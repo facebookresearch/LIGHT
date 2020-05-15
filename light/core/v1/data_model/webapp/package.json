@@ -1,0 +1,46 @@
+{
+  "name": "light-datamodel",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@blueprintjs/core": "^3.17.1",
+    "@blueprintjs/select": "^3.10.0",
+    "@testing-library/jest-dom": "^4.1.0",
+    "@testing-library/react": "^9.2.0",
+    "ansi-regex": "^4.1.0",
+    "diff-match-patch": "^1.0.4",
+    "emoji-mart": "^2.11.1",
+    "fast-deep-equal": "^2.0.1",
+    "formik": "^1.5.8",
+    "react": "^16.8.6",
+    "react-animate-height": "^2.0.15",
+    "react-dom": "^16.8.6",
+    "react-grid-layout": "^0.16.6",
+    "react-paginate": "^6.3.0",
+    "react-reorder": "2.2.1",
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "3.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {}
+}
