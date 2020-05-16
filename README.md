@@ -1,1 +1,3 @@
 # LIGHT
+
+This directory is home to the [LIGHT](https//parl.ai/projects/light/) project. At the moment it is very much a migration in progress, but it will be home to all of the LIGHT experiments, reproducible code, and more!
