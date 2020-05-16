@@ -1,3 +1,3 @@
-# LIGHT Graph
+# LIGHT World
 
-The LIGHT graph is the core state of the environment over which LIGHT takes place. This folder contains the components for managing, building, and operating on Graphs.
+The LIGHT World operates on a level above the LIGHT Graph, and it is responsible for maintaining track of agents within the world, listening to their actions, parsing them, and executing them on the underlying graph.
