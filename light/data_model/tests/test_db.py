@@ -10,7 +10,7 @@ import unittest
 import os
 import pickle
 
-from parlai_internal.projects.light.v1.data_model.light_database import (
+from light.data-model.light_database import (
     LIGHTDatabase,
     DB_EDGE_IN_CONTAINED,
     DB_EDGE_EX_CONTAINED,

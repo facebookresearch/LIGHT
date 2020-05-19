@@ -8,11 +8,11 @@ import parlai.utils.misc as parlai_utils
 
 sys.modules['parlai.core.utils'] = parlai_utils
 
-from parlai_internal.projects.light.v1.graph_builders.starspace_all import (
+from light.graph.builders.starspace_all import (
     StarspaceBuilder,
 )
 from parlai.core.params import ParlaiParser
-from parlai_internal.projects.light.v1.world import World
+from light.world.world import World
 import os
 import random
 import numpy

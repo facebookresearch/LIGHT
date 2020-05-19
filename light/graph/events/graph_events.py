@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai_internal.projects.light.v1.graph_model.events.base import (
+from light.graph.events.base import (
     GraphEvent,
     ErrorEvent,
     TriggeredEvent,
@@ -15,7 +15,7 @@ from parlai_internal.projects.light.v1.graph_model.events.base import (
 # Used for typehinting
 from typing import Union, List, Optional, Tuple, Any, Type, TYPE_CHECKING
 import random
-from parlai_internal.projects.light.v1.graph_model.graph_nodes import (
+from light.graph.elements.graph_nodes import (
     GraphNode,
     GraphAgent,
     GraphObject,
@@ -24,8 +24,8 @@ from parlai_internal.projects.light.v1.graph_model.graph_nodes import (
 )
 
 if TYPE_CHECKING:
-    from parlai_internal.projects.light.v1.world import World
-    from parlai_internal.projects.light.v1.graph_model.structured_graph import OOGraph
+    from light.world.world import World
+    from light.graph.structured_graph import OOGraph
 
 
 # TODO remove ability to take actions with yourself

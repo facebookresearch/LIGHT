@@ -3,14 +3,17 @@
 # Is not currently connected to the LIGHT text adventure game API
 #  (but should be straight-forward).
 
+# TODO (wish) restore this to work with the new data model
+# to include as reproducible research
+
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
-from parlai_internal.tasks.light_maps.builder import load_world_db
-from parlai_internal.projects.light.light_maps.html_map import generate_html_map
-from parlai_internal.projects.light.light_maps.filler_rooms import build_filler_rooms
-import parlai_internal.projects.light.v1.graph as graph
-from parlai_internal.projects.light.v1.graph_builders.base import GraphBuilder
-from parlai_internal.projects.light.light_maps.graph_printer import GraphPrinter
+from light.graph.viz.html_map import generate_html_map
+from light.graph.viz.graph_printer import GraphPrinter
+from light.data_model.filler_rooms import build_filler_rooms
+from light.graph.structured_graph import OOGraph
+from light.graph.builders.base import GraphBuilder
+
 import pickle
 import random
 import copy
@@ -52,7 +55,7 @@ class StarspaceNeighborBuilder(GraphBuilder):
             with open(env_file, 'rb') as picklefile:
                 self.db = pickle.load(picklefile)
         else:
-            self.db = load_world_db(opt=self.opt)
+            raise AssertionError("Loading a legacy builder without the pickle is unsupported")
 
         self.debug = debug
         self.filler_rooms, self.filler_room_names = build_filler_rooms(self.db)
@@ -182,13 +185,8 @@ class StarspaceNeighborBuilder(GraphBuilder):
         #     # Don't create the same agent twice.
         #     return
 
-        if isinstance(g, graph.Graph):
-            agent_id = g.add_node(use_desc, self.props_from_char(char))
-            g._npc_names.add(use_desc)
-            self.add_agent(g, agent_id)
-        else:
-            agent = g.oo_graph.add_agent(use_desc, self.props_from_char(char))
-            agent_id = agent.node_id
+        agent = g.oo_graph.add_agent(use_desc, self.props_from_char(char))
+        agent_id = agent.node_id
 
         g.move_object(agent_id, room_id)
         objs = {}
@@ -433,7 +431,7 @@ class StarspaceNeighborBuilder(GraphBuilder):
                 return None
 
     def get_graph(self):
-        g = graph.Graph(self.opt)
+        g = OOGraph(self.opt)
         g.npc_models._no_npc_models = self._no_npc_models
         g.db = self.db
         g.world = self

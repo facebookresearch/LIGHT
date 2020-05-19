@@ -7,7 +7,7 @@
 import unittest
 import json
 
-from parlai_internal.projects.light.v1.graph_model.graph_nodes import (
+from light.graph.elements.graph_nodes import (
     GraphNode,
     GraphVoidNode,
     GraphEdge,
@@ -19,7 +19,7 @@ from parlai_internal.projects.light.v1.graph_model.graph_nodes import (
     UNINTERESTING_PHRASES,
 )
 
-from parlai_internal.projects.light.v1.graph_model.structured_graph import OOGraph
+from light.graph.structured_graph import OOGraph
 
 
 class TestGraphUnits(unittest.TestCase):

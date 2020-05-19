@@ -8,12 +8,12 @@ import unittest
 import json
 import random
 
-from parlai_internal.projects.light.v1.graph_model.events.base import (
+from light.graph.events.base import (
     ProcessedArguments,
     GraphEvent,
     ErrorEvent,
 )
-from parlai_internal.projects.light.v1.graph_model.events.graph_events import (
+from light.graph.events.graph_events import (
     SayEvent,
     ShoutEvent,
     WhisperEvent,
@@ -49,12 +49,12 @@ from parlai_internal.projects.light.v1.graph_model.events.graph_events import (
     LookEvent,
 )
 
-from parlai_internal.projects.light.v1.graph_model.structured_graph import OOGraph
-from parlai_internal.projects.light.v1.graph_model.graph_nodes import (
+from light.graph.structured_graph import OOGraph
+from light.graph.elements.graph_nodes import (
     GraphObject,
     GraphAgent,
 )
-from parlai_internal.projects.light.v1.world import World
+from light.world.world import World
 
 from typing import Tuple, List, Type, Optional
 

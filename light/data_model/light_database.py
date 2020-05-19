@@ -12,13 +12,13 @@ import pandas as pd
 from collections import defaultdict
 from tqdm import tqdm
 from parlai.core.params import ParlaiParser
-from parlai_internal.projects.light.v1.data_model.conversation_checkpoint_parser import (
+from light.data_model.conversation_checkpoint_parser import (
     ConversationCheckpointParser,
 )
-from parlai_internal.projects.light.v1.data_model.environment_checkpoint_parser import (
+from light.data_model.environment_checkpoint_parser import (
     EnvironmentCheckpointParser,
 )
-from parlai_internal.projects.light.v1.utils import get_article
+from light.graph.utils import get_article
 
 import sys
 import parlai.utils.misc as parlai_utils

@@ -4,8 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import copy, itertools
-from parlai_internal.projects.light.v1.graph_builders.db_utils import id_is_usable
-from parlai_internal.projects.light.v1.data_model.light_database import (
+from light.graph.builders.db_utils import id_is_usable
+from light.data_model.light_database import (
     LIGHTDatabase,
     DB_TYPE_ROOM,
     DB_TYPE_CHAR,

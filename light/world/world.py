@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-import parlai_internal.projects.light.v1.callbacks as Callbacks
-from parlai_internal.projects.light.v1.graph_model.content_loggers import (
+from light.world.content_loggers import (
     RoomConversationBuffer,
 )
-from parlai_internal.projects.light.light_maps.graph_printer import GraphPrinter
-from parlai_internal.projects.light.v1.graph_model.structured_graph import OOGraph
-from parlai_internal.projects.light.v1.graph_model.graph_nodes import GraphRoom
+from light.graph.viz.graph_printer import GraphPrinter
+from light.graph.structured_graph import OOGraph
+from light.graph.elements.graph_nodes import GraphRoom
 
 from copy import deepcopy
 import emoji
@@ -13,12 +12,12 @@ import os
 import random
 
 # TODO don't use * imports
-from parlai_internal.projects.light.v1.npc_models import *
-from parlai_internal.projects.light.v1.utils import rm, deprecated
-from parlai_internal.projects.light.v1.views import WorldViewer
-from parlai_internal.projects.light.v1.graph_model.events.base import GraphEvent, ErrorEvent
-from parlai_internal.projects.light.v1.graph_model.events.graph_events import ALL_EVENTS, ALL_EVENTS_LIST
-from parlai_internal.projects.light.v1.graph_model.graph_nodes import GraphNode, GraphAgent
+from light.world.npc_models import *
+from light.graph.utils import rm, deprecated
+from light.world.views import WorldViewer
+from light.graph.events.base import GraphEvent, ErrorEvent
+from light.graph.events.graph_events import ALL_EVENTS, ALL_EVENTS_LIST
+from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 
 
 def check_integrity(f):

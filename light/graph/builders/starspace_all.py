@@ -8,16 +8,16 @@ import sys
 
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent, create_agent_from_shared
-from parlai_internal.projects.light.v1.world import World
-from parlai_internal.projects.light.light_maps.html_map import generate_html_map
-from parlai_internal.projects.light.v1.graph_model.structured_graph import OOGraph
-from parlai_internal.projects.light.v1.graph_model.graph_nodes import GraphNode
-from parlai_internal.projects.light.v1.graph_model.events.graph_events import ArriveEvent
-from parlai_internal.projects.light.v1.graph_builders.base import (
+from light.world.world import World
+from light.graph.viz.html_map import generate_html_map
+from light.graph.structured_graph import OOGraph
+from light.graph.elements.graph_nodes import GraphNode
+from light.graph.events.graph_events import ArriveEvent
+from light.graph.builders.base import (
     DBGraphBuilder,
     SingleSuggestionGraphBuilder,
 )
-from parlai_internal.projects.light.v1.data_model.light_database import (
+from light.data_model.light_database import (
     DB_EDGE_IN_CONTAINED,
     DB_EDGE_EX_CONTAINED,
     DB_EDGE_CONTAINED_IN,
@@ -34,12 +34,12 @@ from parlai_internal.projects.light.v1.data_model.light_database import (
     DB_TYPE_BASE_ROOM,
     DB_TYPE_ROOM,
 )
-from parlai_internal.projects.light.v1.graph_builders.base_elements import (
+from light.graph.builders.base_elements import (
     DBRoom,
     DBObject,
     DBCharacter,
 )
-from parlai_internal.projects.light.light_maps.filler_rooms import (
+from light.data_model.filler_rooms import (
     build_filler_rooms_from_categories,
     FillerRoom,
 )

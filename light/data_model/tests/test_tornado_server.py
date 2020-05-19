@@ -8,7 +8,7 @@ import unittest
 import os
 import urllib
 from urllib import parse
-from parlai_internal.projects.light.v1.data_model.light_database import (
+from light.data_model.light_database import (
     LIGHTDatabase,
     DB_EDGE_IN_CONTAINED,
     DB_EDGE_EX_CONTAINED,
@@ -40,7 +40,7 @@ from parlai_internal.projects.light.v1.data_model.light_database import (
     CONTENT_STATUSES,
     EDIT_STATUSES,
 )
-from parlai_internal.projects.light.v1.data_model.server import (
+from light.data_model.server import (
     Application,
     get_handlers,
 )

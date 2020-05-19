@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai_internal.projects.light.v1.data_model.light_database import (
+from light.data_model.light_database import (
     LIGHTDatabase,
     DB_STATUS_REJECTED,
     DB_TRAIN_SPLIT,

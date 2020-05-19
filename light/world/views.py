@@ -7,8 +7,8 @@
 from collections import Counter
 import emoji
 
-from parlai_internal.projects.light.v1.utils import rm, deprecated
-from parlai_internal.projects.light.v1.graph_model.graph_nodes import GraphRoom
+from light.graph.utils import rm, deprecated
+from light.graph.elements.graph_nodes import GraphRoom
 
 
 class WorldViewer(object):

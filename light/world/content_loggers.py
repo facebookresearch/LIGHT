@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from parlai_internal.projects.light.v1.graph_model.structured_graph import OOGraph
+from light.graph.structured_graph import OOGraph
 import os
 import uuid
 import json

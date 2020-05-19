@@ -8,7 +8,7 @@ import tornado.web
 from tornado.ioloop import IOLoop
 from tornado import locks
 from tornado import gen
-from parlai_internal.projects.light.v1.data_model.light_database import LIGHTDatabase
+from light.data_model.light_database import LIGHTDatabase
 
 PORT = 8080
 lock = locks.Lock()

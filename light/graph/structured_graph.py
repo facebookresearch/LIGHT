@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import json
-from parlai_internal.projects.light.v1.graph_model.graph_nodes import (
+from light.graph.elements.graph_nodes import (
     GraphObject,
     GraphAgent,
     GraphRoom,

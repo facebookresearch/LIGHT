@@ -6,7 +6,7 @@
 
 # Used for typehinting
 from typing import Union, Any, List, Optional, cast, Type
-from parlai_internal.projects.light.v1.graph_model.graph_nodes import (
+from light.graph.elements.graph_nodes import (
     GraphNode,
     GraphAgent,
 )
@@ -14,8 +14,8 @@ from parlai_internal.projects.light.v1.graph_model.graph_nodes import (
 from typing import NamedTuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from parlai_internal.projects.light.v1.graph_model.structured_graph import OOGraph
-    from parlai_internal.projects.light.v1.world import World
+    from light.graph.structured_graph import OOGraph
+    from light.world.world import World
 
 
 class ProcessedArguments(NamedTuple):
