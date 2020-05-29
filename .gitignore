@@ -7,3 +7,4 @@ tmp/*
 examples/**/build/*
 
 light.egg-info/
+**/.vscode/*
