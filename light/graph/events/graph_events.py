@@ -14,6 +14,7 @@ from light.graph.events.base import (
 
 # Used for typehinting
 from typing import Union, List, Optional, Tuple, Any, Type, TYPE_CHECKING
+import emoji
 import random
 from light.graph.elements.graph_nodes import (
     GraphNode,
@@ -697,7 +698,7 @@ class SpawnEvent(TriggeredEvent):
         actor_name = self.actor.get_prefix_view()
 
         sun_txt = emoji.emojize(':star2:', use_aliases=True) * 31
-        msg_txt += sun_txt + "\n"
+        msg_txt = sun_txt + "\n"
         msg_txt += f"You are spawned into this world as {self.actor.get_view()}.\n"
         msg_txt += "Your character:\n"
         msg_txt += self.actor.persona + "\n"

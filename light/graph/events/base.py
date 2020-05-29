@@ -12,7 +12,7 @@ from light.graph.elements.graph_nodes import (
 )
 from light.graph.structured_graph import GraphEncoder
 
-from typing import NamedTuple, TYPE_CHECKING
+from typing import NamedTuple, TYPE_CHECKING, Dict
 import json
 
 if TYPE_CHECKING:

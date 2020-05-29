@@ -961,7 +961,7 @@ class World(object):
             p_id = existing_player_id
 
         event = SpawnEvent(use_agent)
-        event.execute()
+        event.execute(self)
 
         use_agent.set_player(p_id)
 
