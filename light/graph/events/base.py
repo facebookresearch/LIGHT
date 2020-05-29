@@ -10,12 +10,18 @@ from light.graph.elements.graph_nodes import (
     GraphNode,
     GraphAgent,
 )
+from light.graph.structured_graph import GraphEncoder
 
 from typing import NamedTuple, TYPE_CHECKING
+import json
 
 if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
     from light.world.world import World
+
+
+def node_to_json(node: GraphNode) -> Dict[str, Any]:
+    return json.dumps(node, cls=GraphEncoder, sort_keys=True, indent=4)
 
 
 class ProcessedArguments(NamedTuple):
@@ -156,6 +162,20 @@ class GraphEvent(object):
             args_str += f', "{self.text_content}"'
         return f'{self.__class__.__name__}({args_str})'
 
+    def to_frontend_form(self, viewer: 'GraphAgent') -> Dict[str, Any]: 
+        """
+        Parse out the contents of this event as seen by the given agent
+        and return a dict that is consumable by our frontends
+        """
+        return {
+            'text': self.view_as(viewer),
+            'caller': self.__class__.__name__,
+            'target_nodes': [node_to_json(x) for x in self.target_nodes],
+            'additional_text': self.text_content,
+            'present_agent_ids': self.present_agent_ids,
+            'canonical_targets': self._canonical_targets,
+            'room': node_to_json(self.room),
+        }
 
 class ErrorEvent(GraphEvent):
     """

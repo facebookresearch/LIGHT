@@ -408,41 +408,12 @@ class World(object):
             t += ' '
             self.send_msg(agent_id, t, action)
 
-    def extract_action(self, agent_id, action):
+    def extract_action(self, agent_id, event):
         """
-        Parse the given action and provide a graph-independent version
-        of that action for consumption by other apis
+        Parse the given event and provide a graph-independent action
+        of that event for consumption by other apis
         """
-        # TODO update with action objects
-        new_action = action.copy()
-        if action['caller'] is None:
-            val = action['txt']
-            if type(val) is dict and 'iter' in val:
-                i = val['iter']
-                val['iter'] = (i + 1) % len(val['data'])
-                extracted_text = val['data'][i]
-            else:
-                extracted_text = val
-            new_action['text'] = extracted_text
-        else:
-            try:
-                func_wrap = GRAPH_FUNCTIONS[action['caller']]
-            except BaseException:
-                func_wrap = CONSTRAINTS[action['caller']]
-            try:
-                t = func_wrap.format_observation(self, agent_id, action).rstrip()
-            except Exception:
-                return  # the agent doesn't accept observations
-            t += ' '
-            new_action['text'] = t
-        for field_name in new_action.keys():
-            if type(new_action[field_name]) is set:
-                new_action[field_name] = list(new_action[field_name])
-        new_action['text_actors'] = [
-            self.view.get_node_desc_id(a) for a in new_action.get('actors', [])
-        ]
-
-        return new_action
+        return event.to_frontend_form(self.oo_graph.get_node(agent_id))
 
     def send_msg(self, agent_id, txt, action=None):
         '''Send an agent an action and a message'''
