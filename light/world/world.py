@@ -971,7 +971,7 @@ class World(object):
                 # send message that we can't respawn
                 a_id = self.playerid_to_agentid(existing_player_id)
                 self.send_msg(
-                    aid,
+                    a_id,
                     "Your lost soul attempts to join the living...but the path is blocked.\n",
                 )
             return -1
