@@ -7,7 +7,7 @@
 # LICENSE file in the root directory of this source tree.
 
 
-from parlai_internal.projects.light.v1.server.game_instance import (
+from game_instance import (
     Player,
     PlayerProvider,
     GameInstance,
