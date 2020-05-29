@@ -5,11 +5,11 @@
 #
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
-from parlai_internal.projects.light.v1.graph_builders.starspace_all import (
+from light.graph.builders.starspace_all import (
     StarspaceBuilder,
 )
 from parlai.utils.misc import Timer
-from parlai_internal.projects.light.v1.world import World
+from light.world.world import World
 
 
 class Player:
