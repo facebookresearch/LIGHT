@@ -25,6 +25,7 @@ from light.graph.events.graph_events import (
     UnfollowEvent,
     FollowEvent,
     DeathEvent,
+    SpawnEvent,
     HitEvent,
     HugEvent,
     GetObjectEvent,
@@ -1544,6 +1545,11 @@ class LookEventTest(GraphEventTests):
         ('sword_dealer_14', '', [], None, test_graph_3, [LookEvent]),
     ]
     EVENT_CLASS = LookEvent
+
+
+# TODO test TriggeredEvents that aren't triggered by other events
+class SpawnEventTest():
+    pass
 
 
 class ExamineEventTest(GraphEventTests):

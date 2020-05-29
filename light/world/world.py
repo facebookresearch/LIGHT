@@ -16,7 +16,7 @@ from light.world.npc_models import *
 from light.graph.utils import rm, deprecated
 from light.world.views import WorldViewer
 from light.graph.events.base import GraphEvent, ErrorEvent
-from light.graph.events.graph_events import ALL_EVENTS, ALL_EVENTS_LIST
+from light.graph.events.graph_events import ALL_EVENTS, ALL_EVENTS_LIST, SpawnEvent
 from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 
 
@@ -969,43 +969,30 @@ class World(object):
         if len(possible_agents) == 0:
             if existing_player_id != -1:
                 # send message that we can't respawn
-                aid = self.playerid_to_agentid(existing_player_id)
+                a_id = self.playerid_to_agentid(existing_player_id)
                 self.send_msg(
-                    aid,
+                    a_id,
                     "Your lost soul attempts to join the living...but the path is blocked.\n",
                 )
             return -1
 
-        # Pick an agent, then construct starting message
-        # TODO this display logic belongs elsewhere
+        # Pick an agent, then send event
         use_agent = random.choice(possible_agents)
         a_id = use_agent.node_id
-        msg_txt = ''
         if existing_player_id == -1:
             self._player_cnt += 1
             p_id = "_player_" + str(self._player_cnt)
         else:
-            msg_txt += "Your lost soul attempts to join the living...\n"
+            self.send_msg(
+                self.playerid_to_agentid(existing_player_id),
+                "Your lost soul attempts to join the living...\n",
+            )
             p_id = existing_player_id
-        sun_txt = emoji.emojize(':star2:', use_aliases=True) * 31
-        msg_txt += sun_txt + "\n"
-        msg_txt += f"You are spawned into this world as {use_agent.get_view()}.\n"
-        msg_txt += "Your character:\n"
-        msg_txt += use_agent.get_prop('persona') + "\n"
-        # msg_txt += self.get_prop(a_id, 'desc') + "\n"
-        msg_txt += sun_txt + "\n"
-        action = {
-            'caller': None,
-            'name': 'persona',
-            'room_id': use_agent.get_room().node_id,
-            'txt': msg_txt,
-            'actors': [use_agent.node_id],
-            'character': use_agent.get_view(),
-            'persona': use_agent.get_prop('persona'),
-        }
+
+        event = SpawnEvent(use_agent)
+        event.execute()
 
         use_agent.set_player(p_id)
-        use_agent.observe_action(msg_txt, action)
 
         self._playerid_to_agentid[p_id] = a_id
         self._agentid_to_playerid[a_id] = p_id

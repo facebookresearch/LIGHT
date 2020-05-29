@@ -689,6 +689,33 @@ class DeathEvent(TriggeredEvent):
             return self.__in_room_view
 
 
+class SpawnEvent(TriggeredEvent):
+    """Handles processing the view for when a player is spawned, and passing their context"""
+
+    def execute(self, world: "World") -> List[GraphEvent]:
+        """Construct intro text and broadcast to the player"""
+        actor_name = self.actor.get_prefix_view()
+
+        sun_txt = emoji.emojize(':star2:', use_aliases=True) * 31
+        msg_txt += sun_txt + "\n"
+        msg_txt += f"You are spawned into this world as {self.actor.get_view()}.\n"
+        msg_txt += "Your character:\n"
+        msg_txt += self.actor.persona + "\n"
+        msg_txt += sun_txt + "\n"
+        self.__msg_txt = msg_txt
+
+        world.broadcast_to_agents(self, [self.actor])
+
+        return []
+
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        if viewer == self.actor:
+            return self.__msg_txt
+        else:
+            return None
+
+
 class HitEvent(GraphEvent):
     """Handles having one agent attack another"""
 
