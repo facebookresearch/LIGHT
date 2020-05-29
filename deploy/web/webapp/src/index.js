@@ -117,9 +117,7 @@ function Message({ text, caller, actor, isSelf, onReply }) {
 }
 
 function Entry({ msg, onReply, agents, selfId }) {
-  if (["look", "go", "text"].includes(msg.caller) || msg.caller === null) {
-    return <Setting text={msg.text} />;
-  } else if (msg.caller === "examine" && msg.name !== "witnessed") {
+  if (["LookEvent", "GoEvent", "ExamineEvent", "text"].includes(msg.caller) || msg.caller === null) {
     return <Setting text={msg.text} />;
   } else {
     return (

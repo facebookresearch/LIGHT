@@ -175,6 +175,7 @@ class GraphEvent(object):
             'present_agent_ids': self.present_agent_ids,
             'canonical_targets': self._canonical_targets,
             'room': node_to_json(self.room),
+            'actor': node_to_json(self.actor),
         }
 
 class ErrorEvent(GraphEvent):

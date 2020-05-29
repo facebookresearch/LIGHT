@@ -960,14 +960,14 @@ class World(object):
             )
             p_id = existing_player_id
 
-        event = SpawnEvent(use_agent)
-        event.execute(self)
-
         use_agent.set_player(p_id)
 
         self._playerid_to_agentid[p_id] = a_id
         self._agentid_to_playerid[a_id] = p_id
         # self._room_convo_buffers[self.room(a_id)].enter_human()
+
+        event = SpawnEvent(use_agent)
+        event.execute(self)
         return p_id
 
     def playerid_to_agentid(self, pid):
