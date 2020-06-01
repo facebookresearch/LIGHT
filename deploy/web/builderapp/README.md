@@ -4,8 +4,8 @@ This folder contains the LIGHT project's data acquisition and management system 
 
 ## To run
 
-- Obtain a .db file (either by importing a pickle file, or from the FAIR cluster at /private/home/jju/ParlAI/data/light/environment/db/database3.db)
-- Run the python server with the db file
+- Obtain a .db file (either by importing a pickle file, or from the FAIR cluster at /checkpoint/light/data/database3.db)
+- Run the python server with the db file (../server/builder_server.py)
 - Make sure port in `src/config.js` is the same as the python server port
 - `npm start`
 
