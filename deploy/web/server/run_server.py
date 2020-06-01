@@ -6,13 +6,13 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai_internal.projects.light.v1.server.game_instance import (
+from deploy.web.server.game_instance import (
     GameInstance,
 )
-from parlai_internal.projects.light.v1.server.telnet_server import (
+from deploy.web.server.telnet_server import (
     TelnetPlayerProvider,
 )
-from parlai_internal.projects.light.v1.server.tornado_server import (
+from deploy.web.server.tornado_server import (
     TornadoWebappPlayerProvider,
 )
 
@@ -26,7 +26,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='Start the game server.')
     parser.add_argument('--light-model-root', type=str,
-                        default="/Users/jju/Desktop/LIGHT/",
+                        default="/checkpoint/light/models/",
                         help='models path. For local setup, use: /checkpoint/jase/projects/light/dialog/')
     parser.add_argument('-port', metavar='port', type=int,
                         default=DEFAULT_PORT,

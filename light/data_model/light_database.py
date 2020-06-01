@@ -115,6 +115,7 @@ class LIGHTDatabase:
         argparser = ParlaiParser(False, False)
         # ignore unknown command line arguments
         opt = argparser.parse_and_process_known_args()[0]
+        
         # Path to the dictionary csv's
         self.data_dir = os.path.join(opt["datapath"], 'light', "light_database_csv")
         if not os.path.exists(self.data_dir):

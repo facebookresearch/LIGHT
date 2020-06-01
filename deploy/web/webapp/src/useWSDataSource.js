@@ -25,13 +25,15 @@ export function useWSDataSource(url) {
         const buffer = [];
 
         cmd.data.forEach(action => {
-          const isRespawn = action.text.startsWith(
+          const isRespawn = false; /* action.text.startsWith(
             "Your lost soul attempts to join the living..."
-          );
-          const isPersonaDescription =
-            action.caller === null && action.name === "persona";
-          const isLocationDescription = action.name === "list_room";
-          const hasUpdatedAgentsInfo = !!action.room_agents;
+          );*/
+          const isPersonaDescription = action.caller === "SpawnEvent";
+          const isLocationDescription = action.caller === "LookEvent";
+          const hasUpdatedAgentsInfo = false; //!!action.present_agent_ids;
+
+          action.room = JSON.parse(action.room)
+          action.actor = JSON.parse(action.actor)
 
           if (hasUpdatedAgentsInfo) {
             setAgents(
@@ -40,25 +42,24 @@ export function useWSDataSource(url) {
           }
           if (isPersonaDescription) {
             setPersona({
-              name: action.character,
-              description: action.persona,
-              id: action.actors[0]
+              name: action.actor.name,
+              description: action.actor.persona,
+              id: action.actor.node_id
             });
             if (isRespawn) {
               buffer.push(action);
             }
             return;
           } else if (isLocationDescription) {
-            const locationName = action.text.split("\n")[0];
             setLocation({
-              name: locationName,
+              name: action.room.name,
               description:
-                action.room_desc +
+                action.room.desc +
                 "\n" +
                 "You notice: " +
-                action.room_descs.join(", ") +
+                "TODO add examine stuff here" + 
                 ".",
-              id: action.room_id
+              id: action.room.node_id
             });
             buffer.push(action);
           } else {

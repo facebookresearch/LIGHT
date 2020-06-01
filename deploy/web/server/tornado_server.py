@@ -6,7 +6,7 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai_internal.projects.light.v1.server.game_instance import (
+from deploy.web.server.game_instance import (
     Player,
     PlayerProvider,
     GameInstance,
@@ -285,7 +285,7 @@ class TornadoWebappPlayer(Player):
         # TODO update extract_action to be more standard
         # across multiple actions?
         obs_list = [graph.extract_action(self.get_agent_id(), a) for a in actions]
-        filtered_obs = [obs for obs in obs_list if len(obs['text'].strip())]
+        filtered_obs = [obs for obs in obs_list if obs['text'] is not None and len(obs['text'].strip())]
         if extra_text != '':
             # obs_list.append({'caller': 'text', 'text': extra_text})
             pass  # extra text is gotten through regular actions as well
