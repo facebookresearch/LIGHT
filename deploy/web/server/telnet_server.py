@@ -7,7 +7,7 @@
 # LICENSE file in the root directory of this source tree.
 
 
-from game_instance import (
+from deploy.web.server.game_instance import (
     Player,
     PlayerProvider,
     GameInstance,

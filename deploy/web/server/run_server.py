@@ -6,13 +6,13 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-from game_instance import (
+from deploy.web.server.game_instance import (
     GameInstance,
 )
-from telnet_server import (
+from deploy.web.server.telnet_server import (
     TelnetPlayerProvider,
 )
-from tornado_server import (
+from deploy.web.server.tornado_server import (
     TornadoWebappPlayerProvider,
 )
 
