@@ -10,7 +10,8 @@ from tornado import locks
 from tornado import gen
 from light.data_model.light_database import LIGHTDatabase
 
-PORT = 8080
+# Conflicts with game UI port
+PORT = 35496 
 lock = locks.Lock()
 
 
