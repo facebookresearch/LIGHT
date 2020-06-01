@@ -10,7 +10,7 @@ from tornado import locks
 from tornado import gen
 from light.data_model.light_database import LIGHTDatabase
 
-PORT = 35495 # 1 less than port for other server for now
+PORT = 35496 # 1 less than port for other server for now
 lock = locks.Lock()
 
 
