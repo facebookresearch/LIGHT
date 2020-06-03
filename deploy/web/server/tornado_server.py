@@ -135,9 +135,13 @@ class Application(tornado.web.Application):
             # (r"/init", InitSceneHandler, {'app': self}),
             (r"/socket", SocketHandler, {'app': self}),
             # (r"%s(.*)", IndexHandler, {'app': self}),
+            (r'/', HomeHandler),
         ]
         super(Application, self).__init__(handlers, **tornado_settings)
 
+class HomeHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render('../../webapp/public/index.html')
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
     def initialize(self, app):
