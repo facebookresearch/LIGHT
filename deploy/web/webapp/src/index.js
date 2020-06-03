@@ -230,7 +230,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
     },
     [setEnteredText, chatInputRef]
   );
-  console.log(messages)
+
   // console.log(selectedEmoji);
   return (
     <div className="App">
