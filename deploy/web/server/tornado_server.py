@@ -119,7 +119,6 @@ def get_path(filename):
 tornado_settings = {
     "autoescape": None,
     "debug": "/dbg/" in __file__,
-    "static_path": get_path('static'),
     "template_path": get_path('static'),
     "compiled_template_cache": False
 }
@@ -130,18 +129,25 @@ class Application(tornado.web.Application):
         self.subs = {}
         self.new_subs = []
 
-        tornado_settings['static_url_prefix'] = "../build/static"
+        static_path = here + "/../webapp/build/static"
         handlers = [
-            # (r"/init", InitSceneHandler, {'app': self}),
             (r"/socket", SocketHandler, {'app': self}),
-            # (r"%s(.*)", IndexHandler, {'app': self}),
-            (r'/', HomeHandler),
+            (r"/static/(.*)", MyStaticHandler, {'path': static_path}),
+            (r"/", HomeHandler,),
         ]
         super(Application, self).__init__(handlers, **tornado_settings)
 
+class MyStaticHandler(tornado.web.StaticFileHandler):
+
+    def parse_url_path(self, url_path):
+        if not url_path or url_path.endswith('/'):
+            url_path = url_path + 'index.html'
+        print(url_path)
+        return url_path
+
 class HomeHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render('../webapp/build/index.html')
+        self.render(here + '/../webapp/build/index.html')
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
     def initialize(self, app):
