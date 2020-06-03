@@ -130,7 +130,7 @@ class Application(tornado.web.Application):
         self.subs = {}
         self.new_subs = []
 
-        tornado_settings['static_url_prefix'] = "/static/"
+        tornado_settings['static_url_prefix'] = "../build/static"
         handlers = [
             # (r"/init", InitSceneHandler, {'app': self}),
             (r"/socket", SocketHandler, {'app': self}),
@@ -141,7 +141,7 @@ class Application(tornado.web.Application):
 
 class HomeHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render('../../webapp/public/index.html')
+        self.render('../webapp/build/index.html')
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
     def initialize(self, app):
