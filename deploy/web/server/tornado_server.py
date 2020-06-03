@@ -129,11 +129,10 @@ class Application(tornado.web.Application):
         self.subs = {}
         self.new_subs = []
 
-        static_path = here + "/../webapp/build/static"
+        static_path = here + "/../webapp/build/"
         handlers = [
             (r"/socket", SocketHandler, {'app': self}),
-            (r"/static/(.*)", MyStaticHandler, {'path': static_path}),
-            (r"/", HomeHandler,),
+            (r"/(.*)", MyStaticHandler, {'path': static_path}),
         ]
         super(Application, self).__init__(handlers, **tornado_settings)
 
@@ -142,12 +141,8 @@ class MyStaticHandler(tornado.web.StaticFileHandler):
     def parse_url_path(self, url_path):
         if not url_path or url_path.endswith('/'):
             url_path = url_path + 'index.html'
-        print(url_path)
         return url_path
 
-class HomeHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.render(here + '/../webapp/build/index.html')
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
     def initialize(self, app):
@@ -336,7 +331,9 @@ class TornadoWebappPlayerProvider(PlayerProvider):
                 hostname = os.environ["HOSTNAME"]
             else:
                 hostname = hostname
-            print("You can connect to http://%s:%s/socket" % (hostname, port))
+            print("You can connect to http://%s:%s/" % (hostname, port))
+            print("Or you can connect to http://%s:%s/socket" % (hostname, port))
+
 
             self.my_loop.start()
 

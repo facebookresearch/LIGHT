@@ -50,29 +50,8 @@ def main():
     game.register_provider(provider)
     provider = TelnetPlayerProvider(graph, FLAGS.hostname, FLAGS.port + 1)
     game.register_provider(provider)
-
-    filename = inspect.getframeinfo(inspect.currentframe()).filename
-    path     = os.path.dirname(os.path.abspath(filename))
-    ui_out_path = path + '/ui_out.txt'
-    # TODO: Figure out how to pass configurable port
-    out = open(ui_out_path, 'w')
-    ui_cmd = ["npm", "start", "-s", "-q",] #"--", "--port", DEFAULT_PORT,]
-    # TODO: Change to using location of this script
-    ui = subprocess.Popen(ui_cmd, cwd=path + '/../webapp', stdout=out)
-
-    print("Waiting for ui to spin up...")
-    sleep(60)
-    with open(ui_out_path, 'r') as f:
-        txt = f.read()
-        print(txt)
-        txt = txt.split()
-        links = [ word for word in txt if word.startswith('http://')]
-
-    assert len(links) > 0
-    print("Play the game at any of {}".format(str(links)))    
     game.run_graph()
 
-    ui.wait(timeout=1000)
 
 if __name__ == "__main__":
     main()
