@@ -716,6 +716,30 @@ class SpawnEvent(TriggeredEvent):
         else:
             return None
 
+class HelpEvent(NoArgumentEvent):
+    """Handles user asking for help"""
+
+    NAMES = ["help", "h"]
+
+    def execute(self, world: "World") -> List[GraphEvent]:
+        """
+        On execution, broadcast the nothing happening
+        """
+        assert not self.executed
+        self.__actor_name = self.actor.get_prefix_view()
+        world.broadcast_to_room(self)
+        self.executed = True
+        return []
+
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        if viewer == self.actor:
+            return "You asked for help. "
+        else:
+            return f"{self.__actor_name.capitalize()} asked for help. "
+
+    def to_canonical_form(self) -> str:
+        return f'help'
 
 class HitEvent(GraphEvent):
     """Handles having one agent attack another"""
@@ -2769,6 +2793,7 @@ ALL_EVENTS_LIST: List[Type[GraphEvent]] = [
     GoEvent,
     UnfollowEvent,
     FollowEvent,
+    HelpEvent,
     HitEvent,
     HugEvent,
     GetObjectEvent,
