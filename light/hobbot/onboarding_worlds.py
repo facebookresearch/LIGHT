@@ -12,7 +12,7 @@ import time
 
 from parlai.core.worlds import World
 from parlai.chat_service.services.messenger.worlds import OnboardWorld
-import parlai_internal.projects.light.beatthehobbot_dist.utils as utils
+import light.hobbot.utils as utils
 	
 from copy import deepcopy
 

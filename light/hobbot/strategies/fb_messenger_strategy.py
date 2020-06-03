@@ -11,17 +11,16 @@ from typing import Optional, List, Dict, Any, Union
 import re
 
 from parlai.core.opt import Opt
-from parlai_internal.projects.light.beatthehobbot_dist.strategies.light_chat_strategy import LIGHTChatStrategy
+from light.hobbot.strategies.light_chat_strategy import LIGHTChatStrategy
 
 from parlai_bot.fb_messenger_manager import FBMessengerManager
 from parlai_bot.safety import (
-    fetch_and_initialize_safety_model, 
+    fetch_and_initialize_safety_model,
     SAFETY_MODEL_OPT,
-    MessageSafetyDetector, 
-    fetch_and_initialize_safety_model
+    MessageSafetyDetector,
 )
 from parlai_bot.utils import (
-    OffensiveLanguageDetector, 
+    OffensiveLanguageDetector,
     PersonalInfoDetector,
     fetch_resources,
     resource_path,
@@ -31,6 +30,7 @@ from parlai_bot.sql_utils import BeatTheBotSQLQueries as bb_sql
 from parlai_bot.sql_utils import BeatTheHobbotSQLQueries as bhb_sql
 
 from dsi.logger.py.LoggerConfigHandler import LoggerConfigHandler
+
 
 class FBMessengerChatStrategy(LIGHTChatStrategy):
     """Class to handle launching the LIGHT chat game on internal FB Messenger"""
@@ -56,11 +56,7 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
             'ParlAIBotBeatTheHobbitSinglePlayerLoggerConfig'
         )
 
-        self.offensive_language = OffensiveLanguageDetector(
-            path=opt.get('offensive_lang_path')
-        )
-        self.personal_info = PersonalInfoDetector()
-
+        # Below code is used to initialize a safety model, which we are not currently using
         # safety_opt = deepcopy(SAFETY_MODEL_OPT)
         # # override the model:
         # safety_opt['model'] = 'transformer/classifier'
@@ -76,12 +72,10 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
         #     'threshold', 0.9
         # }
         # opt['safety_classifier_opts']['threshold'] = 0.9
-        # self.safety_checker = MessageSafetyDetector(opt)
+        self.personal_info = PersonalInfoDetector()
 
         self.db_tier = opt['db_tier']
         self.table_prefix = 'lightbot'
-
-
 
     def fetch_resources(self) -> str:
         return self.opt['resources_path']
@@ -93,7 +87,14 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
     def has_personal_info(self, message: str):
         """Determine if the provided message contains personal info"""
         return self.personal_info.txt_format_detect_all(message)
-        
+
+    def init_safety(self, opt):
+        """Initialize safety models"""
+        self.offensive_language = OffensiveLanguageDetector(
+            path=opt.get('offensive_lang_path')
+        )
+        # self.safety_checker = MessageSafetyDetector(self.opt)
+
     def update_leaderboard(self, player_id: str, score: Optional[int] = None, username: Optional[str] = None) -> None:
         """Updates the leaderboard for this game with the parameters provided"""
         if score is not None:
@@ -127,7 +128,7 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
 
     def get_player_leaderboard_stats(self, player_id: str) -> Dict[str, Any]:
         """Return interesting leaderboard stats for the given player id.
-        
+
         Return dict expects the following fields:
             total_players: total number of players
             rank: rank of the given player
@@ -166,7 +167,7 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
         """Update the characters that an agent has collected"""
         bhb_sql.update_character_collection(
             player_id,
-            self.agent.data['characters_caught_string'],
+            collected_characters,
             tier=self.db_tier,
             table='{}_extradata'.format(self.table_prefix),
         )
@@ -187,11 +188,15 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
         """Determine if the given message has any offensive subwords"""
         return self.offensive_language.contains_offensive_subwords(dict_freqs, message)
 
+    def username_is_appropriate(self, username: str):
+        """Determine if the username is considered appropriate"""
+        return self.offensive_language.contains_offensive_language(username)
+
     def username_is_valid(self, username: str) -> Union[str, bool]:
-        """Ensure the username can be properly stored, return True if valid and 
+        """Ensure the username can be properly stored, return True if valid and
         an error message for the user if it is not
         """
-    
+
         """
         Check if the name only contains alphanumeric characters and
         spaces, and warn the user of these restrictions if it doesn't

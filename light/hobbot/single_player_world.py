@@ -12,9 +12,9 @@ import math
 
 from parlai.core.agents import create_agent_from_shared
 from parlai.core.worlds import World
-from parlai_internal.projects.light.beatthehobbot_dist.strategies.light_chat_strategy import LIGHTChatStrategy
-import parlai_internal.projects.light.beatthehobbot_dist.utils as utils
-
+from light.hobbot.strategies.light_chat_strategy import LIGHTChatStrategy
+import light.hobbot.utils as utils
+from light.graph.builders.starspace_all import StarspaceBuilder
 
 # Task specific constants
 GAME_OVER = ('You have ended the game. Thanks for playing!')
@@ -30,6 +30,7 @@ SINGLE_CATCH_THRESHOLD = 11
 DOUBLE_CATCH_THRESHOLD = 15
 
 ROOKIE_USER_MIN_SCORE = 40
+
 
 # ---------- LIGHT Dungeon World -------- #
 class LIGHTSinglePlayerWorld(World):
@@ -92,16 +93,55 @@ class LIGHTSinglePlayerWorld(World):
 
     @staticmethod
     def generate_world(opt, agents, task_state=None):
-        shared_bot_params = opt['shared_bot_params']
-        shared_scoring_params = opt['shared_scoring_params']
-        scoring_bot = create_agent_from_shared(shared_scoring_params)
+        bot_params = opt['shared_bot_params']
+        if opt.get('shared_scoring_params') is None:
+            opt['shared_scoring_params'] = {}
+            # At the moment we're just using a single scoring model, but
+            # the below code would let us initialize a scoring model for
+            # every dialogue model.
+            # for model_key, params in bot_params.items():
+            #     # shallow copy most things, but set use_reply to none
+            #     scoring_params = params.copy()
+            #     scoring_params['opt'] = params['opt'].copy()
+            #     scoring_params['opt']['use_reply'] = 'none'
+            #     scoring_params['opt']['override'] = params['opt']['override'].copy()
+            #     scoring_params['opt']['override']['use_reply'] = 'none'
+            #     opt['shared_scoring_params'][model_key] = scoring_params
+
+        model_to_use = random.choice(list(bot_params.keys()))
+        #model_to_use = 'sw17_bigmlm_smallcode5'
+        shared_bot_params = opt['shared_bot_params'][model_to_use]
+        if (
+            shared_bot_params['opt'].get('boring_alpha', 0) != 0 or
+            shared_bot_params['opt']['override'].get('boring_alpha', 0) != 0
+        ):
+            if random.random() > 0.5:
+                model_to_use += '_boring'
+                print("Making boring version!")
+            else:
+                shared_bot_params = shared_bot_params.copy()
+                shared_bot_params['opt'] = shared_bot_params['opt'].copy()
+                shared_bot_params['opt']['boring_alpha'] = 0
+                shared_bot_params['opt']['override'] = shared_bot_params['opt']['override'].copy()
+                shared_bot_params['opt']['override']['boring_alpha'] = 0
         bot = create_agent_from_shared(shared_bot_params)
-        model = 'reddit_polyranker'
+
+        scoring_model_to_use = 'orig_light_poly'
+        if scoring_model_to_use not in opt['shared_scoring_params']:
+            use_bot_params = opt['shared_bot_params'][scoring_model_to_use]
+            scoring_params = use_bot_params.copy()
+            scoring_params['opt'] = use_bot_params['opt'].copy()
+            scoring_params['opt']['use_reply'] = 'none'
+            scoring_params['opt']['override'] = use_bot_params['opt']['override'].copy()
+            scoring_params['opt']['override']['use_reply'] = 'none'
+            opt['shared_scoring_params'][scoring_model_to_use] = scoring_params
+        shared_scoring_params = opt['shared_scoring_params'][scoring_model_to_use]
+        scoring_bot = create_agent_from_shared(shared_scoring_params)
         return LIGHTSinglePlayerWorld(
             opt=opt,
             human_agents=agents,
             bot=bot,
-            model=model,
+            model=model_to_use,
             task_state=task_state,
             scoring_bot=scoring_bot,
         )
@@ -379,10 +419,10 @@ class LIGHTSinglePlayerWorld(World):
         new_character_option = "New Persona"
         exit_option = "EXIT"
         choice_options = [
-            loc1_option, 
-            loc2_option, 
-            new_partner_option, 
-            new_character_option, 
+            loc1_option,
+            loc2_option,
+            new_partner_option,
+            new_character_option,
             exit_option
         ]
         self.observe_game_msg(
@@ -469,7 +509,7 @@ class LIGHTSinglePlayerWorld(World):
         if len(emojis) > 0:
             # Update awarded characters
             self.service_strategy.update_character_collection(
-                self.agent.id, 
+                self.agent.id,
                 self.agent.data['characters_caught_string'],
             )
             characters_so_far = utils.get_awarded_character_count(self.agent)
@@ -486,7 +526,7 @@ class LIGHTSinglePlayerWorld(World):
         if self.agent.data.get('next_task') != 'EXIT':
             self.agent.data['next_task'] = None
         if self.timeout:  # if timeout
-            flash_text = self.pick_endgame_flash_and_award_characters()
+            flash_text = random.choice(utils.GAME_TIMEOUT_FLASHES)
             if self.score > 0:
                 final_text = (
                     f"{flash_text}\n"
@@ -500,7 +540,7 @@ class LIGHTSinglePlayerWorld(World):
         elif self.reported:  # if reported
             pass
         elif not self.game_ended:
-            flash_text = random.choice(utils.END_GAME_FLASHES)
+            flash_text = self.pick_endgame_flash_and_award_characters()
             final_text = (
                 f"{flash_text}\n"
                 f"Your score increased by {self.score} points "
@@ -510,7 +550,7 @@ class LIGHTSinglePlayerWorld(World):
             self.update_leaderboard()
             self.agent.data['next_task'] = 'SinglePlayer'
             self.setup_next_game()
-            return 
+            return
         else:  # if user clicked end game
             self.observe_game_msg(GAME_OVER)
         # update and view leaderboard
@@ -521,10 +561,10 @@ class LIGHTSinglePlayerWorld(World):
         psid = self.agent.id
         score = int(self.score)
         username = self.agent.data['user_name']
-        
+
         self.service_strategy.update_leaderboard(psid, score=score, username=username)
         leaderboard_stats = self.service_strategy.get_player_leaderboard_stats(psid)
-        
+
         rank_msg = 'Your *rank* is {} out of {}.\n'.format(
             leaderboard_stats['rank'], leaderboard_stats['total_players'])
         score_msg = 'Your *total score* is {}.'.format(leaderboard_stats['score'])
@@ -708,6 +748,10 @@ class LIGHTSinglePlayerWorld(World):
     def show_debug_info(self):
         """Print the bot's full history"""
         bot_history = self.bot.history.get_history_str()
+        self.agent.observe({
+            'id': '',
+            'text': f"You are talking to a {self.model_name}",
+        })
         self.agent.observe({
             'id': '',
             'text': f"Bot's history:\n```{bot_history}```",
