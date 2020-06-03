@@ -896,7 +896,7 @@ class World(object):
         if executable == 'help' and len(arguments) == 0:
             # TODO fix send_msg
             self.send_msg(agentid, self.help())
-            return True, 'help'
+            return True, HelpEvent().to_canonical_form()
         if executable == "map" and len(arguments) == 0:
             # TODO fix print_graph
             self.send_msg(
