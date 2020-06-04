@@ -21,12 +21,8 @@ DEFAULT_HOSTNAME = "localhost"
 
 def main():
     import argparse
-    import inspect
     import numpy
-    import os.path
     import random
-    import subprocess
-    from time import sleep
 
 
     parser = argparse.ArgumentParser(description='Start the game server.')
