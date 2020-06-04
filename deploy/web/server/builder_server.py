@@ -11,12 +11,16 @@ from tornado import gen
 from light.data_model.light_database import LIGHTDatabase
 
 # Conflicts with game UI port
-PORT = 35496 
+HOSTNAME = 'localhost'
+PORT = 35495 
 lock = locks.Lock()
 
 
 def get_handlers(db):
     ''' Returns handler array with required arguments '''
+    here = os.path.abspath(os.path.dirname(__file__))
+    path_to_build = here + "/../builderapp/build/"
+    print(path_to_build)
     return [
         (r"/edits", EntityEditHandler, {'dbpath': db}),
         (r"/edits/([0-9]+)/accept/([a-zA-Z_]+)", AcceptEditHandler, {'dbpath': db}),
@@ -28,6 +32,7 @@ def get_handlers(db):
         (r"/entities/([a-zA-Z_]+)/fields", EntityFieldsHandler, {'dbpath': db}),
         (r"/interactions", InteractionHandler, {'dbpath': db}),
         (r"/tables/types", TypesHandler, {'dbpath': db}),
+        (r"/(.*)", StaticDataUIHandler, {'path': path_to_build}),
     ]
 
 
@@ -42,6 +47,11 @@ class AppException(tornado.web.HTTPError):
 
     pass
 
+class StaticDataUIHandler(tornado.web.StaticFileHandler):
+    def parse_url_path(self, url_path):
+        if not url_path or url_path.endswith('/'):
+            url_path = url_path + 'index.html'
+        return url_path
 
 class BaseHandler(tornado.web.RequestHandler):
     def options(self, *args, **kwargs):
@@ -370,7 +380,7 @@ def main():
     assert sys.argv[1][-3:] == '.db', 'Please enter a database path'
     app = Application(get_handlers(sys.argv[1]))
     app.listen(PORT)
-    print(f'Server is starting at localhost:{PORT}...')
+    print(f'You can connect to http://{HOSTNAME}:{PORT}/')
     IOLoop.instance().start()
 
 
