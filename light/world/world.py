@@ -16,7 +16,7 @@ from light.world.npc_models import *
 from light.graph.utils import rm, deprecated
 from light.world.views import WorldViewer
 from light.graph.events.base import GraphEvent, ErrorEvent
-from light.graph.events.graph_events import ALL_EVENTS, ALL_EVENTS_LIST, SpawnEvent
+from light.graph.events.graph_events import ALL_EVENTS, ALL_EVENTS_LIST, SpawnEvent, HelpEvent
 from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 
 
@@ -425,7 +425,7 @@ class World(object):
         if agent is None:
             print(txt, agent_id)
         agent.observe_action(txt, action)
-
+        print(action)
         # TODO move message callbacks to be registered to players
         pos_playerid = self.agentid_to_playerid(agent_id)
         if pos_playerid in self.__message_callbacks:
@@ -895,8 +895,9 @@ class World(object):
             return True, 'actions'
         if executable == 'help' and len(arguments) == 0:
             # TODO fix send_msg
-            self.send_msg(agentid, self.help())
-            return True, HelpEvent().to_canonical_form()
+            actor_node = self.oo_graph.get_node(agentid)
+            HelpEvent(actor_node).execute(self)
+            return True, 'help'
         if executable == "map" and len(arguments) == 0:
             # TODO fix print_graph
             self.send_msg(
