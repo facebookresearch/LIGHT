@@ -24,7 +24,6 @@ def main():
     import numpy
     import random
 
-
     parser = argparse.ArgumentParser(description='Start the game server.')
     parser.add_argument('--light-model-root', type=str,
                         default="/checkpoint/light/models/",

@@ -96,7 +96,6 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         self.db_path = os.path.join(opt['datapath'], 'light', 'database3.db')
         if opt.get("light_db_file", "") != "":
             self.db_path = opt.get("light_db_file")
-        
         self.model_path = opt.get("light_model_root")
         DBGraphBuilder.__init__(self, self.db_path)
         SingleSuggestionGraphBuilder.__init__(self, opt, model_path=self.model_path)
