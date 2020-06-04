@@ -117,7 +117,7 @@ function Message({ text, caller, actor, isSelf, onReply }) {
 }
 
 function Entry({ msg, onReply, agents, selfId }) {
-  if (["LookEvent", "GoEvent", "ExamineEvent", "text"].includes(msg.caller) || msg.caller === null) {
+  if (["LookEvent", "GoEvent", "ExamineEvent", "ErrorEvent", "text"].includes(msg.caller) || msg.caller === null) {
     return <Setting text={msg.text} />;
   } else {
     return (
