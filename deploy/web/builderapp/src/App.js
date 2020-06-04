@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
+import { HashRouter as HashRouter, Route, Redirect } from "react-router-dom";
 
 import NavBar from "./components/NavBar";
 import ExplorePage from "./components/ExplorePage";
@@ -11,9 +11,9 @@ import EditPage from "./components/EditPage";
 function App() {
   return (
     <div className="App">
-      <Router>
+      <HashRouter>
         <Routes />
-      </Router>
+      </HashRouter>
     </div>
   );
 }
@@ -23,15 +23,15 @@ export function Routes() {
     <>
       <NavBar />
       <div style={{ margin: "40px 30px" }}>
-        <Route path="/explore" component={ExplorePage} />
-        <Route path="/create" component={CreatePage} />
-        <Route path="/review" component={ReviewPage} />
+        <Route path="/explore" component={ExplorePage} exact/>
+        <Route path="/create" component={CreatePage} exact/>
+        <Route path="/review" component={ReviewPage} exact/>
         <Route
           path="/world_builder"
-          render={props => <WorldBuilderPage {...props} key={Math.random()} />}
+          render={props => <WorldBuilderPage {...props} key={Math.random()} exact/>}
         />
-        <Route path="/edit/:id" component={EditPage} />
-        <Route exact path="/" render={() => <Redirect to="/explore" />} />
+        <Route path="/edit/:id" component={EditPage} exact/>
+        <Route exact path="/" render={() => <Redirect to="/explore" />} exact/>
       </div>
     </>
   );

@@ -20,7 +20,6 @@ def get_handlers(db):
     ''' Returns handler array with required arguments '''
     here = os.path.abspath(os.path.dirname(__file__))
     path_to_build = here + "/../builderapp/build/"
-    print(path_to_build)
     return [
         (r"/edits", EntityEditHandler, {'dbpath': db}),
         (r"/edits/([0-9]+)/accept/([a-zA-Z_]+)", AcceptEditHandler, {'dbpath': db}),
