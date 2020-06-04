@@ -425,7 +425,6 @@ class World(object):
         if agent is None:
             print(txt, agent_id)
         agent.observe_action(txt, action)
-        print(action)
         # TODO move message callbacks to be registered to players
         pos_playerid = self.agentid_to_playerid(agent_id)
         if pos_playerid in self.__message_callbacks:
