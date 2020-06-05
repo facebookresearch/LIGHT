@@ -37,7 +37,6 @@ DEFAULT_HOSTNAME = "localhost"
 here = os.path.abspath(os.path.dirname(__file__))
 
 _seen_warnings = set()
-logging.basicConfig(level=logging.DEBUG)
 
 """
 TornadoWebappPlayers have a number of commands that they're able to communicate
@@ -175,7 +174,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             'Opened new socket from ip: {}'.format(self.request.remote_ip))
 
         self.new_subs.append(self.sid)
-
+        
     def send_alive(self):
         self.safe_write_message(
             json.dumps({'command': 'register', 'data': self.sid}))
@@ -306,7 +305,6 @@ class TornadoWebappPlayer(Player):
         self.observe()
 
     def is_alive(self):
-        print(" I AM ALIVE")
         return self.socket.alive
 
 
@@ -333,8 +331,8 @@ class TornadoWebappPlayerProvider(PlayerProvider):
                 hostname = os.environ["HOSTNAME"]
             else:
                 hostname = hostname
-            print("You can connect to http://%s:%s/" % (hostname, port))
-            print("or you can connect to http://%s:%s/socket" % (hostname, port))
+            # print("You can connect to http://%s:%s/" % (hostname, port))
+            # print("or you can connect to http://%s:%s/game/socket" % (hostname, port))
 
 
             self.my_loop.start()
