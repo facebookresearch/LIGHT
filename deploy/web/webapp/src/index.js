@@ -24,7 +24,7 @@ const createWebSocketUrlFromBrowserUrl = url => {
     console.log("Using user-provided server hostname:", optionalServerHost);
   }
   const websocketURL =
-    wsProtocol + "://" + (optionalServerHost || url.hostname) + ":" + port + "/socket";
+    wsProtocol + "://" + (optionalServerHost || url.hostname) + ":" + port + "/game/socket";
   return websocketURL;
 };
 
