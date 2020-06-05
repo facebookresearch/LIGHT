@@ -716,7 +716,7 @@ class SpawnEvent(TriggeredEvent):
         else:
             return None
 
-class HelpEvent(TriggeredEvent):
+class HelpEvent(NoArgumentEvent):
     """Handles user asking for help"""
 
     NAMES = ["help", "h"]
