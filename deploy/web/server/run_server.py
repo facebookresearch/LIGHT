@@ -77,11 +77,13 @@ def _run_server(FLAGS, tornado_provider):
         hostname = os.environ["HOSTNAME"]
     else:
         hostname = FLAGS.hostname
-    print("\n You can connect to the game at http://%s:%s/" % (FLAGS.hostname, FLAGS.port))
+    print("\nYou can connect to the game at http://%s:%s/" % (FLAGS.hostname, FLAGS.port))
     print("You can connect to the worldbuilder at http://%s:%s/builder/" % (FLAGS.hostname, FLAGS.port))
     print("or you can connect to http://%s:%s/game/socket \n" % (FLAGS.hostname, FLAGS.port))
     my_loop.current().start()
 
+# Threading used here for simplicity, but PeriodicCallback is a more deterministic way to handle 
+# switching  vs the python scheduler.
 def router_run(FLAGS, tornado_provider):
     t = threading.Thread(
         target=_run_server, args=(FLAGS, tornado_provider), name='RoutingServer', daemon=True
