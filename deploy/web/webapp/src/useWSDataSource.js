@@ -10,6 +10,7 @@ const reducer = (state, msg) => {
 };
 
 export function useWSDataSource(url) {
+  console.log(url);
   const websocket = React.useRef();
   const [isConnected, setConnected] = React.useState(false);
   const [isErrored, setErrored] = React.useState(false);

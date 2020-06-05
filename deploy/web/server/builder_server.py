@@ -21,17 +21,17 @@ def get_handlers(db):
     here = os.path.abspath(os.path.dirname(__file__))
     path_to_build = here + "/../builderapp/build/"
     return [
-        (r"/edits", EntityEditHandler, {'dbpath': db}),
-        (r"/edits/([0-9]+)/accept/([a-zA-Z_]+)", AcceptEditHandler, {'dbpath': db}),
-        (r"/edits/([0-9]+)/reject", RejectEditHandler, {'dbpath': db}),
-        (r"/edits/([0-9]+)", ViewEditWithIDHandler, {'dbpath': db}),
-        (r"/edges", EdgesHandler, {'dbpath': db}),
-        (r"/entities/([0-9]+)", ViewEntityWithIDHandler, {'dbpath': db}),
-        (r"/entities/([a-zA-Z_]+)", EntityHandler, {'dbpath': db}),
-        (r"/entities/([a-zA-Z_]+)/fields", EntityFieldsHandler, {'dbpath': db}),
-        (r"/interactions", InteractionHandler, {'dbpath': db}),
-        (r"/tables/types", TypesHandler, {'dbpath': db}),
-        (r"/(.*)", StaticDataUIHandler, {'path': path_to_build}),
+        (r"/builder/edits", EntityEditHandler, {'dbpath': db}),
+        (r"/builder/edits/([0-9]+)/accept/([a-zA-Z_]+)", AcceptEditHandler, {'dbpath': db}),
+        (r"/builder/edits/([0-9]+)/reject", RejectEditHandler, {'dbpath': db}),
+        (r"/builder/edits/([0-9]+)", ViewEditWithIDHandler, {'dbpath': db}),
+        (r"/builder/edges", EdgesHandler, {'dbpath': db}),
+        (r"/builder/entities/([0-9]+)", ViewEntityWithIDHandler, {'dbpath': db}),
+        (r"/builder/entities/([a-zA-Z_]+)", EntityHandler, {'dbpath': db}),
+        (r"/builder/entities/([a-zA-Z_]+)/fields", EntityFieldsHandler, {'dbpath': db}),
+        (r"/builder/interactions", InteractionHandler, {'dbpath': db}),
+        (r"/builder/tables/types", TypesHandler, {'dbpath': db}),
+        (r"/builder/(.*)", StaticDataUIHandler, {'path': path_to_build}),
     ]
 
 
@@ -379,7 +379,7 @@ def main():
     assert sys.argv[1][-3:] == '.db', 'Please enter a database path'
     app = Application(get_handlers(sys.argv[1]))
     app.listen(PORT)
-    print(f'You can connect to http://{HOSTNAME}:{PORT}/')
+    print(f'You can connect to http://{HOSTNAME}:{PORT}/builder')
     IOLoop.instance().start()
 
 

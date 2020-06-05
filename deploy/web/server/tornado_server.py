@@ -37,6 +37,7 @@ DEFAULT_HOSTNAME = "localhost"
 here = os.path.abspath(os.path.dirname(__file__))
 
 _seen_warnings = set()
+logging.basicConfig(level=logging.DEBUG)
 
 """
 TornadoWebappPlayers have a number of commands that they're able to communicate
@@ -128,13 +129,14 @@ class Application(tornado.web.Application):
     def __init__(self):
         self.subs = {}
         self.new_subs = []
+        super(Application, self).__init__(self.get_handlers(), **tornado_settings)
 
+    def get_handlers(self):
         path_to_build = here + "/../webapp/build/"
-        handlers = [
-            (r"/socket", SocketHandler, {'app': self}),
+        return [
+            (r"/game/socket", SocketHandler, {'app': self}),
             (r"/(.*)", StaticUIHandler, {'path': path_to_build}),
         ]
-        super(Application, self).__init__(handlers, **tornado_settings)
 
 class StaticUIHandler(tornado.web.StaticFileHandler):
     def parse_url_path(self, url_path):
@@ -304,6 +306,7 @@ class TornadoWebappPlayer(Player):
         self.observe()
 
     def is_alive(self):
+        print(" I AM ALIVE")
         return self.socket.alive
 
 
@@ -323,7 +326,7 @@ class TornadoWebappPlayerProvider(PlayerProvider):
             nonlocal port
             self.my_loop = ioloop.IOLoop()
             self.app = Application()
-            self.app.listen(port, max_buffer_size=1024 ** 3)
+            # self.app.listen(port, max_buffer_size=1024 ** 3)
             logging.info("Application Started")
 
             if "HOSTNAME" in os.environ and hostname == DEFAULT_HOSTNAME:
