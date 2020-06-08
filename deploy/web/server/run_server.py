@@ -22,7 +22,7 @@ from tornado.routing import (
     PathMatches, Rule, RuleRouter,
 )
 from tornado.web import (
-    Application, StaticFileHandler,
+    Application,
 )
 from tornado.httpserver import (
     HTTPServer,
@@ -33,25 +33,21 @@ from tornado.ioloop import (
 
 import os.path
 import threading
-import time
 
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
-
-
 here = os.path.abspath(os.path.dirname(__file__))
 
 def make_app(FLAGS, tornado_provider):
     worldBuilderApp = Application(get_handlers(FLAGS.data_model_db))
     staticApp = Application([(r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})])
-    # provider.app gives application
     router = RuleRouter([
         Rule(PathMatches("/builder/.*"), worldBuilderApp),
         Rule(PathMatches("/game/(.*)"), tornado_provider.app),
         Rule(PathMatches("/(.*)"), staticApp),
     ])
     server = HTTPServer(router)
-    server.listen(DEFAULT_PORT)
+    server.listen(DEFAULT_PORT) # Replace with FLAGS.port??
 
 def _run_server(FLAGS, tornado_provider):
     my_loop = IOLoop()
@@ -103,9 +99,9 @@ def main():
     graph = game.g
     tornado_provider = TornadoWebappPlayerProvider(graph, FLAGS.hostname, FLAGS.port)
     game.register_provider(tornado_provider)
-    router_run(FLAGS, tornado_provider)
     provider = TelnetPlayerProvider(graph, FLAGS.hostname, FLAGS.port + 1)
     game.register_provider(provider)
+    router_run(FLAGS, tornado_provider)
     game.run_graph()
 
 
