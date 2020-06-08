@@ -118,9 +118,11 @@ def get_path(filename):
 
 tornado_settings = {
     "autoescape": None,
+    "cookie_secret": "0123456789", #TODO: Placeholder, do not include in repo when deploy!!!
+    "compiled_template_cache": False,
     "debug": "/dbg/" in __file__,
+    "login_url": "/login",
     "template_path": get_path('static'),
-    "compiled_template_cache": False
 }
 
 
@@ -134,6 +136,7 @@ class Application(tornado.web.Application):
         path_to_build = here + "/../build/"
         return [
             (r"/game/socket", SocketHandler, {'app': self}),
+            (r"/", MainHandler),
             (r"/(.*)", StaticUIHandler, {'path': path_to_build}),
         ]
 
@@ -225,9 +228,11 @@ class BaseHandler(tornado.web.RequestHandler):
     def __init__(self, *request, **kwargs):
         self.include_host = False
         super(BaseHandler, self).__init__(*request, **kwargs)
+    
+    def get_current_user(self):
+        return self.get_secure_cookie("user")
 
     # TODO maybe use cookies to restore previous game state?
-
     def write_error(self, status_code, **kwargs):
         logging.error("ERROR: %s: %s" % (status_code, kwargs))
         if "exc_info" in kwargs:
@@ -253,6 +258,34 @@ class BaseHandler(tornado.web.RequestHandler):
             except Exception as e:
                 logging.error(e)
 
+class LandingApplication(tornado.web.Application):
+    def __init__(self):
+        super(LandingApplication, self).__init__(self.get_handlers(), **tornado_settings)
+
+    def get_handlers(self):
+        return [
+            (r"/", MainHandler),
+            (r"/login", LoginHandler),
+            (r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})
+        ]
+class MainHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        print("main handler main handler!!!")
+        name = tornado.escape.xhtml_escape(self.current_user)
+        self.write("Hello " + name)
+        self.render(here + "/../build/index.html")
+        
+class LoginHandler(BaseHandler):
+    def get(self):
+        self.write('<html><body><form action="/login" method="post">'
+                   'Name: <input type="text" name="name">'
+                   '<input type="submit" value="Sign in">'
+                   '</form></body></html>')
+
+    def post(self):
+        self.set_secure_cookie("user", self.get_argument("name"))
+        self.redirect("/")
 
 class TornadoWebappPlayer(Player):
     """
