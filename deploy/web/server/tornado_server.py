@@ -131,7 +131,7 @@ class Application(tornado.web.Application):
         super(Application, self).__init__(self.get_handlers(), **tornado_settings)
 
     def get_handlers(self):
-        path_to_build = here + "/../webapp/build/"
+        path_to_build = here + "/../build/"
         return [
             (r"/game/socket", SocketHandler, {'app': self}),
             (r"/(.*)", StaticUIHandler, {'path': path_to_build}),

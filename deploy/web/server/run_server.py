@@ -43,8 +43,8 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 class StaticUIHandler(StaticFileHandler):
     def parse_url_path(self, url_path):
-        path_to_build = here + "/../builderapp/build/" + url_path
-        path_to_game = here + "/../webapp/build/" + url_path
+        path_to_build = here + "/../build/" + url_path
+        path_to_game = here + "/../build/" + url_path
         build_exists = os.path.exists(path_to_build)
         game_exists = os.path.exists(path_to_game)
         if (game_exists):

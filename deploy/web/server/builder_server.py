@@ -19,7 +19,7 @@ lock = locks.Lock()
 def get_handlers(db):
     ''' Returns handler array with required arguments '''
     here = os.path.abspath(os.path.dirname(__file__))
-    path_to_build = here + "/../builderapp/build/"
+    path_to_build = here + "/../build/"
     return [
         (r"/builder/edits", EntityEditHandler, {'dbpath': db}),
         (r"/builder/edits/([0-9]+)/accept/([a-zA-Z_]+)", AcceptEditHandler, {'dbpath': db}),
@@ -32,6 +32,7 @@ def get_handlers(db):
         (r"/builder/interactions", InteractionHandler, {'dbpath': db}),
         (r"/builder/tables/types", TypesHandler, {'dbpath': db}),
         (r"/builder/(.*)", StaticDataUIHandler, {'path': path_to_build}),
+        (r"/(.*)", StaticDataUIHandler, {'path': path_to_build}),
     ]
 
 
@@ -49,7 +50,7 @@ class AppException(tornado.web.HTTPError):
 class StaticDataUIHandler(tornado.web.StaticFileHandler):
     def parse_url_path(self, url_path):
         if not url_path or url_path.endswith('/'):
-            url_path = url_path + 'index.html'
+            url_path = url_path + 'builder_index.html'
         return url_path
 
 class BaseHandler(tornado.web.RequestHandler):
