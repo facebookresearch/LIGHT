@@ -13,10 +13,10 @@ from deploy.web.server.telnet_server import (
     TelnetPlayerProvider,
 )
 from deploy.web.server.tornado_server import (
-    TornadoWebappPlayerProvider, StaticUIHandler,
+    TornadoWebappPlayerProvider, LandingApplication,
 )
 from deploy.web.server.builder_server import (
-    get_handlers,
+    BuildApplication, get_handlers,
 )
 from tornado.routing import (
     PathMatches, Rule, RuleRouter,
@@ -39,12 +39,12 @@ DEFAULT_HOSTNAME = "localhost"
 here = os.path.abspath(os.path.dirname(__file__))
 
 def make_app(FLAGS, tornado_provider):
-    worldBuilderApp = Application(get_handlers(FLAGS.data_model_db))
-    staticApp = Application([(r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})])
+    worldBuilderApp = BuildApplication(get_handlers(FLAGS.data_model_db))
+    landingApp = LandingApplication()
     router = RuleRouter([
         Rule(PathMatches("/builder/.*"), worldBuilderApp),
         Rule(PathMatches("/game/(.*)"), tornado_provider.app),
-        Rule(PathMatches("/(.*)"), staticApp),
+        Rule(PathMatches("/(.*)"), landingApp),
     ])
     server = HTTPServer(router)
     server.listen(DEFAULT_PORT) # Replace with FLAGS.port??
