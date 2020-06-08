@@ -13,7 +13,7 @@ from deploy.web.server.telnet_server import (
     TelnetPlayerProvider,
 )
 from deploy.web.server.tornado_server import (
-    TornadoWebappPlayerProvider,
+    TornadoWebappPlayerProvider, StaticUIHandler,
 )
 from deploy.web.server.builder_server import (
     get_handlers,
@@ -41,25 +41,9 @@ DEFAULT_HOSTNAME = "localhost"
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-class StaticUIHandler(StaticFileHandler):
-    def parse_url_path(self, url_path):
-        path_to_build = here + "/../build/" + url_path
-        path_to_game = here + "/../build/" + url_path
-        build_exists = os.path.exists(path_to_build)
-        game_exists = os.path.exists(path_to_game)
-        if (game_exists):
-            url_path = path_to_game
-        elif (build_exists):
-            url_path = path_to_build
-
-        if not url_path or url_path.endswith('/'):
-            url_path =  url_path + 'index.html'
-
-        return url_path
-
 def make_app(FLAGS, tornado_provider):
     worldBuilderApp = Application(get_handlers(FLAGS.data_model_db))
-    staticApp = Application([(r"/(.*)", StaticUIHandler, {'path' : ""})])
+    staticApp = Application([(r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})])
     # provider.app gives application
     router = RuleRouter([
         Rule(PathMatches("/builder/.*"), worldBuilderApp),
