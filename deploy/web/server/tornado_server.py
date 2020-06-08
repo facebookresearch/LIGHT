@@ -137,6 +137,8 @@ class Application(tornado.web.Application):
             (r"/(.*)", StaticUIHandler, {'path': path_to_build}),
         ]
 
+# StaticUIHandler serves static front end, defaulting to index.html served
+# If the file is unspecified.
 class StaticUIHandler(tornado.web.StaticFileHandler):
     def parse_url_path(self, url_path):
         if not url_path or url_path.endswith('/'):
