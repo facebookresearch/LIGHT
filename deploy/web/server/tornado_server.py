@@ -119,7 +119,6 @@ def get_path(filename):
 tornado_settings = {
     "autoescape": None,
     "debug": "/dbg/" in __file__,
-    "static_path": get_path('static'),
     "template_path": get_path('static'),
     "compiled_template_cache": False
 }
@@ -130,13 +129,18 @@ class Application(tornado.web.Application):
         self.subs = {}
         self.new_subs = []
 
-        tornado_settings['static_url_prefix'] = "/static/"
+        path_to_build = here + "/../webapp/build/"
         handlers = [
-            # (r"/init", InitSceneHandler, {'app': self}),
             (r"/socket", SocketHandler, {'app': self}),
-            # (r"%s(.*)", IndexHandler, {'app': self}),
+            (r"/(.*)", StaticUIHandler, {'path': path_to_build}),
         ]
         super(Application, self).__init__(handlers, **tornado_settings)
+
+class StaticUIHandler(tornado.web.StaticFileHandler):
+    def parse_url_path(self, url_path):
+        if not url_path or url_path.endswith('/'):
+            url_path = url_path + 'index.html'
+        return url_path
 
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
@@ -326,7 +330,9 @@ class TornadoWebappPlayerProvider(PlayerProvider):
                 hostname = os.environ["HOSTNAME"]
             else:
                 hostname = hostname
-            print("You can connect to http://%s:%s/socket" % (hostname, port))
+            print("You can connect to http://%s:%s/" % (hostname, port))
+            print("or you can connect to http://%s:%s/socket" % (hostname, port))
+
 
             self.my_loop.start()
 

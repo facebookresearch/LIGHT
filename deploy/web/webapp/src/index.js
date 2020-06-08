@@ -16,6 +16,7 @@ import LoadingScreen from "./LoadingScreen";
 
 import { setCaretPosition } from "./utils";
 
+const port = 35496;
 const createWebSocketUrlFromBrowserUrl = url => {
   const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
   const optionalServerHost = new URL(url).searchParams.get("server");
@@ -23,7 +24,7 @@ const createWebSocketUrlFromBrowserUrl = url => {
     console.log("Using user-provided server hostname:", optionalServerHost);
   }
   const websocketURL =
-    wsProtocol + "://" + (optionalServerHost || url.hostname) + ":35496/socket";
+    wsProtocol + "://" + (optionalServerHost || url.hostname) + ":" + port + "/socket";
   return websocketURL;
 };
 
