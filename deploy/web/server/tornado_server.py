@@ -229,8 +229,19 @@ class BaseHandler(tornado.web.RequestHandler):
         self.include_host = False
         super(BaseHandler, self).__init__(*request, **kwargs)
     
+    def get_login_url(self):
+        return u"/login"
+
     def get_current_user(self):
-        return self.get_secure_cookie("user")
+        user_json = self.get_secure_cookie("user")
+        if user_json:
+            return tornado.escape.json_decode(user_json)
+        else:
+            return None
+
+    def set_default_headers(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        self.set_header('Access-Control-Allow-Headers', '*')
 
     # TODO maybe use cookies to restore previous game state?
     def write_error(self, status_code, **kwargs):
@@ -266,26 +277,41 @@ class LandingApplication(tornado.web.Application):
         return [
             (r"/", MainHandler),
             (r"/login", LoginHandler),
+            (r"/logout", LogoutHandler),
             (r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})
         ]
 class MainHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        print("main handler main handler!!!")
         name = tornado.escape.xhtml_escape(self.current_user)
-        self.write("Hello " + name)
         self.render(here + "/../build/index.html")
         
 class LoginHandler(BaseHandler):
+
     def get(self):
-        self.write('<html><body><form action="/login" method="post">'
-                   'Name: <input type="text" name="name">'
-                   '<input type="submit" value="Sign in">'
-                   '</form></body></html>')
+        self.render(here + "/login.html", next=self.get_argument("next", u"/"))
+        self.next = next
 
     def post(self):
-        self.set_secure_cookie("user", self.get_argument("name"))
-        self.redirect("/")
+        name = self.get_argument("name", "")
+        password = self.get_argument("password", "")
+        if password == "LetsPlay":
+            self.set_current_user(name)
+            self.redirect(self.get_argument("next", u"/"))
+        else:
+            error_msg = u"?error=" + tornado.escape.url_escape("Login incorrect.")
+            self.redirect(u"/login" + error_msg)
+
+    def set_current_user(self, user):
+        if user:
+            self.set_secure_cookie("user", tornado.escape.json_encode(user))
+        else:
+            self.clear_cookie("user")
+
+class LogoutHandler(BaseHandler):
+    def get(self):
+        self.clear_cookie("user")
+        self.redirect(u"/login")
 
 class TornadoWebappPlayer(Player):
     """
