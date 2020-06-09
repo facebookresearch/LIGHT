@@ -194,7 +194,7 @@ class EntityHandler(BaseHandler):
         page = self.get_argument('page', False, True)
         per_page = self.get_argument('per_page', 30, True)
         with LIGHTDatabase(self.dbpath) as db:
-            results = db.search_database(type, search)
+            results = db.search_database(type, search, fts=False)
         ids = [i[0] for i in results]
         results_json = []
         for r in results:
