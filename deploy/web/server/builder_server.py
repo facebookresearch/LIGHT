@@ -127,6 +127,7 @@ class EntityEditHandler(BaseHandler):
         self.dbpath = dbpath
 
     @gen.coroutine
+    @tornado.web.authenticated
     def post(self):
         with (yield lock.acquire()):
             with LIGHTDatabase(self.dbpath) as db:
@@ -140,6 +141,7 @@ class EntityEditHandler(BaseHandler):
                     self.set_status(201)
                 self.write(json.dumps({'edit_id': edit_id}))
 
+    @tornado.web.authenticated
     def get(self):
         with LIGHTDatabase(self.dbpath) as db:
             id = self.get_argument("id", None, True)
@@ -191,6 +193,7 @@ class ViewEditWithIDHandler(BaseHandler):
     def initialize(self, dbpath):
         self.dbpath = dbpath
 
+    @tornado.web.authenticated
     def get(self, edit_id):
         with LIGHTDatabase(self.dbpath) as db:
             self.write(json.dumps(db.view_edit(edit_id)))
@@ -202,6 +205,7 @@ class ViewEntityWithIDHandler(BaseHandler):
     def initialize(self, dbpath):
         self.dbpath = dbpath
 
+    @tornado.web.authenticated
     def get(self, id):
         with LIGHTDatabase(self.dbpath) as db:
             entity = db.get_query(id)
@@ -259,6 +263,7 @@ class EntityHandler(BaseHandler):
             self.write(json.dumps(ids))
 
     @gen.coroutine
+    @tornado.web.authenticated
     def post(self, type):
         with (yield lock.acquire()):
             type = type.replace('_', ' ')
@@ -309,6 +314,7 @@ class EntityFieldsHandler(BaseHandler):
     def initialize(self, dbpath):
         self.dbpath = dbpath
 
+    @tornado.web.authenticated
     def get(self, type):
         type = type.replace('_', ' ')
         error = False
@@ -330,6 +336,7 @@ class InteractionHandler(BaseHandler):
     def initialize(self, dbpath):
         self.dbpath = dbpath
 
+    @tornado.web.authenticated
     def get(self):
         interaction_id = self.get_argument('interaction_id')
         with LIGHTDatabase(self.dbpath) as db:
@@ -362,6 +369,7 @@ class InteractionHandler(BaseHandler):
         )
 
     @gen.coroutine
+    @tornado.web.authenticated
     def post(self):
         room = int(self.get_argument('room'))
         participants = json.loads(self.get_argument('participants'))
@@ -378,6 +386,7 @@ class TypesHandler(BaseHandler):
     def initialize(self, dbpath):
         self.dbpath = dbpath
 
+    @tornado.web.authenticated
     def get(self):
         with LIGHTDatabase(self.dbpath) as db:
             self.write(json.dumps(list(db.table_dict.keys())))
@@ -389,12 +398,14 @@ class EdgesHandler(BaseHandler):
     def initialize(self, dbpath):
         self.dbpath = dbpath
 
+    @tornado.web.authenticated
     def get(self):
         room = int(self.get_argument('room'))
         with LIGHTDatabase(self.dbpath) as db:
             potential_entities = db.find_database_entities_in_rooms(room)
             self.write(json.dumps(potential_entities))
 
+    @tornado.web.authenticated
     def post(self):
         '''displays/creates edges'''
         with LIGHTDatabase(self.dbpath) as db:
