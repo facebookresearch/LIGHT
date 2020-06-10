@@ -42,8 +42,8 @@ def make_app(FLAGS, tornado_provider):
     worldBuilderApp = BuildApplication(get_handlers(FLAGS.data_model_db))
     landingApp = LandingApplication()
     router = RuleRouter([
-        Rule(PathMatches("/builder/(.*)"), worldBuilderApp),
-        Rule(PathMatches("/game/(.*)"), tornado_provider.app),
+        Rule(PathMatches("/builder(.*)"), worldBuilderApp),
+        Rule(PathMatches("/game(.*)"), tornado_provider.app),
         Rule(PathMatches("/(.*)"), landingApp),
     ])
     server = HTTPServer(router)
@@ -80,13 +80,13 @@ def main():
     parser.add_argument('--light-model-root', type=str,
                         default="/checkpoint/light/models/",
                         help='models path. For local setup, use: /checkpoint/jase/projects/light/dialog/')
-    parser.add_argument('-port', metavar='port', type=int,
+    parser.add_argument('--port', metavar='port', type=int,
                         default=DEFAULT_PORT,
                         help='port to run the server on.')
     parser.add_argument('--hostname', metavar='hostname', type=str,
                         default=DEFAULT_HOSTNAME,
                         help='host to run the server on.')
-    parser.add_argument('--data_model_db', type=str,
+    parser.add_argument('--data-model-db', type=str,
                         default=here + "/../../../light/data_model/database.db",
                         help='Databse path for the datamodel')
     FLAGS, _unknown = parser.parse_known_args()
