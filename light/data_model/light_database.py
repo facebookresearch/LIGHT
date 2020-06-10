@@ -506,6 +506,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="base_objects_table", name);
             """
         )
+        # Required to link existing objects
+        self.c.execute(
+            """
+            INSERT INTO "base_objects_table_fts" (rowid, name)
+                SELECT rowid, name FROM base_objects_table;
+            """
+        )
         # Specific objects created from object types
         self.c.execute(
             """
@@ -540,6 +547,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="objects_table", name, physical_description);
             """
         )
+        self.c.execute(
+            """
+            INSERT INTO "objects_table_fts" (rowid, name, physical_description)
+                SELECT rowid, name, physical_description FROM objects_table;
+            """
+        )
+
         # Basic room types
         self.c.execute(
             """
@@ -556,6 +570,12 @@ class LIGHTDatabase:
             """
             CREATE VIRTUAL TABLE IF NOT EXISTS base_rooms_table_fts
             USING fts4(tokenize=porter, content="base_rooms_table", name);
+            """
+        )
+        self.c.execute(
+            """
+            INSERT INTO "base_rooms_table_fts" (rowid, name)
+                SELECT rowid, name FROM base_rooms_table;
             """
         )
         # Specific rooms created from room types
@@ -585,6 +605,12 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="rooms_table", name, description, backstory);
             """
         )
+        self.c.execute(
+            """
+            INSERT INTO "rooms_table_fts" (rowid, name, description, backstory)
+                SELECT rowid, name, description, backstory FROM rooms_table;
+            """
+        )
         # Basic character types
         self.c.execute(
             """
@@ -601,6 +627,12 @@ class LIGHTDatabase:
             """
             CREATE VIRTUAL TABLE IF NOT EXISTS base_characters_table_fts
             USING fts4(tokenize=porter, content="base_characters_table", name);
+            """
+        )
+        self.c.execute(
+            """
+            INSERT INTO "base_characters_table_fts" (rowid, name)
+                SELECT rowid, name FROM base_characters_table;
             """
         )
         # Specific characters created from character types
@@ -633,6 +665,12 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="characters_table", name, persona, physical_description);
             """
         )
+        self.c.execute(
+            """
+            INSERT INTO "characters_table_fts" (rowid, name, persona, physical_description)
+                SELECT rowid, name, persona, physical_description FROM characters_table;
+            """
+        )        
         # Node contents represent an edge between a node and something in it
         # Edge is deleted when either node is deleted
         self.c.execute(
@@ -1302,6 +1340,12 @@ class LIGHTDatabase:
         )
         self.c.execute(
             """
+            INSERT INTO "utterances_table_fts" (rowid, dialogue)
+                SELECT rowid, dialogue FROM utterances_table;
+            """
+        )
+        self.c.execute(
+            """
             CREATE TABLE IF NOT EXISTS participants_table (
             id integer PRIMARY KEY NOT NULL,
             interaction_id integer NOT NULL,
@@ -1364,6 +1408,12 @@ class LIGHTDatabase:
             """
             CREATE VIRTUAL TABLE IF NOT EXISTS turns_table_fts
             USING fts4(tokenize=porter, content="turns_table", interaction_type, action);
+            """
+        )
+        self.c.execute(
+            """
+            INSERT INTO "turns_table_fts" (rowid, interaction_type, action)
+                SELECT rowid, interaction_type, action FROM turns_table;
             """
         )
         # Table to represent all players of the game
