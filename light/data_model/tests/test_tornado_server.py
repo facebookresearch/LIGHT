@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# import unittest.mock as mock
 import json
 from tornado import gen, httpclient, ioloop, testing, escape
 from tornado.testing import AsyncHTTPTestCase, gen_test
@@ -43,11 +44,14 @@ from light.data_model.light_database import (
 from deploy.web.server.builder_server import (
     BuildApplication,
     get_handlers,
+    EntityEditHandler,
+    ViewEditWithIDHandler,
 )
 
 PORT = 35494
 URL = f'http://localhost:{PORT}'
-
+COOK_HEADER = {'Cookie': 
+    'user="2|1:0|10:1591809198|4:user|16:InRoYXRfZ3V5Ig==|02e1a9835b94ea0c0d5e95d6bb13094b120b9a5cb7dd0c8b149e264f037e755a"'}
 
 class TestTornadoApp(AsyncHTTPTestCase):
     def setUp(self):
@@ -81,11 +85,13 @@ class TestTornadoApp(AsyncHTTPTestCase):
         response = yield self.client.fetch(
             f'{URL}/builder/edits',
             method='POST',
-            headers=None,
+            headers=COOK_HEADER,
             body=urllib.parse.urlencode(body),
         )
         self.assertEqual(response.code, 201)
-        response = yield self.client.fetch(f'{URL}/builder/edits/1')
+        #with mock.patch.object(ViewEditWithIDHandler, 'get_secure_cookie') as mget:
+           # mget.return_value = 'user'
+        response = yield self.client.fetch(f'{URL}/builder/edits/1', headers=COOK_HEADER)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -128,12 +134,12 @@ class TestTornadoApp(AsyncHTTPTestCase):
         response = yield self.client.fetch(
             f'{URL}/builder/edits',
             method='POST',
-            headers=None,
+            headers=COOK_HEADER,
             body=urllib.parse.urlencode(body),
         )
         self.assertEqual(response.code, 201)
         self.assertEqual(json.loads(response.body.decode()), {'edit_id': 1})
-        response = yield self.client.fetch(f'{URL}/builder/edits/1')
+        response = yield self.client.fetch(f'{URL}/builder/edits/1', headers=COOK_HEADER)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -163,7 +169,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
             response = yield self.client.fetch(
                 f'{URL}/builder/edits',
                 method='POST',
-                headers=None,
+                headers=COOK_HEADER,
                 body=urllib.parse.urlencode(body),
             )
         self.assertEqual(400, cm.exception.code)
@@ -193,11 +199,11 @@ class TestTornadoApp(AsyncHTTPTestCase):
                 ],
             )
         response = yield self.client.fetch(
-            f'{URL}/builder/edits/{edit_id}/reject', method='POST', headers=None, body=b''
+            f'{URL}/builder/edits/{edit_id}/reject', method='POST', headers=COOK_HEADER, body=b''
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()), {'id': base_room})
-        response = yield self.client.fetch(f'{URL}/builder/edits/1')
+        response = yield self.client.fetch(f'{URL}/builder/edits/1', headers=COOK_HEADER)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -239,13 +245,13 @@ class TestTornadoApp(AsyncHTTPTestCase):
         response = yield self.client.fetch(
             f'{URL}/builder/edits/{edit_id}/accept/{accept_type}',
             method='POST',
-            headers=None,
+            headers=COOK_HEADER,
             body=b'',
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()), {'id': base_room})
         # check that the entry in the edits table is updated
-        response = yield self.client.fetch(f'{URL}/builder/edits/1')
+        response = yield self.client.fetch(f'{URL}/builder/edits/1', headers=COOK_HEADER)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -309,7 +315,8 @@ class TestTornadoApp(AsyncHTTPTestCase):
         # check that querying for edits with DB_STATUS_REVIEW status only returns
         # the second edit
         response = yield self.client.fetch(
-            f'{URL}/builder/edits?status={escape.url_escape(DB_STATUS_REVIEW)}&expand=True'
+            f'{URL}/builder/edits?status={escape.url_escape(DB_STATUS_REVIEW)}&expand=True',
+            headers=COOK_HEADER,
         )
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -327,7 +334,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
             ],
         )
         # check that querying for edits submitted by "player" returns both edits
-        response = yield self.client.fetch(f'{URL}/builder/edits?player={player}&expand=True')
+        response = yield self.client.fetch(f'{URL}/builder/edits?player={player}&expand=True', headers=COOK_HEADER)
         self.assertEqual(
             json.loads(response.body.decode()),
             [
@@ -354,7 +361,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
             ],
         )
         # check that expand=False behaves as expected
-        response = yield self.client.fetch(f'{URL}/builder/edits?player={player}')
+        response = yield self.client.fetch(f'{URL}/builder/edits?player={player}', headers=COOK_HEADER)
         self.assertEqual(json.loads(response.body.decode()), [1, 2])
 
     @gen_test
@@ -368,13 +375,13 @@ class TestTornadoApp(AsyncHTTPTestCase):
             base_room2 = db.create_base_room('small room')[0]
             room1 = db.create_room('small room', base_room1, 'tiny', 'old')[0]
         # Test that base entity can be viewed
-        response = yield self.client.fetch(f'{URL}/builder/entities/{base_room1}')
+        response = yield self.client.fetch(f'{URL}/builder/entities/{base_room1}', headers=COOK_HEADER)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()), {'entity': {'id': base_room1, 'name': 'room'}, 'type': 'base room'}
         )
         # Test that entity can be viewed
-        response = yield self.client.fetch(f'{URL}/builder/entities/{room1}')
+        response = yield self.client.fetch(f'{URL}/builder/entities/{room1}', headers=COOK_HEADER)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -404,7 +411,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
             room2 = db.create_room('roomsmall', base_room1, 'decayed', 'tiny')[0]
             room3 = db.create_room('small room', base_room1, 'tiny', 'good')[0]
         # check that seraching for base room works properly
-        response = yield self.client.fetch(f'{URL}/builder/entities/base_room?search=room')
+        response = yield self.client.fetch(f'{URL}/builder/entities/base_room?search=room', headers=COOK_HEADER)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -415,7 +422,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
             ],
         )
         # check that seraching for room works properly
-        response = yield self.client.fetch(f'{URL}/builder/entities/room?search=decay')
+        response = yield self.client.fetch(f'{URL}/builder/entities/room?search=decay', headers=COOK_HEADER)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -447,7 +454,8 @@ class TestTornadoApp(AsyncHTTPTestCase):
             base_room2 = db.create_base_room('small room')[0]
         search_string = parse.quote_plus('small room')
         response = yield self.client.fetch(
-            f'{URL}/builder/entities/base_room?search={search_string}'
+            f'{URL}/builder/entities/base_room?search={search_string}',
+            headers=COOK_HEADER,
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(
@@ -461,7 +469,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
         with LIGHTDatabase(self.db_path) as db:
             base_room = db.create_base_room('room')[0]
         with self.assertRaises(httpclient.HTTPClientError) as cm:
-            response = yield self.client.fetch(f'{URL}/builder/entities/base_?search=room')
+            response = yield self.client.fetch(f'{URL}/builder/entities/base_?search=room', headers=COOK_HEADER)
         self.assertEqual(400, cm.exception.code)
         self.assertEqual(cm.exception.message, 'Type is not valid. ')
 
@@ -498,7 +506,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
             tree = test.create_object(None, base_obj2, 0.4, 0.2, 0, 0, 0, 0, 0, "big")[
                 0
             ]
-        response = yield self.client.fetch(f'{URL}/builder/edges?room={classroom}')
+        response = yield self.client.fetch(f'{URL}/builder/edges?room={classroom}', headers=COOK_HEADER)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()), [teacher1, student, podium]
@@ -526,7 +534,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
         response = yield self.client.fetch(
             f'{URL}/builder/edges',
             method='POST',
-            headers=None,
+            headers=COOK_HEADER,
             body=urllib.parse.urlencode(body),
         )
         self.assertEqual(response.code, 200)
@@ -552,7 +560,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
         response = yield self.client.fetch(
             f'{URL}/builder/edges',
             method='POST',
-            headers=None,
+            headers=COOK_HEADER,
             body=urllib.parse.urlencode(body),
         )
         # check that when dry_run = False the database is altered
@@ -567,7 +575,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
         with LIGHTDatabase(self.db_path) as db:
             base_room1 = db.create_base_room('room')[0]
             base_room2 = db.create_base_room('small room')[0]
-        response = yield self.client.fetch(f'{URL}/builder/entities/base_room?')
+        response = yield self.client.fetch(f'{URL}/builder/entities/base_room?', headers=COOK_HEADER)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -580,7 +588,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
     @gen_test
     def test_get_types(self):
         '''Tests all table names are returned correctly'''
-        response = yield self.client.fetch(f'{URL}/builder/tables/types')
+        response = yield self.client.fetch(f'{URL}/builder/tables/types', headers=COOK_HEADER)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -604,13 +612,13 @@ class TestTornadoApp(AsyncHTTPTestCase):
     def test_get_column_names(self):
         '''Tests all column names are returned correctly'''
         # test base entity
-        response = yield self.client.fetch(f'{URL}/builder/entities/base_object/fields')
+        response = yield self.client.fetch(f'{URL}/builder/entities/base_object/fields', headers=COOK_HEADER)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()), {'id': 'integer', 'name': 'text'}
         )
         # test entity
-        response = yield self.client.fetch(f'{URL}/builder/entities/room/fields')
+        response = yield self.client.fetch(f'{URL}/builder/entities/room/fields', headers=COOK_HEADER)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -627,7 +635,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
     def test_get_column_names_invalid(self):
         '''Tests that when type is invalid, error is raised'''
         with self.assertRaises(Exception):
-            response = yield self.client.fetch(f'{URL}/builder/entities/base_/fields')
+            response = yield self.client.fetch(f'{URL}/builder/entities/base_/fields', headers=COOK_HEADER)
             self.assertEqual(response.code, 400)
 
     @gen_test
@@ -637,7 +645,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
         response = yield self.client.fetch(
             f'{URL}/builder/entities/base_room',
             method='POST',
-            headers=None,
+            headers=COOK_HEADER,
             body=urllib.parse.urlencode(body),
         )
         # check that the entry in the edits table is updated
@@ -660,7 +668,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
         response = yield self.client.fetch(
             f'{URL}/builder/entities/character',
             method='POST',
-            headers=None,
+            headers=COOK_HEADER,
             body=urllib.parse.urlencode(body),
         )
         # check that the entry in the edits table is updated
@@ -717,7 +725,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
         response = yield self.client.fetch(
             f'{URL}/builder/interactions',
             method='POST',
-            headers=None,
+            headers=COOK_HEADER,
             body=urllib.parse.urlencode(body),
         )
         self.assertEqual(response.code, 200)
@@ -728,7 +736,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
         response = yield self.client.fetch(
             f'{URL}/builder/interactions',
             method='POST',
-            headers=None,
+            headers=COOK_HEADER,
             body=urllib.parse.urlencode(body),
         )
         self.assertEqual(response.code, 200)
@@ -761,7 +769,8 @@ class TestTornadoApp(AsyncHTTPTestCase):
                 interaction1, 1, 1, "speech", utterance2, "", participant1, participant2
             )[0]
         response = yield self.client.fetch(
-            f'{URL}/builder/interactions?interaction_id={interaction1}'
+            f'{URL}/builder/interactions?interaction_id={interaction1}',
+            headers=COOK_HEADER
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(
