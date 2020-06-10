@@ -499,6 +499,14 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        self.c.execute(
+            """
+            SELECT name 
+            FROM sqlite_master 
+            WHERE type="table" AND name="base_objects_table_fts";
+            """
+        )
+        table_not_exists = self.c.fetchone() == None
         # FTS table for base objects
         self.c.execute(
             """
@@ -507,12 +515,13 @@ class LIGHTDatabase:
             """
         )
         # Required to link existing objects
-        self.c.execute(
-            """
-            INSERT INTO "base_objects_table_fts" (rowid, name)
-                SELECT rowid, name FROM base_objects_table;
-            """
-        )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "base_objects_table_fts" (rowid, name)
+                    SELECT rowid, name FROM base_objects_table;
+                """
+            )
         # Specific objects created from object types
         self.c.execute(
             """
@@ -540,19 +549,27 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
-        # FTS table for objects
+        self.c.execute(
+            """
+            SELECT name 
+            FROM sqlite_master 
+            WHERE type="table" AND name="objects_table_fts";
+            """
+        )
+        table_not_exists = self.c.fetchone() == None
         self.c.execute(
             """
             CREATE VIRTUAL TABLE IF NOT EXISTS objects_table_fts
             USING fts4(tokenize=porter, content="objects_table", name, physical_description);
             """
         )
-        self.c.execute(
-            """
-            INSERT INTO "objects_table_fts" (rowid, name, physical_description)
-                SELECT rowid, name, physical_description FROM objects_table;
-            """
-        )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "objects_table_fts" (rowid, name, physical_description)
+                    SELECT rowid, name, physical_description FROM objects_table;
+                """
+            )
 
         # Basic room types
         self.c.execute(
@@ -565,6 +582,14 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        self.c.execute(
+            """
+            SELECT name 
+            FROM sqlite_master 
+            WHERE type="table" AND name="base_room_table_fts";
+            """
+        )
+        table_not_exists = self.c.fetchone() == None
         # FTS table for base rooms
         self.c.execute(
             """
@@ -572,12 +597,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="base_rooms_table", name);
             """
         )
-        self.c.execute(
-            """
-            INSERT INTO "base_rooms_table_fts" (rowid, name)
-                SELECT rowid, name FROM base_rooms_table;
-            """
-        )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "base_rooms_table_fts" (rowid, name)
+                    SELECT rowid, name FROM base_rooms_table;
+                """
+            )
         # Specific rooms created from room types
         self.c.execute(
             """
@@ -598,6 +624,14 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        self.c.execute(
+            """
+            SELECT name 
+            FROM sqlite_master 
+            WHERE type="table" AND name="rooms_table_fts";
+            """
+        )
+        table_not_exists = self.c.fetchone() == None
         # FTS table for rooms
         self.c.execute(
             """
@@ -605,12 +639,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="rooms_table", name, description, backstory);
             """
         )
-        self.c.execute(
-            """
-            INSERT INTO "rooms_table_fts" (rowid, name, description, backstory)
-                SELECT rowid, name, description, backstory FROM rooms_table;
-            """
-        )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "rooms_table_fts" (rowid, name, description, backstory)
+                    SELECT rowid, name, description, backstory FROM rooms_table;
+                """
+            )
         # Basic character types
         self.c.execute(
             """
@@ -622,6 +657,14 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        self.c.execute(
+            """
+            SELECT name 
+            FROM sqlite_master 
+            WHERE type="table" AND name="base_characters_table_fts";
+            """
+        )
+        table_not_exists = self.c.fetchone() == None
         # FTS table for base characters
         self.c.execute(
             """
@@ -629,12 +672,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="base_characters_table", name);
             """
         )
-        self.c.execute(
-            """
-            INSERT INTO "base_characters_table_fts" (rowid, name)
-                SELECT rowid, name FROM base_characters_table;
-            """
-        )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "base_characters_table_fts" (rowid, name)
+                    SELECT rowid, name FROM base_characters_table;
+                """
+            )
         # Specific characters created from character types
         self.c.execute(
             """
@@ -658,6 +702,14 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        self.c.execute(
+            """
+            SELECT name 
+            FROM sqlite_master 
+            WHERE type="table" AND name="characters_table_fts";
+            """
+        )
+        table_not_exists = self.c.fetchone() == None
         # FTS table for characters
         self.c.execute(
             """
@@ -665,12 +717,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="characters_table", name, persona, physical_description);
             """
         )
-        self.c.execute(
-            """
-            INSERT INTO "characters_table_fts" (rowid, name, persona, physical_description)
-                SELECT rowid, name, persona, physical_description FROM characters_table;
-            """
-        )        
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "characters_table_fts" (rowid, name, persona, physical_description)
+                    SELECT rowid, name, persona, physical_description FROM characters_table;
+                """
+            )        
         # Node contents represent an edge between a node and something in it
         # Edge is deleted when either node is deleted
         self.c.execute(
@@ -1331,6 +1384,14 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        self.c.execute(
+            """
+            SELECT name 
+            FROM sqlite_master 
+            WHERE type="table" AND name="utterances_table_fts";
+            """
+        )
+        table_not_exists = self.c.fetchone() == None
         # FTS table for utterances
         self.c.execute(
             """
@@ -1338,12 +1399,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="utterances_table", dialogue);
             """
         )
-        self.c.execute(
-            """
-            INSERT INTO "utterances_table_fts" (rowid, dialogue)
-                SELECT rowid, dialogue FROM utterances_table;
-            """
-        )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "utterances_table_fts" (rowid, dialogue)
+                    SELECT rowid, dialogue FROM utterances_table;
+                """
+            )
         self.c.execute(
             """
             CREATE TABLE IF NOT EXISTS participants_table (
@@ -1403,6 +1465,14 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        self.c.execute(
+            """
+            SELECT name 
+            FROM sqlite_master 
+            WHERE type="table" AND name="turns_table_fts";
+            """
+        )
+        table_not_exists = self.c.fetchone() == None
         # FTS table for turns
         self.c.execute(
             """
@@ -1410,12 +1480,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="turns_table", interaction_type, action);
             """
         )
-        self.c.execute(
-            """
-            INSERT INTO "turns_table_fts" (rowid, interaction_type, action)
-                SELECT rowid, interaction_type, action FROM turns_table;
-            """
-        )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "turns_table_fts" (rowid, interaction_type, action)
+                    SELECT rowid, interaction_type, action FROM turns_table;
+                """
+            )
         # Table to represent all players of the game
         self.c.execute(
             """
