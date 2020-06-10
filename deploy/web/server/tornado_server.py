@@ -304,7 +304,7 @@ class LoginHandler(BaseHandler):
 
     def set_current_user(self, user):
         if user:
-            self.set_secure_cookie("user", tornado.escape.json_encode(user))
+            self.set_secure_cookie("user", tornado.escape.json_encode(user), domain=DEFAULT_HOSTNAME)
         else:
             self.clear_cookie("user")
 

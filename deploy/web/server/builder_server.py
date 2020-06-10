@@ -227,6 +227,7 @@ class EntityHandler(BaseHandler):
     def initialize(self, dbpath):
         self.dbpath = dbpath
 
+    @tornado.web.authenticated
     def get(self, type):
         type = type.replace('_', ' ')
         error = False
