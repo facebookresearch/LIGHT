@@ -173,12 +173,17 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.player = player
 
     def open(self):
-        if self not in list(self.subs.values()):
-            self.subs[self.sid] = self
-        logging.info(
-            'Opened new socket from ip: {}'.format(self.request.remote_ip))
-
-        self.new_subs.append(self.sid)
+        user_json = self.get_secure_cookie("user")
+        if user_json:
+            if self not in list(self.subs.values()):
+                self.subs[self.sid] = self
+            logging.info(
+                'Opened new socket from ip: {}'.format(self.request.remote_ip))
+            self.new_subs.append(self.sid)
+        else:
+            self.close()
+            self.redirect(u"/login")
+        
         
     def send_alive(self):
         self.safe_write_message(
