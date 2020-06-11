@@ -1,0 +1,8 @@
+--data-model-db
+/private/home/lucaskabela/LIGHT/light/data_model/database.db
+--hostname
+localhost
+--light-model-root
+/checkpoint/light/models/
+--port
+35496

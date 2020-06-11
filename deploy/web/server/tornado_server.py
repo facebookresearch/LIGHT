@@ -33,7 +33,6 @@ import tornado.escape     # noqa E402: gotta install ioloop first
 
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
-
 here = os.path.abspath(os.path.dirname(__file__))
 
 _seen_warnings = set()
@@ -285,7 +284,6 @@ class LandingApplication(tornado.web.Application):
             (r"/logout", LogoutHandler),
             (r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})
         ]
-        
 class MainHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
@@ -381,31 +379,28 @@ class TornadoWebappPlayerProvider(PlayerProvider):
     will be given opportunities to check for new players and should return
     an array of new players during these calls
     """
-    def __init__(self, graph, hostname="127.0.0.1", port=35496):
+    def __init__(self, graph, hostname=DEFAULT_HOSTNAME, port=DEFAULT_PORT, listening=False):
         super().__init__(graph)
         self.app = None
 
-        def _run_server():
+        def _run_server(listening=False):
             nonlocal self
             nonlocal hostname
             nonlocal port
             self.my_loop = ioloop.IOLoop()
             self.app = Application()
-            # self.app.listen(port, max_buffer_size=1024 ** 3)
-            logging.info("Application Started")
+            if listening:
+                self.app.listen(port, max_buffer_size=1024 ** 3)
+            logging.info("TornadoWebProvider Started")
 
             if "HOSTNAME" in os.environ and hostname == DEFAULT_HOSTNAME:
                 hostname = os.environ["HOSTNAME"]
             else:
                 hostname = hostname
-            # print("You can connect to http://%s:%s/" % (hostname, port))
-            # print("or you can connect to http://%s:%s/game/socket" % (hostname, port))
-
-
             self.my_loop.start()
 
         self.t = threading.Thread(
-            target=_run_server, name='TornadoProviderThread', daemon=True
+            target=_run_server, args=(listening), name='TornadoProviderThread', daemon=True
         )
         self.t.start()
         while self.app is None:
@@ -449,28 +444,28 @@ def main():
     import random
 
     parser = argparse.ArgumentParser(description='Start the tornado server.')
-    parser.add_argument('--light-model-root', type=str,
-                        default="/Users/jju/Desktop/LIGHT/",
-                        help='models path. For local setup, use: /checkpoint/jase/projects/light/dialog/')
-    parser.add_argument('-port', metavar='port', type=int,
-                        default=DEFAULT_PORT,
-                        help='port to run the server on.')
     parser.add_argument('--hostname', metavar='hostname', type=str,
                         default=DEFAULT_HOSTNAME,
                         help='host to run the server on.')
+    parser.add_argument('--light-model-root', type=str,
+                        default="/Users/jju/Desktop/LIGHT/",
+                        help='models path. For local setup, use: /checkpoint/jase/projects/light/dialog/')
     parser.add_argument('--no-game-instance', action='store_true',
-                    help='does not initialize game instance')
+                        help='does not initialize game instance')
+    parser.add_argument('-port', metavar='port', type=int,
+                        default=DEFAULT_PORT,
+                        help='port to run the server on.')
     FLAGS = parser.parse_args()
 
     random.seed(6)
     numpy.random.seed(6)
 
     if FLAGS.no_game_instance:
-        provider = TornadoWebappPlayerProvider(None, FLAGS.hostname, FLAGS.port)
+        provider = TornadoWebappPlayerProvider(None, FLAGS.hostname, FLAGS.port, listening=True)
     else:
         game = GameInstance()
         graph = game.g
-        provider = TornadoWebappPlayerProvider(graph, FLAGS.hostname, FLAGS.port)
+        provider = TornadoWebappPlayerProvider(graph, FLAGS.hostname, FLAGS.port, listening=True)
         game.register_provider(provider)
         game.run_graph()
 

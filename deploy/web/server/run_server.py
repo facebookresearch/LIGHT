@@ -34,8 +34,6 @@ from tornado.ioloop import (
 import os.path
 import threading
 
-DEFAULT_PORT = 35496
-DEFAULT_HOSTNAME = "localhost"
 here = os.path.abspath(os.path.dirname(__file__))
 
 def make_app(FLAGS, tornado_provider):
@@ -47,19 +45,18 @@ def make_app(FLAGS, tornado_provider):
         Rule(PathMatches("/(.*)"), landingApp),
     ])
     server = HTTPServer(router)
-    server.listen(DEFAULT_PORT) # Replace with FLAGS.port??
+    server.listen(FLAGS.port)
 
 def _run_server(FLAGS, tornado_provider):
     my_loop = IOLoop()
     make_app(FLAGS, tornado_provider)
     # self.app.listen(port, max_buffer_size=1024 ** 3)
-    if "HOSTNAME" in os.environ and hostname == DEFAULT_HOSTNAME:
+    if "HOSTNAME" in os.environ and hostname == FLAGS.hostname:
         hostname = os.environ["HOSTNAME"]
     else:
         hostname = FLAGS.hostname
     print("\nYou can connect to the game at http://%s:%s/" % (FLAGS.hostname, FLAGS.port))
     print("You can connect to the worldbuilder at http://%s:%s/builder/" % (FLAGS.hostname, FLAGS.port))
-    print("or you can connect to http://%s:%s/game/socket \n" % (FLAGS.hostname, FLAGS.port))
     my_loop.current().start()
 
 # Threading used here for simplicity, but PeriodicCallback is a more deterministic way to handle 
@@ -76,19 +73,22 @@ def main():
     import numpy
     import random
 
-    parser = argparse.ArgumentParser(description='Start the game server.')
+    DEFAULT_PORT = 35496
+    DEFAULT_HOSTNAME = "localhost"
+
+    parser = argparse.ArgumentParser(description='Start the game server.', fromfile_prefix_chars='@')
+    parser.add_argument('--data-model-db', type=str,
+                        default=here + "/../../../light/data_model/database.db",
+                        help='Databse path for the datamodel')
+    parser.add_argument('--hostname', metavar='hostname', type=str,
+                        default=DEFAULT_HOSTNAME,
+                        help='host to run the server on.')
     parser.add_argument('--light-model-root', type=str,
                         default="/checkpoint/light/models/",
                         help='models path. For local setup, use: /checkpoint/jase/projects/light/dialog/')
     parser.add_argument('--port', metavar='port', type=int,
                         default=DEFAULT_PORT,
                         help='port to run the server on.')
-    parser.add_argument('--hostname', metavar='hostname', type=str,
-                        default=DEFAULT_HOSTNAME,
-                        help='host to run the server on.')
-    parser.add_argument('--data-model-db', type=str,
-                        default=here + "/../../../light/data_model/database.db",
-                        help='Databse path for the datamodel')
     FLAGS, _unknown = parser.parse_known_args()
 
     random.seed(6)
