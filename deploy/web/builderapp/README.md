@@ -4,10 +4,9 @@ This folder contains the LIGHT project's data acquisition and management system 
 
 ## To run
 
-- Obtain a .db file (either by importing a pickle file, or from the FAIR cluster at /checkpoint/light/data/database3.db)
-- Run the python server with the db file (../server/builder_server.py)
 - Make sure port in `src/config.js` is the same as the python server port
-- `npm start`
+- `npm install` and then `npm run build`, then run `npm install` and `npm run build` in `../gameapp`
+- Run `../server/run_server.py`, with usage instructions in the parent directory.  Navigate to the endpoint `localhost:port/builder/`
 
 ### Bugs/Tasks
 
