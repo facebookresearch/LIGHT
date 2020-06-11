@@ -143,8 +143,9 @@ class Application(tornado.web.Application):
 # If the file is unspecified.
 class StaticUIHandler(tornado.web.StaticFileHandler):
     def parse_url_path(self, url_path):
+        PRIMARY_PAGE='index.html'
         if not url_path or url_path.endswith('/'):
-            url_path = url_path + 'index.html'
+            url_path = url_path + PRIMARY_PAGE
         return url_path
 
 
@@ -274,32 +275,34 @@ class BaseHandler(tornado.web.RequestHandler):
                 logging.error(e)
 
 class LandingApplication(tornado.web.Application):
-    def __init__(self):
-        super(LandingApplication, self).__init__(self.get_handlers(), **tornado_settings)
+    def __init__(self, hostname=DEFAULT_HOSTNAME):
+        super(LandingApplication, self).__init__(self.get_handlers(hostname), **tornado_settings)
 
-    def get_handlers(self):
+    def get_handlers(self, hostname=DEFAULT_HOSTNAME):
         return [
             (r"/", MainHandler),
-            (r"/login", LoginHandler),
+            (r"/login", LoginHandler, {'hostname' : hostname}),
             (r"/logout", LogoutHandler),
             (r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})
         ]
 class MainHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        name = tornado.escape.xhtml_escape(self.current_user)
         self.render(here + "/../build/index.html")
         
 class LoginHandler(BaseHandler):
+    def initialize(self, hostname=DEFAULT_HOSTNAME):
+            self.hostname = hostname
 
     def get(self):
         self.render(here + "/login.html", next=self.get_argument("next", u"/"))
         self.next = next
 
     def post(self):
+        CORRECT_PASSWORD = "LetsPlay"
         name = self.get_argument("name", "")
         password = self.get_argument("password", "")
-        if password == "LetsPlay":
+        if password == CORRECT_PASSWORD:
             self.set_current_user(name)
             self.redirect(self.get_argument("next", u"/"))
         else:
@@ -308,7 +311,7 @@ class LoginHandler(BaseHandler):
 
     def set_current_user(self, user):
         if user:
-            self.set_secure_cookie("user", tornado.escape.json_encode(user), domain=DEFAULT_HOSTNAME)
+            self.set_secure_cookie("user", tornado.escape.json_encode(user), domain=self.hostname)
         else:
             self.clear_cookie("user")
 
@@ -383,7 +386,8 @@ class TornadoWebappPlayerProvider(PlayerProvider):
         super().__init__(graph)
         self.app = None
 
-        def _run_server(listening=False):
+        def _run_server():
+            nonlocal listening
             nonlocal self
             nonlocal hostname
             nonlocal port
@@ -400,7 +404,7 @@ class TornadoWebappPlayerProvider(PlayerProvider):
             self.my_loop.start()
 
         self.t = threading.Thread(
-            target=_run_server, args=(listening), name='TornadoProviderThread', daemon=True
+            target=_run_server, name='TornadoProviderThread', daemon=True
         )
         self.t.start()
         while self.app is None:
