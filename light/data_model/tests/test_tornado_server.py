@@ -47,6 +47,10 @@ from deploy.web.server.builder_server import (
     EntityEditHandler,
     ViewEditWithIDHandler,
 )
+from deploy.web.server.tornado_server import (
+    LandingApplication, 
+    Application,
+)
 
 PORT = 35494
 URL = f'http://localhost:{PORT}'
@@ -54,6 +58,125 @@ COOK_HEADER = {'Cookie':
     'user="2|1:0|10:1591809198|4:user|16:InRoYXRfZ3V5Ig==|02e1a9835b94ea0c0d5e95d6bb13094b120b9a5cb7dd0c8b149e264f037e755a"'}
 # To do:  Add test for the main handler (which serves the builder), and add all test for the game app, main app, and router
 # Further, test authentication/login works properly
+
+class TestGameApp(AsyncHTTPTestCase):
+    def setUp(self):
+        self.data_dir = tempfile.mkdtemp()
+        self.db_path = os.path.join(self.data_dir, 'test_server.db')
+        self.client = httpclient.AsyncHTTPClient()
+        super().setUp()
+
+    def tearDown(self):
+        super().tearDown()
+        shutil.rmtree(self.data_dir)
+
+    def get_app(self):
+        app = Application()
+        app.listen(PORT)
+        return app
+
+class TestLandingApp(AsyncHTTPTestCase):
+    def setUp(self):
+        self.data_dir = tempfile.mkdtemp()
+        self.db_path = os.path.join(self.data_dir, 'test_server.db')
+        self.client = httpclient.AsyncHTTPClient()
+        super().setUp()
+
+    def tearDown(self):
+        super().tearDown()
+        shutil.rmtree(self.data_dir)
+
+    def get_app(self):
+        app = LandingApplication()
+        app.listen(PORT)
+        return app
+        
+    @gen_test
+    def test_login_succesful(self):
+        '''Test that login endpoint with correct password gives cookie, 200'''
+        headers = {'Content-Type': 'multipart/form-data; boundary=SomeRandomBoundary'}
+        body = self.build_body()
+        with self.assertRaises(httpclient.HTTPClientError) as cm:
+            response = yield self.client.fetch(
+                f'{URL}/login',
+                method='POST',
+                headers=headers,
+                body=body,
+                follow_redirects=False,
+            )
+        # 302 still bc we need to redirect
+            self.assertEqual(cm.exception.code, 302)
+        self.assertEqual(len(cm.exception.response.headers.get_list('Set-Cookie')), 1)
+        response = yield self.client.fetch(
+            f'{URL}/login',
+            method='POST',
+            headers=headers,
+            body=body,
+        )
+        self.assertEqual(response.code, 200)
+
+
+    @gen_test
+    def test_login_endpoint(self):
+        '''Test that login endpoint responds with login page'''
+        headers = {'Content-Type': 'application/json'}
+        response = yield self.client.fetch(
+            f'{URL}/login',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(response.headers['Content-Type'], 'text/html; charset=UTF-8')
+        # This part is liable to change, can just remove in future
+        self.assertEqual(response.body, b'<html><body><form action="/login?next=/" method="post">Name:<input type="text" name="name"> Password: <input type="text" name="password"><input type="submit" value="Sign in"></form></body></html>')
+
+    @gen_test
+    def test_login_password_protected(self):
+        '''Test that login does not work with wrong password'''
+        headers = {'Content-Type': 'multipart/form-data; boundary=SomeRandomBoundary'}
+        body = self.build_body(password="dog")
+        with self.assertRaises(httpclient.HTTPClientError) as cm:
+            response = yield self.client.fetch(
+                f'{URL}/login',
+                method='POST',
+                headers=headers,
+                body=body,
+                follow_redirects=False,
+            )
+        self.assertEqual(cm.exception.code, 302)
+
+        # With allowing redirects, we expect to end up back at the login page
+        response = yield self.client.fetch(
+            f'{URL}/login',
+            method='POST',
+            headers=headers,
+            body=body,
+        )        
+        self.assertEqual(response.code, 200)
+        self.assertEqual(response.headers['Content-Type'], 'text/html; charset=UTF-8')
+        # This part is liable to change, can just remove in future
+        self.assertEqual(response.body, b'<html><body><form action="/login?next=/" method="post">Name:<input type="text" name="name"> Password: <input type="text" name="password"><input type="submit" value="Sign in"></form></body></html>')
+
+    def build_body(name='me', password='LetsPlay'):
+        boundary = 'SomeRandomBoundary'
+        body = '--%s\r\n' % boundary 
+
+        # data for field1
+        body += 'Content-Disposition: form-data; name="name"\r\n'
+        body += '\r\n' # blank line
+        body += '%s\r\n' % name
+
+        # separator boundary
+        body += '--%s\r\n' % boundary 
+
+        # data for field2
+        body += 'Content-Disposition: form-data; name="password"\r\n'
+        body += '\r\n' # blank line
+        body += '%s\r\n' % password
+
+        # separator boundary
+        body += '--%s--\r\n' % boundary 
+        return body
 
 class TestBuilderApp(AsyncHTTPTestCase):
     def setUp(self):
@@ -822,8 +945,10 @@ class TestBuilderApp(AsyncHTTPTestCase):
 
 
 def all():
-    return unittest.TestLoader().loadTestsFromTestCase(TestBuilderApp)
-
+    suiteList = []
+    suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestBuilderApp))
+    suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestLandingApp))
+    return unittest.TestSuite(suiteList)
 
 if __name__ == '__main__':
     testing.main()
