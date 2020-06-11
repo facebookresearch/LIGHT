@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # import unittest.mock as mock
 import json
+import re
 from tornado import gen, httpclient, ioloop, testing, escape
 from tornado.testing import AsyncHTTPTestCase, gen_test
 from tornado.ioloop import IOLoop
@@ -75,6 +76,33 @@ class TestGameApp(AsyncHTTPTestCase):
         app.listen(PORT)
         return app
 
+
+    @gen_test
+    def test_game_page(self):
+        '''Test that no specific endpoint results in main game served when logged in'''
+        headers = {'Content-Type': 'application/json',
+                'Cookie': 'user="2|1:0|10:1591809198|4:user|16:InRoYXRfZ3V5Ig==|02e1a9835b94ea0c0d5e95d6bb13094b120b9a5cb7dd0c8b149e264f037e755a"',
+        }
+        response = yield self.client.fetch(
+            f'{URL}/',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+
+    @gen_test
+    def test_static_handler(self):
+        '''Test that index.html will be rendered from static handler correctly'''
+        headers = {'Content-Type': 'application/json',
+                'Cookie': 'user="2|1:0|10:1591809198|4:user|16:InRoYXRfZ3V5Ig==|02e1a9835b94ea0c0d5e95d6bb13094b120b9a5cb7dd0c8b149e264f037e755a"',
+        }
+        response = yield self.client.fetch(
+            f'{URL}/index.html',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+
 class TestLandingApp(AsyncHTTPTestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
@@ -91,6 +119,79 @@ class TestLandingApp(AsyncHTTPTestCase):
         app.listen(PORT)
         return app
         
+    @gen_test
+    def test_static_handler(self):
+        '''Test that index.html will be rendered from static handler correctly'''
+        headers = {'Content-Type': 'application/json',
+                'Cookie': 'user="2|1:0|10:1591809198|4:user|16:InRoYXRfZ3V5Ig==|02e1a9835b94ea0c0d5e95d6bb13094b120b9a5cb7dd0c8b149e264f037e755a"',
+        }
+        response = yield self.client.fetch(
+            f'{URL}/index.html',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+
+    @gen_test
+    def test_static_handler_nonexisting(self):
+        '''Test the static handler 404 if resource not found'''
+        headers = {'Content-Type': 'application/json',
+                'Cookie': 'user="2|1:0|10:1591809198|4:user|16:InRoYXRfZ3V5Ig==|02e1a9835b94ea0c0d5e95d6bb13094b120b9a5cb7dd0c8b149e264f037e755a"',
+        }
+        with self.assertRaises(httpclient.HTTPClientError) as cm:
+            response = yield self.client.fetch(
+                f'{URL}/something.html',
+                method='GET',
+                headers=headers,
+            )
+        self.assertEqual(cm.exception.code, 404)
+
+    @gen_test
+    def test_landing_page(self):
+        '''Test that no specific endpoint results in main page served when logged in'''
+        headers = {'Content-Type': 'application/json',
+                'Cookie': 'user="2|1:0|10:1591809198|4:user|16:InRoYXRfZ3V5Ig==|02e1a9835b94ea0c0d5e95d6bb13094b120b9a5cb7dd0c8b149e264f037e755a"',
+        }
+        response = yield self.client.fetch(
+            f'{URL}/',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+
+    @gen_test
+    def test_landing_page(self):
+        '''Test that redirect when not logged in'''
+        headers = {'Content-Type': 'application/json'}
+        with self.assertRaises(httpclient.HTTPClientError) as cm:
+            response = yield self.client.fetch(
+                f'{URL}/',
+                method='GET',
+                headers=headers,
+                follow_redirects=False,
+            )
+        self.assertEqual(cm.exception.code, 302)
+        self.assertEqual(cm.exception.response.headers['Location'], '/login?next=%2F')
+
+    @gen_test
+    def test_logout(self):
+        '''Test that logout clears cookie and redirects'''
+        headers = {'Content-Type': 'application/json'}
+        with self.assertRaises(httpclient.HTTPClientError) as cm:
+            response = yield self.client.fetch(
+                f'{URL}/logout',
+                method='GET',
+                headers=headers,
+                follow_redirects=False,
+            )
+        # 302 still bc we need to redirect
+        self.assertEqual(cm.exception.code, 302)
+        self.assertEqual(len(cm.exception.response.headers.get_list('Set-Cookie')), 1)
+        # Clearing cookies, so should user should be empty string, then redirect to login
+        result = re.search('user="(.*)"(.*)', cm.exception.response.headers['Set-Cookie'])
+        self.assertEqual(len(result.group(1)), 0)
+        self.assertEqual(cm.exception.response.headers['Location'], '/login')
+
     @gen_test
     def test_login_succesful(self):
         '''Test that login endpoint with correct password gives cookie, 200'''
@@ -194,6 +295,46 @@ class TestBuilderApp(AsyncHTTPTestCase):
         app.listen(PORT)
         return app
 
+
+    @gen_test
+    def test_builder_page(self):
+        '''Test that no specific endpoint results in main builder page served when logged in'''
+        headers = {'Content-Type': 'application/json',
+                'Cookie': 'user="2|1:0|10:1591809198|4:user|16:InRoYXRfZ3V5Ig==|02e1a9835b94ea0c0d5e95d6bb13094b120b9a5cb7dd0c8b149e264f037e755a"',
+        }
+        response = yield self.client.fetch(
+            f'{URL}/builder/',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+
+    @gen_test
+    def test_builder_page(self):
+        '''Test that static data serves landing correctly'''
+        headers = {'Content-Type': 'application/json',
+                'Cookie': 'user="2|1:0|10:1591809198|4:user|16:InRoYXRfZ3V5Ig==|02e1a9835b94ea0c0d5e95d6bb13094b120b9a5cb7dd0c8b149e264f037e755a"',
+        }
+        response = yield self.client.fetch(
+            f'{URL}/builder/builderindex.html',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+
+    @gen_test
+    def test_builder_page(self):
+        '''Test that static data serves main builder page correctly'''
+        headers = {'Content-Type': 'application/json',
+                'Cookie': 'user="2|1:0|10:1591809198|4:user|16:InRoYXRfZ3V5Ig==|02e1a9835b94ea0c0d5e95d6bb13094b120b9a5cb7dd0c8b149e264f037e755a"',
+        }
+        response = yield self.client.fetch(
+            f'{URL}/',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+
     @gen_test
     def test_submit_entity_edits(self):
         '''Test that entity edits can be submitted successfully'''
@@ -255,7 +396,6 @@ class TestBuilderApp(AsyncHTTPTestCase):
             'edited_value': 'Hello',
             'player': player,
         }
-        print("{}/builder/edits".format(URL))
         response = yield self.client.fetch(
             f'{URL}/builder/edits',
             method='POST',
@@ -946,6 +1086,7 @@ class TestBuilderApp(AsyncHTTPTestCase):
 
 def all():
     suiteList = []
+    suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestGameApp))
     suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestBuilderApp))
     suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestLandingApp))
     return unittest.TestSuite(suiteList)

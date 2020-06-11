@@ -65,7 +65,7 @@ class AppException(tornado.web.HTTPError):
 class StaticDataUIHandler(tornado.web.StaticFileHandler):
     def parse_url_path(self, url_path):
         if not url_path or url_path.endswith('/'):
-            url_path = url_path + 'builder_index.html'
+            url_path = url_path + 'builderindex.html'
         return url_path
 
 class BaseHandler(tornado.web.RequestHandler):
