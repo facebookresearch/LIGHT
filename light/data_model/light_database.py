@@ -333,7 +333,7 @@ class LIGHTDatabase:
         df.to_csv(os.path.join(self.data_dir, "id_room_dict.csv"), header=False)
         df = pd.DataFrame.from_dict(self.id_object_dict, orient="index")
         df.to_csv(os.path.join(self.data_dir, "id_object_dict.csv"), header=False)
-
+    
     def search_database(self, type, input, fts=True):
         '''Search a specific table (dictated by 'type') using a search string'''
         table_name = self.table_dict[type]
@@ -476,6 +476,17 @@ class LIGHTDatabase:
         result = {i[1]: i[2] for i in fetched}
         return result
 
+    def table_not_exists(self, table_name):
+        self.c.execute(
+            """
+            SELECT name 
+            FROM sqlite_master 
+            WHERE type="table" AND name=?;
+            """,
+            (table_name,),
+        )
+        return self.c.fetchone() == None
+
     def init_environment_tables(self):
         """
         Initializes environment tables. All IDs are unique across different
@@ -499,14 +510,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
-        self.c.execute(
-            """
-            SELECT name 
-            FROM sqlite_master 
-            WHERE type="table" AND name="base_objects_table_fts";
-            """
-        )
-        table_not_exists = self.c.fetchone() == None
+        table_not_exists = self.table_not_exists("base_objects_table_fts")
         # FTS table for base objects
         self.c.execute(
             """
@@ -549,14 +553,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
-        self.c.execute(
-            """
-            SELECT name 
-            FROM sqlite_master 
-            WHERE type="table" AND name="objects_table_fts";
-            """
-        )
-        table_not_exists = self.c.fetchone() == None
+        table_not_exists = self.table_not_exists("objects_table_fts")
         self.c.execute(
             """
             CREATE VIRTUAL TABLE IF NOT EXISTS objects_table_fts
@@ -582,14 +579,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
-        self.c.execute(
-            """
-            SELECT name 
-            FROM sqlite_master 
-            WHERE type="table" AND name="base_room_table_fts";
-            """
-        )
-        table_not_exists = self.c.fetchone() == None
+        table_not_exists = self.table_not_exists("base_rooms_table_fts")
         # FTS table for base rooms
         self.c.execute(
             """
@@ -624,14 +614,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
-        self.c.execute(
-            """
-            SELECT name 
-            FROM sqlite_master 
-            WHERE type="table" AND name="rooms_table_fts";
-            """
-        )
-        table_not_exists = self.c.fetchone() == None
+        table_not_exists = self.table_not_exists("rooms_table_fts")
         # FTS table for rooms
         self.c.execute(
             """
@@ -657,14 +640,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
-        self.c.execute(
-            """
-            SELECT name 
-            FROM sqlite_master 
-            WHERE type="table" AND name="base_characters_table_fts";
-            """
-        )
-        table_not_exists = self.c.fetchone() == None
+        table_not_exists = self.table_not_exists("base_characters_table_fts")
         # FTS table for base characters
         self.c.execute(
             """
@@ -702,14 +678,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
-        self.c.execute(
-            """
-            SELECT name 
-            FROM sqlite_master 
-            WHERE type="table" AND name="characters_table_fts";
-            """
-        )
-        table_not_exists = self.c.fetchone() == None
+        table_not_exists = self.table_not_exists("characters_table_fts")
         # FTS table for characters
         self.c.execute(
             """
@@ -1384,14 +1353,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
-        self.c.execute(
-            """
-            SELECT name 
-            FROM sqlite_master 
-            WHERE type="table" AND name="utterances_table_fts";
-            """
-        )
-        table_not_exists = self.c.fetchone() == None
+        table_not_exists = self.table_not_exists("utterances_table_fts")
         # FTS table for utterances
         self.c.execute(
             """
@@ -1465,14 +1427,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
-        self.c.execute(
-            """
-            SELECT name 
-            FROM sqlite_master 
-            WHERE type="table" AND name="turns_table_fts";
-            """
-        )
-        table_not_exists = self.c.fetchone() == None
+        table_not_exists = self.table_not_exists("turns_table_fts")
         # FTS table for turns
         self.c.execute(
             """
