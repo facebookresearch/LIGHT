@@ -10,7 +10,6 @@ from tornado import locks
 from tornado import gen
 from light.data_model.light_database import LIGHTDatabase
 
-# Conflicts with game UI port
 HOSTNAME = 'localhost'
 PORT = 35495 
 lock = locks.Lock()

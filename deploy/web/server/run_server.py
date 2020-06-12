@@ -52,7 +52,6 @@ def make_app(FLAGS, tornado_provider):
 def _run_server(FLAGS, tornado_provider):
     my_loop = IOLoop()
     make_app(FLAGS, tornado_provider)
-    # self.app.listen(port, max_buffer_size=1024 ** 3)
     if "HOSTNAME" in os.environ and hostname == DEFAULT_HOSTNAME:
         hostname = os.environ["HOSTNAME"]
     else:
@@ -62,9 +61,20 @@ def _run_server(FLAGS, tornado_provider):
     print("or you can connect to http://%s:%s/game/socket \n" % (FLAGS.hostname, FLAGS.port))
     my_loop.current().start()
 
-# Threading used here for simplicity, but PeriodicCallback is a more deterministic way to handle 
-# switching  vs the python scheduler.
+
 def router_run(FLAGS, tornado_provider):
+    '''
+    Router run spins up the router for request to send to the correct application.
+    
+    In doing so, we have a tornado application that blocks listening for request.  Since this executes in the
+    same thread as the game instance, we have to do something to avoid blocking the game instance from running.
+    
+    Our options are spinning a seperate thread, or using the PeriodicCallback function in tornado to switch
+    between the router and the game instance.  Here we have chosen to use threading for precedence, as this
+    is how the TornadoWebAppProvider runs, and for the simplicity of the implementation, however
+    PeriodicCallback is a more deterministic way to handle to control switching as opposed
+    to this method, which relies on the the python scheduler.  
+    '''
     t = threading.Thread(
         target=_run_server, args=(FLAGS, tornado_provider), name='RoutingServer', daemon=True
     )
