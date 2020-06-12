@@ -1,6 +1,6 @@
 const DEV = {
   host: "http://localhost",
-  port: "35496"
+  port: "35495"
 };
 
 export default DEV;
