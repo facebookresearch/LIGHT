@@ -119,7 +119,69 @@ class MainHandler(BaseHandler):
         name = tornado.escape.xhtml_escape(self.current_user)
         here = os.path.abspath(os.path.dirname(__file__))
         self.render(here + "/../build/builderindex.html")
-        
+
+#-------------WorldBuilder Endpoints for World Saving ------------#
+class ListWorldsHandler(BaseHandler):
+    '''Lists the worlds owned by the user'''
+
+    def initialize(self, dbpath):
+        self.dbpath = dbpath
+    
+    @tornado.web.authenticated
+    def get(self):
+        with LIGHTDatabase(self.dbpath) as db:
+            player = self.get_argument("player", None, True)
+            # TODO: Implement this method
+            worlds = db.get_worlds(player_id=player)
+            # Want to write the world name and ids.
+            self.write(json.dumps(worlds))
+
+class DeleteWorldHandler(BaseHandler):
+    '''Deletes a world given the user and world id'''
+
+    def initialize(self, dbpath):
+        self.dbpath = dbpath
+    
+    @gen.coroutine
+    @tornado.web.authenticated
+    def post(self):
+        with (yield lock.acquire()):
+            with LIGHTDatabase(self.dbpath) as db:
+                id = int(self.get_argument('id'))
+                player = self.get_argument("player", None, True)
+                # TODO: Implement this method
+                world_id = db.remove_world(id=id, player_id=player)
+                # Want to write the world name and ids.
+                self.write(json.dumps(world_id))
+
+class WorldHandler(BaseHandler):
+    '''Save or Load a world given the player id and world id'''
+
+    def initialize(self, dbpath):
+        self.dbpath = dbpath
+
+    @gen.coroutine
+    @tornado.web.authenticated
+    def post(self):
+        with (yield lock.acquire()):
+            with LIGHTDatabase(self.dbpath) as db:
+                id = int(self.get_argument('id'))
+                player = self.get_argument("player", None, True)
+                # TODO: Implement this method.  Save the world in the worldbuilder
+                #       Look at the edges builder! Might return error if over limit
+
+    @tornado.web.authenticated
+    def get(self):
+        with LIGHTDatabase(self.dbpath) as db:
+            id = int(self.get_argument('id'))
+            player = self.get_argument("player", None, True)
+            # TODO: Implement this method - load the world for the wordlbuilder
+            world = db.get_world(id=id, player_id=player)
+            # Want to write the world name and ids.
+            self.write(json.dumps(world))
+
+ #-------------------------------------------------------------#
+
 class EntityEditHandler(BaseHandler):
     ''' Submit edits through post request and view edits through get request '''
 
