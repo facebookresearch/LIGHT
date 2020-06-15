@@ -141,7 +141,7 @@ class Application(tornado.web.Application):
 
 '''
 class WorldHandler(BaseHandler):
-    '''Load a world given the player id and world id'''
+    'Load a world given the player id and world id'
 
     def initialize(self, dbpath):
         self.dbpath = dbpath

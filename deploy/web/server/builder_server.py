@@ -132,7 +132,7 @@ class ListWorldsHandler(BaseHandler):
         with LIGHTDatabase(self.dbpath) as db:
             player = self.get_argument("player", None, True)
             # TODO: Implement this method
-            worlds = db.get_worlds(player_id=player)
+            worlds = db.view_worlds(player_id=player)
             # Want to write the world name and ids.
             self.write(json.dumps(worlds))
 
@@ -150,7 +150,7 @@ class DeleteWorldHandler(BaseHandler):
                 id = int(self.get_argument('id'))
                 player = self.get_argument("player", None, True)
                 # TODO: Implement this method
-                world_id = db.remove_world(id=id, player_id=player)
+                world_id = db.delete_world(world_id=id, player_id=player)
                 # Want to write the world name and ids.
                 self.write(json.dumps(world_id))
 
@@ -169,14 +169,16 @@ class WorldHandler(BaseHandler):
                 player = self.get_argument("player", None, True)
                 # TODO: Implement this method.  Save the world in the worldbuilder
                 #       Look at the edges builder! Might return error if over limit
-
+                world_id = db.create_world()
+                return world_id
+                
     @tornado.web.authenticated
     def get(self):
         with LIGHTDatabase(self.dbpath) as db:
             id = int(self.get_argument('id'))
             player = self.get_argument("player", None, True)
             # TODO: Implement this method - load the world for the wordlbuilder
-            world = db.get_world(id=id, player_id=player)
+            world = db.get_world(world_id=id, player_id=player)
             # Want to write the world name and ids.
             self.write(json.dumps(world))
 

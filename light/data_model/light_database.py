@@ -2770,3 +2770,96 @@ class LIGHTDatabase:
             for i in edges_lst:
                 self.create_node_content(*i)
         return edges_lst
+
+#-------------------Database added for WorldBuilder-------------#
+    def get_worlds_owned_by(self, player_id):
+        """
+        Return a list of all worlds owned by the player
+        """
+        self.c.execute(
+            """
+            SELECT * FROM world_table
+            WHERE owner_id = ?
+            """,
+            (player_id,),
+        )
+        return self.c.fetchall()
+
+    def assert_world_ownership(self, world_id, player_id):
+        self.c.execute(
+            """
+            SELECT * FROM world_table
+            WHERE id = ? AND owner_id = ? 
+            """,
+            (world_id, player_id,),
+        )
+        assert(len(self.c.fetchall()) == 1)
+
+    def get_world(self, world_id, player_id):
+        """
+        Return the data for a world given its ID
+        """
+        self.assert_world_ownership(world_id, player_id)
+        return self.get_query(world_id)
+
+    def delete_world(self, world_id, player_id):
+        """
+        Delete the world data for a world given its ID
+        """
+        self.assert_world_ownership(world_id, player_id)\
+        self.delete_id(world_id)
+        
+    def view_worlds(self, player_id):
+        """
+        Format world names and ids owned by the player for viewing
+        """
+        player_worlds = self.get_worlds_owned_by(player_id=player_id)
+        print(player_worlds)
+        return player_worlds
+    
+    def get_num_worlds_owned_by(self, player_id):
+        """
+        Return the number of worlds owned by a user
+        """
+        return len(self.get_worlds_owned_by(player_id))
+    
+    def create_world(
+            self,
+            name,
+            owner_id,
+            height,
+            width,
+            num_floors,
+            entry_attributes={},
+        ):
+            id = self.create_id(DB_TYPE_WORLD, entry_attributes)
+            self.c.execute(
+                """
+                INSERT or IGNORE INTO world_table(id, name, owner_id,
+                height, width, num_floors)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    id,
+                    name,
+                    owner_id,
+                    height,
+                    width,
+                    num_floors,
+                    entry_attributes,
+                ),
+            )
+            inserted = bool(self.c.rowcount)
+            if not inserted:
+                self.delete_id(id)
+                self.c.execute(
+                    """
+                    SELECT id from world_table WHERE name = ? AND owner_id = ? \
+                    AND height = ? AND width = ? AND num_floors = ?
+                    """,
+                    (name, owner_id, height, width, num_floors),
+                )
+                result = self.c.fetchall()
+                assert len(result) == 1
+                id = int(result[0][0])
+            return (id, inserted)
