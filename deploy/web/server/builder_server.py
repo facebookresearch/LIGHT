@@ -19,6 +19,9 @@ def get_handlers(db):
     ''' Returns handler array with required arguments '''
     here = os.path.abspath(os.path.dirname(__file__))
     path_to_build = here + "/../build/"
+    # NOTE: We choose to keep the StaticUIHandler, despite this handler never being
+    #       hit in the top level RuleRouter from run_server.py in case this application
+    #       is run standalone for some reason.
     return [
         (r"/builder/edits", EntityEditHandler, {'dbpath': db}),
         (r"/builder/edits/([0-9]+)/accept/([a-zA-Z_]+)", AcceptEditHandler, {'dbpath': db}),

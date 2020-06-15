@@ -132,6 +132,9 @@ class Application(tornado.web.Application):
 
     def get_handlers(self):
         path_to_build = here + "/../build/"
+        # NOTE: We choose to keep the StaticUIHandler, despite this handler never being
+        #       hit in the top level RuleRouter from run_server.py in case this application
+        #       is run standalone for some reason.
         return [
             (r"/game/socket", SocketHandler, {'app': self}),
             (r"/(.*)", StaticUIHandler, {'path': path_to_build}),
