@@ -55,6 +55,7 @@ DB_TYPE_UTTERANCE = 'utterance'
 DB_TYPE_PARTICIPANT = 'participant'
 DB_TYPE_TURN = 'turn'
 DB_TYPE_PLAYER = 'player'
+DB_TYPE_WORLD = 'world'
 ENTITY_TYPES = [
     DB_TYPE_BASE_CHAR,
     DB_TYPE_CHAR,
@@ -69,6 +70,7 @@ ENTITY_TYPES = [
     DB_TYPE_PARTICIPANT,
     DB_TYPE_TURN,
     DB_TYPE_PLAYER,
+    DB_TYPE_WORLD,
 ]
 
 # Statuses for any content in the database
@@ -147,6 +149,7 @@ class LIGHTDatabase:
             DB_TYPE_PARTICIPANT: "participants_table",
             DB_TYPE_TURN: "turns_table",
             DB_TYPE_PLAYER: "players_table",
+            DB_TYPE_WORLD: "world_table",
         }
 
         # Master table for keeping unique IDs across tables and to look up
@@ -243,6 +246,7 @@ class LIGHTDatabase:
         self.init_environment_tables()
         self.init_conversation_tables()
         self.init_edits_table()
+        self.init_world_tables()
         self.init_game_tables()
         self.create_triggers()
 
@@ -1255,6 +1259,28 @@ class LIGHTDatabase:
                 )
             results = [r for r in results if r['edge_type'] == edge_type]
         return results
+    
+    def init_world_tables(self):
+        """
+        Initializes world tables
+        """
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS world_table (
+            id integer PRIMARY KEY NOT NULL,
+            name text NOT NULL, 
+            owner_id integer NOT NULL,
+            height integer NOT NULL,
+            width integer NOT NULL,
+            num_floors integer NOT NULL,
+            CONSTRAINT fk_id FOREIGN KEY (id)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE,
+            CONSTRAINT fk_player FOREIGN KEY (owner_id)
+                REFERENCES players_table (id)
+                ON DELETE CASCADE);
+            """
+        )
 
     def init_conversation_tables(self):
         """
@@ -2791,7 +2817,7 @@ class LIGHTDatabase:
             SELECT * FROM world_table
             WHERE id = ? AND owner_id = ? 
             """,
-            (world_id, player_id,),
+            (world_id, player_id),
         )
         assert(len(self.c.fetchall()) == 1)
 
@@ -2800,22 +2826,32 @@ class LIGHTDatabase:
         Return the data for a world given its ID
         """
         self.assert_world_ownership(world_id, player_id)
-        return self.get_query(world_id)
-
+        if self.use_cache:
+            if world_id is not None and world_id in self.cache['worlds']:
+                return [self.cache['worlds'][world_id]]
+        self.c.execute(
+            """
+            SELECT * FROM world_table
+            WHERE id = ? AND owner_id = ?
+            """,
+            (world_id, player_id,),
+        )
+        return self.c.fetchall()
+        
     def delete_world(self, world_id, player_id):
         """
         Delete the world data for a world given its ID
         """
-        self.assert_world_ownership(world_id, player_id)\
+        self.assert_world_ownership(world_id, player_id)
         self.delete_id(world_id)
-        
+
     def view_worlds(self, player_id):
         """
         Format world names and ids owned by the player for viewing
         """
         player_worlds = self.get_worlds_owned_by(player_id=player_id)
-        print(player_worlds)
-        return player_worlds
+        res = [{'id' : x['id'], 'name' : x['name']} for x in player_worlds]
+        return res
     
     def get_num_worlds_owned_by(self, player_id):
         """
@@ -2846,7 +2882,6 @@ class LIGHTDatabase:
                     height,
                     width,
                     num_floors,
-                    entry_attributes,
                 ),
             )
             inserted = bool(self.c.rowcount)

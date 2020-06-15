@@ -10,7 +10,7 @@ import unittest
 import os
 import pickle
 
-from light.data-model.light_database import (
+from light.data_model.light_database import (
     LIGHTDatabase,
     DB_EDGE_IN_CONTAINED,
     DB_EDGE_EX_CONTAINED,
@@ -31,6 +31,7 @@ from light.data-model.light_database import (
     DB_TYPE_PARTICIPANT,
     DB_TYPE_TURN,
     DB_TYPE_PLAYER,
+    DB_TYPE_WORLD,
     ENTITY_TYPES,
     DB_STATUS_PROD,
     DB_STATUS_REVIEW,
@@ -678,6 +679,33 @@ class TestDatabase(unittest.TestCase):
             )
             # Test if the id_table is unaffected
             self.assertEqual(len(test.get_id()), prev_id_len)
+#-----------------World Saving Test-----------------#
+    def test_create_world(self):
+        '''Test that world creation works and behaves as expected'''
+        # Test if a new world can be successfully created
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            player0 = test.create_player()[0]
+            w_id = test.create_world("swamp", player0, 3, 3, 1)[0]
+            self.assert_sqlite_row_equal(
+                {'id': w_id, 'name': "swamp", 'owner_id': player0, 'height': 3, 'width': 3, 'num_floors' : 1,},
+                test.get_world(w_id, player0)[0],
+                "New World cannot be created",
+            )
+    
+    def test_view_worlds(self):
+        '''Test that view worlds returns all worlds owned by palyer'''
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            player0 = test.create_player()[0]
+            w1_id = test.create_world("swamp", player0, 3, 3, 1)[0]
+            print("Creating second world!")
+            w2_id = test.create_world("dragon-guarded-castle", player0, 3, 3, 1)[0]
+            res = test.view_worlds(player0)
+            self.assertEqual(len(res), 2)
+            self.assertEqual(
+                [{'id': w1_id, 'name': "swamp",}, {'id': w2_id, 'name': "dragon guarded castle",}],
+                res
+            )
+#---------------------------------------------------#
 
     def test_status(self):
         '''Test that status in the master ID table behaves as expected'''
