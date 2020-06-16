@@ -14,6 +14,7 @@ from parlai.core.agents import create_agent_from_shared
 from parlai.core.worlds import World
 from light.hobbot.strategies.light_chat_strategy import LIGHTChatStrategy
 import light.hobbot.utils as utils
+from light.graph.structured_graph import OOGraph
 from light.graph.builders.starspace_all import StarspaceBuilder
 from light.graph.events.graph_events import LookEvent
 
@@ -760,11 +761,12 @@ class LIGHTSinglePlayerWorld(World):
         """Invoked when this world went down in the middle of a run, and it
         is loading the state from a previous world.
         """
-        # TODO update to use the personas correctly
         int_attrs = [
             'score',
+            'curr_acting_score',
             'blacklist_cnt',
             'flagged_cnt',
+            'games_played',
             'turn',
         ]
 
@@ -780,6 +782,11 @@ class LIGHTSinglePlayerWorld(World):
                     f'WARNING! World does not have attribute {k}. Not setting.'
                 )
 
+        self.graph, self.world = builder.get_graph_from_quest(self.quest)
+        self.graph = OOGraph.from_json(self.graph_json)
+        self.world.oo_graph = self.graph
+
+        self.model_name = 'reconnect'
         self.observe_game_msg(
             "Sorry about that! You may now continue the game."
         )
@@ -795,23 +802,33 @@ class LIGHTSinglePlayerWorld(World):
             "message."
         )
         attrs = [
+            'quest',
+            'quest_goal',
+            'quest_motivation',
             'dialogs',
             'score',
+            'curr_acting_score',
             'blacklist_cnt',
+            'flagged_cnt',
+            'flagged_messages',
+            'saw_bonus',
+            'saw_quest',
+            'characters_caught',
+            'characters_caught_string',
+            'games_played',
             'chosen_dialog',
             'episodeDone',
             'game_ended',
-            'flagged_cnt',
-            'flagged_messages',
             'reported',
             'seen_welcome_message',
             'timeout',
+            'first_observe',
+            'bot_action_observe',
             'turn',
             'human_player_details',
             'bot_player_details',
             'location_details',
             'graph_json',
-            'prepped_cand_scores',
         ]
 
         game_state = {}
