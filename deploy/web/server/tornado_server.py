@@ -395,6 +395,8 @@ class TornadoWebappPlayerProvider(PlayerProvider):
             self.app = Application()
             if listening:
                 self.app.listen(port, max_buffer_size=1024 ** 3)
+                print("\nYou can connect to the game at http://%s:%s/" % (hostname, port))
+                print("You can connect to the socket at http://%s:%s/game/socket/" % (hostname, port))
             logging.info("TornadoWebProvider Started")
 
             if "HOSTNAME" in os.environ and hostname == DEFAULT_HOSTNAME:
