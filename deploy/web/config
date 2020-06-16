@@ -4,5 +4,7 @@
 localhost
 --light-model-root
 /checkpoint/light/models/
+--password
+LetsPlay
 --port
 35494

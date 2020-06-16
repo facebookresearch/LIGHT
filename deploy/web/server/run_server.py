@@ -37,8 +37,9 @@ import threading
 here = os.path.abspath(os.path.dirname(__file__))
 
 def make_app(FLAGS, tornado_provider):
+    tornado_provider.app['cookie_secret'] = Flags.cookie_secret
     worldBuilderApp = BuildApplication(get_handlers(FLAGS.data_model_db))
-    landingApp = LandingApplication(FLAGS.hostname)
+    landingApp = LandingApplication(FLAGS.hostname, FLAGS.password)
     router = RuleRouter([
         Rule(PathMatches("/builder(.*)"), worldBuilderApp),
         Rule(PathMatches("/game(.*)"), tornado_provider.app),
@@ -77,6 +78,9 @@ def main():
     DEFAULT_HOSTNAME = "localhost"
 
     parser = argparse.ArgumentParser(description='Start the game server.', fromfile_prefix_chars='@')
+    parser.add_argument('--cookie-secret', type=str,
+                        default="0123456789",
+                        help='Cookie secret for issueing cookies (SECRET!!!)')
     parser.add_argument('--data-model-db', type=str,
                         default=here + "/../../../light/data_model/database.db",
                         help='Databse path for the datamodel')
@@ -86,6 +90,9 @@ def main():
     parser.add_argument('--light-model-root', type=str,
                         default="/checkpoint/light/models/",
                         help='models path. For local setup, use: /checkpoint/jase/projects/light/dialog/')
+    parser.add_argument('--password', type=str,
+                        default="LetsPlay",
+                        help='password for users to access the game.')
     parser.add_argument('--port', metavar='port', type=int,
                         default=DEFAULT_PORT,
                         help='port to run the server on.')

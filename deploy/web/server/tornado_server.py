@@ -291,18 +291,18 @@ class MainHandler(BaseHandler):
         self.render(here + "/../build/index.html")
         
 class LoginHandler(BaseHandler):
-    def initialize(self, hostname=DEFAULT_HOSTNAME):
+    def initialize(self, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
             self.hostname = hostname
+            self.password = password
 
     def get(self):
         self.render(here + "/login.html", next=self.get_argument("next", u"/"))
         self.next = next
 
     def post(self):
-        CORRECT_PASSWORD = "LetsPlay"
         name = self.get_argument("name", "")
         password = self.get_argument("password", "")
-        if password == CORRECT_PASSWORD:
+        if password == self.password:
             self.set_current_user(name)
             self.redirect(self.get_argument("next", u"/"))
         else:
