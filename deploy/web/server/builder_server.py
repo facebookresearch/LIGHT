@@ -344,6 +344,8 @@ class EntityHandler(BaseHandler):
             kw_args = arg_names[-len(default_args) :]
             kw_default_map = {kw_args[i]: default_args[i] for i in range(len(kw_args))}
             print(kw_default_map)
+            print(type)
+            print(fields.keys())
             for i in list(fields.keys()):
                 # ignore the ID field since the ID is created by the database
                 if i == 'id':
