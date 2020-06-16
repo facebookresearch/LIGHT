@@ -930,7 +930,7 @@ class LIGHTSinglePlayerWorld(World):
         self.dialogs.append(f"Human Act: {choice['text']}")
         chosen_act.execute(self.world)
         self.observe_game_msg(chosen_act.view_as(self.player_node))
-        self.bot_action_observe = chosen_act.view_as(self.bot_node))
+        self.bot_action_observe = chosen_act.view_as(self.bot_node)
         self.graph_json = self.graph.to_json()
         self.curr_acting_score -= SCORE_TO_ACT
 
