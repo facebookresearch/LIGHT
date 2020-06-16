@@ -464,7 +464,11 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         return results
 
     def get_graph_from_quest(self, quest):
-        pass
+        graph_json = quest["data"]["graph"]
+        g = OOGraph.from_json(graph_json)
+        world = World(self.opt, self)
+        world.oo_graph = g
+        return g, world
 
     def get_constrained_graph(self, location=None, player=None):
         """
@@ -508,14 +512,23 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
 
         if player is None:
             player_char = random.choice(possible_chars)
+            possible_chars.remove(player_char)
+            self_char_id = self.add_new_agent_to_graph(g, player_char, room_node)
+            while self_char_id is None:
+                player_char = random.choice(possible_chars)
+                possible_chars.remove(player_char)
+                self_char_id = self.add_new_agent_to_graph(g, player_char, room_node)
         else:
             player_char = self.get_char_from_id(self.charfeats_to_id(player.lower()))
+            self_char_id = self.add_new_agent_to_graph(g, player_char, room_node)
         
-        possible_chars = [c for c in possible_chars if c.db_id != player_char.db_id]
         partner_char = random.choice(possible_chars)
-
-        self.add_new_agent_to_graph(g, player_char, room_node)
-        self.add_new_agent_to_graph(g, partner_char, room_node)
+        possible_chars.remove(partner_char)
+        parner_char_id = self.add_new_agent_to_graph(g, partner_char, room_node)
+        while parner_char_id is None:
+            partner_char = random.choice(possible_chars)
+            possible_chars.remove(partner_char)
+            parner_char_id = self.add_new_agent_to_graph(g, partner_char, room_node)
 
         if 'db' in set_room.ex_objects:
             for item_id in set_room.ex_objects['db']:

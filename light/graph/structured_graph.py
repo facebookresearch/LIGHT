@@ -101,7 +101,8 @@ class OOGraph(object):
                 # TODO parse other edge locked parameters
             room.move_to(oo_graph.void)
 
-        oo_graph.delete_nodes([oo_graph.get_node(graph.void_id)])
+        if hasattr(graph, 'void_id'):
+            oo_graph.delete_nodes([oo_graph.get_node(graph.void_id)])
         return oo_graph
 
     # consistency and graph validation

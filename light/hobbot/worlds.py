@@ -10,7 +10,7 @@ from parlai.core.agents import create_agent
 from parlai.core.dict import DictionaryAgent
 
 from parlai_internal.projects.light.beatthehobbot.chat_service.utils import LIGHTPersonaGenerator
-import parlai_internal.chat_service.utils.misc as internal_utils
+import parlai_fb.chat_service.utils.misc as internal_utils
 from parlai.chat_service.utils.misc import DictFrequencies
 from parlai.core.opt import Opt
 from light.hobbot.onboarding_worlds import (
@@ -20,6 +20,7 @@ from light.hobbot.onboarding_worlds import (
 from light.hobbot.single_player_world import (
     LIGHTSinglePlayerWorld
 )
+from light.graph.builders.one_room_builder import OneRoomChatBuilder
 
 from copy import deepcopy
 import os
@@ -40,9 +41,7 @@ def module_initialize(opt: Opt, manager, deploy_with_tw: bool = False):
     service_strategy.init_safety(opt)
 
     # Rest of LIGHT setup
-    opt['persona_generator'] = LIGHTPersonaGenerator(
-        path=os.path.join(res_path, 'personas.json')
-    )
+    opt['graph_builder'] = OneRoomChatBuilder()
 
     # Build a dictionary for use in OffensiveLanguageDetector
     dict_agent = DictionaryAgent({})
@@ -54,6 +53,11 @@ def module_initialize(opt: Opt, manager, deploy_with_tw: bool = False):
     opt['logger_handler'] = None  # only have single player
     with open(os.path.join(res_path, 'character_emojis.json'), 'r') as jsonfile:
         opt['all_persona_emojis'] = json.load(jsonfile)
+    quest_dir = os.path.join(res_path, 'quests')
+    opt['available_quests'] = []
+    for quest_file in os.listdir(quest_dir):
+        with open(os.path.join(quest_dir, quest_file), 'r') as jsonfile:
+            opt['available_quests'].append(json.load(jsonfile))
 
 
 def eligibility_function(agent_id):
