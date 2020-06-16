@@ -73,7 +73,7 @@ export function post(url, payload) {
   return fetch(`${CONFIG.host}:${CONFIG.port}/${url}`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
+      "Content-Type": "application/x-www-form-urlencoded",
     },
     body: formBody.join("&")
   });

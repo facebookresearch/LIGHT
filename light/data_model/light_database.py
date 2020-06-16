@@ -2868,33 +2868,39 @@ class LIGHTDatabase:
             num_floors,
             entry_attributes={},
         ):
-            id = self.create_id(DB_TYPE_WORLD, entry_attributes)
+        
+        LIMIT = 10
+        num_worlds = self.get_num_worlds_owned_by(owner_id)
+        if (num_worlds >= LIMIT):
+            return (-1, False)
+
+        id = self.create_id(DB_TYPE_WORLD, entry_attributes)
+        self.c.execute(
+            """
+            INSERT or IGNORE INTO world_table(id, name, owner_id,
+            height, width, num_floors)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (
+                id,
+                name,
+                owner_id,
+                height,
+                width,
+                num_floors,
+            ),
+        )
+        inserted = bool(self.c.rowcount)
+        if not inserted:
+            self.delete_id(id)
             self.c.execute(
                 """
-                INSERT or IGNORE INTO world_table(id, name, owner_id,
-                height, width, num_floors)
-                VALUES (?, ?, ?, ?, ?, ?)
+                SELECT id from world_table WHERE name = ? AND owner_id = ? \
+                AND height = ? AND width = ? AND num_floors = ?
                 """,
-                (
-                    id,
-                    name,
-                    owner_id,
-                    height,
-                    width,
-                    num_floors,
-                ),
+                (name, owner_id, height, width, num_floors),
             )
-            inserted = bool(self.c.rowcount)
-            if not inserted:
-                self.delete_id(id)
-                self.c.execute(
-                    """
-                    SELECT id from world_table WHERE name = ? AND owner_id = ? \
-                    AND height = ? AND width = ? AND num_floors = ?
-                    """,
-                    (name, owner_id, height, width, num_floors),
-                )
-                result = self.c.fetchall()
-                assert len(result) == 1
-                id = int(result[0][0])
-            return (id, inserted)
+            result = self.c.fetchall()
+            assert len(result) == 1
+            id = int(result[0][0])
+        return (id, inserted)

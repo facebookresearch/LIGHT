@@ -678,7 +678,8 @@ class TestDatabase(unittest.TestCase):
                 len(test.get_room(name="room", description="dirty", backstory="new")), 0
             )
             # Test if the id_table is unaffected
-            self.assertEqual(len(test.get_id()), prev_id_len)
+            self.assertEqual(len(test.get_id()), prev_id_len)\
+                
 #-----------------World Saving Test-----------------#
     def test_create_world(self):
         '''Test that world creation works and behaves as expected'''
@@ -693,18 +694,53 @@ class TestDatabase(unittest.TestCase):
             )
     
     def test_view_worlds(self):
-        '''Test that view worlds returns all worlds owned by palyer'''
+        '''Test that view worlds returns all worlds owned by player and only those worlds!'''
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player0 = test.create_player()[0]
             w1_id = test.create_world("swamp", player0, 3, 3, 1)[0]
-            print("Creating second world!")
-            w2_id = test.create_world("dragon-guarded-castle", player0, 3, 3, 1)[0]
+            w2_id = test.create_world("dragon guarded castle", player0, 2, 4, 2)[0]
             res = test.view_worlds(player0)
             self.assertEqual(len(res), 2)
             self.assertEqual(
                 [{'id': w1_id, 'name': "swamp",}, {'id': w2_id, 'name': "dragon guarded castle",}],
                 res
             )
+
+            player1 = test.create_player()[0]
+            w3_id = test.create_world("swamp2", player1, 3, 3, 5)[0]
+            res = test.view_worlds(player1)
+            self.assertEqual(len(res), 1)
+            self.assertEqual(
+                [{'id': w3_id, 'name': "swamp2",},],
+                res
+            )
+    
+    def test_world_deletion(self):
+        '''Test that delete worlds works as expected (ownly owner can delete)'''
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            player0 = test.create_player()[0]
+            player1 = test.create_player()[0]
+            w1_id = test.create_world("swamp", player0, 3, 3, 1)[0]
+            
+            with self.assertRaises(Exception):
+                test.delete_world(w1_id, player1)
+            self.assertEqual(len(test.view_worlds(player0)), 1)
+            test.delete_world(w1_id, player0)
+            self.assertEqual(len(test.view_worlds(player0)), 0)
+
+
+    def test_world_limit(self):
+        '''Test that the limit on world creation is enforced properly'''
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            player0 = test.create_player()[0]
+            player1 = test.create_player()[0]
+            for i in range(10):
+                test.create_world("swamp" + str(i), player0, 3, 3, 1)[0]
+            res = test.create_world("swamp10", player0, 3, 3, 1)
+            self.assertEqual(res, (-1, False))
+            res = test.create_world("swamp10", player1, 3, 3, 1)
+            self.assertEqual(res[1], True)
+
 #---------------------------------------------------#
 
     def test_status(self):
