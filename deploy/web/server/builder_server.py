@@ -131,10 +131,9 @@ class ListWorldsHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         with LIGHTDatabase(self.dbpath) as db:
+            # This should be a player id from db
             player = self.get_argument("player", None, True)
-            # TODO: Implement this method
             worlds = db.view_worlds(player_id=player)
-            # Want to write the world name and ids.
             self.write(json.dumps(worlds))
 
 class DeleteWorldHandler(BaseHandler):
@@ -166,15 +165,24 @@ class WorldHandler(BaseHandler):
     def post(self):
         with (yield lock.acquire()):
             with LIGHTDatabase(self.dbpath) as db:
-                id = int(self.get_argument('id'))
                 player = self.get_argument("player", None, True)
-                # TODO: Implement this method.  Save the world in the worldbuilder
-                #       Look at the edges builder! Might return error if over limit
-                world_id = db.create_world()
-                # Basically, want to copy Commit Edges logic - First, make sure all entities are 
-                # posted to the db.  Then, commit all tiles (tile_id, world_id, color, room_id, position)
-                # Then, commit all the game neighbor edges (need id, wrld_id, src_id & dst_id & direction), mb regular edges
-                # Then commit all tile entity (tile id, edge id, direction)
+                world_info = json.loads(self.get_argument('world', '{}', True))
+                edges = json.loads(self.get_argument('edges', '[]', True))
+                tiles = json.loads(self.get_argument('tiles', '[]', True))
+                rooms = json.loads(self.get_argument('rooms', '[]', True))
+                objs = json.loads(self.get_argument('objs', '[]', True))
+                chars = json.loads(self.get_argument('chars', '[]', True))
+                world_id = db.create_world(**world_info)
+                tile_edges = {}
+                for tile in tiles:
+                    tile_id = db.create_tile(world_id, room_id, color, x_coordinate, y_coordinate, floor)
+                    
+                for edge in edges:
+                    edges = []
+                    edge_id = db.create_graph_edge(world_id, src_id, dst_id, type_)
+                    edges.append(edge_id)
+
+                # Now write all the tile_edges pairs!
                 return world_id
                 
     @tornado.web.authenticated
@@ -182,11 +190,7 @@ class WorldHandler(BaseHandler):
         with LIGHTDatabase(self.dbpath) as db:
             id = int(self.get_argument('id'))
             player = self.get_argument("player", None, True)
-            # TODO: Implement this method - load the world for the wordlbuilder
-            # Follows easily from format - first set attributes of world, then get all tiles for the given world
-            # Use this to build the walls and connections.  Tada, done!
-            world = db.get_world(world_id=id, player_id=player)
-            # Want to write the world name and ids.
+            world = db.load_world(id, player)
             self.write(json.dumps(world))
 
  #-------------------------------------------------------------#
