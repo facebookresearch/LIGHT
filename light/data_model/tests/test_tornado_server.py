@@ -57,8 +57,6 @@ PORT = 35494
 URL = f'http://localhost:{PORT}'
 COOK_HEADER = {'Cookie': 
     'user="2|1:0|10:1591809198|4:user|16:InRoYXRfZ3V5Ig==|02e1a9835b94ea0c0d5e95d6bb13094b120b9a5cb7dd0c8b149e264f037e755a"'}
-# To do:  Add test for the main handler (which serves the builder), and add all test for the game app, main app, and router
-# Further, test authentication/login works properly
 
 class TestGameApp(AsyncHTTPTestCase):
     def setUp(self):
