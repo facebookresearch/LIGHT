@@ -480,6 +480,63 @@ export function useWorldBuilder(upload) {
     return filtered;
   };
 
+  // const deleteWorld = ...
+
+  // const getWorld = ...
+
+  // const listWorlds = ...
+
+  const postWorld = async () => {
+    const store = { room: {}, character: {}, object: {} };
+    const map = filteredMap();
+    // Create maps of all entities being used in the world
+    map.forEach(floor => {
+      Object.values(floor.tiles).forEach(tile => {
+        store.room[tile.room] = entities.room[tile.room];
+        for (let index in tile.characters) {
+          store.character[tile.characters[index]] =
+            entities.character[tile.characters[index]];
+        }
+        for (let index in tile.objects) {
+          store.object[tile.objects[index]] =
+            entities.object[tile.objects[index]];
+        }
+      });
+    });
+    // Post all used entities to the API and store their returned ID for edges
+    const createReqs = [].concat(
+      Object.values(store.room).map(async room => {
+        const res = await post("entities/room", room);
+        const data = await res.json();
+        room.id = data[0];
+      }),
+      Object.values(store.character).map(async character => {
+        const res = await post("entities/character", character);
+        const data = await res.json();
+        character.id = data[0];
+      }),
+      Object.values(store.object).map(async object => {
+        const res = await post("entities/object", object);
+        const data = await res.json();
+        object.id = data[0];
+      })
+    );
+
+    await Promise.all(createReqs);
+
+    // Next, post all the tiles
+
+    // Now, post the world
+
+    // Great!  Graph edges posted next
+
+    // Finish with posting the tile edge combos
+    AppToaster.show({
+      intent: Intent.SUCCESS,
+      message: "World Saved!"
+    });   
+  }
+
   // Post all edges to the API
   const postEdges = async () => {
     const store = { room: {}, character: {}, object: {} };
