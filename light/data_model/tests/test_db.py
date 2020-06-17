@@ -741,6 +741,54 @@ class TestDatabase(unittest.TestCase):
             res = test.create_world("swamp10", player1, 3, 3, 1)
             self.assertEqual(res[1], True)
 
+    def test_world_saving(self):
+        '''Test that when we save then load a world, all attributes exist'''
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            player0 = test.create_player()[0]
+            w_id = test.create_world("swampy world", player0, 3, 3, 1)[0]
+
+            # Create rooms, characters, and objects
+            rbase_id = test.create_base_room("room")[0]
+            rcontent_id1 = test.create_room("swamp", rbase_id, "damp", "wet")[0]
+            cbase_id = test.create_base_character("ogre")[0]
+            ccontent_id1 = test.create_character(None, cbase_id, "green", "big")[0]
+            obase_id = test.create_base_object('obj')[0]
+            ocontent_id1 = test.create_object(
+                'small obj', obase_id, 0, 0, 0, 0, 0, 0, 0, 'dusty'
+            )[0]
+
+            rcontent_id2 = test.create_room("marsh", rbase_id, "soggy", "wet")[0]
+            cbase_id2 = test.create_base_character("frog")[0]
+            ccontent_id2 = test.create_character(None, cbase_id2, "green", "small")[0]
+            ocontent_id2 = test.create_object(
+                'big obj', obase_id, 0, 0, 0, 0, 0, 0, 0, 'huuuge'
+            )[0]
+
+            # Create edges now
+            e_id1 = test.create_graph_edge(w_id, rcontent_id1, rcontent_id2, "neighbors to the north of")[0]
+            e_id2 = test.create_graph_edge(w_id, rcontent_id1, ccontent_id1, "contains")[0]
+            e_id3 = test.create_graph_edge(w_id, rcontent_id1, ocontent_id1, "contains")[0]
+
+            e_id4 = test.create_graph_edge(w_id, rcontent_id2, rcontent_id1, "neighbors to the south of")[0]
+            e_id5 = test.create_graph_edge(w_id, rcontent_id2, ccontent_id2, "contains")[0]
+            e_id6 = test.create_graph_edge(w_id, rcontent_id2, ocontent_id2, "contains")[0]
+
+            # Create tiles now
+            t_id1 = test.create_tile(w_id, rcontent_id1, 3394611, 1, 1, 1)[0]
+            t_id2 = test.create_tile(w_id, rcontent_id2, 13056, 2, 1, 1)[0]
+
+            # Add tiles to edges here
+            test.create_tile_edges(t_id1, t_id2, e_id1)
+            test.create_tile_edges(t_id1, t_id1, e_id2)
+            test.create_tile_edges(t_id1, t_id1, e_id3)
+            test.create_tile_edges(t_id2, t_id1, e_id4)
+            test.create_tile_edges(t_id2, t_id2, e_id5)
+            test.create_tile_edges(t_id2, t_id2, e_id6)
+
+            # Idea for loading world:  Given world id, load some dictionaries like:
+            #{w_id: 1, name: "swampy world" height: 3, width: 3,  tiles: [{t_id: 1, x_coord: 1, y_coord: 1, floor: 1, color : 1, room_id: 1},...], edges: [...], rooms:..., objs:..., chars:...}
+            #assertEqual(test.load_world(w_id, player0))
+
 #---------------------------------------------------#
 
     def test_status(self):
