@@ -741,6 +741,7 @@ class TestDatabase(unittest.TestCase):
             res = test.create_world("swamp10", player1, 3, 3, 1)
             self.assertEqual(res[1], True)
 
+    # TODO: Add test for the components (such as saving/creating edges, etc)
     def test_world_saving(self):
         '''Test that when we save then load a world, all attributes exist'''
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
@@ -787,7 +788,84 @@ class TestDatabase(unittest.TestCase):
 
             # Idea for loading world:  Given world id, load some dictionaries like:
             #{w_id: 1, name: "swampy world" height: 3, width: 3,  tiles: [{t_id: 1, x_coord: 1, y_coord: 1, floor: 1, color : 1, room_id: 1},...], edges: [...], rooms:..., objs:..., chars:...}
-            #assertEqual(test.load_world(w_id, player0))
+            self.assertEqual(test.load_world(w_id, player0),
+                {
+                'id': 2,
+                'name': 'swampy world',
+                'height': 3,
+                'width': 3,
+                'num_floors': 1,
+                'tiles': [{
+                    'id': 19,
+                    'room_id': 4,
+                    'color': 3394611,
+                    'x_coordinate': 1,
+                    'y_coordinate': 1,
+                    'floor': 1
+                }, {
+                    'id': 20,
+                    'room_id': 9,
+                    'color': 13056,
+                    'x_coordinate': 2,
+                    'y_coordinate': 1,
+                    'floor': 1
+                }],
+                'edges': [{
+                    'tile_id_src': 19,
+                    'tile_id_dst': 20,
+                    'edge_id': 13,
+                    'src_id': 4,
+                    'dst_id': 9,
+                    'edge_type': 'neighbors to the north of'
+                }, {
+                    'tile_id_src': 19,
+                    'tile_id_dst': 19,
+                    'edge_id': 14,
+                    'src_id': 4,
+                    'dst_id': 6,
+                    'edge_type': 'contains'
+                }, {
+                    'tile_id_src': 19,
+                    'tile_id_dst': 19,
+                    'edge_id': 15,
+                    'src_id': 4,
+                    'dst_id': 8,
+                    'edge_type': 'contains'
+                }, {
+                    'tile_id_src': 20,
+                    'tile_id_dst': 19,
+                    'edge_id': 16,
+                    'src_id': 9,
+                    'dst_id': 4,
+                    'edge_type': 'neighbors to the south of'
+                }, {
+                    'tile_id_src': 20,
+                    'tile_id_dst': 20,
+                    'edge_id': 17,
+                    'src_id': 9,
+                    'dst_id': 11,
+                    'edge_type': 'contains'
+                }, {
+                    'tile_id_src': 20,
+                    'tile_id_dst': 20,
+                    'edge_id': 18,
+                    'src_id': 9,
+                    'dst_id': 12,
+                    'edge_type': 'contains'
+                }],
+                'room': {
+                    9,
+                    4
+                },
+                'character': {
+                    11,
+                    6
+                },
+                'object': {
+                    8,
+                    12
+                }
+            })
 
 #---------------------------------------------------#
 
