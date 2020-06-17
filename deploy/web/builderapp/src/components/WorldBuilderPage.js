@@ -32,6 +32,7 @@ function WorldBuilderPage({ location }) {
   );
 }
 
+// TODO:  Add save, load, delete, list buttons
 function WorldBuilder({ upload }) {
   const state = useWorldBuilder(upload);
   const [advanced, setAdvanced] = React.useState(false);
