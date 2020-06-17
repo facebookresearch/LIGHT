@@ -171,6 +171,10 @@ class WorldHandler(BaseHandler):
                 # TODO: Implement this method.  Save the world in the worldbuilder
                 #       Look at the edges builder! Might return error if over limit
                 world_id = db.create_world()
+                # Basically, want to copy Commit Edges logic - First, make sure all entities are 
+                # posted to the db.  Then, commit all tiles (tile_id, world_id, color, room_id, position)
+                # Then, commit all the game neighbor edges (need id, wrld_id, src_id & dst_id & direction), mb regular edges
+                # Then commit all tile entity (tile id, edge id, direction)
                 return world_id
                 
     @tornado.web.authenticated
@@ -179,6 +183,8 @@ class WorldHandler(BaseHandler):
             id = int(self.get_argument('id'))
             player = self.get_argument("player", None, True)
             # TODO: Implement this method - load the world for the wordlbuilder
+            # Follows easily from format - first set attributes of world, then get all tiles for the given world
+            # Use this to build the walls and connections.  Tada, done!
             world = db.get_world(world_id=id, player_id=player)
             # Want to write the world name and ids.
             self.write(json.dumps(world))
@@ -344,8 +350,6 @@ class EntityHandler(BaseHandler):
             kw_args = arg_names[-len(default_args) :]
             kw_default_map = {kw_args[i]: default_args[i] for i in range(len(kw_args))}
             print(kw_default_map)
-            print(type)
-            print(fields.keys())
             for i in list(fields.keys()):
                 # ignore the ID field since the ID is created by the database
                 if i == 'id':
