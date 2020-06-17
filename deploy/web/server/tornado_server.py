@@ -128,14 +128,20 @@ class Application(tornado.web.Application):
     def __init__(self):
         self.subs = {}
         self.new_subs = []
+        super(Application, self).__init__(self.get_handlers(), **tornado_settings)
 
-        path_to_build = here + "/../webapp/build/"
-        handlers = [
-            (r"/socket", SocketHandler, {'app': self}),
+    def get_handlers(self):
+        path_to_build = here + "/../build/"
+        # NOTE: We choose to keep the StaticUIHandler, despite this handler never being
+        #       hit in the top level RuleRouter from run_server.py in case this application
+        #       is run standalone for some reason.
+        return [
+            (r"/game/socket", SocketHandler, {'app': self}),
             (r"/(.*)", StaticUIHandler, {'path': path_to_build}),
         ]
-        super(Application, self).__init__(handlers, **tornado_settings)
 
+# StaticUIHandler serves static front end, defaulting to index.html served
+# If the file is unspecified.
 class StaticUIHandler(tornado.web.StaticFileHandler):
     def parse_url_path(self, url_path):
         if not url_path or url_path.endswith('/'):
@@ -173,7 +179,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             'Opened new socket from ip: {}'.format(self.request.remote_ip))
 
         self.new_subs.append(self.sid)
-
+        
     def send_alive(self):
         self.safe_write_message(
             json.dumps({'command': 'register', 'data': self.sid}))
@@ -323,15 +329,15 @@ class TornadoWebappPlayerProvider(PlayerProvider):
             nonlocal port
             self.my_loop = ioloop.IOLoop()
             self.app = Application()
-            self.app.listen(port, max_buffer_size=1024 ** 3)
+            # self.app.listen(port, max_buffer_size=1024 ** 3)
             logging.info("Application Started")
 
             if "HOSTNAME" in os.environ and hostname == DEFAULT_HOSTNAME:
                 hostname = os.environ["HOSTNAME"]
             else:
                 hostname = hostname
-            print("You can connect to http://%s:%s/" % (hostname, port))
-            print("or you can connect to http://%s:%s/socket" % (hostname, port))
+            # print("You can connect to http://%s:%s/" % (hostname, port))
+            # print("or you can connect to http://%s:%s/game/socket" % (hostname, port))
 
 
             self.my_loop.start()

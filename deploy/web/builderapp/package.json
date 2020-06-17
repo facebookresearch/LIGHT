@@ -24,6 +24,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "postbuild": "(mv ./build/index.html ./build/builder_index.html && rm -rf ../build/* && cp -r ./build/* ../build && rm -R ./build)",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

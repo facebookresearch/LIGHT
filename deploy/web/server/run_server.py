@@ -13,11 +13,73 @@ from deploy.web.server.telnet_server import (
     TelnetPlayerProvider,
 )
 from deploy.web.server.tornado_server import (
-    TornadoWebappPlayerProvider,
+    TornadoWebappPlayerProvider, StaticUIHandler,
 )
+from deploy.web.server.builder_server import (
+    get_handlers,
+)
+from tornado.routing import (
+    PathMatches, Rule, RuleRouter,
+)
+from tornado.web import (
+    Application,
+)
+from tornado.httpserver import (
+    HTTPServer,
+)
+from tornado.ioloop import (
+    IOLoop,
+)
+
+import os.path
+import threading
 
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
+here = os.path.abspath(os.path.dirname(__file__))
+
+def make_app(FLAGS, tornado_provider):
+    worldBuilderApp = Application(get_handlers(FLAGS.data_model_db))
+    staticApp = Application([(r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})])
+    router = RuleRouter([
+        Rule(PathMatches("/builder/.*"), worldBuilderApp),
+        Rule(PathMatches("/game/(.*)"), tornado_provider.app),
+        Rule(PathMatches("/(.*)"), staticApp),
+    ])
+    server = HTTPServer(router)
+    server.listen(DEFAULT_PORT) # Replace with FLAGS.port??
+
+def _run_server(FLAGS, tornado_provider):
+    my_loop = IOLoop()
+    make_app(FLAGS, tornado_provider)
+    if "HOSTNAME" in os.environ and hostname == DEFAULT_HOSTNAME:
+        hostname = os.environ["HOSTNAME"]
+    else:
+        hostname = FLAGS.hostname
+    print("\nYou can connect to the game at http://%s:%s/" % (FLAGS.hostname, FLAGS.port))
+    print("You can connect to the worldbuilder at http://%s:%s/builder/" % (FLAGS.hostname, FLAGS.port))
+    print("or you can connect to http://%s:%s/game/socket \n" % (FLAGS.hostname, FLAGS.port))
+    my_loop.current().start()
+
+
+def router_run(FLAGS, tornado_provider):
+    '''
+    Router run spins up the router for request to send to the correct application.
+    
+    In doing so, we have a tornado application that blocks listening for request.  Since this executes in the
+    same thread as the game instance, we have to do something to avoid blocking the game instance from running.
+    
+    Our options are spinning a seperate thread, or using the PeriodicCallback function in tornado to switch
+    between the router and the game instance.  Here we have chosen to use threading for precedence, as this
+    is how the TornadoWebAppProvider runs, and for the simplicity of the implementation, however
+    PeriodicCallback is a more deterministic way to handle to control switching as opposed
+    to this method, which relies on the the python scheduler.  
+    '''
+    t = threading.Thread(
+        target=_run_server, args=(FLAGS, tornado_provider), name='RoutingServer', daemon=True
+    )
+    t.start()
+
 
 def main():
     import argparse
@@ -34,18 +96,24 @@ def main():
     parser.add_argument('--hostname', metavar='hostname', type=str,
                         default=DEFAULT_HOSTNAME,
                         help='host to run the server on.')
+    parser.add_argument('--data_model_db', type=str,
+                        default=here + "/../../../light/data_model/database.db",
+                        help='Databse path for the datamodel')
     FLAGS, _unknown = parser.parse_known_args()
 
     random.seed(6)
     numpy.random.seed(6)
 
+
     game = GameInstance()
     graph = game.g
-    provider = TornadoWebappPlayerProvider(graph, FLAGS.hostname, FLAGS.port)
-    game.register_provider(provider)
+    tornado_provider = TornadoWebappPlayerProvider(graph, FLAGS.hostname, FLAGS.port)
+    game.register_provider(tornado_provider)
     provider = TelnetPlayerProvider(graph, FLAGS.hostname, FLAGS.port + 1)
     game.register_provider(provider)
+    router_run(FLAGS, tornado_provider)
     game.run_graph()
+
 
 
 if __name__ == "__main__":

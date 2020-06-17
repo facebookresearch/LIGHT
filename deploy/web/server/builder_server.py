@@ -10,7 +10,6 @@ from tornado import locks
 from tornado import gen
 from light.data_model.light_database import LIGHTDatabase
 
-# Conflicts with game UI port
 HOSTNAME = 'localhost'
 PORT = 35495 
 lock = locks.Lock()
@@ -19,18 +18,22 @@ lock = locks.Lock()
 def get_handlers(db):
     ''' Returns handler array with required arguments '''
     here = os.path.abspath(os.path.dirname(__file__))
-    path_to_build = here + "/../builderapp/build/"
+    path_to_build = here + "/../build/"
+    # NOTE: We choose to keep the StaticUIHandler, despite this handler never being
+    #       hit in the top level RuleRouter from run_server.py in case this application
+    #       is run standalone for some reason.
     return [
-        (r"/edits", EntityEditHandler, {'dbpath': db}),
-        (r"/edits/([0-9]+)/accept/([a-zA-Z_]+)", AcceptEditHandler, {'dbpath': db}),
-        (r"/edits/([0-9]+)/reject", RejectEditHandler, {'dbpath': db}),
-        (r"/edits/([0-9]+)", ViewEditWithIDHandler, {'dbpath': db}),
-        (r"/edges", EdgesHandler, {'dbpath': db}),
-        (r"/entities/([0-9]+)", ViewEntityWithIDHandler, {'dbpath': db}),
-        (r"/entities/([a-zA-Z_]+)", EntityHandler, {'dbpath': db}),
-        (r"/entities/([a-zA-Z_]+)/fields", EntityFieldsHandler, {'dbpath': db}),
-        (r"/interactions", InteractionHandler, {'dbpath': db}),
-        (r"/tables/types", TypesHandler, {'dbpath': db}),
+        (r"/builder/edits", EntityEditHandler, {'dbpath': db}),
+        (r"/builder/edits/([0-9]+)/accept/([a-zA-Z_]+)", AcceptEditHandler, {'dbpath': db}),
+        (r"/builder/edits/([0-9]+)/reject", RejectEditHandler, {'dbpath': db}),
+        (r"/builder/edits/([0-9]+)", ViewEditWithIDHandler, {'dbpath': db}),
+        (r"/builder/edges", EdgesHandler, {'dbpath': db}),
+        (r"/builder/entities/([0-9]+)", ViewEntityWithIDHandler, {'dbpath': db}),
+        (r"/builder/entities/([a-zA-Z_]+)", EntityHandler, {'dbpath': db}),
+        (r"/builder/entities/([a-zA-Z_]+)/fields", EntityFieldsHandler, {'dbpath': db}),
+        (r"/builder/interactions", InteractionHandler, {'dbpath': db}),
+        (r"/builder/tables/types", TypesHandler, {'dbpath': db}),
+        (r"/builder/(.*)", StaticDataUIHandler, {'path': path_to_build}),
         (r"/(.*)", StaticDataUIHandler, {'path': path_to_build}),
     ]
 
@@ -43,13 +46,14 @@ class Application(tornado.web.Application):
 
 class AppException(tornado.web.HTTPError):
     '''Used to return custom errors'''
-
     pass
 
+# StaticUIHandler serves static front end, defaulting to builder_index.html served
+# if the file is unspecified.
 class StaticDataUIHandler(tornado.web.StaticFileHandler):
     def parse_url_path(self, url_path):
         if not url_path or url_path.endswith('/'):
-            url_path = url_path + 'index.html'
+            url_path = url_path + 'builder_index.html'
         return url_path
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -379,7 +383,7 @@ def main():
     assert sys.argv[1][-3:] == '.db', 'Please enter a database path'
     app = Application(get_handlers(sys.argv[1]))
     app.listen(PORT)
-    print(f'You can connect to http://{HOSTNAME}:{PORT}/')
+    print(f'You can connect to http://{HOSTNAME}:{PORT}/builder')
     IOLoop.instance().start()
 
 
