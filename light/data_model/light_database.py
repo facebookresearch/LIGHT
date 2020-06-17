@@ -41,6 +41,24 @@ EDGE_TYPES = [
     DB_EDGE_NEIGHBOR,
 ]
 
+DB_GRAPH_EDGE_CONTAINS = 'contains'
+DB_GRAPH_EDGE_NEIGHBOR_N = "neighbors to the north of"
+DB_GRAPH_EDGE_NEIGHBOR_E = "neighbors to the east of"
+DB_GRAPH_EDGE_NEIGHBOR_S = "neighbors to the south of"
+DB_GRAPH_EDGE_NEIGHBOR_W = "neighbors to the west of"
+DB_GRAPH_EDGE_NEIGHBOR_U = "neighbors above of"
+DB_GRAPH_EDGE_NEIGHBOR_D = "neighbors below"
+# Edges between nodes in graphs executed
+GRAPH_EDGE_TYPES = [
+    DB_GRAPH_EDGE_CONTAINS,
+    DB_GRAPH_EDGE_NEIGHBOR_N,
+    DB_GRAPH_EDGE_NEIGHBOR_E,
+    DB_GRAPH_EDGE_NEIGHBOR_S,
+    DB_GRAPH_EDGE_NEIGHBOR_W,
+    DB_GRAPH_EDGE_NEIGHBOR_U,
+    DB_GRAPH_EDGE_NEIGHBOR_D,
+]
+
 # All entity types existing in the database
 DB_TYPE_BASE_CHAR = 'base character'
 DB_TYPE_CHAR = 'character'
@@ -1290,6 +1308,17 @@ class LIGHTDatabase:
             id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
             type text NOT NULL UNIQUE);
             """
+        )
+
+        # Initialize the graph edge type enum table
+        graph_edge_types_formated = format_list_for_sql(GRAPH_EDGE_TYPES)
+        self.c.execute(
+            """
+            INSERT OR IGNORE INTO enum_table_graph_edge_type (type)
+            VALUES {}
+            """.format(
+                graph_edge_types_formated
+            )
         )
 
         # Graph edges table - edges in execution
@@ -2936,6 +2965,81 @@ class LIGHTDatabase:
         """
         return len(self.get_worlds_owned_by(player_id))
     
+    def create_tile(self, world_id, room_id, color, x_coordinate, y_coordinate, floor):
+        id = self.create_id(DB_TYPE_TILE, entry_attributes)
+        self.c.execute(
+            """
+            INSERT or IGNORE INTO tile_table(id, world_id, room_id,
+            color, x_coordinate, y_coordinate, floor)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                id,
+                world_id,
+                room_id,
+                color,
+                x_coordinate,
+                y_coordinate,
+                floor,
+            ),
+        )
+        inserted = bool(self.c.rowcount)
+        if not inserted:
+            self.delete_id(id)
+            self.c.execute(
+                """
+                SELECT id from tile_table WHERE world_id = ? AND room_id = ? \
+                AND color = ? AND x_coordinate = ? AND y_coordinate = ? AND floor = ?
+                """,
+                (world_id, room_id, color, x_coordinate, y_coordinate, floor),
+            )
+            result = self.c.fetchall()
+            assert len(result) == 1
+            id = int(result[0][0])
+        return (id, inserted)
+
+    def create_graph_edge(self, src_id, dst_id, type_):
+        id = self.create_id(DB_TYPE_GRAPH_EDGE, entry_attributes)
+        self.c.execute(
+            """
+            INSERT or IGNORE INTO edges_table(id, src_id, dst_id, type)
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                id,
+                src_id,
+                dst_id,
+                type_,
+            ),
+        )
+        inserted = bool(self.c.rowcount)
+        if not inserted:
+            self.delete_id(id)
+            self.c.execute(
+                """
+                SELECT id from edges_table WHERE src_id = ? AND dst_id = ? \
+                AND type = ?
+                """,
+                (src_id, dst_id, type_),
+            )
+            result = self.c.fetchall()
+            assert len(result) == 1
+            id = int(result[0][0])
+        return (id, inserted)
+
+    def create_tile_edges(self, tile_id_src, tile_id_dst, edge_id):
+        self.c.execute(
+            """
+            INSERT or IGNORE INTO tile_edge_table(tile_id_src, tile_id_dst, edge_id)
+            VALUES (?, ?, ?)
+            """,
+            (
+                tile_id_src,
+                tile_id_dst,
+                edge_id,
+            ),
+        )
+
     def create_world(
             self,
             name,
