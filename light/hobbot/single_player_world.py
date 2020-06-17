@@ -31,7 +31,7 @@ SUBSAMPLE_CANDS = -1
 SINGLE_CATCH_THRESHOLD = 11
 DOUBLE_CATCH_THRESHOLD = 15
 
-ROOKIE_USER_MIN_SCORE = 40
+ROOKIE_USER_MIN_SCORE = 30
 SCORE_TO_ACT = 5
 
 USE_ACTIONS = [
@@ -62,6 +62,29 @@ def add_scoring_model(opt, model_key):
     scoring_params['opt']['override'] = params['opt']['override'].copy()
     scoring_params['opt']['override']['use_reply'] = 'none'
     opt['shared_scoring_params'][model_key] = scoring_params
+
+
+def get_override_name(model_name, override):
+    SKIP_KEYS = [
+        'model',
+        'candidates',
+        'eval_candidates',
+        'fp16',
+        'no_cuda',
+        'interactive_mode',
+        'batchsize',
+        'trainset',
+        'partner_trainset',
+        'baseforms',
+        'force_fp16_tokens',
+    ]
+    important_keys = []
+    for key, value in override.items():
+        if key in SKIP_KEYS:
+            continue
+        important_keys.append(f'{key}={value}')
+    important_keys.sort()
+    return f"{model_name}?{','.join(important_keys)}"
 
 
 # ---------- LIGHT Dungeon World -------- #
@@ -144,21 +167,24 @@ class LIGHTSinglePlayerWorld(World):
         if opt.get('shared_scoring_params') is None:
             opt['shared_scoring_params'] = {}
 
-        model_to_use = random.choice(list(bot_params.keys()))
-        shared_bot_params = opt['shared_bot_params'][model_to_use]
-        if (
-            shared_bot_params['opt'].get('boring_alpha', 0) != 0 or
-            shared_bot_params['opt']['override'].get('boring_alpha', 0) != 0
-        ):
-            if random.random() > 0.5:
-                model_to_use += '_boring'
-                print("Making boring version!")
-            else:
-                shared_bot_params = shared_bot_params.copy()
-                shared_bot_params['opt'] = shared_bot_params['opt'].copy()
-                shared_bot_params['opt']['boring_alpha'] = 0
-                shared_bot_params['opt']['override'] = shared_bot_params['opt']['override'].copy()
-                shared_bot_params['opt']['override']['boring_alpha'] = 0
+        possible_models = []
+        for model_key in opt['model_info'].keys():
+            overrides = opt['model_info'][model_key].get('override', {})
+            if type(overrides) is dict:
+                overrides = [overrides]
+            for override in overrides:
+                model_info = (model_key, override)
+                possible_models += [model_info] * override.get('selection_choice_weight')
+        
+        model_to_use = random.choice(possible_models)
+        model_name = get_override_name(*model_to_use)
+        print(f"Selected model {model_to_use[0]}, name {model_name}")
+
+        shared_bot_params = opt['shared_bot_params'][model_to_use[0]]
+        use_bot_params = shared_bot_params.copy()
+        use_bot_params['opt'] = shared_bot_params['opt'].copy()
+        use_bot_params['opt']['override'] = model_to_use[1]
+        use_bot_params['opt'].update(model_to_use[1])
         bot = create_agent_from_shared(shared_bot_params)
 
         scoring_model_to_use = 'orig_light_poly'
@@ -170,17 +196,16 @@ class LIGHTSinglePlayerWorld(World):
         # Determine if we're doing a quest!
         quest = None
         if agents[0].data.get('persona') is None:
-            quest = random.choice(opt['available_quests'])
-            
-            # if agents[0].data.get('total_score') > ROOKIE_USER_MIN_SCORE:
-            #     if random.random() > 0.4:
-            #         quest = random.choice(opt['available_quests'])
+            quest = random.choice(opt['available_quests']) 
+            if agents[0].data.get('total_score') > ROOKIE_USER_MIN_SCORE:
+                if random.random() > 0.2:
+                    quest = random.choice(opt['available_quests'])
 
         return LIGHTSinglePlayerWorld(
             opt=opt,
             human_agents=agents,
             bot=bot,
-            model=model_to_use,
+            model=model_name,
             scoring_bot=scoring_bot,
             use_quest=quest,
             task_state=task_state,
@@ -486,7 +511,7 @@ class LIGHTSinglePlayerWorld(World):
         self._log('Acting persona:\n{}'.format(self.acting_persona_obs))
         # Human observe location if not the same setting
         if not agent_data.get('same_setting'):
-            character = self.player_node
+            character = self.graph.get_node(self.human_player_details['id'])
             look_event = LookEvent(character)
             look_event.execute(self.world)
             room_desc = look_event.view_as(character)
