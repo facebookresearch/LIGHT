@@ -1282,6 +1282,83 @@ class LIGHTDatabase:
             """
         )
 
+        # Differs from text_edges as those are more annotation, these are actual edges of 
+        # world graphs in execution
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS enum_table_graph_edge_type (
+            id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+            type text NOT NULL UNIQUE);
+            """
+        )
+
+        # Graph edges table - edges in execution
+        # (need src, dst, type of node - can we just have 
+        # Edge North, Edge South, Edge West, Edge East, Edge Up, Edge Down, Edge contains?)
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS edges_table (
+            id integer PRIMARY KEY NOT NULL,
+            src_id integer NOT NULL,
+            dst_id integer NOT NULL,
+            edge_type text NOT NULL,
+            CONSTRAINT fk_id FOREIGN KEY (id)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE),
+            CONSTRAINT fk_src FOREIGN KEY (src_id)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE),
+            CONSTRAINT fk_dst FOREIGN KEY (dst_id)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE),
+            CONSTRAINT fk_edge FOREIGN KEY (edge_type)
+                REFERENCES enum_table_graph_edge_type (type)
+                ON DELETE CASCADE);            
+            """
+        )
+
+        # Tiles table - needs node/room id that goes inside too(?)
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS tile_table (
+            id integer PRIMARY KEY NOT NULL,
+            world_id integer NOT NULL,
+            room_id integer NOT NULL,
+            color integer NOT NULL,
+            x_coordinate integer NOT NULL,
+            y_coordinate integer NOT NULL,
+            floor integer NOT NULL,
+            CONSTRAINT fk_id FOREIGN KEY (id)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE),
+            CONSTRAINT fk_world FOREIGN KEY (world_id)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE),
+            CONSTRAINT fk_room FOREIGN KEY (room_id)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE);
+            """
+        )
+
+        # Need Tile Edge table?  maybe that would be helpful
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS tile_edge_table (
+            tile_id_src integer NOT NULL,
+            tile_id_dst integer NOT NULL,
+            edge_id integer NOT NULL,
+            CONSTRAINT fk_src FOREIGN KEY (tile_id_src)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE),
+            CONSTRAINT fk_dst FOREIGN KEY (tile_id_dst)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE),
+            CONSTRAINT fk_edge FOREIGN KEY (edge_id)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE);
+            """
+        )
+
     def init_conversation_tables(self):
         """
         Initializes conversation tables. All IDs are unique across different
