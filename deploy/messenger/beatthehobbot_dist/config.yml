@@ -31,21 +31,38 @@ opt:
       force_fp16_tokens: true
       boring_alpha: 0
       override:
-        model: 'fb:light_poly'
-        fixed_candidates_path: '/Users/jju/tmp_packages/tmp_packages/light_package/light_cands.txt'
-        candidates: 'fixed'
-        eval_candidates: 'fixed'
-        fp16: False
-        no_cuda: True
-        interactive_mode: true
-        batchsize: 1
-        from_speaker_bonus: 15
-        to_speaker_bonus: 15
-        trainset: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_to_utterance_trainset.txt"
-        partner_trainset: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_to_utterance_partner_trainset.txt"
-        baseforms: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_baseforms.json"
-        force_fp16_tokens: true
-        boring_alpha: 0
+        - model: 'fb:light_poly'
+          fixed_candidates_path: '/Users/jju/tmp_packages/tmp_packages/light_package/light_cands.txt'
+          candidates: 'fixed'
+          eval_candidates: 'fixed'
+          fp16: False
+          no_cuda: True
+          interactive_mode: true
+          batchsize: 1
+          from_speaker_bonus: 15
+          to_speaker_bonus: 15
+          trainset: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_to_utterance_trainset.txt"
+          partner_trainset: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_to_utterance_partner_trainset.txt"
+          baseforms: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_baseforms.json"
+          force_fp16_tokens: true
+          boring_alpha: 20
+          selection_choice_weight: 0
+        - model: 'fb:light_poly'
+          fixed_candidates_path: '/Users/jju/tmp_packages/tmp_packages/light_package/light_cands.txt'
+          candidates: 'fixed'
+          eval_candidates: 'fixed'
+          fp16: False
+          no_cuda: True
+          interactive_mode: true
+          batchsize: 1
+          from_speaker_bonus: 15
+          to_speaker_bonus: 15
+          trainset: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_to_utterance_trainset.txt"
+          partner_trainset: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_to_utterance_partner_trainset.txt"
+          baseforms: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_baseforms.json"
+          force_fp16_tokens: True
+          boring_alpha: 0
+          selection_choice_weight: 1
   service: 'terminal'
   chat_service_strategies:
     websocket: "light.hobbot.strategies.sockets_strategy.SocketChatStrategy"

@@ -16,6 +16,7 @@ print(f"Removing current contents of {target_dir}")
 shutil.rmtree(target_dir)
 shutil.copytree(source_dir, target_dir)
 
+print(f"Migrating import paths from light.* to parlai_fb.projects.light.*.")
 python_files = [f for f in Path(target_dir).glob("**/*.py")]
 for py_filename in python_files:
     with open(py_filename, 'r') as py_file:
@@ -25,3 +26,4 @@ for py_filename in python_files:
 
     with open(py_filename, 'w') as py_file:
         py_file.write(file_contents)
+print("Done!")
