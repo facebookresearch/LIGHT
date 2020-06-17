@@ -300,6 +300,7 @@ class LoginHandler(BaseHandler):
     def post(self):
         name = self.get_argument("name", "")
         password = self.get_argument("password", "")
+        # TODO: Move to config
         if password == "LetsPlay":
             self.set_current_user(name)
             self.redirect(self.get_argument("next", u"/"))
