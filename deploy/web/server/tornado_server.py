@@ -118,9 +118,11 @@ def get_path(filename):
 
 tornado_settings = {
     "autoescape": None,
+    "cookie_secret": "0123456789", #TODO: Placeholder, do not include in repo when deploy!!!
+    "compiled_template_cache": False,
     "debug": "/dbg/" in __file__,
+    "login_url": "/login",
     "template_path": get_path('static'),
-    "compiled_template_cache": False
 }
 
 
@@ -137,6 +139,7 @@ class Application(tornado.web.Application):
         #       is run standalone for some reason.
         return [
             (r"/game/socket", SocketHandler, {'app': self}),
+            (r"/", MainHandler),
             (r"/(.*)", StaticUIHandler, {'path': path_to_build}),
         ]
 
@@ -173,12 +176,17 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.player = player
 
     def open(self):
-        if self not in list(self.subs.values()):
-            self.subs[self.sid] = self
-        logging.info(
-            'Opened new socket from ip: {}'.format(self.request.remote_ip))
-
-        self.new_subs.append(self.sid)
+        user_json = self.get_secure_cookie("user")
+        if user_json:
+            if self not in list(self.subs.values()):
+                self.subs[self.sid] = self
+            logging.info(
+                'Opened new socket from ip: {}'.format(self.request.remote_ip))
+            self.new_subs.append(self.sid)
+        else:
+            self.close()
+            self.redirect(u"/login")
+        
         
     def send_alive(self):
         self.safe_write_message(
@@ -228,9 +236,22 @@ class BaseHandler(tornado.web.RequestHandler):
     def __init__(self, *request, **kwargs):
         self.include_host = False
         super(BaseHandler, self).__init__(*request, **kwargs)
+    
+    def get_login_url(self):
+        return u"/login"
+
+    def get_current_user(self):
+        user_json = self.get_secure_cookie("user")
+        if user_json:
+            return tornado.escape.json_decode(user_json)
+        else:
+            return None
+
+    def set_default_headers(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        self.set_header('Access-Control-Allow-Headers', '*')
 
     # TODO maybe use cookies to restore previous game state?
-
     def write_error(self, status_code, **kwargs):
         logging.error("ERROR: %s: %s" % (status_code, kwargs))
         if "exc_info" in kwargs:
@@ -256,6 +277,50 @@ class BaseHandler(tornado.web.RequestHandler):
             except Exception as e:
                 logging.error(e)
 
+class LandingApplication(tornado.web.Application):
+    def __init__(self):
+        super(LandingApplication, self).__init__(self.get_handlers(), **tornado_settings)
+
+    def get_handlers(self):
+        return [
+            (r"/", MainHandler),
+            (r"/login", LoginHandler),
+            (r"/logout", LogoutHandler),
+            (r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})
+        ]
+class MainHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        name = tornado.escape.xhtml_escape(self.current_user)
+        self.render(here + "/../build/index.html")
+        
+class LoginHandler(BaseHandler):
+
+    def get(self):
+        self.render(here + "/login.html", next=self.get_argument("next", u"/"))
+        self.next = next
+
+    def post(self):
+        name = self.get_argument("name", "")
+        password = self.get_argument("password", "")
+        # TODO: Move to config
+        if password == "LetsPlay":
+            self.set_current_user(name)
+            self.redirect(self.get_argument("next", u"/"))
+        else:
+            error_msg = u"?error=" + tornado.escape.url_escape("Login incorrect.")
+            self.redirect(u"/login" + error_msg)
+
+    def set_current_user(self, user):
+        if user:
+            self.set_secure_cookie("user", tornado.escape.json_encode(user), domain=DEFAULT_HOSTNAME)
+        else:
+            self.clear_cookie("user")
+
+class LogoutHandler(BaseHandler):
+    def get(self):
+        self.clear_cookie("user")
+        self.redirect(u"/login")
 
 class TornadoWebappPlayer(Player):
     """
