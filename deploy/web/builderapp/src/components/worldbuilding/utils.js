@@ -480,27 +480,27 @@ export function useWorldBuilder(upload) {
     return filtered;
   };
 
-  const deleteWorld = async () => {
-    const res = await post("deleteWorld", id);
-    const data = await res.json();
-    // Whatever you get back here its whatever
-  }
+  // const deleteWorld = async () => {
+  //   const res = await post("deleteWorld");
+  //   const data = await res.json();
+  //   // Whatever you get back here its whatever
+  // }
 
-  const getWorld = async () => {
-    useAPI(
-      CONFIG,
-      `/worlds/${id}`
-    )
-    // should get back json of the loaded world, need to reconstruct it too!
-  }
+  // const getWorld = async () => {
+  //   useAPI(
+  //     CONFIG,
+  //     `/worlds/${id}`
+  //   )
+  //   // should get back json of the loaded world, need to reconstruct it too!
+  // }
 
-  const listWorlds = async () => {
-    useAPI(
-      CONFIG,
-      `/worlds/`
-    )
-    // Should get back the json list like this
-  }
+  // const listWorlds = async () => {
+  //   useAPI(
+  //     CONFIG,
+  //     `/worlds/`
+  //   )
+  //   // Should get back the json list like this
+  // }
 
   const postWorld = async () => {
     const store = { height: dimensions.height, width: dimensions.width, floors: dimensions.floors,
@@ -520,14 +520,14 @@ export function useWorldBuilder(upload) {
         }
       });
     });
-
+    console.table(map);
     // create store of all edges in the world
     const edges = [];
     // Create all edge requests and post all of them
     for (let floor = 0; floor < map.length; floor++) {
       const tiles = map[floor].tiles;
       for (let coord in tiles) {
-        store.tile[coord] = tiles[coord]
+        store.tile[coord + " " + floor] = tiles[coord]
         const payload = { room: -1, chars: [], objs: [], neighbors: [] };
         payload.room = store.room[tiles[coord].room].id;
         tiles[coord].characters.forEach(character => {
@@ -537,14 +537,14 @@ export function useWorldBuilder(upload) {
           payload.objs.push(store.object[object].id);
         });
         if (tiles[coord].stairUp) {
-          payload.neighbors.push(
-            store.room[map[floor + 1].tiles[coord].room].id
-          );
+          payload.neighbors.push({
+            dst_id: store.room[map[floor + 1].tiles[coord].room].id, dir: 'neighbors above'
+          });
         }
         if (tiles[coord].stairDown) {
-          payload.neighbors.push(
-            store.room[map[floor - 1].tiles[coord].room].id
-          );
+          payload.neighbors.push({
+            dst_id: store.room[map[floor - 1].tiles[coord].room].id, dir: 'neighbors below'
+          });
         }
         // Ensure neighbours aren't blocked by walls
         const [x, y] = coord.split(" ").map(i => parseInt(i));
@@ -554,23 +554,33 @@ export function useWorldBuilder(upload) {
           `${x} ${y - 1}`,
           `${x} ${y + 1}`
         ];
-        neighbors.forEach(neighbor => {
+        const dirs = [
+          'neighbors to the north',
+          'neighbors to the south',
+          'neighbors to the west',
+          'neighbors to the east'
+        ]
+        for (let index in neighbors) {
+          const direction = dirs[index];
+          const neighbor = neighbors[index];
           if (
             !Object.keys(map[floor].walls).some(
               wall => wall.includes(neighbor) && wall.includes(coord)
             )
           ) {
             if (!isEmpty(tiles[neighbor])) {
-              payload.neighbors.push(store.room[tiles[neighbor].room].id);
+              payload.neighbors.push({dst_id: store.room[tiles[neighbor].room].id, dir: direction});
             }
           }
-        });
+        }
+
         edges.push(payload)
       }
     }
     // send it to the saving format!
     store.edges = edges
-    const res = await post("world", store);
+    console.table(store)
+    const res = await post("world/", store);
     const data = await res.json();
     await Promise.all(res);
 
@@ -713,6 +723,7 @@ export function useWorldBuilder(upload) {
     editEntity,
     findOrAddEntity,
     postEdges,
-    exportWorld
+    exportWorld,
+    postWorld,
   };
 }

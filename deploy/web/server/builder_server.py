@@ -30,6 +30,7 @@ def get_handlers(db):
         (r"/builder/entities/([a-zA-Z_]+)/fields", EntityFieldsHandler, {'dbpath': db}),
         (r"/builder/interactions", InteractionHandler, {'dbpath': db}),
         (r"/builder/tables/types", TypesHandler, {'dbpath': db}),
+        (r"/builder/world/", SaveWorldHandler, {'dbpath': db}),
         (r"/builder/", MainHandler),
         (r"/builder/(.*)", StaticDataUIHandler, {'path': path_to_build}),
         (r"/(.*)", StaticDataUIHandler, {'path': path_to_build}),
@@ -149,13 +150,12 @@ class DeleteWorldHandler(BaseHandler):
             with LIGHTDatabase(self.dbpath) as db:
                 id = int(self.get_argument('id'))
                 player = self.get_argument("player", None, True)
-                # TODO: Implement this method
                 world_id = db.delete_world(world_id=id, player_id=player)
                 # Want to write the world name and ids.
                 self.write(json.dumps(world_id))
 
-class WorldHandler(BaseHandler):
-    '''Save or Load a world given the player id and world id'''
+class SaveWorldHandler(BaseHandler):
+    '''Save a world given the player id and world id'''
 
     def initialize(self, dbpath):
         self.dbpath = dbpath
@@ -166,11 +166,12 @@ class WorldHandler(BaseHandler):
         with (yield lock.acquire()):
             with LIGHTDatabase(self.dbpath) as db:
                 player = self.get_argument("player", None, True)
+
                 # Add current time to name too!
-                name = son.loads(self.get_argument('name', 'default_world', True))
-                height = int(json.loads(self.get_argument('height', 3, True)))
-                width = int(json.loads(self.get_argument('width', 3, True)))
-                num_floors = int(json.loads(self.get_argument('num_floors', 1, True)))
+                name = self.get_argument('name', 'default_world', True)
+                height = int(self.get_argument('height', 3, True))
+                width = int(self.get_argument('width', 3, True))
+                num_floors = int(self.get_argument('num_floors', 1, True))
                 edges = json.loads(self.get_argument('edges', '[]', True))
                 tiles = json.loads(self.get_argument('tiles', '{}', True))
                 rooms = json.loads(self.get_argument('rooms', '{}', True))
@@ -206,9 +207,14 @@ class WorldHandler(BaseHandler):
 
                 # Now return to the user we did all of it!
                 return world_id
-                
+
+class LoadWorldHandler(BaseHandler):
+    '''Load a world given the id'''
+    def initialize(self, dbpath):
+        self.dbpath = dbpath
+
     @tornado.web.authenticated
-    def get(self):
+    def get(self, world_id):
         with LIGHTDatabase(self.dbpath) as db:
             id = int(self.get_argument('id'))
             player = self.get_argument("player", None, True)

@@ -108,6 +108,14 @@ function WorldBuilder({ upload }) {
         }}
         className="bp3-navbar"
       >
+
+        <Button
+          onClick={state.postWorld}
+          intent="primary"
+          style={{ margin: "10px" }}
+        >
+          Save
+        </Button>
         <Button
           onClick={state.exportWorld}
           intent="primary"
