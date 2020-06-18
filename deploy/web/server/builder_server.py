@@ -62,7 +62,7 @@ class AppException(tornado.web.HTTPError):
     '''Used to return custom errors'''
     pass
 
-# StaticUIHandler serves static front end, defaulting to builder_index.html served
+# StaticUIHandler serves static front end, defaulting to builderindex.html served
 # if the file is unspecified.
 class StaticDataUIHandler(tornado.web.StaticFileHandler):
     def parse_url_path(self, url_path):

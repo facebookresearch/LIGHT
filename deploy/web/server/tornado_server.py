@@ -288,6 +288,7 @@ class LandingApplication(tornado.web.Application):
             (r"/logout", LogoutHandler),
             (r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})
         ]
+        
 class MainHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
