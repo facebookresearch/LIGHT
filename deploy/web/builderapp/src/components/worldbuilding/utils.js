@@ -480,35 +480,35 @@ export function useWorldBuilder(upload) {
     return filtered;
   };
 
-const deleteWorld = async () => {
-  const res = await post("deleteWorld", id);
-  const data = await res.json();
-  // Whatever you get back here its whatever
-}
+  const deleteWorld = async () => {
+    const res = await post("deleteWorld", id);
+    const data = await res.json();
+    // Whatever you get back here its whatever
+  }
 
-const getWorld = async () => {
-  useAPI(
-    CONFIG,
-    `/worlds/${id}`
-  )
-  // should get back json of the loaded world, need to reconstruct it too!
-}
+  const getWorld = async () => {
+    useAPI(
+      CONFIG,
+      `/worlds/${id}`
+    )
+    // should get back json of the loaded world, need to reconstruct it too!
+  }
 
-const listWorlds = async () => {
-  useAPI(
-    CONFIG,
-    `/worlds/`
-  )
-  // Should get back the json list like this
-}
+  const listWorlds = async () => {
+    useAPI(
+      CONFIG,
+      `/worlds/`
+    )
+    // Should get back the json list like this
+  }
 
   const postWorld = async () => {
-    const store = { tile: {}, room: {}, character: {}, object: {} };
+    const store = { height: dimensions.height, width: dimensions.width, floors: dimensions.floors,
+      tile: {}, room: {}, character: {}, object: {} };
     const map = filteredMap();
     // Create store of all entities being used in the world
     map.forEach(floor => {
       Object.values(floor.tiles).forEach(tile => {
-        store.tile[tile] = tile
         store.room[tile.room] = entities.room[tile.room];
         for (let index in tile.characters) {
           store.character[tile.characters[index]] =
@@ -527,6 +527,7 @@ const listWorlds = async () => {
     for (let floor = 0; floor < map.length; floor++) {
       const tiles = map[floor].tiles;
       for (let coord in tiles) {
+        store.tile[coord] = tiles[coord]
         const payload = { room: -1, chars: [], objs: [], neighbors: [] };
         payload.room = store.room[tiles[coord].room].id;
         tiles[coord].characters.forEach(character => {

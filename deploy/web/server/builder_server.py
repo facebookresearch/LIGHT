@@ -166,23 +166,45 @@ class WorldHandler(BaseHandler):
         with (yield lock.acquire()):
             with LIGHTDatabase(self.dbpath) as db:
                 player = self.get_argument("player", None, True)
-                world_info = json.loads(self.get_argument('world', '{}', True))
+                # Add current time to name too!
+                name = son.loads(self.get_argument('name', 'default_world', True))
+                height = int(json.loads(self.get_argument('height', 3, True)))
+                width = int(json.loads(self.get_argument('width', 3, True)))
+                num_floors = int(json.loads(self.get_argument('num_floors', 1, True)))
                 edges = json.loads(self.get_argument('edges', '[]', True))
-                tiles = json.loads(self.get_argument('tiles', '[]', True))
-                rooms = json.loads(self.get_argument('rooms', '[]', True))
-                objs = json.loads(self.get_argument('objs', '[]', True))
-                chars = json.loads(self.get_argument('chars', '[]', True))
-                world_id = db.create_world(**world_info)
-                tile_edges = {}
-                for tile in tiles:
-                    tile_id = db.create_tile(world_id, room_id, color, x_coordinate, y_coordinate, floor)
-                    
-                for edge in edges:
-                    edges = []
-                    edge_id = db.create_graph_edge(world_id, src_id, dst_id, type_)
-                    edges.append(edge_id)
+                tiles = json.loads(self.get_argument('tiles', '{}', True))
+                rooms = json.loads(self.get_argument('rooms', '{}', True))
+                objs = json.loads(self.get_argument('objs', '{}', True))
+                chars = json.loads(self.get_argument('chars', '{}', True))
 
-                # Now write all the tile_edges pairs!
+                # World created!
+                world_id = db.create_world(name, player, height, width, num_floors)[0]
+
+                #Now, make sure all entities are created:
+                for room in rooms:
+                    print(room) # Need to see what this format looks like
+                    # db.create_room()
+                
+                for char in chars:
+                    print(char)
+                    # db.create_character()
+                
+                for obj in objs:
+                    print(obj)
+                    # db.create_object()
+                
+                # Now, go through all the entities and make graph nodes for them, storing a map from the id to the graph id
+
+                # Make the edges!
+                for edge in edges:
+                    print(edge)
+
+                # Make the tiles!
+                for tile in tiles:
+                    print(tile)
+                    # db.create_tile()
+
+                # Now return to the user we did all of it!
                 return world_id
                 
     @tornado.web.authenticated
