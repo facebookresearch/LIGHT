@@ -24,7 +24,7 @@ you should replace it with localhost.  This is to ensure the authentication work
 
 ## Using LIGHT
 
-As of now, the only way to switch between the world creation and game is to manually change the endpoint.  You can access that game simply at `hostname:port/`, while the world creation tool is hosted at `hostname:port/builder/`.  Note, as of now the last forward slash is necessary to avoid 404 errors.  
+As of now, the only way to switch between the world creation and game is to manually change the endpoint.  You can access that game simply at `hostname:port/`, while the world creation tool is hosted at `hostname:port/builder`.
 
 If it is your first time playing, you will be asked to login with a username and password.  The username is not important, but as of now the password must be _**LetsPlay**_
 

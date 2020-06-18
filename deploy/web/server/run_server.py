@@ -42,9 +42,9 @@ def make_app(FLAGS, tornado_provider):
     worldBuilderApp = BuildApplication(get_handlers(FLAGS.data_model_db))
     landingApp = LandingApplication()
     router = RuleRouter([
-        Rule(PathMatches("/builder(.*)"), worldBuilderApp),
-        Rule(PathMatches("/game(.*)"), tornado_provider.app),
-        Rule(PathMatches("/(.*)"), landingApp),
+        Rule(PathMatches("/builder.*"), worldBuilderApp),
+        Rule(PathMatches("/game.*"), tornado_provider.app),
+        Rule(PathMatches("/.*"), landingApp),
     ])
     server = HTTPServer(router)
     server.listen(DEFAULT_PORT) # Replace with FLAGS.port??

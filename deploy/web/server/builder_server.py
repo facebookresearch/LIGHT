@@ -34,7 +34,7 @@ def get_handlers(db):
         (r"/builder/interactions", InteractionHandler, {'dbpath': db}),
         (r"/builder/tables/types", TypesHandler, {'dbpath': db}),
         (r"/builder/", MainHandler),
-        (r"/builder/(.*)", StaticDataUIHandler, {'path': path_to_build}),
+        (r"/builder(.*)", StaticDataUIHandler, {'path': path_to_build}),
         (r"/(.*)", StaticDataUIHandler, {'path': path_to_build}),
     ]
 
@@ -66,8 +66,8 @@ class AppException(tornado.web.HTTPError):
 # if the file is unspecified.
 class StaticDataUIHandler(tornado.web.StaticFileHandler):
     def parse_url_path(self, url_path):
-        if not url_path or url_path.endswith('/'):
-            url_path = url_path + 'builder_index.html'
+        if not url_path or url_path.endswith('/') or url_path == '':
+            url_path = url_path + 'builderindex.html'
         return url_path
 
 class BaseHandler(tornado.web.RequestHandler):
