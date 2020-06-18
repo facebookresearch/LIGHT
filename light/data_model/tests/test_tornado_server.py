@@ -45,8 +45,6 @@ from light.data_model.light_database import (
 from deploy.web.server.builder_server import (
     BuildApplication,
     get_handlers,
-    EntityEditHandler,
-    ViewEditWithIDHandler,
 )
 from deploy.web.server.tornado_server import (
     LandingApplication, 
