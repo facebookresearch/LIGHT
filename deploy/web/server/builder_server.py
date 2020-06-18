@@ -19,6 +19,9 @@ def get_handlers(db):
     ''' Returns handler array with required arguments '''
     here = os.path.abspath(os.path.dirname(__file__))
     path_to_build = here + "/../build/"
+    # NOTE: We choose to keep the StaticUIHandler, despite this handler never being
+    #       hit in the top level RuleRouter from run_server.py in case this application
+    #       is run standalone for some reason.
     return [
         (r"/builder/edits", EntityEditHandler, {'dbpath': db}),
         (r"/builder/edits/([0-9]+)/accept/([a-zA-Z_]+)", AcceptEditHandler, {'dbpath': db}),
@@ -31,7 +34,7 @@ def get_handlers(db):
         (r"/builder/interactions", InteractionHandler, {'dbpath': db}),
         (r"/builder/tables/types", TypesHandler, {'dbpath': db}),
         (r"/builder/", MainHandler),
-        (r"/builder/(.*)", StaticDataUIHandler, {'path': path_to_build}),
+        (r"/builder(.*)", StaticDataUIHandler, {'path': path_to_build}),
         (r"/(.*)", StaticDataUIHandler, {'path': path_to_build}),
     ]
 
@@ -59,11 +62,11 @@ class AppException(tornado.web.HTTPError):
     '''Used to return custom errors'''
     pass
 
-# StaticUIHandler serves static front end, defaulting to builder_index.html served
+# StaticUIHandler serves static front end, defaulting to builderindex.html served
 # if the file is unspecified.
 class StaticDataUIHandler(tornado.web.StaticFileHandler):
     def parse_url_path(self, url_path):
-        if not url_path or url_path.endswith('/'):
+        if not url_path or url_path.endswith('/') or url_path == '':
             url_path = url_path + 'builderindex.html'
         return url_path
 

@@ -716,7 +716,26 @@ class SpawnEvent(TriggeredEvent):
         else:
             return None
 
+class HelpEvent(NoArgumentEvent):
+    """Handles user asking for help"""
 
+    NAMES = ["help", "h"]
+
+    def execute(self, world: "World") -> List[GraphEvent]:
+        """Construct intro text and broadcast to the player"""
+        actor_name = self.actor.get_prefix_view()
+        self.__msg_txt = world.view.help_text()
+        world.broadcast_to_agents(self, [self.actor])
+        return []
+
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        if viewer == self.actor:
+            return self.__msg_txt
+        else:
+            return None
+
+            
 class HitEvent(GraphEvent):
     """Handles having one agent attack another"""
 
@@ -2769,6 +2788,7 @@ ALL_EVENTS_LIST: List[Type[GraphEvent]] = [
     GoEvent,
     UnfollowEvent,
     FollowEvent,
+    HelpEvent,
     HitEvent,
     HugEvent,
     GetObjectEvent,
