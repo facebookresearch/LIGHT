@@ -4,7 +4,7 @@ import { cloneDeep, isEmpty, merge } from "lodash";
 import equal from "fast-deep-equal";
 import { emojiIndex } from "emoji-mart";
 
-import { post } from "../../utils";
+import { post, useAPI } from "../../utils";
 import AppToaster from "../AppToaster";
 
 export const MAX_WIDTH = 10;
@@ -480,18 +480,35 @@ export function useWorldBuilder(upload) {
     return filtered;
   };
 
-  // const deleteWorld = ...
+const deleteWorld = async () => {
+  const res = await post("deleteWorld", id);
+  const data = await res.json();
+  // Whatever you get back here its whatever
+}
 
-  // const getWorld = ...
+const getWorld = async () => {
+  useAPI(
+    CONFIG,
+    `/worlds/${id}`
+  )
+  // should get back json of the loaded world, need to reconstruct it too!
+}
 
-  // const listWorlds = ...
+const listWorlds = async () => {
+  useAPI(
+    CONFIG,
+    `/worlds/`
+  )
+  // Should get back the json list like this
+}
 
   const postWorld = async () => {
-    const store = { room: {}, character: {}, object: {} };
+    const store = { tile: {}, room: {}, character: {}, object: {} };
     const map = filteredMap();
-    // Create maps of all entities being used in the world
+    // Create store of all entities being used in the world
     map.forEach(floor => {
       Object.values(floor.tiles).forEach(tile => {
+        store.tile[tile] = tile
         store.room[tile.room] = entities.room[tile.room];
         for (let index in tile.characters) {
           store.character[tile.characters[index]] =
@@ -503,34 +520,59 @@ export function useWorldBuilder(upload) {
         }
       });
     });
-    // Post all used entities to the API and store their returned ID for edges
-    const createReqs = [].concat(
-      Object.values(store.room).map(async room => {
-        const res = await post("entities/room", room);
-        const data = await res.json();
-        room.id = data[0];
-      }),
-      Object.values(store.character).map(async character => {
-        const res = await post("entities/character", character);
-        const data = await res.json();
-        character.id = data[0];
-      }),
-      Object.values(store.object).map(async object => {
-        const res = await post("entities/object", object);
-        const data = await res.json();
-        object.id = data[0];
-      })
-    );
 
-    await Promise.all(createReqs);
+    // create store of all edges in the world
+    const edges = [];
+    // Create all edge requests and post all of them
+    for (let floor = 0; floor < map.length; floor++) {
+      const tiles = map[floor].tiles;
+      for (let coord in tiles) {
+        const payload = { room: -1, chars: [], objs: [], neighbors: [] };
+        payload.room = store.room[tiles[coord].room].id;
+        tiles[coord].characters.forEach(character => {
+          payload.chars.push(store.character[character].id);
+        });
+        tiles[coord].objects.forEach(object => {
+          payload.objs.push(store.object[object].id);
+        });
+        if (tiles[coord].stairUp) {
+          payload.neighbors.push(
+            store.room[map[floor + 1].tiles[coord].room].id
+          );
+        }
+        if (tiles[coord].stairDown) {
+          payload.neighbors.push(
+            store.room[map[floor - 1].tiles[coord].room].id
+          );
+        }
+        // Ensure neighbours aren't blocked by walls
+        const [x, y] = coord.split(" ").map(i => parseInt(i));
+        const neighbors = [
+          `${x - 1} ${y}`,
+          `${x + 1} ${y}`,
+          `${x} ${y - 1}`,
+          `${x} ${y + 1}`
+        ];
+        neighbors.forEach(neighbor => {
+          if (
+            !Object.keys(map[floor].walls).some(
+              wall => wall.includes(neighbor) && wall.includes(coord)
+            )
+          ) {
+            if (!isEmpty(tiles[neighbor])) {
+              payload.neighbors.push(store.room[tiles[neighbor].room].id);
+            }
+          }
+        });
+        edges.push(payload)
+      }
+    }
+    // send it to the saving format!
+    store.edges = edges
+    const res = await post("world", store);
+    const data = await res.json();
+    await Promise.all(res);
 
-    // Next, post all the tiles
-
-    // Now, post the world
-
-    // Great!  Graph edges posted next
-
-    // Finish with posting the tile edge combos
     AppToaster.show({
       intent: Intent.SUCCESS,
       message: "World Saved!"
