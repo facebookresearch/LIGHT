@@ -765,103 +765,111 @@ class TestDatabase(unittest.TestCase):
                 'big obj', obase_id, 0, 0, 0, 0, 0, 0, 0, 'huuuge'
             )[0]
 
-            # Create edges now
-            e_id1 = test.create_graph_edge(w_id, rcontent_id1, rcontent_id2, "neighbors to the north of")[0]
-            e_id2 = test.create_graph_edge(w_id, rcontent_id1, ccontent_id1, "contains")[0]
-            e_id3 = test.create_graph_edge(w_id, rcontent_id1, ocontent_id1, "contains")[0]
+            # Create nodes
+            n_id1 = test.create_graph_node(rcontent_id1)[0]
+            n_id2 = test.create_graph_node(ccontent_id1)[0]
+            n_id3 = test.create_graph_node(ocontent_id1)[0]
+            n_id4 = test.create_graph_node(rcontent_id2)[0]
+            n_id5 = test.create_graph_node(ccontent_id2)[0]
+            n_id6 = test.create_graph_node(ocontent_id2)[0]
 
-            e_id4 = test.create_graph_edge(w_id, rcontent_id2, rcontent_id1, "neighbors to the south of")[0]
-            e_id5 = test.create_graph_edge(w_id, rcontent_id2, ccontent_id2, "contains")[0]
-            e_id6 = test.create_graph_edge(w_id, rcontent_id2, ocontent_id2, "contains")[0]
+
+            
+            # Create edges now
+            e_id1 = test.create_graph_edge(w_id, n_id1, n_id4, "neighbors to the north of")[0]
+            e_id2 = test.create_graph_edge(w_id, n_id1, n_id2, "contains")[0]
+            e_id3 = test.create_graph_edge(w_id, n_id1, n_id3, "contains")[0]
+
+            e_id4 = test.create_graph_edge(w_id, n_id4, n_id1, "neighbors to the south of")[0]
+            e_id5 = test.create_graph_edge(w_id, n_id4, n_id5, "contains")[0]
+            e_id6 = test.create_graph_edge(w_id, n_id4, n_id6, "contains")[0]
 
             # Create tiles now
-            t_id1 = test.create_tile(w_id, rcontent_id1, 3394611, 1, 1, 1)[0]
-            t_id2 = test.create_tile(w_id, rcontent_id2, 13056, 2, 1, 1)[0]
+            t_id1 = test.create_tile(w_id, n_id1, 3394611, 1, 1, 1)[0]
+            t_id2 = test.create_tile(w_id, n_id4, 13056, 2, 1, 1)[0]
 
-            # Add tiles to edges here
-            test.create_tile_edges(t_id1, t_id2, e_id1)
-            test.create_tile_edges(t_id1, t_id1, e_id2)
-            test.create_tile_edges(t_id1, t_id1, e_id3)
-            test.create_tile_edges(t_id2, t_id1, e_id4)
-            test.create_tile_edges(t_id2, t_id2, e_id5)
-            test.create_tile_edges(t_id2, t_id2, e_id6)
-
-            # Idea for loading world:  Given world id, load some dictionaries like:
-            #{w_id: 1, name: "swampy world" height: 3, width: 3,  tiles: [{t_id: 1, x_coord: 1, y_coord: 1, floor: 1, color : 1, room_id: 1},...], edges: [...], rooms:..., objs:..., chars:...}
-            self.assertEqual(test.load_world(w_id, player0),
-                {
+            self.assertCountEqual(test.load_world(w_id, player0),
+            {
                 'id': 2,
                 'name': 'swampy world',
                 'height': 3,
                 'width': 3,
                 'num_floors': 1,
                 'tiles': [{
-                    'id': 19,
-                    'room_id': 4,
+                    'id': 25,
+                    'room_node_id': 13,
                     'color': 3394611,
                     'x_coordinate': 1,
                     'y_coordinate': 1,
-                    'floor': 1
+                    'floor': 1,
+                    'room_entity_id': 4
                 }, {
-                    'id': 20,
-                    'room_id': 9,
+                    'id': 26,
+                    'room_node_id': 16,
                     'color': 13056,
                     'x_coordinate': 2,
                     'y_coordinate': 1,
-                    'floor': 1
+                    'floor': 1,
+                    'room_entity_id': 9
                 }],
                 'edges': [{
-                    'tile_id_src': 19,
-                    'tile_id_dst': 20,
-                    'edge_id': 13,
-                    'src_id': 4,
-                    'dst_id': 9,
-                    'edge_type': 'neighbors to the north of'
+                    'id': 19,
+                    'w_id': 2,
+                    'src_id': 13,
+                    'dst_id': 16,
+                    'edge_type': 'neighbors to the north of',
+                    'src_entity_id': 4,
+                    'dst_entity_id': 9
                 }, {
-                    'tile_id_src': 19,
-                    'tile_id_dst': 19,
-                    'edge_id': 14,
-                    'src_id': 4,
-                    'dst_id': 6,
-                    'edge_type': 'contains'
+                    'id': 24,
+                    'w_id': 2,
+                    'src_id': 16,
+                    'dst_id': 18,
+                    'edge_type': 'contains',
+                    'src_entity_id': 9,
+                    'dst_entity_id': 12
                 }, {
-                    'tile_id_src': 19,
-                    'tile_id_dst': 19,
-                    'edge_id': 15,
-                    'src_id': 4,
-                    'dst_id': 8,
-                    'edge_type': 'contains'
+                    'id': 23,
+                    'w_id': 2,
+                    'src_id': 16,
+                    'dst_id': 17,
+                    'edge_type': 'contains',
+                    'src_entity_id': 9,
+                    'dst_entity_id': 11
                 }, {
-                    'tile_id_src': 20,
-                    'tile_id_dst': 19,
-                    'edge_id': 16,
-                    'src_id': 9,
-                    'dst_id': 4,
-                    'edge_type': 'neighbors to the south of'
+                    'id': 21,
+                    'w_id': 2,
+                    'src_id': 13,
+                    'dst_id': 15,
+                    'edge_type': 'contains',
+                    'src_entity_id': 4,
+                    'dst_entity_id': 8
                 }, {
-                    'tile_id_src': 20,
-                    'tile_id_dst': 20,
-                    'edge_id': 17,
-                    'src_id': 9,
-                    'dst_id': 11,
-                    'edge_type': 'contains'
+                    'id': 22,
+                    'w_id': 2,
+                    'src_id': 16,
+                    'dst_id': 13,
+                    'edge_type': 'neighbors to the south of',
+                    'src_entity_id': 9,
+                    'dst_entity_id': 4
                 }, {
-                    'tile_id_src': 20,
-                    'tile_id_dst': 20,
-                    'edge_id': 18,
-                    'src_id': 9,
-                    'dst_id': 12,
-                    'edge_type': 'contains'
+                    'id': 20,
+                    'w_id': 2,
+                    'src_id': 13,
+                    'dst_id': 14,
+                    'edge_type': 'contains',
+                    'src_entity_id': 4,
+                    'dst_entity_id': 6
                 }],
-                'room': {
+                'rooms': {
                     9,
                     4
                 },
-                'character': {
+                'characters': {
                     11,
                     6
                 },
-                'object': {
+                'objects': {
                     8,
                     12
                 }

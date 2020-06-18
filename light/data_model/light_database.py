@@ -48,6 +48,8 @@ DB_GRAPH_EDGE_NEIGHBOR_S = "neighbors to the south of"
 DB_GRAPH_EDGE_NEIGHBOR_W = "neighbors to the west of"
 DB_GRAPH_EDGE_NEIGHBOR_U = "neighbors above of"
 DB_GRAPH_EDGE_NEIGHBOR_D = "neighbors below"
+DB_GRAPH_EDGE_WORN = 'worn'
+DB_GRAPH_EDGE_WIELDED = 'wielded'
 # Edges between nodes in graphs executed
 GRAPH_EDGE_TYPES = [
     DB_GRAPH_EDGE_CONTAINS,
@@ -57,6 +59,8 @@ GRAPH_EDGE_TYPES = [
     DB_GRAPH_EDGE_NEIGHBOR_W,
     DB_GRAPH_EDGE_NEIGHBOR_U,
     DB_GRAPH_EDGE_NEIGHBOR_D,
+    DB_GRAPH_EDGE_WORN,
+    DB_GRAPH_EDGE_WIELDED,
 ]
 
 # All entity types existing in the database
@@ -68,6 +72,7 @@ DB_TYPE_BASE_ROOM = 'base room'
 DB_TYPE_ROOM = 'room'
 DB_TYPE_EDGE = 'edge'
 DB_TYPE_GRAPH_EDGE = 'graph edge'
+DB_TYPE_GRAPH_NODE = 'graph node'
 DB_TYPE_TEXT_EDGE = 'text edge'
 DB_TYPE_TILE = 'tile'
 DB_TYPE_INTERACTION = 'interaction'
@@ -84,6 +89,7 @@ ENTITY_TYPES = [
     DB_TYPE_BASE_ROOM,
     DB_TYPE_ROOM,
     DB_TYPE_GRAPH_EDGE,
+    DB_TYPE_GRAPH_NODE,
     DB_TYPE_EDGE,
     DB_TYPE_TEXT_EDGE,
     DB_TYPE_TILE,
@@ -167,6 +173,7 @@ class LIGHTDatabase:
             DB_TYPE_ROOM: "rooms_table",
             DB_TYPE_EDGE: "node_content_table",
             DB_TYPE_GRAPH_EDGE: "edges_table",
+            DB_TYPE_GRAPH_NODE: "nodes_table",
             DB_TYPE_TILE: 'tile_table',
             DB_TYPE_INTERACTION: "interactions_table",
             DB_TYPE_UTTERANCE: "utterances_table",
@@ -1326,7 +1333,19 @@ class LIGHTDatabase:
                 graph_edge_types_formated
             )
         )
-
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS nodes_table (
+            id integer PRIMARY KEY NOT NULL,
+            entity_id integer NOT NULL,
+            CONSTRAINT fk_id FOREIGN KEY (id)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE,
+            CONSTRAINT fk_eid FOREIGN KEY (entity_id)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE);       
+            """
+        )
         # Graph edges table - edges in execution
         # (need src, dst, type of node - can we just have 
         # Edge North, Edge South, Edge West, Edge East, Edge Up, Edge Down, Edge contains?)
@@ -1345,10 +1364,10 @@ class LIGHTDatabase:
                 REFERENCES world_table (id)
                 ON DELETE CASCADE,
             CONSTRAINT fk_src FOREIGN KEY (src_id)
-                REFERENCES id_table (id)
+                REFERENCES nodes_table (id)
                 ON DELETE CASCADE,
             CONSTRAINT fk_dst FOREIGN KEY (dst_id)
-                REFERENCES id_table (id)
+                REFERENCES nodes_table (id)
                 ON DELETE CASCADE,
             CONSTRAINT fk_edge FOREIGN KEY (edge_type)
                 REFERENCES enum_table_graph_edge_type (type)
@@ -1362,7 +1381,7 @@ class LIGHTDatabase:
             CREATE TABLE IF NOT EXISTS tile_table (
             id integer PRIMARY KEY NOT NULL,
             world_id integer NOT NULL,
-            room_id integer NOT NULL,
+            room_node_id integer NOT NULL,
             color integer NOT NULL,
             x_coordinate integer NOT NULL,
             y_coordinate integer NOT NULL,
@@ -1373,30 +1392,12 @@ class LIGHTDatabase:
             CONSTRAINT fk_world FOREIGN KEY (world_id)
                 REFERENCES world_table (id)
                 ON DELETE CASCADE,
-            CONSTRAINT fk_room FOREIGN KEY (room_id)
-                REFERENCES rooms_table (id)
+            CONSTRAINT fk_room FOREIGN KEY (room_node_id)
+                REFERENCES nodes_table (id)
                 ON DELETE CASCADE);
             """
         )
 
-        # Need Tile Edge table?  maybe that would be helpful
-        self.c.execute(
-            """
-            CREATE TABLE IF NOT EXISTS tile_edge_table (
-            tile_id_src integer NOT NULL,
-            tile_id_dst integer NOT NULL,
-            edge_id integer NOT NULL,
-            CONSTRAINT fk_src FOREIGN KEY (tile_id_src)
-                REFERENCES tile_table (id)
-                ON DELETE CASCADE,
-            CONSTRAINT fk_dst FOREIGN KEY (tile_id_dst)
-                REFERENCES tile_table (id)
-                ON DELETE CASCADE,
-            CONSTRAINT fk_edge FOREIGN KEY (edge_id)
-                REFERENCES edges_table (id)
-                ON DELETE CASCADE);
-            """
-        )
 
     def init_conversation_tables(self):
         """
@@ -2995,39 +2996,66 @@ class LIGHTDatabase:
             (world_id,),
         )
         return self.c.fetchall()
-
-    # Should return all edges associated with the tile_id
-    def get_edges(self, tile_id):
+    def get_node(self, node_id):
         self.c.execute(
             """
-            SELECT * FROM tile_edge_table
-            WHERE tile_id_src = ?
+            SELECT * FROM nodes_table
+            WHERE id = ?
+            """,
+            (node_id,),
+        )
+        return self.c.fetchall()
+    # Gets all connected components to this tile
+    def get_edges(self, tile_id, edges):
+        self.c.execute(
+            """
+            SELECT room_node_id FROM tile_table
+            WHERE id = ?
             """,
             (tile_id,),
         )
-        return self.c.fetchall()
+        crit_node_id = self.c.fetchall()[0][0]
+        self.get_connected(crit_node_id, edges)
     
+    def get_connected(self, node_id, edges):
+        self.c.execute(
+            """
+            SELECT * FROM edges_table
+            WHERE src_id = ?
+            """,
+            (node_id,),
+        )
+        edges_connected = self.c.fetchall()
+        for e in edges_connected:
+            old_len = len(edges)
+            edges.add(e)
+            if (old_len != len(edges)):
+                self.get_connected(e['dst_id'], edges)
+        
     def load_world(self, world_id, player_id):
         world = self.get_world(world_id, player_id)[0]
         world_dict = {x: world[x] for x in world.keys() if x != 'owner_id'}
         tiles = self.get_tiles(world_id)
         tile_list = [{x: tile[x] for x in tile.keys() if x != 'world_id'} for tile in tiles]
-        edges = []
+        edges = set()
         objects = set()
         characters = set()
         rooms = set()
-        entities_dict = {'room': rooms, 'character': characters, 'object': objects,}
-        for tile in tiles:
-            edges += self.get_edges(tile['id'])
+        entities_dict = {'rooms': rooms, 'characters': characters, 'objects': objects,}
+        for tile in tile_list:
+            self.get_edges(tile['id'], edges)
+            tile['room_entity_id'] = self.get_node(tile['room_node_id'])[0]['entity_id']
         edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
+        # now get all entities
         for edge in edge_list:
-            info = self.get_edge(world_id, edge['edge_id'])[0]
-            info_dict = {x: info[x] for x in info.keys()}
-            edge.update(info_dict)
-            type_src = self.get_id(info_dict['src_id'])[0]['type']
-            type_dst = self.get_id(info_dict['dst_id'])[0]['type']
-            entities_dict[type_src].add(info_dict['src_id'])
-            entities_dict[type_dst].add(info_dict['dst_id'])
+            src = self.get_node(edge['src_id'])[0]
+            dst = self.get_node(edge['dst_id'])[0]
+            edge['src_entity_id'] = src['entity_id']
+            edge['dst_entity_id'] = dst['entity_id']
+            type_src = self.get_id(src['entity_id'])[0]['type'] + 's'
+            type_dst = self.get_id(dst['entity_id'])[0]['type'] + 's'
+            entities_dict[type_src].add(src['entity_id'])
+            entities_dict[type_dst].add(dst['entity_id'])
         entities_dict_list = {x : list(entities_dict[x]) for x in entities_dict.keys()}
         world_dict['tiles'] = tile_list
         world_dict['edges'] = edge_list
@@ -3039,7 +3067,7 @@ class LIGHTDatabase:
         id = self.create_id(DB_TYPE_TILE, entry_attributes)
         self.c.execute(
             """
-            INSERT or IGNORE INTO tile_table(id, world_id, room_id,
+            INSERT or IGNORE INTO tile_table(id, world_id, room_node_id,
             color, x_coordinate, y_coordinate, floor)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
@@ -3058,10 +3086,36 @@ class LIGHTDatabase:
             self.delete_id(id)
             self.c.execute(
                 """
-                SELECT id from tile_table WHERE world_id = ? AND room_id = ? \
+                SELECT id from tile_table WHERE world_id = ? AND room_node_id = ? \
                 AND color = ? AND x_coordinate = ? AND y_coordinate = ? AND floor = ?
                 """,
                 (world_id, room_id, color, x_coordinate, y_coordinate, floor),
+            )
+            result = self.c.fetchall()
+            assert len(result) == 1
+            id = int(result[0][0])
+        return (id, inserted)
+
+    def create_graph_node(self, entity_id, entry_attributes={}):
+        id = self.create_id(DB_TYPE_GRAPH_NODE, entry_attributes)
+        self.c.execute(
+            """
+            INSERT or IGNORE INTO nodes_table(id, entity_id)
+            VALUES (?, ?)
+            """,
+            (
+                id,
+                entity_id,
+            ),
+        )
+        inserted = bool(self.c.rowcount)
+        if not inserted:
+            self.delete_id(id)
+            self.c.execute(
+                """
+                SELECT id from nodes_table WHERE entity_id = ?
+                """,
+                (entity_id,),
             )
             result = self.c.fetchall()
             assert len(result) == 1
@@ -3097,19 +3151,6 @@ class LIGHTDatabase:
             assert len(result) == 1
             id = int(result[0][0])
         return (id, inserted)
-
-    def create_tile_edges(self, tile_id_src, tile_id_dst, edge_id):
-        self.c.execute(
-            """
-            INSERT or IGNORE INTO tile_edge_table(tile_id_src, tile_id_dst, edge_id)
-            VALUES (?, ?, ?)
-            """,
-            (
-                tile_id_src,
-                tile_id_dst,
-                edge_id,
-            ),
-        )
 
     def create_world(
             self,
