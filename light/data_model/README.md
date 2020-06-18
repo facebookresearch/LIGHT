@@ -24,15 +24,6 @@ with LIGHTDatabase('database.db') as db:
         db.add_conversation_data('conversation_data.pickle', disable_TQDM=True)
 ```
 
-## Starting the server
-Use command line argument to pass in the database path
-
-#### Example usage
-```bash
-$ python parlai_internal/projects/light/v1/data_model/server.py database.db
-Server is starting at localhost:80...
-```
-
 ## APIs
 - **<code>GET</code> edits**
 	- URL parameters
