@@ -78,7 +78,7 @@ class LIGHTBotOverworld(World):
         self.agent.start_time = time.time()  # starting time for timing out session
         self.seen_intro = False
 
-        self.service_strategy: LIGHTChatStrategy = opt["service_strategy"]
+        self.service_strategy = opt["service_strategy"]
 
         self._log('LIGHTBotOverworld initialization complete...')
         self.table_prefix = 'lightbot'
@@ -343,7 +343,7 @@ class LIGHTBotOnboardWorld(OnboardWorld):
         self.episodeDone = False
         self.opt = opt
 
-        self.service_strategy: LIGHTChatStrategy = opt["service_strategy"]
+        self.service_strategy = opt["service_strategy"]
 
         self._log('LIGHTBotOnboardWorld initialization complete...')
 

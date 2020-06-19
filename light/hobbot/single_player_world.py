@@ -812,6 +812,7 @@ class LIGHTSinglePlayerWorld(World):
                     f'WARNING! World does not have attribute {k}. Not setting.'
                 )
 
+        builder = self.opt["graph_builder"]
         self.graph, self.world = builder.get_graph_from_quest(self.quest)
         self.graph = OOGraph.from_json(self.graph_json)
         self.world.oo_graph = self.graph

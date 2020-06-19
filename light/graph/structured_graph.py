@@ -136,7 +136,7 @@ class OOGraph(object):
     def _assert_no_deleted_nodes_remains(self):
         '''Ensure any node that has been deleted doesn't exist in the graph'''
         for node_id in self._deleted_nodes:
-            assert node_id not in self.all_nodes, f'deleted node {node} still in all_nodes'
+            assert node_id not in self.all_nodes, f'deleted node {node_id} still in all_nodes'
 
     def _assert_all_nodes_valid(self):
         '''Ensure every node tracked in this graph is valid'''
