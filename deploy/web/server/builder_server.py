@@ -31,6 +31,8 @@ def get_handlers(db):
         (r"/builder/interactions", InteractionHandler, {'dbpath': db}),
         (r"/builder/tables/types", TypesHandler, {'dbpath': db}),
         (r"/builder/world/", SaveWorldHandler, {'dbpath': db}),
+        (r"/builder/world/([0-9]+)", LoadWorldHandler, {'dbpath': db}),
+        (r"/builder/worlds/", ListWorldsHandler, {'dbpath': db}),
         (r"/builder/", MainHandler),
         (r"/builder/(.*)", StaticDataUIHandler, {'path': path_to_build}),
         (r"/(.*)", StaticDataUIHandler, {'path': path_to_build}),
@@ -133,8 +135,10 @@ class ListWorldsHandler(BaseHandler):
     def get(self):
         with LIGHTDatabase(self.dbpath) as db:
             # This should be a player id from db
-            player = self.get_argument("player", None, True)
+            player = self.get_argument("player", 31106, True)
             worlds = db.view_worlds(player_id=player)
+            print("In here!!")
+            print(worlds)
             self.write(json.dumps(worlds))
 
 class DeleteWorldHandler(BaseHandler):
@@ -165,7 +169,7 @@ class SaveWorldHandler(BaseHandler):
     def post(self):
         with (yield lock.acquire()):
             with LIGHTDatabase(self.dbpath) as db:
-                player = self.get_argument("player", None, True)
+                player = int(self.get_argument("player", 31106, True))
 
                 # Add current time to name too!
                 name = self.get_argument('name', 'default_world', True)
@@ -173,40 +177,61 @@ class SaveWorldHandler(BaseHandler):
                 width = int(self.get_argument('width', 3, True))
                 num_floors = int(self.get_argument('num_floors', 1, True))
                 edges = json.loads(self.get_argument('edges', '[]', True))
-                tiles = json.loads(self.get_argument('tiles', '{}', True))
-                rooms = json.loads(self.get_argument('rooms', '{}', True))
-                objs = json.loads(self.get_argument('objs', '{}', True))
-                chars = json.loads(self.get_argument('chars', '{}', True))
+                tiles = json.loads(self.get_argument('tile', '[]', True))
+                rooms = json.loads(self.get_argument('room', '[]', True))
+                objs = json.loads(self.get_argument('object', '[]', True))
+                chars = json.loads(self.get_argument('character', '[]', True))
 
                 # World created!
                 world_id = db.create_world(name, player, height, width, num_floors)[0]
 
                 #Now, make sure all entities are created:
+                id_to_dbid = {}
                 for room in rooms:
-                    print(room) # Need to see what this format looks like
-                    # db.create_room()
-                
+                    room_obj = rooms[room]
+                    room_id = db.create_room(room_obj['name'], room_obj['base_id'], room_obj['description'], room_obj['backstory'])
+                    id_to_dbid[room] = room_id[0]
+
                 for char in chars:
-                    print(char)
-                    # db.create_character()
+                    char_obj = chars[char]
+                    char_id = db.create_character(char_obj['name'], char_obj['base_id'], char_obj['persona'], char_obj['physical_description'],
+                        name_prefix=char_obj['name_prefix'], is_plural=char_obj['is_plural'], char_type=char_obj['char_type'],
+                    )
+                    id_to_dbid[char] = char_id[0]
                 
                 for obj in objs:
-                    print(obj)
-                    # db.create_object()
-                
+                    obj_obj = objs[obj]
+                    obj_id = db.create_object(obj_obj['name'], obj_obj['base_id'], obj_obj['is_container'], obj_obj['is_drink'],
+                        obj_obj['is_food'], obj_obj['is_gettable'], obj_obj['is_surface'], obj_obj['is_wearable'], obj_obj['is_weapon'],
+                        obj_obj['physical_description'], name_prefix=obj_obj['name_prefix'], is_plural=obj_obj['is_plural'],
+                    )
+                    id_to_dbid[obj] = obj_id[0]
+
                 # Now, go through all the entities and make graph nodes for them, storing a map from the id to the graph id
+                dbid_to_nodeid = {}
+                for dbid in id_to_dbid.values():
+                    node_id = db.create_graph_node(dbid)
+                    dbid_to_nodeid[dbid] = node_id[0]
 
                 # Make the edges!
                 for edge in edges:
-                    print(edge)
+                    src_node = dbid_to_nodeid[edge['room']]
+                    for char in edge['chars']:
+                        db.create_graph_edge(world_id, src_node, dbid_to_nodeid[char], 'contains')
+                    for obj in edge['objs']:
+                        db.create_graph_edge(world_id, src_node, dbid_to_nodeid[obj], 'contains')
+                    for neigh in edge['neighbors']:
+                        dst_node = dbid_to_nodeid[neigh['dst_id']]
+                        db.create_graph_edge(world_id, src_node, dst_node, neigh['dir'])
 
                 # Make the tiles!
                 for tile in tiles:
-                    print(tile)
-                    # db.create_tile()
+                    location = tile.split()
+                    curr_tile = tiles[tile]
+                    db.create_tile(world_id, dbid_to_nodeid[id_to_dbid[str(curr_tile['room'])]], curr_tile['color'], int(location[0]), int(location[1]), int(location[2]))
 
                 # Now return to the user we did all of it!
-                return world_id
+                self.write(json.dumps(world_id))
 
 class LoadWorldHandler(BaseHandler):
     '''Load a world given the id'''
@@ -216,9 +241,8 @@ class LoadWorldHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, world_id):
         with LIGHTDatabase(self.dbpath) as db:
-            id = int(self.get_argument('id'))
-            player = self.get_argument("player", None, True)
-            world = db.load_world(id, player)
+            player = self.get_argument("player", 31106, True)
+            world = db.load_world(world_id, player)
             self.write(json.dumps(world))
 
  #-------------------------------------------------------------#

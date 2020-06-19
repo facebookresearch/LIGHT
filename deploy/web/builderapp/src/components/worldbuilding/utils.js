@@ -3,7 +3,7 @@ import { Colors, Intent } from "@blueprintjs/core";
 import { cloneDeep, isEmpty, merge } from "lodash";
 import equal from "fast-deep-equal";
 import { emojiIndex } from "emoji-mart";
-
+import CONFIG from "../../config";
 import { post, useAPI } from "../../utils";
 import AppToaster from "../AppToaster";
 
@@ -114,6 +114,30 @@ export function invertColor(hex) {
   // pick black/white based on intensity
   return r * 0.299 + g * 0.587 + b * 0.114 > 150 ? "#182026" : "#F5F8FA";
 }
+
+export async function ListWorlds() {
+  const res = await fetch(`${CONFIG.host}:${CONFIG.port}/builder/worlds/`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    }});
+  const data = await res.json()
+  console.log(data)
+  return data;
+}
+
+export async function getWorld(id){
+  // should get back json of the loaded world, need to reconstruct it too!
+  const res = await fetch(`${CONFIG.host}:${CONFIG.port}/builder/world/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    }});
+  const data = await res.json()
+  console.log(data)
+  return data;
+}
+
 
 export function findEmoji(name) {
   let results = emojiIndex.search(name);
@@ -486,21 +510,7 @@ export function useWorldBuilder(upload) {
   //   // Whatever you get back here its whatever
   // }
 
-  // const getWorld = async () => {
-  //   useAPI(
-  //     CONFIG,
-  //     `/worlds/${id}`
-  //   )
-  //   // should get back json of the loaded world, need to reconstruct it too!
-  // }
 
-  // const listWorlds = async () => {
-  //   useAPI(
-  //     CONFIG,
-  //     `/worlds/`
-  //   )
-  //   // Should get back the json list like this
-  // }
 
   const postWorld = async () => {
     const store = { height: dimensions.height, width: dimensions.width, floors: dimensions.floors,
@@ -582,11 +592,10 @@ export function useWorldBuilder(upload) {
     console.table(store)
     const res = await post("world/", store);
     const data = await res.json();
-    await Promise.all(res);
 
     AppToaster.show({
       intent: Intent.SUCCESS,
-      message: "World Saved!"
+      message: "World Saved! "
     });   
   }
 

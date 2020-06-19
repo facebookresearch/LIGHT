@@ -42,11 +42,11 @@ EDGE_TYPES = [
 ]
 
 DB_GRAPH_EDGE_CONTAINS = 'contains'
-DB_GRAPH_EDGE_NEIGHBOR_N = "neighbors to the north of"
-DB_GRAPH_EDGE_NEIGHBOR_E = "neighbors to the east of"
-DB_GRAPH_EDGE_NEIGHBOR_S = "neighbors to the south of"
-DB_GRAPH_EDGE_NEIGHBOR_W = "neighbors to the west of"
-DB_GRAPH_EDGE_NEIGHBOR_U = "neighbors above of"
+DB_GRAPH_EDGE_NEIGHBOR_N = "neighbors to the north"
+DB_GRAPH_EDGE_NEIGHBOR_E = "neighbors to the east"
+DB_GRAPH_EDGE_NEIGHBOR_S = "neighbors to the south"
+DB_GRAPH_EDGE_NEIGHBOR_W = "neighbors to the west"
+DB_GRAPH_EDGE_NEIGHBOR_U = "neighbors above"
 DB_GRAPH_EDGE_NEIGHBOR_D = "neighbors below"
 DB_GRAPH_EDGE_WORN = 'worn'
 DB_GRAPH_EDGE_WIELDED = 'wielded'
