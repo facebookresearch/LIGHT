@@ -468,6 +468,28 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         g = OOGraph.from_json(graph_json)
         world = World(self.opt, self)
         world.oo_graph = g
+
+        base_room = list(g.rooms.values())[0]
+        db_id = base_room.db_id
+        if base_room.db_id is None:
+            neighbors = [self.get_random_room(), self.get_random_room()]
+        else:
+            neighbors = self.get_neighbor_rooms(base_room.db_id)
+        for neighbor_room in neighbors:
+            g.add_room(
+                neighbor_room.setting,
+                {
+                    'room': True,
+                    'desc': neighbor_room.description,
+                    'extra_desc': neighbor_room.background,
+                    'size': 2000,  # TODO turk room sizes
+                    'contain_size': 2000,  # TODO turk room sizes
+                    'name_prefix': "the",
+                    'surface_type': "in",
+                    'classes': {'room'},
+                },
+                db_id=neighbor_room.db_id,
+            )
         return g, world
 
     def get_constrained_graph(self, location=None, player=None):

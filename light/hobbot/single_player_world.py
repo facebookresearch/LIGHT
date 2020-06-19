@@ -437,11 +437,11 @@ class LIGHTSinglePlayerWorld(World):
         if self.quest is not None:
             self.graph, self.world = builder.get_graph_from_quest(self.quest)
             human_player_name = ' '.join(self.quest['data']['character'].split(' ')[1:])
-        elif agent_data.get('player'):
-            player = agent_data.get('player')
-            location = agent_data.get('location')
+        elif agent_data.get('persona'):
+            player = agent_data.get('persona')
+            location = agent_data.get('setting')
             self.graph, self.world = builder.get_constrained_graph(location, player)
-            human_player_name = player.split(',')[0]
+            human_player_name = player.split('. ')[0]
         else:
             self.graph, self.world = builder.get_graph()
         self.graph_json = self.graph.to_json() # TODO do this after every action
@@ -474,7 +474,7 @@ class LIGHTSinglePlayerWorld(World):
             'db_id': bot_player.db_id,
         }
         
-        if agent_data.get('player') is None:
+        if agent_data.get('persona') is None:
             self.send_persona()  # TODO update call
 
         self._log('Human persona:\n{}'.format(self.human_player_details))
@@ -515,6 +515,7 @@ class LIGHTSinglePlayerWorld(World):
             look_event = LookEvent(character)
             look_event.execute(self.world)
             room_desc = look_event.view_as(character)
+            room_desc += f"You are {self.world.view.get_inventory_text_for(character.node_id)}"
             self.observe_game_msg(room_desc)
 
         # Send the quest
@@ -522,8 +523,11 @@ class LIGHTSinglePlayerWorld(World):
             self.quest_motivation = self.quest['data']['short_motivation']
             if random.random() > 0.05:
                 self.quest_motivation = self.quest['data']['mid_motivation']
+            self.acting_persona_obs += self.quest_motivation
             self.quest_goal = self.quest['data']['goal']
             self.human_player_details['motivation'] = self.quest_motivation
+            self.human_player_details['goal'] = self.quest_goal
+            self.location_details['quest_file'] = self.quest["filename"]
             self.send_quest()
 
     def setup_next_game(self):
@@ -565,10 +569,10 @@ class LIGHTSinglePlayerWorld(World):
         )
         choice = choice['text']
         if choice == loc1_option:
-            self.agent.data['setting'] = f"{loc1.name}. {loc1.description}"
+            self.agent.data['setting'] = f"{loc1.name}. {loc1.desc}"
             self.agent.data['persona'] = curr_persona
         elif choice == loc2_option:
-            self.agent.data['setting'] = f"{loc2.name}. {loc2.description}"
+            self.agent.data['setting'] = f"{loc2.name}. {loc2.desc}"
             self.agent.data['persona'] = curr_persona
         elif choice == new_partner_option:
             self.agent.data['setting'] = (
@@ -778,6 +782,7 @@ class LIGHTSinglePlayerWorld(World):
             'dialogue': dialog,
             'flagged_messages': check_empty(self.flagged_messages, joiner='\t')
         }
+        print(json.dumps(log_data))
 
         self._log('Logging data: {}'.format(log_data))
         return log_data
@@ -952,7 +957,7 @@ class LIGHTSinglePlayerWorld(World):
             )
             self.score += 5
         
-        self.dialogs.append(f"Human Act: {choice['text']}")
+        self.dialogs.append(f"Human Act: {chosen_act.to_canonical_form()}")
         chosen_act.execute(self.world)
         self.observe_game_msg(chosen_act.view_as(self.player_node))
         self.bot_action_observe = chosen_act.view_as(self.bot_node)
