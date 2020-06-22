@@ -295,8 +295,8 @@ class MainHandler(BaseHandler):
         
 class LoginHandler(BaseHandler):
     def initialize(self, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
-            self.hostname = hostname
-            self.password = password
+        self.hostname = hostname
+        self.password = password
 
     def get(self):
         self.render(here + "/login.html", next=self.get_argument("next", u"/"))
