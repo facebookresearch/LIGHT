@@ -1,11 +1,8 @@
-import classNames from "classnames";
 import React from "react";
 import {
   NumericInput,
-  Classes,
   ControlGroup,
   FormGroup,
-  Overlay,
   Tooltip,
   Position,
   Icon,
@@ -36,15 +33,9 @@ function WorldBuilderPage({ location }) {
   );
 }
 
-// TODO:  Add save, load, delete, list buttons
 function WorldBuilder({ upload }) {
   const state = useWorldBuilder(upload);
   const [advanced, setAdvanced] = React.useState(false);
-  const [isOverlayOpen, toggleOverlay] = React.useState(false);
-  const classes = classNames(
-    Classes.CARD,
-    Classes.ELEVATION_4,
-  );
   return (
     <>
       <FormGroup
@@ -117,7 +108,7 @@ function WorldBuilder({ upload }) {
         className="bp3-navbar"
       >
         <Button
-          onClick={() => toggleOverlay(!isOverlayOpen)} 
+          onClick={ListWorlds}
           intent="primary"
           style={{ margin: "10px" }}
         >

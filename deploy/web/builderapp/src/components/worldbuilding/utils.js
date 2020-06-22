@@ -1,5 +1,6 @@
 import React from "react";
-import { Button, Colors, Intent } from "@blueprintjs/core";
+import classNames from "classnames";
+import { Button, Classes, Colors, Intent, Overlay } from "@blueprintjs/core";
 import { cloneDeep, isEmpty, merge } from "lodash";
 import equal from "fast-deep-equal";
 import { emojiIndex } from "emoji-mart";
@@ -121,17 +122,37 @@ const deleteWorld = async (id) => {
   console.log(data)
 }
 
-export async function ListWorlds() {
-  const res = await fetch(`${CONFIG.host}:${CONFIG.port}/builder/worlds/`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    }});
-  const data = await res.json()
-  console.log(data)
+export const ListWorlds = () => {
+  const { loading, result, reload } = useAPI(
+    CONFIG,
+    `/worlds/`
+  );
+  const data = result.json();
+  const [isOverlayOpen, toggleOverlay] = React.useState(true);
+  const classes = classNames(
+    Classes.CARD,
+    Classes.ELEVATION_4,
+  );
+
+  console.log(data);
   return (
     <>
-      <table
+      <div>
+        <Overlay isOpen={isOverlayOpen} onClose={() => toggleOverlay(!isOverlayOpen)} >
+          <div className={classes}>
+            <p>This is a placeholder</p>
+            <Button intent={Intent.DANGER} onClick={() => toggleOverlay(!isOverlayOpen)} style={{ margin: "10px" }}>
+              Close
+            </Button>
+          </div>
+        </Overlay>
+      </div>
+    </>
+  );
+};
+
+
+{/* <table
         data-testid="world-review"
         style={{ width: "100%" }}
         className="bp3-html-table bp3-html-table-condensed bp3-interactive"
@@ -181,10 +202,7 @@ export async function ListWorlds() {
               </React.Fragment>
             ))}
         </tbody>
-      </table>
-    </>
-  );
-}
+      </table> */}
 
 const getWorld = async (id) => {
   // should get back json of the loaded world, need to reconstruct it too!
