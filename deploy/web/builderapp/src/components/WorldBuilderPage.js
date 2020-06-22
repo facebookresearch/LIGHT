@@ -47,28 +47,6 @@ function WorldBuilder({ upload }) {
   );
   return (
     <>
-    <Overlay onOpening={() => ListWorlds()} isOpen={isOverlayOpen} onClose={() => toggleOverlay(!isOverlayOpen)} hasBackdrop={true} autoFocus={true} usePortal={true}>
-      <div className={classes}>
-          <p>
-              This is a simple container with some inline styles to position it on the screen. Its CSS
-              transitions are customized for this example only to demonstrate how easily custom
-              transitions can be implemented.
-          </p>
-          <p>
-              Click the "Focus button" below to transfer focus to the "Show overlay" trigger button
-              outside of this overlay. If persistent focus is enabled, focus will be constrained to the
-              overlay. Use the <b>tab</b> key to move to the next focusable element to illustrate
-              this effect.
-          </p>
-          <p>
-              Click the "Make me scroll" button below to make this overlay's content really tall, which
-              will make the overlay's container (but not the page) scrollable
-          </p>
-          <Button onClick={() => toggleOverlay(!isOverlayOpen)} style={{ margin: "" }}>
-              Close
-          </Button>
-        </div>
-      </Overlay>
       <FormGroup
         inline
         label="World Dimensions"

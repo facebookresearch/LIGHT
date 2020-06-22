@@ -1,5 +1,5 @@
 import React from "react";
-import { Colors, Intent } from "@blueprintjs/core";
+import { Button, Colors, Intent } from "@blueprintjs/core";
 import { cloneDeep, isEmpty, merge } from "lodash";
 import equal from "fast-deep-equal";
 import { emojiIndex } from "emoji-mart";
@@ -115,6 +115,12 @@ export function invertColor(hex) {
   return r * 0.299 + g * 0.587 + b * 0.114 > 150 ? "#182026" : "#F5F8FA";
 }
 
+const deleteWorld = async (id) => {
+  const res = await post("deleteWorld", id);
+  const data = await res.json();
+  console.log(data)
+}
+
 export async function ListWorlds() {
   const res = await fetch(`${CONFIG.host}:${CONFIG.port}/builder/worlds/`, {
     method: "GET",
@@ -123,10 +129,64 @@ export async function ListWorlds() {
     }});
   const data = await res.json()
   console.log(data)
-  return data;
+  return (
+    <>
+      <table
+        data-testid="world-review"
+        style={{ width: "100%" }}
+        className="bp3-html-table bp3-html-table-condensed bp3-interactive"
+      >
+        <thead>
+          <tr>
+            <th>World ID</th>
+            <th>World Name</th>
+            <th>Load</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((id, name) => (
+            <React.Fragment key={id}>
+              <tr
+                data-testid="tr-review"
+                style={{
+                  background: undefined
+                }}
+              >
+                <td>{id}</td>
+                <td>
+                  <strong>{name}</strong>
+                </td>
+                <td>
+                  <Button
+                    intent={Intent.SUCCESS}
+                    type="submit"
+                    onClick={() => deleteWorld(id)}
+                    style={{ marginLeft: "15px" }}
+                  >
+                    Load
+                  </Button>
+                </td>
+                <td>
+                  <Button
+                    intent={Intent.DANGER}
+                    type="submit"
+                    onClick={() => getWorld(id)}
+                    style={{ marginLeft: "15px" }}
+                  >
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+              </React.Fragment>
+            ))}
+        </tbody>
+      </table>
+    </>
+  );
 }
 
-export async function getWorld(id){
+const getWorld = async (id) => {
   // should get back json of the loaded world, need to reconstruct it too!
   const res = await fetch(`${CONFIG.host}:${CONFIG.port}/builder/world/${id}`, {
     method: "GET",
@@ -504,11 +564,6 @@ export function useWorldBuilder(upload) {
     return filtered;
   };
 
-  // const deleteWorld = async () => {
-  //   const res = await post("deleteWorld");
-  //   const data = await res.json();
-  //   // Whatever you get back here its whatever
-  // }
 
 
 
