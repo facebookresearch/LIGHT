@@ -16,7 +16,8 @@ import LoadingScreen from "./LoadingScreen";
 
 import { setCaretPosition } from "./utils";
 
-const port = 35496;
+import CONFIG from "./config";
+
 const createWebSocketUrlFromBrowserUrl = url => {
   const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
   const optionalServerHost = new URL(url).searchParams.get("server");
@@ -24,12 +25,12 @@ const createWebSocketUrlFromBrowserUrl = url => {
     console.log("Using user-provided server hostname:", optionalServerHost);
   }
   const websocketURL =
-    wsProtocol + "://" + (optionalServerHost || url.hostname) + ":" + port + "/game/socket";
+    wsProtocol + "://" + (optionalServerHost || CONFIG.hostname) + ":" + CONFIG.port + "/game/socket";
   return websocketURL;
 };
 
 const getDataModelAddress = () => {
-  return new URL(window.location).searchParams.get("data-model");
+  return new URL(window.location).searchParams.get("builder");
 };
 
 // TODO: consider showing different agent's dialogues in

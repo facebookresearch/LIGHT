@@ -10,8 +10,8 @@ from tornado import locks
 from tornado import gen
 from light.data_model.light_database import LIGHTDatabase
 
-HOSTNAME = 'localhost'
-PORT = 35495 
+DEFAULT_HOSTNAME = 'localhost'
+DEFAULT_PORT = 35495 
 lock = locks.Lock()
 
 
@@ -428,8 +428,8 @@ class EdgesHandler(BaseHandler):
 def main():
     assert sys.argv[1][-3:] == '.db', 'Please enter a database path'
     app = BuildApplication(get_handlers(sys.argv[1]))
-    app.listen(PORT)
-    print(f'You can connect to http://{HOSTNAME}:{PORT}/builder')
+    app.listen(DEFAULT_PORT)
+    print(f'You can connect to http://{DEFAULT_HOSTNAME}:{DEFAULT_PORT}/builder')
     IOLoop.instance().start()
 
 
