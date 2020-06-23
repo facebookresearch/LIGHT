@@ -32,6 +32,7 @@ def get_handlers(db):
         (r"/builder/tables/types", TypesHandler, {'dbpath': db}),
         (r"/builder/world/", SaveWorldHandler, {'dbpath': db}),
         (r"/builder/world/([0-9]+)", LoadWorldHandler, {'dbpath': db}),
+        (r"/builder/world/delete/([0-9]+)", DeleteWorldHandler, {'dbpath': db}),
         (r"/builder/worlds/", ListWorldsHandler, {'dbpath': db}),
         (r"/builder/", MainHandler),
         (r"/builder/(.*)", StaticDataUIHandler, {'path': path_to_build}),
@@ -149,11 +150,10 @@ class DeleteWorldHandler(BaseHandler):
     
     @gen.coroutine
     @tornado.web.authenticated
-    def post(self):
+    def post(self, id):
         with (yield lock.acquire()):
             with LIGHTDatabase(self.dbpath) as db:
-                id = int(self.get_argument('id'))
-                player = self.get_argument("player", None, True)
+                player = self.get_argument("player", 31106, True)
                 world_id = db.delete_world(world_id=id, player_id=player)
                 # Want to write the world name and ids.
                 self.write(json.dumps(world_id))
@@ -242,8 +242,10 @@ class LoadWorldHandler(BaseHandler):
     def get(self, world_id):
         with LIGHTDatabase(self.dbpath) as db:
             player = self.get_argument("player", 31106, True)
+            print("Starting to load things")
             world = db.load_world(world_id, player)
             self.write(json.dumps(world))
+            print("Finally done - that took way to long!")
 
  #-------------------------------------------------------------#
 

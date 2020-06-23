@@ -862,18 +862,18 @@ class TestDatabase(unittest.TestCase):
                     'src_entity_id': 4,
                     'dst_entity_id': 6
                 }],
-                'rooms': {
+                'rooms': [
                     9,
                     4
-                },
-                'characters': {
+                ],
+                'characters': [
                     11,
                     6
-                },
-                'objects': {
+                ],
+                'objects': [
                     8,
                     12
-                }
+                ]
             })
 
 #---------------------------------------------------#

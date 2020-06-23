@@ -1,6 +1,10 @@
 import React from "react";
+import classNames from "classnames";
 import {
   NumericInput,
+  Classes,
+  Intent, 
+  Overlay,
   ControlGroup,
   FormGroup,
   Tooltip,
@@ -11,12 +15,12 @@ import {
 } from "@blueprintjs/core";
 
 import {
-  ListWorlds,
   useWorldBuilder,
   MAX_HEIGHT,
   MAX_WIDTH,
   MAX_FLOORS
 } from "./worldbuilding/utils";
+import ListWorlds from "./WorldManager";
 import Grid from "./worldbuilding/Grid";
 import FloorSelector from "./worldbuilding/FloorSelector";
 
@@ -36,8 +40,24 @@ function WorldBuilderPage({ location }) {
 function WorldBuilder({ upload }) {
   const state = useWorldBuilder(upload);
   const [advanced, setAdvanced] = React.useState(false);
+  const [isOverlayOpen, toggleOverlay] = React.useState(false);
+  const classes = classNames(
+    Classes.CARD,
+    Classes.ELEVATION_4,
+  );
+
   return (
     <>
+      <div>
+        <Overlay isOpen={isOverlayOpen} onClose={() => toggleOverlay(!isOverlayOpen)} >
+          <div className={classes}>
+            < ListWorlds isOpen={isOverlayOpen} state={state} toggleOverlay={toggleOverlay}/>
+            <Button intent={Intent.DANGER} onClick={() => toggleOverlay(!isOverlayOpen)} style={{ margin: "10px" }}>
+              Close
+            </Button>
+          </div>
+        </Overlay>
+      </div>
       <FormGroup
         inline
         label="World Dimensions"
@@ -108,7 +128,7 @@ function WorldBuilder({ upload }) {
         className="bp3-navbar"
       >
         <Button
-          onClick={ListWorlds}
+          onClick={() => toggleOverlay(!isOverlayOpen)}
           intent="primary"
           style={{ margin: "10px" }}
         >

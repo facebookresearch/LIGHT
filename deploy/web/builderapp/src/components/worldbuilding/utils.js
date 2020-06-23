@@ -1,6 +1,5 @@
 import React from "react";
-import classNames from "classnames";
-import { Button, Classes, Colors, Intent, Overlay } from "@blueprintjs/core";
+import {Colors, Intent, } from "@blueprintjs/core";
 import { cloneDeep, isEmpty, merge } from "lodash";
 import equal from "fast-deep-equal";
 import { emojiIndex } from "emoji-mart";
@@ -116,105 +115,6 @@ export function invertColor(hex) {
   return r * 0.299 + g * 0.587 + b * 0.114 > 150 ? "#182026" : "#F5F8FA";
 }
 
-const deleteWorld = async (id) => {
-  const res = await post("deleteWorld", id);
-  const data = await res.json();
-  console.log(data)
-}
-
-export const ListWorlds = () => {
-  const { loading, result, reload } = useAPI(
-    CONFIG,
-    `/worlds/`
-  );
-  const data = result.json();
-  const [isOverlayOpen, toggleOverlay] = React.useState(true);
-  const classes = classNames(
-    Classes.CARD,
-    Classes.ELEVATION_4,
-  );
-
-  console.log(data);
-  return (
-    <>
-      <div>
-        <Overlay isOpen={isOverlayOpen} onClose={() => toggleOverlay(!isOverlayOpen)} >
-          <div className={classes}>
-            <p>This is a placeholder</p>
-            <Button intent={Intent.DANGER} onClick={() => toggleOverlay(!isOverlayOpen)} style={{ margin: "10px" }}>
-              Close
-            </Button>
-          </div>
-        </Overlay>
-      </div>
-    </>
-  );
-};
-
-
-{/* <table
-        data-testid="world-review"
-        style={{ width: "100%" }}
-        className="bp3-html-table bp3-html-table-condensed bp3-interactive"
-      >
-        <thead>
-          <tr>
-            <th>World ID</th>
-            <th>World Name</th>
-            <th>Load</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((id, name) => (
-            <React.Fragment key={id}>
-              <tr
-                data-testid="tr-review"
-                style={{
-                  background: undefined
-                }}
-              >
-                <td>{id}</td>
-                <td>
-                  <strong>{name}</strong>
-                </td>
-                <td>
-                  <Button
-                    intent={Intent.SUCCESS}
-                    type="submit"
-                    onClick={() => deleteWorld(id)}
-                    style={{ marginLeft: "15px" }}
-                  >
-                    Load
-                  </Button>
-                </td>
-                <td>
-                  <Button
-                    intent={Intent.DANGER}
-                    type="submit"
-                    onClick={() => getWorld(id)}
-                    style={{ marginLeft: "15px" }}
-                  >
-                    Delete
-                  </Button>
-                </td>
-              </tr>
-              </React.Fragment>
-            ))}
-        </tbody>
-      </table> */}
-
-const getWorld = async (id) => {
-  // should get back json of the loaded world, need to reconstruct it too!
-  const res = await fetch(`${CONFIG.host}:${CONFIG.port}/builder/world/${id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    }});
-  const data = await res.json()
-  console.log(data)
-  return data;
-}
 
 
 export function findEmoji(name) {
@@ -584,7 +484,111 @@ export function useWorldBuilder(upload) {
 
 
 
+  const deleteWorld = async (id) => {
+    const res = await post(`world/delete/${id}`);
+    const data = await res.json();
+    console.log(data);
+  };
+  
+  const getWorld = async (id) => {
+    // should get back json of the loaded world, need to reconstruct it too!
 
+    AppToaster.show({
+      intent: Intent.PRIMARY,
+      message: "Loading your world...",
+      timeout: 10000
+    });  
+    const res = await fetch(`${CONFIG.host}:${CONFIG.port}/builder/world/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      }});
+    const data = await res.json();
+    console.log(data);
+    // SetDimensions, then tiles
+    setDimensions({ ...dimensions, height: data.height, width: data.width, floors: data.num_floors });
+    const entity_to_local = {};
+    const entity_to_type = {};
+    const room_chars = {};
+    const room_objs = {};
+    const room_tiles = {};
+
+    data.rooms.forEach(room => {
+      id = findOrAddEntity(room, "room");
+      entity_to_local[room.id] = id;
+      entity_to_type[room.id] = "room";
+    }); 
+    data.characters.forEach(character => {
+      character.emoji = findEmoji(character.name);
+      id = findOrAddEntity(character, "character");
+      entity_to_local[character.id] = id;
+      entity_to_type[character.id] = "character";
+
+    });
+    data.objects.forEach(object => {
+      object.emoji = findEmoji(object.name);
+      id = findOrAddEntity(object, "object");
+      entity_to_local[object.id] = id;
+      entity_to_type[object.id] = "object";
+    });
+    const map = filteredMap();
+    console.log("Before");
+    console.log(map);
+
+    data.tiles.forEach(tile => {
+      let c_floor = tile.floor;
+      let c_x = tile.x_coordinate;
+      let c_y = tile.y_coordinate;
+      room_chars[tile.room_node_id] = [];
+      room_objs[tile.room_node_id] = [];
+      room_tiles[tile.room_node_id] = {x: c_x, y: c_y, floor: c_floor};
+      const temp = {
+        room: entity_to_local[tile.room_entity_id],
+        characters: [],
+        objects: [],
+        color: tile.color
+      };
+      setTile(c_x, c_y, temp, c_floor);
+    });
+
+    data.edges.forEach(edge => {
+      if (edge.edge_type == "contains"){
+        if(entity_to_type[edge.dst_entity_id] == "character"){
+          room_chars[edge.src_id].push(entity_to_local[edge.dst_entity_id]);
+        }else if (entity_to_type[edge.dst_entity_id] == "object"){
+          room_objs[edge.src_id].push(entity_to_local[edge.dst_entity_id]);
+        }else{
+          console.log("This should not be happening...");
+        }
+      }
+    });
+    console.log(room_tiles);
+    console.log(room_chars);
+    console.log(room_objs);
+
+    Object.keys(room_tiles).forEach(room_node => {
+      let tile_coords = room_tiles[room_node];
+      const newTile = cloneDeep(getTileAt(tile_coords.x, tile_coords.y, tile_coords.floor));
+      console.log(newTile);
+      newTile.characters = room_chars[room_node];
+      newTile.objects = room_objs[room_node];
+      setTile(tile_coords.x, tile_coords.y, newTile, tile_coords.floor);
+    });
+    // Go through each tile object, reconstructing it (adding all walls)
+    // for(... in data.tiles):
+    // mapDispatch({ type: "SET_TILE", x, y, newTile, floor });
+    // for(... in data.edges):
+    // // 2 edges: neighbors or contains.  eitherway, need room associated with the node.
+    // Go through all edges, populating the tiles with objects and neighbors 
+    // which tears down the walls.
+    console.log("After");
+    AppToaster.show({
+      intent: Intent.SUCCESS,
+      message: "Done loading!",
+    });  
+    return data;
+  };
+  
   const postWorld = async () => {
     const store = { height: dimensions.height, width: dimensions.width, floors: dimensions.floors,
       tile: {}, room: {}, character: {}, object: {} };
@@ -638,10 +642,10 @@ export function useWorldBuilder(upload) {
           `${x} ${y + 1}`
         ];
         const dirs = [
-          'neighbors to the north',
-          'neighbors to the south',
           'neighbors to the west',
-          'neighbors to the east'
+          'neighbors to the east',
+          'neighbors to the north',
+          'neighbors to the south'
         ]
         for (let index in neighbors) {
           const direction = dirs[index];
@@ -807,5 +811,7 @@ export function useWorldBuilder(upload) {
     postEdges,
     exportWorld,
     postWorld,
+    getWorld,
+    deleteWorld,
   };
 }
