@@ -176,6 +176,7 @@ const createdEntitiesReducer = (state, action) => {
     case "SET_ALL":
       return action.entities;
     case "ADD_ENTITY": {
+      console.log("I am 100% in here");
       return Object.assign({}, state, {
         [action.entityType]: {
           ...state[action.entityType],
@@ -243,6 +244,8 @@ export function useWorldBuilder(upload) {
 
   // Add an entity to the local store and return its temporary id
   const addEntity = (data, entityType) => {
+    console.log("Been called to add");
+    console.log(data);
     const id = entities.nextID;
     entitiesDispatch({ type: "ADD_ENTITY", data, entityType });
     return id;
@@ -265,6 +268,7 @@ export function useWorldBuilder(upload) {
 
   // Change data in a specific tile on the map
   const setTile = (x, y, newTile, floor = currFloor) => {
+    console.log("Been called to set tile");
     mapDispatch({ type: "SET_TILE", x, y, newTile, floor });
   };
 
@@ -482,112 +486,6 @@ export function useWorldBuilder(upload) {
     return filtered;
   };
 
-
-
-  const deleteWorld = async (id) => {
-    const res = await post(`world/delete/${id}`);
-    const data = await res.json();
-    console.log(data);
-  };
-  
-  const getWorld = async (id) => {
-    // should get back json of the loaded world, need to reconstruct it too!
-
-    AppToaster.show({
-      intent: Intent.PRIMARY,
-      message: "Loading your world...",
-      timeout: 10000
-    });  
-    const res = await fetch(`${CONFIG.host}:${CONFIG.port}/builder/world/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      }});
-    const data = await res.json();
-    console.log(data);
-    // SetDimensions, then tiles
-    setDimensions({ ...dimensions, height: data.height, width: data.width, floors: data.num_floors });
-    const entity_to_local = {};
-    const entity_to_type = {};
-    const room_chars = {};
-    const room_objs = {};
-    const room_tiles = {};
-
-    data.rooms.forEach(room => {
-      id = findOrAddEntity(room, "room");
-      entity_to_local[room.id] = id;
-      entity_to_type[room.id] = "room";
-    }); 
-    data.characters.forEach(character => {
-      character.emoji = findEmoji(character.name);
-      id = findOrAddEntity(character, "character");
-      entity_to_local[character.id] = id;
-      entity_to_type[character.id] = "character";
-
-    });
-    data.objects.forEach(object => {
-      object.emoji = findEmoji(object.name);
-      id = findOrAddEntity(object, "object");
-      entity_to_local[object.id] = id;
-      entity_to_type[object.id] = "object";
-    });
-    const map = filteredMap();
-    console.log("Before");
-    console.log(map);
-
-    data.tiles.forEach(tile => {
-      let c_floor = tile.floor;
-      let c_x = tile.x_coordinate;
-      let c_y = tile.y_coordinate;
-      room_chars[tile.room_node_id] = [];
-      room_objs[tile.room_node_id] = [];
-      room_tiles[tile.room_node_id] = {x: c_x, y: c_y, floor: c_floor};
-      const temp = {
-        room: entity_to_local[tile.room_entity_id],
-        characters: [],
-        objects: [],
-        color: tile.color
-      };
-      setTile(c_x, c_y, temp, c_floor);
-    });
-
-    data.edges.forEach(edge => {
-      if (edge.edge_type == "contains"){
-        if(entity_to_type[edge.dst_entity_id] == "character"){
-          room_chars[edge.src_id].push(entity_to_local[edge.dst_entity_id]);
-        }else if (entity_to_type[edge.dst_entity_id] == "object"){
-          room_objs[edge.src_id].push(entity_to_local[edge.dst_entity_id]);
-        }else{
-          console.log("This should not be happening...");
-        }
-      }
-    });
-    console.log(room_tiles);
-    console.log(room_chars);
-    console.log(room_objs);
-
-    Object.keys(room_tiles).forEach(room_node => {
-      let tile_coords = room_tiles[room_node];
-      const newTile = cloneDeep(getTileAt(tile_coords.x, tile_coords.y, tile_coords.floor));
-      console.log(newTile);
-      newTile.characters = room_chars[room_node];
-      newTile.objects = room_objs[room_node];
-      setTile(tile_coords.x, tile_coords.y, newTile, tile_coords.floor);
-    });
-    // Go through each tile object, reconstructing it (adding all walls)
-    // for(... in data.tiles):
-    // mapDispatch({ type: "SET_TILE", x, y, newTile, floor });
-    // for(... in data.edges):
-    // // 2 edges: neighbors or contains.  eitherway, need room associated with the node.
-    // Go through all edges, populating the tiles with objects and neighbors 
-    // which tears down the walls.
-    console.log("After");
-    AppToaster.show({
-      intent: Intent.SUCCESS,
-      message: "Done loading!",
-    });  
-    return data;
-  };
   
   const postWorld = async () => {
     const store = { height: dimensions.height, width: dimensions.width, floors: dimensions.floors,
@@ -811,7 +709,5 @@ export function useWorldBuilder(upload) {
     postEdges,
     exportWorld,
     postWorld,
-    getWorld,
-    deleteWorld,
   };
 }
