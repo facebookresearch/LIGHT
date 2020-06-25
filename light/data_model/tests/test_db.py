@@ -678,7 +678,7 @@ class TestDatabase(unittest.TestCase):
                 len(test.get_room(name="room", description="dirty", backstory="new")), 0
             )
             # Test if the id_table is unaffected
-            self.assertEqual(len(test.get_id()), prev_id_len)\
+            self.assertEqual(len(test.get_id()), prev_id_len)
                 
 #-----------------World Saving Test-----------------#
     def test_create_world(self):

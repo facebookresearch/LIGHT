@@ -7,6 +7,16 @@ TARGET_FILE = os.path.expanduser("~/Desktop/light_chats.json")
 with open(TARGET_FILE, 'r') as chat_file:
     chats = json.load(chat_file)
 
+if isinstance(chats, dict):
+    headers = chats['header']
+    rows = chats['rows']
+    chats = []
+    for row in rows:
+        chat = {}
+        for idx, header in enumerate(headers):
+            chat[headers[idx]] = row[idx]
+        chats.append(chat)
+
 chats = [c for c in chats if c['dialogue'] is not None and len(c['dialogue'].split('\\n')) > 1]
 
 def get_flagged(in_chats):
@@ -85,6 +95,15 @@ def chat_stats(in_chats):
         })
     print(f"Total Chats: {total_chats}, Total utts: {total_utts}, Total Words: {total_words}, avg chat len {total_utts/total_chats}, avg utt len {total_words/total_utts}")
     return fin_stats        
+
+def split_chats_by_model(chats):
+    model_chats = {}
+    for c in chats:
+        model = c['model_name']
+        if model not in model_chats:
+            model_chats[model] = []
+        model_chats[model].append(c)
+    return(model_chats)
 
 import code
 code.interact(local=locals())

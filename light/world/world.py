@@ -425,7 +425,6 @@ class World(object):
         if agent is None:
             print(txt, agent_id)
         agent.observe_action(txt, action)
-
         # TODO move message callbacks to be registered to players
         pos_playerid = self.agentid_to_playerid(agent_id)
         if pos_playerid in self.__message_callbacks:
@@ -893,10 +892,6 @@ class World(object):
                 agentid, '\n'.join(self.get_possible_actions(agentid)) + '\n'
             )
             return True, 'actions'
-        if executable == 'help' and len(arguments) == 0:
-            # TODO fix send_msg
-            self.send_msg(agentid, self.help())
-            return True, 'help'
         if executable == "map" and len(arguments) == 0:
             # TODO fix print_graph
             self.send_msg(

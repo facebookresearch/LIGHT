@@ -368,7 +368,7 @@ class LIGHTDatabase:
         df.to_csv(os.path.join(self.data_dir, "id_room_dict.csv"), header=False)
         df = pd.DataFrame.from_dict(self.id_object_dict, orient="index")
         df.to_csv(os.path.join(self.data_dir, "id_object_dict.csv"), header=False)
-
+    
     def search_database(self, type, input, fts=True):
         '''Search a specific table (dictated by 'type') using a search string'''
         table_name = self.table_dict[type]
@@ -511,6 +511,17 @@ class LIGHTDatabase:
         result = {i[1]: i[2] for i in fetched}
         return result
 
+    def table_not_exists(self, table_name):
+        self.c.execute(
+            """
+            SELECT name 
+            FROM sqlite_master 
+            WHERE type="table" AND name=?;
+            """,
+            (table_name,),
+        )
+        return self.c.fetchone() == None
+
     def init_environment_tables(self):
         """
         Initializes environment tables. All IDs are unique across different
@@ -534,6 +545,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        table_not_exists = self.table_not_exists("base_objects_table_fts")
         # FTS table for base objects
         self.c.execute(
             """
@@ -541,6 +553,14 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="base_objects_table", name);
             """
         )
+        # Required to link existing objects
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "base_objects_table_fts" (rowid, name)
+                    SELECT rowid, name FROM base_objects_table;
+                """
+            )
         # Specific objects created from object types
         self.c.execute(
             """
@@ -568,13 +588,21 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
-        # FTS table for objects
+        table_not_exists = self.table_not_exists("objects_table_fts")
         self.c.execute(
             """
             CREATE VIRTUAL TABLE IF NOT EXISTS objects_table_fts
             USING fts4(tokenize=porter, content="objects_table", name, physical_description);
             """
         )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "objects_table_fts" (rowid, name, physical_description)
+                    SELECT rowid, name, physical_description FROM objects_table;
+                """
+            )
+
         # Basic room types
         self.c.execute(
             """
@@ -586,6 +614,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        table_not_exists = self.table_not_exists("base_rooms_table_fts")
         # FTS table for base rooms
         self.c.execute(
             """
@@ -593,6 +622,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="base_rooms_table", name);
             """
         )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "base_rooms_table_fts" (rowid, name)
+                    SELECT rowid, name FROM base_rooms_table;
+                """
+            )
         # Specific rooms created from room types
         self.c.execute(
             """
@@ -613,6 +649,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        table_not_exists = self.table_not_exists("rooms_table_fts")
         # FTS table for rooms
         self.c.execute(
             """
@@ -620,6 +657,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="rooms_table", name, description, backstory);
             """
         )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "rooms_table_fts" (rowid, name, description, backstory)
+                    SELECT rowid, name, description, backstory FROM rooms_table;
+                """
+            )
         # Basic character types
         self.c.execute(
             """
@@ -631,6 +675,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        table_not_exists = self.table_not_exists("base_characters_table_fts")
         # FTS table for base characters
         self.c.execute(
             """
@@ -638,6 +683,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="base_characters_table", name);
             """
         )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "base_characters_table_fts" (rowid, name)
+                    SELECT rowid, name FROM base_characters_table;
+                """
+            )
         # Specific characters created from character types
         self.c.execute(
             """
@@ -661,6 +713,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        table_not_exists = self.table_not_exists("characters_table_fts")
         # FTS table for characters
         self.c.execute(
             """
@@ -668,6 +721,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="characters_table", name, persona, physical_description);
             """
         )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "characters_table_fts" (rowid, name, persona, physical_description)
+                    SELECT rowid, name, persona, physical_description FROM characters_table;
+                """
+            )        
         # Node contents represent an edge between a node and something in it
         # Edge is deleted when either node is deleted
         self.c.execute(
@@ -1436,6 +1496,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        table_not_exists = self.table_not_exists("utterances_table_fts")
         # FTS table for utterances
         self.c.execute(
             """
@@ -1443,6 +1504,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="utterances_table", dialogue);
             """
         )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "utterances_table_fts" (rowid, dialogue)
+                    SELECT rowid, dialogue FROM utterances_table;
+                """
+            )
         self.c.execute(
             """
             CREATE TABLE IF NOT EXISTS participants_table (
@@ -1502,6 +1570,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        table_not_exists = self.table_not_exists("turns_table_fts")
         # FTS table for turns
         self.c.execute(
             """
@@ -1509,6 +1578,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="turns_table", interaction_type, action);
             """
         )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "turns_table_fts" (rowid, interaction_type, action)
+                    SELECT rowid, interaction_type, action FROM turns_table;
+                """
+            )
         # Table to represent all players of the game
         self.c.execute(
             """
@@ -2928,7 +3004,7 @@ class LIGHTDatabase:
         )
         return self.c.fetchall()
 
-    def assert_world_ownership(self, world_id, player_id):
+    def is_world_owned_by(self, world_id, player_id):
         self.c.execute(
             """
             SELECT * FROM world_table
@@ -2936,13 +3012,13 @@ class LIGHTDatabase:
             """,
             (world_id, player_id),
         )
-        assert(len(self.c.fetchall()) == 1)
+        return len(self.c.fetchall()) == 1
 
     def get_world(self, world_id, player_id):
         """
         Return the data for a world given its ID
         """
-        self.assert_world_ownership(world_id, player_id)
+        assert self.is_world_owned_by(world_id, player_id), "Cannot load a world you do not own"
         if self.use_cache:
             if world_id is not None and world_id in self.cache['worlds']:
                 return [self.cache['worlds'][world_id]]

@@ -37,12 +37,13 @@ import threading
 here = os.path.abspath(os.path.dirname(__file__))
 
 def make_app(FLAGS, tornado_provider):
+    tornado_provider.app['cookie_secret'] = FLAGS.cookie_secret
     worldBuilderApp = BuildApplication(get_handlers(FLAGS.data_model_db))
-    landingApp = LandingApplication(FLAGS.hostname)
+    landingApp = LandingApplication(FLAGS.hostname, FLAGS.password)
     router = RuleRouter([
-        Rule(PathMatches("/builder(.*)"), worldBuilderApp),
-        Rule(PathMatches("/game(.*)"), tornado_provider.app),
-        Rule(PathMatches("/(.*)"), landingApp),
+        Rule(PathMatches("/builder.*"), worldBuilderApp),
+        Rule(PathMatches("/game.*"), tornado_provider.app),
+        Rule(PathMatches("/.*"), landingApp),
     ])
     server = HTTPServer(router)
     server.listen(FLAGS.port)
@@ -50,7 +51,6 @@ def make_app(FLAGS, tornado_provider):
 def _run_server(FLAGS, tornado_provider):
     my_loop = IOLoop()
     make_app(FLAGS, tornado_provider)
-    # self.app.listen(port, max_buffer_size=1024 ** 3)
     if "HOSTNAME" in os.environ and hostname == FLAGS.hostname:
         hostname = os.environ["HOSTNAME"]
     else:
@@ -59,9 +59,20 @@ def _run_server(FLAGS, tornado_provider):
     print("You can connect to the worldbuilder at http://%s:%s/builder/" % (FLAGS.hostname, FLAGS.port))
     my_loop.current().start()
 
-# Threading used here for simplicity, but PeriodicCallback is a more deterministic way to handle 
-# switching  vs the python scheduler.
+
 def router_run(FLAGS, tornado_provider):
+    '''
+    Router run spins up the router for request to send to the correct application.
+    
+    In doing so, we have a tornado application that blocks listening for request.  Since this executes in the
+    same thread as the game instance, we have to do something to avoid blocking the game instance from running.
+    
+    Our options are spinning a seperate thread, or using the PeriodicCallback function in tornado to switch
+    between the router and the game instance.  Here we have chosen to use threading for precedence, as this
+    is how the TornadoWebAppProvider runs, and for the simplicity of the implementation, however
+    PeriodicCallback is a more deterministic way to handle to control switching as opposed
+    to this method, which relies on the the python scheduler.  
+    '''
     t = threading.Thread(
         target=_run_server, args=(FLAGS, tornado_provider), name='RoutingServer', daemon=True
     )
@@ -77,6 +88,9 @@ def main():
     DEFAULT_HOSTNAME = "localhost"
 
     parser = argparse.ArgumentParser(description='Start the game server.', fromfile_prefix_chars='@')
+    parser.add_argument('--cookie-secret', type=str,
+                        default="0123456789",
+                        help='Cookie secret for issueing cookies (SECRET!!!)')
     parser.add_argument('--data-model-db', type=str,
                         default=here + "/../../../light/data_model/database.db",
                         help='Databse path for the datamodel')
@@ -86,6 +100,9 @@ def main():
     parser.add_argument('--light-model-root', type=str,
                         default="/checkpoint/light/models/",
                         help='models path. For local setup, use: /checkpoint/jase/projects/light/dialog/')
+    parser.add_argument('--password', type=str,
+                        default="LetsPlay",
+                        help='password for users to access the game.')
     parser.add_argument('--port', metavar='port', type=int,
                         default=DEFAULT_PORT,
                         help='port to run the server on.')

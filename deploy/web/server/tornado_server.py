@@ -133,6 +133,9 @@ class Application(tornado.web.Application):
 
     def get_handlers(self):
         path_to_build = here + "/../build/"
+        # NOTE: We choose to keep the StaticUIHandler, despite this handler never being
+        #       hit in the top level RuleRouter from run_server.py in case this application
+        #       is run standalone for some reason.
         return [
             (r"/game/socket", SocketHandler, {'app': self}),
             (r"/", MainHandler),
@@ -309,18 +312,18 @@ class MainHandler(BaseHandler):
         self.render(here + "/../build/index.html")
         
 class LoginHandler(BaseHandler):
-    def initialize(self, hostname=DEFAULT_HOSTNAME):
-            self.hostname = hostname
+    def initialize(self, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
+        self.hostname = hostname
+        self.password = password
 
     def get(self):
         self.render(here + "/login.html", next=self.get_argument("next", u"/"))
         self.next = next
 
     def post(self):
-        CORRECT_PASSWORD = "LetsPlay"
         name = self.get_argument("name", "")
         password = self.get_argument("password", "")
-        if password == CORRECT_PASSWORD:
+        if password == self.password:
             self.set_current_user(name)
             self.redirect(self.get_argument("next", u"/"))
         else:
@@ -413,6 +416,8 @@ class TornadoWebappPlayerProvider(PlayerProvider):
             self.app = Application()
             if listening:
                 self.app.listen(port, max_buffer_size=1024 ** 3)
+                print("\nYou can connect to the game at http://%s:%s/" % (hostname, port))
+                print("You can connect to the socket at http://%s:%s/game/socket/" % (hostname, port))
             logging.info("TornadoWebProvider Started")
 
             if "HOSTNAME" in os.environ and hostname == DEFAULT_HOSTNAME:
