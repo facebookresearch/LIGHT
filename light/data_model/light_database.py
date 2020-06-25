@@ -2928,7 +2928,7 @@ class LIGHTDatabase:
         )
         return self.c.fetchall()
 
-    def assert_world_ownership(self, world_id, player_id):
+    def is_world_owned_by(self, world_id, player_id):
         self.c.execute(
             """
             SELECT * FROM world_table
@@ -2936,13 +2936,13 @@ class LIGHTDatabase:
             """,
             (world_id, player_id),
         )
-        assert(len(self.c.fetchall()) == 1)
+        return len(self.c.fetchall()) == 1
 
     def get_world(self, world_id, player_id):
         """
         Return the data for a world given its ID
         """
-        self.assert_world_ownership(world_id, player_id)
+        assert self.is_world_owned_by(world_id, player_id), "Cannot load a world you do not own"
         if self.use_cache:
             if world_id is not None and world_id in self.cache['worlds']:
                 return [self.cache['worlds'][world_id]]
