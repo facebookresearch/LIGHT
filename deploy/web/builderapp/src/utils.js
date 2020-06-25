@@ -70,10 +70,10 @@ export function post(url, payload) {
     );
     formBody.push(encodedKey + "=" + encodedValue);
   }
-  return fetch(`${CONFIG.host}:${CONFIG.port}/${url}`, {
+  return fetch(`${CONFIG.host}:${CONFIG.port}/builder/${url}`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
+      "Content-Type": "application/x-www-form-urlencoded",
     },
     body: formBody.join("&")
   });

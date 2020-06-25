@@ -142,6 +142,24 @@ class Application(tornado.web.Application):
             (r"/(.*)", StaticUIHandler, {'path': path_to_build}),
         ]
 
+'''
+class WorldHandler(BaseHandler):
+    'Load a world given the player id and world id'
+
+    def initialize(self, dbpath):
+        self.dbpath = dbpath
+
+    @tornado.web.authenticated
+    def get(self):
+        with LIGHTDatabase(self.dbpath) as db:
+            id = int(self.get_argument('id'))
+            player = self.get_argument("player", None, True)
+            # TODO: Implement this method - load the world for the wordlbuilder
+            world = db.get_world(id=id, player_id=player)
+            # Want to write the world name and ids.  Then, load it into game instance somehow...
+            self.write(json.dumps(world))
+'''
+
 # StaticUIHandler serves static front end, defaulting to index.html served
 # If the file is unspecified.
 class StaticUIHandler(tornado.web.StaticFileHandler):
