@@ -4,19 +4,21 @@ import {post, useAPI } from "../utils";
 import {findEmoji} from "./worldbuilding/utils"
 import {Button, Intent, Spinner} from "@blueprintjs/core";
 import AppToaster from "./AppToaster";
+import { Redirect } from "react-router-dom";
 
 function ListWorlds ({isOpen, state, toggleOverlay}) {
     const { loading, result, reload } = useAPI(
       CONFIG,
       `/worlds/`
     );
+    const [upload, setUpload] = React.useState(undefined);
 
     const deleteWorld = async (id) => {
         const res = await post(`world/delete/${id}`);
         const data = await res.json();
         console.log(data);
     };
-    
+
     const getWorld = async (id, state) => {
     // should get back json of the loaded world, need to reconstruct it too!
     
@@ -31,10 +33,18 @@ function ListWorlds ({isOpen, state, toggleOverlay}) {
             "Content-Type": "application/json",
             }});
         const data = await res.json();
+        const dat = { 
+            dimensions: {height: data.height, width: data.width, floors: data.num_floors},
+            map: [{name: "1F", tiles: {}, walls: {}}],
+            entities: {room: {}, character: {}, object: {}, nextID: 1},
+        };
+        var i = 2;
+        while (dat.map.length < data.num_floors){
+            dat.map.push({name: i + "F", tiles: {}, walls: {}});
+            i = i + 1;
+        }
         console.log(data);
-        // SetDimensions, then tiles
-        state.setDimensions({ ...state.dimensions, height: data.height, width: data.width, floors: data.num_floors });
-        console.log(state);
+
         const entity_to_local = {};
         const entity_to_type = {};
         const room_chars = {};
@@ -42,29 +52,37 @@ function ListWorlds ({isOpen, state, toggleOverlay}) {
         const room_tiles = {};
     
         data.rooms.forEach(room => {
-            console.log(room);
-            id = state.findOrAddEntity(room, "room");
+            id = dat.entities.nextID;
+            room.emoji = findEmoji(room.name);
+            dat.entities.room[dat.entities.nextID] = room;
+            dat.entities.nextID = dat.entities.nextID + 1;
             console.log(id);
             entity_to_local[room.id] = id;
             entity_to_type[room.id] = "room";
         }); 
+
         data.characters.forEach(character => {
+            id = dat.entities.nextID;
             character.emoji = findEmoji(character.name);
-            id = state.findOrAddEntity(character, "character");
+            dat.entities.character[dat.entities.nextID] = character;
+            dat.entities.nextID = dat.entities.nextID + 1;
             console.log(id);
             entity_to_local[character.id] = id;
             entity_to_type[character.id] = "character";
-    
         });
+
         data.objects.forEach(object => {
+            id = dat.entities.nextID;
             object.emoji = findEmoji(object.name);
-            id = state.findOrAddEntity(object, "object");
+            dat.entities.object[dat.entities.nextID] = object;
+            dat.entities.nextID = dat.entities.nextID + 1;
             console.log(id);
             entity_to_local[object.id] = id;
             entity_to_type[object.id] = "object";
         });
+
         console.log("Before");
-        console.log(state);
+        console.log(dat);
     
         data.tiles.forEach(tile => {
             let c_floor = tile.floor;
@@ -91,35 +109,30 @@ function ListWorlds ({isOpen, state, toggleOverlay}) {
         console.log(room_tiles);
         console.log(room_chars);
         console.log(room_objs);
-        console.log(state.entities)
         Object.keys(room_tiles).forEach(room_node => {
             console.log(room_node)
             let tile_info = room_tiles[room_node];
             const temp = {
-            room: tile_info.room_id,
-            characters: room_chars[room_node],
-            objects: room_objs[room_node],
-            color: tile_info.color
+                room: tile_info.room_id,
+                characters: room_chars[room_node],
+                objects: room_objs[room_node],
+                color: tile_info.color
             };
-            state.setTile(tile_info.x, tile_info.y, temp, tile_info.floor);
+            dat.map[tile_info.floor].tiles[tile_info.x + " " + tile_info.y] = temp;
         });
-        // Go through each tile object, reconstructing it (adding all walls)
-        // for(... in data.tiles):
-        // mapDispatch({ type: "SET_TILE", x, y, newTile, floor });
-        // for(... in data.edges):
-        // // 2 edges: neighbors or contains.  eitherway, need room associated with the node.
-        // Go through all edges, populating the tiles with objects and neighbors 
-        // which tears down the walls.
+
+
         console.log("After");
-        console.log(state);
+        console.log(dat);
     
         AppToaster.show({
             intent: Intent.SUCCESS,
             message: "Done loading!",
         });  
-        return data;
+        setUpload(dat)
     };
-    
+
+    console.log(upload);
     const data = result;
     if (!isOpen || data == undefined){
         return <></>;
@@ -158,8 +171,7 @@ function ListWorlds ({isOpen, state, toggleOverlay}) {
                         <Button
                             intent={Intent.SUCCESS}
                             type="submit"
-                            onClick={() => {toggleOverlay(!isOpen);
-                                            getWorld(d.id, state); }
+                            onClick={() => {getWorld(d.id);}
                                     }
                         >
                             Load
@@ -182,6 +194,9 @@ function ListWorlds ({isOpen, state, toggleOverlay}) {
                     ))}
             </tbody>
             </table> 
+            {upload && (
+                            <Redirect to={{ pathname: "/world_builder", state: { data: upload } }} />
+                        )}
         </>); 
     }
 }

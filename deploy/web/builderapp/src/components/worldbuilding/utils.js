@@ -176,7 +176,6 @@ const createdEntitiesReducer = (state, action) => {
     case "SET_ALL":
       return action.entities;
     case "ADD_ENTITY": {
-      console.log("I am 100% in here");
       return Object.assign({}, state, {
         [action.entityType]: {
           ...state[action.entityType],
