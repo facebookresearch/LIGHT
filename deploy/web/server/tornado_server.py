@@ -296,13 +296,13 @@ class BaseHandler(tornado.web.RequestHandler):
                 logging.error(e)
 
 class LandingApplication(tornado.web.Application):
-    def __init__(self, hostname=DEFAULT_HOSTNAME):
-        super(LandingApplication, self).__init__(self.get_handlers(hostname), **tornado_settings)
+    def __init__(self, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
+        super(LandingApplication, self).__init__(self.get_handlers(hostname, password), **tornado_settings)
 
-    def get_handlers(self, hostname=DEFAULT_HOSTNAME):
+    def get_handlers(self, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
         return [
             (r"/", MainHandler),
-            (r"/login", LoginHandler, {'hostname' : hostname}),
+            (r"/login", LoginHandler, {'hostname' : hostname, 'password': password}),
             (r"/logout", LogoutHandler),
             (r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})
         ]

@@ -138,11 +138,8 @@ class ListWorldsHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         with LIGHTDatabase(self.dbpath) as db:
-            # This should be a player id from db
             player = self.get_argument("player", 31106, True)
             worlds = db.view_worlds(player_id=player)
-            print("In here!!")
-            print(worlds)
             self.write(json.dumps(worlds))
 
 class DeleteWorldHandler(BaseHandler):
@@ -158,7 +155,6 @@ class DeleteWorldHandler(BaseHandler):
             with LIGHTDatabase(self.dbpath) as db:
                 player = self.get_argument("player", 31106, True)
                 world_id = db.delete_world(world_id=id, player_id=player)
-                # Want to write the world name and ids.
                 self.write(json.dumps(world_id))
 
 class SaveWorldHandler(BaseHandler):
@@ -174,7 +170,7 @@ class SaveWorldHandler(BaseHandler):
             with LIGHTDatabase(self.dbpath) as db:
                 player = int(self.get_argument("player", 31106, True))
 
-                # Add current time to name too!
+                # Add current time to name too?
                 name = self.get_argument('name', 'default_world', True)
                 height = int(self.get_argument('height', 3, True))
                 width = int(self.get_argument('width', 3, True))
@@ -242,6 +238,7 @@ class LoadWorldHandler(BaseHandler):
         self.dbpath = dbpath
 
     @tornado.web.authenticated
+    # Prints let you see just how long this takes...
     def get(self, world_id):
         with LIGHTDatabase(self.dbpath) as db:
             player = self.get_argument("player", 31106, True)

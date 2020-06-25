@@ -1,10 +1,9 @@
 import React from "react";
-import {Colors, Intent, } from "@blueprintjs/core";
+import {Colors, Intent} from "@blueprintjs/core";
 import { cloneDeep, isEmpty, merge } from "lodash";
 import equal from "fast-deep-equal";
 import { emojiIndex } from "emoji-mart";
-import CONFIG from "../../config";
-import { post, useAPI } from "../../utils";
+import { post} from "../../utils";
 import AppToaster from "../AppToaster";
 
 export const MAX_WIDTH = 10;
@@ -114,8 +113,6 @@ export function invertColor(hex) {
   // pick black/white based on intensity
   return r * 0.299 + g * 0.587 + b * 0.114 > 150 ? "#182026" : "#F5F8FA";
 }
-
-
 
 export function findEmoji(name) {
   let results = emojiIndex.search(name);
@@ -243,8 +240,6 @@ export function useWorldBuilder(upload) {
 
   // Add an entity to the local store and return its temporary id
   const addEntity = (data, entityType) => {
-    console.log("Been called to add");
-    console.log(data);
     const id = entities.nextID;
     entitiesDispatch({ type: "ADD_ENTITY", data, entityType });
     return id;
@@ -267,7 +262,6 @@ export function useWorldBuilder(upload) {
 
   // Change data in a specific tile on the map
   const setTile = (x, y, newTile, floor = currFloor) => {
-    console.log("Been called to set tile");
     mapDispatch({ type: "SET_TILE", x, y, newTile, floor });
   };
 
@@ -563,9 +557,7 @@ export function useWorldBuilder(upload) {
     }
     // send it to the saving format!
     store.edges = edges
-    console.table(store)
     const res = await post("world/", store);
-    const data = await res.json();
 
     AppToaster.show({
       intent: Intent.SUCCESS,

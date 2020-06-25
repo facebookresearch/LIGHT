@@ -13,7 +13,6 @@ import {
   Switch,
   Button
 } from "@blueprintjs/core";
-
 import {
   useWorldBuilder,
   MAX_HEIGHT,
@@ -49,9 +48,9 @@ function WorldBuilder({ upload }) {
   return (
     <>
       <div>
-        <Overlay isOpen={isOverlayOpen} onClose={() => toggleOverlay(!isOverlayOpen)} >
+        <Overlay className={Classes.OVERLAY_SCROLL_CONTAINER} isOpen={isOverlayOpen} onClose={() => toggleOverlay(!isOverlayOpen)} >
           <div className={classes}>
-            < ListWorlds isOpen={isOverlayOpen} state={state} toggleOverlay={toggleOverlay}/>
+            < ListWorlds isOpen={isOverlayOpen} toggleOverlay={toggleOverlay}/>
             <Button intent={Intent.DANGER} onClick={() => toggleOverlay(!isOverlayOpen)} style={{ margin: "10px" }}>
               Close
             </Button>

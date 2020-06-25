@@ -6,7 +6,7 @@ import {Button, Intent, Spinner} from "@blueprintjs/core";
 import AppToaster from "./AppToaster";
 import { Redirect } from "react-router-dom";
 
-function ListWorlds ({isOpen, state, toggleOverlay}) {
+function ListWorlds ({isOpen, toggleOverlay}) {
     const { loading, result, reload } = useAPI(
       CONFIG,
       `/worlds/`
@@ -15,42 +15,45 @@ function ListWorlds ({isOpen, state, toggleOverlay}) {
 
     const deleteWorld = async (id) => {
         const res = await post(`world/delete/${id}`);
-        const data = await res.json();
-        console.log(data);
     };
 
-    const getWorld = async (id, state) => {
-    // should get back json of the loaded world, need to reconstruct it too!
-    
+    const getWorld = async (id) => {    
+        
         AppToaster.show({
             intent: Intent.PRIMARY,
             message: "Loading your world...",
             timeout: 10000
         });  
+
         const res = await fetch(`${CONFIG.host}:${CONFIG.port}/builder/world/${id}`, {
             method: "GET",
             headers: {
             "Content-Type": "application/json",
             }});
         const data = await res.json();
+
+        // Construct the 3 parts of state we need
         const dat = { 
             dimensions: {height: data.height, width: data.width, floors: data.num_floors},
             map: [{name: "1F", tiles: {}, walls: {}}],
             entities: {room: {}, character: {}, object: {}, nextID: 1},
         };
+
+        // Add all the floors we will need to the map
         var i = 2;
         while (dat.map.length < data.num_floors){
             dat.map.push({name: i + "F", tiles: {}, walls: {}});
             i = i + 1;
         }
-        console.log(data);
 
+        // Maps responsible for taking the db entries to local entires
         const entity_to_local = {};
         const entity_to_type = {};
         const room_chars = {};
         const room_objs = {};
         const room_tiles = {};
     
+        // Add each room, character, and object to the data store
         data.rooms.forEach(room => {
             id = dat.entities.nextID;
             room.emoji = findEmoji(room.name);
@@ -81,9 +84,7 @@ function ListWorlds ({isOpen, state, toggleOverlay}) {
             entity_to_type[object.id] = "object";
         });
 
-        console.log("Before");
-        console.log(dat);
-    
+        // Go through recording the room node needed for each tile
         data.tiles.forEach(tile => {
             let c_floor = tile.floor;
             let c_x = tile.x_coordinate;
@@ -94,21 +95,21 @@ function ListWorlds ({isOpen, state, toggleOverlay}) {
                 color: tile.color, room_id: entity_to_local[tile.room_entity_id]};
         });
     
+        // Associate each entity with room it is in (TODO: Add walls/stair logic)
         data.edges.forEach(edge => {
             console.log(edge);
             if (edge.edge_type == "contains"){
-            if(entity_to_type[edge.dst_entity_id] == "character"){
-                room_chars[edge.src_id].push(entity_to_local[edge.dst_entity_id]);
-            }else if (entity_to_type[edge.dst_entity_id] == "object"){
-                room_objs[edge.src_id].push(entity_to_local[edge.dst_entity_id]);
-            }else{
-                console.log("This should not be happening...");
-            }
+                if(entity_to_type[edge.dst_entity_id] == "character"){
+                    room_chars[edge.src_id].push(entity_to_local[edge.dst_entity_id]);
+                }else if (entity_to_type[edge.dst_entity_id] == "object"){
+                    room_objs[edge.src_id].push(entity_to_local[edge.dst_entity_id]);
+                }else{
+                    console.log("This should not be happening...");
+                }
             }
         });
-        console.log(room_tiles);
-        console.log(room_chars);
-        console.log(room_objs);
+
+        // Finally, add each tile to the map!
         Object.keys(room_tiles).forEach(room_node => {
             console.log(room_node)
             let tile_info = room_tiles[room_node];
@@ -121,10 +122,7 @@ function ListWorlds ({isOpen, state, toggleOverlay}) {
             dat.map[tile_info.floor].tiles[tile_info.x + " " + tile_info.y] = temp;
         });
 
-
-        console.log("After");
-        console.log(dat);
-    
+        // Mission accomplished!
         AppToaster.show({
             intent: Intent.SUCCESS,
             message: "Done loading!",
@@ -132,9 +130,8 @@ function ListWorlds ({isOpen, state, toggleOverlay}) {
         setUpload(dat)
     };
 
-    console.log(upload);
     const data = result;
-    if (!isOpen || data == undefined){
+    if (!isOpen){
         return <></>;
     }else if (loading){
         return <Spinner intent={Intent.PRIMARY} />;
@@ -171,8 +168,7 @@ function ListWorlds ({isOpen, state, toggleOverlay}) {
                         <Button
                             intent={Intent.SUCCESS}
                             type="submit"
-                            onClick={() => {getWorld(d.id);}
-                                    }
+                            onClick={() => getWorld(d.id)}
                         >
                             Load
                         </Button>
@@ -181,10 +177,7 @@ function ListWorlds ({isOpen, state, toggleOverlay}) {
                         <Button
                             intent={Intent.DANGER}
                             type="submit"
-                            onClick={() => {deleteWorld(d.id); 
-                                            toggleOverlay(!isOpen); 
-                                            toggleOverlay(isOpen);}
-                                    }
+                            onClick={() => deleteWorld(d.id)}
                         >
                             Delete
                         </Button>
@@ -195,11 +188,10 @@ function ListWorlds ({isOpen, state, toggleOverlay}) {
             </tbody>
             </table> 
             {upload && (
-                            <Redirect to={{ pathname: "/world_builder", state: { data: upload } }} />
-                        )}
+                <Redirect to={{ pathname: "/world_builder", state: { data: upload } }} />
+            )}
         </>); 
     }
 }
-  
   
 export default ListWorlds;

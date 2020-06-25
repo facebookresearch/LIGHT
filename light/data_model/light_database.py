@@ -3035,7 +3035,7 @@ class LIGHTDatabase:
         """
         Delete the world data for a world given its ID
         """
-        self.assert_world_ownership(world_id, player_id)
+        assert self.is_world_owned_by(world_id, player_id), "Cannot delete a world you do not own"
         self.delete_id(world_id)
 
     def view_worlds(self, player_id):
