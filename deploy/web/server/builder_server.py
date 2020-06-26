@@ -4,6 +4,7 @@ import os
 import sys
 import ast
 import inspect
+import time
 import tornado.web
 from tornado.ioloop import IOLoop
 from tornado import locks
@@ -171,63 +172,54 @@ class SaveWorldHandler(BaseHandler):
                 player = int(self.get_argument("player", 31106, True))
 
                 # Add current time to name too?
-                name = self.get_argument('name', 'default_world', True)
-                height = int(self.get_argument('height', 3, True))
-                width = int(self.get_argument('width', 3, True))
-                num_floors = int(self.get_argument('num_floors', 1, True))
-                edges = json.loads(self.get_argument('edges', '[]', True))
-                tiles = json.loads(self.get_argument('tile', '[]', True))
-                rooms = json.loads(self.get_argument('room', '[]', True))
-                objs = json.loads(self.get_argument('object', '[]', True))
-                chars = json.loads(self.get_argument('character', '[]', True))
-
-                # World created!
-                world_id = db.create_world(name, player, height, width, num_floors)[0]
-
-                #Now, make sure all entities are created:
-                id_to_dbid = {}
-                for room in rooms:
-                    room_obj = rooms[room]
-                    room_id = db.create_room(room_obj['name'], room_obj['base_id'], room_obj['description'], room_obj['backstory'])
-                    id_to_dbid[room] = room_id[0]
-
-                for char in chars:
-                    char_obj = chars[char]
-                    char_id = db.create_character(char_obj['name'], char_obj['base_id'], char_obj['persona'], char_obj['physical_description'],
-                        name_prefix=char_obj['name_prefix'], is_plural=char_obj['is_plural'], char_type=char_obj['char_type'],
-                    )
-                    id_to_dbid[char] = char_id[0]
+                name = self.get_argument('name', 'default ' + time.ctime(time.time()), True)
+                dimensions = json.loads(self.get_argument('dimensions', '{"height": 3, "width": 3, "floors": 1}'))
+                world_map = json.loads(self.get_argument('map', '{"tiles": {}, "edges": []}'))
+                entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}, }'))
                 
-                for obj in objs:
-                    obj_obj = objs[obj]
-                    obj_id = db.create_object(obj_obj['name'], obj_obj['base_id'], obj_obj['is_container'], obj_obj['is_drink'],
-                        obj_obj['is_food'], obj_obj['is_gettable'], obj_obj['is_surface'], obj_obj['is_wearable'], obj_obj['is_weapon'],
-                        obj_obj['physical_description'], name_prefix=obj_obj['name_prefix'], is_plural=obj_obj['is_plural'],
+                print(name)
+                print(dimensions)
+                print(world_map)
+                print(entities)
+                # World created!
+                world_id = db.create_world(name, player, dimensions["height"], dimensions["width"], dimensions["floors"])[0]
+
+                #Now, make sure all entities are created and get their db id!
+                local_id_to_dbid = {}
+                for local_id, room in entities['room'].items():
+                    room_id = db.create_room(room['name'], room['base_id'], room['description'], room['backstory'])
+                    local_id_to_dbid[local_id] = room_id[0]
+
+                for local_id, char in entities['character'].items():
+                    char_id = db.create_character(char['name'], char['base_id'], char['persona'], char['physical_description'],
+                        name_prefix=char['name_prefix'], is_plural=char['is_plural'], char_type=char['char_type'],
                     )
-                    id_to_dbid[obj] = obj_id[0]
+                    local_id_to_dbid[local_id] = char_id[0]
+                
+                for local_id, obj in entities['object'].items():
+                    obj_id = db.create_object(obj['name'], obj['base_id'], obj['is_container'], obj['is_drink'],
+                        obj['is_food'], obj['is_gettable'], obj['is_surface'], obj['is_wearable'], obj['is_weapon'],
+                        obj['physical_description'], name_prefix=obj['name_prefix'], is_plural=obj['is_plural'],
+                    )
+                    local_id_to_dbid[local_id] = obj_id[0]
 
                 # Now, go through all the entities and make graph nodes for them, storing a map from the id to the graph id
                 dbid_to_nodeid = {}
-                for dbid in id_to_dbid.values():
+                for dbid in local_id_to_dbid.values():
                     node_id = db.create_graph_node(dbid)
                     dbid_to_nodeid[dbid] = node_id[0]
 
+                print(local_id_to_dbid)
+                print(dbid_to_nodeid)
                 # Make the edges!
-                for edge in edges:
-                    src_node = dbid_to_nodeid[edge['room']]
-                    for char in edge['chars']:
-                        db.create_graph_edge(world_id, src_node, dbid_to_nodeid[char], 'contains')
-                    for obj in edge['objs']:
-                        db.create_graph_edge(world_id, src_node, dbid_to_nodeid[obj], 'contains')
-                    for neigh in edge['neighbors']:
-                        dst_node = dbid_to_nodeid[neigh['dst_id']]
-                        db.create_graph_edge(world_id, src_node, dst_node, neigh['dir'])
+                for edge in world_map['edges']:
+                    src_node = dbid_to_nodeid[local_id_to_dbid[str(edge['src'])]]
+                    dst_node = dbid_to_nodeid[local_id_to_dbid[str(edge['dst'])]]
+                    db.create_graph_edge(world_id, src_node, dst_node, edge['dir'])
 
                 # Make the tiles!
-                for tile in tiles:
-                    location = tile.split()
-                    curr_tile = tiles[tile]
-                    db.create_tile(world_id, dbid_to_nodeid[id_to_dbid[str(curr_tile['room'])]], curr_tile['color'], int(location[0]), int(location[1]), int(location[2]))
+                for tile in world_map['tiles']:
+                    db.create_tile(world_id, dbid_to_nodeid[local_id_to_dbid[str(tile['room'])]], tile['color'], tile['x_coordinate'], tile['y_coordinate'], tile['floor'])
 
                 # Now return to the user we did all of it!
                 self.write(json.dumps(world_id))
@@ -287,7 +279,6 @@ class LoadWorldHandler(BaseHandler):
             world_dict['edges'] = edge_list
             world_dict.update(entities_dict_list)
             self.write(json.dumps(world_dict))
-            print(str(world_dict))
             print("Finally done - that took way to long!")
 
  #-------------------------------------------------------------#

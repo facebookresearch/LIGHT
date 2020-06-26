@@ -481,51 +481,43 @@ export function useWorldBuilder(upload) {
 
   
   const postWorld = async () => {
-    const store = { height: dimensions.height, width: dimensions.width, floors: dimensions.floors,
-      tile: {}, room: {}, character: {}, object: {} };
+
+    const store = { 
+      dimensions: cloneDeep(dimensions),
+      map: {tiles: [], edges: [], },
+      entities: cloneDeep(entities),
+    };
+
     const map = filteredMap();
-    // Create store of all entities being used in the world
-    map.forEach(floor => {
-      Object.values(floor.tiles).forEach(tile => {
-        store.room[tile.room] = entities.room[tile.room];
-        for (let index in tile.characters) {
-          store.character[tile.characters[index]] =
-            entities.character[tile.characters[index]];
-        }
-        for (let index in tile.objects) {
-          store.object[tile.objects[index]] =
-            entities.object[tile.objects[index]];
-        }
-      });
-    });
-    console.table(map);
     // create store of all edges in the world
     const edges = [];
     // Create all edge requests and post all of them
     for (let floor = 0; floor < map.length; floor++) {
       const tiles = map[floor].tiles;
       for (let coord in tiles) {
-        store.tile[coord + " " + floor] = tiles[coord]
-        const payload = { room: -1, chars: [], objs: [], neighbors: [] };
-        payload.room = store.room[tiles[coord].room].id;
+        const tile = cloneDeep(tiles[coord]);
+        const [x, y] = coord.split(" ").map(i => parseInt(i));
+        tile["x_coordinate"] = x;
+        tile["y_coordinate"] = y;
+        tile["floor"] = floor;
+        const room = tile.room;
         tiles[coord].characters.forEach(character => {
-          payload.chars.push(store.character[character].id);
+          edges.push({src: room, dst: character, dir: "contains"});
         });
         tiles[coord].objects.forEach(object => {
-          payload.objs.push(store.object[object].id);
+          edges.push({src: room, dst: object, dir: "contains"})
         });
         if (tiles[coord].stairUp) {
-          payload.neighbors.push({
-            dst_id: store.room[map[floor + 1].tiles[coord].room].id, dir: 'neighbors above'
+          edges.push({
+            src: room, dst: map[floor + 1].tiles[coord].room, dir: 'neighbors above'
           });
         }
         if (tiles[coord].stairDown) {
-          payload.neighbors.push({
-            dst_id: store.room[map[floor - 1].tiles[coord].room].id, dir: 'neighbors below'
+          edges.push({
+            src: room, dst: map[floor - 1].tiles[coord].room, dir: 'neighbors below'
           });
         }
         // Ensure neighbours aren't blocked by walls
-        const [x, y] = coord.split(" ").map(i => parseInt(i));
         const neighbors = [
           `${x - 1} ${y}`,
           `${x + 1} ${y}`,
@@ -547,16 +539,20 @@ export function useWorldBuilder(upload) {
             )
           ) {
             if (!isEmpty(tiles[neighbor])) {
-              payload.neighbors.push({dst_id: store.room[tiles[neighbor].room].id, dir: direction});
+              edges.push({
+                src: room, dst: map[floor].tiles[neighbor].room, dir: direction
+              });
             }
           }
         }
-
-        edges.push(payload)
+        delete tile.characters;
+        delete tile.objects;
+        store.map.tiles.push(tile);
       }
     }
     // send it to the saving format!
-    store.edges = edges
+    store.map.edges = edges
+    console.log(store);
     const res = await post("world/", store);
 
     AppToaster.show({

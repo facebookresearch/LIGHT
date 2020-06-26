@@ -3107,46 +3107,6 @@ class LIGHTDatabase:
             edges.add(e)
             if (old_len != len(edges)):
                 self.get_connected(e['dst_id'], edges)
-        
-    def load_world(self, world_id, player_id):
-        world = self.get_world(world_id, player_id)[0]
-        world_dict = {x: world[x] for x in world.keys() if x != 'owner_id'}
-        tiles = self.get_tiles(world_id)
-        tile_list = [{x: tile[x] for x in tile.keys() if x != 'world_id'} for tile in tiles]
-        edges = set()
-        objects = set()
-        characters = set()
-        rooms = set()
-        entities_dict = {'room': rooms, 'character': characters, 'object': objects,}
-        for tile in tile_list:
-            self.get_edges(tile['id'], edges)
-            tile['room_entity_id'] = self.get_node(tile['room_node_id'])[0]['entity_id']
-        edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
-        # now get all entities
-        for edge in edge_list:
-            src = self.get_node(edge['src_id'])[0]
-            dst = self.get_node(edge['dst_id'])[0]
-            edge['src_entity_id'] = src['entity_id']
-            edge['dst_entity_id'] = dst['entity_id']
-            type_src = self.get_id(src['entity_id'])[0]['type'] 
-            type_dst = self.get_id(dst['entity_id'])[0]['type']
-            entities_dict[type_src].add(src['entity_id'])
-            entities_dict[type_dst].add(dst['entity_id'])
-
-        entities_dict_list = {}
-        for x in entities_dict.keys():
-            target_func = eval('self.get_' + x)
-            add = []
-            for entity_id in entities_dict[x]:
-                row = target_func(id=entity_id)[0]
-                add.append({key: row[key] for key in row.keys()})
-            entities_dict_list[x + 's'] = add
-           
-        world_dict['tiles'] = tile_list
-        world_dict['edges'] = edge_list
-        world_dict.update(entities_dict_list)
-
-        return world_dict
 
     def create_tile(self, world_id, room_id, color, x_coordinate, y_coordinate, floor, entry_attributes={}):
         id = self.create_id(DB_TYPE_TILE, entry_attributes)

@@ -31,7 +31,7 @@ function ListWorlds ({isOpen, toggleOverlay}) {
             "Content-Type": "application/json",
             }});
         const data = await res.json();
-
+        console.log(data)
         // Construct the 3 parts of state we need
         const dat = { 
             dimensions: {height: data.height, width: data.width, floors: data.num_floors},
@@ -127,6 +127,7 @@ function ListWorlds ({isOpen, toggleOverlay}) {
             intent: Intent.SUCCESS,
             message: "Done loading!",
         });  
+        console.log(dat);
         setUpload(dat)
     };
 
