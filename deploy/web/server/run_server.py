@@ -37,7 +37,6 @@ import threading
 here = os.path.abspath(os.path.dirname(__file__))
 
 def make_app(FLAGS, tornado_provider):
-    tornado_provider.app['cookie_secret'] = FLAGS.cookie_secret
     worldBuilderApp = BuildApplication(get_handlers(FLAGS.data_model_db))
     landingApp = LandingApplication(FLAGS.hostname, FLAGS.password)
     router = RuleRouter([
