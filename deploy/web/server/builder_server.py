@@ -241,10 +241,53 @@ class LoadWorldHandler(BaseHandler):
     # Prints let you see just how long this takes...
     def get(self, world_id):
         with LIGHTDatabase(self.dbpath) as db:
-            player = self.get_argument("player", 31106, True)
-            print("Starting to load things")
-            world = db.load_world(world_id, player)
-            self.write(json.dumps(world))
+            print("Starting to load...")
+            player_id = self.get_argument("player", 31106, True)
+            world = db.get_world(world_id, player_id)[0]
+            tiles = db.get_tiles(world_id)
+
+            # Construct all the dictionaries we will need
+            world_dict = {x: world[x] for x in world.keys() if x != 'owner_id'}
+            tile_list = [{x: tile[x] for x in tile.keys() if x != 'world_id'} for tile in tiles]
+            edges = set()
+            objects = set()
+            characters = set()
+            rooms = set()
+            entities_dict = {'room': rooms, 'character': characters, 'object': objects,}
+
+
+            for tile in tile_list:
+                db.get_edges(tile['id'], edges)
+                tile['room_entity_id'] = db.get_node(tile['room_node_id'])[0]['entity_id']
+            edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
+
+            # now get all entity ids associated with the edges
+            for edge in edge_list:
+                src = db.get_node(edge['src_id'])[0]
+                dst = db.get_node(edge['dst_id'])[0]
+                edge['src_entity_id'] = src['entity_id']
+                edge['dst_entity_id'] = dst['entity_id']
+                type_src = db.get_id(src['entity_id'])[0]['type'] 
+                type_dst = db.get_id(dst['entity_id'])[0]['type']
+                entities_dict[type_src].add(src['entity_id'])
+                entities_dict[type_dst].add(dst['entity_id'])
+
+            # Get the actual entities (needed for local store)
+            entities_dict_list = {}
+            for x in entities_dict.keys():
+                target_func = eval('db.get_' + x)
+                add = []
+                for entity_id in entities_dict[x]:
+                    row = target_func(id=entity_id)[0]
+                    add.append({key: row[key] for key in row.keys()})
+                entities_dict_list[x + 's'] = add
+            
+            # Combine all the dictionaries to return
+            world_dict['tiles'] = tile_list
+            world_dict['edges'] = edge_list
+            world_dict.update(entities_dict_list)
+            self.write(json.dumps(world_dict))
+            print(str(world_dict))
             print("Finally done - that took way to long!")
 
  #-------------------------------------------------------------#
