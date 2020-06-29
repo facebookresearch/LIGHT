@@ -482,24 +482,24 @@ export function useWorldBuilder(upload) {
   
   const postWorld = async () => {
 
-    const store = { 
+    // can pretty much just take the dimensions and entities as is
+    const dat = { 
       dimensions: cloneDeep(dimensions),
       map: {tiles: [], edges: [], },
       entities: cloneDeep(entities),
     };
 
     const map = filteredMap();
-    // create store of all edges in the world
+
+    // create all edge relationships and tile metadata needed
     const edges = [];
-    // Create all edge requests and post all of them
     for (let floor = 0; floor < map.length; floor++) {
       const tiles = map[floor].tiles;
       for (let coord in tiles) {
         const tile = cloneDeep(tiles[coord]);
         const [x, y] = coord.split(" ").map(i => parseInt(i));
-        tile["x_coordinate"] = x;
-        tile["y_coordinate"] = y;
-        tile["floor"] = floor;
+
+        // Now, construct the edges - first contains
         const room = tile.room;
         tiles[coord].characters.forEach(character => {
           edges.push({src: room, dst: character, type: "contains"});
@@ -507,6 +507,7 @@ export function useWorldBuilder(upload) {
         tiles[coord].objects.forEach(object => {
           edges.push({src: room, dst: object, type: "contains"})
         });
+
         if (tiles[coord].stairUp) {
           edges.push({
             src: room, dst: map[floor + 1].tiles[coord].room, type: 'neighbors above'
@@ -519,17 +520,11 @@ export function useWorldBuilder(upload) {
         }
         // Ensure neighbours aren't blocked by walls
         const neighbors = [
-          `${x - 1} ${y}`,
-          `${x + 1} ${y}`,
-          `${x} ${y - 1}`,
-          `${x} ${y + 1}`
+          `${x - 1} ${y}`, `${x + 1} ${y}`, `${x} ${y - 1}`, `${x} ${y + 1}`
         ];
         const dirs = [
-          'neighbors to the west',
-          'neighbors to the east',
-          'neighbors to the north',
-          'neighbors to the south'
-        ]
+          'neighbors to the west', 'neighbors to the east', 'neighbors to the north', 'neighbors to the south'
+        ];
         for (let index in neighbors) {
           const direction = dirs[index];
           const neighbor = neighbors[index];
@@ -545,17 +540,22 @@ export function useWorldBuilder(upload) {
             }
           }
         }
+
+        // Modify tile object to expected format and push
+        tile["x_coordinate"] = x;
+        tile["y_coordinate"] = y;
+        tile["floor"] = floor;
         delete tile.characters;
         delete tile.objects;
-        store.map.tiles.push(tile);
+        dat.map.tiles.push(tile);
       }
     }
     // send it to the saving format!
-    store.map.edges = edges
+    dat.map.edges = edges
 
     console.log("Format of saved data: ");
-    console.log(store);
-    const res = await post("world/", store);
+    console.log(dat);
+    const res = await post("world/", dat);
 
     AppToaster.show({
       intent: Intent.SUCCESS,

@@ -180,7 +180,7 @@ class SaveWorldHandler(BaseHandler):
                 # World created!
                 world_id = db.create_world(name, player, dimensions["height"], dimensions["width"], dimensions["floors"])[0]
 
-                #Now, make sure all entities are created and get their db id!
+                #Now, make sure all entities are created and get their db id! - surely must be a way to just dump all this stuff here
                 local_id_to_dbid = {}
                 for local_id, room in entities['room'].items():
                     room_id = db.create_room(room['name'], room['base_id'], room['description'], room['backstory'])
@@ -247,10 +247,8 @@ class LoadWorldHandler(BaseHandler):
             tile_list = [{x: tile[x] for x in tile.keys() if x != 'world_id'} for tile in tiles]
             edges = set()
             nextID = 1
-            objects = {}
-            characters = {}
-            rooms = {}
-            entities = {'room': rooms, 'character': characters, 'object': objects,}
+            entities = {'room': {}, 'character': {}, 'object': {},}
+
             node_to_local_id = {}
             node_to_type = {}
             for tile in tile_list:
@@ -263,7 +261,7 @@ class LoadWorldHandler(BaseHandler):
                 del tile['id']
                 del tile['room_node_id']
                 nextID += 1
-                
+
             edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
             edges = []
             # now get all entity ids associated with the edges
@@ -271,7 +269,6 @@ class LoadWorldHandler(BaseHandler):
                 if edge['src_id'] not in node_to_local_id:
                     src = db.get_node(edge['src_id'])[0]
                     node_to_local_id[edge['src_id']] = nextID
-                    edge['src_entity_id'] = src['entity_id']
                     type_src = db.get_id(src['entity_id'])[0]['type'] 
                     node_to_type[edge['src_id']] = type_src
                     row = eval('db.get_' + type_src)(id=src['entity_id'])[0]
@@ -281,7 +278,6 @@ class LoadWorldHandler(BaseHandler):
                 if edge['dst_id'] not in node_to_local_id:
                     dst = db.get_node(edge['dst_id'])[0]
                     node_to_local_id[edge['dst_id']] = nextID
-                    edge['dst_entity_id'] = dst['entity_id']
                     type_dst = db.get_id(dst['entity_id'])[0]['type']
                     node_to_type[edge['dst_id']] = type_dst
                     row = eval('db.get_' + type_dst)(id=dst['entity_id'])[0]
@@ -301,8 +297,7 @@ class LoadWorldHandler(BaseHandler):
             world_map['edges'] = edges
             result["map"] = world_map
             self.write(json.dumps(result))
-            print("Finally done - that took way to long!")
-
+            print("Finally done - that took way to long!")        
  #-------------------------------------------------------------#
 
 class EntityEditHandler(BaseHandler):
