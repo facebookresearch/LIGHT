@@ -33,7 +33,6 @@ import tornado.escape     # noqa E402: gotta install ioloop first
 
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
-
 here = os.path.abspath(os.path.dirname(__file__))
 
 _seen_warnings = set()
@@ -118,10 +117,11 @@ def get_path(filename):
 
 tornado_settings = {
     "autoescape": None,
+    "cookie_secret": "0123456789", #TODO: Placeholder, do not include in repo when deploy!!!
+    "compiled_template_cache": False,
     "debug": "/dbg/" in __file__,
-    "static_path": get_path('static'),
+    "login_url": "/login",
     "template_path": get_path('static'),
-    "compiled_template_cache": False
 }
 
 
@@ -129,14 +129,45 @@ class Application(tornado.web.Application):
     def __init__(self):
         self.subs = {}
         self.new_subs = []
+        super(Application, self).__init__(self.get_handlers(), **tornado_settings)
 
-        tornado_settings['static_url_prefix'] = "/static/"
-        handlers = [
-            # (r"/init", InitSceneHandler, {'app': self}),
-            (r"/socket", SocketHandler, {'app': self}),
-            # (r"%s(.*)", IndexHandler, {'app': self}),
+    def get_handlers(self):
+        path_to_build = here + "/../build/"
+        # NOTE: We choose to keep the StaticUIHandler, despite this handler never being
+        #       hit in the top level RuleRouter from run_server.py in case this application
+        #       is run standalone for some reason.
+        return [
+            (r"/game/socket", SocketHandler, {'app': self}),
+            (r"/", MainHandler),
+            (r"/(.*)", StaticUIHandler, {'path': path_to_build}),
         ]
-        super(Application, self).__init__(handlers, **tornado_settings)
+
+'''
+class WorldHandler(BaseHandler):
+    'Load a world given the player id and world id'
+
+    def initialize(self, dbpath):
+        self.dbpath = dbpath
+
+    @tornado.web.authenticated
+    def get(self):
+        with LIGHTDatabase(self.dbpath) as db:
+            id = int(self.get_argument('id'))
+            player = self.get_argument("player", None, True)
+            # TODO: Implement this method - load the world for the wordlbuilder
+            world = db.get_world(id=id, player_id=player)
+            # Want to write the world name and ids.  Then, load it into game instance somehow...
+            self.write(json.dumps(world))
+'''
+
+# StaticUIHandler serves static front end, defaulting to index.html served
+# If the file is unspecified.
+class StaticUIHandler(tornado.web.StaticFileHandler):
+    def parse_url_path(self, url_path):
+        PRIMARY_PAGE='index.html'
+        if not url_path or url_path.endswith('/'):
+            url_path = url_path + PRIMARY_PAGE
+        return url_path
 
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
@@ -163,13 +194,18 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.player = player
 
     def open(self):
-        if self not in list(self.subs.values()):
-            self.subs[self.sid] = self
-        logging.info(
-            'Opened new socket from ip: {}'.format(self.request.remote_ip))
-
-        self.new_subs.append(self.sid)
-
+        user_json = self.get_secure_cookie("user")
+        if user_json:
+            if self not in list(self.subs.values()):
+                self.subs[self.sid] = self
+            logging.info(
+                'Opened new socket from ip: {}'.format(self.request.remote_ip))
+            self.new_subs.append(self.sid)
+        else:
+            self.close()
+            self.redirect(u"/login")
+        
+        
     def send_alive(self):
         self.safe_write_message(
             json.dumps({'command': 'register', 'data': self.sid}))
@@ -218,9 +254,22 @@ class BaseHandler(tornado.web.RequestHandler):
     def __init__(self, *request, **kwargs):
         self.include_host = False
         super(BaseHandler, self).__init__(*request, **kwargs)
+    
+    def get_login_url(self):
+        return u"/login"
+
+    def get_current_user(self):
+        user_json = self.get_secure_cookie("user")
+        if user_json:
+            return tornado.escape.json_decode(user_json)
+        else:
+            return None
+
+    def set_default_headers(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        self.set_header('Access-Control-Allow-Headers', '*')
 
     # TODO maybe use cookies to restore previous game state?
-
     def write_error(self, status_code, **kwargs):
         logging.error("ERROR: %s: %s" % (status_code, kwargs))
         if "exc_info" in kwargs:
@@ -246,6 +295,52 @@ class BaseHandler(tornado.web.RequestHandler):
             except Exception as e:
                 logging.error(e)
 
+class LandingApplication(tornado.web.Application):
+    def __init__(self, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
+        super(LandingApplication, self).__init__(self.get_handlers(hostname, password), **tornado_settings)
+
+    def get_handlers(self, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
+        return [
+            (r"/", MainHandler),
+            (r"/login", LoginHandler, {'hostname' : hostname, 'password': password}),
+            (r"/logout", LogoutHandler),
+            (r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})
+        ]
+
+class MainHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        self.render(here + "/../build/index.html")
+        
+class LoginHandler(BaseHandler):
+    def initialize(self, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
+        self.hostname = hostname
+        self.password = password
+
+    def get(self):
+        self.render(here + "/login.html", next=self.get_argument("next", u"/"))
+        self.next = next
+
+    def post(self):
+        name = self.get_argument("name", "")
+        password = self.get_argument("password", "")
+        if password == self.password:
+            self.set_current_user(name)
+            self.redirect(self.get_argument("next", u"/"))
+        else:
+            error_msg = u"?error=" + tornado.escape.url_escape("Login incorrect.")
+            self.redirect(u"/login" + error_msg)
+
+    def set_current_user(self, user):
+        if user:
+            self.set_secure_cookie("user", tornado.escape.json_encode(user), domain=self.hostname)
+        else:
+            self.clear_cookie("user")
+
+class LogoutHandler(BaseHandler):
+    def get(self):
+        self.clear_cookie("user")
+        self.redirect(u"/login")
 
 class TornadoWebappPlayer(Player):
     """
@@ -309,25 +404,27 @@ class TornadoWebappPlayerProvider(PlayerProvider):
     will be given opportunities to check for new players and should return
     an array of new players during these calls
     """
-    def __init__(self, graph, hostname="127.0.0.1", port=35496):
+    def __init__(self, graph, hostname=DEFAULT_HOSTNAME, port=DEFAULT_PORT, listening=False):
         super().__init__(graph)
         self.app = None
 
         def _run_server():
+            nonlocal listening
             nonlocal self
             nonlocal hostname
             nonlocal port
             self.my_loop = ioloop.IOLoop()
             self.app = Application()
-            self.app.listen(port, max_buffer_size=1024 ** 3)
-            logging.info("Application Started")
+            if listening:
+                self.app.listen(port, max_buffer_size=1024 ** 3)
+                print("\nYou can connect to the game at http://%s:%s/" % (hostname, port))
+                print("You can connect to the socket at http://%s:%s/game/socket/" % (hostname, port))
+            logging.info("TornadoWebProvider Started")
 
             if "HOSTNAME" in os.environ and hostname == DEFAULT_HOSTNAME:
                 hostname = os.environ["HOSTNAME"]
             else:
                 hostname = hostname
-            print("You can connect to http://%s:%s/socket" % (hostname, port))
-
             self.my_loop.start()
 
         self.t = threading.Thread(
@@ -375,28 +472,28 @@ def main():
     import random
 
     parser = argparse.ArgumentParser(description='Start the tornado server.')
-    parser.add_argument('--light-model-root', type=str,
-                        default="/Users/jju/Desktop/LIGHT/",
-                        help='models path. For local setup, use: /checkpoint/jase/projects/light/dialog/')
-    parser.add_argument('-port', metavar='port', type=int,
-                        default=DEFAULT_PORT,
-                        help='port to run the server on.')
     parser.add_argument('--hostname', metavar='hostname', type=str,
                         default=DEFAULT_HOSTNAME,
                         help='host to run the server on.')
+    parser.add_argument('--light-model-root', type=str,
+                        default="/Users/jju/Desktop/LIGHT/",
+                        help='models path. For local setup, use: /checkpoint/jase/projects/light/dialog/')
     parser.add_argument('--no-game-instance', action='store_true',
-                    help='does not initialize game instance')
+                        help='does not initialize game instance')
+    parser.add_argument('-port', metavar='port', type=int,
+                        default=DEFAULT_PORT,
+                        help='port to run the server on.')
     FLAGS = parser.parse_args()
 
     random.seed(6)
     numpy.random.seed(6)
 
     if FLAGS.no_game_instance:
-        provider = TornadoWebappPlayerProvider(None, FLAGS.hostname, FLAGS.port)
+        provider = TornadoWebappPlayerProvider(None, FLAGS.hostname, FLAGS.port, listening=True)
     else:
         game = GameInstance()
         graph = game.g
-        provider = TornadoWebappPlayerProvider(graph, FLAGS.hostname, FLAGS.port)
+        provider = TornadoWebappPlayerProvider(graph, FLAGS.hostname, FLAGS.port, listening=True)
         game.register_provider(provider)
         game.run_graph()
 

@@ -10,7 +10,7 @@ import unittest
 import os
 import pickle
 
-from light.data-model.light_database import (
+from light.data_model.light_database import (
     LIGHTDatabase,
     DB_EDGE_IN_CONTAINED,
     DB_EDGE_EX_CONTAINED,
@@ -31,6 +31,7 @@ from light.data-model.light_database import (
     DB_TYPE_PARTICIPANT,
     DB_TYPE_TURN,
     DB_TYPE_PLAYER,
+    DB_TYPE_WORLD,
     ENTITY_TYPES,
     DB_STATUS_PROD,
     DB_STATUS_REVIEW,
@@ -678,6 +679,203 @@ class TestDatabase(unittest.TestCase):
             )
             # Test if the id_table is unaffected
             self.assertEqual(len(test.get_id()), prev_id_len)
+                
+#-----------------World Saving Test-----------------#
+    def test_create_world(self):
+        '''Test that world creation works and behaves as expected'''
+        # Test if a new world can be successfully created
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            player0 = test.create_player()[0]
+            w_id = test.create_world("swamp", player0, 3, 3, 1)[0]
+            self.assert_sqlite_row_equal(
+                {'id': w_id, 'name': "swamp", 'owner_id': player0, 'height': 3, 'width': 3, 'num_floors' : 1,},
+                test.get_world(w_id, player0)[0],
+                "New World cannot be created",
+            )
+    
+    def test_view_worlds(self):
+        '''Test that view worlds returns all worlds owned by player and only those worlds!'''
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            player0 = test.create_player()[0]
+            w1_id = test.create_world("swamp", player0, 3, 3, 1)[0]
+            w2_id = test.create_world("dragon guarded castle", player0, 2, 4, 2)[0]
+            res = test.view_worlds(player0)
+            self.assertEqual(len(res), 2)
+            self.assertEqual(
+                [{'id': w1_id, 'name': "swamp",}, {'id': w2_id, 'name': "dragon guarded castle",}],
+                res
+            )
+
+            player1 = test.create_player()[0]
+            w3_id = test.create_world("swamp2", player1, 3, 3, 5)[0]
+            res = test.view_worlds(player1)
+            self.assertEqual(len(res), 1)
+            self.assertEqual(
+                [{'id': w3_id, 'name': "swamp2",},],
+                res
+            )
+    
+    def test_world_deletion(self):
+        '''Test that delete worlds works as expected (ownly owner can delete)'''
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            player0 = test.create_player()[0]
+            player1 = test.create_player()[0]
+            w1_id = test.create_world("swamp", player0, 3, 3, 1)[0]
+            
+            with self.assertRaises(Exception):
+                test.delete_world(w1_id, player1)
+            self.assertEqual(len(test.view_worlds(player0)), 1)
+            test.delete_world(w1_id, player0)
+            self.assertEqual(len(test.view_worlds(player0)), 0)
+
+
+    def test_world_limit(self):
+        '''Test that the limit on world creation is enforced properly'''
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            player0 = test.create_player()[0]
+            player1 = test.create_player()[0]
+            for i in range(10):
+                test.create_world("swamp" + str(i), player0, 3, 3, 1)[0]
+            res = test.create_world("swamp10", player0, 3, 3, 1)
+            self.assertEqual(res, (-1, False))
+            res = test.create_world("swamp10", player1, 3, 3, 1)
+            self.assertEqual(res[1], True)
+
+    # TODO: Add test for the components (such as saving/creating edges, etc)
+    def test_world_saving(self):
+        '''Test that when we save then load a world, all attributes exist'''
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            player0 = test.create_player()[0]
+            w_id = test.create_world("swampy world", player0, 3, 3, 1)[0]
+
+            # Create rooms, characters, and objects
+            rbase_id = test.create_base_room("room")[0]
+            rcontent_id1 = test.create_room("swamp", rbase_id, "damp", "wet")[0]
+            cbase_id = test.create_base_character("ogre")[0]
+            ccontent_id1 = test.create_character(None, cbase_id, "green", "big")[0]
+            obase_id = test.create_base_object('obj')[0]
+            ocontent_id1 = test.create_object(
+                'small obj', obase_id, 0, 0, 0, 0, 0, 0, 0, 'dusty'
+            )[0]
+
+            rcontent_id2 = test.create_room("marsh", rbase_id, "soggy", "wet")[0]
+            cbase_id2 = test.create_base_character("frog")[0]
+            ccontent_id2 = test.create_character(None, cbase_id2, "green", "small")[0]
+            ocontent_id2 = test.create_object(
+                'big obj', obase_id, 0, 0, 0, 0, 0, 0, 0, 'huuuge'
+            )[0]
+
+            # Create nodes
+            n_id1 = test.create_graph_node(rcontent_id1)[0]
+            n_id2 = test.create_graph_node(ccontent_id1)[0]
+            n_id3 = test.create_graph_node(ocontent_id1)[0]
+            n_id4 = test.create_graph_node(rcontent_id2)[0]
+            n_id5 = test.create_graph_node(ccontent_id2)[0]
+            n_id6 = test.create_graph_node(ocontent_id2)[0]
+
+
+            
+            # Create edges now
+            e_id1 = test.create_graph_edge(w_id, n_id1, n_id4, "neighbors to the north of")[0]
+            e_id2 = test.create_graph_edge(w_id, n_id1, n_id2, "contains")[0]
+            e_id3 = test.create_graph_edge(w_id, n_id1, n_id3, "contains")[0]
+
+            e_id4 = test.create_graph_edge(w_id, n_id4, n_id1, "neighbors to the south of")[0]
+            e_id5 = test.create_graph_edge(w_id, n_id4, n_id5, "contains")[0]
+            e_id6 = test.create_graph_edge(w_id, n_id4, n_id6, "contains")[0]
+
+            # Create tiles now
+            t_id1 = test.create_tile(w_id, n_id1, 3394611, 1, 1, 1)[0]
+            t_id2 = test.create_tile(w_id, n_id4, 13056, 2, 1, 1)[0]
+
+            self.assertCountEqual(test.load_world(w_id, player0),
+            {
+                'id': 2,
+                'name': 'swampy world',
+                'height': 3,
+                'width': 3,
+                'num_floors': 1,
+                'tiles': [{
+                    'id': 25,
+                    'room_node_id': 13,
+                    'color': 3394611,
+                    'x_coordinate': 1,
+                    'y_coordinate': 1,
+                    'floor': 1,
+                    'room_entity_id': 4
+                }, {
+                    'id': 26,
+                    'room_node_id': 16,
+                    'color': 13056,
+                    'x_coordinate': 2,
+                    'y_coordinate': 1,
+                    'floor': 1,
+                    'room_entity_id': 9
+                }],
+                'edges': [{
+                    'id': 19,
+                    'w_id': 2,
+                    'src_id': 13,
+                    'dst_id': 16,
+                    'edge_type': 'neighbors to the north of',
+                    'src_entity_id': 4,
+                    'dst_entity_id': 9
+                }, {
+                    'id': 24,
+                    'w_id': 2,
+                    'src_id': 16,
+                    'dst_id': 18,
+                    'edge_type': 'contains',
+                    'src_entity_id': 9,
+                    'dst_entity_id': 12
+                }, {
+                    'id': 23,
+                    'w_id': 2,
+                    'src_id': 16,
+                    'dst_id': 17,
+                    'edge_type': 'contains',
+                    'src_entity_id': 9,
+                    'dst_entity_id': 11
+                }, {
+                    'id': 21,
+                    'w_id': 2,
+                    'src_id': 13,
+                    'dst_id': 15,
+                    'edge_type': 'contains',
+                    'src_entity_id': 4,
+                    'dst_entity_id': 8
+                }, {
+                    'id': 22,
+                    'w_id': 2,
+                    'src_id': 16,
+                    'dst_id': 13,
+                    'edge_type': 'neighbors to the south of',
+                    'src_entity_id': 9,
+                    'dst_entity_id': 4
+                }, {
+                    'id': 20,
+                    'w_id': 2,
+                    'src_id': 13,
+                    'dst_id': 14,
+                    'edge_type': 'contains',
+                    'src_entity_id': 4,
+                    'dst_entity_id': 6
+                }],
+                'rooms': {
+                    9,
+                    4
+                },
+                'characters': {
+                    11,
+                    6
+                },
+                'objects': {
+                    8,
+                    12
+                }
+            })
+
+#---------------------------------------------------#
 
     def test_status(self):
         '''Test that status in the master ID table behaves as expected'''

@@ -35,7 +35,7 @@ export function useAPI(CONFIG, url, { body, params } = {}, preloaded) {
     let isSubscribed = true;
 
     if (state.loading) {
-      fetch(CONFIG.host + ":" + CONFIG.port + url)
+      fetch(CONFIG.host + ":" + CONFIG.port + "/builder" + url)
         .then(res => res.json())
         .then(data => {
           if (isSubscribed) {
@@ -70,10 +70,10 @@ export function post(url, payload) {
     );
     formBody.push(encodedKey + "=" + encodedValue);
   }
-  return fetch(`${CONFIG.host}:${CONFIG.port}/${url}`, {
+  return fetch(`${CONFIG.host}:${CONFIG.port}/builder/${url}`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
+      "Content-Type": "application/x-www-form-urlencoded",
     },
     body: formBody.join("&")
   });

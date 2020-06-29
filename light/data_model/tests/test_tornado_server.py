@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+import unittest.mock as mock
 import json
+import re
 from tornado import gen, httpclient, ioloop, testing, escape
 from tornado.testing import AsyncHTTPTestCase, gen_test
 from tornado.ioloop import IOLoop
@@ -40,16 +42,20 @@ from light.data_model.light_database import (
     CONTENT_STATUSES,
     EDIT_STATUSES,
 )
-from light.data_model.server import (
-    Application,
+from deploy.web.server.builder_server import (
+    BuildApplication,
     get_handlers,
 )
+from deploy.web.server.tornado_server import (
+    LandingApplication, 
+    Application,
+)
 
-PORT = 8080
+PORT = 35494
 URL = f'http://localhost:{PORT}'
 
-
-class TestTornadoApp(AsyncHTTPTestCase):
+@mock.patch('deploy.web.server.tornado_server.BaseHandler.get_current_user', return_value='user')
+class TestGameApp(AsyncHTTPTestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.data_dir, 'test_server.db')
@@ -61,12 +67,257 @@ class TestTornadoApp(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = Application(get_handlers(self.db_path))
+        app = Application()
         app.listen(PORT)
         return app
 
     @gen_test
-    def test_submit_entity_edits(self):
+    def test_game_page(self, mocked_auth):
+        '''Test that no specific endpoint results in main game served when logged in'''
+        headers = {'Content-Type': 'application/json',}
+        response = yield self.client.fetch(
+            f'{URL}/',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+
+    @gen_test
+    def test_static_handler(self, mocked_auth):
+        '''Test that index.html will be rendered from static handler correctly'''
+        headers = {'Content-Type': 'application/json',}
+        response = yield self.client.fetch(
+            f'{URL}/index.html',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+
+@mock.patch('deploy.web.server.tornado_server.BaseHandler.get_current_user', return_value='user')
+class TestLandingApp(AsyncHTTPTestCase):
+    def setUp(self):
+        self.data_dir = tempfile.mkdtemp()
+        self.db_path = os.path.join(self.data_dir, 'test_server.db')
+        self.client = httpclient.AsyncHTTPClient()
+        super().setUp()
+
+    def tearDown(self):
+        super().tearDown()
+        shutil.rmtree(self.data_dir)
+
+    def get_app(self):
+        app = LandingApplication()
+        app.listen(PORT)
+        return app
+        
+    @gen_test
+    def test_static_handler(self, mocked_auth):
+        '''Test that index.html will be rendered from static handler correctly'''
+        headers = {'Content-Type': 'application/json',}
+        response = yield self.client.fetch(
+            f'{URL}/index.html',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+
+    @gen_test
+    def test_static_handler_nonexisting(self, mocked_auth):
+        '''Test the static handler 404 if resource not found'''
+        headers = {'Content-Type': 'application/json',}
+        with self.assertRaises(httpclient.HTTPClientError) as cm:
+            response = yield self.client.fetch(
+                f'{URL}/something.html',
+                method='GET',
+                headers=headers,
+            )
+        self.assertEqual(cm.exception.code, 404)
+
+    @gen_test
+    def test_landing_page(self, mocked_auth):
+        '''Test that no specific endpoint results in main page served when logged in'''
+        headers = {'Content-Type': 'application/json',}
+        response = yield self.client.fetch(
+            f'{URL}/',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+
+    @gen_test
+    def test_landing_page_redirect(self, mocked_auth):
+        '''Test that redirect when not logged in'''
+        mocked_auth.return_value=None
+        headers = {'Content-Type': 'application/json'}
+        with self.assertRaises(httpclient.HTTPClientError) as cm:
+            response = yield self.client.fetch(
+                f'{URL}/',
+                method='GET',
+                headers=headers,
+                follow_redirects=False,
+            )
+        self.assertEqual(cm.exception.code, 302)
+        self.assertEqual(cm.exception.response.headers['Location'], '/login?next=%2F')
+
+    @gen_test
+    def test_logout(self, mocked_auth):
+        '''Test that logout clears cookie and redirects'''
+        headers = {'Content-Type': 'application/json'}
+        with self.assertRaises(httpclient.HTTPClientError) as cm:
+            response = yield self.client.fetch(
+                f'{URL}/logout',
+                method='GET',
+                headers=headers,
+                follow_redirects=False,
+            )
+        # 302 still bc we need to redirect
+        self.assertEqual(cm.exception.code, 302)
+        self.assertEqual(len(cm.exception.response.headers.get_list('Set-Cookie')), 1)
+        # Clearing cookies, so should user should be empty string, then redirect to login
+        result = re.search('user="(.*)"(.*)', cm.exception.response.headers['Set-Cookie'])
+        self.assertEqual(len(result.group(1)), 0)
+        self.assertEqual(cm.exception.response.headers['Location'], '/login')
+
+    @gen_test
+    def test_login_succesful(self, mocked_auth):
+        '''Test that login endpoint with correct password gives cookie, 200'''
+        headers = {'Content-Type': 'multipart/form-data; boundary=SomeRandomBoundary'}
+        body = self.build_body()
+        with self.assertRaises(httpclient.HTTPClientError) as cm:
+            response = yield self.client.fetch(
+                f'{URL}/login',
+                method='POST',
+                headers=headers,
+                body=body,
+                follow_redirects=False,
+            )
+        # 302 still bc we need to redirect
+            self.assertEqual(cm.exception.code, 302)
+        self.assertEqual(len(cm.exception.response.headers.get_list('Set-Cookie')), 1)
+        response = yield self.client.fetch(
+            f'{URL}/login',
+            method='POST',
+            headers=headers,
+            body=body,
+        )
+        self.assertEqual(response.code, 200)
+
+
+    @gen_test
+    def test_login_endpoint(self, mocked_auth):
+        '''Test that login endpoint responds with login page'''
+        headers = {'Content-Type': 'application/json'}
+        response = yield self.client.fetch(
+            f'{URL}/login',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(response.headers['Content-Type'], 'text/html; charset=UTF-8')
+        # This part is liable to change, can just remove in future
+        self.assertEqual(response.body, b'<html><body><form action="/login?next=/" method="post">Name:<input type="text" name="name"> Password: <input type="text" name="password"><input type="submit" value="Sign in"></form></body></html>')
+
+    @gen_test
+    def test_login_password_protected(self, mocked_auth):
+        '''Test that login does not work with wrong password'''
+        headers = {'Content-Type': 'multipart/form-data; boundary=SomeRandomBoundary'}
+        body = self.build_body(password="dog")
+        with self.assertRaises(httpclient.HTTPClientError) as cm:
+            response = yield self.client.fetch(
+                f'{URL}/login',
+                method='POST',
+                headers=headers,
+                body=body,
+                follow_redirects=False,
+            )
+        self.assertEqual(cm.exception.code, 302)
+
+        # With allowing redirects, we expect to end up back at the login page
+        response = yield self.client.fetch(
+            f'{URL}/login',
+            method='POST',
+            headers=headers,
+            body=body,
+        )        
+        self.assertEqual(response.code, 200)
+        self.assertEqual(response.headers['Content-Type'], 'text/html; charset=UTF-8')
+        # This part is liable to change, can just remove in future
+        self.assertEqual(response.body, b'<html><body><form action="/login?next=/" method="post">Name:<input type="text" name="name"> Password: <input type="text" name="password"><input type="submit" value="Sign in"></form></body></html>')
+
+    def build_body(name='me', password='LetsPlay'):
+        boundary = 'SomeRandomBoundary'
+        body = '--%s\r\n' % boundary 
+
+        # data for field1
+        body += 'Content-Disposition: form-data; name="name"\r\n'
+        body += '\r\n' # blank line
+        body += '%s\r\n' % name
+
+        # separator boundary
+        body += '--%s\r\n' % boundary 
+
+        # data for field2
+        body += 'Content-Disposition: form-data; name="password"\r\n'
+        body += '\r\n' # blank line
+        body += '%s\r\n' % password
+
+        # separator boundary
+        body += '--%s--\r\n' % boundary 
+        return body
+
+@mock.patch('deploy.web.server.builder_server.BaseHandler.get_current_user', return_value='user')
+class TestBuilderApp(AsyncHTTPTestCase):
+    def setUp(self):
+        self.data_dir = tempfile.mkdtemp()
+        self.db_path = os.path.join(self.data_dir, 'test_server.db')
+        self.client = httpclient.AsyncHTTPClient()
+        super().setUp()
+
+    def tearDown(self):
+        super().tearDown()
+        shutil.rmtree(self.data_dir)
+
+    def get_app(self):
+        app = BuildApplication(get_handlers(self.db_path))
+        app.listen(PORT)
+        return app
+
+
+    @gen_test
+    def test_builder_page(self, mocked_auth):
+        '''Test that no specific endpoint results in main builder page served when logged in'''
+        headers = {'Content-Type': 'application/json',}
+        response = yield self.client.fetch(
+            f'{URL}/builder/',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+
+    @gen_test
+    def test_builder_page(self, mocked_auth):
+        '''Test that static data serves landing correctly'''
+        headers = {'Content-Type': 'application/json',}
+        response = yield self.client.fetch(
+            f'{URL}/builder/builderindex.html',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+
+    @gen_test
+    def test_builder_page(self, mocked_auth):
+        '''Test that static data serves main builder page correctly'''
+        headers = {'Content-Type': 'application/json',}
+        response = yield self.client.fetch(
+            f'{URL}/',
+            method='GET',
+            headers=headers,
+        )
+        self.assertEqual(response.code, 200)
+
+    @gen_test
+    def test_submit_entity_edits(self, mocked_auth):
         '''Test that entity edits can be submitted successfully'''
         with LIGHTDatabase(self.db_path) as db:
             player = db.create_player()[0]
@@ -79,13 +330,12 @@ class TestTornadoApp(AsyncHTTPTestCase):
             'player': player,
         }
         response = yield self.client.fetch(
-            f'{URL}/edits',
+            f'{URL}/builder/edits',
             method='POST',
-            headers=None,
             body=urllib.parse.urlencode(body),
         )
         self.assertEqual(response.code, 201)
-        response = yield self.client.fetch(f'{URL}/edits/1')
+        response = yield self.client.fetch(f'{URL}/builder/edits/1',)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -102,7 +352,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
         )
 
     @gen_test
-    def test_submit_utterance_edits(self):
+    def test_submit_utterance_edits(self, mocked_auth):
         '''Test that utterance edits can be submitted successfully'''
         with LIGHTDatabase(self.db_path) as db:
             player = db.create_player()[0]
@@ -125,14 +375,13 @@ class TestTornadoApp(AsyncHTTPTestCase):
             'player': player,
         }
         response = yield self.client.fetch(
-            f'{URL}/edits',
+            f'{URL}/builder/edits',
             method='POST',
-            headers=None,
             body=urllib.parse.urlencode(body),
         )
         self.assertEqual(response.code, 201)
         self.assertEqual(json.loads(response.body.decode()), {'edit_id': 1})
-        response = yield self.client.fetch(f'{URL}/edits/1')
+        response = yield self.client.fetch(f'{URL}/builder/edits/1')
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -152,7 +401,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
         )
 
     @gen_test
-    def test_submit_edits_error(self):
+    def test_submit_edits_error(self, mocked_auth):
         '''Test that missing arguments are detected'''
         with LIGHTDatabase(self.db_path) as db:
             player = db.create_player()[0]
@@ -160,16 +409,16 @@ class TestTornadoApp(AsyncHTTPTestCase):
         body = {'field': 'name', 'edited_value': 'name_edit_test', 'player': player}
         with self.assertRaises(httpclient.HTTPClientError) as cm:
             response = yield self.client.fetch(
-                f'{URL}/edits',
+                f'{URL}/builder/edits',
                 method='POST',
-                headers=None,
+                headers=headers,
                 body=urllib.parse.urlencode(body),
             )
         self.assertEqual(400, cm.exception.code)
         self.assertEqual(cm.exception.message, 'Bad Request')
 
     @gen_test
-    def test_reject_edits(self):
+    def test_reject_edits(self, mocked_auth):
         '''Test that edits can be rejected successfully'''
         with LIGHTDatabase(self.db_path) as db:
             player = db.create_player()[0]
@@ -192,11 +441,11 @@ class TestTornadoApp(AsyncHTTPTestCase):
                 ],
             )
         response = yield self.client.fetch(
-            f'{URL}/edits/{edit_id}/reject', method='POST', headers=None, body=b''
+            f'{URL}/builder/edits/{edit_id}/reject', method='POST', body=b''
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()), {'id': base_room})
-        response = yield self.client.fetch(f'{URL}/edits/1')
+        response = yield self.client.fetch(f'{URL}/builder/edits/1')
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -213,7 +462,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
         )
 
     @gen_test
-    def test_accept_edits(self):
+    def test_accept_edits(self, mocked_auth):
         '''Test that edits can be accepted and enacted'''
         with LIGHTDatabase(self.db_path) as db:
             player = db.create_player()[0]
@@ -236,15 +485,14 @@ class TestTornadoApp(AsyncHTTPTestCase):
             )
         accept_type = 'accepted'
         response = yield self.client.fetch(
-            f'{URL}/edits/{edit_id}/accept/{accept_type}',
+            f'{URL}/builder/edits/{edit_id}/accept/{accept_type}',
             method='POST',
-            headers=None,
             body=b'',
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()), {'id': base_room})
         # check that the entry in the edits table is updated
-        response = yield self.client.fetch(f'{URL}/edits/1')
+        response = yield self.client.fetch(f'{URL}/builder/edits/1')
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -264,7 +512,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
             self.assertEqual(db.get_query(base_room)[:], (base_room, 'name_edit_test'))
 
     @gen_test
-    def test_view_multiple_edits(self):
+    def test_view_multiple_edits(self, mocked_auth):
         '''
         Tests that edits can be queried based on player, status and entity ID
         '''
@@ -308,7 +556,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
         # check that querying for edits with DB_STATUS_REVIEW status only returns
         # the second edit
         response = yield self.client.fetch(
-            f'{URL}/edits?status={escape.url_escape(DB_STATUS_REVIEW)}&expand=True'
+            f'{URL}/builder/edits?status={escape.url_escape(DB_STATUS_REVIEW)}&expand=True',
         )
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -326,7 +574,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
             ],
         )
         # check that querying for edits submitted by "player" returns both edits
-        response = yield self.client.fetch(f'{URL}/edits?player={player}&expand=True')
+        response = yield self.client.fetch(f'{URL}/builder/edits?player={player}&expand=True')
         self.assertEqual(
             json.loads(response.body.decode()),
             [
@@ -353,11 +601,11 @@ class TestTornadoApp(AsyncHTTPTestCase):
             ],
         )
         # check that expand=False behaves as expected
-        response = yield self.client.fetch(f'{URL}/edits?player={player}')
+        response = yield self.client.fetch(f'{URL}/builder/edits?player={player}',)
         self.assertEqual(json.loads(response.body.decode()), [1, 2])
 
     @gen_test
-    def test_view_entities(self):
+    def test_view_entities(self, mocked_auth):
         '''
         Tests the ViewEntityWithIDHandler. Checks whether the correct content
         and format is returned when calling entities/<ID>
@@ -367,13 +615,13 @@ class TestTornadoApp(AsyncHTTPTestCase):
             base_room2 = db.create_base_room('small room')[0]
             room1 = db.create_room('small room', base_room1, 'tiny', 'old')[0]
         # Test that base entity can be viewed
-        response = yield self.client.fetch(f'{URL}/entities/{base_room1}')
+        response = yield self.client.fetch(f'{URL}/builder/entities/{base_room1}',)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()), {'entity': {'id': base_room1, 'name': 'room'}, 'type': 'base room'}
         )
         # Test that entity can be viewed
-        response = yield self.client.fetch(f'{URL}/entities/{room1}')
+        response = yield self.client.fetch(f'{URL}/builder/entities/{room1}',)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -390,7 +638,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
         )
 
     @gen_test
-    def test_search_entities(self):
+    def test_search_entities(self, mocked_auth):
         '''
         Tests entries in the database can be searched through the endpoint
         using FTS. More extensive tests on the search function are in test_db.py
@@ -403,7 +651,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
             room2 = db.create_room('roomsmall', base_room1, 'decayed', 'tiny')[0]
             room3 = db.create_room('small room', base_room1, 'tiny', 'good')[0]
         # check that seraching for base room works properly
-        response = yield self.client.fetch(f'{URL}/entities/base_room?search=room')
+        response = yield self.client.fetch(f'{URL}/builder/entities/base_room?search=room',)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -414,7 +662,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
             ],
         )
         # check that seraching for room works properly
-        response = yield self.client.fetch(f'{URL}/entities/room?search=decay')
+        response = yield self.client.fetch(f'{URL}/builder/entities/room?search=decay',)
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -437,7 +685,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
         )
 
     @gen_test
-    def test_search_entities_special_character(self):
+    def test_search_entities_special_character(self, mocked_auth):
         '''
         Tests special characters in search string can be processed using urllib
         '''
@@ -446,7 +694,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
             base_room2 = db.create_base_room('small room')[0]
         search_string = parse.quote_plus('small room')
         response = yield self.client.fetch(
-            f'{URL}/entities/base_room?search={search_string}'
+            f'{URL}/builder/entities/base_room?search={search_string}',
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(
@@ -455,17 +703,17 @@ class TestTornadoApp(AsyncHTTPTestCase):
         )
 
     @gen_test
-    def test_search_entities_incorrect_type(self):
+    def test_search_entities_incorrect_type(self, mocked_auth):
         '''Tests that passing the incorrect type raises 400 bad request'''
         with LIGHTDatabase(self.db_path) as db:
             base_room = db.create_base_room('room')[0]
         with self.assertRaises(httpclient.HTTPClientError) as cm:
-            response = yield self.client.fetch(f'{URL}/entities/base_?search=room')
+            response = yield self.client.fetch(f'{URL}/builder/entities/base_?search=room')
         self.assertEqual(400, cm.exception.code)
         self.assertEqual(cm.exception.message, 'Type is not valid. ')
 
     @gen_test
-    def test_get_in_contained_from_database(self):
+    def test_get_in_contained_from_database(self, mocked_auth):
         '''
         When given a room, test that the endpoint can successfullly retrieve
         all objects/characters in the database whose name is contained in the
@@ -497,14 +745,14 @@ class TestTornadoApp(AsyncHTTPTestCase):
             tree = test.create_object(None, base_obj2, 0.4, 0.2, 0, 0, 0, 0, 0, "big")[
                 0
             ]
-        response = yield self.client.fetch(f'{URL}/edges?room={classroom}')
+        response = yield self.client.fetch(f'{URL}/builder/edges?room={classroom}')
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()), [teacher1, student, podium]
         )
 
     @gen_test
-    def test_create_edges(self):
+    def test_create_edges(self, mocked_auth):
         '''Tests creating edges'''
         with LIGHTDatabase(self.db_path) as test:
             base_room = test.create_base_room('room')[0]
@@ -523,9 +771,8 @@ class TestTornadoApp(AsyncHTTPTestCase):
             'dry_run': True,
         }
         response = yield self.client.fetch(
-            f'{URL}/edges',
+            f'{URL}/builder/edges',
             method='POST',
-            headers=None,
             body=urllib.parse.urlencode(body),
         )
         self.assertEqual(response.code, 200)
@@ -549,9 +796,8 @@ class TestTornadoApp(AsyncHTTPTestCase):
             'dry_run': False,
         }
         response = yield self.client.fetch(
-            f'{URL}/edges',
+            f'{URL}/builder/edges',
             method='POST',
-            headers=None,
             body=urllib.parse.urlencode(body),
         )
         # check that when dry_run = False the database is altered
@@ -561,12 +807,12 @@ class TestTornadoApp(AsyncHTTPTestCase):
             self.assertNotEqual(test.get_id(type=DB_TYPE_EDGE), [])
 
     @gen_test
-    def test_search_entities_no_search(self):
+    def test_search_entities_no_search(self, mocked_auth):
         '''Tests that not passing search returns all entries'''
         with LIGHTDatabase(self.db_path) as db:
             base_room1 = db.create_base_room('room')[0]
             base_room2 = db.create_base_room('small room')[0]
-        response = yield self.client.fetch(f'{URL}/entities/base_room?')
+        response = yield self.client.fetch(f'{URL}/builder/entities/base_room?')
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -577,9 +823,9 @@ class TestTornadoApp(AsyncHTTPTestCase):
         )
 
     @gen_test
-    def test_get_types(self):
+    def test_get_types(self, mocked_auth):
         '''Tests all table names are returned correctly'''
-        response = yield self.client.fetch(f'{URL}/tables/types')
+        response = yield self.client.fetch(f'{URL}/builder/tables/types')
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -600,16 +846,16 @@ class TestTornadoApp(AsyncHTTPTestCase):
         )
 
     @gen_test
-    def test_get_column_names(self):
+    def test_get_column_names(self, mocked_auth):
         '''Tests all column names are returned correctly'''
         # test base entity
-        response = yield self.client.fetch(f'{URL}/entities/base_object/fields')
+        response = yield self.client.fetch(f'{URL}/builder/entities/base_object/fields')
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()), {'id': 'integer', 'name': 'text'}
         )
         # test entity
-        response = yield self.client.fetch(f'{URL}/entities/room/fields')
+        response = yield self.client.fetch(f'{URL}/builder/entities/room/fields')
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -623,20 +869,19 @@ class TestTornadoApp(AsyncHTTPTestCase):
         )
 
     @gen_test
-    def test_get_column_names_invalid(self):
+    def test_get_column_names_invalid(self, mocked_auth):
         '''Tests that when type is invalid, error is raised'''
         with self.assertRaises(Exception):
-            response = yield self.client.fetch(f'{URL}/entities/base_/fields')
+            response = yield self.client.fetch(f'{URL}/builder/entities/base_/fields',)
             self.assertEqual(response.code, 400)
 
     @gen_test
-    def test_create_base_entity(self):
+    def test_create_base_entity(self, mocked_auth):
         '''Tests that a base entity can be created through the endpoint'''
         body = {'name': 'base room lala'}
         response = yield self.client.fetch(
-            f'{URL}/entities/base_room',
+            f'{URL}/builder/entities/base_room',
             method='POST',
-            headers=None,
             body=urllib.parse.urlencode(body),
         )
         # check that the entry in the edits table is updated
@@ -646,7 +891,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
             self.assertEqual(db.get_query(id)[:], (id, 'base room lala'))
 
     @gen_test
-    def test_create_entity(self):
+    def test_create_entity(self, mocked_auth):
         '''Tests that an entity can be created through the endpoint'''
         with LIGHTDatabase(self.db_path) as db:
             base_char = db.create_base_character('animal')[0]
@@ -657,9 +902,8 @@ class TestTornadoApp(AsyncHTTPTestCase):
             'physical_description': 'big',
         }
         response = yield self.client.fetch(
-            f'{URL}/entities/character',
+            f'{URL}/builder/entities/character',
             method='POST',
-            headers=None,
             body=urllib.parse.urlencode(body),
         )
         # check that the entry in the edits table is updated
@@ -671,7 +915,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
             )
 
     @gen_test
-    def test_create_interaction(self):
+    def test_create_interaction(self, mocked_auth):
         '''Tests that an interaction can be created through the endpoint'''
         with LIGHTDatabase(self.db_path) as test:
             base_room = test.create_base_room("room")[0]
@@ -714,9 +958,8 @@ class TestTornadoApp(AsyncHTTPTestCase):
             "turns": json.dumps(turns),
         }
         response = yield self.client.fetch(
-            f'{URL}/interactions',
+            f'{URL}/builder/interactions',
             method='POST',
-            headers=None,
             body=urllib.parse.urlencode(body),
         )
         self.assertEqual(response.code, 200)
@@ -725,9 +968,8 @@ class TestTornadoApp(AsyncHTTPTestCase):
             self.assertEqual(db.get_query(interaction_id)[:], (interaction_id, room))
         # check that duplicates return -1 as interaction_id
         response = yield self.client.fetch(
-            f'{URL}/interactions',
+            f'{URL}/builder/interactions',
             method='POST',
-            headers=None,
             body=urllib.parse.urlencode(body),
         )
         self.assertEqual(response.code, 200)
@@ -735,7 +977,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
         self.assertEqual(interaction_id, -1)
 
     @gen_test
-    def test_view_interaction(self):
+    def test_view_interaction(self, mocked_auth):
         '''Tests that an interaction can be viewed through the endpoint'''
         with LIGHTDatabase(self.db_path) as test:
             rbase_id = test.create_base_room("room")[0]
@@ -760,7 +1002,7 @@ class TestTornadoApp(AsyncHTTPTestCase):
                 interaction1, 1, 1, "speech", utterance2, "", participant1, participant2
             )[0]
         response = yield self.client.fetch(
-            f'{URL}/interactions?interaction_id={interaction1}'
+            f'{URL}/builder/interactions?interaction_id={interaction1}',
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(
@@ -810,8 +1052,11 @@ class TestTornadoApp(AsyncHTTPTestCase):
 
 
 def all():
-    return unittest.TestLoader().loadTestsFromTestCase(TestTornadoApp)
-
+    suiteList = []
+    suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestGameApp))
+    suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestBuilderApp))
+    suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestLandingApp))
+    return unittest.TestSuite(suiteList)
 
 if __name__ == '__main__':
     testing.main()

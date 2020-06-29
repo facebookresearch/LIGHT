@@ -41,6 +41,28 @@ EDGE_TYPES = [
     DB_EDGE_NEIGHBOR,
 ]
 
+DB_GRAPH_EDGE_CONTAINS = 'contains'
+DB_GRAPH_EDGE_NEIGHBOR_N = "neighbors to the north of"
+DB_GRAPH_EDGE_NEIGHBOR_E = "neighbors to the east of"
+DB_GRAPH_EDGE_NEIGHBOR_S = "neighbors to the south of"
+DB_GRAPH_EDGE_NEIGHBOR_W = "neighbors to the west of"
+DB_GRAPH_EDGE_NEIGHBOR_U = "neighbors above of"
+DB_GRAPH_EDGE_NEIGHBOR_D = "neighbors below"
+DB_GRAPH_EDGE_WORN = 'worn'
+DB_GRAPH_EDGE_WIELDED = 'wielded'
+# Edges between nodes in graphs executed
+GRAPH_EDGE_TYPES = [
+    DB_GRAPH_EDGE_CONTAINS,
+    DB_GRAPH_EDGE_NEIGHBOR_N,
+    DB_GRAPH_EDGE_NEIGHBOR_E,
+    DB_GRAPH_EDGE_NEIGHBOR_S,
+    DB_GRAPH_EDGE_NEIGHBOR_W,
+    DB_GRAPH_EDGE_NEIGHBOR_U,
+    DB_GRAPH_EDGE_NEIGHBOR_D,
+    DB_GRAPH_EDGE_WORN,
+    DB_GRAPH_EDGE_WIELDED,
+]
+
 # All entity types existing in the database
 DB_TYPE_BASE_CHAR = 'base character'
 DB_TYPE_CHAR = 'character'
@@ -49,12 +71,16 @@ DB_TYPE_OBJ = 'object'
 DB_TYPE_BASE_ROOM = 'base room'
 DB_TYPE_ROOM = 'room'
 DB_TYPE_EDGE = 'edge'
+DB_TYPE_GRAPH_EDGE = 'graph edge'
+DB_TYPE_GRAPH_NODE = 'graph node'
 DB_TYPE_TEXT_EDGE = 'text edge'
+DB_TYPE_TILE = 'tile'
 DB_TYPE_INTERACTION = 'interaction'
 DB_TYPE_UTTERANCE = 'utterance'
 DB_TYPE_PARTICIPANT = 'participant'
 DB_TYPE_TURN = 'turn'
 DB_TYPE_PLAYER = 'player'
+DB_TYPE_WORLD = 'world'
 ENTITY_TYPES = [
     DB_TYPE_BASE_CHAR,
     DB_TYPE_CHAR,
@@ -62,13 +88,17 @@ ENTITY_TYPES = [
     DB_TYPE_OBJ,
     DB_TYPE_BASE_ROOM,
     DB_TYPE_ROOM,
+    DB_TYPE_GRAPH_EDGE,
+    DB_TYPE_GRAPH_NODE,
     DB_TYPE_EDGE,
     DB_TYPE_TEXT_EDGE,
+    DB_TYPE_TILE,
     DB_TYPE_INTERACTION,
     DB_TYPE_UTTERANCE,
     DB_TYPE_PARTICIPANT,
     DB_TYPE_TURN,
     DB_TYPE_PLAYER,
+    DB_TYPE_WORLD,
 ]
 
 # Statuses for any content in the database
@@ -143,11 +173,15 @@ class LIGHTDatabase:
             DB_TYPE_ROOM: "rooms_table",
             DB_TYPE_TEXT_EDGE: "text_edges_table",
             DB_TYPE_EDGE: "node_content_table",
+            DB_TYPE_GRAPH_EDGE: "edges_table",
+            DB_TYPE_GRAPH_NODE: "nodes_table",
+            DB_TYPE_TILE: 'tile_table',
             DB_TYPE_INTERACTION: "interactions_table",
             DB_TYPE_UTTERANCE: "utterances_table",
             DB_TYPE_PARTICIPANT: "participants_table",
             DB_TYPE_TURN: "turns_table",
             DB_TYPE_PLAYER: "players_table",
+            DB_TYPE_WORLD: "world_table",
         }
 
         # Master table for keeping unique IDs across tables and to look up
@@ -244,6 +278,7 @@ class LIGHTDatabase:
         self.init_environment_tables()
         self.init_conversation_tables()
         self.init_edits_table()
+        self.init_world_tables()
         self.init_game_tables()
         self.create_triggers()
 
@@ -334,7 +369,7 @@ class LIGHTDatabase:
         df.to_csv(os.path.join(self.data_dir, "id_room_dict.csv"), header=False)
         df = pd.DataFrame.from_dict(self.id_object_dict, orient="index")
         df.to_csv(os.path.join(self.data_dir, "id_object_dict.csv"), header=False)
-
+    
     def search_database(self, type, input, fts=True):
         '''Search a specific table (dictated by 'type') using a search string'''
         table_name = self.table_dict[type]
@@ -477,6 +512,17 @@ class LIGHTDatabase:
         result = {i[1]: i[2] for i in fetched}
         return result
 
+    def table_not_exists(self, table_name):
+        self.c.execute(
+            """
+            SELECT name 
+            FROM sqlite_master 
+            WHERE type="table" AND name=?;
+            """,
+            (table_name,),
+        )
+        return self.c.fetchone() == None
+
     def init_environment_tables(self):
         """
         Initializes environment tables. All IDs are unique across different
@@ -500,6 +546,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        table_not_exists = self.table_not_exists("base_objects_table_fts")
         # FTS table for base objects
         self.c.execute(
             """
@@ -507,6 +554,14 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="base_objects_table", name);
             """
         )
+        # Required to link existing objects
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "base_objects_table_fts" (rowid, name)
+                    SELECT rowid, name FROM base_objects_table;
+                """
+            )
         # Specific objects created from object types
         self.c.execute(
             """
@@ -534,13 +589,21 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
-        # FTS table for objects
+        table_not_exists = self.table_not_exists("objects_table_fts")
         self.c.execute(
             """
             CREATE VIRTUAL TABLE IF NOT EXISTS objects_table_fts
             USING fts4(tokenize=porter, content="objects_table", name, physical_description);
             """
         )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "objects_table_fts" (rowid, name, physical_description)
+                    SELECT rowid, name, physical_description FROM objects_table;
+                """
+            )
+
         # Basic room types
         self.c.execute(
             """
@@ -552,6 +615,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        table_not_exists = self.table_not_exists("base_rooms_table_fts")
         # FTS table for base rooms
         self.c.execute(
             """
@@ -559,6 +623,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="base_rooms_table", name);
             """
         )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "base_rooms_table_fts" (rowid, name)
+                    SELECT rowid, name FROM base_rooms_table;
+                """
+            )
         # Specific rooms created from room types
         self.c.execute(
             """
@@ -579,6 +650,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        table_not_exists = self.table_not_exists("rooms_table_fts")
         # FTS table for rooms
         self.c.execute(
             """
@@ -586,6 +658,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="rooms_table", name, description, backstory);
             """
         )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "rooms_table_fts" (rowid, name, description, backstory)
+                    SELECT rowid, name, description, backstory FROM rooms_table;
+                """
+            )
         # Basic character types
         self.c.execute(
             """
@@ -597,6 +676,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        table_not_exists = self.table_not_exists("base_characters_table_fts")
         # FTS table for base characters
         self.c.execute(
             """
@@ -604,6 +684,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="base_characters_table", name);
             """
         )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "base_characters_table_fts" (rowid, name)
+                    SELECT rowid, name FROM base_characters_table;
+                """
+            )
         # Specific characters created from character types
         self.c.execute(
             """
@@ -627,6 +714,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        table_not_exists = self.table_not_exists("characters_table_fts")
         # FTS table for characters
         self.c.execute(
             """
@@ -634,6 +722,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="characters_table", name, persona, physical_description);
             """
         )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "characters_table_fts" (rowid, name, persona, physical_description)
+                    SELECT rowid, name, persona, physical_description FROM characters_table;
+                """
+            )        
         # Node contents represent an edge between a node and something in it
         # Edge is deleted when either node is deleted
         self.c.execute(
@@ -1256,6 +1351,114 @@ class LIGHTDatabase:
                 )
             results = [r for r in results if r['edge_type'] == edge_type]
         return results
+    
+    def init_world_tables(self):
+        """
+        Initializes world tables
+        """
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS world_table (
+            id integer PRIMARY KEY NOT NULL,
+            name text NOT NULL, 
+            owner_id integer NOT NULL,
+            height integer NOT NULL,
+            width integer NOT NULL,
+            num_floors integer NOT NULL,
+            CONSTRAINT fk_id FOREIGN KEY (id)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE,
+            CONSTRAINT fk_player FOREIGN KEY (owner_id)
+                REFERENCES players_table (id)
+                ON DELETE CASCADE);
+            """
+        )
+
+        # Differs from text_edges as those are more annotation, these are actual edges of 
+        # world graphs in execution
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS enum_table_graph_edge_type (
+            id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+            type text NOT NULL UNIQUE);
+            """
+        )
+
+        # Initialize the graph edge type enum table
+        graph_edge_types_formated = format_list_for_sql(GRAPH_EDGE_TYPES)
+        self.c.execute(
+            """
+            INSERT OR IGNORE INTO enum_table_graph_edge_type (type)
+            VALUES {}
+            """.format(
+                graph_edge_types_formated
+            )
+        )
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS nodes_table (
+            id integer PRIMARY KEY NOT NULL,
+            entity_id integer NOT NULL,
+            CONSTRAINT fk_id FOREIGN KEY (id)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE,
+            CONSTRAINT fk_eid FOREIGN KEY (entity_id)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE);       
+            """
+        )
+        # Graph edges table - edges in execution
+        # (need src, dst, type of node - can we just have 
+        # Edge North, Edge South, Edge West, Edge East, Edge Up, Edge Down, Edge contains?)
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS edges_table (
+            id integer PRIMARY KEY NOT NULL,
+            w_id integer NOT NULL,
+            src_id integer NOT NULL,
+            dst_id integer NOT NULL,
+            edge_type text NOT NULL,
+            CONSTRAINT fk_id FOREIGN KEY (id)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE,
+            CONSTRAINT fk_id FOREIGN KEY (w_id)
+                REFERENCES world_table (id)
+                ON DELETE CASCADE,
+            CONSTRAINT fk_src FOREIGN KEY (src_id)
+                REFERENCES nodes_table (id)
+                ON DELETE CASCADE,
+            CONSTRAINT fk_dst FOREIGN KEY (dst_id)
+                REFERENCES nodes_table (id)
+                ON DELETE CASCADE,
+            CONSTRAINT fk_edge FOREIGN KEY (edge_type)
+                REFERENCES enum_table_graph_edge_type (type)
+                ON DELETE CASCADE);            
+            """
+        )
+
+        # Tiles table - needs node/room id that goes inside too(?)
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS tile_table (
+            id integer PRIMARY KEY NOT NULL,
+            world_id integer NOT NULL,
+            room_node_id integer NOT NULL,
+            color integer NOT NULL,
+            x_coordinate integer NOT NULL,
+            y_coordinate integer NOT NULL,
+            floor integer NOT NULL,
+            CONSTRAINT fk_id FOREIGN KEY (id)
+                REFERENCES id_table (id)
+                ON DELETE CASCADE,
+            CONSTRAINT fk_world FOREIGN KEY (world_id)
+                REFERENCES world_table (id)
+                ON DELETE CASCADE,
+            CONSTRAINT fk_room FOREIGN KEY (room_node_id)
+                REFERENCES nodes_table (id)
+                ON DELETE CASCADE);
+            """
+        )
+
 
     def init_conversation_tables(self):
         """
@@ -1294,6 +1497,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        table_not_exists = self.table_not_exists("utterances_table_fts")
         # FTS table for utterances
         self.c.execute(
             """
@@ -1301,6 +1505,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="utterances_table", dialogue);
             """
         )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "utterances_table_fts" (rowid, dialogue)
+                    SELECT rowid, dialogue FROM utterances_table;
+                """
+            )
         self.c.execute(
             """
             CREATE TABLE IF NOT EXISTS participants_table (
@@ -1360,6 +1571,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
+        table_not_exists = self.table_not_exists("turns_table_fts")
         # FTS table for turns
         self.c.execute(
             """
@@ -1367,6 +1579,13 @@ class LIGHTDatabase:
             USING fts4(tokenize=porter, content="turns_table", interaction_type, action);
             """
         )
+        if table_not_exists:
+            self.c.execute(
+                """
+                INSERT INTO "turns_table_fts" (rowid, interaction_type, action)
+                    SELECT rowid, interaction_type, action FROM turns_table;
+                """
+            )
         # Table to represent all players of the game
         self.c.execute(
             """
@@ -2771,3 +2990,287 @@ class LIGHTDatabase:
             for i in edges_lst:
                 self.create_node_content(*i)
         return edges_lst
+
+#-------------------Database added for WorldBuilder-------------#
+    def get_worlds_owned_by(self, player_id):
+        """
+        Return a list of all worlds owned by the player
+        """
+        self.c.execute(
+            """
+            SELECT * FROM world_table
+            WHERE owner_id = ?
+            """,
+            (player_id,),
+        )
+        return self.c.fetchall()
+
+    def is_world_owned_by(self, world_id, player_id):
+        self.c.execute(
+            """
+            SELECT * FROM world_table
+            WHERE id = ? AND owner_id = ? 
+            """,
+            (world_id, player_id),
+        )
+        return len(self.c.fetchall()) == 1
+
+    def get_world(self, world_id, player_id):
+        """
+        Return the data for a world given its ID
+        """
+        assert self.is_world_owned_by(world_id, player_id), "Cannot load a world you do not own"
+        if self.use_cache:
+            if world_id is not None and world_id in self.cache['worlds']:
+                return [self.cache['worlds'][world_id]]
+        self.c.execute(
+            """
+            SELECT * FROM world_table
+            WHERE id = ? AND owner_id = ?
+            """,
+            (world_id, player_id,),
+        )
+        return self.c.fetchall()
+        
+    def delete_world(self, world_id, player_id):
+        """
+        Delete the world data for a world given its ID
+        """
+        self.assert_world_ownership(world_id, player_id)
+        self.delete_id(world_id)
+
+    def view_worlds(self, player_id):
+        """
+        Format world names and ids owned by the player for viewing
+        """
+        player_worlds = self.get_worlds_owned_by(player_id=player_id)
+        res = [{'id' : x['id'], 'name' : x['name']} for x in player_worlds]
+        return res
+    
+    def get_num_worlds_owned_by(self, player_id):
+        """
+        Return the number of worlds owned by a user
+        """
+        return len(self.get_worlds_owned_by(player_id))
+    
+    def get_edge(self, world_id, edge_id):
+        self.c.execute(
+            """
+            SELECT src_id, dst_id, edge_type FROM edges_table
+            WHERE id = ? AND w_id = ?
+            """,
+            (edge_id, world_id,),
+        )
+        return self.c.fetchall()
+
+    # Should return all tiles belonging to the world
+    def get_tiles(self, world_id):
+        self.c.execute(
+            """
+            SELECT * FROM tile_table
+            WHERE world_id = ?
+            """,
+            (world_id,),
+        )
+        return self.c.fetchall()
+    def get_node(self, node_id):
+        self.c.execute(
+            """
+            SELECT * FROM nodes_table
+            WHERE id = ?
+            """,
+            (node_id,),
+        )
+        return self.c.fetchall()
+    # Gets all connected components to this tile
+    def get_edges(self, tile_id, edges):
+        self.c.execute(
+            """
+            SELECT room_node_id FROM tile_table
+            WHERE id = ?
+            """,
+            (tile_id,),
+        )
+        crit_node_id = self.c.fetchall()[0][0]
+        self.get_connected(crit_node_id, edges)
+    
+    def get_connected(self, node_id, edges):
+        self.c.execute(
+            """
+            SELECT * FROM edges_table
+            WHERE src_id = ?
+            """,
+            (node_id,),
+        )
+        edges_connected = self.c.fetchall()
+        for e in edges_connected:
+            old_len = len(edges)
+            edges.add(e)
+            if (old_len != len(edges)):
+                self.get_connected(e['dst_id'], edges)
+        
+    def load_world(self, world_id, player_id):
+        world = self.get_world(world_id, player_id)[0]
+        world_dict = {x: world[x] for x in world.keys() if x != 'owner_id'}
+        tiles = self.get_tiles(world_id)
+        tile_list = [{x: tile[x] for x in tile.keys() if x != 'world_id'} for tile in tiles]
+        edges = set()
+        objects = set()
+        characters = set()
+        rooms = set()
+        entities_dict = {'rooms': rooms, 'characters': characters, 'objects': objects,}
+        for tile in tile_list:
+            self.get_edges(tile['id'], edges)
+            tile['room_entity_id'] = self.get_node(tile['room_node_id'])[0]['entity_id']
+        edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
+        # now get all entities
+        for edge in edge_list:
+            src = self.get_node(edge['src_id'])[0]
+            dst = self.get_node(edge['dst_id'])[0]
+            edge['src_entity_id'] = src['entity_id']
+            edge['dst_entity_id'] = dst['entity_id']
+            type_src = self.get_id(src['entity_id'])[0]['type'] + 's'
+            type_dst = self.get_id(dst['entity_id'])[0]['type'] + 's'
+            entities_dict[type_src].add(src['entity_id'])
+            entities_dict[type_dst].add(dst['entity_id'])
+        entities_dict_list = {x : list(entities_dict[x]) for x in entities_dict.keys()}
+        world_dict['tiles'] = tile_list
+        world_dict['edges'] = edge_list
+        world_dict.update(entities_dict)
+        # Now that we have all the ids that we need, format them all nice
+        return world_dict
+
+    def create_tile(self, world_id, room_id, color, x_coordinate, y_coordinate, floor, entry_attributes={}):
+        id = self.create_id(DB_TYPE_TILE, entry_attributes)
+        self.c.execute(
+            """
+            INSERT or IGNORE INTO tile_table(id, world_id, room_node_id,
+            color, x_coordinate, y_coordinate, floor)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                id,
+                world_id,
+                room_id,
+                color,
+                x_coordinate,
+                y_coordinate,
+                floor,
+            ),
+        )
+        inserted = bool(self.c.rowcount)
+        if not inserted:
+            self.delete_id(id)
+            self.c.execute(
+                """
+                SELECT id from tile_table WHERE world_id = ? AND room_node_id = ? \
+                AND color = ? AND x_coordinate = ? AND y_coordinate = ? AND floor = ?
+                """,
+                (world_id, room_id, color, x_coordinate, y_coordinate, floor),
+            )
+            result = self.c.fetchall()
+            assert len(result) == 1
+            id = int(result[0][0])
+        return (id, inserted)
+
+    def create_graph_node(self, entity_id, entry_attributes={}):
+        id = self.create_id(DB_TYPE_GRAPH_NODE, entry_attributes)
+        self.c.execute(
+            """
+            INSERT or IGNORE INTO nodes_table(id, entity_id)
+            VALUES (?, ?)
+            """,
+            (
+                id,
+                entity_id,
+            ),
+        )
+        inserted = bool(self.c.rowcount)
+        if not inserted:
+            self.delete_id(id)
+            self.c.execute(
+                """
+                SELECT id from nodes_table WHERE entity_id = ?
+                """,
+                (entity_id,),
+            )
+            result = self.c.fetchall()
+            assert len(result) == 1
+            id = int(result[0][0])
+        return (id, inserted)
+
+    def create_graph_edge(self, w_id, src_id, dst_id, type_, entry_attributes={}):
+        id = self.create_id(DB_TYPE_GRAPH_EDGE, entry_attributes)
+        self.c.execute(
+            """
+            INSERT or IGNORE INTO edges_table(id, w_id, src_id, dst_id, edge_type)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                id,
+                w_id, 
+                src_id,
+                dst_id,
+                type_,
+            ),
+        )
+        inserted = bool(self.c.rowcount)
+        if not inserted:
+            self.delete_id(id)
+            self.c.execute(
+                """
+                SELECT id from edges_table WHERE w_id = ? AND src_id = ? AND dst_id = ? \
+                AND edge_type = ?
+                """,
+                (w_id, src_id, dst_id, type_),
+            )
+            result = self.c.fetchall()
+            assert len(result) == 1
+            id = int(result[0][0])
+        return (id, inserted)
+
+    def create_world(
+            self,
+            name,
+            owner_id,
+            height,
+            width,
+            num_floors,
+            entry_attributes={},
+        ):
+        
+        LIMIT = 10
+        num_worlds = self.get_num_worlds_owned_by(owner_id)
+        if (num_worlds >= LIMIT):
+            return (-1, False)
+
+        id = self.create_id(DB_TYPE_WORLD, entry_attributes)
+        self.c.execute(
+            """
+            INSERT or IGNORE INTO world_table(id, name, owner_id,
+            height, width, num_floors)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (
+                id,
+                name,
+                owner_id,
+                height,
+                width,
+                num_floors,
+            ),
+        )
+        inserted = bool(self.c.rowcount)
+        if not inserted:
+            self.delete_id(id)
+            self.c.execute(
+                """
+                SELECT id from world_table WHERE name = ? AND owner_id = ? \
+                AND height = ? AND width = ? AND num_floors = ?
+                """,
+                (name, owner_id, height, width, num_floors),
+            )
+            result = self.c.fetchall()
+            assert len(result) == 1
+            id = int(result[0][0])
+        return (id, inserted)
