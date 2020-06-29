@@ -45,7 +45,7 @@ opt:
           partner_trainset: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_to_utterance_partner_trainset.txt"
           baseforms: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_baseforms.json"
           force_fp16_tokens: true
-          boring_alpha: 20
+          boring_alpha: -20
           selection_choice_weight: 0
         - model: 'fb:light_poly'
           fixed_candidates_path: '/Users/jju/tmp_packages/tmp_packages/light_package/light_cands.txt'

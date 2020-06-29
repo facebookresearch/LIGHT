@@ -31,7 +31,7 @@ SUBSAMPLE_CANDS = -1
 SINGLE_CATCH_THRESHOLD = 11
 DOUBLE_CATCH_THRESHOLD = 15
 
-ROOKIE_USER_MIN_SCORE = 30
+ROOKIE_USER_MIN_SCORE = 15
 SCORE_TO_ACT = 5
 
 USE_ACTIONS = [
@@ -45,10 +45,10 @@ USE_ACTIONS = [
     'give',
     'wear',
     'wield',
-    # 'remove',
+    'remove',
     'eat',
     'drink',
-]
+]  
 
 
 def add_scoring_model(opt, model_key):
@@ -77,6 +77,7 @@ def get_override_name(model_name, override):
         'partner_trainset',
         'baseforms',
         'force_fp16_tokens',
+        'selection_choice_weight',
     ]
     important_keys = []
     for key, value in override.items():
@@ -185,7 +186,7 @@ class LIGHTSinglePlayerWorld(World):
         use_bot_params['opt'] = shared_bot_params['opt'].copy()
         use_bot_params['opt']['override'] = model_to_use[1]
         use_bot_params['opt'].update(model_to_use[1])
-        bot = create_agent_from_shared(shared_bot_params)
+        bot = create_agent_from_shared(use_bot_params)
 
         scoring_model_to_use = 'orig_light_poly'
         if scoring_model_to_use not in opt['shared_scoring_params']:
@@ -782,7 +783,6 @@ class LIGHTSinglePlayerWorld(World):
             'dialogue': dialog,
             'flagged_messages': check_empty(self.flagged_messages, joiner='\t')
         }
-        print(json.dumps(log_data))
 
         self._log('Logging data: {}'.format(log_data))
         return log_data
