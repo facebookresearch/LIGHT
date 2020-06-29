@@ -234,51 +234,76 @@ class LoadWorldHandler(BaseHandler):
     def get(self, world_id):
         with LIGHTDatabase(self.dbpath) as db:
             print("Starting to load...")
+            result = {}
             player_id = self.get_argument("player", 31106, True)
-            world = db.get_world(world_id, player_id)[0]
-            tiles = db.get_tiles(world_id)
 
-            # Construct all the dictionaries we will need
-            world_dict = {x: world[x] for x in world.keys() if x != 'owner_id'}
+            # Load the world info (dimensions, name, id) and store in "dimensions"
+            world = db.get_world(world_id, player_id)
+            assert len(world) == 1, "Must get a world back to load it"
+            world = world[0]
+            result["dimensions"] = {x: world[x] for x in world.keys() if x != 'owner_id'}
+            result["dimensions"]["floors"] = result["dimensions"]["num_floors"]
+            del result["dimensions"]["num_floors"]
+
+            # Load the entities (by getting the tiles and all connected components)
+            # Build local store here too!
+            tiles = db.get_tiles(world_id)
             tile_list = [{x: tile[x] for x in tile.keys() if x != 'world_id'} for tile in tiles]
             edges = set()
-            objects = set()
-            characters = set()
-            rooms = set()
-            entities_dict = {'room': rooms, 'character': characters, 'object': objects,}
-
-
+            nextID = 1
+            objects = {}
+            characters = {}
+            rooms = {}
+            entities = {'room': rooms, 'character': characters, 'object': objects,}
+            node_to_local_id = {}
+            node_to_type = {}
             for tile in tile_list:
                 db.get_edges(tile['id'], edges)
-                tile['room_entity_id'] = db.get_node(tile['room_node_id'])[0]['entity_id']
+                node_to_local_id[tile['room_node_id']] = nextID
+                node_to_type[tile['room_node_id']] = 'room'
+                row = db.get_room(db.get_node(tile['room_node_id'])[0]['entity_id'])[0]
+                entities["room"][nextID] = {key: row[key] for key in row.keys()}
+                tile['room'] = nextID
+                del tile['id']
+                del tile['room_node_id']
+                nextID += 1
             edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
-
+            edges = []
             # now get all entity ids associated with the edges
             for edge in edge_list:
-                src = db.get_node(edge['src_id'])[0]
-                dst = db.get_node(edge['dst_id'])[0]
-                edge['src_entity_id'] = src['entity_id']
-                edge['dst_entity_id'] = dst['entity_id']
-                type_src = db.get_id(src['entity_id'])[0]['type'] 
-                type_dst = db.get_id(dst['entity_id'])[0]['type']
-                entities_dict[type_src].add(src['entity_id'])
-                entities_dict[type_dst].add(dst['entity_id'])
+                if edge['src_id'] not in node_to_local_id:
+                    src = db.get_node(edge['src_id'])[0]
+                    node_to_local_id[edge['src_id']] = nextID
+                    edge['src_entity_id'] = src['entity_id']
+                    type_src = db.get_id(src['entity_id'])[0]['type'] 
+                    node_to_type[edge['src_id']] = type_src
+                    row = eval('db.get_' + type_src)(id=src['entity_id'])[0]
+                    entities[type_src][nextID] = {key: row[key] for key in row.keys()}
+                    nextID += 1
 
-            # Get the actual entities (needed for local store)
-            entities_dict_list = {}
-            for x in entities_dict.keys():
-                target_func = eval('db.get_' + x)
-                add = []
-                for entity_id in entities_dict[x]:
-                    row = target_func(id=entity_id)[0]
-                    add.append({key: row[key] for key in row.keys()})
-                entities_dict_list[x + 's'] = add
-            
+                if edge['dst_id'] not in node_to_local_id:
+                    dst = db.get_node(edge['dst_id'])[0]
+                    node_to_local_id[edge['dst_id']] = nextID
+                    edge['dst_entity_id'] = dst['entity_id']
+                    type_dst = db.get_id(dst['entity_id'])[0]['type']
+                    node_to_type[edge['dst_id']] = type_dst
+                    row = eval('db.get_' + type_dst)(id=dst['entity_id'])[0]
+                    entities[type_dst][nextID] = {key: row[key] for key in row.keys()}
+                    nextID += 1
+                
+                src = node_to_local_id[edge['src_id']]
+                dst = node_to_local_id[edge['dst_id']]
+                edges.append({"src" : src, "dst": dst, "type": edge["edge_type"]})
+                
+            entities["nextID"] = nextID
+            result["entities"] = entities
+
             # Combine all the dictionaries to return
-            world_dict['tiles'] = tile_list
-            world_dict['edges'] = edge_list
-            world_dict.update(entities_dict_list)
-            self.write(json.dumps(world_dict))
+            world_map = {}
+            world_map['tiles'] = tile_list
+            world_map['edges'] = edges
+            result["map"] = world_map
+            self.write(json.dumps(result))
             print("Finally done - that took way to long!")
 
  #-------------------------------------------------------------#
