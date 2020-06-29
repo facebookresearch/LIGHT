@@ -502,19 +502,19 @@ export function useWorldBuilder(upload) {
         tile["floor"] = floor;
         const room = tile.room;
         tiles[coord].characters.forEach(character => {
-          edges.push({src: room, dst: character, dir: "contains"});
+          edges.push({src: room, dst: character, type: "contains"});
         });
         tiles[coord].objects.forEach(object => {
-          edges.push({src: room, dst: object, dir: "contains"})
+          edges.push({src: room, dst: object, type: "contains"})
         });
         if (tiles[coord].stairUp) {
           edges.push({
-            src: room, dst: map[floor + 1].tiles[coord].room, dir: 'neighbors above'
+            src: room, dst: map[floor + 1].tiles[coord].room, type: 'neighbors above'
           });
         }
         if (tiles[coord].stairDown) {
           edges.push({
-            src: room, dst: map[floor - 1].tiles[coord].room, dir: 'neighbors below'
+            src: room, dst: map[floor - 1].tiles[coord].room, type: 'neighbors below'
           });
         }
         // Ensure neighbours aren't blocked by walls
@@ -540,7 +540,7 @@ export function useWorldBuilder(upload) {
           ) {
             if (!isEmpty(tiles[neighbor])) {
               edges.push({
-                src: room, dst: map[floor].tiles[neighbor].room, dir: direction
+                src: room, dst: map[floor].tiles[neighbor].room, type: direction
               });
             }
           }
@@ -552,6 +552,8 @@ export function useWorldBuilder(upload) {
     }
     // send it to the saving format!
     store.map.edges = edges
+
+    console.log("Format of saved data: ");
     console.log(store);
     const res = await post("world/", store);
 

@@ -5,7 +5,6 @@ import {findEmoji} from "./worldbuilding/utils"
 import {Button, Intent, Spinner} from "@blueprintjs/core";
 import AppToaster from "./AppToaster";
 import { Redirect } from "react-router-dom";
-import cloneDeep from "lodash";
 
 function ListWorlds ({isOpen, toggleOverlay}) {
     const { loading, result, reload } = useAPI(
@@ -16,6 +15,65 @@ function ListWorlds ({isOpen, toggleOverlay}) {
 
     const deleteWorld = async (id) => {
         const res = await post(`world/delete/${id}`);
+    };
+
+    /* Given an entity id, its type, and the local entities store, get 
+        the matching emoji and associate the type with the id */
+    const storeEntity = (entities, entity_id, type, entity_to_type) => {
+        let entity = entities[type][entity_id];
+        entity.emoji = findEmoji(entity.name);
+        entity_to_type[entity_id] = type;
+    };
+
+    /* Given the tiles, go through and intialize maps with the local room it holds
+        and set metadata for the tile */
+    const parseTiles = (tiles, room_to_tile) => {
+        tiles.forEach(tile => {
+            room_to_tile[tile.room] = {x: tile.x_coordinate, y: tile.y_coordinate, 
+                floor: tile.floor, color: tile.color, room: tile.room, characters: [],
+                objects: []
+            };
+        });
+    };
+
+    /* Given the edges in the form of (src, dst, type), parse the rooms which contain the objects, 
+        as well as the rooms that neighbor above or below for stairs */
+    const parseEdges = (edges, room_to_tile, entity_to_type) => {
+        edges.forEach(edge => {
+            if (edge.type == "contains"){
+                if(entity_to_type[edge.dst] == "character"){
+                    room_to_tile[edge.src].characters.push(edge.dst);
+                }else if (entity_to_type[edge.dst] == "object"){
+                    room_to_tile[edge.src].objects.push(edge.dst);
+                }else{
+                    throw "Cannot contain types other than character and object";
+                }
+            }else if (edge.type == "neighbors above"){
+                room_to_tile[edge.src].stairUp = true; 
+            }else if (edge.type == "neighbors below"){
+                room_to_tile[edge.src].stairDown = true;
+            }
+        });
+    };
+
+    /* Given the metadata for tiles, construct the format expected by the frontend which
+        involves mapping x, y, and floor into the map then storing the other data */
+    const constructTiles = (room_to_tile, dat_map) => {
+        Object.keys(room_to_tile).forEach(room_id => {
+            let tile_info = room_to_tile[room_id];
+            const temp = {
+                room: tile_info.room,
+                characters: tile_info.characters,
+                objects: tile_info.objects,
+                color: tile_info.color,
+            };
+            if (tile_info.stairUp){
+                temp.stairUp = true;
+            }else if (tile_info.stairDown){
+                temp.stairDown = true;
+            }
+            dat_map[tile_info.floor].tiles[tile_info.x + " " + tile_info.y] = temp;
+        });
     };
 
     const getWorld = async (id) => {    
@@ -32,7 +90,10 @@ function ListWorlds ({isOpen, toggleOverlay}) {
             "Content-Type": "application/json",
             }});
         const data = await res.json();
+
+        console.log("Format of loaded data")
         console.log(data)
+
         // Construct the 3 parts of state we need
         const dat = { 
             dimensions: {height: data.dimensions.height, width: data.dimensions.width, 
@@ -40,91 +101,39 @@ function ListWorlds ({isOpen, toggleOverlay}) {
             map: [{name: "1F", tiles: {}, walls: {}}],
             entities: data.entities,
         };
-        console.log(dat)
+
         // Add all the floors we will need to the map
         var i = 2;
-        while (dat.map.length < data.num_floors){
+        while (dat.map.length < dat.dimensions.floors){
             dat.map.push({name: i + "F", tiles: {}, walls: {}});
             i = i + 1;
         }
 
         // Maps responsible for taking the db entries to local entires
         const entity_to_type = {};
-        const room_chars = {};
-        const room_objs = {};
-        const room_tiles = {};
-    
-        // Add each room, character, and object emoji
-        Object.keys(dat.entities.room).forEach(room_local_id => {
-            let room = dat.entities.room[room_local_id];
-            room.emoji = findEmoji(room.name);
-            entity_to_type[room_local_id] = "room";
-        }); 
+        // Associate characters, objects, and tiles with local store ids for rooms
+        const room_to_tile = {};
 
-        Object.keys(dat.entities.character).forEach(char_local_id => {
-            let character = dat.entities.character[char_local_id];
-            character.emoji = findEmoji(character.name);
-            entity_to_type[char_local_id] = "character";
+        // Add each room, character, and object emoji as well as record the type
+        Object.keys(dat.entities).forEach(dat_type =>{
+            Object.keys(dat.entities[dat_type]).forEach(entity_id => {
+                storeEntity(dat.entities, entity_id, dat_type, entity_to_type)
+            });
         });
 
-        Object.keys(dat.entities.object).forEach(obj_local_id => {
-            let object = dat.entities.object[obj_local_id];
-            object.emoji = findEmoji(object.name);
-            entity_to_type[obj_local_id] = "object";
-        });
-
-        // Go through recording the room node needed for each tile
-        data.map.tiles.forEach(tile => {
-            let c_floor = tile.floor;
-            let c_x = tile.x_coordinate;
-            let c_y = tile.y_coordinate;
-            room_chars[tile.room] = [];
-            room_objs[tile.room] = [];
-            room_tiles[tile.room] = {x: c_x, y: c_y, floor: c_floor, 
-                color: tile.color, room: tile.room};
-        });
-    
-        // Associate each entity with room it is in (TODO: Add walls/stair logic)
-        data.map.edges.forEach(edge => {
-            console.log(edge);
-            if (edge.type == "contains"){
-                if(entity_to_type[edge.dst] == "character"){
-                    room_chars[edge.src].push(edge.dst);
-                }else if (entity_to_type[edge.dst] == "object"){
-                    room_objs[edge.src].push(edge.dst);
-                }else{
-                    console.log("This should not be happening...");
-                }
-            }else if (edge.type == "neighbors above"){
-                room_tiles[edge.src].stairUp = true; 
-            }else if (edge.type == "neighbors below"){
-                room_tiles[edge.src].stairDown = true;
-            }
-        });
-
-        // Finally, add each tile to the map!
-        Object.keys(room_tiles).forEach(room_node => {
-            let tile_info = room_tiles[room_node];
-            const temp = {
-                room: tile_info.room,
-                characters: room_chars[room_node],
-                objects: room_objs[room_node],
-                color: tile_info.color
-            };
-            if (tile_info.stairUp){
-                temp.stairUp = true;
-            }else if (tile_info.stairDown){
-                temp.stairDown = true;
-            }
-            dat.map[tile_info.floor].tiles[tile_info.x + " " + tile_info.y] = temp;
-        });
+        parseTiles(data.map.tiles, room_to_tile);
+        parseEdges(data.map.edges, room_to_tile, entity_to_type);
+        constructTiles(room_to_tile, dat.map);
 
         // Mission accomplished!
         AppToaster.show({
             intent: Intent.SUCCESS,
             message: "Done loading!",
         });  
+
+        console.log("Reconstructed data: ")
         console.log(dat);
+
         setUpload(dat)
     };
 

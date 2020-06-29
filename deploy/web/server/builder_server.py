@@ -176,11 +176,7 @@ class SaveWorldHandler(BaseHandler):
                 dimensions = json.loads(self.get_argument('dimensions', '{"height": 3, "width": 3, "floors": 1}'))
                 world_map = json.loads(self.get_argument('map', '{"tiles": {}, "edges": []}'))
                 entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}, }'))
-                
-                print(name)
-                print(dimensions)
-                print(world_map)
-                print(entities)
+        
                 # World created!
                 world_id = db.create_world(name, player, dimensions["height"], dimensions["width"], dimensions["floors"])[0]
 
@@ -209,8 +205,6 @@ class SaveWorldHandler(BaseHandler):
                     node_id = db.create_graph_node(dbid)
                     dbid_to_nodeid[dbid] = node_id[0]
 
-                print(local_id_to_dbid)
-                print(dbid_to_nodeid)
                 # Make the edges!
                 for edge in world_map['edges']:
                     src_node = dbid_to_nodeid[local_id_to_dbid[str(edge['src'])]]
@@ -219,7 +213,9 @@ class SaveWorldHandler(BaseHandler):
 
                 # Make the tiles!
                 for tile in world_map['tiles']:
-                    db.create_tile(world_id, dbid_to_nodeid[local_id_to_dbid[str(tile['room'])]], tile['color'], tile['x_coordinate'], tile['y_coordinate'], tile['floor'])
+                    db.create_tile(world_id, dbid_to_nodeid[local_id_to_dbid[str(tile['room'])]], tile['color'], 
+                        tile['x_coordinate'], tile['y_coordinate'], tile['floor']
+                    )
 
                 # Now return to the user we did all of it!
                 self.write(json.dumps(world_id))
@@ -267,6 +263,7 @@ class LoadWorldHandler(BaseHandler):
                 del tile['id']
                 del tile['room_node_id']
                 nextID += 1
+                
             edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
             edges = []
             # now get all entity ids associated with the edges
@@ -294,7 +291,7 @@ class LoadWorldHandler(BaseHandler):
                 src = node_to_local_id[edge['src_id']]
                 dst = node_to_local_id[edge['dst_id']]
                 edges.append({"src" : src, "dst": dst, "type": edge["edge_type"]})
-                
+
             entities["nextID"] = nextID
             result["entities"] = entities
 
