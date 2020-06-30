@@ -5,7 +5,7 @@ export const EDGE_TYPES = {
     NEIGHBORS_EAST: "neighbors to the east",
     NEIGHBORS_NORTH: "neighbors to the north",
     NEIGHBORS_SOUTH: "neighbors to the south",
-    NEIHGBORS_ABOVE: "neighbors above",
-    NEIHGBORS_BELOW: "neighbors below",
+    NEIGHBORS_ABOVE: "neighbors above",
+    NEIGHBORS_BELOW: "neighbors below",
     CONTAINS: "contains",
 };

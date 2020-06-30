@@ -180,7 +180,6 @@ class SaveWorldHandler(BaseHandler):
                 entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}, }'))
         
                 world_id = db.create_world(name, player, dimensions["height"], dimensions["width"], dimensions["floors"])[0]
-                
                 #Get DB IDs for all object and store them
                 local_id_to_dbid = {}
                 for local_id, room in entities['room'].items():
