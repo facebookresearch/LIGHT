@@ -3,7 +3,7 @@ import classNames from "classnames";
 import {
   NumericInput,
   Classes,
-  Intent, 
+  Intent,
   Overlay,
   ControlGroup,
   FormGroup,
@@ -11,13 +11,13 @@ import {
   Position,
   Icon,
   Switch,
-  Button
+  Button,
 } from "@blueprintjs/core";
 import {
   useWorldBuilder,
   MAX_HEIGHT,
   MAX_WIDTH,
-  MAX_FLOORS
+  MAX_FLOORS,
 } from "./worldbuilding/utils";
 import ListWorlds from "./WorldManager";
 import Grid from "./worldbuilding/Grid";
@@ -40,18 +40,23 @@ function WorldBuilder({ upload }) {
   const state = useWorldBuilder(upload);
   const [advanced, setAdvanced] = React.useState(false);
   const [isOverlayOpen, toggleOverlay] = React.useState(false);
-  const classes = classNames(
-    Classes.CARD,
-    Classes.ELEVATION_4,
-  );
+  const classes = classNames(Classes.CARD, Classes.ELEVATION_4);
 
   return (
     <>
       <div>
-        <Overlay className={Classes.OVERLAY_SCROLL_CONTAINER} isOpen={isOverlayOpen} onClose={() => toggleOverlay(!isOverlayOpen)} >
+        <Overlay
+          className={Classes.OVERLAY_SCROLL_CONTAINER}
+          isOpen={isOverlayOpen}
+          onClose={() => toggleOverlay(!isOverlayOpen)}
+        >
           <div className={classes}>
-            < ListWorlds isOpen={isOverlayOpen} toggleOverlay={toggleOverlay}/>
-            <Button intent={Intent.DANGER} onClick={() => toggleOverlay(!isOverlayOpen)} style={{ margin: "10px" }}>
+            <ListWorlds isOpen={isOverlayOpen} toggleOverlay={toggleOverlay} />
+            <Button
+              intent={Intent.DANGER}
+              onClick={() => toggleOverlay(!isOverlayOpen)}
+              style={{ margin: "10px" }}
+            >
               Close
             </Button>
           </div>
@@ -68,7 +73,7 @@ function WorldBuilder({ upload }) {
             style={{ width: "3rem" }}
             max={MAX_WIDTH}
             min={1}
-            onValueChange={value => {
+            onValueChange={(value) => {
               state.setDimensions({ ...state.dimensions, width: value });
             }}
           />
@@ -78,7 +83,7 @@ function WorldBuilder({ upload }) {
             style={{ width: "3rem" }}
             max={MAX_HEIGHT}
             min={1}
-            onValueChange={value => {
+            onValueChange={(value) => {
               state.setDimensions({ ...state.dimensions, height: value });
             }}
           />
@@ -122,7 +127,7 @@ function WorldBuilder({ upload }) {
           bottom: 0,
           left: 0,
           right: 0,
-          height: "50px"
+          height: "50px",
         }}
         className="bp3-navbar"
       >
