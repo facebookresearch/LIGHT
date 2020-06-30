@@ -139,6 +139,7 @@ class ListWorldsHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         with LIGHTDatabase(self.dbpath) as db:
+            # TODO: Change to use value from player username
             player = self.get_argument("player", 31106, True)
             worlds = db.view_worlds(player_id=player)
             self.write(json.dumps(worlds))
@@ -154,6 +155,7 @@ class DeleteWorldHandler(BaseHandler):
     def post(self, id):
         with (yield lock.acquire()):
             with LIGHTDatabase(self.dbpath) as db:
+                # TODO: Change to use value from player username
                 player = self.get_argument("player", 31106, True)
                 world_id = db.delete_world(world_id=id, player_id=player)
                 self.write(json.dumps(world_id))
@@ -169,6 +171,7 @@ class SaveWorldHandler(BaseHandler):
     def post(self):
         with (yield lock.acquire()):
             with LIGHTDatabase(self.dbpath) as db:
+                # TODO: Change to use value from player username
                 player = int(self.get_argument("player", 31106, True))
 
                 # Add current time to name too?
@@ -209,7 +212,7 @@ class SaveWorldHandler(BaseHandler):
                 for edge in world_map['edges']:
                     src_node = dbid_to_nodeid[local_id_to_dbid[str(edge['src'])]]
                     dst_node = dbid_to_nodeid[local_id_to_dbid[str(edge['dst'])]]
-                    db.create_graph_edge(world_id, src_node, dst_node, edge['dir'])
+                    db.create_graph_edge(world_id, src_node, dst_node, edge['type'])
 
                 # Make the tiles!
                 for tile in world_map['tiles']:
@@ -229,8 +232,11 @@ class LoadWorldHandler(BaseHandler):
     # Prints let you see just how long this takes...
     def get(self, world_id):
         with LIGHTDatabase(self.dbpath) as db:
-            print("Starting to load...")
+
+            start = time.time()
+
             result = {}
+            # TODO: Change to use value from player username
             player_id = self.get_argument("player", 31106, True)
 
             # Load the world info (dimensions, name, id) and store in "dimensions"
@@ -271,7 +277,7 @@ class LoadWorldHandler(BaseHandler):
                     node_to_local_id[edge['src_id']] = nextID
                     type_src = db.get_id(src['entity_id'])[0]['type'] 
                     node_to_type[edge['src_id']] = type_src
-                    row = eval('db.get_' + type_src)(id=src['entity_id'])[0]
+                    row = getattr(db, 'get_' + type_src)(id=src['entity_id'])[0]
                     entities[type_src][nextID] = {key: row[key] for key in row.keys()}
                     nextID += 1
 
@@ -280,7 +286,7 @@ class LoadWorldHandler(BaseHandler):
                     node_to_local_id[edge['dst_id']] = nextID
                     type_dst = db.get_id(dst['entity_id'])[0]['type']
                     node_to_type[edge['dst_id']] = type_dst
-                    row = eval('db.get_' + type_dst)(id=dst['entity_id'])[0]
+                    row = getattr(db, 'get_' + type_dst)(id=dst['entity_id'])[0]
                     entities[type_dst][nextID] = {key: row[key] for key in row.keys()}
                     nextID += 1
                 
@@ -297,7 +303,9 @@ class LoadWorldHandler(BaseHandler):
             world_map['edges'] = edges
             result["map"] = world_map
             self.write(json.dumps(result))
-            print("Finally done - that took way to long!")        
+
+            end = time.time()
+            print("Finally done - took " + str(end - start) + " seconds")        
  #-------------------------------------------------------------#
 
 class EntityEditHandler(BaseHandler):
