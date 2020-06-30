@@ -1458,6 +1458,17 @@ class LIGHTDatabase:
             """
         )
 
+    def init_graph_interaction_tables(self):
+    '''
+    TODO: Add tables 
+    This is we should add tables for saving the logs
+    Tables (and columns) we will certainly need:
+    log table:
+        - id | graph id (json?) | nextEventId
+    log event table:
+        - id | log id | Event (json format?  String?)  
+      How about needing Actor (?) Room (?)
+    '''
 
     def init_conversation_tables(self):
         """
@@ -3242,3 +3253,15 @@ class LIGHTDatabase:
             assert len(result) == 1
             id = int(result[0][0])
         return (id, inserted)
+
+
+
+'''
+TODO: Add any methods for interacting with the logger here
+This is we should add the methods for saving to the logger
+
+Methods we will certainly need:
+    - Add a new graph to the logs (json format, or reference to graph in the db?)
+    - Add a new event to existing graph logs (how do we play back in chronological order?  a "local" id?)
+    - Get a graph and all its events associated
+'''
