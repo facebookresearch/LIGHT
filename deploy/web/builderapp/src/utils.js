@@ -18,7 +18,7 @@ export function useDidChange(val) {
 export function useAPI(CONFIG, url, { body, params } = {}, preloaded) {
   const [state, setState] = React.useState({
     loading: true,
-    result: undefined
+    result: undefined,
   });
 
   const newUrl = useDidChange(url);
@@ -36,13 +36,13 @@ export function useAPI(CONFIG, url, { body, params } = {}, preloaded) {
 
     if (state.loading) {
       fetch(CONFIG.host + ":" + CONFIG.port + "/builder" + url)
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           if (isSubscribed) {
             setState({ loading: false, result: data });
           }
         })
-        .catch(err => console.log("Error fetching data"));
+        .catch((err) => console.log("Error fetching data"));
     }
 
     return () => (isSubscribed = false);
@@ -55,7 +55,7 @@ export function useAPI(CONFIG, url, { body, params } = {}, preloaded) {
   return {
     loading: state.loading,
     result: state.result,
-    reload
+    reload,
   };
 }
 
@@ -75,6 +75,6 @@ export function post(url, payload) {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: formBody.join("&")
+    body: formBody.join("&"),
   });
 }

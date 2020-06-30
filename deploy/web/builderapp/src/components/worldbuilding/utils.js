@@ -479,100 +479,6 @@ export function useWorldBuilder(upload) {
     return filtered;
   };
 
-  const postWorld = async () => {
-    // can pretty much just take the dimensions and entities as is
-    const dat = {
-      dimensions: cloneDeep(dimensions),
-      map: { tiles: [], edges: [] },
-      entities: cloneDeep(entities),
-    };
-
-    const map = filteredMap();
-
-    // create all edge relationships and tile metadata needed
-    const edges = [];
-    for (let floor = 0; floor < map.length; floor++) {
-      const tiles = map[floor].tiles;
-      for (let coord in tiles) {
-        const tile = cloneDeep(tiles[coord]);
-        const [x, y] = coord.split(" ").map((i) => parseInt(i));
-
-        // Now, construct the edges - first contains
-        const room = tile.room;
-        tiles[coord].characters.forEach((character) => {
-          edges.push({ src: room, dst: character, type: "contains" });
-        });
-        tiles[coord].objects.forEach((object) => {
-          edges.push({ src: room, dst: object, type: "contains" });
-        });
-
-        if (tiles[coord].stairUp) {
-          edges.push({
-            src: room,
-            dst: map[floor + 1].tiles[coord].room,
-            type: "neighbors above",
-          });
-        }
-        if (tiles[coord].stairDown) {
-          edges.push({
-            src: room,
-            dst: map[floor - 1].tiles[coord].room,
-            type: "neighbors below",
-          });
-        }
-        // Ensure neighbours aren't blocked by walls
-        const neighbors = [
-          `${x - 1} ${y}`,
-          `${x + 1} ${y}`,
-          `${x} ${y - 1}`,
-          `${x} ${y + 1}`,
-        ];
-        const dirs = [
-          "neighbors to the west",
-          "neighbors to the east",
-          "neighbors to the north",
-          "neighbors to the south",
-        ];
-        for (let index in neighbors) {
-          const direction = dirs[index];
-          const neighbor = neighbors[index];
-          if (
-            !Object.keys(map[floor].walls).some(
-              (wall) => wall.includes(neighbor) && wall.includes(coord)
-            )
-          ) {
-            if (!isEmpty(tiles[neighbor])) {
-              edges.push({
-                src: room,
-                dst: map[floor].tiles[neighbor].room,
-                type: direction,
-              });
-            }
-          }
-        }
-
-        // Modify tile object to expected format and push
-        tile["x_coordinate"] = x;
-        tile["y_coordinate"] = y;
-        tile["floor"] = floor;
-        delete tile.characters;
-        delete tile.objects;
-        dat.map.tiles.push(tile);
-      }
-    }
-    // send it to the saving format!
-    dat.map.edges = edges;
-
-    console.log("Format of saved data: ");
-    console.log(dat);
-    const res = await post("world/", dat);
-
-    AppToaster.show({
-      intent: Intent.SUCCESS,
-      message: "World Saved! ",
-    });
-  };
-
   // Post all edges to the API
   const postEdges = async () => {
     const store = { room: {}, character: {}, object: {} };
@@ -691,6 +597,7 @@ export function useWorldBuilder(upload) {
     },
     currFloor,
     map,
+    filteredMap,
     setTile,
     clearTile,
     swapTiles,
@@ -707,6 +614,5 @@ export function useWorldBuilder(upload) {
     findOrAddEntity,
     postEdges,
     exportWorld,
-    postWorld,
   };
 }

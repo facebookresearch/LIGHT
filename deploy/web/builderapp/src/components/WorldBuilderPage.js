@@ -1,10 +1,6 @@
 import React from "react";
-import classNames from "classnames";
 import {
   NumericInput,
-  Classes,
-  Intent,
-  Overlay,
   ControlGroup,
   FormGroup,
   Tooltip,
@@ -19,7 +15,8 @@ import {
   MAX_WIDTH,
   MAX_FLOORS,
 } from "./worldbuilding/utils";
-import ListWorlds from "./WorldManager";
+import ListWorldsOverlay from "./WorldManager";
+import { postWorld } from "./WorldManager";
 import Grid from "./worldbuilding/Grid";
 import FloorSelector from "./worldbuilding/FloorSelector";
 
@@ -39,29 +36,14 @@ function WorldBuilderPage({ location }) {
 function WorldBuilder({ upload }) {
   const state = useWorldBuilder(upload);
   const [advanced, setAdvanced] = React.useState(false);
-  const [isOverlayOpen, toggleOverlay] = React.useState(false);
-  const classes = classNames(Classes.CARD, Classes.ELEVATION_4);
-
+  const [isOverlayOpen, setIsOverlayOpen] = React.useState(false);
+  // TODO: Remove postEdges and commit, add some other way to export world to json somehow
   return (
     <>
-      <div>
-        <Overlay
-          className={Classes.OVERLAY_SCROLL_CONTAINER}
-          isOpen={isOverlayOpen}
-          onClose={() => toggleOverlay(!isOverlayOpen)}
-        >
-          <div className={classes}>
-            <ListWorlds isOpen={isOverlayOpen} toggleOverlay={toggleOverlay} />
-            <Button
-              intent={Intent.DANGER}
-              onClick={() => toggleOverlay(!isOverlayOpen)}
-              style={{ margin: "10px" }}
-            >
-              Close
-            </Button>
-          </div>
-        </Overlay>
-      </div>
+      <ListWorldsOverlay
+        isOverlayOpen={isOverlayOpen}
+        setIsOverlayOpen={setIsOverlayOpen}
+      />
       <FormGroup
         inline
         label="World Dimensions"
@@ -132,14 +114,14 @@ function WorldBuilder({ upload }) {
         className="bp3-navbar"
       >
         <Button
-          onClick={() => toggleOverlay(!isOverlayOpen)}
+          onClick={() => setIsOverlayOpen(!isOverlayOpen)}
           intent="primary"
           style={{ margin: "10px" }}
         >
           Manage Worlds
         </Button>
         <Button
-          onClick={state.postWorld}
+          onClick={() => postWorld(state)}
           intent="primary"
           style={{ margin: "10px" }}
         >

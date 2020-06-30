@@ -1,12 +1,44 @@
 import React from "react";
+import classNames from "classnames";
 import CONFIG from "../config";
 import { post, useAPI } from "../utils";
 import { findEmoji } from "./worldbuilding/utils";
-import { Button, Intent, Spinner } from "@blueprintjs/core";
 import AppToaster from "./AppToaster";
 import { Redirect } from "react-router-dom";
+import { Button, Classes, Intent, Overlay, Spinner } from "@blueprintjs/core";
+import { cloneDeep, isEmpty } from "lodash";
+import { EDGE_TYPES } from "./EdgeTypes";
 
-function ListWorlds({ isOpen, toggleOverlay }) {
+function ListWorldsOverlay({ isOverlayOpen, setIsOverlayOpen }) {
+  const classes = classNames(Classes.CARD, Classes.ELEVATION_4);
+  return (
+    <>
+      <div>
+        <Overlay
+          className={Classes.OVERLAY_SCROLL_CONTAINER}
+          isOpen={isOverlayOpen}
+          onClose={() => setIsOverlayOpen(!isOverlayOpen)}
+        >
+          <div className={classes}>
+            <ListWorlds
+              isOpen={isOverlayOpen}
+              setIsOverlayOpen={setIsOverlayOpen}
+            />
+            <Button
+              intent={Intent.DANGER}
+              onClick={() => setIsOverlayOpen(!isOverlayOpen)}
+              style={{ margin: "10px" }}
+            >
+              Close
+            </Button>
+          </div>
+        </Overlay>
+      </div>
+    </>
+  );
+}
+
+function ListWorlds({ isOpen, setIsOverlayOpen }) {
   const { loading, result, reload } = useAPI(CONFIG, `/worlds/`);
   const [upload, setUpload] = React.useState(undefined);
 
@@ -16,17 +48,17 @@ function ListWorlds({ isOpen, toggleOverlay }) {
 
   /* Given an entity id, its type, and the local entities store, get 
         the matching emoji and associate the type with the id */
-  const storeEntity = (entities, entity_id, type, entity_to_type) => {
-    let entity = entities[type][entity_id];
+  const storeEntity = (entities, entityId, type, entityToType) => {
+    let entity = entities[type][entityId];
     entity.emoji = findEmoji(entity.name);
-    entity_to_type[entity_id] = type;
+    entityToType[entityId] = type;
   };
 
   /* Given the tiles, go through and intialize maps with the local room it holds
         and set metadata for the tile */
-  const parseTiles = (tiles, room_to_tile) => {
+  const parseTiles = (tiles, roomToTile) => {
     tiles.forEach((tile) => {
-      room_to_tile[tile.room] = {
+      roomToTile[tile.room] = {
         x: tile.x_coordinate,
         y: tile.y_coordinate,
         floor: tile.floor,
@@ -40,41 +72,41 @@ function ListWorlds({ isOpen, toggleOverlay }) {
 
   /* Given the edges in the form of (src, dst, type), parse the rooms which contain the objects, 
         as well as the rooms that neighbor above or below for stairs */
-  const parseEdges = (edges, room_to_tile, entity_to_type) => {
+  const parseEdges = (edges, roomToTile, entityToType) => {
     edges.forEach((edge) => {
-      if (edge.type == "contains") {
-        if (entity_to_type[edge.dst] == "character") {
-          room_to_tile[edge.src].characters.push(edge.dst);
-        } else if (entity_to_type[edge.dst] == "object") {
-          room_to_tile[edge.src].objects.push(edge.dst);
+      if (edge.type === EDGE_TYPES.CONTAINS) {
+        if (entityToType[edge.dst] === "character") {
+          roomToTile[edge.src].characters.push(edge.dst);
+        } else if (entityToType[edge.dst] === "object") {
+          roomToTile[edge.src].objects.push(edge.dst);
         } else {
           throw "Cannot contain types other than character and object";
         }
-      } else if (edge.type == "neighbors above") {
-        room_to_tile[edge.src].stairUp = true;
-      } else if (edge.type == "neighbors below") {
-        room_to_tile[edge.src].stairDown = true;
+      } else if (edge.type === EDGE_TYPES.NEIGHBORS_ABOVE) {
+        roomToTile[edge.src].stairUp = true;
+      } else if (edge.type === EDGE_TYPES.NEIGHBORS_BELOW) {
+        roomToTile[edge.src].stairDown = true;
       }
     });
   };
 
   /* Given the metadata for tiles, construct the format expected by the frontend which
         involves mapping x, y, and floor into the map then storing the other data */
-  const constructTiles = (room_to_tile, dat_map) => {
-    Object.keys(room_to_tile).forEach((room_id) => {
-      let tile_info = room_to_tile[room_id];
+  const constructTiles = (roomToTile, datMap) => {
+    Object.keys(roomToTile).forEach((roomId) => {
+      let tileInfo = roomToTile[roomId];
       const temp = {
-        room: tile_info.room,
-        characters: tile_info.characters,
-        objects: tile_info.objects,
-        color: tile_info.color,
+        room: tileInfo.room,
+        characters: tileInfo.characters,
+        objects: tileInfo.objects,
+        color: tileInfo.color,
       };
-      if (tile_info.stairUp) {
+      if (tileInfo.stairUp) {
         temp.stairUp = true;
-      } else if (tile_info.stairDown) {
+      } else if (tileInfo.stairDown) {
         temp.stairDown = true;
       }
-      dat_map[tile_info.floor].tiles[tile_info.x + " " + tile_info.y] = temp;
+      datMap[tileInfo.floor].tiles[tileInfo.x + " " + tileInfo.y] = temp;
     });
   };
 
@@ -96,9 +128,6 @@ function ListWorlds({ isOpen, toggleOverlay }) {
     );
     const data = await res.json();
 
-    console.log("Format of loaded data");
-    console.log(data);
-
     // Construct the 3 parts of state we need
     const dat = {
       dimensions: {
@@ -118,29 +147,26 @@ function ListWorlds({ isOpen, toggleOverlay }) {
     }
 
     // Maps responsible for taking the db entries to local entires
-    const entity_to_type = {};
+    const entityToType = {};
     // Associate characters, objects, and tiles with local store ids for rooms
-    const room_to_tile = {};
+    const roomToTile = {};
 
     // Add each room, character, and object emoji as well as record the type
-    Object.keys(dat.entities).forEach((dat_type) => {
-      Object.keys(dat.entities[dat_type]).forEach((entity_id) => {
-        storeEntity(dat.entities, entity_id, dat_type, entity_to_type);
+    Object.keys(dat.entities).forEach((datType) => {
+      Object.keys(dat.entities[datType]).forEach((entityId) => {
+        storeEntity(dat.entities, entityId, datType, entityToType);
       });
     });
 
-    parseTiles(data.map.tiles, room_to_tile);
-    parseEdges(data.map.edges, room_to_tile, entity_to_type);
-    constructTiles(room_to_tile, dat.map);
+    parseTiles(data.map.tiles, roomToTile);
+    parseEdges(data.map.edges, roomToTile, entityToType);
+    constructTiles(roomToTile, dat.map);
 
     // Mission accomplished!
     AppToaster.show({
       intent: Intent.SUCCESS,
       message: "Done loading!",
     });
-
-    console.log("Reconstructed data: ");
-    console.log(dat);
 
     setUpload(dat);
   };
@@ -212,4 +238,99 @@ function ListWorlds({ isOpen, toggleOverlay }) {
   }
 }
 
-export default ListWorlds;
+export async function postWorld(state) {
+  // can pretty much just take the dimensions and entities as is
+  const dat = {
+    dimensions: cloneDeep(state.dimensions),
+    map: { tiles: [], edges: [] },
+    entities: cloneDeep(state.entities),
+  };
+  // Add name and id field (blank rn)
+  dat.dimensions["id"] = null;
+  dat.dimensions["name"] = null;
+  const map = state.filteredMap();
+
+  // create all edge relationships and tile metadata needed
+  const edges = [];
+  for (let floor = 0; floor < map.length; floor++) {
+    const tiles = map[floor].tiles;
+    for (let coord in tiles) {
+      const tile = cloneDeep(tiles[coord]);
+      const [x, y] = coord.split(" ").map((i) => parseInt(i));
+
+      // Now, construct the edges - first contains
+      const room = tile.room;
+      tiles[coord].characters.forEach((character) => {
+        edges.push({ src: room, dst: character, type: EDGE_TYPES.CONTAINS });
+      });
+      tiles[coord].objects.forEach((object) => {
+        edges.push({ src: room, dst: object, type: EDGE_TYPES.CONTAINS });
+      });
+
+      if (tiles[coord].stairUp) {
+        delete tile.stairUp;
+        edges.push({
+          src: room,
+          dst: map[floor + 1].tiles[coord].room,
+          type: EDGE_TYPES.NEIGHBORS_ABOVE,
+        });
+      }
+      if (tiles[coord].stairDown) {
+        delete tile.stairDown;
+        edges.push({
+          src: room,
+          dst: map[floor - 1].tiles[coord].room,
+          type: EDGE_TYPES.NEIGHBORS_BELOW,
+        });
+      }
+      // Ensure neighbours aren't blocked by walls
+      const neighbors = [
+        `${x - 1} ${y}`,
+        `${x + 1} ${y}`,
+        `${x} ${y - 1}`,
+        `${x} ${y + 1}`,
+      ];
+      const dirs = [
+        EDGE_TYPES.NEIGHBORS_WEST,
+        EDGE_TYPES.NEIGHBORS_EAST,
+        EDGE_TYPES.NEIGHBORS_NORTH,
+        EDGE_TYPES.NEIGHBORS_SOUTH,
+      ];
+      for (let index in neighbors) {
+        const direction = dirs[index];
+        const neighbor = neighbors[index];
+        if (
+          !Object.keys(map[floor].walls).some(
+            (wall) => wall.includes(neighbor) && wall.includes(coord)
+          )
+        ) {
+          if (!isEmpty(tiles[neighbor])) {
+            edges.push({
+              src: room,
+              dst: map[floor].tiles[neighbor].room,
+              type: direction,
+            });
+          }
+        }
+      }
+
+      // Modify tile object to expected format and push
+      tile["x_coordinate"] = x;
+      tile["y_coordinate"] = y;
+      tile["floor"] = floor;
+      delete tile.characters;
+      delete tile.objects;
+      dat.map.tiles.push(tile);
+    }
+  }
+  // send it to the saving format!
+  dat.map.edges = edges;
+  const res = await post("world/", dat);
+
+  AppToaster.show({
+    intent: Intent.SUCCESS,
+    message: "World Saved! ",
+  });
+}
+
+export default ListWorldsOverlay;
