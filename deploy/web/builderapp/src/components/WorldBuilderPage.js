@@ -39,7 +39,8 @@ function WorldBuilder({ upload }) {
   const state = useWorldBuilder(upload);
   const [advanced, setAdvanced] = React.useState(false);
   const [isOverlayOpen, setIsOverlayOpen] = React.useState(false);
-  const world_name = state.dimensions.name === null ? " " : state.dimensions.name;
+  const world_name =
+    state.dimensions.name == null ? " " : state.dimensions.name;
 
   // TODO: Remove postEdges and commit, add some other way to export world to json somehow
   return (
@@ -57,17 +58,22 @@ function WorldBuilder({ upload }) {
       >
         <ControlGroup>
           <InputGroup
-            id="name-input" 
-            placeholder={state.dimensions.name == null ? "Default" : state.dimensions.name} 
+            id="name-input"
+            placeholder={
+              state.dimensions.name == null ? "Default" : state.dimensions.name
+            }
           />
           <Button
-              intent={Intent.PRIMARY}
-              onClick={() => {
-                state.setDimensions({...state.dimensions, name: document.getElementById("name-input").value});
-              }}
-          >     
+            intent={Intent.PRIMARY}
+            onClick={() => {
+              state.setDimensions({
+                ...state.dimensions,
+                name: document.getElementById("name-input").value,
+              });
+            }}
+          >
             Update
-          </Button>   
+          </Button>
         </ControlGroup>
       </FormGroup>
       <FormGroup
