@@ -4,6 +4,24 @@ import os
 import uuid
 import json
 
+'''
+TODO: Decide where to place loggers - rooms or agents or ...?
+
+TODO: Where to put the logs?  Directory, but where?  How to organize?
+
+General flow:
+    - A player enters
+    - Save the state of the graph, dump to a file so it can be reloaded
+    - Record events happening as long as player exists (meta episode is not over)
+        * Events need timestamps to order, other metadata (?room?actor?)
+    - Write events to log files
+    - Player exits, stop recording!
+
+Considerations:
+    - some sort of history of conversation to give context (bot history here)
+    - some sort of limit to avoid afk players
+    - Lots of rooms, players - want to avoid super high write times (how??)
+'''
 
 class RoomConversationBuffer(object):
     def __init__(
