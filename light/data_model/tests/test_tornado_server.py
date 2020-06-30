@@ -54,6 +54,53 @@ from deploy.web.server.tornado_server import (
 PORT = 35494
 URL = f'http://localhost:{PORT}'
 
+# Add test for the worldsaving endpoints!
+@mock.patch('deploy.web.server.builder_server.BaseHandler.get_current_user', return_value='user')
+class class TestWorldSaving(AsyncHTTPTestCase):
+    def setUp(self):
+        self.data_dir = tempfile.mkdtemp()
+        self.db_path = os.path.join(self.data_dir, 'test_server.db')
+        self.client = httpclient.AsyncHTTPClient()
+        super().setUp()
+
+    def tearDown(self):
+        super().tearDown()
+        shutil.rmtree(self.data_dir)
+
+    def get_app(self):
+        app = BuildApplication(get_handlers(self.db_path))
+        app.listen(PORT)
+        return app
+
+
+    @gen_test
+    def test_list_worlds(self, mocked_auth):
+        '''Test that the list worlds endpoint can be hit succesfully and returns world 
+            dimesnions in expected format'''
+        pass
+
+    @gen_test
+    def test_delete_world(self, mocked_auth):
+        '''Test the endpoint for deleting worlds works as expected'''
+        pass
+
+    @gen_test
+    def test_save_world(self, mocked_auth):
+        '''Test the endpoint for saving worlds works as expected'''
+        pass
+
+    @gen_test
+    def test_load_world(self, mocked_auth):
+        '''Test the endpoint for loading worlds works as expected'''
+        pass
+
+    @gen_test
+    def test_world_saving_integration(self, mocked_auth):
+        '''Test a flow where a user creates a world, views the saved worlds, loads the world, then 
+            deletes it'''
+        pass
+
+    
 @mock.patch('deploy.web.server.tornado_server.BaseHandler.get_current_user', return_value='user')
 class TestGameApp(AsyncHTTPTestCase):
     def setUp(self):

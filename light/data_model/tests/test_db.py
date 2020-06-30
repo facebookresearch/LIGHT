@@ -681,6 +681,21 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(len(test.get_id()), prev_id_len)
                 
 #-----------------World Saving Test-----------------#
+    # TODO: Update these test to work with the changes made
+    # TODO: Add test for the components (such as saving/creating edges and tiles)
+
+    def test_create_graph_nodes(self):
+        '''Test that edge creation works and behaves as expected'''
+        pass
+
+    def test_create_graph_edges(self):
+        '''Test that edge creation works and behaves as expected'''
+        pass
+
+    def test_create_tiles(self):
+        '''Test that edge creation works and behaves as expected'''
+        pass
+
     def test_create_world(self):
         '''Test that world creation works and behaves as expected'''
         # Test if a new world can be successfully created
@@ -741,10 +756,8 @@ class TestDatabase(unittest.TestCase):
             res = test.create_world("swamp10", player1, 3, 3, 1)
             self.assertEqual(res[1], True)
 
-    # TODO: Add test for the components (such as saving/creating edges, etc)
-    
-    def test_world_saving(self):
-        '''Test that when we save then load a world, all attributes exist'''
+    def test_world_loading_saving(self):
+        '''Test world saving and loading works as expected'''
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player0 = test.create_player()[0]
             w_id = test.create_world("swampy world", player0, 3, 3, 1)[0]
