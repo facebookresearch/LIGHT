@@ -200,12 +200,13 @@ export function useWorldBuilder(upload) {
     upload
       ? upload.data.dimensions
       : {
+          name: null,
           height: STARTING_HEIGHT,
           width: STARTING_WIDTH,
           floors: STARTING_FLOORS,
         }
   );
-
+  
   // Floors and tiles kept seperate to avoid unnecessary updates on either side
   // The index key is used because the Reorder component does not pass index to children
   // Represents the map state

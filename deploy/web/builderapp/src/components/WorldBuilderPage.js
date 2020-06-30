@@ -1,6 +1,7 @@
 import React from "react";
 import {
   NumericInput,
+  InputGroup,
   ControlGroup,
   FormGroup,
   Tooltip,
@@ -8,6 +9,7 @@ import {
   Icon,
   Switch,
   Button,
+  Intent,
 } from "@blueprintjs/core";
 import {
   useWorldBuilder,
@@ -37,13 +39,37 @@ function WorldBuilder({ upload }) {
   const state = useWorldBuilder(upload);
   const [advanced, setAdvanced] = React.useState(false);
   const [isOverlayOpen, setIsOverlayOpen] = React.useState(false);
+  const world_name = state.dimensions.name === null ? " " : state.dimensions.name;
+
   // TODO: Remove postEdges and commit, add some other way to export world to json somehow
   return (
     <>
+      <h3>World: {world_name}</h3>
       <ListWorldsOverlay
         isOverlayOpen={isOverlayOpen}
         setIsOverlayOpen={setIsOverlayOpen}
       />
+      <FormGroup
+        inline
+        label="World Name"
+        labelFor="name-input"
+        labelInfo={`(optional)`}
+      >
+        <ControlGroup>
+          <InputGroup
+            id="name-input" 
+            placeholder={state.dimensions.name == null ? "Default" : state.dimensions.name} 
+          />
+          <Button
+              intent={Intent.PRIMARY}
+              onClick={() => {
+                state.setDimensions({...state.dimensions, name: document.getElementById("name-input").value});
+              }}
+          >     
+            Update
+          </Button>   
+        </ControlGroup>
+      </FormGroup>
       <FormGroup
         inline
         label="World Dimensions"
