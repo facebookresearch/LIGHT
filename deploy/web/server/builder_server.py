@@ -174,16 +174,14 @@ class SaveWorldHandler(BaseHandler):
                 # TODO: Change to use value from player username
                 player = int(self.get_argument("player", 31106, True))
 
-                # Add current time to name too?
                 name = self.get_argument('name', 'default ' + time.ctime(time.time()), True)
                 dimensions = json.loads(self.get_argument('dimensions', '{"height": 3, "width": 3, "floors": 1}'))
                 world_map = json.loads(self.get_argument('map', '{"tiles": {}, "edges": []}'))
                 entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}, }'))
         
-                # World created!
                 world_id = db.create_world(name, player, dimensions["height"], dimensions["width"], dimensions["floors"])[0]
-
-                #Now, make sure all entities are created and get their db id! - surely must be a way to just dump all this stuff here
+                
+                #Get DB IDs for all object and store them
                 local_id_to_dbid = {}
                 for local_id, room in entities['room'].items():
                     room_id = db.create_room(room['name'], room['base_id'], room['description'], room['backstory'])
