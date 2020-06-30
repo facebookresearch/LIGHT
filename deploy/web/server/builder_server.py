@@ -4,6 +4,7 @@ import os
 import sys
 import ast
 import inspect
+import time
 import tornado.web
 from tornado.ioloop import IOLoop
 from tornado import locks
@@ -33,6 +34,10 @@ def get_handlers(db):
         (r"/builder/entities/([a-zA-Z_]+)/fields", EntityFieldsHandler, {'dbpath': db}),
         (r"/builder/interactions", InteractionHandler, {'dbpath': db}),
         (r"/builder/tables/types", TypesHandler, {'dbpath': db}),
+        (r"/builder/world/", SaveWorldHandler, {'dbpath': db}),
+        (r"/builder/world/([0-9]+)", LoadWorldHandler, {'dbpath': db}),
+        (r"/builder/world/delete/([0-9]+)", DeleteWorldHandler, {'dbpath': db}),
+        (r"/builder/worlds/", ListWorldsHandler, {'dbpath': db}),
         (r"/builder/", MainHandler),
         (r"/builder(.*)", StaticDataUIHandler, {'path': path_to_build}),
         (r"/(.*)", StaticDataUIHandler, {'path': path_to_build}),
@@ -134,8 +139,8 @@ class ListWorldsHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         with LIGHTDatabase(self.dbpath) as db:
-            # This should be a player id from db
-            player = self.get_argument("player", None, True)
+            # TODO: Change to use value from player username
+            player = self.get_argument("player", 31106, True)
             worlds = db.view_worlds(player_id=player)
             self.write(json.dumps(worlds))
 
@@ -147,18 +152,16 @@ class DeleteWorldHandler(BaseHandler):
     
     @gen.coroutine
     @tornado.web.authenticated
-    def post(self):
+    def post(self, id):
         with (yield lock.acquire()):
             with LIGHTDatabase(self.dbpath) as db:
-                id = int(self.get_argument('id'))
-                player = self.get_argument("player", None, True)
-                # TODO: Implement this method
+                # TODO: Change to use value from player username
+                player = self.get_argument("player", 31106, True)
                 world_id = db.delete_world(world_id=id, player_id=player)
-                # Want to write the world name and ids.
                 self.write(json.dumps(world_id))
 
-class WorldHandler(BaseHandler):
-    '''Save or Load a world given the player id and world id'''
+class SaveWorldHandler(BaseHandler):
+    '''Save a world given the player id and world id'''
 
     def initialize(self, dbpath):
         self.dbpath = dbpath
@@ -168,34 +171,138 @@ class WorldHandler(BaseHandler):
     def post(self):
         with (yield lock.acquire()):
             with LIGHTDatabase(self.dbpath) as db:
-                player = self.get_argument("player", None, True)
-                world_info = json.loads(self.get_argument('world', '{}', True))
-                edges = json.loads(self.get_argument('edges', '[]', True))
-                tiles = json.loads(self.get_argument('tiles', '[]', True))
-                rooms = json.loads(self.get_argument('rooms', '[]', True))
-                objs = json.loads(self.get_argument('objs', '[]', True))
-                chars = json.loads(self.get_argument('chars', '[]', True))
-                world_id = db.create_world(**world_info)
-                tile_edges = {}
-                for tile in tiles:
-                    tile_id = db.create_tile(world_id, room_id, color, x_coordinate, y_coordinate, floor)
-                    
-                for edge in edges:
-                    edges = []
-                    edge_id = db.create_graph_edge(world_id, src_id, dst_id, type_)
-                    edges.append(edge_id)
+                # TODO: Change to use value from player username
+                player = int(self.get_argument("player", 31106, True))
 
-                # Now write all the tile_edges pairs!
-                return world_id
+                name = self.get_argument('name', 'default ' + time.ctime(time.time()), True)
+                dimensions = json.loads(self.get_argument('dimensions', '{"height": 3, "width": 3, "floors": 1}'))
+                world_map = json.loads(self.get_argument('map', '{"tiles": {}, "edges": []}'))
+                entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}, }'))
+        
+                world_id = db.create_world(name, player, dimensions["height"], dimensions["width"], dimensions["floors"])[0]
+                #Get DB IDs for all object and store them
+                local_id_to_dbid = {}
+                for local_id, room in entities['room'].items():
+                    room_id = db.create_room(room['name'], room['base_id'], room['description'], room['backstory'])
+                    local_id_to_dbid[local_id] = room_id[0]
+
+                for local_id, char in entities['character'].items():
+                    char_id = db.create_character(char['name'], char['base_id'], char['persona'], char['physical_description'],
+                        name_prefix=char['name_prefix'], is_plural=char['is_plural'], char_type=char['char_type'],
+                    )
+                    local_id_to_dbid[local_id] = char_id[0]
                 
-    @tornado.web.authenticated
-    def get(self):
-        with LIGHTDatabase(self.dbpath) as db:
-            id = int(self.get_argument('id'))
-            player = self.get_argument("player", None, True)
-            world = db.load_world(id, player)
-            self.write(json.dumps(world))
+                for local_id, obj in entities['object'].items():
+                    obj_id = db.create_object(obj['name'], obj['base_id'], obj['is_container'], obj['is_drink'],
+                        obj['is_food'], obj['is_gettable'], obj['is_surface'], obj['is_wearable'], obj['is_weapon'],
+                        obj['physical_description'], name_prefix=obj['name_prefix'], is_plural=obj['is_plural'],
+                    )
+                    local_id_to_dbid[local_id] = obj_id[0]
 
+                # Now, go through all the entities and make graph nodes for them, storing a map from the id to the graph id
+                dbid_to_nodeid = {}
+                for dbid in local_id_to_dbid.values():
+                    node_id = db.create_graph_node(dbid)
+                    dbid_to_nodeid[dbid] = node_id[0]
+
+                # Make the edges!
+                for edge in world_map['edges']:
+                    src_node = dbid_to_nodeid[local_id_to_dbid[str(edge['src'])]]
+                    dst_node = dbid_to_nodeid[local_id_to_dbid[str(edge['dst'])]]
+                    db.create_graph_edge(world_id, src_node, dst_node, edge['type'])
+
+                # Make the tiles!
+                for tile in world_map['tiles']:
+                    db.create_tile(world_id, dbid_to_nodeid[local_id_to_dbid[str(tile['room'])]], tile['color'], 
+                        tile['x_coordinate'], tile['y_coordinate'], tile['floor']
+                    )
+
+                # Now return to the user we did all of it!
+                self.write(json.dumps(world_id))
+
+class LoadWorldHandler(BaseHandler):
+    '''Load a world given the id'''
+    def initialize(self, dbpath):
+        self.dbpath = dbpath
+
+    @tornado.web.authenticated
+    # Prints let you see just how long this takes...
+    def get(self, world_id):
+        with LIGHTDatabase(self.dbpath) as db:
+
+            start = time.time()
+
+            result = {}
+            # TODO: Change to use value from player username
+            player_id = self.get_argument("player", 31106, True)
+
+            # Load the world info (dimensions, name, id) and store in "dimensions"
+            world = db.get_world(world_id, player_id)
+            assert len(world) == 1, "Must get a world back to load it"
+            world = world[0]
+            result["dimensions"] = {x: world[x] for x in world.keys() if x != 'owner_id'}
+            result["dimensions"]["floors"] = result["dimensions"]["num_floors"]
+            del result["dimensions"]["num_floors"]
+
+            # Load the entities (by getting the tiles and all connected components)
+            # Build local store here too!
+            tiles = db.get_tiles(world_id)
+            tile_list = [{x: tile[x] for x in tile.keys() if x != 'world_id'} for tile in tiles]
+            edges = set()
+            nextID = 1
+            entities = {'room': {}, 'character': {}, 'object': {},}
+
+            node_to_local_id = {}
+            node_to_type = {}
+            for tile in tile_list:
+                db.get_edges(tile['id'], edges)
+                node_to_local_id[tile['room_node_id']] = nextID
+                node_to_type[tile['room_node_id']] = 'room'
+                row = db.get_room(db.get_node(tile['room_node_id'])[0]['entity_id'])[0]
+                entities["room"][nextID] = {key: row[key] for key in row.keys()}
+                tile['room'] = nextID
+                del tile['id']
+                del tile['room_node_id']
+                nextID += 1
+
+            edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
+            edges = []
+            # now get all entity ids associated with the edges
+            for edge in edge_list:
+                if edge['src_id'] not in node_to_local_id:
+                    src = db.get_node(edge['src_id'])[0]
+                    node_to_local_id[edge['src_id']] = nextID
+                    type_src = db.get_id(src['entity_id'])[0]['type'] 
+                    node_to_type[edge['src_id']] = type_src
+                    row = getattr(db, 'get_' + type_src)(id=src['entity_id'])[0]
+                    entities[type_src][nextID] = {key: row[key] for key in row.keys()}
+                    nextID += 1
+
+                if edge['dst_id'] not in node_to_local_id:
+                    dst = db.get_node(edge['dst_id'])[0]
+                    node_to_local_id[edge['dst_id']] = nextID
+                    type_dst = db.get_id(dst['entity_id'])[0]['type']
+                    node_to_type[edge['dst_id']] = type_dst
+                    row = getattr(db, 'get_' + type_dst)(id=dst['entity_id'])[0]
+                    entities[type_dst][nextID] = {key: row[key] for key in row.keys()}
+                    nextID += 1
+                
+                src = node_to_local_id[edge['src_id']]
+                dst = node_to_local_id[edge['dst_id']]
+                edges.append({"src" : src, "dst": dst, "type": edge["edge_type"]})
+
+            entities["nextID"] = nextID
+            result["entities"] = entities
+
+            # Combine all the dictionaries to return
+            world_map = {}
+            world_map['tiles'] = tile_list
+            world_map['edges'] = edges
+            result["map"] = world_map
+            self.write(json.dumps(result))
+
+            end = time.time()
+            print("Finally done - took " + str(end - start) + " seconds")        
  #-------------------------------------------------------------#
 
 class EntityEditHandler(BaseHandler):

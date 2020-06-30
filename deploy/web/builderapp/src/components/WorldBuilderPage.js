@@ -7,15 +7,16 @@ import {
   Position,
   Icon,
   Switch,
-  Button
+  Button,
 } from "@blueprintjs/core";
-
 import {
   useWorldBuilder,
   MAX_HEIGHT,
   MAX_WIDTH,
-  MAX_FLOORS
+  MAX_FLOORS,
 } from "./worldbuilding/utils";
+import ListWorldsOverlay from "./WorldManager";
+import { postWorld } from "./WorldManager";
 import Grid from "./worldbuilding/Grid";
 import FloorSelector from "./worldbuilding/FloorSelector";
 
@@ -35,9 +36,14 @@ function WorldBuilderPage({ location }) {
 function WorldBuilder({ upload }) {
   const state = useWorldBuilder(upload);
   const [advanced, setAdvanced] = React.useState(false);
-
+  const [isOverlayOpen, setIsOverlayOpen] = React.useState(false);
+  // TODO: Remove postEdges and commit, add some other way to export world to json somehow
   return (
     <>
+      <ListWorldsOverlay
+        isOverlayOpen={isOverlayOpen}
+        setIsOverlayOpen={setIsOverlayOpen}
+      />
       <FormGroup
         inline
         label="World Dimensions"
@@ -49,7 +55,7 @@ function WorldBuilder({ upload }) {
             style={{ width: "3rem" }}
             max={MAX_WIDTH}
             min={1}
-            onValueChange={value => {
+            onValueChange={(value) => {
               state.setDimensions({ ...state.dimensions, width: value });
             }}
           />
@@ -59,7 +65,7 @@ function WorldBuilder({ upload }) {
             style={{ width: "3rem" }}
             max={MAX_HEIGHT}
             min={1}
-            onValueChange={value => {
+            onValueChange={(value) => {
               state.setDimensions({ ...state.dimensions, height: value });
             }}
           />
@@ -103,10 +109,24 @@ function WorldBuilder({ upload }) {
           bottom: 0,
           left: 0,
           right: 0,
-          height: "50px"
+          height: "50px",
         }}
         className="bp3-navbar"
       >
+        <Button
+          onClick={() => setIsOverlayOpen(!isOverlayOpen)}
+          intent="primary"
+          style={{ margin: "10px" }}
+        >
+          Manage Worlds
+        </Button>
+        <Button
+          onClick={() => postWorld(state)}
+          intent="primary"
+          style={{ margin: "10px" }}
+        >
+          Save
+        </Button>
         <Button
           onClick={state.exportWorld}
           intent="primary"

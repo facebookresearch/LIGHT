@@ -742,6 +742,7 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(res[1], True)
 
     # TODO: Add test for the components (such as saving/creating edges, etc)
+    
     def test_world_saving(self):
         '''Test that when we save then load a world, all attributes exist'''
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
@@ -861,18 +862,18 @@ class TestDatabase(unittest.TestCase):
                     'src_entity_id': 4,
                     'dst_entity_id': 6
                 }],
-                'rooms': {
+                'rooms': [
                     9,
                     4
-                },
-                'characters': {
+                ],
+                'characters': [
                     11,
                     6
-                },
-                'objects': {
+                ],
+                'objects': [
                     8,
                     12
-                }
+                ]
             })
 
 #---------------------------------------------------#

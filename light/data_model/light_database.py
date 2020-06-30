@@ -42,11 +42,11 @@ EDGE_TYPES = [
 ]
 
 DB_GRAPH_EDGE_CONTAINS = 'contains'
-DB_GRAPH_EDGE_NEIGHBOR_N = "neighbors to the north of"
-DB_GRAPH_EDGE_NEIGHBOR_E = "neighbors to the east of"
-DB_GRAPH_EDGE_NEIGHBOR_S = "neighbors to the south of"
-DB_GRAPH_EDGE_NEIGHBOR_W = "neighbors to the west of"
-DB_GRAPH_EDGE_NEIGHBOR_U = "neighbors above of"
+DB_GRAPH_EDGE_NEIGHBOR_N = "neighbors to the north"
+DB_GRAPH_EDGE_NEIGHBOR_E = "neighbors to the east"
+DB_GRAPH_EDGE_NEIGHBOR_S = "neighbors to the south"
+DB_GRAPH_EDGE_NEIGHBOR_W = "neighbors to the west"
+DB_GRAPH_EDGE_NEIGHBOR_U = "neighbors above"
 DB_GRAPH_EDGE_NEIGHBOR_D = "neighbors below"
 DB_GRAPH_EDGE_WORN = 'worn'
 DB_GRAPH_EDGE_WIELDED = 'wielded'
@@ -3035,7 +3035,7 @@ class LIGHTDatabase:
         """
         Delete the world data for a world given its ID
         """
-        self.assert_world_ownership(world_id, player_id)
+        assert self.is_world_owned_by(world_id, player_id), "Cannot delete a world you do not own"
         self.delete_id(world_id)
 
     def view_worlds(self, player_id):
@@ -3107,37 +3107,6 @@ class LIGHTDatabase:
             edges.add(e)
             if (old_len != len(edges)):
                 self.get_connected(e['dst_id'], edges)
-        
-    def load_world(self, world_id, player_id):
-        world = self.get_world(world_id, player_id)[0]
-        world_dict = {x: world[x] for x in world.keys() if x != 'owner_id'}
-        tiles = self.get_tiles(world_id)
-        tile_list = [{x: tile[x] for x in tile.keys() if x != 'world_id'} for tile in tiles]
-        edges = set()
-        objects = set()
-        characters = set()
-        rooms = set()
-        entities_dict = {'rooms': rooms, 'characters': characters, 'objects': objects,}
-        for tile in tile_list:
-            self.get_edges(tile['id'], edges)
-            tile['room_entity_id'] = self.get_node(tile['room_node_id'])[0]['entity_id']
-        edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
-        # now get all entities
-        for edge in edge_list:
-            src = self.get_node(edge['src_id'])[0]
-            dst = self.get_node(edge['dst_id'])[0]
-            edge['src_entity_id'] = src['entity_id']
-            edge['dst_entity_id'] = dst['entity_id']
-            type_src = self.get_id(src['entity_id'])[0]['type'] + 's'
-            type_dst = self.get_id(dst['entity_id'])[0]['type'] + 's'
-            entities_dict[type_src].add(src['entity_id'])
-            entities_dict[type_dst].add(dst['entity_id'])
-        entities_dict_list = {x : list(entities_dict[x]) for x in entities_dict.keys()}
-        world_dict['tiles'] = tile_list
-        world_dict['edges'] = edge_list
-        world_dict.update(entities_dict)
-        # Now that we have all the ids that we need, format them all nice
-        return world_dict
 
     def create_tile(self, world_id, room_id, color, x_coordinate, y_coordinate, floor, entry_attributes={}):
         id = self.create_id(DB_TYPE_TILE, entry_attributes)

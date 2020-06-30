@@ -3,7 +3,6 @@ import { Colors, Intent } from "@blueprintjs/core";
 import { cloneDeep, isEmpty, merge } from "lodash";
 import equal from "fast-deep-equal";
 import { emojiIndex } from "emoji-mart";
-
 import { post } from "../../utils";
 import AppToaster from "../AppToaster";
 
@@ -24,7 +23,7 @@ export const TILE_COLORS = [
   Colors.SEPIA5,
   Colors.GOLD5,
   Colors.FOREST5,
-  Colors.BLUE5
+  Colors.BLUE5,
 ];
 
 const grass = [
@@ -38,7 +37,7 @@ const grass = [
   "woods",
   "jungle",
   "swamp",
-  "green"
+  "green",
 ];
 const water = [
   "water",
@@ -49,7 +48,7 @@ const water = [
   "pond",
   "lagoon",
   "shore",
-  "blue"
+  "blue",
 ];
 const buildings = [
   "castle",
@@ -60,7 +59,7 @@ const buildings = [
   "building",
   "cave",
   "gray",
-  "grey"
+  "grey",
 ];
 const royal = ["king", "queen", "palace", "purple"];
 const brick = ["brick", "fire", "red"];
@@ -72,25 +71,25 @@ const farm = ["farm", "cottage", "sand", "beach", "yellow", "gold"];
  */
 export function findBiome(name, current) {
   const lowName = name.toLowerCase();
-  if (grass.some(biome => lowName.indexOf(biome) > -1)) {
+  if (grass.some((biome) => lowName.indexOf(biome) > -1)) {
     return Colors.FOREST5;
   }
-  if (water.some(biome => lowName.indexOf(biome) > -1)) {
+  if (water.some((biome) => lowName.indexOf(biome) > -1)) {
     return Colors.BLUE5;
   }
-  if (brick.some(biome => lowName.indexOf(biome) > -1)) {
+  if (brick.some((biome) => lowName.indexOf(biome) > -1)) {
     return Colors.RED5;
   }
-  if (path.some(biome => lowName.indexOf(biome) > -1)) {
+  if (path.some((biome) => lowName.indexOf(biome) > -1)) {
     return Colors.SEPIA5;
   }
-  if (farm.some(biome => lowName.indexOf(biome) > -1)) {
+  if (farm.some((biome) => lowName.indexOf(biome) > -1)) {
     return Colors.GOLD5;
   }
-  if (buildings.some(biome => lowName.indexOf(biome) > -1)) {
+  if (buildings.some((biome) => lowName.indexOf(biome) > -1)) {
     return Colors.GRAY3;
   }
-  if (royal.some(biome => lowName.indexOf(biome) > -1)) {
+  if (royal.some((biome) => lowName.indexOf(biome) > -1)) {
     return Colors.VIOLET5;
   }
   return current;
@@ -145,8 +144,8 @@ const mapReducer = (state, action) => {
             ...floor,
             tiles: {
               ...floor.tiles,
-              [`${action.x} ${action.y}`]: action.newTile
-            }
+              [`${action.x} ${action.y}`]: action.newTile,
+            },
           };
         } else {
           return floor;
@@ -157,7 +156,7 @@ const mapReducer = (state, action) => {
         if (floorIndex === action.floor) {
           return {
             ...floor,
-            name: action.name
+            name: action.name,
           };
         } else {
           return floor;
@@ -177,14 +176,14 @@ const createdEntitiesReducer = (state, action) => {
       return Object.assign({}, state, {
         [action.entityType]: {
           ...state[action.entityType],
-          [state.nextID]: action.data
+          [state.nextID]: action.data,
         },
-        nextID: state.nextID + 1
+        nextID: state.nextID + 1,
       });
     }
     case "EDIT_ENTITY": {
       return merge(state, {
-        [action.entityType]: { [action.id]: action.data }
+        [action.entityType]: { [action.id]: action.data },
       });
     }
     default:
@@ -203,7 +202,7 @@ export function useWorldBuilder(upload) {
       : {
           height: STARTING_HEIGHT,
           width: STARTING_WIDTH,
-          floors: STARTING_FLOORS
+          floors: STARTING_FLOORS,
         }
   );
 
@@ -287,13 +286,13 @@ export function useWorldBuilder(upload) {
             tiles: {
               ...floor.tiles,
               [`${x1} ${y1}`]: floor.tiles[`${x2} ${y2}`],
-              [`${x2} ${y2}`]: floor.tiles[`${x1} ${y1}`]
-            }
+              [`${x2} ${y2}`]: floor.tiles[`${x1} ${y1}`],
+            },
           };
         } else {
           return floor;
         }
-      })
+      }),
     });
   };
 
@@ -301,16 +300,16 @@ export function useWorldBuilder(upload) {
   const addRowTop = () => {
     mapDispatch({
       type: "SET_MAP",
-      map: map.map(floor => {
+      map: map.map((floor) => {
         const tileKeys = Object.keys(floor.tiles);
         const newTiles = {};
-        tileKeys.forEach(key => {
+        tileKeys.forEach((key) => {
           const [x, y] = key.split(" ");
           newTiles[`${x} ${parseInt(y) + 1}`] = floor.tiles[key];
         });
         const wallKeys = Object.keys(floor.walls);
         const newWalls = {};
-        wallKeys.forEach(key => {
+        wallKeys.forEach((key) => {
           const [t1, t2] = key.split("|");
           const [x1, y1] = t1.split(" ");
           const [x2, y2] = t2.split(" ");
@@ -318,7 +317,7 @@ export function useWorldBuilder(upload) {
             floor.walls[key];
         });
         return { ...floor, tiles: newTiles, walls: newWalls };
-      })
+      }),
     });
     setDimensions({ ...dimensions, height: dimensions.height + 1 });
   };
@@ -332,16 +331,16 @@ export function useWorldBuilder(upload) {
   const addColFront = () => {
     mapDispatch({
       type: "SET_MAP",
-      map: map.map(floor => {
+      map: map.map((floor) => {
         const tileKeys = Object.keys(floor.tiles);
         const newTiles = {};
-        tileKeys.forEach(key => {
+        tileKeys.forEach((key) => {
           const [x, y] = key.split(" ");
           newTiles[`${parseInt(x) + 1} ${y}`] = floor.tiles[key];
         });
         const wallKeys = Object.keys(floor.walls);
         const newWalls = {};
-        wallKeys.forEach(key => {
+        wallKeys.forEach((key) => {
           const [t1, t2] = key.split("|");
           const [x1, y1] = t1.split(" ");
           const [x2, y2] = t2.split(" ");
@@ -349,7 +348,7 @@ export function useWorldBuilder(upload) {
             floor.walls[key];
         });
         return { ...floor, tiles: newTiles, walls: newWalls };
-      })
+      }),
     });
     setDimensions({ ...dimensions, width: dimensions.width + 1 });
   };
@@ -386,7 +385,7 @@ export function useWorldBuilder(upload) {
   // Remove all stairs up or down from a floor
   const removeStairsFloor = (floor, stair) => {
     if (!isEmpty(floor) && !isEmpty(floor.tiles)) {
-      Object.keys(floor.tiles).forEach(key => {
+      Object.keys(floor.tiles).forEach((key) => {
         if (!isEmpty(floor.tiles[key])) {
           delete floor.tiles[key][stair];
         }
@@ -395,7 +394,7 @@ export function useWorldBuilder(upload) {
   };
 
   // Delete a floor
-  const deleteFloor = index => {
+  const deleteFloor = (index) => {
     const newMap = map.filter((_floor, i) => i !== index);
     removeStairsFloor(newMap[index - 1], "stairUp");
     removeStairsFloor(newMap[index], "stairDown");
@@ -458,7 +457,7 @@ export function useWorldBuilder(upload) {
           } else {
             return floor;
           }
-        })
+        }),
       });
     }
   };
@@ -485,8 +484,8 @@ export function useWorldBuilder(upload) {
     const store = { room: {}, character: {}, object: {} };
     const map = filteredMap();
     // Create maps of all entities being used in the world
-    map.forEach(floor => {
-      Object.values(floor.tiles).forEach(tile => {
+    map.forEach((floor) => {
+      Object.values(floor.tiles).forEach((tile) => {
         store.room[tile.room] = entities.room[tile.room];
         for (let index in tile.characters) {
           store.character[tile.characters[index]] =
@@ -500,17 +499,17 @@ export function useWorldBuilder(upload) {
     });
     // Post all used entities to the API and store their returned ID for edges
     const createReqs = [].concat(
-      Object.values(store.room).map(async room => {
+      Object.values(store.room).map(async (room) => {
         const res = await post("entities/room", room);
         const data = await res.json();
         room.id = data[0];
       }),
-      Object.values(store.character).map(async character => {
+      Object.values(store.character).map(async (character) => {
         const res = await post("entities/character", character);
         const data = await res.json();
         character.id = data[0];
       }),
-      Object.values(store.object).map(async object => {
+      Object.values(store.object).map(async (object) => {
         const res = await post("entities/object", object);
         const data = await res.json();
         object.id = data[0];
@@ -526,10 +525,10 @@ export function useWorldBuilder(upload) {
       for (let coord in tiles) {
         const payload = { room: -1, chars: [], objs: [], neighbors: [] };
         payload.room = store.room[tiles[coord].room].id;
-        tiles[coord].characters.forEach(character => {
+        tiles[coord].characters.forEach((character) => {
           payload.chars.push(store.character[character].id);
         });
-        tiles[coord].objects.forEach(object => {
+        tiles[coord].objects.forEach((object) => {
           payload.objs.push(store.object[object].id);
         });
         if (tiles[coord].stairUp) {
@@ -543,17 +542,17 @@ export function useWorldBuilder(upload) {
           );
         }
         // Ensure neighbours aren't blocked by walls
-        const [x, y] = coord.split(" ").map(i => parseInt(i));
+        const [x, y] = coord.split(" ").map((i) => parseInt(i));
         const neighbors = [
           `${x - 1} ${y}`,
           `${x + 1} ${y}`,
           `${x} ${y - 1}`,
-          `${x} ${y + 1}`
+          `${x} ${y + 1}`,
         ];
-        neighbors.forEach(neighbor => {
+        neighbors.forEach((neighbor) => {
           if (
             !Object.keys(map[floor].walls).some(
-              wall => wall.includes(neighbor) && wall.includes(coord)
+              (wall) => wall.includes(neighbor) && wall.includes(coord)
             )
           ) {
             if (!isEmpty(tiles[neighbor])) {
@@ -567,7 +566,7 @@ export function useWorldBuilder(upload) {
     await Promise.all(edgeReqs);
     AppToaster.show({
       intent: Intent.SUCCESS,
-      message: "Successfully created all edges"
+      message: "Successfully created all edges",
     });
   };
 
@@ -594,10 +593,11 @@ export function useWorldBuilder(upload) {
       addFloor,
       deleteFloor,
       reorderFloors,
-      editFloorName
+      editFloorName,
     },
     currFloor,
     map,
+    filteredMap,
     setTile,
     clearTile,
     swapTiles,
@@ -613,6 +613,6 @@ export function useWorldBuilder(upload) {
     editEntity,
     findOrAddEntity,
     postEdges,
-    exportWorld
+    exportWorld,
   };
 }
