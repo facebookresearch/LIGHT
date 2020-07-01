@@ -37,7 +37,7 @@ function WorldBuilder({ upload }) {
   const state = useWorldBuilder(upload);
   const [advanced, setAdvanced] = React.useState(false);
   const [isOverlayOpen, setIsOverlayOpen] = React.useState(false);
-  // TODO: Remove postEdges and commit, add some other way to export world to json somehow
+  //TODO: Consider moving the export somewhere else?
   return (
     <>
       <ListWorldsOverlay
@@ -133,13 +133,6 @@ function WorldBuilder({ upload }) {
           style={{ margin: "10px" }}
         >
           Export
-        </Button>
-        <Button
-          onClick={state.postEdges}
-          intent="primary"
-          style={{ margin: "10px" }}
-        >
-          Commit Edges
         </Button>
       </div>
     </>
