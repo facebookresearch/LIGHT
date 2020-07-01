@@ -1458,6 +1458,7 @@ class LIGHTDatabase:
             """
         )
 
+
     def init_conversation_tables(self):
         """
         Initializes conversation tables. All IDs are unique across different
