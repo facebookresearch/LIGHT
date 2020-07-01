@@ -681,20 +681,82 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(len(test.get_id()), prev_id_len)
                 
 #-----------------World Saving Test-----------------#
-    # TODO: Update these test to work with the changes made
-    # TODO: Add test for the components (such as saving/creating edges and tiles)
 
     def test_create_graph_nodes(self):
+        '''Test that graph node creation works and behaves as expected'''
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            rbase_id = test.create_base_room("room")[0]
+            rcontent_id1 = test.create_room("room1", rbase_id, "dirty", "old")[0]
+            cbase_id = test.create_base_character("troll")[0]
+            ccontent_id1 = test.create_character(None, cbase_id, "tall", "big")[0]
+            obase_id = test.create_base_object("object")[0]
+            ocontent_id1 = test.create_object('small obj', obase_id, 0, 0, 0, 0, 0, 0, 0, 'dusty')[0]
+            rnode_id = test.create_graph_node(rcontent_id1)[0]
+            cnode_id = test.create_graph_node(ccontent_id1)[0]
+            onode_id = test.create_graph_node(ocontent_id1)[0]
+            self.assert_sqlite_row_equal(
+                {'id' : rnode_id, 'entity_id': rcontent_id1},
+                test.get_node(rnode_id)[0],
+                "Node entity id does not match room id",
+            )
+            self.assert_sqlite_row_equal(
+                {'id' : cnode_id, 'entity_id': ccontent_id1},
+                test.get_node(cnode_id)[0], 
+                "Node entity id does not match character id",
+            )
+            self.assert_sqlite_row_equal(
+                {'id' : onode_id, 'entity_id': ocontent_id1},
+                test.get_node(onode_id)[0],
+                "Node entity id does not match object id",
+            )
+            
+    def test_create_tiles(self):
         '''Test that edge creation works and behaves as expected'''
-        pass
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            player0 = test.create_player()[0]
+            w_id = test.create_world("swamp", player0, 3, 3, 1)[0]
+
+            rbase_id = test.create_base_room("room")[0]
+            rcontent_id1 = test.create_room("room1", rbase_id, "dirty", "old")[0]
+        
+            rnode_id1 = test.create_graph_node(rcontent_id1)[0]
+
+            tile_id = test.create_tile(w_id, rnode_id1, '#FFFFF', 1, 1, 0)[0]
+            res = test.get_tiles(w_id)[0]
+            self.assert_sqlite_row_equal(
+                {'id': tile_id, "world_id": w_id, "room_node_id": rnode_id1, 'color': "#FFFFF", 'x_coordinate': 1, 'y_coordinate': 1, 'floor': 0},
+                res,
+                "Tile was not created succesfully"
+            )
 
     def test_create_graph_edges(self):
         '''Test that edge creation works and behaves as expected'''
-        pass
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            player0 = test.create_player()[0]
+            w_id = test.create_world("swamp", player0, 3, 3, 1)[0]
 
-    def test_create_tiles(self):
-        '''Test that edge creation works and behaves as expected'''
-        pass
+            rbase_id = test.create_base_room("room")[0]
+            rcontent_id1 = test.create_room("room1", rbase_id, "dirty", "old")[0]
+            rcontent_id2 = test.create_room("room2", rbase_id, "dirty", "old")[0]
+            cbase_id = test.create_base_character("troll")[0]
+            ccontent_id1 = test.create_character(None, cbase_id, "tall", "big")[0]
+        
+            rnode_id1 = test.create_graph_node(rcontent_id1)[0]
+            rnode_id2 = test.create_graph_node(rcontent_id2)[0]
+            cnode_id = test.create_graph_node(ccontent_id1)[0]
+
+            tile_id = test.create_tile(w_id, rnode_id1, '#FFFFF', 1, 1, 0)[0]
+            edge1 = test.create_graph_edge(w_id, rnode_id1, rnode_id2, "neighbors to the north")[0]
+            edge2 = test.create_graph_edge(w_id, rnode_id1, cnode_id, "contains")[0]
+            edges = set()
+            test.get_edges(tile_id, edges)
+            edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
+            self.assertCountEqual(
+                [{'id': edge1, 'w_id': w_id, 'src_id': rnode_id1, 'dst_id': rnode_id2, 'edge_type': "neighbors to the north"}, 
+                 {'id': edge2, 'w_id': w_id, 'src_id': rnode_id1, 'dst_id': cnode_id, 'edge_type': "contains"}],
+                edge_list
+            )
+           
 
     def test_create_world(self):
         '''Test that world creation works and behaves as expected'''
@@ -721,6 +783,7 @@ class TestDatabase(unittest.TestCase):
                 res
             )
 
+            # Can't see player0's worlds!
             player1 = test.create_player()[0]
             w3_id = test.create_world("swamp2", player1, 3, 3, 5)[0]
             res = test.view_worlds(player1)
@@ -755,139 +818,6 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(res, (-1, False))
             res = test.create_world("swamp10", player1, 3, 3, 1)
             self.assertEqual(res[1], True)
-
-    def test_world_loading_saving(self):
-        '''Test world saving and loading works as expected'''
-        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            player0 = test.create_player()[0]
-            w_id = test.create_world("swampy world", player0, 3, 3, 1)[0]
-
-            # Create rooms, characters, and objects
-            rbase_id = test.create_base_room("room")[0]
-            rcontent_id1 = test.create_room("swamp", rbase_id, "damp", "wet")[0]
-            cbase_id = test.create_base_character("ogre")[0]
-            ccontent_id1 = test.create_character(None, cbase_id, "green", "big")[0]
-            obase_id = test.create_base_object('obj')[0]
-            ocontent_id1 = test.create_object(
-                'small obj', obase_id, 0, 0, 0, 0, 0, 0, 0, 'dusty'
-            )[0]
-
-            rcontent_id2 = test.create_room("marsh", rbase_id, "soggy", "wet")[0]
-            cbase_id2 = test.create_base_character("frog")[0]
-            ccontent_id2 = test.create_character(None, cbase_id2, "green", "small")[0]
-            ocontent_id2 = test.create_object(
-                'big obj', obase_id, 0, 0, 0, 0, 0, 0, 0, 'huuuge'
-            )[0]
-
-            # Create nodes
-            n_id1 = test.create_graph_node(rcontent_id1)[0]
-            n_id2 = test.create_graph_node(ccontent_id1)[0]
-            n_id3 = test.create_graph_node(ocontent_id1)[0]
-            n_id4 = test.create_graph_node(rcontent_id2)[0]
-            n_id5 = test.create_graph_node(ccontent_id2)[0]
-            n_id6 = test.create_graph_node(ocontent_id2)[0]
-
-
-            
-            # Create edges now
-            e_id1 = test.create_graph_edge(w_id, n_id1, n_id4, "neighbors to the north of")[0]
-            e_id2 = test.create_graph_edge(w_id, n_id1, n_id2, "contains")[0]
-            e_id3 = test.create_graph_edge(w_id, n_id1, n_id3, "contains")[0]
-
-            e_id4 = test.create_graph_edge(w_id, n_id4, n_id1, "neighbors to the south of")[0]
-            e_id5 = test.create_graph_edge(w_id, n_id4, n_id5, "contains")[0]
-            e_id6 = test.create_graph_edge(w_id, n_id4, n_id6, "contains")[0]
-
-            # Create tiles now
-            t_id1 = test.create_tile(w_id, n_id1, 3394611, 1, 1, 1)[0]
-            t_id2 = test.create_tile(w_id, n_id4, 13056, 2, 1, 1)[0]
-
-            self.assertCountEqual(test.load_world(w_id, player0),
-            {
-                'id': 2,
-                'name': 'swampy world',
-                'height': 3,
-                'width': 3,
-                'num_floors': 1,
-                'tiles': [{
-                    'id': 25,
-                    'room_node_id': 13,
-                    'color': 3394611,
-                    'x_coordinate': 1,
-                    'y_coordinate': 1,
-                    'floor': 1,
-                    'room_entity_id': 4
-                }, {
-                    'id': 26,
-                    'room_node_id': 16,
-                    'color': 13056,
-                    'x_coordinate': 2,
-                    'y_coordinate': 1,
-                    'floor': 1,
-                    'room_entity_id': 9
-                }],
-                'edges': [{
-                    'id': 19,
-                    'w_id': 2,
-                    'src_id': 13,
-                    'dst_id': 16,
-                    'edge_type': 'neighbors to the north of',
-                    'src_entity_id': 4,
-                    'dst_entity_id': 9
-                }, {
-                    'id': 24,
-                    'w_id': 2,
-                    'src_id': 16,
-                    'dst_id': 18,
-                    'edge_type': 'contains',
-                    'src_entity_id': 9,
-                    'dst_entity_id': 12
-                }, {
-                    'id': 23,
-                    'w_id': 2,
-                    'src_id': 16,
-                    'dst_id': 17,
-                    'edge_type': 'contains',
-                    'src_entity_id': 9,
-                    'dst_entity_id': 11
-                }, {
-                    'id': 21,
-                    'w_id': 2,
-                    'src_id': 13,
-                    'dst_id': 15,
-                    'edge_type': 'contains',
-                    'src_entity_id': 4,
-                    'dst_entity_id': 8
-                }, {
-                    'id': 22,
-                    'w_id': 2,
-                    'src_id': 16,
-                    'dst_id': 13,
-                    'edge_type': 'neighbors to the south of',
-                    'src_entity_id': 9,
-                    'dst_entity_id': 4
-                }, {
-                    'id': 20,
-                    'w_id': 2,
-                    'src_id': 13,
-                    'dst_id': 14,
-                    'edge_type': 'contains',
-                    'src_entity_id': 4,
-                    'dst_entity_id': 6
-                }],
-                'rooms': [
-                    9,
-                    4
-                ],
-                'characters': [
-                    11,
-                    6
-                ],
-                'objects': [
-                    8,
-                    12
-                ]
-            })
 
 #---------------------------------------------------#
 
