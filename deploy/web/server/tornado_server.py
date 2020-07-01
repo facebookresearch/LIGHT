@@ -311,7 +311,9 @@ class MainHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         self.render(here + "/../build/index.html")
-        
+
+# TODO:  Add signup page, which will let us create new users
+       
 class LoginHandler(BaseHandler):
     def initialize(self, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
         self.hostname = hostname
@@ -321,6 +323,8 @@ class LoginHandler(BaseHandler):
         self.render(here + "/login.html", next=self.get_argument("next", u"/"))
         self.next = next
 
+    # TODO: Add db, send request here to validate
+    # KEEP SUPPORT for fb login
     def post(self):
         name = self.get_argument("name", "")
         password = self.get_argument("password", "")

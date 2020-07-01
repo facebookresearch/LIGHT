@@ -1351,6 +1351,16 @@ class LIGHTDatabase:
             results = [r for r in results if r['edge_type'] == edge_type]
         return results
     
+    def init_user_tables(self):
+        """
+        Initializes users and login tables
+        """
+
+        # USERS table: Stores user id, user name, and other unique user metadata (cached file location?)
+        # LOGIN table: Ties user id and username to password salt & password hash, facebook login
+        # NOTE: In future, if memberships / premium status type stuff, that could be included here!
+        # CONSIDERATON: How does this tie in with "login with facebook?" - fb seems to suggest how to handle login with this!
+
     def init_world_tables(self):
         """
         Initializes world tables
@@ -3242,3 +3252,11 @@ class LIGHTDatabase:
             assert len(result) == 1
             id = int(result[0][0])
         return (id, inserted)
+
+
+'''
+Methods to add for user support:
+    - create user method, populates login and table entry
+    - login method, pass the username and password, we look for the matching userid
+    - login w/ facebook method, pass the userID and get associated information from the userid from the db
+'''
