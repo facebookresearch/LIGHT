@@ -1,10 +1,11 @@
 import os
 import pickle
 
-from parlai_internal.projects.light.v1.data_model.light_database import LIGHTDatabase, DB_STATUS_REJECTED
+from light.data_model.light_database import LIGHTDatabase, DB_STATUS_REJECTED
 
-db_path = '/Users/jju/ParlAI/data/LIGHT/environment/db/database3.db'
+# db_path = '/Users/jju/ParlAI/data/LIGHT/environment/db/database3.db'
 # db_path = '/Users/jju/Desktop/ParlAI/data/LIGHT/environment/db/database3.db'
+db_path = '/Users/jju/tmp_packages/tmp_packages/light_package/database.db'
 
 rejected_count = 0
 rejected_rooms = 0

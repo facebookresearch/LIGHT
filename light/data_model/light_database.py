@@ -171,6 +171,7 @@ class LIGHTDatabase:
             DB_TYPE_OBJ: "objects_table",
             DB_TYPE_BASE_ROOM: "base_rooms_table",
             DB_TYPE_ROOM: "rooms_table",
+            DB_TYPE_TEXT_EDGE: "text_edges_table",
             DB_TYPE_EDGE: "node_content_table",
             DB_TYPE_GRAPH_EDGE: "edges_table",
             DB_TYPE_GRAPH_NODE: "nodes_table",

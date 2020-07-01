@@ -117,7 +117,7 @@ class RoomConversationBuffer(object):
     def _export_and_refresh(self):
         """Save the conversation to the database and locally, then refresh the
         buffer"""
-        if not is_active:
+        if not self.is_active:
             return
 
         data = self._to_dump_format()
