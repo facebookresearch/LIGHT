@@ -78,6 +78,8 @@ class InteractionLogger(abc.ABC):
 
 # TODO: Decide meta episode viewpoint - is it as long as humans are on the graph? Or... what?
 #       There is a distinction in episode from room and agent POV
+
+# IDEA: The GRAPH should control the meta episode (record if it has human players still)
 class RoomInteractionLogger(InteractionLogger):
     '''
         This interaction logger attaches to a room level node in the graph, logging all
@@ -116,7 +118,7 @@ class RoomInteractionLogger(InteractionLogger):
             import traceback
             traceback.print_exc()
             raise
-        
+
     def _is_logging(self):
         return self.num_humans > 0
 
@@ -137,7 +139,7 @@ class RoomInteractionLogger(InteractionLogger):
         with open(file_path, 'w') as dump_file:
             json.dump(data, dump_file)
 
-        events_file_path = os.path.join(data_path, f'/light_events/{unique_graph_name}_events.json')
+        events_file_path = os.path.join(data_path, f'/light_event_dumps/{unique_graph_name}_events.json')
         with open(events_file_path, 'w') as dump_file:
             for event in events:
                 json.dump(event.to_json(), dump_file)
