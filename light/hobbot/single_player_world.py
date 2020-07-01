@@ -12,9 +12,11 @@ import math
 
 from parlai.core.agents import create_agent_from_shared
 from parlai.core.worlds import World
-from parlai_internal.projects.light.beatthehobbot_dist.strategies.light_chat_strategy import LIGHTChatStrategy
-import parlai_internal.projects.light.beatthehobbot_dist.utils as utils
-
+from light.hobbot.strategies.light_chat_strategy import LIGHTChatStrategy
+import light.hobbot.utils as utils
+from light.graph.structured_graph import OOGraph
+from light.graph.builders.starspace_all import StarspaceBuilder
+from light.graph.events.graph_events import LookEvent
 
 # Task specific constants
 GAME_OVER = ('You have ended the game. Thanks for playing!')
@@ -29,7 +31,62 @@ SUBSAMPLE_CANDS = -1
 SINGLE_CATCH_THRESHOLD = 11
 DOUBLE_CATCH_THRESHOLD = 15
 
-ROOKIE_USER_MIN_SCORE = 40
+ROOKIE_USER_MIN_SCORE = 15
+SCORE_TO_ACT = 5
+
+USE_ACTIONS = [
+    'follow',
+    'hit',
+    'hug',
+    'get',
+    'put',
+    'drop',
+    'steal',
+    'give',
+    'wear',
+    'wield',
+    'remove',
+    'eat',
+    'drink',
+]  
+
+
+def add_scoring_model(opt, model_key):
+    if opt.get('shared_scoring_params') is None:
+        opt['shared_scoring_params'] = {}
+    bot_params = opt['shared_bot_params']
+    params = bot_params[model_key]
+    scoring_params = params.copy()
+    scoring_params['opt'] = params['opt'].copy()
+    scoring_params['opt']['use_reply'] = 'none'
+    scoring_params['opt']['override'] = params['opt']['override'].copy()
+    scoring_params['opt']['override']['use_reply'] = 'none'
+    opt['shared_scoring_params'][model_key] = scoring_params
+
+
+def get_override_name(model_name, override):
+    SKIP_KEYS = [
+        'model',
+        'candidates',
+        'eval_candidates',
+        'fp16',
+        'no_cuda',
+        'interactive_mode',
+        'batchsize',
+        'trainset',
+        'partner_trainset',
+        'baseforms',
+        'force_fp16_tokens',
+        'selection_choice_weight',
+    ]
+    important_keys = []
+    for key, value in override.items():
+        if key in SKIP_KEYS:
+            continue
+        important_keys.append(f'{key}={value}')
+    important_keys.sort()
+    return f"{model_name}?{','.join(important_keys)}"
+
 
 # ---------- LIGHT Dungeon World -------- #
 class LIGHTSinglePlayerWorld(World):
@@ -37,7 +94,7 @@ class LIGHTSinglePlayerWorld(World):
 
     GAME_EMOJIS = utils.GAMEPLAY_EMOJIS
 
-    def __init__(self, opt, human_agents, bot, scoring_bot, model, task_state=None):
+    def __init__(self, opt, human_agents, bot, scoring_bot, model, use_quest=None, task_state=None):
         self.opt = opt
         self.debug = opt.get('is_debug', False)
         self.agent = human_agents[0]
@@ -45,16 +102,28 @@ class LIGHTSinglePlayerWorld(World):
         self.bot = bot
         self.model_opt = bot.opt
         self.delimiter = self.model_opt.get('delimiter', '\n')
+        self.quest = use_quest
+        self.quest_goal = None
+        self.quest_motivation = None
+        self.table_prefix = 'lightbot'
 
         # data
         self.dialogs = []
         self.model_name = model
         self.score = 0
+        self.curr_acting_score = 0
 
         # offensive / personal info detection
         self.blacklist_cnt = 0
         self.flagged_cnt = 0
         self.flagged_messages = []
+
+        # agent based state
+        self.saw_bonus = self.agent.data.get('saw_bonus', False)
+        self.saw_quest = self.agent.data.get('saw_quest', False)
+        self.characters_caught = self.agent.data.get('characters_caught')
+        self.characters_caught_string = self.agent.data.get('characters_caught_string')
+        self.games_played = self.agent.data.get('light_games_played', 0)
 
         self.service_strategy: LIGHTChatStrategy = opt["service_strategy"]
 
@@ -65,45 +134,82 @@ class LIGHTSinglePlayerWorld(World):
         self.reported = False
         self.seen_welcome_message = False
         self.timeout = False
+        self.first_observe = False
+        self.bot_action_observe = None
         self.turn = 0
 
-        # set up personas
-        self.persona = []
-        self.bot_persona = []
-        self.persona_question = None
-        self.set_up_personas()
-
-        self.table_prefix = 'lightbot'
-        self.actingscore_agent = scoring_bot
-        self._init_acting_score_agent()
-        self.saw_bonus = self.agent.data.get('saw_bonus', False)
-        self.characters_caught = self.agent.data.get('characters_caught')
-        self.characters_caught_string = self.agent.data.get('characters_caught_string')
-        self.games_played = self.agent.data.get('light_games_played', 0)
-        with open(self.opt['nonsequiturs_path'], 'r') as nonseq_file:
-            self.nonsequiturs = nonseq_file.readlines()
         # Store pre-computed candidates
         self.prepped_cand_scores = []
-        self.first_observe = False
 
-        if task_state is not None:
+        # set up personas
+        self.human_player_details = {'id': None, 'db_id': None, 'name': None, 'persona': None}
+        self.bot_player_details = {'id': None, 'db_id': None, 'name': None, 'persona': None}
+        self.location_details = {'id': None, 'db_id': None, 'name': None, 'description': None}
+        self.graph_json = None
+
+        with open(self.opt['nonsequiturs_path'], 'r') as nonseq_file:
+            self.nonsequiturs = nonseq_file.readlines()
+
+        if task_state is None:
+            self.set_up_personas()
+        else:
             self.load_state(task_state)
+
+        self.player_node = self.graph.get_node(self.human_player_details['id'])
+        self.bot_node = self.graph.get_node(self.bot_player_details['id'])
+        self.user_text = self.player_node.get_prefix_view()
+        self.actingscore_agent = scoring_bot
+        self._init_acting_score_agent()
         self._log('SinglePlayerWorld initialization complete...')
 
     @staticmethod
     def generate_world(opt, agents, task_state=None):
-        shared_bot_params = opt['shared_bot_params']
-        shared_scoring_params = opt['shared_scoring_params']
+        bot_params = opt['shared_bot_params']
+        if opt.get('shared_scoring_params') is None:
+            opt['shared_scoring_params'] = {}
+
+        possible_models = []
+        for model_key in opt['model_info'].keys():
+            overrides = opt['model_info'][model_key].get('override', {})
+            if type(overrides) is dict:
+                overrides = [overrides]
+            for override in overrides:
+                model_info = (model_key, override)
+                possible_models += [model_info] * override.get('selection_choice_weight')
+        
+        model_to_use = random.choice(possible_models)
+        model_name = get_override_name(*model_to_use)
+        print(f"Selected model {model_to_use[0]}, name {model_name}")
+
+        shared_bot_params = opt['shared_bot_params'][model_to_use[0]]
+        use_bot_params = shared_bot_params.copy()
+        use_bot_params['opt'] = shared_bot_params['opt'].copy()
+        use_bot_params['opt']['override'] = model_to_use[1]
+        use_bot_params['opt'].update(model_to_use[1])
+        bot = create_agent_from_shared(use_bot_params)
+
+        scoring_model_to_use = 'orig_light_poly'
+        if scoring_model_to_use not in opt['shared_scoring_params']:
+            add_scoring_model(opt, scoring_model_to_use)
+        shared_scoring_params = opt['shared_scoring_params'][scoring_model_to_use]
         scoring_bot = create_agent_from_shared(shared_scoring_params)
-        bot = create_agent_from_shared(shared_bot_params)
-        model = 'reddit_polyranker'
+
+        # Determine if we're doing a quest!
+        quest = None
+        if agents[0].data.get('persona') is None:
+            quest = random.choice(opt['available_quests']) 
+            if agents[0].data.get('total_score') > ROOKIE_USER_MIN_SCORE:
+                if random.random() > 0.2:
+                    quest = random.choice(opt['available_quests'])
+
         return LIGHTSinglePlayerWorld(
             opt=opt,
             human_agents=agents,
             bot=bot,
-            model=model,
-            task_state=task_state,
+            model=model_name,
             scoring_bot=scoring_bot,
+            use_quest=quest,
+            task_state=task_state,
         )
 
     @staticmethod
@@ -291,8 +397,8 @@ class LIGHTSinglePlayerWorld(World):
         })
 
         persona_text = '*You are a:* {}\n*Persona:* {}'.format(
-            self.full_persona[0],  # character name
-            self.full_persona[1]  # character description
+            self.human_player_details['name'],
+            self.human_player_details['persona'],
         )
         # observe persona
         self.agent.observe({
@@ -300,89 +406,146 @@ class LIGHTSinglePlayerWorld(World):
             'text': persona_text,
         })
 
+    def send_quest(self):
+        if not self.saw_quest:
+            self.agent.data['saw_quest'] = True
+            self.agent.observe({
+                'id': '',
+                'text': 
+                    "The dungeon master is interested in "
+                    "seeing how you act. You will be given "
+                    "an additional motivation or goal. "
+                    "Play your character well to be given "
+                    "the opporunity to TAKE ACTION. Choosing "
+                    "this option will give you a few actions "
+                    "to select. Respond with the number of "
+                    "your selected action, then continue your dialogue.",
+            })
+        self.agent.observe({
+            'id': '',
+            'text': 
+                "Your character has the following motivation: "
+                f"{self.quest_motivation}.",
+        })
+
     def set_up_personas(self):
         self._log('Setting up personas...')
-        # get human's persona
         agent_data = self.agent.data
+
+        # Load up a graph
+        builder = self.opt['graph_builder']
+        human_player_name = None
+        if self.quest is not None:
+            self.graph, self.world = builder.get_graph_from_quest(self.quest)
+            human_player_name = ' '.join(self.quest['data']['character'].split(' ')[1:])
+        elif agent_data.get('persona'):
+            player = agent_data.get('persona')
+            location = agent_data.get('setting')
+            self.graph, self.world = builder.get_constrained_graph(location, player)
+            human_player_name = player.split('. ')[0]
+        else:
+            self.graph, self.world = builder.get_graph()
+        self.graph_json = self.graph.to_json() # TODO do this after every action
+        
+        # Assign human player
+        human_player = None
+        available_players = list(self.graph.agents.values())
+        print(available_players)
+        if human_player_name is not None:
+            pos_human_player = self.graph.desc_to_nodes(human_player_name)
+            assert len(pos_human_player) > 0, "Could not find given player"
+            human_player = pos_human_player[0]
+        else:
+            human_player = random.choice(available_players)
+        available_players.remove(human_player)
+
+        # Assign bot player
+        bot_player = random.choice(available_players)
+
+        self.human_player_details = {
+            'id': human_player.node_id, 
+            'name': human_player.name, 
+            'persona': human_player.persona,
+            'db_id': human_player.db_id,
+        }
+        self.bot_player_details = {
+            'id': bot_player.node_id, 
+            'name': bot_player.name, 
+            'persona': bot_player.persona,
+            'db_id': bot_player.db_id,
+        }
+        
         if agent_data.get('persona') is None:
-            self.full_persona = self.opt['persona_generator'].get_persona()
-            self.send_persona()
-        else:
-            self.full_persona = agent_data['persona']
-        self._log('Human persona:\n{}'.format(self.full_persona))
+            self.send_persona()  # TODO update call
 
-        # separate name, persona description, and location information
-        self.name, self.persona_text, loc1 = self.full_persona
-        # get list of persona sentences
-        self.persona = self.persona_text.split('. ')
+        self._log('Human persona:\n{}'.format(self.human_player_details))
 
-        # get bot's persona
-        if agent_data.get('partner_persona') is None:
-            self.bot_full_persona = self.opt['persona_generator'].get_persona()
-        else:
-            self.bot_full_persona = agent_data['partner_persona']
-        # separate name, persona description, and location information
-        self.bot_name, self.bot_persona_text, loc2 = self.bot_full_persona
-        # get list of persona sentences
-        self.bot_persona = self.bot_persona_text.split('. ')
-        # choose and observe location
-        if agent_data.get('setting') is None:
-            self.location = random.choice([loc1, loc2])
-        else:
-            self.location = agent_data['setting']
+        location = human_player.get_room()
+        self.location_details = {
+            'id': location.node_id,
+            'name': location.name,
+            'description': location.desc,
+            'db_id': location.db_id,
+        }
 
-        loc_name, loc_desc = self.location.split(', ', 1)
         self.bot_persona_obs = '\n'.join(
             [
                 "_task_speech",
-                utils.SETTING_NAME + loc_name,
-                utils.SETTING_DESC + loc_desc,
-                utils.PARTNER_NAME + self.name,
-                utils.SELF_NAME + self.bot_name,
-                utils.SELF_PERSONA + self.bot_persona_text,
+                utils.SETTING_NAME + self.location_details['name'],
+                utils.SETTING_DESC + self.location_details['description'],
+                utils.PARTNER_NAME + self.human_player_details['name'],
+                utils.SELF_NAME + self.bot_player_details['name'],
+                utils.SELF_PERSONA + self.bot_player_details['persona'],
             ]
         )
-        self._log('Bot persona:\n{}'.format(self.bot_full_persona))
+        self._log('Bot persona:\n{}'.format(self.bot_player_details))
         # Create the acting score persona
         self.acting_persona_obs = '\n'.join(
             [
-                utils.SETTING_NAME + loc_name,
-                utils.SETTING_DESC + loc_desc,
-                utils.PARTNER_NAME + self.bot_name,
-                utils.SELF_NAME + self.name,
-                utils.SELF_PERSONA + self.persona_text,
+                utils.SETTING_NAME + self.location_details['name'],
+                utils.SETTING_DESC + self.location_details['description'],
+                utils.PARTNER_NAME + self.bot_player_details['name'],
+                utils.SELF_NAME + self.human_player_details['name'],
+                utils.SELF_PERSONA + self.human_player_details['persona'],
             ]
         )
         self._log('Acting persona:\n{}'.format(self.acting_persona_obs))
         # Human observe location if not the same setting
         if not agent_data.get('same_setting'):
-            self.observe_game_msg(
-                'You have just entered the following location: *{}* \n\n{}'.format(
-                    loc_name,
-                    loc_desc
-                )
-            )
+            character = self.graph.get_node(self.human_player_details['id'])
+            look_event = LookEvent(character)
+            look_event.execute(self.world)
+            room_desc = look_event.view_as(character)
+            room_desc += f"You are {self.world.view.get_inventory_text_for(character.node_id)}"
+            self.observe_game_msg(room_desc)
 
-        # Human observe bot's name
-        article = 'an' if self.bot_name[0] in 'aeiou' else 'a'
-        self.observe_game_msg(
-            f'There is {article} *{self.bot_name}* here.'
-        )
+        # Send the quest
+        if self.quest is not None:
+            self.quest_motivation = self.quest['data']['short_motivation']
+            if random.random() > 0.05:
+                self.quest_motivation = self.quest['data']['mid_motivation']
+            self.acting_persona_obs += self.quest_motivation
+            self.quest_goal = self.quest['data']['goal']
+            self.human_player_details['motivation'] = self.quest_motivation
+            self.human_player_details['goal'] = self.quest_goal
+            self.location_details['quest_file'] = self.quest["filename"]
+            self.send_quest()
 
     def setup_next_game(self):
-        new_personas = self.opt['persona_generator'].get_personas()
-        loc1, loc2 = new_personas[0][2], new_personas[1][2]
-        loc1_name, loc2_name = loc1.split(', ')[0], loc2.split(', ')[0]
+        locs = [r for r in self.graph.rooms.values() if r.name != self.location_details['name']]
+        random.shuffle(locs)
+        loc1, loc2 = locs[:2]
+        loc1_name, loc2_name = loc1.name, loc2.name
         loc1_option = f'Go: {loc1_name}'[:19]
         loc2_option = f'Go: {loc2_name}'[:19]
         new_partner_option = "New Partner"
         new_character_option = "New Persona"
         exit_option = "EXIT"
         choice_options = [
-            loc1_option, 
-            loc2_option, 
-            new_partner_option, 
-            new_character_option, 
+            loc1_option,
+            loc2_option,
+            new_partner_option,
+            new_character_option,
             exit_option
         ]
         self.observe_game_msg(
@@ -401,19 +564,23 @@ class LIGHTSinglePlayerWorld(World):
             )
             choice = self.get_act()
 
+        curr_persona = (
+            f"{self.human_player_details['name']}. "
+            f"{self.human_player_details['persona']}"
+        )
         choice = choice['text']
         if choice == loc1_option:
-            self.agent.data['setting'] = loc1
-            self.agent.data['partner_persona'] = new_personas[0]
-            self.agent.data['persona'] = self.full_persona
+            self.agent.data['setting'] = f"{loc1.name}. {loc1.desc}"
+            self.agent.data['persona'] = curr_persona
         elif choice == loc2_option:
-            self.agent.data['setting'] = loc2
-            self.agent.data['partner_persona'] = new_personas[1]
-            self.agent.data['persona'] = self.full_persona
+            self.agent.data['setting'] = f"{loc2.name}. {loc2.desc}"
+            self.agent.data['persona'] = curr_persona
         elif choice == new_partner_option:
-            self.agent.data['setting'] = self.location
-            self.agent.data['partner_persona'] = new_personas[1]
-            self.agent.data['persona'] = self.full_persona
+            self.agent.data['setting'] = (
+                f"{self.location_details['name']}. "
+                f"{self.location_details['description']}"
+            )
+            self.agent.data['persona'] = curr_persona
             self.agent.data['same_setting'] = True
         elif choice == exit_option:
             self.agent.data['next_task'] = 'EXIT'
@@ -422,8 +589,8 @@ class LIGHTSinglePlayerWorld(World):
 
     def see_character(self):
         persona_text = '*You are a:* {}\n*Persona:* {}'.format(
-            self.name,  # character name
-            self.persona_text  # character description
+            self.human_player_details['name'],  # character name
+            self.human_player_details['persona'],  # character description
         )
         loc_name, loc_desc = self.location.split('. ', 1)
         # Observe character
@@ -438,9 +605,9 @@ class LIGHTSinglePlayerWorld(World):
             )
         )
         # Observe bot's name
-        article = 'an' if self.bot_name[0] in 'aeiou' else 'a'
+        article = 'an' if self.bot_player_details['name'][0] in 'aeiou' else 'a'
         self.observe_game_msg(
-            f'There is {article} *{self.bot_name}* here.',
+            f'There is {article} *{self.bot_player_details["name"]}* here.',
         )
 
     def pick_endgame_flash_and_award_characters(self):
@@ -448,19 +615,19 @@ class LIGHTSinglePlayerWorld(World):
         Handle selecting the correct end game flash, and awarding characters
         """
         base_text = random.choice(utils.END_GAME_FLASHES)
-        has_self = utils.agent_has_character(self.agent, self.full_persona[0])
-        has_partner = utils.agent_has_character(self.agent, self.bot_full_persona[0])
+        has_self = utils.agent_has_character(self.agent, self.human_player_details['name'])
+        has_partner = utils.agent_has_character(self.agent, self.bot_player_details['name'])
         had_duplicate = False
         emojis = ""
         emoji_text = ""
         if self.score >= SINGLE_CATCH_THRESHOLD:
             emoji_text = random.choice(utils.SELF_CAUGHT_FLASHES)
-            emojis += utils.award_agent_character(self.agent, self.full_persona[0])
+            emojis += utils.award_agent_character(self.agent, self.human_player_details['name'])
             if has_self:
                 had_duplicate = True
         if self.score >= DOUBLE_CATCH_THRESHOLD:
             emoji_text = random.choice(utils.PARTNER_CAUGHT_FLASHES)
-            emojis += utils.award_agent_character(self.agent, self.bot_full_persona[0])
+            emojis += utils.award_agent_character(self.agent, self.bot_player_details['name'])
             if has_partner:
                 had_duplicate = True
         flash_text = base_text + emoji_text + emojis
@@ -469,7 +636,7 @@ class LIGHTSinglePlayerWorld(World):
         if len(emojis) > 0:
             # Update awarded characters
             self.service_strategy.update_character_collection(
-                self.agent.id, 
+                self.agent.id,
                 self.agent.data['characters_caught_string'],
             )
             characters_so_far = utils.get_awarded_character_count(self.agent)
@@ -486,7 +653,7 @@ class LIGHTSinglePlayerWorld(World):
         if self.agent.data.get('next_task') != 'EXIT':
             self.agent.data['next_task'] = None
         if self.timeout:  # if timeout
-            flash_text = self.pick_endgame_flash_and_award_characters()
+            flash_text = random.choice(utils.GAME_TIMEOUT_FLASHES)
             if self.score > 0:
                 final_text = (
                     f"{flash_text}\n"
@@ -500,7 +667,7 @@ class LIGHTSinglePlayerWorld(World):
         elif self.reported:  # if reported
             pass
         elif not self.game_ended:
-            flash_text = random.choice(utils.END_GAME_FLASHES)
+            flash_text = self.pick_endgame_flash_and_award_characters()
             final_text = (
                 f"{flash_text}\n"
                 f"Your score increased by {self.score} points "
@@ -510,7 +677,7 @@ class LIGHTSinglePlayerWorld(World):
             self.update_leaderboard()
             self.agent.data['next_task'] = 'SinglePlayer'
             self.setup_next_game()
-            return 
+            return
         else:  # if user clicked end game
             self.observe_game_msg(GAME_OVER)
         # update and view leaderboard
@@ -521,10 +688,10 @@ class LIGHTSinglePlayerWorld(World):
         psid = self.agent.id
         score = int(self.score)
         username = self.agent.data['user_name']
-        
+
         self.service_strategy.update_leaderboard(psid, score=score, username=username)
         leaderboard_stats = self.service_strategy.get_player_leaderboard_stats(psid)
-        
+
         rank_msg = 'Your *rank* is {} out of {}.\n'.format(
             leaderboard_stats['rank'], leaderboard_stats['total_players'])
         score_msg = 'Your *total score* is {}.'.format(leaderboard_stats['score'])
@@ -575,9 +742,11 @@ class LIGHTSinglePlayerWorld(World):
             bot_cands = [random.choice(self.nonsequiturs)]
 
         bot_replies = [self.spacing_fix(x) for x in bot_cands]
-        format_bot_reply = '*{}.* {}'.format(self.bot_name, bot_replies[0])
+        format_bot_reply = '*{}.* {}'.format(self.bot_player_details['name'], bot_replies[0])
         bot_reply_message = {'id': ''}
         bot_reply_message['text'] = format_bot_reply
+        if self.quest is not None and self.curr_acting_score >= SCORE_TO_ACT:
+            bot_reply_message['quick_replies'] = ['TAKE ACTION']
         self.agent.observe(bot_reply_message)
 
         # update dialog data
@@ -598,16 +767,20 @@ class LIGHTSinglePlayerWorld(World):
                 return joiner.join(lst)
             return None
 
+        dialog = check_empty(self.dialogs)
+        if dialog is not None:
+            dialog = json.dumps(self.location_details) + "\n" + dialog
+
         log_data = {
             'psid': self.agent.id,
             'model_name': self.model_name,
             'score': int(self.score),
-            'human_persona': check_empty(self.full_persona),
-            'bot_persona': check_empty(self.bot_full_persona),
-            'persona_question': self.persona_question,
+            'human_persona': json.dumps(self.human_player_details),
+            'bot_persona': json.dumps(self.bot_player_details),
+            'persona_question': None,
             'reported': self.reported,
             'timeout': self.timeout,
-            'dialogue': check_empty([self.location] + self.dialogs),
+            'dialogue': dialog,
             'flagged_messages': check_empty(self.flagged_messages, joiner='\t')
         }
 
@@ -620,8 +793,10 @@ class LIGHTSinglePlayerWorld(World):
         """
         int_attrs = [
             'score',
+            'curr_acting_score',
             'blacklist_cnt',
             'flagged_cnt',
+            'games_played',
             'turn',
         ]
 
@@ -637,6 +812,12 @@ class LIGHTSinglePlayerWorld(World):
                     f'WARNING! World does not have attribute {k}. Not setting.'
                 )
 
+        builder = self.opt["graph_builder"]
+        self.graph, self.world = builder.get_graph_from_quest(self.quest)
+        self.graph = OOGraph.from_json(self.graph_json)
+        self.world.oo_graph = self.graph
+
+        self.model_name = 'reconnect'
         self.observe_game_msg(
             "Sorry about that! You may now continue the game."
         )
@@ -645,37 +826,40 @@ class LIGHTSinglePlayerWorld(World):
         """Invoked when a worker is going down and we want to transfer state to
         a new worker. When we call this, shutdown is not called so we need to
         invoke agent shutdown ourselves."""
+        # TODO update
         self.observe_game_msg(
             "Uh oh! We encountered a small problem. Please give us up to 30 "
             "seconds to resolve it. We'll tell you when you can send another "
             "message."
         )
         attrs = [
+            'quest',
+            'quest_goal',
+            'quest_motivation',
             'dialogs',
             'score',
+            'curr_acting_score',
             'blacklist_cnt',
+            'flagged_cnt',
+            'flagged_messages',
+            'saw_bonus',
+            'saw_quest',
+            'characters_caught',
+            'characters_caught_string',
+            'games_played',
             'chosen_dialog',
             'episodeDone',
             'game_ended',
-            'flagged_cnt',
-            'flagged_messages',
             'reported',
             'seen_welcome_message',
             'timeout',
+            'first_observe',
+            'bot_action_observe',
             'turn',
-            'persona',
-            'bot_persona',
-            'bot_persona_txt',
-            'fake_persona',
-            'persona_question',
-            'location',
-            'name',
-            'persona_text',
-            'bot_full_persona',
-            'bot_name',
-            'bot_persona_text',
-            'bot_persona_obs',
-            'prepped_cand_scores',
+            'human_player_details',
+            'bot_player_details',
+            'location_details',
+            'graph_json',
         ]
 
         game_state = {}
@@ -710,13 +894,94 @@ class LIGHTSinglePlayerWorld(World):
         bot_history = self.bot.history.get_history_str()
         self.agent.observe({
             'id': '',
+            'text': f"You are talking to a {self.model_name}",
+        })
+        self.agent.observe({
+            'id': '',
             'text': f"Bot's history:\n```{bot_history}```",
         })
 
-    def do_game_turn(self, a, flagged):
-        self.log_human_reply(a['text'])  # log human reply
-        self.bot.observe(a)  # bot observe act
-        score, score_message = self.get_acting_score(a['text'])
+    def get_possible_events(self, return_count=6):
+        """
+        Return the possible events, up to the 
+        amount requested. Always include the 
+        goal if it's possible.
+        """
+        possible_events = self.world.get_possible_events(
+            self.human_player_details['id'], 
+            USE_ACTIONS,
+        )
+        possible_actions_by_name = {x.to_canonical_form(): x for x in possible_events}
+        selectable_events = []
+        to_select = 6
+        if self.quest_goal in possible_actions_by_name:
+            selectable_events.append(possible_actions_by_name[self.quest_goal])
+            del possible_actions_by_name[self.quest_goal]
+            to_select -= 1
+        remaining_events = list(possible_actions_by_name.values())
+        random.shuffle(remaining_events)
+        selectable_events += remaining_events[:to_select]
+        random.shuffle(selectable_events)
+        return selectable_events
+
+    def get_and_process_action(self):
+        """
+        Send action options to the user, and then
+        have them select one.
+        """
+        events = self.get_possible_events()
+        options = {str(i + 1): e for i, e in enumerate(events)}
+        options_txt = '\n'.join(
+            [f"{i}. {a.to_canonical_form()}" for i, a in options.items()]
+        )
+        choice_options = [i for i in options.keys()]
+        self.observe_game_msg(
+            "Pick one of the following actions:\n"
+            f"{options_txt}",
+            quick_replies=choice_options,
+        )
+        choice = self.get_act()
+        while choice is None or choice['text'] not in choice_options:
+            if choice is None:
+                return
+
+            self.observe_game_msg(
+                "Please choose one of the following options",
+                quick_replies=choice_options
+            )
+            choice = self.get_act()
+            
+        chosen_act = options[choice['text']]
+        if chosen_act.to_canonical_form() == self.quest_goal:
+            self.observe_game_msg(
+                random.choice(utils.STAR_EMOJIS) * 5
+            )
+            self.score += 5
+        
+        self.dialogs.append(f"Human Act: {chosen_act.to_canonical_form()}")
+        chosen_act.execute(self.world)
+        self.observe_game_msg(chosen_act.view_as(self.player_node))
+        self.bot_action_observe = chosen_act.view_as(self.bot_node)
+        self.graph_json = self.graph.to_json()
+        self.curr_acting_score -= SCORE_TO_ACT
+
+        if not self.saw_quest:
+            self.observe_game_msg(
+                "(After selecting an action, continue your "
+                "dialogue with what you might say while doing it)"
+            )
+
+    def do_game_turn(self, player_act, flagged):
+        act_text = player_act['text']
+        self.log_human_reply(act_text)  # log human reply
+        if self.bot_action_observe is None:
+            self.bot.observe(player_act)  # bot observe act
+        else:
+            act_copy = player_act.copy()
+            act_copy['text'] += ' ' + self.bot_action_observe
+            self.bot.observe(act_copy)
+            self.bot_action_observe = None
+        score, score_message = self.get_acting_score(act_text)
         if score > 1:
             if not self.saw_bonus and self.is_rookie_user():
                 score_message = (
@@ -726,9 +991,10 @@ class LIGHTSinglePlayerWorld(World):
                 self.saw_bonus = True
                 self.agent.data['saw_bonus'] = True
             self.observe_game_msg(score_message)
-        self.actingscore_agent.observe(a)
+        self.actingscore_agent.observe(player_act)
         self.score += score
-        self.produce_bot_reply(a, flagged)  # get and display bot messages
+        self.curr_acting_score += score
+        self.produce_bot_reply(player_act, flagged)  # get and display bot messages
         # Clear any messages sent in a row
         a = self.agent.act()
         if a is not None:
@@ -760,9 +1026,28 @@ class LIGHTSinglePlayerWorld(World):
             return
 
         self.set_fixed_cand_scores()
-        a = self.get_act()
-        if self.game_ended:
-            return
+        a = None
+        while a is None:
+            a = self.get_act()
+            if self.game_ended:
+                return
+
+            if a['text'].strip() == "TAKE ACTION":
+                if self.quest is None:
+                    self.observe_game_msg(
+                        "For now, you can only take actions when set "
+                        "on a quest by the dungeon master."
+                    )
+                    a = None
+                elif self.curr_acting_score < SCORE_TO_ACT:
+                    self.observe_game_msg(
+                        "You need to play your character more to take "
+                        "an action in this dialogue."
+                    )
+                    a = None
+                else:
+                    self.get_and_process_action()
+                    a = None
 
         self._log('Human is generating a reply...')
         if self.check_personal_info(a):

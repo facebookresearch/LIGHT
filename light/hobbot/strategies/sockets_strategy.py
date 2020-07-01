@@ -11,7 +11,7 @@ from typing import Optional, List, Dict, Any, Union
 import re
 
 from parlai.core.opt import Opt
-from parlai_internal.projects.light.beatthehobbot_dist.strategies.light_chat_strategy import LIGHTChatStrategy
+from light.hobbot.strategies.light_chat_strategy import LIGHTChatStrategy
 from parlai.chat_service.utils.misc import PersonalInfoDetector
 
 
