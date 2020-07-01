@@ -177,7 +177,7 @@ class SaveWorldHandler(BaseHandler):
                 name = self.get_argument('name', 'default ' + time.ctime(time.time()), True)
                 dimensions = json.loads(self.get_argument('dimensions', '{"height": 3, "width": 3, "floors": 1}'))
                 world_map = json.loads(self.get_argument('map', '{"tiles": {}, "edges": []}'))
-                entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}, }'))
+                entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}}'))
         
                 world_id = db.create_world(name, player, dimensions["height"], dimensions["width"], dimensions["floors"])[0]
                 

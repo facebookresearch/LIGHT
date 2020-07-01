@@ -2,6 +2,7 @@
 import unittest.mock as mock
 import json
 import re
+import ast
 from tornado import gen, httpclient, ioloop, testing, escape
 from tornado.testing import AsyncHTTPTestCase, gen_test
 from tornado.ioloop import IOLoop
@@ -24,13 +25,17 @@ from light.data_model.light_database import (
     DB_TYPE_OBJ,
     DB_TYPE_BASE_ROOM,
     DB_TYPE_ROOM,
+    DB_TYPE_GRAPH_EDGE,
+    DB_TYPE_GRAPH_NODE,
     DB_TYPE_EDGE,
     DB_TYPE_TEXT_EDGE,
+    DB_TYPE_TILE,
     DB_TYPE_INTERACTION,
     DB_TYPE_UTTERANCE,
     DB_TYPE_PARTICIPANT,
     DB_TYPE_TURN,
     DB_TYPE_PLAYER,
+    DB_TYPE_WORLD,
     ENTITY_TYPES,
     DB_STATUS_PROD,
     DB_STATUS_REVIEW,
@@ -56,7 +61,7 @@ URL = f'http://localhost:{PORT}'
 
 # Add test for the worldsaving endpoints!
 @mock.patch('deploy.web.server.builder_server.BaseHandler.get_current_user', return_value='user')
-class class TestWorldSaving(AsyncHTTPTestCase):
+class TestWorldSaving(AsyncHTTPTestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.data_dir, 'test_server.db')
@@ -77,28 +82,93 @@ class class TestWorldSaving(AsyncHTTPTestCase):
     def test_list_worlds(self, mocked_auth):
         '''Test that the list worlds endpoint can be hit succesfully and returns world 
             dimesnions in expected format'''
-        pass
+        with LIGHTDatabase(self.db_path) as db:
+            player_id = db.create_player()[0]
+            world1 = db.create_world("default", player_id, 3, 3, 1)[0]
+            world2 = db.create_world("default2", player_id, 4, 2, 2)[0]
+        
 
+        response = yield self.client.fetch(
+            f'{URL}/builder/worlds/?player={player_id}', method='GET',
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body.decode()), 
+            [{'id': world1, 'name': "default"}, {'id': world2, 'name': "default2"},]
+        )
+        
     @gen_test
     def test_delete_world(self, mocked_auth):
         '''Test the endpoint for deleting worlds works as expected'''
-        pass
+        with LIGHTDatabase(self.db_path) as db:
+            player_id = db.create_player()[0]
+            world1 = db.create_world("default", player_id, 3, 3, 1)[0]
+            world2 = db.create_world("default2", player_id, 4, 2, 2)[0]
+        
+
+        response = yield self.client.fetch(
+            f'{URL}/builder/world/delete/{world1}?player={player_id}', method='POST', body=b''
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body.decode()),  str(world1))
 
     @gen_test
     def test_save_world(self, mocked_auth):
         '''Test the endpoint for saving worlds works as expected'''
-        pass
-
+        with LIGHTDatabase(self.db_path) as db:
+            player_id = db.create_player()[0]
+        headers = {"Content-Type": "application/x-www-form-urlencoded",}
+        response = yield self.client.fetch(
+            f'{URL}/builder/world/?player={player_id}', method='POST', headers=headers, body=b''
+        )
+        self.assertEqual(response.code, 200)
+        # Get back a world code, 
+        self.assertEqual(type(json.loads(response.body.decode())), int)
+    
     @gen_test
     def test_load_world(self, mocked_auth):
         '''Test the endpoint for loading worlds works as expected'''
-        pass
+        with LIGHTDatabase(self.db_path) as db:
+            player_id = db.create_player()[0]
+            world1 = db.create_world("default", player_id, 4, 1, 1)[0]
+        response = yield self.client.fetch(
+            f'{URL}/builder/world/{world1}?player={player_id}', method='GET'
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body.decode()),  
+            {
+                "dimensions":{
+                    "id" : world1,
+                    "name": "default",
+                    "height": 4,
+                    "width": 1,
+                    "floors": 1
+                },
+                "entities":{
+                    "room": {},
+                    "character": {},
+                    "object": {},
+                    "nextID": 1
+                },
+                "map":{
+                    "tiles": [],
+                    "edges": []
+                }
+            }
+        )
 
     @gen_test
     def test_world_saving_integration(self, mocked_auth):
         '''Test a flow where a user creates a world, views the saved worlds, loads the world, then 
             deletes it'''
-        pass
+
+        # NOTE: The format for json encoding does not seem to be right, no matter how i do it, so this
+        # test is being shelfed for later
+        with LIGHTDatabase(self.db_path) as db:
+            player_id = db.create_player()[0]
+            base_room_id = db.create_base_room('room')[0]
+            base_char_id = db.create_base_character('character')[0]
+            base_obj_id = db.create_base_object('object')[0]
+            pass
 
     
 @mock.patch('deploy.web.server.tornado_server.BaseHandler.get_current_user', return_value='user')
@@ -884,11 +954,15 @@ class TestBuilderApp(AsyncHTTPTestCase):
                 DB_TYPE_BASE_ROOM,
                 DB_TYPE_ROOM,
                 DB_TYPE_EDGE,
+                DB_TYPE_GRAPH_EDGE,
+                DB_TYPE_GRAPH_NODE,
+                DB_TYPE_TILE,
                 DB_TYPE_INTERACTION,
                 DB_TYPE_UTTERANCE,
                 DB_TYPE_PARTICIPANT,
                 DB_TYPE_TURN,
                 DB_TYPE_PLAYER,
+                DB_TYPE_WORLD,
             ],
         )
 
@@ -1101,6 +1175,7 @@ class TestBuilderApp(AsyncHTTPTestCase):
 def all():
     suiteList = []
     suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestGameApp))
+    suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestWorldSaving))
     suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestBuilderApp))
     suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestLandingApp))
     return unittest.TestSuite(suiteList)
