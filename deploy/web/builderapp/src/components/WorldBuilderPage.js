@@ -60,7 +60,7 @@ function WorldBuilder({ upload }) {
           <InputGroup
             id="name-input"
             placeholder={
-              state.dimensions.name == null ? "Default" : state.dimensions.name
+              state.dimensions.name == null ? "Unnamed World" : state.dimensions.name
             }
           />
           <Button
@@ -68,7 +68,7 @@ function WorldBuilder({ upload }) {
             onClick={() => {
               state.setDimensions({
                 ...state.dimensions,
-                name: document.getElementById("name-input").value,
+                name: document.getElementById("name-input").value.trim(),
               });
             }}
           >

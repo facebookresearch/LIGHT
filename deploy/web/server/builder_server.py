@@ -181,7 +181,8 @@ class SaveWorldHandler(BaseHandler):
                 name = dimensions["name"]
                 if name is None:
                     name = 'Default ' + time.ctime(time.time())
-
+                name = name.strip()
+                
                 world_id = db.create_world(name, player, dimensions["height"], dimensions["width"], dimensions["floors"])[0]
                 #Get DB IDs for all object and store them
                 local_id_to_dbid = {}
