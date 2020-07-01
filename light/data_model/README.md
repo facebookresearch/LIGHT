@@ -85,23 +85,6 @@ with LIGHTDatabase('database.db') as db:
                 "status": "accepted",
                 "type": "base room",
             }</code>
-- **<code>POST</code> edges**
-	- Data parameters
-		- Required:
-			- room=[int]
-		- Optional:
-			- objs=[list of int]; default []
-			- chars=[list of int]; default []
-			- neighbors=[list of int]; default []
-			- dry_run = [bool]; default False
-	- Example of successful response
-		- Code: 200
-		- Content: <code>[
-                [2, 5, 'ex_contained', 0],
-                [2, 6, 'ex_contained', 0],
-                [2, 8, 'ex_contained', 0],
-                [2, 3, 'neighbor', 1],
-            ]</code>
 - **<code>GET</code> entities/\<type>**
 	- URL parameters
 		- Required:

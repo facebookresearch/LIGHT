@@ -1,10 +1,9 @@
 import React from "react";
-import { Colors, Intent } from "@blueprintjs/core";
+import { Colors } from "@blueprintjs/core";
 import { cloneDeep, isEmpty, merge } from "lodash";
 import equal from "fast-deep-equal";
 import { emojiIndex } from "emoji-mart";
-import { post } from "../../utils";
-import AppToaster from "../AppToaster";
+
 
 export const MAX_WIDTH = 10;
 export const MAX_HEIGHT = 10;
@@ -480,97 +479,6 @@ export function useWorldBuilder(upload) {
     return filtered;
   };
 
-  // Post all edges to the API
-  const postEdges = async () => {
-    const store = { room: {}, character: {}, object: {} };
-    const map = filteredMap();
-    // Create maps of all entities being used in the world
-    map.forEach((floor) => {
-      Object.values(floor.tiles).forEach((tile) => {
-        store.room[tile.room] = entities.room[tile.room];
-        for (let index in tile.characters) {
-          store.character[tile.characters[index]] =
-            entities.character[tile.characters[index]];
-        }
-        for (let index in tile.objects) {
-          store.object[tile.objects[index]] =
-            entities.object[tile.objects[index]];
-        }
-      });
-    });
-    // Post all used entities to the API and store their returned ID for edges
-    const createReqs = [].concat(
-      Object.values(store.room).map(async (room) => {
-        const res = await post("entities/room", room);
-        const data = await res.json();
-        room.id = data[0];
-      }),
-      Object.values(store.character).map(async (character) => {
-        const res = await post("entities/character", character);
-        const data = await res.json();
-        character.id = data[0];
-      }),
-      Object.values(store.object).map(async (object) => {
-        const res = await post("entities/object", object);
-        const data = await res.json();
-        object.id = data[0];
-      })
-    );
-
-    await Promise.all(createReqs);
-
-    const edgeReqs = [];
-    // Create all edge requests and post all of them
-    for (let floor = 0; floor < map.length; floor++) {
-      const tiles = map[floor].tiles;
-      for (let coord in tiles) {
-        const payload = { room: -1, chars: [], objs: [], neighbors: [] };
-        payload.room = store.room[tiles[coord].room].id;
-        tiles[coord].characters.forEach((character) => {
-          payload.chars.push(store.character[character].id);
-        });
-        tiles[coord].objects.forEach((object) => {
-          payload.objs.push(store.object[object].id);
-        });
-        if (tiles[coord].stairUp) {
-          payload.neighbors.push(
-            store.room[map[floor + 1].tiles[coord].room].id
-          );
-        }
-        if (tiles[coord].stairDown) {
-          payload.neighbors.push(
-            store.room[map[floor - 1].tiles[coord].room].id
-          );
-        }
-        // Ensure neighbours aren't blocked by walls
-        const [x, y] = coord.split(" ").map((i) => parseInt(i));
-        const neighbors = [
-          `${x - 1} ${y}`,
-          `${x + 1} ${y}`,
-          `${x} ${y - 1}`,
-          `${x} ${y + 1}`,
-        ];
-        neighbors.forEach((neighbor) => {
-          if (
-            !Object.keys(map[floor].walls).some(
-              (wall) => wall.includes(neighbor) && wall.includes(coord)
-            )
-          ) {
-            if (!isEmpty(tiles[neighbor])) {
-              payload.neighbors.push(store.room[tiles[neighbor].room].id);
-            }
-          }
-        });
-        edgeReqs.push(post("edges", payload));
-      }
-    }
-    await Promise.all(edgeReqs);
-    AppToaster.show({
-      intent: Intent.SUCCESS,
-      message: "Successfully created all edges",
-    });
-  };
-
   const exportWorld = () => {
     const data = JSON.stringify({ dimensions, map, entities }, null, "\t");
     var element = document.createElement("a");
@@ -613,7 +521,6 @@ export function useWorldBuilder(upload) {
     entities,
     editEntity,
     findOrAddEntity,
-    postEdges,
     exportWorld,
   };
 }

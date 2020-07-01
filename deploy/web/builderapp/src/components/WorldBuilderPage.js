@@ -42,7 +42,7 @@ function WorldBuilder({ upload }) {
   const world_name =
     state.dimensions.name == null ? " " : state.dimensions.name;
 
-  // TODO: Remove postEdges and commit, add some other way to export world to json somehow
+  //TODO: Consider moving the export somewhere else?
   return (
     <>
       <h3>World: {world_name}</h3>
@@ -165,13 +165,6 @@ function WorldBuilder({ upload }) {
           style={{ margin: "10px" }}
         >
           Export
-        </Button>
-        <Button
-          onClick={state.postEdges}
-          intent="primary"
-          style={{ margin: "10px" }}
-        >
-          Commit Edges
         </Button>
       </div>
     </>
