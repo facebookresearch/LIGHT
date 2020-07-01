@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from light.graph.world.world import World
     from light.graph.events.base import GraphEvent
 
+
 class ModelSoul(Soul):
     """
     A ModelSoul is responsible for passing it's observations back to
@@ -20,4 +21,5 @@ class ModelSoul(Soul):
     methods for loading shared models and some shared behavior between
     classes, for now is a stub.
     """
-    pass 
+
+    pass

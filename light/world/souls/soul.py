@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from light.graph.world.world import World
     from light.graph.events.base import GraphEvent
 
+
 class Soul(ABC):
     """
     Gives GraphAgents the ability to observe and act. Without a Soul, GraphAgents

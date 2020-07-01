@@ -12,11 +12,12 @@ from light.world.world import World
 from light.graph.events.graph_events import EmoteEvent
 from light.world.souls.test_soul import TestSoul
 
+
 class TestGraphNodes(unittest.TestCase):
     """Unit tests for simple souls"""
 
     def test_init_soul(self):
-        '''Ensure that souls can be created'''
+        """Ensure that souls can be created"""
         test_graph = OOGraph()
         agent_node = test_graph.add_agent("My test agent", {})
         room_node = test_graph.add_room("test room", {})
@@ -27,15 +28,16 @@ class TestGraphNodes(unittest.TestCase):
         self.assertEqual(agent_node, test_soul.target_node)
         self.assertEqual(test_world, test_soul.world)
 
-        test_event = EmoteEvent.construct_from_args(agent_node, targets=[], text="smile")
+        test_event = EmoteEvent.construct_from_args(
+            agent_node, targets=[], text="smile"
+        )
         test_soul.do_act(test_event)
 
         test_soul.reap()
-       
+
     # TODO add interactions over the world when the world->soul flow
     # is properly written.
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

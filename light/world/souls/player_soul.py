@@ -13,14 +13,17 @@ if TYPE_CHECKING:
     from light.graph.world.world import World
     from light.graph.events.base import GraphEvent
 
+
 class PlayerSoul(Soul):
     """
     A PlayerSoul is responsible for interfacing with the players in the
     game via a PlayerProvider, and will handle incoming messages
     from there and forward observations out.
     """
-    
-    def __init__(self, target_node: "GraphAgent", world: "World", player_id: str, provider=None):
+
+    def __init__(
+        self, target_node: "GraphAgent", world: "World", player_id: str, provider=None
+    ):
         """
         PlayerSouls register to a GraphAgent in a World, but also keep track of the
         current player. They interface with the human through the provider
@@ -28,7 +31,7 @@ class PlayerSoul(Soul):
         super().__init__(target_node, world)
         target_node.is_player = True
         self.player_id = player_id
-        self.provider = provider # TODO link with real provider
+        self.provider = provider  # TODO link with real provider
         provider.register_soul(self)
 
     def handle_act(self, act_text):
@@ -47,7 +50,6 @@ class PlayerSoul(Soul):
         """
         # provider.observe_event(self, event)
         pass
-        
 
     def reap(self):
         """
