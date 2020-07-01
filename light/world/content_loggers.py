@@ -40,6 +40,8 @@ class InteractionLogger(abc.ABC):
         location to write data, as well as defines some methods for interfacing
     '''
     def __init__(self, graph, data_location):
+        # TODO: Consider a meta information file in directory for data store, read this from
+        # that file!
         self.meta_episode = 0
         self.data_location = data_location
         self.graph = graph
@@ -64,6 +66,7 @@ class InteractionLogger(abc.ABC):
             Writes out the buffers to the location specified by data location, 
             handling any data specific formatting
         '''
+        raise NotImplementedError
 
     def observe_event(self, event):
         '''
