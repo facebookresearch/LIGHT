@@ -33,7 +33,9 @@ class RepeatSoul(Soul):
         """
         my_observation = event.view_as(self.target_node)
         repeat_text = f"I just saw the following: {my_observation}"
-        repeat_obs = SayEvent.construct_from_args(self.target_node, text=my_observation)
+        repeat_obs = SayEvent.construct_from_args(
+            self.target_node, targets=[], text=my_observation
+        )
         creepy_smile = EmoteEvent.construct_from_args(
             self.target_node, targets=[], text="smile"
         )
