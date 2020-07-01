@@ -5,35 +5,68 @@ tasks:
     timeout: 600
     agents_required: 1
 task_name: beatthehobbot
-world_module: parlai_internal.projects.light.beatthehobbot_dist.worlds
+world_module: light.hobbot.worlds
 overworld: LIGHTBotOverworld
 max_workers: 30
 opt:
   boring_alpha: -50
   debug: True
   is_debug: True
-  # models:\
-  #   TODO actually put the models in this format! Then we can load dynamically!
-  #   captain_kiwi:
-  #     model: 'transformer/image_polyencoder'
-  #     model_file: '/checkpoint/ems/all_in_one_dialogue/scripts/s2020_02_12__imagechat_with_polyencoder/04_roberta_style/000/75e/model'
-  #     fixed_candidates_path: '/checkpoint/parlai/tasks/safety_and_gender_filtered/images__safety_gender_processed.txt'
-  #     candidates: 'fixed'
-  #     eval_candidates: 'fixed'
-  #     no_cuda: True
-  #     fp16: False
-  #     override:
-  #       fixed_candidates_path: '/checkpoint/parlai/tasks/safety_and_gender_filtered/images__safety_gender_processed.txt'
-  #       candidates: 'fixed'
-  #       eval_candidates: 'fixed'
-  #       fp16: False
-  #       no_cuda: True
+  models:
+    orig_light_poly:
+      model: 'fb:light_poly'
+      model_file: '/Users/jju/tmp_packages/tmp_packages/light_package/model'
+      fixed_candidates_path: '/Users/jju/tmp_packages/tmp_packages/light_package/light_cands.txt'
+      candidates: 'fixed'
+      eval_candidates: 'fixed'
+      no_cuda: True
+      fp16: False
+      interactive_mode: true
+      batchsize: 1
+      from_speaker_bonus: 15
+      to_speaker_bonus: 15
+      trainset: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_to_utterance_trainset.txt"
+      partner_trainset: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_to_utterance_partner_trainset.txt"
+      baseforms: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_baseforms.json"
+      force_fp16_tokens: true
+      boring_alpha: 0
+      override:
+        - model: 'fb:light_poly'
+          fixed_candidates_path: '/Users/jju/tmp_packages/tmp_packages/light_package/light_cands.txt'
+          candidates: 'fixed'
+          eval_candidates: 'fixed'
+          fp16: False
+          no_cuda: True
+          interactive_mode: true
+          batchsize: 1
+          from_speaker_bonus: 15
+          to_speaker_bonus: 15
+          trainset: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_to_utterance_trainset.txt"
+          partner_trainset: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_to_utterance_partner_trainset.txt"
+          baseforms: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_baseforms.json"
+          force_fp16_tokens: true
+          boring_alpha: -20
+          selection_choice_weight: 0
+        - model: 'fb:light_poly'
+          fixed_candidates_path: '/Users/jju/tmp_packages/tmp_packages/light_package/light_cands.txt'
+          candidates: 'fixed'
+          eval_candidates: 'fixed'
+          fp16: False
+          no_cuda: True
+          interactive_mode: true
+          batchsize: 1
+          from_speaker_bonus: 15
+          to_speaker_bonus: 15
+          trainset: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_to_utterance_trainset.txt"
+          partner_trainset: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_to_utterance_partner_trainset.txt"
+          baseforms: "/Users/jju/tmp_packages/tmp_packages/light_package/agent_baseforms.json"
+          force_fp16_tokens: True
+          boring_alpha: 0
+          selection_choice_weight: 1
   service: 'terminal'
   chat_service_strategies:
-    websocket: "parlai_internal.projects.light.beatthehobbot_dist.\
-      strategies.sockets_strategy.SocketChatStrategy"
-    Browser: "parlai_internal.projects.light.beatthehobbot_dist.\
-      strategies.sockets_strategy.SocketChatStrategy"
-    terminal: "parlai_internal.projects.light.beatthehobbot_dist.\
-      strategies.sockets_strategy.SocketChatStrategy"
+    websocket: "light.hobbot.strategies.sockets_strategy.SocketChatStrategy"
+    Browser: "light.hobbot.strategies.sockets_strategy.SocketChatStrategy"
+    terminal: "light.hobbot.strategies.sockets_strategy.SocketChatStrategy"
   resources_path: /Users/jju/tmp_packages/tmp_packages/light_package
+

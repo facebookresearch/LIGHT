@@ -9,7 +9,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List, Any, Dict, Union
 
-from parlai_internal.chat_service.core.chat_service_strategy import ChatServiceStrategy
+from parlai_fb.chat_service.core.chat_service_strategy import ChatServiceStrategy
 
 
 class LIGHTChatStrategy(ChatServiceStrategy):

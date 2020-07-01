@@ -206,7 +206,7 @@ class ErrorEvent(GraphEvent):
         self.__failed_constraint = failed_constraint
         self.entered_text = None
 
-    def set_entered_text(entered_text):
+    def set_entered_text(self, entered_text):
         """Set the text tentered for this event to be loaded later"""
         self.entered_text = entered_text
 
