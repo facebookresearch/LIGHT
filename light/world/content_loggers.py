@@ -74,6 +74,9 @@ class InteractionLogger(abc.ABC):
         '''
         raise NotImplementedError
 
+
+# TODO: Decide meta episode viewpoint - is it as long as humans are on the graph? Or... what?
+#       There is a distinction in episode from room and agent POV
 class RoomInteractionLogger(InteractionLogger):
     '''
         This interaction logger attaches to a room level node in the graph, logging all
@@ -113,19 +116,16 @@ class RoomInteractionLogger(InteractionLogger):
         self._log_interactions()
     
     def _log_interactions(self):
-        '''
-            Writes out the buffers to the location specified by data location, 
-            handling any data specific formatting
-        '''
         # First, check graph path, then write the graph dump
         # Then, check events path and, write the individual events please!
         # MB make directory for events associated with base graph by name?
         pass
-    
+
     def observe_event(self, event):
-        '''
-            Examine event passed in, deciding how to save it to the logs
-        '''
+        # Event comes in, first check if we are recording bc person in room
+        #   If not, check if human associated so we should be - init if needed
+        #   If we are, check if human or bot, update the vars as needed
+        #       then, proceed 
         raise NotImplementedError
 
 
