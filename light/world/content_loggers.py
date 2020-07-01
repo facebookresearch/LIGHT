@@ -5,6 +5,7 @@ import uuid
 import abc
 import time
 import json
+import collections
 
 '''
 TODO: Decide where to place loggers - rooms or agents or ...?
@@ -86,13 +87,17 @@ class RoomInteractionLogger(InteractionLogger):
     def __init__(self, graph, data_location, room_id, max_bot_history=5, afk_turn_tolerance=10):
         super().__init__(graph, data_location)
         self.conversation_buffer = []
+        self.bot_context_buffer = collections.deque(maxlen=max_bot_history)
         self.max_bot_history = max_bot_history
         self.afk_turn_tolerance = afk_turn_tolerance
         self.room_id = room_id
+        self.num_humans = 0
 
     def _begin_meta_episode(self):
         self._clear_buffer()
+        self.conversation_buffer.update(self.bot_context_buffer)
         self.turns_wo_human = -1
+        self.is_logging = True
         # TODO: If we persist the number of meta episodes, write to metadata file with that info now
         #       so that no one else tries to take my number!
         self._init_graph_state()
@@ -111,6 +116,9 @@ class RoomInteractionLogger(InteractionLogger):
             import traceback
             traceback.print_exc()
             raise
+        
+    def _is_logging(self):
+        return self.num_humans > 0
 
     def _end_meta_episode(self):
         self._log_interactions()
@@ -119,16 +127,44 @@ class RoomInteractionLogger(InteractionLogger):
         # First, check graph path, then write the graph dump
         # Then, check events path and, write the individual events please!
         # MB make directory for events associated with base graph by name?
-        pass
+
+        graph_path = os.path.join(data_path, '/light_graph_dumps')
+        if not os.path.exists(dump_path):
+            os.mkdir(dump_path)
+        unique_graph_name = str(uuid.uuid4())
+        file_name = f'{unique_graph_name}.json'
+        file_path = os.path.join(dump_path, file_name)
+        with open(file_path, 'w') as dump_file:
+            json.dump(data, dump_file)
+
+        events_file_path = os.path.join(data_path, f'/light_events/{unique_graph_name}_events.json')
+        with open(events_file_path, 'w') as dump_file:
+            for event in events:
+                json.dump(event.to_json(), dump_file)
+
 
     def observe_event(self, event):
         # Event comes in, first check if we are recording bc person in room
         #   If not, check if human associated so we should be - init if needed
         #   If we are, check if human or bot, update the vars as needed
         #       then, proceed 
-        raise NotImplementedError
 
+        # TODO: Add special logic for human entering and exiting
 
+        if not self._is_logging():
+            if event.actor is human:
+                self._begin_meta_episode()
+            else:
+                self.bot_context_buffer.append(event)
+
+        if self._is_logging():
+            if self.turns_wo_human < self.afk_turn_tolerance:
+                self.conversation_buffer.append(event)
+            if event.actor is not human:
+                self.turns_wo_human += 1
+            else:
+                self.turns_wo_human = 0
+        
 
 class RoomConversationBuffer(object):
     def __init__(
