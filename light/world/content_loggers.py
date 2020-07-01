@@ -74,6 +74,61 @@ class InteractionLogger(abc.ABC):
         '''
         raise NotImplementedError
 
+class RoomInteractionLogger(InteractionLogger):
+    '''
+        This interaction logger attaches to a room level node in the graph, logging all
+        events which take place with human agents in the room as long as a player is still 
+        in the room
+    '''
+    def __init__(self, graph, data_location, room_id, max_bot_history=5, afk_turn_tolerance=10):
+        super().__init__(graph, data_location)
+        self.conversation_buffer = []
+        self.max_bot_history = max_bot_history
+        self.afk_turn_tolerance = afk_turn_tolerance
+        self.room_id = room_id
+
+    def _begin_meta_episode(self):
+        self._clear_buffer()
+        self.turns_wo_human = -1
+        # TODO: If we persist the number of meta episodes, write to metadata file with that info now
+        #       so that no one else tries to take my number!
+        self._init_graph_state()
+
+    def _clear_buffer(self):
+        '''Initialize this buffer's required storage'''
+        self.conversation_buffer = []
+
+    def _init_graph_state(self):
+        """Make a copy of the graph state so we can replay events on top of it
+        """
+        try:
+            self.init_state = OOGraph(self.graph, self.room_id).toJSON()
+        except Exception as e:
+            print(e)
+            import traceback
+            traceback.print_exc()
+            raise
+
+    def _end_meta_episode(self):
+        self._log_interactions()
+    
+    def _log_interactions(self):
+        '''
+            Writes out the buffers to the location specified by data location, 
+            handling any data specific formatting
+        '''
+        # First, check graph path, then write the graph dump
+        # Then, check events path and, write the individual events please!
+        # MB make directory for events associated with base graph by name?
+        pass
+    
+    def observe_event(self, event):
+        '''
+            Examine event passed in, deciding how to save it to the logs
+        '''
+        raise NotImplementedError
+
+
 
 class RoomConversationBuffer(object):
     def __init__(
