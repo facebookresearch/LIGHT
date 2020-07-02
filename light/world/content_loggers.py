@@ -80,10 +80,16 @@ class RoomInteractionLogger(InteractionLogger):
     '''
     def __init__(self, graph, data_location, room_id, max_bot_history=5, afk_turn_tolerance=10):
         super().__init__(graph, data_location)
+
+        self.data_path = data_location
         self.conversation_buffer = []
         self.bot_context_buffer = collections.deque(maxlen=max_bot_history)
         self.max_bot_history = max_bot_history
         self.afk_turn_tolerance = afk_turn_tolerance
+        
+        # Does graph even want us logging?
+        self.is_active = graph._opt.get('dump_dialogues', False) is True
+        
         self.room_id = room_id
         self.num_humans = 0
 
@@ -91,7 +97,6 @@ class RoomInteractionLogger(InteractionLogger):
         self._clear_buffer()
         self.conversation_buffer.update(self.bot_context_buffer)
         self.turns_wo_human = -1
-        self.is_logging = True
         # TODO: If we persist the number of meta episodes, write to metadata file with that info now
         #       so that no one else tries to take my number!
         self._init_graph_state()
@@ -116,48 +121,57 @@ class RoomInteractionLogger(InteractionLogger):
 
     def _end_meta_episode(self):
         self._log_interactions()
+        self.bot_context_buffer.clear()
     
     def _log_interactions(self):
         # First, check graph path, then write the graph dump
-        # Then, check events path and, write the individual events please!
-        # MB make directory for events associated with base graph by name?
-
-        graph_path = os.path.join(data_path, '/light_graph_dumps')
-        if not os.path.exists(dump_path):
-            os.mkdir(dump_path)
+        graph_path = os.path.join(self.data_path, '/light_graph_dumps')
+        if not os.path.exists(graph_path):
+            os.mkdir(graph_path)
         unique_graph_name = str(uuid.uuid4())
-        file_name = f'{unique_graph_name}.json'
-        file_path = os.path.join(dump_path, file_name)
+        graph_file_name = f'{unique_graph_name}.json'
+        file_path = os.path.join(graph_path, graph_file_name)
         with open(file_path, 'w') as dump_file:
-            json.dump(data, dump_file)
+            json.dump(self.init_state, dump_file)
 
-        events_file_path = os.path.join(data_path, f'/light_event_dumps/rooms/{unique_graph_name}_events.json')
+        # Now, do the same for events, dumping in the light_event_dumps/rooms
+        events_path = os.path.join(self.data_path, '/light_event_dumps/rooms')
+        if not os.path.exists(events_path):
+            os.mkdir(events_path)
+        event_file_name = f'{unique_graph_name}_events.json'
+        events_file_path = os.path.join(events_path, event_file_name)
+        # Potential logic bug - should this be a to apend instead of w to write???
         with open(events_file_path, 'w') as dump_file:
-            for event in events:
-                json.dump(event.to_json(), dump_file)
-
+            for event, time in self.conversation_buffer:
+                to_write = ''.join([time, event])
+                json.dump(to_write, dump_file)
 
     def observe_event(self, event):
-        # Event comes in, first check if we are recording bc person in room
-        #   If not, check if human associated so we should be - init if needed
-        #   If we are, check if human or bot, update the vars as needed
-        #       then, proceed 
+        # Only log if logger is active
+        if not self.is_active:
+            return
 
-        # TODO: Add special logic for human entering and exiting
-
-        if not self._is_logging():
-            if event.actor is human:
+        # Do we need to set initial logging state, or flush because we are done?
+        was_logging = self._is_logging()
+        if event is 'enter' and event.actor is 'human':
+            self.num_humans += 1
+            if was_logging != self._is_logging():
                 self._begin_meta_episode()
-            else:
-                self.bot_context_buffer.append(event)
+        else if event is 'exit' and event.actor is 'human':
+            self.num_humans -= 1
+            if was_logging != self._is_logging():
+                self._end_meta_episode()
 
-        if self._is_logging():
+        # Store context from bots, or store current events
+        if not self._is_logging():
+            self.bot_context_buffer.append((event.to_json(), time.ctime()))
+        else:
             if self.turns_wo_human < self.afk_turn_tolerance:
-                self.conversation_buffer.append(event)
-            if event.actor is not human:
-                self.turns_wo_human += 1
-            else:
+                self.conversation_buffer.append((event.to_json(), time.ctime()))
+            if event.actor is  'human':
                 self.turns_wo_human = 0
+            else:
+                self.turns_wo_human += 1
         
 
 class RoomConversationBuffer(object):
