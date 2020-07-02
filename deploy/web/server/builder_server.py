@@ -138,7 +138,6 @@ class ListWorldsHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         with LIGHTDatabase(self.dbpath) as db:
-            # TODO: Change to use value from player username
             username = tornado.escape.xhtml_escape(self.current_user)
             player = db.get_user_id(username)
             worlds = db.view_worlds(player_id=player)

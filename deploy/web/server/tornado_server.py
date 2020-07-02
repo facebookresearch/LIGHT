@@ -312,6 +312,7 @@ class MainHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         self.render(here + "/../build/index.html")
+
        
 class LoginHandler(BaseHandler):
     def initialize(self, dbpath, hostname=DEFAULT_HOSTNAME, password="LetsPlay", ):
