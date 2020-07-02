@@ -5,12 +5,14 @@
 # LICENSE file in the root directory of this source tree.abs
 
 import unittest
+import time
 
 from light.graph.elements.graph_nodes import GraphAgent
 from light.graph.structured_graph import OOGraph
 from light.world.world import World
-from light.graph.events.graph_events import EmoteEvent
+from light.graph.events.graph_events import EmoteEvent, SayEvent
 from light.world.souls.test_soul import TestSoul
+from light.world.souls.repeat_soul import RepeatSoul
 
 
 class TestGraphNodes(unittest.TestCase):
@@ -35,8 +37,58 @@ class TestGraphNodes(unittest.TestCase):
 
         test_soul.reap()
 
-    # TODO add interactions over the world when the world->soul flow
-    # is properly written.
+    def test_message_sending(self):
+        """
+        Ensure that messages can be sent to souls when acting in the world
+        """
+        # Set up scenario with two nodes in a room
+        test_graph = OOGraph()
+        test_node = test_graph.add_agent("TestAgent", {})
+        repeat_node = test_graph.add_agent("RepeatAgent", {})
+        room_node = test_graph.add_room("TestLab", {})
+        test_node.force_move_to(room_node)
+        repeat_node.force_move_to(room_node)
+
+        test_world = World({}, None, True)
+        test_world.oo_graph = test_graph
+
+        purgatory = test_world.purgatory
+        purgatory.register_filler_soul_provider("test", TestSoul, lambda: [])
+        purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
+
+        purgatory.fill_soul(test_node, 'test')
+        self.assertIn(test_node.node_id, purgatory.node_id_to_soul)
+        purgatory.fill_soul(repeat_node, 'repeat')
+        self.assertIn(repeat_node.node_id, purgatory.node_id_to_soul)
+
+        test_soul: "TestSoul" = purgatory.node_id_to_soul[test_node.node_id]
+        repeat_soul = purgatory.node_id_to_soul[repeat_node.node_id]
+
+        # Make the test soul act, and observe what follows
+        test_event = EmoteEvent.construct_from_args(
+            test_node, targets=[], text="smile"
+        )
+        test_soul.do_act(test_event)
+
+        time.sleep(0.2)
+        observations = test_soul.observations
+        # Observations should be the self smile event, then the repeat agent's say and smile
+        self.assertEqual(len(observations), 3, "Unexpected amount of observations")
+
+        self_emote_observe = observations[0]
+        self.assertEqual(type(self_emote_observe), EmoteEvent)
+        self.assertEqual(self_emote_observe.actor, test_node)
+        self.assertEqual(self_emote_observe.text_content, 'smile')
+
+        other_say_observe = observations[1]
+        self.assertEqual(type(other_say_observe), SayEvent)
+        self.assertEqual(other_say_observe.actor, repeat_node)
+        self.assertEqual(other_say_observe.text_content, "I just saw the following: The testagent smiles")
+
+        other_emote_observe = observations[2]
+        self.assertEqual(type(other_emote_observe), EmoteEvent)
+        self.assertEqual(other_emote_observe.actor, repeat_node)
+        self.assertEqual(other_emote_observe.text_content, 'smile')
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import random
-from threading import Condition
+import threading
 from typing import TYPE_CHECKING, List, Tuple, Type, Callable, Any, Optional
 
 if TYPE_CHECKING:
@@ -36,7 +36,7 @@ class Purgatory:
         self.node_id_to_soul = {}
         self.filler_soul_providers: Dict[str, SoulProvider] = {}
         self.world = world
-        self.player_assign_condition = Condition()
+        self.player_assign_condition = threading.Condition()
     
     def register_filler_soul_provider(
         self, provider_name: str, desired_soul_type: Type["Soul"], arg_provider: SoulArgProvider,
@@ -63,17 +63,18 @@ class Purgatory:
             )
             wanted_provider = random.choice(list(self.filler_soul_providers.keys()))
         soul_class, arg_provider = self.filler_soul_providers[wanted_provider]
-        soul = soul_class(agent, world, *arg_provider())
+        soul = soul_class(agent, self.world, *arg_provider())
         self.node_id_to_soul[agent.node_id] = soul
 
     def send_event_to_soul(self, event: "GraphEvent", agent: "GraphAgent"):
         """
         Pass an GraphEvent along to the soul inhabiting the given GraphAgent 
-        if such a soul exists, passing otherwise
+        if such a soul exists, passing otherwise. Launch in a thread so that
+        the soul can choose to take its time deciding what to do.
         """
         soul: "Soul" = self.node_id_to_soul.get(agent.node_id)
         if soul is not None:
-            soul.observe_event(event)
+            soul.launch_observe_event_thread(event)
 
     def clear_soul(self, agent: "GraphAgent") -> None:
         """Clear the soul that is associated with the given agent"""
