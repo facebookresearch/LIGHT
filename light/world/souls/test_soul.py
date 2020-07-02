@@ -44,4 +44,4 @@ class TestSoul(Soul):
         """
         TestSouls don't have any extra resources, and thus don't need to clean up.
         """
-        pass
+        super().reap()

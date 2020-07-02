@@ -30,6 +30,7 @@ class PlayerSoul(Soul):
         """
         super().__init__(target_node, world)
         target_node.is_player = True
+        target_node._human = True
         self.player_id = player_id
         self.provider = provider  # TODO link with real provider
         provider.register_soul(self)
@@ -39,21 +40,19 @@ class PlayerSoul(Soul):
         PlayerSouls must process act text sent from players and enact them on the world.
         This method is called by the player provider when an action is taken.
         """
-        # self.world.parse_exec(act_text)
-        # send error event to player if necessary?
-        pass
+        self.world.parse_exec(self.target_node.node_id, act_text)
 
     def observe_event(self, event: "GraphEvent"):
         """
         PlayerSouls pass their observation along to the provider, who will handle getting the
         correct format to send to the view.
         """
-        # provider.observe_event(self, event)
-        pass
+        self.provider.player_observe_event(self, event)
 
     def reap(self):
         """
         PlayerSouls must remove the player flag from their target GraphAgent when removed.
         """
+        super().reap()
         self.target_node.is_player = False
         self.provider.on_reap_soul(self)

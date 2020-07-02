@@ -33,6 +33,7 @@ class Soul(ABC):
         self.target_node = target_node
         self.world = world
         self._observe_threads = []
+        self.is_reaped = False
 
     def launch_observe_event_thread(self, event):
         """
@@ -62,7 +63,6 @@ class Soul(ABC):
         """
         pass
 
-    @abstractmethod
     def reap(self):
         """
         Free resources associated with this Soul, and ensure any pending events
@@ -72,4 +72,4 @@ class Soul(ABC):
         another Soul to inhabit the same GraphAgent. In any case, when a Soul
         is reaped, it should clean up after itself.
         """
-        pass
+        self.is_reaped = True
