@@ -96,6 +96,7 @@ class RoomInteractionLogger(InteractionLogger):
     def _begin_meta_episode(self):
         self._clear_buffer()
         self.conversation_buffer.update(self.bot_context_buffer)
+        self.bot_context_buffer.clear()
         self.turns_wo_human = -1
         # TODO: If we persist the number of meta episodes, write to metadata file with that info now
         #       so that no one else tries to take my number!
@@ -163,15 +164,19 @@ class RoomInteractionLogger(InteractionLogger):
                 self._end_meta_episode()
 
         # Store context from bots, or store current events
-        if not self._is_logging():
+        if not self._is_logging() or self.turns_wo_human > self.afk_turn_tolerance:
             self.bot_context_buffer.append((event.to_json(), time.ctime()))
         else:
-            if self.turns_wo_human < self.afk_turn_tolerance:
-                self.conversation_buffer.append((event.to_json(), time.ctime()))
-            if event.actor is  'human':
+            if event.actor is 'human':
+                if self.turns_wo_human > self.afk_turn_tolerance:
+                    self.conversation_buffer.update(self.bot_context_buffer)
+                    self.bot_context_buffer.clear()
                 self.turns_wo_human = 0
             else:
                 self.turns_wo_human += 1
+
+            if self.turns_wo_human < self.afk_turn_tolerance:
+                self.conversation_buffer.append((event.to_json(), time.ctime()))
         
 
 class RoomConversationBuffer(object):
