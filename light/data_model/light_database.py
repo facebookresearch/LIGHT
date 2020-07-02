@@ -1365,8 +1365,8 @@ class LIGHTDatabase:
             """
         )
 
-        # LOGIN table: Ties user id and username to password salt & password hash, facebook login - add later!
-        # NOTE: In future, if memberships / premium status type stuff, that could be included here!
+        # NOTE: In future, if memberships / premium status type stuff or more login tables
+        # that could be included here!
 
     def init_world_tables(self):
         """
@@ -3295,9 +3295,3 @@ class LIGHTDatabase:
         assert len(result) == 1
         id = int(result[0][0])
         return id
-'''
-Methods to add for user support:
-    - create user method, populates login and table entry
-    - login method, pass the username and password, we look for the matching userid
-    - login w/ facebook method, pass the userID and get associated information from the userid from the db
-'''
