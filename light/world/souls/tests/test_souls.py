@@ -15,7 +15,7 @@ from light.world.souls.test_soul import TestSoul
 from light.world.souls.repeat_soul import RepeatSoul
 
 
-class TestGraphNodes(unittest.TestCase):
+class TestSouls(unittest.TestCase):
     """Unit tests for simple souls"""
 
     def test_init_soul(self):
