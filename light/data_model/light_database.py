@@ -279,6 +279,7 @@ class LIGHTDatabase:
         self.init_conversation_tables()
         self.init_edits_table()
         self.init_world_tables()
+        self.init_user_tables()
         self.init_game_tables()
         self.create_triggers()
 
@@ -1356,11 +1357,16 @@ class LIGHTDatabase:
         """
         Initializes users and login tables
         """
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS user_table (
+            id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+            username text UNIQUE NOT NULL);
+            """
+        )
 
-        # USERS table: Stores user id, user name, and other unique user metadata (cached file location?)
-        # LOGIN table: Ties user id and username to password salt & password hash, facebook login
+        # LOGIN table: Ties user id and username to password salt & password hash, facebook login - add later!
         # NOTE: In future, if memberships / premium status type stuff, that could be included here!
-        # CONSIDERATON: How does this tie in with "login with facebook?" - fb seems to suggest how to handle login with this!
 
     def init_world_tables(self):
         """
@@ -1378,8 +1384,8 @@ class LIGHTDatabase:
             CONSTRAINT fk_id FOREIGN KEY (id)
                 REFERENCES id_table (id)
                 ON DELETE CASCADE,
-            CONSTRAINT fk_player FOREIGN KEY (owner_id)
-                REFERENCES players_table (id)
+            CONSTRAINT fk_user FOREIGN KEY (owner_id)
+                REFERENCES user_table (id)
                 ON DELETE CASCADE);
             """
         )
@@ -3255,6 +3261,39 @@ class LIGHTDatabase:
         return (id, inserted)
 
 
+    def create_user(self, username):
+        self.c.execute(
+            """
+            INSERT or IGNORE INTO user_table(username)
+            VALUES (?)
+            """,
+            (username,),
+        )
+        inserted = bool(self.c.rowcount)
+        if not inserted:
+            self.c.execute(
+                """
+                SELECT id from user_table WHERE username = ?
+                """,
+                (username,),
+            )
+            result = self.c.fetchall()
+            assert len(result) == 1
+            id = int(result[0][0])
+        else:
+            id = self.c.lastrowid
+        return (id, inserted)
+
+    def get_user_id(self, username):
+        self.c.execute(
+                """
+                SELECT id from user_table WHERE username = ?
+                """,
+                (username,),
+            )
+        result = self.c.fetchall()
+        assert len(result) == 1
+        id = int(result[0][0])
 '''
 Methods to add for user support:
     - create user method, populates login and table entry
