@@ -56,18 +56,16 @@ class TestGraphNodes(unittest.TestCase):
         purgatory.register_filler_soul_provider("test", TestSoul, lambda: [])
         purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
 
-        purgatory.fill_soul(test_node, 'test')
+        purgatory.fill_soul(test_node, "test")
         self.assertIn(test_node.node_id, purgatory.node_id_to_soul)
-        purgatory.fill_soul(repeat_node, 'repeat')
+        purgatory.fill_soul(repeat_node, "repeat")
         self.assertIn(repeat_node.node_id, purgatory.node_id_to_soul)
 
         test_soul: "TestSoul" = purgatory.node_id_to_soul[test_node.node_id]
         repeat_soul = purgatory.node_id_to_soul[repeat_node.node_id]
 
         # Make the test soul act, and observe what follows
-        test_event = EmoteEvent.construct_from_args(
-            test_node, targets=[], text="smile"
-        )
+        test_event = EmoteEvent.construct_from_args(test_node, targets=[], text="smile")
         test_soul.do_act(test_event)
 
         time.sleep(0.2)
@@ -78,17 +76,20 @@ class TestGraphNodes(unittest.TestCase):
         self_emote_observe = observations[0]
         self.assertEqual(type(self_emote_observe), EmoteEvent)
         self.assertEqual(self_emote_observe.actor, test_node)
-        self.assertEqual(self_emote_observe.text_content, 'smile')
+        self.assertEqual(self_emote_observe.text_content, "smile")
 
         other_say_observe = observations[1]
         self.assertEqual(type(other_say_observe), SayEvent)
         self.assertEqual(other_say_observe.actor, repeat_node)
-        self.assertEqual(other_say_observe.text_content, "I just saw the following: The testagent smiles")
+        self.assertEqual(
+            other_say_observe.text_content,
+            "I just saw the following: The testagent smiles",
+        )
 
         other_emote_observe = observations[2]
         self.assertEqual(type(other_emote_observe), EmoteEvent)
         self.assertEqual(other_emote_observe.actor, repeat_node)
-        self.assertEqual(other_emote_observe.text_content, 'smile')
+        self.assertEqual(other_emote_observe.text_content, "smile")
 
 
 if __name__ == "__main__":
