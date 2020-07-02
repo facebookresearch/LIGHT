@@ -37,9 +37,12 @@ class Purgatory:
         self.filler_soul_providers: Dict[str, SoulProvider] = {}
         self.world = world
         self.player_assign_condition = threading.Condition()
-    
+
     def register_filler_soul_provider(
-        self, provider_name: str, desired_soul_type: Type["Soul"], arg_provider: SoulArgProvider,
+        self,
+        provider_name: str,
+        desired_soul_type: Type["Soul"],
+        arg_provider: SoulArgProvider,
     ) -> None:
         """
         Register a source for Purgatory to be able to fill GraphAgents with souls. Purgatory
@@ -48,19 +51,21 @@ class Purgatory:
         """
         self.filler_soul_providers[provider_name] = (desired_soul_type, arg_provider)
 
-    def fill_soul(self, agent: "GraphAgent", wanted_provider: Optional[str] = None) -> None:
+    def fill_soul(
+        self, agent: "GraphAgent", wanted_provider: Optional[str] = None
+    ) -> None:
         """
         Provide a filler soul for a graph agent. Select randomly from the filler soul
         providers to create the soul.
         """
         if wanted_provider is not None:
-            assert wanted_provider in self.filler_soul_providers, (
-                f"Requested provider {wanted_provider} is not registered"
-            )
+            assert (
+                wanted_provider in self.filler_soul_providers
+            ), f"Requested provider {wanted_provider} is not registered"
         else:
-            assert len(self.filler_soul_providers) > 0, (
-                "Must register at least one filler soul provider to fill souls"
-            )
+            assert (
+                len(self.filler_soul_providers) > 0
+            ), "Must register at least one filler soul provider to fill souls"
             wanted_provider = random.choice(list(self.filler_soul_providers.keys()))
         soul_class, arg_provider = self.filler_soul_providers[wanted_provider]
         soul = soul_class(agent, self.world, *arg_provider())
@@ -84,9 +89,7 @@ class Purgatory:
             del self.node_id_to_soul[agent.node_id]
 
     def get_soul_for_player(
-        self, 
-        player_provider, 
-        agent: Optional["GraphAgent"] = None
+        self, player_provider, agent: Optional["GraphAgent"] = None
     ) -> Optional[int]:
         """
         Create a player soul registered with the given player provider, returning
