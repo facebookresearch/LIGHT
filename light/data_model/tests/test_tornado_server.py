@@ -161,16 +161,124 @@ class TestWorldSaving(AsyncHTTPTestCase):
         '''Test a flow where a user creates a world, views the saved worlds, loads the world, then 
             deletes it'''
 
-        # NOTE: The format for json encoding does not seem to be right, no matter how i do it, so this
-        # test is being shelfed for later
         with LIGHTDatabase(self.db_path) as db:
             player_id = db.create_player()[0]
             base_room_id = db.create_base_room('room')[0]
             base_char_id = db.create_base_character('character')[0]
             base_obj_id = db.create_base_object('object')[0]
-            pass
+            rcontent_id1 = db.create_room("room1", base_room_id, "dirty", "old")[0]
+            ccontent_id1 = db.create_character("troll", base_char_id, "tall", "big")[0]
+            ocontent_id1 = db.create_object('small obj', base_obj_id, 0, 0, 0, 0, 0, 0, 0, 'dusty')[0]
+            d = {
+                "dimensions":{
+                    "id" : None,
+                    "name": "Test",
+                    "height": 5,
+                    "width": 5,
+                    "floors": 2
+                },
+                "entities":{
+                    "room": {
+                        "1": {"id": rcontent_id1, "name": "room1", "base_id": base_room_id, "description": "dirty", "backstory": "old"},
+                        "2": {"id": rcontent_id1, "name": "room1", "base_id": base_room_id, "description": "dirty", "backstory": "old"}
+                    },
+                    "character": {
+                        "3":{"id":ccontent_id1, "name":"troll", "base_id":base_char_id, "persona":"tall", "physical_description":"big", "name_prefix":"a","is_plural":0,"char_type":"unknown"}
+                    },
+                    "object": {
+                        "4":{"id":ocontent_id1,"name":"small obj","base_id":base_obj_id,"is_container":0,"is_drink":0,"is_food":0,"is_gettable":0,"is_surface":0,"is_wearable":0,
+                        "is_weapon":0,"physical_description": "dusty", "name_prefix": "a", "is_plural": 0}
+                    },
+                    "nextID": 5
+                },
+                "map":{
+                    "tiles": [{"room":1,"color":"#8A9BA8","x_coordinate":1,"y_coordinate":1,"floor":0},{"room":2,"color":"#8A9BA8","x_coordinate":2,"y_coordinate":1,"floor":0}],
+                    "edges": [{"src":1,"dst":3,"type":"contains"},{"src":1,"dst":4,"type":"contains"},{"src":1,"dst":2,"type":"neighbors to the east"},{"src":2,"dst":1,"type":"neighbors to the west"}]
+                }
+            }
+        response = yield self.client.fetch(
+            f'{URL}/builder/world/?player={player_id}', method='POST', body=self.get_encoded_url_params(d)
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(type(json.loads(response.body.decode())), int)
+        w_id = json.loads(response.body.decode())
 
+        # Test listing worlds here
+        response = yield self.client.fetch(
+            f'{URL}/builder/worlds/?player={player_id}', method='GET',
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body.decode()), 
+            [{'id': w_id, 'name': "Test"},]
+        )
+
+        # Test world loading - expect same format!
+        d['dimensions']['id'] = w_id
+        response = yield self.client.fetch(
+            f'{URL}/builder/world/{w_id}?player={player_id}', method='GET'
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body.decode()), d)
+
+        # Test deletion
+        response = yield self.client.fetch(
+            f'{URL}/builder/world/delete/{w_id}?player={player_id}', method='POST', body=b''
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body.decode()),  str(w_id))
+
+        # List should now be empty
+        response = yield self.client.fetch(
+            f'{URL}/builder/worlds/?player={player_id}', method='GET',
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body.decode()), 
+            []
+        )
+
+
+    def get_encoded_url_params(self, d):
+        """URL-encode a nested dictionary.
+        :param d = dict
+        :returns url encoded string with dict key-value pairs as query parameters
+        e.g.
+        if d = { "addr":{ "country": "US", "line": ["a","b"] },
+                "routing_number": "011100915", "token": "asdf"
+            }
+        :returns 'addr[country]=US&addr[line][0]=a&addr[line][1]=b&routing_number=011100915&token=asdf'
+        or 'addr%5Bcountry%5D=US&addr%5Bline%5D%5B0%5D=a&addr%5Bline%5D%5B1%5D=b&routing_number=011100915&token=asdf'
+        (which is url encoded form of the former using quote_plus())
+
+        This helper method is required to get the data in the proper format for integration test (TY stack overflow)
+        """
+
+        def get_pairs(value, base):
+            if isinstance(value, dict):
+                return get_dict_pairs(value, base)
+            elif isinstance(value, list):
+                return get_list_pairs(value, base)
+            else:
+                return [base + '=' + str(value)]
+                # use quote_plus() to get url encoded string
+                # return [quote_plus(base) + '=' + quote_plus(str(value))]
+
+        def get_list_pairs(li, base):
+            pairs = []
+            for idx, value in enumerate(li):
+                new_base = base + '[' + str(idx) + ']'
+                pairs += get_pairs(value, new_base)
+            return pairs
+
+        def get_dict_pairs(d, base=''):
+            pairs = []
+            for key, value in d.items():
+                new_base = key if base == '' else base + '[' + key + ']'
+                pairs += get_pairs(value, new_base)
+            return pairs
+
+        return '&'.join(get_dict_pairs(d))
     
+
 @mock.patch('deploy.web.server.tornado_server.BaseHandler.get_current_user', return_value='user')
 class TestGameApp(AsyncHTTPTestCase):
     def setUp(self):
