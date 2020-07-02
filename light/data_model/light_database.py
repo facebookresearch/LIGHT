@@ -1356,6 +1356,8 @@ class LIGHTDatabase:
         """
         Initializes world tables
         """
+        ### TODO: Add the world (graph) id with the nodes and edges, which will enable us to do one query
+        # greatly improving query speeds
         self.c.execute(
             """
             CREATE TABLE IF NOT EXISTS world_table (
@@ -1383,7 +1385,6 @@ class LIGHTDatabase:
             type text NOT NULL UNIQUE);
             """
         )
-
         # Initialize the graph edge type enum table
         graph_edge_types_formated = format_list_for_sql(GRAPH_EDGE_TYPES)
         self.c.execute(
@@ -1394,13 +1395,24 @@ class LIGHTDatabase:
                 graph_edge_types_formated
             )
         )
+
+        # Get rid of old format, remove after running once!
+        self.c.execute(
+            """
+            DROP TABLE IF NOT EXISTS nodes_table;
+            """
+        )
         self.c.execute(
             """
             CREATE TABLE IF NOT EXISTS nodes_table (
             id integer PRIMARY KEY NOT NULL,
+            w_id integer NOT NULL,
             entity_id integer NOT NULL,
             CONSTRAINT fk_id FOREIGN KEY (id)
                 REFERENCES id_table (id)
+                ON DELETE CASCADE,
+            CONSTRAINT fk_graph FOREIGN KEY (w_id)
+                REFERENCES world_table (id)
                 ON DELETE CASCADE,
             CONSTRAINT fk_eid FOREIGN KEY (entity_id)
                 REFERENCES id_table (id)
@@ -3031,6 +3043,58 @@ class LIGHTDatabase:
             (world_id, player_id,),
         )
         return self.c.fetchall()
+    
+    def get_world_assets(self, world_id, player_id):
+        assert self.is_world_owned_by(world_id, player_id), "Cannot load a world you do not own"
+
+        self.c.execute(
+            """
+            SELECT * FROM tile_table
+            WHERE AND world_id = ?
+            """,
+            (world_id,),
+        )
+        tiles = self.c.fetchall()
+
+        self.c.execute(
+            """
+            SELECT * FROM edges_table
+            WHERE AND w_id = ?
+            """,
+            (world_id,),
+        )
+        edges = self.c.fetchall()
+
+        self.c.execute(
+            """
+            SELECT * FROM node_table INNER JOIN rooms_table ON node_table.entity_id=rooms_table.id
+            WHERE w_id = ?
+            """,
+            (world_id,),
+        )
+        room_nodes =  self.c.fetchall()
+
+        self.c.execute(
+            """
+            SELECT * FROM node_table INNER JOIN characters_table ON node_table.entity_id=characters_table.id
+            WHERE w_id = ?
+            """,
+            (world_id,),
+        )
+        character_nodes =  self.c.fetchall()
+
+        room_nodes =  self.c.fetchall()
+
+                self.c.execute(
+            """
+            SELECT * FROM node_table INNER JOIN objects_table ON node_table.entity_id=objects_table.id
+            WHERE w_id = ?
+            """,
+            (world_id,),
+        )
+        object_nodes =  self.c.fetchall()
+
+        return [tiles, edges, room_nodes, character_nodes, object_nodes]
         
     def delete_world(self, world_id, player_id):
         """

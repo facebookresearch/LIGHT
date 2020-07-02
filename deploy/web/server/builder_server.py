@@ -249,51 +249,43 @@ class LoadWorldHandler(BaseHandler):
 
             # Load the entities (by getting the tiles and all connected components)
             # Build local store here too!
-            tiles = db.get_tiles(world_id)
+            resources = db.get_world_assets(world, player_id)
+            tiles = resources[0]
             tile_list = [{x: tile[x] for x in tile.keys() if x != 'world_id'} for tile in tiles]
-            edges = set()
+            edges = resources[1]
+            edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
             nextID = 1
             entities = {'room': {}, 'character': {}, 'object': {},}
-
             node_to_local_id = {}
             node_to_type = {}
+            rooms = resources[2]
+            for room in rooms:
+                # Add to maps here
+                entities["room"][nextID] = {key: row[key] for key in room.keys()}
+                print(entities["room"][nextID])
+                nextID += 1
+            chars = resources[3]
+            for char in chars:
+                # Add to maps here
+                entities["character"][nextID] = {key: row[key] for key in char.keys()}
+                print(entities["character"][nextID])
+                nextID += 1
+            objs = resources[4]
+            for obj in objs:
+                # Add to maps here
+                entities["object"][nextID] = {key: row[key] for key in obj.keys()}
+                print(entities["object"][nextID])
+                nextID += 1
             for tile in tile_list:
-                db.get_edges(tile['id'], edges)
-                node_to_local_id[tile['room_node_id']] = nextID
-                node_to_type[tile['room_node_id']] = 'room'
-                row = db.get_room(db.get_node(tile['room_node_id'])[0]['entity_id'])[0]
-                entities["room"][nextID] = {key: row[key] for key in row.keys()}
-                tile['room'] = nextID
+                tile['room'] = node_to_local_id[tile['room_node_id']]
                 del tile['id']
                 del tile['room_node_id']
                 nextID += 1
-
-            edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
             edges = []
-            # now get all entity ids associated with the edges
             for edge in edge_list:
-                if edge['src_id'] not in node_to_local_id:
-                    src = db.get_node(edge['src_id'])[0]
-                    node_to_local_id[edge['src_id']] = nextID
-                    type_src = db.get_id(src['entity_id'])[0]['type'] 
-                    node_to_type[edge['src_id']] = type_src
-                    row = getattr(db, 'get_' + type_src)(id=src['entity_id'])[0]
-                    entities[type_src][nextID] = {key: row[key] for key in row.keys()}
-                    nextID += 1
-
-                if edge['dst_id'] not in node_to_local_id:
-                    dst = db.get_node(edge['dst_id'])[0]
-                    node_to_local_id[edge['dst_id']] = nextID
-                    type_dst = db.get_id(dst['entity_id'])[0]['type']
-                    node_to_type[edge['dst_id']] = type_dst
-                    row = getattr(db, 'get_' + type_dst)(id=dst['entity_id'])[0]
-                    entities[type_dst][nextID] = {key: row[key] for key in row.keys()}
-                    nextID += 1
-                
                 src = node_to_local_id[edge['src_id']]
                 dst = node_to_local_id[edge['dst_id']]
                 edges.append({"src" : src, "dst": dst, "type": edge["edge_type"]})
-
             entities["nextID"] = nextID
             result["entities"] = entities
 
