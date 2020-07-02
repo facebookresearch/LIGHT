@@ -14,10 +14,11 @@ import random
 # TODO don't use * imports
 from light.world.npc_models import *
 from light.graph.utils import rm, deprecated
-from light.world.views import WorldViewer
 from light.graph.events.base import GraphEvent, ErrorEvent
 from light.graph.events.graph_events import ALL_EVENTS, ALL_EVENTS_LIST, SpawnEvent
 from light.graph.elements.graph_nodes import GraphNode, GraphAgent
+from light.world.views import WorldViewer
+from light.world.purgatory import Purgatory
 
 
 def check_integrity(f):
@@ -55,6 +56,7 @@ class World(object):
         self.debug = debug
         self.oo_graph = OOGraph(opt)
         self.view = WorldViewer(self)
+        self.purgatory = Purgatory(self)
 
         # TODO better specific player management?
         self._player_cnt = 0
@@ -424,8 +426,14 @@ class World(object):
             agent = self.oo_graph.get_node(agent_id)
         if agent is None:
             print(txt, agent_id)
+        if action is None:
+            # TODO no actions should be None anymore, messages
+            # should all be moved to actions
+            pass
+        else:
+            self.purgatory.send_event_to_soul(action, agent)
+        # TODO remove below when Purgatory is complete
         agent.observe_action(txt, action)
-        # TODO move message callbacks to be registered to players
         pos_playerid = self.agentid_to_playerid(agent_id)
         if pos_playerid in self.__message_callbacks:
             self.__message_callbacks[pos_playerid](self, action)

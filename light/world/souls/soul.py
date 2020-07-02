@@ -6,6 +6,8 @@
 
 from abc import ABC, abstractmethod
 
+import threading
+import time
 from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
@@ -30,6 +32,20 @@ class Soul(ABC):
         """
         self.target_node = target_node
         self.world = world
+        self._observe_threads = []
+
+    def launch_observe_event_thread(self, event):
+        """
+        Souls will observe events in a background thread to ensure that 
+        they can choose to act how they wish in response.
+        """
+        observe_thread = threading.Thread(
+            target=self.observe_event,
+            args=(event,),
+            name=f"Node-{self.target_node.node_id}-observe-{time.time():.4f}",
+        )
+        self._observe_threads.append(observe_thread)
+        observe_thread.start()
 
     @abstractmethod
     def observe_event(self, event: "GraphEvent"):
