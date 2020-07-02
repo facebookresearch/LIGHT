@@ -780,6 +780,10 @@ class World(object):
         return self._graph_printer.print(self, start_node, agentid, visited)
 
     def get_possible_actions(self, my_agent_id, use_actions=None):
+        graph_events = self.get_possible_events(my_agent_id, use_actions)
+        return [e.to_canonical_form() for e in graph_events]
+
+    def get_possible_events(self, my_agent_id, use_actions=None):
         if self.get_prop(my_agent_id, 'dead'):
             return []
         use_events = ALL_EVENTS_LIST
@@ -791,8 +795,7 @@ class World(object):
         all_events = []
         for EventClass in use_events:
             all_events += EventClass.get_valid_actions(self.oo_graph, actor_node)
-
-        return [e.to_canonical_form() for e in all_events]
+        return all_events
 
     # TODO refactor parsing methods with action objects
     def help_message(self):

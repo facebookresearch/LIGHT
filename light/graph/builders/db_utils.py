@@ -6,7 +6,7 @@
 
 from light.data_model.light_database import (
     LIGHTDatabase,
-    DB_STATUS_REJECTED,
+    DB_STATUS_PROD,
     DB_TRAIN_SPLIT,
     DB_TEST_SPLIT,
     DB_VAL_SPLIT,
@@ -18,7 +18,7 @@ def id_is_usable(ldb, id_to_check):
     ''' Check response of get_id to see if id_entry 
         exists andis not of 'rejected' status'''
     id_entry = ldb.get_id(id=id_to_check)
-    if len(id_entry) <= 0 or id_entry[0]['status'] == DB_STATUS_REJECTED:
+    if len(id_entry) <= 0 or id_entry[0]['status'] != DB_STATUS_PROD:
         return False
     return True
 

@@ -131,6 +131,7 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
     // Construct the 3 parts of state we need
     const dat = {
       dimensions: {
+        name: data.dimensions.name,
         height: data.dimensions.height,
         width: data.dimensions.width,
         floors: data.dimensions.floors,
@@ -247,7 +248,6 @@ export async function postWorld(state) {
   };
   // Add name and id field (blank rn)
   dat.dimensions["id"] = null;
-  dat.dimensions["name"] = null;
   const map = state.filteredMap();
 
   // create all edge relationships and tile metadata needed
