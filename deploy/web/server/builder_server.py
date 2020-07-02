@@ -28,7 +28,6 @@ def get_handlers(db):
         (r"/builder/edits/([0-9]+)/accept/([a-zA-Z_]+)", AcceptEditHandler, {'dbpath': db}),
         (r"/builder/edits/([0-9]+)/reject", RejectEditHandler, {'dbpath': db}),
         (r"/builder/edits/([0-9]+)", ViewEditWithIDHandler, {'dbpath': db}),
-        (r"/builder/edges", EdgesHandler, {'dbpath': db}),
         (r"/builder/entities/([0-9]+)", ViewEntityWithIDHandler, {'dbpath': db}),
         (r"/builder/entities/([a-zA-Z_]+)", EntityHandler, {'dbpath': db}),
         (r"/builder/entities/([a-zA-Z_]+)/fields", EntityFieldsHandler, {'dbpath': db}),
@@ -174,11 +173,15 @@ class SaveWorldHandler(BaseHandler):
                 # TODO: Change to use value from player username
                 player = int(self.get_argument("player", 31106, True))
 
-                name = self.get_argument('name', 'default ' + time.ctime(time.time()), True)
-                dimensions = json.loads(self.get_argument('dimensions', '{"height": 3, "width": 3, "floors": 1}'))
+                dimensions = json.loads(self.get_argument('dimensions', '{"id": null, "name": null, "height": 3, "width": 3, "floors": 1}'))
                 world_map = json.loads(self.get_argument('map', '{"tiles": {}, "edges": []}'))
                 entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}, }'))
-        
+
+                name = dimensions["name"]
+                if name is None:
+                    name = 'Default ' + time.ctime(time.time())
+                name = name.strip()
+                
                 world_id = db.create_world(name, player, dimensions["height"], dimensions["width"], dimensions["floors"])[0]
                 #Get DB IDs for all object and store them
                 local_id_to_dbid = {}
@@ -575,36 +578,6 @@ class TypesHandler(BaseHandler):
     def get(self):
         with LIGHTDatabase(self.dbpath) as db:
             self.write(json.dumps(list(db.table_dict.keys())))
-
-
-class EdgesHandler(BaseHandler):
-    '''Create edges between entities'''
-
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
-
-    @tornado.web.authenticated
-    def get(self):
-        room = int(self.get_argument('room'))
-        with LIGHTDatabase(self.dbpath) as db:
-            potential_entities = db.find_database_entities_in_rooms(room)
-            self.write(json.dumps(potential_entities))
-
-    @tornado.web.authenticated
-    def post(self):
-        '''displays/creates edges'''
-        with LIGHTDatabase(self.dbpath) as db:
-            room = int(self.get_argument('room'))
-            objs = json.loads(self.get_argument('objs', '[]', True))
-            chars = json.loads(self.get_argument('chars', '[]', True))
-            neighbors = json.loads(self.get_argument('neighbors', '[]', True))
-
-            # convert to boolean
-            dry_run = eval(self.get_argument('dry_run', 'False', 'True'))
-            edges = db.create_edges(room, chars, objs, neighbors, dry_run)
-            ids = [i[0] for i in edges]
-            edges_json = json.dumps(edges)
-            self.write(json.dumps(edges))
 
 
 def main():
