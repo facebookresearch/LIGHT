@@ -3294,6 +3294,7 @@ class LIGHTDatabase:
         result = self.c.fetchall()
         assert len(result) == 1
         id = int(result[0][0])
+        return id
 '''
 Methods to add for user support:
     - create user method, populates login and table entry
