@@ -212,13 +212,21 @@ class TestWorldSaving(AsyncHTTPTestCase):
             [{'id': w_id, 'name': "Test"},]
         )
 
-        # Test world loading - expect same format!
+        # Test world loading - expect same format! (except differences in local ids, so check dimensions and tiles really)
         d['dimensions']['id'] = w_id
         response = yield self.client.fetch(
             f'{URL}/builder/world/{w_id}?player={player_id}', method='GET'
         )
         self.assertEqual(response.code, 200)
-        self.assertEqual(json.loads(response.body.decode()), d)
+        actual_dict = json.loads(response.body.decode())
+        # Dimensions with updated world id should match exactly
+        self.assertEqual(actual_dict['dimensions'], d['dimensions'])
+        # Store id will not be the same, but values (and next ID) should be
+        self.assertCountEqual(actual_dict['entities']['room'].values(), d['entities']['room'].values())
+        self.assertCountEqual(actual_dict['entities']['character'].values(), d['entities']['character'].values())
+        self.assertCountEqual(actual_dict['entities']['object'].values(), d['entities']['object'].values())
+        # Tiles may differ in the room id but otherwise should be nearly the same
+        self.assertAlmostEqual(actual_dict['map']['tiles'], d['map']['tiles'])
 
         # Test deletion
         response = yield self.client.fetch(
@@ -236,48 +244,14 @@ class TestWorldSaving(AsyncHTTPTestCase):
             []
         )
 
-
     def get_encoded_url_params(self, d):
-        """URL-encode a nested dictionary.
-        :param d = dict
-        :returns url encoded string with dict key-value pairs as query parameters
-        e.g.
-        if d = { "addr":{ "country": "US", "line": ["a","b"] },
-                "routing_number": "011100915", "token": "asdf"
-            }
-        :returns 'addr[country]=US&addr[line][0]=a&addr[line][1]=b&routing_number=011100915&token=asdf'
-        or 'addr%5Bcountry%5D=US&addr%5Bline%5D%5B0%5D=a&addr%5Bline%5D%5B1%5D=b&routing_number=011100915&token=asdf'
-        (which is url encoded form of the former using quote_plus())
+        formBody = []
+        for prop in d.keys():
+            encodedKey = urllib.parse.quote(prop)
+            encodedValue = urllib.parse.quote( json.dumps(d[prop], separators=(',', ':')) if (type(d[prop]) is dict or type(d[prop]) is list) else d[prop] )
+            formBody.append(encodedKey + '=' + encodedValue)
+        return '&'.join(formBody)
 
-        This helper method is required to get the data in the proper format for integration test (TY stack overflow)
-        """
-
-        def get_pairs(value, base):
-            if isinstance(value, dict):
-                return get_dict_pairs(value, base)
-            elif isinstance(value, list):
-                return get_list_pairs(value, base)
-            else:
-                return [base + '=' + str(value)]
-                # use quote_plus() to get url encoded string
-                # return [quote_plus(base) + '=' + quote_plus(str(value))]
-
-        def get_list_pairs(li, base):
-            pairs = []
-            for idx, value in enumerate(li):
-                new_base = base + '[' + str(idx) + ']'
-                pairs += get_pairs(value, new_base)
-            return pairs
-
-        def get_dict_pairs(d, base=''):
-            pairs = []
-            for key, value in d.items():
-                new_base = key if base == '' else base + '[' + key + ']'
-                pairs += get_pairs(value, new_base)
-            return pairs
-
-        return '&'.join(get_dict_pairs(d))
-    
 
 @mock.patch('deploy.web.server.tornado_server.BaseHandler.get_current_user', return_value='user')
 class TestGameApp(AsyncHTTPTestCase):
@@ -968,6 +942,7 @@ class TestBuilderApp(AsyncHTTPTestCase):
                 DB_TYPE_OBJ,
                 DB_TYPE_BASE_ROOM,
                 DB_TYPE_ROOM,
+                DB_TYPE_TEXT_EDGE,
                 DB_TYPE_EDGE,
                 DB_TYPE_GRAPH_EDGE,
                 DB_TYPE_GRAPH_NODE,
