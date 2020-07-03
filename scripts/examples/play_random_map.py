@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 # To run locally, use:
-# python play_random_map.py --light-model-root /checkpoint/jase/projects/light/dialog/:no_npc_models  --light-db-file labeling/light_jfixed_environment.pkl
+# python scripts/examples/play_random_map.py --light-model-root ~/Desktop/LIGHT/LIGHT_models/ --light-db-file ~/ParlAI/data/light/environment/db/database3.db
 
 import sys
 
 import parlai.utils.misc as parlai_utils
-
-# sys.modules['parlai.core.utils'] = parlai_utils
 
 from light.graph.builders.starspace_all import StarspaceBuilder
 from light.world.utils.terminal_player_provider import TerminalPlayerProvider
@@ -36,15 +39,10 @@ def run_with_builder(world_builder):
     """
     Takes in a World object and its OOGraph and allows one to play with a random map
     """
-    # import parlai.utils.misc as parlai_utils
-
-    # sys.modules['parlai.core.utils'] = parlai_utils
-
     player_provider = init_world(world_builder)
     player_provider.process_terminal_act("")  # get an agent
     while True:
         act = input("\raction> ")
-        # import pdb; pdb.set_trace()
         if act == "":
             continue
         if act == "exit":
@@ -55,7 +53,7 @@ def run_with_builder(world_builder):
             player_provider = init_world(world_builder)
             player_provider.process_terminal_act("")  # get an agent
         else:
-            player_provider.process_terminal_act(act)  # get an agent
+            player_provider.process_terminal_act(act)
 
 
 parser = ParlaiParser()
