@@ -23,6 +23,7 @@ class GraphEncoder(json.JSONEncoder):
         return use_dict
 
 
+# TODO:  Attach a room log / agent log manager onto this - handles the logging
 class OOGraph(object):
     '''Graph class that takes normal graph and formats it in an easily
     inspectible version from an Object-Oriented point of view

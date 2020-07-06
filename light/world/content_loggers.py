@@ -87,7 +87,7 @@ class RoomInteractionLogger(InteractionLogger):
         self.max_bot_history = max_bot_history
         self.afk_turn_tolerance = afk_turn_tolerance
         
-        # Does graph even want us logging?
+        # Does graph even want us logging? - can change to property of world
         self.is_active = graph._opt.get('dump_dialogues', False) is True
         
         self.room_id = room_id
@@ -110,7 +110,7 @@ class RoomInteractionLogger(InteractionLogger):
         """Make a copy of the graph state so we can replay events on top of it
         """
         try:
-            self.init_state = OOGraph(self.graph, self.room_id).toJSON()
+            self.init_state = OOGraph(self.graph, self.room_id).to_json()
         except Exception as e:
             print(e)
             import traceback
@@ -154,11 +154,12 @@ class RoomInteractionLogger(InteractionLogger):
 
         # Do we need to set initial logging state, or flush because we are done?
         was_logging = self._is_logging()
-        if event is 'enter' and event.actor is 'human':
+        # Should I be using is_human instead??
+        if event is 'enter' and event.actor.is_player:
             self.num_humans += 1
             if was_logging != self._is_logging():
                 self._begin_meta_episode()
-        else if event is 'exit' and event.actor is 'human':
+        else if event is 'exit' and event.actor.is_player:
             self.num_humans -= 1
             if was_logging != self._is_logging():
                 self._end_meta_episode()
@@ -167,7 +168,7 @@ class RoomInteractionLogger(InteractionLogger):
         if not self._is_logging() or self.turns_wo_human > self.afk_turn_tolerance:
             self.bot_context_buffer.append((event.to_json(), time.ctime()))
         else:
-            if event.actor is 'human':
+            if event.actor.is_player:
                 if self.turns_wo_human > self.afk_turn_tolerance:
                     self.conversation_buffer.update(self.bot_context_buffer)
                     self.bot_context_buffer.clear()
@@ -176,6 +177,7 @@ class RoomInteractionLogger(InteractionLogger):
                 self.turns_wo_human += 1
 
             if self.turns_wo_human < self.afk_turn_tolerance:
+                # TODO: Decide who to put as POV in event - the actor?
                 self.conversation_buffer.append((event.to_json(), time.ctime()))
         
 
