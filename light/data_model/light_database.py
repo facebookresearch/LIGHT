@@ -3122,7 +3122,7 @@ class LIGHTDatabase:
         Format world names and ids owned by the player for viewing
         """
         player_worlds = self.get_worlds_owned_by(player_id=player_id)
-        res = [{'id' : x['id'], 'name' : x['name']} for x in player_worlds]
+        res = [{key: row[key] for key in row.keys()} for row in player_worlds]
         return res
     
     def get_num_worlds_owned_by(self, player_id):
