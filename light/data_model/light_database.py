@@ -1396,12 +1396,6 @@ class LIGHTDatabase:
             )
         )
 
-        # Get rid of old format, remove after running once!
-        self.c.execute(
-            """
-            DROP TABLE IF NOT EXISTS nodes_table;
-            """
-        )
         self.c.execute(
             """
             CREATE TABLE IF NOT EXISTS nodes_table (
@@ -3050,7 +3044,7 @@ class LIGHTDatabase:
         self.c.execute(
             """
             SELECT * FROM tile_table
-            WHERE AND world_id = ?
+            WHERE world_id = ?
             """,
             (world_id,),
         )
@@ -3059,7 +3053,7 @@ class LIGHTDatabase:
         self.c.execute(
             """
             SELECT * FROM edges_table
-            WHERE AND w_id = ?
+            WHERE w_id = ?
             """,
             (world_id,),
         )
@@ -3067,7 +3061,7 @@ class LIGHTDatabase:
 
         self.c.execute(
             """
-            SELECT * FROM node_table INNER JOIN rooms_table ON node_table.entity_id=rooms_table.id
+            SELECT * FROM nodes_table INNER JOIN rooms_table ON nodes_table.entity_id=rooms_table.id
             WHERE w_id = ?
             """,
             (world_id,),
@@ -3076,18 +3070,16 @@ class LIGHTDatabase:
 
         self.c.execute(
             """
-            SELECT * FROM node_table INNER JOIN characters_table ON node_table.entity_id=characters_table.id
+            SELECT * FROM nodes_table INNER JOIN characters_table ON nodes_table.entity_id=characters_table.id
             WHERE w_id = ?
             """,
             (world_id,),
         )
         character_nodes =  self.c.fetchall()
 
-        room_nodes =  self.c.fetchall()
-
-                self.c.execute(
+        self.c.execute(
             """
-            SELECT * FROM node_table INNER JOIN objects_table ON node_table.entity_id=objects_table.id
+            SELECT * FROM nodes_table INNER JOIN objects_table ON nodes_table.entity_id=objects_table.id
             WHERE w_id = ?
             """,
             (world_id,),
@@ -3206,15 +3198,16 @@ class LIGHTDatabase:
             id = int(result[0][0])
         return (id, inserted)
 
-    def create_graph_node(self, entity_id, entry_attributes={}):
+    def create_graph_node(self, w_id, entity_id, entry_attributes={}):
         id = self.create_id(DB_TYPE_GRAPH_NODE, entry_attributes)
         self.c.execute(
             """
-            INSERT or IGNORE INTO nodes_table(id, entity_id)
-            VALUES (?, ?)
+            INSERT or IGNORE INTO nodes_table(id, w_id, entity_id)
+            VALUES (?, ?, ?)
             """,
             (
                 id,
+                w_id,
                 entity_id,
             ),
         )
@@ -3223,9 +3216,9 @@ class LIGHTDatabase:
             self.delete_id(id)
             self.c.execute(
                 """
-                SELECT id from nodes_table WHERE entity_id = ?
+                SELECT id from nodes_table WHERE w_id = ? AND entity_id = ?
                 """,
-                (entity_id,),
+                (w_id, entity_id,),
             )
             result = self.c.fetchall()
             assert len(result) == 1

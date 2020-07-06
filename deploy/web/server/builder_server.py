@@ -205,7 +205,7 @@ class SaveWorldHandler(BaseHandler):
                 # Now, go through all the entities and make graph nodes for them, storing a map from the id to the graph id
                 dbid_to_nodeid = {}
                 for dbid in local_id_to_dbid.values():
-                    node_id = db.create_graph_node(dbid)
+                    node_id = db.create_graph_node(world_id, dbid)
                     dbid_to_nodeid[dbid] = node_id[0]
 
                 # Make the edges!
@@ -229,7 +229,6 @@ class LoadWorldHandler(BaseHandler):
         self.dbpath = dbpath
 
     @tornado.web.authenticated
-    # Prints let you see just how long this takes...
     def get(self, world_id):
         with LIGHTDatabase(self.dbpath) as db:
 
@@ -249,7 +248,7 @@ class LoadWorldHandler(BaseHandler):
 
             # Load the entities (by getting the tiles and all connected components)
             # Build local store here too!
-            resources = db.get_world_assets(world, player_id)
+            resources = db.get_world_assets(world_id, player_id)
             tiles = resources[0]
             tile_list = [{x: tile[x] for x in tile.keys() if x != 'world_id'} for tile in tiles]
             edges = resources[1]
@@ -260,27 +259,44 @@ class LoadWorldHandler(BaseHandler):
             node_to_type = {}
             rooms = resources[2]
             for room in rooms:
-                # Add to maps here
-                entities["room"][nextID] = {key: row[key] for key in room.keys()}
-                print(entities["room"][nextID])
+                entities["room"][nextID] = {key: room[key] for key in room.keys()}
+                node_to_local_id[room['id']] = nextID
+                node_to_type[room['id']] = "room"
+
+                del entities["room"][nextID]['w_id']
+                entities["room"][nextID]['id'] = entities["room"][nextID]['entity_id']
+                del entities["room"][nextID]['entity_id']
                 nextID += 1
+
             chars = resources[3]
             for char in chars:
                 # Add to maps here
-                entities["character"][nextID] = {key: row[key] for key in char.keys()}
-                print(entities["character"][nextID])
+                entities["character"][nextID] = {key: char[key] for key in char.keys()}
+                node_to_local_id[char['id']] = nextID
+                node_to_type[char['id']] = "character"
+
+                del entities["character"][nextID]['w_id']
+                entities["character"][nextID]['id'] = entities["character"][nextID]['entity_id']
+                del entities["character"][nextID]['entity_id']
                 nextID += 1
+
             objs = resources[4]
             for obj in objs:
                 # Add to maps here
-                entities["object"][nextID] = {key: row[key] for key in obj.keys()}
-                print(entities["object"][nextID])
+                entities["object"][nextID] = {key: obj[key] for key in obj.keys()}
+                node_to_local_id[obj['id']] = nextID
+                node_to_type[obj['id']] = "object"
+
+                del entities["object"][nextID]['w_id']
+                entities["object"][nextID]['id'] = entities["object"][nextID]['entity_id']
+                del entities["object"][nextID]['entity_id']
                 nextID += 1
+
             for tile in tile_list:
                 tile['room'] = node_to_local_id[tile['room_node_id']]
                 del tile['id']
                 del tile['room_node_id']
-                nextID += 1
+                
             edges = []
             for edge in edge_list:
                 src = node_to_local_id[edge['src_id']]
