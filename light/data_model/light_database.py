@@ -1356,8 +1356,6 @@ class LIGHTDatabase:
         """
         Initializes world tables
         """
-        ### TODO: Add the world (graph) id with the nodes and edges, which will enable us to do one query
-        # greatly improving query speeds
         self.c.execute(
             """
             CREATE TABLE IF NOT EXISTS world_table (
@@ -1396,6 +1394,7 @@ class LIGHTDatabase:
             )
         )
 
+        # Initialize the graph nodes table
         self.c.execute(
             """
             CREATE TABLE IF NOT EXISTS nodes_table (
@@ -1413,6 +1412,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);       
             """
         )
+
         # Graph edges table - edges in execution
         # (need src, dst, type of node - can we just have 
         # Edge North, Edge South, Edge West, Edge East, Edge Up, Edge Down, Edge contains?)
@@ -3038,9 +3038,10 @@ class LIGHTDatabase:
         )
         return self.c.fetchall()
     
-    def get_world_assets(self, world_id, player_id):
+    def get_world_resources(self, world_id, player_id):
         assert self.is_world_owned_by(world_id, player_id), "Cannot load a world you do not own"
 
+        # Get tiles tied to this world
         self.c.execute(
             """
             SELECT * FROM tile_table
@@ -3050,6 +3051,7 @@ class LIGHTDatabase:
         )
         tiles = self.c.fetchall()
 
+        # Get edges tied to this world
         self.c.execute(
             """
             SELECT * FROM edges_table
@@ -3059,6 +3061,7 @@ class LIGHTDatabase:
         )
         edges = self.c.fetchall()
 
+        # Get rooms joined with room nodes associated with this world
         self.c.execute(
             """
             SELECT * FROM nodes_table INNER JOIN rooms_table ON nodes_table.entity_id=rooms_table.id
@@ -3068,6 +3071,7 @@ class LIGHTDatabase:
         )
         room_nodes =  self.c.fetchall()
 
+        # Get characters joined with character nodes associated with this world
         self.c.execute(
             """
             SELECT * FROM nodes_table INNER JOIN characters_table ON nodes_table.entity_id=characters_table.id
@@ -3077,6 +3081,7 @@ class LIGHTDatabase:
         )
         character_nodes =  self.c.fetchall()
 
+        # Get objects joined with object nodes associated with this world
         self.c.execute(
             """
             SELECT * FROM nodes_table INNER JOIN objects_table ON nodes_table.entity_id=objects_table.id
@@ -3129,6 +3134,7 @@ class LIGHTDatabase:
             (world_id,),
         )
         return self.c.fetchall()
+    
     def get_node(self, node_id):
         self.c.execute(
             """
@@ -3138,6 +3144,7 @@ class LIGHTDatabase:
             (node_id,),
         )
         return self.c.fetchall()
+    
     # Gets all connected components to this tile
     def get_edges(self, tile_id, edges):
         self.c.execute(
