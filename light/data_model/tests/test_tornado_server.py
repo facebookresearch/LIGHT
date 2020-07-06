@@ -1164,6 +1164,7 @@ class TestBuilderApp(AsyncHTTPTestCase):
 
 def all():
     suiteList = []
+    # TODO: Break out into seperate files, arrange suite elsewhere when automated testing done
     suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestGameApp))
     suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestWorldSaving))
     suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestBuilderApp))
