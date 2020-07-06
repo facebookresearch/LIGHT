@@ -175,7 +175,7 @@ class SaveWorldHandler(BaseHandler):
 
                 dimensions = json.loads(self.get_argument('dimensions', '{"id": null, "name": null, "height": 3, "width": 3, "floors": 1}'))
                 world_map = json.loads(self.get_argument('map', '{"tiles": {}, "edges": []}'))
-                entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}, }'))
+                entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}}'))
 
                 name = dimensions["name"]
                 if name is None:
