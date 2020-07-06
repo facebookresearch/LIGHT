@@ -39,6 +39,7 @@ class OOGraph(object):
         self._nodes_to_delete = []
         self._deleted_nodes = {}
         self.dead_nodes = {}
+        self._opt = opt
 
     @staticmethod
     def from_graph(graph, start_location=None):

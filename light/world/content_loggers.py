@@ -88,14 +88,17 @@ class RoomInteractionLogger(InteractionLogger):
         self.afk_turn_tolerance = afk_turn_tolerance
         
         # Does graph even want us logging? - can change to property of world
-        self.is_active = graph._opt.get('dump_dialogues', False) is True
+        if graph._opt is not None:
+            self.is_active = graph._opt.get('dump_dialogues', False) is True
+        else:
+            self.is_active = True
         
         self.room_id = room_id
         self.num_humans = 0
 
     def _begin_meta_episode(self):
         self._clear_buffer()
-        self.conversation_buffer.update(self.bot_context_buffer)
+        self.conversation_buffer.extend(self.bot_context_buffer)
         self.bot_context_buffer.clear()
         self.turns_wo_human = -1
         # TODO: If we persist the number of meta episodes, write to metadata file with that info now
@@ -110,7 +113,8 @@ class RoomInteractionLogger(InteractionLogger):
         """Make a copy of the graph state so we can replay events on top of it
         """
         try:
-            self.init_state = OOGraph(self.graph, self.room_id).to_json()
+            # Why does this not work??? - Big blocker
+            self.init_state = OOGraph.from_graph(self.graph, start_location=self.room_id).to_json()
         except Exception as e:
             print(e)
             import traceback
@@ -159,7 +163,7 @@ class RoomInteractionLogger(InteractionLogger):
             self.num_humans += 1
             if was_logging != self._is_logging():
                 self._begin_meta_episode()
-        else if event is 'exit' and event.actor.is_player:
+        elif event is 'exit' and event.actor.is_player:
             self.num_humans -= 1
             if was_logging != self._is_logging():
                 self._end_meta_episode()
@@ -170,7 +174,7 @@ class RoomInteractionLogger(InteractionLogger):
         else:
             if event.actor.is_player:
                 if self.turns_wo_human > self.afk_turn_tolerance:
-                    self.conversation_buffer.update(self.bot_context_buffer)
+                    self.conversation_buffer.extend(self.bot_context_buffer)
                     self.bot_context_buffer.clear()
                 self.turns_wo_human = 0
             else:
