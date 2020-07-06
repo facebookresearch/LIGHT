@@ -2,6 +2,7 @@
 import unittest.mock as mock
 import json
 import re
+import ast
 from tornado import gen, httpclient, ioloop, testing, escape
 from tornado.testing import AsyncHTTPTestCase, gen_test
 from tornado.ioloop import IOLoop
@@ -24,13 +25,17 @@ from light.data_model.light_database import (
     DB_TYPE_OBJ,
     DB_TYPE_BASE_ROOM,
     DB_TYPE_ROOM,
+    DB_TYPE_GRAPH_EDGE,
+    DB_TYPE_GRAPH_NODE,
     DB_TYPE_EDGE,
     DB_TYPE_TEXT_EDGE,
+    DB_TYPE_TILE,
     DB_TYPE_INTERACTION,
     DB_TYPE_UTTERANCE,
     DB_TYPE_PARTICIPANT,
     DB_TYPE_TURN,
     DB_TYPE_PLAYER,
+    DB_TYPE_WORLD,
     ENTITY_TYPES,
     DB_STATUS_PROD,
     DB_STATUS_REVIEW,
@@ -53,6 +58,200 @@ from deploy.web.server.tornado_server import (
 
 PORT = 35494
 URL = f'http://localhost:{PORT}'
+
+# Add test for the worldsaving endpoints!
+@mock.patch('deploy.web.server.builder_server.BaseHandler.get_current_user', return_value='user')
+class TestWorldSaving(AsyncHTTPTestCase):
+    def setUp(self):
+        self.data_dir = tempfile.mkdtemp()
+        self.db_path = os.path.join(self.data_dir, 'test_server.db')
+        self.client = httpclient.AsyncHTTPClient()
+        super().setUp()
+
+    def tearDown(self):
+        super().tearDown()
+        shutil.rmtree(self.data_dir)
+
+    def get_app(self):
+        app = BuildApplication(get_handlers(self.db_path))
+        app.listen(PORT)
+        return app
+
+
+    @gen_test
+    def test_list_worlds(self, mocked_auth):
+        '''Test that the list worlds endpoint can be hit succesfully and returns world 
+            dimesnions in expected format'''
+        with LIGHTDatabase(self.db_path) as db:
+            player_id = db.create_player()[0]
+            world1 = db.create_world("default", player_id, 3, 3, 1)[0]
+            world2 = db.create_world("default2", player_id, 4, 2, 2)[0]
+        
+
+        response = yield self.client.fetch(
+            f'{URL}/builder/worlds/?player={player_id}', method='GET',
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body.decode()), 
+            [{'id': world1, 'name': "default"}, {'id': world2, 'name': "default2"},]
+        )
+        
+    @gen_test
+    def test_delete_world(self, mocked_auth):
+        '''Test the endpoint for deleting worlds works as expected'''
+        with LIGHTDatabase(self.db_path) as db:
+            player_id = db.create_player()[0]
+            world1 = db.create_world("default", player_id, 3, 3, 1)[0]
+            world2 = db.create_world("default2", player_id, 4, 2, 2)[0]
+        
+
+        response = yield self.client.fetch(
+            f'{URL}/builder/world/delete/{world1}?player={player_id}', method='POST', body=b''
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body.decode()),  str(world1))
+
+    @gen_test
+    def test_save_world(self, mocked_auth):
+        '''Test the endpoint for saving worlds works as expected'''
+        with LIGHTDatabase(self.db_path) as db:
+            player_id = db.create_player()[0]
+        headers = {"Content-Type": "application/x-www-form-urlencoded",}
+        response = yield self.client.fetch(
+            f'{URL}/builder/world/?player={player_id}', method='POST', headers=headers, body=b''
+        )
+        self.assertEqual(response.code, 200)
+        # Get back a world code, 
+        self.assertEqual(type(json.loads(response.body.decode())), int)
+    
+    @gen_test
+    def test_load_world(self, mocked_auth):
+        '''Test the endpoint for loading worlds works as expected'''
+        with LIGHTDatabase(self.db_path) as db:
+            player_id = db.create_player()[0]
+            world1 = db.create_world("default", player_id, 4, 1, 1)[0]
+        response = yield self.client.fetch(
+            f'{URL}/builder/world/{world1}?player={player_id}', method='GET'
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body.decode()),  
+            {
+                "dimensions":{
+                    "id" : world1,
+                    "name": "default",
+                    "height": 4,
+                    "width": 1,
+                    "floors": 1
+                },
+                "entities":{
+                    "room": {},
+                    "character": {},
+                    "object": {},
+                    "nextID": 1
+                },
+                "map":{
+                    "tiles": [],
+                    "edges": []
+                }
+            }
+        )
+
+    @gen_test
+    def test_world_saving_integration(self, mocked_auth):
+        '''Test a flow where a user creates a world, views the saved worlds, loads the world, then 
+            deletes it'''
+
+        with LIGHTDatabase(self.db_path) as db:
+            player_id = db.create_player()[0]
+            base_room_id = db.create_base_room('room')[0]
+            base_char_id = db.create_base_character('character')[0]
+            base_obj_id = db.create_base_object('object')[0]
+            rcontent_id1 = db.create_room("room1", base_room_id, "dirty", "old")[0]
+            ccontent_id1 = db.create_character("troll", base_char_id, "tall", "big")[0]
+            ocontent_id1 = db.create_object('small obj', base_obj_id, 0, 0, 0, 0, 0, 0, 0, 'dusty')[0]
+            d = {
+                "dimensions":{
+                    "id" : None,
+                    "name": "Test",
+                    "height": 5,
+                    "width": 5,
+                    "floors": 2
+                },
+                "entities":{
+                    "room": {
+                        "1": {"id": rcontent_id1, "name": "room1", "base_id": base_room_id, "description": "dirty", "backstory": "old"},
+                        "2": {"id": rcontent_id1, "name": "room1", "base_id": base_room_id, "description": "dirty", "backstory": "old"}
+                    },
+                    "character": {
+                        "3":{"id":ccontent_id1, "name":"troll", "base_id":base_char_id, "persona":"tall", "physical_description":"big", "name_prefix":"a","is_plural":0,"char_type":"unknown"}
+                    },
+                    "object": {
+                        "4":{"id":ocontent_id1,"name":"small obj","base_id":base_obj_id,"is_container":0,"is_drink":0,"is_food":0,"is_gettable":0,"is_surface":0,"is_wearable":0,
+                        "is_weapon":0,"physical_description": "dusty", "name_prefix": "a", "is_plural": 0}
+                    },
+                    "nextID": 5
+                },
+                "map":{
+                    "tiles": [{"room":1,"color":"#8A9BA8","x_coordinate":1,"y_coordinate":1,"floor":0},{"room":2,"color":"#8A9BA8","x_coordinate":2,"y_coordinate":1,"floor":0}],
+                    "edges": [{"src":1,"dst":3,"type":"contains"},{"src":1,"dst":4,"type":"contains"},{"src":1,"dst":2,"type":"neighbors to the east"},{"src":2,"dst":1,"type":"neighbors to the west"}]
+                }
+            }
+        response = yield self.client.fetch(
+            f'{URL}/builder/world/?player={player_id}', method='POST', body=self.get_encoded_url_params(d)
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(type(json.loads(response.body.decode())), int)
+        w_id = json.loads(response.body.decode())
+
+        # Test listing worlds here
+        response = yield self.client.fetch(
+            f'{URL}/builder/worlds/?player={player_id}', method='GET',
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body.decode()), 
+            [{'id': w_id, 'name': "Test"},]
+        )
+
+        # Test world loading - expect same format! (except differences in local ids, so check dimensions and tiles really)
+        d['dimensions']['id'] = w_id
+        response = yield self.client.fetch(
+            f'{URL}/builder/world/{w_id}?player={player_id}', method='GET'
+        )
+        self.assertEqual(response.code, 200)
+        actual_dict = json.loads(response.body.decode())
+        # Dimensions with updated world id should match exactly
+        self.assertEqual(actual_dict['dimensions'], d['dimensions'])
+        # Store id will not be the same, but values (and next ID) should be
+        self.assertCountEqual(actual_dict['entities']['room'].values(), d['entities']['room'].values())
+        self.assertCountEqual(actual_dict['entities']['character'].values(), d['entities']['character'].values())
+        self.assertCountEqual(actual_dict['entities']['object'].values(), d['entities']['object'].values())
+        # Tiles may differ in the room id but otherwise should be nearly the same
+        self.assertAlmostEqual(actual_dict['map']['tiles'], d['map']['tiles'])
+
+        # Test deletion
+        response = yield self.client.fetch(
+            f'{URL}/builder/world/delete/{w_id}?player={player_id}', method='POST', body=b''
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body.decode()),  str(w_id))
+
+        # List should now be empty
+        response = yield self.client.fetch(
+            f'{URL}/builder/worlds/?player={player_id}', method='GET',
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body.decode()), 
+            []
+        )
+
+    def get_encoded_url_params(self, d):
+        formBody = []
+        for prop in d.keys():
+            encodedKey = urllib.parse.quote(prop)
+            encodedValue = urllib.parse.quote( json.dumps(d[prop], separators=(',', ':')) if (type(d[prop]) is dict or type(d[prop]) is list) else d[prop] )
+            formBody.append(encodedKey + '=' + encodedValue)
+        return '&'.join(formBody)
+
 
 @mock.patch('deploy.web.server.tornado_server.BaseHandler.get_current_user', return_value='user')
 class TestGameApp(AsyncHTTPTestCase):
@@ -712,99 +911,6 @@ class TestBuilderApp(AsyncHTTPTestCase):
         self.assertEqual(400, cm.exception.code)
         self.assertEqual(cm.exception.message, 'Type is not valid. ')
 
-    @gen_test
-    def test_get_in_contained_from_database(self, mocked_auth):
-        '''
-        When given a room, test that the endpoint can successfullly retrieve
-        all objects/characters in the database whose name is contained in the
-        room description.
-        '''
-        with LIGHTDatabase(self.db_path) as test:
-            base_room = test.create_base_room('room')[0]
-            classroom = test.create_room(
-                'classroom',
-                base_room,
-                'The classroom contains several students and teachers. There is a giant podium near the entrance.',
-                'old',
-            )[0]
-            base_char = test.create_base_character("people")[0]
-            teacher1 = test.create_character(
-                "teacher", base_char, "I teach 1", "older"
-            )[0]
-            student = test.create_character(
-                "student", base_char, "I go to school", "younger"
-            )[0]
-            priest = test.create_character(
-                "priest", base_char, "I preach", "religious"
-            )[0]
-            base_obj1 = test.create_base_object("podium")[0]
-            podium = test.create_object(
-                None, base_obj1, 0.4, 0.2, 0, 0, 0, 0, 0, "big"
-            )[0]
-            base_obj2 = test.create_base_object("tree")[0]
-            tree = test.create_object(None, base_obj2, 0.4, 0.2, 0, 0, 0, 0, 0, "big")[
-                0
-            ]
-        response = yield self.client.fetch(f'{URL}/builder/edges?room={classroom}')
-        self.assertEqual(response.code, 200)
-        self.assertEqual(
-            json.loads(response.body.decode()), [teacher1, student, podium]
-        )
-
-    @gen_test
-    def test_create_edges(self, mocked_auth):
-        '''Tests creating edges'''
-        with LIGHTDatabase(self.db_path) as test:
-            base_room = test.create_base_room('room')[0]
-            room1 = test.create_room('small room', base_room, 'tiny', 'old')[0]
-            room2 = test.create_room('roomsmall', base_room, 'tiny', 'old')[0]
-            baes_char = test.create_base_character("troll")[0]
-            char1 = test.create_character(None, baes_char, "tall", "big")[0]
-            char2 = test.create_character("troll2", baes_char, "short", "big")[0]
-            base_obj = test.create_base_object("knife")[0]
-            obj1 = test.create_object(None, base_obj, 0.4, 0.2, 0, 0, 0, 0, 0, "big")[0]
-        body = {
-            'room': room1,
-            'objs': [obj1],
-            'chars': [char1, char2],
-            'neighbors': [room2],
-            'dry_run': True,
-        }
-        response = yield self.client.fetch(
-            f'{URL}/builder/edges',
-            method='POST',
-            body=urllib.parse.urlencode(body),
-        )
-        self.assertEqual(response.code, 200)
-        self.assertEqual(
-            json.loads(response.body.decode()),
-            [
-                [2, 5, 'ex_contained', 0],
-                [2, 6, 'ex_contained', 0],
-                [2, 8, 'ex_contained', 0],
-                [2, 3, 'neighbor', 1],
-            ],
-        )
-        # check that when dry_run = True nothing is changed in the database
-        with LIGHTDatabase(self.db_path) as test:
-            self.assertEqual(test.get_id(type=DB_TYPE_EDGE), [])
-        body = {
-            'room': room1,
-            'objs': [obj1],
-            'chars': [char1],
-            'neighbors': [room2],
-            'dry_run': False,
-        }
-        response = yield self.client.fetch(
-            f'{URL}/builder/edges',
-            method='POST',
-            body=urllib.parse.urlencode(body),
-        )
-        # check that when dry_run = False the database is altered
-        with LIGHTDatabase(self.db_path) as test:
-            # the actual content of the database is checked in the database
-            # unit tests
-            self.assertNotEqual(test.get_id(type=DB_TYPE_EDGE), [])
 
     @gen_test
     def test_search_entities_no_search(self, mocked_auth):
@@ -836,12 +942,17 @@ class TestBuilderApp(AsyncHTTPTestCase):
                 DB_TYPE_OBJ,
                 DB_TYPE_BASE_ROOM,
                 DB_TYPE_ROOM,
+                DB_TYPE_TEXT_EDGE,
                 DB_TYPE_EDGE,
+                DB_TYPE_GRAPH_EDGE,
+                DB_TYPE_GRAPH_NODE,
+                DB_TYPE_TILE,
                 DB_TYPE_INTERACTION,
                 DB_TYPE_UTTERANCE,
                 DB_TYPE_PARTICIPANT,
                 DB_TYPE_TURN,
                 DB_TYPE_PLAYER,
+                DB_TYPE_WORLD,
             ],
         )
 
@@ -1053,7 +1164,9 @@ class TestBuilderApp(AsyncHTTPTestCase):
 
 def all():
     suiteList = []
+    # TODO: Break out into seperate files, arrange suite elsewhere when automated testing done
     suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestGameApp))
+    suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestWorldSaving))
     suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestBuilderApp))
     suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestLandingApp))
     return unittest.TestSuite(suiteList)
