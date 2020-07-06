@@ -279,6 +279,7 @@ class LIGHTDatabase:
         self.init_conversation_tables()
         self.init_edits_table()
         self.init_world_tables()
+        self.init_user_tables()
         self.init_game_tables()
         self.create_triggers()
 
@@ -1352,6 +1353,21 @@ class LIGHTDatabase:
             results = [r for r in results if r['edge_type'] == edge_type]
         return results
     
+    def init_user_tables(self):
+        """
+        Initializes users and login tables
+        """
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS user_table (
+            id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+            username text UNIQUE NOT NULL);
+            """
+        )
+
+        # NOTE: In future, if memberships / premium status type stuff or more login tables
+        # that could be included here!
+
     def init_world_tables(self):
         """
         Initializes world tables
@@ -1368,8 +1384,8 @@ class LIGHTDatabase:
             CONSTRAINT fk_id FOREIGN KEY (id)
                 REFERENCES id_table (id)
                 ON DELETE CASCADE,
-            CONSTRAINT fk_player FOREIGN KEY (owner_id)
-                REFERENCES players_table (id)
+            CONSTRAINT fk_user FOREIGN KEY (owner_id)
+                REFERENCES user_table (id)
                 ON DELETE CASCADE);
             """
         )
@@ -3244,3 +3260,39 @@ class LIGHTDatabase:
             assert len(result) == 1
             id = int(result[0][0])
         return (id, inserted)
+
+
+    def create_user(self, username):
+        self.c.execute(
+            """
+            INSERT or IGNORE INTO user_table(username)
+            VALUES (?)
+            """,
+            (username,),
+        )
+        inserted = bool(self.c.rowcount)
+        if not inserted:
+            self.c.execute(
+                """
+                SELECT id from user_table WHERE username = ?
+                """,
+                (username,),
+            )
+            result = self.c.fetchall()
+            assert len(result) == 1
+            id = int(result[0][0])
+        else:
+            id = self.c.lastrowid
+        return (id, inserted)
+
+    def get_user_id(self, username):
+        self.c.execute(
+                """
+                SELECT id from user_table WHERE username = ?
+                """,
+                (username,),
+            )
+        result = self.c.fetchall()
+        assert len(result) == 1
+        id = int(result[0][0])
+        return id
