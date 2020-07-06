@@ -93,7 +93,10 @@ class TestWorldSaving(AsyncHTTPTestCase):
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()), 
-            [{'id': world1, 'name': "default"}, {'id': world2, 'name': "default2"},]
+            [
+                {'height': 3, 'id': world1, 'name': "default", 'num_floors': 1, 'owner_id': player_id, 'width': 3},
+                {'height': 4, 'id': world2, 'name': "default2", 'num_floors': 2, 'owner_id': player_id, 'width': 2},
+            ]
         )
         
     @gen_test
@@ -209,7 +212,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()), 
-            [{'id': w_id, 'name': "Test"},]
+            [{'height': 5, 'id': w_id, 'name': "Test", 'num_floors': 2, 'owner_id': player_id, 'width': 5},]
         )
 
         # Test world loading - expect same format! (except differences in local ids, so check dimensions and tiles really)

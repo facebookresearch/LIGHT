@@ -781,9 +781,11 @@ class TestDatabase(unittest.TestCase):
             w2_id = test.create_world("dragon guarded castle", player0, 2, 4, 2)[0]
             res = test.view_worlds(player0)
             self.assertEqual(len(res), 2)
-            self.assertEqual(
-                [{'id': w1_id, 'name': "swamp",}, {'id': w2_id, 'name': "dragon guarded castle",}],
-                res
+            self.assertEqual(res, 
+                [            
+                    {'height': 3, 'id': w1_id, 'name': "swamp", 'num_floors': 1, 'owner_id': player0, 'width': 3},
+                    {'height': 2, 'id': w2_id, 'name': "dragon guarded castle", 'num_floors': 2, 'owner_id': player0, 'width': 4},
+                ],
             )
 
             # Can't see player0's worlds!
@@ -792,7 +794,7 @@ class TestDatabase(unittest.TestCase):
             res = test.view_worlds(player1)
             self.assertEqual(len(res), 1)
             self.assertEqual(
-                [{'id': w3_id, 'name': "swamp2",},],
+                [{'height': 3, 'id': w3_id, 'name': "swamp2", 'num_floors': 5, 'owner_id': player1, 'width': 3}],
                 res
             )
     
