@@ -238,13 +238,13 @@ class LoadWorldHandler(BaseHandler):
 
             # Load the world info (dimensions, name, id) and store in "dimensions"
             world = db.get_world(world_id, player_id)
-            assert len(world) == 1, "Must get a world back to load it"
+            assert len(world) == 1, "Must get a single world back to load it"
             world = world[0]
             result["dimensions"] = {x: world[x] for x in world.keys() if x != 'owner_id'}
             result["dimensions"]["floors"] = result["dimensions"]["num_floors"]
             del result["dimensions"]["num_floors"]
 
-            resources = db.get_world_assets(world_id, player_id)
+            resources = db.get_world_resources(world_id, player_id)
             tiles = resources[0]
             tile_list = [{x: tile[x] for x in tile.keys() if x != 'world_id'} for tile in tiles]
             edges = resources[1]

@@ -685,15 +685,18 @@ class TestDatabase(unittest.TestCase):
     def test_create_graph_nodes(self):
         '''Test that graph node creation works and behaves as expected'''
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            player0 = test.create_user("test")[0]
+            w_id = test.create_world("swamp", player0, 3, 3, 1)[0]
+
             rbase_id = test.create_base_room("room")[0]
             rcontent_id1 = test.create_room("room1", rbase_id, "dirty", "old")[0]
             cbase_id = test.create_base_character("troll")[0]
             ccontent_id1 = test.create_character(None, cbase_id, "tall", "big")[0]
             obase_id = test.create_base_object("object")[0]
             ocontent_id1 = test.create_object('small obj', obase_id, 0, 0, 0, 0, 0, 0, 0, 'dusty')[0]
-            rnode_id = test.create_graph_node(rcontent_id1)[0]
-            cnode_id = test.create_graph_node(ccontent_id1)[0]
-            onode_id = test.create_graph_node(ocontent_id1)[0]
+            rnode_id = test.create_graph_node(w_id, rcontent_id1)[0]
+            cnode_id = test.create_graph_node(w_id, ccontent_id1)[0]
+            onode_id = test.create_graph_node(w_id, ocontent_id1)[0]
             self.assert_sqlite_row_equal(
                 {'id' : rnode_id, 'entity_id': rcontent_id1},
                 test.get_node(rnode_id)[0],
@@ -713,13 +716,13 @@ class TestDatabase(unittest.TestCase):
     def test_create_tiles(self):
         '''Test that edge creation works and behaves as expected'''
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            player0 = test.create_player()[0]
+            player0 = test.create_user("test")[0]
             w_id = test.create_world("swamp", player0, 3, 3, 1)[0]
 
             rbase_id = test.create_base_room("room")[0]
             rcontent_id1 = test.create_room("room1", rbase_id, "dirty", "old")[0]
         
-            rnode_id1 = test.create_graph_node(rcontent_id1)[0]
+            rnode_id1 = test.create_graph_node(w_id, rcontent_id1)[0]
 
             tile_id = test.create_tile(w_id, rnode_id1, '#FFFFF', 1, 1, 0)[0]
             res = test.get_tiles(w_id)[0]
@@ -732,7 +735,7 @@ class TestDatabase(unittest.TestCase):
     def test_create_graph_edges(self):
         '''Test that edge creation works and behaves as expected'''
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            player0 = test.create_player()[0]
+            player0 = test.create_user("test")[0]
             w_id = test.create_world("swamp", player0, 3, 3, 1)[0]
 
             rbase_id = test.create_base_room("room")[0]
@@ -741,9 +744,9 @@ class TestDatabase(unittest.TestCase):
             cbase_id = test.create_base_character("troll")[0]
             ccontent_id1 = test.create_character(None, cbase_id, "tall", "big")[0]
         
-            rnode_id1 = test.create_graph_node(rcontent_id1)[0]
-            rnode_id2 = test.create_graph_node(rcontent_id2)[0]
-            cnode_id = test.create_graph_node(ccontent_id1)[0]
+            rnode_id1 = test.create_graph_node(w_id, rcontent_id1)[0]
+            rnode_id2 = test.create_graph_node(w_id, rcontent_id2)[0]
+            cnode_id = test.create_graph_node(w_id, ccontent_id1)[0]
 
             tile_id = test.create_tile(w_id, rnode_id1, '#FFFFF', 1, 1, 0)[0]
             edge1 = test.create_graph_edge(w_id, rnode_id1, rnode_id2, "neighbors to the north")[0]
@@ -762,7 +765,7 @@ class TestDatabase(unittest.TestCase):
         '''Test that world creation works and behaves as expected'''
         # Test if a new world can be successfully created
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            player0 = test.create_player()[0]
+            player0 = test.create_user("test")[0]
             w_id = test.create_world("swamp", player0, 3, 3, 1)[0]
             self.assert_sqlite_row_equal(
                 {'id': w_id, 'name': "swamp", 'owner_id': player0, 'height': 3, 'width': 3, 'num_floors' : 1,},
@@ -773,7 +776,7 @@ class TestDatabase(unittest.TestCase):
     def test_view_worlds(self):
         '''Test that view worlds returns all worlds owned by player and only those worlds!'''
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            player0 = test.create_player()[0]
+            player0 = test.create_user("test")[0]
             w1_id = test.create_world("swamp", player0, 3, 3, 1)[0]
             w2_id = test.create_world("dragon guarded castle", player0, 2, 4, 2)[0]
             res = test.view_worlds(player0)
@@ -784,7 +787,7 @@ class TestDatabase(unittest.TestCase):
             )
 
             # Can't see player0's worlds!
-            player1 = test.create_player()[0]
+            player1 = test.create_user("test2")[0]
             w3_id = test.create_world("swamp2", player1, 3, 3, 5)[0]
             res = test.view_worlds(player1)
             self.assertEqual(len(res), 1)
@@ -796,8 +799,8 @@ class TestDatabase(unittest.TestCase):
     def test_world_deletion(self):
         '''Test that delete worlds works as expected (ownly owner can delete)'''
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            player0 = test.create_player()[0]
-            player1 = test.create_player()[0]
+            player0 = test.create_user("test")[0]
+            player1 = test.create_user("test2")[0]
             w1_id = test.create_world("swamp", player0, 3, 3, 1)[0]
             
             with self.assertRaises(Exception):
@@ -810,8 +813,8 @@ class TestDatabase(unittest.TestCase):
     def test_world_limit(self):
         '''Test that the limit on world creation is enforced properly'''
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            player0 = test.create_player()[0]
-            player1 = test.create_player()[0]
+            player0 = test.create_user("test")[0]
+            player1 = test.create_user("test2")[0]
             for i in range(10):
                 test.create_world("swamp" + str(i), player0, 3, 3, 1)[0]
             res = test.create_world("swamp10", player0, 3, 3, 1)
