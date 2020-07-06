@@ -38,7 +38,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 def make_app(FLAGS, tornado_provider):
     worldBuilderApp = BuildApplication(get_handlers(FLAGS.data_model_db))
-    landingApp = LandingApplication(FLAGS.hostname, FLAGS.password)
+    landingApp = LandingApplication(FLAGS.data_model_db, FLAGS.hostname, FLAGS.password)
     router = RuleRouter([
         Rule(PathMatches("/builder.*"), worldBuilderApp),
         Rule(PathMatches("/game.*"), tornado_provider.app),

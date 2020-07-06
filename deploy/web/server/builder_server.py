@@ -138,8 +138,8 @@ class ListWorldsHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         with LIGHTDatabase(self.dbpath) as db:
-            # TODO: Change to use value from player username
-            player = self.get_argument("player", 31106, True)
+            username = tornado.escape.xhtml_escape(self.current_user)
+            player = db.get_user_id(username)
             worlds = db.view_worlds(player_id=player)
             self.write(json.dumps(worlds))
 
@@ -154,8 +154,8 @@ class DeleteWorldHandler(BaseHandler):
     def post(self, id):
         with (yield lock.acquire()):
             with LIGHTDatabase(self.dbpath) as db:
-                # TODO: Change to use value from player username
-                player = self.get_argument("player", 31106, True)
+                username = tornado.escape.xhtml_escape(self.current_user)
+                player = db.get_user_id(username)
                 world_id = db.delete_world(world_id=id, player_id=player)
                 self.write(json.dumps(world_id))
 
@@ -170,12 +170,12 @@ class SaveWorldHandler(BaseHandler):
     def post(self):
         with (yield lock.acquire()):
             with LIGHTDatabase(self.dbpath) as db:
-                # TODO: Change to use value from player username
-                player = int(self.get_argument("player", 31106, True))
+                username = tornado.escape.xhtml_escape(self.current_user)
+                player = db.get_user_id(username)
 
                 dimensions = json.loads(self.get_argument('dimensions', '{"id": null, "name": null, "height": 3, "width": 3, "floors": 1}'))
                 world_map = json.loads(self.get_argument('map', '{"tiles": {}, "edges": []}'))
-                entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}, }'))
+                entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}}'))
 
                 name = dimensions["name"]
                 if name is None:
@@ -233,8 +233,8 @@ class LoadWorldHandler(BaseHandler):
         with LIGHTDatabase(self.dbpath) as db:
 
             result = {}
-            # TODO: Change to use value from player username
-            player_id = self.get_argument("player", 31106, True)
+            username = tornado.escape.xhtml_escape(self.current_user)
+            player_id = db.get_user_id(username)
 
             # Load the world info (dimensions, name, id) and store in "dimensions"
             world = db.get_world(world_id, player_id)
