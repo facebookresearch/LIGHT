@@ -232,8 +232,6 @@ class LoadWorldHandler(BaseHandler):
     def get(self, world_id):
         with LIGHTDatabase(self.dbpath) as db:
 
-            start = time.time()
-
             result = {}
             # TODO: Change to use value from player username
             player_id = self.get_argument("player", 31106, True)
@@ -246,74 +244,44 @@ class LoadWorldHandler(BaseHandler):
             result["dimensions"]["floors"] = result["dimensions"]["num_floors"]
             del result["dimensions"]["num_floors"]
 
-            # Load the entities (by getting the tiles and all connected components)
-            # Build local store here too!
             resources = db.get_world_assets(world_id, player_id)
             tiles = resources[0]
             tile_list = [{x: tile[x] for x in tile.keys() if x != 'world_id'} for tile in tiles]
             edges = resources[1]
             edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
+            
+            # Load the entities 
             nextID = 1
             entities = {'room': {}, 'character': {}, 'object': {},}
             node_to_local_id = {}
-            node_to_type = {}
-            rooms = resources[2]
-            for room in rooms:
-                entities["room"][nextID] = {key: room[key] for key in room.keys()}
-                node_to_local_id[room['id']] = nextID
-                node_to_type[room['id']] = "room"
+            type_to_entities = {'room': resources[2], 'character': resources[3], 'object':resources[4],}
+            for type_ in type_to_entities.keys():
+                for entity in type_to_entities[type_]:
+                    entities[type_][nextID] = {key: entity[key] for key in entity.keys()}
+                    node_to_local_id[entity['id']] = nextID
 
-                del entities["room"][nextID]['w_id']
-                entities["room"][nextID]['id'] = entities["room"][nextID]['entity_id']
-                del entities["room"][nextID]['entity_id']
-                nextID += 1
+                    # Modify entires to fit format
+                    del entities[type_][nextID]['w_id']
+                    entities[type_][nextID]['id'] = entities[type_][nextID]['entity_id']
+                    del entities[type_][nextID]['entity_id']
+                    nextID += 1
+            entities["nextID"] = nextID
+            result["entities"] = entities
 
-            chars = resources[3]
-            for char in chars:
-                # Add to maps here
-                entities["character"][nextID] = {key: char[key] for key in char.keys()}
-                node_to_local_id[char['id']] = nextID
-                node_to_type[char['id']] = "character"
-
-                del entities["character"][nextID]['w_id']
-                entities["character"][nextID]['id'] = entities["character"][nextID]['entity_id']
-                del entities["character"][nextID]['entity_id']
-                nextID += 1
-
-            objs = resources[4]
-            for obj in objs:
-                # Add to maps here
-                entities["object"][nextID] = {key: obj[key] for key in obj.keys()}
-                node_to_local_id[obj['id']] = nextID
-                node_to_type[obj['id']] = "object"
-
-                del entities["object"][nextID]['w_id']
-                entities["object"][nextID]['id'] = entities["object"][nextID]['entity_id']
-                del entities["object"][nextID]['entity_id']
-                nextID += 1
-
+            #Load the edges and tiles
             for tile in tile_list:
                 tile['room'] = node_to_local_id[tile['room_node_id']]
                 del tile['id']
                 del tile['room_node_id']
-                
             edges = []
             for edge in edge_list:
                 src = node_to_local_id[edge['src_id']]
                 dst = node_to_local_id[edge['dst_id']]
                 edges.append({"src" : src, "dst": dst, "type": edge["edge_type"]})
-            entities["nextID"] = nextID
-            result["entities"] = entities
+            result["map"] = {'tiles': tile_list, 'edges': edges}
 
-            # Combine all the dictionaries to return
-            world_map = {}
-            world_map['tiles'] = tile_list
-            world_map['edges'] = edges
-            result["map"] = world_map
+            # Return data
             self.write(json.dumps(result))
-
-            end = time.time()
-            print("Finally done - took " + str(end - start) + " seconds")        
  #-------------------------------------------------------------#
 
 class EntityEditHandler(BaseHandler):
