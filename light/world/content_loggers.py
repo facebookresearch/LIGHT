@@ -114,7 +114,7 @@ class RoomInteractionLogger(InteractionLogger):
         """
         try:
             # Why does this not work??? - Big blocker
-            self.init_state = OOGraph.from_graph(self.graph, start_location=self.room_id).to_json()
+            self.init_state = self.graph.to_json()
         except Exception as e:
             print(e)
             import traceback
@@ -130,22 +130,26 @@ class RoomInteractionLogger(InteractionLogger):
     
     def _log_interactions(self):
         # First, check graph path, then write the graph dump
-        graph_path = os.path.join(self.data_path, '/light_graph_dumps')
+        graph_path = os.path.join(self.data_path, 'light_graph_dumps')
         if not os.path.exists(graph_path):
             os.mkdir(graph_path)
         unique_graph_name = str(uuid.uuid4())
+        self._logged_to = unique_graph_name
         graph_file_name = f'{unique_graph_name}.json'
         file_path = os.path.join(graph_path, graph_file_name)
         with open(file_path, 'w') as dump_file:
             json.dump(self.init_state, dump_file)
 
         # Now, do the same for events, dumping in the light_event_dumps/rooms
-        events_path = os.path.join(self.data_path, '/light_event_dumps/rooms')
+        events_path = os.path.join(self.data_path, 'light_event_dumps')
         if not os.path.exists(events_path):
             os.mkdir(events_path)
+        events_room_path = os.path.join(events_path, 'room')
+        if not os.path.exists(events_room_path):
+            os.mkdir(events_room_path)
         event_file_name = f'{unique_graph_name}_events.json'
-        events_file_path = os.path.join(events_path, event_file_name)
-        # Potential logic bug - should this be a to apend instead of w to write???
+        events_file_path = os.path.join(events_room_path, event_file_name)
+        # Potential logic bug - should this be a to append instead of w to write???
         with open(events_file_path, 'w') as dump_file:
             for event, time in self.conversation_buffer:
                 to_write = ''.join([time, event])
