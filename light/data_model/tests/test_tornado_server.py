@@ -60,7 +60,7 @@ PORT = 35494
 URL = f'http://localhost:{PORT}'
 
 # Add test for the worldsaving endpoints!
-@mock.patch('deploy.web.server.builder_server.BaseHandler.get_current_user', return_value='user')
+@mock.patch('deploy.web.server.builder_server.BaseHandler.get_current_user', return_value='test')
 class TestWorldSaving(AsyncHTTPTestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
@@ -83,13 +83,13 @@ class TestWorldSaving(AsyncHTTPTestCase):
         '''Test that the list worlds endpoint can be hit succesfully and returns world 
             dimesnions in expected format'''
         with LIGHTDatabase(self.db_path) as db:
-            player_id = db.create_player()[0]
+            player_id = db.create_user("test")[0]
             world1 = db.create_world("default", player_id, 3, 3, 1)[0]
             world2 = db.create_world("default2", player_id, 4, 2, 2)[0]
         
 
         response = yield self.client.fetch(
-            f'{URL}/builder/worlds/?player={player_id}', method='GET',
+            f'{URL}/builder/worlds/', method='GET',
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()), 
@@ -100,13 +100,13 @@ class TestWorldSaving(AsyncHTTPTestCase):
     def test_delete_world(self, mocked_auth):
         '''Test the endpoint for deleting worlds works as expected'''
         with LIGHTDatabase(self.db_path) as db:
-            player_id = db.create_player()[0]
+            player_id = db.create_user("test")[0]
             world1 = db.create_world("default", player_id, 3, 3, 1)[0]
             world2 = db.create_world("default2", player_id, 4, 2, 2)[0]
         
 
         response = yield self.client.fetch(
-            f'{URL}/builder/world/delete/{world1}?player={player_id}', method='POST', body=b''
+            f'{URL}/builder/world/delete/{world1}', method='POST', body=b''
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()),  str(world1))
@@ -115,10 +115,10 @@ class TestWorldSaving(AsyncHTTPTestCase):
     def test_save_world(self, mocked_auth):
         '''Test the endpoint for saving worlds works as expected'''
         with LIGHTDatabase(self.db_path) as db:
-            player_id = db.create_player()[0]
+            player_id = db.create_user("test")[0]
         headers = {"Content-Type": "application/x-www-form-urlencoded",}
         response = yield self.client.fetch(
-            f'{URL}/builder/world/?player={player_id}', method='POST', headers=headers, body=b''
+            f'{URL}/builder/world/', method='POST', headers=headers, body=b''
         )
         self.assertEqual(response.code, 200)
         # Get back a world code, 
@@ -128,10 +128,10 @@ class TestWorldSaving(AsyncHTTPTestCase):
     def test_load_world(self, mocked_auth):
         '''Test the endpoint for loading worlds works as expected'''
         with LIGHTDatabase(self.db_path) as db:
-            player_id = db.create_player()[0]
+            player_id = db.create_user("test")[0]
             world1 = db.create_world("default", player_id, 4, 1, 1)[0]
         response = yield self.client.fetch(
-            f'{URL}/builder/world/{world1}?player={player_id}', method='GET'
+            f'{URL}/builder/world/{world1}', method='GET'
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()),  
@@ -162,7 +162,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
             deletes it'''
 
         with LIGHTDatabase(self.db_path) as db:
-            player_id = db.create_player()[0]
+            player_id = db.create_user("test")[0]
             base_room_id = db.create_base_room('room')[0]
             base_char_id = db.create_base_character('character')[0]
             base_obj_id = db.create_base_object('object')[0]
@@ -197,7 +197,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
                 }
             }
         response = yield self.client.fetch(
-            f'{URL}/builder/world/?player={player_id}', method='POST', body=self.get_encoded_url_params(d)
+            f'{URL}/builder/world/', method='POST', body=self.get_encoded_url_params(d)
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(type(json.loads(response.body.decode())), int)
@@ -205,7 +205,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
 
         # Test listing worlds here
         response = yield self.client.fetch(
-            f'{URL}/builder/worlds/?player={player_id}', method='GET',
+            f'{URL}/builder/worlds/', method='GET',
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()), 
@@ -215,7 +215,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
         # Test world loading - expect same format! (except differences in local ids, so check dimensions and tiles really)
         d['dimensions']['id'] = w_id
         response = yield self.client.fetch(
-            f'{URL}/builder/world/{w_id}?player={player_id}', method='GET'
+            f'{URL}/builder/world/{w_id}', method='GET'
         )
         self.assertEqual(response.code, 200)
         actual_dict = json.loads(response.body.decode())
@@ -225,19 +225,17 @@ class TestWorldSaving(AsyncHTTPTestCase):
         self.assertCountEqual(actual_dict['entities']['room'].values(), d['entities']['room'].values())
         self.assertCountEqual(actual_dict['entities']['character'].values(), d['entities']['character'].values())
         self.assertCountEqual(actual_dict['entities']['object'].values(), d['entities']['object'].values())
-        # Tiles may differ in the room id but otherwise should be nearly the same
-        self.assertAlmostEqual(actual_dict['map']['tiles'], d['map']['tiles'])
 
         # Test deletion
         response = yield self.client.fetch(
-            f'{URL}/builder/world/delete/{w_id}?player={player_id}', method='POST', body=b''
+            f'{URL}/builder/world/delete/{w_id}', method='POST', body=b''
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()),  str(w_id))
 
         # List should now be empty
         response = yield self.client.fetch(
-            f'{URL}/builder/worlds/?player={player_id}', method='GET',
+            f'{URL}/builder/worlds/', method='GET',
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()), 
@@ -305,7 +303,7 @@ class TestLandingApp(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = LandingApplication()
+        app = LandingApplication(self.db_path)
         app.listen(PORT)
         return app
         
