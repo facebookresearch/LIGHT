@@ -68,8 +68,17 @@ class TestSouls(unittest.TestCase):
         test_event = EmoteEvent.construct_from_args(test_node, targets=[], text="smile")
         test_soul.do_act(test_event)
 
-        time.sleep(0.2)
         observations = test_soul.observations
+        start_time = time.time()
+        OBSERVATION_WAIT_TIMEOUT = 0.3
+        while len(observations) < 3:
+            self.assertTrue(
+                time.time() - start_time < OBSERVATION_WAIT_TIMEOUT,
+                f"Exceeded expected duration {OBSERVATION_WAIT_TIMEOUT} waiting for parrot events",
+            )
+            observations = test_soul.observations
+            time.sleep(0.01)
+
         # Observations should be the self smile event, then the repeat agent's say and smile
         self.assertEqual(len(observations), 3, "Unexpected amount of observations")
 
@@ -91,6 +100,10 @@ class TestSouls(unittest.TestCase):
         self.assertEqual(other_emote_observe.actor, repeat_node)
         self.assertEqual(other_emote_observe.text_content, "smile")
 
+        observations = test_soul.observations
+        # Extra observation may have slipped in?
+        self.assertEqual(len(observations), 3, "Unexpected amount of observations")
+        self.assertEqual(len(test_soul._observe_threads), 0, "All obs threads should have deleted")
 
 if __name__ == "__main__":
     unittest.main()

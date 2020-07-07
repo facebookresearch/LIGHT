@@ -29,6 +29,7 @@ class PlayerSoul(Soul):
         current player. They interface with the human through the provider
         """
         super().__init__(target_node, world)
+        assert not target_node.is_player, "Cannot have two players in the same agent!"
         target_node.is_player = True
         target_node._human = True
         self.player_id = player_id
