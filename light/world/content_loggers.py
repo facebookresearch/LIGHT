@@ -7,6 +7,8 @@ import time
 import json
 import collections
 
+from light.graph.events.graph_events import ArriveEvent, SpawnEvent, DeathEvent, LeaveEvent
+
 '''
 General flow:
     - A player enters
@@ -163,11 +165,13 @@ class RoomInteractionLogger(InteractionLogger):
         # Do we need to set initial logging state, or flush because we are done?
         was_logging = self._is_logging()
         # Should I be using is_human instead??
-        if event is 'enter' and event.actor.is_player:
+        # ArriveEvent / SpawnEvent
+        if type(event) is ArriveEvent and event.actor.is_player:
             self.num_humans += 1
             if was_logging != self._is_logging():
                 self._begin_meta_episode()
-        elif event is 'exit' and event.actor.is_player:
+        # LeaveEvent / DeathEvent
+        elif type(event) is LeaveEvent and event.actor.is_player:
             self.num_humans -= 1
             if was_logging != self._is_logging():
                 self._end_meta_episode()
@@ -185,7 +189,6 @@ class RoomInteractionLogger(InteractionLogger):
                 self.turns_wo_human += 1
 
             if self.turns_wo_human < self.afk_turn_tolerance:
-                # TODO: Decide who to put as POV in event - the actor?
                 self.conversation_buffer.append((event.to_json(), time.ctime()))
         
 
