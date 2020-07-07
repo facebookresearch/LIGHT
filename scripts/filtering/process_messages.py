@@ -2,20 +2,35 @@ import os
 import json
 from datetime import datetime, timedelta
 
-TARGET_FILE = os.path.expanduser("~/Desktop/light_chats.json")
+TARGET_FILES = [
+    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_00-00-00_to_05-26-20.json"),
+    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_05-27-20_to_06-23-20.json"),
+]
 
-with open(TARGET_FILE, 'r') as chat_file:
-    chats = json.load(chat_file)
+chats = []
+for TARGET_FILE in TARGET_FILES:
+    with open(TARGET_FILE, 'r') as chat_file:
+        new_chats = json.load(chat_file)
+        if isinstance(new_chats, dict):
+            headers = new_chats['header']
+            rows = new_chats['rows']
+            for row in rows:
+                chat = {}
+                for idx, header in enumerate(headers):
+                    chat[headers[idx]] = row[idx]
+                chats.append(chat)
+        else:
+            chats += new_chats
 
-if isinstance(chats, dict):
-    headers = chats['header']
-    rows = chats['rows']
-    chats = []
-    for row in rows:
-        chat = {}
-        for idx, header in enumerate(headers):
-            chat[headers[idx]] = row[idx]
-        chats.append(chat)
+# if isinstance(chats, dict):
+#     headers = chats['header']
+#     rows = chats['rows']
+#     chats = []
+#     for row in rows:
+#         chat = {}
+#         for idx, header in enumerate(headers):
+#             chat[headers[idx]] = row[idx]
+#         chats.append(chat)
 
 chats = [c for c in chats if c['dialogue'] is not None and len(c['dialogue'].split('\\n')) > 1]
 
