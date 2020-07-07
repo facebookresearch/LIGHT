@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import copy
 from light.graph.elements.graph_nodes import (
     GraphObject,
     GraphAgent,
@@ -436,8 +437,48 @@ class OOGraph(object):
         }
         return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
 
-    #TODO: Add a new to_json method which will take json from a room perspective (for size)
-    
+    def to_json_rv(self, room_id):
+        room_node = self.all_nodes[room_id] 
+
+        # Do not forget neighbors for Leave / Arrive events, but drop their connections
+        neighbors = room_node.get_neighbors()
+        neighbors_contained_removed = [copy.deepcopy(neighbor) for neighbor in neighbors]
+        for neighbor in neighbors_contained_removed:
+            neighbor.contained_nodes = {}
+
+        # Get everything contained inside this room using BFS
+        content_queue = room_node.get_contents()
+        sub_nodes = set()
+        sub_nodes.add(room_node)
+        # Is it better to just go through the graph nodes and use get_room here for simplicity?
+        while(len(content_queue) != 0):
+            next_node = content_queue.pop(0)
+            if (next_node not in sub_nodes):
+                sub_nodes.add(next_node)
+                content_queue.extend(next_node.get_contents())
+        nodes = sub_nodes.union(set(neighbors_contained_removed))
+
+        # Organize nodes into type
+        agents = []
+        objects = []
+        rooms = []
+        for node in nodes:
+            if node.room:
+                rooms.append(node.node_id)
+            elif node.agent:
+                agents.append(node.node_id)
+            elif node.object:
+                objects.append(node.node_id)
+            # If it is none of those do not worry, nodes still has it
+
+        dicts = {
+            'agents': sorted(agents),
+            'nodes': {node.node_id : node for node in nodes},
+            'objects': sorted(objects),
+            'rooms': sorted(rooms),
+        }
+        return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
+
     @staticmethod
     def from_json(input_json: str):
         dict_format = json.loads(input_json)

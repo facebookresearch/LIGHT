@@ -226,7 +226,7 @@ class TestGraphFunctions(unittest.TestCase):
         self.assertEqual(len(self.graph.objects), 5)
         self.assertEqual(len(self.graph.agents), 1)
         self.assertEqual(len(self.graph.all_nodes), 8)
-        self.assertEqual(new_node.get_containeßr(), self.room_1)
+        self.assertEqual(new_node.get_container(), self.room_1)
         self.assertEqual(self.container_1.get_container(), new_node)
         self.assertIn(new_node, self.room_1.get_contents())
         self.assertIn(self.container_1, new_node.get_contents())
@@ -492,6 +492,19 @@ class TestGraphFunctions(unittest.TestCase):
         self.assertEqual(as_json_1, as_json_2)
         self.assertDictEqual(json.loads(as_json_1), json.loads(as_json_2))
 
+    def test_json_from_room_view(self):
+        '''Ensure that json dumping from a room POV can be reconstructed into a graph 
+           with only the room'''
+        as_json_1 = self.graph.to_json_rv(self.room_1.node_id)
+        self.assertIsNotNone(as_json_1)
+        self.assertGreater(len(as_json_1), 0)
+        from_json_1 = OOGraph.from_json(as_json_1)
+        from_json_1.assert_valid()
+        as_json_2 = from_json_1.to_json()
+        
+        # Ensure that the created and reloaded json and is equivalent
+        self.assertEqual(as_json_1, as_json_2)
+        self.assertDictEqual(json.loads(as_json_1), json.loads(as_json_2))
 
 if __name__ == '__main__':
     unittest.main()
