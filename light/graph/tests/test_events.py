@@ -158,6 +158,8 @@ class GraphEventTests(unittest.TestCase):
                 f"Could not construct event on input {input_string}",
             )
             assert not isinstance(event, ErrorEvent)
+            res = event.to_json()
+            print(res)
             extra_events = event.execute(self.world)
             for extra_event in extra_events:
                 extra_event.execute(self.world)
