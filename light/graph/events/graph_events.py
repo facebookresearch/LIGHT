@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 # TODO remove ability to take actions with yourself
 
 class SystemMessageEvent(TriggeredEvent):
-    """Event to note that someone has left a room"""
+    """Event to send text messages to specified agents outside of other events"""
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """Message to the target agent"""
