@@ -14,6 +14,7 @@ from light.graph.structured_graph import GraphEncoder
 
 from typing import NamedTuple, TYPE_CHECKING, Dict
 import json
+import inspect
 
 if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
@@ -147,14 +148,26 @@ class GraphEvent(object):
         """
         Instantiate this event from the given json over the given world
         """
-        raise NotImplementedError
+        dict_format = json.loads(input_json)
+        print(dict_format)
+        class_name = dict_format["class"]
+        arglist = inspect.getfullargspec(class_name.__init__)
+        constructor_args = [dict_format[arg] for arg in arglist]
+        event = class_name(*constructor_args)
+        return event
 
     def to_json(self, viewer: GraphAgent = None) -> str:
         """
         Convert the content of this action into a json format that can be
         imported back to the original with from_json
         """
-        raise NotImplementedError
+        use_dict = {k: v for k, v in o.__dict__.copy().items()}
+        use_dict['viewer'] = viewer
+        use_dict['class'] = self.__class__
+        print(use_dict)
+        res = json.dumps(use_dict, cls=GraphEncoder, sort_keys=True, indent=4)
+        print(res)
+        return res
 
     def __repr__(self) -> str:
         args_str = f'{self.actor}'
