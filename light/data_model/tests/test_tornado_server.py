@@ -109,7 +109,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
         
 
         response = yield self.client.fetch(
-            f'{URL}/builder/world/delete/{world1}', method='DELETE', body=b''
+            f'{URL}/builder/world/delete/{world1}', method='DELETE',
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()),  str(world1))
@@ -231,7 +231,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
 
         # Test deletion
         response = yield self.client.fetch(
-            f'{URL}/builder/world/delete/{w_id}', method='DELETE', body=b''
+            f'{URL}/builder/world/delete/{w_id}', method='DELETE',
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()),  str(w_id))
