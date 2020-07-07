@@ -43,9 +43,3 @@ class RepeatSoul(Soul):
             self.target_node, targets=[], text="smile"
         )
         creepy_smile.execute(self.world)
-
-    def reap(self):
-        """
-        RepeatSouls don't have any extra resources, and thus don't need to clean up.
-        """
-        super().reap()

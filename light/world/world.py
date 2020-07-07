@@ -429,7 +429,7 @@ class World(object):
         if action is None:
             action = SystemMessageEvent(agent, [], text_content=txt)
         self.purgatory.send_event_to_soul(action, agent)
-        # TODO remove below when Purgatory is complete
+        # TODO remove below when server game has Soul-based PlayerProvider
         agent.observe_action(txt, action)
         pos_playerid = self.agentid_to_playerid(agent_id)
         if pos_playerid in self.__message_callbacks:
