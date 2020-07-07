@@ -28,6 +28,8 @@ class ProcessedArguments(NamedTuple):
     targets: List[GraphNode]
     text: Optional[str] = None
 
+# TODO: Implement a EventEncoder which will json encode an event 
+# with type, then by encoding the attributes listed here in Graph Event
 
 class GraphEvent(object):
     """

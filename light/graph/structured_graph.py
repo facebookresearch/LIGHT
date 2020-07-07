@@ -436,6 +436,8 @@ class OOGraph(object):
         }
         return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
 
+    #TODO: Add a new to_json method which will take json from a room perspective (for size)
+    
     @staticmethod
     def from_json(input_json: str):
         dict_format = json.loads(input_json)
