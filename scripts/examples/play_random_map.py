@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# To run locally, use:
+# To run on a devfair, use:
+# python scripts/examples/play_random_map.py
+# To run on Jack's laptop, run:
 # python scripts/examples/play_random_map.py --light-model-root ~/Desktop/LIGHT/LIGHT_models/ --light-db-file ~/ParlAI/data/light/environment/db/database3.db
 
 import sys
