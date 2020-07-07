@@ -6,6 +6,8 @@
 
 import unittest
 import shutil, tempfile
+import os
+import json
 
 from light.graph.elements.graph_nodes import GraphAgent
 from light.graph.structured_graph import OOGraph
@@ -33,9 +35,14 @@ class TestInteractionLoggers(unittest.TestCase):
         agent_node.force_move_to(room_node)
         test_world = World({}, None, True)
         test_world.oo_graph = test_graph 
+        test_init_json = test_world.oo_graph.to_json()
         room_logger = RoomInteractionLogger(test_graph, self.data_dir, room_node.node_id)
         room_logger._begin_meta_episode()
         room_logger._end_meta_episode()
+        graph_file = os.path.join(self.data_dir, 'light_graph_dumps/' + room_logger._logged_to + '.json')
+        with open(graph_file, 'r') as graph_json_file:
+            written_init_json = json.load(graph_json_file)
+            self.assertEqual(test_init_json, written_init_json)
 
 if __name__ == "__main__":
     unittest.main()
