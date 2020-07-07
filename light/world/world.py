@@ -108,7 +108,7 @@ class World(object):
 
     def unique_hash(self):
         # TODO: consider world properties
-        return self.oo_graph.to_JSON()
+        return self.oo_graph.to_json()
 
     def __eq__(self, other):
         return self.unique_hash() == other.unique_hash()
