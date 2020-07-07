@@ -30,6 +30,7 @@ class PlayerSoul(Soul):
         """
         super().__init__(target_node, world)
         assert not target_node.is_player, "Cannot have two players in the same agent!"
+        # TODO merge these flags across LIGHT
         target_node.is_player = True
         target_node._human = True
         self.player_id = player_id
