@@ -28,7 +28,6 @@ def get_handlers(db):
         (r"/builder/edits/([0-9]+)/accept/([a-zA-Z_]+)", AcceptEditHandler, {'dbpath': db}),
         (r"/builder/edits/([0-9]+)/reject", RejectEditHandler, {'dbpath': db}),
         (r"/builder/edits/([0-9]+)", ViewEditWithIDHandler, {'dbpath': db}),
-        (r"/builder/edges", EdgesHandler, {'dbpath': db}),
         (r"/builder/entities/([0-9]+)", ViewEntityWithIDHandler, {'dbpath': db}),
         (r"/builder/entities/([a-zA-Z_]+)", EntityHandler, {'dbpath': db}),
         (r"/builder/entities/([a-zA-Z_]+)/fields", EntityFieldsHandler, {'dbpath': db}),
@@ -139,8 +138,8 @@ class ListWorldsHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         with LIGHTDatabase(self.dbpath) as db:
-            # TODO: Change to use value from player username
-            player = self.get_argument("player", 31106, True)
+            username = tornado.escape.xhtml_escape(self.current_user)
+            player = db.get_user_id(username)
             worlds = db.view_worlds(player_id=player)
             self.write(json.dumps(worlds))
 
@@ -155,8 +154,8 @@ class DeleteWorldHandler(BaseHandler):
     def post(self, id):
         with (yield lock.acquire()):
             with LIGHTDatabase(self.dbpath) as db:
-                # TODO: Change to use value from player username
-                player = self.get_argument("player", 31106, True)
+                username = tornado.escape.xhtml_escape(self.current_user)
+                player = db.get_user_id(username)
                 world_id = db.delete_world(world_id=id, player_id=player)
                 self.write(json.dumps(world_id))
 
@@ -171,14 +170,18 @@ class SaveWorldHandler(BaseHandler):
     def post(self):
         with (yield lock.acquire()):
             with LIGHTDatabase(self.dbpath) as db:
-                # TODO: Change to use value from player username
-                player = int(self.get_argument("player", 31106, True))
+                username = tornado.escape.xhtml_escape(self.current_user)
+                player = db.get_user_id(username)
 
-                name = self.get_argument('name', 'default ' + time.ctime(time.time()), True)
-                dimensions = json.loads(self.get_argument('dimensions', '{"height": 3, "width": 3, "floors": 1}'))
+                dimensions = json.loads(self.get_argument('dimensions', '{"id": null, "name": null, "height": 3, "width": 3, "floors": 1}'))
                 world_map = json.loads(self.get_argument('map', '{"tiles": {}, "edges": []}'))
-                entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}, }'))
-        
+                entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}}'))
+
+                name = dimensions["name"]
+                if name is None:
+                    name = 'Default ' + time.ctime(time.time())
+                name = name.strip()
+                
                 world_id = db.create_world(name, player, dimensions["height"], dimensions["width"], dimensions["floors"])[0]
                 #Get DB IDs for all object and store them
                 local_id_to_dbid = {}
@@ -202,7 +205,7 @@ class SaveWorldHandler(BaseHandler):
                 # Now, go through all the entities and make graph nodes for them, storing a map from the id to the graph id
                 dbid_to_nodeid = {}
                 for dbid in local_id_to_dbid.values():
-                    node_id = db.create_graph_node(dbid)
+                    node_id = db.create_graph_node(world_id, dbid)
                     dbid_to_nodeid[dbid] = node_id[0]
 
                 # Make the edges!
@@ -226,83 +229,59 @@ class LoadWorldHandler(BaseHandler):
         self.dbpath = dbpath
 
     @tornado.web.authenticated
-    # Prints let you see just how long this takes...
     def get(self, world_id):
         with LIGHTDatabase(self.dbpath) as db:
 
-            start = time.time()
-
             result = {}
-            # TODO: Change to use value from player username
-            player_id = self.get_argument("player", 31106, True)
+            username = tornado.escape.xhtml_escape(self.current_user)
+            player_id = db.get_user_id(username)
 
             # Load the world info (dimensions, name, id) and store in "dimensions"
             world = db.get_world(world_id, player_id)
-            assert len(world) == 1, "Must get a world back to load it"
+            assert len(world) == 1, "Must get a single world back to load it"
             world = world[0]
             result["dimensions"] = {x: world[x] for x in world.keys() if x != 'owner_id'}
             result["dimensions"]["floors"] = result["dimensions"]["num_floors"]
             del result["dimensions"]["num_floors"]
 
-            # Load the entities (by getting the tiles and all connected components)
-            # Build local store here too!
-            tiles = db.get_tiles(world_id)
+            resources = db.get_world_resources(world_id, player_id)
+            tiles = resources[0]
             tile_list = [{x: tile[x] for x in tile.keys() if x != 'world_id'} for tile in tiles]
-            edges = set()
+            edges = resources[1]
+            edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
+            
+            # Load the entities 
             nextID = 1
             entities = {'room': {}, 'character': {}, 'object': {},}
-
             node_to_local_id = {}
-            node_to_type = {}
-            for tile in tile_list:
-                db.get_edges(tile['id'], edges)
-                node_to_local_id[tile['room_node_id']] = nextID
-                node_to_type[tile['room_node_id']] = 'room'
-                row = db.get_room(db.get_node(tile['room_node_id'])[0]['entity_id'])[0]
-                entities["room"][nextID] = {key: row[key] for key in row.keys()}
-                tile['room'] = nextID
-                del tile['id']
-                del tile['room_node_id']
-                nextID += 1
+            type_to_entities = {'room': resources[2], 'character': resources[3], 'object':resources[4],}
+            for type_ in type_to_entities.keys():
+                for entity in type_to_entities[type_]:
+                    entities[type_][nextID] = {key: entity[key] for key in entity.keys()}
+                    node_to_local_id[entity['id']] = nextID
 
-            edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
-            edges = []
-            # now get all entity ids associated with the edges
-            for edge in edge_list:
-                if edge['src_id'] not in node_to_local_id:
-                    src = db.get_node(edge['src_id'])[0]
-                    node_to_local_id[edge['src_id']] = nextID
-                    type_src = db.get_id(src['entity_id'])[0]['type'] 
-                    node_to_type[edge['src_id']] = type_src
-                    row = getattr(db, 'get_' + type_src)(id=src['entity_id'])[0]
-                    entities[type_src][nextID] = {key: row[key] for key in row.keys()}
+                    # Modify entires to fit format
+                    del entities[type_][nextID]['w_id']
+                    entities[type_][nextID]['id'] = entities[type_][nextID]['entity_id']
+                    del entities[type_][nextID]['entity_id']
                     nextID += 1
-
-                if edge['dst_id'] not in node_to_local_id:
-                    dst = db.get_node(edge['dst_id'])[0]
-                    node_to_local_id[edge['dst_id']] = nextID
-                    type_dst = db.get_id(dst['entity_id'])[0]['type']
-                    node_to_type[edge['dst_id']] = type_dst
-                    row = getattr(db, 'get_' + type_dst)(id=dst['entity_id'])[0]
-                    entities[type_dst][nextID] = {key: row[key] for key in row.keys()}
-                    nextID += 1
-                
-                src = node_to_local_id[edge['src_id']]
-                dst = node_to_local_id[edge['dst_id']]
-                edges.append({"src" : src, "dst": dst, "type": edge["edge_type"]})
-
             entities["nextID"] = nextID
             result["entities"] = entities
 
-            # Combine all the dictionaries to return
-            world_map = {}
-            world_map['tiles'] = tile_list
-            world_map['edges'] = edges
-            result["map"] = world_map
-            self.write(json.dumps(result))
+            #Load the edges and tiles
+            for tile in tile_list:
+                tile['room'] = node_to_local_id[tile['room_node_id']]
+                del tile['id']
+                del tile['room_node_id']
+            edges = []
+            for edge in edge_list:
+                src = node_to_local_id[edge['src_id']]
+                dst = node_to_local_id[edge['dst_id']]
+                edges.append({"src" : src, "dst": dst, "type": edge["edge_type"]})
+            result["map"] = {'tiles': tile_list, 'edges': edges}
 
-            end = time.time()
-            print("Finally done - took " + str(end - start) + " seconds")        
+            # Return data
+            self.write(json.dumps(result))
  #-------------------------------------------------------------#
 
 class EntityEditHandler(BaseHandler):
@@ -575,36 +554,6 @@ class TypesHandler(BaseHandler):
     def get(self):
         with LIGHTDatabase(self.dbpath) as db:
             self.write(json.dumps(list(db.table_dict.keys())))
-
-
-class EdgesHandler(BaseHandler):
-    '''Create edges between entities'''
-
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
-
-    @tornado.web.authenticated
-    def get(self):
-        room = int(self.get_argument('room'))
-        with LIGHTDatabase(self.dbpath) as db:
-            potential_entities = db.find_database_entities_in_rooms(room)
-            self.write(json.dumps(potential_entities))
-
-    @tornado.web.authenticated
-    def post(self):
-        '''displays/creates edges'''
-        with LIGHTDatabase(self.dbpath) as db:
-            room = int(self.get_argument('room'))
-            objs = json.loads(self.get_argument('objs', '[]', True))
-            chars = json.loads(self.get_argument('chars', '[]', True))
-            neighbors = json.loads(self.get_argument('neighbors', '[]', True))
-
-            # convert to boolean
-            dry_run = eval(self.get_argument('dry_run', 'False', 'True'))
-            edges = db.create_edges(room, chars, objs, neighbors, dry_run)
-            ids = [i[0] for i in edges]
-            edges_json = json.dumps(edges)
-            self.write(json.dumps(edges))
 
 
 def main():
