@@ -103,7 +103,7 @@ class TestSouls(unittest.TestCase):
         observations = test_soul.observations
         # Extra observation may have slipped in?
         self.assertEqual(len(observations), 3, "Unexpected amount of observations")
-
+        self.assertEqual(len(test_soul._observe_threads), 0, "All obs threads should have deleted")
 
 if __name__ == "__main__":
     unittest.main()

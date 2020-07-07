@@ -32,19 +32,27 @@ class Soul(ABC):
         """
         self.target_node = target_node
         self.world = world
-        self._observe_threads = []
+        self._observe_threads = {}
 
     def launch_observe_event_thread(self, event):
         """
         Souls will observe events in a background thread to ensure that 
         they can choose to act how they wish in response.
         """
+
+        thread_id = f"Node-{self.target_node.node_id}-obs-{time.time():.10f}"
+
+        def _launch_thread_and_cleanup(event):
+            self.observe_event(event)
+            del self._observe_threads[thread_id]
+
         observe_thread = threading.Thread(
-            target=self.observe_event,
+            target=_launch_thread_and_cleanup,
             args=(event,),
             name=f"Node-{self.target_node.node_id}-observe-{time.time():.4f}",
         )
-        self._observe_threads.append(observe_thread)
+        # Keep track of thread for 
+        self._observe_threads[thread_id] = (observe_thread)
         observe_thread.start()
 
     @abstractmethod
