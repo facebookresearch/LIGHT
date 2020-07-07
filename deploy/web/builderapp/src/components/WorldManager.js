@@ -189,6 +189,9 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
             <tr>
               <th>World ID</th>
               <th>World Name</th>
+              <th>Height</th>
+              <th>Width</th>
+              <th>Number of Floors</th>
               <th>Load</th>
               <th>Delete</th>
             </tr>
@@ -206,9 +209,12 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
                   <td>
                     <strong>{d.name}</strong>
                   </td>
+                  <td>{d.height}</td>
+                  <td>{d.width}</td>
+                  <td>{d.num_floors}</td>
                   <td>
                     <Button
-                      intent={Intent.SUCCESS}
+                      intent={Intent.PRIMARY}
                       type="submit"
                       onClick={() => getWorld(d.id)}
                     >
