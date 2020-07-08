@@ -41,7 +41,7 @@ class TestInteractionLoggers(unittest.TestCase):
         room_logger._end_meta_episode()
         graph_file = os.path.join(self.data_dir, 'light_graph_dumps',f'{room_logger._last_logged_to}.json')
         with open(graph_file, 'r') as graph_json_file:
-            written_init_json = json.load(graph_json_file)
+            written_init_json = graph_json_file.read()
             self.assertEqual(test_init_json, written_init_json)
     
     def test_simple_room_logger_saves_and_loads_event(self):
