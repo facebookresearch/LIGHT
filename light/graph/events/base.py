@@ -166,9 +166,9 @@ class GraphEvent(object):
                     else:
                         return GraphNode.from_json_dict(obj)
             elif type(obj) is dict:
-                return {k: helper_conversion(obj[k], world) for k in obj.keys()}
+                return {k: dict_node_conversion(obj[k], world) for k in obj.keys()}
             elif type(obj) is list:
-                return [helper_conversion(item, world) for item in obj]
+                return [dict_node_conversion(item, world) for item in obj]
             else:
                 # TODO: Consider other datatypes such as set or tuples (although none in events 
                 # currently, so not an issue)

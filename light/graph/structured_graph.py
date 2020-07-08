@@ -438,26 +438,19 @@ class OOGraph(object):
         return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
 
     def to_json_rv(self, room_id):
+        '''Export a graph with room_id, its descendants, and its direct neighbors (for logging)'''
         room_node = self.all_nodes[room_id] 
 
-        # Do not forget neighbors for Leave / Arrive events, but drop their connections
+        # Do not forget neighbors for Leave / Arrive events, but drop the things in them
         neighbors = room_node.get_neighbors()
-        neighbors_contained_removed = [copy.deepcopy(neighbor) for neighbor in neighbors]
+        neighbors_contained_removed = set([copy.deepcopy(neighbor) for neighbor in neighbors])
         for neighbor in neighbors_contained_removed:
             neighbor.contained_nodes = {}
 
-        # Get everything contained inside this room using BFS
-        content_queue = room_node.get_contents()
-        sub_nodes = set()
-        sub_nodes.add(room_node)
-        while(len(content_queue) != 0):
-            next_node = content_queue.pop(0)
-            if (next_node not in sub_nodes):
-                sub_nodes.add(next_node)
-                content_queue.extend(next_node.get_contents())
-        nodes = sub_nodes.union(set(neighbors_contained_removed))
+        # Get everything contained inside this room using BFS, then union with neighbors
+        contained_nodes = OOGraph.get_contained_in_room(room_node)
+        nodes = contained_nodes.union(neighbors_contained_removed)
 
-        # Organize nodes into type
         agents = []
         objects = []
         rooms = []
@@ -478,6 +471,22 @@ class OOGraph(object):
         }
         return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
 
+    @staticmethod
+    def get_contained_in_room(room_node):
+        """
+        Starting from room_node, use a BFS to get all descendant nodes of
+        the room node in the graph (including the room node)
+        """
+        content_queue = room_node.get_contents()
+        contained_nodes = set()
+        contained_nodes.add(room_node)
+        while(len(content_queue) != 0):
+            next_node = content_queue.pop(0)
+            if (next_node not in contained_nodes):
+                contained_nodes.add(next_node)
+                content_queue.extend(next_node.get_contents())
+        return contained_nodes
+        
     @staticmethod
     def from_json(input_json: str):
         dict_format = json.loads(input_json)
