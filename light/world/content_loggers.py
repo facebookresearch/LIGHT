@@ -76,104 +76,114 @@ class InteractionLogger(abc.ABC):
 
 class AgentInteractionLogger(InteractionLogger):
     '''
-        This interaction logger attaches to human agents room in the graph, logging all
-        events the human observes.  This logger also requires serializing more rooms, since agent encounters many rooms
-        along its traversal
+        This interaction logger attaches to human agents in the graph, logging all
+        events the human observes.  This logger also requires serializing more rooms, 
+        since agent encounters many rooms along its traversal
     '''
-    def __init__(self, graph, data_location, room_id, max_bot_history=5, afk_turn_tolerance=10):
-        super().__init__(graph, data_location)
-        
-        self.data_path = data_location
-        self.conversation_buffer = []
-        self.bot_context_buffer = collections.deque(maxlen=max_bot_history)
-        self.max_bot_history = max_bot_history
+    def __init__(self, graph, data_path, agent, max_afk_history=5, afk_turn_tolerance=25):
+        super().__init__(graph, data_path)
+        self.agent = agent
+        self.max_afk_history = max_afk_history
         self.afk_turn_tolerance = afk_turn_tolerance
-        self.curr_room_id = room_id
-        # Does graph even want us logging?
-        self.is_active = graph._opt.get('dump_dialogues', False) is True
-        self.logging_intialized = False
+
+        self.turns_wo_player_action = 0 #Player is acting by virtue of this initialized!
+        self.afk_context_buffer = collections.deque(maxlen=max_afk_history)
+        self.event_buffer = []
+        self.state_history = []
+        self._logging_intialized = False
+        # Does graph even want us logging? - can change to property of world
+        if graph._opt is not None:
+            self.is_active = graph._opt.get('dump_dialogues', False) is True
+        else:
+            self.is_active = True
 
     def _begin_meta_episode(self):
         self._clear_buffer()
-        self.turns_wo_human = -1
-        self.logging_intialized = True
-        # TODO: If we persist the number of meta episodes, write to metadata file with that info now
-        #       so that no one else tries to take my number!
-        self.graph_states = [self._init_graph_state()]
+        self._add_current_graph_state()
+        self.turns_wo_player_action = 0
+        self._logging_intialized = True
 
-    def _clear_buffer(self):
-        '''Clear this buffer's required storage'''
-        self.conversation_buffer = []
-        self.bot_context_buffer.clear()
+    def _clear_buffers(self):
+        '''Clear the buffers storage for this logger, dumping context'''
+        self.state_history.clear()
+        self.event_buffer.clear()
 
-    def _get_graph_state(self):
+    def _add_current_graph_state(self):
         """Make a copy of the graph state so we can replay events on top of it
         """
         try:
-            return OOGraph(self.graph, self.curr_room_id).toJSON()
+            self.state_history.append(self.graph.to_json_rv(self.agent.get_room().node_id))
         except Exception as e:
             print(e)
             import traceback
             traceback.print_exc()
             raise
 
-    def _is_logging(self):
-        return self.logging_initialized
+    def _is_player_afk(self):
+        return self.turns_wo_players >= self.afk_turn_tolerance
 
     def _end_meta_episode(self):
+        self._logging_intialized = False
         self._log_interactions()
-        self.logging_intialized = False
     
     def _log_interactions(self):
         # First, check graph path, then write the graph dump
-        graph_path = os.path.join(self.data_path, '/light_graph_dumps')
+        graph_path = os.path.join(self.data_path, 'light_graph_dumps')
         if not os.path.exists(graph_path):
             os.mkdir(graph_path)
-        for graph in self.graph_states:
+
+        # TODO: Fix this logic for agent writing out multiple graphs
+        for state in self.state_history:
             unique_graph_name = str(uuid.uuid4())
+            self._last_logged_to = unique_graph_name
             graph_file_name = f'{unique_graph_name}.json'
             file_path = os.path.join(graph_path, graph_file_name)
             with open(file_path, 'w') as dump_file:
-                json.dump(self.init_state, dump_file)
+                dump_file.write(state)
 
-            # Now, do the same for events, dumping in the light_event_dumps/rooms
-            events_path = os.path.join(self.data_path, '/light_event_dumps/agents')
-            if not os.path.exists(events_path):
-                os.mkdir(events_path)
-            event_file_name = f'{unique_graph_name}_events.json'
-            events_file_path = os.path.join(events_path, event_file_name)
-            # Potential logic bug - should this be a to apend instead of w to write???
-            with open(events_file_path, 'w') as dump_file:
-                for event, time in self.conversation_buffer:
-                    to_write = ''.join([time, event])
-                    json.dump(to_write, dump_file)
+        # Now, do the same for events, dumping in the light_event_dumps/rooms
+        events_path = os.path.join(self.data_path, 'light_event_dumps')
+        if not os.path.exists(events_path):
+            os.mkdir(events_path)
+        events_room_path = os.path.join(events_path, 'room')
+        if not os.path.exists(events_room_path):
+            os.mkdir(events_room_path)
+
+        event_file_name = f'{unique_graph_name}_events.json'
+        events_file_path = os.path.join(events_room_path, event_file_name)
+        with open(events_file_path, 'w') as dump_file:
+            for event, time in self.event_buffer:
+                # TODO:  If writing multiple graphs, need to reference those here 
+                dump_file.write(''.join([time, '\n']))
+                dump_file.write(event)
 
     def observe_event(self, event):
-        # Only log if logger is active
         if not self.is_active:
             return
 
-        # Do we need to set initial logging state, or flush because we are done?
-        if not self._is_logging():
+        event_t = type(event)
+        if event_t is SpawnEvent and not self._logging_intialized:
             self._begin_meta_episode()
-        else if event is 'dead': # If agent is exiting or dieing or something, write
+        elif event_t is DeathEvent: # If agent is exiting or dieing or something, end meta episode
             self._end_meta_episode()
 
         # Get new room state
-        if event is 'enter' and event.actor is 'self':
-            self.curr_room_id = event.room
-            self.graph_states.append(self._get_graph_state())
+        if event is ArriveEvent and event.actor is self.agent:
+            # NOTE: If this is before executing event, not reliable!
+            self._add_current_graph_state()
 
         # Store context from bots, or store current events
-        if self.turns_wo_human >= self.afk_turn_tolerance:
-            self.bot_context_buffer.append((event.to_json(), time.ctime()))
+        if (self._is_player_afk() and not event.actor is self.agent):
+            self.afk_context_buffer.append((event.to_json(), time.ctime()))
         else:
-            if event.actor is  'human':
-                self.turns_wo_human = 0
-                self.conversation_buffer.update(self.bot_context_buffer)
+            if event.actor is self.agent:
+                if self._is_player_afk():
+                    self.event_buffer.extend(self.afk_context_buffer)
+                    self.afk_context_buffer.clear()
+                self.turns_wo_player_action = 0
             else:
-                self.turns_wo_human += 1
-            self.conversation_buffer.append((event.to_json(), time.ctime()))
+                self.turns_wo_player_action += 1
+            self.event_buffer.append((event.to_json(), time.ctime()))
 
 class RoomInteractionLogger(InteractionLogger):
     '''
@@ -226,7 +236,7 @@ class RoomInteractionLogger(InteractionLogger):
         return self.num_players_present > 0
 
     def _is_players_afk(self):
-        return self.turns_wo_players > self.afk_turn_tolerance
+        return self.turns_wo_players >= self.afk_turn_tolerance
 
     def _end_meta_episode(self):
         self._log_interactions()
