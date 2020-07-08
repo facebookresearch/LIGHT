@@ -8,6 +8,8 @@ import random
 import threading
 from typing import TYPE_CHECKING, List, Tuple, Type, Callable, Any, Optional
 
+from light.world.souls.player_soul import PlayerSoul
+
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
     from light.graph.world.world import World
@@ -37,6 +39,7 @@ class Purgatory:
         self.filler_soul_providers: Dict[str, SoulProvider] = {}
         self.world = world
         self.player_assign_condition = threading.Condition()
+        self.players = 0
 
     def register_filler_soul_provider(
         self,
@@ -93,12 +96,19 @@ class Purgatory:
 
     def get_soul_for_player(
         self, player_provider, agent: Optional["GraphAgent"] = None
-    ) -> Optional[int]:
+    ) -> Optional["Soul"]:
         """
         Create a player soul registered with the given player provider, returning
-        the player_soul_id if such a soul can be created, None if not (the world is full)
+        the PlayerSoul if such a soul can be created, None if not (the world is full)
         """
         with self.player_assign_condition:
-            # TODO check the world if there are any players that can be inhabited, then
-            # create a PlayerSoul for that player
-            pass
+            possible_agents = self.world.get_possible_player_nodes()
+            if len(possible_agents) > 0:
+                target_agent = random.choice(possible_agents)
+                self.clear_soul(target_agent)
+                soul = PlayerSoul(target_agent, self.world, self.players, player_provider)
+                self.node_id_to_soul[target_agent.node_id] = soul
+                self.player_soul_id_to_soul[self.players] = soul
+                self.players += 1
+                return soul
+        return None

@@ -15,7 +15,7 @@ import random
 from light.world.npc_models import *
 from light.graph.utils import rm, deprecated
 from light.graph.events.base import GraphEvent, ErrorEvent
-from light.graph.events.graph_events import ALL_EVENTS, ALL_EVENTS_LIST, SpawnEvent
+from light.graph.events.graph_events import ALL_EVENTS, ALL_EVENTS_LIST, SpawnEvent, SystemMessageEvent
 from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 from light.world.views import WorldViewer
 from light.world.purgatory import Purgatory
@@ -427,12 +427,9 @@ class World(object):
         if agent is None:
             print(txt, agent_id)
         if action is None:
-            # TODO no actions should be None anymore, messages
-            # should all be moved to actions
-            pass
-        else:
-            self.purgatory.send_event_to_soul(action, agent)
-        # TODO remove below when Purgatory is complete
+            action = SystemMessageEvent(agent, [], text_content=txt)
+        self.purgatory.send_event_to_soul(action, agent)
+        # TODO remove below when server game has Soul-based PlayerProvider
         agent.observe_action(txt, action)
         pos_playerid = self.agentid_to_playerid(agent_id)
         if pos_playerid in self.__message_callbacks:
@@ -938,6 +935,10 @@ class World(object):
         else:
             parsed_event.execute(self)
             return True, parsed_event.to_canonical_form()
+
+    def get_possible_player_nodes(self):
+        """Return any nodes that would be allowed to be reinhabited by a player"""
+        return self.oo_graph.get_npcs()
 
     # TODO refactor players
     def spawn_player(self, existing_player_id=-1):
