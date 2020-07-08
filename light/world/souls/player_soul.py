@@ -59,5 +59,6 @@ class PlayerSoul(Soul):
         PlayerSouls must remove the player flag from their target GraphAgent when removed.
         """
         super().reap()
+        # TODO:  Need to remove agent here?
         self.target_node.is_player = False
         self.provider.on_reap_soul(self)
