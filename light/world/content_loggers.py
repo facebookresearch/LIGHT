@@ -98,7 +98,7 @@ class AgentInteractionLogger(InteractionLogger):
             self.is_active = True
 
     def _begin_meta_episode(self):
-        self._clear_buffer()
+        self._clear_buffers()
         self._add_current_graph_state()
         self.turns_wo_player_action = 0
         self._logging_intialized = True
@@ -120,7 +120,7 @@ class AgentInteractionLogger(InteractionLogger):
             raise
 
     def _is_player_afk(self):
-        return self.turns_wo_players >= self.afk_turn_tolerance
+        return self.turns_wo_player_action >= self.afk_turn_tolerance
 
     def _end_meta_episode(self):
         self._logging_intialized = False
@@ -133,6 +133,7 @@ class AgentInteractionLogger(InteractionLogger):
             os.mkdir(graph_path)
 
         # TODO: Fix this logic for agent writing out multiple graphs
+        print(len(self.state_history))
         for state in self.state_history:
             unique_graph_name = str(uuid.uuid4())
             self._last_logged_to = unique_graph_name
@@ -145,7 +146,7 @@ class AgentInteractionLogger(InteractionLogger):
         events_path = os.path.join(self.data_path, 'light_event_dumps')
         if not os.path.exists(events_path):
             os.mkdir(events_path)
-        events_room_path = os.path.join(events_path, 'room')
+        events_room_path = os.path.join(events_path, 'agent')
         if not os.path.exists(events_room_path):
             os.mkdir(events_room_path)
 
@@ -168,7 +169,7 @@ class AgentInteractionLogger(InteractionLogger):
             self._end_meta_episode()
 
         # Get new room state
-        if event is ArriveEvent and event.actor is self.agent:
+        if event_t is ArriveEvent and event.actor is self.agent:
             # NOTE: If this is before executing event, not reliable!
             self._add_current_graph_state()
 
