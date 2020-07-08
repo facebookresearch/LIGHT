@@ -29,19 +29,6 @@ def node_to_json(node: GraphNode) -> Dict[str, Any]:
     return json.dumps(node, cls=GraphEncoder, sort_keys=True, indent=4)
 
 
-class EventEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, set):
-            return sorted(list(o))
-        if isinstance(o, list):
-            return sorted(o)
-        if isinstance(o, GraphEdge):
-            return {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
-        if not isinstance(o, GraphNode):
-            return super().default(o)
-        use_dict = {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
-        return use_dict
-
 class ProcessedArguments(NamedTuple):
     targets: List[GraphNode]
     text: Optional[str] = None
@@ -164,13 +151,12 @@ class GraphEvent(object):
         """
         Instantiate this event from the given json over the given world
         """
-        def helper_conversion(obj, world):
+        def dict_node_conversion(obj, world):
             if type(obj) is dict and 'node_id' in obj:
-                # Handle things that got removed from world or are not yet part of it
+                # Handle things that got removed from world by the event
                 if obj['node_id'] in world.oo_graph.all_nodes:
                     return world.oo_graph.all_nodes[obj['node_id']]
                 else:
-                    # Note: Since this stuff got detached, need to manually set this
                     if obj['agent'] == True:
                         return GraphAgent.from_json_dict(obj)
                     elif obj['object']:
@@ -184,11 +170,11 @@ class GraphEvent(object):
             elif type(obj) is list:
                 return [helper_conversion(item, world) for item in obj]
             else:
-                # Could be set or something else, but those aren't converted so no biggie
+                # TODO: Consider other datatypes such as set or tuples (although none in events 
+                # currently, so not an issue)
                 return obj
 
-        # Go through the dict, converting everything that is a node to a node!
-        dict_format = helper_conversion(json.loads(input_json), world)
+        dict_format = dict_node_conversion(json.loads(input_json), world)
         class_ = GraphEvent
         if "__class__" in dict_format:
             class_name = dict_format.pop("__class__")
@@ -197,12 +183,9 @@ class GraphEvent(object):
             module = __import__(module_name, fromlist=[None])
             class_ = getattr(module, class_name)
 
-        # This stuff is handled in constructor, no need to use later
         arglist = [dict_format.pop(arg) for arg in inspect.getfullargspec(class_.__init__)[0] if arg is not 'self']
         event = class_(*arglist)
-
         for k, v in dict_format.items():
-            # Make sure all key values match for none nodes
             event.__dict__[k] = v
         return event
 
@@ -215,7 +198,8 @@ class GraphEvent(object):
         use_dict['viewer'] = viewer
         use_dict['__class__'] = self.__class__.__name__
         use_dict['__module__'] = self.__module__
-        res = json.dumps(use_dict, cls=EventEncoder, sort_keys=True, indent=4)
+        # TODO: Consider moving graph encoder to a utils since we use here too!
+        res = json.dumps(use_dict, cls=GraphEncoder, sort_keys=True, indent=4)
         return res
 
     def __repr__(self) -> str:
