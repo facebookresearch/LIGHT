@@ -450,7 +450,6 @@ class OOGraph(object):
         content_queue = room_node.get_contents()
         sub_nodes = set()
         sub_nodes.add(room_node)
-        # Is it better to just go through the graph nodes and use get_room here for simplicity?
         while(len(content_queue) != 0):
             next_node = content_queue.pop(0)
             if (next_node not in sub_nodes):

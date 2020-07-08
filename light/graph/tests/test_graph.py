@@ -506,5 +506,15 @@ class TestGraphFunctions(unittest.TestCase):
         self.assertEqual(as_json_1, as_json_2)
         self.assertDictEqual(json.loads(as_json_1), json.loads(as_json_2))
 
+        # Check things in room from OG graph exists
+        self.assertTrue(from_json_1.node_exists(self.char_1.node_id))
+        self.assertTrue(from_json_1.node_exists(self.obj_1.node_id))
+        self.assertTrue(from_json_1.node_exists(self.container_1.node_id))
+
+        # Check that things from OG. graph not in room are not included
+        self.assertFalse(from_json_1.node_exists(self.char_2.node_id))
+        self.assertFalse(from_json_1.node_exists(self.obj_2.node_id))
+        self.assertFalse(from_json_1.node_exists(self.container_2.node_id))
+
 if __name__ == '__main__':
     unittest.main()

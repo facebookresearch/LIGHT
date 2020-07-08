@@ -159,7 +159,11 @@ class GraphEventTests(unittest.TestCase):
             )
             assert not isinstance(event, ErrorEvent)
             res = event.to_json()
-            print(res)
+            event_back = GraphEvent.from_json(res, self.world)
+            self.assertEqual(type(event), type(event_back), "Events should be same type")
+            for k in event.__dict__:
+                if not k.startswith("__"):
+                    self.assertEqual(event.__dict__[k], event_back.__dict__[k], "Json loaded back should match")
             extra_events = event.execute(self.world)
             for extra_event in extra_events:
                 extra_event.execute(self.world)
