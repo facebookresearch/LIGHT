@@ -8,12 +8,17 @@
 from typing import Union, Any, List, Optional, cast, Type
 from light.graph.elements.graph_nodes import (
     GraphNode,
+    GraphEdge,
     GraphAgent,
+    GraphObject,
+    GraphNode,
+    GraphRoom,
 )
 from light.graph.structured_graph import GraphEncoder
 
 from typing import NamedTuple, TYPE_CHECKING, Dict
 import json
+import inspect
 
 if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
@@ -58,12 +63,13 @@ class GraphEvent(object):
         self.actor = actor
         self.room = actor.get_room()
         self.target_nodes = [] if target_nodes is None else target_nodes
-        self.present_agent_ids = [
-            x.node_id for x in self.room.get_contents() if x.agent
-        ]
-        self._canonical_targets = [
-            x.get_view_from(self.room) for x in self.target_nodes
-        ]
+        if self.room is not False:
+            self.present_agent_ids = [
+                x.node_id for x in self.room.get_contents() if x.agent
+            ]
+            self._canonical_targets = [
+                x.get_view_from(self.room) for x in self.target_nodes
+            ]
         self.text_content = text_content
 
     def execute(self, world: 'World') -> List['GraphEvent']:
@@ -145,14 +151,56 @@ class GraphEvent(object):
         """
         Instantiate this event from the given json over the given world
         """
-        raise NotImplementedError
+        def dict_node_conversion(obj, world):
+            if type(obj) is dict and 'node_id' in obj:
+                # Handle things that got removed from world by the event
+                if obj['node_id'] in world.oo_graph.all_nodes:
+                    return world.oo_graph.all_nodes[obj['node_id']]
+                else:
+                    if obj['agent'] == True:
+                        return GraphAgent.from_json_dict(obj)
+                    elif obj['object']:
+                        return GraphObject.from_json_dict(obj)                    
+                    elif obj['room']:
+                        return GraphRoom.from_json_dict(obj)
+                    else:
+                        return GraphNode.from_json_dict(obj)
+            elif type(obj) is dict:
+                return {k: dict_node_conversion(obj[k], world) for k in obj.keys()}
+            elif type(obj) is list:
+                return [dict_node_conversion(item, world) for item in obj]
+            else:
+                # TODO: Consider other datatypes such as set or tuples (although none in events 
+                # currently, so not an issue)
+                return obj
+
+        dict_format = dict_node_conversion(json.loads(input_json), world)
+        class_ = GraphEvent
+        if "__class__" in dict_format:
+            class_name = dict_format.pop("__class__")
+            module_name = dict_format.pop("__module__")
+            # Must pass non empty list to get the exact module
+            module = __import__(module_name, fromlist=[None])
+            class_ = getattr(module, class_name)
+
+        arglist = [dict_format.pop(arg) for arg in inspect.getfullargspec(class_.__init__)[0] if arg is not 'self']
+        event = class_(*arglist)
+        for k, v in dict_format.items():
+            event.__dict__[k] = v
+        return event
 
     def to_json(self, viewer: GraphAgent = None) -> str:
         """
         Convert the content of this action into a json format that can be
         imported back to the original with from_json
         """
-        raise NotImplementedError
+        use_dict = {k: v for k, v in self.__dict__.copy().items() if not k.startswith("__")}
+        use_dict['viewer'] = viewer
+        use_dict['__class__'] = self.__class__.__name__
+        use_dict['__module__'] = self.__module__
+        # TODO: Consider moving graph encoder to a utils since we use here too!
+        res = json.dumps(use_dict, cls=GraphEncoder, sort_keys=True, indent=4)
+        return res
 
     def __repr__(self) -> str:
         args_str = f'{self.actor}'
