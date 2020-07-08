@@ -158,9 +158,22 @@ class GraphEventTests(unittest.TestCase):
                 f"Could not construct event on input {input_string}",
             )
             assert not isinstance(event, ErrorEvent)
+            # Commented out stuff because there are some issues with jsoning the event in relation
+            # to the graph
+            # og_json = self.world.oo_graph.to_json_rv(actor_node.get_room().node_id)
             extra_events = event.execute(self.world)
             for extra_event in extra_events:
                 extra_event.execute(self.world)
+            # self.maxDiff = None
+            res = event.to_json()
+            # old_world = World({}, None)
+            # old_world.oo_graph = OOGraph.from_json(og_json)
+            event_back = GraphEvent.from_json(res, self.world)
+            self.assertEqual(type(event), type(event_back), "Events should be same type")
+            # self.assertEqual(event.to_json(), event_back.to_json(), "Events should match json'd again")
+            for k in event.__dict__:
+                if not k.startswith("__"):
+                    self.assertEqual(event.__dict__[k], event_back.__dict__[k], "Json loaded back should match")
             self.graph.delete_nodes()
             final_json = self.graph.to_json()
             self.assertDictEqual(

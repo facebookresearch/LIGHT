@@ -430,6 +430,7 @@ class World(object):
         if pos_playerid in self.__message_callbacks:
             self.__message_callbacks[pos_playerid](self, action)
 
+    # TODO: Put the room logging here
     def broadcast_to_agents(self, action, agents, exclude_agents=None):
         '''send a message to agents in the specified list '''
         if exclude_agents is None:
