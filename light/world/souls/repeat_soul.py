@@ -31,11 +31,14 @@ class RepeatSoul(Soul):
         RepeatSouls do very little beyond saying what they observed, and smiling
         for good measure.
         """
+        if event.actor == self.target_node:
+            return
         my_observation = event.view_as(self.target_node)
         repeat_text = f"I just saw the following: {my_observation}"
-        repeat_obs = SayEvent.construct_from_args(
-            self.target_node, targets=[], text=my_observation
+        repeat_event = SayEvent.construct_from_args(
+            self.target_node, targets=[], text=repeat_text
         )
+        repeat_event.execute(self.world)
         creepy_smile = EmoteEvent.construct_from_args(
             self.target_node, targets=[], text="smile"
         )
