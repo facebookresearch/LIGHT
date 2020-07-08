@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from light.world.souls.soul import Soul
-
+from light.world.content_loggers import AgentInteractionLogger
 from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
@@ -35,6 +35,8 @@ class PlayerSoul(Soul):
         target_node._human = True
         self.player_id = player_id
         self.provider = provider  # TODO link with real provider
+        # TODO: Change this with a configurable path
+        self.agent_logger = AgentInteractionLogger("./data_path", world.oo_graph, target_node)
         provider.register_soul(self)
 
     def handle_act(self, act_text):
@@ -50,6 +52,7 @@ class PlayerSoul(Soul):
         correct format to send to the view.
         """
         self.provider.player_observe_event(self, event)
+        self.agent_logger.observe_event(event)
 
     def reap(self):
         """

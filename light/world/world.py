@@ -435,7 +435,6 @@ class World(object):
         if pos_playerid in self.__message_callbacks:
             self.__message_callbacks[pos_playerid](self, action)
 
-    # TODO: Put the room logging here
     def broadcast_to_agents(self, action, agents, exclude_agents=None):
         '''send a message to agents in the specified list '''
         if exclude_agents is None:
@@ -459,6 +458,7 @@ class World(object):
                 if a in exclude_agents:
                     continue
                 self.send_action(a, action)
+            self.oo_graph.room_id_to_loggers[action.get_room().room_id].observe_event(action)
 
     def broadcast_to_room(self, action, exclude_agents=None, told_by=None, target_room=None):
         '''send a message to everyone in a room'''

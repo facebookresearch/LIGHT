@@ -9,6 +9,7 @@ from light.graph.elements.graph_nodes import (
     GraphVoidNode,
     GraphEdge,
 )
+from light.world.content_loggers import RoomInteractionLogger
 
 class GraphEncoder(json.JSONEncoder):
     def default(self, o):
@@ -34,6 +35,7 @@ class OOGraph(object):
         self.objects = {}
         self.agents = {}
         self.rooms = {}
+        self.room_id_to_loggers = {}
         self.all_nodes = {}
         self.void = GraphVoidNode()
         self.cnt = 0
@@ -103,6 +105,8 @@ class OOGraph(object):
                 )
                 # TODO parse other edge locked parameters
             room.move_to(oo_graph.void)
+            # TODO: Make data_path configurable
+            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(oo_graph, "./data_path", room_id)
 
         if hasattr(graph, 'void_id'):
             oo_graph.delete_nodes([oo_graph.get_node(graph.void_id)])
@@ -209,7 +213,7 @@ class OOGraph(object):
         node.force_move_to(self.void)
         self.rooms[id] = node
         self.all_nodes[id] = node
-        # TODO initialize RoomConversationBuffer(self, self._database_location, id)
+        self.room_id_to_loggers[id] = RoomInteractionLogger(self, "./data_path", id)
         return node
 
     def add_object(self, name, props, uid='', db_id=None):
@@ -539,6 +543,7 @@ class OOGraph(object):
                         edge_desc=edge_dict['examine_desc'],
                     )
             room.force_move_to(oo_graph.void)
+            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(oo_graph, "./data_path", room_id)
 
         # Container locks
         for obj in oo_graph.objects.values():
