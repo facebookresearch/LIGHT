@@ -35,33 +35,46 @@ class TestInteractionLoggers(unittest.TestCase):
         agent_node.force_move_to(room_node)
         test_world = World({}, None, True)
         test_world.oo_graph = test_graph 
-        test_init_json = test_world.oo_graph.to_json()
+        test_init_json = test_world.oo_graph.to_json_rv(room_node.node_id)
         room_logger = RoomInteractionLogger(test_graph, self.data_dir, room_node.node_id)
         room_logger._begin_meta_episode()
         room_logger._end_meta_episode()
-        graph_file = os.path.join(self.data_dir, 'light_graph_dumps/' + room_logger._logged_to + '.json')
+        graph_file = os.path.join(self.data_dir, 'light_graph_dumps',f'{room_logger._last_logged_to}.json')
         with open(graph_file, 'r') as graph_json_file:
             written_init_json = json.load(graph_json_file)
             self.assertEqual(test_init_json, written_init_json)
     
     def test_simple_room_logger_saves_and_loads_event(self):
+        """
+        Test that the room logger properly saves and reloads an event 
+        """
         test_graph = OOGraph()
         agent_node = test_graph.add_agent("My test agent", {})
+        agent_node.is_player = True
         room_node = test_graph.add_room("test room", {})
         room2_node = test_graph.add_room("test room2", {})
-        agent_node.force_move_to(room2_node)
+        agent_node.force_move_to(room_node)
         test_world = World({}, None, True)
         test_world.oo_graph = test_graph 
         test_event = ArriveEvent(agent_node, text_content="")
-        test_init_json = test_world.oo_graph.to_json()
+        self.maxDiff = None
+        test_init_json = test_world.oo_graph.to_json_rv(agent_node.get_room().node_id)
         room_logger = RoomInteractionLogger(test_graph, self.data_dir, room_node.node_id)
-        room_logger._begin_meta_episode()
         room_logger.observe_event(test_event)
         room_logger._end_meta_episode()
-        graph_file = os.path.join(self.data_dir, 'light_graph_dumps/' + room_logger._logged_to + '.json')
-        with open(graph_file, 'r') as graph_json_file:
-            written_init_json = json.load(graph_json_file)
-            self.assertEqual(test_init_json, written_init_json)
+
+        ref_json = test_event.to_json()
+        event_file = os.path.join(self.data_dir, 'light_event_dumps/room',f'{room_logger._last_logged_to}_events.json')
+        self.assertNotEqual(os.stat(event_file).st_size, 0)
+        with open(event_file, 'r') as event_json_file:
+            parity = True
+            for line in event_json_file:
+                if parity:
+                    time_stamp = line
+                else:
+                    written_event = line
+                    self.assertEqual(ref_json, written_event)
+                parity = not parity
 
 if __name__ == "__main__":
     unittest.main()

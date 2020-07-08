@@ -189,7 +189,7 @@ class GraphEvent(object):
             event.__dict__[k] = v
         return event
 
-    def to_json(self, viewer: GraphAgent = None) -> str:
+    def to_json(self, viewer: GraphAgent = None, indent : int = None) -> str:
         """
         Convert the content of this action into a json format that can be
         imported back to the original with from_json
@@ -199,7 +199,7 @@ class GraphEvent(object):
         use_dict['__class__'] = self.__class__.__name__
         use_dict['__module__'] = self.__module__
         # TODO: Consider moving graph encoder to a utils since we use here too!
-        res = json.dumps(use_dict, cls=GraphEncoder, sort_keys=True, indent=4)
+        res = json.dumps(use_dict, cls=GraphEncoder, sort_keys=True, indent=indent)
         return res
 
     def __repr__(self) -> str:

@@ -115,8 +115,7 @@ class RoomInteractionLogger(InteractionLogger):
         """Make a copy of the graph state so we can replay events on top of it
         """
         try:
-            # Why does this not work??? - Big blocker
-            self.init_state = self.graph.to_json()
+            self.init_state = self.graph.to_json_rv(self.room_id)
         except Exception as e:
             print(e)
             import traceback
@@ -136,7 +135,7 @@ class RoomInteractionLogger(InteractionLogger):
         if not os.path.exists(graph_path):
             os.mkdir(graph_path)
         unique_graph_name = str(uuid.uuid4())
-        self._logged_to = unique_graph_name
+        self._last_logged_to = unique_graph_name
         graph_file_name = f'{unique_graph_name}.json'
         file_path = os.path.join(graph_path, graph_file_name)
         with open(file_path, 'w') as dump_file:
@@ -154,14 +153,13 @@ class RoomInteractionLogger(InteractionLogger):
         # Potential logic bug - should this be a to append instead of w to write???
         with open(events_file_path, 'w') as dump_file:
             for event, time in self.conversation_buffer:
-                to_write = ''.join([time, event])
-                json.dump(to_write, dump_file)
+                dump_file.write(''.join([time, '\n']))
+                dump_file.write(event)
 
     def observe_event(self, event):
         # Only log if logger is active
         if not self.is_active:
             return
-
         # Do we need to set initial logging state, or flush because we are done?
         was_logging = self._is_logging()
         # Should I be using is_human instead??
