@@ -1399,7 +1399,6 @@ class LIGHTDatabase:
             type text NOT NULL UNIQUE);
             """
         )
-
         # Initialize the graph edge type enum table
         graph_edge_types_formated = format_list_for_sql(GRAPH_EDGE_TYPES)
         self.c.execute(
@@ -1410,19 +1409,26 @@ class LIGHTDatabase:
                 graph_edge_types_formated
             )
         )
+
+        # Initialize the graph nodes table
         self.c.execute(
             """
             CREATE TABLE IF NOT EXISTS nodes_table (
             id integer PRIMARY KEY NOT NULL,
+            w_id integer NOT NULL,
             entity_id integer NOT NULL,
             CONSTRAINT fk_id FOREIGN KEY (id)
                 REFERENCES id_table (id)
+                ON DELETE CASCADE,
+            CONSTRAINT fk_graph FOREIGN KEY (w_id)
+                REFERENCES world_table (id)
                 ON DELETE CASCADE,
             CONSTRAINT fk_eid FOREIGN KEY (entity_id)
                 REFERENCES id_table (id)
                 ON DELETE CASCADE);       
             """
         )
+
         # Graph edges table - edges in execution
         # (need src, dst, type of node - can we just have 
         # Edge North, Edge South, Edge West, Edge East, Edge Up, Edge Down, Edge contains?)
@@ -3047,6 +3053,61 @@ class LIGHTDatabase:
             (world_id, player_id,),
         )
         return self.c.fetchall()
+    
+    def get_world_resources(self, world_id, player_id):
+        assert self.is_world_owned_by(world_id, player_id), "Cannot load a world you do not own"
+
+        # Get tiles tied to this world
+        self.c.execute(
+            """
+            SELECT * FROM tile_table
+            WHERE world_id = ?
+            """,
+            (world_id,),
+        )
+        tiles = self.c.fetchall()
+
+        # Get edges tied to this world
+        self.c.execute(
+            """
+            SELECT * FROM edges_table
+            WHERE w_id = ?
+            """,
+            (world_id,),
+        )
+        edges = self.c.fetchall()
+
+        # Get rooms joined with room nodes associated with this world
+        self.c.execute(
+            """
+            SELECT * FROM nodes_table INNER JOIN rooms_table ON nodes_table.entity_id=rooms_table.id
+            WHERE w_id = ?
+            """,
+            (world_id,),
+        )
+        room_nodes =  self.c.fetchall()
+
+        # Get characters joined with character nodes associated with this world
+        self.c.execute(
+            """
+            SELECT * FROM nodes_table INNER JOIN characters_table ON nodes_table.entity_id=characters_table.id
+            WHERE w_id = ?
+            """,
+            (world_id,),
+        )
+        character_nodes =  self.c.fetchall()
+
+        # Get objects joined with object nodes associated with this world
+        self.c.execute(
+            """
+            SELECT * FROM nodes_table INNER JOIN objects_table ON nodes_table.entity_id=objects_table.id
+            WHERE w_id = ?
+            """,
+            (world_id,),
+        )
+        object_nodes =  self.c.fetchall()
+
+        return [tiles, edges, room_nodes, character_nodes, object_nodes]
         
     def delete_world(self, world_id, player_id):
         """
@@ -3061,7 +3122,7 @@ class LIGHTDatabase:
         Format world names and ids owned by the player for viewing
         """
         player_worlds = self.get_worlds_owned_by(player_id=player_id)
-        res = [{'id' : x['id'], 'name' : x['name']} for x in player_worlds]
+        res = [dict(row) for row in player_worlds]
         return res
     
     def get_num_worlds_owned_by(self, player_id):
@@ -3090,6 +3151,7 @@ class LIGHTDatabase:
             (world_id,),
         )
         return self.c.fetchall()
+    
     def get_node(self, node_id):
         self.c.execute(
             """
@@ -3099,6 +3161,7 @@ class LIGHTDatabase:
             (node_id,),
         )
         return self.c.fetchall()
+    
     # Gets all connected components to this tile
     def get_edges(self, tile_id, edges):
         self.c.execute(
@@ -3159,15 +3222,16 @@ class LIGHTDatabase:
             id = int(result[0][0])
         return (id, inserted)
 
-    def create_graph_node(self, entity_id, entry_attributes={}):
+    def create_graph_node(self, w_id, entity_id, entry_attributes={}):
         id = self.create_id(DB_TYPE_GRAPH_NODE, entry_attributes)
         self.c.execute(
             """
-            INSERT or IGNORE INTO nodes_table(id, entity_id)
-            VALUES (?, ?)
+            INSERT or IGNORE INTO nodes_table(id, w_id, entity_id)
+            VALUES (?, ?, ?)
             """,
             (
                 id,
+                w_id,
                 entity_id,
             ),
         )
@@ -3176,9 +3240,9 @@ class LIGHTDatabase:
             self.delete_id(id)
             self.c.execute(
                 """
-                SELECT id from nodes_table WHERE entity_id = ?
+                SELECT id from nodes_table WHERE w_id = ? AND entity_id = ?
                 """,
-                (entity_id,),
+                (w_id, entity_id,),
             )
             result = self.c.fetchall()
             assert len(result) == 1

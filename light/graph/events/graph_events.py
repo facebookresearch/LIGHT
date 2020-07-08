@@ -31,6 +31,20 @@ if TYPE_CHECKING:
 
 # TODO remove ability to take actions with yourself
 
+class SystemMessageEvent(TriggeredEvent):
+    """Event to send text messages to specified agents outside of other events"""
+
+    def execute(self, world: "World") -> List[GraphEvent]:
+        """Message to the target agent"""
+        world.broadcast_to_agents(self, agents=[self.actor])
+        return []
+
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Only the target actor should be able to see this message"""
+        if viewer == self.actor:
+            return self.text_content
+        else:
+            return None
 
 class SayEvent(GraphEvent):
     """Handles saying something out loud to the room."""
