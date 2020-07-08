@@ -10,6 +10,9 @@ from light.graph.elements.graph_nodes import (
     GraphNode,
     GraphEdge,
     GraphAgent,
+    GraphObject,
+    GraphNode,
+    GraphRoom,
 )
 from light.graph.structured_graph import GraphEncoder
 
@@ -35,8 +38,8 @@ class EventEncoder(json.JSONEncoder):
         if isinstance(o, GraphEdge):
             return {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
         if not isinstance(o, GraphNode):
-            use_dict = {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
-        use_dict = {'node_id': o.node_id}
+            return super().default(o)
+        use_dict = {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
         return use_dict
 
 class ProcessedArguments(NamedTuple):
@@ -73,12 +76,13 @@ class GraphEvent(object):
         self.actor = actor
         self.room = actor.get_room()
         self.target_nodes = [] if target_nodes is None else target_nodes
-        self.present_agent_ids = [
-            x.node_id for x in self.room.get_contents() if x.agent
-        ]
-        self._canonical_targets = [
-            x.get_view_from(self.room) for x in self.target_nodes
-        ]
+        if self.room is not False:
+            self.present_agent_ids = [
+                x.node_id for x in self.room.get_contents() if x.agent
+            ]
+            self._canonical_targets = [
+                x.get_view_from(self.room) for x in self.target_nodes
+            ]
         self.text_content = text_content
 
     def execute(self, world: 'World') -> List['GraphEvent']:
@@ -162,7 +166,19 @@ class GraphEvent(object):
         """
         def helper_conversion(obj, world):
             if type(obj) is dict and 'node_id' in obj:
-                return world.oo_graph.all_nodes[obj['node_id']]
+                # Handle things that got removed from world or are not yet part of it
+                if obj['node_id'] in world.oo_graph.all_nodes:
+                    return world.oo_graph.all_nodes[obj['node_id']]
+                else:
+                    # Note: Since this stuff got detached, need to manually set this
+                    if obj['agent'] == True:
+                        return GraphAgent.from_json_dict(obj)
+                    elif obj['object']:
+                        return GraphObject.from_json_dict(obj)                    
+                    elif obj['room']:
+                        return GraphRoom.from_json_dict(obj)
+                    else:
+                        return GraphNode.from_json_dict(obj)
             elif type(obj) is dict:
                 return {k: helper_conversion(obj[k], world) for k in obj.keys()}
             elif type(obj) is list:
@@ -173,7 +189,6 @@ class GraphEvent(object):
 
         # Go through the dict, converting everything that is a node to a node!
         dict_format = helper_conversion(json.loads(input_json), world)
-
         class_ = GraphEvent
         if "__class__" in dict_format:
             class_name = dict_format.pop("__class__")
@@ -186,11 +201,9 @@ class GraphEvent(object):
         arglist = [dict_format.pop(arg) for arg in inspect.getfullargspec(class_.__init__)[0] if arg is not 'self']
         event = class_(*arglist)
 
-        for k, v in enumerate(dict_format):
+        for k, v in dict_format.items():
             # Make sure all key values match for none nodes
-            if k in event.__dict__:
-                event.__dict__[k] = v
-
+            event.__dict__[k] = v
         return event
 
     def to_json(self, viewer: GraphAgent = None) -> str:
