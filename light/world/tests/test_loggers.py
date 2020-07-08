@@ -29,12 +29,15 @@ class TestInteractionLoggers(unittest.TestCase):
         Test that the room logger properly saves and reloads the initial 
         graph
         """
+        # Set up the graph 
         test_graph = OOGraph()
         agent_node = test_graph.add_agent("My test agent", {})
         room_node = test_graph.add_room("test room", {})
         agent_node.force_move_to(room_node)
         test_world = World({}, None, True)
         test_world.oo_graph = test_graph 
+
+        # Check the room json was done correctly
         test_init_json = test_world.oo_graph.to_json_rv(room_node.node_id)
         room_logger = RoomInteractionLogger(test_graph, self.data_dir, room_node.node_id)
         room_logger._begin_meta_episode()
@@ -48,6 +51,7 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         Test that the room logger properly saves and reloads an event 
         """
+        # Set up the graph 
         test_graph = OOGraph()
         agent_node = test_graph.add_agent("My test agent", {})
         agent_node.is_player = True
@@ -56,16 +60,18 @@ class TestInteractionLoggers(unittest.TestCase):
         agent_node.force_move_to(room_node)
         test_world = World({}, None, True)
         test_world.oo_graph = test_graph 
+
+        # Check an event json was done correctly
         test_event = ArriveEvent(agent_node, text_content="")
         self.maxDiff = None
         test_init_json = test_world.oo_graph.to_json_rv(agent_node.get_room().node_id)
         room_logger = RoomInteractionLogger(test_graph, self.data_dir, room_node.node_id)
         room_logger.observe_event(test_event)
         room_logger._end_meta_episode()
-
         ref_json = test_event.to_json()
         event_file = os.path.join(self.data_dir, 'light_event_dumps/room',f'{room_logger._last_logged_to}_events.json')
         self.assertNotEqual(os.stat(event_file).st_size, 0)
+        # Note:  Lines alternate timestamp, json, use parity to help with this!
         with open(event_file, 'r') as event_json_file:
             parity = True
             for line in event_json_file:

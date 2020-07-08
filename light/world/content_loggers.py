@@ -82,9 +82,9 @@ class RoomInteractionLogger(InteractionLogger):
     '''
     def __init__(self, graph, data_path, room_id, max_bot_history=5, afk_turn_tolerance=10):
         super().__init__(graph, data_path)
+        self.room_id = room_id
         self.max_bot_history = max_bot_history
         self.afk_turn_tolerance = afk_turn_tolerance
-        self.room_id = room_id
 
         self.num_players_present = 0
         self.turns_wo_players = float('inf') # Technically, we have never had players
@@ -100,8 +100,8 @@ class RoomInteractionLogger(InteractionLogger):
         
     def _begin_meta_episode(self):
         self._clear_buffers()
-        self.turns_wo_players = 0
         self._init_graph_state()
+        self.turns_wo_players = 0
 
     def _clear_buffers(self):
         '''Clear the buffers storage for this logger, dumping context'''
@@ -168,9 +168,9 @@ class RoomInteractionLogger(InteractionLogger):
         self.num_players_present += 1
 
     def _remove_player(self):
-        ''' Record that a player entered the room, updating variables as needed'''
+        ''' Record that a player left the room, updating variables as needed'''
         self.num_players_present -= 1
-        assert(self.num_players_present <= 0)
+        assert(self.num_players_present >= 0)
         if not self._is_logging():
             self._end_meta_episode()
 
@@ -178,7 +178,7 @@ class RoomInteractionLogger(InteractionLogger):
         if not self.is_active:
             return
 
-        # Do we need to set initial logging state, or flush because we are done?
+        # Check if we need to set initial logging state, or flush because we are done
         event_t = type(event)
         if (event_t is ArriveEvent or event_t is SpawnEvent) and event.actor.is_player:
             self._add_player()
