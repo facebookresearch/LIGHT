@@ -203,7 +203,7 @@ class OOGraph(object):
         node.force_move_to(self.void)
         self.rooms[id] = node
         self.all_nodes[id] = node
-        self.room_id_to_loggers[id] = RoomInteractionLogger(self, "./data_path", id)
+        self.room_id_to_loggers[id] = RoomInteractionLogger(self, "/private/home/lucaskabela/LIGHT/logs", id)
         return node
 
     def add_object(self, name, props, uid='', db_id=None):

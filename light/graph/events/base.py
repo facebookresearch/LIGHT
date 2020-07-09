@@ -195,9 +195,10 @@ class GraphEvent(object):
         Convert the content of this action into a json format that can be
         imported back to the original with from_json
         """
-        use_dict = {k: v for k, v in self.__dict__.copy().items() if not k.startswith("__")}
+        className = self.__class__.__name__
+        use_dict = {k: v for k, v in self.__dict__.copy().items() if not k.startswith(f'_{className}__')}
         use_dict['viewer'] = viewer
-        use_dict['__class__'] = self.__class__.__name__
+        use_dict['__class__'] = className
         use_dict['__module__'] = self.__module__
         # TODO: Consider moving graph encoder to a utils since we use here too!
         res = json.dumps(use_dict, cls=GraphEncoder, sort_keys=True, indent=indent)
