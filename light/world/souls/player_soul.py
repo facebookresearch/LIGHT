@@ -36,7 +36,7 @@ class PlayerSoul(Soul):
         self.player_id = player_id
         self.provider = provider  # TODO link with real provider
         # TODO: Change this with a configurable path
-        self.agent_logger = AgentInteractionLogger("./data_path", world.oo_graph, target_node)
+        self.agent_logger = AgentInteractionLogger( world.oo_graph, "./data_path", target_node)
         provider.register_soul(self)
 
     def handle_act(self, act_text):
@@ -59,6 +59,6 @@ class PlayerSoul(Soul):
         PlayerSouls must remove the player flag from their target GraphAgent when removed.
         """
         super().reap()
-        # TODO:  Need to remove agent here?
+        # TODO:  Need to remove agent logger here?
         self.target_node.is_player = False
         self.provider.on_reap_soul(self)
