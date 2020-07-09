@@ -141,5 +141,13 @@ class TestInteractionLoggers(unittest.TestCase):
                     self.assertEqual(ref_json, written_event)
                 parity = not parity
 
+    # TODO: Add simple unit type test - create new graph, loggers, log the events seperte tada!
+
+    # TODO: Add context unit test
+
+    # TODO: Add afk unit test
+
+    # TODO: Add e2e test - create a new starspace, ensure loggers log properly
+
 if __name__ == "__main__":
     unittest.main()

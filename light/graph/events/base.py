@@ -14,8 +14,9 @@ from light.graph.elements.graph_nodes import (
     GraphNode,
     GraphRoom,
 )
-from light.graph.structured_graph import GraphEncoder
-
+from light.world.utils.json_utils import (
+    GraphEncoder,
+)
 from typing import NamedTuple, TYPE_CHECKING, Dict
 import json
 import inspect

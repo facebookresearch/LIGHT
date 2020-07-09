@@ -17,6 +17,9 @@ from light.graph.builders.base import (
     DBGraphBuilder,
     SingleSuggestionGraphBuilder,
 )
+from light.world.content_loggers import (
+    RoomInteractionLogger,
+)
 from light.data_model.light_database import (
     DB_EDGE_IN_CONTAINED,
     DB_EDGE_EX_CONTAINED,
@@ -812,6 +815,9 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                         if c is not None:
                             room_node = g.get_node(pos_room.g_id)
                             self.add_new_agent_to_graph(g, c, room_node)
+
+        for room in g.rooms:
+            g.room_id_to_loggers[room] = RoomInteractionLogger(g, "/private/home/lucaskabela/LIGHT/logs", room)
 
         world = World(self.opt, self)
         world.oo_graph = g

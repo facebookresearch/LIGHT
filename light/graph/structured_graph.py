@@ -9,23 +9,13 @@ from light.graph.elements.graph_nodes import (
     GraphVoidNode,
     GraphEdge,
 )
-from light.world.content_loggers import RoomInteractionLogger
+from light.world.utils.json_utils import (
+    GraphEncoder,
+)
+from light.world.content_loggers import (
+    RoomInteractionLogger,
+)
 
-class GraphEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, set):
-            return sorted(list(o))
-        if isinstance(o, list):
-            return sorted(o)
-        if isinstance(o, GraphEdge):
-            return {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
-        if not isinstance(o, GraphNode):
-            return super().default(o)
-        use_dict = {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
-        return use_dict
-
-
-# TODO:  Attach a room log / agent log manager onto this - handles the logging
 class OOGraph(object):
     '''Graph class that takes normal graph and formats it in an easily
     inspectible version from an Object-Oriented point of view
@@ -106,7 +96,7 @@ class OOGraph(object):
                 # TODO parse other edge locked parameters
             room.move_to(oo_graph.void)
             # TODO: Make data_path configurable
-            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(oo_graph, "./data_path", room_id)
+            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(oo_graph, "/private/home/lucaskabela/LIGHT/logs", room_id)
 
         if hasattr(graph, 'void_id'):
             oo_graph.delete_nodes([oo_graph.get_node(graph.void_id)])
