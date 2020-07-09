@@ -118,15 +118,23 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
       }
       // Only need to set walls down and to right
       const neighbors = [
+        `${tileInfo.x - 1} ${tileInfo.y}`,
         `${tileInfo.x + 1} ${tileInfo.y}`,
+        `${tileInfo.x} ${tileInfo.y - 1}`,
         `${tileInfo.x} ${tileInfo.y + 1}`,
       ];
       datMap[tileInfo.floor].tiles[tileInfo.x + " " + tileInfo.y] = temp;
-      if (tileInfo.walls[1]){
-        datMap[tileInfo.floor].walls[tileInfo.x + " " + tileInfo.y + "|" + neighbors[0]] = true;
-      }
-      if (tileInfo.walls[3]){
-        datMap[tileInfo.floor].walls[tileInfo.x + " " + tileInfo.y + "|" + neighbors[1]] = true;
+      let myLoc = `${tileInfo.x} ${tileInfo.y}`;
+      for(let i = 0; i < tileInfo.walls.length; i++){
+        if (tileInfo.walls[i]){
+          let otherLoc = neighbors[i];
+          // Need to sort in order for upload to work!
+          if (otherLoc < myLoc){
+            datMap[tileInfo.floor].walls[otherLoc + "|" + myLoc] = true;
+          }else{
+            datMap[tileInfo.floor].walls[myLoc + "|" + otherLoc] = true;
+          }
+        }
       }
     });
   };
