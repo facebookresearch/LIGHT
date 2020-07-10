@@ -72,7 +72,8 @@ player request to the correct game instance
     def initialize(self, app):
         self.game_instances = app.game_instances
         self.default = None
-        
+        self.router = None
+
     @tornado.web.authenticated
     def get(self, game_id):
         '''
@@ -88,16 +89,3 @@ player request to the correct game instance
         '''
         Registers a new TornadoProvider at the game_id endpoint
         '''
-
-
-class CustomRouter(Router):
-    def __init__(self, app):
-        self.app = app
-
-    def find_handler(self, request, **kwargs):
-        game_id = request.path.split('/')[2] # last part of the path
-        print(endpoint)
-        app_to_get =  self.app.game_instances[game_id]
-        socket_handler =  app_to_get["SocketHandler"]
-        # some routing logic providing a suitable HTTPMessageDelegate instance
-        return app_to_get.get_handler_delegate(request, socket_handler)
