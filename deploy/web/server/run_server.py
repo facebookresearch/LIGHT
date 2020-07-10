@@ -115,7 +115,7 @@ def main():
 
     # Need to package this stuff into a new method for spawning game, so wrap it up!
     # Just one tornado listener that passes people along to correct graph?
-    # Look at the tornado_server for handling this mostly - can just add the graphs to tornadoWebbapp
+    # Look at the tornado_server for handling this mostly
     game = GameInstance()
     graph = game.g
     tornado_provider = TornadoWebappPlayerProvider(graph, FLAGS.hostname, FLAGS.port)
