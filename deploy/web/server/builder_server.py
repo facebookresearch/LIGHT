@@ -151,7 +151,7 @@ class DeleteWorldHandler(BaseHandler):
     
     @gen.coroutine
     @tornado.web.authenticated
-    def post(self, id):
+    def delete(self, id):
         with (yield lock.acquire()):
             with LIGHTDatabase(self.dbpath) as db:
                 username = tornado.escape.xhtml_escape(self.current_user)
@@ -221,6 +221,7 @@ class SaveWorldHandler(BaseHandler):
                     )
 
                 # Now return to the user we did all of it!
+                self.set_status(201)
                 self.write(json.dumps(world_id))
 
 class LoadWorldHandler(BaseHandler):
