@@ -16,6 +16,9 @@ import tornado.web
 from tornado.ioloop import IOLoop
 from tornado import locks
 from tornado import gen
+from tornado.routing import (
+    PathMatches, Rule, RuleRouter,
+)
 
 def get_rand_id():
     return str(uuid.uuid4())
@@ -39,9 +42,10 @@ class RegistryApplication(tornado.web.Application):
         super(Application, self).__init__(self.get_handlers(), **tornado_settings)
 
     def get_handlers(self):
+        self.router = RuleRouter([])
         return [
-            (r"/game", RandomGameHandler, {'app': self}), 
-            (r"/game(.*)", GameRouterHandler, {'app': self}),
+            (r"/game/new/(.*)", GameCreatorHandler, {'app': self}),
+            (r"/game/(.*)", self.router)
         ]
 
 # Default BaseHandler - should be extracted to some util?
@@ -64,28 +68,21 @@ class BaseHandler(tornado.web.RequestHandler):
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
 
-class GameRouterHandler(BaseHandler):
+class GameCreatorHandler(BaseHandler):
 '''
 This web handler is responsible for registering new game instances, as well as forwarding
 player request to the correct game instance
 '''
     def initialize(self, app):
+        self.app = app
         self.game_instances = app.game_instances
         self.default = None
-        self.router = None
-
-    @tornado.web.authenticated
-    def get(self, game_id):
-        '''
-        Given a game id, forward the request to the appropiate game 
-        '''
-        if game_id is None or game_id == "":
-            game_id = self.default
-        return self.game_instances[game_id].SocketHandler()
-
 
     @tornado.web.authenticated
     def post(self, game_id):
         '''
         Registers a new TornadoProvider at the game_id endpoint
         '''
+        # Create game_provider here
+        new_rule = Rule(PathMatches(f'/game/{game_id}'), game_provider)
+        self.app.router.add_rules([new_rule])
