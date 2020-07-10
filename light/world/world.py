@@ -14,10 +14,11 @@ import random
 # TODO don't use * imports
 from light.world.npc_models import *
 from light.graph.utils import rm, deprecated
-from light.world.views import WorldViewer
 from light.graph.events.base import GraphEvent, ErrorEvent
-from light.graph.events.graph_events import ALL_EVENTS, ALL_EVENTS_LIST, SpawnEvent
+from light.graph.events.graph_events import ALL_EVENTS, ALL_EVENTS_LIST, SpawnEvent, SystemMessageEvent
 from light.graph.elements.graph_nodes import GraphNode, GraphAgent
+from light.world.views import WorldViewer
+from light.world.purgatory import Purgatory
 
 
 def check_integrity(f):
@@ -55,6 +56,7 @@ class World(object):
         self.debug = debug
         self.oo_graph = OOGraph(opt)
         self.view = WorldViewer(self)
+        self.purgatory = Purgatory(self)
 
         # TODO better specific player management?
         self._player_cnt = 0
@@ -108,7 +110,7 @@ class World(object):
 
     def unique_hash(self):
         # TODO: consider world properties
-        return self.oo_graph.to_JSON()
+        return self.oo_graph.to_json()
 
     def __eq__(self, other):
         return self.unique_hash() == other.unique_hash()
@@ -424,8 +426,11 @@ class World(object):
             agent = self.oo_graph.get_node(agent_id)
         if agent is None:
             print(txt, agent_id)
+        if action is None:
+            action = SystemMessageEvent(agent, [], text_content=txt)
+        self.purgatory.send_event_to_soul(action, agent)
+        # TODO remove below when server game has Soul-based PlayerProvider
         agent.observe_action(txt, action)
-        # TODO move message callbacks to be registered to players
         pos_playerid = self.agentid_to_playerid(agent_id)
         if pos_playerid in self.__message_callbacks:
             self.__message_callbacks[pos_playerid](self, action)
@@ -930,6 +935,10 @@ class World(object):
         else:
             parsed_event.execute(self)
             return True, parsed_event.to_canonical_form()
+
+    def get_possible_player_nodes(self):
+        """Return any nodes that would be allowed to be reinhabited by a player"""
+        return self.oo_graph.get_npcs()
 
     # TODO refactor players
     def spawn_player(self, existing_player_id=-1):

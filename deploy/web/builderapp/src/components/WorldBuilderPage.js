@@ -1,6 +1,7 @@
 import React from "react";
 import {
   NumericInput,
+  InputGroup,
   ControlGroup,
   FormGroup,
   Tooltip,
@@ -8,6 +9,7 @@ import {
   Icon,
   Switch,
   Button,
+  Intent,
 } from "@blueprintjs/core";
 import {
   useWorldBuilder,
@@ -37,13 +39,43 @@ function WorldBuilder({ upload }) {
   const state = useWorldBuilder(upload);
   const [advanced, setAdvanced] = React.useState(false);
   const [isOverlayOpen, setIsOverlayOpen] = React.useState(false);
-  // TODO: Remove postEdges and commit, add some other way to export world to json somehow
+  const world_name =
+    state.dimensions.name == null ? " " : state.dimensions.name;
+
+  //TODO: Consider moving the export somewhere else?
   return (
     <>
+      <h3>World: {world_name}</h3>
       <ListWorldsOverlay
         isOverlayOpen={isOverlayOpen}
         setIsOverlayOpen={setIsOverlayOpen}
       />
+      <FormGroup
+        inline
+        label="World Name"
+        labelFor="name-input"
+        labelInfo={`(optional)`}
+      >
+        <ControlGroup>
+          <InputGroup
+            id="name-input"
+            placeholder={
+              state.dimensions.name == null ? "Unnamed World" : state.dimensions.name
+            }
+          />
+          <Button
+            intent={Intent.PRIMARY}
+            onClick={() => {
+              state.setDimensions({
+                ...state.dimensions,
+                name: document.getElementById("name-input").value.trim(),
+              });
+            }}
+          >
+            Update
+          </Button>
+        </ControlGroup>
+      </FormGroup>
       <FormGroup
         inline
         label="World Dimensions"
@@ -133,13 +165,6 @@ function WorldBuilder({ upload }) {
           style={{ margin: "10px" }}
         >
           Export
-        </Button>
-        <Button
-          onClick={state.postEdges}
-          intent="primary"
-          style={{ margin: "10px" }}
-        >
-          Commit Edges
         </Button>
       </div>
     </>
