@@ -1,0 +1,113 @@
+{
+    "agents": [
+        "my test agent_0"
+    ],
+    "nodes": {
+        "my test agent_0": {
+            "agent": true,
+            "aggression": 0,
+            "char_type": "person",
+            "classes": [
+                "agent"
+            ],
+            "contain_size": 20,
+            "contained_nodes": {},
+            "container_node": {
+                "target_id": "test room_1"
+            },
+            "damage": 1,
+            "db_id": null,
+            "defense": 0,
+            "desc": "You really don't have a good reason to be examining this closer.",
+            "followed_by": {},
+            "following": null,
+            "food_energy": 1,
+            "health": 10,
+            "is_player": true,
+            "name": "My test agent",
+            "name_prefix": "the",
+            "names": [
+                "My test agent"
+            ],
+            "node_id": "my test agent_0",
+            "object": false,
+            "persona": "I am a player in the LIGHT world.",
+            "room": false,
+            "size": 20,
+            "speed": 0
+        },
+        "test room2_2": {
+            "agent": false,
+            "classes": [
+                "room"
+            ],
+            "contain_size": 100000,
+            "contained_nodes": {},
+            "container_node": {
+                "target_id": "VOID"
+            },
+            "db_id": null,
+            "desc": "You really don't have a good reason to be examining this closer.",
+            "extra_desc": "You really don't have a good reason to be examining this closer.",
+            "name": "test room2",
+            "name_prefix": "the",
+            "names": [
+                "test room2"
+            ],
+            "neighbors": {
+                "test room_1": {
+                    "examine_desc": null,
+                    "label": "a path to the south",
+                    "locked_edge": null,
+                    "target_id": "test room_1"
+                }
+            },
+            "node_id": "test room2_2",
+            "object": false,
+            "room": true,
+            "size": 1,
+            "surface_type": "in"
+        },
+        "test room_1": {
+            "agent": false,
+            "classes": [
+                "room"
+            ],
+            "contain_size": 100000,
+            "contained_nodes": {
+                "my test agent_0": {
+                    "target_id": "my test agent_0"
+                }
+            },
+            "container_node": {
+                "target_id": "VOID"
+            },
+            "db_id": null,
+            "desc": "You really don't have a good reason to be examining this closer.",
+            "extra_desc": "You really don't have a good reason to be examining this closer.",
+            "name": "test room",
+            "name_prefix": "the",
+            "names": [
+                "test room"
+            ],
+            "neighbors": {
+                "test room2_2": {
+                    "examine_desc": null,
+                    "label": "a path to the north",
+                    "locked_edge": null,
+                    "target_id": "test room2_2"
+                }
+            },
+            "node_id": "test room_1",
+            "object": false,
+            "room": true,
+            "size": 1,
+            "surface_type": "in"
+        }
+    },
+    "objects": [],
+    "rooms": [
+        "test room2_2",
+        "test room_1"
+    ]
+}

@@ -84,22 +84,18 @@ class AgentInteractionLogger(InteractionLogger):
         events the human observes.  This logger also requires serializing more rooms, 
         since agent encounters many rooms along its traversal
     '''
-    def __init__(self, graph, data_path, agent, max_afk_history=5, afk_turn_tolerance=25):
+    def __init__(self, graph, data_path, agent, is_active=False, max_afk_history=5, afk_turn_tolerance=25):
         super().__init__(graph, data_path)
         self.agent = agent
         self.max_afk_history = max_afk_history
         self.afk_turn_tolerance = afk_turn_tolerance
+        self.is_active = is_active
 
         self.turns_wo_player_action = 0 #Player is acting by virtue of this initialized!
         self.afk_context_buffer = collections.deque(maxlen=max_afk_history)
         self.event_buffer = []
         self.state_history = []
         self._logging_intialized = False
-        # Does graph even want us logging? - can change to property of world
-        if graph._opt is not None:
-            self.is_active = graph._opt.get('dump_dialogues', True) is True
-        else:
-            self.is_active = True
 
     def _begin_meta_episode(self):
         self._clear_buffers()
@@ -141,11 +137,11 @@ class AgentInteractionLogger(InteractionLogger):
         for state in self.state_history:
             unique_graph_name = str(uuid.uuid4())
             states.append(unique_graph_name)
-            self._last_logged_to = unique_graph_name
             graph_file_name = f'{unique_graph_name}.json'
             file_path = os.path.join(graph_path, graph_file_name)
             with open(file_path, 'w') as dump_file:
                 dump_file.write(state)
+        self._last_graph = states[-1]
 
         # Now, do the same for events, dumping in the light_event_dumps/rooms
         events_path = os.path.join(self.data_path, 'light_event_dumps')
@@ -156,8 +152,10 @@ class AgentInteractionLogger(InteractionLogger):
             os.mkdir(events_room_path)
 
         unique_event_name = str(uuid.uuid4())
-        event_file_name = f'{self.agent.node_id}_{unique_event_name}_events.log'
+        agent_name = f'{self.agent.node_id}'.replace(" ", "_")
+        event_file_name = f'{agent_name}_{unique_event_name}_events.log'
         events_file_path = os.path.join(events_room_path, event_file_name)
+        self._last_logged_to = events_file_path
         with open(events_file_path, 'w') as dump_file:
             for (idx, event, time) in self.event_buffer:
                 # TODO:  If writing multiple graphs, need to reference those here 
@@ -200,11 +198,12 @@ class RoomInteractionLogger(InteractionLogger):
         events which take place with human agents in the room as long as a player is still 
         in the room
     '''
-    def __init__(self, graph, data_path, room_id, max_bot_history=5, afk_turn_tolerance=10):
+    def __init__(self, graph, data_path, room_id, is_active=False, max_bot_history=5, afk_turn_tolerance=10):
         super().__init__(graph, data_path)
         self.room_id = room_id
         self.max_bot_history = max_bot_history
         self.afk_turn_tolerance = afk_turn_tolerance
+        self.is_active = is_active
 
         self.num_players_present = 0
         self.turns_wo_players = float('inf') # Technically, we have never had players
@@ -212,12 +211,6 @@ class RoomInteractionLogger(InteractionLogger):
         self.conversation_buffer = []
         self.state_history = []
 
-        # Does graph even want us logging? - can change to property of world
-        if graph._opt is not None:
-            self.is_active = graph._opt.get('dump_dialogues', True) is True
-        else:
-            self.is_active = True
-        
          # Initialize player count here (bc sometimes players are force moved)
         for node_id in self.graph.all_nodes[self.room_id].contained_nodes:
             if self.graph.all_nodes[node_id].agent and (self.graph.all_nodes[node_id].is_player or self.graph.all_nodes[node_id]._human):
@@ -261,7 +254,6 @@ class RoomInteractionLogger(InteractionLogger):
         graph_path = os.path.join(self.data_path, 'light_graph_dumps')
         if not os.path.exists(graph_path):
             os.mkdir(graph_path)
-        print("Logging for", self.room_id, "to:", graph_path)
         states = []
         for state in self.state_history:
             unique_graph_name = str(uuid.uuid4())
@@ -271,6 +263,7 @@ class RoomInteractionLogger(InteractionLogger):
             file_path = os.path.join(graph_path, graph_file_name)
             with open(file_path, 'w') as dump_file:
                 dump_file.write(state)
+        self._last_graph = states[-1]
 
         # Now, do the same for events, dumping in the light_event_dumps/rooms
         events_path = os.path.join(self.data_path, 'light_event_dumps')
@@ -281,8 +274,10 @@ class RoomInteractionLogger(InteractionLogger):
             os.mkdir(events_room_path)
 
         unique_event_name = str(uuid.uuid4())
-        event_file_name = f'{self.room_id}_{unique_event_name}_events.log'
+        room_name = f'{self.room_id}'.replace(" ", "_")
+        event_file_name = f'{room_name}_{unique_event_name}_events.log'
         events_file_path = os.path.join(events_room_path, event_file_name)
+        self._last_logged_to = events_file_path
         with open(events_file_path, 'w') as dump_file:
             for (idx, event, time) in self.conversation_buffer:
                 # TODO:  If writing multiple graphs, need to reference those here 
