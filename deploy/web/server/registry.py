@@ -28,21 +28,16 @@ tornado_settings = {
     "login_url": "/login",
 }
 
-class Application(tornado.web.Application):
+class RegistryApplication(tornado.web.Application):
     def __init__(self):
-        self.subs = {}
-        self.new_subs = []
+        self.game_instances = {}
         super(Application, self).__init__(self.get_handlers(), **tornado_settings)
 
     def get_handlers(self):
-        path_to_build = here + "/../build/"
-        # NOTE: We choose to keep the StaticUIHandler, despite this handler never being
-        #       hit in the top level RuleRouter from run_server.py in case this application
-        #       is run standalone for some reason.
         return [
-            (r"/game(.*)", GameRouterHandler, {'app': self}),
+            (r"/game(.*)", GameRouterHandler),
         ]
-
+# Default BaseHandler - should be extracted to some util?
 class BaseHandler(tornado.web.RequestHandler):
     def options(self, *args, **kwargs):
         pass
@@ -61,27 +56,6 @@ class BaseHandler(tornado.web.RequestHandler):
         self.set_header('Content-Type', '*')
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
-    def write_error(self, status_code, **kwargs):
-        self.set_header('Content-Type', 'application/json')
-        if self.settings.get("serve_traceback") and "exc_info" in kwargs:
-            lines = []
-            for line in traceback.format_exception(*kwargs["exc_info"]):
-                lines.append(line)
-            self.finish(
-                json.dumps(
-                    {
-                        'error': {
-                            'code': status_code,
-                            'message': self._reason,
-                            'traceback': lines,
-                        }
-                    }
-                )
-            )
-        else:
-            self.finish(
-                json.dumps({'error': {'code': status_code, 'message': self._reason}})
-            )
 
 class GameRouterHandler(BaseHandler):
 '''
