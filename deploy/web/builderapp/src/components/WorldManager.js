@@ -43,7 +43,9 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
   const [upload, setUpload] = React.useState(undefined);
 
   const deleteWorld = async (id) => {
-    const res = await post(`world/delete/${id}`);
+    const res = await fetch(`${CONFIG.host}:${CONFIG.port}/builder/world/delete/${id}`, {
+      method: "DELETE",
+    });
   };
 
 
