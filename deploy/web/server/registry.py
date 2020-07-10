@@ -29,6 +29,11 @@ tornado_settings = {
 }
 
 class RegistryApplication(tornado.web.Application):
+    '''
+    This application simply takes the user game request and will
+        - Forward it to the designated tornado provider (if an id is given)
+        - Assign to a random (or default) game based on some load balancing
+    '''
     def __init__(self):
         self.game_instances = {}
         super(Application, self).__init__(self.get_handlers(), **tornado_settings)
@@ -37,6 +42,7 @@ class RegistryApplication(tornado.web.Application):
         return [
             (r"/game(.*)", GameRouterHandler),
         ]
+        
 # Default BaseHandler - should be extracted to some util?
 class BaseHandler(tornado.web.RequestHandler):
     def options(self, *args, **kwargs):
