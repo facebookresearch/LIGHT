@@ -137,8 +137,10 @@ class AgentInteractionLogger(InteractionLogger):
             os.mkdir(graph_path)
 
         # TODO: Fix this logic for agent writing out multiple graphs
+        states = []
         for state in self.state_history:
             unique_graph_name = str(uuid.uuid4())
+            states.append(unique_graph_name)
             self._last_logged_to = unique_graph_name
             graph_file_name = f'{unique_graph_name}.json'
             file_path = os.path.join(graph_path, graph_file_name)
@@ -153,13 +155,15 @@ class AgentInteractionLogger(InteractionLogger):
         if not os.path.exists(events_room_path):
             os.mkdir(events_room_path)
 
-        event_file_name = f'{unique_graph_name}_events.json'
+        unique_event_name = str(uuid.uuid4())
+        event_file_name = f'{self.agent.node_id}_{unique_event_name}_events.log'
         events_file_path = os.path.join(events_room_path, event_file_name)
         with open(events_file_path, 'w') as dump_file:
-            for event, time in self.event_buffer:
+            for (idx, event, time) in self.event_buffer:
                 # TODO:  If writing multiple graphs, need to reference those here 
+                dump_file.write(''.join([states[idx], '\n']))
                 dump_file.write(''.join([time, '\n']))
-                dump_file.write(event)
+                dump_file.write(''.join([event, '\n']))
 
     def observe_event(self, event):
         if not self.is_active:
@@ -167,8 +171,6 @@ class AgentInteractionLogger(InteractionLogger):
         event_t = type(event)
         if event_t is SpawnEvent and not self._logging_intialized:
             self._begin_meta_episode()
-        elif event_t is DeathEvent: # If agent is exiting or dieing or something, end meta episode
-            self._end_meta_episode()
 
         # Get new room state
         if event_t is ArriveEvent and event.actor is self.agent:
@@ -177,7 +179,7 @@ class AgentInteractionLogger(InteractionLogger):
 
         # Store context from bots, or store current events
         if (self._is_player_afk() and not event.actor is self.agent):
-            self.afk_context_buffer.append((event.to_json(), time.ctime()))
+            self.afk_context_buffer.append((len(self.state_history) - 1, event.to_json(), time.ctime()))
         else:
             if event.actor is self.agent:
                 if self._is_player_afk():
@@ -186,7 +188,11 @@ class AgentInteractionLogger(InteractionLogger):
                 self.turns_wo_player_action = 0
             else:
                 self.turns_wo_player_action += 1
-            self.event_buffer.append((event.to_json(), time.ctime()))
+            self.event_buffer.append((len(self.state_history) - 1, event.to_json(), time.ctime()))
+       
+        if event_t is DeathEvent: # If agent is exiting or dieing or something, end meta episode
+            self._end_meta_episode()
+
 
 class RoomInteractionLogger(InteractionLogger):
     '''
@@ -214,7 +220,7 @@ class RoomInteractionLogger(InteractionLogger):
         
          # Initialize player count here (bc sometimes players are force moved)
         for node_id in self.graph.all_nodes[self.room_id].contained_nodes:
-            if self.graph.all_nodes[node_id].agent and self.graph.all_nodes[node_id].is_player:
+            if self.graph.all_nodes[node_id].agent and (self.graph.all_nodes[node_id].is_player or self.graph.all_nodes[node_id]._human):
                 self._add_player()
 
     def _begin_meta_episode(self):
@@ -256,8 +262,10 @@ class RoomInteractionLogger(InteractionLogger):
         if not os.path.exists(graph_path):
             os.mkdir(graph_path)
         print("Logging for", self.room_id, "to:", graph_path)
+        states = []
         for state in self.state_history:
             unique_graph_name = str(uuid.uuid4())
+            states.append(unique_graph_name)
             self._last_logged_to = unique_graph_name
             graph_file_name = f'{unique_graph_name}.json'
             file_path = os.path.join(graph_path, graph_file_name)
@@ -272,13 +280,15 @@ class RoomInteractionLogger(InteractionLogger):
         if not os.path.exists(events_room_path):
             os.mkdir(events_room_path)
 
-        event_file_name = f'{unique_graph_name}_events.json'
+        unique_event_name = str(uuid.uuid4())
+        event_file_name = f'{self.room_id}_{unique_event_name}_events.log'
         events_file_path = os.path.join(events_room_path, event_file_name)
         with open(events_file_path, 'w') as dump_file:
-            for event, time in self.conversation_buffer:
+            for (idx, event, time) in self.conversation_buffer:
                 # TODO:  If writing multiple graphs, need to reference those here 
+                dump_file.write(''.join([states[idx], '\n']))
                 dump_file.write(''.join([time, '\n']))
-                dump_file.write(event)
+                dump_file.write(''.join([event, '\n']))
 
     def _add_player(self):
         ''' Record that a player entered the room, updating variables as needed'''
@@ -299,14 +309,14 @@ class RoomInteractionLogger(InteractionLogger):
 
         # Check if we need to set initial logging state, or flush because we are done
         event_t = type(event)
-        if (event_t is ArriveEvent or event_t is SpawnEvent) and event.actor.is_player:
+        if (event_t is ArriveEvent or event_t is SpawnEvent) and self.human_controlled(event):
             self._add_player()
 
         # Store context from bots, or store current events
-        if not self._is_logging() or (self._is_players_afk() and not event.actor.is_player):
-            self.bot_context_buffer.append((event.to_json(), time.ctime()))
+        if not self._is_logging() or (self._is_players_afk() and not self.human_controlled(event)):
+            self.bot_context_buffer.append((len(self.state_history) - 1, event.to_json(), time.ctime()))
         else:
-            if event.actor.is_player:
+            if self.human_controlled(event):
                 # Players are back from AFK, dump context
                 if self._is_players_afk():
                     # TODO: Need to handle something related to graph state here(?)
@@ -315,7 +325,11 @@ class RoomInteractionLogger(InteractionLogger):
                 self.turns_wo_players = 0
             else:
                 self.turns_wo_players += 1
-            self.conversation_buffer.append((event.to_json(), time.ctime()))
+            self.conversation_buffer.append((len(self.state_history) - 1, event.to_json(), time.ctime()))
         
-        if (event_t is LeaveEvent or event_t is DeathEvent) and event.actor.is_player:
+        if (event_t is LeaveEvent or event_t is DeathEvent) and self.human_controlled(event):
             self._remove_player()
+
+    def human_controlled(self, event):
+        ''' Determines if an event is controlled by a human or not - need ._human for legacy (web)'''
+        return event.actor.is_player or event.actor._human

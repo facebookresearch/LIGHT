@@ -275,22 +275,6 @@ class ErrorEvent(GraphEvent):
         )
         return self.display_text
 
-    @staticmethod
-    def from_json(self, input_json, world):
-        """
-        Instantiate this event from the given json over the given world
-        """
-        # TODO
-        raise NotImplementedError
-
-    def to_json(self):
-        """
-        Convert the content of this action into a json format that can be
-        imported back to the original with from_json
-        """
-        # TODO
-        raise NotImplementedError
-
     def __repr__(self):
         return f'ErrorEvent({self.display_text}, {self.target_nodes})'
 
