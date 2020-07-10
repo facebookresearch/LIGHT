@@ -43,7 +43,6 @@ class Application(tornado.web.Application):
             (r"/game(.*)", GameRouterHandler, {'app': self}),
         ]
 
-
 class BaseHandler(tornado.web.RequestHandler):
     def options(self, *args, **kwargs):
         pass
@@ -94,7 +93,6 @@ player request to the correct game instance
         '''
         Given a game id, forward the request to the appropiate game 
         '''
-        name = tornado.escape.xhtml_escape(self.current_user)
 
     @tornado.web.authenticated
     def post(self, game_id):
