@@ -43,7 +43,9 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
   const [upload, setUpload] = React.useState(undefined);
 
   const deleteWorld = async (id) => {
-    const res = await post(`world/delete/${id}`);
+    const res = await fetch(`${CONFIG.host}:${CONFIG.port}/builder/world/delete/${id}`, {
+      method: "DELETE",
+    });
   };
 
   /* Given an entity id, its type, and the local entities store, get 
@@ -189,6 +191,9 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
             <tr>
               <th>World ID</th>
               <th>World Name</th>
+              <th>Height</th>
+              <th>Width</th>
+              <th>Number of Floors</th>
               <th>Load</th>
               <th>Delete</th>
             </tr>
@@ -206,9 +211,12 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
                   <td>
                     <strong>{d.name}</strong>
                   </td>
+                  <td>{d.height}</td>
+                  <td>{d.width}</td>
+                  <td>{d.num_floors}</td>
                   <td>
                     <Button
-                      intent={Intent.SUCCESS}
+                      intent={Intent.PRIMARY}
                       type="submit"
                       onClick={() => getWorld(d.id)}
                     >
