@@ -11,6 +11,7 @@ from deploy.web.server.game_instance import (
     PlayerProvider,
     GameInstance,
 )
+from light.data_model.light_database import LIGHTDatabase
 
 import argparse
 import inspect
@@ -296,13 +297,13 @@ class BaseHandler(tornado.web.RequestHandler):
                 logging.error(e)
 
 class LandingApplication(tornado.web.Application):
-    def __init__(self, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
-        super(LandingApplication, self).__init__(self.get_handlers(hostname, password), **tornado_settings)
+    def __init__(self, dbpath, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
+        super(LandingApplication, self).__init__(self.get_handlers(dbpath, hostname, password), **tornado_settings)
 
-    def get_handlers(self, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
+    def get_handlers(self, dbpath, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
         return [
             (r"/", MainHandler),
-            (r"/login", LoginHandler, {'hostname' : hostname, 'password': password}),
+            (r"/login", LoginHandler, {'dbpath': dbpath, 'hostname' : hostname, 'password': password}),
             (r"/logout", LogoutHandler),
             (r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})
         ]
@@ -311,9 +312,11 @@ class MainHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         self.render(here + "/../build/index.html")
-        
+
+       
 class LoginHandler(BaseHandler):
-    def initialize(self, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
+    def initialize(self, dbpath, hostname=DEFAULT_HOSTNAME, password="LetsPlay", ):
+        self.dbpath = dbpath
         self.hostname = hostname
         self.password = password
 
@@ -325,6 +328,8 @@ class LoginHandler(BaseHandler):
         name = self.get_argument("name", "")
         password = self.get_argument("password", "")
         if password == self.password:
+            with LIGHTDatabase(self.dbpath) as db:
+                _ = db.create_user(name)
             self.set_current_user(name)
             self.redirect(self.get_argument("next", u"/"))
         else:
