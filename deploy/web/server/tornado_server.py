@@ -24,7 +24,7 @@ import time
 import traceback
 import uuid
 import warnings
-
+from collections import defaultdict
 from zmq.eventloop import ioloop
 ioloop.install()  # Needs to happen before any tornado imports!
 
@@ -130,7 +130,7 @@ tornado_settings = {
 class Application(tornado.web.Application):
     def __init__(self):
         self.subs = {}
-        self.new_subs = []
+        self.new_subs = defaultdict(list)
         super(Application, self).__init__(self.get_handlers(), **tornado_settings)
 
     def get_handlers(self):
@@ -143,24 +143,6 @@ class Application(tornado.web.Application):
             (r"/", MainHandler),
             (r"/(.*)", StaticUIHandler, {'path': path_to_build}),
         ]
-
-'''
-class WorldHandler(BaseHandler):
-    'Load a world given the player id and world id'
-
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
-
-    @tornado.web.authenticated
-    def get(self):
-        with LIGHTDatabase(self.dbpath) as db:
-            id = int(self.get_argument('id'))
-            player = self.get_argument("player", None, True)
-            # TODO: Implement this method - load the world for the wordlbuilder
-            world = db.get_world(id=id, player_id=player)
-            # Want to write the world name and ids.  Then, load it into game instance somehow...
-            self.write(json.dumps(world))
-'''
 
 # StaticUIHandler serves static front end, defaulting to index.html served
 # If the file is unspecified.
@@ -195,14 +177,16 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
     def set_player(self, player):
         self.player = player
 
-    def open(self):
+    def open(self, game_id):
+        print(game_id)
+        print("Uhhhh, is it blank?", game_id == "")
         user_json = self.get_secure_cookie("user")
         if user_json:
             if self not in list(self.subs.values()):
                 self.subs[self.sid] = self
             logging.info(
                 'Opened new socket from ip: {}'.format(self.request.remote_ip))
-            self.new_subs.append(self.sid)
+            self.new_subs[game_id].append(self.sid)
         else:
             self.close()
             self.redirect(u"/login")
@@ -410,10 +394,9 @@ class TornadoWebappPlayerProvider(PlayerProvider):
     will be given opportunities to check for new players and should return
     an array of new players during these calls
     """
-    def __init__(self, graph, hostname=DEFAULT_HOSTNAME, port=DEFAULT_PORT, listening=False):
-        super().__init__(graph)
+    def __init__(self, graphs, hostname=DEFAULT_HOSTNAME, port=DEFAULT_PORT, listening=False):
+        super().__init__(graphs)
         self.app = None
-
         def _run_server():
             nonlocal listening
             nonlocal self
@@ -439,21 +422,22 @@ class TornadoWebappPlayerProvider(PlayerProvider):
         while self.app is None:
             time.sleep(0.3)
 
-    def get_new_players(self):
+    def get_new_players(self, graph_id):
         """
         Should check the potential source of players for new players. If
         a player exists, this should instantiate a relevant Player object
         for each potential new player and return them.
         """
         new_connections = []
-        while len(self.app.new_subs) > 0:
-            new_connections.append(self.app.new_subs.pop())
+        my_new_subs = self.app.new_subs[graph_id]
+        while len(my_new_subs) > 0:
+            new_connections.append(my_new_subs.pop())
         players = []
 
         for conn_name in new_connections:
             conn = self.app.subs[conn_name]
             if conn.alive:
-                player_id = self.g.spawn_player()
+                player_id = self.graphs[graph_id].spawn_player()
                 print("added a subscriber!: " + str(player_id))
                 if player_id == -1:
                     conn.safe_write_message(
@@ -464,7 +448,7 @@ class TornadoWebappPlayerProvider(PlayerProvider):
                     )
                 else:
                     new_player = TornadoWebappPlayer(
-                        self.g,
+                        self.graphs[graph_id],
                         player_id,
                         conn,
                     )

@@ -11,7 +11,7 @@ import os
 import sys
 import ast
 import inspect
-import subprocess
+import threading
 import time
 import uuid
 import tornado.web
@@ -55,14 +55,34 @@ class RegistryApplication(tornado.web.Application):
         super(RegistryApplication, self).__init__(self.get_handlers(FLAGS), **tornado_settings)
 
     def get_handlers(self, FLAGS):
-        id = get_rand_id()
-        tornado.process.fork_processes(0)
-        t_provider_default = run_new_game(id, FLAGS)
-        self.router = RuleRouter([Rule(PathMatches(f'/game/socket'), t_provider_default.app)])
+        self.tornado_provider = TornadoWebappPlayerProvider({}, FLAGS.hostname, FLAGS.port)
+        self.router = RuleRouter([Rule(PathMatches(f'/game/socket'), self.tornado_provider.app)])
+        game_instance = self.run_new_game("", FLAGS)
         return [
             (r"/game/new/(.*)", GameCreatorHandler, {'app': self}),
             (r"/game/(.*)", self.router)
         ]
+
+    # TODO: Move this to utils
+    # This is basically it though - want to create a new world?  For now call these methods, then
+    # attach the game's tornado provider 
+    def run_new_game(self, game_id, FLAGS):
+
+        game = GameInstance(game_id)
+        graph = game.g
+        self.tornado_provider.graphs[game_id] = graph
+        self.game_instances[game_id] = game
+
+        game.register_provider(self.tornado_provider)
+        # Handle telenet changes later
+        # provider = TelnetPlayerProvider(graph, FLAGS.hostname, FLAGS.port + 1)
+        # game.register_provider(provider)
+        t = threading.Thread(
+            target=game.run_graph, name=f'Game{game_id}GraphThread', daemon=True
+        )
+        t.start()
+
+        return game
 
 # Default BaseHandler - should be extracted to some util?
 class BaseHandler(tornado.web.RequestHandler):
@@ -93,7 +113,6 @@ class GameCreatorHandler(BaseHandler):
     def initialize(self, app):
         self.app = app
         self.game_instances = app.game_instances
-        self.default = None
 
     @tornado.web.authenticated
     def post(self, game_id):
@@ -101,26 +120,9 @@ class GameCreatorHandler(BaseHandler):
         Registers a new TornadoProvider at the game_id endpoint
         '''
         # Create game_provider here
-        tornado_provider = run_new_game(game_id, self.app.FLAGS)
-        new_rule = Rule(PathMatches(f'/game/{game_id}.*'), tornado_provider.app)
-        self.app.router.add_rules([new_rule])
-        self.game_instances[game_id] = tornado_provider
+        print("Registering: ", game_id)
+        game = self.app.run_new_game(game_id, self.app.FLAGS)
+        self.game_instances[game_id] = game
         self.set_status(201)
 
-# TODO: Move this to utils
-# This is basically it though - want to create a new world?  For now call these methods, then
-# attach the game's tornado provider 
-def run_new_game(game_id, FLAGS):
-
-    game = GameInstance()
-    graph = game.g
-    tornado_provider = TornadoWebappPlayerProvider(graph, FLAGS.hostname, FLAGS.port)
-    game.register_provider(tornado_provider)
-    provider = TelnetPlayerProvider(graph, FLAGS.hostname, FLAGS.port + 1)
-    game.register_provider(provider)
-    t = threading.Thread(
-        target=game.run_graph, name=f'Game{game_id}GraphThread', daemon=True
-    )
-    t.start()
-
-    return tornado_provider
+    
