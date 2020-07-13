@@ -14,6 +14,7 @@ from deploy.web.server.game_instance import (
 from light.data_model.light_database import LIGHTDatabase
 
 import argparse
+import asyncio
 import inspect
 import json
 import logging
@@ -418,7 +419,7 @@ class TornadoWebappPlayerProvider(PlayerProvider):
             nonlocal self
             nonlocal hostname
             nonlocal port
-            self.my_loop = ioloop.IOLoop()
+            asyncio.set_event_loop(asyncio.new_event_loop())
             self.app = Application()
             if listening:
                 self.app.listen(port, max_buffer_size=1024 ** 3)
@@ -430,7 +431,6 @@ class TornadoWebappPlayerProvider(PlayerProvider):
                 hostname = os.environ["HOSTNAME"]
             else:
                 hostname = hostname
-            self.my_loop.start()
 
         self.t = threading.Thread(
             target=_run_server, name='TornadoProviderThread', daemon=True

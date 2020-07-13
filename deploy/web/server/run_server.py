@@ -18,6 +18,9 @@ from deploy.web.server.tornado_server import (
 from deploy.web.server.builder_server import (
     BuildApplication, get_handlers,
 )
+from deploy.web.server.registry import (
+    RegistryApplication,
+)
 from tornado.routing import (
     PathMatches, Rule, RuleRouter,
 )
@@ -39,20 +42,21 @@ here = os.path.abspath(os.path.dirname(__file__))
 # Idea - make a "game registry" app or something similar that has endpoint /game(.*)
 # This will then be routed to the registryApp, which uses that (.*) url to pass to the appropiate
 # game instance.
-def make_app(FLAGS, tornado_provider):
+def make_app(FLAGS):
     worldBuilderApp = BuildApplication(get_handlers(FLAGS.data_model_db))
     landingApp = LandingApplication(FLAGS.data_model_db, FLAGS.hostname, FLAGS.password)
+    registryApp = RegistryApplication(FLAGS)
     router = RuleRouter([
         Rule(PathMatches("/builder.*"), worldBuilderApp),
-        Rule(PathMatches("/game.*"), tornado_provider.app),
+        Rule(PathMatches("/game.*"), registryApp),
         Rule(PathMatches("/.*"), landingApp),
     ])
     server = HTTPServer(router)
     server.listen(FLAGS.port)
 
-def _run_server(FLAGS, tornado_provider):
+def _run_server(FLAGS):
     my_loop = IOLoop()
-    make_app(FLAGS, tornado_provider)
+    make_app(FLAGS)
     if "HOSTNAME" in os.environ and hostname == FLAGS.hostname:
         hostname = os.environ["HOSTNAME"]
     else:
@@ -62,7 +66,7 @@ def _run_server(FLAGS, tornado_provider):
     my_loop.current().start()
 
 
-def router_run(FLAGS, tornado_provider):
+def router_run(FLAGS):
     '''
     Router run spins up the router for request to send to the correct application.
     
@@ -76,7 +80,7 @@ def router_run(FLAGS, tornado_provider):
     to this method, which relies on the the python scheduler.  
     '''
     t = threading.Thread(
-        target=_run_server, args=(FLAGS, tornado_provider), name='RoutingServer', daemon=True
+        target=_run_server, args=(FLAGS), name='PrimaryRoutingServer', daemon=True
     )
     t.start()
 
@@ -112,18 +116,7 @@ def main():
 
     random.seed(6)
     numpy.random.seed(6)
-
-    # Need to package this stuff into a new method for spawning game, so wrap it up!
-    # Just one tornado listener that passes people along to correct graph?
-    # Look at the tornado_server for handling this mostly
-    game = GameInstance()
-    graph = game.g
-    tornado_provider = TornadoWebappPlayerProvider(graph, FLAGS.hostname, FLAGS.port)
-    game.register_provider(tornado_provider)
-    provider = TelnetPlayerProvider(graph, FLAGS.hostname, FLAGS.port + 1)
-    game.register_provider(provider)
-    router_run(FLAGS, tornado_provider)
-    game.run_graph()
+    _run_server(FLAGS)
 
 
 

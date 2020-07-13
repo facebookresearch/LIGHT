@@ -11,7 +11,9 @@ import os
 import sys
 import ast
 import inspect
+import threading
 import time
+import uuid
 import tornado.web
 from tornado.ioloop import IOLoop
 from tornado import locks
@@ -19,6 +21,16 @@ from tornado import gen
 from tornado.routing import (
     PathMatches, Rule, RuleRouter,
 )
+from deploy.web.server.game_instance import (
+    GameInstance,
+)
+from deploy.web.server.tornado_server import (
+    TornadoWebappPlayerProvider,
+)
+from deploy.web.server.telnet_server import (
+    TelnetPlayerProvider,
+)
+
 
 def get_rand_id():
     return str(uuid.uuid4())
@@ -37,14 +49,14 @@ class RegistryApplication(tornado.web.Application):
         - Forward it to the designated tornado provider (if an id is given)
         - Assign to a random (or default) game based on some load balancing
     '''
-    def __init__(self):
+    def __init__(self, FLAGS):
         self.game_instances = {}
-        super(Application, self).__init__(self.get_handlers(), **tornado_settings)
+        super(RegistryApplication, self).__init__(self.get_handlers(FLAGS), **tornado_settings)
 
-    def get_handlers(self):
+    def get_handlers(self, FLAGS):
         id = get_rand_id()
-        t_provider_default = run_new_game(id)
-        self.router = RuleRouter([Rule(PathMatches(f'/game/socket'), t_provider_default.application)])
+        t_provider_default = run_new_game(id, FLAGS)
+        self.router = RuleRouter([Rule(PathMatches(f'/game/socket'), t_provider_default.app)])
         return [
             (r"/game/new/(.*)", GameCreatorHandler, {'app': self}),
             (r"/game/(.*)", self.router)
@@ -71,10 +83,11 @@ class BaseHandler(tornado.web.RequestHandler):
 
 
 class GameCreatorHandler(BaseHandler):
-'''
-This web handler is responsible for registering new game instances, as well as forwarding
-player request to the correct game instance
-'''
+    '''
+    This web handler is responsible for registering new game instances, as well as forwarding
+    player request to the correct game instance
+    '''
+
     def initialize(self, app):
         self.app = app
         self.game_instances = app.game_instances
@@ -93,34 +106,17 @@ player request to the correct game instance
 # TODO: Move this to utils
 # This is basically it though - want to create a new world?  For now call these methods, then
 # attach the game's tornado provider 
-def router_run(FLAGS, tornado_provider):
-    '''
-    Router run spins up the router for request to send to the correct application.
-    
-    In doing so, we have a tornado application that blocks listening for request.  Since this executes in the
-    same thread as the game instance, we have to do something to avoid blocking the game instance from running.
-    
-    Our options are spinning a seperate thread, or using the PeriodicCallback function in tornado to switch
-    between the router and the game instance.  Here we have chosen to use threading for precedence, as this
-    is how the TornadoWebAppProvider runs, and for the simplicity of the implementation, however
-    PeriodicCallback is a more deterministic way to handle to control switching as opposed
-    to this method, which relies on the the python scheduler.  
-    '''
-    t = threading.Thread(
-        target=_run_server, args=(FLAGS, tornado_provider), name='RoutingServer', daemon=True
-    )
-    t.start()
+def run_new_game(game_id, FLAGS):
 
-def run_new_game(game_id):
     game = GameInstance()
     graph = game.g
     tornado_provider = TornadoWebappPlayerProvider(graph, FLAGS.hostname, FLAGS.port)
     game.register_provider(tornado_provider)
     provider = TelnetPlayerProvider(graph, FLAGS.hostname, FLAGS.port + 1)
     game.register_provider(provider)
-    router_run(FLAGS, tornado_provider)
     t = threading.Thread(
-        target=game.run_graph(), args=(FLAGS, tornado_provider), name=f'Game{game_id}Thread', daemon=True
+        target=game.run_graph, name=f'Game{game_id}GraphThread', daemon=True
     )
     t.start()
+
     return tornado_provider

@@ -5,6 +5,7 @@
 #
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
+import asyncio
 from light.graph.builders.starspace_all import (
     StarspaceBuilder,
 )
@@ -103,6 +104,7 @@ class GameInstance:
     def run_graph(self):
         g = self.g
         timer = Timer()
+        asyncio.set_event_loop(asyncio.new_event_loop())
         while True:
             # try to make some new players
             for provider in self.providers:
