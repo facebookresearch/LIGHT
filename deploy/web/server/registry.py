@@ -44,7 +44,7 @@ class RegistryApplication(tornado.web.Application):
     def get_handlers(self):
         id = get_rand_id()
         t_provider_default = run_new_game(id)
-        self.router = RuleRouter([Rule(PathMatches(f'/game/socket/'), t_provider_default.application)])
+        self.router = RuleRouter([Rule(PathMatches(f'/game/socket'), t_provider_default.application)])
         return [
             (r"/game/new/(.*)", GameCreatorHandler, {'app': self}),
             (r"/game/(.*)", self.router)
