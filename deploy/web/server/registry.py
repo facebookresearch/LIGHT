@@ -11,7 +11,7 @@ import os
 import sys
 import ast
 import inspect
-import threading
+import subprocess
 import time
 import uuid
 import tornado.web
@@ -51,10 +51,12 @@ class RegistryApplication(tornado.web.Application):
     '''
     def __init__(self, FLAGS):
         self.game_instances = {}
+        self.FLAGS = FLAGS
         super(RegistryApplication, self).__init__(self.get_handlers(FLAGS), **tornado_settings)
 
     def get_handlers(self, FLAGS):
         id = get_rand_id()
+        tornado.process.fork_processes(0)
         t_provider_default = run_new_game(id, FLAGS)
         self.router = RuleRouter([Rule(PathMatches(f'/game/socket'), t_provider_default.app)])
         return [
@@ -99,9 +101,11 @@ class GameCreatorHandler(BaseHandler):
         Registers a new TornadoProvider at the game_id endpoint
         '''
         # Create game_provider here
-        tornado_provider = run_new_game(game_id)
-        new_rule = Rule(PathMatches(f'/game/{game_id}.*'), tornado_provider.application)
+        tornado_provider = run_new_game(game_id, self.app.FLAGS)
+        new_rule = Rule(PathMatches(f'/game/{game_id}.*'), tornado_provider.app)
         self.app.router.add_rules([new_rule])
+        self.game_instances[game_id] = tornado_provider
+        self.set_status(201)
 
 # TODO: Move this to utils
 # This is basically it though - want to create a new world?  For now call these methods, then
