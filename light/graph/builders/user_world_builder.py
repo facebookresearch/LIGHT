@@ -32,7 +32,7 @@ class UserWorldBuilder(DBGraphBuilder):
         self.db_path = opt['light_db_file']
         self.filler_probability = opt['filler_probability']
         self._no_npc_models = not opt['use_npc_models']
-        DBGraphBuilder.__init__(self, self.db_path)
+        DBGraphBuilder.__init__(self, self.db_path) # <--- this is the culprit
         self.debug = debug
 
         # Need world id to be non none, check that here
@@ -119,3 +119,55 @@ class UserWorldBuilder(DBGraphBuilder):
         world = World(self.opt, self)
         world.oo_graph = g
         return g, world
+
+    @staticmethod
+    def add_parser_arguments(parser):
+        """
+        Add arguments to a parser to be able to set the required options for 
+        this builder
+        """
+        parser.add_argument(
+            '--suggestion-type',
+            type=str,
+            default='model',
+            help="Input 'model', 'human', or 'hybrid', for the suggestion type",
+        )
+        parser.add_argument(
+            '--hybridity-prob',
+            type=float,
+            default=0.5,
+            help="Set probability how often ex-object or character is skipped",
+        )
+        parser.add_argument(
+            '--use-best-match-model',
+            type='bool',
+            default=False,
+            help="use human suggestions for predicting placement of objects, characters, and room",
+        )
+        parser.add_argument(
+            '--light-db-file',
+            type=str,
+            default="/checkpoint/light/data/database3.db",
+            help="specific path for light database",
+        )
+        parser.add_argument(
+            '--light-model-root',
+            type=str,
+            default="/checkpoint/light/models/",
+            help="specific path for light models",
+        )
+        parser.add_argument(
+            '--filler-probability',
+            type=float,
+            default=0.3,
+            help="probability for retrieving filler rooms",
+        )
+        parser.add_argument(
+            '--use-npc-models',
+            type='bool',
+            default=True,
+            help="whether to use NPC model ",
+        )
+        parser.add_argument(
+            '--map-size', type=int, default=6, help="define the size of the map"
+        )

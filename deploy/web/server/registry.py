@@ -30,6 +30,8 @@ from deploy.web.server.tornado_server import (
 from deploy.web.server.telnet_server import (
     TelnetPlayerProvider,
 )
+from light.graph.builders.user_world_builder import UserWorldBuilder
+from light.data_model.light_database import LIGHTDatabase
 
 
 def get_rand_id():
@@ -66,22 +68,23 @@ class RegistryApplication(tornado.web.Application):
     # TODO: Move this to utils
     # This is basically it though - want to create a new world?  For now call these methods, then
     # attach the game's tornado provider 
-    def run_new_game(self, game_id, FLAGS):
+    def run_new_game(self, game_id, player_id=None, world_id=None):
+        
+        if world_id is not None and player_id is not None:
+            builder = UserWorldBuilder(player_id=player_id, world_id=world_id)
+            _, graph = builder.get_graph()
+            game = GameInstance(game_id, g=graph)
+        else:
+            game = GameInstance(game_id)
+            graph = game.g
 
-        game = GameInstance(game_id)
-        graph = game.g
         self.tornado_provider.graphs[game_id] = graph
         self.game_instances[game_id] = game
-
         game.register_provider(self.tornado_provider)
-        # Handle telenet changes later
-        # provider = TelnetPlayerProvider(graph, FLAGS.hostname, FLAGS.port + 1)
-        # game.register_provider(provider)
         t = threading.Thread(
             target=game.run_graph, name=f'Game{game_id}GraphThread', daemon=True
         )
         t.start()
-
         return game
 
 # Default BaseHandler - should be extracted to some util?
@@ -119,12 +122,24 @@ class GameCreatorHandler(BaseHandler):
         '''
         Registers a new TornadoProvider at the game_id endpoint
         '''
-        print("I never got here, bug sad")
+        # Ensures we only get one default game
         if (game_id == ""):
             game_id = get_rand_id()
+        
+        world_id = self.get_argument("world_id", None, True)
+        if (world_id is not None):
+            username = tornado.escape.xhtml_escape(self.current_user)
+            with LIGHTDatabase(self.app.FLAGS.data_model_db) as db:
+                player = db.get_user_id(username)
+                if (not db.is_world_owned_by(world_id, player)):
+                    self.set_status(403)
+                    return
+            game = self.app.run_new_game(game_id, player, world_id)
+        else:
+            game = self.app.run_new_game(game_id)
+
         # Create game_provider here
         print("Registering: ", game_id)
-        game = self.app.run_new_game(game_id, self.app.FLAGS)
         self.game_instances[game_id] = game
         self.set_status(201)
         self.write(json.dumps(game_id))
