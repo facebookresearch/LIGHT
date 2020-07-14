@@ -11,6 +11,8 @@ from light.graph.events.graph_events import ArriveEvent
 from light.graph.builders.base import (
     DBGraphBuilder,
 )
+from light.world.world import World
+
 
 
 class UserWorldBuilder(DBGraphBuilder):
@@ -24,22 +26,18 @@ class UserWorldBuilder(DBGraphBuilder):
                 True, True, 'Arguments for building a LIGHT world with User Defined Builder'
             )
             self.add_parser_arguments(parser)
+            opt, _unknown = parser.parse_and_process_known_args()
 
-        opt, _unknown = parser.parse_and_process_known_args()
         self.opt = opt
-        self.parlai_datapath = opt['datapath']
-        self.db_path = os.path.join(opt['datapath'], 'light', 'database3.db')
-        if opt.get("light_db_file", "") != "":
-            self.db_path = opt.get("light_db_file")
-        self.model_path = opt.get("light_model_root")
-        DBGraphBuilder.__init__(self, self.db_path)`
+        self.db_path = opt['light_db_file']
+        self.filler_probability = opt['filler_probability']
+        self._no_npc_models = not opt['use_npc_models']
+        DBGraphBuilder.__init__(self, self.db_path)
         self.debug = debug
 
         # Need world id to be non none, check that here
         self.world_id = world_id
         self.player_id = player_id
-        # grid of 3d coordinates to room dicts that exist there
-        self.grid = {}
 
     def add_random_new_agent_to_graph(self, target_graph):
         '''Add an agent to the graph in a random room somewhere'''
@@ -65,7 +63,7 @@ class UserWorldBuilder(DBGraphBuilder):
         with self.db as ldb:
             world = ldb.get_world(self.world_id, self.player_id)
             assert len(world) == 1, "Must get a single world back to load game from it"
-            resources = db.get_world_resources(self.world_id, self.player_id)
+            resources = ldb.get_world_resources(self.world_id, self.player_id)
 
         world = world[0]
         # {world_id, name, height, width, num_floors} are keys!
@@ -79,19 +77,20 @@ class UserWorldBuilder(DBGraphBuilder):
         # Need a db_id to g_id map!
         # Do not bother mapping to local here, map straight into the graph (make these nodes)
         nextID = 1
-        entities = {'room': {}, 'character': {}, 'object': {},}
         db_to_g = {}
         node_to_g= {}
-        type_to_entities = {'room': resources[2], 'character': resources[3], 'object':resources[4],}
+        self.roomid_to_db = {}
+        type_to_entities = {'room': resources[2], 'agent': resources[3], 'object':resources[4],}
         for type_ in type_to_entities.keys():
             for entity in type_to_entities[type_]:
                 props = dict(entity)
-                print(dictionary)
                 func = getattr(g, f'add_{type_}')
                 # No uid or player for any of these
-                g_id = func(props['name'], props, db_id=props['db_id'])
-                db_to_g[props['db_id']] = g_id
-                node_to_g[props['node_id']] = g_id
+                g_id = func(props['name'], props, db_id=props['entity_id']).node_id
+                db_to_g[props['entity_id']] = g_id
+                node_to_g[props['id']] = g_id
+                if(type_ == 'room'):
+                    self.roomid_to_db[g_id] = props['entity_id']
 
         edges = []
         for edge in edge_list:
@@ -115,9 +114,8 @@ class UserWorldBuilder(DBGraphBuilder):
             elif edge == "contains":
                 dst.move_to(src)
 
-
         # Now we have all the info we need - time to organize
         # Add neighbors to rooms with the edges, and add objects and characters to rooms
         world = World(self.opt, self)
         world.oo_graph = g
-        return world
+        return g, world
