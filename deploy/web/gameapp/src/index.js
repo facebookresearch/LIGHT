@@ -18,14 +18,18 @@ import { setCaretPosition } from "./utils";
 
 import CONFIG from "./config";
 
-const createWebSocketUrlFromBrowserUrl = url => {
+const createWebSocketUrlFromBrowserUrl = (url) => {
   const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
   const optionalServerHost = new URL(url).searchParams.get("server");
+  var optionalGameId = new URL(url).searchParams.get("id");
+  if (!optionalGameId){
+    optionalGameId = "";
+  }
   if (optionalServerHost) {
     console.log("Using user-provided server hostname:", optionalServerHost);
   }
   const websocketURL =
-    wsProtocol + "://" + (optionalServerHost || CONFIG.hostname) + ":" + CONFIG.port + "/game/socket";
+    wsProtocol + "://" + (optionalServerHost || CONFIG.hostname) + ":" + CONFIG.port + `/game${optionalGameId}/socket`;
   return websocketURL;
 };
 
@@ -138,6 +142,7 @@ function ConnectedApp() {
     () => createWebSocketUrlFromBrowserUrl(window.location),
     []
   );
+  console.log(wsUrl);
   const {
     isErrored,
     messages,

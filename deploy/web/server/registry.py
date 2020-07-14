@@ -56,11 +56,11 @@ class RegistryApplication(tornado.web.Application):
 
     def get_handlers(self, FLAGS):
         self.tornado_provider = TornadoWebappPlayerProvider({}, FLAGS.hostname, FLAGS.port)
-        self.router = RuleRouter([Rule(PathMatches(f'/game/socket'), self.tornado_provider.app)])
+        self.router = RuleRouter([Rule(PathMatches(f'/game.*/socket'), self.tornado_provider.app)])
         game_instance = self.run_new_game("", FLAGS)
         return [
             (r"/game/new/(.*)", GameCreatorHandler, {'app': self}),
-            (r"/game/(.*)", self.router)
+            (r"/game(.*)", self.router)
         ]
 
     # TODO: Move this to utils
@@ -119,10 +119,13 @@ class GameCreatorHandler(BaseHandler):
         '''
         Registers a new TornadoProvider at the game_id endpoint
         '''
+        if (game_id == ""):
+            game_id = get_rand_id()
         # Create game_provider here
         print("Registering: ", game_id)
         game = self.app.run_new_game(game_id, self.app.FLAGS)
         self.game_instances[game_id] = game
         self.set_status(201)
+        self.write(json.dumps(game_id))
 
     
