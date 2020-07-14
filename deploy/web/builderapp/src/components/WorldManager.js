@@ -256,7 +256,12 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
 */
 export async function launchWorld(state){
   // TODO: See above
-  return null;
+  world_id = await postWorld(state)
+  const res = await post('game/new/', world_id);
+  const data = res.json()
+  console.log(data.url_param)
+  // New component here?  or just return link and surface somewhere else?
+  return data.url_param;
 }
 
 export async function postWorld(state) {
@@ -351,6 +356,9 @@ export async function postWorld(state) {
     intent: Intent.SUCCESS,
     message: "World Saved! ",
   });
+  // Return the id
+  console.log(res.json());
+  return res.json();
 }
 
 export default ListWorldsOverlay;
