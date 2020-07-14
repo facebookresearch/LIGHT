@@ -212,7 +212,7 @@ class RoomInteractionLogger(InteractionLogger):
         
     def _begin_meta_episode(self):
         self._clear_buffers()
-        self._init_graph_state()
+        self._add_current_graph_state()
         self.turns_wo_players = 0
 
     def _clear_buffers(self):
@@ -222,7 +222,7 @@ class RoomInteractionLogger(InteractionLogger):
         self.conversation_buffer.extend(self.bot_context_buffer)
         self.bot_context_buffer.clear()
 
-    def _init_graph_state(self):
+    def _add_current_graph_state(self):
         """Make a copy of the graph state so we can replay events on top of it
         """
         try:
