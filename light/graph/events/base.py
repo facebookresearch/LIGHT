@@ -7,19 +7,18 @@
 # Used for typehinting
 from typing import Union, Any, List, Optional, cast, Type
 from light.graph.elements.graph_nodes import (
-    GraphNode,
-    GraphEdge,
     GraphAgent,
-    GraphObject,
+    GraphEdge,
     GraphNode,
+    GraphObject,
     GraphRoom,
 )
 from light.world.utils.json_utils import (
     GraphEncoder,
 )
 from typing import NamedTuple, TYPE_CHECKING, Dict
-import json
 import inspect
+import json
 
 if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
@@ -152,41 +151,18 @@ class GraphEvent(object):
         """
         Instantiate this event from the given json over the given world
         """
-        def dict_node_conversion(obj, world):
-            if type(obj) is dict and 'node_id' in obj:
-                # Handle things that got removed from world by the event
-                if obj['node_id'] in world.oo_graph.all_nodes:
-                    return world.oo_graph.all_nodes[obj['node_id']]
-                else:
-                    if obj['agent'] == True:
-                        return GraphAgent.from_json_dict(obj)
-                    elif obj['object']:
-                        return GraphObject.from_json_dict(obj)                    
-                    elif obj['room']:
-                        return GraphRoom.from_json_dict(obj)
-                    else:
-                        return GraphNode.from_json_dict(obj)
-            elif type(obj) is dict:
-                return {k: dict_node_conversion(obj[k], world) for k in obj.keys()}
-            elif type(obj) is list:
-                return [dict_node_conversion(item, world) for item in obj]
-            else:
-                # TODO: Consider other datatypes such as set or tuples (although none in events 
-                # currently, so not an issue)
-                return obj
-
-        dict_format = dict_node_conversion(json.loads(input_json), world)
+        attribute_dict = convert_dict_to_node(json.loads(input_json), world)
         class_ = GraphEvent
-        if "__class__" in dict_format:
-            class_name = dict_format.pop("__class__")
-            module_name = dict_format.pop("__module__")
+        if "__class__" in attribute_dict:
+            class_name = attribute_dict.pop("__class__")
+            module_name = attribute_dict.pop("__module__")
             # Must pass non empty list to get the exact module
             module = __import__(module_name, fromlist=[None])
             class_ = getattr(module, class_name)
 
-        arglist = [dict_format.pop(arg) for arg in inspect.getfullargspec(class_.__init__)[0] if arg is not 'self']
+        arglist = [attribute_dict.pop(arg) for arg in inspect.getfullargspec(class_.__init__)[0] if arg is not 'self']
         event = class_(*arglist)
-        for k, v in dict_format.items():
+        for k, v in attribute_dict.items():
             event.__dict__[k] = v
         return event
 
@@ -227,6 +203,36 @@ class GraphEvent(object):
             'room': node_to_json(self.room),
             'actor': node_to_json(self.actor),
         }
+
+# TODO: Move to a utils file with the graph encoder
+def convert_dict_to_node(obj, world):
+        """
+        Given a dictionary (typically loaded from json), iterate over the elements recursively,
+        reconstructing any nodes that we are able to using the reference world.
+
+        If the node_id is not in the reference world, this means it was deleted during execution, so 
+        construct a new node object with it
+        """
+        if type(obj) is dict and 'node_id' in obj:
+            if obj['node_id'] in world.oo_graph.all_nodes:
+                return world.oo_graph.all_nodes[obj['node_id']]
+            else:
+                if obj['agent']:
+                    return GraphAgent.from_json_dict(obj)
+                elif obj['object']:
+                    return GraphObject.from_json_dict(obj)                    
+                elif obj['room']:
+                    return GraphRoom.from_json_dict(obj)
+                else:
+                    return GraphNode.from_json_dict(obj)
+        elif type(obj) is dict:
+            return {k: convert_dict_to_node(obj[k], world) for k in obj.keys()}
+        elif type(obj) is list:
+            return [convert_dict_to_node(item, world) for item in obj]
+        else:
+            # TODO: Consider other datatypes such as set or tuples (although none in events 
+            # rn, so not an issue)
+            return obj
 
 class ErrorEvent(GraphEvent):
     """
