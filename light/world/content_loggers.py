@@ -2,7 +2,77 @@
 from light.graph.structured_graph import OOGraph
 import os
 import uuid
+import abc
+import time
 import json
+
+'''
+TODO: Decide where to place loggers - rooms or agents or ...?
+
+TODO: Where to put the logs?  Directory, but where?  How to organize?
+
+General flow:
+    - A player enters
+    - Save the state of the graph, dump to a file so it can be reloaded
+    - Record events happening as long as player exists (meta episode is not over)
+        * Events need timestamps to order, other metadata (?room?actor?)
+    - Write events to log files
+    - Player exits, stop recording!
+
+Considerations:
+    - some sort of history of conversation to give context (bot history here)
+    - some sort of limit to avoid afk players
+    - Lots of rooms, players - want to avoid super high write times (how??)
+
+Attributes to have:
+    - meta episode id
+    - graph id
+    episode should have events!  Events have..
+        - TIMESTAMP!
+        - EVENT JSON!
+        - follow up?  response to?
+        - actor?  room?
+
+'''
+class InteractionLogger(abc.ABC):
+    '''
+        Base object for interaction loggers.  Takes a reference to the graph and
+        location to write data, as well as defines some methods for interfacing
+    '''
+    def __init__(self, graph, data_location):
+        # TODO: Consider a meta information file in directory for data store, read this from
+        # that file!
+        self.meta_episode = 0
+        self.data_location = data_location
+        self.graph = graph
+
+    def _begin_meta_episode(self):
+        '''
+            Handles any preprocessing associated with beginning a meta episode such as
+            clearing buffers and recording initial state
+        '''
+        raise NotImplementedError
+    
+    def _end_meta_episode(self):
+        '''
+            Handles any postprocessing associated with the end of a meta episode 
+            such as flushing buffers by writing to data location, and updating variables
+        '''
+        self._log_interactions()
+        raise NotImplementedError
+    
+    def _log_interactions(self):
+        '''
+            Writes out the buffers to the location specified by data location, 
+            handling any data specific formatting
+        '''
+        raise NotImplementedError
+
+    def observe_event(self, event):
+        '''
+            Examine event passed in, deciding how to save it to the logs
+        '''
+        raise NotImplementedError
 
 
 class RoomConversationBuffer(object):
