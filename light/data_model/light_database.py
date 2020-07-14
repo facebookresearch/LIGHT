@@ -318,6 +318,7 @@ class LIGHTDatabase:
             self.c.execute("""SELECT * FROM {0} """.format(table_name))
             print("Maybe the execute?")
             results = self.c.fetchall()
+            print("Nah, it is the fetchall that is the culprit!")
             if 'edges' in key:
                 self.cache[key] = {}
                 for row in results:
