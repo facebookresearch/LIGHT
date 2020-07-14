@@ -328,3 +328,4 @@ class RoomInteractionLogger(InteractionLogger):
     def human_controlled(self, event):
         ''' Determines if an event is controlled by a human or not - need ._human for legacy (web)'''
         return event.actor.is_player or event.actor._human
+        

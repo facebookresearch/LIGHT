@@ -10,11 +10,9 @@ from light.graph.elements.graph_nodes import (
     GraphAgent,
     GraphEdge,
     GraphNode,
-    GraphObject,
-    GraphRoom,
 )
 from light.world.utils.json_utils import (
-    GraphEncoder,
+    convert_dict_to_node, GraphEncoder,
 )
 from typing import NamedTuple, TYPE_CHECKING, Dict
 import inspect
@@ -203,36 +201,7 @@ class GraphEvent(object):
             'room': node_to_json(self.room),
             'actor': node_to_json(self.actor),
         }
-
-# TODO: Move to a utils file with the graph encoder
-def convert_dict_to_node(obj, world):
-        """
-        Given a dictionary (typically loaded from json), iterate over the elements recursively,
-        reconstructing any nodes that we are able to using the reference world.
-
-        If the node_id is not in the reference world, this means it was deleted during execution, so 
-        construct a new node object with it
-        """
-        if type(obj) is dict and 'node_id' in obj:
-            if obj['node_id'] in world.oo_graph.all_nodes:
-                return world.oo_graph.all_nodes[obj['node_id']]
-            else:
-                if obj['agent']:
-                    return GraphAgent.from_json_dict(obj)
-                elif obj['object']:
-                    return GraphObject.from_json_dict(obj)                    
-                elif obj['room']:
-                    return GraphRoom.from_json_dict(obj)
-                else:
-                    return GraphNode.from_json_dict(obj)
-        elif type(obj) is dict:
-            return {k: convert_dict_to_node(obj[k], world) for k in obj.keys()}
-        elif type(obj) is list:
-            return [convert_dict_to_node(item, world) for item in obj]
-        else:
-            # TODO: Consider other datatypes such as set or tuples (although none in events 
-            # rn, so not an issue)
-            return obj
+        
 
 class ErrorEvent(GraphEvent):
     """
