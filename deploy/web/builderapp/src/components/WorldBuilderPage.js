@@ -17,7 +17,7 @@ import {
   MAX_WIDTH,
   MAX_FLOORS,
 } from "./worldbuilding/utils";
-import ListWorldsOverlay from "./WorldManager";
+import ListWorldsOverlay, { launchWorld } from "./WorldManager";
 import { postWorld } from "./WorldManager";
 import Grid from "./worldbuilding/Grid";
 import FloorSelector from "./worldbuilding/FloorSelector";
@@ -147,6 +147,13 @@ function WorldBuilder({ upload }) {
         }}
         className="bp3-navbar"
       >
+        <Button
+          onClick={() => launchWorld(state)}
+          intent="primary"
+          style={{ margin: "10px" }}
+        >
+          Launch Game
+        </Button>
         <Button
           onClick={() => setIsOverlayOpen(!isOverlayOpen)}
           intent="primary"

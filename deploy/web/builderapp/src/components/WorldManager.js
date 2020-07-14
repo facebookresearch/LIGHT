@@ -256,12 +256,24 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
 */
 export async function launchWorld(state){
   // TODO: See above
-  world_id = await postWorld(state)
-  const res = await post('game/new/', world_id);
-  const data = res.json()
-  console.log(data.url_param)
+  const world_id = await postWorld(state);
+
+  const formBody = [];
+  const encodedKey = encodeURIComponent("world_id");
+  const encodedValue = encodeURIComponent(world_id);
+  formBody.push(encodedKey + "=" + encodedValue);
+
+  const res = await fetch(`${CONFIG.host}:${CONFIG.port}/game/new/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: formBody.join("&"),
+  });
+  const data = await res.json();
+  console.log(data)
   // New component here?  or just return link and surface somewhere else?
-  return data.url_param;
+  return data;
 }
 
 export async function postWorld(state) {
@@ -351,14 +363,13 @@ export async function postWorld(state) {
   // send it to the saving format!
   dat.map.edges = edges;
   const res = await post("world/", dat);
-
+  const resData = await res.json();
   AppToaster.show({
     intent: Intent.SUCCESS,
     message: "World Saved! ",
   });
   // Return the id
-  console.log(res.json());
-  return res.json();
+  return resData;
 }
 
 export default ListWorldsOverlay;

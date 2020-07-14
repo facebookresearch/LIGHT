@@ -103,7 +103,7 @@ class TelnetPlayerProvider(PlayerProvider):
         server_socket.settimeout(0.0)
         self.server_socket = server_socket
 
-    def get_new_players(self):
+    def get_new_players(self, game_id):
         """
         Should check the potential source of players for new players. If
         a player exists, this should instantiate a relevant Player object
