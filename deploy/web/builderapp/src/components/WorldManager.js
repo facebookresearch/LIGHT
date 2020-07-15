@@ -102,6 +102,29 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
     });
   };
 
+  /* Given a specific tile and the datMap, add the walls which
+      are true in the wall array for the tile to the map*/
+  const constructWallsForTile = (tileInfo, datMap) => {
+    const neighbors = [
+      `${tileInfo.x - 1} ${tileInfo.y}`,
+      `${tileInfo.x + 1} ${tileInfo.y}`,
+      `${tileInfo.x} ${tileInfo.y - 1}`,
+      `${tileInfo.x} ${tileInfo.y + 1}`,
+    ];
+    let myLoc = `${tileInfo.x} ${tileInfo.y}`;
+    for(let i = 0; i < tileInfo.walls.length; i++){
+      if (tileInfo.walls[i]){
+        let otherLoc = neighbors[i];
+        // Need to sort in order for upload to work!
+        if (otherLoc < myLoc){
+          datMap[tileInfo.floor].walls[otherLoc + "|" + myLoc] = true;
+        }else{
+          datMap[tileInfo.floor].walls[myLoc + "|" + otherLoc] = true;
+        }
+      }
+    }
+  }
+
   /* Given the metadata for tiles, construct the format expected by the frontend which
         involves mapping x, y, and floor into the map then storing the other data */
   const constructTilesAndWalls = (roomToTile, datMap) => {
@@ -118,26 +141,8 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
       } else if (tileInfo.stairDown) {
         temp.stairDown = true;
       }
-      // Only need to set walls down and to right
-      const neighbors = [
-        `${tileInfo.x - 1} ${tileInfo.y}`,
-        `${tileInfo.x + 1} ${tileInfo.y}`,
-        `${tileInfo.x} ${tileInfo.y - 1}`,
-        `${tileInfo.x} ${tileInfo.y + 1}`,
-      ];
       datMap[tileInfo.floor].tiles[tileInfo.x + " " + tileInfo.y] = temp;
-      let myLoc = `${tileInfo.x} ${tileInfo.y}`;
-      for(let i = 0; i < tileInfo.walls.length; i++){
-        if (tileInfo.walls[i]){
-          let otherLoc = neighbors[i];
-          // Need to sort in order for upload to work!
-          if (otherLoc < myLoc){
-            datMap[tileInfo.floor].walls[otherLoc + "|" + myLoc] = true;
-          }else{
-            datMap[tileInfo.floor].walls[myLoc + "|" + otherLoc] = true;
-          }
-        }
-      }
+      constructWallsForTile(tileInfo, datMap);
     });
   };
 
