@@ -43,11 +43,15 @@ class InteractionLogger(abc.ABC):
         location to write data, as well as defines some methods for interfacing
     '''
     def __init__(self, graph, data_path):
-        # TODO: Consider a meta information file in directory for data store, read this from
-        # that file!
-        self.meta_episode = 0
         self.data_path = data_path
         self.graph = graph
+
+        # All loggers should have graph state history and a buffer for events
+        # State history is just the json of the graph the event executed on
+        self.state_history = []
+        # Event buffer is (state_history_idx, event_hash, timestamp, event_json)
+        # where state_history_idx is the index of the graph the event executed on
+        self.event_buffer = []
 
     def _begin_meta_episode(self):
         '''
@@ -77,6 +81,56 @@ class InteractionLogger(abc.ABC):
         '''
         raise NotImplementedError
 
+    def _dump_graphs(self):
+        '''
+            This method is responsible for dumping the graphs of the event logger 
+            to file, recording the identifiers used for the graphs
+        '''
+        # First, check graph path, then write the graph dump
+        graph_path = os.path.join(self.data_path, 'light_graph_dumps')
+        if not os.path.exists(graph_path):
+            os.mkdir(graph_path)
+
+        states = []
+        for state in self.state_history:
+            unique_graph_name = str(uuid.uuid4())
+            states.append(unique_graph_name)
+            graph_file_name = f'{unique_graph_name}.json'
+            file_path = os.path.join(graph_path, graph_file_name)
+            with open(file_path, 'w') as dump_file:
+                dump_file.write(state)
+        return states
+
+    def _dump_events(self, graph_states, pov, id_):
+        '''
+            This method is responsible for dumping the event logs, referencing the
+            graph files recorded in graph_states.  An event log consist of events, where
+            an event consist of 3 lines:
+                serialized_graph_filename event_hash
+                timestamp
+                event_json
+            Event logs are named: {id}_{unique_identifier}.log
+            and are stored in the `pov/` directory
+
+        '''
+        # Now, do the same for events, dumping in the light_event_dumps/rooms
+        events_path = os.path.join(self.data_path, 'light_event_dumps')
+        if not os.path.exists(events_path):
+            os.mkdir(events_path)
+        events_path_dir = os.path.join(events_path, pov)
+        if not os.path.exists(events_room_path):
+            os.mkdir(events_room_path)
+
+        unique_event_name = str(uuid.uuid4())
+        id_name = f'{id_}'.replace(" ", "_")
+        event_file_name = f'{id_name}_{unique_event_name}_events.log'
+        events_file_path = os.path.join(events_path_dir, event_file_name)
+        with open(events_file_path, 'w') as dump_file:
+            for (idx, hashed, event, time) in self.event_buffer:
+                dump_file.write(''.join([states[idx], " ", hashed, '\n']))
+                dump_file.write(''.join([time, '\n']))
+                dump_file.write(''.join([event, '\n']))
+        return events_file_path
 
 class AgentInteractionLogger(InteractionLogger):
     '''
@@ -104,11 +158,8 @@ class AgentInteractionLogger(InteractionLogger):
             self.data_path = graph._opt.get("log_path", DEFAULT_LOG_PATH)    
             self.is_active = graph._opt.get("is_logging", False)
 
-
         self.turns_wo_player_action = 0 #Player is acting by virtue of this initialized!
         self.context_buffer = collections.deque(maxlen=max_context_history)
-        self.event_buffer = []
-        self.state_history = []
         self._logging_intialized = False
 
     def _begin_meta_episode(self):
@@ -139,61 +190,12 @@ class AgentInteractionLogger(InteractionLogger):
     def _end_meta_episode(self):
         self._logging_intialized = False
         self._log_interactions()
-    
-    def _dump_graphs(self):
-        '''
-            This method is responsible for dumping the graphs of the event logger 
-            to file, recording the identifiers used for the graphs
-        '''
-        # First, check graph path, then write the graph dump
-        graph_path = os.path.join(self.data_path, 'light_graph_dumps')
-        if not os.path.exists(graph_path):
-            os.mkdir(graph_path)
-
-        states = []
-        for state in self.state_history:
-            unique_graph_name = str(uuid.uuid4())
-            states.append(unique_graph_name)
-            graph_file_name = f'{unique_graph_name}.json'
-            file_path = os.path.join(graph_path, graph_file_name)
-            with open(file_path, 'w') as dump_file:
-                dump_file.write(state)
-        return states
-
-    def _dump_events(self, graph_states):
-        '''
-            This method is responsible for dumping the event logs, referencing the
-            graph files recorded in graph_states.  An event log consist of events, where
-            an event consist of 3 lines:
-                serialized_graph_filename event_hash
-                timestamp
-                event_json
-            Agent event logs are named: {agent_id}_{unique_identifier}.log
-        '''
-        # Now, do the same for events, dumping in the light_event_dumps/rooms
-        events_path = os.path.join(self.data_path, 'light_event_dumps')
-        if not os.path.exists(events_path):
-            os.mkdir(events_path)
-        events_agent_path = os.path.join(events_path, 'agent')
-        if not os.path.exists(events_room_path):
-            os.mkdir(events_room_path)
-
-        unique_event_name = str(uuid.uuid4())
-        agent_name = f'{self.agent.node_id}'.replace(" ", "_")
-        event_file_name = f'{agent_name}_{unique_event_name}_events.log'
-        events_file_path = os.path.join(events_agent_path, event_file_name)
-        with open(events_file_path, 'w') as dump_file:
-            for (idx, hashed, event, time) in self.event_buffer:
-                dump_file.write(''.join([states[idx], " ", hashed, '\n']))
-                dump_file.write(''.join([time, '\n']))
-                dump_file.write(''.join([event, '\n']))
-        return events_file_path
 
     def _log_interactions(self):
 
         graph_states = self._dump_graphs()
-        self._last_graph = graph_states[-1]
-        events_file_path = self._dump_events()
+        self._last_graphs = graph_states
+        events_file_path = self._dump_events(graph_states, "agent", self.agent.node_id)
         # Used for testing
         self._last_event_log = events_file_path
 
@@ -261,8 +263,6 @@ class RoomInteractionLogger(InteractionLogger):
         self.num_players_present = 0
         self.turns_wo_players = float('inf') # Technically, we have never had players
         self.context_buffer = collections.deque(maxlen=max_context_history)
-        self.conversation_buffer = []
-        self.state_history = []
 
          # Initialize player count here (bc sometimes players are force moved)
         for node_id in self.graph.all_nodes[self.room_id].contained_nodes:
@@ -277,8 +277,8 @@ class RoomInteractionLogger(InteractionLogger):
     def _clear_buffers(self):
         '''Clear the buffers storage for this logger, dumping context'''
         self.state_history.clear()
-        self.conversation_buffer.clear()
-        self.conversation_buffer.extend(self.context_buffer)
+        self.event_buffer.clear()
+        self.event_buffer.extend(self.context_buffer)
         self.context_buffer.clear()
 
     def _add_current_graph_state(self):
@@ -301,62 +301,11 @@ class RoomInteractionLogger(InteractionLogger):
     def _end_meta_episode(self):
         self._log_interactions()
         self.context_buffer.clear()
-    
-    def _dump_graphs(self):
-        '''
-            This method is responsible for dumping the graphs of the event logger 
-            to file, recording the identifiers used for the graphs
-        '''
-        # First, check graph path, then write the graph dump
-        graph_path = os.path.join(self.data_path, 'light_graph_dumps')
-        if not os.path.exists(graph_path):
-            os.mkdir(graph_path)
-
-        states = []
-        for state in self.state_history:
-            unique_graph_name = str(uuid.uuid4())
-            states.append(unique_graph_name)
-            graph_file_name = f'{unique_graph_name}.json'
-            file_path = os.path.join(graph_path, graph_file_name)
-            with open(file_path, 'w') as dump_file:
-                dump_file.write(state)
-        return states
-
-    def _dump_events(self, graph_states):
-        '''
-            This method is responsible for dumping the event logs, referencing the
-            graph files recorded in graph_states.  An event log consist of events, where
-            an event consist of 3 lines:
-                serialized_graph_filename event_hash
-                timestamp
-                event_json
-            Room event logs are named: {room_id}_{unique_identifier}.log
-
-        '''
-        # Now, do the same for events, dumping in the light_event_dumps/rooms
-        events_path = os.path.join(self.data_path, 'light_event_dumps')
-        if not os.path.exists(events_path):
-            os.mkdir(events_path)
-        events_room_path = os.path.join(events_path, 'room')
-        if not os.path.exists(events_room_path):
-            os.mkdir(events_room_path)
-
-        unique_event_name = str(uuid.uuid4())
-        room_name = f'{self.room_id}'.replace(" ", "_")
-        event_file_name = f'{room_name}_{unique_event_name}_events.log'
-        events_file_path = os.path.join(events_room_path, event_file_name)
-        with open(events_file_path, 'w') as dump_file:
-            for (idx, hashed, event, time) in self.conversation_buffer:
-                dump_file.write(''.join([states[idx], " ", hashed, '\n']))
-                dump_file.write(''.join([time, '\n']))
-                dump_file.write(''.join([event, '\n']))
-        return events_file_path
 
     def _log_interactions(self):
-
         graph_states = self._dump_graphs()
-        self._last_graph = graph_states[-1]
-        events_file_path = self._dump_events()
+        self._last_graphs = graph_states
+        events_file_path = self._dump_events(graph_states, 'room', self.room_id)
         # Used for testing
         self._last_event_log = events_file_path
 
@@ -391,12 +340,12 @@ class RoomInteractionLogger(InteractionLogger):
                 # Players are back from AFK, dump context
                 if self._is_players_afk():
                     # TODO: Need to handle something related to graph state here(?)
-                    self.conversation_buffer.extend(self.context_buffer)
+                    self.event_buffer.extend(self.context_buffer)
                     self.context_buffer.clear()
                 self.turns_wo_players = 0
             else:
                 self.turns_wo_players += 1
-            self.conversation_buffer.append((len(self.state_history) - 1, event.__hash__(), 
+            self.event_buffer.append((len(self.state_history) - 1, event.__hash__(), 
                 event.to_json(), time.ctime()))
         
         if (event_t is LeaveEvent or event_t is DeathEvent) and self.human_controlled(event):
