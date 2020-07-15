@@ -12,7 +12,7 @@ import json
 import collections
 
 from light.graph.events.graph_events import ArriveEvent, SpawnEvent, DeathEvent, LeaveEvent
-
+DEFAULT_LOG_PATH = ''.join([os.path.abspath(os.path.dirname(__file__)), "/../../logs"])
 '''
 General flow:
     - A player enters
@@ -118,8 +118,8 @@ class InteractionLogger(abc.ABC):
         if not os.path.exists(events_path):
             os.mkdir(events_path)
         events_path_dir = os.path.join(events_path, pov)
-        if not os.path.exists(events_room_path):
-            os.mkdir(events_room_path)
+        if not os.path.exists(events_path_dir):
+            os.mkdir(events_path_dir)
 
         unique_event_name = str(uuid.uuid4())
         id_name = f'{id_}'.replace(" ", "_")
@@ -127,7 +127,7 @@ class InteractionLogger(abc.ABC):
         events_file_path = os.path.join(events_path_dir, event_file_name)
         with open(events_file_path, 'w') as dump_file:
             for (idx, hashed, event, time) in self.event_buffer:
-                dump_file.write(''.join([states[idx], " ", hashed, '\n']))
+                dump_file.write(''.join([graph_states[idx], " ", str(hashed), '\n']))
                 dump_file.write(''.join([time, '\n']))
                 dump_file.write(''.join([event, '\n']))
         return events_file_path
@@ -213,8 +213,9 @@ class AgentInteractionLogger(InteractionLogger):
 
         # Store context from bots, or store current events
         if (self._is_player_afk() and not event.actor is self.agent):
-            self.context_buffer.append((len(self.state_history) - 1, event.__hash__(), 
-                event.to_json(), time.ctime()))
+            self.context_buffer.append(
+                (len(self.state_history) - 1, event.__hash__(), event.to_json(), time.ctime())
+            )
         else:
             if event.actor is self.agent:
                 if self._is_player_afk():
@@ -223,8 +224,9 @@ class AgentInteractionLogger(InteractionLogger):
                 self.turns_wo_player_action = 0
             else:
                 self.turns_wo_player_action += 1
-            self.event_buffer.append((len(self.state_history) - 1, event.__hash__(),
-                event.to_json(), time.ctime()))
+            self.event_buffer.append(
+                (len(self.state_history) - 1, event.__hash__(), event.to_json(), time.ctime())
+            )
        
         if event_t is DeathEvent: # If agent is exiting or dieing or something, end meta episode
             self._end_meta_episode()
@@ -333,8 +335,9 @@ class RoomInteractionLogger(InteractionLogger):
 
         # Store context from bots, or store current events
         if not self._is_logging() or (self._is_players_afk() and not self.human_controlled(event)):
-            self.context_buffer.append((len(self.state_history) - 1, event.__hash__()
-                event.to_json(), time.ctime()))
+            self.context_buffer.append(
+                (len(self.state_history) - 1, event.__hash__(), event.to_json(), time.ctime())
+            )
         else:
             if self.human_controlled(event):
                 # Players are back from AFK, dump context
@@ -345,8 +348,9 @@ class RoomInteractionLogger(InteractionLogger):
                 self.turns_wo_players = 0
             else:
                 self.turns_wo_players += 1
-            self.event_buffer.append((len(self.state_history) - 1, event.__hash__(), 
-                event.to_json(), time.ctime()))
+            self.event_buffer.append(
+                (len(self.state_history) - 1, event.__hash__(), event.to_json(), time.ctime())
+            )
         
         if (event_t is LeaveEvent or event_t is DeathEvent) and self.human_controlled(event):
             self._remove_player()

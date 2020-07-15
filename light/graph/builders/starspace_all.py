@@ -182,6 +182,18 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         parser.add_argument(
             '--map-size', type=int, default=6, help="define the size of the map"
         )
+        parser.add_argument(
+            '--is-logging',
+            type='bool',
+            default=True,
+            help="Log events with interaction loggers",
+        )
+        parser.add_argument(
+            '--log-path',
+            type=str,
+            default=''.join([os.path.abspath(os.path.dirname(__file__)), "/../../../logs"]),
+            help="Write the events logged to this path",
+        )
 
     def load_models(self):
         '''Load starspace models for building the map'''
