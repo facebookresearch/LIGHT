@@ -170,6 +170,7 @@ class GraphEvent(object):
         imported back to the original with from_json
         """
         use_dict = {k: v for k, v in self.__dict__.copy().items() if not k.startswith("__")}
+        # Viewer is sent to dictionary in case we want to reconstruct `view_as` method
         use_dict['viewer'] = viewer
         use_dict['__class__'] = self.__class__.__name__
         use_dict['__module__'] = self.__module__
