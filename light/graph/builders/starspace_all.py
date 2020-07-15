@@ -99,7 +99,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         self.model_path = opt.get("light_model_root")
         # manual override for efficency - change this to your scratch, copied from
         # /checkpoint/light/data/databse3.db
-        self.db_path = '/scratch/lucaskabela/database3.db'
+        # self.db_path = '/scratch/lucaskabela/database3.db'
         print("Gonna try building")
         DBGraphBuilder.__init__(self, self.db_path)
         print("Did I get pass the DB?")
