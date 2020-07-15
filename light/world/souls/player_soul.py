@@ -36,7 +36,7 @@ class PlayerSoul(Soul):
         self.player_id = player_id
         self.provider = provider  # TODO link with real provider
         # TODO: Change this with a configurable path
-        self.agent_logger = AgentInteractionLogger( world.oo_graph, "/private/home/lucaskabela/LIGHT/logs", target_node)
+        self.agent_logger = AgentInteractionLogger( world.oo_graph, target_node)
         # Record that there is now a player in the room we are putting this one in
         world.oo_graph.room_id_to_loggers[target_node.get_room().node_id]._add_player()
         provider.register_soul(self)

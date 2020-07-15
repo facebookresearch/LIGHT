@@ -54,3 +54,4 @@ def convert_dict_to_node(obj, world):
             # TODO: Consider other datatypes such as set or tuples (although none in events 
             # rn, so not an issue)
             return obj
+

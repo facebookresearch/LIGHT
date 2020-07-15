@@ -82,17 +82,31 @@ class AgentInteractionLogger(InteractionLogger):
     '''
         This interaction logger attaches to human agents in the graph, logging all
         events the human observes.  This logger also requires serializing more rooms, 
-        since agent encounters many rooms along its traversal
+        since agent encounters many rooms along its traversal  These events go into 
+        the conversation buffer, which is then sent to `.log` files at the specified path
+
+        context_buffers serve an important role in this class to avoid bloating the event logs.
+        context_buffers will log a fixed number of the most recent events when:
+
+        1. The player goes afk.  This has the potential to avoid logging lots of noise in the room 
+           that does not provide any signal on human player interactions.  When the player comes back 
+           to the game, our loggers send some context of the most recent events to the log
     '''
-    def __init__(self, graph, data_path, agent, is_active=False, max_afk_history=5, afk_turn_tolerance=25):
+    def __init__(self, graph, agent, data_path=DEFAULT_LOG_PATH, is_active=False, 
+            max_afk_history=5, afk_turn_tolerance=25):
         super().__init__(graph, data_path)
         self.agent = agent
         self.max_afk_history = max_afk_history
         self.afk_turn_tolerance = afk_turn_tolerance
-        self.is_active = is_active
+        if graph._opt is None:
+            self.is_active=is_active
+        else:
+            self.data_path = graph._opt.get("log_path", DEFAULT_LOG_PATH)    
+            self.is_active = graph._opt.get("is_logging", False)
+
 
         self.turns_wo_player_action = 0 #Player is acting by virtue of this initialized!
-        self.afk_context_buffer = collections.deque(maxlen=max_afk_history)
+        self.context_buffer = collections.deque(maxlen=max_afk_history)
         self.event_buffer = []
         self.state_history = []
         self._logging_intialized = False
@@ -177,12 +191,12 @@ class AgentInteractionLogger(InteractionLogger):
 
         # Store context from bots, or store current events
         if (self._is_player_afk() and not event.actor is self.agent):
-            self.afk_context_buffer.append((len(self.state_history) - 1, event.to_json(), time.ctime()))
+            self.context_buffer.append((len(self.state_history) - 1, event.to_json(), time.ctime()))
         else:
             if event.actor is self.agent:
                 if self._is_player_afk():
-                    self.event_buffer.extend(self.afk_context_buffer)
-                    self.afk_context_buffer.clear()
+                    self.event_buffer.extend(self.context_buffer)
+                    self.context_buffer.clear()
                 self.turns_wo_player_action = 0
             else:
                 self.turns_wo_player_action += 1
@@ -210,12 +224,17 @@ class RoomInteractionLogger(InteractionLogger):
            that does not provide any signal on human player interactions.  When players come back 
            to the game, our loggers send some context of the most recent events to the log
     '''
-    def __init__(self, graph, data_path, room_id, is_active=False, max_bot_history=5, afk_turn_tolerance=10):
+    def __init__(self, graph, room_id, data_path=DEFAULT_LOG_PATH, is_active=False, 
+            max_afk_history=5, afk_turn_tolerance=10):
         super().__init__(graph, data_path)
         self.room_id = room_id
-        self.max_bot_history = max_bot_history
+        self.max_afk_history = max_afk_history
         self.afk_turn_tolerance = afk_turn_tolerance
-        self.is_active = is_active
+        if graph._opt is None:
+            self.is_active=is_active
+        else:
+            self.data_path = graph._opt.get("log_path", DEFAULT_LOG_PATH)    
+            self.is_active = graph._opt.get("is_logging", False)
 
         self.num_players_present = 0
         self.turns_wo_players = float('inf') # Technically, we have never had players

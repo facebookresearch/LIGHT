@@ -816,17 +816,8 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                             room_node = g.get_node(pos_room.g_id)
                             self.add_new_agent_to_graph(g, c, room_node)
 
-        # Get location for logger
-        default_loc = "".join([os.path.abspath(os.path.dirname(__file__)), "/../../logs/"])
-        if self.opt is None:
-            loc = default_loc
-            is_active=False
-        else:
-            loc = self.opt.get("log_path", default_loc)    
-            is_active = self.opt.get("is_logging", False)
-
         for room in g.rooms:
-            g.room_id_to_loggers[room] = RoomInteractionLogger(g, loc, room, is_active=is_active)
+            g.room_id_to_loggers[room] = RoomInteractionLogger(g, room)
 
         world = World(self.opt, self)
         world.oo_graph = g
