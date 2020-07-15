@@ -78,7 +78,19 @@ class RoomInteractionLogger(InteractionLogger):
     '''
         This interaction logger attaches to a room level node in the graph, logging all
         events which take place with human agents in the room as long as a player is still 
-        in the room
+        in the room.  These events go into the conversation buffer, which is then sent to `.log`
+        files at the specified path
+
+        
+        context_buffers serve an important role in this class to avoid bloating the event logs.
+        context_buffers will log a fixed number of the most recent events when:
+
+        1. There are no players in the room. This is a potential use case when an agent enters a 
+           conversation between 2 or more models, and we want some context for training purposes
+
+        2. All players go afk.  This has the potential to avoid logging lots of noise in the room 
+           that does not provide any signal on human player interactions.  When players come back 
+           to the game, our loggers send some context of the most recent events to the log
     '''
     def __init__(self, graph, data_path, room_id, max_bot_history=5, afk_turn_tolerance=10):
         super().__init__(graph, data_path)
@@ -88,7 +100,7 @@ class RoomInteractionLogger(InteractionLogger):
 
         self.num_players_present = 0
         self.turns_wo_players = float('inf') # Technically, we have never had players
-        self.bot_context_buffer = collections.deque(maxlen=max_bot_history)
+        self.context_buffer = collections.deque(maxlen=max_bot_history)
         self.conversation_buffer = []
         self.state_history = []
         
@@ -107,8 +119,8 @@ class RoomInteractionLogger(InteractionLogger):
         '''Clear the buffers storage for this logger, dumping context'''
         self.state_history.clear()
         self.conversation_buffer.clear()
-        self.conversation_buffer.extend(self.bot_context_buffer)
-        self.bot_context_buffer.clear()
+        self.conversation_buffer.extend(self.context_buffer)
+        self.context_buffer.clear()
 
     def _init_graph_state(self):
         """Make a copy of the graph state so we can replay events on top of it
@@ -129,7 +141,7 @@ class RoomInteractionLogger(InteractionLogger):
 
     def _end_meta_episode(self):
         self._log_interactions()
-        self.bot_context_buffer.clear()
+        self.context_buffer.clear()
     
     def _log_interactions(self):
         # First, check graph path, then write the graph dump
@@ -187,14 +199,14 @@ class RoomInteractionLogger(InteractionLogger):
 
         # Store context from bots, or store current events
         if not self._is_logging() or (self._is_players_afk() and not event.actor.is_player):
-            self.bot_context_buffer.append((event.to_json(), time.ctime()))
+            self.context_buffer.append((event.to_json(), time.ctime()))
         else:
             if event.actor.is_player:
                 # Players are back from AFK, dump context
                 if self._is_players_afk():
                     # TODO: Need to handle something related to graph state here(?)
-                    self.conversation_buffer.extend(self.bot_context_buffer)
-                    self.bot_context_buffer.clear()
+                    self.conversation_buffer.extend(self.context_buffer)
+                    self.context_buffer.clear()
                 self.turns_wo_players = 0
             else:
                 self.turns_wo_players += 1
