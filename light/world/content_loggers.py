@@ -93,10 +93,10 @@ class AgentInteractionLogger(InteractionLogger):
            to the game, our loggers send some context of the most recent events to the log
     '''
     def __init__(self, graph, agent, data_path=DEFAULT_LOG_PATH, is_active=False, 
-            max_afk_history=5, afk_turn_tolerance=25):
+            max_context_history=5, afk_turn_tolerance=25):
         super().__init__(graph, data_path)
         self.agent = agent
-        self.max_afk_history = max_afk_history
+        self.max_context_history = max_context_history
         self.afk_turn_tolerance = afk_turn_tolerance
         if graph._opt is None:
             self.is_active=is_active
@@ -106,7 +106,7 @@ class AgentInteractionLogger(InteractionLogger):
 
 
         self.turns_wo_player_action = 0 #Player is acting by virtue of this initialized!
-        self.context_buffer = collections.deque(maxlen=max_afk_history)
+        self.context_buffer = collections.deque(maxlen=max_context_history)
         self.event_buffer = []
         self.state_history = []
         self._logging_intialized = False
@@ -140,13 +140,16 @@ class AgentInteractionLogger(InteractionLogger):
         self._logging_intialized = False
         self._log_interactions()
     
-    def _log_interactions(self):
+    def _dump_graphs(self):
+        '''
+            This method is responsible for dumping the graphs of the event logger 
+            to file, recording the identifiers used for the graphs
+        '''
         # First, check graph path, then write the graph dump
         graph_path = os.path.join(self.data_path, 'light_graph_dumps')
         if not os.path.exists(graph_path):
             os.mkdir(graph_path)
 
-        # TODO: Fix this logic for agent writing out multiple graphs
         states = []
         for state in self.state_history:
             unique_graph_name = str(uuid.uuid4())
@@ -155,27 +158,44 @@ class AgentInteractionLogger(InteractionLogger):
             file_path = os.path.join(graph_path, graph_file_name)
             with open(file_path, 'w') as dump_file:
                 dump_file.write(state)
-        self._last_graph = states[-1]
+        return states
 
+    def _dump_events(self, graph_states):
+        '''
+            This method is responsible for dumping the event logs, referencing the
+            graph files recorded in graph_states.  An event log consist of events, where
+            an event consist of 3 lines:
+                serialized_graph_filename event_hash
+                timestamp
+                event_json
+            Agent event logs are named: {agent_id}_{unique_identifier}.log
+        '''
         # Now, do the same for events, dumping in the light_event_dumps/rooms
         events_path = os.path.join(self.data_path, 'light_event_dumps')
         if not os.path.exists(events_path):
             os.mkdir(events_path)
-        events_room_path = os.path.join(events_path, 'agent')
+        events_agent_path = os.path.join(events_path, 'agent')
         if not os.path.exists(events_room_path):
             os.mkdir(events_room_path)
 
         unique_event_name = str(uuid.uuid4())
         agent_name = f'{self.agent.node_id}'.replace(" ", "_")
         event_file_name = f'{agent_name}_{unique_event_name}_events.log'
-        events_file_path = os.path.join(events_room_path, event_file_name)
-        self._last_logged_to = events_file_path
+        events_file_path = os.path.join(events_agent_path, event_file_name)
         with open(events_file_path, 'w') as dump_file:
-            for (idx, event, time) in self.event_buffer:
-                # TODO:  If writing multiple graphs, need to reference those here 
-                dump_file.write(''.join([states[idx], '\n']))
+            for (idx, hashed, event, time) in self.event_buffer:
+                dump_file.write(''.join([states[idx], " ", hashed, '\n']))
                 dump_file.write(''.join([time, '\n']))
                 dump_file.write(''.join([event, '\n']))
+        return events_file_path
+
+    def _log_interactions(self):
+
+        graph_states = self._dump_graphs()
+        self._last_graph = graph_states[-1]
+        events_file_path = self._dump_events()
+        # Used for testing
+        self._last_event_log = events_file_path
 
     def observe_event(self, event):
         if not self.is_active:
@@ -191,7 +211,8 @@ class AgentInteractionLogger(InteractionLogger):
 
         # Store context from bots, or store current events
         if (self._is_player_afk() and not event.actor is self.agent):
-            self.context_buffer.append((len(self.state_history) - 1, event.to_json(), time.ctime()))
+            self.context_buffer.append((len(self.state_history) - 1, event.__hash__(), 
+                event.to_json(), time.ctime()))
         else:
             if event.actor is self.agent:
                 if self._is_player_afk():
@@ -200,7 +221,8 @@ class AgentInteractionLogger(InteractionLogger):
                 self.turns_wo_player_action = 0
             else:
                 self.turns_wo_player_action += 1
-            self.event_buffer.append((len(self.state_history) - 1, event.to_json(), time.ctime()))
+            self.event_buffer.append((len(self.state_history) - 1, event.__hash__(),
+                event.to_json(), time.ctime()))
        
         if event_t is DeathEvent: # If agent is exiting or dieing or something, end meta episode
             self._end_meta_episode()
@@ -225,10 +247,10 @@ class RoomInteractionLogger(InteractionLogger):
            to the game, our loggers send some context of the most recent events to the log
     '''
     def __init__(self, graph, room_id, data_path=DEFAULT_LOG_PATH, is_active=False, 
-            max_afk_history=5, afk_turn_tolerance=10):
+            max_context_history=5, afk_turn_tolerance=10):
         super().__init__(graph, data_path)
         self.room_id = room_id
-        self.max_afk_history = max_afk_history
+        self.max_context_history = max_context_history
         self.afk_turn_tolerance = afk_turn_tolerance
         if graph._opt is None:
             self.is_active=is_active
@@ -238,7 +260,7 @@ class RoomInteractionLogger(InteractionLogger):
 
         self.num_players_present = 0
         self.turns_wo_players = float('inf') # Technically, we have never had players
-        self.context_buffer = collections.deque(maxlen=max_bot_history)
+        self.context_buffer = collections.deque(maxlen=max_context_history)
         self.conversation_buffer = []
         self.state_history = []
 
@@ -280,22 +302,37 @@ class RoomInteractionLogger(InteractionLogger):
         self._log_interactions()
         self.context_buffer.clear()
     
-    def _log_interactions(self):
+    def _dump_graphs(self):
+        '''
+            This method is responsible for dumping the graphs of the event logger 
+            to file, recording the identifiers used for the graphs
+        '''
         # First, check graph path, then write the graph dump
         graph_path = os.path.join(self.data_path, 'light_graph_dumps')
         if not os.path.exists(graph_path):
             os.mkdir(graph_path)
+
         states = []
         for state in self.state_history:
             unique_graph_name = str(uuid.uuid4())
             states.append(unique_graph_name)
-            self._last_logged_to = unique_graph_name
             graph_file_name = f'{unique_graph_name}.json'
             file_path = os.path.join(graph_path, graph_file_name)
             with open(file_path, 'w') as dump_file:
                 dump_file.write(state)
-        self._last_graph = states[-1]
+        return states
 
+    def _dump_events(self, graph_states):
+        '''
+            This method is responsible for dumping the event logs, referencing the
+            graph files recorded in graph_states.  An event log consist of events, where
+            an event consist of 3 lines:
+                serialized_graph_filename event_hash
+                timestamp
+                event_json
+            Room event logs are named: {room_id}_{unique_identifier}.log
+
+        '''
         # Now, do the same for events, dumping in the light_event_dumps/rooms
         events_path = os.path.join(self.data_path, 'light_event_dumps')
         if not os.path.exists(events_path):
@@ -308,13 +345,20 @@ class RoomInteractionLogger(InteractionLogger):
         room_name = f'{self.room_id}'.replace(" ", "_")
         event_file_name = f'{room_name}_{unique_event_name}_events.log'
         events_file_path = os.path.join(events_room_path, event_file_name)
-        self._last_logged_to = events_file_path
         with open(events_file_path, 'w') as dump_file:
-            for (idx, event, time) in self.conversation_buffer:
-                # TODO:  If writing multiple graphs, need to reference those here 
-                dump_file.write(''.join([states[idx], '\n']))
+            for (idx, hashed, event, time) in self.conversation_buffer:
+                dump_file.write(''.join([states[idx], " ", hashed, '\n']))
                 dump_file.write(''.join([time, '\n']))
                 dump_file.write(''.join([event, '\n']))
+        return events_file_path
+
+    def _log_interactions(self):
+
+        graph_states = self._dump_graphs()
+        self._last_graph = graph_states[-1]
+        events_file_path = self._dump_events()
+        # Used for testing
+        self._last_event_log = events_file_path
 
     def _add_player(self):
         ''' Record that a player entered the room, updating variables as needed'''
@@ -340,7 +384,8 @@ class RoomInteractionLogger(InteractionLogger):
 
         # Store context from bots, or store current events
         if not self._is_logging() or (self._is_players_afk() and not self.human_controlled(event)):
-            self.context_buffer.append((len(self.state_history) - 1, event.to_json(), time.ctime()))
+            self.context_buffer.append((len(self.state_history) - 1, event.__hash__()
+                event.to_json(), time.ctime()))
         else:
             if self.human_controlled(event):
                 # Players are back from AFK, dump context
@@ -351,7 +396,8 @@ class RoomInteractionLogger(InteractionLogger):
                 self.turns_wo_players = 0
             else:
                 self.turns_wo_players += 1
-            self.conversation_buffer.append((len(self.state_history) - 1, event.to_json(), time.ctime()))
+            self.conversation_buffer.append((len(self.state_history) - 1, event.__hash__(), 
+                event.to_json(), time.ctime()))
         
         if (event_t is LeaveEvent or event_t is DeathEvent) and self.human_controlled(event):
             self._remove_player()
