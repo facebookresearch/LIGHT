@@ -11,6 +11,7 @@ import time
 import json
 import collections
 
+# TODO: Investigate changing the format from 3 line to csv or some other standard
 from light.graph.events.graph_events import ArriveEvent, SpawnEvent, DeathEvent, LeaveEvent
 DEFAULT_LOG_PATH = ''.join([os.path.abspath(os.path.dirname(__file__)), "/../../logs"])
 '''
