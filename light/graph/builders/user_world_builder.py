@@ -18,7 +18,7 @@ from light.world.world import World
 class UserWorldBuilder(DBGraphBuilder):
     '''Builds a LIGHT map using a predefined world saved to the light database.'''
 
-    def __init__(self, world_id=None, player_id=None, debug=True, opt=None):
+    def __init__(self, ldb, world_id=None, player_id=None, debug=True, opt=None):
         '''Initializes required models and parameters for this graph builder'''
         
         if opt is None:
@@ -27,12 +27,11 @@ class UserWorldBuilder(DBGraphBuilder):
             )
             self.add_parser_arguments(parser)
             opt, _unknown = parser.parse_and_process_known_args()
-
+        self.db = ldb
         self.opt = opt
-        self.db_path = opt['light_db_file']
         self.filler_probability = opt['filler_probability']
         self._no_npc_models = not opt['use_npc_models']
-        DBGraphBuilder.__init__(self, self.db_path) # <--- this is the culprit
+        DBGraphBuilder.__init__(self, self.db) # <--- this is the culprit
         self.debug = debug
 
         # Need world id to be non none, check that here

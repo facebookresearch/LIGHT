@@ -317,14 +317,8 @@ class LIGHTDatabase:
         }
 
         for key, table_name in db_table_dict.items():
-            print("Am I blocking?")
-            self.c.execute("""SELECT COUNT(*) FROM {0};""".format(table_name))
-            num = self.c.fetchone()
-            print("The table", table_name, "has: ", str(num['COUNT(*)']), "entries")
             self.c.execute("""SELECT * FROM {0};""".format(table_name))
-            print("Maybe the execute?")
             results = self.c.fetchall()
-            print("Nah, it is the fetchall that is the culprit!")
             if 'edges' in key:
                 self.cache[key] = {}
                 for row in results:
@@ -334,7 +328,7 @@ class LIGHTDatabase:
                         self.cache[key][row['parent_id']] = [row]
             else:
                 self.cache[key] = {row['id']: row for row in results}
-        
+
     def __enter__(self):
         self.lock.acquire()
         conn = sqlite3.connect(self.dbpath)
@@ -481,7 +475,7 @@ class LIGHTDatabase:
         """
         self.c.execute("DELETE FROM id_table WHERE id = ?", (id,))
         if self.use_cache and id in self.cache['id']:
-            del self.cache['id']
+            del self.cache['id'][id]
 
     def update_status(self, id, status):
         '''Updates status of entity in the database'''

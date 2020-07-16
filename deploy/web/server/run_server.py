@@ -43,10 +43,10 @@ here = os.path.abspath(os.path.dirname(__file__))
 # Idea - make a "game registry" app or something similar that has endpoint /game(.*)
 # This will then be routed to the registryApp, which uses that (.*) url to pass to the appropiate
 # game instance.
-def make_app(FLAGS):
+def make_app(FLAGS, ldb):
     worldBuilderApp = BuildApplication(get_handlers(ldb))
     landingApp = LandingApplication(ldb, FLAGS.hostname, FLAGS.password)
-    registryApp = RegistryApplication(FLAGS)
+    registryApp = RegistryApplication(FLAGS, ldb)
     router = RuleRouter([
         Rule(PathMatches("/builder.*"), worldBuilderApp),
         Rule(PathMatches("/game.*"), registryApp),
@@ -55,9 +55,9 @@ def make_app(FLAGS):
     server = HTTPServer(router)
     server.listen(FLAGS.port)
 
-def _run_server(FLAGS):
+def _run_server(FLAGS, ldb):
     my_loop = IOLoop()
-    make_app(FLAGS)
+    make_app(FLAGS, ldb)
     if "HOSTNAME" in os.environ and hostname == FLAGS.hostname:
         hostname = os.environ["HOSTNAME"]
     else:
@@ -117,7 +117,7 @@ def main():
 
     random.seed(6)
     numpy.random.seed(6)
-    ldb = LIGHTDatabase(Flags.data_model_db)
+    ldb = LIGHTDatabase(FLAGS.data_model_db)
     _run_server(FLAGS, ldb)
 
 

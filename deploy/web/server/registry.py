@@ -74,7 +74,7 @@ class RegistryApplication(tornado.web.Application):
         if world_id is not None and player_id is not None:
             builder = UserWorldBuilder(ldb, player_id=player_id, world_id=world_id)
             _, graph = builder.get_graph()
-            game = GameInstance(game_id, g=graph)
+            game = GameInstance(game_id, ldb, g=graph)
         else:
             game = GameInstance(game_id, ldb)
             graph = game.g
@@ -130,7 +130,7 @@ class GameCreatorHandler(BaseHandler):
         world_id = self.get_argument("world_id", None, True)
         if (world_id is not None):
             username = tornado.escape.xhtml_escape(self.current_user)
-            self.app.ldb as db:
+            with self.app.ldb as db:
                 player = db.get_user_id(username)
                 if (not db.is_world_owned_by(world_id, player)):
                     self.set_status(403)
