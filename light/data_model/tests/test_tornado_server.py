@@ -97,17 +97,16 @@ class TestRegistryApp(AsyncHTTPTestCase):
     #         headers=headers,
     #     )
     #     self.assertEqual(response.code, 101)
-
-    # @gen_test
-    # def test_new_game(self, mocked_auth):
-    #     '''Test that we can post to create a new game'''
+    @gen_test
+    def test_new_game(self, mocked_auth):
+        '''Test that we can post to create a new game'''
         # TODO: Mock the world creation or something
-        # response = yield self.client.fetch(
-        #     f'{URL}/game/new/01',
-        #     method='POST',
-        #     body=b'',
-        # )
-        # self.assertEqual(response.code, 201)
+        response = yield self.client.fetch(
+            f'{URL}/game/new/01',
+            method='POST',
+            body=b'',
+        )
+        self.assertEqual(response.code, 201)
 
     # @gen_test
     # def test_new_game_creation(self, mocked_auth):

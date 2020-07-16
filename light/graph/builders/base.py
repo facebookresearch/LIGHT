@@ -56,6 +56,7 @@ class DBGraphBuilder(GraphBuilder):
         self.db = ldb
         if not self.db.cache_init:
             with self.db as ldb:
+                print("Creating cache")
                 ldb.create_cache()
         self.__usable_rooms = None
         self.__usable_chars = None
