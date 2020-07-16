@@ -35,9 +35,9 @@ def load_event_log(event_file):
                     uuid_to_world[world_uuid] = world
                 else:
                     world = uuid_to_world[world_uuid]
-                hash_ = world_uuid_and_hash[1].trim()
+                hash_ = world_uuid_and_hash[1].strip()
             if parity == 1:
-                timestamp = line.trim()
+                timestamp = line.strip()
             elif parity == 2:
                 written_event = GraphEvent.from_json(line, world)
                 event_buffer.append((hash_, timestamp, written_event))
@@ -55,7 +55,9 @@ def get_world(uuid, graph_dir):
     graph_file = os.path.join(graph_dir, f'{uuid}.json')
     with open(graph_file, 'r') as graph_json_file:
         graph = OOGraph.from_json(graph_json_file.read())
-    return World.from_graph(graph)
+    world  = World(None, None, False)
+    world.oo_graph = graph
+    return world
 
 def main():
     parser = argparse.ArgumentParser(description='Args for the event to reconstruct')
