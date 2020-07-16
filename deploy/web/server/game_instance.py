@@ -89,9 +89,9 @@ class GameInstance:
     can come from any source.
     """
 
-    def __init__(self, game_id, g=None,):
+    def __init__(self, game_id, ldb, g=None,):
         if g is None:
-            _, world = StarspaceBuilder(
+            _, world = StarspaceBuilder(ldb,
                 debug=False
             ).get_graph()  # TODO: what are the args that are needed
         self.g = world

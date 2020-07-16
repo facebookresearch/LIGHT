@@ -19,7 +19,7 @@ from light.data_model.environment_checkpoint_parser import (
     EnvironmentCheckpointParser,
 )
 from light.graph.utils import get_article
-
+from threading import Lock
 import sys
 import parlai.utils.misc as parlai_utils
 
@@ -161,6 +161,8 @@ class LIGHTDatabase:
         self.use_cache = False
         self.read_only = False
         self.cache = {}
+        self.cache_init = False
+        self.lock = Lock()
 
         # Dictionary to convert between types in id_table and corresponding
         # table names
@@ -298,6 +300,7 @@ class LIGHTDatabase:
     def create_cache(self):
         '''Create a cached version of the database in dict format
         with id as the keys and the rows are values'''
+        self.cache_init = True
         self.use_cache = True
         self.read_only = True
         db_table_dict = {
@@ -315,7 +318,10 @@ class LIGHTDatabase:
 
         for key, table_name in db_table_dict.items():
             print("Am I blocking?")
-            self.c.execute("""SELECT * FROM {0} """.format(table_name))
+            self.c.execute("""SELECT COUNT(*) FROM {0};""".format(table_name))
+            num = self.c.fetchone()
+            print("The table", table_name, "has: ", str(num['COUNT(*)']), "entries")
+            self.c.execute("""SELECT * FROM {0};""".format(table_name))
             print("Maybe the execute?")
             results = self.c.fetchall()
             print("Nah, it is the fetchall that is the culprit!")
@@ -330,6 +336,7 @@ class LIGHTDatabase:
                 self.cache[key] = {row['id']: row for row in results}
         
     def __enter__(self):
+        self.lock.acquire()
         conn = sqlite3.connect(self.dbpath)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = 1")
@@ -344,6 +351,8 @@ class LIGHTDatabase:
             self.conn.rollback()
         self.conn.commit()
         self.conn.close()
+        self.lock.release()
+
 
     def load_dictionaries(self):
         """

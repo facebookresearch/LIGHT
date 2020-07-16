@@ -24,19 +24,19 @@ def get_handlers(db):
     #       hit in the top level RuleRouter from run_server.py in case this application
     #       is run standalone for some reason.
     return [
-        (r"/builder/edits", EntityEditHandler, {'dbpath': db}),
-        (r"/builder/edits/([0-9]+)/accept/([a-zA-Z_]+)", AcceptEditHandler, {'dbpath': db}),
-        (r"/builder/edits/([0-9]+)/reject", RejectEditHandler, {'dbpath': db}),
-        (r"/builder/edits/([0-9]+)", ViewEditWithIDHandler, {'dbpath': db}),
-        (r"/builder/entities/([0-9]+)", ViewEntityWithIDHandler, {'dbpath': db}),
-        (r"/builder/entities/([a-zA-Z_]+)", EntityHandler, {'dbpath': db}),
-        (r"/builder/entities/([a-zA-Z_]+)/fields", EntityFieldsHandler, {'dbpath': db}),
-        (r"/builder/interactions", InteractionHandler, {'dbpath': db}),
-        (r"/builder/tables/types", TypesHandler, {'dbpath': db}),
-        (r"/builder/world/", SaveWorldHandler, {'dbpath': db}),
-        (r"/builder/world/([0-9]+)", LoadWorldHandler, {'dbpath': db}),
-        (r"/builder/world/delete/([0-9]+)", DeleteWorldHandler, {'dbpath': db}),
-        (r"/builder/worlds/", ListWorldsHandler, {'dbpath': db}),
+        (r"/builder/edits", EntityEditHandler, {'database': db}),
+        (r"/builder/edits/([0-9]+)/accept/([a-zA-Z_]+)", AcceptEditHandler, {'database': db}),
+        (r"/builder/edits/([0-9]+)/reject", RejectEditHandler, {'database': db}),
+        (r"/builder/edits/([0-9]+)", ViewEditWithIDHandler, {'database': db}),
+        (r"/builder/entities/([0-9]+)", ViewEntityWithIDHandler, {'database': db}),
+        (r"/builder/entities/([a-zA-Z_]+)", EntityHandler, {'database': db}),
+        (r"/builder/entities/([a-zA-Z_]+)/fields", EntityFieldsHandler, {'database': db}),
+        (r"/builder/interactions", InteractionHandler, {'database': db}),
+        (r"/builder/tables/types", TypesHandler, {'database': db}),
+        (r"/builder/world/", SaveWorldHandler, {'database': db}),
+        (r"/builder/world/([0-9]+)", LoadWorldHandler, {'database': db}),
+        (r"/builder/world/delete/([0-9]+)", DeleteWorldHandler, {'database': db}),
+        (r"/builder/worlds/", ListWorldsHandler, {'database': db}),
         (r"/builder/", MainHandler),
         (r"/builder(.*)", StaticDataUIHandler, {'path': path_to_build}),
         (r"/(.*)", StaticDataUIHandler, {'path': path_to_build}),
@@ -132,71 +132,70 @@ class MainHandler(BaseHandler):
 class ListWorldsHandler(BaseHandler):
     '''Lists the worlds owned by the user'''
 
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
+    def initialize(self, database):
+        self.db = database
     
     @tornado.web.authenticated
     def get(self):
-        with LIGHTDatabase(self.dbpath) as db:
-            username = tornado.escape.xhtml_escape(self.current_user)
-            player = db.get_user_id(username)
-            worlds = db.view_worlds(player_id=player)
-            self.write(json.dumps(worlds))
+        username = tornado.escape.xhtml_escape(self.current_user)
+        with self.db as ldb:
+            player = ldb.get_user_id(username)
+            worlds = ldb.view_worlds(player_id=player)
+        self.write(json.dumps(worlds))
 
 class DeleteWorldHandler(BaseHandler):
     '''Deletes a world given the user and world id'''
 
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
+    def initialize(self, database):
+        self.db = database
     
     @gen.coroutine
     @tornado.web.authenticated
     def delete(self, id):
+        username = tornado.escape.xhtml_escape(self.current_user)
         with (yield lock.acquire()):
-            with LIGHTDatabase(self.dbpath) as db:
-                username = tornado.escape.xhtml_escape(self.current_user)
-                player = db.get_user_id(username)
-                world_id = db.delete_world(world_id=id, player_id=player)
-                self.write(json.dumps(world_id))
+            with self.db as ldb:
+                player = ldb.get_user_id(username)
+                world_id = ldb.delete_world(world_id=id, player_id=player)
+        self.write(json.dumps(world_id))
 
 class SaveWorldHandler(BaseHandler):
     '''Save a world given the player id and world id'''
 
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
+    def initialize(self, database):
+        self.db = database
 
     @gen.coroutine
     @tornado.web.authenticated
     def post(self):
+        username = tornado.escape.xhtml_escape(self.current_user)
+        dimensions = json.loads(self.get_argument('dimensions', '{"id": null, "name": null, "height": 3, "width": 3, "floors": 1}'))
+        world_map = json.loads(self.get_argument('map', '{"tiles": {}, "edges": []}'))
+        entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}}'))
+
+        name = dimensions["name"]
+        if name is None:
+            name = 'Default ' + time.ctime(time.time())
+        name = name.strip()
+
         with (yield lock.acquire()):
-            with LIGHTDatabase(self.dbpath) as db:
-                username = tornado.escape.xhtml_escape(self.current_user)
-                player = db.get_user_id(username)
-
-                dimensions = json.loads(self.get_argument('dimensions', '{"id": null, "name": null, "height": 3, "width": 3, "floors": 1}'))
-                world_map = json.loads(self.get_argument('map', '{"tiles": {}, "edges": []}'))
-                entities = json.loads(self.get_argument('entities', '{"room": {}, "character": {}, "object": {}}'))
-
-                name = dimensions["name"]
-                if name is None:
-                    name = 'Default ' + time.ctime(time.time())
-                name = name.strip()
-                
-                world_id = db.create_world(name, player, dimensions["height"], dimensions["width"], dimensions["floors"])[0]
+            with self.db as ldb:
+                player = ldb.get_user_id(username)            
+                world_id = ldb.create_world(name, player, dimensions["height"], dimensions["width"], dimensions["floors"])[0]
                 #Get DB IDs for all object and store them
                 local_id_to_dbid = {}
                 for local_id, room in entities['room'].items():
-                    room_id = db.create_room(room['name'], room['base_id'], room['description'], room['backstory'])
+                    room_id = ldb.create_room(room['name'], room['base_id'], room['description'], room['backstory'])
                     local_id_to_dbid[local_id] = room_id[0]
 
                 for local_id, char in entities['character'].items():
-                    char_id = db.create_character(char['name'], char['base_id'], char['persona'], char['physical_description'],
+                    char_id = ldb.create_character(char['name'], char['base_id'], char['persona'], char['physical_description'],
                         name_prefix=char['name_prefix'], is_plural=char['is_plural'], char_type=char['char_type'],
                     )
                     local_id_to_dbid[local_id] = char_id[0]
                 
                 for local_id, obj in entities['object'].items():
-                    obj_id = db.create_object(obj['name'], obj['base_id'], obj['is_container'], obj['is_drink'],
+                    obj_id = ldb.create_object(obj['name'], obj['base_id'], obj['is_container'], obj['is_drink'],
                         obj['is_food'], obj['is_gettable'], obj['is_surface'], obj['is_wearable'], obj['is_weapon'],
                         obj['physical_description'], name_prefix=obj['name_prefix'], is_plural=obj['is_plural'],
                     )
@@ -205,181 +204,181 @@ class SaveWorldHandler(BaseHandler):
                 # Now, go through all the entities and make graph nodes for them, storing a map from the id to the graph id
                 dbid_to_nodeid = {}
                 for dbid in local_id_to_dbid.values():
-                    node_id = db.create_graph_node(world_id, dbid)
+                    node_id = ldb.create_graph_node(world_id, dbid)
                     dbid_to_nodeid[dbid] = node_id[0]
 
                 # Make the edges!
                 for edge in world_map['edges']:
                     src_node = dbid_to_nodeid[local_id_to_dbid[str(edge['src'])]]
                     dst_node = dbid_to_nodeid[local_id_to_dbid[str(edge['dst'])]]
-                    db.create_graph_edge(world_id, src_node, dst_node, edge['type'])
+                    ldb.create_graph_edge(world_id, src_node, dst_node, edge['type'])
 
                 # Make the tiles!
                 for tile in world_map['tiles']:
-                    db.create_tile(world_id, dbid_to_nodeid[local_id_to_dbid[str(tile['room'])]], tile['color'], 
+                    ldb.create_tile(world_id, dbid_to_nodeid[local_id_to_dbid[str(tile['room'])]], tile['color'], 
                         tile['x_coordinate'], tile['y_coordinate'], tile['floor']
                     )
 
-                # Now return to the user we did all of it!
-                self.set_status(201)
-                self.write(json.dumps(world_id))
+            # Now return to the user we did all of it!
+            self.set_status(201)
+            self.write(json.dumps(world_id))
 
 class LoadWorldHandler(BaseHandler):
     '''Load a world given the id'''
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
+    def initialize(self, database):
+        self.db = database
 
     @tornado.web.authenticated
     def get(self, world_id):
-        with LIGHTDatabase(self.dbpath) as db:
-
-            result = {}
-            username = tornado.escape.xhtml_escape(self.current_user)
-            player_id = db.get_user_id(username)
+        result = {}
+        username = tornado.escape.xhtml_escape(self.current_user)
+        with self.db as ldb:
+            player_id = ldb.get_user_id(username)
 
             # Load the world info (dimensions, name, id) and store in "dimensions"
-            world = db.get_world(world_id, player_id)
+            world = ldb.get_world(world_id, player_id)
             assert len(world) == 1, "Must get a single world back to load it"
-            world = world[0]
-            result["dimensions"] = {x: world[x] for x in world.keys() if x != 'owner_id'}
-            result["dimensions"]["floors"] = result["dimensions"]["num_floors"]
-            del result["dimensions"]["num_floors"]
+            resources = ldb.get_world_resources(world_id, player_id)
 
-            resources = db.get_world_resources(world_id, player_id)
-            tiles = resources[0]
-            tile_list = [{x: tile[x] for x in tile.keys() if x != 'world_id'} for tile in tiles]
-            edges = resources[1]
-            edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
-            
-            # Load the entities 
-            nextID = 1
-            entities = {'room': {}, 'character': {}, 'object': {},}
-            node_to_local_id = {}
-            type_to_entities = {'room': resources[2], 'character': resources[3], 'object':resources[4],}
-            for type_ in type_to_entities.keys():
-                for entity in type_to_entities[type_]:
-                    entities[type_][nextID] = {key: entity[key] for key in entity.keys()}
-                    node_to_local_id[entity['id']] = nextID
+        world = world[0]
+        result["dimensions"] = {x: world[x] for x in world.keys() if x != 'owner_id'}
+        result["dimensions"]["floors"] = result["dimensions"]["num_floors"]
+        del result["dimensions"]["num_floors"]
 
-                    # Modify entires to fit format
-                    del entities[type_][nextID]['w_id']
-                    entities[type_][nextID]['id'] = entities[type_][nextID]['entity_id']
-                    del entities[type_][nextID]['entity_id']
-                    nextID += 1
-            entities["nextID"] = nextID
-            result["entities"] = entities
+        tiles = resources[0]
+        tile_list = [{x: tile[x] for x in tile.keys() if x != 'world_id'} for tile in tiles]
+        edges = resources[1]
+        edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
+        
+        # Load the entities 
+        nextID = 1
+        entities = {'room': {}, 'character': {}, 'object': {},}
+        node_to_local_id = {}
+        type_to_entities = {'room': resources[2], 'character': resources[3], 'object':resources[4],}
+        for type_ in type_to_entities.keys():
+            for entity in type_to_entities[type_]:
+                entities[type_][nextID] = {key: entity[key] for key in entity.keys()}
+                node_to_local_id[entity['id']] = nextID
 
-            #Load the edges and tiles
-            for tile in tile_list:
-                tile['room'] = node_to_local_id[tile['room_node_id']]
-                del tile['id']
-                del tile['room_node_id']
-            edges = []
-            for edge in edge_list:
-                src = node_to_local_id[edge['src_id']]
-                dst = node_to_local_id[edge['dst_id']]
-                edges.append({"src" : src, "dst": dst, "type": edge["edge_type"]})
-            result["map"] = {'tiles': tile_list, 'edges': edges}
+                # Modify entires to fit format
+                del entities[type_][nextID]['w_id']
+                entities[type_][nextID]['id'] = entities[type_][nextID]['entity_id']
+                del entities[type_][nextID]['entity_id']
+                nextID += 1
+        entities["nextID"] = nextID
+        result["entities"] = entities
 
-            # Return data
-            self.write(json.dumps(result))
+        #Load the edges and tiles
+        for tile in tile_list:
+            tile['room'] = node_to_local_id[tile['room_node_id']]
+            del tile['id']
+            del tile['room_node_id']
+        edges = []
+        for edge in edge_list:
+            src = node_to_local_id[edge['src_id']]
+            dst = node_to_local_id[edge['dst_id']]
+            edges.append({"src" : src, "dst": dst, "type": edge["edge_type"]})
+        result["map"] = {'tiles': tile_list, 'edges': edges}
+
+        # Return data
+        self.write(json.dumps(result))
  #-------------------------------------------------------------#
 
 class EntityEditHandler(BaseHandler):
     ''' Submit edits through post request and view edits through get request '''
 
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
+    def initialize(self, database):
+        self.db = database
 
     @gen.coroutine
     @tornado.web.authenticated
     def post(self):
+        id = int(self.get_argument('id'))
+        field = self.get_argument('field')
+        edited_value = self.get_argument('edited_value')
+        player = int(self.get_argument('player'))
         with (yield lock.acquire()):
-            with LIGHTDatabase(self.dbpath) as db:
-                id = int(self.get_argument('id'))
-                field = self.get_argument('field')
-                edited_value = self.get_argument('edited_value')
-                player = int(self.get_argument('player'))
-                edit_id = db.submit_edit(id, field, edited_value, player)
+            with self.db as ldb:
+                edit_id = ldb.submit_edit(id, field, edited_value, player)
                 # return status 201 when new instance is created
-                if db.get_edit(edit_id):
+                if ldb.get_edit(edit_id):
                     self.set_status(201)
                 self.write(json.dumps({'edit_id': edit_id}))
 
     @tornado.web.authenticated
     def get(self):
-        with LIGHTDatabase(self.dbpath) as db:
-            id = self.get_argument("id", None, True)
-            status = self.get_argument("status", None, True)
-            player = self.get_argument("player", None, True)
-            expand = self.get_argument("expand", False, True)
-            edits = db.get_edit(id=id, player_id=player, status=status)
+        id = self.get_argument("id", None, True)
+        status = self.get_argument("status", None, True)
+        player = self.get_argument("player", None, True)
+        expand = self.get_argument("expand", False, True)
+        with self.db as ldb:
+            edits = ldb.get_edit(id=id, player_id=player, status=status)
             ids = [i[0] for i in edits]
-            ids_expanded = [db.view_edit(i) for i in ids]
-            if expand:
-                self.write(json.dumps(ids_expanded))
-            else:
-                self.write(json.dumps(ids))
+            ids_expanded = [ldb.view_edit(i) for i in ids]
+        if expand:
+            self.write(json.dumps(ids_expanded))
+        else:
+            self.write(json.dumps(ids))
 
 
 class AcceptEditHandler(BaseHandler):
     ''' Accept edit with given edit_id and accept_type '''
 
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
+    def initialize(self, database):
+        self.db = database
 
     @gen.coroutine
     def post(self, edit_id, accept_type):
         with (yield lock.acquire()):
-            with LIGHTDatabase(self.dbpath) as db:
-                db.accept_edit(edit_id, accept_type)
-                id = db.get_edit(edit_id=edit_id)[0][1]
+            with self.db as ldb:
+                ldb.accept_edit(edit_id, accept_type)
+                id = ldb.get_edit(edit_id=edit_id)[0][1]
         self.write(json.dumps({'id': id}))
 
 
 class RejectEditHandler(BaseHandler):
     ''' Reject edit with given edit_id '''
 
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
+    def initialize(self, database):
+        self.db = database
 
     @gen.coroutine
     def post(self, edit_id):
         with (yield lock.acquire()):
-            with LIGHTDatabase(self.dbpath) as db:
-                db.reject_edit(edit_id)
-                id = db.get_edit(edit_id=edit_id)[0][1]
+            with self.db as ldb:
+                ldb.reject_edit(edit_id)
+                id = ldb.get_edit(edit_id=edit_id)[0][1]
         self.write(json.dumps({'id': id}))
 
 
 class ViewEditWithIDHandler(BaseHandler):
     ''' View edit with given edit_id; returns json '''
 
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
+    def initialize(self, database):
+        self.db = database
 
     @tornado.web.authenticated
     def get(self, edit_id):
-        with LIGHTDatabase(self.dbpath) as db:
-            self.write(json.dumps(db.view_edit(edit_id)))
+        with self.db as ldb:
+            self.write(json.dumps(ldb.view_edit(edit_id)))
 
 
 class ViewEntityWithIDHandler(BaseHandler):
     ''' View entity with given id; returns json '''
 
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
+    def initialize(self, database):
+        self.db = database
 
     @tornado.web.authenticated
     def get(self, id):
-        with LIGHTDatabase(self.dbpath) as db:
-            entity = db.get_query(id)
-            type = db.get_table_name(id, return_type=True)
-            columns = db.get_columns(type)
-            self.write(json.dumps({
-                'entity': dict(zip(columns, entity)),
-                'type': type
-            }))
+        with self.db as ldb:
+            entity = ldb.get_query(id)
+            type = ldb.get_table_name(id, return_type=True)
+            columns = ldb.get_columns(type)
+        self.write(json.dumps({
+            'entity': dict(zip(columns, entity)),
+            'type': type
+        }))
 
 
 class EntityHandler(BaseHandler):
@@ -392,23 +391,23 @@ class EntityHandler(BaseHandler):
     entity. Call entity/{type}/fields to retrieve the list of fields.
     '''
 
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
+    def initialize(self, database):
+        self.db = database
 
     @tornado.web.authenticated
     def get(self, type):
         type = type.replace('_', ' ')
         error = False
-        with LIGHTDatabase(self.dbpath) as db:
-            if type not in list(db.table_dict.keys()):
+        with self.db as ldb:
+            if type not in list(ldb.table_dict.keys()):
                 raise AppException(reason='Type is not valid. ', status_code=400)
-            columns = db.get_columns(type)
+            columns = ldb.get_columns(type)
         search = self.get_argument('search', '', True)
         expand = self.get_argument('expand', True, True)
         page = self.get_argument('page', False, True)
         per_page = self.get_argument('per_page', 30, True)
-        with LIGHTDatabase(self.dbpath) as db:
-            results = db.search_database(type, search)
+        with self.db as ldb:
+            results = ldb.search_database(type, search)
         ids = [i[0] for i in results]
         results_json = []
         for r in results:
@@ -431,43 +430,42 @@ class EntityHandler(BaseHandler):
     @tornado.web.authenticated
     def post(self, type):
         with (yield lock.acquire()):
-            type = type.replace('_', ' ')
-            # get the column names and types
-            with LIGHTDatabase(self.dbpath) as db:
-                fields = db.get_columns(type)
-                target_func = eval('db.create_' + type.replace(' ', '_'))
-            parameters = []
-            kwargs = {}
-            argspec = inspect.getfullargspec(target_func)
-            default_args = argspec.defaults
-            arg_names = argspec.args
-            kw_args = arg_names[-len(default_args) :]
-            kw_default_map = {kw_args[i]: default_args[i] for i in range(len(kw_args))}
-            print(kw_default_map)
-            for i in list(fields.keys()):
-                # ignore the ID field since the ID is created by the database
-                if i == 'id':
-                    continue
-                if i in kw_default_map:
-                    if fields[i] == 'integer':
-                        kwargs[i] = int(self.get_argument(i, kw_default_map.get(i)))
+            with self.db as ldb:
+                type = type.replace('_', ' ')
+                # get the column names and types
+                fields = ldb.get_columns(type)
+                target_func = eval('ldb.create_' + type.replace(' ', '_'))
+                parameters = []
+                kwargs = {}
+                argspec = inspect.getfullargspec(target_func)
+                default_args = argspec.defaults
+                arg_names = argspec.args
+                kw_args = arg_names[-len(default_args) :]
+                kw_default_map = {kw_args[i]: default_args[i] for i in range(len(kw_args))}
+                print(kw_default_map)
+                for i in list(fields.keys()):
+                    # ignore the ID field since the ID is created by the database
+                    if i == 'id':
+                        continue
+                    if i in kw_default_map:
+                        if fields[i] == 'integer':
+                            kwargs[i] = int(self.get_argument(i, kw_default_map.get(i)))
+                        else:
+                            kwargs[i] = self.get_argument(i, kw_default_map.get(i))
                     else:
-                        kwargs[i] = self.get_argument(i, kw_default_map.get(i))
-                else:
-                    if fields[i] == 'integer':
-                        parameters.append(
-                            int(self.get_argument(i, kw_default_map.get(i)))
-                        )
-                    else:
-                        parameters.append(self.get_argument(i, kw_default_map.get(i)))
-            with LIGHTDatabase(self.dbpath) as db:
-                # calls db.create_{type}({parameters})
-                # for example, db.create_base_object('name')
-                target_func = eval('db.create_' + type.replace(' ', '_'))
+                        if fields[i] == 'integer':
+                            parameters.append(
+                                int(self.get_argument(i, kw_default_map.get(i)))
+                            )
+                        else:
+                            parameters.append(self.get_argument(i, kw_default_map.get(i)))
+                    # calls db.create_{type}({parameters})
+                    # for example, db.create_base_object('name')
+                target_func = eval('ldb.create_' + type.replace(' ', '_'))
                 id = target_func(*parameters, **kwargs)
                 # return (id, boolean) where boolean is whether the attempted
                 # insert is unique
-                self.write(json.dumps(id))
+            self.write(json.dumps(id))
 
 
 class EntityFieldsHandler(BaseHandler):
@@ -476,19 +474,19 @@ class EntityFieldsHandler(BaseHandler):
     keys are the column names and the values are the types of values they store
     '''
 
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
+    def initialize(self, database):
+        self.db = database
 
     @tornado.web.authenticated
     def get(self, type):
         type = type.replace('_', ' ')
         error = False
-        with LIGHTDatabase(self.dbpath) as db:
-            if type not in list(db.table_dict.keys()):
+        with self.db as ldb:
+            if type not in list(ldb.table_dict.keys()):
                 self.set_status(400)
                 error = True
             else:
-                fields = db.get_columns(type)
+                fields = ldb.get_columns(type)
         if not error:
             self.write(json.dumps(fields))
 
@@ -498,16 +496,16 @@ class InteractionHandler(BaseHandler):
     Adds/retrieves interactions
     '''
 
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
+    def initialize(self, database):
+        self.db = database
 
     @tornado.web.authenticated
     def get(self):
         interaction_id = self.get_argument('interaction_id')
-        with LIGHTDatabase(self.dbpath) as db:
-            participants = db.get_participant(interaction_id=interaction_id)
-            turns = db.get_turn(interaction_id=interaction_id)
-            room = db.get_interaction(id=interaction_id)[0][1]
+        with self.db as ldb:
+            participants =ldb.get_participant(interaction_id=interaction_id)
+            turns = ldb.get_turn(interaction_id=interaction_id)
+            room = ldb.get_interaction(id=interaction_id)[0][1]
         participant_columns = ['ID', 'interaction_id', 'character_id', 'player_id']
         turn_columns = [
             'ID',
@@ -540,26 +538,27 @@ class InteractionHandler(BaseHandler):
         participants = json.loads(self.get_argument('participants'))
         turns = json.loads(self.get_argument('turns'))
         with (yield lock.acquire()):
-            with LIGHTDatabase(self.dbpath) as db:
-                interaction_id = db.add_single_conversation(room, participants, turns)
+            with self.db as ldb:
+                interaction_id = ldb.add_single_conversation(room, participants, turns)
         self.write(json.dumps(interaction_id))
 
 
 class TypesHandler(BaseHandler):
     '''Returns a list of the types of entities in the database'''
 
-    def initialize(self, dbpath):
-        self.dbpath = dbpath
+    def initialize(self, database):
+        self.db = database
 
     @tornado.web.authenticated
     def get(self):
-        with LIGHTDatabase(self.dbpath) as db:
-            self.write(json.dumps(list(db.table_dict.keys())))
+        with self.db as ldb:
+            self.write(json.dumps(list(ldb.table_dict.keys())))
 
 
 def main():
     assert sys.argv[1][-3:] == '.db', 'Please enter a database path'
-    app = BuildApplication(get_handlers(sys.argv[1]))
+    ldb = LIGHTDatabase(sys.argv[1])
+    app = BuildApplication(get_handlers(ldb))
     app.listen(DEFAULT_PORT)
     print(f'You can connect to http://{DEFAULT_HOSTNAME}:{DEFAULT_PORT}/builder')
     IOLoop.instance().start()

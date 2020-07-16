@@ -25,9 +25,9 @@ class DBElement(object):
     that are used to populate graphs. All database elements will adhere to 
     a standard interface'''
 
-    def __init__(self, db_path, id, cache=None):
+    def __init__(self, ldb, id, cache=None):
         '''Intialize databse for later queries '''
-        self.db_path = db_path
+        self.db = ldb
         self.id = id
         self.__data_split = None
         self.text_edge_cache = None
@@ -51,11 +51,12 @@ class DBElement(object):
                     filtered = [f for f in filtered if f['edge_type'] == type]
                 text_edges_list = [edge['child_text'] for edge in filtered]
             return text_edges_list
-        with LIGHTDatabase(self.db_path) as ldb:
+
+        with self.db as ldb:
             text_edges_list = [
                 edge['child_text']
-                for edge in ldb.get_text_edge(parent_id=self.id, edge_type=type)
-                if id_is_usable(ldb, edge['id'])
+                    for edge in ldb.get_text_edge(parent_id=self.id, edge_type=type)
+                    if id_is_usable(ldb, edge['id'])
             ]
         return text_edges_list
 
@@ -90,8 +91,7 @@ class DBElement(object):
                         == parent_type
                     ]
             return filtered
-
-        with LIGHTDatabase(self.db_path) as ldb:
+        with self.db as ldb:
             if parent_type is not None:
                 db_edges_list = [
                     edge[return_id]
@@ -110,7 +110,7 @@ class DBElement(object):
     @property
     def data_split(self):
         if self.__data_split is None:
-            with LIGHTDatabase(self.db_path) as ldb:
+            with self.db as ldb:
                 self.__data_split = ldb.get_id(self.id)[0]['split']
         return self.__data_split
 
@@ -118,14 +118,14 @@ class DBElement(object):
 class DBRoom(DBElement):
     '''Instantiate a LightDB representation of a room'''
 
-    def __init__(self, db_path, room_id, cache=None):
+    def __init__(self, ldb, room_id, cache=None):
         '''Takes in the database path and a valid room_id 
         and initialize base fields of a room'''
-        super(DBRoom, self).__init__(db_path, room_id, cache)
+        super(DBRoom, self).__init__(ldb, room_id, cache)
         if self.use_cache:
             room = cache['rooms'][room_id]
         else:
-            with LIGHTDatabase(self.db_path) as ldb:
+            with self.db as ldb:
                 room = ldb.get_room(id=room_id)[0]
         self.db_id = room_id
         self.setting = room['name']
@@ -155,7 +155,7 @@ class DBRoom(DBElement):
                     if self.cache['id'][id]['type'] == DB_TYPE_OBJ
                 ]
             else:
-                with LIGHTDatabase(self.db_path) as ldb:
+                with self.db as ldb:
                     db_ex_objs = [
                         e
                         for e in all_ex_edges
@@ -176,7 +176,7 @@ class DBRoom(DBElement):
                     if self.cache['id'][id]['type'] == DB_TYPE_OBJ
                 ]
             else:
-                with LIGHTDatabase(self.db_path) as ldb:
+                with self.db as ldb:
                     db_in_objs = [
                         e
                         for e in all_in_edges
@@ -197,7 +197,7 @@ class DBRoom(DBElement):
                     if self.cache['id'][id]['type'] == DB_TYPE_CHAR
                 ]
             else:
-                with LIGHTDatabase(self.db_path) as ldb:
+                with self.db as ldb:
                     db_ex_chars = [
                         e
                         for e in all_ex_edges
@@ -217,7 +217,7 @@ class DBRoom(DBElement):
                     if self.cache['id'][id]['type'] == DB_TYPE_CHAR
                 ]
             else:
-                with LIGHTDatabase(self.db_path) as ldb:
+                with self.db as ldb:
                     db_in_chars = [
                         e
                         for e in all_in_edges
@@ -229,7 +229,7 @@ class DBRoom(DBElement):
     @property
     def category(self):
         if self.__category is None:
-            with LIGHTDatabase(self.db_path) as ldb:
+            with self.db as ldb:
                 self.__category = ldb.get_base_room(self.base_id)[0]['name']
         return self.__category
 
@@ -253,12 +253,12 @@ class DBRoom(DBElement):
 class DBObject(DBElement):
     '''Instantiate a LightDB representation of an Object'''
 
-    def __init__(self, db_path, object_id, cache=None):
-        super(DBObject, self).__init__(db_path, object_id, cache)
+    def __init__(self, ldb, object_id, cache=None):
+        super(DBObject, self).__init__(ldb, object_id, cache)
         if self.use_cache:
             obj = cache['objects'][object_id]
         else:
-            with LIGHTDatabase(self.db_path) as ldb:
+            with self.db as ldb:
                 obj = ldb.get_object(id=object_id)[0]
         self.is_gettable = obj['is_gettable']
         self.is_wearable = obj['is_wearable']
@@ -306,7 +306,7 @@ class DBObject(DBElement):
     @property
     def base_form(self):
         if self.__base_form is None:
-            with LIGHTDatabase(self.db_path) as ldb:
+            with self.db as ldb:
                 self.__base_form = ldb.get_base_object(self.base_id)[0]['name']
         return self.__base_form
 
@@ -332,14 +332,14 @@ class DBObject(DBElement):
 class DBCharacter(DBElement):
     '''Instantiate a LightDB representation of a Character'''
 
-    def __init__(self, db_path, char_id, cache=None):
+    def __init__(self, ldb, char_id, cache=None):
         '''Takes in the database path and a valid room_id 
         and initialize base fields of a character'''
-        super(DBCharacter, self).__init__(db_path, char_id, cache)
+        super(DBCharacter, self).__init__(ldb, char_id, cache)
         if self.use_cache:
             char = cache['characters'][char_id]
         else:
-            with LIGHTDatabase(self.db_path) as ldb:
+            with self.db as ldb:
                 char = ldb.get_character(id=char_id)[0]
         self.name = char['name']
         self.name_prefix = char['name_prefix']
@@ -391,7 +391,7 @@ class DBCharacter(DBElement):
     @property
     def base_form(self):
         if self.__base_char is None:
-            with LIGHTDatabase(self.db_path) as ldb:
+            with self.db as ldb:
                 self.__base_char = ldb.get_base_character(self.base_id)[0]['name']
         return self.__base_char
 

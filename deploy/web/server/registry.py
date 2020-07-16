@@ -51,15 +51,16 @@ class RegistryApplication(tornado.web.Application):
         - Forward it to the designated tornado provider (if an id is given)
         - Assign to a random (or default) game based on some load balancing
     '''
-    def __init__(self, FLAGS):
+    def __init__(self, FLAGS, ldb):
         self.game_instances = {}
         self.FLAGS = FLAGS
+        self.ldb = ldb
         super(RegistryApplication, self).__init__(self.get_handlers(FLAGS), **tornado_settings)
 
     def get_handlers(self, FLAGS):
         self.tornado_provider = TornadoWebappPlayerProvider({}, FLAGS.hostname, FLAGS.port)
         self.router = RuleRouter([Rule(PathMatches(f'/game.*/socket'), self.tornado_provider.app)])
-        game_instance = self.run_new_game("", FLAGS)
+        game_instance = self.run_new_game("", self.ldb)
         return [
             (r"/game/new/(.*)", GameCreatorHandler, {'app': self}),
             (r"/game(.*)", self.router)
@@ -68,14 +69,14 @@ class RegistryApplication(tornado.web.Application):
     # TODO: Move this to utils
     # This is basically it though - want to create a new world?  For now call these methods, then
     # attach the game's tornado provider 
-    def run_new_game(self, game_id, player_id=None, world_id=None):
+    def run_new_game(self, game_id, ldb, player_id=None, world_id=None):
         
         if world_id is not None and player_id is not None:
-            builder = UserWorldBuilder(player_id=player_id, world_id=world_id)
+            builder = UserWorldBuilder(ldb, player_id=player_id, world_id=world_id)
             _, graph = builder.get_graph()
             game = GameInstance(game_id, g=graph)
         else:
-            game = GameInstance(game_id)
+            game = GameInstance(game_id, ldb)
             graph = game.g
 
         self.tornado_provider.graphs[game_id] = graph
@@ -129,14 +130,14 @@ class GameCreatorHandler(BaseHandler):
         world_id = self.get_argument("world_id", None, True)
         if (world_id is not None):
             username = tornado.escape.xhtml_escape(self.current_user)
-            with LIGHTDatabase(self.app.FLAGS.data_model_db) as db:
+            self.app.ldb as db:
                 player = db.get_user_id(username)
                 if (not db.is_world_owned_by(world_id, player)):
                     self.set_status(403)
                     return
-            game = self.app.run_new_game(game_id, player, world_id)
+            game = self.app.run_new_game(game_id, self.app.ldb, player, world_id)
         else:
-            game = self.app.run_new_game(game_id)
+            game = self.app.run_new_game(game_id, self.app.ldb)
 
         # Create game_provider here
         print("Registering: ", game_id)
