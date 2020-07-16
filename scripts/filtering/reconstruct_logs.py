@@ -17,7 +17,7 @@ def load_event_log(event_file):
     Given a log file, this method reconstructs the graph jsons and event jsons associated with said log.
     To replay, all that is required is using event execute methods
     '''
-    graph_dir = os.
+    graph_dir = os.join(os.path.abspath(os.path.dirname(event_file), '../../light_graph_dumps')
     graph_buffer = []
     event_buffer = []
     self.assertNotEqual(os.stat(event_file).st_size, 0)
@@ -27,20 +27,20 @@ def load_event_log(event_file):
             if parity == 0:
                 line = line.strip()
                 self.assertEqual(room_logger._last_graph, line)
-            if parity == 2:
+            elif parity == 1:
+                # Timestamp
+            else
                 written_event = json.loads(line)
-                ref_json = json.loads(event_room_node_observed)
-                self.assertEqual(ref_json, written_event)
             parity += 1
             parity %= 3
 
 def main():
-    parser = argparse.ArgumentParser(description='Choose the event to reconstruct')
-    parser.add_argument('--event-file', type=str,
-                        help='Cookie secret for issueing cookies (SECRET!!!)')
+    parser = argparse.ArgumentParser(description='Args for the event to reconstruct')
+    parser.add_argument('--event-log', type=str,
+                        help='The event log to reconstruct')
     FLAGS, _unknown = parser.parse_known_args()
 
-    load_event_log(FLAGS.event_file)
+    load_event_log(FLAGS.event_file,)
 
 if __name__ == '__main__':
     main()
