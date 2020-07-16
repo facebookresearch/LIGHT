@@ -216,13 +216,15 @@ def convert_dict_to_node(obj, world):
                 return world.oo_graph.all_nodes[obj['node_id']]
             else:
                 if obj['agent']:
-                    return GraphAgent.from_json_dict(obj)
+                    newNode = GraphAgent.from_json_dict(obj)
                 elif obj['object']:
-                    return GraphObject.from_json_dict(obj)                    
+                    newNode = GraphObject.from_json_dict(obj)                    
                 elif obj['room']:
-                    return GraphRoom.from_json_dict(obj)
+                    newNode = GraphRoom.from_json_dict(obj)
                 else:
-                    return GraphNode.from_json_dict(obj)
+                    newNode = GraphNode.from_json_dict(obj)
+                newNode.move_to(world.oo_graph.all_nodes[newNode._container_id])
+                return newNode
         elif type(obj) is dict:
             return {k: convert_dict_to_node(obj[k], world) for k in obj.keys()}
         elif type(obj) is list:
