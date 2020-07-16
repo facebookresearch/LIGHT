@@ -49,16 +49,14 @@ class DBGraphBuilder(GraphBuilder):
     the light db to find content
     '''
 
-    def __init__(self, db_path, allow_blocked=False):
+    def __init__(self, ldb, allow_blocked=False):
         '''Initialize a GraphBuilder with access to a LIGHTDatabase class'''
-        self.db_path = db_path
         self.allow_blocked = allow_blocked
         print("In the builder...")
-        self.db = LIGHTDatabase(self.db_path)
-        print("Made it through init the database")
-        with self.db as ldb:
-            ldb.create_cache()
-        print("Did not make the cache though")
+        self.db = ldb
+        if not self.db.cache_init:
+            with self.db as ldb:
+                ldb.create_cache()
         self.__usable_rooms = None
         self.__usable_chars = None
         self.__usable_objects = None
@@ -114,7 +112,7 @@ class DBGraphBuilder(GraphBuilder):
         '''
         if not room_id in self.get_usable_rooms():
             return None
-        room = DBRoom(self.db_path, room_id, cache=self.db.cache)
+        room = DBRoom(self.ldb, room_id, cache=self.db.cache)
         return room
 
     def get_obj_from_id(self, object_id):
@@ -123,7 +121,7 @@ class DBGraphBuilder(GraphBuilder):
         '''
         if not object_id in self.get_usable_objects():
             return None
-        obj = DBObject(self.db_path, object_id, cache=self.db.cache)
+        obj = DBObject(self.ldb, object_id, cache=self.db.cache)
         return obj
 
     def get_char_from_id(self, char_id):
@@ -132,7 +130,7 @@ class DBGraphBuilder(GraphBuilder):
         '''
         if not char_id in self.get_usable_chars():
             return None
-        char = DBCharacter(self.db_path, char_id, cache=self.db.cache)
+        char = DBCharacter(self.ldb, char_id, cache=self.db.cache)
         return char
 
     def get_random_room(self):

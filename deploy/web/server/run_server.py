@@ -36,6 +36,7 @@ from tornado.ioloop import (
 
 import os.path
 import threading
+from light.data_model.light_database import LIGHTDatabase
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -43,8 +44,8 @@ here = os.path.abspath(os.path.dirname(__file__))
 # This will then be routed to the registryApp, which uses that (.*) url to pass to the appropiate
 # game instance.
 def make_app(FLAGS):
-    worldBuilderApp = BuildApplication(get_handlers(FLAGS.data_model_db))
-    landingApp = LandingApplication(FLAGS.data_model_db, FLAGS.hostname, FLAGS.password)
+    worldBuilderApp = BuildApplication(get_handlers(ldb))
+    landingApp = LandingApplication(ldb, FLAGS.hostname, FLAGS.password)
     registryApp = RegistryApplication(FLAGS)
     router = RuleRouter([
         Rule(PathMatches("/builder.*"), worldBuilderApp),
@@ -116,7 +117,8 @@ def main():
 
     random.seed(6)
     numpy.random.seed(6)
-    _run_server(FLAGS)
+    ldb = LIGHTDatabase(Flags.data_model_db)
+    _run_server(FLAGS, ldb)
 
 
 

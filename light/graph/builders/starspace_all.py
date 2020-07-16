@@ -82,7 +82,7 @@ POSSIBLE_NEW_ENTRANCES = [
 class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
     '''Builds a LIGHT map using a StarSpace model to connect everything.'''
 
-    def __init__(self, debug=True, opt=None):
+    def __init__(self, ldb, debug=True, opt=None):
         '''Initializes required models and parameters for this graph builder'''
         if opt is None:
             parser = ParlaiParser(
@@ -91,18 +91,14 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             self.add_parser_arguments(parser)
             opt, _unknown = parser.parse_and_process_known_args()
 
-
         self.parlai_datapath = opt['datapath']
         self.db_path = os.path.join(opt['datapath'], 'light', 'database3.db')
-        if opt.get("light_db_file", "") != "":
-            self.db_path = opt.get("light_db_file")
         self.model_path = opt.get("light_model_root")
+        self.ldb = ldb
         # manual override for efficency - change this to your scratch, copied from
         # /checkpoint/light/data/databse3.db
         # self.db_path = '/scratch/lucaskabela/database3.db'
-        print("Gonna try building")
-        DBGraphBuilder.__init__(self, self.db_path)
-        print("Did I get pass the DB?")
+        DBGraphBuilder.__init__(self, ldb)
         SingleSuggestionGraphBuilder.__init__(self, opt, model_path=self.model_path)
         self.dpath = self.parlai_datapath + '/light_maps'
         
