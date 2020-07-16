@@ -444,6 +444,7 @@ class OOGraph(object):
         neighbors_contained_removed = set([copy.deepcopy(neighbor) for neighbor in neighbors])
         for neighbor in neighbors_contained_removed:
             neighbor.contained_nodes = {}
+            neighbor.neighbors = {}
 
         # Get everything contained inside this room using BFS, then union with neighbors
         contained_nodes = OOGraph.get_contained_in_room(room_node)

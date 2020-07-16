@@ -6,6 +6,8 @@
 from light.graph.structured_graph import OOGraph
 from light.graph.events.base import GraphEvent
 from light.world.world import World
+
+import argparse
 import os
 '''
 This file contains a script for reconstructing a meta episode from
@@ -17,13 +19,11 @@ def load_event_log(event_file):
     Given a log file, this method reconstructs the graph jsons and event jsons associated with said log.
     To replay, all that is required is using event execute methods
     '''
-    graph_dir = os.join(os.path.abspath(os.path.dirname(event_file), '../../light_graph_dumps')
-    log_type = 'agent' if 'agent' in os.path.abspath(os.path.dirname(event_file) else 'room'
+    graph_dir = os.path.join(os.path.abspath(os.path.dirname(event_file)), '../../light_graph_dumps')
+    log_type = 'agent' if 'agent' in os.path.abspath(os.path.dirname(event_file) )else 'room'
 
     uuid_to_world = {}
     event_buffer = []
-    # Cannot reload an empty log
-    self.assertNotEqual(os.stat(event_file).st_size, 0)
     with open(event_file, 'r') as event_json_file:
         parity = 0
         for line in event_json_file:
@@ -52,7 +52,7 @@ def get_world(uuid, graph_dir):
         Given a directory containing graph dumps and a graph uuid, reconstruct a world 
         from the serialized graph
     '''
-    graph_file = os.path.join(graph_dir, 'light_graph_dumps',f'{uuid}.json')
+    graph_file = os.path.join(graph_dir, f'{uuid}.json')
     with open(graph_file, 'r') as graph_json_file:
         graph = OOGraph.from_json(graph_json_file.read())
     return World.from_graph(graph)
@@ -62,7 +62,7 @@ def main():
     parser.add_argument('--event-log', type=str,
                         help='The event log to reconstruct')
     FLAGS, _unknown = parser.parse_known_args()
-    uuid_to_world, event_buffer = load_event_log(FLAGS.event_file,)
+    uuid_to_world, event_buffer = load_event_log(FLAGS.event_log,)
     # TODO:  Process these in future - for now just display
     print(uuid_to_world)
     print(event_buffer)
