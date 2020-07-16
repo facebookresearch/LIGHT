@@ -7,7 +7,7 @@
 import unittest
 import json
 import random
-
+import copy
 from light.graph.events.base import (
     ProcessedArguments,
     GraphEvent,
@@ -164,12 +164,14 @@ class GraphEventTests(unittest.TestCase):
                 extra_event = extra_events.pop()
                 extra_events.extend(extra_event.execute(self.world))
             res = event.to_json()
-            world_to_load = World.from_graph(self.world.oo_graph)
+            before_oo_graph = copy.deepcopy(self.world.oo_graph)
             event_back = GraphEvent.from_json(res, self.world)
             self.assertEqual(type(event), type(event_back), "Events should be same type")
             for k in event.__dict__:
                 if not k.startswith("__"):
                     self.assertEqual(event.__dict__[k], event_back.__dict__[k], "Json loaded back should match")
+            self.graph = before_oo_graph
+            self.world.oo_graph = self.graph
             self.graph.delete_nodes()
             final_json = self.graph.to_json()
             self.assertDictEqual(
