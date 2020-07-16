@@ -77,15 +77,6 @@ class OOGraph(object):
             if char.node_id in graph._node_follows:
                 char.follow(oo_graph.all_nodes[graph._node_follows[char.node_id]])
 
-        # Get location for logger
-        default_loc = "".join([os.path.abspath(os.path.dirname(__file__)), "/../../logs/"])
-        if graph._opt is None:
-            loc = default_loc
-            is_active = False
-        else:
-            loc = graph._opt.get("log_path", default_loc)          
-            is_active = self.opt.get("is_logging", False) 
-
         for room in oo_graph.rooms.values():
             room_id = room.node_id
             for ((edge_type, neighbor_id), edge) in graph._node_to_edges[
@@ -105,7 +96,7 @@ class OOGraph(object):
                 )
                 # TODO parse other edge locked parameters
             room.move_to(oo_graph.void)
-            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(oo_graph, loc, room_id, is_active=is_active)
+            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(oo_graph, room_id)
 
         if hasattr(graph, 'void_id'):
             oo_graph.delete_nodes([oo_graph.get_node(graph.void_id)])
@@ -212,16 +203,8 @@ class OOGraph(object):
         node.force_move_to(self.void)
         self.rooms[id] = node
         self.all_nodes[id] = node
-        
-        default_loc = "".join([os.path.abspath(os.path.dirname(__file__)), "/../../logs/"])
-        if self._opt is None:
-            loc = default_loc
-            is_active = False
-        else:
-            loc = self._opt.get("log_path", default_loc)
-            is_active = self._opt.get("is_logging", False) 
 
-        self.room_id_to_loggers[id] = RoomInteractionLogger(self, loc, id, is_active=is_active)
+        self.room_id_to_loggers[id] = RoomInteractionLogger(self, id)
         
         return node
 
@@ -503,7 +486,7 @@ class OOGraph(object):
         return contained_nodes
         
     @staticmethod
-    def from_json(input_json: str, opt: dict = {"dump_dialogue": False}):
+    def from_json(input_json: str):
         dict_format = json.loads(input_json)
         oo_graph = OOGraph()
         object_ids = set(dict_format['objects'])
@@ -531,19 +514,6 @@ class OOGraph(object):
             if char_dict['following'] is not None:
                 char.follow(sync_nodes[char_dict['following']['target_id']])
 
-        # Get location for logger
-        default_loc = "".join([os.path.abspath(os.path.dirname(__file__)), "/../../logs/"])
-        if opt is None:
-            loc = default_loc
-            is_active = False
-        else:
-            if opt["log_path"] is not None:
-                loc = graph._opt.get("log_path", default_loc)    
-                is_active = graph._opt.get("is_logging", False) 
-            else:
-                loc = default_loc    
-                is_active = False
-
         # Neighbors/locks
         for room in oo_graph.rooms.values():
             room_id = room.node_id
@@ -565,7 +535,8 @@ class OOGraph(object):
                         edge_desc=edge_dict['examine_desc'],
                     )
             room.force_move_to(oo_graph.void)
-            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(oo_graph, loc, room_id, is_active=is_active)
+            # need to read opts back somehow?  Or just do not worry about it - not logging from json
+            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(oo_graph, room_id)
 
         # Container locks
         for obj in oo_graph.objects.values():
