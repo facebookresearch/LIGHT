@@ -12,7 +12,7 @@ from light.graph.elements.graph_nodes import (
     GraphNode,
 )
 from light.world.utils.json_utils import (
-    convert_dict_to_node, GraphEncoder,
+    convert_dict_to_node, GraphEncoder, node_to_json
 )
 from typing import NamedTuple, TYPE_CHECKING, Dict
 import inspect
@@ -21,10 +21,6 @@ import json
 if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
     from light.world.world import World
-
-
-def node_to_json(node: GraphNode) -> Dict[str, Any]:
-    return json.dumps(node, cls=GraphEncoder, sort_keys=True, indent=4)
 
 
 class ProcessedArguments(NamedTuple):
