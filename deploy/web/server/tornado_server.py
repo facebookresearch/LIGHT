@@ -14,7 +14,6 @@ from deploy.web.server.game_instance import (
 from light.data_model.light_database import LIGHTDatabase
 
 import argparse
-import asyncio
 import inspect
 import json
 import logging
@@ -178,14 +177,14 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.player = player
 
     def open(self, game_id):
-        print(game_id)
-        print("Uhhhh, is it blank?", game_id == "")
         user_json = self.get_secure_cookie("user")
         if user_json:
             if self not in list(self.subs.values()):
                 self.subs[self.sid] = self
             logging.info(
                 'Opened new socket from ip: {}'.format(self.request.remote_ip))
+            logging.info(
+                'For game: {}'.format(game_id))
             self.new_subs[game_id].append(self.sid)
         else:
             self.close()
@@ -403,7 +402,7 @@ class TornadoWebappPlayerProvider(PlayerProvider):
             nonlocal self
             nonlocal hostname
             nonlocal port
-            asyncio.set_event_loop(asyncio.new_event_loop())
+            self.my_loop = ioloop.IOLoop()
             self.app = Application()
             if listening:
                 self.app.listen(port, max_buffer_size=1024 ** 3)
