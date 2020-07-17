@@ -128,4 +128,3 @@ class GameCreatorHandler(BaseHandler):
         self.set_status(201)
         self.write(json.dumps(game_id))
 
-    

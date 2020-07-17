@@ -94,7 +94,6 @@ class GameInstance:
             _, world = StarspaceBuilder(
                 debug=False
             ).get_graph()  # TODO: what are the args that are needed
-        print("The graph has been made!")
         self.g = world
         self.game_id = game_id
         self.players = []
