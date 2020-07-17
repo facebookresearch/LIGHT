@@ -271,8 +271,8 @@ export async function launchWorld(state){
     body: formBody.join("&"),
   });
   const data = await res.json();
-  console.log(data)
-  // New component here?  or just return link and surface somewhere else?
+  const url = `${CONFIG.host}:${CONFIG.port}/?id=${data}`;
+  window.open(url);
   return data;
 }
 
