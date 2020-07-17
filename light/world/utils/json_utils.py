@@ -12,6 +12,7 @@ from light.graph.elements.graph_nodes import (
     GraphObject,
     GraphRoom,
 )
+from typing import Any, Dict
 
 class GraphEncoder(json.JSONEncoder):
     def default(self, o):
