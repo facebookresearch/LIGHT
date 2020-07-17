@@ -146,6 +146,7 @@ class UserWorldBuilder(DBGraphBuilder):
         arrival_event = ArriveEvent(agent, text_content=random.choice(POSSIBLE_NEW_ENTRANCES))
         arrival_event.execute(world)
 
+
     def get_graph(self):
         '''Return an OOGraph built by this builder'''
         # Use the get from id methods!

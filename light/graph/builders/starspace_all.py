@@ -18,6 +18,9 @@ from light.graph.builders.base import (
     SingleSuggestionGraphBuilder,
     POSSIBLE_NEW_ENTRANCES,
 )
+from light.world.content_loggers import (
+    RoomInteractionLogger,
+)
 from light.data_model.light_database import (
     DB_EDGE_IN_CONTAINED,
     DB_EDGE_EX_CONTAINED,
@@ -94,7 +97,6 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         SingleSuggestionGraphBuilder.__init__(self, opt, model_path=self.model_path)
         self.dpath = self.parlai_datapath + '/light_maps'
         self.debug = debug
-
         category_set = set(self.get_room_categories())
         self.filler_rooms, self.filler_room_names = build_filler_rooms_from_categories(
             category_set
@@ -171,6 +173,18 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         )
         parser.add_argument(
             '--map-size', type=int, default=6, help="define the size of the map"
+        )
+        parser.add_argument(
+            '--is-logging',
+            type='bool',
+            default=True,
+            help="Log events with interaction loggers",
+        )
+        parser.add_argument(
+            '--log-path',
+            type=str,
+            default=''.join([os.path.abspath(os.path.dirname(__file__)), "/../../../logs"]),
+            help="Write the events logged to this path",
         )
 
     def load_models(self):
@@ -805,6 +819,9 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                         if c is not None:
                             room_node = g.get_node(pos_room.g_id)
                             self.add_new_agent_to_graph(g, c, room_node)
+
+        for room in g.rooms:
+            g.room_id_to_loggers[room] = RoomInteractionLogger(g, room)
 
         world = World(self.opt, self)
         world.oo_graph = g
