@@ -11,7 +11,14 @@ from light.graph.events.graph_events import ArriveEvent
 from light.graph.builders.base import (
     DBGraphBuilder,
 )
-
+POSSIBLE_NEW_ENTRANCES = [
+    "somewhere you can't see",
+    "an undiscernable place",
+    "a puff of smoke",
+    "behind the shadows",
+    "nowhere in particular",
+    "a flash of light",
+]
 
 class UserWorldBuilder(DBGraphBuilder):
     '''Builds a LIGHT map using a predefined world saved to the light database.'''
@@ -41,14 +48,110 @@ class UserWorldBuilder(DBGraphBuilder):
         # grid of 3d coordinates to room dicts that exist there
         self.grid = {}
 
-    def add_random_new_agent_to_graph(self, target_graph):
-        '''Add an agent to the graph in a random room somewhere'''
-        # with self.db as ldb:
-            # Do things
+    def _props_from_char(self, char):
+        '''Given a dict representing a character in the world, extract the
+        required props to create that object in the world
         '''
-            Idea is take an agent and put it into one of the rooms at random 
-        '''
-        raise NotImplementedError
+        use_classes = ['agent']
+        props = {
+            'agent': True,
+            'size': 20,
+            'contain_size': 20,
+            'health': 2,
+            'food_energy': 1,
+            'aggression': 0,
+            'speed': 5,
+            'char_type': char.char_type,
+            'desc': char.desc,
+            'persona': char.persona,
+        }
+        props['classes'] = use_classes
+        props['name_prefix'] = char.name_prefix
+        if char.is_plural == 1:
+            props['is_plural'] = True
+        else:
+            props['is_plural'] = False
+        return props
+
+    def heuristic_name_cleaning(self, use_desc):
+        if use_desc.lower().startswith('a '):
+            use_desc = use_desc[2:]
+        if use_desc.lower().startswith('an '):
+            use_desc = use_desc[3:]
+        if use_desc.lower().startswith('the '):
+            use_desc = use_desc[4:]
+        return use_desc
+
+    def add_object_to_graph(self, g, obj, container, extra_props={}):
+        if type(obj) == int:
+            with self.db as ldb:
+                obj = ldb.get_object(id=obj)  # find actual object from id
+        obj['description'] = random.choice(obj['description']).capitalize()
+        if obj['is_plural'] == 1:
+            if extra_props.get('not_gettable', False) != True:
+                return None  # skip this. TODO: find nearest object that is singular.
+            else:
+                # modify object description to make plural work. TODO: fix in data
+                desc = obj['description']
+                desc = 'You peer closer at one of them. ' + desc
+                obj['description'] = desc
+
+        use_desc = obj['name']
+        props = self.props_from_obj(obj)
+        for k, v in extra_props.items():
+            props[k] = v
+        props['name_prefix'] = obj['name_prefix']
+        object_ = g.oo_graph.add_agent(use_desc, props, db_id=obj.db_id)
+        object_.force_move_to(container)
+        return object_
+
+    def add_new_agent_to_graph(self, g, char, pos_room):
+        if 'is_banned' in char:
+            print("skipping BANNED character! " + char['name'])
+            return
+        if char['is_plural'] > 0:
+            print("skipping PLURAL character! " + char['name'])
+            return
+        use_desc = (
+            char['name'] if char['is_plural'] == 0 else random.choice(char['base_form'])
+        )
+        use_desc = self.heuristic_name_cleaning(use_desc)
+        if use_desc in [node.name for node in g.get_npcs()]:
+            # Don't create the same agent twice.
+            return None
+        agent = g.add_agent(use_desc, self.props_from_char(char), db_id=char.db_id)
+        agent_id = agent.node_id
+
+        # Is this necesary?  I have never seen these attributes...
+        agent.force_move_to(pos_room)
+        objs = {}
+        for obj in char['carrying_objects']:
+            objs[obj] = 'carrying'
+        for obj in char['wearing_objects']:
+            objs[obj] = 'equipped'
+        for obj in char['wielding_objects']:
+            objs[obj] = 'equipped'
+        for obj in objs:
+            object_ = self.add_object_to_graph(g, obj, agent_id)
+            obj_id = object_.node_id
+            if obj_id is not None:
+                if objs[obj] == 'equipped':
+                    g.set_prop(obj_id, 'equipped')
+        return agent_id
+
+    def add_random_new_agent_to_graph(self, world):
+        # pick a random room
+        g = world.oo_graph
+        id = random.choice(list(g.rooms.keys()))
+        pos_room = g.all_nodes[id]
+        char = self.get_random_char()
+        agent_id = self.add_new_agent_to_graph(g, char, pos_room)
+        if agent_id is None:
+            return
+
+        # Send message notifying people in room this agent arrived.
+        arrival_event = ArriveEvent(agent, text_content=random.choice(POSSIBLE_NEW_ENTRANCES))
+        arrival_event.execute(world)
 
     def get_graph(self):
         '''Return an OOGraph built by this builder'''
