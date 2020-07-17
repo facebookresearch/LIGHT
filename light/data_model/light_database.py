@@ -316,12 +316,7 @@ class LIGHTDatabase:
         }
 
         for key, table_name in db_table_dict.items():
-            print("Am I blocking?")
-            self.c.execute("""SELECT COUNT(*) FROM {0};""".format(table_name))
-            num = self.c.fetchone()
-            print("The table", table_name, "has: ", str(num['COUNT(*)']), "entries")
             self.c.execute("""SELECT * FROM {0};""".format(table_name))
-            print("Maybe the execute?")
             results = self.c.fetchall()
             if 'edges' in key:
                 self.cache[key] = {}

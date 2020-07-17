@@ -67,11 +67,12 @@ class TestFlags():
         self.port = port
 
 @mock.patch('deploy.web.server.registry.BaseHandler.get_current_user', return_value='user')
+@mock.patch('light.graph.builders.starspace_all.StarspaceBuilder')
 class TestRegistryApp(AsyncHTTPTestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
         # Need to fix this somehow...
-        self.db_path = '/scratch/lucaskabela/database3.db'
+        self.db_path = os.path.join(self.data_dir, 'test_server.db')
         self.db = LIGHTDatabase(self.db_path)
         self.FLAGS = TestFlags("localhost", PORT)
         self.client = httpclient.AsyncHTTPClient()
@@ -82,49 +83,34 @@ class TestRegistryApp(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = RegistryApplication(self.FLAGS, self.db)
+        app = RegistryApplication(self.FLAGS, self.db, default=False)
         app.listen(PORT)
         return app
 
-    # @gen_test
-    # def test_game_socket(self, mocked_auth):
-    #     '''Test that we connect to socket by default'''
-    #     # TODO: Mock the world creation or something
-    #     headers = {'Connection': 'Upgrade', 'Upgrade':'websocket'}
-    #     response = yield self.client.fetch(
-    #         f'{URL}/game/socket',
-    #         method='GET',
-    #         headers=headers,
-    #     )
-    #     self.assertEqual(response.code, 101)
     @gen_test
-    def test_new_game(self, mocked_auth):
+    def test_game_socket(self, mocked_auth, MockStarSpace):
+        '''Test that we connect to socket by default'''
+        headers = {'Connection': 'Upgrade', 'Upgrade':'websocket'}
+        with self.assertRaises(httpclient.HTTPClientError) as cm:
+            response = yield self.client.fetch(
+                f'{URL}/game/socket',
+                method='GET',
+                headers=headers,
+            )
+        # Need to upgrade in response
+        self.assertEqual(cm.exception.code, 426)
+
+    @mock.patch('deploy.web.server.registry.RegistryApplication.run_new_game', return_value='test')
+    @gen_test
+    def test_new_game(self, mocked_auth, MockStarSpace, mocked_method):
         '''Test that we can post to create a new game'''
-        # TODO: Mock the world creation or something
         response = yield self.client.fetch(
             f'{URL}/game/new/01',
             method='POST',
-            body=b'',
+            body=b'test',
         )
         self.assertEqual(response.code, 201)
 
-    # @gen_test
-    # def test_new_game_creation(self, mocked_auth):
-    #     '''Test that we can post to create a new game, then connect to it'''
-    #     # TODO: Mock the world creation or something
-    #     response = yield self.client.fetch(
-    #         f'{URL}/game/new/01',
-    #         method='POST',
-    #     )
-    #     self.assertEqual(response.code, 201)
-
-    #     headers = {'Connection': 'Upgrade', 'Upgrade':'websocket'}
-    #     response = yield self.client.fetch(
-    #         f'{URL}/game/01socket',
-    #         method='GET',
-    #         headers=headers,
-    #     )
-    #     self.assertEqual(response.code, 101)
 
 @mock.patch('deploy.web.server.builder_server.BaseHandler.get_current_user', return_value='test')
 class TestWorldSaving(AsyncHTTPTestCase):

@@ -49,16 +49,17 @@ class RegistryApplication(tornado.web.Application):
         - Forward it to the designated tornado provider (if an id is given)
         - Assign to a random (or default) game based on some load balancing
     '''
-    def __init__(self, FLAGS, ldb):
+    def __init__(self, FLAGS, ldb, default=True):
         self.game_instances = {}
         self.FLAGS = FLAGS
         self.ldb = ldb
-        super(RegistryApplication, self).__init__(self.get_handlers(FLAGS, ldb), **tornado_settings)
+        super(RegistryApplication, self).__init__(self.get_handlers(FLAGS, ldb, default), **tornado_settings)
 
-    def get_handlers(self, FLAGS, ldb):
+    def get_handlers(self, FLAGS, ldb, default=True):
         self.tornado_provider = TornadoWebappPlayerProvider({}, FLAGS.hostname, FLAGS.port)
         self.router = RuleRouter([Rule(PathMatches(f'/game.*/socket'), self.tornado_provider.app)])
-        game_instance = self.run_new_game("", FLAGS, self.ldb)
+        if default:
+            game_instance = self.run_new_game("", FLAGS, self.ldb)
         return [
             (r"/game/new/(.*)", GameCreatorHandler, {'app': self}),
             (r"/game(.*)", self.router)
@@ -129,4 +130,3 @@ class GameCreatorHandler(BaseHandler):
         self.set_status(201)
         self.write(json.dumps(game_id))
 
-    
