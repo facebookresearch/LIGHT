@@ -8,9 +8,6 @@ import random
 import emoji
 import json
 from typing import List, Set
-from light.world.utils.json_utils import (
-    GraphEncoder, node_to_json
-)
 
 UNINTERESTING_PHRASES = [
     "There's nothing special about it.",
@@ -25,6 +22,22 @@ DEAD_DESCRIPTIONS = [
     'Their corpse is inanimate.',
 ]
 
+def node_to_json(node):
+    return json.dumps(node, cls=GraphEncoder, sort_keys=True, indent=4)
+
+# TODO:  refactor to not use here
+class GraphEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, set):
+            return sorted(list(o))
+        if isinstance(o, list):
+            return sorted(o)
+        if isinstance(o, GraphEdge):
+            return {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
+        if not isinstance(o, GraphNode):
+            return super().default(o)
+        use_dict = {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
+        return use_dict
 
 class GraphEdge(object):
     '''Representative structure for having an edge between two nodes in the
