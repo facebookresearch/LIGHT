@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from light.world.souls.soul import Soul
-
+from light.world.content_loggers import AgentInteractionLogger
 from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
@@ -35,6 +35,8 @@ class PlayerSoul(Soul):
         target_node._human = True
         self.player_id = player_id
         self.provider = provider  # TODO link with real provider
+        self.agent_logger = AgentInteractionLogger(world.oo_graph, target_node)
+        world.oo_graph.room_id_to_loggers[target_node.get_room().node_id]._add_player()
         provider.register_soul(self)
 
     def handle_act(self, act_text):
@@ -50,11 +52,14 @@ class PlayerSoul(Soul):
         correct format to send to the view.
         """
         self.provider.player_observe_event(self, event)
+        self.agent_logger.observe_event(event)
 
     def reap(self):
         """
-        PlayerSouls must remove the player flag from their target GraphAgent when removed.
+        PlayerSouls must remove the player flag from their target GraphAgent when removed,
+        and notify the logger
         """
         super().reap()
         self.target_node.is_player = False
+        world.oo_graph.room_id_to_loggers[target_node.get_room().node_id]._remove_player()     
         self.provider.on_reap_soul(self)

@@ -25,7 +25,7 @@ DEAD_DESCRIPTIONS = [
 def node_to_json(node):
     return json.dumps(node, cls=GraphEncoder, sort_keys=True, indent=4)
 
-# TODO:  Get from utils
+# TODO:  refactor to not use here
 class GraphEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, set):

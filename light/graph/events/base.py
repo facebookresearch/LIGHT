@@ -10,10 +10,10 @@ from light.graph.elements.graph_nodes import (
     GraphAgent,
     GraphEdge,
     GraphNode,
-    GraphObject,
-    GraphRoom,
 )
-from light.graph.structured_graph import GraphEncoder
+from light.world.utils.json_utils import (
+    convert_dict_to_node, GraphEncoder, node_to_json
+)
 from typing import NamedTuple, TYPE_CHECKING, Dict
 import inspect
 import json
@@ -21,10 +21,6 @@ import json
 if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
     from light.world.world import World
-
-
-def node_to_json(node: GraphNode) -> Dict[str, Any]:
-    return json.dumps(node, cls=GraphEncoder, sort_keys=True, indent=4)
 
 
 class ProcessedArguments(NamedTuple):
@@ -169,10 +165,10 @@ class GraphEvent(object):
         Convert the content of this action into a json format that can be
         imported back to the original with from_json
         """
-        use_dict = {k: v for k, v in self.__dict__.copy().items() if not k.startswith("__")}
-        # Viewer is sent to dictionary in case we want to reconstruct `view_as` method
+        className = self.__class__.__name__
+        use_dict = {k: v for k, v in self.__dict__.copy().items() if not k.startswith(f'_{className}__')}
         use_dict['viewer'] = viewer
-        use_dict['__class__'] = self.__class__.__name__
+        use_dict['__class__'] = className
         use_dict['__module__'] = self.__module__
         # TODO: Consider moving graph encoder to a utils since we use here too!
         res = json.dumps(use_dict, cls=GraphEncoder, sort_keys=True, indent=indent)
@@ -201,38 +197,7 @@ class GraphEvent(object):
             'room': node_to_json(self.room),
             'actor': node_to_json(self.actor),
         }
-
-# TODO: Move to a utils file with the graph encoder
-def convert_dict_to_node(obj, world):
-        """
-        Given a dictionary (typically loaded from json), iterate over the elements recursively,
-        reconstructing any nodes that we are able to using the reference world.
-
-        If the node_id is not in the reference world, this means it was deleted during execution, so 
-        construct a new node object with it
-        """
-        if type(obj) is dict and 'node_id' in obj:
-            if obj['node_id'] in world.oo_graph.all_nodes:
-                return world.oo_graph.all_nodes[obj['node_id']]
-            else:
-                if obj['agent']:
-                    newNode = GraphAgent.from_json_dict(obj)
-                elif obj['object']:
-                    newNode = GraphObject.from_json_dict(obj)                    
-                elif obj['room']:
-                    newNode = GraphRoom.from_json_dict(obj)
-                else:
-                    newNode = GraphNode.from_json_dict(obj)
-                newNode.move_to(world.oo_graph.all_nodes[newNode._container_id])
-                return newNode
-        elif type(obj) is dict:
-            return {k: convert_dict_to_node(obj[k], world) for k in obj.keys()}
-        elif type(obj) is list:
-            return [convert_dict_to_node(item, world) for item in obj]
-        else:
-            # TODO: Consider other datatypes such as set or tuples (although none in events 
-            # rn, so not an issue)
-            return obj
+        
 
 class ErrorEvent(GraphEvent):
     """
@@ -280,22 +245,6 @@ class ErrorEvent(GraphEvent):
             'invoke an action.'
         )
         return self.display_text
-
-    @staticmethod
-    def from_json(self, input_json, world):
-        """
-        Instantiate this event from the given json over the given world
-        """
-        # TODO
-        raise NotImplementedError
-
-    def to_json(self):
-        """
-        Convert the content of this action into a json format that can be
-        imported back to the original with from_json
-        """
-        # TODO
-        raise NotImplementedError
 
     def __repr__(self):
         return f'ErrorEvent({self.display_text}, {self.target_nodes})'

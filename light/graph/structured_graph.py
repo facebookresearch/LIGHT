@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import os
 import copy
 from light.graph.elements.graph_nodes import (
     GraphObject,
@@ -9,22 +10,13 @@ from light.graph.elements.graph_nodes import (
     GraphVoidNode,
     GraphEdge,
 )
+from light.world.utils.json_utils import (
+    GraphEncoder,
+)
+from light.world.content_loggers import (
+    RoomInteractionLogger,
+)
 
-class GraphEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, set):
-            return sorted(list(o))
-        if isinstance(o, list):
-            return sorted(o)
-        if isinstance(o, GraphEdge):
-            return {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
-        if not isinstance(o, GraphNode):
-            return super().default(o)
-        use_dict = {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
-        return use_dict
-
-
-# TODO:  Attach a room log / agent log manager onto this - handles the logging
 class OOGraph(object):
     '''Graph class that takes normal graph and formats it in an easily
     inspectible version from an Object-Oriented point of view
@@ -34,6 +26,7 @@ class OOGraph(object):
         self.objects = {}
         self.agents = {}
         self.rooms = {}
+        self.room_id_to_loggers = {}
         self.all_nodes = {}
         self.void = GraphVoidNode()
         self.cnt = 0
@@ -103,6 +96,7 @@ class OOGraph(object):
                 )
                 # TODO parse other edge locked parameters
             room.move_to(oo_graph.void)
+            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(oo_graph, room_id)
 
         if hasattr(graph, 'void_id'):
             oo_graph.delete_nodes([oo_graph.get_node(graph.void_id)])
@@ -209,7 +203,9 @@ class OOGraph(object):
         node.force_move_to(self.void)
         self.rooms[id] = node
         self.all_nodes[id] = node
-        # TODO initialize RoomConversationBuffer(self, self._database_location, id)
+
+        self.room_id_to_loggers[id] = RoomInteractionLogger(self, id)
+        
         return node
 
     def add_object(self, name, props, uid='', db_id=None):
@@ -539,6 +535,8 @@ class OOGraph(object):
                         edge_desc=edge_dict['examine_desc'],
                     )
             room.force_move_to(oo_graph.void)
+            # need to read opts back somehow?  Or just do not worry about it - not logging from json
+            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(oo_graph, room_id)
 
         # Container locks
         for obj in oo_graph.objects.values():
