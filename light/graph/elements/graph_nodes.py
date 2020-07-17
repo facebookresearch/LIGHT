@@ -6,7 +6,7 @@
 
 import random
 import emoji
-
+import json
 from typing import List, Set
 
 UNINTERESTING_PHRASES = [
@@ -22,6 +22,22 @@ DEAD_DESCRIPTIONS = [
     'Their corpse is inanimate.',
 ]
 
+def node_to_json(node):
+    return json.dumps(node, cls=GraphEncoder, sort_keys=True, indent=4)
+
+# TODO:  Get from utils
+class GraphEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, set):
+            return sorted(list(o))
+        if isinstance(o, list):
+            return sorted(o)
+        if isinstance(o, GraphEdge):
+            return {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
+        if not isinstance(o, GraphNode):
+            return super().default(o)
+        use_dict = {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
+        return use_dict
 
 class GraphEdge(object):
     '''Representative structure for having an edge between two nodes in the
@@ -293,7 +309,17 @@ class GraphNode(object):
         return list(self.names)
 
     def __repr__(self):
-        return f'{self.NODE_TYPE}({self.node_id})'
+        return f'{self.NODE_TYPE}({self.node_id})' + str(self.__dict__)
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return node_to_json(self) == node_to_json(other)
+        else:
+            return False
+    
+    # Have to override hash, but do not want to
+    def __hash__(self):
+        return super.__hash__(self)
 
     # -------- Derived functions that employ some graph logic ------ #
 

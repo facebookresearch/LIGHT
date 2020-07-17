@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import copy
 from light.graph.elements.graph_nodes import (
     GraphObject,
     GraphAgent,
@@ -38,6 +39,7 @@ class OOGraph(object):
         self._nodes_to_delete = []
         self._deleted_nodes = {}
         self.dead_nodes = {}
+        self._opt = opt
 
     @staticmethod
     def from_graph(graph, start_location=None):
@@ -436,6 +438,56 @@ class OOGraph(object):
         }
         return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
 
+    def to_json_rv(self, room_id):
+        '''Export a graph with room_id, its descendants, and its direct neighbors (for logging)'''
+        room_node = self.all_nodes[room_id] 
+
+        # Do not forget neighbors for Leave / Arrive events, but drop the things in them
+        neighbors = room_node.get_neighbors()
+        neighbors_contained_removed = set([copy.deepcopy(neighbor) for neighbor in neighbors])
+        for neighbor in neighbors_contained_removed:
+            neighbor.contained_nodes = {}
+
+        # Get everything contained inside this room using BFS, then union with neighbors
+        contained_nodes = OOGraph.get_contained_in_room(room_node)
+        nodes = contained_nodes.union(neighbors_contained_removed)
+
+        agents = []
+        objects = []
+        rooms = []
+        for node in nodes:
+            if node.room:
+                rooms.append(node.node_id)
+            elif node.agent:
+                agents.append(node.node_id)
+            elif node.object:
+                objects.append(node.node_id)
+            # If it is none of those do not worry, nodes still has it
+
+        dicts = {
+            'agents': sorted(agents),
+            'nodes': {node.node_id : node for node in nodes},
+            'objects': sorted(objects),
+            'rooms': sorted(rooms),
+        }
+        return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
+
+    @staticmethod
+    def get_contained_in_room(room_node):
+        """
+        Starting from room_node, use a BFS to get all descendant nodes of
+        the room node in the graph (including the room node)
+        """
+        content_queue = room_node.get_contents()
+        contained_nodes = set()
+        contained_nodes.add(room_node)
+        while(len(content_queue) != 0):
+            next_node = content_queue.pop(0)
+            if (next_node not in contained_nodes):
+                contained_nodes.add(next_node)
+                content_queue.extend(next_node.get_contents())
+        return contained_nodes
+        
     @staticmethod
     def from_json(input_json: str):
         dict_format = json.loads(input_json)
