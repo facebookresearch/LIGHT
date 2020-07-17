@@ -74,9 +74,7 @@ class RegistryApplication(tornado.web.Application):
         self.game_instances[game_id] = game
 
         game.register_provider(self.tornado_provider)
-        # Handle telenet changes later
-        # provider = TelnetPlayerProvider(graph, FLAGS.hostname, FLAGS.port + 1)
-        # game.register_provider(provider)
+        # TODO: Decide if threading is the right approach or not
         t = threading.Thread(
             target=game.run_graph, name=f'Game{game_id}GraphThread', daemon=True
         )
