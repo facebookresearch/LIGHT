@@ -36,6 +36,9 @@ import threading
 
 here = os.path.abspath(os.path.dirname(__file__))
 
+# Idea - make a "game registry" app or something similar that has endpoint /game(.*)
+# This will then be routed to the registryApp, which uses that (.*) url to pass to the appropiate
+# game instance.
 def make_app(FLAGS, tornado_provider):
     worldBuilderApp = BuildApplication(get_handlers(FLAGS.data_model_db))
     landingApp = LandingApplication(FLAGS.data_model_db, FLAGS.hostname, FLAGS.password)
@@ -110,7 +113,9 @@ def main():
     random.seed(6)
     numpy.random.seed(6)
 
-
+    # Need to package this stuff into a new method for spawning game, so wrap it up!
+    # Just one tornado listener that passes people along to correct graph?
+    # Look at the tornado_server for handling this mostly
     game = GameInstance()
     graph = game.g
     tornado_provider = TornadoWebappPlayerProvider(graph, FLAGS.hostname, FLAGS.port)
