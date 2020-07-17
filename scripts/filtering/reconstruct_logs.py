@@ -6,6 +6,7 @@
 from light.graph.structured_graph import OOGraph
 from light.graph.events.base import GraphEvent
 from light.world.world import World
+from light.world.utils.json_utils import read_event_logs
 
 import argparse
 import os
@@ -23,29 +24,21 @@ def load_event_log(event_file):
     log_type = 'agent' if 'agent' in os.path.abspath(os.path.dirname(event_file) )else 'room'
 
     uuid_to_world = {}
-    event_buffer = []
-    with open(event_file, 'r') as event_json_file:
-        parity = 0
-        for line in event_json_file:
-            if parity == 0:
-                world_uuid_and_hash = line.split(" ")
-                world_uuid = world_uuid_and_hash[0]
-                if world_uuid not in uuid_to_world:
-                    world = get_world(world_uuid, graph_dir)
-                    uuid_to_world[world_uuid] = world
-                else:
-                    world = uuid_to_world[world_uuid]
-                hash_ = world_uuid_and_hash[1].strip()
-            if parity == 1:
-                timestamp = line.strip()
-            elif parity == 2:
-                written_event = GraphEvent.from_json(line, world)
-                event_buffer.append((hash_, timestamp, written_event))
-            parity += 1
-            parity %= 3
+    events = []
+    event_buffer = read_event_logs(event_file)
+    for (world_uuid, hash_, timestamp, event_json) in event_buffer:
+        if world_uuid not in uuid_to_world:
+            world = get_world(world_uuid, graph_dir)
+            uuid_to_world[world_uuid] = world
+        else:
+            world = uuid_to_world[world_uuid]
+
+        event_obj = GraphEvent.from_json(event_json, world)
+        events.append((hash_, timestamp, event_obj))
+
     # Return the worlds and the event buffer which is in order of the events 
     # NOTE: In future, if asynch writes, can define a sort on the timestamp 
-    return (uuid_to_world, event_buffer)
+    return (uuid_to_world, events)
 
 def get_world(uuid, graph_dir):
     '''

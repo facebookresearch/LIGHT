@@ -309,7 +309,7 @@ class GraphNode(object):
         return list(self.names)
 
     def __repr__(self):
-        return f'{self.NODE_TYPE}({self.node_id})' + str(self.__dict__)
+        return f'{self.NODE_TYPE}({self.node_id})'
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
