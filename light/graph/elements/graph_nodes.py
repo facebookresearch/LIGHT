@@ -6,8 +6,11 @@
 
 import random
 import emoji
-
+import json
 from typing import List, Set
+from light.world.utils.json_utils import (
+    GraphEncoder, node_to_json
+)
 
 UNINTERESTING_PHRASES = [
     "There's nothing special about it.",
@@ -293,7 +296,17 @@ class GraphNode(object):
         return list(self.names)
 
     def __repr__(self):
-        return f'{self.NODE_TYPE}({self.node_id})'
+        return f'{self.NODE_TYPE}({self.node_id})' + str(self.__dict__)
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return node_to_json(self) == node_to_json(other)
+        else:
+            return False
+    
+    # Have to override hash, but do not want to
+    def __hash__(self):
+        return super.__hash__(self)
 
     # -------- Derived functions that employ some graph logic ------ #
 

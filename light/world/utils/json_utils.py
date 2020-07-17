@@ -26,6 +26,9 @@ class GraphEncoder(json.JSONEncoder):
         use_dict = {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
         return use_dict
 
+def node_to_json(node: GraphNode) -> Dict[str, Any]:
+    return json.dumps(node, cls=GraphEncoder, sort_keys=True, indent=4)
+
 def convert_dict_to_node(obj, world):
     """
     Given a dictionary (typically loaded from json), iterate over the elements recursively,
