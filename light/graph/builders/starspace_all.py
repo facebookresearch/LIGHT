@@ -104,7 +104,6 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         SingleSuggestionGraphBuilder.__init__(self, opt, model_path=self.model_path)
         self.dpath = self.parlai_datapath + '/light_maps'
         self.debug = debug
-
         category_set = set(self.get_room_categories())
         self.filler_rooms, self.filler_room_names = build_filler_rooms_from_categories(
             category_set

@@ -5,6 +5,7 @@
 #
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
+import asyncio
 from light.graph.builders.starspace_all import (
     StarspaceBuilder,
 )
@@ -67,9 +68,9 @@ class PlayerProvider:
     an array of new players during these calls
     """
 
-    def __init__(self, graph):
-        # TODO providers should be able to provide to multiple graphs
-        self.g = graph
+    def __init__(self, graphs):
+        # Graphs should be a map of game_ids to the associated game graph
+        self.graphs = graphs
 
     def get_new_players(self):
         """
@@ -79,7 +80,7 @@ class PlayerProvider:
         """
         raise NotImplementedError
 
-
+# TODO:  Refactor when update player providers
 class GameInstance:
     """
     This class serves to create a wrapper around a specific graph and manage
@@ -88,25 +89,28 @@ class GameInstance:
     can come from any source.
     """
 
-    def __init__(self, g=None):
+    def __init__(self, game_id, g=None,):
         if g is None:
             _, world = StarspaceBuilder(
                 debug=False
             ).get_graph()  # TODO: what are the args that are needed
         self.g = world
+        self.game_id = game_id
         self.players = []
         self.providers = []
 
     def register_provider(self, provider):
         self.providers.append(provider)
+        provider.graphs[self.game_id] = self.g
 
     def run_graph(self):
         g = self.g
         timer = Timer()
+        asyncio.set_event_loop(asyncio.new_event_loop())
         while True:
             # try to make some new players
             for provider in self.providers:
-                self.players += provider.get_new_players()
+                self.players += provider.get_new_players(self.game_id)
 
             # Clear disconnected players
             left_players = [p for p in self.players if not p.is_alive()]
