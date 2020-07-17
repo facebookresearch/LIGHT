@@ -16,6 +16,7 @@ from light.graph.events.graph_events import ArriveEvent
 from light.graph.builders.base import (
     DBGraphBuilder,
     SingleSuggestionGraphBuilder,
+    POSSIBLE_NEW_ENTRANCES,
 )
 from light.data_model.light_database import (
     DB_EDGE_IN_CONTAINED,
@@ -68,14 +69,6 @@ RELATIONSHIP_TYPES = [
     CONTAINING,
     CONTAINED_BY,
     CHAR_CONTAINING,
-]
-POSSIBLE_NEW_ENTRANCES = [
-    "somewhere you can't see",
-    "an undiscernable place",
-    "a puff of smoke",
-    "behind the shadows",
-    "nowhere in particular",
-    "a flash of light",
 ]
 
 

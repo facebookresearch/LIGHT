@@ -10,15 +10,8 @@ from light.graph.elements.graph_nodes import GraphNode
 from light.graph.events.graph_events import ArriveEvent
 from light.graph.builders.base import (
     DBGraphBuilder,
+    POSSIBLE_NEW_ENTRANCES,
 )
-POSSIBLE_NEW_ENTRANCES = [
-    "somewhere you can't see",
-    "an undiscernable place",
-    "a puff of smoke",
-    "behind the shadows",
-    "nowhere in particular",
-    "a flash of light",
-]
 
 class UserWorldBuilder(DBGraphBuilder):
     '''Builds a LIGHT map using a predefined world saved to the light database.'''
