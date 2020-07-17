@@ -83,6 +83,12 @@ class UserWorldBuilder(DBGraphBuilder):
         for type_ in type_to_entities.keys():
             for entity in type_to_entities[type_]:
                 props = dict(entity)
+                if (type_ == 'room'):
+                    props['desc'] = props['description'] if 'description' in props else None
+                    props['extra_desc'] = props['backstory'] if 'backstory' in props else None
+                else:
+                    props['desc'] = props['physical_description'] if 'physical_description' in props else None
+
                 func = getattr(g, f'add_{type_}')
                 # No uid or player for any of these
                 g_id = func(props['name'], props, db_id=props['entity_id']).node_id
