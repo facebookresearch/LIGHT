@@ -14,7 +14,7 @@ from light.graph.structured_graph import OOGraph
 from light.world.world import World
 from light.graph.events.graph_events import ArriveEvent, LeaveEvent, GoEvent, LookEvent
 from light.world.content_loggers import AgentInteractionLogger, RoomInteractionLogger
-
+from light.world.utils.json_utils import read_event_logs
 from parlai.core.params import ParlaiParser
 
 class TestInteractionLoggers(unittest.TestCase):
@@ -22,6 +22,7 @@ class TestInteractionLoggers(unittest.TestCase):
 
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
+        # TODO: Remove reliance on this, just use argparser
         self.parser = ParlaiParser()
         self.parser.add_argument(
             '--is-logging',
@@ -88,21 +89,15 @@ class TestInteractionLoggers(unittest.TestCase):
         ref_json = test_event.to_json()
         event_file = room_logger._last_event_log
         self.assertNotEqual(os.stat(event_file).st_size, 0)
-        # Note:  Lines alternate graph-hash, timestamp, json, use parity to help with this!
-        with open(event_file, 'r') as event_json_file:
-            parity = 0
-            for line in event_json_file:
-                # check graph
-                if parity == 0:
-                    world_hash = line.split(" ")
-                    self.assertEqual(world_hash[0], room_logger._last_graphs[-1])
-                    self.assertEqual(world_hash[1], str(test_event.__hash__()) + "\n")
-                elif parity == 2:
-                    written_event = json.loads(line)
-                    ref_json = json.loads(ref_json)
-                    self.assertEqual(ref_json, written_event)
-                parity += 1
-                parity %= 3
+        buff = read_event_logs(event_file)
+        assert(len(buff) == 1)
+
+        world_name, hash_, timestamp, written_event = buff[0]
+        self.assertEqual(world_name, room_logger._last_graphs[-1])
+        self.assertEqual(hash_, str(test_event.__hash__()))
+        ref_json = json.loads(ref_json)
+        self.assertEqual(written_event, ref_json)
+
 
     def test_simple_agent_logger_saves_and_loads_init_graph(self):
         """
@@ -153,21 +148,15 @@ class TestInteractionLoggers(unittest.TestCase):
         ref_json = test_event.to_json()
         event_file = agent_logger._last_event_log
         self.assertNotEqual(os.stat(event_file).st_size, 0)
-        # Note:  Lines alternate timestamp, json, use parity to help with this!
-        with open(event_file, 'r') as event_json_file:
-            parity = 0
-            for line in event_json_file:
-                # check graph
-                if parity == 0:
-                    world_hash = line.split(" ")
-                    self.assertEqual(world_hash[0], agent_logger._last_graphs[-1])
-                    self.assertEqual(world_hash[1], str(test_event.__hash__()) + "\n")
-                elif parity == 2:
-                    written_event = json.loads(line)
-                    ref_json = json.loads(ref_json)
-                    self.assertEqual(ref_json, written_event)
-                parity += 1
-                parity %= 3
+        buff = read_event_logs(event_file)
+        assert(len(buff) == 1)
+
+        world_name, hash_, timestamp, written_event = buff[0]
+        self.assertEqual(world_name, agent_logger._last_graphs[-1])
+        self.assertEqual(hash_, str(test_event.__hash__()))
+        ref_json = json.loads(ref_json)
+        self.assertEqual(written_event, ref_json)
+
 
     # TODO: Add simple unit type test - create new graph, loggers, log the events seperate tada!
     def test_simple_room_logger_e2e(self):
@@ -189,12 +178,11 @@ class TestInteractionLoggers(unittest.TestCase):
         test_world = World({}, None, True)
         test_world.oo_graph = test_graph 
 
-
         # Check the room and event json was done correctly for room_node
         event_room_node_observed = LeaveEvent(agent_node, target_nodes=[room_node2]).to_json()
         test_init_json = test_world.oo_graph.to_json_rv(room_node.node_id)
 
-        test_event = GoEvent(agent_node, target_nodes=[room_node2]).execute(test_world)
+        GoEvent(agent_node, target_nodes=[room_node2]).execute(test_world)
         
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
         graph_file = os.path.join(self.data_dir, 'light_graph_dumps', f'{room_logger._last_graphs[-1]}.json')       
@@ -204,20 +192,13 @@ class TestInteractionLoggers(unittest.TestCase):
             self.assertEqual(test_init_json, written_init_json)
         event_file = room_logger._last_event_log
         self.assertNotEqual(os.stat(event_file).st_size, 0)
-        with open(event_file, 'r') as event_json_file:
-            parity = 0
-            for line in event_json_file:
-                # check graph
-                if parity == 0:
-                    world_hash = line.split(" ")
-                    self.assertEqual(world_hash[0], room_logger._last_graphs[-1])
-                elif parity == 2:
-                    written_event = json.loads(line)
-                    ref_json = json.loads(event_room_node_observed)
-                    self.assertEqual(ref_json, written_event)
-                parity += 1
-                parity %= 3
+        buff = read_event_logs(event_file)
+        assert(len(buff) == 1)
 
+        world_name, hash_, timestamp, written_event = buff[0]
+        self.assertEqual(world_name, room_logger._last_graphs[-1])
+        ref_json = json.loads(event_room_node_observed)
+        self.assertEqual(written_event, ref_json)
 
 
 if __name__ == "__main__":
