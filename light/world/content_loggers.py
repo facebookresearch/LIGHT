@@ -74,6 +74,118 @@ class InteractionLogger(abc.ABC):
         raise NotImplementedError
 
 
+class AgentInteractionLogger(InteractionLogger):
+    '''
+        This interaction logger attaches to human agents in the graph, logging all
+        events the human observes.  This logger also requires serializing more rooms, 
+        since agent encounters many rooms along its traversal
+    '''
+    def __init__(self, graph, data_path, agent, max_afk_history=5, afk_turn_tolerance=25):
+        super().__init__(graph, data_path)
+        self.agent = agent
+        self.max_afk_history = max_afk_history
+        self.afk_turn_tolerance = afk_turn_tolerance
+
+        self.turns_wo_player_action = 0 #Player is acting by virtue of this initialized!
+        self.afk_context_buffer = collections.deque(maxlen=max_afk_history)
+        self.event_buffer = []
+        self.state_history = []
+        self._logging_intialized = False
+        # Does graph even want us logging? - can change to property of world
+        if graph._opt is not None:
+            self.is_active = graph._opt.get('dump_dialogues', False) is True
+        else:
+            self.is_active = True
+
+    def _begin_meta_episode(self):
+        self._clear_buffers()
+        self._add_current_graph_state()
+        self.turns_wo_player_action = 0
+        self._logging_intialized = True
+
+    def _clear_buffers(self):
+        '''Clear the buffers storage for this logger, dumping context'''
+        self.state_history.clear()
+        self.event_buffer.clear()
+
+    def _add_current_graph_state(self):
+        """Make a copy of the graph state so we can replay events on top of it
+        """
+        try:
+            self.state_history.append(self.graph.to_json_rv(self.agent.get_room().node_id))
+        except Exception as e:
+            print(e)
+            import traceback
+            traceback.print_exc()
+            raise
+
+    def _is_player_afk(self):
+        return self.turns_wo_player_action >= self.afk_turn_tolerance
+
+    def _end_meta_episode(self):
+        self._logging_intialized = False
+        self._log_interactions()
+    
+    def _log_interactions(self):
+        # First, check graph path, then write the graph dump
+        graph_path = os.path.join(self.data_path, 'light_graph_dumps')
+        if not os.path.exists(graph_path):
+            os.mkdir(graph_path)
+
+        # TODO: Fix this logic for agent writing out multiple graphs
+        print(len(self.state_history))
+        for state in self.state_history:
+            unique_graph_name = str(uuid.uuid4())
+            self._last_logged_to = unique_graph_name
+            graph_file_name = f'{unique_graph_name}.json'
+            file_path = os.path.join(graph_path, graph_file_name)
+            with open(file_path, 'w') as dump_file:
+                dump_file.write(state)
+
+        # Now, do the same for events, dumping in the light_event_dumps/rooms
+        events_path = os.path.join(self.data_path, 'light_event_dumps')
+        if not os.path.exists(events_path):
+            os.mkdir(events_path)
+        events_room_path = os.path.join(events_path, 'agent')
+        if not os.path.exists(events_room_path):
+            os.mkdir(events_room_path)
+
+        event_file_name = f'{unique_graph_name}_events.json'
+        events_file_path = os.path.join(events_room_path, event_file_name)
+        with open(events_file_path, 'w') as dump_file:
+            for event, time in self.event_buffer:
+                # TODO:  If writing multiple graphs, need to reference those here 
+                dump_file.write(''.join([time, '\n']))
+                dump_file.write(event)
+
+    def observe_event(self, event):
+        if not self.is_active:
+            return
+
+        event_t = type(event)
+        if event_t is SpawnEvent and not self._logging_intialized:
+            self._begin_meta_episode()
+        elif event_t is DeathEvent: # If agent is exiting or dieing or something, end meta episode
+            self._end_meta_episode()
+
+        # Get new room state
+        if event_t is ArriveEvent and event.actor is self.agent:
+            # NOTE: If this is before executing event, not reliable!
+            self._add_current_graph_state()
+
+        # Store context from bots, or store current events
+        if (self._is_player_afk() and not event.actor is self.agent):
+            self.afk_context_buffer.append((event.to_json(), time.ctime()))
+        else:
+            if event.actor is self.agent:
+                if self._is_player_afk():
+                    self.event_buffer.extend(self.afk_context_buffer)
+                    self.afk_context_buffer.clear()
+                self.turns_wo_player_action = 0
+            else:
+                self.turns_wo_player_action += 1
+            self.event_buffer.append((event.to_json(), time.ctime()))
+
 class RoomInteractionLogger(InteractionLogger):
     '''
         This interaction logger attaches to a room level node in the graph, logging all
@@ -112,7 +224,7 @@ class RoomInteractionLogger(InteractionLogger):
         
     def _begin_meta_episode(self):
         self._clear_buffers()
-        self._init_graph_state()
+        self._add_current_graph_state()
         self.turns_wo_players = 0
 
     def _clear_buffers(self):
@@ -122,7 +234,7 @@ class RoomInteractionLogger(InteractionLogger):
         self.conversation_buffer.extend(self.context_buffer)
         self.context_buffer.clear()
 
-    def _init_graph_state(self):
+    def _add_current_graph_state(self):
         """Make a copy of the graph state so we can replay events on top of it
         """
         try:
@@ -137,7 +249,7 @@ class RoomInteractionLogger(InteractionLogger):
         return self.num_players_present > 0
 
     def _is_players_afk(self):
-        return self.turns_wo_players > self.afk_turn_tolerance
+        return self.turns_wo_players >= self.afk_turn_tolerance
 
     def _end_meta_episode(self):
         self._log_interactions()
