@@ -14,7 +14,7 @@ from light.graph.builders.base import (
     POSSIBLE_NEW_ENTRANCES,
 )
 from light.world.world import World
-
+# TODO:  Refactor common functionality between builders!
 class UserWorldBuilder(DBGraphBuilder):
     '''Builds a LIGHT map using a predefined world saved to the light database.'''
 
