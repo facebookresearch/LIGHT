@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-from light.world.content_loggers import (
-    RoomConversationBuffer,
-)
 from light.graph.viz.graph_printer import GraphPrinter
 from light.graph.structured_graph import OOGraph
 from light.graph.elements.graph_nodes import GraphRoom
@@ -446,6 +443,7 @@ class World(object):
                 if a in exclude_agents:
                     continue
                 self.send_action(a, action)
+            self.oo_graph.room_id_to_loggers[action.actor.get_room().node_id].observe_event(action)
         else:
             if 'actors' in action:
                 # send message to the actor first

@@ -48,6 +48,7 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
     });
   };
 
+
   /* Given an entity id, its type, and the local entities store, get 
         the matching emoji and associate the type with the id */
   const storeEntity = (entities, entityId, type, entityToType) => {
@@ -68,6 +69,7 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
         room: tile.room,
         characters: [],
         objects: [],
+        walls: [true, true, true, true],
       };
     });
   };
@@ -75,6 +77,12 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
   /* Given the edges in the form of (src, dst, type), parse the rooms which contain the objects, 
         as well as the rooms that neighbor above or below for stairs */
   const parseEdges = (edges, roomToTile, entityToType) => {
+    const dirs = {};
+    dirs[EDGE_TYPES.NEIGHBORS_WEST] = 0;
+    dirs[EDGE_TYPES.NEIGHBORS_EAST] = 1;
+    dirs[EDGE_TYPES.NEIGHBORS_NORTH] = 2;
+    dirs[EDGE_TYPES.NEIGHBORS_SOUTH] = 3;
+
     edges.forEach((edge) => {
       if (edge.type === EDGE_TYPES.CONTAINS) {
         if (entityToType[edge.dst] === "character") {
@@ -88,13 +96,38 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
         roomToTile[edge.src].stairUp = true;
       } else if (edge.type === EDGE_TYPES.NEIGHBORS_BELOW) {
         roomToTile[edge.src].stairDown = true;
+      } else {
+        roomToTile[edge.src].walls[dirs[edge.type]] = false;
       }
     });
   };
 
+  /* Given a specific tile and the datMap, add the walls which
+      are true in the wall array for the tile to the map*/
+  const constructWallsForTile = (tileInfo, datMap) => {
+    const neighbors = [
+      `${tileInfo.x - 1} ${tileInfo.y}`,
+      `${tileInfo.x + 1} ${tileInfo.y}`,
+      `${tileInfo.x} ${tileInfo.y - 1}`,
+      `${tileInfo.x} ${tileInfo.y + 1}`,
+    ];
+    let myLoc = `${tileInfo.x} ${tileInfo.y}`;
+    for(let i = 0; i < tileInfo.walls.length; i++){
+      if (tileInfo.walls[i]){
+        let otherLoc = neighbors[i];
+        // Need to sort in order for upload to work!
+        if (otherLoc < myLoc){
+          datMap[tileInfo.floor].walls[otherLoc + "|" + myLoc] = true;
+        }else{
+          datMap[tileInfo.floor].walls[myLoc + "|" + otherLoc] = true;
+        }
+      }
+    }
+  }
+
   /* Given the metadata for tiles, construct the format expected by the frontend which
         involves mapping x, y, and floor into the map then storing the other data */
-  const constructTiles = (roomToTile, datMap) => {
+  const constructTilesAndWalls = (roomToTile, datMap) => {
     Object.keys(roomToTile).forEach((roomId) => {
       let tileInfo = roomToTile[roomId];
       const temp = {
@@ -109,6 +142,7 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
         temp.stairDown = true;
       }
       datMap[tileInfo.floor].tiles[tileInfo.x + " " + tileInfo.y] = temp;
+      constructWallsForTile(tileInfo, datMap);
     });
   };
 
@@ -163,7 +197,7 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
 
     parseTiles(data.map.tiles, roomToTile);
     parseEdges(data.map.edges, roomToTile, entityToType);
-    constructTiles(roomToTile, dat.map);
+    constructTilesAndWalls(roomToTile, dat.map);
 
     // Mission accomplished!
     AppToaster.show({

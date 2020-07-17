@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import json
+import os
+import copy
 from light.graph.elements.graph_nodes import (
     GraphObject,
     GraphAgent,
@@ -8,20 +10,12 @@ from light.graph.elements.graph_nodes import (
     GraphVoidNode,
     GraphEdge,
 )
-
-class GraphEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, set):
-            return sorted(list(o))
-        if isinstance(o, list):
-            return sorted(o)
-        if isinstance(o, GraphEdge):
-            return {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
-        if not isinstance(o, GraphNode):
-            return super().default(o)
-        use_dict = {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
-        return use_dict
-
+from light.world.utils.json_utils import (
+    GraphEncoder,
+)
+from light.world.content_loggers import (
+    RoomInteractionLogger,
+)
 
 class OOGraph(object):
     '''Graph class that takes normal graph and formats it in an easily
@@ -32,12 +26,14 @@ class OOGraph(object):
         self.objects = {}
         self.agents = {}
         self.rooms = {}
+        self.room_id_to_loggers = {}
         self.all_nodes = {}
         self.void = GraphVoidNode()
         self.cnt = 0
         self._nodes_to_delete = []
         self._deleted_nodes = {}
         self.dead_nodes = {}
+        self._opt = opt
 
     @staticmethod
     def from_graph(graph, start_location=None):
@@ -100,6 +96,7 @@ class OOGraph(object):
                 )
                 # TODO parse other edge locked parameters
             room.move_to(oo_graph.void)
+            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(oo_graph, room_id)
 
         if hasattr(graph, 'void_id'):
             oo_graph.delete_nodes([oo_graph.get_node(graph.void_id)])
@@ -206,7 +203,9 @@ class OOGraph(object):
         node.force_move_to(self.void)
         self.rooms[id] = node
         self.all_nodes[id] = node
-        # TODO initialize RoomConversationBuffer(self, self._database_location, id)
+
+        self.room_id_to_loggers[id] = RoomInteractionLogger(self, id)
+        
         return node
 
     def add_object(self, name, props, uid='', db_id=None):
@@ -436,6 +435,56 @@ class OOGraph(object):
         }
         return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
 
+    def to_json_rv(self, room_id):
+        '''Export a graph with room_id, its descendants, and its direct neighbors (for logging)'''
+        room_node = self.all_nodes[room_id] 
+
+        # Do not forget neighbors for Leave / Arrive events, but drop the things in them
+        neighbors = room_node.get_neighbors()
+        neighbors_contained_removed = set([copy.deepcopy(neighbor) for neighbor in neighbors])
+        for neighbor in neighbors_contained_removed:
+            neighbor.contained_nodes = {}
+
+        # Get everything contained inside this room using BFS, then union with neighbors
+        contained_nodes = OOGraph.get_contained_in_room(room_node)
+        nodes = contained_nodes.union(neighbors_contained_removed)
+
+        agents = []
+        objects = []
+        rooms = []
+        for node in nodes:
+            if node.room:
+                rooms.append(node.node_id)
+            elif node.agent:
+                agents.append(node.node_id)
+            elif node.object:
+                objects.append(node.node_id)
+            # If it is none of those do not worry, nodes still has it
+
+        dicts = {
+            'agents': sorted(agents),
+            'nodes': {node.node_id : node for node in nodes},
+            'objects': sorted(objects),
+            'rooms': sorted(rooms),
+        }
+        return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
+
+    @staticmethod
+    def get_contained_in_room(room_node):
+        """
+        Starting from room_node, use a BFS to get all descendant nodes of
+        the room node in the graph (including the room node)
+        """
+        content_queue = room_node.get_contents()
+        contained_nodes = set()
+        contained_nodes.add(room_node)
+        while(len(content_queue) != 0):
+            next_node = content_queue.pop(0)
+            if (next_node not in contained_nodes):
+                contained_nodes.add(next_node)
+                content_queue.extend(next_node.get_contents())
+        return contained_nodes
+        
     @staticmethod
     def from_json(input_json: str):
         dict_format = json.loads(input_json)
@@ -486,6 +535,8 @@ class OOGraph(object):
                         edge_desc=edge_dict['examine_desc'],
                     )
             room.force_move_to(oo_graph.void)
+            # need to read opts back somehow?  Or just do not worry about it - not logging from json
+            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(oo_graph, room_id)
 
         # Container locks
         for obj in oo_graph.objects.values():

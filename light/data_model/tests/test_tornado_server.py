@@ -55,11 +55,61 @@ from deploy.web.server.tornado_server import (
     LandingApplication, 
     Application,
 )
+from deploy.web.server.registry import (
+    RegistryApplication, 
+)
 
 PORT = 35494
 URL = f'http://localhost:{PORT}'
+class TestFlags():
+    def __init__(self, hostname, port):
+        self.hostname = hostname
+        self.port = port
 
-# Add test for the worldsaving endpoints!
+@mock.patch('deploy.web.server.registry.BaseHandler.get_current_user', return_value='user')
+@mock.patch('light.graph.builders.starspace_all.StarspaceBuilder')
+class TestRegistryApp(AsyncHTTPTestCase):
+    def setUp(self):
+        self.data_dir = tempfile.mkdtemp()
+        self.db_path = os.path.join(self.data_dir, 'test_server.db')
+        self.FLAGS = TestFlags("localhost", PORT)
+        self.client = httpclient.AsyncHTTPClient()
+        super().setUp()
+
+    def tearDown(self):
+        super().tearDown()
+        shutil.rmtree(self.data_dir)
+
+    def get_app(self):
+        app = RegistryApplication(self.FLAGS, default=False)
+        app.listen(PORT)
+        return app
+
+    @gen_test
+    def test_game_socket(self, mocked_auth, MockStarSpace):
+        '''Test that we connect to socket by default'''
+        headers = {'Connection': 'Upgrade', 'Upgrade':'websocket'}
+        with self.assertRaises(httpclient.HTTPClientError) as cm:
+            response = yield self.client.fetch(
+                f'{URL}/game/socket',
+                method='GET',
+                headers=headers,
+            )
+        # Need to upgrade in response
+        self.assertEqual(cm.exception.code, 426)
+
+    @mock.patch('deploy.web.server.registry.RegistryApplication.run_new_game', return_value='test')
+    @gen_test
+    def test_new_game(self, mocked_auth, MockStarSpace, mocked_method):
+        '''Test that we can post to create a new game'''
+        response = yield self.client.fetch(
+            f'{URL}/game/new/01',
+            method='POST',
+            body=b'test',
+        )
+        self.assertEqual(response.code, 201)
+
+
 @mock.patch('deploy.web.server.builder_server.BaseHandler.get_current_user', return_value='test')
 class TestWorldSaving(AsyncHTTPTestCase):
     def setUp(self):
@@ -1166,6 +1216,7 @@ class TestBuilderApp(AsyncHTTPTestCase):
 def all():
     suiteList = []
     # TODO: Break out into seperate files, arrange suite elsewhere when automated testing done
+    suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestRegistryApp))
     suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestGameApp))
     suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestWorldSaving))
     suiteList.append(unittest.TestLoader().loadTestsFromTestCase(TestBuilderApp))
