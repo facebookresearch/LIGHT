@@ -97,15 +97,9 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         if opt.get("light_db_file", "") != "":
             self.db_path = opt.get("light_db_file")
         self.model_path = opt.get("light_model_root")
-        # manual override for efficency - change this to your scratch, copied from
-        # /checkpoint/light/data/databse3.db
-        # self.db_path = '/scratch/lucaskabela/database3.db'
-        print("Gonna try building")
         DBGraphBuilder.__init__(self, self.db_path)
-        print("Did I get pass the DB?")
         SingleSuggestionGraphBuilder.__init__(self, opt, model_path=self.model_path)
         self.dpath = self.parlai_datapath + '/light_maps'
-        
         self.debug = debug
         category_set = set(self.get_room_categories())
         self.filler_rooms, self.filler_room_names = build_filler_rooms_from_categories(
