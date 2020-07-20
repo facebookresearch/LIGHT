@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
 import os
+import random
 from light.graph.structured_graph import OOGraph
 from light.graph.elements.graph_nodes import GraphNode
 from light.graph.events.graph_events import ArriveEvent
@@ -12,7 +13,8 @@ from light.graph.builders.base import (
     DBGraphBuilder,
     POSSIBLE_NEW_ENTRANCES,
 )
-
+from light.world.world import World
+# TODO:  Refactor common functionality between builders!
 class UserWorldBuilder(DBGraphBuilder):
     '''Builds a LIGHT map using a predefined world saved to the light database.'''
 
@@ -24,22 +26,18 @@ class UserWorldBuilder(DBGraphBuilder):
                 True, True, 'Arguments for building a LIGHT world with User Defined Builder'
             )
             self.add_parser_arguments(parser)
+            opt, _unknown = parser.parse_and_process_known_args()
 
-        opt, _unknown = parser.parse_and_process_known_args()
         self.opt = opt
-        self.parlai_datapath = opt['datapath']
-        self.db_path = os.path.join(opt['datapath'], 'light', 'database3.db')
-        if opt.get("light_db_file", "") != "":
-            self.db_path = opt.get("light_db_file")
-        self.model_path = opt.get("light_model_root")
-        DBGraphBuilder.__init__(self, self.db_path)`
+        self.db_path = opt['light_db_file']
+        self.filler_probability = opt['filler_probability']
+        self._no_npc_models = not opt['use_npc_models']
+        DBGraphBuilder.__init__(self, self.db_path)
         self.debug = debug
 
         # Need world id to be non none, check that here
         self.world_id = world_id
         self.player_id = player_id
-        # grid of 3d coordinates to room dicts that exist there
-        self.grid = {}
 
     def _props_from_char(self, char):
         '''Given a dict representing a character in the world, extract the
@@ -75,62 +73,57 @@ class UserWorldBuilder(DBGraphBuilder):
             use_desc = use_desc[4:]
         return use_desc
 
-    def add_object_to_graph(self, g, obj, container, extra_props={}):
-        if type(obj) == int:
-            with self.db as ldb:
-                obj = ldb.get_object(id=obj)  # find actual object from id
-        obj['description'] = random.choice(obj['description']).capitalize()
-        if obj['is_plural'] == 1:
+    def add_object_to_graph(self, g, obj, container_node, extra_props={}):
+        '''Adds a particular DBObject to the given OOgraph, adding to the specific
+        container node. Returns the newly created object node'''
+        obj.description = obj.description.capitalize()
+        if obj.is_plural == 1:
             if extra_props.get('not_gettable', False) != True:
-                return None  # skip this. TODO: find nearest object that is singular.
+                # TODO: figure out making plurals work better
+                return None
             else:
-                # modify object description to make plural work. TODO: fix in data
-                desc = obj['description']
-                desc = 'You peer closer at one of them. ' + desc
-                obj['description'] = desc
-
-        use_desc = obj['name']
-        props = self.props_from_obj(obj)
-        for k, v in extra_props.items():
-            props[k] = v
-        props['name_prefix'] = obj['name_prefix']
-        object_ = g.oo_graph.add_agent(use_desc, props, db_id=obj.db_id)
-        object_.force_move_to(container)
-        return object_
+                # modify object description to make plural work.
+                # TODO: fix in data
+                desc = obj.description
+                desc = f'You peer closer at one of them. {desc}'
+                obj.description = desc
+            obj_node = self._add_object_to_graph(g, obj, container_node)
+            return obj_node
 
     def add_new_agent_to_graph(self, g, char, pos_room):
-        if 'is_banned' in char:
-            print("skipping BANNED character! " + char['name'])
-            return
-        if char['is_plural'] > 0:
-            print("skipping PLURAL character! " + char['name'])
-            return
-        use_desc = (
-            char['name'] if char['is_plural'] == 0 else random.choice(char['base_form'])
-        )
+        if 'is_banned' in vars(char):
+            print("skipping BANNED character! " + char.name)
+            return None
+        if char.is_plural > 0:
+            print("skipping PLURAL character! " + char.name)
+            return None
+        use_desc = char.name if char.is_plural == 0 else char.base_form
         use_desc = self.heuristic_name_cleaning(use_desc)
         if use_desc in [node.name for node in g.get_npcs()]:
             # Don't create the same agent twice.
             return None
-        agent = g.add_agent(use_desc, self.props_from_char(char), db_id=char.db_id)
+        agent = g.add_agent(use_desc, self._props_from_char(char), db_id=char.db_id)
         agent_id = agent.node_id
+        agent.force_move_to(pos_room)
 
         # Is this necesary?  I have never seen these attributes...
-        agent.force_move_to(pos_room)
         objs = {}
-        for obj in char['carrying_objects']:
+        for obj in char.carrying_objects['db']:
+            # Only use the database id objects, as add object to graph takes an obj_id
             objs[obj] = 'carrying'
-        for obj in char['wearing_objects']:
+        for obj in char.wearing_objects['db']:
             objs[obj] = 'equipped'
-        for obj in char['wielding_objects']:
+        for obj in char.wielding_objects['db']:
             objs[obj] = 'equipped'
+        
         for obj in objs:
-            object_ = self.add_object_to_graph(g, obj, agent_id)
-            obj_id = object_.node_id
-            if obj_id is not None:
+            obj_node = self.add_object_to_graph(
+                g, self.get_obj_from_id(obj), agent_node
+            )
+            if obj_node is not None:
                 if objs[obj] == 'equipped':
-                    g.set_prop(obj_id, 'equipped')
-        return agent_id
+                    obj_node.set_prop('equipped', True)
+        return agent
 
     def add_random_new_agent_to_graph(self, world):
         # pick a random room
@@ -138,8 +131,8 @@ class UserWorldBuilder(DBGraphBuilder):
         id = random.choice(list(g.rooms.keys()))
         pos_room = g.all_nodes[id]
         char = self.get_random_char()
-        agent_id = self.add_new_agent_to_graph(g, char, pos_room)
-        if agent_id is None:
+        agent = self.add_new_agent_to_graph(g, char, pos_room)
+        if agent is None:
             return
 
         # Send message notifying people in room this agent arrived.
@@ -162,7 +155,7 @@ class UserWorldBuilder(DBGraphBuilder):
         with self.db as ldb:
             world = ldb.get_world(self.world_id, self.player_id)
             assert len(world) == 1, "Must get a single world back to load game from it"
-            resources = db.get_world_resources(self.world_id, self.player_id)
+            resources = ldb.get_world_resources(self.world_id, self.player_id)
 
         world = world[0]
         # {world_id, name, height, width, num_floors} are keys!
@@ -176,10 +169,10 @@ class UserWorldBuilder(DBGraphBuilder):
         # Need a db_id to g_id map!
         # Do not bother mapping to local here, map straight into the graph (make these nodes)
         nextID = 1
-        entities = {'room': {}, 'character': {}, 'object': {},}
         db_to_g = {}
         node_to_g= {}
-        type_to_entities = {'room': resources[2], 'character': resources[3], 'object':resources[4],}
+        self.roomid_to_db = {}
+        type_to_entities = {'room': resources[2], 'agent': resources[3], 'object':resources[4],}
         for type_ in type_to_entities.keys():
             for entity in type_to_entities[type_]:
                 props = dict(entity)
@@ -190,9 +183,11 @@ class UserWorldBuilder(DBGraphBuilder):
                     props['desc'] = props['physical_description'] if 'physical_description' in props else None
                 func = getattr(g, f'add_{type_}')
                 # No uid or player for any of these
-                g_id = func(props['name'], props, db_id=props['db_id'])
-                db_to_g[props['db_id']] = g_id
-                node_to_g[props['node_id']] = g_id
+                g_id = func(props['name'], props, db_id=props['entity_id']).node_id
+                db_to_g[props['entity_id']] = g_id
+                node_to_g[props['id']] = g_id
+                if(type_ == 'room'):
+                    self.roomid_to_db[g_id] = props['entity_id']
 
         edges = []
         for edge in edge_list:
@@ -216,9 +211,8 @@ class UserWorldBuilder(DBGraphBuilder):
             elif edge == "contains":
                 dst.move_to(src)
 
-
         # Now we have all the info we need - time to organize
         # Add neighbors to rooms with the edges, and add objects and characters to rooms
         world = World(self.opt, self)
         world.oo_graph = g
-        return world
+        return g, world
