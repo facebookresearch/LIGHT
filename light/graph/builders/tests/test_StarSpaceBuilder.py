@@ -11,9 +11,9 @@ from parlai.core.params import ParlaiParser
 import parlai.utils.misc as parlai_utils
 
 sys.modules['parlai.core.utils'] = parlai_utils
-from parlai_internal.projects.light.v1.graph_model.structured_graph import OOGraph
+from light.graph.structured_graph import OOGraph
 import random
-from parlai_internal.projects.light.v1.data_model.light_database import (
+from light.data_model.light_database import (
     DB_EDGE_IN_CONTAINED,
     DB_EDGE_EX_CONTAINED,
     DB_EDGE_CONTAINED_IN,
@@ -29,6 +29,7 @@ from parlai_internal.projects.light.v1.data_model.light_database import (
     DB_TYPE_OBJ,
     DB_TYPE_BASE_ROOM,
     DB_TYPE_ROOM,
+    LIGHTDatabase,
 )
 
 
@@ -40,8 +41,10 @@ class TestStarspaceBuilder(unittest.TestCase):
         dpath = os.path.join(
             parlai_datapath, 'light', 'environment', 'db', 'database3.db'
         )
+        ldb = LIGHTDatabase(dpath)
         model_dir = os.path.join(parlai_datapath, 'models', 'light', '')
         self.testBuilder = StarspaceBuilder(
+            ldb, 
             build_args=[
                 "--light-db-file",
                 dpath,

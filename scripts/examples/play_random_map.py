@@ -14,6 +14,7 @@ import sys
 import parlai.utils.misc as parlai_utils
 
 from light.graph.builders.starspace_all import StarspaceBuilder
+from light.data_model.light_database import LIGHTDatabase
 from light.world.utils.terminal_player_provider import TerminalPlayerProvider
 from parlai.core.params import ParlaiParser
 from light.world.world import World
@@ -61,6 +62,7 @@ def run_with_builder(world_builder):
 parser = ParlaiParser()
 StarspaceBuilder.add_parser_arguments(parser)
 opt, _unknown = parser.parse_and_process_known_args()
-world_builder = StarspaceBuilder(debug=False, opt=opt)
+ldb = LIGHTDatabase(opt['light_db_file'])
+world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
 
 run_with_builder(world_builder)
