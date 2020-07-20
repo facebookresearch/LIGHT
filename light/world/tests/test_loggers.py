@@ -96,7 +96,8 @@ class TestInteractionLoggers(unittest.TestCase):
         self.assertEqual(world_name, room_logger._last_graphs[-1])
         self.assertEqual(hash_, str(test_event.__hash__()))
         ref_json = json.loads(ref_json)
-        self.assertEqual(written_event, ref_json)
+        event_ref = json.loads(written_event)
+        self.assertEqual(event_ref, ref_json)
 
 
     def test_simple_agent_logger_saves_and_loads_init_graph(self):
@@ -155,7 +156,8 @@ class TestInteractionLoggers(unittest.TestCase):
         self.assertEqual(world_name, agent_logger._last_graphs[-1])
         self.assertEqual(hash_, str(test_event.__hash__()))
         ref_json = json.loads(ref_json)
-        self.assertEqual(written_event, ref_json)
+        event_ref = json.loads(written_event)
+        self.assertEqual(event_ref, ref_json)
 
 
     # TODO: Add simple unit type test - create new graph, loggers, log the events seperate tada!
@@ -198,7 +200,8 @@ class TestInteractionLoggers(unittest.TestCase):
         world_name, hash_, timestamp, written_event = buff[0]
         self.assertEqual(world_name, room_logger._last_graphs[-1])
         ref_json = json.loads(event_room_node_observed)
-        self.assertEqual(written_event, ref_json)
+        event_ref = json.loads(written_event)
+        self.assertEqual(event_ref, ref_json)
 
 
 if __name__ == "__main__":

@@ -72,8 +72,7 @@ def read_event_logs(event_file):
             if parity == 1:
                 timestamp = line
             elif parity == 2:
-                written_event = json.loads(line)
-                buffer.append((world_hash[0], world_hash[1].strip(), timestamp, written_event))
+                buffer.append((world_hash[0], world_hash[1].strip(), timestamp, line))
             parity += 1
             parity %= 3
     return buffer
