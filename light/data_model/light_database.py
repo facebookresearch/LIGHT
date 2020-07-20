@@ -310,10 +310,11 @@ class LIGHTDatabase:
             'base_chars': 'base_characters_table',
             'base_rooms': 'base_rooms_table',
             'base_objs': 'base_objects_table',
+            'worlds': 'world_table',
         }
 
         for key, table_name in db_table_dict.items():
-            self.c.execute("""SELECT * FROM {0} """.format(table_name))
+            self.c.execute("""SELECT * FROM {0};""".format(table_name))
             results = self.c.fetchall()
             if 'edges' in key:
                 self.cache[key] = {}
@@ -324,7 +325,7 @@ class LIGHTDatabase:
                         self.cache[key][row['parent_id']] = [row]
             else:
                 self.cache[key] = {row['id']: row for row in results}
-
+        
     def __enter__(self):
         conn = sqlite3.connect(self.dbpath)
         conn.row_factory = sqlite3.Row

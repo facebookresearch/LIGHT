@@ -35,9 +35,7 @@ class PlayerSoul(Soul):
         target_node._human = True
         self.player_id = player_id
         self.provider = provider  # TODO link with real provider
-        self.agent_logger = AgentInteractionLogger( world.oo_graph, target_node)
-        # Record that there is now a player in the room we are putting this one in
-        # - Or will this trigger a spawn event???
+        self.agent_logger = AgentInteractionLogger(world.oo_graph, target_node)
         world.oo_graph.room_id_to_loggers[target_node.get_room().node_id]._add_player()
         provider.register_soul(self)
 
@@ -58,9 +56,10 @@ class PlayerSoul(Soul):
 
     def reap(self):
         """
-        PlayerSouls must remove the player flag from their target GraphAgent when removed.
+        PlayerSouls must remove the player flag from their target GraphAgent when removed,
+        and notify the logger
         """
         super().reap()
-        # TODO:  Need to remove agent logger here?
         self.target_node.is_player = False
+        world.oo_graph.room_id_to_loggers[target_node.get_room().node_id]._remove_player()     
         self.provider.on_reap_soul(self)

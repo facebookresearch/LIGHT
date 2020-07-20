@@ -16,6 +16,7 @@ from light.graph.events.graph_events import ArriveEvent
 from light.graph.builders.base import (
     DBGraphBuilder,
     SingleSuggestionGraphBuilder,
+    POSSIBLE_NEW_ENTRANCES,
 )
 from light.world.content_loggers import (
     RoomInteractionLogger,
@@ -72,14 +73,6 @@ RELATIONSHIP_TYPES = [
     CONTAINED_BY,
     CHAR_CONTAINING,
 ]
-POSSIBLE_NEW_ENTRANCES = [
-    "somewhere you can't see",
-    "an undiscernable place",
-    "a puff of smoke",
-    "behind the shadows",
-    "nowhere in particular",
-    "a flash of light",
-]
 
 
 class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
@@ -104,7 +97,6 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         SingleSuggestionGraphBuilder.__init__(self, opt, model_path=self.model_path)
         self.dpath = self.parlai_datapath + '/light_maps'
         self.debug = debug
-
         category_set = set(self.get_room_categories())
         self.filler_rooms, self.filler_room_names = build_filler_rooms_from_categories(
             category_set
