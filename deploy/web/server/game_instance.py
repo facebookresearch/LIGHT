@@ -80,7 +80,7 @@ class PlayerProvider:
         """
         raise NotImplementedError
 
-
+# TODO:  Refactor when update player providers
 class GameInstance:
     """
     This class serves to create a wrapper around a specific graph and manage

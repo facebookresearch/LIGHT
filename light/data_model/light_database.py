@@ -313,6 +313,7 @@ class LIGHTDatabase:
             'base_chars': 'base_characters_table',
             'base_rooms': 'base_rooms_table',
             'base_objs': 'base_objects_table',
+            'worlds': 'world_table',
         }
 
         for key, table_name in db_table_dict.items():
