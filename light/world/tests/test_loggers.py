@@ -244,6 +244,7 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
+
         # Not test player soul rn, so just copy what the method looks like
         logger = test_graph.room_id_to_loggers[room_node.node_id]
         test_event1 = ArriveEvent(agent_node, text_content="hello1")
@@ -267,11 +268,35 @@ class TestInteractionLoggers(unittest.TestCase):
         self.assertFalse(logger._is_logging())
         self.assertEqual(len(logger.event_buffer), 0)
         self.assertEqual(len(logger.context_buffer), 5)
-        events = [json for _, _, _, json in logger.context_buffer]
+        events = [json for _, _, json, _ in logger.context_buffer]
         self.assertFalse(test_event1.to_json() in events)
 
+        # player added, should be in event buffer
+        logger._add_player()
+        self.assertTrue(logger._is_logging())
+        self.assertEqual(len(logger.event_buffer), 5)
+        self.assertEqual(len(logger.context_buffer), 0)
+
     def test_observe_event_room_logger(self):
-        pass
+        """
+        Test that calling observe_event with players present adds to the 
+        event, not the context buffer
+        """
+
+        initial = self.setUp_single_room_graph()
+        test_graph, test_world, agent_node, room_node = initial
+
+        # player added, should be in event buffer
+        logger = test_graph.room_id_to_loggers[room_node.node_id]
+        logger._add_player()
+        test_event1 = ArriveEvent(agent_node, text_content="hello1")
+        logger.observe_event(test_event1)
+
+        self.assertTrue(logger._is_logging())
+        self.assertEqual(len(logger.event_buffer), 1)
+        self.assertEqual(len(logger.context_buffer), 0)
+        events = [json for _, _, json, _ in logger.event_buffer]
+        self.assertTrue(test_event1.to_json() in events)
 
     def test_observe_event_agent_logger(self):
         """
@@ -282,14 +307,69 @@ class TestInteractionLoggers(unittest.TestCase):
         test_graph, test_world, agent_node, room_node = initial
         # Not test player soul rn, so just copy what the method looks like
         logger = AgentInteractionLogger(test_graph, agent_node)
-        logger._end_meta_episode
-        self.assertFalse(logger._logging_intialized)
+        logger._begin_meta_episode()
+        test_event1 = ArriveEvent(agent_node, text_content="hello1")
+        logger.observe_event(test_event1)
+
+        self.assertEqual(len(logger.event_buffer), 1)
+        self.assertEqual(len(logger.context_buffer), 0)
+        events = [json for _, _, json, _ in logger.event_buffer]
+        self.assertTrue(test_event1.to_json() in events)
+
 
     def test_afk_observe_event_room_logger(self):
-        pass
+        """
+        Test that after 10 turns with no player, fill buffer, then dumps into main!
+        """
+        initial = self.setUp_single_room_graph()
+        test_graph, test_world, agent_node, room_node = initial
+
+        # player added, should be in event buffer
+        logger = test_graph.room_id_to_loggers[room_node.node_id]
+        logger._add_player()
+        test_event1 = ArriveEvent(agent_node, text_content="hello1")
+        for i in range(20):
+            logger.observe_event(test_event1)
+
+        # Only up to 5 in buffer, that is the limit
+        self.assertTrue(logger._is_logging())
+        self.assertTrue(logger._is_players_afk())
+        self.assertEqual(len(logger.event_buffer), 10)
+        self.assertEqual(len(logger.context_buffer), 5)
+
+        agent_node.is_player = True
+        logger.observe_event(test_event1)
+        self.assertTrue(logger._is_logging())
+        self.assertFalse(logger._is_players_afk())
+        self.assertEqual(len(logger.event_buffer), 16)
+        self.assertEqual(len(logger.context_buffer), 0)
 
     def test_afk_observe_event_agent_logger(self):
-        pass
+        """
+        Test that after 25 turns with no player, fill buffer, then dumps into main!
+        """
+        initial = self.setUp_single_room_graph()
+        test_graph, test_world, agent_node, room_node = initial
+        agent_node2 = test_graph.add_agent("My test agent2", {})
+        agent_node2.force_move_to(room_node)
+
+        # player added, should be in event buffer
+        logger = AgentInteractionLogger(test_graph, agent_node)
+        logger._begin_meta_episode()
+        test_event1 = ArriveEvent(agent_node2, text_content="hello1")
+        for i in range(35):
+            logger.observe_event(test_event1)
+
+        # Only up to 5 in buffer, that is the limit
+        self.assertTrue(logger._is_player_afk())
+        self.assertEqual(len(logger.event_buffer), 25)
+        self.assertEqual(len(logger.context_buffer), 5)
+
+        test_event2 = ArriveEvent(agent_node, text_content="hello2")
+        logger.observe_event(test_event2)
+        self.assertFalse(logger._is_player_afk())
+        self.assertEqual(len(logger.event_buffer), 31)
+        self.assertEqual(len(logger.context_buffer), 0)
     
     def test_simple_room_logger_saves_and_loads_init_graph(self):
         """
@@ -377,7 +457,7 @@ class TestInteractionLoggers(unittest.TestCase):
     
     def test_simple_agent_logger_saves_and_loads_event(self):
         """
-        Test that the room logger properly saves and reloads an event 
+        Test that the agent logger properly saves and reloads an event 
         """
         # Set up the graph 
         opt, _ = self.parser.parse_and_process_known_args()
@@ -411,7 +491,6 @@ class TestInteractionLoggers(unittest.TestCase):
         self.assertEqual(event_ref, ref_json)
 
 
-    # TODO: Add simple unit type test - create new graph, loggers, log the events seperate tada!
     def test_simple_room_logger_e2e(self):
         """
         Test that the room logger properly saves and reloads the graph and events
