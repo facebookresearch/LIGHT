@@ -142,7 +142,6 @@ function ConnectedApp() {
     () => createWebSocketUrlFromBrowserUrl(window.location),
     []
   );
-  console.log(wsUrl);
   const {
     isErrored,
     messages,

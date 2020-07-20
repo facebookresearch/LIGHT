@@ -5,16 +5,16 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
 import os
+import random
 from light.graph.structured_graph import OOGraph
 from light.graph.elements.graph_nodes import GraphNode
 from light.graph.events.graph_events import ArriveEvent
 from light.graph.builders.base import (
     DBGraphBuilder,
+    POSSIBLE_NEW_ENTRANCES,
 )
 from light.world.world import World
-
-
-
+# TODO:  Refactor common functionality between builders!
 class UserWorldBuilder(DBGraphBuilder):
     '''Builds a LIGHT map using a predefined world saved to the light database.'''
 
@@ -27,36 +27,120 @@ class UserWorldBuilder(DBGraphBuilder):
             )
             self.add_parser_arguments(parser)
             opt, _unknown = parser.parse_and_process_known_args()
-        self.db = ldb
         self.opt = opt
         self.filler_probability = opt['filler_probability']
         self._no_npc_models = not opt['use_npc_models']
-        DBGraphBuilder.__init__(self, self.db) # <--- this is the culprit
+        self.db = ldb
+        DBGraphBuilder.__init__(self, self.db)
         self.debug = debug
 
         # Need world id to be non none, check that here
         self.world_id = world_id
         self.player_id = player_id
 
-    def add_random_new_agent_to_graph(self, target_graph):
-        '''Add an agent to the graph in a random room somewhere'''
-        # with self.db as ldb:
-            # Do things
+    def _props_from_char(self, char):
+        '''Given a dict representing a character in the world, extract the
+        required props to create that object in the world
         '''
-            Idea is take an agent and put it into one of the rooms at random 
-        '''
-        raise NotImplementedError
+        use_classes = ['agent']
+        props = {
+            'agent': True,
+            'size': 20,
+            'contain_size': 20,
+            'health': 2,
+            'food_energy': 1,
+            'aggression': 0,
+            'speed': 5,
+            'char_type': char.char_type,
+            'desc': char.desc,
+            'persona': char.persona,
+        }
+        props['classes'] = use_classes
+        props['name_prefix'] = char.name_prefix
+        if char.is_plural == 1:
+            props['is_plural'] = True
+        else:
+            props['is_plural'] = False
+        return props
+
+    def heuristic_name_cleaning(self, use_desc):
+        if use_desc.lower().startswith('a '):
+            use_desc = use_desc[2:]
+        if use_desc.lower().startswith('an '):
+            use_desc = use_desc[3:]
+        if use_desc.lower().startswith('the '):
+            use_desc = use_desc[4:]
+        return use_desc
+
+    def add_object_to_graph(self, g, obj, container_node, extra_props={}):
+        '''Adds a particular DBObject to the given OOgraph, adding to the specific
+        container node. Returns the newly created object node'''
+        obj.description = obj.description.capitalize()
+        if obj.is_plural == 1:
+            if extra_props.get('not_gettable', False) != True:
+                # TODO: figure out making plurals work better
+                return None
+            else:
+                # modify object description to make plural work.
+                # TODO: fix in data
+                desc = obj.description
+                desc = f'You peer closer at one of them. {desc}'
+                obj.description = desc
+            obj_node = self._add_object_to_graph(g, obj, container_node)
+            return obj_node
+
+    def add_new_agent_to_graph(self, g, char, pos_room):
+        if 'is_banned' in vars(char):
+            print("skipping BANNED character! " + char.name)
+            return None
+        if char.is_plural > 0:
+            print("skipping PLURAL character! " + char.name)
+            return None
+        use_desc = char.name if char.is_plural == 0 else char.base_form
+        use_desc = self.heuristic_name_cleaning(use_desc)
+        if use_desc in [node.name for node in g.get_npcs()]:
+            # Don't create the same agent twice.
+            return None
+        agent = g.add_agent(use_desc, self._props_from_char(char), db_id=char.db_id)
+        agent_id = agent.node_id
+        agent.force_move_to(pos_room)
+
+        # Is this necesary?  I have never seen these attributes...
+        objs = {}
+        for obj in char.carrying_objects['db']:
+            # Only use the database id objects, as add object to graph takes an obj_id
+            objs[obj] = 'carrying'
+        for obj in char.wearing_objects['db']:
+            objs[obj] = 'equipped'
+        for obj in char.wielding_objects['db']:
+            objs[obj] = 'equipped'
+        
+        for obj in objs:
+            obj_node = self.add_object_to_graph(
+                g, self.get_obj_from_id(obj), agent_node
+            )
+            if obj_node is not None:
+                if objs[obj] == 'equipped':
+                    obj_node.set_prop('equipped', True)
+        return agent
+
+    def add_random_new_agent_to_graph(self, world):
+        # pick a random room
+        g = world.oo_graph
+        id = random.choice(list(g.rooms.keys()))
+        pos_room = g.all_nodes[id]
+        char = self.get_random_char()
+        agent = self.add_new_agent_to_graph(g, char, pos_room)
+        if agent is None:
+            return
+
+        # Send message notifying people in room this agent arrived.
+        arrival_event = ArriveEvent(agent, text_content=random.choice(POSSIBLE_NEW_ENTRANCES))
+        arrival_event.execute(world)
+
 
     def get_graph(self):
         '''Return an OOGraph built by this builder'''
-        # Use the get from id methods!
-        # with self.db as ldb:
-        '''
-            The general structure is as follows:
-                - query the db for the world, all its entities, edges, and nodes as in loading
-                - rooms are top level, fill with objects, and add neighbor connections
-                - done(?)
-        '''
         g = OOGraph(self.opt)
         self.g = g
         with self.db as ldb:
@@ -88,7 +172,6 @@ class UserWorldBuilder(DBGraphBuilder):
                     props['extra_desc'] = props['backstory'] if 'backstory' in props else None
                 else:
                     props['desc'] = props['physical_description'] if 'physical_description' in props else None
-
                 func = getattr(g, f'add_{type_}')
                 # No uid or player for any of these
                 g_id = func(props['name'], props, db_id=props['entity_id']).node_id

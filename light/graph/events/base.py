@@ -7,21 +7,20 @@
 # Used for typehinting
 from typing import Union, Any, List, Optional, cast, Type
 from light.graph.elements.graph_nodes import (
-    GraphNode,
     GraphAgent,
+    GraphEdge,
+    GraphNode,
 )
-from light.graph.structured_graph import GraphEncoder
-
+from light.world.utils.json_utils import (
+    convert_dict_to_node, GraphEncoder, node_to_json
+)
 from typing import NamedTuple, TYPE_CHECKING, Dict
+import inspect
 import json
 
 if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
     from light.world.world import World
-
-
-def node_to_json(node: GraphNode) -> Dict[str, Any]:
-    return json.dumps(node, cls=GraphEncoder, sort_keys=True, indent=4)
 
 
 class ProcessedArguments(NamedTuple):
@@ -58,12 +57,13 @@ class GraphEvent(object):
         self.actor = actor
         self.room = actor.get_room()
         self.target_nodes = [] if target_nodes is None else target_nodes
-        self.present_agent_ids = [
-            x.node_id for x in self.room.get_contents() if x.agent
-        ]
-        self._canonical_targets = [
-            x.get_view_from(self.room) for x in self.target_nodes
-        ]
+        if self.room is not False:
+            self.present_agent_ids = [
+                x.node_id for x in self.room.get_contents() if x.agent
+            ]
+            self._canonical_targets = [
+                x.get_view_from(self.room) for x in self.target_nodes
+            ]
         self.text_content = text_content
 
     def execute(self, world: 'World') -> List['GraphEvent']:
@@ -145,14 +145,34 @@ class GraphEvent(object):
         """
         Instantiate this event from the given json over the given world
         """
-        raise NotImplementedError
+        attribute_dict = convert_dict_to_node(json.loads(input_json), world)
+        class_ = GraphEvent
+        if "__class__" in attribute_dict:
+            class_name = attribute_dict.pop("__class__")
+            module_name = attribute_dict.pop("__module__")
+            # Must pass non empty list to get the exact module
+            module = __import__(module_name, fromlist=[None])
+            class_ = getattr(module, class_name)
 
-    def to_json(self, viewer: GraphAgent = None) -> str:
+        arglist = [attribute_dict.pop(arg) for arg in inspect.getfullargspec(class_.__init__)[0] if arg is not 'self']
+        event = class_(*arglist)
+        for k, v in attribute_dict.items():
+            event.__dict__[k] = v
+        return event
+
+    def to_json(self, viewer: GraphAgent = None, indent : int = None) -> str:
         """
         Convert the content of this action into a json format that can be
         imported back to the original with from_json
         """
-        raise NotImplementedError
+        className = self.__class__.__name__
+        use_dict = {k: v for k, v in self.__dict__.copy().items() if not k.startswith(f'_{className}__')}
+        use_dict['viewer'] = viewer
+        use_dict['__class__'] = className
+        use_dict['__module__'] = self.__module__
+        # TODO: Consider moving graph encoder to a utils since we use here too!
+        res = json.dumps(use_dict, cls=GraphEncoder, sort_keys=True, indent=indent)
+        return res
 
     def __repr__(self) -> str:
         args_str = f'{self.actor}'
@@ -177,6 +197,7 @@ class GraphEvent(object):
             'room': node_to_json(self.room),
             'actor': node_to_json(self.actor),
         }
+        
 
 class ErrorEvent(GraphEvent):
     """
@@ -224,22 +245,6 @@ class ErrorEvent(GraphEvent):
             'invoke an action.'
         )
         return self.display_text
-
-    @staticmethod
-    def from_json(self, input_json, world):
-        """
-        Instantiate this event from the given json over the given world
-        """
-        # TODO
-        raise NotImplementedError
-
-    def to_json(self):
-        """
-        Convert the content of this action into a json format that can be
-        imported back to the original with from_json
-        """
-        # TODO
-        raise NotImplementedError
 
     def __repr__(self):
         return f'ErrorEvent({self.display_text}, {self.target_nodes})'

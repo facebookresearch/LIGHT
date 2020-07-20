@@ -23,6 +23,15 @@ from light.graph.builders.base_elements import (
     DBCharacter,
 )
 
+# Possible new entrances for add_new_random_agent
+POSSIBLE_NEW_ENTRANCES = [
+    "somewhere you can't see",
+    "an undiscernable place",
+    "a puff of smoke",
+    "behind the shadows",
+    "nowhere in particular",
+    "a flash of light",
+]
 
 class GraphBuilder(object):
     '''Abstract class that defines a method for building and populating a
@@ -56,7 +65,6 @@ class DBGraphBuilder(GraphBuilder):
         self.db = ldb
         if not self.db.cache_init:
             with self.db as ldb:
-                print("Creating cache")
                 ldb.create_cache()
         self.__usable_rooms = None
         self.__usable_chars = None

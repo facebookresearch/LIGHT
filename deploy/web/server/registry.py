@@ -51,16 +51,17 @@ class RegistryApplication(tornado.web.Application):
         - Forward it to the designated tornado provider (if an id is given)
         - Assign to a random (or default) game based on some load balancing
     '''
-    def __init__(self, FLAGS, ldb):
+    def __init__(self, FLAGS, ldb, default=True):
         self.game_instances = {}
         self.FLAGS = FLAGS
         self.ldb = ldb
-        super(RegistryApplication, self).__init__(self.get_handlers(FLAGS), **tornado_settings)
+        super(RegistryApplication, self).__init__(self.get_handlers(FLAGS, ldb, default), **tornado_settings)
 
-    def get_handlers(self, FLAGS):
+    def get_handlers(self, FLAGS, ldb, default=True):
         self.tornado_provider = TornadoWebappPlayerProvider({}, FLAGS.hostname, FLAGS.port)
         self.router = RuleRouter([Rule(PathMatches(f'/game.*/socket'), self.tornado_provider.app)])
-        game_instance = self.run_new_game("", self.ldb)
+        if default:
+            game_instance = self.run_new_game("", self.ldb)
         return [
             (r"/game/new/(.*)", GameCreatorHandler, {'app': self}),
             (r"/game(.*)", self.router)
@@ -82,6 +83,7 @@ class RegistryApplication(tornado.web.Application):
         self.tornado_provider.graphs[game_id] = graph
         self.game_instances[game_id] = game
         game.register_provider(self.tornado_provider)
+        # TODO: Decide if threading is the right approach or not
         t = threading.Thread(
             target=game.run_graph, name=f'Game{game_id}GraphThread', daemon=True
         )
@@ -145,4 +147,3 @@ class GameCreatorHandler(BaseHandler):
         self.set_status(201)
         self.write(json.dumps(game_id))
 
-    

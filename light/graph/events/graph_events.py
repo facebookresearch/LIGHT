@@ -407,8 +407,12 @@ class GoEvent(GraphEvent):
 
     NAMES = ['go']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self,
+            actor: GraphAgent,
+            target_nodes: Optional[List[GraphNode]] = None,
+            text_content: Optional[str] = None,
+        ):
+        super().__init__(actor, target_nodes, text_content)
         # Must store room views because getting views from other rooms is odd
         new_room = self.target_nodes[0]
         old_room = self.actor.get_room()
@@ -755,8 +759,12 @@ class HitEvent(GraphEvent):
 
     NAMES = ['hit']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self,
+            actor: GraphAgent,
+            target_nodes: Optional[List[GraphNode]] = None,
+            text_content: Optional[str] = None,
+        ):
+        super().__init__(actor, target_nodes, text_content)
         # Must store these for replaying exact sequences
         self.attack = None
         self.defense = None
