@@ -19,7 +19,6 @@ from light.data_model.environment_checkpoint_parser import (
     EnvironmentCheckpointParser,
 )
 from light.graph.utils import get_article
-from threading import Lock
 import sys
 import parlai.utils.misc as parlai_utils
 
@@ -162,7 +161,6 @@ class LIGHTDatabase:
         self.read_only = False
         self.cache = {}
         self.cache_init = False
-        self.lock = Lock()
 
         # Dictionary to convert between types in id_table and corresponding
         # table names
@@ -330,7 +328,6 @@ class LIGHTDatabase:
                 self.cache[key] = {row['id']: row for row in results}
         
     def __enter__(self):
-        self.lock.acquire()
         conn = sqlite3.connect(self.dbpath)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = 1")
@@ -345,7 +342,6 @@ class LIGHTDatabase:
             self.conn.rollback()
         self.conn.commit()
         self.conn.close()
-        self.lock.release()
 
 
     def load_dictionaries(self):
