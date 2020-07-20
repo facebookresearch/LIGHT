@@ -5,11 +5,20 @@ from datetime import datetime, timedelta
 
 TARGET_FILE = os.path.expanduser("/checkpoint/light/data/wild_chats/light_chats_06-24-20_to_06-28-20.json")
 TARGET_FILES = [
+    # Wave 1
     # os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_00-00-00_to_05-26-20.json"),
     # os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_05-27-20_to_06-23-20.json"),
+    # Wave 2
     os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_06-24-20_to_06-28-20.json"),
     os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_06-29-20_to_06-30-20.json"),
     os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_07-01-20_to_07-05-20.json"),
+    # Wave 3
+    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_07-06-20_to_07-08-20.json"),
+    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_07-09-20.json"),
+    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_07-10-20.json"),
+    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_07-11-20.json"),
+    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_07-12-20.json"),
+    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_07-13-20_to_07-16-20.json"),
 ]
 
 chats = []
@@ -32,17 +41,19 @@ def remove_cand_path(in_path):
     pre_fixed_cands = fcp_split[0]
     post_fixed_cands = fcp_split[1].split('/')[-1]
     check = pre_fixed_cands + "fixed_candidates_path=" + post_fixed_cands
-    return check.replace('==', '=')
+    return check.replace('==', '=').replace("encode_candidate_vecs=True,", "")
 
 for c in chats:
-    try:
-        c['dialogue'] = json.loads(c['dialogue'].replace('\\\\"', '\\"'))
-        c['human_persona'] = json.loads(c['human_persona'].replace('\\\\"', '\\"'))
-        c['bot_persona'] = json.loads(c['bot_persona'].replace('\\\\"', '\\"'))
-        c['model_name'] = remove_cand_path(c['model_name'].replace('\\\\"', '\\"'))
-    except:
-        print(c['dialogue'], type(c['dialogue']))
-        raise
+    c['model_name'] = remove_cand_path(c['model_name'])
+    for key in ['dialogue', 'human_persona', 'bot_persona']:
+        try:
+            c[key] = json.loads(c[key].replace('\\\\"', '\\"'))
+        except:
+            try:
+                c[key] = json.loads(c[key])
+            except:
+                print(key, c[key], type(c[key]))
+                raise
 
 chats = [c for c in chats if c['dialogue'] is not None and len(c['dialogue']) > 1]
 
