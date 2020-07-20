@@ -3,22 +3,24 @@ import json
 import math
 from datetime import datetime, timedelta
 
-TARGET_FILE = os.path.expanduser("/checkpoint/light/data/wild_chats/light_chats_06-24-20_to_06-28-20.json")
+ROOT_PATH = "/checkpoint/light/data/wild_chats/"
+#ROOT_PATH = os.path.expanduser("~/Desktop/Hobbot_chats/")
+
 TARGET_FILES = [
     # Wave 1
-    # os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_00-00-00_to_05-26-20.json"),
-    # os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_05-27-20_to_06-23-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_00-00-00_to_05-26-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_05-27-20_to_06-23-20.json"),
     # Wave 2
-    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_06-24-20_to_06-28-20.json"),
-    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_06-29-20_to_06-30-20.json"),
-    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_07-01-20_to_07-05-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_06-24-20_to_06-28-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_06-29-20_to_06-30-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_07-01-20_to_07-05-20.json"),
     # Wave 3
-    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_07-06-20_to_07-08-20.json"),
-    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_07-09-20.json"),
-    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_07-10-20.json"),
-    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_07-11-20.json"),
-    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_07-12-20.json"),
-    os.path.expanduser("~/Desktop/Hobbot_chats/light_chats_07-13-20_to_07-16-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_07-06-20_to_07-08-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_07-09-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_07-10-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_07-11-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_07-12-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_07-13-20_to_07-16-20.json"),
 ]
 
 chats = []
