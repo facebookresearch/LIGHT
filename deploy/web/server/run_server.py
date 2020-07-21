@@ -33,10 +33,13 @@ from tornado.httpserver import (
 from tornado.ioloop import (
     IOLoop,
 )
+from yappi import get_func_stats, COLUMNS_FUNCSTATS, COLUMNS_THREADSTATS
 
+import yappi
+import sys
+import os
 import os.path
 import threading
-from light.data_model.light_database import LIGHTDatabase
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -67,7 +70,7 @@ def _run_server(FLAGS, ldb):
     my_loop.current().start()
 
 
-def router_run(FLAGS):
+def router_run(FLAGS, ldb):
     '''
     Router run spins up the router for request to send to the correct application.
     
@@ -81,15 +84,45 @@ def router_run(FLAGS):
     to this method, which relies on the the python scheduler.  
     '''
     t = threading.Thread(
-        target=_run_server, args=(FLAGS), name='PrimaryRoutingServer', daemon=True
+        target=_run_server, args=(FLAGS, ldb), name='PrimaryRoutingServer', daemon=True
     )
     t.start()
 
 
 def main():
+    yappi.set_clock_type("cpu")
+    yappi.start()
+    wrapper()
+    yappi.stop()
+    threads = yappi.get_thread_stats()
+    for thread in threads:
+        print(
+            "Function stats for (%s) (%d)" % (thread.name, thread.id)
+        )  # it is the Thread.__class__.__name__
+        stats = yappi.get_func_stats(ctx_id=thread.id)
+        stats.sort("tavg", "desc")
+        print_all(stats, sys.stdout, limit=20)
+
+def print_all(stats, out, limit=None):
+    if stats.empty():
+        return
+    sizes = [60, 10, 8, 8, 8]
+    columns = dict(zip(range(len(COLUMNS_FUNCSTATS)), zip(COLUMNS_FUNCSTATS, sizes)))
+    show_stats = stats
+    if limit:
+        show_stats = stats[:limit]
+    out.write(os.linesep)
+    # write out the headers for the func_stats
+    # write out stats with exclusions applied.
+    for stat in show_stats:
+       stat._print(out, columns)  
+
+def wrapper():
     import argparse
     import numpy
     import random
+    from light.data_model.light_database import LIGHTDatabase
+    import time
 
     DEFAULT_PORT = 35496
     DEFAULT_HOSTNAME = "localhost"
@@ -117,9 +150,12 @@ def main():
 
     random.seed(6)
     numpy.random.seed(6)
-    ldb = LIGHTDatabase(FLAGS.data_model_db)
-    _run_server(FLAGS, ldb)
 
+    ldb = LIGHTDatabase(FLAGS.data_model_db)
+    router_run(FLAGS, ldb)
+    time.sleep(120)
+    num = input('Enter to exit')
+    return num
 
 
 if __name__ == "__main__":
