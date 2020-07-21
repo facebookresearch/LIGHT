@@ -139,7 +139,6 @@ class TestInteractionLoggers(unittest.TestCase):
             test_graph.to_json_rv(agent_node.get_room().node_id)
         )
 
-    # Test end_meta_episode - 2 test
     def test_end_meta_episode_room_logger(self):
         """
         Test calling end_meta_episode:
@@ -230,7 +229,6 @@ class TestInteractionLoggers(unittest.TestCase):
         self.assertEqual(len(logger.context_buffer), 0)
         self.assertEqual(logger.num_players_present, 0)
 
-    # Test observe event - 2 test, 2 for afk, 1 for before room
     def test_observer_event_goes_context_room_logger(self):
         """
         Test calling observe_event under normal circumstances adds the 
