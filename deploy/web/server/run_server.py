@@ -59,7 +59,7 @@ def make_app(FLAGS, ldb):
     server.listen(FLAGS.port)
 
 def _run_server(FLAGS, ldb):
-    my_loop = IOLoop()
+    my_loop = IOLoop.current()
     make_app(FLAGS, ldb)
     if "HOSTNAME" in os.environ and hostname == FLAGS.hostname:
         hostname = os.environ["HOSTNAME"]
@@ -67,7 +67,10 @@ def _run_server(FLAGS, ldb):
         hostname = FLAGS.hostname
     print("\nYou can connect to the game at http://%s:%s/" % (FLAGS.hostname, FLAGS.port))
     print("You can connect to the worldbuilder at http://%s:%s/builder/" % (FLAGS.hostname, FLAGS.port))
-    my_loop.current().start()
+    try:
+        my_loop.start()
+    except KeyboardInterrupt:
+        my_loop.stop()
 
 
 def router_run(FLAGS, ldb):
@@ -90,17 +93,16 @@ def router_run(FLAGS, ldb):
 
 
 def main():
-    yappi.set_clock_type("cpu")
+    yappi.set_clock_type("wall")
     yappi.start()
     wrapper()
     yappi.stop()
     threads = yappi.get_thread_stats()
     for thread in threads:
         print(
-            "Function stats for (%s) (%d)" % (thread.name, thread.id)
+            "Function stats for (%s) (%d), time of: (%.5f) and schedule (%d) times" % (thread.name, thread.id, thread.ttot, thread.sched_count)
         )  # it is the Thread.__class__.__name__
-        stats = yappi.get_func_stats(ctx_id=thread.id)
-        stats.sort("tavg", "desc")
+        stats = yappi.get_func_stats(ctx_id=thread.id).sort('tavg')
         print_all(stats, sys.stdout, limit=20)
 
 def print_all(stats, out, limit=None):
@@ -152,10 +154,8 @@ def wrapper():
     numpy.random.seed(6)
 
     ldb = LIGHTDatabase(FLAGS.data_model_db)
-    router_run(FLAGS, ldb)
-    time.sleep(120)
-    num = input('Enter to exit')
-    return num
+    my_loop = IOLoop(make_current=True)
+    _run_server(FLAGS, ldb)
 
 
 if __name__ == "__main__":

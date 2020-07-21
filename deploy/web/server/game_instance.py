@@ -11,6 +11,7 @@ from light.graph.builders.starspace_all import (
 )
 from parlai.utils.misc import Timer
 from light.world.world import World
+from tornado.ioloop import IOLoop
 
 
 class Player:
@@ -107,27 +108,22 @@ class GameInstance:
 
     def run_graph(self):
         g = self.g
-        timer = Timer()
-        asyncio.set_event_loop(asyncio.new_event_loop())
-        while True:
-            # try to make some new players
-            for provider in self.providers:
-                self.players += provider.get_new_players(self.game_id)
+        # try to make some new players
+        for provider in self.providers:
+            self.players += provider.get_new_players(self.game_id)
 
-            # Clear disconnected players
-            left_players = [p for p in self.players if not p.is_alive()]
-            for player in left_players:
-                g.set_prop(g.playerid_to_agentid(player.id), 'human', False)
-                self.players.remove(player)
+        # Clear disconnected players
+        left_players = [p for p in self.players if not p.is_alive()]
+        for player in left_players:
+            g.set_prop(g.playerid_to_agentid(player.id), 'human', False)
+            self.players.remove(player)
 
-            # Check existing players
-            for player in self.players:
-                act = player.act()
-                if act != '':
-                    g.parse_exec(g.playerid_to_agentid(player.id), act)
-                player.observe()
+        # Check existing players
+        for player in self.players:
+            act = player.act()
+            if act != '':
+                g.parse_exec(g.playerid_to_agentid(player.id), act)
+            player.observe()
 
-            # run npcs
-            if timer.time() > 2:
-                timer.reset()
-                g.update_world()
+        # run npcs
+        g.update_world()
