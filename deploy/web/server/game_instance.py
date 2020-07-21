@@ -106,7 +106,7 @@ class GameInstance:
         self.providers.append(provider)
         provider.graphs[self.game_id] = self.g
 
-    def run_graph(self):
+    def run_graph_step(self):
         g = self.g
         # try to make some new players
         for provider in self.providers:
