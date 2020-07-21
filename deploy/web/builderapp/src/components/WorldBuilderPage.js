@@ -42,6 +42,8 @@ function WorldBuilder({ upload }) {
   const world_name =
     state.dimensions.name == null ? " " : state.dimensions.name;
 
+  // TODO: Add the launch game button, should be next to name, or on bottom bar
+  // requires the state.dimensions.id, mb save first?
   //TODO: Consider moving the export somewhere else?
   return (
     <>

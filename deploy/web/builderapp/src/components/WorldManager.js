@@ -280,6 +280,18 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
     );
   }
 }
+/* Functions should:
+  1. Save the world - regardless of if it has been saved or not!
+  2. Pass the id to the game (hit the POST game/new) endpoint
+    - Should we include cool naming as jason suggested?  i.e url param for name?
+    - get url param from response
+  3. Surface the url param/link on the page
+      * might be judicious to impose some limit on number of launches a user gets per session
+*/
+export async function launchWorld(state){
+  // TODO: See above
+  return null;
+}
 
 export async function postWorld(state) {
   // can pretty much just take the dimensions and entities as is
