@@ -33,8 +33,10 @@ from tornado.httpserver import (
 from tornado.ioloop import (
     IOLoop,
 )
+
 import os.path
 import threading
+from light.data_model.light_database import LIGHTDatabase
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -91,8 +93,6 @@ def main():
     import argparse
     import numpy
     import random
-    from light.data_model.light_database import LIGHTDatabase
-    import time
 
     DEFAULT_PORT = 35494
     DEFAULT_HOSTNAME = "localhost"
@@ -120,7 +120,6 @@ def main():
 
     random.seed(6)
     numpy.random.seed(6)
-
     ldb = LIGHTDatabase(FLAGS.data_model_db)
     my_loop = IOLoop(make_current=True)
     _run_server(FLAGS, ldb)
