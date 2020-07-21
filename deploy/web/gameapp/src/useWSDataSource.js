@@ -30,14 +30,13 @@ export function useWSDataSource(url) {
           );*/
           const isPersonaDescription = action.caller === "SpawnEvent";
           const isLocationDescription = action.caller === "LookEvent";
-          const hasUpdatedAgentsInfo = false; //!!action.present_agent_ids;
-
+          const hasUpdatedAgentsInfo = true; 
           action.room = JSON.parse(action.room)
           action.actor = JSON.parse(action.actor)
 
           if (hasUpdatedAgentsInfo) {
             setAgents(
-              zipToObject(action.room_agents[0], action.room_agents[1])
+                action.present_agent_ids
             );
           }
           if (isPersonaDescription) {

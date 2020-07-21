@@ -167,6 +167,7 @@ function ConnectedApp() {
       messages={messages}
       onSubmit={submitMessage}
       persona={persona}
+      // persona={{ name: "a cow" }}
       location={location}
       agents={agents}
     />
@@ -508,6 +509,6 @@ function getLocationState(messages) {
 
   return {
     currentRoom: lastMessage.room_id,
-    presentAgents: lastMessage.present_agent_ids
+    presentAgents: Object.keys(lastMessage.present_agent_ids)
   };
 }
