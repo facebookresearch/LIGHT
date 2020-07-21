@@ -51,7 +51,6 @@ class TestInteractionLoggers(unittest.TestCase):
         test_world.oo_graph = test_graph 
         return (test_graph, test_world, agent_node, room_node)
 
-    # Test individual methods first - 2 init tests
     def test_init_room_logger(self):
         """
         Test the initial state of room loggers from OOGraph() constructor matches expected values
@@ -76,7 +75,6 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
-        # Not test player soul rn, so just copy what the method looks like
         logger = AgentInteractionLogger(test_graph, agent_node)
                 
         self.assertEqual(logger.data_path, self.data_dir)
@@ -99,7 +97,7 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
-        # Not test player soul rn, so just copy what the method looks like
+
         logger = test_graph.room_id_to_loggers[room_node.node_id]
         logger.event_buffer.append("Testing NOT!")
         logger.state_history.append("Testing")
@@ -125,12 +123,11 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
-        # Not test player soul rn, so just copy what the method looks like
+
         logger = AgentInteractionLogger(test_graph, agent_node)
         logger.event_buffer.append("Testing")
         logger.state_history.append("Testing")
         logger._begin_meta_episode()
-
 
         self.assertFalse(logger._is_player_afk())
         self.assertTrue(logger._logging_intialized)
@@ -151,10 +148,11 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
-        # Not test player soul rn, so just copy what the method looks like
+
         logger = test_graph.room_id_to_loggers[room_node.node_id]
         logger.context_buffer.append("Testing")
         logger._end_meta_episode()
+
         self.assertEqual(len(logger.context_buffer), 0)
         
     def test_end_meta_episode_agent_logger(self):
@@ -166,12 +164,12 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
-        # Not test player soul rn, so just copy what the method looks like
+
         logger = AgentInteractionLogger(test_graph, agent_node)
         logger._end_meta_episode()
+
         self.assertFalse(logger._logging_intialized)
 
-    # Test add and remove player for agent logger
     def test_add_player_room_logger(self):
         """
         Test calling _add_player():
@@ -180,14 +178,13 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
-        # Not test player soul rn, so just copy what the method looks like
         logger = test_graph.room_id_to_loggers[room_node.node_id]
+
         logger.event_buffer.append("Testing NOT!")
         logger.state_history.append("Testing")
         logger.context_buffer.append("Testing")
         logger._add_player()
 
-        # The _loggging_active checks
         self.assertTrue(logger._is_logging())
         self.assertFalse(logger._is_players_afk())
         self.assertEqual(len(logger.context_buffer), 0)
@@ -201,8 +198,6 @@ class TestInteractionLoggers(unittest.TestCase):
 
         # Another player just ups the count
         logger._add_player()
-        self.assertTrue(logger._is_logging())
-        self.assertFalse(logger._is_players_afk())
         self.assertEqual(len(logger.context_buffer), 0)
         self.assertEqual(logger.event_buffer, ["Testing"])
         self.assertEqual(len(logger.state_history), 1)
@@ -220,7 +215,6 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
-        # Not test player soul rn, so just copy what the method looks like
         logger = test_graph.room_id_to_loggers[room_node.node_id]
         logger._add_player()
         logger._add_player()
@@ -244,9 +238,8 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
-
-        # Not test player soul rn, so just copy what the method looks like
         logger = test_graph.room_id_to_loggers[room_node.node_id]
+
         test_event1 = ArriveEvent(agent_node, text_content="hello1")
         test_event2 = ArriveEvent(agent_node, text_content="hello2")
         test_event3 = ArriveEvent(agent_node, text_content="hello3")
@@ -285,9 +278,8 @@ class TestInteractionLoggers(unittest.TestCase):
 
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
-
-        # player added, should be in event buffer
         logger = test_graph.room_id_to_loggers[room_node.node_id]
+
         logger._add_player()
         test_event1 = ArriveEvent(agent_node, text_content="hello1")
         logger.observe_event(test_event1)
@@ -305,8 +297,8 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
-        # Not test player soul rn, so just copy what the method looks like
         logger = AgentInteractionLogger(test_graph, agent_node)
+
         logger._begin_meta_episode()
         test_event1 = ArriveEvent(agent_node, text_content="hello1")
         logger.observe_event(test_event1)
@@ -323,23 +315,21 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
-
-        # player added, should be in event buffer
         logger = test_graph.room_id_to_loggers[room_node.node_id]
         logger._add_player()
+
         test_event1 = ArriveEvent(agent_node, text_content="hello1")
         for i in range(20):
             logger.observe_event(test_event1)
 
         # Only up to 5 in buffer, that is the limit
-        self.assertTrue(logger._is_logging())
         self.assertTrue(logger._is_players_afk())
         self.assertEqual(len(logger.event_buffer), 10)
         self.assertEqual(len(logger.context_buffer), 5)
 
+        # Now, player event - dump to buffer!
         agent_node.is_player = True
         logger.observe_event(test_event1)
-        self.assertTrue(logger._is_logging())
         self.assertFalse(logger._is_players_afk())
         self.assertEqual(len(logger.event_buffer), 16)
         self.assertEqual(len(logger.context_buffer), 0)
@@ -352,15 +342,13 @@ class TestInteractionLoggers(unittest.TestCase):
         test_graph, test_world, agent_node, room_node = initial
         agent_node2 = test_graph.add_agent("My test agent2", {})
         agent_node2.force_move_to(room_node)
-
-        # player added, should be in event buffer
         logger = AgentInteractionLogger(test_graph, agent_node)
+
         logger._begin_meta_episode()
         test_event1 = ArriveEvent(agent_node2, text_content="hello1")
         for i in range(35):
             logger.observe_event(test_event1)
 
-        # Only up to 5 in buffer, that is the limit
         self.assertTrue(logger._is_player_afk())
         self.assertEqual(len(logger.event_buffer), 25)
         self.assertEqual(len(logger.context_buffer), 5)
@@ -377,13 +365,8 @@ class TestInteractionLoggers(unittest.TestCase):
         graph
         """
         # Set up the graph 
-        opt, _ = self.parser.parse_and_process_known_args()
-        test_graph = OOGraph(opt)
-        agent_node = test_graph.add_agent("My test agent", {})
-        room_node = test_graph.add_room("test room", {})
-        agent_node.force_move_to(room_node)
-        test_world = World({}, None, True)
-        test_world.oo_graph = test_graph 
+        initial = self.setUp_single_room_graph()
+        test_graph, test_world, agent_node, room_node = initial
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
 
         # Check the room json was done correctly
@@ -400,15 +383,10 @@ class TestInteractionLoggers(unittest.TestCase):
         Test that the room logger properly saves and reloads an event 
         """
         # Set up the graph 
-        opt, _ = self.parser.parse_and_process_known_args()
-        test_graph = OOGraph(opt)
-        agent_node = test_graph.add_agent("My test agent", {})
+        initial = self.setUp_single_room_graph()
+        test_graph, test_world, agent_node, room_node = initial
         agent_node.is_player = True
-        room_node = test_graph.add_room("test room", {})
         room2_node = test_graph.add_room("test room2", {})
-        agent_node.force_move_to(room_node)
-        test_world = World({}, None, True)
-        test_world.oo_graph = test_graph 
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
 
         # Check an event json was done correctly
@@ -437,13 +415,8 @@ class TestInteractionLoggers(unittest.TestCase):
         graph
         """
         # Set up the graph 
-        opt, _ = self.parser.parse_and_process_known_args()
-        test_graph = OOGraph(opt)
-        agent_node = test_graph.add_agent("My test agent", {})
-        room_node = test_graph.add_room("test room", {})
-        agent_node.force_move_to(room_node)
-        test_world = World({}, None, True)
-        test_world.oo_graph = test_graph 
+        initial = self.setUp_single_room_graph()
+        test_graph, test_world, agent_node, room_node = initial
 
         # Check the graph json was done correctly from agent's room
         test_init_json = test_world.oo_graph.to_json_rv(room_node.node_id)
@@ -460,15 +433,11 @@ class TestInteractionLoggers(unittest.TestCase):
         Test that the agent logger properly saves and reloads an event 
         """
         # Set up the graph 
-        opt, _ = self.parser.parse_and_process_known_args()
-        test_graph = OOGraph(opt)
-        agent_node = test_graph.add_agent("My test agent", {})
+        initial = self.setUp_single_room_graph()
+        test_graph, test_world, agent_node, room_node = initial
         agent_node.is_player = True
-        room_node = test_graph.add_room("test room", {})
         room2_node = test_graph.add_room("test room2", {})
-        agent_node.force_move_to(room_node)
-        test_world = World({}, None, True)
-        test_world.oo_graph = test_graph 
+        room_logger = test_graph.room_id_to_loggers[room_node.node_id]
 
         # Check an event json was done correctly
         test_event = ArriveEvent(agent_node, text_content="")
@@ -496,19 +465,13 @@ class TestInteractionLoggers(unittest.TestCase):
         Test that the room logger properly saves and reloads the graph and events
         """
         # Set up the graph 
-        opt, _ = self.parser.parse_and_process_known_args()
-        test_graph = OOGraph(opt)
-        agent_node = test_graph.add_agent("My test agent", {})
+        initial = self.setUp_single_room_graph()
+        test_graph, test_world, agent_node, room_node = initial
         agent_node.is_player = True
-        room_node = test_graph.add_room("test room", {})
         room_node2 = test_graph.add_room("test room2", {})
+        room_logger = test_graph.room_id_to_loggers[room_node.node_id]
         test_graph.add_paths_between(room_node, room_node2, 'a path to the north', 'a path to the south')
-        agent_node.force_move_to(room_node)
         test_graph.room_id_to_loggers[room_node.node_id]._add_player()
-
-        # Now, set the player flag
-        test_world = World({}, None, True)
-        test_world.oo_graph = test_graph 
 
         # Check the room and event json was done correctly for room_node
         event_room_node_observed = LeaveEvent(agent_node, target_nodes=[room_node2]).to_json()
