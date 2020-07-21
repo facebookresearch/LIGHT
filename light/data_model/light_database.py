@@ -19,7 +19,6 @@ from light.data_model.environment_checkpoint_parser import (
     EnvironmentCheckpointParser,
 )
 from light.graph.utils import get_article
-
 import sys
 import parlai.utils.misc as parlai_utils
 
@@ -161,6 +160,7 @@ class LIGHTDatabase:
         self.use_cache = False
         self.read_only = False
         self.cache = {}
+        self.cache_init = False
 
         # Dictionary to convert between types in id_table and corresponding
         # table names
@@ -298,6 +298,7 @@ class LIGHTDatabase:
     def create_cache(self):
         '''Create a cached version of the database in dict format
         with id as the keys and the rows are values'''
+        self.cache_init = True
         self.use_cache = True
         self.read_only = True
         db_table_dict = {
@@ -341,6 +342,7 @@ class LIGHTDatabase:
             self.conn.rollback()
         self.conn.commit()
         self.conn.close()
+
 
     def load_dictionaries(self):
         """

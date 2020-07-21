@@ -281,14 +281,14 @@ class BaseHandler(tornado.web.RequestHandler):
                 logging.error(e)
 
 class LandingApplication(tornado.web.Application):
-    def __init__(self, dbpath, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
-        super(LandingApplication, self).__init__(self.get_handlers(dbpath, hostname, password), **tornado_settings)
+    def __init__(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
+        super(LandingApplication, self).__init__(self.get_handlers(database, hostname, password), **tornado_settings)
 
-    def get_handlers(self, dbpath, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
+    def get_handlers(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
         return [
             (r"/", MainHandler),
             (r"/?id=.*", MainHandler),
-            (r"/login", LoginHandler, {'dbpath': dbpath, 'hostname' : hostname, 'password': password}),
+            (r"/login", LoginHandler, {'database': database, 'hostname' : hostname, 'password': password}),
             (r"/logout", LogoutHandler),
             (r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})
         ]
@@ -300,8 +300,8 @@ class MainHandler(BaseHandler):
 
        
 class LoginHandler(BaseHandler):
-    def initialize(self, dbpath, hostname=DEFAULT_HOSTNAME, password="LetsPlay", ):
-        self.dbpath = dbpath
+    def initialize(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay", ):
+        self.db = database
         self.hostname = hostname
         self.password = password
 
@@ -313,8 +313,9 @@ class LoginHandler(BaseHandler):
         name = self.get_argument("name", "")
         password = self.get_argument("password", "")
         if password == self.password:
-            with LIGHTDatabase(self.dbpath) as db:
-                _ = db.create_user(name)
+            # with (yield lock.acquire()):
+            with self.db as ldb:
+                _ = ldb.create_user(name)
             self.set_current_user(name)
             self.redirect(self.get_argument("next", u"/"))
         else:

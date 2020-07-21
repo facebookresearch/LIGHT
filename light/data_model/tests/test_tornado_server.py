@@ -71,7 +71,9 @@ class TestFlags():
 class TestRegistryApp(AsyncHTTPTestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
+        # Need to fix this somehow...
         self.db_path = os.path.join(self.data_dir, 'test_server.db')
+        self.db = LIGHTDatabase(self.db_path)
         self.FLAGS = TestFlags("localhost", PORT)
         self.client = httpclient.AsyncHTTPClient()
         super().setUp()
@@ -81,7 +83,7 @@ class TestRegistryApp(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = RegistryApplication(self.FLAGS, default=False)
+        app = RegistryApplication(self.FLAGS, self.db, default=False)
         app.listen(PORT)
         return app
 
@@ -115,6 +117,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.data_dir, 'test_server.db')
+        self.db = LIGHTDatabase(self.db_path)
         self.client = httpclient.AsyncHTTPClient()
         super().setUp()
 
@@ -123,7 +126,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = BuildApplication(get_handlers(self.db_path))
+        app = BuildApplication(get_handlers(self.db))
         app.listen(PORT)
         return app
 
@@ -309,6 +312,7 @@ class TestGameApp(AsyncHTTPTestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.data_dir, 'test_server.db')
+        self.db = LIGHTDatabase(self.db_path)
         self.client = httpclient.AsyncHTTPClient()
         super().setUp()
 
@@ -348,6 +352,7 @@ class TestLandingApp(AsyncHTTPTestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.data_dir, 'test_server.db')
+        self.db = LIGHTDatabase(self.db_path)
         self.client = httpclient.AsyncHTTPClient()
         super().setUp()
 
@@ -356,7 +361,7 @@ class TestLandingApp(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = LandingApplication(self.db_path)
+        app = LandingApplication(self.db)
         app.listen(PORT)
         return app
         
@@ -520,6 +525,7 @@ class TestBuilderApp(AsyncHTTPTestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.data_dir, 'test_server.db')
+        self.db = LIGHTDatabase(self.db_path)
         self.client = httpclient.AsyncHTTPClient()
         super().setUp()
 
@@ -528,7 +534,7 @@ class TestBuilderApp(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = BuildApplication(get_handlers(self.db_path))
+        app = BuildApplication(get_handlers(self.db))
         app.listen(PORT)
         return app
 
@@ -673,7 +679,6 @@ class TestBuilderApp(AsyncHTTPTestCase):
         with LIGHTDatabase(self.db_path) as db:
             player = db.create_player()[0]
             base_room = db.create_base_room('room')[0]
-        with LIGHTDatabase(self.db_path) as db:
             # insert edit directly into the database and check if it's correct
             edit_id = db.submit_edit(base_room, 'name', 'name_edit_test', player)
             self.assertEqual(

@@ -14,8 +14,9 @@ from parlai.core.params import ParlaiParser
 
 import random
 
-from parlai_internal.projects.light.v1.graph_builders.starspace_all import StarspaceBuilder
-from parlai_internal.projects.light.v1.graph_model.events.graph_events import (
+from light.data_model.light_database import LIGHTDatabase
+from  light.graph.builders.starspace_all import StarspaceBuilder
+from light.graph.events.graph_events import (
     GoEvent,
     FollowEvent,
     HitEvent,
@@ -155,7 +156,8 @@ def construct_tasks(num_tasks):
     opt['light_model_root'] = '/Users/jju/Desktop/LIGHT/LIGHT_models/'
     opt['hybridity_prob'] = 1
     opt['suggestion_type'] = 'hybrid'
-    builder = StarspaceBuilder(opt=opt)
+    ldb = LIGHTDatabase(opt['light_db_file'])
+    builder = StarspaceBuilder(ldb, opt=opt)
     random.seed(88)
     while len(tasks) < num_tasks:
         g, world = builder.get_graph()

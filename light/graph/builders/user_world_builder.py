@@ -18,7 +18,7 @@ from light.world.world import World
 class UserWorldBuilder(DBGraphBuilder):
     '''Builds a LIGHT map using a predefined world saved to the light database.'''
 
-    def __init__(self, world_id=None, player_id=None, debug=True, opt=None):
+    def __init__(self, ldb, world_id=None, player_id=None, debug=True, opt=None):
         '''Initializes required models and parameters for this graph builder'''
         
         if opt is None:
@@ -32,7 +32,8 @@ class UserWorldBuilder(DBGraphBuilder):
         self.db_path = opt['light_db_file']
         self.filler_probability = opt['filler_probability']
         self._no_npc_models = not opt['use_npc_models']
-        DBGraphBuilder.__init__(self, self.db_path)
+        self.db = ldb
+        DBGraphBuilder.__init__(self, self.db)
         self.debug = debug
 
         # Need world id to be non none, check that here
@@ -142,14 +143,6 @@ class UserWorldBuilder(DBGraphBuilder):
 
     def get_graph(self):
         '''Return an OOGraph built by this builder'''
-        # Use the get from id methods!
-        # with self.db as ldb:
-        '''
-            The general structure is as follows:
-                - query the db for the world, all its entities, edges, and nodes as in loading
-                - rooms are top level, fill with objects, and add neighbor connections
-                - done(?)
-        '''
         g = OOGraph(self.opt)
         self.g = g
         with self.db as ldb:

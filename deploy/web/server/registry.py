@@ -49,16 +49,17 @@ class RegistryApplication(tornado.web.Application):
         - Forward it to the designated tornado provider (if an id is given)
         - Assign to a random (or default) game based on some load balancing
     '''
-    def __init__(self, FLAGS, default=True):
+    def __init__(self, FLAGS, ldb, default=True):
         self.game_instances = {}
         self.FLAGS = FLAGS
-        super(RegistryApplication, self).__init__(self.get_handlers(FLAGS, default), **tornado_settings)
+        self.ldb = ldb
+        super(RegistryApplication, self).__init__(self.get_handlers(FLAGS, ldb, default), **tornado_settings)
 
-    def get_handlers(self, FLAGS, default):
+    def get_handlers(self, FLAGS, ldb, default=True):
         self.tornado_provider = TornadoWebappPlayerProvider({}, FLAGS.hostname, FLAGS.port)
         self.router = RuleRouter([Rule(PathMatches(f'/game.*/socket'), self.tornado_provider.app)])
         if default:
-            game_instance = self.run_new_game("", FLAGS)
+            game_instance = self.run_new_game("", FLAGS, self.ldb)
         return [
             (r"/game/new/(.*)", GameCreatorHandler, {'app': self}),
             (r"/game(.*)", self.router)
@@ -67,9 +68,9 @@ class RegistryApplication(tornado.web.Application):
     # TODO: Move this to utils
     # This is basically it though - want to create a new world?  For now call these methods, then
     # attach the game's tornado provider 
-    def run_new_game(self, game_id, FLAGS):
+    def run_new_game(self, game_id, FLAGS, ldb):
 
-        game = GameInstance(game_id)
+        game = GameInstance(game_id, ldb)
         graph = game.g
         self.tornado_provider.graphs[game_id] = graph
         self.game_instances[game_id] = game
@@ -122,7 +123,7 @@ class GameCreatorHandler(BaseHandler):
             game_id = get_rand_id()
         # Create game_provider here
         print("Registering: ", game_id)
-        game = self.app.run_new_game(game_id, self.app.FLAGS)
+        game = self.app.run_new_game(game_id, self.app.FLAGS, self.app.ldb)
         self.game_instances[game_id] = game
         self.set_status(201)
         self.write(json.dumps(game_id))
