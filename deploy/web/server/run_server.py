@@ -56,7 +56,7 @@ def make_app(FLAGS, ldb):
     server.listen(FLAGS.port)
 
 def _run_server(FLAGS, ldb):
-    my_loop = IOLoop()
+    my_loop = IOLoop.current()
     make_app(FLAGS, ldb)
     if "HOSTNAME" in os.environ and hostname == FLAGS.hostname:
         hostname = os.environ["HOSTNAME"]
@@ -64,10 +64,13 @@ def _run_server(FLAGS, ldb):
         hostname = FLAGS.hostname
     print("\nYou can connect to the game at http://%s:%s/" % (FLAGS.hostname, FLAGS.port))
     print("You can connect to the worldbuilder at http://%s:%s/builder/" % (FLAGS.hostname, FLAGS.port))
-    my_loop.current().start()
+    try:
+        my_loop.start()
+    except KeyboardInterrupt:
+        my_loop.stop()
 
 
-def router_run(FLAGS):
+def router_run(FLAGS, ldb):
     '''
     Router run spins up the router for request to send to the correct application.
     
@@ -81,7 +84,7 @@ def router_run(FLAGS):
     to this method, which relies on the the python scheduler.  
     '''
     t = threading.Thread(
-        target=_run_server, args=(FLAGS), name='PrimaryRoutingServer', daemon=True
+        target=_run_server, args=(FLAGS, ldb), name='PrimaryRoutingServer', daemon=True
     )
     t.start()
 
@@ -91,7 +94,7 @@ def main():
     import numpy
     import random
 
-    DEFAULT_PORT = 35496
+    DEFAULT_PORT = 35494
     DEFAULT_HOSTNAME = "localhost"
 
     parser = argparse.ArgumentParser(description='Start the game server.', fromfile_prefix_chars='@')
@@ -118,8 +121,8 @@ def main():
     random.seed(6)
     numpy.random.seed(6)
     ldb = LIGHTDatabase(FLAGS.data_model_db)
+    my_loop = IOLoop(make_current=True)
     _run_server(FLAGS, ldb)
-
 
 
 if __name__ == "__main__":
