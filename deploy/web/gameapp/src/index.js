@@ -167,7 +167,6 @@ function ConnectedApp() {
       messages={messages}
       onSubmit={submitMessage}
       persona={persona}
-      // persona={{ name: "a cow" }}
       location={location}
       agents={agents}
     />
@@ -237,7 +236,6 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
     [setEnteredText, chatInputRef]
   );
 
-  // console.log(selectedEmoji);
   return (
     <div className="App">
       <div className="sidebar">
