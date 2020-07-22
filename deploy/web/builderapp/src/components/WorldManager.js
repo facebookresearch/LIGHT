@@ -320,7 +320,6 @@ export async function postWorld(state) {
   if (!("id" in dat.dimensions)){
     dat.dimensions["id"] = null;
   }
-  // Add name and id field (blank rn)
   const map = state.filteredMap();
 
   // create all edge relationships and tile metadata needed
