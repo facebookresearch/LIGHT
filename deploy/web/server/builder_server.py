@@ -147,7 +147,6 @@ class ListWorldsHandler(BaseHandler):
             dat = {"auto": autosave["timestamp"], "data": worlds}
         else:
             dat = {"auto": None, "data": worlds}
-        print(dat)
         self.write(json.dumps(dat))
 
 class DeleteWorldHandler(BaseHandler):
