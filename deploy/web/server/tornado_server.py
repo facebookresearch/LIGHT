@@ -31,6 +31,7 @@ import tornado.ioloop     # noqa E402: gotta install ioloop first
 import tornado.web        # noqa E402: gotta install ioloop first
 import tornado.websocket  # noqa E402: gotta install ioloop first
 import tornado.escape     # noqa E402: gotta install ioloop first
+import tornado.auth
 
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
@@ -289,6 +290,7 @@ class LandingApplication(tornado.web.Application):
             (r"/", MainHandler),
             (r"/?id=.*", MainHandler),
             (r"/login", LoginHandler, {'database': database, 'hostname' : hostname, 'password': password}),
+            (r"/fb/login", FacebookOAuth2LoginHandler, {'database': database}),
             (r"/logout", LogoutHandler),
             (r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})
         ]
@@ -298,7 +300,38 @@ class MainHandler(BaseHandler):
     def get(self):
         self.render(here + "/../build/index.html")
 
-       
+class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
+    '''
+        See https://www.tornadoweb.org/en/stable/_modules/tornado/auth.html#FacebookGraphMixin
+    '''
+    def initialize(self, database):
+        self.db = database
+
+    async def get(self):
+        if self.get_argument("code", False):
+            user = await self.get_authenticated_user(
+                redirect_uri='/auth/facebookgraph/',
+                client_id=self.settings["facebook_api_key"],
+                client_secret=self.settings["facebook_secret"],
+                code=self.get_argument("code"))
+            self.set_current_user(user.name)
+        else:
+            await self.authorize_redirect(
+                redirect_uri='/auth/facebookgraph/',
+                client_id=self.settings["facebook_api_key"],
+                extra_params={"scope": "read_stream,offline_access"})
+
+        self.redirect(self.get_argument("next", u"/"))
+
+
+    def set_current_user(self, user):
+        if user:
+            with self.db as ldb:
+                _ = ldb.create_user(user)
+            self.set_secure_cookie("user", tornado.escape.json_encode(user), domain=self.hostname)
+        else:
+            self.clear_cookie("user")
+
 class LoginHandler(BaseHandler):
     def initialize(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay", ):
         self.db = database
