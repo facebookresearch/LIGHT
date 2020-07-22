@@ -146,10 +146,10 @@ class TestWorldSaving(AsyncHTTPTestCase):
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()), 
-            [
+            {"auto": None, "data": [
                 {'height': 3, 'id': world1, 'in_use': 1, 'name': "default", 'num_floors': 1, 'owner_id': player_id, 'width': 3},
                 {'height': 4, 'id': world2, 'in_use': 1, 'name': "default2", 'num_floors': 2, 'owner_id': player_id, 'width': 2},
-            ]
+            ]}
         )
         
     @gen_test
@@ -181,18 +181,40 @@ class TestWorldSaving(AsyncHTTPTestCase):
         self.assertEqual(type(json.loads(response.body.decode())), int)
 
     @gen_test
-    def test_autosave(self, mocked_auth):
-        '''Test the endpoint for saving worlds works as expected'''
+    def test_autosave_endpoints(self, mocked_auth):
+        '''Test the endpoint for posting worlds works as expected, and loading back matches'''
         with LIGHTDatabase(self.db_path) as db:
             player_id = db.create_user("test")[0]
+            d = {"data": {
+                "dimensions":{
+                    "name": "default",
+                    "height": 4,
+                    "width": 1,
+                    "floors": 1
+                },
+                "entities":{
+                    "room": {},
+                    "character": {},
+                    "object": {},
+                    "nextID": 1
+                },
+                "map":{
+                    "tiles": [],
+                    "edges": []
+                }
+            }}
         headers = {"Content-Type": "application/x-www-form-urlencoded",}
         response = yield self.client.fetch(
-            f'{URL}/builder/world/', method='POST', headers=headers, body=b''
+            f'{URL}/builder/world/autosave/', method='POST', headers=headers, body=self.get_encoded_url_params(d)
         )
         self.assertEqual(response.code, 201)
-        # Get back a world code, 
-        self.assertEqual(type(json.loads(response.body.decode())), int)
-    
+        
+        response = yield self.client.fetch(
+            f'{URL}/builder/world/autosave/', method='GET',
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body.decode()),  d["data"])
+
     @gen_test
     def test_load_world(self, mocked_auth):
         '''Test the endpoint for loading worlds works as expected'''
@@ -278,7 +300,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()), 
-            [{'height': 5, 'id': w_id, 'in_use': 1, 'name': "Test", 'num_floors': 2, 'owner_id': player_id, 'width': 5},]
+            {"auto": None, "data": [{'height': 5, 'id': w_id, 'in_use': 1, 'name': "Test", 'num_floors': 2, 'owner_id': player_id, 'width': 5},]},
         )
 
         # Test world loading - expect same format! (except differences in local ids, so check dimensions and tiles really)
@@ -308,7 +330,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()), 
-            []
+            {'auto': None, 'data': []},
         )
 
     def get_encoded_url_params(self, d):
