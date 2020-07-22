@@ -167,7 +167,6 @@ function ConnectedApp() {
       messages={messages}
       onSubmit={submitMessage}
       persona={persona}
-      // persona={{ name: "a cow" }}
       location={location}
       agents={agents}
     />

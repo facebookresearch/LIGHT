@@ -30,6 +30,8 @@ from deploy.web.server.tornado_server import (
 from deploy.web.server.telnet_server import (
     TelnetPlayerProvider,
 )
+from light.graph.builders.user_world_builder import UserWorldBuilder
+from light.data_model.light_database import LIGHTDatabase
 
 
 def get_rand_id():
@@ -59,7 +61,7 @@ class RegistryApplication(tornado.web.Application):
         self.tornado_provider = TornadoWebappPlayerProvider({}, FLAGS.hostname, FLAGS.port)
         self.router = RuleRouter([Rule(PathMatches(f'/game.*/socket'), self.tornado_provider.app)])
         if default:
-            game_instance = self.run_new_game("", FLAGS, self.ldb)
+            game_instance = self.run_new_game("", self.ldb)
         return [
             (r"/game/new/(.*)", GameCreatorHandler, {'app': self}),
             (r"/game(.*)", self.router)
@@ -68,20 +70,24 @@ class RegistryApplication(tornado.web.Application):
     # TODO: Move this to utils
     # This is basically it though - want to create a new world?  For now call these methods, then
     # attach the game's tornado provider 
-    def run_new_game(self, game_id, FLAGS, ldb):
+    def run_new_game(self, game_id, ldb, player_id=None, world_id=None):
+        
+        if world_id is not None and player_id is not None:
+            builder = UserWorldBuilder(ldb, player_id=player_id, world_id=world_id)
+            _, graph = builder.get_graph()
+            game = GameInstance(game_id, ldb, g=graph)
+        else:
+            game = GameInstance(game_id, ldb)
+            graph = game.g
 
-        game = GameInstance(game_id, ldb)
-        graph = game.g
         self.tornado_provider.graphs[game_id] = graph
         self.game_instances[game_id] = game
-
         game.register_provider(self.tornado_provider)
         # TODO: Decide if threading is the right approach or not
         t = threading.Thread(
             target=game.run_graph, name=f'Game{game_id}GraphThread', daemon=True
         )
         t.start()
-
         return game
 
 # Default BaseHandler - should be extracted to some util?
@@ -119,11 +125,24 @@ class GameCreatorHandler(BaseHandler):
         '''
         Registers a new TornadoProvider at the game_id endpoint
         '''
+        # Ensures we do not overwrite the default game if someone forgets an id
         if (game_id == ""):
             game_id = get_rand_id()
+        
+        world_id = self.get_argument("world_id", None, True)
+        if (world_id is not None):
+            username = tornado.escape.xhtml_escape(self.current_user)
+            with self.app.ldb as db:
+                player = db.get_user_id(username)
+                if (not db.is_world_owned_by(world_id, player)):
+                    self.set_status(403)
+                    return
+            game = self.app.run_new_game(game_id, self.app.ldb, player, world_id)
+        else:
+            game = self.app.run_new_game(game_id, self.app.ldb)
+
         # Create game_provider here
         print("Registering: ", game_id)
-        game = self.app.run_new_game(game_id, self.app.FLAGS, self.app.ldb)
         self.game_instances[game_id] = game
         self.set_status(201)
         self.write(json.dumps(game_id))

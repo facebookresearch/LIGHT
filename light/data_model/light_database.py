@@ -326,7 +326,7 @@ class LIGHTDatabase:
                         self.cache[key][row['parent_id']] = [row]
             else:
                 self.cache[key] = {row['id']: row for row in results}
-        
+
     def __enter__(self):
         conn = sqlite3.connect(self.dbpath)
         conn.row_factory = sqlite3.Row
@@ -471,7 +471,7 @@ class LIGHTDatabase:
         """
         self.c.execute("DELETE FROM id_table WHERE id = ?", (id,))
         if self.use_cache and id in self.cache['id']:
-            del self.cache['id']
+            del self.cache['id'][id]
 
     def update_status(self, id, status):
         '''Updates status of entity in the database'''

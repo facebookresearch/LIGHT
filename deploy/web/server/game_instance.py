@@ -94,7 +94,9 @@ class GameInstance:
             _, world = StarspaceBuilder(ldb,
                 debug=False
             ).get_graph()  # TODO: what are the args that are needed
-        self.g = world
+            self.g = world
+        else:
+            self.g = g
         self.game_id = game_id
         self.players = []
         self.providers = []

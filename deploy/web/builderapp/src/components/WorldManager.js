@@ -290,7 +290,13 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
 */
 export async function launchWorld(state){
   // TODO: See above
-  return null;
+  const world_id = await postWorld(state);
+  const world_map = {'world_id': world_id}
+  const res = await post('game/new/', world_map)
+  const data = await res.json();
+  const url = `${CONFIG.host}:${CONFIG.port}/?id=${data}`;
+  window.open(url);
+  return data;
 }
 
 export async function postWorld(state) {
@@ -379,12 +385,14 @@ export async function postWorld(state) {
   }
   // send it to the saving format!
   dat.map.edges = edges;
-  const res = await post("world/", dat);
-
+  const res = await post("builder/world/", dat);
+  const resData = await res.json();
   AppToaster.show({
     intent: Intent.SUCCESS,
     message: "World Saved! ",
   });
+  // Return the id
+  return resData;
 }
 
 export default ListWorldsOverlay;
