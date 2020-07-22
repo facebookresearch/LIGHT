@@ -773,18 +773,30 @@ class TestDatabase(unittest.TestCase):
                 "New World cannot be created",
             )
     
+    def test_set_inactive_world(self):
+        '''Test that creation is active, and we make inactive with the set_inactive'''
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            player0 = test.create_user("test")[0]
+            w1_id = test.create_world("swamp", player0, 3, 3, 1)[0]
+            self.assertEqual(test.get_world(w1_id, player0)[0]["in_use"], 1)
+            test.set_world_inactive(w1_id, player0)
+            self.assertEqual(test.get_world(w1_id, player0)[0]["in_use"], 0)
+
+
     def test_view_worlds(self):
-        '''Test that view worlds returns all worlds owned by player and only those worlds!'''
+        '''Test that view worlds returns all active worlds owned by player and only those worlds!'''
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player0 = test.create_user("test")[0]
             w1_id = test.create_world("swamp", player0, 3, 3, 1)[0]
             w2_id = test.create_world("dragon guarded castle", player0, 2, 4, 2)[0]
+            w3_id = test.create_world("far far away", player0, 2, 4, 2)[0]
+            test.set_world_inactive(w3_id, player0)
             res = test.view_worlds(player0)
             self.assertEqual(len(res), 2)
             self.assertEqual(res, 
                 [            
-                    {'height': 3, 'id': w1_id, 'name': "swamp", 'num_floors': 1, 'owner_id': player0, 'width': 3},
-                    {'height': 2, 'id': w2_id, 'name': "dragon guarded castle", 'num_floors': 2, 'owner_id': player0, 'width': 4},
+                    {'height': 3, 'id': w1_id, 'in_use': 1, 'name': "swamp", 'num_floors': 1, 'owner_id': player0, 'width': 3},
+                    {'height': 2, 'id': w2_id, 'in_use': 1, 'name': "dragon guarded castle", 'num_floors': 2, 'owner_id': player0, 'width': 4},
                 ],
             )
 
@@ -794,7 +806,7 @@ class TestDatabase(unittest.TestCase):
             res = test.view_worlds(player1)
             self.assertEqual(len(res), 1)
             self.assertEqual(
-                [{'height': 3, 'id': w3_id, 'name': "swamp2", 'num_floors': 5, 'owner_id': player1, 'width': 3}],
+                [{'height': 3, 'id': w3_id, 'in_use': 1, 'name': "swamp2", 'num_floors': 5, 'owner_id': player1, 'width': 3}],
                 res
             )
     
