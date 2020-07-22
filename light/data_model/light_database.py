@@ -1394,6 +1394,19 @@ class LIGHTDatabase:
             """
         )
 
+        # Store 1 autosave per user in this table
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS auto_save_table (
+            owner_id integer PRIMARY KEY NOT NULL UNIQUE,
+            timestamp TEXT NOT NULL,
+            world_dump TEXT NOT NULL,
+            CONSTRAINT fk_user FOREIGN KEY (owner_id)
+                REFERENCES user_table (id)
+                ON DELETE CASCADE);
+            """
+        )
+
         # Differs from text_edges as those are more annotation, these are actual edges of 
         # world graphs in execution
         self.c.execute(
@@ -3018,6 +3031,46 @@ class LIGHTDatabase:
         return edges_lst
 
 #-------------------Database added for WorldBuilder-------------#
+    def set_autosave(self, world_dump, player_id, timestamp):
+        # Existing autosave?
+        self.c.execute(
+            """
+            SELECT * FROM auto_save_table
+            WHERE owner_id = ?
+            """,
+            (player_id,),
+        )
+        if len(self.c.fetchall()) == 1:
+            # Existing then update
+            self.c.execute(
+                """
+                UPDATE auto_save_table
+                SET timestamp = ? AND SET world_dump = ? 
+                WHERE owner_id = ?;
+                """,
+                (timestamp, world_dump, player_id,),
+            )
+        else:
+            # Otherwise, just insert
+            self.c.execute(
+                """
+                INSERT or IGNORE INTO auto_save_table(owner_id, timestamp, world_dump)
+                VALUES (?, ?, ?)
+                """,
+                (player_id, timestamp, world_dump,),
+            )
+
+    def get_autosave(self, player_id):
+        # Get existing autosave
+        self.c.execute(
+            """
+            SELECT * FROM auto_save_table
+            WHERE owner_id = ?
+            """,
+            (player_id,),
+        )
+        return self.c.fetchone()
+
     def get_active_worlds_owned_by(self, player_id):
         """
         Return a list of all worlds owned by the player which are active

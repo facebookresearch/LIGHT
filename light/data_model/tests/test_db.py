@@ -7,6 +7,8 @@
 import shutil, tempfile
 import sqlite3
 import unittest
+import time
+import json
 import os
 import pickle
 
@@ -782,6 +784,40 @@ class TestDatabase(unittest.TestCase):
             test.set_world_inactive(w1_id, player0)
             self.assertEqual(test.get_world(w1_id, player0)[0]["in_use"], 0)
 
+    def test_autosave(self):
+        '''Test that autosave works, and updates is one per user'''
+        world_dict = {
+                "dimensions":{
+                    "id" : None,
+                    "name": "default",
+                    "height": 3,
+                    "width": 3,
+                    "floors": 1
+                },
+                "entities":{
+                    "room": {},
+                    "character": {},
+                    "object": {},
+                    "nextID": 1
+                },
+                "map":{
+                    "tiles": [],
+                    "edges": []
+                }
+            }
+        curr_time = time.ctime(time.time())
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            player0 = test.create_user("test")[0]
+            test.set_autosave(json.dumps(world_dict), player0, curr_time,)
+            autosave = test.get_autosave(player0)
+        self.assert_sqlite_row_equal(
+            {
+                'owner_id': player0,
+                'timestamp': curr_time,
+                'world_dump': json.dumps(world_dict),
+            },
+            autosave
+        )
 
     def test_view_worlds(self):
         '''Test that view worlds returns all active worlds owned by player and only those worlds!'''
