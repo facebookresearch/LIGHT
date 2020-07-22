@@ -180,7 +180,9 @@ class SaveWorldHandler(BaseHandler):
 
         with (yield lock.acquire()):
             with self.db as ldb:
-                player = ldb.get_user_id(username)            
+                player = ldb.get_user_id(username)
+                if dimensions["id"] is not None:
+                    ldb.set_world_inactive(dimensions["id"], player)            
                 world_id = ldb.create_world(name, player, dimensions["height"], dimensions["width"], dimensions["floors"])[0]
                 #Get DB IDs for all object and store them
                 local_id_to_dbid = {}

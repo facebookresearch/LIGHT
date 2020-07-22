@@ -167,6 +167,7 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
     // Construct the 3 parts of state we need
     const dat = {
       dimensions: {
+        id: data.dimensions.id,
         name: data.dimensions.name,
         height: data.dimensions.height,
         width: data.dimensions.width,
@@ -204,7 +205,6 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
       intent: Intent.SUCCESS,
       message: "Done loading!",
     });
-
     setUpload(dat);
   };
 
@@ -317,8 +317,10 @@ export async function postWorld(state) {
     map: { tiles: [], edges: [] },
     entities: cloneDeep(state.entities),
   };
+  if (!("id" in dat.dimensions)){
+    dat.dimensions["id"] = null;
+  }
   // Add name and id field (blank rn)
-  dat.dimensions["id"] = null;
   const map = state.filteredMap();
 
   // create all edge relationships and tile metadata needed
@@ -398,6 +400,7 @@ export async function postWorld(state) {
   dat.map.edges = edges;
   const res = await post("world/", dat);
   const resData = await res.json();
+  state.dimensions.id = resData;
   AppToaster.show({
     intent: Intent.SUCCESS,
     message: "World Saved! ",

@@ -1377,12 +1377,6 @@ class LIGHTDatabase:
         """
         self.c.execute(
             """
-            DROP TABLE IF EXISTS world_table;
-
-            """
-        )
-        self.c.execute(
-            """
             CREATE TABLE IF NOT EXISTS world_table (
             id integer PRIMARY KEY NOT NULL,
             name text NOT NULL, 
@@ -3063,7 +3057,24 @@ class LIGHTDatabase:
             (world_id, player_id,),
         )
         return self.c.fetchall()
-    
+
+    def set_world_inactive(self, world_id, player_id):
+        """
+            Makes a world in the world table inactive if owned by player_id
+        """
+        assert self.is_world_owned_by(world_id, player_id), "Cannot change a world you do not own"
+        self.c.execute(
+            """
+            UPDATE world_table
+            SET in_use = 0
+            WHERE id = ?;
+            """,
+            (world_id,),
+        )
+        if self.use_cache and world_id in self.cache['worlds']:
+            self.c.execute("""SELECT * FROM world_table WHERE id = ? """, (world_id,))
+            self.cache['worlds'][world_id] = self.c.fetchone()
+
     def get_world_resources(self, world_id, player_id):
         assert self.is_world_owned_by(world_id, player_id), "Cannot load a world you do not own"
 
