@@ -117,7 +117,7 @@ function EditsList({ edits, status, reload }) {
 
   async function handleSubmitSelected() {
     const reqs = pendingSubmission.map(index =>
-      post(`builer/edits/${edits[index].edit_id}/${submitAction}`)
+      post(`builder/edits/${edits[index].edit_id}/${submitAction}`)
     );
     await Promise.all(reqs).then(() => {
       reload();
