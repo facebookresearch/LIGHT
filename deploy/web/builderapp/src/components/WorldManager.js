@@ -292,7 +292,7 @@ export async function launchWorld(state){
   // TODO: See above
   const world_id = await postWorld(state);
   const world_map = {'world_id': world_id}
-  const res = await post('game/new', world_map)
+  const res = await post('game/new/', world_map)
   const data = await res.json();
   const url = `${CONFIG.host}:${CONFIG.port}/?id=${data}`;
   window.open(url);
