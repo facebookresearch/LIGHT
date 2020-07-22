@@ -125,7 +125,7 @@ class GameCreatorHandler(BaseHandler):
         '''
         Registers a new TornadoProvider at the game_id endpoint
         '''
-        # Ensures we only get one default game
+        # Ensures we do not overwrite the default game if someone forgets an id
         if (game_id == ""):
             game_id = get_rand_id()
         

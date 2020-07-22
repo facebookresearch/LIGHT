@@ -70,7 +70,7 @@ export function post(url, payload) {
     );
     formBody.push(encodedKey + "=" + encodedValue);
   }
-  return fetch(`${CONFIG.host}:${CONFIG.port}/builder/${url}`, {
+  return fetch(`${CONFIG.host}:${CONFIG.port}/${url}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",

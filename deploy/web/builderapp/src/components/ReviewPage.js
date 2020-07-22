@@ -117,7 +117,7 @@ function EditsList({ edits, status, reload }) {
 
   async function handleSubmitSelected() {
     const reqs = pendingSubmission.map(index =>
-      post(`edits/${edits[index].edit_id}/${submitAction}`)
+      post(`builer/edits/${edits[index].edit_id}/${submitAction}`)
     );
     await Promise.all(reqs).then(() => {
       reload();
@@ -402,7 +402,7 @@ function Card({ edit, entity, reload }) {
           intent={Intent.DANGER}
           type="submit"
           onClick={() =>
-            post(`edits/${edit.edit_id}/reject`).then(() => reload())
+            post(`builder/edits/${edit.edit_id}/reject`).then(() => reload())
           }
           style={{ marginLeft: "15px" }}
         >
@@ -412,7 +412,7 @@ function Card({ edit, entity, reload }) {
           intent={Intent.SUCCESS}
           type="submit"
           onClick={() =>
-            post(`edits/${edit.edit_id}/accept/accepted`).then(() => reload())
+            post(`builder/edits/${edit.edit_id}/accept/accepted`).then(() => reload())
           }
           style={{ marginLeft: "15px" }}
         >
