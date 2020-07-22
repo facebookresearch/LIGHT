@@ -313,7 +313,6 @@ class LoginHandler(BaseHandler):
         name = self.get_argument("name", "")
         password = self.get_argument("password", "")
         if password == self.password:
-            # with (yield lock.acquire()):
             with self.db as ldb:
                 _ = ldb.create_user(name)
             self.set_current_user(name)
@@ -416,12 +415,9 @@ class TornadoWebappPlayerProvider(PlayerProvider):
             else:
                 hostname = hostname
 
-        self.t = threading.Thread(
-            target=_run_server, name='TornadoProviderThread', daemon=True
-        )
-        self.t.start()
+        _run_server()
         while self.app is None:
-            time.sleep(0.3)
+            asyncio.sleep(0.3)
 
     def get_new_players(self, graph_id):
         """

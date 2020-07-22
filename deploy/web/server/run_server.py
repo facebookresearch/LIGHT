@@ -35,7 +35,6 @@ from tornado.ioloop import (
 )
 
 import os.path
-import threading
 from light.data_model.light_database import LIGHTDatabase
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -68,26 +67,6 @@ def _run_server(FLAGS, ldb):
         my_loop.start()
     except KeyboardInterrupt:
         my_loop.stop()
-
-
-def router_run(FLAGS, ldb):
-    '''
-    Router run spins up the router for request to send to the correct application.
-    
-    In doing so, we have a tornado application that blocks listening for request.  Since this executes in the
-    same thread as the game instance, we have to do something to avoid blocking the game instance from running.
-    
-    Our options are spinning a seperate thread, or using the PeriodicCallback function in tornado to switch
-    between the router and the game instance.  Here we have chosen to use threading for precedence, as this
-    is how the TornadoWebAppProvider runs, and for the simplicity of the implementation, however
-    PeriodicCallback is a more deterministic way to handle to control switching as opposed
-    to this method, which relies on the the python scheduler.  
-    '''
-    t = threading.Thread(
-        target=_run_server, args=(FLAGS, ldb), name='PrimaryRoutingServer', daemon=True
-    )
-    t.start()
-
 
 def main():
     import argparse

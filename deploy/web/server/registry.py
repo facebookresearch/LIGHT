@@ -15,7 +15,7 @@ import threading
 import time
 import uuid
 import tornado.web
-from tornado.ioloop import IOLoop
+from tornado import ioloop
 from tornado import locks
 from tornado import gen
 from tornado.routing import (
@@ -83,11 +83,7 @@ class RegistryApplication(tornado.web.Application):
         self.tornado_provider.graphs[game_id] = graph
         self.game_instances[game_id] = game
         game.register_provider(self.tornado_provider)
-        # TODO: Decide if threading is the right approach or not
-        t = threading.Thread(
-            target=game.run_graph, name=f'Game{game_id}GraphThread', daemon=True
-        )
-        t.start()
+        tornado.ioloop.PeriodicCallback(game.run_graph_step, 125).start()
         return game
 
 # Default BaseHandler - should be extracted to some util?
