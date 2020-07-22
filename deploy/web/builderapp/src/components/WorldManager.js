@@ -53,7 +53,7 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
       method: "GET",
     });
     const data = await res.json();
-    console.log(data)
+
     // Mission accomplished!
     AppToaster.show({
       intent: Intent.SUCCESS,

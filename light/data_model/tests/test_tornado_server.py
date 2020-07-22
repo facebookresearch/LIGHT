@@ -179,6 +179,19 @@ class TestWorldSaving(AsyncHTTPTestCase):
         self.assertEqual(response.code, 201)
         # Get back a world code, 
         self.assertEqual(type(json.loads(response.body.decode())), int)
+
+    @gen_test
+    def test_autosave(self, mocked_auth):
+        '''Test the endpoint for saving worlds works as expected'''
+        with LIGHTDatabase(self.db_path) as db:
+            player_id = db.create_user("test")[0]
+        headers = {"Content-Type": "application/x-www-form-urlencoded",}
+        response = yield self.client.fetch(
+            f'{URL}/builder/world/', method='POST', headers=headers, body=b''
+        )
+        self.assertEqual(response.code, 201)
+        # Get back a world code, 
+        self.assertEqual(type(json.loads(response.body.decode())), int)
     
     @gen_test
     def test_load_world(self, mocked_auth):
