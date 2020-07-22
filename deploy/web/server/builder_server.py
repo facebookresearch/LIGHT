@@ -156,8 +156,8 @@ class DeleteWorldHandler(BaseHandler):
         with (yield lock.acquire()):
             with self.db as ldb:
                 player = ldb.get_user_id(username)
-                world_id = ldb.delete_world(world_id=id, player_id=player)
-        self.write(json.dumps(world_id))
+                ldb.set_world_inactive(world_id=id, player_id=player)
+        self.write(json.dumps(id))
 
 class SaveWorldHandler(BaseHandler):
     '''Save a world given the player id and world id'''
@@ -243,7 +243,7 @@ class LoadWorldHandler(BaseHandler):
             resources = ldb.get_world_resources(world_id, player_id)
 
         world = world[0]
-        result["dimensions"] = {x: world[x] for x in world.keys() if x != 'owner_id'}
+        result["dimensions"] = {x: world[x] for x in world.keys() if x != 'owner_id' and x != 'in_use'}
         result["dimensions"]["floors"] = result["dimensions"]["num_floors"]
         del result["dimensions"]["num_floors"]
 
