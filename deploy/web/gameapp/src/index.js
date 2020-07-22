@@ -236,7 +236,6 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
     [setEnteredText, chatInputRef]
   );
 
-  // console.log(selectedEmoji);
   return (
     <div className="App">
       <div className="sidebar">
@@ -508,6 +507,6 @@ function getLocationState(messages) {
 
   return {
     currentRoom: lastMessage.room_id,
-    presentAgents: lastMessage.present_agent_ids
+    presentAgents: Object.keys(lastMessage.present_agent_ids)
   };
 }

@@ -187,12 +187,15 @@ class GraphEvent(object):
         Parse out the contents of this event as seen by the given agent
         and return a dict that is consumable by our frontends
         """
+        present_dict = {
+                x.node_id : x.name for x in self.room.get_contents() if x.agent
+        }
         return {
             'text': self.view_as(viewer),
             'caller': self.__class__.__name__,
             'target_nodes': [node_to_json(x) for x in self.target_nodes],
             'additional_text': self.text_content,
-            'present_agent_ids': self.present_agent_ids,
+            'present_agent_ids': present_dict,
             'canonical_targets': self._canonical_targets,
             'room': node_to_json(self.room),
             'actor': node_to_json(self.actor),
