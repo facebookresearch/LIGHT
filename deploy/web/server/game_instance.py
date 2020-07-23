@@ -101,7 +101,7 @@ class GameInstance:
             self.g = g
         purgatory = self.g.purgatory
         purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
-        for empty_agent in world.oo_graph.agents.values():
+        for empty_agent in self.g.oo_graph.agents.values():
             purgatory.fill_soul(empty_agent)
         self.game_id = game_id
         self.players = []
@@ -125,7 +125,7 @@ class GameInstance:
         left_players = [p for p in self.players if not p.is_alive()]
         for player in left_players:
             if player.player_soul is not None:
-                g.clear_soul(player.player_soul.target_node)
+                self.g.purgatory.clear_soul(player.player_soul.target_node)
             self.players.remove(player)
 
         # Check existing players

@@ -63,25 +63,30 @@ class RegistryApplication(tornado.web.Application):
         self.router = RuleRouter([Rule(PathMatches(f'/game.*/socket'), self.tornado_provider.app)])
         if default:
             game_instance = self.run_new_game("", self.ldb)
-        tornado.ioloop.PeriodicCallback(self.cleanup_games 60000).start()
+        tornado.ioloop.PeriodicCallback(self.cleanup_games, 60000).start()
 
         return [
             (r"/game/new/(.*)", GameCreatorHandler, {'app': self}),
             (r"/game(.*)", self.router)
         ]
 
-    def cleanup_graphs(self):
+    def cleanup_games(self):
         '''
             Goes through the game instances, cleaning up any game that does 
             not have a connection in the past 10 minutes
         '''
-        TIMEOUT = 10
+        TIMEOUT = 1
         curr_time = time.time()
-        game_map = copy.deepcopy(self.game_instances)
-        for game_id, game in game_map:
-            no_players = len(game.players)
-            diff = (curr_time - game.last_connection) / 60 # get minutes
+        iterate_over = [(g_id, len(g.players), g.last_connection) for g_id, g in self.game_instances.items()]
+
+        for game_id, num_players, last_conn in iterate_over:
+            if game_id == "":
+                continue
+            no_players = num_players == 0
+            diff = (curr_time - last_conn) / 60 # get minutes
+            print(game_id, "diff:", diff)
             if no_players and diff > TIMEOUT:
+                print("deleting:", game_id)
                 self.callbacks[game_id].stop()
                 del self.callbacks[game_id]
                 del self.game_instances[game_id]

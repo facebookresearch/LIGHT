@@ -385,6 +385,9 @@ class TornadoPlayerProvider(soul_pp.PlayerProvider):
         text = action
         player_agent = self.player_soul.handle_act(text)
 
+    def on_reap_soul(self, soul):
+        self.socket.alive = False
+
     def is_alive(self):
         return self.socket.alive
 
