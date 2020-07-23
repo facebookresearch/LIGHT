@@ -351,7 +351,6 @@ class TornadoPlayerProvider(soul_pp.PlayerProvider):
         Send observation forward to the player in whatever format the player
         expects it to be.
         """
-        print("In here!!)")
         # This will need to pass through the socket?
         view = event.view_as(soul.target_node)
         if not self.socket.alive_sent:
@@ -359,7 +358,6 @@ class TornadoPlayerProvider(soul_pp.PlayerProvider):
         dat = event.to_frontend_form(self.player_soul.target_node)
         filtered_obs = dat if dat['text'] is not None and len(dat['text'].strip()) else None
         if filtered_obs is not None:
-            print("Got an action to send")
             self.socket.safe_write_message(
                 json.dumps({'command': 'actions', 'data': [dat]})
             )            
