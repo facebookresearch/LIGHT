@@ -21,6 +21,7 @@ export function useWSDataSource(url) {
   const handleMessage = React.useCallback(
     msg => {
       const cmd = JSON.parse(msg.data);
+      console.log(cmd);
       if (cmd.command === "actions") {
         const buffer = [];
 
@@ -29,23 +30,19 @@ export function useWSDataSource(url) {
             "Your lost soul attempts to join the living..."
           );*/
           const isPersonaDescription = action.caller === "SpawnEvent";
+          // How to fix persona, now that we do not get spawn events?
           const isLocationDescription = action.caller === "LookEvent";
           action.room = JSON.parse(action.room)
           action.actor = JSON.parse(action.actor)
           setAgents(
               action.present_agent_ids
           );
-          if (isPersonaDescription) {
-            setPersona({
-              name: action.actor.name,
-              description: action.actor.persona,
-              id: action.actor.node_id
-            });
-            if (isRespawn) {
-              buffer.push(action);
-            }
-            return;
-          } else if (isLocationDescription) {
+          setPersona({
+            name: action.actor.name,
+            description: action.actor.persona,
+            id: action.actor.node_id
+          });
+          if (isLocationDescription) {
             setLocation({
               name: action.room.name,
               description:

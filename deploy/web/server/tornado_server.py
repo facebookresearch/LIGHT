@@ -205,9 +205,9 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         if self.player is None:
             return
         if cmd == 'act':
-            # self.actions.append(msg['data'])
-            self.player.g.parse_exec(self.player.get_agent_id(), msg['data'])
-            self.player.observe()
+            self.actions.append(msg['data'])
+            # self.player.g.parse_exec(self.player.get_agent_id(), msg['data'])
+            # self.player.observe()
         elif cmd == 'descs':
             self.safe_write_message(
                 json.dumps({'command': 'descs', 'data': self.g._node_to_desc})
@@ -231,8 +231,6 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             )
 
     def on_close(self):
-        if self.player is not None:
-            self.player.g.clear_message_callback(self.player.get_player_id())
         self.alive = False
 
 
@@ -353,6 +351,7 @@ class TornadoPlayerProvider(soul_pp.PlayerProvider):
         Send observation forward to the player in whatever format the player
         expects it to be.
         """
+        print("In here!!)")
         # This will need to pass through the socket?
         view = event.view_as(soul.target_node)
         if not self.socket.alive_sent:
@@ -360,17 +359,12 @@ class TornadoPlayerProvider(soul_pp.PlayerProvider):
         dat = event.to_frontend_form(self.player_soul.target_node)
         filtered_obs = dat if dat['text'] is not None and len(dat['text'].strip()) else None
         if filtered_obs is not None:
+            print("Got an action to send")
             self.socket.safe_write_message(
-                json.dumps({'command': 'actions', 'data': dat})
+                json.dumps({'command': 'actions', 'data': [dat]})
             )            
     
     def act(self):
-        if len(self.socket.actions) > 0:
-            action = self.socket.actions.pop()
-        else:
-            action = ''
-        print(action)
-        text = action
         if self.player_soul is not None and self.player_soul.is_reaped:
             self.player_soul = None
         if self.player_soul is None:
@@ -383,10 +377,17 @@ class TornadoPlayerProvider(soul_pp.PlayerProvider):
             else:
                 self.player_soul.handle_act("look")
             return
+        
+        if len(self.socket.actions) > 0:
+            action = self.socket.actions.pop()
+        else:
+            return
+        text = action
         player_agent = self.player_soul.handle_act(text)
 
     def is_alive(self):
         return self.socket.alive
+
 class TornadoWebappPlayer(Player):
     """
     A player in an instance of the light game. Maintains any required

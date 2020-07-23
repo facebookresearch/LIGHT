@@ -845,6 +845,7 @@ class World(object):
     def parse_exec_internal(self, agentid, inst=None):
         """Try to parse and execute the given event"""
         # basic replacements
+        print(inst)
         inst = inst.rstrip('\n').rstrip('\r')
         parse_shortcuts = {
             'e': 'go east',
@@ -876,7 +877,7 @@ class World(object):
             )
             return False, 'dead'
 
-        if inst == []:
+        if instruction_list == []:
             errs = [
                 'Huh?',
                 'What?',

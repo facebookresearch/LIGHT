@@ -85,7 +85,7 @@ class Purgatory:
         """
         soul: "Soul" = self.node_id_to_soul.get(agent.node_id)
         if soul is not None:
-            soul.launch_observe_event_thread(event)
+            soul.observe_event(event)
 
     def clear_soul(self, agent: "GraphAgent") -> None:
         """Clear the soul that is associated with the given agent"""
