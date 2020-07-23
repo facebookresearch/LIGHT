@@ -146,7 +146,7 @@ function submitEdit(id, field, edited_value) {
     player: 1
   };
 
-  return post("edits", payload);
+  return post("builder/edits", payload);
 }
 
 export default EditPage;
