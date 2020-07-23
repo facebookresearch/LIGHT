@@ -13,7 +13,7 @@ from parlai.utils.misc import Timer
 from light.world.world import World
 from tornado.ioloop import IOLoop
 from light.world.souls.repeat_soul import RepeatSoul
-
+import time
 
 class Player:
     """
@@ -106,6 +106,7 @@ class GameInstance:
         self.game_id = game_id
         self.players = []
         self.providers = []
+        self.last_connection = time.time()
 
     def register_provider(self, provider):
         self.providers.append(provider)
@@ -114,8 +115,11 @@ class GameInstance:
     def run_graph_step(self):
         g = self.g
         # try to make some new players
+        old = len(self.players)
         for provider in self.providers:
             self.players += provider.get_new_players(self.game_id, self.g.purgatory)
+            if len(self.players) != old:
+                self.last_connection = time.time()
 
         # Clear disconnected players
         left_players = [p for p in self.players if not p.is_alive()]

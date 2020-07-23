@@ -32,7 +32,7 @@ from deploy.web.server.telnet_server import (
 )
 from light.graph.builders.user_world_builder import UserWorldBuilder
 from light.data_model.light_database import LIGHTDatabase
-
+import copy
 
 def get_rand_id():
     return str(uuid.uuid4())
@@ -53,6 +53,7 @@ class RegistryApplication(tornado.web.Application):
     '''
     def __init__(self, FLAGS, ldb, default=True):
         self.game_instances = {}
+        self.callbacks = {}
         self.FLAGS = FLAGS
         self.ldb = ldb
         super(RegistryApplication, self).__init__(self.get_handlers(FLAGS, ldb, default), **tornado_settings)
@@ -62,10 +63,28 @@ class RegistryApplication(tornado.web.Application):
         self.router = RuleRouter([Rule(PathMatches(f'/game.*/socket'), self.tornado_provider.app)])
         if default:
             game_instance = self.run_new_game("", self.ldb)
+        tornado.ioloop.PeriodicCallback(self.cleanup_games 60000).start()
+
         return [
             (r"/game/new/(.*)", GameCreatorHandler, {'app': self}),
             (r"/game(.*)", self.router)
         ]
+
+    def cleanup_graphs(self):
+        '''
+            Goes through the game instances, cleaning up any game that does 
+            not have a connection in the past 10 minutes
+        '''
+        TIMEOUT = 10
+        curr_time = time.time()
+        game_map = copy.deepcopy(self.game_instances)
+        for game_id, game in game_map:
+            no_players = len(game.players)
+            diff = (curr_time - game.last_connection) / 60 # get minutes
+            if no_players and diff > TIMEOUT:
+                self.callbacks[game_id].stop()
+                del self.callbacks[game_id]
+                del self.game_instances[game_id]
 
     # TODO: Move this to utils
     # This is basically it though - want to create a new world?  For now call these methods, then
@@ -83,7 +102,8 @@ class RegistryApplication(tornado.web.Application):
         self.tornado_provider.graphs[game_id] = graph
         self.game_instances[game_id] = game
         game.register_provider(self.tornado_provider)
-        tornado.ioloop.PeriodicCallback(game.run_graph_step, 125).start()
+        self.callbacks[game_id] = tornado.ioloop.PeriodicCallback(game.run_graph_step, 125)
+        self.callbacks[game_id].start()
         return game
 
 # Default BaseHandler - should be extracted to some util?
