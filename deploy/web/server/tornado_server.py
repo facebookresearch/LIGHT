@@ -12,6 +12,7 @@ from deploy.web.server.game_instance import (
     GameInstance,
 )
 from light.data_model.light_database import LIGHTDatabase
+import light.world.player_provider as soul_pp
 
 import argparse
 import inspect
@@ -332,6 +333,60 @@ class LogoutHandler(BaseHandler):
         self.clear_cookie("user")
         self.redirect(u"/login")
 
+class TornadoPlayerProvider(soul_pp.PlayerProvider):
+    """
+        Player Provider for the web app
+    """
+    def __init__(self, socket, purgatory):
+        self.socket = socket
+        self.player_soul = None
+        self.purgatory = purgatory
+        socket.set_player(self)
+        socket.send_alive()
+
+    def register_soul(self, soul: "PlayerSoul"):
+        """Save the soul as a local player soul"""
+        self.player_soul = soul
+
+    def player_observe_event(self, soul: "PlayerSoul", event: "GraphEvent"):
+        """
+        Send observation forward to the player in whatever format the player
+        expects it to be.
+        """
+        # This will need to pass through the socket?
+        view = event.view_as(soul.target_node)
+        if not self.socket.alive_sent:
+            return  # the socket isn't alive yet, let's wait
+        dat = event.to_frontend_form(self.player_soul.target_node)
+        filtered_obs = dat if dat['text'] is not None and len(dat['text'].strip()) else None
+        if filtered_obs is not None:
+            self.socket.safe_write_message(
+                json.dumps({'command': 'actions', 'data': dat})
+            )            
+    
+    def act(self):
+        if len(self.socket.actions) > 0:
+            action = self.socket.actions.pop()
+        else:
+            action = ''
+        print(action)
+        text = action
+        if self.player_soul is not None and self.player_soul.is_reaped:
+            self.player_soul = None
+        if self.player_soul is None:
+            # Should this be event sent to frontend?
+            print("Your soul searches for a character to inhabit")
+            self.purgatory.get_soul_for_player(self)
+            if self.player_soul is None:
+                # Should this be event sent to frontend?
+                print("No soul could be found for you :(")
+            else:
+                self.player_soul.handle_act("look")
+            return
+        player_agent = self.player_soul.handle_act(text)
+
+    def is_alive(self):
+        return self.socket.alive
 class TornadoWebappPlayer(Player):
     """
     A player in an instance of the light game. Maintains any required
@@ -387,7 +442,7 @@ class TornadoWebappPlayer(Player):
     def is_alive(self):
         return self.socket.alive
 
-
+# This will change to the factory
 class TornadoWebappPlayerProvider(PlayerProvider):
     """
     A player provider is an API for adding new players into the game. It
@@ -419,7 +474,7 @@ class TornadoWebappPlayerProvider(PlayerProvider):
         while self.app is None:
             asyncio.sleep(0.3)
 
-    def get_new_players(self, graph_id):
+    def get_new_players(self, graph_id, graph_purgatory):
         """
         Should check the potential source of players for new players. If
         a player exists, this should instantiate a relevant Player object
@@ -434,22 +489,10 @@ class TornadoWebappPlayerProvider(PlayerProvider):
         for conn_name in new_connections:
             conn = self.app.subs[conn_name]
             if conn.alive:
-                player_id = self.graphs[graph_id].spawn_player()
-                print("added a subscriber!: " + str(player_id))
-                if player_id == -1:
-                    conn.safe_write_message(
-                        json.dumps({
-                            'command': 'reject',
-                            'data': 'Sorry, too many players are on right now!'
-                        })
-                    )
-                else:
-                    new_player = TornadoWebappPlayer(
-                        self.graphs[graph_id],
-                        player_id,
-                        conn,
-                    )
-                    players.append(new_player)
+                new_player = TornadoPlayerProvider(
+                    conn, graph_purgatory,
+                )
+                players.append(new_player)
         return players
 
 
