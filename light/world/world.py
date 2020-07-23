@@ -378,6 +378,7 @@ class World(object):
             agent = agent_id
             if not isinstance(agent_id, GraphAgent):
                 agent = self.oo_graph.get_node(agent_id)
+            print(agent)
             viewed_message = action.view_as(agent)
             self.send_msg(agent_id, viewed_message, action)
         else:

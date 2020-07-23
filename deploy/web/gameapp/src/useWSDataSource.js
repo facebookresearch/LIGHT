@@ -45,7 +45,6 @@ export function useWSDataSource(url) {
             if (isRespawn) {	
               buffer.push(action);	
             }	
-            return;	
           } 
           if (isLocationDescription) {
             setLocation({

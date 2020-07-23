@@ -46,7 +46,7 @@ class Soul(ABC):
         def _launch_thread_and_cleanup(event):
             self.observe_event(event)
             del self._observe_threads[thread_id]
-
+        ### TODO:  Make compatible with tornado
         observe_thread = threading.Thread(
             target=_launch_thread_and_cleanup,
             args=(event,),

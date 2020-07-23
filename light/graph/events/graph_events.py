@@ -722,7 +722,6 @@ class SoulSpawnEvent(TriggeredEvent):
         msg_txt += self.actor.persona + "\n"
         msg_txt += sun_txt + "\n"
         self.__msg_txt = msg_txt
-
         world.broadcast_to_agents(self, [self.actor])
 
         return []

@@ -32,6 +32,7 @@ import tornado.ioloop     # noqa E402: gotta install ioloop first
 import tornado.web        # noqa E402: gotta install ioloop first
 import tornado.websocket  # noqa E402: gotta install ioloop first
 import tornado.escape     # noqa E402: gotta install ioloop first
+from light.graph.events.graph_events import SoulSpawnEvent
 
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
@@ -366,6 +367,7 @@ class TornadoPlayerProvider(soul_pp.PlayerProvider):
             self.player_soul = None
         if self.player_soul is None:
             self.init_soul()
+            return
         player_agent = self.player_soul.handle_act(action_data)
 
     def init_soul(self):
@@ -376,6 +378,7 @@ class TornadoPlayerProvider(soul_pp.PlayerProvider):
                 json.dumps({'command': 'actions', 'data': [dat]})
             )            
         else:
+            SoulSpawnEvent(self.player_soul.target_node).execute(self.purgatory.world)
             self.player_soul.handle_act("look")
         
     def is_alive(self):
