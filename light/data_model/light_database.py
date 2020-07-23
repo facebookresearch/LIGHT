@@ -1384,9 +1384,23 @@ class LIGHTDatabase:
             height integer NOT NULL,
             width integer NOT NULL,
             num_floors integer NOT NULL,
+            in_use BOOLEAN NOT NULL CHECK (in_use IN (0, 1)),
             CONSTRAINT fk_id FOREIGN KEY (id)
                 REFERENCES id_table (id)
                 ON DELETE CASCADE,
+            CONSTRAINT fk_user FOREIGN KEY (owner_id)
+                REFERENCES user_table (id)
+                ON DELETE CASCADE);
+            """
+        )
+
+        # Store 1 autosave per user in this table
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS auto_save_table (
+            owner_id integer PRIMARY KEY NOT NULL UNIQUE,
+            timestamp TEXT NOT NULL,
+            world_dump TEXT NOT NULL,
             CONSTRAINT fk_user FOREIGN KEY (owner_id)
                 REFERENCES user_table (id)
                 ON DELETE CASCADE);
@@ -3017,14 +3031,54 @@ class LIGHTDatabase:
         return edges_lst
 
 #-------------------Database added for WorldBuilder-------------#
-    def get_worlds_owned_by(self, player_id):
+    def set_autosave(self, world_dump, player_id, timestamp):
+        # Existing autosave?
+        self.c.execute(
+            """
+            SELECT * FROM auto_save_table
+            WHERE owner_id = ?
+            """,
+            (player_id,),
+        )
+        if len(self.c.fetchall()) == 1:
+            # Existing then update
+            self.c.execute(
+                """
+                UPDATE auto_save_table
+                SET timestamp = ?, world_dump = ?
+                WHERE owner_id = ?;
+                """,
+                (timestamp, world_dump, player_id,),
+            )
+        else:
+            # Otherwise, just insert
+            self.c.execute(
+                """
+                INSERT or IGNORE INTO auto_save_table(owner_id, timestamp, world_dump)
+                VALUES (?, ?, ?)
+                """,
+                (player_id, timestamp, world_dump,),
+            )
+
+    def get_autosave(self, player_id):
+        # Get existing autosave
+        self.c.execute(
+            """
+            SELECT * FROM auto_save_table
+            WHERE owner_id = ?
+            """,
+            (player_id,),
+        )
+        return self.c.fetchone()
+
+    def get_active_worlds_owned_by(self, player_id):
         """
-        Return a list of all worlds owned by the player
+        Return a list of all worlds owned by the player which are active
         """
         self.c.execute(
             """
             SELECT * FROM world_table
-            WHERE owner_id = ?
+            WHERE owner_id = ? and in_use = 1;
             """,
             (player_id,),
         )
@@ -3056,7 +3110,24 @@ class LIGHTDatabase:
             (world_id, player_id,),
         )
         return self.c.fetchall()
-    
+
+    def set_world_inactive(self, world_id, player_id):
+        """
+            Makes a world in the world table inactive if owned by player_id
+        """
+        assert self.is_world_owned_by(world_id, player_id), "Cannot change a world you do not own"
+        self.c.execute(
+            """
+            UPDATE world_table
+            SET in_use = 0
+            WHERE id = ?;
+            """,
+            (world_id,),
+        )
+        if self.use_cache and world_id in self.cache['worlds']:
+            self.c.execute("""SELECT * FROM world_table WHERE id = ? """, (world_id,))
+            self.cache['worlds'][world_id] = self.c.fetchone()
+
     def get_world_resources(self, world_id, player_id):
         assert self.is_world_owned_by(world_id, player_id), "Cannot load a world you do not own"
 
@@ -3124,7 +3195,7 @@ class LIGHTDatabase:
         """
         Format world names and ids owned by the player for viewing
         """
-        player_worlds = self.get_worlds_owned_by(player_id=player_id)
+        player_worlds = self.get_active_worlds_owned_by(player_id=player_id)
         res = [dict(row) for row in player_worlds]
         return res
     
@@ -3132,7 +3203,7 @@ class LIGHTDatabase:
         """
         Return the number of worlds owned by a user
         """
-        return len(self.get_worlds_owned_by(player_id))
+        return len(self.get_active_worlds_owned_by(player_id))
     
     def get_edge(self, world_id, edge_id):
         self.c.execute(
@@ -3289,6 +3360,7 @@ class LIGHTDatabase:
             height,
             width,
             num_floors,
+            in_use=True,
             entry_attributes={},
         ):
         
@@ -3298,11 +3370,12 @@ class LIGHTDatabase:
             return (-1, False)
 
         id = self.create_id(DB_TYPE_WORLD, entry_attributes)
+        in_use = 1 if in_use else 0
         self.c.execute(
             """
             INSERT or IGNORE INTO world_table(id, name, owner_id,
-            height, width, num_floors)
-            VALUES (?, ?, ?, ?, ?, ?)
+            height, width, num_floors, in_use)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 id,
@@ -3311,6 +3384,7 @@ class LIGHTDatabase:
                 height,
                 width,
                 num_floors,
+                in_use,
             ),
         )
         inserted = bool(self.c.rowcount)
@@ -3319,9 +3393,9 @@ class LIGHTDatabase:
             self.c.execute(
                 """
                 SELECT id from world_table WHERE name = ? AND owner_id = ? \
-                AND height = ? AND width = ? AND num_floors = ?
+                AND height = ? AND width = ? AND num_floors = ? AND in_use = ?
                 """,
-                (name, owner_id, height, width, num_floors),
+                (name, owner_id, height, width, num_floors, in_use),
             )
             result = self.c.fetchall()
             assert len(result) == 1

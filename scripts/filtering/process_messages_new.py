@@ -1,11 +1,32 @@
 import os
 import json
+import math
 from datetime import datetime, timedelta
 
-TARGET_FILE = os.path.expanduser("/checkpoint/light/data/wild_chats/light_chats_06-24-20_to_06-28-20.json")
+ROOT_PATH = "/checkpoint/light/data/wild_chats/"
+#ROOT_PATH = os.path.expanduser("~/Desktop/Hobbot_chats/")
 
-with open(TARGET_FILE, 'r') as chat_file:
-    chats = json.load(chat_file)
+TARGET_FILES = [
+    # Wave 1
+    os.path.join(ROOT_PATH, "light_chats_00-00-00_to_05-26-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_05-27-20_to_06-23-20.json"),
+    # Wave 2
+    os.path.join(ROOT_PATH, "light_chats_06-24-20_to_06-28-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_06-29-20_to_06-30-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_07-01-20_to_07-05-20.json"),
+    # Wave 3
+    os.path.join(ROOT_PATH, "light_chats_07-06-20_to_07-08-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_07-09-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_07-10-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_07-11-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_07-12-20.json"),
+    os.path.join(ROOT_PATH, "light_chats_07-13-20_to_07-16-20.json"),
+]
+
+chats = []
+for TARGET_FILE in TARGET_FILES:
+    with open(TARGET_FILE, 'r') as chat_file:
+        chats += json.load(chat_file)
 
 if isinstance(chats, dict):
     headers = chats['header']
@@ -21,17 +42,20 @@ def remove_cand_path(in_path):
     fcp_split = in_path.split('fixed_candidates_path')
     pre_fixed_cands = fcp_split[0]
     post_fixed_cands = fcp_split[1].split('/')[-1]
-    return pre_fixed_cands + "fixed_candidates_path=" + post_fixed_cands
+    check = pre_fixed_cands + "fixed_candidates_path=" + post_fixed_cands
+    return check.replace('==', '=').replace("encode_candidate_vecs=True,", "")
 
 for c in chats:
-    try:
-        c['dialogue'] = json.loads(c['dialogue'].replace('\\\\"', '\\"'))
-        c['human_persona'] = json.loads(c['human_persona'].replace('\\\\"', '\\"'))
-        c['bot_persona'] = json.loads(c['bot_persona'].replace('\\\\"', '\\"'))
-        c['model_name'] = remove_cand_path(c['model_name'].replace('\\\\"', '\\"'))
-    except:
-        print(c['dialogue'], type(c['dialogue']))
-        raise
+    c['model_name'] = remove_cand_path(c['model_name'])
+    for key in ['dialogue', 'human_persona', 'bot_persona']:
+        try:
+            c[key] = json.loads(c[key].replace('\\\\"', '\\"'))
+        except:
+            try:
+                c[key] = json.loads(c[key])
+            except:
+                print(key, c[key], type(c[key]))
+                raise
 
 chats = [c for c in chats if c['dialogue'] is not None and len(c['dialogue']) > 1]
 
@@ -147,9 +171,28 @@ def quest_hit_goal(quest):
     actions = [a for a in quest['dialogue'] if a['type'] == 'action']
     return len([a for a in actions if a['text'] == quest['human_persona']['goal']]) > 0
 
+def get_continue_rate_stats_for_chats(in_chats):
+    continues = len([c for c in in_chats if c['choice'] is not None and c['choice']['text'] != 'EXIT'])
+    total = len(in_chats)
+    exits = total - continues
+    estimate_p = continues / total
+    Z = 1.9599
+    error = Z / (2 * math.sqrt(total))
+    return estimate_p, error
+
+def estimate_model_continue_rates(chats_by_model):
+    model_keys_sorted = sorted(list(chats_by_model.keys()))
+    print(f"Calculating continue rate and error at 95% confidence")
+    for model_key in model_keys_sorted:
+        model_chats = chats_by_model[model_key]
+        prob, error = get_continue_rate_stats_for_chats(model_chats)
+        print(f"Model: {model_key}")
+        print(f"Continue rate: {prob:0.3f} +/- {error:0.3f}, count: {len(model_chats)}")
+
+
 quest_chats = get_quests(chats)
 perfect_quests = [q for q in quest_chats if quest_hit_goal(q)]
-doable_quessts = [q for q in quest_chats if quest_successful(q)]
+doable_quests = [q for q in quest_chats if quest_successful(q)]
 
 import code
 code.interact(local=locals())
