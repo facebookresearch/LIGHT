@@ -115,19 +115,17 @@ class GameInstance:
         g = self.g
         # try to make some new players
         for provider in self.providers:
-            self.players += provider.get_new_players(self.game_id, self.g.purgatory)
+            new_players = provider.get_new_players(self.game_id, self.g.purgatory)
+            for player in new_players:
+                player.init_soul()
+            self.players += new_players
 
         # Clear disconnected players
         left_players = [p for p in self.players if not p.is_alive()]
         for player in left_players:
             if player.player_soul is not None:
-                g.clear_soul(player.player_soul.target_node)
+                g.purgatory.clear_soul(player.player_soul.target_node)
             self.players.remove(player)
-
-        # Check existing players
-        for player in self.players:
-            player.act()
- 
 
         # run npcs
         g.update_world()

@@ -205,9 +205,8 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         if self.player is None:
             return
         if cmd == 'act':
-            self.actions.append(msg['data'])
-            # self.player.g.parse_exec(self.player.get_agent_id(), msg['data'])
-            # self.player.observe()
+            self.player.act(msg['data'])
+        # THESE COMMANDS ARE DEPRECATED
         elif cmd == 'descs':
             self.safe_write_message(
                 json.dumps({'command': 'descs', 'data': self.g._node_to_desc})
@@ -362,29 +361,28 @@ class TornadoPlayerProvider(soul_pp.PlayerProvider):
                 json.dumps({'command': 'actions', 'data': [dat]})
             )            
     
-    def act(self):
+    def act(self, action_data):
         if self.player_soul is not None and self.player_soul.is_reaped:
             self.player_soul = None
         if self.player_soul is None:
-            # Should this be event sent to frontend?
-            print("Your soul searches for a character to inhabit")
-            self.purgatory.get_soul_for_player(self)
-            if self.player_soul is None:
-                # Should this be event sent to frontend?
-                print("No soul could be found for you :(")
-            else:
-                self.player_soul.handle_act("look")
-            return
-        
-        if len(self.socket.actions) > 0:
-            action = self.socket.actions.pop()
-        else:
-            return
-        text = action
-        player_agent = self.player_soul.handle_act(text)
+            self.init_soul()
+        player_agent = self.player_soul.handle_act(action_data)
 
+    def init_soul(self):
+        self.purgatory.get_soul_for_player(self)
+        if self.player_soul is None:
+            dat = {"text": "Could not find a soul for you, sorry"}
+            self.socket.safe_write_message(
+                json.dumps({'command': 'actions', 'data': [dat]})
+            )            
+        else:
+            self.player_soul.handle_act("look")
+        
     def is_alive(self):
         return self.socket.alive
+    
+    def on_reap_soul(self, soul):
+        self.socket.alive = False
 
 class TornadoWebappPlayer(Player):
     """

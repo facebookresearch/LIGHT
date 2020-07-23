@@ -28,7 +28,7 @@ export function useWSDataSource(url) {
           const isRespawn = false; /* action.text.startsWith(
             "Your lost soul attempts to join the living..."
           );*/
-          const isPersonaDescription = action.caller === "SpawnEvent";
+          const isPersonaDescription = action.caller === "SoulSpawnEvent";
           // How to fix persona, now that we do not get spawn events?
           const isLocationDescription = action.caller === "LookEvent";
           action.room = JSON.parse(action.room)
@@ -36,11 +36,17 @@ export function useWSDataSource(url) {
           setAgents(
               action.present_agent_ids
           );
-          setPersona({
-            name: action.actor.name,
-            description: action.actor.persona,
-            id: action.actor.node_id
-          });
+          if (isPersonaDescription){
+            setPersona({
+              name: action.actor.name,
+              description: action.actor.persona,
+              id: action.actor.node_id
+            });           
+            if (isRespawn) {	
+              buffer.push(action);	
+            }	
+            return;	
+          } 
           if (isLocationDescription) {
             setLocation({
               name: action.room.name,

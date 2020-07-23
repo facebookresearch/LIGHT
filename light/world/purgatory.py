@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from light.graph.world.world import World
     from light.graph.events.base import GraphEvent
     from light.world.souls.soul import Soul
+from light.graph.events.graph_events import SoulSpawnEvent
 
 # Useful types
 SoulArgProvider = Callable[[], List[Any]]
@@ -110,5 +111,6 @@ class Purgatory:
                 self.node_id_to_soul[target_agent.node_id] = soul
                 self.player_soul_id_to_soul[self.players] = soul
                 self.players += 1
+                SoulSpawnEvent(target_agent).execute(self.world)
                 return soul
         return None
