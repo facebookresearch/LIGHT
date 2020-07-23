@@ -327,19 +327,8 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
 export async function launchWorld(state){
   // TODO: See above
   const world_id = await postWorld(state);
-
-  const formBody = [];
-  const encodedKey = encodeURIComponent("world_id");
-  const encodedValue = encodeURIComponent(world_id);
-  formBody.push(encodedKey + "=" + encodedValue);
-
-  const res = await fetch(`${CONFIG.host}:${CONFIG.port}/game/new/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: formBody.join("&"),
-  });
+  const world_map = {'world_id': world_id}
+  const res = await post('game/new/', world_map)
   const data = await res.json();
   const url = `${CONFIG.host}:${CONFIG.port}/?id=${data}`;
   window.open(url);
@@ -363,7 +352,6 @@ export async function postWorld(state) {
   if (!("id" in dat.dimensions)){
     dat.dimensions["id"] = null;
   }
-  // Add name and id field (blank rn)
   const map = state.filteredMap();
 
   // create all edge relationships and tile metadata needed
@@ -441,7 +429,7 @@ export async function postWorld(state) {
   }
   // send it to the saving format!
   dat.map.edges = edges;
-  const res = await post("world/", dat);
+  const res = await post("builder/world/", dat);
   const resData = await res.json();
   state.dimensions.id = resData;
   AppToaster.show({

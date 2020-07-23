@@ -55,7 +55,7 @@ function CreatePage({ location }) {
 function CreateForm({ type, initialInputs }) {
   const history = useHistory();
   const submitEntity = async payload => {
-    await post(`entities/${type}`, payload).then(() => {
+    await post(`builder/entities/${type}`, payload).then(() => {
       history.push("/");
     });
     AppToaster.show({
