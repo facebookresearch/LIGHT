@@ -21,7 +21,6 @@ export function useWSDataSource(url) {
   const handleMessage = React.useCallback(
     msg => {
       const cmd = JSON.parse(msg.data);
-      console.log(cmd);
       if (cmd.command === "actions") {
         const buffer = [];
 
