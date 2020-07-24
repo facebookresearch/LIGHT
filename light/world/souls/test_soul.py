@@ -33,12 +33,14 @@ class TestSoul(Soul):
         """
         event.execute(self.world)
 
-    def observe_event(self, event: "GraphEvent"):
+    async def observe_event(self, event: "GraphEvent"):
         """
         TestSouls do very little beyond saying what they observed, and smiling
         for good measure.
         """
+        print(f'Observing {event} as a test soul {self}')
         self.observations.append(event)
+        print(f"Current observations: {self.observations}")
 
     def reap(self):
         """
