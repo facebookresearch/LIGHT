@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 import threading
 import time
 from typing import TYPE_CHECKING, List
-
+import asyncio
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
     from light.graph.world.world import World
@@ -35,7 +35,7 @@ class Soul(ABC):
         self._observe_threads = {}
         self.is_reaped = False
 
-    def launch_observe_event_thread(self, event):
+    def launch_observe_event_thread(self, event, asynch=False):
         """
         Souls will observe events in a background thread to ensure that 
         they can choose to act how they wish in response.
@@ -43,18 +43,25 @@ class Soul(ABC):
 
         thread_id = f"Node-{self.target_node.node_id}-obs-{time.time():.10f}"
 
+
         def _launch_thread_and_cleanup(event):
             self.observe_event(event)
             del self._observe_threads[thread_id]
 
-        observe_thread = threading.Thread(
-            target=_launch_thread_and_cleanup,
-            args=(event,),
-            name=f"Node-{self.target_node.node_id}-observe-{time.time():.4f}",
-        )
-        # Keep track of thread for 
-        self._observe_threads[thread_id] = (observe_thread)
-        observe_thread.start()
+        if asynch:
+            loop = asyncio.get_running_loop()
+            self._observe_threads[thread_id] = (thread_id)
+            loop.call_soon_threadsafe(_launch_thread_and_cleanup, event)
+        else:
+            ### TODO:  Make compatible with tornado
+            observe_thread = threading.Thread(
+                target=_launch_thread_and_cleanup,
+                args=(event,),
+                name=f"Node-{self.target_node.node_id}-observe-{time.time():.4f}",
+            )
+            # Keep track of thread for 
+            self._observe_threads[thread_id] = (observe_thread)
+            observe_thread.start()
 
     @abstractmethod
     def observe_event(self, event: "GraphEvent"):

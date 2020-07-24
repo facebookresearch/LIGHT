@@ -8,11 +8,10 @@
 
 from deploy.web.server.game_instance import (
     Player,
-    PlayerProvider,
     GameInstance,
 )
 from light.data_model.light_database import LIGHTDatabase
-import light.world.player_provider as soul_pp
+from light.world.player_provider import PlayerProvider
 
 import argparse
 import inspect
@@ -32,6 +31,7 @@ import tornado.ioloop     # noqa E402: gotta install ioloop first
 import tornado.web        # noqa E402: gotta install ioloop first
 import tornado.websocket  # noqa E402: gotta install ioloop first
 import tornado.escape     # noqa E402: gotta install ioloop first
+from light.graph.events.graph_events import SoulSpawnEvent
 
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
@@ -180,13 +180,17 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
     def open(self, game_id):
         user_json = self.get_secure_cookie("user")
         if user_json:
-            if self not in list(self.subs.values()):
-                self.subs[self.sid] = self
             logging.info(
                 'Opened new socket from ip: {}'.format(self.request.remote_ip))
             logging.info(
                 'For game: {}'.format(game_id))
-            self.new_subs[game_id].append(self.sid)
+            graph_purgatory = self.app.graphs[game_id].g.purgatory
+            if self.alive:
+                new_player = TornadoPlayerProvider(
+                    self, graph_purgatory,
+                )
+                new_player.init_soul()
+                self.app.graphs[game_id].players.append(new_player)
         else:
             self.close()
             self.redirect(u"/login")
@@ -205,30 +209,9 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         if self.player is None:
             return
         if cmd == 'act':
-            self.actions.append(msg['data'])
-            # self.player.g.parse_exec(self.player.get_agent_id(), msg['data'])
-            # self.player.observe()
-        elif cmd == 'descs':
-            self.safe_write_message(
-                json.dumps({'command': 'descs', 'data': self.g._node_to_desc})
-            )
-        elif cmd == 'contains':
-            queries = msg['data']
-            self.safe_write_message(
-                json.dumps({
-                    'command': 'contains',
-                    'data': {q : list(self.g.node_contains) for q in queries}
-                })
-            )
-        elif cmd == 'attributes':
-            queries = msg['data']
-            self.safe_write_message(
-                json.dumps({
-                    'command': 'contains',
-                    # TODO expose a way in graph to get all props for a node
-                    'data': {q : list(self.g._node_to_props) for q in queries}
-                })
-            )
+            self.player.act(msg['data'])
+        else:
+            print("THESE COMMANDS HAVE BEEN DEPRICATED")
 
     def on_close(self):
         self.alive = False
@@ -331,7 +314,7 @@ class LogoutHandler(BaseHandler):
         self.clear_cookie("user")
         self.redirect(u"/login")
 
-class TornadoPlayerProvider(soul_pp.PlayerProvider):
+class TornadoPlayerProvider(PlayerProvider):
     """
         Player Provider for the web app
     """
@@ -351,7 +334,6 @@ class TornadoPlayerProvider(soul_pp.PlayerProvider):
         Send observation forward to the player in whatever format the player
         expects it to be.
         """
-        print("In here!!)")
         # This will need to pass through the socket?
         view = event.view_as(soul.target_node)
         if not self.socket.alive_sent:
@@ -359,102 +341,44 @@ class TornadoPlayerProvider(soul_pp.PlayerProvider):
         dat = event.to_frontend_form(self.player_soul.target_node)
         filtered_obs = dat if dat['text'] is not None and len(dat['text'].strip()) else None
         if filtered_obs is not None:
-            print("Got an action to send")
             self.socket.safe_write_message(
                 json.dumps({'command': 'actions', 'data': [dat]})
             )            
     
-    def act(self):
+    def act(self, action_data):
         if self.player_soul is not None and self.player_soul.is_reaped:
             self.player_soul = None
         if self.player_soul is None:
-            # Should this be event sent to frontend?
-            print("Your soul searches for a character to inhabit")
-            self.purgatory.get_soul_for_player(self)
-            if self.player_soul is None:
-                # Should this be event sent to frontend?
-                print("No soul could be found for you :(")
-            else:
-                self.player_soul.handle_act("look")
+            self.init_soul()
             return
-        
-        if len(self.socket.actions) > 0:
-            action = self.socket.actions.pop()
-        else:
-            return
-        text = action
-        player_agent = self.player_soul.handle_act(text)
+        player_agent = self.player_soul.handle_act(action_data)
 
+    def init_soul(self):
+        self.purgatory.get_soul_for_player(self)
+        if self.player_soul is None:
+            dat = {"text": "Could not find a soul for you, sorry"}
+            self.socket.safe_write_message(
+                json.dumps({'command': 'actions', 'data': [dat]})
+            )            
+        else:
+            soul_id = self.player_soul.player_id
+            SoulSpawnEvent(soul_id, self.player_soul.target_node).execute(self.purgatory.world)
+            self.player_soul.handle_act("look")
+        
+    def is_alive(self):
+        return self.socket.alive
+    
     def on_reap_soul(self, soul):
         self.socket.alive = False
 
-    def is_alive(self):
-        return self.socket.alive
-
-class TornadoWebappPlayer(Player):
-    """
-    A player in an instance of the light game. Maintains any required
-    connections and IO such that the game doesn't need to worry about
-    that stuff
-    """
-
-    def __init__(self, graph, player_id, socket):
-        self.socket = socket
-        socket.set_player(self)
-        socket.send_alive()
-        super().__init__(graph, player_id)
-        graph.add_message_callback(player_id, self.observe)
-
-    def act(self):
-        """
-        Get an action to take on the graph if one exists
-        """
-        if len(self.socket.actions) > 0:
-            action = self.socket.actions.pop()
-            print('returning action', action)
-            return action
-        return ''
-
-    def observe(self, graph=None, action=None):
-        """
-        Get all of the discrete actions that have occurred, send them
-        to the frontend with as much context as possible
-        """
-        if not self.socket.alive_sent:
-            return  # the socket isn't alive yet, let's wait
-        if graph is None:
-            graph = self.g
-        actions = graph.get_action_history(self.get_agent_id())
-        extra_text = graph.get_text(self.get_agent_id())
-        # TODO update extract_action to be more standard
-        # across multiple actions?
-        obs_list = [graph.extract_action(self.get_agent_id(), a) for a in actions]
-        filtered_obs = [obs for obs in obs_list if obs['text'] is not None and len(obs['text'].strip())]
-        if extra_text != '':
-            # obs_list.append({'caller': 'text', 'text': extra_text})
-            pass  # extra text is gotten through regular actions as well
-        if len(filtered_obs) > 0:
-            self.socket.safe_write_message(
-                json.dumps({'command': 'actions', 'data': filtered_obs})
-            )
-
-    def init_observe(self):
-        # TODO send own character name?
-        self.g.parse_exec(self.get_agent_id(), 'look')
-        self.observe()
-
-    def is_alive(self):
-        return self.socket.alive
-
-# This will change to the factory
-class TornadoWebappPlayerProvider(PlayerProvider):
+class TornadoPlayerFactory():
     """
     A player provider is an API for adding new players into the game. It
     will be given opportunities to check for new players and should return
     an array of new players during these calls
     """
     def __init__(self, graphs, hostname=DEFAULT_HOSTNAME, port=DEFAULT_PORT, listening=False):
-        super().__init__(graphs)
+        self.graphs = graphs
         self.app = None
         def _run_server():
             nonlocal listening
@@ -463,6 +387,7 @@ class TornadoWebappPlayerProvider(PlayerProvider):
             nonlocal port
             self.my_loop = ioloop.IOLoop()
             self.app = Application()
+            self.app.graphs = self.graphs
             if listening:
                 self.app.listen(port, max_buffer_size=1024 ** 3)
                 print("\nYou can connect to the game at http://%s:%s/" % (hostname, port))
@@ -477,27 +402,6 @@ class TornadoWebappPlayerProvider(PlayerProvider):
         _run_server()
         while self.app is None:
             asyncio.sleep(0.3)
-
-    def get_new_players(self, graph_id, graph_purgatory):
-        """
-        Should check the potential source of players for new players. If
-        a player exists, this should instantiate a relevant Player object
-        for each potential new player and return them.
-        """
-        new_connections = []
-        my_new_subs = self.app.new_subs[graph_id]
-        while len(my_new_subs) > 0:
-            new_connections.append(my_new_subs.pop())
-        players = []
-
-        for conn_name in new_connections:
-            conn = self.app.subs[conn_name]
-            if conn.alive:
-                new_player = TornadoPlayerProvider(
-                    conn, graph_purgatory,
-                )
-                players.append(new_player)
-        return players
 
 
 def main():
@@ -522,11 +426,11 @@ def main():
     numpy.random.seed(6)
 
     if FLAGS.no_game_instance:
-        provider = TornadoWebappPlayerProvider(None, FLAGS.hostname, FLAGS.port, listening=True)
+        provider = TornadoPlayerFactory(None, FLAGS.hostname, FLAGS.port, listening=True)
     else:
         game = GameInstance()
         graph = game.g
-        provider = TornadoWebappPlayerProvider(graph, FLAGS.hostname, FLAGS.port, listening=True)
+        provider = TornadoPlayerFactory(graph, FLAGS.hostname, FLAGS.port, listening=True)
         game.register_provider(provider)
         game.run_graph()
 

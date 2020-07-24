@@ -99,6 +99,7 @@ class GameInstance:
             self.g = world
         else:
             self.g = g
+        self.g.web = True
         purgatory = self.g.purgatory
         purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
         for empty_agent in self.g.oo_graph.agents.values():
@@ -110,28 +111,16 @@ class GameInstance:
 
     def register_provider(self, provider):
         self.providers.append(provider)
-        provider.graphs[self.game_id] = self.g
 
     def run_graph_step(self):
         g = self.g
-        # try to make some new players
-        old = len(self.players)
-        for provider in self.providers:
-            self.players += provider.get_new_players(self.game_id, self.g.purgatory)
-            if len(self.players) != old:
-                self.last_connection = time.time()
-
+        
         # Clear disconnected players
         left_players = [p for p in self.players if not p.is_alive()]
         for player in left_players:
             if player.player_soul is not None:
                 self.g.purgatory.clear_soul(player.player_soul.target_node)
             self.players.remove(player)
-
-        # Check existing players
-        for player in self.players:
-            player.act()
- 
 
         # run npcs
         g.update_world()

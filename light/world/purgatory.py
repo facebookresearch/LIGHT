@@ -77,7 +77,7 @@ class Purgatory:
         soul = soul_class(agent, self.world, *arg_provider())
         self.node_id_to_soul[agent.node_id] = soul
 
-    def send_event_to_soul(self, event: "GraphEvent", agent: "GraphAgent"):
+    def send_event_to_soul(self, event: "GraphEvent", agent: "GraphAgent", asynch: bool = False):
         """
         Pass an GraphEvent along to the soul inhabiting the given GraphAgent 
         if such a soul exists, passing otherwise. Launch in a thread so that
@@ -85,7 +85,7 @@ class Purgatory:
         """
         soul: "Soul" = self.node_id_to_soul.get(agent.node_id)
         if soul is not None:
-            soul.observe_event(event)
+            soul.launch_observe_event_thread(event, asynch=asynch)
 
     def clear_soul(self, agent: "GraphAgent") -> None:
         """Clear the soul that is associated with the given agent"""

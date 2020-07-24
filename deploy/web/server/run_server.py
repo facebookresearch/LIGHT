@@ -13,7 +13,7 @@ from deploy.web.server.telnet_server import (
     TelnetPlayerProvider,
 )
 from deploy.web.server.tornado_server import (
-    TornadoWebappPlayerProvider, LandingApplication,
+    TornadoPlayerFactory, LandingApplication,
 )
 from deploy.web.server.builder_server import (
     BuildApplication, get_handlers,
