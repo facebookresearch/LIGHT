@@ -63,7 +63,8 @@ class RegistryApplication(tornado.web.Application):
         self.router = RuleRouter([Rule(PathMatches(f'/game.*/socket'), self.tornado_provider.app)])
         if default:
             game_instance = self.run_new_game("", self.ldb)
-        tornado.ioloop.PeriodicCallback(self.cleanup_games, 60000).start()
+        TEN_MINUTES = 600000
+        tornado.ioloop.PeriodicCallback(self.cleanup_games, TEN_MINUTES).start()
 
         return [
             (r"/game/new/(.*)", GameCreatorHandler, {'app': self}),
