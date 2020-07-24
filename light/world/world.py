@@ -43,7 +43,7 @@ class World(object):
     Still very much defining the behavior clearly until deprecations are finished
     '''
 
-    def __init__(self, opt, graph_builder, debug=False):
+    def __init__(self, opt, graph_builder, debug=False, web=False):
         # TODO re-investigate callbacks during action refactor
         self.callbacks = {}
         self.variables = {}
@@ -54,6 +54,7 @@ class World(object):
         self.oo_graph = OOGraph(opt)
         self.view = WorldViewer(self)
         self.purgatory = Purgatory(self)
+        self.web = web
 
         # TODO better specific player management?
         self._player_cnt = 0
@@ -378,7 +379,6 @@ class World(object):
             agent = agent_id
             if not isinstance(agent_id, GraphAgent):
                 agent = self.oo_graph.get_node(agent_id)
-            print(agent)
             viewed_message = action.view_as(agent)
             self.send_msg(agent_id, viewed_message, action)
         else:
@@ -426,7 +426,7 @@ class World(object):
             print(txt, agent_id)
         if action is None:
             action = SystemMessageEvent(agent, [], text_content=txt)
-        self.purgatory.send_event_to_soul(action, agent)
+        self.purgatory.send_event_to_soul(action, agent, asynch=self.web)
         # TODO remove below when server game has Soul-based PlayerProvider
         agent.observe_action(txt, action)
         pos_playerid = self.agentid_to_playerid(agent_id)

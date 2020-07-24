@@ -99,9 +99,10 @@ class GameInstance:
             self.g = world
         else:
             self.g = g
+        self.g.web=True
         purgatory = self.g.purgatory
         purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
-        for empty_agent in world.oo_graph.agents.values():
+        for empty_agent in self.g.oo_graph.agents.values():
             purgatory.fill_soul(empty_agent)
         self.game_id = game_id
         self.players = []
