@@ -113,13 +113,7 @@ class GameInstance:
 
     def run_graph_step(self):
         g = self.g
-        # try to make some new players
-        for provider in self.providers:
-            new_players = provider.get_new_players(self.game_id, self.g.purgatory)
-            for player in new_players:
-                player.init_soul()
-            self.players += new_players
-
+        
         # Clear disconnected players
         left_players = [p for p in self.players if not p.is_alive()]
         for player in left_players:

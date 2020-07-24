@@ -371,61 +371,6 @@ class TornadoPlayerProvider(PlayerProvider):
     def on_reap_soul(self, soul):
         self.socket.alive = False
 
-class TornadoWebappPlayer(Player):
-    """
-    A player in an instance of the light game. Maintains any required
-    connections and IO such that the game doesn't need to worry about
-    that stuff
-    """
-
-    def __init__(self, graph, player_id, socket):
-        self.socket = socket
-        socket.set_player(self)
-        socket.send_alive()
-        super().__init__(graph, player_id)
-        graph.add_message_callback(player_id, self.observe)
-
-    def act(self):
-        """
-        Get an action to take on the graph if one exists
-        """
-        if len(self.socket.actions) > 0:
-            action = self.socket.actions.pop()
-            print('returning action', action)
-            return action
-        return ''
-
-    def observe(self, graph=None, action=None):
-        """
-        Get all of the discrete actions that have occurred, send them
-        to the frontend with as much context as possible
-        """
-        if not self.socket.alive_sent:
-            return  # the socket isn't alive yet, let's wait
-        if graph is None:
-            graph = self.g
-        actions = graph.get_action_history(self.get_agent_id())
-        extra_text = graph.get_text(self.get_agent_id())
-        # TODO update extract_action to be more standard
-        # across multiple actions?
-        obs_list = [graph.extract_action(self.get_agent_id(), a) for a in actions]
-        filtered_obs = [obs for obs in obs_list if obs['text'] is not None and len(obs['text'].strip())]
-        if extra_text != '':
-            # obs_list.append({'caller': 'text', 'text': extra_text})
-            pass  # extra text is gotten through regular actions as well
-        if len(filtered_obs) > 0:
-            self.socket.safe_write_message(
-                json.dumps({'command': 'actions', 'data': filtered_obs})
-            )
-
-    def init_observe(self):
-        # TODO send own character name?
-        self.g.parse_exec(self.get_agent_id(), 'look')
-        self.observe()
-
-    def is_alive(self):
-        return self.socket.alive
-
 class TornadoPlayerFactory():
     """
     A player provider is an API for adding new players into the game. It
@@ -457,27 +402,6 @@ class TornadoPlayerFactory():
         _run_server()
         while self.app is None:
             asyncio.sleep(0.3)
-
-    def get_new_players(self, graph_id, graph_purgatory):
-        """
-        Should check the potential source of players for new players. If
-        a player exists, this should instantiate a relevant Player object
-        for each potential new player and return them.
-        """
-        new_connections = []
-        my_new_subs = self.app.new_subs[graph_id]
-        while len(my_new_subs) > 0:
-            new_connections.append(my_new_subs.pop())
-        players = []
-
-        for conn_name in new_connections:
-            conn = self.app.subs[conn_name]
-            if conn.alive:
-                new_player = TornadoPlayerProvider(
-                    conn, graph_purgatory,
-                )
-                players.append(new_player)
-        return players
 
 
 def main():
