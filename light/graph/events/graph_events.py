@@ -710,6 +710,16 @@ class DeathEvent(TriggeredEvent):
 class SoulSpawnEvent(TriggeredEvent):
     """Handles processing the view for when a player is spawned, and passing their context"""
 
+    def __init__(self,
+            soul_id, 
+            actor: GraphAgent,
+            target_nodes: Optional[List[GraphNode]] = None,
+            text_content: Optional[str] = None,
+        ):
+        super().__init__(actor, target_nodes, text_content)
+        # Must store this for important metadata
+        self.soul_id = soul_id
+
     def execute(self, world: "World") -> List[GraphEvent]:
         # Add player id as an attribute
         """Construct intro text and broadcast to the player"""

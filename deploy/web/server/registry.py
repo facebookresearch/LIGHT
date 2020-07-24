@@ -25,7 +25,7 @@ from deploy.web.server.game_instance import (
     GameInstance,
 )
 from deploy.web.server.tornado_server import (
-    TornadoWebappPlayerProvider,
+    TornadoPlayerFactory,
 )
 from deploy.web.server.telnet_server import (
     TelnetPlayerProvider,
@@ -58,7 +58,7 @@ class RegistryApplication(tornado.web.Application):
         super(RegistryApplication, self).__init__(self.get_handlers(FLAGS, ldb, default), **tornado_settings)
 
     def get_handlers(self, FLAGS, ldb, default=True):
-        self.tornado_provider = TornadoWebappPlayerProvider({}, FLAGS.hostname, FLAGS.port)
+        self.tornado_provider = TornadoPlayerFactory({}, FLAGS.hostname, FLAGS.port)
         self.router = RuleRouter([Rule(PathMatches(f'/game.*/socket'), self.tornado_provider.app)])
         if default:
             game_instance = self.run_new_game("", self.ldb)

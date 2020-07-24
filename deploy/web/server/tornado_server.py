@@ -8,11 +8,10 @@
 
 from deploy.web.server.game_instance import (
     Player,
-    PlayerProvider,
     GameInstance,
 )
 from light.data_model.light_database import LIGHTDatabase
-import light.world.player_provider as soul_pp
+from light.world.player_provider import PlayerProvider
 
 import argparse
 import inspect
@@ -207,28 +206,8 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             return
         if cmd == 'act':
             self.player.act(msg['data'])
-        # THESE COMMANDS ARE DEPRECATED
-        elif cmd == 'descs':
-            self.safe_write_message(
-                json.dumps({'command': 'descs', 'data': self.g._node_to_desc})
-            )
-        elif cmd == 'contains':
-            queries = msg['data']
-            self.safe_write_message(
-                json.dumps({
-                    'command': 'contains',
-                    'data': {q : list(self.g.node_contains) for q in queries}
-                })
-            )
-        elif cmd == 'attributes':
-            queries = msg['data']
-            self.safe_write_message(
-                json.dumps({
-                    'command': 'contains',
-                    # TODO expose a way in graph to get all props for a node
-                    'data': {q : list(self.g._node_to_props) for q in queries}
-                })
-            )
+        else:
+            print("THESE COMMANDS HAVE BEEN DEPRICATED")
 
     def on_close(self):
         self.alive = False
@@ -331,7 +310,7 @@ class LogoutHandler(BaseHandler):
         self.clear_cookie("user")
         self.redirect(u"/login")
 
-class TornadoPlayerProvider(soul_pp.PlayerProvider):
+class TornadoPlayerProvider(PlayerProvider):
     """
         Player Provider for the web app
     """
@@ -378,7 +357,8 @@ class TornadoPlayerProvider(soul_pp.PlayerProvider):
                 json.dumps({'command': 'actions', 'data': [dat]})
             )            
         else:
-            SoulSpawnEvent(self.player_soul.target_node).execute(self.purgatory.world)
+            soul_id = self.player_soul.player_id
+            SoulSpawnEvent(soul_id, self.player_soul.target_node).execute(self.purgatory.world)
             self.player_soul.handle_act("look")
         
     def is_alive(self):
@@ -442,15 +422,14 @@ class TornadoWebappPlayer(Player):
     def is_alive(self):
         return self.socket.alive
 
-# This will change to the factory
-class TornadoWebappPlayerProvider(PlayerProvider):
+class TornadoPlayerFactory():
     """
     A player provider is an API for adding new players into the game. It
     will be given opportunities to check for new players and should return
     an array of new players during these calls
     """
     def __init__(self, graphs, hostname=DEFAULT_HOSTNAME, port=DEFAULT_PORT, listening=False):
-        super().__init__(graphs)
+        self.graphs = graphs
         self.app = None
         def _run_server():
             nonlocal listening
@@ -518,11 +497,11 @@ def main():
     numpy.random.seed(6)
 
     if FLAGS.no_game_instance:
-        provider = TornadoWebappPlayerProvider(None, FLAGS.hostname, FLAGS.port, listening=True)
+        provider = TornadoPlayerFactory(None, FLAGS.hostname, FLAGS.port, listening=True)
     else:
         game = GameInstance()
         graph = game.g
-        provider = TornadoWebappPlayerProvider(graph, FLAGS.hostname, FLAGS.port, listening=True)
+        provider = TornadoPlayerFactory(graph, FLAGS.hostname, FLAGS.port, listening=True)
         game.register_provider(provider)
         game.run_graph()
 
