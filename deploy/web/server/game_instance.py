@@ -110,7 +110,6 @@ class GameInstance:
 
     def register_provider(self, provider):
         self.providers.append(provider)
-        provider.graphs[self.game_id] = self.g
 
     def run_graph_step(self):
         g = self.g

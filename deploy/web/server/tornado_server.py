@@ -180,13 +180,17 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
     def open(self, game_id):
         user_json = self.get_secure_cookie("user")
         if user_json:
-            if self not in list(self.subs.values()):
-                self.subs[self.sid] = self
             logging.info(
                 'Opened new socket from ip: {}'.format(self.request.remote_ip))
             logging.info(
                 'For game: {}'.format(game_id))
-            self.new_subs[game_id].append(self.sid)
+            graph_purgatory = self.app.graphs[game_id].g.purgatory
+            if self.alive:
+                new_player = TornadoPlayerProvider(
+                    self, graph_purgatory,
+                )
+                new_player.init_soul()
+                self.app.graphs[game_id].players.append(new_player)
         else:
             self.close()
             self.redirect(u"/login")
@@ -438,6 +442,7 @@ class TornadoPlayerFactory():
             nonlocal port
             self.my_loop = ioloop.IOLoop()
             self.app = Application()
+            self.app.graphs = self.graphs
             if listening:
                 self.app.listen(port, max_buffer_size=1024 ** 3)
                 print("\nYou can connect to the game at http://%s:%s/" % (hostname, port))

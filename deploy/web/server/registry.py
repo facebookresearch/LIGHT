@@ -58,7 +58,7 @@ class RegistryApplication(tornado.web.Application):
         super(RegistryApplication, self).__init__(self.get_handlers(FLAGS, ldb, default), **tornado_settings)
 
     def get_handlers(self, FLAGS, ldb, default=True):
-        self.tornado_provider = TornadoPlayerFactory({}, FLAGS.hostname, FLAGS.port)
+        self.tornado_provider = TornadoPlayerFactory(self.game_instances, FLAGS.hostname, FLAGS.port)
         self.router = RuleRouter([Rule(PathMatches(f'/game.*/socket'), self.tornado_provider.app)])
         if default:
             game_instance = self.run_new_game("", self.ldb)
@@ -80,7 +80,6 @@ class RegistryApplication(tornado.web.Application):
             game = GameInstance(game_id, ldb)
             graph = game.g
 
-        self.tornado_provider.graphs[game_id] = graph
         self.game_instances[game_id] = game
         game.register_provider(self.tornado_provider)
         tornado.ioloop.PeriodicCallback(game.run_graph_step, 125).start()
