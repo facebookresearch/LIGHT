@@ -46,10 +46,11 @@ function WorldBuilder({ upload }) {
 
   useEffect(() => {
     const timer = setTimeout(function autosave() {
+      const TWO_MINUTES = 1200000;
       postAutosave(stateRef.current);
-      console.log("Autosaved!")
-      setTimeout(autosave, 30000);
-    }, 30000);
+      console.log("Autosaved!");
+      setTimeout(autosave, TWO_MINUTES);
+    }, TWO_MINUTES);
     return () => clearTimeout(timer);
   }, []);
 
@@ -70,7 +71,9 @@ function WorldBuilder({ upload }) {
           <InputGroup
             id="name-input"
             placeholder={
-              state.dimensions.name == null ? "Unnamed World" : state.dimensions.name
+              state.dimensions.name == null
+                ? "Unnamed World"
+                : state.dimensions.name
             }
           />
           <Button
