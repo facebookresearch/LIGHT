@@ -117,13 +117,27 @@ def get_path(filename):
         os.path.abspath(inspect.getfile(inspect.currentframe())))
     return os.path.join(cwd, filename)
 
+def read_secrets():
+    loc = here + "/../../../../secrets.txt"
+    secrets = {}
+    with open(loc, 'r') as secret_file:
+        for line in secret_file:
+            items = line.split(" ")
+            if (len(items) == 2):
+                secrets[items[0]] = items[1]
+    return secrets
+
+SECRETS = read_secrets()
+
 tornado_settings = {
     "autoescape": None,
-    "cookie_secret": "0123456789", #TODO: Placeholder, do not include in repo when deploy!!!
+    "cookie_secret": SECRETS['cookie_secret'],
     "compiled_template_cache": False,
     "debug": "/dbg/" in __file__,
     "login_url": "/login",
     "template_path": get_path('static'),
+    "facebook_api_key": SECRETS['facebook_api_key'],
+    "facebook_secret": SECRETS['facebook_secret'],
 }
 
 
@@ -290,7 +304,7 @@ class LandingApplication(tornado.web.Application):
             (r"/", MainHandler),
             (r"/?id=.*", MainHandler),
             (r"/login", LoginHandler, {'database': database, 'hostname' : hostname, 'password': password}),
-            (r"/fb/login", FacebookOAuth2LoginHandler, {'database': database}),
+            (r"/fb/login", FacebookOAuth2LoginHandler, {'database': database, 'app': self, 'hostname' : hostname}),
             (r"/logout", LogoutHandler),
             (r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})
         ]
@@ -304,24 +318,25 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
     '''
         See https://www.tornadoweb.org/en/stable/_modules/tornado/auth.html#FacebookGraphMixin
     '''
-    def initialize(self, database):
+    def initialize(self, database, app, hostname):
+        self.app = app
         self.db = database
+        self.hostname=hostname
 
     async def get(self):
+        redirect = self.hostname + self.get_argument("next", u"/")
         if self.get_argument("code", False):
             user = await self.get_authenticated_user(
-                redirect_uri='/auth/facebookgraph/',
-                client_id=self.settings["facebook_api_key"],
-                client_secret=self.settings["facebook_secret"],
+                redirect_uri=redirect, 
+                client_id=self.app.settings["facebook_api_key"],
+                client_secret=self.app.settings["facebook_secret"],
                 code=self.get_argument("code"))
             self.set_current_user(user.name)
         else:
-            await self.authorize_redirect(
-                redirect_uri='/auth/facebookgraph/',
-                client_id=self.settings["facebook_api_key"],
-                extra_params={"scope": "read_stream,offline_access"})
-
-        self.redirect(self.get_argument("next", u"/"))
+            self.authorize_redirect(
+                redirect_uri=redirect,
+                client_id=self.app.settings["facebook_api_key"],
+            )
 
 
     def set_current_user(self, user):
