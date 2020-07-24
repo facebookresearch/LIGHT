@@ -53,7 +53,7 @@ class RegistryApplication(tornado.web.Application):
     '''
     def __init__(self, FLAGS, ldb, default=True):
         self.game_instances = {}
-        self.callbacks = {}
+        self.step_callbacks = {}
         self.FLAGS = FLAGS
         self.ldb = ldb
         super(RegistryApplication, self).__init__(self.get_handlers(FLAGS, ldb, default), **tornado_settings)
@@ -75,7 +75,7 @@ class RegistryApplication(tornado.web.Application):
             Goes through the game instances, cleaning up any game that does 
             not have a connection in the past 10 minutes
         '''
-        TIMEOUT = 1
+        TIMEOUT = 10 # timeout to clear with no players, in minutes
         curr_time = time.time()
         iterate_over = [(g_id, len(g.players), g.last_connection) for g_id, g in self.game_instances.items()]
 
@@ -84,11 +84,10 @@ class RegistryApplication(tornado.web.Application):
                 continue
             no_players = num_players == 0
             diff = (curr_time - last_conn) / 60 # get minutes
-            print(game_id, "diff:", diff)
             if no_players and diff > TIMEOUT:
                 print("deleting:", game_id)
-                self.callbacks[game_id].stop()
-                del self.callbacks[game_id]
+                self.step_callbacks[game_id].stop()
+                del self.step_callbacks[game_id]
                 del self.game_instances[game_id]
 
     # TODO: Move this to utils
@@ -106,8 +105,8 @@ class RegistryApplication(tornado.web.Application):
 
         self.game_instances[game_id] = game
         game.register_provider(self.tornado_provider)
-        self.callbacks[game_id] = tornado.ioloop.PeriodicCallback(game.run_graph_step, 125)
-        self.callbacks[game_id].start()
+        self.step_callbacks[game_id] = tornado.ioloop.PeriodicCallback(game.run_graph_step, 125)
+        self.step_callbacks[game_id].start()
         return game
 
 # Default BaseHandler - should be extracted to some util?

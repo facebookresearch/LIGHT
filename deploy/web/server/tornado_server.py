@@ -369,7 +369,7 @@ class TornadoPlayerProvider(PlayerProvider):
         return self.socket.alive
     
     def on_reap_soul(self, soul):
-        self.socket.alive = False
+        pass
 
 class TornadoPlayerFactory():
     """

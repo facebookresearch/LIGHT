@@ -82,7 +82,6 @@ class PlayerProvider:
         """
         raise NotImplementedError
 
-# TODO:  Refactor when update player providers
 class GameInstance:
     """
     This class serves to create a wrapper around a specific graph and manage
@@ -121,6 +120,7 @@ class GameInstance:
             if player.player_soul is not None:
                 self.g.purgatory.clear_soul(player.player_soul.target_node)
             self.players.remove(player)
+            self.last_connection = time.time()
 
         # run npcs
         g.update_world()
