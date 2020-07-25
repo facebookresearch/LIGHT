@@ -161,7 +161,7 @@ class DBGraphBuilder(GraphBuilder):
 
     def get_random_obj(self):
         '''Get a random obj from the database.'''
-        obj_ids = self.get_usable_chars()
+        obj_ids = self.get_usable_objects()
         if not len(obj_ids):
             return None
         obj_id = random.choice(obj_ids)

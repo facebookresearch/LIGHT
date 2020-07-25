@@ -39,50 +39,50 @@ class TestDBGraphBuilder(unittest.TestCase):
         self.ldb = LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME))
         with self.ldb as test:
             rbase_id = test.create_base_room("room")[0]
-            self.roomID = test.create_room("room1", rbase_id, "dirty", "old", entry_attributes={'status': 'production'})[0]
-            self.roomID2 = test.create_room("room2", rbase_id, "dirty neighbor", "old", entry_attributes={'status': 'production'})[
+            self.roomID = test.create_room("room1", rbase_id, "dirty", "old")[0]
+            self.roomID2 = test.create_room("room2", rbase_id, "dirty neighbor", "old")[
                 0
             ]
             cbase_id = test.create_base_character("troll")[0]
             self.charID = test.create_character(
-                "troll under the bridge", cbase_id, "Male", "Tall", entry_attributes={'status': 'production'}
+                "troll under the bridge", cbase_id, "Male", "Tall"
             )[0]
             self.charID2 = test.create_character(
-                "troll2 under the bridge", cbase_id, "Female", "Short", entry_attributes={'status': 'production'}
+                "troll2 under the bridge", cbase_id, "Female", "Short"
             )[0]
-            test.create_node_content(self.roomID, self.charID, DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'})
-            test.create_node_content(self.roomID, self.charID2, DB_EDGE_EX_CONTAINED, 1, entry_attributes={'status': 'production'})
+            test.create_node_content(self.roomID, self.charID, DB_EDGE_IN_CONTAINED, 1)
+            test.create_node_content(self.roomID, self.charID2, DB_EDGE_EX_CONTAINED, 1)
             self.obase_id = test.create_base_object("room4")[0]
             self.objID = test.create_object(
-                'OBJ_1', self.obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big", entry_attributes={'status': 'production'}
+                'OBJ_1', self.obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big"
             )[0]
             self.objID2 = test.create_object(
-                'OBJ_2', self.obase_id, 0.2, 0.3, 0, 0, 0, 0, 0, "Small", entry_attributes={'status': 'production'}
+                'OBJ_2', self.obase_id, 0.2, 0.3, 0, 0, 0, 0, 0, "Small"
             )[0]
-            test.create_node_content(self.roomID, self.objID, DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'})
+            test.create_node_content(self.roomID, self.objID, DB_EDGE_IN_CONTAINED, 1)
             test.create_node_content(
-                self.charID, self.objID, DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'}
+                self.charID, self.objID, DB_EDGE_IN_CONTAINED, 1
             )  # carrying
-            test.create_node_content(self.roomID, self.objID2, DB_EDGE_EX_CONTAINED, 1, entry_attributes={'status': 'production'})
+            test.create_node_content(self.roomID, self.objID2, DB_EDGE_EX_CONTAINED, 1)
             test.create_node_content(
-                self.charID, self.objID2, DB_EDGE_WIELDED, 1, entry_attributes={'status': 'production'}
+                self.charID, self.objID2, DB_EDGE_WIELDED, 1
             )  # wielded
             test.create_node_content(
-                self.charID, self.objID2, DB_EDGE_WORN, 1, entry_attributes={'status': 'production'}
+                self.charID, self.objID2, DB_EDGE_WORN, 1
             )  # wearing
-            test.create_text_edge(self.roomID, "Spear", DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'})
-            test.create_text_edge(self.charID, "Spear", DB_EDGE_WIELDED, 1, entry_attributes={'status': 'production'})  # wielding
-            test.create_text_edge(self.roomID, "Knife", DB_EDGE_EX_CONTAINED, 1, entry_attributes={'status': 'production'})
-            test.create_text_edge(self.objID, "Knife", DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'})
-            test.create_text_edge(self.objID, "Cake", DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'})
+            test.create_text_edge(self.roomID, "Spear", DB_EDGE_IN_CONTAINED, 1)
+            test.create_text_edge(self.charID, "Spear", DB_EDGE_WIELDED, 1)  # wielding
+            test.create_text_edge(self.roomID, "Knife", DB_EDGE_EX_CONTAINED, 1)
+            test.create_text_edge(self.objID, "Knife", DB_EDGE_IN_CONTAINED, 1)
+            test.create_text_edge(self.objID, "Cake", DB_EDGE_IN_CONTAINED, 1)
             test.create_text_edge(
-                self.charID, "Knife", DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'}
+                self.charID, "Knife", DB_EDGE_IN_CONTAINED, 1
             )  # carrying
-            test.create_text_edge(self.charID, "Coat", DB_EDGE_WORN, 1, entry_attributes={'status': 'production'})  # wearing
+            test.create_text_edge(self.charID, "Coat", DB_EDGE_WORN, 1)  # wearing
             # object containment:
-            test.create_node_content(self.objID, self.objID2, DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'})
+            test.create_node_content(self.objID, self.objID2, DB_EDGE_IN_CONTAINED, 1)
             test.create_text_edge(
-                self.roomID, "Dirty Neighbor", DB_EDGE_NEIGHBOR, 1, entry_attributes={'status': 'production'}
+                self.roomID, "Dirty Neighbor", DB_EDGE_NEIGHBOR, 1
             )  # Neighbor
         self.graphBuilder = DBGraphBuilder(self.ldb)
 

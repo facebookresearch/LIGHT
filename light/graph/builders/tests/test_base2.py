@@ -10,8 +10,8 @@ import sqlite3
 import os
 import pickle
 
-from parlai_internal.projects.light.v1.graph_builders.base import DBGraphBuilder
-from parlai_internal.projects.light.v1.data_model.light_database import (
+from light.graph.builders.base import DBGraphBuilder
+from light.data_model.light_database import (
     LIGHTDatabase,
     DB_TYPE_ROOM,
     DB_TYPE_BASE_ROOM,
@@ -24,7 +24,7 @@ from parlai_internal.projects.light.v1.data_model.light_database import (
     DB_EDGE_WIELDED,
     DB_STATUS_PROD,
 )
-from parlai_internal.projects.light.v1.graph_builders.db_utils import assign_datasplit
+from light.graph.builders.db_utils import assign_datasplit
 
 
 class TestDBGraphBuilder(unittest.TestCase):
@@ -34,7 +34,8 @@ class TestDBGraphBuilder(unittest.TestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
         empty = LIGHTDatabase(os.path.join(self.data_dir, self.EMPTY_DB))
-        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+        self.ldb = LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME))
+        with self.ldb as test:
             # Create Base Rooms
             self.rbase_id = test.create_base_room("broom1")[0]
             self.rbase_id2 = test.create_base_room("broom2")[0]
@@ -68,7 +69,7 @@ class TestDBGraphBuilder(unittest.TestCase):
             )[0]
             self.charID3 = test.create_character(
                 "troll3 rejected",
-                cbase_id,
+                cbase_id2,
                 "Child",
                 "Short",
                 entry_attributes={'status': DB_STATUS_REJECTED},
@@ -118,9 +119,9 @@ class TestDBGraphBuilder(unittest.TestCase):
                 {'status': DB_STATUS_REJECTED},
             )
 
-        self.graphBuilder = DBGraphBuilder(os.path.join(self.data_dir, self.DB_NAME))
+        self.graphBuilder = DBGraphBuilder(self.ldb)
         self.graphBuilderEmpty = DBGraphBuilder(
-            os.path.join(self.data_dir, self.EMPTY_DB)
+            empty
         )
 
     def tearDown(self):
@@ -164,7 +165,7 @@ class TestDBGraphBuilder(unittest.TestCase):
     def test_get_text_edges(self):
         test_room = self.graphBuilder.get_room_from_id(self.roomID)
         self.assertNotIn("Cake", test_room.get_text_edges(DB_EDGE_EX_CONTAINED))
-        self.assertEqual(test_room.get_text_edges(), ["Knife", "Cake"])
+        self.assertEqual(test_room.get_text_edges(), ["Knife", "Cake", "Rejected"])
         self.assertEqual(test_room.get_text_edges(DB_EDGE_EX_CONTAINED), ["Knife"])
 
     def test_get_db_edges(self):
