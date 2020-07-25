@@ -10,8 +10,8 @@ import sqlite3
 import os
 import pickle
 
-from parlai_internal.projects.light.v1.graph_builders.base import DBGraphBuilder
-from parlai_internal.projects.light.v1.data_model.light_database import (
+from light.graph.builders.base import DBGraphBuilder
+from light.data_model.light_database import (
     LIGHTDatabase,
     DB_TYPE_ROOM,
     DB_TYPE_CHAR,
@@ -23,7 +23,7 @@ from parlai_internal.projects.light.v1.data_model.light_database import (
     DB_EDGE_WIELDED,
     DB_EDGE_NEIGHBOR,
 )
-from parlai_internal.projects.light.v1.graph_builders.base_elements import (
+from light.graph.builders.base_elements import (
     DBRoom,
     DBObject,
     DBCharacter,
@@ -36,54 +36,55 @@ class TestDBGraphBuilder(unittest.TestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.data_dir, self.DB_NAME)
-        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+        self.ldb = LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME))
+        with self.ldb as test:
             rbase_id = test.create_base_room("room")[0]
-            self.roomID = test.create_room("room1", rbase_id, "dirty", "old")[0]
-            self.roomID2 = test.create_room("room2", rbase_id, "dirty neighbor", "old")[
+            self.roomID = test.create_room("room1", rbase_id, "dirty", "old", entry_attributes={'status': 'production'})[0]
+            self.roomID2 = test.create_room("room2", rbase_id, "dirty neighbor", "old", entry_attributes={'status': 'production'})[
                 0
             ]
             cbase_id = test.create_base_character("troll")[0]
             self.charID = test.create_character(
-                "troll under the bridge", cbase_id, "Male", "Tall"
+                "troll under the bridge", cbase_id, "Male", "Tall", entry_attributes={'status': 'production'}
             )[0]
             self.charID2 = test.create_character(
-                "troll2 under the bridge", cbase_id, "Female", "Short"
+                "troll2 under the bridge", cbase_id, "Female", "Short", entry_attributes={'status': 'production'}
             )[0]
-            test.create_node_content(self.roomID, self.charID, DB_EDGE_IN_CONTAINED, 1)
-            test.create_node_content(self.roomID, self.charID2, DB_EDGE_EX_CONTAINED, 1)
+            test.create_node_content(self.roomID, self.charID, DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'})
+            test.create_node_content(self.roomID, self.charID2, DB_EDGE_EX_CONTAINED, 1, entry_attributes={'status': 'production'})
             self.obase_id = test.create_base_object("room4")[0]
             self.objID = test.create_object(
-                'OBJ_1', self.obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big"
+                'OBJ_1', self.obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big", entry_attributes={'status': 'production'}
             )[0]
             self.objID2 = test.create_object(
-                'OBJ_2', self.obase_id, 0.2, 0.3, 0, 0, 0, 0, 0, "Small"
+                'OBJ_2', self.obase_id, 0.2, 0.3, 0, 0, 0, 0, 0, "Small", entry_attributes={'status': 'production'}
             )[0]
-            test.create_node_content(self.roomID, self.objID, DB_EDGE_IN_CONTAINED, 1)
+            test.create_node_content(self.roomID, self.objID, DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'})
             test.create_node_content(
-                self.charID, self.objID, DB_EDGE_IN_CONTAINED, 1
+                self.charID, self.objID, DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'}
             )  # carrying
-            test.create_node_content(self.roomID, self.objID2, DB_EDGE_EX_CONTAINED, 1)
+            test.create_node_content(self.roomID, self.objID2, DB_EDGE_EX_CONTAINED, 1, entry_attributes={'status': 'production'})
             test.create_node_content(
-                self.charID, self.objID2, DB_EDGE_WIELDED, 1
+                self.charID, self.objID2, DB_EDGE_WIELDED, 1, entry_attributes={'status': 'production'}
             )  # wielded
             test.create_node_content(
-                self.charID, self.objID2, DB_EDGE_WORN, 1
+                self.charID, self.objID2, DB_EDGE_WORN, 1, entry_attributes={'status': 'production'}
             )  # wearing
-            test.create_text_edge(self.roomID, "Spear", DB_EDGE_IN_CONTAINED, 1)
-            test.create_text_edge(self.charID, "Spear", DB_EDGE_WIELDED, 1)  # wielding
-            test.create_text_edge(self.roomID, "Knife", DB_EDGE_EX_CONTAINED, 1)
-            test.create_text_edge(self.objID, "Knife", DB_EDGE_IN_CONTAINED, 1)
-            test.create_text_edge(self.objID, "Cake", DB_EDGE_IN_CONTAINED, 1)
+            test.create_text_edge(self.roomID, "Spear", DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'})
+            test.create_text_edge(self.charID, "Spear", DB_EDGE_WIELDED, 1, entry_attributes={'status': 'production'})  # wielding
+            test.create_text_edge(self.roomID, "Knife", DB_EDGE_EX_CONTAINED, 1, entry_attributes={'status': 'production'})
+            test.create_text_edge(self.objID, "Knife", DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'})
+            test.create_text_edge(self.objID, "Cake", DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'})
             test.create_text_edge(
-                self.charID, "Knife", DB_EDGE_IN_CONTAINED, 1
+                self.charID, "Knife", DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'}
             )  # carrying
-            test.create_text_edge(self.charID, "Coat", DB_EDGE_WORN, 1)  # wearing
+            test.create_text_edge(self.charID, "Coat", DB_EDGE_WORN, 1, entry_attributes={'status': 'production'})  # wearing
             # object containment:
-            test.create_node_content(self.objID, self.objID2, DB_EDGE_IN_CONTAINED, 1)
+            test.create_node_content(self.objID, self.objID2, DB_EDGE_IN_CONTAINED, 1, entry_attributes={'status': 'production'})
             test.create_text_edge(
-                self.roomID, "Dirty Neighbor", DB_EDGE_NEIGHBOR, 1
+                self.roomID, "Dirty Neighbor", DB_EDGE_NEIGHBOR, 1, entry_attributes={'status': 'production'}
             )  # Neighbor
-        self.graphBuilder = DBGraphBuilder(os.path.join(self.data_dir, self.DB_NAME))
+        self.graphBuilder = DBGraphBuilder(self.ldb)
 
     def tearDown(self):
         shutil.rmtree(self.data_dir)
@@ -171,16 +172,14 @@ class TestDBGraphBuilder(unittest.TestCase):
         self.assertIn('Dirty Neighbor', room1.neighbors)
 
     def test_cached_db_objects(self):
-        roomDB = DBRoom(self.db_path, self.roomID)
-        charDB = DBCharacter(self.db_path, self.charID)
-        objDB = DBObject(self.db_path, self.objID)
-        with LIGHTDatabase(
-            os.path.join(self.data_dir, self.DB_NAME), read_only=True
-        ) as ldb:
-            cache = ldb.cache
-        roomCache = DBRoom(self.db_path, self.roomID, cache)
-        charCache = DBCharacter(self.db_path, self.charID, cache)
-        objCache = DBObject(self.db_path, self.objID, cache)
+        roomDB = DBRoom(self.ldb, self.roomID)
+        charDB = DBCharacter(self.ldb, self.charID)
+        objDB = DBObject(self.ldb, self.objID)
+        with self.ldb as test:
+            cache = test.cache
+        roomCache = DBRoom(self.ldb, self.roomID, cache)
+        charCache = DBCharacter(self.ldb, self.charID, cache)
+        objCache = DBObject(self.ldb, self.objID, cache)
         roomCache.get_text_edges(DB_EDGE_NEIGHBOR)
         self.assertEqual(roomDB.setting, roomCache.setting)
         self.assertEqual(roomDB.category, roomCache.category)
