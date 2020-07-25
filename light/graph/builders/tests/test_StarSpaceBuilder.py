@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import unittest, os, sys
-from parlai_internal.projects.light.v1.graph_builders.starspace_all import (
+from light.graph.builders.starspace_all import (
     StarspaceBuilder,
 )
 from parlai.core.params import ParlaiParser
@@ -37,36 +37,20 @@ class TestStarspaceBuilder(unittest.TestCase):
     def setUp(self):
         random.seed(20)
         parser = ParlaiParser()
+        here = os.path.abspath(os.path.dirname(__file__))
+        self.dbpath = "/checkpoint/light/data/database3.db"
         parlai_datapath = os.path.join(parser.parlai_home, 'data')
-        dpath = os.path.join(
-            parlai_datapath, 'light', 'environment', 'db', 'database3.db'
-        )
-        ldb = LIGHTDatabase(dpath)
+        ldb = LIGHTDatabase(dbpath)
         model_dir = os.path.join(parlai_datapath, 'models', 'light', '')
         self.testBuilder = StarspaceBuilder(
             ldb, 
-            build_args=[
-                "--light-db-file",
-                dpath,
-                "--light-model-root",
-                model_dir,
-                '--filler-probability',
-                '0.5',
-                '--use-npc-models',
-                'True',
-                '--map-size',
-                '10',
-            ]
         )
         self.testGraph, _ = self.testBuilder.get_graph()
 
     def test_arg_parser(self):
         parser = ParlaiParser()
         parlai_datapath = os.path.join(parser.parlai_home, 'data')
-        dpath = os.path.join(
-            parlai_datapath, 'light', 'environment', 'db', 'database3.db'
-        )
-        self.assertEqual(self.testBuilder.opt.get('light_db_file'), dpath)
+        self.assertEqual(self.testBuilder.opt.get('light_db_file'), self.dbpath)
         self.assertEqual(self.testBuilder.opt.get('filler_probability'), 0.5)
         self.assertEqual(self.testBuilder.opt.get('map_size'), 10)
         self.assertEqual(self.testBuilder.opt.get('suggestion_type'), 'model')

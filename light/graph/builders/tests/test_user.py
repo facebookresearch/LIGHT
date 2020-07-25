@@ -53,7 +53,7 @@ class TestWorldGraphBuilder(unittest.TestCase):
                 "troll under the bridge2", cbase_id, "Female", "Short"
             )[0]
             self.charID3 = test.create_character(
-                "troll under the bridge3", cbase_id, "Male", "Tall", entry_attributes={'status': 'production'}
+                "troll under the bridge3", cbase_id, "Male", "Tall",
             )[0]
             self.obase_id = test.create_base_object("room4")[0]
             self.objID = test.create_object(
