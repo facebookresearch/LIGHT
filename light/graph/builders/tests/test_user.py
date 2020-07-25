@@ -9,7 +9,7 @@ import shutil, tempfile
 import sqlite3
 import os
 import pickle
-
+import random
 
 from light.graph.builders.base import DBGraphBuilder
 from light.graph.builders.user_world_builder import UserWorldBuilder
@@ -34,10 +34,12 @@ class TestWorldGraphBuilder(unittest.TestCase):
 
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
+        # Random seed for right random char
+        random.seed(2)
         self.db_path = os.path.join(self.data_dir, self.DB_NAME)
         opt = {"light_db_file": self.db_path, "filler_probability": .05, "use_npc_models": True}        
-
-        with LIGHTDatabase(self.db_path) as test:
+        self.ldb = LIGHTDatabase(self.db_path)
+        with self.ldb as test:
             self.player_id = test.create_user("test")[0]
             self.world_id = test.create_world("swamp", self.player_id, 3, 3, 1)[0]
             rbase_id = test.create_base_room("room")[0]
@@ -79,7 +81,7 @@ class TestWorldGraphBuilder(unittest.TestCase):
             edge4 = test.create_graph_edge(self.world_id, rnode_id2, onode_id2, "contains")[0]
 
  
-        self.graphBuilder = UserWorldBuilder(self.world_id, self.player_id, True, opt)
+        self.graphBuilder = UserWorldBuilder(self.ldb, self.world_id, self.player_id, True, opt)
         self.testGraph, self.testWorld = self.graphBuilder.get_graph()
 
 
