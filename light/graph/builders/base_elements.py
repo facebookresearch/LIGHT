@@ -85,9 +85,9 @@ class DBElement(object):
                     filtered = [
                         row['parent_id']
                         for row in filtered
-                        if row['type'] == type
+                        if row['edge_type'] == type
                         and row['child_id'] == self.id
-                        and self.cache['id'][row['parent_id']]['edge_type']
+                        and self.cache['id'][row['parent_id']]['type']
                         == parent_type
                     ]
             return filtered
