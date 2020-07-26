@@ -170,7 +170,7 @@ class GraphEventTests(unittest.TestCase):
             type_ = type(event)
             for k in event.__dict__:
                 if not k.startswith('_{type_}__'):
-                    self.assertEqual(event.__dict__[k], event_back.__dict__[k], "Json loaded back should match")
+                    self.assertEqual(event.__dict__[k], event_back.__dict__[k], 'Json should match loaded back')
             self.graph = before_oo_graph
             self.world.oo_graph = self.graph
             self.graph.delete_nodes()
