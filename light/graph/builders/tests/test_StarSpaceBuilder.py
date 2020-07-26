@@ -40,7 +40,7 @@ class TestStarspaceBuilder(unittest.TestCase):
         here = os.path.abspath(os.path.dirname(__file__))
         self.dbpath = "/checkpoint/light/data/database3.db"
         parlai_datapath = os.path.join(parser.parlai_home, 'data')
-        ldb = LIGHTDatabase(dbpath)
+        ldb = LIGHTDatabase(self.dbpath)
         model_dir = os.path.join(parlai_datapath, 'models', 'light', '')
         self.testBuilder = StarspaceBuilder(
             ldb, 

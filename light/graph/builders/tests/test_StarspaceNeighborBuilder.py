@@ -4,11 +4,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import unittest, os
-from parlai_internal.projects.light.v1.graph_builders.starspace_neighbor import (
+from light.graph.builders.starspace_neighbor import (
     StarspaceNeighborBuilder,
 )
 from parlai.core.params import ParlaiParser
-from parlai_internal.projects.light.v1.graph_model.structured_graph import OOGraph
+from light.graph.structured_graph import OOGraph
 
 
 class TestStarspaceNeighborBuilder(unittest.TestCase):
