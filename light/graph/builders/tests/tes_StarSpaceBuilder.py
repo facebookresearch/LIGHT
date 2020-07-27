@@ -51,11 +51,11 @@ class TestStarspaceBuilder(unittest.TestCase):
         parser = ParlaiParser()
         parlai_datapath = os.path.join(parser.parlai_home, 'data')
         self.assertEqual(self.testBuilder.opt.get('light_db_file'), self.dbpath)
-        self.assertEqual(self.testBuilder.opt.get('filler_probability'), 0.5)
-        self.assertEqual(self.testBuilder.opt.get('map_size'), 10)
+        self.assertEqual(self.testBuilder.opt.get('filler_probability'), 0.3)
+        self.assertEqual(self.testBuilder.opt.get('map_size'), 6)
         self.assertEqual(self.testBuilder.opt.get('suggestion_type'), 'model')
-        self.assertEqual(self.testBuilder.map_size, 10)
-        self.assertEqual(self.testBuilder.filler_probability, 0.5)
+        self.assertEqual(self.testBuilder.map_size, 6)
+        self.assertEqual(self.testBuilder.filler_probability, 0.3)
 
     def test_room_similiarity(self):
         loc1 = (3, 3, 0)
