@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from light.world.souls.soul import Soul
-
+import asyncio
 from typing import TYPE_CHECKING, List, Any
 
 if TYPE_CHECKING:
