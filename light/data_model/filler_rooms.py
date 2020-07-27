@@ -3,7 +3,7 @@ import random
 
 
 class FillerRoom(object):
-    """An Object Oriented Abstraction of a filler room. 
+    """An Object Oriented Abstraction of a filler room.
     Implemented in similar manner as DBRoom"""
 
     def __init__(self, category=None, name=None, description=None, background=None):
@@ -27,7 +27,7 @@ class FillerRoom(object):
 
 
 def to_legacy_dict(filler_room):
-    """Takes in a filler_room object and return a dict 
+    """Takes in a filler_room object and return a dict
     representation that reflects the legacy implementation of the filler room"""
     filler_room_dict = {}
     filler_room_dict["category"] = filler_room.category

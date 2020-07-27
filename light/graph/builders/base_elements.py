@@ -21,8 +21,8 @@ from light.data_model.light_database import (
 
 
 class DBElement(object):
-    """Abstract class that defines a method for building database elements 
-    that are used to populate graphs. All database elements will adhere to 
+    """Abstract class that defines a method for building database elements
+    that are used to populate graphs. All database elements will adhere to
     a standard interface"""
 
     def __init__(self, ldb, id, cache=None):
@@ -41,7 +41,7 @@ class DBElement(object):
             # self.__data_split = cache['id'][self.id]['split']
 
     def get_text_edges(self, type=None):
-        """Return a list of text edges (child_text) given the id 
+        """Return a list of text edges (child_text) given the id
         of  parent node and type of connection"""
         if self.use_cache:
             text_edges_list = []
@@ -118,7 +118,7 @@ class DBRoom(DBElement):
     """Instantiate a LightDB representation of a room"""
 
     def __init__(self, ldb, room_id, cache=None):
-        """Takes in the database path and a valid room_id 
+        """Takes in the database path and a valid room_id
         and initialize base fields of a room"""
         super(DBRoom, self).__init__(ldb, room_id, cache)
         if self.use_cache:
@@ -332,7 +332,7 @@ class DBCharacter(DBElement):
     """Instantiate a LightDB representation of a Character"""
 
     def __init__(self, ldb, char_id, cache=None):
-        """Takes in the database path and a valid room_id 
+        """Takes in the database path and a valid room_id
         and initialize base fields of a character"""
         super(DBCharacter, self).__init__(ldb, char_id, cache)
         if self.use_cache:

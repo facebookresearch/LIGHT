@@ -21,7 +21,7 @@ class TestSoul(Soul):
 
     def __init__(self, target_node: "GraphAgent", world: "World"):
         """
-        TestSouls are created for test cases to take actions 
+        TestSouls are created for test cases to take actions
         and report observations
         """
         super().__init__(target_node, world)

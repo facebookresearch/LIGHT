@@ -63,7 +63,7 @@ from typing import Tuple, List, Type, Optional
 class GraphEventTests(unittest.TestCase):
     """
     This class contains the basic structure of a test for a GraphEvent.
-    
+
     It requires specifying initial inputs and expected outputs.
     """
 
@@ -100,7 +100,7 @@ class GraphEventTests(unittest.TestCase):
 
     def test_run_successful_cases(self) -> None:
         """
-        Try any tests that should result in successful outcomes. 
+        Try any tests that should result in successful outcomes.
         """
         GraphEventClass = self.EVENT_CLASS
         for (
@@ -194,7 +194,7 @@ class GraphEventTests(unittest.TestCase):
 
     def test_run_error_cases(self) -> None:
         """
-        Try any tests that should not result in unsuccessful outcomes. 
+        Try any tests that should not result in unsuccessful outcomes.
         """
         GraphEventClass = self.EVENT_CLASS
         for (actor_id, input_string) in self.ERROR_CASES:

@@ -245,7 +245,7 @@ class SingleSuggestionGraphBuilder(object):
         num_results=5,
         banned_items=[],
     ):
-        """abstract method for getting desired relationship given a non-graph 
+        """abstract method for getting desired relationship given a non-graph
         element and a type of relationship """
         raise NotImplementedError
 

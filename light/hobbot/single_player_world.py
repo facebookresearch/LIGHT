@@ -930,8 +930,8 @@ class LIGHTSinglePlayerWorld(World):
 
     def get_possible_events(self, return_count=6):
         """
-        Return the possible events, up to the 
-        amount requested. Always include the 
+        Return the possible events, up to the
+        amount requested. Always include the
         goal if it's possible.
         """
         possible_events = self.world.get_possible_events(

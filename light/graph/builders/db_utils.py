@@ -15,7 +15,7 @@ import random
 
 
 def id_is_usable(ldb, id_to_check):
-    """ Check response of get_id to see if id_entry 
+    """ Check response of get_id to see if id_entry
         exists andis not of 'rejected' status"""
     id_entry = ldb.get_id(id=id_to_check)
     # TODO:  Decide if this is correct semantics
@@ -25,7 +25,7 @@ def id_is_usable(ldb, id_to_check):
 
 
 def assign_datasplit(db_path, db_type, weights=[0.8, 0.1, 0.1]):
-    """Assign datasplit given a speicific database type based 
+    """Assign datasplit given a speicific database type based
     on given weights. Only assign datasplit to unassigned entries"""
     with LIGHTDatabase(db_path, True) as ldb:
         id_entries = ldb.get_id(type=db_type)

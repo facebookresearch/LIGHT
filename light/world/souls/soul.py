@@ -27,8 +27,8 @@ class Soul(ABC):
 
     def __init__(self, target_node: "GraphAgent", world: "World"):
         """
-        All Souls should be attached to a target_node, which is the agent that 
-        this soul will be inhabiting. It also takes the world in which that 
+        All Souls should be attached to a target_node, which is the agent that
+        this soul will be inhabiting. It also takes the world in which that
         agent exists.
         """
         self.target_node = target_node
@@ -38,7 +38,7 @@ class Soul(ABC):
 
     def launch_observe_event_thread(self, event, asynch=False):
         """
-        Souls will observe events in a background thread to ensure that 
+        Souls will observe events in a background thread to ensure that
         they can choose to act how they wish in response.
         """
 
@@ -67,12 +67,12 @@ class Soul(ABC):
     def observe_event(self, event: "GraphEvent"):
         """
         All souls should define some kind of behavior for when an event occurs,
-        ensuring that they are able to handle it somehow. 
-        
-        The soul may choose to ask the world for possible actions it may take, and 
-        then take one in response, or perhaps bide its time, launching a thread 
-        to do something later. Maybe it just takes a note for itself. 
-        
+        ensuring that they are able to handle it somehow.
+
+        The soul may choose to ask the world for possible actions it may take, and
+        then take one in response, or perhaps bide its time, launching a thread
+        to do something later. Maybe it just takes a note for itself.
+
         This method will always be called in a separate thread, such that no Souls
         have the ability to prevent other Souls from observing.
         """

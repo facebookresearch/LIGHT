@@ -229,7 +229,7 @@ class TestInteractionLoggers(unittest.TestCase):
 
     def test_observer_event_goes_context_room_logger(self):
         """
-        Test calling observe_event under normal circumstances adds the 
+        Test calling observe_event under normal circumstances adds the
         necessary metadata to the event buffer
         """
         initial = self.setUp_single_room_graph()
@@ -268,7 +268,7 @@ class TestInteractionLoggers(unittest.TestCase):
 
     def test_observe_event_room_logger(self):
         """
-        Test that calling observe_event with players present adds to the 
+        Test that calling observe_event with players present adds to the
         event, not the context buffer
         """
 
@@ -288,7 +288,7 @@ class TestInteractionLoggers(unittest.TestCase):
 
     def test_observe_event_agent_logger(self):
         """
-        Test calling observe_event under normal circumstances adds the 
+        Test calling observe_event under normal circumstances adds the
         necessary metadata to the event buffer
         """
         initial = self.setUp_single_room_graph()
@@ -356,7 +356,7 @@ class TestInteractionLoggers(unittest.TestCase):
 
     def test_simple_room_logger_saves_and_loads_init_graph(self):
         """
-        Test that the room logger properly saves and reloads the initial 
+        Test that the room logger properly saves and reloads the initial
         graph
         """
         # Set up the graph
@@ -377,7 +377,7 @@ class TestInteractionLoggers(unittest.TestCase):
 
     def test_simple_room_logger_saves_and_loads_event(self):
         """
-        Test that the room logger properly saves and reloads an event 
+        Test that the room logger properly saves and reloads an event
         """
         # Set up the graph
         initial = self.setUp_single_room_graph()
@@ -407,7 +407,7 @@ class TestInteractionLoggers(unittest.TestCase):
 
     def test_simple_agent_logger_saves_and_loads_init_graph(self):
         """
-        Test that the agent logger properly saves and reloads the initial 
+        Test that the agent logger properly saves and reloads the initial
         graph
         """
         # Set up the graph
@@ -428,7 +428,7 @@ class TestInteractionLoggers(unittest.TestCase):
 
     def test_simple_agent_logger_saves_and_loads_event(self):
         """
-        Test that the agent logger properly saves and reloads an event 
+        Test that the agent logger properly saves and reloads an event
         """
         # Set up the graph
         initial = self.setUp_single_room_graph()

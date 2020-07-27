@@ -514,8 +514,8 @@ class LIGHTDatabase:
     def table_not_exists(self, table_name):
         self.c.execute(
             """
-            SELECT name 
-            FROM sqlite_master 
+            SELECT name
+            FROM sqlite_master
             WHERE type="table" AND name=?;
             """,
             (table_name,),
@@ -1374,7 +1374,7 @@ class LIGHTDatabase:
             """
             CREATE TABLE IF NOT EXISTS world_table (
             id integer PRIMARY KEY NOT NULL,
-            name text NOT NULL, 
+            name text NOT NULL,
             owner_id integer NOT NULL,
             height integer NOT NULL,
             width integer NOT NULL,
@@ -1437,7 +1437,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE,
             CONSTRAINT fk_eid FOREIGN KEY (entity_id)
                 REFERENCES id_table (id)
-                ON DELETE CASCADE);       
+                ON DELETE CASCADE);
             """
         )
 
@@ -1466,7 +1466,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE,
             CONSTRAINT fk_edge FOREIGN KEY (edge_type)
                 REFERENCES enum_table_graph_edge_type (type)
-                ON DELETE CASCADE);            
+                ON DELETE CASCADE);
             """
         )
 
@@ -3082,7 +3082,7 @@ class LIGHTDatabase:
         self.c.execute(
             """
             SELECT * FROM world_table
-            WHERE id = ? AND owner_id = ? 
+            WHERE id = ? AND owner_id = ?
             """,
             (world_id, player_id),
         )

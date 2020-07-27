@@ -136,7 +136,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
 
     @gen_test
     def test_list_worlds(self, mocked_auth):
-        """Test that the list worlds endpoint can be hit succesfully and returns world 
+        """Test that the list worlds endpoint can be hit succesfully and returns world
             dimesnions in expected format"""
         with LIGHTDatabase(self.db_path) as db:
             player_id = db.create_user("test")[0]
@@ -225,7 +225,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
 
     @gen_test
     def test_world_saving_integration(self, mocked_auth):
-        """Test a flow where a user creates a world, views the saved worlds, loads the world, then 
+        """Test a flow where a user creates a world, views the saved worlds, loads the world, then
             deletes it"""
 
         with LIGHTDatabase(self.db_path) as db:

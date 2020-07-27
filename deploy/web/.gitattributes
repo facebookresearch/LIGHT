@@ -1,1 +1,1 @@
-build/** -diff -merge linguist-generated=true 
+build/** -diff -merge linguist-generated=true

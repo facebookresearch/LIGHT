@@ -12,7 +12,7 @@ import yappi
 import deploy.web.server.run_server as server
 
 """
-This script launches the server from default config with a profiler wrapped around it to 
+This script launches the server from default config with a profiler wrapped around it to
 monitor resource usage
 """
 

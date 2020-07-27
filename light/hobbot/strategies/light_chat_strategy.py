@@ -57,7 +57,7 @@ class LIGHTChatStrategy(ChatServiceStrategy):
     @abstractmethod
     def get_player_leaderboard_stats(self, player_id: str) -> Dict[str, Any]:
         """Return interesting leaderboard stats for the given player id.
-        
+
         Return dict expects the following fields:
             total_players: total number of players
             rank: rank of the given player
