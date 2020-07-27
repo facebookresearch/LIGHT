@@ -4,7 +4,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import time
+from collections import deque
 from light.world.souls.model_soul import ModelSoul
+from light.graph.events.graph_events import TellEvent, SayEvent
 
 from typing import TYPE_CHECKING, List
 
@@ -13,6 +16,9 @@ if TYPE_CHECKING:
     from light.graph.world.world import World
     from light.graph.events.base import GraphEvent
 
+
+MIN_TIME_BETWEEN_TURNS = 5
+ALLOW_INTERBOT_CHAT = False  # Only allow bots to answer humans
 
 class PartnerHeuristicModelSoul(ModelSoul):
     """
@@ -30,11 +36,13 @@ class PartnerHeuristicModelSoul(ModelSoul):
         model and interactions with it.
         """
         self._pending_observations = []
-        self._node_to_dialog_history = {}
-        self._no_npc_models = False
-        self._last_action_time = {}
-        self._timer = Timer()
-        self._last_interaction_partner = {}
+        self._last_action_time = time.time() + random.random() * 2
+        self._dialogue_history = {}
+
+        # TODO set self.npc_model and self.npc_act_model
+        self._utterance_to_speaker_name = {}
+
+        # TODO remove?
         self._last_dialogs = {}
         self._last_actions = {}
 
@@ -43,6 +51,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
         On an observe event, the agent 
         """
         if event.actor == self.target_node:
+            self._last_action_time = time.time() + random.random() * 2
             return
         
         self._pending_observations.append(event)
@@ -51,176 +60,118 @@ class PartnerHeuristicModelSoul(ModelSoul):
         # so don't wait for the timeout.
         await self._take_timestep()
 
-    # check if utterance <txt> was said by <agent> recently, or not (so we don't repeat).
-    def dialogue_utterance_not_too_recent(self, txt, agent):
-        # heuristic: only say something that hasn't been mentioned in the last 50 turns.
-        if agent not in self._last_dialogs:
-            self._last_dialogs[agent] = [[], set()]
-        hist = self._last_dialogs[agent]
-        if len(hist[0]) > 50:
-            # pop oldest utterance from the list
-            hist[1].remove(hist[0][0])
-            hist[0].pop(0)
-        if txt not in hist[1]:
-            hist[1].add(txt)
-            hist[0].append(txt)
-            return True
-        return False
+    def _ensure_agent_has_utterance_history(self, agent):
+        """Create the _utterance_history attribute for a GraphAgent if it doesn't exist"""
+        if not hasattr(agent, '_utterance_history'):
+            agent._utterance_history = deque(maxlen=50)
 
-    # check if utterance <txt> was said by <agent> recently, or not (so we don't repeat).
-    def action_not_too_recent(self, txt, agent):
-        # heuristic: only say something that hasn't been mentioned in the last 50 turns.
-        if agent not in self._last_actions:
-            self._last_actions[agent] = [[], set()]
-        hist = self._last_actions[agent]
-        if len(hist[0]) > 4:
-            # pop oldest utterance from the list
-            hist[1].remove(hist[0][0])
-            hist[0].pop(0)
-        if txt not in hist[1]:
-            hist[1].add(txt)
-            hist[0].append(txt)
-            return True
-        return False
+    def _ensure_agent_has_action_history(self, agent):
+        """Create the _action_history attribute for a GraphAgent if it doesn't exist"""
+        if not hasattr(agent, '_action_history'):
+            agent._action_history = deque(maxlen=4)
 
-    def dialogue_clear_partner(self, agent_id):
+    def dialogue_clear_partner(self):
+        """
+        Clear this Soul's set dialogue partner, possibly clearing
+        the partner if they still point to it.
+        """
         # how a dialogue agent deals with moving location
-        # TODO: bake this into the callback later.
-        # reset dialogue history when move:
-        self._node_to_dialog_history[agent_id] = {}
+        self._dialogue_history = {}
+
         # remove interaction partner links:
-        partner_id = self._last_interaction_partner.get(agent_id, 'none')
-        self._last_interaction_partner[agent_id] = 'none'
-        if (
-            partner_id != 'none'
-            and self._last_interaction_partner.get(partner_id, 'none') == agent_id
-        ):
-            self._last_interaction_partner[partner_id] = 'none'
-            self._node_to_dialog_history[partner_id] = {}
+        agent = self.target_node
+        partner_id = self.get_last_interaction_partner(agent)
+        agent._last_interaction_partner_id = None
+        if partner_id is None:
+            continue
 
-    # check if utterance <txt> was said by <agent> recently, or not (so we don't repeat).
-    def dialogue_utterance_not_too_recent(self, txt, agent):
-        # heuristic: only say something that hasn't been mentioned in the last 50 turns.
-        if agent not in self._last_dialogs:
-            self._last_dialogs[agent] = [[], set()]
-        hist = self._last_dialogs[agent]
-        if len(hist[0]) > 50:
-            # pop oldest utterance from the list
-            hist[1].remove(hist[0][0])
-            hist[0].pop(0)
-        if txt not in hist[1]:
-            hist[1].add(txt)
-            hist[0].append(txt)
-            return True
-        return False
+        # If the partner node is still focused here, clear
+        partner = self.world.oo_graph.get_node(partner_id)
+        if self.get_last_interaction_partner(partner) == agent.node_id:
+            partner._last_interaction_partner_id = None
 
-    # check if utterance <txt> was said by <agent> recently, or not (so we don't repeat).
-    def action_not_too_recent(self, txt, agent):
-        # heuristic: only say something that hasn't been mentioned in the last 50 turns.
-        if agent not in self._last_actions:
-            self._last_actions[agent] = [[], set()]
-        hist = self._last_actions[agent]
-        if len(hist[0]) > 4:
-            # pop oldest utterance from the list
-            hist[1].remove(hist[0][0])
-            hist[0].pop(0)
-        if txt not in hist[1]:
-            hist[1].add(txt)
-            hist[0].append(txt)
-            return True
-        return False
-
-    def npc_pick_non_repeating_action(self, act, agent1):
-        # for t in act['text_candidates']:
+    def npc_pick_non_repeating_action(self, act):
+        """
+        Only return an actual action if it's either hit or hasn't been done in
+        the last 4 turns
+        """
+        self._ensure_agent_has_dialogue_history(self.target_node)
         t = act['text_candidates'][0]
-        if self.action_not_too_recent(t, agent1) or t.startswith('hit'):
+        if t not in self.target_node._action_history or t.startswith('hit'):
+            self.target_node._action_history.append(t)
             return t
-        # couldn't find a valid response, so just return the top one.
+        # If the top action was too recent, let's do nothing.
         return 'wait'
 
-    def dialogue_pick_non_repeating_response(self, act, agent1, agent2):
-        agent1_name = agent1[: agent1.find('_')]
-        agent2_name = agent2[: agent2.find('_')]
+    def dialogue_pick_non_repeating_response(self, act, partner):
+        """
+        Produce an act that is not in the dialogue history for this given
+        agent.
+        """
+        self._ensure_agent_has_utterance_history(self.target_node)
+        self._ensure_agent_has_utterance_history(partner)
         for t in act['text_candidates']:
             if (
-                self.dialogue_utterance_not_too_recent(t, agent1)
-                and self.dialogue_utterance_not_too_recent(t, agent2)
-                and self._utt_to_name.get(t, 'anon') != agent2_name
+                t not in self.target_node._utterance_history
+                and t not in partner._utterance_history
+                and self._utterance_to_speaker_name.get(t, 'anon') != partner.name
             ):
+                # This is the utterance selected to be said, append it to the
+                # history for each partner
+                self.target_node._utterance_history.append(t)
+                partner._utterance_history.append(t)
                 return t
-            # + " [" + self._utt_to_name.get(t, 'anon') + "-vs-" + agent2_name + "|" + agent1_name  + "]"
+
         # couldn't find a valid response, so just return the top one.
         return act['text']
 
-    def npc_build_context(self, agent_id, partner_name=None):
-        # Build context for model.
-        room_id = self.g.node_contained_in(agent_id)
-        txt = "_setting_name " + self.g.get_prop(room_id, 'names')[0] + '\\n'
+    def npc_build_context(self, partner_name=None):
+        """
+        Build the full context for this Soul's model
+        """
+        agent = self.target_node
+        room = agent.get_room()
+        txt = "_setting_name " + room.name + '\\n'
         txt += (
-            "_setting_desc " + self.g.get_prop(room_id, 'desc').replace('*', '') + '\\n'
+            "_setting_desc " + room.desc + '\\n'
         )
         if partner_name is not None:
             txt += "_partner_name " + partner_name + '\\n'
-        txt += "_self_name " + self.g.get_prop(agent_id, 'names')[0] + '\\n'
-        txt += '_self_persona ' + self.g.get_prop(agent_id, 'persona') + '\\n'
+        txt += "_self_name " + agent.name + '\\n'
+        txt += '_self_persona ' + agent.persona + '\\n'
         return txt
 
-    # log that an agent acted
-    def log_agent_acted(self, agent_id):
-        self._last_action_time[agent_id] = self._timer.time() + random.random() * 0.1
-        # log in the location they are in, too
-        room_id = self.g.room(agent_id)
-        self._last_action_time[room_id] = self._timer.time() + random.random() * 0.1
+    def get_last_turn_too_recent(self):
+        return time.time() - self._last_action_time < MIN_TIME_BETWEEN_TURNS
 
-    # last time agent acted, according to its own log
-    def last_agent_action(self, agent_id):
-        curr_time = self._timer.time()
-        if agent_id not in self._last_action_time:
-            self._last_action_time[agent_id] = curr_time - 10
-        room_id = self.g.room(agent_id)
-        if room_id not in self._last_action_time:
-            self._last_action_time[room_id] = curr_time - 10
-        tim1 = curr_time - self._last_action_time[agent_id]
-        tim2 = curr_time - self._last_action_time[room_id]
-        return min(tim1, tim2)
-
-    def last_agent_action_too_recent(self, agent_id):
-        return self.last_agent_action(agent_id) < 5
-
-    def npc_action(self, agent_id):
-        if (
-            True
-        ):  # self._no_npc_models: #Skipped entirely for now amidst npc refactoring
-            return
-        if (random.randint(0, 100) < 20) and not self.last_agent_action_too_recent(
-            agent_id
-        ):
-            pass
-        else:
+    def npc_action(self):
+        """
+        Agent attempt to take an action
+        """
+        if self.get_last_turn_too_recent() or (random.randint(0, 100) > 20):
             return
 
-        partner_id = self._last_interaction_partner.get(agent_id, 'none')
-        if partner_id != 'none':
-            partner_name = self.g.get_prop(partner_id, 'names')[0]
+        agent = self.target_node
+        partner_id = self.get_last_interaction_partner(agent)
+        if partner_id != None:
+            partner_name = self.world.oo_graph.get_prop(partner_id, 'names')[0]
         else:
             partner_name = None
-        if not hasattr(self, 'npc_act_model'):
-            # load the bert model up:
-            self.load_npc_act_model()
-        if agent_id not in self._node_to_dialog_history:
-            self._node_to_dialog_history[agent_id] = {}
-        hist = self._node_to_dialog_history[agent_id]
+       
+        hist = self._dialogue_history
         if partner_id not in hist:
             hist[partner_id] = []
         if agent_id not in hist:
             hist[agent_id] = []
-        txt = self.npc_build_context(agent_id, partner_name)
+
+        txt = self.npc_build_context(partner_name)
         for d in hist[agent_id]:
             txt += d
-        cands = self.g.get_possible_actions(agent_id)
+        cands = self.world.get_possible_actions(agent_id)
         if len(cands) == 0:
             # nothing to do here.
             return
+
         msg = {
             'text': txt,
             'episode_done': True,
@@ -229,100 +180,120 @@ class PartnerHeuristicModelSoul(ModelSoul):
         }
         self.npc_act_model.observe(msg)
         act = self.npc_act_model.act()
-        act_text = self.npc_pick_non_repeating_action(act, agent_id)
+        act_text = self.npc_pick_non_repeating_action(act)
         reply_action = act_text + '\n'
         # add action to history
         hist[agent_id].append('_self_act ' + act_text + '\\n')
-        self.g.parse_exec(agent_id, reply_action)
-        self.log_agent_acted(agent_id)
+        self.world.parse_exec(agent_id, reply_action)
 
-    def npc_dialogue(self, agent_id, obs):
-        if True:  # self._no_npc_models: #Skipped during NPC refactoring
-            return
-        partner_id = obs['actors'][0]
-        partner_name = self.g.get_prop(partner_id, 'names')[0]
-        partner_interactor_id = self._last_interaction_partner.get(partner_id, 'none')
-        if (
-            obs['caller'] == 'say'
-            and partner_interactor_id != 'none'
-            and partner_interactor_id != agent_id
-        ):
-            # partner said something, but is interacting with someone else, so we don't reply.
-            return
-        # we are going to reply, so point both agents as having this as their last interaction.
-        last_partner_id = self._last_interaction_partner.get(agent_id, 'none')
-        if last_partner_id != 'none':
-            self._last_interaction_partner[last_partner_id] = 'none'
-        if partner_interactor_id != 'none':
-            self._last_interaction_partner[partner_interactor_id] = 'none'
-        self._last_interaction_partner[agent_id] = partner_id
-        self._last_interaction_partner[partner_id] = agent_id
+    def npc_dialogue(self, obs=None):
+        """
+        Attempt to take a dialogue turn
+        """
+        agent = self.target_node
+        agent_id = agent.node_id
 
-        if not hasattr(self, 'npc_model'):
-            # load the bert model up:
-            self.load_npc_model()
-        if agent_id not in self._node_to_dialog_history:
-            self._node_to_dialog_history[agent_id] = {}
-        hist = self._node_to_dialog_history[agent_id]
+        if obs is None:
+            partner_id = self.get_last_interaction_partner(agent)
+            if partner_id is None:
+                return
+            partner = self.world.oo_graph.get_node(partner_id)
+        else:
+            partner = obs.actor
+            partner_id = partner.node_id
+            partner_interactor_id = self.get_last_interaction_partner(partner)
+            if (
+                isinstance(obs, SayEvent)
+                and partner_interactor_id is not None
+                and partner_interactor_id != agent_id
+            ):
+                # partner said something, but is interacting with someone else, so we don't reply.
+                return
+            # we are going to reply, so point both agents as having this as their last interaction.
+            self.set_interaction_partner(partner)
+
+        hist = self._dialog_history
         if agent_id not in hist:
             hist[agent_id] = []
 
-        # uncomment if you don't want npcs to talk to each other
-        if not self.g.get_prop(partner_id, 'human'):
+        if not ALLOW_INTERBOT_CHAT and not partner._human:
             return
 
-        txt = self.npc_build_context(agent_id, partner_name)
+        partner_name = partner.name
+        txt = self.npc_build_context(partner_name)
         for d in hist[agent_id]:
             txt += d
 
-        if obs.get('content', 'none') == 'analysis':
+        if obs is not None and obs.text_content == 'DEBUG':
             # print debug information instead
-            reply_action = "say " + txt + '\n'
-            self.g.parse_exec(agent_id, reply_action)
+            event = SayEvent(agent, target_nodes=[], text_content=txt)
+            event.execute(self.world)
             return
 
         # add dialogue to history
-        if 'content' in obs:
-            last_msg = '_partner_say ' + obs['content'] + '\\n'
+        if obs is not None:
+            last_msg = '_partner_say ' + obs.text_content + '\\n'
             hist[agent_id].append(last_msg)
             txt += last_msg
+        
+        # Send to model to process
         msg = {'text': txt, 'episode_done': True}
         self.npc_model.observe(msg)
         act = self.npc_model.act()
-        act_text = self.dialogue_pick_non_repeating_response(act, agent_id, partner_id)
-        # p self._node_to_prop[agent_id]
-        # p self.g.get_prop(agent_id, 'persona')[0]
-        reply_action = "tell " + partner_name + ' "' + act_text + '"\n'
+        act_text = self.dialogue_pick_non_repeating_response(act, partner)
+
+        reply_event = TellEvent(agent, target_nodes=[partner], text_content=act_text)
+        reply_event.execute(self.world)
+
         # add dialogue to history
         hist[agent_id].append('_self_say ' + act_text + '\\n')
-        self.g.parse_exec(agent_id, reply_action)
-        # TODO: possibly move this to parse_exec?
-        self.log_agent_acted(agent_id)
-        self.log_agent_acted(partner_id)
+
+    def get_last_interaction_partner(self, node: "GraphAgent"):
+        """
+        Get the last interaction partner labelled for the given node, if it exists
+        """
+        if hasattr(node, "_last_interaction_partner_id"):
+            return node._last_interaction_partner_id
+        else:
+            return None
+
+    def set_interaction_partner(self, partner_node: "GraphAgent"):
+        """
+        Set the last interaction partner for this agent and the
+        partner, clearing previous partners if they are set
+        """
+        for node in [self.target_node, partner_node]:
+            un_partner_id = self.get_last_interaction_partner(node)
+            if un_partner_id is not None:
+                un_partner_node = self.world.oo_graph.get_node(un_partner_id)
+                un_partner_node._last_interaction_partner_id = None
+        self.target_node._last_interaction_partner_id = partner_node.node_id
+        partner_node._last_interaction_partner_id = self.target_node.node_id
 
     async def _take_timestep(self) -> None:
         """
-        If this model intends to take actions periodically, those steps should
-        be defined in this method. The method _run_timesteps will call this periodically.
+        Attempt to take some actions based on any observations in the pending list
         """
-        if self.last_agent_action_too_recent(agent_id):
+        if self.get_last_turn_too_recent():
             return
 
-        # possibly respond to talk requests
         graph = self.world.oo_graph
-        agent = graph.get_node(agent_id)
-        for obs in agent._observations:
-            # TODO handle updating dialogue for actions
-            # if (
-            #     obs['caller'] == 'say'
-            #     or (obs['caller'] == 'tell' and obs['target_agent'] == agent_id)
-            # ) and not self.last_agent_action_too_recent(agent_id):
-            #     self.npc_dialogue(agent_id, obs)
-            #     agent.get_text()
-            #     return
-            pass
+        agent = self.target_node
+        agent_id = agent.node_id
+        agent.get_text()  # Clear the buffer, we use _pending_observations
+
+        # possibly respond to talk requests
+        for obs in self._pending_observations:
+            if (
+                isinstance(obs, SayEvent) or 
+                (isinstance(obs, TellEvent) and obs.target_nodes[0] == agent)
+            ):
+                self.npc_dialogue(obs)
+                return
+
         # possibly initiate talk request to someone in the room
-        if self._last_interaction_partner.get(agent_id, 'none') == 'none':
+        if self.get_last_interaction_partner(agent) is None:
+            self._dialogue_history = {}
             room = agent.get_room()
             agents = [x for x in room.get_contents() if x.agent]
             partner = random.choice(agents)
@@ -330,41 +301,35 @@ class PartnerHeuristicModelSoul(ModelSoul):
             if (
                 partner.node_id != agent_id
                 and partner.get_prop('speed', 0) > 0
-                and self._last_interaction_partner.get(partner_id, 'none') == 'none'
+                and self.get_last_interaction_partner(partner) is None
             ):
-                obs = {'caller': 'say', 'actors': [partner_id]}
-                self.npc_dialogue(agent_id, obs)
-                agent.get_text()
+                self.set_interaction_partner(partner)
+                # TODO handle dialogue with no observation
+                self.npc_dialogue(None)
                 return
         else:
             # possibly end interaction with existing interaction partner (if any)?
             if random.randint(0, 100) < 5:
-                self.dialogue_clear_partner(agent_id)
+                self.dialogue_clear_partner()
 
-        agent.get_text(agent_id)
-        did_hit = False
         room = agent.get_room()
-        possible_agents = [x for x in room.get_contents() if x.agent]
-        # TODO refactor
-        for other_agent in possible_agents:
-            if other_agent.get_prop('is_player'):
-                aggression = agent.get_prop('aggression', 0)
-                if random.randint(0, 100) < aggression:
-                    act = 'hit {}'.format(other_agent.get_view())
-                    self.g.parse_exec(agent_id, act)
-                    self.log_agent_acted(agent_id)
-                    did_hit = True
+        # TODO refactor attacking
+        # possible_agents = [x for x in room.get_contents() if x.agent]
+        # for other_agent in possible_agents:
+        #     if other_agent.get_prop('is_player'):
+        #         aggression = agent.get_prop('aggression', 0)
+        #         if random.randint(0, 100) < aggression:
+        #             act = 'hit {}'.format(other_agent.get_view())
+        #             self.g.parse_exec(agent_id, act)
+        #             return
 
-        if not did_hit:
-            # random movement for npcs..
-            if random.randint(0, 1000) < self.g.get_prop(agent_id, 'speed', 0):
-                cur_loc = self.g.room(agent_id)
-                locs = self.g.node_path_to(cur_loc)
-                if len(locs) > 0:
-                    loc = locs[random.randint(0, len(locs) - 1)]
-                    act = 'go ' + self.g.node_to_desc_raw(loc, from_id=cur_loc)
-                    self.g.parse_exec(agent_id, act)
-                    self.log_agent_acted(agent_id)
+        # random movement for npcs..
+        if random.randint(0, 1000) < agent.speed:
+            move_actions = self.world.get_possible_actions(agent_id, possible_actions=['go'])
+            if len(move_actions) > 0:
+                move_action = random.choice(move_actions)
+                move_action.execute(self.world)
+                return
 
         # possibly act according to the bert model
         self.npc_action(agent_id)
