@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import time
+import random
 from collections import deque
 from light.world.souls.model_soul import ModelSoul
 from light.graph.events.graph_events import TellEvent, SayEvent
@@ -66,7 +67,6 @@ class PartnerHeuristicModelSoul(ModelSoul):
         speech_model = create_agent(speech_opt, requireModelExists=True)
 
         # Load speaker stop list
-        fname = LIGHT_MODEL_ROOT + 'agent_to_utterance_trainset.txt'
         with open(agent_to_utterance_path, "r") as map_file:
             utt_map_lines = map_file.readlines()
 
@@ -92,7 +92,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
         act_opt['ignore_bad_candidates'] = True
         action_model = create_agent(act_opt, requireModelExists=True)
 
-        return = {
+        return {
             'utterance_to_speaker_name': utterance_to_speaker_map,
             'shared_dialog_model': speech_model.share(),
             'shared_action_model': action_model.share(),
@@ -148,7 +148,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
         partner_id = self.get_last_interaction_partner(agent)
         agent._last_interaction_partner_id = None
         if partner_id is None:
-            continue
+            return
 
         # If the partner node is still focused here, clear
         partner = self.world.oo_graph.get_node(partner_id)

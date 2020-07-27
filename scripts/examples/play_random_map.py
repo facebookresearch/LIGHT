@@ -19,6 +19,7 @@ from light.world.utils.terminal_player_provider import TerminalPlayerProvider
 from parlai.core.params import ParlaiParser
 from light.world.world import World
 from light.world.souls.repeat_soul import RepeatSoul
+from light.world.souls.models.parner_heuristic_model_soul import PartnerHeuristicModelSoul
 import os
 import random
 import numpy
@@ -27,12 +28,16 @@ import asyncio
 random.seed(6)
 numpy.random.seed(6)
 
+USE_MODELS = True
+shared_model_content = None
 
 def init_world(world_builder):
     g, world = world_builder.get_graph()
     purgatory = world.purgatory
-    # TODO load this from models!
-    purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
+    if not USE_MODELS:
+        purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
+    else:
+        purgatory.register_filler_soul_provider("model", PartnerHeuristicModelSoul, lambda: [shared_model_content])
     for empty_agent in world.oo_graph.agents.values():
         purgatory.fill_soul(empty_agent)
     provider = TerminalPlayerProvider(purgatory)
@@ -68,6 +73,15 @@ StarspaceBuilder.add_parser_arguments(parser)
 opt, _unknown = parser.parse_and_process_known_args()
 ldb = LIGHTDatabase(opt['light_db_file'])
 world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
+
+if USE_MODELS:
+    light_model_root = opt['light_model_root']
+    shared_model_content = PartnerHeuristicModelSoul.load_models(
+        light_model_root + 'game_speech1/model',
+        light_model_root + 'speech_train_cands.txt',
+        light_model_root + 'agent_to_utterance_trainset.txt',
+        light_model_root + 'main_act/model',
+    )
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
