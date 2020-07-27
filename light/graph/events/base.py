@@ -166,7 +166,6 @@ class GraphEvent(object):
         imported back to the original with from_json
         """
         className = self.__class__.__name__
-        print
         use_dict = {k: v for k, v in self.__dict__.copy().items() if not k.startswith(f'_{className}__')}
         use_dict['viewer'] = viewer
         use_dict['__class__'] = className
