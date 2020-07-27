@@ -19,33 +19,33 @@ class npc_models:
         from parlai.core.params import ParlaiParser
         from parlai.core.agents import create_agent
 
-        parser = ParlaiParser(True, True, '')
-        LIGHT_MODEL_ROOT = self._opt['light_model_root'].replace(":no_npc_models", "")
+        parser = ParlaiParser(True, True, "")
+        LIGHT_MODEL_ROOT = self._opt["light_model_root"].replace(":no_npc_models", "")
         args = [
-            '-mf',
-            LIGHT_MODEL_ROOT + 'game_speech1/model',
+            "-mf",
+            LIGHT_MODEL_ROOT + "game_speech1/model",
             #'models:light/biranker_dialogue/model',
-            '-ecands',
-            'fixed',
-            '--ignore-bad-candidates',
-            'True',
-            '-fcp',
-            LIGHT_MODEL_ROOT + 'speech_train_cands.txt',
+            "-ecands",
+            "fixed",
+            "--ignore-bad-candidates",
+            "True",
+            "-fcp",
+            LIGHT_MODEL_ROOT + "speech_train_cands.txt",
         ]
         opt, _unknown = parser.parse_and_process_known_args(args=args)
-        opt['override'] = {
-            'eval_candidates': 'fixed',
-            'fixed_candidates_path': LIGHT_MODEL_ROOT + 'speech_train_cands.txt',
+        opt["override"] = {
+            "eval_candidates": "fixed",
+            "fixed_candidates_path": LIGHT_MODEL_ROOT + "speech_train_cands.txt",
         }
-        opt['interactive_mode'] = True
+        opt["interactive_mode"] = True
         self.npc_model = create_agent(opt, requireModelExists=True)
         # load agent speak stop list.
-        fname = LIGHT_MODEL_ROOT + 'agent_to_utterance_trainset.txt'
+        fname = LIGHT_MODEL_ROOT + "agent_to_utterance_trainset.txt"
         file = open(fname, "r")
         data = file.readlines()
         self._utt_to_name = {}
         for d in data:
-            i1 = d.find(':')
+            i1 = d.find(":")
             name = d[1:i1]
             utt = d[i1 + 1 : -1]
             self._utt_to_name[utt] = name
@@ -55,21 +55,21 @@ class npc_models:
         from parlai.core.agents import create_agent
 
         # TODO load this from the zoo
-        parser = ParlaiParser(True, True, '')
-        LIGHT_MODEL_ROOT = self._opt['light_model_root']
+        parser = ParlaiParser(True, True, "")
+        LIGHT_MODEL_ROOT = self._opt["light_model_root"]
         args = [
-            '-mf',
-            LIGHT_MODEL_ROOT + 'main_act/model',
-            '-ecands',
-            'inline',
-            '--ignore-bad-candidates',
-            'True',
+            "-mf",
+            LIGHT_MODEL_ROOT + "main_act/model",
+            "-ecands",
+            "inline",
+            "--ignore-bad-candidates",
+            "True",
         ]
         opt, _unknown = parser.parse_and_process_known_args(args=args)
-        opt['override'] = {'eval_candidates': 'inline', 'ignore_bad_candidates': 'True'}
-        opt['interactive_mode'] = True
+        opt["override"] = {"eval_candidates": "inline", "ignore_bad_candidates": "True"}
+        opt["interactive_mode"] = True
         self.npc_act_model = create_agent(opt, requireModelExists=True)
-        self.npc_act_model.opt['ignore_bad_candidates'] = True
+        self.npc_act_model.opt["ignore_bad_candidates"] = True
 
     # check if utterance <txt> was said by <agent> recently, or not (so we don't repeat).
     def dialogue_utterance_not_too_recent(self, txt, agent):
@@ -109,13 +109,13 @@ class npc_models:
         # reset dialogue history when move:
         self._node_to_dialog_history[agent_id] = {}
         # remove interaction partner links:
-        partner_id = self._last_interaction_partner.get(agent_id, 'none')
-        self._last_interaction_partner[agent_id] = 'none'
+        partner_id = self._last_interaction_partner.get(agent_id, "none")
+        self._last_interaction_partner[agent_id] = "none"
         if (
-            partner_id != 'none'
-            and self._last_interaction_partner.get(partner_id, 'none') == agent_id
+            partner_id != "none"
+            and self._last_interaction_partner.get(partner_id, "none") == agent_id
         ):
-            self._last_interaction_partner[partner_id] = 'none'
+            self._last_interaction_partner[partner_id] = "none"
             self._node_to_dialog_history[partner_id] = {}
 
     # check if utterance <txt> was said by <agent> recently, or not (so we don't repeat).
@@ -152,37 +152,37 @@ class npc_models:
 
     def npc_pick_non_repeating_action(self, act, agent1):
         # for t in act['text_candidates']:
-        t = act['text_candidates'][0]
-        if self.action_not_too_recent(t, agent1) or t.startswith('hit'):
+        t = act["text_candidates"][0]
+        if self.action_not_too_recent(t, agent1) or t.startswith("hit"):
             return t
         # couldn't find a valid response, so just return the top one.
-        return 'wait'
+        return "wait"
 
     def dialogue_pick_non_repeating_response(self, act, agent1, agent2):
-        agent1_name = agent1[: agent1.find('_')]
-        agent2_name = agent2[: agent2.find('_')]
-        for t in act['text_candidates']:
+        agent1_name = agent1[: agent1.find("_")]
+        agent2_name = agent2[: agent2.find("_")]
+        for t in act["text_candidates"]:
             if (
                 self.dialogue_utterance_not_too_recent(t, agent1)
                 and self.dialogue_utterance_not_too_recent(t, agent2)
-                and self._utt_to_name.get(t, 'anon') != agent2_name
+                and self._utt_to_name.get(t, "anon") != agent2_name
             ):
                 return t
             # + " [" + self._utt_to_name.get(t, 'anon') + "-vs-" + agent2_name + "|" + agent1_name  + "]"
         # couldn't find a valid response, so just return the top one.
-        return act['text']
+        return act["text"]
 
     def npc_build_context(self, agent_id, partner_name=None):
         # Build context for model.
         room_id = self.g.node_contained_in(agent_id)
-        txt = "_setting_name " + self.g.get_prop(room_id, 'names')[0] + '\\n'
+        txt = "_setting_name " + self.g.get_prop(room_id, "names")[0] + "\\n"
         txt += (
-            "_setting_desc " + self.g.get_prop(room_id, 'desc').replace('*', '') + '\\n'
+            "_setting_desc " + self.g.get_prop(room_id, "desc").replace("*", "") + "\\n"
         )
         if partner_name is not None:
-            txt += "_partner_name " + partner_name + '\\n'
-        txt += "_self_name " + self.g.get_prop(agent_id, 'names')[0] + '\\n'
-        txt += '_self_persona ' + self.g.get_prop(agent_id, 'persona') + '\\n'
+            txt += "_partner_name " + partner_name + "\\n"
+        txt += "_self_name " + self.g.get_prop(agent_id, "names")[0] + "\\n"
+        txt += "_self_persona " + self.g.get_prop(agent_id, "persona") + "\\n"
         return txt
 
     # log that an agent acted
@@ -219,12 +219,12 @@ class npc_models:
         else:
             return
 
-        partner_id = self._last_interaction_partner.get(agent_id, 'none')
-        if partner_id != 'none':
-            partner_name = self.g.get_prop(partner_id, 'names')[0]
+        partner_id = self._last_interaction_partner.get(agent_id, "none")
+        if partner_id != "none":
+            partner_name = self.g.get_prop(partner_id, "names")[0]
         else:
             partner_name = None
-        if not hasattr(self, 'npc_act_model'):
+        if not hasattr(self, "npc_act_model"):
             # load the bert model up:
             self.load_npc_act_model()
         if agent_id not in self._node_to_dialog_history:
@@ -242,43 +242,43 @@ class npc_models:
             # nothing to do here.
             return
         msg = {
-            'text': txt,
-            'episode_done': True,
-            'label_candidates': cands,
-            'eval_labels': [cands[0]],
+            "text": txt,
+            "episode_done": True,
+            "label_candidates": cands,
+            "eval_labels": [cands[0]],
         }
         self.npc_act_model.observe(msg)
         act = self.npc_act_model.act()
         act_text = self.npc_pick_non_repeating_action(act, agent_id)
-        reply_action = act_text + '\n'
+        reply_action = act_text + "\n"
         # add action to history
-        hist[agent_id].append('_self_act ' + act_text + '\\n')
+        hist[agent_id].append("_self_act " + act_text + "\\n")
         self.g.parse_exec(agent_id, reply_action)
         self.log_agent_acted(agent_id)
 
     def npc_dialogue(self, agent_id, obs):
         if True:  # self._no_npc_models: #Skipped during NPC refactoring
             return
-        partner_id = obs['actors'][0]
-        partner_name = self.g.get_prop(partner_id, 'names')[0]
-        partner_interactor_id = self._last_interaction_partner.get(partner_id, 'none')
+        partner_id = obs["actors"][0]
+        partner_name = self.g.get_prop(partner_id, "names")[0]
+        partner_interactor_id = self._last_interaction_partner.get(partner_id, "none")
         if (
-            obs['caller'] == 'say'
-            and partner_interactor_id != 'none'
+            obs["caller"] == "say"
+            and partner_interactor_id != "none"
             and partner_interactor_id != agent_id
         ):
             # partner said something, but is interacting with someone else, so we don't reply.
             return
         # we are going to reply, so point both agents as having this as their last interaction.
-        last_partner_id = self._last_interaction_partner.get(agent_id, 'none')
-        if last_partner_id != 'none':
-            self._last_interaction_partner[last_partner_id] = 'none'
-        if partner_interactor_id != 'none':
-            self._last_interaction_partner[partner_interactor_id] = 'none'
+        last_partner_id = self._last_interaction_partner.get(agent_id, "none")
+        if last_partner_id != "none":
+            self._last_interaction_partner[last_partner_id] = "none"
+        if partner_interactor_id != "none":
+            self._last_interaction_partner[partner_interactor_id] = "none"
         self._last_interaction_partner[agent_id] = partner_id
         self._last_interaction_partner[partner_id] = agent_id
 
-        if not hasattr(self, 'npc_model'):
+        if not hasattr(self, "npc_model"):
             # load the bert model up:
             self.load_npc_model()
         if agent_id not in self._node_to_dialog_history:
@@ -288,25 +288,25 @@ class npc_models:
             hist[agent_id] = []
 
         # uncomment if you don't want npcs to talk to each other
-        if not self.g.get_prop(partner_id, 'human'):
+        if not self.g.get_prop(partner_id, "human"):
             return
 
         txt = self.npc_build_context(agent_id, partner_name)
         for d in hist[agent_id]:
             txt += d
 
-        if obs.get('content', 'none') == 'analysis':
+        if obs.get("content", "none") == "analysis":
             # print debug information instead
-            reply_action = "say " + txt + '\n'
+            reply_action = "say " + txt + "\n"
             self.g.parse_exec(agent_id, reply_action)
             return
 
         # add dialogue to history
-        if 'content' in obs:
-            last_msg = '_partner_say ' + obs['content'] + '\\n'
+        if "content" in obs:
+            last_msg = "_partner_say " + obs["content"] + "\\n"
             hist[agent_id].append(last_msg)
             txt += last_msg
-        msg = {'text': txt, 'episode_done': True}
+        msg = {"text": txt, "episode_done": True}
         self.npc_model.observe(msg)
         act = self.npc_model.act()
         act_text = self.dialogue_pick_non_repeating_response(act, agent_id, partner_id)
@@ -314,7 +314,7 @@ class npc_models:
         # p self.g.get_prop(agent_id, 'persona')[0]
         reply_action = "tell " + partner_name + ' "' + act_text + '"\n'
         # add dialogue to history
-        hist[agent_id].append('_self_say ' + act_text + '\\n')
+        hist[agent_id].append("_self_say " + act_text + "\\n")
         self.g.parse_exec(agent_id, reply_action)
         # TODO: possibly move this to parse_exec?
         self.log_agent_acted(agent_id)
@@ -338,17 +338,17 @@ class npc_models:
             #     return
             pass
         # possibly initiate talk request to someone in the room
-        if self._last_interaction_partner.get(agent_id, 'none') == 'none':
+        if self._last_interaction_partner.get(agent_id, "none") == "none":
             room = agent.get_room()
             agents = [x for x in room.get_contents() if x.agent]
             partner = random.choice(agents)
             partner_id = partner.node_id
             if (
                 partner.node_id != agent_id
-                and partner.get_prop('speed', 0) > 0
-                and self._last_interaction_partner.get(partner_id, 'none') == 'none'
+                and partner.get_prop("speed", 0) > 0
+                and self._last_interaction_partner.get(partner_id, "none") == "none"
             ):
-                obs = {'caller': 'say', 'actors': [partner_id]}
+                obs = {"caller": "say", "actors": [partner_id]}
                 self.npc_dialogue(agent_id, obs)
                 agent.get_text()
                 return
@@ -363,22 +363,22 @@ class npc_models:
         possible_agents = [x for x in room.get_contents() if x.agent]
         # TODO refactor
         for other_agent in possible_agents:
-            if other_agent.get_prop('is_player'):
-                aggression = agent.get_prop('aggression', 0)
+            if other_agent.get_prop("is_player"):
+                aggression = agent.get_prop("aggression", 0)
                 if random.randint(0, 100) < aggression:
-                    act = 'hit {}'.format(other_agent.get_view())
+                    act = "hit {}".format(other_agent.get_view())
                     self.g.parse_exec(agent_id, act)
                     self.log_agent_acted(agent_id)
                     did_hit = True
 
         if not did_hit:
             # random movement for npcs..
-            if random.randint(0, 1000) < self.g.get_prop(agent_id, 'speed', 0):
+            if random.randint(0, 1000) < self.g.get_prop(agent_id, "speed", 0):
                 cur_loc = self.g.room(agent_id)
                 locs = self.g.node_path_to(cur_loc)
                 if len(locs) > 0:
                     loc = locs[random.randint(0, len(locs) - 1)]
-                    act = 'go ' + self.g.node_to_desc_raw(loc, from_id=cur_loc)
+                    act = "go " + self.g.node_to_desc_raw(loc, from_id=cur_loc)
                     self.g.parse_exec(agent_id, act)
                     self.log_agent_acted(agent_id)
 

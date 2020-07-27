@@ -62,7 +62,7 @@ def run_with_builder(world_builder):
 parser = ParlaiParser()
 StarspaceBuilder.add_parser_arguments(parser)
 opt, _unknown = parser.parse_and_process_known_args()
-ldb = LIGHTDatabase(opt['light_db_file'])
+ldb = LIGHTDatabase(opt["light_db_file"])
 world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
 
 run_with_builder(world_builder)

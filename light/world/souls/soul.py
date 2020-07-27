@@ -10,6 +10,7 @@ import threading
 import time
 from typing import TYPE_CHECKING, List
 import asyncio
+
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
     from light.graph.world.world import World
@@ -43,14 +44,13 @@ class Soul(ABC):
 
         thread_id = f"Node-{self.target_node.node_id}-obs-{time.time():.10f}"
 
-
         def _launch_thread_and_cleanup(event):
             self.observe_event(event)
             del self._observe_threads[thread_id]
 
         if asynch:
             loop = asyncio.get_running_loop()
-            self._observe_threads[thread_id] = (thread_id)
+            self._observe_threads[thread_id] = thread_id
             loop.call_soon_threadsafe(_launch_thread_and_cleanup, event)
         else:
             ### TODO:  Make compatible with tornado
@@ -59,8 +59,8 @@ class Soul(ABC):
                 args=(event,),
                 name=f"Node-{self.target_node.node_id}-observe-{time.time():.4f}",
             )
-            # Keep track of thread for 
-            self._observe_threads[thread_id] = (observe_thread)
+            # Keep track of thread for
+            self._observe_threads[thread_id] = observe_thread
             observe_thread.start()
 
     @abstractmethod

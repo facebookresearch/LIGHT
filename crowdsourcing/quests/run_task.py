@@ -15,7 +15,7 @@ from parlai.core.params import ParlaiParser
 import random
 
 from light.data_model.light_database import LIGHTDatabase
-from  light.graph.builders.starspace_all import StarspaceBuilder
+from light.graph.builders.starspace_all import StarspaceBuilder
 from light.graph.events.graph_events import (
     GoEvent,
     FollowEvent,
@@ -37,22 +37,25 @@ from light.graph.events.graph_events import (
     InventoryEvent,
 )
 
-ACTION_LIST = [x.NAMES[0] for x in [
-    GoEvent,
-    FollowEvent,
-    HitEvent,
-    HugEvent,
-    GetObjectEvent,
-    PutObjectInEvent,
-    DropObjectEvent,
-    StealObjectEvent,
-    GiveObjectEvent,
-    WearEvent,
-    WieldEvent,
-    # RemoveObjectEvent,
-    EatEvent,
-    DrinkEvent,
-]]
+ACTION_LIST = [
+    x.NAMES[0]
+    for x in [
+        GoEvent,
+        FollowEvent,
+        HitEvent,
+        HugEvent,
+        GetObjectEvent,
+        PutObjectInEvent,
+        DropObjectEvent,
+        StealObjectEvent,
+        GiveObjectEvent,
+        WearEvent,
+        WieldEvent,
+        # RemoveObjectEvent,
+        EatEvent,
+        DrinkEvent,
+    ]
+]
 
 USE_LOCAL = True
 LAUNCH_LIVE = False
@@ -69,7 +72,11 @@ task_description = (
     "why the character might be motivated to take the given action, and give possible previous and next actions."
 )
 
-requester_name = "test_requester" if USE_LOCAL else ("NoahTurk1027" if LAUNCH_LIVE else "NoahTurk1027_sandbox")
+requester_name = (
+    "test_requester"
+    if USE_LOCAL
+    else ("NoahTurk1027" if LAUNCH_LIVE else "NoahTurk1027_sandbox")
+)
 architect_type = "local" if USE_LOCAL else "heroku"
 
 # The first time round, need to call the following here.
@@ -84,8 +91,8 @@ if LAUNCH_LIVE:
         " is this what you want? Press enter to continue"
     )
 
-assert USE_LOCAL or LAUNCH_LIVE or requester_name.endswith(
-    "_sandbox"
+assert (
+    USE_LOCAL or LAUNCH_LIVE or requester_name.endswith("_sandbox")
 ), "Should use a sandbox for testing"
 
 # The first time using mturk, need to call the following here
@@ -151,23 +158,25 @@ def construct_tasks(num_tasks):
     parser = ParlaiParser()
     StarspaceBuilder.add_parser_arguments(parser)
     opt, _unknown = parser.parse_and_process_known_args()
-    opt['map_size'] = 1
-    opt['light_db_file'] = '/Users/jju/ParlAI/data/light/database3.db'
-    opt['light_model_root'] = '/Users/jju/Desktop/LIGHT/LIGHT_models/'
-    opt['hybridity_prob'] = 1
-    opt['suggestion_type'] = 'hybrid'
-    ldb = LIGHTDatabase(opt['light_db_file'])
+    opt["map_size"] = 1
+    opt["light_db_file"] = "/Users/jju/ParlAI/data/light/database3.db"
+    opt["light_model_root"] = "/Users/jju/Desktop/LIGHT/LIGHT_models/"
+    opt["hybridity_prob"] = 1
+    opt["suggestion_type"] = "hybrid"
+    ldb = LIGHTDatabase(opt["light_db_file"])
     builder = StarspaceBuilder(ldb, opt=opt)
     random.seed(88)
     while len(tasks) < num_tasks:
         g, world = builder.get_graph()
         while len(world.oo_graph.agents) == 0:
-            print('no agents in room')
+            print("no agents in room")
             g, world = builder.get_graph()
         possible_agents = list(world.oo_graph.agents.values())
         random.shuffle(possible_agents)
         for character in possible_agents:
-            actions = world.get_possible_actions(character.node_id, use_actions=ACTION_LIST)
+            actions = world.get_possible_actions(
+                character.node_id, use_actions=ACTION_LIST
+            )
             if len(actions) < 3:
                 print("less than 3 actions")
                 continue
@@ -175,25 +184,28 @@ def construct_tasks(num_tasks):
             look_event = LookEvent(character)
             look_event.execute(world)
             room_desc = look_event.view_as(character)
-            room_desc += f"\nYou are {world.view.get_inventory_text_for(character.node_id)}"
+            room_desc += (
+                f"\nYou are {world.view.get_inventory_text_for(character.node_id)}"
+            )
             if "torture" in room_desc.lower():
                 continue
-            tasks.append({
-                'character': character.get_prefix_view(),
-                'persona': character.persona,
-                'description': room_desc,
-                'goal': use_action,
-                'char_id': character.db_id, 
-                'room_id': character.get_room().db_id,
-                'time': get_random_times(),
-            })
+            tasks.append(
+                {
+                    "character": character.get_prefix_view(),
+                    "persona": character.persona,
+                    "description": room_desc,
+                    "goal": use_action,
+                    "char_id": character.db_id,
+                    "room_id": character.get_room().db_id,
+                    "time": get_random_times(),
+                }
+            )
             if len(tasks) == num_tasks:
                 break
     return tasks
 
-extra_args = {
-    'static_task_data': construct_tasks(15)
-}
+
+extra_args = {"static_task_data": construct_tasks(15)}
 
 
 operator = Operator(db)

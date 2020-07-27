@@ -7,15 +7,15 @@
 import pickle
 import os
 
-NEIGHBOR_FIELDS = ['destination', 'direction', 'connection']
+NEIGHBOR_FIELDS = ["destination", "direction", "connection"]
 
 
 class EnvironmentCheckpointParser:
-    '''
+    """
     Load pickle at given path into a class that puts the dict members of the
     pickle into properties of the class, and exposes methods for counting the
     number of objects, characters, and locations in the file
-    '''
+    """
 
     def __init__(self, pklpath):
         with open(pklpath, "rb") as f:
@@ -46,5 +46,5 @@ class EnvironmentCheckpointParser:
     def get_neighbors(self):
         neighbors = []
         for _, n in self.neighbors.items():
-            neighbors.append((n['room_id'], dict((k, n[k]) for k in NEIGHBOR_FIELDS)))
+            neighbors.append((n["room_id"], dict((k, n[k]) for k in NEIGHBOR_FIELDS)))
         return neighbors

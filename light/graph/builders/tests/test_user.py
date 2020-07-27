@@ -37,7 +37,11 @@ class TestWorldGraphBuilder(unittest.TestCase):
         # Random seed for right random char
         random.seed(2)
         self.db_path = os.path.join(self.data_dir, self.DB_NAME)
-        opt = {"light_db_file": self.db_path, "filler_probability": .05, "use_npc_models": True}        
+        opt = {
+            "light_db_file": self.db_path,
+            "filler_probability": 0.05,
+            "use_npc_models": True,
+        }
         self.ldb = LIGHTDatabase(self.db_path)
         with self.ldb as test:
             self.player_id = test.create_user("test")[0]
@@ -59,10 +63,10 @@ class TestWorldGraphBuilder(unittest.TestCase):
             )[0]
             self.obase_id = test.create_base_object("room4")[0]
             self.objID = test.create_object(
-                'OBJ_1', self.obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big"
+                "OBJ_1", self.obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big"
             )[0]
             self.objID2 = test.create_object(
-                'OBJ_2', self.obase_id, 0.2, 0.3, 0, 0, 0, 0, 0, "Small"
+                "OBJ_2", self.obase_id, 0.2, 0.3, 0, 0, 0, 0, 0, "Small"
             )[0]
 
             rnode_id1 = test.create_graph_node(self.world_id, self.roomID)[0]
@@ -72,26 +76,36 @@ class TestWorldGraphBuilder(unittest.TestCase):
             onode_id1 = test.create_graph_node(self.world_id, self.objID)[0]
             onode_id2 = test.create_graph_node(self.world_id, self.objID2)[0]
 
-            tile_id1 = test.create_tile(self.world_id, rnode_id1, '#FFFFF', 1, 1, 0)[0]
-            tile_id2 = test.create_tile(self.world_id, rnode_id2, '#FFFFF', 1, 2, 0)[0]
-            edge1 = test.create_graph_edge(self.world_id, rnode_id1, rnode_id2, "neighbors to the north")[0]
-            edge2 = test.create_graph_edge(self.world_id, rnode_id1, cnode_id1, "contains")[0]
-            edge3 = test.create_graph_edge(self.world_id, rnode_id1, onode_id1, "contains")[0]
-            edge3 = test.create_graph_edge(self.world_id, rnode_id2, cnode_id2, "contains")[0]
-            edge4 = test.create_graph_edge(self.world_id, rnode_id2, onode_id2, "contains")[0]
+            tile_id1 = test.create_tile(self.world_id, rnode_id1, "#FFFFF", 1, 1, 0)[0]
+            tile_id2 = test.create_tile(self.world_id, rnode_id2, "#FFFFF", 1, 2, 0)[0]
+            edge1 = test.create_graph_edge(
+                self.world_id, rnode_id1, rnode_id2, "neighbors to the north"
+            )[0]
+            edge2 = test.create_graph_edge(
+                self.world_id, rnode_id1, cnode_id1, "contains"
+            )[0]
+            edge3 = test.create_graph_edge(
+                self.world_id, rnode_id1, onode_id1, "contains"
+            )[0]
+            edge3 = test.create_graph_edge(
+                self.world_id, rnode_id2, cnode_id2, "contains"
+            )[0]
+            edge4 = test.create_graph_edge(
+                self.world_id, rnode_id2, onode_id2, "contains"
+            )[0]
 
- 
-        self.graphBuilder = UserWorldBuilder(self.ldb, self.world_id, self.player_id, True, opt)
+        self.graphBuilder = UserWorldBuilder(
+            self.ldb, self.world_id, self.player_id, True, opt
+        )
         self.testGraph, self.testWorld = self.graphBuilder.get_graph()
-
 
     def tearDown(self):
         shutil.rmtree(self.data_dir)
 
     def test_builder_adds_random_agent_to_graph_adds_another_to_some_room(self):
-        '''
+        """
             Test that the add_random_new_agent_to_graph method will add new agents
-        '''
+        """
         dbid_to_g = {val: key for key, val in self.graphBuilder.roomid_to_db.items()}
         gRoomId = dbid_to_g[self.roomID]
         gRoomId2 = dbid_to_g[self.roomID2]
@@ -99,9 +113,7 @@ class TestWorldGraphBuilder(unittest.TestCase):
         self.assertEqual(len(self.testGraph.agents), 3)
         contained_room_1 = len(self.testGraph.get_node(gRoomId).contained_nodes)
         contained_room_2 = len(self.testGraph.get_node(gRoomId2).contained_nodes)
-        self.assertTrue(
-            contained_room_1 == 3 or contained_room_2 == 3
-         )
+        self.assertTrue(contained_room_1 == 3 or contained_room_2 == 3)
         # Trying to add again will not work, since all characters in world!
         self.graphBuilder.add_random_new_agent_to_graph(self.testWorld)
         self.assertEqual(len(self.testGraph.agents), 3)
@@ -111,7 +123,7 @@ class TestWorldGraphBuilder(unittest.TestCase):
 
     def test_builder_graph_valid(self):
         self.testGraph.assert_valid()
-    
+
     def test_graph_contains_room(self):
         self.assertTrue(bool(self.testGraph.rooms))
 
@@ -132,7 +144,7 @@ class TestWorldGraphBuilder(unittest.TestCase):
         # Check the DB_IDs
         self.assertTrue(self.roomID in self.graphBuilder.roomid_to_db.values())
         self.assertTrue(self.roomID2 in self.graphBuilder.roomid_to_db.values())
-        
+
         dbid_to_g = {val: key for key, val in self.graphBuilder.roomid_to_db.items()}
         # Get the graph node for the rooms:
         gRoomId = dbid_to_g[self.roomID]
@@ -145,20 +157,21 @@ class TestWorldGraphBuilder(unittest.TestCase):
         self.assertEqual(edge2.label, "a path to the north")
 
         for node in self.testGraph.get_all_nodes():
-            if(node.room):
-                #all good, nothing to do here
+            if node.room:
+                # all good, nothing to do here
                 pass
-            elif (node.name.endswith("2")):
+            elif node.name.endswith("2"):
                 self.assertEqual(node.get_container().node_id, gRoomId2)
             else:
                 self.assertEqual(node.get_container().node_id, gRoomId)
 
-        # Finally check no extra added - that is, rooms contain no other objects, and 
+        # Finally check no extra added - that is, rooms contain no other objects, and
         # have no other neighbors
         self.assertEqual(len(self.testGraph.get_node(gRoomId).contained_nodes), 2)
         self.assertEqual(len(self.testGraph.get_node(gRoomId2).contained_nodes), 2)
         self.assertEqual(len(self.testGraph.get_node(gRoomId).get_neighbors()), 1)
         self.assertEqual(len(self.testGraph.get_node(gRoomId2).get_neighbors()), 1)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
