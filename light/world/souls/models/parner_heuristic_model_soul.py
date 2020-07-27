@@ -8,6 +8,7 @@ import time
 from collections import deque
 from light.world.souls.model_soul import ModelSoul
 from light.graph.events.graph_events import TellEvent, SayEvent
+from parlai.core.agents import create_agent_from_shared
 
 from typing import TYPE_CHECKING, List
 
@@ -30,6 +31,73 @@ class PartnerHeuristicModelSoul(ModelSoul):
 
     HAS_MAIN_LOOP = True
 
+    @staticmethod
+    def load_models(
+        speech_model_path, 
+        speech_cands_path, 
+        agent_to_utterance_path, 
+        act_model_path,
+    ):
+        """
+        Load up and create possible shared models for use with this class
+        """
+        from parlai.core.params import ParlaiParser
+        from parlai.core.agents import create_agent
+
+        parser = ParlaiParser(True, True, '')
+
+        # Load speech model
+        speech_args = [
+            '-mf',
+            speech_model_path,
+            '-ecands',
+            'fixed',
+            '--ignore-bad-candidates',
+            'True',
+            '-fcp',
+            speech_cands_path,
+        ]
+        speech_opt, _unknown = parser.parse_and_process_known_args(args=speech_args)
+        speech_opt['override'] = {
+            'eval_candidates': 'fixed',
+            'fixed_candidates_path': speech_cands_path,
+        }
+        speech_opt['interactive_mode'] = True
+        speech_model = create_agent(speech_opt, requireModelExists=True)
+
+        # Load speaker stop list
+        fname = LIGHT_MODEL_ROOT + 'agent_to_utterance_trainset.txt'
+        with open(agent_to_utterance_path, "r") as map_file:
+            utt_map_lines = map_file.readlines()
+
+        utterance_to_speaker_map = {}
+        for d in utt_map_lines:
+            i1 = d.find(':')
+            name = d[1:i1]
+            utt = d[i1 + 1 : -1]
+            utterance_to_speaker_map[utt] = name
+
+        # Load action model
+        args = [
+            '-mf',
+            act_model_path,
+            '-ecands',
+            'inline',
+            '--ignore-bad-candidates',
+            'True',
+        ]
+        act_opt, _unknown = parser.parse_and_process_known_args(args=args)
+        act_opt['override'] = {'eval_candidates': 'inline', 'ignore_bad_candidates': 'True'}
+        act_opt['interactive_mode'] = True
+        act_opt['ignore_bad_candidates'] = True
+        action_model = create_agent(act_opt, requireModelExists=True)
+
+        return = {
+            'utterance_to_speaker_name': utterance_to_speaker_map,
+            'shared_dialog_model': speech_model.share(),
+            'shared_action_model': action_model.share(),
+        }
+
     def _init_with_models(self, models) -> None:
         """
         Initialize required members of this soul for tracking the 
@@ -38,17 +106,14 @@ class PartnerHeuristicModelSoul(ModelSoul):
         self._pending_observations = []
         self._last_action_time = time.time() + random.random() * 2
         self._dialogue_history = {}
-
-        # TODO set self.npc_model and self.npc_act_model
-        self._utterance_to_speaker_name = {}
-
-        # TODO remove?
-        self._last_dialogs = {}
-        self._last_actions = {}
+        self._utterance_to_speaker_name = models['utterance_to_speaker_name']
+        self.npc_model = create_agent_from_shared(models['shared_dialog_model'])
+        self.npc_act_model = create_agent_from_shared(models['shared_action_model'])
 
     async def observe_event(self, event: "GraphEvent"):
         """
-        On an observe event, the agent 
+        On an observe event, the agent should append the event to the pending observations,
+        and take a timestep (to ensure we respond in a timely manner)
         """
         if event.actor == self.target_node:
             self._last_action_time = time.time() + random.random() * 2
