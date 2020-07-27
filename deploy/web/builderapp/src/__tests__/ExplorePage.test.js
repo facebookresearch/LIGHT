@@ -6,7 +6,7 @@ import {
   getAllByText,
   render,
   fireEvent,
-  wait
+  wait,
 } from "@testing-library/react";
 import ExplorePage from "../components/ExplorePage";
 
@@ -15,7 +15,7 @@ describe("<ExplorePage />", () => {
     const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
       json: () => {
         return objects;
-      }
+      },
     });
     const { container, getByTestId, getAllByTestId } = render(
       <MemoryRouter>
@@ -41,12 +41,12 @@ describe("<ExplorePage />", () => {
       .mockResolvedValueOnce({
         json: () => {
           return objects;
-        }
+        },
       })
       .mockResolvedValueOnce({
         json: () => {
           return characters;
-        }
+        },
       });
     const { getByTestId, getAllByTestId } = render(
       <MemoryRouter>
@@ -58,7 +58,7 @@ describe("<ExplorePage />", () => {
     expect(getAllByTestId("tr-explore").length).toEqual(3);
 
     fireEvent.click(getByTestId("radio-character"), {
-      target: { value: "character" }
+      target: { value: "character" },
     });
     await wait(() => getByTestId("table-explore"));
 
@@ -75,12 +75,12 @@ describe("<ExplorePage />", () => {
       .mockResolvedValueOnce({
         json: () => {
           return objects;
-        }
+        },
       })
       .mockResolvedValueOnce({
         json: () => {
           return rooms;
-        }
+        },
       });
     const { getByTestId, getAllByTestId } = render(
       <MemoryRouter>
@@ -92,7 +92,7 @@ describe("<ExplorePage />", () => {
     expect(getAllByTestId("tr-explore").length).toEqual(3);
 
     fireEvent.click(getByTestId("radio-character"), {
-      target: { value: "room" }
+      target: { value: "room" },
     });
     await wait(() => getByTestId("table-explore"));
 
@@ -107,7 +107,7 @@ describe("<ExplorePage />", () => {
     const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValueOnce({
       json: () => {
         return objects;
-      }
+      },
     });
     const { container, getByTestId } = render(
       <MemoryRouter>
@@ -131,7 +131,7 @@ describe("<ExplorePage />", () => {
     const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
       json: () => {
         return objects;
-      }
+      },
     });
     const { container, getByTestId } = render(
       <MemoryRouter>
@@ -155,7 +155,7 @@ describe("<ExplorePage />", () => {
     const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
       json: () => {
         return objects;
-      }
+      },
     });
     const { container, getByTestId } = render(
       <MemoryRouter>
@@ -182,12 +182,12 @@ describe("<ExplorePage />", () => {
       .mockResolvedValueOnce({
         json: () => {
           return characters;
-        }
+        },
       })
       .mockResolvedValueOnce({
         json: () => {
           return characters;
-        }
+        },
       });
     const { container, getByTestId } = render(
       <MemoryRouter>
@@ -230,7 +230,7 @@ const objects = {
       is_weapon: 0.0,
       physical_description: "the tree is tall and leafy",
       name_prefix: "some",
-      is_plural: 1.0
+      is_plural: 1.0,
     },
     {
       id: 5011,
@@ -246,7 +246,7 @@ const objects = {
       physical_description:
         "the tree has so tall and skinny it was as if it almost couldn't be seen",
       name_prefix: "some",
-      is_plural: 1.0
+      is_plural: 1.0,
     },
     {
       id: 5013,
@@ -261,9 +261,9 @@ const objects = {
       is_weapon: 1.0,
       physical_description: "the needle is sharp and picky.",
       name_prefix: "some",
-      is_plural: 1.0
-    }
-  ]
+      is_plural: 1.0,
+    },
+  ],
 };
 
 const characters = {
@@ -282,7 +282,7 @@ const characters = {
         "A friendly and playful beast that roams the sprawling meadow surrounding the castle.",
       name_prefix: "some",
       is_plural: 1.0,
-      char_type: "person"
+      char_type: "person",
     },
     {
       id: 1326,
@@ -294,9 +294,9 @@ const characters = {
         "this person loves seclusion and is most at peace in nature",
       name_prefix: "some",
       is_plural: 1.0,
-      char_type: "person"
-    }
-  ]
+      char_type: "person",
+    },
+  ],
 };
 
 const rooms = {
@@ -312,7 +312,7 @@ const rooms = {
       description:
         "This room is quite small and cramped. It's about the size of maybe three wooden carts, which is to say, it's very small. There are boxes all over the place and many candles and other church accessories. There are several big robes hanging next to what looks like a very small closet. Some candles shed an eerie light on the room, flickering softly. There is a small cabinet with several religious tapes and records and a few books. A book case is near and contains many common religious texts.",
       backstory:
-        "The rectory is one of the most important rooms in the church, as it is where the priest and others get ready before they start church, where the put on robes and cassocks and the like. It is vital to the church as a matter of fact. Visibility to the room is blocked off by the altar in front of it, so church goers cannot see it unless they walk behind the altar. It seems to be used as a bit of a storage area for religious artifacts."
-    }
-  ]
+        "The rectory is one of the most important rooms in the church, as it is where the priest and others get ready before they start church, where the put on robes and cassocks and the like. It is vital to the church as a matter of fact. Visibility to the room is blocked off by the altar in front of it, so church goers cannot see it unless they walk behind the altar. It seems to be used as a bit of a storage area for religious artifacts.",
+    },
+  ],
 };

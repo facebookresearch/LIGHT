@@ -7,7 +7,7 @@ import {
   Intent,
   Radio,
   RadioGroup,
-  Spinner
+  Spinner,
 } from "@blueprintjs/core";
 import DiffMatchPatch from "diff-match-patch";
 import AnimateHeight from "react-animate-height";
@@ -39,7 +39,7 @@ function ReviewPage() {
         <RadioGroup
           inline
           large
-          onChange={e => setSelectedStatus(e.target.value)}
+          onChange={(e) => setSelectedStatus(e.target.value)}
           selectedValue={selectedStatus}
         >
           <Radio
@@ -72,7 +72,7 @@ function EditsList({ edits, status, reload }) {
   const [state, setState] = React.useState({
     expanded: -1,
     animating: 0,
-    nextState: -1
+    nextState: -1,
   });
   const [selected, setSelected] = React.useState({ rows: [], all: 0 });
   const [submitAction, setSubmitAction] = React.useState(undefined);
@@ -99,9 +99,9 @@ function EditsList({ edits, status, reload }) {
     const newSelection = [...selected.rows];
     newSelection[index] = selected.rows[index] ? false : true;
     let all = selected.all;
-    if (newSelection.every(r => r === true)) {
+    if (newSelection.every((r) => r === true)) {
       all = 1;
-    } else if (newSelection.every(r => r === false)) {
+    } else if (newSelection.every((r) => r === false)) {
       all = 0;
     } else {
       all = -1;
@@ -116,7 +116,7 @@ function EditsList({ edits, status, reload }) {
   }
 
   async function handleSubmitSelected() {
-    const reqs = pendingSubmission.map(index =>
+    const reqs = pendingSubmission.map((index) =>
       post(`builder/edits/${edits[index].edit_id}/${submitAction}`)
     );
     await Promise.all(reqs).then(() => {
@@ -125,7 +125,7 @@ function EditsList({ edits, status, reload }) {
     AppToaster.show({ intent: Intent.SUCCESS, message: "Review submitted" });
   }
 
-  const showSubmission = action => {
+  const showSubmission = (action) => {
     const checked = [];
     for (let i = 0; i < selected.rows.length; i++) {
       if (selected.rows[i]) {
@@ -211,7 +211,7 @@ function EditsList({ edits, status, reload }) {
                   data-testid="tr-review"
                   style={{
                     background:
-                      index % 2 === 0 ? "rgba(191, 204, 214, 0.15)" : undefined
+                      index % 2 === 0 ? "rgba(191, 204, 214, 0.15)" : undefined,
                   }}
                 >
                   {status === "under review" && (
@@ -234,7 +234,7 @@ function EditsList({ edits, status, reload }) {
                 <tr
                   style={{
                     background:
-                      index % 2 === 0 ? "rgba(191, 204, 214, 0.15)" : undefined
+                      index % 2 === 0 ? "rgba(191, 204, 214, 0.15)" : undefined,
                   }}
                 >
                   <td
@@ -242,7 +242,7 @@ function EditsList({ edits, status, reload }) {
                     style={{
                       display: state.expanded === index ? undefined : "none",
                       padding: 0,
-                      cursor: "unset"
+                      cursor: "unset",
                     }}
                   >
                     <AnimateHeight
@@ -262,7 +262,7 @@ function EditsList({ edits, status, reload }) {
                           animating:
                             state.animating === 3 && state.nextState !== -1
                               ? 1
-                              : 0
+                              : 0,
                         })
                       }
                       animateOpacity={true}
@@ -287,7 +287,7 @@ function EditsList({ edits, status, reload }) {
             style={{
               display: "flex",
               margin: "10px",
-              justifyContent: "flex-end"
+              justifyContent: "flex-end",
             }}
           >
             <Button
@@ -343,7 +343,7 @@ function Card({ edit, entity, reload }) {
           display: "flex",
           flexDirection: "row",
           padding: "20px 20px 0 20px",
-          alignItems: "center"
+          alignItems: "center",
         }}
       >
         <div style={{ flexGrow: 1 }}>
@@ -353,7 +353,7 @@ function Card({ edit, entity, reload }) {
               flexDirection: "column",
               width: "50%",
               maxWidth: "30vw",
-              margin: "auto"
+              margin: "auto",
             }}
           >
             {Object.keys(entity).map((key, index) => (
@@ -376,7 +376,7 @@ function Card({ edit, entity, reload }) {
               flexDirection: "column",
               width: "50%",
               maxWidth: "30vw",
-              margin: "auto"
+              margin: "auto",
             }}
           >
             {Object.keys(entity).map((key, index) => (
@@ -395,7 +395,7 @@ function Card({ edit, entity, reload }) {
         style={{
           display: "flex",
           padding: "0 20px 20px 20px",
-          justifyContent: "flex-end"
+          justifyContent: "flex-end",
         }}
       >
         <Button
@@ -412,7 +412,9 @@ function Card({ edit, entity, reload }) {
           intent={Intent.SUCCESS}
           type="submit"
           onClick={() =>
-            post(`builder/edits/${edit.edit_id}/accept/accepted`).then(() => reload())
+            post(`builder/edits/${edit.edit_id}/accept/accepted`).then(() =>
+              reload()
+            )
           }
           style={{ marginLeft: "15px" }}
         >
@@ -434,7 +436,7 @@ function diff(orig, edit) {
     edit = 0 + edit;
     diff = [
       [-1, +orig],
-      [1, +edit]
+      [1, +edit],
     ];
   }
   return (

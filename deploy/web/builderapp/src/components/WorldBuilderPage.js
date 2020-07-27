@@ -62,7 +62,9 @@ function WorldBuilder({ upload }) {
           <InputGroup
             id="name-input"
             placeholder={
-              state.dimensions.name == null ? "Unnamed World" : state.dimensions.name
+              state.dimensions.name == null
+                ? "Unnamed World"
+                : state.dimensions.name
             }
           />
           <Button

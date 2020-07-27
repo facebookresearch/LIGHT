@@ -6,7 +6,7 @@ import {
   Button,
   InputGroup,
   Alert,
-  Intent
+  Intent,
 } from "@blueprintjs/core";
 import Reorder from "react-reorder";
 import createReactClass from "create-react-class";
@@ -33,12 +33,12 @@ function FloorSelector({ manager, map, currFloor }) {
   // Template component for each Floor Button
   const FloorButton = ContextMenuTarget(
     createReactClass({
-      keypressHandler: function(event) {
+      keypressHandler: function (event) {
         if (event.key === "Enter") {
           inputRef.current.blur();
         }
       },
-      renderContextMenu: function() {
+      renderContextMenu: function () {
         setContextShowing(true);
         return (
           <Menu>
@@ -59,7 +59,7 @@ function FloorSelector({ manager, map, currFloor }) {
                     manager.deleteFloor(this.props.item.index);
                     setConfirmAlert({});
                   },
-                  content: `Are you sure you want to delete the entire ${this.props.item.name} floor? All data on this floor and connections to this floor will be reset.`
+                  content: `Are you sure you want to delete the entire ${this.props.item.name} floor? All data on this floor and connections to this floor will be reset.`,
                 });
               }}
               text="Delete Floor"
@@ -67,20 +67,20 @@ function FloorSelector({ manager, map, currFloor }) {
           </Menu>
         );
       },
-      onContextMenuClose: function() {
+      onContextMenuClose: function () {
         setContextShowing(false);
       },
-      handleBlur: function(e) {
+      handleBlur: function (e) {
         manager.editFloorName(e.target.value, this.props.item.index);
         setEditing(null);
       },
-      componentDidMount: function() {
+      componentDidMount: function () {
         if (editing === this.props.item.index) {
           inputRef.current.focus();
           inputRef.current.select();
         }
       },
-      render: function() {
+      render: function () {
         return (
           <div
             style={{
@@ -88,7 +88,7 @@ function FloorSelector({ manager, map, currFloor }) {
               width: "100%",
               height: "100%",
               lineHeight: "30px",
-              padding: "0px 5px"
+              padding: "0px 5px",
             }}
           >
             {editing !== null && editing === this.props.item.index ? (
@@ -96,14 +96,14 @@ function FloorSelector({ manager, map, currFloor }) {
                 inputRef={inputRef}
                 onBlur={this.handleBlur}
                 defaultValue={this.props.item.name}
-                onKeyPress={event => this.keypressHandler(event)}
+                onKeyPress={(event) => this.keypressHandler(event)}
               />
             ) : (
               <div>{this.props.item.name}</div>
             )}
           </div>
         );
-      }
+      },
     })
   );
 
@@ -124,7 +124,7 @@ function FloorSelector({ manager, map, currFloor }) {
           manager.reorderFloors(initialIndex, newIndex);
           setConfirmAlert({});
         },
-        content: `Are you sure you want to reorder the entire ${floors[newIndex].name} floor? All connections to and from this floor, in both positions, will be reset.`
+        content: `Are you sure you want to reorder the entire ${floors[newIndex].name} floor? All connections to and from this floor, in both positions, will be reset.`,
       });
     }
   };
@@ -149,7 +149,7 @@ function FloorSelector({ manager, map, currFloor }) {
       </Alert>
       <div
         style={{
-          display: "flex"
+          display: "flex",
         }}
       >
         <Button
@@ -157,7 +157,7 @@ function FloorSelector({ manager, map, currFloor }) {
           icon="add"
           onClick={manager.addFloor}
           style={{
-            height: "30px"
+            height: "30px",
           }}
         />
         <Reorder

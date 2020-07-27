@@ -1,0 +1,10 @@
+**/node_modules/*
+light.egg-info/
+**/.vscode/*
+deploy/messenger/*
+deploy/web/build/*
+crowdsourcing/*
+projects/*
+logs/*
+
+*.md

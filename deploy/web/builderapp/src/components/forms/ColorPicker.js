@@ -22,7 +22,7 @@ function ColorPicker({ colors, value, handleChange, advanced }) {
               borderWidth: "2px",
               boxShadow: value === color ? `0px 0px 8px ${value}` : "",
               margin: "2px",
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={() => handleChange("color", color)}
           />
@@ -36,11 +36,11 @@ function ColorPicker({ colors, value, handleChange, advanced }) {
             height: "20px",
             width: "20px",
             borderRadius: "5px",
-            padding: "0px 0px 0px 0px"
+            padding: "0px 0px 0px 0px",
           }}
           type="color"
           value={value}
-          onChange={event => handleChange("color", event.target.value)}
+          onChange={(event) => handleChange("color", event.target.value)}
         />
       )}
     </div>
