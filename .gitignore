@@ -10,3 +10,4 @@ light.egg-info/
 **/.vscode/*
 
 logs/*
+.coverage
