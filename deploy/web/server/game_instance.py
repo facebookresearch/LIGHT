@@ -13,7 +13,7 @@ from parlai.utils.misc import Timer
 from light.world.world import World
 from tornado.ioloop import IOLoop
 from light.world.souls.repeat_soul import RepeatSoul
-
+import time
 
 class Player:
     """
@@ -82,7 +82,6 @@ class PlayerProvider:
         """
         raise NotImplementedError
 
-# TODO:  Refactor when update player providers
 class GameInstance:
     """
     This class serves to create a wrapper around a specific graph and manage
@@ -106,6 +105,7 @@ class GameInstance:
         self.game_id = game_id
         self.players = []
         self.providers = []
+        self.last_connection = time.time()
 
     def register_provider(self, provider):
         self.providers.append(provider)
@@ -117,8 +117,9 @@ class GameInstance:
         left_players = [p for p in self.players if not p.is_alive()]
         for player in left_players:
             if player.player_soul is not None:
-                g.purgatory.clear_soul(player.player_soul.target_node)
+                self.g.purgatory.clear_soul(player.player_soul.target_node)
             self.players.remove(player)
+            self.last_connection = time.time()
 
         # run npcs
         g.update_world()

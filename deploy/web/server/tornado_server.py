@@ -184,6 +184,10 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                 'Opened new socket from ip: {}'.format(self.request.remote_ip))
             logging.info(
                 'For game: {}'.format(game_id))
+            if game_id not in self.app.graphs:
+                self.close()
+                # TODO: Have an error page about game deleted
+                self.redirect(u"/game/")
             graph_purgatory = self.app.graphs[game_id].g.purgatory
             if self.alive:
                 new_player = TornadoPlayerProvider(
@@ -369,7 +373,7 @@ class TornadoPlayerProvider(PlayerProvider):
         return self.socket.alive
     
     def on_reap_soul(self, soul):
-        self.socket.alive = False
+        pass
 
 class TornadoPlayerFactory():
     """
