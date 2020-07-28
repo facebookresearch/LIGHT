@@ -126,11 +126,17 @@ function Entry({ msg, onReply, agents, selfId }) {
   if (["LookEvent", "GoEvent", "ExamineEvent", "ErrorEvent", "HelpEvent", "text"].includes(msg.caller) || msg.caller === null) {
     return <Setting text={msg.text} />;
   } else {
+    var actor = ""
+    if (msg.actors == undefined){
+      actor = msg.actor.node_id;
+    }else{
+      actor = msg.actors[0];
+    }
     return (
       <Message
         text={msg.text}
-        isSelf={msg.is_self || msg.actors[0] === selfId}
-        actor={agents[msg.actors[0]]}
+        isSelf={msg.is_self || actor === selfId}
+        actor={agents[actor]}
         onReply={onReply}
       />
     );

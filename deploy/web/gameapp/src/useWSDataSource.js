@@ -19,49 +19,41 @@ export function useWSDataSource(url) {
   const [agents, setAgents] = React.useState({});
 
   const handleMessage = React.useCallback(
-    msg => {
+    (msg) => {
       const cmd = JSON.parse(msg.data);
       if (cmd.command === "actions") {
         const buffer = [];
 
-        cmd.data.forEach(action => {
-          const isRespawn = false; /* action.text.startsWith(
-            "Your lost soul attempts to join the living..."
-          );*/
-          const isPersonaDescription = action.caller === "SpawnEvent";
+        cmd.data.forEach((action) => {
+          const isPersonaDescription = action.caller === "SoulSpawnEvent";
           const isLocationDescription = action.caller === "LookEvent";
-          action.room = JSON.parse(action.room)
-          action.actor = JSON.parse(action.actor)
-          setAgents(
-              action.present_agent_ids
-          );
+          action.room = JSON.parse(action.room);
+          action.actor = JSON.parse(action.actor);
+          setAgents(action.present_agent_ids);
           if (isPersonaDescription) {
             setPersona({
               name: action.actor.name,
               description: action.actor.persona,
-              id: action.actor.node_id
+              id: action.actor.node_id,
             });
-            if (isRespawn) {
-              buffer.push(action);
-            }
-            return;
-          } else if (isLocationDescription) {
+          }
+          if (isLocationDescription) {
             setLocation({
               name: action.room.name,
               description:
                 action.room.desc +
                 "\n" +
                 "You notice: " +
-                "TODO add examine stuff here" + 
+                "TODO add examine stuff here" +
                 ".",
-              id: action.room.node_id
+              id: action.room.node_id,
             });
             buffer.push(action);
           } else {
             buffer.push(action);
           }
 
-          buffer.forEach(msg => appendMessage(msg));
+          buffer.forEach((msg) => appendMessage(msg));
         });
       }
     },
@@ -73,12 +65,12 @@ export function useWSDataSource(url) {
   }, [handleMessage]);
 
   const submitMessage = React.useCallback(
-    txt => {
+    (txt) => {
       appendMessage({
         caller: "say",
         text: txt,
         is_self: true,
-        actors: [persona.id]
+        actors: [persona.id],
       });
 
       const msg = JSON.stringify({ command: "act", data: txt });
@@ -112,6 +104,6 @@ export function useWSDataSource(url) {
     persona,
     location,
     isErrored,
-    agents
+    agents,
   };
 }

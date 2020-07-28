@@ -43,7 +43,7 @@ class World(object):
     Still very much defining the behavior clearly until deprecations are finished
     '''
 
-    def __init__(self, opt, graph_builder, debug=False):
+    def __init__(self, opt, graph_builder, debug=False,):
         # TODO re-investigate callbacks during action refactor
         self.callbacks = {}
         self.variables = {}
@@ -876,7 +876,7 @@ class World(object):
             )
             return False, 'dead'
 
-        if inst == []:
+        if instruction_list == []:
             errs = [
                 'Huh?',
                 'What?',

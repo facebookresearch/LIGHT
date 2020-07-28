@@ -62,5 +62,5 @@ class PlayerSoul(Soul):
         """
         super().reap()
         self.target_node.is_player = False
-        world.oo_graph.room_id_to_loggers[target_node.get_room().node_id]._remove_player()     
+        self.world.oo_graph.room_id_to_loggers[self.target_node.get_room().node_id]._remove_player()     
         self.provider.on_reap_soul(self)
