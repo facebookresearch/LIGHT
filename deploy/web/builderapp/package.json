@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@blueprintjs/core": "^3.17.1",
-    "@blueprintjs/select": "^3.10.0",
+    "@blueprintjs/core": "^3.30.0",
+    "@blueprintjs/select": "^3.13.5",
     "@testing-library/jest-dom": "^4.1.0",
     "@testing-library/react": "^9.2.0",
     "ansi-regex": "^4.1.0",
@@ -13,7 +13,7 @@
     "fast-deep-equal": "^2.0.1",
     "formik": "^1.5.8",
     "react": "^16.8.6",
-    "react-animate-height": "^2.0.15",
+    "react-animate-height": "^2.0.22",
     "react-dom": "^16.8.6",
     "react-grid-layout": "^0.16.6",
     "react-paginate": "^6.3.0",
@@ -25,7 +25,8 @@
     "start": "react-scripts start",
     "build": "cp ../config.js ./src/config.js && react-scripts build",
     "postbuild": "rm ./src/config.js && (mv ./build/index.html ./build/builderindex.html && rm -rf ../build/* && cp -r ./build/* ../build && rm -R ./build)",
-    "test": "react-scripts test",
+    "test": "cp ../config.js ./src/config.js && react-scripts test",
+    "posttest": "rm ./src/config.js",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

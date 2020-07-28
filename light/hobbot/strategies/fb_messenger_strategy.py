@@ -40,20 +40,19 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
         super().__init__(manager, opt)
         assert opt is not None, "Internal service must be initialized with options"
 
-        if not opt.get('db_tier'):
-            raise ValueError('need to specify a db tier for BeatTheHobbot tables')
+        if not opt.get("db_tier"):
+            raise ValueError("need to specify a db tier for BeatTheHobbot tables")
 
-        if opt.get('deploy_with_tw', False):
-            opt['resources_path'] = '/packages/ai-group.parlaibot-light-resources'
+        if opt.get("deploy_with_tw", False):
+            opt["resources_path"] = "/packages/ai-group.parlaibot-light-resources"
         else:
-            fetch_resources(package='ai-group.parlaibot-light-resources')
-            opt['resources_path'] = resource_path(
-                '',
-                package='ai-group.parlaibot-light-resources'
+            fetch_resources(package="ai-group.parlaibot-light-resources")
+            opt["resources_path"] = resource_path(
+                "", package="ai-group.parlaibot-light-resources"
             )
 
         self.logger_handler = LoggerConfigHandler(
-            'ParlAIBotBeatTheHobbitSinglePlayerLoggerConfig'
+            "ParlAIBotBeatTheHobbitSinglePlayerLoggerConfig"
         )
 
         # Below code is used to initialize a safety model, which we are not currently using
@@ -74,11 +73,11 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
         # opt['safety_classifier_opts']['threshold'] = 0.9
         self.personal_info = PersonalInfoDetector()
 
-        self.db_tier = opt['db_tier']
-        self.table_prefix = 'lightbot'
+        self.db_tier = opt["db_tier"]
+        self.table_prefix = "lightbot"
 
     def fetch_resources(self) -> str:
-        return self.opt['resources_path']
+        return self.opt["resources_path"]
 
     def has_offensive_language(self, message: str, previous_turn: Optional[str] = None):
         """Determine if the provided act is offensive"""
@@ -91,11 +90,16 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
     def init_safety(self, opt):
         """Initialize safety models"""
         self.offensive_language = OffensiveLanguageDetector(
-            path=opt.get('offensive_lang_path')
+            path=opt.get("offensive_lang_path")
         )
         # self.safety_checker = MessageSafetyDetector(self.opt)
 
-    def update_leaderboard(self, player_id: str, score: Optional[int] = None, username: Optional[str] = None) -> None:
+    def update_leaderboard(
+        self,
+        player_id: str,
+        score: Optional[int] = None,
+        username: Optional[str] = None,
+    ) -> None:
         """Updates the leaderboard for this game with the parameters provided"""
         if score is not None:
             # update score
@@ -104,7 +108,7 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
                 username,
                 score,
                 tier=self.db_tier,
-                table='{}_leaderboard'.format(self.table_prefix),
+                table="{}_leaderboard".format(self.table_prefix),
             )
         if username is not None:
             # update username
@@ -112,7 +116,7 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
                 player_id,
                 username,
                 tier=self.db_tier,
-                table='{}_leaderboard'.format(self.table_prefix),
+                table="{}_leaderboard".format(self.table_prefix),
             )
 
     def get_top_n_leaderboard(self, num_rows: int = 5) -> List[Any]:
@@ -123,7 +127,7 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
         return bhb_sql.display_leaderboard(
             num_rows=5,
             tier=self.db_tier,
-            table='{}_leaderboard'.format(self.table_prefix),
+            table="{}_leaderboard".format(self.table_prefix),
         )
 
     def get_player_leaderboard_stats(self, player_id: str) -> Dict[str, Any]:
@@ -137,30 +141,29 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
         # TODO return the players above and below to construct a contextual leaderboard
         """
         total_players = bhb_sql.get_leaderboard_total(
-            tier=self.db_tier,
-            table='{}_leaderboard'.format(self.table_prefix),
+            tier=self.db_tier, table="{}_leaderboard".format(self.table_prefix),
         )
 
         rank = bhb_sql.get_leaderboard_rank(
             player_id,
             tier=self.db_tier,
-            table='{}_leaderboard'.format(self.table_prefix),
+            table="{}_leaderboard".format(self.table_prefix),
         )
         score = bhb_sql.get_leaderboard_score(
             player_id,
             tier=self.db_tier,
-            table='{}_leaderboard'.format(self.table_prefix),
+            table="{}_leaderboard".format(self.table_prefix),
         )
         username = bhb_sql.get_leaderboard_username(
             player_id,
             tier=self.db_tier,
-            table='{}_leaderboard'.format(self.table_prefix),
+            table="{}_leaderboard".format(self.table_prefix),
         )
         return {
-            'total_players': total_players,
-            'rank': rank,
-            'score': score,
-            'username': username,
+            "total_players": total_players,
+            "rank": rank,
+            "score": score,
+            "username": username,
         }
 
     def update_character_collection(self, player_id: str, collected_characters: str):
@@ -169,7 +172,7 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
             player_id,
             collected_characters,
             tier=self.db_tier,
-            table='{}_extradata'.format(self.table_prefix),
+            table="{}_extradata".format(self.table_prefix),
         )
 
     def get_character_collection(self, player_id: str) -> Optional[str]:
@@ -177,7 +180,7 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
         return bhb_sql.get_character_collection(
             player_id,
             tier=self.db_tier,
-            table='{}_extradata'.format(self.table_prefix),
+            table="{}_extradata".format(self.table_prefix),
         )
 
     def log(self, data: Dict[str, Any]):
@@ -201,11 +204,11 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
         Check if the name only contains alphanumeric characters and
         spaces, and warn the user of these restrictions if it doesn't
         """
-        name_without_spaces = username.replace(' ', '')
-        is_valid = re.match('^[A-Za-z0-9_]*$', name_without_spaces) is not None
+        name_without_spaces = username.replace(" ", "")
+        is_valid = re.match("^[A-Za-z0-9_]*$", name_without_spaces) is not None
         if not is_valid:
             return (
-                'Your username may only contain letters and '
-                'numbers. Please try again.'
+                "Your username may only contain letters and "
+                "numbers. Please try again."
             )
         return True

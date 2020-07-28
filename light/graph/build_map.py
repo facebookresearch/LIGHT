@@ -4,9 +4,7 @@
 #  (but should be straight-forward).
 
 
-from light.graph.builders.starspace_neighbor import (
-    StarspaceNeighborBuilder,
-)
+from light.graph.builders.starspace_neighbor import StarspaceNeighborBuilder
 
 from light.world.world import World
 import random
@@ -18,7 +16,7 @@ np.random.seed(6)
 
 
 # TODO deprecate in favor of graph builders
-class BuildLightMap():
+class BuildLightMap:
     def __init__(self, debug=True):
         self.world = StarspaceNeighborBuilder()
         self.world.build_world()
@@ -26,11 +24,10 @@ class BuildLightMap():
     def get_graph(self):
         return World.from_graph(self.world.get_graph())
 
-
     def add_agent(self, g, agent_id):
         g._node_npcs.add(agent_id)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     random.seed(6)
     m = BuildLightMap()

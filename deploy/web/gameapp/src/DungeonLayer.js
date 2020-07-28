@@ -4,7 +4,7 @@ import L from "leaflet";
 class Grid extends GridLayer {
   createLeafletElement(opts) {
     const Grid = L.GridLayer.extend({
-      createTile: coords => {
+      createTile: (coords) => {
         // console.log(coords);
         // if (coords.x % 3 === 0) return null;
         console.log(coords);
@@ -17,7 +17,7 @@ class Grid extends GridLayer {
           "Castle",
           "#ddd",
           "Pasture",
-          "#daf5b1"
+          "#daf5b1",
         ];
 
         const tile = document.createElement("div");
@@ -28,7 +28,7 @@ class Grid extends GridLayer {
         tile.style.alignItems = "center";
         tile.style.justifyContent = "center";
         return tile;
-      }
+      },
     });
     return new Grid({ tileSize: 100 });
   }

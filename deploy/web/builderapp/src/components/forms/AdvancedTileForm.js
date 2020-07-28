@@ -6,7 +6,7 @@ import {
   Icon,
   Popover,
   PopoverInteractionKind,
-  Tooltip
+  Tooltip,
 } from "@blueprintjs/core";
 import { isEmpty, cloneDeep } from "lodash";
 import AnimateHeight from "react-animate-height";
@@ -21,7 +21,7 @@ import {
   findBiome,
   invertColor,
   findEmoji,
-  DEFAULT_EMOJI
+  DEFAULT_EMOJI,
 } from "../worldbuilding/utils";
 import ObjectForm, { emptyObjectForm } from "./ObjectForm";
 import CharacterForm, { emptyCharacterForm } from "./CharacterForm";
@@ -43,7 +43,7 @@ function AdvancedTileForm({
   tileStyle,
   entities,
   findOrAddEntity,
-  editEntity
+  editEntity,
 }) {
   const TilePreview = ({ tile }) => {
     const contentColor = invertColor(
@@ -53,7 +53,7 @@ function AdvancedTileForm({
       <div style={{ display: "flex", justifyContent: "center" }}>
         <div
           style={{
-            position: "relative"
+            position: "relative",
           }}
         >
           <Icon
@@ -71,7 +71,7 @@ function AdvancedTileForm({
                 opacity: tile.stairDown ? 1 : 0.2,
                 position: "absolute",
                 bottom: "5px",
-                left: "5px"
+                left: "5px",
               }}
               icon="arrow-bottom-left"
             />
@@ -84,7 +84,7 @@ function AdvancedTileForm({
                 opacity: tile.stairUp ? 1 : 0.2,
                 position: "absolute",
                 top: "5px",
-                right: "5px"
+                right: "5px",
               }}
               icon="arrow-top-right"
             />
@@ -94,7 +94,9 @@ function AdvancedTileForm({
             style={{
               ...tileStyle,
               backgroundColor:
-                tile && !isNaN(tile.room) && tile.color ? tile.color : "#ced9e0"
+                tile && !isNaN(tile.room) && tile.color
+                  ? tile.color
+                  : "#ced9e0",
             }}
           >
             <div
@@ -103,7 +105,7 @@ function AdvancedTileForm({
                 color: contentColor,
                 width: "100%",
                 maxHeight: tileStyle.maxHeight - 20,
-                overflow: "hidden"
+                overflow: "hidden",
               }}
             >
               {!isEmpty(tile) && entities.room[tile.room]
@@ -111,7 +113,7 @@ function AdvancedTileForm({
                 : ""}
               <p>
                 {!isEmpty(tile)
-                  ? tile.characters.map(char => (
+                  ? tile.characters.map((char) => (
                       <Tooltip content={entities.character[char].name}>
                         {entities.character[char].emoji}
                       </Tooltip>
@@ -120,7 +122,7 @@ function AdvancedTileForm({
               </p>
               <p>
                 {!isEmpty(tile)
-                  ? tile.objects.map(obj => (
+                  ? tile.objects.map((obj) => (
                       <Tooltip content={entities.object[obj].name}>
                         {entities.object[obj].emoji}
                       </Tooltip>
@@ -141,7 +143,7 @@ function AdvancedTileForm({
         (!isEmpty(initialInputs) ? initialInputs : undefined) ||
         emptyTileForm
       }
-      validate={values => {
+      validate={(values) => {
         let errors = {};
         if (!values.room) {
           errors.room = "Required";
@@ -151,7 +153,7 @@ function AdvancedTileForm({
       isInitialValid={!!inheritedInputs && !!inheritedInputs.room}
       onSubmit={handleSubmit}
     >
-      {props => {
+      {(props) => {
         const {
           values,
           setFieldValue,
@@ -161,7 +163,7 @@ function AdvancedTileForm({
           dirty,
           isValid,
           handleSubmit,
-          handleReset
+          handleReset,
         } = props;
         const setRoomValue = (name, value, fullValue) => {
           setFieldValue(name, value);
@@ -189,7 +191,7 @@ function AdvancedTileForm({
                   setFieldTouched: setFieldTouched,
                   onItemSelect: findOrAddEntity,
                   entities: entities,
-                  handleChange: setRoomValue
+                  handleChange: setRoomValue,
                 }}
                 handleChange={setFieldValue}
                 formValue={values.room}
@@ -197,9 +199,9 @@ function AdvancedTileForm({
                 type="room"
                 Form={RoomForm}
                 formProps={{
-                  initialInputs: emptyRoomForm
+                  initialInputs: emptyRoomForm,
                 }}
-                handleCreateSubmit={data =>
+                handleCreateSubmit={(data) =>
                   setRoomValue("room", findOrAddEntity(data, "room"), data)
                 }
                 handleEditSubmit={editEntity}
@@ -209,7 +211,7 @@ function AdvancedTileForm({
                   columnKeys: ["name", "description", "backstory"],
                   items: !isNaN(values.room) ? [values.room] : undefined,
                   entities,
-                  type: "room"
+                  type: "room",
                 }}
               ></SelectFromExistingOrCreateNew>
               {errors.room && touched.room && (
@@ -241,7 +243,7 @@ function AdvancedTileForm({
                     return findOrAddEntity(e, type);
                   },
                   entities: entities,
-                  handleChange: setFieldValue
+                  handleChange: setFieldValue,
                 }}
                 handleChange={setFieldValue}
                 formValue={values.characters}
@@ -249,9 +251,9 @@ function AdvancedTileForm({
                 type="character"
                 Form={CharacterForm}
                 formProps={{
-                  initialInputs: emptyCharacterForm
+                  initialInputs: emptyCharacterForm,
                 }}
-                handleCreateSubmit={data => {
+                handleCreateSubmit={(data) => {
                   data.emoji = findEmoji(data.name);
                   setFieldValue(
                     "characters",
@@ -266,7 +268,7 @@ function AdvancedTileForm({
                   items: values.characters,
                   entities,
                   type: "character",
-                  editEntity: editEntity
+                  editEntity: editEntity,
                 }}
               />
               {errors.characters && touched.characters && (
@@ -287,7 +289,7 @@ function AdvancedTileForm({
                     return findOrAddEntity(e, type);
                   },
                   entities: entities,
-                  handleChange: setFieldValue
+                  handleChange: setFieldValue,
                 }}
                 handleChange={setFieldValue}
                 formValue={values.objects}
@@ -295,9 +297,9 @@ function AdvancedTileForm({
                 type="object"
                 Form={ObjectForm}
                 formProps={{
-                  initialInputs: emptyObjectForm
+                  initialInputs: emptyObjectForm,
                 }}
-                handleCreateSubmit={data => {
+                handleCreateSubmit={(data) => {
                   data.emoji = findEmoji(data.name);
                   setFieldValue(
                     "objects",
@@ -312,7 +314,7 @@ function AdvancedTileForm({
                   items: values.objects,
                   entities,
                   type: "object",
-                  editEntity: editEntity
+                  editEntity: editEntity,
                 }}
               />
               {errors.objects && touched.objects && (
@@ -326,7 +328,7 @@ function AdvancedTileForm({
               style={{
                 display: "flex",
                 justifyContent: "flex-end",
-                padding: "10px"
+                padding: "10px",
               }}
             >
               <Button
@@ -400,14 +402,14 @@ function SelectedTableView({
   handleDuplicate,
   handleDelete,
   type,
-  editEntity
+  editEntity,
 }) {
   function EmojiTD({ item }) {
     const [showPicker, setShowPicker] = React.useState(false);
     return (
       <Popover
         interactionKind={PopoverInteractionKind.CLICK}
-        onInteraction={state => setShowPicker(state)}
+        onInteraction={(state) => setShowPicker(state)}
         isOpen={showPicker}
         wrapperTagName="td"
       >
@@ -418,7 +420,7 @@ function SelectedTableView({
           {entities[type][item].emoji || DEFAULT_EMOJI}
         </div>
         <Picker
-          onSelect={event => {
+          onSelect={(event) => {
             const data = cloneDeep(entities[type][item]);
             data.emoji = event.native;
             editEntity(item, data, type);
@@ -449,7 +451,7 @@ function SelectedTableView({
               return (
                 <React.Fragment key={index}>
                   <tr>
-                    {columnKeys.map(key => {
+                    {columnKeys.map((key) => {
                       if (key === "emoji") {
                         return <EmojiTD item={item} key={key} />;
                       }
@@ -491,7 +493,7 @@ const selectOrCreateState = {
   SELECT_FROM_EXISTING: 2,
   CREATE_NEW: 3,
   EDIT: 4,
-  DUPLICATE: 5
+  DUPLICATE: 5,
 };
 
 // Input type component that includes the selected table,
@@ -510,7 +512,7 @@ function SelectFromExistingOrCreateNew({
   handleCreateSubmit,
   handleEditSubmit,
   Selected,
-  selectedProps
+  selectedProps,
 }) {
   const [state, setState] = React.useState(initialState);
   const [editing, setEditing] = React.useState(undefined);
@@ -521,12 +523,12 @@ function SelectFromExistingOrCreateNew({
     setState(selectOrCreateState.EDIT);
   };
 
-  const handleDuplicate = data => {
+  const handleDuplicate = (data) => {
     setDuplicating(data);
     setState(selectOrCreateState.DUPLICATE);
   };
 
-  const handleDelete = index => {
+  const handleDelete = (index) => {
     if (Array.isArray(formValue)) {
       formValue.splice(index, 1);
       handleChange(name, formValue);
@@ -551,7 +553,7 @@ function SelectFromExistingOrCreateNew({
             justifyContent: "center",
             flexDirection: "row",
             alignItems: "center",
-            padding: "5px"
+            padding: "5px",
           }}
         >
           <Button
@@ -594,7 +596,7 @@ function SelectFromExistingOrCreateNew({
           <Form
             {...formProps}
             type={type}
-            handleSubmit={value => {
+            handleSubmit={(value) => {
               setState(initialState);
               handleCreateSubmit(value);
             }}
@@ -612,7 +614,7 @@ function SelectFromExistingOrCreateNew({
             {...formProps}
             type={type}
             initialInputs={editing.data}
-            handleSubmit={value => {
+            handleSubmit={(value) => {
               setState(initialState);
               handleEditSubmit(editing.id, value, type);
               setEditing(undefined);
@@ -631,7 +633,7 @@ function SelectFromExistingOrCreateNew({
             {...formProps}
             type={type}
             initialInputs={duplicating}
-            handleSubmit={value => {
+            handleSubmit={(value) => {
               setState(initialState);
               handleCreateSubmit(value);
               setDuplicating(undefined);

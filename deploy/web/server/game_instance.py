@@ -6,12 +6,12 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 import asyncio
-from light.graph.builders.starspace_all import (
-    StarspaceBuilder,
-)
+from light.graph.builders.starspace_all import StarspaceBuilder
 from parlai.utils.misc import Timer
 from light.world.world import World
 from tornado.ioloop import IOLoop
+from light.world.souls.repeat_soul import RepeatSoul
+import time
 
 
 class Player:
@@ -81,7 +81,7 @@ class PlayerProvider:
         """
         raise NotImplementedError
 
-# TODO:  Refactor when update player providers
+
 class GameInstance:
     """
     This class serves to create a wrapper around a specific graph and manage
@@ -90,40 +90,38 @@ class GameInstance:
     can come from any source.
     """
 
-    def __init__(self, game_id, ldb, g=None,):
+    def __init__(
+        self, game_id, ldb, g=None,
+    ):
         if g is None:
-            _, world = StarspaceBuilder(ldb,
-                debug=False
+            _, world = StarspaceBuilder(
+                ldb, debug=False
             ).get_graph()  # TODO: what are the args that are needed
             self.g = world
         else:
             self.g = g
+        purgatory = self.g.purgatory
+        purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
+        for empty_agent in self.g.oo_graph.agents.values():
+            purgatory.fill_soul(empty_agent)
         self.game_id = game_id
         self.players = []
         self.providers = []
+        self.last_connection = time.time()
 
     def register_provider(self, provider):
         self.providers.append(provider)
-        provider.graphs[self.game_id] = self.g
 
     def run_graph_step(self):
         g = self.g
-        # try to make some new players
-        for provider in self.providers:
-            self.players += provider.get_new_players(self.game_id)
 
         # Clear disconnected players
         left_players = [p for p in self.players if not p.is_alive()]
         for player in left_players:
-            g.set_prop(g.playerid_to_agentid(player.id), 'human', False)
+            if player.player_soul is not None:
+                self.g.purgatory.clear_soul(player.player_soul.target_node)
             self.players.remove(player)
-
-        # Check existing players
-        for player in self.players:
-            act = player.act()
-            if act != '':
-                g.parse_exec(g.playerid_to_agentid(player.id), act)
-            player.observe()
+            self.last_connection = time.time()
 
         # run npcs
         g.update_world()

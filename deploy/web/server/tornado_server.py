@@ -8,10 +8,10 @@
 
 from deploy.web.server.game_instance import (
     Player,
-    PlayerProvider,
     GameInstance,
 )
 from light.data_model.light_database import LIGHTDatabase
+from light.world.player_provider import PlayerProvider
 
 import argparse
 import inspect
@@ -25,13 +25,15 @@ import uuid
 import warnings
 from collections import defaultdict
 from zmq.eventloop import ioloop
+
 ioloop.install()  # Needs to happen before any tornado imports!
 
-import tornado.ioloop     # noqa E402: gotta install ioloop first
-import tornado.web        # noqa E402: gotta install ioloop first
+import tornado.ioloop  # noqa E402: gotta install ioloop first
+import tornado.web  # noqa E402: gotta install ioloop first
 import tornado.websocket  # noqa E402: gotta install ioloop first
-import tornado.escape     # noqa E402: gotta install ioloop first
+import tornado.escape  # noqa E402: gotta install ioloop first
 import tornado.auth
+from light.graph.events.graph_events import SoulSpawnEvent
 
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
@@ -113,31 +115,32 @@ def ensure_dir_exists(path):
 
 def get_path(filename):
     """Get the path to an asset."""
-    cwd = os.path.dirname(
-        os.path.abspath(inspect.getfile(inspect.currentframe())))
+    cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     return os.path.join(cwd, filename)
+
 
 def read_secrets():
     loc = here + "/../../../../secrets.txt"
     secrets = {}
-    with open(loc, 'r') as secret_file:
+    with open(loc, "r") as secret_file:
         for line in secret_file:
             items = line.split(" ")
-            if (len(items) == 2):
+            if len(items) == 2:
                 secrets[items[0]] = items[1]
     return secrets
+
 
 SECRETS = read_secrets()
 
 tornado_settings = {
     "autoescape": None,
-    "cookie_secret": SECRETS['cookie_secret'],
+    "cookie_secret": SECRETS["cookie_secret"],
     "compiled_template_cache": False,
     "debug": "/dbg/" in __file__,
     "login_url": "/login",
-    "template_path": get_path('static'),
-    "facebook_api_key": SECRETS['facebook_api_key'],
-    "facebook_secret": SECRETS['facebook_secret'],
+    "template_path": get_path("static"),
+    "facebook_api_key": SECRETS["facebook_api_key"],
+    "facebook_secret": SECRETS["facebook_secret"],
 }
 
 
@@ -153,17 +156,18 @@ class Application(tornado.web.Application):
         #       hit in the top level RuleRouter from run_server.py in case this application
         #       is run standalone for some reason.
         return [
-            (r"/game(.*)/socket", SocketHandler, {'app': self}),
+            (r"/game(.*)/socket", SocketHandler, {"app": self}),
             (r"/", MainHandler),
-            (r"/(.*)", StaticUIHandler, {'path': path_to_build}),
+            (r"/(.*)", StaticUIHandler, {"path": path_to_build}),
         ]
+
 
 # StaticUIHandler serves static front end, defaulting to index.html served
 # If the file is unspecified.
 class StaticUIHandler(tornado.web.StaticFileHandler):
     def parse_url_path(self, url_path):
-        PRIMARY_PAGE='index.html'
-        if not url_path or url_path.endswith('/'):
+        PRIMARY_PAGE = "index.html"
+        if not url_path or url_path.endswith("/"):
             url_path = url_path + PRIMARY_PAGE
         return url_path
 
@@ -194,59 +198,37 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
     def open(self, game_id):
         user_json = self.get_secure_cookie("user")
         if user_json:
-            if self not in list(self.subs.values()):
-                self.subs[self.sid] = self
-            logging.info(
-                'Opened new socket from ip: {}'.format(self.request.remote_ip))
-            logging.info(
-                'For game: {}'.format(game_id))
-            self.new_subs[game_id].append(self.sid)
+            logging.info("Opened new socket from ip: {}".format(self.request.remote_ip))
+            logging.info("For game: {}".format(game_id))
+            if game_id not in self.app.graphs:
+                self.close()
+                # TODO: Have an error page about game deleted
+                self.redirect(u"/game/")
+            graph_purgatory = self.app.graphs[game_id].g.purgatory
+            if self.alive:
+                new_player = TornadoPlayerProvider(self, graph_purgatory,)
+                new_player.init_soul()
+                self.app.graphs[game_id].players.append(new_player)
         else:
             self.close()
             self.redirect(u"/login")
-        
-        
+
     def send_alive(self):
-        self.safe_write_message(
-            json.dumps({'command': 'register', 'data': self.sid}))
+        self.safe_write_message(json.dumps({"command": "register", "data": self.sid}))
         self.alive_sent = True
 
-
     def on_message(self, message):
-        logging.info('from web client: {}'.format(message))
+        logging.info("from web client: {}".format(message))
         msg = tornado.escape.json_decode(tornado.escape.to_basestring(message))
-        cmd = msg.get('command')
+        cmd = msg.get("command")
         if self.player is None:
             return
-        if cmd == 'act':
-            # self.actions.append(msg['data'])
-            self.player.g.parse_exec(self.player.get_agent_id(), msg['data'])
-            self.player.observe()
-        elif cmd == 'descs':
-            self.safe_write_message(
-                json.dumps({'command': 'descs', 'data': self.g._node_to_desc})
-            )
-        elif cmd == 'contains':
-            queries = msg['data']
-            self.safe_write_message(
-                json.dumps({
-                    'command': 'contains',
-                    'data': {q : list(self.g.node_contains) for q in queries}
-                })
-            )
-        elif cmd == 'attributes':
-            queries = msg['data']
-            self.safe_write_message(
-                json.dumps({
-                    'command': 'contains',
-                    # TODO expose a way in graph to get all props for a node
-                    'data': {q : list(self.g._node_to_props) for q in queries}
-                })
-            )
+        if cmd == "act":
+            self.player.act(msg["data"])
+        else:
+            print("THESE COMMANDS HAVE BEEN DEPRICATED")
 
     def on_close(self):
-        if self.player is not None:
-            self.player.g.clear_message_callback(self.player.get_player_id())
         self.alive = False
 
 
@@ -254,7 +236,7 @@ class BaseHandler(tornado.web.RequestHandler):
     def __init__(self, *request, **kwargs):
         self.include_host = False
         super(BaseHandler, self).__init__(*request, **kwargs)
-    
+
     def get_login_url(self):
         return u"/login"
 
@@ -266,18 +248,20 @@ class BaseHandler(tornado.web.RequestHandler):
             return None
 
     def set_default_headers(self):
-        self.set_header('Access-Control-Allow-Origin', '*')
-        self.set_header('Access-Control-Allow-Headers', '*')
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "*")
 
     # TODO maybe use cookies to restore previous game state?
     def write_error(self, status_code, **kwargs):
         logging.error("ERROR: %s: %s" % (status_code, kwargs))
         if "exc_info" in kwargs:
-            logging.info('Traceback: {}'.format(
-                traceback.format_exception(*kwargs["exc_info"])))
+            logging.info(
+                "Traceback: {}".format(traceback.format_exception(*kwargs["exc_info"]))
+            )
         if self.settings.get("debug") and "exc_info" in kwargs:
             logging.error("rendering error page")
             import traceback
+
             exc_info = kwargs["exc_info"]
             # exc_info is a tuple consisting of:
             # 1. The class of the Exception
@@ -285,9 +269,9 @@ class BaseHandler(tornado.web.RequestHandler):
             # 3. The traceback opbject
             try:
                 params = {
-                    'error': exc_info[1],
-                    'trace_info': traceback.format_exception(*exc_info),
-                    'request': self.request.__dict__
+                    "error": exc_info[1],
+                    "trace_info": traceback.format_exception(*exc_info),
+                    "request": self.request.__dict__,
                 }
 
                 self.render("error.html", **params)
@@ -295,60 +279,78 @@ class BaseHandler(tornado.web.RequestHandler):
             except Exception as e:
                 logging.error(e)
 
+
 class LandingApplication(tornado.web.Application):
     def __init__(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
-        super(LandingApplication, self).__init__(self.get_handlers(database, hostname, password), **tornado_settings)
+        super(LandingApplication, self).__init__(
+            self.get_handlers(database, hostname, password), **tornado_settings
+        )
 
     def get_handlers(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
         return [
             (r"/", MainHandler),
             (r"/?id=.*", MainHandler),
-            (r"/login", LoginHandler, {'database': database, 'hostname' : hostname, 'password': password}),
-            (r"/fb/login", FacebookOAuth2LoginHandler, {'database': database, 'app': self, 'hostname' : hostname}),
+            (
+                r"/login",
+                LoginHandler,
+                {"database": database, "hostname": hostname, "password": password},
+            ),
+            (
+                r"/fb/login",
+                FacebookOAuth2LoginHandler,
+                {"database": database, "app": self, "hostname": hostname},
+            ),
             (r"/logout", LogoutHandler),
-            (r"/(.*)", StaticUIHandler, {'path' : here + "/../build/"})
+            (r"/(.*)", StaticUIHandler, {"path": here + "/../build/"}),
         ]
+
 
 class MainHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         self.render(here + "/../build/index.html")
 
+
 class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
-    '''
+    """
         See https://www.tornadoweb.org/en/stable/_modules/tornado/auth.html#FacebookGraphMixin
-    '''
+    """
+
     def initialize(self, database, app, hostname):
         self.app = app
         self.db = database
-        self.hostname=hostname
+        self.hostname = hostname
 
     async def get(self):
         redirect = self.hostname + self.get_argument("next", u"/")
         if self.get_argument("code", False):
             user = await self.get_authenticated_user(
-                redirect_uri=redirect, 
+                redirect_uri=redirect,
                 client_id=self.app.settings["facebook_api_key"],
                 client_secret=self.app.settings["facebook_secret"],
-                code=self.get_argument("code"))
+                code=self.get_argument("code"),
+            )
             self.set_current_user(user.name)
         else:
             self.authorize_redirect(
-                redirect_uri=redirect,
-                client_id=self.app.settings["facebook_api_key"],
+                redirect_uri=redirect, client_id=self.app.settings["facebook_api_key"],
             )
-
 
     def set_current_user(self, user):
         if user:
             with self.db as ldb:
                 _ = ldb.create_user(user)
-            self.set_secure_cookie("user", tornado.escape.json_encode(user), domain=self.hostname)
+            self.set_secure_cookie(
+                "user", tornado.escape.json_encode(user), domain=self.hostname
+            )
         else:
             self.clear_cookie("user")
 
+
 class LoginHandler(BaseHandler):
-    def initialize(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay", ):
+    def initialize(
+        self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay",
+    ):
         self.db = database
         self.hostname = hostname
         self.password = password
@@ -371,80 +373,95 @@ class LoginHandler(BaseHandler):
 
     def set_current_user(self, user):
         if user:
-            self.set_secure_cookie("user", tornado.escape.json_encode(user), domain=self.hostname)
+            self.set_secure_cookie(
+                "user", tornado.escape.json_encode(user), domain=self.hostname
+            )
         else:
             self.clear_cookie("user")
+
 
 class LogoutHandler(BaseHandler):
     def get(self):
         self.clear_cookie("user")
         self.redirect(u"/login")
 
-class TornadoWebappPlayer(Player):
+
+class TornadoPlayerProvider(PlayerProvider):
     """
-    A player in an instance of the light game. Maintains any required
-    connections and IO such that the game doesn't need to worry about
-    that stuff
+        Player Provider for the web app
     """
 
-    def __init__(self, graph, player_id, socket):
+    def __init__(self, socket, purgatory):
         self.socket = socket
+        self.player_soul = None
+        self.purgatory = purgatory
         socket.set_player(self)
         socket.send_alive()
-        super().__init__(graph, player_id)
-        graph.add_message_callback(player_id, self.observe)
 
-    def act(self):
-        """
-        Get an action to take on the graph if one exists
-        """
-        if len(self.socket.actions) > 0:
-            action = self.socket.actions.pop()
-            print('returning action', action)
-            return action
-        return ''
+    def register_soul(self, soul: "PlayerSoul"):
+        """Save the soul as a local player soul"""
+        self.player_soul = soul
 
-    def observe(self, graph=None, action=None):
+    def player_observe_event(self, soul: "PlayerSoul", event: "GraphEvent"):
         """
-        Get all of the discrete actions that have occurred, send them
-        to the frontend with as much context as possible
+        Send observation forward to the player in whatever format the player
+        expects it to be.
         """
+        # This will need to pass through the socket?
+        view = event.view_as(soul.target_node)
         if not self.socket.alive_sent:
             return  # the socket isn't alive yet, let's wait
-        if graph is None:
-            graph = self.g
-        actions = graph.get_action_history(self.get_agent_id())
-        extra_text = graph.get_text(self.get_agent_id())
-        # TODO update extract_action to be more standard
-        # across multiple actions?
-        obs_list = [graph.extract_action(self.get_agent_id(), a) for a in actions]
-        filtered_obs = [obs for obs in obs_list if obs['text'] is not None and len(obs['text'].strip())]
-        if extra_text != '':
-            # obs_list.append({'caller': 'text', 'text': extra_text})
-            pass  # extra text is gotten through regular actions as well
-        if len(filtered_obs) > 0:
+        dat = event.to_frontend_form(self.player_soul.target_node)
+        filtered_obs = (
+            dat if dat["text"] is not None and len(dat["text"].strip()) else None
+        )
+        if filtered_obs is not None:
             self.socket.safe_write_message(
-                json.dumps({'command': 'actions', 'data': filtered_obs})
+                json.dumps({"command": "actions", "data": [dat]})
             )
 
-    def init_observe(self):
-        # TODO send own character name?
-        self.g.parse_exec(self.get_agent_id(), 'look')
-        self.observe()
+    def act(self, action_data):
+        if self.player_soul is not None and self.player_soul.is_reaped:
+            self.player_soul = None
+        if self.player_soul is None:
+            self.init_soul()
+            return
+        player_agent = self.player_soul.handle_act(action_data)
+
+    def init_soul(self):
+        self.purgatory.get_soul_for_player(self)
+        if self.player_soul is None:
+            dat = {"text": "Could not find a soul for you, sorry"}
+            self.socket.safe_write_message(
+                json.dumps({"command": "actions", "data": [dat]})
+            )
+        else:
+            soul_id = self.player_soul.player_id
+            SoulSpawnEvent(soul_id, self.player_soul.target_node).execute(
+                self.purgatory.world
+            )
+            self.player_soul.handle_act("look")
 
     def is_alive(self):
         return self.socket.alive
 
+    def on_reap_soul(self, soul):
+        pass
 
-class TornadoWebappPlayerProvider(PlayerProvider):
+
+class TornadoPlayerFactory:
     """
     A player provider is an API for adding new players into the game. It
     will be given opportunities to check for new players and should return
     an array of new players during these calls
     """
-    def __init__(self, graphs, hostname=DEFAULT_HOSTNAME, port=DEFAULT_PORT, listening=False):
-        super().__init__(graphs)
+
+    def __init__(
+        self, graphs, hostname=DEFAULT_HOSTNAME, port=DEFAULT_PORT, listening=False
+    ):
+        self.graphs = graphs
         self.app = None
+
         def _run_server():
             nonlocal listening
             nonlocal self
@@ -452,10 +469,16 @@ class TornadoWebappPlayerProvider(PlayerProvider):
             nonlocal port
             self.my_loop = ioloop.IOLoop()
             self.app = Application()
+            self.app.graphs = self.graphs
             if listening:
                 self.app.listen(port, max_buffer_size=1024 ** 3)
-                print("\nYou can connect to the game at http://%s:%s/" % (hostname, port))
-                print("You can connect to the socket at http://%s:%s/game/socket/" % (hostname, port))
+                print(
+                    "\nYou can connect to the game at http://%s:%s/" % (hostname, port)
+                )
+                print(
+                    "You can connect to the socket at http://%s:%s/game/socket/"
+                    % (hostname, port)
+                )
             logging.info("TornadoWebProvider Started")
 
             if "HOSTNAME" in os.environ and hostname == DEFAULT_HOSTNAME:
@@ -467,67 +490,52 @@ class TornadoWebappPlayerProvider(PlayerProvider):
         while self.app is None:
             asyncio.sleep(0.3)
 
-    def get_new_players(self, graph_id):
-        """
-        Should check the potential source of players for new players. If
-        a player exists, this should instantiate a relevant Player object
-        for each potential new player and return them.
-        """
-        new_connections = []
-        my_new_subs = self.app.new_subs[graph_id]
-        while len(my_new_subs) > 0:
-            new_connections.append(my_new_subs.pop())
-        players = []
-
-        for conn_name in new_connections:
-            conn = self.app.subs[conn_name]
-            if conn.alive:
-                player_id = self.graphs[graph_id].spawn_player()
-                print("added a subscriber!: " + str(player_id))
-                if player_id == -1:
-                    conn.safe_write_message(
-                        json.dumps({
-                            'command': 'reject',
-                            'data': 'Sorry, too many players are on right now!'
-                        })
-                    )
-                else:
-                    new_player = TornadoWebappPlayer(
-                        self.graphs[graph_id],
-                        player_id,
-                        conn,
-                    )
-                    players.append(new_player)
-        return players
-
 
 def main():
     import numpy
     import random
 
-    parser = argparse.ArgumentParser(description='Start the tornado server.')
-    parser.add_argument('--hostname', metavar='hostname', type=str,
-                        default=DEFAULT_HOSTNAME,
-                        help='host to run the server on.')
-    parser.add_argument('--light-model-root', type=str,
-                        default="/Users/jju/Desktop/LIGHT/",
-                        help='models path. For local setup, use: /checkpoint/jase/projects/light/dialog/')
-    parser.add_argument('--no-game-instance', action='store_true',
-                        help='does not initialize game instance')
-    parser.add_argument('-port', metavar='port', type=int,
-                        default=DEFAULT_PORT,
-                        help='port to run the server on.')
+    parser = argparse.ArgumentParser(description="Start the tornado server.")
+    parser.add_argument(
+        "--hostname",
+        metavar="hostname",
+        type=str,
+        default=DEFAULT_HOSTNAME,
+        help="host to run the server on.",
+    )
+    parser.add_argument(
+        "--light-model-root",
+        type=str,
+        default="/Users/jju/Desktop/LIGHT/",
+        help="models path. For local setup, use: /checkpoint/jase/projects/light/dialog/",
+    )
+    parser.add_argument(
+        "--no-game-instance",
+        action="store_true",
+        help="does not initialize game instance",
+    )
+    parser.add_argument(
+        "-port",
+        metavar="port",
+        type=int,
+        default=DEFAULT_PORT,
+        help="port to run the server on.",
+    )
     FLAGS = parser.parse_args()
 
     random.seed(6)
     numpy.random.seed(6)
 
     if FLAGS.no_game_instance:
-        provider = TornadoWebappPlayerProvider(None, FLAGS.hostname, FLAGS.port, listening=True)
+        provider = TornadoPlayerFactory(
+            None, FLAGS.hostname, FLAGS.port, listening=True
+        )
     else:
         game = GameInstance()
         graph = game.g
-        provider = TornadoWebappPlayerProvider(graph, FLAGS.hostname, FLAGS.port, listening=True)
+        provider = TornadoPlayerFactory(
+            graph, FLAGS.hostname, FLAGS.port, listening=True
+        )
         game.register_provider(provider)
         game.run_graph()
 

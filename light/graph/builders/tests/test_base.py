@@ -10,8 +10,8 @@ import sqlite3
 import os
 import pickle
 
-from parlai_internal.projects.light.v1.graph_builders.base import DBGraphBuilder
-from parlai_internal.projects.light.v1.data_model.light_database import (
+from light.graph.builders.base import DBGraphBuilder
+from light.data_model.light_database import (
     LIGHTDatabase,
     DB_TYPE_ROOM,
     DB_TYPE_CHAR,
@@ -23,7 +23,7 @@ from parlai_internal.projects.light.v1.data_model.light_database import (
     DB_EDGE_WIELDED,
     DB_EDGE_NEIGHBOR,
 )
-from parlai_internal.projects.light.v1.graph_builders.base_elements import (
+from light.graph.builders.base_elements import (
     DBRoom,
     DBObject,
     DBCharacter,
@@ -36,7 +36,8 @@ class TestDBGraphBuilder(unittest.TestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.data_dir, self.DB_NAME)
-        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+        self.ldb = LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME))
+        with self.ldb as test:
             rbase_id = test.create_base_room("room")[0]
             self.roomID = test.create_room("room1", rbase_id, "dirty", "old")[0]
             self.roomID2 = test.create_room("room2", rbase_id, "dirty neighbor", "old")[
@@ -53,10 +54,10 @@ class TestDBGraphBuilder(unittest.TestCase):
             test.create_node_content(self.roomID, self.charID2, DB_EDGE_EX_CONTAINED, 1)
             self.obase_id = test.create_base_object("room4")[0]
             self.objID = test.create_object(
-                'OBJ_1', self.obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big"
+                "OBJ_1", self.obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big"
             )[0]
             self.objID2 = test.create_object(
-                'OBJ_2', self.obase_id, 0.2, 0.3, 0, 0, 0, 0, 0, "Small"
+                "OBJ_2", self.obase_id, 0.2, 0.3, 0, 0, 0, 0, 0, "Small"
             )[0]
             test.create_node_content(self.roomID, self.objID, DB_EDGE_IN_CONTAINED, 1)
             test.create_node_content(
@@ -83,23 +84,23 @@ class TestDBGraphBuilder(unittest.TestCase):
             test.create_text_edge(
                 self.roomID, "Dirty Neighbor", DB_EDGE_NEIGHBOR, 1
             )  # Neighbor
-        self.graphBuilder = DBGraphBuilder(os.path.join(self.data_dir, self.DB_NAME))
+        self.graphBuilder = DBGraphBuilder(self.ldb)
 
     def tearDown(self):
         shutil.rmtree(self.data_dir)
 
     def test_get_room_from_id(self):
         room = self.graphBuilder.get_room_from_id(self.roomID)
-        self.assertEqual(room.description, 'dirty')
+        self.assertEqual(room.description, "dirty")
         self.assertEqual(room.db_id, self.roomID)
-        self.assertEqual(room.background, 'old')
-        self.assertEqual(room.setting, 'room1')
-        self.assertEqual(room.in_characters['db'][0], self.charID)
-        self.assertEqual(room.ex_characters['db'][0], self.charID2)
-        self.assertEqual(room.in_objects['db'][0], self.objID)
-        self.assertEqual(room.ex_objects['db'][0], self.objID2)
-        self.assertEqual(room.in_objects['text'][0], "Spear")
-        self.assertEqual(room.ex_objects['text'][0], "Knife")
+        self.assertEqual(room.background, "old")
+        self.assertEqual(room.setting, "room1")
+        self.assertEqual(room.in_characters["db"][0], self.charID)
+        self.assertEqual(room.ex_characters["db"][0], self.charID2)
+        self.assertEqual(room.in_objects["db"][0], self.objID)
+        self.assertEqual(room.ex_objects["db"][0], self.objID2)
+        self.assertEqual(room.in_objects["text"][0], "Spear")
+        self.assertEqual(room.ex_objects["text"][0], "Knife")
 
     def test_get_obj_from_id(self):
         obj = self.graphBuilder.get_obj_from_id(self.objID)
@@ -107,17 +108,17 @@ class TestDBGraphBuilder(unittest.TestCase):
             set.issubset(
                 set(
                     [
-                        'is_gettable',
-                        'is_wearable',
-                        'is_weapon',
-                        'is_food',
-                        'is_drink',
-                        'is_container',
-                        'is_surface',
-                        'description',
-                        'name',
-                        'name_prefix',
-                        'is_plural',
+                        "is_gettable",
+                        "is_wearable",
+                        "is_weapon",
+                        "is_food",
+                        "is_drink",
+                        "is_container",
+                        "is_surface",
+                        "description",
+                        "name",
+                        "name_prefix",
+                        "is_plural",
                     ]
                 ),
                 set(vars(obj).keys()),
@@ -129,33 +130,33 @@ class TestDBGraphBuilder(unittest.TestCase):
         self.assertEqual(obj.is_weapon, 0)
         self.assertEqual(obj.is_surface, 0)
         self.assertEqual(obj.is_plural, 0)
-        self.assertEqual(obj.name, 'OBJ_1')
-        self.assertEqual(obj.name_prefix, 'a')
-        self.assertEqual(obj.description, 'big')
+        self.assertEqual(obj.name, "OBJ_1")
+        self.assertEqual(obj.name_prefix, "a")
+        self.assertEqual(obj.description, "big")
 
     def test_get_char_from_id(self):
         char = self.graphBuilder.get_char_from_id(self.charID)
         self.assertEqual(char.is_plural, 0)
-        self.assertEqual(char.persona, 'Male')
+        self.assertEqual(char.persona, "Male")
         self.assertEqual(char.name, "troll under the bridge")
-        self.assertEqual(char.char_type, 'unknown')
-        self.assertEqual(char.desc, 'Tall')
-        self.assertEqual(char.carrying_objects['db'][0], self.objID)
-        self.assertEqual(char.wielding_objects['db'][0], self.objID2)
-        self.assertEqual(char.wearing_objects['db'][0], self.objID2)
-        self.assertEqual(char.carrying_objects['text'][0], 'Knife')
-        self.assertEqual(char.wielding_objects['text'][0], 'Spear')
-        self.assertEqual(char.wearing_objects['text'][0], 'Coat')
-        self.assertEqual(char.base_form, 'troll')
+        self.assertEqual(char.char_type, "unknown")
+        self.assertEqual(char.desc, "Tall")
+        self.assertEqual(char.carrying_objects["db"][0], self.objID)
+        self.assertEqual(char.wielding_objects["db"][0], self.objID2)
+        self.assertEqual(char.wearing_objects["db"][0], self.objID2)
+        self.assertEqual(char.carrying_objects["text"][0], "Knife")
+        self.assertEqual(char.wielding_objects["text"][0], "Spear")
+        self.assertEqual(char.wearing_objects["text"][0], "Coat")
+        self.assertEqual(char.base_form, "troll")
 
     def test_char_deferred_properties(self):
         char1 = self.graphBuilder.get_char_from_id(self.charID)
         room1 = self.graphBuilder.get_room_from_id(self.roomID)
         self.assertIn(self.roomID, char1.in_room_ids)
-        self.assertIn(self.charID, room1.in_characters['db'])
+        self.assertIn(self.charID, room1.in_characters["db"])
         char2 = self.graphBuilder.get_char_from_id(self.charID2)
         self.assertIn(self.roomID, char2.ex_room_ids)
-        self.assertIn(self.charID2, room1.ex_characters['db'])
+        self.assertIn(self.charID2, room1.ex_characters["db"])
 
     def test_obj_deferred_properties(self):
         obj1 = self.graphBuilder.get_obj_from_id(self.objID)
@@ -163,24 +164,22 @@ class TestDBGraphBuilder(unittest.TestCase):
         self.assertNotIn(
             obj2.name, obj1.containing_objs
         )  # SInce containing obj is only text edges atm
-        self.assertIn('Knife', obj1.containing_objs)
-        self.assertIn('Cake', obj1.containing_objs)
+        self.assertIn("Knife", obj1.containing_objs)
+        self.assertIn("Cake", obj1.containing_objs)
 
     def test_deferred_room_prop(self):
         room1 = self.graphBuilder.get_room_from_id(self.roomID)
-        self.assertIn('Dirty Neighbor', room1.neighbors)
+        self.assertIn("Dirty Neighbor", room1.neighbors)
 
     def test_cached_db_objects(self):
-        roomDB = DBRoom(self.db_path, self.roomID)
-        charDB = DBCharacter(self.db_path, self.charID)
-        objDB = DBObject(self.db_path, self.objID)
-        with LIGHTDatabase(
-            os.path.join(self.data_dir, self.DB_NAME), read_only=True
-        ) as ldb:
-            cache = ldb.cache
-        roomCache = DBRoom(self.db_path, self.roomID, cache)
-        charCache = DBCharacter(self.db_path, self.charID, cache)
-        objCache = DBObject(self.db_path, self.objID, cache)
+        roomDB = DBRoom(self.ldb, self.roomID)
+        charDB = DBCharacter(self.ldb, self.charID)
+        objDB = DBObject(self.ldb, self.objID)
+        with self.ldb as test:
+            cache = test.cache
+        roomCache = DBRoom(self.ldb, self.roomID, cache)
+        charCache = DBCharacter(self.ldb, self.charID, cache)
+        objCache = DBObject(self.ldb, self.objID, cache)
         roomCache.get_text_edges(DB_EDGE_NEIGHBOR)
         self.assertEqual(roomDB.setting, roomCache.setting)
         self.assertEqual(roomDB.category, roomCache.category)
@@ -206,5 +205,5 @@ class TestDBGraphBuilder(unittest.TestCase):
         self.assertEqual(objDB.containing_objs, objCache.containing_objs)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

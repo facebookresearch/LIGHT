@@ -4,7 +4,6 @@ import { cloneDeep, isEmpty, merge } from "lodash";
 import equal from "fast-deep-equal";
 import { emojiIndex } from "emoji-mart";
 
-
 export const MAX_WIDTH = 10;
 export const MAX_HEIGHT = 10;
 export const MAX_FLOORS = 10;
@@ -205,7 +204,7 @@ export function useWorldBuilder(upload) {
           floors: STARTING_FLOORS,
         }
   );
-  
+
   // Floors and tiles kept seperate to avoid unnecessary updates on either side
   // The index key is used because the Reorder component does not pass index to children
   // Represents the map state

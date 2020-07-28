@@ -26,7 +26,7 @@ class RepeatSoul(Soul):
         """
         super().__init__(target_node, world)
 
-    def observe_event(self, event: "GraphEvent"):
+    async def observe_event(self, event: "GraphEvent"):
         """
         RepeatSouls do very little beyond saying what they observed, and smiling
         for good measure.

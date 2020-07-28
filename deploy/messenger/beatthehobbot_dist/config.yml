@@ -69,4 +69,3 @@ opt:
     Browser: "light.hobbot.strategies.sockets_strategy.SocketChatStrategy"
     terminal: "light.hobbot.strategies.sockets_strategy.SocketChatStrategy"
   resources_path: /Users/jju/tmp_packages/tmp_packages/light_package
-

@@ -7,6 +7,7 @@
 from light.world.souls.soul import Soul
 from light.world.content_loggers import AgentInteractionLogger
 from typing import TYPE_CHECKING, List
+import asyncio
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -46,7 +47,7 @@ class PlayerSoul(Soul):
         """
         self.world.parse_exec(self.target_node.node_id, act_text)
 
-    def observe_event(self, event: "GraphEvent"):
+    async def observe_event(self, event: "GraphEvent"):
         """
         PlayerSouls pass their observation along to the provider, who will handle getting the
         correct format to send to the view.
@@ -61,5 +62,7 @@ class PlayerSoul(Soul):
         """
         super().reap()
         self.target_node.is_player = False
-        world.oo_graph.room_id_to_loggers[target_node.get_room().node_id]._remove_player()     
+        self.world.oo_graph.room_id_to_loggers[
+            self.target_node.get_room().node_id
+        ]._remove_player()
         self.provider.on_reap_soul(self)

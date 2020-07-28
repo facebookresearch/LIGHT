@@ -23,7 +23,7 @@ const iconPerson = new L.Icon({
   shadowSize: null,
   popupAnchor: [0, -36],
   shadowAnchor: null,
-  className: "custom-icon"
+  className: "custom-icon",
 });
 
 const position = [-0.097, 0.099];
@@ -31,7 +31,7 @@ const position = [-0.097, 0.099];
 export default () => {
   const [markers, setMarkers] = React.useState([]);
 
-  const addMarker = e => {
+  const addMarker = (e) => {
     setMarkers([e.latlng]);
   };
 

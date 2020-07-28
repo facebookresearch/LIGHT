@@ -21,7 +21,7 @@ class TestSoul(Soul):
 
     def __init__(self, target_node: "GraphAgent", world: "World"):
         """
-        TestSouls are created for test cases to take actions 
+        TestSouls are created for test cases to take actions
         and report observations
         """
         super().__init__(target_node, world)
@@ -33,7 +33,7 @@ class TestSoul(Soul):
         """
         event.execute(self.world)
 
-    def observe_event(self, event: "GraphEvent"):
+    async def observe_event(self, event: "GraphEvent"):
         """
         TestSouls do very little beyond saying what they observed, and smiling
         for good measure.

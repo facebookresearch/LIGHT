@@ -25,7 +25,7 @@ class Purgatory:
     """
     The Purgatory class is responsible for holding all of the Souls until the moment
     they are assigned a GraphAgent to inhabit. It is also the source from which Souls
-    recieve observations, as the World is not aware of what Souls have inhabited 
+    recieve observations, as the World is not aware of what Souls have inhabited
     the GraphAgents within.
     """
 
@@ -49,7 +49,7 @@ class Purgatory:
     ) -> None:
         """
         Register a source for Purgatory to be able to fill GraphAgents with souls. Purgatory
-        will pick randomly from all of the registered soul providers, call the function for 
+        will pick randomly from all of the registered soul providers, call the function for
         args, and then pass the target agent, world, and created args to the Soul.
         """
         self.filler_soul_providers[provider_name] = (desired_soul_type, arg_provider)
@@ -61,9 +61,9 @@ class Purgatory:
         Provide a filler soul for a graph agent. Select randomly from the filler soul
         providers to create the soul.
         """
-        assert self.node_id_to_soul.get(agent.node_id) is None, (
-            "Cannot fill a soul that has someone already in it. call clear_soul first"
-        )
+        assert (
+            self.node_id_to_soul.get(agent.node_id) is None
+        ), "Cannot fill a soul that has someone already in it. call clear_soul first"
         if wanted_provider is not None:
             assert (
                 wanted_provider in self.filler_soul_providers
@@ -79,13 +79,14 @@ class Purgatory:
 
     def send_event_to_soul(self, event: "GraphEvent", agent: "GraphAgent"):
         """
-        Pass an GraphEvent along to the soul inhabiting the given GraphAgent 
-        if such a soul exists, passing otherwise. Launch in a thread so that
-        the soul can choose to take its time deciding what to do.
+        Pass an GraphEvent along to the soul inhabiting the given GraphAgent
+        if such a soul exists, passing otherwise. Launch in wrapper around
+        the async call such that the soul can choose to take its time
+        deciding what to do.
         """
         soul: "Soul" = self.node_id_to_soul.get(agent.node_id)
         if soul is not None:
-            soul.launch_observe_event_thread(event)
+            soul.wrap_observe_event(event)
 
     def clear_soul(self, agent: "GraphAgent") -> None:
         """Clear the soul that is associated with the given agent"""
@@ -106,7 +107,9 @@ class Purgatory:
             if len(possible_agents) > 0:
                 target_agent = random.choice(possible_agents)
                 self.clear_soul(target_agent)
-                soul = PlayerSoul(target_agent, self.world, self.players, player_provider)
+                soul = PlayerSoul(
+                    target_agent, self.world, self.players, player_provider
+                )
                 self.node_id_to_soul[target_agent.node_id] = soul
                 self.player_soul_id_to_soul[self.players] = soul
                 self.players += 1

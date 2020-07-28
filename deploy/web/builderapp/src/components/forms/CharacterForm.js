@@ -6,7 +6,7 @@ import {
   InputGroup,
   Switch,
   TextArea,
-  Alignment
+  Alignment,
 } from "@blueprintjs/core";
 import { Formik } from "formik";
 
@@ -16,7 +16,7 @@ function CharacterForm({ initialInputs, handleSubmit, type }) {
   return (
     <Formik
       initialValues={initialInputs}
-      validate={values => {
+      validate={(values) => {
         let errors = {};
         if (!values.name) {
           errors.name = "Required";
@@ -40,7 +40,7 @@ function CharacterForm({ initialInputs, handleSubmit, type }) {
       }}
       onSubmit={handleSubmit}
     >
-      {props => {
+      {(props) => {
         const {
           values,
           setFieldValue,
@@ -52,10 +52,10 @@ function CharacterForm({ initialInputs, handleSubmit, type }) {
           handleChange,
           handleBlur,
           handleSubmit,
-          handleReset
+          handleReset,
         } = props;
 
-        const handleSwitch = e => {
+        const handleSwitch = (e) => {
           const { name } = e.target;
           setFieldValue(name, values[name] ? 0 : 1);
         };
@@ -225,7 +225,7 @@ export const emptyCharacterForm = {
   physical_description: "",
   char_type: "",
   base_id: 0,
-  is_plural: 0
+  is_plural: 0,
 };
 
 export default CharacterForm;

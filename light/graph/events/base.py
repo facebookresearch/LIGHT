@@ -12,7 +12,9 @@ from light.graph.elements.graph_nodes import (
     GraphNode,
 )
 from light.world.utils.json_utils import (
-    convert_dict_to_node, GraphEncoder, node_to_json
+    convert_dict_to_node,
+    GraphEncoder,
+    node_to_json,
 )
 from typing import NamedTuple, TYPE_CHECKING, Dict
 import inspect
@@ -66,7 +68,7 @@ class GraphEvent(object):
             ]
         self.text_content = text_content
 
-    def execute(self, world: 'World') -> List['GraphEvent']:
+    def execute(self, world: "World") -> List["GraphEvent"]:
         """
         Execute the current action on the given world. Return a list of
         additional events that are triggered from this one.
@@ -88,7 +90,7 @@ class GraphEvent(object):
     @classmethod
     def split_text_args(
         cls, actor: GraphAgent, text: str
-    ) -> Union[List[List[str]], 'ErrorEvent']:
+    ) -> Union[List[List[str]], "ErrorEvent"]:
         """
         Try to extract all possible interpretations for the given text such that
         the returned list of arguments may be parsed into world nodes to
@@ -106,8 +108,8 @@ class GraphEvent(object):
 
     @classmethod
     def find_nodes_for_args(
-        cls, graph: 'OOGraph', actor: GraphAgent, *text_args: str
-    ) -> Union[ProcessedArguments, 'ErrorEvent']:
+        cls, graph: "OOGraph", actor: GraphAgent, *text_args: str
+    ) -> Union[ProcessedArguments, "ErrorEvent"]:
         """
         Given the text arguments returned by split_text_args, produce the
         arguments required for construct_from_args. Return an ErrorEvent if
@@ -115,12 +117,12 @@ class GraphEvent(object):
 
         Default does no parsing and returns the given args
         """
-        return ProcessedArguments(targets=[], text=' '.join(text_args))
+        return ProcessedArguments(targets=[], text=" ".join(text_args))
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['GraphEvent', 'ErrorEvent']:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["GraphEvent", "ErrorEvent"]:
         """
         Try to return an Event constructed from the given args, return
         ErrorEvent if there's a reason it can't be created.
@@ -132,8 +134,8 @@ class GraphEvent(object):
 
     @classmethod
     def get_valid_actions(
-        cls, graph: 'OOGraph', actor: GraphAgent
-    ) -> List['GraphEvent']:
+        cls, graph: "OOGraph", actor: GraphAgent
+    ) -> List["GraphEvent"]:
         """
         Return any valid actions that can be taken by the given actor
         over the current graph. Default returns no events.
@@ -141,7 +143,7 @@ class GraphEvent(object):
         return []
 
     @staticmethod
-    def from_json(input_json: str, world: 'World') -> 'GraphEvent':
+    def from_json(input_json: str, world: "World") -> "GraphEvent":
         """
         Instantiate this event from the given json over the given world
         """
@@ -154,53 +156,59 @@ class GraphEvent(object):
             module = __import__(module_name, fromlist=[None])
             class_ = getattr(module, class_name)
 
-        arglist = [attribute_dict.pop(arg) for arg in inspect.getfullargspec(class_.__init__)[0] if arg is not 'self']
+        arglist = [
+            attribute_dict.pop(arg)
+            for arg in inspect.getfullargspec(class_.__init__)[0]
+            if arg is not "self"
+        ]
         event = class_(*arglist)
         for k, v in attribute_dict.items():
             event.__dict__[k] = v
         return event
 
-    def to_json(self, viewer: GraphAgent = None, indent : int = None) -> str:
+    def to_json(self, viewer: GraphAgent = None, indent: int = None) -> str:
         """
         Convert the content of this action into a json format that can be
         imported back to the original with from_json
         """
         className = self.__class__.__name__
-        use_dict = {k: v for k, v in self.__dict__.copy().items() if not k.startswith(f'_{className}__')}
-        use_dict['viewer'] = viewer
-        use_dict['__class__'] = className
-        use_dict['__module__'] = self.__module__
+        use_dict = {
+            k: v
+            for k, v in self.__dict__.copy().items()
+            if not k.startswith(f"_{className}__")
+        }
+        use_dict["viewer"] = viewer
+        use_dict["__class__"] = className
+        use_dict["__module__"] = self.__module__
         # TODO: Consider moving graph encoder to a utils since we use here too!
         res = json.dumps(use_dict, cls=GraphEncoder, sort_keys=True, indent=indent)
         return res
 
     def __repr__(self) -> str:
-        args_str = f'{self.actor}'
+        args_str = f"{self.actor}"
         if len(self.target_nodes) > 0:
-            args_str += f', {self.target_nodes}'
+            args_str += f", {self.target_nodes}"
         if self.text_content is not None:
             args_str += f', "{self.text_content}"'
-        return f'{self.__class__.__name__}({args_str})'
+        return f"{self.__class__.__name__}({args_str})"
 
-    def to_frontend_form(self, viewer: 'GraphAgent') -> Dict[str, Any]: 
+    def to_frontend_form(self, viewer: "GraphAgent") -> Dict[str, Any]:
         """
         Parse out the contents of this event as seen by the given agent
         and return a dict that is consumable by our frontends
         """
-        present_dict = {
-                x.node_id : x.name for x in self.room.get_contents() if x.agent
-        }
+        present_dict = {x.node_id: x.name for x in self.room.get_contents() if x.agent}
         return {
-            'text': self.view_as(viewer),
-            'caller': self.__class__.__name__,
-            'target_nodes': [node_to_json(x) for x in self.target_nodes],
-            'additional_text': self.text_content,
-            'present_agent_ids': present_dict,
-            'canonical_targets': self._canonical_targets,
-            'room': node_to_json(self.room),
-            'actor': node_to_json(self.actor),
+            "text": self.view_as(viewer),
+            "caller": self.__class__.__name__,
+            "target_nodes": [node_to_json(x) for x in self.target_nodes],
+            "additional_text": self.text_content,
+            "present_agent_ids": present_dict,
+            "canonical_targets": self._canonical_targets,
+            "room": node_to_json(self.room),
+            "actor": node_to_json(self.actor),
         }
-        
+
 
 class ErrorEvent(GraphEvent):
     """
@@ -239,18 +247,18 @@ class ErrorEvent(GraphEvent):
         ErrorEvents represent failed actions (by parsing or constraint
         invalidation), and are thus not executable
         """
-        raise Exception('ErrorEvents should never be executed')
+        raise Exception("ErrorEvents should never be executed")
 
     def view_as(self, actor):
         """ErrorEvents should be viewed by the actor who tried to act"""
         assert actor == self.actor, (
-            'ErrorEvents should only be viewed by the actor who tried to '
-            'invoke an action.'
+            "ErrorEvents should only be viewed by the actor who tried to "
+            "invoke an action."
         )
         return self.display_text
 
     def __repr__(self):
-        return f'ErrorEvent({self.display_text}, {self.target_nodes})'
+        return f"ErrorEvent({self.display_text}, {self.target_nodes})"
 
 
 class TriggeredEvent(GraphEvent):
@@ -262,27 +270,27 @@ class TriggeredEvent(GraphEvent):
     @classmethod
     def split_text_args(
         cls, actor: GraphAgent, text: str
-    ) -> Union[List[List[str]], 'ErrorEvent']:
+    ) -> Union[List[List[str]], "ErrorEvent"]:
         """Triggered events are never parsed, and shouldn't call this"""
-        raise Exception('Triggered events are never parsed')
+        raise Exception("Triggered events are never parsed")
 
     @classmethod
     def find_nodes_for_args(
-        cls, graph: 'OOGraph', actor: GraphAgent, *text_args: str
+        cls, graph: "OOGraph", actor: GraphAgent, *text_args: str
     ) -> Union[ProcessedArguments, ErrorEvent]:
         """Triggered events are never parsed, and shouldn't call this"""
-        raise Exception('Triggered events are never parsed')
+        raise Exception("Triggered events are never parsed")
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
     ) -> GraphEvent:
         """Triggered events are never parsed, and shouldn't call this"""
-        raise Exception('Triggered events are never parsed')
+        raise Exception("Triggered events are never parsed")
 
     def to_cannonical_form(self) -> str:
         """Triggered events are never parsed, and shouldn't call this"""
-        raise Exception('Triggered events are never parsed')
+        raise Exception("Triggered events are never parsed")
 
 
 class NoArgumentEvent(GraphEvent):
@@ -295,22 +303,22 @@ class NoArgumentEvent(GraphEvent):
 
     @classmethod
     def find_nodes_for_args(
-        cls, graph: 'OOGraph', actor: GraphAgent, *text_args: str
+        cls, graph: "OOGraph", actor: GraphAgent, *text_args: str
     ) -> Union[ProcessedArguments, ErrorEvent]:
         """No argument functions don't have any arguments to find"""
         return ProcessedArguments(targets=[], text=None)
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
     ) -> GraphEvent:
         """No argument events can always be constructed from just the actor"""
         return cls(actor)
 
     @classmethod
     def get_valid_actions(
-        cls, graph: 'OOGraph', actor: GraphAgent
-    ) -> List['GraphEvent']:
+        cls, graph: "OOGraph", actor: GraphAgent
+    ) -> List["GraphEvent"]:
         """No argument events can always be constructed from just the actor"""
         return [cls(actor)]
 
