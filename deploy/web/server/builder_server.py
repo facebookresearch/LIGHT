@@ -34,6 +34,7 @@ def get_handlers(db):
         (r"/builder/interactions", InteractionHandler, {'database': db}),
         (r"/builder/tables/types", TypesHandler, {'database': db}),
         (r"/builder/world/", SaveWorldHandler, {'database': db}),
+        (r"/builder/world/autosave/", AutosaveHandler, {'database': db}),
         (r"/builder/world/([0-9]+)", LoadWorldHandler, {'database': db}),
         (r"/builder/world/delete/([0-9]+)", DeleteWorldHandler, {'database': db}),
         (r"/builder/worlds/", ListWorldsHandler, {'database': db}),
@@ -141,7 +142,12 @@ class ListWorldsHandler(BaseHandler):
         with self.db as ldb:
             player = ldb.get_user_id(username)
             worlds = ldb.view_worlds(player_id=player)
-        self.write(json.dumps(worlds))
+            autosave = ldb.get_autosave(player)
+        if autosave is not None:
+            dat = {"auto": autosave["timestamp"], "data": worlds}
+        else:
+            dat = {"auto": None, "data": worlds}
+        self.write(json.dumps(dat))
 
 class DeleteWorldHandler(BaseHandler):
     '''Deletes a world given the user and world id'''
@@ -158,6 +164,34 @@ class DeleteWorldHandler(BaseHandler):
                 player = ldb.get_user_id(username)
                 ldb.set_world_inactive(world_id=id, player_id=player)
         self.write(json.dumps(id))
+
+class AutosaveHandler(BaseHandler):
+    '''Save a world given the player id and world id'''
+
+    def initialize(self, database):
+        self.db = database
+
+    @gen.coroutine
+    @tornado.web.authenticated
+    def post(self):
+        world_dict = json.loads(self.get_argument('data', None))
+        curr_time = time.ctime(time.time())
+        username = tornado.escape.xhtml_escape(self.current_user)
+        with (yield lock.acquire()):
+            with self.db as ldb:
+                player = ldb.get_user_id(username)
+                ldb.set_autosave(json.dumps(world_dict), player, curr_time)
+        self.set_status(201)
+
+    @tornado.web.authenticated
+    def get(self):
+        username = tornado.escape.xhtml_escape(self.current_user)
+        with self.db as ldb:
+            player = ldb.get_user_id(username)
+            world_dump = ldb.get_autosave(player)["world_dump"]
+        self.set_status(200)
+        self.write(world_dump)
+          
 
 class SaveWorldHandler(BaseHandler):
     '''Save a world given the player id and world id'''

@@ -22,6 +22,7 @@ from light.world.souls.repeat_soul import RepeatSoul
 import os
 import random
 import numpy
+import asyncio
 
 random.seed(6)
 numpy.random.seed(6)
@@ -38,12 +39,13 @@ def init_world(world_builder):
     return provider
 
 
-def run_with_builder(world_builder):
+async def run_with_builder(world_builder):
     """
     Takes in a World object and its OOGraph and allows one to play with a random map
     """
     player_provider = init_world(world_builder)
     player_provider.process_terminal_act("")  # get an agent
+    await asyncio.sleep(0.01)
     while True:
         act = input("\raction> ")
         if act == "":
@@ -55,8 +57,10 @@ def run_with_builder(world_builder):
             print("A mist fills the world and everything resets")
             player_provider = init_world(world_builder)
             player_provider.process_terminal_act("")  # get an agent
+            await asyncio.sleep(0.01)
         else:
             player_provider.process_terminal_act(act)
+        await asyncio.sleep(0.01)
 
 
 parser = ParlaiParser()
@@ -65,4 +69,7 @@ opt, _unknown = parser.parse_and_process_known_args()
 ldb = LIGHTDatabase(opt['light_db_file'])
 world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
 
-run_with_builder(world_builder)
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(run_with_builder(world_builder))
+    

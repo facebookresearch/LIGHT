@@ -25,9 +25,6 @@ export function useWSDataSource(url) {
         const buffer = [];
 
         cmd.data.forEach((action) => {
-          const isRespawn = false; /* action.text.startsWith(
-            "Your lost soul attempts to join the living..."
-          );*/
           const isPersonaDescription = action.caller === "SoulSpawnEvent";
           const isLocationDescription = action.caller === "LookEvent";
           action.room = JSON.parse(action.room);
@@ -39,9 +36,6 @@ export function useWSDataSource(url) {
               description: action.actor.persona,
               id: action.actor.node_id,
             });
-            if (isRespawn) {
-              buffer.push(action);
-            }
           }
           if (isLocationDescription) {
             setLocation({

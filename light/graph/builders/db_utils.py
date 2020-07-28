@@ -18,7 +18,7 @@ def id_is_usable(ldb, id_to_check):
     ''' Check response of get_id to see if id_entry 
         exists andis not of 'rejected' status'''
     id_entry = ldb.get_id(id=id_to_check)
-    # TODO:  Decide if this is correct semantics
+    # TODO:  Have dev vs prod mode, change rejected and prod depending on mode
     if len(id_entry) <= 0 or id_entry[0]['status'] == DB_STATUS_REJECTED:
         return False
     return True
