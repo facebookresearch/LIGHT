@@ -4,21 +4,21 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import unittest, os
-from light.graph.builders.starspace_neighbor import (
-    StarspaceNeighborBuilder,
-)
+from light.graph.builders.starspace_neighbor import StarspaceNeighborBuilder
+import pytest
 from parlai.core.params import ParlaiParser
 from light.graph.structured_graph import OOGraph
 
 
+@pytest.mark.slow
 class TestStarspaceNeighborBuilder(unittest.TestCase):
     def setUp(self):
         parser = ParlaiParser()
-        parlai_datapath = os.path.join(parser.parlai_home, 'data')
+        parlai_datapath = os.path.join(parser.parlai_home, "data")
         envir_pkl = os.path.join(
-            parlai_datapath, 'light', 'environment', 'light-environment-1.2.pkl'
+            parlai_datapath, "light", "environment", "light-environment-1.2.pkl"
         )
-        model_dir = os.path.join(parlai_datapath, 'models', 'light', '')
+        model_dir = os.path.join(parlai_datapath, "models", "light", "")
         testNeighbor = StarspaceNeighborBuilder(
             build_args=["--light-db-file", envir_pkl, "--light-model-root", model_dir]
         )
@@ -41,5 +41,5 @@ class TestStarspaceNeighborBuilder(unittest.TestCase):
         self.assertTrue(bool(self.testGraph.objects))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
