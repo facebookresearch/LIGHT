@@ -52,7 +52,7 @@ class DBElement(object):
                 with self.db as ldb:
                     text_edges_list = [
                         edge['child_text'] 
-                        for edge in filtered if id_is_useable(ldb, edge["id"])
+                        for edge in filtered if id_is_usable(ldb, edge["id"])
                     ]
             return text_edges_list
 
