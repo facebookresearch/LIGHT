@@ -19,7 +19,7 @@ from light.world.utils.terminal_player_provider import TerminalPlayerProvider
 from parlai.core.params import ParlaiParser
 from light.world.world import World
 from light.world.souls.repeat_soul import RepeatSoul
-from light.world.souls.models.parner_heuristic_model_soul import PartnerHeuristicModelSoul
+from light.world.souls.models.partner_heuristic_model_soul import PartnerHeuristicModelSoul
 import os
 import random
 import numpy
