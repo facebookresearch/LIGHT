@@ -166,10 +166,11 @@ class GraphEventTests(unittest.TestCase):
             res = event.to_json()
             before_oo_graph = copy.deepcopy(self.world.oo_graph)
             event_back = GraphEvent.from_json(res, self.world)
-            self.assertEqual(type(event), type(event_back), "Events should be same type")
+            self.assertEqual(type(event), type(event_back), "From Json event should be same type as base event")
+            class_ = event.__class__.__name__
             for k in event.__dict__:
-                if not k.startswith("__"):
-                    self.assertEqual(event.__dict__[k], event_back.__dict__[k], "Json loaded back should match")
+                if not k.startswith(f'_{class_}__'):
+                    self.assertEqual(event.__dict__[k], event_back.__dict__[k], 'From Json event should have the same k/v (except hidden vars)')
             self.graph = before_oo_graph
             self.world.oo_graph = self.graph
             self.graph.delete_nodes()

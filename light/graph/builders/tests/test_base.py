@@ -10,8 +10,8 @@ import sqlite3
 import os
 import pickle
 
-from parlai_internal.projects.light.v1.graph_builders.base import DBGraphBuilder
-from parlai_internal.projects.light.v1.data_model.light_database import (
+from light.graph.builders.base import DBGraphBuilder
+from light.data_model.light_database import (
     LIGHTDatabase,
     DB_TYPE_ROOM,
     DB_TYPE_CHAR,
@@ -23,7 +23,7 @@ from parlai_internal.projects.light.v1.data_model.light_database import (
     DB_EDGE_WIELDED,
     DB_EDGE_NEIGHBOR,
 )
-from parlai_internal.projects.light.v1.graph_builders.base_elements import (
+from light.graph.builders.base_elements import (
     DBRoom,
     DBObject,
     DBCharacter,
@@ -36,7 +36,8 @@ class TestDBGraphBuilder(unittest.TestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.data_dir, self.DB_NAME)
-        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+        self.ldb = LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME))
+        with self.ldb as test:
             rbase_id = test.create_base_room("room")[0]
             self.roomID = test.create_room("room1", rbase_id, "dirty", "old")[0]
             self.roomID2 = test.create_room("room2", rbase_id, "dirty neighbor", "old")[
@@ -83,7 +84,7 @@ class TestDBGraphBuilder(unittest.TestCase):
             test.create_text_edge(
                 self.roomID, "Dirty Neighbor", DB_EDGE_NEIGHBOR, 1
             )  # Neighbor
-        self.graphBuilder = DBGraphBuilder(os.path.join(self.data_dir, self.DB_NAME))
+        self.graphBuilder = DBGraphBuilder(self.ldb)
 
     def tearDown(self):
         shutil.rmtree(self.data_dir)
@@ -171,16 +172,14 @@ class TestDBGraphBuilder(unittest.TestCase):
         self.assertIn('Dirty Neighbor', room1.neighbors)
 
     def test_cached_db_objects(self):
-        roomDB = DBRoom(self.db_path, self.roomID)
-        charDB = DBCharacter(self.db_path, self.charID)
-        objDB = DBObject(self.db_path, self.objID)
-        with LIGHTDatabase(
-            os.path.join(self.data_dir, self.DB_NAME), read_only=True
-        ) as ldb:
-            cache = ldb.cache
-        roomCache = DBRoom(self.db_path, self.roomID, cache)
-        charCache = DBCharacter(self.db_path, self.charID, cache)
-        objCache = DBObject(self.db_path, self.objID, cache)
+        roomDB = DBRoom(self.ldb, self.roomID)
+        charDB = DBCharacter(self.ldb, self.charID)
+        objDB = DBObject(self.ldb, self.objID)
+        with self.ldb as test:
+            cache = test.cache
+        roomCache = DBRoom(self.ldb, self.roomID, cache)
+        charCache = DBCharacter(self.ldb, self.charID, cache)
+        objCache = DBObject(self.ldb, self.objID, cache)
         roomCache.get_text_edges(DB_EDGE_NEIGHBOR)
         self.assertEqual(roomDB.setting, roomCache.setting)
         self.assertEqual(roomDB.category, roomCache.category)

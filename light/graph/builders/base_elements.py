@@ -49,7 +49,11 @@ class DBElement(object):
                 filtered = self.text_edge_cache[self.id]
                 if type is not None:
                     filtered = [f for f in filtered if f['edge_type'] == type]
-                text_edges_list = [edge['child_text'] for edge in filtered]
+                with self.db as ldb:
+                    text_edges_list = [
+                        edge['child_text'] 
+                        for edge in filtered if id_is_usable(ldb, edge["id"])
+                    ]
             return text_edges_list
 
         with self.db as ldb:
@@ -73,7 +77,7 @@ class DBElement(object):
                 filtered = [
                     edge['child_id']
                     for edge in self.db_edge_cache[self.id]
-                    if edge['edge_type'] == type
+                    if (edge['edge_type'] == type or type == None)
                 ]
             else:
                 if parent_type is not None:
@@ -85,9 +89,9 @@ class DBElement(object):
                     filtered = [
                         row['parent_id']
                         for row in filtered
-                        if row['type'] == type
+                        if (row['edge_type'] == type or type == None)
                         and row['child_id'] == self.id
-                        and self.cache['id'][row['parent_id']]['edge_type']
+                        and self.cache['id'][row['parent_id']]['type']
                         == parent_type
                     ]
             return filtered

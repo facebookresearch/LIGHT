@@ -492,7 +492,8 @@ class TestInteractionLoggers(unittest.TestCase):
         self.assertEqual(world_name, room_logger._last_graphs[-1])
         ref_json = json.loads(event_room_node_observed)
         event_ref = json.loads(written_event)
-        self.assertEqual(event_ref, ref_json)
+        for k in ref_json:
+            self.assertEqual(ref_json[k], event_ref[k], f'Event Json should match')
 
 
 if __name__ == "__main__":

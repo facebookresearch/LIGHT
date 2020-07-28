@@ -43,7 +43,10 @@ def convert_dict_to_node(obj, world):
             return world.oo_graph.all_nodes[obj['node_id']]
         else:
             if obj['agent']:
-                return GraphAgent.from_json_dict(obj)
+                agent = GraphAgent.from_json_dict(obj)
+                if obj['container_node']['target_id'] in world.oo_graph.rooms:
+                    agent.force_move_to(world.oo_graph.rooms[obj['container_node']['target_id']])
+                return agent
             elif obj['object']:
                 return GraphObject.from_json_dict(obj)                    
             elif obj['room']:
