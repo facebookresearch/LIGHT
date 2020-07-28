@@ -43,10 +43,10 @@ function WorldBuilder({ upload }) {
     state.dimensions.name == null ? " " : state.dimensions.name;
   const stateRef = React.useRef(state);
   stateRef.current = state;
+  const TWO_MINUTES = 1200000;
 
   useEffect(() => {
     const timer = setTimeout(function autosave() {
-      const TWO_MINUTES = 1200000;
       postAutosave(stateRef.current);
       console.log("Autosaved!");
       setTimeout(autosave, TWO_MINUTES);
