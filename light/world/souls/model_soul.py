@@ -59,9 +59,7 @@ class ModelSoul(Soul):
                 await self._take_timestep()
                 await asyncio.sleep(self.MAIN_LOOP_STEP_TIMEOUT)
                 
-        loop = asyncio.get_running_loop()
-        self._main_loop = _run_model_main_forever()
-        asyncio.create_task(self._main_loop, loop=loop)
+        self._main_loop = asyncio.create_task(_run_main_logic_forever())
 
     def reap(self):
         """
