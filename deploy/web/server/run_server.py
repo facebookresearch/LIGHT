@@ -25,7 +25,6 @@ from tornado.routing import (
 from tornado.web import Application
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
-
 import os.path
 from light.data_model.light_database import LIGHTDatabase
 
@@ -123,7 +122,6 @@ def main():
     random.seed(6)
     numpy.random.seed(6)
     ldb = LIGHTDatabase(FLAGS.data_model_db)
-    my_loop = IOLoop(make_current=True)
     _run_server(FLAGS, ldb)
 
 
