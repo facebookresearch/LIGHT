@@ -75,7 +75,7 @@ class SocketChatStrategy(LIGHTChatStrategy):
 
     def get_player_leaderboard_stats(self, player_id: str) -> Dict[str, Any]:
         """Return interesting leaderboard stats for the given player id.
-        
+
         Return dict expects the following fields:
             total_players: total number of players
             rank: rank of the given player
@@ -118,7 +118,7 @@ class SocketChatStrategy(LIGHTChatStrategy):
         )
 
     def username_is_valid(self, username: str) -> Union[str, bool]:
-        """Ensure the username can be properly stored, return True if valid and 
+        """Ensure the username can be properly stored, return True if valid and
         an error message for the user if it is not
         """
         return True

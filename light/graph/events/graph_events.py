@@ -381,7 +381,7 @@ class ArriveEvent(TriggeredEvent):
 class TriggerFollowEvent(TriggeredEvent):
     """
     Event to trigger a follow from, to tell that a follow happened
-    
+
     it takes as target_nodes the possible destination
     """
 

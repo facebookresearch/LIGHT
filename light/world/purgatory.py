@@ -25,7 +25,7 @@ class Purgatory:
     """
     The Purgatory class is responsible for holding all of the Souls until the moment
     they are assigned a GraphAgent to inhabit. It is also the source from which Souls
-    recieve observations, as the World is not aware of what Souls have inhabited 
+    recieve observations, as the World is not aware of what Souls have inhabited
     the GraphAgents within.
     """
 
@@ -49,7 +49,7 @@ class Purgatory:
     ) -> None:
         """
         Register a source for Purgatory to be able to fill GraphAgents with souls. Purgatory
-        will pick randomly from all of the registered soul providers, call the function for 
+        will pick randomly from all of the registered soul providers, call the function for
         args, and then pass the target agent, world, and created args to the Soul.
         """
         self.filler_soul_providers[provider_name] = (desired_soul_type, arg_provider)
@@ -79,9 +79,9 @@ class Purgatory:
 
     def send_event_to_soul(self, event: "GraphEvent", agent: "GraphAgent"):
         """
-        Pass an GraphEvent along to the soul inhabiting the given GraphAgent 
+        Pass an GraphEvent along to the soul inhabiting the given GraphAgent
         if such a soul exists, passing otherwise. Launch in wrapper around
-        the async call such that the soul can choose to take its time 
+        the async call such that the soul can choose to take its time
         deciding what to do.
         """
         soul: "Soul" = self.node_id_to_soul.get(agent.node_id)

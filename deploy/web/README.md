@@ -7,7 +7,7 @@ it is first compiled into static content using `npm install` and `npm run build`
 
 There are two primary applications which are deployed from this folder on the same server - the builder application and the
 game application.  The builder application can be accessed by endpoints prefixed with `/builder/`, while the game application's
-endpoints will be prefaced with `/game/`.  
+endpoints will be prefaced with `/game/`.
 
 By default, when running a server and connecting to the host, the default page displayed is the game page.
 

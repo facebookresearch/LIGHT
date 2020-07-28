@@ -38,7 +38,7 @@ def convert_dict_to_node(obj, world):
     Given a dictionary (typically loaded from json), iterate over the elements recursively,
     reconstructing any nodes that we are able to using the reference world.
 
-    If the node_id is not in the reference world, this means it was deleted during execution, so 
+    If the node_id is not in the reference world, this means it was deleted during execution, so
     construct a new node object with it
     """
     if type(obj) is dict and "node_id" in obj:

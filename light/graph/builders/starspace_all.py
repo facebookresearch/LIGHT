@@ -122,7 +122,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
     @staticmethod
     def add_parser_arguments(parser):
         """
-        Add arguments to a parser to be able to set the required options for 
+        Add arguments to a parser to be able to set the required options for
         this builder
         """
         parser.add_argument(
@@ -657,12 +657,12 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         return self.get_similar_element(txt_feats, DB_TYPE_ROOM)
 
     def get_similar_object(self, txt_feats):
-        """Find a similar object to the text given 
+        """Find a similar object to the text given
         based on starspace prediciton"""
         return self.get_similar_element(txt_feats, DB_TYPE_OBJ)
 
     def get_similar_character(self, txt_feats):
-        """Find a similar object to the text given 
+        """Find a similar object to the text given
         based on starspace prediciton"""
         return self.get_similar_element(txt_feats, DB_TYPE_CHAR)
 
@@ -953,8 +953,8 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         num_results=5,
         banned_items=[],
     ):
-        """ Given a text description of a non-graph element and a type of 
-        relationship to query, find closest match in database 
+        """ Given a text description of a non-graph element and a type of
+        relationship to query, find closest match in database
         and return model suggestions """
         # TODO: context based query
         element_rel_dict = {

@@ -13,7 +13,7 @@ import os
 
 """
 This file contains a script for reconstructing a meta episode from
-the point of view (and logs) of either an agent or a room.  
+the point of view (and logs) of either an agent or a room.
 """
 
 
@@ -49,7 +49,7 @@ def load_event_log(event_file):
 
 def get_world(uuid, graph_dir):
     """
-        Given a directory containing graph dumps and a graph uuid, reconstruct a world 
+        Given a directory containing graph dumps and a graph uuid, reconstruct a world
         from the serialized graph
     """
     graph_file = os.path.join(graph_dir, f"{uuid}.json")

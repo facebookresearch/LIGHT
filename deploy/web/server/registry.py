@@ -79,7 +79,7 @@ class RegistryApplication(tornado.web.Application):
 
     def cleanup_games(self):
         """
-            Goes through the game instances, cleaning up any game that does 
+            Goes through the game instances, cleaning up any game that does
             not have a connection in the past 10 minutes
         """
         TIMEOUT = 10  # timeout to clear with no players, in minutes

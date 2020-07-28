@@ -72,7 +72,7 @@ class InteractionLogger(abc.ABC):
 
     def _end_meta_episode(self):
         """
-            Handles any postprocessing associated with the end of a meta episode 
+            Handles any postprocessing associated with the end of a meta episode
             such as flushing buffers by writing to data location, and updating variables
         """
         self._log_interactions()
@@ -80,7 +80,7 @@ class InteractionLogger(abc.ABC):
 
     def _log_interactions(self):
         """
-            Writes out the buffers to the location specified by data location, 
+            Writes out the buffers to the location specified by data location,
             handling any data specific formatting
         """
         raise NotImplementedError
@@ -93,7 +93,7 @@ class InteractionLogger(abc.ABC):
 
     def _dump_graphs(self):
         """
-            This method is responsible for dumping the graphs of the event logger 
+            This method is responsible for dumping the graphs of the event logger
             to file, recording the identifiers used for the graphs
         """
         # First, check graph path, then write the graph dump
@@ -146,15 +146,15 @@ class InteractionLogger(abc.ABC):
 class AgentInteractionLogger(InteractionLogger):
     """
         This interaction logger attaches to human agents in the graph, logging all
-        events the human observes.  This logger also requires serializing more rooms, 
-        since agent encounters many rooms along its traversal  These events go into 
+        events the human observes.  This logger also requires serializing more rooms,
+        since agent encounters many rooms along its traversal  These events go into
         the conversation buffer, which is then sent to `.log` files at the specified path
 
         context_buffers serve an important role in this class to avoid bloating the event logs.
         context_buffers will log a fixed number of the most recent events when:
 
-        1. The player goes afk.  This has the potential to avoid logging lots of noise in the room 
-           that does not provide any signal on human player interactions.  When the player comes back 
+        1. The player goes afk.  This has the potential to avoid logging lots of noise in the room
+           that does not provide any signal on human player interactions.  When the player comes back
            to the game, our loggers send some context of the most recent events to the log
     """
 
@@ -271,19 +271,19 @@ class AgentInteractionLogger(InteractionLogger):
 class RoomInteractionLogger(InteractionLogger):
     """
         This interaction logger attaches to a room level node in the graph, logging all
-        events which take place with human agents in the room as long as a player is still 
+        events which take place with human agents in the room as long as a player is still
         in the room.  These events go into the conversation buffer, which is then sent to `.log`
         files at the specified path
 
-        
+
         context_buffers serve an important role in this class to avoid bloating the event logs.
         context_buffers will log a fixed number of the most recent events when:
 
-        1. There are no players in the room. This is a potential use case when an agent enters a 
+        1. There are no players in the room. This is a potential use case when an agent enters a
            conversation between 2 or more models, and we want some context for training purposes
 
-        2. All players go afk.  This has the potential to avoid logging lots of noise in the room 
-           that does not provide any signal on human player interactions.  When players come back 
+        2. All players go afk.  This has the potential to avoid logging lots of noise in the room
+           that does not provide any signal on human player interactions.  When players come back
            to the game, our loggers send some context of the most recent events to the log
     """
 

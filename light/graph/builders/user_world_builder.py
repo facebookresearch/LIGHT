@@ -235,7 +235,7 @@ class UserWorldBuilder(DBGraphBuilder):
     @staticmethod
     def add_parser_arguments(parser):
         """
-        Add arguments to a parser to be able to set the required options for 
+        Add arguments to a parser to be able to set the required options for
         this builder
         """
         parser.add_argument(
