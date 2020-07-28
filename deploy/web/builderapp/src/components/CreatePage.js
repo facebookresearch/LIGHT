@@ -28,7 +28,7 @@ function CreatePage({ location }) {
           <RadioGroup
             inline
             large
-            onChange={e => {
+            onChange={(e) => {
               location.state = undefined;
               setFormType(e.target.value);
             }}
@@ -54,13 +54,13 @@ function CreatePage({ location }) {
 
 function CreateForm({ type, initialInputs }) {
   const history = useHistory();
-  const submitEntity = async payload => {
+  const submitEntity = async (payload) => {
     await post(`builder/entities/${type}`, payload).then(() => {
       history.push("/");
     });
     AppToaster.show({
       intent: Intent.SUCCESS,
-      message: "Successfully created entity"
+      message: "Successfully created entity",
     });
   };
 

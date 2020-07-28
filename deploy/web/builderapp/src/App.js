@@ -1,5 +1,5 @@
 import React from "react";
-import  {HashRouter, Route, Redirect} from "react-router-dom";
+import { HashRouter, Route, Redirect } from "react-router-dom";
 
 import NavBar from "./components/NavBar";
 import ExplorePage from "./components/ExplorePage";
@@ -23,15 +23,17 @@ export function Routes() {
     <>
       <NavBar />
       <div style={{ margin: "40px 30px" }}>
-        <Route path="/explore" component={ExplorePage} exact/>
-        <Route path="/create" component={CreatePage} exact/>
-        <Route path="/review" component={ReviewPage} exact/>
+        <Route path="/explore" component={ExplorePage} exact />
+        <Route path="/create" component={CreatePage} exact />
+        <Route path="/review" component={ReviewPage} exact />
         <Route
           path="/world_builder"
-          render={props => <WorldBuilderPage {...props} key={Math.random()} exact/>}
+          render={(props) => (
+            <WorldBuilderPage {...props} key={Math.random()} exact />
+          )}
         />
-        <Route path="/edit/:id" component={EditPage} exact/>
-        <Route exact path="/" render={() => <Redirect to="/explore" />} exact/>
+        <Route path="/edit/:id" component={EditPage} exact />
+        <Route exact path="/" render={() => <Redirect to="/explore" />} exact />
       </div>
     </>
   );

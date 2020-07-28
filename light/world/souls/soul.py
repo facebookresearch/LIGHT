@@ -27,8 +27,8 @@ class Soul(ABC):
 
     def __init__(self, target_node: "GraphAgent", world: "World"):
         """
-        All Souls should be attached to a target_node, which is the agent that 
-        this soul will be inhabiting. It also takes the world in which that 
+        All Souls should be attached to a target_node, which is the agent that
+        this soul will be inhabiting. It also takes the world in which that
         agent exists.
         """
         self.target_node = target_node
@@ -43,24 +43,25 @@ class Soul(ABC):
         """
         future_id = f"Node-{self.target_node.node_id}-obs-{time.time():.10f}"
         self._observe_futures[future_id] = self.observe_event(event)
+
         async def _await_observe_then_cleanup():
             await self._observe_futures[future_id]
             del self._observe_futures[future_id]
 
         loop = asyncio.get_running_loop()
         asyncio.ensure_future(_await_observe_then_cleanup(), loop=loop)
-        
+
     @abstractmethod
     async def observe_event(self, event: "GraphEvent"):
         """
         All souls should define some kind of behavior for when an event occurs,
-        ensuring that they are able to handle it somehow. 
-        
-        The soul may choose to ask the world for possible actions it may take, and 
-        then take one in response, or perhaps bide its time, launching a thread 
-        to do something later. Maybe it just takes a note for itself. 
-        
-        This method will always be called asyncronously, such that it can be 
+        ensuring that they are able to handle it somehow.
+
+        The soul may choose to ask the world for possible actions it may take, and
+        then take one in response, or perhaps bide its time, launching a thread
+        to do something later. Maybe it just takes a note for itself.
+
+        This method will always be called asyncronously, such that it can be
         cancelled and won't block execution of the world.
         """
         pass

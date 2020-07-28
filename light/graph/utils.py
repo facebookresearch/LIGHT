@@ -4,17 +4,18 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-'''Contains some helper functions that are useful across multiple files'''
+"""Contains some helper functions that are useful across multiple files"""
+
 
 def rm(d, val):
-    '''Removes a value from a dictionary if it exists, does nothing otherwise'''
+    """Removes a value from a dictionary if it exists, does nothing otherwise"""
     if val in d:
         del d[val]
 
 
 def get_article(txt):
     """Provide an article for the given text (a/an)"""
-    return 'an' if txt[0] in ['a', 'e', 'i', 'o', 'u'] else 'a'
+    return "an" if txt[0] in ["a", "e", "i", "o", "u"] else "a"
 
 
 def get_node_view_or_self(self_node, other_node):
@@ -25,15 +26,18 @@ def get_node_view_or_self(self_node, other_node):
 
 
 def deprecated(f):
-    '''If the debug flag is set on the class that this wrapper is used in,
+    """If the debug flag is set on the class that this wrapper is used in,
     loudly complain that this function is being called
-    '''
+    """
+
     def wrapper(*args, **kwargs):
         world = args[0]
         if world.debug:
-            print('Call to deprecated function')
+            print("Call to deprecated function")
             import traceback
+
             traceback.print_stack()
         res = f(*args, **kwargs)
         return res
+
     return wrapper

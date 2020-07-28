@@ -30,7 +30,7 @@ function Grid({ state, initialShowAdvanced }) {
   };
 
   // store the initial layout of the grid
-  const onDragStart = layout => {
+  const onDragStart = (layout) => {
     setLayout(cloneDeep(layout));
   };
 
@@ -100,7 +100,7 @@ function Grid({ state, initialShowAdvanced }) {
               h: 1,
               draggableHandle: ".react-grid-item-handle",
               draggableCancel: ".react-grid-item",
-              isDraggable: !isEmpty(tile)
+              isDraggable: !isEmpty(tile),
             }}
             onClick={() => {
               if (
@@ -130,7 +130,7 @@ function Grid({ state, initialShowAdvanced }) {
                 width: SIZE,
                 height: SIZE,
                 maxWidth: SIZE,
-                maxHeight: SIZE
+                maxHeight: SIZE,
               }}
               state={state}
             />
@@ -159,7 +159,7 @@ function Grid({ state, initialShowAdvanced }) {
               style={{
                 top: MARGIN + (MARGIN + SIZE) * i,
                 left: (MARGIN + SIZE) * j + (MARGIN - 10) / 2,
-                height: SIZE
+                height: SIZE,
               }}
             />
           );
@@ -177,7 +177,7 @@ function Grid({ state, initialShowAdvanced }) {
               style={{
                 left: MARGIN + (MARGIN + SIZE) * j,
                 top: (MARGIN + SIZE) * i + (MARGIN - 10) / 2,
-                width: SIZE
+                width: SIZE,
               }}
             />
           );
@@ -196,7 +196,7 @@ function Grid({ state, initialShowAdvanced }) {
             (state.dimensions.width + 1) * MARGIN +
             60,
           margin: "0 auto 75px auto",
-          textAlign: "center"
+          textAlign: "center",
         }}
       >
         <Button
@@ -207,7 +207,7 @@ function Grid({ state, initialShowAdvanced }) {
               state.dimensions.width * SIZE +
               (state.dimensions.width + 1) * MARGIN -
               20,
-            margin: "auto"
+            margin: "auto",
           }}
           onClick={state.addRowTop}
           icon="add"
@@ -221,7 +221,7 @@ function Grid({ state, initialShowAdvanced }) {
                 state.dimensions.height * SIZE +
                 (state.dimensions.height + 1) * MARGIN -
                 20,
-              margin: "10px 0"
+              margin: "10px 0",
             }}
             onClick={state.addColFront}
             icon="add"
@@ -234,7 +234,7 @@ function Grid({ state, initialShowAdvanced }) {
                 (state.dimensions.width + 1) * MARGIN,
               height:
                 state.dimensions.height * SIZE +
-                (state.dimensions.height + 1) * MARGIN
+                (state.dimensions.height + 1) * MARGIN,
             }}
           >
             <div className="walls">{generateWalls()}</div>
@@ -255,7 +255,7 @@ function Grid({ state, initialShowAdvanced }) {
               style={{
                 width:
                   state.dimensions.width * SIZE +
-                  (state.dimensions.width + 1) * MARGIN
+                  (state.dimensions.width + 1) * MARGIN,
               }}
             >
               {generateTiles()}
@@ -269,7 +269,7 @@ function Grid({ state, initialShowAdvanced }) {
                 state.dimensions.height * SIZE +
                 (state.dimensions.height + 1) * MARGIN -
                 20,
-              margin: "10px 0"
+              margin: "10px 0",
             }}
             onClick={state.addColEnd}
             icon="add"
@@ -283,7 +283,7 @@ function Grid({ state, initialShowAdvanced }) {
               state.dimensions.width * SIZE +
               (state.dimensions.width + 1) * MARGIN -
               20,
-            margin: "auto"
+            margin: "auto",
           }}
           onClick={state.addRowBot}
           icon="add"
@@ -305,12 +305,12 @@ function AdvancedEditor({
   setSelected,
   resetShowAdvanced,
   showAdvanced,
-  state
+  state,
 }) {
-  const handleSubmit = data => {
+  const handleSubmit = (data) => {
     state.setTile(selected.x, selected.y, {
       ...state.getTileAt(selected.x, selected.y),
-      ...data
+      ...data,
     });
     setSelected(null);
     resetShowAdvanced();
@@ -348,7 +348,7 @@ function AdvancedEditor({
                 width: SIZE,
                 height: SIZE,
                 maxWidth: SIZE,
-                maxHeight: SIZE
+                maxHeight: SIZE,
               }}
               entities={state.entities}
               findOrAddEntity={state.findOrAddEntity}

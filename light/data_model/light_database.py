@@ -12,25 +12,21 @@ import pandas as pd
 from collections import defaultdict
 from tqdm import tqdm
 from parlai.core.params import ParlaiParser
-from light.data_model.conversation_checkpoint_parser import (
-    ConversationCheckpointParser,
-)
-from light.data_model.environment_checkpoint_parser import (
-    EnvironmentCheckpointParser,
-)
+from light.data_model.conversation_checkpoint_parser import ConversationCheckpointParser
+from light.data_model.environment_checkpoint_parser import EnvironmentCheckpointParser
 from light.graph.utils import get_article
 import sys
 import parlai.utils.misc as parlai_utils
 
-sys.modules['parlai.core.utils'] = parlai_utils
+sys.modules["parlai.core.utils"] = parlai_utils
 
 # Edges between nodes stored in the database
-DB_EDGE_IN_CONTAINED = 'in_contained'
-DB_EDGE_EX_CONTAINED = 'ex_contained'
-DB_EDGE_WORN = 'worn'
-DB_EDGE_WIELDED = 'wielded'
-DB_EDGE_NEIGHBOR = 'neighbor'
-DB_EDGE_CONTAINED_IN = 'contained_in'  # new addition for obj containment
+DB_EDGE_IN_CONTAINED = "in_contained"
+DB_EDGE_EX_CONTAINED = "ex_contained"
+DB_EDGE_WORN = "worn"
+DB_EDGE_WIELDED = "wielded"
+DB_EDGE_NEIGHBOR = "neighbor"
+DB_EDGE_CONTAINED_IN = "contained_in"  # new addition for obj containment
 EDGE_TYPES = [
     DB_EDGE_IN_CONTAINED,
     DB_EDGE_EX_CONTAINED,
@@ -40,15 +36,15 @@ EDGE_TYPES = [
     DB_EDGE_NEIGHBOR,
 ]
 
-DB_GRAPH_EDGE_CONTAINS = 'contains'
+DB_GRAPH_EDGE_CONTAINS = "contains"
 DB_GRAPH_EDGE_NEIGHBOR_N = "neighbors to the north"
 DB_GRAPH_EDGE_NEIGHBOR_E = "neighbors to the east"
 DB_GRAPH_EDGE_NEIGHBOR_S = "neighbors to the south"
 DB_GRAPH_EDGE_NEIGHBOR_W = "neighbors to the west"
 DB_GRAPH_EDGE_NEIGHBOR_U = "neighbors above"
 DB_GRAPH_EDGE_NEIGHBOR_D = "neighbors below"
-DB_GRAPH_EDGE_WORN = 'worn'
-DB_GRAPH_EDGE_WIELDED = 'wielded'
+DB_GRAPH_EDGE_WORN = "worn"
+DB_GRAPH_EDGE_WIELDED = "wielded"
 # Edges between nodes in graphs executed
 GRAPH_EDGE_TYPES = [
     DB_GRAPH_EDGE_CONTAINS,
@@ -63,23 +59,23 @@ GRAPH_EDGE_TYPES = [
 ]
 
 # All entity types existing in the database
-DB_TYPE_BASE_CHAR = 'base character'
-DB_TYPE_CHAR = 'character'
-DB_TYPE_BASE_OBJ = 'base object'
-DB_TYPE_OBJ = 'object'
-DB_TYPE_BASE_ROOM = 'base room'
-DB_TYPE_ROOM = 'room'
-DB_TYPE_EDGE = 'edge'
-DB_TYPE_GRAPH_EDGE = 'graph edge'
-DB_TYPE_GRAPH_NODE = 'graph node'
-DB_TYPE_TEXT_EDGE = 'text edge'
-DB_TYPE_TILE = 'tile'
-DB_TYPE_INTERACTION = 'interaction'
-DB_TYPE_UTTERANCE = 'utterance'
-DB_TYPE_PARTICIPANT = 'participant'
-DB_TYPE_TURN = 'turn'
-DB_TYPE_PLAYER = 'player'
-DB_TYPE_WORLD = 'world'
+DB_TYPE_BASE_CHAR = "base character"
+DB_TYPE_CHAR = "character"
+DB_TYPE_BASE_OBJ = "base object"
+DB_TYPE_OBJ = "object"
+DB_TYPE_BASE_ROOM = "base room"
+DB_TYPE_ROOM = "room"
+DB_TYPE_EDGE = "edge"
+DB_TYPE_GRAPH_EDGE = "graph edge"
+DB_TYPE_GRAPH_NODE = "graph node"
+DB_TYPE_TEXT_EDGE = "text edge"
+DB_TYPE_TILE = "tile"
+DB_TYPE_INTERACTION = "interaction"
+DB_TYPE_UTTERANCE = "utterance"
+DB_TYPE_PARTICIPANT = "participant"
+DB_TYPE_TURN = "turn"
+DB_TYPE_PLAYER = "player"
+DB_TYPE_WORLD = "world"
 ENTITY_TYPES = [
     DB_TYPE_BASE_CHAR,
     DB_TYPE_CHAR,
@@ -101,20 +97,20 @@ ENTITY_TYPES = [
 ]
 
 # Statuses for any content in the database
-DB_STATUS_PROD = 'production'
-DB_STATUS_REVIEW = 'under review'
-DB_STATUS_REJECTED = 'rejected'
-DB_STATUS_QUESTIONABLE = 'questionable'
-DB_STATUS_ACCEPTED = 'accepted'
+DB_STATUS_PROD = "production"
+DB_STATUS_REVIEW = "under review"
+DB_STATUS_REJECTED = "rejected"
+DB_STATUS_QUESTIONABLE = "questionable"
+DB_STATUS_ACCEPTED = "accepted"
 # accepted one and accepted all are reserved for editing utterances,
 # where there is the option to change the utterance only in the turn
 # that the edit was submitted for or change the utterance in all places
 # that it appears in. The choice is up to the reviewer.
-DB_STATUS_ACCEPT_ONE = 'accepted one'
-DB_STATUS_ACCEPT_ALL = 'accepted all'
-DB_TRAIN_SPLIT = 'train'
-DB_TEST_SPLIT = 'test'
-DB_VAL_SPLIT = 'val'
+DB_STATUS_ACCEPT_ONE = "accepted one"
+DB_STATUS_ACCEPT_ALL = "accepted all"
+DB_TRAIN_SPLIT = "train"
+DB_TEST_SPLIT = "test"
+DB_VAL_SPLIT = "val"
 CONTENT_STATUSES = [
     DB_STATUS_PROD,
     DB_STATUS_REVIEW,
@@ -144,9 +140,9 @@ class LIGHTDatabase:
         argparser = ParlaiParser(False, False)
         # ignore unknown command line arguments
         opt = argparser.parse_and_process_known_args()[0]
-        
+
         # Path to the dictionary csv's
-        self.data_dir = os.path.join(opt["datapath"], 'light', "light_database_csv")
+        self.data_dir = os.path.join(opt["datapath"], "light", "light_database_csv")
         if not os.path.exists(self.data_dir):
             os.makedirs(self.data_dir)
         # Path to the database
@@ -175,7 +171,7 @@ class LIGHTDatabase:
             DB_TYPE_EDGE: "node_content_table",
             DB_TYPE_GRAPH_EDGE: "edges_table",
             DB_TYPE_GRAPH_NODE: "nodes_table",
-            DB_TYPE_TILE: 'tile_table',
+            DB_TYPE_TILE: "tile_table",
             DB_TYPE_INTERACTION: "interactions_table",
             DB_TYPE_UTTERANCE: "utterances_table",
             DB_TYPE_PARTICIPANT: "participants_table",
@@ -296,36 +292,36 @@ class LIGHTDatabase:
     # Connect to sqlite3 in __init__ instead because __init__ is called
     # before __enter__
     def create_cache(self):
-        '''Create a cached version of the database in dict format
-        with id as the keys and the rows are values'''
+        """Create a cached version of the database in dict format
+        with id as the keys and the rows are values"""
         self.cache_init = True
         self.use_cache = True
         self.read_only = True
         db_table_dict = {
-            'id': 'id_table',
-            'db_edges': 'node_content_table',
-            'text_edges': 'text_edges_table',
-            'characters': 'characters_table',
-            'rooms': 'rooms_table',
-            'objects': 'objects_table',
-            'base_chars': 'base_characters_table',
-            'base_rooms': 'base_rooms_table',
-            'base_objs': 'base_objects_table',
-            'worlds': 'world_table',
+            "id": "id_table",
+            "db_edges": "node_content_table",
+            "text_edges": "text_edges_table",
+            "characters": "characters_table",
+            "rooms": "rooms_table",
+            "objects": "objects_table",
+            "base_chars": "base_characters_table",
+            "base_rooms": "base_rooms_table",
+            "base_objs": "base_objects_table",
+            "worlds": "world_table",
         }
 
         for key, table_name in db_table_dict.items():
             self.c.execute("""SELECT * FROM {0};""".format(table_name))
             results = self.c.fetchall()
-            if 'edges' in key:
+            if "edges" in key:
                 self.cache[key] = {}
                 for row in results:
-                    if row['parent_id'] in self.cache[key]:
-                        self.cache[key][row['parent_id']].append(row)
+                    if row["parent_id"] in self.cache[key]:
+                        self.cache[key][row["parent_id"]].append(row)
                     else:
-                        self.cache[key][row['parent_id']] = [row]
+                        self.cache[key][row["parent_id"]] = [row]
             else:
-                self.cache[key] = {row['id']: row for row in results}
+                self.cache[key] = {row["id"]: row for row in results}
 
     def __enter__(self):
         conn = sqlite3.connect(self.dbpath)
@@ -342,7 +338,6 @@ class LIGHTDatabase:
             self.conn.rollback()
         self.conn.commit()
         self.conn.close()
-
 
     def load_dictionaries(self):
         """
@@ -373,9 +368,9 @@ class LIGHTDatabase:
         df.to_csv(os.path.join(self.data_dir, "id_room_dict.csv"), header=False)
         df = pd.DataFrame.from_dict(self.id_object_dict, orient="index")
         df.to_csv(os.path.join(self.data_dir, "id_object_dict.csv"), header=False)
-    
+
     def search_database(self, type, input, fts=True):
-        '''Search a specific table (dictated by 'type') using a search string'''
+        """Search a specific table (dictated by 'type') using a search string"""
         table_name = self.table_dict[type]
         table_name_fts = self.table_dict[type] + "_fts"
         # if input is empty, return all entries of the specified type through
@@ -403,7 +398,7 @@ class LIGHTDatabase:
                 """.format(
                     table_name
                 ),
-                ('%' + input + '%',),
+                ("%" + input + "%",),
             )
         return self.c.fetchall()
 
@@ -413,10 +408,10 @@ class LIGHTDatabase:
         id_table.
         """
         if self.use_cache and id is not None:
-            if id in self.cache['id']:
-                return [self.cache['id'][id]]
+            if id in self.cache["id"]:
+                return [self.cache["id"][id]]
         if self.use_cache and type is not None:
-            return [row for row in self.cache['id'].values() if row['type'] == type]
+            return [row for row in self.cache["id"].values() if row["type"] == type]
         self.c.execute(
             """
             SELECT * FROM id_table
@@ -433,18 +428,18 @@ class LIGHTDatabase:
     def create_id(self, type, entry_attributes):
         is_from_pickle = False
         status = DB_STATUS_REVIEW
-        if 'is_from_pickle' in list(entry_attributes.keys()):
-            is_from_pickle = entry_attributes['is_from_pickle']
-        if 'status' in list(entry_attributes.keys()):
-            status = entry_attributes['status']
-        if 'split' in list(entry_attributes.keys()):
-            split = entry_attributes['split']
+        if "is_from_pickle" in list(entry_attributes.keys()):
+            is_from_pickle = entry_attributes["is_from_pickle"]
+        if "status" in list(entry_attributes.keys()):
+            status = entry_attributes["status"]
+        if "split" in list(entry_attributes.keys()):
+            split = entry_attributes["split"]
         if (
             set(list(entry_attributes.keys()))
-            | set(['is_from_pickle', 'status', 'split'])
-        ) > set(['is_from_pickle', 'status', 'split']):
+            | set(["is_from_pickle", "status", "split"])
+        ) > set(["is_from_pickle", "status", "split"]):
             raise Exception("Unrecognized keys in entry_attributes")
-        if 'split' in list(entry_attributes.keys()):
+        if "split" in list(entry_attributes.keys()):
             # NOTE: this will break circleCI Unittest which will need to be updated to reflect the changes in Light DB
             self.c.execute(
                 """
@@ -462,7 +457,7 @@ class LIGHTDatabase:
         id = self.c.lastrowid
         if self.use_cache:
             self.c.execute("""SELECT * FROM id_table WHERE id = ?""", (id,))
-            self.cache['id'][id] = self.c.fetchone()
+            self.cache["id"][id] = self.c.fetchone()
         return id
 
     def delete_id(self, id):
@@ -470,11 +465,11 @@ class LIGHTDatabase:
         Deletes specified id from id_table
         """
         self.c.execute("DELETE FROM id_table WHERE id = ?", (id,))
-        if self.use_cache and id in self.cache['id']:
-            del self.cache['id'][id]
+        if self.use_cache and id in self.cache["id"]:
+            del self.cache["id"][id]
 
     def update_status(self, id, status):
-        '''Updates status of entity in the database'''
+        """Updates status of entity in the database"""
         assert status in CONTENT_STATUSES
         self.c.execute(
             """
@@ -484,12 +479,12 @@ class LIGHTDatabase:
             """,
             (status, id),
         )
-        if self.use_cache and id in self.cache['id']:
+        if self.use_cache and id in self.cache["id"]:
             self.c.execute("""SELECT * FROM id_table WHERE id = ? """, (id,))
-            self.cache['id'][id] = self.c.fetchone()
+            self.cache["id"][id] = self.c.fetchone()
 
     def update_split(self, id, split):
-        '''Updates status of entity in the database'''
+        """Updates status of entity in the database"""
         assert split in DATASPLIT_TYPES
         self.c.execute(
             """
@@ -499,19 +494,19 @@ class LIGHTDatabase:
             """,
             (split, id),
         )
-        if self.use_cache and id in self.cache['id']:
+        if self.use_cache and id in self.cache["id"]:
             self.c.execute("""SELECT * FROM id_table WHERE id = ? """, (id,))
-            self.cache['id'][id] = self.c.fetchone()
+            self.cache["id"][id] = self.c.fetchone()
 
     def get_columns(self, type):
-        '''
+        """
         Takes "type" as specified by keys in table_dictionary and returns a
         dictionary where the keys are the column names and the values are the
         column types
-        '''
-        assert type in list(self.table_dict.keys()), 'Type is invalid'
+        """
+        assert type in list(self.table_dict.keys()), "Type is invalid"
         table_name = self.table_dict[type]
-        self.c.execute(f'PRAGMA table_info({table_name})')
+        self.c.execute(f"PRAGMA table_info({table_name})")
         fetched = self.c.fetchall()
         result = {i[1]: i[2] for i in fetched}
         return result
@@ -519,8 +514,8 @@ class LIGHTDatabase:
     def table_not_exists(self, table_name):
         self.c.execute(
             """
-            SELECT name 
-            FROM sqlite_master 
+            SELECT name
+            FROM sqlite_master
             WHERE type="table" AND name=?;
             """,
             (table_name,),
@@ -732,7 +727,7 @@ class LIGHTDatabase:
                 INSERT INTO "characters_table_fts" (rowid, name, persona, physical_description)
                     SELECT rowid, name, persona, physical_description FROM characters_table;
                 """
-            )        
+            )
         # Node contents represent an edge between a node and something in it
         # Edge is deleted when either node is deleted
         self.c.execute(
@@ -827,7 +822,7 @@ class LIGHTDatabase:
         entry_attributes={},
         name_prefix=None,
         is_plural=None,
-        char_type='unknown',
+        char_type="unknown",
     ):
         # Inherit name from base character if no name is provided
         if name == None:
@@ -848,7 +843,7 @@ class LIGHTDatabase:
 
         # If plurality is None, guess heuristically
         if is_plural is None:
-            is_plural = 0 if name[-1] != 's' else 0.7
+            is_plural = 0 if name[-1] != "s" else 0.7
 
         id = self.create_id(DB_TYPE_CHAR, entry_attributes)
         self.c.execute(
@@ -962,16 +957,16 @@ class LIGHTDatabase:
 
         # If plurality is None, guess heuristically
         if is_plural is None:
-            is_plural = 0 if name[-1] != 's' else 0.7
+            is_plural = 0 if name[-1] != "s" else 0.7
 
         # Attempt insert
         choice = random.randint(0, 9)
         if choice < 8:
-            entry_attributes['split'] = 'train'
+            entry_attributes["split"] = "train"
         elif choice == 8:
-            entry_attributes['split'] = 'test'
+            entry_attributes["split"] = "test"
         else:
-            entry_attributes['split'] = 'val'
+            entry_attributes["split"] = "val"
 
         id = self.create_id(DB_TYPE_OBJ, entry_attributes)
         self.c.execute(
@@ -1062,11 +1057,11 @@ class LIGHTDatabase:
             name = result[0][0]
         choice = random.randint(0, 9)
         if choice < 8:
-            entry_attributes['split'] = 'train'
+            entry_attributes["split"] = "train"
         elif choice == 8:
-            entry_attributes['split'] = 'test'
+            entry_attributes["split"] = "test"
         else:
-            entry_attributes['split'] = 'val'
+            entry_attributes["split"] = "val"
         id = self.create_id(DB_TYPE_ROOM, entry_attributes)
         self.c.execute(
             """
@@ -1129,8 +1124,8 @@ class LIGHTDatabase:
         edge_type,
         edge_strength,
         entry_attributes={},
-        child_desc='',
-        child_label='',
+        child_desc="",
+        child_label="",
     ):
         id = self.create_id(DB_TYPE_TEXT_EDGE, entry_attributes)
         assert parent_id == None or self.get_id(parent_id)[0][1] in [
@@ -1174,7 +1169,7 @@ class LIGHTDatabase:
             result = self.c.fetchall()
             assert (
                 len(result) == 1
-            ), f'had more than one result: {result}, {child_text}, {parent_id}'
+            ), f"had more than one result: {result}, {child_text}, {parent_id}"
             id = int(result[0][0])
         return (id, inserted)
 
@@ -1193,8 +1188,8 @@ class LIGHTDatabase:
         self, id=None, name=None, base_id=None, persona=None, physical_description=None
     ):
         if self.use_cache:
-            if id is not None and id in self.cache['characters']:
-                return [self.cache['characters'][id]]
+            if id is not None and id in self.cache["characters"]:
+                return [self.cache["characters"][id]]
         self.c.execute(
             """
             SELECT * FROM characters_table
@@ -1233,8 +1228,8 @@ class LIGHTDatabase:
         is_weapon=None,
         physical_description=None,
     ):
-        if self.use_cache and id is not None and id in self.cache['objects']:
-            return [self.cache['objects'][id]]
+        if self.use_cache and id is not None and id in self.cache["objects"]:
+            return [self.cache["objects"][id]]
         self.c.execute(
             """
             SELECT * from objects_table
@@ -1281,8 +1276,8 @@ class LIGHTDatabase:
         self, id=None, name=None, base_id=None, description=None, backstory=None
     ):
         if self.use_cache:
-            if id is not None and id in self.cache['rooms']:
-                return [self.cache['rooms'][id]]
+            if id is not None and id in self.cache["rooms"]:
+                return [self.cache["rooms"][id]]
 
         self.c.execute(
             """
@@ -1301,7 +1296,7 @@ class LIGHTDatabase:
         self, id=None, parent_id=None, child_id=None, edge_type=None, edge_strength=None
     ):
         if self.use_cache:
-            results = self.get_edges_cached('db_edges', parent_id, edge_type)
+            results = self.get_edges_cached("db_edges", parent_id, edge_type)
             if len(results):
                 return results
         self.c.execute(
@@ -1326,7 +1321,7 @@ class LIGHTDatabase:
         edge_strength=None,
     ):
         if self.use_cache:
-            results = self.get_edges_cached('text_edges', parent_id, edge_type)
+            results = self.get_edges_cached("text_edges", parent_id, edge_type)
             if len(results):
                 return results
 
@@ -1353,9 +1348,9 @@ class LIGHTDatabase:
                 results = list(
                     itertools.chain.from_iterable([rows for rows in results])
                 )
-            results = [r for r in results if r['edge_type'] == edge_type]
+            results = [r for r in results if r["edge_type"] == edge_type]
         return results
-    
+
     def init_user_tables(self):
         """
         Initializes users and login tables
@@ -1379,7 +1374,7 @@ class LIGHTDatabase:
             """
             CREATE TABLE IF NOT EXISTS world_table (
             id integer PRIMARY KEY NOT NULL,
-            name text NOT NULL, 
+            name text NOT NULL,
             owner_id integer NOT NULL,
             height integer NOT NULL,
             width integer NOT NULL,
@@ -1407,7 +1402,7 @@ class LIGHTDatabase:
             """
         )
 
-        # Differs from text_edges as those are more annotation, these are actual edges of 
+        # Differs from text_edges as those are more annotation, these are actual edges of
         # world graphs in execution
         self.c.execute(
             """
@@ -1442,12 +1437,12 @@ class LIGHTDatabase:
                 ON DELETE CASCADE,
             CONSTRAINT fk_eid FOREIGN KEY (entity_id)
                 REFERENCES id_table (id)
-                ON DELETE CASCADE);       
+                ON DELETE CASCADE);
             """
         )
 
         # Graph edges table - edges in execution
-        # (need src, dst, type of node - can we just have 
+        # (need src, dst, type of node - can we just have
         # Edge North, Edge South, Edge West, Edge East, Edge Up, Edge Down, Edge contains?)
         self.c.execute(
             """
@@ -1471,7 +1466,7 @@ class LIGHTDatabase:
                 ON DELETE CASCADE,
             CONSTRAINT fk_edge FOREIGN KEY (edge_type)
                 REFERENCES enum_table_graph_edge_type (type)
-                ON DELETE CASCADE);            
+                ON DELETE CASCADE);
             """
         )
 
@@ -1497,7 +1492,6 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
-
 
     def init_conversation_tables(self):
         """
@@ -1963,7 +1957,7 @@ class LIGHTDatabase:
         return self.c.fetchall()
 
     def save_single_game(self, graph, edges, creator):
-        '''
+        """
         Saves the state of a created game
         Parameters:
         graph (str): name of the graph being saved
@@ -1974,7 +1968,7 @@ class LIGHTDatabase:
             <optional (include if edge is 'neighbor'), str>}
         creator (int): player ID of the creator
         Return value: game ID
-        '''
+        """
         self.c.execute(
             """
             INSERT or IGNORE INTO games_table(graph, creator)
@@ -1985,9 +1979,9 @@ class LIGHTDatabase:
         game = self.c.lastrowid
         for comp in list(edges.keys()):
             assert self.get_id(id=comp, expand=False)[0][1] in [
-                'object',
-                'character',
-                'room',
+                "object",
+                "character",
+                "room",
             ]
             self.c.execute(
                 """
@@ -1997,13 +1991,13 @@ class LIGHTDatabase:
                 (game, comp),
             )
             for e in edges[comp]:
-                child = e['child']
+                child = e["child"]
                 assert self.get_id(id=child, expand=False)[0][1] in [
-                    'object',
-                    'character',
-                    'room',
+                    "object",
+                    "character",
+                    "room",
                 ]
-                if e['type'] == 'non_neighbor':
+                if e["type"] == "non_neighbor":
                     self.c.execute(
                         """
                         INSERT or IGNORE INTO game_components_table(game, component)
@@ -2016,15 +2010,15 @@ class LIGHTDatabase:
                         INSERT or IGNORE INTO game_edges_table(game, parent, child, edge)
                         VALUES (?, ?, ?, ?)
                         """,
-                        (game, comp, child, e['edge']),
+                        (game, comp, child, e["edge"]),
                     )
-                elif e['type'] == 'neighbor':
+                elif e["type"] == "neighbor":
                     self.c.execute(
                         """
                         INSERT or IGNORE INTO game_edges_table(game, parent, child, edge, direction)
                         VALUES (?, ?, ?, ?, ?)
                         """,
-                        (game, comp, child, e['edge'], e['direction']),
+                        (game, comp, child, e["edge"], e["direction"]),
                     )
                 else:
                     raise Exception("Edge type is unrecognized")
@@ -2035,21 +2029,21 @@ class LIGHTDatabase:
         Creates triggers to keep full text index up to date with the content
         table
         """
-        'interaction', 'utterance', 'participant',
-        'turn'
+        "interaction", "utterance", "participant",
+        "turn"
         trigger_info = [
-            ('base_objects', ['name']),
-            ('objects', ['name', 'physical_description']),
-            ('base_rooms', ['name']),
-            ('rooms', ['name', 'description', 'backstory']),
-            ('base_characters', ['name']),
-            ('characters', ['name', 'persona', 'physical_description']),
-            ('utterances', ['dialogue']),
-            ('turns', ['interaction_type', 'action']),
+            ("base_objects", ["name"]),
+            ("objects", ["name", "physical_description"]),
+            ("base_rooms", ["name"]),
+            ("rooms", ["name", "description", "backstory"]),
+            ("base_characters", ["name"]),
+            ("characters", ["name", "persona", "physical_description"]),
+            ("utterances", ["dialogue"]),
+            ("turns", ["interaction_type", "action"]),
         ]
         for i in trigger_info:
-            comma_separated = ', '.join([str(j) for j in i[1]])
-            comma_separated_with_new = ', '.join(['new.' + str(j) for j in i[1]])
+            comma_separated = ", ".join([str(j) for j in i[1]])
+            comma_separated_with_new = ", ".join(["new." + str(j) for j in i[1]])
             # can use .format because all variables are defined in the
             # trigger_info table above and cannot be altered by users
             self.c.execute(
@@ -2096,7 +2090,7 @@ class LIGHTDatabase:
             )
 
     def add_single_conversation(self, room, participants, turns):
-        '''
+        """
         Adds a single conversation to the database
         Parameters:
         room (int): ID of the room the conversation took place in
@@ -2108,15 +2102,15 @@ class LIGHTDatabase:
             <text, can be 'speech', 'action', or 'emote'>,
             content: <text>}, turn_time: <int>}
         Return value: interaction_id
-        '''
+        """
         # check if the conversation has already been loaded
         data = []
         for t in turns:
-            if t['interaction']['type'] == 'speech':
+            if t["interaction"]["type"] == "speech":
                 data.append(
                     {
-                        'speaker': participants[t['speaker']][0],
-                        'text': t['interaction']['content'],
+                        "speaker": participants[t["speaker"]][0],
+                        "text": t["interaction"]["content"],
                     }
                 )
         if not self.is_duplicate_conversation(data, room):
@@ -2127,32 +2121,32 @@ class LIGHTDatabase:
             for i, t in enumerate(turns):
                 utterance_id = None
                 action = None
-                if t['interaction']['type'] == 'speech':
-                    utterance_id = self.create_utterance(t['interaction']['content'])[0]
+                if t["interaction"]["type"] == "speech":
+                    utterance_id = self.create_utterance(t["interaction"]["content"])[0]
                 else:
-                    action = t['interaction']['content']
-                assert t['speaker'] is not None, "Speaker cannot be null"
-                if not t['listener']:
+                    action = t["interaction"]["content"]
+                assert t["speaker"] is not None, "Speaker cannot be null"
+                if not t["listener"]:
                     self.create_turn(
                         interaction_id,
                         i,
-                        t['turn_time'],
-                        t['interaction']['type'],
+                        t["turn_time"],
+                        t["interaction"]["type"],
                         utterance_id,
                         action,
-                        pars[t['speaker']],
+                        pars[t["speaker"]],
                         None,
                     )
                 else:
                     self.create_turn(
                         interaction_id,
                         i,
-                        t['turn_time'],
-                        t['interaction']['type'],
+                        t["turn_time"],
+                        t["interaction"]["type"],
                         utterance_id,
                         action,
-                        pars[t['speaker']],
-                        pars[t['listener']],
+                        pars[t["speaker"]],
+                        pars[t["listener"]],
                     )
             return interaction_id
         return -1
@@ -2187,7 +2181,7 @@ class LIGHTDatabase:
         for d in data:
             utterance_id = self.create_utterance(
                 d["text"],
-                entry_attributes={'is_from_pickle': True, 'status': DB_STATUS_PROD},
+                entry_attributes={"is_from_pickle": True, "status": DB_STATUS_PROD},
             )[0]
             # For every existing interaction that contains utterance_id, check
             # if the interaction has the same speaker and if it is spoken in
@@ -2242,7 +2236,7 @@ class LIGHTDatabase:
         conv_parser = ConversationCheckpointParser(pklpath)
         convs_data = conv_parser.get_convs_data()
         for i in tqdm(
-            range(len(convs_data)), desc='loading conversations', disable=disable_TQDM
+            range(len(convs_data)), desc="loading conversations", disable=disable_TQDM
         ):
             room_pickle_id, data = convs_data[i]
             room_id = self.id_room_dict[room_pickle_id]
@@ -2252,26 +2246,26 @@ class LIGHTDatabase:
             # if the conversation has not already been added, add it to the
             # database
             for i in data:
-                i['speaker'] = name_to_id[i['speaker']]
-                if i['listener']:
-                    i['listener'] = name_to_id[i['listener']]
+                i["speaker"] = name_to_id[i["speaker"]]
+                if i["listener"]:
+                    i["listener"] = name_to_id[i["listener"]]
             if not self.is_duplicate_conversation(data, room_id):
                 interaction_id = self.create_interaction(
                     room_id,
-                    entry_attributes={'is_from_pickle': True, 'status': DB_STATUS_PROD},
+                    entry_attributes={"is_from_pickle": True, "status": DB_STATUS_PROD},
                 )[0]
                 # char_to_participant maps speaker id to (participant ID of
                 # speaker, participant ID of listener). Participant ID of
                 # listener is None when the speaker is speaking to the room
                 char_to_participant = {}
                 char1_player_id = self.create_player(
-                    entry_attributes={'is_from_pickle': True, 'status': DB_STATUS_PROD}
+                    entry_attributes={"is_from_pickle": True, "status": DB_STATUS_PROD}
                 )[0]
                 char1_id = self.create_participant(
                     interaction_id,
                     data[0]["speaker"],
                     char1_player_id,
-                    entry_attributes={'is_from_pickle': True, 'status': DB_STATUS_PROD},
+                    entry_attributes={"is_from_pickle": True, "status": DB_STATUS_PROD},
                 )[0]
                 if data[0]["listener"] == None:
                     char2_id = None
@@ -2279,8 +2273,8 @@ class LIGHTDatabase:
                 else:
                     char2_player_id = self.create_player(
                         entry_attributes={
-                            'is_from_pickle': True,
-                            'status': DB_STATUS_PROD,
+                            "is_from_pickle": True,
+                            "status": DB_STATUS_PROD,
                         }
                     )[0]
                     char2_id = self.create_participant(
@@ -2288,8 +2282,8 @@ class LIGHTDatabase:
                         data[0]["listener"],
                         char2_player_id,
                         entry_attributes={
-                            'is_from_pickle': True,
-                            'status': DB_STATUS_PROD,
+                            "is_from_pickle": True,
+                            "status": DB_STATUS_PROD,
                         },
                     )[0]
                     char_to_participant[data[0]["speaker"]] = (char1_id, char2_id)
@@ -2301,8 +2295,8 @@ class LIGHTDatabase:
                     utterance_id = self.create_utterance(
                         d["text"],
                         entry_attributes={
-                            'is_from_pickle': True,
-                            'status': DB_STATUS_PROD,
+                            "is_from_pickle": True,
+                            "status": DB_STATUS_PROD,
                         },
                     )[0]
                     # add turn related to speech
@@ -2316,8 +2310,8 @@ class LIGHTDatabase:
                         speaker_id,
                         listener_id,
                         entry_attributes={
-                            'is_from_pickle': True,
-                            'status': DB_STATUS_PROD,
+                            "is_from_pickle": True,
+                            "status": DB_STATUS_PROD,
                         },
                     )
                     turn_number += 1
@@ -2333,8 +2327,8 @@ class LIGHTDatabase:
                             speaker_id,
                             listener_id,
                             entry_attributes={
-                                'is_from_pickle': True,
-                                'status': DB_STATUS_PROD,
+                                "is_from_pickle": True,
+                                "status": DB_STATUS_PROD,
                             },
                         )
                         turn_number += 1
@@ -2350,20 +2344,20 @@ class LIGHTDatabase:
         neighbors = enviro_parser.get_neighbors()
         # add all rooms
         for i in tqdm(
-            range(len(list(rooms.keys()))), desc='loading rooms', disable=disable_TQDM
+            range(len(list(rooms.keys()))), desc="loading rooms", disable=disable_TQDM
         ):
             key = list(rooms.keys())[i]
             r = rooms[key]
             base_id = self.create_base_room(
                 r["category"],
-                entry_attributes={'is_from_pickle': True, 'status': DB_STATUS_PROD},
+                entry_attributes={"is_from_pickle": True, "status": DB_STATUS_PROD},
             )[0]
             id = self.create_room(
                 r["setting"],
                 base_id,
                 r["description"],
                 r["background"],
-                entry_attributes={'is_from_pickle': True, 'status': DB_STATUS_PROD},
+                entry_attributes={"is_from_pickle": True, "status": DB_STATUS_PROD},
             )[0]
             split = "test"
             self.update_split(id, split)
@@ -2371,7 +2365,7 @@ class LIGHTDatabase:
         # add all characters
         for i in tqdm(
             range(len(list(characters.keys()))),
-            desc='loading characters',
+            desc="loading characters",
             disable=disable_TQDM,
         ):
             key = list(characters.keys())[i]
@@ -2379,7 +2373,7 @@ class LIGHTDatabase:
             base_form = min(c["base_form"], key=len).lower()
             base_id = self.create_base_character(
                 base_form,
-                entry_attributes={'is_from_pickle': True, 'status': DB_STATUS_PROD},
+                entry_attributes={"is_from_pickle": True, "status": DB_STATUS_PROD},
             )[0]
             # each character can have multiple personas and thus correspond to
             # multiple entries in the database. Each character id in the pickle
@@ -2391,16 +2385,16 @@ class LIGHTDatabase:
                     base_id,
                     c["personas"][i],
                     c["desc"],
-                    entry_attributes={'is_from_pickle': True, 'status': DB_STATUS_PROD},
-                    is_plural=c.get('is_plural'),
-                    char_type=c.get('char_type'),
-                    name_prefix=c.get('name_prefix'),
+                    entry_attributes={"is_from_pickle": True, "status": DB_STATUS_PROD},
+                    is_plural=c.get("is_plural"),
+                    char_type=c.get("char_type"),
+                    name_prefix=c.get("name_prefix"),
                 )[0]
                 self.id_char_dict[c["character_id"]].append(id)
         # add all objects
         for i in tqdm(
             range(len(list(objects.keys()))),
-            desc='loading objects',
+            desc="loading objects",
             disable=disable_TQDM,
         ):
             key = list(objects.keys())[i]
@@ -2408,7 +2402,7 @@ class LIGHTDatabase:
             base_form = min(o["base_form"], key=len).lower()
             base_id = self.create_base_object(
                 base_form,
-                entry_attributes={'is_from_pickle': True, 'status': DB_STATUS_PROD},
+                entry_attributes={"is_from_pickle": True, "status": DB_STATUS_PROD},
             )[0]
             id = self.create_object(
                 o["name"],
@@ -2421,9 +2415,9 @@ class LIGHTDatabase:
                 o["is_wearable"],
                 o["is_weapon"],
                 o["descriptions"][0],
-                entry_attributes={'is_from_pickle': True, 'status': DB_STATUS_PROD},
-                name_prefix=o.get('name_prefix'),
-                is_plural=o.get('is_plural'),
+                entry_attributes={"is_from_pickle": True, "status": DB_STATUS_PROD},
+                name_prefix=o.get("name_prefix"),
+                is_plural=o.get("is_plural"),
             )[0]
             self.id_object_dict[o["object_id"]] = id
         # add all node content (edges)
@@ -2431,7 +2425,7 @@ class LIGHTDatabase:
         # extra possibility. In has edge strength 1 and ex has edge strength 0
         for i in tqdm(
             range(len(list(rooms.keys()))),
-            desc='loading edges for rooms',
+            desc="loading edges for rooms",
             disable=disable_TQDM,
         ):
             key = list(rooms.keys())[i]
@@ -2445,8 +2439,8 @@ class LIGHTDatabase:
                         "ex_contained",
                         0,
                         entry_attributes={
-                            'is_from_pickle': True,
-                            'status': DB_STATUS_PROD,
+                            "is_from_pickle": True,
+                            "status": DB_STATUS_PROD,
                         },
                     )
             for i in r["ex_objects"]:
@@ -2455,7 +2449,7 @@ class LIGHTDatabase:
                     self.id_object_dict[i],
                     "ex_contained",
                     0,
-                    entry_attributes={'is_from_pickle': True, 'status': DB_STATUS_PROD},
+                    entry_attributes={"is_from_pickle": True, "status": DB_STATUS_PROD},
                 )
             for i in r["in_characters"]:
                 char_lst = self.id_char_dict[i]
@@ -2466,8 +2460,8 @@ class LIGHTDatabase:
                         "in_contained",
                         1,
                         entry_attributes={
-                            'is_from_pickle': True,
-                            'status': DB_STATUS_PROD,
+                            "is_from_pickle": True,
+                            "status": DB_STATUS_PROD,
                         },
                     )
             for i in r["in_objects"]:
@@ -2476,11 +2470,11 @@ class LIGHTDatabase:
                     self.id_object_dict[i],
                     "in_contained",
                     1,
-                    entry_attributes={'is_from_pickle': True, 'status': DB_STATUS_PROD},
+                    entry_attributes={"is_from_pickle": True, "status": DB_STATUS_PROD},
                 )
         for i in tqdm(
             range(len(list(characters.keys()))),
-            desc='loading edges for characters',
+            desc="loading edges for characters",
             disable=disable_TQDM,
         ):
             key = list(characters.keys())[i]
@@ -2495,8 +2489,8 @@ class LIGHTDatabase:
                             DB_EDGE_WORN,
                             1,
                             entry_attributes={
-                                'is_from_pickle': True,
-                                'status': DB_STATUS_PROD,
+                                "is_from_pickle": True,
+                                "status": DB_STATUS_PROD,
                             },
                         )
                     else:
@@ -2506,8 +2500,8 @@ class LIGHTDatabase:
                             DB_EDGE_WORN,
                             1,
                             entry_attributes={
-                                'is_from_pickle': True,
-                                'status': DB_STATUS_PROD,
+                                "is_from_pickle": True,
+                                "status": DB_STATUS_PROD,
                             },
                         )
             for i in c["wielding_objects"]:
@@ -2519,8 +2513,8 @@ class LIGHTDatabase:
                             DB_EDGE_WIELDED,
                             1,
                             entry_attributes={
-                                'is_from_pickle': True,
-                                'status': DB_STATUS_PROD,
+                                "is_from_pickle": True,
+                                "status": DB_STATUS_PROD,
                             },
                         )
                     else:
@@ -2530,8 +2524,8 @@ class LIGHTDatabase:
                             DB_EDGE_WIELDED,
                             1,
                             entry_attributes={
-                                'is_from_pickle': True,
-                                'status': DB_STATUS_PROD,
+                                "is_from_pickle": True,
+                                "status": DB_STATUS_PROD,
                             },
                         )
             for i in c["carrying_objects"]:
@@ -2543,8 +2537,8 @@ class LIGHTDatabase:
                             DB_EDGE_IN_CONTAINED,
                             1,
                             entry_attributes={
-                                'is_from_pickle': True,
-                                'status': DB_STATUS_PROD,
+                                "is_from_pickle": True,
+                                "status": DB_STATUS_PROD,
                             },
                         )
                     else:
@@ -2554,20 +2548,20 @@ class LIGHTDatabase:
                             DB_EDGE_IN_CONTAINED,
                             1,
                             entry_attributes={
-                                'is_from_pickle': True,
-                                'status': DB_STATUS_PROD,
+                                "is_from_pickle": True,
+                                "status": DB_STATUS_PROD,
                             },
                         )
         # add neighbors for rooms
         for i in tqdm(
-            range(len(neighbors)), desc='loading neighbors', disable=disable_TQDM
+            range(len(neighbors)), desc="loading neighbors", disable=disable_TQDM
         ):
             id, n_dict = neighbors[i]
             # We read the destination, direction, and direction from the neighbor in
             # as the child_text, child_label, and child_desc respectively.
-            child_text = n_dict['destination']
-            child_label = n_dict['direction']
-            child_desc = n_dict['connection']
+            child_text = n_dict["destination"]
+            child_label = n_dict["direction"]
+            child_desc = n_dict["connection"]
 
             # create text edge with edge type "neighbor" and edge strength 1
             # -1 indicates there is no parent room
@@ -2581,7 +2575,7 @@ class LIGHTDatabase:
                     1,
                     child_label=child_label,
                     child_desc=child_desc,
-                    entry_attributes={'is_from_pickle': True, 'status': DB_STATUS_PROD},
+                    entry_attributes={"is_from_pickle": True, "status": DB_STATUS_PROD},
                 )
             else:
                 # some rooms in the original data are rejected and thus don't
@@ -2595,8 +2589,8 @@ class LIGHTDatabase:
                         child_label=child_label,
                         child_desc=child_desc,
                         entry_attributes={
-                            'is_from_pickle': True,
-                            'status': DB_STATUS_PROD,
+                            "is_from_pickle": True,
+                            "status": DB_STATUS_PROD,
                         },
                     )
                 except KeyError:
@@ -2681,7 +2675,7 @@ class LIGHTDatabase:
         # if utterance is edited, change edit field to utterance ID instead of
         # raw text Note that a new entry in the utterance table is created if
         # the utternace is not already in the database
-        if field == 'utterance_id':
+        if field == "utterance_id":
             edit = self.create_utterance(edit)[0]
         # get the unedited text
         self.c.execute(
@@ -2873,7 +2867,7 @@ class LIGHTDatabase:
         ) = self.get_edit(edit_id=edit_id)[0]
         edit_column_names = list(map(lambda x: x[0], self.c.description))
         edit_row = self.get_edit(edit_id=edit_id)[0]
-        entity_values = self.get_query(edit_row['id'])
+        entity_values = self.get_query(edit_row["id"])
         # result now contains all information from the edits_table about a
         # particular edit in dictionary form
         result = {key: edit_row[key] for key in edit_column_names}
@@ -2883,7 +2877,7 @@ class LIGHTDatabase:
         # if base form exists, then include it in the dictionary
         if self.get_id(id=id)[0][1] in ["object", "character", "room"]:
             base_index = 2
-            result["base"] = self.get_query(entity_values['base_id'])[1]
+            result["base"] = self.get_query(entity_values["base_id"])[1]
         # if the entity being edited is utterance, then include additional
         # information: all other utterances in the conversation, room ID, and
         # characters involved
@@ -2968,10 +2962,10 @@ class LIGHTDatabase:
         )
 
     def find_entities_in_rooms(self, room, chars, objs):
-        '''
+        """
         Find characters and objects in chars and objs that should be a part of
         a room. Helper function for create_edges
-        '''
+        """
         room_desc = self.get_query(room)[3]
         in_contained_chars = []
         in_contained_objs = []
@@ -3012,7 +3006,7 @@ class LIGHTDatabase:
         return results
 
     def create_edges(self, room, chars, objs, rooms, dry_run):
-        '''Called when creating new entities'''
+        """Called when creating new entities"""
         edges_lst = []
         in_contained_chars, in_contained_objs = self.find_entities_in_rooms(
             room, chars, objs
@@ -3030,7 +3024,7 @@ class LIGHTDatabase:
                 self.create_node_content(*i)
         return edges_lst
 
-#-------------------Database added for WorldBuilder-------------#
+    # -------------------Database added for WorldBuilder-------------#
     def set_autosave(self, world_dump, player_id, timestamp):
         # Existing autosave?
         self.c.execute(
@@ -3088,7 +3082,7 @@ class LIGHTDatabase:
         self.c.execute(
             """
             SELECT * FROM world_table
-            WHERE id = ? AND owner_id = ? 
+            WHERE id = ? AND owner_id = ?
             """,
             (world_id, player_id),
         )
@@ -3098,10 +3092,12 @@ class LIGHTDatabase:
         """
         Return the data for a world given its ID
         """
-        assert self.is_world_owned_by(world_id, player_id), "Cannot load a world you do not own"
+        assert self.is_world_owned_by(
+            world_id, player_id
+        ), "Cannot load a world you do not own"
         if self.use_cache:
-            if world_id is not None and world_id in self.cache['worlds']:
-                return [self.cache['worlds'][world_id]]
+            if world_id is not None and world_id in self.cache["worlds"]:
+                return [self.cache["worlds"][world_id]]
         self.c.execute(
             """
             SELECT * FROM world_table
@@ -3115,7 +3111,9 @@ class LIGHTDatabase:
         """
             Makes a world in the world table inactive if owned by player_id
         """
-        assert self.is_world_owned_by(world_id, player_id), "Cannot change a world you do not own"
+        assert self.is_world_owned_by(
+            world_id, player_id
+        ), "Cannot change a world you do not own"
         self.c.execute(
             """
             UPDATE world_table
@@ -3124,12 +3122,14 @@ class LIGHTDatabase:
             """,
             (world_id,),
         )
-        if self.use_cache and world_id in self.cache['worlds']:
+        if self.use_cache and world_id in self.cache["worlds"]:
             self.c.execute("""SELECT * FROM world_table WHERE id = ? """, (world_id,))
-            self.cache['worlds'][world_id] = self.c.fetchone()
+            self.cache["worlds"][world_id] = self.c.fetchone()
 
     def get_world_resources(self, world_id, player_id):
-        assert self.is_world_owned_by(world_id, player_id), "Cannot load a world you do not own"
+        assert self.is_world_owned_by(
+            world_id, player_id
+        ), "Cannot load a world you do not own"
 
         # Get tiles tied to this world
         self.c.execute(
@@ -3159,7 +3159,7 @@ class LIGHTDatabase:
             """,
             (world_id,),
         )
-        room_nodes =  self.c.fetchall()
+        room_nodes = self.c.fetchall()
 
         # Get characters joined with character nodes associated with this world
         self.c.execute(
@@ -3169,7 +3169,7 @@ class LIGHTDatabase:
             """,
             (world_id,),
         )
-        character_nodes =  self.c.fetchall()
+        character_nodes = self.c.fetchall()
 
         # Get objects joined with object nodes associated with this world
         self.c.execute(
@@ -3179,15 +3179,17 @@ class LIGHTDatabase:
             """,
             (world_id,),
         )
-        object_nodes =  self.c.fetchall()
+        object_nodes = self.c.fetchall()
 
         return [tiles, edges, room_nodes, character_nodes, object_nodes]
-        
+
     def delete_world(self, world_id, player_id):
         """
         Delete the world data for a world given its ID
         """
-        assert self.is_world_owned_by(world_id, player_id), "Cannot delete a world you do not own"
+        assert self.is_world_owned_by(
+            world_id, player_id
+        ), "Cannot delete a world you do not own"
         self.delete_id(world_id)
         return world_id
 
@@ -3198,13 +3200,13 @@ class LIGHTDatabase:
         player_worlds = self.get_active_worlds_owned_by(player_id=player_id)
         res = [dict(row) for row in player_worlds]
         return res
-    
+
     def get_num_worlds_owned_by(self, player_id):
         """
         Return the number of worlds owned by a user
         """
         return len(self.get_active_worlds_owned_by(player_id))
-    
+
     def get_edge(self, world_id, edge_id):
         self.c.execute(
             """
@@ -3225,7 +3227,7 @@ class LIGHTDatabase:
             (world_id,),
         )
         return self.c.fetchall()
-    
+
     def get_node(self, node_id):
         self.c.execute(
             """
@@ -3235,7 +3237,7 @@ class LIGHTDatabase:
             (node_id,),
         )
         return self.c.fetchall()
-    
+
     # Gets all connected components to this tile
     def get_edges(self, tile_id, edges):
         self.c.execute(
@@ -3247,7 +3249,7 @@ class LIGHTDatabase:
         )
         crit_node_id = self.c.fetchall()[0][0]
         self.get_connected(crit_node_id, edges)
-    
+
     def get_connected(self, node_id, edges):
         self.c.execute(
             """
@@ -3260,10 +3262,19 @@ class LIGHTDatabase:
         for e in edges_connected:
             old_len = len(edges)
             edges.add(e)
-            if (old_len != len(edges)):
-                self.get_connected(e['dst_id'], edges)
+            if old_len != len(edges):
+                self.get_connected(e["dst_id"], edges)
 
-    def create_tile(self, world_id, room_id, color, x_coordinate, y_coordinate, floor, entry_attributes={}):
+    def create_tile(
+        self,
+        world_id,
+        room_id,
+        color,
+        x_coordinate,
+        y_coordinate,
+        floor,
+        entry_attributes={},
+    ):
         id = self.create_id(DB_TYPE_TILE, entry_attributes)
         self.c.execute(
             """
@@ -3271,15 +3282,7 @@ class LIGHTDatabase:
             color, x_coordinate, y_coordinate, floor)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
-            (
-                id,
-                world_id,
-                room_id,
-                color,
-                x_coordinate,
-                y_coordinate,
-                floor,
-            ),
+            (id, world_id, room_id, color, x_coordinate, y_coordinate, floor,),
         )
         inserted = bool(self.c.rowcount)
         if not inserted:
@@ -3303,11 +3306,7 @@ class LIGHTDatabase:
             INSERT or IGNORE INTO nodes_table(id, w_id, entity_id)
             VALUES (?, ?, ?)
             """,
-            (
-                id,
-                w_id,
-                entity_id,
-            ),
+            (id, w_id, entity_id,),
         )
         inserted = bool(self.c.rowcount)
         if not inserted:
@@ -3330,13 +3329,7 @@ class LIGHTDatabase:
             INSERT or IGNORE INTO edges_table(id, w_id, src_id, dst_id, edge_type)
             VALUES (?, ?, ?, ?, ?)
             """,
-            (
-                id,
-                w_id, 
-                src_id,
-                dst_id,
-                type_,
-            ),
+            (id, w_id, src_id, dst_id, type_,),
         )
         inserted = bool(self.c.rowcount)
         if not inserted:
@@ -3354,19 +3347,19 @@ class LIGHTDatabase:
         return (id, inserted)
 
     def create_world(
-            self,
-            name,
-            owner_id,
-            height,
-            width,
-            num_floors,
-            in_use=True,
-            entry_attributes={},
-        ):
-        
+        self,
+        name,
+        owner_id,
+        height,
+        width,
+        num_floors,
+        in_use=True,
+        entry_attributes={},
+    ):
+
         LIMIT = 10
         num_worlds = self.get_num_worlds_owned_by(owner_id)
-        if (num_worlds >= LIMIT):
+        if num_worlds >= LIMIT:
             return (-1, False)
 
         id = self.create_id(DB_TYPE_WORLD, entry_attributes)
@@ -3377,15 +3370,7 @@ class LIGHTDatabase:
             height, width, num_floors, in_use)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
-            (
-                id,
-                name,
-                owner_id,
-                height,
-                width,
-                num_floors,
-                in_use,
-            ),
+            (id, name, owner_id, height, width, num_floors, in_use,),
         )
         inserted = bool(self.c.rowcount)
         if not inserted:
@@ -3401,7 +3386,6 @@ class LIGHTDatabase:
             assert len(result) == 1
             id = int(result[0][0])
         return (id, inserted)
-
 
     def create_user(self, username):
         self.c.execute(
@@ -3428,11 +3412,11 @@ class LIGHTDatabase:
 
     def get_user_id(self, username):
         self.c.execute(
-                """
+            """
                 SELECT id from user_table WHERE username = ?
                 """,
-                (username,),
-            )
+            (username,),
+        )
         result = self.c.fetchall()
         assert len(result) == 1
         id = int(result[0][0])

@@ -19,7 +19,7 @@ function BaseSuggest({
   handleChange,
   type,
   onItemSelect,
-  entities
+  entities,
 }) {
   const [items, setItems] = React.useState([]);
   const [query, setQuery] = React.useState("");
@@ -36,7 +36,8 @@ function BaseSuggest({
         const results = localEntities
           .concat(result.slice(0, SUGGEST_SIZE + localEntities.length + 1))
           .filter(
-            (item, index, self) => self.findIndex(t => equal(t, item)) === index
+            (item, index, self) =>
+              self.findIndex((t) => equal(t, item)) === index
           );
 
         return setItems(results);
@@ -76,23 +77,23 @@ function BaseSuggest({
   };
 
   return (
-    <div onBlur={e => setFieldTouched(name)}>
+    <div onBlur={(e) => setFieldTouched(name)}>
       <Suggest
         id={id}
         name={name}
         items={items}
         itemRenderer={renderOption}
         itemListRenderer={renderItemList}
-        inputValueRenderer={item =>
+        inputValueRenderer={(item) =>
           entities && entities[type][item]
             ? entities[type][item].name
             : item.name
         }
         inputProps={{
           intent: errors && touched ? Intent.DANGER : null,
-          "data-testid": "base-suggest"
+          "data-testid": "base-suggest",
         }}
-        onItemSelect={e => {
+        onItemSelect={(e) => {
           if (onItemSelect) {
             const result = onItemSelect(e, type);
             setCurrItem(result);
@@ -107,7 +108,7 @@ function BaseSuggest({
         itemPredicate={filterItems}
         selectedItem={currItem}
         query={query}
-        onQueryChange={q => setQuery(q)}
+        onQueryChange={(q) => setQuery(q)}
         resetOnQuery={true}
       />
     </div>

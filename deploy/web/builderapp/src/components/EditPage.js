@@ -33,7 +33,7 @@ function EditPage({ match, location }) {
     }
   }
 
-  const showEdits = values => {
+  const showEdits = (values) => {
     const edits = [];
     for (let property in values) {
       if (values[property] !== initialInputs[property]) {
@@ -126,7 +126,7 @@ function EditForm({ type, initialInputs, handleSubmit }) {
 }
 
 async function submitEdits(id, edits, history) {
-  const reqs = edits.map(edit =>
+  const reqs = edits.map((edit) =>
     submitEdit(id, edit.property, edit.editedValue)
   );
   await Promise.all(reqs).then(() => {
@@ -134,7 +134,7 @@ async function submitEdits(id, edits, history) {
   });
   AppToaster.show({
     intent: Intent.SUCCESS,
-    message: "Successfully created edits"
+    message: "Successfully created edits",
   });
 }
 
@@ -143,7 +143,7 @@ function submitEdit(id, field, edited_value) {
     id,
     field,
     edited_value,
-    player: 1
+    player: 1,
   };
 
   return post("builder/edits", payload);

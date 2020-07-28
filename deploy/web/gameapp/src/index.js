@@ -22,14 +22,19 @@ const createWebSocketUrlFromBrowserUrl = (url) => {
   const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
   const optionalServerHost = new URL(url).searchParams.get("server");
   var optionalGameId = new URL(url).searchParams.get("id");
-  if (!optionalGameId){
+  if (!optionalGameId) {
     optionalGameId = "";
   }
   if (optionalServerHost) {
     console.log("Using user-provided server hostname:", optionalServerHost);
   }
   const websocketURL =
-    wsProtocol + "://" + (optionalServerHost || CONFIG.hostname) + ":" + CONFIG.port + `/game${optionalGameId}/socket`;
+    wsProtocol +
+    "://" +
+    (optionalServerHost || CONFIG.hostname) +
+    ":" +
+    CONFIG.port +
+    `/game${optionalGameId}/socket`;
   return websocketURL;
 };
 
@@ -123,14 +128,30 @@ function Message({ text, caller, actor, isSelf, onReply }) {
 }
 
 function Entry({ msg, onReply, agents, selfId }) {
-  if (["LookEvent", "GoEvent", "ExamineEvent", "ErrorEvent", "HelpEvent", "text"].includes(msg.caller) || msg.caller === null) {
+  if (
+    [
+      "LookEvent",
+      "GoEvent",
+      "ExamineEvent",
+      "ErrorEvent",
+      "HelpEvent",
+      "text",
+    ].includes(msg.caller) ||
+    msg.caller === null
+  ) {
     return <Setting text={msg.text} />;
   } else {
+    var actor = "";
+    if (msg.actors == undefined) {
+      actor = msg.actor.node_id;
+    } else {
+      actor = msg.actors[0];
+    }
     return (
       <Message
         text={msg.text}
-        isSelf={msg.is_self || msg.actors[0] === selfId}
-        actor={agents[msg.actors[0]]}
+        isSelf={msg.is_self || actor === selfId}
+        actor={agents[actor]}
         onReply={onReply}
       />
     );
@@ -148,7 +169,7 @@ function ConnectedApp() {
     submitMessage,
     persona,
     location,
-    agents
+    agents,
   } = useWSDataSource(wsUrl);
 
   if (isErrored)
@@ -175,8 +196,8 @@ function ConnectedApp() {
 function Chat({ messages, onSubmit, persona, location, agents }) {
   const [enteredText, setEnteredText] = React.useState("");
   const chatContainerRef = React.useRef(null);
-  const getAgentName = agent => (agents ? agents[agent] : agent);
-  const getEntityId = agent => agent.match(/\d+$/)[0];
+  const getAgentName = (agent) => (agents ? agents[agent] : agent);
+  const getEntityId = (agent) => agent.match(/\d+$/)[0];
   const dataModelHost = getDataModelAddress();
 
   const scrollToBottom = React.useCallback(
@@ -210,11 +231,11 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
       ? []
       : persona.name
           .split(" ")
-          .filter(token => !!token)
-          .map(token => token.replace(/\.$/, ""))
-          .filter(word => skipWords.indexOf(word.toLowerCase()) === -1)
-          .flatMap(term =>
-            emojiIndex.search(term).map(o => {
+          .filter((token) => !!token)
+          .map((token) => token.replace(/\.$/, ""))
+          .filter((word) => skipWords.indexOf(word.toLowerCase()) === -1)
+          .flatMap((term) =>
+            emojiIndex.search(term).map((o) => {
               return o.native;
             })
           );
@@ -225,7 +246,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
   }, [persona, setSelectedEmoji]);
 
   const setTextTellAgent = React.useCallback(
-    agent => {
+    (agent) => {
       const message = `tell ${agent} ""`;
       setEnteredText(message);
       setTimeout(
@@ -262,13 +283,13 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                       top: "80px",
                       left: "50%",
                       transform: "translateX(-50%)",
-                      zIndex: 999
+                      zIndex: 999,
                     }}
                   >
                     <BlurClosingPicker
                       autoFocus={true}
                       onBlur={() => setShowEmojiPicker(false)}
-                      onSelect={emoji => {
+                      onSelect={(emoji) => {
                         // TODO: Send the selected emoji to the back-end so we can keep record it
                         setSelectedEmoji(emoji.native);
                         setShowEmojiPicker(false);
@@ -344,7 +365,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                 key={idx}
                 msg={msg}
                 agents={agents}
-                onReply={agent => setTextTellAgent(agent)}
+                onReply={(agent) => setTextTellAgent(agent)}
                 selfId={persona.id}
               />
             ))}
@@ -353,7 +374,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
         <div className="controls">
           <form
             style={{ display: "flex" }}
-            onSubmit={e => {
+            onSubmit={(e) => {
               e.preventDefault();
 
               if (!!enteredText) {
@@ -366,8 +387,8 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
             <input
               ref={chatInputRef}
               value={enteredText}
-              onChange={e => setEnteredText(e.target.value)}
-              onKeyPress={e => {
+              onChange={(e) => setEnteredText(e.target.value)}
+              onKeyPress={(e) => {
                 if (e.key === "Enter" && e.shiftKey) {
                   const prefix = e.target.value.startsWith('"') ? "" : '"';
                   const suffix = e.target.value.endsWith('"') ? "" : '"';
@@ -382,8 +403,8 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
             <div style={{ float: "left" }}>
               {/* {location ? <span>{location.name} &mdash; </span> : null} */}
               {presentAgents
-                .filter(id => id !== persona.id) // only show users other than self
-                .map(agent => {
+                .filter((id) => id !== persona.id) // only show users other than self
+                .map((agent) => {
                   const agentName = getAgentName(agent);
                   const agentId = getEntityId(agent);
                   return (
@@ -393,7 +414,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                         backgroundColor: "#eee",
                         borderRadius: 3,
                         padding: "1px 3px",
-                        marginRight: 5
+                        marginRight: 5,
                       }}
                     >
                       <span
@@ -436,12 +457,12 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
               style={{
                 display: "flex",
                 alignItems: "center",
-                float: "right"
+                float: "right",
               }}
             >
               <span
                 className={cx("hint-message", "fadeHidden", {
-                  fadeShow: enteredText.length > 0 && enteredText[0] === '"'
+                  fadeShow: enteredText.length > 0 && enteredText[0] === '"',
                 })}
               >
                 Tip: Hit Shift+Enter to auto-wrap your entry in quotes
@@ -475,7 +496,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
               // "wave",
               // "wink",
               // "yawn"
-            ].map(action => (
+            ].map((action) => (
               <span className="action" key={action}>
                 {action}
               </span>
@@ -492,7 +513,7 @@ const EmojiPicker = ({ onBlur, ...props }) => {
   return <Picker {...props} />;
 };
 const BlurClosingPicker = onClickOutside(EmojiPicker, {
-  handleClickOutside: () => EmojiPicker.handleClickOutside
+  handleClickOutside: () => EmojiPicker.handleClickOutside,
 });
 
 const rootElement = document.getElementById("root");
@@ -500,13 +521,13 @@ ReactDOM.render(<ConnectedApp />, rootElement);
 
 function getLocationState(messages) {
   var valid_messages = messages.filter(
-    m => m.is_self !== true && m.caller !== null
+    (m) => m.is_self !== true && m.caller !== null
   );
   if (valid_messages.length === 0) return [null, []];
   var lastMessage = valid_messages[valid_messages.length - 1];
 
   return {
     currentRoom: lastMessage.room_id,
-    presentAgents: Object.keys(lastMessage.present_agent_ids)
+    presentAgents: Object.keys(lastMessage.present_agent_ids),
   };
 }

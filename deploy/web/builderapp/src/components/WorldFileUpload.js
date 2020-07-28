@@ -8,10 +8,10 @@ function WorldFileUpload({ setPopover }) {
   return (
     <>
       <input
-        onChange={e => {
+        onChange={(e) => {
           setFile(undefined);
           const fileReader = new FileReader();
-          fileReader.onload = function(event) {
+          fileReader.onload = function (event) {
             setFile(JSON.parse(event.target.result));
           };
           const file = e.target.files[0];

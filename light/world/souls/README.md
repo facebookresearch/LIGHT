@@ -1,6 +1,6 @@
 # LIGHT Souls
 
-The LIGHT `Soul` class is responsible for inhabiting `GraphAgent`'s, observing events, and taking actions. In short, the `OOGraph` is constrained as a graph data model, wherein all nodes are static and take no actions. `GraphEvent`'s can make modifications to an `OOGraph`, but we need to have a class responsible for actually taking and observing those `GraphEvent`'s. This is where the `Soul` comes in, and is responsible for being the active element of the otherwise static `GraphAgents`. 
+The LIGHT `Soul` class is responsible for inhabiting `GraphAgent`'s, observing events, and taking actions. In short, the `OOGraph` is constrained as a graph data model, wherein all nodes are static and take no actions. `GraphEvent`'s can make modifications to an `OOGraph`, but we need to have a class responsible for actually taking and observing those `GraphEvent`'s. This is where the `Soul` comes in, and is responsible for being the active element of the otherwise static `GraphAgents`.
 
 ## Lifecycle
 `Soul`'s are tied to a `GraphAgent` upon initialization. They should be uniquely attached to that `target_node`, but can initialize any number of additional members required to keep track of actions and responses and such.

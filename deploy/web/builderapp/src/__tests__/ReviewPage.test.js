@@ -5,7 +5,7 @@ import {
   getAllByText,
   render,
   fireEvent,
-  wait
+  wait,
 } from "@testing-library/react";
 
 import ReviewPage from "../components/ReviewPage";
@@ -16,7 +16,7 @@ describe("<ReviewPage />", () => {
     const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
       json: () => {
         return edits;
-      }
+      },
     });
     const { container, getByTestId, getAllByTestId } = render(<ReviewPage />);
 
@@ -40,12 +40,12 @@ describe("<ReviewPage />", () => {
       .mockResolvedValueOnce({
         json: () => {
           return edits;
-        }
+        },
       })
       .mockResolvedValueOnce({
         json: () => {
           return accepted;
-        }
+        },
       });
     const { getByTestId, getAllByTestId } = render(<ReviewPage />);
     await wait(() => getByTestId("table-review"));
@@ -53,7 +53,7 @@ describe("<ReviewPage />", () => {
     expect(getAllByTestId("tr-review").length).toEqual(3);
 
     fireEvent.click(getByTestId("radio-accepted"), {
-      target: { value: "accepted" }
+      target: { value: "accepted" },
     });
     await wait(() => getByTestId("table-review"));
 
@@ -72,12 +72,12 @@ describe("<ReviewPage />", () => {
       .mockResolvedValueOnce({
         json: () => {
           return edits;
-        }
+        },
       })
       .mockResolvedValueOnce({
         json: () => {
           return rejected;
-        }
+        },
       });
     const { getByTestId, getAllByTestId } = render(<ReviewPage />);
     await wait(() => getByTestId("table-review"));
@@ -85,7 +85,7 @@ describe("<ReviewPage />", () => {
     expect(getAllByTestId("tr-review").length).toEqual(3);
 
     fireEvent.click(getByTestId("radio-rejected"), {
-      target: { value: "rejected" }
+      target: { value: "rejected" },
     });
     await wait(() => getByTestId("table-review"));
 
@@ -105,13 +105,13 @@ describe("<ReviewPage />", () => {
       postSpy = jest.spyOn(utils, "post").mockResolvedValue({
         json: () => {
           return {};
-        }
+        },
       });
 
       fetchSpy = jest.spyOn(global, "fetch").mockResolvedValueOnce({
         json: () => {
           return edits;
-        }
+        },
       });
     });
     afterEach(async () => {
@@ -122,7 +122,7 @@ describe("<ReviewPage />", () => {
       fetchSpy = fetchSpy.mockResolvedValueOnce({
         json: () => {
           return entity;
-        }
+        },
       });
       const { container, getByTestId } = render(<ReviewPage />);
       await wait(() => getByTestId("table-review"));
@@ -140,7 +140,7 @@ describe("<ReviewPage />", () => {
       fetchSpy = fetchSpy.mockResolvedValueOnce({
         json: () => {
           return entity;
-        }
+        },
       });
       const { container, getByTestId } = render(<ReviewPage />);
       await wait(() => getByTestId("table-review"));
@@ -157,7 +157,7 @@ describe("<ReviewPage />", () => {
       fetchSpy = fetchSpy.mockResolvedValueOnce({
         json: () => {
           return [];
-        }
+        },
       });
       const { container, getByTestId, getAllByRole } = render(<ReviewPage />);
       await wait(() => getByTestId("table-review"));
@@ -216,7 +216,7 @@ const edits = [
     player_id: 1,
     status: "under review",
     type: "object",
-    base: "tree"
+    base: "tree",
   },
   {
     edit_id: 2,
@@ -227,7 +227,7 @@ const edits = [
     player_id: 1,
     status: "under review",
     type: "object",
-    base: "sail"
+    base: "sail",
   },
   {
     edit_id: 3,
@@ -238,8 +238,8 @@ const edits = [
     player_id: 1,
     status: "under review",
     type: "object",
-    base: "sail"
-  }
+    base: "sail",
+  },
 ];
 
 const accepted = [
@@ -252,8 +252,8 @@ const accepted = [
     player_id: 1,
     status: "accepted",
     type: "object",
-    base: "needle"
-  }
+    base: "needle",
+  },
 ];
 
 const rejected = [
@@ -266,7 +266,7 @@ const rejected = [
     player_id: 1,
     status: "rejected",
     type: "object",
-    base: "needle"
+    base: "needle",
   },
   {
     edit_id: 7,
@@ -277,8 +277,8 @@ const rejected = [
     player_id: 1,
     status: "rejected",
     type: "object",
-    base: "tree"
-  }
+    base: "tree",
+  },
 ];
 
 const entity = {
@@ -295,7 +295,7 @@ const entity = {
     is_weapon: 0.0,
     physical_description: "the tree is tall and leafy",
     name_prefix: "some",
-    is_plural: 1.0
+    is_plural: 1.0,
   },
-  type: "object"
+  type: "object",
 };
