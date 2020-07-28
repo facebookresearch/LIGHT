@@ -160,13 +160,13 @@ class PartnerHeuristicModelSoul(ModelSoul):
         Only return an actual action if it's either hit or hasn't been done in
         the last 4 turns
         """
-        self._ensure_agent_has_dialogue_history(self.target_node)
+        self._ensure_agent_has_action_history(self.target_node)
         t = act['text_candidates'][0]
         if t not in self.target_node._action_history or t.startswith('hit'):
             self.target_node._action_history.append(t)
             return t
         # If the top action was too recent, let's do nothing.
-        return 'wait'
+        return None
 
     def dialogue_pick_non_repeating_response(self, act, partner):
         """
@@ -217,9 +217,11 @@ class PartnerHeuristicModelSoul(ModelSoul):
             return
 
         agent = self.target_node
+        agent_id = agent.node_id
         partner_id = self.get_last_interaction_partner(agent)
         if partner_id != None:
-            partner_name = self.world.oo_graph.get_prop(partner_id, 'names')[0]
+            partner = self.world.oo_graph.get_node(partner_id)
+            partner_name = partner.name
         else:
             partner_name = None
        
@@ -246,6 +248,9 @@ class PartnerHeuristicModelSoul(ModelSoul):
         self.npc_act_model.observe(msg)
         act = self.npc_act_model.act()
         act_text = self.npc_pick_non_repeating_action(act)
+        if act_text is None:
+            return
+
         reply_action = act_text + '\n'
         # add action to history
         hist[agent_id].append('_self_act ' + act_text + '\\n')
@@ -277,7 +282,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
             # we are going to reply, so point both agents as having this as their last interaction.
             self.set_interaction_partner(partner)
 
-        hist = self._dialog_history
+        hist = self._dialogue_history
         if agent_id not in hist:
             hist[agent_id] = []
 
@@ -331,7 +336,8 @@ class PartnerHeuristicModelSoul(ModelSoul):
             un_partner_id = self.get_last_interaction_partner(node)
             if un_partner_id is not None:
                 un_partner_node = self.world.oo_graph.get_node(un_partner_id)
-                un_partner_node._last_interaction_partner_id = None
+                if un_partner_node is not None:
+                    un_partner_node._last_interaction_partner_id = None
         self.target_node._last_interaction_partner_id = partner_node.node_id
         partner_node._last_interaction_partner_id = self.target_node.node_id
 
@@ -348,7 +354,10 @@ class PartnerHeuristicModelSoul(ModelSoul):
         agent.get_text()  # Clear the buffer, we use _pending_observations
 
         # possibly respond to talk requests
-        for obs in self._pending_observations:
+        curr_obs = []
+        while len(self._pending_observations) > 0:
+            curr_obs.append(self._pending_observations.pop(0))
+        for obs in curr_obs:
             if (
                 isinstance(obs, SayEvent) or 
                 (isinstance(obs, TellEvent) and obs.target_nodes[0] == agent)
@@ -390,11 +399,11 @@ class PartnerHeuristicModelSoul(ModelSoul):
 
         # random movement for npcs..
         if random.randint(0, 1000) < agent.speed:
-            move_actions = self.world.get_possible_actions(agent_id, possible_actions=['go'])
+            move_actions = self.world.get_possible_actions(agent_id, use_actions=['go'])
             if len(move_actions) > 0:
                 move_action = random.choice(move_actions)
                 move_action.execute(self.world)
                 return
 
         # possibly act according to the bert model
-        self.npc_action(agent_id)
+        self.npc_action()

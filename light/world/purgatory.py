@@ -84,6 +84,8 @@ class Purgatory:
         the async call such that the soul can choose to take its time 
         deciding what to do.
         """
+        if agent.get_prop('dead'):
+            self.clear_soul(agent)
         soul: "Soul" = self.node_id_to_soul.get(agent.node_id)
         if soul is not None:
             soul.wrap_observe_event(event)
