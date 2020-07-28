@@ -50,7 +50,6 @@ optional-django==0.1.0
 packaging==20.4
 pandas==1.0.3
 -e git+git@github.com:facebookresearch/ParlAI.git@0107e74d83b662e347890808dab02ef658d9e254#egg=parlai
--e git+git@github.com:fairinternal/ParlAI-Internal.git@6ecf619650ca96d4cc0e73dea3cb14308c7f0f85#egg=parlai_internal
 pathspec==0.8.0
 pexpect==4.7.0
 Pillow==7.1.2
@@ -111,3 +110,4 @@ websocket-server==0.4
 wrapt==1.12.1
 yappi==1.2.5
 zipp==3.1.0
+pre-commit

@@ -17,13 +17,15 @@ UNINTERESTING_PHRASES = [
 ]
 
 DEAD_DESCRIPTIONS = [
-    'They look pretty dead.',
-    'They are very dead.',
-    'Their corpse is inanimate.',
+    "They look pretty dead.",
+    "They are very dead.",
+    "Their corpse is inanimate.",
 ]
+
 
 def node_to_json(node):
     return json.dumps(node, cls=GraphEncoder, sort_keys=True, indent=4)
+
 
 # TODO:  refactor to not use here
 class GraphEncoder(json.JSONEncoder):
@@ -33,21 +35,24 @@ class GraphEncoder(json.JSONEncoder):
         if isinstance(o, list):
             return sorted(o)
         if isinstance(o, GraphEdge):
-            return {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
+            return {k: v for k, v in o.__dict__.copy().items() if not k.startswith("_")}
         if not isinstance(o, GraphNode):
             return super().default(o)
-        use_dict = {k: v for k, v in o.__dict__.copy().items() if not k.startswith('_')}
+        use_dict = {k: v for k, v in o.__dict__.copy().items() if not k.startswith("_")}
         return use_dict
 
-class GraphEdge(object):
-    '''Representative structure for having an edge between two nodes in the
-    graph. Provides an interface for dereferencing edges but can still be
-    serialized'''
 
-    EDGE_TYPE = 'GraphEdge'
+class GraphEdge(object):
+    """Representative structure for having an edge between two nodes in the
+    graph. Provides an interface for dereferencing edges but can still be
+    serialized"""
+
+    EDGE_TYPE = "GraphEdge"
 
     def __init__(self, target_node):
-        assert isinstance(target_node, GraphNode), f'Edges must be to other graph nodes, given {target_node}'
+        assert isinstance(
+            target_node, GraphNode
+        ), f"Edges must be to other graph nodes, given {target_node}"
         self._target_node = target_node
         self.target_id = target_node.node_id
 
@@ -55,7 +60,7 @@ class GraphEdge(object):
         return self._target_node
 
     def __repr__(self):
-        return f'{self.EDGE_TYPE}({self._target_node})'
+        return f"{self.EDGE_TYPE}({self._target_node})"
 
 
 class LockEdge(GraphEdge):
@@ -75,8 +80,8 @@ class LockEdge(GraphEdge):
 
 
 class NeighborEdge(GraphEdge):
-    '''Structure for edges between rooms in a graph. Contains relevant details
-    for traversing through the graph'''
+    """Structure for edges between rooms in a graph. Contains relevant details
+    for traversing through the graph"""
 
     def __init__(self, target_node, label=None, examine_desc=None, locked_edge=None):
         super().__init__(target_node)
@@ -85,19 +90,19 @@ class NeighborEdge(GraphEdge):
         self.locked_edge = locked_edge
 
     def get_examine_desc(self):
-        '''Return the description this path should give when examined'''
+        """Return the description this path should give when examined"""
         # TODO consider locking
         return self.examine_desc
 
     # TODO consider locking in multiplayer games - keys per player?
     def lock_path(self, key_node):
-        '''lock the edge from id1 to id2 using the given key'''
-        assert self.locked_edge is not None, 'Cannot unlock path with no lock'
+        """lock the edge from id1 to id2 using the given key"""
+        assert self.locked_edge is not None, "Cannot unlock path with no lock"
         self.locked_edge.lock()
 
     def unlock_path(self, id1, id2, key_id):
-        '''unlock the edge from id1 to id2 using the given key'''
-        assert self.locked_edge is not None, 'Cannot lock path with no lock'
+        """unlock the edge from id1 to id2 using the given key"""
+        assert self.locked_edge is not None, "Cannot lock path with no lock"
         self.locked_edge.unlock()
 
     def path_is_locked(self):
@@ -108,17 +113,17 @@ class NeighborEdge(GraphEdge):
 
 
 class GraphNode(object):
-    '''Node object for contents in the graph. Everything in the graph
-    has this structure, and thus shared functionality should all go here'''
+    """Node object for contents in the graph. Everything in the graph
+    has this structure, and thus shared functionality should all go here"""
 
     DEFAULT_CONTAIN_SIZE = 20
     DEFAULT_SIZE = 1
-    NODE_TYPE = 'GraphNode'
+    NODE_TYPE = "GraphNode"
 
     # -------- Creating functions -------- #
 
     def __init__(self, node_id, name, props=None, db_id=None):
-        '''Init this node from an existing place in the graph'''
+        """Init this node from an existing place in the graph"""
         # TODO force props, or define a props object. Special props can be
         # class members (and handled differently by get_prop and other methods)
         if props is None:
@@ -130,15 +135,17 @@ class GraphNode(object):
         self.contained_nodes = {}
 
         # Properties of all graph nodes
-        self.contain_size = self._props.get('contain_size', 20)
-        self.size = self._props.get('size', 1)
+        self.contain_size = self._props.get("contain_size", 20)
+        self.size = self._props.get("size", 1)
         self.node_id = node_id
         self.db_id = db_id  # TODO populate with id from the database
         self.name = name
-        self.name_prefix = self._props.get('name_prefix', 'an' if name[0] in 'aeiou' else 'a')
-        self.names = self._props.get('names', [self.name]).copy()
-        self.desc = self._props.get('desc', random.choice(UNINTERESTING_PHRASES))
-        self.classes = set(self._props.get('classes', set()).copy())
+        self.name_prefix = self._props.get(
+            "name_prefix", "an" if name[0] in "aeiou" else "a"
+        )
+        self.names = self._props.get("names", [self.name]).copy()
+        self.desc = self._props.get("desc", random.choice(UNINTERESTING_PHRASES))
+        self.classes = set(self._props.get("classes", set()).copy())
 
         self.agent = False
         self.room = False
@@ -151,10 +158,8 @@ class GraphNode(object):
 
     @classmethod
     def from_graph(cls, graph, node_id):
-        '''Init this node from an existing place in the graph'''
-        node = cls(
-            node_id, graph._node_to_desc[node_id], graph._node_to_prop[node_id]
-        )
+        """Init this node from an existing place in the graph"""
+        node = cls(node_id, graph._node_to_desc[node_id], graph._node_to_prop[node_id])
         node._graph = graph
         node._container_id = graph.location(node_id)
         node._contained_ids = graph.node_contains(node_id)
@@ -163,21 +168,21 @@ class GraphNode(object):
 
     @classmethod
     def from_json_dict(cls, input_dict):
-        '''Init this node from a json encoding of the original node'''
-        node = cls(
-            input_dict['node_id'],
-            input_dict['name'],
-            props=input_dict,
-        )
-        node._container_id = input_dict['container_node']['target_id']
-        node._contained_ids = [x['target_id'] for x in input_dict['contained_nodes'].values()]
+        """Init this node from a json encoding of the original node"""
+        node = cls(input_dict["node_id"], input_dict["name"], props=input_dict,)
+        node._container_id = input_dict["container_node"]["target_id"]
+        node._contained_ids = [
+            x["target_id"] for x in input_dict["contained_nodes"].values()
+        ]
         node._is_from_json = True
         return node
 
     def sync(self, all_node_list):
-        '''Populate remaining fields that could not be created with from_graph
-        because dependent nodes didn't exist yet'''
-        assert self._is_from_graph or self._is_from_json, 'Only need to sync nodes created from static'
+        """Populate remaining fields that could not be created with from_graph
+        because dependent nodes didn't exist yet"""
+        assert (
+            self._is_from_graph or self._is_from_json
+        ), "Only need to sync nodes created from static"
         if self._container_id is not None:
             if all_node_list.get(self._container_id) is None:
                 print(self, all_node_list, self._container_id)
@@ -189,8 +194,8 @@ class GraphNode(object):
     # -------- Node validation functions ---------- #
 
     def assert_valid(self):
-        '''Ensure no invariants are broken for this node that would make it
-        impossible to exist'''
+        """Ensure no invariants are broken for this node that would make it
+        impossible to exist"""
         assert self.size is not None
         assert self.contain_size is not None
         assert self.name is not None
@@ -206,51 +211,55 @@ class GraphNode(object):
     # ------- Simple property accessors and mutators -------- #
 
     def get_contain_size(self):
-        '''Return the remaining containment size for this object'''
+        """Return the remaining containment size for this object"""
         # TODO contain_size should be a special prop
         return self.contain_size
 
     def add_contained_node(self, contained_node):
-        '''Add the given node to the nodes contained within the self node
+        """Add the given node to the nodes contained within the self node
         Following a successful call to update containment, the container
         of contained_node should be updated to be this node with set_container
-        '''
-        assert isinstance(contained_node, GraphNode), f"Only nodes can be inserted, found {contained_node}"
+        """
+        assert isinstance(
+            contained_node, GraphNode
+        ), f"Only nodes can be inserted, found {contained_node}"
         assert (
             contained_node not in self.get_contents()
-        ), 'Given node already inside this node'
+        ), "Given node already inside this node"
         assert contained_node is not self, "Can't put node in itself"
         assert contained_node.size <= self.contain_size, "Can't fit anything else"
         self.contained_nodes[contained_node.node_id] = GraphEdge(contained_node)
         self.contain_size -= contained_node.size
 
     def remove_contained_node(self, contained_node):
-        '''Remove the given node from the list of nodes contained in this one'''
-        assert contained_node.node_id in self.contained_nodes, 'Given node not present'
+        """Remove the given node from the list of nodes contained in this one"""
+        assert contained_node.node_id in self.contained_nodes, "Given node not present"
         del self.contained_nodes[contained_node.node_id]
         self.contain_size += contained_node.size
 
     def get_contents(self):
-        '''get copy of the list of nodes inside this node'''
+        """get copy of the list of nodes inside this node"""
         return [x.get() for x in self.contained_nodes.values()]
 
     def set_container(self, container_node):
-        '''Set the container and container id for this node'''
+        """Set the container and container id for this node"""
         assert container_node is not self, "Can't put node in itself"
         assert (
             container_node not in self.get_contents()
         ), "Can't create containment loop"
-        assert isinstance(container_node, GraphNode), f"Only nodes can be inserted, found {container_node}"
+        assert isinstance(
+            container_node, GraphNode
+        ), f"Only nodes can be inserted, found {container_node}"
         self.container_node = GraphEdge(container_node)
         self._container_id = container_node.node_id
 
     def reset_container(self):
-        '''Clear the container set for this node'''
+        """Clear the container set for this node"""
         self.container_node = None
         self._container_id = None
 
     def get_container(self):
-        '''Get this node's immediate container'''
+        """Get this node's immediate container"""
         if self.container_node is None:
             return None
         return self.container_node.get()
@@ -259,64 +268,64 @@ class GraphNode(object):
         return self.__dict__.get(prop_name, default)
 
     def has_prop(self, prop_name):
-        '''Return if the node has the given prop'''
+        """Return if the node has the given prop"""
         return self.get_prop(prop_name) is not False
 
     def set_prop(self, prop_name, val):
-        '''Set key class attributes as props for this node'''
+        """Set key class attributes as props for this node"""
         # TODO - try not to use this until formalized, it's hard to track
         self.__dict__[prop_name] = val
 
     def add_class(self, class_name):
-        '''Add a class to this node'''
+        """Add a class to this node"""
         self.classes.add(class_name)
 
     def remove_class(self, class_name):
-        '''remove a class from this node'''
+        """remove a class from this node"""
         self.classes.remove(class_name)
 
-    def get_room(self) -> 'GraphRoom':
-        '''get this node's first containing room'''
-        checked_nodes: Set['GraphNode'] = set()
+    def get_room(self) -> "GraphRoom":
+        """get this node's first containing room"""
+        checked_nodes: Set["GraphNode"] = set()
         node = self
         while not node.room:
-            assert node not in checked_nodes, 'detected a containment cycle'
+            assert node not in checked_nodes, "detected a containment cycle"
             checked_nodes.add(node)
             node = node.get_container()
             if node is None:
                 return False  # There is no room in the chain
-        assert isinstance(node, GraphRoom), 'node.room set but not GraphRoom'
+        assert isinstance(node, GraphRoom), "node.room set but not GraphRoom"
         return node
 
     def get_view(self):
-        '''Nicely named wrapper for getting the view desciption of this node'''
+        """Nicely named wrapper for getting the view desciption of this node"""
         return self.get_view_from()
 
     def get_view_from(self, from_node=None):
-        '''Return how this node would look like from the given location'''
+        """Return how this node would look like from the given location"""
         return self.name
 
     def get_prefix_view(self):
-        '''Return the name of this node, with any expected prefix'''
-        return f'{self.name_prefix} {self.get_view()}'
+        """Return the name of this node, with any expected prefix"""
+        return f"{self.name_prefix} {self.get_view()}"
 
     def get_prefix_view_from(self, from_node=None):
-        '''Return the name of this node, with any expected prefix'''
-        return f'{self.name_prefix} {self.get_view_from(from_node)}'
+        """Return the name of this node, with any expected prefix"""
+        return f"{self.name_prefix} {self.get_view_from(from_node)}"
 
     def get_names(self):
-        '''Return all names for this node'''
+        """Return all names for this node"""
         return list(self.names)
 
     def __repr__(self):
-        return f'{self.NODE_TYPE}({self.node_id})'
+        return f"{self.NODE_TYPE}({self.node_id})"
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return node_to_json(self) == node_to_json(other)
         else:
             return False
-    
+
     # Have to override hash, but do not want to
     def __hash__(self):
         return super.__hash__(self)
@@ -324,14 +333,16 @@ class GraphNode(object):
     # -------- Derived functions that employ some graph logic ------ #
 
     def would_fit(self, other_node):
-        '''See if other_node would fit into this node'''
-        assert isinstance(other_node, GraphNode), f"Only nodes can be checked, given {other_node}"
+        """See if other_node would fit into this node"""
+        assert isinstance(
+            other_node, GraphNode
+        ), f"Only nodes can be checked, given {other_node}"
         return other_node.size <= self.get_contain_size()
 
     def move_to(self, container_node):
-        '''Move this node into the node specified in container_node, update
+        """Move this node into the node specified in container_node, update
         containing edges, update sizes.
-        '''
+        """
         # Remove from the old container if it exists
         old_container = self.get_container()
         if old_container is not None:
@@ -341,12 +352,12 @@ class GraphNode(object):
         self.set_container(container_node)
 
     def force_move_to(self, container_node):
-        '''Force this node into the node specified in container_node, update
+        """Force this node into the node specified in container_node, update
         containing edges.
 
         Only call when building a world or killing an agent. Other calls can
         cause the contain sizes for nodes vary in an untracable way
-        '''
+        """
         # Remove from the old container if it exists
         old_container = self.get_container()
         if old_container is not None:
@@ -358,7 +369,7 @@ class GraphNode(object):
         self.set_container(container_node)
 
     def delete_and_cleanup(self):
-        '''Remove this node and all contents from being linked, return nodes deleted'''
+        """Remove this node and all contents from being linked, return nodes deleted"""
         old_container = self.get_container()
         if old_container is not None:
             old_container.remove_contained_node(self)
@@ -372,14 +383,14 @@ class GraphNode(object):
 
 
 class GraphVoidNode(GraphNode):
-    '''Initial container of everything still in the world'''
+    """Initial container of everything still in the world"""
 
     INIT_CONTAIN_SIZE = 10000000
 
-    NODE_TYPE = 'VoidNode'
+    NODE_TYPE = "VoidNode"
 
     def __init__(self):
-        super().__init__('VOID', 'VOID', {})
+        super().__init__("VOID", "VOID", {})
         self.void = True
         # TODO make it possible to have infinite contain size
         self.contain_size = self.INIT_CONTAIN_SIZE
@@ -392,35 +403,35 @@ class GraphVoidNode(GraphNode):
 
 
 class GraphRoom(GraphNode):
-    '''Represents rooms in the graph. Has all required attributes.'''
+    """Represents rooms in the graph. Has all required attributes."""
 
     DEFAULT_CONTAIN_SIZE = 100000
-    NODE_TYPE = 'GraphRoom'
+    NODE_TYPE = "GraphRoom"
 
     def __init__(self, node_id, name, props=None, db_id=None):
         super().__init__(node_id, name, props, db_id)
         self.room = True
-        self.extra_desc = self._props.get('extra_desc', self.desc)
-        self.name_prefix = self._props.get('name_prefix', 'the')
-        self.surface_type = self._props.get('surface_type', 'in')
-        self.classes = set(self._props.get('classes', {'room'}))
-        self.contain_size = self._props.get('contain_size', self.DEFAULT_CONTAIN_SIZE)
+        self.extra_desc = self._props.get("extra_desc", self.desc)
+        self.name_prefix = self._props.get("name_prefix", "the")
+        self.surface_type = self._props.get("surface_type", "in")
+        self.classes = set(self._props.get("classes", {"room"}))
+        self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
         self.neighbors = {}
 
     def assert_valid(self):
-        '''Ensure no invariants are broken for this node that would make it
-        impossible to exist'''
+        """Ensure no invariants are broken for this node that would make it
+        impossible to exist"""
         super().assert_valid()
         assert isinstance(self.neighbors, dict)
         for x in self.get_neighbors():
             assert isinstance(x, GraphRoom)
 
     def get_neighbors(self) -> List["GraphRoom"]:
-        '''return the neighboring nodes across outgoing edges from this room'''
+        """return the neighboring nodes across outgoing edges from this room"""
         return list([x.get() for x in self.neighbors.values()])
 
     def get_edge_to(self, other_node):
-        '''return edge to the other node if it exists, None otherwise'''
+        """return edge to the other node if it exists, None otherwise"""
         assert other_node is not self, "Can't have self edge"
         assert isinstance(
             other_node, GraphRoom
@@ -428,7 +439,7 @@ class GraphRoom(GraphNode):
         return self.neighbors.get(other_node.node_id)
 
     def get_view_from(self, from_node=None):
-        '''Return how this node would look like from the given location'''
+        """Return how this node would look like from the given location"""
         neighbors = None if from_node is None else from_node.get_neighbors()
         if from_node is None:
             return self.name
@@ -448,9 +459,9 @@ class GraphRoom(GraphNode):
         full_label=False,
         is_locked=False,
     ):
-        '''Add an edge to another room. Takes optional view label,
+        """Add an edge to another room. Takes optional view label,
         locking node, and examine description
-        '''
+        """
         locked_edge = None
         if locked_with is not None:
             # TODO update with locking descriptions
@@ -466,7 +477,7 @@ class GraphRoom(GraphNode):
         del self.neighbors[other_node.node_id]
 
     def delete_and_cleanup(self):
-        '''Remove this room from being present in the graph, return nodes deleted'''
+        """Remove this room from being present in the graph, return nodes deleted"""
         deleted_nodes = super().delete_and_cleanup()
         # now remove edges from other rooms
         for neighbor_node in self.get_neighbors():
@@ -476,33 +487,33 @@ class GraphRoom(GraphNode):
 
 
 class GraphAgent(GraphNode):
-    '''Represents agents in the graph. Has all required attributes.'''
+    """Represents agents in the graph. Has all required attributes."""
 
     DEFAULT_SIZE = 20
     DEFAULT_CONTAIN_SIZE = 20
     DEFAULT_HEALTH = 10
     DEFAULT_AGGRESSION = 0
     DEFAULT_SPEED = 0
-    DEFAULT_PERSONA = 'I am a player in the LIGHT world.'
+    DEFAULT_PERSONA = "I am a player in the LIGHT world."
 
-    NODE_TYPE = 'GraphAgent'
+    NODE_TYPE = "GraphAgent"
 
     def __init__(self, node_id, name, props=None, db_id=None):
         super().__init__(node_id, name, props, db_id)
         self.agent = True
-        self.size = self._props.get('size', self.DEFAULT_SIZE)
-        self.contain_size = self._props.get('contain_size', self.DEFAULT_CONTAIN_SIZE)
-        self.health = self._props.get('health', self.DEFAULT_HEALTH)
-        self.damage = self._props.get('damage', 1)
-        self.defense = self._props.get('defense', 0)
-        self.food_energy = self._props.get('food_energy', 1)
-        self.aggression = self._props.get('aggression', self.DEFAULT_AGGRESSION)
-        self.name_prefix = self._props.get('name_prefix', 'the')
-        self.speed = self._props.get('speed', self.DEFAULT_SPEED)
-        self.char_type = self._props.get('char_type', 'person')
-        self.classes = set(self._props.get('classes', {'agent'}))
-        self.persona = self._props.get('persona', self.DEFAULT_PERSONA)
-        self.is_player = self._props.get('is_player', False)
+        self.size = self._props.get("size", self.DEFAULT_SIZE)
+        self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
+        self.health = self._props.get("health", self.DEFAULT_HEALTH)
+        self.damage = self._props.get("damage", 1)
+        self.defense = self._props.get("defense", 0)
+        self.food_energy = self._props.get("food_energy", 1)
+        self.aggression = self._props.get("aggression", self.DEFAULT_AGGRESSION)
+        self.name_prefix = self._props.get("name_prefix", "the")
+        self.speed = self._props.get("speed", self.DEFAULT_SPEED)
+        self.char_type = self._props.get("char_type", "person")
+        self.classes = set(self._props.get("classes", {"agent"}))
+        self.persona = self._props.get("persona", self.DEFAULT_PERSONA)
+        self.is_player = self._props.get("is_player", False)
 
         self.following = None
         self.followed_by = {}
@@ -513,8 +524,8 @@ class GraphAgent(GraphNode):
         self.clear_memory()
 
     def assert_valid(self):
-        '''Ensure no invariants are broken for this node that would make it
-        impossible to exist'''
+        """Ensure no invariants are broken for this node that would make it
+        impossible to exist"""
         super().assert_valid()
         assert self.following is None or isinstance(self.following, GraphEdge)
         assert isinstance(self.followed_by, dict)
@@ -528,8 +539,10 @@ class GraphAgent(GraphNode):
         )
 
     def follow(self, other_agent):
-        '''Create an edge between this and the agent being followed'''
-        assert isinstance(other_agent, GraphAgent), f"Can only follow agents, given {other_agent}"
+        """Create an edge between this and the agent being followed"""
+        assert isinstance(
+            other_agent, GraphAgent
+        ), f"Can only follow agents, given {other_agent}"
         assert self.node_id not in other_agent.followed_by, "Already following"
         assert (
             other_agent.get_room() == self.get_room()
@@ -538,14 +551,14 @@ class GraphAgent(GraphNode):
         other_agent.followed_by[self.node_id] = GraphEdge(self)
 
     def unfollow(self):
-        '''Remove the edges between this agent and the agent they are following'''
+        """Remove the edges between this agent and the agent they are following"""
         assert self.following is not None, "Not following anyone"
         followed_agent = self.following.get()
         del followed_agent.followed_by[self.node_id]
         self.following = None
 
     def get_followers(self):
-        '''Get a list of the nodes following this node'''
+        """Get a list of the nodes following this node"""
         return [x.get() for x in self.followed_by.values()]
 
     def get_following(self):
@@ -554,7 +567,7 @@ class GraphAgent(GraphNode):
         return self.following.get()
 
     def delete_and_cleanup(self):
-        '''Remove this agent from being present in the graph, return nodes deleted'''
+        """Remove this agent from being present in the graph, return nodes deleted"""
         deleted_nodes = super().delete_and_cleanup()
         if self.get_following() is not None:
             self.unfollow()
@@ -568,53 +581,53 @@ class GraphAgent(GraphNode):
     # TODO move into a player class, link from here
 
     def clear_memory(self):
-        '''Clear memory buffers for this player'''
+        """Clear memory buffers for this player"""
         # TODO consider moving to a player object
-        self._text_buffer = ''  # clear buffer
+        self._text_buffer = ""  # clear buffer
         self._observations = []  # clear buffer
         self._visited_rooms = set()
         self._last_room = None
 
     def get_text(self, clear_actions=True):
-        '''Return the text in this agent's buffer'''
+        """Return the text in this agent's buffer"""
         txt = self._text_buffer
-        self._text_buffer = ''  # clear buffer
+        self._text_buffer = ""  # clear buffer
         if clear_actions:
             self._observations = []  # clear buffer
         return txt
 
     def observe_action(self, text, action=None):
-        '''Observe text and an optional action. Update local state to store
-        the new action'''
+        """Observe text and an optional action. Update local state to store
+        the new action"""
         if action is None:
-            action = {'caller': None, 'room_id': self.get_room(), 'txt': text}
+            action = {"caller": None, "room_id": self.get_room(), "txt": text}
         self._observations.append(action)
         if text is not None:
             self._text_buffer += text
 
     def get_observations(self):
-        '''Return all the observations from this character's history'''
+        """Return all the observations from this character's history"""
         obs = []
         while len(self._observations) > 0:
             obs.append(self._observations.pop(0))
         return obs
 
     def set_player(self, current_player):
-        '''Have a new player take over this agent. None returns to npc'''
+        """Have a new player take over this agent. None returns to npc"""
         self._human = current_player is not None
         self.clear_memory()
         self._current_player = current_player
 
     def die(self):
-        '''Kill off this agent, turn them into an object'''
+        """Kill off this agent, turn them into an object"""
         self.desc = random.choice(DEAD_DESCRIPTIONS)
-        new_node_id = self.node_id + '__dead__'
+        new_node_id = self.node_id + "__dead__"
         new_node = GraphObject(new_node_id, self.name, self.__dict__)
         room = self.get_room()
-        new_node.set_prop('dead', True)
-        new_node.set_prop('container', True)
-        new_node.add_class('container')
-        new_node.add_class('object')
+        new_node.set_prop("dead", True)
+        new_node.set_prop("container", True)
+        new_node.add_class("container")
+        new_node.add_class("object")
         for item in self.get_contents():
             item.force_move_to(new_node)
         new_node.move_to(room)
@@ -622,43 +635,43 @@ class GraphAgent(GraphNode):
 
 
 class GraphObject(GraphNode):
-    '''Represents objects in the graph. Has all required attributes.'''
+    """Represents objects in the graph. Has all required attributes."""
 
     DEFAULT_SIZE = 1
     DEFAULT_CONTAIN_SIZE = 0
     DEFAULT_CONTAINER_SIZE = 20
 
-    NODE_TYPE = 'GraphObject'
+    NODE_TYPE = "GraphObject"
 
     def __init__(self, node_id, name, props=None, db_id=None):
         super().__init__(node_id, name, props, db_id)
         self.object = True
-        self.size = self._props.get('size', self.DEFAULT_SIZE)
-        self.food_energy = self._props.get('food_energy', 0)
-        self.value = self._props.get('value', 1)
-        self.surface_type = self._props.get('surface_type', 'on')
-        self.drink = self._props.get('drink', False)
-        self.food = self._props.get('food', False)
-        self.dead = self._props.get('dead', False)
-        self.container = self._props.get('container', False)
-        self.gettable = self._props.get('gettable', True)
-        self.wearable = self._props.get('wearable', False)
-        self.wieldable = self._props.get('wieldable', False)
-        self.classes = set(self._props.get('classes', {'object'}))
-        self.equipped = self._props.get('equipped', None)
+        self.size = self._props.get("size", self.DEFAULT_SIZE)
+        self.food_energy = self._props.get("food_energy", 0)
+        self.value = self._props.get("value", 1)
+        self.surface_type = self._props.get("surface_type", "on")
+        self.drink = self._props.get("drink", False)
+        self.food = self._props.get("food", False)
+        self.dead = self._props.get("dead", False)
+        self.container = self._props.get("container", False)
+        self.gettable = self._props.get("gettable", True)
+        self.wearable = self._props.get("wearable", False)
+        self.wieldable = self._props.get("wieldable", False)
+        self.classes = set(self._props.get("classes", {"object"}))
+        self.equipped = self._props.get("equipped", None)
         self.contain_size = self._props.get(
-            'contain_size',
+            "contain_size",
             self.DEFAULT_CONTAINER_SIZE
             if self.container
             else self.DEFAULT_CONTAIN_SIZE,
         )
         # TODO object stat multipliers should not be a simple dict
         self.stats = self._props.get(
-            'stats', {'damage': int(self.wieldable), 'defense': int(self.wearable)}
+            "stats", {"damage": int(self.wieldable), "defense": int(self.wearable)}
         )
         self.locked_edge = None
 
-    def add_locked_edge(self, locked_with: 'GraphObject', start_locked=True):
+    def add_locked_edge(self, locked_with: "GraphObject", start_locked=True):
         """Add an edge to note that this container is locked by the given object"""
         assert self.container, "Only containers can be locked!"
         self.locked_edge = LockEdge(locked_with, start_locked, None)

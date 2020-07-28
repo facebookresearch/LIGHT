@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 class PlayerProvider:
     """
     A PlayerProvider defines the interface by which some external surface
-    can provide a link between an actual human player and a PlayerSoul 
-    inside of the game. By defining the following methods, arbitrary 
+    can provide a link between an actual human player and a PlayerSoul
+    inside of the game. By defining the following methods, arbitrary
     providers can be written for different use cases.
 
     Any running game can then use `Purgatory.get_soul_for_player` to
@@ -26,8 +26,8 @@ class PlayerProvider:
     def register_soul(self, soul: "PlayerSoul"):
         """
         Do whatever bookkeeping is required to keep track of the given PlayerSoul
-        such that other required methods operate properly, especially such that 
-        the player will be able to act in the world. 
+        such that other required methods operate properly, especially such that
+        the player will be able to act in the world.
         """
         pass
 

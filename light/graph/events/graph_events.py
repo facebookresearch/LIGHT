@@ -31,6 +31,7 @@ if TYPE_CHECKING:
 
 # TODO remove ability to take actions with yourself
 
+
 class SystemMessageEvent(TriggeredEvent):
     """Event to send text messages to specified agents outside of other events"""
 
@@ -46,10 +47,11 @@ class SystemMessageEvent(TriggeredEvent):
         else:
             return None
 
+
 class SayEvent(GraphEvent):
     """Handles saying something out loud to the room."""
 
-    NAMES = ['say']
+    NAMES = ["say"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the expected views, then broadcast"""
@@ -83,8 +85,8 @@ class SayEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['SayEvent', 'ErrorEvent']:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["SayEvent", "ErrorEvent"]:
         """Say events are valid as long as there is text, otherwise fail."""
         if text is None or len(text.strip()) == 0:
             return ErrorEvent(cls, actor, "Say what? You have to say something!")
@@ -97,7 +99,7 @@ class SayEvent(GraphEvent):
 class ShoutEvent(GraphEvent):
     """Handles saying something out loud to all agents."""
 
-    NAMES = ['shout']
+    NAMES = ["shout"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the view for the event"""
@@ -131,8 +133,8 @@ class ShoutEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['ShoutEvent', 'ErrorEvent']:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["ShoutEvent", "ErrorEvent"]:
         """Shout events are valid as long as there is text, otherwise fail."""
         if text is None or len(text) == 0:
             return ErrorEvent(cls, actor, "Shout what? You have to shout something!")
@@ -145,7 +147,7 @@ class ShoutEvent(GraphEvent):
 class WhisperEvent(GraphEvent):
     """Handles saying something to a specific agent without others hearing."""
 
-    NAMES = ['whisper']
+    NAMES = ["whisper"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the views for the event, then broadcast"""
@@ -156,7 +158,7 @@ class WhisperEvent(GraphEvent):
             f'{actor_name} whispered "{self.text_content}" to you'.capitalize()
         )
         self.__in_room_view = (
-            f'{actor_name} whispered something to {target_name}'.capitalize()
+            f"{actor_name} whispered something to {target_name}".capitalize()
         )
 
         # broadcast
@@ -203,9 +205,9 @@ class WhisperEvent(GraphEvent):
         Try to find applicable nodes by the given names - the node for
         target_name should be an agent
         """
-        assert len(text_args) == 2, f'Incorrect number of arguments for WhisperEvent'
+        assert len(text_args) == 2, f"Incorrect number of arguments for WhisperEvent"
         target_name, text_content = text_args
-        target_nodes = graph.desc_to_nodes(target_name, actor, 'sameloc+players')
+        target_nodes = graph.desc_to_nodes(target_name, actor, "sameloc+players")
         applicable_nodes = [x for x in target_nodes if x.agent]
         if len(applicable_nodes) > 0:
             return ProcessedArguments(targets=[applicable_nodes[0]], text=text_content)
@@ -224,10 +226,10 @@ class WhisperEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['WhisperEvent', ErrorEvent]:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["WhisperEvent", ErrorEvent]:
         """Whisper events are valid as long as there is text, otherwise fail."""
-        assert text is not None, 'Cannot construct WhisperEvent without text'
+        assert text is not None, "Cannot construct WhisperEvent without text"
         text = text.strip()
         if len(text) == 0:
             return ErrorEvent(
@@ -243,7 +245,7 @@ class WhisperEvent(GraphEvent):
 class TellEvent(GraphEvent):
     """Handles saying something to a specific agent aloud."""
 
-    NAMES = ['tell']
+    NAMES = ["tell"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the view for the actors involved"""
@@ -298,9 +300,9 @@ class TellEvent(GraphEvent):
         Try to find applicable nodes by the given names - the node for
         target_name should be an agent
         """
-        assert len(text_args) == 2, 'TellEvents require 2 arguments'
+        assert len(text_args) == 2, "TellEvents require 2 arguments"
         target_name, text_content = text_args
-        target_nodes = graph.desc_to_nodes(target_name, actor, 'sameloc+players')
+        target_nodes = graph.desc_to_nodes(target_name, actor, "sameloc+players")
         applicable_nodes = [x for x in target_nodes if x.agent]
         if len(applicable_nodes) > 0:
             return ProcessedArguments(targets=[applicable_nodes[0]], text=text_content)
@@ -319,8 +321,8 @@ class TellEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['TellEvent', ErrorEvent]:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["TellEvent", ErrorEvent]:
         """Tell events are valid as long as there is text, otherwise fail."""
         assert len(targets) == 1, "Can only construct Tell event to exactly one target"
         target = targets[0]
@@ -363,7 +365,7 @@ class ArriveEvent(TriggeredEvent):
         """Save expected views, then message everyone"""
         actor_name = self.actor.get_prefix_view()
         self.__in_room_view = (
-            f'{actor_name} arrived from {self.text_content}'.capitalize()
+            f"{actor_name} arrived from {self.text_content}".capitalize()
         )
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         return []
@@ -379,7 +381,7 @@ class ArriveEvent(TriggeredEvent):
 class TriggerFollowEvent(TriggeredEvent):
     """
     Event to trigger a follow from, to tell that a follow happened
-    
+
     it takes as target_nodes the possible destination
     """
 
@@ -405,13 +407,14 @@ class TriggerFollowEvent(TriggeredEvent):
 class GoEvent(GraphEvent):
     """Handles moving as an individual from one room to another"""
 
-    NAMES = ['go']
+    NAMES = ["go"]
 
-    def __init__(self,
-            actor: GraphAgent,
-            target_nodes: Optional[List[GraphNode]] = None,
-            text_content: Optional[str] = None,
-        ):
+    def __init__(
+        self,
+        actor: GraphAgent,
+        target_nodes: Optional[List[GraphNode]] = None,
+        text_content: Optional[str] = None,
+    ):
         super().__init__(actor, target_nodes, text_content)
         # Must store room views because getting views from other rooms is odd
         new_room = self.target_nodes[0]
@@ -454,15 +457,15 @@ class GoEvent(GraphEvent):
         """
         Provide the text that this event's actor would use to invoke this event
         """
-        return f'go {self.__canonical_room_view}'
+        return f"go {self.__canonical_room_view}"
 
     REPLACEMENTS = {
-        'e': 'east',
-        'w': 'west',
-        'n': 'north',
-        's': 'south',
-        'u': 'up',
-        'd': 'down',
+        "e": "east",
+        "w": "west",
+        "n": "north",
+        "s": "south",
+        "u": "up",
+        "d": "down",
     }
 
     @classmethod
@@ -482,10 +485,10 @@ class GoEvent(GraphEvent):
         for a path. The path must not be locked and there must be room to
         fit inside
         """
-        assert len(text_args) == 1, 'GoEvents take one additional argument'
+        assert len(text_args) == 1, "GoEvents take one additional argument"
         target_name = text_args[0]
 
-        target_nodes = graph.desc_to_nodes(target_name, actor, 'path')
+        target_nodes = graph.desc_to_nodes(target_name, actor, "path")
         room_nodes = [x for x in target_nodes if x.room]
         current_room = actor.get_room()
         if len(room_nodes) == 0:
@@ -507,12 +510,12 @@ class GoEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['GoEvent', ErrorEvent]:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["GoEvent", ErrorEvent]:
         """Go events are valid if properly parsed and thus target is a room."""
-        assert len(targets) == 1, f'GoEvents take one target, the room. Got {targets}'
+        assert len(targets) == 1, f"GoEvents take one target, the room. Got {targets}"
         target = targets[0]
-        assert target.room, 'Can only go to rooms'
+        assert target.room, "Can only go to rooms"
         return cls(actor, target_nodes=[target])
 
     @classmethod
@@ -530,7 +533,7 @@ class GoEvent(GraphEvent):
 class UnfollowEvent(NoArgumentEvent):
     """Handles removing a follow"""
 
-    NAMES = ['unfollow']
+    NAMES = ["unfollow"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -539,8 +542,8 @@ class UnfollowEvent(NoArgumentEvent):
         assert not self.executed
         actor_name = self.actor.get_prefix_view()
         follow_name = self.actor.get_following().get_prefix_view()
-        self.__unfollow_view = f'You stopped following {follow_name}'
-        self.__unfollowed_view = f'{actor_name} stopped following you'.capitalize()
+        self.__unfollow_view = f"You stopped following {follow_name}"
+        self.__unfollowed_view = f"{actor_name} stopped following you".capitalize()
 
         self.__follow_target = self.actor.get_following()
         self.actor.unfollow()
@@ -558,12 +561,12 @@ class UnfollowEvent(NoArgumentEvent):
             return None
 
     def to_canonical_form(self) -> str:
-        return f'unfollow'
+        return f"unfollow"
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['UnfollowEvent', ErrorEvent]:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["UnfollowEvent", ErrorEvent]:
         """Unfollow events are valid as long as you are following something."""
         assert (
             len(targets) == 0
@@ -584,7 +587,7 @@ class UnfollowEvent(NoArgumentEvent):
 class FollowEvent(GraphEvent):
     """Handles having an agent follow another agent"""
 
-    NAMES = ['follow']
+    NAMES = ["follow"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -598,8 +601,8 @@ class FollowEvent(GraphEvent):
         follow_target = self.target_nodes[0]
         actor_name = self.actor.get_prefix_view()
         follow_name = follow_target.get_prefix_view()
-        self.__follow_view = f'You started following {follow_name}'
-        self.__followed_view = f'{actor_name} started following you'.capitalize()
+        self.__follow_view = f"You started following {follow_name}"
+        self.__followed_view = f"{actor_name} started following you".capitalize()
 
         self.actor.follow(follow_target)
         world.broadcast_to_agents(self, [self.actor, self.target_nodes[0]])
@@ -619,7 +622,7 @@ class FollowEvent(GraphEvent):
         """
         Provide the text that this event's actor would use to invoke this event
         """
-        return f'follow {self._canonical_targets[0]}'
+        return f"follow {self._canonical_targets[0]}"
 
     @classmethod
     def find_nodes_for_args(
@@ -629,9 +632,9 @@ class FollowEvent(GraphEvent):
         Try to find applicable nodes by the given names - here we're searching
         for an agent in the same room.
         """
-        assert len(text_args) == 1, f'FollowEvent takes one arg, got {text_args}'
+        assert len(text_args) == 1, f"FollowEvent takes one arg, got {text_args}"
         target_name = text_args[0]
-        target_nodes = graph.desc_to_nodes(target_name, actor, 'sameloc')
+        target_nodes = graph.desc_to_nodes(target_name, actor, "sameloc")
         applicable_nodes = [x for x in target_nodes if x.agent]
         if len(applicable_nodes) > 0:
             return ProcessedArguments(targets=[applicable_nodes[0]])
@@ -650,12 +653,12 @@ class FollowEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['FollowEvent', ErrorEvent]:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["FollowEvent", ErrorEvent]:
         """Follow events with a target agent will always be valid if it's not the already followed agent."""
-        assert len(targets) == 1, f'FollowEvent takes one arg, got {targets}'
+        assert len(targets) == 1, f"FollowEvent takes one arg, got {targets}"
         target = targets[0]
-        assert target.agent, 'Can only follow agents'
+        assert target.agent, "Can only follow agents"
         if target == actor.get_following():
             return ErrorEvent(
                 cls,
@@ -689,7 +692,7 @@ class DeathEvent(TriggeredEvent):
     def execute(self, world: "World") -> List[GraphEvent]:
         """Save expected views, then message everyone"""
         actor_name = self.actor.get_prefix_view()
-        self.__in_room_view = f'{actor_name} died! '
+        self.__in_room_view = f"{actor_name} died! "
 
         # You have to send to the room before death or the dying agent won't get the message
         world.broadcast_to_room(self)
@@ -703,19 +706,21 @@ class DeathEvent(TriggeredEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            return f'You died! '
+            return f"You died! "
         else:
             return self.__in_room_view
+
 
 class SoulSpawnEvent(TriggeredEvent):
     """Handles processing the view for when a player is spawned, and passing their context"""
 
-    def __init__(self,
-            soul_id, 
-            actor: GraphAgent,
-            target_nodes: Optional[List[GraphNode]] = None,
-            text_content: Optional[str] = None,
-        ):
+    def __init__(
+        self,
+        soul_id,
+        actor: GraphAgent,
+        target_nodes: Optional[List[GraphNode]] = None,
+        text_content: Optional[str] = None,
+    ):
         super().__init__(actor, target_nodes, text_content)
         # Must store this for important metadata
         self.soul_id = soul_id
@@ -725,7 +730,7 @@ class SoulSpawnEvent(TriggeredEvent):
         """Construct intro text and broadcast to the player"""
         actor_name = self.actor.get_prefix_view()
 
-        sun_txt = emoji.emojize(':star2:', use_aliases=True) * 31
+        sun_txt = emoji.emojize(":star2:", use_aliases=True) * 31
         msg_txt = sun_txt + "\n"
         msg_txt += f"Your soul possesses {self.actor.get_view()}.\n"
         msg_txt += "Your character:\n"
@@ -743,6 +748,7 @@ class SoulSpawnEvent(TriggeredEvent):
         else:
             return None
 
+
 class SpawnEvent(TriggeredEvent):
     """Handles processing the view for when a player is spawned, and passing their context"""
 
@@ -750,7 +756,7 @@ class SpawnEvent(TriggeredEvent):
         """Construct intro text and broadcast to the player"""
         actor_name = self.actor.get_prefix_view()
 
-        sun_txt = emoji.emojize(':star2:', use_aliases=True) * 31
+        sun_txt = emoji.emojize(":star2:", use_aliases=True) * 31
         msg_txt = sun_txt + "\n"
         msg_txt += f"You are spawned into this world as {self.actor.get_view()}.\n"
         msg_txt += "Your character:\n"
@@ -768,6 +774,7 @@ class SpawnEvent(TriggeredEvent):
             return self.__msg_txt
         else:
             return None
+
 
 class HelpEvent(NoArgumentEvent):
     """Handles user asking for help"""
@@ -788,17 +795,18 @@ class HelpEvent(NoArgumentEvent):
         else:
             return None
 
-            
+
 class HitEvent(GraphEvent):
     """Handles having one agent attack another"""
 
-    NAMES = ['hit']
+    NAMES = ["hit"]
 
-    def __init__(self,
-            actor: GraphAgent,
-            target_nodes: Optional[List[GraphNode]] = None,
-            text_content: Optional[str] = None,
-        ):
+    def __init__(
+        self,
+        actor: GraphAgent,
+        target_nodes: Optional[List[GraphNode]] = None,
+        text_content: Optional[str] = None,
+    ):
         super().__init__(actor, target_nodes, text_content)
         # Must store these for replaying exact sequences
         self.attack = None
@@ -817,8 +825,8 @@ class HitEvent(GraphEvent):
         attack_target = self.target_nodes[0]
         assert isinstance(attack_target, GraphAgent), "Must attack an agent"
         self.__attack_name = attack_target.get_prefix_view()
-        damage = self.actor.get_prop('damage', 0)
-        armor = attack_target.get_prop('defense', 0)
+        damage = self.actor.get_prop("damage", 0)
+        armor = attack_target.get_prop("defense", 0)
         if self.attack is None:
             # need to save randomized attacks for replaying
             self.attack = random.randint(max(0, damage - 10), damage + 1)
@@ -845,37 +853,37 @@ class HitEvent(GraphEvent):
         if self.attack == 0:
             # The attack missed
             if viewer == self.actor:
-                return f'You attacked {self.__attack_name}, but missed! '
+                return f"You attacked {self.__attack_name}, but missed! "
             elif viewer == self.target_nodes[0]:
-                return f'{self.__actor_name} attacked you, but missed. '.capitalize()
+                return f"{self.__actor_name} attacked you, but missed. ".capitalize()
             else:
-                return f'{self.__actor_name} attacked {self.__attack_name}, but missed. '.capitalize()
+                return f"{self.__actor_name} attacked {self.__attack_name}, but missed. ".capitalize()
         elif self.attack - self.defend < 1:
             # The attack was blocked
             if viewer == self.actor:
-                return f'You attacked {self.__attack_name}, but they blocked! '
+                return f"You attacked {self.__attack_name}, but they blocked! "
             elif viewer == self.target_nodes[0]:
                 return (
-                    f'{self.__actor_name} attacked you, but you blocked. '.capitalize()
+                    f"{self.__actor_name} attacked you, but you blocked. ".capitalize()
                 )
             else:
-                return f'{self.__actor_name} attacked {self.__attack_name}, but the attack was blocked. '.capitalize()
+                return f"{self.__actor_name} attacked {self.__attack_name}, but the attack was blocked. ".capitalize()
         else:
             # The attack happened
             if viewer == self.actor:
-                return f'You attacked {self.__attack_name}! '
+                return f"You attacked {self.__attack_name}! "
             elif viewer == self.target_nodes[0]:
-                return f'{self.__actor_name} attacked you! '.capitalize()
+                return f"{self.__actor_name} attacked you! ".capitalize()
             else:
                 return (
-                    f'{self.__actor_name} attacked {self.__attack_name}! '.capitalize()
+                    f"{self.__actor_name} attacked {self.__attack_name}! ".capitalize()
                 )
 
     def to_canonical_form(self) -> str:
         """
         Provide the text that this event's actor would use to invoke this event
         """
-        return f'hit {self._canonical_targets[0]}'
+        return f"hit {self._canonical_targets[0]}"
 
     @classmethod
     def find_nodes_for_args(
@@ -885,9 +893,9 @@ class HitEvent(GraphEvent):
         Try to find applicable nodes by the given names - here we're searching
         for an agent in the same room.
         """
-        assert len(text_args) == 1, f'HitEvent takes one arg, got {text_args}'
+        assert len(text_args) == 1, f"HitEvent takes one arg, got {text_args}"
         target_name = text_args[0]
-        target_nodes = graph.desc_to_nodes(target_name, actor, 'sameloc')
+        target_nodes = graph.desc_to_nodes(target_name, actor, "sameloc")
         applicable_nodes = [x for x in target_nodes if x.agent]
         if len(applicable_nodes) > 0:
             return ProcessedArguments(targets=[applicable_nodes[0]])
@@ -906,12 +914,12 @@ class HitEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['HitEvent', 'ErrorEvent']:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["HitEvent", "ErrorEvent"]:
         """Hit events with a target agent will always be valid."""
-        assert len(targets) == 1, f'HitEvent takes one arg, got {targets}'
+        assert len(targets) == 1, f"HitEvent takes one arg, got {targets}"
         target = targets[0]
-        assert target.agent, 'Can only hit agents'
+        assert target.agent, "Can only hit agents"
         return cls(actor, target_nodes=[target])
 
     @classmethod
@@ -933,7 +941,7 @@ class HitEvent(GraphEvent):
 class HugEvent(GraphEvent):
     """Handles having one agent give another a hug"""
 
-    NAMES = ['hug']
+    NAMES = ["hug"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -951,17 +959,17 @@ class HugEvent(GraphEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            return f'You hugged {self.__hugged_name}, but missed!'
+            return f"You hugged {self.__hugged_name}, but missed!"
         elif viewer == self.target_nodes[0]:
-            return f'{self.__actor_name} hugged you.'.capitalize()
+            return f"{self.__actor_name} hugged you.".capitalize()
         else:
-            return f'{self.__actor_name} hugged {self.__hugged_name}.'.capitalize()
+            return f"{self.__actor_name} hugged {self.__hugged_name}.".capitalize()
 
     def to_canonical_form(self) -> str:
         """
         Provide the text that this event's actor would use to invoke this event
         """
-        return f'hug {self._canonical_targets[0]}'
+        return f"hug {self._canonical_targets[0]}"
 
     @classmethod
     def find_nodes_for_args(
@@ -971,9 +979,9 @@ class HugEvent(GraphEvent):
         Try to find applicable nodes by the given names - here we're searching
         for an agent in the same room.
         """
-        assert len(text_args) == 1, f'HugEvent takes one arg, got {text_args}'
+        assert len(text_args) == 1, f"HugEvent takes one arg, got {text_args}"
         target_name = text_args[0]
-        target_nodes = graph.desc_to_nodes(target_name, actor, 'sameloc')
+        target_nodes = graph.desc_to_nodes(target_name, actor, "sameloc")
         applicable_nodes = [x for x in target_nodes if x.agent]
         if len(applicable_nodes) > 0:
             return ProcessedArguments(targets=[applicable_nodes[0]])
@@ -992,12 +1000,12 @@ class HugEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['HugEvent', 'ErrorEvent']:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["HugEvent", "ErrorEvent"]:
         """Hug events with a target will always be valid."""
-        assert len(targets) == 1, f'HitEvent takes one arg, got {targets}'
+        assert len(targets) == 1, f"HitEvent takes one arg, got {targets}"
         target = targets[0]
-        assert target.agent, 'Can only hit agents'
+        assert target.agent, "Can only hit agents"
         return cls(actor, target_nodes=[target])
 
     @classmethod
@@ -1020,7 +1028,7 @@ class HugEvent(GraphEvent):
 class GetObjectEvent(GraphEvent):
     """Handles getting an object from a container or a location"""
 
-    NAMES = ['get', 'take']
+    NAMES = ["get", "take"]
 
     def __init__(
         self,
@@ -1030,7 +1038,6 @@ class GetObjectEvent(GraphEvent):
     ):
         super().__init__(actor, target_nodes, text_content)
         self.__from_room = self.room == self.target_nodes[1]
-
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -1057,33 +1064,33 @@ class GetObjectEvent(GraphEvent):
         else:
             viewer_text = self.__actor_name.capitalize()
         if self.__from_room:
-            return f'{viewer_text} got {self.__gotten_name}'
+            return f"{viewer_text} got {self.__gotten_name}"
         else:
             return (
-                f'{viewer_text} got {self.__gotten_name} from {self.__container_name}'
+                f"{viewer_text} got {self.__gotten_name} from {self.__container_name}"
             )
 
     def to_canonical_form(self) -> str:
         """return action text for Get the canonical target, from the container if not the room"""
         if self.__from_room:
-            return f'get {self._canonical_targets[0]}'
-        return f'get {self._canonical_targets[0]} from {self._canonical_targets[1]}'
+            return f"get {self._canonical_targets[0]}"
+        return f"get {self._canonical_targets[0]} from {self._canonical_targets[1]}"
 
     @classmethod
     def split_text_args(
         cls, actor: GraphAgent, text: str
-    ) -> Union[List[List[str]], 'ErrorEvent']:
+    ) -> Union[List[List[str]], "ErrorEvent"]:
         """
         Return all possible interpretations for "get x from y".
 
         Must consider that "get ornament from china from big chest" should properly
         be able to consider both [ornament from china, big chest] and [ornament, china from big chest]
         """
-        possible_from_splits = text.split(' from ')
+        possible_from_splits = text.split(" from ")
         possibilities = []
         for split_ind in range(len(possible_from_splits)):
-            before = ' from '.join(possible_from_splits[:split_ind])
-            after = ' from '.join(possible_from_splits[split_ind:])
+            before = " from ".join(possible_from_splits[:split_ind])
+            after = " from ".join(possible_from_splits[split_ind:])
             if len(after) > 0 and len(before) > 0:
                 possibilities.append([before, after])
         possibilities.append([text])
@@ -1099,7 +1106,7 @@ class GetObjectEvent(GraphEvent):
         """
         assert (
             len(text_args) == 1 or len(text_args) == 2
-        ), f'GetObjectEvent takes one or two arguments, got {text_args}'
+        ), f"GetObjectEvent takes one or two arguments, got {text_args}"
         object_name = text_args[0]
         container_name = None
         if len(text_args) == 2:
@@ -1107,7 +1114,7 @@ class GetObjectEvent(GraphEvent):
         possible_containers: List[GraphNode] = [actor.get_room()]
         if container_name is not None:
             # getting an item from the specified container
-            target_nodes = graph.desc_to_nodes(container_name, actor, 'all+here')
+            target_nodes = graph.desc_to_nodes(container_name, actor, "all+here")
             applicable_nodes = [x for x in target_nodes if isinstance(x, GraphObject)]
             applicable_containers: List[GraphNode] = [
                 x for x in applicable_nodes if x.container
@@ -1136,7 +1143,7 @@ class GetObjectEvent(GraphEvent):
         # check each container to see if the wanted object is within
         first_guess_error = None
         for container in possible_containers:
-            target_nodes = graph.desc_to_nodes(object_name, container, 'carrying')
+            target_nodes = graph.desc_to_nodes(object_name, container, "carrying")
             applicable_nodes = [x for x in target_nodes if isinstance(x, GraphObject)]
             applicable_nodes = [x for x in applicable_nodes if x.gettable]
             if len(applicable_nodes) > 0:
@@ -1162,14 +1169,14 @@ class GetObjectEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['GetObjectEvent', 'ErrorEvent']:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["GetObjectEvent", "ErrorEvent"]:
         """Get object events are valid as long as the agent can hold the object"""
-        assert len(targets) == 2, f'GetObjectEvent takes two arg, got {targets}'
+        assert len(targets) == 2, f"GetObjectEvent takes two arg, got {targets}"
         target, container = targets
         assert (
             target in container.get_contents()
-        ), 'Target node is not in the given container'
+        ), "Target node is not in the given container"
         if not actor.would_fit(target):
             return ErrorEvent(
                 cls,
@@ -1206,7 +1213,7 @@ class GetObjectEvent(GraphEvent):
 class PutObjectInEvent(GraphEvent):
     """Handles putting an object in or on another object"""
 
-    NAMES = ['put']
+    NAMES = ["put"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -1232,28 +1239,28 @@ class PutObjectInEvent(GraphEvent):
             viewer_text = "You"
         else:
             viewer_text = self.__actor_name.capitalize()
-        surface_type = self.target_nodes[1].get_prop('surface_type', 'in')
-        return f'{viewer_text} put {self.__put_name} {surface_type} {self.__container_name}'
+        surface_type = self.target_nodes[1].get_prop("surface_type", "in")
+        return f"{viewer_text} put {self.__put_name} {surface_type} {self.__container_name}"
 
     def to_canonical_form(self) -> str:
         """return action text for putting the object in/on the container"""
-        surface_type = self.target_nodes[1].get_prop('surface_type', 'in')
-        return f'put {self._canonical_targets[0]} {surface_type} {self._canonical_targets[1]}'
+        surface_type = self.target_nodes[1].get_prop("surface_type", "in")
+        return f"put {self._canonical_targets[0]} {surface_type} {self._canonical_targets[1]}"
 
     @classmethod
     def split_text_args(
         cls, actor: GraphAgent, text: str
-    ) -> Union[List[List[str]], 'ErrorEvent']:
+    ) -> Union[List[List[str]], "ErrorEvent"]:
         """
         Return all possible interpretations for "put x in/on y".
 
         Must consider multiple in/on situations
         """
-        splitwords = ['in', 'on', 'into', 'onto']
+        splitwords = ["in", "on", "into", "onto"]
 
         has_word = False
         for word in splitwords:
-            if f' {word} ' in text:
+            if f" {word} " in text:
                 has_word = True
 
         if not has_word:
@@ -1263,7 +1270,7 @@ class PutObjectInEvent(GraphEvent):
 
         possibilities = []
         for word in splitwords:
-            splitword = f' {word} '
+            splitword = f" {word} "
             possible_splits = text.split(splitword)
             for split_ind in range(len(possible_splits)):
                 before = splitword.join(possible_splits[:split_ind])
@@ -1281,10 +1288,10 @@ class PutObjectInEvent(GraphEvent):
         Try to find applicable nodes by the given names - here we're searching
         for an object, within the actor, and a container in the room.
         """
-        assert len(text_args) == 2, f'PutObjectInEvent takes two args, got {text_args}'
+        assert len(text_args) == 2, f"PutObjectInEvent takes two args, got {text_args}"
         object_name, container_name = text_args
         # putting an item in the specified container
-        target_nodes = graph.desc_to_nodes(container_name, actor, 'all+here')
+        target_nodes = graph.desc_to_nodes(container_name, actor, "all+here")
         applicable_nodes = [x for x in target_nodes if isinstance(x, GraphObject)]
         applicable_containers = [x for x in applicable_nodes if x.container]
         if len(applicable_containers) == 0:
@@ -1309,7 +1316,7 @@ class PutObjectInEvent(GraphEvent):
         container = applicable_containers[0]
 
         # check actor to see if the wanted object is within
-        target_nodes = graph.desc_to_nodes(object_name, actor, 'carrying')
+        target_nodes = graph.desc_to_nodes(object_name, actor, "carrying")
         applicable_nodes = [x for x in target_nodes if isinstance(x, GraphObject)]
         unequipped_nodes = [x for x in applicable_nodes if not x.equipped]
         if len(unequipped_nodes) > 0:
@@ -1339,14 +1346,14 @@ class PutObjectInEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['PutObjectInEvent', 'ErrorEvent']:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["PutObjectInEvent", "ErrorEvent"]:
         """Put object events are valid as long as the container can hold the object and is not the object"""
-        assert len(targets) == 2, f'PutObjectInEvent takes two args, got {targets}'
+        assert len(targets) == 2, f"PutObjectInEvent takes two args, got {targets}"
         target, container = targets
         assert (
             target in actor.get_contents()
-        ), 'Target node is not in the given container'
+        ), "Target node is not in the given container"
         if container == target:
             return ErrorEvent(
                 cls, actor, f"You can't put {target.get_prefix_view()} into itself!."
@@ -1373,7 +1380,8 @@ class PutObjectInEvent(GraphEvent):
             return []
 
         possible_objects = [
-            x for x in actor.get_room().get_contents() 
+            x
+            for x in actor.get_room().get_contents()
             if isinstance(x, GraphObject) and not x.equipped
         ]
         possible_containers = [x for x in possible_objects if x.container]
@@ -1389,7 +1397,7 @@ class PutObjectInEvent(GraphEvent):
 class DropObjectEvent(GraphEvent):
     """Handles dropping an object onto the floor"""
 
-    NAMES = ['drop']
+    NAMES = ["drop"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -1414,11 +1422,11 @@ class DropObjectEvent(GraphEvent):
             viewer_text = "You"
         else:
             viewer_text = self.__actor_name.capitalize()
-        return f'{viewer_text} got {self.__drop_name} '
+        return f"{viewer_text} got {self.__drop_name} "
 
     def to_canonical_form(self) -> str:
         """return action text for dropping the object"""
-        return f'drop {self._canonical_targets[0]}'
+        return f"drop {self._canonical_targets[0]}"
 
     @classmethod
     def find_nodes_for_args(
@@ -1428,10 +1436,10 @@ class DropObjectEvent(GraphEvent):
         Try to find applicable nodes by the given names - here we're searching
         for an object within the actor.
         """
-        assert len(text_args) == 1, f'DropObjectEvent takes one arg, got {text_args}'
+        assert len(text_args) == 1, f"DropObjectEvent takes one arg, got {text_args}"
         object_name = text_args[0]
         # check actor to see if the wanted object is within
-        target_nodes = graph.desc_to_nodes(object_name, actor, 'carrying')
+        target_nodes = graph.desc_to_nodes(object_name, actor, "carrying")
         applicable_nodes = [x for x in target_nodes if isinstance(x, GraphObject)]
         unequipped_nodes = [x for x in applicable_nodes if not x.equipped]
         if len(unequipped_nodes) > 0:
@@ -1461,14 +1469,14 @@ class DropObjectEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['DropObjectEvent', 'ErrorEvent']:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["DropObjectEvent", "ErrorEvent"]:
         """Drop object events are valid as long as the container can hold the object"""
-        assert len(targets) == 1, f'DropObjectEvent takes one arg, got {targets}'
+        assert len(targets) == 1, f"DropObjectEvent takes one arg, got {targets}"
         target = targets[0]
         assert (
             target in actor.get_contents()
-        ), 'Target node is not in the given container'
+        ), "Target node is not in the given container"
         if not actor.get_room().would_fit(target):
             return ErrorEvent(
                 cls,
@@ -1485,7 +1493,8 @@ class DropObjectEvent(GraphEvent):
         valid_actions: List[GraphEvent] = []
         # get all the drop-able objects
         dropable_objects = [
-            x for x in actor.get_contents() 
+            x
+            for x in actor.get_contents()
             if isinstance(x, GraphObject) and not x.equipped
         ]
         if len(dropable_objects) == 0:
@@ -1502,7 +1511,7 @@ class DropObjectEvent(GraphEvent):
 class StealObjectEvent(GraphEvent):
     """Handles stealing an object from an actor"""
 
-    NAMES = ['steal']
+    NAMES = ["steal"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -1531,31 +1540,31 @@ class StealObjectEvent(GraphEvent):
         victim_text = self.__victim_name
         if viewer == self.target_nodes[1]:
             victim_text = "you"
-        return f'{actor_text} stole {self.__gotten_name} from {victim_text}'
+        return f"{actor_text} stole {self.__gotten_name} from {victim_text}"
 
     def to_canonical_form(self) -> str:
         """return action text for stealing from the target"""
-        return f'steal {self._canonical_targets[0]} from {self._canonical_targets[1]}'
+        return f"steal {self._canonical_targets[0]} from {self._canonical_targets[1]}"
 
     @classmethod
     def split_text_args(
         cls, actor: GraphAgent, text: str
-    ) -> Union[List[List[str]], 'ErrorEvent']:
+    ) -> Union[List[List[str]], "ErrorEvent"]:
         """
         Return all possible interpretations for "steal x from y".
 
         Must consider that "steal ornament from china from big chest" should properly
         be able to consider both [ornament from china, big chest] and [ornament, china from big chest]
         """
-        if ' from ' not in text:
+        if " from " not in text:
             return ErrorEvent(
                 cls, actor, "You must `steal <something> from <someone>`."
             )
-        possible_from_splits = text.split(' from ')
+        possible_from_splits = text.split(" from ")
         possibilities = []
         for split_ind in range(len(possible_from_splits)):
-            before = ' from '.join(possible_from_splits[:split_ind])
-            after = ' from '.join(possible_from_splits[split_ind:])
+            before = " from ".join(possible_from_splits[:split_ind])
+            after = " from ".join(possible_from_splits[split_ind:])
             if len(after) > 0 and len(before) > 0:
                 possibilities.append([before, after])
         return possibilities
@@ -1568,11 +1577,11 @@ class StealObjectEvent(GraphEvent):
         Try to find applicable nodes by the given names - here we're searching
         for an object, within an agent
         """
-        assert len(text_args) == 2, f'StealObjectEvent takes two args, got {text_args}'
+        assert len(text_args) == 2, f"StealObjectEvent takes two args, got {text_args}"
         object_name, victim_name = text_args
         possible_victims = []
         # getting an item from the specified container
-        target_nodes = graph.desc_to_nodes(victim_name, actor, 'sameloc')
+        target_nodes = graph.desc_to_nodes(victim_name, actor, "sameloc")
         applicable_victims = [x for x in target_nodes if isinstance(x, GraphAgent)]
         if len(applicable_victims) == 0:
             if len(target_nodes) > 0:
@@ -1597,7 +1606,7 @@ class StealObjectEvent(GraphEvent):
         # check each victim to see if the wanted object is within
         first_guess_error = None
         for victim in possible_victims:
-            target_nodes = graph.desc_to_nodes(object_name, victim, 'carrying')
+            target_nodes = graph.desc_to_nodes(object_name, victim, "carrying")
             applicable_nodes = [x for x in target_nodes if isinstance(x, GraphObject)]
             unequipped_nodes = [x for x in applicable_nodes if not x.equipped]
             if len(unequipped_nodes) > 0:
@@ -1635,14 +1644,14 @@ class StealObjectEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['StealObjectEvent', 'ErrorEvent']:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["StealObjectEvent", "ErrorEvent"]:
         """Steal object events are valid as long as the agent can hold the object"""
-        assert len(targets) == 2, f'StealObjectEvent takes two args, got {targets}'
+        assert len(targets) == 2, f"StealObjectEvent takes two args, got {targets}"
         target, victim = targets
         assert (
             target in victim.get_contents()
-        ), 'Target node is not held by the given victim'
+        ), "Target node is not held by the given victim"
         if not actor.would_fit(target):
             return ErrorEvent(
                 cls,
@@ -1665,7 +1674,8 @@ class StealObjectEvent(GraphEvent):
 
         for agent in room_agents:
             stealable_objects = [
-                x for x in agent.get_contents() 
+                x
+                for x in agent.get_contents()
                 if isinstance(x, GraphObject) and not x.equipped
             ]
             for obj in stealable_objects:
@@ -1678,7 +1688,7 @@ class StealObjectEvent(GraphEvent):
 class GiveObjectEvent(GraphEvent):
     """Handles giving an object to another agent"""
 
-    NAMES = ['give']
+    NAMES = ["give"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -1707,16 +1717,16 @@ class GiveObjectEvent(GraphEvent):
         recipient_text = self.__recipient_name
         if viewer == self.target_nodes[1]:
             recipient_text = "you"
-        return f'{actor_text} gave {self.__given_name} to {recipient_text}'
+        return f"{actor_text} gave {self.__given_name} to {recipient_text}"
 
     def to_canonical_form(self) -> str:
         """return action text for giving the object to the agent"""
-        return f'give {self._canonical_targets[0]} to {self._canonical_targets[1]}'
+        return f"give {self._canonical_targets[0]} to {self._canonical_targets[1]}"
 
     @classmethod
     def split_text_args(
         cls, actor: GraphAgent, text: str
-    ) -> Union[List[List[str]], 'ErrorEvent']:
+    ) -> Union[List[List[str]], "ErrorEvent"]:
         """
         Return all possible interpretations for "give x to y".
 
@@ -1725,17 +1735,17 @@ class GiveObjectEvent(GraphEvent):
         Also considers that the person may have written "give y x" if there is no "to"
         """
         possibilities = []
-        possible_to_splits = text.split(' to ')
+        possible_to_splits = text.split(" to ")
         for split_ind in range(len(possible_to_splits)):
-            before = ' to '.join(possible_to_splits[:split_ind])
-            after = ' to '.join(possible_to_splits[split_ind:])
+            before = " to ".join(possible_to_splits[:split_ind])
+            after = " to ".join(possible_to_splits[split_ind:])
             if len(after) > 0 and len(before) > 0:
                 possibilities.append([before, after])
         if len(possibilities) == 0:
-            possible_splits = text.split(' ')
+            possible_splits = text.split(" ")
             for split_ind in range(len(possible_splits)):
-                before = ' '.join(possible_to_splits[:split_ind])
-                after = ' '.join(possible_to_splits[split_ind:])
+                before = " ".join(possible_to_splits[:split_ind])
+                after = " ".join(possible_to_splits[split_ind:])
                 if len(after) > 0 and len(before) > 0:
                     possibilities.append([before, after])
         return possibilities
@@ -1748,9 +1758,9 @@ class GiveObjectEvent(GraphEvent):
         Try to find applicable nodes by the given names - here we're searching
         for an object within the actor, and an agent in the room.
         """
-        assert len(text_args) == 2, f'GiveObjectEvent takes two args, got {text_args}'
+        assert len(text_args) == 2, f"GiveObjectEvent takes two args, got {text_args}"
         object_name, recipient_name = text_args
-        target_nodes = graph.desc_to_nodes(recipient_name, actor, 'all+here')
+        target_nodes = graph.desc_to_nodes(recipient_name, actor, "all+here")
         possible_agents = [x for x in target_nodes if isinstance(x, GraphAgent)]
         if len(possible_agents) == 0:
             # didn't find any nodes by this name
@@ -1761,7 +1771,7 @@ class GiveObjectEvent(GraphEvent):
             )
 
         # check actor to see if they have the node to give
-        target_nodes = graph.desc_to_nodes(object_name, actor, 'carrying')
+        target_nodes = graph.desc_to_nodes(object_name, actor, "carrying")
         applicable_nodes = [x for x in target_nodes if isinstance(x, GraphObject)]
         unequipped_nodes = [x for x in applicable_nodes if not x.equipped]
         if len(unequipped_nodes) > 0:
@@ -1791,12 +1801,12 @@ class GiveObjectEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['GiveObjectEvent', 'ErrorEvent']:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["GiveObjectEvent", "ErrorEvent"]:
         """give object events are valid as long as the recipient can hold the object"""
-        assert len(targets) == 2, f'GiveObjectEvent takes two args, got {targets}'
+        assert len(targets) == 2, f"GiveObjectEvent takes two args, got {targets}"
         target, recipient = targets
-        assert target in actor.get_contents(), 'Target node is not held by actor'
+        assert target in actor.get_contents(), "Target node is not held by actor"
         if not recipient.would_fit(target):
             return ErrorEvent(
                 cls,
@@ -1813,7 +1823,8 @@ class GiveObjectEvent(GraphEvent):
         valid_actions: List[GraphEvent] = []
         # get all the give-able objects
         giveable_objects = [
-            x for x in actor.get_contents() 
+            x
+            for x in actor.get_contents()
             if isinstance(x, GraphObject) and not x.equipped
         ]
         if len(giveable_objects) == 0:
@@ -1835,10 +1846,10 @@ class GiveObjectEvent(GraphEvent):
 class EquipObjectEvent(GraphEvent):
     """Handles equipping a held object"""
 
-    NAMES = ['equip']
+    NAMES = ["equip"]
 
-    action_name = 'equipped'
-    past_tense_action_name = 'equipped'
+    action_name = "equipped"
+    past_tense_action_name = "equipped"
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -1855,7 +1866,7 @@ class EquipObjectEvent(GraphEvent):
             equip_target, GraphObject
         ), f"Can only equip GraphObjects, not {equip_target}"
         equip_target.equipped = True
-        for n, s in equip_target.get_prop('stats', {'defense': 1}).items():
+        for n, s in equip_target.get_prop("stats", {"defense": 1}).items():
             self.actor.set_prop(n, self.actor.get_prop(n) + s)
         world.broadcast_to_room(self)
         self.executed = True
@@ -1871,11 +1882,11 @@ class EquipObjectEvent(GraphEvent):
             actor_text = "You"
         else:
             actor_text = self._actor_name.capitalize()
-        return f'{actor_text} {self.action_name} {self._equip_name} '
+        return f"{actor_text} {self.action_name} {self._equip_name} "
 
     def to_canonical_form(self) -> str:
         """return action text for equipping the object"""
-        return f'{self.NAMES[0]} {self._canonical_targets[0]}'
+        return f"{self.NAMES[0]} {self._canonical_targets[0]}"
 
     @classmethod
     def find_nodes_for_args(
@@ -1885,10 +1896,10 @@ class EquipObjectEvent(GraphEvent):
         Try to find applicable nodes by the given names - here we're searching
         for an equippable object within the actor.
         """
-        assert len(text_args) == 1, f'EquipObjectEvents takes one arg, got {text_args}'
+        assert len(text_args) == 1, f"EquipObjectEvents takes one arg, got {text_args}"
         object_name = text_args[0]
         # check actor to see if the wanted object is within
-        carrying_nodes = graph.desc_to_nodes(object_name, actor, 'carrying')
+        carrying_nodes = graph.desc_to_nodes(object_name, actor, "carrying")
         target_nodes = [x for x in carrying_nodes if isinstance(x, GraphObject)]
         applicable_nodes = [x for x in target_nodes if cls.can_equip(x)]
         if len(applicable_nodes) > 0:
@@ -1910,14 +1921,14 @@ class EquipObjectEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['EquipObjectEvent', 'ErrorEvent']:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["EquipObjectEvent", "ErrorEvent"]:
         """Equip object events are valid as long as an equippable object was found"""
-        assert len(targets) == 1, f'EquipObjectEvent takes one arg, got {targets}'
+        assert len(targets) == 1, f"EquipObjectEvent takes one arg, got {targets}"
         target = targets[0]
         assert (
             target in actor.get_contents()
-        ), 'Target node is not in the given container'
+        ), "Target node is not in the given container"
         assert isinstance(
             target, GraphObject
         ), f"Can only be equipping objects, not {target}"
@@ -1936,7 +1947,8 @@ class EquipObjectEvent(GraphEvent):
         valid_actions: List[GraphEvent] = []
         # get all the give-able objects
         held_objects = [
-            x for x in actor.get_contents() 
+            x
+            for x in actor.get_contents()
             if isinstance(x, GraphObject) and not x.equipped
         ]
         if len(held_objects) == 0:
@@ -1952,10 +1964,10 @@ class EquipObjectEvent(GraphEvent):
 class WearEvent(EquipObjectEvent):
     """Handles wearing a held object"""
 
-    NAMES = ['wear']
+    NAMES = ["wear"]
 
-    action_name = 'wore'
-    past_tense_action_name = 'worn'
+    action_name = "wore"
+    past_tense_action_name = "worn"
 
     @classmethod
     def can_equip(cls, object_node: GraphObject) -> bool:
@@ -1965,10 +1977,10 @@ class WearEvent(EquipObjectEvent):
 class WieldEvent(EquipObjectEvent):
     """Handles wielding a held object"""
 
-    NAMES = ['wield']
+    NAMES = ["wield"]
 
-    action_name = 'wielded'
-    past_tense_action_name = 'wielded'
+    action_name = "wielded"
+    past_tense_action_name = "wielded"
 
     @classmethod
     def can_equip(cls, object_node: GraphObject) -> bool:
@@ -1978,7 +1990,7 @@ class WieldEvent(EquipObjectEvent):
 class RemoveObjectEvent(GraphEvent):
     """Handles removing an equipped object"""
 
-    NAMES = ['remove', 'unwield']
+    NAMES = ["remove", "unwield"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -1995,7 +2007,7 @@ class RemoveObjectEvent(GraphEvent):
             equip_target, GraphObject
         ), f"Can only remove GraphObjects, not {equip_target}"
         equip_target.equipped = None
-        for n, s in equip_target.get_prop('stats', {'defense': 1}).items():
+        for n, s in equip_target.get_prop("stats", {"defense": 1}).items():
             self.actor.set_prop(n, self.actor.get_prop(n) - s)
         world.broadcast_to_room(self)
         self.executed = True
@@ -2011,11 +2023,11 @@ class RemoveObjectEvent(GraphEvent):
             actor_text = "You"
         else:
             actor_text = self._actor_name.capitalize()
-        return f'{actor_text} removed {self._equip_name} '
+        return f"{actor_text} removed {self._equip_name} "
 
     def to_canonical_form(self) -> str:
         """return action text for equipping the object"""
-        return f'{self.NAMES[0]} {self._canonical_targets[0]}'
+        return f"{self.NAMES[0]} {self._canonical_targets[0]}"
 
     @classmethod
     def find_nodes_for_args(
@@ -2025,13 +2037,13 @@ class RemoveObjectEvent(GraphEvent):
         Try to find applicable nodes by the given names - here we're searching
         for an equippable object within the actor.
         """
-        assert len(text_args) == 1, f'RemoveObjectEvent takes one arg, got {text_args}'
+        assert len(text_args) == 1, f"RemoveObjectEvent takes one arg, got {text_args}"
         object_name = text_args[0]
         # check actor to see if the wanted object is within
-        carrying_nodes = graph.desc_to_nodes(object_name, actor, 'carrying')
+        carrying_nodes = graph.desc_to_nodes(object_name, actor, "carrying")
         target_nodes = [x for x in carrying_nodes if isinstance(x, GraphObject)]
         applicable_nodes = [
-            x for x in target_nodes if x.get_prop('equipped') is not False
+            x for x in target_nodes if x.get_prop("equipped") is not False
         ]
         if len(applicable_nodes) > 0:
             # we found the thing!
@@ -2053,14 +2065,14 @@ class RemoveObjectEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['RemoveObjectEvent', 'ErrorEvent']:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["RemoveObjectEvent", "ErrorEvent"]:
         """Remove object events are valid as long as an equipped object was found"""
-        assert len(targets) == 1, f'RemoveObjectEvent takes one arg, got {targets}'
+        assert len(targets) == 1, f"RemoveObjectEvent takes one arg, got {targets}"
         target = targets[0]
         assert (
             target in actor.get_contents()
-        ), 'Target node is not in the given container'
+        ), "Target node is not in the given container"
         assert isinstance(
             target, GraphObject
         ), f"Can only remove GraphObjects, not {target}"
@@ -2093,7 +2105,7 @@ class RemoveObjectEvent(GraphEvent):
 class IngestEvent(GraphEvent):
     """Handles equipping a held object"""
 
-    NAMES = ['ingest']
+    NAMES = ["ingest"]
 
     past_tense_action_name = "ingested"
 
@@ -2141,7 +2153,7 @@ class IngestEvent(GraphEvent):
 
     def to_canonical_form(self) -> str:
         """return action text for equipping the object"""
-        return f'{self.NAMES[0]} {self._canonical_targets[0]}'
+        return f"{self.NAMES[0]} {self._canonical_targets[0]}"
 
     @classmethod
     def find_nodes_for_args(
@@ -2151,10 +2163,10 @@ class IngestEvent(GraphEvent):
         Try to find applicable nodes by the given names - here we're searching
         for an equippable object within the actor.
         """
-        assert len(text_args) == 1, f'IngestEvent takes one arg, got {text_args}'
+        assert len(text_args) == 1, f"IngestEvent takes one arg, got {text_args}"
         object_name = text_args[0]
         # check actor to see if the wanted object is within
-        carrying_nodes = graph.desc_to_nodes(object_name, actor, 'carrying')
+        carrying_nodes = graph.desc_to_nodes(object_name, actor, "carrying")
         target_nodes = [x for x in carrying_nodes if isinstance(x, GraphObject)]
         applicable_nodes = [x for x in target_nodes if cls.can_ingest(x)]
         if len(applicable_nodes) > 0:
@@ -2169,14 +2181,14 @@ class IngestEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['IngestEvent', 'ErrorEvent']:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["IngestEvent", "ErrorEvent"]:
         """Equip object events are valid as long as an equippable object was found"""
-        assert len(targets) == 1, f'IngestEvent takes one arg, got {targets}'
+        assert len(targets) == 1, f"IngestEvent takes one arg, got {targets}"
         target = targets[0]
         assert (
             target in actor.get_contents()
-        ), 'Target node is not in the given container'
+        ), "Target node is not in the given container"
         assert isinstance(target, GraphObject), f"Must ingest an object, not {target}"
         if not cls.can_ingest(target):
             guess_target_name = target.get_prefix_view().capitalize()
@@ -2207,9 +2219,9 @@ class IngestEvent(GraphEvent):
 class EatEvent(IngestEvent):
     """Handles eating a held object"""
 
-    NAMES = ['eat']
+    NAMES = ["eat"]
 
-    past_tense_action_name = 'ate'
+    past_tense_action_name = "ate"
 
     @classmethod
     def can_ingest(cls, object_node: GraphObject) -> bool:
@@ -2219,9 +2231,9 @@ class EatEvent(IngestEvent):
 class DrinkEvent(IngestEvent):
     """Handles eating a held object"""
 
-    NAMES = ['drink']
+    NAMES = ["drink"]
 
-    past_tense_action_name = 'drank'
+    past_tense_action_name = "drank"
 
     @classmethod
     def can_ingest(cls, object_node: GraphObject) -> bool:
@@ -2236,11 +2248,11 @@ class LockableEvent(GraphEvent):
     NAMES: List[str] = []  # must be overridden with locking and unlocking
 
     @classmethod
-    def is_correct_lock_status(cls, lock_edge: 'LockEdge') -> bool:
+    def is_correct_lock_status(cls, lock_edge: "LockEdge") -> bool:
         raise NotImplementedError
 
     @classmethod
-    def process_locking(cls, lock_edge: 'LockEdge') -> None:
+    def process_locking(cls, lock_edge: "LockEdge") -> None:
         raise NotImplementedError
 
     def execute(self, world: "World") -> List[GraphEvent]:
@@ -2278,31 +2290,31 @@ class LockableEvent(GraphEvent):
         else:
             viewer_text = self._actor_name.capitalize()
         return (
-            f'{viewer_text} {self.NAMES[0]}ed {self._locked_name} with {self._key_name}'
+            f"{viewer_text} {self.NAMES[0]}ed {self._locked_name} with {self._key_name}"
         )
 
     def to_canonical_form(self) -> str:
         """return action text for putting the object in/on the container"""
-        return f'{self.NAMES[0]} {self._canonical_targets[0]} with {self._canonical_targets[1]}'
+        return f"{self.NAMES[0]} {self._canonical_targets[0]} with {self._canonical_targets[1]}"
 
     @classmethod
     def split_text_args(
         cls, actor: GraphAgent, text: str
-    ) -> Union[List[List[str]], 'ErrorEvent']:
+    ) -> Union[List[List[str]], "ErrorEvent"]:
         """
         Return all possible interpretations for "lock x with y".
 
         Must consider multiple with situations
         """
-        if ' with ' not in text:
+        if " with " not in text:
             return ErrorEvent(
                 cls, actor, f"You must `{cls.NAMES[0]} <something> with <key>`."
             )
         possibilities = []
-        possible_with_splits = text.split(' with ')
+        possible_with_splits = text.split(" with ")
         for split_ind in range(len(possible_with_splits)):
-            before = ' with '.join(possible_with_splits[:split_ind])
-            after = ' with '.join(possible_with_splits[split_ind:])
+            before = " with ".join(possible_with_splits[:split_ind])
+            after = " with ".join(possible_with_splits[split_ind:])
             if len(after) > 0 and len(before) > 0:
                 possibilities.append([before, after])
         return possibilities
@@ -2315,11 +2327,11 @@ class LockableEvent(GraphEvent):
         Try to find applicable nodes by the given names - here we're searching
         for a lockable thing in the room or carried by the actor, and a key within the actor.
         """
-        assert len(text_args) == 2, f'LockableEvents take two arg, got {text_args}'
+        assert len(text_args) == 2, f"LockableEvents take two arg, got {text_args}"
         lockable_name, key_name = text_args
 
         curr_room = actor.get_room()
-        possible_keys = graph.desc_to_nodes(key_name, actor, 'carrying')
+        possible_keys = graph.desc_to_nodes(key_name, actor, "carrying")
         possible_key_objects = [x for x in possible_keys if x.object]
 
         if len(possible_keys) == 0:
@@ -2330,7 +2342,7 @@ class LockableEvent(GraphEvent):
             )
 
         possible_lockable_rooms = graph.desc_to_nodes(
-            lockable_name, actor.get_room(), 'path'
+            lockable_name, actor.get_room(), "path"
         )
         rooms_with_edges = [
             (x, curr_room.get_edge_to(x)) for x in possible_lockable_rooms
@@ -2343,7 +2355,7 @@ class LockableEvent(GraphEvent):
 
         possible_lockable_objects = [
             x
-            for x in graph.desc_to_nodes(lockable_name, actor, 'carrying+sameloc')
+            for x in graph.desc_to_nodes(lockable_name, actor, "carrying+sameloc")
             if x.object
         ]
         definitely_lockable_objects = [
@@ -2401,12 +2413,12 @@ class LockableEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['LockableEvent', 'ErrorEvent']:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["LockableEvent", "ErrorEvent"]:
         """Lock object events are valid as long as the target is unlocked"""
-        assert len(targets) == 1, f'LockableEvent takes one arg, got {targets}'
+        assert len(targets) == 1, f"LockableEvent takes one arg, got {targets}"
         target_node, key_node = targets
-        assert key_node in actor.get_contents(), 'Actor not carrying key'
+        assert key_node in actor.get_contents(), "Actor not carrying key"
         assert isinstance(
             target_node, GraphObject
         ), f"Must lock an object, not {target_node}"
@@ -2485,28 +2497,28 @@ class LockableEvent(GraphEvent):
 class LockEvent(LockableEvent):
     """Handles locking an edge/container with the appropriate key"""
 
-    NAMES = ['lock']
+    NAMES = ["lock"]
 
     @classmethod
-    def is_correct_lock_status(cls, lock_edge: 'LockEdge') -> bool:
+    def is_correct_lock_status(cls, lock_edge: "LockEdge") -> bool:
         return lock_edge.get_is_locked() is False
 
     @classmethod
-    def process_locking(cls, lock_edge: 'LockEdge') -> None:
+    def process_locking(cls, lock_edge: "LockEdge") -> None:
         lock_edge.lock()
 
 
 class UnlockEvent(GraphEvent):
     """Handles unlocking an edge/container with the appropriate key"""
 
-    NAMES = ['unlock']
+    NAMES = ["unlock"]
 
     @classmethod
-    def is_correct_lock_status(cls, lock_edge: 'LockEdge') -> bool:
+    def is_correct_lock_status(cls, lock_edge: "LockEdge") -> bool:
         return lock_edge.get_is_locked() is True
 
     @classmethod
-    def process_locking(cls, lock_edge: 'LockEdge') -> None:
+    def process_locking(cls, lock_edge: "LockEdge") -> None:
         lock_edge.unlock()
 
 
@@ -2514,7 +2526,7 @@ class UnlockEvent(GraphEvent):
 class ExamineEvent(GraphEvent):
     """Handles displaying examine/extra text for a graph node"""
 
-    NAMES = ['examine', 'ex']
+    NAMES = ["examine", "ex"]
 
     def _get_target_description(self, world: "World") -> str:
         """Get the examine description for the given target"""
@@ -2527,7 +2539,7 @@ class ExamineEvent(GraphEvent):
         base_desc = target.desc
         if isinstance(target, GraphAgent):
             inv_text = world.view.get_inventory_text_for(object_id, give_empty=False)
-            if inv_text != '':
+            if inv_text != "":
                 base_desc += f"\n{self.__target_name} is {inv_text} "
         elif isinstance(target, GraphObject) and target.container:
             if len(target.get_contents()) > 0:
@@ -2560,7 +2572,7 @@ class ExamineEvent(GraphEvent):
 
     def to_canonical_form(self) -> str:
         """return action text for dropping the object"""
-        return f'examine {self._canonical_targets[0]}'
+        return f"examine {self._canonical_targets[0]}"
 
     @classmethod
     def find_nodes_for_args(
@@ -2570,11 +2582,11 @@ class ExamineEvent(GraphEvent):
         Try to find applicable nodes by the given names - here we're searching
         for an object within the actor.
         """
-        assert len(text_args) == 1, f'ExamineEvent takes one arg, got {text_args}'
+        assert len(text_args) == 1, f"ExamineEvent takes one arg, got {text_args}"
         object_name = text_args[0]
 
-        all_nodes = graph.desc_to_nodes(object_name, actor, 'all+here')
-        rooms_too = graph.desc_to_nodes(object_name, actor, 'path')
+        all_nodes = graph.desc_to_nodes(object_name, actor, "all+here")
+        rooms_too = graph.desc_to_nodes(object_name, actor, "path")
         applicable_nodes = all_nodes + rooms_too
         if len(applicable_nodes) > 0:
             return ProcessedArguments(targets=[applicable_nodes[0]])
@@ -2582,8 +2594,8 @@ class ExamineEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> 'ExamineEvent':
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> "ExamineEvent":
         """Examine events are always valid if constructed"""
         return cls(actor, target_nodes=targets)
 
@@ -2612,31 +2624,31 @@ class ExamineEvent(GraphEvent):
 class EmoteEvent(GraphEvent):
     """Handles ending an emotion to the room."""
 
-    NAMES = ['emote']
+    NAMES = ["emote"]
 
     DESC_MAP = {
-        'applaud': 'applauds',
-        'blush': 'blushes',
-        'cry': 'cries',
-        'dance': 'dances',
-        'frown': 'frowns',
-        'gasp': 'gasps',
-        'grin': 'grins',
-        'groan': 'groans',
-        'growl': 'growls',
-        'laugh': 'laughs',
-        'nod': 'nods',
-        'nudge': 'nudges',
-        'ponder': 'ponders',
-        'pout': 'pouts',
-        'scream': 'screams',
-        'shrug': 'shrugs',
-        'sigh': 'sighs',
-        'smile': 'smiles',
-        'stare': 'stares',
-        'wave': 'waves',
-        'wink': 'winks',
-        'yawn': 'yawns',
+        "applaud": "applauds",
+        "blush": "blushes",
+        "cry": "cries",
+        "dance": "dances",
+        "frown": "frowns",
+        "gasp": "gasps",
+        "grin": "grins",
+        "groan": "groans",
+        "growl": "growls",
+        "laugh": "laughs",
+        "nod": "nods",
+        "nudge": "nudges",
+        "ponder": "ponders",
+        "pout": "pouts",
+        "scream": "screams",
+        "shrug": "shrugs",
+        "sigh": "sighs",
+        "smile": "smiles",
+        "stare": "stares",
+        "wave": "waves",
+        "wink": "winks",
+        "yawn": "yawns",
     }
 
     def execute(self, world: "World") -> List[GraphEvent]:
@@ -2645,7 +2657,7 @@ class EmoteEvent(GraphEvent):
         assert self.text_content is not None, "Cannot emote without text_context"
         actor_name = self.actor.get_prefix_view()
         self.__display_action = self.DESC_MAP[self.text_content]
-        self.__in_room_view = f'{actor_name} {self.__display_action}'.capitalize()
+        self.__in_room_view = f"{actor_name} {self.__display_action}".capitalize()
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         self.executed = True
         return []
@@ -2661,7 +2673,7 @@ class EmoteEvent(GraphEvent):
         """
         Provide the text that this event's actor would use to invoke this event
         """
-        return f'emote {self.text_content}'
+        return f"emote {self.text_content}"
 
     @classmethod
     def split_text_args(cls, actor: GraphAgent, text: str) -> List[List[str]]:
@@ -2670,11 +2682,11 @@ class EmoteEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List['GraphNode'], text: Optional[str] = None
-    ) -> Union['EmoteEvent', 'ErrorEvent']:
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["EmoteEvent", "ErrorEvent"]:
         """Emote events are valid if the emote is valid."""
         if text is None or text not in cls.DESC_MAP:
-            all_emotes = ', '.join(cls.DESC_MAP.keys()) + '.'
+            all_emotes = ", ".join(cls.DESC_MAP.keys()) + "."
             return ErrorEvent(
                 cls,
                 actor,
@@ -2699,7 +2711,7 @@ class EmoteEvent(GraphEvent):
 class WaitEvent(NoArgumentEvent):
     """Wait events just allow a player to do nothing in a timestep"""
 
-    NAMES = ['wait']
+    NAMES = ["wait"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -2739,8 +2751,8 @@ class InventoryEvent(NoArgumentEvent):
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
             return (
-                f'You check yourself. You are {self.__actor_name}!\n'
-                f'You are {self.__inv_text}'
+                f"You check yourself. You are {self.__actor_name}!\n"
+                f"You are {self.__inv_text}"
             )
         else:
             return f"{self.__actor_name.capitalize()} checked their inventory. "
@@ -2765,7 +2777,7 @@ class HealthEvent(NoArgumentEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            return f'You are feeling {self.__health_text}. '
+            return f"You are feeling {self.__health_text}. "
         else:
             return f"{self.__actor_name.capitalize()} checked their health. "
 
@@ -2798,10 +2810,10 @@ class LookEvent(NoArgumentEvent):
         """
         assert not self.executed
         is_return = self.room.node_id in self.actor._visited_rooms
-        if is_return or not self.room.has_prop('first_desc'):
+        if is_return or not self.room.has_prop("first_desc"):
             self.room_desc: str = self.room.desc
         else:
-            self.room_desc = self.room.get_prop('first_desc')
+            self.room_desc = self.room.get_prop("first_desc")
 
         self.actor._visited_rooms.add(self.room.node_id)
 

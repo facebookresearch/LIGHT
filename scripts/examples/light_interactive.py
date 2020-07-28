@@ -8,44 +8,44 @@ import json
 import random
 
 
-personas_path = '/checkpoint/parlai/zoo/light/personas.json'
-SETTING_NAME = '_setting_name '
-SETTING_DESC = '_setting_desc '
-SELF_NAME = '_self_name '
-SELF_PERSONA = '_self_persona '
-PARTNER_NAME = '_partner_name '
-SELF_SAY = '_self_say '
-PARTNER_SAY = '_partner_say '
+personas_path = "/checkpoint/parlai/zoo/light/personas.json"
+SETTING_NAME = "_setting_name "
+SETTING_DESC = "_setting_desc "
+SELF_NAME = "_self_name "
+SELF_PERSONA = "_self_persona "
+PARTNER_NAME = "_partner_name "
+SELF_SAY = "_self_say "
+PARTNER_SAY = "_partner_say "
 
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, True, 'Interactive chat with a model')
-    parser.add_argument('-d', '--display-examples', type='bool', default=False)
+        parser = ParlaiParser(True, True, "Interactive chat with a model")
+    parser.add_argument("-d", "--display-examples", type="bool", default=False)
     parser.add_argument(
-        '--display-prettify',
-        type='bool',
+        "--display-prettify",
+        type="bool",
         default=False,
-        help='Set to use a prettytable when displaying '
-        'examples with text candidates',
+        help="Set to use a prettytable when displaying "
+        "examples with text candidates",
     )
     parser.add_argument(
-        '--display-ignore-fields',
+        "--display-ignore-fields",
         type=str,
-        default='label_candidates,text_candidates',
-        help='Do not display these fields',
+        default="label_candidates,text_candidates",
+        help="Do not display these fields",
     )
     parser.add_argument(
-        '-it',
-        '--interactive-task',
-        type='bool',
+        "-it",
+        "--interactive-task",
+        type="bool",
         default=True,
-        help='Create interactive version of task',
+        help="Create interactive version of task",
     )
     parser.set_defaults(
         interactive_mode=True,
-        task='interactive',
-        model_file='/checkpoint/parlai/zoo/light/reddit_polyranker/model'  # change the model file if you have another pretrained model
+        task="interactive",
+        model_file="/checkpoint/parlai/zoo/light/reddit_polyranker/model",  # change the model file if you have another pretrained model
     )
     LocalHumanAgent.add_cmdline_args(parser)
     return parser
@@ -58,7 +58,7 @@ def interactive(opt, print_parser=None):
         elif print_parser is False:
             print_parser = None
     if isinstance(opt, ParlaiParser):
-        print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
+        print("[ Deprecated Warning: interactive should be passed opt not Parser ]")
         opt = opt.parse_args()
 
     random.seed()
@@ -73,16 +73,16 @@ def interactive(opt, print_parser=None):
         print_parser.print_args()
 
     # choose personas
-    personas = json.loads(open(personas_path, 'rb').read())
+    personas = json.loads(open(personas_path, "rb").read())
     p1, p2 = random.sample(personas, 2)
     p1_name, pers1, loc1 = p1
     p2_name, pers2, loc2 = p2
     # choose a random location from one of the provided locations
     loc = random.choice([loc1, loc2])
-    loc_name, loc_desc = loc.split('. ', 1)
+    loc_name, loc_desc = loc.split(". ", 1)
 
     # human persona
-    p1_obs_string = '\n'.join(
+    p1_obs_string = "\n".join(
         [
             SETTING_NAME + loc_name,
             SETTING_DESC + loc_desc,
@@ -92,7 +92,7 @@ def interactive(opt, print_parser=None):
         ]
     )
     # bot persona
-    p2_obs_string = '\n'.join(
+    p2_obs_string = "\n".join(
         [
             SETTING_NAME + loc_name,
             SETTING_DESC + loc_desc,
@@ -102,37 +102,33 @@ def interactive(opt, print_parser=None):
         ]
     )
 
-    print(
-        'Please play the following persona and setting:\n\n{}'.format(
-            p1_obs_string
-        )
-    )
+    print("Please play the following persona and setting:\n\n{}".format(p1_obs_string))
 
     used_cands = []
     bot_obs = [p2_obs_string]  # used for tracking history
     cnt = 0
     last_act = None
     while True:
-        new_act = {'epsiode_done': True}
+        new_act = {"epsiode_done": True}
         human_act = human_agent.act()
-        bot_obs.append(PARTNER_SAY + human_act['text'])
-        new_act['text'] = '\n'.join(bot_obs)
+        bot_obs.append(PARTNER_SAY + human_act["text"])
+        new_act["text"] = "\n".join(bot_obs)
         agent.observe(new_act)
         last_act = agent.act()
         # get a unique utterance among 100 available candidates
-        for cand in last_act['text_candidates']:
+        for cand in last_act["text_candidates"]:
             if cand not in used_cands:
                 used_cands.append(cand)
                 if type(last_act) == dict:
-                    last_act['text'] = cand
+                    last_act["text"] = cand
                 else:
-                    last_act.force_set('text', cand)
+                    last_act.force_set("text", cand)
                 break
-        bot_obs.append(SELF_SAY + last_act['text'])
+        bot_obs.append(SELF_SAY + last_act["text"])
         human_agent.observe(last_act)
         cnt += 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = setup_args()
     interactive(parser.parse_args(print_args=False), print_parser=parser)

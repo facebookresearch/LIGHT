@@ -11,13 +11,13 @@ import random
 import time
 
 
-SETTING_NAME = '_setting_name '
-SETTING_DESC = '_setting_desc '
-SELF_NAME = '_self_name '
-SELF_PERSONA = '_self_persona '
-PARTNER_NAME = '_partner_name '
-SELF_SAY = '_self_say '
-PARTNER_SAY = '_partner_say '
+SETTING_NAME = "_setting_name "
+SETTING_DESC = "_setting_desc "
+SELF_NAME = "_self_name "
+SELF_PERSONA = "_self_persona "
+PARTNER_NAME = "_partner_name "
+SELF_SAY = "_self_say "
+PARTNER_SAY = "_partner_say "
 
 EMOJI_LENGTH = 6
 
@@ -70,10 +70,10 @@ POLICIES = [
     "guarantee that messages will be completely anonymous. Do not send "
     "personal information (for example, name, "
     "address, email, or phone number) in your messages. \n\n",
-    "Facebook\'s Community Standards apply and you may not use any "
+    "Facebook's Community Standards apply and you may not use any "
     "racist, sexist, or otherwise offensive language, or harass other "
     "players. \n\n"
-    "If you violate our policies you may be reported and blocked. "
+    "If you violate our policies you may be reported and blocked. ",
 ]
 
 SINGLE_PLAYER_TIMEOUT = 600
@@ -101,7 +101,7 @@ FIRST_INTRO_MESSAGES = [
     f"The dungeon master {wizard} is trying to source potential players for "
     "the upcoming LIGHT RPG. Come try your hand! Any progress here will "
     "carry over to future releases.",
-    f"{dice*3}\n" + OVERWORLD_INSTRUCTIONS
+    f"{dice*3}\n" + OVERWORLD_INSTRUCTIONS,
 ]
 
 REPEAT_MESSAGE = (
@@ -141,7 +141,7 @@ SELF_CAUGHT_FLASHES = [
 
 PARTNER_CAUGHT_FLASHES = [
     "You did so well the Dungeon Master awards you a badge for both your and your partner's characters: ",
-    "\"Amazing work\" the Dungeon Master says, before handing you both of these badges: ",
+    '"Amazing work" the Dungeon Master says, before handing you both of these badges: ',
     "Your character proficiency was so strong the Dungeon Master insisted on giving you two badges: ",
 ]
 
@@ -174,9 +174,7 @@ NO_CHARACTERS_TEXT = (
     "using info from the setting, or otherwise staying in character."
 )
 
-HAS_CHARACTERS_TEXT = (
-    "Here are all of the badges the Dungeon Master has awarded you for exemplary performance so far."
-)
+HAS_CHARACTERS_TEXT = "Here are all of the badges the Dungeon Master has awarded you for exemplary performance so far."
 
 REPORT_BOT = (
     "Your report was successfully submitted. "
@@ -185,13 +183,9 @@ REPORT_BOT = (
     "*The game is now ending.* "
 )
 
-OFFLANG = (
-    "Your message could not be processed. Please try again."
-)
+OFFLANG = "Your message could not be processed. Please try again."
 
-REPORTED_OFFLANG = (
-    "We are unable to respond at this time. *The game is now ending.*"
-)
+REPORTED_OFFLANG = "We are unable to respond at this time. *The game is now ending.*"
 
 USERNAME_OFFLANG = (
     "We've found that the username you entered may contain offensive language. "
@@ -202,33 +196,33 @@ USERNAME_OFFLANG = (
 
 def agent_has_character(agent, character_name):
     """Return true if the given agent has collected the given character"""
-    characters = agent.data['characters_caught']
+    characters = agent.data["characters_caught"]
     character = characters[character_name.lower()]
-    return character['is_caught']
+    return character["is_caught"]
 
 
 def award_agent_character(agent, character_name):
     """Give the given agent the given character, return the emoji"""
-    char_str = agent.data['characters_caught_string']
-    characters = agent.data['characters_caught']
+    char_str = agent.data["characters_caught_string"]
+    characters = agent.data["characters_caught"]
     character = characters[character_name.lower()]
-    character['is_caught'] = True
-    update_idx = int(character['emoji_id'])
-    new_string = char_str[:update_idx] + '1' + char_str[update_idx + 1:]
-    agent.data['characters_caught_string'] = new_string
-    return character['emoji']
+    character["is_caught"] = True
+    update_idx = int(character["emoji_id"])
+    new_string = char_str[:update_idx] + "1" + char_str[update_idx + 1 :]
+    agent.data["characters_caught_string"] = new_string
+    return character["emoji"]
 
 
 def get_awarded_character_count(agent):
     """return the count of characters an agent has collected so far"""
-    return agent.data['characters_caught_string'].count('1')
+    return agent.data["characters_caught_string"].count("1")
 
 
 def get_awarded_character_emojis(agent):
     emojis = []
-    for char in agent.data['characters_caught'].values():
-        if char['is_caught']:
-            emojis.append(char['emoji'])
+    for char in agent.data["characters_caught"].values():
+        if char["is_caught"]:
+            emojis.append(char["emoji"])
     return emojis
 
 
@@ -252,7 +246,7 @@ def get_response_timeout_loop(agent, world):
         )
         return None
 
-    if a['text'].upper() == "EXIT":
+    if a["text"].upper() == "EXIT":
         world.episodeDone = True
         return None
     return a
@@ -261,7 +255,7 @@ def get_response_timeout_loop(agent, world):
 class LIGHTPersonaGenerator(object):
     def __init__(self, path):
         # load personas
-        with open(path, 'rb') as personafp:
+        with open(path, "rb") as personafp:
             self.personas = json.loads(personafp.read())
             self.num_personas = len(self.personas)
 
@@ -276,7 +270,7 @@ class LIGHTPersonaGenerator(object):
     def get_shortened_persona(self, length=2, pers=None):
         if pers is None:
             pers = self.get_persona()
-        persona = pers[1].split('. ')
+        persona = pers[1].split(". ")
         to_samp = min(length, len(persona))
         p_list = random.sample(persona, to_samp)
         return p_list

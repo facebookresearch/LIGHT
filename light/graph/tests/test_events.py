@@ -63,7 +63,7 @@ from typing import Tuple, List, Type, Optional
 class GraphEventTests(unittest.TestCase):
     """
     This class contains the basic structure of a test for a GraphEvent.
-    
+
     It requires specifying initial inputs and expected outputs.
     """
 
@@ -100,7 +100,7 @@ class GraphEventTests(unittest.TestCase):
 
     def test_run_successful_cases(self) -> None:
         """
-        Try any tests that should result in successful outcomes. 
+        Try any tests that should result in successful outcomes.
         """
         GraphEventClass = self.EVENT_CLASS
         for (
@@ -119,7 +119,7 @@ class GraphEventTests(unittest.TestCase):
             self.assertNotIsInstance(
                 possible_text_args,
                 ErrorEvent,
-                f'Recieved error {possible_text_args} processing string on input {input_string}',
+                f"Recieved error {possible_text_args} processing string on input {input_string}",
             )
             assert not isinstance(possible_text_args, ErrorEvent)
             found_success = False
@@ -141,13 +141,13 @@ class GraphEventTests(unittest.TestCase):
             self.assertListEqual(
                 target_node_ids,
                 found_node_ids,
-                f'Found target nodes {target_node_ids} not expected {found_node_ids}',
+                f"Found target nodes {target_node_ids} not expected {found_node_ids}",
             )
             found_text = result.text
             self.assertEqual(
                 text,
                 found_text,
-                f'Found text {found_text} was not expected text {text}',
+                f"Found text {found_text} was not expected text {text}",
             )
             event = GraphEventClass.construct_from_args(
                 actor_node, target_nodes, found_text
@@ -166,11 +166,19 @@ class GraphEventTests(unittest.TestCase):
             res = event.to_json()
             before_oo_graph = copy.deepcopy(self.world.oo_graph)
             event_back = GraphEvent.from_json(res, self.world)
-            self.assertEqual(type(event), type(event_back), "From Json event should be same type as base event")
+            self.assertEqual(
+                type(event),
+                type(event_back),
+                "From Json event should be same type as base event",
+            )
             class_ = event.__class__.__name__
             for k in event.__dict__:
-                if not k.startswith(f'_{class_}__'):
-                    self.assertEqual(event.__dict__[k], event_back.__dict__[k], 'From Json event should have the same k/v (except hidden vars)')
+                if not k.startswith(f"_{class_}__"):
+                    self.assertEqual(
+                        event.__dict__[k],
+                        event_back.__dict__[k],
+                        "From Json event should have the same k/v (except hidden vars)",
+                    )
             self.graph = before_oo_graph
             self.world.oo_graph = self.graph
             self.graph.delete_nodes()
@@ -178,7 +186,7 @@ class GraphEventTests(unittest.TestCase):
             self.assertDictEqual(
                 json.loads(final_json.strip()),
                 json.loads(output_graph_json.strip()),
-                f'on input {input_string} Json not matching. : actual: {final_json.strip()}',
+                f"on input {input_string} Json not matching. : actual: {final_json.strip()}",
             )
             observations = actor_node.get_observations()
             observation_types = [type(x) for x in observations]
@@ -186,7 +194,7 @@ class GraphEventTests(unittest.TestCase):
 
     def test_run_error_cases(self) -> None:
         """
-        Try any tests that should not result in unsuccessful outcomes. 
+        Try any tests that should not result in unsuccessful outcomes.
         """
         GraphEventClass = self.EVENT_CLASS
         for (actor_id, input_string) in self.ERROR_CASES:
@@ -224,7 +232,7 @@ class GraphEventTests(unittest.TestCase):
 
     def test_run_valid_cases(self) -> None:
         if not self.HAS_VALID_EVENTS:
-            self.skipTest(f'No valid events for {self.EVENT_CLASS}')
+            self.skipTest(f"No valid events for {self.EVENT_CLASS}")
         agent_ids = list(self.graph.agents.keys())
         GraphEventClass = self.EVENT_CLASS
         had_valid_test = False
@@ -369,12 +377,12 @@ test_graph_1_after_noop = OOGraph.from_json(test_graph_1).to_json()
 class SayEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_1
-    ERROR_CASES = [('test_agent_0', ""), ('test_agent_0', "\n")]
+    ERROR_CASES = [("test_agent_0", ""), ("test_agent_0", "\n")]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'test_agent_0',
+            "test_agent_0",
             "something I'm giving up on you",
             [],
             "something I'm giving up on you",
@@ -382,7 +390,7 @@ class SayEventTest(GraphEventTests):
             [SayEvent],
         ),
         (
-            'test_agent_0',
+            "test_agent_0",
             "this is a test phrase",
             [],
             "this is a test phrase",
@@ -390,10 +398,10 @@ class SayEventTest(GraphEventTests):
             [SayEvent],
         ),
         (
-            'test_agent_0',
+            "test_agent_0",
             '"I can parse with quotations too"',
             [],
-            'I can parse with quotations too',
+            "I can parse with quotations too",
             test_graph_1_after_noop,
             [SayEvent],
         ),
@@ -406,12 +414,12 @@ class SayEventTest(GraphEventTests):
 class ShoutEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_1
-    ERROR_CASES = [('test_agent_0', ""), ('test_agent_0', "\n")]
+    ERROR_CASES = [("test_agent_0", ""), ("test_agent_0", "\n")]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'test_agent_0',
+            "test_agent_0",
             "something I'm giving up on you",
             [],
             "something I'm giving up on you",
@@ -419,7 +427,7 @@ class ShoutEventTest(GraphEventTests):
             [],
         ),
         (
-            'test_agent_0',
+            "test_agent_0",
             "this is a test phrase",
             [],
             "this is a test phrase",
@@ -427,10 +435,10 @@ class ShoutEventTest(GraphEventTests):
             [],
         ),
         (
-            'test_agent_0',
+            "test_agent_0",
             '"I can parse with quotations too"',
             [],
-            'I can parse with quotations too',
+            "I can parse with quotations too",
             test_graph_1_after_noop,
             [],
         ),
@@ -444,20 +452,20 @@ class WhisperEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_1
     ERROR_CASES = [
-        ('test_agent_0', ""),
-        ('test_agent_0', "\n"),
-        ('test_agent_0', "something I'm giving up on you"),
-        ('test_agent_0', 'base_room "I can only parse with quotations"'),
-        ('test_agent_0', 'another_test_agent "\n"'),
+        ("test_agent_0", ""),
+        ("test_agent_0", "\n"),
+        ("test_agent_0", "something I'm giving up on you"),
+        ("test_agent_0", 'base_room "I can only parse with quotations"'),
+        ("test_agent_0", 'another_test_agent "\n"'),
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'test_agent_0',
+            "test_agent_0",
             'another_test_agent "I can only parse with quotations"',
-            ['another_test_agent_2'],
-            'I can only parse with quotations',
+            ["another_test_agent_2"],
+            "I can only parse with quotations",
             test_graph_1_after_noop,
             [WhisperEvent],
         )
@@ -471,20 +479,20 @@ class TellEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_1
     ERROR_CASES = [
-        ('test_agent_0', ""),
-        ('test_agent_0', "\n"),
-        ('test_agent_0', "something I'm giving up on you"),
-        ('test_agent_0', 'base_room "I can only parse with quotations"'),
-        ('test_agent_0', 'another_test_agent "\n"'),
+        ("test_agent_0", ""),
+        ("test_agent_0", "\n"),
+        ("test_agent_0", "something I'm giving up on you"),
+        ("test_agent_0", 'base_room "I can only parse with quotations"'),
+        ("test_agent_0", 'another_test_agent "\n"'),
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'test_agent_0',
+            "test_agent_0",
             'another_test_agent "I can only parse with quotations"',
-            ['another_test_agent_2'],
-            'I can only parse with quotations',
+            ["another_test_agent_2"],
+            "I can only parse with quotations",
             test_graph_1_after_noop,
             [TellEvent],
         )
@@ -689,19 +697,19 @@ test_graph_2 = """
 test_graph_2_after_noop = OOGraph.from_json(test_graph_2).to_json()
 
 test_graph_2_after_move_dict = json.loads(test_graph_2)
-test_graph_2_after_move_dict['nodes']['base_room_1']['contained_nodes'] = {
+test_graph_2_after_move_dict["nodes"]["base_room_1"]["contained_nodes"] = {
     "another_test_agent_2": {"target_id": "another_test_agent_2"}
 }
-test_graph_2_after_move_dict['nodes']['base_room_1']['contain_size'] = 100040
-test_graph_2_after_move_dict['nodes']['other_room_1']['contained_nodes'] = {
+test_graph_2_after_move_dict["nodes"]["base_room_1"]["contain_size"] = 100040
+test_graph_2_after_move_dict["nodes"]["other_room_1"]["contained_nodes"] = {
     "following_agent_0": {"target_id": "following_agent_0"},
     "test_agent_0": {"target_id": "test_agent_0"},
 }
-test_graph_2_after_move_dict['nodes']['other_room_1']['contain_size'] = 99960
-test_graph_2_after_move_dict['nodes']['following_agent_0']['container_node'] = {
+test_graph_2_after_move_dict["nodes"]["other_room_1"]["contain_size"] = 99960
+test_graph_2_after_move_dict["nodes"]["following_agent_0"]["container_node"] = {
     "target_id": "other_room_1"
 }
-test_graph_2_after_move_dict['nodes']['test_agent_0']['container_node'] = {
+test_graph_2_after_move_dict["nodes"]["test_agent_0"]["container_node"] = {
     "target_id": "other_room_1"
 }
 test_graph_2_after_move = OOGraph.from_json(
@@ -713,25 +721,25 @@ class GoEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_2
     ERROR_CASES = [
-        ('test_agent_0', "base_room"),
-        ('test_agent_0', "following_agent"),
-        ('test_agent_0', 'test_agent"'),
+        ("test_agent_0", "base_room"),
+        ("test_agent_0", "following_agent"),
+        ("test_agent_0", 'test_agent"'),
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'test_agent_0',
-            's',
-            ['other_room_1'],
+            "test_agent_0",
+            "s",
+            ["other_room_1"],
             None,
             test_graph_2_after_move,
             [LeaveEvent, ArriveEvent, LookEvent, ArriveEvent],
         ),
         (
-            'test_agent_0',
-            'south',
-            ['other_room_1'],
+            "test_agent_0",
+            "south",
+            ["other_room_1"],
             None,
             test_graph_2_after_move,
             [LeaveEvent, ArriveEvent, LookEvent, ArriveEvent],
@@ -741,13 +749,13 @@ class GoEventTest(GraphEventTests):
 
 
 test_graph_2_after_follow_dict = json.loads(test_graph_2)
-test_graph_2_after_follow_dict['nodes']['another_test_agent_2']['followed_by'] = {
+test_graph_2_after_follow_dict["nodes"]["another_test_agent_2"]["followed_by"] = {
     "following_agent_0": {"target_id": "following_agent_0"}
 }
-test_graph_2_after_follow_dict['nodes']['following_agent_0']['following'] = {
+test_graph_2_after_follow_dict["nodes"]["following_agent_0"]["following"] = {
     "target_id": "another_test_agent_2"
 }
-test_graph_2_after_follow_dict['nodes']['test_agent_0']['followed_by'] = {}
+test_graph_2_after_follow_dict["nodes"]["test_agent_0"]["followed_by"] = {}
 test_graph_2_after_follow = OOGraph.from_json(
     json.dumps(test_graph_2_after_follow_dict)
 ).to_json()
@@ -757,22 +765,22 @@ class FollowEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_2
     ERROR_CASES = [
-        ('following_agent_0', "test_agent"),  # Failed because already following them
-        ('following_agent_0', "other_room"),  # Failed because not followable
-        ('test_agent_0', ""),  # Failed because bad input
-        ('test_agent_0', 'abc"'),  # Failed because not present
+        ("following_agent_0", "test_agent"),  # Failed because already following them
+        ("following_agent_0", "other_room"),  # Failed because not followable
+        ("test_agent_0", ""),  # Failed because bad input
+        ("test_agent_0", 'abc"'),  # Failed because not present
         (
-            'another_test_agent_2',
-            'another_test_agent',
+            "another_test_agent_2",
+            "another_test_agent",
         ),  # failed because can't follow self
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'following_agent_0',
-            'another_test_agent',
-            ['another_test_agent_2'],
+            "following_agent_0",
+            "another_test_agent",
+            ["another_test_agent_2"],
             None,
             test_graph_2_after_follow,
             [UnfollowEvent, FollowEvent],
@@ -782,8 +790,8 @@ class FollowEventTest(GraphEventTests):
 
 
 test_graph_2_after_unfollow_dict = json.loads(test_graph_2)
-test_graph_2_after_unfollow_dict['nodes']['following_agent_0']['following'] = None
-test_graph_2_after_unfollow_dict['nodes']['test_agent_0']['followed_by'] = {}
+test_graph_2_after_unfollow_dict["nodes"]["following_agent_0"]["following"] = None
+test_graph_2_after_unfollow_dict["nodes"]["test_agent_0"]["followed_by"] = {}
 test_graph_2_after_unfollow = OOGraph.from_json(
     json.dumps(test_graph_2_after_unfollow_dict)
 ).to_json()
@@ -792,13 +800,13 @@ test_graph_2_after_unfollow = OOGraph.from_json(
 class UnfollowEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_2
-    ERROR_CASES = [('test_agent_0', '')]  # failed because not following
+    ERROR_CASES = [("test_agent_0", "")]  # failed because not following
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'following_agent_0',
-            '',
+            "following_agent_0",
+            "",
             [],
             None,
             test_graph_2_after_unfollow,
@@ -809,8 +817,8 @@ class UnfollowEventTest(GraphEventTests):
 
 
 test_graph_2_after_kill_following_dict = json.loads(test_graph_2)
-del test_graph_2_after_kill_following_dict['nodes']['following_agent_0']
-test_graph_2_after_kill_following_dict['nodes']['following_agent_0__dead__'] = {
+del test_graph_2_after_kill_following_dict["nodes"]["following_agent_0"]
+test_graph_2_after_kill_following_dict["nodes"]["following_agent_0__dead__"] = {
     "agent": False,
     "classes": ["object", "container", "agent"],
     "contain_size": 20,
@@ -838,24 +846,24 @@ test_graph_2_after_kill_following_dict['nodes']['following_agent_0__dead__'] = {
     "wearable": False,
     "wieldable": False,
 }
-test_graph_2_after_kill_following_dict['nodes']['test_agent_0']['followed_by'] = {}
-test_graph_2_after_kill_following_dict['nodes']['base_room_1']['contained_nodes'] = {
+test_graph_2_after_kill_following_dict["nodes"]["test_agent_0"]["followed_by"] = {}
+test_graph_2_after_kill_following_dict["nodes"]["base_room_1"]["contained_nodes"] = {
     "another_test_agent_2": {"target_id": "another_test_agent_2"},
     "following_agent_0__dead__": {"target_id": "following_agent_0__dead__"},
     "test_agent_0": {"target_id": "test_agent_0"},
 }
-test_graph_2_after_kill_following_dict['agents'] = [
+test_graph_2_after_kill_following_dict["agents"] = [
     "another_test_agent_2",
     "test_agent_0",
 ]
-test_graph_2_after_kill_following_dict['objects'] = ["following_agent_0__dead__"]
+test_graph_2_after_kill_following_dict["objects"] = ["following_agent_0__dead__"]
 test_graph_2_after_kill_following = OOGraph.from_json(
     json.dumps(test_graph_2_after_kill_following_dict)
 ).to_json()
 
 
 test_graph_2_after_hit_another_dict = json.loads(test_graph_2)
-test_graph_2_after_hit_another_dict['nodes']['test_agent_0']['health'] = 8
+test_graph_2_after_hit_another_dict["nodes"]["test_agent_0"]["health"] = 8
 test_graph_2_after_hit_another = OOGraph.from_json(
     json.dumps(test_graph_2_after_hit_another_dict)
 ).to_json()
@@ -865,33 +873,33 @@ class HitEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_2
     ERROR_CASES = [
-        ('following_agent_0', "following_agent"),  # failed because can't hit self
-        ('test_agent_0', "abc"),  # failed because bad input
-        ('test_agent_0', ''),  # failed because no target
+        ("following_agent_0", "following_agent"),  # failed because can't hit self
+        ("test_agent_0", "abc"),  # failed because bad input
+        ("test_agent_0", ""),  # failed because no target
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'test_agent_0',
-            'following_agent',
-            ['following_agent_0'],
+            "test_agent_0",
+            "following_agent",
+            ["following_agent_0"],
             None,
             test_graph_2_after_kill_following,
             [HitEvent, DeathEvent],
         ),
         (
-            'following_agent_0',
-            'another',
-            ['another_test_agent_2'],
+            "following_agent_0",
+            "another",
+            ["another_test_agent_2"],
             None,
             test_graph_2_after_noop,
             [HitEvent],
         ),
         (
-            'another_test_agent_2',
-            'test',
-            ['test_agent_0'],
+            "another_test_agent_2",
+            "test",
+            ["test_agent_0"],
             None,
             test_graph_2_after_hit_another,
             [HitEvent],
@@ -904,33 +912,33 @@ class HugEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_2
     ERROR_CASES = [
-        ('following_agent_0', "following_agent"),  # failed because can't hug self
-        ('test_agent_0', "abc"),  # failed because bad input
-        ('test_agent_0', ''),  # failed because no target
+        ("following_agent_0", "following_agent"),  # failed because can't hug self
+        ("test_agent_0", "abc"),  # failed because bad input
+        ("test_agent_0", ""),  # failed because no target
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'test_agent_0',
-            'following_agent',
-            ['following_agent_0'],
+            "test_agent_0",
+            "following_agent",
+            ["following_agent_0"],
             None,
             test_graph_2_after_noop,
             [HugEvent],
         ),
         (
-            'following_agent_0',
-            'another',
-            ['another_test_agent_2'],
+            "following_agent_0",
+            "another",
+            ["another_test_agent_2"],
             None,
             test_graph_2_after_noop,
             [HugEvent],
         ),
         (
-            'another_test_agent_2',
-            'test',
-            ['test_agent_0'],
+            "another_test_agent_2",
+            "test",
+            ["test_agent_0"],
             None,
             test_graph_2_after_noop,
             [HugEvent],
@@ -943,14 +951,14 @@ class EmoteEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_2
     ERROR_CASES = [
-        ('following_agent_0', "following_agent"),  # failed because this isn't an emote
-        ('test_agent_0', "abc"),  # failed because not an emote
-        ('test_agent_0', ''),  # failed because no target
+        ("following_agent_0", "following_agent"),  # failed because this isn't an emote
+        ("test_agent_0", "abc"),  # failed because not an emote
+        ("test_agent_0", ""),  # failed because no target
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
-        ('test_agent_0', x, [], x, test_graph_2_after_noop, [EmoteEvent])
+        ("test_agent_0", x, [], x, test_graph_2_after_noop, [EmoteEvent])
         for x in EmoteEvent.DESC_MAP.keys()
     ]
     EVENT_CLASS = EmoteEvent
@@ -964,7 +972,7 @@ class WaitEventTest(GraphEventTests):
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
-    ] = [('test_agent_0', '', [], None, test_graph_2_after_noop, [WaitEvent])]
+    ] = [("test_agent_0", "", [], None, test_graph_2_after_noop, [WaitEvent])]
     EVENT_CLASS = WaitEvent
 
 
@@ -976,7 +984,7 @@ class HealthEventTest(GraphEventTests):
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
-    ] = [('test_agent_0', '', [], None, test_graph_2_after_noop, [HealthEvent])]
+    ] = [("test_agent_0", "", [], None, test_graph_2_after_noop, [HealthEvent])]
     EVENT_CLASS = HealthEvent
 
 
@@ -1533,10 +1541,10 @@ class InventoryEventTest(GraphEventTests):
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         # Test having a lot of items
-        ('carrier_12', '', [], None, test_graph_3, [InventoryEvent]),
+        ("carrier_12", "", [], None, test_graph_3, [InventoryEvent]),
         # Test having nothing
-        ('trained_monkey_13', '', [], None, test_graph_3, [InventoryEvent]),
-        ('sword_dealer_14', '', [], None, test_graph_3, [InventoryEvent]),
+        ("trained_monkey_13", "", [], None, test_graph_3, [InventoryEvent]),
+        ("sword_dealer_14", "", [], None, test_graph_3, [InventoryEvent]),
     ]
     EVENT_CLASS = InventoryEvent
 
@@ -1551,16 +1559,16 @@ class LookEventTest(GraphEventTests):
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         # Test having a lot of items
-        ('carrier_12', '', [], None, test_graph_3, [LookEvent]),
+        ("carrier_12", "", [], None, test_graph_3, [LookEvent]),
         # Test having nothing
-        ('trained_monkey_13', '', [], None, test_graph_3, [LookEvent]),
-        ('sword_dealer_14', '', [], None, test_graph_3, [LookEvent]),
+        ("trained_monkey_13", "", [], None, test_graph_3, [LookEvent]),
+        ("sword_dealer_14", "", [], None, test_graph_3, [LookEvent]),
     ]
     EVENT_CLASS = LookEvent
 
 
 # TODO test TriggeredEvents that aren't triggered by other events
-class SpawnEventTest():
+class SpawnEventTest:
     pass
 
 
@@ -1569,51 +1577,51 @@ class ExamineEventTest(GraphEventTests):
     INPUT_WORLD_JSON = test_graph_3
     ERROR_CASES: List[Tuple[str, str]] = [
         # Examine events fail if things can't be seen
-        ('carrier_12', 'contained object'),  # Can't examine things in things
-        ('carrier_12', '123'),  # Fail because the thing doesn't exist
-        ('carrier_12', ''),
-        ('carrier_12', 'carrier'),
+        ("carrier_12", "contained object"),  # Can't examine things in things
+        ("carrier_12", "123"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("carrier_12", "carrier"),
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'carrier_12',
-            'sword f',
-            ['sword_from_a_stone_4'],
+            "carrier_12",
+            "sword f",
+            ["sword_from_a_stone_4"],
             None,
             test_graph_3,
             [ExamineEvent],
         ),
         (
-            'carrier_12',
-            'sword d',
-            ['sword_dealer_14'],
+            "carrier_12",
+            "sword d",
+            ["sword_dealer_14"],
             None,
             test_graph_3,
             [ExamineEvent],
         ),
         (
-            'carrier_12',
-            'sword',
-            ['sword_dealer_14'],
+            "carrier_12",
+            "sword",
+            ["sword_dealer_14"],
             None,
             test_graph_3,
             [ExamineEvent],
         ),
-        ('carrier_12', 'room', ['main_room_0'], None, test_graph_3, [ExamineEvent]),
+        ("carrier_12", "room", ["main_room_0"], None, test_graph_3, [ExamineEvent]),
         (
-            'trained_monkey_13',
-            'south',
-            ['main_room_0'],
+            "trained_monkey_13",
+            "south",
+            ["main_room_0"],
             None,
             test_graph_3,
             [ExamineEvent],
         ),
         (
-            'sword_dealer_14',
-            'carrier',
-            ['carrier_12'],
+            "sword_dealer_14",
+            "carrier",
+            ["carrier_12"],
             None,
             test_graph_3,
             [ExamineEvent],
@@ -1623,16 +1631,16 @@ class ExamineEventTest(GraphEventTests):
 
 
 test_graph_3_before_get_contained = OOGraph.from_json(test_graph_3)
-contained_node = test_graph_3_before_get_contained.get_node('contained_object_10')
-carrier_node = test_graph_3_before_get_contained.get_node('carrier_12')
-assert contained_node is not None and carrier_node is not None, 'Graph parsing failed'
+contained_node = test_graph_3_before_get_contained.get_node("contained_object_10")
+carrier_node = test_graph_3_before_get_contained.get_node("carrier_12")
+assert contained_node is not None and carrier_node is not None, "Graph parsing failed"
 contained_node.move_to(carrier_node)
 test_graph_3_after_get_contained = test_graph_3_before_get_contained.to_json()
 
 test_graph_3_before_get_chest = OOGraph.from_json(test_graph_3)
-chest_node = test_graph_3_before_get_chest.get_node('chest_7')
-carrier_node = test_graph_3_before_get_chest.get_node('carrier_12')
-assert chest_node is not None and carrier_node is not None, 'Graph parsing failed'
+chest_node = test_graph_3_before_get_chest.get_node("chest_7")
+carrier_node = test_graph_3_before_get_chest.get_node("carrier_12")
+assert chest_node is not None and carrier_node is not None, "Graph parsing failed"
 chest_node.move_to(carrier_node)
 test_graph_3_after_get_chest = test_graph_3_before_get_chest.to_json()
 
@@ -1641,29 +1649,29 @@ class GetObjectEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_3
     ERROR_CASES: List[Tuple[str, str]] = [
-        ('carrier_12', 'contained object'),  # Must specify where to get from
-        ('carrier_12', '123'),  # Fail because the thing doesn't exist
-        ('carrier_12', ''),
-        ('carrier_12', 'carrier'),  # Can't get self
-        ('carrier_12', 'sword from a stone'),  # Can't get something you already have
-        ('carrier_12', 'table'),  # Can't get things that aren't gettable
-        ('carrier_12', 'sword dealer'),  # Can't get people
+        ("carrier_12", "contained object"),  # Must specify where to get from
+        ("carrier_12", "123"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("carrier_12", "carrier"),  # Can't get self
+        ("carrier_12", "sword from a stone"),  # Can't get something you already have
+        ("carrier_12", "table"),  # Can't get things that aren't gettable
+        ("carrier_12", "sword dealer"),  # Can't get people
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'carrier_12',
-            'contained from table',
-            ['contained_object_10', 'table_6'],
+            "carrier_12",
+            "contained from table",
+            ["contained_object_10", "table_6"],
             None,
             test_graph_3_after_get_contained,
             [GetObjectEvent],
         ),
         (
-            'carrier_12',
-            'chest',
-            ['chest_7', 'main_room_0'],
+            "carrier_12",
+            "chest",
+            ["chest_7", "main_room_0"],
             None,
             test_graph_3_after_get_chest,
             [GetObjectEvent],
@@ -1673,9 +1681,9 @@ class GetObjectEventTest(GraphEventTests):
 
 
 test_graph_3_before_put_sword = OOGraph.from_json(test_graph_3)
-contained_node = test_graph_3_before_put_sword.get_node('sword_from_a_stone_4')
-chest_node = test_graph_3_before_put_sword.get_node('chest_7')
-assert contained_node is not None and chest_node is not None, 'Graph parsing failed'
+contained_node = test_graph_3_before_put_sword.get_node("sword_from_a_stone_4")
+chest_node = test_graph_3_before_put_sword.get_node("chest_7")
+assert contained_node is not None and chest_node is not None, "Graph parsing failed"
 contained_node.move_to(chest_node)
 test_graph_3_after_put_sword = test_graph_3_before_put_sword.to_json()
 
@@ -1684,29 +1692,29 @@ class PutObjectInEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_3
     ERROR_CASES: List[Tuple[str, str]] = [
-        ('carrier_12', 'contained object'),  # Must specify where to put on/in
-        ('carrier_12', '123 on 456'),  # Fail because the thing doesn't exist
-        ('carrier_12', ''),
-        ('carrier_12', 'carrier on table'),  # Can't put self
-        ('carrier_12', 'sword from a stone on table'),  # Can't overfill something
-        ('carrier_12', 'table in chest'),  # Can't put things you don't have
-        ('carrier_12', 'bag in bag'),  # Can't put things into themselves
+        ("carrier_12", "contained object"),  # Must specify where to put on/in
+        ("carrier_12", "123 on 456"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("carrier_12", "carrier on table"),  # Can't put self
+        ("carrier_12", "sword from a stone on table"),  # Can't overfill something
+        ("carrier_12", "table in chest"),  # Can't put things you don't have
+        ("carrier_12", "bag in bag"),  # Can't put things into themselves
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'carrier_12',
-            'sword from a stone in chest',
-            ['sword_from_a_stone_4', 'chest_7'],
+            "carrier_12",
+            "sword from a stone in chest",
+            ["sword_from_a_stone_4", "chest_7"],
             None,
             test_graph_3_after_put_sword,
             [PutObjectInEvent],
         ),
         (
-            'carrier_12',
-            'sword from a stone into chest',
-            ['sword_from_a_stone_4', 'chest_7'],
+            "carrier_12",
+            "sword from a stone into chest",
+            ["sword_from_a_stone_4", "chest_7"],
             None,
             test_graph_3_after_put_sword,
             [PutObjectInEvent],
@@ -1716,9 +1724,9 @@ class PutObjectInEventTest(GraphEventTests):
 
 
 test_graph_3_before_drop_sword = OOGraph.from_json(test_graph_3)
-contained_node = test_graph_3_before_drop_sword.get_node('sword_from_a_stone_4')
-room_node = test_graph_3_before_drop_sword.get_node('main_room_0')
-assert contained_node is not None and room_node is not None, 'Graph parsing failed'
+contained_node = test_graph_3_before_drop_sword.get_node("sword_from_a_stone_4")
+room_node = test_graph_3_before_drop_sword.get_node("main_room_0")
+assert contained_node is not None and room_node is not None, "Graph parsing failed"
 contained_node.move_to(room_node)
 test_graph_3_after_drop_sword = test_graph_3_before_drop_sword.to_json()
 
@@ -1727,26 +1735,26 @@ class DropObjectEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_3
     ERROR_CASES: List[Tuple[str, str]] = [
-        ('carrier_12', 'contained object'),  # Can't drop what you don't have
-        ('carrier_12', '123'),  # Fail because the thing doesn't exist
-        ('carrier_12', ''),
-        ('carrier_12', 'carrier'),  # Can't drop self
+        ("carrier_12", "contained object"),  # Can't drop what you don't have
+        ("carrier_12", "123"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("carrier_12", "carrier"),  # Can't drop self
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'carrier_12',
-            'sword from a stone',
-            ['sword_from_a_stone_4'],
+            "carrier_12",
+            "sword from a stone",
+            ["sword_from_a_stone_4"],
             None,
             test_graph_3_after_drop_sword,
             [DropObjectEvent],
         ),
         (
-            'carrier_12',
-            'sword from a stone',
-            ['sword_from_a_stone_4'],
+            "carrier_12",
+            "sword from a stone",
+            ["sword_from_a_stone_4"],
             None,
             test_graph_3_after_drop_sword,
             [DropObjectEvent],
@@ -1756,9 +1764,9 @@ class DropObjectEventTest(GraphEventTests):
 
 
 test_graph_3_before_steal_sword = OOGraph.from_json(test_graph_3)
-contained_node = test_graph_3_before_steal_sword.get_node('sword_from_a_stone_4')
-dealer_node = test_graph_3_before_steal_sword.get_node('sword_dealer_14')
-assert contained_node is not None and dealer_node is not None, 'Graph parsing failed'
+contained_node = test_graph_3_before_steal_sword.get_node("sword_from_a_stone_4")
+dealer_node = test_graph_3_before_steal_sword.get_node("sword_dealer_14")
+assert contained_node is not None and dealer_node is not None, "Graph parsing failed"
 contained_node.move_to(dealer_node)
 test_graph_3_after_steal_sword = test_graph_3_before_steal_sword.to_json()
 
@@ -1767,27 +1775,27 @@ class StealObjectEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_3
     ERROR_CASES: List[Tuple[str, str]] = [
-        ('carrier_12', 'contained object'),  # Must specify where to steal from
-        ('carrier_12', '123 from 456'),  # Fail because the thing doesn't exist
-        ('carrier_12', ''),
-        ('carrier_12', 'sword from sword dealer'),  # Can't steal something you have
-        ('carrier_12', 'sword from carrier'),  # Can't steal from self
+        ("carrier_12", "contained object"),  # Must specify where to steal from
+        ("carrier_12", "123 from 456"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("carrier_12", "sword from sword dealer"),  # Can't steal something you have
+        ("carrier_12", "sword from carrier"),  # Can't steal from self
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'sword_dealer_14',
-            'sword from carrier',
-            ['sword_from_a_stone_4', 'carrier_12'],
+            "sword_dealer_14",
+            "sword from carrier",
+            ["sword_from_a_stone_4", "carrier_12"],
             None,
             test_graph_3_after_steal_sword,
             [StealObjectEvent],
         ),
         (
-            'sword_dealer_14',
-            'sword from a stone from carrier',
-            ['sword_from_a_stone_4', 'carrier_12'],
+            "sword_dealer_14",
+            "sword from a stone from carrier",
+            ["sword_from_a_stone_4", "carrier_12"],
             None,
             test_graph_3_after_steal_sword,
             [StealObjectEvent],
@@ -1800,27 +1808,27 @@ class GiveObjectEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_3
     ERROR_CASES: List[Tuple[str, str]] = [
-        ('carrier_12', 'sword'),  # Must specify where to give to
-        ('carrier_12', '123 from 456'),  # Fail because the thing doesn't exist
-        ('carrier_12', ''),
-        ('sword_dealer_14', 'sword to carrier'),  # Can't give something you don't have
-        ('carrier_12', 'sword to carrier'),  # Can't give to self
+        ("carrier_12", "sword"),  # Must specify where to give to
+        ("carrier_12", "123 from 456"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("sword_dealer_14", "sword to carrier"),  # Can't give something you don't have
+        ("carrier_12", "sword to carrier"),  # Can't give to self
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'carrier_12',
-            'sword from a stone to sword dealer',
-            ['sword_from_a_stone_4', 'sword_dealer_14'],
+            "carrier_12",
+            "sword from a stone to sword dealer",
+            ["sword_from_a_stone_4", "sword_dealer_14"],
             None,
             test_graph_3_after_steal_sword,
             [GiveObjectEvent],
         ),
         (
-            'carrier_12',
-            'sword to sword',
-            ['sword_from_a_stone_4', 'sword_dealer_14'],
+            "carrier_12",
+            "sword to sword",
+            ["sword_from_a_stone_4", "sword_dealer_14"],
             None,
             test_graph_3_after_steal_sword,
             [GiveObjectEvent],
@@ -1830,25 +1838,25 @@ class GiveObjectEventTest(GraphEventTests):
 
 
 test_graph_3_before_equip_sword = OOGraph.from_json(test_graph_3)
-equipped_node = test_graph_3_before_equip_sword.get_node('sword_from_a_stone_4')
-actor_node = test_graph_3_before_equip_sword.get_node('carrier_12')
-assert isinstance(equipped_node, GraphObject), 'Graph parsing failed'
-assert isinstance(actor_node, GraphAgent), 'Graph parsing failed'
+equipped_node = test_graph_3_before_equip_sword.get_node("sword_from_a_stone_4")
+actor_node = test_graph_3_before_equip_sword.get_node("carrier_12")
+assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
+assert isinstance(actor_node, GraphAgent), "Graph parsing failed"
 equipped_node.equipped = True
 actor_node.damage += 1
 test_graph_3_after_equip_sword = test_graph_3_before_equip_sword.to_json()
-equipped_node = test_graph_3_before_equip_sword.get_node('hat_5')
-assert isinstance(equipped_node, GraphObject), 'Graph parsing failed'
+equipped_node = test_graph_3_before_equip_sword.get_node("hat_5")
+assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
 equipped_node.equipped = True
 actor_node.defense += 1
 test_graph_3_after_equip_both = test_graph_3_before_equip_sword.to_json()
 
 
 test_graph_3_before_equip_hat = OOGraph.from_json(test_graph_3)
-equipped_node = test_graph_3_before_equip_hat.get_node('hat_5')
-actor_node = test_graph_3_before_equip_hat.get_node('carrier_12')
-assert isinstance(equipped_node, GraphObject), 'Graph parsing failed'
-assert isinstance(actor_node, GraphAgent), 'Graph parsing failed'
+equipped_node = test_graph_3_before_equip_hat.get_node("hat_5")
+actor_node = test_graph_3_before_equip_hat.get_node("carrier_12")
+assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
+assert isinstance(actor_node, GraphAgent), "Graph parsing failed"
 equipped_node.equipped = True
 actor_node.defense += 1
 test_graph_3_after_equip_hat = test_graph_3_before_equip_hat.to_json()
@@ -1858,35 +1866,35 @@ class EquipObjectEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_3
     ERROR_CASES: List[Tuple[str, str]] = [
-        ('sword_dealer_14', 'chest'),  # Cant equip things you don't have
-        ('carrier_12', '123'),  # Fail because the thing doesn't exist
-        ('carrier_12', ''),
-        ('sword_dealer_14', 'carrier'),  # Can't equip people
-        ('carrier_12', 'carrier'),  # Can't equip to self
+        ("sword_dealer_14", "chest"),  # Cant equip things you don't have
+        ("carrier_12", "123"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("sword_dealer_14", "carrier"),  # Can't equip people
+        ("carrier_12", "carrier"),  # Can't equip to self
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'carrier_12',
-            'sword from a stone',
-            ['sword_from_a_stone_4'],
+            "carrier_12",
+            "sword from a stone",
+            ["sword_from_a_stone_4"],
             None,
             test_graph_3_after_equip_sword,
             [EquipObjectEvent],
         ),
         (
-            'carrier_12',
-            'sword',
-            ['sword_from_a_stone_4'],
+            "carrier_12",
+            "sword",
+            ["sword_from_a_stone_4"],
             None,
             test_graph_3_after_equip_sword,
             [EquipObjectEvent],
         ),
         (
-            'carrier_12',
-            'hat',
-            ['hat_5'],
+            "carrier_12",
+            "hat",
+            ["hat_5"],
             None,
             test_graph_3_after_equip_hat,
             [EquipObjectEvent],
@@ -1899,20 +1907,20 @@ class WearEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_3
     ERROR_CASES: List[Tuple[str, str]] = [
-        ('sword_dealer_14', 'chest'),  # Cant equip things you don't have
-        ('carrier_12', '123'),  # Fail because the thing doesn't exist
-        ('carrier_12', ''),
-        ('sword_dealer_14', 'carrier'),  # Can't equip people
-        ('carrier_12', 'carrier'),  # Can't equip to self
-        ('carrier_12', 'sword from a stone'),  # Can't wear weapons
+        ("sword_dealer_14", "chest"),  # Cant equip things you don't have
+        ("carrier_12", "123"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("sword_dealer_14", "carrier"),  # Can't equip people
+        ("carrier_12", "carrier"),  # Can't equip to self
+        ("carrier_12", "sword from a stone"),  # Can't wear weapons
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'carrier_12',
-            'hat',
-            ['hat_5'],
+            "carrier_12",
+            "hat",
+            ["hat_5"],
             None,
             test_graph_3_after_equip_hat,
             [WearEvent],
@@ -1925,28 +1933,28 @@ class WieldEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_3
     ERROR_CASES: List[Tuple[str, str]] = [
-        ('sword_dealer_14', 'chest'),  # Cant equip things you don't have
-        ('carrier_12', '123'),  # Fail because the thing doesn't exist
-        ('carrier_12', ''),
-        ('sword_dealer_14', 'carrier'),  # Can't equip people
-        ('carrier_12', 'carrier'),  # Can't equip to self
-        ('carrier_12', 'hat'),  # can't wield wearables
+        ("sword_dealer_14", "chest"),  # Cant equip things you don't have
+        ("carrier_12", "123"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("sword_dealer_14", "carrier"),  # Can't equip people
+        ("carrier_12", "carrier"),  # Can't equip to self
+        ("carrier_12", "hat"),  # can't wield wearables
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'carrier_12',
-            'sword from a stone',
-            ['sword_from_a_stone_4'],
+            "carrier_12",
+            "sword from a stone",
+            ["sword_from_a_stone_4"],
             None,
             test_graph_3_after_equip_sword,
             [WieldEvent],
         ),
         (
-            'carrier_12',
-            'sword',
-            ['sword_from_a_stone_4'],
+            "carrier_12",
+            "sword",
+            ["sword_from_a_stone_4"],
             None,
             test_graph_3_after_equip_sword,
             [WieldEvent],
@@ -1959,28 +1967,28 @@ class RemoveObjectEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_3_after_equip_both
     ERROR_CASES: List[Tuple[str, str]] = [
-        ('sword_dealer_14', 'chest'),  # Cant remove things you don't have
-        ('carrier_12', '123'),  # Fail because the thing doesn't exist
-        ('carrier_12', ''),
-        ('sword_dealer_14', 'carrier'),  # Can't remove people
-        ('carrier_12', 'carrier'),  # Can't remove people
-        ('carrier_12', 'bag'),  # Can't remove things not equipped
+        ("sword_dealer_14", "chest"),  # Cant remove things you don't have
+        ("carrier_12", "123"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("sword_dealer_14", "carrier"),  # Can't remove people
+        ("carrier_12", "carrier"),  # Can't remove people
+        ("carrier_12", "bag"),  # Can't remove things not equipped
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'carrier_12',
-            'sword',
-            ['sword_from_a_stone_4'],
+            "carrier_12",
+            "sword",
+            ["sword_from_a_stone_4"],
             None,
             test_graph_3_after_equip_hat,
             [RemoveObjectEvent],
         ),
         (
-            'carrier_12',
-            'hat',
-            ['hat_5'],
+            "carrier_12",
+            "hat",
+            ["hat_5"],
             None,
             test_graph_3_after_equip_sword,
             [RemoveObjectEvent],
@@ -1990,13 +1998,13 @@ class RemoveObjectEventTest(GraphEventTests):
 
 
 test_graph_3_before_ingest_steak_dict = json.loads(test_graph_3)
-del test_graph_3_before_ingest_steak_dict['nodes']['tasty_steak_to_eat_9']
-del test_graph_3_before_ingest_steak_dict['nodes']['carrier_12']['contained_nodes'][
-    'tasty_steak_to_eat_9'
+del test_graph_3_before_ingest_steak_dict["nodes"]["tasty_steak_to_eat_9"]
+del test_graph_3_before_ingest_steak_dict["nodes"]["carrier_12"]["contained_nodes"][
+    "tasty_steak_to_eat_9"
 ]
-test_graph_3_before_ingest_steak_dict['nodes']['carrier_12']['contain_size'] += 1
-test_graph_3_before_ingest_steak_dict['nodes']['carrier_12']['health'] = 22
-test_graph_3_before_ingest_steak_dict['objects'].remove('tasty_steak_to_eat_9')
+test_graph_3_before_ingest_steak_dict["nodes"]["carrier_12"]["contain_size"] += 1
+test_graph_3_before_ingest_steak_dict["nodes"]["carrier_12"]["health"] = 22
+test_graph_3_before_ingest_steak_dict["objects"].remove("tasty_steak_to_eat_9")
 test_graph_3_after_ingest_steak = OOGraph.from_json(
     json.dumps(test_graph_3_before_ingest_steak_dict)
 ).to_json()
@@ -2580,12 +2588,12 @@ test_graph_3_after_ingest_apple = """
 """
 
 test_graph_3_before_ingest_drink_dict = json.loads(test_graph_3)
-del test_graph_3_before_ingest_drink_dict['nodes']['something_to_drink_20']
-del test_graph_3_before_ingest_drink_dict['nodes']['carrier_12']['contained_nodes'][
-    'something_to_drink_20'
+del test_graph_3_before_ingest_drink_dict["nodes"]["something_to_drink_20"]
+del test_graph_3_before_ingest_drink_dict["nodes"]["carrier_12"]["contained_nodes"][
+    "something_to_drink_20"
 ]
-test_graph_3_before_ingest_drink_dict['nodes']['carrier_12']['contain_size'] += 1
-test_graph_3_before_ingest_drink_dict['objects'].remove('something_to_drink_20')
+test_graph_3_before_ingest_drink_dict["nodes"]["carrier_12"]["contain_size"] += 1
+test_graph_3_before_ingest_drink_dict["objects"].remove("something_to_drink_20")
 test_graph_3_after_ingest_drink = OOGraph.from_json(
     json.dumps(test_graph_3_before_ingest_drink_dict)
 ).to_json()
@@ -2595,36 +2603,36 @@ class IngestEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_3
     ERROR_CASES: List[Tuple[str, str]] = [
-        ('sword_dealer_14', 'chest'),  # Cant ingest things you don't have
-        ('carrier_12', '123'),  # Fail because the thing doesn't exist
-        ('carrier_12', ''),
-        ('sword_dealer_14', 'carrier'),  # Can't ingest people
-        ('carrier_12', 'carrier'),  # Can't ingest people
-        ('carrier_12', 'bag'),  # Can't ingest things not ingestable
+        ("sword_dealer_14", "chest"),  # Cant ingest things you don't have
+        ("carrier_12", "123"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("sword_dealer_14", "carrier"),  # Can't ingest people
+        ("carrier_12", "carrier"),  # Can't ingest people
+        ("carrier_12", "bag"),  # Can't ingest things not ingestable
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'carrier_12',
-            'apple',
-            ['poison_apple_8'],
+            "carrier_12",
+            "apple",
+            ["poison_apple_8"],
             None,
             test_graph_3_after_ingest_apple,
             [IngestEvent, DeathEvent],
         ),
         (
-            'carrier_12',
-            'steak',
-            ['tasty_steak_to_eat_9'],
+            "carrier_12",
+            "steak",
+            ["tasty_steak_to_eat_9"],
             None,
             test_graph_3_after_ingest_steak,
             [IngestEvent, HealthEvent],
         ),
         (
-            'carrier_12',
-            'something',
-            ['something_to_drink_20'],
+            "carrier_12",
+            "something",
+            ["something_to_drink_20"],
             None,
             test_graph_3_after_ingest_drink,
             [IngestEvent],
@@ -2637,29 +2645,29 @@ class EatEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_3
     ERROR_CASES: List[Tuple[str, str]] = [
-        ('sword_dealer_14', 'chest'),  # Cant ingest things you don't have
-        ('carrier_12', '123'),  # Fail because the thing doesn't exist
-        ('carrier_12', ''),
-        ('sword_dealer_14', 'carrier'),  # Can't ingest people
-        ('carrier_12', 'carrier'),  # Can't ingest people
-        ('carrier_12', 'bag'),  # Can't ingest things not ingestable
-        ('carrier_12', 'something'),  # can't eat a drinkable
+        ("sword_dealer_14", "chest"),  # Cant ingest things you don't have
+        ("carrier_12", "123"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("sword_dealer_14", "carrier"),  # Can't ingest people
+        ("carrier_12", "carrier"),  # Can't ingest people
+        ("carrier_12", "bag"),  # Can't ingest things not ingestable
+        ("carrier_12", "something"),  # can't eat a drinkable
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'carrier_12',
-            'apple',
-            ['poison_apple_8'],
+            "carrier_12",
+            "apple",
+            ["poison_apple_8"],
             None,
             test_graph_3_after_ingest_apple,
             [EatEvent, DeathEvent],
         ),
         (
-            'carrier_12',
-            'steak',
-            ['tasty_steak_to_eat_9'],
+            "carrier_12",
+            "steak",
+            ["tasty_steak_to_eat_9"],
             None,
             test_graph_3_after_ingest_steak,
             [EatEvent, HealthEvent],
@@ -2672,22 +2680,22 @@ class DrinkEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_3
     ERROR_CASES: List[Tuple[str, str]] = [
-        ('sword_dealer_14', 'chest'),  # Cant ingest things you don't have
-        ('carrier_12', '123'),  # Fail because the thing doesn't exist
-        ('carrier_12', ''),
-        ('sword_dealer_14', 'carrier'),  # Can't ingest people
-        ('carrier_12', 'carrier'),  # Can't ingest people
-        ('carrier_12', 'bag'),  # Can't ingest things not ingestable
-        ('carrier_12', 'apple'),  # can't drink an edible
-        ('carrier_12', 'steak'),  # can't drink an edible
+        ("sword_dealer_14", "chest"),  # Cant ingest things you don't have
+        ("carrier_12", "123"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("sword_dealer_14", "carrier"),  # Can't ingest people
+        ("carrier_12", "carrier"),  # Can't ingest people
+        ("carrier_12", "bag"),  # Can't ingest things not ingestable
+        ("carrier_12", "apple"),  # can't drink an edible
+        ("carrier_12", "steak"),  # can't drink an edible
     ]
     SUCCESS_CASES: List[
         Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
     ] = [
         (
-            'carrier_12',
-            'something',
-            ['something_to_drink_20'],
+            "carrier_12",
+            "something",
+            ["something_to_drink_20"],
             None,
             test_graph_3_after_ingest_drink,
             [DrinkEvent],
@@ -2698,5 +2706,5 @@ class DrinkEventTest(GraphEventTests):
 
 # TODO test locking
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -3,8 +3,8 @@ import random
 
 
 class FillerRoom(object):
-    '''An Object Oriented Abstraction of a filler room. 
-    Implemented in similar manner as DBRoom'''
+    """An Object Oriented Abstraction of a filler room.
+    Implemented in similar manner as DBRoom"""
 
     def __init__(self, category=None, name=None, description=None, background=None):
         self.category = category
@@ -27,23 +27,23 @@ class FillerRoom(object):
 
 
 def to_legacy_dict(filler_room):
-    '''Takes in a filler_room object and return a dict 
-    representation that reflects the legacy implementation of the filler room'''
+    """Takes in a filler_room object and return a dict
+    representation that reflects the legacy implementation of the filler room"""
     filler_room_dict = {}
-    filler_room_dict['category'] = filler_room.category
-    filler_room_dict['setting'] = filler_room.setting
-    filler_room_dict['description'] = filler_room.description
-    filler_room_dict['background'] = filler_room.background
-    filler_room_dict['in_characters'] = filler_room.in_characters
-    filler_room_dict['ex_characters'] = filler_room.ex_characters
-    filler_room_dict['in_objects'] = filler_room.in_objects
-    filler_room_dict['ex_objects'] = filler_room.ex_objects
-    filler_room_dict['neighbors'] = filler_room.neighbors
-    filler_room_dict['ind'] = filler_room.ind
-    filler_room_dict['db_id'] = filler_room.db_id
-    filler_room_dict['g_id'] = filler_room.g_id
-    filler_room_dict['loc'] = filler_room.loc
-    filler_room_dict['possible_connections'] = filler_room.possible_connections
+    filler_room_dict["category"] = filler_room.category
+    filler_room_dict["setting"] = filler_room.setting
+    filler_room_dict["description"] = filler_room.description
+    filler_room_dict["background"] = filler_room.background
+    filler_room_dict["in_characters"] = filler_room.in_characters
+    filler_room_dict["ex_characters"] = filler_room.ex_characters
+    filler_room_dict["in_objects"] = filler_room.in_objects
+    filler_room_dict["ex_objects"] = filler_room.ex_objects
+    filler_room_dict["neighbors"] = filler_room.neighbors
+    filler_room_dict["ind"] = filler_room.ind
+    filler_room_dict["db_id"] = filler_room.db_id
+    filler_room_dict["g_id"] = filler_room.g_id
+    filler_room_dict["loc"] = filler_room.loc
+    filler_room_dict["possible_connections"] = filler_room.possible_connections
     return filler_room_dict
 
 

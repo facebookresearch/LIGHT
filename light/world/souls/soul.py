@@ -8,8 +8,9 @@ from abc import ABC, abstractmethod
 
 import threading
 import time
-from typing import TYPE_CHECKING, List
 import asyncio
+from typing import TYPE_CHECKING, List, Dict
+
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
     from light.graph.world.world import World
@@ -26,65 +27,57 @@ class Soul(ABC):
 
     def __init__(self, target_node: "GraphAgent", world: "World"):
         """
-        All Souls should be attached to a target_node, which is the agent that 
-        this soul will be inhabiting. It also takes the world in which that 
+        All Souls should be attached to a target_node, which is the agent that
+        this soul will be inhabiting. It also takes the world in which that
         agent exists.
         """
         self.target_node = target_node
         self.world = world
-        self._observe_threads = {}
+        self._observe_futures: Dict[str, asyncio.Future] = {}
         self.is_reaped = False
 
-    def launch_observe_event_thread(self, event, asynch=False):
+    def wrap_observe_event(self, event):
         """
-        Souls will observe events in a background thread to ensure that 
-        they can choose to act how they wish in response.
+        Souls will observe events in a future, such that it can be cancelled
+        during a reap.
         """
+        future_id = f"Node-{self.target_node.node_id}-obs-{time.time():.10f}"
+        self._observe_futures[future_id] = self.observe_event(event)
 
-        thread_id = f"Node-{self.target_node.node_id}-obs-{time.time():.10f}"
+        async def _await_observe_then_cleanup():
+            await self._observe_futures[future_id]
+            del self._observe_futures[future_id]
 
-
-        def _launch_thread_and_cleanup(event):
-            self.observe_event(event)
-            del self._observe_threads[thread_id]
-
-        if asynch:
-            loop = asyncio.get_running_loop()
-            self._observe_threads[thread_id] = (thread_id)
-            loop.call_soon_threadsafe(_launch_thread_and_cleanup, event)
-        else:
-            ### TODO:  Make compatible with tornado
-            observe_thread = threading.Thread(
-                target=_launch_thread_and_cleanup,
-                args=(event,),
-                name=f"Node-{self.target_node.node_id}-observe-{time.time():.4f}",
-            )
-            # Keep track of thread for 
-            self._observe_threads[thread_id] = (observe_thread)
-            observe_thread.start()
+        loop = asyncio.get_running_loop()
+        asyncio.ensure_future(_await_observe_then_cleanup(), loop=loop)
 
     @abstractmethod
-    def observe_event(self, event: "GraphEvent"):
+    async def observe_event(self, event: "GraphEvent"):
         """
         All souls should define some kind of behavior for when an event occurs,
-        ensuring that they are able to handle it somehow. 
-        
-        The soul may choose to ask the world for possible actions it may take, and 
-        then take one in response, or perhaps bide its time, launching a thread 
-        to do something later. Maybe it just takes a note for itself. 
-        
-        This method will always be called in a separate thread, such that no Souls
-        have the ability to prevent other Souls from observing.
+        ensuring that they are able to handle it somehow.
+
+        The soul may choose to ask the world for possible actions it may take, and
+        then take one in response, or perhaps bide its time, launching a thread
+        to do something later. Maybe it just takes a note for itself.
+
+        This method will always be called asyncronously, such that it can be
+        cancelled and won't block execution of the world.
         """
         pass
 
     def reap(self):
         """
-        Free resources associated with this Soul, and ensure any pending events
-        or threads are cancelled.
+        Free resources associated with this Soul, and ensure any pending futures
+        are cancelled.
 
         It's possible that a Soul may be reaped, due to death or to make room for
         another Soul to inhabit the same GraphAgent. In any case, when a Soul
         is reaped, it should clean up after itself.
         """
         self.is_reaped = True
+        outstanding_future_ids = list(self._observe_futures.keys())
+        for future_id in outstanding_future_ids:
+            future = self._observe_futures.get(future_id)
+            if future is not None:
+                future.cancel()

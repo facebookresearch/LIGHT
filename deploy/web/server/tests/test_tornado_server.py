@@ -96,7 +96,7 @@ class TestRegistryApp(AsyncHTTPTestCase):
         """Test that we connect to socket by default"""
         headers = {"Connection": "Upgrade", "Upgrade": "websocket"}
         with self.assertRaises(httpclient.HTTPClientError) as cm:
-            _ = yield self.client.fetch(
+            response = yield self.client.fetch(
                 f"{URL}/game/socket", method="GET", headers=headers,
             )
         # Need to upgrade in response
@@ -137,7 +137,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
 
     @gen_test
     def test_list_worlds(self, mocked_auth):
-        """Test that the list worlds endpoint can be hit succesfully and returns world 
+        """Test that the list worlds endpoint can be hit succesfully and returns world
             dimesnions in expected format"""
         with LIGHTDatabase(self.db_path) as db:
             player_id = db.create_user("test")[0]
@@ -148,26 +148,29 @@ class TestWorldSaving(AsyncHTTPTestCase):
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
-            [
-                {
-                    "height": 3,
-                    "id": world1,
-                    "in_use": 1,
-                    "name": "default",
-                    "num_floors": 1,
-                    "owner_id": player_id,
-                    "width": 3,
-                },
-                {
-                    "height": 4,
-                    "id": world2,
-                    "in_use": 1,
-                    "name": "default2",
-                    "num_floors": 2,
-                    "owner_id": player_id,
-                    "width": 2,
-                },
-            ],
+            {
+                "auto": None,
+                "data": [
+                    {
+                        "height": 3,
+                        "id": world1,
+                        "in_use": 1,
+                        "name": "default",
+                        "num_floors": 1,
+                        "owner_id": player_id,
+                        "width": 3,
+                    },
+                    {
+                        "height": 4,
+                        "id": world2,
+                        "in_use": 1,
+                        "name": "default2",
+                        "num_floors": 2,
+                        "owner_id": player_id,
+                        "width": 2,
+                    },
+                ],
+            },
         )
 
     @gen_test
@@ -200,6 +203,45 @@ class TestWorldSaving(AsyncHTTPTestCase):
         self.assertEqual(type(json.loads(response.body.decode())), int)
 
     @gen_test
+    def test_autosave_endpoints(self, mocked_auth):
+        """Test the endpoint for posting worlds works as expected, and loading back matches"""
+        with LIGHTDatabase(self.db_path) as db:
+            player_id = db.create_user("test")[0]
+            d = {
+                "data": {
+                    "dimensions": {
+                        "name": "default",
+                        "height": 4,
+                        "width": 1,
+                        "floors": 1,
+                    },
+                    "entities": {
+                        "room": {},
+                        "character": {},
+                        "object": {},
+                        "nextID": 1,
+                    },
+                    "map": {"tiles": [], "edges": []},
+                }
+            }
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+        }
+        response = yield self.client.fetch(
+            f"{URL}/builder/world/autosave/",
+            method="POST",
+            headers=headers,
+            body=self.get_encoded_url_params(d),
+        )
+        self.assertEqual(response.code, 201)
+
+        response = yield self.client.fetch(
+            f"{URL}/builder/world/autosave/", method="GET",
+        )
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json.loads(response.body.decode()), d["data"])
+
+    @gen_test
     def test_load_world(self, mocked_auth):
         """Test the endpoint for loading worlds works as expected"""
         with LIGHTDatabase(self.db_path) as db:
@@ -226,7 +268,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
 
     @gen_test
     def test_world_saving_integration(self, mocked_auth):
-        """Test a flow where a user creates a world, views the saved worlds, loads the world, then 
+        """Test a flow where a user creates a world, views the saved worlds, loads the world, then
             deletes it"""
 
         with LIGHTDatabase(self.db_path) as db:
@@ -332,17 +374,20 @@ class TestWorldSaving(AsyncHTTPTestCase):
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
-            [
-                {
-                    "height": 5,
-                    "id": w_id,
-                    "in_use": 1,
-                    "name": "Test",
-                    "num_floors": 2,
-                    "owner_id": player_id,
-                    "width": 5,
-                },
-            ],
+            {
+                "auto": None,
+                "data": [
+                    {
+                        "height": 5,
+                        "id": w_id,
+                        "in_use": 1,
+                        "name": "Test",
+                        "num_floors": 2,
+                        "owner_id": player_id,
+                        "width": 5,
+                    },
+                ],
+            },
         )
 
         # Test world loading - expect same format! (except differences in local ids, so check dimensions and tiles really)
@@ -374,7 +419,9 @@ class TestWorldSaving(AsyncHTTPTestCase):
         # List should now be empty
         response = yield self.client.fetch(f"{URL}/builder/worlds/", method="GET",)
         self.assertEqual(response.code, 200)
-        self.assertEqual(json.loads(response.body.decode()), [])
+        self.assertEqual(
+            json.loads(response.body.decode()), {"auto": None, "data": []},
+        )
 
     def get_encoded_url_params(self, d):
         formBody = []
@@ -532,15 +579,6 @@ class TestLandingApp(AsyncHTTPTestCase):
             f"{URL}/login", method="POST", headers=headers, body=body,
         )
         self.assertEqual(response.code, 200)
-
-    def get_login_page(self):
-        """
-            Read the login page for login endpoint test
-        """
-        login = os.path.abspath(os.path.dirname(__file__)) + "../login.html"
-        login = os.open(here)
-        with open(login, "r") as login_file:
-            return login_file.read()
 
     @gen_test
     def test_login_endpoint(self, mocked_auth):
