@@ -24,10 +24,13 @@ ALLOW_INTERBOT_CHAT = False  # Only allow bots to answer humans
 
 class PartnerHeuristicModelSoul(ModelSoul):
     """
-    A ModelSoul is responsible for passing it's observations back to
-    a model that decides what to do. This class will likely have utility
-    methods for loading shared models and some shared behavior between
-    classes, for now is a stub.
+    The PartnerHeuristicModelSoul is a ModelSoul that uses two different
+    models for acting and dialogue, and uses a heuristic for keeping track
+    of the partner of a given agent (to prevent responding out of turn).
+    
+    This class represents a port of the initial implementation of a model
+    in the LIGHT world, that used to be guided by the npc_models in the days
+    before the OOGraph and GraphEvents
     """
 
     HAS_MAIN_LOOP = True
