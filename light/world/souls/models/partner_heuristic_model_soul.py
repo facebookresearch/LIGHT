@@ -20,7 +20,12 @@ if TYPE_CHECKING:
 
 
 MIN_TIME_BETWEEN_TURNS = 5
+MAX_DIALOGUE_REPEAT_HISTORY = 50
+MAX_ACTION_REPEAT_HISTORY = 4
 ALLOW_INTERBOT_CHAT = False  # Only allow bots to answer humans
+JITTER_TIME_AROUND_TURNS = 2
+CHAT_DISENGAGE_CHANCE = 5.0 / 100.0
+TAKE_ACTION_CHANCE = 1.0 / 5.0
 
 class PartnerHeuristicModelSoul(ModelSoul):
     """
@@ -45,6 +50,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
         """
         Load up and create possible shared models for use with this class
         """
+        # TODO refactor with some kind of model-loading standard for model souls?
         from parlai.core.params import ParlaiParser
         from parlai.core.agents import create_agent
 
@@ -107,7 +113,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
         model and interactions with it.
         """
         self._pending_observations = []
-        self._last_action_time = time.time() + random.random() * 2
+        self._last_action_time = time.time() + self._get_random_time_offset()
         self._dialogue_history = {}
         self._utterance_to_speaker_name = models['utterance_to_speaker_name']
         self.npc_model = create_agent_from_shared(models['shared_dialog_model'])
@@ -119,7 +125,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
         and take a timestep (to ensure we respond in a timely manner)
         """
         if event.actor == self.target_node:
-            self._last_action_time = time.time() + random.random() * 2
+            self._last_action_time = time.time() + self._get_random_time_offset()
             return
         
         self._pending_observations.append(event)
@@ -128,15 +134,22 @@ class PartnerHeuristicModelSoul(ModelSoul):
         # so don't wait for the timeout.
         await self._take_timestep()
 
+    def _get_random_time_offset(self):
+        """
+        Produce a time offset based on JITTER_TIME_AROUND_TURNS to prevent
+        model responses from being exactly periodic.
+        """
+        return random.random() * JITTER_TIME_AROUND_TURNS
+
     def _ensure_agent_has_utterance_history(self, agent):
         """Create the _utterance_history attribute for a GraphAgent if it doesn't exist"""
         if not hasattr(agent, '_utterance_history'):
-            agent._utterance_history = deque(maxlen=50)
+            agent._utterance_history = deque(maxlen=MAX_DIALOGUE_REPEAT_HISTORY)
 
     def _ensure_agent_has_action_history(self, agent):
         """Create the _action_history attribute for a GraphAgent if it doesn't exist"""
         if not hasattr(agent, '_action_history'):
-            agent._action_history = deque(maxlen=4)
+            agent._action_history = deque(maxlen=MAX_ACTION_REPEAT_HISTORY)
 
     def dialogue_clear_partner(self):
         """
@@ -165,6 +178,9 @@ class PartnerHeuristicModelSoul(ModelSoul):
         """
         self._ensure_agent_has_action_history(self.target_node)
         t = act['text_candidates'][0]
+
+        # Hit actions are allowed to repeat because we expect such
+        # behavior in a combat setting
         if t not in self.target_node._action_history or t.startswith('hit'):
             self.target_node._action_history.append(t)
             return t
@@ -216,7 +232,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
         """
         Agent attempt to take an action
         """
-        if self.get_last_turn_too_recent() or (random.randint(0, 100) > 20):
+        if self.get_last_turn_too_recent() or random.random() > TAKE_ACTION_CHANCE:
             return
 
         agent = self.target_node
@@ -289,6 +305,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
         if agent_id not in hist:
             hist[agent_id] = []
 
+        # TODO refactor with is_human when human flag is refactored
         if not ALLOW_INTERBOT_CHAT and not partner._human:
             return
 
@@ -386,7 +403,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
                 return
         else:
             # possibly end interaction with existing interaction partner (if any)?
-            if random.randint(0, 100) < 5:
+            if random.random() < CHAT_DISENGAGE_CHANCE:
                 self.dialogue_clear_partner()
 
         room = agent.get_room()

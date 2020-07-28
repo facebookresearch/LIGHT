@@ -86,6 +86,7 @@ class Purgatory:
         """
         if agent.get_prop('dead'):
             self.clear_soul(agent)
+            return  # We shouldn't send an event to this soul, as it is reaped
         soul: "Soul" = self.node_id_to_soul.get(agent.node_id)
         if soul is not None:
             soul.wrap_observe_event(event)
