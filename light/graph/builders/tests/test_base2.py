@@ -163,7 +163,7 @@ class TestDBGraphBuilder(unittest.TestCase):
     def test_get_text_edges(self):
         test_room = self.graphBuilder.get_room_from_id(self.roomID)
         self.assertNotIn("Cake", test_room.get_text_edges(DB_EDGE_EX_CONTAINED))
-        self.assertEqual(test_room.get_text_edges(), ["Knife", "Cake", "Rejected"])
+        self.assertEqual(test_room.get_text_edges(), ["Knife", "Cake"], "Should only return non rejected edges",)
         self.assertEqual(test_room.get_text_edges(DB_EDGE_EX_CONTAINED), ["Knife"])
 
     def test_get_db_edges(self):

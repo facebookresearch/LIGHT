@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   NumericInput,
   InputGroup,
@@ -17,8 +17,8 @@ import {
   MAX_WIDTH,
   MAX_FLOORS,
 } from "./worldbuilding/utils";
-import ListWorldsOverlay, { launchWorld } from "./WorldManager";
-import { postWorld } from "./WorldManager";
+import ListWorldsOverlay from "./WorldManager";
+import { launchWorld, postAutosave, postWorld } from "./WorldManager";
 import Grid from "./worldbuilding/Grid";
 import FloorSelector from "./worldbuilding/FloorSelector";
 
@@ -41,10 +41,19 @@ function WorldBuilder({ upload }) {
   const [isOverlayOpen, setIsOverlayOpen] = React.useState(false);
   const world_name =
     state.dimensions.name == null ? " " : state.dimensions.name;
+  const stateRef = React.useRef(state);
+  stateRef.current = state;
 
-  // TODO: Add the launch game button, should be next to name, or on bottom bar
-  // requires the state.dimensions.id, mb save first?
-  //TODO: Consider moving the export somewhere else?
+  useEffect(() => {
+    const timer = setTimeout(function autosave() {
+      const TWO_MINUTES = 1200000;
+      postAutosave(stateRef.current);
+      console.log("Autosaved!");
+      setTimeout(autosave, TWO_MINUTES);
+    }, TWO_MINUTES);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <>
       <h3>World: {world_name}</h3>

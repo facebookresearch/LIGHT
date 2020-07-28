@@ -51,6 +51,23 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
     );
   };
 
+  const getAutosave = async () => {
+    const res = await fetch(
+      `${CONFIG.host}:${CONFIG.port}/builder/world/autosave/`,
+      {
+        method: "GET",
+      }
+    );
+    const data = await res.json();
+
+    // Mission accomplished!
+    AppToaster.show({
+      intent: Intent.SUCCESS,
+      message: "Done loading!",
+    });
+    setUpload(data);
+  };
+
   /* Given an entity id, its type, and the local entities store, get 
         the matching emoji and associate the type with the id */
   const storeEntity = (entities, entityId, type, entityToType) => {
@@ -210,12 +227,40 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
     setUpload(dat);
   };
 
-  const data = result;
   if (!isOpen) {
     return <></>;
   } else if (loading) {
     return <Spinner intent={Intent.PRIMARY} />;
   } else {
+    const data = result.data;
+    var auto = null;
+    if (result.auto == null) {
+      auto = <></>;
+    } else {
+      auto = (
+        <>
+          <tr>
+            <td>
+              <strong>Autosave</strong>
+            </td>
+            <td> {result.auto} </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+              <Button
+                intent={Intent.PRIMARY}
+                type="submit"
+                onClick={() => getAutosave()}
+              >
+                Load
+              </Button>
+            </td>
+            <td></td>
+          </tr>
+        </>
+      );
+    }
     return (
       <>
         <table
@@ -271,6 +316,7 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
                 </tr>
               </React.Fragment>
             ))}
+            {auto}
           </tbody>
         </table>
         {upload && (
@@ -299,6 +345,13 @@ export async function launchWorld(state) {
   const url = `${CONFIG.host}:${CONFIG.port}/?id=${data}`;
   window.open(url);
   return data;
+}
+
+export async function postAutosave(state) {
+  // Just send the state dict
+  const data = cloneDeep(state);
+  state = { data: data };
+  const res = await post("builder/world/autosave/", state);
 }
 
 export async function postWorld(state) {
