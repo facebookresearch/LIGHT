@@ -322,7 +322,10 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
         self.hostname = hostname
 
     async def get(self):
-        redirect = self.hostname + self.get_argument("next", u"/")
+        redirect = (
+            "http://" + self.hostname + ":35494" + self.get_argument("next", u"/")
+        )
+        print(redirect)
         if self.get_argument("code", False):
             user = await self.get_authenticated_user(
                 redirect_uri=redirect,
