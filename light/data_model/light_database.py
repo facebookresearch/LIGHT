@@ -3045,7 +3045,7 @@ class LIGHTDatabase:
             self.c.execute(
                 """
                 UPDATE auto_save_table
-                SET timestamp = ?, world_dump = ?
+                SET timestamp = ?, world_dump = ? 
                 WHERE owner_id = ?;
                 """,
                 (timestamp, world_dump, player_id,),
