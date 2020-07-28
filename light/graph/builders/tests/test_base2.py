@@ -41,7 +41,7 @@ class TestDBGraphBuilder(unittest.TestCase):
             self.rbase_id2 = test.create_base_room("broom2")[0]
             self.rbase_id3 = test.create_base_room("broom3")[0]
             rbase_id_rejected = test.create_base_room(
-                "rejected_broom", entry_attributes={'status': DB_STATUS_REJECTED}
+                "rejected_broom", entry_attributes={"status": DB_STATUS_REJECTED}
             )[0]
 
             # Create Rooms
@@ -52,13 +52,13 @@ class TestDBGraphBuilder(unittest.TestCase):
                 self.rbase_id3,
                 "neutral",
                 "no history",
-                {'status': DB_STATUS_REJECTED},
+                {"status": DB_STATUS_REJECTED},
             )[0]
 
             # Create Characters
             cbase_id = test.create_base_character("troll")[0]
             cbase_id2 = test.create_base_character(
-                name="troll", entry_attributes={'status': DB_STATUS_REJECTED}
+                name="troll", entry_attributes={"status": DB_STATUS_REJECTED}
             )[0]
 
             self.charID = test.create_character(
@@ -72,19 +72,19 @@ class TestDBGraphBuilder(unittest.TestCase):
                 cbase_id2,
                 "Child",
                 "Short",
-                entry_attributes={'status': DB_STATUS_REJECTED},
+                entry_attributes={"status": DB_STATUS_REJECTED},
             )[0]
 
             # Create Objects
             self.obase_id = test.create_base_object("baseobj")[0]
             self.objID = test.create_object(
-                'OBJ_1', self.obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big"
+                "OBJ_1", self.obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big"
             )[0]
             self.objID2 = test.create_object(
-                'OBJ_2', self.obase_id, 0.2, 0.3, 0, 0, 0, 0, 0, "Small"
+                "OBJ_2", self.obase_id, 0.2, 0.3, 0, 0, 0, 0, 0, "Small"
             )[0]
             self.objID3 = test.create_object(
-                'OBJ_3',
+                "OBJ_3",
                 self.obase_id,
                 0.2,
                 0.3,
@@ -94,7 +94,7 @@ class TestDBGraphBuilder(unittest.TestCase):
                 0,
                 0,
                 "Small",
-                {'status': DB_STATUS_REJECTED},
+                {"status": DB_STATUS_REJECTED},
             )[0]
 
             # Create Text Edges
@@ -105,7 +105,7 @@ class TestDBGraphBuilder(unittest.TestCase):
                 "Rejected",
                 DB_EDGE_IN_CONTAINED,
                 1,
-                {'status': DB_STATUS_REJECTED},
+                {"status": DB_STATUS_REJECTED},
             )
 
             # Create DB Edges
@@ -116,13 +116,11 @@ class TestDBGraphBuilder(unittest.TestCase):
                 self.charID3,
                 DB_EDGE_EX_CONTAINED,
                 1,
-                {'status': DB_STATUS_REJECTED},
+                {"status": DB_STATUS_REJECTED},
             )
 
         self.graphBuilder = DBGraphBuilder(self.ldb)
-        self.graphBuilderEmpty = DBGraphBuilder(
-            empty
-        )
+        self.graphBuilderEmpty = DBGraphBuilder(empty)
 
     def tearDown(self):
         shutil.rmtree(self.data_dir)
@@ -143,23 +141,23 @@ class TestDBGraphBuilder(unittest.TestCase):
         )  # troll3 is rejected char
         self.assertIn(
             self.graphBuilder.get_random_char().name,
-            ['troll under the bridge', 'troll2 under the bridge'],
+            ["troll under the bridge", "troll2 under the bridge"],
         )
 
     def test_get_random_obj(self):
         self.assertIsNone(self.graphBuilderEmpty.get_random_obj())
         self.assertNotEqual(
-            self.graphBuilder.get_random_obj().name, 'OBJ_3'
+            self.graphBuilder.get_random_obj().name, "OBJ_3"
         )  # roomID3 is id of an rejected room
-        self.assertIn(self.graphBuilder.get_random_obj().name, ['OBJ_1', 'OBJ_2'])
+        self.assertIn(self.graphBuilder.get_random_obj().name, ["OBJ_1", "OBJ_2"])
 
     def test_get_room_categories(self):
         self.assertEqual(self.graphBuilderEmpty.get_room_categories(), [])
         self.assertNotIn(
-            'rejected_broom', self.graphBuilder.get_room_categories()
+            "rejected_broom", self.graphBuilder.get_room_categories()
         )  # test if rejected baseroom is in the list
         self.assertEqual(
-            self.graphBuilder.get_room_categories(), ['broom1', 'broom2', 'broom3']
+            self.graphBuilder.get_room_categories(), ["broom1", "broom2", "broom3"]
         )
 
     def test_get_text_edges(self):
@@ -177,47 +175,47 @@ class TestDBGraphBuilder(unittest.TestCase):
     def test_update_split(self):
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             obj_ids = {
-                o['id']: test.get_id(o['id'])[0]['split'] for o in test.get_object()
+                o["id"]: test.get_id(o["id"])[0]["split"] for o in test.get_object()
             }
             for o in test.get_object():
-                test.update_split(o['id'], 'val')
-            splits = [test.get_id(o['id'])[0]['split'] for o in test.get_object()]
-            self.assertEqual(set(splits), set(['val']))
+                test.update_split(o["id"], "val")
+            splits = [test.get_id(o["id"])[0]["split"] for o in test.get_object()]
+            self.assertEqual(set(splits), set(["val"]))
 
     def test_datasplit(self):
         test_room = self.graphBuilder.get_room_from_id(self.roomID)
         self.assertIsNotNone(test_room.data_split)
-        self.assertIn(test_room.data_split, ['test', 'train', 'val'])
+        self.assertIn(test_room.data_split, ["test", "train", "val"])
 
     def test_assign_datasplit(self):
         # Test on Base Room as they do not get an automatic assignment
         db_path = os.path.join(self.data_dir, self.DB_NAME)
         with LIGHTDatabase(db_path) as ldb:
             entries = ldb.get_id(type=DB_TYPE_BASE_ROOM)
-        pre_assigned = [e['split'] for e in entries]
+        pre_assigned = [e["split"] for e in entries]
         for e in pre_assigned:
             self.assertIsNone(e)
 
         assign_datasplit(db_path, DB_TYPE_BASE_ROOM)
         with LIGHTDatabase(db_path) as ldb:
             entries = ldb.get_id(type=DB_TYPE_BASE_ROOM)
-        assigned = [e['split'] for e in entries]
+        assigned = [e["split"] for e in entries]
         for e in assigned:
             self.assertIsNotNone(e)
-            self.assertIn(e, ['test', 'train', 'val'])
+            self.assertIn(e, ["test", "train", "val"])
 
     def test_data_split_at_creation(self):
         db_path = os.path.join(self.data_dir, self.DB_NAME)
         with LIGHTDatabase(db_path) as ldb:
             room_id, _ = ldb.create_room(
-                'tempt room',
+                "tempt room",
                 self.rbase_id,
-                'temp room to test datasplit',
-                'does it have a datasplit',
-                entry_attributes={'is_from_pickle': False, 'status': DB_STATUS_PROD},
+                "temp room to test datasplit",
+                "does it have a datasplit",
+                entry_attributes={"is_from_pickle": False, "status": DB_STATUS_PROD},
             )
-            self.assertIn(ldb.get_id(id=room_id)[0]['split'], ['test', 'train', 'val'])
+            self.assertIn(ldb.get_id(id=room_id)[0]["split"], ["test", "train", "val"])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

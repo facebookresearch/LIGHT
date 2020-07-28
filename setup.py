@@ -9,36 +9,36 @@ from setuptools import setup, find_packages
 import sys
 
 if sys.version_info < (3, 6):
-    sys.exit('Sorry, Python >=3.6 is required for ParlAI.')
+    sys.exit("Sorry, Python >=3.6 is required for ParlAI.")
 
-with open('README.md', encoding="utf8") as f:
+with open("README.md", encoding="utf8") as f:
     readme = f.read()
 
-with open('LICENSE') as f:
+with open("LICENSE") as f:
     license = f.read()
 
-with open('requirements.txt') as f:
+with open("requirements.txt") as f:
     reqs = f.read()
 
 # TODO ParlAI is a requirement for LIGHT, must make sure it's cloned and setup.py first
 try:
     import parlai
 except:
-    print("ParlAI must be installed to use LIGHT, please clone the repo and run setup.py develop")
+    print(
+        "ParlAI must be installed to use LIGHT, please clone the repo and run setup.py develop"
+    )
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     setup(
-        name='light',
-        version='0.1',
-        description='Text-Adventure Game Research Platform.',
+        name="light",
+        version="0.1",
+        description="Text-Adventure Game Research Platform.",
         long_description=readme,
         # url='http://light-game.ai/',
         license=license,
-        python_requires='>=3.6',
-        packages=find_packages(
-            exclude=('data', 'scripts', 'tests', 'light_internal',)
-        ),
-        install_requires=reqs.strip().split('\n'),
+        python_requires=">=3.6",
+        packages=find_packages(exclude=("data", "scripts", "tests", "light_internal",)),
+        install_requires=reqs.strip().split("\n"),
         include_package_data=True,
         # entry_points={"flake8.extension": ["PAI = parlai.utils.flake8:ParlAIChecker"]},
         classifiers=[

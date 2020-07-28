@@ -43,13 +43,14 @@ class Soul(ABC):
         """
         future_id = f"Node-{self.target_node.node_id}-obs-{time.time():.10f}"
         self._observe_futures[future_id] = self.observe_event(event)
+        
         async def _await_observe_then_cleanup():
             await self._observe_futures[future_id]
             del self._observe_futures[future_id]
 
         loop = asyncio.get_running_loop()
         asyncio.ensure_future(_await_observe_then_cleanup(), loop=loop)
-        
+
     @abstractmethod
     async def observe_event(self, event: "GraphEvent"):
         """

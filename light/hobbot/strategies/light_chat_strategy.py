@@ -20,7 +20,9 @@ class LIGHTChatStrategy(ChatServiceStrategy):
     """
 
     @abstractmethod
-    def has_offensive_language(self, message: str, previous_turn: Optional[str] = None) -> Optional[str]:
+    def has_offensive_language(
+        self, message: str, previous_turn: Optional[str] = None
+    ) -> Optional[str]:
         """Determine if the provided message contains offensive language
 
         Args:
@@ -37,7 +39,12 @@ class LIGHTChatStrategy(ChatServiceStrategy):
         """
 
     @abstractmethod
-    def update_leaderboard(self, player_id: str, score: Optional[int] = None, username: Optional[str] = None) -> None:
+    def update_leaderboard(
+        self,
+        player_id: str,
+        score: Optional[int] = None,
+        username: Optional[str] = None,
+    ) -> None:
         """Updates the leaderboard for this game with the parameters provided"""
 
     @abstractmethod

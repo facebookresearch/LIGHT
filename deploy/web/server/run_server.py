@@ -6,33 +6,25 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-from deploy.web.server.game_instance import (
-    GameInstance,
-)
-from deploy.web.server.telnet_server import (
-    TelnetPlayerProvider,
-)
+from deploy.web.server.game_instance import GameInstance
+from deploy.web.server.telnet_server import TelnetPlayerProvider
 from deploy.web.server.tornado_server import (
-    TornadoPlayerFactory, LandingApplication,
+    TornadoPlayerFactory,
+    LandingApplication,
 )
 from deploy.web.server.builder_server import (
-    BuildApplication, get_handlers,
+    BuildApplication,
+    get_handlers,
 )
-from deploy.web.server.registry import (
-    RegistryApplication,
-)
+from deploy.web.server.registry import RegistryApplication
 from tornado.routing import (
-    PathMatches, Rule, RuleRouter,
+    PathMatches,
+    Rule,
+    RuleRouter,
 )
-from tornado.web import (
-    Application,
-)
-from tornado.httpserver import (
-    HTTPServer,
-)
-from tornado.ioloop import (
-    IOLoop,
-)
+from tornado.web import Application
+from tornado.httpserver import HTTPServer
+from tornado.ioloop import IOLoop
 
 import os.path
 from light.data_model.light_database import LIGHTDatabase
@@ -46,13 +38,16 @@ def make_app(FLAGS, ldb):
     worldBuilderApp = BuildApplication(get_handlers(ldb))
     landingApp = LandingApplication(ldb, FLAGS.hostname, FLAGS.password)
     registryApp = RegistryApplication(FLAGS, ldb)
-    router = RuleRouter([
-        Rule(PathMatches("/builder.*"), worldBuilderApp),
-        Rule(PathMatches("/game.*"), registryApp),
-        Rule(PathMatches("/.*"), landingApp),
-    ])
+    router = RuleRouter(
+        [
+            Rule(PathMatches("/builder.*"), worldBuilderApp),
+            Rule(PathMatches("/game.*"), registryApp),
+            Rule(PathMatches("/.*"), landingApp),
+        ]
+    )
     server = HTTPServer(router)
     server.listen(FLAGS.port)
+
 
 def _run_server(FLAGS, ldb):
     my_loop = IOLoop.current()
@@ -61,12 +56,18 @@ def _run_server(FLAGS, ldb):
         hostname = os.environ["HOSTNAME"]
     else:
         hostname = FLAGS.hostname
-    print("\nYou can connect to the game at http://%s:%s/" % (FLAGS.hostname, FLAGS.port))
-    print("You can connect to the worldbuilder at http://%s:%s/builder/" % (FLAGS.hostname, FLAGS.port))
+    print(
+        "\nYou can connect to the game at http://%s:%s/" % (FLAGS.hostname, FLAGS.port)
+    )
+    print(
+        "You can connect to the worldbuilder at http://%s:%s/builder/"
+        % (FLAGS.hostname, FLAGS.port)
+    )
     try:
         my_loop.start()
     except KeyboardInterrupt:
         my_loop.stop()
+
 
 def main():
     import argparse
@@ -76,25 +77,47 @@ def main():
     DEFAULT_PORT = 35494
     DEFAULT_HOSTNAME = "localhost"
 
-    parser = argparse.ArgumentParser(description='Start the game server.', fromfile_prefix_chars='@')
-    parser.add_argument('--cookie-secret', type=str,
-                        default="0123456789",
-                        help='Cookie secret for issueing cookies (SECRET!!!)')
-    parser.add_argument('--data-model-db', type=str,
-                        default=here + "/../../../light/data_model/database.db",
-                        help='Databse path for the datamodel')
-    parser.add_argument('--hostname', metavar='hostname', type=str,
-                        default=DEFAULT_HOSTNAME,
-                        help='host to run the server on.')
-    parser.add_argument('--light-model-root', type=str,
-                        default="/checkpoint/light/models/",
-                        help='models path. For local setup, use: /checkpoint/jase/projects/light/dialog/')
-    parser.add_argument('--password', type=str,
-                        default="LetsPlay",
-                        help='password for users to access the game.')
-    parser.add_argument('--port', metavar='port', type=int,
-                        default=DEFAULT_PORT,
-                        help='port to run the server on.')
+    parser = argparse.ArgumentParser(
+        description="Start the game server.", fromfile_prefix_chars="@"
+    )
+    parser.add_argument(
+        "--cookie-secret",
+        type=str,
+        default="0123456789",
+        help="Cookie secret for issueing cookies (SECRET!!!)",
+    )
+    parser.add_argument(
+        "--data-model-db",
+        type=str,
+        default=here + "/../../../light/data_model/database.db",
+        help="Databse path for the datamodel",
+    )
+    parser.add_argument(
+        "--hostname",
+        metavar="hostname",
+        type=str,
+        default=DEFAULT_HOSTNAME,
+        help="host to run the server on.",
+    )
+    parser.add_argument(
+        "--light-model-root",
+        type=str,
+        default="/checkpoint/light/models/",
+        help="models path. For local setup, use: /checkpoint/jase/projects/light/dialog/",
+    )
+    parser.add_argument(
+        "--password",
+        type=str,
+        default="LetsPlay",
+        help="password for users to access the game.",
+    )
+    parser.add_argument(
+        "--port",
+        metavar="port",
+        type=int,
+        default=DEFAULT_PORT,
+        help="port to run the server on.",
+    )
     FLAGS, _unknown = parser.parse_known_args()
 
     random.seed(6)

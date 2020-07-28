@@ -4,13 +4,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import unittest, os, sys
-from light.graph.builders.starspace_all import (
-    StarspaceBuilder,
-)
+from light.graph.builders.starspace_all import StarspaceBuilder
 from parlai.core.params import ParlaiParser
 import parlai.utils.misc as parlai_utils
 
-sys.modules['parlai.core.utils'] = parlai_utils
+sys.modules["parlai.core.utils"] = parlai_utils
 from light.graph.structured_graph import OOGraph
 import random
 from light.data_model.light_database import (
@@ -39,21 +37,19 @@ class TestStarspaceBuilder(unittest.TestCase):
         parser = ParlaiParser()
         here = os.path.abspath(os.path.dirname(__file__))
         self.dbpath = "/checkpoint/light/data/database3.db"
-        parlai_datapath = os.path.join(parser.parlai_home, 'data')
+        parlai_datapath = os.path.join(parser.parlai_home, "data")
         ldb = LIGHTDatabase(self.dbpath)
-        model_dir = os.path.join(parlai_datapath, 'models', 'light', '')
-        self.testBuilder = StarspaceBuilder(
-            ldb, 
-        )
+        model_dir = os.path.join(parlai_datapath, "models", "light", "")
+        self.testBuilder = StarspaceBuilder(ldb,)
         self.testGraph, _ = self.testBuilder.get_graph()
 
     def test_arg_parser(self):
         parser = ParlaiParser()
-        parlai_datapath = os.path.join(parser.parlai_home, 'data')
-        self.assertEqual(self.testBuilder.opt.get('light_db_file'), self.dbpath)
-        self.assertEqual(self.testBuilder.opt.get('filler_probability'), 0.3)
-        self.assertEqual(self.testBuilder.opt.get('map_size'), 6)
-        self.assertEqual(self.testBuilder.opt.get('suggestion_type'), 'model')
+        parlai_datapath = os.path.join(parser.parlai_home, "data")
+        self.assertEqual(self.testBuilder.opt.get("light_db_file"), self.dbpath)
+        self.assertEqual(self.testBuilder.opt.get("filler_probability"), 0.3)
+        self.assertEqual(self.testBuilder.opt.get("map_size"), 6)
+        self.assertEqual(self.testBuilder.opt.get("suggestion_type"), "model")
         self.assertEqual(self.testBuilder.map_size, 6)
         self.assertEqual(self.testBuilder.filler_probability, 0.3)
 
@@ -81,51 +77,56 @@ class TestStarspaceBuilder(unittest.TestCase):
 
     def test_single_suggestion_graph_builder(self):
         self.testBuilder.use_best_match = True
-        farmer = self.testBuilder.get_similar_character('servant')
+        farmer = self.testBuilder.get_similar_character("servant")
         best_matches = [
             e.name
             for e in self.testBuilder.get_element_relationship(
-                'servant', DB_TYPE_CHAR, DB_EDGE_IN_CONTAINED
+                "servant", DB_TYPE_CHAR, DB_EDGE_IN_CONTAINED
             )
         ]
         contained = [
-            e.name for e in self.testBuilder.get_contained_items(farmer.db_id , DB_TYPE_CHAR)
+            e.name
+            for e in self.testBuilder.get_contained_items(farmer.db_id, DB_TYPE_CHAR)
         ]
         self.assertEqual(best_matches, contained)
 
-        box = self.testBuilder.get_similar_object('bandana satchel')
+        box = self.testBuilder.get_similar_object("bandana satchel")
         best_matches = [
             e.name
             for e in self.testBuilder.get_element_relationship(
-                'bandana satchel', DB_TYPE_OBJ, DB_EDGE_IN_CONTAINED
+                "bandana satchel", DB_TYPE_OBJ, DB_EDGE_IN_CONTAINED
             )
         ]
         existing_obj_id = box.db_id
         contained = [
-            e.name for e in self.testBuilder.get_contained_items(existing_obj_id , DB_TYPE_OBJ)
+            e.name
+            for e in self.testBuilder.get_contained_items(existing_obj_id, DB_TYPE_OBJ)
         ]
         self.assertEqual(best_matches, contained)
-        room = self.testBuilder.get_similar_room('library')
+        room = self.testBuilder.get_similar_room("library")
         best_matches = [
             e.setting
             for e in self.testBuilder.get_element_relationship(
-                'library', DB_TYPE_ROOM, DB_EDGE_NEIGHBOR
+                "library", DB_TYPE_ROOM, DB_EDGE_NEIGHBOR
             )
         ]
-        neighbors = [room.setting for room in self.testBuilder.get_neighbor_rooms(room.db_id)]
+        neighbors = [
+            room.setting for room in self.testBuilder.get_neighbor_rooms(room.db_id)
+        ]
         self.assertEqual(best_matches, neighbors)
         best_matches = [
             e.name
             for e in self.testBuilder.get_element_relationship(
-                'library', DB_TYPE_CHAR, DB_EDGE_IN_CONTAINED+ " char"
+                "library", DB_TYPE_CHAR, DB_EDGE_IN_CONTAINED + " char"
             )
         ]
-        contained_chars = [char.name for char in self.testBuilder.get_contained_characters(room.db_id)]
+        contained_chars = [
+            char.name for char in self.testBuilder.get_contained_characters(room.db_id)
+        ]
         self.assertEqual(best_matches, contained_chars)
-
 
     # TODO: More tests for room validitiy, such as containment hierarchy
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

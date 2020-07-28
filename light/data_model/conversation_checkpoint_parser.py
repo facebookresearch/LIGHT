@@ -6,11 +6,12 @@
 
 import pickle
 
+
 class ConversationCheckpointParser:
-    '''
+    """
     Loads conversations from a pickle file and contains methods to query the
     number of conversations and other metrics.
-    '''
+    """
 
     def __init__(self, pkl_lst_path):
         with open(pkl_lst_path, "rb") as f:
@@ -28,54 +29,54 @@ class ConversationCheckpointParser:
         return self.count_conversations() * self.get_average_conversation_length()
 
     def get_room_pickle_id(self, index):
-        '''
+        """
         Returns the room ID in the pickle file of a particular conversation.
-        '''
+        """
         conv = self.conv_lst[index]
-        room_pickle_id = conv['conv_info']['room']['id']
+        room_pickle_id = conv["conv_info"]["room"]["id"]
         return room_pickle_id
 
     def get_graph(self, index):
         conv = self.conv_lst[index]
-        graph = conv['graph']
+        graph = conv["graph"]
         return graph
 
     def name_to_persona(self, index):
-        '''
+        """
         Returns a dictionary that maps the name of a character to the persona
         of the character in a particular conversation.
-        '''
+        """
         conv_raw = self.conv_lst[index]
-        conv = conv_raw['conv_info']['acts']
-        chars_lst = conv_raw['conv_info']['characters']
+        conv = conv_raw["conv_info"]["acts"]
+        chars_lst = conv_raw["conv_info"]["characters"]
         char_dict = {}
         for i in range(min(len(conv), len(chars_lst))):
             char_name = chars_lst[i][0]
-            char_dict[char_name.lower()] = conv[i]['task_data']['persona']
+            char_dict[char_name.lower()] = conv[i]["task_data"]["persona"]
         return char_dict
 
     def get_conv_data(self, index):
-        '''
+        """
         Returns turn data by all speakers in a specific conversation.
         Index refers to the index of the converstaion in the pickle passed to
         the class. Returns information needed to create an entry in turns_table
-        '''
-        conv = self.conv_lst[index]['conv_info']['acts']
+        """
+        conv = self.conv_lst[index]["conv_info"]["acts"]
         char_dict = self.name_to_persona(index)
         data = []
         for i in range(len(conv)):
-            action = conv[i]['task_data']['action']
-            if action[:8] == 'gesture ':
-                action_type = 'emote'
+            action = conv[i]["task_data"]["action"]
+            if action[:8] == "gesture ":
+                action_type = "emote"
                 action_text = action[8:]
                 action_return = (action_type, action_text)
-            elif action != '':
-                action_type = 'action'
+            elif action != "":
+                action_type = "action"
                 action_text = action
                 action_return = (action_type, action_text)
             else:
                 action_return = None
-            speaker_name = conv[i]['id'].lower()
+            speaker_name = conv[i]["id"].lower()
             if len(char_dict) == 1:
                 listener_name = None
             else:
@@ -84,11 +85,11 @@ class ConversationCheckpointParser:
                 listener_name = temp_lst[0]
             data.append(
                 {
-                    'speaker': speaker_name,
-                    'listener': listener_name,
-                    'text': conv[i]['text'],
-                    'action': action_return,
-                    'duration': conv[i]['duration'],
+                    "speaker": speaker_name,
+                    "listener": listener_name,
+                    "text": conv[i]["text"],
+                    "action": action_return,
+                    "duration": conv[i]["duration"],
                 }
             )
         return data

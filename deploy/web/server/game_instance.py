@@ -6,14 +6,13 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 import asyncio
-from light.graph.builders.starspace_all import (
-    StarspaceBuilder,
-)
+from light.graph.builders.starspace_all import StarspaceBuilder
 from parlai.utils.misc import Timer
 from light.world.world import World
 from tornado.ioloop import IOLoop
 from light.world.souls.repeat_soul import RepeatSoul
 import time
+
 
 class Player:
     """
@@ -82,6 +81,7 @@ class PlayerProvider:
         """
         raise NotImplementedError
 
+
 class GameInstance:
     """
     This class serves to create a wrapper around a specific graph and manage
@@ -90,10 +90,12 @@ class GameInstance:
     can come from any source.
     """
 
-    def __init__(self, game_id, ldb, g=None,):
+    def __init__(
+        self, game_id, ldb, g=None,
+    ):
         if g is None:
-            _, world = StarspaceBuilder(ldb,
-                debug=False
+            _, world = StarspaceBuilder(
+                ldb, debug=False
             ).get_graph()  # TODO: what are the args that are needed
             self.g = world
         else:
@@ -112,7 +114,7 @@ class GameInstance:
 
     def run_graph_step(self):
         g = self.g
-        
+
         # Clear disconnected players
         left_players = [p for p in self.players if not p.is_alive()]
         for player in left_players:

@@ -17,6 +17,7 @@ from light.world.content_loggers import AgentInteractionLogger, RoomInteractionL
 from light.world.utils.json_utils import read_event_logs
 from parlai.core.params import ParlaiParser
 
+
 class TestInteractionLoggers(unittest.TestCase):
     """Unit tests for Interaction Loggers"""
 
@@ -25,13 +26,13 @@ class TestInteractionLoggers(unittest.TestCase):
         # TODO: Remove reliance on this, just use argparser
         self.parser = ParlaiParser()
         self.parser.add_argument(
-            '--is-logging',
-            type='bool',
+            "--is-logging",
+            type="bool",
             default=True,
             help="Log events with interaction loggers",
         )
         self.parser.add_argument(
-            '--log-path',
+            "--log-path",
             type=str,
             default=self.data_dir,
             help="Write the events logged to this path",
@@ -39,16 +40,16 @@ class TestInteractionLoggers(unittest.TestCase):
 
     def tearDown(self):
         shutil.rmtree(self.data_dir)
-    
+
     def setUp_single_room_graph(self):
-        # Set up the graph 
+        # Set up the graph
         opt, _ = self.parser.parse_and_process_known_args()
         test_graph = OOGraph(opt)
         agent_node = test_graph.add_agent("My test agent", {})
         room_node = test_graph.add_room("test room", {})
         agent_node.force_move_to(room_node)
         test_world = World({}, None, True)
-        test_world.oo_graph = test_graph 
+        test_world.oo_graph = test_graph
         return (test_graph, test_world, agent_node, room_node)
 
     def test_init_room_logger(self):
@@ -68,7 +69,7 @@ class TestInteractionLoggers(unittest.TestCase):
         self.assertTrue(logger._is_players_afk())
         self.assertTrue(logger.is_active)
         self.assertEqual(len(logger.context_buffer), 0)
-    
+
     def test_init_agent_logger(self):
         """
         Test the initial state of the agent logger from OOGraph
@@ -76,7 +77,7 @@ class TestInteractionLoggers(unittest.TestCase):
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
         logger = AgentInteractionLogger(test_graph, agent_node)
-                
+
         self.assertEqual(logger.data_path, self.data_dir)
         self.assertEqual(logger.graph, test_graph)
         self.assertEqual(logger.state_history, [])
@@ -109,8 +110,7 @@ class TestInteractionLoggers(unittest.TestCase):
         self.assertEqual(logger.event_buffer, ["Testing"])
         self.assertEqual(len(logger.state_history), 1)
         self.assertEqual(
-            logger.state_history[-1], 
-            test_graph.to_json_rv(logger.room_id)
+            logger.state_history[-1], test_graph.to_json_rv(logger.room_id)
         )
 
     def test_begin_meta_episode_agent_logger(self):
@@ -135,8 +135,8 @@ class TestInteractionLoggers(unittest.TestCase):
         self.assertEqual(len(logger.event_buffer), 0)
         self.assertEqual(len(logger.state_history), 1)
         self.assertEqual(
-            logger.state_history[-1], 
-            test_graph.to_json_rv(agent_node.get_room().node_id)
+            logger.state_history[-1],
+            test_graph.to_json_rv(agent_node.get_room().node_id),
         )
 
     def test_end_meta_episode_room_logger(self):
@@ -153,7 +153,7 @@ class TestInteractionLoggers(unittest.TestCase):
         logger._end_meta_episode()
 
         self.assertEqual(len(logger.context_buffer), 0)
-        
+
     def test_end_meta_episode_agent_logger(self):
         """
         Test calling end_meta_episode:
@@ -190,8 +190,7 @@ class TestInteractionLoggers(unittest.TestCase):
         self.assertEqual(logger.event_buffer, ["Testing"])
         self.assertEqual(len(logger.state_history), 1)
         self.assertEqual(
-            logger.state_history[-1], 
-            test_graph.to_json_rv(logger.room_id)
+            logger.state_history[-1], test_graph.to_json_rv(logger.room_id)
         )
         self.assertEqual(logger.num_players_present, 1)
 
@@ -201,8 +200,7 @@ class TestInteractionLoggers(unittest.TestCase):
         self.assertEqual(logger.event_buffer, ["Testing"])
         self.assertEqual(len(logger.state_history), 1)
         self.assertEqual(
-            logger.state_history[-1], 
-            test_graph.to_json_rv(logger.room_id)
+            logger.state_history[-1], test_graph.to_json_rv(logger.room_id)
         )
         self.assertEqual(logger.num_players_present, 2)
 
@@ -306,7 +304,6 @@ class TestInteractionLoggers(unittest.TestCase):
         events = [json for _, _, json, _ in logger.event_buffer]
         self.assertTrue(test_event1.to_json() in events)
 
-
     def test_afk_observe_event_room_logger(self):
         """
         Test that after 10 turns with no player, fill buffer, then dumps into main!
@@ -356,13 +353,13 @@ class TestInteractionLoggers(unittest.TestCase):
         self.assertFalse(logger._is_player_afk())
         self.assertEqual(len(logger.event_buffer), 31)
         self.assertEqual(len(logger.context_buffer), 0)
-    
+
     def test_simple_room_logger_saves_and_loads_init_graph(self):
         """
         Test that the room logger properly saves and reloads the initial 
         graph
         """
-        # Set up the graph 
+        # Set up the graph
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
@@ -371,16 +368,18 @@ class TestInteractionLoggers(unittest.TestCase):
         test_init_json = test_world.oo_graph.to_json_rv(room_node.node_id)
         room_logger._begin_meta_episode()
         room_logger._end_meta_episode()
-        graph_file = os.path.join(self.data_dir, 'light_graph_dumps',f'{room_logger._last_graphs[-1]}.json')
-        with open(graph_file, 'r') as graph_json_file:
+        graph_file = os.path.join(
+            self.data_dir, "light_graph_dumps", f"{room_logger._last_graphs[-1]}.json"
+        )
+        with open(graph_file, "r") as graph_json_file:
             written_init_json = graph_json_file.read()
             self.assertEqual(test_init_json, written_init_json)
-    
+
     def test_simple_room_logger_saves_and_loads_event(self):
         """
         Test that the room logger properly saves and reloads an event 
         """
-        # Set up the graph 
+        # Set up the graph
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
         agent_node.is_player = True
@@ -397,7 +396,7 @@ class TestInteractionLoggers(unittest.TestCase):
         event_file = room_logger._last_event_log
         self.assertNotEqual(os.stat(event_file).st_size, 0)
         buff = read_event_logs(event_file)
-        assert(len(buff) == 1)
+        assert len(buff) == 1
 
         world_name, hash_, timestamp, written_event = buff[0]
         self.assertEqual(world_name, room_logger._last_graphs[-1])
@@ -406,13 +405,12 @@ class TestInteractionLoggers(unittest.TestCase):
         event_ref = json.loads(written_event)
         self.assertEqual(event_ref, ref_json)
 
-
     def test_simple_agent_logger_saves_and_loads_init_graph(self):
         """
         Test that the agent logger properly saves and reloads the initial 
         graph
         """
-        # Set up the graph 
+        # Set up the graph
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
 
@@ -421,16 +419,18 @@ class TestInteractionLoggers(unittest.TestCase):
         agent_logger = AgentInteractionLogger(test_graph, agent_node)
         agent_logger._begin_meta_episode()
         agent_logger._end_meta_episode()
-        graph_file = os.path.join(self.data_dir, 'light_graph_dumps',f'{agent_logger._last_graphs[-1]}.json')
-        with open(graph_file, 'r') as graph_json_file:
+        graph_file = os.path.join(
+            self.data_dir, "light_graph_dumps", f"{agent_logger._last_graphs[-1]}.json"
+        )
+        with open(graph_file, "r") as graph_json_file:
             written_init_json = graph_json_file.read()
             self.assertEqual(test_init_json, written_init_json)
-    
+
     def test_simple_agent_logger_saves_and_loads_event(self):
         """
         Test that the agent logger properly saves and reloads an event 
         """
-        # Set up the graph 
+        # Set up the graph
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
         agent_node.is_player = True
@@ -448,7 +448,7 @@ class TestInteractionLoggers(unittest.TestCase):
         event_file = agent_logger._last_event_log
         self.assertNotEqual(os.stat(event_file).st_size, 0)
         buff = read_event_logs(event_file)
-        assert(len(buff) == 1)
+        assert len(buff) == 1
 
         world_name, hash_, timestamp, written_event = buff[0]
         self.assertEqual(world_name, agent_logger._last_graphs[-1])
@@ -457,43 +457,48 @@ class TestInteractionLoggers(unittest.TestCase):
         event_ref = json.loads(written_event)
         self.assertEqual(event_ref, ref_json)
 
-
     def test_simple_room_logger_e2e(self):
         """
         Test that the room logger properly saves and reloads the graph and events
         """
-        # Set up the graph 
+        # Set up the graph
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
         agent_node.is_player = True
         room_node2 = test_graph.add_room("test room2", {})
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
-        test_graph.add_paths_between(room_node, room_node2, 'a path to the north', 'a path to the south')
+        test_graph.add_paths_between(
+            room_node, room_node2, "a path to the north", "a path to the south"
+        )
         test_graph.room_id_to_loggers[room_node.node_id]._add_player()
 
         # Check the room and event json was done correctly for room_node
-        event_room_node_observed = LeaveEvent(agent_node, target_nodes=[room_node2]).to_json()
+        event_room_node_observed = LeaveEvent(
+            agent_node, target_nodes=[room_node2]
+        ).to_json()
         test_init_json = test_world.oo_graph.to_json_rv(room_node.node_id)
 
         GoEvent(agent_node, target_nodes=[room_node2]).execute(test_world)
-        
+
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
-        graph_file = os.path.join(self.data_dir, 'light_graph_dumps', f'{room_logger._last_graphs[-1]}.json')       
+        graph_file = os.path.join(
+            self.data_dir, "light_graph_dumps", f"{room_logger._last_graphs[-1]}.json"
+        )
         self.assertNotEqual(os.stat(graph_file).st_size, 0)
-        with open(graph_file, 'r') as graph_json_file:
+        with open(graph_file, "r") as graph_json_file:
             written_init_json = graph_json_file.read()
             self.assertEqual(test_init_json, written_init_json)
         event_file = room_logger._last_event_log
         self.assertNotEqual(os.stat(event_file).st_size, 0)
         buff = read_event_logs(event_file)
-        assert(len(buff) == 1)
+        assert len(buff) == 1
 
         world_name, hash_, timestamp, written_event = buff[0]
         self.assertEqual(world_name, room_logger._last_graphs[-1])
         ref_json = json.loads(event_room_node_observed)
         event_ref = json.loads(written_event)
         for k in ref_json:
-            self.assertEqual(ref_json[k], event_ref[k], f'Event Json should match')
+            self.assertEqual(ref_json[k], event_ref[k], f"Event Json should match")
 
 
 if __name__ == "__main__":

@@ -61,9 +61,9 @@ class Purgatory:
         Provide a filler soul for a graph agent. Select randomly from the filler soul
         providers to create the soul.
         """
-        assert self.node_id_to_soul.get(agent.node_id) is None, (
-            "Cannot fill a soul that has someone already in it. call clear_soul first"
-        )
+        assert (
+            self.node_id_to_soul.get(agent.node_id) is None
+        ), "Cannot fill a soul that has someone already in it. call clear_soul first"
         if wanted_provider is not None:
             assert (
                 wanted_provider in self.filler_soul_providers
@@ -107,7 +107,9 @@ class Purgatory:
             if len(possible_agents) > 0:
                 target_agent = random.choice(possible_agents)
                 self.clear_soul(target_agent)
-                soul = PlayerSoul(target_agent, self.world, self.players, player_provider)
+                soul = PlayerSoul(
+                    target_agent, self.world, self.players, player_provider
+                )
                 self.node_id_to_soul[target_agent.node_id] = soul
                 self.player_soul_id_to_soul[self.players] = soul
                 self.players += 1

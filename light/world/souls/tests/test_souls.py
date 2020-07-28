@@ -22,7 +22,9 @@ def async_test(f):
         future = coro(*args, **kwargs)
         loop = asyncio.get_event_loop()
         loop.run_until_complete(future)
+
     return wrapper
+
 
 class TestSouls(unittest.TestCase):
     """Unit tests for simple souls"""
@@ -114,7 +116,10 @@ class TestSouls(unittest.TestCase):
         observations = test_soul.observations
         # Extra observation may have slipped in?
         self.assertEqual(len(observations), 3, "Unexpected amount of observations")
-        self.assertEqual(len(test_soul._observe_futures), 0, "All obs threads should have deleted")
+        self.assertEqual(
+            len(test_soul._observe_futures), 0, "All obs threads should have deleted"
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

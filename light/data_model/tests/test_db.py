@@ -59,45 +59,45 @@ class TestDatabase(unittest.TestCase):
         shutil.rmtree(self.data_dir)
 
     def assert_sqlite_row_equal(self, expected_dict, sqlite_row, msg=None):
-        '''Ensure that everything in the expected dict was set in the given row'''
+        """Ensure that everything in the expected dict was set in the given row"""
         for key, value in expected_dict.items():
             self.assertEqual(value, sqlite_row[key], msg)
 
     def assert_sqlite_rows_equal(self, expected_dicts, sqlite_rows, msg=None):
-        '''Ensure that everything in the given dicts was correct in the given rows'''
+        """Ensure that everything in the given dicts was correct in the given rows"""
         for x in range(len(sqlite_rows)):
             self.assert_sqlite_row_equal(expected_dicts[x], sqlite_rows[x], msg)
 
     def test_column_names(self):
-        '''Test that column name and type can be retrieved for a specific table'''
+        """Test that column name and type can be retrieved for a specific table"""
         # base room
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             self.assertEqual(
-                test.get_columns(DB_TYPE_BASE_ROOM), {'id': 'integer', 'name': 'text'}
+                test.get_columns(DB_TYPE_BASE_ROOM), {"id": "integer", "name": "text"}
             )
         # room
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             self.assertEqual(
                 test.get_columns(DB_TYPE_ROOM),
                 {
-                    'id': 'integer',
-                    'name': 'text',
-                    'base_id': 'integer',
-                    'description': 'text',
-                    'backstory': 'text',
+                    "id": "integer",
+                    "name": "text",
+                    "base_id": "integer",
+                    "description": "text",
+                    "backstory": "text",
                 },
             )
         # raise exception when type is invalid
         with self.assertRaises(Exception):
             with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-                test.get_columns('invalid_type')
+                test.get_columns("invalid_type")
 
     def test_create_entries(self):
         # Test if base room can be successfully created
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             rbase_id = test.create_base_room("room")[0]
             self.assert_sqlite_row_equal(
-                {'id': rbase_id, "name": "room"},
+                {"id": rbase_id, "name": "room"},
                 test.get_base_room()[0],
                 "Base room cannot be created",
             )
@@ -108,11 +108,11 @@ class TestDatabase(unittest.TestCase):
             rcontent_id1 = test.create_room("room1", rbase_id, "dirty", "old")[0]
             self.assert_sqlite_row_equal(
                 {
-                    'id': rcontent_id1,
-                    'name': "room1",
-                    'base_id': rbase_id,
-                    'description': 'dirty',
-                    'backstory': 'old',
+                    "id": rcontent_id1,
+                    "name": "room1",
+                    "base_id": rbase_id,
+                    "description": "dirty",
+                    "backstory": "old",
                 },
                 test.get_room()[0],
                 "Room cannot be created",
@@ -120,11 +120,11 @@ class TestDatabase(unittest.TestCase):
             rcontent_id2 = test.create_room(None, rbase_id, "dirty", "old")[0]
             self.assert_sqlite_row_equal(
                 {
-                    'id': rcontent_id2,
-                    'name': "room",
-                    'base_id': rbase_id,
-                    'description': 'dirty',
-                    'backstory': 'old',
+                    "id": rcontent_id2,
+                    "name": "room",
+                    "base_id": rbase_id,
+                    "description": "dirty",
+                    "backstory": "old",
                 },
                 test.get_room(id=rcontent_id2)[0],
                 "Room cannot inherit base room name extended name is not given",
@@ -134,7 +134,7 @@ class TestDatabase(unittest.TestCase):
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             cbase_id = test.create_base_character("troll")[0]
             self.assert_sqlite_row_equal(
-                {'id': cbase_id, "name": "troll"},
+                {"id": cbase_id, "name": "troll"},
                 test.get_base_character()[0],
                 "Base character cannot be created",
             )
@@ -146,11 +146,11 @@ class TestDatabase(unittest.TestCase):
             )[0]
             self.assert_sqlite_row_equal(
                 {
-                    'id': ccontent_id1,
-                    'name': "troll under the bridge",
-                    'base_id': cbase_id,
-                    'persona': 'Male',
-                    'physical_description': 'Tall',
+                    "id": ccontent_id1,
+                    "name": "troll under the bridge",
+                    "base_id": cbase_id,
+                    "persona": "Male",
+                    "physical_description": "Tall",
                 },
                 test.get_character()[0],
                 "Character cannot be created",
@@ -160,7 +160,7 @@ class TestDatabase(unittest.TestCase):
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             obase_id = test.create_base_object("room4")[0]
             self.assert_sqlite_row_equal(
-                {'id': obase_id, "name": "room4"},
+                {"id": obase_id, "name": "room4"},
                 test.get_base_object()[0],
                 "Base object cannot be created",
             )
@@ -172,17 +172,17 @@ class TestDatabase(unittest.TestCase):
             )[0]
             self.assert_sqlite_row_equal(
                 {
-                    'id': ocontent_id1,
-                    'name': "room4",
-                    'base_id': obase_id,
-                    'is_container': 0.4,
-                    'is_drink': 0.2,
-                    'is_food': 0,
-                    'is_gettable': 0,
-                    'is_surface': 0,
-                    'is_wearable': 0,
-                    'is_weapon': 0,
-                    'physical_description': "big",
+                    "id": ocontent_id1,
+                    "name": "room4",
+                    "base_id": obase_id,
+                    "is_container": 0.4,
+                    "is_drink": 0.2,
+                    "is_food": 0,
+                    "is_gettable": 0,
+                    "is_surface": 0,
+                    "is_wearable": 0,
+                    "is_weapon": 0,
+                    "physical_description": "big",
                 },
                 test.get_object()[0],
                 "Object cannot be created",
@@ -195,11 +195,11 @@ class TestDatabase(unittest.TestCase):
             )[0]
             self.assert_sqlite_row_equal(
                 {
-                    'id': check_id,
-                    'parent_id': rcontent_id1,
-                    'child_id': ccontent_id1,
-                    'edge_type': DB_EDGE_EX_CONTAINED,
-                    'edge_strength': 0,
+                    "id": check_id,
+                    "parent_id": rcontent_id1,
+                    "child_id": ccontent_id1,
+                    "edge_type": DB_EDGE_EX_CONTAINED,
+                    "edge_strength": 0,
                 },
                 test.get_node_content()[0],
                 "Node content (edge) cannot be created for ex_contained",
@@ -211,11 +211,11 @@ class TestDatabase(unittest.TestCase):
             )[0]
             self.assert_sqlite_row_equal(
                 {
-                    'id': check_id,
-                    'parent_id': rcontent_id1,
-                    'child_id': ccontent_id1,
-                    'edge_type': DB_EDGE_IN_CONTAINED,
-                    'edge_strength': 1,
+                    "id": check_id,
+                    "parent_id": rcontent_id1,
+                    "child_id": ccontent_id1,
+                    "edge_type": DB_EDGE_IN_CONTAINED,
+                    "edge_strength": 1,
                 },
                 test.get_node_content(edge_strength=1)[0],
                 "Node content (edge) cannot be created for in_contained",
@@ -228,11 +228,11 @@ class TestDatabase(unittest.TestCase):
             )[0]
             self.assert_sqlite_row_equal(
                 {
-                    'id': check_id,
-                    'parent_id': rcontent_id1,
-                    'child_text': "Spear",
-                    'edge_type': DB_EDGE_NEIGHBOR,
-                    'edge_strength': 1,
+                    "id": check_id,
+                    "parent_id": rcontent_id1,
+                    "child_text": "Spear",
+                    "edge_type": DB_EDGE_NEIGHBOR,
+                    "edge_strength": 1,
                 },
                 test.get_text_edge(child_text="Spear")[0],
                 "Neighbor Text edge cannot be created",
@@ -241,21 +241,21 @@ class TestDatabase(unittest.TestCase):
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             check_id = test.create_text_edge(
                 rcontent_id2,
-                'The Abyss',
+                "The Abyss",
                 DB_EDGE_NEIGHBOR,
                 1,
-                child_desc='Falling into the endless crater',
-                child_label='down',
+                child_desc="Falling into the endless crater",
+                child_label="down",
             )[0]
             self.assert_sqlite_row_equal(
                 {
-                    'id': check_id,
-                    'parent_id': rcontent_id2,
-                    'child_text': 'The Abyss',
-                    'edge_type': DB_EDGE_NEIGHBOR,
-                    'edge_strength': 1,
-                    'child_desc': 'Falling into the endless crater',
-                    'child_label': 'down',
+                    "id": check_id,
+                    "parent_id": rcontent_id2,
+                    "child_text": "The Abyss",
+                    "edge_type": DB_EDGE_NEIGHBOR,
+                    "edge_strength": 1,
+                    "child_desc": "Falling into the endless crater",
+                    "child_label": "down",
                 },
                 test.get_text_edge(parent_id=rcontent_id2)[0],
                 "Neighbors edge cannot be created",
@@ -265,14 +265,14 @@ class TestDatabase(unittest.TestCase):
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player1 = test.create_player()[0]
             self.assert_sqlite_row_equal(
-                {'id': player1}, test.get_player()[0], "Player cannot be created"
+                {"id": player1}, test.get_player()[0], "Player cannot be created"
             )
 
         # Test if utterance can be successfully created
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             utterance1 = test.create_utterance("Hi")[0]
             self.assert_sqlite_row_equal(
-                {'id': utterance1, 'dialogue': "Hi"},
+                {"id": utterance1, "dialogue": "Hi"},
                 test.get_utterance()[0],
                 "Utterance cannot be created",
             )
@@ -280,12 +280,12 @@ class TestDatabase(unittest.TestCase):
             utterance2 = test.create_utterance("Hello")[0]
             utterances = test.get_utterance()
             self.assert_sqlite_row_equal(
-                {'id': utterance1, 'dialogue': "Hi"},
+                {"id": utterance1, "dialogue": "Hi"},
                 utterances[0],
                 "Utterance cannot be created",
             )
             self.assert_sqlite_row_equal(
-                {'id': utterance2, 'dialogue': "Hello"},
+                {"id": utterance2, "dialogue": "Hello"},
                 utterances[1],
                 "Utterance cannot be created",
             )
@@ -295,7 +295,7 @@ class TestDatabase(unittest.TestCase):
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             interaction1 = test.create_interaction(rcontent_id1)[0]
             self.assert_sqlite_row_equal(
-                {'id': interaction1, 'setting_id': rcontent_id1},
+                {"id": interaction1, "setting_id": rcontent_id1},
                 test.get_interaction()[0],
                 "Interaction cannot be created",
             )
@@ -315,10 +315,10 @@ class TestDatabase(unittest.TestCase):
             ]
             self.assert_sqlite_row_equal(
                 {
-                    'id': participant1,
-                    'interaction_id': interaction2,
-                    'character_id': ccontent_id1,
-                    'player_id': player1,
+                    "id": participant1,
+                    "interaction_id": interaction2,
+                    "character_id": ccontent_id1,
+                    "player_id": player1,
                 },
                 test.get_participant()[0],
                 "Participant cannot be created",
@@ -331,15 +331,15 @@ class TestDatabase(unittest.TestCase):
             )[0]
             self.assert_sqlite_row_equal(
                 {
-                    'id': turn1,
-                    'interaction_id': interaction1,
-                    'turn_number': 1,
-                    'turn_time': 1,
-                    'interaction_type': "action",
-                    'utterance_id': None,
-                    'action': "hit",
-                    'speaker_id': participant1,
-                    'listener_id': participant1,
+                    "id": turn1,
+                    "interaction_id": interaction1,
+                    "turn_number": 1,
+                    "turn_time": 1,
+                    "interaction_type": "action",
+                    "utterance_id": None,
+                    "action": "hit",
+                    "speaker_id": participant1,
+                    "listener_id": participant1,
                 },
                 test.get_turn()[0],
                 "Turn (action) cannot be created",
@@ -353,15 +353,15 @@ class TestDatabase(unittest.TestCase):
             )[0]
             self.assert_sqlite_row_equal(
                 {
-                    'id': turn2,
-                    'interaction_id': interaction2,
-                    'turn_number': 1,
-                    'turn_time': 1,
-                    'interaction_type': "speech",
-                    'utterance_id': utterance1,
-                    'action': "",
-                    'speaker_id': participant1,
-                    'listener_id': None,
+                    "id": turn2,
+                    "interaction_id": interaction2,
+                    "turn_number": 1,
+                    "turn_time": 1,
+                    "interaction_type": "speech",
+                    "utterance_id": utterance1,
+                    "action": "",
+                    "speaker_id": participant1,
+                    "listener_id": None,
                 },
                 test.get_turn(interaction_type="speech")[0],
                 "Turn (speech) cannot be created",
@@ -681,11 +681,11 @@ class TestDatabase(unittest.TestCase):
             )
             # Test if the id_table is unaffected
             self.assertEqual(len(test.get_id()), prev_id_len)
-                
-#-----------------World Saving Test-----------------#
+
+    # -----------------World Saving Test-----------------#
 
     def test_create_graph_nodes(self):
-        '''Test that graph node creation works and behaves as expected'''
+        """Test that graph node creation works and behaves as expected"""
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player0 = test.create_user("test")[0]
             w_id = test.create_world("swamp", player0, 3, 3, 1)[0]
@@ -695,47 +695,57 @@ class TestDatabase(unittest.TestCase):
             cbase_id = test.create_base_character("troll")[0]
             ccontent_id1 = test.create_character(None, cbase_id, "tall", "big")[0]
             obase_id = test.create_base_object("object")[0]
-            ocontent_id1 = test.create_object('small obj', obase_id, 0, 0, 0, 0, 0, 0, 0, 'dusty')[0]
+            ocontent_id1 = test.create_object(
+                "small obj", obase_id, 0, 0, 0, 0, 0, 0, 0, "dusty"
+            )[0]
             rnode_id = test.create_graph_node(w_id, rcontent_id1)[0]
             cnode_id = test.create_graph_node(w_id, ccontent_id1)[0]
             onode_id = test.create_graph_node(w_id, ocontent_id1)[0]
             self.assert_sqlite_row_equal(
-                {'id' : rnode_id, 'entity_id': rcontent_id1},
+                {"id": rnode_id, "entity_id": rcontent_id1},
                 test.get_node(rnode_id)[0],
                 "Node entity id does not match room id",
             )
             self.assert_sqlite_row_equal(
-                {'id' : cnode_id, 'entity_id': ccontent_id1},
-                test.get_node(cnode_id)[0], 
+                {"id": cnode_id, "entity_id": ccontent_id1},
+                test.get_node(cnode_id)[0],
                 "Node entity id does not match character id",
             )
             self.assert_sqlite_row_equal(
-                {'id' : onode_id, 'entity_id': ocontent_id1},
+                {"id": onode_id, "entity_id": ocontent_id1},
                 test.get_node(onode_id)[0],
                 "Node entity id does not match object id",
             )
-            
+
     def test_create_tiles(self):
-        '''Test that edge creation works and behaves as expected'''
+        """Test that edge creation works and behaves as expected"""
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player0 = test.create_user("test")[0]
             w_id = test.create_world("swamp", player0, 3, 3, 1)[0]
 
             rbase_id = test.create_base_room("room")[0]
             rcontent_id1 = test.create_room("room1", rbase_id, "dirty", "old")[0]
-        
+
             rnode_id1 = test.create_graph_node(w_id, rcontent_id1)[0]
 
-            tile_id = test.create_tile(w_id, rnode_id1, '#FFFFF', 1, 1, 0)[0]
+            tile_id = test.create_tile(w_id, rnode_id1, "#FFFFF", 1, 1, 0)[0]
             res = test.get_tiles(w_id)[0]
             self.assert_sqlite_row_equal(
-                {'id': tile_id, "world_id": w_id, "room_node_id": rnode_id1, 'color': "#FFFFF", 'x_coordinate': 1, 'y_coordinate': 1, 'floor': 0},
+                {
+                    "id": tile_id,
+                    "world_id": w_id,
+                    "room_node_id": rnode_id1,
+                    "color": "#FFFFF",
+                    "x_coordinate": 1,
+                    "y_coordinate": 1,
+                    "floor": 0,
+                },
                 res,
-                "Tile was not created succesfully"
+                "Tile was not created succesfully",
             )
 
     def test_create_graph_edges(self):
-        '''Test that edge creation works and behaves as expected'''
+        """Test that edge creation works and behaves as expected"""
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player0 = test.create_user("test")[0]
             w_id = test.create_world("swamp", player0, 3, 3, 1)[0]
@@ -745,38 +755,60 @@ class TestDatabase(unittest.TestCase):
             rcontent_id2 = test.create_room("room2", rbase_id, "dirty", "old")[0]
             cbase_id = test.create_base_character("troll")[0]
             ccontent_id1 = test.create_character(None, cbase_id, "tall", "big")[0]
-        
+
             rnode_id1 = test.create_graph_node(w_id, rcontent_id1)[0]
             rnode_id2 = test.create_graph_node(w_id, rcontent_id2)[0]
             cnode_id = test.create_graph_node(w_id, ccontent_id1)[0]
 
-            tile_id = test.create_tile(w_id, rnode_id1, '#FFFFF', 1, 1, 0)[0]
-            edge1 = test.create_graph_edge(w_id, rnode_id1, rnode_id2, "neighbors to the north")[0]
+            tile_id = test.create_tile(w_id, rnode_id1, "#FFFFF", 1, 1, 0)[0]
+            edge1 = test.create_graph_edge(
+                w_id, rnode_id1, rnode_id2, "neighbors to the north"
+            )[0]
             edge2 = test.create_graph_edge(w_id, rnode_id1, cnode_id, "contains")[0]
             edges = set()
             test.get_edges(tile_id, edges)
             edge_list = [{x: edge[x] for x in edge.keys()} for edge in edges]
             self.assertCountEqual(
-                [{'id': edge1, 'w_id': w_id, 'src_id': rnode_id1, 'dst_id': rnode_id2, 'edge_type': "neighbors to the north"}, 
-                 {'id': edge2, 'w_id': w_id, 'src_id': rnode_id1, 'dst_id': cnode_id, 'edge_type': "contains"}],
-                edge_list
+                [
+                    {
+                        "id": edge1,
+                        "w_id": w_id,
+                        "src_id": rnode_id1,
+                        "dst_id": rnode_id2,
+                        "edge_type": "neighbors to the north",
+                    },
+                    {
+                        "id": edge2,
+                        "w_id": w_id,
+                        "src_id": rnode_id1,
+                        "dst_id": cnode_id,
+                        "edge_type": "contains",
+                    },
+                ],
+                edge_list,
             )
-           
 
     def test_create_world(self):
-        '''Test that world creation works and behaves as expected'''
+        """Test that world creation works and behaves as expected"""
         # Test if a new world can be successfully created
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player0 = test.create_user("test")[0]
             w_id = test.create_world("swamp", player0, 3, 3, 1)[0]
             self.assert_sqlite_row_equal(
-                {'id': w_id, 'name': "swamp", 'owner_id': player0, 'height': 3, 'width': 3, 'num_floors' : 1,},
+                {
+                    "id": w_id,
+                    "name": "swamp",
+                    "owner_id": player0,
+                    "height": 3,
+                    "width": 3,
+                    "num_floors": 1,
+                },
                 test.get_world(w_id, player0)[0],
                 "New World cannot be created",
             )
-    
+
     def test_set_inactive_world(self):
-        '''Test that creation is active, and we make inactive with the set_inactive'''
+        """Test that creation is active, and we make inactive with the set_inactive"""
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player0 = test.create_user("test")[0]
             w1_id = test.create_world("swamp", player0, 3, 3, 1)[0]
@@ -785,74 +817,64 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(test.get_world(w1_id, player0)[0]["in_use"], 0)
 
     def test_autosave_basic(self):
-        '''Test that autosave works'''
+        """Test that autosave works"""
         world_dict = {
-                "dimensions":{
-                    "id" : None,
-                    "name": "default",
-                    "height": 3,
-                    "width": 3,
-                    "floors": 1
-                },
-                "entities":{
-                    "room": {},
-                    "character": {},
-                    "object": {},
-                    "nextID": 1
-                },
-                "map":{
-                    "tiles": [],
-                    "edges": []
-                }
-            }
+            "dimensions": {
+                "id": None,
+                "name": "default",
+                "height": 3,
+                "width": 3,
+                "floors": 1,
+            },
+            "entities": {"room": {}, "character": {}, "object": {}, "nextID": 1},
+            "map": {"tiles": [], "edges": []},
+        }
         curr_time = time.ctime(time.time())
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player0 = test.create_user("test")[0]
-            test.set_autosave(json.dumps(world_dict), player0, curr_time,)
+            test.set_autosave(
+                json.dumps(world_dict), player0, curr_time,
+            )
             autosave = test.get_autosave(player0)
         self.assert_sqlite_row_equal(
             {
-                'owner_id': player0,
-                'timestamp': curr_time,
-                'world_dump': json.dumps(world_dict),
+                "owner_id": player0,
+                "timestamp": curr_time,
+                "world_dump": json.dumps(world_dict),
             },
-            autosave
+            autosave,
         )
 
     def test_autosave_update(self):
-        '''Test that autosave updates properly'''
+        """Test that autosave updates properly"""
         world_dict = {
-                "dimensions":{
-                    "id" : None,
-                    "name": "default",
-                    "height": 3,
-                    "width": 3,
-                    "floors": 1
-                },
-                "entities":{
-                    "room": {},
-                    "character": {},
-                    "object": {},
-                    "nextID": 1
-                },
-                "map":{
-                    "tiles": [],
-                    "edges": []
-                }
-            }
+            "dimensions": {
+                "id": None,
+                "name": "default",
+                "height": 3,
+                "width": 3,
+                "floors": 1,
+            },
+            "entities": {"room": {}, "character": {}, "object": {}, "nextID": 1},
+            "map": {"tiles": [], "edges": []},
+        }
         curr_time = time.ctime(time.time())
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player0 = test.create_user("test")[0]
-            test.set_autosave(json.dumps(world_dict), player0, curr_time,)
+            test.set_autosave(
+                json.dumps(world_dict), player0, curr_time,
+            )
             second_time = time.ctime(time.time())
             world_dict["dimensions"]["height"] = 10
-            test.set_autosave(json.dumps(world_dict), player0, second_time,)
+            test.set_autosave(
+                json.dumps(world_dict), player0, second_time,
+            )
             autosave = test.get_autosave(player0,)
         self.assertEqual(autosave["timestamp"], second_time)
         self.assertEqual(json.loads(autosave["world_dump"])["dimensions"]["height"], 10)
 
     def test_view_worlds(self):
-        '''Test that view worlds returns all active worlds owned by player and only those worlds!'''
+        """Test that view worlds returns all active worlds owned by player and only those worlds!"""
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player0 = test.create_user("test")[0]
             w1_id = test.create_world("swamp", player0, 3, 3, 1)[0]
@@ -861,10 +883,27 @@ class TestDatabase(unittest.TestCase):
             test.set_world_inactive(w3_id, player0)
             res = test.view_worlds(player0)
             self.assertEqual(len(res), 2)
-            self.assertEqual(res, 
-                [            
-                    {'height': 3, 'id': w1_id, 'in_use': 1, 'name': "swamp", 'num_floors': 1, 'owner_id': player0, 'width': 3},
-                    {'height': 2, 'id': w2_id, 'in_use': 1, 'name': "dragon guarded castle", 'num_floors': 2, 'owner_id': player0, 'width': 4},
+            self.assertEqual(
+                res,
+                [
+                    {
+                        "height": 3,
+                        "id": w1_id,
+                        "in_use": 1,
+                        "name": "swamp",
+                        "num_floors": 1,
+                        "owner_id": player0,
+                        "width": 3,
+                    },
+                    {
+                        "height": 2,
+                        "id": w2_id,
+                        "in_use": 1,
+                        "name": "dragon guarded castle",
+                        "num_floors": 2,
+                        "owner_id": player0,
+                        "width": 4,
+                    },
                 ],
             )
 
@@ -874,26 +913,35 @@ class TestDatabase(unittest.TestCase):
             res = test.view_worlds(player1)
             self.assertEqual(len(res), 1)
             self.assertEqual(
-                [{'height': 3, 'id': w3_id, 'in_use': 1, 'name': "swamp2", 'num_floors': 5, 'owner_id': player1, 'width': 3}],
-                res
+                [
+                    {
+                        "height": 3,
+                        "id": w3_id,
+                        "in_use": 1,
+                        "name": "swamp2",
+                        "num_floors": 5,
+                        "owner_id": player1,
+                        "width": 3,
+                    }
+                ],
+                res,
             )
-    
+
     def test_world_deletion(self):
-        '''Test that delete worlds works as expected (ownly owner can delete)'''
+        """Test that delete worlds works as expected (ownly owner can delete)"""
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player0 = test.create_user("test")[0]
             player1 = test.create_user("test2")[0]
             w1_id = test.create_world("swamp", player0, 3, 3, 1)[0]
-            
+
             with self.assertRaises(Exception):
                 test.delete_world(w1_id, player1)
             self.assertEqual(len(test.view_worlds(player0)), 1)
             test.delete_world(w1_id, player0)
             self.assertEqual(len(test.view_worlds(player0)), 0)
 
-
     def test_world_limit(self):
-        '''Test that the limit on world creation is enforced properly'''
+        """Test that the limit on world creation is enforced properly"""
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player0 = test.create_user("test")[0]
             player1 = test.create_user("test2")[0]
@@ -904,10 +952,10 @@ class TestDatabase(unittest.TestCase):
             res = test.create_world("swamp10", player1, 3, 3, 1)
             self.assertEqual(res[1], True)
 
-#---------------------------------------------------#
+    # ---------------------------------------------------#
 
     def test_status(self):
-        '''Test that status in the master ID table behaves as expected'''
+        """Test that status in the master ID table behaves as expected"""
         # test if created entities have default value of False for is_from_pickle
         # and DB_STATUS_REVIEW for status
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
@@ -923,19 +971,19 @@ class TestDatabase(unittest.TestCase):
             test.update_status(rbase_id, DB_STATUS_PROD)
             self.assert_sqlite_row_equal(
                 {
-                    'id': rbase_id,
-                    'type': DB_TYPE_BASE_ROOM,
-                    'status': DB_STATUS_PROD,
-                    'is_from_pickle': 0,
+                    "id": rbase_id,
+                    "type": DB_TYPE_BASE_ROOM,
+                    "status": DB_STATUS_PROD,
+                    "is_from_pickle": 0,
                 },
                 test.get_id(id=rbase_id)[0],
             )
             self.assert_sqlite_row_equal(
                 {
-                    'id': rcontent_id1,
-                    'type': DB_TYPE_ROOM,
-                    'status': DB_STATUS_REVIEW,
-                    'is_from_pickle': 0,
+                    "id": rcontent_id1,
+                    "type": DB_TYPE_ROOM,
+                    "status": DB_STATUS_REVIEW,
+                    "is_from_pickle": 0,
                 },
                 test.get_id(id=rcontent_id1)[0],
             )
@@ -945,19 +993,19 @@ class TestDatabase(unittest.TestCase):
             test.update_status(ccontent_id1, DB_STATUS_REJECTED)
             self.assert_sqlite_row_equal(
                 {
-                    'id': cbase_id,
-                    'type': DB_TYPE_BASE_CHAR,
-                    'status': DB_STATUS_REVIEW,
-                    'is_from_pickle': 0,
+                    "id": cbase_id,
+                    "type": DB_TYPE_BASE_CHAR,
+                    "status": DB_STATUS_REVIEW,
+                    "is_from_pickle": 0,
                 },
                 test.get_id(id=cbase_id)[0],
             )
             self.assert_sqlite_row_equal(
                 {
-                    'id': ccontent_id1,
-                    'type': DB_TYPE_CHAR,
-                    'status': DB_STATUS_REJECTED,
-                    'is_from_pickle': 0,
+                    "id": ccontent_id1,
+                    "type": DB_TYPE_CHAR,
+                    "status": DB_STATUS_REJECTED,
+                    "is_from_pickle": 0,
                 },
                 test.get_id(id=ccontent_id1)[0],
             )
@@ -984,14 +1032,14 @@ class TestDatabase(unittest.TestCase):
             room3 = test.create_room("room3", base_room2, "clean", "new")[0]
             base_char = test.create_base_character("troll")[0]
             char = test.create_character(None, base_char, "tall", "big")[0]
-            base_obj = test.create_base_object('obj')[0]
+            base_obj = test.create_base_object("obj")[0]
             # test % wildcard in front of search string works
             obj1 = test.create_object(
-                'small obj', base_obj, 0, 0, 0, 0, 0, 0, 0, 'dusty'
+                "small obj", base_obj, 0, 0, 0, 0, 0, 0, 0, "dusty"
             )[0]
             # test % wildcard after search string works
             obj2 = test.create_object(
-                'big obj', base_obj, 0, 0, 0, 0, 0, 0, 1, 'clean'
+                "big obj", base_obj, 0, 0, 0, 0, 0, 0, 1, "clean"
             )[0]
             room1_room2 = test.create_node_content(room1, room2, "neighbor", 1)[0]
             room1_room3 = test.create_node_content(room1, room3, "neighbor", 1)[0]
@@ -1007,87 +1055,87 @@ class TestDatabase(unittest.TestCase):
             edges = {
                 room1: [
                     {
-                        'child': room2,
-                        'type': 'neighbor',
-                        'edge': room1_room2,
-                        'direction': 'W',
+                        "child": room2,
+                        "type": "neighbor",
+                        "edge": room1_room2,
+                        "direction": "W",
                     },
                     {
-                        'child': room3,
-                        'type': 'neighbor',
-                        'edge': room1_room3,
-                        'direction': 'N',
+                        "child": room3,
+                        "type": "neighbor",
+                        "edge": room1_room3,
+                        "direction": "N",
                     },
-                    {'child': char, 'type': 'non_neighbor', 'edge': room1_char},
-                    {'child': obj1, 'type': 'non_neighbor', 'edge': room1_obj1},
+                    {"child": char, "type": "non_neighbor", "edge": room1_char},
+                    {"child": obj1, "type": "non_neighbor", "edge": room1_obj1},
                 ],
-                room2: [{'child': obj2, 'type': 'non_neighbor', 'edge': room2_obj2}],
+                room2: [{"child": obj2, "type": "non_neighbor", "edge": room2_obj2}],
                 room3: [],
             }
             game_id = test.save_single_game(graph, edges, creator)
             self.assert_sqlite_row_equal(
-                {'game_id': game_id, 'graph': 'graph_name', 'creator': creator},
+                {"game_id": game_id, "graph": "graph_name", "creator": creator},
                 test.get_games()[0],
             )
             self.assert_sqlite_rows_equal(
                 [
-                    {'component_id': 1, 'game': game_id, 'component': room1},
-                    {'component_id': 2, 'game': game_id, 'component': char},
-                    {'component_id': 3, 'game': game_id, 'component': obj1},
-                    {'component_id': 4, 'game': game_id, 'component': room2},
-                    {'component_id': 5, 'game': game_id, 'component': obj2},
-                    {'component_id': 6, 'game': game_id, 'component': room3},
+                    {"component_id": 1, "game": game_id, "component": room1},
+                    {"component_id": 2, "game": game_id, "component": char},
+                    {"component_id": 3, "game": game_id, "component": obj1},
+                    {"component_id": 4, "game": game_id, "component": room2},
+                    {"component_id": 5, "game": game_id, "component": obj2},
+                    {"component_id": 6, "game": game_id, "component": room3},
                 ],
                 test.get_game_components(),
             )
             self.assert_sqlite_rows_equal(
                 [
                     {
-                        'edge_id': 1,
-                        'game': game_id,
-                        'parent': room1,
-                        'child': room2,
-                        'edge': room1_room2,
-                        'direction': 'W',
+                        "edge_id": 1,
+                        "game": game_id,
+                        "parent": room1,
+                        "child": room2,
+                        "edge": room1_room2,
+                        "direction": "W",
                     },
                     {
-                        'edge_id': 2,
-                        'game': game_id,
-                        'parent': room1,
-                        'child': room3,
-                        'edge': room1_room3,
-                        'direction': 'N',
+                        "edge_id": 2,
+                        "game": game_id,
+                        "parent": room1,
+                        "child": room3,
+                        "edge": room1_room3,
+                        "direction": "N",
                     },
                     {
-                        'edge_id': 3,
-                        'game': game_id,
-                        'parent': room1,
-                        'child': char,
-                        'edge': room1_char,
-                        'direction': None,
+                        "edge_id": 3,
+                        "game": game_id,
+                        "parent": room1,
+                        "child": char,
+                        "edge": room1_char,
+                        "direction": None,
                     },
                     {
-                        'edge_id': 4,
-                        'game': game_id,
-                        'parent': room1,
-                        'child': obj1,
-                        'edge': room1_obj1,
-                        'direction': None,
+                        "edge_id": 4,
+                        "game": game_id,
+                        "parent": room1,
+                        "child": obj1,
+                        "edge": room1_obj1,
+                        "direction": None,
                     },
                     {
-                        'edge_id': 5,
-                        'game': game_id,
-                        'parent': room2,
-                        'child': obj2,
-                        'edge': room2_obj2,
-                        'direction': None,
+                        "edge_id": 5,
+                        "game": game_id,
+                        "parent": room2,
+                        "child": obj2,
+                        "edge": room2_obj2,
+                        "direction": None,
                     },
                 ],
                 test.get_game_edges(),
             )
 
     def test_load_single_conversation(self):
-        '''Tests whether loading a single conversation works'''
+        """Tests whether loading a single conversation works"""
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             base_room = test.create_base_room("room")[0]
             room = test.create_room("room1", base_room, "dirty", "old")[0]
@@ -1099,106 +1147,106 @@ class TestDatabase(unittest.TestCase):
             participants = [(char, player0), (char, player1), (char, player2)]
             turns = [
                 {
-                    'speaker': 0,
-                    'listener': None,
-                    'interaction': {'type': 'speech', 'content': 'utterance1'},
-                    'turn_time': 5,
+                    "speaker": 0,
+                    "listener": None,
+                    "interaction": {"type": "speech", "content": "utterance1"},
+                    "turn_time": 5,
                 },
                 {
-                    'speaker': 2,
-                    'listener': 1,
-                    'interaction': {'type': 'emote', 'content': 'emote1'},
-                    'turn_time': 4,
+                    "speaker": 2,
+                    "listener": 1,
+                    "interaction": {"type": "emote", "content": "emote1"},
+                    "turn_time": 4,
                 },
                 {
-                    'speaker': 2,
-                    'listener': None,
-                    'interaction': {'type': 'action', 'content': 'action1'},
-                    'turn_time': 3,
+                    "speaker": 2,
+                    "listener": None,
+                    "interaction": {"type": "action", "content": "action1"},
+                    "turn_time": 3,
                 },
                 {
-                    'speaker': 1,
-                    'listener': 2,
-                    'interaction': {'type': 'speech', 'content': 'utterance2'},
-                    'turn_time': 2,
+                    "speaker": 1,
+                    "listener": 2,
+                    "interaction": {"type": "speech", "content": "utterance2"},
+                    "turn_time": 2,
                 },
             ]
             interaction_id = test.add_single_conversation(room, participants, turns)
             # check that the interaction is correct
             self.assert_sqlite_row_equal(
-                {'id': interaction_id, 'setting_id': room},
+                {"id": interaction_id, "setting_id": room},
                 test.get_query(interaction_id),
             )
             # check that the participants are correct
-            participants_retrieved = test.get_id(type='participant', expand=True)
+            participants_retrieved = test.get_id(type="participant", expand=True)
             self.assert_sqlite_rows_equal(
                 [
                     {
-                        'interaction_id': interaction_id,
-                        'character_id': char,
-                        'player_id': player0,
+                        "interaction_id": interaction_id,
+                        "character_id": char,
+                        "player_id": player0,
                     },
                     {
-                        'interaction_id': interaction_id,
-                        'character_id': char,
-                        'player_id': player1,
+                        "interaction_id": interaction_id,
+                        "character_id": char,
+                        "player_id": player1,
                     },
                     {
-                        'interaction_id': interaction_id,
-                        'character_id': char,
-                        'player_id': player2,
+                        "interaction_id": interaction_id,
+                        "character_id": char,
+                        "player_id": player2,
                     },
                 ],
                 participants_retrieved,
             )
             # check that the turns are correct
-            turns_retrieved = test.get_id(type='turn', expand=True)
+            turns_retrieved = test.get_id(type="turn", expand=True)
             utterance1 = test.get_utterance(dialogue="utterance1")[0][0]
-            utterance2 = test.get_utterance(dialogue='utterance2')[0][0]
+            utterance2 = test.get_utterance(dialogue="utterance2")[0][0]
             par0 = test.get_participant(character_id=char, player_id=player0)[0][0]
             par1 = test.get_participant(character_id=char, player_id=player1)[0][0]
             par2 = test.get_participant(character_id=char, player_id=player2)[0][0]
             self.assert_sqlite_rows_equal(
                 [
                     {
-                        'interaction_id': interaction_id,
-                        'turn_number': 0,
-                        'turn_time': 5,
-                        'interaction_type': 'speech',
-                        'utterance_id': utterance1,
-                        'action': None,
-                        'speaker_id': par0,
-                        'listener_id': None,
+                        "interaction_id": interaction_id,
+                        "turn_number": 0,
+                        "turn_time": 5,
+                        "interaction_type": "speech",
+                        "utterance_id": utterance1,
+                        "action": None,
+                        "speaker_id": par0,
+                        "listener_id": None,
                     },
                     {
-                        'interaction_id': interaction_id,
-                        'turn_number': 1,
-                        'turn_time': 4,
-                        'interaction_type': 'emote',
-                        'utterance_id': None,
-                        'action': 'emote1',
-                        'speaker_id': par2,
-                        'listener_id': par1,
+                        "interaction_id": interaction_id,
+                        "turn_number": 1,
+                        "turn_time": 4,
+                        "interaction_type": "emote",
+                        "utterance_id": None,
+                        "action": "emote1",
+                        "speaker_id": par2,
+                        "listener_id": par1,
                     },
                     {
-                        'interaction_id': interaction_id,
-                        'turn_number': 2,
-                        'turn_time': 3,
-                        'interaction_type': 'action',
-                        'utterance_id': None,
-                        'action': 'action1',
-                        'speaker_id': par2,
-                        'listener_id': None,
+                        "interaction_id": interaction_id,
+                        "turn_number": 2,
+                        "turn_time": 3,
+                        "interaction_type": "action",
+                        "utterance_id": None,
+                        "action": "action1",
+                        "speaker_id": par2,
+                        "listener_id": None,
                     },
                     {
-                        'interaction_id': interaction_id,
-                        'turn_number': 3,
-                        'turn_time': 2,
-                        'interaction_type': 'speech',
-                        'utterance_id': utterance2,
-                        'action': None,
-                        'speaker_id': par1,
-                        'listener_id': par2,
+                        "interaction_id": interaction_id,
+                        "turn_number": 3,
+                        "turn_time": 2,
+                        "interaction_type": "speech",
+                        "utterance_id": utterance2,
+                        "action": None,
+                        "speaker_id": par1,
+                        "listener_id": par2,
                     },
                 ],
                 turns_retrieved,
@@ -1207,13 +1255,13 @@ class TestDatabase(unittest.TestCase):
             # test whether duplicate conversation is detected and ignored
             interaction_id_dup = test.add_single_conversation(room, participants, turns)
             self.assertEqual(interaction_id_dup, -1)
-            participants_retrieved_dup = test.get_id(type='participant', expand=True)
+            participants_retrieved_dup = test.get_id(type="participant", expand=True)
             self.assertEqual(len(participants_retrieved_dup), 3)
-            turns_retrieved_dup = test.get_id(type='turn', expand=True)
+            turns_retrieved_dup = test.get_id(type="turn", expand=True)
             self.assertEqual(len(turns_retrieved_dup), 4)
 
     def test_load_single_conversation_errors(self):
-        '''Tests whether errors are detected when loading conversations'''
+        """Tests whether errors are detected when loading conversations"""
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             base_room = test.create_base_room("room")[0]
             room = test.create_room("room1", base_room, "dirty", "old")[0]
@@ -1225,22 +1273,22 @@ class TestDatabase(unittest.TestCase):
             participants = [(char, player0), (char, player1), (char, player2)]
             turns = [
                 {
-                    'speaker': 0,
-                    'listener': None,
-                    'interaction': {'type': 'speech', 'content': 'utterance1'},
-                    'turn_time': 5,
+                    "speaker": 0,
+                    "listener": None,
+                    "interaction": {"type": "speech", "content": "utterance1"},
+                    "turn_time": 5,
                 },
                 {
-                    'speaker': 2,
-                    'listener': 1,
-                    'interaction': {'type': 'emote', 'content': 'emote1'},
-                    'turn_time': 4,
+                    "speaker": 2,
+                    "listener": 1,
+                    "interaction": {"type": "emote", "content": "emote1"},
+                    "turn_time": 4,
                 },
                 {
-                    'speaker': None,
-                    'listener': None,
-                    'interaction': {'type': 'action', 'content': 'action1'},
-                    'turn_time': 3,
+                    "speaker": None,
+                    "listener": None,
+                    "interaction": {"type": "action", "content": "action1"},
+                    "turn_time": 3,
                 },
             ]
             # error should be raised when speaker is null in a conversation
@@ -2103,21 +2151,21 @@ class TestDatabase(unittest.TestCase):
         """
         # Test if searching for rooms works properly
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            base_room = test.create_base_room('room')[0]
+            base_room = test.create_base_room("room")[0]
             # test % wildcard in front of search string works
-            room1 = test.create_room('small room', base_room, 'tiny', 'old')[0]
+            room1 = test.create_room("small room", base_room, "tiny", "old")[0]
             # test % wildcard after search string works
-            room2 = test.create_room('roomsmall', base_room, 'tiny', 'old')[0]
+            room2 = test.create_room("roomsmall", base_room, "tiny", "old")[0]
             # test % wildcard before and after search string works
-            room3 = test.create_room('small room small', base_room, 'tiny', 'old')[0]
+            room3 = test.create_room("small room small", base_room, "tiny", "old")[0]
             # test that if the search string is not present exactly, the result
             # is not returned
-            room4 = test.create_room('small oom', base_room, 'tiny', 'old')[0]
+            room4 = test.create_room("small oom", base_room, "tiny", "old")[0]
             # test that exact string is returned
-            room5 = test.create_room(None, base_room, 'tiny', 'old')[0]
+            room5 = test.create_room(None, base_room, "tiny", "old")[0]
             # test that capitalization is ignored
-            room6 = test.create_room('Room', base_room, 'tiny', 'old')[0]
-            result = test.search_database('room', 'room', fts=False)
+            room6 = test.create_room("Room", base_room, "tiny", "old")[0]
+            result = test.search_database("room", "room", fts=False)
             self.assertEqual(
                 [i[:5] for i in result],
                 [
@@ -2131,23 +2179,23 @@ class TestDatabase(unittest.TestCase):
 
         # Test if searching for characters works properly
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            base_char = test.create_base_character('char')[0]
+            base_char = test.create_base_character("char")[0]
             # test % wildcard in front of search string works
-            char1 = test.create_character('small char', base_char, 'tall', 'young')[0]
+            char1 = test.create_character("small char", base_char, "tall", "young")[0]
             # test % wildcard after search string works
-            char2 = test.create_character('charsmall', base_char, 'tall', 'young')[0]
+            char2 = test.create_character("charsmall", base_char, "tall", "young")[0]
             # test % wildcard before and after search string works
             char3 = test.create_character(
-                'small char small', base_char, 'tall', 'young'
+                "small char small", base_char, "tall", "young"
             )[0]
             # test that if the search string is not present exactly, the result
             # is not returned
-            char4 = test.create_character('small har', base_char, 'tall', 'young')[0]
+            char4 = test.create_character("small har", base_char, "tall", "young")[0]
             # test that exact string is returned
-            char5 = test.create_character(None, base_char, 'tall', 'young')[0]
+            char5 = test.create_character(None, base_char, "tall", "young")[0]
             # test that capitalization is ignored
-            char6 = test.create_character('Char', base_char, 'tall', 'young')[0]
-            result = test.search_database('character', 'char', fts=False)
+            char6 = test.create_character("Char", base_char, "tall", "young")[0]
+            result = test.search_database("character", "char", fts=False)
             self.assertEqual(
                 [i[:5] for i in result],
                 [
@@ -2161,29 +2209,29 @@ class TestDatabase(unittest.TestCase):
 
         # Test if searching for objects works properly
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            base_obj = test.create_base_object('obj')[0]
+            base_obj = test.create_base_object("obj")[0]
             # test % wildcard in front of search string works
             obj1 = test.create_object(
-                'small obj', base_obj, 0, 0, 0, 0, 0, 0, 0, 'dusty'
+                "small obj", base_obj, 0, 0, 0, 0, 0, 0, 0, "dusty"
             )[0]
             # test % wildcard after search string works
             obj2 = test.create_object(
-                'objsmall', base_obj, 0, 0, 0, 0, 0, 0, 0, 'dusty'
+                "objsmall", base_obj, 0, 0, 0, 0, 0, 0, 0, "dusty"
             )[0]
             # test % wildcard before and after search string works
             obj3 = test.create_object(
-                'small obj small', base_obj, 0, 0, 0, 0, 0, 0, 0, 'dusty'
+                "small obj small", base_obj, 0, 0, 0, 0, 0, 0, 0, "dusty"
             )[0]
             # test that if the search string is not present exactly, the result
             # is not returned
             obj4 = test.create_object(
-                'small ob', base_obj, 0, 0, 0, 0, 0, 0, 0, 'dusty'
+                "small ob", base_obj, 0, 0, 0, 0, 0, 0, 0, "dusty"
             )[0]
             # test that exact string is returned
-            obj5 = test.create_object(None, base_obj, 0, 0, 0, 0, 0, 0, 0, 'dusty')[0]
+            obj5 = test.create_object(None, base_obj, 0, 0, 0, 0, 0, 0, 0, "dusty")[0]
             # test that capitalization is ignored
-            obj6 = test.create_object('Obj', base_obj, 0, 0, 0, 0, 0, 0, 0, 'dusty')[0]
-            result = test.search_database('object', 'obj', fts=False)
+            obj6 = test.create_object("Obj", base_obj, 0, 0, 0, 0, 0, 0, 0, "dusty")[0]
+            result = test.search_database("object", "obj", fts=False)
             self.assertEqual(
                 [i[:11] for i in result],
                 [
@@ -2207,7 +2255,7 @@ class TestDatabase(unittest.TestCase):
             rbase_id = test.create_base_room("rooms")[0]
             self.assertEqual(
                 [i[:2] for i in test.search_database("base room", "rooms")],
-                [(rbase_id, 'rooms')],
+                [(rbase_id, "rooms")],
             )
             test.c.execute(
                 """
@@ -2230,7 +2278,7 @@ class TestDatabase(unittest.TestCase):
             )
             self.assertEqual(
                 [i[:2] for i in test.search_database("base room", "rooms")],
-                [(rbase_id, 'rooms')],
+                [(rbase_id, "rooms")],
             )
             test.c.execute(
                 """
@@ -2300,7 +2348,7 @@ class TestDatabase(unittest.TestCase):
             rbase_id = test.create_base_room("large hallways")[0]
             self.assertEqual(
                 [i[:2] for i in test.search_database("base room", "HALlway")],
-                [(rbase_id, 'large hallways')],
+                [(rbase_id, "large hallways")],
             )
 
         # room, test phrases
@@ -2402,18 +2450,18 @@ class TestDatabase(unittest.TestCase):
             )
 
     def test_create_edges(self):
-        '''
+        """
         Tests whether the create_edges() returns the edges to be created given
         room, list of characters, and list of objects and successfully creates
         edges in the database when dry_run is False.
-        '''
+        """
 
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            base_room = test.create_base_room('room')[0]
-            room1 = test.create_room('room 1', base_room, 'tiny', 'old')[0]
-            room2 = test.create_room('room 2', base_room, 'tiny', 'old')[0]
-            room3 = test.create_room('room 3', base_room, 'tiny', 'old')[0]
-            room4 = test.create_room('room 4', base_room, 'tiny', 'old')[0]
+            base_room = test.create_base_room("room")[0]
+            room1 = test.create_room("room 1", base_room, "tiny", "old")[0]
+            room2 = test.create_room("room 2", base_room, "tiny", "old")[0]
+            room3 = test.create_room("room 3", base_room, "tiny", "old")[0]
+            room4 = test.create_room("room 4", base_room, "tiny", "old")[0]
             baes_char = test.create_base_character("troll")[0]
             char1 = test.create_character(None, baes_char, "tall", "big")[0]
             char2 = test.create_character("troll2", baes_char, "short", "big")[0]
@@ -2426,12 +2474,12 @@ class TestDatabase(unittest.TestCase):
                     room1, [char1, char2], [obj1], [room2, room3, room4], True
                 ),
                 [
-                    (room1, char2, 'ex_contained', 0),
-                    (room1, char1, 'ex_contained', 0),
-                    (room1, obj1, 'ex_contained', 0),
-                    (room1, room2, 'neighbor', 1),
-                    (room1, room3, 'neighbor', 1),
-                    (room1, room4, 'neighbor', 1),
+                    (room1, char2, "ex_contained", 0),
+                    (room1, char1, "ex_contained", 0),
+                    (room1, obj1, "ex_contained", 0),
+                    (room1, room2, "neighbor", 1),
+                    (room1, room3, "neighbor", 1),
+                    (room1, room4, "neighbor", 1),
                 ],
                 "Edges are not correcly returned when dry_run = True",
             )
@@ -2443,12 +2491,12 @@ class TestDatabase(unittest.TestCase):
                     room1, [char1, char2], [obj1], [room2, room3, room4], False
                 ),
                 [
-                    (room1, char2, 'ex_contained', 0),
-                    (room1, char1, 'ex_contained', 0),
-                    (room1, obj1, 'ex_contained', 0),
-                    (room1, room2, 'neighbor', 1),
-                    (room1, room3, 'neighbor', 1),
-                    (room1, room4, 'neighbor', 1),
+                    (room1, char2, "ex_contained", 0),
+                    (room1, char1, "ex_contained", 0),
+                    (room1, obj1, "ex_contained", 0),
+                    (room1, room2, "neighbor", 1),
+                    (room1, room3, "neighbor", 1),
+                    (room1, room4, "neighbor", 1),
                 ],
                 "Edges are not correcly returned or edges are not successfully \
                 created in the database when dry_run = False",
@@ -2458,12 +2506,12 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(
                 edges_no_id,
                 [
-                    (room1, char2, 'ex_contained', 0),
-                    (room1, char1, 'ex_contained', 0),
-                    (room1, obj1, 'ex_contained', 0),
-                    (room1, room2, 'neighbor', 1),
-                    (room1, room3, 'neighbor', 1),
-                    (room1, room4, 'neighbor', 1),
+                    (room1, char2, "ex_contained", 0),
+                    (room1, char1, "ex_contained", 0),
+                    (room1, obj1, "ex_contained", 0),
+                    (room1, room2, "neighbor", 1),
+                    (room1, room3, "neighbor", 1),
+                    (room1, room4, "neighbor", 1),
                 ],
             )
             # check whether the function works properly when one or more
@@ -2471,10 +2519,10 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(
                 test.create_edges(room1, [], [obj1], [room2, room3, room4], True),
                 [
-                    (room1, obj1, 'ex_contained', 0),
-                    (room1, room2, 'neighbor', 1),
-                    (room1, room3, 'neighbor', 1),
-                    (room1, room4, 'neighbor', 1),
+                    (room1, obj1, "ex_contained", 0),
+                    (room1, room2, "neighbor", 1),
+                    (room1, room3, "neighbor", 1),
+                    (room1, room4, "neighbor", 1),
                 ],
                 "Edges are not successfullly created when one or more lists \
                 are empty",
@@ -2486,16 +2534,16 @@ class TestDatabase(unittest.TestCase):
         entity is contained in the room description.
         """
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            base_room = test.create_base_room('room')[0]
+            base_room = test.create_base_room("room")[0]
             classroom = test.create_room(
-                'classroom',
+                "classroom",
                 base_room,
-                'The classroom contains several students and teachers. There is a giant podium near the entrance.',
-                'old',
+                "The classroom contains several students and teachers. There is a giant podium near the entrance.",
+                "old",
             )[0]
-            room2 = test.create_room('room 2', base_room, 'tiny', 'old')[0]
-            room3 = test.create_room('room 3', base_room, 'tiny', 'old')[0]
-            room4 = test.create_room('room 4', base_room, 'tiny', 'old')[0]
+            room2 = test.create_room("room 2", base_room, "tiny", "old")[0]
+            room3 = test.create_room("room 3", base_room, "tiny", "old")[0]
+            room4 = test.create_room("room 4", base_room, "tiny", "old")[0]
             base_char = test.create_base_character("people")[0]
             teacher = test.create_character("teacher", base_char, "I teach", "older")[0]
             student = test.create_character(
@@ -2524,11 +2572,11 @@ class TestDatabase(unittest.TestCase):
                     (classroom, teacher, DB_EDGE_IN_CONTAINED, 1),
                     (classroom, student, DB_EDGE_IN_CONTAINED, 1),
                     (classroom, podium, DB_EDGE_IN_CONTAINED, 1),
-                    (classroom, priest, 'ex_contained', 0),
-                    (classroom, tree, 'ex_contained', 0),
-                    (classroom, room2, 'neighbor', 1),
-                    (classroom, room3, 'neighbor', 1),
-                    (classroom, room4, 'neighbor', 1),
+                    (classroom, priest, "ex_contained", 0),
+                    (classroom, tree, "ex_contained", 0),
+                    (classroom, room2, "neighbor", 1),
+                    (classroom, room3, "neighbor", 1),
+                    (classroom, room4, "neighbor", 1),
                 ],
                 "Edges are not correcly returned when dry_run = True",
             )
@@ -2549,11 +2597,11 @@ class TestDatabase(unittest.TestCase):
                     (classroom, teacher, DB_EDGE_IN_CONTAINED, 1),
                     (classroom, student, DB_EDGE_IN_CONTAINED, 1),
                     (classroom, podium, DB_EDGE_IN_CONTAINED, 1),
-                    (classroom, priest, 'ex_contained', 0),
-                    (classroom, tree, 'ex_contained', 0),
-                    (classroom, room2, 'neighbor', 1),
-                    (classroom, room3, 'neighbor', 1),
-                    (classroom, room4, 'neighbor', 1),
+                    (classroom, priest, "ex_contained", 0),
+                    (classroom, tree, "ex_contained", 0),
+                    (classroom, room2, "neighbor", 1),
+                    (classroom, room3, "neighbor", 1),
+                    (classroom, room4, "neighbor", 1),
                 ],
                 "Edges are not correcly returned or edges are not successfully \
                 created in the database when dry_run = False",
@@ -2566,11 +2614,11 @@ class TestDatabase(unittest.TestCase):
                     (classroom, teacher, DB_EDGE_IN_CONTAINED, 1),
                     (classroom, student, DB_EDGE_IN_CONTAINED, 1),
                     (classroom, podium, DB_EDGE_IN_CONTAINED, 1),
-                    (classroom, priest, 'ex_contained', 0),
-                    (classroom, tree, 'ex_contained', 0),
-                    (classroom, room2, 'neighbor', 1),
-                    (classroom, room3, 'neighbor', 1),
-                    (classroom, room4, 'neighbor', 1),
+                    (classroom, priest, "ex_contained", 0),
+                    (classroom, tree, "ex_contained", 0),
+                    (classroom, room2, "neighbor", 1),
+                    (classroom, room3, "neighbor", 1),
+                    (classroom, room4, "neighbor", 1),
                 ],
             )
 
@@ -2580,12 +2628,12 @@ class TestDatabase(unittest.TestCase):
         entity is contained in the room description.
         """
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            base_room = test.create_base_room('room')[0]
+            base_room = test.create_base_room("room")[0]
             classroom = test.create_room(
-                'classroom',
+                "classroom",
                 base_room,
-                'The classroom contains several students and teachers. There is a giant podium near the entrance.',
-                'old',
+                "The classroom contains several students and teachers. There is a giant podium near the entrance.",
+                "old",
             )[0]
             base_char = test.create_base_character("people")[0]
             teacher1 = test.create_character(
@@ -2625,7 +2673,7 @@ class TestDatabase(unittest.TestCase):
             for i in range(200):
                 results.add(tuple(test.find_database_entities_in_rooms(classroom)))
             self.assertEqual(len(results), 3)
-    
+
 
 if __name__ == "__main__":
     unittest.main()
