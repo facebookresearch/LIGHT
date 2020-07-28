@@ -2,7 +2,7 @@
 light.egg-info/
 **/.vscode/*
 deploy/messenger/*
-deploy/web/build/*
+**/build/*
 crowdsourcing/*
 projects/*
 logs/*

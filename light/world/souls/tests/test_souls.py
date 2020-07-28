@@ -6,6 +6,7 @@
 
 import unittest
 import time
+import asyncio
 
 from light.graph.elements.graph_nodes import GraphAgent
 from light.graph.structured_graph import OOGraph
@@ -13,6 +14,16 @@ from light.world.world import World
 from light.graph.events.graph_events import EmoteEvent, SayEvent
 from light.world.souls.test_soul import TestSoul
 from light.world.souls.repeat_soul import RepeatSoul
+
+
+def async_test(f):
+    def wrapper(*args, **kwargs):
+        coro = f
+        future = coro(*args, **kwargs)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(future)
+
+    return wrapper
 
 
 class TestSouls(unittest.TestCase):
@@ -37,7 +48,8 @@ class TestSouls(unittest.TestCase):
 
         test_soul.reap()
 
-    def test_message_sending(self):
+    @async_test
+    async def test_message_sending(self):
         """
         Ensure that messages can be sent to souls when acting in the world
         """
@@ -70,14 +82,15 @@ class TestSouls(unittest.TestCase):
 
         observations = test_soul.observations
         start_time = time.time()
-        OBSERVATION_WAIT_TIMEOUT = 0.3
+        OBSERVATION_WAIT_TIMEOUT = 3.3
         while len(observations) < 3:
             self.assertTrue(
                 time.time() - start_time < OBSERVATION_WAIT_TIMEOUT,
-                f"Exceeded expected duration {OBSERVATION_WAIT_TIMEOUT} waiting for parrot events",
+                f"Exceeded expected duration {OBSERVATION_WAIT_TIMEOUT} waiting "
+                f"for parrot events, found {test_soul.observations}",
             )
             observations = test_soul.observations
-            time.sleep(0.01)
+            await asyncio.sleep(0.01)
 
         # Observations should be the self smile event, then the repeat agent's say and smile
         self.assertEqual(len(observations), 3, "Unexpected amount of observations")
@@ -104,7 +117,7 @@ class TestSouls(unittest.TestCase):
         # Extra observation may have slipped in?
         self.assertEqual(len(observations), 3, "Unexpected amount of observations")
         self.assertEqual(
-            len(test_soul._observe_threads), 0, "All obs threads should have deleted"
+            len(test_soul._observe_futures), 0, "All obs threads should have deleted"
         )
 
 
