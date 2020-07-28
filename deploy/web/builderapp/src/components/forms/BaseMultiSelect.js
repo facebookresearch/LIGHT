@@ -20,7 +20,7 @@ function BaseMultiSelect({
   type,
   tooltip,
   onItemSelect,
-  entities
+  entities,
 }) {
   const [items, setItems] = React.useState([]);
   const [query, setQuery] = React.useState("");
@@ -37,7 +37,8 @@ function BaseMultiSelect({
         const results = localEntities
           .concat(result.slice(0, SUGGEST_SIZE + localEntities.length + 1))
           .filter(
-            (item, index, self) => self.findIndex(t => equal(t, item)) === index
+            (item, index, self) =>
+              self.findIndex((t) => equal(t, item)) === index
           );
 
         return setItems(results);
@@ -108,7 +109,7 @@ function BaseMultiSelect({
   };
 
   return (
-    <div onBlur={e => setFieldTouched(name)}>
+    <div onBlur={(e) => setFieldTouched(name)}>
       <MultiSelect
         id={id}
         name={name}
@@ -118,9 +119,9 @@ function BaseMultiSelect({
         tagInputProps={{
           intent: errors && touched ? Intent.DANGER : null,
           "data-testid": "base-multi-select",
-          onRemove: removeTag
+          onRemove: removeTag,
         }}
-        onItemSelect={e => {
+        onItemSelect={(e) => {
           if (onItemSelect) {
             const result = onItemSelect(e, type);
             setCurrItems([...currItems, result]);
@@ -135,9 +136,9 @@ function BaseMultiSelect({
         itemPredicate={filterItems}
         selectedItems={currItems}
         query={query}
-        onQueryChange={q => setQuery(q)}
+        onQueryChange={(q) => setQuery(q)}
         resetOnQuery={true}
-        tagRenderer={item => {
+        tagRenderer={(item) => {
           return entities && entities[type][item]
             ? entities[type][item].name
             : item.name;

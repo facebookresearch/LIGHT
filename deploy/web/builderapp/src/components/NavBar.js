@@ -6,7 +6,7 @@ import {
   Position,
   Popover,
   Menu,
-  MenuItem
+  MenuItem,
 } from "@blueprintjs/core";
 import { Link } from "react-router-dom";
 

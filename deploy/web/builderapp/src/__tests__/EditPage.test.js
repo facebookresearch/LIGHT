@@ -6,7 +6,7 @@ import {
   render,
   fireEvent,
   wait,
-  waitForElementToBeRemoved
+  waitForElementToBeRemoved,
 } from "@testing-library/react";
 import EditPage from "../components/EditPage";
 
@@ -17,12 +17,12 @@ describe("<EditPage />", () => {
       .mockResolvedValueOnce({
         json: () => {
           return object;
-        }
+        },
       })
       .mockResolvedValueOnce({
         json: () => {
           return baseObjects;
-        }
+        },
       });
     const { container, getByTestId, getByLabelText } = render(
       <MemoryRouter initialEntries={["/create"]}>
@@ -63,12 +63,12 @@ describe("<EditPage />", () => {
       .mockResolvedValueOnce({
         json: () => {
           return character;
-        }
+        },
       })
       .mockResolvedValueOnce({
         json: () => {
           return baseCharacters;
-        }
+        },
       });
     const { container, getByTestId, getByLabelText } = render(
       <MemoryRouter initialEntries={["/create"]}>
@@ -103,12 +103,12 @@ describe("<EditPage />", () => {
       .mockResolvedValueOnce({
         json: () => {
           return room;
-        }
+        },
       })
       .mockResolvedValueOnce({
         json: () => {
           return baseRooms;
-        }
+        },
       });
     const { container, getByTestId, getByLabelText } = render(
       <MemoryRouter initialEntries={["/create"]}>
@@ -140,12 +140,12 @@ describe("<EditPage />", () => {
       .mockResolvedValueOnce({
         json: () => {
           return object;
-        }
+        },
       })
       .mockResolvedValueOnce({
         json: () => {
           return baseObjects;
-        }
+        },
       });
     const { container, getByTestId, getByLabelText } = render(
       <MemoryRouter initialEntries={["/create"]}>
@@ -172,12 +172,12 @@ describe("<EditPage />", () => {
         .mockResolvedValueOnce({
           json: () => {
             return object;
-          }
+          },
         })
         .mockResolvedValueOnce({
           json: () => {
             return baseObjects;
-          }
+          },
         });
       const { container, getByTestId, getByLabelText, findByText } = render(
         <MemoryRouter initialEntries={["/create"]}>
@@ -213,12 +213,12 @@ describe("<EditPage />", () => {
         .mockResolvedValueOnce({
           json: () => {
             return character;
-          }
+          },
         })
         .mockResolvedValueOnce({
           json: () => {
             return baseCharacters;
-          }
+          },
         });
       const { container, getByTestId, getByLabelText, findByText } = render(
         <MemoryRouter initialEntries={["/create"]}>
@@ -254,12 +254,12 @@ describe("<EditPage />", () => {
         .mockResolvedValueOnce({
           json: () => {
             return room;
-          }
+          },
         })
         .mockResolvedValueOnce({
           json: () => {
             return baseRooms;
-          }
+          },
         });
       const { container, getByTestId, getByLabelText, findByText } = render(
         <MemoryRouter initialEntries={["/create"]}>
@@ -303,15 +303,15 @@ const object = {
     is_weapon: 0.0,
     physical_description: "the tree is tall and leafy",
     name_prefix: "some",
-    is_plural: 1.0
+    is_plural: 1.0,
   },
-  type: "object"
+  type: "object",
 };
 
 const baseObjects = [
   { id: 5008, name: "tree" },
   { id: 5010, name: "equipment" },
-  { id: 5012, name: "clothing" }
+  { id: 5012, name: "clothing" },
 ];
 
 const character = {
@@ -325,16 +325,16 @@ const character = {
       "A friendly and playful beast that roams the sprawling meadow surrounding the castle.",
     name_prefix: "some",
     is_plural: 1.0,
-    char_type: "person"
+    char_type: "person",
   },
-  type: "character"
+  type: "character",
 };
 
 const baseCharacters = [
   { id: 1323, name: "animal" },
   { id: 1325, name: "people" },
   { id: 1327, name: "person" },
-  { id: 1335, name: "rabbit" }
+  { id: 1335, name: "rabbit" },
 ];
 
 const room = {
@@ -345,12 +345,12 @@ const room = {
     description:
       "This room is quite small and cramped. It's about the size of maybe three wooden carts, which is to say, it's very small. There are boxes all over the place and many candles and other church accessories. There are several big robes hanging next to what looks like a very small closet. Some candles shed an eerie light on the room, flickering softly. There is a small cabinet with several religious tapes and records and a few books. A book case is near and contains many common religious texts.",
     backstory:
-      "The rectory is one of the most important rooms in the church, as it is where the priest and others get ready before they start church, where the put on robes and cassocks and the like. It is vital to the church as a matter of fact. Visibility to the room is blocked off by the altar in front of it, so church goers cannot see it unless they walk behind the altar. It seems to be used as a bit of a storage area for religious artifacts."
+      "The rectory is one of the most important rooms in the church, as it is where the priest and others get ready before they start church, where the put on robes and cassocks and the like. It is vital to the church as a matter of fact. Visibility to the room is blocked off by the altar in front of it, so church goers cannot see it unless they walk behind the altar. It seems to be used as a bit of a storage area for religious artifacts.",
   },
-  type: "room"
+  type: "room",
 };
 
 const baseRooms = [
   { id: 1, name: "Inside Church" },
-  { id: 3, name: "Cave" }
+  { id: 3, name: "Cave" },
 ];

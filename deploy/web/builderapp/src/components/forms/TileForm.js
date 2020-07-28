@@ -6,7 +6,7 @@ import {
   Intent,
   Classes,
   Divider,
-  Icon
+  Icon,
 } from "@blueprintjs/core";
 import { isEmpty } from "lodash";
 
@@ -19,7 +19,7 @@ export const emptyTileForm = {
   room: undefined,
   characters: [],
   objects: [],
-  color: TILE_COLORS[0]
+  color: TILE_COLORS[0],
 };
 
 function TileForm({
@@ -30,12 +30,12 @@ function TileForm({
   findOrAddEntity,
   setShowAdvanced,
   selected,
-  setSelected
+  setSelected,
 }) {
   return (
     <Formik
       initialValues={isEmpty(initialInputs) ? emptyTileForm : initialInputs}
-      validate={values => {
+      validate={(values) => {
         let errors = {};
         if (isNaN(values.room)) {
           errors.room = "Required";
@@ -44,7 +44,7 @@ function TileForm({
       }}
       onSubmit={onSubmit}
     >
-      {props => {
+      {(props) => {
         const {
           values,
           setFieldValue,
@@ -54,7 +54,7 @@ function TileForm({
           dirty,
           isValid,
           handleSubmit,
-          handleReset
+          handleReset,
         } = props;
 
         const setRoomValue = (name, value, fullValue) => {
@@ -77,7 +77,7 @@ function TileForm({
                 display: "flex",
                 flexDirection: "row",
                 alignContent: "stretch",
-                justifyContent: "space-between"
+                justifyContent: "space-between",
               }}
             >
               <h5 style={{ fontSize: "18px" }} className={Classes.HEADING}>
@@ -86,7 +86,7 @@ function TileForm({
               <div
                 style={{
                   display: "flex",
-                  justifyContent: "flex-end"
+                  justifyContent: "flex-end",
                 }}
                 onClick={() => {
                   setSelected({ ...selected, data: { ...values } });

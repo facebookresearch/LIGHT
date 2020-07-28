@@ -38,7 +38,7 @@ function ExplorePage() {
           placeholder="Search..."
           dir="auto"
           value={searchText}
-          onChange={e => {
+          onChange={(e) => {
             setSearchText(e.target.value);
             setPage(0);
           }}
@@ -49,7 +49,7 @@ function ExplorePage() {
         <RadioGroup
           inline
           large
-          onChange={e => {
+          onChange={(e) => {
             setSelectedEntity(e.target.value);
             setPage(0);
           }}
@@ -90,7 +90,7 @@ function ExplorePage() {
               pageCount={result.total_pages}
               marginPagesDisplayed={2}
               pageRangeDisplayed={5}
-              onPageChange={data => setPage(data.selected)}
+              onPageChange={(data) => setPage(data.selected)}
               containerClassName={"pagination"}
               subContainerClassName={"pages pagination"}
               activeClassName={"active"}
@@ -106,12 +106,12 @@ function ItemsList({
   items,
   descriptionField,
   additionalFields = [],
-  selectedEntity
+  selectedEntity,
 }) {
   const [state, setState] = React.useState({
     expanded: -1,
     animating: 0,
-    nextState: -1
+    nextState: -1,
   });
 
   function handleTrClick(index) {
@@ -137,7 +137,7 @@ function ItemsList({
           <tr>
             <th>Name</th>
             <th>Description</th>
-            {additionalFields.map(field => (
+            {additionalFields.map((field) => (
               <th key={field}>{field.name}</th>
             ))}
 
@@ -152,14 +152,14 @@ function ItemsList({
                 data-testid="tr-explore"
                 style={{
                   background:
-                    index % 2 === 0 ? "rgba(191, 204, 214, 0.15)" : undefined
+                    index % 2 === 0 ? "rgba(191, 204, 214, 0.15)" : undefined,
                 }}
               >
                 <td>
                   <strong>{item.name}</strong>
                 </td>
                 <td>{item[descriptionField]}</td>
-                {additionalFields.map(field => (
+                {additionalFields.map((field) => (
                   <td key={field.name}>{item[field.key]}</td>
                 ))}
                 <td>{item.id}</td>
@@ -167,7 +167,7 @@ function ItemsList({
               <tr
                 style={{
                   background:
-                    index % 2 === 0 ? "rgba(191, 204, 214, 0.15)" : undefined
+                    index % 2 === 0 ? "rgba(191, 204, 214, 0.15)" : undefined,
                 }}
               >
                 <td
@@ -175,7 +175,7 @@ function ItemsList({
                   style={{
                     display: state.expanded === index ? undefined : "none",
                     padding: 0,
-                    cursor: "unset"
+                    cursor: "unset",
                   }}
                 >
                   <AnimateHeight
@@ -195,7 +195,7 @@ function ItemsList({
                         animating:
                           state.animating === 3 && state.nextState !== -1
                             ? 2
-                            : 0
+                            : 0,
                       })
                     }
                     animateOpacity={true}
@@ -223,13 +223,13 @@ function ExpandedTab({ item, selectedEntity }) {
       <div
         data-testid="dropdown"
         style={{
-          padding: "20px 40px 0 40px"
+          padding: "20px 40px 0 40px",
         }}
       >
         <div
           style={{
             display: "flex",
-            flexDirection: "column"
+            flexDirection: "column",
           }}
         >
           {Object.keys(item).map((key, index) => (
@@ -243,7 +243,7 @@ function ExpandedTab({ item, selectedEntity }) {
         style={{
           display: "flex",
           padding: "0 20px 20px 20px",
-          justifyContent: "flex-end"
+          justifyContent: "flex-end",
         }}
       >
         <Link
@@ -253,8 +253,8 @@ function ExpandedTab({ item, selectedEntity }) {
             pathname: `/create`,
             state: {
               type: selectedEntity,
-              entity: item
-            }
+              entity: item,
+            },
           }}
         >
           Create From
@@ -266,8 +266,8 @@ function ExpandedTab({ item, selectedEntity }) {
             pathname: `/edit/${item.id}`,
             state: {
               type: selectedEntity,
-              entity: item
-            }
+              entity: item,
+            },
           }}
         >
           Edit

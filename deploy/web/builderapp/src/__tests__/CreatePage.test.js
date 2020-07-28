@@ -6,7 +6,7 @@ import {
   render,
   fireEvent,
   wait,
-  waitForElementToBeRemoved
+  waitForElementToBeRemoved,
 } from "@testing-library/react";
 import CreatePage from "../components/CreatePage";
 
@@ -15,7 +15,7 @@ describe("<CreatePage />", () => {
     const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValueOnce({
       json: () => {
         return baseObjects;
-      }
+      },
     });
     const { getByTestId, getByLabelText } = render(
       <MemoryRouter initialEntries={["/create"]}>
@@ -48,7 +48,7 @@ describe("<CreatePage />", () => {
     const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValueOnce({
       json: () => {
         return baseCharacters;
-      }
+      },
     });
     const { getByTestId, getByLabelText } = render(
       <MemoryRouter initialEntries={["/create"]}>
@@ -65,10 +65,10 @@ describe("<CreatePage />", () => {
                   "this person loves seclusion and is most at peace in nature",
                 name_prefix: "some",
                 is_plural: 1.0,
-                char_type: "person"
+                char_type: "person",
               },
-              type: "character"
-            }
+              type: "character",
+            },
           }}
         />
       </MemoryRouter>
@@ -103,12 +103,12 @@ describe("<CreatePage />", () => {
       .mockResolvedValueOnce({
         json: () => {
           return baseObjects;
-        }
+        },
       })
       .mockResolvedValueOnce({
         json: () => {
           return baseCharacters;
-        }
+        },
       });
     const { getByTestId, getByLabelText } = render(
       <MemoryRouter initialEntries={["/create"]}>
@@ -119,7 +119,7 @@ describe("<CreatePage />", () => {
     await wait(() => getByTestId("form"));
 
     fireEvent.click(getByTestId("radio-character"), {
-      target: { value: "character" }
+      target: { value: "character" },
     });
 
     await wait(() => getByTestId("form"));
@@ -142,12 +142,12 @@ describe("<CreatePage />", () => {
       .mockResolvedValueOnce({
         json: () => {
           return baseObjects;
-        }
+        },
       })
       .mockResolvedValueOnce({
         json: () => {
           return baseRooms;
-        }
+        },
       });
     const { getByTestId, getByLabelText } = render(
       <MemoryRouter initialEntries={["/create"]}>
@@ -158,7 +158,7 @@ describe("<CreatePage />", () => {
     await wait(() => getByTestId("form"));
 
     fireEvent.click(getByTestId("radio-room"), {
-      target: { value: "room" }
+      target: { value: "room" },
     });
 
     await wait(() => getByTestId("form"));
@@ -175,7 +175,7 @@ describe("<CreatePage />", () => {
     const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValueOnce({
       json: () => {
         return baseObjects;
-      }
+      },
     });
     const { container, getByTestId, getByLabelText } = render(
       <MemoryRouter initialEntries={["/create"]}>
@@ -190,15 +190,15 @@ describe("<CreatePage />", () => {
     const submitButton = getByText(container, "Save Changes").parentElement;
     expect(submitButton).toBeDisabled();
     fireEvent.change(getByLabelText("Name (required)"), {
-      target: { value: "some name" }
+      target: { value: "some name" },
     });
     await wait(() => expect(submitButton).toBeDisabled());
     fireEvent.change(getByLabelText("Name Prefix (required)"), {
-      target: { value: "some name prefix" }
+      target: { value: "some name prefix" },
     });
     await wait(() => expect(submitButton).toBeDisabled());
     fireEvent.change(getByLabelText("Physical Description (required)"), {
-      target: { value: "some physical description" }
+      target: { value: "some physical description" },
     });
     await wait(() => expect(submitButton).toBeDisabled());
     fireEvent.focus(getByTestId("base-suggest"));
@@ -217,12 +217,12 @@ describe("<CreatePage />", () => {
       .mockResolvedValueOnce({
         json: () => {
           return baseObjects;
-        }
+        },
       })
       .mockResolvedValueOnce({
         json: () => {
           return baseCharacters;
-        }
+        },
       });
     const { container, getByTestId, getByLabelText } = render(
       <MemoryRouter initialEntries={["/create"]}>
@@ -235,7 +235,7 @@ describe("<CreatePage />", () => {
     await wait(() => getByTestId("form"));
 
     fireEvent.click(getByTestId("radio-character"), {
-      target: { value: "character" }
+      target: { value: "character" },
     });
 
     await wait(() => getByTestId("form"));
@@ -243,23 +243,23 @@ describe("<CreatePage />", () => {
     const submitButton = getByText(container, "Save Changes").parentElement;
     expect(submitButton).toBeDisabled();
     fireEvent.change(getByLabelText("Name (required)"), {
-      target: { value: "some name" }
+      target: { value: "some name" },
     });
     await wait(() => expect(submitButton).toBeDisabled());
     fireEvent.change(getByLabelText("Name Prefix (required)"), {
-      target: { value: "some name prefix" }
+      target: { value: "some name prefix" },
     });
     await wait(() => expect(submitButton).toBeDisabled());
     fireEvent.change(getByLabelText("Persona (required)"), {
-      target: { value: "some persona" }
+      target: { value: "some persona" },
     });
     await wait(() => expect(submitButton).toBeDisabled());
     fireEvent.change(getByLabelText("Physical Description (required)"), {
-      target: { value: "some physical description" }
+      target: { value: "some physical description" },
     });
     await wait(() => expect(submitButton).toBeDisabled());
     fireEvent.change(getByLabelText("Character Type (required)"), {
-      target: { value: "some character type" }
+      target: { value: "some character type" },
     });
     await wait(() => expect(submitButton).toBeDisabled());
     fireEvent.focus(getByTestId("base-suggest"));
@@ -278,12 +278,12 @@ describe("<CreatePage />", () => {
       .mockResolvedValueOnce({
         json: () => {
           return baseObjects;
-        }
+        },
       })
       .mockResolvedValueOnce({
         json: () => {
           return baseRooms;
-        }
+        },
       });
     const { container, getByTestId, getByLabelText } = render(
       <MemoryRouter initialEntries={["/create"]}>
@@ -296,7 +296,7 @@ describe("<CreatePage />", () => {
     await wait(() => getByTestId("form"));
 
     fireEvent.click(getByTestId("radio-room"), {
-      target: { value: "room" }
+      target: { value: "room" },
     });
 
     await wait(() => getByTestId("form"));
@@ -304,15 +304,15 @@ describe("<CreatePage />", () => {
     const submitButton = getByText(container, "Save Changes").parentElement;
     expect(submitButton).toBeDisabled();
     fireEvent.change(getByLabelText("Name (required)"), {
-      target: { value: "some name" }
+      target: { value: "some name" },
     });
     await wait(() => expect(submitButton).toBeDisabled());
     fireEvent.change(getByLabelText("Description (required)"), {
-      target: { value: "some description" }
+      target: { value: "some description" },
     });
     await wait(() => expect(submitButton).toBeDisabled());
     fireEvent.change(getByLabelText("Backstory (required)"), {
-      target: { value: "some backstory" }
+      target: { value: "some backstory" },
     });
     await wait(() => expect(submitButton).toBeDisabled());
     fireEvent.focus(getByTestId("base-suggest"));
@@ -331,17 +331,17 @@ describe("<CreatePage />", () => {
 const baseObjects = [
   { id: 5008, name: "tree" },
   { id: 5010, name: "equipment" },
-  { id: 5012, name: "clothing" }
+  { id: 5012, name: "clothing" },
 ];
 
 const baseCharacters = [
   { id: 1323, name: "animal" },
   { id: 1325, name: "people" },
   { id: 1327, name: "person" },
-  { id: 1335, name: "rabbit" }
+  { id: 1335, name: "rabbit" },
 ];
 
 const baseRooms = [
   { id: 1, name: "Inside Church" },
-  { id: 3, name: "Cave" }
+  { id: 3, name: "Cave" },
 ];

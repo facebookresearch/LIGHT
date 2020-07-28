@@ -17,9 +17,9 @@ function Tile({
   showAdvanced,
   setShowAdvanced,
   tileStyle,
-  state
+  state,
 }) {
-  const handleSubmit = data => {
+  const handleSubmit = (data) => {
     state.setTile(x, y, { ...tile, ...data });
     setSelected(null);
   };
@@ -59,14 +59,14 @@ function Tile({
         <Icon
           color={contentColor}
           onClick={
-            !isEmpty(tile) ? e => toggleStairs(e, "stairDown") : undefined
+            !isEmpty(tile) ? (e) => toggleStairs(e, "stairDown") : undefined
           }
           className={isEmpty(tile) ? "disabled" : ""}
           style={{
             opacity: !isEmpty(tile) && tile.stairDown ? 1 : 0.35,
             position: "absolute",
             bottom: "5px",
-            left: "5px"
+            left: "5px",
           }}
           icon="arrow-bottom-left"
         />
@@ -74,13 +74,15 @@ function Tile({
       {!isEmpty(state.getTileAt(x, y, state.currFloor + 1)) && (
         <Icon
           color={contentColor}
-          onClick={!isEmpty(tile) ? e => toggleStairs(e, "stairUp") : undefined}
+          onClick={
+            !isEmpty(tile) ? (e) => toggleStairs(e, "stairUp") : undefined
+          }
           className={isEmpty(tile) ? "disabled" : ""}
           style={{
             opacity: !isEmpty(tile) && tile.stairUp ? 1 : 0.35,
             position: "absolute",
             top: "5px",
-            right: "5px"
+            right: "5px",
           }}
           icon="arrow-top-right"
         />
@@ -101,7 +103,7 @@ function Tile({
           className="react-grid-item-content"
           style={{
             ...tileStyle,
-            backgroundColor: tile && tile.color ? tile.color : ""
+            backgroundColor: tile && tile.color ? tile.color : "",
           }}
         >
           <div
@@ -110,13 +112,13 @@ function Tile({
               color: contentColor,
               width: "100%",
               maxHeight: tileStyle.maxHeight - 20,
-              overflow: "hidden"
+              overflow: "hidden",
             }}
           >
             <p>{!isEmpty(tile) ? state.entities.room[tile.room].name : ""}</p>
             <p>
               {!isEmpty(tile)
-                ? tile.characters.map(char => (
+                ? tile.characters.map((char) => (
                     <Tooltip content={state.entities.character[char].name}>
                       {state.entities.character[char].emoji}
                     </Tooltip>
@@ -125,7 +127,7 @@ function Tile({
             </p>
             <p>
               {!isEmpty(tile)
-                ? tile.objects.map(obj => (
+                ? tile.objects.map((obj) => (
                     <Tooltip content={state.entities.object[obj].name}>
                       {state.entities.object[obj].emoji}
                     </Tooltip>
