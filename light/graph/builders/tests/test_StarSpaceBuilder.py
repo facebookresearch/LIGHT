@@ -7,6 +7,7 @@ import unittest, os, sys
 from light.graph.builders.starspace_all import StarspaceBuilder
 from parlai.core.params import ParlaiParser
 import parlai.utils.misc as parlai_utils
+import pytest
 
 sys.modules["parlai.core.utils"] = parlai_utils
 from light.graph.structured_graph import OOGraph
@@ -31,6 +32,7 @@ from light.data_model.light_database import (
 )
 
 
+@pytest.mark.slow
 class TestStarspaceBuilder(unittest.TestCase):
     def setUp(self):
         random.seed(20)
