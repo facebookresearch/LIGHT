@@ -24,7 +24,9 @@ class TestInteractionLoggers(unittest.TestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
         # TODO: Remove reliance on this, just use argparser
-        self.parser = ParlaiParser()
+        self.parser = ParlaiParser(
+            True, True, "Arguments for building a LIGHT world with Starspace"
+        )
         self.parser.add_argument(
             "--is-logging",
             type="bool",
