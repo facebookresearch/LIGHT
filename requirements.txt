@@ -33,7 +33,6 @@ Jinja2==3.0.0a1
 jmespath==0.10.0
 joblib==0.14.1
 lazy-object-proxy==1.4.3
--e git+git@github.com:facebookresearch/LIGHT.git@e4eb2891dd8b99e960a90230a6fb4fbe52719459#egg=light
 Markdown==2.6.11
 MarkupSafe==2.0.0a1
 mccabe==0.6.1
