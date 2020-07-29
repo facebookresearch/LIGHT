@@ -25,4 +25,4 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Test with pytest
         run: |
-          pytest -v -m "not slow" --cov
+          python -m pytest -v -m "not slow" --cov
