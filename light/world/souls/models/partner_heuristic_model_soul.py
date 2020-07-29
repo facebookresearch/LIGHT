@@ -408,16 +408,13 @@ class PartnerHeuristicModelSoul(ModelSoul):
             if random.random() < CHAT_DISENGAGE_CHANCE:
                 self.dialogue_clear_partner()
 
-        room = agent.get_room()
-        # TODO refactor attacking
-        # possible_agents = [x for x in room.get_contents() if x.agent]
-        # for other_agent in possible_agents:
-        #     if other_agent.get_prop('is_player'):
-        #         aggression = agent.get_prop('aggression', 0)
-        #         if random.randint(0, 100) < aggression:
-        #             act = 'hit {}'.format(other_agent.get_view())
-        #             self.g.parse_exec(agent_id, act)
-        #             return
+        hit_actions = self.world.get_possible_actions(agent_id, use_actions=['hit'])
+        filtered_hit_actions = [a for a in hit_actions if a.target_nodes[0].get_prop('is_player')]
+        for hit_event in filtered_hit_actions:
+            aggression = agent.get_prop('aggression', 0)
+            if random.randint(0, 100) < aggression:
+                hit_event.execute(self.world)
+                return
 
         # random movement for npcs..
         if random.randint(0, 1000) < agent.speed:
