@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class ModelSoul(Soul):
     """
     A ModelSoul is responsible for passing it's observations back to
-    a model that decides what to do. This class should be initialized with a 
+    a model that decides what to do. This class should be initialized with a
     `models` parameter that can be used for the main operations.
     """
 
@@ -26,8 +26,8 @@ class ModelSoul(Soul):
 
     def __init__(self, target_node: "GraphAgent", world: "World", models: Any):
         """
-        All Souls should be attached to a target_node, which is the agent that 
-        this soul will be inhabiting. It also takes the world in which that 
+        All Souls should be attached to a target_node, which is the agent that
+        this soul will be inhabiting. It also takes the world in which that
         agent exists.
         """
         super().__init__(target_node, world)
@@ -54,11 +54,12 @@ class ModelSoul(Soul):
         """
         Call _take_timestep every MAIN_LOOP_STEP_TIMEOUT period
         """
+
         async def _run_main_logic_forever():
             while not self.is_reaped:
                 await self._take_timestep()
                 await asyncio.sleep(self.MAIN_LOOP_STEP_TIMEOUT)
-                
+
         self._main_loop = asyncio.create_task(_run_main_logic_forever())
 
     def reap(self):

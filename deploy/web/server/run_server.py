@@ -25,6 +25,7 @@ from tornado.routing import (
 from tornado.web import Application
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
+import asyncio
 import os.path
 from light.data_model.light_database import LIGHTDatabase
 
@@ -46,11 +47,17 @@ def make_app(FLAGS, ldb):
     )
     server = HTTPServer(router)
     server.listen(FLAGS.port)
+    return registryApp
+
+
+def start_default_game(ldb, registryApp):
+    registryApp.run_new_game("", ldb)
 
 
 def _run_server(FLAGS, ldb):
     my_loop = IOLoop.current()
-    make_app(FLAGS, ldb)
+    registry_app = make_app(FLAGS, ldb)
+    my_loop.call_later(1, start_default_game, ldb, registry_app)
     if "HOSTNAME" in os.environ and hostname == FLAGS.hostname:
         hostname = os.environ["HOSTNAME"]
     else:
