@@ -400,7 +400,6 @@ class PartnerHeuristicModelSoul(ModelSoul):
                 and self.get_last_interaction_partner(partner) is None
             ):
                 self.set_interaction_partner(partner)
-                # TODO handle dialogue with no observation
                 self.npc_dialogue(None)
                 return
         else:
