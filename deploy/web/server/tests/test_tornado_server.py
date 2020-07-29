@@ -2,6 +2,7 @@
 import unittest.mock as mock
 import json
 import re
+import os
 import ast
 from tornado import gen, httpclient, ioloop, testing, escape
 from tornado.testing import AsyncHTTPTestCase, gen_test
@@ -588,11 +589,6 @@ class TestLandingApp(AsyncHTTPTestCase):
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(response.headers["Content-Type"], "text/html; charset=UTF-8")
-        # This part is liable to change, can just remove in future
-        self.assertEqual(
-            response.body,
-            b'<html><body><form action="/login?next=/" method="post">Name:<input type="text" name="name"> Password: <input type="text" name="password"><input type="submit" value="Sign in"></form></body></html>',
-        )
 
     @gen_test
     def test_login_password_protected(self, mocked_auth):
@@ -615,11 +611,6 @@ class TestLandingApp(AsyncHTTPTestCase):
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(response.headers["Content-Type"], "text/html; charset=UTF-8")
-        # This part is liable to change, can just remove in future
-        self.assertEqual(
-            response.body,
-            b'<html><body><form action="/login?next=/" method="post">Name:<input type="text" name="name"> Password: <input type="text" name="password"><input type="submit" value="Sign in"></form></body></html>',
-        )
 
     def build_body(name="me", password="LetsPlay"):
         boundary = "SomeRandomBoundary"

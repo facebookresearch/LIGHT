@@ -5,10 +5,12 @@
 # LICENSE file in the root directory of this source tree.
 import unittest, os
 from light.graph.builders.starspace_neighbor import StarspaceNeighborBuilder
+import pytest
 from parlai.core.params import ParlaiParser
 from light.graph.structured_graph import OOGraph
 
 
+@pytest.mark.slow
 class TestStarspaceNeighborBuilder(unittest.TestCase):
     def setUp(self):
         parser = ParlaiParser()
