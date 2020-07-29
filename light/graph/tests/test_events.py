@@ -178,7 +178,7 @@ class GraphEventTests(unittest.TestCase):
             self.graph = before_oo_graph
             self.world.oo_graph = self.graph
             self.graph.delete_nodes()
-            final_json = self.graph.to_json()
+            final_json = self.world.oo_graph.to_json()
             self.assertDictEqual(
                 json.loads(final_json.strip()),
                 json.loads(output_graph_json.strip()),
