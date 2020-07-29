@@ -194,20 +194,22 @@ class PartnerHeuristicModelSoul(ModelSoul):
         """
         self._ensure_agent_has_utterance_history(self.target_node)
         self._ensure_agent_has_utterance_history(partner)
+
+        # Default to the top text, then try to find one that isn't in anyone's history
+        found_utterance = act['text']
         for t in act['text_candidates']:
             if (
                 t not in self.target_node._utterance_history
                 and t not in partner._utterance_history
                 and self._utterance_to_speaker_name.get(t, 'anon') != partner.name
             ):
-                # This is the utterance selected to be said, append it to the
-                # history for each partner
-                self.target_node._utterance_history.append(t)
-                partner._utterance_history.append(t)
-                return t
-
-        # couldn't find a valid response, so just return the top one.
-        return act['text']
+                found_utterance = t
+        
+        # This is the utterance selected to be said, append it to the
+        # history for each partner
+        self.target_node._utterance_history.append(found_utterance)
+        partner._utterance_history.append(found_utterance)
+        return found_utterance
 
     def npc_build_context(self, partner_name=None):
         """
