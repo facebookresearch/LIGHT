@@ -21,14 +21,17 @@ from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 import os.path
 from light.data_model.light_database import LIGHTDatabase
+from light.world.souls.models.partner_heuristic_model_soul import (
+    PartnerHeuristicModelSoul,
+)
 
 here = os.path.abspath(os.path.dirname(__file__))
 
 
-def make_app(FLAGS, ldb):
+def make_app(FLAGS, ldb, model_resources):
     worldBuilderApp = BuildApplication(get_handlers(ldb))
     landingApp = LandingApplication(ldb, FLAGS.hostname, FLAGS.password)
-    registryApp = RegistryApplication(FLAGS, ldb)
+    registryApp = RegistryApplication(FLAGS, ldb, model_resources)
     router = RuleRouter(
         [
             Rule(PathMatches("/builder.*"), worldBuilderApp),
@@ -42,13 +45,14 @@ def make_app(FLAGS, ldb):
 
 
 def start_default_game(ldb, registryApp):
-    registryApp.run_new_game("", ldb)
+    _ = registryApp.run_new_game("", ldb)
 
 
-def _run_server(FLAGS, ldb):
+def _run_server(FLAGS, ldb, model_resources):
     my_loop = IOLoop.current()
-    registry_app = make_app(FLAGS, ldb)
+    registry_app = make_app(FLAGS, ldb, model_resources)
     my_loop.call_later(1, start_default_game, ldb, registry_app)
+
     print(
         "\nYou can connect to the game at http://%s:%s/" % (FLAGS.hostname, FLAGS.port)
     )
@@ -60,6 +64,18 @@ def _run_server(FLAGS, ldb):
         my_loop.start()
     except KeyboardInterrupt:
         my_loop.stop()
+
+
+# Override this to be the model_resources needed for souls
+def init_model_resources(light_model_root):
+    shared_model_content = PartnerHeuristicModelSoul.load_models(
+        light_model_root + "game_speech1/model",
+        light_model_root + "speech_train_cands.txt",
+        light_model_root + "agent_to_utterance_trainset.txt",
+        light_model_root + "main_act/model",
+    )
+    resources = {"shared_model_content": shared_model_content}
+    return resources
 
 
 def main():
@@ -115,8 +131,9 @@ def main():
 
     random.seed(6)
     numpy.random.seed(6)
+    model_resources = init_model_resources(FLAGS.light_model_root)
     ldb = LIGHTDatabase(FLAGS.data_model_db)
-    _run_server(FLAGS, ldb)
+    _run_server(FLAGS, ldb, model_resources)
 
 
 if __name__ == "__main__":
