@@ -6,12 +6,7 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-from deploy.web.server.game_instance import GameInstance
-from deploy.web.server.telnet_server import TelnetPlayerProvider
-from deploy.web.server.tornado_server import (
-    TornadoPlayerFactory,
-    LandingApplication,
-)
+from deploy.web.server.tornado_server import LandingApplication
 from deploy.web.server.builder_server import (
     BuildApplication,
     get_handlers,
@@ -22,18 +17,14 @@ from tornado.routing import (
     Rule,
     RuleRouter,
 )
-from tornado.web import Application
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
-import asyncio
 import os.path
 from light.data_model.light_database import LIGHTDatabase
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-# Idea - make a "game registry" app or something similar that has endpoint /game(.*)
-# This will then be routed to the registryApp, which uses that (.*) url to pass to the appropiate
-# game instance.
+
 def make_app(FLAGS, ldb):
     worldBuilderApp = BuildApplication(get_handlers(ldb))
     landingApp = LandingApplication(ldb, FLAGS.hostname, FLAGS.password)
@@ -58,15 +49,11 @@ def _run_server(FLAGS, ldb):
     my_loop = IOLoop.current()
     registry_app = make_app(FLAGS, ldb)
     my_loop.call_later(1, start_default_game, ldb, registry_app)
-    if "HOSTNAME" in os.environ and hostname == FLAGS.hostname:
-        hostname = os.environ["HOSTNAME"]
-    else:
-        hostname = FLAGS.hostname
     print(
         "\nYou can connect to the game at http://%s:%s/" % (FLAGS.hostname, FLAGS.port)
     )
     print(
-        "You can connect to the worldbuilder at http://%s:%s/builder/"
+        "You can connect to the worldbuilder at http://%s:%s/builder/ \n"
         % (FLAGS.hostname, FLAGS.port)
     )
     try:
@@ -109,7 +96,7 @@ def main():
         "--light-model-root",
         type=str,
         default="/checkpoint/light/models/",
-        help="models path. For local setup, use: /checkpoint/jase/projects/light/dialog/",
+        help="Models path",
     )
     parser.add_argument(
         "--password",
