@@ -11,7 +11,13 @@ from parlai.utils.misc import Timer
 from light.world.world import World
 from tornado.ioloop import IOLoop
 from light.world.souls.repeat_soul import RepeatSoul
+from light.world.souls.models.partner_heuristic_model_soul import (
+    PartnerHeuristicModelSoul,
+)
 import time
+
+USE_MODELS = True
+shared_model_content = None
 
 
 class Player:
@@ -100,14 +106,24 @@ class GameInstance:
             self.g = world
         else:
             self.g = g
-        purgatory = self.g.purgatory
-        purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
-        for empty_agent in self.g.oo_graph.agents.values():
-            purgatory.fill_soul(empty_agent)
+
         self.game_id = game_id
         self.players = []
         self.providers = []
         self.last_connection = time.time()
+
+    def fill_souls(self, model_resources):
+        purgatory = self.g.purgatory
+        if not USE_MODELS:
+            purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
+        else:
+            purgatory.register_filler_soul_provider(
+                "model",
+                PartnerHeuristicModelSoul,
+                lambda: [model_resources["shared_model_content"]],
+            )
+        for empty_agent in self.g.oo_graph.agents.values():
+            purgatory.fill_soul(empty_agent)
 
     def register_provider(self, provider):
         self.providers.append(provider)
