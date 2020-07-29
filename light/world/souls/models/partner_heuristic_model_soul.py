@@ -194,20 +194,22 @@ class PartnerHeuristicModelSoul(ModelSoul):
         """
         self._ensure_agent_has_utterance_history(self.target_node)
         self._ensure_agent_has_utterance_history(partner)
+
+        # Default to the top text, then try to find one that isn't in anyone's history
+        found_utterance = act['text']
         for t in act['text_candidates']:
             if (
                 t not in self.target_node._utterance_history
                 and t not in partner._utterance_history
                 and self._utterance_to_speaker_name.get(t, 'anon') != partner.name
             ):
-                # This is the utterance selected to be said, append it to the
-                # history for each partner
-                self.target_node._utterance_history.append(t)
-                partner._utterance_history.append(t)
-                return t
-
-        # couldn't find a valid response, so just return the top one.
-        return act['text']
+                found_utterance = t
+        
+        # This is the utterance selected to be said, append it to the
+        # history for each partner
+        self.target_node._utterance_history.append(found_utterance)
+        partner._utterance_history.append(found_utterance)
+        return found_utterance
 
     def npc_build_context(self, partner_name=None):
         """
@@ -398,7 +400,6 @@ class PartnerHeuristicModelSoul(ModelSoul):
                 and self.get_last_interaction_partner(partner) is None
             ):
                 self.set_interaction_partner(partner)
-                # TODO handle dialogue with no observation
                 self.npc_dialogue(None)
                 return
         else:
@@ -406,16 +407,13 @@ class PartnerHeuristicModelSoul(ModelSoul):
             if random.random() < CHAT_DISENGAGE_CHANCE:
                 self.dialogue_clear_partner()
 
-        room = agent.get_room()
-        # TODO refactor attacking
-        # possible_agents = [x for x in room.get_contents() if x.agent]
-        # for other_agent in possible_agents:
-        #     if other_agent.get_prop('is_player'):
-        #         aggression = agent.get_prop('aggression', 0)
-        #         if random.randint(0, 100) < aggression:
-        #             act = 'hit {}'.format(other_agent.get_view())
-        #             self.g.parse_exec(agent_id, act)
-        #             return
+        hit_actions = self.world.get_possible_actions(agent_id, use_actions=['hit'])
+        filtered_hit_actions = [a for a in hit_actions if a.target_nodes[0].get_prop('is_player')]
+        for hit_event in filtered_hit_actions:
+            aggression = agent.get_prop('aggression', 0)
+            if random.randint(0, 100) < aggression:
+                hit_event.execute(self.world)
+                return
 
         # random movement for npcs..
         if random.randint(0, 1000) < agent.speed:
