@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import random
-import emoji
 import json
 from typing import List, Set
 
@@ -440,7 +439,6 @@ class GraphRoom(GraphNode):
 
     def get_view_from(self, from_node=None):
         """Return how this node would look like from the given location"""
-        neighbors = None if from_node is None else from_node.get_neighbors()
         if from_node is None:
             return self.name
         elif from_node == self:
@@ -513,6 +511,8 @@ class GraphAgent(GraphNode):
         self.char_type = self._props.get("char_type", "person")
         self.classes = set(self._props.get("classes", {"agent"}))
         self.persona = self._props.get("persona", self.DEFAULT_PERSONA)
+        if self._props.get("dead", None) is not None:
+            self.dead = self._props.get("dead")
         self.is_player = self._props.get("is_player", False)
 
         self.following = None
@@ -621,6 +621,7 @@ class GraphAgent(GraphNode):
     def die(self):
         """Kill off this agent, turn them into an object"""
         self.desc = random.choice(DEAD_DESCRIPTIONS)
+        self.set_prop("dead", True)
         new_node_id = self.node_id + "__dead__"
         new_node = GraphObject(new_node_id, self.name, self.__dict__)
         room = self.get_room()

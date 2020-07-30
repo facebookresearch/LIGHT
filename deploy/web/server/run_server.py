@@ -6,12 +6,7 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-from deploy.web.server.game_instance import GameInstance
-from deploy.web.server.telnet_server import TelnetPlayerProvider
-from deploy.web.server.tornado_server import (
-    TornadoPlayerFactory,
-    LandingApplication,
-)
+from deploy.web.server.tornado_server import LandingApplication
 from deploy.web.server.builder_server import (
     BuildApplication,
     get_handlers,
@@ -22,22 +17,21 @@ from tornado.routing import (
     Rule,
     RuleRouter,
 )
-from tornado.web import Application
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
-
 import os.path
 from light.data_model.light_database import LIGHTDatabase
+from light.world.souls.models.partner_heuristic_model_soul import (
+    PartnerHeuristicModelSoul,
+)
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-# Idea - make a "game registry" app or something similar that has endpoint /game(.*)
-# This will then be routed to the registryApp, which uses that (.*) url to pass to the appropiate
-# game instance.
-def make_app(FLAGS, ldb):
+
+def make_app(FLAGS, ldb, model_resources):
     worldBuilderApp = BuildApplication(get_handlers(ldb))
     landingApp = LandingApplication(ldb, FLAGS.hostname, FLAGS.password)
-    registryApp = RegistryApplication(FLAGS, ldb)
+    registryApp = RegistryApplication(FLAGS, ldb, model_resources)
     router = RuleRouter(
         [
             Rule(PathMatches("/builder.*"), worldBuilderApp),
@@ -47,26 +41,41 @@ def make_app(FLAGS, ldb):
     )
     server = HTTPServer(router)
     server.listen(FLAGS.port)
+    return registryApp
 
 
-def _run_server(FLAGS, ldb):
+def start_default_game(ldb, registryApp):
+    _ = registryApp.run_new_game("", ldb)
+
+
+def _run_server(FLAGS, ldb, model_resources):
     my_loop = IOLoop.current()
-    make_app(FLAGS, ldb)
-    if "HOSTNAME" in os.environ and hostname == FLAGS.hostname:
-        hostname = os.environ["HOSTNAME"]
-    else:
-        hostname = FLAGS.hostname
+    registry_app = make_app(FLAGS, ldb, model_resources)
+    my_loop.call_later(1, start_default_game, ldb, registry_app)
+
     print(
         "\nYou can connect to the game at http://%s:%s/" % (FLAGS.hostname, FLAGS.port)
     )
     print(
-        "You can connect to the worldbuilder at http://%s:%s/builder/"
+        "You can connect to the worldbuilder at http://%s:%s/builder/ \n"
         % (FLAGS.hostname, FLAGS.port)
     )
     try:
         my_loop.start()
     except KeyboardInterrupt:
         my_loop.stop()
+
+
+# Override this to be the model_resources needed for souls
+def init_model_resources(light_model_root):
+    shared_model_content = PartnerHeuristicModelSoul.load_models(
+        light_model_root + "game_speech1/model",
+        light_model_root + "speech_train_cands.txt",
+        light_model_root + "agent_to_utterance_trainset.txt",
+        light_model_root + "main_act/model",
+    )
+    resources = {"shared_model_content": shared_model_content}
+    return resources
 
 
 def main():
@@ -103,7 +112,7 @@ def main():
         "--light-model-root",
         type=str,
         default="/checkpoint/light/models/",
-        help="models path. For local setup, use: /checkpoint/jase/projects/light/dialog/",
+        help="Models path",
     )
     parser.add_argument(
         "--password",
@@ -122,9 +131,9 @@ def main():
 
     random.seed(6)
     numpy.random.seed(6)
+    model_resources = init_model_resources(FLAGS.light_model_root)
     ldb = LIGHTDatabase(FLAGS.data_model_db)
-    my_loop = IOLoop(make_current=True)
-    _run_server(FLAGS, ldb)
+    _run_server(FLAGS, ldb, model_resources)
 
 
 if __name__ == "__main__":

@@ -7,17 +7,9 @@
 # LICENSE file in the root directory of this source tree.
 
 import json
-import os
-import sys
-import ast
-import inspect
-import threading
 import time
 import uuid
 import tornado.web
-from tornado import ioloop
-from tornado import locks
-from tornado import gen
 from tornado.routing import (
     PathMatches,
     Rule,
@@ -25,10 +17,7 @@ from tornado.routing import (
 )
 from deploy.web.server.game_instance import GameInstance
 from deploy.web.server.tornado_server import TornadoPlayerFactory
-from deploy.web.server.telnet_server import TelnetPlayerProvider
 from light.graph.builders.user_world_builder import UserWorldBuilder
-from light.data_model.light_database import LIGHTDatabase
-import copy
 
 
 def get_rand_id():
@@ -37,7 +26,7 @@ def get_rand_id():
 
 tornado_settings = {
     "autoescape": None,
-    "cookie_secret": "0123456789",  # TODO: Placeholder, do not include in repo when deploy!!!
+    "cookie_secret": "0123456789",  # TODO: Placeholder, read secrets!!!
     "compiled_template_cache": False,
     "debug": "/dbg/" in __file__,
     "login_url": "/login",
@@ -51,27 +40,25 @@ class RegistryApplication(tornado.web.Application):
         - Assign to a random (or default) game based on some load balancing
     """
 
-    def __init__(self, FLAGS, ldb, default=True):
+    def __init__(self, FLAGS, ldb, model_resources):
         self.game_instances = {}
         self.step_callbacks = {}
+        self.model_resources = model_resources
         self.FLAGS = FLAGS
         self.ldb = ldb
         super(RegistryApplication, self).__init__(
-            self.get_handlers(FLAGS, ldb, default), **tornado_settings
+            self.get_handlers(FLAGS, ldb), **tornado_settings
         )
 
-    def get_handlers(self, FLAGS, ldb, default=True):
+    def get_handlers(self, FLAGS, ldb):
         self.tornado_provider = TornadoPlayerFactory(
             self.game_instances, FLAGS.hostname, FLAGS.port
         )
         self.router = RuleRouter(
             [Rule(PathMatches(f"/game.*/socket"), self.tornado_provider.app)]
         )
-        if default:
-            game_instance = self.run_new_game("", self.ldb)
         TEN_MINUTES = 600000
         tornado.ioloop.PeriodicCallback(self.cleanup_games, TEN_MINUTES).start()
-
         return [
             (r"/game/new/(.*)", GameCreatorHandler, {"app": self}),
             (r"/game(.*)", self.router),
@@ -100,9 +87,6 @@ class RegistryApplication(tornado.web.Application):
                 del self.step_callbacks[game_id]
                 del self.game_instances[game_id]
 
-    # TODO: Move this to utils
-    # This is basically it though - want to create a new world?  For now call these methods, then
-    # attach the game's tornado provider
     def run_new_game(self, game_id, ldb, player_id=None, world_id=None):
 
         if world_id is not None and player_id is not None:
@@ -112,6 +96,7 @@ class RegistryApplication(tornado.web.Application):
         else:
             game = GameInstance(game_id, ldb)
             graph = game.g
+        game.fill_souls(self.model_resources)
 
         self.game_instances[game_id] = game
         game.register_provider(self.tornado_provider)
@@ -144,8 +129,8 @@ class BaseHandler(tornado.web.RequestHandler):
 
 class GameCreatorHandler(BaseHandler):
     """
-    This web handler is responsible for registering new game instances, as well as forwarding
-    player request to the correct game instance
+    This web handler is responsible for registering new game instances,
+    as well as forwarding player request to the correct game instance
     """
 
     def initialize(self, app):

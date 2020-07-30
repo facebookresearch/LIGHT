@@ -20,12 +20,10 @@ from light.graph.events.graph_events import (
     TellEvent,
     LeaveEvent,
     ArriveEvent,
-    TriggerFollowEvent,
     GoEvent,
     UnfollowEvent,
     FollowEvent,
     DeathEvent,
-    SpawnEvent,
     HitEvent,
     HugEvent,
     GetObjectEvent,
@@ -40,8 +38,6 @@ from light.graph.events.graph_events import (
     IngestEvent,
     EatEvent,
     DrinkEvent,
-    LockEvent,
-    UnlockEvent,
     ExamineEvent,
     EmoteEvent,
     WaitEvent,
@@ -177,12 +173,12 @@ class GraphEventTests(unittest.TestCase):
                     self.assertEqual(
                         event.__dict__[k],
                         event_back.__dict__[k],
-                        "From Json event should have the same k/v (except hidden vars)",
+                        "From Json event should have the same k/v (except hidden vars):",
                     )
             self.graph = before_oo_graph
             self.world.oo_graph = self.graph
             self.graph.delete_nodes()
-            final_json = self.graph.to_json()
+            final_json = self.world.oo_graph.to_json()
             self.assertDictEqual(
                 json.loads(final_json.strip()),
                 json.loads(output_graph_json.strip()),
@@ -245,7 +241,7 @@ class GraphEventTests(unittest.TestCase):
                 actor_node = self.graph.get_node(agent_id)
                 event = GraphEventClass.get_valid_actions(self.graph, actor_node)[e_idx]
                 event.execute(self.world)
-                cannonical = event.to_canonical_form()
+                _ = event.to_canonical_form()
                 for viewer_id in agent_ids:
                     viewer = self.graph.get_node(viewer_id)
                     event_view = event.view_as(viewer)
@@ -254,7 +250,7 @@ class GraphEventTests(unittest.TestCase):
                     self.assertIsInstance(event_view, str)
                     self.assertTrue(len(event_view) > 0)
 
-                # TODO run the world over the canonical action to show that it is the same
+                # TODO run the world over the canonical action to show its the same
                 # graph_dict = json.loads(self.graph.to_json())
                 # self.reset_world()
 
