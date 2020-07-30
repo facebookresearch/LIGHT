@@ -4,10 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from light.graph.events.graph_events import EmoteEvent, SayEvent
 from light.world.souls.soul import Soul
-from light.graph.events.graph_events import SayEvent, EmoteEvent
-
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
