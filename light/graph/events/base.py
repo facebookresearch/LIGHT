@@ -5,10 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 # Used for typehinting
-from typing import Union, Any, List, Optional, cast, Type
 from light.graph.elements.graph_nodes import (
     GraphAgent,
-    GraphEdge,
     GraphNode,
 )
 from light.world.utils.json_utils import (
@@ -16,7 +14,16 @@ from light.world.utils.json_utils import (
     GraphEncoder,
     node_to_json,
 )
-from typing import NamedTuple, TYPE_CHECKING, Dict
+from typing import (
+    Any,
+    Dict,
+    List,
+    NamedTuple,
+    Optional,
+    Type,
+    TYPE_CHECKING,
+    Union,
+)
 import inspect
 import json
 
@@ -159,7 +166,7 @@ class GraphEvent(object):
         arglist = [
             attribute_dict.pop(arg)
             for arg in inspect.getfullargspec(class_.__init__)[0]
-            if arg is not "self"
+            if arg != "self"
         ]
         event = class_(*arglist)
         for k, v in attribute_dict.items():
