@@ -295,7 +295,11 @@ class LandingApplication(tornado.web.Application):
                 LoginHandler,
                 {"database": database, "hostname": hostname, "password": password},
             ),
-            (r"/fb/login", FacebookOAuth2LoginHandler,),
+            (
+                r"/auth/login",
+                FacebookOAuth2LoginHandler,
+                {"database": database, "app": self},
+            ),
             (r"/logout", LogoutHandler),
             (r"/(.*)", StaticUIHandler, {"path": here + "/../build/"}),
         ]
@@ -312,15 +316,20 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
         See https://www.tornadoweb.org/en/stable/_modules/tornado/auth.html#FacebookGraphMixin
     """
 
+    def initialize(
+        self, database, app,
+    ):
+        self.app = app
+        self.db = database
+
     async def get(self):
         redirect = (
             self.request.protocol
             + "://"
             + self.request.host
-            + "/login?next="
+            + "/auth/login?next="
             + tornado.escape.url_escape(self.get_argument("next", "/"))
         )
-        print(redirect)
         if self.get_argument("code", False):
             user = await self.get_authenticated_user(
                 redirect_uri=redirect,
@@ -335,15 +344,15 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
             redirect_uri=redirect, client_id=self.app.settings["facebook_api_key"],
         )
 
-    # def set_current_user(self, user):
-    #     if user:
-    #         with self.db as ldb:
-    #             _ = ldb.create_user(user)
-    #         self.set_secure_cookie(
-    #             "light_user", tornado.escape.json_encode(user), domain=self.hostname
-    #         )
-    #     else:
-    #         self.clear_cookie("light_user")
+    def set_current_user(self, user):
+        if user:
+            with self.db as ldb:
+                _ = ldb.create_user(user)
+            self.set_secure_cookie(
+                "light_user", tornado.escape.json_encode(user), domain=self.hostname
+            )
+        else:
+            self.clear_cookie("light_user")
 
 
 class LoginHandler(BaseHandler):

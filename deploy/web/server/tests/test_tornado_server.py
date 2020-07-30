@@ -560,6 +560,27 @@ class TestLandingApp(AsyncHTTPTestCase):
         self.assertEqual(cm.exception.response.headers["Location"], "/login")
 
     @gen_test
+    @mock.patch(
+        "deploy.web.server.tornado_server.FacebookOAuth2LoginHandler.get_authenticated_user",
+        return_value="test",
+    )
+    @mock.patch(
+        "deploy.web.server.tornado_server.FacebookOAuth2LoginHandler.authorize_redirect",
+    )
+    def test_fb_login_succesful(self, mocked_auth, mocked_get, mocked_redirect):
+        """Test that the facebook login endpoint gives cookie, 200"""
+        headers = {"Content-Type": "application/json"}
+        with self.assertRaises(httpclient.HTTPClientError) as cm:
+            response = yield self.client.fetch(
+                f"{URL}/fb/login",
+                method="GET",
+                headers=headers,
+                follow_redirects=False,
+            )
+            # 302 still bc we need to redirect
+            self.assertEqual(cm.exception.code, 302)
+
+    @gen_test
     def test_login_succesful(self, mocked_auth):
         """Test that login endpoint with correct password gives cookie, 200"""
         headers = {"Content-Type": "multipart/form-data; boundary=SomeRandomBoundary"}
