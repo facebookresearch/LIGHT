@@ -87,7 +87,7 @@ class TestRegistryApp(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = RegistryApplication(self.FLAGS, self.db, default=False)
+        app = RegistryApplication(self.FLAGS, self.db, {})
         app.listen(PORT)
         return app
 
