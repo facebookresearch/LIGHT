@@ -133,7 +133,7 @@ class GameInstance:
             if player.player_soul is not None:
                 node_to_clean = player.player_soul.target_node
                 self.g.purgatory.clear_soul(node_to_clean)
-                self.g.purgator.fill_soul(node_to_clean)
+                self.g.purgatory.fill_soul(node_to_clean)
             self.players.remove(player)
             self.last_connection = time.time()
 
