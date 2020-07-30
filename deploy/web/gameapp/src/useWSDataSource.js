@@ -9,6 +9,27 @@ const reducer = (state, msg) => {
   return updatedState;
 };
 
+const getNeighbors = (action) => {
+  var paths = [];
+  Object.keys(action.room.neighbors).forEach((neighbor_id) => {
+    var neighbor = action.room.neighbors[neighbor_id];
+    paths.push(neighbor.label);
+  });
+  var notice = "";
+  for (let i = 0; i < paths.length; i++) {
+    if (i == 0) {
+      notice += paths[i];
+    } else if (i == paths.length - 1) {
+      notice += " and " + paths[i];
+    } else {
+      notice += ", " + paths[i];
+    }
+  }
+  if (notice == "") {
+    notice = "nothing of interest";
+  }
+  return notice;
+};
 export function useWSDataSource(url) {
   const websocket = React.useRef();
   const [isConnected, setConnected] = React.useState(false);
@@ -38,14 +59,10 @@ export function useWSDataSource(url) {
             });
           }
           if (isLocationDescription) {
+            const neighbors = getNeighbors(action);
             setLocation({
               name: action.room.name,
-              description:
-                action.room.desc +
-                "\n" +
-                "You notice: " +
-                "TODO add examine stuff here" +
-                ".",
+              description: action.room.desc + "\n" + "You notice: " + neighbors,
               id: action.room.node_id,
             });
             buffer.push(action);
