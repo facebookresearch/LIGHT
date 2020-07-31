@@ -5,11 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 
 from abc import ABC, abstractmethod
-
-import threading
-import time
+from typing import TYPE_CHECKING, Dict
 import asyncio
-from typing import TYPE_CHECKING, List, Dict
+import time
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -43,14 +41,15 @@ class Soul(ABC):
         """
         future_id = f"Node-{self.target_node.node_id}-obs-{time.time():.10f}"
         _observe_future = self.observe_event(event)
-        
 
         async def _await_observe_then_cleanup():
             await _observe_future
             del self._observe_futures[future_id]
 
         loop = asyncio.get_running_loop()
-        self._observe_futures[future_id] = asyncio.ensure_future(_await_observe_then_cleanup(), loop=loop)
+        self._observe_futures[future_id] = asyncio.ensure_future(
+            _await_observe_then_cleanup(), loop=loop
+        )
 
     @abstractmethod
     async def observe_event(self, event: "GraphEvent"):

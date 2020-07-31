@@ -6,12 +6,11 @@
 
 from light.world.souls.soul import Soul
 import asyncio
-from typing import TYPE_CHECKING, List, Any
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
     from light.graph.world.world import World
-    from light.graph.events.base import GraphEvent
 
 
 class ModelSoul(Soul):
@@ -46,7 +45,8 @@ class ModelSoul(Soul):
     async def _take_timestep(self) -> None:
         """
         If this model intends to take actions periodically, those steps should
-        be defined in this method. The method _run_timesteps will call this periodically.
+        be defined in this method. The method _run_timesteps will call this
+        periodically.
         """
         pass
 

@@ -5,8 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from light.world.souls.soul import Soul
-
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent

@@ -6,8 +6,7 @@
 
 from light.world.souls.soul import Soul
 from light.world.content_loggers import AgentInteractionLogger
-from typing import TYPE_CHECKING, List
-import asyncio
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -37,7 +36,6 @@ class PlayerSoul(Soul):
         self.player_id = player_id
         self.provider = provider  # TODO link with real provider
         self.agent_logger = AgentInteractionLogger(world.oo_graph, target_node)
-        world.oo_graph.room_id_to_loggers[target_node.get_room().node_id]._add_player()
         provider.register_soul(self)
 
     def handle_act(self, act_text):
@@ -49,20 +47,22 @@ class PlayerSoul(Soul):
 
     async def observe_event(self, event: "GraphEvent"):
         """
-        PlayerSouls pass their observation along to the provider, who will handle getting the
-        correct format to send to the view.
+        PlayerSouls pass their observation along to the provider, who will handle
+        getting the correct format to send to the view.
         """
         self.provider.player_observe_event(self, event)
         self.agent_logger.observe_event(event)
 
     def reap(self):
         """
-        PlayerSouls must remove the player flag from their target GraphAgent when removed,
-        and notify the logger
+        PlayerSouls must remove the player flag from their target GraphAgent when
+        removed, and notify the logger
         """
         super().reap()
         self.target_node.is_player = False
         self.world.oo_graph.room_id_to_loggers[
             self.target_node.get_room().node_id
         ]._remove_player()
+        if self.agent_logger._logging_intialized:
+            self.agent_logger._end_meta_episode()
         self.provider.on_reap_soul(self)
