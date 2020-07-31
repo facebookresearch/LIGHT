@@ -7,3 +7,4 @@ psycopg2==2.8.5
 pytest==6.0.0
 pyzmq==19.0.1
 tqdm==4.48.0
+torch==1.6.0
