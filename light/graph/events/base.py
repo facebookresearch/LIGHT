@@ -209,7 +209,6 @@ class GraphEvent(object):
         present_objects_dict = {
             x.node_id: x.get_prefix_view() for x in contents if x.object
         }
-        room = node_to_json(self.room)
         return {
             "text": self.view_as(viewer),
             "caller": self.__class__.__name__,
@@ -217,7 +216,7 @@ class GraphEvent(object):
             "additional_text": self.text_content,
             "present_agent_ids": present_dict,
             "canonical_targets": self._canonical_targets,
-            "room": room,
+            "room": node_to_json(self.room),
             "actor": node_to_json(self.actor),
             "objects": present_objects_dict,
         }

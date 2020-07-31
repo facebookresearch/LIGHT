@@ -9,6 +9,27 @@ const reducer = (state, msg) => {
 };
 
 /*
+  Concatentates a list of items with an oxford style comma
+  If the items is empty, returns the default message instead
+*/
+const stringifyList = (listItems, defaultMsg) => {
+  var res = "";
+  for (let i = 0; i < listItems.length; i++) {
+    if (i === 0) {
+      res += listItems[i];
+    } else if (i === listItems.length - 1) {
+      res += ", and " + listItems[i];
+    } else {
+      res += ", " + listItems[i];
+    }
+  }
+  if (res === "") {
+    return defaultMsg;
+  }
+  return res;
+};
+
+/*
   Get the labels on paths from neighbors, and display them on screen
 */
 const getNeighbors = (action) => {
@@ -17,20 +38,7 @@ const getNeighbors = (action) => {
     var neighbor = action.room.neighbors[neighbor_id];
     paths.push(neighbor.label);
   });
-  var notice = "";
-  for (let i = 0; i < paths.length; i++) {
-    if (i === 0) {
-      notice += paths[i];
-    } else if (i === paths.length - 1) {
-      notice += ", and " + paths[i];
-    } else {
-      notice += ", " + paths[i];
-    }
-  }
-  if (notice === "") {
-    notice = "there are no exits";
-  }
-  return notice;
+  return stringifyList(paths, "there are no exits");
 };
 
 /*
@@ -42,21 +50,7 @@ const getItems = (action) => {
     const object = action.objects[object_id];
     objects.push(object);
   });
-
-  var items = "";
-  for (let i = 0; i < objects.length; i++) {
-    if (i === 0) {
-      items += objects[i];
-    } else if (i === objects.length - 1) {
-      items += ", and " + objects[i];
-    } else {
-      items += ", " + objects[i];
-    }
-  }
-  if (items === "") {
-    items = "nothing of interest.";
-  }
-  return items;
+  return stringifyList(objects, "nothing of interest");
 };
 
 export function useWSDataSource(url) {
