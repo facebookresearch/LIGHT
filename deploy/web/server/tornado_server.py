@@ -241,7 +241,7 @@ class BaseHandler(tornado.web.RequestHandler):
         return u"/login"
 
     def get_current_user(self):
-        user_json = self.get_secure_cookie("light_user")
+        user_json = self.get_secure_cookie("user")
         if user_json:
             return tornado.escape.json_decode(user_json)
         else:
@@ -337,7 +337,7 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
                 client_secret=self.app.settings["facebook_secret"],
                 code=self.get_argument("code"),
             )
-            self.set_secure_cookie("light_user", tornado.escape.json_encode(user))
+            self.set_current_user("user", tornado.escape.json_encode(user))
             self.redirect(self.get_argument("next", "/"))
             return
         self.authorize_redirect(
@@ -349,10 +349,10 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
             with self.db as ldb:
                 _ = ldb.create_user(user)
             self.set_secure_cookie(
-                "light_user", tornado.escape.json_encode(user), domain=self.hostname
+                "user", tornado.escape.json_encode(user), domain=self.hostname
             )
         else:
-            self.clear_cookie("light_user")
+            self.clear_cookie("user")
 
 
 class LoginHandler(BaseHandler):

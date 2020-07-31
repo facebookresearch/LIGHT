@@ -1,25 +1,25 @@
 #!/usr/bin/env python3
+
+# Copyright 2017-present, Facebook, Inc.
+# All rights reserved.
+#
+# This source code is licensed under the license found in the
+# LICENSE file in the root directory of this source tree.
+
+import asyncio
 import unittest.mock as mock
 import json
 import re
 import os
-import ast
-from tornado import gen, httpclient, ioloop, testing, escape
+from tornado import httpclient, testing, escape
 from tornado.testing import AsyncHTTPTestCase, gen_test
-from tornado.ioloop import IOLoop
-import shutil, tempfile
+import shutil
+import tempfile
 import unittest
-import os
 import urllib
 from urllib import parse
 from light.data_model.light_database import (
     LIGHTDatabase,
-    DB_EDGE_IN_CONTAINED,
-    DB_EDGE_EX_CONTAINED,
-    DB_EDGE_WORN,
-    DB_EDGE_WIELDED,
-    DB_EDGE_NEIGHBOR,
-    EDGE_TYPES,
     DB_TYPE_BASE_CHAR,
     DB_TYPE_CHAR,
     DB_TYPE_BASE_OBJ,
@@ -37,16 +37,9 @@ from light.data_model.light_database import (
     DB_TYPE_TURN,
     DB_TYPE_PLAYER,
     DB_TYPE_WORLD,
-    ENTITY_TYPES,
-    DB_STATUS_PROD,
     DB_STATUS_REVIEW,
     DB_STATUS_REJECTED,
-    DB_STATUS_QUESTIONABLE,
     DB_STATUS_ACCEPTED,
-    DB_STATUS_ACCEPT_ONE,
-    DB_STATUS_ACCEPT_ALL,
-    CONTENT_STATUSES,
-    EDIT_STATUSES,
 )
 from deploy.web.server.builder_server import (
     BuildApplication,
@@ -96,7 +89,7 @@ class TestRegistryApp(AsyncHTTPTestCase):
         """Test that we connect to socket by default"""
         headers = {"Connection": "Upgrade", "Upgrade": "websocket"}
         with self.assertRaises(httpclient.HTTPClientError) as cm:
-            response = yield self.client.fetch(
+            _ = yield self.client.fetch(
                 f"{URL}/game/socket", method="GET", headers=headers,
             )
         # Need to upgrade in response
@@ -179,7 +172,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
         with LIGHTDatabase(self.db_path) as db:
             player_id = db.create_user("test")[0]
             world1 = db.create_world("default", player_id, 3, 3, 1)[0]
-            world2 = db.create_world("default2", player_id, 4, 2, 2)[0]
+            _ = db.create_world("default2", player_id, 4, 2, 2)[0]
 
         response = yield self.client.fetch(
             f"{URL}/builder/world/delete/{world1}", method="DELETE",
@@ -191,7 +184,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
     def test_save_world(self, mocked_auth):
         """Test the endpoint for saving worlds works as expected"""
         with LIGHTDatabase(self.db_path) as db:
-            player_id = db.create_user("test")[0]
+            _ = db.create_user("test")[0]
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
         }
@@ -204,9 +197,12 @@ class TestWorldSaving(AsyncHTTPTestCase):
 
     @gen_test
     def test_autosave_endpoints(self, mocked_auth):
-        """Test the endpoint for posting worlds works as expected, and loading back matches"""
+        """
+            Test the endpoint for posting worlds works as expected, and
+            loading back matches
+        """
         with LIGHTDatabase(self.db_path) as db:
-            player_id = db.create_user("test")[0]
+            _ = db.create_user("test")[0]
             d = {
                 "data": {
                     "dimensions": {
@@ -268,8 +264,10 @@ class TestWorldSaving(AsyncHTTPTestCase):
 
     @gen_test
     def test_world_saving_integration(self, mocked_auth):
-        """Test a flow where a user creates a world, views the saved worlds, loads the world, then
-            deletes it"""
+        """
+            Test a flow where a user creates a world, views the saved worlds, loads
+            the world, then deletes it
+        """
 
         with LIGHTDatabase(self.db_path) as db:
             player_id = db.create_user("test")[0]
@@ -390,7 +388,8 @@ class TestWorldSaving(AsyncHTTPTestCase):
             },
         )
 
-        # Test world loading - expect same format! (except differences in local ids, so check dimensions and tiles really)
+        # Test world loading - expect same format! (except differences in local ids, so
+        # check dimensions and tiles really)
         d["dimensions"]["id"] = w_id
         response = yield self.client.fetch(f"{URL}/builder/world/{w_id}", method="GET")
         self.assertEqual(response.code, 200)
@@ -515,7 +514,7 @@ class TestLandingApp(AsyncHTTPTestCase):
             "Content-Type": "application/json",
         }
         with self.assertRaises(httpclient.HTTPClientError) as cm:
-            response = yield self.client.fetch(
+            _ = yield self.client.fetch(
                 f"{URL}/something.html", method="GET", headers=headers,
             )
         self.assertEqual(cm.exception.code, 404)
@@ -535,7 +534,7 @@ class TestLandingApp(AsyncHTTPTestCase):
         mocked_auth.return_value = None
         headers = {"Content-Type": "application/json"}
         with self.assertRaises(httpclient.HTTPClientError) as cm:
-            response = yield self.client.fetch(
+            _ = yield self.client.fetch(
                 f"{URL}/", method="GET", headers=headers, follow_redirects=False,
             )
         self.assertEqual(cm.exception.code, 302)
@@ -546,13 +545,14 @@ class TestLandingApp(AsyncHTTPTestCase):
         """Test that logout clears cookie and redirects"""
         headers = {"Content-Type": "application/json"}
         with self.assertRaises(httpclient.HTTPClientError) as cm:
-            response = yield self.client.fetch(
+            _ = yield self.client.fetch(
                 f"{URL}/logout", method="GET", headers=headers, follow_redirects=False,
             )
         # 302 still bc we need to redirect
         self.assertEqual(cm.exception.code, 302)
         self.assertEqual(len(cm.exception.response.headers.get_list("Set-Cookie")), 1)
-        # Clearing cookies, so should user should be empty string, then redirect to login
+        # Clearing cookies, so should user should be empty string
+        # then redirect to login
         result = re.search(
             'user="(.*)"(.*)', cm.exception.response.headers["Set-Cookie"]
         )
@@ -561,24 +561,41 @@ class TestLandingApp(AsyncHTTPTestCase):
 
     @gen_test
     @mock.patch(
-        "deploy.web.server.tornado_server.FacebookOAuth2LoginHandler.get_authenticated_user",
-        return_value="test",
+        "deploy.web.server.tornado_server.FacebookOAuth2LoginHandler.authorize_redirect"
     )
-    @mock.patch(
-        "deploy.web.server.tornado_server.FacebookOAuth2LoginHandler.authorize_redirect",
-    )
-    def test_fb_login_succesful(self, mocked_auth, mocked_get, mocked_redirect):
+    def test_fb_login_redirects(self, mocked_auth, mocked_redirect):
         """Test that the facebook login endpoint gives cookie, 200"""
         headers = {"Content-Type": "application/json"}
         with self.assertRaises(httpclient.HTTPClientError) as cm:
-            response = yield self.client.fetch(
-                f"{URL}/fb/login",
+            _ = yield self.client.fetch(
+                f"{URL}/auth/login",
                 method="GET",
                 headers=headers,
                 follow_redirects=False,
             )
             # 302 still bc we need to redirect
             self.assertEqual(cm.exception.code, 302)
+
+    # @gen_test
+    # @mock.patch(
+    #     "deploy.web.server.tornado_server.FacebookOAuth2LoginHandler.get_authenticated_user"
+    # )
+    # def test_fb_login_success(self, mocked_auth, mocked_auth_user):
+    #     """Test that the facebook login endpoint gives cookie, 200"""
+    #     headers = {"Content-Type": "application/json"}
+    #     with self.assertRaises(httpclient.HTTPClientError) as cm:
+    #         f = asyncio.Future()
+    #         f.set_result("test")
+    #         mocked_auth.return_value = f
+    #         _ = yield self.client.fetch(
+    #             f"{URL}/auth/login?code=True",
+    #             method="GET",
+    #             headers=headers,
+    #             follow_redirects=False,
+    #         )
+    #         # 302 still bc we need to redirect
+    #         self.assertEqual(cm.exception.code, 302)
+    #     self.assertEqual(len(cm.exception.response.headers.get_list("Set-Cookie")), 1)
 
     @gen_test
     def test_login_succesful(self, mocked_auth):
