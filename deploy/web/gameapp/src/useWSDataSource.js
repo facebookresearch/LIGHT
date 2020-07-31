@@ -1,5 +1,4 @@
 import React from "react";
-import { zipToObject } from "./utils";
 
 const reducer = (state, msg) => {
   const updatedState = [...state, msg];
@@ -9,6 +8,9 @@ const reducer = (state, msg) => {
   return updatedState;
 };
 
+/*
+  Get the labels on paths from neighbors, and display them on screen
+*/
 const getNeighbors = (action) => {
   var paths = [];
   Object.keys(action.room.neighbors).forEach((neighbor_id) => {
@@ -17,19 +19,46 @@ const getNeighbors = (action) => {
   });
   var notice = "";
   for (let i = 0; i < paths.length; i++) {
-    if (i == 0) {
+    if (i === 0) {
       notice += paths[i];
-    } else if (i == paths.length - 1) {
-      notice += " and " + paths[i];
+    } else if (i === paths.length - 1) {
+      notice += ", and " + paths[i];
     } else {
       notice += ", " + paths[i];
     }
   }
-  if (notice == "") {
-    notice = "nothing of interest";
+  if (notice === "") {
+    notice = "there are no exits";
   }
   return notice;
 };
+
+/*
+  Get the objects in the room to display them
+*/
+const getItems = (action) => {
+  var objects = [];
+  Object.keys(action.objects).forEach((object_id) => {
+    const object = action.objects[object_id];
+    objects.push(object);
+  });
+
+  var items = "";
+  for (let i = 0; i < objects.length; i++) {
+    if (i === 0) {
+      items += objects[i];
+    } else if (i === objects.length - 1) {
+      items += ", and " + objects[i];
+    } else {
+      items += ", " + objects[i];
+    }
+  }
+  if (items === "") {
+    items = "nothing of interest.";
+  }
+  return items;
+};
+
 export function useWSDataSource(url) {
   const websocket = React.useRef();
   const [isConnected, setConnected] = React.useState(false);
@@ -38,6 +67,8 @@ export function useWSDataSource(url) {
   const [persona, setPersona] = React.useState(null);
   const [location, setLocation] = React.useState(null);
   const [agents, setAgents] = React.useState({});
+  const agentList = React.useRef(agents);
+  agentList.current = agents;
 
   const handleMessage = React.useCallback(
     (msg) => {
@@ -50,7 +81,11 @@ export function useWSDataSource(url) {
           const isLocationDescription = action.caller === "LookEvent";
           action.room = JSON.parse(action.room);
           action.actor = JSON.parse(action.actor);
-          setAgents(action.present_agent_ids);
+          var new_agents = {
+            ...agentList.current,
+            ...action.present_agent_ids,
+          };
+          setAgents(new_agents);
           if (isPersonaDescription) {
             setPersona({
               name: action.actor.name,
@@ -58,18 +93,21 @@ export function useWSDataSource(url) {
               id: action.actor.node_id,
             });
           }
-          if (isLocationDescription) {
-            const neighbors = getNeighbors(action);
-            setLocation({
-              name: action.room.name,
-              description: action.room.desc + "\n" + "You notice: " + neighbors,
-              id: action.room.node_id,
-            });
-            buffer.push(action);
-          } else {
-            buffer.push(action);
-          }
-
+          const neighbors = getNeighbors(action);
+          const items = getItems(action);
+          setLocation({
+            name: action.room.name,
+            description:
+              action.room.desc +
+              "\n" +
+              "There is " +
+              items +
+              "\n" +
+              "You notice " +
+              neighbors,
+            id: action.room.node_id,
+          });
+          buffer.push(action);
           buffer.forEach((msg) => appendMessage(msg));
         });
       }

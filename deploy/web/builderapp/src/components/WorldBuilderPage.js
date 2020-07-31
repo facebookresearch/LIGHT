@@ -38,7 +38,20 @@ function WorldBuilderPage({ location }) {
 function WorldBuilder({ upload }) {
   const state = useWorldBuilder(upload);
   const [advanced, setAdvanced] = React.useState(false);
-  const [isOverlayOpen, setIsOverlayOpen] = React.useState(false);
+
+  // Try and get if we should start with overlay or not
+  const loc = window.location.href;
+  const paramsIdx = loc.indexOf("?");
+  var initOverlay = false;
+  if (paramsIdx != -1) {
+    const params = loc.substring(paramsIdx + 1);
+    var res = params.split("=");
+    if (res[0] === "manage") {
+      initOverlay = res[1] == "true";
+    }
+  }
+
+  const [isOverlayOpen, setIsOverlayOpen] = React.useState(initOverlay);
   const world_name =
     state.dimensions.name == null ? " " : state.dimensions.name;
   const stateRef = React.useRef(state);
