@@ -9,25 +9,15 @@
     This involves:
         1. Finding the start/stop of conversations
         2. Capture relevant metadata
-            - task (?)
             - _setting_name
             - _setting_desc
-            - _partner(s)_name (? - multiple)
-            - _self_name
-            - _self_persona
-            - _object_desc
-            - _self_say
-            - _partner_say
-            - _self_emote
-            - _partner_emote
-            - _self_act
-            - _partner_act
+            - agent names and personas
+            - object names and descriptions
         3. Take events and parse out the convo
-            - say can be SayEvent, TellEvent, WhisperEvent(?)
-            - emotes are emotes
+            - say can be SayEvent certainly, maybe TellEvent, WhisperEvent(?)
+            - emotes are actions
             - all other are act events
         4. Return a list of the episodes
-        Format - id (actor, recepient) and text, and action (emote can be an action)
 """
 
 
