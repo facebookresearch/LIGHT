@@ -69,7 +69,7 @@ def _run_server(FLAGS, ldb, model_resources):
 # Override this to be the model_resources needed for souls
 def init_model_resources(light_model_root):
     shared_model_content = PartnerHeuristicModelSoul.load_models(
-        light_model_root + "game_speech1/model",
+        light_model_root + "dialog_gen/model",
         light_model_root + "speech_train_cands.txt",
         light_model_root + "agent_to_utterance_trainset.txt",
         light_model_root + "main_act/model",

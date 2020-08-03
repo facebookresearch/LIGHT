@@ -6,7 +6,7 @@
 
 import time
 import random
-from collections import deque
+from collections import deque, defaultdict
 from light.world.souls.model_soul import ModelSoul
 from light.graph.events.graph_events import TellEvent, SayEvent
 from parlai.core.agents import create_agent_from_shared
@@ -58,20 +58,24 @@ class PartnerHeuristicModelSoul(ModelSoul):
 
         # Load speech model
         speech_args = [
+            '-dt', 
+            'valid', 
+            '--inference',
+            'beam',
+            '--beam-context-block-ngram',
+            3,
+            '--beam-block-ngram', 
+            3, 
+            '--beam-size',
+            10, 
+            '--beam-min-length', 
+            20,
+            '-m', 
+            'transformer/generator'
             '-mf',
             speech_model_path,
-            '-ecands',
-            'fixed',
-            '--ignore-bad-candidates',
-            'True',
-            '-fcp',
-            speech_cands_path,
         ]
         speech_opt, _unknown = parser.parse_and_process_known_args(args=speech_args)
-        speech_opt['override'] = {
-            'eval_candidates': 'fixed',
-            'fixed_candidates_path': speech_cands_path,
-        }
         speech_opt['interactive_mode'] = True
         speech_model = create_agent(speech_opt, requireModelExists=True)
 
@@ -107,6 +111,10 @@ class PartnerHeuristicModelSoul(ModelSoul):
             'shared_action_model': action_model.share(),
         }
 
+    def _clear_dialogue_history(self) -> None:
+        """Empty the dialogue history for both speech and act models"""
+        self._dialogue_history = {'speech': defaultdict(list), 'act': defaultdict(list)}
+
     def _init_with_models(self, models) -> None:
         """
         Initialize required members of this soul for tracking the 
@@ -114,7 +122,6 @@ class PartnerHeuristicModelSoul(ModelSoul):
         """
         self._pending_observations = []
         self._last_action_time = time.time() + self._get_random_time_offset()
-        self._dialogue_history = {}
         self._utterance_to_speaker_name = models['utterance_to_speaker_name']
         self.npc_model = create_agent_from_shared(models['shared_dialog_model'])
         self.npc_act_model = create_agent_from_shared(models['shared_action_model'])
@@ -157,7 +164,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
         the partner if they still point to it.
         """
         # how a dialogue agent deals with moving location
-        self._dialogue_history = {}
+        self._clear_dialogue_history()
 
         # remove interaction partner links:
         agent = self.target_node
@@ -217,14 +224,14 @@ class PartnerHeuristicModelSoul(ModelSoul):
         """
         agent = self.target_node
         room = agent.get_room()
-        txt = "_setting_name " + room.name + '\\n'
+        txt = "_setting_name " + room.name + '\n'
         txt += (
-            "_setting_desc " + room.desc + '\\n'
+            "_setting_desc " + room.desc + '\n'
         )
         if partner_name is not None:
-            txt += "_partner_name " + partner_name + '\\n'
-        txt += "_self_name " + agent.name + '\\n'
-        txt += '_self_persona ' + agent.persona + '\\n'
+            txt += "_partner_name " + partner_name + '\n'
+        txt += "_self_name " + agent.name + '\n'
+        txt += '_self_persona ' + agent.persona + '\n'
         return txt
 
     def get_last_turn_too_recent(self):
@@ -246,11 +253,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
         else:
             partner_name = None
        
-        hist = self._dialogue_history
-        if partner_id not in hist:
-            hist[partner_id] = []
-        if agent_id not in hist:
-            hist[agent_id] = []
+        hist = self._dialogue_history['act']
 
         txt = self.npc_build_context(partner_name)
         for d in hist[agent_id]:
@@ -272,10 +275,10 @@ class PartnerHeuristicModelSoul(ModelSoul):
         if act_text is None:
             return
 
-        reply_action = act_text + '\n'
         # add action to history
-        hist[agent_id].append('_self_act ' + act_text + '\\n')
-        self.world.parse_exec(agent_id, reply_action)
+        self._dialogue_history['act'][agent_id].append('_self_act ' + act_text + '\n')
+        # self._dialogue_history['speech'][agent_id].append('_self_act ' + act_text + '\n')
+        self.world.parse_exec(agent_id, act_text)
 
     def npc_dialogue(self, obs=None):
         """
@@ -303,9 +306,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
             # we are going to reply, so point both agents as having this as their last interaction.
             self.set_interaction_partner(partner)
 
-        hist = self._dialogue_history
-        if agent_id not in hist:
-            hist[agent_id] = []
+        hist = self._dialogue_history['speech']
 
         # TODO refactor with is_human when human flag is refactored
         if not ALLOW_INTERBOT_CHAT and not partner._human:
@@ -324,8 +325,9 @@ class PartnerHeuristicModelSoul(ModelSoul):
 
         # add dialogue to history
         if obs is not None:
-            last_msg = '_partner_say ' + obs.text_content + '\\n'
-            hist[agent_id].append(last_msg)
+            last_msg = '_partner_say ' + obs.text_content + '\n'
+            self._dialogue_history['speech'][agent_id].append(obs.text_content + '\n')
+            self._dialogue_history['act'][agent_id].append(last_msg)
             txt += last_msg
         
         # Send to model to process
@@ -338,7 +340,8 @@ class PartnerHeuristicModelSoul(ModelSoul):
         reply_event.execute(self.world)
 
         # add dialogue to history
-        hist[agent_id].append('_self_say ' + act_text + '\\n')
+        self._dialogue_history['speech'][agent_id].append(act_text + '\n')
+        self._dialogue_history['act'][agent_id].append(('_self_say ' + act_text + '\n')
 
     def get_last_interaction_partner(self, node: "GraphAgent"):
         """
