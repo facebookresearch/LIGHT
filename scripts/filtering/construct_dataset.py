@@ -14,3 +14,39 @@
         3. Write to the dataset
         4. Export the dataset, adding any necessary metadata
 """
+from light.scripts.filtering.reconstruct_logs import load_event_log
+from light.scripts.filtering.extract_episodes import extract_episodes
+import argparse
+
+
+def convert_event_log(event_file, dataset_dir):
+    """
+        Given a log file and a dataset directory to write to, extract the
+        training episodes from the log and write them to the dataset.
+    """
+    uuid_to_world, event_buffer = load_event_log(event_file,)
+    episodes = extract_episodes(uuid_to_world, event_buffer)
+    write_episodes_to_dir(episodes, dataset_dir)
+
+
+def write_episodes_to_dir(episodes, dataset_dir):
+    """
+        Given episodes and a directory for a dataset, write the episodes to the dataset
+    """
+    pass
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Args for the directory of log to convert"
+    )
+    parser.add_argument("--event-log", type=str, help="The event log to convert")
+    parser.add_argument(
+        "--dataset-dir", type=str, help="The directory to put the episodes"
+    )
+    FLAGS, _unknown = parser.parse_known_args()
+    convert_event_log(FLAGS.event_log, FLAGS.dataset_dir)
+
+
+if __name__ == "__main__":
+    main()
