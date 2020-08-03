@@ -142,7 +142,7 @@ function Entry({ msg, onReply, agents, selfId }) {
     return <Setting text={msg.text} />;
   } else {
     var actor = "";
-    if (msg.actors == undefined) {
+    if (msg.actors === undefined) {
       actor = msg.actor.node_id;
     } else {
       actor = msg.actors[0];
@@ -256,7 +256,6 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
     },
     [setEnteredText, chatInputRef]
   );
-
   return (
     <div className="App">
       <div className="sidebar">

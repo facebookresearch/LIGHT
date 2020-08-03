@@ -1,5 +1,4 @@
 import React from "react";
-import { zipToObject } from "./utils";
 
 const reducer = (state, msg) => {
   const updatedState = [...state, msg];
@@ -7,6 +6,51 @@ const reducer = (state, msg) => {
   console.table(updatedState);
   console.groupEnd();
   return updatedState;
+};
+
+/*
+  Concatentates a list of items with an oxford style comma
+  If the items is empty, returns the default message instead
+*/
+const stringifyList = (listItems, defaultMsg) => {
+  var res = "";
+  for (let i = 0; i < listItems.length; i++) {
+    if (i === 0) {
+      res += listItems[i];
+    } else if (i === listItems.length - 1) {
+      res += ", and " + listItems[i];
+    } else {
+      res += ", " + listItems[i];
+    }
+  }
+  if (res === "") {
+    return defaultMsg;
+  }
+  return res;
+};
+
+/*
+  Get the labels on paths from neighbors, and display them on screen
+*/
+const getNeighbors = (action) => {
+  var paths = [];
+  Object.keys(action.room.neighbors).forEach((neighbor_id) => {
+    var neighbor = action.room.neighbors[neighbor_id];
+    paths.push(neighbor.label);
+  });
+  return stringifyList(paths, "there are no exits");
+};
+
+/*
+  Get the objects in the room to display them
+*/
+const getItems = (action) => {
+  var objects = [];
+  Object.keys(action.objects).forEach((object_id) => {
+    const object = action.objects[object_id];
+    objects.push(object);
+  });
+  return stringifyList(objects, "nothing of interest");
 };
 
 export function useWSDataSource(url) {
@@ -17,6 +61,8 @@ export function useWSDataSource(url) {
   const [persona, setPersona] = React.useState(null);
   const [location, setLocation] = React.useState(null);
   const [agents, setAgents] = React.useState({});
+  const agentList = React.useRef(agents);
+  agentList.current = agents;
 
   const handleMessage = React.useCallback(
     (msg) => {
@@ -29,7 +75,11 @@ export function useWSDataSource(url) {
           const isLocationDescription = action.caller === "LookEvent";
           action.room = JSON.parse(action.room);
           action.actor = JSON.parse(action.actor);
-          setAgents(action.present_agent_ids);
+          var new_agents = {
+            ...agentList.current,
+            ...action.present_agent_ids,
+          };
+          setAgents(new_agents);
           if (isPersonaDescription) {
             setPersona({
               name: action.actor.name,
@@ -37,22 +87,21 @@ export function useWSDataSource(url) {
               id: action.actor.node_id,
             });
           }
-          if (isLocationDescription) {
-            setLocation({
-              name: action.room.name,
-              description:
-                action.room.desc +
-                "\n" +
-                "You notice: " +
-                "TODO add examine stuff here" +
-                ".",
-              id: action.room.node_id,
-            });
-            buffer.push(action);
-          } else {
-            buffer.push(action);
-          }
-
+          const neighbors = getNeighbors(action);
+          const items = getItems(action);
+          setLocation({
+            name: action.room.name,
+            description:
+              action.room.desc +
+              "\n" +
+              "There is " +
+              items +
+              "\n" +
+              "You notice " +
+              neighbors,
+            id: action.room.node_id,
+          });
+          buffer.push(action);
           buffer.forEach((msg) => appendMessage(msg));
         });
       }
