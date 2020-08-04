@@ -14,8 +14,8 @@
         3. Write to the dataset
         4. Export the dataset, adding any necessary metadata
 """
-from light.scripts.filtering.reconstruct_logs import load_event_log
-from light.scripts.filtering.extract_episodes import extract_episodes
+from scripts.filtering.reconstruct_logs import load_event_log
+from scripts.filtering.extract_episodes import extract_episodes
 import argparse
 
 

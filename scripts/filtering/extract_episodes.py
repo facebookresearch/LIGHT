@@ -43,19 +43,17 @@ def extract_episodes(uuid_to_world, event_buffer):
     episodes = []
     curr_episode = None
     for i in range(len(event_buffer)):
-        world, hash_, event, time_ = event_buffer[i]
-
+        hash_, time_, event, = event_buffer[i]
         if should_start_episode(event):
-            curr_episode = Episode(event)
-            utterance = Utterance()
-            curr_episode.add_utterance(utterance)
+            # Need to do some serious processing on these
+            curr_episode = initialize_episode(event)
+            curr_episode.add_utterance(event)
         elif curr_episode is not None:
             if should_end_episode(event):
                 episodes.append(curr_episode)
                 curr_episode = None
             else:
-                utterance = Utterance()
-                curr_episode.add_utterance(utterance)
+                curr_episode.add_utterance(event)
 
     return episodes
 
@@ -66,6 +64,16 @@ def should_start_episode(event):
 
 def should_end_episode(event):
     return type(event) in END_EVENTS
+
+
+def initialize_episode(event):
+    curr_episode = Episode(
+        event.room.name,
+        event.room.desc,
+        event.room.get_contents(),
+        event.room.get_contents(),
+    )
+    return curr_episode
 
 
 class Episode:
@@ -87,8 +95,19 @@ class Episode:
         self.convo = []
         pass
 
-    def add_utterance(self, utterance):
-        self.convo.append(utterance)
+    def add_utterance(self, event):
+        utter = self.convert_to_utterance(event)
+        self.convo.append(utter)
+
+    def convert_to_utterance(self, event):
+        # Problem is SayEvents do not have target - to room?
+        utterance = Utterance(
+            event.actor.name,
+            event.text_content,
+            event.to_canonical_form(),
+            event.present_agent_ids,
+        )
+        return utterance
 
 
 class Utterance:
