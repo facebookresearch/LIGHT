@@ -20,6 +20,7 @@
 """
 from light.graph.events.graph_events import (
     DeathEvent,
+    ErrorEvent,
     LeaveEvent,
     SayEvent,
     TellEvent,
@@ -42,9 +43,9 @@ def extract_episodes(uuid_to_world, event_buffer):
     episodes = []
     curr_episode = None
     for i in range(len(event_buffer)):
-        hash_, time_, event, = event_buffer[i]
+        _, _, event, = event_buffer[i]
+
         if should_start_episode(curr_episode, event):
-            # Need to do some serious processing on these
             curr_episode = initialize_episode(event)
             curr_episode.add_utterance(event)
         elif curr_episode is not None:
@@ -56,6 +57,7 @@ def extract_episodes(uuid_to_world, event_buffer):
 
     if curr_episode is not None:
         episodes.append(curr_episode)
+
     return episodes
 
 
@@ -76,7 +78,7 @@ def should_start_episode(curr_episode, event):
 def should_end_episode(event):
     """
         Returns true if the event signals the end of a new conversation
-        1. Death Event limits to only 1 present agent in the room
+        1. DeathEvent
         2. Leave Event (if agents continue talking, just make it a new convo
     """
     return type(event) in END_EVENTS
@@ -85,7 +87,8 @@ def should_end_episode(event):
 def initialize_episode(event):
     """
         Given an event which should_start_episode, initialize the episode class
-        with the room name, description, and present agents and objects
+        with the room name, description, and present agents and objects and their
+        descriptions
     """
     contained = event.room.get_contents()
     agents = {x.name: x.desc for x in contained if x.agent}
@@ -106,20 +109,55 @@ class Episode:
     def __init__(self, setting_name, setting_desc, agents, objects):
         self._setting_name = setting_name
         self._setting_desc = setting_desc
+
         # Dictionaries from IDs to descriptions
         self.agents = agents
         self.objects = objects
-        # Conversation, a list of utterances
-        self.convo = []
+
+        self.utterances = []
 
     def add_utterance(self, event):
-        utter = self.convert_to_utterance(event)
-        self.convo.append(utter)
+        """
+            Converts the event to an utterance then appends it to the utterance
+            buffer
+        """
+        # TODO: Decide if there are other skippable events which should not be
+        # part of an episode
+        if type(event) is ErrorEvent:
+            return
+        utter = Utterance.convert_to_utterance(event)
+        self.utterances.append(utter)
 
-    def convert_to_utterance(self, event):
+
+class Utterance:
+    """
+        An utterance is a class which is a single "turn"/timestep in a conversation
+        Utterances include:
+        1. The name of the actor
+        2. What was said (the text of the action)
+        3. What action (if any) was performed
+        4. The recipient of the action
+    """
+
+    def __init__(self, actor_id, text, action, target_id):
+        self.actor_id = actor_id
+        self.text = text
+        self.action = action
+        self.target_id = target_id
+
+    @staticmethod
+    def convert_to_utterance(event):
+        """
+            This method is responsible for converting an event to an utteranc from the
+            episode's POV.
+
+            The biggest challenge that this requires is identifying the target node, as
+            some events (such as SayEvent) do not contain this information.
+        """
+
         # Problem is SayEvents do not have target - look to room? Sure, use present
         # agent other problem is, how do we then identify which is the target id?
-        # Look ahead perhaps(?)
+        # Look ahead in the buffer perhaps(?)
         except_actor = copy.deepcopy(event.present_agent_ids)
         except_actor.remove(event.actor.node_id)
         target_id = [
@@ -130,15 +168,3 @@ class Episode:
             event.actor.name, event.text_content, event.to_canonical_form(), target_id,
         )
         return utterance
-
-
-class Utterance:
-    """
-        An utterance is a class which is a single "turn"/timeperiod in a conversation
-    """
-
-    def __init__(self, actor_id, text, action, target_id):
-        self.actor_id = actor_id
-        self.text = text
-        self.action = action
-        self.target_id = target_id

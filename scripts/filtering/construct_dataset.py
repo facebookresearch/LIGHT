@@ -47,7 +47,7 @@ def write_episodes_to_dir(episodes, dataset_dir):
         # Decide format - all episodes in one file?  Many files?
         # How to structure?
         with open(file_path, "w") as episode_file:
-            for utter in episode.convo:
+            for utter in episode.utterances:
                 # Fill in what to write properly
                 episode_file.write(utter.actor_id + " ")
                 episode_file.write(utter.text)
