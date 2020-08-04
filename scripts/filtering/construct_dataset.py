@@ -38,20 +38,35 @@ def write_episodes_to_dir(episodes, dataset_dir):
     if not os.path.exists(dataset_dir):
         os.mkdir(dataset_dir)
 
-    # Decide what to do with the naming (?)
+    # Decide what to do with the naming - random right now
     for episode in episodes:
         unique_name = str(uuid.uuid4())
-        # What format!?!?!?
         file_name = f"{unique_name}.txt"
         file_path = os.path.join(dataset_dir, file_name)
-        # Decide format - all episodes in one file?  Many files?
-        # How to structure?
         with open(file_path, "w") as episode_file:
+
+            # TODO - need any other metadata?  How to tag metadata
+            # with the name perhaps?
+            episode_file.write("_setting_name   " + episode._setting_name + "\n")
+            episode_file.write("_setting_desc   " + episode._setting_desc + "\n")
+            episode_file.write("\n")
+
+            episode_file.write("\nAgents:\n")
+            for agent_name in episode.agents:
+                episode_file.write("_name   " + agent_name + "\n")
+                episode_file.write("_persona  " + episode.agents[agent_name] + "\n\n")
+
+            # TODO: Decide if need objects or not
+            episode_file.write("\nDialogue\n")
             for utter in episode.utterances:
-                # Fill in what to write properly
-                episode_file.write(utter.actor_id + " ")
-                episode_file.write(utter.text)
+                # Fill in what to write properly - should be line by line?
+                # CSV?  Tab seperated?
+                episode_file.write(utter.actor_id + "\n")
+                episode_file.write(utter.text + "\n")
+                episode_file.write(utter.action + "\n")
+                episode_file.write(utter.target_id + "\n")
                 episode_file.write("\n")
+            episode_file.write("episode done? true")
 
 
 def main():
