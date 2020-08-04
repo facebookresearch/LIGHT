@@ -26,12 +26,12 @@ from light.graph.events.graph_events import (
     TellEvent,
     WhisperEvent,
 )
+import copy
 
 SPEECH_EVENTS = [SayEvent, TellEvent, WhisperEvent]
 END_EVENTS = [DeathEvent, LeaveEvent]
 
 
-# TODO: Treat this file as a "utils", maybe even include an episode class?
 def extract_episodes(uuid_to_world, event_buffer):
     """
         Given the uuid to world json, and a buffer of events which occured in the logs,
@@ -55,6 +55,9 @@ def extract_episodes(uuid_to_world, event_buffer):
             else:
                 curr_episode.add_utterance(event)
 
+    if curr_episode is not None:
+        episodes.append(curr_episode)
+    print(episodes)
     return episodes
 
 
@@ -63,9 +66,13 @@ def should_start_episode(curr_episode, event):
         Returns true if the event signals the start of a new conversation
         1. There is not an episode currently in place
         2. The event starts a conversation (so is a speech event)
-        3. More than one agent in the room (?)
+        3. More than one agent in the room
     """
-    return curr_episode is None and type(event) in SPEECH_EVENTS
+    return (
+        curr_episode is None
+        and type(event) in SPEECH_EVENTS
+        and len(event.present_agent_ids) > 1
+    )
 
 
 def should_end_episode(event):
@@ -82,12 +89,10 @@ def initialize_episode(event):
         Given an event which should_start_episode, initialize the episode class
         with the room name, description, and present agents and objects
     """
-    curr_episode = Episode(
-        event.room.name,
-        event.room.desc,
-        event.room.get_contents(),
-        event.room.get_contents(),
-    )
+    contained = event.room.get_contents()
+    agents = {x.name: x.desc for x in contained if x.agent}
+    objects = {x.name: x.desc for x in contained if x.object}
+    curr_episode = Episode(event.room.name, event.room.desc, agents, objects,)
     return curr_episode
 
 
@@ -108,19 +113,23 @@ class Episode:
         self.objects = objects
         # Conversation, a list of utterances
         self.convo = []
-        pass
 
     def add_utterance(self, event):
         utter = self.convert_to_utterance(event)
         self.convo.append(utter)
 
     def convert_to_utterance(self, event):
-        # Problem is SayEvents do not have target - to room?
+        # Problem is SayEvents do not have target - look to room? Sure, use present
+        # agent other problem is, how do we then identify which is the target id?
+        # Look ahead perhaps(?)
+        except_actor = copy.deepcopy(event.present_agent_ids)
+        except_actor.remove(event.actor.node_id)
+        target_id = [
+            event.actor.get_room().contained_nodes[x]._target_node.name
+            for x in except_actor
+        ][0]
         utterance = Utterance(
-            event.actor.name,
-            event.text_content,
-            event.to_canonical_form(),
-            event.present_agent_ids,
+            event.actor.name, event.text_content, event.to_canonical_form(), target_id,
         )
         return utterance
 
@@ -135,4 +144,3 @@ class Utterance:
         self.text = text
         self.action = action
         self.target_id = target_id
-        pass
