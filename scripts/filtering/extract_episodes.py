@@ -20,6 +20,7 @@
 """
 from light.graph.events.graph_events import (
     DeathEvent,
+    ErrorEvent,
     LeaveEvent,
     SayEvent,
     TellEvent,
@@ -120,6 +121,10 @@ class Episode:
             Converts the event to an utterance then appends it to the utterance
             buffer
         """
+        # TODO: Decide if there are other skippable events which should not be
+        # part of an episode
+        if type(event) is ErrorEvent:
+            return
         utter = Utterance.convert_to_utterance(event)
         self.utterances.append(utter)
 
