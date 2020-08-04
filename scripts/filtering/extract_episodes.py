@@ -19,6 +19,16 @@
             - all other are act events
         4. Return a list of the episodes
 """
+from light.graph.events.graph_events import (
+    DeathEvent,
+    LeaveEvent,
+    SayEvent,
+    TellEvent,
+    WhisperEvent,
+)
+
+SPEECH_EVENTS = [SayEvent, TellEvent, WhisperEvent]
+END_EVENTS = [DeathEvent, LeaveEvent]
 
 
 # TODO: Treat this file as a "utils", maybe even include an episode class?
@@ -30,7 +40,32 @@ def extract_episodes(uuid_to_world, event_buffer):
         3. Parse the episode from the data
         4. Return the episodes!
     """
-    pass
+    episodes = []
+    curr_episode = None
+    for i in range(len(event_buffer)):
+        world, hash_, event, time_ = event_buffer[i]
+
+        if should_start_episode(event):
+            curr_episode = Episode(event)
+            utterance = Utterance()
+            curr_episode.add_utterance(utterance)
+        elif curr_episode is not None:
+            if should_end_episode(event):
+                episodes.append(curr_episode)
+                curr_episode = None
+            else:
+                utterance = Utterance()
+                curr_episode.add_utterance(utterance)
+
+    return episodes
+
+
+def should_start_episode(event):
+    return type(event) in SPEECH_EVENTS
+
+
+def should_end_episode(event):
+    return type(event) in END_EVENTS
 
 
 class Episode:
@@ -51,6 +86,9 @@ class Episode:
         # Conversation, a list of utterances
         self.convo = []
         pass
+
+    def add_utterance(self, utterance):
+        self.convo.append(utterance)
 
 
 class Utterance:
