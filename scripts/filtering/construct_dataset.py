@@ -33,6 +33,10 @@ def write_episodes_to_dir(episodes, dataset_dir):
     """
         Given episodes and a directory for a dataset, write the episodes to the dataset
     """
+    for episode in episodes:
+        for utter in episode.convo:
+            print(utter.actor_id, "said")
+            print(utter.text)
     pass
 
 
