@@ -420,7 +420,7 @@ class GoEvent(GraphEvent):
         new_room = self.target_nodes[0]
         old_room = self.actor.get_room()
         old_room_view = self.room.get_prefix_view_from(new_room)
-        self.__canonical_room_view = new_room.get_view_from(old_room)
+        self.__canonical_room_view = new_room.get_view_from(old_room).replace("a path to the", "")
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """

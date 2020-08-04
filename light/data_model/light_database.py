@@ -3396,6 +3396,7 @@ class LIGHTDatabase:
             (username,),
         )
         inserted = bool(self.c.rowcount)
+        print("creating user", username, inserted)
         if not inserted:
             self.c.execute(
                 """
@@ -3418,6 +3419,7 @@ class LIGHTDatabase:
             (username,),
         )
         result = self.c.fetchall()
+        print(username, result)
         assert len(result) == 1
         id = int(result[0][0])
         return id
