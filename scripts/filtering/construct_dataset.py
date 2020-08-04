@@ -40,16 +40,18 @@ def write_episodes_to_dir(episodes, dataset_dir):
 
     # Decide what to do with the naming (?)
     for episode in episodes:
-        for utter in episode.convo:
-            unique_name = str(uuid.uuid4())
-            # What format!?!?!?
-            file_name = f"{unique_name}.csv"
-            file_path = os.path.join(dataset_dir, file_name)
-            # Decide format - all episodes in one file?  Many files?
-            # How to structure?
-            with open(file_path, "w") as episode_file:
+        unique_name = str(uuid.uuid4())
+        # What format!?!?!?
+        file_name = f"{unique_name}.txt"
+        file_path = os.path.join(dataset_dir, file_name)
+        # Decide format - all episodes in one file?  Many files?
+        # How to structure?
+        with open(file_path, "w") as episode_file:
+            for utter in episode.convo:
                 # Fill in what to write properly
-                episode_file.write(utter)
+                episode_file.write(utter.actor_id + " ")
+                episode_file.write(utter.text)
+                episode_file.write("\n")
 
 
 def main():
