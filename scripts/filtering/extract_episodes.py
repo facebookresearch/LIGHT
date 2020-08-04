@@ -3,7 +3,6 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-
 """
     This file is responsible for extracting the episodes from a meta episode log
     This involves:
@@ -57,7 +56,6 @@ def extract_episodes(uuid_to_world, event_buffer):
 
     if curr_episode is not None:
         episodes.append(curr_episode)
-    print(episodes)
     return episodes
 
 
