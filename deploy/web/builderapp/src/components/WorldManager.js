@@ -11,6 +11,12 @@ import { EDGE_TYPES } from "./EdgeTypes";
 
 function ListWorldsOverlay({ isOverlayOpen, setIsOverlayOpen }) {
   const classes = classNames(Classes.CARD, Classes.ELEVATION_4);
+  var overlay_center = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+  };
   return (
     <>
       <div>
@@ -19,7 +25,7 @@ function ListWorldsOverlay({ isOverlayOpen, setIsOverlayOpen }) {
           isOpen={isOverlayOpen}
           onClose={() => setIsOverlayOpen(!isOverlayOpen)}
         >
-          <div className={classes}>
+          <div className={classes} style={overlay_center}>
             <ListWorlds
               isOpen={isOverlayOpen}
               setIsOverlayOpen={setIsOverlayOpen}

@@ -57,6 +57,22 @@ function NavBar({ children }) {
                 shouldDismissPopover={true}
                 tagName="div"
               />
+              <MenuItem
+                icon="cloud-upload"
+                text={
+                  <Link
+                    onClick={() => setWorldBuildPopover(false)}
+                    style={{ color: "inherit" }}
+                    data-testid="link-world-builder-manage"
+                    className="btn-link"
+                    to="/world_builder?manage=true"
+                  >
+                    Manage Existing
+                  </Link>
+                }
+                shouldDismissPopover={true}
+                tagName="div"
+              />
               <WorldFileUpload setPopover={setWorldBuildPopover} />
             </Menu>
           </Popover>
