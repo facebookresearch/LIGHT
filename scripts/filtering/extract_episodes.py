@@ -44,7 +44,7 @@ def extract_episodes(uuid_to_world, event_buffer):
     curr_episode = None
     for i in range(len(event_buffer)):
         hash_, time_, event, = event_buffer[i]
-        if should_start_episode(event):
+        if should_start_episode(curr_episode, event):
             # Need to do some serious processing on these
             curr_episode = initialize_episode(event)
             curr_episode.add_utterance(event)
@@ -58,15 +58,30 @@ def extract_episodes(uuid_to_world, event_buffer):
     return episodes
 
 
-def should_start_episode(event):
-    return type(event) in SPEECH_EVENTS
+def should_start_episode(curr_episode, event):
+    """
+        Returns true if the event signals the start of a new conversation
+        1. There is not an episode currently in place
+        2. The event starts a conversation (so is a speech event)
+        3. More than one agent in the room (?)
+    """
+    return curr_episode is None and type(event) in SPEECH_EVENTS
 
 
 def should_end_episode(event):
+    """
+        Returns true if the event signals the end of a new conversation
+        1. Death Event limits to only 1 present agent in the room
+        2. Leave Event (if agents continue talking, just make it a new convo
+    """
     return type(event) in END_EVENTS
 
 
 def initialize_episode(event):
+    """
+        Given an event which should_start_episode, initialize the episode class
+        with the room name, description, and present agents and objects
+    """
     curr_episode = Episode(
         event.room.name,
         event.room.desc,
