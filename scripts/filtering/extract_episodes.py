@@ -26,7 +26,6 @@ from light.graph.events.graph_events import (
     TellEvent,
     WhisperEvent,
 )
-import copy
 
 SPEECH_EVENTS = [SayEvent, TellEvent, WhisperEvent]
 END_EVENTS = [DeathEvent, LeaveEvent]
@@ -139,32 +138,27 @@ class Utterance:
         4. The recipient of the action
     """
 
-    def __init__(self, actor_id, text, action, target_id):
+    def __init__(self, actor_id, text, action, target_ids):
         self.actor_id = actor_id
         self.text = text
         self.action = action
-        self.target_id = target_id
+        self.target_ids = target_ids
 
     @staticmethod
     def convert_to_utterance(event):
         """
-            This method is responsible for converting an event to an utteranc from the
+            This method is responsible for converting an event to an utterance from the
             episode's POV.
 
-            The biggest challenge that this requires is identifying the target node, as
-            some events (such as SayEvent) do not contain this information.
-        """
+            Special cases:
 
-        # Problem is SayEvents do not have target - look to room? Sure, use present
-        # agent other problem is, how do we then identify which is the target id?
-        # Look ahead in the buffer perhaps(?)
-        except_actor = copy.deepcopy(event.present_agent_ids)
-        except_actor.remove(event.actor.node_id)
-        target_id = [
-            event.actor.get_room().contained_nodes[x]._target_node.name
-            for x in except_actor
-        ][0]
-        utterance = Utterance(
-            event.actor.name, event.text_content, event.to_canonical_form(), target_id,
-        )
+                - If there are no target nodes, then we pass None, and if there are
+                multiple we record them all
+
+                - If it is a speech event, do not record the action form.
+
+        """
+        target_ids = event.target_nodes if len(event.target_nodes) > 0 else None
+        action = event.to_canonical_form() if type(event) not in SPEECH_EVENTS else None
+        utterance = Utterance(event.actor.name, event.text_content, action, target_ids,)
         return utterance
