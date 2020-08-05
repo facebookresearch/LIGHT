@@ -158,7 +158,11 @@ class Utterance:
                 - If it is a speech event, do not record the action form.
 
         """
-        target_ids = event.target_nodes if len(event.target_nodes) > 0 else None
+        target_ids = (
+            [x.name for x in event.target_nodes]
+            if len(event.target_nodes) > 0
+            else None
+        )
         action = event.to_canonical_form() if type(event) not in SPEECH_EVENTS else None
         utterance = Utterance(event.actor.name, event.text_content, action, target_ids,)
         return utterance

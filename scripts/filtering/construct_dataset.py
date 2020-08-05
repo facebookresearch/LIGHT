@@ -51,22 +51,26 @@ def write_episodes_to_dir(episodes, dataset_dir):
             episode_file.write("_setting_desc   " + episode._setting_desc + "\n")
             episode_file.write("\n")
 
-            episode_file.write("\nAgents:\n")
+            episode_file.write("\n_agents:\n")
             for agent_name in episode.agents:
                 episode_file.write("_name   " + agent_name + "\n")
                 episode_file.write("_persona  " + episode.agents[agent_name] + "\n\n")
 
             # TODO: Decide if need objects or not
-            episode_file.write("\nDialogue\n")
+            episode_file.write("\n_dialogue\n")
             for utter in episode.utterances:
                 # Fill in what to write properly - should be line by line?
                 # CSV?  Tab seperated?
-                episode_file.write(utter.actor_id + "\n")
-                episode_file.write(utter.text + "\n")
-                episode_file.write(utter.action + "\n")
-                episode_file.write(utter.target_id + "\n")
+                episode_file.write("_actor  " + utter.actor_id + "\n")
+                if utter.text is not None:
+                    episode_file.write("_msg_text   " + utter.text + "\n")
+                if utter.action is not None:
+                    episode_file.write("_msg_act   " + utter.action + "\n")
+                if utter.target_ids is not None:
+                    for target_id in utter.target_ids:
+                        episode_file.write("_target " + target_id + "\n")
                 episode_file.write("\n")
-            episode_file.write("episode done? true")
+            episode_file.write("_episode_done true")
 
 
 def main():
