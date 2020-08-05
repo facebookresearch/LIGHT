@@ -27,13 +27,11 @@ def convert_event_log_dirs(event_log_dir, dataset_dir):
         log files inside this directory and extract the episodes from each
         of them using convert_event_log
     """
-    conversion_count = 0
-    for subdir, dirs, files in os.walk(event_log_dir):
+    for subdir, _, files in os.walk(event_log_dir):
         for filename in files:
 
             filepath = subdir + os.sep + filename
             if filepath.endswith("events.log"):
-                conversion_count += 1
                 convert_event_log(filepath, dataset_dir)
 
 
@@ -42,7 +40,6 @@ def convert_event_log(event_file, dataset_dir):
         Given a log file and a dataset directory to write to, extract the
         training episodes from the log and write them to the dataset.
     """
-    print(event_file)
     uuid_to_world, event_buffer = load_event_log(event_file,)
     episodes = extract_episodes(uuid_to_world, event_buffer)
     write_episodes_to_dir(episodes, dataset_dir)
