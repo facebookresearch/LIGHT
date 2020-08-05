@@ -90,7 +90,9 @@ def initialize_episode(event):
         descriptions
     """
     contained = event.room.get_contents()
-    agents = {x.name: x.desc for x in contained if x.agent}
+    agents = {
+        x.name: {"persona": x.desc, "human": x.is_player} for x in contained if x.agent
+    }
     objects = {x.name: x.desc for x in contained if x.object}
     curr_episode = Episode(event.room.name, event.room.desc, agents, objects,)
     return curr_episode

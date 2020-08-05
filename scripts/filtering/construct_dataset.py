@@ -68,7 +68,13 @@ def write_episodes_to_dir(episodes, dataset_dir):
             episode_file.write("\n_agents:\n")
             for agent_name in episode.agents:
                 episode_file.write("_name   " + agent_name + "\n")
-                episode_file.write("_persona  " + episode.agents[agent_name] + "\n\n")
+                episode_file.write(
+                    "_persona  " + episode.agents[agent_name]["persona"] + "\n"
+                )
+                episode_file.write(
+                    "_human  " + str(episode.agents[agent_name]["human"]) + "\n\n"
+                )
+            episode_file.write("_end_agents\n\n")
 
             # TODO: Decide if need objects or not
             episode_file.write("\n_dialogue\n")
