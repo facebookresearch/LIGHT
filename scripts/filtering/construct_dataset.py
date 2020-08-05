@@ -21,11 +21,28 @@ import os
 import uuid
 
 
+def convert_event_log_dirs(event_log_dir, dataset_dir):
+    """
+        Given a directory which may contain log files, search for all the
+        log files inside this directory and extract the episodes from each
+        of them using convert_event_log
+    """
+    conversion_count = 0
+    for subdir, dirs, files in os.walk(event_log_dir):
+        for filename in files:
+
+            filepath = subdir + os.sep + filename
+            if filepath.endswith("events.log"):
+                conversion_count += 1
+                convert_event_log(filepath, dataset_dir)
+
+
 def convert_event_log(event_file, dataset_dir):
     """
         Given a log file and a dataset directory to write to, extract the
         training episodes from the log and write them to the dataset.
     """
+    print(event_file)
     uuid_to_world, event_buffer = load_event_log(event_file,)
     episodes = extract_episodes(uuid_to_world, event_buffer)
     write_episodes_to_dir(episodes, dataset_dir)
@@ -77,12 +94,29 @@ def main():
     parser = argparse.ArgumentParser(
         description="Args for the directory of log to convert"
     )
-    parser.add_argument("--event-log", type=str, help="The event log to convert")
+
     parser.add_argument(
-        "--dataset-dir", type=str, help="The directory to put the episodes"
+        "--dataset-dir",
+        type=str,
+        help="The directory to put the episodes",
+        required=True,
     )
+
+    # Only have one of a log or directory of logs
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--event-log", type=str, help="The event log to convert")
+    group.add_argument(
+        "--log-dir", type=str, help="The top level directory of event logs to convert"
+    )
+
     FLAGS, _unknown = parser.parse_known_args()
-    convert_event_log(FLAGS.event_log, FLAGS.dataset_dir)
+    if FLAGS.log_dir is not None:
+        convert_event_log_dirs(FLAGS.log_dir, FLAGS.dataset_dir)
+    elif FLAGS.event_log is not None:
+        convert_event_log(FLAGS.event_log, FLAGS.dataset_dir)
+    else:
+        print("Must provide an individual event log or a directory to construct")
+        print("Please try again")
 
 
 if __name__ == "__main__":

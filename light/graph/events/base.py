@@ -162,6 +162,17 @@ class GraphEvent(object):
             # Must pass non empty list to get the exact module
             module = __import__(module_name, fromlist=[None])
             class_ = getattr(module, class_name)
+            if "__failed_event" in attribute_dict:
+                # Get the class type for the failed event (error)
+                failed_module = __import__(
+                    attribute_dict.pop("__error_module"), fromlist=[None]
+                )
+                attribute_dict["failed_event"] = getattr(
+                    failed_module, attribute_dict["__failed_event"]
+                )
+                attribute_dict["failed_constraint"] = attribute_dict[
+                    "__failed_constraint"
+                ]
 
         arglist = [
             attribute_dict.pop(arg)
@@ -271,6 +282,29 @@ class ErrorEvent(GraphEvent):
 
     def __repr__(self):
         return f"ErrorEvent({self.display_text}, {self.target_nodes})"
+
+    # Error event overrides, needs __failed_event for constructor
+    def to_json(self, viewer: GraphAgent = None, indent: int = None) -> str:
+        """
+        Convert the content of this action into a json format that can be
+        imported back to the original with from_json
+        """
+        className = self.__class__.__name__
+        use_dict = {
+            k: v
+            for k, v in self.__dict__.copy().items()
+            if not k.startswith(f"_{className}__")
+        }
+        use_dict["__failed_event"] = self.__failed_event.__name__
+        use_dict["__error_module"] = self.__failed_event.__module__
+        use_dict["__failed_constraint"] = self.__failed_constraint
+
+        use_dict["viewer"] = viewer
+        use_dict["__class__"] = className
+        use_dict["__module__"] = self.__module__
+        # TODO: Consider moving graph encoder to a utils since we use here too!
+        res = json.dumps(use_dict, cls=GraphEncoder, sort_keys=True, indent=indent)
+        return res
 
 
 class TriggeredEvent(GraphEvent):
