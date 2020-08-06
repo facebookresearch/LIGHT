@@ -42,9 +42,9 @@ class Episode:
             3. Present player id's (perhaps(?)) - may come in use for banning
     """
 
-    def __init__(self, setting_name, setting_desc, agents, objects):
-        self._setting_name = setting_name
-        self._setting_desc = setting_desc
+    def __init__(self, settings, agents, objects):
+        # Dictionary from setting name to description
+        self.settings = settings
         # Dictionaries from IDs to descriptions
         self.agents = agents
         self.objects = objects
