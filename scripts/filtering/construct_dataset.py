@@ -17,6 +17,7 @@
 from scripts.filtering.reconstruct_logs import load_event_log
 from scripts.filtering.extract_episodes import extract_episodes
 import argparse
+import os
 
 
 def convert_event_log(event_file, dataset_dir):
@@ -25,7 +26,9 @@ def convert_event_log(event_file, dataset_dir):
         training episodes from the log and write them to the dataset.
     """
     uuid_to_world, event_buffer = load_event_log(event_file,)
-    episodes = extract_episodes(uuid_to_world, event_buffer)
+    # TODO: Have a better way to say if log is agent or room POV (?)
+    agent_pov = "agent" in os.path.abspath(os.path.dirname(event_file))
+    episodes = extract_episodes(uuid_to_world, event_buffer, agent_pov=agent_pov)
     write_episodes_to_dir(episodes, dataset_dir)
 
 

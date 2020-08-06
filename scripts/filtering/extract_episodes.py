@@ -18,6 +18,7 @@
         4. Return a list of the episodes
 """
 from light.graph.events.graph_events import (
+    ArriveEvent,
     DeathEvent,
     ErrorEvent,
     LeaveEvent,
@@ -30,7 +31,10 @@ SPEECH_EVENTS = [SayEvent, TellEvent, WhisperEvent]
 END_EVENTS = [DeathEvent, LeaveEvent]
 
 
-def extract_episodes(uuid_to_world, event_buffer):
+# TODO:  Add who's perspective it is from
+# Add multiple settings collection
+# Change to meta episode here
+def extract_episodes(uuid_to_world, event_buffer, agent_pov=True):
     """
         Given the uuid to world json, and a buffer of events which occured in the logs,
         1. Delimit the training episodes
@@ -40,18 +44,18 @@ def extract_episodes(uuid_to_world, event_buffer):
     """
     episodes = []
     curr_episode = None
-    for i in range(len(event_buffer)):
-        _, _, event, = event_buffer[i]
-
-        if should_start_episode(curr_episode, event):
-            curr_episode = initialize_episode(event)
-            curr_episode.add_utterance(event)
-        elif curr_episode is not None:
-            if should_end_episode(event):
-                episodes.append(curr_episode)
-                curr_episode = None
+    if agent_pov:
+        for i in range(len(event_buffer)):
+            _, _, event, = event_buffer[i]
+            if curr_episode is None:
+                # Should start with SoulSpawnEvent from agent POV
+                curr_episode = initialize_episode(event)
             else:
+                # From agent perspective, just log everything
                 curr_episode.add_utterance(event)
+    else:
+        # room POV - need to handle multiple human agents
+        pass
 
     if curr_episode is not None:
         episodes.append(curr_episode)
@@ -88,10 +92,11 @@ def initialize_episode(event):
         with the room name, description, and present agents and objects and their
         descriptions
     """
+    settings = {event.room.name: event.room.desc}
     contained = event.room.get_contents()
-    agents = {x.name: x.desc for x in contained if x.agent}
+    agents = {x.name: x.persona for x in contained if x.agent}
     objects = {x.name: x.desc for x in contained if x.object}
-    curr_episode = Episode(event.room.name, event.room.desc, agents, objects,)
+    curr_episode = Episode(settings, agents, objects, event.actor)
     return curr_episode
 
 
@@ -104,12 +109,14 @@ class Episode:
             3. Present player id's (perhaps(?)) - may come in use for banning
     """
 
-    def __init__(self, settings, agents, objects):
+    def __init__(self, settings, agents, objects, actor):
         # Dictionary from setting name to description
         self.settings = settings
         # Dictionaries from IDs to descriptions
         self.agents = agents
         self.objects = objects
+        # The agent whose POV this episode is from
+        self.actor = actor
 
         self.utterances = []
 
@@ -122,7 +129,10 @@ class Episode:
         # part of an episode
         if type(event) is ErrorEvent:
             return
-        utter = Utterance.convert_to_utterance(event)
+        if type(event) is ArriveEvent:
+            # Need to add a new setting
+            self.settings[event.room.name] = event.room.desc
+        utter = Utterance.convert_to_utterance(event, self.actor)
         self.utterances.append(utter)
 
 
@@ -143,7 +153,7 @@ class Utterance:
         self.target_ids = target_ids
 
     @staticmethod
-    def convert_to_utterance(event):
+    def convert_to_utterance(event, main_agent):
         """
             This method is responsible for converting an event to an utterance from the
             episode's POV.
@@ -157,6 +167,6 @@ class Utterance:
 
         """
         target_ids = event.target_nodes if len(event.target_nodes) > 0 else None
-        action = event.to_canonical_form() if type(event) not in SPEECH_EVENTS else None
+        action = event.view_as(main_agent) if type(event) not in SPEECH_EVENTS else None
         utterance = Utterance(event.actor.name, event.text_content, action, target_ids,)
         return utterance
