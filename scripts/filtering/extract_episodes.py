@@ -22,10 +22,15 @@ from light.graph.events.graph_events import (
     DeathEvent,
     ErrorEvent,
     LeaveEvent,
+    LookEvent,
     SayEvent,
+    SoulSpawnEvent,
+    SpawnEvent,
+    SystemMessageEvent,
     TellEvent,
     WhisperEvent,
 )
+from json import JSONEncoder
 
 SPEECH_EVENTS = [SayEvent, TellEvent, WhisperEvent]
 END_EVENTS = [DeathEvent, LeaveEvent]
@@ -58,6 +63,8 @@ def extract_episodes(uuid_to_world, event_buffer, agent_pov=True):
         pass
 
     if curr_episode is not None:
+        # Preprocess - no longer need the node here, just the actor name
+        curr_episode.actor = curr_episode.actor.name
         episodes.append(curr_episode)
 
     return episodes
@@ -127,11 +134,16 @@ class Episode:
         """
         # TODO: Decide if there are other skippable events which should not be
         # part of an episode
-        if type(event) is ErrorEvent:
+        if type(event) is ErrorEvent or type(event) is SystemMessageEvent:
             return
-        if type(event) is ArriveEvent:
-            # Need to add a new setting
+        elif type(event) is ArriveEvent:
+            # Need to add a new setting - and any agents or objects
             self.settings[event.room.name] = event.room.desc
+            contained = event.room.get_contents()
+            agents = {x.name: x.persona for x in contained if x.agent}
+            objects = {x.name: x.desc for x in contained if x.object}
+            self.agents.update(agents)
+            self.objects.update(objects)
         utter = Utterance.convert_to_utterance(event, self.actor)
         self.utterances.append(utter)
 
@@ -146,11 +158,12 @@ class Utterance:
         4. The recipient of the action
     """
 
-    def __init__(self, actor_id, text, action, target_ids):
+    def __init__(self, actor_id, text, action, target_ids, triggered):
         self.actor_id = actor_id
         self.text = text
         self.action = action
         self.target_ids = target_ids
+        self.triggered = triggered
 
     @staticmethod
     def convert_to_utterance(event, main_agent):
@@ -166,7 +179,51 @@ class Utterance:
                 - If it is a speech event, do not record the action form.
 
         """
-        target_ids = event.target_nodes if len(event.target_nodes) > 0 else None
-        action = event.view_as(main_agent) if type(event) not in SPEECH_EVENTS else None
-        utterance = Utterance(event.actor.name, event.text_content, action, target_ids,)
+        TRIGGERED_EVENTS = [
+            ArriveEvent,
+            DeathEvent,
+            LeaveEvent,
+            LookEvent,
+            SpawnEvent,
+            SoulSpawnEvent,
+        ]
+        target_ids = (
+            [x.name for x in event.target_nodes]
+            if len(event.target_nodes) > 0
+            else None
+        )
+        triggered = False
+        if type(event) in TRIGGERED_EVENTS:
+            class_name = event.__class__.__name__
+            # Chop off the "event" part of the name
+            action = class_name[: len(class_name) - 5].lower()
+            triggered = True
+        else:
+            action = event.to_canonical_form()
+
+        if type(event) in SPEECH_EVENTS:
+            # This check because wierd room transitions make nodes not equal
+            text = event.text_content
+        elif main_agent.node_id == event.actor.node_id:
+            text = event.view_as(event.actor)
+        else:
+            text = event.view_as(main_agent)
+
+        utterance = Utterance(event.actor.name, text, action, target_ids, triggered)
+        if type(event) is LookEvent:
+            # Record what is present for look events only
+            contained = event.room.get_contents()
+            utterance.setting = event.room.name
+            utterance.present_agents = [x.name for x in contained if x.agent]
+            utterance.present_objects = [x.name for x in contained if x.object]
         return utterance
+
+
+class EpisodeEncoder(JSONEncoder):
+    def default(self, o):
+        if isinstance(o, set):
+            return sorted(list(o))
+        if isinstance(o, list):
+            return sorted(o)
+        else:
+            return {k: v for k, v in o.__dict__.copy().items()}

@@ -15,8 +15,9 @@
         4. Export the dataset, adding any necessary metadata
 """
 from scripts.filtering.reconstruct_logs import load_event_log
-from scripts.filtering.extract_episodes import extract_episodes
+from scripts.filtering.extract_episodes import extract_episodes, EpisodeEncoder
 import argparse
+import json
 import os
 import uuid
 
@@ -47,7 +48,7 @@ def convert_event_log(event_file, dataset_dir):
     write_episodes_to_dir(episodes, dataset_dir)
 
 
-def write_episodes_to_dir(episodes, dataset_dir):
+def write_episodes_to_dir(episodes, dataset_dir, indent=4):
     """
         Given episodes and a directory for a dataset, write the episodes to the dataset
     """
@@ -60,39 +61,11 @@ def write_episodes_to_dir(episodes, dataset_dir):
         file_name = f"{unique_name}.txt"
         file_path = os.path.join(dataset_dir, file_name)
         with open(file_path, "w") as episode_file:
-
-            # TODO - need any other metadata?  How to tag metadata
-            # with the name perhaps?
-            episode_file.write("_setting_name   " + episode._setting_name + "\n")
-            episode_file.write("_setting_desc   " + episode._setting_desc + "\n")
-            episode_file.write("\n")
-
-            episode_file.write("\n_agents:\n")
-            for agent_name in episode.agents:
-                episode_file.write("_name   " + agent_name + "\n")
-                episode_file.write(
-                    "_persona  " + episode.agents[agent_name]["persona"] + "\n"
-                )
-                episode_file.write(
-                    "_human  " + str(episode.agents[agent_name]["human"]) + "\n\n"
-                )
-            episode_file.write("_end_agents\n\n")
-
-            # TODO: Decide if need objects or not
-            episode_file.write("\n_dialogue\n")
-            for utter in episode.utterances:
-                # Fill in what to write properly - should be line by line?
-                # CSV?  Tab seperated?
-                episode_file.write("_actor  " + utter.actor_id + "\n")
-                if utter.text is not None:
-                    episode_file.write("_msg_text   " + utter.text + "\n")
-                if utter.action is not None:
-                    episode_file.write("_msg_act   " + utter.action + "\n")
-                if utter.target_ids is not None:
-                    for target_id in utter.target_ids:
-                        episode_file.write("_target " + target_id + "\n")
-                episode_file.write("\n")
-            episode_file.write("_episode_done true")
+            episode_dict = {k: v for k, v in episode.__dict__.copy().items()}
+            res = json.dumps(
+                episode_dict, cls=EpisodeEncoder, sort_keys=True, indent=indent
+            )
+            episode_file.write(res)
 
 
 def main():
