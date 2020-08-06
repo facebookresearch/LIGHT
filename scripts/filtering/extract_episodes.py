@@ -32,6 +32,7 @@ from light.graph.events.graph_events import (
 )
 from json import JSONEncoder
 
+START_EVENTS = [ArriveEvent, SoulSpawnEvent]
 SPEECH_EVENTS = [SayEvent, TellEvent, WhisperEvent]
 END_EVENTS = [DeathEvent, LeaveEvent]
 
@@ -58,39 +59,55 @@ def extract_episodes(uuid_to_world, event_buffer, agent_pov=True):
             else:
                 # From agent perspective, just log everything
                 curr_episode.add_utterance(event)
-    else:
-        # room POV - need to handle multiple human agents
-        pass
 
-    if curr_episode is not None:
-        # Preprocess - no longer need the node here, just the actor name
-        curr_episode.actor = curr_episode.actor.name
-        episodes.append(curr_episode)
+        if curr_episode is not None:
+            # Preprocess - no longer need the node here, just the actor name
+            curr_episode.actor = curr_episode.actor.name
+            episodes.append(curr_episode)
+    else:
+        # Triggered by soul spawn event or arrive event!
+        for i in range(len(event_buffer)):
+            _, _, event, = event_buffer[i]
+            # Get the human entered on this event, record episode until leave or die.
+            if should_start_episode(event):
+                # Should start with SoulSpawnEvent/ArriveEvent from agent POV
+                curr_episode = initialize_episode(event)
+                record_episode(curr_episode, event_buffer, i)
+                curr_episode.actor = curr_episode.actor.name
+                episodes.append(curr_episode)
 
     return episodes
 
 
-def should_start_episode(curr_episode, event):
+def should_start_episode(event):
     """
         Returns true if the event signals the start of a new conversation
         1. There is not an episode currently in place
         2. The event starts a conversation (so is a speech event)
         3. More than one agent in the room
     """
-    return (
-        curr_episode is None
-        and type(event) in SPEECH_EVENTS
-        and len(event.present_agent_ids) > 1
-    )
+    return type(event) in START_EVENTS and event.actor.is_player
 
 
-def should_end_episode(event):
+def record_episode(curr_episode, event_buffer, idx):
+    """
+        Records an episode from the POV of an agent in a room
+    """
+    while idx < len(event_buffer):
+        event = event_buffer[idx]
+        curr_episode.add_utterance(event)
+        if should_end_episode(event):
+            return
+        idx += 1
+
+
+def should_end_episode(episode, event):
     """
         Returns true if the event signals the end of a new conversation
         1. DeathEvent
         2. Leave Event (if agents continue talking, just make it a new convo
     """
-    return type(event) in END_EVENTS
+    return type(event) in END_EVENTS and event.actor.node_id == episode.actor.node_id
 
 
 def initialize_episode(event):
