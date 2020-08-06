@@ -5,12 +5,11 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-    This file is responsible for extracting the episodes from a meta episode log
+    This file is responsible for extracting the episodes from a event log
     This involves:
-        1. Finding the start/stop of conversations
+        1. Finding the start/stop of conversations (off loading to task maybe?)
         2. Capture relevant metadata
-            - _setting_name
-            - _setting_desc
+            - setting names and descriptions
             - agent names and personas
             - object names and descriptions
         3. Take events and parse out the convo
