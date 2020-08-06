@@ -4,12 +4,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-    This file is responsible for extracting the episodes from a meta episode log
+    This file is responsible for extracting the episodes from a event log
     This involves:
-        1. Finding the start/stop of conversations
+        1. Finding the start/stop of conversations (off loading to task maybe?)
         2. Capture relevant metadata
-            - _setting_name
-            - _setting_desc
+            - setting names and descriptions
             - agent names and personas
             - object names and descriptions
         3. Take events and parse out the convo
@@ -105,10 +104,9 @@ class Episode:
             3. Present player id's (perhaps(?)) - may come in use for banning
     """
 
-    def __init__(self, setting_name, setting_desc, agents, objects):
-        self._setting_name = setting_name
-        self._setting_desc = setting_desc
-
+    def __init__(self, settings, agents, objects):
+        # Dictionary from setting name to description
+        self.settings = settings
         # Dictionaries from IDs to descriptions
         self.agents = agents
         self.objects = objects
