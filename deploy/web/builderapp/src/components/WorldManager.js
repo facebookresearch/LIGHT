@@ -371,13 +371,16 @@ export async function postWorld(state) {
     dat.dimensions["id"] = null;
   }
   const map = state.filteredMap();
-
   // create all edge relationships and tile metadata needed
   const edges = [];
   for (let floor = 0; floor < map.length; floor++) {
+    console.log(map[floor].walls);
+
     const tiles = map[floor].tiles;
     for (let coord in tiles) {
       const tile = cloneDeep(tiles[coord]);
+      console.log("Getting edges for: ");
+      console.log(coord);
       const [x, y] = coord.split(" ").map((i) => parseInt(i));
 
       // Now, construct the edges - first contains
@@ -421,11 +424,16 @@ export async function postWorld(state) {
       for (let index in neighbors) {
         const direction = dirs[index];
         const neighbor = neighbors[index];
+        console.log(neighbor);
         if (
           !Object.keys(map[floor].walls).some(
-            (wall) => wall.includes(neighbor) && wall.includes(coord)
+            (wall) =>
+              wall.includes(neighbor) &&
+              wall.includes(coord) &&
+              !wall.includes("-")
           )
         ) {
+          console.log(neighbor);
           if (!isEmpty(tiles[neighbor])) {
             edges.push({
               src: room,
@@ -446,6 +454,7 @@ export async function postWorld(state) {
     }
   }
   // send it to the saving format!
+  console.log(edges);
   dat.map.edges = edges;
   const res = await post("builder/world/", dat);
   const resData = await res.json();
