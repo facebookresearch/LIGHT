@@ -184,7 +184,6 @@ function TileForm({
             </Button>
             <Button
               intent={Intent.PRIMARY}
-              type="submit"
               onClick={handleSubmit}
               disabled={!dirty || !isValid}
               style={{ marginLeft: "15px" }}
