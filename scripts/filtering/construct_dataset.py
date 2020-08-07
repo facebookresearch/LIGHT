@@ -19,7 +19,7 @@ from scripts.filtering.extract_episodes import extract_episodes, EpisodeEncoder
 import argparse
 import json
 import os
-import uuid
+import time
 
 
 def convert_event_log_dirs(event_log_dir, dataset_dir):
@@ -57,8 +57,10 @@ def write_episodes_to_dir(episodes, dataset_dir, indent=4):
 
     # Decide what to do with the naming - random right now
     for episode in episodes:
-        unique_name = str(uuid.uuid4())
-        file_name = f"{unique_name}.txt"
+        # Convention is actor + starting room + time
+        first_room = str(list(episode.settings.keys())[0])
+        unique_name = " ".join([episode.actor, first_room, str(time.time())])
+        file_name = f"{unique_name}.txt".replace(" ", "_")
         file_path = os.path.join(dataset_dir, file_name)
         with open(file_path, "w") as episode_file:
             episode_dict = {k: v for k, v in episode.__dict__.copy().items()}
