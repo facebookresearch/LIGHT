@@ -14,9 +14,10 @@
         3. Write to the dataset
         4. Export the dataset, adding any necessary metadata
 """
-from light.scripts.filtering.reconstruct_logs import load_event_log
-from light.scripts.filtering.extract_episodes import extract_episodes
+from scripts.filtering.reconstruct_logs import load_event_log
+from scripts.filtering.extract_episodes import extract_episodes
 import argparse
+import os
 
 
 def convert_event_log(event_file, dataset_dir):
@@ -25,7 +26,9 @@ def convert_event_log(event_file, dataset_dir):
         training episodes from the log and write them to the dataset.
     """
     uuid_to_world, event_buffer = load_event_log(event_file,)
-    episodes = extract_episodes(uuid_to_world, event_buffer)
+    # TODO: Have a better way to say if log is agent or room POV (?)
+    agent_pov = "agent" in os.path.abspath(os.path.dirname(event_file))
+    episodes = extract_episodes(uuid_to_world, event_buffer, agent_pov=agent_pov)
     write_episodes_to_dir(episodes, dataset_dir)
 
 
@@ -33,6 +36,12 @@ def write_episodes_to_dir(episodes, dataset_dir):
     """
         Given episodes and a directory for a dataset, write the episodes to the dataset
     """
+    for episode in episodes:
+        print(episode._setting_name)
+        print(episode._setting_desc + "\n")
+        for utter in episode.utterances:
+            print(utter.actor_id, "said")
+            print(utter.text)
     pass
 
 
