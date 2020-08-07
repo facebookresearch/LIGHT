@@ -479,7 +479,12 @@ export function useWorldBuilder(upload) {
   };
 
   const exportWorld = () => {
-    const data = JSON.stringify({ dimensions, map, entities }, null, "\t");
+    const { id, ...dimensionsWithoutId } = dimensions;
+    const data = JSON.stringify(
+      { dimensions: { ...dimensionsWithoutId }, map, entities },
+      null,
+      "\t"
+    );
     var element = document.createElement("a");
     element.setAttribute(
       "href",
