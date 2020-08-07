@@ -37,9 +37,6 @@ SPEECH_EVENTS = [SayEvent, TellEvent, WhisperEvent]
 END_EVENTS = [DeathEvent, LeaveEvent]
 
 
-# TODO:  Add who's perspective it is from
-# Add multiple settings collection
-# Change to meta episode here
 def extract_episodes(uuid_to_world, event_buffer, agent_pov=True):
     """
         Given the uuid to world json, and a buffer of events which occured in the logs,
@@ -94,9 +91,9 @@ def record_episode(curr_episode, event_buffer, idx):
         Records an episode from the POV of an agent in a room
     """
     while idx < len(event_buffer):
-        event = event_buffer[idx]
+        _, _, event, = event_buffer[idx]
         curr_episode.add_utterance(event)
-        if should_end_episode(event):
+        if should_end_episode(curr_episode, event):
             return
         idx += 1
 
@@ -234,3 +231,13 @@ class Utterance:
             utterance.present_agents = [x.name for x in contained if x.agent]
             utterance.present_objects = [x.name for x in contained if x.object]
         return utterance
+
+
+class EpisodeEncoder(JSONEncoder):
+    def default(self, o):
+        if isinstance(o, set):
+            return sorted(list(o))
+        if isinstance(o, list):
+            return sorted(o)
+        else:
+            return {k: v for k, v in o.__dict__.copy().items()}
