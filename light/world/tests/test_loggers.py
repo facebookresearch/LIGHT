@@ -493,14 +493,17 @@ class TestInteractionLoggers(unittest.TestCase):
         event_file = room_logger._last_event_log
         self.assertNotEqual(os.stat(event_file).st_size, 0)
         buff = read_event_logs(event_file)
-        assert len(buff) == 1
+        # Go event triggers a leave event as well!
+        assert len(buff) == 2
 
-        world_name, hash_, timestamp, written_event = buff[0]
+        world_name, hash_, timestamp, written_event = buff[1]
         self.assertEqual(world_name, room_logger._last_graphs[-1])
         ref_json = json.loads(event_room_node_observed)
         event_ref = json.loads(written_event)
         for k in ref_json:
-            self.assertEqual(ref_json[k], event_ref[k], f"Event Json should match")
+            self.assertEqual(
+                ref_json[k], event_ref[k], f"Event Json should match for LeaveEvent"
+            )
 
 
 if __name__ == "__main__":
