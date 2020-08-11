@@ -433,10 +433,12 @@ class GoEvent(GraphEvent):
         old_room_view = old_room.get_prefix_view_from(new_room)
 
         # Send event to loggers - this event does not get broadcasted, so need record
-        world.oo_graph.room_id_to_loggers[old_room.node_id].observe_event(self)
-        world.purgatory.node_id_to_soul[self.actor.node_id].agent_logger.observe_event(
-            self
-        )
+        if old_room.node_id in world.oo_graph.room_id_to_loggers:
+            world.oo_graph.room_id_to_loggers[old_room.node_id].observe_event(self)
+        if self.actor.node_id in world.purgatory.node_id_to_soul:
+            world.purgatory.node_id_to_soul[
+                self.actor.node_id
+            ].agent_logger.observe_event(self)
 
         # Trigger the leave event, must be before the move to get correct room
         LeaveEvent(self.actor, [self.target_nodes[0]]).execute(world)
