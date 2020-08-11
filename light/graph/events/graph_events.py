@@ -419,8 +419,6 @@ class GoEvent(GraphEvent):
         # Must store room views because getting views from other rooms is odd
         new_room = self.target_nodes[0]
         old_room = self.actor.get_room()
-        old_room_view = self.room.get_prefix_view_from(new_room)
-        # Need to make an exception for logging go events here, otherwise they never get logged
         self.__canonical_room_view = new_room.get_view_from(old_room)
 
     def execute(self, world: "World") -> List[GraphEvent]:
@@ -434,11 +432,12 @@ class GoEvent(GraphEvent):
         new_room = self.target_nodes[0]
         old_room_view = old_room.get_prefix_view_from(new_room)
 
-        self.__canonical_room_view = new_room.get_view_from(old_room)
+        # Send event to loggers - this event does not get broadcasted, so need record
         world.oo_graph.room_id_to_loggers[old_room.node_id].observe_event(self)
         world.purgatory.node_id_to_soul[self.actor.node_id].agent_logger.observe_event(
             self
         )
+
         # Trigger the leave event, must be before the move to get correct room
         LeaveEvent(self.actor, [self.target_nodes[0]]).execute(world)
         self.actor.move_to(new_room)
@@ -1426,7 +1425,7 @@ class DropObjectEvent(GraphEvent):
             viewer_text = "You"
         else:
             viewer_text = self.__actor_name.capitalize()
-        return f"{viewer_text} got {self.__drop_name} "
+        return f"{viewer_text} dropped {self.__drop_name} "
 
     def to_canonical_form(self) -> str:
         """return action text for dropping the object"""

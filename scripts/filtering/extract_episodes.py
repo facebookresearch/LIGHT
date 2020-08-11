@@ -21,15 +21,17 @@ from light.graph.events.graph_events import (
     ArriveEvent,
     DeathEvent,
     ErrorEvent,
+    GoEvent,
     LeaveEvent,
     LookEvent,
     SayEvent,
     SoulSpawnEvent,
-    SpawnEvent,
     SystemMessageEvent,
     TellEvent,
+    TriggerFollowEvent,
     WhisperEvent,
 )
+from light.graph.events.base import TriggeredEvent
 from json import JSONEncoder
 
 START_EVENTS = [ArriveEvent, SoulSpawnEvent]
@@ -51,12 +53,14 @@ def extract_episodes(uuid_to_world, event_buffer, agent_pov=True):
         for i in range(len(event_buffer)):
             _, _, event, = event_buffer[i]
             if curr_episode is None:
-                # Should start with SoulSpawnEvent from agent POV
                 curr_episode = initialize_episode(event)
-            else:
-                # From agent perspective, just log everything
-                curr_episode.add_utterance(event)
 
+            if i == 0:
+                add_event_trigger(curr_episode, event)
+            else:
+                _, _, prev_event = event_buffer[i - 1]
+                prev_type = type(prev_event)
+                add_event_trigger(curr_episode, event, prev_type)
         if curr_episode is not None:
             # Preprocess - no longer need the node here, just the actor name
             curr_episode.actor = curr_episode.actor.name
@@ -86,16 +90,36 @@ def should_start_episode(event):
     return type(event) in START_EVENTS and event.actor.is_player
 
 
-def record_episode(curr_episode, event_buffer, idx):
+def record_episode(curr_episode, event_buffer, i):
     """
         Records an episode from the POV of an agent in a room
     """
-    while idx < len(event_buffer):
-        _, _, event, = event_buffer[idx]
-        curr_episode.add_utterance(event)
+    while i < len(event_buffer):
+        _, _, event, = event_buffer[i]
+        if i == 0:
+            add_event_trigger(curr_episode, event)
+        else:
+            _, _, prev_event = event_buffer[i - 1]
+            prev_type = type(prev_event)
+            add_event_trigger(curr_episode, event, prev_type)
         if should_end_episode(curr_episode, event):
             return
-        idx += 1
+        i += 1
+
+
+def add_event_trigger(curr_episode, event, prev_type=None):
+    """
+        Determines if the event should be added with triggered or not, then
+         adds it to the utterances for the episode
+    """
+    if type(event) == LookEvent:
+        triggered = prev_type == ArriveEvent or prev_type == SoulSpawnEvent
+        curr_episode.add_utterance(event, triggered=triggered)
+    elif type(event) == GoEvent:
+        triggered = prev_type == TriggerFollowEvent
+        curr_episode.add_utterance(event, triggered=triggered)
+    else:
+        curr_episode.add_utterance(event)
 
 
 def should_end_episode(episode, event):
@@ -141,7 +165,7 @@ class Episode:
 
         self.utterances = []
 
-    def add_utterance(self, event):
+    def add_utterance(self, event, triggered=False):
         """
             Converts the event to an utterance then appends it to the utterance
             buffer
@@ -158,7 +182,7 @@ class Episode:
             objects = {x.name: x.desc for x in contained if x.object}
             self.agents.update(agents)
             self.objects.update(objects)
-        utter = Utterance.convert_to_utterance(event, self.actor)
+        utter = Utterance.convert_to_utterance(event, self.actor, triggered)
         self.utterances.append(utter)
 
 
@@ -180,7 +204,7 @@ class Utterance:
         self.triggered = triggered
 
     @staticmethod
-    def convert_to_utterance(event, main_agent):
+    def convert_to_utterance(event, main_agent, certain_triggered=False):
         """
             This method is responsible for converting an event to an utterance from the
             episode's POV.
@@ -193,39 +217,34 @@ class Utterance:
                 - If it is a speech event, do not record the action form.
 
         """
-        TRIGGERED_EVENTS = [
-            ArriveEvent,
-            DeathEvent,
-            LeaveEvent,
-            LookEvent,
-            SpawnEvent,
-            SoulSpawnEvent,
-        ]
         target_ids = (
             [x.name for x in event.target_nodes]
             if len(event.target_nodes) > 0
             else None
         )
-        triggered = False
-        if type(event) in TRIGGERED_EVENTS:
+        triggered = certain_triggered
+        if issubclass(type(event), TriggeredEvent):
             class_name = event.__class__.__name__
-            # Chop off the "event" part of the name
+            # Chop off the "event" part of the name, make that action
+            # else it is an error (bc no canonical form)
             action = class_name[: len(class_name) - 5].lower()
             triggered = True
         else:
             action = event.to_canonical_form()
 
         if type(event) in SPEECH_EVENTS:
-            # This check because wierd room transitions make nodes not equal
             text = event.text_content
         elif main_agent.node_id == event.actor.node_id:
+            # This hack is because the nodes will not always be equal
+            # for some specific __eq__ semantics, so need to use
+            # the actual reference otherwise you get 3rd person pov
             text = event.view_as(event.actor)
         else:
             text = event.view_as(main_agent)
 
         utterance = Utterance(event.actor.name, text, action, target_ids, triggered)
-        if type(event) is LookEvent:
-            # Record what is present for look events only
+        if type(event) is LookEvent and main_agent.node_id == event.actor.node_id:
+            # Record what is present for pov look events only
             contained = event.room.get_contents()
             utterance.setting = event.room.name
             utterance.present_agents = [x.name for x in contained if x.agent]
