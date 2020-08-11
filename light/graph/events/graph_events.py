@@ -963,7 +963,7 @@ class HugEvent(GraphEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            return f"You hugged {self.__hugged_name}, but missed!"
+            return f"You hugged {self.__hugged_name}."
         elif viewer == self.target_nodes[0]:
             return f"{self.__actor_name} hugged you.".capitalize()
         else:
