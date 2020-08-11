@@ -68,7 +68,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
             '--beam-block-ngram', 
             '3', 
             '--beam-size',
-            '10', 
+            '2', 
             '--beam-min-length', 
             '20',
             '-m', 
