@@ -154,6 +154,7 @@ a {
   animation: popInChat 0.25s cubic-bezier(0, 0.5, 0, 1);
   box-shadow: 0 2px 2px #bbb;
   text-align: left;
+  white-space: pre-line;
 }
 
 .message.type-action {
