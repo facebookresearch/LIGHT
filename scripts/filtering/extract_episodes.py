@@ -51,16 +51,17 @@ def extract_episodes(uuid_to_world, event_buffer, agent_pov=True):
     curr_episode = None
     if agent_pov:
         for i in range(len(event_buffer)):
-            _, _, event, = event_buffer[i]
+            uuid, _, _, event, = event_buffer[i]
+            world = uuid_to_world[uuid]
             if curr_episode is None:
                 curr_episode = initialize_episode(event)
 
             if i == 0:
-                add_event_trigger(curr_episode, event)
+                add_event_trigger(curr_episode, world, event)
             else:
-                _, _, prev_event = event_buffer[i - 1]
+                _, _, _, prev_event = event_buffer[i - 1]
                 prev_type = type(prev_event)
-                add_event_trigger(curr_episode, event, prev_type)
+                add_event_trigger(curr_episode, world, event, prev_type)
         if curr_episode is not None:
             # Preprocess - no longer need the node here, just the actor name
             curr_episode.actor = curr_episode.actor.name
@@ -68,12 +69,12 @@ def extract_episodes(uuid_to_world, event_buffer, agent_pov=True):
     else:
         # Triggered by soul spawn event or arrive event!
         for i in range(len(event_buffer)):
-            _, _, event, = event_buffer[i]
+            _, _, _, event, = event_buffer[i]
             # Get the human entered on this event, record episode until leave or die.
             if should_start_episode(event):
                 # Should start with SoulSpawnEvent/ArriveEvent from agent POV
                 curr_episode = initialize_episode(event)
-                record_episode(curr_episode, event_buffer, i)
+                record_episode(uuid_to_world, curr_episode, event_buffer, i)
                 curr_episode.actor = curr_episode.actor.name
                 episodes.append(curr_episode)
 
@@ -90,36 +91,37 @@ def should_start_episode(event):
     return type(event) in START_EVENTS and event.actor.is_player
 
 
-def record_episode(curr_episode, event_buffer, i):
+def record_episode(uuid_to_world, curr_episode, event_buffer, i):
     """
         Records an episode from the POV of an agent in a room
     """
     while i < len(event_buffer):
-        _, _, event, = event_buffer[i]
+        uuid, _, _, event, = event_buffer[i]
+        world = uuid_to_world[uuid]
         if i == 0:
-            add_event_trigger(curr_episode, event)
+            add_event_trigger(curr_episode, world, event)
         else:
-            _, _, prev_event = event_buffer[i - 1]
+            _, _, _, prev_event = event_buffer[i - 1]
             prev_type = type(prev_event)
-            add_event_trigger(curr_episode, event, prev_type)
+            add_event_trigger(curr_episode, world, event, prev_type)
         if should_end_episode(curr_episode, event):
             return
         i += 1
 
 
-def add_event_trigger(curr_episode, event, prev_type=None):
+def add_event_trigger(curr_episode, world, event, prev_type=None):
     """
         Determines if the event should be added with triggered or not, then
          adds it to the utterances for the episode
     """
     if type(event) == LookEvent:
         triggered = prev_type == ArriveEvent or prev_type == SoulSpawnEvent
-        curr_episode.add_utterance(event, triggered=triggered)
+        curr_episode.add_utterance(world, event, triggered=triggered)
     elif type(event) == GoEvent:
         triggered = prev_type == TriggerFollowEvent
-        curr_episode.add_utterance(event, triggered=triggered)
+        curr_episode.add_utterance(world, event, triggered=triggered)
     else:
-        curr_episode.add_utterance(event)
+        curr_episode.add_utterance(world, event)
 
 
 def should_end_episode(episode, event):
@@ -165,7 +167,7 @@ class Episode:
 
         self.utterances = []
 
-    def add_utterance(self, event, triggered=False):
+    def add_utterance(self, world, event, triggered=False):
         """
             Converts the event to an utterance then appends it to the utterance
             buffer
@@ -183,6 +185,10 @@ class Episode:
             self.agents.update(agents)
             self.objects.update(objects)
         utter = Utterance.convert_to_utterance(event, self.actor, triggered)
+        event.executed = False
+        event.execute(world)
+        if self.actor.node_id == event.actor.node_id and not utter.triggered:
+            utter.possible_actions = world.get_possible_actions(event.actor.node_id)
         self.utterances.append(utter)
 
 
