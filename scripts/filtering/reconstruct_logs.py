@@ -37,7 +37,7 @@ def load_event_log(event_file):
             world = uuid_to_world[world_uuid]
 
         event_obj = GraphEvent.from_json(event_json, world)
-        events.append((hash_, timestamp, event_obj))
+        events.append((world_uuid, hash_, timestamp, event_obj))
 
     # Return the worlds and the event buffer which is in order of the events
     # NOTE: In future, if async writes, can define a sort on the timestamp
