@@ -23,6 +23,9 @@ from light.graph.elements.graph_nodes import (
     GraphRoom,
     LockEdge,
 )
+from light.graph.events.safety import SafetyClassifier
+
+safety_classifier = SafetyClassifier()
 
 if TYPE_CHECKING:
     from light.world.world import World
@@ -48,7 +51,14 @@ class SystemMessageEvent(TriggeredEvent):
             return None
 
 
-class SayEvent(GraphEvent):
+class SpeechEvent(GraphEvent):
+    """Base speaking class mostly to handle dialogue safety."""
+
+    def is_dialogue_safe(self, text):
+        return safety_classifier.is_safe(text)
+
+
+class SayEvent(SpeechEvent):
     """Handles saying something out loud to the room."""
 
     NAMES = ["say"]
@@ -57,7 +67,16 @@ class SayEvent(GraphEvent):
         """On execution, store the expected views, then broadcast"""
         assert not self.executed
         actor_name = self.actor.get_prefix_view()
-        self.__in_room_view = f'{actor_name} said "{self.text_content}"'.capitalize()
+        if self.is_dialogue_safe(self.text_content):
+            self.__in_room_view = (
+                f'{actor_name} said "{self.text_content}"'.capitalize()
+            )
+            self.__self_view = None
+        else:
+            self.__in_room_view = (
+                f"{actor_name} mumbled something incomprehensible.".capitalize()
+            )
+            self.__self_view = "You mumble something incomprehensible."
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         self.executed = True
         return []
@@ -65,7 +84,7 @@ class SayEvent(GraphEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            return None  # One should not observe themself saying things
+            return self.__self_view
         else:
             return self.__in_room_view
 
@@ -96,7 +115,7 @@ class SayEvent(GraphEvent):
         return cls(actor, text_content=text)
 
 
-class ShoutEvent(GraphEvent):
+class ShoutEvent(SpeechEvent):
     """Handles saying something out loud to all agents."""
 
     NAMES = ["shout"]
@@ -105,7 +124,17 @@ class ShoutEvent(GraphEvent):
         """On execution, store the view for the event"""
         assert not self.executed
         actor_name = self.actor.get_prefix_view()
-        self.__in_room_view = f'{actor_name} said "{self.text_content}"'.capitalize()
+        if self.is_dialogue_safe(self.text_content):
+            self.__in_room_view = (
+                f'{actor_name} shouted "{self.text_content}"'.capitalize()
+            )
+            self.__self_view = None
+        else:
+            self.__in_room_view = (
+                f"{actor_name} shouted something incomprehensible.".capitalize()
+            )
+            self.__self_view = "You shout something incomprehensible."
+        self.__in_room_view = f'{actor_name} shouted "{self.text_content}"'.capitalize()
         world.broadcast_to_all_agents(self, exclude_agents=[self.actor])
         self.executed = True
         return []
@@ -113,7 +142,7 @@ class ShoutEvent(GraphEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            return None  # One should not observe themself saying things
+            return self.__self_view
         else:
             return self.__in_room_view
 
@@ -144,7 +173,7 @@ class ShoutEvent(GraphEvent):
         return cls(actor, text_content=text)
 
 
-class WhisperEvent(GraphEvent):
+class WhisperEvent(SpeechEvent):
     """Handles saying something to a specific agent without others hearing."""
 
     NAMES = ["whisper"]
@@ -154,12 +183,21 @@ class WhisperEvent(GraphEvent):
         assert not self.executed
         actor_name = self.actor.get_prefix_view()
         target_name = self.target_nodes[0].get_prefix_view()
-        self.__target_view = (
-            f'{actor_name} whispered "{self.text_content}" to you'.capitalize()
-        )
         self.__in_room_view = (
             f"{actor_name} whispered something to {target_name}".capitalize()
         )
+        if self.is_dialogue_safe(self.text_content):
+            self.__target_view = (
+                f'{actor_name} whispered "{self.text_content}" to you'.capitalize()
+            )
+            self.__self_view = None
+        else:
+            self.__target_view = (
+                f"{actor_name} whispered something incomprehensible to you".capitalize()
+            )
+            self.__self_view = (
+                f"You mumble something incomprehensible to {target_name}."
+            )
 
         # broadcast
         world.broadcast_to_room(self, exclude_agents=[self.actor])
@@ -169,7 +207,7 @@ class WhisperEvent(GraphEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            return None  # One should not observe themself saying things
+            return self.__self_view
         elif viewer == self.target_nodes[0]:
             return self.__target_view
         else:
@@ -242,7 +280,7 @@ class WhisperEvent(GraphEvent):
         return cls(actor, target_nodes=[targets[0]], text_content=text)
 
 
-class TellEvent(GraphEvent):
+class TellEvent(SpeechEvent):
     """Handles saying something to a specific agent aloud."""
 
     NAMES = ["tell"]
@@ -252,10 +290,24 @@ class TellEvent(GraphEvent):
         assert not self.executed
         actor_name = self.actor.get_prefix_view()
         target_name = self.target_nodes[0].get_prefix_view()
-        self.__target_view = f'{actor_name} told you "{self.text_content}"'.capitalize()
-        self.__in_room_view = (
-            f'{actor_name} told {target_name} "{self.text_content}"'.capitalize()
-        )
+        if self.is_dialogue_safe(self.text_content):
+            self.__target_view = (
+                f'{actor_name} told you "{self.text_content}"'.capitalize()
+            )
+            self.__in_room_view = (
+                f'{actor_name} told {target_name} "{self.text_content}"'.capitalize()
+            )
+            self.__self_view = None
+        else:
+            self.__target_view = (
+                f"{actor_name} mumbled something incomprehensible to you.".capitalize()
+            )
+            self.__in_room_view = (
+                f"{actor_name} mumbled something incomprehensible.".capitalize()
+            )
+            self.__self_view = (
+                f"You mumble something incomprehensible to {target_name}."
+            )
 
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         self.executed = True
@@ -264,7 +316,7 @@ class TellEvent(GraphEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            return None  # One should not observe themself saying things
+            return self.__self_view
         elif viewer == self.target_nodes[0]:
             return self.__target_view
         else:
