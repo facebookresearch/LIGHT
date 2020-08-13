@@ -26,12 +26,12 @@ def execute_events(world, transcript):
         # gesture -> emote "xyz"
         # text -> say/tell (?)
         # other actions are literals
-        world.parse_exec(event["id"].lower(), "say " + event["text"])
         action = event["task_data"]["action"]
         if action != "":
             if action.startswith("gesture"):
                 action = action.replace("gesture", "emote")
             world.parse_exec(event["id"].lower(), action)
+        world.parse_exec(event["id"].lower(), "say " + event["text"])
 
 
 def process_episodes(src, log_dir):
@@ -41,6 +41,7 @@ def process_episodes(src, log_dir):
     """
     # alt is, everything contained in room so just room logger is fine
     # Room logger - is_player already specified (nice!)
+    i = 0
     for ep in src:
         ep["graph"]._opt["is_logging"] = True
         ep["graph"]._opt["log_path"] = log_dir
@@ -53,8 +54,13 @@ def process_episodes(src, log_dir):
         for p in players:
             SoulSpawnEvent(p.node_id, p).execute(world)
             LookEvent(p).execute(world)
-
-        execute_events(world, transcript)
+        try:
+            execute_events(world, transcript)
+        except:
+            with open(f"./error{i}.pkl", "wb") as picklefile:
+                pickle.dump(ep, picklefile)
+            print("Found an error in executing, writing out")
+            i += 1
         for log in new_g.room_id_to_loggers.values():
             log._end_meta_episode()
 

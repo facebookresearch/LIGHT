@@ -37,6 +37,7 @@ from json import JSONEncoder
 START_EVENTS = [ArriveEvent, SoulSpawnEvent]
 SPEECH_EVENTS = [SayEvent, TellEvent, WhisperEvent]
 END_EVENTS = [DeathEvent, LeaveEvent]
+DEFAULT_PERSONA = "I am a player in the LIGHT world."
 
 
 def extract_episodes(uuid_to_world, event_buffer, agent_pov=True):
@@ -141,7 +142,14 @@ def initialize_episode(event):
     """
     settings = {event.room.name: event.room.desc}
     contained = event.room.get_contents()
-    agents = {x.name: x.persona for x in contained if x.agent}
+    agents = {}
+    for x in contained:
+        if x.agent:
+            # Required for old format (conversion script)
+            if x.persona != DEFAULT_PERSONA:
+                agents[x.name] = x.persona
+            else:
+                agents[x.name] = x.desc
     objects = {x.name: x.desc for x in contained if x.object}
     curr_episode = Episode(settings, agents, objects, event.actor)
     return curr_episode
@@ -180,15 +188,23 @@ class Episode:
             # Need to add a new setting - and any agents or objects
             self.settings[event.room.name] = event.room.desc
             contained = event.room.get_contents()
-            agents = {x.name: x.persona for x in contained if x.agent}
+            agents = {}
+            for x in contained:
+                if x.agent:
+                    # Required for old format (conversion script)
+                    if x.persona != DEFAULT_PERSONA:
+                        agents[x.name] = x.persona
+                    else:
+                        agents[x.name] = x.desc
             objects = {x.name: x.desc for x in contained if x.object}
             self.agents.update(agents)
             self.objects.update(objects)
         utter = Utterance.convert_to_utterance(event, self.actor, triggered)
-        event.executed = False
-        event.execute(world)
+        # Add possible actions before executing!
         if self.actor.node_id == event.actor.node_id and not utter.triggered:
             utter.possible_actions = world.get_possible_actions(event.actor.node_id)
+        event.executed = False
+        event.execute(world)
         self.utterances.append(utter)
 
 

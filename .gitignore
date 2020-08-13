@@ -12,3 +12,4 @@ light.egg-info/
 dataset/*
 logs/*
 .coverage
+*.zip
