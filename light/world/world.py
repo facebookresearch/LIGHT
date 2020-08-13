@@ -500,10 +500,10 @@ class World(object):
         # create rename <node> <value>    <-- **crashes*
         # create delete <node>
         # create set_prop orc to health=5
-        from parlai_internal.tasks.graph_world3.class_nodes import (
-            create_thing,
-            CLASS_NAMES,
-        )
+        # from parlai_internal.tasks.graph_world3.class_nodes import (
+        #     create_thing,
+        #     CLASS_NAMES,
+        # )
 
         if not self.has_prop(agent_id, "agent"):
             return False, "create"
