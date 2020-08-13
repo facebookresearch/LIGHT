@@ -14,12 +14,10 @@ from light.graph.builders.base import (
 from light.world.world import World
 
 class ExternalMapJsonBuilder(DBGraphBuilder):
-    """Abstract GraphBuilder that has convenience functions for accessing
-    the light db to find content
+    """Loads maps exported from the World Builder UI Json Format
     """
 
     def __init__(self, ldb, debug, opt):
-        """Initialize a GraphBuilder with access to a LIGHTDatabase class"""
         self.db = ldb
         self.opt = opt
         self._no_npc_models = True
