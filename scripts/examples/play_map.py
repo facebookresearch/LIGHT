@@ -13,6 +13,7 @@ import sys
 
 import parlai.utils.misc as parlai_utils
 
+from light.graph.builders.json_file_builder import JsonFileBuilder
 from light.graph.builders.starspace_all import StarspaceBuilder
 from light.data_model.light_database import LIGHTDatabase
 from light.world.utils.terminal_player_provider import TerminalPlayerProvider
@@ -28,6 +29,7 @@ import asyncio
 random.seed(6)
 numpy.random.seed(6)
 
+LOAD_MAP = True
 USE_MODELS = False
 shared_model_content = None
 
@@ -69,10 +71,16 @@ async def run_with_builder(world_builder):
 
 
 parser = ParlaiParser()
-StarspaceBuilder.add_parser_arguments(parser)
-opt, _unknown = parser.parse_and_process_known_args()
-ldb = LIGHTDatabase(opt["light_db_file"])
-world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
+if LOAD_MAP:
+    Builder = JsonFileBuilder
+    opt, _unknown = parser.parse_and_process_known_args()
+    ldb = ''
+    world_builder = Builder(ldb, debug=False, opt=opt)    
+else:
+    StarspaceBuilder.add_parser_arguments(parser)
+    opt, _unknown = parser.parse_and_process_known_args()
+    ldb = LIGHTDatabase(opt["light_db_file"])
+    world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
 
 if USE_MODELS:
     light_model_root = opt['light_model_root']
