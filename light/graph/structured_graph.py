@@ -569,3 +569,78 @@ class OOGraph(object):
                 )
 
         return oo_graph
+
+
+    @staticmethod
+    def from_worldbuilder_json(input_json: str):
+        f = open(input_json, "rb" )
+        dict_format = json.load(f)
+        f.close()
+        g = OOGraph()
+
+        entities = dict_format["entities"]
+        locations = dict_format["map"]
+
+        rooms = {}
+        for ind,r in entities['room'].items():
+            n = g.add_room(r['name'],
+                           {
+                               'desc': r['description'],
+                               'backstory': r['backstory']
+                           }, uid=int(ind))
+            rooms[int(ind)] = n
+            n.force_move_to(g.void)
+            
+        agents = {}
+        for ind, c in entities['character'].items():
+            # TODO: not used yet: name_prefix, is_plural, char_type, emoj, base_id
+            n = g.add_agent(c['name'],
+                            {
+                                'desc': c['physical_description'],
+                                'persona': c['persona']
+                            }, uid=str(ind))
+            agents[int(ind)] = n
+
+        objects = {}
+        for ind, obj in entities['object'].items():
+            n = g.add_object(obj['name'],
+                             {
+                                 'desc': obj['physical_description'],
+                             }, uid=str(ind))
+            objects[int(ind)] = n
+            
+        grid = {}
+        for grid_loc, v in locations[0]['tiles'].items():
+            # TODO: not used yet: name (of map floor), walls
+            rid = int(v['room'])
+            grid[grid_loc] = rid
+            for c in v['characters']:
+                aid = int(c)
+                agents[aid].force_move_to(rooms[rid])
+            for o in v['objects']:
+                oid = int(o)
+                objects[oid].force_move_to(rooms[rid])
+        
+        # Make paths
+        # TODO: no up, down as yet.
+        directions = [
+            ([-1, 0], 'west'),
+            ([+1, 0], 'east'),
+            ([0, -1], 'south'),
+            ([0, +1], 'north'),
+        ]
+        for loc, rid in grid.items():
+            loc1 = [ int(loc.split()[0]), int(loc.split()[1]) ]
+            for d in directions:
+                grad = d[0]
+                edge = d[1]
+                loc2 = ( loc1[0]+grad[0], loc1[1]+grad[1])
+                grid2 = str(loc2[0]) + ' ' + str(loc2[1])
+                if grid2 in grid:
+                    rooms[rid].add_neighbor(
+                        other_node=rooms[grid[grid2]],
+                        edge_label= "path to the " + edge,
+                        edge_desc= "You see a path!"
+                    )
+        
+        return g
