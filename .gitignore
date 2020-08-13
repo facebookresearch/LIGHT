@@ -11,3 +11,8 @@ light.egg-info/
 
 logs/*
 .coverage
+
+#emacs
+*~
+\#*\#
+.\#*
