@@ -1422,7 +1422,7 @@ class DropObjectEvent(GraphEvent):
             viewer_text = "You"
         else:
             viewer_text = self.__actor_name.capitalize()
-        return f"{viewer_text} got {self.__drop_name} "
+        return f"{viewer_text} dropped {self.__drop_name} "
 
     def to_canonical_form(self) -> str:
         """return action text for dropping the object"""
