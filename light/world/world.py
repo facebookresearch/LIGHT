@@ -921,7 +921,7 @@ class World(object):
 
         if executable not in ALL_EVENTS:
             self.send_msg(
-                agentid, "You can't {}.{}".format(executable, self.help_message())
+                agentid, "You can't {}. {}".format(executable, self.help_message())
             )
             return False, inst[0]
 

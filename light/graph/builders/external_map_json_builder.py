@@ -13,7 +13,7 @@ from light.graph.builders.base import (
 )
 from light.world.world import World
 
-class JsonFileBuilder(DBGraphBuilder):
+class ExternalMapJsonBuilder(DBGraphBuilder):
     """Abstract GraphBuilder that has convenience functions for accessing
     the light db to find content
     """
