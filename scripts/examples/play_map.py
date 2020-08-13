@@ -20,7 +20,9 @@ from light.world.utils.terminal_player_provider import TerminalPlayerProvider
 from parlai.core.params import ParlaiParser
 from light.world.world import World
 from light.world.souls.repeat_soul import RepeatSoul
-from light.world.souls.models.partner_heuristic_model_soul import PartnerHeuristicModelSoul
+from light.world.souls.models.partner_heuristic_model_soul import (
+    PartnerHeuristicModelSoul,
+)
 import os
 import random
 import numpy
@@ -33,13 +35,16 @@ LOAD_MAP = True
 USE_MODELS = False
 shared_model_content = None
 
+
 def init_world(world_builder):
     g, world = world_builder.get_graph()
     purgatory = world.purgatory
     if not USE_MODELS:
         purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
     else:
-        purgatory.register_filler_soul_provider("model", PartnerHeuristicModelSoul, lambda: [shared_model_content])
+        purgatory.register_filler_soul_provider(
+            "model", PartnerHeuristicModelSoul, lambda: [shared_model_content]
+        )
     for empty_agent in world.oo_graph.agents.values():
         purgatory.fill_soul(empty_agent)
     provider = TerminalPlayerProvider(purgatory)
@@ -74,8 +79,8 @@ parser = ParlaiParser()
 if LOAD_MAP:
     Builder = ExternalMapJsonBuilder
     opt, _unknown = parser.parse_and_process_known_args()
-    ldb = ''
-    world_builder = Builder(ldb, debug=False, opt=opt)    
+    ldb = ""
+    world_builder = Builder(ldb, debug=False, opt=opt)
 else:
     StarspaceBuilder.add_parser_arguments(parser)
     opt, _unknown = parser.parse_and_process_known_args()
@@ -83,15 +88,14 @@ else:
     world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
 
 if USE_MODELS:
-    light_model_root = opt['light_model_root']
+    light_model_root = opt["light_model_root"]
     shared_model_content = PartnerHeuristicModelSoul.load_models(
-        light_model_root + 'game_speech1/model',
-        light_model_root + 'speech_train_cands.txt',
-        light_model_root + 'agent_to_utterance_trainset.txt',
-        light_model_root + 'main_act/model',
+        light_model_root + "game_speech1/model",
+        light_model_root + "speech_train_cands.txt",
+        light_model_root + "agent_to_utterance_trainset.txt",
+        light_model_root + "main_act/model",
     )
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(run_with_builder(world_builder))
-    
