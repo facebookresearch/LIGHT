@@ -13,7 +13,7 @@ class SafetyClassifier:
             self.classifier = OffensiveStringMatcher(datapath)
         else:
             self.classifier = None
-            
+
     def is_safe(self, text):
         if self.classifier is None:
             return True
