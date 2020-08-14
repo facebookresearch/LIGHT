@@ -25,13 +25,13 @@ To just run the web server, run:
 
     python ./server/run_server.py [--light-model-root light-model-directory] [--port port] [--hostname host] [--data-model-db world-creation-database]
 
-config contains important configurations for the tornado server, while config.js contains similar configs for the static web pages.  If you want to change the
+`./config` contains important configurations for the tornado server, while `./config.js` contains similar configs for the static web pages.  If you want to change the
 host or the port, both should be changed!
 
 You can then interface with the game through several options below
 
-_**NOTE**_: if your hostname is localhost, you **must** ensure that the connection in Chrome is through localhost:port/...  If the initial link takes you to 127.0.0.1:port/...
-you should replace it with localhost.  This is to ensure the authentication works properly (i.e ~~127.0.0.1:35494~~ -> localhost:35494)
+_**NOTE**_: if your hostname is localhost, you **must** ensure that the connection in Chrome is through `localhost:port/...`  If the initial link takes you to `127.0.0.1:port/...`
+you should replace it with `localhost`.  This is to ensure the authentication works properly (i.e ~~127.0.0.1:35494~~ -> localhost:35494)
 
 ## Using LIGHT
 
