@@ -19,7 +19,6 @@ This folder contains the LIGHT project's data acquisition and management system 
 - World Builder
   - [ ] BaseMultiSelect component in the World Builder currently allows the same entity to be added multiple times, modify the BaseMultiSelect component to disable selected entities
   - [ ] Updating emojis in the advanced editor doesn't immediately update the tile preview, investigate
-  - [ ] Determining a structure for storing a world in the database
   - [ ] Support Objects being placed in another Object that is a container
   - [ ] Support Objects that are wearable to be placed in a character
   - [ ] Support doors?
