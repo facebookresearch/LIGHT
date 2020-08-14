@@ -120,6 +120,10 @@ def get_path(filename):
 
 
 def read_secrets():
+    """
+    Reads the secrets from a secret text file, located outside the repo.
+    The secrets should have the facebook api key, secret, and the cookie secret.
+    """
     loc = here + "/../../../../secrets.txt"
     secrets = {}
     with open(loc, "r") as secret_file:
@@ -296,7 +300,7 @@ class LandingApplication(tornado.web.Application):
                 {"database": database, "hostname": hostname, "password": password},
             ),
             (
-                r"/auth/login",
+                r"/auth/fblogin",
                 FacebookOAuth2LoginHandler,
                 {"database": database, "app": self},
             ),
@@ -327,7 +331,7 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
             self.request.protocol
             + "://"
             + self.request.host
-            + "/auth/login?next="
+            + "/auth/fblogin?next="
             + tornado.escape.url_escape(self.get_argument("next", "/"))
         )
         if self.get_argument("code", False):
@@ -337,7 +341,7 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
                 client_secret=self.app.settings["facebook_secret"],
                 code=self.get_argument("code"),
             )
-            self.set_current_user("user", tornado.escape.json_encode(user))
+            self.set_current_user("user", user)
             self.redirect(self.get_argument("next", "/"))
             return
         self.authorize_redirect(

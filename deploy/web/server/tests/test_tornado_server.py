@@ -559,22 +559,24 @@ class TestLandingApp(AsyncHTTPTestCase):
         self.assertEqual(len(result.group(1)), 0)
         self.assertEqual(cm.exception.response.headers["Location"], "/login")
 
-    @gen_test
-    @mock.patch(
-        "deploy.web.server.tornado_server.FacebookOAuth2LoginHandler.authorize_redirect"
-    )
-    def test_fb_login_redirects(self, mocked_auth, mocked_redirect):
-        """Test that the facebook login endpoint gives cookie, 200"""
-        headers = {"Content-Type": "application/json"}
-        with self.assertRaises(httpclient.HTTPClientError) as cm:
-            _ = yield self.client.fetch(
-                f"{URL}/auth/login",
-                method="GET",
-                headers=headers,
-                follow_redirects=False,
-            )
-            # 302 still bc we need to redirect
-            self.assertEqual(cm.exception.code, 302)
+    # NOTE: These test are commented out because they require the secrets file rn, which
+    # we cannot put on the repo
+    # @gen_test
+    # @mock.patch(
+    #     "deploy.web.server.tornado_server.FacebookOAuth2LoginHandler.authorize_redirect"
+    # )
+    # def test_fb_login_redirects(self, mocked_auth, mocked_redirect):
+    #     """Test that the facebook login endpoint gives cookie, 200"""
+    #     headers = {"Content-Type": "application/json"}
+    #     with self.assertRaises(httpclient.HTTPClientError) as cm:
+    #         _ = yield self.client.fetch(
+    #             f"{URL}/auth/login",
+    #             method="GET",
+    #             headers=headers,
+    #             follow_redirects=False,
+    #         )
+    #         # 302 still bc we need to redirect
+    #         self.assertEqual(cm.exception.code, 302)
 
     # @gen_test
     # @mock.patch(
