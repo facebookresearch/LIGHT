@@ -419,7 +419,6 @@ class GoEvent(GraphEvent):
         # Must store room views because getting views from other rooms is odd
         new_room = self.target_nodes[0]
         old_room = self.actor.get_room()
-        old_room_view = self.room.get_prefix_view_from(new_room)
         self.__canonical_room_view = new_room.get_view_from(old_room)
 
     def execute(self, world: "World") -> List[GraphEvent]:
@@ -433,7 +432,13 @@ class GoEvent(GraphEvent):
         new_room = self.target_nodes[0]
         old_room_view = old_room.get_prefix_view_from(new_room)
 
-        self.__canonical_room_view = new_room.get_view_from(old_room)
+        # Send event to loggers - this event does not get broadcasted, so need record
+        if old_room.node_id in world.oo_graph.room_id_to_loggers:
+            world.oo_graph.room_id_to_loggers[old_room.node_id].observe_event(self)
+        if self.actor.node_id in world.purgatory.node_id_to_soul:
+            world.purgatory.node_id_to_soul[
+                self.actor.node_id
+            ].agent_logger.observe_event(self)
 
         # Trigger the leave event, must be before the move to get correct room
         LeaveEvent(self.actor, [self.target_nodes[0]]).execute(world)
@@ -959,7 +964,7 @@ class HugEvent(GraphEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            return f"You hugged {self.__hugged_name}, but missed!"
+            return f"You hugged {self.__hugged_name}."
         elif viewer == self.target_nodes[0]:
             return f"{self.__actor_name} hugged you.".capitalize()
         else:
