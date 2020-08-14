@@ -4,46 +4,21 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.abs
 
-import os
-import uuid
 import abc
-import time
-import json
 import collections
+import os
+import time
+import uuid
 
 # TODO: Investigate changing the format from 3 line to csv or some other standard
 from light.graph.events.graph_events import (
     ArriveEvent,
-    SpawnEvent,
     DeathEvent,
     LeaveEvent,
+    SoulSpawnEvent,
 )
 
 DEFAULT_LOG_PATH = "".join([os.path.abspath(os.path.dirname(__file__)), "/../../logs"])
-"""
-General flow:
-    - A player enters
-    - Save the state of the graph, dump to a file so it can be reloaded
-    - Record events happening as long as player exists (meta episode is not over)
-        * Events need timestamps to order, other metadata (?room?actor?)
-    - Write events to log files
-    - Player exits, stop recording!
-
-Considerations:
-    - some sort of history of conversation to give context (bot history here)
-    - some sort of limit to avoid afk players
-    - Lots of rooms, players - want to avoid super high write times (how??)
-
-Attributes to have:
-    - meta episode id
-    - graph id
-    episode should have events!  Events have..
-        - TIMESTAMP!
-        - EVENT JSON!
-        - follow up?  response to?
-        - actor?  room?
-
-"""
 
 
 class InteractionLogger(abc.ABC):
@@ -97,6 +72,8 @@ class InteractionLogger(abc.ABC):
             to file, recording the identifiers used for the graphs
         """
         # First, check graph path, then write the graph dump
+        if not os.path.exists(self.data_path):
+            os.mkdir(self.data_path)
         graph_path = os.path.join(self.data_path, "light_graph_dumps")
         if not os.path.exists(graph_path):
             os.mkdir(graph_path)
@@ -136,9 +113,9 @@ class InteractionLogger(abc.ABC):
         event_file_name = f"{id_name}_{unique_event_name}_events.log"
         events_file_path = os.path.join(events_path_dir, event_file_name)
         with open(events_file_path, "w") as dump_file:
-            for (idx, hashed, event, time) in self.event_buffer:
+            for (idx, hashed, event, time_) in self.event_buffer:
                 dump_file.write("".join([graph_states[idx], " ", str(hashed), "\n"]))
-                dump_file.write("".join([time, "\n"]))
+                dump_file.write("".join([time_, "\n"]))
                 dump_file.write("".join([event, "\n"]))
         return events_file_path
 
@@ -148,14 +125,17 @@ class AgentInteractionLogger(InteractionLogger):
         This interaction logger attaches to human agents in the graph, logging all
         events the human observes.  This logger also requires serializing more rooms,
         since agent encounters many rooms along its traversal  These events go into
-        the conversation buffer, which is then sent to `.log` files at the specified path
+        the conversation buffer, which is then sent to `.log` files
+        at the specified path
 
-        context_buffers serve an important role in this class to avoid bloating the event logs.
-        context_buffers will log a fixed number of the most recent events when:
+        context_buffers serve an important role in this class to avoid bloating the
+        event logs. Context_buffers will log a fixed number of the most recent events
+        when:
 
-        1. The player goes afk.  This has the potential to avoid logging lots of noise in the room
-           that does not provide any signal on human player interactions.  When the player comes back
-           to the game, our loggers send some context of the most recent events to the log
+        1. The player goes afk.  This has the potential to avoid logging lots of noise
+            in the room that does not provide any signal on human player interactions.
+            When the player comes back to the game, our loggers send some context of
+            the most recent events to the log
     """
 
     def __init__(
@@ -227,7 +207,7 @@ class AgentInteractionLogger(InteractionLogger):
         if not self.is_active:
             return
         event_t = type(event)
-        if event_t is SpawnEvent and not self._logging_intialized:
+        if event_t is SoulSpawnEvent and not self._logging_intialized:
             self._begin_meta_episode()
 
         # Get new room state
@@ -236,7 +216,7 @@ class AgentInteractionLogger(InteractionLogger):
             self._add_current_graph_state()
 
         # Store context from bots, or store current events
-        if self._is_player_afk() and not event.actor is self.agent:
+        if self._is_player_afk() and event.actor is not self.agent:
             self.context_buffer.append(
                 (
                     len(self.state_history) - 1,
@@ -263,7 +243,7 @@ class AgentInteractionLogger(InteractionLogger):
             )
 
         if (
-            event_t is DeathEvent
+            event_t is DeathEvent and event.actor is self.agent
         ):  # If agent is exiting or dieing or something, end meta episode
             self._end_meta_episode()
 
@@ -271,20 +251,23 @@ class AgentInteractionLogger(InteractionLogger):
 class RoomInteractionLogger(InteractionLogger):
     """
         This interaction logger attaches to a room level node in the graph, logging all
-        events which take place with human agents in the room as long as a player is still
-        in the room.  These events go into the conversation buffer, which is then sent to `.log`
-        files at the specified path
+        events which take place with human agents in the room as long as a player is
+        still in the room.  These events go into the conversation buffer, which is
+        then sent to `.log` files at the specified path
 
 
-        context_buffers serve an important role in this class to avoid bloating the event logs.
-        context_buffers will log a fixed number of the most recent events when:
+        context_buffers serve an important role in this class to avoid bloating the
+        event logs. context_buffers will log a fixed number of the most recent events
+        when:
 
-        1. There are no players in the room. This is a potential use case when an agent enters a
-           conversation between 2 or more models, and we want some context for training purposes
+        1. There are no players in the room. This is a potential use case when an agent
+            enters a conversation between 2 or more models, and we want some context for
+            training purposes
 
-        2. All players go afk.  This has the potential to avoid logging lots of noise in the room
-           that does not provide any signal on human player interactions.  When players come back
-           to the game, our loggers send some context of the most recent events to the log
+        2. All players go afk.  This has the potential to avoid logging lots of noise
+            in the room that does not provide any signal on human player interactions.
+            When players come back to the game, our loggers send context of the most
+            recent events to the log
     """
 
     def __init__(
@@ -378,9 +361,9 @@ class RoomInteractionLogger(InteractionLogger):
 
         # Check if we need to set initial logging state, or flush because we are done
         event_t = type(event)
-        if (event_t is ArriveEvent or event_t is SpawnEvent) and self.human_controlled(
-            event
-        ):
+        if (
+            event_t is ArriveEvent or event_t is SoulSpawnEvent
+        ) and self.human_controlled(event):
             self._add_player()
 
         # Store context from bots, or store current events
@@ -420,5 +403,8 @@ class RoomInteractionLogger(InteractionLogger):
             self._remove_player()
 
     def human_controlled(self, event):
-        """ Determines if an event is controlled by a human or not - need ._human for legacy (web)"""
+        """
+            Determines if an event is controlled by a human or not -
+            need ._human for legacy (web)
+        """
         return event.actor.is_player or event.actor._human

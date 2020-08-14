@@ -152,9 +152,9 @@ class TestWorldGraphBuilder(unittest.TestCase):
 
         # Now check edges:
         edge1 = self.testGraph.get_edge(gRoomId, gRoomId2)
-        self.assertEqual(edge1.label, "a path to the south")
+        self.assertEqual(edge1.label, "a path to the north")
         edge2 = self.testGraph.get_edge(gRoomId2, gRoomId)
-        self.assertEqual(edge2.label, "a path to the north")
+        self.assertEqual(edge2.label, "a path to the south")
 
         for node in self.testGraph.get_all_nodes():
             if node.room:

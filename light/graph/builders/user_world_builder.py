@@ -4,16 +4,15 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
-import os
 import random
 from light.graph.structured_graph import OOGraph
-from light.graph.elements.graph_nodes import GraphNode
 from light.graph.events.graph_events import ArriveEvent
 from light.graph.builders.base import (
     DBGraphBuilder,
     POSSIBLE_NEW_ENTRANCES,
 )
 from light.world.world import World
+
 
 # TODO:  Refactor common functionality between builders!
 class UserWorldBuilder(DBGraphBuilder):
@@ -80,7 +79,7 @@ class UserWorldBuilder(DBGraphBuilder):
         container node. Returns the newly created object node"""
         obj.description = obj.description.capitalize()
         if obj.is_plural == 1:
-            if extra_props.get("not_gettable", False) != True:
+            if not extra_props.get("not_gettable", False):
                 # TODO: figure out making plurals work better
                 return None
             else:
@@ -105,7 +104,6 @@ class UserWorldBuilder(DBGraphBuilder):
             # Don't create the same agent twice.
             return None
         agent = g.add_agent(use_desc, self._props_from_char(char), db_id=char.db_id)
-        agent_id = agent.node_id
         agent.force_move_to(pos_room)
 
         # Is this necesary?  I have never seen these attributes...
@@ -119,9 +117,7 @@ class UserWorldBuilder(DBGraphBuilder):
             objs[obj] = "equipped"
 
         for obj in objs:
-            obj_node = self.add_object_to_graph(
-                g, self.get_obj_from_id(obj), agent_node
-            )
+            obj_node = self.add_object_to_graph(g, self.get_obj_from_id(obj), agent)
             if obj_node is not None:
                 if objs[obj] == "equipped":
                     obj_node.set_prop("equipped", True)
@@ -152,21 +148,26 @@ class UserWorldBuilder(DBGraphBuilder):
             assert len(world) == 1, "Must get a single world back to load game from it"
             resources = ldb.get_world_resources(self.world_id, self.player_id)
 
-        world = world[0]
-        # {world_id, name, height, width, num_floors} are keys!
-        dimensions = {x: world[x] for x in world.keys() if x != "owner_id"}
-        # Do not need x/y room right?
         # Gives us the contains and neighbor edges
         edges = resources[1]
         edge_list = [dict(edge) for edge in edges]
 
-        # Load the entities
-        # Need a db_id to g_id map!
-        # Do not bother mapping to local here, map straight into the graph (make these nodes)
-        nextID = 1
         db_to_g = {}
         node_to_g = {}
         self.roomid_to_db = {}
+
+        self.add_nodes(g, resources, db_to_g, node_to_g)
+        self.add_edges(g, edge_list, node_to_g)
+
+        world = World(self.opt, self)
+        world.oo_graph = g
+        return g, world
+
+    def add_nodes(self, g, resources, db_to_g, node_to_g):
+        """
+            Iterates over the entities in the saved world, adding them
+            to the graph as nodes
+        """
         type_to_entities = {
             "room": resources[2],
             "agent": resources[3],
@@ -196,41 +197,39 @@ class UserWorldBuilder(DBGraphBuilder):
                 if type_ == "room":
                     self.roomid_to_db[g_id] = props["entity_id"]
 
-        edges = []
+    def add_edges(self, g, edge_list, node_to_g):
+        """
+            Adds the edges from the edge_lsit to the graph, g, using node_to_g map
+            to map ids
+        """
         for edge in edge_list:
             src = g.get_node(node_to_g[edge["src_id"]])
             dst = g.get_node(node_to_g[edge["dst_id"]])
             edge = edge["edge_type"]
-            # TODO: Link to light_database - check logic error with duplicate edges
+            # TODO: Link to light_database (hardcoding paths rn)
             if edge == "neighbors to the north":
-                g.add_paths_between(
-                    src, dst, "a path to the south", "a path to the north"
-                )
-            elif edge == "neighbors to the south":
                 g.add_paths_between(
                     src, dst, "a path to the north", "a path to the south"
                 )
-            elif edge == "neighbors to the east":
+            elif edge == "neighbors to the south":
                 g.add_paths_between(
-                    src, dst, "a path to the west", "a path to the east"
+                    src, dst, "a path to the south", "a path to the north"
                 )
-            elif edge == "neighbors to the west":
+            elif edge == "neighbors to the east":
                 g.add_paths_between(
                     src, dst, "a path to the east", "a path to the west"
                 )
+            elif edge == "neighbors to the west":
+                g.add_paths_between(
+                    src, dst, "a path to the west", "a path to the east"
+                )
             # This cannot be right...
             elif edge == "neighbors above":
-                g.add_paths_between(src, dst, "a path to the down", "a path to the up")
-            elif edge == "neighbors below":
                 g.add_paths_between(src, dst, "a path to the up", "a path to the down")
+            elif edge == "neighbors below":
+                g.add_paths_between(src, dst, "a path to the down", "a path to the up")
             elif edge == "contains":
-                dst.move_to(src)
-
-        # Now we have all the info we need - time to organize
-        # Add neighbors to rooms with the edges, and add objects and characters to rooms
-        world = World(self.opt, self)
-        world.oo_graph = g
-        return g, world
+                dst.force_move_to(src)
 
     @staticmethod
     def add_parser_arguments(parser):
@@ -254,7 +253,7 @@ class UserWorldBuilder(DBGraphBuilder):
             "--use-best-match-model",
             type="bool",
             default=False,
-            help="use human suggestions for predicting placement of objects, characters, and room",
+            help="use human suggestions for predicting placement things",
         )
         parser.add_argument(
             "--light-db-file",

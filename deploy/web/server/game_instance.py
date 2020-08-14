@@ -5,11 +5,8 @@
 #
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
-import asyncio
+
 from light.graph.builders.starspace_all import StarspaceBuilder
-from parlai.utils.misc import Timer
-from light.world.world import World
-from tornado.ioloop import IOLoop
 from light.world.souls.repeat_soul import RepeatSoul
 from light.world.souls.models.partner_heuristic_model_soul import (
     PartnerHeuristicModelSoul,
@@ -17,7 +14,6 @@ from light.world.souls.models.partner_heuristic_model_soul import (
 import time
 
 USE_MODELS = True
-shared_model_content = None
 
 
 class Player:
@@ -135,7 +131,9 @@ class GameInstance:
         left_players = [p for p in self.players if not p.is_alive()]
         for player in left_players:
             if player.player_soul is not None:
-                self.g.purgatory.clear_soul(player.player_soul.target_node)
+                node_to_clean = player.player_soul.target_node
+                self.g.purgatory.clear_soul(node_to_clean)
+                self.g.purgatory.fill_soul(node_to_clean)
             self.players.remove(player)
             self.last_connection = time.time()
 
