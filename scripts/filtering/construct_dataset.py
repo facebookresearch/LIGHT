@@ -13,6 +13,10 @@
         2. Get the log's episodes (see extract_episodes.py)
         3. Write to the dataset
         4. Export the dataset, adding any necessary metadata
+
+    example usage:
+        python scripts/filtering/construct_dataset.py --log-dir ./logs
+            --dataset-dir ./dataset/
 """
 from scripts.filtering.reconstruct_logs import load_event_log
 from scripts.filtering.extract_episodes import extract_episodes, EpisodeEncoder
@@ -44,7 +48,14 @@ def convert_event_log(event_file, dataset_dir):
     uuid_to_world, event_buffer = load_event_log(event_file,)
     # TODO: Have a better way to say if log is agent or room POV (?)
     agent_pov = "agent" in os.path.abspath(os.path.dirname(event_file))
-    episodes = extract_episodes(uuid_to_world, event_buffer, agent_pov=agent_pov)
+    try:
+        episodes = extract_episodes(uuid_to_world, event_buffer, agent_pov=agent_pov)
+    except:
+        # Seems death/health events are doing wierd things when executing?
+        # No health attribute?
+        print("Encountered an unexpected error when extracting")
+        print(event_file)
+        return
     write_episodes_to_dir(episodes, dataset_dir)
 
 
@@ -61,6 +72,8 @@ def write_episodes_to_dir(episodes, dataset_dir, indent=4):
         first_room = str(list(episode.settings.keys())[0])
         unique_name = " ".join([episode.actor, first_room, str(time.time())])
         file_name = f"{unique_name}.txt".replace(" ", "_")
+        # Wierd bug with an agent named horse_caretaker/trainer
+        file_name = file_name.replace("'", "").replace("/", "")
         file_path = os.path.join(dataset_dir, file_name)
         with open(file_path, "w") as episode_file:
             episode_dict = {k: v for k, v in episode.__dict__.copy().items()}
