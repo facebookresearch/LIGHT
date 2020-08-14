@@ -7,6 +7,10 @@
 """
     This file is responsible for converting the training conversations of the
     old pickle format into the new format using the construct_dataset
+
+    example usage:
+        python scripts/training/conversion.py --file ../valid_convs.pkl
+            --log-dir ./logs --dataset-dir ./dataset/
 """
 import argparse
 import pickle

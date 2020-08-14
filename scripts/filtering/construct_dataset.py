@@ -13,6 +13,10 @@
         2. Get the log's episodes (see extract_episodes.py)
         3. Write to the dataset
         4. Export the dataset, adding any necessary metadata
+
+    example usage:
+        python scripts/filtering/construct_dataset.py --log-dir ./logs
+            --dataset-dir ./dataset/
 """
 from scripts.filtering.reconstruct_logs import load_event_log
 from scripts.filtering.extract_episodes import extract_episodes, EpisodeEncoder
