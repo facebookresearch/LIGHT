@@ -25,8 +25,11 @@ from light.graph.elements.graph_nodes import (
 )
 from light.graph.events.safety import SafetyClassifier
 
-safety_classifier = SafetyClassifier()
+def init_safety_classifier(datapath):
+    global safety_classifier
+    safety_classifier = SafetyClassifier(datapath)
 
+    
 if TYPE_CHECKING:
     from light.world.world import World
     from light.graph.structured_graph import OOGraph

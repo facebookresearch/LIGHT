@@ -8,12 +8,16 @@ from parlai.utils.safety import OffensiveStringMatcher
 
 
 class SafetyClassifier:
-    def __init__(self):
-        self.classifier = OffensiveStringMatcher(
-            "/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt"
-        )
-
+    def __init__(self, datapath):
+        if datapath != "":
+            self.classifier = OffensiveStringMatcher(datapath)
+        else:
+            self.classifier = None
+            
     def is_safe(self, text):
-        text = text.lstrip('"')
-        text = text.rstrip('"')
-        return not (text in self.classifier)
+        if self.classifier is None:
+            return True
+        else:
+            text = text.lstrip('"')
+            text = text.rstrip('"')
+            return not (text in self.classifier)

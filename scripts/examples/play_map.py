@@ -79,6 +79,7 @@ parser = ParlaiParser()
 if LOAD_MAP:
     Builder = ExternalMapJsonBuilder
     opt, _unknown = parser.parse_and_process_known_args()
+    opt['safety_classifier_path'] = '/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt'
     ldb = ""
     world_builder = Builder(ldb, debug=False, opt=opt)
 else:

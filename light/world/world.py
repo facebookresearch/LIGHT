@@ -17,6 +17,7 @@ from light.graph.events.graph_events import (
     ALL_EVENTS_LIST,
     SpawnEvent,
     SystemMessageEvent,
+    init_safety_classifier
 )
 from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 from light.world.views import WorldViewer
@@ -59,7 +60,8 @@ class World(object):
         self.oo_graph = OOGraph(opt)
         self.view = WorldViewer(self)
         self.purgatory = Purgatory(self)
-
+        self.opt = opt
+        
         # TODO better specific player management?
         self._player_cnt = 0
         self._playerid_to_agentid = {}
@@ -74,6 +76,9 @@ class World(object):
             self.npc_models._no_npc_models = self._no_npc_models
         self.graph_builder = graph_builder  # TODO replace with builder
 
+        # Set up safety classifier.
+        init_safety_classifier(self.opt.get('safety_classifier_path', ''))
+        
         # TODO Used for storage of conversation history
         # self._database_location = opt.get('database_path', None)
         # self._room_convo_buffers = {}  # Map from room id to RoomConversationBuffer
