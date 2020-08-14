@@ -13,3 +13,8 @@ dataset/*
 logs/*
 .coverage
 *.zip
+
+#emacs
+*~
+\#*\#
+.\#*
