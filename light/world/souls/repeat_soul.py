@@ -30,9 +30,8 @@ class RepeatSoul(Soul):
         RepeatSouls do very little beyond saying what they observed, and smiling
         for good measure.
         """
-        if event.actor == self.target_node:
-            return
         my_observation = event.view_as(self.target_node)
+        my_observation = event.__class__.__name__
         repeat_text = f"I just saw the following: {my_observation}"
         repeat_event = SayEvent.construct_from_args(
             self.target_node, targets=[], text=repeat_text

@@ -68,7 +68,13 @@
 			"name_prefix": "some",
 			"is_plural": 1,
 			"char_type": "creature",
-			"emoji": "🏍️"
+			"emoji": "a",
+			"props": {
+			    "on_event": [
+				[{"action": "tell", "arg": "meow"}],
+				[{"action": "tell", "arg": "meow yourself, buddy!"}]
+			    ]
+			}
 		    }
 		},
 		"object": {

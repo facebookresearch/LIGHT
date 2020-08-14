@@ -514,7 +514,12 @@ class GraphAgent(GraphNode):
         if self._props.get("dead", None) is not None:
             self.dead = self._props.get("dead")
         self.is_player = self._props.get("is_player", False)
+        self.on_events = [
+            [['SayEvent', 'lotr'], ['SayEvent', 'One does not simply mention lotr!']],
+            [['SayEvent', 'meow'], ['SayEvent', 'Meow back!']],
 
+        ]
+        
         self.following = None
         self.followed_by = {}
 
