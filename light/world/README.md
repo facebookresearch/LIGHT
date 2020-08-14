@@ -14,9 +14,10 @@ The LIGHT World operates on a level above the LIGHT Graph, and it is responsible
 
     - `is_logging`, which determines wether loggers should be recording events or not
 
-Files ending in `event.log` record a meta episode from the POV of the room or agent (depending on where the log was attached).  Such log files have the following structure, where each pair of two lines is a new event:
+Files ending in `event.log` record a meta episode from the POV of the room or agent (depending on where the log was attached).  Such log files have the following structure, where each pair of three lines is a new event:
 
-    graph_uuid event_hash timestamp
+    graph_uuid event_hash 
+    timestamp
     event_to_json
 
 All event logs are in the `log_path/light_event_dumps` directory.  The graph_uuid references a graph in the `log_path/light_graph_dumps` directory
