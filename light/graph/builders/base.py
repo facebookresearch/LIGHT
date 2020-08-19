@@ -62,7 +62,9 @@ class DBGraphBuilder(GraphBuilder):
     def __init__(self, ldb, allow_blocked=False):
         """Initialize a GraphBuilder with access to a LIGHTDatabase class"""
         self.allow_blocked = allow_blocked
-        self.db = LIGHTDatabase(self.db_path, read_only=True)
+        self.db = ldb
+        with self.db as open_db:
+            open_db.create_cache()
         self.__usable_rooms = None
         self.__usable_chars = None
         self.__usable_objects = None
