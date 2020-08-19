@@ -9,5 +9,12 @@ examples/**/build/*
 light.egg-info/
 **/.vscode/*
 
+dataset/*
 logs/*
 .coverage
+*.zip
+
+#emacs
+*~
+\#*\#
+.\#*

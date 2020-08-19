@@ -9,9 +9,6 @@
 from parlai.core.agents import create_agent
 from parlai.core.dict import DictionaryAgent
 
-from parlai_internal.projects.light.beatthehobbot.chat_service.utils import (
-    LIGHTPersonaGenerator,
-)
 import parlai_fb.chat_service.utils.misc as internal_utils
 from parlai.chat_service.utils.misc import DictFrequencies
 from parlai.core.opt import Opt
@@ -21,6 +18,7 @@ from light.hobbot.onboarding_worlds import (
 )
 from light.hobbot.single_player_world import LIGHTSinglePlayerWorld
 from light.graph.builders.one_room_builder import OneRoomChatBuilder
+from light.data_model.light_database import LIGHTDatabase
 
 from copy import deepcopy
 import os
@@ -41,7 +39,16 @@ def module_initialize(opt: Opt, manager, deploy_with_tw: bool = False):
     service_strategy.init_safety(opt)
 
     # Rest of LIGHT setup
-    opt["graph_builder"] = OneRoomChatBuilder()
+    ldb = LIGHTDatabase(os.path.join(res_path, "database.db"))
+    opt["graph_builder"] = OneRoomChatBuilder(
+        ldb=ldb,
+        opt={
+            'db_path': os.path.join(res_path, "database.db"),
+            'model_path': os.path.join(res_path, "starspace"),
+            "suggestion_type": "hybrid",
+            "hybridity_prob": 0.2,
+        },
+    )
 
     # Build a dictionary for use in OffensiveLanguageDetector
     dict_agent = DictionaryAgent({})

@@ -356,7 +356,13 @@ class PartnerHeuristicModelSoul(ModelSoul):
         Get the last interaction partner labelled for the given node, if it exists
         """
         if hasattr(node, "_last_interaction_partner_id"):
-            return node._last_interaction_partner_id
+            last_partner_id = node._last_interaction_partner_id
+            if last_partner_id is None:
+                return None
+            last_partner_node = self.world.oo_graph.get_node(last_partner_id)
+            if last_partner_node.get_room() != node.get_room():
+                return None  # last partner is no longer present.
+            return last_partner_id
         else:
             return None
 

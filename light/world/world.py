@@ -17,6 +17,7 @@ from light.graph.events.graph_events import (
     ALL_EVENTS_LIST,
     SpawnEvent,
     SystemMessageEvent,
+    init_safety_classifier,
 )
 from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 from light.world.views import WorldViewer
@@ -48,7 +49,9 @@ class World(object):
     Still very much defining the behavior clearly until deprecations are finished
     """
 
-    def __init__(self, opt, graph_builder, debug=False,):
+    def __init__(
+        self, opt, graph_builder, debug=False,
+    ):
         # TODO re-investigate callbacks during action refactor
         self.callbacks = {}
         self.variables = {}
@@ -59,6 +62,7 @@ class World(object):
         self.oo_graph = OOGraph(opt)
         self.view = WorldViewer(self)
         self.purgatory = Purgatory(self)
+        self.opt = opt
 
         # TODO better specific player management?
         self._player_cnt = 0
@@ -73,6 +77,9 @@ class World(object):
             self._no_npc_models = graph_builder._no_npc_models
             self.npc_models._no_npc_models = self._no_npc_models
         self.graph_builder = graph_builder  # TODO replace with builder
+
+        # Set up safety classifier.
+        init_safety_classifier(self.opt.get("safety_classifier_path", ""))
 
         # TODO Used for storage of conversation history
         # self._database_location = opt.get('database_path', None)
@@ -500,10 +507,10 @@ class World(object):
         # create rename <node> <value>    <-- **crashes*
         # create delete <node>
         # create set_prop orc to health=5
-        from parlai_internal.tasks.graph_world3.class_nodes import (
-            create_thing,
-            CLASS_NAMES,
-        )
+        # from parlai_internal.tasks.graph_world3.class_nodes import (
+        #     create_thing,
+        #     CLASS_NAMES,
+        # )
 
         if not self.has_prop(agent_id, "agent"):
             return False, "create"
@@ -921,7 +928,7 @@ class World(object):
 
         if executable not in ALL_EVENTS:
             self.send_msg(
-                agentid, "You can't {}.{}".format(executable, self.help_message())
+                agentid, "You can't {}. {}".format(executable, self.help_message())
             )
             return False, inst[0]
 

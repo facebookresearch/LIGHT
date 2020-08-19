@@ -13,13 +13,16 @@ import sys
 
 import parlai.utils.misc as parlai_utils
 
+from light.graph.builders.external_map_json_builder import ExternalMapJsonBuilder
 from light.graph.builders.starspace_all import StarspaceBuilder
 from light.data_model.light_database import LIGHTDatabase
 from light.world.utils.terminal_player_provider import TerminalPlayerProvider
 from parlai.core.params import ParlaiParser
 from light.world.world import World
 from light.world.souls.repeat_soul import RepeatSoul
-from light.world.souls.models.partner_heuristic_model_soul import PartnerHeuristicModelSoul
+from light.world.souls.models.partner_heuristic_model_soul import (
+    PartnerHeuristicModelSoul,
+)
 import os
 import random
 import numpy
@@ -28,8 +31,10 @@ import asyncio
 random.seed(6)
 numpy.random.seed(6)
 
-USE_MODELS = True
+LOAD_MAP = True
+USE_MODELS = False
 shared_model_content = None
+
 
 def init_world(world_builder):
     g, world = world_builder.get_graph()
@@ -37,7 +42,9 @@ def init_world(world_builder):
     if not USE_MODELS:
         purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
     else:
-        purgatory.register_filler_soul_provider("model", PartnerHeuristicModelSoul, lambda: [shared_model_content])
+        purgatory.register_filler_soul_provider(
+            "model", PartnerHeuristicModelSoul, lambda: [shared_model_content]
+        )
     for empty_agent in world.oo_graph.agents.values():
         purgatory.fill_soul(empty_agent)
     provider = TerminalPlayerProvider(purgatory)
@@ -69,21 +76,27 @@ async def run_with_builder(world_builder):
 
 
 parser = ParlaiParser()
-StarspaceBuilder.add_parser_arguments(parser)
-opt, _unknown = parser.parse_and_process_known_args()
-ldb = LIGHTDatabase(opt["light_db_file"])
-world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
+if LOAD_MAP:
+    Builder = ExternalMapJsonBuilder
+    opt, _unknown = parser.parse_and_process_known_args()
+    opt['safety_classifier_path'] = '/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt'
+    ldb = ""
+    world_builder = Builder(ldb, debug=False, opt=opt)
+else:
+    StarspaceBuilder.add_parser_arguments(parser)
+    opt, _unknown = parser.parse_and_process_known_args()
+    ldb = LIGHTDatabase(opt["light_db_file"])
+    world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
 
 if USE_MODELS:
-    light_model_root = opt['light_model_root']
+    light_model_root = opt["light_model_root"]
     shared_model_content = PartnerHeuristicModelSoul.load_models(
-        light_model_root + 'game_speech1/model',
-        light_model_root + 'speech_train_cands.txt',
-        light_model_root + 'agent_to_utterance_trainset.txt',
-        light_model_root + 'main_act/model',
+        light_model_root + "game_speech1/model",
+        light_model_root + "speech_train_cands.txt",
+        light_model_root + "agent_to_utterance_trainset.txt",
+        light_model_root + "main_act/model",
     )
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(run_with_builder(world_builder))
-    

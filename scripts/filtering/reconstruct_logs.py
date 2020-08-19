@@ -3,10 +3,10 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from light.graph.structured_graph import OOGraph
 from light.graph.events.base import GraphEvent
-from light.world.world import World
+from light.graph.structured_graph import OOGraph
 from light.world.utils.json_utils import read_event_logs
+from light.world.world import World
 
 import argparse
 import os
@@ -19,16 +19,13 @@ the point of view (and logs) of either an agent or a room.
 
 def load_event_log(event_file):
     """
-    Given a log file, this method reconstructs the graph jsons and event jsons associated with said log.
-    To replay, all that is required is using event execute methods
+        Given a log file, this method reconstructs the graph jsons and event jsons
+        associated with said log. To replay, all that is required is using event
+        execute methods
     """
     graph_dir = os.path.join(
         os.path.abspath(os.path.dirname(event_file)), "../../light_graph_dumps"
     )
-    log_type = (
-        "agent" if "agent" in os.path.abspath(os.path.dirname(event_file)) else "room"
-    )
-
     uuid_to_world = {}
     events = []
     event_buffer = read_event_logs(event_file)
@@ -40,10 +37,10 @@ def load_event_log(event_file):
             world = uuid_to_world[world_uuid]
 
         event_obj = GraphEvent.from_json(event_json, world)
-        events.append((hash_, timestamp, event_obj))
+        events.append((world_uuid, hash_, timestamp, event_obj))
 
     # Return the worlds and the event buffer which is in order of the events
-    # NOTE: In future, if asynch writes, can define a sort on the timestamp
+    # NOTE: In future, if async writes, can define a sort on the timestamp
     return (uuid_to_world, events)
 
 
