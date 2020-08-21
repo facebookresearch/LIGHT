@@ -514,7 +514,7 @@ class GraphAgent(GraphNode):
         if self._props.get("dead", None) is not None:
             self.dead = self._props.get("dead")
         self.is_player = self._props.get("is_player", False)
-        
+
         self.following = None
         self.followed_by = {}
 
