@@ -31,22 +31,22 @@ import asyncio
 
 random.seed(6)
 numpy.random.seed(6)
-
-LOAD_MAP = True
-USE_MODELS = False
 shared_model_content = None
 
 
 def init_world(world_builder):
     g, world = world_builder.get_graph()
     purgatory = world.purgatory
-    if not USE_MODELS:
-        # purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
-        purgatory.register_filler_soul_provider("repeat", OnEventSoul, lambda: [])
-    else:
+    # Choose the type of NPC souls.
+    if opt["use_models"] == "PartnerHeuristicModelSoul":
         purgatory.register_filler_soul_provider(
             "model", PartnerHeuristicModelSoul, lambda: [shared_model_content]
         )
+    elif opt["use_models"] == "OnEventSoul":
+        purgatory.register_filler_soul_provider("repeat", OnEventSoul, lambda: [])
+    else:
+        purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
+
     for empty_agent in world.oo_graph.agents.values():
         purgatory.fill_soul(empty_agent)
     provider = TerminalPlayerProvider(purgatory)
@@ -78,10 +78,24 @@ async def run_with_builder(world_builder):
 
 
 parser = ParlaiParser()
-if LOAD_MAP:
+parser.add_argument(
+    "--use-models",
+    type=str,
+    default="OnEventSoul",
+    choices={"OnEventSoul", "RepeatSoul", "PartnerHeuristicModelSoul"},
+)
+parser.add_argument(
+    "--load-map", type=str, default="scripts/examples/simple_world.json"
+)
+parser.add_argument(
+    "--safety-classifier-path",
+    type=str,
+    default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
+)
+opt, _unknown = parser.parse_and_process_known_args()
+
+if opt["load_map"] != "none":
     Builder = ExternalMapJsonBuilder
-    opt, _unknown = parser.parse_and_process_known_args()
-    opt['safety_classifier_path'] = '/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt'
     ldb = ""
     world_builder = Builder(ldb, debug=False, opt=opt)
 else:
@@ -90,7 +104,7 @@ else:
     ldb = LIGHTDatabase(opt["light_db_file"])
     world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
 
-if USE_MODELS:
+if opt["use_models"] == "PartnerHeuristicModelSoul":
     light_model_root = opt["light_model_root"]
     shared_model_content = PartnerHeuristicModelSoul.load_models(
         light_model_root + "game_speech1/model",
