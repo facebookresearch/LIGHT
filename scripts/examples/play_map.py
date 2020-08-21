@@ -20,6 +20,7 @@ from light.world.utils.terminal_player_provider import TerminalPlayerProvider
 from parlai.core.params import ParlaiParser
 from light.world.world import World
 from light.world.souls.repeat_soul import RepeatSoul
+from light.world.souls.on_event_soul import OnEventSoul
 from light.world.souls.models.partner_heuristic_model_soul import (
     PartnerHeuristicModelSoul,
 )
@@ -40,7 +41,8 @@ def init_world(world_builder):
     g, world = world_builder.get_graph()
     purgatory = world.purgatory
     if not USE_MODELS:
-        purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
+        # purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
+        purgatory.register_filler_soul_provider("repeat", OnEventSoul, lambda: [])
     else:
         purgatory.register_filler_soul_provider(
             "model", PartnerHeuristicModelSoul, lambda: [shared_model_content]

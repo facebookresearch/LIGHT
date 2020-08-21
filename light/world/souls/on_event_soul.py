@@ -25,6 +25,27 @@ class OnEventSoul(Soul):
         """
         super().__init__(target_node, world)
 
+    def match_event(self, event, cause):
+        event_name = event.__class__.__name__
+        if cause[0] == event_name:
+            if event_name == 'SayEvent':
+                if cause[1] in event.text_content and event.safe:
+                    return True
+        return False
+
+    def execute_event(self, effect):
+        if effect[0] == 'SayEvent':
+            do_text = effect[1]
+            do_event = SayEvent.construct_from_args(
+                self.target_node, targets=[], text=do_text
+            )
+            do_event.execute(self.world)
+        if effect[0] == 'EmoteEvent':
+            do_event = EmoteEvent.construct_from_args(
+                self.target_node, targets=[], text=effect[1]
+            )
+            do_event.execute(self.world)
+            
     def on_events(self, event):
         if not hasattr(self.target_node, 'on_events'):
             # No on_events for this agent.
@@ -34,15 +55,9 @@ class OnEventSoul(Soul):
         for on_event in on_events:
             cause = on_event[0]
             effect = on_event[1]
-            if event_name == cause[0]:
-                if event_name == 'SayEvent':
-                    if cause[1] in event.text_content:
-                        do_text = effect[1]
-                        do_event = SayEvent.construct_from_args(
-                            self.target_node, targets=[], text=do_text
-                        )
-                        do_event.execute(self.world)
-        
+            if self.match_event(event, cause):
+                self.execute_event(effect)
+            
         
     async def observe_event(self, event: "GraphEvent"):
         """

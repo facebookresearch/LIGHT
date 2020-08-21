@@ -517,7 +517,7 @@ class GraphAgent(GraphNode):
         self.on_events = [
             [['SayEvent', 'lotr'], ['SayEvent', 'One does not simply mention lotr!']],
             [['SayEvent', 'meow'], ['SayEvent', 'Meow back!']],
-
+            [['SayEvent', 'beam at me'], ['EmoteEvent', 'grin']],
         ]
         
         self.following = None
