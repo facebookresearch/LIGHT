@@ -28,26 +28,26 @@ class OnEventSoul(Soul):
     def match_event(self, event, cause):
         event_name = event.__class__.__name__
         if cause[0] == event_name:
-            if event_name == 'SayEvent':
+            if event_name == "SayEvent":
                 if cause[1] in event.text_content and event.safe:
                     return True
         return False
 
     def execute_event(self, effect):
-        if effect[0] == 'SayEvent':
+        if effect[0] == "SayEvent":
             do_text = effect[1]
             do_event = SayEvent.construct_from_args(
                 self.target_node, targets=[], text=do_text
             )
             do_event.execute(self.world)
-        if effect[0] == 'EmoteEvent':
+        if effect[0] == "EmoteEvent":
             do_event = EmoteEvent.construct_from_args(
                 self.target_node, targets=[], text=effect[1]
             )
             do_event.execute(self.world)
-            
+
     def on_events(self, event):
-        if not hasattr(self.target_node, 'on_events'):
+        if not hasattr(self.target_node, "on_events"):
             # No on_events for this agent.
             return
         event_name = event.__class__.__name__
@@ -57,8 +57,7 @@ class OnEventSoul(Soul):
             effect = on_event[1]
             if self.match_event(event, cause):
                 self.execute_event(effect)
-            
-        
+
     async def observe_event(self, event: "GraphEvent"):
         """
         OnEventSouls check for specific events, that trigger specific actions.
