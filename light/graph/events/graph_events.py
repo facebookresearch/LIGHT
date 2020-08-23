@@ -482,6 +482,8 @@ class GoEvent(GraphEvent):
         self.__canonical_room_view = new_room.get_view_from(old_room)
 
     def is_not_blocked(self, world):
+        return False
+        # TODO: add logic to support blocking such as below.
         self.__self_view = 'You were blocked from moving!'
         actor_name = self.actor.get_prefix_view()
         self.__in_room_view = f'{actor_name} was blocked from moving!'.capitalize()
