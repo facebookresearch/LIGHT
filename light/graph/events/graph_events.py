@@ -484,13 +484,13 @@ class GoEvent(GraphEvent):
     def is_not_blocked(self, world):
         return True
         # TODO: add logic to support blocking such as below.
-        self.__self_view = 'You were blocked from moving!'
+        self.__self_view = "You were blocked from moving!"
         actor_name = self.actor.get_prefix_view()
-        self.__in_room_view = f'{actor_name} was blocked from moving!'.capitalize()
+        self.__in_room_view = f"{actor_name} was blocked from moving!".capitalize()
         world.broadcast_to_agents(self, [self.actor])
         self.executed = True
         return False
-        
+
     def execute(self, world: "World") -> List[GraphEvent]:
         """
         On execution, trigger leaving, move the agent, and trigger arriving
@@ -515,7 +515,7 @@ class GoEvent(GraphEvent):
         self.__successful_leave = self.is_not_blocked(world)
         if not self.__successful_leave:
             return []
-        
+
         # Trigger the leave event, must be before the move to get correct room
         LeaveEvent(self.actor, [self.target_nodes[0]]).execute(world)
         self.actor.move_to(new_room)
@@ -538,7 +538,7 @@ class GoEvent(GraphEvent):
             return self.__self_view
         else:
             return self.__in_room_view
-        
+
     def to_canonical_form(self) -> str:
         """
         Provide the text that this event's actor would use to invoke this event
