@@ -481,6 +481,14 @@ class GoEvent(GraphEvent):
         old_room = self.actor.get_room()
         self.__canonical_room_view = new_room.get_view_from(old_room)
 
+    def is_not_blocked(self, world):
+        self.__self_view = 'You were blocked from moving!'
+        actor_name = self.actor.get_prefix_view()
+        self.__in_room_view = f'{actor_name} was blocked from moving!'.capitalize()
+        world.broadcast_to_agents(self, [self.actor])
+        self.executed = True
+        return False
+        
     def execute(self, world: "World") -> List[GraphEvent]:
         """
         On execution, trigger leaving, move the agent, and trigger arriving
@@ -488,6 +496,8 @@ class GoEvent(GraphEvent):
         """
         assert not self.executed
         # Populate for views
+        self.__self_view = None
+        self.__in_room_view = None
         old_room = self.actor.get_room()
         new_room = self.target_nodes[0]
         old_room_view = old_room.get_prefix_view_from(new_room)
@@ -500,6 +510,10 @@ class GoEvent(GraphEvent):
                 self.actor.node_id
             ].agent_logger.observe_event(self)
 
+        self.__successful_leave = self.is_not_blocked(world)
+        if not self.__successful_leave:
+            return []
+        
         # Trigger the leave event, must be before the move to get correct room
         LeaveEvent(self.actor, [self.target_nodes[0]]).execute(world)
         self.actor.move_to(new_room)
@@ -516,8 +530,13 @@ class GoEvent(GraphEvent):
 
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
-        return None  # Go events are viewed through Leave and Arrive events
-
+        # Go events are mostly viewed through Leave and Arrive events.
+        # These variables over other cases, such as being blocked.
+        if viewer == self.actor:
+            return self.__self_view
+        else:
+            return self.__in_room_view
+        
     def to_canonical_form(self) -> str:
         """
         Provide the text that this event's actor would use to invoke this event
