@@ -12,6 +12,7 @@ from deploy.web.server.game_instance import (
 )
 from light.data_model.light_database import LIGHTDatabase
 from light.world.player_provider import PlayerProvider
+from light.world.quest_loader import QuestLoader
 
 import argparse
 import inspect
@@ -36,6 +37,7 @@ from light.graph.events.graph_events import SoulSpawnEvent
 
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
+QUESTS_LOCATION = None
 here = os.path.abspath(os.path.dirname(__file__))
 
 _seen_warnings = set()
@@ -338,6 +340,8 @@ class TornadoPlayerProvider(PlayerProvider):
         self.socket = socket
         self.player_soul = None
         self.purgatory = purgatory
+        if QUESTS_LOCATION is not None:
+            self.quest_loader = QuestLoader(QUESTS_LOCATION)
         socket.set_player(self)
         socket.send_alive()
 

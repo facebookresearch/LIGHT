@@ -7,12 +7,16 @@
 from light.world.souls.soul import Soul
 from light.world.content_loggers import AgentInteractionLogger
 from typing import TYPE_CHECKING
+import random
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
     from light.graph.world.world import World
     from light.graph.events.base import GraphEvent
 
+
+QUESTS_ACTIVE = True
+QUEST_TEXT = "\nYour Quest:\n"
 
 class PlayerSoul(Soul):
     """
@@ -35,6 +39,10 @@ class PlayerSoul(Soul):
         target_node._human = True
         self.player_id = player_id
         self.provider = provider  # TODO link with real provider
+        if hasattr(self.provider, 'quest_loader'):
+            target_quest = self.provider.quest_loader.get_random_quest()
+            goal = random.choice(["short_motivation", "mid_motivation", "long_motivation"])
+            target_node.persona += QUEST_TEXT + target_quest[goal]
         self.agent_logger = AgentInteractionLogger(world.oo_graph, target_node)
         provider.register_soul(self)
 
@@ -60,6 +68,7 @@ class PlayerSoul(Soul):
         """
         super().reap()
         self.target_node.is_player = False
+        self.target_node.persona = self.target_node.persona.split(QUEST_TEXT)
         self.world.oo_graph.room_id_to_loggers[
             self.target_node.get_room().node_id
         ]._remove_player()
