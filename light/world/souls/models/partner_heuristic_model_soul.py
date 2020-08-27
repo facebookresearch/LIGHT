@@ -27,6 +27,14 @@ ALLOW_INTERBOT_CHAT = False  # Only allow bots to answer humans
 JITTER_TIME_AROUND_TURNS = 2
 CHAT_DISENGAGE_CHANCE = 5.0 / 100.0
 TAKE_ACTION_CHANCE = 1.0 / 5.0
+SAFE_PHRASES = [
+  "Let's talk about something else?",
+  "Tell me something you don't know anything about.",
+  "I'd like to talk about something different.",
+  "Would you like to talk about something different.",
+  "Can we change topics?",
+  "How about a new conversation?",
+]
 
 class PartnerHeuristicModelSoul(ModelSoul):
     """
@@ -331,12 +339,18 @@ class PartnerHeuristicModelSoul(ModelSoul):
             return
 
         # add dialogue to history
-        if obs is not None:
+        if obs is not None and obs.is_dialogue_safe(obs.text_content):
             last_msg = '_partner_say ' + obs.text_content + '\n'
             self._dialogue_history['speech'][agent_id].append(obs.text_content + '\n')
             self._dialogue_history['act'][agent_id].append(last_msg)
             txt += last_msg
-        
+        elif obs is not None:
+            # text content was not safe
+            last_msg = '_partner_say ' + random.choice(SAFE_PHRASES) + "\n"
+            self._dialogue_history['speech'][agent_id].append(obs.text_content + '\n')
+            self._dialogue_history['act'][agent_id].append(last_msg)
+            txt += last_msg
+
         # Send to model to process
         msg = {'text': txt, 'episode_done': True}
         self.npc_model.observe(msg)

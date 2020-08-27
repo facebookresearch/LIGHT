@@ -79,7 +79,7 @@ class World(object):
         self.graph_builder = graph_builder  # TODO replace with builder
 
         # Set up safety classifier.
-        init_safety_classifier(self.opt.get("safety_classifier_path", ""))
+        # init_safety_classifier(self.opt.get("safety_classifier_path", ""))
 
         # TODO Used for storage of conversation history
         # self._database_location = opt.get('database_path', None)

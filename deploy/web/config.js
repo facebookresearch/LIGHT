@@ -1,6 +1,6 @@
 const DEV = {
-  host: "http://ec2-3-22-242-71.us-east-2.compute.amazonaws.com",
-  hostname: "ec2-3-22-242-71.us-east-2.compute.amazonaws.com",
+  host: "http://light-rpg.ai",
+  hostname: "light-rpg.ai",
   port: "8080",
 };
 

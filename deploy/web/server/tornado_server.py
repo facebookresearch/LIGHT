@@ -13,6 +13,7 @@ from deploy.web.server.game_instance import (
 from light.data_model.light_database import LIGHTDatabase
 from light.world.player_provider import PlayerProvider
 from light.world.quest_loader import QuestLoader
+from light.graph.events.graph_events import init_safety_classifier
 
 import argparse
 import inspect
@@ -39,6 +40,8 @@ DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
 QUESTS_LOCATION = None
 here = os.path.abspath(os.path.dirname(__file__))
+
+init_safety_classifier(os.path.expanduser("~/data/safety/OffensiveLanguage.txt"))
 
 _seen_warnings = set()
 

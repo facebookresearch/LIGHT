@@ -127,6 +127,15 @@ function Message({ text, caller, actor, isSelf, onReply }) {
   );
 }
 
+function get_msg_actor(msg) {
+  if (msg.actors === undefined) {
+    return msg.actor.node_id;
+  } else {
+    return msg.actors[0];
+  }
+}
+
+
 function Entry({ msg, onReply, agents, selfId }) {
   if (
     [
@@ -141,12 +150,7 @@ function Entry({ msg, onReply, agents, selfId }) {
   ) {
     return <Setting text={msg.text} />;
   } else {
-    var actor = "";
-    if (msg.actors === undefined) {
-      actor = msg.actor.node_id;
-    } else {
-      actor = msg.actors[0];
-    }
+    var actor = get_msg_actor(msg);
     return (
       <Message
         text={msg.text}
