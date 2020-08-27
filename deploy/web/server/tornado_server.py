@@ -39,6 +39,10 @@ from light.graph.events.graph_events import SoulSpawnEvent
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
 QUESTS_LOCATION = None
+if QUESTS_LOCATION is not None:
+    quest_loader = QuestLoader(QUESTS_LOCATION)
+else:
+    quest_loader = None
 here = os.path.abspath(os.path.dirname(__file__))
 
 init_safety_classifier(os.path.expanduser("~/data/safety/OffensiveLanguage.txt"))
@@ -343,8 +347,8 @@ class TornadoPlayerProvider(PlayerProvider):
         self.socket = socket
         self.player_soul = None
         self.purgatory = purgatory
-        if QUESTS_LOCATION is not None:
-            self.quest_loader = QuestLoader(QUESTS_LOCATION)
+        if quest_loader is not None:
+            self.quest_loader = quest_loader
         socket.set_player(self)
         socket.send_alive()
 
