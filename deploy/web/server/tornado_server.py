@@ -38,7 +38,7 @@ from light.graph.events.graph_events import SoulSpawnEvent
 
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
-QUESTS_LOCATION = None
+QUESTS_LOCATION = "/home/ubuntu/data/quests"
 if QUESTS_LOCATION is not None:
     quest_loader = QuestLoader(QUESTS_LOCATION)
 else:
