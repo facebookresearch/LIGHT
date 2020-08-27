@@ -57,7 +57,12 @@
 			"name_prefix": "some",
 			"is_plural": 1,
 			"char_type": "creature",
-			"emoji": "🏍️"
+			"emoji": "b",
+			"on_events": [
+			    [["SayEvent", "lotr"], ["SayEvent", "One does not simply mention lotr!"]],
+			    [["SayEvent", "meow"], ["SayEvent", "Meow back!"]],
+			    [["SayEvent", "beam at me"], ["EmoteEvent", "grin"]]
+			]
 		    },
 		    "5": {
 			"id": 3629,
@@ -68,7 +73,7 @@
 			"name_prefix": "some",
 			"is_plural": 1,
 			"char_type": "creature",
-			"emoji": "🏍️"
+			"emoji": "a"
 		    }
 		},
 		"object": {

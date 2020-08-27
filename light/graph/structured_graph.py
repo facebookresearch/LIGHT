@@ -593,11 +593,16 @@ class OOGraph(object):
         agents = {}
         for ind, c in entities["character"].items():
             # TODO: not used yet: name_prefix, is_plural, char_type, emoj, base_id
+            props ={
+                "desc": c["physical_description"],
+                "persona": c["persona"]
+                }
             n = g.add_agent(
-                c["name"],
-                {"desc": c["physical_description"], "persona": c["persona"]},
+                c["name"], props,
                 uid=str(ind),
             )
+            if 'on_events' in c:
+                n.on_events = c['on_events']
             agents[int(ind)] = n
 
         objects = {}

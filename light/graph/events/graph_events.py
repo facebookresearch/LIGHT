@@ -59,7 +59,11 @@ class SpeechEvent(GraphEvent):
     """Base speaking class mostly to handle dialogue safety."""
 
     def is_dialogue_safe(self, text):
-        return safety_classifier.is_safe(text)
+        if safety_classifier.is_safe(text):
+            self.safe = True
+        else:
+            self.safe = False
+        return self.safe
 
 
 class SayEvent(SpeechEvent):
@@ -2718,7 +2722,7 @@ class EmoteEvent(GraphEvent):
         assert self.text_content is not None, "Cannot emote without text_context"
         actor_name = self.actor.get_prefix_view()
         self.__display_action = self.DESC_MAP[self.text_content]
-        self.__in_room_view = f"{actor_name} {self.__display_action}".capitalize()
+        self.__in_room_view = f"{actor_name} {self.__display_action}.".capitalize()
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         self.executed = True
         return []
