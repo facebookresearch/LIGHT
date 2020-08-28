@@ -22,7 +22,7 @@
 					"room": 2,
 					"characters": [ "5" ],
 					"objects": [
-						3
+					    "3", "6", "7"
 					],
 					"color": "#8A9BA8"
 				}
@@ -69,7 +69,7 @@
 			"name": "kitty",
 			"base_id": 3628,
 			"persona": "I'm a cute kitty.",
-			"physical_description": "Black and white and cute all over.",
+			"desc": "Black and white and cute all over.",
 			"name_prefix": "some",
 			"is_plural": 1,
 			"char_type": "creature",
@@ -88,10 +88,68 @@
 				"is_surface": 0,
 				"is_wearable": 0,
 				"is_weapon": 0,
-				"physical_description": "A work of art that is has more than monetary value. Mostly owned by kings and wealthy collectors",
+				"desc": "A work of art that is has more than monetary value. Mostly owned by kings and wealthy collectors",
 				"name_prefix": "a",
-				"is_plural": 0,
+				"is_plslural": 0,
 				"emoji": "🕰️"
+			},
+			"6": {
+			    "id": 5125,
+			    "name": "shovel",
+			    "base_id": 5124,
+			    "is_container": 0,
+			    "is_drink": 0,
+			    "is_food": 0,
+			    "is_gettable": 0,
+			    "is_surface": 0,
+			    "is_wearable": 0,
+			    "is_weapon": 0,
+			    "desc": "A shovel",
+			    "name_prefix": "a",
+			    "is_plural": 0,
+			    "on_use": [
+				{
+				    "pre": [
+					["is_holding", "used_item"],
+					["used_with_item_name", "muddy area"]
+				    ],
+				    "post": [
+					[   
+                                            "create_entity",
+                                            "in_used_target_item",
+					    {
+						"name": "emerald ring",
+						"is_wearable": 1,
+						"physical_description": "A beautiful and mysterious ring.. could it have magical powers?"
+					    }
+					],
+					[
+					    "broadcast_message",
+					    {
+						"self_view": "You dig into the sodden mud, and spy something glistening within!"
+					    }
+					]
+				    ]
+				}
+			    ]
+			},
+			"7": {
+			    "id": 5125,
+			    "name": "muddy area",
+			    "base_id": 5124,
+			    "is_container": 1,
+			    "container": true,
+			    "is_drink": 0,
+			    "is_food": 0,
+			    "is_gettable": 0,
+			    "is_surface": 1,
+			    "surface_type": "in",
+			    "is_wearable": 0,
+			    "is_weapon": 0,
+			    "desc": "A muddy area",
+			    "name_prefix": "a",
+			    "is_plural": 0,
+			    "emoji": "🕰️"
 			}
 		},
 		"nextID": 5

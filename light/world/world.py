@@ -822,16 +822,19 @@ class World(object):
         return random.choice(h)
 
     def parse_exec(self, agentid, inst=None):
-        try:
+        if self.opt.get('dont_catch_errors', False):
             return self.parse_exec_internal(agentid, inst)
-        except Exception:
-            import traceback
+        else:
+            try:
+                return self.parse_exec_internal(agentid, inst)
+            except Exception:
+                import traceback
 
-            traceback.print_exc()
-            self.send_msg(
-                agentid, "Strange magic is afoot. This failed for some reason..."
-            )
-            return False, "FailedParseExec"
+                traceback.print_exc()
+                self.send_msg(
+                    agentid, "Strange magic is afoot. This failed for some reason..."
+                )
+                return False, "FailedParseExec"
 
     def attempt_parse_event(self, EventClass, actor_node, arguments):
         """Return the possible parsed event given the event, actor, and arguments"""

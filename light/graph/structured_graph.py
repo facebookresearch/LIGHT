@@ -591,24 +591,17 @@ class OOGraph(object):
             n.force_move_to(g.void)
 
         agents = {}
-        for ind, c in entities["character"].items():
-            # TODO: not used yet: name_prefix, is_plural, char_type, emoj, base_id
-            props ={
-                "desc": c["physical_description"],
-                "persona": c["persona"]
-                }
+        for ind, props in entities["character"].items():
             n = g.add_agent(
-                c["name"], props,
+                props["name"], props,
                 uid=str(ind),
             )
-            if 'on_events' in c:
-                n.on_events = c['on_events']
             agents[int(ind)] = n
 
         objects = {}
         for ind, obj in entities["object"].items():
             n = g.add_object(
-                obj["name"], {"desc": obj["physical_description"],}, uid=str(ind)
+                obj["name"], obj, uid=str(ind)
             )
             objects[int(ind)] = n
 
