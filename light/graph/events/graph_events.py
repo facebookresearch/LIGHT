@@ -2430,10 +2430,6 @@ class UseEvent(GraphEvent):
             recipient_text = "you"
         return f"{actor_text} used {self.__given_name} with {recipient_text}."
 
-    def to_canonical_form(self) -> str:
-        """return action text"""
-        return "BOB"  # f"use {self._objects[0]} with {self._objects[1]}"
-
     @classmethod
     def split_text_args(
         cls, actor: GraphAgent, text: str
