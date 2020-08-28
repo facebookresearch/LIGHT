@@ -822,8 +822,9 @@ class World(object):
         return random.choice(h)
 
     def parse_exec(self, agentid, inst=None):
+        return self.parse_exec_internal(agentid, inst)
         try:
-            return self.parse_exec_internal(agentid, inst)
+            pass
         except Exception:
             import traceback
 
