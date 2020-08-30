@@ -24,7 +24,6 @@ class LongcontextSoul(Soul):
         LongcontextSouls (currently) just initialize normally on a node and world
         """
         super().__init__(target_node, world)
-        print("longinit")
         
     def match_event(self, event, cause):
         event_name = event.__class__.__name__
@@ -67,7 +66,6 @@ class LongcontextSoul(Soul):
         """
         LongcontextSouls check for specific events, that trigger specific actions.
         """
-        print("ho!")
         if event.actor == self.target_node:
             return
         self.on_events(event)

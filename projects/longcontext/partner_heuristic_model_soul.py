@@ -8,7 +8,7 @@ import time
 import random
 from collections import deque
 from light.world.souls.model_soul import ModelSoul
-from light.graph.events.graph_events import TellEvent, SayEvent
+from light.graph.events.graph_events import TellEvent, SayEvent, GoEvent
 from parlai.core.agents import create_agent_from_shared
 
 from typing import TYPE_CHECKING, List
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 MIN_TIME_BETWEEN_TURNS = 0
 MAX_DIALOGUE_REPEAT_HISTORY = 50
 MAX_ACTION_REPEAT_HISTORY = 4
-ALLOW_INTERBOT_CHAT = False  # Only allow bots to answer humans
+ALLOW_INTERBOT_CHAT = True  # Only allow bots to answer humans
 JITTER_TIME_AROUND_TURNS = 2
 CHAT_DISENGAGE_CHANCE = 5.0 / 100.0
 TAKE_ACTION_CHANCE = 1.0 / 5.0
@@ -307,10 +307,6 @@ class PartnerHeuristicModelSoul(ModelSoul):
         if agent_id not in hist:
             hist[agent_id] = []
 
-        # TODO refactor with is_human when human flag is refactored
-        if not ALLOW_INTERBOT_CHAT and not partner._human:
-            return
-
         partner_name = partner.name
         txt = self.npc_build_context(partner_name)
         for d in hist[agent_id]:
@@ -369,18 +365,27 @@ class PartnerHeuristicModelSoul(ModelSoul):
         self.target_node._last_interaction_partner_id = partner_node.node_id
         partner_node._last_interaction_partner_id = self.target_node.node_id
 
+    def hai(self):
+        print("hai")
+
     async def _take_timestep(self) -> None:
+        self.take_timestep()
+        
+    def take_timestep(self) -> None:
         """
         Attempt to take some actions based on any observations in the pending list
         """
         #if self.get_last_turn_too_recent():
         #    return
-        
+
         graph = self.world.oo_graph
         agent = self.target_node
         agent_id = agent.node_id
         agent.get_text()  # Clear the buffer, we use _pending_observations
 
+        if random.random() < CHAT_DISENGAGE_CHANCE:
+            self.dialogue_clear_partner()
+        
         # possibly respond to talk requests
         curr_obs = []
         while len(self._pending_observations) > 0:
@@ -402,7 +407,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
             partner_id = partner.node_id
             if (
                 partner.node_id != agent_id
-                and partner.get_prop('speed', 0) > 0
+                and partner.get_prop('speed', 0) >= 0
                 and self.get_last_interaction_partner(partner) is None
             ):
                 self.set_interaction_partner(partner)
@@ -412,21 +417,16 @@ class PartnerHeuristicModelSoul(ModelSoul):
             # possibly end interaction with existing interaction partner (if any)?
             if random.random() < CHAT_DISENGAGE_CHANCE:
                 self.dialogue_clear_partner()
-
-        hit_actions = self.world.get_possible_actions(agent_id, use_actions=['hit'])
-        filtered_hit_actions = [a for a in hit_actions if a.target_nodes[0].get_prop('is_player')]
-        for hit_event in filtered_hit_actions:
-            aggression = agent.get_prop('aggression', 0)
-            if random.randint(0, 100) < aggression:
-                hit_event.execute(self.world)
-                return
-
+                
         # random movement for npcs..
-        if random.randint(0, 1000) < agent.speed:
-            move_actions = self.world.get_possible_actions(agent_id, use_actions=['go'])
-            if len(move_actions) > 0:
-                move_action = random.choice(move_actions)
-                move_action.execute(self.world)
+        if random.randint(0, 1000) < 100: #agent.speed:
+            go_events =  self.world.get_possible_events(agent_id, use_actions=['go'])
+            # move_actions = self.world.get_possible_actions(agent_id, use_actions=['go'])
+            if len(go_events) > 0:
+                go_event = random.choice(go_events)
+                go_event.execute(self.world)
+                #move_action = random.choice(move_actions)
+                #move_action.execute(self.world)
                 return
 
         # possibly act according to the bert model

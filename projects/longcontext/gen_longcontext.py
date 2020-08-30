@@ -46,12 +46,12 @@ def init_world(world_builder):
         "model", PartnerHeuristicModelSoul, lambda: [shared_model_content]
     )
     #purgatory.register_filler_soul_provider("repeat", LongcontextSoul, lambda: [])
-    print("init_world")
+    #print("init_world")
     for empty_agent in world.oo_graph.agents.values():
         purgatory.fill_soul(empty_agent)
     #return world
     provider = LongcontextPlayerProvider(purgatory)
-    return provider
+    return provider, world
 
 
 
@@ -63,13 +63,20 @@ async def run_with_builder2(world_builder):
             agent.handle_act("look")
 
 async def run_with_builder(world_builder):
-    player_provider = init_world(world_builder)
+    player_provider, world = init_world(world_builder)
     player_provider.process_longcontext_act("")  # get an agent
     player_provider.process_longcontext_act("go east")  # get an agent
     while True:
+        for soulid, soul in world.purgatory.node_id_to_soul.items():
+            # import pdb; pdb.set_trace()
+            if str(type(soul)) == "<class 'partner_heuristic_model_soul.PartnerHeuristicModelSoul'>":
+                # print(soul)
+                soul.take_timestep()
+
         if player_provider.obs_cnt == 0:
-            text = '"hello there!"'
-            player_provider.process_longcontext_act(text)
+            pass
+            #text = "look" #'"hello there!"'
+            #player_provider.process_longcontext_act(text)
         else:
             pass #print(player_provider.obs_cnt)
         await asyncio.sleep(0.01)
@@ -102,14 +109,14 @@ parser = ParlaiParser()
 parser.add_argument(
     "--use-models",
     type=str,
-    default="OnEventSoul",
+    default="LongcontextSoul",
     choices={"OnEventSoul", "RepeatSoul", "PartnerHeuristicModelSoul"},
 )
 parser.add_argument(
     "--light-model-root", type=str, default="/checkpoint/light/models/"
 )
 parser.add_argument(
-    "--load-map", type=str, default="scripts/examples/simple_world.json"
+    "--load-map", type=str, default="projects/longcontext/simple_world.json"
 )
 parser.add_argument(
     "--safety-classifier-path",

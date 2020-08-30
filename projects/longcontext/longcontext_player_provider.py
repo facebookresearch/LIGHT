@@ -5,11 +5,14 @@
 # LICENSE file in the root directory of this source tree.
 
 from light.world.player_provider import PlayerProvider
+from partner_heuristic_model_soul import (                                                             
+    PartnerHeuristicModelSoul,
+)   
 
 from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
-    from light.world.souls.player_soul import PlayerSoul
+    #    from light.world.souls.player_soul import PlayerSoul
     from light.world.purgatory import Purgatory
 
 
@@ -24,6 +27,7 @@ class LongcontextPlayerProvider(PlayerProvider):
         LongcontextPlayerProviders only keep track of one player at most.
         """
         self.player_soul: Optional["PlayerSoul"] = None
+        #self.npc_soul = PartnerHeuristicModelSoul(
         self.purgatory = purgatory
         self.obs_cnt = 0
         
