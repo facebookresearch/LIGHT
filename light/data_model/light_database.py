@@ -372,6 +372,18 @@ class LIGHTDatabase:
         table_name_fts = self.table_dict[type] + "_fts"
         # if input is empty, return all entries of the specified type through
         # the "else" block
+        
+        self.c.execute(
+            """
+            SELECT * FROM {}
+            WHERE name LIKE ?
+            """.format(
+                table_name
+            ),
+            ("%" + input + "%",),
+        )
+        results = self.c.fetchall()
+
         if fts and input != "":
             # Can use .format because table_name is being chosen from a predefined
             # list, so there is no risk for SQL injection
@@ -387,17 +399,10 @@ class LIGHTDatabase:
                 ),
                 (input,),
             )
-        else:
-            self.c.execute(
-                """
-                SELECT * FROM {}
-                WHERE name LIKE ?
-                """.format(
-                    table_name
-                ),
-                ("%" + input + "%",),
-            )
-        return self.c.fetchall()
+            fts_results = self.c.fetchall()
+            results += fts_results
+
+        return results
 
     def get_id(self, id=None, type=None, expand=False):
         """
