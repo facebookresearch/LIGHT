@@ -345,7 +345,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
             if last_partner_id is None:
                 return None
             last_partner_node = self.world.oo_graph.get_node(last_partner_id)
-            if last_partner_node.get_room() != node.get_room():
+            if last_partner_node == None or last_partner_node.get_room() != node.get_room():
                 return None  # last partner is no longer present.
             return last_partner_id
         else:
@@ -430,4 +430,5 @@ class PartnerHeuristicModelSoul(ModelSoul):
                 return
 
         # possibly act according to the bert model
-        self.npc_action()
+        # self.npc_action()
+        

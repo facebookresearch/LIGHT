@@ -116,12 +116,13 @@ parser.add_argument(
     "--light-model-root", type=str, default="/checkpoint/light/models/"
 )
 parser.add_argument(
-    "--load-map", type=str, default="projects/longcontext/simple_world.json"
+    "--load-map", type=str, default="none" #projects/longcontext/simple_world.json"
+    #"--load-map", type=str, default="projects/longcontext/simple_world.json"
 )
 parser.add_argument(
     "--safety-classifier-path",
     type=str,
-    default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
+    default="" #"/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
 )
 opt, _unknown = parser.parse_and_process_known_args()
 

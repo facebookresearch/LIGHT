@@ -455,9 +455,9 @@ class World(object):
                 if a in exclude_agents:
                     continue
                 self.send_action(a, action)
-            self.oo_graph.room_id_to_loggers[
-                action.actor.get_room().node_id
-            ].observe_event(action)
+            #self.oo_graph.room_id_to_loggers[
+            #    action.actor.get_room().node_id
+            #].observe_event(action)
         else:
             if "actors" in action:
                 # send message to the actor first

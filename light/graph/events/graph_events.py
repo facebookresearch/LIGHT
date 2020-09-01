@@ -2376,7 +2376,7 @@ class UseEvent(GraphEvent):
 
     def on_use(self, world):
         use_node = self.target_nodes[0]
-        if not hasattr(use_node, "on_use"):
+        if not hasattr(use_node, "on_use") and use_node.on_use is not None:
             # No on_use for this agent.
             return
         self.found_use = False
@@ -2502,7 +2502,7 @@ class UseEvent(GraphEvent):
         if not hasattr(use_object, "on_use") or use_object.on_use is None:
             return ErrorEvent(cls, actor, "Nothing special seems to happen.",)
         return cls(actor, target_nodes=[use_object, use_with])
-
+    
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
         """
@@ -2513,7 +2513,7 @@ class UseEvent(GraphEvent):
         useable_objects = [
             x
             for x in actor.get_contents()
-            if isinstance(x, GraphObject) and "on_use" in x
+            if isinstance(x, GraphObject) and hasattr(x, "on_use") and x.on_use is not None
         ]
         if len(useable_objects) == 0:
             return []
