@@ -411,7 +411,10 @@ class LIGHTDatabase:
         """
         if self.use_cache and id is not None:
             if id in self.cache["id"]:
-                return [self.cache["id"][id]]
+                found_id = self.cache["id"][id]
+                if expand:
+                    return [self.cache[found_id['type'] + 's'][id]]
+                return [found_id]
         if self.use_cache and type is not None:
             return [row for row in self.cache["id"].values() if row["type"] == type]
         self.c.execute(

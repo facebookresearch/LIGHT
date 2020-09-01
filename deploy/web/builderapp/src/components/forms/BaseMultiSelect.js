@@ -5,7 +5,7 @@ import equal from "fast-deep-equal";
 import "@blueprintjs/select/lib/css/blueprint-select.css";
 
 import CONFIG from "../../config";
-import { useAPI } from "../../utils";
+import { useAPI, get_source } from "../../utils";
 
 const SUGGEST_SIZE = 100;
 
@@ -21,21 +21,32 @@ function BaseMultiSelect({
   tooltip,
   onItemSelect,
   entities,
+  suggestionSource,
 }) {
   const [items, setItems] = React.useState([]);
   const [query, setQuery] = React.useState("");
   const [currItems, setCurrItems] = React.useState([]);
+  const { loading: loadingModel, result: modelResult } = useAPI(
+    CONFIG,
+    `/suggestions/${type}/${get_source(suggestionSource, entities)}`
+  );
   const { loading, result } = useAPI(
     CONFIG,
     `/entities/${type}?search=${query}`
   );
+
+  let options = result;
+
+  if (!loading && !loadingModel && modelResult !== undefined && !query) {
+    options = modelResult.concat(result);
+  }
 
   React.useEffect(() => {
     if (!loading) {
       if (entities) {
         const localEntities = Object.values(entities[type]);
         const results = localEntities
-          .concat(result.slice(0, SUGGEST_SIZE + localEntities.length + 1))
+          .concat(options.slice(0, SUGGEST_SIZE + localEntities.length + 1))
           .filter(
             (item, index, self) =>
               self.findIndex((t) => equal(t, item)) === index
@@ -43,9 +54,9 @@ function BaseMultiSelect({
 
         return setItems(results);
       }
-      return setItems(result);
+      return setItems(options);
     }
-  }, [result, loading, entities, type]);
+  }, [result, modelResult, loading, entities, type]);
 
   React.useEffect(() => {
     // When Reset is clicked on the form

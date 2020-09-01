@@ -31,6 +31,7 @@ function TileForm({
   setShowAdvanced,
   selected,
   setSelected,
+  neighbor,
 }) {
   return (
     <Formik
@@ -113,6 +114,7 @@ function TileForm({
                 handleChange={setRoomValue}
                 entities={entities}
                 onItemSelect={findOrAddEntity}
+                suggestionSource={neighbor}
               />
               {errors.room && touched.room && (
                 <div className="form-error">{errors.room}</div>
@@ -139,6 +141,7 @@ function TileForm({
                   e.emoji = findEmoji(e.name);
                   return findOrAddEntity(e, type);
                 }}
+                suggestionSource={values.room}
               />
               {errors.characters && touched.characters && (
                 <div className="form-error">{errors.characters}</div>
@@ -160,6 +163,7 @@ function TileForm({
                   e.emoji = findEmoji(e.name);
                   return findOrAddEntity(e, type);
                 }}
+                suggestionSource={values.room}
               />
               {errors.objects && touched.objects && (
                 <div className="form-error">{errors.objects}</div>

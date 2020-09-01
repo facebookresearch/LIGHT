@@ -78,3 +78,15 @@ export function post(url, payload) {
     body: formBody.join("&"),
   });
 }
+
+export function get_source(local_id, entities) {
+  if (local_id in entities.room) {
+    return entities.room[local_id].id;
+  } else if (local_id in entities.object) {
+    return entities.object[local_id].id;
+  } else if (local_id in entities.character) {
+    return entities.character[local_id].id;
+  } else {
+    return 0;
+  }
+}
