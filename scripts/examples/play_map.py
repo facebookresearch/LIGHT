@@ -13,7 +13,7 @@ import sys
 
 import parlai.utils.misc as parlai_utils
 
-from light.graph.builders.external_map_json_builder import ExternalMapJsonBuilder
+from light.graph.builders.map_json_builder import MapJsonBuilder
 from light.graph.builders.starspace_all import StarspaceBuilder
 from light.data_model.light_database import LIGHTDatabase
 from light.world.utils.terminal_player_provider import TerminalPlayerProvider
@@ -98,7 +98,7 @@ parser.add_argument(
 opt, _unknown = parser.parse_and_process_known_args()
 
 if opt["load_map"] != "none":
-    Builder = ExternalMapJsonBuilder
+    Builder = MapJsonBuilder
     ldb = ""
     world_builder = Builder(ldb, debug=False, opt=opt)
 else:
