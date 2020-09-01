@@ -91,6 +91,11 @@ parser.add_argument(
     "--load-map", type=str, default="scripts/examples/simple_world.json"
 )
 parser.add_argument(
+    "--dont-catch-errors",
+    type="bool",
+    default=True
+)
+parser.add_argument(
     "--safety-classifier-path",
     type=str,
     default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",

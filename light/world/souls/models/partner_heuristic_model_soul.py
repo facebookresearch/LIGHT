@@ -19,13 +19,13 @@ if TYPE_CHECKING:
     from light.graph.events.base import GraphEvent
 
 
-MIN_TIME_BETWEEN_TURNS = 5
+MIN_TIME_BETWEEN_TURNS = 1
 MAX_DIALOGUE_REPEAT_HISTORY = 50
 MAX_ACTION_REPEAT_HISTORY = 4
 ALLOW_INTERBOT_CHAT = False  # Only allow bots to answer humans
 JITTER_TIME_AROUND_TURNS = 2
 CHAT_DISENGAGE_CHANCE = 5.0 / 100.0
-TAKE_ACTION_CHANCE = 1.0 / 5.0
+TAKE_ACTION_CHANCE = 3.0 / 5.0
 
 class PartnerHeuristicModelSoul(ModelSoul):
     """
@@ -96,8 +96,9 @@ class PartnerHeuristicModelSoul(ModelSoul):
             'True',
         ]
         act_opt, _unknown = parser.parse_and_process_known_args(args=args)
-        act_opt['override'] = {'eval_candidates': 'inline', 'ignore_bad_candidates': 'True'}
-        act_opt['interactive_mode'] = True
+        act_opt['override'] = {'candidates': 'inline',
+                               'eval_candidates': 'inline', 'ignore_bad_candidates': 'True'}
+        act_opt['interactive_mode'] = False
         act_opt['ignore_bad_candidates'] = True
         action_model = create_agent(act_opt, requireModelExists=True)
 
@@ -236,7 +237,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
         """
         if self.get_last_turn_too_recent() or random.random() > TAKE_ACTION_CHANCE:
             return
-
+        
         agent = self.target_node
         agent_id = agent.node_id
         partner_id = self.get_last_interaction_partner(agent)
@@ -259,7 +260,6 @@ class PartnerHeuristicModelSoul(ModelSoul):
         if len(cands) == 0:
             # nothing to do here.
             return
-
         msg = {
             'text': txt,
             'episode_done': True,
@@ -413,20 +413,20 @@ class PartnerHeuristicModelSoul(ModelSoul):
             if random.random() < CHAT_DISENGAGE_CHANCE:
                 self.dialogue_clear_partner()
 
-        hit_actions = self.world.get_possible_actions(agent_id, use_actions=['hit'])
-        filtered_hit_actions = [a for a in hit_actions if a.target_nodes[0].get_prop('is_player')]
-        for hit_event in filtered_hit_actions:
-            aggression = agent.get_prop('aggression', 0)
-            if random.randint(0, 100) < aggression:
-                hit_event.execute(self.world)
-                return
+        #hit_events =  self.world.get_possible_events(agent_id, use_actions=['hit'])
+        #filtered_hit_events = [a for a in hit_actions if a.target_nodes[0].get_prop('is_player')]
+        #for hit_event in filtered_hit_actions:
+        #    aggression = agent.get_prop('aggression', 0)
+        #    if random.randint(0, 100) < aggression:
+        #        hit_event.execute(self.world)
+        #        return
 
         # random movement for npcs..
         if random.randint(0, 1000) < agent.speed:
-            move_actions = self.world.get_possible_actions(agent_id, use_actions=['go'])
-            if len(move_actions) > 0:
-                move_action = random.choice(move_actions)
-                move_action.execute(self.world)
+            go_events =  self.world.get_possible_events(agent_id, use_actions=['go'])
+            if len(go_events) > 0:
+                go_event = random.choice(go_events)
+                go_event.execute(self.world)
                 return
 
         # possibly act according to the bert model
