@@ -402,7 +402,7 @@ class LeaveEvent(TriggeredEvent):
         """Save expected views, then message everyone"""
         actor_name = self.actor.get_prefix_view()
         target_name = self.target_nodes[0].get_prefix_view_from(self.room)
-        self.__in_room_view = f'{actor_name} left towards "{target_name}"'
+        self.__in_room_view = f'{actor_name} left towards {target_name}.'
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         return []
 
@@ -508,9 +508,11 @@ class GoEvent(GraphEvent):
         if old_room.node_id in world.oo_graph.room_id_to_loggers:
             world.oo_graph.room_id_to_loggers[old_room.node_id].observe_event(self)
         if self.actor.node_id in world.purgatory.node_id_to_soul:
-            world.purgatory.node_id_to_soul[
+            agent = world.purgatory.node_id_to_soul[
                 self.actor.node_id
-            ].agent_logger.observe_event(self)
+            ]
+            if hasattr(agent, 'agent_logger'):
+                agent.agent_logger.observe_event(self)
 
         self.__successful_leave = self.is_not_blocked(world)
         if not self.__successful_leave:
@@ -2374,7 +2376,7 @@ class UseEvent(GraphEvent):
 
     def on_use(self, world):
         use_node = self.target_nodes[0]
-        if not hasattr(use_node, "on_use"):
+        if not hasattr(use_node, "on_use") and use_node.on_use is not None:
             # No on_use for this agent.
             return
         self.found_use = False
@@ -2500,7 +2502,7 @@ class UseEvent(GraphEvent):
         if not hasattr(use_object, "on_use") or use_object.on_use is None:
             return ErrorEvent(cls, actor, "Nothing special seems to happen.",)
         return cls(actor, target_nodes=[use_object, use_with])
-
+    
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
         """
@@ -2511,7 +2513,7 @@ class UseEvent(GraphEvent):
         useable_objects = [
             x
             for x in actor.get_contents()
-            if isinstance(x, GraphObject) and "on_use" in x
+            if isinstance(x, GraphObject) and hasattr(x, "on_use") and x.on_use is not None
         ]
         if len(useable_objects) == 0:
             return []
