@@ -27,6 +27,7 @@ JITTER_TIME_AROUND_TURNS = 2
 CHAT_DISENGAGE_CHANCE = 5.0 / 100.0
 TAKE_ACTION_CHANCE = 1.0 / 5.0
 
+
 class PartnerHeuristicModelSoul(ModelSoul):
     """
     The PartnerHeuristicModelSoul is a ModelSoul that uses two different
@@ -42,10 +43,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
 
     @staticmethod
     def load_models(
-        speech_model_path, 
-        speech_cands_path, 
-        agent_to_utterance_path, 
-        act_model_path,
+        speech_model_path, speech_cands_path, agent_to_utterance_path, act_model_path,
     ):
         """
         Load up and create possible shared models for use with this class
@@ -54,25 +52,25 @@ class PartnerHeuristicModelSoul(ModelSoul):
         from parlai.core.params import ParlaiParser
         from parlai.core.agents import create_agent
 
-        parser = ParlaiParser(True, True, '')
+        parser = ParlaiParser(True, True, "")
 
         # Load speech model
         speech_args = [
-            '-mf',
+            "-mf",
             speech_model_path,
-            '-ecands',
-            'fixed',
-            '--ignore-bad-candidates',
-            'True',
-            '-fcp',
+            "-ecands",
+            "fixed",
+            "--ignore-bad-candidates",
+            "True",
+            "-fcp",
             speech_cands_path,
         ]
         speech_opt, _unknown = parser.parse_and_process_known_args(args=speech_args)
-        speech_opt['override'] = {
-            'eval_candidates': 'fixed',
-            'fixed_candidates_path': speech_cands_path,
+        speech_opt["override"] = {
+            "eval_candidates": "fixed",
+            "fixed_candidates_path": speech_cands_path,
         }
-        speech_opt['interactive_mode'] = True
+        speech_opt["interactive_mode"] = True
         speech_model = create_agent(speech_opt, requireModelExists=True)
 
         # Load speaker stop list
@@ -81,30 +79,34 @@ class PartnerHeuristicModelSoul(ModelSoul):
 
         utterance_to_speaker_map = {}
         for d in utt_map_lines:
-            i1 = d.find(':')
+            i1 = d.find(":")
             name = d[1:i1]
             utt = d[i1 + 1 : -1]
             utterance_to_speaker_map[utt] = name
 
         # Load action model
         args = [
-            '-mf',
+            "-mf",
             act_model_path,
-            '-ecands',
-            'inline',
-            '--ignore-bad-candidates',
-            'True',
+            "-ecands",
+            "inline",
+            "--ignore-bad-candidates",
+            "True",
         ]
         act_opt, _unknown = parser.parse_and_process_known_args(args=args)
-        act_opt['override'] = {'eval_candidates': 'inline', 'ignore_bad_candidates': 'True'}
-        act_opt['interactive_mode'] = True
-        act_opt['ignore_bad_candidates'] = True
+        act_opt["override"] = {
+            "candidates": "inline",
+            "eval_candidates": "inline",
+            "ignore_bad_candidates": "True",
+        }
+        act_opt["interactive_mode"] = False
+        act_opt["ignore_bad_candidates"] = True
         action_model = create_agent(act_opt, requireModelExists=True)
 
         return {
-            'utterance_to_speaker_name': utterance_to_speaker_map,
-            'shared_dialog_model': speech_model.share(),
-            'shared_action_model': action_model.share(),
+            "utterance_to_speaker_name": utterance_to_speaker_map,
+            "shared_dialog_model": speech_model.share(),
+            "shared_action_model": action_model.share(),
         }
 
     def _init_with_models(self, models) -> None:
@@ -115,9 +117,9 @@ class PartnerHeuristicModelSoul(ModelSoul):
         self._pending_observations = []
         self._last_action_time = time.time() + self._get_random_time_offset()
         self._dialogue_history = {}
-        self._utterance_to_speaker_name = models['utterance_to_speaker_name']
-        self.npc_model = create_agent_from_shared(models['shared_dialog_model'])
-        self.npc_act_model = create_agent_from_shared(models['shared_action_model'])
+        self._utterance_to_speaker_name = models["utterance_to_speaker_name"]
+        self.npc_model = create_agent_from_shared(models["shared_dialog_model"])
+        self.npc_act_model = create_agent_from_shared(models["shared_action_model"])
 
     async def observe_event(self, event: "GraphEvent"):
         """
@@ -127,10 +129,10 @@ class PartnerHeuristicModelSoul(ModelSoul):
         if event.actor == self.target_node:
             self._last_action_time = time.time() + self._get_random_time_offset()
             return
-        
+
         self._pending_observations.append(event)
 
-        # The model may choose to do something in response to this action, 
+        # The model may choose to do something in response to this action,
         # so don't wait for the timeout.
         await self._take_timestep()
 
@@ -143,12 +145,12 @@ class PartnerHeuristicModelSoul(ModelSoul):
 
     def _ensure_agent_has_utterance_history(self, agent):
         """Create the _utterance_history attribute for a GraphAgent if it doesn't exist"""
-        if not hasattr(agent, '_utterance_history'):
+        if not hasattr(agent, "_utterance_history"):
             agent._utterance_history = deque(maxlen=MAX_DIALOGUE_REPEAT_HISTORY)
 
     def _ensure_agent_has_action_history(self, agent):
         """Create the _action_history attribute for a GraphAgent if it doesn't exist"""
-        if not hasattr(agent, '_action_history'):
+        if not hasattr(agent, "_action_history"):
             agent._action_history = deque(maxlen=MAX_ACTION_REPEAT_HISTORY)
 
     def dialogue_clear_partner(self):
@@ -177,11 +179,11 @@ class PartnerHeuristicModelSoul(ModelSoul):
         the last 4 turns
         """
         self._ensure_agent_has_action_history(self.target_node)
-        t = act['text_candidates'][0]
+        t = act["text_candidates"][0]
 
         # Hit actions are allowed to repeat because we expect such
         # behavior in a combat setting
-        if t not in self.target_node._action_history or t.startswith('hit'):
+        if t not in self.target_node._action_history or t.startswith("hit"):
             self.target_node._action_history.append(t)
             return t
         # If the top action was too recent, let's do nothing.
@@ -196,15 +198,15 @@ class PartnerHeuristicModelSoul(ModelSoul):
         self._ensure_agent_has_utterance_history(partner)
 
         # Default to the top text, then try to find one that isn't in anyone's history
-        found_utterance = act['text']
-        for t in act['text_candidates']:
+        found_utterance = act["text"]
+        for t in act["text_candidates"]:
             if (
                 t not in self.target_node._utterance_history
                 and t not in partner._utterance_history
-                and self._utterance_to_speaker_name.get(t, 'anon') != partner.name
+                and self._utterance_to_speaker_name.get(t, "anon") != partner.name
             ):
                 found_utterance = t
-        
+
         # This is the utterance selected to be said, append it to the
         # history for each partner
         self.target_node._utterance_history.append(found_utterance)
@@ -217,14 +219,12 @@ class PartnerHeuristicModelSoul(ModelSoul):
         """
         agent = self.target_node
         room = agent.get_room()
-        txt = "_setting_name " + room.name + '\\n'
-        txt += (
-            "_setting_desc " + room.desc + '\\n'
-        )
+        txt = "_setting_name " + room.name + "\\n"
+        txt += "_setting_desc " + room.desc + "\\n"
         if partner_name is not None:
-            txt += "_partner_name " + partner_name + '\\n'
-        txt += "_self_name " + agent.name + '\\n'
-        txt += '_self_persona ' + agent.persona + '\\n'
+            txt += "_partner_name " + partner_name + "\\n"
+        txt += "_self_name " + agent.name + "\\n"
+        txt += "_self_persona " + agent.persona + "\\n"
         return txt
 
     def get_last_turn_too_recent(self):
@@ -245,7 +245,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
             partner_name = partner.name
         else:
             partner_name = None
-       
+
         hist = self._dialogue_history
         if partner_id not in hist:
             hist[partner_id] = []
@@ -259,12 +259,11 @@ class PartnerHeuristicModelSoul(ModelSoul):
         if len(cands) == 0:
             # nothing to do here.
             return
-
         msg = {
-            'text': txt,
-            'episode_done': True,
-            'label_candidates': cands,
-            'eval_labels': [cands[0]],
+            "text": txt,
+            "episode_done": True,
+            "label_candidates": cands,
+            "eval_labels": [cands[0]],
         }
         self.npc_act_model.observe(msg)
         act = self.npc_act_model.act()
@@ -272,9 +271,9 @@ class PartnerHeuristicModelSoul(ModelSoul):
         if act_text is None:
             return
 
-        reply_action = act_text + '\n'
+        reply_action = act_text + "\n"
         # add action to history
-        hist[agent_id].append('_self_act ' + act_text + '\\n')
+        hist[agent_id].append("_self_act " + act_text + "\\n")
         self.world.parse_exec(agent_id, reply_action)
 
     def npc_dialogue(self, obs=None):
@@ -316,7 +315,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
         for d in hist[agent_id]:
             txt += d
 
-        if obs is not None and obs.text_content == 'DEBUG':
+        if obs is not None and obs.text_content == "DEBUG":
             # print debug information instead
             event = SayEvent(agent, target_nodes=[], text_content=txt)
             event.execute(self.world)
@@ -324,12 +323,12 @@ class PartnerHeuristicModelSoul(ModelSoul):
 
         # add dialogue to history
         if obs is not None:
-            last_msg = '_partner_say ' + obs.text_content + '\\n'
+            last_msg = "_partner_say " + obs.text_content + "\\n"
             hist[agent_id].append(last_msg)
             txt += last_msg
-        
+
         # Send to model to process
-        msg = {'text': txt, 'episode_done': True}
+        msg = {"text": txt, "episode_done": True}
         self.npc_model.observe(msg)
         act = self.npc_model.act()
         act_text = self.dialogue_pick_non_repeating_response(act, partner)
@@ -338,7 +337,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
         reply_event.execute(self.world)
 
         # add dialogue to history
-        hist[agent_id].append('_self_say ' + act_text + '\\n')
+        hist[agent_id].append("_self_say " + act_text + "\\n")
 
     def get_last_interaction_partner(self, node: "GraphAgent"):
         """
@@ -386,9 +385,8 @@ class PartnerHeuristicModelSoul(ModelSoul):
         while len(self._pending_observations) > 0:
             curr_obs.append(self._pending_observations.pop(0))
         for obs in curr_obs:
-            if (
-                isinstance(obs, SayEvent) or 
-                (isinstance(obs, TellEvent) and obs.target_nodes[0] == agent)
+            if isinstance(obs, SayEvent) or (
+                isinstance(obs, TellEvent) and obs.target_nodes[0] == agent
             ):
                 self.npc_dialogue(obs)
                 return
@@ -402,7 +400,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
             partner_id = partner.node_id
             if (
                 partner.node_id != agent_id
-                and partner.get_prop('speed', 0) > 0
+                and partner.get_prop("speed", 0) > 0
                 and self.get_last_interaction_partner(partner) is None
             ):
                 self.set_interaction_partner(partner)
@@ -413,20 +411,20 @@ class PartnerHeuristicModelSoul(ModelSoul):
             if random.random() < CHAT_DISENGAGE_CHANCE:
                 self.dialogue_clear_partner()
 
-        hit_actions = self.world.get_possible_actions(agent_id, use_actions=['hit'])
-        filtered_hit_actions = [a for a in hit_actions if a.target_nodes[0].get_prop('is_player')]
-        for hit_event in filtered_hit_actions:
-            aggression = agent.get_prop('aggression', 0)
-            if random.randint(0, 100) < aggression:
-                hit_event.execute(self.world)
-                return
+        # hit_events =  self.world.get_possible_events(agent_id, use_actions=['hit'])
+        # filtered_hit_events = [a for a in hit_actions if a.target_nodes[0].get_prop('is_player')]
+        # for hit_event in filtered_hit_actions:
+        #    aggression = agent.get_prop('aggression', 0)
+        #    if random.randint(0, 100) < aggression:
+        #        hit_event.execute(self.world)
+        #        return
 
         # random movement for npcs..
         if random.randint(0, 1000) < agent.speed:
-            move_actions = self.world.get_possible_actions(agent_id, use_actions=['go'])
-            if len(move_actions) > 0:
-                move_action = random.choice(move_actions)
-                move_action.execute(self.world)
+            go_events = self.world.get_possible_events(agent_id, use_actions=["go"])
+            if len(go_events) > 0:
+                go_event = random.choice(go_events)
+                go_event.execute(self.world)
                 return
 
         # possibly act according to the bert model
