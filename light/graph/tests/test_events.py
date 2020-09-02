@@ -2582,7 +2582,7 @@ test_graph_3_after_ingest_apple = """
     ]
 }
 """
-
+test_graph_3_after_ingest_apple = OOGraph.from_json(test_graph_3_after_ingest_apple).to_json()
 test_graph_3_before_ingest_drink_dict = json.loads(test_graph_3)
 del test_graph_3_before_ingest_drink_dict["nodes"]["something_to_drink_20"]
 del test_graph_3_before_ingest_drink_dict["nodes"]["carrier_12"]["contained_nodes"][

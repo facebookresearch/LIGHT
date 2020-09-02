@@ -168,11 +168,13 @@ class GraphNode(object):
     @classmethod
     def from_json_dict(cls, input_dict):
         """Init this node from a json encoding of the original node"""
-        node = cls(input_dict["node_id"], input_dict["name"], props=input_dict,)
-        node._container_id = input_dict["container_node"]["target_id"]
-        node._contained_ids = [
-            x["target_id"] for x in input_dict["contained_nodes"].values()
-        ]
+        node = cls(input_dict.get("node_id", -1), input_dict["name"], props=input_dict,)
+        if "container_node" in input_dict:
+            node._container_id = input_dict["container_node"]["target_id"]
+        if "contained_nodes" in input_dict:
+            node._contained_ids = [
+                x["target_id"] for x in input_dict["contained_nodes"].values()
+            ]
         node._is_from_json = True
         return node
 
@@ -511,6 +513,7 @@ class GraphAgent(GraphNode):
         self.char_type = self._props.get("char_type", "person")
         self.classes = set(self._props.get("classes", {"agent"}))
         self.persona = self._props.get("persona", self.DEFAULT_PERSONA)
+        self.on_events = self._props.get("on_events", None)
         if self._props.get("dead", None) is not None:
             self.dead = self._props.get("dead")
         self.is_player = self._props.get("is_player", False)
@@ -654,6 +657,7 @@ class GraphObject(GraphNode):
         self.drink = self._props.get("drink", False)
         self.food = self._props.get("food", False)
         self.dead = self._props.get("dead", False)
+        self.on_use = self._props.get("on_use", None)
         self.container = self._props.get("container", False)
         self.gettable = self._props.get("gettable", True)
         self.wearable = self._props.get("wearable", False)

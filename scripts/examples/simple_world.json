@@ -1,99 +1,344 @@
 {
-	"dimensions": {
-		"name": "SimpleWorld",
-		"height": 3,
-		"width": 3,
-		"floors": 1,
-		"id": 431210
-	},
-	"map": [
-		{
-			"name": "1F",
-			"tiles": {
-				"0 0": {
-					"room": 1,
-					"characters": [
-						"4"
-					],
-					"objects": [],
-					"color": "#8A9BA8"
-				},
-				"1 0": {
-					"room": 2,
-					"characters": [ "5" ],
-					"objects": [
-						3
-					],
-					"color": "#8A9BA8"
-				}
-			},
-			"walls": {}
-		}
-	],
-	"entities": {
-		"room": {
-			"1": {
-				"id": 4,
-				"name": "Orc cave",
-				"base_id": 3,
-				"description": "It is a dark cave that is cold and damp inside. The floor is rocks covered in bat poop. It is damp from the ceiling dripping of water. The cave just goes on what seems to be endlessly into the dark abyss. The only light you can see is from the distance entrance of the cave.",
-				"backstory": "The cave is an old orc hiding place. It housed thousands of orcs that used it for shelter and to store their gold. The orc population has died and there is now very little that remains of the orcs that used to occupy this cave. Robbers have stolen anything worthwhile in this cave."
-			},
-			"2": {
-				"id": 8,
-				"name": "Church Entryway",
-				"base_id": 1,
-				"description": "The church has marble floors and a huge frost window. There are benches made from wood and a big organ can be seen at the front stage. There is gold trim all around the church.",
-				"backstory": "This is where everyone comes to pray. It is a place to worship god and have ceremonies."
-			}
-		},
-		"character": {
-		    "4": {
-			"id": 3629,
-			"name": "orc",
-			"base_id": 3628,
-			"persona": "I am a orc that was born in a cave. I eat corn the most. I have many friends.",
-			"physical_description": "You are unlike any other orcs. You engage with a lot of other orcs and like to talk a little too much.",
-			"name_prefix": "some",
-			"is_plural": 1,
-			"char_type": "creature",
-			"emoji": "b",
-			"on_events": [
-			    [["SayEvent", "lotr"], ["SayEvent", "One does not simply mention lotr!"]],
-			    [["SayEvent", "meow"], ["SayEvent", "Meow back!"]],
-			    [["SayEvent", "beam at me"], ["EmoteEvent", "grin"]]
-			]
-		    },
-		    "5": {
-			"id": 3629,
-			"name": "kitty",
-			"base_id": 3628,
-			"persona": "I'm a cute kitty.",
-			"physical_description": "Black and white and cute all over.",
-			"name_prefix": "some",
-			"is_plural": 1,
-			"char_type": "creature",
-			"emoji": "a"
-		    }
-		},
-		"object": {
-			"3": {
-				"id": 5125,
-				"name": "priceless piece of art",
-				"base_id": 5124,
-				"is_container": 0,
-				"is_drink": 0,
-				"is_food": 0,
-				"is_gettable": 0,
-				"is_surface": 0,
-				"is_wearable": 0,
-				"is_weapon": 0,
-				"physical_description": "A work of art that is has more than monetary value. Mostly owned by kings and wealthy collectors",
-				"name_prefix": "a",
-				"is_plural": 0,
-				"emoji": "🕰️"
-			}
-		},
-		"nextID": 5
-	}
+    "agents": [
+        "kitty_3_5",
+        "orc_2_4"
+    ],
+    "nodes": {
+        "church entryway_1_2": {
+            "agent": false,
+            "classes": [
+                "room"
+            ],
+            "contain_size": 100000,
+            "contained_nodes": {
+                "kitty_3_5": {
+                    "target_id": "kitty_3_5"
+                },
+                "muddy area_6_7": {
+                    "target_id": "muddy area_6_7"
+                },
+                "priceless piece of art_4_3": {
+                    "target_id": "priceless piece of art_4_3"
+                },
+                "shovel_5_6": {
+                    "target_id": "shovel_5_6"
+                }
+            },
+            "container_node": {
+                "target_id": "VOID"
+            },
+            "db_id": null,
+            "desc": "The church has marble floors and a huge frost window. There are benches made from wood and a big organ can be seen at the front stage. There is gold trim all around the church.",
+            "extra_desc": "The church has marble floors and a huge frost window. There are benches made from wood and a big organ can be seen at the front stage. There is gold trim all around the church.",
+            "name": "Church Entryway",
+            "name_prefix": "the",
+            "names": [
+                "Church Entryway"
+            ],
+            "neighbors": {
+                "orc cave_0_1": {
+                    "examine_desc": "You see a path!",
+                    "label": "path to the west",
+                    "locked_edge": null,
+                    "target_id": "orc cave_0_1"
+                }
+            },
+            "node_id": "church entryway_1_2",
+            "object": false,
+            "room": true,
+            "size": 1,
+            "surface_type": "in"
+        },
+        "kitty_3_5": {
+            "agent": true,
+            "aggression": 0,
+            "char_type": "creature",
+            "classes": [
+                "agent"
+            ],
+            "contain_size": 20,
+            "contained_nodes": {},
+            "container_node": {
+                "target_id": "church entryway_1_2"
+            },
+            "damage": 1,
+            "db_id": null,
+            "defense": 0,
+            "desc": "Black and white and cute all over.",
+            "followed_by": {},
+            "following": null,
+            "food_energy": 1,
+            "health": 10,
+            "is_player": false,
+            "name": "kitty",
+            "name_prefix": "some",
+            "names": [
+                "kitty"
+            ],
+            "node_id": "kitty_3_5",
+            "object": false,
+            "on_events": null,
+            "persona": "I'm a cute kitty.",
+            "room": false,
+            "size": 20,
+            "speed": 0
+        },
+        "muddy area_6_7": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 20,
+            "contained_nodes": {},
+            "container": true,
+            "container_node": {
+                "target_id": "church entryway_1_2"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "A muddy area",
+            "drink": false,
+            "equipped": null,
+            "food": false,
+            "food_energy": 0,
+            "gettable": true,
+            "locked_edge": null,
+            "name": "muddy area",
+            "name_prefix": "a",
+            "names": [
+                "muddy area"
+            ],
+            "node_id": "muddy area_6_7",
+            "object": true,
+            "on_use": null,
+            "room": false,
+            "size": 1,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "in",
+            "value": 1,
+            "wearable": false,
+            "wieldable": false
+        },
+        "orc cave_0_1": {
+            "agent": false,
+            "classes": [
+                "room"
+            ],
+            "contain_size": 100000,
+            "contained_nodes": {
+                "orc_2_4": {
+                    "target_id": "orc_2_4"
+                }
+            },
+            "container_node": {
+                "target_id": "VOID"
+            },
+            "db_id": null,
+            "desc": "It is a dark cave that is cold and damp inside. The floor is rocks covered in bat poop. It is damp from the ceiling dripping of water. The cave just goes on what seems to be endlessly into the dark abyss. The only light you can see is from the distance entrance of the cave.",
+            "extra_desc": "It is a dark cave that is cold and damp inside. The floor is rocks covered in bat poop. It is damp from the ceiling dripping of water. The cave just goes on what seems to be endlessly into the dark abyss. The only light you can see is from the distance entrance of the cave.",
+            "name": "Orc cave",
+            "name_prefix": "the",
+            "names": [
+                "Orc cave"
+            ],
+            "neighbors": {
+                "church entryway_1_2": {
+                    "examine_desc": "You see a path!",
+                    "label": "path to the east",
+                    "locked_edge": null,
+                    "target_id": "church entryway_1_2"
+                }
+            },
+            "node_id": "orc cave_0_1",
+            "object": false,
+            "room": true,
+            "size": 1,
+            "surface_type": "in"
+        },
+        "orc_2_4": {
+            "agent": true,
+            "aggression": 0,
+            "char_type": "creature",
+            "classes": [
+                "agent"
+            ],
+            "contain_size": 20,
+            "contained_nodes": {},
+            "container_node": {
+                "target_id": "orc cave_0_1"
+            },
+            "damage": 1,
+            "db_id": null,
+            "defense": 0,
+            "desc": "You really don't have a good reason to be examining this closer.",
+            "followed_by": {},
+            "following": null,
+            "food_energy": 1,
+            "health": 10,
+            "is_player": false,
+            "name": "orc",
+            "name_prefix": "some",
+            "names": [
+                "orc"
+            ],
+            "node_id": "orc_2_4",
+            "object": false,
+            "on_events": [
+                [
+                    [
+                        "SayEvent",
+                        "lotr"
+                    ],
+                    [
+                        "SayEvent",
+                        "One does not simply mention lotr!"
+                    ]
+                ],
+                [
+                    [
+                        "SayEvent",
+                        "meow"
+                    ],
+                    [
+                        "SayEvent",
+                        "Meow back!"
+                    ]
+                ],
+                [
+                    [
+                        "SayEvent",
+                        "beam at me"
+                    ],
+                    [
+                        "EmoteEvent",
+                        "grin"
+                    ]
+                ]
+            ],
+            "persona": "I am a orc that was born in a cave. I eat corn the most. I have many friends.",
+            "room": false,
+            "size": 20,
+            "speed": 0
+        },
+        "priceless piece of art_4_3": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 0,
+            "contained_nodes": {},
+            "container": false,
+            "container_node": {
+                "target_id": "church entryway_1_2"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "A work of art that is has more than monetary value. Mostly owned by kings and wealthy collectors",
+            "drink": false,
+            "equipped": null,
+            "food": false,
+            "food_energy": 0,
+            "gettable": true,
+            "locked_edge": null,
+            "name": "priceless piece of art",
+            "name_prefix": "a",
+            "names": [
+                "priceless piece of art"
+            ],
+            "node_id": "priceless piece of art_4_3",
+            "object": true,
+            "on_use": null,
+            "room": false,
+            "size": 1,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "on",
+            "value": 1,
+            "wearable": false,
+            "wieldable": false
+        },
+        "shovel_5_6": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 0,
+            "contained_nodes": {},
+            "container": false,
+            "container_node": {
+                "target_id": "church entryway_1_2"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "A shovel",
+            "drink": false,
+            "equipped": null,
+            "food": false,
+            "food_energy": 0,
+            "gettable": true,
+            "locked_edge": null,
+            "name": "shovel",
+            "name_prefix": "a",
+            "names": [
+                "shovel"
+            ],
+            "node_id": "shovel_5_6",
+            "object": true,
+            "on_use": [
+                {
+                    "post": [
+                        [
+                            "create_entity",
+                            "in_used_target_item",
+                            {
+                                "is_wearable": 1,
+                                "name": "emerald ring",
+                                "physical_description": "A beautiful and mysterious ring.. could it have magical powers?"
+                            }
+                        ],
+                        [
+                            "broadcast_message",
+                            {
+                                "self_view": "You dig into the sodden mud, and spy something glistening within!"
+                            }
+                        ]
+                    ],
+                    "pre": [
+                        [
+                            "is_holding",
+                            "used_item"
+                        ],
+                        [
+                            "used_with_item_name",
+                            "muddy area"
+                        ]
+                    ]
+                }
+            ],
+            "room": false,
+            "size": 1,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "on",
+            "value": 1,
+            "wearable": false,
+            "wieldable": false
+        }
+    },
+    "objects": [
+        "muddy area_6_7",
+        "priceless piece of art_4_3",
+        "shovel_5_6"
+    ],
+    "rooms": [
+        "church entryway_1_2",
+        "orc cave_0_1"
+    ]
 }
