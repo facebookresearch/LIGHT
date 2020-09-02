@@ -26,7 +26,6 @@ import numpy
 import asyncio
 
 # local classes
-from longcontext_player_provider import LongcontextPlayerProvider
 from longcontext_soul import LongcontextSoul
 from partner_heuristic_model_soul import (
     PartnerHeuristicModelSoul,
@@ -50,16 +49,11 @@ def init_world(world_builder):
     #print("init_world")
     for empty_agent in world.oo_graph.agents.values():
         purgatory.fill_soul(empty_agent)
-    #return world
-    provider = "none"
-    #provider = LongcontextPlayerProvider(purgatory)
-    return provider, world
+    return world
 
 
 async def run_with_builder(world_builder):
-    player_provider, world = init_world(world_builder)
-    #player_provider.process_longcontext_act("")  # get an agent
-    #player_provider.process_longcontext_act("go east")  # get an agent
+    world = init_world(world_builder)
 
     # make first character the one that we view
     for soulid, soul in world.purgatory.node_id_to_soul.items():
