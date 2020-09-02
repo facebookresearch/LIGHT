@@ -109,7 +109,7 @@ if opt["load_map"] != "none":
 else:
     StarspaceBuilder.add_parser_arguments(parser)
     opt, _unknown = parser.parse_and_process_known_args()
-    ldb = LIGHTDatabase(opt["light_db_file"])
+    ldb = LIGHTDatabase(opt["light_db_file"], read_only=True)
     world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
 
 if opt["use_models"] == "PartnerHeuristicModelSoul":
