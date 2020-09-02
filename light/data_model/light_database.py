@@ -373,16 +373,20 @@ class LIGHTDatabase:
         # if input is empty, return all entries of the specified type through
         # the "else" block
         
-        self.c.execute(
-            """
-            SELECT * FROM {}
-            WHERE name LIKE ?
-            """.format(
-                table_name
-            ),
-            ("%" + input + "%",),
-        )
-        results = self.c.fetchall()
+        try:
+            self.c.execute(
+                """
+                SELECT * FROM {}
+                WHERE name LIKE ?
+                """.format(
+                    table_name
+                ),
+                ("%" + input + "%",),
+            )
+            results = self.c.fetchall()
+        except sqlite3.OperationalError:
+            # Table cannot be searched by name
+            results = []
 
         if fts and input != "":
             # Can use .format because table_name is being chosen from a predefined
@@ -400,7 +404,8 @@ class LIGHTDatabase:
                 (input,),
             )
             fts_results = self.c.fetchall()
-            results += fts_results
+            already_present = set(r['id'] for r in results)
+            results += [r for r in fts_results if r['id'] not in already_present]
 
         return results
 
