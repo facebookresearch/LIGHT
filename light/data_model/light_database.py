@@ -372,6 +372,22 @@ class LIGHTDatabase:
         table_name_fts = self.table_dict[type] + "_fts"
         # if input is empty, return all entries of the specified type through
         # the "else" block
+        
+        try:
+            self.c.execute(
+                """
+                SELECT * FROM {}
+                WHERE name LIKE ?
+                """.format(
+                    table_name
+                ),
+                ("%" + input + "%",),
+            )
+            results = self.c.fetchall()
+        except sqlite3.OperationalError:
+            # Table cannot be searched by name
+            results = []
+
         if fts and input != "":
             # Can use .format because table_name is being chosen from a predefined
             # list, so there is no risk for SQL injection
@@ -387,17 +403,11 @@ class LIGHTDatabase:
                 ),
                 (input,),
             )
-        else:
-            self.c.execute(
-                """
-                SELECT * FROM {}
-                WHERE name LIKE ?
-                """.format(
-                    table_name
-                ),
-                ("%" + input + "%",),
-            )
-        return self.c.fetchall()
+            fts_results = self.c.fetchall()
+            already_present = set(r['id'] for r in results)
+            results += [r for r in fts_results if r['id'] not in already_present]
+
+        return results
 
     def get_id(self, id=None, type=None, expand=False):
         """
@@ -406,7 +416,10 @@ class LIGHTDatabase:
         """
         if self.use_cache and id is not None:
             if id in self.cache["id"]:
-                return [self.cache["id"][id]]
+                found_id = self.cache["id"][id]
+                if expand:
+                    return [self.cache[found_id['type'] + 's'][id]]
+                return [found_id]
         if self.use_cache and type is not None:
             return [row for row in self.cache["id"].values() if row["type"] == type]
         self.c.execute(

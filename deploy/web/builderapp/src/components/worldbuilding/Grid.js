@@ -11,6 +11,31 @@ const SIZE = 150;
 const MARGIN = 24;
 
 /**
+ * Helper function to get a neighbor for the given tile. Right now only returns one
+ * rather than trying to suggest based on all of them.
+ */
+function get_neighbor(j, i, state) {
+  let otherTile = state.getTileAt(j-1, i, state.currFloor);
+  if (otherTile && !isNaN(otherTile.room)) {
+    return otherTile.room;
+  }
+  otherTile = state.getTileAt(j+1, i, state.currFloor);
+  if (otherTile && !isNaN(otherTile.room)) {
+    return otherTile.room;
+  }
+  otherTile = state.getTileAt(j, i-1, state.currFloor);
+  if (otherTile && !isNaN(otherTile.room)) {
+    return otherTile.room;
+  }
+  otherTile = state.getTileAt(j, i+1, state.currFloor);
+  if (otherTile && !isNaN(otherTile.room)) {
+    return otherTile.room;
+  }
+
+  return undefined;
+}
+
+/**
  * Component for the interactive grid.
  * Using react-grid-layout for the draggable interface with some custom drag behavior to maintain
  * grid dimensions and update map state.
@@ -133,6 +158,7 @@ function Grid({ state, initialShowAdvanced }) {
                 maxHeight: SIZE,
               }}
               state={state}
+              neighbor={get_neighbor(j, i, state)}
             />
           </div>
         );
