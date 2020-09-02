@@ -7,6 +7,7 @@
 from light.graph.events.graph_events import EmoteEvent, SayEvent
 from light.world.souls.soul import Soul
 from typing import TYPE_CHECKING
+import random
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -18,54 +19,58 @@ class LongcontextSoul(Soul):
     """
     The simplest of Souls, it responds to all events by saying what it saw
     """
-
+    
     def __init__(self, target_node: "GraphAgent", world: "World"):
         """
         LongcontextSouls (currently) just initialize normally on a node and world
         """
         super().__init__(target_node, world)
         
-    def match_event(self, event, cause):
-        event_name = event.__class__.__name__
-        if cause[0] == event_name:
-            if event_name == "SayEvent":
-                if cause[1] in event.text_content and event.safe:
-                    return True
-        return False
+    def take_timestep(self):
+        agent = self.target_node
+        agent_id = agent.node_id
 
-    def execute_event(self, effect):
-        if effect[0] == "SayEvent":
-            do_text = effect[1]
-            do_event = SayEvent.construct_from_args(
-                self.target_node, targets=[], text=do_text
-            )
-            do_event.execute(self.world)
-        if effect[0] == "EmoteEvent":
-            do_event = EmoteEvent.construct_from_args(
-                self.target_node, targets=[], text=effect[1]
-            )
-            do_event.execute(self.world)
+        # random movement for npcs..
+        if random.randint(0, 100) < 50:
+            go_events = self.world.get_possible_events(agent_id, use_actions=["go"])
+            if len(go_events) > 0:
+                go_event = random.choice(go_events)
+                if hasattr(self, 'is_viewed'):
+                    view_txt = 'You go towards the ' + go_event._canonical_targets[0]
+                    print(view_txt)
+                go_event.execute(self.world)
+                return
 
-    def on_events(self, event):
-        if not hasattr(self.target_node, "on_events"):
-            # No on_events for this agent.
-            return
-        event_name = event.__class__.__name__
-        on_events = self.target_node.on_events
-        for on_event in on_events:
-            cause = on_event[0]
-            effect = on_event[1]
-            if self.match_event(event, cause):
-                self.execute_event(effect)
-
-    def handle_act(self, act_text):
-        self.world.parse_exec(self.target_node.node_id, act_text)        
-        view = event.view_as(soul.target_node)
-        
-    async def observe_event(self, event: "GraphEvent"):
+        #do_event = EmoteEvent.construct_from_args(
+        #    self.target_node, targets=[], text="grin"
+        #)
+        #do_event.execute(self.world)
+    
+    def observe_event(self, event: "GraphEvent"):
         """
         LongcontextSouls check for specific events, that trigger specific actions.
         """
-        if event.actor == self.target_node:
+
+        if not hasattr(self, 'is_viewed'):
             return
-        self.on_events(event)
+        
+        if event.actor == self.target_node:
+            class_name = event.__class__.__name__
+            if class_name == 'LeaveEvent' or class_name == 'ArriveEvent':
+                return
+        
+        view_txt = event.view_as(self.target_node)
+        if view_txt == None:
+            class_name = event.__class__.__name__
+            #if class_name == 'ArriveEvent':
+            #    view_txt = 'You arrived from the ' + event.text_content
+            #elif class_name == 'LeaveEvent':
+            #    view_txt = 'You left from the ' + event.text_content
+            #else:
+            #    import pdb; pdb.set_trace()
+            #print(view_txt)
+        else:
+            print(view_txt)
+
+
+

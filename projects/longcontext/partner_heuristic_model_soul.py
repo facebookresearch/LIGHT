@@ -126,14 +126,31 @@ class PartnerHeuristicModelSoul(ModelSoul):
         """
         if event.actor == self.target_node:
             self._last_action_time = time.time() + self._get_random_time_offset()
-            return
         
         self._pending_observations.append(event)
 
         # The model may choose to do something in response to this action, 
         # so don't wait for the timeout.
-        await self._take_timestep()
+        # await self._take_timestep()
+        
+        if not hasattr(self, 'is_viewed'):
+            return
+        
+        if event.actor == self.target_node:
+            class_name = event.__class__.__name__
+            if class_name == 'LeaveEvent' or class_name == 'ArriveEvent':
+                return
+        
+        view_txt = event.view_as(self.target_node)
+        if view_txt == None:
+            pass
+        else:
+            print(view_txt)
 
+
+
+
+        
     def _get_random_time_offset(self):
         """
         Produce a time offset based on JITTER_TIME_AROUND_TURNS to prevent
@@ -307,6 +324,12 @@ class PartnerHeuristicModelSoul(ModelSoul):
         if agent_id not in hist:
             hist[agent_id] = []
 
+        if not (hasattr(self, 'is_viewed') or hasattr(partner, 'is_viewed')):
+            # only talk to the 'viewer'
+            #import pdb; pdb.set_trace()
+            #print("ignore!")
+            return
+        
         partner_name = partner.name
         txt = self.npc_build_context(partner_name)
         for d in hist[agent_id]:
@@ -332,10 +355,14 @@ class PartnerHeuristicModelSoul(ModelSoul):
 
         reply_event = TellEvent(agent, target_nodes=[partner], text_content=act_text)
         reply_event.execute(self.world)
-
+        if hasattr(self, 'is_viewed'):
+            view_txt = 'You tell the ' + partner.name + ' "' + act_text + '"'
+            print(view_txt)
+                    
         # add dialogue to history
         hist[agent_id].append('_self_say ' + act_text + '\\n')
-
+        
+        
     def get_last_interaction_partner(self, node: "GraphAgent"):
         """
         Get the last interaction partner labelled for the given node, if it exists
@@ -364,10 +391,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
                     un_partner_node._last_interaction_partner_id = None
         self.target_node._last_interaction_partner_id = partner_node.node_id
         partner_node._last_interaction_partner_id = self.target_node.node_id
-
-    def hai(self):
-        print("hai")
-
+ 
     async def _take_timestep(self) -> None:
         self.take_timestep()
         
@@ -385,7 +409,21 @@ class PartnerHeuristicModelSoul(ModelSoul):
 
         if random.random() < CHAT_DISENGAGE_CHANCE:
             self.dialogue_clear_partner()
-        
+
+        # random movement for npcs..
+        if random.randint(0, 100) < 10:
+            go_events = self.world.get_possible_events(agent_id, use_actions=["go"])
+            if len(go_events) > 0:
+                go_event = random.choice(go_events)
+                if hasattr(self, 'is_viewed'):
+                    view_txt = 'You go towards the ' + go_event._canonical_targets[0]
+                    print(view_txt)
+                self.dialogue_clear_partner()
+                go_event.execute(self.world)
+                return
+
+
+            
         # possibly respond to talk requests
         curr_obs = []
         while len(self._pending_observations) > 0:
@@ -417,17 +455,8 @@ class PartnerHeuristicModelSoul(ModelSoul):
             # possibly end interaction with existing interaction partner (if any)?
             if random.random() < CHAT_DISENGAGE_CHANCE:
                 self.dialogue_clear_partner()
-                
-        # random movement for npcs..
-        if random.randint(0, 1000) < 100: #agent.speed:
-            go_events =  self.world.get_possible_events(agent_id, use_actions=['go'])
-            # move_actions = self.world.get_possible_actions(agent_id, use_actions=['go'])
-            if len(go_events) > 0:
-                go_event = random.choice(go_events)
-                go_event.execute(self.world)
-                #move_action = random.choice(move_actions)
-                #move_action.execute(self.world)
-                return
+
+
 
         # possibly act according to the bert model
         # self.npc_action()
