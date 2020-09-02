@@ -17,6 +17,7 @@ from light.data_model.environment_checkpoint_parser import EnvironmentCheckpoint
 from light.graph.utils import get_article
 import sys
 import parlai.utils.misc as parlai_utils
+import json
 
 sys.modules["parlai.core.utils"] = parlai_utils
 
@@ -294,6 +295,19 @@ class LIGHTDatabase:
         self.cache_init = True
         self.use_cache = True
         self.read_only = True
+
+        try:
+            possible_cache_path = self.dbpath + '.json'
+            if os.path.exists(possible_cache_path):
+                cache_date = os.path.getmtime(possible_cache_path)
+                database_date = os.path.getmtime(self.dbpath)
+                if cache_date > database_date:
+                    with open(possible_cache_path, 'r') as json_cache:
+                        self.cache = json.load(json_cache)
+                        return
+        except Exception:
+            pass  # initialize a new cache if the old one is corrupted
+
         db_table_dict = {
             "id": "id_table",
             "db_edges": "node_content_table",
@@ -314,11 +328,14 @@ class LIGHTDatabase:
                 self.cache[key] = {}
                 for row in results:
                     if row["parent_id"] in self.cache[key]:
-                        self.cache[key][row["parent_id"]].append(row)
+                        self.cache[key][row["parent_id"]].append(dict(row))
                     else:
-                        self.cache[key][row["parent_id"]] = [row]
+                        self.cache[key][row["parent_id"]] = [dict(row)]
             else:
-                self.cache[key] = {row["id"]: row for row in results}
+                self.cache[key] = {row["id"]: dict(row) for row in results}
+
+        with open(possible_cache_path, 'w') as json_cache:
+            json.dump(self.cache, json_cache)
 
     def __enter__(self):
         conn = sqlite3.connect(self.dbpath)
