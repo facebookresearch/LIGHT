@@ -304,6 +304,9 @@ class LIGHTDatabase:
                 if cache_date > database_date:
                     with open(possible_cache_path, 'r') as json_cache:
                         self.cache = json.load(json_cache)
+                        for key in self.cache.keys():
+                            for str_id in self.cache[key].ids():
+                                self.cache[key][int(str_id)] = self.cache[key][str_id]
                         return
         except Exception:
             pass  # initialize a new cache if the old one is corrupted
@@ -328,11 +331,11 @@ class LIGHTDatabase:
                 self.cache[key] = {}
                 for row in results:
                     if row["parent_id"] in self.cache[key]:
-                        self.cache[key][row["parent_id"]].append(dict(row))
+                        self.cache[key][int(row["parent_id"])].append(dict(row))
                     else:
-                        self.cache[key][row["parent_id"]] = [dict(row)]
+                        self.cache[key][int(row["parent_id"])] = [dict(row)]
             else:
-                self.cache[key] = {row["id"]: dict(row) for row in results}
+                self.cache[key] = {int(row["id"]): dict(row) for row in results}
 
         with open(possible_cache_path, 'w') as json_cache:
             json.dump(self.cache, json_cache)
@@ -432,7 +435,7 @@ class LIGHTDatabase:
         id_table.
         """
         if self.use_cache and id is not None:
-            use_id = str(id)
+            use_id = int(id)
             if use_id in self.cache["id"]:
                 found_id = self.cache["id"][use_id]
                 if expand:
