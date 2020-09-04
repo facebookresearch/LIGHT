@@ -55,11 +55,17 @@ def init_world(world_builder):
 async def run_with_builder(world_builder):
     world = init_world(world_builder)
 
-    # make first character the one that we view
+    # make first character the one that we vie
     for soulid, soul in world.purgatory.node_id_to_soul.items():
         if hasattr(soul, 'take_timestep'):
             soul.is_viewed = True
             soul.target_node.is_viewed = True
+            world.view_soul = soul
+            world.tasks = {}
+            for soulid2, soul2 in world.purgatory.node_id_to_soul.items():
+                if soulid != soulid2:
+                    world.tasks[soul2.target_node] = False
+            
             print("You are: " + soul.target_node.names[0])
             #agent.handle_act("inventory")
             break
