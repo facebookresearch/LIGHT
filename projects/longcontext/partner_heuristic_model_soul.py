@@ -294,6 +294,50 @@ class PartnerHeuristicModelSoul(ModelSoul):
         hist[agent_id].append('_self_act ' + act_text + '\\n')
         self.world.parse_exec(agent_id, reply_action)
 
+    def provide_task(self):
+        # STEP 1: in same room as viewing agent?
+        agent = self.target_node
+        my_room = self.target_node.get_room()
+        viewer_room = self.world.view_soul.target_node.get_room()
+        if my_room != viewer_room:
+            return
+        if random.randint(0, 100) < 75:
+            return False        
+        partner = self.world.view_soul.target_node
+        # STEP 2: find an open task
+        for task, taken in self.world.tasks.items():
+            if taken == False and task != agent and my_room != task.get_room():
+                act_text = ("can you tell the " + task.name + " that the " +
+                           self.target_node.name  + " wants to see them?")
+                self.world.tasks[task] = agent
+                tell_event = TellEvent(agent, target_nodes=[partner], text_content=act_text)
+                tell_event.execute(self.world)
+                return True
+        return False
+
+
+    def complete_task(self):
+        # is anything in the same room a task?
+        contents = self.target_node.get_room().get_contents()
+        task = None
+        for c in contents:
+            if c in self.world.tasks and self.world.tasks[c] != False:
+                task = c
+        if task is None:
+            return
+        task_contents = self.world.tasks[task] # person who assigned the task
+        agent = self.target_node
+        partner = task
+        act_text = task_contents.name + " wants to see you!"
+        tell_event = TellEvent(agent, target_nodes=[partner], text_content=act_text)
+        tell_event.execute(self.world)
+        view_txt = 'You tell the ' + partner.name + ' "' + act_text + '"'
+        print(view_txt)
+            
+        # Clear task
+        self.world.tasks[task] = False
+        return True
+    
     def npc_dialogue(self, obs=None):
         """
         Attempt to take a dialogue turn
@@ -407,6 +451,16 @@ class PartnerHeuristicModelSoul(ModelSoul):
         agent_id = agent.node_id
         agent.get_text()  # Clear the buffer, we use _pending_observations
 
+
+        if hasattr(self, 'is_viewed'):
+            # "player"
+            if self.complete_task():
+                return
+        else:
+            # random agent that provides a task
+            if self.provide_task():
+                return
+        
         if random.random() < CHAT_DISENGAGE_CHANCE:
             self.dialogue_clear_partner()
 
