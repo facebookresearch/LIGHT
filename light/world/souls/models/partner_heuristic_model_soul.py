@@ -94,12 +94,9 @@ class PartnerHeuristicModelSoul(ModelSoul):
             "True",
         ]
         act_opt, _unknown = parser.parse_and_process_known_args(args=args)
-        act_opt["override"] = {
-            "candidates": "inline",
-            "eval_candidates": "inline",
-            "ignore_bad_candidates": "True",
-        }
-        act_opt["interactive_mode"] = False
+
+        act_opt['override'] = {'eval_candidates': 'inline', 'ignore_bad_candidates': 'True'}
+        act_opt["interactive_mode"] = True
         act_opt["ignore_bad_candidates"] = True
         action_model = create_agent(act_opt, requireModelExists=True)
 
@@ -262,8 +259,8 @@ class PartnerHeuristicModelSoul(ModelSoul):
         msg = {
             "text": txt,
             "episode_done": True,
-            "label_candidates": cands,
-            "eval_labels": [cands[0]],
+            'label_candidates': cands,
+            'eval_labels': [cands[0]],
         }
         self.npc_act_model.observe(msg)
         act = self.npc_act_model.act()
@@ -348,7 +345,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
             if last_partner_id is None:
                 return None
             last_partner_node = self.world.oo_graph.get_node(last_partner_id)
-            if last_partner_node.get_room() != node.get_room():
+            if last_partner_node is None or last_partner_node.get_room() != node.get_room():
                 return None  # last partner is no longer present.
             return last_partner_id
         else:
