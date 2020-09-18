@@ -97,7 +97,7 @@ class WorldViewer(object):
             ent = node.get_prop("player_name")
         elif node.get_prop("agent") or node.get_prop("object"):
             prefix = self.name_prefix(node, ent, use_the)
-            if prefix is not "" and not drop_prefix:
+            if prefix != "" and not drop_prefix:
                 # -- clean up data, TODO: shouldn't need this?
                 if ent.lower().startswith("a "):
                     ent = ent[2:]
@@ -176,7 +176,7 @@ class WorldViewer(object):
             return False
         edge = from_node.get_edge_to(node)
         if edge is not None:
-            return f"a path to the {edge.label}"
+            return f"{edge.label}"
         else:
             return False
 
@@ -191,7 +191,7 @@ class WorldViewer(object):
             return False
         edge = self.world.oo_graph.get_edge(from_id, id)
         if edge is not None:
-            return f"a path to the {edge.label}"
+            return f"{edge.label}"
         else:
             return False
 

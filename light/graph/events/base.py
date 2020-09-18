@@ -32,6 +32,20 @@ if TYPE_CHECKING:
     from light.world.world import World
 
 
+def proper_caps(func): 
+    '''Decorator that reports the execution time.'''
+  
+    def wrap(*args, **kwargs): 
+        result = func(*args, **kwargs) 
+        if result is not None:
+            try:
+                result = result[0].upper() + result[1:]
+            except:
+                print(f"Had difficulty with proper_caps on {result}")
+        return result 
+    return wrap 
+
+
 class ProcessedArguments(NamedTuple):
     targets: List[GraphNode]
     text: Optional[str] = None
@@ -268,6 +282,7 @@ class ErrorEvent(GraphEvent):
         """
         raise Exception("ErrorEvents should never be executed")
 
+    @proper_caps
     def view_as(self, actor):
         """ErrorEvents should be viewed by the actor who tried to act"""
         assert actor == self.actor, (

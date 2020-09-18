@@ -10,6 +10,7 @@ from light.graph.events.base import (
     TriggeredEvent,
     NoArgumentEvent,
     ProcessedArguments,
+    proper_caps
 )
 
 # Used for typehinting
@@ -47,6 +48,7 @@ class SystemMessageEvent(TriggeredEvent):
         world.broadcast_to_agents(self, agents=[self.actor])
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Only the target actor should be able to see this message"""
         if viewer == self.actor:
@@ -77,18 +79,19 @@ class SayEvent(SpeechEvent):
         actor_name = self.actor.get_prefix_view()
         if self.is_dialogue_safe(self.text_content):
             self.__in_room_view = (
-                f'{actor_name} said "{self.text_content}"'.capitalize()
+                f'{actor_name} said "{self.text_content}"'
             )
             self.__self_view = None
         else:
             self.__in_room_view = (
-                f"{actor_name} mumbled something incomprehensible.".capitalize()
+                f"{actor_name} mumbled something incomprehensible."
             )
             self.__self_view = "You mumble something incomprehensible."
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -134,19 +137,20 @@ class ShoutEvent(SpeechEvent):
         actor_name = self.actor.get_prefix_view()
         if self.is_dialogue_safe(self.text_content):
             self.__in_room_view = (
-                f'{actor_name} shouted "{self.text_content}"'.capitalize()
+                f'{actor_name} shouted "{self.text_content}"'
             )
             self.__self_view = None
         else:
             self.__in_room_view = (
-                f"{actor_name} shouted something incomprehensible.".capitalize()
+                f"{actor_name} shouted something incomprehensible."
             )
             self.__self_view = "You shout something incomprehensible."
-        self.__in_room_view = f'{actor_name} shouted "{self.text_content}"'.capitalize()
+        self.__in_room_view = f'{actor_name} shouted "{self.text_content}"'
         world.broadcast_to_all_agents(self, exclude_agents=[self.actor])
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -192,16 +196,16 @@ class WhisperEvent(SpeechEvent):
         actor_name = self.actor.get_prefix_view()
         target_name = self.target_nodes[0].get_prefix_view()
         self.__in_room_view = (
-            f"{actor_name} whispered something to {target_name}".capitalize()
+            f"{actor_name} whispered something to {target_name}"
         )
         if self.is_dialogue_safe(self.text_content):
             self.__target_view = (
-                f'{actor_name} whispered "{self.text_content}" to you'.capitalize()
+                f'{actor_name} whispered "{self.text_content}" to you'
             )
             self.__self_view = None
         else:
             self.__target_view = (
-                f"{actor_name} whispered something incomprehensible to you".capitalize()
+                f"{actor_name} whispered something incomprehensible to you"
             )
             self.__self_view = (
                 f"You mumble something incomprehensible to {target_name}."
@@ -212,6 +216,7 @@ class WhisperEvent(SpeechEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -300,18 +305,18 @@ class TellEvent(SpeechEvent):
         target_name = self.target_nodes[0].get_prefix_view()
         if self.is_dialogue_safe(self.text_content):
             self.__target_view = (
-                f'{actor_name} told you "{self.text_content}"'.capitalize()
+                f'{actor_name} told you "{self.text_content}"'
             )
             self.__in_room_view = (
-                f'{actor_name} told {target_name} "{self.text_content}"'.capitalize()
+                f'{actor_name} told {target_name} "{self.text_content}"'
             )
             self.__self_view = None
         else:
             self.__target_view = (
-                f"{actor_name} mumbled something incomprehensible to you.".capitalize()
+                f"{actor_name} mumbled something incomprehensible to you."
             )
             self.__in_room_view = (
-                f"{actor_name} mumbled something incomprehensible.".capitalize()
+                f"{actor_name} mumbled something incomprehensible."
             )
             self.__self_view = (
                 f"You mumble something incomprehensible to {target_name}."
@@ -321,6 +326,7 @@ class TellEvent(SpeechEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -406,6 +412,7 @@ class LeaveEvent(TriggeredEvent):
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -425,11 +432,12 @@ class ArriveEvent(TriggeredEvent):
         """Save expected views, then message everyone"""
         actor_name = self.actor.get_prefix_view()
         self.__in_room_view = (
-            f"{actor_name} arrived from {self.text_content}".capitalize()
+            f"{actor_name} arrived from {self.text_content}"
         )
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -453,6 +461,7 @@ class TriggerFollowEvent(TriggeredEvent):
             GoEvent(self.actor, target_nodes=self.target_nodes).execute(world)
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -486,7 +495,7 @@ class GoEvent(GraphEvent):
         # TODO: add logic to support blocking such as below.
         self.__self_view = "You were blocked from moving!"
         actor_name = self.actor.get_prefix_view()
-        self.__in_room_view = f"{actor_name} was blocked from moving!".capitalize()
+        self.__in_room_view = f"{actor_name} was blocked from moving!"
         world.broadcast_to_agents(self, [self.actor])
         self.executed = True
         return False
@@ -532,6 +541,7 @@ class GoEvent(GraphEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         # Go events are mostly viewed through Leave and Arrive events.
@@ -545,7 +555,7 @@ class GoEvent(GraphEvent):
         """
         Provide the text that this event's actor would use to invoke this event
         """
-        return f"go {self.__canonical_room_view}"
+        return f"go {self.__canonical_room_view}".replace("a path to the a path to the", "a path to the")
 
     REPLACEMENTS = {
         "e": "east",
@@ -631,7 +641,7 @@ class UnfollowEvent(NoArgumentEvent):
         actor_name = self.actor.get_prefix_view()
         follow_name = self.actor.get_following().get_prefix_view()
         self.__unfollow_view = f"You stopped following {follow_name}"
-        self.__unfollowed_view = f"{actor_name} stopped following you".capitalize()
+        self.__unfollowed_view = f"{actor_name} stopped following you"
 
         self.__follow_target = self.actor.get_following()
         self.actor.unfollow()
@@ -639,6 +649,7 @@ class UnfollowEvent(NoArgumentEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -690,13 +701,14 @@ class FollowEvent(GraphEvent):
         actor_name = self.actor.get_prefix_view()
         follow_name = follow_target.get_prefix_view()
         self.__follow_view = f"You started following {follow_name}"
-        self.__followed_view = f"{actor_name} started following you".capitalize()
+        self.__followed_view = f"{actor_name} started following you"
 
         self.actor.follow(follow_target)
         world.broadcast_to_agents(self, [self.actor, self.target_nodes[0]])
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -791,6 +803,7 @@ class DeathEvent(TriggeredEvent):
         # update the player
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -829,6 +842,7 @@ class SoulSpawnEvent(TriggeredEvent):
 
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -856,6 +870,7 @@ class SpawnEvent(TriggeredEvent):
 
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -876,6 +891,7 @@ class HelpEvent(NoArgumentEvent):
         world.broadcast_to_agents(self, [self.actor])
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -935,6 +951,7 @@ class HitEvent(GraphEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 
@@ -943,28 +960,28 @@ class HitEvent(GraphEvent):
             if viewer == self.actor:
                 return f"You attacked {self.__attack_name}, but missed! "
             elif viewer == self.target_nodes[0]:
-                return f"{self.__actor_name} attacked you, but missed. ".capitalize()
+                return f"{self.__actor_name} attacked you, but missed. "
             else:
-                return f"{self.__actor_name} attacked {self.__attack_name}, but missed. ".capitalize()
+                return f"{self.__actor_name} attacked {self.__attack_name}, but missed. "
         elif self.attack - self.defend < 1:
             # The attack was blocked
             if viewer == self.actor:
                 return f"You attacked {self.__attack_name}, but they blocked! "
             elif viewer == self.target_nodes[0]:
                 return (
-                    f"{self.__actor_name} attacked you, but you blocked. ".capitalize()
+                    f"{self.__actor_name} attacked you, but you blocked. "
                 )
             else:
-                return f"{self.__actor_name} attacked {self.__attack_name}, but the attack was blocked. ".capitalize()
+                return f"{self.__actor_name} attacked {self.__attack_name}, but the attack was blocked. "
         else:
             # The attack happened
             if viewer == self.actor:
                 return f"You attacked {self.__attack_name}! "
             elif viewer == self.target_nodes[0]:
-                return f"{self.__actor_name} attacked you! ".capitalize()
+                return f"{self.__actor_name} attacked you! "
             else:
                 return (
-                    f"{self.__actor_name} attacked {self.__attack_name}! ".capitalize()
+                    f"{self.__actor_name} attacked {self.__attack_name}! "
                 )
 
     def to_canonical_form(self) -> str:
@@ -1044,14 +1061,15 @@ class HugEvent(GraphEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
             return f"You hugged {self.__hugged_name}."
         elif viewer == self.target_nodes[0]:
-            return f"{self.__actor_name} hugged you.".capitalize()
+            return f"{self.__actor_name} hugged you."
         else:
-            return f"{self.__actor_name} hugged {self.__hugged_name}.".capitalize()
+            return f"{self.__actor_name} hugged {self.__hugged_name}."
 
     def to_canonical_form(self) -> str:
         """
@@ -1144,13 +1162,14 @@ class GetObjectEvent(GraphEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 
         if viewer == self.actor:
             viewer_text = "You"
         else:
-            viewer_text = self.__actor_name.capitalize()
+            viewer_text = self.__actor_name
         if self.__from_room:
             return f"{viewer_text} got {self.__gotten_name}"
         else:
@@ -1218,7 +1237,7 @@ class GetObjectEvent(GraphEvent):
                     )
                 else:
                     guess_target = target_nodes[0]
-                    guess_target_name = guess_target.get_prefix_view().capitalize()
+                    guess_target_name = guess_target.get_prefix_view()
                     # nodes found were not a container
                     return ErrorEvent(
                         cls,
@@ -1241,7 +1260,7 @@ class GetObjectEvent(GraphEvent):
                 # we found a node, but it isn't the right one. if this is our first find, it'll be the error
                 if first_guess_error is None:
                     guess_target = target_nodes[0]
-                    guess_target_name = guess_target.get_prefix_view().capitalize()
+                    guess_target_name = guess_target.get_prefix_view()
                     first_guess_error = ErrorEvent(
                         cls,
                         actor,
@@ -1320,13 +1339,14 @@ class PutObjectInEvent(GraphEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 
         if viewer == self.actor:
             viewer_text = "You"
         else:
-            viewer_text = self.__actor_name.capitalize()
+            viewer_text = self.__actor_name
         surface_type = self.target_nodes[1].get_prop("surface_type", "in")
         return f"{viewer_text} put {self.__put_name} {surface_type} {self.__container_name}"
 
@@ -1393,7 +1413,7 @@ class PutObjectInEvent(GraphEvent):
                 )
             else:
                 guess_target = target_nodes[0]
-                guess_target_name = guess_target.get_prefix_view().capitalize()
+                guess_target_name = guess_target.get_prefix_view()
                 # nodes found were not a container
                 return ErrorEvent(
                     cls,
@@ -1413,7 +1433,7 @@ class PutObjectInEvent(GraphEvent):
         if len(applicable_nodes) > 0:
             # we found the thing, but it's equipped
             guess_target = applicable_nodes[0]
-            guess_target_name = guess_target.get_prefix_view().capitalize()
+            guess_target_name = guess_target.get_prefix_view()
             return ErrorEvent(
                 cls,
                 actor,
@@ -1423,7 +1443,7 @@ class PutObjectInEvent(GraphEvent):
         elif len(target_nodes) > 0:
             # we found a node, but it isn't the right one.
             guess_target = target_nodes[0]
-            guess_target_name = guess_target.get_prefix_view().capitalize()
+            guess_target_name = guess_target.get_prefix_view()
             return ErrorEvent(
                 cls,
                 actor,
@@ -1503,13 +1523,14 @@ class DropObjectEvent(GraphEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 
         if viewer == self.actor:
             viewer_text = "You"
         else:
-            viewer_text = self.__actor_name.capitalize()
+            viewer_text = self.__actor_name
         return f"{viewer_text} dropped {self.__drop_name} "
 
     def to_canonical_form(self) -> str:
@@ -1536,7 +1557,7 @@ class DropObjectEvent(GraphEvent):
         if len(applicable_nodes) > 0:
             # we found the thing, but it's equipped
             guess_target = applicable_nodes[0]
-            guess_target_name = guess_target.get_prefix_view().capitalize()
+            guess_target_name = guess_target.get_prefix_view()
             return ErrorEvent(
                 cls,
                 actor,
@@ -1546,7 +1567,7 @@ class DropObjectEvent(GraphEvent):
         elif len(target_nodes) > 0:
             # we found a node, but it isn't the right one.
             guess_target = target_nodes[0]
-            guess_target_name = guess_target.get_prefix_view().capitalize()
+            guess_target_name = guess_target.get_prefix_view()
             return ErrorEvent(
                 cls,
                 actor,
@@ -1618,13 +1639,14 @@ class StealObjectEvent(GraphEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 
         if viewer == self.actor:
             actor_text = "You"
         else:
-            actor_text = self.__actor_name.capitalize()
+            actor_text = self.__actor_name
         victim_text = self.__victim_name
         if viewer == self.target_nodes[1]:
             victim_text = "you"
@@ -1674,7 +1696,7 @@ class StealObjectEvent(GraphEvent):
         if len(applicable_victims) == 0:
             if len(target_nodes) > 0:
                 guess_target = target_nodes[0]
-                guess_target_name = guess_target.get_prefix_view().capitalize()
+                guess_target_name = guess_target.get_prefix_view()
                 # nodes found were not an agent
                 return ErrorEvent(
                     cls,
@@ -1705,7 +1727,7 @@ class StealObjectEvent(GraphEvent):
                 # the error
                 if first_guess_error is None:
                     guess_target = applicable_nodes[0]
-                    guess_target_name = guess_target.get_prefix_view().capitalize()
+                    guess_target_name = guess_target.get_prefix_view()
                     first_guess_error = ErrorEvent(
                         cls,
                         actor,
@@ -1716,7 +1738,7 @@ class StealObjectEvent(GraphEvent):
                 # we found a node, but it isn't the right one. if this is our first find, it'll be the error
                 if first_guess_error is None:
                     guess_target = target_nodes[0]
-                    guess_target_name = guess_target.get_prefix_view().capitalize()
+                    guess_target_name = guess_target.get_prefix_view()
                     first_guess_error = ErrorEvent(
                         cls,
                         actor,
@@ -1795,13 +1817,14 @@ class GiveObjectEvent(GraphEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 
         if viewer == self.actor:
             actor_text = "You"
         else:
-            actor_text = self.__actor_name.capitalize()
+            actor_text = self.__actor_name
         recipient_text = self.__recipient_name
         if viewer == self.target_nodes[1]:
             recipient_text = "you"
@@ -1868,7 +1891,7 @@ class GiveObjectEvent(GraphEvent):
         if len(applicable_nodes) > 0:
             # we found the thing, but it's equipped
             guess_target = applicable_nodes[0]
-            guess_target_name = guess_target.get_prefix_view().capitalize()
+            guess_target_name = guess_target.get_prefix_view()
             return ErrorEvent(
                 cls,
                 actor,
@@ -1878,7 +1901,7 @@ class GiveObjectEvent(GraphEvent):
         elif len(target_nodes) > 0:
             # we found a node, but it isn't the right one.
             guess_target = target_nodes[0]
-            guess_target_name = guess_target.get_prefix_view().capitalize()
+            guess_target_name = guess_target.get_prefix_view()
             return ErrorEvent(
                 cls,
                 actor,
@@ -1964,12 +1987,13 @@ class EquipObjectEvent(GraphEvent):
     def can_equip(cls, object_node: GraphObject) -> bool:
         return object_node.wearable or object_node.wieldable
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
             actor_text = "You"
         else:
-            actor_text = self._actor_name.capitalize()
+            actor_text = self._actor_name
         return f"{actor_text} {self.action_name} {self._equip_name} "
 
     def to_canonical_form(self) -> str:
@@ -1996,7 +2020,7 @@ class EquipObjectEvent(GraphEvent):
         elif len(target_nodes) > 0:
             # we found a node, but it isn't the right one.
             guess_target = target_nodes[0]
-            guess_target_name = guess_target.get_prefix_view().capitalize()
+            guess_target_name = guess_target.get_prefix_view()
             return ErrorEvent(
                 cls,
                 actor,
@@ -2105,12 +2129,13 @@ class RemoveObjectEvent(GraphEvent):
     def can_equip(cls, object_node: GraphObject) -> bool:
         return object_node.wearable or object_node.wieldable
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
             actor_text = "You"
         else:
-            actor_text = self._actor_name.capitalize()
+            actor_text = self._actor_name
         return f"{actor_text} removed {self._equip_name} "
 
     def to_canonical_form(self) -> str:
@@ -2140,7 +2165,7 @@ class RemoveObjectEvent(GraphEvent):
             # we found a node, but it's not removable. Still return the event to fail later
             return ProcessedArguments(targets=[target_nodes[0]])
             guess_target = target_nodes[0]
-            guess_target_name = guess_target.get_prefix_view().capitalize()
+            guess_target_name = guess_target.get_prefix_view()
             return ErrorEvent(
                 cls,
                 actor,
@@ -2165,7 +2190,7 @@ class RemoveObjectEvent(GraphEvent):
             target, GraphObject
         ), f"Can only remove GraphObjects, not {target}"
         if not target.equipped:
-            guess_target_name = target.get_prefix_view().capitalize()
+            guess_target_name = target.get_prefix_view()
             return ErrorEvent(
                 cls,
                 actor,
@@ -2232,12 +2257,13 @@ class IngestEvent(GraphEvent):
     def can_ingest(cls, object_node: GraphObject) -> bool:
         return object_node.drink or object_node.food
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
             return f"You {self.past_tense_action_name} {self._ingest_name}. {self._outcome} "
         else:
-            return f"{self._actor_name.capitalize()} {self.past_tense_action_name} {self._ingest_name}. "
+            return f"{self._actor_name} {self.past_tense_action_name} {self._ingest_name}. "
 
     def to_canonical_form(self) -> str:
         """return action text for equipping the object"""
@@ -2279,7 +2305,7 @@ class IngestEvent(GraphEvent):
         ), "Target node is not in the given container"
         assert isinstance(target, GraphObject), f"Must ingest an object, not {target}"
         if not cls.can_ingest(target):
-            guess_target_name = target.get_prefix_view().capitalize()
+            guess_target_name = target.get_prefix_view()
             return ErrorEvent(
                 cls,
                 actor,
@@ -2409,6 +2435,7 @@ class UseEvent(GraphEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 
@@ -2426,7 +2453,7 @@ class UseEvent(GraphEvent):
                 return self.messages["other_view"]
 
         # Default message.
-        actor_text = self.__actor_name.capitalize()
+        actor_text = self.__actor_name
         recipient_text = self.__recipient_name
         if viewer == self.target_nodes[1]:
             recipient_text = "you"
@@ -2483,7 +2510,7 @@ class UseEvent(GraphEvent):
         elif len(target_nodes) > 0:
             # we found a node, but it isn't the right one.
             guess_target = target_nodes[0]
-            guess_target_name = guess_target.get_prefix_view().capitalize()
+            guess_target_name = guess_target.get_prefix_view()
             return ErrorEvent(
                 cls,
                 actor,
@@ -2576,12 +2603,13 @@ class LockableEvent(GraphEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
             viewer_text = "You"
         else:
-            viewer_text = self._actor_name.capitalize()
+            viewer_text = self._actor_name
         return (
             f"{viewer_text} {self.NAMES[0]}ed {self._locked_name} with {self._key_name}"
         )
@@ -2854,14 +2882,15 @@ class ExamineEvent(GraphEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
             return self.__examine_text
         elif self.target_nodes[0] == viewer:
-            return f"{self.__actor_name.capitalize()} examined you "
+            return f"{self.__actor_name} examined you "
         else:
-            return f"{self.__actor_name.capitalize()} examined {self.__target_name} "
+            return f"{self.__actor_name} examined {self.__target_name} "
 
     def to_canonical_form(self) -> str:
         """return action text for dropping the object"""
@@ -2950,11 +2979,12 @@ class EmoteEvent(GraphEvent):
         assert self.text_content is not None, "Cannot emote without text_context"
         actor_name = self.actor.get_prefix_view()
         self.__display_action = self.DESC_MAP[self.text_content]
-        self.__in_room_view = f"{actor_name} {self.__display_action}.".capitalize()
+        self.__in_room_view = f"{actor_name} {self.__display_action}."
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -3016,12 +3046,13 @@ class WaitEvent(NoArgumentEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
             return "You waited. "
         else:
-            return f"{self.__actor_name.capitalize()} waited. "
+            return f"{self.__actor_name} waited. "
 
 
 class InventoryEvent(NoArgumentEvent):
@@ -3040,6 +3071,7 @@ class InventoryEvent(NoArgumentEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -3048,7 +3080,7 @@ class InventoryEvent(NoArgumentEvent):
                 f"You are {self.__inv_text}"
             )
         else:
-            return f"{self.__actor_name.capitalize()} checked their inventory. "
+            return f"{self.__actor_name} checked their inventory. "
 
 
 class HealthEvent(NoArgumentEvent):
@@ -3067,12 +3099,13 @@ class HealthEvent(NoArgumentEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
             return f"You are feeling {self.__health_text}. "
         else:
-            return f"{self.__actor_name.capitalize()} checked their health. "
+            return f"{self.__actor_name} checked their health. "
 
 
 class LookEvent(NoArgumentEvent):
@@ -3131,12 +3164,13 @@ class LookEvent(NoArgumentEvent):
         self.executed = True
         return []
 
+    @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
             return self.__current_view
         else:
-            return f"{self.__actor_name.capitalize()} looked around. "
+            return f"{self.__actor_name} looked around. "
 
 
 # TODO implement use
