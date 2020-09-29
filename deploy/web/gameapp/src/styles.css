@@ -336,6 +336,7 @@ i.fa {
   margin: 8px 0 0;
   font-size: 15px;
   line-height: 1.4em;
+  white-space: pre-line;
 }
 
 .persona .icon {

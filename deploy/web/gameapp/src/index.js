@@ -28,13 +28,15 @@ const createWebSocketUrlFromBrowserUrl = (url) => {
   if (optionalServerHost) {
     console.log("Using user-provided server hostname:", optionalServerHost);
   }
-  const websocketURL =
+
+  let websocketURL =
     wsProtocol +
     "://" +
-    (optionalServerHost || CONFIG.hostname) +
-    ":" +
-    CONFIG.port +
-    `/game${optionalGameId}/socket`;
+    (optionalServerHost || CONFIG.hostname);
+  if (CONFIG.port != '80') {
+    websocketURL += ":" + CONFIG.port;
+  }
+  websocketURL += `/game${optionalGameId}/socket`;
   return websocketURL;
 };
 

@@ -148,8 +148,8 @@ export function useWSDataSource(url) {
       setConnected(true);
     };
 
-    websocket.current.onerror = websocket.current.onclose = () => {
-      console.log("errored");
+    websocket.current.onerror = websocket.current.onclose = (e) => {
+      console.log("errored", e);
       setConnected(false);
       setErrored(true);
       websocket.current = null;

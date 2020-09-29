@@ -17,7 +17,7 @@ class QuestLoader():
             if not quest_file.endswith('.json'):
                 continue
             with open(os.path.join(quest_dir, quest_file), "r") as jsonfile:
-                self.quests.append(json.load(jsonfile))
+                self.quests.append(json.load(jsonfile)['data'])
 
     def get_random_quest(self):
         """

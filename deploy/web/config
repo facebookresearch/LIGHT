@@ -1,9 +1,9 @@
 --data-model-db
-~/data/database.db 
+/home/ubuntu/data/database.db 
 --hostname
 light-rpg.ai
 --light-model-root
-~/data/models/
+/home/ubuntu/data/models/
 --password
 LetsPlay
 --port
