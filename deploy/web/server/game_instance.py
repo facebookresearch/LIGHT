@@ -14,7 +14,7 @@ from light.world.souls.models.partner_heuristic_model_soul import (
 
 import time
 
-USE_MODELS = False
+USE_MODELS = True
 
 
 class Player:
@@ -114,6 +114,7 @@ class GameInstance:
         if not USE_MODELS:
             purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
         else:
+            print(model_resources.keys())
             purgatory.register_filler_soul_provider(
                 "model",
                 PartnerHeuristicModelSoul,
