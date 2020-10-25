@@ -517,9 +517,13 @@ class GraphAgent(GraphNode):
         if self._props.get("dead", None) is not None:
             self.dead = self._props.get("dead")
         self.is_player = self._props.get("is_player", False)
+        self.usually_npc = self._props.get("usually_npc", False)
 
         self.following = None
         self.followed_by = {}
+
+        self.blocking = None
+        self.blocked_by = {}
 
         # Game properties to track for this agent, TODO move to other class?
         self._human = False
@@ -531,15 +535,51 @@ class GraphAgent(GraphNode):
         impossible to exist"""
         super().assert_valid()
         assert self.following is None or isinstance(self.following, GraphEdge)
+        assert self.blocking is None or isinstance(self.blocking, GraphEdge)
         assert isinstance(self.followed_by, dict)
+        assert isinstance(self.blocked_by, dict)
         for key, value in self.followed_by:
             assert value.get().node_id == key
             assert value.get().following == self
+        for key, value in self.blocked_by:
+            assert value.get().node_id == key
+            assert value.get().blocking == self
         for x in self.get_followers():
             assert isinstance(x, GraphAgent)
+        for x in self.get_blockers():
+            assert isinstance(x, GraphAgent)
         assert self.get_following() is None or isinstance(
-            self.get_following, GraphAgent
-        )
+            self.get_following, GraphAgent)
+        assert self.get_blocking() is None or isinstance(
+            self.get_blocking, GraphAgent)
+
+    def block(self, other_agent):
+        """Create an edge between this and the agent being blocked"""
+        assert isinstance(
+            other_agent, GraphAgent
+        ), f"Can only block agents, given {other_agent}"
+        assert self.node_id not in other_agent.blocked_by, "Already blocking"
+        assert (
+            other_agent.get_room() == self.get_room()
+        ), "Can only block agents in the same room"
+        self.blocking = GraphEdge(other_agent)
+        other_agent.blocked_by[self.node_id] = GraphEdge(self)
+
+    def unblock(self):
+        """Remove the edges between this agent and the agent they are blocking"""
+        assert self.blocking is not None, "Not blocking anyone"
+        blocked_agent = self.blocking.get()
+        del blocked_agent.blocked_by[self.node_id]
+        self.blocking = None
+
+    def get_blockers(self):
+        """Get a list of the nodes blocking this node"""
+        return [x.get() for x in self.blocked_by.values()]
+
+    def get_blocking(self):
+        if self.blocking is None:
+            return None
+        return self.blocking.get()        
 
     def follow(self, other_agent):
         """Create an edge between this and the agent being followed"""
@@ -574,8 +614,12 @@ class GraphAgent(GraphNode):
         deleted_nodes = super().delete_and_cleanup()
         if self.get_following() is not None:
             self.unfollow()
+        if self.get_blocking() is not None:
+            self.unblock()
         for node in self.get_followers():
             node.unfollow()
+        for node in self.get_blockers():
+            node.unblock()
         # TODO sever the player connection
 
         return deleted_nodes

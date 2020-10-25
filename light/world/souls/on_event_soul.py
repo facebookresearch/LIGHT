@@ -27,8 +27,8 @@ class OnEventSoul(Soul):
 
     def match_event(self, event, cause):
         event_name = event.__class__.__name__
-        if cause[0] == event_name:
-            if event_name == "SayEvent":
+        if cause[0] == event_name  or (cause[0] == "SayEvent" and event_name == "TellEvent"):
+            if cause[0] == "SayEvent":
                 if cause[1] in event.text_content and event.safe:
                     return True
         return False
