@@ -949,7 +949,13 @@ class World(object):
 
     def get_possible_player_nodes(self):
         """Return any nodes that would be allowed to be reinhabited by a player"""
-        return self.oo_graph.get_npcs()
+        agents = self.oo_graph.get_npcs()
+        allowed_agents = []
+        for a in agents:
+            if not a.usually_npc:
+                # only allow a player to be from the non-NPC set
+                allowed_agents.append(a)
+        return allowed_agents
 
     # TODO refactor players
     def spawn_player(self, existing_player_id=-1):

@@ -160,6 +160,7 @@
         },
         "orc_2_4": {
             "agent": true,
+	    "usually_npc": true,
             "aggression": 0,
             "char_type": "creature",
             "classes": [
@@ -296,6 +297,7 @@
                             "create_entity",
                             "in_used_target_item",
                             {
+				"name_prefix": "an",
                                 "is_wearable": 1,
                                 "name": "emerald ring",
                                 "physical_description": "A beautiful and mysterious ring.. could it have magical powers?"
