@@ -10,7 +10,7 @@ from light.graph.events.base import (
     TriggeredEvent,
     NoArgumentEvent,
     ProcessedArguments,
-    proper_caps
+    proper_caps,
 )
 
 # Used for typehinting
@@ -78,14 +78,10 @@ class SayEvent(SpeechEvent):
         assert not self.executed
         actor_name = self.actor.get_prefix_view()
         if self.is_dialogue_safe(self.text_content):
-            self.__in_room_view = (
-                f'{actor_name} said "{self.text_content}"'
-            )
+            self.__in_room_view = f'{actor_name} said "{self.text_content}"'
             self.__self_view = None
         else:
-            self.__in_room_view = (
-                f"{actor_name} mumbled something incomprehensible."
-            )
+            self.__in_room_view = f"{actor_name} mumbled something incomprehensible."
             self.__self_view = "You mumble something incomprehensible."
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         self.executed = True
@@ -136,14 +132,10 @@ class ShoutEvent(SpeechEvent):
         assert not self.executed
         actor_name = self.actor.get_prefix_view()
         if self.is_dialogue_safe(self.text_content):
-            self.__in_room_view = (
-                f'{actor_name} shouted "{self.text_content}"'
-            )
+            self.__in_room_view = f'{actor_name} shouted "{self.text_content}"'
             self.__self_view = None
         else:
-            self.__in_room_view = (
-                f"{actor_name} shouted something incomprehensible."
-            )
+            self.__in_room_view = f"{actor_name} shouted something incomprehensible."
             self.__self_view = "You shout something incomprehensible."
         self.__in_room_view = f'{actor_name} shouted "{self.text_content}"'
         world.broadcast_to_all_agents(self, exclude_agents=[self.actor])
@@ -195,13 +187,9 @@ class WhisperEvent(SpeechEvent):
         assert not self.executed
         actor_name = self.actor.get_prefix_view()
         target_name = self.target_nodes[0].get_prefix_view()
-        self.__in_room_view = (
-            f"{actor_name} whispered something to {target_name}"
-        )
+        self.__in_room_view = f"{actor_name} whispered something to {target_name}"
         if self.is_dialogue_safe(self.text_content):
-            self.__target_view = (
-                f'{actor_name} whispered "{self.text_content}" to you'
-            )
+            self.__target_view = f'{actor_name} whispered "{self.text_content}" to you'
             self.__self_view = None
         else:
             self.__target_view = (
@@ -304,9 +292,7 @@ class TellEvent(SpeechEvent):
         actor_name = self.actor.get_prefix_view()
         target_name = self.target_nodes[0].get_prefix_view()
         if self.is_dialogue_safe(self.text_content):
-            self.__target_view = (
-                f'{actor_name} told you "{self.text_content}"'
-            )
+            self.__target_view = f'{actor_name} told you "{self.text_content}"'
             self.__in_room_view = (
                 f'{actor_name} told {target_name} "{self.text_content}"'
             )
@@ -315,9 +301,7 @@ class TellEvent(SpeechEvent):
             self.__target_view = (
                 f"{actor_name} mumbled something incomprehensible to you."
             )
-            self.__in_room_view = (
-                f"{actor_name} mumbled something incomprehensible."
-            )
+            self.__in_room_view = f"{actor_name} mumbled something incomprehensible."
             self.__self_view = (
                 f"You mumble something incomprehensible to {target_name}."
             )
@@ -408,7 +392,7 @@ class LeaveEvent(TriggeredEvent):
         """Save expected views, then message everyone"""
         actor_name = self.actor.get_prefix_view()
         target_name = self.target_nodes[0].get_prefix_view_from(self.room)
-        self.__in_room_view = f'{actor_name} left towards {target_name}.'
+        self.__in_room_view = f"{actor_name} left towards {target_name}."
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         return []
 
@@ -431,9 +415,7 @@ class ArriveEvent(TriggeredEvent):
     def execute(self, world: "World") -> List[GraphEvent]:
         """Save expected views, then message everyone"""
         actor_name = self.actor.get_prefix_view()
-        self.__in_room_view = (
-            f"{actor_name} arrived from {self.text_content}"
-        )
+        self.__in_room_view = f"{actor_name} arrived from {self.text_content}"
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         return []
 
@@ -518,10 +500,8 @@ class GoEvent(GraphEvent):
         if old_room.node_id in world.oo_graph.room_id_to_loggers:
             world.oo_graph.room_id_to_loggers[old_room.node_id].observe_event(self)
         if self.actor.node_id in world.purgatory.node_id_to_soul:
-            agent = world.purgatory.node_id_to_soul[
-                self.actor.node_id
-            ]
-            if hasattr(agent, 'agent_logger'):
+            agent = world.purgatory.node_id_to_soul[self.actor.node_id]
+            if hasattr(agent, "agent_logger"):
                 agent.agent_logger.observe_event(self)
 
         self.__successful_leave = self.is_not_blocked(world)
@@ -556,7 +536,9 @@ class GoEvent(GraphEvent):
         """
         Provide the text that this event's actor would use to invoke this event
         """
-        return f"go {self.__canonical_room_view}".replace("a path to the a path to the", "a path to the")
+        return f"go {self.__canonical_room_view}".replace(
+            "a path to the a path to the", "a path to the"
+        )
 
     REPLACEMENTS = {
         "e": "east",
@@ -785,7 +767,6 @@ class FollowEvent(GraphEvent):
         return valid_actions
 
 
-
 class UnblockEvent(NoArgumentEvent):
     """Handles removing a block"""
 
@@ -825,9 +806,7 @@ class UnblockEvent(NoArgumentEvent):
         cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
     ) -> Union["UnblockEvent", ErrorEvent]:
         """Unblock events are valid as long as you are blocking something."""
-        assert (
-            len(targets) == 0
-        ), f"UnblockEvents should get no args, but got {targets}"
+        assert len(targets) == 0, f"UnblockEvents should get no args, but got {targets}"
         if actor.get_blocking() is None:
             return ErrorEvent(cls, actor, "You already aren't blocking anyone")
         return cls(actor)
@@ -941,7 +920,7 @@ class BlockEvent(GraphEvent):
                 valid_actions.append(cls(actor, target_nodes=[agent]))
         return valid_actions
 
-    
+
 # TODO examine more death processing. Do we need to update a player status?
 # must check structured_graph and graph_nodes
 class DeathEvent(TriggeredEvent):
@@ -1120,15 +1099,15 @@ class HitEvent(GraphEvent):
             elif viewer == self.target_nodes[0]:
                 return f"{self.__actor_name} attacked you, but missed. "
             else:
-                return f"{self.__actor_name} attacked {self.__attack_name}, but missed. "
+                return (
+                    f"{self.__actor_name} attacked {self.__attack_name}, but missed. "
+                )
         elif self.attack - self.defend < 1:
             # The attack was blocked
             if viewer == self.actor:
                 return f"You attacked {self.__attack_name}, but they blocked! "
             elif viewer == self.target_nodes[0]:
-                return (
-                    f"{self.__actor_name} attacked you, but you blocked. "
-                )
+                return f"{self.__actor_name} attacked you, but you blocked. "
             else:
                 return f"{self.__actor_name} attacked {self.__attack_name}, but the attack was blocked. "
         else:
@@ -1138,9 +1117,7 @@ class HitEvent(GraphEvent):
             elif viewer == self.target_nodes[0]:
                 return f"{self.__actor_name} attacked you! "
             else:
-                return (
-                    f"{self.__actor_name} attacked {self.__attack_name}! "
-                )
+                return f"{self.__actor_name} attacked {self.__attack_name}! "
 
     def to_canonical_form(self) -> str:
         """
@@ -2687,7 +2664,7 @@ class UseEvent(GraphEvent):
         if not hasattr(use_object, "on_use") or use_object.on_use is None:
             return ErrorEvent(cls, actor, "Nothing special seems to happen.",)
         return cls(actor, target_nodes=[use_object, use_with])
-    
+
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
         """
@@ -2698,7 +2675,9 @@ class UseEvent(GraphEvent):
         useable_objects = [
             x
             for x in actor.get_contents()
-            if isinstance(x, GraphObject) and hasattr(x, "on_use") and x.on_use is not None
+            if isinstance(x, GraphObject)
+            and hasattr(x, "on_use")
+            and x.on_use is not None
         ]
         if len(useable_objects) == 0:
             return []
