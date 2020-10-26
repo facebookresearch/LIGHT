@@ -1834,19 +1834,24 @@ class GiveObjectEventTest(GraphEventTests):
 
 
 test_graph_3_before_equip_sword = OOGraph.from_json(test_graph_3)
+
 equipped_node = test_graph_3_before_equip_sword.get_node("sword_from_a_stone_4")
 actor_node = test_graph_3_before_equip_sword.get_node("carrier_12")
 assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
 assert isinstance(actor_node, GraphAgent), "Graph parsing failed"
 equipped_node.equipped = True
 actor_node.damage += 1
+actor_node.num_wieldable_items = 1
+actor_node.num_wearable_items = 0
 test_graph_3_after_equip_sword = test_graph_3_before_equip_sword.to_json()
+
 equipped_node = test_graph_3_before_equip_sword.get_node("hat_5")
 assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
 equipped_node.equipped = True
 actor_node.defense += 1
+actor_node.num_wieldable_items = 1
+actor_node.num_wearable_items = 1
 test_graph_3_after_equip_both = test_graph_3_before_equip_sword.to_json()
-
 
 test_graph_3_before_equip_hat = OOGraph.from_json(test_graph_3)
 equipped_node = test_graph_3_before_equip_hat.get_node("hat_5")
@@ -1855,6 +1860,8 @@ assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
 assert isinstance(actor_node, GraphAgent), "Graph parsing failed"
 equipped_node.equipped = True
 actor_node.defense += 1
+actor_node.num_wieldable_items = 0
+actor_node.num_wearable_items = 1
 test_graph_3_after_equip_hat = test_graph_3_before_equip_hat.to_json()
 
 
@@ -2582,7 +2589,9 @@ test_graph_3_after_ingest_apple = """
     ]
 }
 """
-test_graph_3_after_ingest_apple = OOGraph.from_json(test_graph_3_after_ingest_apple).to_json()
+test_graph_3_after_ingest_apple = OOGraph.from_json(
+    test_graph_3_after_ingest_apple
+).to_json()
 test_graph_3_before_ingest_drink_dict = json.loads(test_graph_3)
 del test_graph_3_before_ingest_drink_dict["nodes"]["something_to_drink_20"]
 del test_graph_3_before_ingest_drink_dict["nodes"]["carrier_12"]["contained_nodes"][
