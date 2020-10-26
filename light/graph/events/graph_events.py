@@ -1282,7 +1282,7 @@ class GetObjectEvent(GraphEvent):
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
-        On execution, move the item from its location to the age
+        On execution, move the item from its location to the agent
         """
         assert not self.executed
         # Populate for views
@@ -1381,7 +1381,6 @@ class GetObjectEvent(GraphEvent):
                         [guess_target],
                     )
             possible_containers = applicable_containers
-
         # check each container to see if the wanted object is within
         first_guess_error = None
         for container in possible_containers:
