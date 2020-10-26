@@ -848,8 +848,8 @@ class World(object):
             result = EventClass.find_nodes_for_args(
                 self.oo_graph, actor_node, *string_args
             )
-            if isinstance(result, ErrorEvent):
-                continue
+            if not isinstance(result, ErrorEvent):
+                break
 
         if isinstance(result, ErrorEvent):
             return result
