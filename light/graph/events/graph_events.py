@@ -2183,17 +2183,9 @@ class EquipObjectEvent(GraphEvent):
             target, GraphObject
         ), f"Can only be equipping objects, not {target}"
         if target.wieldable and actor.num_wieldable_items >= actor.max_wieldable_items:
-            return ErrorEvent(
-                cls,
-                actor,
-                "You can't wield any more items!"
-            )
+            return ErrorEvent(cls, actor, "You can't wield any more items!")
         if target.wearable and actor.num_wearable_items >= actor.max_wearable_items:
-            return ErrorEvent(
-                cls,
-                actor,
-                "You can't wear any more items!"
-            )
+            return ErrorEvent(cls, actor, "You can't wear any more items!")
         if target.equipped is not None:
             return ErrorEvent(
                 cls,

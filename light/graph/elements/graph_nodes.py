@@ -505,8 +505,12 @@ class GraphAgent(GraphNode):
         self.agent = True
         self.size = self._props.get("size", self.DEFAULT_SIZE)
         self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
-        self.max_wearable_items = self._props.get("max_wearable_items", self.DEFAULT_MAX_WEARABLE_ITEMS)
-        self.max_wieldable_items = self._props.get("max_wieldable_items", self.DEFAULT_MAX_WIELDABLE_ITEMS)
+        self.max_wearable_items = self._props.get(
+            "max_wearable_items", self.DEFAULT_MAX_WEARABLE_ITEMS
+        )
+        self.max_wieldable_items = self._props.get(
+            "max_wieldable_items", self.DEFAULT_MAX_WIELDABLE_ITEMS
+        )
         self.num_wearable_items = 0
         self.num_wieldable_items = 0
         self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
@@ -556,9 +560,9 @@ class GraphAgent(GraphNode):
         for x in self.get_blockers():
             assert isinstance(x, GraphAgent)
         assert self.get_following() is None or isinstance(
-            self.get_following, GraphAgent)
-        assert self.get_blocking() is None or isinstance(
-            self.get_blocking, GraphAgent)
+            self.get_following, GraphAgent
+        )
+        assert self.get_blocking() is None or isinstance(self.get_blocking, GraphAgent)
 
     def block(self, other_agent):
         """Create an edge between this and the agent being blocked"""
@@ -586,7 +590,7 @@ class GraphAgent(GraphNode):
     def get_blocking(self):
         if self.blocking is None:
             return None
-        return self.blocking.get()        
+        return self.blocking.get()
 
     def follow(self, other_agent):
         """Create an edge between this and the agent being followed"""
