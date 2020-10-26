@@ -68,7 +68,7 @@
             "followed_by": {},
             "following": null,
             "food_energy": 1,
-            "health": 10,
+            "health": 5,
             "is_player": false,
             "name": "kitty",
             "name_prefix": "some",

@@ -64,14 +64,14 @@ class WorldViewer(object):
             health = 8
         f = [
             "dead",
-            "on the verge of death",
-            "very weak",
-            "weak",
-            "ok",
-            "good",
-            "strong",
-            "very strong",
-            "nigh on invincible",
+            "feeling on the verge of death",
+            "feeling very weak",
+            "feeling weak",
+            "still feeling ok", 
+            "still feeling good", 
+            "still feeling strong",
+            "still feeling very strong",
+            "still feeling nigh on invincible",
         ]
         return f[int(health)]
 
