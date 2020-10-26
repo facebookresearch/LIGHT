@@ -708,6 +708,8 @@ test_graph_2_after_move_dict["nodes"]["following_agent_0"]["container_node"] = {
 test_graph_2_after_move_dict["nodes"]["test_agent_0"]["container_node"] = {
     "target_id": "other_room_1"
 }
+test_graph_2_after_move_dict["nodes"]["test_agent_0"]["health"] = 9.95
+test_graph_2_after_move_dict["nodes"]["following_agent_0"]["health"] = 9.95
 test_graph_2_after_move = OOGraph.from_json(
     json.dumps(test_graph_2_after_move_dict)
 ).to_json()
