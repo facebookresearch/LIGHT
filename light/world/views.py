@@ -62,18 +62,19 @@ class WorldViewer(object):
             health = 1
         if health > 8:
             health = 8
+        # Second argument indicates sentiment (can use for descriptions).    
         f = [
-            "dead",
-            "feeling on the verge of death",
-            "feeling very weak",
-            "feeling weak",
-            "still feeling ok", 
-            "still feeling good", 
-            "still feeling strong",
-            "still feeling very strong",
-            "still feeling nigh on invincible",
+            ("pretty dead", -1),
+            ("on the verge of death", -1),
+            ("very weak", -1),
+            ("weak", -1),
+            ("ok", 1),
+            ("good", 1),
+            ("strong", 1),
+            ("very strong", 1),
+            ("nigh on invincible", 1)
         ]
-        return f[int(health)]
+        return f[int(health)][0], f[int(health)][1]
 
     def get_node_desc(self, node, from_node=None, use_the=False, drop_prefix=False):
         """Return a viewable description for this node in the graph"""

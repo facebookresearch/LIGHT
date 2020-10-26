@@ -1094,12 +1094,36 @@ class HitEvent(GraphEvent):
         attack_target = self.target_nodes[0]
         assert isinstance(attack_target, GraphAgent), "Must attack an agent"
         self.__attack_name = attack_target.get_prefix_view()
-        damage = self.actor.get_prop("damage", 0)
-        armor = attack_target.get_prop("defense", 0)
+        damage = self.actor.get_prop("damage", 0) + self.actor.strength
+        armor = attack_target.get_prop("defense", 0) + self.actor.dexterity
         if self.attack is None:
             # need to save randomized attacks for replaying
             self.attack = random.randint(max(0, damage - 10), damage + 1)
             self.defend = random.randint(max(0, armor - 10), armor)
+
+        # pick weapon that hit the opponent
+        weapons = []
+        for id, obj in self.actor.contained_nodes.items():
+            n = obj._target_node
+            if n.wieldable and n.equipped:
+                weapons.append(n)
+        if len(weapons) == 0:
+            self.weapon = "none"
+        else:
+            self.weapon = random.choice(weapons).get_prefix_view()
+        # fun text details
+        attack_verb = ["attacked", "strike at", "charge at", "swipe at"]
+        block_verb = ["parried", "blocked", "repelled"]
+        hit_details = [
+            "making crunching contact",
+            "hitting them",
+            "crunch",
+            "smash",
+            "crack",
+        ]
+        self.attack_verb = random.choice(attack_verb)
+        self.block_verb = random.choice(block_verb)
+        self.hit_details = random.choice(hit_details)
 
         world.broadcast_to_room(self)
 
@@ -1111,7 +1135,7 @@ class HitEvent(GraphEvent):
             if health == 0:
                 DeathEvent(attack_target).execute(world)
             else:
-                HealthEvent(attack_target).execute(world)
+                HealthEvent(attack_target, target_nodes=[self.actor]).execute(world)
 
         self.executed = True
         return []
@@ -1123,29 +1147,34 @@ class HitEvent(GraphEvent):
         if self.attack == 0:
             # The attack missed
             if viewer == self.actor:
-                return f"You attacked {self.__attack_name}, but missed! "
+                return f"You {self.attack_verb} {self.__attack_name}, but missed! "
             elif viewer == self.target_nodes[0]:
-                return f"{self.__actor_name} attacked you, but missed. "
+                return f"{self.__actor_name} {self.attack_verb} you, but missed. "
             else:
-                return (
-                    f"{self.__actor_name} attacked {self.__attack_name}, but missed. "
-                )
-        elif self.attack - self.defend < 1:
+                return f"{self.__actor_name} {self.attack_verb} {self.__attack_name}, but missed. "
+        elif self.attack - self.defend <= 1:
             # The attack was blocked
             if viewer == self.actor:
-                return f"You attacked {self.__attack_name}, but they blocked! "
+                return f"You {self.attack_verb} {self.__attack_name}, but they {self.block_verb}! "
             elif viewer == self.target_nodes[0]:
-                return f"{self.__actor_name} attacked you, but you blocked. "
+                return f"{self.__actor_name} {self.attack_verb} you, but you {self.block_verb}. "
             else:
-                return f"{self.__actor_name} attacked {self.__attack_name}, but the attack was blocked. "
+                return f"{self.__actor_name} {self.attack_verb} {self.__attack_name}, but the attack was {self.block_verb}. "
         else:
             # The attack happened
+            txt = ""
             if viewer == self.actor:
-                return f"You attacked {self.__attack_name}! "
+                txt = f"You {self.attack_verb} {self.__attack_name}"
             elif viewer == self.target_nodes[0]:
-                return f"{self.__actor_name} attacked you! "
+                txt = f"{self.__actor_name} attacked you"
             else:
-                return f"{self.__actor_name} attacked {self.__attack_name}! "
+                txt = f"{self.__actor_name} {self.attack_verb} {self.__attack_name}"
+            if self.weapon != "none":
+                txt += " with " + self.weapon
+            if self.hit_details != "none":
+                txt += ", " + self.hit_details
+            txt += "!"
+            return txt
 
     def to_canonical_form(self) -> str:
         """
@@ -3156,6 +3185,7 @@ class EmoteEvent(GraphEvent):
         actor_name = self.actor.get_prefix_view()
         self.__display_action = self.DESC_MAP[self.text_content]
         self.__in_room_view = f"{actor_name} {self.__display_action}."
+        self.__self_view = f"You {self.text_content}."
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         self.executed = True
         return []
@@ -3164,7 +3194,8 @@ class EmoteEvent(GraphEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            return None  # One should not observe themself emoting
+            return self.__self_view
+            # None  # One should not observe themself emoting
         else:
             return self.__in_room_view
 
@@ -3271,21 +3302,28 @@ class HealthEvent(NoArgumentEvent):
         assert not self.executed
         self.__actor_name = self.actor.get_prefix_view()
         self.__health_text = world.health(self.actor.node_id)
-        world.broadcast_to_agents(self, [self.actor])
+        to_agents = [self.actor]
+        for t in self.target_nodes:
+            to_agents.append(t)
+        world.broadcast_to_agents(self, to_agents)
         self.executed = True
         return []
 
     @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
+        health_text, sentiment = self.__health_text
         if viewer == self.actor:
             s = ""
             if self.text_content is not None:
                 s += "You are " + self.text_content + ". "
-            s += f"You are {self.__health_text}. "
+            s += f"You are currently feeling {health_text}."
             return s
         else:
-            return f"{self.__actor_name} checked their health. "
+            verb = "looks"
+            if sentiment > 0:
+                verb = "still looks"
+            return f"{self.__actor_name} {verb} {health_text}."
 
 
 class LookEvent(NoArgumentEvent):
