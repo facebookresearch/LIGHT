@@ -519,7 +519,7 @@ class GoEvent(GraphEvent):
         self.__successful_leave = self.is_not_too_tired(world)
         if not self.__successful_leave:
             return []
-                
+
         self.__successful_leave = self.is_not_blocked(world)
         if not self.__successful_leave:
             return []
@@ -538,8 +538,10 @@ class GoEvent(GraphEvent):
             self.actor.health = max(0, health - eps)
             new_health_text = world.health(self.actor.node_id)
             if health_text != new_health_text:
-                HealthEvent(self.actor, text_content="getting tired from your travels").execute(world)
-                
+                HealthEvent(
+                    self.actor, text_content="getting tired from your travels"
+                ).execute(world)
+
         # trigger the follows
         followers = self.actor.get_followers()
         for follower in followers:
@@ -3277,7 +3279,7 @@ class HealthEvent(NoArgumentEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            s = ''
+            s = ""
             if self.text_content is not None:
                 s += "You are " + self.text_content + ". "
             s += f"You are {self.__health_text}. "
