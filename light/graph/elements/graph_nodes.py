@@ -493,7 +493,8 @@ class GraphAgent(GraphNode):
     DEFAULT_CONTAIN_SIZE = 20
     DEFAULT_MAX_WEARABLE_ITEMS = 3
     DEFAULT_MAX_WIELDABLE_ITEMS = 1
-    DEFAULT_HEALTH = 10
+    DEFAULT_HEALTH = 6
+    DEFAULT_MOVEMENT_ENERGY_COST = 0.05
     DEFAULT_AGGRESSION = 0
     DEFAULT_SPEED = 0
     DEFAULT_PERSONA = "I am a player in the LIGHT world."
@@ -515,6 +516,9 @@ class GraphAgent(GraphNode):
         self.num_wieldable_items = self._props.get("num_wieldable_items", 0)
         self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
         self.health = self._props.get("health", self.DEFAULT_HEALTH)
+        self.movement_energy_cost = self._props.get(
+            "movement_energy_cost", self.DEFAULT_MOVEMENT_ENERGY_COST
+        )
         self.damage = self._props.get("damage", 1)
         self.defense = self._props.get("defense", 0)
         self.food_energy = self._props.get("food_energy", 1)

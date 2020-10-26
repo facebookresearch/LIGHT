@@ -483,6 +483,18 @@ class GoEvent(GraphEvent):
         self.executed = True
         return False
 
+    def is_not_too_tired(self, world):
+        eps = self.actor.movement_energy_cost
+        health = self.actor.health
+        if health > eps:
+            return True
+        self.__self_view = "You are too exhausted to move!"
+        actor_name = self.actor.get_prefix_view()
+        self.__in_room_view = f"{actor_name} tries to leave but is too exhausted!"
+        world.broadcast_to_agents(self, [self.actor])
+        self.executed = True
+        return False
+
     def execute(self, world: "World") -> List[GraphEvent]:
         """
         On execution, trigger leaving, move the agent, and trigger arriving
@@ -504,6 +516,10 @@ class GoEvent(GraphEvent):
             if hasattr(agent, "agent_logger"):
                 agent.agent_logger.observe_event(self)
 
+        self.__successful_leave = self.is_not_too_tired(world)
+        if not self.__successful_leave:
+            return []
+
         self.__successful_leave = self.is_not_blocked(world)
         if not self.__successful_leave:
             return []
@@ -513,6 +529,18 @@ class GoEvent(GraphEvent):
         self.actor.move_to(new_room)
         ArriveEvent(self.actor, text_content=old_room_view).execute(world)
         LookEvent(self.actor).execute(world)
+
+        # Lose a little bit of energy from moving.
+        health = self.actor.health
+        eps = self.actor.movement_energy_cost
+        if health > eps:
+            health_text = world.health(self.actor.node_id)
+            self.actor.health = max(0, health - eps)
+            new_health_text = world.health(self.actor.node_id)
+            if health_text != new_health_text:
+                HealthEvent(
+                    self.actor, text_content="getting tired from your travels"
+                ).execute(world)
 
         # trigger the follows
         followers = self.actor.get_followers()
@@ -3251,7 +3279,11 @@ class HealthEvent(NoArgumentEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            return f"You are feeling {self.__health_text}. "
+            s = ""
+            if self.text_content is not None:
+                s += "You are " + self.text_content + ". "
+            s += f"You are {self.__health_text}. "
+            return s
         else:
             return f"{self.__actor_name} checked their health. "
 

@@ -600,6 +600,7 @@ test_graph_2 = """
             },
             "food_energy": 1,
             "health": 10,
+            "movement_energy_cost": 0.05,
             "is_player": false,
             "name": "following_agent",
             "name_prefix": "a",
@@ -668,6 +669,7 @@ test_graph_2 = """
             "following": null,
             "food_energy": 1,
             "health": 10,
+            "movement_energy_cost": 0.05,
             "is_player": false,
             "name": "test_agent",
             "name_prefix": "a",
@@ -708,6 +710,12 @@ test_graph_2_after_move_dict["nodes"]["following_agent_0"]["container_node"] = {
 test_graph_2_after_move_dict["nodes"]["test_agent_0"]["container_node"] = {
     "target_id": "other_room_1"
 }
+test_graph_2_after_move_dict["nodes"]["test_agent_0"][
+    "health"
+] -= test_graph_2_after_move_dict["nodes"]["test_agent_0"]["movement_energy_cost"]
+test_graph_2_after_move_dict["nodes"]["following_agent_0"][
+    "health"
+] -= test_graph_2_after_move_dict["nodes"]["following_agent_0"]["movement_energy_cost"]
 test_graph_2_after_move = OOGraph.from_json(
     json.dumps(test_graph_2_after_move_dict)
 ).to_json()
