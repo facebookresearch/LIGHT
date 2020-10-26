@@ -511,8 +511,8 @@ class GraphAgent(GraphNode):
         self.max_wieldable_items = self._props.get(
             "max_wieldable_items", self.DEFAULT_MAX_WIELDABLE_ITEMS
         )
-        self.num_wearable_items = props.get("num_wearable_items", 0)
-        self.num_wieldable_items = props.get("num_wieldable_items", 0)
+        self.num_wearable_items = self._props.get("num_wearable_items", 0)
+        self.num_wieldable_items = self._props.get("num_wieldable_items", 0)
         self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
         self.health = self._props.get("health", self.DEFAULT_HEALTH)
         self.damage = self._props.get("damage", 1)
