@@ -2113,6 +2113,10 @@ class EquipObjectEvent(GraphEvent):
         equip_target.equipped = True
         for n, s in equip_target.get_prop("stats", {"defense": 1}).items():
             self.actor.set_prop(n, self.actor.get_prop(n) + s)
+        if equip_target.wieldable:
+            self.actor.num_wieldable_items += 1
+        else:
+            self.actor.num_wearable_items += 1
         world.broadcast_to_room(self)
         self.executed = True
         return []
@@ -2158,7 +2162,7 @@ class EquipObjectEvent(GraphEvent):
             return ErrorEvent(
                 cls,
                 actor,
-                f"{guess_target_name}, isn't something you can {cls.NAMES[0]}.",
+                f"{guess_target_name} isn't something you can {cls.NAMES[0]}.",
                 [guess_target],
             )
         return ErrorEvent(
@@ -2178,6 +2182,10 @@ class EquipObjectEvent(GraphEvent):
         assert isinstance(
             target, GraphObject
         ), f"Can only be equipping objects, not {target}"
+        if target.wieldable and actor.num_wieldable_items >= actor.max_wieldable_items:
+            return ErrorEvent(cls, actor, "You can't wield any more items!")
+        if target.wearable and actor.num_wearable_items >= actor.max_wearable_items:
+            return ErrorEvent(cls, actor, "You can't wear any more items!")
         if target.equipped is not None:
             return ErrorEvent(
                 cls,
@@ -2253,6 +2261,10 @@ class RemoveObjectEvent(GraphEvent):
             equip_target, GraphObject
         ), f"Can only remove GraphObjects, not {equip_target}"
         equip_target.equipped = None
+        if equip_target.wieldable:
+            self.actor.num_wieldable_items -= 1
+        else:
+            self.actor.num_wearable_items -= 1
         for n, s in equip_target.get_prop("stats", {"defense": 1}).items():
             self.actor.set_prop(n, self.actor.get_prop(n) - s)
         world.broadcast_to_room(self)
