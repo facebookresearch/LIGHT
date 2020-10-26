@@ -261,7 +261,7 @@
             "surface_type": "on",
             "value": 1,
             "wearable": false,
-            "wieldable": false
+            "wieldable": true
         },
         "shovel_5_6": {
             "agent": false,
@@ -331,7 +331,7 @@
             "surface_type": "on",
             "value": 1,
             "wearable": false,
-            "wieldable": false
+            "wieldable": true
         }
     },
     "objects": [

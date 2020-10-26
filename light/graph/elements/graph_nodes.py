@@ -491,6 +491,8 @@ class GraphAgent(GraphNode):
 
     DEFAULT_SIZE = 20
     DEFAULT_CONTAIN_SIZE = 20
+    DEFAULT_MAX_WEARABLE_ITEMS = 3
+    DEFAULT_MAX_WIELDABLE_ITEMS = 1
     DEFAULT_HEALTH = 10
     DEFAULT_AGGRESSION = 0
     DEFAULT_SPEED = 0
@@ -502,6 +504,11 @@ class GraphAgent(GraphNode):
         super().__init__(node_id, name, props, db_id)
         self.agent = True
         self.size = self._props.get("size", self.DEFAULT_SIZE)
+        self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
+        self.max_wearable_items = self._props.get("max_wearable_items", self.DEFAULT_MAX_WEARABLE_ITEMS)
+        self.max_wieldable_items = self._props.get("max_wieldable_items", self.DEFAULT_MAX_WIELDABLE_ITEMS)
+        self.num_wearable_items = 0
+        self.num_wieldable_items = 0
         self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
         self.health = self._props.get("health", self.DEFAULT_HEALTH)
         self.damage = self._props.get("damage", 1)
