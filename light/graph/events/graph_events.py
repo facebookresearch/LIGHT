@@ -487,7 +487,7 @@ class GoEvent(GraphEvent):
             # Calculate if can block  using dexterity actor vs victim.
             victim_dex = self.actor.dexterity
             blocker_dex = blocker.dexterity
-            chance = min(1, 1 + blocker_dex - victim_dex)
+            chance = max(1, 1 + blocker_dex - victim_dex)
             if random.randint(0, 20) > chance:
                 blocked = True
                 self.blocker = blocker
@@ -1868,11 +1868,10 @@ class StealObjectEvent(GraphEvent):
         self.__gotten_name = gotten_target.get_prefix_view()
         self.__victim_name = self.target_nodes[1].get_prefix_view()
 
-
         # Calculate if can steal using dexterity actor vs victim.
         actor_dex = self.actor.dexterity
         victim_dex = self.target_nodes[1].dexterity
-        chance = min(1, 1 + actor_dex - victim_dex)
+        chance = max(1, 1 + actor_dex - victim_dex)
         self.failed = False
         if random.randint(0, 20) > chance:
             # failed steal operation
@@ -1880,7 +1879,7 @@ class StealObjectEvent(GraphEvent):
         else:
             # Move the object over and broadcast
             gotten_target.move_to(self.actor)
-            
+
         world.broadcast_to_room(self)
         self.executed = True
         return []

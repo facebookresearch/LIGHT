@@ -1082,6 +1082,7 @@ test_graph_3 = OOGraph.from_json(
         },
         "sword_dealer_14": {
             "agent": true,
+            "dexterity": 1000, 
             "aggression": 0,
             "char_type": "person",
             "classes": [
@@ -2396,6 +2397,7 @@ test_graph_3_after_ingest_apple = """
         "sword_dealer_14": {
             "agent": true,
             "aggression": 0,
+            "dexterity": 1000,
             "char_type": "person",
             "classes": [
                 "agent"
