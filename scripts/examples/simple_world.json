@@ -47,12 +47,13 @@
             "object": false,
             "room": true,
             "size": 1,
+	    "grid_location": [0,0,0],
             "surface_type": "in"
         },
         "kitty_3_5": {
             "agent": true,
             "aggression": 0,
-	    "pacifist": true,
+	    "pacifist": false,
             "char_type": "creature",
             "classes": [
                 "agent"
@@ -82,7 +83,7 @@
             "persona": "I'm a cute kitty.",
             "room": false,
             "size": 20,
-            "speed": 0
+            "speed": 20
         },
         "muddy area_6_7": {
             "agent": false,
@@ -157,6 +158,7 @@
             "object": false,
             "room": true,
             "size": 1,
+	    "grid_location": [0,1,0],
             "surface_type": "in"
         },
         "orc_2_4": {
@@ -223,7 +225,7 @@
             "persona": "I am a orc that was born in a cave. I eat corn the most. I have many friends.",
             "room": false,
             "size": 20,
-            "speed": 0
+            "speed": 20
         },
         "priceless piece of art_4_3": {
             "agent": false,

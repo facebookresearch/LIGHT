@@ -417,6 +417,7 @@ class GraphRoom(GraphNode):
         self.surface_type = self._props.get("surface_type", "in")
         self.classes = set(self._props.get("classes", {"room"}))
         self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
+        self.grid_location = self._props.get("grid_location", [0,0,0])
         self.neighbors = {}
 
     def assert_valid(self):
@@ -496,10 +497,13 @@ class GraphAgent(GraphNode):
     DEFAULT_HEALTH = 6
     DEFAULT_MOVEMENT_ENERGY_COST = 0.05
     DEFAULT_AGGRESSION = 0
-    DEFAULT_SPEED = 0
+    DEFAULT_SPEED = 10
     DEFAULT_STRENGTH = 0
     DEFAULT_DEXTERITY = 0
     DEFAULT_PERSONA = "I am a player in the LIGHT world."
+    DEFAULT_MAX_DISTANCE_FROM_START_LOCATION = 1000000
+    DEFAULT_TAGS = []
+    DEFAULT_ATTACK_TAGGED_AGENTS = []
 
     NODE_TYPE = "GraphAgent"
 
@@ -526,9 +530,7 @@ class GraphAgent(GraphNode):
         self.damage = self._props.get("damage", 1)
         self.defense = self._props.get("defense", 0)
         self.food_energy = self._props.get("food_energy", 1)
-        self.aggression = self._props.get("aggression", self.DEFAULT_AGGRESSION)
         self.name_prefix = self._props.get("name_prefix", "the")
-        self.speed = self._props.get("speed", self.DEFAULT_SPEED)
         self.char_type = self._props.get("char_type", "person")
         self.classes = set(self._props.get("classes", {"agent"}))
         self.persona = self._props.get("persona", self.DEFAULT_PERSONA)
@@ -538,13 +540,23 @@ class GraphAgent(GraphNode):
         self.is_player = self._props.get("is_player", False)
         self.usually_npc = self._props.get("usually_npc", False)
         self.pacifist = self._props.get("pacifist", False)
-
+        self.tags = self._props.get("tags", self.DEFAULT_TAGS)
+        
         self.following = None
         self.followed_by = {}
 
         self.blocking = None
         self.blocked_by = {}
 
+        # NPC properties. TODO move to another class somehow?
+        self.aggression = self._props.get("aggression", self.DEFAULT_AGGRESSION)
+        self.speed = self._props.get("speed", self.DEFAULT_SPEED)
+        self.max_distance_from_start_location = self._props.get("max_distance_from_start_location",
+                                                                self.DEFAULT_MAX_DISTANCE_FROM_START_LOCATION)
+        self.attack_tagged_agents = self._props.get("aggression", self.DEFAULT_ATTACK_TAGGED_AGENTS)
+
+        
+        
         # Game properties to track for this agent, TODO move to other class?
         self._human = False
         self._current_player = None
