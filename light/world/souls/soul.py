@@ -43,8 +43,13 @@ class Soul(ABC):
         _observe_future = self.observe_event(event)
 
         async def _await_observe_then_cleanup():
-            await _observe_future
-            del self._observe_futures[future_id]
+            try:
+                await _observe_future
+                del self._observe_futures[future_id]
+            except Exception as e:
+                print(f"Error when running observe for soul {self}: {repr(e)}")
+                import traceback
+                traceback.print_exc()
 
         loop = asyncio.get_running_loop()
         self._observe_futures[future_id] = asyncio.ensure_future(
