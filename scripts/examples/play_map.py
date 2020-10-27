@@ -122,6 +122,5 @@ if opt["use_models"] == "PartnerHeuristicModelSoul":
     )
 
 if __name__ == "__main__":
-    os.environ["PYTHONASYNCIODEBUG"] = "1"
     loop = asyncio.get_event_loop()
     loop.run_until_complete(run_with_builder(world_builder))
