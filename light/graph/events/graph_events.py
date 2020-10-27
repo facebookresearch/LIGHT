@@ -1089,7 +1089,7 @@ class HitEvent(GraphEvent):
         world.broadcast_to_agents(self, [self.actor])
         self.executed = True
         return False
-        
+
     def execute(self, world: "World") -> List[GraphEvent]:
         """
         On execution, have one agent hit another, calculating
@@ -1163,7 +1163,7 @@ class HitEvent(GraphEvent):
             if viewer == self.actor:
                 return self.__self_view
             return ""
-        
+
         if self.attack == 0:
             # The attack missed
             if viewer == self.actor:

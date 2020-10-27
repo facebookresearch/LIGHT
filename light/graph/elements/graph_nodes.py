@@ -544,7 +544,7 @@ class GraphAgent(GraphNode):
 
         self.blocking = None
         self.blocked_by = {}
-        
+
         # Game properties to track for this agent, TODO move to other class?
         self._human = False
         self._current_player = None
