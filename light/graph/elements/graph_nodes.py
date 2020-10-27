@@ -497,6 +497,8 @@ class GraphAgent(GraphNode):
     DEFAULT_MOVEMENT_ENERGY_COST = 0.05
     DEFAULT_AGGRESSION = 0
     DEFAULT_SPEED = 0
+    DEFAULT_STRENGTH = 0
+    DEFAULT_DEXTERITY = 0
     DEFAULT_PERSONA = "I am a player in the LIGHT world."
 
     NODE_TYPE = "GraphAgent"
@@ -505,6 +507,8 @@ class GraphAgent(GraphNode):
         super().__init__(node_id, name, props, db_id)
         self.agent = True
         self.size = self._props.get("size", self.DEFAULT_SIZE)
+        self.strength = self._props.get("strength", self.DEFAULT_STRENGTH)
+        self.dexterity = self._props.get("dexterity", self.DEFAULT_DEXTERITY)
         self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
         self.max_wearable_items = self._props.get(
             "max_wearable_items", self.DEFAULT_MAX_WEARABLE_ITEMS

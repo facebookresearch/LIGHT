@@ -906,7 +906,7 @@ class HitEventTest(GraphEventTests):
             ["test_agent_0"],
             None,
             test_graph_2_after_hit_another,
-            [HitEvent],
+            [HitEvent, HealthEvent],
         ),
     ]
     EVENT_CLASS = HitEvent
