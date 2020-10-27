@@ -193,7 +193,11 @@ class World(object):
     def get_prop(self, id, prop, default=None):
         """Get the given prop, return None if it doesn't exist"""
         # TODO deprecate calls here, go to oo_graph
-        return self.oo_graph.get_node(id).get_prop(prop, default)
+        node = self.oo_graph.get_node(id)
+        if node is None:
+            return "ErrorNodeNotFound"
+        else:
+            return node.get_prop(prop, default)
 
     @deprecated
     def set_prop(self, id, prop, val=True):
@@ -875,7 +879,7 @@ class World(object):
             inst = "say " + inst
 
         instruction_list = inst.strip().split()
-
+        
         if (
             len(inst) == 1
             and ((inst[0] == "respawn") or (inst[0] == "*respawn*"))
@@ -884,7 +888,8 @@ class World(object):
         ):
             self.respawn_player(agentid)
             return True, "Respawn"
-        if self.get_prop(agentid, "dead"):
+        dead = self.get_prop(agentid, "dead")
+        if dead or (dead == "ErrorNodeNotFound"):
             self.send_msg(
                 agentid,
                 "You are dead, you can't do anything, sorry.\nType *respawn* to try at life again.\n",

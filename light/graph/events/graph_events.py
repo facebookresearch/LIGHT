@@ -887,8 +887,8 @@ class BlockEvent(GraphEvent):
         block_target = self.target_nodes[0]
         actor_name = self.actor.get_prefix_view()
         block_name = block_target.get_prefix_view()
-        self.__block_view = f"You started blocking {block_name}"
-        self.__blocked_view = f"{actor_name} started blocking you"
+        self.__block_view = f"You started blocking {block_name}."
+        self.__blocked_view = f"{actor_name} started blocking you."
 
         self.actor.block(block_target)
 
@@ -1139,30 +1139,30 @@ class HitEvent(GraphEvent):
             self.attack = random.randint(max(0, damage - 10), damage + 1)
             self.defend = random.randint(max(0, armor - 10), armor)
 
-        # pick weapon that hit the opponent
-        weapons = []
-        for id, obj in self.actor.contained_nodes.items():
-            n = obj._target_node
-            if n.wieldable and n.equipped:
-                weapons.append(n)
-        if len(weapons) == 0:
-            self.weapon = "none"
-        else:
-            self.weapon = random.choice(weapons).get_prefix_view()
-        # fun text details
-        attack_verb = ["attacked", "strike at", "charge at", "swipe at"]
-        block_verb = ["parried", "blocked", "repelled"]
-        hit_details = [
-            "making crunching contact",
-            "hitting them",
-            "crunch",
-            "smash",
-            "crack",
-        ]
-        self.attack_verb = random.choice(attack_verb)
-        self.block_verb = random.choice(block_verb)
-        self.hit_details = random.choice(hit_details)
-
+            # pick weapon that hit the opponent
+            weapons = []
+            for id, obj in self.actor.contained_nodes.items():
+                n = obj._target_node
+                if n.wieldable and n.equipped:
+                    weapons.append(n)
+            if len(weapons) == 0:
+                self.weapon = "none"
+            else:
+                self.weapon = random.choice(weapons).get_prefix_view()
+            # fun text details
+            attack_verb = ["attacked", "struck at", "charged at", "swiped at"]
+            block_verb = ["parried", "blocked", "repelled"]
+            hit_details = [
+                "making crunching contact",
+                "hitting the target",
+                "crunch",
+                "smash",
+                "crack, that hurts",
+            ]
+            self.attack_verb = random.choice(attack_verb)
+            self.block_verb = random.choice(block_verb)
+            self.hit_details = random.choice(hit_details)
+            
         world.broadcast_to_room(self)
 
         if self.attack - self.defend > 1:
@@ -1765,7 +1765,7 @@ class DropObjectEvent(GraphEvent):
             viewer_text = "You"
         else:
             viewer_text = self.__actor_name
-        return f"{viewer_text} dropped {self.__drop_name} "
+        return f"{viewer_text} dropped {self.__drop_name}."
 
     def to_canonical_form(self) -> str:
         """return action text for dropping the object"""

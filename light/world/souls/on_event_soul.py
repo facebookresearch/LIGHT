@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.graph.events.graph_events import EmoteEvent, SayEvent
+from light.graph.events.graph_events import EmoteEvent, SayEvent, DropObjectEvent, HitEvent, BlockEvent
 from light.world.souls.soul import Soul
 from light.world.souls.model_soul import ModelSoul
 from typing import TYPE_CHECKING
@@ -35,22 +35,56 @@ class OnEventSoul(ModelSoul):
         return False
 
     def execute_event(self, effect):
+        agent = self.target_node
+        if effect[0] == "BlockEvent":
+            do_event = BlockEvent.construct_from_args(agent, targets=[effect[1]])
+            if do_event.__class__.__name__ != 'ErrorEvent':
+                do_event.execute(self.world)            
+        if effect[0] == "HitEvent":
+            do_event = HitEvent.construct_from_args(agent, targets=[effect[1]])
+            if do_event.__class__.__name__ != 'ErrorEvent':
+                do_event.execute(self.world)            
         if effect[0] == "SayEvent":
             do_text = effect[1]
             do_event = SayEvent.construct_from_args(
-                self.target_node, targets=[], text=do_text
+                agent, targets=[], text=do_text
             )
-            do_event.execute(self.world)
+            if do_event.__class__.__name__ != 'ErrorEvent':
+                do_event.execute(self.world)
         if effect[0] == "EmoteEvent":
             do_event = EmoteEvent.construct_from_args(
-                self.target_node, targets=[], text=effect[1]
+                agent, targets=[], text=effect[1]
             )
-            do_event.execute(self.world)
+            if do_event.__class__.__name__ != 'ErrorEvent':
+                do_event.execute(self.world)
+        if effect[0] == "DropEvent":
+            do_event = DropObjectEvent.construct_from_args(
+                agent, effect[1])
+            if do_event.__class__.name != 'ErrorEvent':
+                do_event.execute(self.world)
+
 
     def on_events_heuristics(self, event):
+        agent = self.target_node
         event_name = event.__class__.__name__
-        # TBD
-        
+
+        # HitEvent
+        if event_name == "HitEvent" and event.target_nodes[0] == agent:
+            other_agent = event.actor
+            self.execute_event(["BlockEvent", other_agent])  # block!
+            self.execute_event(["HitEvent", other_agent]) # hit back!
+            
+        # GiveObjectEvent
+        if event_name == "GiveObjectEvent" and event.target_nodes[1] == agent:
+            if agent.dont_accept_gifts:
+                obj = event.target_nodes[0]
+                self.execute_event(["DropEvent", obj])
+                say_text = "I don't want that."
+            else:
+                say_text = "Err.. thanks."
+            self.execute_event(["SayEvent", say_text])
+
+            
     def on_events(self, event):
         self.on_events_heuristics(event)
 

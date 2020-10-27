@@ -73,7 +73,7 @@
             "health": 5,
             "is_player": false,
             "name": "kitty",
-            "name_prefix": "some",
+            "name_prefix": "an",
             "names": [
                 "kitty"
             ],
@@ -184,7 +184,7 @@
             "health": 10,
             "is_player": false,
             "name": "orc",
-            "name_prefix": "some",
+            "name_prefix": "an",
             "names": [
                 "orc"
             ],
@@ -328,7 +328,7 @@
             "room": false,
             "size": 1,
             "stats": {
-                "damage": 0,
+                "damage": 1,
                 "defense": 0
             },
             "surface_type": "on",
