@@ -43,10 +43,10 @@ def init_world(world_builder):
             "model", PartnerHeuristicModelSoul, lambda: [shared_model_content]
         )
     elif opt["use_models"] == "OnEventSoul":
-        purgatory.register_filler_soul_provider("repeat", OnEventSoul, lambda: [])
+        purgatory.register_filler_soul_provider("repeat", OnEventSoul, lambda: [ {} ])
     else:
         purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
-
+        
     for empty_agent in world.oo_graph.agents.values():
         purgatory.fill_soul(empty_agent)
     provider = TerminalPlayerProvider(purgatory)

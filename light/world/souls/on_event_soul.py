@@ -6,7 +6,10 @@
 
 from light.graph.events.graph_events import EmoteEvent, SayEvent
 from light.world.souls.soul import Soul
+from light.world.souls.model_soul import ModelSoul
 from typing import TYPE_CHECKING
+
+import random
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -14,17 +17,14 @@ if TYPE_CHECKING:
     from light.graph.events.base import GraphEvent
 
 
-class OnEventSoul(Soul):
+class OnEventSoul(ModelSoul):
     """
     The simplest of Souls, it responds to all events by saying what it saw
     """
 
-    def __init__(self, target_node: "GraphAgent", world: "World"):
-        """
-        OnEventSouls (currently) just initialize normally on a node and world
-        """
-        super().__init__(target_node, world)
-
+    HAS_MAIN_LOOP = True
+    MAIN_LOOP_STEP_TIMEOUT = 1
+    
     def match_event(self, event, cause):
         event_name = event.__class__.__name__
         if cause[0] == event_name  or (cause[0] == "SayEvent" and event_name == "TellEvent"):
@@ -65,3 +65,20 @@ class OnEventSoul(Soul):
         if event.actor == self.target_node:
             return
         self.on_events(event)
+
+
+    async def _take_timestep(self) -> None:
+        """
+        Attempt to take some actions based on any observations in the pending list
+        """
+        graph = self.world.oo_graph
+        agent = self.target_node
+        agent_id = agent.node_id
+        
+        # random movement for npcs..
+        if True: #random.randint(0, 10) < agent.speed:
+            go_events = self.world.get_possible_events(agent_id, use_actions=["go"])
+            if len(go_events) > 0:
+                go_event = random.choice(go_events)
+                go_event.execute(self.world)
+        return

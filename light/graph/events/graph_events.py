@@ -473,13 +473,33 @@ class GoEvent(GraphEvent):
         self.__canonical_room_view = new_room.get_view_from(old_room)
 
     def is_not_blocked(self, world):
+        self.blocker = None
         blockers = self.actor.get_blockers()
         if len(blockers) == 0:
             return True
-        self.__self_view = "You were blocked from moving!"
+        blocked = False
+        for blocker in blockers:
+            # Check if still in same room
+            if blocker.get_room() != self.actor.get_room():
+                # unblock, if not in same room.
+                blocker.unblock()
+                continue
+            # Calculate if can block  using dexterity actor vs victim.
+            victim_dex = self.actor.dexterity
+            blocker_dex = blocker.dexterity
+            chance = max(1, 1 + blocker_dex - victim_dex)
+            if random.randint(0, 20) > chance:
+                blocked = True
+                self.blocker = blocker
+                blocker_name = blocker.get_prefix_view()
+                break
+        if not blocked:
+            return True
+        self.__self_view = f"You were blocked from moving by {blocker_name}!"
         actor_name = self.actor.get_prefix_view()
-        self.__in_room_view = f"{actor_name} was blocked from moving!"
-        world.broadcast_to_agents(self, [self.actor])
+        self.__blocker_view = f"You blocked {actor_name} from moving!"
+        self.__in_room_view = f"{actor_name} was blocked from moving by {blocker_name}!"
+        world.broadcast_to_room(self)
         self.executed = True
         return False
 
@@ -555,7 +575,9 @@ class GoEvent(GraphEvent):
         """Provide the way that the given viewer should view this event"""
         # Go events are mostly viewed through Leave and Arrive events.
         # These variables over other cases, such as being blocked.
-        if viewer == self.actor:
+        if viewer == self.blocker:
+            return self.__blocker_view
+        elif viewer == self.actor:
             return self.__self_view
         else:
             return self.__in_room_view
@@ -869,6 +891,7 @@ class BlockEvent(GraphEvent):
         self.__blocked_view = f"{actor_name} started blocking you"
 
         self.actor.block(block_target)
+
         world.broadcast_to_agents(self, [self.actor, self.target_nodes[0]])
         self.executed = True
         return []
@@ -1082,6 +1105,7 @@ class HitEvent(GraphEvent):
         self.defense = None
 
     def is_not_pacifist(self, world):
+        self.pacifist = False
         if not self.actor.pacifist:
             return True
         self.pacifist = True
@@ -1099,7 +1123,6 @@ class HitEvent(GraphEvent):
         """
         assert not self.executed
 
-        self.pacifist = False
         self.__successful_hit = self.is_not_pacifist(world)
         if not self.__successful_hit:
             return []
@@ -1838,14 +1861,25 @@ class StealObjectEvent(GraphEvent):
         On execution, move the item from its location to the actor
         """
         assert not self.executed
+
         # Populate for views
         self.__actor_name = self.actor.get_prefix_view()
         gotten_target = self.target_nodes[0]
         self.__gotten_name = gotten_target.get_prefix_view()
         self.__victim_name = self.target_nodes[1].get_prefix_view()
 
-        # Move the object over and broadcast
-        gotten_target.move_to(self.actor)
+        # Calculate if can steal using dexterity actor vs victim.
+        actor_dex = self.actor.dexterity
+        victim_dex = self.target_nodes[1].dexterity
+        chance = max(1, 1 + actor_dex - victim_dex)
+        self.failed = False
+        if random.randint(0, 20) > chance:
+            # failed steal operation
+            self.failed = True
+        else:
+            # Move the object over and broadcast
+            gotten_target.move_to(self.actor)
+
         world.broadcast_to_room(self)
         self.executed = True
         return []
@@ -1861,7 +1895,10 @@ class StealObjectEvent(GraphEvent):
         victim_text = self.__victim_name
         if viewer == self.target_nodes[1]:
             victim_text = "you"
-        return f"{actor_text} stole {self.__gotten_name} from {victim_text}"
+        if self.failed:
+            return f"{actor_text} tried to steal {self.__gotten_name} from {victim_text}, but they caught you in the act!"
+        else:
+            return f"{actor_text} stole {self.__gotten_name} from {victim_text}"
 
     def to_canonical_form(self) -> str:
         """return action text for stealing from the target"""
