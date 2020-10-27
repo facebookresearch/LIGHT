@@ -842,7 +842,7 @@ class World(object):
         possible_text_args = EventClass.split_text_args(actor_node, arguments)
         if isinstance(possible_text_args, ErrorEvent):
             return possible_text_args
-
+        
         # Parse the string arguments into nodes
         for string_args in possible_text_args:
             result = EventClass.find_nodes_for_args(
@@ -850,7 +850,7 @@ class World(object):
             )
             if not isinstance(result, ErrorEvent):
                 break
-
+            
         if isinstance(result, ErrorEvent):
             return result
 
