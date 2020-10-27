@@ -504,7 +504,8 @@ class GraphAgent(GraphNode):
     DEFAULT_MAX_DISTANCE_FROM_START_LOCATION = 1000000
     DEFAULT_TAGS = []
     DEFAULT_ATTACK_TAGGED_AGENTS = []
-
+    DEFAULT_DONT_ACCEPT_GIFTS = False
+    
     NODE_TYPE = "GraphAgent"
 
     def __init__(self, node_id, name, props=None, db_id=None):
@@ -553,6 +554,7 @@ class GraphAgent(GraphNode):
         self.speed = self._props.get("speed", self.DEFAULT_SPEED)
         self.max_distance_from_start_location = self._props.get("max_distance_from_start_location",
                                                                 self.DEFAULT_MAX_DISTANCE_FROM_START_LOCATION)
+        self.dont_accept_gifts = self._props.get("dont_accept_gifts", self.DEFAULT_DONT_ACCEPT_GIFTS)
         self.attack_tagged_agents = self._props.get("aggression", self.DEFAULT_ATTACK_TAGGED_AGENTS)
 
         
