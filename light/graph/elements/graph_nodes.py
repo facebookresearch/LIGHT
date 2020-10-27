@@ -537,6 +537,7 @@ class GraphAgent(GraphNode):
             self.dead = self._props.get("dead")
         self.is_player = self._props.get("is_player", False)
         self.usually_npc = self._props.get("usually_npc", False)
+        self.pacifist = self._props.get("pacifist", False)
 
         self.following = None
         self.followed_by = {}
