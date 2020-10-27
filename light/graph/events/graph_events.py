@@ -558,9 +558,7 @@ class GoEvent(GraphEvent):
             self.actor.health = max(0, health - eps)
             new_health_text = world.health(self.actor.node_id)
             if health_text != new_health_text:
-                HealthEvent(
-                    self.actor, text_content="getting tired from your travels"
-                ).execute(world)
+                HealthEvent(self.actor, text_content="HealthOnMoveEvent").execute(world)
 
         # trigger the follows
         followers = self.actor.get_followers()
@@ -1162,7 +1160,7 @@ class HitEvent(GraphEvent):
             self.attack_verb = random.choice(attack_verb)
             self.block_verb = random.choice(block_verb)
             self.hit_details = random.choice(hit_details)
-            
+
         world.broadcast_to_room(self)
 
         if self.attack - self.defend > 1:
@@ -1173,7 +1171,11 @@ class HitEvent(GraphEvent):
             if health == 0:
                 DeathEvent(attack_target).execute(world)
             else:
-                HealthEvent(attack_target, target_nodes=[self.actor]).execute(world)
+                HealthEvent(
+                    attack_target,
+                    target_nodes=[self.actor],
+                    text_content="HealthOnHitEvent",
+                ).execute(world)
 
         self.executed = True
         return []
@@ -2508,7 +2510,7 @@ class IngestEvent(GraphEvent):
         if self.actor.health <= 0:
             DeathEvent(self.actor).execute(world)
         elif health_text != new_health_text:
-            HealthEvent(self.actor).execute(world)
+            HealthEvent(self.actor, text_content="HealthOnIngestEvent").execute(world)
 
         self.executed = True
         return []
@@ -3372,15 +3374,59 @@ class HealthEvent(NoArgumentEvent):
         health_text, sentiment = self.__health_text
         if viewer == self.actor:
             s = ""
-            if self.text_content is not None:
-                s += "You are " + self.text_content + ". "
+            if self.text_content == "HealthOnMoveEvent":
+                s += "You are getting tired from your travels. "
             s += f"You are currently feeling {health_text}."
-            return s
         else:
             verb = "looks"
             if sentiment > 0:
                 verb = "still looks"
             return f"{self.__actor_name} {verb} {health_text}."
+        if viewer == self.actor and self.text_content is None:
+            # actual self "health" call, show dexterity and strength options as well.
+            size = self.actor.size
+            size_txt = "average in size."
+            if size > 30:
+                size_txt = "huge."
+            if size > 20:
+                size_txt = "quite large."
+            if size < 10:
+                size_txt = "below average in size."
+            if size < 5:
+                size_txt = "quite small."
+            if size <= 1:
+                size_txt = "absolutely tiny!"
+
+            def txt2num(strength):
+                strength_txt = "average"
+                if strength > 0:
+                    strength_txt = "above average"
+                if strength > 1:
+                    strength_txt = "well above average"
+                if strength > 3:
+                    strength_txt = "strong"
+                if strength > 5:
+                    strength_txt = "very strong"
+                if strength > 8:
+                    strength_txt = "extremely strong"
+                if strength < 0:
+                    strength_txt = "below average"
+                if strength < -1:
+                    strength_txt = "well below average"
+                if strength < -3:
+                    strength_txt = "weak"
+                if strength < -5:
+                    strength_txt = "very weak"
+                if strength < -8:
+                    strength_txt = "extremely weak"
+                return strength_txt
+
+            strength_txt = txt2num(self.actor.strength)
+            dex_txt = txt2num(self.actor.dexterity)
+            s += f"\nYou are {size_txt}"
+            s += f"\nYou are {strength_txt} in physical toughness."
+            s += f"\nYou are {dex_txt} in physical dexterity."
+        return s
 
 
 class LookEvent(NoArgumentEvent):
