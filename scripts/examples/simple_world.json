@@ -52,6 +52,7 @@
         "kitty_3_5": {
             "agent": true,
             "aggression": 0,
+	    "pacificist": true,
             "char_type": "creature",
             "classes": [
                 "agent"

@@ -1081,6 +1081,15 @@ class HitEvent(GraphEvent):
         self.attack = None
         self.defense = None
 
+    def is_not_pacifist(self, world):
+        if not self.actor.pacifist:
+            return True
+        self.pacifist = True
+        self.__self_view = "You couldn't do that, you are a pacifist!"
+        world.broadcast_to_agents(self, [self.actor])
+        self.executed = True
+        return False
+        
     def execute(self, world: "World") -> List[GraphEvent]:
         """
         On execution, have one agent hit another, calculating
@@ -1089,6 +1098,12 @@ class HitEvent(GraphEvent):
         If an agent died, trigger a death event.
         """
         assert not self.executed
+
+        self.pacifist = False
+        self.__successful_hit = self.is_not_pacifist(world)
+        if not self.__successful_hit:
+            return []
+
         # Populate for views
         self.__actor_name = self.actor.get_prefix_view()
         attack_target = self.target_nodes[0]
@@ -1144,6 +1159,11 @@ class HitEvent(GraphEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 
+        if self.pacifist:
+            if viewer == self.actor:
+                return self.__self_view
+            return ""
+        
         if self.attack == 0:
             # The attack missed
             if viewer == self.actor:
