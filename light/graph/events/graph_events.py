@@ -1125,7 +1125,7 @@ class HitEvent(GraphEvent):
 
         if self.actor.dead:
             return []
-        
+
         self.__successful_hit = self.is_not_pacifist(world)
         if not self.__successful_hit:
             return []
@@ -2651,15 +2651,15 @@ class UseEvent(GraphEvent):
     def modify_attribute(self, post, world):
         if post[1] == "in_used_target_item":
             target = self.target_nodes[1]
-        key = post[2]    
+        key = post[2]
         value = post[3]
-        if value.startswith('+'):
+        if value.startswith("+"):
             value = float(value[1:])
             setattr(target, key, getattr(target, key) + value)
-        elif value.startswith('-'):
+        elif value.startswith("-"):
             value = -float(value[1:])
             setattr(target, key, getattr(target, key) + value)
-        elif value.startswith('='):
+        elif value.startswith("="):
             value = float(value[1:])
             setattr(target, key, value)
         else:
@@ -2676,7 +2676,7 @@ class UseEvent(GraphEvent):
                     target_nodes=[self.actor, target],
                     text_content="HealthOnHitEvent",
                 ).execute(world)
-            
+
     def create_entity(self, post, world):
         # creation location
         if post[1] == "in_used_item":
@@ -2750,22 +2750,31 @@ class UseEvent(GraphEvent):
 
         actor_text = self.__actor_name
         recipient_text = self.__recipient_name
-            
+
         if viewer == self.actor:
-            s = ''
+            s = ""
             if "self_view" in self.messages:
                 s += self.messages["self_view"] + " "
-            if "self_as_target_view" in self.messages and viewer == self.target_nodes[1]:
+            if (
+                "self_as_target_view" in self.messages
+                and viewer == self.target_nodes[1]
+            ):
                 s += str.format(self.messages["self_as_target_view"], **locals())
-            if "self_not_target_view" in self.messages and viewer != self.target_nodes[1]:
+            if (
+                "self_not_target_view" in self.messages
+                and viewer != self.target_nodes[1]
+            ):
                 s += str.format(self.messages["self_not_target_view"], **locals())
             return s
         else:
-            if "self_not_target_view" in self.messages and viewer == self.target_nodes[1]:
+            if (
+                "self_not_target_view" in self.messages
+                and viewer == self.target_nodes[1]
+            ):
                 return str.format(self.messages["self_not_target_view"], **locals())
             elif "room_view" in self.messages:
                 return str.format(self.messages["room_view"], **locals())
-                
+
         # Default message.
         if viewer == self.target_nodes[1]:
             recipient_text = "you"
