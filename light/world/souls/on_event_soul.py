@@ -4,7 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.graph.events.graph_events import EmoteEvent, SayEvent, DropObjectEvent, HitEvent, BlockEvent
+from light.graph.events.graph_events import (
+    EmoteEvent,
+    SayEvent,
+    DropObjectEvent,
+    HitEvent,
+    BlockEvent,
+)
 from light.world.souls.soul import Soul
 from light.world.souls.model_soul import ModelSoul
 from typing import TYPE_CHECKING
@@ -25,10 +31,12 @@ class OnEventSoul(ModelSoul):
 
     HAS_MAIN_LOOP = True
     MAIN_LOOP_STEP_TIMEOUT = 1
-    
+
     def match_event(self, event, cause):
         event_name = event.__class__.__name__
-        if cause[0] == event_name  or (cause[0] == "SayEvent" and event_name == "TellEvent"):
+        if cause[0] == event_name or (
+            cause[0] == "SayEvent" and event_name == "TellEvent"
+        ):
             if cause[0] == "SayEvent":
                 if cause[1] in event.text_content and event.safe:
                     return True
@@ -38,51 +46,52 @@ class OnEventSoul(ModelSoul):
         agent = self.target_node
         if effect[0] == "BlockEvent":
             do_event = BlockEvent.construct_from_args(agent, targets=[effect[1]])
-            if do_event.__class__.__name__ != 'ErrorEvent':
-                do_event.execute(self.world)            
+            if do_event.__class__.__name__ != "ErrorEvent":
+                do_event.execute(self.world)
         if effect[0] == "HitEvent":
             do_event = HitEvent.construct_from_args(agent, targets=[effect[1]])
-            if do_event.__class__.__name__ != 'ErrorEvent':
-                do_event.execute(self.world)            
+            if do_event.__class__.__name__ != "ErrorEvent":
+                do_event.execute(self.world)
         if effect[0] == "SayEvent":
             do_text = effect[1]
-            do_event = SayEvent.construct_from_args(
-                agent, targets=[], text=do_text
-            )
-            if do_event.__class__.__name__ != 'ErrorEvent':
+            do_event = SayEvent.construct_from_args(agent, targets=[], text=do_text)
+            if do_event.__class__.__name__ != "ErrorEvent":
                 do_event.execute(self.world)
         if effect[0] == "EmoteEvent":
-            do_event = EmoteEvent.construct_from_args(
-                agent, targets=[], text=effect[1]
-            )
-            if do_event.__class__.__name__ != 'ErrorEvent':
+            do_event = EmoteEvent.construct_from_args(agent, targets=[], text=effect[1])
+            if do_event.__class__.__name__ != "ErrorEvent":
                 do_event.execute(self.world)
         if effect[0] == "DropEvent":
-            do_event = DropObjectEvent.construct_from_args(
-                agent, effect[1])
-            if do_event.__class__.name != 'ErrorEvent':
+            do_event = DropObjectEvent.construct_from_args(agent, effect[1])
+            if do_event.__class__.name != "ErrorEvent":
                 do_event.execute(self.world)
-
 
     def on_events_heuristics(self, event):
         agent = self.target_node
         event_name = event.__class__.__name__
 
         # HitEvent
-        if event_name == "HitEvent" and event.target_nodes[0] == agent and agent.aggression >= -1:
+        if (
+            event_name == "HitEvent"
+            and event.target_nodes[0] == agent
+            and agent.aggression >= -1
+        ):
             other_agent = event.actor
             self.execute_event(["BlockEvent", other_agent])  # block!
-            self.execute_event(["HitEvent", other_agent]) # hit back!
+            self.execute_event(["HitEvent", other_agent])  # hit back!
             agent.aggression_target = other_agent.node_id
 
         # StealEvent
-        if event_name == "StealObjectEvent" and event.target_nodes[1] == agent and agent.aggression >= 0:
+        if (
+            event_name == "StealObjectEvent"
+            and event.target_nodes[1] == agent
+            and agent.aggression >= 0
+        ):
             other_agent = event.actor
             self.execute_event(["BlockEvent", other_agent])  # block!
-            self.execute_event(["HitEvent", other_agent]) # hit back!
+            self.execute_event(["HitEvent", other_agent])  # hit back!
             agent.aggression_target = other_agent.node_id
 
-            
         # GiveObjectEvent
         if event_name == "GiveObjectEvent" and event.target_nodes[1] == agent:
             if agent.dont_accept_gifts:
@@ -93,7 +102,6 @@ class OnEventSoul(ModelSoul):
                 say_text = "Err.. thanks."
             self.execute_event(["SayEvent", say_text])
 
-            
     def on_events(self, event):
         self.on_events_heuristics(event)
 
@@ -112,15 +120,15 @@ class OnEventSoul(ModelSoul):
         """
         OnEventSouls check for specific events, that trigger specific actions.
         """
-        #if event.actor ! and !== self.target_node:
+        # if event.actor ! and !== self.target_node:
         #    return
         self.on_events(event)
 
     def is_too_far(self, agent, room):
         # Check if it's too far from agent's starting room
-        if not hasattr(agent, 'start_loc'):
+        if not hasattr(agent, "start_loc"):
             agent.start_loc = agent.get_room().grid_location
-        target_loc = room.grid_location        
+        target_loc = room.grid_location
         dist = 0
         for i in range(0, 3):
             dist += math.pow(target_loc[i] - agent.start_loc[i], 2)
@@ -147,7 +155,7 @@ class OnEventSoul(ModelSoul):
                     if target_tag == agro_tag:
                         return True
         return False
-        
+
     async def _take_timestep(self) -> None:
         """
         Attempt to take some actions based on any observations in the pending list
@@ -157,8 +165,8 @@ class OnEventSoul(ModelSoul):
         agent_id = agent.node_id
 
         # Attack if we have an aggression target
-        if hasattr(agent, 'aggression_target'):
-            target_id =  agent.aggression_target
+        if hasattr(agent, "aggression_target"):
+            target_id = agent.aggression_target
             target_agent = graph.get_node(target_id)
             if target_agent is not None:
                 target_room = target_agent.get_room()
@@ -179,7 +187,7 @@ class OnEventSoul(ModelSoul):
                         self.execute_event(["HitEvent", other_agent])
                         agent.aggression_target = other_agent.node_id
                         return
-                    
+
         # Random movement for NPCs..
         if random.randint(0, 100) < agent.speed:
             go_events = self.world.get_possible_events(agent_id, use_actions=["go"])
