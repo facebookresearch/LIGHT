@@ -69,10 +69,19 @@ class OnEventSoul(ModelSoul):
         event_name = event.__class__.__name__
 
         # HitEvent
-        if event_name == "HitEvent" and event.target_nodes[0] == agent:
+        if event_name == "HitEvent" and event.target_nodes[0] == agent and agent.aggression >= -1:
             other_agent = event.actor
             self.execute_event(["BlockEvent", other_agent])  # block!
             self.execute_event(["HitEvent", other_agent]) # hit back!
+            agent.aggression_target = other_agent.node_id
+
+        # StealEvent
+        if event_name == "StealObjectEvent" and event.target_nodes[1] == agent and agent.aggression >= 0:
+            other_agent = event.actor
+            self.execute_event(["BlockEvent", other_agent])  # block!
+            self.execute_event(["HitEvent", other_agent]) # hit back!
+            agent.aggression_target = other_agent.node_id
+
             
         # GiveObjectEvent
         if event_name == "GiveObjectEvent" and event.target_nodes[1] == agent:
@@ -120,7 +129,25 @@ class OnEventSoul(ModelSoul):
             return False
         else:
             return True
-            
+
+    def aggressive_towards(self, other_agent):
+        agro_tags = self.target_node.attack_tagged_agents
+        target_tags = other_agent.tags
+        for agro_tag in agro_tags:
+            if agro_tag.startswith("!"):
+                agro_tag = agro_tag[1:]
+                agro = True
+                for target_tag in target_tags:
+                    if target_tag == agro_tag:
+                        agro = False
+                if agro:
+                    return True
+            else:
+                for target_tag in target_tags:
+                    if target_tag == agro_tag:
+                        return True
+        return False
+        
     async def _take_timestep(self) -> None:
         """
         Attempt to take some actions based on any observations in the pending list
@@ -129,7 +156,31 @@ class OnEventSoul(ModelSoul):
         agent = self.target_node
         agent_id = agent.node_id
 
-        # random movement for npcs..
+        # Attack if we have an aggression target
+        if hasattr(agent, 'aggression_target'):
+            target_id =  agent.aggression_target
+            target_agent = graph.get_node(target_id)
+            if target_agent is not None:
+                target_room = target_agent.get_room()
+                if agent.get_room() == target_room:
+                    self.execute_event(["HitEvent", target_agent])
+                    return
+
+        # Search room for aggression targets.
+        hit_tags = agent.attack_tagged_agents
+        if len(hit_tags) > 0:
+            hit_events = self.world.get_possible_events(agent_id, use_actions=["hit"])
+            if len(hit_events) > 0:
+                for event in hit_events:
+                    other_agent = event.target_nodes[0]
+                    if self.aggressive_towards(other_agent):
+                        self.execute_event(["EmoteEvent", "scream"])
+                        self.execute_event(["BlockEvent", other_agent])
+                        self.execute_event(["HitEvent", other_agent])
+                        agent.aggression_target = other_agent.node_id
+                        return
+                    
+        # Random movement for NPCs..
         if random.randint(0, 100) < agent.speed:
             go_events = self.world.get_possible_events(agent_id, use_actions=["go"])
             room = go_events[0].target_nodes[0].get_room()

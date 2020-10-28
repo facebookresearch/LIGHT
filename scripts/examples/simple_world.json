@@ -190,6 +190,8 @@
             ],
             "node_id": "orc_2_4",
             "object": false,
+	    "tags": [ "orc" ],
+	    "attack_tagged_agents": [ "!orc" ],
             "on_events": [
                 [
                     [
