@@ -496,14 +496,15 @@ class GraphAgent(GraphNode):
     DEFAULT_MAX_WIELDABLE_ITEMS = 1
     DEFAULT_HEALTH = 6
     DEFAULT_MOVEMENT_ENERGY_COST = 0.05
-    DEFAULT_AGGRESSION = 0
     DEFAULT_SPEED = 10
     DEFAULT_STRENGTH = 0
     DEFAULT_DEXTERITY = 0
     DEFAULT_PERSONA = "I am a player in the LIGHT world."
-    DEFAULT_MAX_DISTANCE_FROM_START_LOCATION = 1000000
     DEFAULT_TAGS = []
+    # NPC Defaults
+    DEFAULT_AGGRESSION = 0
     DEFAULT_ATTACK_TAGGED_AGENTS = []
+    DEFAULT_MAX_DISTANCE_FROM_START_LOCATION = 1000000
     DEFAULT_DONT_ACCEPT_GIFTS = False
     
     NODE_TYPE = "GraphAgent"
@@ -555,7 +556,7 @@ class GraphAgent(GraphNode):
         self.max_distance_from_start_location = self._props.get("max_distance_from_start_location",
                                                                 self.DEFAULT_MAX_DISTANCE_FROM_START_LOCATION)
         self.dont_accept_gifts = self._props.get("dont_accept_gifts", self.DEFAULT_DONT_ACCEPT_GIFTS)
-        self.attack_tagged_agents = self._props.get("aggression", self.DEFAULT_ATTACK_TAGGED_AGENTS)
+        self.attack_tagged_agents = self._props.get("attack_tagged_agents", self.DEFAULT_ATTACK_TAGGED_AGENTS)
 
         
         
