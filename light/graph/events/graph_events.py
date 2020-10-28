@@ -825,6 +825,8 @@ class UnblockEvent(NoArgumentEvent):
         On execution, prepare  views and clear the block
         """
         assert not self.executed
+        if self.actor.dead:
+            return []
         actor_name = self.actor.get_prefix_view()
         block_name = self.actor.get_blocking().get_prefix_view()
         self.__unblock_view = f"You stopped blocking {block_name}"
@@ -1121,6 +1123,9 @@ class HitEvent(GraphEvent):
         """
         assert not self.executed
 
+        if self.actor.dead:
+            return []
+        
         self.__successful_hit = self.is_not_pacifist(world)
         if not self.__successful_hit:
             return []
@@ -2630,6 +2635,10 @@ class UseEvent(GraphEvent):
             # Check if the useable item is used with the given object.
             return pre[1] == self.target_nodes[1].name
 
+        if pre[0] == "used_with_agent":
+            # Check if the target is an agent
+            return self.target_nodes[1].agent
+
         return True
 
     def preconditions_met(self, pre, world):
@@ -2639,6 +2648,35 @@ class UseEvent(GraphEvent):
                 pre_met = False
         return pre_met
 
+    def modify_attribute(self, post, world):
+        if post[1] == "in_used_target_item":
+            target = self.target_nodes[1]
+        key = post[2]    
+        value = post[3]
+        if value.startswith('+'):
+            value = float(value[1:])
+            setattr(target, key, getattr(target, key) + value)
+        elif value.startswith('-'):
+            value = -float(value[1:])
+            setattr(target, key, getattr(target, key) + value)
+        elif value.startswith('='):
+            value = float(value[1:])
+            setattr(target, key, value)
+        else:
+            setattr(target, key, value)
+        if key == "health":
+            if target.health < 0:
+                target.health = 0
+            health = target.health
+            if health == 0:
+                DeathEvent(target).execute(world)
+            else:
+                HealthEvent(
+                    target,
+                    target_nodes=[self.actor, target],
+                    text_content="HealthOnHitEvent",
+                ).execute(world)
+            
     def create_entity(self, post, world):
         # creation location
         if post[1] == "in_used_item":
@@ -2654,9 +2692,12 @@ class UseEvent(GraphEvent):
 
     def broadcast_message(self, post, world):
         self.messages = post[1]
+        world.broadcast_to_room(self)
 
     def execute_post(self, posts, world):
         for post in posts:
+            if post[0] == "modify_attribute":
+                self.modify_attribute(post, world)
             if post[0] == "create_entity":
                 self.create_entity(post, world)
             if post[0] == "broadcast_message":
@@ -2693,7 +2734,7 @@ class UseEvent(GraphEvent):
 
         # Move the object over and broadcast
         # put_target.move_to(self.target_nodes[1])
-        world.broadcast_to_room(self)
+        # world.broadcast_to_room(self)
         self.executed = True
         return []
 
@@ -2707,16 +2748,25 @@ class UseEvent(GraphEvent):
             else:
                 return
 
-        if viewer == self.actor:
-            if "self_view" in self.messages:
-                return self.messages["self_view"]
-        else:
-            if "other_view" in self.messages:
-                return self.messages["other_view"]
-
-        # Default message.
         actor_text = self.__actor_name
         recipient_text = self.__recipient_name
+            
+        if viewer == self.actor:
+            s = ''
+            if "self_view" in self.messages:
+                s += self.messages["self_view"] + " "
+            if "self_as_target_view" in self.messages and viewer == self.target_nodes[1]:
+                s += str.format(self.messages["self_as_target_view"], **locals())
+            if "self_not_target_view" in self.messages and viewer != self.target_nodes[1]:
+                s += str.format(self.messages["self_not_target_view"], **locals())
+            return s
+        else:
+            if "self_not_target_view" in self.messages and viewer == self.target_nodes[1]:
+                return str.format(self.messages["self_not_target_view"], **locals())
+            elif "room_view" in self.messages:
+                return str.format(self.messages["room_view"], **locals())
+                
+        # Default message.
         if viewer == self.target_nodes[1]:
             recipient_text = "you"
         return f"{actor_text} used {self.__given_name} with {recipient_text}."
@@ -2755,6 +2805,7 @@ class UseEvent(GraphEvent):
         object_name, target_name = text_args
         target_nodes = graph.desc_to_nodes(target_name, actor, "all+here")
         possible_targets = [x for x in target_nodes if isinstance(x, GraphNode)]
+        possible_targets.append(actor)
         if len(possible_targets) == 0:
             # didn't find any nodes by this name
             return ErrorEvent(

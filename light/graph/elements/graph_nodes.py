@@ -539,6 +539,8 @@ class GraphAgent(GraphNode):
         self.on_events = self._props.get("on_events", None)
         if self._props.get("dead", None) is not None:
             self.dead = self._props.get("dead")
+        else:
+            self.dead = False
         self.is_player = self._props.get("is_player", False)
         self.usually_npc = self._props.get("usually_npc", False)
         self.pacifist = self._props.get("pacifist", False)
