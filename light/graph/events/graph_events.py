@@ -473,7 +473,6 @@ class GoEvent(GraphEvent):
         self.__canonical_room_view = new_room.get_view_from(old_room)
 
     def is_not_blocked(self, world):
-        self.blocker = None
         blockers = self.actor.get_blockers()
         if len(blockers) == 0:
             return True
@@ -524,6 +523,7 @@ class GoEvent(GraphEvent):
         # Populate for views
         self.__self_view = None
         self.__in_room_view = None
+        self.blocker = None
         old_room = self.actor.get_room()
         new_room = self.target_nodes[0]
         old_room_view = old_room.get_prefix_view_from(new_room)

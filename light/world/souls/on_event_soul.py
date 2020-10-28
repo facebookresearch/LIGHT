@@ -10,6 +10,7 @@ from light.graph.events.graph_events import (
     DropObjectEvent,
     HitEvent,
     BlockEvent,
+    GiveObjectEvent
 )
 from light.world.souls.soul import Soul
 from light.world.souls.model_soul import ModelSoul
@@ -33,12 +34,20 @@ class OnEventSoul(ModelSoul):
     MAIN_LOOP_STEP_TIMEOUT = 1
 
     def match_event(self, event, cause):
+        agent = self.target_node
+        if event.actor == agent:
+            # ignore own events for now.
+            return
+
         event_name = event.__class__.__name__
         if cause[0] == event_name or (
             cause[0] == "SayEvent" and event_name == "TellEvent"
         ):
             if cause[0] == "SayEvent":
                 if cause[1] in event.text_content and event.safe:
+                    return True
+            if cause[0] == "GiveObjectEvent":
+                if cause[1] in event.target_nodes[0].name:
                     return True
         return False
 
@@ -62,14 +71,18 @@ class OnEventSoul(ModelSoul):
             if do_event.__class__.__name__ != "ErrorEvent":
                 do_event.execute(self.world)
         if effect[0] == "DropEvent":
-            do_event = DropObjectEvent.construct_from_args(agent, effect[1])
-            if do_event.__class__.name != "ErrorEvent":
+            do_event = DropObjectEvent.construct_from_args(agent, targets=[effect[1]])
+            if do_event.__class__.__name__ != "ErrorEvent":
+                do_event.execute(self.world)
+        if effect[0] == "GiveObjectEvent":
+            do_event = GiveObjectEvent.construct_from_args(agent, targets=[effect[1], effect[2]])
+            if do_event.__class__.__name__ != "ErrorEvent":
                 do_event.execute(self.world)
 
     def on_events_heuristics(self, event):
         agent = self.target_node
         event_name = event.__class__.__name__
-
+        
         # HitEvent
         if (
             event_name == "HitEvent"
@@ -102,19 +115,47 @@ class OnEventSoul(ModelSoul):
                 say_text = "Err.. thanks."
             self.execute_event(["SayEvent", say_text])
 
+    def resolve_object_string(self, agent, object_str):
+        for id, obj in agent.contained_nodes.items():
+            obj = obj._target_node
+            if object_str in obj.name:
+                return obj
+        return None
+            
+    def process_effect(self, event, on_event):
+        # Resolve strings into nodes in the graph to execute effect event.
+        agent = self.target_node
+        effect = on_event[1].copy()
+        other_agent = event.actor
+        for i in range(0, len(effect)):
+            if effect[i] == "other_agent":
+                effect[i] = other_agent
+            if effect[i] == "object":
+                effect[i] = event.target_nodes[0]
+        if effect[0] == "GiveObjectEvent":
+            if type(effect[1]) == str:
+                effect[1] = self.resolve_object_string(agent, effect[1])
+                if effect[1] is None:
+                    return None # failed to resolve
+        return effect
+            
     def on_events(self, event):
-        self.on_events_heuristics(event)
+        agent = self.target_node
+        executed = False
+        if hasattr(agent, "on_events") and agent.on_events is not None:
+            event_name = event.__class__.__name__
+            on_events = agent.on_events
+            for on_event in on_events:
+                cause = on_event[0]
+                if self.match_event(event, cause):
+                    effect = self.process_effect(event, on_event)
+                    if effect is not None:
+                        self.execute_event(effect)
+                        executed = True
 
-        if not hasattr(self.target_node, "on_events"):
-            # No on_events for this agent.
-            return
-        event_name = event.__class__.__name__
-        on_events = self.target_node.on_events
-        for on_event in on_events:
-            cause = on_event[0]
-            effect = on_event[1]
-            if self.match_event(event, cause):
-                self.execute_event(effect)
+        if not executed:
+            self.on_events_heuristics(event)
+                
 
     async def observe_event(self, event: "GraphEvent"):
         """
