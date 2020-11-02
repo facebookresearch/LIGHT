@@ -62,18 +62,19 @@ class WorldViewer(object):
             health = 1
         if health > 8:
             health = 8
+        # Second argument indicates sentiment (can use for descriptions).    
         f = [
-            "dead",
-            "on the verge of death",
-            "very weak",
-            "weak",
-            "ok",
-            "good",
-            "strong",
-            "very strong",
-            "nigh on invincible",
+            ("pretty dead", -1),
+            ("on the verge of death", -1),
+            ("very weak", -1),
+            ("weak", -1),
+            ("ok", 1),
+            ("good", 1),
+            ("strong", 1),
+            ("very strong", 1),
+            ("nigh on invincible", 1)
         ]
-        return f[int(health)]
+        return f[int(health)][0], f[int(health)][1]
 
     def get_node_desc(self, node, from_node=None, use_the=False, drop_prefix=False):
         """Return a viewable description for this node in the graph"""
@@ -97,7 +98,7 @@ class WorldViewer(object):
             ent = node.get_prop("player_name")
         elif node.get_prop("agent") or node.get_prop("object"):
             prefix = self.name_prefix(node, ent, use_the)
-            if prefix is not "" and not drop_prefix:
+            if prefix != "" and not drop_prefix:
                 # -- clean up data, TODO: shouldn't need this?
                 if ent.lower().startswith("a "):
                     ent = ent[2:]
@@ -176,7 +177,7 @@ class WorldViewer(object):
             return False
         edge = from_node.get_edge_to(node)
         if edge is not None:
-            return f"a path to the {edge.label}"
+            return f"{edge.label}"
         else:
             return False
 
@@ -191,7 +192,7 @@ class WorldViewer(object):
             return False
         edge = self.world.oo_graph.get_edge(from_id, id)
         if edge is not None:
-            return f"a path to the {edge.label}"
+            return f"{edge.label}"
         else:
             return False
 

@@ -17,6 +17,7 @@ from light.data_model.environment_checkpoint_parser import EnvironmentCheckpoint
 from light.graph.utils import get_article
 import sys
 import parlai.utils.misc as parlai_utils
+import json
 
 sys.modules["parlai.core.utils"] = parlai_utils
 
@@ -294,6 +295,22 @@ class LIGHTDatabase:
         self.cache_init = True
         self.use_cache = True
         self.read_only = True
+
+        try:
+            possible_cache_path = self.dbpath + '.json'
+            if os.path.exists(possible_cache_path):
+                cache_date = os.path.getmtime(possible_cache_path)
+                database_date = os.path.getmtime(self.dbpath)
+                if cache_date > database_date:
+                    with open(possible_cache_path, 'r') as json_cache:
+                        self.cache = json.load(json_cache)
+                        for key in self.cache.keys():
+                            for str_id in self.cache[key].ids():
+                                self.cache[key][int(str_id)] = self.cache[key][str_id]
+                        return
+        except Exception:
+            pass  # initialize a new cache if the old one is corrupted
+
         db_table_dict = {
             "id": "id_table",
             "db_edges": "node_content_table",
@@ -314,11 +331,14 @@ class LIGHTDatabase:
                 self.cache[key] = {}
                 for row in results:
                     if row["parent_id"] in self.cache[key]:
-                        self.cache[key][row["parent_id"]].append(row)
+                        self.cache[key][int(row["parent_id"])].append(dict(row))
                     else:
-                        self.cache[key][row["parent_id"]] = [row]
+                        self.cache[key][int(row["parent_id"])] = [dict(row)]
             else:
-                self.cache[key] = {row["id"]: row for row in results}
+                self.cache[key] = {int(row["id"]): dict(row) for row in results}
+
+        with open(possible_cache_path, 'w') as json_cache:
+            json.dump(self.cache, json_cache)
 
     def __enter__(self):
         conn = sqlite3.connect(self.dbpath)
@@ -372,6 +392,22 @@ class LIGHTDatabase:
         table_name_fts = self.table_dict[type] + "_fts"
         # if input is empty, return all entries of the specified type through
         # the "else" block
+        
+        try:
+            self.c.execute(
+                """
+                SELECT * FROM {}
+                WHERE name LIKE ?
+                """.format(
+                    table_name
+                ),
+                ("%" + input + "%",),
+            )
+            results = self.c.fetchall()
+        except sqlite3.OperationalError:
+            # Table cannot be searched by name
+            results = []
+
         if fts and input != "":
             # Can use .format because table_name is being chosen from a predefined
             # list, so there is no risk for SQL injection
@@ -387,17 +423,11 @@ class LIGHTDatabase:
                 ),
                 (input,),
             )
-        else:
-            self.c.execute(
-                """
-                SELECT * FROM {}
-                WHERE name LIKE ?
-                """.format(
-                    table_name
-                ),
-                ("%" + input + "%",),
-            )
-        return self.c.fetchall()
+            fts_results = self.c.fetchall()
+            already_present = set(r['id'] for r in results)
+            results += [r for r in fts_results if r['id'] not in already_present]
+
+        return results
 
     def get_id(self, id=None, type=None, expand=False):
         """
@@ -405,8 +435,12 @@ class LIGHTDatabase:
         id_table.
         """
         if self.use_cache and id is not None:
-            if id in self.cache["id"]:
-                return [self.cache["id"][id]]
+            use_id = int(id)
+            if use_id in self.cache["id"]:
+                found_id = self.cache["id"][use_id]
+                if expand:
+                    return [self.cache[found_id['type'] + 's'][use_id]]
+                return [found_id]
         if self.use_cache and type is not None:
             return [row for row in self.cache["id"].values() if row["type"] == type]
         self.c.execute(

@@ -193,7 +193,11 @@ class World(object):
     def get_prop(self, id, prop, default=None):
         """Get the given prop, return None if it doesn't exist"""
         # TODO deprecate calls here, go to oo_graph
-        return self.oo_graph.get_node(id).get_prop(prop, default)
+        node = self.oo_graph.get_node(id)
+        if node is None:
+            return "ErrorNodeNotFound"
+        else:
+            return node.get_prop(prop, default)
 
     @deprecated
     def set_prop(self, id, prop, val=True):
@@ -822,16 +826,19 @@ class World(object):
         return random.choice(h)
 
     def parse_exec(self, agentid, inst=None):
-        try:
+        if self.opt.get('dont_catch_errors', False):
             return self.parse_exec_internal(agentid, inst)
-        except Exception:
-            import traceback
+        else:
+            try:
+                return self.parse_exec_internal(agentid, inst)
+            except Exception:
+                import traceback
 
-            traceback.print_exc()
-            self.send_msg(
-                agentid, "Strange magic is afoot. This failed for some reason..."
-            )
-            return False, "FailedParseExec"
+                traceback.print_exc()
+                self.send_msg(
+                    agentid, "Strange magic is afoot. This failed for some reason..."
+                )
+                return False, "FailedParseExec"
 
     def attempt_parse_event(self, EventClass, actor_node, arguments):
         """Return the possible parsed event given the event, actor, and arguments"""
@@ -839,15 +846,15 @@ class World(object):
         possible_text_args = EventClass.split_text_args(actor_node, arguments)
         if isinstance(possible_text_args, ErrorEvent):
             return possible_text_args
-
+        
         # Parse the string arguments into nodes
         for string_args in possible_text_args:
             result = EventClass.find_nodes_for_args(
                 self.oo_graph, actor_node, *string_args
             )
-            if isinstance(result, ErrorEvent):
-                continue
-
+            if not isinstance(result, ErrorEvent):
+                break
+            
         if isinstance(result, ErrorEvent):
             return result
 
@@ -872,7 +879,7 @@ class World(object):
             inst = "say " + inst
 
         instruction_list = inst.strip().split()
-
+        
         if (
             len(inst) == 1
             and ((inst[0] == "respawn") or (inst[0] == "*respawn*"))
@@ -881,7 +888,8 @@ class World(object):
         ):
             self.respawn_player(agentid)
             return True, "Respawn"
-        if self.get_prop(agentid, "dead"):
+        dead = self.get_prop(agentid, "dead")
+        if dead or (dead == "ErrorNodeNotFound"):
             self.send_msg(
                 agentid,
                 "You are dead, you can't do anything, sorry.\nType *respawn* to try at life again.\n",
@@ -946,7 +954,13 @@ class World(object):
 
     def get_possible_player_nodes(self):
         """Return any nodes that would be allowed to be reinhabited by a player"""
-        return self.oo_graph.get_npcs()
+        agents = self.oo_graph.get_npcs()
+        allowed_agents = []
+        for a in agents:
+            if not a.usually_npc:
+                # only allow a player to be from the non-NPC set
+                allowed_agents.append(a)
+        return allowed_agents
 
     # TODO refactor players
     def spawn_player(self, existing_player_id=-1):

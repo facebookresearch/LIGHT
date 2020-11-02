@@ -384,7 +384,7 @@ class TornadoPlayerProvider(PlayerProvider):
         if self.player_soul is None:
             dat = {"text": "Could not find a soul for you, sorry"}
             self.socket.safe_write_message(
-                json.dumps({"command": "actions", "data": [dat]})
+                json.dumps({"command": "fail_find", "data": [dat]})
             )
         else:
             soul_id = self.player_soul.player_id

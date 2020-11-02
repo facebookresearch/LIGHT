@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from light.world.souls.soul import Soul
+import os
 import asyncio
 from typing import TYPE_CHECKING, Any
 
@@ -56,9 +57,16 @@ class ModelSoul(Soul):
         """
 
         async def _run_main_logic_forever():
-            while not self.is_reaped:
-                await self._take_timestep()
-                await asyncio.sleep(self.MAIN_LOOP_STEP_TIMEOUT)
+            try:
+                while not self.is_reaped:
+                    await self._take_timestep()
+                    await asyncio.sleep(self.MAIN_LOOP_STEP_TIMEOUT)
+            except Exception as e:
+                print(f"Unhandled model soul exception in {self}: {e}")
+                import traceback
+                traceback.print_exc()
+                print("Reaping...")
+                self.reap()
 
         self._main_loop = asyncio.create_task(_run_main_logic_forever())
 

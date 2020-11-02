@@ -57,6 +57,7 @@ export function useWSDataSource(url) {
   const websocket = React.useRef();
   const [isConnected, setConnected] = React.useState(false);
   const [isErrored, setErrored] = React.useState(false);
+  const [isFull, setFull] = React.useState(false);
   const [messages, appendMessage] = React.useReducer(reducer, []);
   const [persona, setPersona] = React.useState(null);
   const [location, setLocation] = React.useState(null);
@@ -104,6 +105,8 @@ export function useWSDataSource(url) {
           buffer.push(action);
           buffer.forEach((msg) => appendMessage(msg));
         });
+      } else if (cmd.command === "fail_find") {
+        setFull(true);
       }
     },
     [appendMessage, setPersona, setAgents, setLocation]
@@ -154,5 +157,6 @@ export function useWSDataSource(url) {
     location,
     isErrored,
     agents,
+    isFull,
   };
 }
