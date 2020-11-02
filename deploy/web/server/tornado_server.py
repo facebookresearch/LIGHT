@@ -40,7 +40,7 @@ from light.graph.events.graph_events import SoulSpawnEvent
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
 QUESTS_LOCATION = "/home/ubuntu/data/quests"
-if QUESTS_LOCATION is not None:
+if QUESTS_LOCATION is not None and os.path.exists(QUESTS_LOCATION):
     quest_loader = QuestLoader(QUESTS_LOCATION)
 else:
     quest_loader = None
@@ -148,8 +148,6 @@ def read_secrets():
 
 
 SECRETS = read_secrets()
-
-print(SECRETS)
 
 tornado_settings = {
     "autoescape": None,
