@@ -6,6 +6,7 @@ BUILDER_DIR="${WEBDIR}/builderapp/"
 GAME_DIR="${WEBDIR}/gameapp/"
 SERVER_FILE="${WEBDIR}/server/run_server.py"
 
+mkdir build
 cd $BUILDER_DIR
 npm run build
 cd $GAME_DIR
