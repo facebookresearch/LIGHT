@@ -1,0 +1,1 @@
+This folder is built using the build.sh script in the web directory
