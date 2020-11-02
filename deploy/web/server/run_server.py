@@ -24,9 +24,6 @@ from light.data_model.light_database import LIGHTDatabase
 from light.world.souls.models.partner_heuristic_model_soul import (
     PartnerHeuristicModelSoul,
 )
-
-import ssl
-
 here = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -41,15 +38,7 @@ def make_app(FLAGS, ldb, model_resources):
             Rule(PathMatches("/.*"), landingApp),
         ]
     )
-
-    ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-    # ssl_dir = FLAGS.ssl_dir
-#    ssl_ctx.load_cert_chain(
-#        '/etc/letsencrypt/live/light-rpg.ai/fullchain.pem',
-#        '/etc/letsencrypt/live/light-rpg.ai/privkey.pem',
-#    )
-
-    server = HTTPServer(router) #, ssl_options=ssl_ctx)
+    server = HTTPServer(router)
     server.listen(FLAGS.port)
     return registryApp
 
@@ -78,7 +67,7 @@ def _run_server(FLAGS, ldb, model_resources):
 
 # Override this to be the model_resources needed for souls
 def init_model_resources(light_model_root):
-    return {}
+    # dialog gen is at `dialog_gen`, other is at `game_speech1`?
     shared_model_content = PartnerHeuristicModelSoul.load_models(
         light_model_root + "dialog_gen/model",
         light_model_root + "speech_train_cands.txt",
