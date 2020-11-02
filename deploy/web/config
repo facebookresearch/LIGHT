@@ -1,10 +1,11 @@
 --data-model-db
-/private/home/lucaskabela/LIGHT/light/data_model/database.db
+/home/ubuntu/data/database.db 
 --hostname
-localhost
+light-rpg.ai
 --light-model-root
-/checkpoint/light/models/
+/home/ubuntu/data/models/
 --password
 LetsPlay
 --port
-35494
+8080
+

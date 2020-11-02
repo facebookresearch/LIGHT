@@ -1,7 +1,7 @@
 const DEV = {
-  host: "http://localhost",
-  hostname: "localhost",
-  port: "35494",
+  host: "http://light-rpg.ai",
+  hostname: "light-rpg.ai",
+  port: "80",
 };
 
 export default DEV;

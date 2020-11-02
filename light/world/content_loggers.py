@@ -243,7 +243,7 @@ class AgentInteractionLogger(InteractionLogger):
             )
 
         if (
-            event_t is DeathEvent
+            event_t is DeathEvent and event.actor is self.agent
         ):  # If agent is exiting or dieing or something, end meta episode
             self._end_meta_episode()
 

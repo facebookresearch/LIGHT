@@ -141,10 +141,6 @@ class LIGHTDatabase:
         # ignore unknown command line arguments
         opt = argparser.parse_and_process_known_args()[0]
 
-        # Path to the dictionary csv's
-        self.data_dir = os.path.join(opt["datapath"], "light", "light_database_csv")
-        if not os.path.exists(self.data_dir):
-            os.makedirs(self.data_dir)
         # Path to the database
         self.dbpath = dbpath
         conn = sqlite3.connect(self.dbpath)
@@ -154,7 +150,7 @@ class LIGHTDatabase:
         self.conn = conn
         self.c = c
         self.use_cache = False
-        self.read_only = False
+        self.read_only = read_only
         self.cache = {}
         self.cache_init = False
 
@@ -180,104 +176,105 @@ class LIGHTDatabase:
             DB_TYPE_WORLD: "world_table",
         }
 
-        # Master table for keeping unique IDs across tables and to look up
-        # objects in the correct table given an ID
-        self.c.execute(
-            """
-            CREATE TABLE IF NOT EXISTS id_table (
+        if not self.read_only:
+            # Master table for keeping unique IDs across tables and to look up
+            # objects in the correct table given an ID
+            self.c.execute(
+                """
+                CREATE TABLE IF NOT EXISTS id_table (
+                    id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    type text NOT NULL,
+                    status text NOT NULL,
+                    is_from_pickle BOOLEAN NOT NULL DEFAULT 0 CHECK
+                        (is_from_pickle IN (0, 1)),
+                    split text ,
+                    CONSTRAINT fk_status FOREIGN KEY (status)
+                        REFERENCES enum_table_status (status)
+                        ON DELETE CASCADE,
+                    CONSTRAINT fk_split FOREIGN KEY (split)
+                        REFERENCES enum_table_datasplit (split)
+                        ON DELETE CASCADE,
+                    CONSTRAINT fk_id FOREIGN KEY (type)
+                        REFERENCES enum_table_master_content (type)
+                        ON DELETE CASCADE);
+                """
+            )
+            # Enum table for types of contents in the master table (id_table)
+            self.c.execute(
+                """
+                CREATE TABLE IF NOT EXISTS enum_table_master_content (
                 id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-                type text NOT NULL,
-                status text NOT NULL,
-                is_from_pickle BOOLEAN NOT NULL DEFAULT 0 CHECK
-                    (is_from_pickle IN (0, 1)),
-                split text ,
-                CONSTRAINT fk_status FOREIGN KEY (status)
-                    REFERENCES enum_table_status (status)
-                    ON DELETE CASCADE,
-                CONSTRAINT fk_split FOREIGN KEY (split)
-                    REFERENCES enum_table_datasplit (split)
-                    ON DELETE CASCADE,
-                CONSTRAINT fk_id FOREIGN KEY (type)
-                    REFERENCES enum_table_master_content (type)
-                    ON DELETE CASCADE);
-            """
-        )
-        # Enum table for types of contents in the master table (id_table)
-        self.c.execute(
-            """
-            CREATE TABLE IF NOT EXISTS enum_table_master_content (
-            id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-            type text NOT NULL UNIQUE);
-            """
-        )
-        # Enum table for types of statuses in the master table (id_table)
-        self.c.execute(
-            """
-            CREATE TABLE IF NOT EXISTS enum_table_status (
-            id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-            status text NOT NULL UNIQUE);
-            """
-        )
-        #  Enum table for types of data split in master table (id_table)
-        self.c.execute(
-            """
-            CREATE TABLE IF NOT EXISTS enum_table_datasplit (
-            id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-            split text NOT NULL UNIQUE);
-            """
-        )
-
-        # Initialize content type enum table
-        entity_types_formated = format_list_for_sql(ENTITY_TYPES)
-        self.c.execute(
-            """
-            INSERT OR IGNORE INTO enum_table_master_content (type)
-            VALUES {}
-            """.format(
-                entity_types_formated
+                type text NOT NULL UNIQUE);
+                """
             )
-        )
-
-        # Initialize content status enum table
-        content_statuses_formated = format_list_for_sql(CONTENT_STATUSES)
-        self.c.execute(
-            """
-            INSERT OR IGNORE INTO enum_table_status (status)
-            VALUES {}
-            """.format(
-                content_statuses_formated
+            # Enum table for types of statuses in the master table (id_table)
+            self.c.execute(
+                """
+                CREATE TABLE IF NOT EXISTS enum_table_status (
+                id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+                status text NOT NULL UNIQUE);
+                """
             )
-        )
-
-        #  Initialize data split type enum table
-        datasplit_formated = format_list_for_sql(DATASPLIT_TYPES)
-        self.c.execute(
-            """
-        INSERT OR IGNORE INTO enum_table_datasplit (split)
-        VALUES {}
-        """.format(
-                datasplit_formated
+            #  Enum table for types of data split in master table (id_table)
+            self.c.execute(
+                """
+                CREATE TABLE IF NOT EXISTS enum_table_datasplit (
+                id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+                split text NOT NULL UNIQUE);
+                """
             )
-        )
 
-        # Initialize content status enum table
-        edit_statuses_formated = format_list_for_sql(EDIT_STATUSES)
-        self.c.execute(
-            """
-            INSERT OR IGNORE INTO enum_table_status (status)
-            VALUES {}
-            """.format(
-                edit_statuses_formated
+            # Initialize content type enum table
+            entity_types_formated = format_list_for_sql(ENTITY_TYPES)
+            self.c.execute(
+                """
+                INSERT OR IGNORE INTO enum_table_master_content (type)
+                VALUES {}
+                """.format(
+                    entity_types_formated
+                )
             )
-        )
 
-        self.init_environment_tables()
-        self.init_conversation_tables()
-        self.init_edits_table()
-        self.init_world_tables()
-        self.init_user_tables()
-        self.init_game_tables()
-        self.create_triggers()
+            # Initialize content status enum table
+            content_statuses_formated = format_list_for_sql(CONTENT_STATUSES)
+            self.c.execute(
+                """
+                INSERT OR IGNORE INTO enum_table_status (status)
+                VALUES {}
+                """.format(
+                    content_statuses_formated
+                )
+            )
+
+            #  Initialize data split type enum table
+            datasplit_formated = format_list_for_sql(DATASPLIT_TYPES)
+            self.c.execute(
+                """
+                INSERT OR IGNORE INTO enum_table_datasplit (split)
+                VALUES {}
+                """.format(
+                    datasplit_formated
+                )
+            )
+
+            # Initialize content status enum table
+            edit_statuses_formated = format_list_for_sql(EDIT_STATUSES)
+            self.c.execute(
+                """
+                INSERT OR IGNORE INTO enum_table_status (status)
+                VALUES {}
+                """.format(
+                    edit_statuses_formated
+                )
+            )
+
+            self.init_environment_tables()
+            self.init_conversation_tables()
+            self.init_edits_table()
+            self.init_world_tables()
+            self.init_user_tables()
+            self.init_game_tables()
+            self.create_triggers()
 
         # Dictionaries to convert between previous pickle IDs and current
         # database IDs
@@ -780,16 +777,17 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
-        # Initialize edge type enum table
-        edge_types_formated = format_list_for_sql(EDGE_TYPES)
-        self.c.execute(
-            """
-            INSERT OR IGNORE INTO enum_table_edge_type (type)
-            VALUES {}
-            """.format(
-                edge_types_formated
+        if not self.read_only:
+            # Initialize edge type enum table
+            edge_types_formated = format_list_for_sql(EDGE_TYPES)
+            self.c.execute(
+                """
+                INSERT OR IGNORE INTO enum_table_edge_type (type)
+                VALUES {}
+                """.format(
+                    edge_types_formated
+                )
             )
-        )
 
     def create_base_character(self, name, entry_attributes={}):
         id = self.create_id(DB_TYPE_BASE_CHAR, entry_attributes)
@@ -1629,13 +1627,14 @@ class LIGHTDatabase:
                 ON DELETE CASCADE);
             """
         )
-        # Enum table to represent interaction types
-        self.c.execute(
-            """
-            INSERT OR IGNORE INTO enum_interaction_type (type)
-            VALUES ('action'), ('emote'), ('speech')
-            """
-        )
+        if not self.read_only:
+            # Enum table to represent interaction types
+            self.c.execute(
+                """
+                INSERT OR IGNORE INTO enum_interaction_type (type)
+                VALUES ('action'), ('emote'), ('speech')
+                """
+            )
 
     def create_interaction(self, setting_id, entry_attributes={}):
         id = self.create_id(DB_TYPE_INTERACTION, entry_attributes)
@@ -3396,6 +3395,7 @@ class LIGHTDatabase:
             (username,),
         )
         inserted = bool(self.c.rowcount)
+        print("creating user", username, inserted)
         if not inserted:
             self.c.execute(
                 """
@@ -3418,6 +3418,7 @@ class LIGHTDatabase:
             (username,),
         )
         result = self.c.fetchall()
+        print(username, result)
         assert len(result) == 1
         id = int(result[0][0])
         return id

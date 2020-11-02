@@ -188,6 +188,15 @@ class LIGHTBotOverworld(World):
         Change the username.
         Return True if successful, false otherwise (timeout)
         """
+        if self.agent.data.get("user_name", None) is None:
+            self.agent.observe(
+                {
+                    "id": "",
+                    "text": "PLAY a round to set your initial username",
+                    "quick_replies": self.QUICK_REPLY_OPTIONS,
+                }
+            )
+            return True
         self.agent.observe({"id": "", "text": "Please enter your new username. "})
         a = request_username(self.agent, self)
         if a is None:

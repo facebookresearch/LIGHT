@@ -34,10 +34,7 @@ from light.graph.builders.base_elements import (
 import os
 import random
 import copy
-import numpy as np
-
-random.seed(6)
-np.random.seed(6)
+import time
 
 MAX_EXTRA_AGENTS_PER_ROOM = 2
 INV_DIR = {"east": "west", "west": "east", "north": "south", "south": "north"}
@@ -69,7 +66,7 @@ POSSIBLE_NEW_ENTRANCES = [
 class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
     """Builds a one-room light Graph using a StarSpace model to connect everything."""
 
-    def __init__(self, debug=True, opt=None):
+    def __init__(self, ldb, debug=True, opt=None):
         """Initializes required models and parameters for this graph builder"""
         if opt is None:
             parser = ParlaiParser(
@@ -78,17 +75,19 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             self.add_parser_arguments(parser)
             opt, _unknown = parser.parse_and_process_known_args()
 
-        # TODO update path
-        self.parlai_datapath = opt["datapath"]
-        self.db_path = os.path.join(opt["datapath"], "light", "database3.db")
-        # if opt.get("light_db_file", "") != "":
-        #     self.db_path = opt.get("light_db_file")
-        self.model_path = os.path.expanduser(
-            "~/Desktop/LIGHT/LIGHT_models/"
-        )  # opt.get("light_model_root")
-        DBGraphBuilder.__init__(self, self.db_path)
+        # Setup correct path
+        db_path = opt.get('db_path')
+        if db_path is None:
+            parlai_datapath = opt["datapath"]
+            db_path = os.path.join(parlai_datapath, "light", "database3.db")
+        self.db_path = db_path
+        model_path = opt.get('model_path')
+        if model_path is None:
+            model_path = opt.get("light_model_root")
+        self.model_path = model_path
+        self.ldb = ldb
+        DBGraphBuilder.__init__(self, ldb)
         SingleSuggestionGraphBuilder.__init__(self, opt, model_path=self.model_path)
-        self.dpath = self.parlai_datapath + "/light_maps"
         self.debug = debug
 
         self._no_npc_models = True
@@ -259,6 +258,8 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
     def add_object_to_graph(self, g, obj, container_node, extra_props=None):
         """Adds a particular DBObject to the given OOgraph, adding to the specific
         container node. Returns the newly created object node"""
+        if obj is None:
+            return None
         if extra_props is None:
             extra_props = {}
         obj.description = obj.description.capitalize()
@@ -312,6 +313,8 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
     def add_new_agent_to_graph(self, g, char, room_node):
         """Add the given DBcharacter  to the given room (room_node) in the
         given OOFraph. Return the new agent node on success, and None on failure"""
+        if char is None:
+            return None
         if "is_banned" in vars(char):
             print("skipping BANNED character! " + char.name)
             return None
@@ -472,6 +475,8 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         else:
             neighbors = self.get_neighbor_rooms(db_id)
         for neighbor_room in neighbors:
+            if neighbor_room is None:
+                continue
             g.add_room(
                 neighbor_room.setting,
                 {
@@ -488,7 +493,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             )
         return g, world
 
-    def get_constrained_graph(self, location=None, player=None):
+    def _get_constrained_graph(self, location=None, player=None):
         """
         Location is of the form "Location Name. location description"
         player is of the form "Player Name. player persona"
@@ -497,7 +502,6 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             set_room = self.get_random_room()
         else:
             set_room = self.get_room_from_id(self.roomfeats_to_id(location))
-        set_room = self.get_similar_room(location)
 
         g = OOGraph(self.opt)
         room_node = g.add_room(
@@ -572,6 +576,8 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
 
         neighbors = self.get_neighbor_rooms(set_room.db_id)
         for neighbor_room in neighbors:
+            if neighbor_room is None:
+                continue
             g.add_room(
                 neighbor_room.setting,
                 {
@@ -590,6 +596,20 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         world = World(self.opt, self)
         world.oo_graph = g
         return g, world
+
+    def get_constrained_graph(self, location=None, player=None):
+        """Take a few attempts to get the graph meeting the given constraints"""
+        attempts = 9
+        graph = None
+        world = None
+        while graph is None and attempts > 0:
+            try:
+                random.seed(time.time())
+                graph, world = self._get_constrained_graph(location=location, player=player)
+            except Exception as _e:
+                print(_e)
+                attempts -= 1
+        return graph, world
 
     def get_graph(self):
         """Construct a graph using the grid created with build_world after
