@@ -24,3 +24,4 @@ class QuestLoader():
         Get any random quest from the list of quests.
         """
         return random.choice(self.quests)
+        
