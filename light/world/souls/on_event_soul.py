@@ -197,7 +197,11 @@ class OnEventSoul(ModelSoul):
                         return True
         return False
 
+    
     async def _take_timestep(self) -> None:
+        self.timestep_actions()
+    
+    def timestep_actions(self):
         """
         Attempt to take some actions based on any observations in the pending list
         """
@@ -213,7 +217,7 @@ class OnEventSoul(ModelSoul):
                 target_room = target_agent.get_room()
                 if agent.get_room() == target_room:
                     self.execute_event(["HitEvent", target_agent])
-                    return
+                    return True
 
         # Search room for aggression targets.
         hit_tags = agent.attack_tagged_agents
@@ -227,7 +231,7 @@ class OnEventSoul(ModelSoul):
                         self.execute_event(["BlockEvent", other_agent])
                         self.execute_event(["HitEvent", other_agent])
                         agent.aggression_target = other_agent.node_id
-                        return
+                        return True
 
         # Random movement for NPCs..
         if random.randint(0, 100) < agent.speed:
@@ -236,4 +240,6 @@ class OnEventSoul(ModelSoul):
             if len(go_events) > 0 and not self.is_too_far(agent, room):
                 go_event = random.choice(go_events)
                 go_event.execute(self.world)
-        return
+                return True
+
+        return False
