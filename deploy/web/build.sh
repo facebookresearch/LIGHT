@@ -21,6 +21,8 @@ cp $CONF_FN $GAME_DIR"src/config.js"
 
 mkdir build
 cd $BUILDER_DIR
+npm install
 npm run build
 cd $GAME_DIR
+npm install
 npm run build
