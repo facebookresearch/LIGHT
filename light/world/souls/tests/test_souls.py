@@ -105,7 +105,7 @@ class TestSouls(unittest.TestCase):
         self.assertEqual(other_say_observe.actor, repeat_node)
         self.assertEqual(
             other_say_observe.text_content,
-            "I just saw the following: The testagent smiles",
+            "I just saw the following: The TestAgent smiles.",
         )
 
         other_emote_observe = observations[2]

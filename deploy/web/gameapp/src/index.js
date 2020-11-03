@@ -176,6 +176,7 @@ function ConnectedApp() {
     persona,
     location,
     agents,
+    isFull,
   } = useWSDataSource(wsUrl);
 
   if (isErrored)
@@ -186,7 +187,7 @@ function ConnectedApp() {
     );
 
   if (messages.length === 0) {
-    return <LoadingScreen />;
+    return <LoadingScreen isFull={isFull}/>;
   }
 
   return (

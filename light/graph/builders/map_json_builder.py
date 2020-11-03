@@ -14,17 +14,21 @@ from light.graph.builders.base import (
 from light.world.world import World
 
 
-class ExternalMapJsonBuilder(DBGraphBuilder):
-    """Loads maps exported from the World Builder UI Json Format
+class MapJsonBuilder(DBGraphBuilder):
+    """Loads maps exported from the structured_graph to_json method.
     """
 
     def __init__(self, ldb, debug, opt):
         self.db = ldb
         self.opt = opt
         self._no_npc_models = True
-
+        
     def get_graph(self):
-        g = OOGraph.from_worldbuilder_json(self.opt['load_map'])
+        input_json = self.opt['load_map']
+        f = open(input_json, "r")
+        data = f.read()
+        f.close()
+        g = OOGraph.from_json(data)
         world = World(self.opt, self)
         world.oo_graph = g
         return g, world

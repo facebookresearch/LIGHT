@@ -18,6 +18,7 @@ function Tile({
   setShowAdvanced,
   tileStyle,
   state,
+  neighbor,
 }) {
   const handleSubmit = (data) => {
     state.setTile(x, y, { ...tile, ...data });
@@ -147,6 +148,7 @@ function Tile({
             setSelected={setSelected}
             selected={selected}
             setShowAdvanced={setShowAdvanced}
+            neighbor={neighbor}
           />
         </div>
       </Popover>

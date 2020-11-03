@@ -168,11 +168,13 @@ class GraphNode(object):
     @classmethod
     def from_json_dict(cls, input_dict):
         """Init this node from a json encoding of the original node"""
-        node = cls(input_dict["node_id"], input_dict["name"], props=input_dict,)
-        node._container_id = input_dict["container_node"]["target_id"]
-        node._contained_ids = [
-            x["target_id"] for x in input_dict["contained_nodes"].values()
-        ]
+        node = cls(input_dict.get("node_id", -1), input_dict["name"], props=input_dict,)
+        if "container_node" in input_dict:
+            node._container_id = input_dict["container_node"]["target_id"]
+        if "contained_nodes" in input_dict:
+            node._contained_ids = [
+                x["target_id"] for x in input_dict["contained_nodes"].values()
+            ]
         node._is_from_json = True
         return node
 
@@ -415,6 +417,7 @@ class GraphRoom(GraphNode):
         self.surface_type = self._props.get("surface_type", "in")
         self.classes = set(self._props.get("classes", {"room"}))
         self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
+        self.grid_location = self._props.get("grid_location", [0,0,0])
         self.neighbors = {}
 
     def assert_valid(self):
@@ -489,35 +492,76 @@ class GraphAgent(GraphNode):
 
     DEFAULT_SIZE = 20
     DEFAULT_CONTAIN_SIZE = 20
-    DEFAULT_HEALTH = 10
-    DEFAULT_AGGRESSION = 0
-    DEFAULT_SPEED = 0
+    DEFAULT_MAX_WEARABLE_ITEMS = 3
+    DEFAULT_MAX_WIELDABLE_ITEMS = 1
+    DEFAULT_HEALTH = 6
+    DEFAULT_MOVEMENT_ENERGY_COST = 0.05
+    DEFAULT_SPEED = 10
+    DEFAULT_STRENGTH = 0
+    DEFAULT_DEXTERITY = 0
     DEFAULT_PERSONA = "I am a player in the LIGHT world."
-
+    DEFAULT_TAGS = []
+    # NPC Defaults
+    DEFAULT_AGGRESSION = 0
+    DEFAULT_ATTACK_TAGGED_AGENTS = []
+    DEFAULT_MAX_DISTANCE_FROM_START_LOCATION = 1000000
+    DEFAULT_DONT_ACCEPT_GIFTS = False
+    
     NODE_TYPE = "GraphAgent"
 
     def __init__(self, node_id, name, props=None, db_id=None):
         super().__init__(node_id, name, props, db_id)
         self.agent = True
         self.size = self._props.get("size", self.DEFAULT_SIZE)
+        self.strength = self._props.get("strength", self.DEFAULT_STRENGTH)
+        self.dexterity = self._props.get("dexterity", self.DEFAULT_DEXTERITY)
+        self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
+        self.max_wearable_items = self._props.get(
+            "max_wearable_items", self.DEFAULT_MAX_WEARABLE_ITEMS
+        )
+        self.max_wieldable_items = self._props.get(
+            "max_wieldable_items", self.DEFAULT_MAX_WIELDABLE_ITEMS
+        )
+        self.num_wearable_items = self._props.get("num_wearable_items", 0)
+        self.num_wieldable_items = self._props.get("num_wieldable_items", 0)
         self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
         self.health = self._props.get("health", self.DEFAULT_HEALTH)
+        self.movement_energy_cost = self._props.get(
+            "movement_energy_cost", self.DEFAULT_MOVEMENT_ENERGY_COST
+        )
         self.damage = self._props.get("damage", 1)
         self.defense = self._props.get("defense", 0)
         self.food_energy = self._props.get("food_energy", 1)
-        self.aggression = self._props.get("aggression", self.DEFAULT_AGGRESSION)
         self.name_prefix = self._props.get("name_prefix", "the")
-        self.speed = self._props.get("speed", self.DEFAULT_SPEED)
         self.char_type = self._props.get("char_type", "person")
         self.classes = set(self._props.get("classes", {"agent"}))
         self.persona = self._props.get("persona", self.DEFAULT_PERSONA)
+        self.on_events = self._props.get("on_events", None)
         if self._props.get("dead", None) is not None:
             self.dead = self._props.get("dead")
+        else:
+            self.dead = False
         self.is_player = self._props.get("is_player", False)
-
+        self.usually_npc = self._props.get("usually_npc", False)
+        self.pacifist = self._props.get("pacifist", False)
+        self.tags = self._props.get("tags", self.DEFAULT_TAGS)
+        
         self.following = None
         self.followed_by = {}
 
+        self.blocking = None
+        self.blocked_by = {}
+
+        # NPC properties. TODO move to another class somehow?
+        self.aggression = self._props.get("aggression", self.DEFAULT_AGGRESSION)
+        self.speed = self._props.get("speed", self.DEFAULT_SPEED)
+        self.max_distance_from_start_location = self._props.get("max_distance_from_start_location",
+                                                                self.DEFAULT_MAX_DISTANCE_FROM_START_LOCATION)
+        self.dont_accept_gifts = self._props.get("dont_accept_gifts", self.DEFAULT_DONT_ACCEPT_GIFTS)
+        self.attack_tagged_agents = self._props.get("attack_tagged_agents", self.DEFAULT_ATTACK_TAGGED_AGENTS)
+
+        
+        
         # Game properties to track for this agent, TODO move to other class?
         self._human = False
         self._current_player = None
@@ -528,15 +572,51 @@ class GraphAgent(GraphNode):
         impossible to exist"""
         super().assert_valid()
         assert self.following is None or isinstance(self.following, GraphEdge)
+        assert self.blocking is None or isinstance(self.blocking, GraphEdge)
         assert isinstance(self.followed_by, dict)
+        assert isinstance(self.blocked_by, dict)
         for key, value in self.followed_by:
             assert value.get().node_id == key
             assert value.get().following == self
+        for key, value in self.blocked_by:
+            assert value.get().node_id == key
+            assert value.get().blocking == self
         for x in self.get_followers():
+            assert isinstance(x, GraphAgent)
+        for x in self.get_blockers():
             assert isinstance(x, GraphAgent)
         assert self.get_following() is None or isinstance(
             self.get_following, GraphAgent
         )
+        assert self.get_blocking() is None or isinstance(self.get_blocking, GraphAgent)
+
+    def block(self, other_agent):
+        """Create an edge between this and the agent being blocked"""
+        assert isinstance(
+            other_agent, GraphAgent
+        ), f"Can only block agents, given {other_agent}"
+        assert self.node_id not in other_agent.blocked_by, "Already blocking"
+        assert (
+            other_agent.get_room() == self.get_room()
+        ), "Can only block agents in the same room"
+        self.blocking = GraphEdge(other_agent)
+        other_agent.blocked_by[self.node_id] = GraphEdge(self)
+
+    def unblock(self):
+        """Remove the edges between this agent and the agent they are blocking"""
+        assert self.blocking is not None, "Not blocking anyone"
+        blocked_agent = self.blocking.get()
+        del blocked_agent.blocked_by[self.node_id]
+        self.blocking = None
+
+    def get_blockers(self):
+        """Get a list of the nodes blocking this node"""
+        return [x.get() for x in self.blocked_by.values()]
+
+    def get_blocking(self):
+        if self.blocking is None:
+            return None
+        return self.blocking.get()
 
     def follow(self, other_agent):
         """Create an edge between this and the agent being followed"""
@@ -571,8 +651,12 @@ class GraphAgent(GraphNode):
         deleted_nodes = super().delete_and_cleanup()
         if self.get_following() is not None:
             self.unfollow()
+        if self.get_blocking() is not None:
+            self.unblock()
         for node in self.get_followers():
             node.unfollow()
+        for node in self.get_blockers():
+            node.unblock()
         # TODO sever the player connection
 
         return deleted_nodes
@@ -654,6 +738,7 @@ class GraphObject(GraphNode):
         self.drink = self._props.get("drink", False)
         self.food = self._props.get("food", False)
         self.dead = self._props.get("dead", False)
+        self.on_use = self._props.get("on_use", None)
         self.container = self._props.get("container", False)
         self.gettable = self._props.get("gettable", True)
         self.wearable = self._props.get("wearable", False)

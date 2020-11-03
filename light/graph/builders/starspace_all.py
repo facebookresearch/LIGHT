@@ -146,7 +146,8 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         parser.add_argument(
             "--light-db-file",
             type=str,
-            default="/checkpoint/light/data/database3.db",
+            #default="/checkpoint/light/data/database3.db",
+            default="/checkpoint/light/data/merged.db",
             help="specific path for light database",
         )
         parser.add_argument(
