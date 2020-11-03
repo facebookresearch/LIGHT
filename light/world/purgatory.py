@@ -52,7 +52,6 @@ class Purgatory:
         will pick randomly from all of the registered soul providers, call the function for
         args, and then pass the target agent, world, and created args to the Soul.
         """
-        print("Registering filler soul provider", provider_name, desired_soul_type)
         self.filler_soul_providers[provider_name] = (desired_soul_type, arg_provider)
 
     def fill_soul(
@@ -74,7 +73,6 @@ class Purgatory:
                 len(self.filler_soul_providers) > 0
             ), "Must register at least one filler soul provider to fill souls"
             wanted_provider = random.choice(list(self.filler_soul_providers.keys()))
-        print("Filling soul", agent, "with", wanted_provider)
         soul_class, arg_provider = self.filler_soul_providers[wanted_provider]
         soul = soul_class(agent, self.world, *arg_provider())
         self.node_id_to_soul[agent.node_id] = soul
