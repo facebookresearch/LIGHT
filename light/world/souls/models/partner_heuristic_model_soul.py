@@ -7,7 +7,7 @@
 import time
 import random
 from collections import deque, defaultdict
-from light.world.souls.model_soul import ModelSoul
+from light.world.souls.on_event_soul import OnEventSoul
 from light.graph.events.base import ErrorEvent
 from light.graph.events.graph_events import TellEvent, SayEvent
 from parlai.core.agents import create_agent_from_shared
@@ -37,7 +37,7 @@ SAFE_PHRASES = [
 ]
 
 
-class PartnerHeuristicModelSoul(ModelSoul):
+class PartnerHeuristicModelSoul(OnEventSoul):
     """
     The PartnerHeuristicModelSoul is a ModelSoul that uses two different
     models for acting and dialogue, and uses a heuristic for keeping track
@@ -171,10 +171,14 @@ class PartnerHeuristicModelSoul(ModelSoul):
         if isinstance(event, ErrorEvent):
            return
 
+        # NPC on_events + heuristics.
+        super().on_events(event)
+
         if event.actor == self.target_node:
             self._last_action_time = time.time() + self._get_random_time_offset()
             return
 
+        
         self._pending_observations.append(event)
 
         # The model may choose to do something in response to this action,
@@ -497,13 +501,18 @@ class PartnerHeuristicModelSoul(ModelSoul):
             if random.random() < CHAT_DISENGAGE_CHANCE:
                 self.dialogue_clear_partner()
 
-        # random movement for npcs..
-        if random.randint(0, 1000) < agent.speed:
-            go_events = self.world.get_possible_events(agent_id, use_actions=["go"])
-            if len(go_events) > 0:
-                go_event = random.choice(go_events)
-                go_event.execute(self.world)
-                return
 
-        # possibly act according to the bert model
-        self.npc_action()
+        # NPC heuristics, etc.
+        super().timestep_actions()
+
+        if False:
+            # random movement for npcs..
+            if random.randint(0, 1000) < agent.speed:
+                go_events = self.world.get_possible_events(agent_id, use_actions=["go"])
+                if len(go_events) > 0:
+                    go_event = random.choice(go_events)
+                    go_event.execute(self.world)
+                    return
+
+            # possibly act according to the bert model
+            self.npc_action()
