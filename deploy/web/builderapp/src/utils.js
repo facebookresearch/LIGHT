@@ -2,6 +2,8 @@ import React from "react";
 
 import CONFIG from "./config";
 
+const BASE_URL = CONFIG.port != '80' ? `${CONFIG.host}:${CONFIG.port}` : CONFIG.host;
+
 export function usePrevious(value) {
   const ref = React.useRef();
   React.useEffect(() => {
@@ -35,7 +37,7 @@ export function useAPI(CONFIG, url, { body, params } = {}, preloaded) {
     let isSubscribed = true;
 
     if (state.loading) {
-      fetch(CONFIG.host + ":" + CONFIG.port + "/builder" + url)
+      fetch(BASE_URL + "/builder" + url)
         .then((res) => res.json())
         .then((data) => {
           if (isSubscribed) {

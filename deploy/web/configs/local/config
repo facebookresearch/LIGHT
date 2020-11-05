@@ -1,0 +1,10 @@
+--data-model-db
+~/ParlAI/data/LIGHT/merged.db
+--hostname
+localhost
+--light-model-root
+~/LIGHT/models/
+--password
+LetsPlay
+--port
+35494

@@ -11,8 +11,10 @@ from light.world.souls.repeat_soul import RepeatSoul
 from light.world.souls.models.partner_heuristic_model_soul import (
     PartnerHeuristicModelSoul,
 )
+
 import time
 
+# TODO specify the models to be using
 USE_MODELS = True
 
 

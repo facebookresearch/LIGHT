@@ -1,5 +1,5 @@
 --data-model-db
-/private/home/lucaskabela/LIGHT/light/data_model/database.db
+/checkpoint/light/db/merged.db
 --hostname
 localhost
 --light-model-root
@@ -8,3 +8,4 @@ localhost
 LetsPlay
 --port
 35494
+

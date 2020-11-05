@@ -1,0 +1,11 @@
+--data-model-db
+/home/ubuntu/data/database.db 
+--hostname
+light-rpg.ai
+--light-model-root
+/home/ubuntu/data/models/
+--password
+LetsPlay
+--port
+8080
+

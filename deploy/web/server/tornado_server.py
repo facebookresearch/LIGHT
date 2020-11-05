@@ -13,6 +13,7 @@ from deploy.web.server.game_instance import (
 from light.data_model.light_database import LIGHTDatabase
 from light.world.player_provider import PlayerProvider
 from light.world.quest_loader import QuestLoader
+from light.graph.events.graph_events import init_safety_classifier
 
 import argparse
 import inspect
@@ -31,18 +32,21 @@ ioloop.install()  # Needs to happen before any tornado imports!
 
 import tornado.ioloop  # noqa E402: gotta install ioloop first
 import tornado.web  # noqa E402: gotta install ioloop first
+import tornado.auth  # noqa E402: gotta install ioloop first
 import tornado.websocket  # noqa E402: gotta install ioloop first
 import tornado.escape  # noqa E402: gotta install ioloop first
 from light.graph.events.graph_events import SoulSpawnEvent
 
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
-QUESTS_LOCATION = None
-if QUESTS_LOCATION is not None:
+QUESTS_LOCATION = "/home/ubuntu/data/quests"
+if QUESTS_LOCATION is not None and os.path.exists(QUESTS_LOCATION):
     quest_loader = QuestLoader(QUESTS_LOCATION)
 else:
     quest_loader = None
 here = os.path.abspath(os.path.dirname(__file__))
+
+init_safety_classifier(os.path.expanduser("~/data/safety/OffensiveLanguage.txt"))
 
 _seen_warnings = set()
 
@@ -124,14 +128,40 @@ def get_path(filename):
     return os.path.join(cwd, filename)
 
 
+def read_secrets():
+    """
+    Reads the secrets from a secret text file, located outside the repo.
+    The secrets should have the facebook api key, secret, and the cookie secret.
+    """
+    loc = here + "/../../../../secrets.txt"
+    secrets = {}
+    if not os.path.exists(loc):
+        return {
+            'cookie_secret': '0123456789',
+        }
+    with open(loc, "r") as secret_file:
+        for line in secret_file:
+            items = line.split(" ")
+            if len(items) == 2:
+                secrets[items[0]] = items[1].strip()
+    return secrets
+
+
+SECRETS = read_secrets()
+
 tornado_settings = {
     "autoescape": None,
-    "cookie_secret": "0123456789",  # TODO: Placeholder, do not include in repo when deploy!!!
+    "cookie_secret": SECRETS["cookie_secret"],
     "compiled_template_cache": False,
     "debug": "/dbg/" in __file__,
     "login_url": "/login",
     "template_path": get_path("static"),
 }
+
+if 'facebook_api_key' in SECRETS:
+    tornado_settings['facebook_api_key'] = SECRETS['facebook_api_key']
+if 'facebook_secret' in SECRETS:
+    tornado_settings['facebook_secret'] = SECRETS['facebook_secret']
 
 
 class Application(tornado.web.Application):
@@ -285,6 +315,11 @@ class LandingApplication(tornado.web.Application):
                 LoginHandler,
                 {"database": database, "hostname": hostname, "password": password},
             ),
+            (
+                r"/auth/fblogin",
+                FacebookOAuth2LoginHandler,
+                {"database": database, "hostname": hostname, "app": self},
+            ),
             (r"/logout", LogoutHandler),
             (r"/(.*)", StaticUIHandler, {"path": here + "/../build/"}),
         ]
@@ -294,6 +329,50 @@ class MainHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         self.render(here + "/../build/index.html")
+
+
+class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
+    """
+        See https://www.tornadoweb.org/en/stable/_modules/tornado/auth.html#FacebookGraphMixin
+    """
+
+    def initialize(
+        self, database, hostname, app,
+    ):
+        self.app = app
+        self.db = database
+        self.hostname = hostname
+
+    async def get(self):
+        redirect = (
+            "https://"
+            + self.request.host
+            + "/auth/fblogin?next="
+            + tornado.escape.url_escape(self.get_argument("next", "/"))
+        )
+        if self.get_argument("code", False):
+            fb_user = await self.get_authenticated_user(
+                redirect_uri=redirect,
+                client_id=self.app.settings["facebook_api_key"],
+                client_secret=self.app.settings["facebook_secret"],
+                code=self.get_argument("code"),
+            )
+            self.set_current_user(fb_user['id'])
+            self.redirect(self.get_argument("next", "/"))
+            return
+        self.authorize_redirect(
+            redirect_uri=redirect, client_id=self.app.settings["facebook_api_key"],
+        )
+
+    def set_current_user(self, user):
+        if user:
+            with self.db as ldb:
+                _ = ldb.create_user(user)
+            self.set_secure_cookie(
+                "user", tornado.escape.json_encode(user), domain=self.hostname
+            )
+        else:
+            self.clear_cookie("user")
 
 
 class LoginHandler(BaseHandler):

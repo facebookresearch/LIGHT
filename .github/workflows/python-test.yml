@@ -23,6 +23,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest pytest-cov
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Build server
+        run: | 
+          cd deploy/web
+          bash ./build.sh local
       - name: Test with pytest
         run: |
           python -m pytest -v -m "not slow" --cov

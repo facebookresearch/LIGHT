@@ -8,6 +8,7 @@ import time
 import random
 from collections import deque
 from light.world.souls.on_event_soul import OnEventSoul
+from light.graph.events.base import ErrorEvent
 from light.graph.events.graph_events import TellEvent, SayEvent
 from parlai.core.agents import create_agent_from_shared
 
@@ -26,6 +27,14 @@ ALLOW_INTERBOT_CHAT = False  # Only allow bots to answer humans
 JITTER_TIME_AROUND_TURNS = 2
 CHAT_DISENGAGE_CHANCE = 5.0 / 100.0
 TAKE_ACTION_CHANCE = 1.0 / 5.0
+SAFE_PHRASES = [
+  "Let's talk about something else?",
+  "Tell me something you don't know anything about.",
+  "I'd like to talk about something different.",
+  "Would you like to talk about something different.",
+  "Can we change topics?",
+  "How about a new conversation?",
+]
 
 
 class PartnerHeuristicModelSoul(OnEventSoul):
@@ -41,19 +50,13 @@ class PartnerHeuristicModelSoul(OnEventSoul):
 
     HAS_MAIN_LOOP = True
 
-    @staticmethod
-    def load_models(
-        speech_model_path, speech_cands_path, agent_to_utterance_path, act_model_path,
+    @classmethod
+    def load_speech_model(
+        cls, parser, speech_model_path, speech_cands_path, agent_to_utterance_path,
     ):
         """
-        Load up and create possible shared models for use with this class
+        Load up the speech model for use with this class
         """
-        # TODO refactor with some kind of model-loading standard for model souls?
-        from parlai.core.params import ParlaiParser
-        from parlai.core.agents import create_agent
-
-        parser = ParlaiParser(True, True, "")
-
         # Load speech model
         speech_args = [
             "-mf",
@@ -71,7 +74,24 @@ class PartnerHeuristicModelSoul(OnEventSoul):
             "fixed_candidates_path": speech_cands_path,
         }
         speech_opt["interactive_mode"] = True
-        speech_model = create_agent(speech_opt, requireModelExists=True)
+        return create_agent(speech_opt, requireModelExists=True)
+
+    @classmethod
+    def load_models(
+        cls, speech_model_path, speech_cands_path, agent_to_utterance_path, act_model_path,
+    ):
+        """
+        Load up and create possible shared models for use with this class
+        """
+        # TODO refactor with some kind of model-loading standard for model souls?
+        from parlai.core.params import ParlaiParser
+        from parlai.core.agents import create_agent
+
+        parser = ParlaiParser(True, True, "")
+
+        speech_model = cls.load_speech_model(
+            parser, speech_model_path, speech_cands_path, agent_to_utterance_path,
+        )
 
         # Load speaker stop list
         with open(agent_to_utterance_path, "r") as map_file:
@@ -106,6 +126,31 @@ class PartnerHeuristicModelSoul(OnEventSoul):
             "shared_action_model": action_model.share(),
         }
 
+    def log_act_history(self, act_text, is_self):
+        """Log an act to the act histories"""
+        act_hist = self._dialogue_history['act']
+        speech_act_hist = self._dialogue_history['speech+act']
+        pre_token = "_self_act" if is_self else "_partner_act"
+        act_turn = f"{pre_token} {act_text}\n"
+        act_hist.append(act_turn)
+        speech_act_hist.append(act_turn)
+    
+    def log_speech_history(self, act_text, is_self):
+        """Log a speech turn to the act histories"""
+        speech_hist = self._dialogue_history['speech']
+        speech_act_hist = self._dialogue_history['speech+act']
+        pre_token = "_self_say" if is_self else "_partner_say"
+        act_turn = f"{pre_token} {act_text}\n"
+        speech_hist.append(act_text + '\n')
+        speech_act_hist.append(act_turn)
+
+    def _clear_dialogue_history(self) -> None:
+        """Empty the dialogue history for both speech and act models"""
+        # Note - at the moment the current format is that the speech dict is 
+        # newline seperated history turns just containing the text, while
+        # both act and speech and act add 
+        self._dialogue_history = {'speech': [], 'act': [], 'speech+act': []}
+
     def _init_with_models(self, models) -> None:
         """
         Initialize required members of this soul for tracking the 
@@ -113,16 +158,19 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         """
         self._pending_observations = []
         self._last_action_time = time.time() + self._get_random_time_offset()
-        self._dialogue_history = {}
-        self._utterance_to_speaker_name = models["utterance_to_speaker_name"]
-        self.npc_model = create_agent_from_shared(models["shared_dialog_model"])
-        self.npc_act_model = create_agent_from_shared(models["shared_action_model"])
+        self._utterance_to_speaker_name = models['utterance_to_speaker_name']
+        self.npc_model = create_agent_from_shared(models['shared_dialog_model'])
+        self.npc_act_model = create_agent_from_shared(models['shared_action_model'])
+        self._clear_dialogue_history()
 
     async def observe_event(self, event: "GraphEvent"):
         """
         On an observe event, the agent should append the event to the pending observations,
         and take a timestep (to ensure we respond in a timely manner)
         """
+        if isinstance(event, ErrorEvent):
+           return
+
         # NPC on_events + heuristics.
         super().on_events(event)
 
@@ -160,7 +208,7 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         the partner if they still point to it.
         """
         # how a dialogue agent deals with moving location
-        self._dialogue_history = {}
+        self._clear_dialogue_history()
 
         # remove interaction partner links:
         agent = self.target_node
@@ -199,14 +247,15 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         self._ensure_agent_has_utterance_history(partner)
 
         # Default to the top text, then try to find one that isn't in anyone's history
-        found_utterance = act["text"]
-        for t in act["text_candidates"]:
-            if (
-                t not in self.target_node._utterance_history
-                and t not in partner._utterance_history
-                and self._utterance_to_speaker_name.get(t, "anon") != partner.name
-            ):
-                found_utterance = t
+        found_utterance = act['text']
+        if 'text_candidates' in act:  # Retrieval models can pick different candidates
+            for t in act['text_candidates']:
+                if (
+                    t not in self.target_node._utterance_history
+                    and t not in partner._utterance_history
+                    and self._utterance_to_speaker_name.get(t, 'anon') != partner.name
+                ):
+                    found_utterance = t
 
         # This is the utterance selected to be said, append it to the
         # history for each partner
@@ -238,6 +287,10 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         if self.get_last_turn_too_recent() or random.random() > TAKE_ACTION_CHANCE:
             return
 
+        # Self action history
+        speech_act_hist = self._dialogue_history['speech+act']
+
+        # Get agents
         agent = self.target_node
         agent_id = agent.node_id
         partner_id = self.get_last_interaction_partner(agent)
@@ -247,14 +300,8 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         else:
             partner_name = None
 
-        hist = self._dialogue_history
-        if partner_id not in hist:
-            hist[partner_id] = []
-        if agent_id not in hist:
-            hist[agent_id] = []
-
         txt = self.npc_build_context(partner_name)
-        for d in hist[agent_id]:
+        for d in speech_act_hist:
             txt += d
         cands = self.world.get_possible_actions(agent_id)
         if len(cands) == 0:
@@ -272,10 +319,8 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         if act_text is None:
             return
 
-        reply_action = act_text + "\n"
-        # add action to history
-        hist[agent_id].append("_self_act " + act_text + "\\n")
-        self.world.parse_exec(agent_id, reply_action)
+        self.log_act_history(act_text, is_self=True)
+        self.world.parse_exec(agent_id, act_text)
 
     def npc_dialogue(self, obs=None):
         """
@@ -303,18 +348,10 @@ class PartnerHeuristicModelSoul(OnEventSoul):
             # we are going to reply, so point both agents as having this as their last interaction.
             self.set_interaction_partner(partner)
 
-        hist = self._dialogue_history
-        if agent_id not in hist:
-            hist[agent_id] = []
 
         # TODO refactor with is_human when human flag is refactored
         if not ALLOW_INTERBOT_CHAT and not partner._human:
             return
-
-        partner_name = partner.name
-        txt = self.npc_build_context(partner_name)
-        for d in hist[agent_id]:
-            txt += d
 
         if obs is not None and obs.text_content == "DEBUG":
             # print debug information instead
@@ -323,22 +360,33 @@ class PartnerHeuristicModelSoul(OnEventSoul):
             return
 
         # add dialogue to history
-        if obs is not None:
-            last_msg = "_partner_say " + obs.text_content + "\\n"
-            hist[agent_id].append(last_msg)
-            txt += last_msg
+        if obs is not None and obs.is_dialogue_safe(obs.text_content):
+            self.log_speech_history(obs.text_content, is_self=False)
+        elif obs is not None:
+            # text content was not safe
+            last_msg = random.choice(SAFE_PHRASES)
+            self.log_speech_history(last_msg, is_self=False)
+
+        speech_hist = self._dialogue_history['speech']
+
+        partner_name = partner.name
+        txt = self.npc_build_context(partner_name)
+        for d in speech_hist:
+            txt += d
 
         # Send to model to process
         msg = {"text": txt, "episode_done": True}
         self.npc_model.observe(msg)
         act = self.npc_model.act()
+
+        print("Got model speech act", act)
+
         act_text = self.dialogue_pick_non_repeating_response(act, partner)
 
         reply_event = TellEvent(agent, target_nodes=[partner], text_content=act_text)
         reply_event.execute(self.world)
 
-        # add dialogue to history
-        hist[agent_id].append("_self_say " + act_text + "\\n")
+        self.log_speech_history(act_text)
 
     def get_last_interaction_partner(self, node: "GraphAgent"):
         """
@@ -389,12 +437,17 @@ class PartnerHeuristicModelSoul(OnEventSoul):
             if isinstance(obs, SayEvent) or (
                 isinstance(obs, TellEvent) and obs.target_nodes[0] == agent
             ):
-                self.npc_dialogue(obs)
+                try:
+                    self.npc_dialogue(obs)
+                except e:
+                    print(f"Hit exception {e}")
+                    import traceback
+                    traceback.print_exc()
                 return
 
         # possibly initiate talk request to someone in the room
         if self.get_last_interaction_partner(agent) is None:
-            self._dialogue_history = {}
+            self._clear_dialogue_history()
             room = agent.get_room()
             agents = [x for x in room.get_contents() if x.agent]
             partner = random.choice(agents)
@@ -412,13 +465,6 @@ class PartnerHeuristicModelSoul(OnEventSoul):
             if random.random() < CHAT_DISENGAGE_CHANCE:
                 self.dialogue_clear_partner()
 
-        # hit_events =  self.world.get_possible_events(agent_id, use_actions=['hit'])
-        # filtered_hit_events = [a for a in hit_actions if a.target_nodes[0].get_prop('is_player')]
-        # for hit_event in filtered_hit_actions:
-        #    aggression = agent.get_prop('aggression', 0)
-        #    if random.randint(0, 100) < aggression:
-        #        hit_event.execute(self.world)
-        #        return
 
         # NPC heuristics, etc.
         super().timestep_actions()

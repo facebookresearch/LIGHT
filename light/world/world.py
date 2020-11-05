@@ -78,13 +78,6 @@ class World(object):
             self.npc_models._no_npc_models = self._no_npc_models
         self.graph_builder = graph_builder  # TODO replace with builder
 
-        # Set up safety classifier.
-        init_safety_classifier(self.opt.get("safety_classifier_path", ""))
-
-        # TODO Used for storage of conversation history
-        # self._database_location = opt.get('database_path', None)
-        # self._room_convo_buffers = {}  # Map from room id to RoomConversationBuffer
-
     @staticmethod
     def from_graph(graph):
         world = World(graph._opt, graph.world)
