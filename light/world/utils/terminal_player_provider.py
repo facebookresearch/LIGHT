@@ -54,3 +54,9 @@ class TerminalPlayerProvider(PlayerProvider):
             print(
                 "\r" + event.view_as(soul.target_node).strip() + "\naction> ", end=" "
             )
+
+    def on_reap_soul(self, soul: "PlayerSoul") -> None:
+        """
+        Reaping a soul will lead to a need for respawning.
+        """
+        self.process_terminal_act("respawn")
