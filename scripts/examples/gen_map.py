@@ -47,9 +47,12 @@ if opt["load_map"] != "none":
 else:
     StarspaceBuilder.add_parser_arguments(parser)
     opt, _unknown = parser.parse_and_process_known_args()
+    print("[loading db...]")
     ldb = LIGHTDatabase(opt["light_db_file"], read_only=True)
+    print("[loading builder model...]")
     world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
 
+print("[building...]")
 g, world = world_builder.get_graph() 
 data = g.to_json()
 print(data)
