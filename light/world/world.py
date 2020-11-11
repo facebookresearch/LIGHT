@@ -831,7 +831,7 @@ class World(object):
         if self.opt.get('dont_catch_errors', False):
             return self.parse_exec_internal(actor, inst)
 
-          else:
+        else:
             try:
                 return self.parse_exec_internal(actor, inst)
             except Exception:
