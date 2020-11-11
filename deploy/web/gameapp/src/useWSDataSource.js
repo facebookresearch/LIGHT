@@ -1,6 +1,17 @@
 import React from "react";
 
 const reducer = (state, msg) => {
+  // TODO replace the specific incomprehensible message somehow instead
+  if (msg.text && msg.text.startsWith("You mumble something incomprehensible")) {
+    let last_message = state[state.length - 1];
+    if (last_message.is_self) {
+      const slicedState = [...state.slice(0, state.length - 1), msg];
+      console.groupCollapsed("New message overwritten old. Total: " + slicedState.length);
+      console.table(slicedState);
+      console.groupEnd();
+      return slicedState;
+    }
+  }
   const updatedState = [...state, msg];
   console.groupCollapsed("New message. Total: " + updatedState.length);
   console.table(updatedState);
@@ -141,8 +152,8 @@ export function useWSDataSource(url) {
       setConnected(true);
     };
 
-    websocket.current.onerror = websocket.current.onclose = () => {
-      console.log("errored");
+    websocket.current.onerror = websocket.current.onclose = (e) => {
+      console.log("errored", e);
       setConnected(false);
       setErrored(true);
       websocket.current = null;

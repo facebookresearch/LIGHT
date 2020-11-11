@@ -21,9 +21,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "cp ../config.js ./src/config.js && react-scripts build",
+    "build": "react-scripts build",
     "postbuild": "(cp -r ./build/* ../build && rm -R ./build && rm ./src/config.js)",
-    "test": "cp ../config.js ./src/config.js && react-scripts test --env=jsdom",
+    "test": "cp ../config/local/config.js ./src/config.js && react-scripts test --env=jsdom",
     "posttest": "rm ./src/config.js",
     "eject": "react-scripts eject"
   },

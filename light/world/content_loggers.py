@@ -344,12 +344,16 @@ class RoomInteractionLogger(InteractionLogger):
 
     def _add_player(self):
         """ Record that a player entered the room, updating variables as needed"""
+        if not self.is_active:
+            return
         if not self._is_logging():
             self._begin_meta_episode()
         self.num_players_present += 1
 
     def _remove_player(self):
         """ Record that a player left the room, updating variables as needed"""
+        if not self.is_active:
+            return
         self.num_players_present -= 1
         assert self.num_players_present >= 0
         if not self._is_logging():

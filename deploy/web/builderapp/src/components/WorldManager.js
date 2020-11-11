@@ -9,6 +9,8 @@ import { Button, Classes, Intent, Overlay, Spinner } from "@blueprintjs/core";
 import { cloneDeep, isEmpty } from "lodash";
 import { EDGE_TYPES } from "./EdgeTypes";
 
+const BASE_URL = CONFIG.port != '80' ? `${CONFIG.host}:${CONFIG.port}` : CONFIG.host;
+
 function ListWorldsOverlay({ isOverlayOpen, setIsOverlayOpen }) {
   const classes = classNames(Classes.CARD, Classes.ELEVATION_4);
   var overlay_center = {
@@ -50,7 +52,7 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
 
   const deleteWorld = async (id) => {
     const res = await fetch(
-      `${CONFIG.host}:${CONFIG.port}/builder/world/delete/${id}`,
+      `${BASE_URL}/builder/world/delete/${id}`,
       {
         method: "DELETE",
       }
@@ -59,7 +61,7 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
 
   const getAutosave = async () => {
     const res = await fetch(
-      `${CONFIG.host}:${CONFIG.port}/builder/world/autosave/`,
+      `${BASE_URL}/builder/world/autosave/`,
       {
         method: "GET",
       }
@@ -179,7 +181,7 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
     });
 
     const res = await fetch(
-      `${CONFIG.host}:${CONFIG.port}/builder/world/${id}`,
+      `${BASE_URL}/builder/world/${id}`,
       {
         method: "GET",
         headers: {
@@ -348,7 +350,7 @@ export async function launchWorld(state) {
   const world_map = { world_id: world_id };
   const res = await post("game/new/", world_map);
   const data = await res.json();
-  const url = `${CONFIG.host}:${CONFIG.port}/?id=${data}`;
+  const url = `${BASE_URL}/?id=${data}`;
   window.open(url);
   return data;
 }

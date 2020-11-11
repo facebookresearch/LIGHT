@@ -45,13 +45,16 @@ class PlayerSoul(Soul):
             target_node.persona += QUEST_TEXT + target_quest[goal]
         self.agent_logger = AgentInteractionLogger(world.oo_graph, target_node)
         provider.register_soul(self)
+        self.world.oo_graph.room_id_to_loggers[
+            self.target_node.get_room().node_id
+        ]._add_player()
 
     def handle_act(self, act_text):
         """
         PlayerSouls must process act text sent from players and enact them on the world.
         This method is called by the player provider when an action is taken.
         """
-        self.world.parse_exec(self.target_node.node_id, act_text)
+        self.world.parse_exec(self.target_node, act_text)
 
     async def observe_event(self, event: "GraphEvent"):
         """

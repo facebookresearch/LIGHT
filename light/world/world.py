@@ -85,10 +85,6 @@ class World(object):
         # Set up action parser.
         self.action_parser = ActionParser(opt)
 
-        # TODO Used for storage of conversation history
-        # self._database_location = opt.get('database_path', None)
-        # self._room_convo_buffers = {}  # Map from room id to RoomConversationBuffer
-
     @staticmethod
     def from_graph(graph):
         world = World(graph._opt, graph.world)
@@ -829,18 +825,21 @@ class World(object):
         h = ["Have you tried typing help?"]
         return random.choice(h)
 
-    def parse_exec(self, agentid, inst=None):
-        if self.opt.get("dont_catch_errors", False):
-            return self.parse_exec_internal(agentid, inst)
-        else:
+    def parse_exec(self, actor, inst=None):
+        if not isinstance(actor, GraphNode):
+            actor = self.oo_graph.get_node(actor)
+        if self.opt.get('dont_catch_errors', False):
+            return self.parse_exec_internal(actor, inst)
+
+          else:
             try:
-                return self.parse_exec_internal(agentid, inst)
+                return self.parse_exec_internal(actor, inst)
             except Exception:
                 import traceback
 
                 traceback.print_exc()
                 self.send_msg(
-                    agentid, "Strange magic is afoot. This failed for some reason..."
+                    actor, "Strange magic is afoot. This failed for some reason..."
                 )
                 return False, "FailedParseExec"
 
@@ -865,7 +864,7 @@ class World(object):
         # Create the final event. May be an error but that's okay
         return EventClass.construct_from_args(actor_node, result.targets, result.text)
 
-    def parse_exec_internal(self, agentid, inst=None):
+    def parse_exec_internal(self, actor, inst=None):
         """Try to parse and execute the given event"""
         # basic replacements
         inst = self.action_parser.post_process(inst)
@@ -887,15 +886,15 @@ class World(object):
         if (
             len(inst) == 1
             and ((inst[0] == "respawn") or (inst[0] == "*respawn*"))
-            and self.get_prop(agentid, "human")
-            and self.get_prop(agentid, "dead")
+            and actor.get_prop("human")
+            and actor.get_prop("dead")
         ):
-            self.respawn_player(agentid)
+            self.respawn_player(actor.node_id)
             return True, "Respawn"
-        dead = self.get_prop(agentid, "dead")
+        dead = actor.get_prop("dead")
         if dead or (dead == "ErrorNodeNotFound"):
             self.send_msg(
-                agentid,
+                actor,
                 "You are dead, you can't do anything, sorry.\nType *respawn* to try at life again.\n",
             )
             return False, "dead"
@@ -908,7 +907,7 @@ class World(object):
                 "Maybe try help...?",
                 "Sigh.",
             ]
-            self.send_msg(agentid, random.choice(errs))
+            self.send_msg(actor, random.choice(errs))
             return False
 
         executable = instruction_list[0]
@@ -918,24 +917,24 @@ class World(object):
         if executable in hint_calls:
             # TODO remove the list of valid instructions from the main game,
             # Perhaps behind an admin gatekeeper of sorts
-            self.send_msg(agentid, "\n".join(self.get_possible_actions(agentid)) + "\n")
+            self.send_msg(actor, "\n".join(self.get_possible_actions(actor.node_id)) + "\n")
             return True, "actions"
         if executable == "map" and len(arguments) == 0:
             # TODO fix print_graph
             self.send_msg(
-                agentid, self.print_graph(self.room(agentid), agentid, visited=False)
+                actor, self.print_graph(actor.room(), actor.node_id, visited=False)
             )
             return True, "Print graph"
         if executable == "fogmap" and len(arguments) == 0:
             # TODO fix print_graph
             self.send_msg(
-                agentid, self.print_graph(self.room(agentid), agentid, visited=True)
+                actor, self.print_graph(actor.room(), actor.node_id, visited=True)
             )
             return True, "Print graph"
         if executable == "commit" and arguments == "suicide":
             # TODO fix send_msg
-            self.send_msg(agentid, "You commit suicide!")
-            self.die(agentid)
+            self.send_msg(actor, "You commit suicide!")
+            self.die(actor.node_id)
             return True, "Suicide"
 
         if executable not in ALL_EVENTS:
@@ -952,9 +951,7 @@ class World(object):
 
         EventClass = ALL_EVENTS[executable]
 
-        actor_node = self.oo_graph.get_node(agentid)
-
-        parsed_event = self.attempt_parse_event(EventClass, actor_node, arguments)
+        parsed_event = self.attempt_parse_event(EventClass, actor, arguments)
         if isinstance(parsed_event, ErrorEvent):
             self.broadcast_to_agents(parsed_event, [agentid])
             return False, inst

@@ -1,5 +1,5 @@
-from mephisto.core.local_database import LocalMephistoDB
-from mephisto.core.data_browser import DataBrowser as MephistoDataBrowser
+from mephisto.abstractions.databases.local_database import LocalMephistoDB
+from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
 from mephisto.data_model.worker import Worker
 
 db = LocalMephistoDB()
