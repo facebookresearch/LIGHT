@@ -2,6 +2,7 @@
 from light.graph.viz.graph_printer import GraphPrinter
 from light.graph.structured_graph import OOGraph
 from light.graph.elements.graph_nodes import GraphRoom
+from light.world.action_parser import ActionParser
 
 from copy import deepcopy
 import emoji
@@ -77,6 +78,12 @@ class World(object):
             self._no_npc_models = graph_builder._no_npc_models
             self.npc_models._no_npc_models = self._no_npc_models
         self.graph_builder = graph_builder  # TODO replace with builder
+
+        # Set up safety classifier.
+        init_safety_classifier(self.opt.get("safety_classifier_path", ""))
+
+        # Set up action parser.
+        self.action_parser = ActionParser(opt)
 
     @staticmethod
     def from_graph(graph):
@@ -823,7 +830,8 @@ class World(object):
             actor = self.oo_graph.get_node(actor)
         if self.opt.get('dont_catch_errors', False):
             return self.parse_exec_internal(actor, inst)
-        else:
+
+          else:
             try:
                 return self.parse_exec_internal(actor, inst)
             except Exception:
@@ -841,7 +849,7 @@ class World(object):
         possible_text_args = EventClass.split_text_args(actor_node, arguments)
         if isinstance(possible_text_args, ErrorEvent):
             return possible_text_args
-        
+
         # Parse the string arguments into nodes
         for string_args in possible_text_args:
             result = EventClass.find_nodes_for_args(
@@ -849,7 +857,7 @@ class World(object):
             )
             if not isinstance(result, ErrorEvent):
                 break
-            
+
         if isinstance(result, ErrorEvent):
             return result
 
@@ -859,7 +867,7 @@ class World(object):
     def parse_exec_internal(self, actor, inst=None):
         """Try to parse and execute the given event"""
         # basic replacements
-        inst = inst.rstrip("\n").rstrip("\r")
+        inst = self.action_parser.post_process(inst)
         parse_shortcuts = {
             "e": "go east",
             "w": "go west",
@@ -874,7 +882,7 @@ class World(object):
             inst = "say " + inst
 
         instruction_list = inst.strip().split()
-        
+
         if (
             len(inst) == 1
             and ((inst[0] == "respawn") or (inst[0] == "*respawn*"))
@@ -930,10 +938,16 @@ class World(object):
             return True, "Suicide"
 
         if executable not in ALL_EVENTS:
-            self.send_msg(
-                actor, "You can't {}. {}".format(executable, self.help_message())
-            )
-            return False, inst[0]
+            # Try again with the full model parser.
+            new_inst = self.action_parser.parse(inst)
+            instruction_list = new_inst.strip().split()
+            executable = instruction_list[0]
+            arguments = " ".join(instruction_list[1:])
+            if executable not in ALL_EVENTS:
+                self.send_msg(
+                    agentid, "You can't {}. {}".format(executable, self.help_message())
+                )
+                return False, inst[0]
 
         EventClass = ALL_EVENTS[executable]
 

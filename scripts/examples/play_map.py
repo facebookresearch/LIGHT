@@ -100,6 +100,11 @@ parser.add_argument(
     type=str,
     default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
 )
+parser.add_argument(
+    "--parser-model-file",
+    type=str,
+    default="/checkpoint/jase/projects/light/parser/parser2/34c_jobid=1/model"
+)
 opt, _unknown = parser.parse_and_process_known_args()
 
 if opt["load_map"] != "none":
