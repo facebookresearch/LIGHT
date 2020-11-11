@@ -940,12 +940,13 @@ class World(object):
         if executable not in ALL_EVENTS:
             # Try again with the full model parser.
             new_inst = self.action_parser.parse(inst)
-            instruction_list = new_inst.strip().split()
-            executable = instruction_list[0]
-            arguments = " ".join(instruction_list[1:])
+            if new_inst != '':
+                instruction_list = new_inst.strip().split()
+                executable = instruction_list[0]
+                arguments = " ".join(instruction_list[1:])
             if executable not in ALL_EVENTS:
                 self.send_msg(
-                    agentid, "You can't {}. {}".format(executable, self.help_message())
+                    actor, "You can't {}. {}".format(executable, self.help_message())
                 )
                 return False, inst[0]
 
@@ -953,7 +954,7 @@ class World(object):
 
         parsed_event = self.attempt_parse_event(EventClass, actor, arguments)
         if isinstance(parsed_event, ErrorEvent):
-            self.broadcast_to_agents(parsed_event, [agentid])
+            self.broadcast_to_agents(parsed_event, [actor])
             return False, inst
         else:
             parsed_event.execute(self)
