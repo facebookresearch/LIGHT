@@ -34,6 +34,7 @@ arg1 = [
     "wear",
     "wield",
     "remove",
+    "examine"
 ]
 for a in arg1:
     args[a] = 1
@@ -102,7 +103,7 @@ class ActionParser:
         self.agent = create_agent(self.opt, requireModelExists=True)
         self.agent.opt.log()
 
-    def parse(self, txt):
+    def parse(self, txt, actor=None):
         if self.agent is None:
             # No model installed, return an empty string.
             return ""
@@ -136,9 +137,9 @@ class ActionParser:
             self.agent.observe(query2)
             res2 = self.agent.act()
             txt = res2["text"]
-            txt = self.post_process(txt)
         else:
             txt = verb
+        txt = self.post_process(txt, actor)
 
         return txt
 
@@ -153,6 +154,10 @@ class ActionParser:
         new_txt = " ".join(new_txts)
 
         if new_txts[0] == "use" and "with" not in new_txts and actor is not None:
+            # If no 'with' argument to 'use' is given, it is assumed to 'use' with yourself.
             new_txt += " with " + actor.name
 
+        if new_txt in emotes:
+            new_txt = 'emote ' + new_txt
+            
         return new_txt

@@ -103,7 +103,7 @@ parser.add_argument(
 parser.add_argument(
     "--parser-model-file",
     type=str,
-    default="/checkpoint/jase/projects/light/parser/parser2/34c_jobid=1/model"
+    default="/checkpoint/jase/projects/light/parser/parser3/34c_jobid=1/model"
 )
 opt, _unknown = parser.parse_and_process_known_args()
 

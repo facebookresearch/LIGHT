@@ -48,6 +48,11 @@ def setup_args(parser=None):
         help="Saves a jsonl file containing all of the task examples and "
         "model replies. Must also specify --report-filename.",
     )
+    parser.add_argument(
+        "--parser-model-file",
+        type=str,
+        default="/checkpoint/jase/projects/light/parser/parser3/34c_jobid=1/model"
+    )
     parser.set_defaults(interactive_mode=True, task="interactive")
     LocalHumanAgent.add_cmdline_args(parser)
     return parser

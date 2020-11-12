@@ -867,7 +867,7 @@ class World(object):
     def parse_exec_internal(self, actor, inst=None):
         """Try to parse and execute the given event"""
         # basic replacements
-        inst = self.action_parser.post_process(inst)
+        inst = self.action_parser.post_process(inst, actor)
         parse_shortcuts = {
             "e": "go east",
             "w": "go west",
@@ -939,7 +939,7 @@ class World(object):
 
         if executable not in ALL_EVENTS:
             # Try again with the full model parser.
-            new_inst = self.action_parser.parse(inst)
+            new_inst = self.action_parser.parse(inst, actor)
             if new_inst != '':
                 instruction_list = new_inst.strip().split()
                 executable = instruction_list[0]
