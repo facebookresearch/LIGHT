@@ -417,7 +417,7 @@ class GraphRoom(GraphNode):
         self.surface_type = self._props.get("surface_type", "in")
         self.classes = set(self._props.get("classes", {"room"}))
         self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
-        self.grid_location = self._props.get("grid_location", [0,0,0])
+        self.grid_location = self._props.get("grid_location", [0, 0, 0])
         self.neighbors = {}
 
     def assert_valid(self):
@@ -506,7 +506,7 @@ class GraphAgent(GraphNode):
     DEFAULT_ATTACK_TAGGED_AGENTS = []
     DEFAULT_MAX_DISTANCE_FROM_START_LOCATION = 1000000
     DEFAULT_DONT_ACCEPT_GIFTS = False
-    
+
     NODE_TYPE = "GraphAgent"
 
     def __init__(self, node_id, name, props=None, db_id=None):
@@ -545,7 +545,7 @@ class GraphAgent(GraphNode):
         self.usually_npc = self._props.get("usually_npc", False)
         self.pacifist = self._props.get("pacifist", False)
         self.tags = self._props.get("tags", self.DEFAULT_TAGS)
-        
+
         self.following = None
         self.followed_by = {}
 
@@ -555,13 +555,44 @@ class GraphAgent(GraphNode):
         # NPC properties. TODO move to another class somehow?
         self.aggression = self._props.get("aggression", self.DEFAULT_AGGRESSION)
         self.speed = self._props.get("speed", self.DEFAULT_SPEED)
-        self.max_distance_from_start_location = self._props.get("max_distance_from_start_location",
-                                                                self.DEFAULT_MAX_DISTANCE_FROM_START_LOCATION)
-        self.dont_accept_gifts = self._props.get("dont_accept_gifts", self.DEFAULT_DONT_ACCEPT_GIFTS)
-        self.attack_tagged_agents = self._props.get("attack_tagged_agents", self.DEFAULT_ATTACK_TAGGED_AGENTS)
+        self.max_distance_from_start_location = self._props.get(
+            "max_distance_from_start_location",
+            self.DEFAULT_MAX_DISTANCE_FROM_START_LOCATION,
+        )
+        self.dont_accept_gifts = self._props.get(
+            "dont_accept_gifts", self.DEFAULT_DONT_ACCEPT_GIFTS
+        )
+        self.attack_tagged_agents = self._props.get(
+            "attack_tagged_agents", self.DEFAULT_ATTACK_TAGGED_AGENTS
+        )
 
-        
-        
+        # Quests
+        # NPC default chat.
+        if self.on_events is None:
+            self.on_events = []
+            self.on_events.append(
+                [
+                    ["SayEvent", "mission"],
+                    [
+                        "SayEvent",
+                        "Why should I tell you. I'd rather talk more before I discuss that...",
+                    ],
+                ]
+            )
+            self.on_events.append(
+                [
+                    ["SayEvent", "quest"],
+                    ["SayEvent", "I'd rather talk more before I discuss that..."],
+                ]
+            )
+            self.on_events.append(
+                [
+                    ["SayEvent", "what you want"],
+                    ["SayEvent", "I'd rather talk more before I discuss that..."],
+                ]
+            )
+        self.quests = self._props.get("quests", None)
+
         # Game properties to track for this agent, TODO move to other class?
         self._human = False
         self._current_player = None

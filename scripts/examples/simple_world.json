@@ -110,7 +110,7 @@
             "equipped": null,
             "food": false,
             "food_energy": 0,
-            "gettable": true,
+            "gettable": false,
             "locked_edge": null,
             "name": "muddy area",
             "name_prefix": "a",
