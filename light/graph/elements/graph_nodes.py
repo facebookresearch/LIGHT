@@ -560,7 +560,22 @@ class GraphAgent(GraphNode):
         self.dont_accept_gifts = self._props.get("dont_accept_gifts", self.DEFAULT_DONT_ACCEPT_GIFTS)
         self.attack_tagged_agents = self._props.get("attack_tagged_agents", self.DEFAULT_ATTACK_TAGGED_AGENTS)
 
-        
+
+        # Quests
+        # NPC default chat.
+        if self.on_events is None:
+            self.on_events = []
+            self.on_events.append(
+                [ [ "SayEvent", "mission" ], [ "SayEvent", "Why should I tell you. I'd rather talk more before I discuss that..."] ]
+            )
+            self.on_events.append(
+                [ [ "SayEvent", "quest" ], [ "SayEvent", "I'd rather talk more before I discuss that..."] ]
+            )
+            self.on_events.append(
+                [ [ "SayEvent", "what you want" ], [ "SayEvent", "I'd rather talk more before I discuss that..."] ]
+            )
+        self.quests = self._props.get("quests", None)
+
         
         # Game properties to track for this agent, TODO move to other class?
         self._human = False

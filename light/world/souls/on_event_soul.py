@@ -14,6 +14,7 @@ from light.graph.events.graph_events import (
 )
 from light.world.souls.soul import Soul
 from light.world.souls.model_soul import ModelSoul
+from light.world.quest_loader import QuestCreator
 from typing import TYPE_CHECKING
 
 import math
@@ -209,6 +210,11 @@ class OnEventSoul(ModelSoul):
         agent = self.target_node
         agent_id = agent.node_id
 
+        # Quests.
+        # If quest unassigned, assign one.
+        QuestCreator.create_quest(agent, graph)
+        
+        
         # Attack if we have an aggression target
         if hasattr(agent, "aggression_target"):
             target_id = agent.aggression_target
