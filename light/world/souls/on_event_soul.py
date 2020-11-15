@@ -212,7 +212,7 @@ class OnEventSoul(ModelSoul):
 
         # Quests.
         # If quest unassigned, assign one.
-        QuestCreator.create_quest(agent, graph)
+        # QuestCreator.create_quest(agent, graph)
         
         
         # Attack if we have an aggression target
