@@ -10,7 +10,7 @@ from light.graph.events.graph_events import (
     DropObjectEvent,
     HitEvent,
     BlockEvent,
-    GiveObjectEvent
+    GiveObjectEvent,
 )
 from light.world.souls.soul import Soul
 from light.world.souls.model_soul import ModelSoul
@@ -76,14 +76,16 @@ class OnEventSoul(ModelSoul):
             if do_event.__class__.__name__ != "ErrorEvent":
                 do_event.execute(self.world)
         if effect[0] == "GiveObjectEvent":
-            do_event = GiveObjectEvent.construct_from_args(agent, targets=[effect[1], effect[2]])
+            do_event = GiveObjectEvent.construct_from_args(
+                agent, targets=[effect[1], effect[2]]
+            )
             if do_event.__class__.__name__ != "ErrorEvent":
                 do_event.execute(self.world)
 
     def on_events_heuristics(self, event):
         agent = self.target_node
         event_name = event.__class__.__name__
-        
+
         # HitEvent
         if (
             event_name == "HitEvent"
@@ -122,7 +124,7 @@ class OnEventSoul(ModelSoul):
             if object_str in obj.name:
                 return obj
         return None
-            
+
     def process_effect(self, event, on_event):
         # Resolve strings into nodes in the graph to execute effect event.
         agent = self.target_node
@@ -137,9 +139,9 @@ class OnEventSoul(ModelSoul):
             if type(effect[1]) == str:
                 effect[1] = self.resolve_object_string(agent, effect[1])
                 if effect[1] is None:
-                    return None # failed to resolve
+                    return None  # failed to resolve
         return effect
-            
+
     def on_events(self, event):
         agent = self.target_node
         executed = False
@@ -156,14 +158,25 @@ class OnEventSoul(ModelSoul):
 
         if not executed:
             self.on_events_heuristics(event)
-                
+
+    def new_quest(self):
+        graph = self.world.oo_graph
+        actor = self.target_node
+        quest = QuestCreator.create_quest(actor, graph)
+        self.world.send_msg(actor, str(quest))
+
+    def quest_events(self, event):
+        # If quest unassigned, assign one.
+        graph = self.world.oo_graph
+        actor = self.target_node
+        # Possibly create quest if we don't have one.
+        self.new_quest()
 
     async def observe_event(self, event: "GraphEvent"):
         """
         OnEventSouls check for specific events, that trigger specific actions.
         """
-        # if event.actor ! and !== self.target_node:
-        #    return
+        self.quest_events(event)
         self.on_events(event)
 
     def is_too_far(self, agent, room):
@@ -198,10 +211,9 @@ class OnEventSoul(ModelSoul):
                         return True
         return False
 
-    
     async def _take_timestep(self) -> None:
         self.timestep_actions()
-    
+
     def timestep_actions(self):
         """
         Attempt to take some actions based on any observations in the pending list
@@ -210,11 +222,9 @@ class OnEventSoul(ModelSoul):
         agent = self.target_node
         agent_id = agent.node_id
 
-        # Quests.
-        # If quest unassigned, assign one.
-        # QuestCreator.create_quest(agent, graph)
-        
-        
+        # Possibly create quest if we don't have one.
+        self.new_quest()
+
         # Attack if we have an aggression target
         if hasattr(agent, "aggression_target"):
             target_id = agent.aggression_target

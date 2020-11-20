@@ -1880,7 +1880,8 @@ class StealObjectEvent(GraphEvent):
         victim_dex = self.target_nodes[1].dexterity
         chance = max(1, 1 + actor_dex - victim_dex)
         self.failed = False
-        if random.randint(0, 20) > chance:
+        r = random.randint(0, 20)
+        if r > chance:
             # failed steal operation
             self.failed = True
         else:
