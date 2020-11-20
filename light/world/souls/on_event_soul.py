@@ -158,12 +158,27 @@ class OnEventSoul(ModelSoul):
             self.on_events_heuristics(event)
                 
 
+    def new_quest(self):
+        graph = self.world.oo_graph        
+        actor = self.target_node
+        quest = QuestCreator.create_quest(actor, graph)
+        self.world.send_msg(actor, str(quest))
+
+    def quest_events(self, event):
+        # If quest unassigned, assign one.
+        graph = self.world.oo_graph        
+        actor = self.target_node
+        # Possibly create quest if we don't have one.
+        self.new_quest()
+
+
     async def observe_event(self, event: "GraphEvent"):
         """
         OnEventSouls check for specific events, that trigger specific actions.
         """
         # if event.actor ! and !== self.target_node:
         #    return
+        self.quest_events(event)
         self.on_events(event)
 
     def is_too_far(self, agent, room):
@@ -201,7 +216,7 @@ class OnEventSoul(ModelSoul):
     
     async def _take_timestep(self) -> None:
         self.timestep_actions()
-    
+        
     def timestep_actions(self):
         """
         Attempt to take some actions based on any observations in the pending list
@@ -209,11 +224,9 @@ class OnEventSoul(ModelSoul):
         graph = self.world.oo_graph
         agent = self.target_node
         agent_id = agent.node_id
-
-        # Quests.
-        # If quest unassigned, assign one.
-        # QuestCreator.create_quest(agent, graph)
         
+        # Possibly create quest if we don't have one.
+        self.new_quest()
         
         # Attack if we have an aggression target
         if hasattr(agent, "aggression_target"):

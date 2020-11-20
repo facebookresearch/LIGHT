@@ -62,7 +62,7 @@ class QuestCreator:
         ],
         "put": [
             "I need to put OBJECT IN CONTAINER.",
-            "I want to get OBJECT IN CONTAINER.",
+            "I want to put OBJECT IN CONTAINER.",
         ],
     }
 
@@ -122,7 +122,7 @@ class QuestCreator:
         # Failed.
         return None
 
-    def pick_object(actor, graph, verb, arg, other_obj=None):
+    def pick_object(actor, graph, verb, arg, other_obj=None, new_loc=None):
         # TODO: we could update this later to select from the set of objects
         # satisfying the constraints to be the one that best matches the agent,
         # e.g. using a starspace model.
@@ -138,6 +138,10 @@ class QuestCreator:
                 # Should not be owned by actor
                 if obj.container_node.get() == actor:
                     viable_target = False
+            if verb == "drop":
+                # Should not be already there.
+                if obj.container_node.get() == new_loc:
+                    viable_target = False
             if verb == "steal":
                 # Should be owned by another actor
                 if obj.container_node.get() == actor:
@@ -151,6 +155,9 @@ class QuestCreator:
                     viable_target = False
                 if obj.contain_size < other_obj.size:
                     viable_target = False
+                if other_obj.container_node.get() == obj:
+                    # Goal already achieved.
+                    viable_target = False
 
             if viable_target:
                 return obj
@@ -158,6 +165,12 @@ class QuestCreator:
         return None
 
     def create_quest(actor, graph):
+        if actor.quests is None or len(actor.quests) == 0:
+            actor.quests = []
+        else:
+            # Already has a quest.
+            return
+
         for i in range(0, 20):
             quest = QuestCreator.create_random_quest(actor, graph)
             if quest is not None:
@@ -165,27 +178,27 @@ class QuestCreator:
         if quest is None:
             return None
         # Add quest to actor's list of quests.
-        if actor.quests is None:
-            actor.quests = []
         actor.quests.append(quest)
         return quest
 
     def create_random_quest(actor, graph):
         q_verb = random.choice(list(QuestCreator.templates.keys()))
-        q_verb = "put"
+        q_verb = "converse"
         q_txt = random.choice(QuestCreator.templates[q_verb])
         obj = None
         loc = None
         per = None
         container = None
         if "OBJECT" in q_txt:
-            obj = QuestCreator.pick_object(actor, graph, q_verb, "OBJECT")
+            obj = QuestCreator.pick_object(actor, graph, q_verb, "OBJECT", new_loc=loc)
             if obj is None:
                 return  # failed to create quest right now (should be very rare).
             obj_txt = obj.get_prefix_view()
             q_txt = q_txt.replace("OBJECT", obj_txt)
         if "CONTAINER" in q_txt:
-            container = QuestCreator.pick_object(actor, graph, q_verb, "CONTAINER", obj)
+            container = QuestCreator.pick_object(
+                actor, graph, q_verb, "CONTAINER", other_obj=obj
+            )
             if container is None:
                 return  # failed to create quest right now (should be very rare).
             container_txt = container.get_prefix_view()
@@ -211,6 +224,134 @@ class QuestCreator:
             "container": container.node_id if container is not None else None,
             "location": loc.node_id if loc is not None else None,
             "actor": actor.node_id if actor is not None else None,
-            "agent": per,
+            "agent": per.node_id if per is not None else None,
         }
         return quest
+
+    def event_involves(event, node_id):
+        if event.actor.node_id == node_id:
+            return True
+        for n_id in event.target_nodes:
+            if n_id.node_id == node_id:
+                return True
+        return False
+
+    def contains(container_id, node_id, world):
+        cid = world.oo_graph.all_nodes[node_id].container_node.get().node_id
+        if cid == container_id:
+            return True
+        else:
+            return False
+
+    def same_room(node1_id, node2_id, world):
+        r1 = world.oo_graph.all_nodes[node1_id].get_room()
+        r2 = world.oo_graph.all_nodes[node2_id].get_room()
+        if r1 == r2:
+            return True
+        else:
+            return False
+
+    def conversation_score_above_threshold(actor, agent, world):
+        score = 3
+        if score > 2:
+            return True
+        else:
+            return False
+
+    def quest_matches_event(world, quest, event):
+        #        import pdb; pdb.set_trace()
+        qc = QuestCreator
+        event_name = event.__class__.__name__
+
+        if quest["goal_verb"] == "obtain":
+            if (
+                qc.event_involves(event, quest["actor"])
+                and qc.event_involves(event, quest["object"])
+                and qc.contains(quest["actor"], quest["object"], world)
+            ):
+                return True
+
+        if quest["goal_verb"] == "give":
+            if (
+                qc.event_involves(event, quest["actor"])
+                and qc.event_involves(event, quest["agent"])
+                and qc.event_involves(event, quest["object"])
+                and qc.contains(quest["agent"], quest["object"], world)
+            ):
+                return True
+
+        if quest["goal_verb"] == "drop":
+            if (
+                qc.event_involves(event, quest["actor"])
+                and qc.event_involves(event, quest["object"])
+                and qc.contains(quest["location"], quest["object"], world)
+            ):
+                return True
+
+        if quest["goal_verb"] == "hug":
+            if (
+                event_name == "HugEvent"
+                and qc.event_involves(event, quest["actor"])
+                and qc.event_involves(event, quest["agent"])
+            ):
+                return True
+
+        if quest["goal_verb"] == "converse":
+            if (
+                (
+                    event_name == "SayEvent"
+                    or event_name == "TellEvent"
+                    or event_name == "WhisperEvent"
+                    or event_name == "ShoutEvent"
+                )
+                and qc.event_involves(event, quest["actor"])
+                and qc.same_room(quest["actor"], quest["agent"], world)
+                and qc.conversation_score_above_threshold(
+                    quest["actor"], quest["agent"], world
+                )
+            ):
+                return True
+
+        if quest["goal_verb"] == "laugh":
+            if (
+                event_name == "EmoteEvent"
+                and event.text_content == "laugh"
+                and qc.event_involves(event, quest["agent"])
+                and qc.same_room(quest["actor"], quest["agent"], world)
+            ):
+                return True
+
+        if quest["goal_verb"] == "smile":
+            if (
+                event_name == "EmoteEvent"
+                and event.text_content == "smile"
+                and qc.event_involves(event, quest["agent"])
+                and qc.same_room(quest["actor"], quest["agent"], world)
+            ):
+                return True
+
+        if quest["goal_verb"] == "put":
+            if (
+                qc.event_involves(event, quest["actor"])
+                and qc.event_involves(event, quest["object"])
+                and qc.contains(quest["container"], quest["object"], world)
+            ):
+                return True
+
+        if quest["goal_verb"] == "steal":
+            if (
+                qc.event_involves(event, quest["actor"])
+                and qc.event_involves(event, quest["object"])
+                and qc.contains(quest["actor"], quest["object"], world)
+            ):
+                return True
+
+        if quest["goal_verb"] == "hit":
+            if (
+                event_name == "HitEvent"
+                and quest["actor"] == event.actor.node_id
+                and event.target_nodes[0].node_id == quest["agent"]
+            ):
+                return True
+
+        return False

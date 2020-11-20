@@ -6,6 +6,7 @@
 
 from light.world.souls.soul import Soul
 from light.world.content_loggers import AgentInteractionLogger
+from light.world.quest_loader import QuestCreator
 from typing import TYPE_CHECKING
 import random
 
@@ -13,7 +14,6 @@ if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
     from light.graph.world.world import World
     from light.graph.events.base import GraphEvent
-
 
 QUESTS_ACTIVE = True
 QUEST_TEXT = "\nYour Quest:\n"
@@ -56,11 +56,32 @@ class PlayerSoul(Soul):
         """
         self.world.parse_exec(self.target_node, act_text)
 
+    def new_quest(self):
+        graph = self.world.oo_graph        
+        actor = self.target_node
+        quest = QuestCreator.create_quest(actor, graph)
+        if quest is not None:
+            self.world.send_msg(actor, "New Quest: " + quest['text'])
+        
+    def quest_events(self, event):
+        # Possibly create quest if we don't have one.
+        self.new_quest()
+        actor = self.target_node
+        quests_left = []
+        for q in actor.quests:
+            if QuestCreator.quest_matches_event(self.world, q, event):
+                self.world.send_msg(actor, "Quest Complete: " + q['text'].rstrip('.').rstrip('!') + "!")
+            else:
+                quests_left.append(q)
+        actor.quests = quests_left
+            
+                
     async def observe_event(self, event: "GraphEvent"):
         """
         PlayerSouls pass their observation along to the provider, who will handle
         getting the correct format to send to the view.
         """
+        self.quest_events(event)
         self.provider.player_observe_event(self, event)
         self.agent_logger.observe_event(event)
 
