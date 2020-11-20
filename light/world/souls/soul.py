@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.world.quest_loader import QuestCreator
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Dict
 import asyncio
@@ -57,12 +56,6 @@ class Soul(ABC):
             _await_observe_then_cleanup(), loop=loop
         )
 
-    def quest_events(event):
-        # If quest unassigned, assign one.
-        graph = self.world.oo_graph        
-        QuestCreator.create_quest(self, agent, graph)
-        import pdb; pdb.set_trace()        
-        
     @abstractmethod
     async def observe_event(self, event: "GraphEvent"):
         """

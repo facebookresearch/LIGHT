@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 QUESTS_ACTIVE = True
 QUEST_TEXT = "\nYour Quest:\n"
 
+
 class PlayerSoul(Soul):
     """
     A PlayerSoul is responsible for interfacing with the players in the
@@ -39,9 +40,11 @@ class PlayerSoul(Soul):
         target_node._human = True
         self.player_id = player_id
         self.provider = provider  # TODO link with real provider
-        if hasattr(self.provider, 'quest_loader'):
+        if hasattr(self.provider, "quest_loader"):
             target_quest = self.provider.quest_loader.get_random_quest()
-            goal = random.choice(["short_motivation", "mid_motivation", "long_motivation"])
+            goal = random.choice(
+                ["short_motivation", "mid_motivation", "long_motivation"]
+            )
             target_node.persona += QUEST_TEXT + target_quest[goal]
         self.agent_logger = AgentInteractionLogger(world.oo_graph, target_node)
         provider.register_soul(self)
@@ -57,12 +60,12 @@ class PlayerSoul(Soul):
         self.world.parse_exec(self.target_node, act_text)
 
     def new_quest(self):
-        graph = self.world.oo_graph        
+        graph = self.world.oo_graph
         actor = self.target_node
         quest = QuestCreator.create_quest(actor, graph)
         if quest is not None:
-            self.world.send_msg(actor, "New Quest: " + quest['text'])
-        
+            self.world.send_msg(actor, "New Quest: " + quest["text"])
+
     def quest_events(self, event):
         # Possibly create quest if we don't have one.
         self.new_quest()
@@ -70,12 +73,13 @@ class PlayerSoul(Soul):
         quests_left = []
         for q in actor.quests:
             if QuestCreator.quest_matches_event(self.world, q, event):
-                self.world.send_msg(actor, "Quest Complete: " + q['text'].rstrip('.').rstrip('!') + "!")
+                self.world.send_msg(
+                    actor, "Quest Complete: " + q["text"].rstrip(".").rstrip("!") + "!"
+                )
             else:
                 quests_left.append(q)
         actor.quests = quests_left
-            
-                
+
     async def observe_event(self, event: "GraphEvent"):
         """
         PlayerSouls pass their observation along to the provider, who will handle
