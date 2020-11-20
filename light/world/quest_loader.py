@@ -183,7 +183,6 @@ class QuestCreator:
 
     def create_random_quest(actor, graph):
         q_verb = random.choice(list(QuestCreator.templates.keys()))
-        q_verb = "converse"
         q_txt = random.choice(QuestCreator.templates[q_verb])
         obj = None
         loc = None
@@ -259,7 +258,6 @@ class QuestCreator:
             return False
 
     def quest_matches_event(world, quest, event):
-        #        import pdb; pdb.set_trace()
         qc = QuestCreator
         event_name = event.__class__.__name__
 
