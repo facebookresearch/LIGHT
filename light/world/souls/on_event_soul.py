@@ -70,7 +70,9 @@ class OnEventSoul(ModelSoul):
                 do_event.execute(self.world)
         if effect[0] == "TellEvent":
             do_text = effect[2]
-            do_event = TellEvent.construct_from_args(agent, targets=[effect[1]], text=do_text)
+            do_event = TellEvent.construct_from_args(
+                agent, targets=[effect[1]], text=do_text
+            )
             if do_event.__class__.__name__ != "ErrorEvent":
                 do_event.execute(self.world)
         if effect[0] == "EmoteEvent":
@@ -128,15 +130,15 @@ class OnEventSoul(ModelSoul):
         if (
             event_name == "SayEvent"
             and event.actor != agent
-            and 'goal' in event.text_content
+            and "goal" in event.text_content
         ):
             other_agent = event.actor
             if len(agent.quests) > 0:
-                say_text = agent.quests[0]['text']
+                say_text = agent.quests[0]["text"]
                 self.execute_event(["TellEvent", other_agent, say_text])
                 # Add this actor to the list of potential helpers for the quest.
-                agent.quests[0]['helper_agents'].append(other_agent)
-                
+                agent.quests[0]["helper_agents"].append(other_agent)
+
     def resolve_object_string(self, agent, object_str):
         for id, obj in agent.contained_nodes.items():
             obj = obj._target_node
@@ -202,7 +204,7 @@ class OnEventSoul(ModelSoul):
         QuestCreator.quest_complete(self.world, actor, quest, event)
         # Show a happy emotion from completing the quest.
         agent = self.target_node
-        emote = random.choice(['dance', 'applaud', 'smile', 'grin'])
+        emote = random.choice(["dance", "applaud", "smile", "grin"])
         do_event = EmoteEvent.construct_from_args(agent, targets=[], text=emote)
         if do_event.__class__.__name__ != "ErrorEvent":
             do_event.execute(self.world)
