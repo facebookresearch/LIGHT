@@ -7,6 +7,7 @@
 from light.graph.events.graph_events import (
     EmoteEvent,
     SayEvent,
+    TellEvent,
     DropObjectEvent,
     HitEvent,
     BlockEvent,
@@ -28,7 +29,7 @@ if TYPE_CHECKING:
 
 class OnEventSoul(ModelSoul):
     """
-    The simplest of Souls, it responds to all events by saying what it saw
+    Base soul for NPCs, can trigger actions on events and heuristics.
     """
 
     HAS_MAIN_LOOP = True
@@ -65,6 +66,11 @@ class OnEventSoul(ModelSoul):
         if effect[0] == "SayEvent":
             do_text = effect[1]
             do_event = SayEvent.construct_from_args(agent, targets=[], text=do_text)
+            if do_event.__class__.__name__ != "ErrorEvent":
+                do_event.execute(self.world)
+        if effect[0] == "TellEvent":
+            do_text = effect[2]
+            do_event = TellEvent.construct_from_args(agent, targets=[effect[1]], text=do_text)
             if do_event.__class__.__name__ != "ErrorEvent":
                 do_event.execute(self.world)
         if effect[0] == "EmoteEvent":
@@ -118,17 +124,19 @@ class OnEventSoul(ModelSoul):
                 say_text = "Err.. thanks."
             self.execute_event(["SayEvent", say_text])
 
-        # SayEvent (tell mission)t
+        # Tell Mission to Other Agent.
         if (
             event_name == "SayEvent"
             and event.actor != agent
+            and 'goal' in event.text_content
         ):
             other_agent = event.actor
             if len(agent.quests) > 0:
                 say_text = agent.quests[0]['text']
-                self.execute_event(["SayEvent", say_text])
-            
-
+                self.execute_event(["TellEvent", other_agent, say_text])
+                # Add this actor to the list of potential helpers for the quest.
+                agent.quests[0]['helper_agents'].append(other_agent)
+                
     def resolve_object_string(self, agent, object_str):
         for id, obj in agent.contained_nodes.items():
             obj = obj._target_node
@@ -184,10 +192,20 @@ class OnEventSoul(ModelSoul):
         quests_left = []
         for q in actor.quests:
             if QuestCreator.quest_matches_event(self.world, q, event):
-                QuestCreator.quest_complete(self.world, actor, q)
+                self.quest_complete(q, event)
             else:
                 quests_left.append(q)
         actor.quests = quests_left
+
+    def quest_complete(self, quest, event):
+        actor = self.target_node
+        QuestCreator.quest_complete(self.world, actor, quest, event)
+        # Show a happy emotion from completing the quest.
+        agent = self.target_node
+        emote = random.choice(['dance', 'applaud', 'smile', 'grin'])
+        do_event = EmoteEvent.construct_from_args(agent, targets=[], text=emote)
+        if do_event.__class__.__name__ != "ErrorEvent":
+            do_event.execute(self.world)
 
     async def observe_event(self, event: "GraphEvent"):
         """

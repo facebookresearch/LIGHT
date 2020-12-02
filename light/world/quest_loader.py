@@ -100,7 +100,7 @@ class QuestCreator:
         return None
 
     def pick_agent(actor, graph, verb, arg, obj=None):
-        # TODO: we could update this later to select from the set of objects
+        # TODO: we could update this later to select from the set of agents
         # satisfying the constraints to be the one that best matches the agent,
         # e.g. using a starspace model.
 
@@ -183,6 +183,7 @@ class QuestCreator:
 
     def create_random_quest(actor, graph):
         q_verb = random.choice(list(QuestCreator.templates.keys()))
+        # q_verb = "smile"
         q_txt = random.choice(QuestCreator.templates[q_verb])
         obj = None
         loc = None
@@ -195,9 +196,7 @@ class QuestCreator:
             obj_txt = obj.get_prefix_view()
             q_txt = q_txt.replace("OBJECT", obj_txt)
         if "CONTAINER" in q_txt:
-            container = QuestCreator.pick_object(
-                actor, graph, q_verb, "CONTAINER", other_obj=obj
-            )
+            container = QuestCreator.pick_object(actor, graph, q_verb, "CONTAINER", other_obj=obj)
             if container is None:
                 return  # failed to create quest right now (should be very rare).
             container_txt = container.get_prefix_view()
@@ -224,9 +223,10 @@ class QuestCreator:
             "location": loc.node_id if loc is not None else None,
             "actor": actor.node_id if actor is not None else None,
             "agent": per.node_id if per is not None else None,
+            "helper_agents": [], # Who has been told about this quest
         }
         return quest
-
+    
     def event_involves(event, node_id):
         if event.actor.node_id == node_id:
             return True
@@ -257,103 +257,92 @@ class QuestCreator:
         else:
             return False
 
-    def quest_complete(world, actor, q):        
-        world.send_msg(
-            actor, "Quest Complete: " + q["text"].rstrip(".").rstrip("!") + "!"
-        )
+
+    def quest_complete(world, actor, quest, event=None):        
+        text = "Quest Complete: " + quest["text"].rstrip(".").rstrip("!") + "!"
         # Assign XP.
         if not hasattr(actor, 'xp'):
             actor.xp = 0
-        xp = q.get('goal_xp', 2)
+        xp = quest.get('goal_xp', 2)
         world.send_msg(
-            actor, "You gained " + str(xp) + " experience points.")
+            actor, text + "\nYou gained " + str(xp) + " experience points.")
         actor.xp += xp
+        # Find if someone helped complete the quest.
+        helper_agents = quest['helper_agents']
+        if event is not None:
+            for helper_agent in helper_agents:
+                if event.actor == helper_agent:
+                    # Reward that actor.
+                    agent_str = actor.get_prefix_view()
+                    world.send_msg(
+                        helper_agent, "You gained " + str(xp) + " experience points for helping " + agent_str + "!")
         
     def quest_matches_event(world, quest, event):
+        #        import pdb; pdb.set_trace()
         qc = QuestCreator
         event_name = event.__class__.__name__
 
         if quest["goal_verb"] == "obtain":
-            if (
-                qc.event_involves(event, quest["actor"])
-                and qc.event_involves(event, quest["object"])
-                and qc.contains(quest["actor"], quest["object"], world)
-            ):
+            if (qc.event_involves(event, quest['actor']) and
+                qc.event_involves(event, quest['object']) and
+                qc.contains(quest["actor"], quest['object'], world)):
                 return True
 
         if quest["goal_verb"] == "give":
-            if (
-                qc.event_involves(event, quest["actor"])
-                and qc.event_involves(event, quest["agent"])
-                and qc.event_involves(event, quest["object"])
-                and qc.contains(quest["agent"], quest["object"], world)
-            ):
+            if (qc.event_involves(event, quest['actor']) and
+                qc.event_involves(event, quest['agent']) and
+                qc.event_involves(event, quest['object']) and
+                qc.contains(quest["agent"], quest['object'], world)):
                 return True
 
         if quest["goal_verb"] == "drop":
-            if (
-                qc.event_involves(event, quest["actor"])
-                and qc.event_involves(event, quest["object"])
-                and qc.contains(quest["location"], quest["object"], world)
-            ):
+            if (qc.event_involves(event, quest['actor']) and
+                qc.event_involves(event, quest['object']) and
+                qc.contains(quest["location"], quest['object'], world)):
                 return True
-
+            
         if quest["goal_verb"] == "hug":
             if (
-                event_name == "HugEvent"
-                and qc.event_involves(event, quest["actor"])
-                and qc.event_involves(event, quest["agent"])
-            ):
+                event_name == "HugEvent" 
+                and qc.event_involves(event, quest['actor'])
+                and qc.event_involves(event, quest['agent'])):
                 return True
 
         if quest["goal_verb"] == "converse":
-            if (
-                (
-                    event_name == "SayEvent"
-                    or event_name == "TellEvent"
-                    or event_name == "WhisperEvent"
-                    or event_name == "ShoutEvent"
-                )
-                and qc.event_involves(event, quest["actor"])
-                and qc.same_room(quest["actor"], quest["agent"], world)
-                and qc.conversation_score_above_threshold(
-                    quest["actor"], quest["agent"], world
-                )
-            ):
-                return True
+            if ((event_name == "SayEvent"  or event_name == "TellEvent" or event_name == "WhisperEvent" or event_name == "ShoutEvent")
+                and qc.event_involves(event, quest['actor'])
+                and qc.same_room(quest['actor'], quest['agent'], world)
+                and qc.conversation_score_above_threshold(quest['actor'], quest['agent'], world)):
+                return True            
 
+    
         if quest["goal_verb"] == "laugh":
             if (
                 event_name == "EmoteEvent"
-                and event.text_content == "laugh"
-                and qc.event_involves(event, quest["agent"])
-                and qc.same_room(quest["actor"], quest["agent"], world)
-            ):
+                and event.text_content == 'laugh'
+                and qc.event_involves(event, quest['agent'])
+                and qc.same_room(quest['actor'], quest['agent'], world)):
                 return True
 
         if quest["goal_verb"] == "smile":
             if (
                 event_name == "EmoteEvent"
-                and event.text_content == "smile"
-                and qc.event_involves(event, quest["agent"])
-                and qc.same_room(quest["actor"], quest["agent"], world)
-            ):
+                and event.text_content == 'smile'
+                and qc.event_involves(event, quest['agent'])
+                and qc.same_room(quest['actor'], quest['agent'], world)):
                 return True
 
+            
         if quest["goal_verb"] == "put":
-            if (
-                qc.event_involves(event, quest["actor"])
-                and qc.event_involves(event, quest["object"])
-                and qc.contains(quest["container"], quest["object"], world)
-            ):
+            if (qc.event_involves(event, quest['actor']) and
+                qc.event_involves(event, quest['object']) and
+                qc.contains(quest["container"], quest['object'], world)):
                 return True
-
+ 
         if quest["goal_verb"] == "steal":
-            if (
-                qc.event_involves(event, quest["actor"])
-                and qc.event_involves(event, quest["object"])
-                and qc.contains(quest["actor"], quest["object"], world)
-            ):
+            if (qc.event_involves(event, quest['actor']) and
+                qc.event_involves(event, quest['object']) and
+                qc.contains(quest["actor"], quest['object'], world)):
                 return True
 
         if quest["goal_verb"] == "hit":
@@ -363,5 +352,5 @@ class QuestCreator:
                 and event.target_nodes[0].node_id == quest["agent"]
             ):
                 return True
-
+            
         return False
