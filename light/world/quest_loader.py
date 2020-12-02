@@ -1,5 +1,6 @@
 import os
 import json
+import math
 import random
 
 
@@ -85,6 +86,7 @@ class QuestCreator:
         # e.g. using a starspace model.
 
         locs = list(graph.rooms)
+        viables = []
         for i in range(0, 100):
             loc = random.choice(locs)
             loc = graph.rooms[loc]
@@ -95,9 +97,36 @@ class QuestCreator:
             ):
                 viable_target = False
             if viable_target:
-                return loc
-        # Failed.
-        return None
+                viables.append(loc)
+        if len(viables) == 0:
+            # Failed.
+            return None
+        else:
+            best_score = -1000
+            best = viables[0]
+            for v in viables:
+                score = QuestCreator.score_object(actor, v)
+                if score > best_score:
+                    best = v
+                    best_score = score
+            return best
+
+    def distance(agent, node):
+        if node.container_node.get().name == "VOID":
+            return 1000000
+        agent_loc = agent.get_room().grid_location
+        target_loc = node.get_room().grid_location
+        dist = 0
+        for i in range(0, 3):
+            dist += math.pow(target_loc[i] - agent_loc[i], 2)
+        dist = math.sqrt(dist)
+        return dist
+
+    def score_agent(actor, agent):
+        return -QuestCreator.distance(actor, agent)
+
+    def score_object(actor, obj):
+        return -QuestCreator.distance(actor, obj)
 
     def pick_agent(actor, graph, verb, arg, obj=None):
         # TODO: we could update this later to select from the set of agents
@@ -106,6 +135,7 @@ class QuestCreator:
 
         if verb == "steal":
             return obj.container_node.get()
+        viable_agents = []
 
         pers = list(graph.agents)
         for i in range(0, 100):
@@ -118,15 +148,26 @@ class QuestCreator:
             if not per.agent:
                 viable_target = False
             if viable_target:
-                return per
-        # Failed.
-        return None
+                viable_agents.append(per)
+        if len(viable_agents) == 0:
+            # Failed.
+            return None
+        else:
+            best_score = -1000
+            best_agent = viable_agents[0]
+            for a in viable_agents:
+                score = QuestCreator.score_agent(actor, a)
+                if score > best_score:
+                    best_agent = a
+                    best_score = score
+            return best_agent
 
     def pick_object(actor, graph, verb, arg, other_obj=None, new_loc=None):
         # TODO: we could update this later to select from the set of objects
         # satisfying the constraints to be the one that best matches the agent,
         # e.g. using a starspace model.
         objs = list(graph.objects)
+        viable_objs = []
         for i in range(0, 100):
             obj = random.choice(objs)
             obj = graph.objects[obj]
@@ -153,16 +194,26 @@ class QuestCreator:
                     viable_target = False
                 if not obj.container:
                     viable_target = False
-                if obj.contain_size < other_obj.size:
+                if obj.contain_size < max(other_obj.size, other_obj.contain_size):
                     viable_target = False
                 if other_obj.container_node.get() == obj:
                     # Goal already achieved.
                     viable_target = False
 
             if viable_target:
-                return obj
-        # Failed.
-        return None
+                viable_objs.append(obj)
+        if len(viable_objs) == 0:
+            # Failed.
+            return None
+        else:
+            best_score = -1000
+            best_obj = viable_objs[0]
+            for o in viable_objs:
+                score = QuestCreator.score_object(actor, o)
+                if score > best_score:
+                    best_obj = o
+                    best_score = score
+            return best_obj
 
     def create_quest(actor, graph):
         if actor.quests is None or len(actor.quests) == 0:

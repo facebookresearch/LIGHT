@@ -227,11 +227,13 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         }
         if obj.is_surface > 0.5:
             props["container"] = True
+            props["size"] = 4
             props["contain_size"] = 3
             props["surface_type"] = "on"
             use_classes.append("container")
         if obj.is_container > 0.5:
             props["container"] = True
+            props["size"] = 4
             props["contain_size"] = 3
             props["surface_type"] = "on"
             use_classes.append("container")
@@ -708,7 +710,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
 
         # Create base rooms
         self.roomid_to_db = {}
-        for pos_room in self.grid.values():
+        for grid_loc, pos_room in self.grid.items():
             if pos_room.setting == "EMPTY":
                 continue
             pos_room.g_id = g.add_room(
@@ -722,6 +724,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                     "name_prefix": "the",
                     "surface_type": "in",
                     "classes": {"room"},
+                    "grid_location": grid_loc
                 },
                 db_id=pos_room.db_id,
             ).node_id
