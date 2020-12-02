@@ -100,7 +100,7 @@ class QuestCreator:
         return None
 
     def pick_agent(actor, graph, verb, arg, obj=None):
-        # TODO: we could update this later to select from the set of objects
+        # TODO: we could update this later to select from the set of agents
         # satisfying the constraints to be the one that best matches the agent,
         # e.g. using a starspace model.
 
@@ -183,6 +183,7 @@ class QuestCreator:
 
     def create_random_quest(actor, graph):
         q_verb = random.choice(list(QuestCreator.templates.keys()))
+        # q_verb = "smile"
         q_txt = random.choice(QuestCreator.templates[q_verb])
         obj = None
         loc = None
@@ -224,6 +225,7 @@ class QuestCreator:
             "location": loc.node_id if loc is not None else None,
             "actor": actor.node_id if actor is not None else None,
             "agent": per.node_id if per is not None else None,
+            "helper_agents": [],  # Who has been told about this quest
         }
         return quest
 
@@ -257,7 +259,32 @@ class QuestCreator:
         else:
             return False
 
+    def quest_complete(world, actor, quest, event=None):
+        text = "Quest Complete: " + quest["text"].rstrip(".").rstrip("!") + "!"
+        # Assign XP.
+        if not hasattr(actor, "xp"):
+            actor.xp = 0
+        xp = quest.get("goal_xp", 2)
+        world.send_msg(actor, text + "\nYou gained " + str(xp) + " experience points.")
+        actor.xp += xp
+        # Find if someone helped complete the quest.
+        helper_agents = quest["helper_agents"]
+        if event is not None:
+            for helper_agent in helper_agents:
+                if event.actor == helper_agent:
+                    # Reward that actor.
+                    agent_str = actor.get_prefix_view()
+                    world.send_msg(
+                        helper_agent,
+                        "You gained "
+                        + str(xp)
+                        + " experience points for helping "
+                        + agent_str
+                        + "!",
+                    )
+
     def quest_matches_event(world, quest, event):
+        #        import pdb; pdb.set_trace()
         qc = QuestCreator
         event_name = event.__class__.__name__
 
