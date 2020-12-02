@@ -257,6 +257,18 @@ class QuestCreator:
         else:
             return False
 
+    def quest_complete(world, actor, q):        
+        world.send_msg(
+            actor, "Quest Complete: " + q["text"].rstrip(".").rstrip("!") + "!"
+        )
+        # Assign XP.
+        if not hasattr(actor, 'xp'):
+            actor.xp = 0
+        xp = q.get('goal_xp', 2)
+        world.send_msg(
+            actor, "You gained " + str(xp) + " experience points.")
+        actor.xp += xp
+        
     def quest_matches_event(world, quest, event):
         qc = QuestCreator
         event_name = event.__class__.__name__

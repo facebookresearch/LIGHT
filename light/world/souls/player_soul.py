@@ -73,9 +73,7 @@ class PlayerSoul(Soul):
         quests_left = []
         for q in actor.quests:
             if QuestCreator.quest_matches_event(self.world, q, event):
-                self.world.send_msg(
-                    actor, "Quest Complete: " + q["text"].rstrip(".").rstrip("!") + "!"
-                )
+                QuestCreator.quest_complete(self.world, actor, q)
             else:
                 quests_left.append(q)
         actor.quests = quests_left

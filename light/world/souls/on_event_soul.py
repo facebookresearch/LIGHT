@@ -118,6 +118,17 @@ class OnEventSoul(ModelSoul):
                 say_text = "Err.. thanks."
             self.execute_event(["SayEvent", say_text])
 
+        # SayEvent (tell mission)t
+        if (
+            event_name == "SayEvent"
+            and event.actor != agent
+        ):
+            other_agent = event.actor
+            if len(agent.quests) > 0:
+                say_text = agent.quests[0]['text']
+                self.execute_event(["SayEvent", say_text])
+            
+
     def resolve_object_string(self, agent, object_str):
         for id, obj in agent.contained_nodes.items():
             obj = obj._target_node
@@ -163,14 +174,20 @@ class OnEventSoul(ModelSoul):
         graph = self.world.oo_graph
         actor = self.target_node
         quest = QuestCreator.create_quest(actor, graph)
-        self.world.send_msg(actor, str(quest))
+        if quest is not None:
+            self.world.send_msg(actor, "New Quest: " + quest["text"])
 
     def quest_events(self, event):
-        # If quest unassigned, assign one.
-        graph = self.world.oo_graph
-        actor = self.target_node
         # Possibly create quest if we don't have one.
         self.new_quest()
+        actor = self.target_node
+        quests_left = []
+        for q in actor.quests:
+            if QuestCreator.quest_matches_event(self.world, q, event):
+                QuestCreator.quest_complete(self.world, actor, q)
+            else:
+                quests_left.append(q)
+        actor.quests = quests_left
 
     async def observe_event(self, event: "GraphEvent"):
         """
