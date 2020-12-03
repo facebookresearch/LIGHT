@@ -234,7 +234,7 @@ class QuestCreator:
 
     def create_random_quest(actor, graph):
         q_verb = random.choice(list(QuestCreator.templates.keys()))
-        q_verb = "obtain"
+        # q_verb = "obtain"
         q_txt = random.choice(QuestCreator.templates[q_verb])
         obj = None
         loc = None
@@ -312,16 +312,17 @@ class QuestCreator:
             return False
 
     def quest_complete(world, actor, quest, event=None):
-        #import pdb; pdb.set_trace()
         # Assign XP.
         if not hasattr(actor, "xp"):
             actor.xp = 0
         xp = quest.get("goal_xp", 2)
         actor.xp += xp
 
-        if actor.node_id == quest['actor']:
+        if actor.node_id == quest["actor"]:
             text = "Quest Complete: " + quest["text"].rstrip(".").rstrip("!") + "!"
-            world.send_msg(actor, text + "\nYou gained " + str(xp) + " experience points.")
+            world.send_msg(
+                actor, text + "\nYou gained " + str(xp) + " experience points."
+            )
         else:
             # This actor helped another on their quest.
             world.send_msg(
@@ -329,7 +330,7 @@ class QuestCreator:
                 "You gained "
                 + str(xp)
                 + " experience points for helping "
-                + quest['actor_str']
+                + quest["actor_str"]
                 + "!",
             )
 

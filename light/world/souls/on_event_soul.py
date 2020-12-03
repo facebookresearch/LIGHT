@@ -122,7 +122,7 @@ class OnEventSoul(ModelSoul):
 
         # GiveObjectEvent
         if event_name == "GiveObjectEvent" and event.target_nodes[1] == agent:
-            if False: #agent.dont_accept_gifts:
+            if agent.dont_accept_gifts:
                 obj = event.target_nodes[0]
                 self.execute_event(["DropEvent", obj])
                 say_text = "I don't want that."
