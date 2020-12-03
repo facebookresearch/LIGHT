@@ -93,7 +93,7 @@ class OnEventSoul(ModelSoul):
 
     def conversation_score(self, agent):
         return 5
-                
+
     def on_events_heuristics(self, event):
         agent = self.target_node
         event_name = event.__class__.__name__
@@ -131,19 +131,26 @@ class OnEventSoul(ModelSoul):
             self.execute_event(["SayEvent", say_text])
 
         # Tell Mission to Other Agent (or not).
-        if ((event_name == "SayEvent" and event.actor != agent)
-            or event_name == "TellEvent" and event.actor != agent and event.target_nodes[0] == agent):
+        if (
+            (event_name == "SayEvent" and event.actor != agent)
+            or event_name == "TellEvent"
+            and event.actor != agent
+            and event.target_nodes[0] == agent
+        ):
             about_goals = False
-            for words in ['mission', 'goal', 'quest', 'what you want']:
+            for words in ["mission", "goal", "quest", "what you want"]:
                 if words in event.text_content:
                     about_goals = True
             if about_goals:
                 other_agent = event.actor
                 if self.conversation_score(other_agent) < 5:
-                    say_text = random.choice([
-                        "Why should I tell you. I'd rather talk more before I discuss that...",
-                        "I'd rather talk more before I discuss that..."])
-                    self.execute_event(["SayEvent", say_text])                    
+                    say_text = random.choice(
+                        [
+                            "Why should I tell you. I'd rather talk more before I discuss that...",
+                            "I'd rather talk more before I discuss that...",
+                        ]
+                    )
+                    self.execute_event(["SayEvent", say_text])
                 else:
                     if len(agent.quests) > 0:
                         say_text = agent.quests[0]["text"]
@@ -153,7 +160,6 @@ class OnEventSoul(ModelSoul):
                         q_copy = copy.copy(agent.quests[0])
                         other_agent.quests.append(q_copy)
 
-                        
     def resolve_object_string(self, agent, object_str):
         for id, obj in agent.contained_nodes.items():
             obj = obj._target_node

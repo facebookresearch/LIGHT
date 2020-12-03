@@ -3398,16 +3398,20 @@ class InventoryEvent(NoArgumentEvent):
         # Quests text.
         quests = self.actor.quests
         if len(quests) == 0:
-            self.__quests_text = "You currently have no quests. Talk to people to get some!"
+            self.__quests_text = (
+                "You currently have no quests. Talk to people to get some!"
+            )
         else:
             self.__quests_text = ""
             for q in quests:
-                if q['actor'] == self.actor.node_id:
-                    self.__quests_text += "Your quest: " + q['text'] + "\n"
+                if q["actor"] == self.actor.node_id:
+                    self.__quests_text += "Your quest: " + q["text"] + "\n"
             for q in quests:
-                if q['actor'] != self.actor.node_id:
-                    self.__quests_text += "Quest to help " + q['actor_str'] + ': "' + q['text'] + '"\n'
-                    
+                if q["actor"] != self.actor.node_id:
+                    self.__quests_text += (
+                        "Quest to help " + q["actor_str"] + ': "' + q["text"] + '"\n'
+                    )
+
         world.broadcast_to_agents(self, [self.actor])
         self.executed = True
         return []
