@@ -73,7 +73,7 @@ class PlayerSoul(Soul):
         quests_left = []
         for q in actor.quests:
             if QuestCreator.quest_matches_event(self.world, q, event):
-                QuestCreator.quest_complete(self.world, actor, q)
+                QuestCreator.quest_complete(self.world, actor, q, event)
             else:
                 quests_left.append(q)
         actor.quests = quests_left

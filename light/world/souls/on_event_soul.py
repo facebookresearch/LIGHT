@@ -18,6 +18,7 @@ from light.world.souls.model_soul import ModelSoul
 from light.world.quest_loader import QuestCreator
 from typing import TYPE_CHECKING
 
+import copy
 import math
 import random
 
@@ -90,6 +91,9 @@ class OnEventSoul(ModelSoul):
             if do_event.__class__.__name__ != "ErrorEvent":
                 do_event.execute(self.world)
 
+    def conversation_score(self, agent):
+        return 5
+
     def on_events_heuristics(self, event):
         agent = self.target_node
         event_name = event.__class__.__name__
@@ -126,18 +130,35 @@ class OnEventSoul(ModelSoul):
                 say_text = "Err.. thanks."
             self.execute_event(["SayEvent", say_text])
 
-        # Tell Mission to Other Agent.
+        # Tell Mission to Other Agent (or not).
         if (
-            event_name == "SayEvent"
+            (event_name == "SayEvent" and event.actor != agent)
+            or event_name == "TellEvent"
             and event.actor != agent
-            and "goal" in event.text_content
+            and event.target_nodes[0] == agent
         ):
-            other_agent = event.actor
-            if len(agent.quests) > 0:
-                say_text = agent.quests[0]["text"]
-                self.execute_event(["TellEvent", other_agent, say_text])
-                # Add this actor to the list of potential helpers for the quest.
-                agent.quests[0]["helper_agents"].append(other_agent)
+            about_goals = False
+            for words in ["mission", "goal", "quest", "what you want"]:
+                if words in event.text_content:
+                    about_goals = True
+            if about_goals:
+                other_agent = event.actor
+                if self.conversation_score(other_agent) < 5:
+                    say_text = random.choice(
+                        [
+                            "Why should I tell you. I'd rather talk more before I discuss that...",
+                            "I'd rather talk more before I discuss that...",
+                        ]
+                    )
+                    self.execute_event(["SayEvent", say_text])
+                else:
+                    if len(agent.quests) > 0:
+                        say_text = agent.quests[0]["text"]
+                        self.execute_event(["TellEvent", other_agent, say_text])
+                        # Add this actor to the list of potential helpers for the quest.
+                        agent.quests[0]["helper_agents"].append(other_agent.node_id)
+                        q_copy = copy.copy(agent.quests[0])
+                        other_agent.quests.append(q_copy)
 
     def resolve_object_string(self, agent, object_str):
         for id, obj in agent.contained_nodes.items():

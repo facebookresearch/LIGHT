@@ -203,7 +203,7 @@
             "object": false,
 	    "tags": [ "orc" ],
 	    "attack_tagged_agents": [ "!orc" ],
-	    "dont_accept_gifts": true,
+	    "dont_accept_gifts": false,
             "on_events": [
                 [
                     [

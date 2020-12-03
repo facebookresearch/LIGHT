@@ -3383,7 +3383,7 @@ class WaitEvent(NoArgumentEvent):
 
 
 class InventoryEvent(NoArgumentEvent):
-    """Inventory events just allow a player to do nothing in a timestep"""
+    """Inventory events just allow a player see what they are carrying, etc."""
 
     NAMES = ["inventory", "inv", "i"]
 
@@ -3394,6 +3394,24 @@ class InventoryEvent(NoArgumentEvent):
         assert not self.executed
         self.__actor_name = self.actor.get_prefix_view()
         self.__inv_text = world.view.get_inventory_text_for(self.actor.node_id)
+
+        # Quests text.
+        quests = self.actor.quests
+        if len(quests) == 0:
+            self.__quests_text = (
+                "You currently have no quests. Talk to people to get some!"
+            )
+        else:
+            self.__quests_text = ""
+            for q in quests:
+                if q["actor"] == self.actor.node_id:
+                    self.__quests_text += "Your quest: " + q["text"] + "\n"
+            for q in quests:
+                if q["actor"] != self.actor.node_id:
+                    self.__quests_text += (
+                        "Quest to help " + q["actor_str"] + ': "' + q["text"] + '"\n'
+                    )
+
         world.broadcast_to_agents(self, [self.actor])
         self.executed = True
         return []
@@ -3404,7 +3422,8 @@ class InventoryEvent(NoArgumentEvent):
         if viewer == self.actor:
             return (
                 f"You check yourself. You are {self.__actor_name}!\n"
-                f"You are {self.__inv_text}"
+                f"You are {self.__inv_text}\n"
+                f"{self.__quests_text}\n"
             )
         else:
             return f"{self.__actor_name} checked their inventory. "
@@ -3413,7 +3432,7 @@ class InventoryEvent(NoArgumentEvent):
 class HealthEvent(NoArgumentEvent):
     """Inventory events just allow a player to do nothing in a timestep"""
 
-    NAMES = ["health", "status"]
+    NAMES = ["health", "status", "stats"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
