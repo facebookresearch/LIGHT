@@ -203,38 +203,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "Killing for a living puts things in perspective. It makes me appreciate life more. I would gladly annihilate all living beings for an appropriate fee.",
             "quests": null,
@@ -292,38 +261,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "I cook for the King and Queen and other Royals in the area. I take the directions from the head chef. I hope to someday be the head chef.",
             "quests": null,
@@ -579,38 +517,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "I am a big sheep-like brown dog.  My owner is a poor farmer.  He feeds me scraps in the afternoon.  I sleep outside in the barn.",
             "quests": null,
@@ -757,38 +664,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "I am a sheep with the biggest horns in the area. Other sheep give me food and drink. I know how to get humans to check on me.",
             "quests": null,
@@ -1618,7 +1494,7 @@
                 "target_id": "VOID"
             },
             "db_id": "f348",
-            "desc": "There's a bit of gravel.",
+            "desc": "There's a bit of grass.",
             "extra_desc": [
                 "Sometimes things are just what they seem. There's nothing interesting here."
             ],
@@ -2032,38 +1908,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "I am the fox of the brook in the forest. I live near the castle in the shrubs. I steal from wanderers.",
             "quests": null,
@@ -2311,38 +2156,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "I am the graveyard keeper who lives across the yard from the graveyard. I make sure all of the graves are marked and everything is in order. I dig the graves for newly deceased people.",
             "quests": null,
@@ -2479,38 +2293,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "I used to live with people, but I was abandoned young to learn how to fend for myself. I like to scratch people. I love to eat their babies!",
             "quests": null,
@@ -3123,38 +2906,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "I am one of the king's lord.  I rule over a large area of land.  I have dozens of tenants.",
             "quests": null,
@@ -3296,38 +3048,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "I always am cleaning. I don't enjoy cleaning, but it's the only way to keep food on my families tables. You can always find me sweeping away the dirt, or cleaning the dishes, or cooking dinner.",
             "quests": null,
@@ -3745,38 +3466,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "I am the master-at-arms. I work in the king's armory. I like to monitor all the weapons and make sure they are clean and sharp.",
             "quests": null,
@@ -3956,38 +3646,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "I am a milkman for  the town in the kingdom. I bring fresh milk to town daily . I love working for the people of the town.",
             "quests": null,
@@ -4129,38 +3788,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "I am a monkey from the tropical forest. I am the only one who can speak with humans. I respect the king, but not the queen.",
             "quests": null,
@@ -5201,38 +4829,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "I am here to help the needy. I am well respected in the town. I can not accept lying.",
             "quests": null,
@@ -5694,38 +5291,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "I am the son of the butler in the castle. I assist my father in serving the King and Queen. I live in the servant's quarters of the castle along with my mother and 2 sisters.",
             "quests": null,
@@ -5823,38 +5389,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "No one likes dogs. I live on the streets with all the other dogs. I am hungry most of the time. Sometimes I fight with the other dogs. I am a dog.",
             "quests": null,
@@ -6177,38 +5712,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "My forge is over a thousand degrees. I can melt steel with ore and wood. I make only the finest quality blades and armor.",
             "quests": null,
@@ -6768,38 +6272,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "I am the town doctor.  I have a small practice in the square in the center of the village.  The subjects line up to await my help.",
             "quests": null,
@@ -7049,7 +6522,7 @@
                 "target_id": "VOID"
             },
             "db_id": "f172",
-            "desc": "There's a bit of grass.",
+            "desc": "There's a bit of dirt.",
             "extra_desc": [
                 "Sometimes things are just what they seem. There's nothing interesting here."
             ],
@@ -7343,38 +6816,7 @@
             "num_wearable_items": 0,
             "num_wieldable_items": 0,
             "object": false,
-            "on_events": [
-                [
-                    [
-                        "SayEvent",
-                        "mission"
-                    ],
-                    [
-                        "SayEvent",
-                        "Why should I tell you. I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "quest"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ],
-                [
-                    [
-                        "SayEvent",
-                        "what you want"
-                    ],
-                    [
-                        "SayEvent",
-                        "I'd rather talk more before I discuss that..."
-                    ]
-                ]
-            ],
+            "on_events": [],
             "pacifist": false,
             "persona": "I am a woman who lives in the village.  I live in a small house near the square.  I make bread and peddle it in the market.",
             "quests": null,
