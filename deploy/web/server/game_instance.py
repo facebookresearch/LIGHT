@@ -8,8 +8,8 @@
 
 from light.graph.builders.starspace_all import StarspaceBuilder
 from light.world.souls.repeat_soul import RepeatSoul
-from light.world.souls.models.partner_heuristic_model_soul import (
-    PartnerHeuristicModelSoul,
+from light.world.souls.models.generative_heuristic_model_soul import (
+    GenerativeHeuristicModelSoul,
 )
 
 import time
@@ -95,11 +95,11 @@ class GameInstance:
     """
 
     def __init__(
-        self, game_id, ldb, g=None,
+        self, game_id, ldb, g=None, opt=None,
     ):
         if g is None:
             _, world = StarspaceBuilder(
-                ldb, debug=False
+                ldb, debug=False, opt=opt,
             ).get_graph()  # TODO: what are the args that are needed
             self.g = world
         else:
@@ -117,7 +117,7 @@ class GameInstance:
         else:
             purgatory.register_filler_soul_provider(
                 "model",
-                PartnerHeuristicModelSoul,
+                GenerativeHeuristicModelSoul,
                 lambda: [model_resources["shared_model_content"]],
             )
         for empty_agent in self.g.oo_graph.agents.values():

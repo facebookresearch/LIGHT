@@ -78,12 +78,14 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
 
     def __init__(self, ldb, debug=True, opt=None):
         """Initializes required models and parameters for this graph builder"""
-        if opt is None:
+        if True: # opt is None:
             parser = ParlaiParser(
                 True, True, "Arguments for building a LIGHT world with Starspace"
             )
             self.add_parser_arguments(parser)
-            opt, _unknown = parser.parse_and_process_known_args()
+            base_opt, _unknown = parser.parse_and_process_known_args()
+            base_opt.update(opt)
+            opt = base_opt
 
         self.parlai_datapath = opt["datapath"]
         self.db_path = os.path.join(opt["datapath"], "light", "database3.db")
@@ -431,6 +433,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         self.grid = {}
         self.banned_rooms = set()
 
+        print(self.get_usable_rooms())
         r = self.get_random_room()
         loc = (3, 3, 0)
         r.loc = loc

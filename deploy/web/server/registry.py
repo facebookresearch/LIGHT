@@ -92,9 +92,9 @@ class RegistryApplication(tornado.web.Application):
         if world_id is not None and player_id is not None:
             builder = UserWorldBuilder(ldb, player_id=player_id, world_id=world_id)
             _, graph = builder.get_graph()
-            game = GameInstance(game_id, ldb, g=graph)
+            game = GameInstance(game_id, ldb, g=graph, opt=vars(self.FLAGS))
         else:
-            game = GameInstance(game_id, ldb)
+            game = GameInstance(game_id, ldb, opt=vars(self.FLAGS))
             graph = game.g
         game.fill_souls(self.model_resources)
 

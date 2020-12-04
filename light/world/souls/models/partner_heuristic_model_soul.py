@@ -10,7 +10,7 @@ from collections import deque
 from light.world.souls.on_event_soul import OnEventSoul
 from light.graph.events.base import ErrorEvent
 from light.graph.events.graph_events import TellEvent, SayEvent
-from parlai.core.agents import create_agent_from_shared
+from parlai.core.agents import create_agent_from_shared, create_agent
 
 from typing import TYPE_CHECKING, List
 
@@ -386,7 +386,7 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         reply_event = TellEvent(agent, target_nodes=[partner], text_content=act_text)
         reply_event.execute(self.world)
 
-        self.log_speech_history(act_text)
+        self.log_speech_history(act_text, is_self=True)
 
     def get_last_interaction_partner(self, node: "GraphAgent"):
         """
@@ -439,7 +439,7 @@ class PartnerHeuristicModelSoul(OnEventSoul):
             ):
                 try:
                     self.npc_dialogue(obs)
-                except e:
+                except Exception as e:
                     print(f"Hit exception {e}")
                     import traceback
                     traceback.print_exc()

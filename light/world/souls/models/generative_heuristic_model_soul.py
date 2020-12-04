@@ -40,4 +40,5 @@ class GenerativeHeuristicModelSoul(PartnerHeuristicModelSoul):
         ]
         speech_opt = parser.parse_args(args=speech_args)
         speech_opt['interactive_mode'] = True
+        speech_opt['override'] = speech_opt
         return create_agent(speech_opt, requireModelExists=True)

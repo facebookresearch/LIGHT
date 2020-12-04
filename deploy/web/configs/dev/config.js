@@ -1,5 +1,5 @@
 const DEV = {
-  host: "http://light-rpg.ai",
+  host: "https://light-rpg.ai",
   hostname: "light-rpg.ai",
   port: "8088",
 };

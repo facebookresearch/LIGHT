@@ -129,6 +129,8 @@ def main():
     )
     FLAGS, _unknown = parser.parse_known_args()
 
+    print(FLAGS)
+
     random.seed(6)
     numpy.random.seed(6)
     model_resources = init_model_resources(FLAGS.light_model_root)

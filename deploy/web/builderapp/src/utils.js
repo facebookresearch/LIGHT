@@ -37,14 +37,15 @@ export function useAPI(CONFIG, url, { body, params } = {}, preloaded) {
     let isSubscribed = true;
 
     if (state.loading) {
-      fetch(BASE_URL + "/builder" + url)
+      var target_url = BASE_URL + "/builder" + url;
+      fetch(target_url)
         .then((res) => res.json())
         .then((data) => {
           if (isSubscribed) {
             setState({ loading: false, result: data });
           }
         })
-        .catch((err) => console.log("Error fetching data"));
+        .catch((err) => console.log("Error fetching data for url: " + target_url, err));
     }
 
     return () => (isSubscribed = false);
