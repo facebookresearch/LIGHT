@@ -64,6 +64,7 @@ class ModelSoul(Soul):
             except Exception as e:
                 print(f"Unhandled model soul exception in {self}: {e}")
                 import traceback
+
                 traceback.print_exc()
                 print("Reaping...")
                 self.reap()
