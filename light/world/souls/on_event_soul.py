@@ -160,7 +160,9 @@ class OnEventSoul(ModelSoul):
                         q_copy = copy.copy(agent.quests[0])
                         other_agent.quests.append(q_copy)
             else:
-                say_text = random.choice(['Interesting.', 'Ok.', 'Thanks for telling me.'])
+                say_text = random.choice(
+                    ["Interesting.", "Ok.", "Thanks for telling me."]
+                )
                 self.execute_event(["TellEvent", other_agent, say_text])
 
     def resolve_object_string(self, agent, object_str):
@@ -194,14 +196,16 @@ class OnEventSoul(ModelSoul):
         for n in event.target_nodes:
             if n.agent:
                 agent2 = n
-                
+
         # We need to assign partners for Say events.
         if event.__class__.__name__ == "SayEvent":
             # We need to predict who is talking to each other.
-            if not hasattr(agent1, '_last_interaction_partner_id'):
+            if not hasattr(agent1, "_last_interaction_partner_id"):
                 agent1._last_interaction_partner_id = None
             if agent1._last_interaction_partner_id is not None:
-                agent2 = self.world.oo_graph.get_node(agent1._last_interaction_partner_id)
+                agent2 = self.world.oo_graph.get_node(
+                    agent1._last_interaction_partner_id
+                )
                 if agent1.get_room() != agent2.get_room():
                     agent1._last_interaction_partner_id = None
                     agent2._last_interaction_partner_id = None
@@ -210,32 +214,38 @@ class OnEventSoul(ModelSoul):
                 # Now find a partner if available (someone in the room who isn't engaged).
                 for n in agent1.get_room().get_contents():
                     if n.agent and n != agent1:
-                        if not hasattr(n, '_last_interaction_partner_id') or n._last_interaction_partner_id == None:
+                        if (
+                            not hasattr(n, "_last_interaction_partner_id")
+                            or n._last_interaction_partner_id == None
+                        ):
                             # Assign this agent.
                             agent2 = n
 
         # Now set the values given the two agents (if we have found two agents).
         if agent2 is not None:
-            if not hasattr(agent1, '_last_interaction_partner_id'):
+            if not hasattr(agent1, "_last_interaction_partner_id"):
                 agent1._last_interaction_partner_id = None
             if agent1._last_interaction_partner_id is not None:
-                agent3 = self.world.oo_graph.get_node(agent1._last_interaction_partner_id)
+                agent3 = self.world.oo_graph.get_node(
+                    agent1._last_interaction_partner_id
+                )
                 agent3._last_interaction_partner_id = None
             agent1._last_interaction_partner_id = agent2.node_id
 
-            if not hasattr(agent2, '_last_interaction_partner_id'):
+            if not hasattr(agent2, "_last_interaction_partner_id"):
                 agent2._last_interaction_partner_id = None
             if agent2._last_interaction_partner_id is not None:
-                agent4 = self.world.oo_graph.get_node(agent2._last_interaction_partner_id)
+                agent4 = self.world.oo_graph.get_node(
+                    agent2._last_interaction_partner_id
+                )
                 agent4._last_interaction_partner_id = None
             agent2._last_interaction_partner_id = agent1.node_id
-                
+
             # print(str(agent1) + " started interaction with " + str(agent2))
-                
-    
+
     def on_events(self, event):
         self.set_interaction_partners_from_event(event)
-        
+
         agent = self.target_node
         executed = False
         if hasattr(agent, "on_events") and agent.on_events is not None:
@@ -336,7 +346,7 @@ class OnEventSoul(ModelSoul):
         partner = self.world.oo_graph.get_node(partner_id)
         if self.get_last_interaction_partner(partner) == agent.node_id:
             partner._last_interaction_partner_id = None
-    
+
     async def _take_timestep(self) -> None:
         self.timestep_actions()
 
