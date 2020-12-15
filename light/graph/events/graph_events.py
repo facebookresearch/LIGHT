@@ -3395,7 +3395,33 @@ class InventoryEvent(NoArgumentEvent):
         self.__actor_name = self.actor.get_prefix_view()
         self.__inv_text = world.view.get_inventory_text_for(self.actor.node_id)
 
-        # Quests text.
+        world.broadcast_to_agents(self, [self.actor])
+        self.executed = True
+        return []
+
+    @proper_caps
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        if viewer == self.actor:
+            return (
+                f"You check yourself. You are {self.__actor_name}!\n"
+                f"You are {self.__inv_text}\n"
+            )
+        else:
+            return f"{self.__actor_name} checked their inventory. "
+
+
+class QuestEvent(NoArgumentEvent):
+    """Quest events just allow a player to see their assigned quests. """
+
+    NAMES = ["quest", "quests", "mission", "missions", "goal", "goals", "q"]
+
+    def execute(self, world: "World") -> List[GraphEvent]:
+        """
+        On execution, show the quests
+        """
+        assert not self.executed
+        self.__actor_name = self.actor.get_prefix_view()
         if hasattr(self.actor, 'quests'):
             quests = self.actor.quests
             if quests is None or len(quests) == 0:
@@ -3423,12 +3449,11 @@ class InventoryEvent(NoArgumentEvent):
         if viewer == self.actor:
             return (
                 f"You check yourself. You are {self.__actor_name}!\n"
-                f"You are {self.__inv_text}\n"
                 f"{self.__quests_text}\n"
             )
         else:
-            return f"{self.__actor_name} checked their inventory. "
-
+            return [] # f"{self.__actor_name} looks deep in thought. "
+        
 
 class HealthEvent(NoArgumentEvent):
     """Inventory events just allow a player to do nothing in a timestep"""
@@ -3610,6 +3635,7 @@ ALL_EVENTS_LIST: List[Type[GraphEvent]] = [
     EmoteEvent,
     WaitEvent,
     InventoryEvent,
+    QuestEvent,
     HealthEvent,
     LookEvent,
     UseEvent,

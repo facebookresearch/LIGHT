@@ -156,9 +156,10 @@ class OnEventSoul(ModelSoul):
                         say_text = agent.quests[0]["text"]
                         self.execute_event(["TellEvent", other_agent, say_text])
                         # Add this actor to the list of potential helpers for the quest.
-                        agent.quests[0]["helper_agents"].append(other_agent.node_id)
-                        q_copy = copy.copy(agent.quests[0])
-                        other_agent.quests.append(q_copy)
+                        if other_agent.node_id not in agent.quests[0]["helper_agents"]:
+                            agent.quests[0]["helper_agents"].append(other_agent.node_id)
+                            q_copy = copy.copy(agent.quests[0])
+                            other_agent.quests.append(q_copy)
             else:
                 say_text = random.choice(
                     ["Interesting.", "Ok.", "Thanks for telling me."]
