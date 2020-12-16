@@ -91,8 +91,13 @@ class OnEventSoul(ModelSoul):
             if do_event.__class__.__name__ != "ErrorEvent":
                 do_event.execute(self.world)
 
-    def conversation_score(self, agent):
-        return 5
+    def conversation_score(self, agent2):
+        agent = self.target_node
+        if hasattr(agent2, '_agent_interactions'):
+            if agent.node_id in agent2._agent_interactions:
+                print(agent2._agent_interactions[agent.node_id])
+                return agent2._agent_interactions[agent.node_id]
+        return 0
 
     def on_events_heuristics(self, event):
         agent = self.target_node
