@@ -57,6 +57,26 @@ class Soul(ABC):
             _await_observe_then_cleanup(), loop=loop
         )
 
+    def role_playing_score_events(self, event):
+        # Track event history, and award roleplaying score if appropriate.
+        agent = event.actor
+        if agent != self.target_node:
+            return # only for self actions
+        if event.__class__.__name__ == "SayEvent" or event.__class__.__name__ == "TellEvent":
+            if agent._last_interaction_partner_id != None:
+                agent2_id = agent._last_interaction_partner_id
+                if not hasattr(agent, '_agent_interactions'):
+                    agent._agent_interactions = {}
+                if agent2_id not in agent._agent_interactions:
+                    agent._agent_interactions[agent2_id] = 0
+                stars = 2 # to be filled with an actual prediction.
+                agent._agent_interactions[agent2_id] += stars
+                # Send star score message.
+                self.world.send_msg(agent.node_id, "(" + "*"*stars + ")\n")
+                if hasattr(self.world, 'debug'):
+                    print(str(agent) +" score: " + str(agent._agent_interactions[agent2_id]))
+        
+
     def set_interaction_partners_from_event(self, event):
         # Calculate who the event involves.
         agent1 = event.actor
@@ -93,6 +113,9 @@ class Soul(ABC):
         if agent2 is not None:
             self.dialogue_switch_partner(agent1, agent2)
 
+    def reset_interaction_history(self, agent):
+        agent._last_interaction_history = {}
+            
     def dialogue_switch_partner(self, agent1, agent2):
         """
         Clear this Soul's set dialogue partner, possibly clearing
@@ -109,17 +132,18 @@ class Soul(ABC):
         if agent1._last_interaction_partner_id is not None:
             agent3 = self.world.oo_graph.get_node(agent1._last_interaction_partner_id)
             agent3._last_interaction_partner_id = None
-            agent3._last_interaction_history = []
+            self.reset_interaction_history(agent3)
         if agent2._last_interaction_partner_id is not None:
             agent4 = self.world.oo_graph.get_node(agent2._last_interaction_partner_id)
             agent4._last_interaction_partner_id = None
-            agent4._last_interaction_history = []
+            self.reset_interaction_history(agent4)
 
         agent1._last_interaction_partner_id = agent2.node_id
-        agent1._last_interaction_history = []
         agent2._last_interaction_partner_id = agent1.node_id
-        agent2._last_interaction_history = []
-        print(str(agent1) + " started interaction with " + str(agent2))
+        self.reset_interaction_history(agent1)
+        self.reset_interaction_history(agent2)
+        if hasattr(self.world, 'debug'):
+            print(str(agent1) + " started interaction with " + str(agent2))
 
     @abstractmethod
     async def observe_event(self, event: "GraphEvent"):

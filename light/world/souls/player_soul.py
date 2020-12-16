@@ -84,6 +84,7 @@ class PlayerSoul(Soul):
         getting the correct format to send to the view.
         """
         self.set_interaction_partners_from_event(event)
+        self.role_playing_score_events(event)
         self.quest_events(event)
         self.provider.player_observe_event(self, event)
         self.agent_logger.observe_event(event)
