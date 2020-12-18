@@ -48,6 +48,7 @@ from light.data_model.light_database import (
     CONTENT_STATUSES,
     EDIT_STATUSES,
 )
+from deploy.web.server.tests.config import TEST_TORNADO_SETTINGS
 from deploy.web.server.builder_server import (
     BuildApplication,
     get_handlers,
@@ -87,7 +88,7 @@ class TestRegistryApp(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = RegistryApplication(self.FLAGS, self.db, {})
+        app = RegistryApplication(self.FLAGS, self.db, {}, tornado_settings=TEST_TORNADO_SETTINGS)
         app.listen(PORT)
         return app
 
@@ -131,7 +132,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = BuildApplication(get_handlers(self.db))
+        app = BuildApplication(get_handlers(self.db), tornado_settings=TEST_TORNADO_SETTINGS)
         app.listen(PORT)
         return app
 
@@ -452,7 +453,7 @@ class TestGameApp(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = Application()
+        app = Application(tornado_settings=TEST_TORNADO_SETTINGS)
         app.listen(PORT)
         return app
 
@@ -493,7 +494,7 @@ class TestLandingApp(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = LandingApplication(self.db)
+        app = LandingApplication(self.db, tornado_settings=TEST_TORNADO_SETTINGS)
         app.listen(PORT)
         return app
 
@@ -650,7 +651,7 @@ class TestBuilderApp(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = BuildApplication(get_handlers(self.db))
+        app = BuildApplication(get_handlers(self.db), tornado_settings=TEST_TORNADO_SETTINGS)
         app.listen(PORT)
         return app
 
