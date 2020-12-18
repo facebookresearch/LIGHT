@@ -453,7 +453,7 @@ class TestGameApp(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = Application()
+        app = Application(given_tornado_settings=TEST_TORNADO_SETTINGS)
         app.listen(PORT)
         return app
 

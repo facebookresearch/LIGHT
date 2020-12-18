@@ -131,10 +131,14 @@ tornado_settings = None
 
 
 class Application(tornado.web.Application):
-    def __init__(self):
+    def __init__(self, given_tornado_settings = None):
+        global tornado_settings
+        use_tornado_settings = tornado_settings
+        if given_tornado_settings is not None:
+            use_tornado_settings = given_tornado_settings
         self.subs = {}
         self.new_subs = defaultdict(list)
-        super(Application, self).__init__(self.get_handlers(), **tornado_settings)
+        super(Application, self).__init__(self.get_handlers(), **use_tornado_settings)
 
     def get_handlers(self):
         path_to_build = here + "/../build/"
