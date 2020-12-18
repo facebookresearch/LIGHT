@@ -24,15 +24,6 @@ def get_rand_id():
     return str(uuid.uuid4())
 
 
-tornado_settings = {
-    "autoescape": None,
-    "cookie_secret": "0123456789",  # TODO: Placeholder, read secrets!!!
-    "compiled_template_cache": False,
-    "debug": "/dbg/" in __file__,
-    "login_url": "/login",
-}
-
-
 class RegistryApplication(tornado.web.Application):
     """
     This application simply takes the user game request and will
@@ -40,7 +31,7 @@ class RegistryApplication(tornado.web.Application):
         - Assign to a random (or default) game based on some load balancing
     """
 
-    def __init__(self, FLAGS, ldb, model_resources):
+    def __init__(self, FLAGS, ldb, model_resources, tornado_settings):
         self.game_instances = {}
         self.step_callbacks = {}
         self.model_resources = model_resources

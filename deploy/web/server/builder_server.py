@@ -69,17 +69,8 @@ def get_path(filename):
     return os.path.join(cwd, filename)
 
 
-tornado_settings = {
-    "autoescape": None,
-    "cookie_secret": "0123456789",  # TODO: Placeholder, do not include in repo when deploy!!!
-    "compiled_template_cache": False,
-    "login_url": "/login",
-    "template_path": get_path("static"),
-}
-
-
 class BuildApplication(tornado.web.Application):
-    def __init__(self, handlers):
+    def __init__(self, handlers, tornado_settings):
         handlers = handlers
         super(BuildApplication, self).__init__(handlers, **tornado_settings)
 
@@ -144,6 +135,7 @@ class MainHandler(BaseHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "*")
+        self.set_header("Acces-Control-Allow-Credentials", "true")
         self.set_header("Content-Type", "text/html")
 
     @tornado.web.authenticated

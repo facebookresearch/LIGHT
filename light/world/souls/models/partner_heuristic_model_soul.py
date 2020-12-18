@@ -269,12 +269,12 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         """
         agent = self.target_node
         room = agent.get_room()
-        txt = "_setting_name " + room.name + "\\n"
-        txt += "_setting_desc " + room.desc + "\\n"
+        txt = "_setting_name " + room.name + "\n"
+        txt += "_setting_desc " + room.desc + "\n"
         if partner_name is not None:
-            txt += "_partner_name " + partner_name + "\\n"
-        txt += "_self_name " + agent.name + "\\n"
-        txt += "_self_persona " + agent.persona + "\\n"
+            txt += "_partner_name " + partner_name + "\n"
+        txt += "_self_name " + agent.name + "\n"
+        txt += "_self_persona " + agent.persona + "\n"
         return txt
 
     def get_last_turn_too_recent(self):
@@ -355,6 +355,12 @@ class PartnerHeuristicModelSoul(OnEventSoul):
 
         if obs is not None and obs.text_content == "DEBUG":
             # print debug information instead
+            speech_hist = self._dialogue_history['speech']
+
+            partner_name = partner.name
+            txt = self.npc_build_context(partner_name)
+            for d in speech_hist:
+                txt += d
             event = SayEvent(agent, target_nodes=[], text_content=txt)
             event.execute(self.world)
             return

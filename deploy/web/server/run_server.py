@@ -19,18 +19,62 @@ from tornado.routing import (
 )
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
+import inspect
 import os.path
 from light.data_model.light_database import LIGHTDatabase
-from light.world.souls.models.partner_heuristic_model_soul import (
-    PartnerHeuristicModelSoul,
+from light.world.souls.models.generative_heuristic_model_soul import (
+    GenerativeHeuristicModelSoul,
 )
 here = os.path.abspath(os.path.dirname(__file__))
 
 
+
+def get_path(filename):
+    """Get the path to an asset."""
+    cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    return os.path.join(cwd, filename)
+
+
+def read_secrets():
+    """
+    Reads the secrets from a secret text file, located outside the repo.
+    The secrets should have the facebook api key, secret, and the cookie secret.
+    """
+    loc = here + "/../../../../secrets.txt"
+    secrets = {}
+    if not os.path.exists(loc):
+        return {
+            'cookie_secret': '0123456789',
+        }
+    with open(loc, "r") as secret_file:
+        for line in secret_file:
+            items = line.split(" ")
+            if len(items) == 2:
+                secrets[items[0]] = items[1].strip()
+    return secrets
+
+
+SECRETS = read_secrets()
+
+tornado_settings = {
+    "autoescape": None,
+    "cookie_secret": SECRETS["cookie_secret"],
+    "compiled_template_cache": False,
+    "debug": "/dbg/" in __file__,
+    "login_url": "/login",
+    "template_path": get_path("static"),
+}
+
+if 'facebook_api_key' in SECRETS:
+    tornado_settings['facebook_api_key'] = SECRETS['facebook_api_key']
+if 'facebook_secret' in SECRETS:
+    tornado_settings['facebook_secret'] = SECRETS['facebook_secret']
+
+
 def make_app(FLAGS, ldb, model_resources):
-    worldBuilderApp = BuildApplication(get_handlers(ldb))
-    landingApp = LandingApplication(ldb, FLAGS.hostname, FLAGS.password)
-    registryApp = RegistryApplication(FLAGS, ldb, model_resources)
+    worldBuilderApp = BuildApplication(get_handlers(ldb), tornado_settings)
+    landingApp = LandingApplication(ldb, FLAGS.hostname, FLAGS.password, tornado_settings)
+    registryApp = RegistryApplication(FLAGS, ldb, model_resources, tornado_settings)
     router = RuleRouter(
         [
             Rule(PathMatches("/builder.*"), worldBuilderApp),
@@ -68,7 +112,7 @@ def _run_server(FLAGS, ldb, model_resources):
 # Override this to be the model_resources needed for souls
 def init_model_resources(light_model_root):
     # dialog gen is at `dialog_gen`, other is at `game_speech1`?
-    shared_model_content = PartnerHeuristicModelSoul.load_models(
+    shared_model_content = GenerativeHeuristicModelSoul.load_models(
         light_model_root + "dialog_gen/model",
         light_model_root + "speech_train_cands.txt",
         light_model_root + "agent_to_utterance_trainset.txt",

@@ -38,7 +38,7 @@ export function useAPI(CONFIG, url, { body, params } = {}, preloaded) {
 
     if (state.loading) {
       var target_url = BASE_URL + "/builder" + url;
-      fetch(target_url)
+      fetch(target_url, {credentials: 'same-origin'})
         .then((res) => res.json())
         .then((data) => {
           if (isSubscribed) {
@@ -73,11 +73,12 @@ export function post(url, payload) {
     );
     formBody.push(encodedKey + "=" + encodedValue);
   }
-  return fetch(`${CONFIG.host}:${CONFIG.port}/${url}`, {
+  return fetch(`${BASE_URL}/${url}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
+    credentials: 'same-origin',
     body: formBody.join("&"),
   });
 }

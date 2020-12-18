@@ -127,41 +127,7 @@ def get_path(filename):
     cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     return os.path.join(cwd, filename)
 
-
-def read_secrets():
-    """
-    Reads the secrets from a secret text file, located outside the repo.
-    The secrets should have the facebook api key, secret, and the cookie secret.
-    """
-    loc = here + "/../../../../secrets.txt"
-    secrets = {}
-    if not os.path.exists(loc):
-        return {
-            'cookie_secret': '0123456789',
-        }
-    with open(loc, "r") as secret_file:
-        for line in secret_file:
-            items = line.split(" ")
-            if len(items) == 2:
-                secrets[items[0]] = items[1].strip()
-    return secrets
-
-
-SECRETS = read_secrets()
-
-tornado_settings = {
-    "autoescape": None,
-    "cookie_secret": SECRETS["cookie_secret"],
-    "compiled_template_cache": False,
-    "debug": "/dbg/" in __file__,
-    "login_url": "/login",
-    "template_path": get_path("static"),
-}
-
-if 'facebook_api_key' in SECRETS:
-    tornado_settings['facebook_api_key'] = SECRETS['facebook_api_key']
-if 'facebook_secret' in SECRETS:
-    tornado_settings['facebook_secret'] = SECRETS['facebook_secret']
+tornado_settings = None
 
 
 class Application(tornado.web.Application):
@@ -301,7 +267,9 @@ class BaseHandler(tornado.web.RequestHandler):
 
 
 class LandingApplication(tornado.web.Application):
-    def __init__(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
+    def __init__(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay", given_tornado_settings=None):
+        global tornado_settings
+        tornado_settings = given_tornado_settings
         super(LandingApplication, self).__init__(
             self.get_handlers(database, hostname, password), **tornado_settings
         )
