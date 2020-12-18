@@ -10,7 +10,7 @@ from collections import deque
 from light.world.souls.on_event_soul import OnEventSoul
 from light.graph.events.base import ErrorEvent
 from light.graph.events.graph_events import TellEvent, SayEvent
-from parlai.core.agents import create_agent_from_shared
+from parlai.core.agents import create_agent_from_shared, create_agent
 
 from typing import TYPE_CHECKING, List
 
@@ -269,12 +269,12 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         """
         agent = self.target_node
         room = agent.get_room()
-        txt = "_setting_name " + room.name + "\\n"
-        txt += "_setting_desc " + room.desc + "\\n"
+        txt = "_setting_name " + room.name + "\n"
+        txt += "_setting_desc " + room.desc + "\n"
         if partner_name is not None:
-            txt += "_partner_name " + partner_name + "\\n"
-        txt += "_self_name " + agent.name + "\\n"
-        txt += "_self_persona " + agent.persona + "\\n"
+            txt += "_partner_name " + partner_name + "\n"
+        txt += "_self_name " + agent.name + "\n"
+        txt += "_self_persona " + agent.persona + "\n"
         return txt
 
     def get_last_turn_too_recent(self):
@@ -355,6 +355,12 @@ class PartnerHeuristicModelSoul(OnEventSoul):
 
         if obs is not None and obs.text_content == "DEBUG":
             # print debug information instead
+            speech_hist = self._dialogue_history['speech']
+
+            partner_name = partner.name
+            txt = self.npc_build_context(partner_name)
+            for d in speech_hist:
+                txt += d
             event = SayEvent(agent, target_nodes=[], text_content=txt)
             event.execute(self.world)
             return
@@ -386,7 +392,7 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         reply_event = TellEvent(agent, target_nodes=[partner], text_content=act_text)
         reply_event.execute(self.world)
 
-        self.log_speech_history(act_text)
+        self.log_speech_history(act_text, is_self=True)
 
     def get_last_interaction_partner(self, node: "GraphAgent"):
         """
@@ -439,7 +445,7 @@ class PartnerHeuristicModelSoul(OnEventSoul):
             ):
                 try:
                     self.npc_dialogue(obs)
-                except e:
+                except Exception as e:
                     print(f"Hit exception {e}")
                     import traceback
                     traceback.print_exc()

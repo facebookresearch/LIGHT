@@ -16,7 +16,7 @@ function LoadingScreen(isFull) {
 
   let msg = <span></span>;
   if (isFull) {
-    const builder_url = window.location.protocol + "//" + window.location.host + "/builder";
+    const builder_url = window.location.protocol + "//" + window.location.host + "/builder/";
     msg = <p>
       Sorry, the base world is filled with players right now, you'll need to return later...
       Or, create your own world and share it with friends using the World Builder. 

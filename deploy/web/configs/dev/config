@@ -1,7 +1,7 @@
 --data-model-db
 /home/ubuntu/data/database.db 
 --hostname
-light-rpg.ai
+www.light-rpg.ai
 --light-model-root
 /home/ubuntu/data/models/
 --password

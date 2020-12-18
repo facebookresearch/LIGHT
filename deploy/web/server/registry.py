@@ -24,15 +24,6 @@ def get_rand_id():
     return str(uuid.uuid4())
 
 
-tornado_settings = {
-    "autoescape": None,
-    "cookie_secret": "0123456789",  # TODO: Placeholder, read secrets!!!
-    "compiled_template_cache": False,
-    "debug": "/dbg/" in __file__,
-    "login_url": "/login",
-}
-
-
 class RegistryApplication(tornado.web.Application):
     """
     This application simply takes the user game request and will
@@ -40,19 +31,19 @@ class RegistryApplication(tornado.web.Application):
         - Assign to a random (or default) game based on some load balancing
     """
 
-    def __init__(self, FLAGS, ldb, model_resources):
+    def __init__(self, FLAGS, ldb, model_resources, tornado_settings):
         self.game_instances = {}
         self.step_callbacks = {}
         self.model_resources = model_resources
         self.FLAGS = FLAGS
         self.ldb = ldb
         super(RegistryApplication, self).__init__(
-            self.get_handlers(FLAGS, ldb), **tornado_settings
+            self.get_handlers(FLAGS, ldb, tornado_settings), **tornado_settings
         )
 
-    def get_handlers(self, FLAGS, ldb):
+    def get_handlers(self, FLAGS, ldb, tornado_settings):
         self.tornado_provider = TornadoPlayerFactory(
-            self.game_instances, FLAGS.hostname, FLAGS.port
+            self.game_instances, FLAGS.hostname, FLAGS.port, given_tornado_settings=tornado_settings
         )
         self.router = RuleRouter(
             [Rule(PathMatches(f"/game.*/socket"), self.tornado_provider.app)]
@@ -92,9 +83,9 @@ class RegistryApplication(tornado.web.Application):
         if world_id is not None and player_id is not None:
             builder = UserWorldBuilder(ldb, player_id=player_id, world_id=world_id)
             _, graph = builder.get_graph()
-            game = GameInstance(game_id, ldb, g=graph)
+            game = GameInstance(game_id, ldb, g=graph, opt=vars(self.FLAGS))
         else:
-            game = GameInstance(game_id, ldb)
+            game = GameInstance(game_id, ldb, opt=vars(self.FLAGS))
             graph = game.g
         game.fill_souls(self.model_resources)
 

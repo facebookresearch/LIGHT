@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Logo() {
   const builder_url =
-    window.location.protocol + "//" + window.location.host + "/builder";
+    window.location.protocol + "//" + window.location.host + "/builder/";
   return (
     <div className="header">
       <img alt="logo" src="/scribe.png" />
