@@ -38,12 +38,12 @@ class RegistryApplication(tornado.web.Application):
         self.FLAGS = FLAGS
         self.ldb = ldb
         super(RegistryApplication, self).__init__(
-            self.get_handlers(FLAGS, ldb), **tornado_settings
+            self.get_handlers(FLAGS, ldb, tornado_settings), **tornado_settings
         )
 
-    def get_handlers(self, FLAGS, ldb):
+    def get_handlers(self, FLAGS, ldb, tornado_settings):
         self.tornado_provider = TornadoPlayerFactory(
-            self.game_instances, FLAGS.hostname, FLAGS.port
+            self.game_instances, FLAGS.hostname, FLAGS.port, use_tornado_settings=tornado_settings
         )
         self.router = RuleRouter(
             [Rule(PathMatches(f"/game.*/socket"), self.tornado_provider.app)]

@@ -459,7 +459,7 @@ class TornadoPlayerFactory:
     """
 
     def __init__(
-        self, graphs, hostname=DEFAULT_HOSTNAME, port=DEFAULT_PORT, listening=False
+        self, graphs, hostname=DEFAULT_HOSTNAME, port=DEFAULT_PORT, listening=False, given_tornado_settings=None
     ):
         self.graphs = graphs
         self.app = None
@@ -470,7 +470,7 @@ class TornadoPlayerFactory:
             nonlocal hostname
             nonlocal port
             self.my_loop = ioloop.IOLoop()
-            self.app = Application()
+            self.app = Application(given_tornado_settings=given_tornado_settings)
             self.app.graphs = self.graphs
             if listening:
                 self.app.listen(port, max_buffer_size=1024 ** 3)
