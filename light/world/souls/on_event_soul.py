@@ -95,7 +95,6 @@ class OnEventSoul(ModelSoul):
         agent = self.target_node
         if hasattr(agent2, '_agent_interactions'):
             if agent.node_id in agent2._agent_interactions:
-                print(agent2._agent_interactions[agent.node_id])
                 return agent2._agent_interactions[agent.node_id]
         return 0
 
@@ -135,16 +134,21 @@ class OnEventSoul(ModelSoul):
                 say_text = "Err.. thanks."
             self.execute_event(["SayEvent", say_text])
 
+    def tell_goal_heuristics(self, event):
+        agent = self.target_node
+        event_name = event.__class__.__name__
         # Tell Mission to Other Agent (or not).
-        if (
-            (event_name == "SayEvent" and event.actor != agent)
+        if (((event_name == "SayEvent" and event.actor != agent)
             or event_name == "TellEvent"
             and event.actor != agent
-            and event.target_nodes[0] == agent
+            and event.target_nodes[0] == agent)
         ):
             about_goals = False
             for words in ["mission", "goal", "quest", "what you want"]:
                 if words in event.text_content:
+                    about_goals = True
+            if self.conversation_score(other_agent) > 5:
+                if math.random() < 0.1:
                     about_goals = True
             other_agent = event.actor
             if about_goals:
@@ -156,6 +160,7 @@ class OnEventSoul(ModelSoul):
                         ]
                     )
                     self.execute_event(["SayEvent", say_text])
+                    return True
                 else:
                     if len(agent.quests) > 0:
                         say_text = agent.quests[0]["text"]
@@ -165,12 +170,15 @@ class OnEventSoul(ModelSoul):
                             agent.quests[0]["helper_agents"].append(other_agent.node_id)
                             q_copy = copy.copy(agent.quests[0])
                             other_agent.quests.append(q_copy)
+                    return True
             else:
-                say_text = random.choice(
-                    ["Interesting.", "Ok.", "Thanks for telling me."]
-                )
-                self.execute_event(["TellEvent", other_agent, say_text])
-
+                pass
+                #say_text = random.choice(
+                #    ["Interesting.", "Ok.", "Thanks for telling me."]
+                #)
+                #self.execute_event(["TellEvent", other_agent, say_text])
+        return False
+    
     def resolve_object_string(self, agent, object_str):
         for id, obj in agent.contained_nodes.items():
             obj = obj._target_node
@@ -211,7 +219,7 @@ class OnEventSoul(ModelSoul):
 
         if not executed:
             self.on_events_heuristics(event)
-
+            
     def new_quest(self):
         graph = self.world.oo_graph
         actor = self.target_node
@@ -246,9 +254,11 @@ class OnEventSoul(ModelSoul):
         OnEventSouls check for specific events, that trigger specific actions.
         """
         self.set_interaction_partners_from_event(event)
+        self.log_interaction_from_event(event)
         self.quest_events(event)
         self.on_events(event)
-
+        self.tell_goal_heuristics(event)
+        
     def is_too_far(self, agent, room):
         # Check if it's too far from agent's starting room
         if not hasattr(agent, "start_loc"):
