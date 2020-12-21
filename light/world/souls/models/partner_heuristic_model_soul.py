@@ -11,10 +11,14 @@ from light.world.souls.on_event_soul import OnEventSoul
 from light.graph.events.base import ErrorEvent
 from light.graph.events.graph_events import TellEvent, SayEvent
 <<<<<<< HEAD
+<<<<<<< HEAD
 from parlai.core.agents import create_agent_from_shared, create_agent
 =======
 from parlai.core.agents import create_agent, create_agent_from_shared
 >>>>>>> more WIP
+=======
+from parlai.core.agents import create_agent, create_agent_from_shared
+>>>>>>> 93abd309324a28ff37c76337483ee5582e0ddb76
 
 from typing import TYPE_CHECKING, List
 
@@ -220,6 +224,7 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         return found_utterance
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     def npc_build_context(self, partner_name=None):
         """
         Build the full context for this Soul's model
@@ -236,6 +241,8 @@ class PartnerHeuristicModelSoul(OnEventSoul):
 
 =======
 >>>>>>> more WIP
+=======
+>>>>>>> 93abd309324a28ff37c76337483ee5582e0ddb76
     def get_last_turn_too_recent(self):
         return time.time() - self._last_action_time < MIN_TIME_BETWEEN_TURNS
 
@@ -324,6 +331,7 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         if obs is not None and obs.text_content == "DEBUG":
             # print debug information instead
 <<<<<<< HEAD
+<<<<<<< HEAD
             speech_hist = self._dialogue_history['speech']
 
             partner_name = partner.name
@@ -334,6 +342,9 @@ class PartnerHeuristicModelSoul(OnEventSoul):
 =======
             event = SayEvent(agent, target_nodes=[], text_content="DEBUG: " + context)
 >>>>>>> more WIP
+=======
+            event = SayEvent(agent, target_nodes=[], text_content="DEBUG: " + context)
+>>>>>>> 93abd309324a28ff37c76337483ee5582e0ddb76
             event.execute(self.world)
             return
         
@@ -347,6 +358,7 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         reply_event = TellEvent(agent, target_nodes=[partner], text_content=act_text)
         reply_event.execute(self.world)
 
+<<<<<<< HEAD
 <<<<<<< HEAD
         self.log_speech_history(act_text, is_self=True)
 
@@ -380,6 +392,8 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         partner_node._last_interaction_partner_id = self.target_node.node_id
 =======
 >>>>>>> more WIP
+=======
+>>>>>>> 93abd309324a28ff37c76337483ee5582e0ddb76
 
     async def _take_timestep(self) -> None:
         """
@@ -406,6 +420,7 @@ class PartnerHeuristicModelSoul(OnEventSoul):
                 if not self.tell_goal_heuristics(obs):
                     self.npc_dialogue(obs)
 <<<<<<< HEAD
+<<<<<<< HEAD
                 except Exception as e:
                     print(f"Hit exception {e}")
                     import traceback
@@ -413,6 +428,8 @@ class PartnerHeuristicModelSoul(OnEventSoul):
                 return
 =======
 >>>>>>> more WIP
+=======
+>>>>>>> 93abd309324a28ff37c76337483ee5582e0ddb76
 
         # possibly initiate talk request to someone in the room
         if self.get_last_interaction_partner(agent) is None:
