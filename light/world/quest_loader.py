@@ -53,6 +53,7 @@ class QuestCreator:
         "laugh": ["I'd like to make AGENT laugh."],
         "converse": ["I'd like to converse with AGENT."],
         "smile": ["I'd like to make AGENT smile."],
+        #For now, we will avoid goals involving violence.
         #"hit": [
         #    "I want to make AGENT pay for what they've done.",
         #    "I want to get my revenge on AGENT.",

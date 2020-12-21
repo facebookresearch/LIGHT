@@ -176,11 +176,14 @@ class BaseSoul(Soul):
                 agent2_id = agent._last_interaction_partner_id
                 if not hasattr(agent, '_agent_interactions'):
                     agent._agent_interactions = {}
+                if not hasattr(agent, 'xp'):
+                    agent.xp = 0
                 if agent2_id not in agent._agent_interactions:
                     agent._agent_interactions[agent2_id] = 0
                 
                 stars = self.score_conversation()
                 agent._agent_interactions[agent2_id] += stars
+                agent.xp += stars
                 # Send star score message.
                 self.world.send_msg(agent.node_id, "(You gained " + str(stars) + " XP!)")
                 #if hasattr(self.world, 'debug'):

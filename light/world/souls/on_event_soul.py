@@ -147,10 +147,10 @@ class OnEventSoul(ModelSoul):
             for words in ["mission", "goal", "quest", "what you want"]:
                 if words in event.text_content:
                     about_goals = True
-            if self.conversation_score(other_agent) > 5:
-                if math.random() < 0.1:
-                    about_goals = True
             other_agent = event.actor
+            if self.conversation_score(other_agent) > 5:
+                if random.random() < 0.1:
+                    about_goals = True
             if about_goals:
                 if self.conversation_score(other_agent) < 5:
                     say_text = random.choice(
