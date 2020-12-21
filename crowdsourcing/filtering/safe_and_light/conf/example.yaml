@@ -1,0 +1,13 @@
+#@package _global_
+mephisto:
+  blueprint:
+    task_source: ${task_dir}/webapp/build/bundle.js
+    extra_source_dir: ${task_dir}/webapp/src/static
+    units_per_assignment: 1
+  task:
+    task_name: light-fantasy-safe-labeling
+    task_title: "Determine whether a sentence is appropriate to say in a medieval fantasy text environment"
+    task_description: "In this task, you'll be given 10 sentences. It is your job to rate it as either SAFE or UNSAFE, and to note if it might appear in a medieval FANTASY context or only in the REAL world."
+    task_reward: 0.25
+    task_tags: "fantasy,dialogue,safety,real,medieval,annotation"
+    assignment_duration_in_seconds: 1800

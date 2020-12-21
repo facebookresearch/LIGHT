@@ -301,14 +301,15 @@ class LIGHTDatabase:
             if os.path.exists(possible_cache_path):
                 cache_date = os.path.getmtime(possible_cache_path)
                 database_date = os.path.getmtime(self.dbpath)
-                if cache_date > database_date:
+                if True: # cache_date > database_date:
                     with open(possible_cache_path, 'r') as json_cache:
                         self.cache = json.load(json_cache)
                         for key in self.cache.keys():
                             for str_id in self.cache[key].ids():
                                 self.cache[key][int(str_id)] = self.cache[key][str_id]
                         return
-        except Exception:
+        except Exception as e:
+            print(e)
             pass  # initialize a new cache if the old one is corrupted
 
         db_table_dict = {
@@ -337,8 +338,8 @@ class LIGHTDatabase:
             else:
                 self.cache[key] = {int(row["id"]): dict(row) for row in results}
 
-        with open(possible_cache_path, 'w') as json_cache:
-            json.dump(self.cache, json_cache)
+        # with open(possible_cache_path, 'w') as json_cache:
+        #     json.dump(self.cache, json_cache)
 
     def __enter__(self):
         conn = sqlite3.connect(self.dbpath)
