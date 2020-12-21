@@ -28,12 +28,12 @@ JITTER_TIME_AROUND_TURNS = 2
 CHAT_DISENGAGE_CHANCE = 0.0 / 100.0
 TAKE_ACTION_CHANCE = 1.0 / 5.0
 SAFE_PHRASES = [
-  "Let's talk about something else?",
-  "Tell me something you don't know anything about.",
-  "I'd like to talk about something different.",
-  "Would you like to talk about something different.",
-  "Can we change topics?",
-  "How about a new conversation?",
+    "Let's talk about something else?",
+    "Tell me something you don't know anything about.",
+    "I'd like to talk about something different.",
+    "Would you like to talk about something different.",
+    "Can we change topics?",
+    "How about a new conversation?",
 ]
 
 
@@ -78,7 +78,11 @@ class PartnerHeuristicModelSoul(OnEventSoul):
 
     @classmethod
     def load_models(
-        cls, speech_model_path, speech_cands_path, agent_to_utterance_path, act_model_path,
+        cls,
+        speech_model_path,
+        speech_cands_path,
+        agent_to_utterance_path,
+        act_model_path,
     ):
         """
         Load up and create possible shared models for use with this class
@@ -115,7 +119,10 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         ]
         act_opt, _unknown = parser.parse_and_process_known_args(args=args)
 
-        act_opt['override'] = {'eval_candidates': 'inline', 'ignore_bad_candidates': 'True'}
+        act_opt["override"] = {
+            "eval_candidates": "inline",
+            "ignore_bad_candidates": "True",
+        }
         act_opt["interactive_mode"] = True
         act_opt["ignore_bad_candidates"] = True
         action_model = create_agent(act_opt, requireModelExists=True)
@@ -133,9 +140,9 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         """
         self._pending_observations = []
         self._last_action_time = time.time() + self._get_random_time_offset()
-        self._utterance_to_speaker_name = models['utterance_to_speaker_name']
-        self.npc_model = create_agent_from_shared(models['shared_dialog_model'])
-        self.npc_act_model = create_agent_from_shared(models['shared_action_model'])
+        self._utterance_to_speaker_name = models["utterance_to_speaker_name"]
+        self.npc_model = create_agent_from_shared(models["shared_dialog_model"])
+        self.npc_act_model = create_agent_from_shared(models["shared_action_model"])
         self.reset_interaction_history(self.target_node)
 
     async def observe_event(self, event: "GraphEvent"):
@@ -144,8 +151,8 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         and take a timestep (to ensure we respond in a timely manner)
         """
         if isinstance(event, ErrorEvent):
-           return
-       
+            return
+
         # NPC on_events + heuristics.
         super().set_interaction_partners_from_event(event)
         super().log_interaction_from_event(event)
@@ -155,7 +162,7 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         if event.actor == self.target_node:
             self._last_action_time = time.time() + self._get_random_time_offset()
             return
-        
+
         self._pending_observations.append(event)
 
         # The model may choose to do something in response to this action,
@@ -186,9 +193,9 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         return None
 
     def ensure_agent_has_utterance_history(self, agent):
-        if not hasattr(agent, '_utterance_history'):
+        if not hasattr(agent, "_utterance_history"):
             agent._utterance_history = []
-    
+
     def dialogue_pick_non_repeating_response(self, act, partner):
         """
         Produce an act that is not in the dialogue history for this given
@@ -198,13 +205,13 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         self.ensure_agent_has_utterance_history(partner)
 
         # Default to the top text, then try to find one that isn't in anyone's history
-        found_utterance = act['text']
-        if 'text_candidates' in act:  # Retrieval models can pick different candidates
-            for t in act['text_candidates']:
+        found_utterance = act["text"]
+        if "text_candidates" in act:  # Retrieval models can pick different candidates
+            for t in act["text_candidates"]:
                 if (
                     t not in self.target_node._utterance_history
                     and t not in partner._utterance_history
-                    and self._utterance_to_speaker_name.get(t, 'anon') != partner.name
+                    and self._utterance_to_speaker_name.get(t, "anon") != partner.name
                 ):
                     found_utterance = t
                     break
@@ -226,7 +233,7 @@ class PartnerHeuristicModelSoul(OnEventSoul):
             return
 
         # Self action history
-        speech_act_hist = self._dialogue_history['speech+act']
+        speech_act_hist = self._dialogue_history["speech+act"]
 
         # Get agents
         agent = self.target_node
@@ -240,8 +247,8 @@ class PartnerHeuristicModelSoul(OnEventSoul):
 
         quest_txt = None
         if len(agent.quests) > 0 and self.conversation_score(partner) > 5:
-            quest_text = " " + agent.quests[0]["text"]        
-            
+            quest_text = " " + agent.quests[0]["text"]
+
         txt = self.npc_build_context(partner_name, quest_txt)
         for d in speech_act_hist:
             txt += d
@@ -252,8 +259,8 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         msg = {
             "text": txt,
             "episode_done": True,
-            'label_candidates': cands,
-            'eval_labels': [cands[0]],
+            "label_candidates": cands,
+            "eval_labels": [cands[0]],
         }
         self.npc_act_model.observe(msg)
         act = self.npc_act_model.act()
@@ -263,7 +270,7 @@ class PartnerHeuristicModelSoul(OnEventSoul):
 
         self.log_act_history(act_text, is_self=True)
         self.world.parse_exec(agent_id, act_text)
-        
+
     def npc_dialogue(self, obs=None):
         """
         Attempt to take a dialogue turn
@@ -294,18 +301,17 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         if not ALLOW_INTERBOT_CHAT and not partner._human:
             return
 
-
         quest_txt = None
         if len(agent.quests) > 0 and self.conversation_score(partner) > 5:
-            quest_text = " " + agent.quests[0]["text"]        
+            quest_text = " " + agent.quests[0]["text"]
         context = self.build_dialog_context(quest_txt)
-        
+
         if obs is not None and obs.text_content == "DEBUG":
             # print debug information instead
             event = SayEvent(agent, target_nodes=[], text_content="DEBUG: " + context)
             event.execute(self.world)
             return
-        
+
         # Send to model to process
         msg = {"text": context, "episode_done": True}
         self.npc_model.observe(msg)
@@ -315,7 +321,6 @@ class PartnerHeuristicModelSoul(OnEventSoul):
 
         reply_event = TellEvent(agent, target_nodes=[partner], text_content=act_text)
         reply_event.execute(self.world)
-
 
     async def _take_timestep(self) -> None:
         """
@@ -334,7 +339,7 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         while len(self._pending_observations) > 0:
             curr_obs.append(self._pending_observations.pop(0))
         for obs in curr_obs:
-            
+
             if isinstance(obs, SayEvent) or (
                 isinstance(obs, TellEvent) and obs.target_nodes[0] == agent
             ):
@@ -360,15 +365,15 @@ class PartnerHeuristicModelSoul(OnEventSoul):
                 except Exception as e:
                     print(f"Hit exception {e}")
                     import traceback
+
                     traceback.print_exc()
                 return
         else:
             pass
             # possibly end interaction with existing interaction partner (if any)?
-            #if random.random() < CHAT_DISENGAGE_CHANCE:
-                # TODO: would need to reset both partners.
-                # self.reset_interaction_history()
-
+            # if random.random() < CHAT_DISENGAGE_CHANCE:
+            # TODO: would need to reset both partners.
+            # self.reset_interaction_history()
 
         # NPC heuristics, etc.
         # super().timestep_actions()
