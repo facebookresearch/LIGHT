@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.world.souls.soul import Soul
+from light.world.souls.base_soul import BaseSoul
 from light.world.content_loggers import AgentInteractionLogger
 from light.world.quest_loader import QuestCreator
 from typing import TYPE_CHECKING
@@ -19,7 +19,7 @@ QUESTS_ACTIVE = True
 QUEST_TEXT = "\nYour Quest:\n"
 
 
-class PlayerSoul(Soul):
+class PlayerSoul(BaseSoul):
     """
     A PlayerSoul is responsible for interfacing with the players in the
     game via a PlayerProvider, and will handle incoming messages
@@ -84,6 +84,8 @@ class PlayerSoul(Soul):
         getting the correct format to send to the view.
         """
         self.set_interaction_partners_from_event(event)
+        self.log_interaction_from_event(event)
+        self.role_playing_score_events(event)
         self.quest_events(event)
         self.provider.player_observe_event(self, event)
         self.agent_logger.observe_event(event)
