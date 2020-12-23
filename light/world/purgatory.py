@@ -47,7 +47,7 @@ class Purgatory:
         Used to pass in e.g. the roleplaying model scorer to the player soul.
         """
         self.player_args = arg_provider
-        
+
     def register_filler_soul_provider(
         self,
         provider_name: str,
@@ -91,7 +91,7 @@ class Purgatory:
         the async call such that the soul can choose to take its time
         deciding what to do.
         """
-        if agent.get_prop('dead'):
+        if agent.get_prop("dead"):
             self.clear_soul(agent)
             return  # We shouldn't send an event to this soul, as it is reaped
         soul: "Soul" = self.node_id_to_soul.get(agent.node_id)
@@ -118,8 +118,11 @@ class Purgatory:
                 target_agent = random.choice(possible_agents)
                 self.clear_soul(target_agent)
                 soul = PlayerSoul(
-                    target_agent, self.world, self.players, player_provider,
-                    self.player_args
+                    target_agent,
+                    self.world,
+                    self.players,
+                    player_provider,
+                    self.player_args,
                 )
                 self.node_id_to_soul[target_agent.node_id] = soul
                 self.player_soul_id_to_soul[self.players] = soul

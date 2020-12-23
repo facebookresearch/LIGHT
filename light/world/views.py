@@ -62,7 +62,7 @@ class WorldViewer(object):
             health = 1
         if health > 8:
             health = 8
-        # Second argument indicates sentiment (can use for descriptions).    
+        # Second argument indicates sentiment (can use for descriptions).
         f = [
             ("pretty dead", -1),
             ("on the verge of death", -1),
@@ -72,7 +72,7 @@ class WorldViewer(object):
             ("good", 1),
             ("strong", 1),
             ("very strong", 1),
-            ("nigh on invincible", 1)
+            ("nigh on invincible", 1),
         ]
         return f[int(health)][0], f[int(health)][1]
 

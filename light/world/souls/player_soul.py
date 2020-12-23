@@ -28,8 +28,12 @@ class PlayerSoul(BaseSoul):
     """
 
     def __init__(
-            self, target_node: "GraphAgent", world: "World", player_id: str, provider=None,
-            shared_model_content=None
+        self,
+        target_node: "GraphAgent",
+        world: "World",
+        player_id: str,
+        provider=None,
+        shared_model_content=None,
     ):
         """
         PlayerSouls register to a GraphAgent in a World, but also keep track of the
@@ -49,7 +53,7 @@ class PlayerSoul(BaseSoul):
             )
             target_node.persona += QUEST_TEXT + target_quest[goal]
         if shared_model_content is not None:
-            #self.roleplaying_score_model = create_agent_from_shared(shared_model_content["roleplaying_score_model"])
+            # self.roleplaying_score_model = create_agent_from_shared(shared_model_content["roleplaying_score_model"])
             self.roleplaying_score_model = shared_model_content.clone()
         self.agent_logger = AgentInteractionLogger(world.oo_graph, target_node)
         provider.register_soul(self)
