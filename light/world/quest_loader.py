@@ -235,7 +235,7 @@ class QuestCreator:
 
     def create_random_quest(actor, graph):
         q_verb = random.choice(list(QuestCreator.templates.keys()))
-        # q_verb = "obtain"
+        q_verb = "obtain"
         q_txt = random.choice(QuestCreator.templates[q_verb])
         obj = None
         loc = None
@@ -316,7 +316,7 @@ class QuestCreator:
         # Assign XP.
         if not hasattr(actor, "xp"):
             actor.xp = 0
-        xp = quest.get("goal_xp", 2)
+        xp = quest.get("goal_xp", 50)
         actor.xp += xp
 
         if actor.node_id == quest["actor"]:

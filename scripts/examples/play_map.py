@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 # To run, use:
-# python scripts/examples/play_map.py --use-models GenerativeHeuristicModelSoul 
+# python scripts/examples/play_map.py --use-models GenerativeHeuristicModelSoul
 
 import sys
 
@@ -17,13 +17,14 @@ from light.data_model.light_database import LIGHTDatabase
 from light.world.utils.terminal_player_provider import TerminalPlayerProvider
 from parlai.core.params import ParlaiParser
 from light.world.world import World
+from light.world.souls.base_soul import BaseSoul
 from light.world.souls.repeat_soul import RepeatSoul
 from light.world.souls.on_event_soul import OnEventSoul
 from light.world.souls.models.partner_heuristic_model_soul import (
-    PartnerHeuristicModelSoul
+    PartnerHeuristicModelSoul,
 )
 from light.world.souls.models.generative_heuristic_model_soul import (
-    GenerativeHeuristicModelSoul
+    GenerativeHeuristicModelSoul,
 )
 
 import os
@@ -39,6 +40,9 @@ shared_model_content = None
 def init_world(world_builder):
     g, world = world_builder.get_graph()
     purgatory = world.purgatory
+    if opt["roleplaying_score_model_file"] != "":
+        purgatory.register_player_args(rpg_model_content)
+
     # Choose the type of NPC souls.
     if opt["use_models"] == "PartnerHeuristicModelSoul":
         purgatory.register_filler_soul_provider(
@@ -49,10 +53,10 @@ def init_world(world_builder):
             "model", GenerativeHeuristicModelSoul, lambda: [shared_model_content]
         )
     elif opt["use_models"] == "OnEventSoul":
-        purgatory.register_filler_soul_provider("repeat", OnEventSoul, lambda: [ {} ])
+        purgatory.register_filler_soul_provider("repeat", OnEventSoul, lambda: [{}])
     else:
         purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
-        
+
     for empty_agent in world.oo_graph.agents.values():
         purgatory.fill_soul(empty_agent)
     provider = TerminalPlayerProvider(purgatory)
@@ -88,28 +92,36 @@ parser.add_argument(
     "--use-models",
     type=str,
     default="OnEventSoul",
-    choices={"OnEventSoul", "RepeatSoul", "PartnerHeuristicModelSoul", "GenerativeHeuristicModelSoul"},
+    choices={
+        "OnEventSoul",
+        "RepeatSoul",
+        "PartnerHeuristicModelSoul",
+        "GenerativeHeuristicModelSoul",
+    },
 )
-parser.add_argument(
-    "--light-model-root", type=str, default="/checkpoint/light/models/"
-)
+parser.add_argument("--light-model-root", type=str, default="/checkpoint/light/models/")
 parser.add_argument(
     "--load-map", type=str, default="scripts/examples/simple_world.json"
 )
-parser.add_argument(
-    "--dont-catch-errors",
-    type="bool",
-    default=True
-)
+parser.add_argument("--dont-catch-errors", type="bool", default=True)
 parser.add_argument(
     "--safety-classifier-path",
     type=str,
     default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
 )
 parser.add_argument(
+    "--roleplaying-score-model-file",
+    type=str,
+    default = "",
+    # default = "/checkpoint/jase/projects/light/beatthehobbot/swp6_light_bi/actmodelv2/model",
+    # default="/checkpoint/light/models/speech/orig_light_poly/model",
+    # default="/checkpoint/jase/projects/light/beatthehobbot/swp5_light_neg/neg-hist-cands=100_poly-n-codes=20_jobid=4/model",
+    # default="/checkpoint/light/models/game2020/roleplay_scorer/model",
+)
+parser.add_argument(
     "--parser-model-file",
     type=str,
-    default="" #/checkpoint/jase/projects/light/parser/parser3/34c_jobid=1/model"
+    default="",  # "/checkpoint/jase/projects/light/parser/parser3/34c_jobid=1/model"
 )
 opt, _unknown = parser.parse_and_process_known_args()
 
@@ -122,6 +134,12 @@ else:
     opt, _unknown = parser.parse_and_process_known_args()
     ldb = LIGHTDatabase(opt["light_db_file"], read_only=True)
     world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
+
+if opt["roleplaying_score_model_file"] != "":
+    # Load RPG scorer.
+    rpg_model_content = BaseSoul.load_roleplaying_score_model(
+        opt["roleplaying_score_model_file"]
+    )
 
 if opt["use_models"] == "PartnerHeuristicModelSoul":
     light_model_root = opt["light_model_root"]
@@ -141,7 +159,7 @@ if opt["use_models"] == "GenerativeHeuristicModelSoul":
         light_model_root + "main_act/model",
     )
 
-    
+
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(run_with_builder(world_builder))
