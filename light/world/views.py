@@ -381,7 +381,8 @@ class WorldViewer(object):
                 "look (l, for short)\n"
                 'go <direction>, e.g. "go north", or "go n" or just "n" for short\n'
                 "inventory (i or inv, for short)\n"
-                "status/health\n"
+                "stats/status/health\n"
+                "quest/goal/mission\n"
                 "examine <thing> (ex, for short)\n"
                 "get/drop <object>\n"
                 "eat/drink <object>\n"

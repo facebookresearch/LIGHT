@@ -17,6 +17,7 @@ from light.data_model.light_database import LIGHTDatabase
 from light.world.utils.terminal_player_provider import TerminalPlayerProvider
 from parlai.core.params import ParlaiParser
 from light.world.world import World
+from light.world.souls.base_soul import BaseSoul
 from light.world.souls.repeat_soul import RepeatSoul
 from light.world.souls.on_event_soul import OnEventSoul
 from light.world.souls.models.partner_heuristic_model_soul import (
@@ -39,6 +40,9 @@ shared_model_content = None
 def init_world(world_builder):
     g, world = world_builder.get_graph()
     purgatory = world.purgatory
+    if opt["roleplaying_score_model_file"] != "":
+        purgatory.register_player_args(rpg_model_content)
+        
     # Choose the type of NPC souls.
     if opt["use_models"] == "PartnerHeuristicModelSoul":
         purgatory.register_filler_soul_provider(
@@ -107,9 +111,17 @@ parser.add_argument(
     default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
 )
 parser.add_argument(
+    "--roleplaying-score-model-file",
+    type=str,
+    # default = "/checkpoint/jase/projects/light/beatthehobbot/swp6_light_bi/actmodelv2/model",
+    # default="/checkpoint/light/models/speech/orig_light_poly/model",
+    #default="/checkpoint/jase/projects/light/beatthehobbot/swp5_light_neg/neg-hist-cands=100_poly-n-codes=20_jobid=4/model",
+    default="/checkpoint/light/models/game2020/roleplay_scorer/model"
+)
+parser.add_argument(
     "--parser-model-file",
     type=str,
-    default="" #/checkpoint/jase/projects/light/parser/parser3/34c_jobid=1/model"
+    default="" # "/checkpoint/jase/projects/light/parser/parser3/34c_jobid=1/model"
 )
 opt, _unknown = parser.parse_and_process_known_args()
 
@@ -123,14 +135,19 @@ else:
     ldb = LIGHTDatabase(opt["light_db_file"], read_only=True)
     world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
 
+if opt["roleplaying_score_model_file"] != "":
+    # Load RPG scorer.
+    rpg_model_content = BaseSoul.load_roleplaying_score_model(
+        opt["roleplaying_score_model_file"])
+    
 if opt["use_models"] == "PartnerHeuristicModelSoul":
-    light_model_root = opt["light_model_root"]
-    shared_model_content = PartnerHeuristicModelSoul.load_models(
-        light_model_root + "game_speech1/model",
-        light_model_root + "speech_train_cands.txt",
-        light_model_root + "agent_to_utterance_trainset.txt",
-        light_model_root + "main_act/model",
-    )
+   light_model_root = opt["light_model_root"]
+   shared_model_content = PartnerHeuristicModelSoul.load_models(
+       light_model_root + "game_speech1/model",
+       light_model_root + "speech_train_cands.txt",
+       light_model_root + "agent_to_utterance_trainset.txt",
+       light_model_root + "main_act/model",
+   )
 
 if opt["use_models"] == "GenerativeHeuristicModelSoul":
     light_model_root = opt["light_model_root"]

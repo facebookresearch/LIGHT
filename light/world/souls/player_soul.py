@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from parlai.core.agents import create_agent_from_shared
 from light.world.souls.base_soul import BaseSoul
 from light.world.content_loggers import AgentInteractionLogger
 from light.world.quest_loader import QuestCreator
@@ -27,7 +28,8 @@ class PlayerSoul(BaseSoul):
     """
 
     def __init__(
-        self, target_node: "GraphAgent", world: "World", player_id: str, provider=None
+            self, target_node: "GraphAgent", world: "World", player_id: str, provider=None,
+            shared_model_content=None
     ):
         """
         PlayerSouls register to a GraphAgent in a World, but also keep track of the
@@ -46,6 +48,9 @@ class PlayerSoul(BaseSoul):
                 ["short_motivation", "mid_motivation", "long_motivation"]
             )
             target_node.persona += QUEST_TEXT + target_quest[goal]
+        if shared_model_content is not None:
+            #self.roleplaying_score_model = create_agent_from_shared(shared_model_content["roleplaying_score_model"])
+            self.roleplaying_score_model = shared_model_content.clone()
         self.agent_logger = AgentInteractionLogger(world.oo_graph, target_node)
         provider.register_soul(self)
         self.world.oo_graph.room_id_to_loggers[

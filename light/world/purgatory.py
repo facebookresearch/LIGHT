@@ -40,7 +40,14 @@ class Purgatory:
         self.world = world
         self.player_assign_condition = threading.Condition()
         self.players = 0
+        self.player_args = None
 
+    def register_player_args(self, arg_provider):
+        """
+        Used to pass in e.g. the roleplaying model scorer to the player soul.
+        """
+        self.player_args = arg_provider
+        
     def register_filler_soul_provider(
         self,
         provider_name: str,
@@ -111,7 +118,8 @@ class Purgatory:
                 target_agent = random.choice(possible_agents)
                 self.clear_soul(target_agent)
                 soul = PlayerSoul(
-                    target_agent, self.world, self.players, player_provider
+                    target_agent, self.world, self.players, player_provider,
+                    self.player_args
                 )
                 self.node_id_to_soul[target_agent.node_id] = soul
                 self.player_soul_id_to_soul[self.players] = soul
