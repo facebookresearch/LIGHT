@@ -316,7 +316,7 @@ class QuestCreator:
         # Assign XP.
         if not hasattr(actor, "xp"):
             actor.xp = 0
-        xp = quest.get("goal_xp", 2)
+        xp = quest.get("goal_xp", 50)
         actor.xp += xp
 
         if actor.node_id == quest["actor"]:
