@@ -235,7 +235,7 @@ class QuestCreator:
 
     def create_random_quest(actor, graph):
         q_verb = random.choice(list(QuestCreator.templates.keys()))
-        # q_verb = "obtain"
+        q_verb = "obtain"
         q_txt = random.choice(QuestCreator.templates[q_verb])
         obj = None
         loc = None

@@ -240,6 +240,9 @@ class BaseSoul(Soul):
         return human_rank, human_score
 
     def score_conversation(self):
+        if not hasattr(self, 'roleplaying_score_model'):
+            return 3
+            
         context1 = self.build_dialog_context()
         # print(context)
         contextsplit = context1.split("\n")

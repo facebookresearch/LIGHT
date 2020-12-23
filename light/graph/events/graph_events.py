@@ -3480,10 +3480,12 @@ class HealthEvent(NoArgumentEvent):
         health_text, sentiment = self.__health_text
         if viewer == self.actor:
             s = ""
-            xp = 0
-            if hasattr(self.actor, 'xp'):
-                xp = self.actor.xp
-            s += f"Experience Points: {xp}\n"
+            if self.text_content is None:
+                # actual self "health" call, show experience points.
+                xp = 0
+                if hasattr(self.actor, 'xp'):
+                    xp = self.actor.xp
+                s += f"Experience Points: {xp}\n"
             if self.text_content == "HealthOnMoveEvent":
                 s += "You are getting tired from your travels. "
             s += f"You are currently feeling {health_text}."
