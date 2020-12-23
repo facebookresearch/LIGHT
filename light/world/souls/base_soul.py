@@ -224,7 +224,7 @@ class BaseSoul(Soul):
         act = {
             "text": context,
             "id": "persona",
-            "episode_done": False,
+            "episode_done": True,
         }
         self.roleplaying_score_model.observe(deepcopy(act))
         _ = self.roleplaying_score_model.act()
