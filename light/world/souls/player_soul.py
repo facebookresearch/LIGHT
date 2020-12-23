@@ -53,8 +53,7 @@ class PlayerSoul(BaseSoul):
             )
             target_node.persona += QUEST_TEXT + target_quest[goal]
         if shared_model_content is not None:
-            # self.roleplaying_score_model = create_agent_from_shared(shared_model_content["roleplaying_score_model"])
-            self.roleplaying_score_model = shared_model_content.clone()
+             self.roleplaying_score_model = shared_model_content.clone()
         self.agent_logger = AgentInteractionLogger(world.oo_graph, target_node)
         provider.register_soul(self)
         self.world.oo_graph.room_id_to_loggers[
