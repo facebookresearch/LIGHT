@@ -72,7 +72,7 @@ def add_cands(msg, cands):
     c = []
     ind = 1
     c.append(msg['labels'][0])
-    for i in range(0, 100):
+    for i in range(0, 40):
         while True:
             txt = cands[ind]
             if txt != msg['labels'][0]:
@@ -86,20 +86,28 @@ def add_cands(msg, cands):
 def interactive(opt):
     quests = QuestLoader('/checkpoint/light/data/quests/quest_stems/')
     # try to load cands
-    if os.path.isfile(opt['cands_file']):
-        f = open(opt['cands_file'], "r")
-        cands = []
+    if os.path.isfile(opt['cands_file'] + ".train"):
+        f = open(opt['cands_file'] + ".train", "r")
+        cands_train = []
         for w in f.readlines():
-            cands.append(w.rstrip('\n'))
+            cands_train.append(w.rstrip('\n'))
+        f.close()
+        f = open(opt['cands_file'] + ".valid", "r")
+        cands_valid = []
+        for w in f.readlines():
+            cands_valid.append(w.rstrip('\n'))
         f.close()
     else:
-        cands = None
+        cands_train = None
+        cands_valid = None
 
     fw = open('/tmp/train.txt', 'w')
     for j in range(0, len(quests.quests)):
         if (j % 40) != 0:
             for i in range(0, 10):
                 msg = gen_quest(quests.quests[j])
+                if cands_train is not None:
+                    add_cands(msg, cands_train)
                 txt = msg_to_str(msg)
                 fw.write(txt + '\n\n')
     fw.close()
@@ -109,8 +117,8 @@ def interactive(opt):
         if (j % 40) == 0:
             for i in range(0, 10):
                 msg = gen_quest(quests.quests[j])
-                if cands is not None:
-                    add_cands(msg, cands)
+                if cands_valid is not None:
+                    add_cands(msg, cands_valid)
                 txt = msg_to_str(msg)
                 fw.write(txt + '\n\n')
     fw.close()

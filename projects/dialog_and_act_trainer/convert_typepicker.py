@@ -52,6 +52,7 @@ def clean(msg):
     if '_self_emote' in last_t:
         typepick = 'emote'
     msg.force_set('labels', [ typepick ])
+    msg.force_set('label_candidates', [ 'dialog', 'act', 'emote' ])
     #print(res)
     #print(msg['labels'])
     #import pdb; pdb.set_trace()
