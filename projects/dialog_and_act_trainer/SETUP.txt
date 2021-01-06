@@ -34,3 +34,9 @@ cp  <blahblah..>   /checkpoint/light/projects/dialog_and_act_trainer/raw/light_e
 py convert.py -t fromfile -ffdp  /checkpoint/light/projects/dialog_and_act_trainer/raw/light_train.txt  -of  /checkpoint/light/projects/dialog_and_act_trainer/light_train.txt
 
 etc.   (for all the files in  /checkpoint/light/projects/dialog_and_act_trainer/raw/ .. )
+
+AND
+
+# for the type picker (dialog, act, emote) task:
+
+py convert_typepicker.py -t fromfile -ffdp  /checkpoint/light/projects/dialog_and_act_trainer/raw/light_train.txt  -of  /checkpoint/light/projects/dialog_and_act_trainer/light_typepicker_train.txt
