@@ -1,0 +1,36 @@
+
+
+# flatten light data (train)
+py ParlAI/parlai/scripts/convert_data_to_parlai_format.py -t internal:flattened:task:light_dialog
+cp /tmp/internal:flattened:task:light_dialog_train:stream_c6w55r4x.txt /checkpoint/light/projects/dialog_and_act_trainer/raw/light_train.txt
+
+# flatten light wild data (train)
+py ParlAI/parlai/scripts/convert_data_to_parlai_format.py -t internal:flattened:task:light_dialog_wild
+cp /tmp/internal:flattened:task:light_dialog_wild_train:stream_p9mrwgtq.txt  /checkpoint/light/projects/dialog_and_act_trainer/raw/light_wild_train.txt
+
+# flatten light wild data (valid)
+py ParlAI/parlai/scripts/convert_data_to_parlai_format.py -t internal:flattened:task:light_dialog_wild -dt valid
+cp  /tmp/internal:flattened:task:light_dialog_wild_valid_38xcfjem.txt  /checkpoint/light/projects/dialog_and_act_trainer/raw/light_wild_valid.txt
+
+
+# flatten light wild data (test)
+py ParlAI/parlai/scripts/convert_data_to_parlai_format.py -t internal:flattened:task:light_dialog_wild -dt test
+cp  <blahblah..>  /checkpoint/light/projects/dialog_and_act_trainer/raw/light_wild_test.txt
+
+
+# flatten light wild data for actions (train)
+py ParlAI/parlai/scripts/convert_data_to_parlai_format.py -t internal:flattened:task:light_dialog --light-label-type action
+cp  <blahblah..>   /checkpoint/light/projects/dialog_and_act_trainer/raw/light_act_train.txt
+
+# flatten light wild data for emotes (train)
+py ParlAI/parlai/scripts/convert_data_to_parlai_format.py -t internal:flattened:task:light_dialog --light-label-type emote
+cp  <blahblah..>   /checkpoint/light/projects/dialog_and_act_trainer/raw/light_emote_train.txt
+
+----------------------------
+
+
+# Finally, we make the actual data we want:
+
+py convert.py -t fromfile -ffdp  /checkpoint/light/projects/dialog_and_act_trainer/raw/light_train.txt  -of  /checkpoint/light/projects/dialog_and_act_trainer/light_train.txt
+
+etc.   (for all the files in  /checkpoint/light/projects/dialog_and_act_trainer/raw/ .. )

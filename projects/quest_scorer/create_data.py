@@ -4,7 +4,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-py interactive_action_parser.py -mf /checkpoint/jase/projects/light/parser/parser2/34c_jobid=1/model
+
+After running this, to build cands:
+py  ~/src/ParlAI/parlai/scripts/build_candidates.py -t fromfile -ffdp /tmp/valid.txt 
+Then add cands to loading.
+
 """
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
@@ -17,42 +21,16 @@ from parlai.utils.misc import msg_to_str
 from light.world.action_parser import ActionParser
 from light.world.quest_loader import QuestLoader
 import random
+import os
+import torch
 
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, "Interactive chat with a model")
-    parser.add_argument("-d", "--display-examples", type="bool", default=False)
     parser.add_argument(
-        "--display-prettify",
-        type="bool",
-        default=False,
-        help="Set to use a prettytable when displaying "
-        "examples with text candidates",
-    )
-    parser.add_argument(
-        "--display-ignore-fields",
+        "--cands-file",
         type=str,
-        default="label_candidates,text_candidates",
-        help="Do not display these fields",
-    )
-    parser.add_argument(
-        "-it",
-        "--interactive-task",
-        type="bool",
-        default=True,
-        help="Create interactive version of task",
-    )
-    parser.add_argument(
-        "--save-world-logs",
-        type="bool",
-        default=False,
-        help="Saves a jsonl file containing all of the task examples and "
-        "model replies. Must also specify --report-filename.",
-    )
-    parser.add_argument(
-        "--parser-model-file",
-        type=str,
-        default="/checkpoint/jase/projects/light/parser/parser3/34c_jobid=1/model"
+        default="/tmp/cands.txt"
     )
     parser.set_defaults(interactive_mode=True, task="interactive")
     LocalHumanAgent.add_cmdline_args(parser)
@@ -67,6 +45,7 @@ def gen_quest(q):
     partner_name = 'unknown'
     object_name = 'unknown'
     goals = [ q['goal'] ]
+    #import pdb; pdb.set_trace()
     for g in q['timeline']:
         goals.append(g['action'])
     goal_txt = random.choice(goals)
@@ -76,20 +55,45 @@ def gen_quest(q):
         'persona: ' + random.choice([q['persona'], 'unknown']),
         #'partner: ' + partner_name,
         #'object:' + object_name,
-        'goal: ' + goal_txt,
-        'task: ' + motivation
+        #'goal: ' + goal_txt,
+        'goal: ' + random.choice([motivation_txt, 'unknown'])
     ])
     lab = motivation_txt
-    msg['labels'] = [ lab ]
+    msg['labels'] = [ goal_txt ]
     msg['episode_done'] = True
     #print(msg['text'])
     #print(lab)
     #import pdb; pdb.set_trace()
     return msg
 
+
+def add_cands(msg, cands):
+    p = torch.randperm(len(cands))
+    c = []
+    ind = 1
+    c.append(msg['labels'][0])
+    for i in range(0, 100):
+        while True:
+            txt = cands[ind]
+            if txt != msg['labels'][0]:
+                c.append(txt)
+                ind += 1
+                break
+            else:
+                ind += 1
+    msg['label_candidates'] = c
+                
 def interactive(opt):
-    # quests = QuestLoader('/checkpoint/light/data/quests/quest_stems/')    
-    quests = QuestLoader('/tmp/q/approved/')
+    quests = QuestLoader('/checkpoint/light/data/quests/quest_stems/')
+    # try to load cands
+    if os.path.isfile(opt['cands_file']):
+        f = open(opt['cands_file'], "r")
+        cands = []
+        for w in f.readlines():
+            cands.append(w.rstrip('\n'))
+        f.close()
+    else:
+        cands = None
 
     fw = open('/tmp/train.txt', 'w')
     for j in range(0, len(quests.quests)):
@@ -105,6 +109,8 @@ def interactive(opt):
         if (j % 40) == 0:
             for i in range(0, 10):
                 msg = gen_quest(quests.quests[j])
+                if cands is not None:
+                    add_cands(msg, cands)
                 txt = msg_to_str(msg)
                 fw.write(txt + '\n\n')
     fw.close()
