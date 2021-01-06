@@ -88,6 +88,7 @@ def gen_quest(q):
     return msg
 
 def interactive(opt):
+    # quests = QuestLoader('/checkpoint/light/data/quests/quest_stems/')    
     quests = QuestLoader('/tmp/q/approved/')
 
     fw = open('/tmp/train.txt', 'w')
