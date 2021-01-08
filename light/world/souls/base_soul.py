@@ -30,7 +30,7 @@ class BaseSoul(Soul):
         super().__init__(target_node, world)
         self.target_node._last_interaction_partner_id = None
         self.reset_interaction_history(self.target_node)
-
+        
     def get_last_interaction_partner(self, node=None):
         if node == None:
             node = self.target_node
@@ -170,7 +170,6 @@ class BaseSoul(Soul):
         """
         agent = self.target_node
         room = agent.get_room()
-        txt = "_task_speech\n"
         txt += "_setting_name " + room.name + "\n"
         txt += "_setting_desc " + room.desc + "\n"
         if partner_name is not None:

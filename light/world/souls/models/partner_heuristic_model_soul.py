@@ -250,12 +250,14 @@ class PartnerHeuristicModelSoul(OnEventSoul):
             partner_name = None
 
         quest_txt = None
+        if not hasattr(agent, 'quests') or agent.quests is None:
+            agent.quests = []
         if len(agent.quests) > 0 and self.conversation_score(partner) > 5:
             quest_text = " " + agent.quests[0]["text"]
 
         context = self.build_dialog_context(quest_txt)
 
-        context.replace("_task_speech", "_task_typepicker")
+        context = "_task_typepicker\n" + context
         cands = ["dialog", "act", "emote"]
         msg = {
             "text": context,
@@ -271,7 +273,7 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         # Heuristic modifiers to make it more reasonable:  dialog*0.9, act*1.0, emote*1.1
         scores["dialog"] *= 0.9
         scores["emote"] *= 1.1
-        scores["act"] *= 1.0
+        scores["act"] *= 1.04
         best_score = -1000
         best_type = "dialog"
         for k, v in scores.items():
@@ -285,9 +287,6 @@ class PartnerHeuristicModelSoul(OnEventSoul):
             cands = []
             if len(cands_set) == 0:
                 # nothing to do here.
-                import pdb
-
-                pdb.set_trace()
                 return False
             # remove some actions
             for c in cands_set:
@@ -375,10 +374,13 @@ class PartnerHeuristicModelSoul(OnEventSoul):
             return
 
         quest_txt = None
+        if hasattr(agent, 'quests') or agent.quests is None:
+            agent.quests = []
         if len(agent.quests) > 0 and self.conversation_score(partner) > 5:
             quest_text = " " + agent.quests[0]["text"]
         context = self.build_dialog_context(quest_txt)
-
+        context = "_task_speech\n" + context
+        
         if obs is not None and obs.text_content == "DEBUG":
             # print debug information instead
             event = SayEvent(agent, target_nodes=[], text_content="DEBUG: " + context)
