@@ -569,7 +569,7 @@ class GraphAgent(GraphNode):
 
         if self.on_events is None:
             self.on_events = []
-        self.quests = self._props.get("quests", None)
+        self.quests = self._props.get("quests", [])
 
         # Game properties to track for this agent, TODO move to other class?
         self._human = False

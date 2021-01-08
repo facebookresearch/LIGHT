@@ -14,6 +14,8 @@ from parlai.core.agents import create_agent, create_agent_from_shared
 
 from typing import TYPE_CHECKING, List
 
+from light.graph.events.graph_events import EmoteEvent
+
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
     from light.graph.world.world import World
@@ -179,18 +181,19 @@ class PartnerHeuristicModelSoul(OnEventSoul):
     def npc_pick_non_repeating_action(self, act):
         """
         Only return an actual action if it's either hit or hasn't been done in
-        the last 4 turns
+        the last turn
         """
-        self._ensure_agent_has_action_history(self.target_node)
-        t = act["text_candidates"][0]
+        agent = self.target_node
+        self.ensure_agent_has_action_history(agent)
+        t = act
+        if t in agent._action_history and not t.startswith("hit"):
+            return None
+        agent._action_history = [t]
+        return t
 
-        # Hit actions are allowed to repeat because we expect such
-        # behavior in a combat setting
-        if t not in self.target_node._action_history or t.startswith("hit"):
-            self.target_node._action_history.append(t)
-            return t
-        # If the top action was too recent, let's do nothing.
-        return None
+    def ensure_agent_has_action_history(self, agent):
+        if not hasattr(agent, "_action_history"):
+            agent._action_history = []
 
     def ensure_agent_has_utterance_history(self, agent):
         if not hasattr(agent, "_utterance_history"):
@@ -229,14 +232,15 @@ class PartnerHeuristicModelSoul(OnEventSoul):
         """
         Agent attempt to take an action
         """
-        if self.get_last_turn_too_recent() or random.random() > TAKE_ACTION_CHANCE:
-            return
-
-        # Self action history
-        speech_act_hist = self._dialogue_history["speech+act"]
+        # if self.get_last_turn_too_recent() or random.random() > TAKE_ACTION_CHANCE:
+        #    return
 
         # Get agents
         agent = self.target_node
+        partner_id = self.get_last_interaction_partner(agent)
+        if partner_id is None:
+            return
+        partner = self.world.oo_graph.get_node(partner_id)
         agent_id = agent.node_id
         partner_id = self.get_last_interaction_partner()
         if partner_id != None:
@@ -246,30 +250,98 @@ class PartnerHeuristicModelSoul(OnEventSoul):
             partner_name = None
 
         quest_txt = None
+        if not hasattr(agent, 'quests') or agent.quests is None:
+            agent.quests = []
         if len(agent.quests) > 0 and self.conversation_score(partner) > 5:
             quest_text = " " + agent.quests[0]["text"]
 
-        txt = self.npc_build_context(partner_name, quest_txt)
-        for d in speech_act_hist:
-            txt += d
-        cands = self.world.get_possible_actions(agent_id)
-        if len(cands) == 0:
-            # nothing to do here.
-            return
+        context = self.build_dialog_context(quest_txt)
+
+        context = "_task_typepicker\n" + context
+        cands = ["dialog", "act", "emote"]
         msg = {
-            "text": txt,
+            "text": context,
             "episode_done": True,
             "label_candidates": cands,
             "eval_labels": [cands[0]],
         }
         self.npc_act_model.observe(msg)
         act = self.npc_act_model.act()
-        act_text = self.npc_pick_non_repeating_action(act)
-        if act_text is None:
-            return
+        scores = {}
+        for i in range(0, 3):
+            scores[act["text_candidates"][i]] = float(act["sorted_scores"][i])
+        # Heuristic modifiers to make it more reasonable:  dialog*0.9, act*1.0, emote*1.1
+        scores["dialog"] *= 0.9
+        scores["emote"] *= 1.1
+        scores["act"] *= 1.04
+        best_score = -1000
+        best_type = "dialog"
+        for k, v in scores.items():
+            if v > best_score:
+                best_score = v
+                best_type = k
 
-        self.log_act_history(act_text, is_self=True)
-        self.world.parse_exec(agent_id, act_text)
+        if best_type == "act":
+            context.replace("_task_typepicker", "_task_act")
+            cands_set = self.world.get_possible_actions(agent_id)
+            cands = []
+            if len(cands_set) == 0:
+                # nothing to do here.
+                return False
+            # remove some actions
+            for c in cands_set:
+                if (
+                    c.startswith("get")
+                    or c.startswith("give")
+                    or c.startswith("drop")
+                    or c.startswith("hug")
+                    or c.startswith("equip")
+                    or c.startswith("wield")
+                    # c.startswith('examine') or
+                    # c.startswith('look')
+                    # c.startswith('folllow') or
+                ):
+                    cands.append(c)
+            if len(cands) == 0:
+                # nothing to do here.
+                return False
+            msg = {
+                "text": context,
+                "episode_done": True,
+                "label_candidates": cands,
+                "eval_labels": [cands[0]],
+            }
+            self.npc_act_model.observe(msg)
+            act = self.npc_act_model.act()
+            act_text = act["text"]
+            act_text = self.npc_pick_non_repeating_action(act_text)
+            if act_text is None:
+                return
+            self.world.parse_exec(agent_id, act_text)
+            return True
+
+        if best_type == "emote":
+            context.replace("_task_typepicker", "_task_emote")
+            cands = "ponder|nod|sigh|grin|frown|shrug|blush|smile|gasp|cry|groan|laugh|scream|dance|growl|stare|wink|nudge|pout|applaud|wave|yawn"
+            cands = cands.split("|")
+            msg = {
+                "text": context,
+                "episode_done": True,
+                "label_candidates": cands,
+                "eval_labels": [cands[0]],
+            }
+            self.npc_act_model.observe(msg)
+            act = self.npc_act_model.act()
+            act_text = act["text"]
+            act_text = self.npc_pick_non_repeating_action(act_text)
+            if act_text is None:
+                return
+            do_event = EmoteEvent.construct_from_args(agent, targets=[], text=act_text)
+            if do_event.__class__.__name__ != "ErrorEvent":
+                do_event.execute(self.world)
+            # self.log_act_history(act_text, is_self=True)
+            return True
+        return False
 
     def npc_dialogue(self, obs=None):
         """
@@ -302,10 +374,13 @@ class PartnerHeuristicModelSoul(OnEventSoul):
             return
 
         quest_txt = None
+        if hasattr(agent, 'quests') or agent.quests is None:
+            agent.quests = []
         if len(agent.quests) > 0 and self.conversation_score(partner) > 5:
             quest_text = " " + agent.quests[0]["text"]
         context = self.build_dialog_context(quest_txt)
-
+        context = "_task_speech\n" + context
+        
         if obs is not None and obs.text_content == "DEBUG":
             # print debug information instead
             event = SayEvent(agent, target_nodes=[], text_content="DEBUG: " + context)
@@ -375,17 +450,9 @@ class PartnerHeuristicModelSoul(OnEventSoul):
             # TODO: would need to reset both partners.
             # self.reset_interaction_history()
 
-        # NPC heuristics, etc.
-        # super().timestep_actions()
+        # NPC heuristics: attack, random movement
+        acted = False  # super().timestep_actions()
 
-        if False:
-            # random movement for npcs..
-            if random.randint(0, 1000) < agent.speed:
-                go_events = self.world.get_possible_events(agent_id, use_actions=["go"])
-                if len(go_events) > 0:
-                    go_event = random.choice(go_events)
-                    go_event.execute(self.world)
-                    return
-
-            # possibly act according to the bert model
-            # self.npc_action()
+        # Possibly act according to the transformer model
+        if not acted:
+            self.npc_action()

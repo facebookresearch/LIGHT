@@ -99,7 +99,10 @@ parser.add_argument(
         "GenerativeHeuristicModelSoul",
     },
 )
-parser.add_argument("--light-model-root", type=str, default="/checkpoint/light/models/")
+parser.add_argument("--light-model-root", type=str,
+                    default="/scratch/light/models/"
+                    #default="/checkpoint/light/models/"
+)
 parser.add_argument(
     "--load-map", type=str, default="scripts/examples/simple_world.json"
 )
@@ -107,15 +110,13 @@ parser.add_argument("--dont-catch-errors", type="bool", default=True)
 parser.add_argument(
     "--safety-classifier-path",
     type=str,
-    default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
+    default="",
+    #default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
 )
 parser.add_argument(
     "--roleplaying-score-model-file",
     type=str,
     default = "",
-    # default = "/checkpoint/jase/projects/light/beatthehobbot/swp6_light_bi/actmodelv2/model",
-    # default="/checkpoint/light/models/speech/orig_light_poly/model",
-    # default="/checkpoint/jase/projects/light/beatthehobbot/swp5_light_neg/neg-hist-cands=100_poly-n-codes=20_jobid=4/model",
     # default="/checkpoint/light/models/game2020/roleplay_scorer/model",
 )
 parser.add_argument(
@@ -153,10 +154,10 @@ if opt["use_models"] == "PartnerHeuristicModelSoul":
 if opt["use_models"] == "GenerativeHeuristicModelSoul":
     light_model_root = opt["light_model_root"]
     shared_model_content = PartnerHeuristicModelSoul.load_models(
-        light_model_root + "speech2/gen_boring_unlikelihood/model",
+        light_model_root + "game2021/gen_dialog_model/model.checkpoint",
         light_model_root + "speech_train_cands.txt",
         light_model_root + "agent_to_utterance_trainset.txt",
-        light_model_root + "main_act/model",
+        light_model_root + "game2021/act_model/model",
     )
 
 
