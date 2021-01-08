@@ -46,8 +46,6 @@ else:
     quest_loader = None
 here = os.path.abspath(os.path.dirname(__file__))
 
-init_safety_classifier(os.path.expanduser("~/data/safety/OffensiveLanguage.txt"))
-
 _seen_warnings = set()
 
 """
@@ -524,6 +522,8 @@ def main():
         help="port to run the server on.",
     )
     FLAGS = parser.parse_args()
+
+    init_safety_classifier(os.path.expanduser("~/data/safety/OffensiveLanguage.txt"))
 
     random.seed(6)
     numpy.random.seed(6)

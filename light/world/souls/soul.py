@@ -46,6 +46,8 @@ class Soul(ABC):
             try:
                 await _observe_future
                 del self._observe_futures[future_id]
+            except CancelledError:
+                return
             except Exception as e:
                 print(f"Error when running observe for soul {self}: {repr(e)}")
                 import traceback

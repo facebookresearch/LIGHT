@@ -87,7 +87,7 @@ class RegistryApplication(tornado.web.Application):
         else:
             game = GameInstance(game_id, ldb, opt=vars(self.FLAGS))
             graph = game.g
-        game.fill_souls(self.model_resources)
+        game.fill_souls(self.FLAGS, self.model_resources)
 
         self.game_instances[game_id] = game
         game.register_provider(self.tornado_provider)

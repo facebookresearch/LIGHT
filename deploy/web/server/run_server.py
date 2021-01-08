@@ -22,6 +22,7 @@ from tornado.ioloop import IOLoop
 import inspect
 import os.path
 from light.data_model.light_database import LIGHTDatabase
+from light.graph.events.graph_events import init_safety_classifier
 from light.world.souls.models.generative_heuristic_model_soul import (
     GenerativeHeuristicModelSoul,
 )
@@ -109,14 +110,22 @@ def _run_server(FLAGS, ldb, model_resources):
         my_loop.stop()
 
 
-# Override this to be the model_resources needed for souls
-def init_model_resources(light_model_root):
+# Update this to load _all_ models for the full game
+def init_model_resources(FLAGS):
+    light_model_root = FLAGS.light_model_root
+    dialog_model = FLAGS.dialog_model
+    act_model = FLAGS.acting_model
+    # scoring_model = FLAGS.score_model
+
+    if dialog_model is None:
+        return {"shared_model_content": {}}
+
     # dialog gen is at `dialog_gen`, other is at `game_speech1`?
     shared_model_content = GenerativeHeuristicModelSoul.load_models(
-        light_model_root + "dialog_gen/model",
+        light_model_root + dialog_model,
         light_model_root + "speech_train_cands.txt",
         light_model_root + "agent_to_utterance_trainset.txt",
-        light_model_root + "main_act/model",
+        light_model_root + act_model,
     )
     resources = {"shared_model_content": shared_model_content}
     return resources
@@ -171,13 +180,43 @@ def main():
         default=DEFAULT_PORT,
         help="port to run the server on.",
     )
+    parser.add_argument(
+        "--safety-list",
+        metavar="safety_list",
+        type=str,
+        default=os.path.expanduser("~/data/safety/OffensiveLanguage.txt"),
+        help="Where to find the offensive language list.",
+    )
+    parser.add_argument(
+        "--builder-model",
+        metavar="builder_model",
+        type=str,
+        default=None,
+        help="Builder model to be loading",
+    )
+    parser.add_argument(
+        "--dialog-model",
+        metavar="dialog_model",
+        type=str,
+        default=None,
+        help="dialog model to be loading",
+    )
+    parser.add_argument(
+        "--acting-model",
+        metavar="acting_model",
+        type=str,
+        default=None,
+        help="acting model to be loading",
+    )
     FLAGS, _unknown = parser.parse_known_args()
 
     print(FLAGS)
 
+    init_safety_classifier(FLAGS.safety_list)
+
     random.seed(6)
     numpy.random.seed(6)
-    model_resources = init_model_resources(FLAGS.light_model_root)
+    model_resources = init_model_resources(FLAGS)
     ldb = LIGHTDatabase(FLAGS.data_model_db)
     _run_server(FLAGS, ldb, model_resources)
 

@@ -1,5 +1,5 @@
 --data-model-db
-/checkpoint/light/db/merged.db
+/checkpoint/light/data/merged2.db
 --hostname
 localhost
 --light-model-root
@@ -7,5 +7,10 @@ localhost
 --password
 LetsPlay
 --port
-35494
-
+35496
+--safety-list
+/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt
+--dialog-model
+speech/gen_boring_unlikelihood/model
+--acting-model
+main_act/model
