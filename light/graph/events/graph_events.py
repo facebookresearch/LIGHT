@@ -731,8 +731,8 @@ class FollowEvent(GraphEvent):
         follow_target = self.target_nodes[0]
         actor_name = self.actor.get_prefix_view()
         follow_name = follow_target.get_prefix_view()
-        self.__follow_view = f"You started following {follow_name}"
-        self.__followed_view = f"{actor_name} started following you"
+        self.__follow_view = f"You started following {follow_name}."
+        self.__followed_view = f"{actor_name} started following you."
 
         self.actor.follow(follow_target)
         world.broadcast_to_agents(self, [self.actor, self.target_nodes[0]])
@@ -2084,7 +2084,7 @@ class GiveObjectEvent(GraphEvent):
         recipient_text = self.__recipient_name
         if viewer == self.target_nodes[1]:
             recipient_text = "you"
-        return f"{actor_text} gave {self.__given_name} to {recipient_text}"
+        return f"{actor_text} gave {self.__given_name} to {recipient_text}."
 
     def to_canonical_form(self) -> str:
         """return action text for giving the object to the agent"""

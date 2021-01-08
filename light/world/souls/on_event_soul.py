@@ -93,7 +93,7 @@ class OnEventSoul(ModelSoul):
 
     def conversation_score(self, agent2):
         agent = self.target_node
-        if hasattr(agent2, '_agent_interactions'):
+        if hasattr(agent2, "_agent_interactions"):
             if agent.node_id in agent2._agent_interactions:
                 return agent2._agent_interactions[agent.node_id]
         return 0
@@ -138,10 +138,11 @@ class OnEventSoul(ModelSoul):
         agent = self.target_node
         event_name = event.__class__.__name__
         # Tell Mission to Other Agent (or not).
-        if (((event_name == "SayEvent" and event.actor != agent)
+        if (
+            (event_name == "SayEvent" and event.actor != agent)
             or event_name == "TellEvent"
             and event.actor != agent
-            and event.target_nodes[0] == agent)
+            and event.target_nodes[0] == agent
         ):
             about_goals = False
             for words in ["mission", "goal", "quest", "what you want"]:
@@ -173,12 +174,12 @@ class OnEventSoul(ModelSoul):
                     return True
             else:
                 pass
-                #say_text = random.choice(
+                # say_text = random.choice(
                 #    ["Interesting.", "Ok.", "Thanks for telling me."]
-                #)
-                #self.execute_event(["TellEvent", other_agent, say_text])
+                # )
+                # self.execute_event(["TellEvent", other_agent, say_text])
         return False
-    
+
     def resolve_object_string(self, agent, object_str):
         for id, obj in agent.contained_nodes.items():
             obj = obj._target_node
@@ -219,7 +220,7 @@ class OnEventSoul(ModelSoul):
 
         if not executed:
             self.on_events_heuristics(event)
-            
+
     def new_quest(self):
         graph = self.world.oo_graph
         actor = self.target_node
@@ -258,7 +259,7 @@ class OnEventSoul(ModelSoul):
         self.quest_events(event)
         self.on_events(event)
         self.tell_goal_heuristics(event)
-        
+
     def is_too_far(self, agent, room):
         # Check if it's too far from agent's starting room
         if not hasattr(agent, "start_loc"):
@@ -301,9 +302,6 @@ class OnEventSoul(ModelSoul):
         graph = self.world.oo_graph
         agent = self.target_node
         agent_id = agent.node_id
-
-        # Possibly create quest if we don't have one.
-        self.new_quest()
 
         # Attack if we have an aggression target
         if hasattr(agent, "aggression_target"):

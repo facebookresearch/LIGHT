@@ -34,7 +34,7 @@ arg1 = [
     "wear",
     "wield",
     "remove",
-    "examine"
+    "examine",
 ]
 for a in arg1:
     args[a] = 1
@@ -158,6 +158,6 @@ class ActionParser:
             new_txt += " with " + actor.name
 
         if new_txt in emotes:
-            new_txt = 'emote ' + new_txt
-            
+            new_txt = "emote " + new_txt
+
         return new_txt
