@@ -10,3 +10,5 @@ LetsPlay
 35496
 --safety-list
 ''
+--disable-builder
+True

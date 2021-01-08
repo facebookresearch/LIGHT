@@ -76,13 +76,15 @@ def make_app(FLAGS, ldb, model_resources):
     worldBuilderApp = BuildApplication(get_handlers(ldb), tornado_settings)
     landingApp = LandingApplication(ldb, FLAGS.hostname, FLAGS.password, tornado_settings)
     registryApp = RegistryApplication(FLAGS, ldb, model_resources, tornado_settings)
-    router = RuleRouter(
-        [
-            Rule(PathMatches("/builder.*"), worldBuilderApp),
-            Rule(PathMatches("/game.*"), registryApp),
-            Rule(PathMatches("/.*"), landingApp),
-        ]
-    )
+    rules = []
+    if FLAGS.disable_builder is None:
+        rules.append(Rule(PathMatches("/builder.*"), worldBuilderApp))
+    rules += [
+        Rule(PathMatches("/game.*"), registryApp),
+        Rule(PathMatches("/.*"), landingApp),
+    ]
+
+    router = RuleRouter(rules)
     server = HTTPServer(router)
     server.listen(FLAGS.port)
     return registryApp
@@ -207,6 +209,18 @@ def main():
         type=str,
         default=None,
         help="acting model to be loading",
+    )
+    parser.add_argument(
+        "--disable-builder",
+        metavar="disable_builder",
+        type=str,
+        default=None,
+        help="flag to disable the builder, omit to enable",
+    )
+    parser.add_argument(
+        "--parser-model-file",
+        type=str,
+        default=""
     )
     FLAGS, _unknown = parser.parse_known_args()
 

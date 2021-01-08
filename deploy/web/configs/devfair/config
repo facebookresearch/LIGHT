@@ -14,3 +14,5 @@ LetsPlay
 speech/gen_boring_unlikelihood/model
 --acting-model
 main_act/model
+--parser-model-file
+/checkpoint/jase/projects/light/parser/parser3/34c_jobid=1/model
