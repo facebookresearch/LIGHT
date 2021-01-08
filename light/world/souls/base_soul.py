@@ -170,7 +170,7 @@ class BaseSoul(Soul):
         """
         agent = self.target_node
         room = agent.get_room()
-        txt += "_setting_name " + room.name + "\n"
+        txt = "_setting_name " + room.name + "\n"
         txt += "_setting_desc " + room.desc + "\n"
         if partner_name is not None:
             txt += "_partner_name " + partner_name + "\n"
