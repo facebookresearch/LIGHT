@@ -30,7 +30,7 @@ from light.graph.events.safety import SafetyClassifier
 def init_safety_classifier(datapath):
     global safety_classifier
     if datapath is not None and len(datapath) > 0:
-        safety_classifier = SafetyClassifier(datapath)
+        safety_classifier = SafetyClassifier(datapath, True)
 
 
 if TYPE_CHECKING:
