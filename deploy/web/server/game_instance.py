@@ -129,6 +129,8 @@ class GameInstance:
             )
         for empty_agent in self.g.oo_graph.agents.values():
             purgatory.fill_soul(empty_agent)
+        if model_resources.get('rpg_score_model') is not None:
+            purgatory.register_player_args(model_resources['rpg_score_model'])
 
     def register_provider(self, provider):
         self.providers.append(provider)

@@ -17,6 +17,7 @@ from tornado.routing import (
     Rule,
     RuleRouter,
 )
+from light.world.souls.base_soul import BaseSoul
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 import inspect
@@ -117,7 +118,7 @@ def init_model_resources(FLAGS):
     light_model_root = FLAGS.light_model_root
     dialog_model = FLAGS.dialog_model
     act_model = FLAGS.acting_model
-    # scoring_model = FLAGS.score_model
+    scoring_model = FLAGS.roleplaying_score_model_file
 
     if dialog_model is None:
         return {"shared_model_content": {}}
@@ -130,6 +131,12 @@ def init_model_resources(FLAGS):
         light_model_root + act_model,
     )
     resources = {"shared_model_content": shared_model_content}
+    
+    if scoring_model is not None:
+        resources['rpg_score_model'] = BaseSoul.load_roleplaying_score_model(
+            scoring_model
+        )
+    
     return resources
 
 
@@ -221,6 +228,15 @@ def main():
         "--parser-model-file",
         type=str,
         default=""
+    )
+    parser.add_argument(
+        "--roleplaying-score-model-file",
+        type=str,
+        # default = "",
+        # default = "/checkpoint/jase/projects/light/beatthehobbot/swp6_light_bi/actmodelv2/model",
+        # default="/checkpoint/light/models/speech/orig_light_poly/model",
+        # default="/checkpoint/jase/projects/light/beatthehobbot/swp5_light_neg/neg-hist-cands=100_poly-n-codes=20_jobid=4/model",
+        default="/checkpoint/light/models/game2020/roleplay_scorer/model",
     )
     FLAGS, _unknown = parser.parse_known_args()
 
