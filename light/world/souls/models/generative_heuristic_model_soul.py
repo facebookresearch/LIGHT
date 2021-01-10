@@ -63,7 +63,10 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             "-dt",
             "valid",
             "--inference",
-            "beam",
+            #"beam",
+            "topk",
+            "--topk",
+            "40",
             "--beam-context-block-ngram",
             "3",
             "--beam-block-ngram",
@@ -85,6 +88,8 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             "beam_size": 2,
             "beam_min_length": 20,
         }
+        dialog_opt['override']['inference'] = 'topk'
+        dialog_opt['override']['topk'] = 40
         return create_agent(dialog_opt, requireModelExists=True)
 
     @classmethod
@@ -381,6 +386,12 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             quest_text = " " + agent.quests[0]["text"]
         context = self.build_dialog_context(quest_txt)
         context = "_task_speech\n" + context
+
+        # Add knowledge test (commented for now, as it didn't seem to work well)
+        #contexts = context.split('\n')
+        #contexts[-2] += " The milkman is to the south."
+        #context = '\n'.join(contexts); print(context)
+        #context = context.replace('_self_persona ', "_self_persona I believe the milk man is south of here. ")
         
         if obs is not None and obs.text_content == "DEBUG":
             # print debug information instead
