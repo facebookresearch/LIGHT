@@ -387,13 +387,11 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         context = self.build_dialog_context(quest_txt)
         context = "_task_speech\n" + context
 
-        # Add knowledge.
-        contexts = context.split('\n')
-        contexts[-2] += " The milkman is to the south."
-        context = '\n'.join(contexts); print(context)
-        
+        # Add knowledge test (commented for now, as it didn't seem to work well)
+        #contexts = context.split('\n')
+        #contexts[-2] += " The milkman is to the south."
+        #context = '\n'.join(contexts); print(context)
         #context = context.replace('_self_persona ', "_self_persona I believe the milk man is south of here. ")
-        #import pdb; pdb.set_trace()
         
         if obs is not None and obs.text_content == "DEBUG":
             # print debug information instead
