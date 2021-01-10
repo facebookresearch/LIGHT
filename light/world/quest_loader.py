@@ -124,8 +124,12 @@ class QuestCreator:
         return dist
 
     def score_agent(actor, agent):
-        return -QuestCreator.distance(actor, agent)
-
+        score = -QuestCreator.distance(actor, agent)
+        if (score == 0):
+            # Don't want a too easy task that's in the same room usually.
+            score -=2
+        return score
+        
     def score_object(actor, obj):
         return -QuestCreator.distance(actor, obj)
 
