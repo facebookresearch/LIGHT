@@ -224,7 +224,11 @@ class OnEventSoul(ModelSoul):
     def new_quest(self):
         graph = self.world.oo_graph
         actor = self.target_node
-        quest = QuestCreator.create_quest(actor, graph)
+        if hasattr(self, 'npc_act_model'):
+            quest = QuestCreator.create_quest(actor, graph, self.npc_act_model)
+        else:
+            # no model for generating quests
+            quest = QuestCreator.create_quest(actor, graph)
         if quest is not None:
             self.world.send_msg(actor, "New Quest: " + quest["text"])
 
