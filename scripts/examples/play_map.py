@@ -20,9 +20,6 @@ from light.world.world import World
 from light.world.souls.base_soul import BaseSoul
 from light.world.souls.repeat_soul import RepeatSoul
 from light.world.souls.on_event_soul import OnEventSoul
-from light.world.souls.models.partner_heuristic_model_soul import (
-    PartnerHeuristicModelSoul,
-)
 from light.world.souls.models.generative_heuristic_model_soul import (
     GenerativeHeuristicModelSoul,
 )
@@ -40,15 +37,11 @@ shared_model_content = None
 def init_world(world_builder):
     g, world = world_builder.get_graph()
     purgatory = world.purgatory
-    if opt["roleplaying_score_model_file"] != "":
-        purgatory.register_player_args(rpg_model_content)
-
+    purgatory.register_shared_args('rpg_model', rpg_model_content)
+    purgatory.register_shared_args('generic_act_model', generic_act_model_content)
+    
     # Choose the type of NPC souls.
-    if opt["use_models"] == "PartnerHeuristicModelSoul":
-        purgatory.register_filler_soul_provider(
-            "model", PartnerHeuristicModelSoul, lambda: [shared_model_content]
-        )
-    elif opt["use_models"] == "GenerativeHeuristicModelSoul":
+    if opt["use_models"] == "GenerativeHeuristicModelSoul":
         purgatory.register_filler_soul_provider(
             "model", GenerativeHeuristicModelSoul, lambda: [shared_model_content]
         )
@@ -95,7 +88,6 @@ parser.add_argument(
     choices={
         "OnEventSoul",
         "RepeatSoul",
-        "PartnerHeuristicModelSoul",
         "GenerativeHeuristicModelSoul",
     },
 )
@@ -116,8 +108,13 @@ parser.add_argument(
 parser.add_argument(
     "--roleplaying-score-model-file",
     type=str,
-    default = "",
-    # default="/checkpoint/light/models/game2020/roleplay_scorer/model",
+    #default = "",
+    default="/checkpoint/light/models/game2020/roleplay_scorer/model",
+)
+parser.add_argument(
+    "--generic-act-model-file",
+    type=str,
+    default = "/scratch/light/models/game2021/act_model/model",
 )
 parser.add_argument(
     "--parser-model-file",
@@ -141,24 +138,22 @@ if opt["roleplaying_score_model_file"] != "":
     rpg_model_content = BaseSoul.load_roleplaying_score_model(
         opt["roleplaying_score_model_file"]
     )
-
-if opt["use_models"] == "PartnerHeuristicModelSoul":
-    light_model_root = opt["light_model_root"]
-    shared_model_content = PartnerHeuristicModelSoul.load_models(
-        light_model_root + "game_speech1/model",
-        light_model_root + "speech_train_cands.txt",
-        light_model_root + "agent_to_utterance_trainset.txt",
-        light_model_root + "main_act/model",
+else:
+    rpg_model_content = None
+    
+if opt["generic_act_model_file"] != "":
+    generic_act_model_content = BaseSoul.load_generic_act_model(
+        opt["generic_act_model_file"]
     )
-
+else:
+    generic_act_model_content = None
+    
 if opt["use_models"] == "GenerativeHeuristicModelSoul":
     light_model_root = opt["light_model_root"]
-    shared_model_content = PartnerHeuristicModelSoul.load_models(
+    shared_model_content = GenerativeHeuristicModelSoul.load_models(
         light_model_root + "game2021/gen_dialog_model/model.checkpoint",
-        light_model_root + "speech_train_cands.txt",
-        light_model_root + "agent_to_utterance_trainset.txt",
-        light_model_root + "game2021/act_model/model",
     )
+    shared_model_content['shared_action_model'] = generic_act_model_content.share()
 
 
 if __name__ == "__main__":

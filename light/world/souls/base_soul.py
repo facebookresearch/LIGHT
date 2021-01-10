@@ -206,8 +206,39 @@ class BaseSoul(Soul):
             turn_id = current_turn_id
         return txt + dtxt
 
-    ## ----- ROLE PLAYING SCORE FUNCTIONS BELOW
 
+    @classmethod
+    def load_generic_act_model(cls, generic_act_model_file):
+        """
+        Load up and create shared retrieval model for acts, emotes and quest scoring, etc.
+        """
+        # TODO refactor with some kind of model-loading standard for model souls?
+        from parlai.core.params import ParlaiParser
+        from parlai.core.agents import create_agent
+
+        parser = ParlaiParser(True, True, "")
+        # Load action model
+        args = [
+            "-mf",
+            generic_act_model_file,
+            "-ecands",
+            "inline",
+            "--ignore-bad-candidates",
+            "True",
+        ]
+        act_opt, _unknown = parser.parse_and_process_known_args(args=args)
+        act_opt["override"] = {
+            "eval_candidates": "inline",
+            "ignore_bad_candidates": "True",
+        }
+        act_opt["interactive_mode"] = True
+        act_opt["ignore_bad_candidates"] = True
+        print("[ Creating generic act model ... ]")
+        action_model = create_agent(act_opt, requireModelExists=True)
+        return action_model
+        
+    ## ----- ROLE PLAYING SCORE FUNCTIONS BELOW        
+        
     @classmethod
     def load_roleplaying_score_model(cls, roleplaying_score_model_file):
         """
@@ -243,6 +274,7 @@ class BaseSoul(Soul):
         # override eval step here
         roleplaying_score_model.eval_step = roleplaying_score_model.eval_step_scoresonly
         return roleplaying_score_model
+
 
     def too_much_string_overlap(self, s1, s2):
         """
