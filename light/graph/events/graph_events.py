@@ -1174,7 +1174,9 @@ class HitEvent(GraphEvent):
             health = max(0, health - (self.attack - self.defend))
             attack_target.health = health
             if health == 0:
-                DeathEvent(attack_target).execute(world)
+                # turn off death for now
+                health = 1
+                # DeathEvent(attack_target).execute(world)
             else:
                 HealthEvent(
                     attack_target,
@@ -2514,7 +2516,9 @@ class IngestEvent(GraphEvent):
         self.actor.health = max(self.actor.health + fe, 0)
         new_health_text = world.health(self.actor.node_id)
         if self.actor.health <= 0:
-            DeathEvent(self.actor).execute(world)
+            # Turn off death for now.
+            health = 1
+            # DeathEvent(self.actor).execute(world)
         elif health_text != new_health_text:
             HealthEvent(self.actor, text_content="HealthOnIngestEvent").execute(world)
 
