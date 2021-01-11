@@ -58,6 +58,8 @@ class WorldViewer(object):
         """Return the text description of someone's numeric health"""
         # TODO get the correct values
         health = self.world.get_prop(id, "health")
+        if health < 0:
+            health = 0
         if health is None or health is False:
             health = 1
         if health > 8:

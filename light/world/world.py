@@ -921,24 +921,26 @@ class World(object):
                 actor, "\n".join(self.get_possible_actions(actor.node_id)) + "\n"
             )
             return True, "actions"
-        if executable == "map" and len(arguments) == 0:
-            # TODO fix print_graph
-            self.send_msg(
-                actor, self.print_graph(actor.room(), actor.node_id, visited=False)
-            )
-            return True, "Print graph"
-        if executable == "fogmap" and len(arguments) == 0:
-            # TODO fix print_graph
-            self.send_msg(
-                actor, self.print_graph(actor.room(), actor.node_id, visited=True)
-            )
-            return True, "Print graph"
-        if executable == "commit" and arguments == "suicide":
-            # TODO fix send_msg
-            self.send_msg(actor, "You commit suicide!")
-            self.die(actor.node_id)
-            return True, "Suicide"
-
+        if False:
+            # Switch these off for now.
+            if executable == "map" and len(arguments) == 0:
+                # TODO fix print_graph
+                self.send_msg(
+                    actor, self.print_graph(actor.room(), actor.node_id, visited=False)
+                )
+                return True, "Print graph"
+            if executable == "fogmap" and len(arguments) == 0:
+                # TODO fix print_graph
+                self.send_msg(
+                    actor, self.print_graph(actor.room(), actor.node_id, visited=True)
+                )
+                return True, "Print graph"
+            if executable == "commit" and arguments == "suicide":
+                # TODO fix send_msg
+                self.send_msg(actor, "You commit suicide!")
+                self.die(actor.node_id)
+                return True, "Suicide"
+            
         if executable not in ALL_EVENTS:
             # Try again with the full model parser.
             new_inst = self.action_parser.parse(inst, actor)

@@ -63,10 +63,10 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             "-dt",
             "valid",
             "--inference",
-            #"beam",
-            "topk",
-            "--topk",
-            "40",
+            "beam",
+            #"topk",
+            #"--topk",
+            #"40",
             "--beam-context-block-ngram",
             "3",
             "--beam-block-ngram",
@@ -88,8 +88,8 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             "beam_size": 2,
             "beam_min_length": 20,
         }
-        dialog_opt['override']['inference'] = 'topk'
-        dialog_opt['override']['topk'] = 40
+        #dialog_opt['override']['inference'] = 'topk'
+        #dialog_opt['override']['topk'] = 40
         return create_agent(dialog_opt, requireModelExists=True)
 
     @classmethod
