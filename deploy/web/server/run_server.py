@@ -232,10 +232,7 @@ def main():
     parser.add_argument(
         "--roleplaying-score-model-file",
         type=str,
-        # default = "",
-        # default = "/checkpoint/jase/projects/light/beatthehobbot/swp6_light_bi/actmodelv2/model",
-        # default="/checkpoint/light/models/speech/orig_light_poly/model",
-        # default="/checkpoint/jase/projects/light/beatthehobbot/swp5_light_neg/neg-hist-cands=100_poly-n-codes=20_jobid=4/model",
+        default = "",
         default="/checkpoint/light/models/game2020/roleplay_scorer/model",
     )
     FLAGS, _unknown = parser.parse_known_args()

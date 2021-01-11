@@ -16,3 +16,5 @@ speech/gen_boring_unlikelihood/model
 main_act/model
 --parser-model-file
 /checkpoint/jase/projects/light/parser/parser3/34c_jobid=1/model
+--roleplaying-score-model-file
+/checkpoint/light/models/game2020/roleplay_scorer/model
