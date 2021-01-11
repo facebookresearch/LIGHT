@@ -732,8 +732,8 @@ class FollowEvent(GraphEvent):
         follow_target = self.target_nodes[0]
         actor_name = self.actor.get_prefix_view()
         follow_name = follow_target.get_prefix_view()
-        self.__follow_view = f"You started following {follow_name}"
-        self.__followed_view = f"{actor_name} started following you"
+        self.__follow_view = f"You started following {follow_name}."
+        self.__followed_view = f"{actor_name} started following you."
 
         self.actor.follow(follow_target)
         world.broadcast_to_agents(self, [self.actor, self.target_nodes[0]])
@@ -1175,7 +1175,9 @@ class HitEvent(GraphEvent):
             health = max(0, health - (self.attack - self.defend))
             attack_target.health = health
             if health == 0:
-                DeathEvent(attack_target).execute(world)
+                # turn off death for now
+                health = 1
+                # DeathEvent(attack_target).execute(world)
             else:
                 HealthEvent(
                     attack_target,
@@ -2085,7 +2087,7 @@ class GiveObjectEvent(GraphEvent):
         recipient_text = self.__recipient_name
         if viewer == self.target_nodes[1]:
             recipient_text = "you"
-        return f"{actor_text} gave {self.__given_name} to {recipient_text}"
+        return f"{actor_text} gave {self.__given_name} to {recipient_text}."
 
     def to_canonical_form(self) -> str:
         """return action text for giving the object to the agent"""
@@ -2515,7 +2517,9 @@ class IngestEvent(GraphEvent):
         self.actor.health = max(self.actor.health + fe, 0)
         new_health_text = world.health(self.actor.node_id)
         if self.actor.health <= 0:
-            DeathEvent(self.actor).execute(world)
+            # Turn off death for now.
+            health = 1
+            # DeathEvent(self.actor).execute(world)
         elif health_text != new_health_text:
             HealthEvent(self.actor, text_content="HealthOnIngestEvent").execute(world)
 

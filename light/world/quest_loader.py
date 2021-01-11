@@ -53,11 +53,11 @@ class QuestCreator:
         "laugh": ["I'd like to make AGENT laugh."],
         "converse": ["I'd like to converse with AGENT."],
         "smile": ["I'd like to make AGENT smile."],
-        #For now, we will avoid goals involving violence.
-        #"hit": [
+        # For now, we will avoid goals involving violence.
+        # "hit": [
         #    "I want to make AGENT pay for what they've done.",
         #    "I want to get my revenge on AGENT.",
-        #],
+        # ],
         "steal": [
             "I'd like to get OBJECT from AGENT.",
             "AGENT has OBJECT, and I want it.",
@@ -124,8 +124,12 @@ class QuestCreator:
         return dist
 
     def score_agent(actor, agent):
-        return -QuestCreator.distance(actor, agent)
-
+        score = -QuestCreator.distance(actor, agent)
+        if (abs(score) < 0.0001):
+            # Don't want a too easy task that's in the same room usually.
+            score -=2
+        return score
+        
     def score_object(actor, obj):
         return -QuestCreator.distance(actor, obj)
 
@@ -216,19 +220,51 @@ class QuestCreator:
                     best_score = score
             return best_obj
 
-    def create_quest(actor, graph):
+    def rank_quests(quests, quest_scorer_model):
+        context = "character: " + quests[0]["actor_name"] + "\n"
+        context += "persona: " + quests[0]["actor_persona"] + "\n"
+        context += "goal: unknown\n"
+        cands = []
+        for q in quests:
+            cands.append(q["goal_action"])
+        msg = {
+            "text": context,
+            "episode_done": True,
+            "label_candidates": cands,
+            "eval_labels": [cands[0]],
+        }
+        quest_scorer_model.observe(msg)
+        act = quest_scorer_model.act()
+        best_act = act["text"]
+        quest = None
+        for q in quests:
+            if q["goal_action"] == best_act:
+                quest = q
+        return quest
+
+    def create_quest(actor, graph, quest_scorer_model=None):
         if actor.quests is None or len(actor.quests) == 0:
             actor.quests = []
         else:
             # Already has a quest.
             return
-
-        for i in range(0, 20):
+        quests = []
+        for i in range(0, 5):
             quest = QuestCreator.create_random_quest(actor, graph)
             if quest is not None:
-                break
-        if quest is None:
+                quests.append(quest)
+                if quest_scorer_model is None:
+                    break
+        if len(quests) == 0:
             return None
+        if len(quests) == 1:
+            quest = quests[0]
+        else:
+            # rank the quests with the model scorer
+            quest = QuestCreator.rank_quests(quests, quest_scorer_model)
+            if quest is None:
+                return None
+
         # Add quest to actor's list of quests.
         actor.quests.append(quest)
         return quest
@@ -237,6 +273,7 @@ class QuestCreator:
         q_verb = random.choice(list(QuestCreator.templates.keys()))
         # q_verb = "obtain"
         q_txt = random.choice(QuestCreator.templates[q_verb])
+        qact_txt = QuestCreator.actions[q_verb]
         obj = None
         loc = None
         per = None
@@ -247,6 +284,7 @@ class QuestCreator:
                 return  # failed to create quest right now (should be very rare).
             obj_txt = obj.get_prefix_view()
             q_txt = q_txt.replace("OBJECT", obj_txt)
+            qact_txt = qact_txt.replace("OBJECT", obj_txt)
         if "CONTAINER" in q_txt:
             container = QuestCreator.pick_object(
                 actor, graph, q_verb, "CONTAINER", other_obj=obj
@@ -256,26 +294,32 @@ class QuestCreator:
             container_txt = container.get_prefix_view()
             q_txt = q_txt.replace("CONTAINER", container_txt)
             q_txt = q_txt.replace("IN", container.surface_type)
+            qact_txt = qact_txt.replace("CONTAINER", container_txt)
+            qact_txt = qact_txt.replace("IN", container.surface_type)
         if "AGENT" in q_txt:
             per = QuestCreator.pick_agent(actor, graph, q_verb, "AGENT", obj)
             if per is None:
                 return  # failed to create quest right now (should be very rare).
             per_txt = per.get_prefix_view()
             q_txt = q_txt.replace("AGENT", per_txt)
+            qact_txt = qact_txt.replace("AGENT", per_txt)
         if "LOCATION" in q_txt:
             loc = QuestCreator.pick_location(actor, graph, q_verb, "LOCATION", obj)
             if loc is None:
                 return  # failed to create quest right now (should be very rare).
             loc_txt = loc.get_prefix_view()
             q_txt = q_txt.replace("LOCATION", loc_txt)
-
+            qact_txt = qact_txt.replace("LOCATION", loc_txt)
         quest = {
             "text": q_txt,
+            "goal_action": qact_txt,
             "goal_verb": q_verb,
             "object": obj.node_id if obj is not None else None,
             "container": container.node_id if container is not None else None,
             "location": loc.node_id if loc is not None else None,
             "actor": actor.node_id if actor is not None else None,
+            "actor_name": actor.name if actor is not None else None,
+            "actor_persona": actor.persona if actor is not None else None,
             "actor_str": actor.get_prefix_view() if actor is not None else None,
             "agent": per.node_id if per is not None else None,
             "helper_agents": [],  # Who has been told about this quest

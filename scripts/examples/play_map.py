@@ -20,9 +20,6 @@ from light.world.world import World
 from light.world.souls.base_soul import BaseSoul
 from light.world.souls.repeat_soul import RepeatSoul
 from light.world.souls.on_event_soul import OnEventSoul
-from light.world.souls.models.partner_heuristic_model_soul import (
-    PartnerHeuristicModelSoul,
-)
 from light.world.souls.models.generative_heuristic_model_soul import (
     GenerativeHeuristicModelSoul,
 )
@@ -40,15 +37,11 @@ shared_model_content = None
 def init_world(world_builder):
     g, world = world_builder.get_graph()
     purgatory = world.purgatory
-    if opt["roleplaying_score_model_file"] != "":
-        purgatory.register_player_args(rpg_model_content)
-
+    purgatory.register_shared_args('rpg_model', rpg_model_content)
+    purgatory.register_shared_args('generic_act_model', generic_act_model_content)
+    
     # Choose the type of NPC souls.
-    if opt["use_models"] == "PartnerHeuristicModelSoul":
-        purgatory.register_filler_soul_provider(
-            "model", PartnerHeuristicModelSoul, lambda: [shared_model_content]
-        )
-    elif opt["use_models"] == "GenerativeHeuristicModelSoul":
+    if opt["use_models"] == "GenerativeHeuristicModelSoul":
         purgatory.register_filler_soul_provider(
             "model", GenerativeHeuristicModelSoul, lambda: [shared_model_content]
         )
@@ -95,11 +88,13 @@ parser.add_argument(
     choices={
         "OnEventSoul",
         "RepeatSoul",
-        "PartnerHeuristicModelSoul",
         "GenerativeHeuristicModelSoul",
     },
 )
-parser.add_argument("--light-model-root", type=str, default="/checkpoint/light/models/")
+parser.add_argument("--light-model-root", type=str,
+                    default="/scratch/light/models/"
+                    #default="/checkpoint/light/models/"
+)
 parser.add_argument(
     "--load-map", type=str, default="scripts/examples/simple_world.json"
 )
@@ -107,16 +102,19 @@ parser.add_argument("--dont-catch-errors", type="bool", default=True)
 parser.add_argument(
     "--safety-classifier-path",
     type=str,
-    default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
+    default="",
+    #default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
 )
 parser.add_argument(
     "--roleplaying-score-model-file",
     type=str,
-    default = "",
-    # default = "/checkpoint/jase/projects/light/beatthehobbot/swp6_light_bi/actmodelv2/model",
-    # default="/checkpoint/light/models/speech/orig_light_poly/model",
-    # default="/checkpoint/jase/projects/light/beatthehobbot/swp5_light_neg/neg-hist-cands=100_poly-n-codes=20_jobid=4/model",
-    # default="/checkpoint/light/models/game2020/roleplay_scorer/model",
+    #default = "",
+    default="/checkpoint/light/models/game2020/roleplay_scorer/model",
+)
+parser.add_argument(
+    "--generic-act-model-file",
+    type=str,
+    default = "/scratch/light/models/game2021/act_model/model",
 )
 parser.add_argument(
     "--parser-model-file",
@@ -140,24 +138,22 @@ if opt["roleplaying_score_model_file"] != "":
     rpg_model_content = BaseSoul.load_roleplaying_score_model(
         opt["roleplaying_score_model_file"]
     )
-
-if opt["use_models"] == "PartnerHeuristicModelSoul":
-    light_model_root = opt["light_model_root"]
-    shared_model_content = PartnerHeuristicModelSoul.load_models(
-        light_model_root + "game_speech1/model",
-        light_model_root + "speech_train_cands.txt",
-        light_model_root + "agent_to_utterance_trainset.txt",
-        light_model_root + "main_act/model",
+else:
+    rpg_model_content = None
+    
+if opt["generic_act_model_file"] != "":
+    generic_act_model_content = BaseSoul.load_generic_act_model(
+        opt["generic_act_model_file"]
     )
-
+else:
+    generic_act_model_content = None
+    
 if opt["use_models"] == "GenerativeHeuristicModelSoul":
     light_model_root = opt["light_model_root"]
-    shared_model_content = PartnerHeuristicModelSoul.load_models(
-        light_model_root + "speech2/gen_boring_unlikelihood/model",
-        light_model_root + "speech_train_cands.txt",
-        light_model_root + "agent_to_utterance_trainset.txt",
-        light_model_root + "main_act/model",
+    shared_model_content = GenerativeHeuristicModelSoul.load_models(
+        light_model_root + "game2021/gen_dialog_model/model.checkpoint",
     )
+    shared_model_content['shared_action_model'] = generic_act_model_content.share()
 
 
 if __name__ == "__main__":

@@ -828,7 +828,7 @@ class World(object):
     def parse_exec(self, actor, inst=None):
         if not isinstance(actor, GraphNode):
             actor = self.oo_graph.get_node(actor)
-        if self.opt.get('dont_catch_errors', False):
+        if self.opt.get("dont_catch_errors", False):
             return self.parse_exec_internal(actor, inst)
 
         else:
@@ -917,30 +917,34 @@ class World(object):
         if executable in hint_calls:
             # TODO remove the list of valid instructions from the main game,
             # Perhaps behind an admin gatekeeper of sorts
-            self.send_msg(actor, "\n".join(self.get_possible_actions(actor.node_id)) + "\n")
+            self.send_msg(
+                actor, "\n".join(self.get_possible_actions(actor.node_id)) + "\n"
+            )
             return True, "actions"
-        if executable == "map" and len(arguments) == 0:
-            # TODO fix print_graph
-            self.send_msg(
-                actor, self.print_graph(actor.room(), actor.node_id, visited=False)
-            )
-            return True, "Print graph"
-        if executable == "fogmap" and len(arguments) == 0:
-            # TODO fix print_graph
-            self.send_msg(
-                actor, self.print_graph(actor.room(), actor.node_id, visited=True)
-            )
-            return True, "Print graph"
-        if executable == "commit" and arguments == "suicide":
-            # TODO fix send_msg
-            self.send_msg(actor, "You commit suicide!")
-            self.die(actor.node_id)
-            return True, "Suicide"
-
+        if False:
+            # Switch these off for now.
+            if executable == "map" and len(arguments) == 0:
+                # TODO fix print_graph
+                self.send_msg(
+                    actor, self.print_graph(actor.room(), actor.node_id, visited=False)
+                )
+                return True, "Print graph"
+            if executable == "fogmap" and len(arguments) == 0:
+                # TODO fix print_graph
+                self.send_msg(
+                    actor, self.print_graph(actor.room(), actor.node_id, visited=True)
+                )
+                return True, "Print graph"
+            if executable == "commit" and arguments == "suicide":
+                # TODO fix send_msg
+                self.send_msg(actor, "You commit suicide!")
+                self.die(actor.node_id)
+                return True, "Suicide"
+            
         if executable not in ALL_EVENTS:
             # Try again with the full model parser.
             new_inst = self.action_parser.parse(inst, actor)
-            if new_inst != '':
+            if new_inst != "":
                 instruction_list = new_inst.strip().split()
                 executable = instruction_list[0]
                 arguments = " ".join(instruction_list[1:])

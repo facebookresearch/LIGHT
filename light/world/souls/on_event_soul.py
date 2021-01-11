@@ -93,7 +93,7 @@ class OnEventSoul(ModelSoul):
 
     def conversation_score(self, agent2):
         agent = self.target_node
-        if hasattr(agent2, '_agent_interactions'):
+        if hasattr(agent2, "_agent_interactions"):
             if agent.node_id in agent2._agent_interactions:
                 return agent2._agent_interactions[agent.node_id]
         return 0
@@ -138,10 +138,12 @@ class OnEventSoul(ModelSoul):
         agent = self.target_node
         event_name = event.__class__.__name__
         # Tell Mission to Other Agent (or not).
-        if (((event_name == "SayEvent" and event.actor != agent)
-            or event_name == "TellEvent"
+        if (
+            ((event_name == "SayEvent" and event.actor != agent)
+            or (event_name == "TellEvent"
             and event.actor != agent
-            and event.target_nodes[0] == agent)
+            and event.target_nodes[0] == agent))
+            and (self.get_last_interaction_partner(agent) == event.actor.node_id)
         ):
             about_goals = False
             for words in ["mission", "goal", "quest", "what you want"]:
@@ -149,7 +151,7 @@ class OnEventSoul(ModelSoul):
                     about_goals = True
             other_agent = event.actor
             if self.conversation_score(other_agent) > 5:
-                if random.random() < 0.1:
+                if random.random() < 0.1 and (other_agent.node_id not in agent.quests[0]["helper_agents"]):
                     about_goals = True
             if about_goals:
                 if self.conversation_score(other_agent) < 5:
@@ -163,22 +165,23 @@ class OnEventSoul(ModelSoul):
                     return True
                 else:
                     if len(agent.quests) > 0:
-                        say_text = agent.quests[0]["text"]
-                        self.execute_event(["TellEvent", other_agent, say_text])
-                        # Add this actor to the list of potential helpers for the quest.
+                        # Add this actor to the list of potential helpers for the quest
+                        # and tell them about the quest.
                         if other_agent.node_id not in agent.quests[0]["helper_agents"]:
                             agent.quests[0]["helper_agents"].append(other_agent.node_id)
                             q_copy = copy.copy(agent.quests[0])
                             other_agent.quests.append(q_copy)
+                            say_text = agent.quests[0]["text"]
+                            self.execute_event(["TellEvent", other_agent, say_text])
                     return True
             else:
                 pass
-                #say_text = random.choice(
+                # say_text = random.choice(
                 #    ["Interesting.", "Ok.", "Thanks for telling me."]
-                #)
-                #self.execute_event(["TellEvent", other_agent, say_text])
+                # )
+                # self.execute_event(["TellEvent", other_agent, say_text])
         return False
-    
+
     def resolve_object_string(self, agent, object_str):
         for id, obj in agent.contained_nodes.items():
             obj = obj._target_node
@@ -219,11 +222,15 @@ class OnEventSoul(ModelSoul):
 
         if not executed:
             self.on_events_heuristics(event)
-            
+
     def new_quest(self):
         graph = self.world.oo_graph
         actor = self.target_node
-        quest = QuestCreator.create_quest(actor, graph)
+        if hasattr(self, 'npc_act_model'):
+            quest = QuestCreator.create_quest(actor, graph, self.npc_act_model)
+        else:
+            # no model for generating quests
+            quest = QuestCreator.create_quest(actor, graph)
         if quest is not None:
             self.world.send_msg(actor, "New Quest: " + quest["text"])
 
@@ -258,7 +265,7 @@ class OnEventSoul(ModelSoul):
         self.quest_events(event)
         self.on_events(event)
         self.tell_goal_heuristics(event)
-        
+
     def is_too_far(self, agent, room):
         # Check if it's too far from agent's starting room
         if not hasattr(agent, "start_loc"):
@@ -301,9 +308,6 @@ class OnEventSoul(ModelSoul):
         graph = self.world.oo_graph
         agent = self.target_node
         agent_id = agent.node_id
-
-        # Possibly create quest if we don't have one.
-        self.new_quest()
 
         # Attack if we have an aggression target
         if hasattr(agent, "aggression_target"):

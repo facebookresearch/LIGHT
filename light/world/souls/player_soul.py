@@ -52,8 +52,10 @@ class PlayerSoul(BaseSoul):
                 ["short_motivation", "mid_motivation", "long_motivation"]
             )
             target_node.persona += QUEST_TEXT + target_quest[goal]
-        if shared_model_content is not None:
-             self.roleplaying_score_model = shared_model_content.clone()
+        if 'rpg_model' in shared_model_content:
+            self.roleplaying_score_model = shared_model_content['rpg_model'].clone()
+        if 'generic_act_model' in shared_model_content:
+            self.generic_act_model = shared_model_content['generic_act_model'].clone()
         self.agent_logger = AgentInteractionLogger(world.oo_graph, target_node)
         provider.register_soul(self)
         self.world.oo_graph.room_id_to_loggers[
@@ -70,7 +72,11 @@ class PlayerSoul(BaseSoul):
     def new_quest(self):
         graph = self.world.oo_graph
         actor = self.target_node
-        quest = QuestCreator.create_quest(actor, graph)
+        if hasattr(self, 'generic_act_model'):
+            quest = QuestCreator.create_quest(actor, graph, self.generic_act_model)
+        else:
+            # no model for generating quests
+            quest = QuestCreator.create_quest(actor, graph)
         if quest is not None:
             self.world.send_msg(actor, "New Quest: " + quest["text"])
 

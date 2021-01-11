@@ -30,7 +30,7 @@ class BaseSoul(Soul):
         super().__init__(target_node, world)
         self.target_node._last_interaction_partner_id = None
         self.reset_interaction_history(self.target_node)
-
+        
     def get_last_interaction_partner(self, node=None):
         if node == None:
             node = self.target_node
@@ -43,7 +43,9 @@ class BaseSoul(Soul):
         partner_id = self.target_node._last_interaction_partner_id
         event_actor_id = event.actor.node_id
         if (agent_id == event_actor_id or partner_id == event_actor_id) and (
-            event_name == "TellEvent" or event_name == "SayEvent"
+            event_name == "TellEvent"
+            or event_name == "SayEvent"
+            or event_name == "WhisperEvent"
         ):
             # log event
             text = event.text_content
@@ -51,6 +53,46 @@ class BaseSoul(Soul):
                 agent._last_interaction_history.append(
                     [(event_actor_id, event_name), text]
                 )
+        if (agent_id == event_actor_id or partner_id == event_actor_id) and (
+            event_name == "EmoteEvent"
+        ):
+            # log event
+            text = event.text_content
+            agent._last_interaction_history.append(
+                [(event_actor_id, event_name), "*" + text + "*"]
+            )
+        # Only log these kind of act events.
+        act_events = [
+            "UnfollowEvent",
+            "FollowEvent",
+            "UnblockEvent",
+            "BlockEvent",
+            "HitEvent",
+            "HugEvent",
+            "GetObjectEvent",
+            "PutObjectInEvent",
+            "DropObjectEvent",
+            "StealObjectEvent",
+            "GiveObjectEvent",
+            "EquipObjectEvent",
+            "WearEvent",
+            "WieldEvent",
+            "RemoveObjectEvent",
+            "IngestEvent",
+            "EatEvent",
+            "DrinkEvent",
+            "ExamineEvent",
+            "UseEvent",
+        ]
+        if (agent_id == event_actor_id or partner_id == event_actor_id) and (
+            event_name in act_events
+        ):
+            # log event
+            text = event.to_canonical_form()
+            # import pdb; pdb.set_trace()
+            agent._last_interaction_history.append(
+                [(event_actor_id, event_name), "*" + text + "*"]
+            )
 
     def set_interaction_partners_from_event(self, event):
         # Calculate who the event involves.
@@ -157,15 +199,46 @@ class BaseSoul(Soul):
         for d in agent._last_interaction_history:
             current_turn_id = d[0][0]
             if turn_id == None or turn_id == current_turn_id:
-                dtxt += d[1] + " "
+                dtxt += " " + d[1]
             else:
-                dtxt = dtxt.rstrip(" ")
+                dtxt = dtxt.lstrip(" ")
                 dtxt += "\n" + d[1]
             turn_id = current_turn_id
         return txt + dtxt
 
-    ## ----- ROLE PLAYING SCORE FUNCTIONS BELOW
 
+    @classmethod
+    def load_generic_act_model(cls, generic_act_model_file):
+        """
+        Load up and create shared retrieval model for acts, emotes and quest scoring, etc.
+        """
+        # TODO refactor with some kind of model-loading standard for model souls?
+        from parlai.core.params import ParlaiParser
+        from parlai.core.agents import create_agent
+
+        parser = ParlaiParser(True, True, "")
+        # Load action model
+        args = [
+            "-mf",
+            generic_act_model_file,
+            "-ecands",
+            "inline",
+            "--ignore-bad-candidates",
+            "True",
+        ]
+        act_opt, _unknown = parser.parse_and_process_known_args(args=args)
+        act_opt["override"] = {
+            "eval_candidates": "inline",
+            "ignore_bad_candidates": "True",
+        }
+        act_opt["interactive_mode"] = True
+        act_opt["ignore_bad_candidates"] = True
+        print("[ Creating generic act model ... ]")
+        action_model = create_agent(act_opt, requireModelExists=True)
+        return action_model
+        
+    ## ----- ROLE PLAYING SCORE FUNCTIONS BELOW        
+        
     @classmethod
     def load_roleplaying_score_model(cls, roleplaying_score_model_file):
         """
@@ -201,6 +274,7 @@ class BaseSoul(Soul):
         # override eval step here
         roleplaying_score_model.eval_step = roleplaying_score_model.eval_step_scoresonly
         return roleplaying_score_model
+
 
     def too_much_string_overlap(self, s1, s2):
         """
@@ -240,9 +314,9 @@ class BaseSoul(Soul):
         return human_rank, human_score
 
     def score_conversation(self):
-        if not hasattr(self, 'roleplaying_score_model'):
-            return 3
-            
+        if not hasattr(self, "roleplaying_score_model"):
+            return 0
+
         context1 = self.build_dialog_context()
         # print(context)
         contextsplit = context1.split("\n")
