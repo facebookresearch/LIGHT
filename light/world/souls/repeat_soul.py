@@ -32,6 +32,8 @@ class RepeatSoul(Soul):
         """
         if event.actor == self.target_node:
             return
+        if not (event.actor.is_player or event.actor._human):
+            return
         my_observation = event.view_as(self.target_node)
         repeat_text = f"I just saw the following: {my_observation}"
         repeat_event = SayEvent.construct_from_args(

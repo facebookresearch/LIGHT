@@ -8,4 +8,10 @@ www.light-rpg.ai
 LetsPlay
 --port
 8088
+--builder-model
+starspace/angela_starspace/model4
+--dialog-model
+dialog_gen/model
+--acting-model
+main_act/model
 

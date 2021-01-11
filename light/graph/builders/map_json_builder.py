@@ -32,3 +32,7 @@ class MapJsonBuilder(DBGraphBuilder):
         world = World(self.opt, self)
         world.oo_graph = g
         return g, world
+
+    def add_random_new_agent_to_graph(self, world):
+        """Skip adding an agent, a loaded graph for now has no attached model"""
+        pass

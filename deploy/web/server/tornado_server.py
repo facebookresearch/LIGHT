@@ -46,8 +46,6 @@ else:
     quest_loader = None
 here = os.path.abspath(os.path.dirname(__file__))
 
-init_safety_classifier(os.path.expanduser("~/data/safety/OffensiveLanguage.txt"))
-
 _seen_warnings = set()
 
 """
@@ -293,6 +291,7 @@ class LandingApplication(tornado.web.Application):
                 {"database": database, "hostname": hostname, "app": self},
             ),
             (r"/logout", LogoutHandler),
+            (r"/report", ReportHandler),
             (r"/(.*)", StaticUIHandler, {"path": here + "/../build/"}),
         ]
 
@@ -319,8 +318,7 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
         redirect = (
             "https://"
             + self.request.host
-            + "/auth/fblogin?next="
-            + tornado.escape.url_escape(self.get_argument("next", "/"))
+            + "/auth/fblogin"
         )
         if self.get_argument("code", False):
             fb_user = await self.get_authenticated_user(
@@ -330,7 +328,7 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
                 code=self.get_argument("code"),
             )
             self.set_current_user(fb_user['id'])
-            self.redirect(self.get_argument("next", "/"))
+            self.redirect("/")
             return
         self.authorize_redirect(
             redirect_uri=redirect, client_id=self.app.settings["facebook_api_key"],
@@ -384,6 +382,21 @@ class LogoutHandler(BaseHandler):
     def get(self):
         self.clear_cookie("user")
         self.redirect(u"/login")
+
+class ReportHandler(BaseHandler):
+    def post(self):
+        data = tornado.escape.json_decode(self.request.body)
+        print("Report gotten:", data)
+        report_dir = os.path.expanduser("~/light_reports/")
+        if not os.path.exists(report_dir):
+            os.makedirs(report_dir)
+        tmp_filename = f"report-{time.time()}"
+        while os.path.exists(os.path.join(report_dir, f"{tmp_filename}.json")):
+            # Disgusting hack to get multiple saves at the same time
+            tmp_filename += 'a'
+        dump_loc = os.path.join(report_dir, f"{tmp_filename}.json")
+        with open(os.path.join(report_dir, dump_loc), "w+") as report_file:
+            json.dump(data, report_file)
 
 
 class TornadoPlayerProvider(PlayerProvider):
@@ -524,6 +537,8 @@ def main():
         help="port to run the server on.",
     )
     FLAGS = parser.parse_args()
+
+    init_safety_classifier(os.path.expanduser("~/data/safety/OffensiveLanguage.txt"))
 
     random.seed(6)
     numpy.random.seed(6)

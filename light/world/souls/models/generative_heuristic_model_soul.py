@@ -59,24 +59,44 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         """
         Load up the dialog model for use with this class
         """
+        # Model args if no reranking
+        # dialog_args = [
+        #     "-dt",
+        #     "valid",
+        #     "--inference",
+        #     "beam",
+        #     "--beam-context-block-ngram",
+        #     "3",
+        #     "--beam-block-ngram",
+        #     "3",
+        #     "--beam-size",
+        #     "10",
+        #     "--beam-min-length",
+        #     "20",
+        #     "-m",
+        #     "transformer/generator",
+        #     "-mf",
+        #     dialog_model_path,
+        # ]
+
+        # Reranker args
         dialog_args = [
+            "-m",
+            "internal:light_whoami/generative_rerank",
+            "--predictor-model-file",
+            "/checkpoint/kshuster/projects/continual_learning/light_whoami/whoami_sweep3b_Tue_Oct_13/943/model",
+            "--inference",
+            "delayedbeam",
             "-dt",
             "valid",
-            "--inference",
-            "beam",
-            #"topk",
-            #"--topk",
-            #"40",
             "--beam-context-block-ngram",
             "3",
             "--beam-block-ngram",
             "3",
             "--beam-size",
-            "2",
+            "10",
             "--beam-min-length",
             "20",
-            "-m",
-            "transformer/generator",
             "-mf",
             dialog_model_path,
         ]

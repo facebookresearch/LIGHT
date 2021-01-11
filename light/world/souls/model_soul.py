@@ -8,6 +8,7 @@ from light.world.souls.base_soul import BaseSoul
 import os
 import asyncio
 from typing import TYPE_CHECKING, Any
+from concurrent.futures import CancelledError
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -61,6 +62,8 @@ class ModelSoul(BaseSoul):
                 while not self.is_reaped:
                     await self._take_timestep()
                     await asyncio.sleep(self.MAIN_LOOP_STEP_TIMEOUT)
+            except CancelledError:
+                return
             except Exception as e:
                 print(f"Unhandled model soul exception in {self}: {e}")
                 import traceback
@@ -68,6 +71,7 @@ class ModelSoul(BaseSoul):
                 traceback.print_exc()
                 print("Reaping...")
                 self.reap()
+            
 
         self._main_loop = asyncio.create_task(_run_main_logic_forever())
 
