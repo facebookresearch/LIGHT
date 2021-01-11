@@ -127,10 +127,12 @@ class GameInstance:
                 GenerativeHeuristicModelSoul,
                 lambda: [model_resources["shared_model_content"]],
             )
+        if model_resources.get('rpg_model') is not None:
+            purgatory.register_shared_args('rpg_model', model_resources['rpg_model'])
+        if model_resources.get('shared_action_model') is not None:
+            purgatory.register_shared_args('generic_act_model', model_resources['generic_act_model'])
         for empty_agent in self.g.oo_graph.agents.values():
             purgatory.fill_soul(empty_agent)
-        if model_resources.get('rpg_score_model') is not None:
-            purgatory.register_player_args(model_resources['rpg_score_model'])
 
     def register_provider(self, provider):
         self.providers.append(provider)

@@ -113,12 +113,13 @@ def _run_server(FLAGS, ldb, model_resources):
         my_loop.stop()
 
 
-# Update this to load _all_ models for the full game
+# Update this to load _all_ models for the full game, fix "shared_model_content"
 def init_model_resources(FLAGS):
     light_model_root = FLAGS.light_model_root
     dialog_model = FLAGS.dialog_model
     act_model = FLAGS.acting_model
     scoring_model = FLAGS.roleplaying_score_model_file
+    generic_act_model = FLAGS.generic_act_model_file
 
     if dialog_model is None:
         return {"shared_model_content": {}}
@@ -126,17 +127,23 @@ def init_model_resources(FLAGS):
     # dialog gen is at `dialog_gen`, other is at `game_speech1`?
     shared_model_content = GenerativeHeuristicModelSoul.load_models(
         light_model_root + dialog_model,
-        light_model_root + "speech_train_cands.txt",
-        light_model_root + "agent_to_utterance_trainset.txt",
-        light_model_root + act_model,
     )
     resources = {"shared_model_content": shared_model_content}
     
     if scoring_model is not None:
-        resources['rpg_score_model'] = BaseSoul.load_roleplaying_score_model(
+        resources['rpg_model'] = BaseSoul.load_roleplaying_score_model(
             scoring_model
         )
-    
+        shared_model_content['rpg_model'] = resources['rpg_model']
+
+    if generic_act_model is not None:
+        generic_act_model_content = BaseSoul.load_generic_act_model(
+            generic_act_model
+        )
+        resources['generic_act_model'] = generic_act_model_content.share()
+        shared_model_content['shared_action_model'] = resources['generic_act_model']
+
+
     return resources
 
 
@@ -227,13 +234,17 @@ def main():
     parser.add_argument(
         "--parser-model-file",
         type=str,
-        default=""
+        default="",
     )
     parser.add_argument(
         "--roleplaying-score-model-file",
         type=str,
         default = "",
-        default="/checkpoint/light/models/game2020/roleplay_scorer/model",
+    )
+    parser.add_argument(
+        "--generic-act-model-file",
+        type=str,
+        default = "",
     )
     FLAGS, _unknown = parser.parse_known_args()
 
