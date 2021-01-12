@@ -238,8 +238,8 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         """
         Agent attempt to take an action
         """
-        # if self.get_last_turn_too_recent() or random.random() > TAKE_ACTION_CHANCE:
-        #    return
+        if self.get_last_turn_too_recent() or random.random() > TAKE_ACTION_CHANCE:
+            return
 
         # Get agents
         agent = self.target_node
@@ -463,7 +463,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             # self.reset_interaction_history()
 
         # NPC heuristics: attack, random movement
-        acted = False  # super().timestep_actions()
+        acted = super().timestep_actions()
 
         # Possibly act according to the transformer model
         if not acted:
