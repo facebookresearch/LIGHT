@@ -182,6 +182,10 @@ class BaseSoul(Soul):
                 if partner is not None:
                     txt += "_partner_name " + partner.get_prefix_view() + "\n"
         txt += "_self_name " + agent.name + "\n"
+        # TODO address - agent persona should always be a string, resolve with @jase
+        persona_lines = agent.persona
+        if isinstance(persona_lines, list):
+            agent.persona = " ".join(persona_lines)
         txt += "_self_persona " + agent.persona
         if quest_txt is not None:
             txt += quest_text
@@ -261,7 +265,7 @@ class BaseSoul(Soul):
         # model_opt['fixed_candidates_path'] = ranker_agent.opt['fixed_candidates_path']
         model_opt["candidates"] = "fixed"
         model_opt["eval_candidates"] = "fixed"
-        model_opt["no_cuda"] = True
+        # model_opt["no_cuda"] = True
         model_opt["use_reply"] = "none"
         model_opt["interactive_mode"] = True
         model_opt["boring_alpha"] = 0

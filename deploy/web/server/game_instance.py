@@ -142,6 +142,8 @@ class GameInstance:
 
         # Clear disconnected players
         left_players = [p for p in self.players if not p.is_alive()]
+        if len(left_players) > 0:
+            print(left_players)
         for player in left_players:
             if player.player_soul is not None:
                 node_to_clean = player.player_soul.target_node
