@@ -70,8 +70,13 @@ class PlayerSoul(BaseSoul):
         self.world.parse_exec(self.target_node, act_text)
 
     def new_quest(self):
+        if random.random() > 0.01:
+            # Turn these mostly off for now.
+            return
+
         graph = self.world.oo_graph
         actor = self.target_node
+        
         if hasattr(self, 'generic_act_model'):
             quest = QuestCreator.create_quest(actor, graph, self.generic_act_model)
         else:
@@ -85,6 +90,8 @@ class PlayerSoul(BaseSoul):
         self.new_quest()
         actor = self.target_node
         quests_left = []
+        if actor.quests is None:
+            actor.quests = []
         for q in actor.quests:
             if QuestCreator.quest_matches_event(self.world, q, event):
                 QuestCreator.quest_complete(self.world, actor, q, event)

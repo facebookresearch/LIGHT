@@ -239,6 +239,8 @@ class OnEventSoul(ModelSoul):
         self.new_quest()
         actor = self.target_node
         quests_left = []
+        if actor.quests is None:
+            actor.quests = []
         for q in actor.quests:
             if QuestCreator.quest_matches_event(self.world, q, event):
                 self.quest_complete(q, event)
@@ -334,7 +336,8 @@ class OnEventSoul(ModelSoul):
                         return True
 
         # Random movement for NPCs..
-        if random.randint(0, 100) < agent.speed:
+        
+        if random.randint(0, 300) < agent.speed and self.get_last_interaction_partner(agent) is None:
             go_events = self.world.get_possible_events(agent_id, use_actions=["go"])
             room = go_events[0].target_nodes[0].get_room()
             if len(go_events) > 0 and not self.is_too_far(agent, room):
