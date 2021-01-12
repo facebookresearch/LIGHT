@@ -182,10 +182,6 @@ class BaseSoul(Soul):
                 if partner is not None:
                     txt += "_partner_name " + partner.get_prefix_view() + "\n"
         txt += "_self_name " + agent.name + "\n"
-        # TODO address - agent persona should always be a string, resolve with @jase
-        persona_lines = agent.persona
-        if isinstance(persona_lines, list):
-            agent.persona = " ".join(persona_lines)
         txt += "_self_persona " + agent.persona
         if quest_txt is not None:
             txt += quest_text
