@@ -98,8 +98,8 @@ class ActionParser:
             return
         self.opt["model_file"] = self.opt["parser_model_file"]
         self.opt["interactive_candidates"] = "inline"
-        self.opt["no_cuda"] = True
-        self.opt["override"] = {"interactive_candidates": "inline", "no_cuda": True}
+        # self.opt["no_cuda"] = True
+        self.opt["override"] = {"interactive_candidates": "inline"} # , "no_cuda": True}
         self.agent = create_agent(self.opt, requireModelExists=True)
         self.agent.opt.log()
 

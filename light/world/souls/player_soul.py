@@ -118,7 +118,8 @@ class PlayerSoul(BaseSoul):
         """
         super().reap()
         self.target_node.is_player = False
-        self.target_node.persona = self.target_node.persona.split(QUEST_TEXT)
+        self.target_node._human = False
+        self.target_node.persona = self.target_node.persona.split(QUEST_TEXT)[0]
         self.world.oo_graph.room_id_to_loggers[
             self.target_node.get_room().node_id
         ]._remove_player()

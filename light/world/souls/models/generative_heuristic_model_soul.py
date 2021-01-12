@@ -84,6 +84,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             "-m",
             "internal:light_whoami/generative_rerank",
             "--predictor-model-file",
+            #"/home/ubuntu/data/models/rerank/model",
             "/checkpoint/kshuster/projects/continual_learning/light_whoami/whoami_sweep3b_Tue_Oct_13/943/model",
             "--inference",
             "delayedbeam",

@@ -129,7 +129,7 @@ def init_model_resources(FLAGS):
         light_model_root + dialog_model,
     )
     resources = {"shared_model_content": shared_model_content}
-    
+
     if scoring_model is not None:
         resources['rpg_model'] = BaseSoul.load_roleplaying_score_model(
             scoring_model
@@ -143,6 +143,7 @@ def init_model_resources(FLAGS):
         resources['generic_act_model'] = generic_act_model_content.share()
         shared_model_content['shared_action_model'] = resources['generic_act_model']
 
+    init_safety_classifier(FLAGS.safety_list)
 
     return resources
 
@@ -249,8 +250,6 @@ def main():
     FLAGS, _unknown = parser.parse_known_args()
 
     print(FLAGS)
-
-    init_safety_classifier(FLAGS.safety_list)
 
     random.seed(6)
     numpy.random.seed(6)

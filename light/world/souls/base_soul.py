@@ -261,7 +261,7 @@ class BaseSoul(Soul):
         # model_opt['fixed_candidates_path'] = ranker_agent.opt['fixed_candidates_path']
         model_opt["candidates"] = "fixed"
         model_opt["eval_candidates"] = "fixed"
-        model_opt["no_cuda"] = True
+        # model_opt["no_cuda"] = True
         model_opt["use_reply"] = "none"
         model_opt["interactive_mode"] = True
         model_opt["boring_alpha"] = 0
