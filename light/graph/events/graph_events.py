@@ -3441,7 +3441,7 @@ class QuestEvent(NoArgumentEvent):
             else:
                 for q in quests:
                     if q["actor"] == self.actor.node_id:
-                        self.__quests_text += "Your curent quest: " + q["text"] + "\n"
+                        self.__quests_text += "Your current quest: " + q["text"] + "\n"
                 for q in quests:
                     if q["actor"] != self.actor.node_id:
                         self.__quests_text += (
