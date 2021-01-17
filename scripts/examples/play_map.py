@@ -108,8 +108,8 @@ parser.add_argument(
 parser.add_argument(
     "--roleplaying-score-model-file",
     type=str,
-    #default = "",
-    default="/checkpoint/light/models/game2020/roleplay_scorer/model",
+    default = "",
+    #default="/checkpoint/light/models/game2020/roleplay_scorer/model",
 )
 parser.add_argument(
     "--generic-act-model-file",

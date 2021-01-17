@@ -14,16 +14,14 @@ import sys
 import parlai.utils.misc as parlai_utils
 
 from light.graph.builders.map_json_builder import MapJsonBuilder
-from light.graph.builders.starspace_all import StarspaceBuilder
+from light.graph.builders.starspace_assisted import StarspaceBuilder
 from light.data_model.light_database import LIGHTDatabase
 from light.world.utils.terminal_player_provider import TerminalPlayerProvider
 from parlai.core.params import ParlaiParser
 from light.world.world import World
 from light.world.souls.repeat_soul import RepeatSoul
 from light.world.souls.on_event_soul import OnEventSoul
-from light.world.souls.models.partner_heuristic_model_soul import (
-    PartnerHeuristicModelSoul,
-)
+
 import os
 import random
 import numpy

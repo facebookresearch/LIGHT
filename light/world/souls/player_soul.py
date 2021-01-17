@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from light.graph.events.base import GraphEvent
 
 QUESTS_ACTIVE = True
-QUEST_TEXT = "\nYour Quest:\n"
+QUEST_TEXT = "\nYour Mission: "
 
 
 class PlayerSoul(BaseSoul):
@@ -46,12 +46,16 @@ class PlayerSoul(BaseSoul):
         target_node._human = True
         self.player_id = player_id
         self.provider = provider  # TODO link with real provider
-        if hasattr(self.provider, "quest_loader"):
-            target_quest = self.provider.quest_loader.get_random_quest()
-            goal = random.choice(
-                ["short_motivation", "mid_motivation", "long_motivation"]
-            )
-            target_node.persona += QUEST_TEXT + target_quest[goal]
+        if hasattr(target_node, 'mission') and target_node.mission != '':
+            goal = target_node.mission
+            target_node.persona += QUEST_TEXT + goal
+        else:
+            if hasattr(self.provider, "quest_loader"):
+                target_quest = self.provider.quest_loader.get_random_quest()
+                goal = random.choice(
+                    ["short_motivation", "mid_motivation", "long_motivation"]
+                )
+                target_node.persona += QUEST_TEXT + target_quest[goal]
         if 'rpg_model' in shared_model_content:
             self.roleplaying_score_model = shared_model_content['rpg_model'].clone()
         if 'generic_act_model' in shared_model_content:

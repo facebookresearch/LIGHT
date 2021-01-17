@@ -54,6 +54,9 @@ import numpy as np
 random.seed(6)
 np.random.seed(6)
 
+good = {}
+
+    
 MAX_EXTRA_AGENTS_PER_ROOM = 2
 INV_DIR = {"east": "west", "west": "east", "north": "south", "south": "north"}
 NEIGHBOR = DB_EDGE_NEIGHBOR
@@ -88,7 +91,8 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             opt = base_opt
 
         self.parlai_datapath = opt["datapath"]
-        self.db_path = os.path.join(opt["datapath"], "light", "database3.db")
+        self.db_path = opt["light_db_file"]
+        #self.db_path = os.path.join(opt["datapath"], "light", "database3.db")
         self.model_path = opt.get("light_model_root")
         self.ldb = ldb
         DBGraphBuilder.__init__(self, ldb)
@@ -120,7 +124,9 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         self.grid = {}
         # List of rooms that are already selected
         self.banned_rooms = set()
+        self.banned = {}
 
+        
     @staticmethod
     def add_parser_arguments(parser):
         """
@@ -147,14 +153,16 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         )
         parser.add_argument(
             "--light-db-file",
-            type=str,            #default="/checkpoint/light/data/database3.db",
-            default="/checkpoint/light/data/merged.db",
+            type=str,
+            #default="/checkpoint/light/data/database3.db",
+            #default="/checkpoint/light/data/merged.db",
+            default="/scratch/light/data/merged.db",
             help="specific path for light database",
         )
         parser.add_argument(
             "--light-model-root",
             type=str,
-            default="/checkpoint/light/models/",
+            default="/scratch/light/models/",
             help="specific path for light models",
         )
         parser.add_argument(
@@ -882,6 +890,8 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         response = self.agent_recommend(txt_feats, "object")
         ind = 0
         results = []
+        if len(self.banned) == 0:
+            self.load_banned()
         while len(results) < num_results and ind < len(response["text_candidates"]):
             key = response["text_candidates"][ind]
             if "{{}}" in key:
@@ -890,11 +900,42 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             oid = self.objfeats_to_id(key)
             if oid is not None and oid not in banned_items:
                 obj = self.get_obj_from_id(oid)
+                if not obj.is_gettable or obj.is_plural:
+                    self.banned[key] = True
+            if oid is None:
+                self.banned[key] = True
+                    
+            key = response["text_candidates"][ind]
+            if self.banned.get(key, 'unassigned') == 'unassigned':
+                print("item", key)
+                from six.moves import input
+                ok = input("item good? (y/n): ")
+                if ok == 'y':
+                    self.banned[key] = False
+                if ok == 'n':
+                    self.banned[key] = True
+                # save
+                import json
+                with open('/tmp/banned.json', 'w') as outfile:
+                    json.dump(self.banned, outfile, indent=4)
+                # import pdb; pdb.set_trace()
+            if self.banned.get(key, False):
+                ind = ind + 1
+                continue
+            
+            oid = self.objfeats_to_id(key)
+            if oid is not None and oid not in banned_items:
+                obj = self.get_obj_from_id(oid)
                 if obj.is_gettable or not must_be_gettable:
                     results.append(obj)
             ind = ind + 1
         return results
 
+    def load_banned(self):
+        import json
+        with open('/tmp/banned.json') as json_file:
+            self.banned = json.load(json_file)
+                
     def get_contained_characters(self, room_id, num_results=5, banned_characters=[]):
         """ Get prediction of contained characters in given room_id from StarSpace model."""
         if type(room_id) is str and room_id[0] == "f":
@@ -907,20 +948,44 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         response = self.agent_recommend(txt_feats, "character")
         ind = 0
         results = []
+        if len(self.banned) == 0:
+            self.load_banned()
         while len(results) < num_results:
+            if len(response["text_candidates"]) <= ind:
+                if len(results) == 0:
+                    return [ None ]
+                else:
+                    return results
             key = response["text_candidates"][ind]
-            if "wench" in key:
+            cind = self.charfeats_to_id(key)
+            if cind is not None and cind not in banned_characters:
+                char = self.get_char_from_id(cind)
+                if char.is_plural:
+                    self.banned[key] = True
+                    print("plural -- banned: ", key)
+            if cind is None:
+                self.banned[key] = True
+
+            if self.banned.get(key, 'unassigned') == 'unassigned':
+                print("character", key)
+                from six.moves import input
+                ok = 'y'
+                ok = input("character: good? (y/n): ")
+                if ok == 'y':
+                    self.banned[key] = False
+                if ok == 'n':
+                    self.banned[key] = True
+                import json
+                with open('/tmp/banned.json', 'w') as outfile:
+                    json.dump(self.banned, outfile, indent=4)
+                # import pdb; pdb.set_trace()
+            if "wench" in key or self.banned.get(key, False):
                 ind = ind + 1
                 continue
             cind = self.charfeats_to_id(key)
             if cind is not None and cind not in banned_characters:
                 results.append(self.get_char_from_id(cind))
             ind = ind + 1
-            if len(response["text_candidates"]) <= ind:
-                if len(results) == 0:
-                    return None
-                else:
-                    return results
         return results
 
     def get_description(self, txt_feat, element_type, num_results=5):

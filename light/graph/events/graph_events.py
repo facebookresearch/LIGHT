@@ -3426,18 +3426,22 @@ class QuestEvent(NoArgumentEvent):
         On execution, show the quests
         """
         assert not self.executed
-        self.__actor_name = self.actor.get_prefix_view()
+        self.__actor_name = self.actor.get_prefix_view() + "!"
+        self.__quests_text = ""
+
+        if hasattr(self.actor, 'persona'):
+            self.__actor_name += '\nYour Persona: ' + self.actor.persona + "\n"
+            
         if hasattr(self.actor, 'quests'):
             quests = self.actor.quests
             if quests is None or len(quests) == 0:
-                self.__quests_text = (
+                self.__quests_text += (
                     "You currently have no quests. Talk to people to get some!"
                 )
             else:
-                self.__quests_text = ""
                 for q in quests:
                     if q["actor"] == self.actor.node_id:
-                        self.__quests_text += "Your quest: " + q["text"] + "\n"
+                        self.__quests_text += "Your current quest: " + q["text"] + "\n"
                 for q in quests:
                     if q["actor"] != self.actor.node_id:
                         self.__quests_text += (
@@ -3453,9 +3457,9 @@ class QuestEvent(NoArgumentEvent):
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
             return (
-                f"You check yourself. You are {self.__actor_name}!\n"
+                f"You check yourself. You are {self.__actor_name}\n"
                 f"{self.__quests_text}\n"
-            )
+            ).replace('\n\n', '\n')
         else:
             return [] # f"{self.__actor_name} looks deep in thought. "
         
