@@ -378,13 +378,13 @@ class WorldViewer(object):
             + ("Thine Commands:\n")
             + scroll_line
             + (
+                "quest/goal/mission\n"
+                "stats/status/health\n"
+                "inventory (i or inv, for short)\n"
                 'say/shout "<thing you want to say>; or use quotes only for short "\n'
                 'tell/whisper <agent> "<something>"\n'
                 "look (l, for short)\n"
                 'go <direction>, e.g. "go north", or "go n" or just "n" for short\n'
-                "inventory (i or inv, for short)\n"
-                "stats/status/health\n"
-                "quest/goal/mission\n"
                 "examine <thing> (ex, for short)\n"
                 "get/drop <object>\n"
                 "eat/drink <object>\n"

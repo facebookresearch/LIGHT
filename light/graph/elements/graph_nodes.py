@@ -566,10 +566,10 @@ class GraphAgent(GraphNode):
             "attack_tagged_agents", self.DEFAULT_ATTACK_TAGGED_AGENTS
         )
 
-
         if self.on_events is None:
             self.on_events = []
         self.quests = self._props.get("quests", [])
+        self.mission = self._props.get("mission", '')
 
         # Game properties to track for this agent, TODO move to other class?
         self._human = False
