@@ -10,7 +10,6 @@ import os
 import random
 
 # TODO don't use * imports
-from light.world.npc_models import *
 from light.graph.utils import rm, deprecated
 from light.graph.events.base import GraphEvent, ErrorEvent
 from light.graph.events.graph_events import (
@@ -71,12 +70,6 @@ class World(object):
         self._agentid_to_playerid = {}
         self.__message_callbacks = {}
 
-        # TODO move non-player characters management.
-        self._initial_num_npcs = 0
-        self.npc_models = npc_models(opt, self)
-        if graph_builder is not None:
-            self._no_npc_models = graph_builder._no_npc_models
-            self.npc_models._no_npc_models = self._no_npc_models
         self.graph_builder = graph_builder  # TODO replace with builder
 
         # Set up safety classifier.
@@ -94,7 +87,6 @@ class World(object):
         world._player_cnt = graph._player_cnt
         world._playerid_to_agentid = graph._playerid_to_agentid
         world._agentid_to_playerid = graph._agentid_to_playerid
-        world._initial_num_npcs = graph._initial_num_npcs
         return world
 
     # ------- debug and test helpers ------#
@@ -1054,31 +1046,3 @@ class World(object):
         # TODO remove direct access to oo_graph property here
         if id in self.oo_graph.dead_nodes:
             del self.oo_graph.dead_nodes[id]
-
-    # TODO refactor players
-    def update_world(self):
-        # move all the agents and junk, unless world frozen
-        if self.freeze():
-            return
-        live_npcs = 0
-        npcs = self.oo_graph.get_npcs()
-        for agent in npcs:
-            if agent.get_prop("dead"):
-                continue
-            live_npcs += 1
-            try:
-                self.npc_models.npc_act(agent.node_id)
-            except AttributeError:
-                # TODO fix this death bug in npc models and agents refactor
-                continue
-
-        for coprse in self.oo_graph.get_dead_nodes():
-            self.possibly_clean_corpse(coprse.node_id)
-
-        # Delete any nodes left in the queue to be deleted.
-        # It's better to do this here outside the loop above where the nodes might be used.
-        self.oo_graph.delete_nodes()
-        if live_npcs < self._initial_num_npcs:
-            # add a new NPC as we don't have enough left alive!
-            # print("adding new npc as total is: " + str(live_npcs))
-            self.graph_builder.add_random_new_agent_to_graph(self)
