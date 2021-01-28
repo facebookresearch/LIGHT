@@ -351,7 +351,6 @@ class WorldViewer(object):
     def display_node_list(self, l, from_node=None):
         """Return the view for all the nodes in l as viewed from from_node"""
         desc_to_ent = {ent.get_view_from(from_node): ent for ent in l}
-        # descs = [ent.get_view_from(from_node) for ent in l]
         descs = [ent.get_prefix_view_from(from_node) for ent in l]
         return self.display_desc_list(descs, desc_to_ent)
 
