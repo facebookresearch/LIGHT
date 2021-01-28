@@ -449,9 +449,9 @@ class TriggerFollowEvent(TriggeredEvent):
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
             if self.__successful_follow:
-                return "You follow. "
+                return "You follow."
             else:
-                return "You try to follow, but cannot as there is no more room there! "
+                return "You try to follow, but cannot as there is no more room there!"
         else:
             return None  # One should not observe others follows
 
@@ -1200,11 +1200,11 @@ class HitEvent(GraphEvent):
         if self.attack == 0:
             # The attack missed
             if viewer == self.actor:
-                return f"You {self.attack_verb} {self.__attack_name}, but missed! "
+                return f"You {self.attack_verb} {self.__attack_name}, but missed!"
             elif viewer == self.target_nodes[0]:
-                return f"{self.__actor_name} {self.attack_verb} you, but missed. "
+                return f"{self.__actor_name} {self.attack_verb} you, but missed."
             else:
-                return f"{self.__actor_name} {self.attack_verb} {self.__attack_name}, but missed. "
+                return f"{self.__actor_name} {self.attack_verb} {self.__attack_name}, but missed."
         elif self.attack - self.defend <= 1:
             # The attack was blocked
             if viewer == self.actor:
@@ -1416,10 +1416,10 @@ class GetObjectEvent(GraphEvent):
         else:
             viewer_text = self.__actor_name
         if self.__from_room:
-            return f"{viewer_text} got {self.__gotten_name}"
+            return f"{viewer_text} got {self.__gotten_name}."
         else:
             return (
-                f"{viewer_text} got {self.__gotten_name} from {self.__container_name}"
+                f"{viewer_text} got {self.__gotten_name} from {self.__container_name}."
             )
 
     def to_canonical_form(self) -> str:
@@ -1592,7 +1592,7 @@ class PutObjectInEvent(GraphEvent):
         else:
             viewer_text = self.__actor_name
         surface_type = self.target_nodes[1].get_prop("surface_type", "in")
-        return f"{viewer_text} put {self.__put_name} {surface_type} {self.__container_name}"
+        return f"{viewer_text} put {self.__put_name} {surface_type} {self.__container_name}."
 
     def to_canonical_form(self) -> str:
         """return action text for putting the object in/on the container"""
@@ -1909,7 +1909,7 @@ class StealObjectEvent(GraphEvent):
         if self.failed:
             return f"{actor_text} tried to steal {self.__gotten_name} from {victim_text}, but they caught you in the act!"
         else:
-            return f"{actor_text} stole {self.__gotten_name} from {victim_text}"
+            return f"{actor_text} stole {self.__gotten_name} from {victim_text}."
 
     def to_canonical_form(self) -> str:
         """return action text for stealing from the target"""
@@ -2257,7 +2257,7 @@ class EquipObjectEvent(GraphEvent):
             actor_text = "You"
         else:
             actor_text = self._actor_name
-        return f"{actor_text} {self.action_name} {self._equip_name} "
+        return f"{actor_text} {self.action_name} {self._equip_name}."
 
     def to_canonical_form(self) -> str:
         """return action text for equipping the object"""
@@ -2407,7 +2407,7 @@ class RemoveObjectEvent(GraphEvent):
             actor_text = "You"
         else:
             actor_text = self._actor_name
-        return f"{actor_text} removed {self._equip_name} "
+        return f"{actor_text} removed {self._equip_name}."
 
     def to_canonical_form(self) -> str:
         """return action text for equipping the object"""
@@ -2510,7 +2510,9 @@ class IngestEvent(GraphEvent):
         fe = ingest_target.food_energy
         self._outcome = "Yum. " if fe > 0 else "Gross! "
         world.oo_graph.mark_node_for_deletion(ingest_target.node_id)
-
+        if hasattr(world.oo_graph, "void"):
+            ingest_target.force_move_to(world.oo_graph.void)
+        
         world.broadcast_to_room(self)
 
         health_text = world.health(self.actor.node_id)
@@ -2534,9 +2536,9 @@ class IngestEvent(GraphEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            return f"You {self.past_tense_action_name} {self._ingest_name}. {self._outcome} "
+            return f"You {self.past_tense_action_name} {self._ingest_name}. {self._outcome}"
         else:
-            return f"{self._actor_name} {self.past_tense_action_name} {self._ingest_name}. "
+            return f"{self._actor_name} {self.past_tense_action_name} {self._ingest_name}."
 
     def to_canonical_form(self) -> str:
         """return action text for equipping the object"""
@@ -2721,9 +2723,11 @@ class UseEvent(GraphEvent):
             pre = on_use["pre"]
             if self.preconditions_met(pre, world):
                 post = on_use["post"]
-                self.execute_post(post, world)
                 self.found_use = True
+                self.execute_post(post, world)
                 break
+        if not self.found_use:
+            self.broadcast_message(['broadcast_message', {'self_view': 'Nothing special seems to happen.'}], world)
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -2744,6 +2748,11 @@ class UseEvent(GraphEvent):
         self.executed = True
         return []
 
+
+    def to_canonical_form(self) -> str:
+        """return action text for use"""
+        return f"use {self._canonical_targets[0]} with {self._canonical_targets[1]}"    
+    
     @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
@@ -2941,7 +2950,7 @@ class LockableEvent(GraphEvent):
         else:
             viewer_text = self._actor_name
         return (
-            f"{viewer_text} {self.NAMES[0]}ed {self._locked_name} with {self._key_name}"
+            f"{viewer_text} {self.NAMES[0]}ed {self._locked_name} with {self._key_name}."
         )
 
     def to_canonical_form(self) -> str:
@@ -3218,9 +3227,9 @@ class ExamineEvent(GraphEvent):
         if viewer == self.actor:
             return self.__examine_text
         elif self.target_nodes[0] == viewer:
-            return f"{self.__actor_name} examined you "
+            return f"{self.__actor_name} examined you."
         else:
-            return f"{self.__actor_name} examined {self.__target_name} "
+            return f"{self.__actor_name} examined {self.__target_name}."
 
     def to_canonical_form(self) -> str:
         """return action text for dropping the object"""
@@ -3382,9 +3391,9 @@ class WaitEvent(NoArgumentEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            return "You waited. "
+            return "You waited."
         else:
-            return f"{self.__actor_name} waited. "
+            return f"{self.__actor_name} waited."
 
 
 class InventoryEvent(NoArgumentEvent):
@@ -3413,7 +3422,7 @@ class InventoryEvent(NoArgumentEvent):
                 f"You are {self.__inv_text}\n"
             )
         else:
-            return f"{self.__actor_name} checked their inventory. "
+            return f"{self.__actor_name} checked their inventory."
 
 
 class QuestEvent(NoArgumentEvent):
@@ -3605,14 +3614,14 @@ class LookEvent(NoArgumentEvent):
         world.broadcast_to_agents(self, [self.actor])
         self.executed = True
         return []
-
+    
     @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
             return self.__current_view
         else:
-            return f"{self.__actor_name} looked around. "
+            return f"{self.__actor_name} looked around."
 
 
 # TODO implement use
