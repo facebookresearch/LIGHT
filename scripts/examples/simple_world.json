@@ -165,7 +165,7 @@
             "object": false,
             "room": true,
             "size": 1,
-	    "grid_location": [0,1,0],
+	    "grid_location": [-1,0,0],
             "surface_type": "in"
         },
         "orc_2_4": {
