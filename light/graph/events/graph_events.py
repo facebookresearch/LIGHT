@@ -157,14 +157,14 @@ class ShoutEvent(SpeechEvent):
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the view for the event"""
         assert not self.executed
-        actor_name = self.actor.get_prefix_view()
+        self.actor_name = self.actor.get_prefix_view()
         if self.is_dialogue_safe(self.text_content):
-            self.__in_room_view = f'{actor_name} shouted "{self.text_content}"'
+            self.__in_room_view = f'{self.actor_name} shouted "{self.text_content}"'
             self.__self_view = None
         else:
-            self.__in_room_view = f"{actor_name} shouted something incomprehensible."
+            self.__in_room_view = f"{self.actor_name} shouted something incomprehensible."
             self.__self_view = "You shout something incomprehensible."
-        self.__in_room_view = f'{actor_name} shouted "{self.text_content}"'
+        self.__in_room_view = f'{self.actor_name} shouted "{self.text_content}"'
         world.broadcast_to_all_agents(self)  # , exclude_agents=[self.actor])
         self.executed = True
         return []
@@ -178,11 +178,11 @@ class ShoutEvent(SpeechEvent):
             dist, direction = distance_and_direction(viewer, self.actor)
             if dist > 4:
                 # Further than max shout distance.
-                return
+                return None
             if dist == 0:
                 return self.__in_room_view
             else:
-                return "You hear a shout from the " + direction + "."
+                return f'"You hear {self.actor_name} shout from the {direction}: "{self.text_content}"'
 
     def to_canonical_form(self) -> str:
         """
