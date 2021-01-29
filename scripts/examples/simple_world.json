@@ -326,9 +326,9 @@
                             "in_used_target_item",
                             {
 				"name_prefix": "an",
-                                "is_wearable": 1,
+                                "is_wearable": true,
                                 "name": "emerald ring",
-                                "physical_description": "A beautiful and mysterious ring.. could it have magical powers?"
+                                "desc": "A beautiful and mysterious ring.. could it have magical powers?"
                             }
                         ],
                         [

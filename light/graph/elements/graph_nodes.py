@@ -11,7 +11,7 @@ from typing import List, Set
 UNINTERESTING_PHRASES = [
     "There's nothing special about it.",
     "You really don't have a good reason to be examining this closer.",
-    "You try to get a better look, but it's just as non-descript",
+    "You try to get a better look, but it's just as non-descript.",
     # TODO more uninteresting phrases?
 ]
 
@@ -143,7 +143,10 @@ class GraphNode(object):
             "name_prefix", "an" if name[0] in "aeiou" else "a"
         )
         self.names = self._props.get("names", [self.name]).copy()
-        self.desc = self._props.get("desc", random.choice(UNINTERESTING_PHRASES))
+        field = "desc"
+        if "desc" not in self._props:
+            field = "physical_description"
+        self.desc = self._props.get(field, random.choice(UNINTERESTING_PHRASES))
         self.classes = set(self._props.get("classes", set()).copy())
 
         self.agent = False
@@ -743,15 +746,22 @@ class GraphObject(GraphNode):
         self.size = self._props.get("size", self.DEFAULT_SIZE)
         self.food_energy = self._props.get("food_energy", 0)
         self.value = self._props.get("value", 1)
-        self.surface_type = self._props.get("surface_type", "on")
-        self.drink = self._props.get("drink", False)
-        self.food = self._props.get("food", False)
+        self.drink = self._props.get("drink", self._props.get("is_drink", False))
+        self.food = self._props.get("food", self._props.get("is_food", False))
         self.dead = self._props.get("dead", False)
         self.on_use = self._props.get("on_use", None)
         self.container = self._props.get("container", False)
-        self.gettable = self._props.get("gettable", True)
-        self.wearable = self._props.get("wearable", False)
-        self.wieldable = self._props.get("wieldable", False)
+        if self._props.get("is_container", False) or self._props.get("is_surface", False):
+            self.container = True
+        self.surface_type = self._props.get("surface_type", "on")
+        if 'is_surface' in self._props:
+            if self._props.get("is_surface") == 1.0:
+                self.surface_type = 'on'
+            else:
+                self.surface_type = 'in'
+        self.gettable = self._props.get("gettable", self._props.get("is_gettable", True))
+        self.wearable = self._props.get("wearable", self._props.get("is_wearable", False))
+        self.wieldable = self._props.get("wieldable", self._props.get("is_weapon", False))
         self.classes = set(self._props.get("classes", {"object"}))
         self.equipped = self._props.get("equipped", None)
         self.contain_size = self._props.get(
@@ -760,6 +770,8 @@ class GraphObject(GraphNode):
             if self.container
             else self.DEFAULT_CONTAIN_SIZE,
         )
+        if self.contain_size > self.size:
+            self.size = self.contain_size
         # TODO object stat multipliers should not be a simple dict
         self.stats = self._props.get(
             "stats", {"damage": int(self.wieldable), "defense": int(self.wearable)}

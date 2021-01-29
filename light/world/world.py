@@ -19,6 +19,7 @@ from light.graph.events.graph_events import (
     SystemMessageEvent,
     init_safety_classifier,
 )
+from light.graph.events.magic import init_magic
 from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 from light.world.views import WorldViewer
 from light.world.purgatory import Purgatory
@@ -74,6 +75,9 @@ class World(object):
 
         # Set up safety classifier.
         init_safety_classifier(self.opt.get("safety_classifier_path", ""))
+
+        # Set up magic!
+        init_magic(self.opt.get("magic_db_path", "/scratch/light/data/magic.db"))
 
         # Set up action parser.
         self.action_parser = ActionParser(opt)
