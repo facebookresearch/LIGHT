@@ -26,6 +26,7 @@ from light.graph.elements.graph_nodes import (
 )
 from light.graph.events.safety import SafetyClassifier
 
+safety_classifier = None
 
 def init_safety_classifier(datapath):
     global safety_classifier
@@ -62,6 +63,10 @@ class SpeechEvent(GraphEvent):
     """Base speaking class mostly to handle dialogue safety."""
 
     def is_dialogue_safe(self, text):
+        if safety_classifier is None:
+            self.safe = True
+            return True
+        
         if safety_classifier.is_safe(text):
             self.safe = True
         else:
