@@ -486,8 +486,7 @@ class World(object):
 
     def broadcast_to_all_agents(self, action, exclude_agents=None, told_by=None):
         """send a message to everyone """
-        agents_list, _descs = self.get_all_agents()
-        agents = set(agents_list)
+        agents = set(self.oo_graph.agents.values())
         self.broadcast_to_agents(action, agents, exclude_agents)
 
     # -- Create helpers -- #
@@ -772,13 +771,6 @@ class World(object):
         agent_descs = [self.node_to_desc(a, drop_prefix=drop_prefix) for a in agents]
         return agents, agent_descs
 
-    def get_all_agents(self, have_prop="human"):
-        """Return a list of all agents and their current descriptions"""
-        agents = list(self.oo_graph.agents.values())
-        agents = [a.node_id for a in agents if a.get_prop(have_prop)]
-        agent_descs = [self.node_to_desc(a) for a in agents]
-        return agents, agent_descs
-
     @deprecated
     def get_text(self, agent, clear_actions=True):
         """Get text from the text buffer for an agent, clear that buffer"""
@@ -936,7 +928,7 @@ class World(object):
                 self.send_msg(actor, "You commit suicide!")
                 self.die(actor.node_id)
                 return True, "Suicide"
-            
+
         if executable not in ALL_EVENTS:
             # Try again with the full model parser.
             new_inst = self.action_parser.parse(inst, actor)
