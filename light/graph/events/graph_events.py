@@ -176,6 +176,9 @@ class ShoutEvent(SpeechEvent):
             return self.__self_view
         else:
             dist, direction = distance_and_direction(viewer, self.actor)
+            if dist > 4:
+                # Further than max shout distance.
+                return
             if dist == 0:
                 return self.__in_room_view
             else:
