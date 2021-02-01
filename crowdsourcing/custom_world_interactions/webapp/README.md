@@ -12,5 +12,4 @@ Task for the Custom World Interactions task (WIP)
 The rest of the files are associated with the process of building the finalized javascript main via node and outputting it into the server directory.
 
 - **.babelrc**: links presets and plugins required for babel to transpile the react jsx files into pure js.
-- **package.json**: contains the build dependencies and directs the main build process to run the contents of the webpack config file.
-- **webpack.config.js**: configures webpack to grab the contents of the `dev` folder and output the final built file to `server/static`.
+- **package.json**: contains the build dependencies and directs the main build process to run the contents of the webpack config filechec **webpack.config.js**: configures webpack to grab the contents of the `dev` folder and output the final built file to `server/static`.

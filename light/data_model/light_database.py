@@ -392,7 +392,7 @@ class LIGHTDatabase:
         table_name_fts = self.table_dict[type] + "_fts"
         # if input is empty, return all entries of the specified type through
         # the "else" block
-        
+
         try:
             self.c.execute(
                 """
@@ -610,6 +610,10 @@ class LIGHTDatabase:
             physical_description text NOT NULL,
             name_prefix text NOT NULL,
             is_plural float NOT NULL,
+            size integer,
+            contain_size integer,
+            rarity integer,
+            value integer,
             UNIQUE (name, base_id, physical_description),
             CONSTRAINT fk_base_id FOREIGN KEY (base_id)
                 REFERENCES base_objects_table (id)

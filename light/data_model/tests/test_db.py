@@ -165,7 +165,7 @@ class TestDatabase(unittest.TestCase):
                 "Base object cannot be created",
             )
 
-        # Test if object can be successfully created
+        # Test if object can be successfully created (Without custom tag attributes)
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             ocontent_id1 = test.create_object(
                 None, obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big"
@@ -187,6 +187,35 @@ class TestDatabase(unittest.TestCase):
                 test.get_object()[0],
                 "Object cannot be created",
             )
+
+        # Test if object can be successfully created (With custom tag attributes)
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            ocontent_id1 = test.create_object(
+                None, obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big", 0.5, 0.2, 0.3, 0.1
+            )[0]
+            print(ocontent_id1)
+            self.assert_sqlite_row_equal(
+                {
+                    "id": ocontent_id1,
+                    "name": "room4",
+                    "base_id": obase_id,
+                    "is_container": 0.4,
+                    "is_drink": 0.2,
+                    "is_food": 0,
+                    "is_gettable": 0,
+                    "is_surface": 0,
+                    "is_wearable": 0,
+                    "is_weapon": 0,
+                    "physical_description": "big",
+                    "size": 0.5,
+                    "contain_size": 0.2,
+                    "rarity": 0.3,
+                    "value": 0.1,
+                },
+                test.get_object()[0],
+                "Object cannot be created"
+            )
+
 
         # Test if node content (edge) can be successfully created
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
