@@ -106,6 +106,11 @@ parser.add_argument(
     #default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
 )
 parser.add_argument(
+    "--magic-db-path", type=str,
+    #default=""
+    default = "/scratch/light/magic/magic.db"
+)
+parser.add_argument(
     "--roleplaying-score-model-file",
     type=str,
     default = "",

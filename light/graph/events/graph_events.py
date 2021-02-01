@@ -25,6 +25,9 @@ from light.graph.elements.graph_nodes import (
     LockEdge,
 )
 from light.graph.events.safety import SafetyClassifier
+import math
+
+safety_classifier = None
 
 
 def init_safety_classifier(datapath):
@@ -62,6 +65,10 @@ class SpeechEvent(GraphEvent):
     """Base speaking class mostly to handle dialogue safety."""
 
     def is_dialogue_safe(self, text):
+        if safety_classifier is None:
+            self.safe = True
+            return True
+
         if safety_classifier.is_safe(text):
             self.safe = True
         else:
@@ -123,6 +130,25 @@ class SayEvent(SpeechEvent):
         return cls(actor, text_content=text)
 
 
+def distance_and_direction(node1, node2):
+    node1_loc = node1.get_room().grid_location
+    node2_loc = node2.get_room().grid_location
+    dist = 0
+    for i in range(0, 3):
+        dist += math.pow(node2_loc[i] - node1_loc[i], 2)
+        dist = math.sqrt(dist)
+    direction_string = ""
+    if node1_loc[1] > node2_loc[1]:
+        direction_string = "north"
+    if node1_loc[1] < node2_loc[1]:
+        direction_string = "south"
+    if node1_loc[0] > node2_loc[0]:
+        direction_string += "west"
+    if node1_loc[0] < node2_loc[0]:
+        direction_string += "east"
+    return dist, direction_string
+
+
 class ShoutEvent(SpeechEvent):
     """Handles saying something out loud to all agents."""
 
@@ -131,15 +157,15 @@ class ShoutEvent(SpeechEvent):
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the view for the event"""
         assert not self.executed
-        actor_name = self.actor.get_prefix_view()
+        self.actor_name = self.actor.get_prefix_view()
         if self.is_dialogue_safe(self.text_content):
-            self.__in_room_view = f'{actor_name} shouted "{self.text_content}"'
+            self.__in_room_view = f'{self.actor_name} shouted "{self.text_content}"'
             self.__self_view = None
         else:
-            self.__in_room_view = f"{actor_name} shouted something incomprehensible."
+            self.__in_room_view = f"{self.actor_name} shouted something incomprehensible."
             self.__self_view = "You shout something incomprehensible."
-        self.__in_room_view = f'{actor_name} shouted "{self.text_content}"'
-        world.broadcast_to_all_agents(self, exclude_agents=[self.actor])
+        self.__in_room_view = f'{self.actor_name} shouted "{self.text_content}"'
+        world.broadcast_to_all_agents(self)  # , exclude_agents=[self.actor])
         self.executed = True
         return []
 
@@ -149,7 +175,14 @@ class ShoutEvent(SpeechEvent):
         if viewer == self.actor:
             return self.__self_view
         else:
-            return self.__in_room_view
+            dist, direction = distance_and_direction(viewer, self.actor)
+            if dist > 4:
+                # Further than max shout distance.
+                return None
+            if dist == 0:
+                return self.__in_room_view
+            else:
+                return f'"You hear {self.actor_name} shout from the {direction}: "{self.text_content}"'
 
     def to_canonical_form(self) -> str:
         """
@@ -2512,7 +2545,7 @@ class IngestEvent(GraphEvent):
         world.oo_graph.mark_node_for_deletion(ingest_target.node_id)
         if hasattr(world.oo_graph, "void"):
             ingest_target.force_move_to(world.oo_graph.void)
-        
+
         world.broadcast_to_room(self)
 
         health_text = world.health(self.actor.node_id)
@@ -2538,7 +2571,9 @@ class IngestEvent(GraphEvent):
         if viewer == self.actor:
             return f"You {self.past_tense_action_name} {self._ingest_name}. {self._outcome}"
         else:
-            return f"{self._actor_name} {self.past_tense_action_name} {self._ingest_name}."
+            return (
+                f"{self._actor_name} {self.past_tense_action_name} {self._ingest_name}."
+            )
 
     def to_canonical_form(self) -> str:
         """return action text for equipping the object"""
@@ -2727,7 +2762,13 @@ class UseEvent(GraphEvent):
                 self.execute_post(post, world)
                 break
         if not self.found_use:
-            self.broadcast_message(['broadcast_message', {'self_view': 'Nothing special seems to happen.'}], world)
+            self.broadcast_message(
+                [
+                    "broadcast_message",
+                    {"self_view": "Nothing special seems to happen."},
+                ],
+                world,
+            )
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -2748,11 +2789,10 @@ class UseEvent(GraphEvent):
         self.executed = True
         return []
 
-
     def to_canonical_form(self) -> str:
         """return action text for use"""
-        return f"use {self._canonical_targets[0]} with {self._canonical_targets[1]}"    
-    
+        return f"use {self._canonical_targets[0]} with {self._canonical_targets[1]}"
+
     @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
@@ -2949,9 +2989,7 @@ class LockableEvent(GraphEvent):
             viewer_text = "You"
         else:
             viewer_text = self._actor_name
-        return (
-            f"{viewer_text} {self.NAMES[0]}ed {self._locked_name} with {self._key_name}."
-        )
+        return f"{viewer_text} {self.NAMES[0]}ed {self._locked_name} with {self._key_name}."
 
     def to_canonical_form(self) -> str:
         """return action text for putting the object in/on the container"""
@@ -3438,10 +3476,10 @@ class QuestEvent(NoArgumentEvent):
         self.__actor_name = self.actor.get_prefix_view() + "!"
         self.__quests_text = ""
 
-        if hasattr(self.actor, 'persona'):
-            self.__actor_name += '\nYour Persona: ' + self.actor.persona + "\n"
-            
-        if hasattr(self.actor, 'quests'):
+        if hasattr(self.actor, "persona"):
+            self.__actor_name += "\nYour Persona: " + self.actor.persona + "\n"
+
+        if hasattr(self.actor, "quests"):
             quests = self.actor.quests
             if quests is None or len(quests) == 0:
                 self.__quests_text += (
@@ -3454,8 +3492,12 @@ class QuestEvent(NoArgumentEvent):
                 for q in quests:
                     if q["actor"] != self.actor.node_id:
                         self.__quests_text += (
-                            "Quest to help " + q["actor_str"] + ': "' + q["text"] + '"\n'
-                )
+                            "Quest to help "
+                            + q["actor_str"]
+                            + ': "'
+                            + q["text"]
+                            + '"\n'
+                        )
 
         world.broadcast_to_agents(self, [self.actor])
         self.executed = True
@@ -3468,10 +3510,10 @@ class QuestEvent(NoArgumentEvent):
             return (
                 f"You check yourself. You are {self.__actor_name}\n"
                 f"{self.__quests_text}\n"
-            ).replace('\n\n', '\n')
+            ).replace("\n\n", "\n")
         else:
-            return [] # f"{self.__actor_name} looks deep in thought. "
-        
+            return []  # f"{self.__actor_name} looks deep in thought. "
+
 
 class HealthEvent(NoArgumentEvent):
     """Inventory events just allow a player to do nothing in a timestep"""
@@ -3501,7 +3543,7 @@ class HealthEvent(NoArgumentEvent):
             if self.text_content is None:
                 # actual self "health" call, show experience points.
                 xp = 0
-                if hasattr(self.actor, 'xp'):
+                if hasattr(self.actor, "xp"):
                     xp = self.actor.xp
                 s += f"Experience Points: {xp}\n"
             if self.text_content == "HealthOnMoveEvent":
@@ -3614,7 +3656,7 @@ class LookEvent(NoArgumentEvent):
         world.broadcast_to_agents(self, [self.actor])
         self.executed = True
         return []
-    
+
     @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""

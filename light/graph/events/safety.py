@@ -12,6 +12,7 @@ from parlai_internal.agents.safety_wrapper.multiturn_safety import (
     MultiturnOffensiveLanguageClassifier,
 )
 
+
 class AdversarialOffensiveLanguageClassifier(MultiturnOffensiveLanguageClassifier):
     """
     Load model trained to detect offensive language in the context of multi- turn
@@ -24,7 +25,7 @@ class AdversarialOffensiveLanguageClassifier(MultiturnOffensiveLanguageClassifie
         parser = ParlaiParser(False, False)
         TransformerClassifierAgent.add_cmdline_args(parser)
         parser.set_params(
-            model_file='zoo:bot_adversarial_dialogue/multi_turn/model',
+            model_file="zoo:bot_adversarial_dialogue/multi_turn/model",
             print_scores=True,
             split_lines=True,
             model_parallel=False,
@@ -32,6 +33,7 @@ class AdversarialOffensiveLanguageClassifier(MultiturnOffensiveLanguageClassifie
         )
         safety_opt = parser.parse_args([])
         return create_agent(safety_opt, requireModelExists=True)
+
 
 class SafetyClassifier:
     def __init__(self, datapath, use_model=False):
