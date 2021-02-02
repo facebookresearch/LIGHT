@@ -2151,6 +2151,10 @@ class GiveObjectEvent(GraphEvent):
                 after = " ".join(possible_to_splits[split_ind:])
                 if len(after) > 0 and len(before) > 0:
                     possibilities.append([before, after])
+
+        if len(possibilities) == 0:
+            return ErrorEvent(cls, actor, "You must give that to someone.")
+                    
         return possibilities
 
     @classmethod
@@ -3515,6 +3519,123 @@ class QuestEvent(NoArgumentEvent):
             return []  # f"{self.__actor_name} looks deep in thought. "
 
 
+class RewardEvent(GraphEvent):
+    """Reward events allow to give another agent XP. """
+
+    NAMES = ["reward", "r"]
+
+    def execute(self, world: "World") -> List[GraphEvent]:
+        """
+        On execution, show the quests
+        """
+        assert not self.executed
+        self.__actor_name = self.actor.get_prefix_view()
+        agent = self.target_nodes[0]
+        self.recipient = agent
+        self.__recipient_name = agent.get_prefix_view()
+        if not hasattr(agent, 'xp'):
+            agent.xp = 0
+            agent.reward_xp = 0
+        if not hasattr(self.actor, 'xp'):
+            self.actor.xp = 10
+            self.actor.reward_xp = 0
+        if self.actor.reward_xp > 0:
+            self.actor.reward_xp -= 1
+            stars = 4
+            agent.xp += stars
+            agent.reward_xp += stars / 4.0
+            rewards = math.floor(self.actor.reward_xp)
+            if rewards == 1:
+                self.__reward_xp = '1 reward'
+            else:
+                self.__reward_xp = str(math.floor(self.actor.reward_xp)) + " rewards"
+            self.__gain_xp = str(stars)
+            self.failed = False
+        else:
+            self.failed = True
+        world.broadcast_to_agents(self, [self.actor])
+        self.executed = True
+        return []
+
+    @proper_caps
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        if self.failed:
+            if viewer == self.actor:
+                return f"You don't have any rewards to give. Earn some XP first!"
+            else:
+                return []
+            
+        if viewer == self.actor:
+            return (
+                f"You rewarded {self.__recipient_name}!\n"
+                f"You have {self.__reward_xp} left to give.\n"
+            )
+        elif viewer == self.recipient:
+            return f"{self.__actor_name} rewarded you! (You gained {self.__gain_xp} XP!!)"
+        else:
+            return []
+
+    def to_canonical_form(self) -> str:
+        """
+        Provide the text that this event's actor would use to invoke this event
+        """
+        return f"reward {self._canonical_targets[0]}"
+
+    @classmethod
+    def find_nodes_for_args(
+        cls, graph: "OOGraph", actor: GraphAgent, *text_args: str
+    ) -> Union[ProcessedArguments, ErrorEvent]:
+        """
+        Try to find applicable nodes by the given names - here we're searching
+        for an agent in the same room.
+        """
+        assert len(text_args) == 1, f"RewardEvent takes one arg, got {text_args}"
+        target_name = text_args[0]
+        target_nodes = graph.desc_to_nodes(target_name, actor, "sameloc")
+        applicable_nodes = [x for x in target_nodes if x.agent]
+        if len(applicable_nodes) > 0:
+            return ProcessedArguments(targets=[applicable_nodes[0]])
+        elif len(target_nodes) > 0:
+            guess_target = target_nodes[0]
+            return ErrorEvent(
+                cls,
+                actor,
+                f"You could try and reward {guess_target.get_prefix_view()}, but it won't do anything.",
+                [guess_target],
+            )
+        else:
+            return ErrorEvent(
+                cls, actor, f"You can't find '{target_name}' here that you can reward."
+            )
+
+    @classmethod
+    def construct_from_args(
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> Union["RewardEvent", "ErrorEvent"]:
+        """Reward events with a target agent will always be valid."""
+        assert len(targets) == 1, f"RewardEvent takes one arg, got {targets}"
+        target = targets[0]
+        assert target.agent, "Can only reward agents"
+        return cls(actor, target_nodes=[target])
+
+    @classmethod
+    def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
+        """
+        Return any valid actions that can be taken by the given actor
+        over the current graph. Default returns no events.
+        """
+        valid_actions: List[GraphEvent] = []
+        room = actor.get_room()
+        room_nodes = room.get_contents()
+        room_agents = [x for x in room_nodes if x.agent]
+        for agent in room_agents:
+            if agent != actor:
+                valid_actions.append(cls(actor, target_nodes=[agent]))
+        return valid_actions
+
+        
+
 class HealthEvent(NoArgumentEvent):
     """Inventory events just allow a player to do nothing in a timestep"""
 
@@ -3543,9 +3664,13 @@ class HealthEvent(NoArgumentEvent):
             if self.text_content is None:
                 # actual self "health" call, show experience points.
                 xp = 0
+                rxp = 0
                 if hasattr(self.actor, "xp"):
                     xp = self.actor.xp
+                if hasattr(self.actor, "reward_xp"):
+                    rxp = self.actor.reward_xp
                 s += f"Experience Points: {xp}\n"
+                s += f"Rewards left to give: {rxp}\n"
             if self.text_content == "HealthOnMoveEvent":
                 s += "You are getting tired from your travels. "
             s += f"You are currently feeling {health_text}."
@@ -3705,6 +3830,7 @@ ALL_EVENTS_LIST: List[Type[GraphEvent]] = [
     HealthEvent,
     LookEvent,
     UseEvent,
+    RewardEvent,
 ]
 
 ALL_EVENTS = {name: e for e in ALL_EVENTS_LIST for name in e.NAMES}
