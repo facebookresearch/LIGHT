@@ -32,18 +32,19 @@ if TYPE_CHECKING:
     from light.world.world import World
 
 
-def proper_caps(func): 
-    '''Decorator that reports the execution time.'''
-  
-    def wrap(*args, **kwargs): 
-        result = func(*args, **kwargs) 
+def proper_caps(func):
+    """Decorator that reports the execution time."""
+
+    def wrap(*args, **kwargs):
+        result = func(*args, **kwargs)
         if result is not None:
             try:
                 result = result[0].upper() + result[1:]
             except:
                 print(f"Had difficulty with proper_caps on {result}")
-        return result 
-    return wrap 
+        return result
+
+    return wrap
 
 
 class ProcessedArguments(NamedTuple):

@@ -8,6 +8,7 @@ from parlai.core.agents import create_agent_from_shared
 from light.world.souls.base_soul import BaseSoul
 from light.world.content_loggers import AgentInteractionLogger
 from light.world.quest_loader import QuestCreator
+from light.graph.events.magic import check_if_cast_magic_from_event
 from typing import TYPE_CHECKING
 import random
 
@@ -102,7 +103,7 @@ class PlayerSoul(BaseSoul):
             else:
                 quests_left.append(q)
         actor.quests = quests_left
-
+        
     async def observe_event(self, event: "GraphEvent"):
         """
         PlayerSouls pass their observation along to the provider, who will handle
@@ -111,6 +112,7 @@ class PlayerSoul(BaseSoul):
         self.set_interaction_partners_from_event(event)
         self.log_interaction_from_event(event)
         self.role_playing_score_events(event)
+        check_if_cast_magic_from_event(self, event)
         self.quest_events(event)
         self.provider.player_observe_event(self, event)
         self.agent_logger.observe_event(event)
