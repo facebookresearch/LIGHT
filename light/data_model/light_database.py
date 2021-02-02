@@ -276,6 +276,7 @@ class LIGHTDatabase:
             self.init_user_tables()
             self.init_game_tables()
             self.create_triggers()
+            self.check_custom_tags_objects_tables()
 
         # Dictionaries to convert between previous pickle IDs and current
         # database IDs
@@ -612,7 +613,7 @@ class LIGHTDatabase:
             is_plural float NOT NULL,
             size integer,
             contain_size integer,
-            rarity integer,
+            shape text,
             value integer,
             UNIQUE (name, base_id, physical_description),
             CONSTRAINT fk_base_id FOREIGN KEY (base_id)
@@ -2125,6 +2126,51 @@ class LIGHTDatabase:
                     i[0], comma_separated, comma_separated_with_new
                 )
             )
+
+    def check_custom_tags_objects_tables(self):
+        """
+        Check if the tables has the attrs related to the custom tagged attributes. If not, add them.
+        """
+
+        # Check the table for size column and add if nonexistent
+        self.c.execute(
+            """
+            IF COL_LENGTH('objects_table', 'size') IS NULL
+            BEGIN ALTER TABLE objects_table
+            ADD size int;
+            END;
+            """
+        )
+
+        # Check the table for size column and add if nonexistent
+        self.c.execute(
+            """
+            IF COL_LENGTH('objects_table', 'contain_size') IS NULL
+            BEGIN ALTER TABLE objects_table
+            ADD contain_size int;
+            END;
+            """
+        )
+
+        # Check the table for size column and add if nonexistent
+        self.c.execute(
+            """
+            IF COL_LENGTH('objects_table', 'value') IS NULL
+            BEGIN ALTER TABLE objects_table
+            ADD size int;
+            END;
+            """
+        )
+
+        # Check the table for size column and add if nonexistent
+        self.c.execute(
+            """
+            IF COL_LENGTH('objects_table', 'shape') IS NULL
+            BEGIN ALTER TABLE objects_table
+            ADD shape text;
+            END;
+            """
+        )
 
     def add_single_conversation(self, room, participants, turns):
         """
