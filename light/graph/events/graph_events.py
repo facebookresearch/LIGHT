@@ -2151,6 +2151,10 @@ class GiveObjectEvent(GraphEvent):
                 after = " ".join(possible_to_splits[split_ind:])
                 if len(after) > 0 and len(before) > 0:
                     possibilities.append([before, after])
+
+        if len(possibilities) == 0:
+            return ErrorEvent(cls, actor, "You must give that to someone.")
+                    
         return possibilities
 
     @classmethod

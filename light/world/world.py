@@ -845,7 +845,7 @@ class World(object):
             )
             if not isinstance(result, ErrorEvent):
                 break
-
+            
         if isinstance(result, ErrorEvent):
             return result
 
