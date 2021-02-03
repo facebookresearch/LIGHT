@@ -1066,7 +1066,6 @@ class LIGHTDatabase:
                 ),
             )
             result = self.c.fetchall()
-            print(result)
             assert (
                 len(result) == 1
             ), "There is already an existing item with these unique IDs (name, base_id, physical_description)"

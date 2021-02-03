@@ -194,8 +194,6 @@ class TestDatabase(unittest.TestCase):
             ocontent_id2 = test.create_object(
                 None, obase_id2, 0.4, 0.2, 0, 0, 0, 0, 0, "big", {}, None, None, 5, 3, "round", 1
             )[0]
-            print("Ocontent id: ", ocontent_id2)
-            print("Obase id: ", obase_id2)
             self.assert_sqlite_row_equal(
                 {
                     "id": ocontent_id2,
@@ -214,7 +212,7 @@ class TestDatabase(unittest.TestCase):
                     "shape": "round",
                     "value": 1,
                 },
-                test.get_object()[0],
+                test.get_object(base_id=obase_id2)[0],
                 "Object cannot be created",
             )
 
@@ -465,14 +463,14 @@ class TestDatabase(unittest.TestCase):
 
         # Test if duplicate object is avoided
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            ocontent_id1_dup = test.create_object(
-                None, obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big"
+            ocontent_id2_dup = test.create_object(
+                None, obase_id2, 0.4, 0.2, 0, 0, 0, 0, 0, "big", {}, None, None, 5, 3, "round", 1
             )[0]
             self.assertEqual(
                 len(
                     test.get_object(
-                        name="room4",
-                        base_id=obase_id,
+                        name="room334",
+                        base_id=obase_id2,
                         is_container=0.4,
                         is_drink=0.2,
                         is_food=0,
@@ -481,6 +479,10 @@ class TestDatabase(unittest.TestCase):
                         is_wearable=0,
                         is_weapon=0,
                         physical_description="big",
+                        size=5,
+                        contain_size=3,
+                        shape="round",
+                        value=1
                     )
                 ),
                 1,
