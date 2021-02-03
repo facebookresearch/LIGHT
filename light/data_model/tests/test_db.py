@@ -461,10 +461,10 @@ class TestDatabase(unittest.TestCase):
                 "Base character is duplicated",
             )
 
-        # Test if duplicate object (with custom attributes) is avoided
+        # Test if duplicate object is avoided
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             ocontent_id1_dup = test.create_object(
-                None, obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big", {}, None, None#, 5, 3, "round", 1
+                None, obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big", {}, None, None
             )[0]
             self.assertEqual(
                 len(
@@ -478,11 +478,7 @@ class TestDatabase(unittest.TestCase):
                         is_surface=0,
                         is_wearable=0,
                         is_weapon=0,
-                        physical_description="big",
-                        # size=5,
-                        # contain_size=3,
-                        # shape="round",
-                        # value=1
+                        physical_description="big"
                     )
                 ),
                 1,
