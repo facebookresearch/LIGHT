@@ -145,6 +145,9 @@ class ActionParser:
 
     def post_process(self, txt, actor=None):
         txt = txt.rstrip("\n").rstrip("\r")
+        if '"' in txt:
+            return txt
+        
         txts = txt.strip().split()
         new_txts = []
         postprocess_blacklist = ["the", "a", "an"]

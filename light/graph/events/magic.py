@@ -5,6 +5,7 @@ from light.graph.elements.graph_nodes import (
     GraphNode,
 )
 from light.graph.events.base import TriggeredEvent
+from light.graph.events.graph_events import ArriveEvent, LeaveEvent, LookEvent
 
 magic_db = None
 
@@ -33,7 +34,6 @@ class CreationEvent(TriggeredEvent):
             if viewer == self.actor:
                 return "Nothing seems to happen."
             return
-
         text = (
             "Zap! A mighty roar sounds! Out of thin air, "
             + self.item_name 
@@ -79,11 +79,11 @@ def add_room(g, curr_room, new_room):
 
 def find_item(txt, filter_type=None):
     obs = []
-    txt = ' ' + txt + ' '
+    txt = ' ' + txt.lower() + ' '
     for i in range(0, len(magic_db)):
-        if txt in ' ' + magic_db[i]["name"] + ' ':
+        if txt in ' ' + magic_db[i]["name"].lower() + ' ':
             if filter_type is not None:
-                if 'is_room' in magic_db[i]:
+                if filter_type in magic_db[i]:
                     obs.append(i)
             else:
                 obs.append(i)
@@ -108,7 +108,7 @@ def creo(agent, event):
         query = query.replace('creo loci ', '')
         filter_type = 'is_room'
     elif query.startswith('creo creatura '):
-        query = query.replace('creo creatura  ', '')
+        query = query.replace('creo creatura ', '')
         filter_type = 'is_character'
     else:
         query = query.replace('creo ', '')
@@ -137,6 +137,30 @@ def creo(agent, event):
         
     agent.world.broadcast_to_room(new_event)
 
+def teleport(agent, event):
+    room = event.actor.get_room()
+    world = agent.world
+    g= world.oo_graph
+    found_node = None
+    query = event.text_content.lower().replace('locus ','')
+    for _, node in g.all_nodes.items():
+        if query in node.name.lower():
+            found_node = node
+            break
+    if found_node is not None:
+        new_room = found_node.get_room()
+        LeaveEvent(event.actor, [g.void]).execute(world)
+        event.actor.move_to(new_room)
+        ArriveEvent(event.actor, text_content="arrived in a puff of smoke!").execute(world)
+        LookEvent(event.actor).execute(world)
+    else:
+        # nothing happens event
+        new_event = CreationEvent(event.actor)
+        new_event.actor = event.actor
+        new_event.room = room
+        new_event.item_name = None        
+    
+    
 def save(agent, event):
     print("[saving world state!!!]")
     g = agent.world.oo_graph
@@ -156,3 +180,5 @@ def check_if_cast_magic_from_event(agent, event):
             creo(agent, event)
         if event.text_content.startswith("mort "):
             mort(agent, event)
+        if event.text_content.startswith("locus "):
+            teleport(agent, event)

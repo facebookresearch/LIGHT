@@ -928,7 +928,6 @@ class World(object):
                 self.send_msg(actor, "You commit suicide!")
                 self.die(actor.node_id)
                 return True, "Suicide"
-
         if executable not in ALL_EVENTS:
             # Try again with the full model parser.
             new_inst = self.action_parser.parse(inst, actor)

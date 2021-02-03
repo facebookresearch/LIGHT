@@ -2,22 +2,6 @@
     {
         "base_id": 5008,
         "id": 5015,
-        "is_container": 0.0,
-        "is_drink": 0.0,
-        "is_food": 0.0,
-        "is_gettable": 0.0,
-        "is_object": true,
-        "is_plural": 0.0,
-        "is_surface": 0.0,
-        "is_weapon": 0.0,
-        "is_wearable": 0.0,
-        "name": "orb of creation",
-        "name_prefix": "the",
-        "physical_description": "The orb glows bright blue and emits a faint hum."
-    },
-    {
-        "base_id": 5008,
-        "id": 5015,
         "is_container": 1.0,
         "is_drink": 1.0,
         "is_food": 0.0,
@@ -35,6 +19,40 @@
     {
         "base_id": 5008,
         "id": 5015,
+        "is_container": 0.0,
+        "is_drink": 0.0,
+        "is_food": 0.0,
+        "is_gettable": 1.0,
+        "is_object": true,
+        "is_plural": 0.0,
+        "is_surface": 0.0,
+        "is_weapon": 1.0,
+        "is_wearable": 0.0,
+        "size": 1,
+        "name": "orb of creation",
+        "name_prefix": "the",
+        "physical_description": "The orb glows bright blue and emits a powerful hum."
+    },
+    {
+        "base_id": 5008,
+        "id": 5015,
+        "is_container": 1.0,
+        "is_drink": 1.0,
+        "is_food": 0.0,
+        "is_gettable": 0.0,
+        "is_object": true,
+        "is_plural": 0.0,
+        "is_surface": 0.0,
+        "is_weapon": 0.0,
+        "is_wearable": 0.0,
+        "size": 20,
+        "name": "muddy area",
+        "name_prefix": "a",
+        "physical_description": "This patch seems recently dug up."
+    },
+    {
+        "base_id": 5008,
+        "id": 5015,
         "is_container": 1.0,
         "is_drink": 1.0,
         "is_food": 0.0,
@@ -48,6 +66,22 @@
         "name": "apple tree",
         "name_prefix": "an",
         "physical_description": "There are some delicious looking apples up there -- but they are too high to reach!"
+    },
+    {
+        "base_id": 5008,
+        "id": 5015,
+        "is_container": 0.0,
+        "is_drink": 0.0,
+        "is_food": 0.0,
+        "is_gettable": 1.0,
+        "is_object": true,
+        "is_plural": 0.0,
+        "is_surface": 0.0,
+        "is_weapon": 0.0,
+        "is_wearable": 0.0,
+        "name": "wizard's tome",
+        "name_prefix": "a",
+        "physical_description": "This book describes many sundry spells and incantations in arcane language. Amongst them, it speaks of the orb of creation, a incredibly powerful device that when wielded and chanting such words as \"creo device stone\" one can create a stone! \"creo loci cave\" one can create a cave! or even \"creo creatura dog\" one can summon a living dog!"
     },
     {	
             "agent": false,
@@ -130,7 +164,7 @@
                             {
 				"name_prefix": "an",
                                 "is_wearable": true,
-                                "name": "emerald ring",
+                                "name": "dark emerald ring",
                                 "desc": "A beautiful and mysterious ring.. could it have magical powers?"
                             }
                         ],

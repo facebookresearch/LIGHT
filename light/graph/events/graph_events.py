@@ -425,8 +425,13 @@ class LeaveEvent(TriggeredEvent):
     def execute(self, world: "World") -> List[GraphEvent]:
         """Save expected views, then message everyone"""
         actor_name = self.actor.get_prefix_view()
-        target_name = self.target_nodes[0].get_prefix_view_from(self.room)
-        self.__in_room_view = f"{actor_name} left towards {target_name}."
+        self.__self_view = None
+        if self.target_nodes[0] == world.oo_graph.void:
+            self.__self_view = "You chant the words and feel yourself appearing and disappearing in a puff of smoke!"
+            self.__in_room_view = f"{actor_name} disappears in a puff of smoke!"
+        else:
+            target_name = self.target_nodes[0].get_prefix_view_from(self.room)
+            self.__in_room_view = f"{actor_name} left towards {target_name}."
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         return []
 
@@ -434,7 +439,7 @@ class LeaveEvent(TriggeredEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            return None  # One should not observe themself leaving
+            return self.__self_view
         else:
             return self.__in_room_view
 
@@ -449,7 +454,7 @@ class ArriveEvent(TriggeredEvent):
     def execute(self, world: "World") -> List[GraphEvent]:
         """Save expected views, then message everyone"""
         actor_name = self.actor.get_prefix_view()
-        self.__in_room_view = f"{actor_name} arrived from {self.text_content}"
+        self.__in_room_view = f"{actor_name} {self.text_content}"
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         return []
 
@@ -581,7 +586,7 @@ class GoEvent(GraphEvent):
         # Trigger the leave event, must be before the move to get correct room
         LeaveEvent(self.actor, [self.target_nodes[0]]).execute(world)
         self.actor.move_to(new_room)
-        ArriveEvent(self.actor, text_content=old_room_view).execute(world)
+        ArriveEvent(self.actor, text_content="arrived from " + old_room_view).execute(world)
         LookEvent(self.actor).execute(world)
 
         # Lose a little bit of energy from moving.
