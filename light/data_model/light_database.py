@@ -952,6 +952,10 @@ class LIGHTDatabase:
         entry_attributes={},
         name_prefix=None,
         is_plural=None,
+        size=None,
+        contain_size=None,
+        shape=None,
+        value=None
     ):
         # Check that the attributes are between 0 and 1
         assert (
@@ -1010,8 +1014,8 @@ class LIGHTDatabase:
             """
             INSERT or IGNORE INTO objects_table(id, name, base_id, is_container,
             is_drink, is_food, is_gettable, is_surface, is_wearable, is_weapon,
-            physical_description, name_prefix, is_plural)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            physical_description, name_prefix, is_plural, size, contain_size, shape, value)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 id,
@@ -1027,6 +1031,10 @@ class LIGHTDatabase:
                 physical_description,
                 name_prefix,
                 is_plural,
+                size,
+                contain_size,
+                shape,
+                value
             ),
         )
         inserted = bool(self.c.rowcount)
@@ -1037,7 +1045,8 @@ class LIGHTDatabase:
                 SELECT id from objects_table WHERE name = ? AND base_id = ? \
                 AND is_container = ? AND is_drink = ? AND is_food = ? \
                 AND is_gettable = ? AND is_surface = ? AND is_wearable = ? \
-                AND is_weapon = ? AND physical_description = ?
+                AND is_weapon = ? AND physical_description = ? \
+                AND size = ? AND contain_size = ? AND shape = ? AND value = ? \
                 """,
                 (
                     name,
@@ -1050,9 +1059,14 @@ class LIGHTDatabase:
                     is_wearable,
                     is_weapon,
                     physical_description,
+                    size,
+                    contain_size,
+                    shape,
+                    value
                 ),
             )
             result = self.c.fetchall()
+            print(result)
             assert len(result) == 1
             id = int(result[0][0])
         return (id, inserted)
@@ -2133,44 +2147,57 @@ class LIGHTDatabase:
         """
 
         # Check the table for size column and add if nonexistent
-        self.c.execute(
+        has_size_column = self.c.execute(
             """
-            IF COL_LENGTH('objects_table', 'size') IS NULL
-            BEGIN ALTER TABLE objects_table
-            ADD size int;
-            END;
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='size'
             """
         )
 
-        # Check the table for size column and add if nonexistent
-        self.c.execute(
-            """
-            IF COL_LENGTH('objects_table', 'contain_size') IS NULL
-            BEGIN ALTER TABLE objects_table
-            ADD contain_size int;
-            END;
-            """
-        )
+        if not has_size_column:
+            self.c.execute(
+                """
+                ALTER TABLE objects_table ADD COLUMN size;
+                """
+            )
 
-        # Check the table for size column and add if nonexistent
-        self.c.execute(
+        # Check the table for contain_size column and add if nonexistent
+        has_contain_size_column = self.c.execute(
             """
-            IF COL_LENGTH('objects_table', 'value') IS NULL
-            BEGIN ALTER TABLE objects_table
-            ADD size int;
-            END;
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='contain_size'
             """
         )
+        if not has_contain_size_column:
+            self.c.execute(
+                """
+                ALTER TABLE objects_table ADD COLUMN contain_size;
+                """
+            )
 
-        # Check the table for size column and add if nonexistent
-        self.c.execute(
+        # Check the table for shape column and add if nonexistent
+        has_shape_column = self.c.execute(
             """
-            IF COL_LENGTH('objects_table', 'shape') IS NULL
-            BEGIN ALTER TABLE objects_table
-            ADD shape text;
-            END;
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='shape'
             """
         )
+        if not has_shape_column:
+            self.c.execute(
+                """
+                ALTER TABLE objects_table ADD COLUMN shape;
+                """
+            )
+
+        # Check the table for value column and add if nonexistent
+        has_value_column = self.c.execute(
+            """
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='value'
+            """
+        )
+        if not has_value_column:
+            self.c.execute(
+                """
+                ALTER TABLE objects_table ADD COLUMN value;
+                """
+            )
 
     def add_single_conversation(self, room, participants, turns):
         """

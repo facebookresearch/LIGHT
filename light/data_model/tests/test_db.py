@@ -191,7 +191,7 @@ class TestDatabase(unittest.TestCase):
         # Test if object can be successfully created (With custom tag attributes)
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             ocontent_id1 = test.create_object(
-                None, obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big", 5, 2, "round", 1
+                None, obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big", {}, None, None, 5, 2, "round", 1
             )[0]
             print(ocontent_id1)
             self.assert_sqlite_row_equal(
