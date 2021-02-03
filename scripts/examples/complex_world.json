@@ -2991,7 +2991,40 @@
             "surface_type": "on",
             "value": 1,
             "wearable": false,
-            "wieldable": false
+            "wieldable": false,
+            "on_use": [
+                {
+                    "post": [
+                        [
+                            "create_entity",
+                            "in_room",
+                            {
+                                "desc": "Mmm.. perfectly ripe.",
+                                "is_food": 1.0,
+                                "is_wearable": false,
+                                "name": "delicious crisp apple",
+                                "name_prefix": "a"
+                            }
+                        ],
+                        [
+                            "broadcast_message",
+                            {
+                                "self_view": "You toss the stone.. and land a hit! You knock an apple right off!"
+                            }
+                        ]
+                    ],
+                    "pre": [
+                        [
+                            "is_holding",
+                            "used_item"
+                        ],
+                        [
+                            "used_with_item_name",
+                            "apple tree"
+                        ]
+                    ]
+                }
+            ]
         },
         "groundskeeper_95": {
             "agent": true,
