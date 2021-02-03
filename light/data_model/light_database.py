@@ -1046,7 +1046,7 @@ class LIGHTDatabase:
                 AND is_container = ? AND is_drink = ? AND is_food = ? \
                 AND is_gettable = ? AND is_surface = ? AND is_wearable = ? \
                 AND is_weapon = ? AND physical_description = ? \
-                AND size = ? AND contain_size = ? AND shape = ? AND value = ? \
+                AND (?11 IS NULL OR size = ?11) AND (?12 IS NULL OR contain_size = ?12) AND (?13 IS NULL OR shape = ?13) AND (?14 IS NULL OR value = ?14) \
                 """,
                 (
                     name,
