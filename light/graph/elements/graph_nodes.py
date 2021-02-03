@@ -746,7 +746,7 @@ class GraphObject(GraphNode):
         super().__init__(node_id, name, props, db_id)
         self.object = True
         self.size = self._props.get("size", self.DEFAULT_SIZE)
-        self.food_energy = self._props.get("food_energy", 0)
+        self.food_energy = self._props.get("food_energy", 1)
         self.value = self._props.get("value", 1)
         self.drink = self._props.get("drink", self._props.get("is_drink", False))
         self.food = self._props.get("food", self._props.get("is_food", False))

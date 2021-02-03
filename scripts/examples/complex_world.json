@@ -9,6 +9,7 @@
         "butler_68",
         "drunk reeling out of the saloon_163",
         "fox_150",
+        "goblin_16",
         "graveyard keeper_58",
         "groundskeeper_95",
         "half wild cat_123",
@@ -22,6 +23,7 @@
         "priest_116",
         "rat_165",
         "serving boy_51",
+        "skeleton assistant_15",
         "small aggressive-looking dog_83",
         "smith_160",
         "town doctor_142"
@@ -32,12 +34,16 @@
             "classes": [
                 "room"
             ],
-            "contain_size": 2000,
-            "contained_nodes": {},
+            "contain_size": 1980,
+            "contained_nodes": {
+                "bighorn sheep_136": {
+                    "target_id": "bighorn sheep_136"
+                }
+            },
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": "f698",
+            "db_id": null,
             "desc": "There's a bit of dust.",
             "extra_desc": [
                 "Sometimes things are just what they seem. There's nothing interesting here."
@@ -84,6 +90,45 @@
             "size": 2000,
             "surface_type": "in"
         },
+        "apple tree_13": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 20,
+            "contained_nodes": {},
+            "container": true,
+            "container_node": {
+                "target_id": "picnic area_14"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "There are some delicious looking apples up there -- but they are too high to reach!",
+            "drink": 1.0,
+            "equipped": null,
+            "food": 0.0,
+            "food_energy": 1,
+            "gettable": 0.0,
+            "locked_edge": null,
+            "name": "apple tree",
+            "name_prefix": "an",
+            "names": [
+                "apple tree"
+            ],
+            "node_id": "apple tree_13",
+            "object": true,
+            "on_use": null,
+            "room": false,
+            "size": 20,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "in",
+            "value": 1,
+            "wearable": 0.0,
+            "wieldable": 0.0
+        },
         "apron_133": {
             "agent": false,
             "classes": [
@@ -96,7 +141,7 @@
             "container_node": {
                 "target_id": "assistant chef_130"
             },
-            "db_id": 6461,
+            "db_id": null,
             "dead": false,
             "desc": "The apron is small and a picture of a fire is painted on its front.",
             "drink": false,
@@ -139,7 +184,7 @@
                 "target_id": "modest living area_18"
             },
             "damage": 1,
-            "db_id": 2371,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "This assassin holds no value for any life other than his own and will stop at nothing to achieve his goals.",
@@ -153,6 +198,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Seek adventure, money and honor.",
             "movement_energy_cost": 0.0,
             "name": "assassin",
             "name_prefix": "an",
@@ -166,7 +212,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "Killing for a living puts things in perspective. It makes me appreciate life more. I would gladly annihilate all living beings for an appropriate fee.",
-	    "mission": "Seek adventure, money and honor.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -198,7 +243,7 @@
                 "target_id": "disposal area_16"
             },
             "damage": 1,
-            "db_id": 3689,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "He is the bumbling but charming assistant to the chef, who has aspirations to become the head chef one day.",
@@ -212,6 +257,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "I want to be the best chef in the world, and one day discover the perfect dish.",
             "movement_energy_cost": 0.0,
             "name": "assistant chef",
             "name_prefix": "an",
@@ -225,7 +271,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I cook for the King and Queen and other Royals in the area. I take the directions from the head chef. I hope to someday be the head chef.",
-	    "mission": "I want to be the best chef in the world, and one day discover the perfect dish.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -257,7 +302,7 @@
                 "target_id": "unsettling forest area_20"
             },
             "damage": 1,
-            "db_id": 3316,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "This bandit likes to steal items and hurt people.",
@@ -271,6 +316,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "I want to pull of the greatest roberry there ever was. I may need to recruit some fellow bandits.",
             "movement_energy_cost": 0.0,
             "name": "bandit",
             "name_prefix": "a",
@@ -284,7 +330,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I steal items and money from others. I lurk on the side of the road and prey on travelers. I harm people.",
-	    "mission": "I want to pull of the greatest roberry there ever was. I may need to recruit some fellow bandits.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -305,7 +350,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 6245,
+            "db_id": null,
             "dead": false,
             "desc": "The notorious pot holds a stale liquid.",
             "drink": false,
@@ -359,7 +404,7 @@
                 "target_id": "small hut_11"
             },
             "damage": 1,
-            "db_id": 4127,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "Most generals would oversee his during a battle but this one fights along side his men. You by his scratched and dinged up heavy plate mail armor. You can also tell by the men admire him while he is riding his gigantic battle steed across the battlefield with thundering hoof beats. You can tell by the fire in his eyes he does not do it for personal just to protect as many men under his leadership as he can.",
@@ -373,6 +418,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Assess the threats to this nation, and possibly recruit more patriots.",
             "movement_energy_cost": 0.0,
             "name": "battle master",
             "name_prefix": "a",
@@ -386,7 +432,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I am the general's battle master. I oversee the troops during battles. I am the general's right hand man.",
-	    "mission": "Assess the threats to this nation, and possibly recruit more patriots.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -414,7 +459,7 @@
             "container_node": {
                 "target_id": "personal quarters_2"
             },
-            "db_id": 5495,
+            "db_id": null,
             "dead": false,
             "desc": "The bedding is soft and warm, and is made out of silk and stuffed with animal feathers.",
             "drink": false,
@@ -454,7 +499,7 @@
             "container_node": {
                 "target_id": "serving boy_51"
             },
-            "db_id": 5233,
+            "db_id": null,
             "dead": false,
             "desc": "The bell is small and old, with a thin layer of tarnish that covers the silver. there's a small crack running down from the top.",
             "drink": false,
@@ -497,7 +542,7 @@
                 "target_id": "outside castle_32"
             },
             "damage": 1,
-            "db_id": 3971,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "A lovely and easy going creature that doesn't bother nobody.",
@@ -511,6 +556,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Make friends with everyone! And who knows, they might feed, pet or play with me!",
             "movement_energy_cost": 0.0,
             "name": "big sheep-like brown dog",
             "name_prefix": "a",
@@ -524,7 +570,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I am a big sheep-like brown dog.  My owner is a poor farmer.  He feeds me scraps in the afternoon.  I sleep outside in the barn.",
-	    "mission": "Make friends with everyone! And who knows, they might feed, pet or play with me!",
             "quests": [],
             "room": false,
             "size": 20,
@@ -543,17 +588,17 @@
             "classes": [
                 "agent"
             ],
-            "contain_size": 19,
+            "contain_size": 25,
             "contained_nodes": {
                 "corn_137": {
                     "target_id": "corn_137"
                 }
             },
             "container_node": {
-                "target_id": "table area_17"
+                "target_id": "abandoned farm_21"
             },
             "damage": 1,
-            "db_id": 3036,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "The alpha ram dominates over all the other sheep in the flock. They step aside to allow him to be first at the food and water. Even humans coming running at the slightest bleating from his lips.",
@@ -562,11 +607,12 @@
             "followed_by": {},
             "following": null,
             "food_energy": 1,
-            "health": 2,
+            "health": 2.0,
             "is_player": false,
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Find the best grazeable nibbles in the kingdom",
             "movement_energy_cost": 0.0,
             "name": "bighorn sheep",
             "name_prefix": "a",
@@ -579,9 +625,23 @@
             "object": false,
             "on_events": [],
             "pacifist": false,
-            "persona": "I am a sheep with the biggest horns in the area. Other sheep give me food and drink. I know how to get humans to check on me.",
-	    "mission": "Find the best grazeable nibbles in the kingdom",
-            "quests": [],
+            "persona": "I am a sheep with the biggest horns in the area. Other sheep give me food and drink. I know how to get humans to check on me.\nYour Mission: Find the best grazeable nibbles in the kingdom",
+            "quests": [
+                {
+                    "actor": "bighorn sheep_136",
+                    "actor_name": "bighorn sheep",
+                    "actor_persona": "I am a sheep with the biggest horns in the area. Other sheep give me food and drink. I know how to get humans to check on me.\nYour Mission: Find the best grazeable nibbles in the kingdom",
+                    "actor_str": "a bighorn sheep",
+                    "agent": "half wild cat_123",
+                    "container": null,
+                    "goal_action": "give some corn to a half wild cat",
+                    "goal_verb": "give",
+                    "helper_agents": [],
+                    "location": null,
+                    "object": "corn_137",
+                    "text": "I really need to give some corn to a half wild cat."
+                }
+            ],
             "room": false,
             "size": 20,
             "speed": 5,
@@ -601,7 +661,7 @@
             "container_node": {
                 "target_id": "half wild cat_123"
             },
-            "db_id": 8087,
+            "db_id": null,
             "dead": false,
             "desc": "The hammer is made of sturdy iron, but is covered in a layer of rust.",
             "drink": false,
@@ -640,7 +700,7 @@
             "container_node": {
                 "target_id": "personal rooms_0"
             },
-            "db_id": 7219,
+            "db_id": null,
             "dead": false,
             "desc": "The blanket is made from thick cotton, and it is a dull red color.",
             "drink": false,
@@ -678,7 +738,7 @@
             "container_node": {
                 "target_id": "lord_108"
             },
-            "db_id": 7451,
+            "db_id": null,
             "dead": false,
             "desc": "The block and tackle could be used to raise something.",
             "drink": false,
@@ -718,7 +778,7 @@
             "container_node": {
                 "target_id": "drunk reeling out of the saloon_163"
             },
-            "db_id": 6133,
+            "db_id": null,
             "dead": false,
             "desc": "The wine in the bottle appears rich and dark, inviting you to drink it.",
             "drink": true,
@@ -758,7 +818,7 @@
             "container_node": {
                 "target_id": "main gate_8"
             },
-            "db_id": 5897,
+            "db_id": null,
             "dead": false,
             "desc": "A bow an arrow. made from fine materials. mostly used for hunting and protection.",
             "drink": false,
@@ -797,7 +857,7 @@
             "container_node": {
                 "target_id": "main gate_8"
             },
-            "db_id": 5277,
+            "db_id": null,
             "dead": false,
             "desc": "The bow is old and used, made of wood and some type of string.",
             "drink": false,
@@ -836,7 +896,7 @@
             "container_node": {
                 "target_id": "small graveyard_10"
             },
-            "db_id": 5687,
+            "db_id": null,
             "dead": false,
             "desc": "The bowl has a blue glaze, and holds a large mount of grapes and other fruit.",
             "drink": false,
@@ -854,7 +914,7 @@
             "object": true,
             "on_use": null,
             "room": false,
-            "size": 2,
+            "size": 3,
             "stats": {
                 "damage": 0,
                 "defense": 0
@@ -875,7 +935,7 @@
             "container_node": {
                 "target_id": "personal rooms_0"
             },
-            "db_id": 7361,
+            "db_id": null,
             "dead": false,
             "desc": "The glass is shattered in a hundred pieces, it is sharp and dangerous.",
             "drink": false,
@@ -915,7 +975,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 5821,
+            "db_id": null,
             "dead": false,
             "desc": "The bucket is filled with a noxious brown liquid.",
             "drink": false,
@@ -969,7 +1029,7 @@
                 "target_id": "personal quarters_2"
             },
             "damage": 1,
-            "db_id": 3456,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "He is a well kept, tall man with many years of life experience that takes great pride in his duties and has a very matter of fact attitude usually reserved for royalty.",
@@ -983,6 +1043,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Make sure the royals have all their wishes met.",
             "movement_energy_cost": 0.0,
             "name": "butler",
             "name_prefix": "a",
@@ -996,7 +1057,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I work for the royal family. I serve them food and beverages. I live in the worker's quarters of the castle.",
-	    "mission": "Make sure the royals have all their wishes met.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -1016,7 +1076,7 @@
             "container_node": {
                 "target_id": "wood is gathered to make fire_113"
             },
-            "db_id": 6099,
+            "db_id": null,
             "dead": false,
             "desc": "The candle smells of enchanting vanilla and wax drips down it's side. It has been used a few times but not overused",
             "drink": false,
@@ -1056,13 +1116,13 @@
             "container_node": {
                 "target_id": "small graveyard_10"
             },
-            "db_id": 5539,
+            "db_id": null,
             "dead": false,
             "desc": "The candy is hard and shiny on the outside and made from sweet sugar and honey.",
             "drink": false,
             "equipped": null,
             "food": true,
-            "food_energy": 0,
+            "food_energy": 1,
             "gettable": true,
             "locked_edge": null,
             "name": "candy",
@@ -1096,13 +1156,13 @@
             "container_node": {
                 "target_id": "groundskeeper_95"
             },
-            "db_id": 8653,
+            "db_id": null,
             "dead": false,
             "desc": "The cannon is rusty, but still loaded.",
             "drink": false,
             "equipped": true,
             "food": false,
-            "food_energy": 0,
+            "food_energy": 1,
             "gettable": true,
             "locked_edge": null,
             "name": "cannon",
@@ -1135,13 +1195,13 @@
             "container_node": {
                 "target_id": "battle master_99"
             },
-            "db_id": 6581,
+            "db_id": null,
             "dead": false,
             "desc": "The cargo is stacked up neatly.",
             "drink": false,
             "equipped": null,
             "food": false,
-            "food_energy": 0,
+            "food_energy": 1,
             "gettable": true,
             "locked_edge": null,
             "name": "cargo",
@@ -1173,7 +1233,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 172,
+            "db_id": null,
             "desc": "This castle is made from red brick. The walls are all painted purple and have gold trim. There is a big chandelier that lights up the main room of the castle.",
             "extra_desc": "The inside of the castle is where all important visitors come when in town. The kings throne is located in the castle and never moved. The inside of the castle gets a new coat of paint every month.",
             "grid_location": [
@@ -1212,11 +1272,15 @@
                 "room"
             ],
             "contain_size": 2000,
-            "contained_nodes": {},
+            "contained_nodes": {
+                "pond_0": {
+                    "target_id": "pond_0"
+                }
+            },
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": "f572",
+            "db_id": null,
             "desc": "There's a bit of dirt.",
             "extra_desc": [
                 "Sometimes things are just what they seem. There's nothing interesting here."
@@ -1245,6 +1309,45 @@
             "size": 2000,
             "surface_type": "in"
         },
+        "chair_5": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 20,
+            "contained_nodes": {},
+            "container": true,
+            "container_node": {
+                "target_id": "wizard's quarters_3"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "The chair is inviting, but it is not the time to sit for a rest.",
+            "drink": 0.0,
+            "equipped": null,
+            "food": 0.0,
+            "food_energy": 1,
+            "gettable": 0.0,
+            "locked_edge": null,
+            "name": "chair",
+            "name_prefix": "a",
+            "names": [
+                "chair"
+            ],
+            "node_id": "chair_5",
+            "object": true,
+            "on_use": null,
+            "room": false,
+            "size": 20,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "on",
+            "value": 1,
+            "wearable": 0.0,
+            "wieldable": 0.0
+        },
         "chamber pot_60": {
             "agent": false,
             "classes": [
@@ -1257,13 +1360,13 @@
             "container_node": {
                 "target_id": "graveyard keeper_58"
             },
-            "db_id": 5879,
+            "db_id": null,
             "dead": false,
             "desc": "The chamber pot smells terrible, like it has only been hastily emptied and not cleaned.",
             "drink": false,
             "equipped": null,
             "food": false,
-            "food_energy": 0,
+            "food_energy": 1,
             "gettable": true,
             "locked_edge": null,
             "name": "chamber pot",
@@ -1297,13 +1400,13 @@
             "container_node": {
                 "target_id": "fox_150"
             },
-            "db_id": 8391,
+            "db_id": null,
             "dead": false,
             "desc": "The chamberpot is extremely clean, as though it never gets used.",
             "drink": false,
             "equipped": null,
             "food": false,
-            "food_energy": 0,
+            "food_energy": 1,
             "gettable": true,
             "locked_edge": null,
             "name": "chamberpot",
@@ -1337,13 +1440,13 @@
             "container_node": {
                 "target_id": "butler_68"
             },
-            "db_id": 8171,
+            "db_id": null,
             "dead": false,
             "desc": "The chicken had a golden brown hue and was decorated with the finest vegetables that only fit for the king.",
             "drink": false,
             "equipped": null,
             "food": true,
-            "food_energy": 0,
+            "food_energy": 1,
             "gettable": true,
             "locked_edge": null,
             "name": "chicken",
@@ -1377,13 +1480,13 @@
             "container_node": {
                 "target_id": "modest living area_18"
             },
-            "db_id": 8791,
+            "db_id": null,
             "dead": false,
             "desc": "The living vines that once hung in the trees now mask the flesh of man.",
             "drink": false,
             "equipped": null,
             "food": false,
-            "food_energy": 0,
+            "food_energy": 1,
             "gettable": true,
             "locked_edge": null,
             "name": "clothes made of various plant matter such as large leaves and vines",
@@ -1423,13 +1526,13 @@
             "container_node": {
                 "target_id": "master-at-arms_43"
             },
-            "db_id": 7183,
+            "db_id": null,
             "dead": false,
             "desc": "The computer, also known as an abacus, is a wooden square with faded paint delicately holding metal rods and sliding beads.",
             "drink": false,
             "equipped": null,
             "food": false,
-            "food_energy": 0,
+            "food_energy": 1,
             "gettable": true,
             "locked_edge": null,
             "name": "computer",
@@ -1467,13 +1570,13 @@
             "container_node": {
                 "target_id": "assistant chef_130"
             },
-            "db_id": 7419,
+            "db_id": null,
             "dead": false,
             "desc": "The cookpot is large, heavy, and round. peering inside, you have trouble seeing the bottom.",
             "drink": false,
             "equipped": null,
             "food": false,
-            "food_energy": 0,
+            "food_energy": 1,
             "gettable": true,
             "locked_edge": null,
             "name": "cookpot",
@@ -1507,13 +1610,13 @@
             "container_node": {
                 "target_id": "bighorn sheep_136"
             },
-            "db_id": 7755,
+            "db_id": null,
             "dead": false,
             "desc": "The corn is tasty and delicious, it is big and vast.",
             "drink": false,
             "equipped": null,
             "food": true,
-            "food_energy": 0,
+            "food_energy": 1,
             "gettable": true,
             "locked_edge": null,
             "name": "corn",
@@ -1552,7 +1655,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 884,
+            "db_id": null,
             "desc": "The countryside is quite nice, it's not filled with a lot of people but with travelers here and there. Some in small groups some on their own. They are hosting a campfire where everyone has some to sit and is telling stories about their adventures. Someone is showing local children how to wield some weapons. Another is offering lodge, and stable for travelers and their animals.",
             "extra_desc": "The countryside outside the bazaar has always been well known for being a place for people to relax. As they travel back and forth they can stop by campfires and share stories. It was first started by their king. A lovely man who wanted everyone to try and get to know each other and help each other. When he died his villagers wanted to continue his acts of kindness by offering help to those who passed by.",
             "grid_location": [
@@ -1608,13 +1711,13 @@
             "container_node": {
                 "target_id": "table area_17"
             },
-            "db_id": 5557,
+            "db_id": null,
             "dead": false,
             "desc": "The cup is old and broken, with the handle chipped from being dropped",
             "drink": false,
             "equipped": null,
             "food": false,
-            "food_energy": 0,
+            "food_energy": 1,
             "gettable": true,
             "locked_edge": null,
             "name": "cup",
@@ -1635,24 +1738,141 @@
             "wearable": false,
             "wieldable": true
         },
+        "cupboard_11": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 18,
+            "contained_nodes": {
+                "scroll_7": {
+                    "target_id": "scroll_7"
+                },
+                "wizard's tome_12": {
+                    "target_id": "wizard's tome_12"
+                }
+            },
+            "container": true,
+            "container_node": {
+                "target_id": "wizard's quarters_3"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "The cupboard is filled with all manner of dishware, its handles long worn down from constantly being opened and closed.",
+            "drink": 0.0,
+            "equipped": null,
+            "food": 0.0,
+            "food_energy": 1,
+            "gettable": 0.0,
+            "locked_edge": null,
+            "name": "cupboard",
+            "name_prefix": "a",
+            "names": [
+                "cupboard"
+            ],
+            "node_id": "cupboard_11",
+            "object": true,
+            "on_use": null,
+            "room": false,
+            "size": 20,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "in",
+            "value": 1,
+            "wearable": 0.0,
+            "wieldable": 0.0
+        },
+        "dexteritate scroll_9": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 0,
+            "contained_nodes": {},
+            "container": false,
+            "container_node": {
+                "target_id": "lavish desk piled high with books._6"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "An old scroll with words you decipher to be: \"creo dexteritate\". Could this be magic?",
+            "drink": false,
+            "equipped": null,
+            "food": false,
+            "food_energy": 1,
+            "gettable": true,
+            "locked_edge": null,
+            "name": "dexteritate scroll",
+            "name_prefix": "a",
+            "names": [
+                "dexteritate scroll"
+            ],
+            "node_id": "dexteritate scroll_9",
+            "object": true,
+            "on_use": [
+                {
+                    "post": [
+                        [
+                            "broadcast_message",
+                            {
+                                "room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} seems to glow for a second.",
+                                "self_as_target_view": "Suddenly you feel a lightness upon you and you feel more fleet of foot. Your dexterity has increased!",
+                                "self_not_target_view": "{recipient_text} feels a lightness upon them and they feel more fleet of foot. Their dexterity has increased!",
+                                "self_view": "You say the words aloud, and runes on the scroll glow with gold."
+                            }
+                        ],
+                        [
+                            "modify_attribute",
+                            "in_used_target_item",
+                            "dexterity",
+                            "+2"
+                        ]
+                    ],
+                    "pre": [
+                        [
+                            "is_holding",
+                            "used_item"
+                        ],
+                        [
+                            "used_with_agent"
+                        ]
+                    ]
+                }
+            ],
+            "room": false,
+            "size": 1,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "on",
+            "value": 1,
+            "wearable": false,
+            "wieldable": false
+        },
         "disposal area_16": {
             "agent": false,
             "classes": [
                 "room"
             ],
-            "contain_size": 1979,
+            "contain_size": 1978,
             "contained_nodes": {
                 "assistant chef_130": {
                     "target_id": "assistant chef_130"
                 },
                 "homestead equipment_129": {
                     "target_id": "homestead equipment_129"
+                },
+                "shovel_1": {
+                    "target_id": "shovel_1"
                 }
             },
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 954,
+            "db_id": null,
             "desc": "It is piled high with trash. The smell is absolutely nauseating and the rats are multiplying faster than the castle can be rid of.",
             "extra_desc": "It smells here!",
             "grid_location": [
@@ -1697,13 +1917,13 @@
             "container_node": {
                 "target_id": "small aggressive-looking dog_83"
             },
-            "db_id": 5455,
+            "db_id": null,
             "dead": false,
             "desc": "The dress has beautiful frills and small jewels embedded on it",
             "drink": false,
             "equipped": true,
             "food": false,
-            "food_energy": 0,
+            "food_energy": 1,
             "gettable": true,
             "locked_edge": null,
             "name": "dress",
@@ -1734,17 +1954,17 @@
             "classes": [
                 "agent"
             ],
-            "contain_size": 19,
+            "contain_size": 20,
             "contained_nodes": {
                 "bottle of wine_164": {
                     "target_id": "bottle of wine_164"
                 }
             },
             "container_node": {
-                "target_id": "town_26"
+                "target_id": "table area_17"
             },
             "damage": 1,
-            "db_id": 1886,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "The town drunk fell down after being thrown our of the saloon.",
@@ -1753,11 +1973,12 @@
             "followed_by": {},
             "following": null,
             "food_energy": 1,
-            "health": 2,
+            "health": 2.0,
             "is_player": false,
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Make friends with everyone! And.. well, hic! .. maybe a drink and a nap or too in between!",
             "movement_energy_cost": 0.0,
             "name": "drunk reeling out of the saloon",
             "name_prefix": "a",
@@ -1770,8 +1991,7 @@
             "object": false,
             "on_events": [],
             "pacifist": false,
-            "persona": "I am known as the town drunk. I frequent the local pubs on a daily basis and drink beer till my belly is full. I commonly start fights with other patrons and get thrown out of the saloon.",
-	    "mission": "Make friends with everyone! And.. well, hic! .. maybe a drink and a nap or too in between!",
+            "persona": "I am known as the town drunk. I frequent the local pubs on a daily basis and drink beer till my belly is full. I commonly start fights with other patrons and get thrown out of the saloon.\nYour Mission: Make friends with everyone! And.. well, hic! .. maybe a drink and a nap or too in between!",
             "quests": [],
             "room": false,
             "size": 20,
@@ -1779,6 +1999,100 @@
             "strength": 0,
             "tags": [],
             "usually_npc": false
+        },
+        "dungeon within a castle_2": {
+            "agent": false,
+            "classes": [
+                "room"
+            ],
+            "contain_size": 100000,
+            "contained_nodes": {
+                "skeleton assistant_15": {
+                    "target_id": "skeleton assistant_15"
+                }
+            },
+            "container_node": {
+                "target_id": "VOID"
+            },
+            "db_id": null,
+            "desc": "The castles dungeon lay buried below the village on the outskirts of the castles garden. Only the guards have access to light, and light is given as a privilege. The interior is stone and smells of mildew and deadly black mold.",
+            "extra_desc": "The castles dungeon lay buried below the village on the outskirts of the castles garden. Only the guards have access to light, and light is given as a privilege. The interior is stone and smells of mildew and deadly black mold.",
+            "grid_location": [
+                1,
+                -2,
+                0
+            ],
+            "name": "Dungeon within a castle",
+            "name_prefix": "the",
+            "names": [
+                "Dungeon within a castle"
+            ],
+            "neighbors": {
+                "dungeon_1": {
+                    "examine_desc": null,
+                    "label": "a path to the east",
+                    "locked_edge": null,
+                    "target_id": "dungeon_1"
+                },
+                "wizard's quarters_3": {
+                    "examine_desc": null,
+                    "label": "a path to the south",
+                    "locked_edge": null,
+                    "target_id": "wizard's quarters_3"
+                }
+            },
+            "node_id": "dungeon within a castle_2",
+            "object": false,
+            "room": true,
+            "size": 1,
+            "surface_type": "in"
+        },
+        "dungeon_1": {
+            "agent": false,
+            "classes": [
+                "room"
+            ],
+            "contain_size": 100000,
+            "contained_nodes": {
+                "goblin_16": {
+                    "target_id": "goblin_16"
+                }
+            },
+            "container_node": {
+                "target_id": "VOID"
+            },
+            "db_id": null,
+            "desc": "A dirty stone room with tables and torture instruments abound.  There's pieces of equipment in various corners of the room.",
+            "extra_desc": "A dirty stone room with tables and torture instruments abound.  There's pieces of equipment in various corners of the room.",
+            "grid_location": [
+                2,
+                -2,
+                0
+            ],
+            "name": "Dungeon",
+            "name_prefix": "the",
+            "names": [
+                "Dungeon"
+            ],
+            "neighbors": {
+                "dungeon within a castle_2": {
+                    "examine_desc": null,
+                    "label": "a path to the west",
+                    "locked_edge": null,
+                    "target_id": "dungeon within a castle_2"
+                },
+                "entrance to a cave_0": {
+                    "examine_desc": null,
+                    "label": "a path to the south",
+                    "locked_edge": null,
+                    "target_id": "entrance to a cave_0"
+                }
+            },
+            "node_id": "dungeon_1",
+            "object": false,
+            "room": true,
+            "size": 1,
+            "surface_type": "in"
         },
         "embalming equipment_90": {
             "agent": false,
@@ -1791,7 +2105,7 @@
             "container_node": {
                 "target_id": "main graveyard_9"
             },
-            "db_id": 5671,
+            "db_id": null,
             "dead": false,
             "desc": "The equipment is remarkably clean.",
             "drink": false,
@@ -1829,7 +2143,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": "f348",
+            "db_id": null,
             "desc": "There's a bit of water.",
             "extra_desc": [
                 "Sometimes things are just what they seem. There's nothing interesting here."
@@ -1864,17 +2178,64 @@
             "size": 2000,
             "surface_type": "in"
         },
+        "entrance to a cave_0": {
+            "agent": false,
+            "classes": [
+                "room"
+            ],
+            "contain_size": 100000,
+            "contained_nodes": {},
+            "container_node": {
+                "target_id": "VOID"
+            },
+            "db_id": null,
+            "desc": "The snow drifts rise high enough that the entrance is difficult to make out.  Odd sounds and echos emerge from farther within, although whether they're caused by a trick of the wind or from something lurking within is hard to tell.  There are a few marks just within the entryway of the cave that look like they could be tracks of some kind, although they seem alarmingly large.",
+            "extra_desc": "The snow drifts rise high enough that the entrance is difficult to make out.  Odd sounds and echos emerge from farther within, although whether they're caused by a trick of the wind or from something lurking within is hard to tell.  There are a few marks just within the entryway of the cave that look like they could be tracks of some kind, although they seem alarmingly large.",
+            "grid_location": [
+                2,
+                -1,
+                0
+            ],
+            "name": "Entrance to a Cave",
+            "name_prefix": "the",
+            "names": [
+                "Entrance to a Cave"
+            ],
+            "neighbors": {
+                "dungeon_1": {
+                    "examine_desc": null,
+                    "label": "a path to the north",
+                    "locked_edge": null,
+                    "target_id": "dungeon_1"
+                },
+                "the forest_22": {
+                    "examine_desc": null,
+                    "label": "a path to the south",
+                    "locked_edge": null,
+                    "target_id": "the forest_22"
+                }
+            },
+            "node_id": "entrance to a cave_0",
+            "object": false,
+            "room": true,
+            "size": 1,
+            "surface_type": "in"
+        },
         "entrance to the pine trees_15": {
             "agent": false,
             "classes": [
                 "room"
             ],
-            "contain_size": 2000,
-            "contained_nodes": {},
+            "contain_size": 1999,
+            "contained_nodes": {
+                "hefty rock_14": {
+                    "target_id": "hefty rock_14"
+                }
+            },
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 240,
+            "db_id": null,
             "desc": "Very tall and towering pine trees that create a dark canopy of shade. Long skinny trees sway in the sky from the soft breeze. Pine needles scatter the ground like plush carpet.",
             "extra_desc": "The Pine forest is home to many deer and other animals. It is a sanctuary for people escaping the loud city. It is serene and peaceful and many people have found solace here.",
             "grid_location": [
@@ -1926,7 +2287,7 @@
             "container_node": {
                 "target_id": "personal rooms_0"
             },
-            "db_id": 6503,
+            "db_id": null,
             "dead": false,
             "desc": "A carpet made of the finest silk and with intricate patterns woven in.",
             "drink": false,
@@ -1965,13 +2326,13 @@
             "container_node": {
                 "target_id": "pine tree graveyard_13"
             },
-            "db_id": 6143,
+            "db_id": null,
             "dead": false,
             "desc": "The feather fountain pen appears to  have never been used before as it is so clean and shiny.",
             "drink": false,
             "equipped": null,
             "food": false,
-            "food_energy": 0,
+            "food_energy": 1,
             "gettable": true,
             "locked_edge": null,
             "name": "feather fountain pen",
@@ -2005,7 +2366,7 @@
             "container_node": {
                 "target_id": "jailer_157"
             },
-            "db_id": 5997,
+            "db_id": null,
             "dead": false,
             "desc": "The silk and velvet in the material make it feel so smooth.",
             "drink": false,
@@ -2046,7 +2407,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 776,
+            "db_id": null,
             "desc": "The port is filled with many different small shops that sell fishes caught throughout the day. It is incredibly loud and busy with many customers and fisherman walking around and haggling for a good price on the fishes. There are tons of boxes sitting on the floors everywhere filled with ice, fish, and the fishermen's belongings.",
             "extra_desc": "The port is right near the ocean and is a place where fisherman come to sell the fishes they caught throughout the early morning. It is a place of business where they sell more than just fish.",
             "grid_location": [
@@ -2085,13 +2446,13 @@
             "container_node": {
                 "target_id": "small aggressive-looking dog_83"
             },
-            "db_id": 8363,
+            "db_id": null,
             "dead": false,
             "desc": "The fish wrap seems dirty and used, hopefully no one uses it.",
             "drink": false,
             "equipped": true,
             "food": false,
-            "food_energy": 0,
+            "food_energy": 1,
             "gettable": true,
             "locked_edge": null,
             "name": "fish wrap ( or butcher paper)",
@@ -2112,6 +2473,77 @@
             "wearable": true,
             "wieldable": false
         },
+        "fishing rod_1": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 0,
+            "contained_nodes": {},
+            "container": false,
+            "container_node": {
+                "target_id": "small hut_11"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "Appears to be workable. Might be handy if you can find somewhere to fish!",
+            "drink": false,
+            "equipped": null,
+            "food": false,
+            "food_energy": 0,
+            "gettable": true,
+            "locked_edge": null,
+            "name": "fishing rod",
+            "name_prefix": "a",
+            "names": [
+                "fishing rod"
+            ],
+            "node_id": "fishing rod_1",
+            "object": true,
+            "on_use": [
+                {
+                    "post": [
+                        [
+                            "create_entity",
+                            "in_actor",
+                            {
+                                "desc": "Mmm you could just eat this thing raw.",
+                                "is_food": 1.0,
+                                "is_wearable": false,
+                                "name": "tasty looking fish",
+                                "name_prefix": "a"
+                            }
+                        ],
+                        [
+                            "broadcast_message",
+                            {
+                                "self_view": "You fish for a while..and oh my golly, you caught something!!"
+                            }
+                        ]
+                    ],
+                    "pre": [
+                        [
+                            "is_holding",
+                            "used_item"
+                        ],
+                        [
+                            "used_with_item_name",
+                            "pond"
+                        ]
+                    ]
+                }
+            ],
+            "room": false,
+            "size": 1,
+            "stats": {
+                "damage": 1,
+                "defense": 0
+            },
+            "surface_type": "on",
+            "value": 1,
+            "wearable": false,
+            "wieldable": true
+        },
         "flower pot_75": {
             "agent": false,
             "classes": [
@@ -2124,7 +2556,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 8045,
+            "db_id": null,
             "dead": false,
             "desc": "the pot is made of clay.",
             "drink": false,
@@ -2164,7 +2596,7 @@
             "container_node": {
                 "target_id": "picnic area_14"
             },
-            "db_id": 7221,
+            "db_id": null,
             "dead": false,
             "desc": "A simple tray, to put one's food on.",
             "drink": false,
@@ -2215,7 +2647,7 @@
                 "target_id": "unsettling forest area_20"
             },
             "damage": 1,
-            "db_id": 2184,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "This fox lives in the forest and steals from wanderers.",
@@ -2229,6 +2661,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Tend to my family's needs -- beg, borrow or steal!",
             "movement_energy_cost": 0.0,
             "name": "fox",
             "name_prefix": "a",
@@ -2242,7 +2675,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I am the fox of the brook in the forest. I live near the castle in the shrubs. I steal from wanderers.",
-	    "mission": "Tend to my family's needs -- beg, borrow or steal!",
             "quests": [],
             "room": false,
             "size": 20,
@@ -2263,7 +2695,7 @@
             "container_node": {
                 "target_id": "main house_3"
             },
-            "db_id": 5205,
+            "db_id": null,
             "dead": false,
             "desc": "The house shoes are freshly dried before being worn again.",
             "drink": false,
@@ -2301,7 +2733,7 @@
             "container_node": {
                 "target_id": "butler_68"
             },
-            "db_id": 8709,
+            "db_id": null,
             "dead": false,
             "desc": "The paint is a bright red color and easy to apply on a surface.",
             "drink": false,
@@ -2341,7 +2773,7 @@
             "container_node": {
                 "target_id": "master-at-arms_43"
             },
-            "db_id": 7187,
+            "db_id": null,
             "dead": false,
             "desc": "On further inspection of the giant club you notice it was stained with blood from the battle at the castle earlier.",
             "drink": false,
@@ -2362,12 +2794,64 @@
             "size": 1,
             "stats": {
                 "attack": 1,
-		"damage": 3
+                "damage": 3
             },
             "surface_type": "on",
             "value": 1,
             "wearable": false,
             "wieldable": true
+        },
+        "goblin_16": {
+            "agent": true,
+            "aggression": 0,
+            "attack_tagged_agents": [],
+            "blocked_by": {},
+            "blocking": null,
+            "char_type": "creature",
+            "classes": [
+                "agent"
+            ],
+            "contain_size": 20,
+            "contained_nodes": {},
+            "container_node": {
+                "target_id": "dungeon_1"
+            },
+            "damage": 1,
+            "db_id": null,
+            "dead": false,
+            "defense": 0,
+            "desc": "Creeping out nightly comes the goblin to steal our children, turning them into soup for his dinner. In all the forest he is unwanted and unloved except by those of his own kind.",
+            "dexterity": 0,
+            "dont_accept_gifts": false,
+            "followed_by": {},
+            "following": null,
+            "food_energy": 1,
+            "health": 6,
+            "is_player": false,
+            "max_distance_from_start_location": 1000000,
+            "max_wearable_items": 3,
+            "max_wieldable_items": 1,
+            "mission": "",
+            "movement_energy_cost": 0.0,
+            "name": "goblin",
+            "name_prefix": "a",
+            "names": [
+                "goblin"
+            ],
+            "node_id": "goblin_16",
+            "num_wearable_items": 0,
+            "num_wieldable_items": 0,
+            "object": false,
+            "on_events": [],
+            "pacifist": false,
+            "persona": "I am a goblin that lives in the forest. I only come out at night. Sometimes I steal children and put them in a soup. No one likes me and I don't like anyone except for other goblins.",
+            "quests": [],
+            "room": false,
+            "size": 20,
+            "speed": 10,
+            "strength": 0,
+            "tags": [],
+            "usually_npc": false
         },
         "grappling hook_56": {
             "agent": false,
@@ -2381,7 +2865,7 @@
             "container_node": {
                 "target_id": "main hallway_1"
             },
-            "db_id": 8687,
+            "db_id": null,
             "dead": false,
             "desc": "The hook is rusty and has a sharp pointy end.",
             "drink": false,
@@ -2434,7 +2918,7 @@
                 "target_id": "main hallway_1"
             },
             "damage": 1,
-            "db_id": 3867,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "The graveyard keeper lives across the yard from the graveyard. He is always keeping an eye on the graveyard to make sure everything is in order and also digs all the new graves as needed.",
@@ -2448,6 +2932,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Take care of the dead, and eventually run a funeral home.",
             "movement_energy_cost": 0.0,
             "name": "Graveyard Keeper",
             "name_prefix": "a",
@@ -2461,7 +2946,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I am the graveyard keeper who lives across the yard from the graveyard. I make sure all of the graves are marked and everything is in order. I dig the graves for newly deceased people.",
-	    "mission": "Take care of the dead, and eventually run a funeral home.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -2481,7 +2965,7 @@
             "container_node": {
                 "target_id": "main street_6"
             },
-            "db_id": 8685,
+            "db_id": null,
             "dead": false,
             "desc": "The stone is covered in mold",
             "drink": false,
@@ -2529,7 +3013,7 @@
                 "target_id": "small graveyard_10"
             },
             "damage": 1,
-            "db_id": 3222,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "The groundskeeper skulks in the shadows, watching the archers as they practice with a look of both longing and hatred for what he cannot have.",
@@ -2543,6 +3027,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Learn how to use a bow from the best.",
             "movement_energy_cost": 0.0,
             "name": "groundskeeper",
             "name_prefix": "a",
@@ -2556,7 +3041,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I trim the grass every two days.  I wish I could shoot the bow as the archers do.  I have been groundskeeper for 13 years.",
-	    "mission": "Learn how to use a bow from the best.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -2577,13 +3061,13 @@
             "container_node": {
                 "target_id": "computer_48"
             },
-            "db_id": 5451,
+            "db_id": null,
             "dead": false,
             "desc": "The queen's ivory hair brush has horse hair bristles. It's pearly white handle is hand-carved and accented with jewels.",
             "drink": false,
             "equipped": null,
             "food": false,
-            "food_energy": 0,
+            "food_energy": 1,
             "gettable": true,
             "locked_edge": null,
             "name": "hair brush",
@@ -2614,7 +3098,7 @@
             "classes": [
                 "agent"
             ],
-            "contain_size": 13,
+            "contain_size": 14,
             "contained_nodes": {
                 "blacksmith's hammer_128": {
                     "target_id": "blacksmith's hammer_128"
@@ -2630,10 +3114,10 @@
                 }
             },
             "container_node": {
-                "target_id": "picnic area_14"
+                "target_id": "pine tree graveyard_13"
             },
             "damage": 1,
-            "db_id": 2285,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "He's a scruffy cat, rough around the edges, chasing mice in castle keep. Underneath there yet shines through the aura of a cat who once had better lodgings, who knew how to live in home with a hearth, a family and plenty of milk. Now he's become cold hearted and hardened scratching out at innocent bystanders and snatching their wee babes which he devours whole.",
@@ -2642,11 +3126,12 @@
             "followed_by": {},
             "following": null,
             "food_energy": 1,
-            "health": 2,
+            "health": 2.0,
             "is_player": false,
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Trick people into giving me food, or if they are small enough, their life!",
             "movement_energy_cost": 0.0,
             "name": "half wild cat",
             "name_prefix": "a",
@@ -2659,9 +3144,23 @@
             "object": false,
             "on_events": [],
             "pacifist": false,
-            "persona": "I used to live with people, but I was abandoned young to learn how to fend for myself. I like to scratch people. I love to eat their babies!",
-	    "mission": "Trick people into giving me food, or if they are small enough, their life!",
-            "quests": [],
+            "persona": "I used to live with people, but I was abandoned young to learn how to fend for myself. I like to scratch people. I love to eat their babies!\nYour Mission: Trick people into giving me food, or if they are small enough, their life!",
+            "quests": [
+                {
+                    "actor": "half wild cat_123",
+                    "actor_name": "half wild cat",
+                    "actor_persona": "I used to live with people, but I was abandoned young to learn how to fend for myself. I like to scratch people. I love to eat their babies!\nYour Mission: Trick people into giving me food, or if they are small enough, their life!",
+                    "actor_str": "a half wild cat",
+                    "agent": "serving boy_51",
+                    "container": null,
+                    "goal_action": "a serving boy smiles",
+                    "goal_verb": "smile",
+                    "helper_agents": [],
+                    "location": null,
+                    "object": null,
+                    "text": "I'd like to make a serving boy smile."
+                }
+            ],
             "room": false,
             "size": 20,
             "speed": 5,
@@ -2680,7 +3179,7 @@
             "container_node": {
                 "target_id": "lord_108"
             },
-            "db_id": 7717,
+            "db_id": null,
             "dead": false,
             "desc": "The hand plow is used for farming the fresh earth",
             "drink": false,
@@ -2719,7 +3218,7 @@
             "container_node": {
                 "target_id": "bandit_153"
             },
-            "db_id": 7939,
+            "db_id": null,
             "dead": false,
             "desc": "The harness looks almost too big for a regular horse.  what type of animal is this for?",
             "drink": false,
@@ -2759,7 +3258,7 @@
             "container_node": {
                 "target_id": "small graveyard_10"
             },
-            "db_id": 7711,
+            "db_id": null,
             "dead": false,
             "desc": "The hatchet is old and worn out.",
             "drink": false,
@@ -2798,7 +3297,7 @@
             "container_node": {
                 "target_id": "reception area_12"
             },
-            "db_id": 6953,
+            "db_id": null,
             "dead": false,
             "desc": "The heavy blanket is incredibly comfortable.",
             "drink": false,
@@ -2825,6 +3324,77 @@
             "wearable": true,
             "wieldable": false
         },
+        "hefty rock_14": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 0,
+            "contained_nodes": {},
+            "container": false,
+            "container_node": {
+                "target_id": "entrance to the pine trees_15"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "Feels good in the hand. Great for throwing at stuff!",
+            "drink": false,
+            "equipped": null,
+            "food": false,
+            "food_energy": 0,
+            "gettable": true,
+            "locked_edge": null,
+            "name": "hefty rock",
+            "name_prefix": "a",
+            "names": [
+                "fishing rod"
+            ],
+            "node_id": "hefty rock_14",
+            "object": true,
+            "on_use": [
+                {
+                    "post": [
+                        [
+                            "create_entity",
+                            "in_room",
+                            {
+                                "desc": "Mmm.. perfectly ripe.",
+                                "is_food": 1.0,
+                                "is_wearable": false,
+                                "name": "delicious crisp apple",
+                                "name_prefix": "a"
+                            }
+                        ],
+                        [
+                            "broadcast_message",
+                            {
+                                "self_view": "You toss the rock ..and land a hit! You knock an apple right off!"
+                            }
+                        ]
+                    ],
+                    "pre": [
+                        [
+                            "is_holding",
+                            "used_item"
+                        ],
+                        [
+                            "used_with_item_name",
+                            "apple tree"
+                        ]
+                    ]
+                }
+            ],
+            "room": false,
+            "size": 1,
+            "stats": {
+                "damage": 1,
+                "defense": 0
+            },
+            "surface_type": "on",
+            "value": 1,
+            "wearable": false,
+            "wieldable": true
+        },
         "homestead equipment_129": {
             "agent": false,
             "classes": [
@@ -2837,7 +3407,7 @@
             "container_node": {
                 "target_id": "disposal area_16"
             },
-            "db_id": 6675,
+            "db_id": null,
             "dead": false,
             "desc": "The homestead equipment is ready to be used.",
             "drink": false,
@@ -2876,7 +3446,7 @@
             "container_node": {
                 "target_id": "main graveyard_9"
             },
-            "db_id": 6991,
+            "db_id": null,
             "dead": false,
             "desc": "The horse tack is made of hardened leather and molded iron. it is designed perfectly to fit a horse.",
             "drink": false,
@@ -2915,7 +3485,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 7843,
+            "db_id": null,
             "dead": false,
             "desc": "The pot is large and black.  A large meal can be cooked in the pot.",
             "drink": false,
@@ -2954,7 +3524,7 @@
             "container_node": {
                 "target_id": "countryside_23"
             },
-            "db_id": 6145,
+            "db_id": null,
             "dead": false,
             "desc": "The ink in the jar swirls darkly, the glass glimmering in the light.",
             "drink": false,
@@ -2993,7 +3563,7 @@
             "container_node": {
                 "target_id": "personal quarters_2"
             },
-            "db_id": 8551,
+            "db_id": null,
             "dead": false,
             "desc": "The ink well sat in the king's chambers for use in mail.",
             "drink": false,
@@ -3032,7 +3602,7 @@
             "container_node": {
                 "target_id": "town doctor_142"
             },
-            "db_id": 6349,
+            "db_id": null,
             "dead": false,
             "desc": "The ink is a bright red, reminiscent of blood.",
             "drink": false,
@@ -3083,7 +3653,7 @@
                 "target_id": "countryside_23"
             },
             "damage": 1,
-            "db_id": 3018,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "a good warring keep their prisoners in line.",
@@ -3097,6 +3667,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Make sure everyone is doing their duty, within the royal law. (Unless I'm not on duty!)",
             "movement_energy_cost": 0.0,
             "name": "jailer",
             "name_prefix": "a",
@@ -3110,7 +3681,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I am the jailer of the village. I keep the prisoners in line. I make sure the king's subjects stay in line.",
-	    "mission": "Make sure everyone is doing their duty, within the royal law. (Unless I'm not on duty!)",
             "quests": [],
             "room": false,
             "size": 20,
@@ -3131,7 +3701,7 @@
             "container_node": {
                 "target_id": "wood is gathered to make fire_113"
             },
-            "db_id": 6283,
+            "db_id": null,
             "dead": false,
             "desc": "The key is a large black skeleton key, seemingly made of wrought iron.",
             "drink": false,
@@ -3174,7 +3744,7 @@
                 "target_id": "main house_3"
             },
             "damage": 1,
-            "db_id": 2931,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "a nice looking woman, smiling and giving a warm welcome.",
@@ -3188,6 +3758,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Make the world a happier place, one tea party at a time.",
             "movement_energy_cost": 0.0,
             "name": "lady of the house",
             "name_prefix": "a",
@@ -3201,7 +3772,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I love to accept guests.  I see to it that my house is clean.  I strive to make my guests comfortable.",
-	    "mission": "Make the world a happier place, one tea party at a time.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -3222,7 +3792,7 @@
             "container_node": {
                 "target_id": "lord_108"
             },
-            "db_id": 8115,
+            "db_id": null,
             "dead": false,
             "desc": "The knight's lance has an edge that bears the palpable scars of battle.",
             "drink": false,
@@ -3243,7 +3813,7 @@
             "size": 1,
             "stats": {
                 "attack": 1,
-		"damage": 3
+                "damage": 3
             },
             "surface_type": "on",
             "value": 1,
@@ -3262,7 +3832,7 @@
             "container_node": {
                 "target_id": "main house_3"
             },
-            "db_id": 8269,
+            "db_id": null,
             "dead": false,
             "desc": "The jug is simple earthenware with a bit of blue glaze around the rim.",
             "drink": false,
@@ -3301,7 +3871,7 @@
             "container_node": {
                 "target_id": "main house_3"
             },
-            "db_id": 8605,
+            "db_id": null,
             "dead": false,
             "desc": "The pile of hay is large and dusty.",
             "drink": false,
@@ -3329,6 +3899,49 @@
             "wearable": false,
             "wieldable": false
         },
+        "lavish desk piled high with books._6": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 19,
+            "contained_nodes": {
+                "dexteritate scroll_9": {
+                    "target_id": "dexteritate scroll_9"
+                }
+            },
+            "container": true,
+            "container_node": {
+                "target_id": "wizard's quarters_3"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "The lavish desk is piled high with books that looked like they have seen years of use.  The leather bindings are cracked and the pages are yellowed and torn.  Under the books the desk has a beautiful maple top that reflected the sunlight from the window.",
+            "drink": 0.0,
+            "equipped": null,
+            "food": 0.0,
+            "food_energy": 1,
+            "gettable": 0.0,
+            "locked_edge": null,
+            "name": "lavish desk piled high with books.",
+            "name_prefix": "a",
+            "names": [
+                "lavish desk piled high with books."
+            ],
+            "node_id": "lavish desk piled high with books._6",
+            "object": true,
+            "on_use": null,
+            "room": false,
+            "size": 20,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "on",
+            "value": 1,
+            "wearable": 0.0,
+            "wieldable": 0.0
+        },
         "lord_108": {
             "agent": true,
             "aggression": 0,
@@ -3355,7 +3968,7 @@
                 "target_id": "reception area_12"
             },
             "damage": 1,
-            "db_id": 3641,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "The lord raised the taxes on his tenants, just because he could.",
@@ -3369,6 +3982,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Survey my lands, and bask in my glory. And find ways to be even more glorious!",
             "movement_energy_cost": 0.0,
             "name": "lord",
             "name_prefix": "a",
@@ -3382,7 +3996,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I am one of the king's lord.  I rule over a large area of land.  I have dozens of tenants.",
-	    "mission": "Survey my lands, and bask in my glory. And find ways to be even more glorious!",
             "quests": [],
             "room": false,
             "size": 20,
@@ -3403,7 +4016,7 @@
             "container_node": {
                 "target_id": "graveyard keeper_58"
             },
-            "db_id": 7767,
+            "db_id": null,
             "dead": false,
             "desc": "The plant is lush and well kept and remains fruitful to this day.",
             "drink": false,
@@ -3442,7 +4055,7 @@
             "container_node": {
                 "target_id": "bedding_65"
             },
-            "db_id": 8771,
+            "db_id": null,
             "dead": false,
             "desc": "The bedding is soft and comforting, finely woven from the best wool.",
             "drink": false,
@@ -3482,7 +4095,7 @@
             "container_node": {
                 "target_id": "smith_160"
             },
-            "db_id": 6745,
+            "db_id": null,
             "dead": false,
             "desc": "The mace is sturdy and strong. you would hate to be hit by the metal spikes that line its head.",
             "drink": false,
@@ -3520,7 +4133,7 @@
             "container_node": {
                 "target_id": "half wild cat_123"
             },
-            "db_id": 6971,
+            "db_id": null,
             "dead": false,
             "desc": "The magical crystal is round and glowing.  it emits a white light.",
             "drink": false,
@@ -3559,7 +4172,7 @@
             "container_node": {
                 "target_id": "half wild cat_123"
             },
-            "db_id": 7067,
+            "db_id": null,
             "dead": false,
             "desc": "The shimmering magical light glistens of shades of blue and green from afar",
             "drink": false,
@@ -3576,6 +4189,74 @@
             "node_id": "magical lights_124",
             "object": true,
             "on_use": null,
+            "room": false,
+            "size": 1,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "on",
+            "value": 1,
+            "wearable": false,
+            "wieldable": false
+        },
+        "magnitudo scroll_10": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 0,
+            "contained_nodes": {},
+            "container": false,
+            "container_node": {
+                "target_id": "shelf_4"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "An old scroll with words you decipher to be: \"creo magnitudo\". Could this be magic?",
+            "drink": false,
+            "equipped": null,
+            "food": false,
+            "food_energy": 1,
+            "gettable": true,
+            "locked_edge": null,
+            "name": "magnitudo scroll",
+            "name_prefix": "a",
+            "names": [
+                "magnitudo scroll"
+            ],
+            "node_id": "magnitudo scroll_10",
+            "object": true,
+            "on_use": [
+                {
+                    "post": [
+                        [
+                            "broadcast_message",
+                            {
+                                "room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} seems to glow for a second.. and appears to be getting larger!",
+                                "self_as_target_view": "Suddenly you feel a voluminous about you and you feel ... LARGER! You are  growing!",
+                                "self_not_target_view": "{recipient_text} appears to be growing larger!!!",
+                                "self_view": "You say the words aloud, and runes on the scroll glow with gold."
+                            }
+                        ],
+                        [
+                            "modify_attribute",
+                            "in_used_target_item",
+                            "size",
+                            "+2"
+                        ]
+                    ],
+                    "pre": [
+                        [
+                            "is_holding",
+                            "used_item"
+                        ],
+                        [
+                            "used_with_agent"
+                        ]
+                    ]
+                }
+            ],
             "room": false,
             "size": 1,
             "stats": {
@@ -3604,7 +4285,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 572,
+            "db_id": null,
             "desc": "There are religious statues standing outside this temple.  The outside of the temple is fairly plain itself and imposing looking.  The floor is made out of stone with a bridge leading to the entrance.",
             "extra_desc": "This is where all those who worship come through.  They are greeted by the impressive statues standing outside the temple.",
             "grid_location": [
@@ -3651,7 +4332,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 1160,
+            "db_id": null,
             "desc": "the main gate is new and guarded, it is not run down lie many parts of the area. it is meant to intimidate attackers by making them think the area is all new and not worn down.",
             "extra_desc": "the gate being new was the idea of leaders, many resources were poured into the area, to the dismay of many members of the area",
             "grid_location": [
@@ -3701,7 +4382,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 1094,
+            "db_id": null,
             "desc": "This is an ominous place that a thick fog envelops.  There are rows of primitive gravestones and crosses along with some angelic statues for the more wealthy.  You can hear sobs in the distance as a funeral ceremony is underway.",
             "extra_desc": "Families of lost loved ones come here to grieve and pay their respects before the dead are buried.  Sometimes, in the dead of night, thieves come to rob the dead of their jewels.",
             "grid_location": [
@@ -3754,7 +4435,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 612,
+            "db_id": null,
             "desc": "This area is decorated with suits of armor, elaborate carpet pieces, and tapestries.  There's large, detailed paintings adorning the walls of past rulers.",
             "extra_desc": "This is an area where a visitor can get a glimpse of the history of those who rule here.  It's meant to stun and impress those who enter.",
             "grid_location": [
@@ -3804,7 +4485,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 770,
+            "db_id": null,
             "desc": "A fairly plain wooden building, the fireplace in the center of the back wall provides warmth during the winter seasons. There are paintings on the wall showing the farmer's forefathers and the previous owners. The floor is adorned with animal pelt rugs, and wood crafted furniture for the farmers to sit in.",
             "extra_desc": "The main house provides refuge for the farmers after a hard days work, and is where they sleep, eat, and socialize before heading out for another day in the fields.",
             "grid_location": [
@@ -3866,7 +4547,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 1176,
+            "db_id": null,
             "desc": "main street is bleak and outdated. it wears the atmosphere of the cemetery based on association. it is dark even in sunlight and has a unique odor",
             "extra_desc": "many members of the town protested the cemetery being so close to the main street, but they were denied, and the atmosphere reflects this",
             "grid_location": [
@@ -3922,7 +4603,7 @@
             "container_node": {
                 "target_id": "battle master_99"
             },
-            "db_id": 6775,
+            "db_id": null,
             "dead": false,
             "desc": "The map is very old and wrinkled, with one corner slightly torn.  the paper is yellowed.",
             "drink": false,
@@ -3982,7 +4663,7 @@
                 "target_id": "personal rooms_0"
             },
             "damage": 1,
-            "db_id": 2488,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "He wears black.",
@@ -3996,6 +4677,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Master every single weapon, hording a huge collection.",
             "movement_energy_cost": 0.0,
             "name": "master-at-arms",
             "name_prefix": "a",
@@ -4009,7 +4691,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I am the master-at-arms. I work in the king's armory. I like to monitor all the weapons and make sure they are clean and sharp.",
-	    "mission": "Master every single weapon, hording a huge collection.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -4030,7 +4711,7 @@
             "container_node": {
                 "target_id": "town doctor_142"
             },
-            "db_id": 7105,
+            "db_id": null,
             "dead": false,
             "desc": "The material is lightweight and can be worn in the summer.",
             "drink": false,
@@ -4069,7 +4750,7 @@
             "container_node": {
                 "target_id": "smith_160"
             },
-            "db_id": 5625,
+            "db_id": null,
             "dead": false,
             "desc": "As if fresh from the butcher shop, the meat is a vibrant blood red, and would surely make for a great meal once cooked.",
             "drink": false,
@@ -4110,7 +4791,7 @@
             "container_node": {
                 "target_id": "milk man_145"
             },
-            "db_id": 5269,
+            "db_id": null,
             "dead": false,
             "desc": "The bucket is rusted and old.",
             "drink": false,
@@ -4150,7 +4831,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 5271,
+            "db_id": null,
             "dead": false,
             "desc": "The tray is made of metal and is cool to the touch.  There are sections to put food on the tray.",
             "drink": false,
@@ -4203,7 +4884,7 @@
                 "target_id": "wealthy area of town_19"
             },
             "damage": 1,
-            "db_id": 4037,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "The milk man has lived just outside the town his entire life. His farm is tucked away in the rolling hills just north of the magnificent castle, where cattle roam about and feed on the grass here and there. He comes into town each day with fresh barrels of milk, furnishing everyone from peasants all the way up to lords. He enjoys his job, and has no enemies among the townspeople.",
@@ -4217,6 +4898,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Own my own farm one day.",
             "movement_energy_cost": 0.0,
             "name": "milk man",
             "name_prefix": "a",
@@ -4230,7 +4912,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I am a milkman for the town in the kingdom. I bring fresh milk to town daily. I love working for the people of the town.",
-	    "mission": "Own my own farm one day.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -4251,7 +4932,7 @@
             "container_node": {
                 "target_id": "milk man_145"
             },
-            "db_id": 6191,
+            "db_id": null,
             "dead": false,
             "desc": "The milk is curdled with flies floating in it.",
             "drink": true,
@@ -4299,7 +4980,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 718,
+            "db_id": null,
             "desc": "Mud covered walls and a thatched roof cover the earthen, well-swept floor, packed hard from many generations of feet packing it hard. A fire burns brightly in the dim interior and a wood covered window is thrown wide to let the smoke escape. A few modest woven chairs and a fur skin rug are around the hearth, and a beaten copper pot hangs over the fire, simmering. The smell of mutton stew fills the room.",
             "extra_desc": "The family who lives here has lived on the edge of the forest for generations, passed down from father to son, it has been the only home they have ever known in history. It is near the forest, but in a clearing so they have rich soils where they can grow vegetables, and hunt the forest for wild game. In the springtime, mother and her young ones will go out and pick berries and make delicious preserves.",
             "grid_location": [
@@ -4339,7 +5020,7 @@
             "container_node": {
                 "target_id": "jailer_157"
             },
-            "db_id": 5823,
+            "db_id": null,
             "dead": false,
             "desc": "The bread is moldy and is littered with green and black spots.",
             "drink": false,
@@ -4382,7 +5063,7 @@
                 "target_id": "small hut_11"
             },
             "damage": 1,
-            "db_id": 3352,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "an animal that is held in prominence.",
@@ -4396,6 +5077,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Learn about the ways of humans. For my own ends, mwuhahaha. But they don't know that.",
             "movement_energy_cost": 0.0,
             "name": "monkey friend",
             "name_prefix": "a",
@@ -4409,7 +5091,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I am a monkey from the tropical forest. I am the only one who can speak with humans. I respect the king, but not the queen.",
-	    "mission": "Learn about the ways of humans. For my own ends, mwuhahaha. But they don't know that.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -4417,6 +5098,113 @@
             "strength": 0,
             "tags": [],
             "usually_npc": false
+        },
+        "mortem scroll_8": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 0,
+            "contained_nodes": {},
+            "container": false,
+            "container_node": {
+                "target_id": "shelf_4"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "An old scroll with words you decipher to be: \"facere mortem\". Could this be magic?",
+            "drink": false,
+            "equipped": null,
+            "food": true,
+            "food_energy": 2,
+            "gettable": true,
+            "locked_edge": null,
+            "name": "mortem scroll",
+            "name_prefix": "a",
+            "names": [
+                "mortem scroll"
+            ],
+            "node_id": "mortem scroll_8",
+            "object": true,
+            "on_use": [
+                {
+                    "post": [
+                        [
+                            "broadcast_message",
+                            {
+                                "room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} is struck with searing pain!",
+                                "self_as_target_view": "You are struck with searing pain!",
+                                "self_not_target_view": "{recipient_text} is struck with searing pain!",
+                                "self_view": "You say the words aloud, and runes on the scroll glow with gold."
+                            }
+                        ],
+                        [
+                            "modify_attribute",
+                            "in_used_target_item",
+                            "health",
+                            "-20"
+                        ]
+                    ],
+                    "pre": [
+                        [
+                            "is_holding",
+                            "used_item"
+                        ],
+                        [
+                            "used_with_agent"
+                        ]
+                    ]
+                }
+            ],
+            "room": false,
+            "size": 1,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "on",
+            "value": 1,
+            "wearable": false,
+            "wieldable": false
+        },
+        "muddy area_0": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 20,
+            "contained_nodes": {},
+            "container": true,
+            "container_node": {
+                "target_id": "small graveyard_10"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "This patch seems recently dug up.",
+            "drink": 1.0,
+            "equipped": null,
+            "food": 0.0,
+            "food_energy": 1,
+            "gettable": 0.0,
+            "locked_edge": null,
+            "name": "muddy area",
+            "name_prefix": "a",
+            "names": [
+                "muddy area"
+            ],
+            "node_id": "muddy area_0",
+            "object": true,
+            "on_use": null,
+            "room": false,
+            "size": 20,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "in",
+            "value": 1,
+            "wearable": 0.0,
+            "wieldable": 0.0
         },
         "mug of mead_147": {
             "agent": false,
@@ -4430,7 +5218,7 @@
             "container_node": {
                 "target_id": "milk man_145"
             },
-            "db_id": 6561,
+            "db_id": null,
             "dead": false,
             "desc": "The mug of meed looks tempting.",
             "drink": true,
@@ -4470,7 +5258,7 @@
             "container_node": {
                 "target_id": "computer_48"
             },
-            "db_id": 5053,
+            "db_id": null,
             "dead": false,
             "desc": "the mystical necklace is magical and scary",
             "drink": false,
@@ -4508,7 +5296,7 @@
             "container_node": {
                 "target_id": "graveyard keeper_58"
             },
-            "db_id": 8395,
+            "db_id": null,
             "dead": false,
             "desc": "The placard is made of wood with a clear name on it.",
             "drink": false,
@@ -4536,6 +5324,47 @@
             "wearable": false,
             "wieldable": false
         },
+        "neptune's throne room_0": {
+            "agent": false,
+            "classes": [
+                "room"
+            ],
+            "contain_size": 100000,
+            "contained_nodes": {
+                "throne_1": {
+                    "target_id": "throne_1"
+                }
+            },
+            "container_node": {
+                "target_id": "VOID"
+            },
+            "db_id": null,
+            "desc": "A small room in the castle, Neptune's throne room is adorned with painted walls as blue as the sea itself. Tables constructed of beautiful coral lean against all four walls with decorative shells serving as a border for them. The ceiling is painted to resemble waves.",
+            "extra_desc": "A small room in the castle, Neptune's throne room is adorned with painted walls as blue as the sea itself. Tables constructed of beautiful coral lean against all four walls with decorative shells serving as a border for them. The ceiling is painted to resemble waves.",
+            "grid_location": [
+                7,
+                6,
+                0
+            ],
+            "name": "Neptune's throne room",
+            "name_prefix": "the",
+            "names": [
+                "Neptune's throne room"
+            ],
+            "neighbors": {
+                "the forsaken castle_35": {
+                    "examine_desc": null,
+                    "label": "a path to the west",
+                    "locked_edge": null,
+                    "target_id": "the forsaken castle_35"
+                }
+            },
+            "node_id": "neptune's throne room_0",
+            "object": false,
+            "room": true,
+            "size": 1,
+            "surface_type": "in"
+        },
         "old armor_170": {
             "agent": false,
             "classes": [
@@ -4548,7 +5377,7 @@
             "container_node": {
                 "target_id": "the forsaken castle_35"
             },
-            "db_id": 7519,
+            "db_id": null,
             "dead": false,
             "desc": "The armor is rusted and dented.",
             "drink": false,
@@ -4587,7 +5416,7 @@
             "container_node": {
                 "target_id": "small hut_11"
             },
-            "db_id": 7471,
+            "db_id": null,
             "dead": false,
             "desc": "The broom is very dusty and fragile.",
             "drink": false,
@@ -4625,7 +5454,7 @@
             "container_node": {
                 "target_id": "serving boy_51"
             },
-            "db_id": 6345,
+            "db_id": null,
             "dead": false,
             "desc": "The old prayer book is tattered and worn. it has markings all over it from a previous owner",
             "drink": false,
@@ -4664,7 +5493,7 @@
             "container_node": {
                 "target_id": "master-at-arms_43"
             },
-            "db_id": 8357,
+            "db_id": null,
             "dead": false,
             "desc": "The sailcloth has been bleached almost white by years of sunlight, and it is fraying at the edges.",
             "drink": false,
@@ -4692,6 +5521,45 @@
             "wearable": false,
             "wieldable": false
         },
+        "orb of creation_2": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 0,
+            "contained_nodes": {},
+            "container": false,
+            "container_node": {
+                "target_id": "throne_1"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "The orb glows bright blue and emits a powerful hum.",
+            "drink": 0.0,
+            "equipped": null,
+            "food": 0.0,
+            "food_energy": 1,
+            "gettable": 1.0,
+            "locked_edge": null,
+            "name": "orb of creation",
+            "name_prefix": "the",
+            "names": [
+                "orb of creation"
+            ],
+            "node_id": "orb of creation_2",
+            "object": true,
+            "on_use": null,
+            "room": false,
+            "size": 1,
+            "stats": {
+                "damage": 1,
+                "defense": 0
+            },
+            "surface_type": "in",
+            "value": 1,
+            "wearable": 0.0,
+            "wieldable": 1.0
+        },
         "ornate goblet_41": {
             "agent": false,
             "classes": [
@@ -4703,7 +5571,7 @@
             "container_node": {
                 "target_id": "personal rooms_0"
             },
-            "db_id": 7921,
+            "db_id": null,
             "dead": false,
             "desc": "A goblet made of precious stones and gold.",
             "drink": false,
@@ -4754,7 +5622,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 116,
+            "db_id": null,
             "desc": "The outside castle is beautifully decorated with priceless gems and artifacts. The stone used is ancient and antique with a shiny gloss of silver. The gardens outside the castle are a beautiful green and have the most delightful flowers.",
             "extra_desc": "The outside castle was constructed in ancient times before any other building. It's concrete was one of the first ever used, and the stones used on the entrance door date back to the prehistoric age.",
             "grid_location": [
@@ -4809,7 +5677,7 @@
             "container_node": {
                 "target_id": "reception area_12"
             },
-            "db_id": 6269,
+            "db_id": null,
             "dead": false,
             "desc": "The pail is old and beginning to rust in places.",
             "drink": false,
@@ -4848,7 +5716,7 @@
             "container_node": {
                 "target_id": "battle master_99"
             },
-            "db_id": 6351,
+            "db_id": null,
             "dead": false,
             "desc": "The paper is torn and yellowing around the edges.",
             "drink": false,
@@ -4896,7 +5764,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 564,
+            "db_id": null,
             "desc": "An ornate room, paintings of previous rulers and members of the family hang on the walls.  There's high end pieces of furniture in the room along with books, statues, and expensive pieces of jewelry.",
             "extra_desc": "This is where the inhabitants of the palace come to rest, write, and do other personal activities.  Treasure is also stored here in hidden places only known to members of the royal family.",
             "grid_location": [
@@ -4955,7 +5823,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 962,
+            "db_id": null,
             "desc": "There is a comfortable, but not ornate bed against the wall in the center of the room. There is a dresser and a mirror against the opposite wall. There are various paintings hung throughout the room of landscapes and past kings and queens. There is a fireplace on the east wall with a bearskin rug on the floor in front of it, and two chairs to sit in.",
             "extra_desc": "The personal room is used for guests to stay in while they visit the palace. The king and queen and the royal family stay in a different wing of the palace.",
             "grid_location": [
@@ -4999,13 +5867,13 @@
             "classes": [
                 "room"
             ],
-            "contain_size": 1974,
+            "contain_size": 1994,
             "contained_nodes": {
+                "apple tree_13": {
+                    "target_id": "apple tree_13"
+                },
                 "food tray_119": {
                     "target_id": "food tray_119"
-                },
-                "half wild cat_123": {
-                    "target_id": "half wild cat_123"
                 },
                 "rotting meat_122": {
                     "target_id": "rotting meat_122"
@@ -5017,7 +5885,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 1104,
+            "db_id": null,
             "desc": "In this picnic area, there is a wide clearing with some cut down tree stumps made for people to sit and enjoy their lunch.  There's also a small pond nearby where people can feed fish and watch turtles sunbathe.",
             "extra_desc": "Peasants come here during their lunch break to enjoy the outdoors before having to go back to their manual labor.  It's one of the few areas where they can unwind.",
             "grid_location": [
@@ -5060,7 +5928,7 @@
                 "target_id": "modest living area_18"
             },
             "damage": 1,
-            "db_id": 3362,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "The pig is lazy and gluttonous, and spends most of its days lounging in the mud and seeking out food.",
@@ -5074,6 +5942,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Make everyone cheerful if I can. And wallow as much as possible! Not necessarily in that order.",
             "movement_energy_cost": 0.0,
             "name": "pig",
             "name_prefix": "a",
@@ -5087,7 +5956,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I love living in the mud. I eat just about anything. I am intelligent.",
-	    "mission": "Make everyone cheerful if I can. And wallow as much as possible! Not necessarily in that order.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -5101,10 +5969,13 @@
             "classes": [
                 "room"
             ],
-            "contain_size": 1975,
+            "contain_size": 1955,
             "contained_nodes": {
                 "feather fountain pen_112": {
                     "target_id": "feather fountain pen_112"
+                },
+                "half wild cat_123": {
+                    "target_id": "half wild cat_123"
                 },
                 "priest_116": {
                     "target_id": "priest_116"
@@ -5116,7 +5987,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 958,
+            "db_id": null,
             "desc": "Once known as a forest of solitude, the entrance to the pine trees is now a bleak and dreary graveyard.  Dead grass and moss fill the ground along with crawling critters that mark fear in the mind among the he who venture here.  Tombstones so old many of the names are no longer eligible.  Dense fog surrounds the area, thick tree tops blotting out the sunlight, and an eerie silence fills the air.  Cold it feels, the air, but the ground is soft and warm.  Sound can not enter, no escape this dwelling.",
             "extra_desc": "The nearby town tells strangers that this place is peaceful and beautiful, but little do they know it is not.  A terrible price is paid for all visitors who enter this place, no one has ever returned.",
             "grid_location": [
@@ -5155,6 +6026,45 @@
             "size": 2000,
             "surface_type": "in"
         },
+        "pond_0": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 20,
+            "contained_nodes": {},
+            "container": true,
+            "container_node": {
+                "target_id": "central garden_4"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "You think you see fish swimming in there!",
+            "drink": 1.0,
+            "equipped": null,
+            "food": 0.0,
+            "food_energy": 1,
+            "gettable": 0.0,
+            "locked_edge": null,
+            "name": "pond",
+            "name_prefix": "a",
+            "names": [
+                "pond"
+            ],
+            "node_id": "pond_0",
+            "object": true,
+            "on_use": null,
+            "room": false,
+            "size": 20,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "in",
+            "value": 1,
+            "wearable": 0.0,
+            "wieldable": 0.0
+        },
         "prayer book_118": {
             "agent": false,
             "classes": [
@@ -5167,7 +6077,7 @@
             "container_node": {
                 "target_id": "priest_116"
             },
-            "db_id": 7093,
+            "db_id": null,
             "dead": false,
             "desc": "The book contains many prayers. it has many pages and filled with many words on each.",
             "drink": false,
@@ -5205,7 +6115,7 @@
             "container_node": {
                 "target_id": "serving boy_51"
             },
-            "db_id": 5085,
+            "db_id": null,
             "dead": false,
             "desc": "The oil painting depicts the king's grandfather in an ermine robe. the painting is bright and lustrous.",
             "drink": false,
@@ -5256,7 +6166,7 @@
                 "target_id": "pine tree graveyard_13"
             },
             "damage": 1,
-            "db_id": 1487,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "This priest loves preaching and isn't afraid to be hard on people.",
@@ -5270,6 +6180,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Help those in need.",
             "movement_energy_cost": 0.0,
             "name": "priest",
             "name_prefix": "a",
@@ -5283,7 +6194,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I am here to help the needy. I am well respected in the town. I can not accept lying.",
-	    "mission": "Help those in need.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -5304,7 +6214,7 @@
             "container_node": {
                 "target_id": "small graveyard_10"
             },
-            "db_id": 7709,
+            "db_id": null,
             "dead": false,
             "desc": "The fishing pole was splintered and worn.",
             "drink": false,
@@ -5329,7 +6239,40 @@
             "surface_type": "on",
             "value": 5,
             "wearable": false,
-            "wieldable": true
+            "wieldable": true,
+            "on_use": [
+                {
+                    "post": [
+                        [
+                            "create_entity",
+                            "in_actor",
+                            {
+                                "desc": "Mmm you could just eat this thing raw.",
+                                "is_food": 1.0,
+                                "is_wearable": false,
+                                "name": "tasty looking fish",
+                                "name_prefix": "a"
+                            }
+                        ],
+                        [
+                            "broadcast_message",
+                            {
+                                "self_view": "You fish for a while..and oh my golly, you caught something!!"
+                            }
+                        ]
+                    ],
+                    "pre": [
+                        [
+                            "is_holding",
+                            "used_item"
+                        ],
+                        [
+                            "used_with_item_name",
+                            "pond"
+                        ]
+                    ]
+                }
+            ]
         },
         "rare wood from a tree that doesn't exist anymore_166": {
             "agent": false,
@@ -5342,7 +6285,7 @@
             "container_node": {
                 "target_id": "outside castle_32"
             },
-            "db_id": 6875,
+            "db_id": null,
             "dead": false,
             "desc": "The wood seems very unique in its attributes.",
             "drink": false,
@@ -5386,7 +6329,7 @@
                 "target_id": "fish market_28"
             },
             "damage": 1,
-            "db_id": 2081,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "The rat never goes hungry because he lives near the shipping docks and steals food from cargo boxes that are loaded into ships every night.",
@@ -5400,6 +6343,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "",
             "movement_energy_cost": 0.0,
             "name": "rat",
             "name_prefix": "a",
@@ -5444,7 +6388,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 582,
+            "db_id": null,
             "desc": "The building itself is ordinary in appearance and is somewhat foreboding.  It is surrounding by a dense fog and high grass.  Sometimes, one can hear whispers in the wind.",
             "extra_desc": "This is a plain building where business matters of the graveyard are conducted.  Peasants and royalty alike come here to make deals to bury their loved ones in the graveyard.",
             "grid_location": [
@@ -5495,7 +6439,7 @@
             "container_node": {
                 "target_id": "outside castle_32"
             },
-            "db_id": 5285,
+            "db_id": null,
             "dead": false,
             "desc": "The brick has crumbled and looked very weathered.",
             "drink": false,
@@ -5534,7 +6478,7 @@
             "container_node": {
                 "target_id": "expensive carpet_37"
             },
-            "db_id": 6101,
+            "db_id": null,
             "dead": false,
             "desc": "The ritual dagger has beautiful gems and engravings on the hilt.",
             "drink": false,
@@ -5573,7 +6517,7 @@
             "container_node": {
                 "target_id": "main street_6"
             },
-            "db_id": 6735,
+            "db_id": null,
             "dead": false,
             "desc": "A knife used in rituals by people. very decorative and intricate.",
             "drink": false,
@@ -5612,7 +6556,7 @@
             "container_node": {
                 "target_id": "cookpot_131"
             },
-            "db_id": 6423,
+            "db_id": null,
             "dead": false,
             "desc": "The meat smells as though it were freshly cooked over a fire.",
             "drink": false,
@@ -5652,7 +6596,7 @@
             "container_node": {
                 "target_id": "reception area_12"
             },
-            "db_id": 7977,
+            "db_id": null,
             "dead": false,
             "desc": "The rock is smooth and heavy.",
             "drink": false,
@@ -5691,7 +6635,7 @@
             "container_node": {
                 "target_id": "picnic area_14"
             },
-            "db_id": 5239,
+            "db_id": null,
             "dead": false,
             "desc": "The meat is rotting and it smells badly almost to the point of nausea.",
             "drink": false,
@@ -5731,7 +6675,7 @@
             "container_node": {
                 "target_id": "outside castle_32"
             },
-            "db_id": 7845,
+            "db_id": null,
             "dead": false,
             "desc": "The salt is clean and white, looking more like a crystal than something to eat.",
             "drink": false,
@@ -5773,7 +6717,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 886,
+            "db_id": null,
             "desc": "Saokra's Blacksmith Shop is lined with weapons. They are shown through the outside windows, and once you step inside you see everything from bo staffs to canons. Most of the shop is cool for the work that goes on inside. There are dozens of painted maps on the walls and ceiling. There's a bookshelf over to the left side of the shop that holds nothing but rolled up scrolls, and some have fallen to the floor. Armor sets adorn the manikins to the back of the room. There's a vibrant royal blue knight set of armor that causes the back area to light up in a cool glow of blue. The middle of the room has sunlight beaming into it via a skylight that gives the area a warm feeling.",
             "extra_desc": "Saokra's Shop has been around for years, Saokra herself has always been the owner of it. No one's sure how but it's believed that she was once a God, and possibly still is but instead of living her life in the heavens she chose to live with the people and enjoys her work. One of the reasons for this is that the shop in question seemed to be around for more than a hundred years and with each weapon or armor set she creates you can feel a hum within it. No one's sure why she decided to live the life she does but everyone is grateful to her for having helped keep some of the bad souls away.",
             "grid_location": [
@@ -5823,7 +6767,7 @@
             "container_node": {
                 "target_id": "butler_68"
             },
-            "db_id": 7031,
+            "db_id": null,
             "dead": false,
             "desc": "The sapphire is beautiful.  the gem emits a dark blue light.",
             "drink": false,
@@ -5863,7 +6807,7 @@
             "container_node": {
                 "target_id": "wealthy area of town_19"
             },
-            "db_id": 5975,
+            "db_id": null,
             "dead": false,
             "desc": "The scrap of fur is matted and tiny insects crawl upon it.",
             "drink": false,
@@ -5889,6 +6833,45 @@
             "value": 1,
             "wearable": true,
             "wieldable": false
+        },
+        "scroll_7": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 0,
+            "contained_nodes": {},
+            "container": false,
+            "container_node": {
+                "target_id": "cupboard_11"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "The scroll contains an oddly written text. You hardly recognize the language. There is a faded drawing of an emerald looking ring and the words \"locus aliquid\"",
+            "drink": 0.0,
+            "equipped": null,
+            "food": 0.0,
+            "food_energy": 1,
+            "gettable": 1.0,
+            "locked_edge": null,
+            "name": "scroll",
+            "name_prefix": "a",
+            "names": [
+                "scroll"
+            ],
+            "node_id": "scroll_7",
+            "object": true,
+            "on_use": null,
+            "room": false,
+            "size": 1,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "in",
+            "value": 1,
+            "wearable": 0.0,
+            "wieldable": 0.0
         },
         "serving boy_51": {
             "agent": true,
@@ -5919,7 +6902,7 @@
                 "target_id": "personal rooms_0"
             },
             "damage": 1,
-            "db_id": 1834,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "The young man darts past you, obviously with places to be. He sure seems so young to be moving with such purpose.",
@@ -5933,6 +6916,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Better myself and become a high ranking official one day when I grow up.",
             "movement_energy_cost": 0.0,
             "name": "serving boy",
             "name_prefix": "a",
@@ -5946,7 +6930,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I am the son of the butler in the castle. I assist my father in serving the King and Queen. I live in the servant's quarters of the castle along with my mother and 2 sisters.",
-	    "mission": "Better myself and become a high ranking official one day when I grow up.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -5954,6 +6937,52 @@
             "strength": 0,
             "tags": [],
             "usually_npc": false
+        },
+        "shelf_4": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 18,
+            "contained_nodes": {
+                "magnitudo scroll_10": {
+                    "target_id": "magnitudo scroll_10"
+                },
+                "mortem scroll_8": {
+                    "target_id": "mortem scroll_8"
+                }
+            },
+            "container": true,
+            "container_node": {
+                "target_id": "wizard's quarters_3"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "The shelf is sturdy and held in place with rusty iron brackets.  It held a collection of vials and potions.  The bottles are dusty and looked like they've been there for years.",
+            "drink": 0.0,
+            "equipped": null,
+            "food": 0.0,
+            "food_energy": 1,
+            "gettable": 0.0,
+            "locked_edge": null,
+            "name": "shelf",
+            "name_prefix": "a",
+            "names": [
+                "shelf"
+            ],
+            "node_id": "shelf_4",
+            "object": true,
+            "on_use": null,
+            "room": false,
+            "size": 20,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "on",
+            "value": 1,
+            "wearable": 0.0,
+            "wieldable": 0.0
         },
         "shield_47": {
             "agent": false,
@@ -5967,7 +6996,7 @@
             "container_node": {
                 "target_id": "master-at-arms_43"
             },
-            "db_id": 8109,
+            "db_id": null,
             "dead": false,
             "desc": "The circular wooden shield has a leather rim and a striking metallic boss in the shape of a dragon's head, at the center.",
             "drink": false,
@@ -5988,7 +7017,7 @@
             "size": 1,
             "stats": {
                 "attack": 1,
-		"defense": 2
+                "defense": 2
             },
             "surface_type": "on",
             "value": 1,
@@ -6005,7 +7034,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 364,
+            "db_id": null,
             "desc": "This looks like a lean-to tent.  Propped up on three sides by branches and there is a table in the middle.  The proprietor is selling certain jewels that he claims will provide protection.  They are all different colors and he is well versed in what kind of protection they will provide.",
             "extra_desc": "This tent in the bazaar has been a long time coming.  The proprietor has gone all over the kingdom looking for these stones to make a living.  He really doesn't believe in their powers, but a lady who claimed to be a sorceress that he met in the countryside promised him that if he found these stones and sold them to the townspeople, that he would be greatly rewarded.  So he has spent the better part of the year collecting these jewels.",
             "grid_location": [
@@ -6038,6 +7067,145 @@
             "size": 2000,
             "surface_type": "in"
         },
+        "shovel_1": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 0,
+            "contained_nodes": {},
+            "container": false,
+            "container_node": {
+                "target_id": "disposal area_16"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "A shovel",
+            "drink": false,
+            "equipped": null,
+            "food": false,
+            "food_energy": 0,
+            "gettable": true,
+            "locked_edge": null,
+            "name": "shovel",
+            "name_prefix": "a",
+            "names": [
+                "shovel"
+            ],
+            "node_id": "shovel_1",
+            "object": true,
+            "on_use": [
+                {
+                    "post": [
+                        [
+                            "create_entity",
+                            "in_used_target_item",
+                            {
+                                "desc": "A beautiful and mysterious ring.. could it have magical powers?",
+                                "is_wearable": true,
+                                "name": "dark emerald ring",
+                                "name_prefix": "an"
+                            }
+                        ],
+                        [
+                            "broadcast_message",
+                            {
+                                "self_view": "You dig into the sodden mud, and spy something glistening within!"
+                            }
+                        ]
+                    ],
+                    "pre": [
+                        [
+                            "is_holding",
+                            "used_item"
+                        ],
+                        [
+                            "used_with_item_name",
+                            "muddy area"
+                        ]
+                    ]
+                }
+            ],
+            "room": false,
+            "size": 1,
+            "stats": {
+                "damage": 1,
+                "defense": 0
+            },
+            "surface_type": "on",
+            "value": 1,
+            "wearable": false,
+            "wieldable": true
+        },
+        "skeleton assistant_15": {
+            "agent": true,
+            "aggression": 0,
+            "attack_tagged_agents": [],
+            "blocked_by": {},
+            "blocking": null,
+            "char_type": "creature",
+            "classes": [
+                "agent"
+            ],
+            "contain_size": 21,
+            "contained_nodes": {},
+            "container_node": {
+                "target_id": "dungeon within a castle_2"
+            },
+            "damage": 1,
+            "db_id": null,
+            "dead": false,
+            "defense": 0,
+            "desc": "You are a much better assistant than the rest, taking up no space, no back talking, and you do what is told.",
+            "dexterity": 0,
+            "dont_accept_gifts": false,
+            "followed_by": {},
+            "following": null,
+            "food_energy": 1,
+            "health": 6.0,
+            "is_player": false,
+            "max_distance_from_start_location": 1000000,
+            "max_wearable_items": 3,
+            "max_wieldable_items": 1,
+            "mission": "",
+            "movement_energy_cost": 0.0,
+            "name": "skeleton assistant",
+            "name_prefix": "a",
+            "names": [
+                "skeleton assistant"
+            ],
+            "node_id": "skeleton assistant_15",
+            "num_wearable_items": 0,
+            "num_wieldable_items": 0,
+            "object": false,
+            "on_events": [],
+            "pacifist": false,
+            "persona": "I was created by my master to assist him in his endeavors. I make many mistakes as I have no brain and therefore no critical thinking skills. I am also extremely clumsy as my depth perception is lacking with out actual eyeballs.",
+            "quests": [
+                {
+                    "actor": "skeleton assistant_15",
+                    "actor_name": "skeleton assistant",
+                    "actor_persona": "I was created by my master to assist him in his endeavors. I make many mistakes as I have no brain and therefore no critical thinking skills. I am also extremely clumsy as my depth perception is lacking with out actual eyeballs.",
+                    "actor_str": "a skeleton assistant",
+                    "agent": "drunk reeling out of the saloon_163",
+                    "container": null,
+                    "goal_action": "a drunk reeling out of the saloon smiles",
+                    "goal_verb": "smile",
+                    "helper_agents": [],
+                    "location": null,
+                    "object": null,
+                    "text": "I'd like to make a drunk reeling out of the saloon smile."
+                }
+            ],
+            "reward_xp": 0.0,
+            "room": false,
+            "size": 20,
+            "speed": 10,
+            "strength": 0,
+            "tags": [],
+            "usually_npc": false,
+            "xp": 0
+        },
         "sleet_121": {
             "agent": false,
             "classes": [
@@ -6049,7 +7217,7 @@
             "container_node": {
                 "target_id": "picnic area_14"
             },
-            "db_id": 8491,
+            "db_id": null,
             "dead": false,
             "desc": "The sleet is so thick it is hard to see the floor.",
             "drink": false,
@@ -6106,7 +7274,7 @@
                 "target_id": "main gate_8"
             },
             "damage": 1,
-            "db_id": 2054,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "This dog may be small but that doesnt stop him from fighting the other hungry dogs for food.",
@@ -6120,6 +7288,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Make friends with the right ones, make enemies of the wrong ones.",
             "movement_energy_cost": 0.0,
             "name": "small aggressive-looking dog",
             "name_prefix": "a",
@@ -6133,7 +7302,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "No one likes dogs. I live on the streets with all the other dogs. I am hungry most of the time. Sometimes I fight with the other dogs. I am a dog.",
-	    "mission": "Make friends with the right ones, make enemies of the wrong ones.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -6154,7 +7322,7 @@
             "container_node": {
                 "target_id": "small aggressive-looking dog_83"
             },
-            "db_id": 5867,
+            "db_id": null,
             "dead": false,
             "desc": "The bucket may be small but it gets the job done.",
             "drink": false,
@@ -6194,7 +7362,7 @@
             "container_node": {
                 "target_id": "small aggressive-looking dog_83"
             },
-            "db_id": 5889,
+            "db_id": null,
             "dead": false,
             "desc": "A small crucifix does not necessarily mean small faith.",
             "drink": false,
@@ -6240,6 +7408,9 @@
                 "hatchet_91": {
                     "target_id": "hatchet_91"
                 },
+                "muddy area_0": {
+                    "target_id": "muddy area_0"
+                },
                 "primitive fishing pole_92": {
                     "target_id": "primitive fishing pole_92"
                 }
@@ -6247,7 +7418,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 590,
+            "db_id": null,
             "desc": "This is a small grassy area located under a large oak tree.  There are two home made wooden crosses set up along with mounds where the bodies are buried.",
             "extra_desc": "This is where the residents of the cottage have buried their loved ones.  They wanted them to be close by so they can pay their respects.",
             "grid_location": [
@@ -6297,10 +7468,13 @@
             "classes": [
                 "room"
             ],
-            "contain_size": 1959,
+            "contain_size": 1958,
             "contained_nodes": {
                 "battle master_99": {
                     "target_id": "battle master_99"
+                },
+                "fishing rod_1": {
+                    "target_id": "fishing rod_1"
                 },
                 "monkey friend_98": {
                     "target_id": "monkey friend_98"
@@ -6312,7 +7486,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 504,
+            "db_id": null,
             "desc": "Very small, inside and out, the small hut is made of straw that has turned dingy from mold and time. Two cutout for windows and a brown cloth door mark the front entrance. Inside, there is only a wooden chair and table upon which sits a small wooden bowl and spoon.",
             "extra_desc": "The hut belongs to Jacob, a man who got lost in the jungle and made himself a home to shield and protect him from the elements, animals, and bugs.",
             "grid_location": [
@@ -6352,7 +7526,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 7215,
+            "db_id": null,
             "dead": false,
             "desc": "The metal bucket appears to be made of copper, with multiple dents and scratches on the the surface.",
             "drink": false,
@@ -6402,7 +7576,7 @@
                 "target_id": "saokra's blacksmith shop_25"
             },
             "damage": 1,
-            "db_id": 4121,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "Sooty and sweaty labors the smith over his furnace. With brute and brawn he fashions the finest quality steel in the land into weapons of war.",
@@ -6416,6 +7590,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Find the one who is worthy, and forge the greatest blade ever made.",
             "movement_energy_cost": 0.0,
             "name": "smith",
             "name_prefix": "a",
@@ -6429,7 +7604,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "My forge is over a thousand degrees. I can melt steel with ore and wood. I make only the finest quality blades and armor.",
-	    "mission": "Find the one who is worthy, and forge the greatest blade ever made.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -6450,7 +7624,7 @@
             "container_node": {
                 "target_id": "cup_134"
             },
-            "db_id": 5491,
+            "db_id": null,
             "dead": false,
             "desc": "The spoon is rustic looking, as though it was carved hastily.",
             "drink": false,
@@ -6487,7 +7661,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": "f1160",
+            "db_id": null,
             "desc": "There's a bit of water.",
             "extra_desc": [
                 "Sometimes things are just what they seem. There's nothing interesting here."
@@ -6528,7 +7702,7 @@
             "container_node": {
                 "target_id": "main entrance_7"
             },
-            "db_id": 8191,
+            "db_id": null,
             "dead": false,
             "desc": "The suit of armor was highly polished and it gleamed in the light.",
             "drink": false,
@@ -6567,7 +7741,7 @@
             "container_node": {
                 "target_id": "fox_150"
             },
-            "db_id": 8655,
+            "db_id": null,
             "dead": false,
             "desc": "The sword is sturdy and so heavy that you have trouble lifting it.",
             "drink": false,
@@ -6606,7 +7780,7 @@
             "container_node": {
                 "target_id": "main entrance_7"
             },
-            "db_id": 5689,
+            "db_id": null,
             "dead": false,
             "desc": "Sword's blade was sharp and sturdy. holding it, you could tell it is well versed in the art of war, and is no stranger to the taste of blood, bone and steel.",
             "drink": false,
@@ -6640,17 +7814,17 @@
             ],
             "contain_size": 1976,
             "contained_nodes": {
-                "bighorn sheep_136": {
-                    "target_id": "bighorn sheep_136"
-                },
                 "cup_134": {
                     "target_id": "cup_134"
+                },
+                "drunk reeling out of the saloon_163": {
+                    "target_id": "drunk reeling out of the saloon_163"
                 }
             },
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 1022,
+            "db_id": null,
             "desc": "A floor where musicians and other acts perform as well and dancing and other types of entertainment for the patrons of the tavern. Its a nice place suitable for people who want to enjoy an evening. Hearing music, stories and other entertainments.",
             "extra_desc": "People from the town and the countryside go to have fun, catch up, and to see what has been happening around the town. While they're here they often find some interesting entertainment from whoever happens to be performing in the tavern today.",
             "grid_location": [
@@ -6706,7 +7880,7 @@
             "container_node": {
                 "target_id": "bedding_65"
             },
-            "db_id": 7867,
+            "db_id": null,
             "dead": false,
             "desc": "The tent looks empty.",
             "drink": false,
@@ -6744,7 +7918,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 698,
+            "db_id": null,
             "desc": "The forest has many trees. It has other plants too. There are animals and many livings things. The forest is very much full of life. When you look at it you might only see plants that are green and different shades of brown but there are many other living things in there too.",
             "extra_desc": "The forest started out as a small amount of plants and then the plants kept growing and growing until they were vast. After the plants were very grown the animals and all the small livings things decided to make some houses in the plants.",
             "grid_location": [
@@ -6752,7 +7926,7 @@
                 0,
                 0
             ],
-            "name": "The forest",
+            "name": "forest",
             "name_prefix": "the",
             "names": [
                 "The forest"
@@ -6763,6 +7937,12 @@
                     "label": "a path to the south",
                     "locked_edge": null,
                     "target_id": "abandoned farm_21"
+                },
+                "entrance to a cave_0": {
+                    "examine_desc": null,
+                    "label": "a path to the north",
+                    "locked_edge": null,
+                    "target_id": "entrance to a cave_0"
                 },
                 "shop in bazaar_24": {
                     "examine_desc": null,
@@ -6791,7 +7971,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 58,
+            "db_id": null,
             "desc": "Old and creepy, the castle has been abandoned for centuries now. It is broken and destroyed.",
             "extra_desc": "The castle use to belong to a kingdom. It was a beautiful and rich kingdom, but the people were murdered by bandits.",
             "grid_location": [
@@ -6810,6 +7990,12 @@
                     "label": "a path to the west",
                     "locked_edge": null,
                     "target_id": "castle_34"
+                },
+                "neptune's throne room_0": {
+                    "examine_desc": null,
+                    "label": "a path to the east",
+                    "locked_edge": null,
+                    "target_id": "neptune's throne room_0"
                 }
             },
             "node_id": "the forsaken castle_35",
@@ -6817,6 +8003,49 @@
             "room": true,
             "size": 2000,
             "surface_type": "in"
+        },
+        "throne_1": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 19,
+            "contained_nodes": {
+                "orb of creation_2": {
+                    "target_id": "orb of creation_2"
+                }
+            },
+            "container": true,
+            "container_node": {
+                "target_id": "neptune's throne room_0"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "That throne is where kings and queens would sit during their reign",
+            "drink": 0.0,
+            "equipped": null,
+            "food": 0.0,
+            "food_energy": 1,
+            "gettable": 0.0,
+            "locked_edge": null,
+            "name": "throne",
+            "name_prefix": "a",
+            "names": [
+                "throne"
+            ],
+            "node_id": "throne_1",
+            "object": true,
+            "on_use": null,
+            "room": false,
+            "size": 20,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "in",
+            "value": 1,
+            "wearable": 0.0,
+            "wieldable": 0.0
         },
         "tithe plate_107": {
             "agent": false,
@@ -6830,7 +8059,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 6753,
+            "db_id": null,
             "dead": false,
             "desc": "A shallow plate, but wrapped in gold, the tithe plate serves to host the devious church goers offerings.",
             "drink": false,
@@ -6870,7 +8099,7 @@
             "container_node": {
                 "target_id": "master-at-arms_43"
             },
-            "db_id": 7021,
+            "db_id": null,
             "dead": false,
             "desc": "The torch is stained brown from all the times it was lit.",
             "drink": false,
@@ -6908,7 +8137,7 @@
             "container_node": {
                 "target_id": "main hallway_1"
             },
-            "db_id": 7275,
+            "db_id": null,
             "dead": false,
             "desc": "The torn fabric is used as a cloth atop the royal dinner table.",
             "drink": false,
@@ -6946,7 +8175,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 996,
+            "db_id": null,
             "desc": "This is a single large room, with an aisle leading up to where the magistrate sits, which is behind a bench and podium, on either side of the aisle there are wooden pews for spectators. There are a few maps on the walls and a flag of the land, and a statue of a thief having his hands chopped off by lady justice",
             "extra_desc": "This is where the magistrate hears grievances and wrongdoings of the common folk, they sue each other for wrongful deaths and witchcraft, and criminals are brought before the magistrate to be sentenced",
             "grid_location": [
@@ -6996,7 +8225,7 @@
                 "target_id": "wealthy area of town_19"
             },
             "damage": 1,
-            "db_id": 2281,
+            "db_id": null,
             "dead": false,
             "defense": 0,
             "desc": "The doctor is a funny man trying to make people laugh that he is treating, he helps many people and doesn't ask for much in return, taking trades most of the time over money knowing the people don't have much.",
@@ -7010,6 +8239,7 @@
             "max_distance_from_start_location": 1000000,
             "max_wearable_items": 3,
             "max_wieldable_items": 1,
+            "mission": "Care for people.",
             "movement_energy_cost": 0.0,
             "name": "town doctor",
             "name_prefix": "a",
@@ -7023,7 +8253,6 @@
             "on_events": [],
             "pacifist": false,
             "persona": "I am the town doctor.  I have a small practice in the square in the center of the village.  The subjects line up to await my help.",
-	    "mission": "Care for people.",
             "quests": [],
             "room": false,
             "size": 20,
@@ -7042,7 +8271,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": "f996",
+            "db_id": null,
             "desc": "There's a bit of dust.",
             "extra_desc": [
                 "Sometimes things are just what they seem. There's nothing interesting here."
@@ -7087,7 +8316,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 278,
+            "db_id": null,
             "desc": "This is a quaint theater with plush velvet seats and a beautiful red curtain. It can seat 200 people. It is decorated with mirrors and golden accents. There are posters of past plays in the lobby.",
             "extra_desc": "The theater was built for the local troupe. They put on several plays a year. They also hold town meetings there. People will also rent it out for special occasions.",
             "grid_location": [
@@ -7125,16 +8354,12 @@
             "classes": [
                 "room"
             ],
-            "contain_size": 1980,
-            "contained_nodes": {
-                "drunk reeling out of the saloon_163": {
-                    "target_id": "drunk reeling out of the saloon_163"
-                }
-            },
+            "contain_size": 2000,
+            "contained_nodes": {},
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 308,
+            "db_id": null,
             "desc": "The town is a small, rural area inhabited by the poorer citizens of the empire. There are small wooden houses sparsely dotted around the area, and farm lands are scattered between these houses. Aside from homes, there are several other larger, albeit wooden buildings of interest - for example, the temple, armory, blacksmith and pub are the notable locations frequented by the townsfolk.",
             "extra_desc": "The town was established as a small settlement well outside of the castle walls. The population consists mostly of laborsmen and poorer subsistence farmers that could not afford the houses within the castle limits. Over time, these lower class citizens settled here and built a modest, friendly town that welcomes anyone to come join them.",
             "grid_location": [
@@ -7178,7 +8403,7 @@
             "container_node": {
                 "target_id": "bandit_153"
             },
-            "db_id": 7925,
+            "db_id": null,
             "dead": false,
             "desc": "The treasure chest is a big rectangular box used to store treasures.",
             "drink": false,
@@ -7223,7 +8448,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 1050,
+            "db_id": null,
             "desc": "The forest is actually very creepy even during the day. The trees are so tall that they block the sunlight. There is always fog in the forest which makes it very hard to see. There are a lot of mushrooms near the trees and none of them are edible",
             "extra_desc": "It is believed that this forest is alive! People say that trees are moving from one place to another when nobody sees. This way hunters and other people have a hard time finding their way back. This forest never looks the same",
             "grid_location": [
@@ -7266,7 +8491,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": "f172",
+            "db_id": null,
             "desc": "There's a bit of dirt.",
             "extra_desc": [
                 "Sometimes things are just what they seem. There's nothing interesting here."
@@ -7306,7 +8531,7 @@
             "container_node": {
                 "target_id": "serving boy_51"
             },
-            "db_id": 8163,
+            "db_id": null,
             "dead": false,
             "desc": "The wall hanging shows a deep history imbedded in to it.",
             "drink": false,
@@ -7345,7 +8570,7 @@
             "container_node": {
                 "target_id": "pail_105"
             },
-            "db_id": 7773,
+            "db_id": null,
             "dead": false,
             "desc": "The pail had rust on it's handle and there was a hole rusted through the bottom.",
             "drink": false,
@@ -7393,7 +8618,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 1152,
+            "db_id": null,
             "desc": "A new section of town, new stone buildings and with fresh paint and clean installations. It looks like an old city of rich bankers and guilds of merchants.",
             "extra_desc": "This city was once a garrison for the King's soldiers but in times of peace has become the commerce hub of the region. You can see some military installations but they are old and unused, relics of an earlier time.installations",
             "grid_location": [
@@ -7438,7 +8663,7 @@
             "container_node": {
                 "target_id": "personal rooms_0"
             },
-            "db_id": 5699,
+            "db_id": null,
             "dead": false,
             "desc": "The whip is black and long, the ends stained with some red substance.",
             "drink": false,
@@ -7465,6 +8690,95 @@
             "wearable": false,
             "wieldable": true
         },
+        "wizard's quarters_3": {
+            "agent": false,
+            "classes": [
+                "room"
+            ],
+            "contain_size": 100000,
+            "contained_nodes": {
+                "chair_5": {
+                    "target_id": "chair_5"
+                },
+                "cupboard_11": {
+                    "target_id": "cupboard_11"
+                },
+                "lavish desk piled high with books._6": {
+                    "target_id": "lavish desk piled high with books._6"
+                },
+                "shelf_4": {
+                    "target_id": "shelf_4"
+                }
+            },
+            "container_node": {
+                "target_id": "VOID"
+            },
+            "db_id": null,
+            "desc": "Dark and musty, the Wizard's Quarters are filled with ancient tomes and mysterious items.  Scrolls and jars of mysterious reagents line the walls of the Wizard's Quarters, and magical lights flicker with a mysterious green flame.",
+            "extra_desc": "Dark and musty, the Wizard's Quarters are filled with ancient tomes and mysterious items.  Scrolls and jars of mysterious reagents line the walls of the Wizard's Quarters, and magical lights flicker with a mysterious green flame.",
+            "grid_location": [
+                1,
+                -1,
+                0
+            ],
+            "name": "Wizard's Quarters",
+            "name_prefix": "the",
+            "names": [
+                "Wizard's Quarters"
+            ],
+            "neighbors": {
+                "dungeon within a castle_2": {
+                    "examine_desc": null,
+                    "label": "a path to the north",
+                    "locked_edge": null,
+                    "target_id": "dungeon within a castle_2"
+                }
+            },
+            "node_id": "wizard's quarters_3",
+            "object": false,
+            "room": true,
+            "size": 1,
+            "surface_type": "in"
+        },
+        "wizard's tome_12": {
+            "agent": false,
+            "classes": [
+                "object"
+            ],
+            "contain_size": 0,
+            "contained_nodes": {},
+            "container": false,
+            "container_node": {
+                "target_id": "cupboard_11"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "This book describes many sundry spells and incantations in arcane language. Amongst them, it speaks of the orb of creation, a incredibly powerful device that when wielded and chanting such words as \"creo device stone\" one can create a stone! \"creo loci cave\" one can create a cave! or even \"creo creatura dog\" one can summon a living dog!",
+            "drink": 0.0,
+            "equipped": null,
+            "food": 0.0,
+            "food_energy": 1,
+            "gettable": 1.0,
+            "locked_edge": null,
+            "name": "wizard's tome",
+            "name_prefix": "a",
+            "names": [
+                "wizard's tome"
+            ],
+            "node_id": "wizard's tome_12",
+            "object": true,
+            "on_use": null,
+            "room": false,
+            "size": 1,
+            "stats": {
+                "damage": 0,
+                "defense": 0
+            },
+            "surface_type": "in",
+            "value": 1,
+            "wearable": 0.0,
+            "wieldable": 0.0
+        },
         "wood is gathered to make fire_113": {
             "agent": false,
             "classes": [
@@ -7484,7 +8798,7 @@
             "container_node": {
                 "target_id": "pine tree graveyard_13"
             },
-            "db_id": 7399,
+            "db_id": null,
             "dead": false,
             "desc": "The wood lay scorched on the ground, and warm to the touch.",
             "drink": false,
@@ -7524,7 +8838,7 @@
             "container_node": {
                 "target_id": "VOID"
             },
-            "db_id": 6659,
+            "db_id": null,
             "dead": false,
             "desc": "A simple wooden rectangle with a grid of interwoven ropes to support a mattress.",
             "drink": false,
@@ -7564,7 +8878,7 @@
             "container_node": {
                 "target_id": "priest_116"
             },
-            "db_id": 7395,
+            "db_id": null,
             "dead": false,
             "desc": "The wooden cross is faded in color from being worn too much by the priest",
             "drink": false,
@@ -7603,7 +8917,7 @@
             "container_node": {
                 "target_id": "half wild cat_123"
             },
-            "db_id": 6071,
+            "db_id": null,
             "dead": false,
             "desc": "The wooden spit shows signs of repeated use.",
             "drink": false,
@@ -7643,7 +8957,7 @@
             "container_node": {
                 "target_id": "expensive carpet_37"
             },
-            "db_id": 6661,
+            "db_id": null,
             "dead": false,
             "desc": "the quilt is old and worn out.",
             "drink": false,
@@ -7672,6 +8986,7 @@
         }
     },
     "objects": [
+        "apple tree_13",
         "apron_133",
         "bathroom pot_61",
         "bedding_65",
@@ -7689,6 +9004,7 @@
         "candy_93",
         "cannon_96",
         "cargo_100",
+        "chair_5",
         "chamber pot_60",
         "chamberpot_152",
         "chicken_69",
@@ -7697,12 +9013,15 @@
         "cookpot_131",
         "corn_137",
         "cup_134",
+        "cupboard_11",
+        "dexteritate scroll_9",
         "dress_88",
         "embalming equipment_90",
         "expensive carpet_37",
         "feather fountain pen_112",
         "finest silk and velvet_158",
         "fish wrap ( or butcher paper)_85",
+        "fishing rod_1",
         "flower pot_75",
         "food tray_119",
         "fresh dry house shoes_72",
@@ -7715,6 +9034,7 @@
         "harness_154",
         "hatchet_91",
         "heavy blanket_103",
+        "hefty rock_14",
         "homestead equipment_129",
         "horse tack_89",
         "huge cast iron pot_62",
@@ -7725,11 +9045,13 @@
         "lance_110",
         "large earthenware jug of water for cooking and drinking_74",
         "large pile of hay_73",
+        "lavish desk piled high with books._6",
         "lush green vegetation_63",
         "luxurious bedding_66",
         "mace_162",
         "magical crystal_127",
         "magical lights_124",
+        "magnitudo scroll_10",
         "map of the kingdom_102",
         "materials_144",
         "meat_161",
@@ -7737,6 +9059,8 @@
         "metal meal tray_120",
         "milk_146",
         "moldy bread_159",
+        "mortem scroll_8",
+        "muddy area_0",
         "mug of mead_147",
         "mystical necklace with a colorful crystal_49",
         "name placard_59",
@@ -7744,9 +9068,11 @@
         "old broom_97",
         "old prayer books_54",
         "old, sun-bleached sailcloth_44",
+        "orb of creation_2",
         "ornate goblet_41",
         "pail_105",
         "paper_101",
+        "pond_0",
         "prayer book_118",
         "priceless painting_52",
         "primitive fishing pole_92",
@@ -7760,7 +9086,10 @@
         "salt_168",
         "sapphire_71",
         "scrap of fur_141",
+        "scroll_7",
+        "shelf_4",
         "shield_47",
+        "shovel_1",
         "sleet_121",
         "small bucket_86",
         "small crucifix_84",
@@ -7770,6 +9099,7 @@
         "sword of the guards_151",
         "sword_80",
         "tent_67",
+        "throne_1",
         "tithe plate_107",
         "torch_45",
         "torn fabric_57",
@@ -7777,6 +9107,7 @@
         "wall hanging_55",
         "water pail_106",
         "whip_40",
+        "wizard's tome_12",
         "wood is gathered to make fire_113",
         "wooden bed_126",
         "wooden cross_117",
@@ -7789,7 +9120,10 @@
         "central garden_4",
         "countryside_23",
         "disposal area_16",
+        "dungeon within a castle_2",
+        "dungeon_1",
         "empty storage room_27",
+        "entrance to a cave_0",
         "entrance to the pine trees_15",
         "fish market_28",
         "main entrance_7",
@@ -7799,6 +9133,7 @@
         "main house_3",
         "main street_6",
         "modest living area_18",
+        "neptune's throne room_0",
         "outside castle_32",
         "personal quarters_2",
         "personal rooms_0",
@@ -7819,6 +9154,7 @@
         "town_26",
         "unsettling forest area_20",
         "unused chamber_33",
-        "wealthy area of town_19"
+        "wealthy area of town_19",
+        "wizard's quarters_3"
     ]
 }

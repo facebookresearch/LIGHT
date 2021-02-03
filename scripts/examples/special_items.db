@@ -1,0 +1,428 @@
+[
+    {
+        "base_id": 5008,
+        "id": 5015,
+        "is_container": 1.0,
+        "is_drink": 1.0,
+        "is_food": 0.0,
+        "is_gettable": 0.0,
+        "is_object": true,
+        "is_plural": 0.0,
+        "is_surface": 0.0,
+        "is_weapon": 0.0,
+        "is_wearable": 0.0,
+        "size": 20,
+        "name": "pond",
+        "name_prefix": "a",
+        "physical_description": "You think you see fish swimming in there!"
+    },
+    {
+        "base_id": 5008,
+        "id": 5015,
+        "is_container": 0.0,
+        "is_drink": 0.0,
+        "is_food": 0.0,
+        "is_gettable": 1.0,
+        "is_object": true,
+        "is_plural": 0.0,
+        "is_surface": 0.0,
+        "is_weapon": 1.0,
+        "is_wearable": 0.0,
+        "size": 1,
+        "name": "orb of creation",
+        "name_prefix": "the",
+        "physical_description": "The orb glows bright blue and emits a powerful hum."
+    },
+    {
+        "base_id": 5008,
+        "id": 5015,
+        "is_container": 1.0,
+        "is_drink": 1.0,
+        "is_food": 0.0,
+        "is_gettable": 0.0,
+        "is_object": true,
+        "is_plural": 0.0,
+        "is_surface": 0.0,
+        "is_weapon": 0.0,
+        "is_wearable": 0.0,
+        "size": 20,
+        "name": "muddy area",
+        "name_prefix": "a",
+        "physical_description": "This patch seems recently dug up."
+    },
+    {
+        "base_id": 5008,
+        "id": 5015,
+        "is_container": 1.0,
+        "is_drink": 1.0,
+        "is_food": 0.0,
+        "is_gettable": 0.0,
+        "is_object": true,
+        "is_plural": 0.0,
+        "is_surface": 0.0,
+        "is_weapon": 0.0,
+        "is_wearable": 0.0,
+        "size": 20,
+        "name": "apple tree",
+        "name_prefix": "an",
+        "physical_description": "There are some delicious looking apples up there -- but they are too high to reach!"
+    },
+    {
+        "base_id": 5008,
+        "id": 5015,
+        "is_container": 0.0,
+        "is_drink": 0.0,
+        "is_food": 0.0,
+        "is_gettable": 1.0,
+        "is_object": true,
+        "is_plural": 0.0,
+        "is_surface": 0.0,
+        "is_weapon": 0.0,
+        "is_wearable": 0.0,
+        "name": "wizard's tome",
+        "name_prefix": "a",
+        "physical_description": "This book describes many sundry spells and incantations in arcane language. Amongst them, it speaks of the orb of creation, a incredibly powerful device that when wielded and chanting such words as \"creo device stone\" one can create a stone! \"creo loci cave\" one can create a cave! or even \"creo creatura dog\" one can summon a living dog!"
+    },
+    {	
+            "agent": false,
+	    "is_object": true,
+            "classes": [
+                "object"
+            ],
+            "desc": "An old scroll with words you decipher to be: \"creo magnitudo\". Could this be magic?",
+            "name": "magnitudo scroll",
+            "name_prefix": "a",
+            "node_id": "scroll_9_2",
+            "container_node": { "target_id": "church entryway_1_2"  },
+	    "contained_nodes": {},
+            "object": true,
+            "on_use": [
+                {
+                    "post": [
+                        [
+                            "broadcast_message",
+                            {
+				"self_view": "You say the words aloud, and runes on the scroll glow with gold.",
+				"self_as_target_view": "Suddenly you feel a voluminous about you and you feel ... LARGER! You are  growing!",
+ 	 			"self_not_target_view": "{recipient_text} appears to be growing larger!!!",
+				"room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} seems to glow for a second.. and appears to be getting larger!"
+                            }
+                        ],
+                        [
+                            "modify_attribute",
+                            "in_used_target_item",
+			    "size",
+			    "+2"
+                        ]
+                    ],
+                    "pre": [
+                        [
+                            "is_holding",
+                            "used_item"
+                        ],
+                        [
+                            "used_with_agent"
+                        ]
+                    ]
+                }
+            ]
+	},
+	{
+            "agent": false,
+	    "is_object": true,	    
+            "classes": [
+                "object"
+            ],
+            "contain_size": 0,
+            "contained_nodes": {},
+            "container": false,
+            "container_node": {
+                "target_id": "church entryway_1_2"
+            },
+            "db_id": null,
+            "dead": false,
+            "desc": "A shovel",
+            "drink": false,
+            "equipped": null,
+            "food": false,
+            "food_energy": 0,
+            "gettable": true,
+            "locked_edge": null,
+            "name": "shovel",
+            "name_prefix": "a",
+            "names": [
+                "shovel"
+            ],
+            "node_id": "shovel_5_6",
+            "object": true,
+            "on_use": [
+                {
+                    "post": [
+                        [
+                            "create_entity",
+                            "in_used_target_item",
+                            {
+				"name_prefix": "an",
+                                "is_wearable": true,
+                                "name": "dark emerald ring",
+                                "desc": "A beautiful and mysterious ring.. could it have magical powers?"
+                            }
+                        ],
+                        [
+                            "broadcast_message",
+                            {
+                                "self_view": "You dig into the sodden mud, and spy something glistening within!"
+                            }
+                        ]
+                    ],
+                    "pre": [
+                        [
+                            "is_holding",
+                            "used_item"
+                        ],
+                        [
+                            "used_with_item_name",
+                            "muddy area"
+                        ]
+                    ]
+                }
+            ],
+            "room": false,
+            "size": 1,
+            "stats": {
+                "damage": 1,
+                "defense": 0
+            },
+            "surface_type": "on",
+            "value": 1,
+            "wearable": false,
+            "wieldable": true
+        },
+	{
+            "agent": false,
+	    "is_object": true,
+            "desc": "An old scroll with words you decipher to be: \"facere mortem\". Could this be magic?",
+            "name": "mortem scroll",
+            "drink": false,
+            "equipped": null,
+            "food": true,
+            "food_energy": 2,	    
+            "name_prefix": "a",
+            "node_id": "scroll_9_1",
+            "container_node": { "target_id": "church entryway_1_2"  },
+	    "contained_nodes": {},
+            "object": true,
+            "on_use": [
+                {
+                    "post": [
+                        [
+                            "broadcast_message",
+                            {
+                                "self_view": "You say the words aloud, and runes on the scroll glow with gold.",
+				"self_as_target_view": "You are struck with searing pain!",
+ 	 			"self_not_target_view": "{recipient_text} is struck with searing pain!",
+				"room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} is struck with searing pain!"
+                            }
+                        ],
+			[
+                            "modify_attribute",
+                            "in_used_target_item",
+			    "health",
+			    "-20"
+                        ]
+                    ],
+                    "pre": [
+                        [
+                            "is_holding",
+                            "used_item"
+                        ],
+                        [
+                            "used_with_agent"
+                        ]
+                    ]
+                }
+            ]
+        },
+	{
+            "agent": false,
+            "is_object": true,
+	    "classes": [
+                "object"
+            ],
+            "desc": "An old scroll with words you decipher to be: \"creo dexteritate\". Could this be magic?",
+            "name": "dexteritate scroll",
+            "name_prefix": "a",
+            "node_id": "scroll_9_3",
+            "container_node": { "target_id": "church entryway_1_2"  },
+	    "contained_nodes": {},
+            "object": true,
+            "on_use": [
+                {
+                    "post": [
+			[
+                            "broadcast_message",
+                            {
+				"self_view": "You say the words aloud, and runes on the scroll glow with gold.",
+				"self_as_target_view": "Suddenly you feel a lightness upon you and you feel more fleet of foot. Your dexterity has increased!",
+ 	 			"self_not_target_view": "{recipient_text} feels a lightness upon them and they feel more fleet of foot. Their dexterity has increased!",
+				"room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} seems to glow for a second."
+                            }
+                        ],
+                        [
+                            "modify_attribute",
+                            "in_used_target_item",
+			    "dexterity",
+			    "+2"
+                        ]
+                    ],
+                    "pre": [
+                        [
+                            "is_holding",
+                            "used_item"
+                        ],
+                        [
+                            "used_with_agent"
+                        ]
+                    ]
+                }
+            ]
+        },
+	{
+            "agent": false,
+	    "is_object": true,	    
+            "classes": [
+                "object"
+            ],
+            "contain_size": 0,
+            "contained_nodes": {},
+            "container": false,
+            "db_id": null,
+            "dead": false,
+            "desc": "Appears to be workable. Might be handy if you can find somewhere to fish!",
+            "drink": false,
+            "equipped": null,
+            "food": false,
+            "food_energy": 0,
+            "gettable": true,
+            "locked_edge": null,
+            "name": "fishing rod",
+            "name_prefix": "a",
+            "names": [
+                "fishing rod"
+            ],
+            "node_id": "shovel_5_6",
+            "object": true,
+            "on_use": [
+                {
+                    "post": [
+                        [
+                            "create_entity",
+                            "in_actor",
+                            {
+				"name_prefix": "a",
+	                        "is_food": 1.0,
+                                "is_wearable": false,
+                                "name": "tasty looking fish",
+                                "desc": "Mmm you could just eat this thing raw."
+                            }
+                        ],
+                        [
+                            "broadcast_message",
+                            {
+                                "self_view": "You fish for a while..and oh my golly, you caught something!!"
+                            }
+                        ]
+                    ],
+                    "pre": [
+                        [
+                            "is_holding",
+                            "used_item"
+                        ],
+                        [
+                            "used_with_item_name",
+                            "pond"
+                        ]
+                    ]
+                }
+            ],
+            "room": false,
+            "size": 1,
+            "stats": {
+                "damage": 1,
+                "defense": 0
+            },
+            "surface_type": "on",
+            "value": 1,
+            "wearable": false,
+            "wieldable": true
+        },
+	{
+            "agent": false,
+	    "is_object": true,	    
+            "classes": [
+                "object"
+            ],
+            "contain_size": 0,
+            "contained_nodes": {},
+            "container": false,
+            "db_id": null,
+            "dead": false,
+            "desc": "Feels good in the hand. Great for throwing at stuff!",
+            "drink": false,
+            "equipped": null,
+            "food": false,
+            "food_energy": 0,
+            "gettable": true,
+            "locked_edge": null,
+            "name": "hefty rock",
+            "name_prefix": "a",
+            "names": [
+                "fishing rod"
+            ],
+            "node_id": "shovel_5_6",
+            "object": true,
+            "on_use": [
+                {
+                    "post": [
+                        [
+                            "create_entity",
+                            "in_room",
+                            {
+				"name_prefix": "a",
+	                        "is_food": 1.0,
+                                "is_wearable": false,
+                                "name": "delicious crisp apple",
+                                "desc": "Mmm.. perfectly ripe."
+                            }
+                        ],
+                        [
+                            "broadcast_message",
+                            {
+                                "self_view": "You toss the rock ..and land a hit! You knock an apple right off!"
+                            }
+                        ]
+                    ],
+                    "pre": [
+                        [
+                            "is_holding",
+                            "used_item"
+                        ],
+                        [
+                            "used_with_item_name",
+                            "apple tree"
+                        ]
+                    ]
+                }
+            ],
+            "room": false,
+            "size": 1,
+            "stats": {
+                "damage": 1,
+                "defense": 0
+            },
+            "surface_type": "on",
+            "value": 1,
+            "wearable": false,
+            "wieldable": true
+        }	
+]
