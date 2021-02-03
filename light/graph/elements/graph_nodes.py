@@ -415,6 +415,8 @@ class GraphRoom(GraphNode):
     def __init__(self, node_id, name, props=None, db_id=None):
         super().__init__(node_id, name, props, db_id)
         self.room = True
+        if 'desc' not in props:
+            self.desc = props.get('description', '')
         self.extra_desc = self._props.get("extra_desc", self.desc)
         self.name_prefix = self._props.get("name_prefix", "the")
         self.surface_type = self._props.get("surface_type", "in")
