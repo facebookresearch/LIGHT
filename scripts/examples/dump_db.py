@@ -46,10 +46,20 @@ rooms=(ldbg.get_usable_rooms())
 chars=(ldbg.get_usable_chars())
 objs=(ldbg.get_usable_objects())
 items = []
-for obj_ind in objs:
-    obj = ldb.get_object(obj_ind)[0]
-    if obj['is_plural'] != 1.0:
-        items.append(obj)
+for ind in objs:
+    item = ldb.get_object(ind)[0]
+    item['is_object'] = True
+    if item['is_plural'] != 1.0:
+        items.append(item)
+for ind in chars:
+    item = ldb.get_character(ind)[0]
+    item['is_character'] = True
+    if item['is_plural'] != 1.0:
+        items.append(item)
+for ind in rooms:
+    item = ldb.get_room(ind)[0]
+    item['is_room'] = True
+    items.append(item)
         
 txt=json.dumps(items, sort_keys=True, indent=4)
 fw=open(opt['save_json'], 'w')
