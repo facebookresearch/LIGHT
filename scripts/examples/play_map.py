@@ -108,7 +108,12 @@ parser.add_argument(
 parser.add_argument(
     "--magic-db-path", type=str,
     #default=""
-    default = "/scratch/light/magic/magic.db"
+    #default = "/scratch/light/magic/magic.db,scripts/examples/special_items.db"
+    default = "scripts/examples/special_items.db"
+)
+parser.add_argument(
+    "--allow-save-world", type='bool',
+    default=True
 )
 parser.add_argument(
     "--roleplaying-score-model-file",

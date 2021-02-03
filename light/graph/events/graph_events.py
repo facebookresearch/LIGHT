@@ -2732,6 +2732,8 @@ class UseEvent(GraphEvent):
             location = self.target_nodes[1]
         if post[1] == "in_room":
             location = self.target_nodes[1].get_room()
+        if post[1] == "in_actor":
+            location = self.actor
         g = world.oo_graph
         obj = post[2]
         n = g.add_object(obj["name"], obj)

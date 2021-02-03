@@ -12,9 +12,13 @@ magic_db = None
 def init_magic(datapath):
     global magic_db
     if datapath is not None and len(datapath) > 0:
-        with open(datapath, "r") as jsonfile:
-            magic_db = json.load(jsonfile)
-            print("[ loaded " + str(len(magic_db)) + " magic items]")
+        files = datapath.split(',')
+        magic_db = []
+        for f in files:
+            with open(f, "r") as jsonfile:
+                mdb = json.load(jsonfile)
+                magic_db = magic_db + mdb
+        print("[ loaded " + str(len(magic_db)) + " magic items]")
 
 
 def mort(agent, event):
@@ -133,10 +137,21 @@ def creo(agent, event):
         
     agent.world.broadcast_to_room(new_event)
 
+def save(agent, event):
+    print("[saving world state!!!]")
+    g = agent.world.oo_graph
+    data = g.to_json()
+    # turn off is_player feature:
+    data =  data.replace('"is_player": true', '"is_player": false')
+    fw = open('/tmp/map.json', 'w')
+    fw.write(data)
+    fw.close()
 
 def check_if_cast_magic_from_event(agent, event):
     event_name = event.__class__.__name__
     if event_name == "SayEvent":
+        if event.text_content == "creoservo" and agent.world.opt.get('allow_save_world', False):
+            save(agent, event)
         if event.text_content.startswith("creo "):
             creo(agent, event)
         if event.text_content.startswith("mort "):
