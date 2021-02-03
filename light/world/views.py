@@ -360,7 +360,7 @@ class WorldViewer(object):
         if node.get_prop("surface_type") == "on":
             content_desc = self.display_node_list(node.get_contents())
             obj_desc = self.get_node_desc(node, use_the=True)
-            return "There's {} on {}".format(content_desc, obj_desc)
+            return "There's {} on {}.".format(content_desc, obj_desc)
         else:
             s = self.get_node_desc(node, use_the=True).capitalize() + " contains "
             content_desc = self.display_node_list(node.get_contents())
