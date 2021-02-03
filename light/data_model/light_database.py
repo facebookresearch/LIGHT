@@ -1067,7 +1067,9 @@ class LIGHTDatabase:
             )
             result = self.c.fetchall()
             print(result)
-            assert len(result) == 1
+            assert (
+                len(result) == 1
+            ), "There is already an existing item with these unique IDs (name, base_id, physical_description)"
             id = int(result[0][0])
         return (id, inserted)
 
@@ -1278,6 +1280,10 @@ class LIGHTDatabase:
         is_wearable=None,
         is_weapon=None,
         physical_description=None,
+        size=None,
+        contain_size=None,
+        shape=None,
+        value=None,
     ):
         if self.use_cache and id is not None and id in self.cache["objects"]:
             return [self.cache["objects"][id]]
@@ -1294,7 +1300,11 @@ class LIGHTDatabase:
             AND (?8 IS NULL OR is_wearable = ?8)
             AND (?9 IS NULL OR is_weapon = ?9)
             AND (?10 IS NULL OR physical_description = ?10)
-            AND (?11 IS NULL OR id = ?11)
+            AND (?11 IS NULL OR size = ?11)
+            AND (?12 IS NULL OR contain_size = ?12)
+            AND (?13 IS NULL OR shape = ?13)
+            AND (?14 IS NULL OR value = ?14)
+            AND (?15 IS NULL OR id = ?15)
             """,
             (
                 name,
@@ -1307,6 +1317,10 @@ class LIGHTDatabase:
                 is_wearable,
                 is_weapon,
                 physical_description,
+                size,
+                contain_size,
+                shape,
+                value,
                 id,
             ),
         )

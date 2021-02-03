@@ -158,9 +158,9 @@ class TestDatabase(unittest.TestCase):
 
         # Test if base object can be successfully created
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            obase_id = test.create_base_object("room4")[0]
+            obase_id = test.create_base_object("room333")[0]
             self.assert_sqlite_row_equal(
-                {"id": obase_id, "name": "room4"},
+                {"id": obase_id, "name": "room333"},
                 test.get_base_object()[0],
                 "Base object cannot be created",
             )
@@ -168,12 +168,12 @@ class TestDatabase(unittest.TestCase):
         # Test if object can be successfully created (Without custom tag attributes)
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             ocontent_id1 = test.create_object(
-                None, obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big"
+                None, obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big", {}, None, None
             )[0]
             self.assert_sqlite_row_equal(
                 {
                     "id": ocontent_id1,
-                    "name": "room4",
+                    "name": "room333",
                     "base_id": obase_id,
                     "is_container": 0.4,
                     "is_drink": 0.2,
@@ -190,15 +190,17 @@ class TestDatabase(unittest.TestCase):
 
         # Test if object can be successfully created (With custom tag attributes)
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
-            ocontent_id1 = test.create_object(
-                None, obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big", {}, None, None, 5, 2, "round", 1
+            obase_id2 = test.create_base_object("room334")[0]
+            ocontent_id2 = test.create_object(
+                None, obase_id2, 0.4, 0.2, 0, 0, 0, 0, 0, "big", {}, None, None, 5, 3, "round", 1
             )[0]
-            print(ocontent_id1)
+            print("Ocontent id: ", ocontent_id2)
+            print("Obase id: ", obase_id2)
             self.assert_sqlite_row_equal(
                 {
-                    "id": ocontent_id1,
-                    "name": "room4",
-                    "base_id": obase_id,
+                    "id": ocontent_id2,
+                    "name": "room334",
+                    "base_id": obase_id2,
                     "is_container": 0.4,
                     "is_drink": 0.2,
                     "is_food": 0,
@@ -208,14 +210,13 @@ class TestDatabase(unittest.TestCase):
                     "is_weapon": 0,
                     "physical_description": "big",
                     "size": 5,
-                    "contain_size": 2,
+                    "contain_size": 3,
                     "shape": "round",
                     "value": 1,
                 },
                 test.get_object()[0],
-                "Object cannot be created"
+                "Object cannot be created",
             )
-
 
         # Test if node content (edge) can be successfully created
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
