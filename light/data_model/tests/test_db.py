@@ -478,7 +478,7 @@ class TestDatabase(unittest.TestCase):
                         is_surface=0,
                         is_wearable=0,
                         is_weapon=0,
-                        physical_description="big"
+                        physical_description="big",
                     )
                 ),
                 1,

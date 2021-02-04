@@ -1046,7 +1046,8 @@ class LIGHTDatabase:
                 AND is_container = ? AND is_drink = ? AND is_food = ? \
                 AND is_gettable = ? AND is_surface = ? AND is_wearable = ? \
                 AND is_weapon = ? AND physical_description = ? \
-                AND (?11 IS NULL OR size = ?11) AND (?12 IS NULL OR contain_size = ?12) AND (?13 IS NULL OR shape = ?13) AND (?14 IS NULL OR value = ?14) \
+                AND (?11 IS NULL OR size = ?11) AND (?12 IS NULL OR contain_size = ?12) \
+                AND (?13 IS NULL OR shape = ?13) AND (?14 IS NULL OR value = ?14) \
                 """,
                 (
                     name,
@@ -2159,58 +2160,17 @@ class LIGHTDatabase:
         Check if the tables has the attrs related to the custom tagged attributes. If not, add them.
         """
 
-        # Check the table for size column and add if nonexistent
-        has_size_column = self.c.execute(
-            """
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='size'
-            """
-        )
+        # Check the table for size, contain_size, shape, value columns and add if nonexistent
+        has_size_column = self.c.execute(" SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='size' ")
+        has_contain_size_column = self.c.execute(" SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='contain_size' ")
+        has_shape_column = self.c.execute(" SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='shape' ")
+        has_value_column = self.c.execute(" SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='value' ")
 
-        if not has_size_column:
-            self.c.execute(
-                """
-                ALTER TABLE objects_table ADD COLUMN size;
-                """
-            )
-
-        # Check the table for contain_size column and add if nonexistent
-        has_contain_size_column = self.c.execute(
-            """
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='contain_size'
-            """
-        )
-        if not has_contain_size_column:
-            self.c.execute(
-                """
-                ALTER TABLE objects_table ADD COLUMN contain_size;
-                """
-            )
-
-        # Check the table for shape column and add if nonexistent
-        has_shape_column = self.c.execute(
-            """
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='shape'
-            """
-        )
-        if not has_shape_column:
-            self.c.execute(
-                """
-                ALTER TABLE objects_table ADD COLUMN shape;
-                """
-            )
-
-        # Check the table for value column and add if nonexistent
-        has_value_column = self.c.execute(
-            """
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='value'
-            """
-        )
-        if not has_value_column:
-            self.c.execute(
-                """
-                ALTER TABLE objects_table ADD COLUMN value;
-                """
-            )
+        if not (has_size_column or has_contain_size_column or has_shape_column or has_value_column):
+            self.c.execute("ALTER TABLE objects_table ADD COLUMN size;")
+            self.c.execute("ALTER TABLE objects_table ADD COLUMN contain_size;")
+            self.c.execute("ALTER TABLE objects_table ADD COLUMN shape;")
+            self.c.execute("ALTER TABLE objects_table ADD COLUMN value;")
 
     def add_single_conversation(self, room, participants, turns):
         """
