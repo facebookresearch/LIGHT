@@ -481,7 +481,6 @@ class World(object):
             room = self.oo_graph.get_node(action["room_id"])
         agents_list = [a.node_id for a in room.get_contents() if a.agent]
         agents = set(agents_list)
-        print("Broadcasting", action, agents, "but not", exclude_agents)
         self.broadcast_to_agents(action, agents, exclude_agents)
         # self._room_convo_buffers[action['room_id']].observe_turn(action)
 
