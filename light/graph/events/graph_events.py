@@ -13,7 +13,7 @@ from light.graph.events.base import (
     proper_caps,
 )
 
-from use_events import UseEvent
+from light.graph.events.use_events import UseEvent
 
 # Used for typehinting
 from typing import Union, List, Optional, Tuple, Any, Type, TYPE_CHECKING
