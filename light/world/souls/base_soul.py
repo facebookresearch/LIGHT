@@ -111,7 +111,7 @@ class BaseSoul(Soul):
                 agent2 = self.world.oo_graph.get_node(
                     agent1._last_interaction_partner_id
                 )
-                if agent1.get_room() != agent2.get_room():
+                if agent2 is not None and agent1.get_room() != agent2.get_room():
                     agent1._last_interaction_partner_id = None
                     agent2._last_interaction_partner_id = None
                     agent2 = None

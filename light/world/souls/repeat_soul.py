@@ -34,6 +34,8 @@ class RepeatSoul(Soul):
             return
         if not (event.actor.is_player or event.actor._human):
             return
+        if self.target_node._dying:
+            return # Going to die, can't do anything
         my_observation = event.view_as(self.target_node)
         repeat_text = f"I just saw the following: {my_observation}"
         repeat_event = SayEvent.construct_from_args(
