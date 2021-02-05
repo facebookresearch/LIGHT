@@ -2550,9 +2550,9 @@ class IngestEvent(GraphEvent):
         # Move the object over and broadcast
         fe = ingest_target.food_energy
         self._outcome = "Yum. " if fe > 0 else "Gross! "
-        world.oo_graph.mark_node_for_deletion(ingest_target.node_id)
         if hasattr(world.oo_graph, "void"):
-            ingest_target.force_move_to(world.oo_graph.void)
+            ingest_target.move_to(world.oo_graph.void)
+        world.oo_graph.mark_node_for_deletion(ingest_target.node_id)
 
         world.broadcast_to_room(self)
 
