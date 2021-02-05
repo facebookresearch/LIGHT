@@ -70,6 +70,7 @@ class TestSouls(unittest.TestCase):
 
         purgatory.fill_soul(test_node, "test")
         self.assertIn(test_node.node_id, purgatory.node_id_to_soul)
+        test_node.is_player = True
         purgatory.fill_soul(repeat_node, "repeat")
         self.assertIn(repeat_node.node_id, purgatory.node_id_to_soul)
 
