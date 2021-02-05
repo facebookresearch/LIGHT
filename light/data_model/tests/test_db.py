@@ -165,10 +165,10 @@ class TestDatabase(unittest.TestCase):
                 "Base object cannot be created",
             )
 
-        # Test if object can be successfully created
+        # Test if object can be successfully created (Without custom tag attributes)
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             ocontent_id1 = test.create_object(
-                None, obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big"
+                None, obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big", {}, None, None
             )[0]
             self.assert_sqlite_row_equal(
                 {
@@ -185,6 +185,34 @@ class TestDatabase(unittest.TestCase):
                     "physical_description": "big",
                 },
                 test.get_object()[0],
+                "Object cannot be created",
+            )
+
+        # Test if object can be successfully created (With custom tag attributes)
+        with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
+            obase_id2 = test.create_base_object("room334")[0]
+            ocontent_id2 = test.create_object(
+                None, obase_id2, 0.4, 0.2, 0, 0, 0, 0, 0, "big", {}, None, None, 5, 3, "round", 1
+            )[0]
+            self.assert_sqlite_row_equal(
+                {
+                    "id": ocontent_id2,
+                    "name": "room334",
+                    "base_id": obase_id2,
+                    "is_container": 0.4,
+                    "is_drink": 0.2,
+                    "is_food": 0,
+                    "is_gettable": 0,
+                    "is_surface": 0,
+                    "is_wearable": 0,
+                    "is_weapon": 0,
+                    "physical_description": "big",
+                    "size": 5,
+                    "contain_size": 3,
+                    "shape": "round",
+                    "value": 1,
+                },
+                test.get_object(base_id=obase_id2)[0],
                 "Object cannot be created",
             )
 
@@ -436,7 +464,7 @@ class TestDatabase(unittest.TestCase):
         # Test if duplicate object is avoided
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             ocontent_id1_dup = test.create_object(
-                None, obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big"
+                None, obase_id, 0.4, 0.2, 0, 0, 0, 0, 0, "big", {}, None, None
             )[0]
             self.assertEqual(
                 len(

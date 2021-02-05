@@ -276,6 +276,7 @@ class LIGHTDatabase:
             self.init_user_tables()
             self.init_game_tables()
             self.create_triggers()
+            self.check_custom_tags_objects_tables()
 
         # Dictionaries to convert between previous pickle IDs and current
         # database IDs
@@ -392,7 +393,7 @@ class LIGHTDatabase:
         table_name_fts = self.table_dict[type] + "_fts"
         # if input is empty, return all entries of the specified type through
         # the "else" block
-        
+
         try:
             self.c.execute(
                 """
@@ -610,6 +611,10 @@ class LIGHTDatabase:
             physical_description text NOT NULL,
             name_prefix text NOT NULL,
             is_plural float NOT NULL,
+            size integer,
+            contain_size integer,
+            shape text,
+            value integer,
             UNIQUE (name, base_id, physical_description),
             CONSTRAINT fk_base_id FOREIGN KEY (base_id)
                 REFERENCES base_objects_table (id)
@@ -947,6 +952,10 @@ class LIGHTDatabase:
         entry_attributes={},
         name_prefix=None,
         is_plural=None,
+        size=None,
+        contain_size=None,
+        shape=None,
+        value=None
     ):
         # Check that the attributes are between 0 and 1
         assert (
@@ -1005,8 +1014,8 @@ class LIGHTDatabase:
             """
             INSERT or IGNORE INTO objects_table(id, name, base_id, is_container,
             is_drink, is_food, is_gettable, is_surface, is_wearable, is_weapon,
-            physical_description, name_prefix, is_plural)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            physical_description, name_prefix, is_plural, size, contain_size, shape, value)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 id,
@@ -1022,6 +1031,10 @@ class LIGHTDatabase:
                 physical_description,
                 name_prefix,
                 is_plural,
+                size,
+                contain_size,
+                shape,
+                value
             ),
         )
         inserted = bool(self.c.rowcount)
@@ -1032,7 +1045,9 @@ class LIGHTDatabase:
                 SELECT id from objects_table WHERE name = ? AND base_id = ? \
                 AND is_container = ? AND is_drink = ? AND is_food = ? \
                 AND is_gettable = ? AND is_surface = ? AND is_wearable = ? \
-                AND is_weapon = ? AND physical_description = ?
+                AND is_weapon = ? AND physical_description = ? \
+                AND (?11 IS NULL OR size = ?11) AND (?12 IS NULL OR contain_size = ?12) \
+                AND (?13 IS NULL OR shape = ?13) AND (?14 IS NULL OR value = ?14) \
                 """,
                 (
                     name,
@@ -1045,10 +1060,16 @@ class LIGHTDatabase:
                     is_wearable,
                     is_weapon,
                     physical_description,
+                    size,
+                    contain_size,
+                    shape,
+                    value
                 ),
             )
             result = self.c.fetchall()
-            assert len(result) == 1
+            assert (
+                len(result) == 1
+            ), "There is already an existing item with these unique IDs (name, base_id, physical_description)"
             id = int(result[0][0])
         return (id, inserted)
 
@@ -1259,6 +1280,10 @@ class LIGHTDatabase:
         is_wearable=None,
         is_weapon=None,
         physical_description=None,
+        size=None,
+        contain_size=None,
+        shape=None,
+        value=None,
     ):
         if self.use_cache and id is not None and id in self.cache["objects"]:
             return [self.cache["objects"][id]]
@@ -1275,7 +1300,11 @@ class LIGHTDatabase:
             AND (?8 IS NULL OR is_wearable = ?8)
             AND (?9 IS NULL OR is_weapon = ?9)
             AND (?10 IS NULL OR physical_description = ?10)
-            AND (?11 IS NULL OR id = ?11)
+            AND (?11 IS NULL OR size = ?11)
+            AND (?12 IS NULL OR contain_size = ?12)
+            AND (?13 IS NULL OR shape = ?13)
+            AND (?14 IS NULL OR value = ?14)
+            AND (?15 IS NULL OR id = ?15)
             """,
             (
                 name,
@@ -1288,6 +1317,10 @@ class LIGHTDatabase:
                 is_wearable,
                 is_weapon,
                 physical_description,
+                size,
+                contain_size,
+                shape,
+                value,
                 id,
             ),
         )
@@ -2121,6 +2154,24 @@ class LIGHTDatabase:
                     i[0], comma_separated, comma_separated_with_new
                 )
             )
+
+    def check_custom_tags_objects_tables(self):
+        """
+        Check if the tables has the attrs related to the custom tagged attributes. If not, add them.
+        """
+
+        # Check the table for size, contain_size, shape, value columns and add if nonexistent
+        # this should be deprecated soon when a legacy table is opened
+        has_size_column = self.c.execute(" SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='size' ")
+        has_contain_size_column = self.c.execute(" SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='contain_size' ")
+        has_shape_column = self.c.execute(" SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='shape' ")
+        has_value_column = self.c.execute(" SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='value' ")
+
+        if not (has_size_column or has_contain_size_column or has_shape_column or has_value_column):
+            self.c.execute("ALTER TABLE objects_table ADD COLUMN size;")
+            self.c.execute("ALTER TABLE objects_table ADD COLUMN contain_size;")
+            self.c.execute("ALTER TABLE objects_table ADD COLUMN shape;")
+            self.c.execute("ALTER TABLE objects_table ADD COLUMN value;")
 
     def add_single_conversation(self, room, participants, turns):
         """
