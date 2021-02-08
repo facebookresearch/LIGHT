@@ -145,7 +145,7 @@ class Application(tornado.web.Application):
         #       is run standalone for some reason.
         return [
             (r"/game(.*)/socket", SocketHandler, {"app": self}),
-            (r"/", MainHandler),
+            (r"/play", GameHandler),
             (r"/(.*)", StaticUIHandler, {"path": path_to_build}),
         ]
 
@@ -278,8 +278,9 @@ class LandingApplication(tornado.web.Application):
 
     def get_handlers(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
         return [
-            (r"/", MainHandler),
-            (r"/?id=.*", MainHandler),
+            (r"/", StaticPageHandler, {'target': "/html/landing.html"}),
+            (r"/play", GameHandler),
+            (r"/play/?id=.*", GameHandler),
             (
                 r"/login",
                 LoginHandler,
@@ -291,15 +292,33 @@ class LandingApplication(tornado.web.Application):
                 {"database": database, "hostname": hostname, "app": self},
             ),
             (r"/logout", LogoutHandler),
+            (r"/terms", StaticPageHandler, {'target': "/html/terms.html"}),
+            (r"/bye", StaticPageHandler, {'target': "/html/logout.html"}),
+            (r"/about", StaticLoggedInPageHandler, {'target': "/html/about.html"}),
+            (r"/profile", StaticLoggedInPageHandler, {'target': "/html/profile.html"}),
             (r"/report", ReportHandler),
             (r"/(.*)", StaticUIHandler, {"path": here + "/../build/"}),
         ]
 
 
-class MainHandler(BaseHandler):
+class GameHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         self.render(here + "/../build/index.html")
+
+
+class StaticPageHandler(BaseHandler):
+    def initialize(self, target):
+        self.target_page = here + target
+
+    def get(self):
+        self.render(self.target_page)
+
+
+class StaticLoggedInPageHandler(StaticPageHandler):
+    @tornado.web.authenticated
+    def get(self):
+        self.render(self.target_page)
 
 
 class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
@@ -354,7 +373,7 @@ class LoginHandler(BaseHandler):
         self.password = password
 
     def get(self):
-        self.render(here + "/login.html", next=self.get_argument("next", u"/"))
+        self.render(here + "/html/login.html", next=self.get_argument("next", u"/"))
         self.next = next
 
     def post(self):
@@ -378,10 +397,42 @@ class LoginHandler(BaseHandler):
             self.clear_cookie("user")
 
 
+class LoginHandler(BaseHandler):
+    def initialize(
+        self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay",
+    ):
+        self.db = database
+        self.hostname = hostname
+        self.password = password
+
+    def get(self):
+        self.render(here + "/html/login.html", next=self.get_argument("next", u"/"))
+        self.next = next
+
+    def post(self):
+        name = self.get_argument("name", "")
+        password = self.get_argument("password", "")
+        if password == self.password:
+            with self.db as ldb:
+                _ = ldb.create_user(name)
+            self.set_current_user(name)
+            self.redirect(self.get_argument("next", u"/"))
+        else:
+            error_msg = u"?error=" + tornado.escape.url_escape("Login incorrect.")
+            self.redirect(u"/login" + error_msg)
+
+    def set_current_user(self, user):
+        if user:
+            self.set_secure_cookie(
+                "user", tornado.escape.json_encode(user), domain=self.hostname
+            )
+        else:
+            self.clear_cookie("user")
+
 class LogoutHandler(BaseHandler):
     def get(self):
         self.clear_cookie("user")
-        self.redirect(u"/login")
+        self.redirect(u"/bye")
 
 class ReportHandler(BaseHandler):
     def post(self):
