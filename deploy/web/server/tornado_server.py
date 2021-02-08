@@ -292,6 +292,7 @@ class LandingApplication(tornado.web.Application):
                 {"database": database, "hostname": hostname, "app": self},
             ),
             (r"/logout", LogoutHandler),
+            (r"/terms", StaticPageHandler, {'target': "/html/terms.html"}),
             (r"/bye", StaticPageHandler, {'target': "/html/logout.html"}),
             (r"/about", StaticLoggedInPageHandler, {'target': "/html/about.html"}),
             (r"/profile", StaticLoggedInPageHandler, {'target': "/html/profile.html"}),
