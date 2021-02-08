@@ -8,6 +8,7 @@ import unittest
 import os
 import asyncio
 import time
+from light import LIGHT_DIR
 from light.graph.builders.map_json_builder import MapJsonBuilder
 from light.world.souls.tests.battle_royale_soul import BattleRoyaleSoul
 
@@ -19,7 +20,6 @@ def async_test(f):
         loop.run_until_complete(future)
 
     return wrapper
-
 
 class TestInteractionLoggers(unittest.TestCase):
     """Unit tests for Interaction Loggers"""
@@ -33,7 +33,7 @@ class TestInteractionLoggers(unittest.TestCase):
         await asyncio.sleep(0.1)
         loop = asyncio.get_running_loop()
         opt = {}
-        opt["load_map"] = os.path.expanduser('~/LIGHT/scripts/examples/complex_world.json')
+        opt["load_map"] = os.path.join(LIGHT_DIR, 'scripts/examples/complex_world.json')
         world_builder = MapJsonBuilder("", debug=False, opt=opt)
         g, world = world_builder.get_graph()
         purgatory = world.purgatory
@@ -64,8 +64,8 @@ class TestInteractionLoggers(unittest.TestCase):
             purgatory.fill_soul(empty_agent)
 
         
-        self.assertTrue(len(g.agents) == current_agents + 10)
-        current_agents += 10
+        self.assertTrue(len(g.agents) == current_agents + 20)
+        current_agents += 20
         
         # run some steps
         await run_some_time(2)
