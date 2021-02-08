@@ -1022,6 +1022,7 @@ class DeathEvent(TriggeredEvent):
         """Save expected views, then message everyone"""
         actor_name = self.actor.get_prefix_view()
         self.__in_room_view = f"{actor_name} died! "
+        self.actor._dying = True
 
         # You have to send to the room before death or the dying agent won't get the message
         world.broadcast_to_room(self)
@@ -1215,9 +1216,7 @@ class HitEvent(GraphEvent):
             health = max(0, health - (self.attack - self.defend))
             attack_target.health = health
             if health == 0:
-                # turn off death for now
-                health = 1
-                # DeathEvent(attack_target).execute(world)
+                DeathEvent(attack_target).execute(world)
             else:
                 HealthEvent(
                     attack_target,
@@ -2563,9 +2562,7 @@ class IngestEvent(GraphEvent):
         self.actor.health = max(self.actor.health + fe, 0)
         new_health_text = world.health(self.actor.node_id)
         if self.actor.health <= 0:
-            # Turn off death for now.
-            health = 1
-            # DeathEvent(self.actor).execute(world)
+            DeathEvent(self.actor).execute(world)
         elif health_text != new_health_text:
             HealthEvent(self.actor, text_content="HealthOnIngestEvent").execute(world)
 

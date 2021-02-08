@@ -11,6 +11,7 @@ from light.graph.builders.base import (
     SingleSuggestionGraphBuilder,
     POSSIBLE_NEW_ENTRANCES,
 )
+from light.graph.events.graph_events import ArriveEvent
 from light.world.world import World
 
 
@@ -36,3 +37,18 @@ class MapJsonBuilder(DBGraphBuilder):
     def add_random_new_agent_to_graph(self, world):
         """Skip adding an agent, a loaded graph for now has no attached model"""
         pass
+
+    def force_add_agent(self, world):
+        g = world.oo_graph
+        pos_rooms = [x for x in g.rooms.values()]
+        random.shuffle(pos_rooms)
+
+        agent_node = g.add_agent('test_agent', {})
+        agent_node.move_to(pos_rooms[0])
+
+        # Send message notifying people in room this agent arrived.
+        arrival_event = ArriveEvent(
+            agent_node, text_content=random.choice(POSSIBLE_NEW_ENTRANCES)
+        )
+        arrival_event.execute(world)
+        return agent_node
