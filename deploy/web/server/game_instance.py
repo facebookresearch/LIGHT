@@ -149,6 +149,3 @@ class GameInstance:
                 self.g.purgatory.fill_soul(node_to_clean)
             self.players.remove(player)
             self.last_connection = time.time()
-
-        # run npcs
-        g.update_world()

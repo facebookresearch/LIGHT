@@ -143,7 +143,7 @@ class LIGHTDatabase:
         opt = argparser.parse_and_process_known_args()[0]
 
         # Path to the database
-        self.dbpath = dbpath
+        self.dbpath = os.path.expanduser(dbpath)
         conn = sqlite3.connect(self.dbpath)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = 1")
