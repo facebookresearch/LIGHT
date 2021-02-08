@@ -4,6 +4,7 @@ from light.graph.elements.graph_nodes import (
     GraphAgent,
     GraphNode,
 )
+import os.path
 from light.graph.events.base import TriggeredEvent
 from light.graph.events.graph_events import ArriveEvent, LeaveEvent, LookEvent
 
@@ -16,6 +17,9 @@ def init_magic(datapath):
         files = datapath.split(',')
         magic_db = []
         for f in files:
+            if not os.path.exists(datapath):
+                print(f"Warning - no magic file at {datapath}, skipping!")
+                continue
             with open(f, "r") as jsonfile:
                 mdb = json.load(jsonfile)
                 magic_db = magic_db + mdb
