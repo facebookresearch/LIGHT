@@ -29,6 +29,7 @@ class AdversarialOffensiveLanguageClassifier(MultiturnOffensiveLanguageClassifie
             print_scores=True,
             split_lines=True,
             model_parallel=False,
+            threshold=0.999,
             bs=1,
         )
         safety_opt = parser.parse_args([])
@@ -51,6 +52,7 @@ class SafetyClassifier:
             if text in self.string_matcher:
                 return False
         if self.classifier is not None:
+            print(text)
             if text in self.classifier:
                 return False
         return True

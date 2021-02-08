@@ -3380,7 +3380,7 @@
             "name": "hefty rock",
             "name_prefix": "a",
             "names": [
-                "fishing rod"
+                "hefty rock"
             ],
             "node_id": "hefty rock_14",
             "object": true,
@@ -3956,10 +3956,10 @@
             "food_energy": 1,
             "gettable": 0.0,
             "locked_edge": null,
-            "name": "lavish desk piled high with books.",
+            "name": "lavish desk piled high with books",
             "name_prefix": "a",
             "names": [
-                "lavish desk piled high with books."
+                "lavish desk piled high with books"
             ],
             "node_id": "lavish desk piled high with books._6",
             "object": true,
