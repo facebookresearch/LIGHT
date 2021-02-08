@@ -334,6 +334,10 @@ class TestWorldSaving(AsyncHTTPTestCase):
                             "physical_description": "dusty",
                             "name_prefix": "a",
                             "is_plural": 0,
+                            "size": None,
+                            "contain_size": None,
+                            "shape": None,
+                            "value": None,
                         }
                     },
                     "nextID": 5,
@@ -406,6 +410,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
             actual_dict["entities"]["character"].values(),
             d["entities"]["character"].values(),
         )
+        self.maxDiff = None
         self.assertCountEqual(
             actual_dict["entities"]["object"].values(), d["entities"]["object"].values()
         )
@@ -537,10 +542,10 @@ class TestLandingApp(AsyncHTTPTestCase):
         headers = {"Content-Type": "application/json"}
         with self.assertRaises(httpclient.HTTPClientError) as cm:
             response = yield self.client.fetch(
-                f"{URL}/", method="GET", headers=headers, follow_redirects=False,
+                f"{URL}/play", method="GET", headers=headers, follow_redirects=False,
             )
         self.assertEqual(cm.exception.code, 302)
-        self.assertEqual(cm.exception.response.headers["Location"], "/login?next=%2F")
+        self.assertEqual(cm.exception.response.headers["Location"], "/login?next=%2Fplay")
 
     @gen_test
     def test_logout(self, mocked_auth):
@@ -558,7 +563,7 @@ class TestLandingApp(AsyncHTTPTestCase):
             'user="(.*)"(.*)', cm.exception.response.headers["Set-Cookie"]
         )
         self.assertEqual(len(result.group(1)), 0)
-        self.assertEqual(cm.exception.response.headers["Location"], "/login")
+        self.assertEqual(cm.exception.response.headers["Location"], "/bye")
 
     @gen_test
     def test_login_succesful(self, mocked_auth):
