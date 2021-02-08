@@ -102,8 +102,8 @@ parser.add_argument("--dont-catch-errors", type="bool", default=True)
 parser.add_argument(
     "--safety-classifier-path",
     type=str,
-    default="",
-    #default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
+    #default="",
+    default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
 )
 parser.add_argument(
     "--magic-db-path", type=str,
