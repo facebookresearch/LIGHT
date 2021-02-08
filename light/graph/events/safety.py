@@ -50,11 +50,9 @@ class SafetyClassifier:
     def is_safe(self, text):
         if self.string_matcher is not None:
             if text in self.string_matcher:
-                print("broke matcher")
                 return False
         if self.classifier is not None:
             print(text)
             if text in self.classifier:
-                print("broke classifier")
                 return False
         return True
