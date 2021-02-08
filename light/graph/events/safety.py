@@ -8,9 +8,14 @@ from parlai.utils.safety import OffensiveStringMatcher
 from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser
 from parlai.agents.transformer.transformer import TransformerClassifierAgent
-from parlai_internal.agents.safety_wrapper.multiturn_safety import (
-    MultiturnOffensiveLanguageClassifier,
-)
+try:
+    from parlai_internal.agents.safety_wrapper.multiturn_safety import (
+        MultiturnOffensiveLanguageClassifier,
+    )
+except:
+    class MultiturnOffensiveLanguageClassifier():
+        # Temporary until using public safety
+        pass
 
 
 class AdversarialOffensiveLanguageClassifier(MultiturnOffensiveLanguageClassifier):
@@ -29,6 +34,7 @@ class AdversarialOffensiveLanguageClassifier(MultiturnOffensiveLanguageClassifie
             print_scores=True,
             split_lines=True,
             model_parallel=False,
+            threshold=0.999,
             bs=1,
         )
         safety_opt = parser.parse_args([])
@@ -51,6 +57,7 @@ class SafetyClassifier:
             if text in self.string_matcher:
                 return False
         if self.classifier is not None:
+            print(text)
             if text in self.classifier:
                 return False
         return True

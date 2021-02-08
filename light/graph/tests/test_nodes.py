@@ -371,7 +371,7 @@ class TestNodeNetwork(unittest.TestCase):
             self.assertEqual(
                 object_node.get_contain_size(), GraphObject.DEFAULT_CONTAINER_SIZE
             )
-            self.assertEqual(object_node.size, GraphObject.DEFAULT_SIZE)
+            self.assertEqual(object_node.size, GraphObject.DEFAULT_CONTAINER_SIZE)
 
     def test_corect_character_init(self):
         """Ensure GraphAgent inits properly"""

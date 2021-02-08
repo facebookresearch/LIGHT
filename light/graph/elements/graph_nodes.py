@@ -415,7 +415,7 @@ class GraphRoom(GraphNode):
     def __init__(self, node_id, name, props=None, db_id=None):
         super().__init__(node_id, name, props, db_id)
         self.room = True
-        if 'desc' not in props:
+        if props is not None and 'desc' not in props:
             self.desc = props.get('description', '')
         self.extra_desc = self._props.get("extra_desc", self.desc)
         self.name_prefix = self._props.get("name_prefix", "the")
@@ -546,6 +546,8 @@ class GraphAgent(GraphNode):
             self.dead = self._props.get("dead")
         else:
             self.dead = False
+        # Flag to resolve when a death event is in the stack, but possibly not processed
+        self._dying = False
         self.is_player = self._props.get("is_player", False)
         self.usually_npc = self._props.get("usually_npc", False)
         self.pacifist = self._props.get("pacifist", False)

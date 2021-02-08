@@ -7,6 +7,7 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Dict
 import asyncio
+from concurrent.futures import CancelledError
 import time
 
 if TYPE_CHECKING:
@@ -49,7 +50,6 @@ class Soul(ABC):
             except CancelledError:
                 return
             except Exception as e:
-                print(f"Error when running observe for soul {self}: {repr(e)}")
                 import traceback
 
                 traceback.print_exc()
