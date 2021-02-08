@@ -129,6 +129,11 @@ class GraphNode(object):
             props = {}
         self._props = props.copy()
 
+        if 'contain_size' in self._props and self._props['contain_size'] is None:
+            del self._props['contain_size']
+        if 'size' in self._props and self._props['size'] is None:
+            del self._props['size']
+
         # TODO perhaps these should be edges rather than special cases?
         self.container_node = None
         self.contained_nodes = {}
@@ -768,6 +773,8 @@ class GraphObject(GraphNode):
         self.wieldable = self._props.get("wieldable", self._props.get("is_weapon", False))
         self.classes = set(self._props.get("classes", {"object"}))
         self.equipped = self._props.get("equipped", None)
+
+
         self.contain_size = self._props.get(
             "contain_size",
             self.DEFAULT_CONTAINER_SIZE
