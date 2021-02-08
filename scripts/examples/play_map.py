@@ -92,7 +92,7 @@ parser.add_argument(
     },
 )
 parser.add_argument("--light-model-root", type=str,
-                    default="/scratch/light/models/"
+                    default="/checkpoint/light/models/"
                     #default="/checkpoint/light/models/"
 )
 parser.add_argument(
@@ -108,7 +108,7 @@ parser.add_argument(
 parser.add_argument(
     "--magic-db-path", type=str,
     #default=""
-    default = "/scratch/light/magic/magic.db,scripts/examples/special_items.db"
+    default = "/checkpoint/light/magic/magic.db,scripts/examples/special_items.db"
     #default = "scripts/examples/special_items.db"
 )
 parser.add_argument(
@@ -124,7 +124,7 @@ parser.add_argument(
 parser.add_argument(
     "--generic-act-model-file",
     type=str,
-    default = "/scratch/light/models/game2021/act_model/model",
+    default = "/checkpoint/light/models/game2021/act_model/model",
 )
 parser.add_argument(
     "--parser-model-file",
