@@ -1045,27 +1045,3 @@ class World(object):
                 if new_agent is not None:
                     created.append(new_agent)
         return created
-
-    @deprecated
-    def possibly_clean_corpse(self, id):
-        ticks = self.get_prop(id, "death_ticks", 0)
-        self.set_prop(id, "death_ticks", ticks + 1)
-        # After N ticks, we clean up the corpse.
-        if ticks < 20:
-            return
-
-        agent_desc = self.node_to_desc(id, use_the=True).capitalize()
-        self.broadcast_to_room(
-            {
-                "caller": None,
-                "room_id": self.location(id),
-                "txt": agent_desc + " corpse disintegrates in a puff of magic.\n",
-            },
-            [id],
-        )
-        # Possibly spawn in a new agent
-        self.graph_builder.add_random_new_agent_to_graph(self)
-        self.delete_node(id)
-        # TODO remove direct access to oo_graph property here
-        if id in self.oo_graph.dead_nodes:
-            del self.oo_graph.dead_nodes[id]
