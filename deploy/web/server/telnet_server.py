@@ -157,7 +157,7 @@ def main():
     numpy.random.seed(6)
 
     game = GameInstance()
-    graph = game.g
+    graph = game.world
     provider = TelnetPlayerProvider(graph, FLAGS.hostname, FLAGS.port)
     game.register_provider(provider)
     game.run_graph()

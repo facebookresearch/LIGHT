@@ -104,13 +104,13 @@ class GameInstance:
                 _, world = StarspaceBuilder(
                     ldb, debug=False, opt=opt,
                 ).get_graph()  # TODO: what are the args that are needed
-                self.g = world
+                self.world = world
             else:
                 opt['load_map'] = os.path.expanduser('~/LIGHT/scripts/examples/complex_world.json')
                 world_builder = MapJsonBuilder("", debug=False, opt=opt)
-                _, self.g = world_builder.get_graph()
+                _, self.world = world_builder.get_graph()
         else:
-            self.g = g
+            self.world = g
 
         self.game_id = game_id
         self.players = []
@@ -118,7 +118,7 @@ class GameInstance:
         self.last_connection = time.time()
 
     def fill_souls(self, FLAGS, model_resources):
-        purgatory = self.g.purgatory
+        purgatory = self.world.purgatory
         if FLAGS.dialog_model is None:
             purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
         else:
@@ -131,21 +131,26 @@ class GameInstance:
             purgatory.register_shared_args('rpg_model', model_resources['rpg_model'])
         if model_resources.get('shared_action_model') is not None:
             purgatory.register_shared_args('generic_act_model', model_resources['generic_act_model'])
-        for empty_agent in self.g.oo_graph.agents.values():
+        for empty_agent in self.world.oo_graph.agents.values():
             purgatory.fill_soul(empty_agent)
 
     def register_provider(self, provider):
         self.providers.append(provider)
 
     def run_graph_step(self):
-        g = self.g
+        world = self.world
 
         # Clear disconnected players
         left_players = [p for p in self.players if not p.is_alive()]
         for player in left_players:
             if player.player_soul is not None:
                 node_to_clean = player.player_soul.target_node
-                self.g.purgatory.clear_soul(node_to_clean)
-                self.g.purgatory.fill_soul(node_to_clean)
+                self.world.purgatory.clear_soul(node_to_clean)
+                self.world.purgatory.fill_soul(node_to_clean)
             self.players.remove(player)
             self.last_connection = time.time()
+
+        # clear corpses and respawn
+        ags = self.world.clean_corpses_and_respawn()
+        for ag in ags:
+            self.world.purgatory.fill_soul(ag)

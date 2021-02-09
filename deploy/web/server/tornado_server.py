@@ -192,7 +192,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                 self.close()
                 # TODO: Have an error page about game deleted
                 self.redirect(u"/game/")
-            graph_purgatory = self.app.graphs[game_id].g.purgatory
+            graph_purgatory = self.app.graphs[game_id].world.purgatory
             if self.alive:
                 new_player = TornadoPlayerProvider(self, graph_purgatory,)
                 new_player.init_soul()
@@ -600,7 +600,7 @@ def main():
         )
     else:
         game = GameInstance()
-        graph = game.g
+        graph = game.world
         provider = TornadoPlayerFactory(
             graph, FLAGS.hostname, FLAGS.port, listening=True
         )

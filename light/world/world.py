@@ -17,6 +17,7 @@ from light.graph.events.graph_events import (
     ALL_EVENTS_LIST,
     SpawnEvent,
     SystemMessageEvent,
+    DeleteObjectEvent,
     init_safety_classifier,
 )
 from light.graph.events.magic import init_magic
@@ -24,6 +25,7 @@ from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 from light.world.views import WorldViewer
 from light.world.purgatory import Purgatory
 
+from typing import List
 
 def check_integrity(f):
     """Wrapper for ensuring that the world retains invariants both before and
@@ -1017,6 +1019,32 @@ class World(object):
             p_id2 = self.spawn_player(existing_player_id=p_id)
             new_a_id = self.playerid_to_agentid(p_id2)
             self.parse_exec(new_a_id, "look")
+
+    def clean_corpses_and_respawn(self) -> List[GraphAgent]:
+        """
+        Clean any corpses that have been lying around for a while, 
+        then try to do a respawn for each corpse cleaned.
+
+        Return any respawned GraphAgent nodes created like this
+        """
+        dead_nodes = self.oo_graph.get_dead_nodes()
+        cleaned_count = 0
+        for node in dead_nodes:
+            if node.ready_to_clean_corpse():
+                cleaned_count += 1
+                clear_event = DeleteObjectEvent(
+                    actor=node, 
+                    text_content="corpse disintegrates in a puff of magic."
+                )
+                clear_event.execute(self)
+
+        created = []
+        if self.graph_builder is not None:
+            for _x in range(cleaned_count):
+                new_agent = self.graph_builder.add_random_new_agent_to_graph(self)
+                if new_agent is not None:
+                    created.append(new_agent)
+        return created
 
     @deprecated
     def possibly_clean_corpse(self, id):
