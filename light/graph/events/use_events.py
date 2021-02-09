@@ -41,10 +41,12 @@ class UseEvent(GraphEvent):
         return pre_met
 
     def modify_attribute(self, post, world):
-        if post[1] == "in_used_target_item":
+        if post["params"]["type"] == "in_used_target_item":
             target = self.target_nodes[1]
-        key = post[2]
-        value = post[3]
+
+        key = post["params"]["key"]
+        value = post["params"]["value"]
+
         if value.startswith("+"):
             value = float(value[1:])
             setattr(target, key, getattr(target, key) + value)
@@ -71,30 +73,30 @@ class UseEvent(GraphEvent):
 
     def create_entity(self, post, world):
         # creation location
-        if post[1] == "in_used_item":
+        if post["params"]["type"] == "in_used_item":
             location = self.target_nodes[0]
-        if post[1] == "in_used_target_item":
+        if post["params"]["type"] == "in_used_target_item":
             location = self.target_nodes[1]
-        if post[1] == "in_room":
+        if post["params"]["type"] == "in_room":
             location = self.target_nodes[1].get_room()
-        if post[1] == "in_actor":
+        if post["params"]["type"] == "in_actor":
             location = self.actor
         g = world.oo_graph
-        obj = post[2]
+        obj = post["params"]["object"]
         n = g.add_object(obj["name"], obj)
         n.force_move_to(location)
 
     def broadcast_message(self, post, world):
-        self.messages = post[1]
+        self.messages = post["params"]
         world.broadcast_to_room(self)
 
     def execute_post(self, posts, world):
         for post in posts:
-            if post[0] == "modify_attribute":
+            if post["type"] == "modify_attribute":
                 self.modify_attribute(post, world)
-            if post[0] == "create_entity":
+            if post["type"] == "create_entity":
                 self.create_entity(post, world)
-            if post[0] == "broadcast_message":
+            if post["type"] == "broadcast_message":
                 self.broadcast_message(post, world)
 
     def on_use(self, world):
@@ -106,18 +108,20 @@ class UseEvent(GraphEvent):
         self.messages = {}
         on_uses = use_node.on_use
         for on_use in on_uses:
-            pre = on_use["pre"]
+            pre = on_use["pre_conditions"]
             if self.preconditions_met(pre, world):
-                post = on_use["post"]
+                post = on_use["post_conditions"]
                 self.found_use = True
                 self.execute_post(post, world)
                 break
         if not self.found_use:
             self.broadcast_message(
-                [
-                    "broadcast_message",
-                    {"self_view": "Nothing special seems to happen."},
-                ],
+                {
+                    "type": "broadcast_message",
+                    "params": {
+                        "self_view": "Nothing special seems to happen."
+                    },
+                },
                 world,
             )
 
