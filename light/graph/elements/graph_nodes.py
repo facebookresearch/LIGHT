@@ -6,7 +6,9 @@
 
 import random
 import json
-from typing import List, Set
+from typing import List, Set, Dict, Any
+
+NodeProps = Dict[str, Any]
 
 UNINTERESTING_PHRASES = [
     "There's nothing special about it.",
@@ -20,6 +22,8 @@ DEAD_DESCRIPTIONS = [
     "They are very dead.",
     "Their corpse is inanimate.",
 ]
+
+TICKS_TO_CLEAN_CORPSE = 150
 
 
 def node_to_json(node):
@@ -159,6 +163,7 @@ class GraphNode(object):
         self.object = False
         self._is_from_graph = False
         self._is_from_json = False
+        self._death_ticks = 0
 
         # TODO there are probably more properties currently abstracted by
         # the overarching graph class
@@ -276,6 +281,10 @@ class GraphNode(object):
     def get_prop(self, prop_name, default=False):
         return self.__dict__.get(prop_name, default)
 
+    def get_props(self):
+        """Extract props and attributes from this node"""
+        return {k: v for k, v in self.__dict__.copy().items() if not k.startswith("_")}
+
     def has_prop(self, prop_name):
         """Return if the node has the given prop"""
         return self.get_prop(prop_name) is not False
@@ -376,6 +385,17 @@ class GraphNode(object):
         # Add to new container and update
         container_node.contained_nodes[self.node_id] = GraphEdge(self)
         self.set_container(container_node)
+
+    def ready_to_clean_corpse(self) -> bool:
+        """
+        Return True if this is a corpse that is ready to be removed,
+        False otherwise. Increment death ticks if unripe corpse.
+        """
+        if self.get_prop('dead') is True:
+            if self._death_ticks > TICKS_TO_CLEAN_CORPSE:
+                return True
+            self._death_ticks += 1
+        return False
 
     def delete_and_cleanup(self):
         """Remove this node and all contents from being linked, return nodes deleted"""
@@ -722,6 +742,13 @@ class GraphAgent(GraphNode):
         self._human = current_player is not None
         self.clear_memory()
         self._current_player = current_player
+
+    def mark_dying(self):
+        """Note that this agent is now dying, and future events can see this"""
+        self._dying = True
+
+    def is_dying(self):
+        return self._dying
 
     def die(self):
         """Kill off this agent, turn them into an object"""

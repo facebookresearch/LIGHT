@@ -36,7 +36,7 @@ class BattleRoyaleSoul(ModelSoul):
         """
         if event.actor == self.target_node:
             return
-        if self.target_node._dying:
+        if self.target_node.is_dying():
             return
         self.execute_valid_action()
 

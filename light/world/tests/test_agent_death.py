@@ -11,6 +11,10 @@ import time
 from light import LIGHT_DIR
 from light.graph.builders.map_json_builder import MapJsonBuilder
 from light.world.souls.tests.battle_royale_soul import BattleRoyaleSoul
+from light.graph.elements.graph_nodes import TICKS_TO_CLEAN_CORPSE
+
+# Magic number to ensure we wait more than the expected ticks to clean a corpse
+ENOUGH_EXTRA_TICKS_TO_ENSURE_CORPSE_CLEANUP = 20
 
 def async_test(f):
     def wrapper(*args, **kwargs):
@@ -72,6 +76,22 @@ class TestInteractionLoggers(unittest.TestCase):
 
         # some agents definitely should have died
         self.assertTrue(len(g.agents) < current_agents)
+
+        current_agents = len(g.agents)
+        current_objects = len(g.objects)
+        current_dead = len(g.dead_nodes)
+
+        # try respawning
+        use_ticks = TICKS_TO_CLEAN_CORPSE + ENOUGH_EXTRA_TICKS_TO_ENSURE_CORPSE_CLEANUP
+        for _x in range(use_ticks):
+            ags = world.clean_corpses_and_respawn()
+            for ag in ags:
+                purgatory.fill_soul(ag)
+
+        # some agents definitely should have respawned
+        self.assertTrue(len(g.agents) > current_agents)
+        self.assertTrue(len(g.objects) < current_objects)
+        self.assertTrue(len(g.dead_nodes) < current_dead)
 
 
 if __name__ == "__main__":

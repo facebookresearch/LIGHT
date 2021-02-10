@@ -1013,6 +1013,24 @@ class BlockEvent(GraphEvent):
         return valid_actions
 
 
+# Note, this is the only event we have right now where the actor is 
+# an object... This may need cleanup
+class DeleteObjectEvent(TriggeredEvent):
+    """Handles deleting an object node from the graph"""
+
+    def execute(self, world: "World") -> List[GraphEvent]:
+        actor_name = self.actor.get_prefix_view()
+        self.__in_room_view = f'{actor_name} {self.text_content}'
+        g = world.oo_graph
+        g.delete_nodes([self.actor])
+        world.broadcast_to_room(self)
+
+    @proper_caps
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        return self.__in_room_view
+
+
 # TODO examine more death processing. Do we need to update a player status?
 # must check structured_graph and graph_nodes
 class DeathEvent(TriggeredEvent):
@@ -1022,7 +1040,7 @@ class DeathEvent(TriggeredEvent):
         """Save expected views, then message everyone"""
         actor_name = self.actor.get_prefix_view()
         self.__in_room_view = f"{actor_name} died! "
-        self.actor._dying = True
+        self.actor.mark_dying()
 
         # You have to send to the room before death or the dying agent won't get the message
         world.broadcast_to_room(self)
