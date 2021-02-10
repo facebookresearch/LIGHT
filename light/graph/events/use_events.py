@@ -6,6 +6,8 @@ from light.graph.events.base import (
     proper_caps
 )
 
+from light.graph.events.graph_events import DeathEvent
+
 from light.graph.elements.graph_nodes import (
     GraphAgent,
     GraphNode,
@@ -40,6 +42,34 @@ class BroadcastMessageEvent(PostconditionEvent):
             return self.__msg_txt
         else:
             return None
+
+class CreateEntityEvent(PostconditionEvent):
+
+    def execute(self, world: "World") -> List[GraphEvent]:
+        # creation location
+        entity_event_type = self.post_condition["params"]["type"]
+
+        if entity_event_type == "in_used_item":
+            location = self.target_nodes[0]
+        if entity_event_type == "in_used_target_item":
+            location = self.target_nodes[1]
+        if entity_event_type == "in_room":
+            location = self.target_nodes[1].get_room()
+        if entity_event_type == "in_actor":
+            location = self.actor
+
+        world_graph = world.oo_graph
+        event_object = self.post_condition["params"]["object"]
+        n = world_graph.add_object(event_object["name"], event_object)
+        n.force_move_to(location) 
+    
+    @proper_caps
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        if viewer == self.actor:
+            return self.__msg_txt
+        else:
+            return None   
             
 class UseEvent(GraphEvent):
     """Handles using an object"""
@@ -99,32 +129,22 @@ class UseEvent(GraphEvent):
                     text_content="HealthOnHitEvent",
                 ).execute(world)
 
-    def create_entity(self, post, world):
-        # creation location
-        if post["params"]["type"] == "in_used_item":
-            location = self.target_nodes[0]
-        if post["params"]["type"] == "in_used_target_item":
-            location = self.target_nodes[1]
-        if post["params"]["type"] == "in_room":
-            location = self.target_nodes[1].get_room()
-        if post["params"]["type"] == "in_actor":
-            location = self.actor
-        g = world.oo_graph
-        obj = post["params"]["object"]
-        n = g.add_object(obj["name"], obj)
-        n.force_move_to(location)
-
     def execute_post(self, posts, world):
         for post in posts:
             if post["type"] == "modify_attribute":
                 self.modify_attribute(post, world)
             if post["type"] == "create_entity":
-                self.create_entity(post, world)
+                CreateEntityEvent(
+                    post,
+                    self.actor,
+                    target_nodes=self.target_nodes,
+                    text_content="CreateEntityEvent",    
+                ).execute(world)
             if post["type"] == "broadcast_message":
                 BroadcastMessageEvent(
                     post,
                     self.actor,
-                    target_nodes=None,
+                    target_nodes=self.target_nodes,
                     text_content="BroadcastMessageEvent",
                 ).execute(world)
 
