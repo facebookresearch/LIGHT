@@ -1,6 +1,7 @@
 from light.graph.events.base import (
     GraphEvent,
     ErrorEvent,
+    TriggeredEvent,
     ProcessedArguments,
     proper_caps
 )
@@ -13,6 +14,33 @@ from light.graph.elements.graph_nodes import (
 
 from typing import Union, List, Optional
 
+class PostconditionEvent(TriggeredEvent):
+
+    def __init__(
+        self,
+        post_condition,
+        actor: GraphAgent,
+        target_nodes: Optional[List[GraphNode]] = None,
+        text_content: Optional[str] = None,
+    ):
+        super().__init__(actor, target_nodes, text_content)
+        self.post_condition = post_condition
+
+class BroadcastMessageEvent(PostconditionEvent):
+    
+    def execute(self, world: "World") -> List[GraphEvent]:
+        self.messages = self.post_condition["params"]
+        self.__msg_txt = self.messages['self_view']
+        world.broadcast_to_room(self)   
+    
+    @proper_caps
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        if viewer == self.actor:
+            return self.__msg_txt
+        else:
+            return None
+            
 class UseEvent(GraphEvent):
     """Handles using an object"""
 
@@ -86,10 +114,6 @@ class UseEvent(GraphEvent):
         n = g.add_object(obj["name"], obj)
         n.force_move_to(location)
 
-    def broadcast_message(self, post, world):
-        self.messages = post["params"]
-        world.broadcast_to_room(self)
-
     def execute_post(self, posts, world):
         for post in posts:
             if post["type"] == "modify_attribute":
@@ -97,7 +121,12 @@ class UseEvent(GraphEvent):
             if post["type"] == "create_entity":
                 self.create_entity(post, world)
             if post["type"] == "broadcast_message":
-                self.broadcast_message(post, world)
+                BroadcastMessageEvent(
+                    post,
+                    self.actor,
+                    target_nodes=None,
+                    text_content="BroadcastMessageEvent",
+                ).execute(world)
 
     def on_use(self, world):
         use_node = self.target_nodes[0]
@@ -115,15 +144,17 @@ class UseEvent(GraphEvent):
                 self.execute_post(post, world)
                 break
         if not self.found_use:
-            self.broadcast_message(
+            BroadcastMessageEvent(
                 {
                     "type": "broadcast_message",
                     "params": {
                         "self_view": "Nothing special seems to happen."
                     },
                 },
-                world,
-            )
+                self.actor,
+                target_nodes=None,
+                text_content="BroadcastMessageEvent",
+            ).execute(world)
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
