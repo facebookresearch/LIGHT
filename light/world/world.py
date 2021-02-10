@@ -13,11 +13,13 @@ import random
 from light.graph.utils import rm, deprecated
 from light.graph.events.base import GraphEvent, ErrorEvent
 from light.graph.events.graph_events import (
-    ALL_EVENTS,
-    ALL_EVENTS_LIST,
     SpawnEvent,
     SystemMessageEvent,
     init_safety_classifier,
+)
+from light.graph.events.all_events_list import (
+    ALL_EVENTS,
+    ALL_EVENTS_LIST,
 )
 from light.graph.events.magic import init_magic
 from light.graph.elements.graph_nodes import GraphNode, GraphAgent

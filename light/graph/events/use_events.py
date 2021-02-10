@@ -5,6 +5,8 @@ from light.graph.events.base import (
     proper_caps
 )
 
+from light.graph.events.graph_events import DeathEvent
+
 from light.graph.elements.graph_nodes import (
     GraphAgent,
     GraphNode,
