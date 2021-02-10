@@ -65,7 +65,12 @@ class MapJsonBuilder(DBGraphBuilder):
         arrival_event.execute(world)
 
     def add_random_new_agent_to_graph(self, world) -> Optional["GraphAgent"]:
-        """Skip adding an agent, a loaded graph for now has no attached model"""
+        """
+        Add an agent from the stored original_agents list that isn't
+        currently present in the world, if such an agent exists.
+
+        Return that agent if it is created, otherwise return None
+        """
         possible_respawn_name = self._get_agent_to_respawn(world)
         if possible_respawn_name is None:
             return None
