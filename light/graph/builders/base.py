@@ -245,10 +245,10 @@ class SingleSuggestionGraphBuilder(object):
         banned_items=[],
     ):
         """abstract method for getting desired relationship given a non-graph
-        element and a type of relationship """
+        element and a type of relationship"""
         raise NotImplementedError
 
     def get_similar_element(self, txt_feats, element_type):
-        """ abstract method for getting a corresponding element that already
-        exists in the in the model """
+        """abstract method for getting a corresponding element that already
+        exists in the in the model"""
         raise NotImplementedError

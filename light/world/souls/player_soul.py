@@ -47,7 +47,7 @@ class PlayerSoul(BaseSoul):
         target_node._human = True
         self.player_id = player_id
         self.provider = provider  # TODO link with real provider
-        if hasattr(target_node, 'mission') and target_node.mission != '':
+        if hasattr(target_node, "mission") and target_node.mission != "":
             goal = target_node.mission
             target_node.persona += QUEST_TEXT + goal
         else:
@@ -57,10 +57,10 @@ class PlayerSoul(BaseSoul):
                     ["short_motivation", "mid_motivation", "long_motivation"]
                 )
                 target_node.persona += QUEST_TEXT + target_quest[goal]
-        if 'rpg_model' in shared_model_content:
-            self.roleplaying_score_model = shared_model_content['rpg_model'].clone()
-        if 'generic_act_model' in shared_model_content:
-            self.generic_act_model = shared_model_content['generic_act_model'].clone()
+        if "rpg_model" in shared_model_content:
+            self.roleplaying_score_model = shared_model_content["rpg_model"].clone()
+        if "generic_act_model" in shared_model_content:
+            self.generic_act_model = shared_model_content["generic_act_model"].clone()
         self.agent_logger = AgentInteractionLogger(world.oo_graph, target_node)
         provider.register_soul(self)
         self.world.oo_graph.room_id_to_loggers[
@@ -81,8 +81,8 @@ class PlayerSoul(BaseSoul):
 
         graph = self.world.oo_graph
         actor = self.target_node
-        
-        if hasattr(self, 'generic_act_model'):
+
+        if hasattr(self, "generic_act_model"):
             quest = QuestCreator.create_quest(actor, graph, self.generic_act_model)
         else:
             # no model for generating quests
@@ -103,7 +103,7 @@ class PlayerSoul(BaseSoul):
             else:
                 quests_left.append(q)
         actor.quests = quests_left
-        
+
     async def observe_event(self, event: "GraphEvent"):
         """
         PlayerSouls pass their observation along to the provider, who will handle

@@ -53,7 +53,10 @@ class World(object):
     """
 
     def __init__(
-        self, opt, graph_builder, debug=False,
+        self,
+        opt,
+        graph_builder,
+        debug=False,
     ):
         # TODO re-investigate callbacks during action refactor
         self.callbacks = {}
@@ -847,7 +850,7 @@ class World(object):
             )
             if not isinstance(result, ErrorEvent):
                 break
-            
+
         if isinstance(result, ErrorEvent):
             return result
 

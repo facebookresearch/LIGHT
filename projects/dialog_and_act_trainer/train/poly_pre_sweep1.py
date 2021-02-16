@@ -11,11 +11,11 @@ import time
     LIGHT+WILD Dialogue poly-encoder training.
 """
 
-SWEEP_NAME = 'poly_pre'
+SWEEP_NAME = "poly_pre"
 HOURS = 24
 
 grid = {
-    '--image-mode': ['none'],
+    "--image-mode": ["none"],
     # model args
     "-t": [
         '"fromfile:fromfile_datapath=/checkpoint/light/projects/dialog_and_act_trainer/light_train.txt,fromfile:fromfile_datapath=/checkpoint/light/projects/dialog_and_act_trainer/light_wild_train.txt"'
@@ -70,21 +70,22 @@ grid = {
     "--variant": ["xlm"],
     "--warmup_updates": [100],
     # existing ones..
-    '--validation-every-n-secs': [60 * 60],
-    '--validation-patience': [10],
-    '--log-every-n-secs': [10],
-    '-ttim': [HOURS * 60 * 60 - 60 * 30],
-    '--load-from-checkpoint': ['true'],
+    "--validation-every-n-secs": [60 * 60],
+    "--validation-patience": [10],
+    "--log-every-n-secs": [10],
+    "-ttim": [HOURS * 60 * 60 - 60 * 30],
+    "--load-from-checkpoint": ["true"],
 }
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_grid(
         grid,
         {},
         SWEEP_NAME,
-        saveroot="/checkpoint/light/projects/dialog_and_act_trainer/models/" + SWEEP_NAME,
-        #prefix='python -u examples/train_model.py',
-        PARLAI_PATH='/private/home/jase/src/ParlAI/',
+        saveroot="/checkpoint/light/projects/dialog_and_act_trainer/models/"
+        + SWEEP_NAME,
+        # prefix='python -u examples/train_model.py',
+        PARLAI_PATH="/private/home/jase/src/ParlAI/",
         create_model_file=True,
         include_job_id=True,
         data_parallel=True,
@@ -92,10 +93,10 @@ if __name__ == '__main__':
         volta=True,
         volta32=True,
         # partition='learnfair',
-        partition='dev',
-        jobtime='{}:00:00'.format(HOURS),
+        partition="dev",
+        jobtime="{}:00:00".format(HOURS),
         hashname=True,
         requeue=True,
         copy_env=False,
-        email_updates=False
+        email_updates=False,
     )

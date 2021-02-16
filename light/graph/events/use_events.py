@@ -2,18 +2,15 @@ from light.graph.events.base import (
     GraphEvent,
     ErrorEvent,
     ProcessedArguments,
-    proper_caps
+    proper_caps,
 )
 
 from light.graph.events.graph_events import DeathEvent
 
-from light.graph.elements.graph_nodes import (
-    GraphAgent,
-    GraphNode,
-    GraphObject
-)
+from light.graph.elements.graph_nodes import GraphAgent, GraphNode, GraphObject
 
 from typing import Union, List, Optional
+
 
 class UseEvent(GraphEvent):
     """Handles using an object"""
@@ -120,9 +117,7 @@ class UseEvent(GraphEvent):
             self.broadcast_message(
                 {
                     "type": "broadcast_message",
-                    "params": {
-                        "self_view": "Nothing special seems to happen."
-                    },
+                    "params": {"self_view": "Nothing special seems to happen."},
                 },
                 world,
             )
@@ -230,7 +225,9 @@ class UseEvent(GraphEvent):
         if len(possible_targets) == 0:
             # didn't find any nodes by this name
             return ErrorEvent(
-                cls, actor, f"You can't find '{target_name}' here that you can use.",
+                cls,
+                actor,
+                f"You can't find '{target_name}' here that you can use.",
             )
 
         # check actor to see if they have the node to use
@@ -261,7 +258,11 @@ class UseEvent(GraphEvent):
         assert len(targets) == 2, f"UseObjectEvent takes two args, got {targets}"
         use_object, use_with = targets
         if not hasattr(use_object, "on_use") or use_object.on_use is None:
-            return ErrorEvent(cls, actor, "Nothing special seems to happen.",)
+            return ErrorEvent(
+                cls,
+                actor,
+                "Nothing special seems to happen.",
+            )
         return cls(actor, target_nodes=[use_object, use_with])
 
     @classmethod

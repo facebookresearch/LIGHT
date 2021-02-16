@@ -27,15 +27,14 @@ import random
 import numpy
 import asyncio
 import json
+
 random.seed(6)
 numpy.random.seed(6)
 shared_model_content = None
 
 
 parser = ParlaiParser()
-parser.add_argument(
-    "--load-map", type=str, default="none"
-)
+parser.add_argument("--load-map", type=str, default="none")
 opt, _unknown = parser.parse_and_process_known_args()
 
 if opt["load_map"] != "none":
@@ -51,13 +50,13 @@ else:
     world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
 
 print("[building...]")
-g, world = world_builder.get_graph() 
+g, world = world_builder.get_graph()
 data = g.to_json()
 print(data)
-fw = open('/tmp/map.json', 'w')
+fw = open("/tmp/map.json", "w")
 fw.write(data)
 fw.close()
 
 
 # NOTE: To load back again:
-# g2 = g.from_json(data) 
+# g2 = g.from_json(data)

@@ -14,7 +14,9 @@ PARTITION = "priority"
 name_keys = {}
 
 grid = {
-    "--task": ["internal:light_maps",],
+    "--task": [
+        "internal:light_maps",
+    ],
     "--evaltask": ["internal:light_maps"],
     "--model": ["starspace"],
     "-lr": [0.05, 0.1, 0.2],

@@ -99,7 +99,9 @@ class ActionParser:
         self.opt["model_file"] = self.opt["parser_model_file"]
         self.opt["interactive_candidates"] = "inline"
         # self.opt["no_cuda"] = True
-        self.opt["override"] = {"interactive_candidates": "inline"} # , "no_cuda": True}
+        self.opt["override"] = {
+            "interactive_candidates": "inline"
+        }  # , "no_cuda": True}
         self.agent = create_agent(self.opt, requireModelExists=True)
         self.agent.opt.log()
 
@@ -147,7 +149,7 @@ class ActionParser:
         txt = txt.rstrip("\n").rstrip("\r")
         if '"' in txt:
             return txt
-        
+
         txts = txt.strip().split()
         new_txts = []
         postprocess_blacklist = ["the", "a", "an"]

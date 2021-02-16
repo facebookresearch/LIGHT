@@ -496,7 +496,7 @@ class TestGraphFunctions(unittest.TestCase):
 
     def test_json_from_room_view(self):
         """Ensure that json dumping from a room POV can be reconstructed into a graph
-           with only the room"""
+        with only the room"""
         as_json_1 = self.graph.to_json_rv(self.room_1.node_id)
         self.assertIsNotNone(as_json_1)
         self.assertGreater(len(as_json_1), 0)

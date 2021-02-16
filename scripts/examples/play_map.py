@@ -37,9 +37,9 @@ shared_model_content = None
 def init_world(world_builder):
     g, world = world_builder.get_graph()
     purgatory = world.purgatory
-    purgatory.register_shared_args('rpg_model', rpg_model_content)
-    purgatory.register_shared_args('generic_act_model', generic_act_model_content)
-    
+    purgatory.register_shared_args("rpg_model", rpg_model_content)
+    purgatory.register_shared_args("generic_act_model", generic_act_model_content)
+
     # Choose the type of NPC souls.
     if opt["use_models"] == "GenerativeHeuristicModelSoul":
         purgatory.register_filler_soul_provider(
@@ -91,9 +91,11 @@ parser.add_argument(
         "GenerativeHeuristicModelSoul",
     },
 )
-parser.add_argument("--light-model-root", type=str,
-                    default="/checkpoint/light/models/"
-                    #default="/checkpoint/light/models/"
+parser.add_argument(
+    "--light-model-root",
+    type=str,
+    default="/checkpoint/light/models/"
+    # default="/checkpoint/light/models/"
 )
 parser.add_argument(
     "--load-map", type=str, default="scripts/examples/simple_world.json"
@@ -103,28 +105,26 @@ parser.add_argument(
     "--safety-classifier-path",
     type=str,
     default="",
-    #default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
+    # default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
 )
 parser.add_argument(
-    "--magic-db-path", type=str,
-    #default=""
-    default = "/checkpoint/light/magic/magic.db,scripts/examples/special_items.db"
-    #default = "scripts/examples/special_items.db"
+    "--magic-db-path",
+    type=str,
+    # default=""
+    default="/checkpoint/light/magic/magic.db,scripts/examples/special_items.db"
+    # default = "scripts/examples/special_items.db"
 )
-parser.add_argument(
-    "--allow-save-world", type='bool',
-    default=True
-)
+parser.add_argument("--allow-save-world", type="bool", default=True)
 parser.add_argument(
     "--roleplaying-score-model-file",
     type=str,
-    default = "",
-    #default="/checkpoint/light/models/game2020/roleplay_scorer/model",
+    default="",
+    # default="/checkpoint/light/models/game2020/roleplay_scorer/model",
 )
 parser.add_argument(
     "--generic-act-model-file",
     type=str,
-    default = "/checkpoint/light/models/game2021/act_model/model",
+    default="/checkpoint/light/models/game2021/act_model/model",
 )
 parser.add_argument(
     "--parser-model-file",
@@ -150,20 +150,20 @@ if opt["roleplaying_score_model_file"] != "":
     )
 else:
     rpg_model_content = None
-    
+
 if opt["generic_act_model_file"] != "":
     generic_act_model_content = BaseSoul.load_generic_act_model(
         opt["generic_act_model_file"]
     )
 else:
     generic_act_model_content = None
-    
+
 if opt["use_models"] == "GenerativeHeuristicModelSoul":
     light_model_root = opt["light_model_root"]
     shared_model_content = GenerativeHeuristicModelSoul.load_models(
         light_model_root + "game2021/gen_dialog_model/model.checkpoint",
     )
-    shared_model_content['shared_action_model'] = generic_act_model_content.share()
+    shared_model_content["shared_action_model"] = generic_act_model_content.share()
 
 
 if __name__ == "__main__":

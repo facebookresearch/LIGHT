@@ -298,12 +298,12 @@ class LIGHTDatabase:
         self.read_only = True
 
         try:
-            possible_cache_path = self.dbpath + '.json'
+            possible_cache_path = self.dbpath + ".json"
             if os.path.exists(possible_cache_path):
                 cache_date = os.path.getmtime(possible_cache_path)
                 database_date = os.path.getmtime(self.dbpath)
                 if cache_date > database_date:
-                    with open(possible_cache_path, 'r') as json_cache:
+                    with open(possible_cache_path, "r") as json_cache:
                         self.cache = json.load(json_cache)
                         for key in self.cache.keys():
                             for str_id in self.cache[key].ids():
@@ -338,7 +338,7 @@ class LIGHTDatabase:
             else:
                 self.cache[key] = {int(row["id"]): dict(row) for row in results}
 
-        with open(possible_cache_path, 'w') as json_cache:
+        with open(possible_cache_path, "w") as json_cache:
             json.dump(self.cache, json_cache)
 
     def __enter__(self):
@@ -425,8 +425,8 @@ class LIGHTDatabase:
                 (input,),
             )
             fts_results = self.c.fetchall()
-            already_present = set(r['id'] for r in results)
-            results += [r for r in fts_results if r['id'] not in already_present]
+            already_present = set(r["id"] for r in results)
+            results += [r for r in fts_results if r["id"] not in already_present]
 
         return results
 
@@ -440,7 +440,7 @@ class LIGHTDatabase:
             if use_id in self.cache["id"]:
                 found_id = self.cache["id"][use_id]
                 if expand:
-                    return [self.cache[found_id['type'] + 's'][use_id]]
+                    return [self.cache[found_id["type"] + "s"][use_id]]
                 return [found_id]
         if self.use_cache and type is not None:
             return [row for row in self.cache["id"].values() if row["type"] == type]
@@ -955,7 +955,7 @@ class LIGHTDatabase:
         size=None,
         contain_size=None,
         shape=None,
-        value=None
+        value=None,
     ):
         # Check that the attributes are between 0 and 1
         assert (
@@ -1034,7 +1034,7 @@ class LIGHTDatabase:
                 size,
                 contain_size,
                 shape,
-                value
+                value,
             ),
         )
         inserted = bool(self.c.rowcount)
@@ -1063,7 +1063,7 @@ class LIGHTDatabase:
                     size,
                     contain_size,
                     shape,
-                    value
+                    value,
                 ),
             )
             result = self.c.fetchall()
@@ -2162,12 +2162,25 @@ class LIGHTDatabase:
 
         # Check the table for size, contain_size, shape, value columns and add if nonexistent
         # this should be deprecated soon when a legacy table is opened
-        has_size_column = self.c.execute(" SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='size' ")
-        has_contain_size_column = self.c.execute(" SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='contain_size' ")
-        has_shape_column = self.c.execute(" SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='shape' ")
-        has_value_column = self.c.execute(" SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='value' ")
+        has_size_column = self.c.execute(
+            " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='size' "
+        )
+        has_contain_size_column = self.c.execute(
+            " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='contain_size' "
+        )
+        has_shape_column = self.c.execute(
+            " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='shape' "
+        )
+        has_value_column = self.c.execute(
+            " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='value' "
+        )
 
-        if not (has_size_column or has_contain_size_column or has_shape_column or has_value_column):
+        if not (
+            has_size_column
+            or has_contain_size_column
+            or has_shape_column
+            or has_value_column
+        ):
             self.c.execute("ALTER TABLE objects_table ADD COLUMN size;")
             self.c.execute("ALTER TABLE objects_table ADD COLUMN contain_size;")
             self.c.execute("ALTER TABLE objects_table ADD COLUMN shape;")
@@ -3126,7 +3139,11 @@ class LIGHTDatabase:
                 SET timestamp = ?, world_dump = ?
                 WHERE owner_id = ?;
                 """,
-                (timestamp, world_dump, player_id,),
+                (
+                    timestamp,
+                    world_dump,
+                    player_id,
+                ),
             )
         else:
             # Otherwise, just insert
@@ -3135,7 +3152,11 @@ class LIGHTDatabase:
                 INSERT or IGNORE INTO auto_save_table(owner_id, timestamp, world_dump)
                 VALUES (?, ?, ?)
                 """,
-                (player_id, timestamp, world_dump,),
+                (
+                    player_id,
+                    timestamp,
+                    world_dump,
+                ),
             )
 
     def get_autosave(self, player_id):
@@ -3187,13 +3208,16 @@ class LIGHTDatabase:
             SELECT * FROM world_table
             WHERE id = ? AND owner_id = ?
             """,
-            (world_id, player_id,),
+            (
+                world_id,
+                player_id,
+            ),
         )
         return self.c.fetchall()
 
     def set_world_inactive(self, world_id, player_id):
         """
-            Makes a world in the world table inactive if owned by player_id
+        Makes a world in the world table inactive if owned by player_id
         """
         assert self.is_world_owned_by(
             world_id, player_id
@@ -3297,7 +3321,10 @@ class LIGHTDatabase:
             SELECT src_id, dst_id, edge_type FROM edges_table
             WHERE id = ? AND w_id = ?
             """,
-            (edge_id, world_id,),
+            (
+                edge_id,
+                world_id,
+            ),
         )
         return self.c.fetchall()
 
@@ -3366,7 +3393,15 @@ class LIGHTDatabase:
             color, x_coordinate, y_coordinate, floor)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
-            (id, world_id, room_id, color, x_coordinate, y_coordinate, floor,),
+            (
+                id,
+                world_id,
+                room_id,
+                color,
+                x_coordinate,
+                y_coordinate,
+                floor,
+            ),
         )
         inserted = bool(self.c.rowcount)
         if not inserted:
@@ -3390,7 +3425,11 @@ class LIGHTDatabase:
             INSERT or IGNORE INTO nodes_table(id, w_id, entity_id)
             VALUES (?, ?, ?)
             """,
-            (id, w_id, entity_id,),
+            (
+                id,
+                w_id,
+                entity_id,
+            ),
         )
         inserted = bool(self.c.rowcount)
         if not inserted:
@@ -3399,7 +3438,10 @@ class LIGHTDatabase:
                 """
                 SELECT id from nodes_table WHERE w_id = ? AND entity_id = ?
                 """,
-                (w_id, entity_id,),
+                (
+                    w_id,
+                    entity_id,
+                ),
             )
             result = self.c.fetchall()
             assert len(result) == 1
@@ -3413,7 +3455,13 @@ class LIGHTDatabase:
             INSERT or IGNORE INTO edges_table(id, w_id, src_id, dst_id, edge_type)
             VALUES (?, ?, ?, ?, ?)
             """,
-            (id, w_id, src_id, dst_id, type_,),
+            (
+                id,
+                w_id,
+                src_id,
+                dst_id,
+                type_,
+            ),
         )
         inserted = bool(self.c.rowcount)
         if not inserted:
@@ -3454,7 +3502,15 @@ class LIGHTDatabase:
             height, width, num_floors, in_use)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
-            (id, name, owner_id, height, width, num_floors, in_use,),
+            (
+                id,
+                name,
+                owner_id,
+                height,
+                width,
+                num_floors,
+                in_use,
+            ),
         )
         inserted = bool(self.c.rowcount)
         if not inserted:

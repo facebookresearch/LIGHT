@@ -592,7 +592,11 @@ class OOGraph(object):
 
         agents = {}
         for ind, props in entities["character"].items():
-            n = g.add_agent(props["name"], props, uid=str(ind),)
+            n = g.add_agent(
+                props["name"],
+                props,
+                uid=str(ind),
+            )
             agents[int(ind)] = n
 
         objects = {}
