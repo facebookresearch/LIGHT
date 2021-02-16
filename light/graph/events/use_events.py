@@ -6,17 +6,13 @@ from light.graph.events.base import (
     proper_caps,
 )
 
-from light.graph.events.graph_events import DeathEvent
-
-from light.graph.elements.graph_nodes import (
-    GraphAgent,
-    GraphNode,
-    GraphObject
-)
+from light.graph.elements.graph_nodes import GraphAgent, GraphNode, GraphObject
 
 from typing import Union, List, Optional
 
-class PostconditionEvent(TriggeredEvent):
+
+class UseEvent(GraphEvent):
+    """Handles using an object"""
 
     def __init__(
         self,

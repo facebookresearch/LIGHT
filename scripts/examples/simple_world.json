@@ -267,27 +267,25 @@
       "object": true,
       "on_use": [
         {
-          "post_conditions": [
-            {
-              "type": "create_entity",
-              "params": {
-                "type": "in_used_target_item",
-                "object": {
-                  "name_prefix": "an",
-                  "is_wearable": true,
-                  "name": "emerald ring",
-                  "desc": "A beautiful and mysterious ring.. could it have magical powers?"
-                }
+          "post": [
+            [
+              "create_entity",
+              "in_used_target_item",
+              {
+                "name_prefix": "an",
+                "is_wearable": true,
+                "name": "emerald ring",
+                "desc": "A beautiful and mysterious ring.. could it have magical powers?"
               }
-            },
-            {
-              "type": "broadcast_message",
-              "params": {
+            ],
+            [
+              "broadcast_message",
+              {
                 "self_view": "You dig into the sodden mud, and spy something glistening within!"
               }
-            }
+            ]
           ],
-          "pre_conditions": [
+          "pre": [
             ["is_holding", "used_item"],
             ["used_with_item_name", "muddy area"]
           ]
@@ -319,26 +317,19 @@
       "object": true,
       "on_use": [
         {
-          "post_conditions": [
-            {
-              "type": "broadcast_message",
-              "params": {
+          "post": [
+            [
+              "broadcast_message",
+              {
                 "self_view": "You say the words aloud, and runes on the scroll glow with gold.",
                 "self_as_target_view": "You are struck with searing pain!",
                 "self_not_target_view": "{recipient_text} is struck with searing pain!",
                 "room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} is struck with searing pain!"
               }
-            },
-            {
-              "type": "modify_attribute",
-              "params": {
-                "type": "in_used_target_item",
-                "key": "health",
-                "value": "-20"
-              }
-            }
+            ],
+            ["modify_attribute", "in_used_target_item", "health", "-20"]
           ],
-          "pre_conditions": [["is_holding", "used_item"], ["used_with_agent"]]
+          "pre": [["is_holding", "used_item"], ["used_with_agent"]]
         }
       ]
     },
@@ -354,26 +345,19 @@
       "object": true,
       "on_use": [
         {
-          "post_conditions": [
-            {
-              "type": "broadcast_message",
-              "params": {
+          "post": [
+            [
+              "broadcast_message",
+              {
                 "self_view": "You say the words aloud, and runes on the scroll glow with gold.",
                 "self_as_target_view": "Suddenly you feel a voluminous about you and you feel ... LARGER! You are  growing!",
                 "self_not_target_view": "{recipient_text} appears to be growing larger!!!",
                 "room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} seems to glow for a second.. and appears to be getting larger!"
               }
-            },
-            {
-              "type": "modify_attribute",
-              "params": {
-                "type": "in_used_target_item",
-                "key": "size",
-                "value": "+2"
-              }
-            }
+            ],
+            ["modify_attribute", "in_used_target_item", "size", "+2"]
           ],
-          "pre_conditions": [["is_holding", "used_item"], ["used_with_agent"]]
+          "pre": [["is_holding", "used_item"], ["used_with_agent"]]
         }
       ]
     },
@@ -389,26 +373,19 @@
       "object": true,
       "on_use": [
         {
-          "post_conditions": [
-            {
-              "type": "broadcast_message",
-              "params": {
+          "post": [
+            [
+              "broadcast_message",
+              {
                 "self_view": "You say the words aloud, and runes on the scroll glow with gold.",
                 "self_as_target_view": "Suddenly you feel a lightness upon you and you feel more fleet of foot. Your dexterity has increased!",
                 "self_not_target_view": "{recipient_text} feels a lightness upon them and they feel more fleet of foot. Their dexterity has increased!",
                 "room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} seems to glow for a second."
               }
-            },
-            {
-              "type": "modify_attribute",
-              "params": {
-                "type": "in_used_target_item",
-                "key": "dexterity",
-                "value": "+2"
-              }
-            }
+            ],
+            ["modify_attribute", "in_used_target_item", "dexterity", "+2"]
           ],
-          "pre_conditions": [["is_holding", "used_item"], ["used_with_agent"]]
+          "pre": [["is_holding", "used_item"], ["used_with_agent"]]
         }
       ]
     }

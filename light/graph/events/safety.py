@@ -8,12 +8,14 @@ from parlai.utils.safety import OffensiveStringMatcher
 from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser
 from parlai.agents.transformer.transformer import TransformerClassifierAgent
+
 try:
     from parlai_internal.agents.safety_wrapper.multiturn_safety import (
         MultiturnOffensiveLanguageClassifier,
     )
 except:
-    class MultiturnOffensiveLanguageClassifier():
+
+    class MultiturnOffensiveLanguageClassifier:
         # Temporary until using public safety
         pass
 

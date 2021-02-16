@@ -268,7 +268,7 @@ class OnEventSoul(ModelSoul):
         self.set_interaction_partners_from_event(event)
         self.log_interaction_from_event(event)
         if self.target_node._dying:
-            return # We're dying, don't do any responding.
+            return  # We're dying, don't do any responding.
         self.quest_events(event)
         self.on_events(event)
         self.tell_goal_heuristics(event)

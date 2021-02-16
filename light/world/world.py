@@ -29,6 +29,7 @@ from light.world.purgatory import Purgatory
 
 from typing import List
 
+
 def check_integrity(f):
     """Wrapper for ensuring that the world retains invariants both before and
     after all key function calls. To be used in debug mode only."""
@@ -1027,7 +1028,7 @@ class World(object):
 
     def clean_corpses_and_respawn(self) -> List[GraphAgent]:
         """
-        Clean any corpses that have been lying around for a while, 
+        Clean any corpses that have been lying around for a while,
         then try to do a respawn for each corpse cleaned.
 
         Return any respawned GraphAgent nodes created like this
@@ -1038,8 +1039,7 @@ class World(object):
             if node.ready_to_clean_corpse():
                 cleaned_count += 1
                 clear_event = DeleteObjectEvent(
-                    actor=node, 
-                    text_content="corpse disintegrates in a puff of magic."
+                    actor=node, text_content="corpse disintegrates in a puff of magic."
                 )
                 clear_event.execute(self)
 
