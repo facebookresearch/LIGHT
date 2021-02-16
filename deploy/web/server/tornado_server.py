@@ -192,7 +192,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             if game_id not in self.app.graphs:
                 self.close()
                 # TODO: Have an error page about game deleted
-                self.redirect(u"/game/")
+                self.redirect("/game/")
             graph_purgatory = self.app.graphs[game_id].world.purgatory
             if self.alive:
                 new_player = TornadoPlayerProvider(
@@ -288,7 +288,7 @@ class LandingApplication(tornado.web.Application):
 
     def get_handlers(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
         return [
-            (r"/", StaticPageHandler, {'target': "/html/landing.html"}),
+            (r"/", StaticPageHandler, {"target": "/html/landing.html"}),
             (r"/play", GameHandler),
             (r"/play/?id=.*", GameHandler),
             (
@@ -302,10 +302,10 @@ class LandingApplication(tornado.web.Application):
                 {"database": database, "hostname": hostname, "app": self},
             ),
             (r"/logout", LogoutHandler),
-            (r"/terms", StaticPageHandler, {'target': "/html/terms.html"}),
-            (r"/bye", StaticPageHandler, {'target': "/html/logout.html"}),
-            (r"/about", StaticLoggedInPageHandler, {'target': "/html/about.html"}),
-            (r"/profile", StaticLoggedInPageHandler, {'target': "/html/profile.html"}),
+            (r"/terms", StaticPageHandler, {"target": "/html/terms.html"}),
+            (r"/bye", StaticPageHandler, {"target": "/html/logout.html"}),
+            (r"/about", StaticLoggedInPageHandler, {"target": "/html/about.html"}),
+            (r"/profile", StaticLoggedInPageHandler, {"target": "/html/profile.html"}),
             (r"/report", ReportHandler),
             (r"/(.*)", StaticUIHandler, {"path": here + "/../build/"}),
         ]
@@ -387,10 +387,14 @@ class LoginHandler(BaseHandler):
 
     def get(self):
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.render(here + "/html/login.html", next=self.get_argument("next", u"/"))
 =======
         self.render(here + "/login.html", next=self.get_argument("next", "/"))
 >>>>>>> d19f2cb87d973df94f0fd3b3f48b21327b14c267
+=======
+        self.render(here + "/html/login.html", next=self.get_argument("next", "/"))
+>>>>>>> master
         self.next = next
 
     def post(self):
@@ -416,14 +420,17 @@ class LoginHandler(BaseHandler):
 
 class LoginHandler(BaseHandler):
     def initialize(
-        self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay",
+        self,
+        database,
+        hostname=DEFAULT_HOSTNAME,
+        password="LetsPlay",
     ):
         self.db = database
         self.hostname = hostname
         self.password = password
 
     def get(self):
-        self.render(here + "/html/login.html", next=self.get_argument("next", u"/"))
+        self.render(here + "/html/login.html", next=self.get_argument("next", "/"))
         self.next = next
 
     def post(self):
@@ -433,10 +440,10 @@ class LoginHandler(BaseHandler):
             with self.db as ldb:
                 _ = ldb.create_user(name)
             self.set_current_user(name)
-            self.redirect(self.get_argument("next", u"/"))
+            self.redirect(self.get_argument("next", "/"))
         else:
-            error_msg = u"?error=" + tornado.escape.url_escape("Login incorrect.")
-            self.redirect(u"/login" + error_msg)
+            error_msg = "?error=" + tornado.escape.url_escape("Login incorrect.")
+            self.redirect("/login" + error_msg)
 
     def set_current_user(self, user):
         if user:
@@ -446,15 +453,21 @@ class LoginHandler(BaseHandler):
         else:
             self.clear_cookie("user")
 
+
 class LogoutHandler(BaseHandler):
     def get(self):
         self.clear_cookie("user")
+<<<<<<< HEAD
 <<<<<<< HEAD
         self.redirect(u"/bye")
 =======
         self.redirect("/login")
 
 >>>>>>> d19f2cb87d973df94f0fd3b3f48b21327b14c267
+=======
+        self.redirect("/bye")
+
+>>>>>>> master
 
 class ReportHandler(BaseHandler):
     def post(self):

@@ -577,10 +577,15 @@ class TestLandingApp(AsyncHTTPTestCase):
         headers = {"Content-Type": "application/json"}
         with self.assertRaises(httpclient.HTTPClientError) as cm:
             response = yield self.client.fetch(
-                f"{URL}/play", method="GET", headers=headers, follow_redirects=False,
+                f"{URL}/play",
+                method="GET",
+                headers=headers,
+                follow_redirects=False,
             )
         self.assertEqual(cm.exception.code, 302)
-        self.assertEqual(cm.exception.response.headers["Location"], "/login?next=%2Fplay")
+        self.assertEqual(
+            cm.exception.response.headers["Location"], "/login?next=%2Fplay"
+        )
 
     @gen_test
     def test_logout(self, mocked_auth):

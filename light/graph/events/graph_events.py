@@ -1015,14 +1015,14 @@ class BlockEvent(GraphEvent):
         return valid_actions
 
 
-# Note, this is the only event we have right now where the actor is 
+# Note, this is the only event we have right now where the actor is
 # an object... This may need cleanup
 class DeleteObjectEvent(TriggeredEvent):
     """Handles deleting an object node from the graph"""
 
     def execute(self, world: "World") -> List[GraphEvent]:
         actor_name = self.actor.get_prefix_view()
-        self.__in_room_view = f'{actor_name} {self.text_content}'
+        self.__in_room_view = f"{actor_name} {self.text_content}"
         g = world.oo_graph
         g.delete_nodes([self.actor])
         world.broadcast_to_room(self)

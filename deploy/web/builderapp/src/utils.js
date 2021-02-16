@@ -3,7 +3,7 @@ import React from "react";
 import CONFIG from "./config";
 
 const BASE_URL =
-	CONFIG.port != "80" ? `${CONFIG.host}:${CONFIG.port}` : CONFIG.host;
+  CONFIG.port != "80" ? `${CONFIG.host}:${CONFIG.port}` : CONFIG.host;
 
 export function usePrevious(value) {
 	const ref = React.useRef();
@@ -37,19 +37,19 @@ export function useAPI(CONFIG, url, { body, params } = {}, preloaded) {
 		}
 		let isSubscribed = true;
 
-		if (state.loading) {
-			var target_url = BASE_URL + "/builder" + url;
-			fetch(target_url, { credentials: "same-origin" })
-				.then((res) => res.json())
-				.then((data) => {
-					if (isSubscribed) {
-						setState({ loading: false, result: data });
-					}
-				})
-				.catch((err) =>
-					console.log("Error fetching data for url: " + target_url, err)
-				);
-		}
+    if (state.loading) {
+      var target_url = BASE_URL + "/builder" + url;
+      fetch(target_url, { credentials: "same-origin" })
+        .then((res) => res.json())
+        .then((data) => {
+          if (isSubscribed) {
+            setState({ loading: false, result: data });
+          }
+        })
+        .catch((err) =>
+          console.log("Error fetching data for url: " + target_url, err)
+        );
+    }
 
 		return () => (isSubscribed = false);
 	}, [CONFIG.host, CONFIG.port, url, newUrl, preloaded, state]);
@@ -66,24 +66,24 @@ export function useAPI(CONFIG, url, { body, params } = {}, preloaded) {
 }
 
 export function post(url, payload) {
-	const formBody = [];
-	for (let property in payload) {
-		const encodedKey = encodeURIComponent(property);
-		const encodedValue = encodeURIComponent(
-			typeof payload[property] === "object"
-				? JSON.stringify(payload[property])
-				: payload[property]
-		);
-		formBody.push(encodedKey + "=" + encodedValue);
-	}
-	return fetch(`${BASE_URL}/${url}`, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/x-www-form-urlencoded",
-		},
-		credentials: "same-origin",
-		body: formBody.join("&"),
-	});
+  const formBody = [];
+  for (let property in payload) {
+    const encodedKey = encodeURIComponent(property);
+    const encodedValue = encodeURIComponent(
+      typeof payload[property] === "object"
+        ? JSON.stringify(payload[property])
+        : payload[property]
+    );
+    formBody.push(encodedKey + "=" + encodedValue);
+  }
+  return fetch(`${BASE_URL}/${url}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    credentials: "same-origin",
+    body: formBody.join("&"),
+  });
 }
 
 export function get_source(local_id, entities) {

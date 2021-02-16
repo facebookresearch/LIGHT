@@ -2987,7 +2987,7 @@
       "locked_edge": null,
       "name": "hefty rock",
       "name_prefix": "a",
-      "names": ["fishing rod"],
+      "names": ["hefty rock"],
       "node_id": "hefty rock_14",
       "object": true,
       "on_use": [
@@ -3500,9 +3500,9 @@
       "food_energy": 1,
       "gettable": 0.0,
       "locked_edge": null,
-      "name": "lavish desk piled high with books.",
+      "name": "lavish desk piled high with books",
       "name_prefix": "a",
-      "names": ["lavish desk piled high with books."],
+      "names": ["lavish desk piled high with books"],
       "node_id": "lavish desk piled high with books._6",
       "object": true,
       "on_use": null,
@@ -3847,78 +3847,6 @@
         "bow_81": {
           "target_id": "bow_81"
         },
-<<<<<<< HEAD
-        "hefty rock_14": {
-            "agent": false,
-            "classes": [
-                "object"
-            ],
-            "contain_size": 0,
-            "contained_nodes": {},
-            "container": false,
-            "container_node": {
-                "target_id": "entrance to the pine trees_15"
-            },
-            "db_id": null,
-            "dead": false,
-            "desc": "Feels good in the hand. Great for throwing at stuff!",
-            "drink": false,
-            "equipped": null,
-            "food": false,
-            "food_energy": 0,
-            "gettable": true,
-            "locked_edge": null,
-            "name": "hefty rock",
-            "name_prefix": "a",
-            "names": [
-                "hefty rock"
-            ],
-            "node_id": "hefty rock_14",
-            "object": true,
-            "on_use": [
-                {
-                    "post": [
-                        [
-                            "create_entity",
-                            "in_room",
-                            {
-                                "desc": "Mmm.. perfectly ripe.",
-                                "is_food": 1.0,
-                                "is_wearable": false,
-                                "name": "delicious crisp apple",
-                                "name_prefix": "a"
-                            }
-                        ],
-                        [
-                            "broadcast_message",
-                            {
-                                "self_view": "You toss the rock ..and land a hit! You knock an apple right off!"
-                            }
-                        ]
-                    ],
-                    "pre": [
-                        [
-                            "is_holding",
-                            "used_item"
-                        ],
-                        [
-                            "used_with_item_name",
-                            "apple tree"
-                        ]
-                    ]
-                }
-            ],
-            "room": false,
-            "size": 1,
-            "stats": {
-                "damage": 1,
-                "defense": 0
-            },
-            "surface_type": "on",
-            "value": 1,
-            "wearable": false,
-            "wieldable": true
-=======
         "small aggressive-looking dog_83": {
           "target_id": "small aggressive-looking dog_83"
         }
@@ -3939,7 +3867,6 @@
           "label": "a path to the west",
           "locked_edge": null,
           "target_id": "main street_6"
->>>>>>> d19f2cb87d973df94f0fd3b3f48b21327b14c267
         },
         "outside castle_32": {
           "examine_desc": null,
@@ -4050,268 +3977,6 @@
           "target_id": "large earthenware jug of water for cooking and drinking_74"
         },
         "large pile of hay_73": {
-<<<<<<< HEAD
-            "agent": false,
-            "classes": [
-                "object"
-            ],
-            "contain_size": 0,
-            "contained_nodes": {},
-            "container": false,
-            "container_node": {
-                "target_id": "main house_3"
-            },
-            "db_id": null,
-            "dead": false,
-            "desc": "The pile of hay is large and dusty.",
-            "drink": false,
-            "equipped": null,
-            "food": false,
-            "food_energy": 1,
-            "gettable": true,
-            "locked_edge": null,
-            "name": "large pile of hay",
-            "name_prefix": "a",
-            "names": [
-                "large pile of hay"
-            ],
-            "node_id": "large pile of hay_73",
-            "object": true,
-            "on_use": null,
-            "room": false,
-            "size": 1,
-            "stats": {
-                "damage": 0,
-                "defense": 0
-            },
-            "surface_type": "on",
-            "value": 1,
-            "wearable": false,
-            "wieldable": false
-        },
-        "lavish desk piled high with books._6": {
-            "agent": false,
-            "classes": [
-                "object"
-            ],
-            "contain_size": 19,
-            "contained_nodes": {
-                "dexteritate scroll_9": {
-                    "target_id": "dexteritate scroll_9"
-                }
-            },
-            "container": true,
-            "container_node": {
-                "target_id": "wizard's quarters_3"
-            },
-            "db_id": null,
-            "dead": false,
-            "desc": "The lavish desk is piled high with books that looked like they have seen years of use.  The leather bindings are cracked and the pages are yellowed and torn.  Under the books the desk has a beautiful maple top that reflected the sunlight from the window.",
-            "drink": 0.0,
-            "equipped": null,
-            "food": 0.0,
-            "food_energy": 1,
-            "gettable": 0.0,
-            "locked_edge": null,
-            "name": "lavish desk piled high with books",
-            "name_prefix": "a",
-            "names": [
-                "lavish desk piled high with books"
-            ],
-            "node_id": "lavish desk piled high with books._6",
-            "object": true,
-            "on_use": null,
-            "room": false,
-            "size": 20,
-            "stats": {
-                "damage": 0,
-                "defense": 0
-            },
-            "surface_type": "on",
-            "value": 1,
-            "wearable": 0.0,
-            "wieldable": 0.0
-        },
-        "lord_108": {
-            "agent": true,
-            "aggression": 0,
-            "attack_tagged_agents": [],
-            "blocked_by": {},
-            "blocking": null,
-            "char_type": "person",
-            "classes": [
-                "agent"
-            ],
-            "contain_size": 17,
-            "contained_nodes": {
-                "block and tackle_111": {
-                    "target_id": "block and tackle_111"
-                },
-                "hand plow_109": {
-                    "target_id": "hand plow_109"
-                },
-                "lance_110": {
-                    "target_id": "lance_110"
-                }
-            },
-            "container_node": {
-                "target_id": "reception area_12"
-            },
-            "damage": 1,
-            "db_id": null,
-            "dead": false,
-            "defense": 0,
-            "desc": "The lord raised the taxes on his tenants, just because he could.",
-            "dexterity": 0,
-            "dont_accept_gifts": false,
-            "followed_by": {},
-            "following": null,
-            "food_energy": 1,
-            "health": 2,
-            "is_player": false,
-            "max_distance_from_start_location": 1000000,
-            "max_wearable_items": 3,
-            "max_wieldable_items": 1,
-            "mission": "Survey my lands, and bask in my glory. And find ways to be even more glorious!",
-            "movement_energy_cost": 0.0,
-            "name": "lord",
-            "name_prefix": "a",
-            "names": [
-                "lord"
-            ],
-            "node_id": "lord_108",
-            "num_wearable_items": 0,
-            "num_wieldable_items": 0,
-            "object": false,
-            "on_events": [],
-            "pacifist": false,
-            "persona": "I am one of the king's lord.  I rule over a large area of land.  I have dozens of tenants.",
-            "quests": [],
-            "room": false,
-            "size": 20,
-            "speed": 5,
-            "strength": 0,
-            "tags": [],
-            "usually_npc": false
-        },
-        "lush green vegetation_63": {
-            "agent": false,
-            "classes": [
-                "food",
-                "object"
-            ],
-            "contain_size": 0,
-            "contained_nodes": {},
-            "container": false,
-            "container_node": {
-                "target_id": "graveyard keeper_58"
-            },
-            "db_id": null,
-            "dead": false,
-            "desc": "The plant is lush and well kept and remains fruitful to this day.",
-            "drink": false,
-            "equipped": null,
-            "food": true,
-            "food_energy": 0,
-            "gettable": true,
-            "locked_edge": null,
-            "name": "lush green vegetation",
-            "name_prefix": "a",
-            "names": [
-                "lush green vegetation"
-            ],
-            "node_id": "lush green vegetation_63",
-            "object": true,
-            "on_use": null,
-            "room": false,
-            "size": 1,
-            "stats": {
-                "damage": 0,
-                "defense": 0
-            },
-            "surface_type": "on",
-            "value": 1,
-            "wearable": false,
-            "wieldable": false
-        },
-        "luxurious bedding_66": {
-            "agent": false,
-            "classes": [
-                "object"
-            ],
-            "contain_size": 0,
-            "contained_nodes": {},
-            "container": false,
-            "container_node": {
-                "target_id": "bedding_65"
-            },
-            "db_id": null,
-            "dead": false,
-            "desc": "The bedding is soft and comforting, finely woven from the best wool.",
-            "drink": false,
-            "equipped": null,
-            "food": false,
-            "food_energy": 0,
-            "gettable": true,
-            "locked_edge": null,
-            "name": "luxurious bedding",
-            "name_prefix": "some",
-            "names": [
-                "luxurious bedding"
-            ],
-            "node_id": "luxurious bedding_66",
-            "object": true,
-            "on_use": null,
-            "room": false,
-            "size": 5,
-            "stats": {
-                "damage": 0,
-                "defense": 0
-            },
-            "surface_type": "on",
-            "value": 5,
-            "wearable": false,
-            "wieldable": false
-        },
-        "mace_162": {
-            "agent": false,
-            "classes": [
-                "object",
-                "wieldable"
-            ],
-            "contain_size": 0,
-            "contained_nodes": {},
-            "container": false,
-            "container_node": {
-                "target_id": "smith_160"
-            },
-            "db_id": null,
-            "dead": false,
-            "desc": "The mace is sturdy and strong. you would hate to be hit by the metal spikes that line its head.",
-            "drink": false,
-            "equipped": true,
-            "food": false,
-            "food_energy": 0,
-            "gettable": true,
-            "locked_edge": null,
-            "name": "mace",
-            "name_prefix": "a",
-            "names": [
-                "mace"
-            ],
-            "node_id": "mace_162",
-            "object": true,
-            "on_use": null,
-            "room": false,
-            "size": 1,
-            "stats": {
-                "attack": 1
-            },
-            "surface_type": "on",
-            "value": 1,
-            "wearable": false,
-            "wieldable": true
-=======
           "target_id": "large pile of hay_73"
         }
       },
@@ -4331,7 +3996,6 @@
           "label": "a path to the east",
           "locked_edge": null,
           "target_id": "central garden_4"
->>>>>>> d19f2cb87d973df94f0fd3b3f48b21327b14c267
         },
         "main street_6": {
           "examine_desc": null,

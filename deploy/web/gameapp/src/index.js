@@ -19,23 +19,23 @@ import { setCaretPosition } from "./utils";
 import CONFIG from "./config";
 
 const createWebSocketUrlFromBrowserUrl = (url) => {
-	const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
-	const optionalServerHost = new URL(url).searchParams.get("server");
-	var optionalGameId = new URL(url).searchParams.get("id");
-	if (!optionalGameId) {
-		optionalGameId = "";
-	}
-	if (optionalServerHost) {
-		console.log("Using user-provided server hostname:", optionalServerHost);
-	}
+  const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
+  const optionalServerHost = new URL(url).searchParams.get("server");
+  var optionalGameId = new URL(url).searchParams.get("id");
+  if (!optionalGameId) {
+    optionalGameId = "";
+  }
+  if (optionalServerHost) {
+    console.log("Using user-provided server hostname:", optionalServerHost);
+  }
 
-	let websocketURL =
-		wsProtocol + "://" + (optionalServerHost || CONFIG.hostname);
-	if (CONFIG.port != "80") {
-		websocketURL += ":" + CONFIG.port;
-	}
-	websocketURL += `/game${optionalGameId}/socket`;
-	return websocketURL;
+  let websocketURL =
+    wsProtocol + "://" + (optionalServerHost || CONFIG.hostname);
+  if (CONFIG.port != "80") {
+    websocketURL += ":" + CONFIG.port;
+  }
+  websocketURL += `/game${optionalGameId}/socket`;
+  return websocketURL;
 };
 
 const getDataModelAddress = () => {
@@ -66,122 +66,122 @@ function Setting(props) {
 }
 
 function handleReport(reportedMessage, reportReason) {
-	let base_url = window.location.protocol + "//" + CONFIG.hostname;
-	if (CONFIG.port != "80") {
-		base_url += ":" + CONFIG.port;
-	}
+  let base_url = window.location.protocol + "//" + CONFIG.hostname;
+  if (CONFIG.port != "80") {
+    base_url += ":" + CONFIG.port;
+  }
 
-	fetch(`${base_url}/report`, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		credentials: "same-origin",
-		body: JSON.stringify({
-			message: reportedMessage,
-			reason: reportReason,
-		}),
-	});
+  fetch(`${base_url}/report`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "same-origin",
+    body: JSON.stringify({
+      message: reportedMessage,
+      reason: reportReason,
+    }),
+  });
 }
 
 function Message({ text, caller, actor, isSelf, onReply }) {
-	const [isEditMode, setEditMode] = React.useState(false);
-	const [isReportMode, setReportMode] = React.useState(false);
-	const [reportReason, setReportReason] = React.useState("");
-	const [isReported, setReported] = React.useState(false);
+  const [isEditMode, setEditMode] = React.useState(false);
+  const [isReportMode, setReportMode] = React.useState(false);
+  const [reportReason, setReportReason] = React.useState("");
+  const [isReported, setReported] = React.useState(false);
 
-	let classNames = "message type-dialogue ";
-	if (["tell", "say", "whisper"].includes(caller)) {
-		text = "&ldquo;" + text + "&rdquo;";
-		classNames = "message type-dialogue ";
-	}
-	classNames += isSelf ? "me" : "other";
+  let classNames = "message type-dialogue ";
+  if (["tell", "say", "whisper"].includes(caller)) {
+    text = "&ldquo;" + text + "&rdquo;";
+    classNames = "message type-dialogue ";
+  }
+  classNames += isSelf ? "me" : "other";
 
-	if (isEditMode) {
-		return (
-			<div className={classNames}>
-				<div className="agent">
-					<span>{actor}</span>
-					{isSelf ? null : (
-						<React.Fragment>
-							<i className="fa fa-reply" onClick={() => onReply(actor)} />{" "}
-							<i
-								className="fa fa-commenting-o "
-								onClick={() => setEditMode(false)}
-							/>
-						</React.Fragment>
-					)}
-				</div>
-				<div style={{ opacity: 0, height: 1, pointerEvents: "none" }}>
-					{text}
-				</div>
-				<input className="edit-message" defaultValue={text} />
-				<button type="submit" onClick={() => setEditMode(false)}>
-					Suggest edit
-				</button>
-				<button type="submit" onClick={() => setEditMode(false)}>
-					Suggest edit
-				</button>
-			</div>
-		);
-	}
+  if (isEditMode) {
+    return (
+      <div className={classNames}>
+        <div className="agent">
+          <span>{actor}</span>
+          {isSelf ? null : (
+            <React.Fragment>
+              <i className="fa fa-reply" onClick={() => onReply(actor)} />{" "}
+              <i
+                className="fa fa-commenting-o "
+                onClick={() => setEditMode(false)}
+              />
+            </React.Fragment>
+          )}
+        </div>
+        <div style={{ opacity: 0, height: 1, pointerEvents: "none" }}>
+          {text}
+        </div>
+        <input className="edit-message" defaultValue={text} />
+        <button type="submit" onClick={() => setEditMode(false)}>
+          Suggest edit
+        </button>
+        <button type="submit" onClick={() => setEditMode(false)}>
+          Suggest edit
+        </button>
+      </div>
+    );
+  }
 
-	if (isReportMode) {
-		return (
-			<div className={classNames}>
-				<div className="agent">
-					<span>{actor}</span>
-				</div>
-				{text}
-				<div>
-					<b>Why are you reporting this message?</b>
-				</div>
-				<input
-					className="edit-message"
-					defaultValue={"Enter reason here"}
-					value={reportReason}
-					onChange={(evt) => setReportReason(evt.target.value)}
-				/>
-				<button
-					type="submit"
-					disabled={reportReason.length == 0}
-					onClick={() => {
-						handleReport(text, reportReason);
-						setReportReason("");
-						setReported(true);
-						setReportMode(false);
-					}}
-				>
-					Report
-				</button>
-				<button type="submit" onClick={() => setReportMode(false)}>
-					Cancel
-				</button>
-			</div>
-		);
-	}
+  if (isReportMode) {
+    return (
+      <div className={classNames}>
+        <div className="agent">
+          <span>{actor}</span>
+        </div>
+        {text}
+        <div>
+          <b>Why are you reporting this message?</b>
+        </div>
+        <input
+          className="edit-message"
+          defaultValue={"Enter reason here"}
+          value={reportReason}
+          onChange={(evt) => setReportReason(evt.target.value)}
+        />
+        <button
+          type="submit"
+          disabled={reportReason.length == 0}
+          onClick={() => {
+            handleReport(text, reportReason);
+            setReportReason("");
+            setReported(true);
+            setReportMode(false);
+          }}
+        >
+          Report
+        </button>
+        <button type="submit" onClick={() => setReportMode(false)}>
+          Cancel
+        </button>
+      </div>
+    );
+  }
 
-	if (isReported) {
-		return (
-			<div className={classNames}>
-				<div className="agent">
-					<span>{actor}</span>
-				</div>
-				<i>We have logged your report of this message</i>
-			</div>
-		);
-	}
+  if (isReported) {
+    return (
+      <div className={classNames}>
+        <div className="agent">
+          <span>{actor}</span>
+        </div>
+        <i>We have logged your report of this message</i>
+      </div>
+    );
+  }
 
-	return (
-		<div className={classNames}>
-			<div className="agent">
-				<span>{actor}</span>
-				{isSelf ? null : (
-					<React.Fragment>
-						<Tooltip title={`tell ${actor}...`} position="top">
-							<i className="fa fa-reply" onClick={() => onReply(actor)} />
-						</Tooltip>{" "}
-						{/* <Tooltip
+  return (
+    <div className={classNames}>
+      <div className="agent">
+        <span>{actor}</span>
+        {isSelf ? null : (
+          <React.Fragment>
+            <Tooltip title={`tell ${actor}...`} position="top">
+              <i className="fa fa-reply" onClick={() => onReply(actor)} />
+            </Tooltip>{" "}
+            {/* <Tooltip
               title={`Do you think something else should have been said instead? Provide feedback via an edit...`}
               position="top"
             >
@@ -190,18 +190,18 @@ function Message({ text, caller, actor, isSelf, onReply }) {
                 onClick={() => setEditMode(true)}
               />
             </Tooltip> */}
-						<Tooltip
-							title={`Was this offensive or inappropriate? Click to report.`}
-							position="top"
-						>
-							<i className="fa fa-flag " onClick={() => setReportMode(true)} />
-						</Tooltip>
-					</React.Fragment>
-				)}
-			</div>
-			{text}
-		</div>
-	);
+            <Tooltip
+              title={`Was this offensive or inappropriate? Click to report.`}
+              position="top"
+            >
+              <i className="fa fa-flag " onClick={() => setReportMode(true)} />
+            </Tooltip>
+          </React.Fragment>
+        )}
+      </div>
+      {text}
+    </div>
+  );
 }
 
 function get_msg_actor(msg) {
@@ -239,40 +239,40 @@ function Entry({ msg, onReply, agents, selfId }) {
 }
 
 function ConnectedApp() {
-	const wsUrl = React.useMemo(
-		() => createWebSocketUrlFromBrowserUrl(window.location),
-		[]
-	);
-	const {
-		isErrored,
-		messages,
-		submitMessage,
-		persona,
-		location,
-		agents,
-		isFull,
-	} = useWSDataSource(wsUrl);
+  const wsUrl = React.useMemo(
+    () => createWebSocketUrlFromBrowserUrl(window.location),
+    []
+  );
+  const {
+    isErrored,
+    messages,
+    submitMessage,
+    persona,
+    location,
+    agents,
+    isFull,
+  } = useWSDataSource(wsUrl);
 
-	if (isErrored)
-		return (
-			<div style={{ textAlign: "center", marginTop: 30, fontSize: 30 }}>
-				Could not connect to the server.
-			</div>
-		);
+  if (isErrored)
+    return (
+      <div style={{ textAlign: "center", marginTop: 30, fontSize: 30 }}>
+        Could not connect to the server.
+      </div>
+    );
 
-	if (messages.length === 0) {
-		return <LoadingScreen isFull={isFull} />;
-	}
+  if (messages.length === 0) {
+    return <LoadingScreen isFull={isFull} />;
+  }
 
-	return (
-		<Chat
-			messages={messages}
-			onSubmit={submitMessage}
-			persona={persona}
-			location={location}
-			agents={agents}
-		/>
-	);
+  return (
+    <Chat
+      messages={messages}
+      onSubmit={submitMessage}
+      persona={persona}
+      location={location}
+      agents={agents}
+    />
+  );
 }
 function Chat({ messages, onSubmit, persona, location, agents }) {
 	const [enteredText, setEnteredText] = React.useState("");

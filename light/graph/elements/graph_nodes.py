@@ -133,10 +133,10 @@ class GraphNode(object):
             props = {}
         self._props = props.copy()
 
-        if 'contain_size' in self._props and self._props['contain_size'] is None:
-            del self._props['contain_size']
-        if 'size' in self._props and self._props['size'] is None:
-            del self._props['size']
+        if "contain_size" in self._props and self._props["contain_size"] is None:
+            del self._props["contain_size"]
+        if "size" in self._props and self._props["size"] is None:
+            del self._props["size"]
 
         # TODO perhaps these should be edges rather than special cases?
         self.container_node = None
@@ -395,7 +395,7 @@ class GraphNode(object):
         Return True if this is a corpse that is ready to be removed,
         False otherwise. Increment death ticks if unripe corpse.
         """
-        if self.get_prop('dead') is True:
+        if self.get_prop("dead") is True:
             if self._death_ticks > TICKS_TO_CLEAN_CORPSE:
                 return True
             self._death_ticks += 1
@@ -444,8 +444,8 @@ class GraphRoom(GraphNode):
     def __init__(self, node_id, name, props=None, db_id=None):
         super().__init__(node_id, name, props, db_id)
         self.room = True
-        if props is not None and 'desc' not in props:
-            self.desc = props.get('description', '')
+        if props is not None and "desc" not in props:
+            self.desc = props.get("description", "")
         self.extra_desc = self._props.get("extra_desc", self.desc)
         self.name_prefix = self._props.get("name_prefix", "the")
         self.surface_type = self._props.get("surface_type", "in")
@@ -812,7 +812,6 @@ class GraphObject(GraphNode):
         )
         self.classes = set(self._props.get("classes", {"object"}))
         self.equipped = self._props.get("equipped", None)
-
 
         self.contain_size = self._props.get(
             "contain_size",

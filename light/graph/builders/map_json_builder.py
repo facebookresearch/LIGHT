@@ -17,7 +17,12 @@ from light.world.world import World
 from typing import TYPE_CHECKING, List, Dict, Tuple, Any, Optional
 
 if TYPE_CHECKING:
-    from light.graph.elements.graph_nodes import GraphRoom, GraphNode, NodeProps, GraphAgent
+    from light.graph.elements.graph_nodes import (
+        GraphRoom,
+        GraphNode,
+        NodeProps,
+        GraphAgent,
+    )
 
 
 class MapJsonBuilder(DBGraphBuilder):
@@ -36,7 +41,7 @@ class MapJsonBuilder(DBGraphBuilder):
         f.close()
         g = OOGraph.from_json(data)
         self.original_agents = {
-            agent.name: (agent.get_room(), agent.get_props()) 
+            agent.name: (agent.get_room(), agent.get_props())
             for agent in g.agents.values()
         }
         world = World(self.opt, self)
@@ -47,7 +52,8 @@ class MapJsonBuilder(DBGraphBuilder):
         """Return an agent that once existed in this graph, but no longer does"""
         # Only spawn agents if they don't already exist
         agents_to_use = [
-            agent_name for agent_name in self.original_agents.keys() 
+            agent_name
+            for agent_name in self.original_agents.keys()
             if len(world.oo_graph.find_nodes_by_name(agent_name)) == 0
         ]
         if len(agents_to_use) == 0:
@@ -55,7 +61,9 @@ class MapJsonBuilder(DBGraphBuilder):
 
         return random.choice(agents_to_use)
 
-    def _spawn_agent_in_room(self, world: World, agent: "GraphAgent", room: "GraphRoom") -> None:
+    def _spawn_agent_in_room(
+        self, world: World, agent: "GraphAgent", room: "GraphRoom"
+    ) -> None:
         """Spawn the given agent in the given room of the given world"""
         agent.move_to(room)
         arrival_event = ArriveEvent(
@@ -73,7 +81,7 @@ class MapJsonBuilder(DBGraphBuilder):
         possible_respawn_name = self._get_agent_to_respawn(world)
         if possible_respawn_name is None:
             return None
-        
+
         g = world.oo_graph
         agent_location, agent_props = self.original_agents[possible_respawn_name]
         agent_node = g.add_agent(possible_respawn_name, agent_props)
@@ -86,6 +94,6 @@ class MapJsonBuilder(DBGraphBuilder):
         pos_rooms = [x for x in g.rooms.values()]
         random.shuffle(pos_rooms)
 
-        agent_node = g.add_agent('test_agent', {})
+        agent_node = g.add_agent("test_agent", {})
         self._spawn_agent_in_room(world, agent_node, pos_rooms[0])
         return agent_node
