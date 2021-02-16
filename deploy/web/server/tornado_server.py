@@ -125,11 +125,12 @@ def get_path(filename):
     cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     return os.path.join(cwd, filename)
 
+
 tornado_settings = None
 
 
 class Application(tornado.web.Application):
-    def __init__(self, given_tornado_settings = None):
+    def __init__(self, given_tornado_settings=None):
         global tornado_settings
         use_tornado_settings = tornado_settings
         if given_tornado_settings is not None:
@@ -145,7 +146,7 @@ class Application(tornado.web.Application):
         #       is run standalone for some reason.
         return [
             (r"/game(.*)/socket", SocketHandler, {"app": self}),
-            (r"/", MainHandler),
+            (r"/play", GameHandler),
             (r"/(.*)", StaticUIHandler, {"path": path_to_build}),
         ]
 
@@ -191,15 +192,18 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             if game_id not in self.app.graphs:
                 self.close()
                 # TODO: Have an error page about game deleted
-                self.redirect(u"/game/")
-            graph_purgatory = self.app.graphs[game_id].g.purgatory
+                self.redirect("/game/")
+            graph_purgatory = self.app.graphs[game_id].world.purgatory
             if self.alive:
-                new_player = TornadoPlayerProvider(self, graph_purgatory,)
+                new_player = TornadoPlayerProvider(
+                    self,
+                    graph_purgatory,
+                )
                 new_player.init_soul()
                 self.app.graphs[game_id].players.append(new_player)
         else:
             self.close()
-            self.redirect(u"/login")
+            self.redirect("/login")
 
     def send_alive(self):
         self.safe_write_message(json.dumps({"command": "register", "data": self.sid}))
@@ -226,7 +230,7 @@ class BaseHandler(tornado.web.RequestHandler):
         super(BaseHandler, self).__init__(*request, **kwargs)
 
     def get_login_url(self):
-        return u"/login"
+        return "/login"
 
     def get_current_user(self):
         user_json = self.get_secure_cookie("user")
@@ -269,7 +273,13 @@ class BaseHandler(tornado.web.RequestHandler):
 
 
 class LandingApplication(tornado.web.Application):
-    def __init__(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay", given_tornado_settings=None):
+    def __init__(
+        self,
+        database,
+        hostname=DEFAULT_HOSTNAME,
+        password="LetsPlay",
+        given_tornado_settings=None,
+    ):
         global tornado_settings
         tornado_settings = given_tornado_settings
         super(LandingApplication, self).__init__(
@@ -278,8 +288,9 @@ class LandingApplication(tornado.web.Application):
 
     def get_handlers(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
         return [
-            (r"/", MainHandler),
-            (r"/?id=.*", MainHandler),
+            (r"/", StaticPageHandler, {"target": "/html/landing.html"}),
+            (r"/play", GameHandler),
+            (r"/play/?id=.*", GameHandler),
             (
                 r"/login",
                 LoginHandler,
@@ -291,35 +302,52 @@ class LandingApplication(tornado.web.Application):
                 {"database": database, "hostname": hostname, "app": self},
             ),
             (r"/logout", LogoutHandler),
+            (r"/terms", StaticPageHandler, {"target": "/html/terms.html"}),
+            (r"/bye", StaticPageHandler, {"target": "/html/logout.html"}),
+            (r"/about", StaticLoggedInPageHandler, {"target": "/html/about.html"}),
+            (r"/profile", StaticLoggedInPageHandler, {"target": "/html/profile.html"}),
             (r"/report", ReportHandler),
             (r"/(.*)", StaticUIHandler, {"path": here + "/../build/"}),
         ]
 
 
-class MainHandler(BaseHandler):
+class GameHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         self.render(here + "/../build/index.html")
 
 
+class StaticPageHandler(BaseHandler):
+    def initialize(self, target):
+        self.target_page = here + target
+
+    def get(self):
+        self.render(self.target_page)
+
+
+class StaticLoggedInPageHandler(StaticPageHandler):
+    @tornado.web.authenticated
+    def get(self):
+        self.render(self.target_page)
+
+
 class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
     """
-        See https://www.tornadoweb.org/en/stable/_modules/tornado/auth.html#FacebookGraphMixin
+    See https://www.tornadoweb.org/en/stable/_modules/tornado/auth.html#FacebookGraphMixin
     """
 
     def initialize(
-        self, database, hostname, app,
+        self,
+        database,
+        hostname,
+        app,
     ):
         self.app = app
         self.db = database
         self.hostname = hostname
 
     async def get(self):
-        redirect = (
-            "https://"
-            + self.request.host
-            + "/auth/fblogin"
-        )
+        redirect = "https://" + self.request.host + "/auth/fblogin"
         if self.get_argument("code", False):
             fb_user = await self.get_authenticated_user(
                 redirect_uri=redirect,
@@ -327,11 +355,12 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
                 client_secret=self.app.settings["facebook_secret"],
                 code=self.get_argument("code"),
             )
-            self.set_current_user(fb_user['id'])
+            self.set_current_user(fb_user["id"])
             self.redirect("/")
             return
         self.authorize_redirect(
-            redirect_uri=redirect, client_id=self.app.settings["facebook_api_key"],
+            redirect_uri=redirect,
+            client_id=self.app.settings["facebook_api_key"],
         )
 
     def set_current_user(self, user):
@@ -347,14 +376,17 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
 
 class LoginHandler(BaseHandler):
     def initialize(
-        self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay",
+        self,
+        database,
+        hostname=DEFAULT_HOSTNAME,
+        password="LetsPlay",
     ):
         self.db = database
         self.hostname = hostname
         self.password = password
 
     def get(self):
-        self.render(here + "/login.html", next=self.get_argument("next", u"/"))
+        self.render(here + "/html/login.html", next=self.get_argument("next", "/"))
         self.next = next
 
     def post(self):
@@ -364,10 +396,46 @@ class LoginHandler(BaseHandler):
             with self.db as ldb:
                 _ = ldb.create_user(name)
             self.set_current_user(name)
-            self.redirect(self.get_argument("next", u"/"))
+            self.redirect(self.get_argument("next", "/"))
         else:
-            error_msg = u"?error=" + tornado.escape.url_escape("Login incorrect.")
-            self.redirect(u"/login" + error_msg)
+            error_msg = "?error=" + tornado.escape.url_escape("Login incorrect.")
+            self.redirect("/login" + error_msg)
+
+    def set_current_user(self, user):
+        if user:
+            self.set_secure_cookie(
+                "user", tornado.escape.json_encode(user), domain=self.hostname
+            )
+        else:
+            self.clear_cookie("user")
+
+
+class LoginHandler(BaseHandler):
+    def initialize(
+        self,
+        database,
+        hostname=DEFAULT_HOSTNAME,
+        password="LetsPlay",
+    ):
+        self.db = database
+        self.hostname = hostname
+        self.password = password
+
+    def get(self):
+        self.render(here + "/html/login.html", next=self.get_argument("next", "/"))
+        self.next = next
+
+    def post(self):
+        name = self.get_argument("name", "")
+        password = self.get_argument("password", "")
+        if password == self.password:
+            with self.db as ldb:
+                _ = ldb.create_user(name)
+            self.set_current_user(name)
+            self.redirect(self.get_argument("next", "/"))
+        else:
+            error_msg = "?error=" + tornado.escape.url_escape("Login incorrect.")
+            self.redirect("/login" + error_msg)
 
     def set_current_user(self, user):
         if user:
@@ -381,7 +449,8 @@ class LoginHandler(BaseHandler):
 class LogoutHandler(BaseHandler):
     def get(self):
         self.clear_cookie("user")
-        self.redirect(u"/login")
+        self.redirect("/bye")
+
 
 class ReportHandler(BaseHandler):
     def post(self):
@@ -393,7 +462,7 @@ class ReportHandler(BaseHandler):
         tmp_filename = f"report-{time.time()}"
         while os.path.exists(os.path.join(report_dir, f"{tmp_filename}.json")):
             # Disgusting hack to get multiple saves at the same time
-            tmp_filename += 'a'
+            tmp_filename += "a"
         dump_loc = os.path.join(report_dir, f"{tmp_filename}.json")
         with open(os.path.join(report_dir, dump_loc), "w+") as report_file:
             json.dump(data, report_file)
@@ -401,7 +470,7 @@ class ReportHandler(BaseHandler):
 
 class TornadoPlayerProvider(PlayerProvider):
     """
-        Player Provider for the web app
+    Player Provider for the web app
     """
 
     def __init__(self, socket, purgatory):
@@ -472,7 +541,12 @@ class TornadoPlayerFactory:
     """
 
     def __init__(
-        self, graphs, hostname=DEFAULT_HOSTNAME, port=DEFAULT_PORT, listening=False, given_tornado_settings=None
+        self,
+        graphs,
+        hostname=DEFAULT_HOSTNAME,
+        port=DEFAULT_PORT,
+        listening=False,
+        given_tornado_settings=None,
     ):
         self.graphs = graphs
         self.app = None
@@ -549,7 +623,7 @@ def main():
         )
     else:
         game = GameInstance()
-        graph = game.g
+        graph = game.world
         provider = TornadoPlayerFactory(
             graph, FLAGS.hostname, FLAGS.port, listening=True
         )

@@ -420,7 +420,7 @@ class ShoutEventTest(GraphEventTests):
             [],
             "something I'm giving up on you",
             test_graph_1_after_noop,
-            [],
+            [ShoutEvent],
         ),
         (
             "test_agent_0",
@@ -428,7 +428,7 @@ class ShoutEventTest(GraphEventTests):
             [],
             "this is a test phrase",
             test_graph_1_after_noop,
-            [],
+            [ShoutEvent],
         ),
         (
             "test_agent_0",
@@ -436,7 +436,7 @@ class ShoutEventTest(GraphEventTests):
             [],
             "I can parse with quotations too",
             test_graph_1_after_noop,
-            [],
+            [ShoutEvent],
         ),
     ]
     EVENT_CLASS = ShoutEvent
@@ -2073,8 +2073,9 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "carrier_12__dead__",
             "object": true,
+            "on_use": null,
             "room": false,
-            "size": 20,
+            "size": 21,
             "stats": {
                 "damage": 0,
                 "defense": 0
@@ -2112,8 +2113,9 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "chest_7",
             "object": true,
+            "on_use": null,
             "room": false,
-            "size": 1,
+            "size": 10,
             "stats": {
                 "damage": 0,
                 "defense": 0
@@ -2150,6 +2152,7 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "contained_object_10",
             "object": true,
+            "on_use": null,
             "room": false,
             "size": 1,
             "stats": {
@@ -2174,6 +2177,11 @@ test_graph_3_after_ingest_apple = """
             "db_id": null,
             "desc": "A east room to be used in a test. Doesn't have any other interesting properties beyond that.",
             "extra_desc": "If you look very closely, you can observe that nothing is here.",
+            "grid_location": [
+                0,
+                0,
+                0
+            ],
             "name": "east room",
             "name_prefix": "the",
             "names": [
@@ -2220,8 +2228,9 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "goldfish_in_a_bag_11",
             "object": true,
+            "on_use": null,
             "room": false,
-            "size": 1,
+            "size": 5,
             "stats": {
                 "damage": 0,
                 "defense": 0
@@ -2259,6 +2268,7 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "hat_5",
             "object": true,
+            "on_use": null,
             "room": false,
             "size": 1,
             "stats": {
@@ -2274,7 +2284,7 @@ test_graph_3_after_ingest_apple = """
             "classes": [
                 "room"
             ],
-            "contain_size": 2000,
+            "contain_size": 1999,
             "contained_nodes": {
                 "carrier_12__dead__": {
                     "target_id": "carrier_12__dead__"
@@ -2295,6 +2305,11 @@ test_graph_3_after_ingest_apple = """
             "db_id": null,
             "desc": "A main room to be used in a test. Doesn't have any other interesting properties beyond that.",
             "extra_desc": "If you look very closely, you can observe testing as it occurs.",
+            "grid_location": [
+                0,
+                0,
+                0
+            ],
             "name": "Main room",
             "name_prefix": "the",
             "names": [
@@ -2337,6 +2352,11 @@ test_graph_3_after_ingest_apple = """
             "db_id": null,
             "desc": "A north room to be used in a test. Doesn't have any other interesting properties beyond that.",
             "extra_desc": "If you look very closely, you can observe that nothing is here.",
+            "grid_location": [
+                0,
+                0,
+                0
+            ],
             "name": "north room",
             "name_prefix": "the",
             "names": [
@@ -2383,6 +2403,7 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "something_to_drink_20",
             "object": true,
+            "on_use": null,
             "room": false,
             "size": 1,
             "stats": {
@@ -2397,7 +2418,9 @@ test_graph_3_after_ingest_apple = """
         "sword_dealer_14": {
             "agent": true,
             "aggression": 0,
-            "dexterity": 1000,
+            "attack_tagged_agents": [],
+            "blocked_by": {},
+            "blocking": null,
             "char_type": "person",
             "classes": [
                 "agent"
@@ -2409,24 +2432,40 @@ test_graph_3_after_ingest_apple = """
             },
             "damage": 1,
             "db_id": null,
+            "dead": false,
             "defense": 0,
             "desc": "A person who deals swords.",
+            "dexterity": 1000,
+            "dont_accept_gifts": false,
             "followed_by": {},
             "following": null,
             "food_energy": 1,
             "health": 2,
             "is_player": false,
+            "max_distance_from_start_location": 1000000,
+            "max_wearable_items": 3,
+            "max_wieldable_items": 1,
+            "mission": "",
+            "movement_energy_cost": 0.0,
             "name": "sword dealer",
             "name_prefix": "the",
             "names": [
                 "sword dealer"
             ],
             "node_id": "sword_dealer_14",
+            "num_wearable_items": 0,
+            "num_wieldable_items": 0,
             "object": false,
+            "on_events": [],
+            "pacifist": false,
             "persona": "I am a sword dealer. I deal swords.",
+            "quests": [],
             "room": false,
             "size": 20,
-            "speed": 5
+            "speed": 5,
+            "strength": 0,
+            "tags": [],
+            "usually_npc": false
         },
         "sword_from_a_stone_4": {
             "agent": false,
@@ -2456,6 +2495,7 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "sword_from_a_stone_4",
             "object": true,
+            "on_use": null,
             "room": false,
             "size": 5,
             "stats": {
@@ -2498,8 +2538,9 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "table_6",
             "object": true,
+            "on_use": null,
             "room": false,
-            "size": 1,
+            "size": 3,
             "stats": {
                 "damage": 0,
                 "defense": 0
@@ -2536,6 +2577,7 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "tasty_steak_to_eat_9",
             "object": true,
+            "on_use": null,
             "room": false,
             "size": 1,
             "stats": {
@@ -2550,6 +2592,9 @@ test_graph_3_after_ingest_apple = """
         "trained_monkey_13": {
             "agent": true,
             "aggression": 0,
+            "attack_tagged_agents": [],
+            "blocked_by": {},
+            "blocking": null,
             "char_type": "person",
             "classes": [
                 "agent"
@@ -2561,24 +2606,40 @@ test_graph_3_after_ingest_apple = """
             },
             "damage": 1,
             "db_id": null,
+            "dead": false,
             "defense": 0,
             "desc": "A monkey that has been trained to test.",
+            "dexterity": 0,
+            "dont_accept_gifts": false,
             "followed_by": {},
             "following": null,
             "food_energy": 1,
             "health": 2,
             "is_player": false,
+            "max_distance_from_start_location": 1000000,
+            "max_wearable_items": 3,
+            "max_wieldable_items": 1,
+            "mission": "",
+            "movement_energy_cost": 0.0,
             "name": "trained monkey",
             "name_prefix": "the",
             "names": [
                 "trained monkey"
             ],
             "node_id": "trained_monkey_13",
+            "num_wearable_items": 0,
+            "num_wieldable_items": 0,
             "object": false,
+            "on_events": [],
+            "pacifist": false,
             "persona": "I am a trained monkey. I am trained to test LIGHT.",
+            "quests": [],
             "room": false,
             "size": 20,
-            "speed": 5
+            "speed": 5,
+            "strength": 0,
+            "tags": [],
+            "usually_npc": false
         }
     },
     "objects": [

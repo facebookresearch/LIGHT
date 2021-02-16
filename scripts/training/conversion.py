@@ -23,7 +23,7 @@ from scripts.filtering.construct_dataset import convert_event_log_dirs
 
 def execute_events(world, transcript):
     """
-        Attempts to parse and execute the events contained in the transcript
+    Attempts to parse and execute the events contained in the transcript
     """
     for event in transcript:
         # parse exec, then execute according to
@@ -40,8 +40,8 @@ def execute_events(world, transcript):
 
 def process_episodes(src, log_dir):
     """
-        Reconstructs the episodes contained in src and executes them,
-        resulting in new logs
+    Reconstructs the episodes contained in src and executes them,
+    resulting in new logs
     """
     # alt is, everything contained in room so just room logger is fine
     # Room logger - is_player already specified (nice!)

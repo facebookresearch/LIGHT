@@ -56,7 +56,7 @@ np.random.seed(6)
 
 good = {}
 
-    
+
 MAX_EXTRA_AGENTS_PER_ROOM = 2
 INV_DIR = {"east": "west", "west": "east", "north": "south", "south": "north"}
 NEIGHBOR = DB_EDGE_NEIGHBOR
@@ -81,7 +81,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
 
     def __init__(self, ldb, debug=True, opt=None):
         """Initializes required models and parameters for this graph builder"""
-        if True: # opt is None:
+        if True:  # opt is None:
             parser = ParlaiParser(
                 True, True, "Arguments for building a LIGHT world with Starspace"
             )
@@ -92,7 +92,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
 
         self.parlai_datapath = opt["datapath"]
         self.db_path = opt["light_db_file"]
-        #self.db_path = os.path.join(opt["datapath"], "light", "database3.db")
+        # self.db_path = os.path.join(opt["datapath"], "light", "database3.db")
         self.model_path = opt.get("light_model_root")
         self.ldb = ldb
         DBGraphBuilder.__init__(self, ldb)
@@ -126,7 +126,6 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         self.banned_rooms = set()
         self.banned = {}
 
-        
     @staticmethod
     def add_parser_arguments(parser):
         """
@@ -154,8 +153,8 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         parser.add_argument(
             "--light-db-file",
             type=str,
-            #default="/checkpoint/light/data/database3.db",
-            #default="/checkpoint/light/data/merged.db",
+            # default="/checkpoint/light/data/database3.db",
+            # default="/checkpoint/light/data/merged.db",
             default="/scratch/light/data/merged.db",
             help="specific path for light database",
         )
@@ -631,7 +630,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
 
     ##########For best match model###################
     def get_similar_element(self, txt_feats, element_type):
-        """ Given a text feature, and the corresponding Database type
+        """Given a text feature, and the corresponding Database type
         return an DBElement of the DB type"""
         agent_type = None
         banned_items = {}
@@ -734,7 +733,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                     "name_prefix": "the",
                     "surface_type": "in",
                     "classes": {"room"},
-                    "grid_location": grid_loc
+                    "grid_location": grid_loc,
                 },
                 db_id=pos_room.db_id,
             ).node_id
@@ -904,25 +903,27 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                     self.banned[key] = True
             if oid is None:
                 self.banned[key] = True
-                    
+
             key = response["text_candidates"][ind]
-            if self.banned.get(key, 'unassigned') == 'unassigned':
+            if self.banned.get(key, "unassigned") == "unassigned":
                 print("item", key)
                 from six.moves import input
+
                 ok = input("item good? (y/n): ")
-                if ok == 'y':
+                if ok == "y":
                     self.banned[key] = False
-                if ok == 'n':
+                if ok == "n":
                     self.banned[key] = True
                 # save
                 import json
-                with open('/tmp/banned.json', 'w') as outfile:
+
+                with open("/tmp/banned.json", "w") as outfile:
                     json.dump(self.banned, outfile, indent=4)
                 # import pdb; pdb.set_trace()
             if self.banned.get(key, False):
                 ind = ind + 1
                 continue
-            
+
             oid = self.objfeats_to_id(key)
             if oid is not None and oid not in banned_items:
                 obj = self.get_obj_from_id(oid)
@@ -933,9 +934,10 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
 
     def load_banned(self):
         import json
-        with open('/tmp/banned.json') as json_file:
+
+        with open("/tmp/banned.json") as json_file:
             self.banned = json.load(json_file)
-                
+
     def get_contained_characters(self, room_id, num_results=5, banned_characters=[]):
         """ Get prediction of contained characters in given room_id from StarSpace model."""
         if type(room_id) is str and room_id[0] == "f":
@@ -953,7 +955,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         while len(results) < num_results:
             if len(response["text_candidates"]) <= ind:
                 if len(results) == 0:
-                    return [ None ]
+                    return [None]
                 else:
                     return results
             key = response["text_candidates"][ind]
@@ -966,17 +968,19 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             if cind is None:
                 self.banned[key] = True
 
-            if self.banned.get(key, 'unassigned') == 'unassigned':
+            if self.banned.get(key, "unassigned") == "unassigned":
                 print("character", key)
                 from six.moves import input
-                ok = 'y'
+
+                ok = "y"
                 ok = input("character: good? (y/n): ")
-                if ok == 'y':
+                if ok == "y":
                     self.banned[key] = False
-                if ok == 'n':
+                if ok == "n":
                     self.banned[key] = True
                 import json
-                with open('/tmp/banned.json', 'w') as outfile:
+
+                with open("/tmp/banned.json", "w") as outfile:
                     json.dump(self.banned, outfile, indent=4)
                 # import pdb; pdb.set_trace()
             if "wench" in key or self.banned.get(key, False):
@@ -1023,9 +1027,9 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         num_results=5,
         banned_items=[],
     ):
-        """ Given a text description of a non-graph element and a type of
+        """Given a text description of a non-graph element and a type of
         relationship to query, find closest match in database
-        and return model suggestions """
+        and return model suggestions"""
         # TODO: context based query
         element_rel_dict = {
             CONTAINING: [DB_TYPE_OBJ, DB_TYPE_ROOM, DB_TYPE_CHAR],

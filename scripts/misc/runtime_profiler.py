@@ -48,7 +48,7 @@ def main():
 
 def profile_server(sort_type, out, limit):
     """
-        The main wrapper for calling the server and processing the stats for each thread
+    The main wrapper for calling the server and processing the stats for each thread
     """
     yappi.set_clock_type("wall")
     yappi.start()
@@ -63,7 +63,7 @@ def profile_server(sort_type, out, limit):
 
 def print_all(thread, stats, out, limit=None):
     """
-        Writes all data for thread stats to out, with limit number of lines and all other truncated
+    Writes all data for thread stats to out, with limit number of lines and all other truncated
     """
     if stats.empty():
         return

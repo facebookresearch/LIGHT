@@ -43,7 +43,10 @@ class RegistryApplication(tornado.web.Application):
 
     def get_handlers(self, FLAGS, ldb, tornado_settings):
         self.tornado_provider = TornadoPlayerFactory(
-            self.game_instances, FLAGS.hostname, FLAGS.port, given_tornado_settings=tornado_settings
+            self.game_instances,
+            FLAGS.hostname,
+            FLAGS.port,
+            given_tornado_settings=tornado_settings,
         )
         self.router = RuleRouter(
             [Rule(PathMatches(f"/game.*/socket"), self.tornado_provider.app)]
@@ -57,8 +60,8 @@ class RegistryApplication(tornado.web.Application):
 
     def cleanup_games(self):
         """
-            Goes through the game instances, cleaning up any game that does
-            not have a connection in the past 10 minutes
+        Goes through the game instances, cleaning up any game that does
+        not have a connection in the past 10 minutes
         """
         TIMEOUT = 10  # timeout to clear with no players, in minutes
         curr_time = time.time()
@@ -82,11 +85,11 @@ class RegistryApplication(tornado.web.Application):
 
         if world_id is not None and player_id is not None:
             builder = UserWorldBuilder(ldb, player_id=player_id, world_id=world_id)
-            _, graph = builder.get_graph()
-            game = GameInstance(game_id, ldb, g=graph, opt=vars(self.FLAGS))
+            _, world = builder.get_graph()
+            game = GameInstance(game_id, ldb, g=world, opt=vars(self.FLAGS))
         else:
             game = GameInstance(game_id, ldb, opt=vars(self.FLAGS))
-            graph = game.g
+            world = game.world
         game.fill_souls(self.FLAGS, self.model_resources)
 
         self.game_instances[game_id] = game

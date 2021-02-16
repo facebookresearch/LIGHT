@@ -164,7 +164,9 @@ class ShoutEvent(SpeechEvent):
             self.__in_room_view = f'{self.actor_name} shouted "{self.text_content}"'
             self.__self_view = None
         else:
-            self.__in_room_view = f"{self.actor_name} shouted something incomprehensible."
+            self.__in_room_view = (
+                f"{self.actor_name} shouted something incomprehensible."
+            )
             self.__self_view = "You shout something incomprehensible."
         self.__in_room_view = f'{self.actor_name} shouted "{self.text_content}"'
         world.broadcast_to_all_agents(self)  # , exclude_agents=[self.actor])
@@ -588,7 +590,9 @@ class GoEvent(GraphEvent):
         # Trigger the leave event, must be before the move to get correct room
         LeaveEvent(self.actor, [self.target_nodes[0]]).execute(world)
         self.actor.move_to(new_room)
-        ArriveEvent(self.actor, text_content="arrived from " + old_room_view).execute(world)
+        ArriveEvent(self.actor, text_content="arrived from " + old_room_view).execute(
+            world
+        )
         LookEvent(self.actor).execute(world)
 
         # Lose a little bit of energy from moving.
@@ -1013,6 +1017,24 @@ class BlockEvent(GraphEvent):
         return valid_actions
 
 
+# Note, this is the only event we have right now where the actor is
+# an object... This may need cleanup
+class DeleteObjectEvent(TriggeredEvent):
+    """Handles deleting an object node from the graph"""
+
+    def execute(self, world: "World") -> List[GraphEvent]:
+        actor_name = self.actor.get_prefix_view()
+        self.__in_room_view = f"{actor_name} {self.text_content}"
+        g = world.oo_graph
+        g.delete_nodes([self.actor])
+        world.broadcast_to_room(self)
+
+    @proper_caps
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        return self.__in_room_view
+
+
 # TODO examine more death processing. Do we need to update a player status?
 # must check structured_graph and graph_nodes
 class DeathEvent(TriggeredEvent):
@@ -1022,6 +1044,7 @@ class DeathEvent(TriggeredEvent):
         """Save expected views, then message everyone"""
         actor_name = self.actor.get_prefix_view()
         self.__in_room_view = f"{actor_name} died! "
+        self.actor.mark_dying()
 
         # You have to send to the room before death or the dying agent won't get the message
         world.broadcast_to_room(self)
@@ -1215,9 +1238,7 @@ class HitEvent(GraphEvent):
             health = max(0, health - (self.attack - self.defend))
             attack_target.health = health
             if health == 0:
-                # turn off death for now
-                health = 1
-                # DeathEvent(attack_target).execute(world)
+                DeathEvent(attack_target).execute(world)
             else:
                 HealthEvent(
                     attack_target,
@@ -2553,9 +2574,9 @@ class IngestEvent(GraphEvent):
         # Move the object over and broadcast
         fe = ingest_target.food_energy
         self._outcome = "Yum. " if fe > 0 else "Gross! "
-        world.oo_graph.mark_node_for_deletion(ingest_target.node_id)
         if hasattr(world.oo_graph, "void"):
-            ingest_target.force_move_to(world.oo_graph.void)
+            ingest_target.move_to(world.oo_graph.void)
+        world.oo_graph.mark_node_for_deletion(ingest_target.node_id)
 
         world.broadcast_to_room(self)
 
@@ -2563,9 +2584,7 @@ class IngestEvent(GraphEvent):
         self.actor.health = max(self.actor.health + fe, 0)
         new_health_text = world.health(self.actor.node_id)
         if self.actor.health <= 0:
-            # Turn off death for now.
-            health = 1
-            # DeathEvent(self.actor).execute(world)
+            DeathEvent(self.actor).execute(world)
         elif health_text != new_health_text:
             HealthEvent(self.actor, text_content="HealthOnIngestEvent").execute(world)
 
@@ -2673,6 +2692,7 @@ class DrinkEvent(IngestEvent):
     @classmethod
     def can_ingest(cls, object_node: GraphObject) -> bool:
         return object_node.drink
+
 
 class LockableEvent(GraphEvent):
     """Handles locking and unlocking edges and containers with appropriate keys"""
@@ -3264,10 +3284,10 @@ class RewardEvent(GraphEvent):
         agent = self.target_nodes[0]
         self.recipient = agent
         self.__recipient_name = agent.get_prefix_view()
-        if not hasattr(agent, 'xp'):
+        if not hasattr(agent, "xp"):
             agent.xp = 0
             agent.reward_xp = 0
-        if not hasattr(self.actor, 'xp'):
+        if not hasattr(self.actor, "xp"):
             self.actor.xp = 10
             self.actor.reward_xp = 0
         if self.actor.reward_xp > 0:
@@ -3277,7 +3297,7 @@ class RewardEvent(GraphEvent):
             agent.reward_xp += stars / 4.0
             rewards = math.floor(self.actor.reward_xp)
             if rewards == 1:
-                self.__reward_xp = '1 reward'
+                self.__reward_xp = "1 reward"
             else:
                 self.__reward_xp = str(math.floor(self.actor.reward_xp)) + " rewards"
             self.__gain_xp = str(stars)
@@ -3303,7 +3323,9 @@ class RewardEvent(GraphEvent):
                 f"You have {self.__reward_xp} left to give.\n"
             )
         elif viewer == self.recipient:
-            return f"{self.__actor_name} rewarded you! (You gained {self.__gain_xp} XP!!)"
+            return (
+                f"{self.__actor_name} rewarded you! (You gained {self.__gain_xp} XP!!)"
+            )
         else:
             return []
 
@@ -3364,7 +3386,6 @@ class RewardEvent(GraphEvent):
             if agent != actor:
                 valid_actions.append(cls(actor, target_nodes=[agent]))
         return valid_actions
-
 
 
 class HealthEvent(NoArgumentEvent):

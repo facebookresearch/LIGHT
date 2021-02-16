@@ -347,6 +347,13 @@ class OOGraph(object):
         local_nodes = self.get_local_nodes(actor_id)
         return [x.node_id for x in local_nodes]
 
+    def find_nodes_by_name(self, node_name):
+        """
+        Return all nodes that exact match the given node name,
+        if any exist.
+        """
+        return [n for n in self.get_all_nodes() if n.name == node_name]
+
     def desc_to_nodes(self, desc, nearby_node=None, nearbytype=None):
         """Get nodes nearby to a given node from that node's perspective"""
         # TODO the logic of finding the nearby node searchlist and the
@@ -592,7 +599,11 @@ class OOGraph(object):
 
         agents = {}
         for ind, props in entities["character"].items():
-            n = g.add_agent(props["name"], props, uid=str(ind),)
+            n = g.add_agent(
+                props["name"],
+                props,
+                uid=str(ind),
+            )
             agents[int(ind)] = n
 
         objects = {}

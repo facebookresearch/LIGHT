@@ -30,10 +30,8 @@ const createWebSocketUrlFromBrowserUrl = (url) => {
   }
 
   let websocketURL =
-    wsProtocol +
-    "://" +
-    (optionalServerHost || CONFIG.hostname);
-  if (CONFIG.port != '80') {
+    wsProtocol + "://" + (optionalServerHost || CONFIG.hostname);
+  if (CONFIG.port != "80") {
     websocketURL += ":" + CONFIG.port;
   }
   websocketURL += `/game${optionalGameId}/socket`;
@@ -69,16 +67,16 @@ function Setting(props) {
 
 function handleReport(reportedMessage, reportReason) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
-  if (CONFIG.port != '80') {
+  if (CONFIG.port != "80") {
     base_url += ":" + CONFIG.port;
   }
 
   fetch(`${base_url}/report`, {
     method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    credentials: 'same-origin',
+    credentials: "same-origin",
     body: JSON.stringify({
       message: reportedMessage,
       reason: reportReason,
@@ -89,7 +87,7 @@ function handleReport(reportedMessage, reportReason) {
 function Message({ text, caller, actor, isSelf, onReply }) {
   const [isEditMode, setEditMode] = React.useState(false);
   const [isReportMode, setReportMode] = React.useState(false);
-  const [reportReason, setReportReason] = React.useState('');
+  const [reportReason, setReportReason] = React.useState("");
   const [isReported, setReported] = React.useState(false);
 
   let classNames = "message type-dialogue ";
@@ -138,22 +136,25 @@ function Message({ text, caller, actor, isSelf, onReply }) {
         <div>
           <b>Why are you reporting this message?</b>
         </div>
-        <input 
-          className="edit-message" 
-          defaultValue={"Enter reason here"} 
-          value={reportReason} 
+        <input
+          className="edit-message"
+          defaultValue={"Enter reason here"}
+          value={reportReason}
           onChange={(evt) => setReportReason(evt.target.value)}
         />
-        <button type="submit" disabled={reportReason.length == 0} onClick={() => {
-            handleReport(text, reportReason)
+        <button
+          type="submit"
+          disabled={reportReason.length == 0}
+          onClick={() => {
+            handleReport(text, reportReason);
             setReportReason("");
             setReported(true);
             setReportMode(false);
-          }
-        }>
+          }}
+        >
           Report
         </button>
-        <button type="submit" onClick={() => setReportMode(false)} >
+        <button type="submit" onClick={() => setReportMode(false)}>
           Cancel
         </button>
       </div>
@@ -193,10 +194,7 @@ function Message({ text, caller, actor, isSelf, onReply }) {
               title={`Was this offensive or inappropriate? Click to report.`}
               position="top"
             >
-              <i
-                className="fa fa-flag "
-                onClick={() => setReportMode(true)}
-              />
+              <i className="fa fa-flag " onClick={() => setReportMode(true)} />
             </Tooltip>
           </React.Fragment>
         )}
@@ -213,7 +211,6 @@ function get_msg_actor(msg) {
     return msg.actors[0];
   }
 }
-
 
 function Entry({ msg, onReply, agents, selfId }) {
   if (
@@ -264,7 +261,7 @@ function ConnectedApp() {
     );
 
   if (messages.length === 0) {
-    return <LoadingScreen isFull={isFull}/>;
+    return <LoadingScreen isFull={isFull} />;
   }
 
   return (

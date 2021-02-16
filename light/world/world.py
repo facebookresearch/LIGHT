@@ -17,12 +17,15 @@ from light.graph.events.graph_events import (
     ALL_EVENTS_LIST,
     SpawnEvent,
     SystemMessageEvent,
+    DeleteObjectEvent,
     init_safety_classifier,
 )
 from light.graph.events.magic import init_magic
 from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 from light.world.views import WorldViewer
 from light.world.purgatory import Purgatory
+
+from typing import List
 
 
 def check_integrity(f):
@@ -51,7 +54,10 @@ class World(object):
     """
 
     def __init__(
-        self, opt, graph_builder, debug=False,
+        self,
+        opt,
+        graph_builder,
+        debug=False,
     ):
         # TODO re-investigate callbacks during action refactor
         self.callbacks = {}
@@ -845,7 +851,7 @@ class World(object):
             )
             if not isinstance(result, ErrorEvent):
                 break
-            
+
         if isinstance(result, ErrorEvent):
             return result
 
@@ -1018,26 +1024,27 @@ class World(object):
             new_a_id = self.playerid_to_agentid(p_id2)
             self.parse_exec(new_a_id, "look")
 
-    @deprecated
-    def possibly_clean_corpse(self, id):
-        ticks = self.get_prop(id, "death_ticks", 0)
-        self.set_prop(id, "death_ticks", ticks + 1)
-        # After N ticks, we clean up the corpse.
-        if ticks < 20:
-            return
+    def clean_corpses_and_respawn(self) -> List[GraphAgent]:
+        """
+        Clean any corpses that have been lying around for a while,
+        then try to do a respawn for each corpse cleaned.
 
-        agent_desc = self.node_to_desc(id, use_the=True).capitalize()
-        self.broadcast_to_room(
-            {
-                "caller": None,
-                "room_id": self.location(id),
-                "txt": agent_desc + " corpse disintegrates in a puff of magic.\n",
-            },
-            [id],
-        )
-        # Possibly spawn in a new agent
-        self.graph_builder.add_random_new_agent_to_graph(self)
-        self.delete_node(id)
-        # TODO remove direct access to oo_graph property here
-        if id in self.oo_graph.dead_nodes:
-            del self.oo_graph.dead_nodes[id]
+        Return any respawned GraphAgent nodes created like this
+        """
+        dead_nodes = self.oo_graph.get_dead_nodes()
+        cleaned_count = 0
+        for node in dead_nodes:
+            if node.ready_to_clean_corpse():
+                cleaned_count += 1
+                clear_event = DeleteObjectEvent(
+                    actor=node, text_content="corpse disintegrates in a puff of magic."
+                )
+                clear_event.execute(self)
+
+        created = []
+        if self.graph_builder is not None:
+            for _x in range(cleaned_count):
+                new_agent = self.graph_builder.add_random_new_agent_to_graph(self)
+                if new_agent is not None:
+                    created.append(new_agent)
+        return created
