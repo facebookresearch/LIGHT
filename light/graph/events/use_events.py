@@ -24,13 +24,13 @@ class UseEvent(GraphEvent):
         super().__init__(actor, target_nodes, text_content)
         self.post_condition = post_condition
 
+
 class BroadcastMessageEvent(PostconditionEvent):
-    
     def execute(self, world: "World") -> List[GraphEvent]:
         self.messages = self.post_condition["params"]
-        self.__msg_txt = self.messages['self_view']
-        world.broadcast_to_room(self)   
-    
+        self.__msg_txt = self.messages["self_view"]
+        world.broadcast_to_room(self)
+
     @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
@@ -39,8 +39,8 @@ class BroadcastMessageEvent(PostconditionEvent):
         else:
             return None
 
-class CreateEntityEvent(PostconditionEvent):
 
+class CreateEntityEvent(PostconditionEvent):
     def execute(self, world: "World") -> List[GraphEvent]:
         # creation location
         entity_event_type = self.post_condition["params"]["type"]
@@ -57,8 +57,8 @@ class CreateEntityEvent(PostconditionEvent):
         world_graph = world.oo_graph
         event_object = self.post_condition["params"]["object"]
         n = world_graph.add_object(event_object["name"], event_object)
-        n.force_move_to(location) 
-    
+        n.force_move_to(location)
+
     @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
@@ -67,8 +67,8 @@ class CreateEntityEvent(PostconditionEvent):
         else:
             return None
 
-class ModifyAttributeEvent(PostconditionEvent):
 
+class ModifyAttributeEvent(PostconditionEvent):
     def execute(self, world: "World") -> List[GraphEvent]:
         if self.post_condition["params"]["type"] == "in_used_target_item":
             target = self.target_nodes[1]
@@ -99,15 +99,16 @@ class ModifyAttributeEvent(PostconditionEvent):
                     target_nodes=[self.actor, target],
                     text_content="HealthOnHitEvent",
                 ).execute(world)
-    
+
     @proper_caps
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
             return self.__msg_txt
         else:
-            return None      
-            
+            return None
+
+
 class UseEvent(GraphEvent):
     """Handles using an object"""
 
@@ -149,7 +150,7 @@ class UseEvent(GraphEvent):
                     post,
                     self.actor,
                     target_nodes=self.target_nodes,
-                    text_content="CreateEntityEvent",    
+                    text_content="CreateEntityEvent",
                 ).execute(world)
             if post["type"] == "broadcast_message":
                 BroadcastMessageEvent(
