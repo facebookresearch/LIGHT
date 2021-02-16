@@ -37,7 +37,7 @@ from light.graph.events.graph_events import (
     QuestEvent,
     HealthEvent,
     LookEvent,
-    RewardEvent,   
+    RewardEvent,
 )
 
 ALL_EVENTS_LIST: List[Type[GraphEvent]] = [
