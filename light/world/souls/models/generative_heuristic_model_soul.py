@@ -44,7 +44,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
     The PartnerHeuristicModelSoul is a ModelSoul that uses two different
     models for acting and dialogue, and uses a heuristic for keeping track
     of the partner of a given agent (to prevent responding out of turn).
-    
+
     This class represents a port of the initial implementation of a model
     in the LIGHT world, that used to be guided by the npc_models in the days
     before the OOGraph and GraphEvents
@@ -54,7 +54,9 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
 
     @classmethod
     def load_dialog_model(
-        cls, parser, dialog_model_path,
+        cls,
+        parser,
+        dialog_model_path,
     ):
         """
         Load up the dialog model for use with this class
@@ -84,7 +86,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             "-m",
             "internal:light_whoami/generative_rerank",
             "--predictor-model-file",
-            #"/home/ubuntu/data/models/rerank/model",
+            # "/home/ubuntu/data/models/rerank/model",
             "/checkpoint/kshuster/projects/continual_learning/light_whoami/whoami_sweep3b_Tue_Oct_13/943/model",
             "--inference",
             "delayedbeam",
@@ -109,8 +111,8 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             "beam_size": 2,
             "beam_min_length": 20,
         }
-        #dialog_opt['override']['inference'] = 'topk'
-        #dialog_opt['override']['topk'] = 40
+        # dialog_opt['override']['inference'] = 'topk'
+        # dialog_opt['override']['topk'] = 40
         return create_agent(dialog_opt, requireModelExists=True)
 
     @classmethod
@@ -129,10 +131,11 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         parser = ParlaiParser(True, True, "")
 
         dialog_model = cls.load_dialog_model(
-            parser, dialog_model_path,
+            parser,
+            dialog_model_path,
         )
 
-        if act_model_path is not None: 
+        if act_model_path is not None:
             # Load action model
             args = [
                 "-mf",
@@ -154,7 +157,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             action_model_share = action_model.share()
         else:
             action_model_share = None
-            
+
         return {
             "shared_dialog_model": dialog_model.share(),
             "shared_action_model": action_model_share,
@@ -162,7 +165,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
 
     def _init_with_models(self, models) -> None:
         """
-        Initialize required members of this soul for tracking the 
+        Initialize required members of this soul for tracking the
         model and interactions with it.
         """
         self._pending_observations = []
@@ -277,7 +280,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             partner_name = None
 
         quest_txt = None
-        if not hasattr(agent, 'quests') or agent.quests is None:
+        if not hasattr(agent, "quests") or agent.quests is None:
             agent.quests = []
         if len(agent.quests) > 0 and self.conversation_score(partner) > 5:
             quest_text = " " + agent.quests[0]["text"]
@@ -401,7 +404,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             return
 
         quest_txt = None
-        if hasattr(agent, 'quests') or agent.quests is None:
+        if hasattr(agent, "quests") or agent.quests is None:
             agent.quests = []
         if len(agent.quests) > 0 and self.conversation_score(partner) > 5:
             quest_text = " " + agent.quests[0]["text"]
@@ -409,11 +412,11 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         context = "_task_speech\n" + context
 
         # Add knowledge test (commented for now, as it didn't seem to work well)
-        #contexts = context.split('\n')
-        #contexts[-2] += " The milkman is to the south."
-        #context = '\n'.join(contexts); print(context)
-        #context = context.replace('_self_persona ', "_self_persona I believe the milk man is south of here. ")
-        
+        # contexts = context.split('\n')
+        # contexts[-2] += " The milkman is to the south."
+        # context = '\n'.join(contexts); print(context)
+        # context = context.replace('_self_persona ', "_self_persona I believe the milk man is south of here. ")
+
         if obs is not None and obs.text_content == "DEBUG":
             # print debug information instead
             event = SayEvent(agent, target_nodes=[], text_content="DEBUG: " + context)

@@ -29,13 +29,17 @@ def request_username(agent, world):
         is_valid = world.service_strategy.username_is_valid(a["text"])
         if is_valid is not True:
             agent.observe(
-                {"id": "", "text": is_valid,}
+                {
+                    "id": "",
+                    "text": is_valid,
+                }
             )
             a = None
         else:
             # check if contains offensive subword
             bad = world.service_strategy.check_offensive_subwords(
-                world.opt.get("dict_freqs"), a["text"],
+                world.opt.get("dict_freqs"),
+                a["text"],
             )
             if bad is not None and len(bad) > 0:
                 a = None
@@ -45,8 +49,7 @@ def request_username(agent, world):
 
 # ---------- LIGHT Game Overworld -------- #
 class LIGHTBotOverworld(World):
-    """World to handle user entering into the LIGHT chat game
-    """
+    """World to handle user entering into the LIGHT chat game"""
 
     QUICK_REPLY_OPTIONS = ["PLAY", "OPTIONS", "EXIT"]
     TOS_REPLY_OPTIONS = ["AGREE", "DISAGREE", "EXIT"]
@@ -113,15 +116,24 @@ class LIGHTBotOverworld(World):
         random.shuffle(characters)
         if len(characters) == 0:
             self.agent.observe(
-                {"id": "", "text": utils.NO_CHARACTERS_TEXT,}
+                {
+                    "id": "",
+                    "text": utils.NO_CHARACTERS_TEXT,
+                }
             )
         else:
             self.agent.observe(
-                {"id": "", "text": utils.HAS_CHARACTERS_TEXT,}
+                {
+                    "id": "",
+                    "text": utils.HAS_CHARACTERS_TEXT,
+                }
             )
             chars_string = f"You've collected {len(characters)} badges: "
             self.agent.observe(
-                {"id": "", "text": chars_string + "".join(characters),}
+                {
+                    "id": "",
+                    "text": chars_string + "".join(characters),
+                }
             )
 
     def _view_options(self):
@@ -277,7 +289,10 @@ class LIGHTBotOverworld(World):
 
     def _display_onboarding_emoji(self):
         self.agent.observe(
-            {"id": "", "text": random.choice(self.INTRO_EMOJIS) * utils.EMOJI_LENGTH,}
+            {
+                "id": "",
+                "text": random.choice(self.INTRO_EMOJIS) * utils.EMOJI_LENGTH,
+            }
         )
 
     def _display_intro(self):
@@ -294,12 +309,18 @@ class LIGHTBotOverworld(World):
             if data.get("user_name"):  # have played before
                 u_name = data["user_name"]
                 self.agent.observe(
-                    {"id": "", "text": utils.REPEAT_MESSAGE.format(u_name),}
+                    {
+                        "id": "",
+                        "text": utils.REPEAT_MESSAGE.format(u_name),
+                    }
                 )
             else:  # have never played before
                 for message in utils.FIRST_INTRO_MESSAGES:
                     self.agent.observe(
-                        {"id": "", "text": message,}
+                        {
+                            "id": "",
+                            "text": message,
+                        }
                     )
                 if not self._agree_to_tos():
                     return None  # timed out
@@ -395,12 +416,16 @@ class LIGHTBotOnboardWorld(OnboardWorld):
                 return False
             self.agent.data["user_name"] = a["text"]
             self.service_strategy.update_leaderboard(
-                self.agent.id, username=a["text"], score=0,
+                self.agent.id,
+                username=a["text"],
+                score=0,
             )
             self._log("Username has been updated")
 
         # Retrieve score, which is an approximate metric of familiarity
-        lb_stats = self.service_strategy.get_player_leaderboard_stats(self.agent.id,)
+        lb_stats = self.service_strategy.get_player_leaderboard_stats(
+            self.agent.id,
+        )
         self.agent.data["total_score"] = lb_stats["score"]
 
         # Set to 0 if the load was too soon

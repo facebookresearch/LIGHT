@@ -78,7 +78,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
 
     def __init__(self, ldb, debug=True, opt=None):
         """Initializes required models and parameters for this graph builder"""
-        if True: # opt is None:
+        if True:  # opt is None:
             parser = ParlaiParser(
                 True, True, "Arguments for building a LIGHT world with Starspace"
             )
@@ -147,7 +147,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         )
         parser.add_argument(
             "--light-db-file",
-            type=str,            #default="/checkpoint/light/data/database3.db",
+            type=str,  # default="/checkpoint/light/data/database3.db",
             default="/checkpoint/light/data/merged.db",
             help="specific path for light database",
         )
@@ -623,7 +623,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
 
     ##########For best match model###################
     def get_similar_element(self, txt_feats, element_type):
-        """ Given a text feature, and the corresponding Database type
+        """Given a text feature, and the corresponding Database type
         return an DBElement of the DB type"""
         agent_type = None
         banned_items = {}
@@ -726,7 +726,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                     "name_prefix": "the",
                     "surface_type": "in",
                     "classes": {"room"},
-                    "grid_location": grid_loc
+                    "grid_location": grid_loc,
                 },
                 db_id=pos_room.db_id,
             ).node_id
@@ -958,9 +958,9 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         num_results=5,
         banned_items=[],
     ):
-        """ Given a text description of a non-graph element and a type of
+        """Given a text description of a non-graph element and a type of
         relationship to query, find closest match in database
-        and return model suggestions """
+        and return model suggestions"""
         # TODO: context based query
         element_rel_dict = {
             CONTAINING: [DB_TYPE_OBJ, DB_TYPE_ROOM, DB_TYPE_CHAR],

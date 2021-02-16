@@ -24,7 +24,9 @@ class BattleRoyaleSoul(ModelSoul):
     MAIN_LOOP_TIMEOUT = 0.05
 
     def execute_valid_action(self):
-        our_actions = self.world.get_possible_events(self.target_node.node_id, ['go', 'hit'])
+        our_actions = self.world.get_possible_events(
+            self.target_node.node_id, ["go", "hit"]
+        )
         if len(our_actions) == 0:
             return
         action = random.choice(our_actions)

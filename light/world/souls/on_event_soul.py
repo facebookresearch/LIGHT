@@ -139,19 +139,22 @@ class OnEventSoul(ModelSoul):
         event_name = event.__class__.__name__
         # Tell Mission to Other Agent (or not).
         if (
-            ((event_name == "SayEvent" and event.actor != agent)
-            or (event_name == "TellEvent"
-            and event.actor != agent
-            and event.target_nodes[0] == agent))
-            and (self.get_last_interaction_partner(agent) == event.actor.node_id)
-        ):
+            (event_name == "SayEvent" and event.actor != agent)
+            or (
+                event_name == "TellEvent"
+                and event.actor != agent
+                and event.target_nodes[0] == agent
+            )
+        ) and (self.get_last_interaction_partner(agent) == event.actor.node_id):
             about_goals = False
             for words in ["mission", "goal", "quest", "what you want"]:
                 if words in event.text_content:
                     about_goals = True
             other_agent = event.actor
             if self.conversation_score(other_agent) > 5:
-                if random.random() < 0.1 and (other_agent.node_id not in agent.quests[0]["helper_agents"]):
+                if random.random() < 0.1 and (
+                    other_agent.node_id not in agent.quests[0]["helper_agents"]
+                ):
                     about_goals = True
             if about_goals:
                 if self.conversation_score(other_agent) < 5:
@@ -226,7 +229,7 @@ class OnEventSoul(ModelSoul):
     def new_quest(self):
         graph = self.world.oo_graph
         actor = self.target_node
-        if hasattr(self, 'npc_act_model'):
+        if hasattr(self, "npc_act_model"):
             quest = QuestCreator.create_quest(actor, graph, self.npc_act_model)
         else:
             # no model for generating quests
@@ -265,7 +268,7 @@ class OnEventSoul(ModelSoul):
         self.set_interaction_partners_from_event(event)
         self.log_interaction_from_event(event)
         if self.target_node._dying:
-            return # We're dying, don't do any responding.
+            return  # We're dying, don't do any responding.
         self.quest_events(event)
         self.on_events(event)
         self.tell_goal_heuristics(event)
@@ -338,8 +341,11 @@ class OnEventSoul(ModelSoul):
                         return True
 
         # Random movement for NPCs..
-        
-        if random.randint(0, 300) < agent.speed and self.get_last_interaction_partner(agent) is None:
+
+        if (
+            random.randint(0, 300) < agent.speed
+            and self.get_last_interaction_partner(agent) is None
+        ):
             go_events = self.world.get_possible_events(agent_id, use_actions=["go"])
             room = go_events[0].target_nodes[0].get_room()
             if len(go_events) > 0 and not self.is_too_far(agent, room):

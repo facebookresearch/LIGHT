@@ -192,7 +192,23 @@ class TestDatabase(unittest.TestCase):
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             obase_id2 = test.create_base_object("room334")[0]
             ocontent_id2 = test.create_object(
-                None, obase_id2, 0.4, 0.2, 0, 0, 0, 0, 0, "big", {}, None, None, 5, 3, "round", 1
+                None,
+                obase_id2,
+                0.4,
+                0.2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                "big",
+                {},
+                None,
+                None,
+                5,
+                3,
+                "round",
+                1,
             )[0]
             self.assert_sqlite_row_equal(
                 {
@@ -861,7 +877,9 @@ class TestDatabase(unittest.TestCase):
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player0 = test.create_user("test")[0]
             test.set_autosave(
-                json.dumps(world_dict), player0, curr_time,
+                json.dumps(world_dict),
+                player0,
+                curr_time,
             )
             autosave = test.get_autosave(player0)
         self.assert_sqlite_row_equal(
@@ -890,14 +908,20 @@ class TestDatabase(unittest.TestCase):
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             player0 = test.create_user("test")[0]
             test.set_autosave(
-                json.dumps(world_dict), player0, curr_time,
+                json.dumps(world_dict),
+                player0,
+                curr_time,
             )
             second_time = time.ctime(time.time())
             world_dict["dimensions"]["height"] = 10
             test.set_autosave(
-                json.dumps(world_dict), player0, second_time,
+                json.dumps(world_dict),
+                player0,
+                second_time,
             )
-            autosave = test.get_autosave(player0,)
+            autosave = test.get_autosave(
+                player0,
+            )
         self.assertEqual(autosave["timestamp"], second_time)
         self.assertEqual(json.loads(autosave["world_dump"])["dimensions"]["height"], 10)
 
@@ -1327,9 +1351,9 @@ class TestDatabase(unittest.TestCase):
 
     def test_load_data(self):
         """
-          Test if pickle files can be successfully loaded into the database.
-          Creates temporary pickle files and attempts to load them.
-          """
+        Test if pickle files can be successfully loaded into the database.
+        Creates temporary pickle files and attempts to load them.
+        """
         enviro_data = {}
         enviro_data["objects"] = {
             0: {

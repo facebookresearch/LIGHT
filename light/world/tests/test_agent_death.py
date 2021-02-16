@@ -16,6 +16,7 @@ from light.graph.elements.graph_nodes import TICKS_TO_CLEAN_CORPSE
 # Magic number to ensure we wait more than the expected ticks to clean a corpse
 ENOUGH_EXTRA_TICKS_TO_ENSURE_CORPSE_CLEANUP = 20
 
+
 def async_test(f):
     def wrapper(*args, **kwargs):
         coro = f
@@ -24,6 +25,7 @@ def async_test(f):
         loop.run_until_complete(future)
 
     return wrapper
+
 
 class TestInteractionLoggers(unittest.TestCase):
     """Unit tests for Interaction Loggers"""
@@ -37,12 +39,14 @@ class TestInteractionLoggers(unittest.TestCase):
         await asyncio.sleep(0.1)
         loop = asyncio.get_running_loop()
         opt = {}
-        opt["load_map"] = os.path.join(LIGHT_DIR, 'scripts/examples/complex_world.json')
+        opt["load_map"] = os.path.join(LIGHT_DIR, "scripts/examples/complex_world.json")
         world_builder = MapJsonBuilder("", debug=False, opt=opt)
         g, world = world_builder.get_graph()
         purgatory = world.purgatory
         purgatory.register_filler_soul_provider(
-            "battle", BattleRoyaleSoul, lambda: [{}],
+            "battle",
+            BattleRoyaleSoul,
+            lambda: [{}],
         )
         for empty_agent in world.oo_graph.agents.values():
             purgatory.fill_soul(empty_agent)
@@ -55,7 +59,7 @@ class TestInteractionLoggers(unittest.TestCase):
             start_time = time.time()
             while time.time() - start_time < max_time:
                 await asyncio.sleep(0.1)
-        
+
         # run some steps
         await run_some_time(2)
         # some agents definitely should have died
@@ -67,10 +71,9 @@ class TestInteractionLoggers(unittest.TestCase):
             empty_agent = world_builder.force_add_agent(world)
             purgatory.fill_soul(empty_agent)
 
-        
         self.assertTrue(len(g.agents) == current_agents + 20)
         current_agents += 20
-        
+
         # run some steps
         await run_some_time(2)
 

@@ -71,7 +71,7 @@ def convert_dict_to_node(obj, world):
 
 def read_event_logs(event_file):
     """
-        Parses an event file, returning the read file in a buffer
+    Parses an event file, returning the read file in a buffer
     """
     buffer = []
     with open(event_file, "r") as event_json_file:

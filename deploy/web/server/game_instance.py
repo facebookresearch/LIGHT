@@ -97,16 +97,24 @@ class GameInstance:
     """
 
     def __init__(
-        self, game_id, ldb, g=None, opt=None, 
+        self,
+        game_id,
+        ldb,
+        g=None,
+        opt=None,
     ):
         if g is None:
-            if opt['builder_model'] is not None:
+            if opt["builder_model"] is not None:
                 _, world = StarspaceBuilder(
-                    ldb, debug=False, opt=opt,
+                    ldb,
+                    debug=False,
+                    opt=opt,
                 ).get_graph()  # TODO: what are the args that are needed
                 self.world = world
             else:
-                opt['load_map'] = os.path.expanduser('~/LIGHT/scripts/examples/complex_world.json')
+                opt["load_map"] = os.path.expanduser(
+                    "~/LIGHT/scripts/examples/complex_world.json"
+                )
                 world_builder = MapJsonBuilder("", debug=False, opt=opt)
                 _, self.world = world_builder.get_graph()
         else:
@@ -127,10 +135,12 @@ class GameInstance:
                 GenerativeHeuristicModelSoul,
                 lambda: [model_resources["shared_model_content"]],
             )
-        if model_resources.get('rpg_model') is not None:
-            purgatory.register_shared_args('rpg_model', model_resources['rpg_model'])
-        if model_resources.get('shared_action_model') is not None:
-            purgatory.register_shared_args('generic_act_model', model_resources['generic_act_model'])
+        if model_resources.get("rpg_model") is not None:
+            purgatory.register_shared_args("rpg_model", model_resources["rpg_model"])
+        if model_resources.get("shared_action_model") is not None:
+            purgatory.register_shared_args(
+                "generic_act_model", model_resources["generic_act_model"]
+            )
         for empty_agent in self.world.oo_graph.agents.values():
             purgatory.fill_soul(empty_agent)
 

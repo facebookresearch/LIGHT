@@ -30,7 +30,7 @@ class BaseSoul(Soul):
         super().__init__(target_node, world)
         self.target_node._last_interaction_partner_id = None
         self.reset_interaction_history(self.target_node)
-        
+
     def get_last_interaction_partner(self, node=None):
         if node == None:
             node = self.target_node
@@ -206,7 +206,6 @@ class BaseSoul(Soul):
             turn_id = current_turn_id
         return txt + dtxt
 
-
     @classmethod
     def load_generic_act_model(cls, generic_act_model_file):
         """
@@ -236,9 +235,9 @@ class BaseSoul(Soul):
         print("[ Creating generic act model ... ]")
         action_model = create_agent(act_opt, requireModelExists=True)
         return action_model
-        
-    ## ----- ROLE PLAYING SCORE FUNCTIONS BELOW        
-        
+
+    ## ----- ROLE PLAYING SCORE FUNCTIONS BELOW
+
     @classmethod
     def load_roleplaying_score_model(cls, roleplaying_score_model_file):
         """
@@ -274,7 +273,6 @@ class BaseSoul(Soul):
         # override eval step here
         roleplaying_score_model.eval_step = roleplaying_score_model.eval_step_scoresonly
         return roleplaying_score_model
-
 
     def too_much_string_overlap(self, s1, s2):
         """
@@ -364,7 +362,7 @@ class BaseSoul(Soul):
                 if not hasattr(agent, "xp"):
                     agent.xp = 0
                     agent.reward_xp = 0
-                    
+
                 if agent2_id not in agent._agent_interactions:
                     agent._agent_interactions[agent2_id] = 0
 
