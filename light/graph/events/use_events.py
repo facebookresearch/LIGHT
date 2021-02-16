@@ -1,17 +1,117 @@
 from light.graph.events.base import (
     GraphEvent,
     ErrorEvent,
+    TriggeredEvent,
     ProcessedArguments,
     proper_caps,
 )
 
 from light.graph.events.graph_events import DeathEvent
 
-from light.graph.elements.graph_nodes import GraphAgent, GraphNode, GraphObject
+from light.graph.elements.graph_nodes import (
+    GraphAgent,
+    GraphNode,
+    GraphObject
+)
 
 from typing import Union, List, Optional
 
+class PostconditionEvent(TriggeredEvent):
 
+    def __init__(
+        self,
+        post_condition,
+        actor: GraphAgent,
+        target_nodes: Optional[List[GraphNode]] = None,
+        text_content: Optional[str] = None,
+    ):
+        super().__init__(actor, target_nodes, text_content)
+        self.post_condition = post_condition
+
+class BroadcastMessageEvent(PostconditionEvent):
+    
+    def execute(self, world: "World") -> List[GraphEvent]:
+        self.messages = self.post_condition["params"]
+        self.__msg_txt = self.messages['self_view']
+        world.broadcast_to_room(self)   
+    
+    @proper_caps
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        if viewer == self.actor:
+            return self.__msg_txt
+        else:
+            return None
+
+class CreateEntityEvent(PostconditionEvent):
+
+    def execute(self, world: "World") -> List[GraphEvent]:
+        # creation location
+        entity_event_type = self.post_condition["params"]["type"]
+
+        if entity_event_type == "in_used_item":
+            location = self.target_nodes[0]
+        if entity_event_type == "in_used_target_item":
+            location = self.target_nodes[1]
+        if entity_event_type == "in_room":
+            location = self.target_nodes[1].get_room()
+        if entity_event_type == "in_actor":
+            location = self.actor
+
+        world_graph = world.oo_graph
+        event_object = self.post_condition["params"]["object"]
+        n = world_graph.add_object(event_object["name"], event_object)
+        n.force_move_to(location) 
+    
+    @proper_caps
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        if viewer == self.actor:
+            return self.__msg_txt
+        else:
+            return None
+
+class ModifyAttributeEvent(PostconditionEvent):
+
+    def execute(self, world: "World") -> List[GraphEvent]:
+        if self.post_condition["params"]["type"] == "in_used_target_item":
+            target = self.target_nodes[1]
+
+        key = self.post_condition["params"]["key"]
+        value = self.post_condition["params"]["value"]
+
+        if value.startswith("+"):
+            value = float(value[1:])
+            setattr(target, key, getattr(target, key) + value)
+        elif value.startswith("-"):
+            value = -float(value[1:])
+            setattr(target, key, getattr(target, key) + value)
+        elif value.startswith("="):
+            value = float(value[1:])
+            setattr(target, key, value)
+        else:
+            setattr(target, key, value)
+        if key == "health":
+            if target.health < 0:
+                target.health = 0
+            health = target.health
+            if health == 0:
+                DeathEvent(target).execute(world)
+            else:
+                HealthEvent(
+                    target,
+                    target_nodes=[self.actor, target],
+                    text_content="HealthOnHitEvent",
+                ).execute(world)
+    
+    @proper_caps
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        if viewer == self.actor:
+            return self.__msg_txt
+        else:
+            return None      
+            
 class UseEvent(GraphEvent):
     """Handles using an object"""
 
@@ -39,64 +139,29 @@ class UseEvent(GraphEvent):
                 pre_met = False
         return pre_met
 
-    def modify_attribute(self, post, world):
-        if post["params"]["type"] == "in_used_target_item":
-            target = self.target_nodes[1]
-
-        key = post["params"]["key"]
-        value = post["params"]["value"]
-
-        if value.startswith("+"):
-            value = float(value[1:])
-            setattr(target, key, getattr(target, key) + value)
-        elif value.startswith("-"):
-            value = -float(value[1:])
-            setattr(target, key, getattr(target, key) + value)
-        elif value.startswith("="):
-            value = float(value[1:])
-            setattr(target, key, value)
-        else:
-            setattr(target, key, value)
-        if key == "health":
-            if target.health < 0:
-                target.health = 0
-            health = target.health
-            if health == 0:
-                DeathEvent(target).execute(world)
-            else:
-                HealthEvent(
-                    target,
-                    target_nodes=[self.actor, target],
-                    text_content="HealthOnHitEvent",
-                ).execute(world)
-
-    def create_entity(self, post, world):
-        # creation location
-        if post["params"]["type"] == "in_used_item":
-            location = self.target_nodes[0]
-        if post["params"]["type"] == "in_used_target_item":
-            location = self.target_nodes[1]
-        if post["params"]["type"] == "in_room":
-            location = self.target_nodes[1].get_room()
-        if post["params"]["type"] == "in_actor":
-            location = self.actor
-        g = world.oo_graph
-        obj = post["params"]["object"]
-        n = g.add_object(obj["name"], obj)
-        n.force_move_to(location)
-
-    def broadcast_message(self, post, world):
-        self.messages = post["params"]
-        world.broadcast_to_room(self)
-
     def execute_post(self, posts, world):
         for post in posts:
             if post["type"] == "modify_attribute":
-                self.modify_attribute(post, world)
+                ModifyAttributeEvent(
+                    post,
+                    self.actor,
+                    target_nodes=self.target_nodes,
+                    text_content="ModifyAttributeEvent",
+                ).execute(world)
             if post["type"] == "create_entity":
-                self.create_entity(post, world)
+                CreateEntityEvent(
+                    post,
+                    self.actor,
+                    target_nodes=self.target_nodes,
+                    text_content="CreateEntityEvent",    
+                ).execute(world)
             if post["type"] == "broadcast_message":
-                self.broadcast_message(post, world)
+                BroadcastMessageEvent(
+                    post,
+                    self.actor,
+                    target_nodes=self.target_nodes,
+                    text_content="BroadcastMessageEvent",
+                ).execute(world)
 
     def on_use(self, world):
         use_node = self.target_nodes[0]
@@ -114,13 +179,15 @@ class UseEvent(GraphEvent):
                 self.execute_post(post, world)
                 break
         if not self.found_use:
-            self.broadcast_message(
+            BroadcastMessageEvent(
                 {
                     "type": "broadcast_message",
                     "params": {"self_view": "Nothing special seems to happen."},
                 },
-                world,
-            )
+                self.actor,
+                target_nodes=None,
+                text_content="BroadcastMessageEvent",
+            ).execute(world)
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
