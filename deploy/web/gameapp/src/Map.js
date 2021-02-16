@@ -14,52 +14,52 @@ import L from "leaflet";
 // });
 
 const iconPerson = new L.Icon({
-	iconUrl: require("./knight.png"),
-	iconRetinaUrl: require("./knight.png"),
-	iconSize: [24, 24],
-	iconAnchor: [14, 24],
-	popupAnchor: null,
-	shadowUrl: null,
-	shadowSize: null,
-	popupAnchor: [0, -36],
-	shadowAnchor: null,
-	className: "custom-icon",
+  iconUrl: require("./knight.png"),
+  iconRetinaUrl: require("./knight.png"),
+  iconSize: [24, 24],
+  iconAnchor: [14, 24],
+  popupAnchor: null,
+  shadowUrl: null,
+  shadowSize: null,
+  popupAnchor: [0, -36],
+  shadowAnchor: null,
+  className: "custom-icon",
 });
 
 const position = [-0.097, 0.099];
 
 export default () => {
-	const [markers, setMarkers] = React.useState([]);
+  const [markers, setMarkers] = React.useState([]);
 
-	const addMarker = (e) => {
-		setMarkers([e.latlng]);
-	};
+  const addMarker = (e) => {
+    setMarkers([e.latlng]);
+  };
 
-	return (
-		<Map
-			center={position}
-			zoom={13}
-			touchZoom={false}
-			scrollWheelZoom={false}
-			doubleClickZoom={false}
-			zoomControl={false}
-			attributionControl={false}
-			onClick={addMarker}
-		>
-			<DungeonLayer
-				// url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-				attribution={null}
-			/>
-			<Marker position={position} icon={iconPerson}>
-				<Popup>You are here!</Popup>
-			</Marker>
-			{markers.map((position, idx) => (
-				<Marker key={`marker-${idx}`} position={position}>
-					<Popup>
-						<span>Traveling here...</span>
-					</Popup>
-				</Marker>
-			))}
-		</Map>
-	);
+  return (
+    <Map
+      center={position}
+      zoom={13}
+      touchZoom={false}
+      scrollWheelZoom={false}
+      doubleClickZoom={false}
+      zoomControl={false}
+      attributionControl={false}
+      onClick={addMarker}
+    >
+      <DungeonLayer
+        // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution={null}
+      />
+      <Marker position={position} icon={iconPerson}>
+        <Popup>You are here!</Popup>
+      </Marker>
+      {markers.map((position, idx) => (
+        <Marker key={`marker-${idx}`} position={position}>
+          <Popup>
+            <span>Traveling here...</span>
+          </Popup>
+        </Marker>
+      ))}
+    </Map>
+  );
 };

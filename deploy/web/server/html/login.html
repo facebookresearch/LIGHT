@@ -1,12 +1,12 @@
 <html>
-	<body>
-		<form action="/login?next={{next}}" method="post">
-			Name:<input type="text" name="name" /> Password:
-			<input type="text" name="password" />
-			<input type="submit" value="Sign in" />
-		</form>
-		<form action="/auth/fblogin?next={{next}}" method="get">
-			<input type="submit" value="Sign In With Facebook" />
-		</form>
-	</body>
+  <body>
+    <form action="/login?next={{next}}" method="post">
+      Name:<input type="text" name="name" /> Password:
+      <input type="text" name="password" />
+      <input type="submit" value="Sign in" />
+    </form>
+    <form action="/auth/fblogin?next={{next}}" method="get">
+      <input type="submit" value="Sign In With Facebook" />
+    </form>
+  </body>
 </html>
