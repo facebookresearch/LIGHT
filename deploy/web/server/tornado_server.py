@@ -386,15 +386,7 @@ class LoginHandler(BaseHandler):
         self.password = password
 
     def get(self):
-<<<<<<< HEAD
-<<<<<<< HEAD
-        self.render(here + "/html/login.html", next=self.get_argument("next", u"/"))
-=======
-        self.render(here + "/login.html", next=self.get_argument("next", "/"))
->>>>>>> d19f2cb87d973df94f0fd3b3f48b21327b14c267
-=======
         self.render(here + "/html/login.html", next=self.get_argument("next", "/"))
->>>>>>> master
         self.next = next
 
     def post(self):
@@ -457,17 +449,8 @@ class LoginHandler(BaseHandler):
 class LogoutHandler(BaseHandler):
     def get(self):
         self.clear_cookie("user")
-<<<<<<< HEAD
-<<<<<<< HEAD
-        self.redirect(u"/bye")
-=======
-        self.redirect("/login")
-
->>>>>>> d19f2cb87d973df94f0fd3b3f48b21327b14c267
-=======
         self.redirect("/bye")
 
->>>>>>> master
 
 class ReportHandler(BaseHandler):
     def post(self):

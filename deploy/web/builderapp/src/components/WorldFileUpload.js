@@ -3,36 +3,36 @@ import { Redirect } from "react-router-dom";
 import { MenuItem } from "@blueprintjs/core";
 
 function WorldFileUpload({ setPopover }) {
-  const inputRef = React.useRef();
-  const [file, setFile] = React.useState(undefined);
-  return (
-    <>
-      <input
-        onChange={(e) => {
-          setFile(undefined);
-          const fileReader = new FileReader();
-          fileReader.onload = function (event) {
-            setFile(JSON.parse(event.target.result));
-          };
-          const file = e.target.files[0];
-          fileReader.readAsText(file);
-          setPopover(false);
-        }}
-        type="file"
-        ref={inputRef}
-        style={{ display: "none" }}
-      />
-      {file && (
-        <Redirect to={{ pathname: "/world_builder", state: { data: file } }} />
-      )}
-      <MenuItem
-        icon="upload"
-        onClick={() => inputRef.current.click()}
-        text="Upload File"
-        shouldDismissPopover={false}
-      />
-    </>
-  );
+	const inputRef = React.useRef();
+	const [file, setFile] = React.useState(undefined);
+	return (
+		<>
+			<input
+				onChange={(e) => {
+					setFile(undefined);
+					const fileReader = new FileReader();
+					fileReader.onload = function (event) {
+						setFile(JSON.parse(event.target.result));
+					};
+					const file = e.target.files[0];
+					fileReader.readAsText(file);
+					setPopover(false);
+				}}
+				type="file"
+				ref={inputRef}
+				style={{ display: "none" }}
+			/>
+			{file && (
+				<Redirect to={{ pathname: "/world_builder", state: { data: file } }} />
+			)}
+			<MenuItem
+				icon="upload"
+				onClick={() => inputRef.current.click()}
+				text="Upload File"
+				shouldDismissPopover={false}
+			/>
+		</>
+	);
 }
 
 export default WorldFileUpload;

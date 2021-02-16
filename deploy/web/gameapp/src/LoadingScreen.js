@@ -14,30 +14,30 @@ function LoadingScreen(isFull) {
 		}
 	}, [isTimedOut, setTimedOut]);
 
-  let msg = <span></span>;
-  if (isFull) {
-    const builder_url =
-      window.location.protocol + "//" + window.location.host + "/builder/";
-    msg = (
-      <p>
-        Sorry, the base world is filled with players right now, you'll need to
-        return later... Or, create your own world and share it with friends
-        using the World Builder.
-        <br />
-        <a href={builder_url} rel="noopener noreferrer" target="_blank">
-          Go To World Builder.
-        </a>
-      </p>
-    );
-  } else if (isTimedOut) {
-    msg = (
-      <span>
-        It's been {TIMEOUT_SECONDS} seconds, there's likely a server issue.
-      </span>
-    );
-  } else {
-    msg = <span>Hang tight. You are entering a new world...</span>;
-  }
+	let msg = <span></span>;
+	if (isFull) {
+		const builder_url =
+			window.location.protocol + "//" + window.location.host + "/builder/";
+		msg = (
+			<p>
+				Sorry, the base world is filled with players right now, you'll need to
+				return later... Or, create your own world and share it with friends
+				using the World Builder.
+				<br />
+				<a href={builder_url} rel="noopener noreferrer" target="_blank">
+					Go To World Builder.
+				</a>
+			</p>
+		);
+	} else if (isTimedOut) {
+		msg = (
+			<span>
+				It's been {TIMEOUT_SECONDS} seconds, there's likely a server issue.
+			</span>
+		);
+	} else {
+		msg = <span>Hang tight. You are entering a new world...</span>;
+	}
 
 	return (
 		<div

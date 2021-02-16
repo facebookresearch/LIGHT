@@ -10,7 +10,7 @@ import { cloneDeep, isEmpty } from "lodash";
 import { EDGE_TYPES } from "./EdgeTypes";
 
 const BASE_URL =
-  CONFIG.port != "80" ? `${CONFIG.host}:${CONFIG.port}` : CONFIG.host;
+	CONFIG.port != "80" ? `${CONFIG.host}:${CONFIG.port}` : CONFIG.host;
 
 function ListWorldsOverlay({ isOverlayOpen, setIsOverlayOpen }) {
 	const classes = classNames(Classes.CARD, Classes.ELEVATION_4);
@@ -51,17 +51,17 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
 	const { loading, result, reload } = useAPI(CONFIG, `/worlds/`);
 	const [upload, setUpload] = React.useState(undefined);
 
-  const deleteWorld = async (id) => {
-    const res = await fetch(`${BASE_URL}/builder/world/delete/${id}`, {
-      method: "DELETE",
-    });
-  };
+	const deleteWorld = async (id) => {
+		const res = await fetch(`${BASE_URL}/builder/world/delete/${id}`, {
+			method: "DELETE",
+		});
+	};
 
-  const getAutosave = async () => {
-    const res = await fetch(`${BASE_URL}/builder/world/autosave/`, {
-      method: "GET",
-    });
-    const data = await res.json();
+	const getAutosave = async () => {
+		const res = await fetch(`${BASE_URL}/builder/world/autosave/`, {
+			method: "GET",
+		});
+		const data = await res.json();
 
 		// Mission accomplished!
 		AppToaster.show({
@@ -175,13 +175,13 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
 			timeout: 10000,
 		});
 
-    const res = await fetch(`${BASE_URL}/builder/world/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await res.json();
+		const res = await fetch(`${BASE_URL}/builder/world/${id}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+		const data = await res.json();
 
 		// Construct the 3 parts of state we need
 		const dat = {

@@ -15,22 +15,22 @@ const MARGIN = 24;
  * rather than trying to suggest based on all of them.
  */
 function get_neighbor(j, i, state) {
-  let otherTile = state.getTileAt(j - 1, i, state.currFloor);
-  if (otherTile && !isNaN(otherTile.room)) {
-    return otherTile.room;
-  }
-  otherTile = state.getTileAt(j + 1, i, state.currFloor);
-  if (otherTile && !isNaN(otherTile.room)) {
-    return otherTile.room;
-  }
-  otherTile = state.getTileAt(j, i - 1, state.currFloor);
-  if (otherTile && !isNaN(otherTile.room)) {
-    return otherTile.room;
-  }
-  otherTile = state.getTileAt(j, i + 1, state.currFloor);
-  if (otherTile && !isNaN(otherTile.room)) {
-    return otherTile.room;
-  }
+	let otherTile = state.getTileAt(j - 1, i, state.currFloor);
+	if (otherTile && !isNaN(otherTile.room)) {
+		return otherTile.room;
+	}
+	otherTile = state.getTileAt(j + 1, i, state.currFloor);
+	if (otherTile && !isNaN(otherTile.room)) {
+		return otherTile.room;
+	}
+	otherTile = state.getTileAt(j, i - 1, state.currFloor);
+	if (otherTile && !isNaN(otherTile.room)) {
+		return otherTile.room;
+	}
+	otherTile = state.getTileAt(j, i + 1, state.currFloor);
+	if (otherTile && !isNaN(otherTile.room)) {
+		return otherTile.room;
+	}
 
 	return undefined;
 }
