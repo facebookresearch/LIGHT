@@ -71,7 +71,6 @@ class ModelSoul(BaseSoul):
                 traceback.print_exc()
                 print("Reaping...")
                 self.reap()
-            
 
         self._main_loop = asyncio.create_task(_run_main_logic_forever())
 

@@ -15,8 +15,7 @@ from light.world.world import World
 
 
 class ExternalMapJsonBuilder(DBGraphBuilder):
-    """Loads maps exported from the World Builder UI Json Format
-    """
+    """Loads maps exported from the World Builder UI Json Format"""
 
     def __init__(self, ldb, debug, opt):
         self.db = ldb
@@ -24,7 +23,7 @@ class ExternalMapJsonBuilder(DBGraphBuilder):
         self._no_npc_models = True
 
     def get_graph(self):
-        g = OOGraph.from_worldbuilder_json(self.opt['load_map'])
+        g = OOGraph.from_worldbuilder_json(self.opt["load_map"])
         world = World(self.opt, self)
         world.oo_graph = g
         return g, world

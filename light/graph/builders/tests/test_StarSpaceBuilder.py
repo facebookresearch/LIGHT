@@ -42,7 +42,9 @@ class TestStarspaceBuilder(unittest.TestCase):
         parlai_datapath = os.path.join(parser.parlai_home, "data")
         ldb = LIGHTDatabase(self.dbpath)
         model_dir = os.path.join(parlai_datapath, "models", "light", "")
-        self.testBuilder = StarspaceBuilder(ldb,)
+        self.testBuilder = StarspaceBuilder(
+            ldb,
+        )
         self.testGraph, _ = self.testBuilder.get_graph()
 
     def test_arg_parser(self):

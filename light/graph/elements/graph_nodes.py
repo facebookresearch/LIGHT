@@ -133,10 +133,10 @@ class GraphNode(object):
             props = {}
         self._props = props.copy()
 
-        if 'contain_size' in self._props and self._props['contain_size'] is None:
-            del self._props['contain_size']
-        if 'size' in self._props and self._props['size'] is None:
-            del self._props['size']
+        if "contain_size" in self._props and self._props["contain_size"] is None:
+            del self._props["contain_size"]
+        if "size" in self._props and self._props["size"] is None:
+            del self._props["size"]
 
         # TODO perhaps these should be edges rather than special cases?
         self.container_node = None
@@ -181,7 +181,11 @@ class GraphNode(object):
     @classmethod
     def from_json_dict(cls, input_dict):
         """Init this node from a json encoding of the original node"""
-        node = cls(input_dict.get("node_id", -1), input_dict["name"], props=input_dict,)
+        node = cls(
+            input_dict.get("node_id", -1),
+            input_dict["name"],
+            props=input_dict,
+        )
         if "container_node" in input_dict:
             node._container_id = input_dict["container_node"]["target_id"]
         if "contained_nodes" in input_dict:
@@ -391,7 +395,7 @@ class GraphNode(object):
         Return True if this is a corpse that is ready to be removed,
         False otherwise. Increment death ticks if unripe corpse.
         """
-        if self.get_prop('dead') is True:
+        if self.get_prop("dead") is True:
             if self._death_ticks > TICKS_TO_CLEAN_CORPSE:
                 return True
             self._death_ticks += 1
@@ -440,8 +444,8 @@ class GraphRoom(GraphNode):
     def __init__(self, node_id, name, props=None, db_id=None):
         super().__init__(node_id, name, props, db_id)
         self.room = True
-        if props is not None and 'desc' not in props:
-            self.desc = props.get('description', '')
+        if props is not None and "desc" not in props:
+            self.desc = props.get("description", "")
         self.extra_desc = self._props.get("extra_desc", self.desc)
         self.name_prefix = self._props.get("name_prefix", "the")
         self.surface_type = self._props.get("surface_type", "in")
@@ -601,7 +605,7 @@ class GraphAgent(GraphNode):
         if self.on_events is None:
             self.on_events = []
         self.quests = self._props.get("quests", [])
-        self.mission = self._props.get("mission", '')
+        self.mission = self._props.get("mission", "")
 
         # Game properties to track for this agent, TODO move to other class?
         self._human = False
@@ -787,20 +791,27 @@ class GraphObject(GraphNode):
         self.dead = self._props.get("dead", False)
         self.on_use = self._props.get("on_use", None)
         self.container = self._props.get("container", False)
-        if self._props.get("is_container", False) or self._props.get("is_surface", False):
+        if self._props.get("is_container", False) or self._props.get(
+            "is_surface", False
+        ):
             self.container = True
         self.surface_type = self._props.get("surface_type", "on")
-        if 'is_surface' in self._props:
+        if "is_surface" in self._props:
             if self._props.get("is_surface") == 1.0:
-                self.surface_type = 'on'
+                self.surface_type = "on"
             else:
-                self.surface_type = 'in'
-        self.gettable = self._props.get("gettable", self._props.get("is_gettable", True))
-        self.wearable = self._props.get("wearable", self._props.get("is_wearable", False))
-        self.wieldable = self._props.get("wieldable", self._props.get("is_weapon", False))
+                self.surface_type = "in"
+        self.gettable = self._props.get(
+            "gettable", self._props.get("is_gettable", True)
+        )
+        self.wearable = self._props.get(
+            "wearable", self._props.get("is_wearable", False)
+        )
+        self.wieldable = self._props.get(
+            "wieldable", self._props.get("is_weapon", False)
+        )
         self.classes = set(self._props.get("classes", {"object"}))
         self.equipped = self._props.get("equipped", None)
-
 
         self.contain_size = self._props.get(
             "contain_size",

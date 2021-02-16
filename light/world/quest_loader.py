@@ -125,11 +125,11 @@ class QuestCreator:
 
     def score_agent(actor, agent):
         score = -QuestCreator.distance(actor, agent)
-        if (abs(score) < 0.0001):
+        if abs(score) < 0.0001:
             # Don't want a too easy task that's in the same room usually.
-            score -=2
+            score -= 2
         return score
-        
+
     def score_object(actor, obj):
         return -QuestCreator.distance(actor, obj)
 

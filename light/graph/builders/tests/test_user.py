@@ -53,13 +53,19 @@ class TestWorldGraphBuilder(unittest.TestCase):
             ]
             cbase_id = test.create_base_character("troll")[0]
             self.charID = test.create_character(
-                "troll under the bridge", cbase_id, "Male", "Tall",
+                "troll under the bridge",
+                cbase_id,
+                "Male",
+                "Tall",
             )[0]
             self.charID2 = test.create_character(
                 "troll under the bridge2", cbase_id, "Female", "Short"
             )[0]
             self.charID3 = test.create_character(
-                "troll under the bridge3", cbase_id, "Male", "Tall",
+                "troll under the bridge3",
+                cbase_id,
+                "Male",
+                "Tall",
             )[0]
             self.obase_id = test.create_base_object("room4")[0]
             self.objID = test.create_object(
@@ -104,7 +110,7 @@ class TestWorldGraphBuilder(unittest.TestCase):
 
     def test_builder_adds_random_agent_to_graph_adds_another_to_some_room(self):
         """
-            Test that the add_random_new_agent_to_graph method will add new agents
+        Test that the add_random_new_agent_to_graph method will add new agents
         """
         dbid_to_g = {val: key for key, val in self.graphBuilder.roomid_to_db.items()}
         gRoomId = dbid_to_g[self.roomID]

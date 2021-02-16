@@ -88,7 +88,9 @@ class TestRegistryApp(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = RegistryApplication(self.FLAGS, self.db, {}, tornado_settings=TEST_TORNADO_SETTINGS)
+        app = RegistryApplication(
+            self.FLAGS, self.db, {}, tornado_settings=TEST_TORNADO_SETTINGS
+        )
         app.listen(PORT)
         return app
 
@@ -98,7 +100,9 @@ class TestRegistryApp(AsyncHTTPTestCase):
         headers = {"Connection": "Upgrade", "Upgrade": "websocket"}
         with self.assertRaises(httpclient.HTTPClientError) as cm:
             response = yield self.client.fetch(
-                f"{URL}/game/socket", method="GET", headers=headers,
+                f"{URL}/game/socket",
+                method="GET",
+                headers=headers,
             )
         # Need to upgrade in response
         self.assertEqual(cm.exception.code, 426)
@@ -111,7 +115,9 @@ class TestRegistryApp(AsyncHTTPTestCase):
     def test_new_game(self, mocked_auth, MockStarSpace, mocked_method):
         """Test that we can post to create a new game"""
         response = yield self.client.fetch(
-            f"{URL}/game/new/01", method="POST", body=b"test",
+            f"{URL}/game/new/01",
+            method="POST",
+            body=b"test",
         )
         self.assertEqual(response.code, 201)
 
@@ -132,20 +138,25 @@ class TestWorldSaving(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = BuildApplication(get_handlers(self.db), tornado_settings=TEST_TORNADO_SETTINGS)
+        app = BuildApplication(
+            get_handlers(self.db), tornado_settings=TEST_TORNADO_SETTINGS
+        )
         app.listen(PORT)
         return app
 
     @gen_test
     def test_list_worlds(self, mocked_auth):
         """Test that the list worlds endpoint can be hit succesfully and returns world
-            dimesnions in expected format"""
+        dimesnions in expected format"""
         with LIGHTDatabase(self.db_path) as db:
             player_id = db.create_user("test")[0]
             world1 = db.create_world("default", player_id, 3, 3, 1)[0]
             world2 = db.create_world("default2", player_id, 4, 2, 2)[0]
 
-        response = yield self.client.fetch(f"{URL}/builder/worlds/", method="GET",)
+        response = yield self.client.fetch(
+            f"{URL}/builder/worlds/",
+            method="GET",
+        )
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -183,7 +194,8 @@ class TestWorldSaving(AsyncHTTPTestCase):
             world2 = db.create_world("default2", player_id, 4, 2, 2)[0]
 
         response = yield self.client.fetch(
-            f"{URL}/builder/world/delete/{world1}", method="DELETE",
+            f"{URL}/builder/world/delete/{world1}",
+            method="DELETE",
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()), str(world1))
@@ -237,7 +249,8 @@ class TestWorldSaving(AsyncHTTPTestCase):
         self.assertEqual(response.code, 201)
 
         response = yield self.client.fetch(
-            f"{URL}/builder/world/autosave/", method="GET",
+            f"{URL}/builder/world/autosave/",
+            method="GET",
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()), d["data"])
@@ -270,7 +283,7 @@ class TestWorldSaving(AsyncHTTPTestCase):
     @gen_test
     def test_world_saving_integration(self, mocked_auth):
         """Test a flow where a user creates a world, views the saved worlds, loads the world, then
-            deletes it"""
+        deletes it"""
 
         with LIGHTDatabase(self.db_path) as db:
             player_id = db.create_user("test")[0]
@@ -375,7 +388,10 @@ class TestWorldSaving(AsyncHTTPTestCase):
         w_id = json.loads(response.body.decode())
 
         # Test listing worlds here
-        response = yield self.client.fetch(f"{URL}/builder/worlds/", method="GET",)
+        response = yield self.client.fetch(
+            f"{URL}/builder/worlds/",
+            method="GET",
+        )
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -417,16 +433,21 @@ class TestWorldSaving(AsyncHTTPTestCase):
 
         # Test deletion
         response = yield self.client.fetch(
-            f"{URL}/builder/world/delete/{w_id}", method="DELETE",
+            f"{URL}/builder/world/delete/{w_id}",
+            method="DELETE",
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(json.loads(response.body.decode()), str(w_id))
 
         # List should now be empty
-        response = yield self.client.fetch(f"{URL}/builder/worlds/", method="GET",)
+        response = yield self.client.fetch(
+            f"{URL}/builder/worlds/",
+            method="GET",
+        )
         self.assertEqual(response.code, 200)
         self.assertEqual(
-            json.loads(response.body.decode()), {"auto": None, "data": []},
+            json.loads(response.body.decode()),
+            {"auto": None, "data": []},
         )
 
     def get_encoded_url_params(self, d):
@@ -468,7 +489,11 @@ class TestGameApp(AsyncHTTPTestCase):
         headers = {
             "Content-Type": "application/json",
         }
-        response = yield self.client.fetch(f"{URL}/", method="GET", headers=headers,)
+        response = yield self.client.fetch(
+            f"{URL}/",
+            method="GET",
+            headers=headers,
+        )
         self.assertEqual(response.code, 200)
 
     @gen_test
@@ -478,7 +503,9 @@ class TestGameApp(AsyncHTTPTestCase):
             "Content-Type": "application/json",
         }
         response = yield self.client.fetch(
-            f"{URL}/index.html", method="GET", headers=headers,
+            f"{URL}/index.html",
+            method="GET",
+            headers=headers,
         )
         self.assertEqual(response.code, 200)
 
@@ -510,7 +537,9 @@ class TestLandingApp(AsyncHTTPTestCase):
             "Content-Type": "application/json",
         }
         response = yield self.client.fetch(
-            f"{URL}/index.html", method="GET", headers=headers,
+            f"{URL}/index.html",
+            method="GET",
+            headers=headers,
         )
         self.assertEqual(response.code, 200)
 
@@ -522,7 +551,9 @@ class TestLandingApp(AsyncHTTPTestCase):
         }
         with self.assertRaises(httpclient.HTTPClientError) as cm:
             response = yield self.client.fetch(
-                f"{URL}/something.html", method="GET", headers=headers,
+                f"{URL}/something.html",
+                method="GET",
+                headers=headers,
             )
         self.assertEqual(cm.exception.code, 404)
 
@@ -532,7 +563,11 @@ class TestLandingApp(AsyncHTTPTestCase):
         headers = {
             "Content-Type": "application/json",
         }
-        response = yield self.client.fetch(f"{URL}/", method="GET", headers=headers,)
+        response = yield self.client.fetch(
+            f"{URL}/",
+            method="GET",
+            headers=headers,
+        )
         self.assertEqual(response.code, 200)
 
     @gen_test
@@ -542,10 +577,15 @@ class TestLandingApp(AsyncHTTPTestCase):
         headers = {"Content-Type": "application/json"}
         with self.assertRaises(httpclient.HTTPClientError) as cm:
             response = yield self.client.fetch(
-                f"{URL}/play", method="GET", headers=headers, follow_redirects=False,
+                f"{URL}/play",
+                method="GET",
+                headers=headers,
+                follow_redirects=False,
             )
         self.assertEqual(cm.exception.code, 302)
-        self.assertEqual(cm.exception.response.headers["Location"], "/login?next=%2Fplay")
+        self.assertEqual(
+            cm.exception.response.headers["Location"], "/login?next=%2Fplay"
+        )
 
     @gen_test
     def test_logout(self, mocked_auth):
@@ -553,7 +593,10 @@ class TestLandingApp(AsyncHTTPTestCase):
         headers = {"Content-Type": "application/json"}
         with self.assertRaises(httpclient.HTTPClientError) as cm:
             response = yield self.client.fetch(
-                f"{URL}/logout", method="GET", headers=headers, follow_redirects=False,
+                f"{URL}/logout",
+                method="GET",
+                headers=headers,
+                follow_redirects=False,
             )
         # 302 still bc we need to redirect
         self.assertEqual(cm.exception.code, 302)
@@ -582,7 +625,10 @@ class TestLandingApp(AsyncHTTPTestCase):
             self.assertEqual(cm.exception.code, 302)
         self.assertEqual(len(cm.exception.response.headers.get_list("Set-Cookie")), 1)
         response = yield self.client.fetch(
-            f"{URL}/login", method="POST", headers=headers, body=body,
+            f"{URL}/login",
+            method="POST",
+            headers=headers,
+            body=body,
         )
         self.assertEqual(response.code, 200)
 
@@ -591,7 +637,9 @@ class TestLandingApp(AsyncHTTPTestCase):
         """Test that login endpoint responds with login page"""
         headers = {"Content-Type": "application/json"}
         response = yield self.client.fetch(
-            f"{URL}/login", method="GET", headers=headers,
+            f"{URL}/login",
+            method="GET",
+            headers=headers,
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(response.headers["Content-Type"], "text/html; charset=UTF-8")
@@ -613,7 +661,10 @@ class TestLandingApp(AsyncHTTPTestCase):
 
         # With allowing redirects, we expect to end up back at the login page
         response = yield self.client.fetch(
-            f"{URL}/login", method="POST", headers=headers, body=body,
+            f"{URL}/login",
+            method="POST",
+            headers=headers,
+            body=body,
         )
         self.assertEqual(response.code, 200)
         self.assertEqual(response.headers["Content-Type"], "text/html; charset=UTF-8")
@@ -656,7 +707,9 @@ class TestBuilderApp(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = BuildApplication(get_handlers(self.db), tornado_settings=TEST_TORNADO_SETTINGS)
+        app = BuildApplication(
+            get_handlers(self.db), tornado_settings=TEST_TORNADO_SETTINGS
+        )
         app.listen(PORT)
         return app
 
@@ -667,7 +720,9 @@ class TestBuilderApp(AsyncHTTPTestCase):
             "Content-Type": "application/json",
         }
         response = yield self.client.fetch(
-            f"{URL}/builder/", method="GET", headers=headers,
+            f"{URL}/builder/",
+            method="GET",
+            headers=headers,
         )
         self.assertEqual(response.code, 200)
 
@@ -678,7 +733,9 @@ class TestBuilderApp(AsyncHTTPTestCase):
             "Content-Type": "application/json",
         }
         response = yield self.client.fetch(
-            f"{URL}/builder/builderindex.html", method="GET", headers=headers,
+            f"{URL}/builder/builderindex.html",
+            method="GET",
+            headers=headers,
         )
         self.assertEqual(response.code, 200)
 
@@ -688,7 +745,11 @@ class TestBuilderApp(AsyncHTTPTestCase):
         headers = {
             "Content-Type": "application/json",
         }
-        response = yield self.client.fetch(f"{URL}/", method="GET", headers=headers,)
+        response = yield self.client.fetch(
+            f"{URL}/",
+            method="GET",
+            headers=headers,
+        )
         self.assertEqual(response.code, 200)
 
     @gen_test
@@ -705,10 +766,14 @@ class TestBuilderApp(AsyncHTTPTestCase):
             "player": player,
         }
         response = yield self.client.fetch(
-            f"{URL}/builder/edits", method="POST", body=urllib.parse.urlencode(body),
+            f"{URL}/builder/edits",
+            method="POST",
+            body=urllib.parse.urlencode(body),
         )
         self.assertEqual(response.code, 201)
-        response = yield self.client.fetch(f"{URL}/builder/edits/1",)
+        response = yield self.client.fetch(
+            f"{URL}/builder/edits/1",
+        )
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -748,7 +813,9 @@ class TestBuilderApp(AsyncHTTPTestCase):
             "player": player,
         }
         response = yield self.client.fetch(
-            f"{URL}/builder/edits", method="POST", body=urllib.parse.urlencode(body),
+            f"{URL}/builder/edits",
+            method="POST",
+            body=urllib.parse.urlencode(body),
         )
         self.assertEqual(response.code, 201)
         self.assertEqual(json.loads(response.body.decode()), {"edit_id": 1})
@@ -973,7 +1040,9 @@ class TestBuilderApp(AsyncHTTPTestCase):
             ],
         )
         # check that expand=False behaves as expected
-        response = yield self.client.fetch(f"{URL}/builder/edits?player={player}",)
+        response = yield self.client.fetch(
+            f"{URL}/builder/edits?player={player}",
+        )
         self.assertEqual(json.loads(response.body.decode()), [1, 2])
 
     @gen_test
@@ -987,14 +1056,18 @@ class TestBuilderApp(AsyncHTTPTestCase):
             base_room2 = db.create_base_room("small room")[0]
             room1 = db.create_room("small room", base_room1, "tiny", "old")[0]
         # Test that base entity can be viewed
-        response = yield self.client.fetch(f"{URL}/builder/entities/{base_room1}",)
+        response = yield self.client.fetch(
+            f"{URL}/builder/entities/{base_room1}",
+        )
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
             {"entity": {"id": base_room1, "name": "room"}, "type": "base room"},
         )
         # Test that entity can be viewed
-        response = yield self.client.fetch(f"{URL}/builder/entities/{room1}",)
+        response = yield self.client.fetch(
+            f"{URL}/builder/entities/{room1}",
+        )
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -1037,7 +1110,9 @@ class TestBuilderApp(AsyncHTTPTestCase):
             ],
         )
         # check that seraching for room works properly
-        response = yield self.client.fetch(f"{URL}/builder/entities/room?search=decay",)
+        response = yield self.client.fetch(
+            f"{URL}/builder/entities/room?search=decay",
+        )
         self.assertEqual(response.code, 200)
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -1160,7 +1235,9 @@ class TestBuilderApp(AsyncHTTPTestCase):
     def test_get_column_names_invalid(self, mocked_auth):
         """Tests that when type is invalid, error is raised"""
         with self.assertRaises(Exception):
-            response = yield self.client.fetch(f"{URL}/builder/entities/base_/fields",)
+            response = yield self.client.fetch(
+                f"{URL}/builder/entities/base_/fields",
+            )
             self.assertEqual(response.code, 400)
 
     @gen_test

@@ -51,7 +51,7 @@ def setup_args(parser=None):
     parser.add_argument(
         "--parser-model-file",
         type=str,
-        default="/checkpoint/jase/projects/light/parser/parser3/34c_jobid=1/model"
+        default="/checkpoint/jase/projects/light/parser/parser3/34c_jobid=1/model",
     )
     parser.set_defaults(interactive_mode=True, task="interactive")
     LocalHumanAgent.add_cmdline_args(parser)

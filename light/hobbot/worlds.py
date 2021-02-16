@@ -43,8 +43,8 @@ def module_initialize(opt: Opt, manager, deploy_with_tw: bool = False):
     opt["graph_builder"] = OneRoomChatBuilder(
         ldb=ldb,
         opt={
-            'db_path': os.path.join(res_path, "database.db"),
-            'model_path': os.path.join(res_path, "starspace"),
+            "db_path": os.path.join(res_path, "database.db"),
+            "model_path": os.path.join(res_path, "starspace"),
             "suggestion_type": "hybrid",
             "hybridity_prob": 0.2,
         },

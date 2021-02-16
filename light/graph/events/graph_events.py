@@ -164,7 +164,9 @@ class ShoutEvent(SpeechEvent):
             self.__in_room_view = f'{self.actor_name} shouted "{self.text_content}"'
             self.__self_view = None
         else:
-            self.__in_room_view = f"{self.actor_name} shouted something incomprehensible."
+            self.__in_room_view = (
+                f"{self.actor_name} shouted something incomprehensible."
+            )
             self.__self_view = "You shout something incomprehensible."
         self.__in_room_view = f'{self.actor_name} shouted "{self.text_content}"'
         world.broadcast_to_all_agents(self)  # , exclude_agents=[self.actor])
@@ -588,7 +590,9 @@ class GoEvent(GraphEvent):
         # Trigger the leave event, must be before the move to get correct room
         LeaveEvent(self.actor, [self.target_nodes[0]]).execute(world)
         self.actor.move_to(new_room)
-        ArriveEvent(self.actor, text_content="arrived from " + old_room_view).execute(world)
+        ArriveEvent(self.actor, text_content="arrived from " + old_room_view).execute(
+            world
+        )
         LookEvent(self.actor).execute(world)
 
         # Lose a little bit of energy from moving.
@@ -1013,14 +1017,14 @@ class BlockEvent(GraphEvent):
         return valid_actions
 
 
-# Note, this is the only event we have right now where the actor is 
+# Note, this is the only event we have right now where the actor is
 # an object... This may need cleanup
 class DeleteObjectEvent(TriggeredEvent):
     """Handles deleting an object node from the graph"""
 
     def execute(self, world: "World") -> List[GraphEvent]:
         actor_name = self.actor.get_prefix_view()
-        self.__in_room_view = f'{actor_name} {self.text_content}'
+        self.__in_room_view = f"{actor_name} {self.text_content}"
         g = world.oo_graph
         g.delete_nodes([self.actor])
         world.broadcast_to_room(self)
@@ -2689,6 +2693,7 @@ class DrinkEvent(IngestEvent):
     def can_ingest(cls, object_node: GraphObject) -> bool:
         return object_node.drink
 
+
 class LockableEvent(GraphEvent):
     """Handles locking and unlocking edges and containers with appropriate keys"""
 
@@ -3279,10 +3284,10 @@ class RewardEvent(GraphEvent):
         agent = self.target_nodes[0]
         self.recipient = agent
         self.__recipient_name = agent.get_prefix_view()
-        if not hasattr(agent, 'xp'):
+        if not hasattr(agent, "xp"):
             agent.xp = 0
             agent.reward_xp = 0
-        if not hasattr(self.actor, 'xp'):
+        if not hasattr(self.actor, "xp"):
             self.actor.xp = 10
             self.actor.reward_xp = 0
         if self.actor.reward_xp > 0:
@@ -3292,7 +3297,7 @@ class RewardEvent(GraphEvent):
             agent.reward_xp += stars / 4.0
             rewards = math.floor(self.actor.reward_xp)
             if rewards == 1:
-                self.__reward_xp = '1 reward'
+                self.__reward_xp = "1 reward"
             else:
                 self.__reward_xp = str(math.floor(self.actor.reward_xp)) + " rewards"
             self.__gain_xp = str(stars)
@@ -3318,7 +3323,9 @@ class RewardEvent(GraphEvent):
                 f"You have {self.__reward_xp} left to give.\n"
             )
         elif viewer == self.recipient:
-            return f"{self.__actor_name} rewarded you! (You gained {self.__gain_xp} XP!!)"
+            return (
+                f"{self.__actor_name} rewarded you! (You gained {self.__gain_xp} XP!!)"
+            )
         else:
             return []
 
@@ -3379,7 +3386,6 @@ class RewardEvent(GraphEvent):
             if agent != actor:
                 valid_actions.append(cls(actor, target_nodes=[agent]))
         return valid_actions
-
 
 
 class HealthEvent(NoArgumentEvent):
