@@ -27,8 +27,8 @@ from light.graph.events.graph_events import init_safety_classifier
 from light.world.souls.models.generative_heuristic_model_soul import (
     GenerativeHeuristicModelSoul,
 )
-here = os.path.abspath(os.path.dirname(__file__))
 
+here = os.path.abspath(os.path.dirname(__file__))
 
 
 def get_path(filename):
@@ -46,7 +46,7 @@ def read_secrets():
     secrets = {}
     if not os.path.exists(loc):
         return {
-            'cookie_secret': '0123456789',
+            "cookie_secret": "0123456789",
         }
     with open(loc, "r") as secret_file:
         for line in secret_file:
@@ -67,15 +67,17 @@ tornado_settings = {
     "template_path": get_path("static"),
 }
 
-if 'facebook_api_key' in SECRETS:
-    tornado_settings['facebook_api_key'] = SECRETS['facebook_api_key']
-if 'facebook_secret' in SECRETS:
-    tornado_settings['facebook_secret'] = SECRETS['facebook_secret']
+if "facebook_api_key" in SECRETS:
+    tornado_settings["facebook_api_key"] = SECRETS["facebook_api_key"]
+if "facebook_secret" in SECRETS:
+    tornado_settings["facebook_secret"] = SECRETS["facebook_secret"]
 
 
 def make_app(FLAGS, ldb, model_resources):
     worldBuilderApp = BuildApplication(get_handlers(ldb), tornado_settings)
-    landingApp = LandingApplication(ldb, FLAGS.hostname, FLAGS.password, tornado_settings)
+    landingApp = LandingApplication(
+        ldb, FLAGS.hostname, FLAGS.password, tornado_settings
+    )
     registryApp = RegistryApplication(FLAGS, ldb, model_resources, tornado_settings)
     rules = []
     if FLAGS.disable_builder is None:
@@ -131,17 +133,13 @@ def init_model_resources(FLAGS):
     resources = {"shared_model_content": shared_model_content}
 
     if scoring_model is not None:
-        resources['rpg_model'] = BaseSoul.load_roleplaying_score_model(
-            scoring_model
-        )
-        shared_model_content['rpg_model'] = resources['rpg_model']
+        resources["rpg_model"] = BaseSoul.load_roleplaying_score_model(scoring_model)
+        shared_model_content["rpg_model"] = resources["rpg_model"]
 
     if generic_act_model is not None:
-        generic_act_model_content = BaseSoul.load_generic_act_model(
-            generic_act_model
-        )
-        resources['generic_act_model'] = generic_act_model_content.share()
-        shared_model_content['shared_action_model'] = resources['generic_act_model']
+        generic_act_model_content = BaseSoul.load_generic_act_model(generic_act_model)
+        resources["generic_act_model"] = generic_act_model_content.share()
+        shared_model_content["shared_action_model"] = resources["generic_act_model"]
 
     init_safety_classifier(FLAGS.safety_list)
 
@@ -240,12 +238,12 @@ def main():
     parser.add_argument(
         "--roleplaying-score-model-file",
         type=str,
-        default = "",
+        default="",
     )
     parser.add_argument(
         "--generic-act-model-file",
         type=str,
-        default = "",
+        default="",
     )
     FLAGS, _unknown = parser.parse_known_args()
 

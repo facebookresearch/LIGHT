@@ -141,7 +141,8 @@ class FBMessengerChatStrategy(LIGHTChatStrategy):
         # TODO return the players above and below to construct a contextual leaderboard
         """
         total_players = bhb_sql.get_leaderboard_total(
-            tier=self.db_tier, table="{}_leaderboard".format(self.table_prefix),
+            tier=self.db_tier,
+            table="{}_leaderboard".format(self.table_prefix),
         )
 
         rank = bhb_sql.get_leaderboard_rank(

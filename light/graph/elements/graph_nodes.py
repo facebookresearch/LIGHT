@@ -181,7 +181,11 @@ class GraphNode(object):
     @classmethod
     def from_json_dict(cls, input_dict):
         """Init this node from a json encoding of the original node"""
-        node = cls(input_dict.get("node_id", -1), input_dict["name"], props=input_dict,)
+        node = cls(
+            input_dict.get("node_id", -1),
+            input_dict["name"],
+            props=input_dict,
+        )
         if "container_node" in input_dict:
             node._container_id = input_dict["container_node"]["target_id"]
         if "contained_nodes" in input_dict:
@@ -601,7 +605,7 @@ class GraphAgent(GraphNode):
         if self.on_events is None:
             self.on_events = []
         self.quests = self._props.get("quests", [])
-        self.mission = self._props.get("mission", '')
+        self.mission = self._props.get("mission", "")
 
         # Game properties to track for this agent, TODO move to other class?
         self._human = False
@@ -787,17 +791,25 @@ class GraphObject(GraphNode):
         self.dead = self._props.get("dead", False)
         self.on_use = self._props.get("on_use", None)
         self.container = self._props.get("container", False)
-        if self._props.get("is_container", False) or self._props.get("is_surface", False):
+        if self._props.get("is_container", False) or self._props.get(
+            "is_surface", False
+        ):
             self.container = True
         self.surface_type = self._props.get("surface_type", "on")
-        if 'is_surface' in self._props:
+        if "is_surface" in self._props:
             if self._props.get("is_surface") == 1.0:
-                self.surface_type = 'on'
+                self.surface_type = "on"
             else:
-                self.surface_type = 'in'
-        self.gettable = self._props.get("gettable", self._props.get("is_gettable", True))
-        self.wearable = self._props.get("wearable", self._props.get("is_wearable", False))
-        self.wieldable = self._props.get("wieldable", self._props.get("is_weapon", False))
+                self.surface_type = "in"
+        self.gettable = self._props.get(
+            "gettable", self._props.get("is_gettable", True)
+        )
+        self.wearable = self._props.get(
+            "wearable", self._props.get("is_wearable", False)
+        )
+        self.wieldable = self._props.get(
+            "wieldable", self._props.get("is_weapon", False)
+        )
         self.classes = set(self._props.get("classes", {"object"}))
         self.equipped = self._props.get("equipped", None)
 

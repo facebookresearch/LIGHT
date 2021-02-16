@@ -13,12 +13,14 @@ import random
 from light.graph.utils import rm, deprecated
 from light.graph.events.base import GraphEvent, ErrorEvent
 from light.graph.events.graph_events import (
-    ALL_EVENTS,
-    ALL_EVENTS_LIST,
     SpawnEvent,
     SystemMessageEvent,
     DeleteObjectEvent,
     init_safety_classifier,
+)
+from light.graph.events.all_events_list import (
+    ALL_EVENTS,
+    ALL_EVENTS_LIST,
 )
 from light.graph.events.magic import init_magic
 from light.graph.elements.graph_nodes import GraphNode, GraphAgent
@@ -53,7 +55,10 @@ class World(object):
     """
 
     def __init__(
-        self, opt, graph_builder, debug=False,
+        self,
+        opt,
+        graph_builder,
+        debug=False,
     ):
         # TODO re-investigate callbacks during action refactor
         self.callbacks = {}
@@ -847,7 +852,7 @@ class World(object):
             )
             if not isinstance(result, ErrorEvent):
                 break
-            
+
         if isinstance(result, ErrorEvent):
             return result
 

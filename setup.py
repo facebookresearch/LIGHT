@@ -37,7 +37,14 @@ if __name__ == "__main__":
         # url='http://light-game.ai/',
         license=license,
         python_requires=">=3.6",
-        packages=find_packages(exclude=("data", "scripts", "tests", "light_internal",)),
+        packages=find_packages(
+            exclude=(
+                "data",
+                "scripts",
+                "tests",
+                "light_internal",
+            )
+        ),
         install_requires=reqs.strip().split("\n"),
         include_package_data=True,
         # entry_points={"flake8.extension": ["PAI = parlai.utils.flake8:ParlAIChecker"]},

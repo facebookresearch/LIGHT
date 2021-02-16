@@ -76,12 +76,12 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             opt, _unknown = parser.parse_and_process_known_args()
 
         # Setup correct path
-        db_path = opt.get('db_path')
+        db_path = opt.get("db_path")
         if db_path is None:
             parlai_datapath = opt["datapath"]
             db_path = os.path.join(parlai_datapath, "light", "database3.db")
         self.db_path = db_path
-        model_path = opt.get('model_path')
+        model_path = opt.get("model_path")
         if model_path is None:
             model_path = opt.get("light_model_root")
         self.model_path = model_path
@@ -384,7 +384,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
 
     ##########For best match model###################
     def get_similar_element(self, txt_feats, element_type):
-        """ Given a text feature, and the corresponding Database type
+        """Given a text feature, and the corresponding Database type
         return an DBElement of the DB type"""
         agent_type = None
         banned_items = {}
@@ -605,7 +605,9 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         while graph is None and attempts > 0:
             try:
                 random.seed(time.time())
-                graph, world = self._get_constrained_graph(location=location, player=player)
+                graph, world = self._get_constrained_graph(
+                    location=location, player=player
+                )
             except Exception as _e:
                 print(_e)
                 attempts -= 1

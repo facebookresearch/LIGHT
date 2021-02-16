@@ -51,7 +51,7 @@ USE_ACTIONS = [
     "give",
     "wear",
     "wield",
-    'remove',
+    "remove",
     "eat",
     "drink",
 ]
@@ -216,9 +216,13 @@ class LIGHTSinglePlayerWorld(World):
         # Force the same candidate root as the already resolved one.
         cand_path = model_to_use[1].get("fixed_candidates_path")
         if cand_path is not None:
-            model_root = os.path.dirname(shared_bot_params['opt']["fixed_candidates_path"])
+            model_root = os.path.dirname(
+                shared_bot_params["opt"]["fixed_candidates_path"]
+            )
             if model_root not in cand_path:
-                model_to_use[1]['fixed_candidates_path'] = os.path.join(model_root, cand_path)
+                model_to_use[1]["fixed_candidates_path"] = os.path.join(
+                    model_root, cand_path
+                )
         use_bot_params = shared_bot_params.copy()
         use_bot_params["opt"] = shared_bot_params["opt"].copy()
         use_bot_params["opt"]["override"] = model_to_use[1]
@@ -483,7 +487,9 @@ class LIGHTSinglePlayerWorld(World):
                 human_player = pos_human_player[0]
             else:
                 agent_names = [a.name for a in available_players]
-                self._log(f"Could not find given player {human_player_name} in {agent_names}")
+                self._log(
+                    f"Could not find given player {human_player_name} in {agent_names}"
+                )
                 human_player = random.choice(available_players)
                 for a in available_players:
                     if a.name in human_player_name:
@@ -555,7 +561,9 @@ class LIGHTSinglePlayerWorld(World):
             )
             self.observe_game_msg(room_desc)
         else:
-            self.observe_game_msg(f"Your new chat partner is: *{self.bot_player_details['name']}*")
+            self.observe_game_msg(
+                f"Your new chat partner is: *{self.bot_player_details['name']}*"
+            )
 
         # Send the quest
         if self.quest is not None:
@@ -568,7 +576,7 @@ class LIGHTSinglePlayerWorld(World):
 
             self.acting_persona_obs += self.quest_motivation
             self.quest_goal = self.quest["data"]["goal"]
-            self.other_goals = [t['action'] for t in self.quest["data"]['timeline']]
+            self.other_goals = [t["action"] for t in self.quest["data"]["timeline"]]
             self.human_player_details["motivation"] = self.quest_motivation
             self.human_player_details["goal"] = self.quest_goal
             self.location_details["quest_file"] = self.quest["filename"]
@@ -648,11 +656,13 @@ class LIGHTSinglePlayerWorld(World):
             self.agent.data["same_setting"] = True
         elif choice == exit_option:
             self.agent.data["next_task"] = "EXIT"
-        self.dialogs.append({
-            'id': 'human',
-            'type': 'choice',
-            'text': choice,
-        })
+        self.dialogs.append(
+            {
+                "id": "human",
+                "type": "choice",
+                "text": choice,
+            }
+        )
         return
 
     def see_character(self):
@@ -783,12 +793,14 @@ class LIGHTSinglePlayerWorld(World):
         return
 
     def log_human_reply(self, text, score):
-        self.dialogs.append({
-            'id': 'human',
-            'type': 'speech',
-            'text': text,
-            'score': score,
-        })
+        self.dialogs.append(
+            {
+                "id": "human",
+                "type": "speech",
+                "text": text,
+                "score": score,
+            }
+        )
 
     def observe_welcome_msg(self):
         self.observe_game_msg(utils.SINGLE_PLAYER_WELCOME)
@@ -829,11 +841,7 @@ class LIGHTSinglePlayerWorld(World):
         self.agent.observe(bot_reply_message)
 
         # update dialog data
-        self.dialogs.append({
-            'id': 'bot',
-            'type': 'speech',
-            'text': bot_reply
-        })
+        self.dialogs.append({"id": "bot", "type": "speech", "text": bot_reply})
         self.chosen_dialog = bot_reply
         self.actingscore_agent.observe(
             {"text": self.chosen_dialog, "episode_done": False}
@@ -975,16 +983,17 @@ class LIGHTSinglePlayerWorld(World):
         )
         self.agent.observe({"id": "", "text": f"Bot's history:\n```{bot_history}```"})
         if self.quest is not None:
-            self.agent.observe({
-                "id": "",
-                "text":
-                    f"Quest details:\n"
+            self.agent.observe(
+                {
+                    "id": "",
+                    "text": f"Quest details:\n"
                     f"Short Motive:{self.quest['data']['short_motivation']}\n"
                     f"Mid Motive:{self.quest['data']['mid_motivation']}\n"
                     f"Long Motive:{self.quest['data']['long_motivation']}\n"
                     f"Goal Action:{self.quest['data']['goal']}\n"
                     f"Timeline:{self.quest['data']['timeline']}",
-            })
+                }
+            )
 
     def get_possible_events(self, return_count=6):
         """
@@ -1048,12 +1057,14 @@ class LIGHTSinglePlayerWorld(World):
             self.score += SCORE_FOR_OTHER_GOAL
             reward_score = SCORE_FOR_OTHER_GOAL
 
-        self.dialogs.append({
-            'id': 'human',
-            'type': 'action',
-            'text': chosen_act_text,
-            'score': reward_score,
-        })
+        self.dialogs.append(
+            {
+                "id": "human",
+                "type": "action",
+                "text": chosen_act_text,
+                "score": reward_score,
+            }
+        )
         chosen_act.execute(self.world)
         self.observe_game_msg(chosen_act.view_as(self.player_node))
         self.bot_action_observe = chosen_act.view_as(self.bot_node)
