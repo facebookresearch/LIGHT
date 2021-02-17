@@ -17,24 +17,24 @@ class UseEvent(GraphEvent):
 
     NAMES = ["use"]
 
-    def one_pre_met(self, pre, world):
-        if pre[0] == "is_holding" and pre[1] == "used_item":
+    def one_pre_met(self, constraints, world):
+        if constraints[0] == "is_holding" and constraints[1] == "used_item":
             # Check if actor is holding the useable item.
             return self.target_nodes[0].get_container() == self.actor
 
-        if pre[0] == "used_with_item_name":
+        if constraints[0] == "used_with_item_name":
             # Check if the useable item is used with the given object.
-            return pre[1] == self.target_nodes[1].name
+            return constraints[1] == self.target_nodes[1].name
 
-        if pre[0] == "used_with_agent":
+        if constraints[0] == "used_with_agent":
             # Check if the target is an agent
             return self.target_nodes[1].agent
 
         return True
 
-    def preconditions_met(self, pre, world):
+    def preconditions_met(self, constraints, world):
         pre_met = True
-        for p in pre:
+        for p in constraints:
             if not self.one_pre_met(p, world):
                 pre_met = False
         return pre_met
@@ -107,9 +107,9 @@ class UseEvent(GraphEvent):
         self.messages = {}
         on_uses = use_node.on_use
         for on_use in on_uses:
-            pre = on_use["pre_conditions"]
-            if self.preconditions_met(pre, world):
-                post = on_use["post_conditions"]
+            constraints = on_use["constraints"]
+            if self.preconditions_met(constraints, world):
+                post = on_use["events"]
                 self.found_use = True
                 self.execute_post(post, world)
                 break
