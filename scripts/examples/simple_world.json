@@ -288,8 +288,18 @@
             }
           ],
           "constraints": [
-            ["is_holding", "used_item"],
-            ["used_with_item_name", "muddy area"]
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_item_name",
+              "params": {
+                "item": "muddy area"
+              }
+            }
           ]
         }
       ],
@@ -338,7 +348,17 @@
               }
             }
           ],
-          "constraints": [["is_holding", "used_item"], ["used_with_agent"]]
+          "constraints": [
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_agent"
+            }
+          ]
         }
       ]
     },
@@ -373,7 +393,17 @@
               }
             }
           ],
-          "constraints": [["is_holding", "used_item"], ["used_with_agent"]]
+          "constraints": [
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_agent"
+            }
+          ]
         }
       ]
     },
@@ -408,7 +438,17 @@
               }
             }
           ],
-          "constraints": [["is_holding", "used_item"], ["used_with_agent"]]
+          "constraints": [
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_agent"
+            }
+          ]
         }
       ]
     }
