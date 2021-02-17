@@ -6,12 +6,13 @@ from light.graph.events.base import (
     proper_caps,
 )
 
+from light.graph.events.graph_events import DeathEvent
+
 from light.graph.elements.graph_nodes import GraphAgent, GraphNode, GraphObject
 
 from typing import Union, List, Optional
 
-
-class UseEvent(GraphEvent):
+class PostconditionEvent(GraphEvent):
     """Handles using an object"""
 
     def __init__(
@@ -169,9 +170,9 @@ class UseEvent(GraphEvent):
         self.messages = {}
         on_uses = use_node.on_use
         for on_use in on_uses:
-            pre = on_use["pre_conditions"]
+            pre = on_use["constraints"]
             if self.preconditions_met(pre, world):
-                post = on_use["post_conditions"]
+                post = on_use["events"]
                 self.found_use = True
                 self.execute_post(post, world)
                 break
