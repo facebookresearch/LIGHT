@@ -5,6 +5,8 @@ from light.graph.events.base import (
     proper_caps,
 )
 
+from light.graph.events.graph_events import DeathEvent
+
 from light.graph.elements.graph_nodes import GraphAgent, GraphNode, GraphObject
 
 from typing import Union, List, Optional
@@ -15,33 +17,35 @@ class UseEvent(GraphEvent):
 
     NAMES = ["use"]
 
-    def one_pre_met(self, pre, world):
-        if pre[0] == "is_holding" and pre[1] == "used_item":
+    def one_pre_met(self, constraints, world):
+        if constraints[0] == "is_holding" and constraints[1] == "used_item":
             # Check if actor is holding the useable item.
             return self.target_nodes[0].get_container() == self.actor
 
-        if pre[0] == "used_with_item_name":
+        if constraints[0] == "used_with_item_name":
             # Check if the useable item is used with the given object.
-            return pre[1] == self.target_nodes[1].name
+            return constraints[1] == self.target_nodes[1].name
 
-        if pre[0] == "used_with_agent":
+        if constraints[0] == "used_with_agent":
             # Check if the target is an agent
             return self.target_nodes[1].agent
 
         return True
 
-    def preconditions_met(self, pre, world):
+    def preconditions_met(self, constraints, world):
         pre_met = True
-        for p in pre:
+        for p in constraints:
             if not self.one_pre_met(p, world):
                 pre_met = False
         return pre_met
 
     def modify_attribute(self, post, world):
-        if post[1] == "in_used_target_item":
+        if post["params"]["type"] == "in_used_target_item":
             target = self.target_nodes[1]
-        key = post[2]
-        value = post[3]
+
+        key = post["params"]["key"]
+        value = post["params"]["value"]
+
         if value.startswith("+"):
             value = float(value[1:])
             setattr(target, key, getattr(target, key) + value)
@@ -68,30 +72,30 @@ class UseEvent(GraphEvent):
 
     def create_entity(self, post, world):
         # creation location
-        if post[1] == "in_used_item":
+        if post["params"]["type"] == "in_used_item":
             location = self.target_nodes[0]
-        if post[1] == "in_used_target_item":
+        if post["params"]["type"] == "in_used_target_item":
             location = self.target_nodes[1]
-        if post[1] == "in_room":
+        if post["params"]["type"] == "in_room":
             location = self.target_nodes[1].get_room()
-        if post[1] == "in_actor":
+        if post["params"]["type"] == "in_actor":
             location = self.actor
         g = world.oo_graph
-        obj = post[2]
+        obj = post["params"]["object"]
         n = g.add_object(obj["name"], obj)
         n.force_move_to(location)
 
     def broadcast_message(self, post, world):
-        self.messages = post[1]
+        self.messages = post["params"]
         world.broadcast_to_room(self)
 
     def execute_post(self, posts, world):
         for post in posts:
-            if post[0] == "modify_attribute":
+            if post["type"] == "modify_attribute":
                 self.modify_attribute(post, world)
-            if post[0] == "create_entity":
+            if post["type"] == "create_entity":
                 self.create_entity(post, world)
-            if post[0] == "broadcast_message":
+            if post["type"] == "broadcast_message":
                 self.broadcast_message(post, world)
 
     def on_use(self, world):
@@ -103,18 +107,18 @@ class UseEvent(GraphEvent):
         self.messages = {}
         on_uses = use_node.on_use
         for on_use in on_uses:
-            pre = on_use["pre"]
-            if self.preconditions_met(pre, world):
-                post = on_use["post"]
+            constraints = on_use["constraints"]
+            if self.preconditions_met(constraints, world):
+                post = on_use["events"]
                 self.found_use = True
                 self.execute_post(post, world)
                 break
         if not self.found_use:
             self.broadcast_message(
-                [
-                    "broadcast_message",
-                    {"self_view": "Nothing special seems to happen."},
-                ],
+                {
+                    "type": "broadcast_message",
+                    "params": {"self_view": "Nothing special seems to happen."},
+                },
                 world,
             )
 

@@ -6,7 +6,7 @@
 """
 
 After running this, to build cands:
-py  ~/src/ParlAI/parlai/scripts/build_candidates.py -t fromfile -ffdp /tmp/valid.txt 
+py  ~/src/ParlAI/parlai/scripts/build_candidates.py -t fromfile -ffdp /tmp/valid.txt
 Then add cands to loading.
 
 """

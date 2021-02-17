@@ -16,7 +16,7 @@ The LIGHT World operates on a level above the LIGHT Graph, and it is responsible
 
 Files ending in `event.log` record a meta episode from the POV of the room or agent (depending on where the log was attached).  Such log files have the following structure, where each pair of three lines is a new event:
 
-    graph_uuid event_hash 
+    graph_uuid event_hash
     timestamp
     event_to_json
 

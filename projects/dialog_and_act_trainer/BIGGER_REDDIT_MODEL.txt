@@ -1,8 +1,7 @@
 could switch to this bigger model:
 
-here's the command I ran: 
+here's the command I ran:
 
 python -m parlai.scripts.train_model -t light_dialog:simple_multi:light_label=speech,internal:light_dialog_wild:simple  --light-use-date-cutoff 2020-08-03 --light-use-score-cutoff 1 -et internal:light_dialog_wild:simple  --light-use-date-cutoff 2020-08-03 --batchsize 128 --eval-batchsize 256 --warmup-updates 250 -lr 1e-05 --data-parallel True -vp 10 -vtim 1800 --validation-metric hits@1 --validation-metric-mode max --save-after-valid True --log-every-n-secs 30 --candidates batch --eval-candidates inline --optimizer adamw --fp16 True --model transformer/polyencoder --dict-file /checkpoint/parlai/zoo/meena/20200227_mlmretrieval_robertasize_5codes/model.dict --init-model /checkpoint/parlai/zoo/meena/20200227_mlmretrieval_robertasize_5codes/model --dict-tokenizer bytelevelbpe -esz 1024 --ffn-size 4096 --n-heads 16 --n-layers 24 --activation gelu --embeddings-scale False --output-scaling 1.0 --n-positions 512 --variant xlm --learn-positional-embeddings true --poly-n-codes 5 --reduction-type mean --share-encoders False --dropout 0.1 --learn-embeddings True --share-word-embeddings True --polyencoder-type codes --codes-attention-type basic --gradient-clip 1.0 --poly-attention-type basic --label-truncate 72 --text-truncate 360 --ignore-bad-candidates true -tblog true --multitask-weights stochastic --model-file /checkpoint/kshuster/projects/continual_learning/light/light_sweep_8_Mon_Aug__3/133/model
 
 /checkpoint/kshuster/projects/continual_learning/light/light_sweep_8_Mon_Aug__3/133/ will have the model file and model.opt if that's easier to read
-

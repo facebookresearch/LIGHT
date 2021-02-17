@@ -8,6 +8,7 @@ examples/**/build/*
 **/build/*
 
 light.egg-info/
+parlai.egg-info/
 **/.vscode/*
 
 dataset/*

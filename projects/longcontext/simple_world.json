@@ -136,7 +136,7 @@
 					["used_with_item_name", "muddy area"]
 				    ],
 				    "post": [
-					[   
+					[
                                             "create_entity",
                                             "in_used_target_item",
 					    {

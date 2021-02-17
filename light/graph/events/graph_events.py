@@ -13,8 +13,6 @@ from light.graph.events.base import (
     proper_caps,
 )
 
-from light.graph.events.use_events import UseEvent
-
 # Used for typehinting
 from typing import Union, List, Optional, Tuple, Any, Type, TYPE_CHECKING
 import emoji
@@ -3541,48 +3539,3 @@ class LookEvent(NoArgumentEvent):
             return self.__current_view
         else:
             return f"{self.__actor_name} looked around."
-
-
-# TODO implement use
-
-
-ALL_EVENTS_LIST: List[Type[GraphEvent]] = [
-    SayEvent,
-    ShoutEvent,
-    WhisperEvent,
-    TellEvent,
-    GoEvent,
-    UnfollowEvent,
-    FollowEvent,
-    UnblockEvent,
-    BlockEvent,
-    HelpEvent,
-    HitEvent,
-    HugEvent,
-    GetObjectEvent,
-    PutObjectInEvent,
-    DropObjectEvent,
-    StealObjectEvent,
-    GiveObjectEvent,
-    EquipObjectEvent,
-    WearEvent,
-    WieldEvent,
-    RemoveObjectEvent,
-    IngestEvent,
-    EatEvent,
-    DrinkEvent,
-    SoulSpawnEvent,
-    # LockEvent,
-    # UnlockEvent,
-    ExamineEvent,
-    EmoteEvent,
-    WaitEvent,
-    InventoryEvent,
-    QuestEvent,
-    HealthEvent,
-    LookEvent,
-    UseEvent,
-    RewardEvent,
-]
-
-ALL_EVENTS = {name: e for e in ALL_EVENTS_LIST for name in e.NAMES}
