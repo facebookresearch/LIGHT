@@ -12,6 +12,7 @@ from light.graph.elements.graph_nodes import GraphAgent, GraphNode, GraphObject
 
 from typing import Union, List, Optional
 
+
 class PostconditionEvent(GraphEvent):
     """Handles using an object"""
 
@@ -115,47 +116,51 @@ class UseEvent(GraphEvent):
 
     NAMES = ["use"]
 
-    def one_pre_met(self, pre, world):
-        if pre[0] == "is_holding" and pre[1] == "used_item":
+    def satisfy_constraint(self, constraint, world):
+        if constraint[0] == "is_holding" and constraint[1] == "used_item":
             # Check if actor is holding the useable item.
             return self.target_nodes[0].get_container() == self.actor
 
-        if pre[0] == "used_with_item_name":
+        if constraint[0] == "used_with_item_name":
             # Check if the useable item is used with the given object.
-            return pre[1] == self.target_nodes[1].name
+            return constraint[1] == self.target_nodes[1].name
 
-        if pre[0] == "used_with_agent":
+        if constraint[0] == "used_with_agent":
             # Check if the target is an agent
             return self.target_nodes[1].agent
 
         return True
 
-    def preconditions_met(self, pre, world):
-        pre_met = True
-        for p in pre:
-            if not self.one_pre_met(p, world):
-                pre_met = False
-        return pre_met
+    def satisfy_constraints(self, constraints, world):
+        all_constraints_satisfied = True
 
-    def execute_post(self, posts, world):
-        for post in posts:
-            if post["type"] == "modify_attribute":
+        for constraint in constraints:
+            if not self.satisfy_constraint(constraint, world):
+                all_constraints_satisfied = False
+
+        return all_constraints_satisfied
+
+    def execute_events(self, events, world):
+        for event in events:
+            if event["type"] == "modify_attribute":
                 ModifyAttributeEvent(
-                    post,
+                    event,
                     self.actor,
                     target_nodes=self.target_nodes,
                     text_content="ModifyAttributeEvent",
                 ).execute(world)
-            if post["type"] == "create_entity":
+
+            if event["type"] == "create_entity":
                 CreateEntityEvent(
-                    post,
+                    event,
                     self.actor,
                     target_nodes=self.target_nodes,
                     text_content="CreateEntityEvent",
                 ).execute(world)
-            if post["type"] == "broadcast_message":
+
+            if event["type"] == "broadcast_message":
                 BroadcastMessageEvent(
-                    post,
+                    event,
                     self.actor,
                     target_nodes=self.target_nodes,
                     text_content="BroadcastMessageEvent",
@@ -163,19 +168,23 @@ class UseEvent(GraphEvent):
 
     def on_use(self, world):
         use_node = self.target_nodes[0]
+
         if not hasattr(use_node, "on_use") and use_node.on_use is not None:
             # No on_use for this agent.
             return
+
         self.found_use = False
         self.messages = {}
         on_uses = use_node.on_use
+
         for on_use in on_uses:
-            pre = on_use["constraints"]
-            if self.preconditions_met(pre, world):
-                post = on_use["events"]
+            constraints = on_use["constraints"]
+            if self.satisfy_constraints(constraints, world):
+                events = on_use["events"]
                 self.found_use = True
-                self.execute_post(post, world)
+                self.execute_events(events, world)
                 break
+
         if not self.found_use:
             BroadcastMessageEvent(
                 {
