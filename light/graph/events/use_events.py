@@ -57,7 +57,9 @@ class CreateEntityEvent(PostconditionEvent):
             location = self.actor
 
         world_graph = world.oo_graph
-        n = world_graph.add_object(self.event_params["object"]["name"], self.event_params["object"])
+        n = world_graph.add_object(
+            self.event_params["object"]["name"], self.event_params["object"]
+        )
         n.force_move_to(location)
 
     @proper_caps
