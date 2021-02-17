@@ -13,7 +13,7 @@ from light.graph.elements.graph_nodes import GraphAgent, GraphNode, GraphObject
 from typing import Union, List, Optional
 
 
-class PostconditionEvent(GraphEvent):
+class UseTriggeredEvent(GraphEvent):
     """Handles using an object"""
 
     def __init__(
@@ -27,7 +27,7 @@ class PostconditionEvent(GraphEvent):
         self.event_params = event_params
 
 
-class BroadcastMessageEvent(PostconditionEvent):
+class BroadcastMessageEvent(UseTriggeredEvent):
     def execute(self, world: "World") -> List[GraphEvent]:
         self.messages = self.event_params
         self.__msg_txt = self.messages["self_view"]
@@ -42,7 +42,7 @@ class BroadcastMessageEvent(PostconditionEvent):
             return None
 
 
-class CreateEntityEvent(PostconditionEvent):
+class CreateEntityEvent(UseTriggeredEvent):
     def execute(self, world: "World") -> List[GraphEvent]:
         # creation location
         entity_event_type = self.event_params["type"]
@@ -71,7 +71,7 @@ class CreateEntityEvent(PostconditionEvent):
             return None
 
 
-class ModifyAttributeEvent(PostconditionEvent):
+class ModifyAttributeEvent(UseTriggeredEvent):
     def execute(self, world: "World") -> List[GraphEvent]:
         if self.event_params["type"] == "in_used_target_item":
             target = self.target_nodes[1]
