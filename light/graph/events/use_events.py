@@ -1,6 +1,7 @@
 from light.graph.events.base import (
     GraphEvent,
     ErrorEvent,
+    TriggeredEvent,
     ProcessedArguments,
     proper_caps,
 )
@@ -12,39 +13,71 @@ from light.graph.elements.graph_nodes import GraphAgent, GraphNode, GraphObject
 from typing import Union, List, Optional
 
 
-class UseEvent(GraphEvent):
+class UseTriggeredEvent(GraphEvent):
     """Handles using an object"""
 
-    NAMES = ["use"]
+    def __init__(
+        self,
+        event_params,
+        actor: GraphAgent,
+        target_nodes: Optional[List[GraphNode]] = None,
+        text_content: Optional[str] = None,
+    ):
+        super().__init__(actor, target_nodes, text_content)
+        self.event_params = event_params
 
-    def one_pre_met(self, constraints, world):
-        if constraints[0] == "is_holding" and constraints[1] == "used_item":
-            # Check if actor is holding the useable item.
-            return self.target_nodes[0].get_container() == self.actor
 
-        if constraints[0] == "used_with_item_name":
-            # Check if the useable item is used with the given object.
-            return constraints[1] == self.target_nodes[1].name
+class BroadcastMessageEvent(UseTriggeredEvent):
+    def execute(self, world: "World") -> List[GraphEvent]:
+        self.messages = self.event_params
+        self.__msg_txt = self.messages["self_view"]
+        world.broadcast_to_room(self)
 
-        if constraints[0] == "used_with_agent":
-            # Check if the target is an agent
-            return self.target_nodes[1].agent
+    @proper_caps
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        if viewer == self.actor:
+            return self.__msg_txt
+        else:
+            return None
 
-        return True
 
-    def preconditions_met(self, constraints, world):
-        pre_met = True
-        for p in constraints:
-            if not self.one_pre_met(p, world):
-                pre_met = False
-        return pre_met
+class CreateEntityEvent(UseTriggeredEvent):
+    def execute(self, world: "World") -> List[GraphEvent]:
+        # creation location
+        entity_event_type = self.event_params["type"]
 
-    def modify_attribute(self, post, world):
-        if post["params"]["type"] == "in_used_target_item":
+        if entity_event_type == "in_used_item":
+            location = self.target_nodes[0]
+        if entity_event_type == "in_used_target_item":
+            location = self.target_nodes[1]
+        if entity_event_type == "in_room":
+            location = self.target_nodes[1].get_room()
+        if entity_event_type == "in_actor":
+            location = self.actor
+
+        world_graph = world.oo_graph
+        n = world_graph.add_object(
+            self.event_params["object"]["name"], self.event_params["object"]
+        )
+        n.force_move_to(location)
+
+    @proper_caps
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        if viewer == self.actor:
+            return self.__msg_txt
+        else:
+            return None
+
+
+class ModifyAttributeEvent(UseTriggeredEvent):
+    def execute(self, world: "World") -> List[GraphEvent]:
+        if self.event_params["type"] == "in_used_target_item":
             target = self.target_nodes[1]
 
-        key = post["params"]["key"]
-        value = post["params"]["value"]
+        key = self.event_params["key"]
+        value = self.event_params["value"]
 
         if value.startswith("+"):
             value = float(value[1:])
@@ -70,57 +103,96 @@ class UseEvent(GraphEvent):
                     text_content="HealthOnHitEvent",
                 ).execute(world)
 
-    def create_entity(self, post, world):
-        # creation location
-        if post["params"]["type"] == "in_used_item":
-            location = self.target_nodes[0]
-        if post["params"]["type"] == "in_used_target_item":
-            location = self.target_nodes[1]
-        if post["params"]["type"] == "in_room":
-            location = self.target_nodes[1].get_room()
-        if post["params"]["type"] == "in_actor":
-            location = self.actor
-        g = world.oo_graph
-        obj = post["params"]["object"]
-        n = g.add_object(obj["name"], obj)
-        n.force_move_to(location)
+    @proper_caps
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        if viewer == self.actor:
+            return self.__msg_txt
+        else:
+            return None
 
-    def broadcast_message(self, post, world):
-        self.messages = post["params"]
-        world.broadcast_to_room(self)
 
-    def execute_post(self, posts, world):
-        for post in posts:
-            if post["type"] == "modify_attribute":
-                self.modify_attribute(post, world)
-            if post["type"] == "create_entity":
-                self.create_entity(post, world)
-            if post["type"] == "broadcast_message":
-                self.broadcast_message(post, world)
+class UseEvent(GraphEvent):
+    """Handles using an object"""
+
+    NAMES = ["use"]
+
+    def satisfy_constraint(self, constraint, world):
+        if constraint[0] == "is_holding" and constraint[1] == "used_item":
+            # Check if actor is holding the useable item.
+            return self.target_nodes[0].get_container() == self.actor
+
+        if constraint[0] == "used_with_item_name":
+            # Check if the useable item is used with the given object.
+            return constraint[1] == self.target_nodes[1].name
+
+        if constraint[0] == "used_with_agent":
+            # Check if the target is an agent
+            return self.target_nodes[1].agent
+
+        return True
+
+    def satisfy_constraints(self, constraints, world):
+        all_constraints_satisfied = True
+
+        for constraint in constraints:
+            if not self.satisfy_constraint(constraint, world):
+                all_constraints_satisfied = False
+
+        return all_constraints_satisfied
+
+    def execute_events(self, events, world):
+        for event in events:
+            if event["type"] == "modify_attribute":
+                ModifyAttributeEvent(
+                    event["params"],
+                    self.actor,
+                    target_nodes=self.target_nodes,
+                    text_content="ModifyAttributeEvent",
+                ).execute(world)
+
+            if event["type"] == "create_entity":
+                CreateEntityEvent(
+                    event["params"],
+                    self.actor,
+                    target_nodes=self.target_nodes,
+                    text_content="CreateEntityEvent",
+                ).execute(world)
+
+            if event["type"] == "broadcast_message":
+                BroadcastMessageEvent(
+                    event["params"],
+                    self.actor,
+                    target_nodes=self.target_nodes,
+                    text_content="BroadcastMessageEvent",
+                ).execute(world)
 
     def on_use(self, world):
         use_node = self.target_nodes[0]
+
         if not hasattr(use_node, "on_use") and use_node.on_use is not None:
             # No on_use for this agent.
             return
+
         self.found_use = False
         self.messages = {}
         on_uses = use_node.on_use
+
         for on_use in on_uses:
             constraints = on_use["constraints"]
-            if self.preconditions_met(constraints, world):
-                post = on_use["events"]
+            if self.satisfy_constraints(constraints, world):
+                events = on_use["events"]
                 self.found_use = True
-                self.execute_post(post, world)
+                self.execute_events(events, world)
                 break
+
         if not self.found_use:
-            self.broadcast_message(
-                {
-                    "type": "broadcast_message",
-                    "params": {"self_view": "Nothing special seems to happen."},
-                },
-                world,
-            )
+            BroadcastMessageEvent(
+                {"self_view": "Nothing special seems to happen."},
+                self.actor,
+                target_nodes=None,
+                text_content="BroadcastMessageEvent",
+            ).execute(world)
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
