@@ -1,5 +1,5 @@
 --data-model-db
-/home/ubuntu/data/database.db 
+/home/ubuntu/data/database.db
 --hostname
 www.light-rpg.ai
 --light-model-root
@@ -14,4 +14,3 @@ starspace/angela_starspace/model4
 dialog_gen/model
 --acting-model
 main_act/model
-

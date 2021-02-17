@@ -1,0 +1,5 @@
+[console_scripts]
+parlai = parlai.__main__:main
+
+[flake8.extension]
+PAI = parlai.utils.flake8:ParlAIChecker

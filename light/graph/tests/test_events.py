@@ -1082,7 +1082,7 @@ test_graph_3 = OOGraph.from_json(
         },
         "sword_dealer_14": {
             "agent": true,
-            "dexterity": 1000, 
+            "dexterity": 1000,
             "aggression": 0,
             "char_type": "person",
             "classes": [

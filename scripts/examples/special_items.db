@@ -83,7 +83,7 @@
         "name_prefix": "a",
         "physical_description": "This book describes many sundry spells and incantations in arcane language. Amongst them, it speaks of the orb of creation, a incredibly powerful device that when wielded and chanting such words as \"creo device stone\" one can create a stone! \"creo loci cave\" one can create a cave! or even \"creo creatura dog\" one can summon a living dog!"
     },
-    {	
+    {
             "agent": false,
 	    "is_object": true,
             "classes": [
@@ -129,7 +129,7 @@
 	},
 	{
             "agent": false,
-	    "is_object": true,	    
+	    "is_object": true,
             "classes": [
                 "object"
             ],
@@ -206,7 +206,7 @@
             "drink": false,
             "equipped": null,
             "food": true,
-            "food_energy": 2,	    
+            "food_energy": 2,
             "name_prefix": "a",
             "node_id": "scroll_9_1",
             "container_node": { "target_id": "church entryway_1_2"  },
@@ -289,7 +289,7 @@
         },
 	{
             "agent": false,
-	    "is_object": true,	    
+	    "is_object": true,
             "classes": [
                 "object"
             ],
@@ -358,7 +358,7 @@
         },
 	{
             "agent": false,
-	    "is_object": true,	    
+	    "is_object": true,
             "classes": [
                 "object"
             ],
@@ -424,5 +424,5 @@
             "value": 1,
             "wearable": false,
             "wieldable": true
-        }	
+        }
 ]

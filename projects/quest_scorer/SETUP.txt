@@ -15,4 +15,4 @@ py create_data.py
 cp /tmp/train.txt /checkpoint/light/projects/dialog_and_act_trainer/light_questscorer_train.txt
 cp /tmp/valid.txt /checkpoint/light/projects/dialog_and_act_trainer/light_questscorer_valid.txt
 
-# Then used for training the model in light/projects/dialog_and_act_trainer 
+# Then used for training the model in light/projects/dialog_and_act_trainer

@@ -1,0 +1,10 @@
+numpy
+yappi
+torch
+tornado
+pandas
+parlai
+psycopg2
+pytest
+pyzmq
+tqdm
