@@ -18,18 +18,18 @@ class PostconditionEvent(GraphEvent):
 
     def __init__(
         self,
-        post_condition,
+        event_params,
         actor: GraphAgent,
         target_nodes: Optional[List[GraphNode]] = None,
         text_content: Optional[str] = None,
     ):
         super().__init__(actor, target_nodes, text_content)
-        self.post_condition = post_condition
+        self.event_params = event_params
 
 
 class BroadcastMessageEvent(PostconditionEvent):
     def execute(self, world: "World") -> List[GraphEvent]:
-        self.messages = self.post_condition["params"]
+        self.messages = self.event_params
         self.__msg_txt = self.messages["self_view"]
         world.broadcast_to_room(self)
 
@@ -45,7 +45,7 @@ class BroadcastMessageEvent(PostconditionEvent):
 class CreateEntityEvent(PostconditionEvent):
     def execute(self, world: "World") -> List[GraphEvent]:
         # creation location
-        entity_event_type = self.post_condition["params"]["type"]
+        entity_event_type = self.event_params["type"]
 
         if entity_event_type == "in_used_item":
             location = self.target_nodes[0]
@@ -57,8 +57,7 @@ class CreateEntityEvent(PostconditionEvent):
             location = self.actor
 
         world_graph = world.oo_graph
-        event_object = self.post_condition["params"]["object"]
-        n = world_graph.add_object(event_object["name"], event_object)
+        n = world_graph.add_object(self.event_params["object"]["name"], self.event_params["object"])
         n.force_move_to(location)
 
     @proper_caps
@@ -72,11 +71,11 @@ class CreateEntityEvent(PostconditionEvent):
 
 class ModifyAttributeEvent(PostconditionEvent):
     def execute(self, world: "World") -> List[GraphEvent]:
-        if self.post_condition["params"]["type"] == "in_used_target_item":
+        if self.event_params["type"] == "in_used_target_item":
             target = self.target_nodes[1]
 
-        key = self.post_condition["params"]["key"]
-        value = self.post_condition["params"]["value"]
+        key = self.event_params["key"]
+        value = self.event_params["value"]
 
         if value.startswith("+"):
             value = float(value[1:])
@@ -144,7 +143,7 @@ class UseEvent(GraphEvent):
         for event in events:
             if event["type"] == "modify_attribute":
                 ModifyAttributeEvent(
-                    event,
+                    event["params"],
                     self.actor,
                     target_nodes=self.target_nodes,
                     text_content="ModifyAttributeEvent",
@@ -152,7 +151,7 @@ class UseEvent(GraphEvent):
 
             if event["type"] == "create_entity":
                 CreateEntityEvent(
-                    event,
+                    event["params"],
                     self.actor,
                     target_nodes=self.target_nodes,
                     text_content="CreateEntityEvent",
@@ -160,7 +159,7 @@ class UseEvent(GraphEvent):
 
             if event["type"] == "broadcast_message":
                 BroadcastMessageEvent(
-                    event,
+                    event["params"],
                     self.actor,
                     target_nodes=self.target_nodes,
                     text_content="BroadcastMessageEvent",
@@ -187,10 +186,7 @@ class UseEvent(GraphEvent):
 
         if not self.found_use:
             BroadcastMessageEvent(
-                {
-                    "type": "broadcast_message",
-                    "params": {"self_view": "Nothing special seems to happen."},
-                },
+                {"self_view": "Nothing special seems to happen."},
                 self.actor,
                 target_nodes=None,
                 text_content="BroadcastMessageEvent",
