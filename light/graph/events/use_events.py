@@ -32,21 +32,20 @@ class UseEvent(GraphEvent):
     NAMES = ["use"]
 
     def satisfy_constraint(self, constraint, world):
+        constraint["params"]["actor"] = self.actor
+
         if constraint["type"] == "is_holding":
-            constraint["params"]["actor"] = self.actor
-            return IsHoldingConstraint(self.target_nodes, constraint["params"]).satisfy(
-                world
-            )
+            constraint_name = "IsHoldingConstraint"
 
         if constraint["type"] == "used_with_item_name":
-            return UsedWithItemConstraint(
-                self.target_nodes, constraint["params"]
-            ).satisfy(world)
+            constraint_name = "UsedWithItemConstraint"
 
         if constraint["type"] == "used_with_agent":
-            return UsedWithAgentConstraint(self.target_nodes).satisfy(world)
+            constraint_name = "UsedWithAgentConstraint"
 
-        return True
+        return globals()[constraint_name](
+            self.target_nodes, constraint["params"]
+        ).satisfy(world)
 
     def satisfy_constraints(self, constraints, world):
         all_constraints_satisfied = True
@@ -60,28 +59,17 @@ class UseEvent(GraphEvent):
     def execute_events(self, events, world):
         for event in events:
             if event["type"] == "modify_attribute":
-                ModifyAttributeEvent(
-                    event["params"],
-                    self.actor,
-                    target_nodes=self.target_nodes,
-                    text_content="ModifyAttributeEvent",
-                ).execute(world)
+                event_name = "ModifyAttributeEvent"
 
             if event["type"] == "create_entity":
-                CreateEntityEvent(
-                    event["params"],
-                    self.actor,
-                    target_nodes=self.target_nodes,
-                    text_content="CreateEntityEvent",
-                ).execute(world)
+                event_name = "CreateEntityEvent"
 
             if event["type"] == "broadcast_message":
-                BroadcastMessageEvent(
-                    event["params"],
-                    self.actor,
-                    target_nodes=self.target_nodes,
-                    text_content="BroadcastMessageEvent",
-                ).execute(world)
+                event_name = "BroadcastMessageEvent"
+
+            globals()[event_name](
+                event["params"], self.actor, target_nodes=self.target_nodes
+            ).execute(world)
 
     def on_use(self, world):
         use_node = self.target_nodes[0]

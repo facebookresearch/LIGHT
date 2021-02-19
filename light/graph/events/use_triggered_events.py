@@ -23,9 +23,8 @@ class UseTriggeredEvent(TriggeredEvent):
         event_params,
         actor: GraphAgent,
         target_nodes: Optional[List[GraphNode]] = None,
-        text_content: Optional[str] = None,
     ):
-        super().__init__(actor, target_nodes, text_content)
+        super().__init__(actor, target_nodes)
         self.event_params = event_params
 
     @proper_caps
