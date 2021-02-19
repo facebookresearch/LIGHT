@@ -51,6 +51,10 @@ class UseEvent(GraphEvent):
         all_constraints_satisfied = True
 
         for constraint in constraints:
+            if not "params" in constraint:
+                # Avoid errors for constraints with no params
+                constraint["params"] = {}
+
             if not self.satisfy_constraint(constraint, world):
                 all_constraints_satisfied = False
 
@@ -58,6 +62,10 @@ class UseEvent(GraphEvent):
 
     def execute_events(self, events, world):
         for event in events:
+            if not "params" in event:
+                # Avoid errors for events with no params
+                event["params"] = {}
+
             if event["type"] == "modify_attribute":
                 event_name = "ModifyAttributeEvent"
 
@@ -92,10 +100,7 @@ class UseEvent(GraphEvent):
 
         if not self.found_use:
             BroadcastMessageEvent(
-                {"self_view": "Nothing special seems to happen."},
-                self.actor,
-                target_nodes=None,
-                text_content="BroadcastMessageEvent",
+                {"self_view": "Nothing special seems to happen."}, self.actor
             ).execute(world)
 
     def execute(self, world: "World") -> List[GraphEvent]:

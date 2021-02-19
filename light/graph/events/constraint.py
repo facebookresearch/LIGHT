@@ -4,17 +4,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 
 
-class Constraint:
+class Constraint(ABC):
     """Base abstract class to describe every constraint necessary to be met in order to execute an use event"""
 
     def __init__(self, target_nodes, constraint_params=None):
         self.target_nodes = target_nodes
         self.constraint_params = constraint_params
 
-    @abstractmethod
     def satisfy(self, world):
         pass
 
