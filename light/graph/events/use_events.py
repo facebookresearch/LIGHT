@@ -21,6 +21,7 @@ from light.graph.events.constraint import (
     IsHoldingConstraint,
     UsedWithAgentConstraint,
     UsedWithItemConstraint,
+    InRoomConstraint,
 )
 from light.graph.elements.graph_nodes import GraphAgent, GraphNode, GraphObject
 from typing import Union, List, Optional
@@ -42,6 +43,9 @@ class UseEvent(GraphEvent):
 
         if constraint["type"] == "used_with_agent":
             constraint_name = "UsedWithAgentConstraint"
+
+        if constraint["type"] == "in_room":
+            constraint_name = "InRoomConstraint"
 
         return globals()[constraint_name](
             self.target_nodes, constraint["params"]

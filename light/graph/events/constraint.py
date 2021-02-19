@@ -22,7 +22,7 @@ class IsHoldingConstraint(Constraint):
     """Constraint which chexks if actor is holding the useable item"""
 
     def satisfy(self, world):
-        if self.constraint_params["complement"] == "used_item":
+        if not self.constraint_params["complement"] is "used_item":
             return True
 
         target = self.target_nodes[0]
@@ -43,3 +43,11 @@ class UsedWithAgentConstraint(Constraint):
 
     def satisfy(self, world):
         return self.target_nodes[1].agent
+
+
+class InRoomConstraint(Constraint):
+    """Constraint which checks if the event is happening in a specific room"""
+
+    def satisfy(self, world):
+        room_name = self.constraint_params["actor"].get_room().get_names()[0]
+        return room_name == self.constraint_params["room_name"]
