@@ -38,6 +38,8 @@ class UseTriggeredEvent(TriggeredEvent):
 
 
 class BroadcastMessageEvent(UseTriggeredEvent):
+    """Event to broadcast a message to the room the agent currently is inside"""
+
     def execute(self, world: "World") -> List[GraphEvent]:
         self.messages = self.event_params
         self._UseTriggeredEvent__msg_txt = self.messages["self_view"]
@@ -45,6 +47,8 @@ class BroadcastMessageEvent(UseTriggeredEvent):
 
 
 class CreateEntityEvent(UseTriggeredEvent):
+    """Event to create an entity in one of the objects involved on an use event"""
+
     def execute(self, world: "World") -> List[GraphEvent]:
         # creation location
         entity_event_type = self.event_params["type"]
@@ -66,6 +70,8 @@ class CreateEntityEvent(UseTriggeredEvent):
 
 
 class ModifyAttributeEvent(UseTriggeredEvent):
+    """Event to modify the value of a certain attribute"""
+
     def execute(self, world: "World") -> List[GraphEvent]:
         if self.event_params["type"] == "in_used_target_item":
             target = self.target_nodes[1]

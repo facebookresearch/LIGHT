@@ -8,6 +8,8 @@ from abc import abstractmethod
 
 
 class Constraint:
+    """Base abstract class to describe every constraint necessary to be met in order to execute an use event"""
+
     def __init__(self, target_nodes, constraint_params=None):
         self.target_nodes = target_nodes
         self.constraint_params = constraint_params
@@ -18,23 +20,24 @@ class Constraint:
 
 
 class IsHoldingConstraint(Constraint):
+    """Constraint which chexks if actor is holding the useable item"""
+
     def satisfy(self, world):
         target = self.target_nodes[0]
         actor = self.constraint_params["actor"]
-
-        # Check if actor is holding the useable item.
         return target.get_container() == actor
 
 
 class UsedWithItemConstraint(Constraint):
+    """Constraint which checks if the useable item is used with the given object"""
+
     def satisfy(self, world):
         item = self.constraint_params["item"]
-
-        # Check if the useable item is used with the given object.
         return item == self.target_nodes[1].name
 
 
 class UsedWithAgentConstraint(Constraint):
+    """Constraint which checks if the target is an agent"""
+
     def satisfy(self, world):
-        # Check if the target is an agent
         return self.target_nodes[1].agent
