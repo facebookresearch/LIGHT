@@ -32,25 +32,18 @@ class UseEvent(GraphEvent):
     NAMES = ["use"]
 
     def satisfy_constraint(self, constraint, world):
-        if (
-            constraint["type"] == "is_holding"
-            and constraint["params"]["complement"] == "used_item"
-        ):
-            # Check if actor is holding the useable item.
-            # return self.target_nodes[0].get_container() == self.actor
-            return IsHoldingConstraint(
-                self.target_nodes, {"actor": self.actor}
-            ).satisfy(world)
+        if constraint["type"] == "is_holding":
+            constraint["params"]["actor"] = self.actor
+            return IsHoldingConstraint(self.target_nodes, constraint["params"]).satisfy(
+                world
+            )
 
         if constraint["type"] == "used_with_item_name":
-            # Check if the useable item is used with the given object.
-            # return constraint[1] == self.target_nodes[1].name
             return UsedWithItemConstraint(
                 self.target_nodes, constraint["params"]
             ).satisfy(world)
 
         if constraint["type"] == "used_with_agent":
-            # Check if the target is an agent
             return UsedWithAgentConstraint(self.target_nodes).satisfy(world)
 
         return True

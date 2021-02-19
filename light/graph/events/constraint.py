@@ -23,6 +23,9 @@ class IsHoldingConstraint(Constraint):
     """Constraint which chexks if actor is holding the useable item"""
 
     def satisfy(self, world):
+        if self.constraint_params["complement"] == "used_item":
+            return True
+
         target = self.target_nodes[0]
         actor = self.constraint_params["actor"]
         return target.get_container() == actor
