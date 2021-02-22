@@ -22,6 +22,7 @@ from light.graph.events.constraint import (
     UsedWithAgentConstraint,
     UsedWithItemConstraint,
     InRoomConstraint,
+    AttributeCompareValueConstraint,
 )
 from light.graph.elements.graph_nodes import GraphAgent, GraphNode, GraphObject
 from typing import Union, List, Optional
@@ -46,6 +47,9 @@ class UseEvent(GraphEvent):
 
         if constraint["type"] == "in_room":
             constraint_name = "InRoomConstraint"
+
+        if constraint["type"] == "attribute_compare_value":
+            constraint_name = "AttributeCompareValueConstraint"
 
         return globals()[constraint_name](
             self.target_nodes, constraint["params"]

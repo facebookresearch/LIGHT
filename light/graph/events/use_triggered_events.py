@@ -89,6 +89,7 @@ class ModifyAttributeEvent(UseTriggeredEvent):
             setattr(target, key, value)
         else:
             setattr(target, key, value)
+
         if key == "health":
             if target.health < 0:
                 target.health = 0

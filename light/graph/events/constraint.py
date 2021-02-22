@@ -19,10 +19,10 @@ class Constraint(ABC):
 
 
 class IsHoldingConstraint(Constraint):
-    """Constraint which chexks if actor is holding the useable item"""
+    """Checks if actor is holding the useable item"""
 
     def satisfy(self, world):
-        if not self.constraint_params["complement"] is "used_item":
+        if self.constraint_params["complement"] is "used_item":
             return True
 
         target = self.target_nodes[0]
@@ -31,7 +31,7 @@ class IsHoldingConstraint(Constraint):
 
 
 class UsedWithItemConstraint(Constraint):
-    """Constraint which checks if the useable item is used with the given object"""
+    """Checks if the useable item is used with the given object"""
 
     def satisfy(self, world):
         item = self.constraint_params["item"]
@@ -39,15 +39,61 @@ class UsedWithItemConstraint(Constraint):
 
 
 class UsedWithAgentConstraint(Constraint):
-    """Constraint which checks if the target is an agent"""
+    """Checks if the target is an agent"""
 
     def satisfy(self, world):
         return self.target_nodes[1].agent
 
 
 class InRoomConstraint(Constraint):
-    """Constraint which checks if the event is happening in a specific room"""
+    """Checks if the event is happening in a specific room"""
 
     def satisfy(self, world):
         room_name = self.constraint_params["actor"].get_room().get_names()[0]
         return room_name == self.constraint_params["room_name"]
+
+
+class AttributeCompareValueConstraint(Constraint):
+    """Checks if the attribute value is equal to at least one (If should) or different of every element (If should not) out of a possible list"""
+
+    def compare(self, a, b):
+        cmp_type = self.constraint_params["cmp_type"]
+
+        if cmp_type == "eq":
+            return a == b
+
+        if cmp_type == "neq":
+            return a != b
+
+        if cmp_type == "greater":
+            return a > b
+
+        if cmp_type == "geq":
+            return a >= b
+
+        if cmp_type == "less":
+            return a < b
+
+        if cmp_type == "leq":
+            return a <= b
+
+    def satisfy(self, world):
+        if self.constraint_params["type"] == "in_used_target_item":
+            target = self.target_nodes[1]
+
+        key = self.constraint_params["key"]
+        params_list = self.constraint_params["list"].strip("][").split(", ")
+
+        if not hasattr(target, key):
+            return False
+
+        key_value = getattr(target, key)
+
+        for value in params_list:
+            if isinstance(key_value, int):
+                value = int(value)
+
+            if not self.compare(key_value, value):
+                return False
+
+        return True
