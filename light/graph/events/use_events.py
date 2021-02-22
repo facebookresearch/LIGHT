@@ -37,23 +37,21 @@ class UseEvent(GraphEvent):
         constraint["params"]["actor"] = self.actor
 
         if constraint["type"] == "is_holding":
-            constraint_name = "IsHoldingConstraint"
+            constraint_class = IsHoldingConstraint
 
         if constraint["type"] == "used_with_item_name":
-            constraint_name = "UsedWithItemConstraint"
+            constraint_class = UsedWithItemConstraint
 
         if constraint["type"] == "used_with_agent":
-            constraint_name = "UsedWithAgentConstraint"
+            constraint_class = UsedWithAgentConstraint
 
         if constraint["type"] == "in_room":
-            constraint_name = "InRoomConstraint"
+            constraint_class = InRoomConstraint
 
         if constraint["type"] == "attribute_compare_value":
-            constraint_name = "AttributeCompareValueConstraint"
+            constraint_class = AttributeCompareValueConstraint
 
-        return globals()[constraint_name](
-            self.target_nodes, constraint["params"]
-        ).satisfy(world)
+        return constraint_class(self.target_nodes, constraint["params"]).satisfy(world)
 
     def satisfy_constraints(self, constraints, world):
         all_constraints_satisfied = True
@@ -75,15 +73,15 @@ class UseEvent(GraphEvent):
                 event["params"] = {}
 
             if event["type"] == "modify_attribute":
-                event_name = "ModifyAttributeEvent"
+                event_class = ModifyAttributeEvent
 
             if event["type"] == "create_entity":
-                event_name = "CreateEntityEvent"
+                event_class = CreateEntityEvent
 
             if event["type"] == "broadcast_message":
-                event_name = "BroadcastMessageEvent"
+                event_class = BroadcastMessageEvent
 
-            globals()[event_name](
+            event_class(
                 event["params"], self.actor, target_nodes=self.target_nodes
             ).execute(world)
 
