@@ -11,6 +11,7 @@ from light.world.quest_loader import QuestCreator
 from light.graph.events.magic import check_if_cast_magic_from_event
 from typing import TYPE_CHECKING
 import random
+import time
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -45,6 +46,7 @@ class PlayerSoul(BaseSoul):
         # TODO merge these flags across LIGHT
         target_node.is_player = True
         target_node._human = True
+        target_node._last_action_time = time.time()
         self.player_id = player_id
         self.provider = provider  # TODO link with real provider
         if hasattr(target_node, "mission") and target_node.mission != "":
@@ -72,6 +74,8 @@ class PlayerSoul(BaseSoul):
         PlayerSouls must process act text sent from players and enact them on the world.
         This method is called by the player provider when an action is taken.
         """
+        actor = self.target_node
+        actor._last_action_time = time.time()
         self.world.parse_exec(self.target_node, act_text)
 
     def new_quest(self):

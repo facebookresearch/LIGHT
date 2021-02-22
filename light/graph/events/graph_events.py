@@ -17,6 +17,8 @@ from light.graph.events.base import (
 from typing import Union, List, Optional, Tuple, Any, Type, TYPE_CHECKING
 import emoji
 import random
+import time
+import re
 from light.graph.elements.graph_nodes import (
     GraphNode,
     GraphAgent,
@@ -2973,6 +2975,12 @@ class UnlockEvent(GraphEvent):
         lock_edge.unlock()
 
 
+def actor_has_no_recent_action(last_time_acted, current_time):
+    # After 2 minutes we consider an agent to be "dozing off".
+    time_elapsed = current_time -  last_time_acted
+    return time_elapsed > 60*2
+
+
 # TODO handle locked objects
 class ExamineEvent(GraphEvent):
     """Handles displaying examine/extra text for a graph node"""
@@ -2991,7 +2999,10 @@ class ExamineEvent(GraphEvent):
         if isinstance(target, GraphAgent):
             inv_text = world.view.get_inventory_text_for(object_id, give_empty=False)
             if inv_text != "":
-                base_desc += f"\n{self.__target_name} is {inv_text} "
+                base_desc += f"\n{self.__Target_name} is {inv_text} "
+            if (hasattr(self.target_nodes[0], '_last_action_time') and
+                actor_has_no_recent_action(self.target_nodes[0]._last_action_time, time.time())):
+                base_desc += "\nThey appear to be dozing off right now."
         elif isinstance(target, GraphObject) and target.container:
             if len(target.get_contents()) > 0:
                 base_desc += f"\n{world.display_node(object_id)} "
@@ -3005,6 +3016,7 @@ class ExamineEvent(GraphEvent):
         # Populate for views
         self.__actor_name = self.actor.get_prefix_view()
         self.__target_name = self.target_nodes[0].get_prefix_view()
+        self.__Target_name = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), self.__target_name, 1)
         self.__examine_text = self._get_target_description(world)
 
         # Move the object over and broadcast
