@@ -34,7 +34,8 @@ class UseEvent(GraphEvent):
     NAMES = ["use"]
 
     def satisfy_constraint(self, constraint, world):
-        constraint["params"]["actor"] = self.actor
+        constraint_params = constraint.get("params", {})
+        constraint_params["actor"] = self.actor
 
         if constraint["type"] == "is_holding":
             constraint_class = IsHoldingConstraint
@@ -51,16 +52,12 @@ class UseEvent(GraphEvent):
         if constraint["type"] == "attribute_compare_value":
             constraint_class = AttributeCompareValueConstraint
 
-        return constraint_class(self.target_nodes, constraint["params"]).satisfy(world)
+        return constraint_class(self.target_nodes, constraint_params).satisfy(world)
 
     def satisfy_constraints(self, constraints, world):
         all_constraints_satisfied = True
 
         for constraint in constraints:
-            if not "params" in constraint:
-                # Avoid errors for constraints with no params
-                constraint["params"] = {}
-
             if not self.satisfy_constraint(constraint, world):
                 all_constraints_satisfied = False
 
@@ -68,10 +65,6 @@ class UseEvent(GraphEvent):
 
     def execute_events(self, events, world):
         for event in events:
-            if not "params" in event:
-                # Avoid errors for events with no params
-                event["params"] = {}
-
             if event["type"] == "modify_attribute":
                 event_class = ModifyAttributeEvent
 
@@ -82,7 +75,7 @@ class UseEvent(GraphEvent):
                 event_class = BroadcastMessageEvent
 
             event_class(
-                event["params"], self.actor, target_nodes=self.target_nodes
+                event.get("params", {}), self.actor, target_nodes=self.target_nodes
             ).execute(world)
 
     def on_use(self, world):
