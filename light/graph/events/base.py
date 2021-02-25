@@ -39,7 +39,7 @@ def proper_caps(in_string: str) -> str:
     return in_string[0].upper() + in_string[1:]
 
 def proper_caps_wrapper(func):
-    """Decorator that reports the execution time."""
+    """Decorator to ensure output strings are properly capitalized (first letter)."""
 
     def wrap(*args, **kwargs):
         result = func(*args, **kwargs)
