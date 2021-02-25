@@ -3,10 +3,10 @@ from light.graph.events.base import (
     ErrorEvent,
     TriggeredEvent,
     ProcessedArguments,
-    proper_caps,
+    proper_caps_wrapper,
 )
 
-from light.graph.events.graph_events import DeathEvent
+from light.graph.events.graph_events import DeathEvent, HealthEvent
 
 from light.graph.elements.graph_nodes import GraphAgent, GraphNode, GraphObject
 
@@ -33,7 +33,7 @@ class BroadcastMessageEvent(UseTriggeredEvent):
         self.__msg_txt = self.messages["self_view"]
         world.broadcast_to_room(self)
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -62,7 +62,7 @@ class CreateEntityEvent(UseTriggeredEvent):
         )
         n.force_move_to(location)
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -103,7 +103,7 @@ class ModifyAttributeEvent(UseTriggeredEvent):
                     text_content="HealthOnHitEvent",
                 ).execute(world)
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -217,7 +217,7 @@ class UseEvent(GraphEvent):
         """return action text for use"""
         return f"use {self._canonical_targets[0]} with {self._canonical_targets[1]}"
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 
