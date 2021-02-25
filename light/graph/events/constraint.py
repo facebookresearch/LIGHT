@@ -54,7 +54,7 @@ class InRoomConstraint(Constraint):
 
 
 class AttributeCompareValueConstraint(Constraint):
-    """Checks if the attribute value is equal to at least one (If should) or different of every element (If should not) out of a possible list"""
+    """Checks if the attribute value has a true compare to at least one of a possible list"""
 
     def compare(self, a, b):
         cmp_type = self.constraint_params["cmp_type"]
@@ -93,7 +93,7 @@ class AttributeCompareValueConstraint(Constraint):
             if isinstance(key_value, int):
                 value = int(value)
 
-            if not self.compare(key_value, value):
-                return False
+            if self.compare(key_value, value):
+                return True
 
-        return True
+        return False
