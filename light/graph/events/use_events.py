@@ -3,7 +3,7 @@ from light.graph.events.base import (
     ErrorEvent,
     TriggeredEvent,
     ProcessedArguments,
-    proper_caps,
+    proper_caps_wrapper,
 )
 
 from light.graph.events.graph_events import DeathEvent
@@ -217,7 +217,7 @@ class UseEvent(GraphEvent):
         """return action text for use"""
         return f"use {self._canonical_targets[0]} with {self._canonical_targets[1]}"
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 

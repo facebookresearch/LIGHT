@@ -32,14 +32,20 @@ if TYPE_CHECKING:
     from light.world.world import World
 
 
-def proper_caps(func):
+def proper_caps(in_string: str) -> str:
+    """Function for only capitalizing the very first letter without disturbing the rest"""
+    # This implementation is O(n), so if string manipulation ends up being a long-term
+    # problem for LIGHT we'll need to swap to ctypes to get this right
+    return in_string[0].upper() + in_string[1:]
+
+def proper_caps_wrapper(func):
     """Decorator that reports the execution time."""
 
     def wrap(*args, **kwargs):
         result = func(*args, **kwargs)
         if result is not None:
             try:
-                result = result[0].upper() + result[1:]
+                result = proper_caps(result)
             except:
                 print(f"Had difficulty with proper_caps on {result}")
         return result
@@ -283,7 +289,7 @@ class ErrorEvent(GraphEvent):
         """
         raise Exception("ErrorEvents should never be executed")
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, actor):
         """ErrorEvents should be viewed by the actor who tried to act"""
         assert actor == self.actor, (
