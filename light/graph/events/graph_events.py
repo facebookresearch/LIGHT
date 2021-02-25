@@ -2999,7 +2999,7 @@ class ExamineEvent(GraphEvent):
         if isinstance(target, GraphAgent):
             inv_text = world.view.get_inventory_text_for(object_id, give_empty=False)
             if inv_text != "":
-                base_desc += f"\n{self.__Target_name} is {inv_text} "
+                base_desc += f"\n{self.__target_name} is {inv_text} "
             if (hasattr(self.target_nodes[0], '_last_action_time') and
                 actor_has_no_recent_action(self.target_nodes[0]._last_action_time, time.time())):
                 base_desc += "\nThey appear to be dozing off right now."
@@ -3015,8 +3015,7 @@ class ExamineEvent(GraphEvent):
         assert not self.executed
         # Populate for views
         self.__actor_name = self.actor.get_prefix_view()
-        target_name = self.target_nodes[0].get_prefix_view()
-        self.__Target_name = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), target_name, 1)
+        self.__target_name = proper_caps(self.target_nodes[0].get_prefix_view())
         self.__examine_text = self._get_target_description(world)
 
         # Move the object over and broadcast
