@@ -33,7 +33,7 @@ class BroadcastMessageEvent(UseTriggeredEvent):
         self.__msg_txt = self.messages["self_view"]
         world.broadcast_to_room(self)
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:

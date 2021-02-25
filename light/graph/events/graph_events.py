@@ -10,6 +10,7 @@ from light.graph.events.base import (
     TriggeredEvent,
     NoArgumentEvent,
     ProcessedArguments,
+    proper_caps,
     proper_caps_wrapper,
 )
 
