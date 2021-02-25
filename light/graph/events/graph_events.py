@@ -3015,8 +3015,8 @@ class ExamineEvent(GraphEvent):
         assert not self.executed
         # Populate for views
         self.__actor_name = self.actor.get_prefix_view()
-        self.__target_name = self.target_nodes[0].get_prefix_view()
-        self.__Target_name = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), self.__target_name, 1)
+        target_name = self.target_nodes[0].get_prefix_view()
+        self.__Target_name = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), target_name, 1)
         self.__examine_text = self._get_target_description(world)
 
         # Move the object over and broadcast
