@@ -6,7 +6,7 @@ from light.graph.events.base import (
     proper_caps_wrapper,
 )
 
-from light.graph.events.graph_events import DeathEvent
+from light.graph.events.graph_events import DeathEvent, HealthEvent
 
 from light.graph.elements.graph_nodes import GraphAgent, GraphNode, GraphObject
 
@@ -62,7 +62,7 @@ class CreateEntityEvent(UseTriggeredEvent):
         )
         n.force_move_to(location)
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -103,7 +103,7 @@ class ModifyAttributeEvent(UseTriggeredEvent):
                     text_content="HealthOnHitEvent",
                 ).execute(world)
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
