@@ -13,7 +13,7 @@ An event is any interaction triggered or not by player action between two entiti
 
 These events describe any interaction of the type `use x with y`. Every use interaction (Described in the world as an `on_use` function) is made of two parts:
 
-`Constrains` and `Events`. `Constraints` are the conditions that must be fullfilled in order for an event to happen. For example, if try to dig for a pirate treasure
+`Constraints` and `Events`. `Constraints` are the conditions that must be fullfilled in order for an event to happen. For example, if try to dig for a pirate treasure
 
 it will only trigger the `Find Treasure Chest` event if you use the shovel item in the spot with an X on it - if you try to use in another spot the event will not happen.
 
@@ -50,10 +50,10 @@ Checks whether the actor of the event is holding one of the objects involved in 
 Checks whether the actor of the event is holding one of the objects involved in the event. If you try to use a shovel in a muddy area, for example, to be holding the shovel.  It has the format:
 ```
 {
-	"type": "is_holding",
-	"params": {
-		"complement": "used_item"
-	}
+	"type": "used_with_item_name",
+    "params": {
+        "item": "muddy area"
+    }
 }
 ```
 ### Used with Agent
@@ -119,7 +119,7 @@ Creates an entity after the event happens. The entity created may belong to the 
 
 ### Broadcast Message
 
-Broadcasts a message related to the Use event to the room the agent is currently in. To use it, it is necessary to specify the views of the message (Which message will be sent to the agent doing the use event, to agents in the same room, etc.). The format is as following:
+Broadcasts a message related to the Use event to the room the agent is currently in. To use it, it is necessary to specify the views of the message (Which message will be sent to the agent doing the use event, to agents in the same room, etc.). `recipient_text` is the string referring to the target of the Use event, meanwhile `actor_text` is the agent doing the Use event. The format is as following:
 ```
 "type": "broadcast_message",
 "params": {
