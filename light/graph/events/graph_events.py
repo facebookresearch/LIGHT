@@ -11,6 +11,7 @@ from light.graph.events.base import (
     NoArgumentEvent,
     ProcessedArguments,
     proper_caps,
+    proper_caps_wrapper,
 )
 
 # Used for typehinting
@@ -54,7 +55,7 @@ class SystemMessageEvent(TriggeredEvent):
         world.broadcast_to_agents(self, agents=[self.actor])
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Only the target actor should be able to see this message"""
         if viewer == self.actor:
@@ -97,7 +98,7 @@ class SayEvent(SpeechEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -173,7 +174,7 @@ class ShoutEvent(SpeechEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -242,7 +243,7 @@ class WhisperEvent(SpeechEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -348,7 +349,7 @@ class TellEvent(SpeechEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -439,7 +440,7 @@ class LeaveEvent(TriggeredEvent):
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -462,7 +463,7 @@ class ArriveEvent(TriggeredEvent):
         world.broadcast_to_room(self, exclude_agents=[self.actor])
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -486,7 +487,7 @@ class TriggerFollowEvent(TriggeredEvent):
             GoEvent(self.actor, target_nodes=self.target_nodes).execute(world)
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -613,7 +614,7 @@ class GoEvent(GraphEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         # Go events are mostly viewed through Leave and Arrive events.
@@ -725,7 +726,7 @@ class UnfollowEvent(NoArgumentEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -784,7 +785,7 @@ class FollowEvent(GraphEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -883,7 +884,7 @@ class UnblockEvent(NoArgumentEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -941,7 +942,7 @@ class BlockEvent(GraphEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -1029,7 +1030,7 @@ class DeleteObjectEvent(TriggeredEvent):
         g.delete_nodes([self.actor])
         world.broadcast_to_room(self)
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         return self.__in_room_view
@@ -1055,7 +1056,7 @@ class DeathEvent(TriggeredEvent):
         # update the player
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -1094,7 +1095,7 @@ class SoulSpawnEvent(TriggeredEvent):
 
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -1122,7 +1123,7 @@ class SpawnEvent(TriggeredEvent):
 
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -1143,7 +1144,7 @@ class HelpEvent(NoArgumentEvent):
         world.broadcast_to_agents(self, [self.actor])
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -1249,7 +1250,7 @@ class HitEvent(GraphEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 
@@ -1367,7 +1368,7 @@ class HugEvent(GraphEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -1468,7 +1469,7 @@ class GetObjectEvent(GraphEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 
@@ -1644,7 +1645,7 @@ class PutObjectInEvent(GraphEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 
@@ -1828,7 +1829,7 @@ class DropObjectEvent(GraphEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 
@@ -1956,7 +1957,7 @@ class StealObjectEvent(GraphEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 
@@ -2137,7 +2138,7 @@ class GiveObjectEvent(GraphEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
 
@@ -2315,7 +2316,7 @@ class EquipObjectEvent(GraphEvent):
     def can_equip(cls, object_node: GraphObject) -> bool:
         return object_node.wearable or object_node.wieldable
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -2465,7 +2466,7 @@ class RemoveObjectEvent(GraphEvent):
     def can_equip(cls, object_node: GraphObject) -> bool:
         return object_node.wearable or object_node.wieldable
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -2595,7 +2596,7 @@ class IngestEvent(GraphEvent):
     def can_ingest(cls, object_node: GraphObject) -> bool:
         return object_node.drink or object_node.food
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -2737,7 +2738,7 @@ class LockableEvent(GraphEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -3023,7 +3024,7 @@ class ExamineEvent(GraphEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -3126,7 +3127,7 @@ class EmoteEvent(GraphEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -3189,7 +3190,7 @@ class WaitEvent(NoArgumentEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -3215,7 +3216,7 @@ class InventoryEvent(NoArgumentEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -3267,7 +3268,7 @@ class QuestEvent(NoArgumentEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
@@ -3317,7 +3318,7 @@ class RewardEvent(GraphEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if self.failed:
@@ -3416,7 +3417,7 @@ class HealthEvent(NoArgumentEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         health_text, sentiment = self.__health_text
@@ -3543,7 +3544,7 @@ class LookEvent(NoArgumentEvent):
         self.executed = True
         return []
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
