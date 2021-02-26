@@ -47,7 +47,7 @@ Checks whether the actor of the event is holding one of the objects involved in 
 
 ### Used with Item
 
-Checks whether the actor of the event is holding one of the objects involved in the event. If you try to use a shovel in a muddy area, for example, to be holding the shovel.  It has the format:
+Checks whether the actor of the event is doing the event with a specific object. Certain events can only happen by using certain combinations of objects, so this is a must. It has the format:
 ```
 {
 	"type": "used_with_item_name",
