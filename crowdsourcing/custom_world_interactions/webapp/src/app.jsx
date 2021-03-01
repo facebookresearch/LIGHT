@@ -8,6 +8,7 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
+import { ObjectDropdown } from './components/object_dropdown_menu.jsx';
 import { BaseFrontend, LoadingScreen } from "./components/core_components.jsx";
 import { useMephistoTask, ErrorBoundary } from "mephisto-task";
 
@@ -39,16 +40,16 @@ function MainApp() {
   }
   if (isPreview) {
     return (
-      <section className="hero is-medium is-link">
-        <div class="hero-body">
-          <div className="title is-3">
-            Welcome to LIGHT's Custom World Interactions task!
+      <div>
+        <section className="hero is-medium is-link">
+          <div className="hero-body">
+            <div className="title is-3">
+              Welcome to LIGHT's Custom World Interactions task!
+            </div>
           </div>
-          <div className="subtitle is-4">
-            This module is not ready yet, so please come back soon to check it out.
-          </div>
-        </div>
-      </section>
+        </section>
+        <ObjectDropdown />
+      </div>
     );
   }
 
