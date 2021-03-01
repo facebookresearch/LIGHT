@@ -10,7 +10,7 @@ from light.graph.events.base import (
     proper_caps,
 )
 
-from light.graph.events.graph_events import DeathEvent
+from light.graph.events.graph_events import DeathEvent, HealthEvent
 from light.graph.elements.graph_nodes import GraphAgent, GraphNode
 from typing import List, Optional
 
@@ -26,14 +26,6 @@ class UseTriggeredEvent(TriggeredEvent):
     ):
         super().__init__(actor, target_nodes)
         self.event_params = event_params
-
-    @proper_caps
-    def view_as(self, viewer: GraphAgent) -> Optional[str]:
-        """Provide the way that the given viewer should view this event"""
-        if viewer == self.actor:
-            return self.__msg_txt
-        else:
-            return None
 
 
 class BroadcastMessageEvent(UseTriggeredEvent):

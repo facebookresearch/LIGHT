@@ -17,7 +17,7 @@ def init_magic(datapath):
         files = datapath.split(",")
         magic_db = []
         for f in files:
-            if not os.path.exists(datapath):
+            if not os.path.exists(f):
                 print(f"Warning - no magic file at {datapath}, skipping!")
                 continue
             with open(f, "r") as jsonfile:
