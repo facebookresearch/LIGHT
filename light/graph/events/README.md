@@ -1,4 +1,6 @@
 
+
+
 # LIGHT Events
 
   
@@ -31,6 +33,37 @@ Every constraint and event is a dictionary of the format:
 }
 ```
 
+Every `on_use` functions is an array of Use events, which are arrays of `Constraints` and `Events` as described above. In general, when describing an object, the format of their custom interactions will be:
+```
+"object_id": {
+	"name": "object_name",
+	"contain_size": 0,
+	...
+	"on_use": [
+		//Event 1
+		{
+			"events": {
+				...
+			},
+			"constraints": {
+				...
+			}
+		},
+		//Event 2
+		{
+			"events": {
+				...
+			},
+			"constraints": {
+				...
+			}
+		},
+		...
+	]
+}
+
+```
+
 ## Constraint Types
 
 ### Is Holding
@@ -47,7 +80,7 @@ Checks whether the actor of the event is holding one of the objects involved in 
 
 ### Used with Item
 
-Checks whether the actor of the event is holding one of the objects involved in the event. If you try to use a shovel in a muddy area, for example, to be holding the shovel.  It has the format:
+Checks whether the actor of the event is doing the event with a specific object. Certain events can only happen by using certain combinations of objects, so this is a must. It has the format:
 ```
 {
 	"type": "used_with_item_name",
@@ -103,7 +136,7 @@ It's important to remind that the attribute value needs to satisfy its compariso
 
 ### Create Entity
 
-Creates an entity after the event happens. The entity created may belong to the room, the agent, the item being used in the Use event or the target of the Use event itself. To use this event, it's necessary to specify where the entity is being created and the object itself. It has the format:
+Creates an entity after the event happens. The entity created may belong to the room (In this case, `type = in_room`), the actor of the event (`type=in_actor`), the item being used on the Use event (`type=in_used_item`) or the target of the Use event itself (`type=in_use_target_item`). To use this event, it's necessary to specify where the entity is being created and the object itself. It has the format:
 ```
 "type": "create_entity",
 "params": {
@@ -119,7 +152,7 @@ Creates an entity after the event happens. The entity created may belong to the 
 
 ### Broadcast Message
 
-Broadcasts a message related to the Use event to the room the agent is currently in. To use it, it is necessary to specify the views of the message (Which message will be sent to the agent doing the use event, to agents in the same room, etc.). `recipient_text` is the string referring to the target of the Use event, meanwhile `actor_text` is the agent doing the Use event. The format is as following:
+Broadcasts a message related to the Use event to the room the agent is currently in. To use it, it is necessary to specify the views of the message (Which message will be sent to the agent doing the use event, to agents in the same room, etc.). The format is as following:
 ```
 "type": "broadcast_message",
 "params": {
@@ -129,6 +162,12 @@ Broadcasts a message related to the Use event to the room the agent is currently
 	"room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} is struck with searing pain!"
 }
 ```
+
+#### Recipient Text and Actor Text templates
+
+The templates used in the example (`{recipient_text}`and `{actor_text}`) refer to the target and actor of the Use event respectively - which are specified in the code by the name of the objects related to the event itself. For an use event of the format `use x with y`, `actor_text` refer to `x` and `recipient_text` refer to `y`. If necessary, you can use these two templates in strings for _any_ event, not only Broadcast Message events.
+
+
 ### Modify Attribute
 
 This event modifies the value of a certain attribute involved in the Use event. The target (Which should have the attribute) and the attribute being modified are specified through the `type` and `key` fields. The `value` field specifies the numeric change in the attribute, its syntax is as follows:
