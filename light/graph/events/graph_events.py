@@ -3551,3 +3551,120 @@ class LookEvent(NoArgumentEvent):
             return self.__current_view
         else:
             return f"{self.__actor_name} looked around."
+
+
+class PointEvent(GraphEvent):
+    """Handles agents pointing at graph nodes"""
+
+    NAMES = ["point"]
+
+    def execute(self, world: "World") -> List[GraphEvent]:
+        """
+        On execution, move the item from the actor to the room
+        """
+        assert not self.executed
+        # Populate for views
+        self.__actor_name = self.actor.get_prefix_view()
+        self.__target_name = self.target_nodes[0].get_prefix_view()
+
+        self.__target_container_node = None
+        self.__target_container_desc = None
+        if self.target_nodes[0].object:
+            contained_by = self.target_nodes[0].get_container()
+            if contained_by.agent:
+                self.__target_container_node = contained_by
+                self.__target_container_desc = contained_by.get_prefix_view()
+                self.__target_container_type = "carried"
+                if self.target_nodes[0].equipped and self.target_nodes[0].wearable:
+                    self.__target_container_type = "worn"
+                if self.target_nodes[0].equipped and self.target_nodes[0].wieldable:
+                    self.__target_container_type = "wielded"
+        
+        # Move the object over and broadcast
+        world.broadcast_to_room(self)
+        self.executed = True
+        return []
+    
+    @proper_caps_wrapper
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """Provide the way that the given viewer should view this event"""
+        convert = { 'carried': 'carrying', 'worn': 'wearing', 'wielded': 'wielding'}
+        if viewer == self.actor:
+            if self.__target_container_node == None:
+                return f"You pointed at {self.__target_name}."
+            else:
+                if self.__target_container_node == viewer:
+                    return f"You pointed at {self.__target_name} you are {convert[self.__target_container_type]}."
+                else:
+                    return f"You pointed at {self.__target_name} {self.__target_container_type} by {self.__target_container_desc}."
+        elif self.target_nodes[0] == viewer:
+            return f"{self.__actor_name} pointed at you."
+        else:
+            if self.__target_container_node == None:
+                return f"{self.__actor_name} pointed at {self.__target_name}."
+            else:
+                if self.__target_container_node == viewer:
+                    convert = { 'carried': 'carrying', 'worn': 'wearing', 'wielded': 'wielding'}
+                    return f"{self.__actor_name} pointed at {self.__target_name} you are {convert[self.__target_container_type]}."
+                elif self.__target_container_node == self.actor:
+                    return f"{self.__actor_name} pointed at {self.__target_name} they are {convert[self.__target_container_type]}."
+                else:
+                    return f"{self.__actor_name} pointed at {self.__target_name} {self.__target_container_type} by {self.__target_container_desc}."
+                
+    def to_canonical_form(self) -> str:
+        """return action text for dropping the object"""
+        return f"point {self._canonical_targets[0]}"
+
+    @classmethod
+    def find_nodes_for_args(
+        cls, graph: "OOGraph", actor: GraphAgent, *text_args: str
+    ) -> Union[ProcessedArguments, ErrorEvent]:
+        """
+        Try to find applicable nodes by the given names - here we're searching
+        for an object within the actor.
+        """
+        assert len(text_args) == 1, f"PointEvent takes one arg, got {text_args}"
+        object_name = text_args[0]
+        
+        all_nodes = graph.desc_to_nodes(object_name, actor, "all+here")
+        rooms_too = graph.desc_to_nodes(object_name, actor, "path")
+        others_too = graph.desc_to_nodes(object_name, actor, "other_agents")
+        applicable_nodes = all_nodes + rooms_too + others_too
+        if len(applicable_nodes) > 0:
+            return ProcessedArguments(targets=[applicable_nodes[0]])
+        return ErrorEvent(cls, actor, f"You don't see '{object_name}' here to point at.")
+
+    @classmethod
+    def construct_from_args(
+        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+    ) -> "PointEvent":
+        """Point events are always valid if constructed"""
+        return cls(actor, target_nodes=targets)
+
+    @classmethod
+    def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
+        """
+        Find all objects that are currently pointable in the given room for the given agent.
+        """
+        room = actor.get_room()
+        pointable_here = actor.get_contents() + room.get_contents() + [room]
+        
+        pointable_others_objects = list()
+        for n1 in room.get_contents():
+            if n1.agent:
+                pointable_others_objects += n1.get_contents()
+
+        pointable_paths = room.get_neighbors()
+        pointable_all = pointable_here + pointable_paths + pointable_others_objects
+
+        valid_actions: List[GraphEvent] = []
+        # point all of the things here
+        if len(pointable_all) == 0:
+            return []
+
+        # Try to point everything
+        for obj in pointable_all:
+            valid_actions.append(cls(actor, target_nodes=[obj]))
+
+        return valid_actions
+        

@@ -390,6 +390,12 @@ class OOGraph(object):
                     o = o.union(o1).union(o2).union(o3)
                 if "contains" in nearbytype:
                     o = o.union({from_node})
+                if "other_agents" in nearbytype:
+                    # what other agents are carrying (in the same room as the given node)
+                    r = nearby_node.get_room()
+                    for n1 in r.get_contents():
+                        if n1.agent:
+                            o = o.union(n1.get_contents())                            
                 if "others" in nearbytype:
                     for item in o:
                         if item.room or (item.object and item.container):
