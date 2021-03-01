@@ -1,4 +1,5 @@
 
+
 # LIGHT Events
 
   
@@ -29,6 +30,37 @@ Every constraint and event is a dictionary of the format:
 		...
 	}
 }
+```
+
+Every `on_use` functions is an array of Use events, which are arrays of `Constraints` and `Events` as described above. In general, when describing an object, the format of their custom interactions will be:
+```
+"object_id": {
+	"name": "object_name",
+	"contain_size": 0,
+	...
+	"on_use": [
+		//Event 1
+		{
+			"events": {
+				...
+			},
+			"constraints": {
+				...
+			}
+		},
+		//Event 2
+		{
+			"events": {
+				...
+			},
+			"constraints": {
+				...
+			}
+		},
+		...
+	]
+}
+
 ```
 
 ## Constraint Types
@@ -103,7 +135,7 @@ It's important to remind that the attribute value needs to satisfy its compariso
 
 ### Create Entity
 
-Creates an entity after the event happens. The entity created may belong to the room, the agent, the item being used in the Use event or the target of the Use event itself. To use this event, it's necessary to specify where the entity is being created and the object itself. It has the format:
+Creates an entity after the event happens. The entity created may belong to the room (In this case, `type = in_room`), the actor of the event (`type=in_actor`), the item being used on the Use event (`type=in_used_item`) or the target of the Use event itself (`type=in_use_target_item`). To use this event, it's necessary to specify where the entity is being created and the object itself. It has the format:
 ```
 "type": "create_entity",
 "params": {
@@ -119,7 +151,7 @@ Creates an entity after the event happens. The entity created may belong to the 
 
 ### Broadcast Message
 
-Broadcasts a message related to the Use event to the room the agent is currently in. To use it, it is necessary to specify the views of the message (Which message will be sent to the agent doing the use event, to agents in the same room, etc.). `recipient_text` is the string referring to the target of the Use event, meanwhile `actor_text` is the agent doing the Use event. The format is as following:
+Broadcasts a message related to the Use event to the room the agent is currently in. To use it, it is necessary to specify the views of the message (Which message will be sent to the agent doing the use event, to agents in the same room, etc.). `recipient_text` is the string referring to the target of the Use event, meanwhile `actor_text` is the agent doing the Use event, these variables are defined in the code by the `name` string of the object this `on_use` event belongs to and the `name` string of the actor which is doing this event. The format is as following:
 ```
 "type": "broadcast_message",
 "params": {
