@@ -38,6 +38,7 @@ def proper_caps(in_string: str) -> str:
     # problem for LIGHT we'll need to swap to ctypes to get this right
     return in_string[0].upper() + in_string[1:]
 
+
 def proper_caps_wrapper(func):
     """Decorator to ensure output strings are properly capitalized (first letter)."""
 

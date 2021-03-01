@@ -395,7 +395,7 @@ class OOGraph(object):
                     r = nearby_node.get_room()
                     for n1 in r.get_contents():
                         if n1.agent:
-                            o = o.union(n1.get_contents())                            
+                            o = o.union(n1.get_contents())
                 if "others" in nearbytype:
                     for item in o:
                         if item.room or (item.object and item.container):

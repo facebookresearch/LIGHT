@@ -1,15 +1,30 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 from light.graph.events.base import (
     GraphEvent,
     ErrorEvent,
-    TriggeredEvent,
     ProcessedArguments,
     proper_caps_wrapper,
 )
 
 from light.graph.events.graph_events import DeathEvent, HealthEvent
-
+from light.graph.events.use_triggered_events import (
+    BroadcastMessageEvent,
+    CreateEntityEvent,
+    ModifyAttributeEvent,
+)
+from light.graph.events.constraint import (
+    IsHoldingConstraint,
+    UsedWithAgentConstraint,
+    UsedWithItemConstraint,
+    InRoomConstraint,
+    AttributeCompareValueConstraint,
+)
 from light.graph.elements.graph_nodes import GraphAgent, GraphNode, GraphObject
-
 from typing import Union, List, Optional
 
 
@@ -118,19 +133,25 @@ class UseEvent(GraphEvent):
     NAMES = ["use"]
 
     def satisfy_constraint(self, constraint, world):
-        if constraint[0] == "is_holding" and constraint[1] == "used_item":
-            # Check if actor is holding the useable item.
-            return self.target_nodes[0].get_container() == self.actor
+        constraint_params = constraint.get("params", {})
+        constraint_params["actor"] = self.actor
 
-        if constraint[0] == "used_with_item_name":
-            # Check if the useable item is used with the given object.
-            return constraint[1] == self.target_nodes[1].name
+        if constraint["type"] == "is_holding":
+            constraint_class = IsHoldingConstraint
 
-        if constraint[0] == "used_with_agent":
-            # Check if the target is an agent
-            return self.target_nodes[1].agent
+        if constraint["type"] == "used_with_item_name":
+            constraint_class = UsedWithItemConstraint
 
-        return True
+        if constraint["type"] == "used_with_agent":
+            constraint_class = UsedWithAgentConstraint
+
+        if constraint["type"] == "in_room":
+            constraint_class = InRoomConstraint
+
+        if constraint["type"] == "attribute_compare_value":
+            constraint_class = AttributeCompareValueConstraint
+
+        return constraint_class(self.target_nodes, constraint_params).satisfy(world)
 
     def satisfy_constraints(self, constraints, world):
         all_constraints_satisfied = True
@@ -144,28 +165,17 @@ class UseEvent(GraphEvent):
     def execute_events(self, events, world):
         for event in events:
             if event["type"] == "modify_attribute":
-                ModifyAttributeEvent(
-                    event["params"],
-                    self.actor,
-                    target_nodes=self.target_nodes,
-                    text_content="ModifyAttributeEvent",
-                ).execute(world)
+                event_class = ModifyAttributeEvent
 
             if event["type"] == "create_entity":
-                CreateEntityEvent(
-                    event["params"],
-                    self.actor,
-                    target_nodes=self.target_nodes,
-                    text_content="CreateEntityEvent",
-                ).execute(world)
+                event_class = CreateEntityEvent
 
             if event["type"] == "broadcast_message":
-                BroadcastMessageEvent(
-                    event["params"],
-                    self.actor,
-                    target_nodes=self.target_nodes,
-                    text_content="BroadcastMessageEvent",
-                ).execute(world)
+                event_class = BroadcastMessageEvent
+
+            event_class(
+                event.get("params", {}), self.actor, target_nodes=self.target_nodes
+            ).execute(world)
 
     def on_use(self, world):
         use_node = self.target_nodes[0]
@@ -188,10 +198,7 @@ class UseEvent(GraphEvent):
 
         if not self.found_use:
             BroadcastMessageEvent(
-                {"self_view": "Nothing special seems to happen."},
-                self.actor,
-                target_nodes=None,
-                text_content="BroadcastMessageEvent",
+                {"self_view": "Nothing special seems to happen."}, self.actor
             ).execute(world)
 
     def execute(self, world: "World") -> List[GraphEvent]:

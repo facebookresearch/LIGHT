@@ -21,6 +21,12 @@
         "scroll_9_3": {
           "target_id": "scroll_9_3"
         },
+        "scroll_9_4": {
+          "target_id": "scroll_9_4"
+        },
+        "scroll_9_5": {
+          "target_id": "scroll_9_5"
+        },
         "shovel_5_6": {
           "target_id": "shovel_5_6"
         }
@@ -451,6 +457,115 @@
           ]
         }
       ]
+    },
+    "scroll_9_4": {
+      "agent": false,
+      "classes": ["object"],
+      "desc": "An old scroll with words you decipher to be: \"lumus luminosis\". Could this be magic?",
+      "name": "illuminate scroll",
+      "name_prefix": "a",
+      "node_id": "scroll_9_4",
+      "container_node": { "target_id": "church entryway_1_2" },
+      "contained_nodes": {},
+      "object": true,
+      "on_use": [
+        {
+          "events": [
+            {
+              "type": "broadcast_message",
+              "params": {
+                "self_view": "You say the words aloud, and runes on the scroll glow with gold.",
+                "self_as_target_view": "Suddenly a strong light shines from the scroll and illuminates a certain spot in the cave. A mysterious orb erupts from nowhere!",
+                "self_not_target_view": "Suddenly a strong light shines from the scroll and illuminates a certain spot in the cave. A mysterious orb erupts from nowhere!",
+                "room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} seems to glow for a second."
+              }
+            },
+            {
+              "type": "create_entity",
+              "params": {
+                "type": "in_used_target_item",
+                "object": {
+                  "name_prefix": "some",
+                  "is_wearable": false,
+                  "name": "Mysterious orb",
+                  "desc": "Mysterious shiny green orb found in the dark cave. What secrets does it behold?"
+                }
+              }
+            }
+          ],
+          "constraints": [
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_agent"
+            },
+            {
+              "type": "in_room",
+              "params": {
+                "room_name": "Orc cave"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "scroll_9_5": {
+      "agent": false,
+      "classes": ["object"],
+      "desc": "An old scroll with words you decipher to be: \"insta killua mortuis\". Could this be magic?",
+      "name": "killing scroll",
+      "name_prefix": "a",
+      "node_id": "scroll_9_5",
+      "container_node": { "target_id": "church entryway_1_2" },
+      "contained_nodes": {},
+      "object": true,
+      "on_use": [
+        {
+          "events": [
+            {
+              "type": "broadcast_message",
+              "params": {
+                "self_view": "You say the words aloud, and runes on the scroll glow with dark energy.",
+                "self_as_target_view": "Suddenly a darkness ray emanates from the scroll and hits the {recipient_text}, killing it instantly!",
+                "self_not_target_view": "Suddenly a darkness ray emanates from the scroll and hits the {recipient_text}, killing it instantly!",
+                "room_view": "{actor_text} says the words of a scroll aloud, and it glows with dark energy. {recipient_text} is hit with a dark energy ray emerging from the scroll."
+              }
+            },
+            {
+              "type": "modify_attribute",
+              "params": {
+                "type": "in_used_target_item",
+                "key": "health",
+                "value": "=0"
+              }
+            }
+          ],
+          "constraints": [
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_agent"
+            },
+            {
+              "type": "attribute_compare_value",
+              "params": {
+                "type": "in_used_target_item",
+                "cmp_type": "greater",
+                "list": "[0]",
+                "key": "health"
+              }
+            }
+          ]
+        }
+      ]
     }
   },
   "objects": [
@@ -459,7 +574,9 @@
     "shovel_5_6",
     "scroll_9_1",
     "scroll_9_2",
-    "scroll_9_3"
+    "scroll_9_3",
+    "scroll_9_4",
+    "scroll_9_5"
   ],
   "rooms": ["church entryway_1_2", "orc cave_0_1"]
 }

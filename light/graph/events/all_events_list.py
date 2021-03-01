@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 from typing import List, Type
 from light.graph.events.base import (
     GraphEvent,
@@ -78,7 +84,7 @@ ALL_EVENTS_LIST: List[Type[GraphEvent]] = [
     LookEvent,
     UseEvent,
     RewardEvent,
-    PointEvent
+    PointEvent,
 ]
 
 ALL_EVENTS = {name: e for e in ALL_EVENTS_LIST for name in e.NAMES}
