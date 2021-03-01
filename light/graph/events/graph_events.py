@@ -2978,8 +2978,8 @@ class UnlockEvent(GraphEvent):
 
 def actor_has_no_recent_action(last_time_acted, current_time):
     # After 2 minutes we consider an agent to be "dozing off".
-    time_elapsed = current_time -  last_time_acted
-    return time_elapsed > 60*2
+    time_elapsed = current_time - last_time_acted
+    return time_elapsed > 60 * 2
 
 
 # TODO handle locked objects
@@ -3001,8 +3001,11 @@ class ExamineEvent(GraphEvent):
             inv_text = world.view.get_inventory_text_for(object_id, give_empty=False)
             if inv_text != "":
                 base_desc += f"\n{self.__target_name} is {inv_text} "
-            if (hasattr(self.target_nodes[0], '_last_action_time') and
-                actor_has_no_recent_action(self.target_nodes[0]._last_action_time, time.time())):
+            if hasattr(
+                self.target_nodes[0], "_last_action_time"
+            ) and actor_has_no_recent_action(
+                self.target_nodes[0]._last_action_time, time.time()
+            ):
                 base_desc += "\nThey appear to be dozing off right now."
         elif isinstance(target, GraphObject) and target.container:
             if len(target.get_contents()) > 0:
@@ -3579,16 +3582,16 @@ class PointEvent(GraphEvent):
                     self.__target_container_type = "worn"
                 if self.target_nodes[0].equipped and self.target_nodes[0].wieldable:
                     self.__target_container_type = "wielded"
-        
+
         # Move the object over and broadcast
         world.broadcast_to_room(self)
         self.executed = True
         return []
-    
+
     @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
-        convert = { 'carried': 'carrying', 'worn': 'wearing', 'wielded': 'wielding'}
+        convert = {"carried": "carrying", "worn": "wearing", "wielded": "wielding"}
         if viewer == self.actor:
             if self.__target_container_node == None:
                 return f"You pointed at {self.__target_name}."
@@ -3604,13 +3607,17 @@ class PointEvent(GraphEvent):
                 return f"{self.__actor_name} pointed at {self.__target_name}."
             else:
                 if self.__target_container_node == viewer:
-                    convert = { 'carried': 'carrying', 'worn': 'wearing', 'wielded': 'wielding'}
+                    convert = {
+                        "carried": "carrying",
+                        "worn": "wearing",
+                        "wielded": "wielding",
+                    }
                     return f"{self.__actor_name} pointed at {self.__target_name} you are {convert[self.__target_container_type]}."
                 elif self.__target_container_node == self.actor:
                     return f"{self.__actor_name} pointed at {self.__target_name} they are {convert[self.__target_container_type]}."
                 else:
                     return f"{self.__actor_name} pointed at {self.__target_name} {self.__target_container_type} by {self.__target_container_desc}."
-                
+
     def to_canonical_form(self) -> str:
         """return action text for dropping the object"""
         return f"point {self._canonical_targets[0]}"
@@ -3625,14 +3632,16 @@ class PointEvent(GraphEvent):
         """
         assert len(text_args) == 1, f"PointEvent takes one arg, got {text_args}"
         object_name = text_args[0]
-        
+
         all_nodes = graph.desc_to_nodes(object_name, actor, "all+here")
         rooms_too = graph.desc_to_nodes(object_name, actor, "path")
         others_too = graph.desc_to_nodes(object_name, actor, "other_agents")
         applicable_nodes = all_nodes + rooms_too + others_too
         if len(applicable_nodes) > 0:
             return ProcessedArguments(targets=[applicable_nodes[0]])
-        return ErrorEvent(cls, actor, f"You don't see '{object_name}' here to point at.")
+        return ErrorEvent(
+            cls, actor, f"You don't see '{object_name}' here to point at."
+        )
 
     @classmethod
     def construct_from_args(
@@ -3648,7 +3657,7 @@ class PointEvent(GraphEvent):
         """
         room = actor.get_room()
         pointable_here = actor.get_contents() + room.get_contents() + [room]
-        
+
         pointable_others_objects = list()
         for n1 in room.get_contents():
             if n1.agent:
@@ -3667,4 +3676,3 @@ class PointEvent(GraphEvent):
             valid_actions.append(cls(actor, target_nodes=[obj]))
 
         return valid_actions
-        
