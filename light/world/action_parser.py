@@ -165,4 +165,7 @@ class ActionParser:
         if new_txt in emotes:
             new_txt = "emote " + new_txt
 
+        if new_txt.startswith('point at'):
+            new_txt = new_txt.replace('point at', 'point')
+            
         return new_txt

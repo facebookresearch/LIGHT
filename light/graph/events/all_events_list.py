@@ -38,6 +38,7 @@ from light.graph.events.graph_events import (
     HealthEvent,
     LookEvent,
     RewardEvent,
+    PointEvent,
 )
 
 ALL_EVENTS_LIST: List[Type[GraphEvent]] = [
@@ -77,6 +78,7 @@ ALL_EVENTS_LIST: List[Type[GraphEvent]] = [
     LookEvent,
     UseEvent,
     RewardEvent,
+    PointEvent
 ]
 
 ALL_EVENTS = {name: e for e in ALL_EVENTS_LIST for name in e.NAMES}
