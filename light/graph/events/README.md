@@ -1,5 +1,6 @@
 
 
+
 # LIGHT Events
 
   
@@ -151,7 +152,7 @@ Creates an entity after the event happens. The entity created may belong to the 
 
 ### Broadcast Message
 
-Broadcasts a message related to the Use event to the room the agent is currently in. To use it, it is necessary to specify the views of the message (Which message will be sent to the agent doing the use event, to agents in the same room, etc.). `recipient_text` is the string referring to the target of the Use event, meanwhile `actor_text` is the agent doing the Use event, these variables are defined in the code by the `name` string of the object this `on_use` event belongs to and the `name` string of the actor which is doing this event. The format is as following:
+Broadcasts a message related to the Use event to the room the agent is currently in. To use it, it is necessary to specify the views of the message (Which message will be sent to the agent doing the use event, to agents in the same room, etc.). The format is as following:
 ```
 "type": "broadcast_message",
 "params": {
@@ -161,6 +162,12 @@ Broadcasts a message related to the Use event to the room the agent is currently
 	"room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} is struck with searing pain!"
 }
 ```
+
+#### Recipient Text and Actor Text templates
+
+The templates used in the example (`{recipient_text}`and `{actor_text}`) refer to the target and actor of the Use event respectively - which are specified in the code by the name of the objects related to the event itself. For an use event of the format `use x with y`, `actor_text` refer to `x` and `recipient_text` refer to `y`. If necessary, you can use these two templates in strings for _any_ event, not only Broadcast Message events.
+
+
 ### Modify Attribute
 
 This event modifies the value of a certain attribute involved in the Use event. The target (Which should have the attribute) and the attribute being modified are specified through the `type` and `key` fields. The `value` field specifies the numeric change in the attribute, its syntax is as follows:
