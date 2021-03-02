@@ -12,6 +12,7 @@ import { ObjectSelector } from "./components/object_selector.jsx";
 import { InteractionDescription } from "./components/interaction_description.jsx";
 import { BaseFrontend, LoadingScreen } from "./components/core_components.jsx";
 import { useMephistoTask, ErrorBoundary } from "mephisto-task";
+import { ObjectRandomizer } from "./object_randomizer.js";
 
 /* ================= Application Components ================= */
 
@@ -36,6 +37,13 @@ function MainApp() {
       </section>
     );
   }
+
+  const objectRandomizer = new ObjectRandomizer();
+  const primary_object = objectRandomizer.get_primary_object();
+  const random_object_list = objectRandomizer.get_object_list();
+
+  console.log('Random Object List: ', random_object_list);
+
   if (isLoading) {
     return <LoadingScreen />;
   }
@@ -47,7 +55,9 @@ function MainApp() {
             <div className="title is-3">
               Welcome to LIGHT's Custom World Interactions task!
             </div>
-            <ObjectSelector />
+            <p>Actor Object: {primary_object}</p>
+            <p>Target Object: </p>
+            <ObjectSelector objectList={random_object_list} />
             <InteractionDescription />
           </div>
         </section>

@@ -3,14 +3,16 @@ import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 
 class ObjectSelector extends Component {
-  constructor(objectList = []) {
+  constructor(props) {
     super();
 
     this.state = {
       showMenu: false,
     };
 
-    this.objectList = ['Menu Item 1', 'Menu Item 2', 'Menu Item 3'];
+    console.log('props', props);
+    this.objectList = props.objectList;
+    console.log('Object List: ', this.objectList);
     this.showMenu = this.showMenu.bind(this);
     this.closeMenu = this.closeMenu.bind(this);
   }
