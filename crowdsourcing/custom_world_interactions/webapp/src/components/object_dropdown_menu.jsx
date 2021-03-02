@@ -1,29 +1,66 @@
-/*
- * Copyright (c) 2017-present, Facebook, Inc.
- * All rights reserved.
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
 
-import React from "react";
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown';
+import React, { Component } from 'react';
+import Button from 'react-bootstrap/Button';
 
-function ObjectDropdown() {
-      return (
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            Select Object
-          </Dropdown.Toggle>
+class Card extends Component {
+  constructor() {
+    super();
 
-          <Dropdown.Menu>
-            <Dropdown.Item href="#/action-1">Object 1</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">Object 2</Dropdown.Item>
-            <Dropdown.Item href="#/action-3">Object 3</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      );
+    this.state = {
+      showMenu: false,
+    };
+
+    this.showMenu = this.showMenu.bind(this);
+    this.closeMenu = this.closeMenu.bind(this);
+  }
+
+  showMenu(event) {
+    event.preventDefault();
+
+    this.setState({ showMenu: true }, () => {
+      document.addEventListener('click', this.closeMenu);
+    });
+  }
+
+  closeMenu(event) {
+
+    if (!this.dropdownMenu.contains(event.target)) {
+
+      this.setState({ showMenu: false }, () => {
+        document.removeEventListener('click', this.closeMenu);
+      });
+
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <Button variant="outline-primary" onClick={this.showMenu}>
+          Show menu
+        </Button>
+
+        {
+          this.state.showMenu
+            ? (
+              <div
+                className="menu"
+                ref={(element) => {
+                  this.dropdownMenu = element;
+                }}
+              >
+                <Button variant="outline-primary"> Menu item 1 </Button>
+                <Button variant="outline-primary"> Menu item 2 </Button>
+                <Button variant="outline-primary"> Menu item 3 </Button>
+              </div>
+            )
+            : (
+              null
+            )
+        }
+      </div>
+    );
+  }
 }
 
-export { ObjectDropdown };
+export { Card };

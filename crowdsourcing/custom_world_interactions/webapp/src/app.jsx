@@ -8,7 +8,8 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-import { ObjectDropdown } from './components/object_dropdown_menu.jsx';
+import { Card } from "./components/object_dropdown_menu.jsx";
+import { InteractionDescription } from "./components/interaction_description.jsx";
 import { BaseFrontend, LoadingScreen } from "./components/core_components.jsx";
 import { useMephistoTask, ErrorBoundary } from "mephisto-task";
 
@@ -47,8 +48,9 @@ function MainApp() {
               Welcome to LIGHT's Custom World Interactions task!
             </div>
           </div>
+          <Card />
         </section>
-        <ObjectDropdown />
+        <InteractionDescription />
       </div>
     );
   }
