@@ -2,14 +2,15 @@
 import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 
-class Card extends Component {
-  constructor() {
+class ObjectSelector extends Component {
+  constructor(objectList = []) {
     super();
 
     this.state = {
       showMenu: false,
     };
 
+    this.objectList = ['Menu Item 1', 'Menu Item 2', 'Menu Item 3'];
     this.showMenu = this.showMenu.bind(this);
     this.closeMenu = this.closeMenu.bind(this);
   }
@@ -34,6 +35,11 @@ class Card extends Component {
   }
 
   render() {
+    const objects = []
+    for (const [index, object] of this.objectList.entries()) {
+      objects.push(<Button key={index} variant="outline-primary">{object}</Button>);
+    }
+
     return (
       <div>
         <Button variant="outline-primary" onClick={this.showMenu}>
@@ -49,9 +55,7 @@ class Card extends Component {
                   this.dropdownMenu = element;
                 }}
               >
-                <Button variant="outline-primary"> Menu item 1 </Button>
-                <Button variant="outline-primary"> Menu item 2 </Button>
-                <Button variant="outline-primary"> Menu item 3 </Button>
+                {objects}
               </div>
             )
             : (
@@ -63,4 +67,4 @@ class Card extends Component {
   }
 }
 
-export { Card };
+export { ObjectSelector };
