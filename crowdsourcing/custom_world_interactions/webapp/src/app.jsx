@@ -28,6 +28,13 @@ function MainApp() {
     isOnboarding,
   } = useMephistoTask();
 
+  let description = ""
+  const onChangeDescription = React.useCallback(
+    (newDescription) => {
+      description = newDescription;
+  });
+
+
   if (blockedReason !== null) {
     return (
       <section className="hero is-medium is-danger">
@@ -42,7 +49,8 @@ function MainApp() {
   const primary_object = objectRandomizer.get_primary_object();
   const random_object_list = objectRandomizer.get_object_list();
 
-  console.log('Random Object List: ', random_object_list);
+  // console.log('Random Object List: ', random_object_list);
+  // console.log('Current description is: ', description);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -55,10 +63,11 @@ function MainApp() {
             <div className="title is-3">
               Welcome to LIGHT's Custom World Interactions task!
             </div>
-            <p>Actor Object: {primary_object}</p>
+            <p>Actor Object: </p>
+            <p>{primary_object}</p>
             <p>Target Object: </p>
             <ObjectSelector objectList={random_object_list} />
-            <InteractionDescription />
+            <InteractionDescription description={description} onChangeDescription={onChangeDescription} />
           </div>
         </section>
       </div>

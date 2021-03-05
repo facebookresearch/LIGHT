@@ -10,44 +10,46 @@ class ObjectSelector extends Component {
       showMenu: false,
     };
 
-    console.log('props', props);
     this.objectList = props.objectList;
-    console.log('Object List: ', this.objectList);
-    this.showMenu = this.showMenu.bind(this);
-    this.closeMenu = this.closeMenu.bind(this);
+    this.selectedTargetObject = "";
   }
 
-  showMenu(event) {
-    event.preventDefault();
-
-    this.setState({ showMenu: true }, () => {
-      document.addEventListener('click', this.closeMenu);
-    });
+  getSelectedTargetObject() {
+    return this.selectedTargetObject;
   }
 
-  closeMenu(event) {
+  setSelectedTargetObject(selectedTargetObject) {
+    this.selectedTargetObject = selectedTargetObject;
+  }
 
-    if (!this.dropdownMenu.contains(event.target)) {
+  showMenu() {
+    this.state.showMenu = true;
+  }
 
-      this.setState({ showMenu: false }, () => {
-        document.removeEventListener('click', this.closeMenu);
-      });
-
-    }
+  hideMenu() {
+    this.state.showMenu = false;
   }
 
   render() {
     const objects = []
     for (const [index, object] of this.objectList.entries()) {
-      objects.push(<Button key={index} variant="outline-primary">{object}</Button>);
+      objects.push(
+        <Button
+          key={index}
+          variant="outline-primary"
+          onClick={ (key) => {this.setSelectedTargetObject(this.objectList[key])} }>
+            {object}
+        </Button>
+      );
     }
+    console.log(this.getSelectedTargetObject());
 
     return (
       <div>
-        <Button variant="outline-primary" onClick={this.showMenu}>
-          Show menu
+        <p>{this.selectedTargetObject}</p>
+        <Button variant="outline-primary" onClick={ this.state.showMenu ? this.hideMenu : this.showMenu }>
+          { this.state.showMenu ? "Hide menu" : "Show menu" }
         </Button>
-
         {
           this.state.showMenu
             ? (
