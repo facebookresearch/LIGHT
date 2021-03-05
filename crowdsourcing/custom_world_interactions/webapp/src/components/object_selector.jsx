@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 
 function ObjectSelector({ objectList, currentSelectedObject, onChangeCurrentSelectedObject }) {
-  const [showMenu, setShowMenu] = React.useState(true);
+  const [showMenu, setShowMenu] = React.useState(false);
 
   const objects = []
   for (const [index, object] of objectList.entries()) {
@@ -21,7 +21,7 @@ function ObjectSelector({ objectList, currentSelectedObject, onChangeCurrentSele
 
   return (
     <div>
-      <Button variant="outline-primary">
+      <Button variant="outline-primary" onClick={ () => { setShowMenu(!showMenu) } }>
         { showMenu ? "Hide menu" : "Show menu" }
       </Button>
       {

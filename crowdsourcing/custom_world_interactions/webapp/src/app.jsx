@@ -28,22 +28,18 @@ function MainApp() {
     isOnboarding,
   } = useMephistoTask();
 
+  const objectRandomizer = new ObjectRandomizer();
+  const primary_object = objectRandomizer.get_primary_object();
+  const random_object_list = objectRandomizer.get_object_list();
+
+  const [secondary_object, onChangeSecondaryObject] = React.useState("");
+  const [action_description, onChangeActionDescription] = React.useState("");
+
   let state = {
-    primary_object: "",
-    secondary_object: "",
-    action_description: ""
+    primary_object: primary_object,
+    secondary_object: secondary_object,
+    action_description: action_description
   }
-
-  const onChangeDescription = React.useCallback(
-    (newDescription) => {
-      state.action_description = newDescription;
-  });
-
-  const onChangeCurrentSelectedObject = React.useCallback(
-    (newSelectedObject) => {
-      state.secondary_object = newSelectedObject;
-    }
-  )
 
   if (blockedReason !== null) {
     return (
@@ -54,11 +50,6 @@ function MainApp() {
       </section>
     );
   }
-
-  const objectRandomizer = new ObjectRandomizer();
-  const primary_object = objectRandomizer.get_primary_object();
-  const random_object_list = objectRandomizer.get_object_list();
-  state.primary_object = primary_object;
 
   // console.log('Random Object List: ', random_object_list);
   // console.log('Current description is: ', description);
@@ -79,8 +70,8 @@ function MainApp() {
             <p>{state.primary_object}</p>
             <p>Target Object: </p>
             <p>{state.secondary_object}</p>
-            <ObjectSelector objectList={random_object_list} currentSelectedObject={state.secondary_object} onChangeCurrentSelectedObject={onChangeCurrentSelectedObject} />
-            <InteractionDescription description={state.action_description} onChangeDescription={onChangeDescription} />
+            <ObjectSelector objectList={random_object_list} currentSelectedObject={state.secondary_object} onChangeCurrentSelectedObject={onChangeSecondaryObject} />
+            <InteractionDescription description={state.action_description} onChangeDescription={onChangeActionDescription} />
           </div>
         </section>
       </div>
