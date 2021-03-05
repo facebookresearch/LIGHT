@@ -18,6 +18,7 @@ from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint impo
 )
 
 import hydra
+import json
 from omegaconf import DictConfig
 from dataclasses import dataclass, field
 from typing import List, Any
@@ -31,6 +32,8 @@ defaults = [
     {"conf": "example"},
 ]
 
+object_data = json.load(open("./webapp/src/object_mock_db.json"))
+
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
 
 
@@ -39,12 +42,19 @@ class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
 
+def parse_data(object_data):
+    object_list = object_data["object_list"]
+    parsed_object_array = []
+
+    for obj in object_list:
+        parsed_object_array.append({ "primary_object": obj })
+
+    print(parsed_object_array)
+    return parsed_object_array
+
 
 register_script_config(name="scriptconfig", module=TestScriptConfig)
 
-
-# TODO it would be nice if this was automated in the way that it
-# is for ParlAI custom frontend tasks
 def build_task(task_dir):
     """Rebuild the frontend for this task"""
 
@@ -79,10 +89,7 @@ def main(cfg: DictConfig) -> None:
         return True
 
     shared_state = SharedStaticTaskState(
-        static_task_data=[
-            {"text": "This text is good text!"},
-            {"text": "This text is bad text!"},
-        ],
+        static_task_data=parse_data(object_data),
         validate_onboarding=onboarding_always_valid,
     )
 
