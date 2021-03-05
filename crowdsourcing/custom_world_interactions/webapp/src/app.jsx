@@ -8,8 +8,11 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
+import { ObjectSelector } from "./components/object_selector.jsx";
+import { InteractionDescription } from "./components/interaction_description.jsx";
 import { BaseFrontend, LoadingScreen } from "./components/core_components.jsx";
 import { useMephistoTask, ErrorBoundary } from "mephisto-task";
+import { ObjectRandomizer } from "./object_randomizer.js";
 
 /* ================= Application Components ================= */
 
@@ -25,6 +28,19 @@ function MainApp() {
     isOnboarding,
   } = useMephistoTask();
 
+  const objectRandomizer = new ObjectRandomizer();
+  const primary_object = objectRandomizer.get_primary_object();
+  const random_object_list = objectRandomizer.get_object_list();
+
+  const [secondary_object, onChangeSecondaryObject] = React.useState("");
+  const [action_description, onChangeActionDescription] = React.useState("");
+
+  let state = {
+    primary_object: primary_object,
+    secondary_object: secondary_object,
+    action_description: action_description
+  }
+
   if (blockedReason !== null) {
     return (
       <section className="hero is-medium is-danger">
@@ -34,21 +50,24 @@ function MainApp() {
       </section>
     );
   }
+
   if (isLoading) {
     return <LoadingScreen />;
   }
   if (isPreview) {
     return (
-      <section className="hero is-medium is-link">
-        <div class="hero-body">
-          <div className="title is-3">
-            Welcome to LIGHT's Custom World Interactions task!
+      <div>
+        <section className="hero is-medium is-link">
+          <div className="hero-body">
+            <div className="title is-3">
+              Welcome to LIGHT's Custom World Interactions task!
+            </div>
+            <p>Actor Object: {state.primary_object}</p>
+            <ObjectSelector objectList={random_object_list} currentSelectedObject={state.secondary_object} onChangeCurrentSelectedObject={onChangeSecondaryObject} />
+            <InteractionDescription description={state.action_description} onChangeDescription={onChangeActionDescription} />
           </div>
-          <div className="subtitle is-4">
-            This module is not ready yet, so please come back soon to check it out.
-          </div>
-        </div>
-      </section>
+        </section>
+      </div>
     );
   }
 
