@@ -1,42 +1,28 @@
 
 import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 function ObjectSelector({ objectList, currentSelectedObject, onChangeCurrentSelectedObject }) {
   const [showMenu, setShowMenu] = React.useState(false);
 
-  const objects = []
+  const objects = [];
   for (const [index, object] of objectList.entries()) {
     objects.push(
-      <Button
-        key={index}
-        variant="outline-primary"
-        onClick={
-          () => { onChangeCurrentSelectedObject(object); }
-        }>
-          {object}
-      </Button>
+      <option>{object}</option>
     )
   }
 
   return (
-    <div>
-      <Button variant="outline-primary" onClick={ () => { setShowMenu(!showMenu) } }>
-        { showMenu ? "Hide menu" : "Show menu" }
-      </Button>
-      {
-        showMenu
-          ? (
-            <div className="menu">
-              {objects}
-            </div>
-          )
-          : (
-            null
-          )
-      }
+    <div className="menu">
+      <Form.Group controlId="exampleForm.ControlSelect1">
+        <Form.Label>Target Object: </Form.Label>
+        <Form.Control as="select" onChange={(e) => { onChangeCurrentSelectedObject(e.target.value); }}>
+          {objects}
+        </Form.Control>
+      </Form.Group>
     </div>
-  );
+  )
 }
 
 export { ObjectSelector };

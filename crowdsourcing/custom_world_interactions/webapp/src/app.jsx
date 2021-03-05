@@ -51,10 +51,6 @@ function MainApp() {
     );
   }
 
-  // console.log('Random Object List: ', random_object_list);
-  // console.log('Current description is: ', description);
-  // console.log('Current selected object is: ', currentSelectedObject);
-
   if (isLoading) {
     return <LoadingScreen />;
   }
@@ -66,10 +62,7 @@ function MainApp() {
             <div className="title is-3">
               Welcome to LIGHT's Custom World Interactions task!
             </div>
-            <p>Actor Object: </p>
-            <p>{state.primary_object}</p>
-            <p>Target Object: </p>
-            <p>{state.secondary_object}</p>
+            <p>Actor Object: {state.primary_object}</p>
             <ObjectSelector objectList={random_object_list} currentSelectedObject={state.secondary_object} onChangeCurrentSelectedObject={onChangeSecondaryObject} />
             <InteractionDescription description={state.action_description} onChangeDescription={onChangeActionDescription} />
           </div>
