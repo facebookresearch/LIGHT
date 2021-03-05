@@ -28,12 +28,22 @@ function MainApp() {
     isOnboarding,
   } = useMephistoTask();
 
-  let description = ""
+  let state = {
+    primary_object: "",
+    secondary_object: "",
+    action_description: ""
+  }
+
   const onChangeDescription = React.useCallback(
     (newDescription) => {
-      description = newDescription;
+      state.action_description = newDescription;
   });
 
+  const onChangeCurrentSelectedObject = React.useCallback(
+    (newSelectedObject) => {
+      state.secondary_object = newSelectedObject;
+    }
+  )
 
   if (blockedReason !== null) {
     return (
@@ -48,9 +58,11 @@ function MainApp() {
   const objectRandomizer = new ObjectRandomizer();
   const primary_object = objectRandomizer.get_primary_object();
   const random_object_list = objectRandomizer.get_object_list();
+  state.primary_object = primary_object;
 
   // console.log('Random Object List: ', random_object_list);
   // console.log('Current description is: ', description);
+  // console.log('Current selected object is: ', currentSelectedObject);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -64,10 +76,11 @@ function MainApp() {
               Welcome to LIGHT's Custom World Interactions task!
             </div>
             <p>Actor Object: </p>
-            <p>{primary_object}</p>
+            <p>{state.primary_object}</p>
             <p>Target Object: </p>
-            <ObjectSelector objectList={random_object_list} />
-            <InteractionDescription description={description} onChangeDescription={onChangeDescription} />
+            <p>{state.secondary_object}</p>
+            <ObjectSelector objectList={random_object_list} currentSelectedObject={state.secondary_object} onChangeCurrentSelectedObject={onChangeCurrentSelectedObject} />
+            <InteractionDescription description={state.action_description} onChangeDescription={onChangeDescription} />
           </div>
         </section>
       </div>
