@@ -35,7 +35,7 @@ function MainApp() {
   const [secondary_object, onChangeSecondaryObject] = React.useState("");
   const [action_description, onChangeActionDescription] = React.useState("");
 
-  let state = {
+  const state = {
     primary_object: primary_object,
     secondary_object: secondary_object,
     action_description: action_description
