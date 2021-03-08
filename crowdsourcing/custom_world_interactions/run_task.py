@@ -47,7 +47,7 @@ class TestScriptConfig(RunScriptConfig):
     task_dir: str = TASK_DIRECTORY
 
 def parse_data(object_data):
-    db = LIGHTDatabase("../database_test.db")
+    db = LIGHTDatabase("database_test.db")
     print("data: ", db)
     with db as ldb:
         object_list = ldb.get_object()
@@ -58,9 +58,6 @@ def parse_data(object_data):
     for obj in object_list:
         # Get 10 random objects from database
         random_object_list = []
-
-
-
         parsed_object_array.append({ "primary_object": obj })
 
     print(parsed_object_array)
