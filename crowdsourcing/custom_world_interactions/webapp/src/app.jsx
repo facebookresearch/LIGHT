@@ -28,6 +28,8 @@ function MainApp() {
     isOnboarding,
   } = useMephistoTask();
 
+  console.log('Initial Task Data: ', initialTaskData);
+
   const objectRandomizer = new ObjectRandomizer();
   const primary_object = objectRandomizer.get_primary_object();
   const random_object_list = objectRandomizer.get_object_list();
@@ -73,14 +75,16 @@ function MainApp() {
 
   return (
     <div>
-      <ErrorBoundary handleError={handleFatalError}>
-        <BaseFrontend
-          taskData={initialTaskData}
-          onSubmit={handleSubmit}
-          isOnboarding={isOnboarding}
-          onError={handleFatalError}
-        />
-      </ErrorBoundary>
+      <section className="hero is-medium is-link">
+        <div className="hero-body">
+          <div className="title is-3">
+            Welcome to LIGHT's Custom World Interactions task!
+          </div>
+          <p>Actor Object: {state.primary_object}</p>
+          <ObjectSelector objectList={random_object_list} currentSelectedObject={state.secondary_object} onChangeCurrentSelectedObject={onChangeSecondaryObject} />
+          <InteractionDescription description={state.action_description} onChangeDescription={onChangeActionDescription} />
+        </div>
+      </section>
     </div>
   );
 }
