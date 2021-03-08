@@ -16,6 +16,7 @@ from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint i
 from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint import (
     SharedStaticTaskState,
 )
+from light.data_model.light_database import LIGHTDatabase
 
 import hydra
 import json
@@ -43,11 +44,18 @@ class TestScriptConfig(RunScriptConfig):
     task_dir: str = TASK_DIRECTORY
 
 def parse_data(object_data):
+    ldb = LIGHTDatabase(opt["light_db_file"])
+    print(ldb)
     object_list = object_data["object_list"]
     parsed_object_array = []
 
     for obj in object_list:
-        parsed_object_array.append({ "primary_object": obj })
+        # Get 10 random objects from database
+        random_object_list = []
+
+
+
+        parsed_object_array.append({ "primary_object": obj, "object_list": li_list })
 
     print(parsed_object_array)
     return parsed_object_array
