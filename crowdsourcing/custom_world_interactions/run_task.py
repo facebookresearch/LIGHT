@@ -16,7 +16,10 @@ from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint i
 from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint import (
     SharedStaticTaskState,
 )
+from parlai.core.params import ParlaiParser
+
 from light.data_model.light_database import LIGHTDatabase
+from light.graph.builders.starspace_all import StarspaceBuilder
 
 import hydra
 import json
@@ -33,7 +36,7 @@ defaults = [
     {"conf": "example"},
 ]
 
-object_data = json.load(open("./webapp/src/object_mock_db.json"))
+object_data = json.load(open("./crowdsourcing/custom_world_interactions/webapp/src/object_mock_db.json"))
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
 
@@ -44,9 +47,12 @@ class TestScriptConfig(RunScriptConfig):
     task_dir: str = TASK_DIRECTORY
 
 def parse_data(object_data):
-    ldb = LIGHTDatabase(opt["light_db_file"])
-    print(ldb)
-    object_list = object_data["object_list"]
+    db = LIGHTDatabase("../database_test.db")
+    print("data: ", db)
+    with db as ldb:
+        object_list = ldb.get_object()
+    print("object list: ", object_list)
+
     parsed_object_array = []
 
     for obj in object_list:
@@ -55,7 +61,7 @@ def parse_data(object_data):
 
 
 
-        parsed_object_array.append({ "primary_object": obj, "object_list": li_list })
+        parsed_object_array.append({ "primary_object": obj })
 
     print(parsed_object_array)
     return parsed_object_array
