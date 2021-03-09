@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
+import random
 import shutil
 import subprocess
 from mephisto.operations.operator import Operator
@@ -16,10 +17,7 @@ from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint i
 from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint import (
     SharedStaticTaskState,
 )
-from parlai.core.params import ParlaiParser
-
 from light.data_model.light_database import LIGHTDatabase
-from light.graph.builders.starspace_all import StarspaceBuilder
 
 import hydra
 import json
@@ -36,7 +34,7 @@ defaults = [
     {"conf": "example"},
 ]
 
-object_data = json.load(open("./crowdsourcing/custom_world_interactions/webapp/src/object_mock_db.json"))
+db_path = "/checkpoint/light/data/database3.db"
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
 
@@ -46,21 +44,32 @@ class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
 
-def parse_data(object_data):
-    db = LIGHTDatabase("database_test.db")
-    print("data: ", db)
+def get_object_list(db_path):
+    db = LIGHTDatabase(db_path)
     with db as ldb:
         object_list = ldb.get_object()
-    print("object list: ", object_list)
+
+    return object_list
+
+def parse_data(object_list):
+    db = LIGHTDatabase("/checkpoint/light/data/database3.db")
+    with db as ldb:
+        object_list = ldb.get_object()
 
     parsed_object_array = []
+    RANDOM_OBJECT_LIST_SIZE = 10
 
     for obj in object_list:
-        # Get 10 random objects from database
-        random_object_list = []
-        parsed_object_array.append({ "primary_object": obj })
+        obj_name = dict(obj)["name"]
+        
+        random_sample = random.sample(object_list, RANDOM_OBJECT_LIST_SIZE)
+        target_object_name_list = []
+        
+        for random_object in random_sample:
+            target_object_name_list.append(dict(random_object)["name"])
 
-    print(parsed_object_array)
+        parsed_object_array.append({ "primary_object": obj_name, "secondary_object_list": target_object_name_list })
+
     return parsed_object_array
 
 
@@ -100,7 +109,7 @@ def main(cfg: DictConfig) -> None:
         return True
 
     shared_state = SharedStaticTaskState(
-        static_task_data=parse_data(object_data),
+        static_task_data=parse_data(get_object_list(db_path))[:2],
         validate_onboarding=onboarding_always_valid,
     )
 
