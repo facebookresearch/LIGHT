@@ -2162,18 +2162,18 @@ class LIGHTDatabase:
 
         # Check the table for size, contain_size, shape, value columns and add if nonexistent
         # this should be deprecated soon when a legacy table is opened
-        has_size_column = self.c.execute(
+        has_size_column = dict(self.c.execute(
             " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='size' "
-        )
-        has_contain_size_column = self.c.execute(
+        ).fetchone())["CNTREC"]
+        has_contain_size_column = dict(self.c.execute(
             " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='contain_size' "
-        )
-        has_shape_column = self.c.execute(
+        ).fetchone())["CNTREC"]
+        has_shape_column = dict(self.c.execute(
             " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='shape' "
-        )
-        has_value_column = self.c.execute(
+        ).fetchone())["CNTREC"]
+        has_value_column = dict(self.c.execute(
             " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='value' "
-        )
+        ).fetchone())["CNTREC"]
 
         if not (
             has_size_column
