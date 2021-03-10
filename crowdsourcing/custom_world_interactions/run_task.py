@@ -26,6 +26,9 @@ from dataclasses import dataclass, field
 from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+LIGHT_DB_PATH = "/checkpoint/light/data/database3.db"
+RANDOM_OBJECT_LIST_SIZE = 10
+DEFAULT_NUM_TASKS = 2
 
 defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
@@ -34,43 +37,37 @@ defaults = [
     {"conf": "example"},
 ]
 
-db_path = "/checkpoint/light/data/database3.db"
-
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
 
+LIGHT_DB_PATH = "/checkpoint/light/data/database3.db"
+RANDOM_OBJECT_LIST_SIZE = 10
+DEFAULT_NUM_TASKS = 2
 
 @dataclass
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
+    light_db_path: str = LIGHT_DB_PATH
+    random_object_list_size: int = RANDOM_OBJECT_LIST_SIZE
+    num_tasks: int = DEFAULT_NUM_TASKS
 
 def get_object_list(db_path):
     db = LIGHTDatabase(db_path)
     with db as ldb:
-        object_list = ldb.get_object()
+        object_list = [dict(obj)["name"] for obj in ldb.get_object()]
 
     return object_list
 
-def parse_data(object_list):
-    db = LIGHTDatabase("/checkpoint/light/data/database3.db")
-    with db as ldb:
-        object_list = ldb.get_object()
+def create_task_data(object_list, random_object_list_size, num_tasks):
+    task_data_array = []
 
-    parsed_object_array = []
-    RANDOM_OBJECT_LIST_SIZE = 10
+    for idx in range(num_tasks):
+        obj_name = object_list[idx % len(object_list)]
+        random_object_list = random.sample(object_list, random_object_list_size)
+        target_object_name_list = [random_object for random_object in random.sample(object_list, random_object_list_size)]
+        task_data_array.append({ "primary_object": obj_name, "secondary_object_list": target_object_name_list })
 
-    for obj in object_list:
-        obj_name = dict(obj)["name"]
-        
-        random_sample = random.sample(object_list, RANDOM_OBJECT_LIST_SIZE)
-        target_object_name_list = []
-        
-        for random_object in random_sample:
-            target_object_name_list.append(dict(random_object)["name"])
-
-        parsed_object_array.append({ "primary_object": obj_name, "secondary_object_list": target_object_name_list })
-
-    return parsed_object_array
+    return task_data_array
 
 
 register_script_config(name="scriptconfig", module=TestScriptConfig)
@@ -109,7 +106,7 @@ def main(cfg: DictConfig) -> None:
         return True
 
     shared_state = SharedStaticTaskState(
-        static_task_data=parse_data(get_object_list(db_path))[:2],
+        static_task_data=create_task_data(get_object_list(cfg.light_db_path), cfg.random_object_list_size, cfg.num_tasks),
         validate_onboarding=onboarding_always_valid,
     )
 
