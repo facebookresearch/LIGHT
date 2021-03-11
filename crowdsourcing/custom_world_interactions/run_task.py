@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
+import random
 import shutil
 import subprocess
 from mephisto.operations.operator import Operator
@@ -16,13 +17,18 @@ from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint i
 from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint import (
     SharedStaticTaskState,
 )
+from light.data_model.light_database import LIGHTDatabase
 
 import hydra
+import json
 from omegaconf import DictConfig
 from dataclasses import dataclass, field
 from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+LIGHT_DB_PATH = "/checkpoint/light/data/database3.db"
+RANDOM_OBJECT_LIST_SIZE = 10
+DEFAULT_NUM_TASKS = 20
 
 defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
@@ -33,18 +39,36 @@ defaults = [
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
 
-
 @dataclass
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
+    light_db_path: str = LIGHT_DB_PATH
+    random_object_list_size: int = RANDOM_OBJECT_LIST_SIZE
+    num_tasks: int = DEFAULT_NUM_TASKS
+
+def get_object_list(db_path):
+    db = LIGHTDatabase(db_path)
+    with db as ldb:
+        object_list = [dict(obj)["name"] for obj in ldb.get_object()]
+
+    return object_list
+
+def create_task_data(object_list, random_object_list_size, num_tasks):
+    random.shuffle(object_list)
+    task_data_array = []
+
+    for idx in range(num_tasks):
+        obj_name = object_list[idx % len(object_list)]
+        random_object_list = random.sample(object_list, random_object_list_size)
+        target_object_name_list = [random_object for random_object in random.sample(object_list, random_object_list_size)]
+        task_data_array.append({ "primary_object": obj_name, "secondary_object_list": target_object_name_list })
+
+    return task_data_array
 
 
 register_script_config(name="scriptconfig", module=TestScriptConfig)
 
-
-# TODO it would be nice if this was automated in the way that it
-# is for ParlAI custom frontend tasks
 def build_task(task_dir):
     """Rebuild the frontend for this task"""
 
@@ -79,10 +103,7 @@ def main(cfg: DictConfig) -> None:
         return True
 
     shared_state = SharedStaticTaskState(
-        static_task_data=[
-            {"text": "This text is good text!"},
-            {"text": "This text is bad text!"},
-        ],
+        static_task_data=create_task_data(get_object_list(cfg.light_db_path), cfg.random_object_list_size, cfg.num_tasks),
         validate_onboarding=onboarding_always_valid,
     )
 

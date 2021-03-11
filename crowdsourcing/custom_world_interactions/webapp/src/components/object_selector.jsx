@@ -4,12 +4,10 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
 function ObjectSelector({ objectList, currentSelectedObject, onChangeCurrentSelectedObject }) {
-  const [showMenu, setShowMenu] = React.useState(false);
-
   const objects = [];
   for (const [index, object] of objectList.entries()) {
     objects.push(
-      <option>{object}</option>
+      <option key={index} value={object}>{object}</option>
     )
   }
 
@@ -18,6 +16,7 @@ function ObjectSelector({ objectList, currentSelectedObject, onChangeCurrentSele
       <Form.Group controlId="exampleForm.ControlSelect1">
         <Form.Label>Target Object: </Form.Label>
         <Form.Control as="select" onChange={(e) => { onChangeCurrentSelectedObject(e.target.value); }}>
+          <option key={-1} value={""}>Select one</option>
           {objects}
         </Form.Control>
       </Form.Group>
