@@ -6,7 +6,7 @@ function InteractionDescription({ description, onChangeDescription }) {
     return (
         <Form>
             <Form.Group controlId="exampleForm.ControlTextarea1">
-                <Form.Label>Example textarea</Form.Label>
+                <Form.Label>Action Description (Second Person):</Form.Label>
                 <Form.Control
                     as="textarea"
                     rows={3}

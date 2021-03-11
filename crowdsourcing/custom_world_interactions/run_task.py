@@ -28,7 +28,7 @@ from typing import List, Any
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 LIGHT_DB_PATH = "/checkpoint/light/data/database3.db"
 RANDOM_OBJECT_LIST_SIZE = 10
-DEFAULT_NUM_TASKS = 2
+DEFAULT_NUM_TASKS = 20
 
 defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
@@ -38,10 +38,6 @@ defaults = [
 ]
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
-
-LIGHT_DB_PATH = "/checkpoint/light/data/database3.db"
-RANDOM_OBJECT_LIST_SIZE = 10
-DEFAULT_NUM_TASKS = 2
 
 @dataclass
 class TestScriptConfig(RunScriptConfig):
@@ -59,6 +55,7 @@ def get_object_list(db_path):
     return object_list
 
 def create_task_data(object_list, random_object_list_size, num_tasks):
+    random.shuffle(object_list)
     task_data_array = []
 
     for idx in range(num_tasks):

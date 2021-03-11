@@ -8,24 +8,6 @@
 
 import React from "react";
 
-function OnboardingComponent({ onSubmit }) {
-  return (
-    <div>
-      <Directions>
-        This component only renders if you have chosen to assign an onboarding
-        qualification for your task. Click the button to move on to the main
-        task.
-      </Directions>
-      <button
-        className="button is-link"
-        onClick={() => onSubmit({ success: true })}
-      >
-        Move to main task.
-      </button>
-    </div>
-  );
-}
-
 function LoadingScreen() {
   return <Directions>Loading...</Directions>;
 }
@@ -42,44 +24,4 @@ function Directions({ children }) {
   );
 }
 
-function SimpleFrontend({ taskData, isOnboarding, onSubmit, onError }) {
-  if (!taskData) {
-    return <LoadingScreen />;
-  }
-  if (isOnboarding) {
-    return <OnboardingComponent onSubmit={onSubmit} />;
-  }
-  return (
-    <div>
-      <Directions>
-        Directions: Please rate the below sentence as good or bad.
-      </Directions>
-      <section className="section">
-        <div className="container">
-          <p className="subtitle is-5"></p>
-          <p className="title is-3 is-spaced">{taskData.text}</p>
-          <div className="field is-grouped">
-            <div className="control">
-              <button
-                className="button is-success is-large"
-                onClick={() => onSubmit({ rating: "good" })}
-              >
-                Mark as Good
-              </button>
-            </div>
-            <div className="control">
-              <button
-                className="button is-danger is-large"
-                onClick={() => onSubmit({ rating: "bad" })}
-              >
-                Mark as Bad
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-export { LoadingScreen, SimpleFrontend as BaseFrontend };
+export { LoadingScreen };
