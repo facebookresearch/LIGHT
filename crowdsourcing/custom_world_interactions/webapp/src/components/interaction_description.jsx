@@ -7,10 +7,12 @@ function InteractionDescription({ description, onChangeDescription }) {
         <Form>
             <Form.Group controlId="exampleForm.ControlTextarea1">
                 <Form.Label>Action Description (Second Person):</Form.Label>
+                <br/>
                 <Form.Control
+                    style={{ width:"500px", height:"80px"}}
                     as="textarea"
                     rows={3}
-                    placeholder="Describe (in text format) the interaction between these two objects"
+                    placeholder="Describe (in text format) the interaction between these two objects - Start with 'You...'"
                     onChange={(e) => onChangeDescription(e.target.value)}
                 />
             </Form.Group>
