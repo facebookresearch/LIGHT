@@ -50,3 +50,4 @@ class ModelPool:
                 f"No models registered for requested name {model_name}"
             )
         return loader.get_model(overrides)
+        
