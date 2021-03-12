@@ -6,11 +6,14 @@
 
 from dataclasses import dataclass, field
 from omegaconf import MISSING, DictConfig
-from parlai.core.agents import Agent
 
 from light.registry.models.parlai_model import ParlAIModelConfig, ParlAIModelLoader
-from light.registry.models.acting_score_model import ParlAIActingScoreModelConfig, ParlAIActingScoreModelLoader
+from light.registry.models.acting_score_model import (
+    ParlAIActingScoreModelConfig,
+    ParlAIActingScoreModelLoader,
+)
 
+from parlai.core.agents import Agent
 from typing import List, Any, Dict, Optional
 
 # At the moment all models are ParlAIModelLoaders. May change as we make more models
@@ -41,7 +44,7 @@ class ModelPool:
     def get_model(self, model_name: str, overrides: Optional[Dict[str, Any]]) -> Agent:
         """
         Get a copy of the model stored in the given name
-        
+
         If overrides are provided, pass those to the loader as well
         """
         loader = self._model_loaders.get(model_name)
@@ -50,4 +53,3 @@ class ModelPool:
                 f"No models registered for requested name {model_name}"
             )
         return loader.get_model(overrides)
-        
