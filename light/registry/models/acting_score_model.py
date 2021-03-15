@@ -12,16 +12,16 @@ from light.registry.models.parlai_model import ParlAIModelConfig, ParlAIModelLoa
 
 
 @dataclass
-class ParlAIActingScoreModelConfig(ParlAIModelConfig):
+class ParlAIPolyencoderActingScoreModelConfig(ParlAIModelConfig):
     _loader: str = "ParlAIActingScore"
 
 
-class ParlAIActingScoreModelLoader(ParlAIModelLoader):
+class ParlAIPolyencoderActingScoreModelLoader(ParlAIModelLoader):
     """
     Takes in the configuration for a ParlAI model, and provides options
     for being able to load that model one or multiple times (via sharing).
 
-    We do some special post-setup on the acting score model. Ideally this 
+    We do some special post-setup on the acting score model. Ideally this
     could be done as a special opt in the agent itself, but for now it's here.
     """
 

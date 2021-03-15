@@ -31,6 +31,10 @@ class ParlAIModelConfig:
         default=MISSING,
         metadata={"help": ("Path to the ParlAI opt file for this model.")},
     )
+    overrides: Dict[str, Any] = field(
+        default_factory=dict,
+        metadata={"help": ("Additional overrides for this model's opt")},
+    )
 
 
 class ParlAIModelLoader:
@@ -48,6 +52,7 @@ class ParlAIModelLoader:
         """Initialize the model from the given config"""
         opt_from_config = config.get("opt_file", None)
         model_from_config = config.get("model_file", None)
+        overrides = dict(config.get("overrides", {}))
 
         if opt_from_config is None and model_from_config is None:
             raise AssertionError(f"Must provide one of opt_file or model_file")
@@ -67,6 +72,7 @@ class ParlAIModelLoader:
                 )
             opt["model_file"] = model_file
 
+        opt.update(overrides)
         model = create_agent(opt)
         self._shared = model.share()
 

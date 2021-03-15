@@ -9,8 +9,8 @@ from omegaconf import MISSING, DictConfig
 
 from light.registry.models.parlai_model import ParlAIModelConfig, ParlAIModelLoader
 from light.registry.models.acting_score_model import (
-    ParlAIActingScoreModelConfig,
-    ParlAIActingScoreModelLoader,
+    ParlAIPolyencoderActingScoreModelConfig,
+    ParlAIPolyencoderActingScoreModelLoader,
 )
 
 from parlai.core.agents import Agent
@@ -19,7 +19,7 @@ from typing import List, Any, Dict, Optional
 # At the moment all models are ParlAIModelLoaders. May change as we make more models
 ALL_LOADERS: Dict[str, ParlAIModelLoader] = {
     ParlAIModelConfig._loader: ParlAIModelLoader,
-    ParlAIActingScoreModelConfig._loader: ParlAIActingScoreModelLoader,
+    ParlAIPolyencoderActingScoreModelConfig._loader: ParlAIPolyencoderActingScoreModelLoader,
 }
 
 
