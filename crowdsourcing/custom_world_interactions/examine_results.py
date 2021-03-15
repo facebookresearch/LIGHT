@@ -44,9 +44,12 @@ def format_for_printing_data(data):
     )
 
     inputs = contents["inputs"]
-    outputs = contents["outputs"]
+    inputs_string = f"Input:\n\tPrimary Object List: {inputs['primary_object_list']}\n\tSecondary Object List: {inputs['secondary_object_list']}\n\n"
 
-    return f"-------------------\n{inputs}{outputs}"
+    outputs = contents["outputs"]["final_data"]
+    outputs_string = f"Output:\n\tUse {outputs['primaryObject']} with {outputs['secondaryObject']}\n\tAction: {outputs['actionDescription']}\n"
+
+    return f"-------------------\n{inputs_string}{outputs_string}"
 
 
 disqualification_name = None

@@ -112,6 +112,21 @@ def main(cfg: DictConfig) -> None:
         validate_onboarding=onboarding_always_valid,
     )
 
+    shared_state.mturk_specific_qualifications = [
+        {
+            "QualificationTypeId": "00000000000000000040",
+            "Comparator": "GreaterThanOrEqualTo",
+            "IntegerValues": [3000],
+            "ActionsGuarded": "DiscoverPreviewAndAccept",
+        },
+        {
+            "QualificationTypeId": "000000000000000000L0",
+            "Comparator": "GreaterThanOrEqualTo",
+            "IntegerValues": [97],
+            "ActionsGuarded": "DiscoverPreviewAndAccept",
+        },
+    ]
+
     build_task(task_dir)
 
     db, cfg = load_db_and_process_config(cfg)
