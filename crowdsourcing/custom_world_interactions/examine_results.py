@@ -49,7 +49,7 @@ def format_for_printing_data(data):
     outputs = contents["outputs"]["final_data"]
     outputs_string = f"Output:\n\tUse {outputs['primaryObject']} with {outputs['secondaryObject']}\n\tAction: {outputs['actionDescription']}\n"
 
-    return f"-------------------\n{inputs_string}{outputs_string}"
+    return f"-------------------\n{metadata_string}{inputs_string}{outputs_string}"
 
 
 disqualification_name = None
