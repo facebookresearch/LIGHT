@@ -99,6 +99,18 @@ def build_task(task_dir):
         )
     os.chdir(return_dir)
 
+def validate_unit(unit):
+    if unit.get_assigned_agent() is None:
+        return
+
+    data = unit.get_assigned_agent().get_data()
+
+    if len(data) <= 20 or data.lower().find("you") == -1:
+        # Not in second person
+        worker = unit.get_assigned_agent().get_worker()
+        worker.grant_qualification(cfg.mephisto.blueprint.block_qualification)
+
+    return
 
 @hydra.main(config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
@@ -126,6 +138,8 @@ def main(cfg: DictConfig) -> None:
             "ActionsGuarded": "DiscoverPreviewAndAccept",
         },
     ]
+
+    shared_state.on_unit_submitted = validate_unit
 
     build_task(task_dir)
 
