@@ -403,3 +403,72 @@ body .fadeShow {
 .data-model-deep-link {
   color: black;
 }
+
+.app-container {
+  height: 100vh;
+  width: 100vw;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+}
+
+.landingpage-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 1em 5em 4em 5em;
+  background-image: url("./assets/images/splashbg.jpg");
+  background-size: cover;
+
+  height: 100%;
+}
+
+.instructions-container {
+  width: 100%;
+  height: 40%;
+  background-color: #123b0f;
+  border: white;
+  border-width: 1em;
+  border-style: solid;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: row;
+  padding:5px;
+  justify-content: space-between;
+}
+.instructions-container__half {
+  width:50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.instruction-bubble {
+  background-color: whitesmoke;
+  padding: 1em;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80%;
+}
+
+.instruction-arrow {
+  background-color: gold;
+  color: white;
+  height: 25;
+}
+
+.navigation-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-around;
+}
+
+
+.guide-img {
+  height:auto;
+  width:25%
+}
