@@ -209,6 +209,43 @@ class OnEventSoul(ModelSoul):
         ) and (self.get_last_interaction_partner(agent) == event.actor.node_id):
             about_goals = False
 
+        for words in ["mission", "goal", "quest", "what you want"]:
+            if words in event.text_content:
+                about_goals = True
+        other_agent = event.actor
+        if self.conversation_score(other_agent) > 5:
+            if random.random() < 0.1 and (
+                other_agent.node_id not in agent.quests[0]["helper_agents"]
+            ):
+                about_goals = True
+        if about_goals:
+            if self.conversation_score(other_agent) < 5:
+                say_text = random.choice(
+                    [
+                        "Why should I tell you. I'd rather talk more before I discuss that...",
+                        "I'd rather talk more before I discuss that...",
+                    ]
+                )
+                self.execute_event(["SayEvent", say_text])
+                return True
+            else:
+                if len(agent.quests) > 0:
+                    # Add this actor to the list of potential helpers for the quest
+                    # and tell them about the quest.
+                    if other_agent.node_id not in agent.quests[0]["helper_agents"]:
+                        agent.quests[0]["helper_agents"].append(other_agent.node_id)
+                        q_copy = copy.copy(agent.quests[0])
+                        other_agent.quests.append(q_copy)
+                        say_text = agent.quests[0]["text"]
+                        self.execute_event(["TellEvent", other_agent, say_text])
+                return True
+        else:
+            pass
+            # say_text = random.choice(
+            #    ["Interesting.", "Ok.", "Thanks for telling me."]
+            # )
+            # self.execute_event(["TellEvent", other_agent, say_text])
+            
         return False
 
     def resolve_object_string(self, agent, object_str):
