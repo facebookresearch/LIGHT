@@ -253,7 +253,6 @@ class OnEventSoul(ModelSoul):
                 #    ["Interesting.", "Ok.", "Thanks for telling me."]
                 # )
                 # self.execute_event(["TellEvent", other_agent, say_text])
-
             return False
 
     def resolve_object_string(self, agent, object_str):
