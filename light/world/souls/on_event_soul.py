@@ -124,15 +124,15 @@ class OnEventSoul(ModelSoul):
             self.execute_event(["HitEvent", other_agent])  # hit back!
             agent.aggression_target = other_agent.node_id
 
-    def _find_object_of_value(self, agent, value, find='less'):
+    def _find_object_of_value(self, agent, value, find="less"):
         item = None
         for o in agent.get_contents():
-            if find=='less' and o.value <= value:
+            if find == "less" and o.value <= value:
                 item = o
-            if find=='more' and o.value >= value:
+            if find == "more" and o.value >= value:
                 item = o
         return item
-            
+
     def trade_event_heuristics(self, event):
         agent = self.target_node
         other_agent = event.actor
@@ -140,7 +140,7 @@ class OnEventSoul(ModelSoul):
 
         # GiveObjectEvent
         if event_name == "GiveObjectEvent" and event.target_nodes[1] == agent:
-            if hasattr(self, 'willing_to_trade') and self.willing_to_trade is not None:
+            if hasattr(self, "willing_to_trade") and self.willing_to_trade is not None:
                 trade = False
                 item1 = event.target_nodes[0]
                 if item1 == self.willing_to_trade[1]:
@@ -150,12 +150,18 @@ class OnEventSoul(ModelSoul):
                 else:
                     trade = False
                 if trade:
-                    self.execute_event(["GiveObjectEvent", self.willing_to_trade[0], other_agent])
-                    say_text = random.choice(["Thanks for the trade.", "Good doing business with you."])
+                    self.execute_event(
+                        ["GiveObjectEvent", self.willing_to_trade[0], other_agent]
+                    )
+                    say_text = random.choice(
+                        ["Thanks for the trade.", "Good doing business with you."]
+                    )
                     self.execute_event(["SayEvent", say_text])
                     self.willing_to_trade = None
                 else:
-                    say_text = random.choice(["I don't want that.", "Not interested, thanks."])
+                    say_text = random.choice(
+                        ["I don't want that.", "Not interested, thanks."]
+                    )
                     self.execute_event(["SayEvent", say_text])
                     obj = event.target_nodes[0]
                     self.execute_event(["DropEvent", obj])
@@ -167,34 +173,37 @@ class OnEventSoul(ModelSoul):
                 else:
                     say_text = "Err.. thanks."
                 self.execute_event(["SayEvent", say_text])
-                
+
         # PointEvent
-        if (
-            event_name == "PointEvent"
-            and event.target_nodes[0].object
-        ):
+        if event_name == "PointEvent" and event.target_nodes[0].object:
             item = event.target_nodes[0]
             value = item.value
-            say_text = ''
-            if (item.get_container() == other_agent):
-                item2 = self._find_object_of_value(agent, value, 'less')
+            say_text = ""
+            if item.get_container() == other_agent:
+                item2 = self._find_object_of_value(agent, value, "less")
                 if item2 is None:
                     say_text = "That looks nice, but I'm not interested."
                 else:
-                    say_text = "I'm willing to trade that for " + item2.get_prefix_view()
+                    say_text = (
+                        "I'm willing to trade that for " + item2.get_prefix_view()
+                    )
                     self.willing_to_trade = (item2, item)
-                    
-            if (item.get_container() == agent):
-                item2 = self._find_object_of_value(other_agent, value, 'more')
+
+            if item.get_container() == agent:
+                item2 = self._find_object_of_value(other_agent, value, "more")
                 if item2 is None:
-                    say_text = "Nice isn't it? I don't think you have anything I want though."
+                    say_text = (
+                        "Nice isn't it? I don't think you have anything I want though."
+                    )
                 else:
-                    say_text = "I'm willing to trade that for " + item2.get_prefix_view()
+                    say_text = (
+                        "I'm willing to trade that for " + item2.get_prefix_view()
+                    )
                     self.willing_to_trade = (item, item2)
 
-            if say_text != '':
+            if say_text != "":
                 self.execute_event(["TellEvent", other_agent, say_text])
-        
+
     def tell_goal_heuristics(self, event):
         agent = self.target_node
         event_name = event.__class__.__name__
@@ -245,7 +254,7 @@ class OnEventSoul(ModelSoul):
             #    ["Interesting.", "Ok.", "Thanks for telling me."]
             # )
             # self.execute_event(["TellEvent", other_agent, say_text])
-            
+
         return False
 
     def resolve_object_string(self, agent, object_str):
