@@ -238,7 +238,7 @@
         "defense": 0
       },
       "surface_type": "on",
-      "value": 1,
+      "value": 10,
       "wearable": false,
       "wieldable": true
     },
@@ -323,10 +323,11 @@
       "food": true,
       "food_energy": 2,
       "name_prefix": "a",
+      "value": 10,	
       "node_id": "scroll_9_1",
       "container_node": { "target_id": "church entryway_1_2" },
       "contained_nodes": {},
-      "object": true,
+	"object": true,
       "on_use": [
         {
           "events": [
