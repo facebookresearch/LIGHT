@@ -167,5 +167,7 @@ class ActionParser:
 
         if new_txt.startswith("point at"):
             new_txt = new_txt.replace("point at", "point")
+        if new_txt.startswith("point to"):
+            new_txt = new_txt.replace("point to", "point")
 
         return new_txt
