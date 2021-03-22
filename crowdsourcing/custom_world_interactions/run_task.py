@@ -30,6 +30,7 @@ LIGHT_DB_PATH = "/checkpoint/light/data/database3.db"
 PRIMARY_OBJECT_LIST_SIZE = 5
 SECONDARY_OBJECT_LIST_SIZE = 5
 DEFAULT_NUM_TASKS = 20
+BLOCK_QUALIFICATION = "The answer should be a full phrase starting with 'You...'"
 
 defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
@@ -48,6 +49,7 @@ class TestScriptConfig(RunScriptConfig):
     primary_object_list_size: int = PRIMARY_OBJECT_LIST_SIZE
     secondary_object_list_size: int = SECONDARY_OBJECT_LIST_SIZE
     num_tasks: int = DEFAULT_NUM_TASKS
+    block_qualification: str = BLOCK_QUALIFICATION
 
 def get_object_list(db_path):
     db = LIGHTDatabase(db_path)
@@ -108,8 +110,7 @@ def validate_unit(unit):
     if len(data) <= 20 or data.lower().find("you") == -1:
         # Not in second person
         worker = unit.get_assigned_agent().get_worker()
-        worker.grant_qualification(cfg.mephisto.blueprint.block_qualification)
-
+        worker.grant_qualification(cfg.block_qualification, 1)
     return
 
 @hydra.main(config_name="scriptconfig")
