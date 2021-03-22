@@ -12,7 +12,7 @@ function InteractionDescription({ description, onChangeDescription }) {
                     style={{ width:"500px", height:"80px"}}
                     as="textarea"
                     rows={3}
-                    placeholder="Describe (in text format) the interaction between these two objects - Start with 'You...'"
+                    placeholder="Describe the interaction between these two objects (Remember to commit to the medieval fantasy setting) - Start with 'You...'"
                     onChange={(e) => onChangeDescription(e.target.value)}
                 />
             </Form.Group>

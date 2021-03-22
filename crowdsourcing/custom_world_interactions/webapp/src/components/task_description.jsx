@@ -6,7 +6,7 @@ function TaskDescription() {
       <div className="title is-3">
         Objects Interactions Annotation Task
       </div>
-        <p>We're trying to crowdsource possible interactions between a set of items. These interactions are set in a medieval fantasy, and as such should not refer to real people, places, or modern day technologies. 
+        <p>We're trying to crowdsource possible interactions between a set of items. These interactions are set in a <b>medieval fantasy scenario</b>, and as such should not refer to real people, places, or modern day technologies. 
         In this task you will be able to select two objects from a randomized list: Primary Object and Secondary Object. If none of the objects are compatible, please feel free to use the <i>Other</i> field to do the task with a Secondary Object of your choice.</p>
         <p>After that, write a simple <b>interaction</b> between these two objects in the textbox.</p>
         <br />
@@ -36,6 +36,12 @@ function TaskDescription() {
             <br />
             <li><b>Primary:</b> Ball. <b>Target:</b> Table. <b>Interaction</b>: <i>The ball rolls off of the table and falls on the floor.</i></li>
             <li><b>Bad Reason:</b> This interaction isn't written in second person. The correct format would be "You roll the ball on the table. It falls off of the other side onto the floor"</li>
+            <br />
+            <li><b>Primary:</b> Tea. <b>Target:</b> Table. <b>Interaction</b>: <i>You put the tea on the table but it falls off, leaving a mark on the rug.</i></li>
+            <li><b>Bad Reason:</b> This interaction uses a third object (Rug). It's preferable for the interaction to be generic for any environment, therefore not envolving more than the two objects mentioned.</li>
+            <br />
+            <li><b>Primary:</b> Magical Ring. <b>Target:</b> Magician. <b>Interaction</b>: <i>You call a magician with your cellphone and he shows up to analyze the Magical Ring.</i></li>
+            <li><b>Bad Reason:</b> Again, this interaction uses a random third object (Cellphone). It also uses an object which should not exist in the medieval fantasy setting (Cellphone).</li>
           </ul>
       </div>
     </div>
