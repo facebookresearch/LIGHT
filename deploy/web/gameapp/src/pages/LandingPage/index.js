@@ -23,7 +23,8 @@ const LandingPage = (props)=>{
     }
     return(
     <div className="landingpage-container">
-        <h1 style={{fontWeight:"bold", color:"white", textAlign:"center"}}>Welcome to the world of LIGHT</h1>
+        <h1 className="header-text">Welcome to the world of LIGHT</h1>
+        <Link to="/2" style={{color:"white", fontWeight:"bold"}}>ALT 2</Link>
 
         <div className="main-container">
             <div className="instructions-container">
@@ -120,8 +121,8 @@ const LandingPage = (props)=>{
                 </div>
             </div>
             <div className="terms-container">
-                    <h3>Usage terms</h3>
-                    <p>
+                    <h3 style={{color:"yellow"}}>Usage terms</h3>
+                    <p style={{color:"white"}}>
                     You should read our <a href="/terms">terms</a> regarding how we process
                     and use data that you send to LIGHT. You are accepting these terms by
                     playing the game.
