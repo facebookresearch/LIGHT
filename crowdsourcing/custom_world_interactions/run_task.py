@@ -109,6 +109,7 @@ def validate_unit(unit):
 
     if len(data) <= 20 or data.lower().find("you") == -1:
         # Not in second person
+        unit.get_assigned_agent().soft_reject_work()
         worker = unit.get_assigned_agent().get_worker()
         worker.grant_qualification(cfg.block_qualification, 1)
     return
