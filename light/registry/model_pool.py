@@ -41,6 +41,12 @@ class ModelPool:
         for model_name in model_names:
             self._model_loaders[model_name] = loader
 
+    def has_model(self, model_name: str) -> bool:
+        """
+        Determine if there's a model registered for the given name.
+        """
+        return model_name in self._model_loaders
+
     def get_model(self, model_name: str, overrides: Optional[Dict[str, Any]]) -> Agent:
         """
         Get a copy of the model stored in the given name

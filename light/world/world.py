@@ -27,7 +27,10 @@ from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 from light.world.views import WorldViewer
 from light.world.purgatory import Purgatory
 
-from typing import List
+from typing import List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from light.registry.model_pool import ModelPool
 
 
 def check_integrity(f):
@@ -59,6 +62,7 @@ class World(object):
         self,
         opt,
         graph_builder,
+        model_pool: "ModelPool",
         debug=False,
     ):
         # TODO re-investigate callbacks during action refactor
@@ -72,6 +76,7 @@ class World(object):
         self.view = WorldViewer(self)
         self.purgatory = Purgatory(self)
         self.opt = opt
+        self.model_pool = model_pool
 
         # TODO better specific player management?
         self._player_cnt = 0

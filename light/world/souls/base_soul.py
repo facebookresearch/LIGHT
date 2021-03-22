@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
-    from light.graph.world.world import World
+    from light.world.world import World
     from light.graph.events.base import GraphEvent
 
 
@@ -30,6 +30,8 @@ class BaseSoul(Soul):
         super().__init__(target_node, world)
         self.target_node._last_interaction_partner_id = None
         self.reset_interaction_history(self.target_node)
+        self.model_pool = world.model_pool
+        self.roleplaying_score_model = self.model_pool.get("role_playing_score")
 
     def get_last_interaction_partner(self, node=None):
         if node == None:
@@ -184,7 +186,7 @@ class BaseSoul(Soul):
         txt += "_self_name " + agent.name + "\n"
         txt += "_self_persona " + agent.persona
         if quest_txt is not None:
-            txt += quest_text
+            txt += quest_txt
         txt += "\n"
         return txt
 
@@ -194,7 +196,6 @@ class BaseSoul(Soul):
         # Dialogue/interaction context.
         dtxt = ""
         agent = self.target_node
-        agent_id = agent.node_id
         turn_id = None
         for d in agent._last_interaction_history:
             current_turn_id = d[0][0]
@@ -332,7 +333,7 @@ class BaseSoul(Soul):
             self.roleplaying_score_model.eval_step_scoresonly
         )
         fixed_cand_scores = self.get_fixed_cand_scores(context)
-        pos, score = self.get_pos_human_msg(human_msg, fixed_cand_scores)
+        pos, _score = self.get_pos_human_msg(human_msg, fixed_cand_scores)
         # print("pos:", pos)
         if pos < 1000:
             final_score = 4

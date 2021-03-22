@@ -9,6 +9,11 @@ from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser
 from parlai.agents.transformer.transformer import TransformerClassifierAgent
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from light.registry.model_pool import ModelPool
+
 try:
     from parlai_internal.agents.safety_wrapper.multiturn_safety import (
         MultiturnOffensiveLanguageClassifier,
@@ -28,7 +33,11 @@ class AdversarialOffensiveLanguageClassifier(MultiturnOffensiveLanguageClassifie
     <http://parl.ai/projects/dialogue_safety/> for more information.
     """
 
+    def __init__(self, model_pool: "ModelPool"):
+        self.__model_pool = model_pool
+
     def _create_safety_model(self):
+        return self.__model_pool.get_model("safety")
         parser = ParlaiParser(False, False)
         TransformerClassifierAgent.add_cmdline_args(parser)
         parser.set_params(
@@ -44,22 +53,21 @@ class AdversarialOffensiveLanguageClassifier(MultiturnOffensiveLanguageClassifie
 
 
 class SafetyClassifier:
-    def __init__(self, datapath, use_model=False):
+    def __init__(self, datapath: str, model_pool: "ModelPool"):
         if datapath != "":
             self.string_matcher = OffensiveStringMatcher(datapath)
         else:
             self.string_matcher = None
-        if use_model:
-            self.classifier = AdversarialOffensiveLanguageClassifier()
+        if model_pool.has_model("safety"):
+            self.classifier = AdversarialOffensiveLanguageClassifier(model_pool)
         else:
             self.classifier = None
 
-    def is_safe(self, text):
+    def is_safe(self, text: str):
         if self.string_matcher is not None:
             if text in self.string_matcher:
                 return False
         if self.classifier is not None:
-            print(text)
             if text in self.classifier:
                 return False
         return True
