@@ -24,8 +24,6 @@ const LandingPage = (props)=>{
     return(
     <div className="landingpage-container">
         <h1 className="header-text">Welcome to the world of LIGHT</h1>
-        <Link to="/2" style={{color:"white", fontWeight:"bold"}}>ALT 2</Link>
-
         <div className="main-container">
             <div className="instructions-container">
                 <div className="instructions-container__section">
