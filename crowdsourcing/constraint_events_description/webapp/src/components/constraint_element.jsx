@@ -105,7 +105,8 @@ function InRoomConstraint() {
 };
 
 function AttributeCompareValueConstraint({ state }) {
-    const [attribute, onChangeAttribute] = React.useState("");
+    const [attributeName, onChangeAttributeName] = React.useState("");
+    const [attributeValue, onChangeAttributeValue] = React.useState("");
 
     const [cmp, onChangeCmp] = React.useState('equal');
     const cmpList = ['equal', 'not equal', 'greater', 'greater than or equal', 'less', 'less than or equal'];
@@ -126,13 +127,13 @@ function AttributeCompareValueConstraint({ state }) {
             <SingleSelector objectList={targetList} onChangeCurrentSelectedObject={onChangeTarget} />
             <p> has the attribute </p>
             <Form.Group controlId="formBasicAttribute" inline>
-                    <Form.Control type="attribute" placeholder="Attribute" onChange={(e) => { onChangeAttribute(e.target.value); }}/>
+                    <Form.Control type="attribute" placeholder="Attribute" onChange={(e) => { onChangeAttributeName(e.target.value); }}/>
             </Form.Group>
             <p> which needs to be </p>
             <SingleSelector objectList={cmpList} onChangeCurrentSelectedObject={onChangeCmp} />
             <p> when compared to</p>
             <Form.Group controlId="formBasicAttrValue" inline>
-                    <Form.Control type="attributeValue" placeholder="Attribute Compare Value" onChange={(e) => { onChangeAttribute(e.target.value); }}/>
+                    <Form.Control type="attributeValue" placeholder="Attribute Compare Value" onChange={(e) => { onChangeAttributeValue(e.target.value); }}/>
             </Form.Group>
             <br />
             <br />

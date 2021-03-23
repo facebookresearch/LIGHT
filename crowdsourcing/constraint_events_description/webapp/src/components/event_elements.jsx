@@ -33,6 +33,23 @@ function EventToggleButton() {
     );
 }
 
+function SingleSelector({objectList, onChangeCurrentSelectedObject}) {
+    const selectorList = [];
+    
+    for (const [index, object] of objectList.entries()) {
+      selectorList.push(
+        <option key={index} value={object}>{object}</option>
+      )
+    }
+  
+    return (
+      <Form.Control as="select" onChange={(e) => { onChangeCurrentSelectedObject(e.target.value); }}>
+        <option key={-1} value={""}>Select one</option>
+        {selectorList}
+      </Form.Control>
+    );
+  }
+
 function CreateEntityEvent({ state }) {
     return (
         <div>
@@ -76,6 +93,39 @@ function BroadcastMessageEvent({ state }) {
     );
 }
 
+function ModifyAttributeEvent({ state }) {
+    const [attribute, onChangeAttribute] = React.useState("");
+    const [attributeValue, onChangeAttributeValue] = React.useState("");
+
+    const [target, onChangeTarget] = React.useState("");
+    const targetList = ['actor', state["primaryObject"], state["secondaryObject"]]
+
+    return (
+        <div>
+            <div className="title is-4">
+                Does this action modifies an attribute of something involved in it?
+            </div>
+            <p>For example, when you kill someone with a sword, you modify the attribute "health" to 0!</p>
+            <p>You will be given some attributes as examples for suggestion, but feel free to think about any attribute you would like to change.</p>
+            <p>These attribute modifications can be applied to <b>three</b> possible members of the interaction: <b>Actor</b>, <b>{state["primaryObject"]}</b> or <b>{state["secondaryObject"]}</b></p>
+            <br />
+            <p>The object/agent </p> 
+            <SingleSelector objectList={targetList} onChangeCurrentSelectedObject={onChangeTarget} />
+            <p> has the attribute </p>
+            <Form.Group controlId="formBasicAttribute" inline>
+                    <Form.Control type="attribute" placeholder="Attribute" onChange={(e) => { onChangeAttribute(e.target.value); }}/>
+            </Form.Group>
+            <p> changed to </p>
+            <Form.Group controlId="formBasicAttrValue" inline>
+                    <Form.Control type="attributeValue" placeholder="Attribute Compare Value" onChange={(e) => { onChangeAttributeValue(e.target.value); }}/>
+            </Form.Group>
+            <br />
+            <br />
+            <EventToggleButton constraint="attributeCompareValue" />
+        </div>
+    );
+}
+
 function EventsBlock({ state }) {
     return (
         <div>
@@ -86,6 +136,8 @@ function EventsBlock({ state }) {
             <CreateEntityEvent state={state} />
             <br />
             <BroadcastMessageEvent state={state} />
+            <br />
+            <ModifyAttributeEvent state={state} />
         </div>
     );
 }
