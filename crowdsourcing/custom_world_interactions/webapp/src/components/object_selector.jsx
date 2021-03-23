@@ -26,7 +26,7 @@ function OtherSecondaryForm({ onChangeCurrentSecondaryObject }) {
       as="textarea"
       style={{ width:"200px", height:"50px"}}
       rows={1}
-      placeholder="In case you cannot think of any actions, feel free to use your own medieval-fantasy themed object!"
+      placeholder="Please use a medieval-fantasy themed object!"
       onChange={(e) => onChangeCurrentSecondaryObject(e.target.value)}
     />
   );
