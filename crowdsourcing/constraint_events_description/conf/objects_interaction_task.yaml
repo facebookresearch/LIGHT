@@ -5,8 +5,8 @@ mephisto:
     extra_source_dir: ${task_dir}/webapp/src/static
     units_per_assignment: 1
   task:
-    task_name: "objects-interaction-task-4"
-    task_title: "Annotate an interaction between two objects."
-    task_description: "In this task you will receive a main object. You will be able to select another object from a list of 10 randomly selected objects. After that, write a simple interaction between these two objects in the textbox."
+    task_name: "constraints-events-task"
+    task_title: "Determine the constraints and events of a single interaction."
+    task_description: "In this task you will receive two objects with an interaction between them described in text format. You will fill a list of constraints and events related to this description."
     task_reward: 0.19
-    task_tags: "fantasy,object,interaction"
+    task_tags: "fantasy,interaction,constraints,events"

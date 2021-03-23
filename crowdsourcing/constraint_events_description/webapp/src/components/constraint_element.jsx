@@ -2,9 +2,8 @@ import React from "react";
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Form from 'react-bootstrap/Form';
-import FormControl from 'react-bootstrap/FormControl';
 
-function ConstraintToggleButton() {
+function ConstraintToggleButton(id_prefix) {
     const [toggleValue, setToggleValue] = React.useState("");
 
     const values = [
@@ -17,7 +16,6 @@ function ConstraintToggleButton() {
             <ButtonGroup toggle>
                 {values.map((value, idx) => (
                     <ToggleButton
-                        key={idx}
                         type="radio"
                         variant="secondary"
                         name="value"
@@ -92,7 +90,7 @@ function ConstraintBlock({ state }) {
     return (
         <div>
             <div className="title is-4">
-                <b>CONSTRAINTS</b>
+                <b>CONSTRAINT</b>
             </div>
             <hr/>
             <IsHoldingConstraint state={state} />
