@@ -107,11 +107,11 @@ const LandingPage = (props)=>{
                 </div>
                 <div className="menu-container__section">
                     <div className="menu-container">
-                        <Link style={{textDecoration:"none"}} to="/play">
+                        <a style={{textDecoration:"none"}} href="/play">
                             <div className="menu-item ">
                                 <h1>Play Now</h1>
                             </div>
-                        </Link>
+                        </a>
                         <Link style={{textDecoration:"none"}} to="/about">
                             <div className="menu-item">
                                 <h1>About</h1>
