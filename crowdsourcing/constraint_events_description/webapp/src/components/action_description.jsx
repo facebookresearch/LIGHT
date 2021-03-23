@@ -4,7 +4,7 @@ function ActionDescription ({ state }) {
     return (
         <div>
             <div className="title is-4">
-                Action Description
+                <b>ACTION DESCRIPTION</b>
             </div>
             <hr/>
             <p><b>Action:</b> Use {state['primaryObject']} with {state['secondaryObject']}</p>

@@ -92,7 +92,7 @@ function ConstraintBlock({ state }) {
     return (
         <div>
             <div className="title is-4">
-                Constraints
+                <b>CONSTRAINTS</b>
             </div>
             <hr/>
             <IsHoldingConstraint state={state} />

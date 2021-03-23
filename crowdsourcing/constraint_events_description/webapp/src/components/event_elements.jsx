@@ -13,6 +13,7 @@ function EventToggleButton() {
 
     return (
         <div>
+            <p>Is this event necessary?</p>
             <ButtonGroup toggle>
                 {values.map((value, idx) => (
                     <ToggleButton
@@ -49,19 +50,27 @@ function CreateEntityEvent({ state }) {
                     <Form.Label>Description</Form.Label>
                     <Form.Control type="description" placeholder="Description" />
                 </Form.Group>
-
-                <Form.Group controlId="formBasicNamePrefix">
-                    <Form.Label>Name Prefix</Form.Label>
-                    <Form.Control type="nameprefix" placeholder="Name Prefix (An/A/The)" />
-                </Form.Group>
-
-                <Form.Group controlId="formBasicDescription">
-                    <Form.Label>Is Wearable?</Form.Label>
-                    <EventToggleButton />
-                </Form.Group>
             </Form>
             <br/>
-            <p>Does this event is necessary?</p>
+            <EventToggleButton />
+        </div>
+    );
+}
+
+function BroadcastMessageEvent({ state }) {
+    return (
+        <div>
+            <div className="title is-4">
+                How others see this event?
+            </div>
+            Convert the action description <i>"{state.actionDescription}"</i> to third person, using "Actor" as the subject. Think as someone seeing the action:
+            <Form>
+                <Form.Group controlId="formBasicDescription">
+                    <Form.Label>Action Description (Room View):</Form.Label>
+                    <Form.Control style={{ width:"900px"}} type="name" placeholder="Action Description but with 'Actor' as subject" />
+                </Form.Group>
+            </Form>
+            <br />
             <EventToggleButton />
         </div>
     );
@@ -71,10 +80,12 @@ function EventsBlock({ state }) {
     return (
         <div>
             <div className="title is-4">
-                Events
+                <b>EVENTS</b>
             </div>
             <hr/>
             <CreateEntityEvent state={state} />
+            <br />
+            <BroadcastMessageEvent state={state} />
         </div>
     );
 }
