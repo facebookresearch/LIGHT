@@ -23,7 +23,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "postbuild": "(mv ./build/index.html ./build/game.html && rm -rf ../build/* && cp -r ./build/* ../build && rm -R ./build)",
+    "postbuild": "mv ./build/index.html ./build/game.html && cp -r ./build/* ../build && rm -R ./build",
     "test": "cp ../config/local/config.js ./src/config.js && react-scripts test --env=jsdom",
     "posttest": "rm ./src/config.js",
     "eject": "react-scripts eject"
