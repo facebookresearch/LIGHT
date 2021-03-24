@@ -16,7 +16,7 @@ export function Routes() {
       <Route path="/about" component={AboutPage} exact />
       <Route path="/terms" component={TermsPage} exact />
       <Route path="/login" component={LoginPage} exact />
-      <Route path="logout" component={LogoutPage} exact />
+      <Route path="/logout" component={LogoutPage} exact />
     </>
   );
 }

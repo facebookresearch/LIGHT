@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 
 import "../../styles.css";
 
-import Spider from "../../assets/images/spider.png";
-
 const TermsPage = (props) => {
   return (
     <div className="termspage-container">

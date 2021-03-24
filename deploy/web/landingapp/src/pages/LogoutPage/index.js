@@ -1,22 +1,19 @@
 import React from "react";
-
+import { Link } from "react-router-dom";
 import "../../styles.css";
-
-import Unicorn from "../../assets/images/unicorn.jpg";
 
 const LogoutPage = (props) => {
   return (
     <div className="logoutpage-container">
-      <div
-        className="main-container"
-        style={{
-          backgroundColor: "#697b4d",
-          alignItems: "center",
-          height: "90%",
-          padding: "3em",
-        }}
-      >
-        <h1 style={{ color: "white" }}>Terms</h1>
+      <div style={{ width: "100%", flexDirection: "flexStart" }}>
+        <Link style={{ textDecoration: "none", color: "yellow" }} to="/">
+          Back
+        </Link>
+      </div>
+      <div>
+        <h1 style={{ color: "white", marginLeft: "15px" }}>
+          You are now logged out. Thank you for playing!
+        </h1>
       </div>
     </div>
   );
