@@ -291,6 +291,7 @@ class LandingApplication(tornado.web.Application):
             (r"/", LandingHandler),
             (r"/play", GameHandler),
             (r"/play/?id=.*", GameHandler),
+            (r"/build", BuildHandler),
             (
                 r"/login",
                 LoginHandler,
@@ -314,6 +315,11 @@ class LandingApplication(tornado.web.Application):
 class LandingHandler(BaseHandler):
     def get(self):
         self.render(here + "/../build/index.html")
+
+
+class BuildHandler(BaseHandler):
+    def get(self):
+        self.render(here + "/../build/builder.html")
 
 
 class GameHandler(BaseHandler):
