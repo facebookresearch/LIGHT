@@ -1,9 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import Game from "./pages/GamePage"
+import AppRouter from "./AppRouter";
 
 const rootElement = document.getElementById("root");
 
-
-ReactDOM.render(<Game />, rootElement);
+ReactDOM.render(<AppRouter />, rootElement);

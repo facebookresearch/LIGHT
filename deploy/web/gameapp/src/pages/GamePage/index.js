@@ -595,7 +595,6 @@ const BlurClosingPicker = onClickOutside(EmojiPicker, {
   handleClickOutside: () => EmojiPicker.handleClickOutside,
 });
 
-
 function getLocationState(messages) {
   var valid_messages = messages.filter(
     (m) => m.is_self !== true && m.caller !== null

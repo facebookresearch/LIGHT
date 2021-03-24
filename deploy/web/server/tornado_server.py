@@ -288,7 +288,7 @@ class LandingApplication(tornado.web.Application):
 
     def get_handlers(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
         return [
-            (r"/", UnauthorizedGameHandler,
+            (r"/", LandingHandler),
             (r"/play", GameHandler),
             (r"/play/?id=.*", GameHandler),
             (
@@ -310,14 +310,16 @@ class LandingApplication(tornado.web.Application):
             (r"/(.*)", StaticUIHandler, {"path": here + "/../build/"}),
         ]
 
-class UnauthorizedGameHandler(BaseHandler):
+
+class LandingHandler(BaseHandler):
     def get(self):
         self.render(here + "/../build/index.html")
+
 
 class GameHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        self.render(here + "/../build/authenticatedindex.html")
+        self.render(here + "/../build/game.html")
 
 
 class StaticPageHandler(BaseHandler):
