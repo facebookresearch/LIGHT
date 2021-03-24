@@ -14,6 +14,7 @@ import { ConstraintBlock } from "./components/constraint_element.jsx";
 import { EventsBlock } from "./components/event_elements.jsx";
 import { LoadingScreen } from "./components/core_components.jsx";
 import { useMephistoTask } from "mephisto-task";
+import { SubmitButton } from "./components/submit_button.jsx";
 
 /* ================= Application Components ================= */
 
@@ -27,8 +28,13 @@ function MainApp() {
     handleSubmit,
   } = useMephistoTask();
 
-  // const state = initialTaskData;
   const state = {
+    'constraints': [],
+    'events': []
+  }
+
+  // const state = initialTaskData;
+  const mephistoData = {
     'primaryObject': 'big stick',
     'secondaryObject': 'pumpkins',
     'actionDescription': 'You poke at the pumpkins with the big stick. Your stick goes through the pumpkins, indicating that they are rotten.'
@@ -61,6 +67,8 @@ function MainApp() {
     return <LoadingScreen />;
   }
 
+  const active = true;
+
   return (
     <div>
       <section className="hero is-medium is-link">
@@ -68,11 +76,13 @@ function MainApp() {
           <TaskDescription />
           <br />
           <br />
-          <ActionDescription state={state} />
+          <ActionDescription state={mephistoData} />
           <br />
-          <ConstraintBlock state={state} />
+          <ConstraintBlock state={mephistoData} constraintArray={state['constraints']}/>
           <br />
-          <EventsBlock state={state} />
+          <EventsBlock state={mephistoData} />
+          <br />
+          <SubmitButton active={active} state={state} onSubmit={handleSubmit}/>
         </div>
       </section>
     </div>

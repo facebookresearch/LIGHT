@@ -3,9 +3,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Form from 'react-bootstrap/Form';
 
-function ConstraintToggleButton({ constraintName }) {
-    const [toggleValue, setToggleValue] = React.useState("");
-
+function ConstraintToggleButton({ constraintName, toggleValue, setToggleValue }) {
     const values = [
         { name: 'True', value: '1'},
         { name: 'False', value: '0'}
@@ -49,43 +47,99 @@ function SingleSelector({objectList, onChangeCurrentSelectedObject}) {
     );
   }
 
-function IsHoldingConstraint({ state }) {
+function IsHoldingConstraint({ state, constraintArray }) {
+    const [toggleValue, setToggleValue] = React.useState("");
+    
+    const constraintSet = { 
+        "active": toggleValue,
+        "format": 
+        {
+            "type": "is_holding",
+            "params": {
+                "complement": "used_item"
+            }
+        }
+    }
+
+    constraintArray.push(constraintSet);
+
     return (
         <div>
             <div className="title is-4">
                 Is the actor holding the used item?
             </div>
             This action requires the actor to be holding {state['secondaryObject']}
-            <ConstraintToggleButton constraintName="isHolding"/>
+            <ConstraintToggleButton constraintName="isHolding" toggleValue={toggleValue} setToggleValue={setToggleValue}/>
         </div>
     );
 };
 
-function UsedWithItemConstraint({ state }) {
+function UsedWithItemConstraint({ state, constraintArray }) {
+    const [toggleValue, setToggleValue] = React.useState("");
+
+    const constraintSet = {
+        "active": toggleValue,
+        "format":
+        {
+            "type": "used_with_item_name",
+            "params": {
+                "item": state["secondaryObject"]
+            }
+        }
+    }
+
+    constraintArray.push(constraintSet);
+
     return (
         <div>
             <div className="title is-4">
                 Is the actor doing the action with a certain object?
             </div>
             This action requires the actor to be realizing the action with {state['secondaryObject']}. This action CANNOT be done with another object.
-            <ConstraintToggleButton constraintName="usedWithItem"/>
+            <ConstraintToggleButton constraintName="usedWithItem" toggleValue={toggleValue} setToggleValue={setToggleValue}/>
         </div>
     );
 };
 
-function UsedWithAgentConstraint({ state }) {
+function UsedWithAgentConstraint({ state, constraintArray }) {
+    const [toggleValue, setToggleValue] = React.useState("");
+
+    const constraintSet = {
+        "active": toggleValue,
+        "format":
+        {
+            "type": "used_with_agent"
+        }
+    }
+    constraintArray.push(constraintSet);
+
     return (
         <div>
             <div className="title is-4">
                 Is the action being done with an agent?
             </div>
             This action requires {state['secondaryObject']} to be an agent (A living being).
-            <ConstraintToggleButton constraintName="usedWithAgent"/>
+            <ConstraintToggleButton constraintName="usedWithAgent" toggleValue={toggleValue} setToggleValue={setToggleValue}/>
         </div>
     );
 };
 
-function InRoomConstraint() {
+function InRoomConstraint({ constraintArray }) {
+    const [toggleValue, setToggleValue] = React.useState("");
+    const [roomName, setRoomName] = React.useState("");
+
+    const constraintSet = {
+        "active": toggleValue,
+        "format":
+        {
+            "type": "in_room",
+            "params": {
+                "room_name": roomName
+            }
+        }
+    }
+    constraintArray.push(constraintSet);
+
     return (
         <div>
             <div className="title is-4">
@@ -97,14 +151,16 @@ function InRoomConstraint() {
                     className="mb-2 mr-sm-2"
                     id="inlineFormInputName2"
                     placeholder="Room"
+                    onChange={(e)=>{setRoomName(e.target.value);}}
                 />
             </Form>
-            <ConstraintToggleButton constraintName="inRoom"/>
+            <ConstraintToggleButton constraintName="inRoom" toggleValue={toggleValue} setToggleValue={setToggleValue}/>
         </div>
     );
 };
 
-function AttributeCompareValueConstraint({ state }) {
+function AttributeCompareValueConstraint({ state, constraintArray }) {
+    const [toggleValue, setToggleValue] = React.useState("");
     const [attributeName, onChangeAttributeName] = React.useState("");
     const [attributeValue, onChangeAttributeValue] = React.useState("");
 
@@ -112,7 +168,21 @@ function AttributeCompareValueConstraint({ state }) {
     const cmpList = ['equal', 'not equal', 'greater', 'greater than or equal', 'less', 'less than or equal'];
 
     const [target, onChangeTarget] = React.useState("");
-    const targetList = ['actor', state["primaryObject"], state["secondaryObject"]]
+    const targetList = ['actor', state["primaryObject"], state["secondaryObject"]];
+
+    const constraintSet = {
+        "active": toggleValue,
+        "format": {
+            "type": "attribute_compare_value",
+            "params": {
+                "type": target === 'actor' ? "in_actor": "in_used_target_item",
+                "key": attributeName,
+                "list": [ attributeValue ],
+                "cmp_type": cmp
+            }
+        }
+    }
+    constraintArray.push(constraintSet);
 
     return (
         <div>
@@ -137,27 +207,29 @@ function AttributeCompareValueConstraint({ state }) {
             </Form.Group>
             <br />
             <br />
-            <ConstraintToggleButton constraint="attributeCompareValue" />
+            <ConstraintToggleButton constraint="attributeCompareValue" toggleValue={toggleValue} setToggleValue={setToggleValue}/>
         </div>
     );
 }
 
-function ConstraintBlock({ state }) {
+function ConstraintBlock({ state, constraintArray }) {
+    console.log("constraint array: ", constraintArray);
+
     return (
         <div>
             <div className="title is-4">
                 <b>CONSTRAINT</b>
             </div>
             <hr/>
-            <IsHoldingConstraint state={state} />
+            <IsHoldingConstraint state={state} constraintArray={constraintArray} />
             <br />
-            <UsedWithItemConstraint state={state} />
+            <UsedWithItemConstraint state={state} constraintArray={constraintArray} />
             <br />
-            <UsedWithAgentConstraint state={state} />
+            <UsedWithAgentConstraint state={state} constraintArray={constraintArray} />
             <br />
-            <InRoomConstraint />
+            <InRoomConstraint constraintArray={constraintArray}/>
             <br />
-            <AttributeCompareValueConstraint state={state} />
+            <AttributeCompareValueConstraint state={state} constraintArray={constraintArray}/>
         </div>
     );
 }
