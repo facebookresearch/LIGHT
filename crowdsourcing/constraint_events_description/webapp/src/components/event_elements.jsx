@@ -50,7 +50,27 @@ function SingleSelector({objectList, onChangeCurrentSelectedObject}) {
     );
   }
 
-function CreateEntityEvent({ state }) {
+function CreateEntityEvent({ state, eventArray }) {
+    const [toggleValue, setToggleValue] = React.useState("");
+    const [name, setName] = React.useState("");
+    const [description, setDescription] = React.useState("");
+
+    const eventSet = {
+        "active": toggleValue,
+        "format": {
+            "type": "create_entity",
+            "params": {
+                "type": "in_used_target_item",
+                "object": {
+                    "name": name,
+                    "description": description
+                }
+            }
+        }
+    }
+
+    eventArray.push(eventSet);
+
     return (
         <div>
             <div className="title is-4">
@@ -60,12 +80,12 @@ function CreateEntityEvent({ state }) {
             <Form>
                 <Form.Group controlId="formBasicName">
                     <Form.Label>Name</Form.Label>
-                    <Form.Control type="name" placeholder="Object Name" />
+                    <Form.Control type="name" placeholder="Object Name" onChange={(e)=>{setName(e.target.value)}}/>
                 </Form.Group>
 
                 <Form.Group controlId="formBasicDescription">
                     <Form.Label>Description</Form.Label>
-                    <Form.Control type="description" placeholder="Description" />
+                    <Form.Control type="description" placeholder="Description" onChange={(e)=>{setDescription(e.target.value)}}/>
                 </Form.Group>
             </Form>
             <br/>
@@ -74,7 +94,22 @@ function CreateEntityEvent({ state }) {
     );
 }
 
-function BroadcastMessageEvent({ state }) {
+function BroadcastMessageEvent({ state, eventArray }) {
+    const [toggleValue, setToggleValue] = React.useState("");
+    const [roomView, setRoomView] = React.useState("");
+
+    const eventSet = {
+        "active": toggleValue,
+        "format": {
+            "type": "broadcast_message",
+            "params": {
+                "self_view": state['actionDescription'],
+                "room_view": roomView
+            }
+        }
+    }
+    eventArray.push(eventSet);
+
     return (
         <div>
             <div className="title is-4">
@@ -84,7 +119,7 @@ function BroadcastMessageEvent({ state }) {
             <Form>
                 <Form.Group controlId="formBasicDescription">
                     <Form.Label>Action Description (Room View):</Form.Label>
-                    <Form.Control style={{ width:"900px"}} type="name" placeholder="Action Description but with 'Actor' as subject" />
+                    <Form.Control style={{ width:"900px"}} type="name" placeholder="Action Description but with 'Actor' as subject" onChange={(e)=>{setRoomView(e.target.value)}}/>
                 </Form.Group>
             </Form>
             <br />
@@ -93,12 +128,26 @@ function BroadcastMessageEvent({ state }) {
     );
 }
 
-function ModifyAttributeEvent({ state }) {
+function ModifyAttributeEvent({ state, eventArray }) {
+    const [toggleValue, setToggleValue] = React.useState("");
     const [attribute, onChangeAttribute] = React.useState("");
     const [attributeValue, onChangeAttributeValue] = React.useState("");
 
     const [target, onChangeTarget] = React.useState("");
-    const targetList = ['actor', state["primaryObject"], state["secondaryObject"]]
+    const targetList = ['actor', state["primaryObject"], state["secondaryObject"]];
+
+    const eventSet = {
+        "active": toggleValue,
+        "format": {
+            "type": "modify_attribute",
+            "params": {
+                "type": target === 'actor' ? "actor" : "in_used_target_item",
+                "key": attribute,
+                "value": "=" + attributeValue 
+            }
+        }
+    }
+    eventArray.push(eventSet);
 
     return (
         <div>
@@ -126,18 +175,18 @@ function ModifyAttributeEvent({ state }) {
     );
 }
 
-function EventsBlock({ state }) {
+function EventsBlock({ state, eventArray }) {
     return (
         <div>
             <div className="title is-4">
                 <b>EVENTS</b>
             </div>
             <hr/>
-            <CreateEntityEvent state={state} />
+            <CreateEntityEvent state={state} eventArray={eventArray} />
             <br />
-            <BroadcastMessageEvent state={state} />
+            <BroadcastMessageEvent state={state} eventArray={eventArray} />
             <br />
-            <ModifyAttributeEvent state={state} />
+            <ModifyAttributeEvent state={state} eventArray={eventArray} />
         </div>
     );
 }

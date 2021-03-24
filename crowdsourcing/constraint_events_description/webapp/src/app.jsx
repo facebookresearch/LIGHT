@@ -80,7 +80,7 @@ function MainApp() {
           <br />
           <ConstraintBlock state={mephistoData} constraintArray={state['constraints']}/>
           <br />
-          <EventsBlock state={mephistoData} />
+          <EventsBlock state={mephistoData} eventArray={state['events']}/>
           <br />
           <SubmitButton active={active} state={state} onSubmit={handleSubmit}/>
         </div>
