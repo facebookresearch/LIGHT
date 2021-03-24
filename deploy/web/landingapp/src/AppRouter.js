@@ -2,9 +2,10 @@ import React from "react";
 import { HashRouter, Route, Redirect } from "react-router-dom";
 
 import AboutPage from "./pages/AboutPage";
-import AboutPage2 from "./pages/AboutPage2";
 import LandingPage from "./pages/LandingPage";
-import LandingPage2 from "./pages/LandingPage2";
+import TermsPage from "./pages/TermsPage";
+import LoginPage from "./pages/LoginPage";
+import LogoutPage from "./pages/LogoutPage";
 
 import "./styles.css";
 
@@ -13,8 +14,9 @@ export function Routes() {
     <>
       <Route path="/" component={LandingPage} exact />
       <Route path="/about" component={AboutPage} exact />
-      <Route path="/about2" component={AboutPage2} exact />
-      <Route path="/2" component={LandingPage2} exact />
+      <Route path="/terms" component={TermsPage} exact />
+      <Route path="/login" component={LoginPage} exact />
+      <Route path="logout" component={LogoutPage} exact />
     </>
   );
 }

@@ -391,7 +391,7 @@ class LoginHandler(BaseHandler):
         self.password = password
 
     def get(self):
-        self.render(here + "/html/login.html", next=self.get_argument("next", "/"))
+        self.render(here + "/html/landing.html", next=self.get_argument("next", "/"))
         self.next = next
 
     def post(self):
@@ -427,7 +427,7 @@ class LoginHandler(BaseHandler):
         self.password = password
 
     def get(self):
-        self.render(here + "/html/login.html", next=self.get_argument("next", "/"))
+        self.render(here + "/build/index.html", next=self.get_argument("next", "/"))
         self.next = next
 
     def post(self):

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 import "../../styles.css";
 
@@ -16,6 +17,11 @@ const AboutPage = (props) => {
           padding: "3em",
         }}
       >
+        <div style={{ width: "100%", flexDirection: "flexStart" }}>
+          <Link style={{ textDecoration: "none", color: "yellow" }} to="/">
+            Back
+          </Link>
+        </div>
         <h1 style={{ color: "white" }}>About LIGHT</h1>
         <p style={{ color: "white" }}>
           LIGHT is a research project focused on creating realistic interactive

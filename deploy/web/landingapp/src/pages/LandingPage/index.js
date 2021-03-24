@@ -37,7 +37,7 @@ const LandingPage = (props) => {
                       <p className="instruction-arrow">{"<"}</p>
                     </div>
                   ) : (
-                    <div style={{ width: "3em", margin: ".5em;" }} />
+                    <div style={{ width: "3em", margin: ".5em" }} />
                   )}
                   {page !== 2 ? (
                     <div
@@ -47,7 +47,7 @@ const LandingPage = (props) => {
                       <p className="instruction-arrow">{">"}</p>
                     </div>
                   ) : (
-                    <div style={{ width: "3em", margin: ".5em;" }} />
+                    <div style={{ width: "3em", margin: ".5em" }} />
                   )}
                 </div>
               </div>
@@ -131,15 +131,23 @@ const LandingPage = (props) => {
                   <h1>About</h1>
                 </div>
               </Link>
+              <Link style={{ textDecoration: "none" }} to="/login">
+                <div className="menu-item">
+                  <h1>Login</h1>
+                </div>
+              </Link>
             </div>
           </div>
         </div>
         <div className="terms-container">
           <h3 style={{ color: "yellow" }}>Usage terms</h3>
           <p style={{ color: "white" }}>
-            You should read our <a href="/terms">terms</a> regarding how we
-            process and use data that you send to LIGHT. You are accepting these
-            terms by playing the game.
+            You should read our{" "}
+            <Link style={{ color: "yellow" }} to="/terms">
+              terms
+            </Link>{" "}
+            regarding how we process and use data that you send to LIGHT. You
+            are accepting these terms by playing the game.
           </p>
         </div>
       </div>
