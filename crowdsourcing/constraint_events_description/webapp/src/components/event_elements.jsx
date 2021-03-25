@@ -3,9 +3,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Form from 'react-bootstrap/Form';
 
-function EventToggleButton() {
-    const [toggleValue, setToggleValue] = React.useState("");
-
+function EventToggleButton({ eventName, toggleValue, setToggleValue }) {
     const values = [
         { name: 'True', value: '1'},
         { name: 'False', value: '0'}
@@ -20,7 +18,7 @@ function EventToggleButton() {
                         key={idx}
                         type="radio"
                         variant="secondary"
-                        name="value"
+                        name={eventName}
                         value={value.value}
                         checked={toggleValue === value.value}
                         onChange={(e) => setToggleValue(e.currentTarget.value)}
@@ -50,7 +48,7 @@ function SingleSelector({objectList, onChangeCurrentSelectedObject}) {
     );
   }
 
-function CreateEntityEvent({ state, eventArray }) {
+function CreateEntityEvent({ state, eventArray, index }) {
     const [toggleValue, setToggleValue] = React.useState("");
     const [name, setName] = React.useState("");
     const [description, setDescription] = React.useState("");
@@ -69,7 +67,7 @@ function CreateEntityEvent({ state, eventArray }) {
         }
     }
 
-    eventArray.push(eventSet);
+    eventArray.length > index ? eventArray[index] = eventSet : eventArray.push(eventSet);
 
     return (
         <div>
@@ -89,12 +87,12 @@ function CreateEntityEvent({ state, eventArray }) {
                 </Form.Group>
             </Form>
             <br/>
-            <EventToggleButton />
+            <EventToggleButton eventName="createEntity" toggleValue={toggleValue} setToggleValue={setToggleValue}/>
         </div>
     );
 }
 
-function BroadcastMessageEvent({ state, eventArray }) {
+function BroadcastMessageEvent({ state, eventArray, index }) {
     const [toggleValue, setToggleValue] = React.useState("");
     const [roomView, setRoomView] = React.useState("");
 
@@ -108,7 +106,7 @@ function BroadcastMessageEvent({ state, eventArray }) {
             }
         }
     }
-    eventArray.push(eventSet);
+    eventArray.length > index ? eventArray[index] = eventSet : eventArray.push(eventSet);
 
     return (
         <div>
@@ -123,15 +121,18 @@ function BroadcastMessageEvent({ state, eventArray }) {
                 </Form.Group>
             </Form>
             <br />
-            <EventToggleButton />
+            <EventToggleButton eventName="broadcastMessage" toggleValue={toggleValue} setToggleValue={setToggleValue}/>
         </div>
     );
 }
 
-function ModifyAttributeEvent({ state, eventArray }) {
+function ModifyAttributeEvent({ state, eventArray, index }) {
     const [toggleValue, setToggleValue] = React.useState("");
     const [attribute, onChangeAttribute] = React.useState("");
     const [attributeValue, onChangeAttributeValue] = React.useState("");
+
+    const [attributeSign, onChangeAttributeSign] = React.useState("");
+    const attributeSignList = ['+', '-', '='];
 
     const [target, onChangeTarget] = React.useState("");
     const targetList = ['actor', state["primaryObject"], state["secondaryObject"]];
@@ -143,11 +144,11 @@ function ModifyAttributeEvent({ state, eventArray }) {
             "params": {
                 "type": target === 'actor' ? "actor" : "in_used_target_item",
                 "key": attribute,
-                "value": "=" + attributeValue 
+                "value": attributeSign + attributeValue
             }
         }
     }
-    eventArray.push(eventSet);
+    eventArray.length > index ? eventArray[index] = eventSet : eventArray.push(eventSet);
 
     return (
         <div>
@@ -163,14 +164,15 @@ function ModifyAttributeEvent({ state, eventArray }) {
             <p> has the attribute </p>
             <Form.Group controlId="formBasicAttribute" inline>
                     <Form.Control type="attribute" placeholder="Attribute" onChange={(e) => { onChangeAttribute(e.target.value); }}/>
-            </Form.Group>
-            <p> changed to </p>
+            </Form.Group> 
+            <p> changed (considering the operation if numeric) to </p>
             <Form.Group controlId="formBasicAttrValue" inline>
-                    <Form.Control type="attributeValue" placeholder="Attribute Compare Value" onChange={(e) => { onChangeAttributeValue(e.target.value); }}/>
+                <SingleSelector objectList={attributeSignList} onChangeCurrentSelectedObject={onChangeAttributeSign} />
+                <Form.Control type="attributeValue" placeholder="Attribute Compare Value" onChange={(e) => { onChangeAttributeValue(e.target.value); }}/>
             </Form.Group>
             <br />
             <br />
-            <EventToggleButton constraint="attributeCompareValue" />
+            <EventToggleButton eventName="modfiyAttribute" toggleValue={toggleValue} setToggleValue={setToggleValue} />
         </div>
     );
 }
@@ -182,11 +184,11 @@ function EventsBlock({ state, eventArray }) {
                 <b>EVENTS</b>
             </div>
             <hr/>
-            <CreateEntityEvent state={state} eventArray={eventArray} />
+            <CreateEntityEvent state={state} eventArray={eventArray} index={0}/>
             <br />
-            <BroadcastMessageEvent state={state} eventArray={eventArray} />
+            <BroadcastMessageEvent state={state} eventArray={eventArray} index={1}/>
             <br />
-            <ModifyAttributeEvent state={state} eventArray={eventArray} />
+            <ModifyAttributeEvent state={state} eventArray={eventArray} index={2}/>
         </div>
     );
 }

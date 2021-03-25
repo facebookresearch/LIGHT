@@ -28,6 +28,9 @@ function MainApp() {
     handleSubmit,
   } = useMephistoTask();
 
+  const [constraintArraySize, setConstraintArraySize] = React.useState(5);
+  const [eventArraySize, setEventArraySize] = React.useState(3);
+
   const state = {
     'constraints': [],
     'events': []
@@ -78,9 +81,9 @@ function MainApp() {
           <br />
           <ActionDescription state={mephistoData} />
           <br />
-          <ConstraintBlock state={mephistoData} constraintArray={state['constraints']}/>
+          <ConstraintBlock state={mephistoData} constraintArray={state['constraints']} />
           <br />
-          <EventsBlock state={mephistoData} eventArray={state['events']}/>
+          <EventsBlock state={mephistoData} eventArray={state['events']} />
           <br />
           <SubmitButton active={active} state={state} onSubmit={handleSubmit}/>
         </div>

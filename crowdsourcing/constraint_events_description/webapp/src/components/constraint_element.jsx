@@ -47,7 +47,7 @@ function SingleSelector({objectList, onChangeCurrentSelectedObject}) {
     );
   }
 
-function IsHoldingConstraint({ state, constraintArray }) {
+function IsHoldingConstraint({ state, constraintArray, index }) {
     const [toggleValue, setToggleValue] = React.useState("");
     
     const constraintSet = { 
@@ -61,7 +61,12 @@ function IsHoldingConstraint({ state, constraintArray }) {
         }
     }
 
-    constraintArray.push(constraintSet);
+    if (constraintArray.length >= index) {
+        // Element already is inserted into array
+        constraintArray[index] = constraintSet;
+    } else {
+        constraintArray.push(constraintSet);
+    }
 
     return (
         <div>
@@ -74,7 +79,7 @@ function IsHoldingConstraint({ state, constraintArray }) {
     );
 };
 
-function UsedWithItemConstraint({ state, constraintArray }) {
+function UsedWithItemConstraint({ state, constraintArray, index }) {
     const [toggleValue, setToggleValue] = React.useState("");
 
     const constraintSet = {
@@ -88,7 +93,12 @@ function UsedWithItemConstraint({ state, constraintArray }) {
         }
     }
 
-    constraintArray.push(constraintSet);
+    if (constraintArray.length >= index) {
+        // Element already is inserted into array
+        constraintArray[index] = constraintSet;
+    } else {
+        constraintArray.push(constraintSet);
+    }
 
     return (
         <div>
@@ -101,7 +111,7 @@ function UsedWithItemConstraint({ state, constraintArray }) {
     );
 };
 
-function UsedWithAgentConstraint({ state, constraintArray }) {
+function UsedWithAgentConstraint({ state, constraintArray, index }) {
     const [toggleValue, setToggleValue] = React.useState("");
 
     const constraintSet = {
@@ -111,7 +121,12 @@ function UsedWithAgentConstraint({ state, constraintArray }) {
             "type": "used_with_agent"
         }
     }
-    constraintArray.push(constraintSet);
+    if (constraintArray.length >= index) {
+        // Element already is inserted into array
+        constraintArray[index] = constraintSet;
+    } else {
+        constraintArray.push(constraintSet);
+    }
 
     return (
         <div>
@@ -124,7 +139,7 @@ function UsedWithAgentConstraint({ state, constraintArray }) {
     );
 };
 
-function InRoomConstraint({ constraintArray }) {
+function InRoomConstraint({ constraintArray, index }) {
     const [toggleValue, setToggleValue] = React.useState("");
     const [roomName, setRoomName] = React.useState("");
 
@@ -138,7 +153,12 @@ function InRoomConstraint({ constraintArray }) {
             }
         }
     }
-    constraintArray.push(constraintSet);
+    if (constraintArray.length >= index) {
+        // Element already is inserted into array
+        constraintArray[index] = constraintSet;
+    } else {
+        constraintArray.push(constraintSet);
+    }
 
     return (
         <div>
@@ -159,7 +179,7 @@ function InRoomConstraint({ constraintArray }) {
     );
 };
 
-function AttributeCompareValueConstraint({ state, constraintArray }) {
+function AttributeCompareValueConstraint({ state, constraintArray, index }) {
     const [toggleValue, setToggleValue] = React.useState("");
     const [attributeName, onChangeAttributeName] = React.useState("");
     const [attributeValue, onChangeAttributeValue] = React.useState("");
@@ -182,7 +202,13 @@ function AttributeCompareValueConstraint({ state, constraintArray }) {
             }
         }
     }
-    constraintArray.push(constraintSet);
+
+    if (constraintArray.length >= index) {
+        // Element already is inserted into array
+        constraintArray[index] = constraintSet;
+    } else {
+        constraintArray.push(constraintSet);
+    }
 
     return (
         <div>
@@ -213,7 +239,6 @@ function AttributeCompareValueConstraint({ state, constraintArray }) {
 }
 
 function ConstraintBlock({ state, constraintArray }) {
-    console.log("constraint array: ", constraintArray);
 
     return (
         <div>
@@ -221,15 +246,15 @@ function ConstraintBlock({ state, constraintArray }) {
                 <b>CONSTRAINT</b>
             </div>
             <hr/>
-            <IsHoldingConstraint state={state} constraintArray={constraintArray} />
+            <IsHoldingConstraint state={state} constraintArray={constraintArray} index={0} />
             <br />
-            <UsedWithItemConstraint state={state} constraintArray={constraintArray} />
+            <UsedWithItemConstraint state={state} constraintArray={constraintArray} index={1} />
             <br />
-            <UsedWithAgentConstraint state={state} constraintArray={constraintArray} />
+            <UsedWithAgentConstraint state={state} constraintArray={constraintArray} index={2} />
             <br />
-            <InRoomConstraint constraintArray={constraintArray}/>
+            <InRoomConstraint constraintArray={constraintArray} index={3} />
             <br />
-            <AttributeCompareValueConstraint state={state} constraintArray={constraintArray}/>
+            <AttributeCompareValueConstraint state={state} constraintArray={constraintArray} index={4} />
         </div>
     );
 }
