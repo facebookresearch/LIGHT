@@ -28,20 +28,15 @@ function MainApp() {
     handleSubmit,
   } = useMephistoTask();
 
-  const [constraintArraySize, setConstraintArraySize] = React.useState(5);
-  const [eventArraySize, setEventArraySize] = React.useState(3);
-
+  print("Initial task data", initialTaskData);
+  
   const state = {
     'constraints': [],
     'events': []
   }
 
   // const state = initialTaskData;
-  const mephistoData = {
-    'primaryObject': 'big stick',
-    'secondaryObject': 'pumpkins',
-    'actionDescription': 'You poke at the pumpkins with the big stick. Your stick goes through the pumpkins, indicating that they are rotten.'
-  };
+  const mephistoData = initialTaskData;
 
   if (blockedReason !== null) {
     return (

@@ -18,6 +18,10 @@ from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint impo
     SharedStaticTaskState,
 )
 from light.data_model.light_database import LIGHTDatabase
+from mephisto.abstractions.databases.local_database import LocalMephistoDB
+from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
+from mephisto.data_model.worker import Worker
+from mephisto.data_model.unit import Unit
 
 import hydra
 import json
@@ -26,10 +30,11 @@ from dataclasses import dataclass, field
 from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-LIGHT_DB_PATH = "/checkpoint/light/data/database3.db"
-PRIMARY_OBJECT_LIST_SIZE = 5
-SECONDARY_OBJECT_LIST_SIZE = 5
+INPUT_FILE_TASK = "objects-interaction-task-7"
 DEFAULT_NUM_TASKS = 20
+
+db = LocalMephistoDB()
+mephisto_data_browser = MephistoDataBrowser(db=db)
 
 defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
@@ -44,33 +49,8 @@ from mephisto.operations.hydra_config import RunScriptConfig, register_script_co
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
-    light_db_path: str = LIGHT_DB_PATH
-    primary_object_list_size: int = PRIMARY_OBJECT_LIST_SIZE
-    secondary_object_list_size: int = SECONDARY_OBJECT_LIST_SIZE
+    input_file_task: str = INPUT_FILE_TASK
     num_tasks: int = DEFAULT_NUM_TASKS
-
-def get_object_list(db_path):
-    db = LIGHTDatabase(db_path)
-    with db as ldb:
-        object_list = [dict(obj)["name"] for obj in ldb.get_object()]
-
-    return object_list
-
-def create_task_data(object_list, primary_object_list_size, secondary_object_list_size, num_tasks):
-    random.shuffle(object_list)
-    task_data_array = []
-
-    for idx in range(num_tasks):
-        obj_name = object_list[idx % len(object_list)]
-
-        random_object_list = random.sample(object_list, primary_object_list_size + secondary_object_list_size)
-        primary_object_list = random_object_list[:primary_object_list_size]
-        secondary_object_list = random_object_list[primary_object_list_size:]
-
-        task_data_array.append({ "primary_object_list": primary_object_list, "secondary_object_list": secondary_object_list })
-
-    return task_data_array
-
 
 register_script_config(name="scriptconfig", module=TestScriptConfig)
 
@@ -99,16 +79,25 @@ def build_task(task_dir):
         )
     os.chdir(return_dir)
 
+def create_task_data(input_file_task, num_tasks):
+    units = mephisto_data_browser.get_units_for_task_name(input_file_task)
+    data = []
+    for unit in units:
+        data.append(mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"]["final_data"])
+
+    print(data[:num_tasks])
+    return data[:num_tasks]
+
 
 @hydra.main(config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     task_dir = cfg.task_dir
 
     def onboarding_always_valid(onboarding_data):
-        return True
+        return True    
 
     shared_state = SharedStaticTaskState(
-        static_task_data=create_task_data(get_object_list(cfg.light_db_path), cfg.primary_object_list_size, cfg.secondary_object_list_size, cfg.num_tasks),
+        static_task_data=create_task_data(cfg.input_file_task, cfg.num_tasks),
         validate_onboarding=onboarding_always_valid,
     )
 
