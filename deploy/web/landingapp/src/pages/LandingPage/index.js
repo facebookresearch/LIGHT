@@ -131,16 +131,6 @@ const LandingPage = (props) => {
                   <h1>About</h1>
                 </div>
               </Link>
-              <Link style={{ textDecoration: "none" }} to="/login">
-                <div className="menu-item">
-                  <h1>Login</h1>
-                </div>
-              </Link>
-              <Link style={{ textDecoration: "none" }} to="/logout">
-                <div className="menu-item">
-                  <h1>Logout</h1>
-                </div>
-              </Link>
             </div>
           </div>
         </div>
