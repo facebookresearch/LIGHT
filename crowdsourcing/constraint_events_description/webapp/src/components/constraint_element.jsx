@@ -163,7 +163,7 @@ function InRoomConstraint({ constraintArray, index }) {
     return (
         <div>
             <div className="title is-4">
-                Is the action being done with an agent?
+                Is the action being done within a specific room?
             </div>
             This action needs to be happening in the specific room:
             <Form inline>

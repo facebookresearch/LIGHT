@@ -5,8 +5,8 @@ mephisto:
     extra_source_dir: ${task_dir}/webapp/src/static
     units_per_assignment: 1
   task:
-    task_name: "constraints-events-task"
+    task_name: "constraints-events-task-1"
     task_title: "Determine the constraints and events of a single interaction."
     task_description: "In this task you will receive two objects with an interaction between them described in text format. You will fill a list of constraints and events related to this description."
-    task_reward: 0.19
+    task_reward: 0.89
     task_tags: "fantasy,interaction,constraints,events"

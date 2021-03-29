@@ -28,16 +28,6 @@ function MainApp() {
     handleSubmit,
   } = useMephistoTask();
 
-  print("Initial task data", initialTaskData);
-  
-  const state = {
-    'constraints': [],
-    'events': []
-  }
-
-  // const state = initialTaskData;
-  const mephistoData = initialTaskData;
-
   if (blockedReason !== null) {
     return (
       <section className="hero is-medium is-danger">
@@ -65,7 +55,39 @@ function MainApp() {
     return <LoadingScreen />;
   }
 
+  const state = {
+    'constraints': [],
+    'events': []
+  }
+
+  // const state = initialTaskData;
+  const mephistoData = initialTaskData;
+
   const active = true;
+
+  for (let i = 0; i < state['constraints'].length; i++) {
+    constraint = state['constraints'][i];
+
+    if(constraint['active'] == "" || (constraint['active'] == 1 && constraint['format'] == None)) {
+      active = false;
+      break;
+    } else {
+      console.log('This constraint is fine: ', constraint);
+    }
+  }
+
+  for (let i = 0; i < state['events'].length; i++) {
+    useEvent = state['events'][i];
+
+    if(useEvent['active'] == "" || (useEvent['active'] == 1 && useEvent['format'] == None)) {
+      active = false;
+      break;
+    } else {
+      console.log('This constraint is fine: ', constraint);
+    }
+  }
+
+  console.log('active? ', active);
 
   return (
     <div>

@@ -4,39 +4,36 @@ function TaskDescription() {
     return (
       <div>
       <div className="title is-3">
-        Objects Interactions Annotation Task
+        Constraints and Events Quiz Task
       </div>
-        <p>We're trying to crowdsource possible interactions between a set of items. These interactions are set in a medieval fantasy, and as such should not refer to real people, places, or modern day technologies. 
-        In this task you will be able to select two objects from a randomized list: Primary Object and Secondary Object. If none of the objects are compatible, please feel free to use the <i>Other</i> field to do the task with a Secondary Object of your choice.</p>
-        <p>After that, write a simple <b>interaction</b> between these two objects in the textbox.</p>
+        <p>We're trying to crowdsource possible interactions between a set of items. These interactions are set in a <b>medieval fantasy scenario</b>, and as such should not refer to real people, places, or modern day technologies. 
+        In this task you will be given an interaction between two objects and then answer questions related to that event.</p>
         <br />
-        <p>Remember that your interactions are off the format <b>Use PRIMARY_OBJECT with SECONDARY_OBJECT</b>, so please take that in consideration.</p> 
+        <p>Try to be creative with the answers! Think that objects have certain attributes like "burned", "rotten", etc. Some attributes are <b>numeric</b> (Price, health) while some are in a <b>true/false</b> format (burned = True, rotten = false).</p> 
         <br />
-        <p>For example, let's say we have a fire torch as the primary object and a wooden table as the target object.</p>
-        <p>In this case, a good action description would be: <i>"You light the table on fire with the torch. It ignites and burns to the ground, leaving a pile of ash."</i></p>
+        <p>For example, let's say we have the description "You light the table on fire with the torch. It ignites and burns to the ground, leaving a pile of ash.".</p>
         <br />
-        <h2><b>Good Examples:</b></h2>
+        <h2><b>Good Examples of Constraints and Events:</b></h2>
         <br />
         <div>
           <ul>
-            <li><b>Primary:</b> Rusty key. <b>Target:</b> Bucket. <b>Interaction</b>: <i>You scrape the key on the edge of the bucket. It sounds terrible, and leaves a mark.</i></li>
-            <li><b>Primary:</b> Towel. <b>Target:</b> Rock. <b>Interaction</b>: <i>You rub the rock with the towel. The rock is now shiny, but the towel could use a cleaning.</i></li>
-            <li><b>Primary:</b> Rock. <b>Target:</b> Tree. <b>Interaction</b>: <i>You throw the rock at the tree. It hits a branch, and a bird flies away.</i></li>
+            <li><i>Is Holding Constraint?</i> <b>True</b> - the actor needs to be holding the torch</li>
+            <li><i>Is the actor doing the action with a certain object?</i> <b>True</b> - this action cannot be done with any object. Some objects are not burneable</li>
+            <li><i>Is the action being done with an agent?</i> <b>False</b> - this action target is a table, not a living being.</li>
+            <li><i>Is the action being done within a specific room?</i> <b>False</b> - this action can happen anywhere with a torch and a wooden table.</li>
+            <li><i> Does this action requires that an element involved (The actor or one of the objects) has an attribute restriction?</i> <b>True</b> - Wooden Table needs to have, for example, the attribute <i>burnable</i> = True. <b>You can (And are encouraged to) be creative answering this question!</b></li>
+          </ul>
+          <br/>
+          <ul>
+            <li><i>An entity is created?</i> <b>True</b> - an pile of ash is created.</li>
+            <li><i>How others see this event?</i> <b>True</b> - "Actor lit the table on fire with the torch. It ignites and burns to the ground, leaving a pile of ash".</li>
+            <li><i>IDoes this action modifies an attribute of something involved in it?</i> <b>True</b> - Now the attribute burned = True.</li>
           </ul>
         </div>
         <br />
-        <p>Avoid submitting interactions which are physically impossible or nonsense in the current scenario. Interactions must also be written in second person.</p>
+        <p>Avoid submitting interactions which are physically impossible or nonsense in the current scenario.</p>
         <div>
         <br />
-        <h2><b>Bad Examples:</b></h2>
-        <br />
-        <ul>
-            <li><b>Primary:</b> shirt. <b>Target:</b> bucket. <b>Interaction</b>: <i>You put the shirt in the bucket and it transforms into a pair of pants.</i></li>
-            <li><b>Bad Reason:</b> This interaction isn't very plausible. Interactions don't need to be expected or mundane, but they should be a realistic occurrence.</li>
-            <br />
-            <li><b>Primary:</b> Ball. <b>Target:</b> Table. <b>Interaction</b>: <i>The ball rolls off of the table and falls on the floor.</i></li>
-            <li><b>Bad Reason:</b> This interaction isn't written in second person. The correct format would be "You roll the ball on the table. It falls off of the other side onto the floor"</li>
-          </ul>
       </div>
     </div>
     );
