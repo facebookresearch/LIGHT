@@ -5,7 +5,7 @@ mephisto:
     extra_source_dir: ${task_dir}/webapp/src/static
     units_per_assignment: 1
   task:
-    task_name: "objects-interaction-task-9"
+    task_name: "objects-interaction-task-10"
     task_title: "Annotate an interaction between two objects."
     task_description: "In this task you will receive a main object. You will be able to select another object from a list of 10 randomly selected objects. After that, write a simple interaction between these two objects in the textbox."
     task_reward: 0.19
