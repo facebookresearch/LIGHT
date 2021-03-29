@@ -84,7 +84,7 @@ function MainApp() {
           />
           <br />
           <br />
-          <p><b>Your current selected action is:</b><i>"Use {state.primaryObject} with {state.secondaryObject}"</i></p>
+          <p>You are narrating the <b>interaction</b> of a character in a medieval fantasy adventure <b>trying to</b> <i>"use {state.primaryObject} with {state.secondaryObject}".</i></p>
           <InteractionDescription description={state.actionDescription} onChangeDescription={onChangeActionDescription} />
           <br />
           <SubmitButton active={active} state={state} onSubmit={handleSubmit}/>

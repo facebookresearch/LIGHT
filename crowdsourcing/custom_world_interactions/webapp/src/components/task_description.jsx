@@ -10,7 +10,7 @@ function TaskDescription() {
         In this task you will be able to select two objects from a randomized list: Primary Object and Secondary Object. If none of the objects are compatible, please feel free to use the <i>Other</i> field to do the task with a Secondary Object of your choice.</p>
         <p>After that, write a simple <b>interaction</b> between these two objects in the textbox.</p>
         <br />
-        <p>Remember that your interactions are off the format <b>Use PRIMARY_OBJECT with SECONDARY_OBJECT</b>, so please take that in consideration.</p> 
+        <p>Imagine a character in a medieval fantasy adventure were to try to <b>'Use PRIMARY_OBJECT with SECONDARY_OBJECT'</b>. Narrate the interaction to them.</p>
         <br />
         <p>For example, let's say we have a fire torch as the primary object and a wooden table as the target object.</p>
         <p>In this case, a good action description would be: <i>"You light the table on fire with the torch. It ignites and burns to the ground, leaving a pile of ash."</i></p>
