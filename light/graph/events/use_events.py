@@ -177,6 +177,11 @@ class UseEvent(GraphEvent):
                 event.get("params", {}), self.actor, target_nodes=self.target_nodes
             ).execute(world)
 
+    def exit_message(self, world):
+        return BroadcastMessageEvent(
+                {"self_view": "Nothing special seems to happen."}, self.actor
+            ).execute(world)
+
     def on_use(self, world):
         use_node = self.target_nodes[0]
 
@@ -188,7 +193,20 @@ class UseEvent(GraphEvent):
         self.messages = {}
         on_uses = use_node.on_use
 
-        for on_use in on_uses:
+        for i in range(len(on_uses)):
+            on_use = on_uses[i]
+
+            remaining_uses = on_use['remaining_uses']
+            
+            if remaining_uses == 'inf':
+                pass
+            elif remaining_uses > 0:
+                self.target_nodes[0].on_use[i]['remaining_uses'] = remaining_uses-1
+            else:
+                # No remaining uses for this event
+                self.exit_message(world)
+                return
+
             constraints = on_use["constraints"]
             if self.satisfy_constraints(constraints, world):
                 events = on_use["events"]
@@ -197,9 +215,7 @@ class UseEvent(GraphEvent):
                 break
 
         if not self.found_use:
-            BroadcastMessageEvent(
-                {"self_view": "Nothing special seems to happen."}, self.actor
-            ).execute(world)
+            self.exit_message(world)
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
