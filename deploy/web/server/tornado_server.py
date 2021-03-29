@@ -288,9 +288,10 @@ class LandingApplication(tornado.web.Application):
 
     def get_handlers(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
         return [
-            (r"/", StaticPageHandler, {"target": "/html/landing.html"}),
+            (r"/", LandingHandler),
             (r"/play", GameHandler),
             (r"/play/?id=.*", GameHandler),
+            (r"/build", BuildHandler),
             (
                 r"/login",
                 LoginHandler,
@@ -311,10 +312,20 @@ class LandingApplication(tornado.web.Application):
         ]
 
 
+class LandingHandler(BaseHandler):
+    def get(self):
+        self.render(here + "/../build/index.html")
+
+
+class BuildHandler(BaseHandler):
+    def get(self):
+        self.render(here + "/../build/builder.html")
+
+
 class GameHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        self.render(here + "/../build/index.html")
+        self.render(here + "/../build/game.html")
 
 
 class StaticPageHandler(BaseHandler):
@@ -386,7 +397,7 @@ class LoginHandler(BaseHandler):
         self.password = password
 
     def get(self):
-        self.render(here + "/html/login.html", next=self.get_argument("next", "/"))
+        self.render(here + "/html/landing.html", next=self.get_argument("next", "/"))
         self.next = next
 
     def post(self):
@@ -422,7 +433,7 @@ class LoginHandler(BaseHandler):
         self.password = password
 
     def get(self):
-        self.render(here + "/html/login.html", next=self.get_argument("next", "/"))
+        self.render(here + "/build/index.html", next=self.get_argument("next", "/"))
         self.next = next
 
     def post(self):

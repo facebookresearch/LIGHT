@@ -13,6 +13,7 @@
     "react-dom": "16.8.3",
     "react-leaflet": "2.2.1",
     "react-onclickoutside": "^6.8.0",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "2.1.8",
     "react-tippy": "^1.2.3"
   },
@@ -22,7 +23,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "postbuild": "(cp -r ./build/* ../build && rm -R ./build && rm ./src/config.js)",
+    "postbuild": "mv ./build/index.html ./build/game.html && cp -r ./build/* ../build && rm -R ./build",
     "test": "cp ../config/local/config.js ./src/config.js && react-scripts test --env=jsdom",
     "posttest": "rm ./src/config.js",
     "eject": "react-scripts eject"
