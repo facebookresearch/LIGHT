@@ -34,6 +34,12 @@ a {
   color: #165cb9;
 }
 
+table,
+th,
+td {
+  border: 1px solid black;
+}
+
 @media only screen and (max-width: 900px) {
   div.App {
     grid-template-columns: 1fr;
@@ -466,18 +472,7 @@ body .fadeShow {
   align-items: center;
   flex-direction: column;
   padding: 1em 5em 4em 5em;
-  background-image: url("./assets/images/splashbg.jpg");
-  background-size: cover;
-  height: 100%;
-  overflow: scroll;
-}
-
-.landingpage2-container {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  padding: 1em 5em 4em 5em;
-  background-image: url("./assets/images/nightskybg.jpeg");
+  background-image: url("./assets/images/InexplicableTavern.png");
   background-size: cover;
   height: 100%;
   overflow: scroll;
@@ -488,7 +483,7 @@ body .fadeShow {
   align-items: center;
   flex-direction: column;
   padding: 1em 5em 4em 5em;
-  background-image: url("./assets/images/splashbg.jpg");
+  background-image: url("./assets/images/InexplicableTavern.png");
   background-size: cover;
   height: 100%;
   overflow: scroll;
@@ -499,7 +494,7 @@ body .fadeShow {
   justify-content: center;
   flex-direction: column;
   padding: 1em 5em 4em 0.5em;
-  background-image: url("./assets/images/castle4.jpeg");
+  background-image: url("./assets/images/InexplicableTavern.png");
   background-size: cover;
   height: 100%;
 }
@@ -510,6 +505,15 @@ body .fadeShow {
   flex-direction: column;
   padding: 1em 5em 4em 0.5em;
   background-image: url("./assets/images/Squirrel.png");
+  background-size: cover;
+  height: 100%;
+}
+
+.profilepage-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1em 1em 4em 1em;
+  background-image: url("./assets/images/InexplicableTavern.png");
   background-size: cover;
   height: 100%;
 }
@@ -541,23 +545,6 @@ body .fadeShow {
   box-shadow: 0.25em 0.25em 0.25em black;
 }
 
-.main-container2 {
-  width: 100%;
-  height: 80%;
-  border: white;
-  border-width: 1em;
-  border-style: solid;
-  border-radius: 15px;
-  display: flex;
-  flex-direction: column;
-  padding: 5px;
-  box-shadow: 0 0 0.1vw 0.4vw #fff7f7, 0 0 0.4vw 0.6vw #74ace4,
-    0 0 4vw 0.4vw #0073e6, inset 0 0 1.5vw 0.4vw #0073e6,
-    inset 0 0 0.4vw 0.2vw #74ace4, inset 0 0 0.5vw 0.2vw #fff7f7;
-  border-radius: 1.5rem;
-  justify-content: center;
-  align-items: center;
-}
 .instructions-container {
   width: 100%;
   height: 80%;
@@ -646,13 +633,6 @@ body .fadeShow {
 
 .instruction-arrow {
   color: white;
-  font-size: 2em;
-  text-align: center;
-  font-weight: bold;
-}
-
-.instruction-arrow2 {
-  color: lightblue;
   font-size: 2em;
   text-align: center;
   font-weight: bold;
@@ -790,6 +770,53 @@ body .fadeShow {
 
 .login-form__submit:active {
   box-shadow: 0em 0em 0em black;
+}
+
+.nameplate-container {
+  display: flex;
+  align-items: center;
+  margin-top: 3em;
+}
+
+.nameplate {
+  background-color: gold;
+  width: 40%;
+  height: 4em;
+  border-style: double;
+  display: flex;
+  align-items: center;
+  margin-left: 1em;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  z-index: 5;
+  min-width: 280px;
+}
+
+.nameplate-portrait {
+  height: 6em;
+  width: 6em;
+  border-radius: 3em;
+  z-index: 10;
+  position: fixed;
+}
+
+.profiledata-container {
+  width: 100%;
+  height: 100%;
+  background-color: #dcb580;
+  opacity: 0.9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  flex-direction: column;
+}
+
+.profiledata-section {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 }
 
 @media only screen and (max-width: 1224px) {
