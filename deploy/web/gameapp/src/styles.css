@@ -460,39 +460,6 @@ body .fadeShow {
   scroll-behavior: smooth;
 }
 
-.landingpage-container {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  padding: 1em 5em 4em 5em;
-  background-image: url("./assets/images/splashbg.jpg");
-  background-size: cover;
-  height: 100%;
-  overflow: scroll;
-}
-
-.landingpage2-container {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  padding: 1em 5em 4em 5em;
-  background-image: url("./assets/images/nightskybg.jpeg");
-  background-size: cover;
-  height: 100%;
-  overflow: scroll;
-}
-
-.aboutpage-container {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  padding: 1em 5em 4em 5em;
-  background-image: url("./assets/images/splashbg.jpg");
-  background-size: cover;
-  height: 100%;
-  overflow: scroll;
-}
-
 .main-container {
   width: 100%;
   height: 80%;
@@ -508,23 +475,6 @@ body .fadeShow {
   box-shadow: 0.25em 0.25em 0.25em black;
 }
 
-.main-container2 {
-  width: 100%;
-  height: 80%;
-  border: white;
-  border-width: 1em;
-  border-style: solid;
-  border-radius: 15px;
-  display: flex;
-  flex-direction: column;
-  padding: 5px;
-  box-shadow: 0 0 0.1vw 0.4vw #fff7f7, 0 0 0.4vw 0.6vw #74ace4,
-    0 0 4vw 0.4vw #0073e6, inset 0 0 1.5vw 0.4vw #0073e6,
-    inset 0 0 0.4vw 0.2vw #74ace4, inset 0 0 0.5vw 0.2vw #fff7f7;
-  border-radius: 1.5rem;
-  justify-content: center;
-  align-items: center;
-}
 .instructions-container {
   width: 100%;
   height: 80%;
@@ -549,26 +499,6 @@ body .fadeShow {
   margin: 1em;
   overflow: scroll;
   box-shadow: 0.25em 0.25em 0.25em black;
-}
-
-.instruction-bubble2 {
-  border: white;
-  border-width: 1em;
-  border-style: solid;
-  border-radius: 15px;
-  flex-direction: column;
-  padding: 2em;
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 70%; /* Full width */
-  height: auto; /* Full height */
-  margin: 10%;
-  box-shadow: 0.25em 0.25em 0.25em black;
-  box-shadow: 0 0 0.1vw 0.4vw #fff7f7, 0 0 0.4vw 0.6vw #74ace4,
-    0 0 4vw 0.4vw #0073e6, inset 0 0 1.5vw 0.4vw #0073e6,
-    inset 0 0 0.4vw 0.2vw #74ace4, inset 0 0 0.5vw 0.2vw #fff7f7;
 }
 
 .instruction-arrow__container {
