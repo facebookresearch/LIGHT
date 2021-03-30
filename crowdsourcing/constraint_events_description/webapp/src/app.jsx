@@ -14,6 +14,7 @@ import { ConstraintBlock } from "./components/constraint_element.jsx";
 import { EventsBlock } from "./components/event_elements.jsx";
 import { LoadingScreen } from "./components/core_components.jsx";
 import { useMephistoTask } from "mephisto-task";
+import { TimesComponent } from "./components/times_component.jsx";
 import { SubmitButton } from "./components/submit_button.jsx";
 
 /* ================= Application Components ================= */
@@ -27,6 +28,8 @@ function MainApp() {
     initialTaskData,
     handleSubmit,
   } = useMephistoTask();
+
+  const [timesRemaining, setTimesRemaining] = React.useState("");
 
   if (blockedReason !== null) {
     return (
@@ -55,15 +58,16 @@ function MainApp() {
     return <LoadingScreen />;
   }
 
-  const state = {
-    'constraints': [],
-    'events': []
-  }
-
   // const state = initialTaskData;
   const mephistoData = initialTaskData;
 
   const active = true;
+
+  const state = {
+    'constraints': [],
+    'events': [],
+    'times_remaining': timesRemaining
+  }
 
   for (let i = 0; i < state['constraints'].length; i++) {
     constraint = state['constraints'][i];
@@ -101,6 +105,8 @@ function MainApp() {
           <ConstraintBlock state={mephistoData} constraintArray={state['constraints']} />
           <br />
           <EventsBlock state={mephistoData} eventArray={state['events']} />
+          <br />
+          <TimesComponent setTimesRemaining={setTimesRemaining} />
           <br />
           <SubmitButton active={active} state={state} onSubmit={handleSubmit}/>
         </div>
