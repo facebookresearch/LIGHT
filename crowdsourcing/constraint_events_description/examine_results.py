@@ -44,10 +44,22 @@ def format_for_printing_data(data):
     )
 
     inputs = contents["inputs"]
-    inputs_string = f"Input:\n\tPrimary Object List: {inputs['primary_object_list']}\n\tSecondary Object List: {inputs['secondary_object_list']}\n\n"
+    inputs_string = f"Inputs:\n\tPrimary Object: {inputs['primaryObject']}\tSecondary Object List: {inputs['secondaryObject']}\n\tAction Description: {inputs['actionDescription']}\n\n"
 
     outputs = contents["outputs"]["final_data"]
-    outputs_string = f"Output:\n\tUse {outputs['primaryObject']} with {outputs['secondaryObject']}\n\tAction: {outputs['actionDescription']}\n"
+    outputs_string = f"Output:\n"
+
+    for constraint in outputs["constraints"]:
+        if constraint['active'] == "1":
+            # Active constraint
+            outputs_string += f"\tConstraint:\n\t\tType: {constraint['format']['type']}\n\t\tFormat: {constraint['format']}\n\n"
+
+    outputs_string += "\n\n\n"
+
+    for event in outputs["events"]:
+        if event['active'] == "1":
+            # Active event
+            outputs_string += f"\tEvent:\n\t\tType: {event['format']['type']}\n\t\tFormat: {event['format']}\n\n"
 
     return f"-------------------\n{metadata_string}{inputs_string}{outputs_string}"
 
