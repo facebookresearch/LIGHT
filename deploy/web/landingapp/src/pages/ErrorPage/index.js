@@ -24,7 +24,7 @@ const ErrorPage = (props) => {
           </Link>
         </div>
         <h1 style={{ color: "white", textAlign: "center" }}>
-          Oops, something went wrong.
+          Oops something went wrong
         </h1>
       </div>
     </div>

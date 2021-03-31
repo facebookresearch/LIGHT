@@ -1,5 +1,5 @@
 import React from "react";
-import { HashRouter, Route, Redirect } from "react-router-dom";
+import { HashRouter, Route, Redirect, Switch } from "react-router-dom";
 
 import AboutPage from "./pages/AboutPage";
 import LandingPage from "./pages/LandingPage";
@@ -13,12 +13,15 @@ import "./styles.css";
 export function Routes() {
   return (
     <>
-      <Route path="/" component={LandingPage} exact />
-      <Route path="/about" component={AboutPage} exact />
-      <Route path="/terms" component={TermsPage} exact />
-      <Route path="/login" component={LoginPage} exact />
-      <Route path="/logout" component={LogoutPage} exact />
-      <Route path="/error" component={ErrorPage} exact />
+      <Switch>
+        <Route path="/" component={LandingPage} exact />
+        <Route path="/about" component={AboutPage} exact />
+        <Route path="/terms" component={TermsPage} exact />
+        <Route path="/login" component={LoginPage} exact />
+        <Route path="/logout" component={LogoutPage} exact />
+        <Route path="/error" component={ErrorPage} exact />
+        <Route component={ErrorPage} />
+      </Switch>
     </>
   );
 }

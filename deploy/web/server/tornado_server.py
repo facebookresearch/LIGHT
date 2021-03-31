@@ -290,6 +290,7 @@ class LandingApplication(tornado.web.Application):
         return [
             (r"/", LandingHandler),
             (r"/#/login", LandingHandler),
+            (r"/#/error", LandingHandler),
             (r"/play", GameHandler),
             (r"/play/?id=.*", GameHandler),
             (r"/build", BuildHandler),
@@ -327,6 +328,11 @@ class GameHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         self.render(here + "/../build/game.html")
+
+
+class ErrorHandler(BaseHandler):
+    def get(self):
+        self.redirect("/#/error")
 
 
 class StaticPageHandler(BaseHandler):
