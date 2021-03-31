@@ -10,27 +10,19 @@ import ErrorPage from "./pages/ErrorPage";
 
 import "./styles.css";
 
-export function Routes() {
-  return (
-    <>
-      <Switch>
-        <Route path="/" component={LandingPage} exact />
-        <Route path="/about" component={AboutPage} exact />
-        <Route path="/terms" component={TermsPage} exact />
-        <Route path="/login" component={LoginPage} exact />
-        <Route path="/logout" component={LogoutPage} exact />
-        <Route path="/error" component={ErrorPage} exact />
-        <Route component={ErrorPage} />
-      </Switch>
-    </>
-  );
-}
-
 const AppRouter = () => {
   return (
     <div className="app-container">
       <HashRouter>
-        <Routes />
+        <Switch>
+          <Route path="/" component={LandingPage} exact />
+          <Route path="/about" component={AboutPage} exact />
+          <Route path="/terms" component={TermsPage} exact />
+          <Route path="/login" component={LoginPage} exact />
+          <Route path="/logout" component={LogoutPage} exact />
+          <Route path="/error" component={ErrorPage} exact />
+          <Route component={ErrorPage} />
+        </Switch>
       </HashRouter>
     </div>
   );

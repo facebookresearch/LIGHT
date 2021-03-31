@@ -156,8 +156,10 @@ class Application(tornado.web.Application):
 class StaticUIHandler(tornado.web.StaticFileHandler):
     def parse_url_path(self, url_path):
         PRIMARY_PAGE = "index.html"
+        print(url_path)
         if not url_path or url_path.endswith("/"):
             url_path = url_path + PRIMARY_PAGE
+            print("UPDATED", url_path)
         return url_path
 
 
@@ -243,33 +245,45 @@ class BaseHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "*")
 
-    # TODO maybe use cookies to restore previous game state?
-    def write_error(self, status_code, **kwargs):
-        logging.error("ERROR: %s: %s" % (status_code, kwargs))
-        if "exc_info" in kwargs:
-            logging.info(
-                "Traceback: {}".format(traceback.format_exception(*kwargs["exc_info"]))
-            )
-        if self.settings.get("debug") and "exc_info" in kwargs:
-            logging.error("rendering error page")
-            import traceback
+        # TODO maybe use cookies to restore previous game state?
+        # def write_error(self, status_code, **kwargs):
+        def prepare(self):
+            def write_error(self, status_code, **kwargs):
+                if status_code == 404:
+                    return "/#/error"
+                elif status_code == 500:
+                    return "/#/error"
+                else:
+                    self.write("error:" + str(status_code))
 
-            exc_info = kwargs["exc_info"]
-            # exc_info is a tuple consisting of:
-            # 1. The class of the Exception
-            # 2. The actual Exception that was thrown
-            # 3. The traceback opbject
-            try:
-                params = {
-                    "error": exc_info[1],
-                    "trace_info": traceback.format_exception(*exc_info),
-                    "request": self.request.__dict__,
-                }
+            self.write_error(404)
+            logging.error("ERROR: %s: %s" % (status_code, kwargs))
+            if "exc_info" in kwargs:
+                logging.info(
+                    "Traceback: {}".format(
+                        traceback.format_exception(*kwargs["exc_info"])
+                    )
+                )
+            if self.settings.get("debug") and "exc_info" in kwargs:
+                logging.error("rendering error page")
+                import traceback
 
-                self.render("error.html", **params)
-                logging.error("rendering complete")
-            except Exception as e:
-                logging.error(e)
+                exc_info = kwargs["exc_info"]
+                # exc_info is a tuple consisting of:
+                # 1. The class of the Exception
+                # 2. The actual Exception that was thrown
+                # 3. The traceback opbject
+                try:
+                    params = {
+                        "error": exc_info[1],
+                        "trace_info": traceback.format_exception(*exc_info),
+                        "request": self.request.__dict__,
+                    }
+
+                    self.render("error.html", **params)
+                    logging.error("rendering complete")
+                except Exception as e:
+                    logging.error(e)
 
 
 class LandingApplication(tornado.web.Application):
@@ -289,8 +303,9 @@ class LandingApplication(tornado.web.Application):
     def get_handlers(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
         return [
             (r"/", LandingHandler),
+            (r"/#(.*)", LandingHandler),
             (r"/#/login", LandingHandler),
-            (r"/#/error", LandingHandler),
+            (r"/#/error", NotFoundHandler),
             (r"/play", GameHandler),
             (r"/play/?id=.*", GameHandler),
             (r"/build", BuildHandler),
@@ -310,7 +325,7 @@ class LandingApplication(tornado.web.Application):
             (r"/about", StaticLoggedInPageHandler, {"target": "/html/about.html"}),
             (r"/profile", StaticLoggedInPageHandler, {"target": "/html/profile.html"}),
             (r"/report", ReportHandler),
-            (r"/(.*)", ErrorHandler),
+            (r"/(.*)", StaticUIHandler, {"path": here + "/../build/"}),
         ]
 
 
@@ -330,7 +345,7 @@ class GameHandler(BaseHandler):
         self.render(here + "/../build/game.html")
 
 
-class ErrorHandler(BaseHandler):
+class NotFoundHandler(BaseHandler):
     def get(self):
         self.redirect("/#/error")
 
