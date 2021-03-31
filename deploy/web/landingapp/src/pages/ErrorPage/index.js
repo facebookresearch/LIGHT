@@ -20,7 +20,7 @@ const ErrorPage = (props) => {
       >
         <div style={{ width: "100%", flexDirection: "flexStart" }}>
           <Link style={{ textDecoration: "none", color: "yellow" }} to="/">
-            Back
+            Return Home
           </Link>
         </div>
         <h1 style={{ color: "white", textAlign: "center" }}>

@@ -246,15 +246,13 @@ class BaseHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Headers", "*")
 
         # TODO maybe use cookies to restore previous game state?
-        # def write_error(self, status_code, **kwargs):
-        def prepare(self):
-            def write_error(self, status_code, **kwargs):
-                if status_code == 404:
-                    return "/#/error"
-                elif status_code == 500:
-                    return "/#/error"
-                else:
-                    self.write("error:" + str(status_code))
+        def write_error(self, status_code, **kwargs):
+            if status_code == 404:
+                return "/#/error"
+            elif status_code == 500:
+                return "/#/error"
+            else:
+                self.write("error:" + str(status_code))
 
             self.write_error(404)
             logging.error("ERROR: %s: %s" % (status_code, kwargs))
