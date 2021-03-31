@@ -5,8 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.utils.safety import OffensiveStringMatcher
-from parlai.core.agents import create_agent
-from parlai.core.params import ParlaiParser
 from parlai.agents.transformer.transformer import TransformerClassifierAgent
 
 from typing import TYPE_CHECKING
@@ -38,18 +36,6 @@ class AdversarialOffensiveLanguageClassifier(MultiturnOffensiveLanguageClassifie
 
     def _create_safety_model(self):
         return self.__model_pool.get_model("safety")
-        parser = ParlaiParser(False, False)
-        TransformerClassifierAgent.add_cmdline_args(parser)
-        parser.set_params(
-            model_file="zoo:bot_adversarial_dialogue/multi_turn/model",
-            print_scores=True,
-            split_lines=True,
-            model_parallel=False,
-            threshold=0.999,
-            bs=1,
-        )
-        safety_opt = parser.parse_args([])
-        return create_agent(safety_opt, requireModelExists=True)
 
 
 class SafetyClassifier:

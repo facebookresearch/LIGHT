@@ -207,73 +207,7 @@ class BaseSoul(Soul):
             turn_id = current_turn_id
         return txt + dtxt
 
-    @classmethod
-    def load_generic_act_model(cls, generic_act_model_file):
-        """
-        Load up and create shared retrieval model for acts, emotes and quest scoring, etc.
-        """
-        # TODO refactor with some kind of model-loading standard for model souls?
-        from parlai.core.params import ParlaiParser
-        from parlai.core.agents import create_agent
-
-        parser = ParlaiParser(True, True, "")
-        # Load action model
-        args = [
-            "-mf",
-            generic_act_model_file,
-            "-ecands",
-            "inline",
-            "--ignore-bad-candidates",
-            "True",
-        ]
-        act_opt, _unknown = parser.parse_and_process_known_args(args=args)
-        act_opt["override"] = {
-            "eval_candidates": "inline",
-            "ignore_bad_candidates": "True",
-        }
-        act_opt["interactive_mode"] = True
-        act_opt["ignore_bad_candidates"] = True
-        print("[ Creating generic act model ... ]")
-        action_model = create_agent(act_opt, requireModelExists=True)
-        return action_model
-
     ## ----- ROLE PLAYING SCORE FUNCTIONS BELOW
-
-    @classmethod
-    def load_roleplaying_score_model(cls, roleplaying_score_model_file):
-        """
-        Load up and create shared roleplaying score model for use with this class
-        """
-        # TODO refactor with some kind of model-loading standard for model souls?
-        from parlai.core.params import ParlaiParser
-        from parlai.core.agents import create_agent
-
-        parser = ParlaiParser(True, True, "")
-        args = ["-mf", roleplaying_score_model_file]
-        opt, _unknown = parser.parse_and_process_known_args(args=args)
-        # opt["interactive_mode"] = True
-        # return create_agent(opt, requireModelExists=True)
-        print("[ Creating roleplaying score agent ... ]")
-        model_opt = {}
-        model_opt["datapath"] = opt["datapath"]
-        model_opt["model_file"] = roleplaying_score_model_file
-        # '/checkpoint/jase/projects/light/beatthehobbot/swp6_light_bi/actmodelv2/model'
-        # model_opt['fixed_candidates_path'] = ranker_agent.opt['fixed_candidates_path']
-        model_opt["candidates"] = "fixed"
-        model_opt["eval_candidates"] = "fixed"
-        # model_opt["no_cuda"] = True
-        model_opt["use_reply"] = "none"
-        model_opt["interactive_mode"] = True
-        model_opt["boring_alpha"] = 0
-        model_opt["override"] = deepcopy(model_opt)
-        roleplaying_score_model = create_agent(model_opt)
-        roleplaying_score_model.boring = None
-
-        # mark this agent as the special RP score agent
-        roleplaying_score_model.actingscore = True
-        # override eval step here
-        roleplaying_score_model.eval_step = roleplaying_score_model.eval_step_scoresonly
-        return roleplaying_score_model
 
     def too_much_string_overlap(self, s1, s2):
         """

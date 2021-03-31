@@ -10,15 +10,15 @@ from collections import deque
 from light.world.souls.on_event_soul import OnEventSoul
 from light.graph.events.base import ErrorEvent
 from light.graph.events.graph_events import TellEvent, SayEvent
-from parlai.core.agents import create_agent, create_agent_from_shared
 
 from typing import TYPE_CHECKING, List
 
 from light.graph.events.graph_events import EmoteEvent
 
 if TYPE_CHECKING:
+    from light.registry.model_pool import ModelPool
     from light.graph.elements.graph_nodes import GraphAgent
-    from light.graph.world.world import World
+    from light.world.world import World
     from light.graph.events.base import GraphEvent
 
 
@@ -52,129 +52,15 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
 
     HAS_MAIN_LOOP = True
 
-    @classmethod
-    def load_dialog_model(
-        cls,
-        parser,
-        dialog_model_path,
-    ):
-        """
-        Load up the dialog model for use with this class
-        """
-        # Model args if no reranking
-        # dialog_args = [
-        #     "-dt",
-        #     "valid",
-        #     "--inference",
-        #     "beam",
-        #     "--beam-context-block-ngram",
-        #     "3",
-        #     "--beam-block-ngram",
-        #     "3",
-        #     "--beam-size",
-        #     "10",
-        #     "--beam-min-length",
-        #     "20",
-        #     "-m",
-        #     "transformer/generator",
-        #     "-mf",
-        #     dialog_model_path,
-        # ]
-
-        # Reranker args
-        dialog_args = [
-            "-m",
-            "internal:light_whoami/generative_rerank",
-            "--predictor-model-file",
-            # "/home/ubuntu/data/models/rerank/model",
-            "/checkpoint/kshuster/projects/continual_learning/light_whoami/whoami_sweep3b_Tue_Oct_13/943/model",
-            "--inference",
-            "delayedbeam",
-            "-dt",
-            "valid",
-            "--beam-context-block-ngram",
-            "3",
-            "--beam-block-ngram",
-            "3",
-            "--beam-size",
-            "10",
-            "--beam-min-length",
-            "20",
-            "-mf",
-            dialog_model_path,
-        ]
-        dialog_opt = parser.parse_args(args=dialog_args)
-        dialog_opt["interactive_mode"] = True
-        dialog_opt["override"] = {
-            "inference": "beam",
-            "beam_context_block_ngram": 3,
-            "beam_size": 2,
-            "beam_min_length": 20,
-        }
-        # dialog_opt['override']['inference'] = 'topk'
-        # dialog_opt['override']['topk'] = 40
-        return create_agent(dialog_opt, requireModelExists=True)
-
-    @classmethod
-    def load_models(
-        cls,
-        dialog_model_path,
-        act_model_path=None,
-    ):
-        """
-        Load up and create possible shared models for use with this class
-        """
-        # TODO refactor with some kind of model-loading standard for model souls?
-        from parlai.core.params import ParlaiParser
-        from parlai.core.agents import create_agent
-
-        parser = ParlaiParser(True, True, "")
-
-        dialog_model = cls.load_dialog_model(
-            parser,
-            dialog_model_path,
-        )
-
-        if act_model_path is not None:
-            # Load action model
-            args = [
-                "-mf",
-                act_model_path,
-                "-ecands",
-                "inline",
-                "--ignore-bad-candidates",
-                "True",
-            ]
-            act_opt, _unknown = parser.parse_and_process_known_args(args=args)
-
-            act_opt["override"] = {
-                "eval_candidates": "inline",
-                "ignore_bad_candidates": "True",
-            }
-            act_opt["interactive_mode"] = True
-            act_opt["ignore_bad_candidates"] = True
-            action_model = create_agent(act_opt, requireModelExists=True)
-            action_model_share = action_model.share()
-        else:
-            action_model_share = None
-
-        return {
-            "shared_dialog_model": dialog_model.share(),
-            "shared_action_model": action_model_share,
-        }
-
-    def _init_with_models(self, models) -> None:
+    def _init_with_models(self, model_pool: "ModelPool") -> None:
         """
         Initialize required members of this soul for tracking the
         model and interactions with it.
         """
         self._pending_observations = []
         self._last_action_time = time.time() + self._get_random_time_offset()
-        self.npc_dialog_model = create_agent_from_shared(models["shared_dialog_model"])
-        if models["shared_action_model"] is not None:
-            self.npc_act_model = create_agent_from_shared(models["shared_action_model"])
-        else:
-            self.npc_act_model = self.generic_act_model
+        self.npc_dialog_model = model_pool.get_model("dialog")
+        self.npc_act_model = model_pool.get_model("action")
         self.reset_interaction_history(self.target_node)
 
     async def observe_event(self, event: "GraphEvent"):
