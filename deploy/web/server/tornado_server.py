@@ -310,7 +310,7 @@ class LandingApplication(tornado.web.Application):
             (r"/about", StaticLoggedInPageHandler, {"target": "/html/about.html"}),
             (r"/profile", StaticLoggedInPageHandler, {"target": "/html/profile.html"}),
             (r"/report", ReportHandler),
-            (r"/(.*)", StaticUIHandler, {"path": here + "/../build/"}),
+            (r"/(.*)", ErrorHandler),
         ]
 
 
