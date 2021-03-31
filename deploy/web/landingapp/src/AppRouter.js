@@ -6,7 +6,7 @@ import LandingPage from "./pages/LandingPage";
 import TermsPage from "./pages/TermsPage";
 import LoginPage from "./pages/LoginPage";
 import LogoutPage from "./pages/LogoutPage";
-import ProfilePage from "./pages/ProfilePage";
+import ErrorPage from "./pages/ErrorPage";
 
 import "./styles.css";
 
@@ -14,11 +14,11 @@ export function Routes() {
   return (
     <>
       <Route path="/" component={LandingPage} exact />
-      <Route path="/profile" component={ProfilePage} exact />
       <Route path="/about" component={AboutPage} exact />
       <Route path="/terms" component={TermsPage} exact />
       <Route path="/login" component={LoginPage} exact />
       <Route path="/logout" component={LogoutPage} exact />
+      <Route path="/error" component={ErrorPage} exact />
     </>
   );
 }

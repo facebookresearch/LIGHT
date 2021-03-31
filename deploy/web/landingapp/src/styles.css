@@ -483,10 +483,20 @@ body .fadeShow {
   align-items: center;
   flex-direction: column;
   padding: 1em 5em 4em 5em;
-  background-image: url("./assets/images/InexplicableTavern.png");
+  background-image: url("./assets/images/spider.png");
   background-size: cover;
   height: 100%;
   overflow: scroll;
+}
+
+.errorpage-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 1em 5em 4em 0.5em;
+  background-image: url("./assets/images/InexplicableTavern.png");
+  background-size: cover;
+  height: 100%;
 }
 
 .loginpage-container {

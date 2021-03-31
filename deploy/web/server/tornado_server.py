@@ -230,7 +230,7 @@ class BaseHandler(tornado.web.RequestHandler):
         super(BaseHandler, self).__init__(*request, **kwargs)
 
     def get_login_url(self):
-        return "/login"
+        return "/#/login"
 
     def get_current_user(self):
         user_json = self.get_secure_cookie("user")
@@ -289,6 +289,7 @@ class LandingApplication(tornado.web.Application):
     def get_handlers(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
         return [
             (r"/", LandingHandler),
+            (r"/#/login", LandingHandler),
             (r"/play", GameHandler),
             (r"/play/?id=.*", GameHandler),
             (r"/build", BuildHandler),
@@ -397,42 +398,6 @@ class LoginHandler(BaseHandler):
         self.password = password
 
     def get(self):
-        self.render(here + "/html/landing.html", next=self.get_argument("next", "/"))
-        self.next = next
-
-    def post(self):
-        name = self.get_argument("name", "")
-        password = self.get_argument("password", "")
-        if password == self.password:
-            with self.db as ldb:
-                _ = ldb.create_user(name)
-            self.set_current_user(name)
-            self.redirect(self.get_argument("next", "/"))
-        else:
-            error_msg = "?error=" + tornado.escape.url_escape("Login incorrect.")
-            self.redirect("/login" + error_msg)
-
-    def set_current_user(self, user):
-        if user:
-            self.set_secure_cookie(
-                "user", tornado.escape.json_encode(user), domain=self.hostname
-            )
-        else:
-            self.clear_cookie("user")
-
-
-class LoginHandler(BaseHandler):
-    def initialize(
-        self,
-        database,
-        hostname=DEFAULT_HOSTNAME,
-        password="LetsPlay",
-    ):
-        self.db = database
-        self.hostname = hostname
-        self.password = password
-
-    def get(self):
         self.render(here + "/build/index.html", next=self.get_argument("next", "/"))
         self.next = next
 
@@ -443,7 +408,8 @@ class LoginHandler(BaseHandler):
             with self.db as ldb:
                 _ = ldb.create_user(name)
             self.set_current_user(name)
-            self.redirect(self.get_argument("next", "/"))
+            # self.redirect(self.get_argument("next", "/"))
+            self.redirect("/play")
         else:
             error_msg = "?error=" + tornado.escape.url_escape("Login incorrect.")
             self.redirect("/login" + error_msg)
