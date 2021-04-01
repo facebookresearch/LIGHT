@@ -489,6 +489,16 @@ body .fadeShow {
   overflow: scroll;
 }
 
+.errorpage-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 1em 5em 4em 0.5em;
+  background-image: url("./assets/images/spider.png");
+  background-size: cover;
+  height: 100%;
+}
+
 .loginpage-container {
   display: flex;
   justify-content: center;
