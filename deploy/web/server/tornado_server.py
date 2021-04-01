@@ -245,43 +245,36 @@ class BaseHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "*")
 
-        # TODO maybe use cookies to restore previous game state?
-        def write_error(self, status_code, **kwargs):
-            if status_code == 404:
-                return "/#/error"
-            elif status_code == 500:
-                return "/#/error"
-            else:
-                self.write("error:" + str(status_code))
+    # TODO maybe use cookies to restore previous game state?
+    def write_error(self, status_code, **kwargs):
+        logging.error("ERROR: %s: %s" % (status_code, kwargs))
+        if "exc_info" in kwargs:
+            logging.info(
+                "Traceback: {}".format(traceback.format_exception(*kwargs["exc_info"]))
+            )
+        if self.settings.get("debug") and "exc_info" in kwargs:
+            logging.error("rendering error page")
+            import traceback
 
-            self.write_error(404)
-            logging.error("ERROR: %s: %s" % (status_code, kwargs))
-            if "exc_info" in kwargs:
-                logging.info(
-                    "Traceback: {}".format(
-                        traceback.format_exception(*kwargs["exc_info"])
-                    )
-                )
-            if self.settings.get("debug") and "exc_info" in kwargs:
-                logging.error("rendering error page")
-                import traceback
+            exc_info = kwargs["exc_info"]
+            # exc_info is a tuple consisting of:
+            # 1. The class of the Exception
+            # 2. The actual Exception that was thrown
+            # 3. The traceback opbject
+            try:
+                params = {
+                    "error": exc_info[1],
+                    "trace_info": traceback.format_exception(*exc_info),
+                    "request": self.request.__dict__,
+                }
 
-                exc_info = kwargs["exc_info"]
-                # exc_info is a tuple consisting of:
-                # 1. The class of the Exception
-                # 2. The actual Exception that was thrown
-                # 3. The traceback opbject
-                try:
-                    params = {
-                        "error": exc_info[1],
-                        "trace_info": traceback.format_exception(*exc_info),
-                        "request": self.request.__dict__,
-                    }
-
-                    self.render("error.html", **params)
-                    logging.error("rendering complete")
-                except Exception as e:
-                    logging.error(e)
+                self.render("error.html", **params)
+                logging.error("rendering complete")
+            except Exception as e:
+                logging.error(e)
+        else:
+            # In production, reroute to error
+            self.redirect("/#/error")
 
 
 class LandingApplication(tornado.web.Application):
