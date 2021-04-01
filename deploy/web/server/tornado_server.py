@@ -238,7 +238,11 @@ class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         user_json = self.get_secure_cookie("user")
         if user_json:
-            return tornado.escape.json_decode(user_json)
+            user_decoded = tornado.escape.json_decode(user_json)
+            if len(user_decoded) == 0:
+                return None
+            print(f"User {user_decoded} logged in.")
+            return user_decoded
         else:
             return None
 
