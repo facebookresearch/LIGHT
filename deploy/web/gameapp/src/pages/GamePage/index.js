@@ -20,6 +20,9 @@ import { setCaretPosition } from "../../utils";
 
 import CONFIG from "../../config.js";
 
+//Icons
+import { FaStar } from "react-icons/fa";
+
 const createWebSocketUrlFromBrowserUrl = (url) => {
   const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
   const optionalServerHost = new URL(url).searchParams.get("server");
@@ -394,9 +397,20 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
               </p>
               <div>
                 <div className="mission-container">
-                  <h3 className="mission-header" style={{ marginBottom: 0 }}>
-                    YOUR MISSION
-                  </h3>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <FaStar color="white" />
+                    <h3 className="mission-header" style={{ marginBottom: 0 }}>
+                      YOUR MISSION
+                    </h3>
+                    <FaStar color="white" />
+                  </div>
                   <p className="mission-text">
                     {persona.description.slice(
                       persona.description.indexOf(":") + 1,
