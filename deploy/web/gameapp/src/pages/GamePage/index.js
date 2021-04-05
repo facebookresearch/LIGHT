@@ -11,7 +11,7 @@ import onClickOutside from "react-onclickoutside";
 
 import { useWSDataSource } from "../../useWSDataSource";
 
-import LevelDisplay from "../../components/LevelDisplay";
+import ExperienceInfo from "../../components/ExperienceInfo";
 import Logo from "../../components/Logo";
 import LoadingScreen from "../../LoadingScreen";
 
@@ -179,6 +179,9 @@ function Message({ text, caller, actor, isSelf, onReply }) {
         <span>{actor}</span>
         {isSelf ? null : (
           <React.Fragment>
+            <Tooltip title={`Award ${actor} Experience`} position="top">
+              <i className="fa fa-star-o" onClick={() => onReply(actor)} />
+            </Tooltip>{" "}
             <Tooltip title={`tell ${actor}...`} position="top">
               <i className="fa fa-reply" onClick={() => onReply(actor)} />
             </Tooltip>{" "}
@@ -214,6 +217,7 @@ function get_msg_actor(msg) {
 }
 
 function Entry({ msg, onReply, agents, selfId }) {
+  console.log("MESSAGE RESPONSE", msg);
   if (
     [
       "LookEvent",
@@ -342,7 +346,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
     <div className="App">
       <div className="sidebar">
         <Logo />
-        <LevelDisplay experience={15} />
+        <ExperienceInfo experience={15} />
         <div className="game-state">
           {persona ? (
             <div className="persona">

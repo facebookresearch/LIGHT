@@ -2,41 +2,22 @@ import React, { useState, useEffect } from "react";
 
 import "./styles.css";
 
-import ProgressBar from "../Progressbar";
+import NumberStar from "../CustomIcons/NumberStar";
 
 const LevelDisplay = (props) => {
-  const { experience } = props;
-  const [level, setLevel] = useState(1);
-  const [exp, setExp] = useState(0);
-  const [progressPercent, setProgressPercent] = useState(0);
-
-  const levelCalculator = () => {
-    let currentLevel = 1;
-    let currentExp = experience;
-    let expToLevel = currentLevel * 10;
-    while (expToLevel <= currentExp) {
-      currentLevel++;
-      currentExp -= expToLevel;
-      expToLevel = currentLevel * 10;
-    }
-    let percent = Math.floor((currentExp / expToLevel) * 100);
-    setLevel(currentLevel);
-    setExp(currentExp);
-    setProgressPercent(percent);
+  const { level, giftExp } = props;
+  const iconStyle = {
+    color: "yellow",
+    position: "absolute",
+    zIndex: "-1",
   };
-  useEffect(() => {
-    levelCalculator();
-  }, []);
   return (
-    <div className="leveldisplay-container">
+    <div className="levelDisplay-container">
       <div className="level-container">
-        <h3 className="level-number">{`LVL ${level}`}</h3>
+        <h1 className="level-number"> LVL </h1>
+        <h1 className="level-number">{level}</h1>
       </div>
-      <ProgressBar
-        bgcolor={"yellow"}
-        percentCompleted={progressPercent}
-        exp={exp}
-      />
+      <NumberStar number={giftExp} iconStyle={iconStyle} />
     </div>
   );
 };
