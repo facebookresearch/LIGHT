@@ -1,6 +1,7 @@
 import React from "react";
 
 import "../../styles.css";
+import "./styles.css";
 import "react-tippy/dist/tippy.css";
 import "emoji-mart/css/emoji-mart.css";
 
@@ -385,7 +386,25 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                 ) : null}
               </div>
               <h3>You are {persona.name}</h3>
-              {persona.description}
+              <p>
+                {persona.description.slice(
+                  0,
+                  persona.description.indexOf("Your Mission:")
+                )}
+              </p>
+              <div>
+                <div className="mission-container">
+                  <h3 className="mission-header" style={{ marginBottom: 0 }}>
+                    YOUR MISSION
+                  </h3>
+                  <p className="mission-text">
+                    {persona.description.slice(
+                      persona.description.indexOf(":") + 1,
+                      persona.description.length
+                    )}
+                  </p>
+                </div>
+              </div>
               {dataModelHost && (
                 <Tooltip
                   style={{ position: "absolute", bottom: 0, right: 5 }}
@@ -406,7 +425,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
           ) : null}
           {location ? (
             <div className="location">
-              <h3>{location.name}</h3>
+              <h3 style={{ textDecoration: "underline" }}>{location.name}</h3>
               {location.description.split("\n").map((para, idx) => (
                 <p key={idx}>{para}</p>
               ))}

@@ -1,0 +1,27 @@
+.mission-container {
+  background-color: yellow;
+  box-shadow: 2px 2px 2px black;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.mission-header {
+  text-decoration: underline;
+  font-weight: bolder;
+  color: white;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  text-shadow: 1px 1px black;
+}
+
+.mission-text {
+  text-align: center;
+  font-weight: bolder;
+  color: white;
+  margin-top: 3px;
+  padding-top: 0;
+  text-shadow: 1px 1px black;
+}
