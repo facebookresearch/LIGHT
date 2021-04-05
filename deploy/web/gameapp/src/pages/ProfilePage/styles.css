@@ -11,6 +11,8 @@ td {
   background-color: #dcb580;
   background-size: cover;
   height: 100%;
+  width: 100%;
+  justify-content: center;
 }
 
 .nameplate-container {

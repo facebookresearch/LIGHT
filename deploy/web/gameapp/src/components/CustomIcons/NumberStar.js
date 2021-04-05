@@ -3,13 +3,14 @@ import "./styles.css";
 import { FaStar } from "react-icons/fa";
 
 const NumberStar = (props) => {
-  const { number, iconStyle } = props;
+  const { number, iconStyle, size } = props;
+
   return (
     <div className="customicon">
-      <FaStar size="10em" style={iconStyle} />
+      <FaStar size={size} style={iconStyle} />
       <div className="customicon-text__container">
-        <h3 className="customicon-text">Gift EXP </h3>
-        <h1 className="customicon-text">{number} </h1>
+        <h5 className="customicon-text">Gift EXP </h5>
+        <h5 className="customicon-text">{number} </h5>
       </div>
     </div>
   );

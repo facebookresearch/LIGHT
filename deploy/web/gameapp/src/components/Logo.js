@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Logo() {
   const builder_url =
@@ -9,11 +10,16 @@ export default function Logo() {
       <div>
         <h1>LIGHT</h1>
         <span>Learning in Interactive Games with Humans and Text</span>
+        {/*<Link to="/profile">
+          <h3>
+          My Profile
+          </h3>
+          </Link>
         <p>
           <a href={builder_url} rel="noopener noreferrer" target="_blank">
             Go To World Builder
           </a>
-        </p>
+        </p>*/}
       </div>
     </div>
   );

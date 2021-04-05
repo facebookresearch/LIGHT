@@ -10,14 +10,18 @@ const LevelDisplay = (props) => {
     color: "yellow",
     position: "absolute",
     zIndex: "-1",
+    height: "5em",
+    width: "5em",
   };
   return (
     <div className="levelDisplay-container">
       <div className="level-container">
-        <h1 className="level-number"> LVL </h1>
-        <h1 className="level-number">{level}</h1>
+        <h2 className="level-number"> LVL </h2>
+        <h2 className="level-number">{level}</h2>
       </div>
-      <NumberStar number={giftExp} iconStyle={iconStyle} />
+      <div style={{ width: "60%" }}>
+        <NumberStar number={giftExp} iconStyle={iconStyle} size="4em" />
+      </div>
     </div>
   );
 };

@@ -1,25 +1,22 @@
 .customicon {
   position: relative;
-  height: 10em;
-  width: 10em;
 }
 
 .customicon-text__container {
   position: absolute;
   display: flex;
-  height: 100%;
-  width: 100%;
+  width: 5em;
+  height: 5em;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  padding-top: 0.8em;
+  top: 2px;
 }
 
 .customicon-text {
   z-index: 2;
-  color: white;
-  text-shadow: 2px 2px black;
+  color: grey;
   text-align: center;
-  align-self: center;
   margin: 0;
+  font-size: 0.8em;
 }
