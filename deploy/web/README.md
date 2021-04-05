@@ -41,3 +41,17 @@ the hyperlink text under the logo will take you there.  To launch the game from 
 If it is your first time playing, you will be asked to login with a username and password.  The username is not important, but as of now the password must be _**LetsPlay**_
 
 Once you are succesfully authenticated, have fun enjoying the world of LIGHT!
+
+## Copy Locations
+
+Home Page - Tutorial Slide 1 - LIGHT/deploy/web/landingapp/src/pages/LandingPage/index.js - Line  58
+
+Home Page - Tutorial Slide 2 - LIGHT/deploy/web/landingapp/src/pages/LandingPage/index.js - Line  68
+
+Home Page - Tutorial Slide 3 - LIGHT/deploy/web/landingapp/src/pages/LandingPage/index.js - Line  90
+
+Home Page - Terms - LIGHT/deploy/web/landingapp/src/pages/LandingPage/index.js - Line  140
+
+Logout Page - Logout Message - LIGHT/deploy/web/landingapp/src/pages/LogoutPage/index.js - Line 15
+
+About Page - About Copy - LIGHT/deploy/web/landingapp/src/pages/AboutPage/index.js - Line 25

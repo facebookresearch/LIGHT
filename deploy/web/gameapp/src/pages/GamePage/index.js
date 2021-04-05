@@ -10,6 +10,8 @@ import cx from "classnames";
 import onClickOutside from "react-onclickoutside";
 
 import { useWSDataSource } from "../../useWSDataSource";
+
+import LevelDisplay from "../../components/LevelDisplay";
 import Logo from "../../components/Logo";
 import LoadingScreen from "../../LoadingScreen";
 
@@ -340,6 +342,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
     <div className="App">
       <div className="sidebar">
         <Logo />
+        <LevelDisplay experience={15} />
         <div className="game-state">
           {persona ? (
             <div className="persona">

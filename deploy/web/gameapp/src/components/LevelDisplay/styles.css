@@ -1,0 +1,9 @@
+.leveldisplay-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.level-number {
+  color: yellow;
+  text-shadow: 2px 2px black;
+}
