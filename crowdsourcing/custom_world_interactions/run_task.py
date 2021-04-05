@@ -102,6 +102,8 @@ def build_task(task_dir):
     os.chdir(return_dir)
 
 def validate_unit(unit):
+    print("Inside validation function")
+
     if unit.get_assigned_agent() is None:
         return
 
@@ -109,6 +111,7 @@ def validate_unit(unit):
 
     if len(data) <= 20 or data.lower().find("you") == -1:
         # Not in second person
+        print("Not validated unit!")
         unit.get_assigned_agent().soft_reject_work()
         worker = unit.get_assigned_agent().get_worker()
         worker.grant_qualification(cfg.block_qualification, 1)
@@ -123,8 +126,9 @@ def main(cfg: DictConfig) -> None:
 
     shared_state = SharedStaticTaskState(
         static_task_data=create_task_data(get_object_list(cfg.light_db_path), cfg.primary_object_list_size, cfg.secondary_object_list_size, cfg.num_tasks),
-        validate_onboarding=onboarding_always_valid,
+        validate_onboarding=onboarding_always_valid
     )
+    shared_state.on_unit_submitted = validate_unit
 
     shared_state.mturk_specific_qualifications = [
         {
@@ -140,8 +144,6 @@ def main(cfg: DictConfig) -> None:
             "ActionsGuarded": "DiscoverPreviewAndAccept",
         },
     ]
-
-    shared_state.on_unit_submitted = validate_unit
 
     build_task(task_dir)
 
