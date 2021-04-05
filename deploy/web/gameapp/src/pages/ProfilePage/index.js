@@ -1,6 +1,6 @@
 import React from "react";
 
-import "../../styles.css";
+import "./styles.css";
 
 import PortraitPlaceholder from "../../assets/images/scribe.png";
 
