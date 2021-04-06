@@ -1,0 +1,12 @@
+{
+    "model": "internal:light_whoami/generative_rerank",
+    "predictor_model_file": "$LIGHT_MODEL_ROOT/dialog/rerank/model",
+    "model_file": "$LIGHT_MODEL_ROOT/dialog/baseline/model",
+    "inference": "delayedbeam",
+    "datatype": "valid",
+    "beam_context_block_ngram": 3,
+    "beam_block_ngram": 3,
+    "beam_size": 10,
+    "beam_min_length": 20,
+    "interactive_mode": True,
+}
