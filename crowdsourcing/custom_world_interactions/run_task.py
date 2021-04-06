@@ -109,7 +109,7 @@ def validate_unit(unit):
 
     data = unit.get_assigned_agent().get_data()
 
-    if len(data) <= 20 or data.lower().find("you") == -1:
+    if len(data) <= 20 or data.lower().find("you") == -1 or data.lower()[-1] != ".":
         # Not in second person
         print("Not validated unit!")
         unit.get_assigned_agent().soft_reject_work()
