@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import { Tooltip } from "react-tippy";
+
 import "./styles.css";
 
 import NumberStar from "../CustomIcons/NumberStar";
@@ -10,17 +12,21 @@ const LevelDisplay = (props) => {
     color: "yellow",
     position: "absolute",
     zIndex: "-1",
-    height: "5em",
-    width: "5em",
+    height: "2.5em",
+    width: "2.5em",
   };
   return (
     <div className="levelDisplay-container">
-      <div className="level-container">
-        <h2 className="level-number"> LVL </h2>
-        <h2 className="level-number">{level}</h2>
-      </div>
-      <div style={{ width: "60%" }}>
-        <NumberStar number={giftExp} iconStyle={iconStyle} size="4em" />
+      <Tooltip title="Player Level" position="top">
+        <div className="level-container">
+          <h5 className="level-number"> LVL </h5>
+          <h5 className="level-number">{level}</h5>
+        </div>
+      </Tooltip>
+      <div>
+        <Tooltip title="Gift Experience" position="top">
+          <NumberStar number={giftExp} iconStyle={iconStyle} size="2em" />
+        </Tooltip>
       </div>
     </div>
   );

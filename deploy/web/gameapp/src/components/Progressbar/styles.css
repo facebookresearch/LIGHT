@@ -1,14 +1,14 @@
 .bar-container {
   height: 20;
-  width: 60%;
   background-color: #e0e0de;
   border-radius: 5;
   margin: 50;
   border-style: outset;
   border-radius: 15px;
-  box-shadow: 5px 2px 15px;
-  border-color: rgb(131, 35, 35);
+  box-shadow: 5px 2px 5px;
+  border-color: silver;
   border-width: thick;
+  max-width: 15em;
 }
 
 .bar-filler {

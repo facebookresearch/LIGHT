@@ -5,8 +5,8 @@
 .customicon-text__container {
   position: absolute;
   display: flex;
-  width: 5em;
-  height: 5em;
+  width: 2.5em;
+  height: 2.5em;
   justify-content: center;
   align-items: center;
   flex-direction: column;

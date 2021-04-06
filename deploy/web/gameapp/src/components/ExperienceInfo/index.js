@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import { Tooltip } from "react-tippy";
+
 import "./styles.css";
 
 import ProgressBar from "../Progressbar";
@@ -8,6 +10,7 @@ import LevelDisplay from "../LevelDisplay";
 const ExperienceInfo = (props) => {
   const { experience } = props;
   const [level, setLevel] = useState(1);
+  const [neededExp, setNeededExp] = useState(0);
   const [exp, setExp] = useState(0);
   const [giftExp, setGiftExp] = useState(3);
   const [progressPercent, setProgressPercent] = useState(0);
@@ -23,6 +26,7 @@ const ExperienceInfo = (props) => {
     }
     let percent = Math.floor((currentExp / expToLevel) * 100);
     setLevel(currentLevel);
+    setNeededExp(expToLevel - currentExp);
     setExp(currentExp);
     setProgressPercent(percent);
   };
@@ -32,11 +36,15 @@ const ExperienceInfo = (props) => {
   return (
     <div className="experienceinfo-container">
       <LevelDisplay level={level} giftExp={giftExp} />
-      <ProgressBar
-        bgcolor={"yellow"}
-        percentCompleted={progressPercent}
-        exp={exp}
-      />
+      <div style={{ width: "100%", marginLeft: "10%", marginRight: 0 }}>
+        <Tooltip title={`Earn ${neededExp}XP to level up`} position="top">
+          <ProgressBar
+            bgcolor={"yellow"}
+            percentCompleted={progressPercent}
+            exp={exp}
+          />
+        </Tooltip>
+      </div>
     </div>
   );
 };
