@@ -25,6 +25,7 @@ import time
 import traceback
 import uuid
 import warnings
+import asyncio
 from collections import defaultdict
 from zmq.eventloop import ioloop
 
@@ -205,7 +206,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                 self.app.graphs[game_id].players.append(new_player)
         else:
             self.close()
-            self.redirect("/login")
+            self.redirect("/#/login")
 
     def send_alive(self):
         self.safe_write_message(json.dumps({"command": "register", "data": self.sid}))
@@ -237,7 +238,11 @@ class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         user_json = self.get_secure_cookie("user")
         if user_json:
-            return tornado.escape.json_decode(user_json)
+            user_decoded = tornado.escape.json_decode(user_json)
+            if len(user_decoded) == 0:
+                return None
+            print(f"User {user_decoded} logged in.")
+            return user_decoded
         else:
             return None
 
@@ -380,7 +385,7 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
                 code=self.get_argument("code"),
             )
             self.set_current_user(fb_user["id"])
-            self.redirect("/")
+            self.redirect("/play")
             return
         self.authorize_redirect(
             redirect_uri=redirect,
@@ -423,8 +428,8 @@ class LoginHandler(BaseHandler):
             # self.redirect(self.get_argument("next", "/"))
             self.redirect("/play")
         else:
-            error_msg = "?error=" + tornado.escape.url_escape("Login incorrect.")
-            self.redirect("/login" + error_msg)
+            error_msg = "?error=" + tornado.escape.url_escape("incorrect")
+            self.redirect("/#/login" + error_msg)
 
     def set_current_user(self, user):
         if user:
