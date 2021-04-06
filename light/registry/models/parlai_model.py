@@ -61,8 +61,12 @@ class ParlAIModelLoader:
             parser = ParlaiParser(True, True, "")
             opt = parser.parse_args(args=[])
         else:
-            opt_file = os.path.expanduser()
+            opt_file = os.path.expanduser(opt_from_config)
             opt = Opt.load(os.path.expanduser(opt_file))
+            for key in opt.keys():
+                # Expand path and file keys to capture $LIGHT_MODEL_ROOT
+                if "path" in key or "file" in key:
+                    opt[key] = os.path.expandvars(opt[key])
 
         if model_from_config is not None:
             model_file = os.path.expanduser(config.opt_file)

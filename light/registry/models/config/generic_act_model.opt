@@ -1,29 +1,6 @@
-@classmethod
-def load_generic_act_model(cls, generic_act_model_file):
-    """
-    Load up and create shared retrieval model for acts, emotes and quest scoring, etc.
-    """
-    # TODO refactor with some kind of model-loading standard for model souls?
-    from parlai.core.params import ParlaiParser
-    from parlai.core.agents import create_agent
-
-    parser = ParlaiParser(True, True, "")
-    # Load action model
-    args = [
-        "-mf",
-        generic_act_model_file,
-        "-ecands",
-        "inline",
-        "--ignore-bad-candidates",
-        "True",
-    ]
-    act_opt, _unknown = parser.parse_and_process_known_args(args=args)
-    act_opt["override"] = {
-        "eval_candidates": "inline",
-        "ignore_bad_candidates": "True",
-    }
-    act_opt["interactive_mode"] = True
-    act_opt["ignore_bad_candidates"] = True
-    print("[ Creating generic act model ... ]")
-    action_model = create_agent(act_opt, requireModelExists=True)
-    return action_model
+{
+    "model_file": "$LIGHT_MODEL_ROOT/acting/baseline/model",
+    "eval_candidates": "inline",
+    "ignore_bad_candidates": True,
+    "interactive_mode": True,
+}

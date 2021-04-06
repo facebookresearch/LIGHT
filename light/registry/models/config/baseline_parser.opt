@@ -1,15 +1,5 @@
-# model name: "parser"
-
-# Create parser model
-self.opt = copy.deepcopy(opt)
-if "parser_model_file" not in self.opt or self.opt["parser_model_file"] == "":
-    self.agent = None
-    return
-self.opt["model_file"] = self.opt["parser_model_file"]
-self.opt["interactive_candidates"] = "inline"
-# self.opt["no_cuda"] = True
-self.opt["override"] = {
-    "interactive_candidates": "inline"
-}  # , "no_cuda": True}
-self.agent = create_agent(self.opt, requireModelExists=True)
-self.agent.opt.log()
+{
+    "model_file": "$LIGHT_MODEL_ROOT/parser/baseline/model",
+    "interactive_candidates": "inline",
+    "interactive_mode": True,
+}

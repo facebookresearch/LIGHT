@@ -27,10 +27,11 @@ from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 from light.world.views import WorldViewer
 from light.world.purgatory import Purgatory
 
-from typing import List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Dict, Any
 
 if TYPE_CHECKING:
     from light.registry.model_pool import ModelPool
+    from light.graph.builders.base import GraphBuilder
 
 
 def check_integrity(f):
@@ -60,8 +61,8 @@ class World(object):
 
     def __init__(
         self,
-        opt,
-        graph_builder,
+        opt: Dict[str, Any],
+        graph_builder: "GraphBuilder",
         model_pool: "ModelPool",
         debug=False,
     ):
@@ -87,13 +88,13 @@ class World(object):
         self.graph_builder = graph_builder  # TODO replace with builder
 
         # Set up safety classifier.
-        init_safety_classifier(self.opt.get("safety_classifier_path", ""))
+        init_safety_classifier(self.opt.get("safety_classifier_path", ""), model_pool)
 
         # Set up magic!
         init_magic(self.opt.get("magic_db_path", "/scratch/light/data/magic.db"))
 
         # Set up action parser.
-        self.action_parser = ActionParser(opt)
+        self.action_parser = ActionParser(model_pool)
 
     @staticmethod
     def from_graph(graph):

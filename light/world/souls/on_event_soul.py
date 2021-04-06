@@ -24,7 +24,7 @@ import random
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
-    from light.graph.world.world import World
+    from light.world.world import World
     from light.graph.events.base import GraphEvent
 
 

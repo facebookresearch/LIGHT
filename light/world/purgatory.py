@@ -6,13 +6,13 @@
 
 import random
 import threading
-from typing import TYPE_CHECKING, List, Tuple, Type, Callable, Any, Optional
+from typing import TYPE_CHECKING, List, Dict, Tuple, Type, Callable, Any, Optional
 
 from light.world.souls.player_soul import PlayerSoul
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
-    from light.graph.world.world import World
+    from light.world.world import World
     from light.graph.events.base import GraphEvent
     from light.world.souls.soul import Soul
 
@@ -44,7 +44,7 @@ class Purgatory:
 
     def register_shared_args(self, arg_name, arg_provider):
         """
-        Used to pass in e.g. the generic act model and roleplaying model scorer to souls.
+        Used to pass in any shared context that souls may need to initialize.
         """
         if arg_provider is not None:
             self.shared_args[arg_name] = arg_provider

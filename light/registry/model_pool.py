@@ -14,10 +14,10 @@ from light.registry.models.acting_score_model import (
 )
 
 from parlai.core.agents import Agent
-from typing import List, Any, Dict, Optional
+from typing import List, Any, Dict, Optional, Type
 
 # At the moment all models are ParlAIModelLoaders. May change as we make more models
-ALL_LOADERS: Dict[str, ParlAIModelLoader] = {
+ALL_LOADERS: Dict[str, Type[ParlAIModelLoader]] = {
     ParlAIModelConfig._loader: ParlAIModelLoader,
     ParlAIPolyencoderActingScoreModelConfig._loader: ParlAIPolyencoderActingScoreModelLoader,
 }
@@ -47,7 +47,9 @@ class ModelPool:
         """
         return model_name in self._model_loaders
 
-    def get_model(self, model_name: str, overrides: Optional[Dict[str, Any]]) -> Agent:
+    def get_model(
+        self, model_name: str, overrides: Optional[Dict[str, Any]] = None
+    ) -> Agent:
         """
         Get a copy of the model stored in the given name
 

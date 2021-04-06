@@ -12,7 +12,8 @@ from concurrent.futures import CancelledError
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
-    from light.graph.world.world import World
+    from light.world.world import World
+    from light.registry.model_pool import ModelPool
 
 
 class ModelSoul(BaseSoul):
@@ -37,7 +38,7 @@ class ModelSoul(BaseSoul):
         if self.HAS_MAIN_LOOP:
             self._run_timesteps()
 
-    def _init_with_models(self, models) -> None:
+    def _init_with_models(self, model_pool: "ModelPool") -> None:
         """
         If this model soul requires additional configuration of the models,
         or setting of attributes depending on these models, handle that here.

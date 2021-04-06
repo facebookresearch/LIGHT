@@ -31,7 +31,7 @@ class BaseSoul(Soul):
         self.target_node._last_interaction_partner_id = None
         self.reset_interaction_history(self.target_node)
         self.model_pool = world.model_pool
-        self.roleplaying_score_model = self.model_pool.get("role_playing_score")
+        self.roleplaying_score_model = self.model_pool.get_model("role_playing_score")
 
     def get_last_interaction_partner(self, node=None):
         if node == None:
