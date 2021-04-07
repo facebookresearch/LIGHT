@@ -31,8 +31,9 @@ from dataclasses import dataclass, field
 from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-INPUT_FILE_TASK = "objects-interaction-task-7"
+INPUT_FILE_TASK = "objects-interaction-task-11"
 DEFAULT_NUM_TASKS = 20
+BLOCK_QUALIFICATION = "unable-to-do-constraints-events-task"
 
 db = LocalMephistoDB()
 mephisto_data_browser = MephistoDataBrowser(db=db)
@@ -41,7 +42,7 @@ defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    {"conf": "objects_interaction_task"},
+    {"conf": "constraints_events_task"},
 ]
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
@@ -87,9 +88,15 @@ def create_task_data(input_file_task, num_tasks):
     for unit in units:
         data.append(mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"]["final_data"])
 
-    print(data[:num_tasks])
     return data[:num_tasks]
 
+def validate_unit(unit):
+
+    if unit.get_assigned_agent() is None:
+        return
+
+    data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"]["final_data"]
+    print(data)
 
 @hydra.main(config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
@@ -101,6 +108,7 @@ def main(cfg: DictConfig) -> None:
     shared_state = SharedStaticTaskState(
         static_task_data=create_task_data(cfg.input_file_task, cfg.num_tasks),
         validate_onboarding=onboarding_always_valid,
+        on_unit_submitted=validate_unit
     )
 
     shared_state.mturk_specific_qualifications = [
