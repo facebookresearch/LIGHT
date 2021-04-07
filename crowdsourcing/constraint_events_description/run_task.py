@@ -11,6 +11,7 @@ import subprocess
 from mephisto.operations.operator import Operator
 from mephisto.operations.utils import get_root_dir
 from mephisto.tools.scripts import load_db_and_process_config
+from mephisto.abstractions.blueprint import BlueprintArgs
 from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint import (
     BLUEPRINT_TYPE,
 )
@@ -33,7 +34,6 @@ from typing import List, Any
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 INPUT_FILE_TASK = "objects-interaction-task-11"
 DEFAULT_NUM_TASKS = 20
-BLOCK_QUALIFICATION = "unable-to-do-constraints-events-task"
 
 db = LocalMephistoDB()
 mephisto_data_browser = MephistoDataBrowser(db=db)
@@ -91,12 +91,36 @@ def create_task_data(input_file_task, num_tasks):
     return data[:num_tasks]
 
 def validate_unit(unit):
-
     if unit.get_assigned_agent() is None:
         return
 
+    print("Task Directory: ", TASK_DIRECTORY)
+
     data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"]["final_data"]
-    print(data)
+    print("Data: ", data)
+
+    constraints = data["constraints"]
+    events = data["events"]
+
+    has_active = False
+
+    for constraint in constraints:
+        if constraint["active"] == "1":
+            has_active = True
+            break
+
+    for event in events:
+        if event["active"] == "1":
+            has_active = True
+            break
+
+    if not has_active:
+        print("Unit not validated!")
+        unit.get_assigned_agent().soft_reject_work()
+        worker = unit.get_assigned_agent().get_worker()
+        worker.grant_qualification("constraints_events_task_block", 1)
+
+    return
 
 @hydra.main(config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
