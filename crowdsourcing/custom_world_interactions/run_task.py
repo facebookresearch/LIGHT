@@ -47,6 +47,7 @@ defaults = [
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
 
+
 @dataclass
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
@@ -56,6 +57,7 @@ class TestScriptConfig(RunScriptConfig):
     secondary_object_list_size: int = SECONDARY_OBJECT_LIST_SIZE
     num_tasks: int = DEFAULT_NUM_TASKS
 
+
 def get_object_list(db_path):
     db = LIGHTDatabase(db_path)
     with db as ldb:
@@ -63,23 +65,34 @@ def get_object_list(db_path):
 
     return object_list
 
-def create_task_data(object_list, primary_object_list_size, secondary_object_list_size, num_tasks):
+
+def create_task_data(
+    object_list, primary_object_list_size, secondary_object_list_size, num_tasks
+):
     random.shuffle(object_list)
     task_data_array = []
 
     for idx in range(num_tasks):
         obj_name = object_list[idx % len(object_list)]
 
-        random_object_list = random.sample(object_list, primary_object_list_size + secondary_object_list_size)
+        random_object_list = random.sample(
+            object_list, primary_object_list_size + secondary_object_list_size
+        )
         primary_object_list = random_object_list[:primary_object_list_size]
         secondary_object_list = random_object_list[primary_object_list_size:]
 
-        task_data_array.append({ "primary_object_list": primary_object_list, "secondary_object_list": secondary_object_list })
+        task_data_array.append(
+            {
+                "primary_object_list": primary_object_list,
+                "secondary_object_list": secondary_object_list,
+            }
+        )
 
     return task_data_array
 
 
 register_script_config(name="scriptconfig", module=TestScriptConfig)
+
 
 def build_task(task_dir):
     """Rebuild the frontend for this task"""
@@ -106,20 +119,32 @@ def build_task(task_dir):
         )
     os.chdir(return_dir)
 
+
 def validate_unit(unit):
     if unit.get_assigned_agent() is None:
         return
 
-    data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"]["final_data"]
+    data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
+        "final_data"
+    ]
     action_description = data["actionDescription"]
 
-    if len(action_description) <= 20 or action_description.lower().find("you") == -1 or (action_description.lower()[-1] != "." and action_description.lower()[-1] != "?" and action_description.lower()[-1] != "!"):
+    if (
+        len(action_description) <= 20
+        or action_description.lower().find("you") == -1
+        or (
+            action_description.lower()[-1] != "."
+            and action_description.lower()[-1] != "?"
+            and action_description.lower()[-1] != "!"
+        )
+    ):
         # Not in second person or invalid punctuation
         print("Action " + action_description + " was not validated!")
         unit.get_assigned_agent().soft_reject_work()
         worker = unit.get_assigned_agent().get_worker()
         worker.grant_qualification("objects_interaction_task_block", 1)
     return
+
 
 @hydra.main(config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
@@ -129,8 +154,13 @@ def main(cfg: DictConfig) -> None:
         return True
 
     shared_state = SharedStaticTaskState(
-        static_task_data=create_task_data(get_object_list(cfg.light_db_path), cfg.primary_object_list_size, cfg.secondary_object_list_size, cfg.num_tasks),
-        validate_onboarding=onboarding_always_valid
+        static_task_data=create_task_data(
+            get_object_list(cfg.light_db_path),
+            cfg.primary_object_list_size,
+            cfg.secondary_object_list_size,
+            cfg.num_tasks,
+        ),
+        validate_onboarding=onboarding_always_valid,
     )
     shared_state.on_unit_submitted = validate_unit
 

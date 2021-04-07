@@ -10,10 +10,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { ObjectSelector } from "./components/object_selector.jsx";
 import { InteractionDescription } from "./components/interaction_description.jsx";
-import { TaskDescription } from "./components/task_description.jsx"
+import { TaskDescription } from "./components/task_description.jsx";
 import { LoadingScreen } from "./components/core_components.jsx";
 import { useMephistoTask } from "mephisto-task";
-import { SubmitButton } from './components/submit_button.jsx'
+import { SubmitButton } from "./components/submit_button.jsx";
 
 /* ================= Application Components ================= */
 
@@ -65,10 +65,13 @@ function MainApp() {
   const state = {
     primaryObject: primaryObject,
     secondaryObject: secondaryObject,
-    actionDescription: actionDescription
-  }
+    actionDescription: actionDescription,
+  };
 
-  const active = state.actionDescription.length > 0 && state.secondaryObject.length > 0 && state.primaryObject.length > 0;
+  const active =
+    state.actionDescription.length > 0 &&
+    state.secondaryObject.length > 0 &&
+    state.primaryObject.length > 0;
 
   return (
     <div>
@@ -77,17 +80,29 @@ function MainApp() {
           <TaskDescription />
           <br />
           <br />
-          <ObjectSelector 
-            primaryObjectList={primaryObjectList} secondaryObjectList={secondaryObjectList}
-            onChangeCurrentPrimaryObject={onChangePrimaryObject} onChangeCurrentSecondaryObject={onChangeSecondaryObject}
-            otherActive={otherActive} onChangeOtherActive={onChangeOtherActive}
+          <ObjectSelector
+            primaryObjectList={primaryObjectList}
+            secondaryObjectList={secondaryObjectList}
+            onChangeCurrentPrimaryObject={onChangePrimaryObject}
+            onChangeCurrentSecondaryObject={onChangeSecondaryObject}
+            otherActive={otherActive}
+            onChangeOtherActive={onChangeOtherActive}
           />
           <br />
           <br />
-          <p>You are narrating the <b>interaction</b> of a character in a medieval fantasy adventure <b>trying to</b> <i>"use {state.primaryObject} with {state.secondaryObject}".</i></p>
-          <InteractionDescription description={state.actionDescription} onChangeDescription={onChangeActionDescription} />
+          <p>
+            You are narrating the <b>interaction</b> of a character in a
+            medieval fantasy adventure <b>trying to</b>{" "}
+            <i>
+              "use {state.primaryObject} with {state.secondaryObject}".
+            </i>
+          </p>
+          <InteractionDescription
+            description={state.actionDescription}
+            onChangeDescription={onChangeActionDescription}
+          />
           <br />
-          <SubmitButton active={active} state={state} onSubmit={handleSubmit}/>
+          <SubmitButton active={active} state={state} onSubmit={handleSubmit} />
         </div>
       </section>
     </div>
