@@ -41,6 +41,7 @@ defaults = [
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
 
+
 @dataclass
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
@@ -51,6 +52,7 @@ class TestScriptConfig(RunScriptConfig):
     num_tasks: int = DEFAULT_NUM_TASKS
     block_qualification: str = BLOCK_QUALIFICATION
 
+
 def get_object_list(db_path):
     db = LIGHTDatabase(db_path)
     with db as ldb:
@@ -58,23 +60,34 @@ def get_object_list(db_path):
 
     return object_list
 
-def create_task_data(object_list, primary_object_list_size, secondary_object_list_size, num_tasks):
+
+def create_task_data(
+    object_list, primary_object_list_size, secondary_object_list_size, num_tasks
+):
     random.shuffle(object_list)
     task_data_array = []
 
     for idx in range(num_tasks):
         obj_name = object_list[idx % len(object_list)]
 
-        random_object_list = random.sample(object_list, primary_object_list_size + secondary_object_list_size)
+        random_object_list = random.sample(
+            object_list, primary_object_list_size + secondary_object_list_size
+        )
         primary_object_list = random_object_list[:primary_object_list_size]
         secondary_object_list = random_object_list[primary_object_list_size:]
 
-        task_data_array.append({ "primary_object_list": primary_object_list, "secondary_object_list": secondary_object_list })
+        task_data_array.append(
+            {
+                "primary_object_list": primary_object_list,
+                "secondary_object_list": secondary_object_list,
+            }
+        )
 
     return task_data_array
 
 
 register_script_config(name="scriptconfig", module=TestScriptConfig)
+
 
 def build_task(task_dir):
     """Rebuild the frontend for this task"""
@@ -101,6 +114,7 @@ def build_task(task_dir):
         )
     os.chdir(return_dir)
 
+
 def validate_unit(unit):
     if unit.get_assigned_agent() is None:
         return
@@ -114,6 +128,7 @@ def validate_unit(unit):
         worker.grant_qualification(cfg.block_qualification, 1)
     return
 
+
 @hydra.main(config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     task_dir = cfg.task_dir
@@ -122,7 +137,12 @@ def main(cfg: DictConfig) -> None:
         return True
 
     shared_state = SharedStaticTaskState(
-        static_task_data=create_task_data(get_object_list(cfg.light_db_path), cfg.primary_object_list_size, cfg.secondary_object_list_size, cfg.num_tasks),
+        static_task_data=create_task_data(
+            get_object_list(cfg.light_db_path),
+            cfg.primary_object_list_size,
+            cfg.secondary_object_list_size,
+            cfg.num_tasks,
+        ),
         validate_onboarding=onboarding_always_valid,
     )
 
