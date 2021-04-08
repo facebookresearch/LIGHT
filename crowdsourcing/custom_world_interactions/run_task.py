@@ -18,6 +18,10 @@ from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint impo
     SharedStaticTaskState,
 )
 from light.data_model.light_database import LIGHTDatabase
+from mephisto.abstractions.databases.local_database import LocalMephistoDB
+from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
+from mephisto.data_model.worker import Worker
+from mephisto.data_model.unit import Unit
 
 import hydra
 import json
@@ -30,7 +34,9 @@ LIGHT_DB_PATH = "/checkpoint/light/data/database3.db"
 PRIMARY_OBJECT_LIST_SIZE = 5
 SECONDARY_OBJECT_LIST_SIZE = 5
 DEFAULT_NUM_TASKS = 20
-BLOCK_QUALIFICATION = "The answer should be a full phrase starting with 'You...'"
+
+db = LocalMephistoDB()
+mephisto_data_browser = MephistoDataBrowser(db=db)
 
 defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
@@ -50,7 +56,7 @@ class TestScriptConfig(RunScriptConfig):
     primary_object_list_size: int = PRIMARY_OBJECT_LIST_SIZE
     secondary_object_list_size: int = SECONDARY_OBJECT_LIST_SIZE
     num_tasks: int = DEFAULT_NUM_TASKS
-    block_qualification: str = BLOCK_QUALIFICATION
+
 
 
 def get_object_list(db_path):
@@ -119,13 +125,25 @@ def validate_unit(unit):
     if unit.get_assigned_agent() is None:
         return
 
-    data = unit.get_assigned_agent().get_data()
+    data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
+        "final_data"
+    ]
+    action_description = data["actionDescription"]
 
-    if len(data) <= 20 or data.lower().find("you") == -1:
-        # Not in second person
+    if (
+        len(action_description) <= 20
+        or action_description.lower().find("you") == -1
+        or (
+            action_description.lower()[-1] != "."
+            and action_description.lower()[-1] != "?"
+            and action_description.lower()[-1] != "!"
+        )
+    ):
+        # Not in second person or invalid punctuation
+        print("Action " + action_description + " was not validated!")
         unit.get_assigned_agent().soft_reject_work()
         worker = unit.get_assigned_agent().get_worker()
-        worker.grant_qualification(cfg.block_qualification, 1)
+        worker.grant_qualification("objects_interaction_task_block", 1)
     return
 
 
@@ -145,6 +163,7 @@ def main(cfg: DictConfig) -> None:
         ),
         validate_onboarding=onboarding_always_valid,
     )
+    shared_state.on_unit_submitted = validate_unit
 
     shared_state.mturk_specific_qualifications = [
         {
@@ -160,8 +179,6 @@ def main(cfg: DictConfig) -> None:
             "ActionsGuarded": "DiscoverPreviewAndAccept",
         },
     ]
-
-    shared_state.on_unit_submitted = validate_unit
 
     build_task(task_dir)
 
