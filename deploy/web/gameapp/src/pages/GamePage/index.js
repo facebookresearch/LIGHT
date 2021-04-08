@@ -12,12 +12,11 @@ import onClickOutside from "react-onclickoutside";
 
 //Custom Components
 import { useWSDataSource } from "../../useWSDataSource";
+import Entry from "./Entry";
 import ExperienceInfo from "../../components/ExperienceInfo";
 import CollapseibleBox from "../../components/CollapsibleBox";
 import Logo from "../../components/Logo";
 import LoadingScreen from "../../LoadingScreen";
-import Message from "./Message";
-import SettingMessage from "./SettingMessage";
 
 import { setCaretPosition } from "../../utils";
 
@@ -60,41 +59,6 @@ const getDataModelAddress = () => {
 //   "#e6efff", //blue
 //   "#ffe8eb" //red
 // ];
-
-function get_msg_actor(msg) {
-  if (msg.actors === undefined) {
-    return msg.actor.node_id;
-  } else {
-    return msg.actors[0];
-  }
-}
-
-function Entry({ msg, onReply, agents, selfId }) {
-  console.log("MESSAGE RESPONSE", msg);
-  if (
-    [
-      "LookEvent",
-      "GoEvent",
-      "ExamineEvent",
-      "ErrorEvent",
-      "HelpEvent",
-      "text",
-    ].includes(msg.caller) ||
-    msg.caller === null
-  ) {
-    return <SettingMessage text={msg.text} />;
-  } else {
-    var actor = get_msg_actor(msg);
-    return (
-      <Message
-        text={msg.text}
-        isSelf={msg.is_self || actor === selfId}
-        actor={agents[actor]}
-        onReply={onReply}
-      />
-    );
-  }
-}
 
 function ConnectedApp() {
   const wsUrl = React.useMemo(
