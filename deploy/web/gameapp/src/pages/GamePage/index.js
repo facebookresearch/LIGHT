@@ -10,11 +10,14 @@ import { Picker, emojiIndex } from "emoji-mart";
 import cx from "classnames";
 import onClickOutside from "react-onclickoutside";
 
+//Custom Components
 import { useWSDataSource } from "../../useWSDataSource";
-
 import ExperienceInfo from "../../components/ExperienceInfo";
+import CollapseibleBox from "../../components/CollapsibleBox";
 import Logo from "../../components/Logo";
 import LoadingScreen from "../../LoadingScreen";
+import Message from "./Message";
+import SettingMessage from "./SettingMessage";
 
 import { setCaretPosition } from "../../utils";
 
@@ -58,159 +61,140 @@ const getDataModelAddress = () => {
 //   "#ffe8eb" //red
 // ];
 
-function Setting(props) {
-  return (
-    <div style={{ clear: "both", overflow: "auto" }}>
-      <div className="message type-setting">
-        {props.text.split("\n").map((para, idx) => (
-          <p key={idx}>{para}</p>
-        ))}
-      </div>
-    </div>
-  );
-}
+// function Setting(props) {
+//   return (
+//     <div style={{ clear: "both", overflow: "auto" }}>
+//       <div className="message type-setting">
+//         {props.text.split("\n").map((para, idx) => (
+//           <p key={idx}>{para}</p>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
 
-function handleReport(reportedMessage, reportReason) {
-  let base_url = window.location.protocol + "//" + CONFIG.hostname;
-  if (CONFIG.port != "80") {
-    base_url += ":" + CONFIG.port;
-  }
+// function Message({ text, caller, actor, isSelf, onReply }) {
+//   const [isEditMode, setEditMode] = React.useState(false);
+//   const [isReportMode, setReportMode] = React.useState(false);
+//   const [reportReason, setReportReason] = React.useState("");
+//   const [isReported, setReported] = React.useState(false);
 
-  fetch(`${base_url}/report`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "same-origin",
-    body: JSON.stringify({
-      message: reportedMessage,
-      reason: reportReason,
-    }),
-  });
-}
+//   let classNames = "message type-dialogue ";
+//   if (["tell", "say", "whisper"].includes(caller)) {
+//     text = "&ldquo;" + text + "&rdquo;";
+//     classNames = "message type-dialogue ";
+//   }
+//   classNames += isSelf ? "me" : "other";
 
-function Message({ text, caller, actor, isSelf, onReply }) {
-  const [isEditMode, setEditMode] = React.useState(false);
-  const [isReportMode, setReportMode] = React.useState(false);
-  const [reportReason, setReportReason] = React.useState("");
-  const [isReported, setReported] = React.useState(false);
+//   if (isEditMode) {
+//     return (
+//       <div className={classNames}>
+//         <div className="agent">
+//           <span>{actor}</span>
+//           {isSelf ? null : (
+//             <React.Fragment>
+//               <i className="fa fa-reply" onClick={() => onReply(actor)} />{" "}
+//               <i
+//                 className="fa fa-commenting-o "
+//                 onClick={() => setEditMode(false)}
+//               />
+//             </React.Fragment>
+//           )}
+//         </div>
+//         <div style={{ opacity: 0, height: 1, pointerEvents: "none" }}>
+//           {text}
+//         </div>
+//         <input className="edit-message" defaultValue={text} />
+//         <button type="submit" onClick={() => setEditMode(false)}>
+//           Suggest edit
+//         </button>
+//         <button type="submit" onClick={() => setEditMode(false)}>
+//           Suggest edit
+//         </button>
+//       </div>
+//     );
+//   }
 
-  let classNames = "message type-dialogue ";
-  if (["tell", "say", "whisper"].includes(caller)) {
-    text = "&ldquo;" + text + "&rdquo;";
-    classNames = "message type-dialogue ";
-  }
-  classNames += isSelf ? "me" : "other";
+//   if (isReportMode) {
+//     return (
+//       <div className={classNames}>
+//         <div className="agent">
+//           <span>{actor}</span>
+//         </div>
+//         {text}
+//         <div>
+//           <b>Why are you reporting this message?</b>
+//         </div>
+//         <input
+//           className="edit-message"
+//           defaultValue={"Enter reason here"}
+//           value={reportReason}
+//           onChange={(evt) => setReportReason(evt.target.value)}
+//         />
+//         <button
+//           type="submit"
+//           disabled={reportReason.length == 0}
+//           onClick={() => {
+//             handleReport(text, reportReason);
+//             setReportReason("");
+//             setReported(true);
+//             setReportMode(false);
+//           }}
+//         >
+//           Report
+//         </button>
+//         <button type="submit" onClick={() => setReportMode(false)}>
+//           Cancel
+//         </button>
+//       </div>
+//     );
+//   }
 
-  if (isEditMode) {
-    return (
-      <div className={classNames}>
-        <div className="agent">
-          <span>{actor}</span>
-          {isSelf ? null : (
-            <React.Fragment>
-              <i className="fa fa-reply" onClick={() => onReply(actor)} />{" "}
-              <i
-                className="fa fa-commenting-o "
-                onClick={() => setEditMode(false)}
-              />
-            </React.Fragment>
-          )}
-        </div>
-        <div style={{ opacity: 0, height: 1, pointerEvents: "none" }}>
-          {text}
-        </div>
-        <input className="edit-message" defaultValue={text} />
-        <button type="submit" onClick={() => setEditMode(false)}>
-          Suggest edit
-        </button>
-        <button type="submit" onClick={() => setEditMode(false)}>
-          Suggest edit
-        </button>
-      </div>
-    );
-  }
+//   if (isReported) {
+//     return (
+//       <div className={classNames}>
+//         <div className="agent">
+//           <span>{actor}</span>
+//         </div>
+//         <i>We have logged your report of this message</i>
+//       </div>
+//     );
+//   }
 
-  if (isReportMode) {
-    return (
-      <div className={classNames}>
-        <div className="agent">
-          <span>{actor}</span>
-        </div>
-        {text}
-        <div>
-          <b>Why are you reporting this message?</b>
-        </div>
-        <input
-          className="edit-message"
-          defaultValue={"Enter reason here"}
-          value={reportReason}
-          onChange={(evt) => setReportReason(evt.target.value)}
-        />
-        <button
-          type="submit"
-          disabled={reportReason.length == 0}
-          onClick={() => {
-            handleReport(text, reportReason);
-            setReportReason("");
-            setReported(true);
-            setReportMode(false);
-          }}
-        >
-          Report
-        </button>
-        <button type="submit" onClick={() => setReportMode(false)}>
-          Cancel
-        </button>
-      </div>
-    );
-  }
-
-  if (isReported) {
-    return (
-      <div className={classNames}>
-        <div className="agent">
-          <span>{actor}</span>
-        </div>
-        <i>We have logged your report of this message</i>
-      </div>
-    );
-  }
-
-  return (
-    <div className={classNames}>
-      <div className="agent">
-        <span>{actor}</span>
-        {isSelf ? null : (
-          <React.Fragment>
-            <Tooltip title={`Award ${actor} Experience`} position="top">
-              <i className="fa fa-star-o" onClick={() => onReply(actor)} />
-            </Tooltip>{" "}
-            <Tooltip title={`tell ${actor}...`} position="top">
-              <i className="fa fa-reply" onClick={() => onReply(actor)} />
-            </Tooltip>{" "}
-            {/* <Tooltip
-              title={`Do you think something else should have been said instead? Provide feedback via an edit...`}
-              position="top"
-            >
-              <i
-                className="fa fa-commenting-o "
-                onClick={() => setEditMode(true)}
-              />
-            </Tooltip> */}
-            <Tooltip
-              title={`Was this offensive or inappropriate? Click to report.`}
-              position="top"
-            >
-              <i className="fa fa-flag " onClick={() => setReportMode(true)} />
-            </Tooltip>
-          </React.Fragment>
-        )}
-      </div>
-      {text}
-    </div>
-  );
-}
+//   return (
+//     <div className={classNames}>
+//       <div className="agent">
+//         <span>{actor}</span>
+//         {isSelf ? null : (
+//           <React.Fragment>
+//             <Tooltip title={`Award ${actor} Experience`} position="top">
+//               <i className="fa fa-star-o" onClick={() => onReply(actor)} />
+//             </Tooltip>{" "}
+//             <Tooltip title={`tell ${actor}...`} position="top">
+//               <i className="fa fa-reply" onClick={() => onReply(actor)} />
+//             </Tooltip>{" "}
+//             {/* <Tooltip
+//               title={`Do you think something else should have been said instead? Provide feedback via an edit...`}
+//               position="top"
+//             >
+//               <i
+//                 className="fa fa-commenting-o "
+//                 onClick={() => setEditMode(true)}
+//               />
+//             </Tooltip> */}
+//             <Tooltip
+//               title={`Was this offensive or inappropriate? Click to report.`}
+//               position="top"
+//             >
+//               <i className="fa fa-flag " onClick={() => setReportMode(true)} />
+//             </Tooltip>
+//           </React.Fragment>
+//         )}
+//       </div>
+//       {text}
+//     </div>
+//   );
+// }
 
 function get_msg_actor(msg) {
   if (msg.actors === undefined) {
@@ -233,7 +217,7 @@ function Entry({ msg, onReply, agents, selfId }) {
     ].includes(msg.caller) ||
     msg.caller === null
   ) {
-    return <Setting text={msg.text} />;
+    return <SettingMessage text={msg.text} />;
   } else {
     var actor = get_msg_actor(msg);
     return (
@@ -283,6 +267,7 @@ function ConnectedApp() {
     />
   );
 }
+
 function Chat({ messages, onSubmit, persona, location, agents }) {
   const [enteredText, setEnteredText] = React.useState("");
   const chatContainerRef = React.useRef(null);
@@ -388,37 +373,15 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                   </div>
                 ) : null}
               </div>
-              <h3>You are {persona.name}</h3>
-              <p>
-                {persona.description.slice(
-                  0,
-                  persona.description.indexOf("Your Mission:")
-                )}
-              </p>
-              <div>
-                <div className="mission-container">
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <FaStar color="white" />
-                    <h3 className="mission-header" style={{ marginBottom: 0 }}>
-                      YOUR MISSION
-                    </h3>
-                    <FaStar color="white" />
-                  </div>
-                  <p className="mission-text">
-                    {persona.description.slice(
-                      persona.description.indexOf(":") + 1,
-                      persona.description.length
-                    )}
-                  </p>
-                </div>
-              </div>
+              <CollapseibleBox title="">
+                <h3>You are {persona.name}</h3>
+                <p>
+                  {persona.description.slice(
+                    0,
+                    persona.description.indexOf("Your Mission:")
+                  )}
+                </p>
+              </CollapseibleBox>
               {dataModelHost && (
                 <Tooltip
                   style={{ position: "absolute", bottom: 0, right: 5 }}
@@ -437,31 +400,58 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
               )}
             </div>
           ) : null}
+          <CollapseibleBox
+            title="Mission"
+            titleBg="yellow"
+            containerBg="lightyellow"
+          >
+            {
+              <p className="mission-text">
+                {persona.description.slice(
+                  persona.description.indexOf(":") + 1,
+                  persona.description.length
+                )}
+              </p>
+            }
+          </CollapseibleBox>
           {location ? (
-            <div className="location">
-              <h3 style={{ textDecoration: "underline" }}>{location.name}</h3>
-              {location.description.split("\n").map((para, idx) => (
-                <p key={idx}>{para}</p>
-              ))}
-              {dataModelHost && (
-                <Tooltip
-                  style={{ position: "absolute", bottom: 0, right: 5 }}
-                  title={`suggest changes for ${
-                    location.name.split(" the ")[1]
-                  }`}
-                  position="bottom"
+            <CollapseibleBox
+              title="Location"
+              titleBg="#76dada"
+              containerBg="#e0fffe"
+            >
+              <div className="location" style={{ margin: 0 }}>
+                <h3
+                  style={{
+                    textDecoration: "underline",
+                    backgroundColor: "none",
+                  }}
                 >
-                  <a
-                    className="data-model-deep-link"
-                    href={`${dataModelHost}/edit/${getEntityId(location.id)}`}
-                    rel="noopener noreferrer"
-                    target="_blank"
+                  {location.name}
+                </h3>
+                {location.description.split("\n").map((para, idx) => (
+                  <p key={idx}>{para}</p>
+                ))}
+                {dataModelHost && (
+                  <Tooltip
+                    style={{ position: "absolute", bottom: 0, right: 5 }}
+                    title={`suggest changes for ${
+                      location.name.split(" the ")[1]
+                    }`}
+                    position="bottom"
                   >
-                    <i className="fa fa-edit" aria-hidden="true" />
-                  </a>
-                </Tooltip>
-              )}
-            </div>
+                    <a
+                      className="data-model-deep-link"
+                      href={`${dataModelHost}/edit/${getEntityId(location.id)}`}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      <i className="fa fa-edit" aria-hidden="true" />
+                    </a>
+                  </Tooltip>
+                )}
+              </div>
+            </CollapseibleBox>
           ) : null}
         </div>
         {/* <Map /> */}

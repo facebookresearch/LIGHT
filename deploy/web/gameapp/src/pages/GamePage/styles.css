@@ -20,8 +20,8 @@
 .mission-text {
   text-align: center;
   font-weight: bolder;
-  color: white;
-  margin-top: 3px;
+  color: grey;
+  margin-top: 0px;
   padding-top: 0;
   text-shadow: 1px 1px black;
 }

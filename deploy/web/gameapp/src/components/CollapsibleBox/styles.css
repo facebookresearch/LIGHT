@@ -1,0 +1,29 @@
+.collapsible-container {
+  border-radius: 15px;
+  margin-top: 10px;
+}
+
+.collapsible-header {
+  display: flex;
+  flex: row;
+  justify-content: space-between;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+}
+
+.collapsible-header--text {
+}
+
+.collapsible-header--icon {
+  display: flex;
+  justify-content: flex-end;
+  align-content: center;
+  padding: 1em;
+  cursor: pointer;
+}
+
+.collapsible-body {
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  padding: 1em;
+}

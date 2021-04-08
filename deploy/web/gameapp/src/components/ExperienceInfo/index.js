@@ -4,7 +4,7 @@ import { Tooltip } from "react-tippy";
 
 import "./styles.css";
 
-import ProgressBar from "../Progressbar";
+import ProgressBar from "../ProgressBar";
 import LevelDisplay from "../LevelDisplay";
 
 const ExperienceInfo = (props) => {
