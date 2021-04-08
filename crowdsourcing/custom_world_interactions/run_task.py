@@ -58,6 +58,7 @@ class TestScriptConfig(RunScriptConfig):
     num_tasks: int = DEFAULT_NUM_TASKS
 
 
+
 def get_object_list(db_path):
     db = LIGHTDatabase(db_path)
     with db as ldb:

@@ -306,7 +306,8 @@
                 "item": "muddy area"
               }
             }
-          ]
+          ],
+          "remaining_uses": 1
         }
       ],
       "room": false,
@@ -364,7 +365,8 @@
             {
               "type": "used_with_agent"
             }
-          ]
+          ],
+          "remaining_uses": "inf"
         }
       ]
     },
@@ -384,10 +386,10 @@
             {
               "type": "broadcast_message",
               "params": {
-                "self_view": "You say the words aloud, and runes on the scroll glow with gold.",
+                "self_view": "You say the words aloud, and runes on the scroll glow an intense gold for a second, but then instantly fade. The scroll appears to be damaged.",
                 "self_as_target_view": "Suddenly you feel a voluminous about you and you feel ... LARGER! You are  growing!",
                 "self_not_target_view": "{recipient_text} appears to be growing larger!!!",
-                "room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} seems to glow for a second.. and appears to be getting larger!"
+                "room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} seems to glow for a second.. and appears to be getting larger! The runes in the scroll stop glowing and become gray."
               }
             },
             {
@@ -409,7 +411,8 @@
             {
               "type": "used_with_agent"
             }
-          ]
+          ],
+          "remaining_uses": 1
         }
       ]
     },
@@ -454,7 +457,8 @@
             {
               "type": "used_with_agent"
             }
-          ]
+          ],
+          "remaining_uses": "inf"
         }
       ]
     },
@@ -509,7 +513,8 @@
                 "room_name": "Orc cave"
               }
             }
-          ]
+          ],
+          "remaining_uses": "inf"
         }
       ]
     },
@@ -563,7 +568,8 @@
                 "key": "health"
               }
             }
-          ]
+          ],
+          "remaining_uses": "inf"
         }
       ]
     }
