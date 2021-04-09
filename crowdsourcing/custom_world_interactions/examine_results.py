@@ -43,10 +43,17 @@ def format_for_printing_data(data):
         f"Duration: {int(duration)}\nStatus: {data['status']}\n"
     )
 
-    inputs = contents["inputs"]
-    outputs = contents["outputs"]
+    inputs_string = ""
+    outputs_string = ""
 
-    return f"-------------------\n{inputs}{outputs}"
+    if contents["inputs"] is not None and contents["outputs"] is not None:
+        inputs = contents["inputs"]
+        inputs_string = f"Input:\n\tPrimary Object List: {inputs['primary_object_list']}\n\tSecondary Object List: {inputs['secondary_object_list']}\n\n"
+
+        outputs = contents["outputs"]["final_data"]
+        outputs_string = f"Output:\n\tUse {outputs['primaryObject']} with {outputs['secondaryObject']}\n\tAction: {outputs['actionDescription']}\n"
+
+    return f"-------------------\n{metadata_string}{inputs_string}{outputs_string}"
 
 
 disqualification_name = None
