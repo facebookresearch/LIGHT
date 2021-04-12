@@ -1,0 +1,21 @@
+.levelDisplay-container {
+  display: flex;
+  flex-direction: row;
+  width: 40%;
+  justify-content: center;
+}
+.level-container {
+  width: 2.5em;
+  height: 2.5em;
+  background-color: yellow;
+  display: flex;
+  border-radius: 1.25em;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-right: 0.3rem;
+}
+.level-number {
+  color: grey;
+  margin: 0;
+}

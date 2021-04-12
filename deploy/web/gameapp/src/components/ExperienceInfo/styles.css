@@ -1,0 +1,18 @@
+.experienceinfo-container {
+  display: flex;
+  flex-direction: row;
+  margin-right: 4em;
+  margin-top: 1em;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+@media only screen and (max-width: 500px) {
+  .experienceinfo-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+  }
+}

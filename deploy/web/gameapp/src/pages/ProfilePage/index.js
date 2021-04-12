@@ -1,6 +1,6 @@
 import React from "react";
 
-import "../../styles.css";
+import "./styles.css";
 
 import PortraitPlaceholder from "../../assets/images/scribe.png";
 
@@ -21,47 +21,30 @@ const ProfilePage = (props) => {
           </h3>
         </div>
       </div>
-      <div className="profiledata-container">
-        <div className="profiledata-section">
+      <div className="profiledata-container" style={{ color: "gold" }}>
+        <div>
+          <h3 style={{ color: "gold" }}>TOTAL EXP EARNED:</h3>
+          <h3>TOTAL EXP GIVEN:</h3>
+        </div>
+        <div className="table-container"></div>
+      </div>
+      <div className="profiledata-container" style={{ color: "gold" }}>
+        <div className="table-container">
+          <h1>GAMEPLAY STATS</h1>
           <table>
             <tr>
-              <th>Name</th>
-              <th> Joe Doe</th>
+              <th>Role</th>
+              <th>XP</th>
             </tr>
-            <tr>
-              <th>Email</th>
-              <th>jd@jd.net</th>
-            </tr>
-            <tr>
-              <th>Location</th>
-              <th>North America</th>
-            </tr>
-            <tr>
-              <th>Password</th>
-              <th>******</th>
-            </tr>
-            <tr>
-              <th>Location</th>
-              <th>North America</th>
-            </tr>
+            {roleData.length
+              ? roleData.map((data) => (
+                  <tr>
+                    <td>{data.role}</td>
+                    <td>{data.experience}</td>
+                  </tr>
+                ))
+              : null}
           </table>
-          <div className="table-container">
-            <h1>GAMEPLAY STATS</h1>
-            <table>
-              <tr>
-                <th>Role</th>
-                <th>XP</th>
-              </tr>
-              {roleData.length
-                ? roleData.map((data) => (
-                    <tr>
-                      <td>{data.role}</td>
-                      <td>{data.experience}</td>
-                    </tr>
-                  ))
-                : null}
-            </table>
-          </div>
         </div>
       </div>
     </div>

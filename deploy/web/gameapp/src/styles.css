@@ -10,6 +10,8 @@
   font-size: 18px;
   box-sizing: border-box;
   overflow: auto;
+  background-image: url("./assets/images/InexplicableTavern_hungover.png");
+  font-family: fantasy;
 }
 
 body.dark-mode {
@@ -68,12 +70,16 @@ a {
   display: flex;
   flex-direction: column;
   overflow: auto;
+  border-radius: 15px;
 }
 
 .game-state {
   flex: 1;
   overflow: auto;
-  margin: 20px 0 40px;
+  padding: 0px 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .chat-wrapper {
@@ -101,10 +107,12 @@ a {
 
 .sidebar {
   margin: 30px 0px 0px 0px;
-  padding: 0 10px;
+  width: 100%;
   animation: popInApp 0.3s cubic-bezier(0.5, 0, 0, 1);
   animation-fill-mode: forwards;
   opacity: 0;
+  background-color: lightgrey;
+  height: 100%;
 }
 
 .message.type-setting {
@@ -302,13 +310,10 @@ i.fa {
 .header {
   font-size: 15px;
   display: flex;
-  align-items: center;
-  color: #555;
 }
 .header h1 {
   margin: 0;
   padding: 0;
-  color: #333;
 }
 .header img {
   border-radius: 5px;
@@ -320,10 +325,13 @@ i.fa {
   font-size: 16px;
   margin: 95px 0 0 0px;
   background-color: lightgoldenrodyellow;
-  padding: 30px 25px 25px;
+  padding: 10px 25px 25px;
   border-radius: 10px;
   position: relative;
   line-height: 1.35em;
+  box-shadow: 5px 2px 5px;
+  width: 85%;
+  padding-bottom: 5px;
 }
 
 .persona h3,
@@ -355,13 +363,20 @@ i.fa {
   border: 5px solid gold;
 }
 
+.char-icon {
+  padding-top: 30%;
+}
+.persona-text {
+  margin: 0px;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
 .location {
   padding: 15px 25px 25px;
   font-size: 16px;
   line-height: 1.35em;
-  margin-top: 20px;
   margin-bottom: 20px;
-  background-color: lightcyan;
   border-radius: 10px;
   position: relative;
 }

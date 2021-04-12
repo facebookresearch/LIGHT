@@ -1,6 +1,7 @@
 import React from "react";
 
 import "../../styles.css";
+import "./styles.css";
 import "react-tippy/dist/tippy.css";
 import "emoji-mart/css/emoji-mart.css";
 
@@ -9,13 +10,22 @@ import { Picker, emojiIndex } from "emoji-mart";
 import cx from "classnames";
 import onClickOutside from "react-onclickoutside";
 
+//Custom Components
 import { useWSDataSource } from "../../useWSDataSource";
-import Logo from "../../components/Logo";
+import Entry from "./Entry";
+import ExperienceInfo from "../../components/ExperienceInfo";
+import CollapseibleBox from "../../components/CollapsibleBox";
+import Logo from "../../components/Logo/index.js";
 import LoadingScreen from "../../LoadingScreen";
 
 import { setCaretPosition } from "../../utils";
 
 import CONFIG from "../../config.js";
+
+//Icons
+import { FaStar } from "react-icons/fa";
+import { BiWindow } from "react-icons/bi";
+import { FaWindowMinimize } from "react-icons/fa";
 
 const createWebSocketUrlFromBrowserUrl = (url) => {
   const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
@@ -51,191 +61,6 @@ const getDataModelAddress = () => {
 //   "#e6efff", //blue
 //   "#ffe8eb" //red
 // ];
-
-function Setting(props) {
-  return (
-    <div style={{ clear: "both", overflow: "auto" }}>
-      <div className="message type-setting">
-        {props.text.split("\n").map((para, idx) => (
-          <p key={idx}>{para}</p>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function handleReport(reportedMessage, reportReason) {
-  let base_url = window.location.protocol + "//" + CONFIG.hostname;
-  if (CONFIG.port != "80") {
-    base_url += ":" + CONFIG.port;
-  }
-
-  fetch(`${base_url}/report`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "same-origin",
-    body: JSON.stringify({
-      message: reportedMessage,
-      reason: reportReason,
-    }),
-  });
-}
-
-function Message({ text, caller, actor, isSelf, onReply }) {
-  const [isEditMode, setEditMode] = React.useState(false);
-  const [isReportMode, setReportMode] = React.useState(false);
-  const [reportReason, setReportReason] = React.useState("");
-  const [isReported, setReported] = React.useState(false);
-
-  let classNames = "message type-dialogue ";
-  if (["tell", "say", "whisper"].includes(caller)) {
-    text = "&ldquo;" + text + "&rdquo;";
-    classNames = "message type-dialogue ";
-  }
-  classNames += isSelf ? "me" : "other";
-
-  if (isEditMode) {
-    return (
-      <div className={classNames}>
-        <div className="agent">
-          <span>{actor}</span>
-          {isSelf ? null : (
-            <React.Fragment>
-              <i className="fa fa-reply" onClick={() => onReply(actor)} />{" "}
-              <i
-                className="fa fa-commenting-o "
-                onClick={() => setEditMode(false)}
-              />
-            </React.Fragment>
-          )}
-        </div>
-        <div style={{ opacity: 0, height: 1, pointerEvents: "none" }}>
-          {text}
-        </div>
-        <input className="edit-message" defaultValue={text} />
-        <button type="submit" onClick={() => setEditMode(false)}>
-          Suggest edit
-        </button>
-        <button type="submit" onClick={() => setEditMode(false)}>
-          Suggest edit
-        </button>
-      </div>
-    );
-  }
-
-  if (isReportMode) {
-    return (
-      <div className={classNames}>
-        <div className="agent">
-          <span>{actor}</span>
-        </div>
-        {text}
-        <div>
-          <b>Why are you reporting this message?</b>
-        </div>
-        <input
-          className="edit-message"
-          defaultValue={"Enter reason here"}
-          value={reportReason}
-          onChange={(evt) => setReportReason(evt.target.value)}
-        />
-        <button
-          type="submit"
-          disabled={reportReason.length == 0}
-          onClick={() => {
-            handleReport(text, reportReason);
-            setReportReason("");
-            setReported(true);
-            setReportMode(false);
-          }}
-        >
-          Report
-        </button>
-        <button type="submit" onClick={() => setReportMode(false)}>
-          Cancel
-        </button>
-      </div>
-    );
-  }
-
-  if (isReported) {
-    return (
-      <div className={classNames}>
-        <div className="agent">
-          <span>{actor}</span>
-        </div>
-        <i>We have logged your report of this message</i>
-      </div>
-    );
-  }
-
-  return (
-    <div className={classNames}>
-      <div className="agent">
-        <span>{actor}</span>
-        {isSelf ? null : (
-          <React.Fragment>
-            <Tooltip title={`tell ${actor}...`} position="top">
-              <i className="fa fa-reply" onClick={() => onReply(actor)} />
-            </Tooltip>{" "}
-            {/* <Tooltip
-              title={`Do you think something else should have been said instead? Provide feedback via an edit...`}
-              position="top"
-            >
-              <i
-                className="fa fa-commenting-o "
-                onClick={() => setEditMode(true)}
-              />
-            </Tooltip> */}
-            <Tooltip
-              title={`Was this offensive or inappropriate? Click to report.`}
-              position="top"
-            >
-              <i className="fa fa-flag " onClick={() => setReportMode(true)} />
-            </Tooltip>
-          </React.Fragment>
-        )}
-      </div>
-      {text}
-    </div>
-  );
-}
-
-function get_msg_actor(msg) {
-  if (msg.actors === undefined) {
-    return msg.actor.node_id;
-  } else {
-    return msg.actors[0];
-  }
-}
-
-function Entry({ msg, onReply, agents, selfId }) {
-  if (
-    [
-      "LookEvent",
-      "GoEvent",
-      "ExamineEvent",
-      "ErrorEvent",
-      "HelpEvent",
-      "text",
-    ].includes(msg.caller) ||
-    msg.caller === null
-  ) {
-    return <Setting text={msg.text} />;
-  } else {
-    var actor = get_msg_actor(msg);
-    return (
-      <Message
-        text={msg.text}
-        isSelf={msg.is_self || actor === selfId}
-        actor={agents[actor]}
-        onReply={onReply}
-      />
-    );
-  }
-}
 
 function ConnectedApp() {
   const wsUrl = React.useMemo(
@@ -273,7 +98,9 @@ function ConnectedApp() {
     />
   );
 }
+
 function Chat({ messages, onSubmit, persona, location, agents }) {
+  const [showCharacter, setShowCharacter] = React.useState(true);
   const [enteredText, setEnteredText] = React.useState("");
   const chatContainerRef = React.useRef(null);
   const getAgentName = (agent) => (agents ? agents[agent] : agent);
@@ -339,7 +166,10 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
   return (
     <div className="App">
       <div className="sidebar">
-        <Logo />
+        <div className="header-container">
+          <Logo />
+          <ExperienceInfo experience={15} />
+        </div>
         <div className="game-state">
           {persona ? (
             <div className="persona">
@@ -349,6 +179,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
               >
                 <div className="overlay">edit</div>
                 <span
+                  className="char-icon"
                   role="img"
                   aria-label="avatar"
                   onClick={() => setShowEmojiPicker(true)}
@@ -377,8 +208,27 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                   </div>
                 ) : null}
               </div>
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                {showCharacter ? (
+                  <FaWindowMinimize
+                    style={{}}
+                    onClick={() => setShowCharacter(false)}
+                  />
+                ) : (
+                  <BiWindow onClick={() => setShowCharacter(true)} />
+                )}
+              </div>
               <h3>You are {persona.name}</h3>
-              {persona.description}
+              {showCharacter ? (
+                <p className="persona-text">
+                  {persona.description.slice(
+                    0,
+                    persona.description.indexOf("Your Mission:")
+                  )}
+                </p>
+              ) : (
+                <div />
+              )}
               {dataModelHost && (
                 <Tooltip
                   style={{ position: "absolute", bottom: 0, right: 5 }}
@@ -397,31 +247,60 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
               )}
             </div>
           ) : null}
+          <CollapseibleBox
+            title="Mission"
+            titleBg="yellow"
+            containerBg="lightyellow"
+          >
+            {
+              <p className="mission-text">
+                {persona.description.slice(
+                  persona.description.indexOf(":") + 1,
+                  persona.description.length
+                )}
+              </p>
+            }
+          </CollapseibleBox>
           {location ? (
-            <div className="location">
-              <h3>{location.name}</h3>
-              {location.description.split("\n").map((para, idx) => (
-                <p key={idx}>{para}</p>
-              ))}
-              {dataModelHost && (
-                <Tooltip
-                  style={{ position: "absolute", bottom: 0, right: 5 }}
-                  title={`suggest changes for ${
-                    location.name.split(" the ")[1]
-                  }`}
-                  position="bottom"
+            <CollapseibleBox
+              title="Location"
+              titleBg="#76dada"
+              containerBg="#e0fffe"
+            >
+              <div className="location" style={{ margin: 0 }}>
+                <h3
+                  style={{
+                    textDecoration: "underline",
+                    backgroundColor: "none",
+                  }}
                 >
-                  <a
-                    className="data-model-deep-link"
-                    href={`${dataModelHost}/edit/${getEntityId(location.id)}`}
-                    rel="noopener noreferrer"
-                    target="_blank"
+                  {location.name.toUpperCase()}
+                </h3>
+                <p>
+                  {location.description.split("\n").map((para, idx) => (
+                    <p key={idx}>{para}</p>
+                  ))}
+                </p>
+                {dataModelHost && (
+                  <Tooltip
+                    style={{ position: "absolute", bottom: 0, right: 5 }}
+                    title={`suggest changes for ${
+                      location.name.split(" the ")[1]
+                    }`}
+                    position="bottom"
                   >
-                    <i className="fa fa-edit" aria-hidden="true" />
-                  </a>
-                </Tooltip>
-              )}
-            </div>
+                    <a
+                      className="data-model-deep-link"
+                      href={`${dataModelHost}/edit/${getEntityId(location.id)}`}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      <i className="fa fa-edit" aria-hidden="true" />
+                    </a>
+                  </Tooltip>
+                )}
+              </div>
+            </CollapseibleBox>
           ) : null}
         </div>
         {/* <Map /> */}

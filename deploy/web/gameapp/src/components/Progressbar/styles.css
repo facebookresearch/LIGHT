@@ -1,0 +1,27 @@
+.bar-container {
+  height: 20;
+  background-color: #e0e0de;
+  border-radius: 5;
+  margin: 50;
+  border-style: outset;
+  border-radius: 15px;
+  box-shadow: 5px 2px 5px;
+  border-color: silver;
+  border-width: thick;
+  max-width: 15em;
+}
+
+.bar-filler {
+  height: 100%;
+  border-radius: inherit;
+  text-align: right;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bar-label {
+  padding: 5;
+  color: grey;
+  font-weight: bold;
+}

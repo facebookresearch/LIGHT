@@ -1,0 +1,34 @@
+.header-container {
+  padding: 10px;
+  z-index: -1;
+  background-color: #bf8315;
+  box-shadow: 0 4px 4px -2px black;
+  border-style: double;
+  border-color: yellow;
+  border-radius: 15px;
+}
+
+.mission-container {
+  background-color: yellow;
+  box-shadow: 2px 2px 2px black;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.mission-header {
+  text-decoration: underline;
+  font-weight: bolder;
+  color: white;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  text-shadow: 1px 1px black;
+}
+
+.mission-text {
+  text-align: center;
+  margin-top: 0px;
+  padding-top: 0;
+}
