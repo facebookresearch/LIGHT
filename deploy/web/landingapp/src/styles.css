@@ -10,7 +10,7 @@
   font-size: 18px;
   box-sizing: border-box;
   overflow: auto;
-  font-family: fantasy;
+  font-family: Lora, serif;
 }
 
 body.dark-mode {

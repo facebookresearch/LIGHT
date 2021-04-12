@@ -1,7 +1,7 @@
 .collapsible-container {
   border-radius: 25px;
   box-shadow: 5px 2px 5px;
-  margin: 20px 20px 0px 20px;
+  margin: 10px 20px 0px 10px;
   width: 100%;
 }
 
@@ -16,7 +16,8 @@
 
 .collapsible-header--text {
   margin-bottom: 0px;
-  margin-top: 5px;
+  margin-top: 2px;
+  font-family: fantasy;
 }
 
 .collapsible-header--icon {
@@ -30,5 +31,4 @@
 .collapsible-body {
   border-bottom-left-radius: 25px;
   border-bottom-right-radius: 25px;
-  padding: 1em;
 }

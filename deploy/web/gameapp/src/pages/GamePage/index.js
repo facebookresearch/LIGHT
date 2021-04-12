@@ -163,12 +163,13 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
     },
     [setEnteredText, chatInputRef]
   );
+
   return (
     <div className="App">
       <div className="sidebar">
         <div className="header-container">
           <Logo />
-          <ExperienceInfo experience={15} />
+          <ExperienceInfo experience={13} />
         </div>
         <div className="game-state">
           {persona ? (
@@ -210,17 +211,22 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
               </div>
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 {showCharacter ? (
-                  <FaWindowMinimize
-                    style={{}}
-                    onClick={() => setShowCharacter(false)}
-                  />
+                  <FaWindowMinimize onClick={() => setShowCharacter(false)} />
                 ) : (
                   <BiWindow onClick={() => setShowCharacter(true)} />
                 )}
               </div>
-              <h3>You are {persona.name}</h3>
+              <h3
+                style={{
+                  fontFamily: "fantasy",
+                  fontWeight: "900",
+                  marginTop: "6px",
+                }}
+              >
+                You are {persona.prefix} {persona.name}
+              </h3>
               {showCharacter ? (
-                <p className="persona-text">
+                <p className="persona-text" style={{ fontSize: "14px" }}>
                   {persona.description.slice(
                     0,
                     persona.description.indexOf("Your Mission:")
@@ -276,7 +282,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                 >
                   {location.name.toUpperCase()}
                 </h3>
-                <p>
+                <p style={{ paddingBottom: 0 }}>
                   {location.description.split("\n").map((para, idx) => (
                     <p key={idx}>{para}</p>
                   ))}

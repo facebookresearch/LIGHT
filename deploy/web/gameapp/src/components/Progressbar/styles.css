@@ -1,5 +1,5 @@
 .bar-container {
-  height: 20;
+  height: 1.2em;
   background-color: #e0e0de;
   border-radius: 5;
   margin: 50;
@@ -21,7 +21,17 @@
 }
 
 .bar-label {
-  padding: 5;
   color: grey;
   font-weight: bold;
+  position: absolute;
+  left: 60%;
+}
+
+@media only screen and (max-width: 500px) {
+  .bar-label {
+    color: grey;
+    font-weight: bold;
+    position: absolute;
+    left: 30%;
+  }
 }
