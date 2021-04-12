@@ -1,3 +1,13 @@
+.header-container {
+  padding: 10px;
+  z-index: -1;
+  background-color: #bf8315;
+  box-shadow: 0 4px 4px -2px black;
+  border-style: double;
+  border-color: yellow;
+  border-radius: 15px;
+}
+
 .mission-container {
   background-color: yellow;
   box-shadow: 2px 2px 2px black;
@@ -19,9 +29,6 @@
 
 .mission-text {
   text-align: center;
-  font-weight: bolder;
-  color: grey;
   margin-top: 0px;
   padding-top: 0;
-  text-shadow: 1px 1px black;
 }

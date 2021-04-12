@@ -6,7 +6,7 @@ import { FaWindowMinimize } from "react-icons/fa";
 import "./styles.css";
 
 const CollapsibleBox = (props) => {
-  const { title, titleBg, containerBg } = props;
+  const { title, titleBg, containerBg, collapsedContent } = props;
 
   const [isCollapsed, setIsCollapsed] = useState(false);
   const openHandler = () => setIsCollapsed(false);
@@ -25,13 +25,15 @@ const CollapsibleBox = (props) => {
         <h3 className="collapsible-header--text">{title}</h3>
         <div className="collapsible-header--icon">
           {isCollapsed ? (
-            <BiWindow style={{}} onClick={openHandler} />
+            <BiWindow color="black" onClick={openHandler} />
           ) : (
-            <FaWindowMinimize onClick={closeHandler} />
+            <FaWindowMinimize color="black" onClick={closeHandler} />
           )}
         </div>
       </div>
-      {isCollapsed ? null : (
+      {isCollapsed ? (
+        <div>{collapsedContent}</div>
+      ) : (
         <div
           className="collapsible-body"
           style={{ backgroundColor: containerBg }}

@@ -15,7 +15,7 @@ import { useWSDataSource } from "../../useWSDataSource";
 import Entry from "./Entry";
 import ExperienceInfo from "../../components/ExperienceInfo";
 import CollapseibleBox from "../../components/CollapsibleBox";
-import Logo from "../../components/Logo";
+import Logo from "../../components/Logo/index.js";
 import LoadingScreen from "../../LoadingScreen";
 
 import { setCaretPosition } from "../../utils";
@@ -24,6 +24,8 @@ import CONFIG from "../../config.js";
 
 //Icons
 import { FaStar } from "react-icons/fa";
+import { BiWindow } from "react-icons/bi";
+import { FaWindowMinimize } from "react-icons/fa";
 
 const createWebSocketUrlFromBrowserUrl = (url) => {
   const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
@@ -98,6 +100,7 @@ function ConnectedApp() {
 }
 
 function Chat({ messages, onSubmit, persona, location, agents }) {
+  const [showCharacter, setShowCharacter] = React.useState(true);
   const [enteredText, setEnteredText] = React.useState("");
   const chatContainerRef = React.useRef(null);
   const getAgentName = (agent) => (agents ? agents[agent] : agent);
@@ -163,8 +166,10 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
   return (
     <div className="App">
       <div className="sidebar">
-        <Logo />
-        <ExperienceInfo experience={15} />
+        <div className="header-container">
+          <Logo />
+          <ExperienceInfo experience={15} />
+        </div>
         <div className="game-state">
           {persona ? (
             <div className="persona">
@@ -174,6 +179,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
               >
                 <div className="overlay">edit</div>
                 <span
+                  className="char-icon"
                   role="img"
                   aria-label="avatar"
                   onClick={() => setShowEmojiPicker(true)}
@@ -202,15 +208,27 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                   </div>
                 ) : null}
               </div>
-              <CollapseibleBox title="">
-                <h3>You are {persona.name}</h3>
-                <p>
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                {showCharacter ? (
+                  <FaWindowMinimize
+                    style={{}}
+                    onClick={() => setShowCharacter(false)}
+                  />
+                ) : (
+                  <BiWindow onClick={() => setShowCharacter(true)} />
+                )}
+              </div>
+              <h3>You are {persona.name}</h3>
+              {showCharacter ? (
+                <p className="persona-text">
                   {persona.description.slice(
                     0,
                     persona.description.indexOf("Your Mission:")
                   )}
                 </p>
-              </CollapseibleBox>
+              ) : (
+                <div />
+              )}
               {dataModelHost && (
                 <Tooltip
                   style={{ position: "absolute", bottom: 0, right: 5 }}
@@ -256,11 +274,13 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                     backgroundColor: "none",
                   }}
                 >
-                  {location.name}
+                  {location.name.toUpperCase()}
                 </h3>
-                {location.description.split("\n").map((para, idx) => (
-                  <p key={idx}>{para}</p>
-                ))}
+                <p>
+                  {location.description.split("\n").map((para, idx) => (
+                    <p key={idx}>{para}</p>
+                  ))}
+                </p>
                 {dataModelHost && (
                   <Tooltip
                     style={{ position: "absolute", bottom: 0, right: 5 }}

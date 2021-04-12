@@ -1,15 +1,17 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import "./styles.css";
 
-export default function Logo() {
+const Logo = (props) => {
   const builder_url =
     window.location.protocol + "//" + window.location.host + "/builder/";
   return (
     <div className="header">
       <img alt="logo" src="/scribe.png" />
-      <div>
-        <h1>LIGHT</h1>
-        <span>Learning in Interactive Games with Humans and Text</span>
+      <div className="logo-container">
+        <h1 className="logo-title">LIGHT</h1>
+        <p className="logo-text">
+          Learning in Interactive Games with Humans and Text
+        </p>
         {/*<Link to="/profile">
           <h3>
           My Profile
@@ -23,4 +25,6 @@ export default function Logo() {
       </div>
     </div>
   );
-}
+};
+
+export default Logo;

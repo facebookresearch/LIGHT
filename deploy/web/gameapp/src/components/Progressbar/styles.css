@@ -15,6 +15,9 @@
   height: 100%;
   border-radius: inherit;
   text-align: right;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .bar-label {
