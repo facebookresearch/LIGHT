@@ -1,0 +1,27 @@
+.speechbubble {
+  /* (A1) FONT */
+  font-family: arial, sans-serif;
+  font-size: 1em;
+  color: black;
+  /* (A2) DIMENSIONS + BACKGROUND */
+  position: relative;
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  z-index: 10;
+  margin: 10px;
+}
+
+.speechbubble::after {
+  position: absolute;
+  content: "";
+  border: 20px solid transparent;
+}
+
+.bottom.speechbubble::after {
+  border-top-color: white;
+  border-bottom: 0;
+  bottom: -10px;
+  left: 30%;
+  margin-left: -20px;
+}

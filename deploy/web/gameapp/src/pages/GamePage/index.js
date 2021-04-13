@@ -17,6 +17,7 @@ import ExperienceInfo from "../../components/ExperienceInfo";
 import CollapseibleBox from "../../components/CollapsibleBox";
 import Logo from "../../components/Logo/index.js";
 import LoadingScreen from "../../LoadingScreen";
+import SpeechBubble from "../../components/SpeechBubble";
 
 import { setCaretPosition } from "../../utils";
 
@@ -221,6 +222,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                   fontFamily: "fantasy",
                   fontWeight: "900",
                   marginTop: "6px",
+                  fontSize: "large",
                 }}
               >
                 You are {persona.prefix} {persona.name}
@@ -364,7 +366,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
             />
           </form>
           <div className="actions">
-            <div style={{ float: "left" }}>
+            <div style={{ display: "flex", flexDirection: "row" }}>
               {/* {location ? <span>{location.name} &mdash; </span> : null} */}
               {presentAgents
                 .filter((id) => id !== persona.id) // only show users other than self
@@ -374,26 +376,14 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                   return (
                     <span
                       key={agentName}
-                      style={{
-                        backgroundColor: "#eee",
-                        borderRadius: 3,
-                        padding: "1px 3px",
-                        marginRight: 5,
+                      onClick={() => {
+                        setTextTellAgent(agentName);
                       }}
                     >
-                      <span
-                        onClick={() => {
-                          setTextTellAgent(agentName);
-                        }}
-                      >
-                        {agentName}{" "}
-                        <Tooltip
-                          title={`tell ${agentName}...`}
-                          position="bottom"
-                        >
-                          <i className="fa fa-comment-o" aria-hidden="true" />
-                        </Tooltip>
-                      </span>
+                      <Tooltip title={`tell ${agentName}...`} position="bottom">
+                        <SpeechBubble text={`tell ${agentName}...`} />
+                      </Tooltip>
+
                       {dataModelHost && (
                         <>
                           {" "}

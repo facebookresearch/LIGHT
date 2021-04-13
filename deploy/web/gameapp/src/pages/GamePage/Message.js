@@ -114,7 +114,7 @@ const Message = ({ text, caller, actor, isSelf, onReply }) => {
   return (
     <div className={classNames}>
       <div className="agent">
-        <span>{actor}</span>
+        <span style={{ fontFamily: "fantasy" }}>{actor.toUpperCase()}</span>
         {isSelf ? null : (
           <React.Fragment>
             <Tooltip title={`Award ${actor} Experience`} position="top">

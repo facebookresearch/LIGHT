@@ -239,7 +239,7 @@ input::placeholder {
 
 input.chatbox:active,
 input.chatbox:focus {
-  border: 3px solid #e49475;
+  border: 3px solid #fcff56;
   outline: none;
   font-style: normal;
 }
@@ -263,7 +263,7 @@ input.edit-message {
 }
 
 .controls .actions {
-  padding: 10px 10px 10px;
+  padding: 10px 10px 0px;
   font-size: 14px;
   background-color: rgb(228, 226, 221);
   flex: 1;
@@ -335,8 +335,7 @@ i.fa {
   line-height: 1.35em;
   box-shadow: 5px 2px 5px;
   width: 95%;
-  padding-bottom: 5px;
-  padding-right: 10px;
+  padding: 0px 10px 5px 10px;
 }
 
 .persona h3,
