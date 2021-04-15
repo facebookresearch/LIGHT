@@ -210,7 +210,14 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                   </div>
                 ) : null}
               </div>
-              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  margin: "10px",
+                }}
+              >
                 {showCharacter ? (
                   <FaWindowMinimize onClick={() => setShowCharacter(false)} />
                 ) : (

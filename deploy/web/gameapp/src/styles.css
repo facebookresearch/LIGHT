@@ -327,14 +327,15 @@ i.fa {
 }
 
 .persona {
-  margin: 60px 0 0 0px;
+  margin: 60px 10px 0px 0px;
   background-color: lightgoldenrodyellow;
 
-  border-radius: 10px;
+  border-radius: 25px;
+  box-shadow: 5px 2px 5px;
   position: relative;
   line-height: 1.35em;
   box-shadow: 5px 2px 5px;
-  width: 95%;
+  width: 94%;
   padding: 0px 10px 5px 10px;
 }
 
