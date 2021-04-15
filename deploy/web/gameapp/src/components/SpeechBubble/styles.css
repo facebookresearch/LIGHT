@@ -4,7 +4,7 @@
   color: black;
   position: relative;
   background: white;
-  padding: 10px;
+  padding: 5px;
   border-radius: 10px;
   z-index: 10;
   margin: 10px;
@@ -20,9 +20,10 @@
 .bottom.speechbubble::after {
   border-top-color: white;
   border-bottom: 0;
-  bottom: -10px;
   left: 30%;
-  margin-left: -20px;
+  margin-left: -37%;
+  top: 20%;
+  z-index: -1;
 }
 
 .speechbubble :hover {

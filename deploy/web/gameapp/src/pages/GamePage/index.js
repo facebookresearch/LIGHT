@@ -383,7 +383,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                       <Tooltip title={`tell ${agentName}...`} position="bottom">
                         <SpeechBubble text={`${agentName}`} />
                       </Tooltip>
-
+                      <SpeechBubble text={"BUBBLEMAN"} />
                       {dataModelHost && (
                         <>
                           {" "}
