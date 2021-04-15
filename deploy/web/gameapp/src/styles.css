@@ -333,7 +333,6 @@ i.fa {
   border-radius: 25px;
   box-shadow: 5px 2px 5px;
   position: relative;
-  line-height: 1.35em;
   box-shadow: 5px 2px 5px;
   width: 94%;
   padding: 0px 10px 5px 10px;
@@ -349,7 +348,6 @@ i.fa {
 .location p {
   margin: 0;
   font-size: 14px;
-  line-height: 1.4em;
   white-space: pre-line;
   text-align: center;
 }
@@ -380,9 +378,7 @@ i.fa {
 }
 
 .location {
-  padding: 3px 10px 10px 10px;
   font-size: 16px;
-  line-height: 1.35em;
   margin-bottom: 20px;
   border-radius: 10px;
   position: relative;

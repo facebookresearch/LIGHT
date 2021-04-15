@@ -18,6 +18,8 @@
   margin-bottom: 0px;
   margin-top: 2px;
   font-family: fantasy;
+  text-align: center;
+  margin-left: 2em;
 }
 
 .collapsible-header--icon {
@@ -31,4 +33,5 @@
 .collapsible-body {
   border-bottom-left-radius: 25px;
   border-bottom-right-radius: 25px;
+  padding: 10px;
 }

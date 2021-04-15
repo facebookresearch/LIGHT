@@ -291,7 +291,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                 >
                   {location.name.toUpperCase()}
                 </h3>
-                <p style={{ paddingBottom: 0 }}>
+                <p>
                   {location.description.split("\n").map((para, idx) => (
                     <p key={idx}>{para}</p>
                   ))}
@@ -390,7 +390,6 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                       <Tooltip title={`tell ${agentName}...`} position="bottom">
                         <SpeechBubble text={`${agentName}`} />
                       </Tooltip>
-                      <SpeechBubble text={"BUBBLEMAN"} />
                       {dataModelHost && (
                         <>
                           {" "}
