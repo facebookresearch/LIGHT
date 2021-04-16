@@ -115,6 +115,7 @@ export function useWSDataSource(url) {
               name: action.actor.name,
               description: action.actor.persona,
               id: action.actor.node_id,
+              prefix: action.actor.name_prefix,
             });
           }
           const neighbors = getNeighbors(action);

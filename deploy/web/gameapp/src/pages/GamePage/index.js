@@ -17,6 +17,7 @@ import ExperienceInfo from "../../components/ExperienceInfo";
 import CollapseibleBox from "../../components/CollapsibleBox";
 import Logo from "../../components/Logo/index.js";
 import LoadingScreen from "../../LoadingScreen";
+import SpeechBubble from "../../components/SpeechBubble";
 
 import { setCaretPosition } from "../../utils";
 
@@ -163,12 +164,13 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
     },
     [setEnteredText, chatInputRef]
   );
+
   return (
     <div className="App">
       <div className="sidebar">
         <div className="header-container">
           <Logo />
-          <ExperienceInfo experience={15} />
+          <ExperienceInfo experience={13} />
         </div>
         <div className="game-state">
           {persona ? (
@@ -208,19 +210,32 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                   </div>
                 ) : null}
               </div>
-              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  margin: "10px",
+                }}
+              >
                 {showCharacter ? (
-                  <FaWindowMinimize
-                    style={{}}
-                    onClick={() => setShowCharacter(false)}
-                  />
+                  <FaWindowMinimize onClick={() => setShowCharacter(false)} />
                 ) : (
                   <BiWindow onClick={() => setShowCharacter(true)} />
                 )}
               </div>
-              <h3>You are {persona.name}</h3>
+              <h3
+                style={{
+                  fontFamily: "fantasy",
+                  fontWeight: "900",
+                  marginTop: "6px",
+                  fontSize: "large",
+                }}
+              >
+                You are {persona.prefix} {persona.name}
+              </h3>
               {showCharacter ? (
-                <p className="persona-text">
+                <p className="persona-text" style={{ fontSize: "14px" }}>
                   {persona.description.slice(
                     0,
                     persona.description.indexOf("Your Mission:")
@@ -358,7 +373,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
             />
           </form>
           <div className="actions">
-            <div style={{ float: "left" }}>
+            <div style={{ display: "flex", flexDirection: "row" }}>
               {/* {location ? <span>{location.name} &mdash; </span> : null} */}
               {presentAgents
                 .filter((id) => id !== persona.id) // only show users other than self
@@ -368,26 +383,13 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
                   return (
                     <span
                       key={agentName}
-                      style={{
-                        backgroundColor: "#eee",
-                        borderRadius: 3,
-                        padding: "1px 3px",
-                        marginRight: 5,
+                      onClick={() => {
+                        setTextTellAgent(agentName);
                       }}
                     >
-                      <span
-                        onClick={() => {
-                          setTextTellAgent(agentName);
-                        }}
-                      >
-                        {agentName}{" "}
-                        <Tooltip
-                          title={`tell ${agentName}...`}
-                          position="bottom"
-                        >
-                          <i className="fa fa-comment-o" aria-hidden="true" />
-                        </Tooltip>
-                      </span>
+                      <Tooltip title={`tell ${agentName}...`} position="bottom">
+                        <SpeechBubble text={`${agentName}`} />
+                      </Tooltip>
                       {dataModelHost && (
                         <>
                           {" "}

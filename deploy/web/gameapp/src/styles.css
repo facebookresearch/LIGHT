@@ -11,7 +11,7 @@
   box-sizing: border-box;
   overflow: auto;
   background-image: url("./assets/images/InexplicableTavern_hungover.png");
-  font-family: fantasy;
+  font-family: Lora, serif;
 }
 
 body.dark-mode {
@@ -99,8 +99,10 @@ a {
   margin: 30px 20px 0px;
   overflow-y: auto;
   border-radius: 10px 10px 0px 0px;
-  padding: 10px;
   position: relative;
+  border-style: ridge;
+  border-color: lightgray;
+  border-width: 10px 10px 0px 10px;
 
   /* box-shadow: 0px 10px 10px rgba(250, 199, 169, 0.5); */
 }
@@ -215,6 +217,9 @@ a {
   border: 1px solid rgb(184, 184, 184);
   border-top: none;
   overflow: hidden;
+  border-style: ridge;
+  border-color: lightgray;
+  border-width: 10px 10px 10px 10px;
 }
 
 .controls input {
@@ -234,7 +239,7 @@ input::placeholder {
 
 input.chatbox:active,
 input.chatbox:focus {
-  border: 3px solid #e49475;
+  border: 3px solid #fcff56;
   outline: none;
   font-style: normal;
 }
@@ -258,7 +263,7 @@ input.edit-message {
 }
 
 .controls .actions {
-  padding: 10px 10px 10px;
+  padding: 10px 10px 0px;
   font-size: 14px;
   background-color: rgb(228, 226, 221);
   flex: 1;
@@ -322,29 +327,29 @@ i.fa {
 }
 
 .persona {
-  font-size: 16px;
-  margin: 95px 0 0 0px;
+  margin: 60px 10px 0px 0px;
   background-color: lightgoldenrodyellow;
-  padding: 10px 25px 25px;
-  border-radius: 10px;
-  position: relative;
-  line-height: 1.35em;
+
+  border-radius: 25px;
   box-shadow: 5px 2px 5px;
-  width: 85%;
-  padding-bottom: 5px;
+  position: relative;
+  box-shadow: 5px 2px 5px;
+  width: 94%;
+  padding: 0px 10px 5px 10px;
 }
 
 .persona h3,
 .location h3 {
   text-align: center;
-  margin: 5px 0 10px;
+  font-size: 14px;
+  margin: 0;
 }
 
 .location p {
-  margin: 8px 0 0;
-  font-size: 15px;
-  line-height: 1.4em;
+  margin: 0;
+  font-size: 14px;
   white-space: pre-line;
+  text-align: center;
 }
 
 .persona .icon {
@@ -352,11 +357,11 @@ i.fa {
   left: 50%;
   top: 0%;
   transform: translate(-50%, -75%);
-  font-size: 72px;
+  font-size: 50px;
   background-color: #fdf1b3;
   border-radius: 72px;
-  height: 90px;
-  width: 90px;
+  height: 60px;
+  width: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -364,7 +369,7 @@ i.fa {
 }
 
 .char-icon {
-  padding-top: 30%;
+  padding-top: 10%;
 }
 .persona-text {
   margin: 0px;
@@ -373,9 +378,7 @@ i.fa {
 }
 
 .location {
-  padding: 15px 25px 25px;
   font-size: 16px;
-  line-height: 1.35em;
   margin-bottom: 20px;
   border-radius: 10px;
   position: relative;

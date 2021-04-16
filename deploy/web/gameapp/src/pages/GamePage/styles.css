@@ -29,6 +29,6 @@
 
 .mission-text {
   text-align: center;
-  margin-top: 0px;
-  padding-top: 0;
+  margin: 0px;
+  font-size: 14px;
 }
