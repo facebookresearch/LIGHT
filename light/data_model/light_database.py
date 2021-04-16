@@ -3654,3 +3654,7 @@ class LIGHTDatabase:
                 """,
                 (gained_experience, user_id, db_id),
             )
+
+        # Checkpoint that these changes are now in the DB.
+        target_node._base_experience = target_node.xp
+        target_node._base_reward_points = target_node.reward_xp
