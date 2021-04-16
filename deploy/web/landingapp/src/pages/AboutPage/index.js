@@ -26,18 +26,18 @@ const AboutPage = (props) => {
         <p style={{ color: "white" }}>
           LIGHT is a research project focused on creating realistic interactive
           AI. LIGHT stands for
-          <i>“Learning in Interactive Games with Humans and Text.”</i>
-          The LIGHT game is a direct application of
+           <i>“Learning in Interactive Games with Humans and Text.”</i>
+           The LIGHT game is a direct application of
           <a href="https://parl.ai/projects/light/"> our research</a>, and also
-          stands as a live environment to allow players to interact with models
+          acts as a live environment to allow players to interact with models
           and other players directly. We believe that by collecting gameplay
           interactions, we can train better agents to follow stories and create
           meaningful experiences for players.
         </p>
         <p style={{ color: "white" }}>
           We also feel that model-supported architectures can enable creators to
-          tell their own stories. Thus, much of our project’s research supports
-          supporting user-created content in our world builder. By reducing the
+          tell their own stories. Thus, much of our project’s research will
+          support user-created content in our world builder. By reducing the
           barrier of entry to create full, fleshed out worlds, it should be
           easier for anyone to create and share a slice of fantasy.
         </p>
