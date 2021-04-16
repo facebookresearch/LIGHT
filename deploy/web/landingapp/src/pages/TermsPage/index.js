@@ -26,7 +26,7 @@ const TermsPage = (props) => {
         <h1 style={{ color: "white" }}>Terms</h1>
         <p>
           Facebook will process the messages you send in playing the game in
-          accordance with our Data Policy (facebook.com/policy). Messages you
+          accordance with our Data Policy (<a href="http://facebook.com/policy" target="_blank">facebook.com/policy</a>). Messages you
           send in playing the game may be used by Facebook for research purposes
           and as otherwise specified in our Data Policy, and may be used by
           and/or shared with third parties in connection with this research.
