@@ -120,6 +120,7 @@ class GameInstance:
         else:
             self.world = g
 
+        self.db = ldb
         self.game_id = game_id
         self.players = []
         self.providers = []
