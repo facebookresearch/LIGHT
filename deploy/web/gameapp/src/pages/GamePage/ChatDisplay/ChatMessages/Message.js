@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import "../../styles.css";
 import { Tooltip } from "react-tippy";
-import CONFIG from "../../config.js";
+import CONFIG from "../../../../config.js";
 
 function handleReport(reportedMessage, reportReason) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
