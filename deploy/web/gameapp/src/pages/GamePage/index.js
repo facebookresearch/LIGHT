@@ -145,16 +145,15 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
           <Logo />
           <ExperienceInfo experience={13} />
         </div>
-        <div className="game-state">
-          <Sidebar
-            persona={persona}
-            location={location}
-            dataModelHost={dataModelHost}
-            getEntityId={getEntityId}
-          />
-        </div>
-        {/* <Map /> */}
-        {/* <div className="app-controls">
+        <Sidebar
+          persona={persona}
+          location={location}
+          dataModelHost={dataModelHost}
+          getEntityId={getEntityId}
+        />
+      </div>
+      {/* <Map /> */}
+      {/* <div className="app-controls">
           <label>
             <input
               type="checkbox"
@@ -164,7 +163,6 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
             Admin Mode
           </label>
         </div> */}
-      </div>
       <ChatDisplay
         scrollToBottom={scrollToBottom}
         messages={messages}

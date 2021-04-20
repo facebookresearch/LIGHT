@@ -1,5 +1,7 @@
 import React from "react";
 
+import "./styles.css";
+
 //Custom Components
 import ChatInput from "./ChatInput";
 import ActionBar from "./ActionBar";

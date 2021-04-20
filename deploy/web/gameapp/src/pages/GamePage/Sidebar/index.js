@@ -11,6 +11,7 @@ import onClickOutside from "react-onclickoutside";
 
 //CUSTOM COMPONENTS
 import CollapseibleBox from "../../../components/CollapsibleBox";
+import IconCollapsibleBox from "../../../components/IconCollapsibleBox";
 
 //Icons
 import { BiWindow } from "react-icons/bi";
@@ -121,6 +122,21 @@ const SideBar = ({ persona, location, dataModelHost, getEntityId }) => {
           )}
         </div>
       ) : null}
+      <IconCollapsibleBox
+        title={`You are ${persona.prefix} ${persona.name}`}
+        showEmojiPicker={showEmojiPicker}
+        selectedEmoji={selectedEmoji}
+        setShowEmojiPicker={setShowEmojiPicker}
+        BlurClosingPicker={BlurClosingPicker}
+        setSelectedEmoji={setSelectedEmoji}
+      >
+        <p className="persona-text" style={{ fontSize: "14px" }}>
+          {persona.description.slice(
+            0,
+            persona.description.indexOf("Your Mission:")
+          )}
+        </p>
+      </IconCollapsibleBox>
       <CollapseibleBox
         title="Mission"
         titleBg="yellow"

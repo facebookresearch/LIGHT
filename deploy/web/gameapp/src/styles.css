@@ -41,10 +41,6 @@ a {
     grid-template-rows: min-content 1fr;
   }
 
-  .chat-wrapper {
-    grid-row-start: 2;
-  }
-
   div.sidebar {
     margin: 0px;
   }
@@ -68,17 +64,18 @@ a {
 .sidebar {
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  overflow-y: scroll;
   border-radius: 15px;
+  min-width: 400px;
+  align-items: center;
 }
 
-.game-state {
+.chat-container {
   flex: 1;
   overflow: auto;
-  padding: 0px 20px 20px 20px;
+  padding: 0px 20px 0px 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 .chat-wrapper {
@@ -114,7 +111,6 @@ a {
   animation-fill-mode: forwards;
   opacity: 0;
   background-color: lightgrey;
-  height: 100%;
 }
 
 .message.type-setting {
@@ -266,7 +262,6 @@ input.edit-message {
   padding: 10px 10px 0px;
   font-size: 14px;
   background-color: rgb(228, 226, 221);
-  flex: 1;
 }
 
 span.action:first-child {

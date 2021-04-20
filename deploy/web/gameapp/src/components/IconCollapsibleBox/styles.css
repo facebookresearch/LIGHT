@@ -1,0 +1,26 @@
+.collapsible-container__icon {
+  margin: 60px 10px 0px 0px;
+  background-color: lightgoldenrodyellow;
+  border-radius: 25px;
+  box-shadow: 5px 2px 5px;
+  position: relative;
+  box-shadow: 5px 2px 5px;
+  margin: 10px 70px 0px 10px;
+  width: 90%;
+}
+
+.collapsible-container__icon .icon {
+  position: absolute;
+  left: 50%;
+  top: 0%;
+  transform: translate(-50%, -75%);
+  font-size: 50px;
+  background-color: #fdf1b3;
+  border-radius: 72px;
+  height: 60px;
+  width: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 5px solid gold;
+}

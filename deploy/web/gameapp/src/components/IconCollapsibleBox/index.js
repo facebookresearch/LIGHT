@@ -9,15 +9,23 @@ import onClickOutside from "react-onclickoutside";
 
 import "./styles.css";
 
-const IconCollapsibleBox = (props) => {
-  const { title, titleBg, containerBg } = props;
-
+const IconCollapsibleBox = ({
+  showEmojiPicker,
+  setSelectedEmoji,
+  setShowEmojiPicker,
+  selectedEmoji,
+  BlurClosingPicker,
+  title,
+  titleBg,
+  containerBg,
+  children,
+}) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const openHandler = () => setIsCollapsed(false);
   const closeHandler = () => setIsCollapsed(true);
 
   return (
-    <div className="collapsible-container">
+    <div className="collapsible-container__icon">
       <div
         className={cx("icon", { editing: showEmojiPicker })}
         style={{ cursor: "pointer" }}
@@ -60,7 +68,6 @@ const IconCollapsibleBox = (props) => {
         }}
       >
         <div />
-        <h3 className="collapsible-header--text">{title}</h3>
         <div className="collapsible-header--icon">
           {isCollapsed ? (
             <BiWindow style={{}} onClick={openHandler} />
@@ -69,12 +76,13 @@ const IconCollapsibleBox = (props) => {
           )}
         </div>
       </div>
+      <h5 className="collapsible-header--text">{title}</h5>
       {isCollapsed ? null : (
         <div
           className="collapsible-body"
           style={{ backgroundColor: containerBg }}
         >
-          {props.children}
+          {children}
         </div>
       )}
     </div>
