@@ -14,7 +14,7 @@ import ExperienceInfo from "../../../components/ExperienceInfo";
 import Logo from "../../../components/Logo/index.js";
 import CollapseibleBox from "../../../components/CollapsibleBox";
 import IconCollapsibleBox from "../../../components/IconCollapsibleBox";
-
+import GameButton from "../../../components/GameButton";
 //Icons
 import { BiWindow } from "react-icons/bi";
 import { FaWindowMinimize } from "react-icons/fa";
@@ -65,7 +65,9 @@ const SideBar = ({
           </Tooltip>
         )}
       </div>
-
+      <div className="sidebar-row">
+        <GameButton text={"LOGOUT"} />
+      </div>
       <IconCollapsibleBox
         title={`You are ${persona.prefix} ${persona.name}`}
         showEmojiPicker={showEmojiPicker}
