@@ -9,7 +9,7 @@
   box-shadow: 5px 2px 5px;
   position: relative;
   box-shadow: 5px 2px 5px;
-  margin: 10px 0px 0px 10px;
+  margin: 10px 0px 10px 10px;
   width: 90%;
 }
 
@@ -27,4 +27,7 @@
   justify-content: center;
   align-items: center;
   border: 5px solid gold;
+}
+
+.collapsible-header--text {
 }

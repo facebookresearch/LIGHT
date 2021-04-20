@@ -10,6 +10,8 @@ import { Picker, emojiIndex } from "emoji-mart";
 import onClickOutside from "react-onclickoutside";
 
 //CUSTOM COMPONENTS
+import ExperienceInfo from "../../../components/ExperienceInfo";
+import Logo from "../../../components/Logo/index.js";
 import CollapseibleBox from "../../../components/CollapsibleBox";
 import IconCollapsibleBox from "../../../components/IconCollapsibleBox";
 
@@ -32,11 +34,16 @@ const SideBar = ({
   getEntityId,
   selectedEmoji,
   setSelectedEmoji,
+  exp,
 }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   return (
     <div className="sidebar">
+      <div className="header-container">
+        <Logo />
+        <ExperienceInfo experience={exp} />
+      </div>
       <div
         className={cx("icon", { editing: showEmojiPicker })}
         style={{ cursor: "pointer" }}
@@ -58,6 +65,7 @@ const SideBar = ({
           </Tooltip>
         )}
       </div>
+
       <IconCollapsibleBox
         title={`You are ${persona.prefix} ${persona.name}`}
         showEmojiPicker={showEmojiPicker}

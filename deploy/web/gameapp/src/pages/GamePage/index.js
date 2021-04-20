@@ -139,24 +139,19 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
 
   return (
     <div className="App">
-      <div className="sidebar">
-        <div className="header-container">
-          <Logo />
-          <ExperienceInfo experience={13} />
-        </div>
-        {persona ? (
-          <Sidebar
-            persona={persona}
-            location={location}
-            dataModelHost={dataModelHost}
-            getEntityId={getEntityId}
-            selectedEmoji={selectedEmoji}
-            setSelectedEmoji={setSelectedEmoji}
-          />
-        ) : (
-          <div />
-        )}
-      </div>
+      {persona ? (
+        <Sidebar
+          persona={persona}
+          location={location}
+          dataModelHost={dataModelHost}
+          getEntityId={getEntityId}
+          selectedEmoji={selectedEmoji}
+          setSelectedEmoji={setSelectedEmoji}
+          exp={13}
+        />
+      ) : (
+        <div />
+      )}
       {/* <Map /> */}
       {/* <div className="app-controls">
           <label>
