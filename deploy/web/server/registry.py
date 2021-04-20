@@ -47,6 +47,7 @@ class RegistryApplication(tornado.web.Application):
             FLAGS.hostname,
             FLAGS.port,
             given_tornado_settings=tornado_settings,
+            db=ldb,
         )
         self.router = RuleRouter(
             [Rule(PathMatches(f"/game.*/socket"), self.tornado_provider.app)]
