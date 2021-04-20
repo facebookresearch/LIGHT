@@ -18,6 +18,10 @@ from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint impo
     SharedStaticTaskState,
 )
 from light.data_model.light_database import LIGHTDatabase
+from mephisto.abstractions.databases.local_database import LocalMephistoDB
+from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
+from mephisto.data_model.worker import Worker
+from mephisto.data_model.unit import Unit
 
 import hydra
 import json
@@ -27,25 +31,33 @@ from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 LIGHT_DB_PATH = "/checkpoint/light/data/database3.db"
-RANDOM_OBJECT_LIST_SIZE = 10
+PRIMARY_OBJECT_LIST_SIZE = 5
+SECONDARY_OBJECT_LIST_SIZE = 5
 DEFAULT_NUM_TASKS = 20
+
+db = LocalMephistoDB()
+mephisto_data_browser = MephistoDataBrowser(db=db)
 
 defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    {"conf": "example"},
+    {"conf": "objects_interaction_task"},
 ]
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
+
 
 @dataclass
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
     light_db_path: str = LIGHT_DB_PATH
-    random_object_list_size: int = RANDOM_OBJECT_LIST_SIZE
+    primary_object_list_size: int = PRIMARY_OBJECT_LIST_SIZE
+    secondary_object_list_size: int = SECONDARY_OBJECT_LIST_SIZE
     num_tasks: int = DEFAULT_NUM_TASKS
+
+
 
 def get_object_list(db_path):
     db = LIGHTDatabase(db_path)
@@ -54,20 +66,34 @@ def get_object_list(db_path):
 
     return object_list
 
-def create_task_data(object_list, random_object_list_size, num_tasks):
+
+def create_task_data(
+    object_list, primary_object_list_size, secondary_object_list_size, num_tasks
+):
     random.shuffle(object_list)
     task_data_array = []
 
     for idx in range(num_tasks):
         obj_name = object_list[idx % len(object_list)]
-        random_object_list = random.sample(object_list, random_object_list_size)
-        target_object_name_list = [random_object for random_object in random.sample(object_list, random_object_list_size)]
-        task_data_array.append({ "primary_object": obj_name, "secondary_object_list": target_object_name_list })
+
+        random_object_list = random.sample(
+            object_list, primary_object_list_size + secondary_object_list_size
+        )
+        primary_object_list = random_object_list[:primary_object_list_size]
+        secondary_object_list = random_object_list[primary_object_list_size:]
+
+        task_data_array.append(
+            {
+                "primary_object_list": primary_object_list,
+                "secondary_object_list": secondary_object_list,
+            }
+        )
 
     return task_data_array
 
 
 register_script_config(name="scriptconfig", module=TestScriptConfig)
+
 
 def build_task(task_dir):
     """Rebuild the frontend for this task"""
@@ -95,6 +121,32 @@ def build_task(task_dir):
     os.chdir(return_dir)
 
 
+def validate_unit(unit):
+    if unit.get_assigned_agent() is None:
+        return
+
+    data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
+        "final_data"
+    ]
+    action_description = data["actionDescription"]
+
+    if (
+        len(action_description) <= 20
+        or action_description.lower().find("you") == -1
+        or (
+            action_description.lower()[-1] != "."
+            and action_description.lower()[-1] != "?"
+            and action_description.lower()[-1] != "!"
+        )
+    ):
+        # Not in second person or invalid punctuation
+        print("Action " + action_description + " was not validated!")
+        unit.get_assigned_agent().soft_reject_work()
+        worker = unit.get_assigned_agent().get_worker()
+        worker.grant_qualification("objects_interaction_task_block", 1)
+    return
+
+
 @hydra.main(config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     task_dir = cfg.task_dir
@@ -103,9 +155,30 @@ def main(cfg: DictConfig) -> None:
         return True
 
     shared_state = SharedStaticTaskState(
-        static_task_data=create_task_data(get_object_list(cfg.light_db_path), cfg.random_object_list_size, cfg.num_tasks),
+        static_task_data=create_task_data(
+            get_object_list(cfg.light_db_path),
+            cfg.primary_object_list_size,
+            cfg.secondary_object_list_size,
+            cfg.num_tasks,
+        ),
         validate_onboarding=onboarding_always_valid,
     )
+    shared_state.on_unit_submitted = validate_unit
+
+    shared_state.mturk_specific_qualifications = [
+        {
+            "QualificationTypeId": "00000000000000000040",
+            "Comparator": "GreaterThanOrEqualTo",
+            "IntegerValues": [3000],
+            "ActionsGuarded": "DiscoverPreviewAndAccept",
+        },
+        {
+            "QualificationTypeId": "000000000000000000L0",
+            "Comparator": "GreaterThanOrEqualTo",
+            "IntegerValues": [97],
+            "ActionsGuarded": "DiscoverPreviewAndAccept",
+        },
+    ]
 
     build_task(task_dir)
 

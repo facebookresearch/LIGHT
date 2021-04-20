@@ -6,7 +6,6 @@ Task for the Custom World Interactions task (WIP)
 
 - **src/**: contains the react frontend components that comprise the frontend, as well as the css and main javascript file that ties it all together. Of these, the `src/app.jsx` file is currently the most interesting as it displays the landing page.
 
-
 ### Files
 
 The rest of the files are associated with the process of building the finalized javascript main via node and outputting it into the server directory.

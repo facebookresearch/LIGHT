@@ -25,6 +25,7 @@ import time
 import traceback
 import uuid
 import warnings
+import asyncio
 from collections import defaultdict
 from zmq.eventloop import ioloop
 
@@ -130,13 +131,14 @@ tornado_settings = None
 
 
 class Application(tornado.web.Application):
-    def __init__(self, given_tornado_settings=None):
+    def __init__(self, given_tornado_settings=None, db=None):
         global tornado_settings
         use_tornado_settings = tornado_settings
         if given_tornado_settings is not None:
             use_tornado_settings = given_tornado_settings
         self.subs = {}
         self.new_subs = defaultdict(list)
+        self.db = db
         super(Application, self).__init__(self.get_handlers(), **use_tornado_settings)
 
     def get_handlers(self):
@@ -145,8 +147,8 @@ class Application(tornado.web.Application):
         #       hit in the top level RuleRouter from run_server.py in case this application
         #       is run standalone for some reason.
         return [
-            (r"/game(.*)/socket", SocketHandler, {"app": self}),
-            (r"/play", GameHandler),
+            (r"/game(.*)/socket", SocketHandler, {"app": self, "database": self.db}),
+            (r"/play", GameHandler, {"app": self, "database": self.db}),
             (r"/(.*)", StaticUIHandler, {"path": path_to_build}),
         ]
 
@@ -164,7 +166,8 @@ class StaticUIHandler(tornado.web.StaticFileHandler):
 
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
-    def initialize(self, app):
+    def initialize(self, app, database):
+        self.db = database
         self.app = app
         self.subs = app.subs
         self.new_subs = app.new_subs
@@ -173,6 +176,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.actions = []
         self.player = None
         self.sid = get_rand_id()
+        self.db = app.db
 
     def safe_write_message(self, msg):
         try:
@@ -200,12 +204,14 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                 new_player = TornadoPlayerProvider(
                     self,
                     graph_purgatory,
+                    db=self.db,
+                    user=json.loads(user_json),
                 )
                 new_player.init_soul()
                 self.app.graphs[game_id].players.append(new_player)
         else:
             self.close()
-            self.redirect("/login")
+            self.redirect("/#/login")
 
     def send_alive(self):
         self.safe_write_message(json.dumps({"command": "register", "data": self.sid}))
@@ -231,13 +237,30 @@ class BaseHandler(tornado.web.RequestHandler):
         self.include_host = False
         super(BaseHandler, self).__init__(*request, **kwargs)
 
+    def initialize(self, database):
+        self.db = database
+
     def get_login_url(self):
         return "/#/login"
 
     def get_current_user(self):
         user_json = self.get_secure_cookie("user")
         if user_json:
-            return tornado.escape.json_decode(user_json)
+            user_decoded = tornado.escape.json_decode(user_json)
+            if len(user_decoded) == 0:
+                return None
+            try:
+                with self.db as ldb:
+                    user_id = ldb.get_user_id(user_decoded)
+            except Exception as e:
+                # User id does not exist in the database, either
+                # we've updated the user table or someone
+                # is fishing :/
+                # Also can be caused when auth is refreshed
+                print(f"User {user_decoded} tried to log in, but was rejected.")
+                return None
+            print(f"User {user_decoded, user_id} logged in.")
+            return user_decoded
         else:
             return None
 
@@ -245,43 +268,36 @@ class BaseHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "*")
 
-        # TODO maybe use cookies to restore previous game state?
-        def write_error(self, status_code, **kwargs):
-            if status_code == 404:
-                return "/#/error"
-            elif status_code == 500:
-                return "/#/error"
-            else:
-                self.write("error:" + str(status_code))
+    # TODO maybe use cookies to restore previous game state?
+    def write_error(self, status_code, **kwargs):
+        logging.error("ERROR: %s: %s" % (status_code, kwargs))
+        if "exc_info" in kwargs:
+            logging.info(
+                "Traceback: {}".format(traceback.format_exception(*kwargs["exc_info"]))
+            )
+        if self.settings.get("debug") and "exc_info" in kwargs:
+            logging.error("rendering error page")
+            import traceback
 
-            self.write_error(404)
-            logging.error("ERROR: %s: %s" % (status_code, kwargs))
-            if "exc_info" in kwargs:
-                logging.info(
-                    "Traceback: {}".format(
-                        traceback.format_exception(*kwargs["exc_info"])
-                    )
-                )
-            if self.settings.get("debug") and "exc_info" in kwargs:
-                logging.error("rendering error page")
-                import traceback
+            exc_info = kwargs["exc_info"]
+            # exc_info is a tuple consisting of:
+            # 1. The class of the Exception
+            # 2. The actual Exception that was thrown
+            # 3. The traceback opbject
+            try:
+                params = {
+                    "error": exc_info[1],
+                    "trace_info": traceback.format_exception(*exc_info),
+                    "request": self.request.__dict__,
+                }
 
-                exc_info = kwargs["exc_info"]
-                # exc_info is a tuple consisting of:
-                # 1. The class of the Exception
-                # 2. The actual Exception that was thrown
-                # 3. The traceback opbject
-                try:
-                    params = {
-                        "error": exc_info[1],
-                        "trace_info": traceback.format_exception(*exc_info),
-                        "request": self.request.__dict__,
-                    }
-
-                    self.render("error.html", **params)
-                    logging.error("rendering complete")
-                except Exception as e:
-                    logging.error(e)
+                self.render("error.html", **params)
+                logging.error("rendering complete")
+            except Exception as e:
+                logging.error(e)
+        else:
+            # In production, reroute to error
+            self.redirect("/#/error")
 
 
 class LandingApplication(tornado.web.Application):
@@ -292,6 +308,7 @@ class LandingApplication(tornado.web.Application):
         password="LetsPlay",
         given_tornado_settings=None,
     ):
+        self.db = database
         global tornado_settings
         tornado_settings = given_tornado_settings
         super(LandingApplication, self).__init__(
@@ -300,13 +317,13 @@ class LandingApplication(tornado.web.Application):
 
     def get_handlers(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
         return [
-            (r"/", LandingHandler),
-            (r"/#(.*)", LandingHandler),
-            (r"/#/login", LandingHandler),
-            (r"/#/error", NotFoundHandler),
-            (r"/play", GameHandler),
-            (r"/play/?id=.*", GameHandler),
-            (r"/build", BuildHandler),
+            (r"/", LandingHandler, {"database": database}),
+            (r"/#(.*)", LandingHandler, {"database": database}),
+            (r"/#/login", LandingHandler, {"database": database}),
+            (r"/#/error", NotFoundHandler, {"database": database}),
+            (r"/play", GameHandler, {"database": database}),
+            (r"/play/?id=.*", GameHandler, {"database": database}),
+            (r"/build", BuildHandler, {"database": database}),
             (
                 r"/login",
                 LoginHandler,
@@ -317,12 +334,28 @@ class LandingApplication(tornado.web.Application):
                 FacebookOAuth2LoginHandler,
                 {"database": database, "hostname": hostname, "app": self},
             ),
-            (r"/logout", LogoutHandler),
-            (r"/terms", StaticPageHandler, {"target": "/html/terms.html"}),
-            (r"/bye", StaticPageHandler, {"target": "/html/logout.html"}),
-            (r"/about", StaticLoggedInPageHandler, {"target": "/html/about.html"}),
-            (r"/profile", StaticLoggedInPageHandler, {"target": "/html/profile.html"}),
-            (r"/report", ReportHandler),
+            (r"/logout", LogoutHandler, {"database": database}),
+            (
+                r"/terms",
+                StaticPageHandler,
+                {"database": database, "target": "/html/terms.html"},
+            ),
+            (
+                r"/bye",
+                StaticPageHandler,
+                {"database": database, "target": "/html/logout.html"},
+            ),
+            (
+                r"/about",
+                StaticLoggedInPageHandler,
+                {"database": database, "target": "/html/about.html"},
+            ),
+            (
+                r"/profile",
+                StaticLoggedInPageHandler,
+                {"database": database, "target": "/html/profile.html"},
+            ),
+            (r"/report", ReportHandler, {"database": database}),
             (r"/(.*)", StaticUIHandler, {"path": here + "/../build/"}),
         ]
 
@@ -349,8 +382,9 @@ class NotFoundHandler(BaseHandler):
 
 
 class StaticPageHandler(BaseHandler):
-    def initialize(self, target):
+    def initialize(self, target, database):
         self.target_page = here + target
+        self.db = database
 
     def get(self):
         self.render(self.target_page)
@@ -387,7 +421,7 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
                 code=self.get_argument("code"),
             )
             self.set_current_user(fb_user["id"])
-            self.redirect("/")
+            self.redirect("/play")
             return
         self.authorize_redirect(
             redirect_uri=redirect,
@@ -430,8 +464,8 @@ class LoginHandler(BaseHandler):
             # self.redirect(self.get_argument("next", "/"))
             self.redirect("/play")
         else:
-            error_msg = "?error=" + tornado.escape.url_escape("Login incorrect.")
-            self.redirect("/login" + error_msg)
+            error_msg = "?error=" + tornado.escape.url_escape("incorrect")
+            self.redirect("/#/login" + error_msg)
 
     def set_current_user(self, user):
         if user:
@@ -469,7 +503,7 @@ class TornadoPlayerProvider(PlayerProvider):
     Player Provider for the web app
     """
 
-    def __init__(self, socket, purgatory):
+    def __init__(self, socket, purgatory, db=None, user=None):
         self.socket = socket
         self.player_soul = None
         self.purgatory = purgatory
@@ -477,10 +511,15 @@ class TornadoPlayerProvider(PlayerProvider):
             self.quest_loader = quest_loader
         socket.set_player(self)
         socket.send_alive()
+        self.db = db
+        self.user = user
 
     def register_soul(self, soul: "PlayerSoul"):
         """Save the soul as a local player soul"""
         self.player_soul = soul
+        if self.db is not None and self.user is not None:
+            with self.db as ldb:
+                ldb.initialize_agent_score(soul.target_node, self.user)
 
     def player_observe_event(self, soul: "PlayerSoul", event: "GraphEvent"):
         """
@@ -526,7 +565,9 @@ class TornadoPlayerProvider(PlayerProvider):
         return self.socket.alive
 
     def on_reap_soul(self, soul):
-        pass
+        if self.db is not None and self.user is not None:
+            with self.db as ldb:
+                ldb.store_agent_score(soul.target_node, self.user)
 
 
 class TornadoPlayerFactory:
@@ -541,11 +582,13 @@ class TornadoPlayerFactory:
         graphs,
         hostname=DEFAULT_HOSTNAME,
         port=DEFAULT_PORT,
+        db=None,
         listening=False,
         given_tornado_settings=None,
     ):
         self.graphs = graphs
         self.app = None
+        self.db = db
 
         def _run_server():
             nonlocal listening
@@ -553,7 +596,9 @@ class TornadoPlayerFactory:
             nonlocal hostname
             nonlocal port
             self.my_loop = ioloop.IOLoop()
-            self.app = Application(given_tornado_settings=given_tornado_settings)
+            self.app = Application(
+                given_tornado_settings=given_tornado_settings, db=self.db
+            )
             self.app.graphs = self.graphs
             if listening:
                 self.app.listen(port, max_buffer_size=1024 ** 3)
@@ -618,10 +663,10 @@ def main():
             None, FLAGS.hostname, FLAGS.port, listening=True
         )
     else:
-        game = GameInstance()
+        game = GameInstance(game_id=0, ldb=ldb)
         graph = game.world
         provider = TornadoPlayerFactory(
-            graph, FLAGS.hostname, FLAGS.port, listening=True
+            graph, FLAGS.hostname, FLAGS.port, db=ldb, listening=True
         )
         game.register_provider(provider)
         game.run_graph()

@@ -80,7 +80,7 @@ const LandingPage = (props) => {
                       maximized. You can <b>reward</b> other players when you
                       are impressed by their skills. You can also <b>report</b>{" "}
                       or demote unwanted behaviors: e.g., mentions of the real
-                      world, bad behavior. Stay good, my denizens!
+                      world or bad behavior. Stay good, my denizens!
                     </p>
                   </>
                 ) : null}
@@ -103,16 +103,16 @@ const LandingPage = (props) => {
                     <p>
                       <b>Emotes:</b> You can also express your emotions in the
                       game with
-                      <u>emote actions</u>, e.g. <i>smile, grin, scream</i> or{" "}
+                       <u>emote actions</u>, e.g. <i>smile, grin, scream</i> or{" "}
                       <i>dance</i>.
                     </p>
                     <p>
                       <b>Actions:</b> You can move into new locations (e.g.,{" "}
                       <i>go west</i>), pick up objects (e.g., <i>get tool</i>),
                       give objects (e.g.,
-                      <i>give tool to smithy</i>), wear clothing, wield weapons,
-                      eat, drink, try to steal objects, and more. See{" "}
-                      <u>here</u> for the full list of actions.
+                       <i>give tool to smithy</i>), wear clothing, wield weapons,
+                      eat, drink, try to steal objects, and more. Type <i>help</i>
+                      in game for the full list of actions.
                     </p>
                   </>
                 ) : null}
