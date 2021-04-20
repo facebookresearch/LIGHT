@@ -25,8 +25,8 @@ const IconCollapsibleBox = ({
   const closeHandler = () => setIsCollapsed(true);
 
   return (
-    <div style={{ marginTop: "70px" }}>
-      <div className="collapsible-container__icon">
+    <div className="collapsible-container__icon">
+      <div className="collapsible-box__icon">
         <div
           className={cx("icon", { editing: showEmojiPicker })}
           style={{ cursor: "pointer" }}

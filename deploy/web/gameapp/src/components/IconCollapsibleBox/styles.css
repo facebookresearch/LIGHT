@@ -1,15 +1,19 @@
 .collapsible-container__icon {
+  margin-top: 70px;
+  width: 100%;
+}
+.collapsible-box__icon {
   margin: 60px 10px 0px 0px;
   background-color: lightgoldenrodyellow;
   border-radius: 25px;
   box-shadow: 5px 2px 5px;
   position: relative;
   box-shadow: 5px 2px 5px;
-  margin: 10px 70px 0px 10px;
+  margin: 10px 0px 0px 10px;
   width: 90%;
 }
 
-.collapsible-container__icon .icon {
+.collapsible-box__icon .icon {
   position: absolute;
   left: 50%;
   top: 0%;

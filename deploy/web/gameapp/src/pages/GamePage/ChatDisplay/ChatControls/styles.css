@@ -1,3 +1,57 @@
+.controls {
+  /* justify-self: flex-end; */
+  min-height: 100px;
+  background-color: rgb(228, 226, 221);
+  width: auto;
+  margin: 0px 20px 0px;
+  box-shadow: 0px 10px 10px rgba(109, 90, 48, 0.2);
+  border-radius: 0px 0px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgb(184, 184, 184);
+  border-top: none;
+  overflow: hidden;
+  border-style: ridge;
+  border-color: lightgray;
+  border-width: 10px 10px 10px 10px;
+}
+
 .actions {
   display: flex;
+  padding: 0px 10px 0px;
+  font-size: 14px;
+  width: 100%;
+  overflow: scroll;
+  flex-wrap: wrap;
+  height: 4em;
+  align-items: center;
+}
+
+input {
+  border: none;
+  padding: 10px;
+  font-size: 18px;
+  background-color: white;
+  border: 3px solid #dedede;
+  font-family: Lora, serif;
+  width: 100%;
+}
+
+input::placeholder {
+  font-style: italic;
+  color: #aaa;
+}
+
+input:active,
+input:focus {
+  border: 3px solid #fcff56;
+  outline: none;
+  font-style: normal;
+}
+
+.chatbox-input__edit-message {
+  font: inherit;
+  width: 100%;
+  padding: 3px;
+  box-sizing: border-box;
 }

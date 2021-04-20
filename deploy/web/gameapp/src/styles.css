@@ -61,56 +61,11 @@ a {
   border: 1px solid black;
 }
 
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  overflow-y: scroll;
-  border-radius: 15px;
-  min-width: 400px;
-  align-items: center;
-}
-
 .chat-container {
-  flex: 1;
   overflow: auto;
   padding: 0px 20px 0px 20px;
   display: flex;
   flex-direction: column;
-}
-
-.chat-wrapper {
-  display: flex;
-  flex-direction: column;
-  animation: popInApp 0.3s 0.3s cubic-bezier(0.5, 0, 0, 1);
-  animation-fill-mode: forwards;
-  overflow-y: auto;
-  opacity: 0;
-  min-height: 500px;
-  height: 100%;
-}
-
-.chat {
-  flex: 1;
-  border: 1px solid rgb(184, 184, 184);
-  background-color: rgb(228, 226, 221);
-  margin: 30px 20px 0px;
-  overflow-y: auto;
-  border-radius: 10px 10px 0px 0px;
-  position: relative;
-  border-style: ridge;
-  border-color: lightgray;
-  border-width: 10px 10px 0px 10px;
-
-  /* box-shadow: 0px 10px 10px rgba(250, 199, 169, 0.5); */
-}
-
-.sidebar {
-  margin: 30px 0px 0px 0px;
-  width: 100%;
-  animation: popInApp 0.3s cubic-bezier(0.5, 0, 0, 1);
-  animation-fill-mode: forwards;
-  opacity: 0;
-  background-color: lightgrey;
 }
 
 .message.type-setting {
@@ -199,36 +154,7 @@ a {
   /* font-size: 16px; */
 }
 
-.controls {
-  /* justify-self: flex-end; */
-  min-height: 100px;
-  background-color: rgb(255, 255, 255);
-  width: auto;
-  margin: 0px 20px 0px;
-  box-sizing: border-box;
-  box-shadow: 0px 10px 10px rgba(109, 90, 48, 0.2);
-  border-radius: 0px 0px 10px 10px;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid rgb(184, 184, 184);
-  border-top: none;
-  overflow: hidden;
-  border-style: ridge;
-  border-color: lightgray;
-  border-width: 10px 10px 10px 10px;
-}
-
-.controls input {
-  border: none;
-  padding: 10px;
-  font-size: 18px;
-  background-color: white;
-  border: 3px solid #dedede;
-  flex: 1;
-  font-family: Lora, serif;
-}
-
-input::placeholder {
+/* input::placeholder {
   font-style: italic;
   color: #aaa;
 }
@@ -245,7 +171,7 @@ input.edit-message {
   width: 100%;
   padding: 3px;
   box-sizing: border-box;
-}
+} */
 
 .controls span.action {
   margin: 5px 3px;
@@ -256,12 +182,6 @@ input.edit-message {
   border-radius: 5px;
   border: 1px solid #eaeaea;
   color: #777;
-}
-
-.controls .actions {
-  padding: 10px 10px 0px;
-  font-size: 14px;
-  background-color: rgb(228, 226, 221);
 }
 
 span.action:first-child {

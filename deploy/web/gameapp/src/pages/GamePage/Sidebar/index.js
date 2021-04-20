@@ -33,10 +33,10 @@ const SideBar = ({
   selectedEmoji,
   setSelectedEmoji,
 }) => {
-  const [showEmojiPicker, setShowEmojiPicker] = React.useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   return (
-    <div>
+    <div className="sidebar">
       <div
         className={cx("icon", { editing: showEmojiPicker })}
         style={{ cursor: "pointer" }}

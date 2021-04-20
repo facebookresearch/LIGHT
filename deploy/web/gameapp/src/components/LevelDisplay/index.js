@@ -11,7 +11,7 @@ const LevelDisplay = (props) => {
   const iconStyle = {
     color: "yellow",
     position: "absolute",
-    zIndex: "-1",
+    zIndex: "1",
     height: "2.5em",
     width: "2.5em",
   };

@@ -5,10 +5,10 @@ import "./styles.css";
 const SpeechBubble = (props) => {
   const { text } = props;
   return (
-    <div className="speechbubble bottom">
-      <p style={{ textAlign: "center", padding: "0", margin: "0" }}>
-        {text.toUpperCase()}
-      </p>
+    <div className="speechbubble-container">
+      <div className="speechbubble bottom">
+        <p className="speechbubble-text">{text.toUpperCase()}</p>
+      </div>
     </div>
   );
 };

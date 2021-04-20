@@ -21,6 +21,7 @@ const ChatInput = ({
       }}
     >
       <input
+        className="chatbox-input"
         ref={chatInputRef}
         value={enteredText}
         onChange={(e) => setEnteredText(e.target.value)}
