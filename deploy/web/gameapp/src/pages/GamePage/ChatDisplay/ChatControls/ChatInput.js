@@ -6,6 +6,7 @@ const ChatInput = ({
   setEnteredText,
   chatInputRef,
   scrollToBottom,
+  resetIdleTimer,
 }) => {
   return (
     <form
@@ -24,7 +25,10 @@ const ChatInput = ({
         className="chatbox-input"
         ref={chatInputRef}
         value={enteredText}
-        onChange={(e) => setEnteredText(e.target.value)}
+        onChange={(e) => {
+          resetIdleTimer();
+          setEnteredText(e.target.value);
+        }}
         onKeyPress={(e) => {
           if (e.key === "Enter" && e.shiftKey) {
             const prefix = e.target.value.startsWith('"') ? "" : '"';

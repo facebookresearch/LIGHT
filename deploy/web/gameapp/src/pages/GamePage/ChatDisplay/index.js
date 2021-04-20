@@ -31,6 +31,8 @@ const ChatDisplay = ({
   agents,
   getDataModelAddress,
   getLocationState,
+  idle,
+  resetIdleTimer,
 }) => {
   const [showCharacter, setShowCharacter] = React.useState(true);
   const [enteredText, setEnteredText] = React.useState("");
@@ -113,6 +115,8 @@ const ChatDisplay = ({
         setEnteredText={setEnteredText}
         enteredText={enteredText}
         scrollToBottom={scrollToBottom}
+        idle={idle}
+        resetIdleTimer={resetIdleTimer}
       />
     </div>
   );
