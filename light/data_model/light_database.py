@@ -3603,6 +3603,8 @@ class LIGHTDatabase:
             )
             result = {"experience": 0, "reward_points": 0}
 
+        # TODO refactor public/private `GraphNode` attributes, discussion:
+        # https://github.com/facebookresearch/LIGHT/pull/192#discussion_r616161265
         target_node.xp = result["experience"]
         target_node.reward_xp = result["reward_points"]
         target_node._base_class_experience = 0
@@ -3644,6 +3646,8 @@ class LIGHTDatabase:
             ),
         )
 
+        # Extract the target node's db_id, which corresponds to its character
+        # in the database, if it is set
         db_id = target_node.db_id
         if db_id is not None:
             self.c.execute(

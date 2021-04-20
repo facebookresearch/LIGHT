@@ -253,8 +253,11 @@ class BaseHandler(tornado.web.RequestHandler):
                 with self.db as ldb:
                     user_id = ldb.get_user_id(user_decoded)
             except Exception as e:
-                print(e)
-                print(repr(e))
+                # User id does not exist in the database, either
+                # we've updated the user table or someone
+                # is fishing :/
+                # Also can be caused when auth is refreshed
+                print(f"User {user_decoded} tried to log in, but was rejected.")
                 return None
             print(f"User {user_decoded, user_id} logged in.")
             return user_decoded
