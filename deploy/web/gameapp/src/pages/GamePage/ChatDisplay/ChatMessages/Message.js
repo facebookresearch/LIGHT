@@ -28,6 +28,11 @@ const Message = ({ text, caller, actor, isSelf, onReply }) => {
   const [isReportMode, setReportMode] = React.useState(false);
   const [reportReason, setReportReason] = React.useState("");
   const [isReported, setReported] = React.useState(false);
+  const [isLiked, setIsLiked] = React.useState(false);
+
+  const likeHandler = () => {
+    setIsLiked(true);
+  };
 
   let classNames = "message type-dialogue ";
   if (["tell", "say", "whisper"].includes(caller)) {
@@ -118,7 +123,11 @@ const Message = ({ text, caller, actor, isSelf, onReply }) => {
         {isSelf ? null : (
           <React.Fragment>
             <Tooltip title={`Award ${actor} Experience`} position="top">
-              <i className="fa fa-star-o" onClick={() => onReply(actor)} />
+              {isLiked ? (
+                <i className="fa fa-star" style={{ color: "gold" }} />
+              ) : (
+                <i className="fa fa-star-o" onClick={likeHandler} />
+              )}
             </Tooltip>{" "}
             <Tooltip title={`tell ${actor}...`} position="top">
               <i className="fa fa-reply" onClick={() => onReply(actor)} />

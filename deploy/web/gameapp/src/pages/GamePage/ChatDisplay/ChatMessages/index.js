@@ -3,7 +3,7 @@ import React from "react";
 //CUSTOM COMPONENTS
 import Entry from "./Entry";
 
-const ChatMessages = ({ messages, agents, persona }) => {
+const ChatMessages = ({ messages, agents, persona, setTextTellAgent }) => {
   return (
     <div className="chatlog">
       {messages.map((msg, idx) => (
@@ -12,7 +12,7 @@ const ChatMessages = ({ messages, agents, persona }) => {
           msg={msg}
           agents={agents}
           onReply={(agent) => {
-            /*setTextTellAgent(agent)*/
+            setTextTellAgent(agent);
           }}
           selfId={persona.id}
         />

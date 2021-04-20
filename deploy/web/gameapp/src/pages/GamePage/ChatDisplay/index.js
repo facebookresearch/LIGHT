@@ -101,7 +101,12 @@ const ChatDisplay = ({
   return (
     <div className="chat-wrapper">
       <div className="chat" ref={chatContainerRef}>
-        <ChatMessages messages={messages} agents={agents} persona={persona} />
+        <ChatMessages
+          messages={messages}
+          agents={agents}
+          persona={persona}
+          setTextTellAgent={setTextTellAgent}
+        />
       </div>
       <ChatControls
         onSubmit={onSubmit}
