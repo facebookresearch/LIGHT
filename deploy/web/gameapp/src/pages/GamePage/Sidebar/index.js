@@ -25,11 +25,15 @@ const BlurClosingPicker = onClickOutside(EmojiPicker, {
   handleClickOutside: () => EmojiPicker.handleClickOutside,
 });
 
-const SideBar = ({ persona, location, dataModelHost, getEntityId }) => {
-  const defaultEmoji = "❓";
-  const [showCharacter, setShowCharacter] = useState(true);
+const SideBar = ({
+  persona,
+  location,
+  dataModelHost,
+  getEntityId,
+  selectedEmoji,
+  setSelectedEmoji,
+}) => {
   const [showEmojiPicker, setShowEmojiPicker] = React.useState(false);
-  const [selectedEmoji, setSelectedEmoji] = React.useState(defaultEmoji);
 
   return (
     <div>

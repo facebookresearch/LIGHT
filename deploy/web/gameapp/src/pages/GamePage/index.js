@@ -114,7 +114,6 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
 
   const defaultEmoji = "❓";
   const { presentAgents } = getLocationState(messages);
-  const [showEmojiPicker, setShowEmojiPicker] = React.useState(false);
   const [selectedEmoji, setSelectedEmoji] = React.useState(defaultEmoji);
 
   React.useEffect(() => {
@@ -145,12 +144,18 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
           <Logo />
           <ExperienceInfo experience={13} />
         </div>
-        <Sidebar
-          persona={persona}
-          location={location}
-          dataModelHost={dataModelHost}
-          getEntityId={getEntityId}
-        />
+        {persona ? (
+          <Sidebar
+            persona={persona}
+            location={location}
+            dataModelHost={dataModelHost}
+            getEntityId={getEntityId}
+            selectedEmoji={selectedEmoji}
+            setSelectedEmoji={setSelectedEmoji}
+          />
+        ) : (
+          <div />
+        )}
       </div>
       {/* <Map /> */}
       {/* <div className="app-controls">
