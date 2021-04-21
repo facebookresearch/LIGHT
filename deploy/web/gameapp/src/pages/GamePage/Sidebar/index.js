@@ -34,7 +34,6 @@ const SideBar = ({
   getEntityId,
   selectedEmoji,
   setSelectedEmoji,
-  exp,
 }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -42,7 +41,7 @@ const SideBar = ({
     <div className="sidebar">
       <div className="header-container">
         <Logo />
-        <ExperienceInfo experience={exp} />
+        <ExperienceInfo experience={persona.xp} />
       </div>
       <div
         className={cx("icon", { editing: showEmojiPicker })}

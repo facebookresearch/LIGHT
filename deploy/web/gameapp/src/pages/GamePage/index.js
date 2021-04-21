@@ -168,7 +168,6 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
           getEntityId={getEntityId}
           selectedEmoji={selectedEmoji}
           setSelectedEmoji={setSelectedEmoji}
-          exp={13}
         />
       ) : (
         <div />
