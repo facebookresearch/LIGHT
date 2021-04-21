@@ -12,6 +12,7 @@ function uuidv4() {
 const reducer = (state, msg) => {
   // TODO replace the specific incomprehensible message somehow instead
   if (
+    // TODO (Justin) Can we target the event ID to swap the text out now?
     msg.text &&
     msg.text.startsWith("You mumble something incomprehensible")
   ) {
@@ -168,7 +169,7 @@ export function useWSDataSource(url) {
 
       const msg = JSON.stringify({
         command: "act",
-        data: { text: txt, id: event_id },
+        data: { text: txt, event_id: event_id },
       });
       return websocket.current.send(msg);
     },

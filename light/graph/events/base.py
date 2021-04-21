@@ -250,6 +250,7 @@ class GraphEvent(object):
         return {
             "text": self.view_as(viewer),
             "caller": self.__class__.__name__,
+            "event_id": self.event_id,
             "target_nodes": [node_to_json(x) for x in self.target_nodes],
             "additional_text": self.text_content,
             "present_agent_ids": present_dict,

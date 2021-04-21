@@ -13,7 +13,7 @@ from deploy.web.server.game_instance import (
 from light.data_model.light_database import LIGHTDatabase
 from light.world.player_provider import PlayerProvider
 from light.world.quest_loader import QuestLoader
-from light.graph.events.graph_events import init_safety_classifier
+from light.graph.events.graph_events import init_safety_classifier, RewardEvent
 
 import argparse
 import inspect
@@ -42,6 +42,7 @@ from typing import Dict, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
+    from light.world.world import World
 
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
@@ -145,6 +146,7 @@ class Application(tornado.web.Application):
         self.new_subs = defaultdict(list)
         self.db = db
         self.user_node_map: Dict[str, Optional["GraphAgent"]] = {}
+        self.world: Optional["World"] = None
         super(Application, self).__init__(self.get_handlers(), **use_tornado_settings)
 
     def get_handlers(self):
@@ -345,14 +347,27 @@ class ApiHandler(BaseHandler):
         if user_json:
             user_decoded = tornado.escape.json_decode(user_json)
 
-            # TODO do stuff here! You can access self.app.user_node_map
-            print(self.app.user_node_map)
-            print(args)
-            print(user_decoded)
-            # You can also get POST params
-            print(self.get_argument("something", ""))
+            split_inputs = args[0].split("/")
+            api_command = split_inputs[0]
+            other_path_args = split_inputs[1:]
+            if api_command == "grant_reward":
+                my_node = self.app.user_node_map[user_decoded]
+                world = self.app.world
+                target_event_id = self.get_argument("target_event_id", "")
+                target_node_id = self.get_argument("target_node_id", "")
+                # TODO ensure that the target node exists
+                target_node = world.graph.get_node(target_node_id)
 
-            self.write(json.dumps({"data": "Something"}))
+                event = RewardEvent(
+                    my_node,
+                    target_nodes=[target_node],
+                    target_event_id=target_event_id,
+                )
+                event.execute(world)
+
+                self.write(json.dumps({"data": event.to_frontend_form(my_node)}))
+                return
+            self.write(json.dumps({"failed": "invalid command"}))
         else:
             # TODO Not a real error code, but should be sometime
             self.write(json.dumps({"failed": "user was logged out"}))
@@ -575,6 +590,7 @@ class TornadoPlayerProvider(PlayerProvider):
         # the APIs for socket and HTTP requests to use logged in user
         # and their state in the world at the same time.
         self.app = socket.app
+        self.app.world = purgatory.world
 
     def register_soul(self, soul: "PlayerSoul"):
         """Save the soul as a local player soul"""
