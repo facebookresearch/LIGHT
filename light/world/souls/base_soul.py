@@ -9,10 +9,11 @@ from copy import deepcopy
 import os
 import asyncio
 from typing import TYPE_CHECKING, Any
+from light.graph.events.graph_events import SystemMessageEvent
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
-    from light.graph.world.world import World
+    from light.world.world import World
     from light.graph.events.base import GraphEvent
 
 
@@ -372,8 +373,16 @@ class BaseSoul(Soul):
                 agent.reward_xp += stars / 4.0
                 # Send star score message.
                 if stars > 0:
-                    self.world.send_msg(
-                        agent.node_id, "(You gained " + str(stars) + " XP!)"
+                    xp_event_message = SystemMessageEvent(
+                        agent,
+                        [],
+                        text_content="(You gained " + str(stars) + " XP!)",
+                        event_data={
+                            "event_type": "model_experience",
+                            "reward": stars,
+                            "target_event": event.event_id,
+                        },
                     )
+                    self.world.send_action(agent.node_id, xp_event_message)
                 # if hasattr(self.world, 'debug'):
                 #    print(str(agent) +" score: " + str(agent._agent_interactions[agent2_id]))

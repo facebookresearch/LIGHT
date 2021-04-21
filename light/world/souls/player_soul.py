@@ -8,13 +8,13 @@ from light.world.souls.base_soul import BaseSoul
 from light.world.content_loggers import AgentInteractionLogger
 from light.world.quest_loader import QuestCreator
 from light.graph.events.magic import check_if_cast_magic_from_event
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 import random
 import time
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
-    from light.graph.world.world import World
+    from light.world.world import World
     from light.graph.events.base import GraphEvent
 
 QUESTS_ACTIVE = True
@@ -68,7 +68,7 @@ class PlayerSoul(BaseSoul):
             self.target_node.get_room().node_id
         ]._add_player()
 
-    def handle_act(self, act_text):
+    def handle_act(self, act_text, event_id: Optional[str] = None):
         """
         PlayerSouls must process act text sent from players and enact them on the world.
         This method is called by the player provider when an action is taken.

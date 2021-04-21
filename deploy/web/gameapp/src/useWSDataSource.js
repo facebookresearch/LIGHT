@@ -1,5 +1,14 @@
 import React from "react";
 
+// Generate a random id
+function uuidv4() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    var r = (Math.random() * 16) | 0,
+      v = c == "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 const reducer = (state, msg) => {
   // TODO replace the specific incomprehensible message somehow instead
   if (
@@ -148,14 +157,19 @@ export function useWSDataSource(url) {
 
   const submitMessage = React.useCallback(
     (txt) => {
+      let event_id = uuidv4();
       appendMessage({
         caller: "say",
         text: txt,
+        event_id: event_id,
         is_self: true,
         actors: [persona.id],
       });
 
-      const msg = JSON.stringify({ command: "act", data: txt });
+      const msg = JSON.stringify({
+        command: "act",
+        data: { text: txt, id: event_id },
+      });
       return websocket.current.send(msg);
     },
     [websocket, appendMessage, persona]

@@ -26,6 +26,7 @@ from typing import (
 )
 import inspect
 import json
+from uuid import uuid4
 
 if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
@@ -80,10 +81,13 @@ class GraphEvent(object):
         actor: GraphAgent,
         target_nodes: Optional[List[GraphNode]] = None,
         text_content: Optional[str] = None,
+        event_id: Optional[str] = None,
     ):
         """
         Construct an event to be executed by the given actor on given nodes
         """
+        if event_id is None:
+            event_id = str(uuid4())
         self.executed: bool = False  # type: ignore
         self.actor = actor
         self.room = actor.get_room()
@@ -96,6 +100,7 @@ class GraphEvent(object):
                 x.get_view_from(self.room) for x in self.target_nodes
             ]
         self.text_content = text_content
+        self.event_id = event_id
 
     def execute(self, world: "World") -> List["GraphEvent"]:
         """
@@ -150,7 +155,11 @@ class GraphEvent(object):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["GraphEvent", "ErrorEvent"]:
         """
         Try to return an Event constructed from the given args, return
@@ -348,7 +357,11 @@ class TriggeredEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> GraphEvent:
         """Triggered events are never parsed, and shouldn't call this"""
         raise Exception("Triggered events are never parsed")
@@ -375,7 +388,11 @@ class NoArgumentEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> GraphEvent:
         """No argument events can always be constructed from just the actor"""
         return cls(actor)

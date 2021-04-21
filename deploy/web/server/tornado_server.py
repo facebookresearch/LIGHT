@@ -231,7 +231,8 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         if self.player is None:
             return
         if cmd == "act":
-            self.player.act(msg["data"])
+            data = msg["data"]
+            self.player.act(data["text"], data["event_id"])
         else:
             print("THESE COMMANDS HAVE BEEN DEPRICATED")
 
@@ -602,13 +603,13 @@ class TornadoPlayerProvider(PlayerProvider):
                 json.dumps({"command": "actions", "data": [dat]})
             )
 
-    def act(self, action_data):
+    def act(self, action_data, event_id: Optional[str] = None):
         if self.player_soul is not None and self.player_soul.is_reaped:
             self.player_soul = None
         if self.player_soul is None:
             self.init_soul()
             return
-        player_agent = self.player_soul.handle_act(action_data)
+        player_agent = self.player_soul.handle_act(action_data, event_id)
 
     def init_soul(self):
         self.purgatory.get_soul_for_player(self)
