@@ -116,7 +116,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
       setIdleTime((idleTime) => idleTime + 1);
       console.log("TIME", idleTime);
     }, 1000);
-    if (idleTime === 10) {
+    if (idleTime === 300) {
       //disconnect
       setIdle(true);
     }
