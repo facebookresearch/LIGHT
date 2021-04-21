@@ -28,17 +28,19 @@ const reducer = (state, msg) => {
     }
   }
   if (msg.caller === "SystemMessageEvent" && msg.text.indexOf("XP") >= 0) {
-    let i;
-    for (i = state.length - 1; i > 0; i--) {
-      let lastMessage = state[i];
-      if (lastMessage.caller === "say" && lastMessage.is_self) {
-        let messageWithExp = lastMessage.text.concat(msg.text);
-        let filteredState = state.filter((message, index) => index != i);
-        const updatedState = [...filteredState, messageWithExp];
-        console.log(updatedState);
-        return updatedState;
-      }
-    }
+    // TODO(justin)
+    console.log("New message needs to be processed for exp", msg);
+    // let i;
+    // for (i = state.length - 1; i > 0; i--) {
+    //   let lastMessage = state[i];
+    //   if (lastMessage.caller === "say" && lastMessage.is_self) {
+    //     let messageWithExp = lastMessage.text.concat(msg.text);
+    //     let filteredState = state.filter((message, index) => index != i);
+    //     const updatedState = [...filteredState, messageWithExp];
+    //     console.log(updatedState);
+    //     return updatedState;
+    //   }
+    // }
   }
   const updatedState = [...state, msg];
   console.groupCollapsed("New message. Total: " + updatedState.length);
