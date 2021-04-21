@@ -75,6 +75,7 @@ const SideBar = ({
         setShowEmojiPicker={setShowEmojiPicker}
         BlurClosingPicker={BlurClosingPicker}
         setSelectedEmoji={setSelectedEmoji}
+        titleBg={"gold"}
       >
         <p className="persona-text" style={{ fontSize: "14px" }}>
           {persona.description.slice(

@@ -31,5 +31,10 @@
   border: 5px solid gold;
 }
 
+.collapsible-header--container {
+}
+
 .collapsible-header--text {
+  margin-top: 20px;
+  text-align: center;
 }

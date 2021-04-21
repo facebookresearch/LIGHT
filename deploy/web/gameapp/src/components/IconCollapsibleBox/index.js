@@ -69,6 +69,7 @@ const IconCollapsibleBox = ({
           }}
         >
           <div />
+          <h5 className="collapsible-header--text">{title}</h5>
           <div className="collapsible-header--icon">
             {isCollapsed ? (
               <BiWindow style={{}} onClick={openHandler} />
@@ -77,7 +78,7 @@ const IconCollapsibleBox = ({
             )}
           </div>
         </div>
-        <h5 className="collapsible-header--text">{title}</h5>
+        <div />
         {isCollapsed ? null : (
           <div
             className="collapsible-body"

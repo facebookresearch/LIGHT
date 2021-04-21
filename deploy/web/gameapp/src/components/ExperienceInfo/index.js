@@ -4,7 +4,7 @@ import { Tooltip } from "react-tippy";
 
 import "./styles.css";
 
-import ProgressBar from "../ProgressBar";
+import Progressbar from "../Progressbar";
 import LevelDisplay from "../LevelDisplay";
 
 const ExperienceInfo = (props) => {
@@ -38,7 +38,7 @@ const ExperienceInfo = (props) => {
       <LevelDisplay level={level} giftExp={giftExp} />
       <div style={{ width: "100%", marginLeft: "10%", marginRight: 0 }}>
         <Tooltip title={`Earn ${neededExp}XP to level up`} position="top">
-          <ProgressBar
+          <Progressbar
             bgcolor={"yellow"}
             percentCompleted={progressPercent}
             exp={exp}
