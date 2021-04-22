@@ -69,6 +69,8 @@
   margin: -19px -10px 5px -10px;
   color: #666;
   font-style: italic;
+  display: flex;
+  justify-content: space-between;
 }
 
 .message .agent span {
@@ -76,4 +78,7 @@
   padding: 1px 5px;
   border-top-left-radius: 7px;
   margin-right: 7px;
+}
+
+.message-xp {
 }

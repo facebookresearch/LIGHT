@@ -317,6 +317,7 @@ class ApiHandler(BaseHandler):
 
     @tornado.web.authenticated
     def get(self, *args):
+        print("THE ARGS", *args)
         user_json = self.get_secure_cookie("user")
         if user_json:
             user_decoded = tornado.escape.json_decode(user_json)

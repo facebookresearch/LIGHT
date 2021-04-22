@@ -22,6 +22,23 @@ function handleReport(reportedMessage, reportReason) {
     }),
   });
 }
+function handleReward(messageId, messageText) {
+  let base_url = window.location.protocol + "//" + CONFIG.hostname;
+  if (CONFIG.port != "80") {
+    base_url += ":" + CONFIG.port;
+  }
+
+  fetch(`${base_url}/game/api/my_agent`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "same-origin",
+    body: JSON.stringify({
+      message: messageText,
+    }),
+  });
+}
 
 const Message = ({
   text,
@@ -34,6 +51,7 @@ const Message = ({
   playerGiftXp,
   playerXp,
   xp,
+  eventId,
 }) => {
   const [isEditMode, setEditMode] = React.useState(false);
   const [isReportMode, setReportMode] = React.useState(false);
@@ -46,6 +64,10 @@ const Message = ({
       setPlayerGiftXp(playerGiftXp - 1);
       setIsLiked(true);
     }
+  };
+
+  const submitReport = () => {
+    handleReport(text, reportReason);
   };
 
   let classNames = "message type-dialogue ";
@@ -112,7 +134,12 @@ const Message = ({
         >
           Report
         </button>
-        <button type="submit" onClick={() => setReportMode(false)}>
+        <button
+          type="submit"
+          onClick={() => {
+            setReportMode(false);
+          }}
+        >
           Cancel
         </button>
       </div>
@@ -138,34 +165,50 @@ const Message = ({
           <React.Fragment>
             {xp ? (
               <>
-                <span style={{ fontFamily: "fantasy" }}>{xp}</span>
-                <i className="fa fa-star" style={{ color: "gold" }} />
+                <span
+                  style={{
+                    fontFamily: "fantasy",
+                    backgroundColor: "white",
+                    color: "gold",
+                  }}
+                >
+                  {xp}
+                  <i
+                    className="fa fa-star"
+                    style={{ color: "gold", marginLeft: "5px" }}
+                  />
+                </span>
               </>
             ) : null}
           </React.Fragment>
         ) : (
           <React.Fragment>
-            <Tooltip
-              title={
-                playerGiftXp > 0
-                  ? `Award ${actor} Experience`
-                  : "Not enough Gift Experience"
-              }
-              position="top"
-            >
-              {isLiked ? (
-                <i className="fa fa-star" style={{ color: "gold" }} />
-              ) : (
-                <i
-                  className="fa fa-star-o"
-                  onClick={playerGiftXp > 0 ? likeHandler : null}
-                />
-              )}
-            </Tooltip>{" "}
-            <Tooltip title={`tell ${actor}...`} position="top">
-              <i className="fa fa-reply" onClick={() => onReply(actor)} />
-            </Tooltip>{" "}
-            {/* <Tooltip
+            <span style={{ backgroundColor: "white" }}>
+              <Tooltip
+                title={
+                  playerGiftXp > 0
+                    ? `Award ${actor} Experience`
+                    : "Not enough Gift Experience"
+                }
+                position="top"
+              >
+                {isLiked ? (
+                  <i className="fa fa-star" style={{ color: "gold" }} />
+                ) : (
+                  <i
+                    className="fa fa-star-o"
+                    onClick={
+                      playerGiftXp > 0
+                        ? likeHandler
+                        : () => handleReward(eventId, text)
+                    }
+                  />
+                )}
+              </Tooltip>{" "}
+              <Tooltip title={`tell ${actor}...`} position="top">
+                <i className="fa fa-reply" onClick={() => onReply(actor)} />
+              </Tooltip>{" "}
+              {/* <Tooltip
                 title={`Do you think something else should have been said instead? Provide feedback via an edit...`}
                 position="top"
               >
@@ -174,12 +217,16 @@ const Message = ({
                   onClick={() => setEditMode(true)}
                 />
               </Tooltip> */}
-            <Tooltip
-              title={`Was this offensive or inappropriate? Click to report.`}
-              position="top"
-            >
-              <i className="fa fa-flag " onClick={() => setReportMode(true)} />
-            </Tooltip>
+              <Tooltip
+                title={`Was this offensive or inappropriate? Click to report.`}
+                position="top"
+              >
+                <i
+                  className="fa fa-flag "
+                  onClick={() => setReportMode(true)}
+                />
+              </Tooltip>
+            </span>
           </React.Fragment>
         )}
       </div>
