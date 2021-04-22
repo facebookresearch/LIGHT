@@ -344,20 +344,24 @@ class ApiHandler(BaseHandler):
 
     @tornado.web.authenticated
     def post(self, *args):
+        data = tornado.escape.json_decode(self.request.body)
         user_json = self.get_secure_cookie("user")
+        print(data)
         if user_json:
             user_decoded = tornado.escape.json_decode(user_json)
 
             split_inputs = args[0].split("/")
             api_command = split_inputs[0]
             other_path_args = split_inputs[1:]
+            print("API COMMAND", api_command)
+            print("ARGS", args)
             if api_command == "grant_reward":
-                my_node = self.app.user_node_map[user_decoded]
-                world = self.app.world
-                target_event_id = self.get_argument("target_event_id", "")
-                target_node_id = self.get_argument("target_node_id", "")
+                print("EVENTID: " + data.target_event_id)
+                print("NODEID: " + data.target_node_id)
+                target_event_id = data.target_event_id
+                target_node_id = data.target_node_id
                 # TODO ensure that the target node exists
-                target_node = world.graph.get_node(target_node_id)
+                target_node = world.oo_graph.get_node(target_node_id)
 
                 event = RewardEvent(
                     my_node,

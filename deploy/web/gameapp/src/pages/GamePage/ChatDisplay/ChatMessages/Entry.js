@@ -36,7 +36,7 @@ const Entry = ({ msg, onReply, agents, selfId }) => {
         actor={agents[actor]}
         onReply={onReply}
         xp={10}
-        actorId={msg.actor.node_id}
+        actorId={actor}
         eventId={msg.event_id}
       />
     );

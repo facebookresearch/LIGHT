@@ -22,20 +22,22 @@ function handleReport(reportedMessage, reportReason) {
     }),
   });
 }
-function handleReward(messageId, messageText) {
+
+function handleReward(messageId, messageOwner) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
   if (CONFIG.port != "80") {
     base_url += ":" + CONFIG.port;
   }
 
-  fetch(`${base_url}/game/api/my_agent`, {
+  fetch(`${base_url}/game/api/grant_reward`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     credentials: "same-origin",
     body: JSON.stringify({
-      message: messageText,
+      target_event_id: messageId,
+      target_node_id: messageOwner,
     }),
   });
 }
@@ -52,6 +54,7 @@ const Message = ({
   playerXp,
   xp,
   eventId,
+  actorId,
 }) => {
   const [isEditMode, setEditMode] = React.useState(false);
   const [isReportMode, setReportMode] = React.useState(false);
@@ -59,7 +62,11 @@ const Message = ({
   const [isReported, setReported] = React.useState(false);
   const [isLiked, setIsLiked] = React.useState(false);
 
+  console.log("ACTOR", actor);
+  console.log("actorId", actorId);
+  console.log("eventId", eventId);
   const likeHandler = () => {
+    handleReward(eventId, actorId);
     if (playerGiftXp > 0) {
       setPlayerGiftXp(playerGiftXp - 1);
       setIsLiked(true);
@@ -195,14 +202,7 @@ const Message = ({
                 {isLiked ? (
                   <i className="fa fa-star" style={{ color: "gold" }} />
                 ) : (
-                  <i
-                    className="fa fa-star-o"
-                    onClick={
-                      playerGiftXp > 0
-                        ? likeHandler
-                        : () => handleReward(eventId, text)
-                    }
-                  />
+                  <i className="fa fa-star-o" onClick={likeHandler} />
                 )}
               </Tooltip>{" "}
               <Tooltip title={`tell ${actor}...`} position="top">
