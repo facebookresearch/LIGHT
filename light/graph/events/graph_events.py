@@ -15,7 +15,7 @@ from light.graph.events.base import (
 )
 
 # Used for typehinting
-from typing import Union, List, Optional, Tuple, Any, Type, TYPE_CHECKING
+from typing import Union, Dict, List, Optional, Tuple, Any, Type, TYPE_CHECKING
 import emoji
 import random
 import time
@@ -49,6 +49,22 @@ if TYPE_CHECKING:
 
 class SystemMessageEvent(TriggeredEvent):
     """Event to send text messages to specified agents outside of other events"""
+
+    def __init__(
+        self,
+        actor: GraphAgent,
+        target_nodes: Optional[List[GraphNode]] = None,
+        text_content: Optional[str] = None,
+        event_id: Optional[str] = None,
+        event_data: Optional[Dict[str, Any]] = None,
+    ):
+        super().__init__(
+            actor,
+            target_nodes=target_nodes,
+            text_content=text_content,
+            event_id=event_id,
+        )
+        self.event_data = event_data
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """Message to the target agent"""
@@ -122,7 +138,11 @@ class SayEvent(SpeechEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["SayEvent", "ErrorEvent"]:
         """Say events are valid as long as there is text, otherwise fail."""
         if text is None or len(text.strip()) == 0:
@@ -130,7 +150,7 @@ class SayEvent(SpeechEvent):
         text = text.strip()
         if text.startswith('"') and text.endswith('"'):
             text = text[1:-1]
-        return cls(actor, text_content=text)
+        return cls(actor, text_content=text, event_id=event_id)
 
 
 def distance_and_direction(node1, node2):
@@ -205,7 +225,11 @@ class ShoutEvent(SpeechEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["ShoutEvent", "ErrorEvent"]:
         """Shout events are valid as long as there is text, otherwise fail."""
         if text is None or len(text) == 0:
@@ -213,7 +237,7 @@ class ShoutEvent(SpeechEvent):
         text = text.strip()
         if text.startswith('"') and text.endswith('"'):
             text = text[1:-1]
-        return cls(actor, text_content=text)
+        return cls(actor, text_content=text, event_id=event_id)
 
 
 class WhisperEvent(SpeechEvent):
@@ -304,7 +328,11 @@ class WhisperEvent(SpeechEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["WhisperEvent", ErrorEvent]:
         """Whisper events are valid as long as there is text, otherwise fail."""
         assert text is not None, "Cannot construct WhisperEvent without text"
@@ -317,7 +345,9 @@ class WhisperEvent(SpeechEvent):
         if text.startswith('"') and text.endswith('"'):
             text = text[1:-1]
 
-        return cls(actor, target_nodes=[targets[0]], text_content=text)
+        return cls(
+            actor, target_nodes=[targets[0]], text_content=text, event_id=event_id
+        )
 
 
 class TellEvent(SpeechEvent):
@@ -410,7 +440,11 @@ class TellEvent(SpeechEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["TellEvent", ErrorEvent]:
         """Tell events are valid as long as there is text, otherwise fail."""
         assert len(targets) == 1, "Can only construct Tell event to exactly one target"
@@ -421,7 +455,7 @@ class TellEvent(SpeechEvent):
         if text.startswith('"') and text.endswith('"'):
             text = text[1:-1]
 
-        return cls(actor, target_nodes=[target], text_content=text)
+        return cls(actor, target_nodes=[target], text_content=text, event_id=event_id)
 
 
 class LeaveEvent(TriggeredEvent):
@@ -509,8 +543,14 @@ class GoEvent(GraphEvent):
         actor: GraphAgent,
         target_nodes: Optional[List[GraphNode]] = None,
         text_content: Optional[str] = None,
+        event_id: Optional[str] = None,
     ):
-        super().__init__(actor, target_nodes, text_content)
+        super().__init__(
+            actor,
+            target_nodes=target_nodes,
+            text_content=text_content,
+            event_id=event_id,
+        )
         # Must store room views because getting views from other rooms is odd
         new_room = self.target_nodes[0]
         old_room = self.actor.get_room()
@@ -685,13 +725,17 @@ class GoEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["GoEvent", ErrorEvent]:
         """Go events are valid if properly parsed and thus target is a room."""
         assert len(targets) == 1, f"GoEvents take one target, the room. Got {targets}"
         target = targets[0]
         assert target.room, "Can only go to rooms"
-        return cls(actor, target_nodes=[target])
+        return cls(actor, target_nodes=[target], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -741,7 +785,11 @@ class UnfollowEvent(NoArgumentEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["UnfollowEvent", ErrorEvent]:
         """Unfollow events are valid as long as you are following something."""
         assert (
@@ -749,7 +797,7 @@ class UnfollowEvent(NoArgumentEvent):
         ), f"UnfollowEvents should get no args, but got {targets}"
         if actor.get_following() is None:
             return ErrorEvent(cls, actor, "You already aren't following anyone")
-        return cls(actor)
+        return cls(actor, event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -830,7 +878,11 @@ class FollowEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["FollowEvent", ErrorEvent]:
         """Follow events with a target agent will always be valid if it's not the already followed agent."""
         assert len(targets) == 1, f"FollowEvent takes one arg, got {targets}"
@@ -843,7 +895,7 @@ class FollowEvent(GraphEvent):
                 f"You are already following {target.get_prefix_view()}!",
                 [target],
             )
-        return cls(actor, target_nodes=[target])
+        return cls(actor, target_nodes=[target], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -899,13 +951,17 @@ class UnblockEvent(NoArgumentEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["UnblockEvent", ErrorEvent]:
         """Unblock events are valid as long as you are blocking something."""
         assert len(targets) == 0, f"UnblockEvents should get no args, but got {targets}"
         if actor.get_blocking() is None:
             return ErrorEvent(cls, actor, "You already aren't blocking anyone")
-        return cls(actor)
+        return cls(actor, event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -987,7 +1043,11 @@ class BlockEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["BlockEvent", ErrorEvent]:
         """Block events with a target agent will always be valid if it's not the already blocked agent."""
         assert len(targets) == 1, f"BlockEvent takes one arg, got {targets}"
@@ -1000,7 +1060,7 @@ class BlockEvent(GraphEvent):
                 f"You are already blocking {target.get_prefix_view()}!",
                 [target],
             )
-        return cls(actor, target_nodes=[target])
+        return cls(actor, target_nodes=[target], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -1074,8 +1134,14 @@ class SoulSpawnEvent(TriggeredEvent):
         actor: GraphAgent,
         target_nodes: Optional[List[GraphNode]] = None,
         text_content: Optional[str] = None,
+        event_id: Optional[str] = None,
     ):
-        super().__init__(actor, target_nodes, text_content)
+        super().__init__(
+            actor,
+            target_nodes=target_nodes,
+            text_content=text_content,
+            event_id=event_id,
+        )
         # Must store this for important metadata
         self.soul_id = soul_id
 
@@ -1163,8 +1229,14 @@ class HitEvent(GraphEvent):
         actor: GraphAgent,
         target_nodes: Optional[List[GraphNode]] = None,
         text_content: Optional[str] = None,
+        event_id: Optional[str] = None,
     ):
-        super().__init__(actor, target_nodes, text_content)
+        super().__init__(
+            actor,
+            target_nodes=target_nodes,
+            text_content=text_content,
+            event_id=event_id,
+        )
         # Must store these for replaying exact sequences
         self.attack = None
         self.defense = None
@@ -1326,13 +1398,17 @@ class HitEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["HitEvent", "ErrorEvent"]:
         """Hit events with a target agent will always be valid."""
         assert len(targets) == 1, f"HitEvent takes one arg, got {targets}"
         target = targets[0]
         assert target.agent, "Can only hit agents"
-        return cls(actor, target_nodes=[target])
+        return cls(actor, target_nodes=[target], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -1413,13 +1489,17 @@ class HugEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["HugEvent", "ErrorEvent"]:
         """Hug events with a target will always be valid."""
         assert len(targets) == 1, f"HitEvent takes one arg, got {targets}"
         target = targets[0]
         assert target.agent, "Can only hit agents"
-        return cls(actor, target_nodes=[target])
+        return cls(actor, target_nodes=[target], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -1448,8 +1528,14 @@ class GetObjectEvent(GraphEvent):
         actor: GraphAgent,
         target_nodes: Optional[List[GraphNode]] = None,
         text_content: Optional[str] = None,
+        event_id: Optional[str] = None,
     ):
-        super().__init__(actor, target_nodes, text_content)
+        super().__init__(
+            actor,
+            target_nodes=target_nodes,
+            text_content=text_content,
+            event_id=event_id,
+        )
         self.__from_room = self.room == self.target_nodes[1]
 
     def execute(self, world: "World") -> List[GraphEvent]:
@@ -1582,7 +1668,11 @@ class GetObjectEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["GetObjectEvent", "ErrorEvent"]:
         """Get object events are valid as long as the agent can hold the object"""
         assert len(targets) == 2, f"GetObjectEvent takes two arg, got {targets}"
@@ -1596,7 +1686,7 @@ class GetObjectEvent(GraphEvent):
                 actor,
                 f"You can't get {target.get_prefix_view()} because you can't carry that much more.",
             )
-        return cls(actor, target_nodes=[target, container])
+        return cls(actor, target_nodes=[target, container], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -1760,7 +1850,11 @@ class PutObjectInEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["PutObjectInEvent", "ErrorEvent"]:
         """Put object events are valid as long as the container can hold the object and is not the object"""
         assert len(targets) == 2, f"PutObjectInEvent takes two args, got {targets}"
@@ -1778,7 +1872,7 @@ class PutObjectInEvent(GraphEvent):
                 actor,
                 f"You can't put {target.get_prefix_view()} in {container.get_prefix_view()} because there's no room left for it.",
             )
-        return cls(actor, target_nodes=[target, container])
+        return cls(actor, target_nodes=[target, container], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -1884,7 +1978,11 @@ class DropObjectEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["DropObjectEvent", "ErrorEvent"]:
         """Drop object events are valid as long as the container can hold the object"""
         assert len(targets) == 1, f"DropObjectEvent takes one arg, got {targets}"
@@ -1898,7 +1996,7 @@ class DropObjectEvent(GraphEvent):
                 actor,
                 f"You can't drop {target.get_prefix_view()} because there's no room left for it.",
             )
-        return cls(actor, target_nodes=[target])
+        return cls(actor, target_nodes=[target], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -2075,7 +2173,11 @@ class StealObjectEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["StealObjectEvent", "ErrorEvent"]:
         """Steal object events are valid as long as the agent can hold the object"""
         assert len(targets) == 2, f"StealObjectEvent takes two args, got {targets}"
@@ -2089,7 +2191,7 @@ class StealObjectEvent(GraphEvent):
                 actor,
                 f"You can't steal {target.get_prefix_view()} because you can't carry that much more.",
             )
-        return cls(actor, target_nodes=[target, victim])
+        return cls(actor, target_nodes=[target, victim], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -2237,7 +2339,11 @@ class GiveObjectEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["GiveObjectEvent", "ErrorEvent"]:
         """give object events are valid as long as the recipient can hold the object"""
         assert len(targets) == 2, f"GiveObjectEvent takes two args, got {targets}"
@@ -2249,7 +2355,7 @@ class GiveObjectEvent(GraphEvent):
                 actor,
                 f"You can't give {target.get_prefix_view()} to {recipient.get_prefix_view()} because there's they don't have room for it.",
             )
-        return cls(actor, target_nodes=[target, recipient])
+        return cls(actor, target_nodes=[target, recipient], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -2362,7 +2468,11 @@ class EquipObjectEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["EquipObjectEvent", "ErrorEvent"]:
         """Equip object events are valid as long as an equippable object was found"""
         assert len(targets) == 1, f"EquipObjectEvent takes one arg, got {targets}"
@@ -2384,7 +2494,7 @@ class EquipObjectEvent(GraphEvent):
                 f"You already have {target.get_prefix_view()} equipped!",
                 [target],
             )
-        return cls(actor, target_nodes=[target])
+        return cls(actor, target_nodes=[target], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -2515,7 +2625,11 @@ class RemoveObjectEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["RemoveObjectEvent", "ErrorEvent"]:
         """Remove object events are valid as long as an equipped object was found"""
         assert len(targets) == 1, f"RemoveObjectEvent takes one arg, got {targets}"
@@ -2534,7 +2648,7 @@ class RemoveObjectEvent(GraphEvent):
                 f"{guess_target_name}, isn't something you have equipped.",
                 [target],
             )
-        return cls(actor, target_nodes=[target])
+        return cls(actor, target_nodes=[target], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -2636,7 +2750,11 @@ class IngestEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["IngestEvent", "ErrorEvent"]:
         """Equip object events are valid as long as an equippable object was found"""
         assert len(targets) == 1, f"IngestEvent takes one arg, got {targets}"
@@ -2653,7 +2771,7 @@ class IngestEvent(GraphEvent):
                 f"{guess_target_name}, isn't something you can {cls.NAMES[0]}.",
                 [target],
             )
-        return cls(actor, target_nodes=[target])
+        return cls(actor, target_nodes=[target], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -2867,7 +2985,11 @@ class LockableEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["LockableEvent", "ErrorEvent"]:
         """Lock object events are valid as long as the target is unlocked"""
         assert len(targets) == 1, f"LockableEvent takes one arg, got {targets}"
@@ -2891,7 +3013,7 @@ class LockableEvent(GraphEvent):
                 actor,
                 f"You can't {cls.NAMES[0]} {target_node.get_prefix_view_from(actor.get_room())} because it's already {cls.NAMES[0]}ed",
             )
-        return cls(actor, target_nodes=[target_node, key_node])
+        return cls(actor, target_nodes=[target_node, key_node], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -3061,10 +3183,14 @@ class ExamineEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> "ExamineEvent":
         """Examine events are always valid if constructed"""
-        return cls(actor, target_nodes=targets)
+        return cls(actor, target_nodes=targets, event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -3152,7 +3278,11 @@ class EmoteEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["EmoteEvent", "ErrorEvent"]:
         """Emote events are valid if the emote is valid."""
         if text is None or text not in cls.DESC_MAP:
@@ -3162,7 +3292,7 @@ class EmoteEvent(GraphEvent):
                 actor,
                 f"What emotion is that? At the moment light denizens can only show the following gestures:\n{all_emotes}",
             )
-        return cls(actor, text_content=text)
+        return cls(actor, text_content=text, event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -3288,9 +3418,26 @@ class RewardEvent(GraphEvent):
 
     NAMES = ["reward", "r"]
 
+    def __init__(
+        self,
+        actor: GraphAgent,
+        target_nodes: Optional[List[GraphNode]] = None,
+        text_content: Optional[str] = None,
+        event_id: Optional[str] = None,
+        target_event_id: Optional[str] = None,
+    ):
+        super().__init__(
+            actor,
+            target_nodes=target_nodes,
+            text_content=text_content,
+            event_id=event_id,
+        )
+        # Must store the target event, if this was provided
+        self.target_event_id = target_event_id
+
     def execute(self, world: "World") -> List[GraphEvent]:
         """
-        On execution, show the quests
+        On execution, pass along the reward if possible
         """
         assert not self.executed
         self.__actor_name = self.actor.get_prefix_view()
@@ -3377,13 +3524,17 @@ class RewardEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["RewardEvent", "ErrorEvent"]:
         """Reward events with a target agent will always be valid."""
         assert len(targets) == 1, f"RewardEvent takes one arg, got {targets}"
         target = targets[0]
         assert target.agent, "Can only reward agents"
-        return cls(actor, target_nodes=[target])
+        return cls(actor, target_nodes=[target], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
@@ -3645,10 +3796,14 @@ class PointEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> "PointEvent":
         """Point events are always valid if constructed"""
-        return cls(actor, target_nodes=targets)
+        return cls(actor, target_nodes=targets, event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:

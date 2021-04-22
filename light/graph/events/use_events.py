@@ -347,7 +347,11 @@ class UseEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["UseObjectEvent", "ErrorEvent"]:
         """use object events are mostly valid"""
         assert len(targets) == 2, f"UseObjectEvent takes two args, got {targets}"
@@ -358,7 +362,7 @@ class UseEvent(GraphEvent):
                 actor,
                 "Nothing special seems to happen.",
             )
-        return cls(actor, target_nodes=[use_object, use_with])
+        return cls(actor, target_nodes=[use_object, use_with], event_id=event_id)
 
     @classmethod
     def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
