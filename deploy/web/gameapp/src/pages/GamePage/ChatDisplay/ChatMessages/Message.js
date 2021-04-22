@@ -33,6 +33,7 @@ const Message = ({
   setPlayerGiftXp,
   playerGiftXp,
   playerXp,
+  xp,
 }) => {
   const [isEditMode, setEditMode] = React.useState(false);
   const [isReportMode, setReportMode] = React.useState(false);
@@ -133,7 +134,16 @@ const Message = ({
     <div className={classNames}>
       <div className="agent">
         <span style={{ fontFamily: "fantasy" }}>{actor.toUpperCase()}</span>
-        {isSelf ? null : (
+        {isSelf ? (
+          <React.Fragment>
+            {xp ? (
+              <>
+                <span style={{ fontFamily: "fantasy" }}>{xp}</span>
+                <i className="fa fa-star" style={{ color: "gold" }} />
+              </>
+            ) : null}
+          </React.Fragment>
+        ) : (
           <React.Fragment>
             <Tooltip
               title={

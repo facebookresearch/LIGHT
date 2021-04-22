@@ -67,7 +67,10 @@ const SideBar = ({
         )}
       </div>
       <div className="sidebar-row">
-        <a href={"/logout"}>
+        <a
+          href={"/logout"}
+          style={{ color: "#0060B6", textDecoration: "none" }}
+        >
           <GameButton text={"LOGOUT"} clickFunction={() => {}} />
         </a>
       </div>
