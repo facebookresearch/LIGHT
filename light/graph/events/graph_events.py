@@ -71,6 +71,11 @@ class SystemMessageEvent(TriggeredEvent):
         world.broadcast_to_agents(self, agents=[self.actor])
         return []
 
+    def to_frontend_form(self, viewer: "GraphAgent") -> Dict[str, Any]:
+        frontend_form = super().to_frontend_form(viewer)
+        frontend_form["event_data"] = self.event_data
+        return frontend_form
+
     @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Only the target actor should be able to see this message"""
@@ -3550,6 +3555,11 @@ class RewardEvent(GraphEvent):
             if agent != actor:
                 valid_actions.append(cls(actor, target_nodes=[agent]))
         return valid_actions
+
+    def to_frontend_form(self, viewer: "GraphAgent") -> Dict[str, Any]:
+        frontend_form = super().to_frontend_form(viewer)
+        frontend_form["target_event_id"] = self.target_event_id
+        return frontend_form
 
 
 class HealthEvent(NoArgumentEvent):
