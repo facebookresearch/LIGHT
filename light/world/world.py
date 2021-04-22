@@ -27,7 +27,7 @@ from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 from light.world.views import WorldViewer
 from light.world.purgatory import Purgatory
 
-from typing import List
+from typing import List, Optional
 
 
 def check_integrity(f):
@@ -821,15 +821,15 @@ class World(object):
         h = ["Have you tried typing help?"]
         return random.choice(h)
 
-    def parse_exec(self, actor, inst=None):
+    def parse_exec(self, actor, inst=None, event_id: Optional[str] = None):
         if not isinstance(actor, GraphNode):
             actor = self.oo_graph.get_node(actor)
         if self.opt.get("dont_catch_errors", False):
-            return self.parse_exec_internal(actor, inst)
+            return self.parse_exec_internal(actor, inst=inst, event_id=event_id)
 
         else:
             try:
-                return self.parse_exec_internal(actor, inst)
+                return self.parse_exec_internal(actor, inst=inst, event_id=event_id)
             except Exception:
                 import traceback
 
@@ -839,7 +839,9 @@ class World(object):
                 )
                 return False, "FailedParseExec"
 
-    def attempt_parse_event(self, EventClass, actor_node, arguments):
+    def attempt_parse_event(
+        self, EventClass, actor_node, arguments, event_id: Optional[str] = None
+    ):
         """Return the possible parsed event given the event, actor, and arguments"""
         # Parse the text into string args
         possible_text_args = EventClass.split_text_args(actor_node, arguments)
@@ -858,9 +860,11 @@ class World(object):
             return result
 
         # Create the final event. May be an error but that's okay
-        return EventClass.construct_from_args(actor_node, result.targets, result.text)
+        return EventClass.construct_from_args(
+            actor_node, result.targets, result.text, event_id=event_id
+        )
 
-    def parse_exec_internal(self, actor, inst=None):
+    def parse_exec_internal(self, actor, inst=None, event_id: Optional[str] = None):
         """Try to parse and execute the given event"""
         # basic replacements
         inst = self.action_parser.post_process(inst, actor)
@@ -951,7 +955,7 @@ class World(object):
 
         EventClass = ALL_EVENTS[executable]
 
-        parsed_event = self.attempt_parse_event(EventClass, actor, arguments)
+        parsed_event = self.attempt_parse_event(EventClass, actor, arguments, event_id)
         if isinstance(parsed_event, ErrorEvent):
             self.broadcast_to_agents(parsed_event, [actor])
             return False, inst

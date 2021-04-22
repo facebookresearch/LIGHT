@@ -758,6 +758,7 @@ class GraphAgent(GraphNode):
         """Kill off this agent, turn them into an object"""
         self.desc = random.choice(DEAD_DESCRIPTIONS)
         self.set_prop("dead", True)
+        self.mark_dying()
         new_node_id = self.node_id + "__dead__"
         new_node = GraphObject(new_node_id, self.name, self.__dict__)
         room = self.get_room()

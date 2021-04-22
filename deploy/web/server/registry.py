@@ -50,7 +50,10 @@ class RegistryApplication(tornado.web.Application):
             db=ldb,
         )
         self.router = RuleRouter(
-            [Rule(PathMatches(f"/game.*/socket"), self.tornado_provider.app)]
+            [
+                Rule(PathMatches(f"/game.*/socket"), self.tornado_provider.app),
+                Rule(PathMatches(f"/game/api/.*"), self.tornado_provider.app),
+            ]
         )
         TEN_MINUTES = 600000
         tornado.ioloop.PeriodicCallback(self.cleanup_games, TEN_MINUTES).start()

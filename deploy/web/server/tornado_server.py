@@ -13,7 +13,7 @@ from deploy.web.server.game_instance import (
 from light.data_model.light_database import LIGHTDatabase
 from light.world.player_provider import PlayerProvider
 from light.world.quest_loader import QuestLoader
-from light.graph.events.graph_events import init_safety_classifier
+from light.graph.events.graph_events import init_safety_classifier, RewardEvent
 
 import argparse
 import inspect
@@ -37,6 +37,12 @@ import tornado.auth  # noqa E402: gotta install ioloop first
 import tornado.websocket  # noqa E402: gotta install ioloop first
 import tornado.escape  # noqa E402: gotta install ioloop first
 from light.graph.events.graph_events import SoulSpawnEvent
+
+from typing import Dict, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from light.graph.elements.graph_nodes import GraphAgent
+    from light.world.world import World
 
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
@@ -139,6 +145,8 @@ class Application(tornado.web.Application):
         self.subs = {}
         self.new_subs = defaultdict(list)
         self.db = db
+        self.user_node_map: Dict[str, Optional["GraphAgent"]] = {}
+        self.world: Optional["World"] = None
         super(Application, self).__init__(self.get_handlers(), **use_tornado_settings)
 
     def get_handlers(self):
@@ -147,6 +155,7 @@ class Application(tornado.web.Application):
         #       hit in the top level RuleRouter from run_server.py in case this application
         #       is run standalone for some reason.
         return [
+            (r"/game/api/(.*)", ApiHandler, {"app": self, "database": self.db}),
             (r"/game(.*)/socket", SocketHandler, {"app": self, "database": self.db}),
             (r"/play", GameHandler, {"app": self, "database": self.db}),
             (r"/(.*)", StaticUIHandler, {"path": path_to_build}),
@@ -224,7 +233,8 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         if self.player is None:
             return
         if cmd == "act":
-            self.player.act(msg["data"])
+            data = msg["data"]
+            self.player.act(data["text"], data["event_id"])
         else:
             print("THESE COMMANDS HAVE BEEN DEPRICATED")
 
@@ -298,6 +308,69 @@ class BaseHandler(tornado.web.RequestHandler):
         else:
             # In production, reroute to error
             self.redirect("/#/error")
+
+
+class ApiHandler(BaseHandler):
+    def initialize(self, app, database):
+        self.db = database
+        self.app = app
+
+    @tornado.web.authenticated
+    def get(self, *args):
+        user_json = self.get_secure_cookie("user")
+        if user_json:
+            user_decoded = tornado.escape.json_decode(user_json)
+
+            split_inputs = args[0].split("/")
+            api_command = split_inputs[0]
+            other_path_args = split_inputs[1:]
+
+            # TODO(jack) this should really be refactored alongside the
+            # TornadoPlayerProvider. Too many complicated routes back here.
+            # Then these can go to a subapplication and use Tornado routing
+            # rather than whatever this is
+            if api_command == "my_agent":
+
+                # TODO do stuff here! You can access self.app.user_node_map
+                print(self.app.user_node_map)
+                print(other_path_args)
+                print(user_decoded)
+
+                self.write(json.dumps({"data": "Something"}))
+                return
+        # TODO Not a real error code, but should be sometime
+        self.write(json.dumps({"failed": "user was logged out"}))
+
+    @tornado.web.authenticated
+    def post(self, *args):
+        user_json = self.get_secure_cookie("user")
+        if user_json:
+            user_decoded = tornado.escape.json_decode(user_json)
+
+            split_inputs = args[0].split("/")
+            api_command = split_inputs[0]
+            other_path_args = split_inputs[1:]
+            if api_command == "grant_reward":
+                my_node = self.app.user_node_map[user_decoded]
+                world = self.app.world
+                target_event_id = self.get_argument("target_event_id", "")
+                target_node_id = self.get_argument("target_node_id", "")
+                # TODO ensure that the target node exists
+                target_node = world.graph.get_node(target_node_id)
+
+                event = RewardEvent(
+                    my_node,
+                    target_nodes=[target_node],
+                    target_event_id=target_event_id,
+                )
+                event.execute(world)
+
+                self.write(json.dumps({"data": event.to_frontend_form(my_node)}))
+                return
+            self.write(json.dumps({"failed": "invalid command"}))
+        else:
+            # TODO Not a real error code, but should be sometime
+            self.write(json.dumps({"failed": "user was logged out"}))
 
 
 class LandingApplication(tornado.web.Application):
@@ -513,13 +586,20 @@ class TornadoPlayerProvider(PlayerProvider):
         socket.send_alive()
         self.db = db
         self.user = user
+        # TODO a TornadoPlayerProvider refactor is likely desired, combining
+        # the APIs for socket and HTTP requests to use logged in user
+        # and their state in the world at the same time.
+        self.app = socket.app
+        self.app.world = purgatory.world
 
     def register_soul(self, soul: "PlayerSoul"):
         """Save the soul as a local player soul"""
         self.player_soul = soul
-        if self.db is not None and self.user is not None:
-            with self.db as ldb:
-                ldb.initialize_agent_score(soul.target_node, self.user)
+        if self.user is not None:
+            if self.db is not None:
+                with self.db as ldb:
+                    ldb.initialize_agent_score(soul.target_node, self.user)
+            self.app.user_node_map[self.user] = soul.target_node
 
     def player_observe_event(self, soul: "PlayerSoul", event: "GraphEvent"):
         """
@@ -539,13 +619,13 @@ class TornadoPlayerProvider(PlayerProvider):
                 json.dumps({"command": "actions", "data": [dat]})
             )
 
-    def act(self, action_data):
+    def act(self, action_data, event_id: Optional[str] = None):
         if self.player_soul is not None and self.player_soul.is_reaped:
             self.player_soul = None
         if self.player_soul is None:
             self.init_soul()
             return
-        player_agent = self.player_soul.handle_act(action_data)
+        player_agent = self.player_soul.handle_act(action_data, event_id)
 
     def init_soul(self):
         self.purgatory.get_soul_for_player(self)
@@ -565,9 +645,11 @@ class TornadoPlayerProvider(PlayerProvider):
         return self.socket.alive
 
     def on_reap_soul(self, soul):
-        if self.db is not None and self.user is not None:
-            with self.db as ldb:
-                ldb.store_agent_score(soul.target_node, self.user)
+        if self.user is not None:
+            if self.db is not None:
+                with self.db as ldb:
+                    ldb.store_agent_score(soul.target_node, self.user)
+            self.app.user_node_map[self.user] = None
 
 
 class TornadoPlayerFactory:
