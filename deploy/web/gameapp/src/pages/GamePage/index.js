@@ -162,6 +162,7 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
 
   React.useEffect(() => {
     const { xp, giftXp } = persona;
+    console.log("GIFT EXP", giftXp);
     setPlayerXp(xp);
     setPlayerGiftXp(giftXp);
   }, [persona]);
@@ -206,6 +207,8 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
         resetIdleTimer={resetIdleTimer}
         setPlayerXp={setPlayerXp}
         setPlayerGiftXp={setPlayerGiftXp}
+        playerXp={playerXp}
+        playerGiftXp={playerGiftXp}
       />
     </div>
   );

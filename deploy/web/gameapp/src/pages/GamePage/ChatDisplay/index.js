@@ -33,6 +33,10 @@ const ChatDisplay = ({
   getLocationState,
   idle,
   resetIdleTimer,
+  setPlayerXp,
+  setPlayerGiftXp,
+  playerGiftXp,
+  playerXp,
 }) => {
   const [showCharacter, setShowCharacter] = React.useState(true);
   const [enteredText, setEnteredText] = React.useState("");
@@ -106,6 +110,10 @@ const ChatDisplay = ({
           agents={agents}
           persona={persona}
           setTextTellAgent={setTextTellAgent}
+          setPlayerXp={setPlayerXp}
+          setPlayerGiftXp={setPlayerGiftXp}
+          playerGiftXp={playerGiftXp}
+          playerXp={playerXp}
         />
       </div>
       <ChatControls

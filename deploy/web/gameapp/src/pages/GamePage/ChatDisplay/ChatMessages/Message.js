@@ -23,7 +23,17 @@ function handleReport(reportedMessage, reportReason) {
   });
 }
 
-const Message = ({ text, caller, actor, isSelf, onReply }) => {
+const Message = ({
+  text,
+  caller,
+  actor,
+  isSelf,
+  onReply,
+  setPlayerXp,
+  setPlayerGiftXp,
+  playerGiftXp,
+  playerXp,
+}) => {
   const [isEditMode, setEditMode] = React.useState(false);
   const [isReportMode, setReportMode] = React.useState(false);
   const [reportReason, setReportReason] = React.useState("");
@@ -31,7 +41,10 @@ const Message = ({ text, caller, actor, isSelf, onReply }) => {
   const [isLiked, setIsLiked] = React.useState(false);
 
   const likeHandler = () => {
-    setIsLiked(true);
+    if (playerGiftXp > 0) {
+      setPlayerGiftXp(playerGiftXp - 1);
+      setIsLiked(true);
+    }
   };
 
   let classNames = "message type-dialogue ";
@@ -122,11 +135,21 @@ const Message = ({ text, caller, actor, isSelf, onReply }) => {
         <span style={{ fontFamily: "fantasy" }}>{actor.toUpperCase()}</span>
         {isSelf ? null : (
           <React.Fragment>
-            <Tooltip title={`Award ${actor} Experience`} position="top">
+            <Tooltip
+              title={
+                playerGiftXp > 0
+                  ? `Award ${actor} Experience`
+                  : "Not enough Gift Experience"
+              }
+              position="top"
+            >
               {isLiked ? (
                 <i className="fa fa-star" style={{ color: "gold" }} />
               ) : (
-                <i className="fa fa-star-o" onClick={likeHandler} />
+                <i
+                  className="fa fa-star-o"
+                  onClick={playerGiftXp > 0 ? likeHandler : null}
+                />
               )}
             </Tooltip>{" "}
             <Tooltip title={`tell ${actor}...`} position="top">

@@ -30,7 +30,7 @@ const ExperienceInfo = ({ experience, giftExperience }) => {
   };
   useEffect(() => {
     levelCalculator();
-  }, []);
+  }, [experience]);
   return (
     <div className="experienceinfo-container">
       <LevelDisplay level={level} giftExperience={giftExperience} />
