@@ -165,13 +165,14 @@ input.chatbox:focus {
   outline: none;
   font-style: normal;
 }
+*/
 
 input.edit-message {
   font: inherit;
   width: 100%;
   padding: 3px;
   box-sizing: border-box;
-} */
+}
 
 .controls span.action {
   margin: 5px 3px;
