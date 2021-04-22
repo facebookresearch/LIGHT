@@ -1,8 +1,18 @@
 import React from "react";
 
+// Generate a random id
+function uuidv4() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    var r = (Math.random() * 16) | 0,
+      v = c == "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 const reducer = (state, msg) => {
   // TODO replace the specific incomprehensible message somehow instead
   if (
+    // TODO (Justin) Can we target the event ID to swap the text out now?
     msg.text &&
     msg.text.startsWith("You mumble something incomprehensible")
   ) {
@@ -18,17 +28,19 @@ const reducer = (state, msg) => {
     }
   }
   if (msg.caller === "SystemMessageEvent" && msg.text.indexOf("XP") >= 0) {
-    let i;
-    for (i = state.length - 1; i > 0; i--) {
-      let lastMessage = state[i];
-      if (lastMessage.caller === "say" && lastMessage.is_self) {
-        let messageWithExp = lastMessage.text.concat(msg.text);
-        let filteredState = state.filter((message, index) => index != i);
-        const updatedState = [...filteredState, messageWithExp];
-        console.log(updatedState);
-        return updatedState;
-      }
-    }
+    // TODO(justin)
+    console.log("New message needs to be processed for exp", msg);
+    // let i;
+    // for (i = state.length - 1; i > 0; i--) {
+    //   let lastMessage = state[i];
+    //   if (lastMessage.caller === "say" && lastMessage.is_self) {
+    //     let messageWithExp = lastMessage.text.concat(msg.text);
+    //     let filteredState = state.filter((message, index) => index != i);
+    //     const updatedState = [...filteredState, messageWithExp];
+    //     console.log(updatedState);
+    //     return updatedState;
+    //   }
+    // }
   }
   const updatedState = [...state, msg];
   console.groupCollapsed("New message. Total: " + updatedState.length);
@@ -148,14 +160,19 @@ export function useWSDataSource(url) {
 
   const submitMessage = React.useCallback(
     (txt) => {
+      let event_id = uuidv4();
       appendMessage({
         caller: "say",
         text: txt,
+        event_id: event_id,
         is_self: true,
         actors: [persona.id],
       });
 
-      const msg = JSON.stringify({ command: "act", data: txt });
+      const msg = JSON.stringify({
+        command: "act",
+        data: { text: txt, event_id: event_id },
+      });
       return websocket.current.send(msg);
     },
     [websocket, appendMessage, persona]
