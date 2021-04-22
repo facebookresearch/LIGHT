@@ -67,7 +67,9 @@ const SideBar = ({
         )}
       </div>
       <div className="sidebar-row">
-        <GameButton text={"LOGOUT"} />
+        <a href={"/logout"}>
+          <GameButton text={"LOGOUT"} clickFunction={() => {}} />
+        </a>
       </div>
       <IconCollapsibleBox
         title={`You are ${persona.prefix} ${persona.name}`}

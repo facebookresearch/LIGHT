@@ -1,5 +1,5 @@
 import React from "react";
-
+import "./styles.css";
 //CUSTOM COMPONENTS
 import Entry from "./Entry";
 

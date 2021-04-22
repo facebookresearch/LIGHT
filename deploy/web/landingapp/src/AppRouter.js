@@ -19,7 +19,7 @@ const AppRouter = () => {
           <Route path="/about" component={AboutPage} exact />
           <Route path="/terms" component={TermsPage} exact />
           <Route path="/login" component={LoginPage} exact />
-          <Route path="/logout" component={LogoutPage} exact />
+          <Route path="/bye" component={LogoutPage} exact />
           <Route path="/error" component={ErrorPage} exact />
           <Route component={ErrorPage} />
         </Switch>

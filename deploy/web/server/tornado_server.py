@@ -414,9 +414,9 @@ class LandingApplication(tornado.web.Application):
                 {"database": database, "target": "/html/terms.html"},
             ),
             (
-                r"/bye",
-                StaticPageHandler,
-                {"database": database, "target": "/html/logout.html"},
+                r"/#/bye",
+                LandingHandler,
+                {"database": database},
             ),
             (
                 r"/about",
@@ -552,7 +552,7 @@ class LoginHandler(BaseHandler):
 class LogoutHandler(BaseHandler):
     def get(self):
         self.clear_cookie("user")
-        self.redirect("/bye")
+        self.redirect("/#/bye")
 
 
 class ReportHandler(BaseHandler):

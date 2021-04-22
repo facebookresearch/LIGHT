@@ -169,6 +169,7 @@ export function useWSDataSource(url) {
         event_id: event_id,
         is_self: true,
         actors: [persona.id],
+        exp: 0,
       });
 
       const msg = JSON.stringify({
