@@ -7,12 +7,10 @@ import "./styles.css";
 import Progressbar from "../Progressbar";
 import LevelDisplay from "../LevelDisplay";
 
-const ExperienceInfo = (props) => {
-  const { experience } = props;
+const ExperienceInfo = ({ experience, giftExperience }) => {
   const [level, setLevel] = useState(1);
   const [neededExp, setNeededExp] = useState(0);
   const [exp, setExp] = useState(0);
-  const [giftExp, setGiftExp] = useState(3);
   const [progressPercent, setProgressPercent] = useState(0);
 
   const levelCalculator = () => {
@@ -35,7 +33,7 @@ const ExperienceInfo = (props) => {
   }, []);
   return (
     <div className="experienceinfo-container">
-      <LevelDisplay level={level} giftExp={giftExp} />
+      <LevelDisplay level={level} giftExperience={giftExperience} />
       <div style={{ width: "100%", marginLeft: "10%", marginRight: 0 }}>
         <Tooltip title={`Earn ${neededExp}XP to level up`} position="top">
           <Progressbar

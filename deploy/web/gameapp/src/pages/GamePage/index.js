@@ -94,6 +94,8 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
   const [idleTime, setIdleTime] = React.useState(0);
   const [idle, setIdle] = React.useState(false);
   const [enteredText, setEnteredText] = React.useState("");
+  const [playerXp, setPlayerXp] = React.useState(0);
+  const [playerGiftXp, setPlayerGiftXp] = React.useState(0);
   const chatContainerRef = React.useRef(null);
   const getAgentName = (agent) => (agents ? agents[agent] : agent);
   const getEntityId = (agent) => agent.match(/\d+$/)[0];
@@ -158,6 +160,12 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
     setSelectedEmoji(autopickedEmoji);
   }, [persona, setSelectedEmoji]);
 
+  React.useEffect(() => {
+    const { xp, giftXp } = persona;
+    setPlayerXp(xp);
+    setPlayerGiftXp(giftXp);
+  }, [persona]);
+
   return (
     <div className="App" onMouseMove={resetIdleTimer}>
       {persona ? (
@@ -168,6 +176,8 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
           getEntityId={getEntityId}
           selectedEmoji={selectedEmoji}
           setSelectedEmoji={setSelectedEmoji}
+          playerXp={playerXp}
+          playerGiftXp={playerGiftXp}
         />
       ) : (
         <div />
@@ -194,6 +204,8 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
         getLocationState={getLocationState}
         idle={idle}
         resetIdleTimer={resetIdleTimer}
+        setPlayerXp={setPlayerXp}
+        setPlayerGiftXp={setPlayerGiftXp}
       />
     </div>
   );

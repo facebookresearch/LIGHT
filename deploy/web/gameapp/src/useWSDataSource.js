@@ -117,6 +117,7 @@ export function useWSDataSource(url) {
               id: action.actor.node_id,
               prefix: action.actor.name_prefix,
               xp: action.actor.xp,
+              giftXp: action.actor.reward_xp,
             });
           }
           const neighbors = getNeighbors(action);
