@@ -35,7 +35,7 @@ const Entry = ({ msg, onReply, agents, selfId }) => {
         isSelf={msg.is_self || actor === selfId}
         actor={agents[actor]}
         onReply={onReply}
-        xp={10}
+        xp={msg.xp}
         actorId={actor}
         eventId={msg.event_id}
       />

@@ -356,10 +356,12 @@ class ApiHandler(BaseHandler):
             print("API COMMAND", api_command)
             print("ARGS", args)
             if api_command == "grant_reward":
-                print("EVENTID: " + data.target_event_id)
-                print("NODEID: " + data.target_node_id)
-                target_event_id = data.target_event_id
-                target_node_id = data.target_node_id
+                my_node = self.app.user_node_map[user_decoded]
+                world = self.app.world
+                target_event_id = data["target_event_id"]
+                target_node_id = data["target_node_id"]
+                print("EVENTID: " + target_event_id)
+                print("NODEID: " + target_node_id)
                 # TODO ensure that the target node exists
                 target_node = world.oo_graph.get_node(target_node_id)
 

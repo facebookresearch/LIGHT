@@ -62,19 +62,12 @@ const Message = ({
   const [isReported, setReported] = React.useState(false);
   const [isLiked, setIsLiked] = React.useState(false);
 
-  console.log("ACTOR", actor);
-  console.log("actorId", actorId);
-  console.log("eventId", eventId);
   const likeHandler = () => {
-    handleReward(eventId, actorId);
     if (playerGiftXp > 0) {
       setPlayerGiftXp(playerGiftXp - 1);
       setIsLiked(true);
+      handleReward(eventId, actorId);
     }
-  };
-
-  const submitReport = () => {
-    handleReport(text, reportReason);
   };
 
   let classNames = "message type-dialogue ";

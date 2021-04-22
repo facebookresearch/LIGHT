@@ -16,31 +16,34 @@ const reducer = (state, msg) => {
     msg.text &&
     msg.text.startsWith("You mumble something incomprehensible")
   ) {
-    let last_message = state[state.length - 1];
-    if (last_message.is_self) {
-      const slicedState = [...state.slice(0, state.length - 1), msg];
-      console.groupCollapsed(
-        "New message overwritten old. Total: " + slicedState.length
+    let { event_id } = msg;
+    //let last_message = state[state.length - 1];
+    if (msg.is_self) {
+      // const slicedState = [...state.slice(0, state.length - 1), msg];
+      // console.groupCollapsed(
+      //   "New message overwritten old. Total: " + slicedState.length
+      // );
+      // console.table(slicedState);
+      // console.groupEnd();
+      // return slicedState;
+      const filteredState = state.filter(
+        (message) => message.event_id != event_id
       );
-      console.table(slicedState);
-      console.groupEnd();
-      return slicedState;
+      return filteredState;
     }
   }
   if (msg.caller === "SystemMessageEvent" && msg.text.indexOf("XP") >= 0) {
     // TODO(justin)
     console.log("New message needs to be processed for exp", msg);
-    // let i;
-    // for (i = state.length - 1; i > 0; i--) {
-    //   let lastMessage = state[i];
-    //   if (lastMessage.caller === "say" && lastMessage.is_self) {
-    //     let messageWithExp = lastMessage.text.concat(msg.text);
-    //     let filteredState = state.filter((message, index) => index != i);
-    //     const updatedState = [...filteredState, messageWithExp];
-    //     console.log(updatedState);
-    //     return updatedState;
-    //   }
-    // }
+    let { actor, target_event_id } = msg;
+    let { xp } = actor;
+    let updatedMsg = (msg.xp = xp);
+    let filteredState = state.filter(
+      (message) => message.event_id != target_event_id
+    );
+    const updatedState = [...filteredState, updatedMsg];
+    console.log(updatedState);
+    return updatedState;
   }
   const updatedState = [...state, msg];
   console.groupCollapsed("New message. Total: " + updatedState.length);
