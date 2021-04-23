@@ -39,15 +39,13 @@ const reducer = (state, msg) => {
     })[0];
     //MESSAGE WITH EXP
     let updatedMsg = { ...unUpdatedMsg, xp: unUpdatedMsg.exp + xpAmt };
-
+    //UPDATED MESSAGE PLACED IN PROPER POSITION IN STATE
     let updatedState = state.map((message) => {
       if (message.event_id == target_event) {
         return updatedMsg;
       }
       return message;
     });
-    console.log("UPDATE CHAT", updatedState);
-    //const updatedState = [...filteredState, updatedMsg];
     return updatedState;
   }
   const updatedState = [...state, msg];

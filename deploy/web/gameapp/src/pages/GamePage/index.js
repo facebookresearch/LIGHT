@@ -169,7 +169,6 @@ function Chat({
 
   React.useEffect(() => {
     const { xp, giftXp } = persona;
-    console.log("GIFT EXP", giftXp);
     setPlayerXp(xp);
     setPlayerGiftXp(giftXp);
   }, [persona]);
