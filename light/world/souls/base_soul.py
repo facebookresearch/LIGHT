@@ -370,14 +370,14 @@ class BaseSoul(Soul):
 
                 stars = self.score_conversation()
                 agent._agent_interactions[agent2_id] += stars
-                agent.xp += 4  # stars
-                agent.reward_xp += 1  # stars / 4.0
+                agent.xp += stars
+                agent.reward_xp += stars / 4.0
                 # Send star score message.
-                if stars >= 0:
+                if stars > 0:
                     xp_event_message = SystemMessageEvent(
                         agent,
                         [],
-                        text_content="(You gained " + str(4) + " XP!)",
+                        text_content="(You gained " + str(stars) + " XP!)",
                         event_data={
                             "event_type": "model_experience",
                             "reward": stars,
