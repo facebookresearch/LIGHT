@@ -228,7 +228,7 @@ function getLocationState(messages) {
   );
   if (valid_messages.length === 0) return [null, []];
   var lastMessage = valid_messages[valid_messages.length - 1];
-
+  console.log("LAST MESSAGE:", lastMessage);
   return {
     currentRoom: lastMessage.room_id,
     presentAgents: Object.keys(lastMessage.present_agent_ids),

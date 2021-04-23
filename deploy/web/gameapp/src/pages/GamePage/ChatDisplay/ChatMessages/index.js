@@ -17,7 +17,7 @@ const ChatMessages = ({
     <div className="chatlog">
       {messages.map((msg, idx) => (
         <Entry
-          key={idx}
+          key={msg.event_id}
           msg={msg}
           agents={agents}
           onReply={(agent) => {

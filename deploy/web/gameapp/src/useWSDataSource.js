@@ -32,7 +32,10 @@ const reducer = (state, msg) => {
       return filteredState;
     }
   }
-  if (msg.caller === "SystemMessageEvent" && msg.text.indexOf("XP") >= 0) {
+  if (
+    (msg.caller === "SystemMessageEvent" && msg.text.indexOf("XP") >= 0) ||
+    (msg.caller === "RewardEvent" && msg.text.indexOf("XP") >= 0)
+  ) {
     // TODO(justin)
     console.log("New message needs to be processed for exp", msg);
     let { actor, target_event_id } = msg;
