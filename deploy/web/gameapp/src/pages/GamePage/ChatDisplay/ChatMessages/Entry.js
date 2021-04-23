@@ -13,8 +13,17 @@ function get_msg_actor(msg) {
   }
 }
 
-const Entry = ({ msg, onReply, agents, selfId }) => {
-  console.log("MESSAGE RESPONSE", msg);
+const Entry = ({
+  msg,
+  onReply,
+  agents,
+  selfId,
+  setPlayerXp,
+  setPlayerGiftXp,
+  playerGiftXp,
+  playerXp,
+}) => {
+  //console.log("MESSAGE RESPONSE", msg);
   if (
     [
       "LookEvent",
@@ -38,6 +47,8 @@ const Entry = ({ msg, onReply, agents, selfId }) => {
         xp={msg.xp}
         actorId={actor}
         eventId={msg.event_id}
+        playerGiftXp={playerGiftXp}
+        setPlayerGiftXp={setPlayerGiftXp}
       />
     );
   }

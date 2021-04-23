@@ -116,11 +116,11 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
     let timer = null;
     timer = setInterval(() => {
       setIdleTime((idleTime) => idleTime + 1);
-      console.log("TIME", idleTime);
     }, 1000);
     if (idleTime === 300) {
       //disconnect
       setIdle(true);
+      clearInterval(refreshIntervalId);
     }
     return () => clearInterval(timer);
   }, [idleTime]);
@@ -128,7 +128,6 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
   const disconnect = () => {};
   const resetIdleTimer = () => {
     setIdleTime(0);
-    console.log("IDLE TIME", idleTime);
   };
 
   React.useEffect(() => {
@@ -228,7 +227,6 @@ function getLocationState(messages) {
   );
   if (valid_messages.length === 0) return [null, []];
   var lastMessage = valid_messages[valid_messages.length - 1];
-  console.log("LAST MESSAGE:", lastMessage);
   return {
     currentRoom: lastMessage.room_id,
     presentAgents: Object.keys(lastMessage.present_agent_ids),

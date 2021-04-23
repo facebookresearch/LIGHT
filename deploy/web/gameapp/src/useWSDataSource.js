@@ -10,6 +10,7 @@ function uuidv4() {
 }
 
 const reducer = (state, msg) => {
+  console.log("REDUCER STATE:", state);
   // TODO replace the specific incomprehensible message somehow instead
   if (
     // TODO (Justin) Can we target the event ID to swap the text out now?
@@ -39,16 +40,26 @@ const reducer = (state, msg) => {
   ) {
     // TODO(justin)
     console.log("New message needs to be processed for exp", msg);
-    let { actor, target_event_id } = msg;
+    let { actor, event_data, text } = msg;
+    let { target_event } = event_data;
+    let xpAmt = parseInt(text.slice(-6, -5));
+    console.log("INCOMING XP", xpAmt);
 
-    let { xp } = actor;
-
-    let updatedMsg = { ...msg, xp: xp };
+    let unUpdatedMsg = state.filter((message) => {
+      console.log("MESSAGE EVENT ID:  ", message.event_id);
+      console.log("TARGET EVENT ID:  ", target_event);
+      console.log("MATCH:  ", message.event_id == target_event);
+      return message.event_id == target_event;
+    })[0];
+    console.log("UNUPDATED MSG: ", unUpdatedMsg);
+    let updatedMsg = { ...unUpdatedMsg, xp: xpAmt };
+    console.log("UPDATED MSG: ", updatedMsg);
     let filteredState = state.filter(
-      (message) => message.event_id != target_event_id
+      (message) =>
+        message.event_id != target_event || message.event_id != target_event
     );
     const updatedState = [...filteredState, updatedMsg];
-    console.log(updatedState);
+    console.log("UPDATED LIST:", updatedState);
     return updatedState;
   }
   const updatedState = [...state, msg];
