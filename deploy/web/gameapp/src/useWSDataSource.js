@@ -13,8 +13,9 @@ const reducer = (state, msg) => {
   // TODO replace the specific incomprehensible message somehow instead
   if (
     // TODO (Justin) Can we target the event ID to swap the text out now?
-    msg.text &&
-    msg.text.startsWith("You mumble something incomprehensible")
+    (msg.text &&
+      msg.text.startsWith("You mumble something incomprehensible")) ||
+    !msg.text
   ) {
     let { event_id } = msg;
     //let last_message = state[state.length - 1];
@@ -39,8 +40,10 @@ const reducer = (state, msg) => {
     // TODO(justin)
     console.log("New message needs to be processed for exp", msg);
     let { actor, target_event_id } = msg;
+
     let { xp } = actor;
-    let updatedMsg = (msg.xp = xp);
+
+    let updatedMsg = { ...msg, xp: xp };
     let filteredState = state.filter(
       (message) => message.event_id != target_event_id
     );
