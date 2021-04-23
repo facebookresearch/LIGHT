@@ -23,7 +23,6 @@ const Entry = ({
   playerGiftXp,
   playerXp,
 }) => {
-  //console.log("MESSAGE RESPONSE", msg);
   if (
     [
       "LookEvent",

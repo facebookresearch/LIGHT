@@ -63,7 +63,6 @@ const Message = ({
   const [isLiked, setIsLiked] = React.useState(false);
 
   const likeHandler = () => {
-    console.log("PLAYER GIFT EXP:  ", playerGiftXp);
     if (playerGiftXp > 0) {
       setPlayerGiftXp(playerGiftXp - 1);
       setIsLiked(true);

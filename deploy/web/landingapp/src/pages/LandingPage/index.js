@@ -10,7 +10,6 @@ const LandingPage = (props) => {
   let [page, setPage] = useState(0);
 
   const pageChangeHandler = (arrow) => {
-    console.log(page);
     if (page > 0 && arrow === "-") {
       let previousPage = (page -= 1);
       setPage(previousPage);
@@ -103,15 +102,16 @@ const LandingPage = (props) => {
                     <p>
                       <b>Emotes:</b> You can also express your emotions in the
                       game with
-                       <u>emote actions</u>, e.g. <i>smile, grin, scream</i> or{" "}
+                      <u>emote actions</u>, e.g. <i>smile, grin, scream</i> or{" "}
                       <i>dance</i>.
                     </p>
                     <p>
                       <b>Actions:</b> You can move into new locations (e.g.,{" "}
                       <i>go west</i>), pick up objects (e.g., <i>get tool</i>),
                       give objects (e.g.,
-                       <i>give tool to smithy</i>), wear clothing, wield weapons,
-                      eat, drink, try to steal objects, and more. Type <i>help</i>
+                      <i>give tool to smithy</i>), wear clothing, wield weapons,
+                      eat, drink, try to steal objects, and more. Type{" "}
+                      <i>help</i>
                       in game for the full list of actions.
                     </p>
                   </>
