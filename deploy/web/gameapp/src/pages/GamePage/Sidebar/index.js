@@ -120,11 +120,9 @@ const SideBar = ({
             >
               {location.name.toUpperCase()}
             </h3>
-            <p>
-              {location.description.split("\n").map((para, idx) => (
-                <p key={idx}>{para}</p>
-              ))}
-            </p>
+            {location.description.split("\n").map((para, idx) => (
+              <p key={idx}>{para}</p>
+            ))}
             {dataModelHost && (
               <Tooltip
                 style={{ position: "absolute", bottom: 0, right: 5 }}
