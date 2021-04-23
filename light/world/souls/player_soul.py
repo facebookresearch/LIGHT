@@ -75,7 +75,7 @@ class PlayerSoul(BaseSoul):
         """
         actor = self.target_node
         actor._last_action_time = time.time()
-        self.world.parse_exec(self.target_node, act_text)
+        self.world.parse_exec(self.target_node, act_text, event_id=event_id)
 
     def new_quest(self):
         if random.random() > 0.01:
