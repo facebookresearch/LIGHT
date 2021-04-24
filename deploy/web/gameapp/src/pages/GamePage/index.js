@@ -105,6 +105,7 @@ function Chat({
   const [enteredText, setEnteredText] = React.useState("");
   const [playerXp, setPlayerXp] = React.useState(0);
   const [playerGiftXp, setPlayerGiftXp] = React.useState(0);
+  const [sessionXp, setSessionXp] = React.useState(0);
   const chatContainerRef = React.useRef(null);
   const getAgentName = (agent) => (agents ? agents[agent] : agent);
   const getEntityId = (agent) => agent.match(/\d+$/)[0];
@@ -172,6 +173,24 @@ function Chat({
     setPlayerXp(xp);
     setPlayerGiftXp(giftXp);
   }, [persona]);
+
+  React.useEffect(() => {
+    let sessionXpUpdate = 0;
+    console.log("triggered");
+    messages.map((message) => {
+      if (message.is_self && message.xp > 0) {
+        sessionXpUpdate += message.xp;
+      }
+    });
+    if (sessionXpUpdate > 0) {
+      setSessionXp(sessionXpUpdate);
+    }
+  }, [messages]);
+
+  React.useEffect(() => {
+    const { xp } = persona;
+    setPlayerXp(xp + sessionXp);
+  }, [sessionXp, persona]);
 
   return (
     <div className="App" onMouseMove={resetIdleTimer}>
