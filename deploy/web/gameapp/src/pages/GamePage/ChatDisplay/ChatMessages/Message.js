@@ -64,7 +64,6 @@ const Message = ({
 
   const likeHandler = () => {
     if (playerGiftXp > 0) {
-      setPlayerGiftXp(playerGiftXp - 1);
       setIsLiked(true);
       handleReward(eventId, actorId);
     }
