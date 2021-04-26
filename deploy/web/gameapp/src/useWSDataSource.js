@@ -204,7 +204,7 @@ export function useWSDataSource(url) {
       websocket.current = null;
     };
   }
-  const sessionDisconnect = () => {
+  const disconnectFromSession = () => {
     setConnected(false);
     websocket.current = null;
   };
@@ -218,6 +218,6 @@ export function useWSDataSource(url) {
     isErrored,
     agents,
     isFull,
-    sessionDisconnect,
+    disconnectFromSession,
   };
 }

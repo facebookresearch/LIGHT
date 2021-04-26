@@ -66,7 +66,7 @@ function ConnectedApp() {
     location,
     agents,
     isFull,
-    sessionDisconnect,
+    disconnectFromSession,
   } = useWSDataSource(wsUrl);
 
   if (isErrored)
@@ -87,7 +87,7 @@ function ConnectedApp() {
       persona={persona}
       location={location}
       agents={agents}
-      sessionDisconnect={sessionDisconnect}
+      disconnectFromSession={disconnectFromSession}
     />
   );
 }
@@ -98,7 +98,7 @@ function Chat({
   persona,
   location,
   agents,
-  sessionDisconnect,
+  disconnectFromSession,
 }) {
   const [idleTime, setIdleTime] = React.useState(0);
   const [idle, setIdle] = React.useState(false);
@@ -130,7 +130,7 @@ function Chat({
     if (idleTime === 300) {
       setIdle(true);
       clearInterval(timer);
-      sessionDisconnect();
+      disconnectFromSession();
     }
     return () => clearInterval(timer);
   }, [idleTime]);
