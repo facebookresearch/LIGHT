@@ -27,18 +27,18 @@ const reducer = (state, msg) => {
     (msg.caller === "SystemMessageEvent" && msg.text.indexOf("XP") >= 0) ||
     (msg.caller === "RewardEvent" && msg.text.indexOf("XP") >= 0)
   ) {
-    let { actor, event_data, text } = msg;
-    let { target_event } = event_data;
-    //XP AWARDED
-    let xpIndex = msg.text.indexOf("XP");
-    let xpAmt = parseInt(text.slice(xpIndex - 2, xpIndex));
-    let updateIndex;
+    console.log("EXP MESSAGE", msg);
+    let { event_data } = msg;
+    let {
+      target_event, //UUID OF MESSAGE THAT TRIGGERED EXP
+      reward, //XP AWARDED FROM BACKEND
+    } = event_data;
     //MESSAGE BEFORE EXP
     let unUpdatedMsg = state.filter((message, index) => {
       return message.event_id == target_event;
     })[0];
     //MESSAGE WITH EXP
-    let updatedMsg = { ...unUpdatedMsg, xp: unUpdatedMsg.exp + xpAmt };
+    let updatedMsg = { ...unUpdatedMsg, xp: unUpdatedMsg.exp + reward };
     //UPDATED MESSAGE PLACED IN PROPER POSITION IN STATE
     let updatedState = state.map((message) => {
       if (message.event_id == target_event) {
