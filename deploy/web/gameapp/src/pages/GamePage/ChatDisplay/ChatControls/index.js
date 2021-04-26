@@ -28,6 +28,13 @@ const ChatControls = ({
           <h2 className="disconnect-text">
             You have been disconnected due to inactivity.
           </h2>
+          <h2
+            onClick={() => window.location.reload()}
+            style={{ textDecoration: "underline" }}
+            className="disconnect-text"
+          >
+            Click Here to re-enter world.
+          </h2>
         </div>
       ) : (
         <>

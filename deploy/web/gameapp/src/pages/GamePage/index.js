@@ -66,6 +66,7 @@ function ConnectedApp() {
     location,
     agents,
     isFull,
+    disconnectFromSession,
   } = useWSDataSource(wsUrl);
 
   if (isErrored)
@@ -86,16 +87,25 @@ function ConnectedApp() {
       persona={persona}
       location={location}
       agents={agents}
+      disconnectFromSession={disconnectFromSession}
     />
   );
 }
 
-function Chat({ messages, onSubmit, persona, location, agents }) {
+function Chat({
+  messages,
+  onSubmit,
+  persona,
+  location,
+  agents,
+  disconnectFromSession,
+}) {
   const [idleTime, setIdleTime] = React.useState(0);
   const [idle, setIdle] = React.useState(false);
   const [enteredText, setEnteredText] = React.useState("");
   const [playerXp, setPlayerXp] = React.useState(0);
   const [playerGiftXp, setPlayerGiftXp] = React.useState(0);
+  const [sessionXp, setSessionXp] = React.useState(0);
   const chatContainerRef = React.useRef(null);
   const getAgentName = (agent) => (agents ? agents[agent] : agent);
   const getEntityId = (agent) => agent.match(/\d+$/)[0];
@@ -116,19 +126,17 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
     let timer = null;
     timer = setInterval(() => {
       setIdleTime((idleTime) => idleTime + 1);
-      console.log("TIME", idleTime);
     }, 1000);
     if (idleTime === 300) {
-      //disconnect
       setIdle(true);
+      clearInterval(timer);
+      disconnectFromSession();
     }
     return () => clearInterval(timer);
   }, [idleTime]);
 
-  const disconnect = () => {};
   const resetIdleTimer = () => {
     setIdleTime(0);
-    console.log("IDLE TIME", idleTime);
   };
 
   React.useEffect(() => {
@@ -162,10 +170,27 @@ function Chat({ messages, onSubmit, persona, location, agents }) {
 
   React.useEffect(() => {
     const { xp, giftXp } = persona;
-    console.log("GIFT EXP", giftXp);
     setPlayerXp(xp);
     setPlayerGiftXp(giftXp);
   }, [persona]);
+
+  React.useEffect(() => {
+    let sessionXpUpdate = 0;
+    console.log("triggered");
+    messages.map((message) => {
+      if (message.is_self && message.xp > 0) {
+        sessionXpUpdate += message.xp;
+      }
+    });
+    if (sessionXpUpdate > 0) {
+      setSessionXp(sessionXpUpdate);
+    }
+  }, [messages]);
+
+  React.useEffect(() => {
+    const { xp } = persona;
+    setPlayerXp(xp + sessionXp);
+  }, [sessionXp, persona]);
 
   return (
     <div className="App" onMouseMove={resetIdleTimer}>
@@ -228,7 +253,6 @@ function getLocationState(messages) {
   );
   if (valid_messages.length === 0) return [null, []];
   var lastMessage = valid_messages[valid_messages.length - 1];
-
   return {
     currentRoom: lastMessage.room_id,
     presentAgents: Object.keys(lastMessage.present_agent_ids),

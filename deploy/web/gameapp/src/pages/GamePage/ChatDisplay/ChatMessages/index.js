@@ -1,5 +1,5 @@
 import React from "react";
-
+import "./styles.css";
 //CUSTOM COMPONENTS
 import Entry from "./Entry";
 
@@ -17,7 +17,7 @@ const ChatMessages = ({
     <div className="chatlog">
       {messages.map((msg, idx) => (
         <Entry
-          key={idx}
+          key={msg.event_id}
           msg={msg}
           agents={agents}
           onReply={(agent) => {

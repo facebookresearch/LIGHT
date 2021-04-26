@@ -611,7 +611,7 @@ class TestLandingApp(AsyncHTTPTestCase):
             'user="(.*)"(.*)', cm.exception.response.headers["Set-Cookie"]
         )
         self.assertEqual(len(result.group(1)), 0)
-        self.assertEqual(cm.exception.response.headers["Location"], "/bye")
+        self.assertEqual(cm.exception.response.headers["Location"], "/#/bye")
 
     @gen_test
     def test_login_succesful(self, mocked_auth):

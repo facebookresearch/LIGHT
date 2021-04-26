@@ -67,7 +67,12 @@ const SideBar = ({
         )}
       </div>
       <div className="sidebar-row">
-        <GameButton text={"LOGOUT"} />
+        <a
+          href={"/logout"}
+          style={{ color: "#0060B6", textDecoration: "none" }}
+        >
+          <GameButton text={"LOGOUT"} clickFunction={() => {}} />
+        </a>
       </div>
       <IconCollapsibleBox
         title={`You are ${persona.prefix} ${persona.name}`}
@@ -115,11 +120,9 @@ const SideBar = ({
             >
               {location.name.toUpperCase()}
             </h3>
-            <p>
-              {location.description.split("\n").map((para, idx) => (
-                <p key={idx}>{para}</p>
-              ))}
-            </p>
+            {location.description.split("\n").map((para, idx) => (
+              <p key={idx}>{para}</p>
+            ))}
             {dataModelHost && (
               <Tooltip
                 style={{ position: "absolute", bottom: 0, right: 5 }}

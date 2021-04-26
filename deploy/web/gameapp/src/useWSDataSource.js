@@ -10,37 +10,43 @@ function uuidv4() {
 }
 
 const reducer = (state, msg) => {
-  // TODO replace the specific incomprehensible message somehow instead
   if (
-    // TODO (Justin) Can we target the event ID to swap the text out now?
-    msg.text &&
-    msg.text.startsWith("You mumble something incomprehensible")
+    (msg.text &&
+      msg.text.startsWith("You mumble something incomprehensible")) ||
+    !msg.text
   ) {
-    let last_message = state[state.length - 1];
-    if (last_message.is_self) {
-      const slicedState = [...state.slice(0, state.length - 1), msg];
-      console.groupCollapsed(
-        "New message overwritten old. Total: " + slicedState.length
-      );
-      console.table(slicedState);
-      console.groupEnd();
-      return slicedState;
-    }
-  }
-  if (msg.caller === "SystemMessageEvent" && msg.text.indexOf("XP") >= 0) {
-    // TODO(justin)
-    console.log("New message needs to be processed for exp", msg);
-    // let i;
-    // for (i = state.length - 1; i > 0; i--) {
-    //   let lastMessage = state[i];
-    //   if (lastMessage.caller === "say" && lastMessage.is_self) {
-    //     let messageWithExp = lastMessage.text.concat(msg.text);
-    //     let filteredState = state.filter((message, index) => index != i);
-    //     const updatedState = [...filteredState, messageWithExp];
-    //     console.log(updatedState);
-    //     return updatedState;
+    //   let { event_id } = msg;
+    //   if (msg.is_self) {
+    //     const filteredState = state.filter(
+    //       (message) => message.event_id != event_id
+    //     );
+    //     return filteredState;
     //   }
-    // }
+  }
+  if (
+    (msg.caller === "SystemMessageEvent" && msg.text.indexOf("XP") >= 0) ||
+    (msg.caller === "RewardEvent" && msg.text.indexOf("XP") >= 0)
+  ) {
+    console.log("EXP MESSAGE", msg);
+    let { event_data } = msg;
+    let {
+      target_event, //UUID OF MESSAGE THAT TRIGGERED EXP
+      reward, //XP AWARDED FROM BACKEND
+    } = event_data;
+    //MESSAGE BEFORE EXP
+    let unUpdatedMsg = state.filter((message, index) => {
+      return message.event_id == target_event;
+    })[0];
+    //MESSAGE WITH EXP
+    let updatedMsg = { ...unUpdatedMsg, xp: unUpdatedMsg.exp + reward };
+    //UPDATED MESSAGE PLACED IN PROPER POSITION IN STATE
+    let updatedState = state.map((message) => {
+      if (message.event_id == target_event) {
+        return updatedMsg;
+      }
+      return message;
+    });
+    return updatedState;
   }
   const updatedState = [...state, msg];
   console.groupCollapsed("New message. Total: " + updatedState.length);
@@ -141,9 +147,11 @@ export function useWSDataSource(url) {
               "\n" +
               "There is " +
               items +
+              "." +
               "\n" +
               "You notice " +
-              neighbors,
+              neighbors +
+              ".",
             id: action.room.node_id,
           });
           buffer.push(action);
@@ -169,6 +177,7 @@ export function useWSDataSource(url) {
         event_id: event_id,
         is_self: true,
         actors: [persona.id],
+        exp: 0,
       });
 
       const msg = JSON.stringify({
@@ -197,6 +206,10 @@ export function useWSDataSource(url) {
       websocket.current = null;
     };
   }
+  const disconnectFromSession = () => {
+    setConnected(false);
+    websocket.current = null;
+  };
 
   return {
     isConnected,
@@ -207,5 +220,6 @@ export function useWSDataSource(url) {
     isErrored,
     agents,
     isFull,
+    disconnectFromSession,
   };
 }
