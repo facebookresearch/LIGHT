@@ -147,9 +147,11 @@ export function useWSDataSource(url) {
               "\n" +
               "There is " +
               items +
+              "." +
               "\n" +
               "You notice " +
-              neighbors,
+              neighbors +
+              ".",
             id: action.room.node_id,
           });
           buffer.push(action);
