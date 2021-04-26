@@ -15,13 +15,13 @@ const reducer = (state, msg) => {
       msg.text.startsWith("You mumble something incomprehensible")) ||
     !msg.text
   ) {
-    let { event_id } = msg;
-    if (msg.is_self) {
-      const filteredState = state.filter(
-        (message) => message.event_id != event_id
-      );
-      return filteredState;
-    }
+    //   let { event_id } = msg;
+    //   if (msg.is_self) {
+    //     const filteredState = state.filter(
+    //       (message) => message.event_id != event_id
+    //     );
+    //     return filteredState;
+    //   }
   }
   if (
     (msg.caller === "SystemMessageEvent" && msg.text.indexOf("XP") >= 0) ||
