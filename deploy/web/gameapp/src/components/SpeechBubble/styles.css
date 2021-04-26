@@ -1,10 +1,18 @@
+.speechbubble-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 40px;
+  height: 2em;
+  margin: 5px;
+}
 .speechbubble {
-  font-family: arial, sans-serif;
+  font-family: fantasy;
   font-size: 1em;
   color: black;
   position: relative;
   background: white;
-  padding: 5px;
+  padding: 5px 5px 0px 15px;
   border-radius: 10px;
   z-index: 10;
   margin: 10px;
@@ -20,7 +28,7 @@
 .bottom.speechbubble::after {
   border-top-color: white;
   border-bottom: 0;
-  left: 30%;
+  left: 34%;
   margin-left: -37%;
   top: 20%;
   z-index: -1;
@@ -29,4 +37,9 @@
 .speechbubble :hover {
   cursor: pointer;
   font-size: 1.2em;
+}
+.speechbubble-text {
+  text-align: center;
+  padding: 0;
+  margin: 0;
 }

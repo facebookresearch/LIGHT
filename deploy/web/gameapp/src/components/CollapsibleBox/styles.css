@@ -1,8 +1,8 @@
 .collapsible-container {
   border-radius: 25px;
   box-shadow: 5px 2px 5px;
-  margin: 10px 20px 0px 10px;
-  width: 100%;
+  margin: 10px 10px 0px 10px;
+  width: 90%;
 }
 
 .collapsible-header {

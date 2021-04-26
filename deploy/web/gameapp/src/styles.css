@@ -3,10 +3,9 @@
   grid-template-columns: 400px 1fr;
   height: 100vh;
   margin: 0 auto;
-  padding: 0px 0;
+  padding: 0px;
   align-items: stretch;
   justify-content: center;
-  max-width: 1440px;
   font-size: 18px;
   box-sizing: border-box;
   overflow: auto;
@@ -42,10 +41,6 @@ a {
     grid-template-rows: min-content 1fr;
   }
 
-  .chat-wrapper {
-    grid-row-start: 2;
-  }
-
   div.sidebar {
     margin: 0px;
   }
@@ -66,55 +61,11 @@ a {
   border: 1px solid black;
 }
 
-.sidebar {
-  display: flex;
-  flex-direction: column;
+.chat-container {
   overflow: auto;
-  border-radius: 15px;
-}
-
-.game-state {
-  flex: 1;
-  overflow: auto;
-  padding: 0px 20px 20px 20px;
+  padding: 0px 20px 0px 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-}
-
-.chat-wrapper {
-  display: flex;
-  flex-direction: column;
-  animation: popInApp 0.3s 0.3s cubic-bezier(0.5, 0, 0, 1);
-  animation-fill-mode: forwards;
-  overflow-y: auto;
-  opacity: 0;
-  min-height: 500px;
-}
-
-.chat {
-  flex: 1;
-  border: 1px solid rgb(184, 184, 184);
-  background-color: rgb(228, 226, 221);
-  margin: 30px 20px 0px;
-  overflow-y: auto;
-  border-radius: 10px 10px 0px 0px;
-  position: relative;
-  border-style: ridge;
-  border-color: lightgray;
-  border-width: 10px 10px 0px 10px;
-
-  /* box-shadow: 0px 10px 10px rgba(250, 199, 169, 0.5); */
-}
-
-.sidebar {
-  margin: 30px 0px 0px 0px;
-  width: 100%;
-  animation: popInApp 0.3s cubic-bezier(0.5, 0, 0, 1);
-  animation-fill-mode: forwards;
-  opacity: 0;
-  background-color: lightgrey;
-  height: 100%;
 }
 
 .message.type-setting {
@@ -203,36 +154,7 @@ a {
   /* font-size: 16px; */
 }
 
-.controls {
-  /* justify-self: flex-end; */
-  min-height: 100px;
-  background-color: rgb(255, 255, 255);
-  width: auto;
-  margin: 0px 20px 40px;
-  box-sizing: border-box;
-  box-shadow: 0px 10px 10px rgba(109, 90, 48, 0.2);
-  border-radius: 0px 0px 10px 10px;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid rgb(184, 184, 184);
-  border-top: none;
-  overflow: hidden;
-  border-style: ridge;
-  border-color: lightgray;
-  border-width: 10px 10px 10px 10px;
-}
-
-.controls input {
-  border: none;
-  padding: 10px;
-  font-size: 18px;
-  background-color: white;
-  border: 3px solid #dedede;
-  flex: 1;
-  font-family: Lora, serif;
-}
-
-input::placeholder {
+/* input::placeholder {
   font-style: italic;
   color: #aaa;
 }
@@ -249,7 +171,7 @@ input.edit-message {
   width: 100%;
   padding: 3px;
   box-sizing: border-box;
-}
+} */
 
 .controls span.action {
   margin: 5px 3px;
@@ -260,13 +182,6 @@ input.edit-message {
   border-radius: 5px;
   border: 1px solid #eaeaea;
   color: #777;
-}
-
-.controls .actions {
-  padding: 10px 10px 0px;
-  font-size: 14px;
-  background-color: rgb(228, 226, 221);
-  flex: 1;
 }
 
 span.action:first-child {
@@ -381,7 +296,6 @@ i.fa {
   font-size: 16px;
   margin-bottom: 20px;
   border-radius: 10px;
-  position: relative;
 }
 
 .overlay {
