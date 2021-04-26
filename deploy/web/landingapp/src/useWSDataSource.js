@@ -15,7 +15,7 @@ const reducer = (state, msg) => {
     msg.text.startsWith("You mumble something incomprehensible")
   ) {
     let { event_id } = msg;
-    let updatedState = state.map((messaage) => {
+    let updatedState = state.map((message) => {
       if (event_id == message.event_id) {
         return msg;
       }
