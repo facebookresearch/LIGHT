@@ -18,6 +18,8 @@ const reducer = (state, msg) => {
     let updatedState = state.map((message) => {
       if (event_id == message.event_id) {
         return msg;
+      } else {
+        return message;
       }
     });
     return updatedState;
