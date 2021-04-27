@@ -315,7 +315,7 @@ class BaseSoul(Soul):
     def score_conversation(self):
         if not hasattr(self, "roleplaying_score_model"):
             # For local testing of exp with no models, set this to nonzero
-            return 0
+            return 3
 
         context1 = self.build_dialog_context()
         # print(context)

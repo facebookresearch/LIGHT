@@ -63,8 +63,9 @@ const Message = ({
   const [isLiked, setIsLiked] = React.useState(false);
 
   const likeHandler = () => {
-    if (playerGiftXp > 0) {
+    if (playerGiftXp >= 1) {
       setIsLiked(true);
+      setPlayerGiftXp(playerGiftXp - 1);
       handleReward(eventId, actorId);
     }
   };

@@ -63,6 +63,7 @@ input:focus {
   justify-content: center;
   align-items: center;
   background-color: white;
+  flex-direction: column;
 }
 
 .disconnect-text {
