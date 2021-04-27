@@ -66,9 +66,9 @@ const Message = ({
 
   const likeHandler = () => {
     if (playerGiftXp >= 1) {
+      handleReward(eventId, actorId);
       setIsLiked(true);
       setSessionGiftXpSpent(sessionGiftXpSpent + 1);
-      handleReward(eventId, actorId);
     }
   };
 

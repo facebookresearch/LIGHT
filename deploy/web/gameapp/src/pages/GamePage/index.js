@@ -174,7 +174,7 @@ function Chat({
     const { xp, giftXp } = persona;
     setPlayerXp(xp);
     setPlayerGiftXp(giftXp);
-    console.log("I AM WORKING");
+    console.log("GIFT EXP:  ", giftXp);
   }, [persona]);
 
   React.useEffect(() => {
@@ -195,7 +195,8 @@ function Chat({
       sessionGiftXp,
       "sessionxp",
       sessionXp,
-      "giftXP"
+      "giftXP Spent:  ",
+      sessionGiftXpSpent
     );
     setPlayerXp(xp + sessionXp);
     let sessionGiftXpUpdate = sessionXp / 4;
@@ -209,6 +210,8 @@ function Chat({
     );
     if (sessionGiftXpUpdate >= 1) {
       setPlayerGiftXp(giftXp + sessionGiftXpUpdate - sessionGiftXpSpent);
+    } else {
+      setPlayerGiftXp(giftXp - sessionGiftXpSpent);
     }
   }, [sessionXp, sessionGiftXpSpent]);
 
