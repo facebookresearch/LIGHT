@@ -11,17 +11,18 @@ function uuidv4() {
 
 const reducer = (state, msg) => {
   if (
-    (msg.text &&
-      msg.text.startsWith("You mumble something incomprehensible")) ||
-    !msg.text
+    msg.text &&
+    msg.text.indexOf("You mumble something incomprehensible") >= 0
   ) {
-    //   let { event_id } = msg;
-    //   if (msg.is_self) {
-    //     const filteredState = state.filter(
-    //       (message) => message.event_id != event_id
-    //     );
-    //     return filteredState;
-    //   }
+    let { event_id } = msg;
+    const updatedState = state.map((message) => {
+      if (event_id == message.event_id) {
+        return msg;
+      } else {
+        return message;
+      }
+    });
+    return updatedState;
   }
   if (
     (msg.caller === "SystemMessageEvent" && msg.text.indexOf("XP") >= 0) ||
