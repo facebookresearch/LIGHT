@@ -70,4 +70,23 @@ input:focus {
   font-family: fantasy;
   color: darkgrey;
   text-shadow: 0px 10px 10px rgba(109, 90, 48, 0.2);
+  text-align: center;
+}
+
+.disconnect-text__reload {
+  font-family: fantasy;
+  color: darkgrey;
+  text-shadow: 0px 10px 10px rgba(109, 90, 48, 0.2);
+  text-align: center;
+  text-decoration: underline;
+}
+
+.disconnect-text__reload:hover {
+  cursor: pointer;
+  text-shadow: 0px 0px 0px rgba(109, 90, 48, 0.2);
+}
+
+.disconnect-text__reload:active {
+  cursor: pointer;
+  text-decoration: none;
 }
