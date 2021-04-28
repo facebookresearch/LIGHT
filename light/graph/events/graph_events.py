@@ -1308,6 +1308,10 @@ class HitEvent(GraphEvent):
             self.block_verb = random.choice(block_verb)
             self.hit_details = random.choice(hit_details)
 
+        # Mark as a coming death if this is death, as no response can occur
+        if attack_target.health <= self.attack - self.defend:
+            attack_target.mark_dying()
+
         world.broadcast_to_room(self)
 
         if self.attack - self.defend > 1:
@@ -1315,6 +1319,7 @@ class HitEvent(GraphEvent):
             health = attack_target.health
             health = max(0, health - (self.attack - self.defend))
             attack_target.health = health
+
             if health == 0:
                 DeathEvent(attack_target).execute(world)
             else:

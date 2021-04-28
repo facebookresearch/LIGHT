@@ -59,7 +59,7 @@ class BaseSoul(Soul):
         ):
             # log event
             text = event.text_content
-            agent._last_interaction_history.append(                
+            agent._last_interaction_history.append(
                 [(event_actor_id, event_name, True), "*" + text + "*"]
             )
         # Only log these kind of act events.
@@ -90,9 +90,8 @@ class BaseSoul(Soul):
         ):
             # log event
             text = event.to_canonical_form()
-            # import pdb; pdb.set_trace()
             agent._last_interaction_history.append(
-                [(event_actor_id, event_name), "*" + text + "*"]
+                [(event_actor_id, event_name, True), "*" + text + "*"]
             )
 
     def set_interaction_partners_from_event(self, event):
@@ -185,7 +184,7 @@ class BaseSoul(Soul):
         txt += "_self_name " + agent.name + "\n"
         txt += "_self_persona " + agent.persona
         if quest_txt is not None:
-            txt += quest_text
+            txt += quest_txt
         txt += "\n"
         return txt
 
@@ -208,8 +207,8 @@ class BaseSoul(Soul):
             is_safe = d[0][2]
             if not is_safe:
                 # reset conversation when unsafe utterances are in the history
-                dtxt = ''
-        dtxt = dtxt.lstrip(' ')
+                dtxt = self.build_context(quest_txt)
+        dtxt = dtxt.lstrip(" ")
         return txt + dtxt
 
     @classmethod
