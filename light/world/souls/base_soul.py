@@ -90,7 +90,6 @@ class BaseSoul(Soul):
         ):
             # log event
             text = event.to_canonical_form()
-            # import pdb; pdb.set_trace()
             agent._last_interaction_history.append(
                 [(event_actor_id, event_name), "*" + text + "*", True]
             )
