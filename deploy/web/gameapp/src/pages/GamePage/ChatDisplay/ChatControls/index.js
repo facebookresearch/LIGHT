@@ -31,7 +31,7 @@ const ChatControls = ({
           <h2
             onClick={() => window.location.reload()}
             style={{ textDecoration: "underline" }}
-            className="disconnect-text"
+            className="disconnect-text__reload"
           >
             Click Here to re-enter world.
           </h2>

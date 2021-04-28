@@ -22,6 +22,8 @@ const Entry = ({
   setPlayerGiftXp,
   playerGiftXp,
   playerXp,
+  sessionGiftXpSpent,
+  setSessionGiftXpSpent,
 }) => {
   if (
     [
@@ -48,6 +50,8 @@ const Entry = ({
         eventId={msg.event_id}
         playerGiftXp={playerGiftXp}
         setPlayerGiftXp={setPlayerGiftXp}
+        sessionGiftXpSpent={sessionGiftXpSpent}
+        setSessionGiftXpSpent={setSessionGiftXpSpent}
       />
     );
   }

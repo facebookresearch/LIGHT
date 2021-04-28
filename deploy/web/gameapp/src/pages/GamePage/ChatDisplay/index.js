@@ -37,6 +37,8 @@ const ChatDisplay = ({
   setPlayerGiftXp,
   playerGiftXp,
   playerXp,
+  sessionGiftXpSpent,
+  setSessionGiftXpSpent,
 }) => {
   const [showCharacter, setShowCharacter] = React.useState(true);
   const [enteredText, setEnteredText] = React.useState("");
@@ -114,6 +116,8 @@ const ChatDisplay = ({
           setPlayerGiftXp={setPlayerGiftXp}
           playerGiftXp={playerGiftXp}
           playerXp={playerXp}
+          sessionGiftXpSpent={sessionGiftXpSpent}
+          setSessionGiftXpSpent={setSessionGiftXpSpent}
         />
       </div>
       <ChatControls

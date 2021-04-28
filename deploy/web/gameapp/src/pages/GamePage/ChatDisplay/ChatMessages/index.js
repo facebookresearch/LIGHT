@@ -12,6 +12,8 @@ const ChatMessages = ({
   setPlayerGiftXp,
   playerGiftXp,
   playerXp,
+  sessionGiftXpSpent,
+  setSessionGiftXpSpent,
 }) => {
   return (
     <div className="chatlog">
@@ -28,6 +30,8 @@ const ChatMessages = ({
           setPlayerGiftXp={setPlayerGiftXp}
           playerGiftXp={playerGiftXp}
           playerXp={playerXp}
+          sessionGiftXpSpent={sessionGiftXpSpent}
+          setSessionGiftXpSpent={setSessionGiftXpSpent}
         />
       ))}
     </div>

@@ -106,6 +106,8 @@ function Chat({
   const [playerXp, setPlayerXp] = React.useState(0);
   const [playerGiftXp, setPlayerGiftXp] = React.useState(0);
   const [sessionXp, setSessionXp] = React.useState(0);
+  const [sessionGiftXp, setSessionGiftXp] = React.useState(0);
+  const [sessionGiftXpSpent, setSessionGiftXpSpent] = React.useState(0);
   const chatContainerRef = React.useRef(null);
   const getAgentName = (agent) => (agents ? agents[agent] : agent);
   const getEntityId = (agent) => agent.match(/\d+$/)[0];
@@ -172,6 +174,7 @@ function Chat({
     const { xp, giftXp } = persona;
     setPlayerXp(xp);
     setPlayerGiftXp(giftXp);
+    console.log("GIFT EXP:  ", giftXp);
   }, [persona]);
 
   React.useEffect(() => {
@@ -182,15 +185,35 @@ function Chat({
         sessionXpUpdate += message.xp;
       }
     });
-    if (sessionXpUpdate > 0) {
-      setSessionXp(sessionXpUpdate);
-    }
+    setSessionXp(sessionXpUpdate);
   }, [messages]);
 
   React.useEffect(() => {
-    const { xp } = persona;
+    const { xp, giftXp } = persona;
+    console.log(
+      "on sessionxp update",
+      sessionGiftXp,
+      "sessionxp",
+      sessionXp,
+      "giftXP Spent:  ",
+      sessionGiftXpSpent
+    );
     setPlayerXp(xp + sessionXp);
-  }, [sessionXp, persona]);
+    let sessionGiftXpUpdate = sessionXp / 4;
+    console.log(
+      "on sessionxp update",
+      sessionGiftXp,
+      "sessionxp",
+      sessionXp,
+      "sessionGiftXP Total:",
+      sessionGiftXpUpdate
+    );
+    if (sessionGiftXpUpdate >= 1) {
+      setPlayerGiftXp(giftXp + sessionGiftXpUpdate - sessionGiftXpSpent);
+    } else {
+      setPlayerGiftXp(giftXp - sessionGiftXpSpent);
+    }
+  }, [sessionXp, sessionGiftXpSpent]);
 
   return (
     <div className="App" onMouseMove={resetIdleTimer}>
@@ -234,6 +257,8 @@ function Chat({
         setPlayerGiftXp={setPlayerGiftXp}
         playerXp={playerXp}
         playerGiftXp={playerGiftXp}
+        sessionGiftXpSpent={sessionGiftXpSpent}
+        setSessionGiftXpSpent={setSessionGiftXpSpent}
       />
     </div>
   );

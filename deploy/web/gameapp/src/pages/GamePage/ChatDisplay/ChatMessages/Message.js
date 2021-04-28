@@ -55,6 +55,8 @@ const Message = ({
   xp,
   eventId,
   actorId,
+  sessionGiftXpSpent,
+  setSessionGiftXpSpent,
 }) => {
   const [isEditMode, setEditMode] = React.useState(false);
   const [isReportMode, setReportMode] = React.useState(false);
@@ -63,9 +65,10 @@ const Message = ({
   const [isLiked, setIsLiked] = React.useState(false);
 
   const likeHandler = () => {
-    if (playerGiftXp > 0) {
-      setIsLiked(true);
+    if (playerGiftXp >= 1) {
       handleReward(eventId, actorId);
+      setIsLiked(true);
+      setSessionGiftXpSpent(sessionGiftXpSpent + 1);
     }
   };
 
