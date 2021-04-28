@@ -91,7 +91,7 @@ class BaseSoul(Soul):
             # log event
             text = event.to_canonical_form()
             agent._last_interaction_history.append(
-                [(event_actor_id, event_name), "*" + text + "*", True]
+                [(event_actor_id, event_name, True), "*" + text + "*"]
             )
 
     def set_interaction_partners_from_event(self, event):
