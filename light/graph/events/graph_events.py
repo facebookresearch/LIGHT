@@ -1157,7 +1157,7 @@ class SoulSpawnEvent(TriggeredEvent):
 
         sun_txt = emoji.emojize(":star2:", use_aliases=True) * 31
         msg_txt = sun_txt + "\n"
-        msg_txt += f"Your soul possesses {self.actor.get_view()}.\n"
+        msg_txt += f"Your soul possesses {actor_name}. Roleplay well, my friend, and earn experience points!\n"
         msg_txt += "Your character:\n"
         msg_txt += self.actor.persona + "\n"
         msg_txt += sun_txt + "\n"
