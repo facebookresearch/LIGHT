@@ -388,8 +388,6 @@ body .fadeShow {
 .app-container {
   height: 100vh;
   width: 100vw;
-  overflow-y: scroll;
-  overflow-x: scroll;
   scroll-behavior: smooth;
 }
 
