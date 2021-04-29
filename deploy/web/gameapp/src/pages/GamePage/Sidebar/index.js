@@ -118,7 +118,7 @@ const SideBar = ({
                 fontFamily: "fantasy",
               }}
             >
-              {location.name.toUpperCase()}
+              {location.name ? location.name.toUpperCase() : null}
             </h3>
             {location.description.split("\n").map((para, idx) => (
               <p key={idx}>{para}</p>

@@ -6,7 +6,7 @@ const NumberStar = (props) => {
   const { number, iconStyle, size } = props;
 
   return (
-    <div className="customicon">
+    <div className="customicon ">
       <FaStar size={size} style={iconStyle} />
       <div className="customicon-text__container">
         <h5 className="customicon-text">{number} </h5>
