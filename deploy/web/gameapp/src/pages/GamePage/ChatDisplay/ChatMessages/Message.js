@@ -184,7 +184,7 @@ const Message = ({
                         color: "gold",
                       }}
                     >
-                      {xp}
+                      <p style={{ display: "inline" }}>{xp}</p>
                       <i className="fa fa-star message-star" />
                     </span>
                   </Tooltip>
