@@ -170,19 +170,24 @@ const Message = ({
             <React.Fragment>
               {xp ? (
                 <>
-                  <span
-                    style={{
-                      fontFamily: "fantasy",
-                      backgroundColor: "white",
-                      color: "gold",
-                    }}
+                  <Tooltip
+                    title={
+                      xp > 0
+                        ? `${xp} Experience Points Earned For Roleplaying`
+                        : null
+                    }
                   >
-                    {xp}
-                    <i
-                      className="fa fa-star"
-                      style={{ color: "gold", marginLeft: "5px" }}
-                    />
-                  </span>
+                    <span
+                      style={{
+                        fontFamily: "fantasy",
+                        backgroundColor: "white",
+                        color: "gold",
+                      }}
+                    >
+                      {xp}
+                      <i className="fa fa-star message-star" />
+                    </span>
+                  </Tooltip>
                 </>
               ) : null}
             </React.Fragment>
@@ -198,7 +203,7 @@ const Message = ({
                   position="top"
                 >
                   {isLiked ? (
-                    <i className="fa fa-star" style={{ color: "gold" }} />
+                    <i className="fa fa-star message-star" />
                   ) : (
                     <i className="fa fa-star-o" onClick={likeHandler} />
                   )}

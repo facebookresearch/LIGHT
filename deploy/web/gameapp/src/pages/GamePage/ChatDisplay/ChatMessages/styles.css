@@ -80,5 +80,26 @@
   margin-right: 7px;
 }
 
+.message-star {
+  margin-left: 5px;
+  animation: shine infinite 2s;
+  color: #ffe205;
+}
+
+@keyframes shine {
+  0% {
+    color: #ffe205;
+    text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
+  }
+  50% {
+    color: gold;
+    text-shadow: 0 0 0px #ffe205, 0 0 0px #ffe205, 0 0 0px #edd205;
+  }
+  100% {
+    color: #ffe205;
+    text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
+  }
+}
+
 .message-xp {
 }
