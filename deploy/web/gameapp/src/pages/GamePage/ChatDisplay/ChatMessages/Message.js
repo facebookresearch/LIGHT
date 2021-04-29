@@ -162,7 +162,9 @@ const Message = ({
   return (
     <div className={classNames}>
       <div className="agent">
-        <span style={{ fontFamily: "fantasy" }}>{actor.toUpperCase()}</span>
+        <span style={{ fontFamily: "fantasy" }}>
+          {actor ? actor.toUpperCase() : null}
+        </span>
         {isSelf ? (
           <React.Fragment>
             {xp ? (

@@ -82,3 +82,30 @@
 
 .message-xp {
 }
+
+.animated {
+  background-repeat: no-repeat;
+  background-position: left top;
+  padding-top: 95px;
+  margin-bottom: 60px;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+@keyframes flash {
+  0%,
+  50%,
+  100% {
+    opacity: 1;
+  }
+  25%,
+  75% {
+    opacity: 0;
+  }
+}
+
+.flash {
+  animation-name: flash;
+}
