@@ -7,7 +7,7 @@ const SpeechBubble = (props) => {
   return (
     <div className="speechbubble-container">
       <div className="speechbubble bottom">
-        <p className="speechbubble-text">{text.toUpperCase()}</p>
+        <p className="speechbubble-text">{text ? text.toUpperCase() : null}</p>
       </div>
     </div>
   );
