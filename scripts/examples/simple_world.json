@@ -266,7 +266,8 @@
       "node_id": "shovel_5_6",
       "object": true,
       "on_use": [
-        {
+          {
+          "remaining_uses": 1,
           "events": [
             {
               "type": "create_entity",
