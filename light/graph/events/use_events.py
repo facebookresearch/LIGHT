@@ -196,19 +196,20 @@ class UseEvent(GraphEvent):
         for i in range(len(on_uses)):
             on_use = on_uses[i]
 
-            remaining_uses = on_use["remaining_uses"]
-
-            if remaining_uses == "inf":
-                pass
-            elif remaining_uses > 0:
-                self.target_nodes[0].on_use[i]["remaining_uses"] = remaining_uses - 1
-            else:
-                # No remaining uses for this event
-                self.exit_message(world)
-                return
-
             constraints = on_use["constraints"]
             if self.satisfy_constraints(constraints, world):
+                if not ('remaining_uses' in on_use):
+                    # add missing field
+                    on_use["remaining_uses"] = "inf"
+                remaining_uses = on_use["remaining_uses"]
+                if remaining_uses == "inf":
+                    pass
+                elif remaining_uses > 0:
+                    self.target_nodes[0].on_use[i]["remaining_uses"] = remaining_uses - 1
+                else:
+                    # No remaining uses for this event
+                    self.exit_message(world)
+                    return
                 events = on_use["events"]
                 self.found_use = True
                 self.execute_events(events, world)
@@ -345,6 +346,16 @@ class UseEvent(GraphEvent):
             )
         return ErrorEvent(cls, actor, f"You don't have '{object_name}' to use.")
 
+    def exit_message(self, world):
+        event = {
+            "type": "broadcast_message",
+            "params": {
+                  "self_view": "Nothing special seems to happen."
+              }
+            }
+        events = [event]
+        self.execute_events(events, world)
+        
     @classmethod
     def construct_from_args(
         cls,
