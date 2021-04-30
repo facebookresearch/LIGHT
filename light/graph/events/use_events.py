@@ -13,6 +13,7 @@ from light.graph.events.base import (
 
 from light.graph.events.graph_events import DeathEvent, HealthEvent
 from light.graph.events.use_triggered_events import (
+    UseTriggeredEvent,
     BroadcastMessageEvent,
     CreateEntityEvent,
     ModifyAttributeEvent,
@@ -46,7 +47,7 @@ class UseEvent(GraphEvent):
             text_content=text_content,
             event_id=event_id,
         )
-        self.events = None
+        self.events: Optional[List["UseTriggeredEvent"]] = None
 
     def satisfy_constraint(self, constraint, world):
         constraint_params = constraint.get("params", {})
@@ -78,7 +79,8 @@ class UseEvent(GraphEvent):
 
         return all_constraints_satisfied
 
-    def execute_events(self, events, world):
+    def construct_events(self, events):
+        constructed_events = []
         for event in events:
             if event["type"] == "modify_attribute":
                 event_class = ModifyAttributeEvent
@@ -89,9 +91,16 @@ class UseEvent(GraphEvent):
             if event["type"] == "broadcast_message":
                 event_class = BroadcastMessageEvent
 
-            event_class(
-                event.get("params", {}), self.actor, target_nodes=self.target_nodes
-            ).execute(world)
+            constructed_events.append(
+                event_class(
+                    event.get("params", {}), self.actor, target_nodes=self.target_nodes
+                )
+            )
+        return constructed_events
+
+    def execute_events(self, events, world):
+        for event in events:
+            event.execute(world)
 
     def send_no_interaction_message(self, world):
         return BroadcastMessageEvent(
@@ -139,9 +148,9 @@ class UseEvent(GraphEvent):
                     # No remaining uses for this event, but may
                     # be others
                     continue
-                events = on_use["events"]
+                self.events = self.construct_events(on_use["events"])
                 self.found_use = True
-                self.execute_events(events, world)
+                self.execute_events(self.events, world)
                 break
 
         if not self.found_use:
@@ -159,10 +168,10 @@ class UseEvent(GraphEvent):
         self.__recipient_name = self.target_nodes[1].get_prefix_view()
 
         self.on_use(world)
+        world.broadcast_to_room(self)
 
         # Move the object over and broadcast
         # put_target.move_to(self.target_nodes[1])
-        # world.broadcast_to_room(self)
         self.executed = True
         return []
 
@@ -185,6 +194,7 @@ class UseEvent(GraphEvent):
             "you" if viewer == self.target_nodes[1] else self.__recipient_name
         )
         text = ""
+        assert self.events is not None, "Cannot have found use with no events"
         for event in self.events:
             new_text = event.get_view_component(viewer, actor_text, recipient_text)
             if new_text is not None:
@@ -264,7 +274,7 @@ class UseEvent(GraphEvent):
             "type": "broadcast_message",
             "params": {"self_view": "Nothing special seems to happen."},
         }
-        events = [event]
+        events = self.construct_events([event])
         self.execute_events(events, world)
 
     @classmethod

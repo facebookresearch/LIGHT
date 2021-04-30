@@ -98,7 +98,7 @@ class OnEventSoul(ModelSoul):
                 return agent2._agent_interactions[agent.node_id]
         return 0
 
-    def on_events_heuristics(self, event):
+    def on_events_heuristics(self, event) -> bool:
         agent = self.target_node
         event_name = event.__class__.__name__
 
@@ -112,6 +112,7 @@ class OnEventSoul(ModelSoul):
             self.execute_event(["BlockEvent", other_agent])  # block!
             self.execute_event(["HitEvent", other_agent])  # hit back!
             agent.aggression_target = other_agent.node_id
+            return True
 
         # StealEvent
         if (
@@ -123,6 +124,8 @@ class OnEventSoul(ModelSoul):
             self.execute_event(["BlockEvent", other_agent])  # block!
             self.execute_event(["HitEvent", other_agent])  # hit back!
             agent.aggression_target = other_agent.node_id
+            return True
+        return False
 
     def _find_object_of_value(self, agent, value, find="less"):
         item = None
@@ -133,7 +136,7 @@ class OnEventSoul(ModelSoul):
                 item = o
         return item
 
-    def trade_event_heuristics(self, event):
+    def trade_event_heuristics(self, event) -> bool:
         agent = self.target_node
         other_agent = event.actor
         event_name = event.__class__.__name__
@@ -173,6 +176,7 @@ class OnEventSoul(ModelSoul):
                 else:
                     say_text = "Err.. thanks."
                 self.execute_event(["SayEvent", say_text])
+            return True
 
         # PointEvent
         if event_name == "PointEvent" and event.target_nodes[0].object:
@@ -203,8 +207,10 @@ class OnEventSoul(ModelSoul):
 
             if say_text != "":
                 self.execute_event(["TellEvent", other_agent, say_text])
+                return True
+        return False
 
-    def tell_goal_heuristics(self, event):
+    def tell_goal_heuristics(self, event) -> bool:
         agent = self.target_node
         event_name = event.__class__.__name__
         # Tell Mission to Other Agent (or not).
@@ -279,7 +285,7 @@ class OnEventSoul(ModelSoul):
                     return None  # failed to resolve
         return effect
 
-    def on_events(self, event):
+    def on_events(self, event) -> bool:
         agent = self.target_node
         executed = False
         if hasattr(agent, "on_events") and agent.on_events is not None:
@@ -294,7 +300,9 @@ class OnEventSoul(ModelSoul):
                         executed = True
 
         if not executed:
-            self.on_events_heuristics(event)
+            return self.on_events_heuristics(event)
+        else:
+            return True  # Note that we did something with on_events
 
     def new_quest(self):
         graph = self.world.oo_graph

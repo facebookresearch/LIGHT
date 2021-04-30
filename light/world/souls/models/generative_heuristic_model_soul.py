@@ -191,12 +191,15 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         if self.target_node._dying:
             return
         super().quest_events(event)
-        super().on_events(event)
-        super().trade_event_heuristics(event)
-        super().tell_goal_heuristics(event)
+        did_event = super().on_events(event)
+        did_trade = super().trade_event_heuristics(event)
 
         if event.actor == self.target_node:
             self._last_action_time = time.time() + self._get_random_time_offset()
+            return
+
+        if did_event or did_trade:
+            # Already did a heuristic-based action
             return
 
         self._pending_observations.append(event)

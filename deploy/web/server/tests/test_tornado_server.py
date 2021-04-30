@@ -582,7 +582,7 @@ class TestLandingApp(AsyncHTTPTestCase):
         headers = {"Content-Type": "application/json"}
         with self.assertRaises(httpclient.HTTPClientError) as cm:
             response = yield self.client.fetch(
-                f"{URL}/play",
+                f"{URL}/play/",
                 method="GET",
                 headers=headers,
                 follow_redirects=False,

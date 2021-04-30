@@ -121,7 +121,7 @@ const LandingPage = (props) => {
           </div>
           <div className="menu-container__section">
             <div className="menu-container">
-              <a style={{ textDecoration: "none" }} href="/play">
+              <a style={{ textDecoration: "none" }} href="/play/">
                 <div className="menu-item ">
                   <h1>Play Now</h1>
                 </div>
