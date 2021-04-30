@@ -424,7 +424,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         # context = '\n'.join(contexts); print(context)
         # context = context.replace('_self_persona ', "_self_persona I believe the milk man is south of here. ")
 
-        if obs is not None and obs.text_content == "DEBUG":
+        if obs is not None and obs.text_content.strip() == "DEBUG":
             # print debug information instead
             event = SayEvent(agent, target_nodes=[], text_content="DEBUG: " + context)
             event.execute(self.world)
