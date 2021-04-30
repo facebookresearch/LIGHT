@@ -427,6 +427,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         if obs is not None and obs.text_content.strip() == "DEBUG":
             # print debug information instead
             event = SayEvent(agent, target_nodes=[], text_content="DEBUG: " + context)
+            event.skip_safety = True
             event.execute(self.world)
             return
 
