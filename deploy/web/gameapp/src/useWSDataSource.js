@@ -10,6 +10,8 @@ function uuidv4() {
 }
 
 const reducer = (state, msg) => {
+  console.log("MESSAGES", state);
+  console.log("MESSAGE", msg);
   if (
     msg.text &&
     msg.text.indexOf("You mumble something incomprehensible") >= 0
@@ -24,7 +26,7 @@ const reducer = (state, msg) => {
     });
     return updatedState;
   }
-  if (msg.text.indexOf("Quest Complete:" >= 0)) {
+  if (msg.text.indexOf("Quest Complete:") >= 0) {
     const { text } = msg;
     let questExpIndex = text.indexOf("experience");
     let questExp = parseInt(text.slice(questExpIndex - 4, questExpIndex));

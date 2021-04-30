@@ -22,10 +22,13 @@ const ExperienceInfo = ({ experience, giftExperience }) => {
       currentExp -= expToLevel;
       expToLevel = currentLevel * 10;
     }
-    let percent = Math.floor((currentExp / expToLevel) * 100);
+    let nextLevel = currentLevel * 5 * (currentLevel + 1);
+    console.log("NEXT LEVEL", nextLevel);
+    let percent = Math.floor((experience / nextLevel) * 100);
+    console.log("PERCENT", percent);
     setLevel(currentLevel);
-    setNeededExp(expToLevel - currentExp);
-    setExp(currentExp);
+    setNeededExp(nextLevel);
+    setExp(experience);
     setProgressPercent(percent);
   };
   useEffect(() => {
@@ -35,11 +38,12 @@ const ExperienceInfo = ({ experience, giftExperience }) => {
     <div className="experienceinfo-container">
       <LevelDisplay level={level} giftExperience={Math.floor(giftExperience)} />
       <div style={{ width: "100%", marginLeft: "10%", marginRight: 0 }}>
-        <Tooltip title={`Earn ${neededExp}XP to level up`} position="top">
+        <Tooltip title={`Earn ${neededExp - exp}XP to level up`} position="top">
           <Progressbar
             bgcolor={"yellow"}
             percentCompleted={progressPercent}
             exp={exp}
+            nextLevel={neededExp}
           />
         </Tooltip>
       </div>
