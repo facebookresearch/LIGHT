@@ -88,6 +88,23 @@ class SystemMessageEvent(TriggeredEvent):
 class SpeechEvent(GraphEvent):
     """Base speaking class mostly to handle dialogue safety."""
 
+    def __init__(
+        self,
+        actor: GraphAgent,
+        target_nodes: Optional[List[GraphNode]] = None,
+        text_content: Optional[str] = None,
+        event_id: Optional[str] = None,
+    ):
+        super().__init__(
+            actor,
+            target_nodes=target_nodes,
+            text_content=text_content,
+            event_id=event_id,
+        )
+        # Give opportunity to skip the safety after initialization
+        # for debug reasons
+        self.skip_safety = False
+
     def is_dialogue_safe(self, text):
         if safety_classifier is None:
             self.safe = True
@@ -109,7 +126,7 @@ class SayEvent(SpeechEvent):
         """On execution, store the expected views, then broadcast"""
         assert not self.executed
         actor_name = self.actor.get_prefix_view()
-        if self.is_dialogue_safe(self.text_content):
+        if self.skip_safety or self.is_dialogue_safe(self.text_content):
             self.__in_room_view = f'{actor_name} said "{self.text_content}"'
             self.__self_view = None
         else:

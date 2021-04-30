@@ -12,6 +12,7 @@ const GameRouter = () => {
       <HashRouter>
         <Switch>
           <Route path="/" component={GamePage} exact />
+          <Route path="/_=_" component={GamePage} exact />
           <Route path="/profile" component={ProfilePage} exact />
         </Switch>
       </HashRouter>

@@ -188,11 +188,18 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         # NPC on_events + heuristics.
         super().set_interaction_partners_from_event(event)
         super().log_interaction_from_event(event)
+        if self.target_node._dying:
+            return
         super().quest_events(event)
-        super().on_events(event)
+        did_event = super().on_events(event)
+        did_trade = super().trade_event_heuristics(event)
 
         if event.actor == self.target_node:
             self._last_action_time = time.time() + self._get_random_time_offset()
+            return
+
+        if did_event or did_trade:
+            # Already did a heuristic-based action
             return
 
         self._pending_observations.append(event)
@@ -417,9 +424,10 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         # context = '\n'.join(contexts); print(context)
         # context = context.replace('_self_persona ', "_self_persona I believe the milk man is south of here. ")
 
-        if obs is not None and obs.text_content == "DEBUG":
+        if obs is not None and obs.text_content.strip() == "DEBUG":
             # print debug information instead
             event = SayEvent(agent, target_nodes=[], text_content="DEBUG: " + context)
+            event.skip_safety = True
             event.execute(self.world)
             return
 
