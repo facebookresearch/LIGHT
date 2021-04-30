@@ -3,7 +3,9 @@ import React from "react";
 import "../../styles.css";
 
 import Message from "./Message";
+import MissionCompleteMessage from "./MissionCompleteMessage";
 import SettingMessage from "./SettingMessage";
+import SoulSpawnEventMessage from "./SoulSpawnEventMessage";
 
 function get_msg_actor(msg) {
   if (msg.actors === undefined) {
@@ -40,19 +42,27 @@ const Entry = ({
   } else {
     var actor = get_msg_actor(msg);
     return (
-      <Message
-        text={msg.text}
-        isSelf={msg.is_self || actor === selfId}
-        actor={agents[actor]}
-        onReply={onReply}
-        xp={msg.xp}
-        actorId={actor}
-        eventId={msg.event_id}
-        playerGiftXp={playerGiftXp}
-        setPlayerGiftXp={setPlayerGiftXp}
-        sessionGiftXpSpent={sessionGiftXpSpent}
-        setSessionGiftXpSpent={setSessionGiftXpSpent}
-      />
+      <>
+        {msg.caller == "SoulSpawnEvent" ? (
+          <SoulSpawnEventMessage text={msg.text} />
+        ) : msg.questComplete ? (
+          <MissionCompleteMessage />
+        ) : (
+          <Message
+            text={msg.text}
+            isSelf={msg.is_self || actor === selfId}
+            actor={agents[actor]}
+            onReply={onReply}
+            xp={msg.xp}
+            actorId={actor}
+            eventId={msg.event_id}
+            playerGiftXp={playerGiftXp}
+            setPlayerGiftXp={setPlayerGiftXp}
+            sessionGiftXpSpent={sessionGiftXpSpent}
+            setSessionGiftXpSpent={setSessionGiftXpSpent}
+          />
+        )}
+      </>
     );
   }
 };
