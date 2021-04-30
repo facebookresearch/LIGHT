@@ -28,109 +28,25 @@ from light.graph.elements.graph_nodes import GraphAgent, GraphNode, GraphObject
 from typing import Union, List, Optional
 
 
-class UseTriggeredEvent(GraphEvent):
-    """Handles using an object"""
-
-    def __init__(
-        self,
-        event_params,
-        actor: GraphAgent,
-        target_nodes: Optional[List[GraphNode]] = None,
-        text_content: Optional[str] = None,
-    ):
-        super().__init__(actor, target_nodes, text_content)
-        self.event_params = event_params
-
-
-class BroadcastMessageEvent(UseTriggeredEvent):
-    def execute(self, world: "World") -> List[GraphEvent]:
-        self.messages = self.event_params
-        self.__msg_txt = self.messages["self_view"]
-        world.broadcast_to_room(self)
-
-    @proper_caps_wrapper
-    def view_as(self, viewer: GraphAgent) -> Optional[str]:
-        """Provide the way that the given viewer should view this event"""
-        if viewer == self.actor:
-            return self.__msg_txt
-        else:
-            return None
-
-
-class CreateEntityEvent(UseTriggeredEvent):
-    def execute(self, world: "World") -> List[GraphEvent]:
-        # creation location
-        entity_event_type = self.event_params["type"]
-
-        if entity_event_type == "in_used_item":
-            location = self.target_nodes[0]
-        if entity_event_type == "in_used_target_item":
-            location = self.target_nodes[1]
-        if entity_event_type == "in_room":
-            location = self.target_nodes[1].get_room()
-        if entity_event_type == "in_actor":
-            location = self.actor
-
-        world_graph = world.oo_graph
-        n = world_graph.add_object(
-            self.event_params["object"]["name"], self.event_params["object"]
-        )
-        n.force_move_to(location)
-
-    @proper_caps_wrapper
-    def view_as(self, viewer: GraphAgent) -> Optional[str]:
-        """Provide the way that the given viewer should view this event"""
-        if viewer == self.actor:
-            return self.__msg_txt
-        else:
-            return None
-
-
-class ModifyAttributeEvent(UseTriggeredEvent):
-    def execute(self, world: "World") -> List[GraphEvent]:
-        if self.event_params["type"] == "in_used_target_item":
-            target = self.target_nodes[1]
-
-        key = self.event_params["key"]
-        value = self.event_params["value"]
-
-        if value.startswith("+"):
-            value = float(value[1:])
-            setattr(target, key, getattr(target, key) + value)
-        elif value.startswith("-"):
-            value = -float(value[1:])
-            setattr(target, key, getattr(target, key) + value)
-        elif value.startswith("="):
-            value = float(value[1:])
-            setattr(target, key, value)
-        else:
-            setattr(target, key, value)
-        if key == "health":
-            if target.health < 0:
-                target.health = 0
-            health = target.health
-            if health == 0:
-                DeathEvent(target).execute(world)
-            else:
-                HealthEvent(
-                    target,
-                    target_nodes=[self.actor, target],
-                    text_content="HealthOnHitEvent",
-                ).execute(world)
-
-    @proper_caps_wrapper
-    def view_as(self, viewer: GraphAgent) -> Optional[str]:
-        """Provide the way that the given viewer should view this event"""
-        if viewer == self.actor:
-            return self.__msg_txt
-        else:
-            return None
-
-
 class UseEvent(GraphEvent):
     """Handles using an object"""
 
     NAMES = ["use"]
+
+    def __init__(
+        self,
+        actor: GraphAgent,
+        target_nodes: Optional[List[GraphNode]] = None,
+        text_content: Optional[str] = None,
+        event_id: Optional[str] = None,
+    ):
+        super().__init__(
+            actor,
+            target_nodes=target_nodes,
+            text_content=text_content,
+            event_id=event_id,
+        )
+        self.events = None
 
     def satisfy_constraint(self, constraint, world):
         constraint_params = constraint.get("params", {})
@@ -189,6 +105,17 @@ class UseEvent(GraphEvent):
             # No on_use for this agent.
             return
 
+        if self.events is not None:
+            # Replayed events, no need to search
+            if len(self.events) == 0:
+                self.exit_message(world)
+                self.found_use = False
+            else:
+                self.execute_events(self.events, world)
+                self.found_use = True
+            return
+
+        # Find a use event if available
         self.found_use = False
         self.messages = {}
         on_uses = use_node.on_use
@@ -198,18 +125,20 @@ class UseEvent(GraphEvent):
 
             constraints = on_use["constraints"]
             if self.satisfy_constraints(constraints, world):
-                if not ('remaining_uses' in on_use):
+                if not ("remaining_uses" in on_use):
                     # add missing field
                     on_use["remaining_uses"] = "inf"
                 remaining_uses = on_use["remaining_uses"]
                 if remaining_uses == "inf":
                     pass
                 elif remaining_uses > 0:
-                    self.target_nodes[0].on_use[i]["remaining_uses"] = remaining_uses - 1
+                    self.target_nodes[0].on_use[i]["remaining_uses"] = (
+                        remaining_uses - 1
+                    )
                 else:
-                    # No remaining uses for this event
-                    self.exit_message(world)
-                    return
+                    # No remaining uses for this event, but may
+                    # be others
+                    continue
                 events = on_use["events"]
                 self.found_use = True
                 self.execute_events(events, world)
@@ -249,39 +178,23 @@ class UseEvent(GraphEvent):
             if viewer == self.actor:
                 return "Nothing special seems to happen."
             else:
-                return
+                return None
 
-        actor_text = self.__actor_name
-        recipient_text = self.__recipient_name
+        actor_text = "you" if viewer == self.actor else self.__actor_name
+        recipient_text = (
+            "you" if viewer == self.target_nodes[1] else self.__recipient_name
+        )
+        text = ""
+        for event in self.events:
+            new_text = event.get_view_component(viewer, actor_text, recipient_text)
+            if new_text is not None:
+                text += new_text
 
-        if viewer == self.actor:
-            s = ""
-            if "self_view" in self.messages:
-                s += self.messages["self_view"] + " "
-            if (
-                "self_as_target_view" in self.messages
-                and viewer == self.target_nodes[1]
-            ):
-                s += str.format(self.messages["self_as_target_view"], **locals())
-            if (
-                "self_not_target_view" in self.messages
-                and viewer != self.target_nodes[1]
-            ):
-                s += str.format(self.messages["self_not_target_view"], **locals())
-            return s
+        if len(text) == 0:
+            # Default message.
+            return f"{actor_text} used {self.__given_name} with {recipient_text}."
         else:
-            if (
-                "self_not_target_view" in self.messages
-                and viewer == self.target_nodes[1]
-            ):
-                return str.format(self.messages["self_not_target_view"], **locals())
-            elif "room_view" in self.messages:
-                return str.format(self.messages["room_view"], **locals())
-
-        # Default message.
-        if viewer == self.target_nodes[1]:
-            recipient_text = "you"
-        return f"{actor_text} used {self.__given_name} with {recipient_text}."
+            return text
 
     @classmethod
     def split_text_args(
@@ -349,13 +262,11 @@ class UseEvent(GraphEvent):
     def exit_message(self, world):
         event = {
             "type": "broadcast_message",
-            "params": {
-                  "self_view": "Nothing special seems to happen."
-              }
-            }
+            "params": {"self_view": "Nothing special seems to happen."},
+        }
         events = [event]
         self.execute_events(events, world)
-        
+
     @classmethod
     def construct_from_args(
         cls,

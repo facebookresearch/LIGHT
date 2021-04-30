@@ -188,8 +188,12 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         # NPC on_events + heuristics.
         super().set_interaction_partners_from_event(event)
         super().log_interaction_from_event(event)
+        if self.target_node._dying:
+            return
         super().quest_events(event)
         super().on_events(event)
+        super().trade_event_heuristics(event)
+        super().tell_goal_heuristics(event)
 
         if event.actor == self.target_node:
             self._last_action_time = time.time() + self._get_random_time_offset()
