@@ -24,6 +24,14 @@ const reducer = (state, msg) => {
     });
     return updatedState;
   }
+  if (msg.text.indexOf("Quest Complete:" >= 0)) {
+    const { text } = msg;
+    let questExpIndex = text.indexOf("experience");
+    let questExp = parseInt(text.slice(questExpIndex - 4, questExpIndex));
+    let updatedQuestMsg = { ...msg, xp: questExp, questComplete: true };
+    const updatedState = [...state, updatedQuestMsg];
+    return updatedState;
+  }
   if (
     (msg.caller === "SystemMessageEvent" && msg.text.indexOf("XP") >= 0) ||
     (msg.caller === "RewardEvent" && msg.text.indexOf("XP") >= 0)

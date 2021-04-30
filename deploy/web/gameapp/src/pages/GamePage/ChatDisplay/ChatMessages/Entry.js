@@ -43,6 +43,7 @@ const Entry = ({
     var actor = get_msg_actor(msg);
     return (
       <>
+        <MissionCompleteMessage xp={50} name="I want spoon!" />
         {msg.caller == "SoulSpawnEvent" ? (
           <SoulSpawnEventMessage text={msg.text} />
         ) : msg.questComplete ? (

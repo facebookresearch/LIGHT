@@ -179,7 +179,6 @@ function Chat({
 
   React.useEffect(() => {
     let sessionXpUpdate = 0;
-    console.log("triggered");
     messages.map((message) => {
       if (message.is_self && message.xp > 0) {
         sessionXpUpdate += message.xp;
@@ -190,24 +189,8 @@ function Chat({
 
   React.useEffect(() => {
     const { xp, giftXp } = persona;
-    console.log(
-      "on sessionxp update",
-      sessionGiftXp,
-      "sessionxp",
-      sessionXp,
-      "giftXP Spent:  ",
-      sessionGiftXpSpent
-    );
     setPlayerXp(xp + sessionXp);
     let sessionGiftXpUpdate = sessionXp / 4;
-    console.log(
-      "on sessionxp update",
-      sessionGiftXp,
-      "sessionxp",
-      sessionXp,
-      "sessionGiftXP Total:",
-      sessionGiftXpUpdate
-    );
     if (sessionGiftXpUpdate >= 1) {
       setPlayerGiftXp(giftXp + sessionGiftXpUpdate - sessionGiftXpSpent);
     } else {
