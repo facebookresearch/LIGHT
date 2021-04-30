@@ -1616,7 +1616,7 @@
       "object": true,
       "on_use": [
         {
-          "remaining_uses": "inf",
+          "remaining_uses": 5,
           "events": [
             {
               "type": "broadcast_message",
@@ -3880,7 +3880,7 @@
       "object": true,
       "on_use": [
         {
-          "remaining_uses": "inf",
+          "remaining_uses": 5,
           "events": [
             {
               "type": "broadcast_message",
@@ -4675,7 +4675,7 @@
       "object": true,
       "on_use": [
         {
-          "remaining_uses": "inf",
+          "remaining_uses": 5,
           "events": [
             {
               "type": "broadcast_message",
