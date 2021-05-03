@@ -16,9 +16,6 @@ const TutorialPage = (props) => {
   return (
     <div className="tutorialpage-container">
       <div className="tutorialpage-content">
-        <div>
-          <image src={Scribe} />
-        </div>
         <HowToPlay />
         <ExperiencePointsSystem />
         <CharacterBasics />
