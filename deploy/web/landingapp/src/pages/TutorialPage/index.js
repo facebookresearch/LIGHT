@@ -16,6 +16,18 @@ const TutorialPage = (props) => {
   return (
     <div className="tutorialpage-container">
       <div className="tutorialpage-content">
+        <div style={{ width: "100%", display: "flex" }}>
+          <Link
+            style={{
+              textDecoration: "none",
+              color: "gold",
+              fontWeight: "bolder",
+            }}
+            to="/"
+          >
+            Back
+          </Link>
+        </div>
         <HowToPlay />
         <ExperiencePointsSystem />
         <CharacterBasics />
