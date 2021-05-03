@@ -6,6 +6,7 @@ import ExperienceImg1 from "../../../assets/images/screenshots/Tutorial/ExpSyste
 import ExperienceImg2 from "../../../assets/images/screenshots/Tutorial/ExpSystem/ExpSystem2.png";
 import AwardExperience1 from "../../../assets/images/screenshots/Tutorial/AwardExp/AwardExp1.png";
 import AwardExperience2 from "../../../assets/images/screenshots/Tutorial/AwardExp/AwardExp2.png";
+import ReportPlayer1 from "../../../assets/images/screenshots/Tutorial/ReportPlayer/ReportPlayer1.png";
 
 const ExperiencePointsSystem = (props) => {
   return (
@@ -28,7 +29,7 @@ const ExperiencePointsSystem = (props) => {
         This panel also tells you your character’s persona, and their mission.
         Roleplaying your character well means playing this described role!
       </p>
-      <h4>Receiving Experience Points</h4>
+      <h4>Awarding Experience Points</h4>
       <p>
         If you believe another character is playing their role well, you can
         award them experience points! You can see your gift experience points in
@@ -41,6 +42,13 @@ const ExperiencePointsSystem = (props) => {
         that you deemed worthy of praise:
       </p>
       <img src={AwardExperience2} />
+      <h4>Reporting Players</h4>
+      <p>
+        If you see bad behavior by any player, you can report it. This could
+        include clearly not playing their role, or offensive messages. To report
+        it simply click on the flag icon next to their message:
+      </p>
+      <img src={ReportPlayer1} />
     </div>
   );
 };
