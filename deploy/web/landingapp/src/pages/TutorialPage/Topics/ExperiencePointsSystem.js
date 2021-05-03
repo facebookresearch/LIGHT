@@ -4,6 +4,8 @@ import "../styles.css";
 //IMAGES
 import ExperienceImg1 from "../../../assets/images/screenshots/Tutorial/ExpSystem/ExpSystem1.png";
 import ExperienceImg2 from "../../../assets/images/screenshots/Tutorial/ExpSystem/ExpSystem2.png";
+import AwardExperience1 from "../../../assets/images/screenshots/Tutorial/AwardExp/AwardExp1.png";
+import AwardExperience2 from "../../../assets/images/screenshots/Tutorial/AwardExp/AwardExp2.png";
 
 const ExperiencePointsSystem = (props) => {
   return (
@@ -26,6 +28,19 @@ const ExperiencePointsSystem = (props) => {
         This panel also tells you your character’s persona, and their mission.
         Roleplaying your character well means playing this described role!
       </p>
+      <h4>Receiving Experience Points</h4>
+      <p>
+        If you believe another character is playing their role well, you can
+        award them experience points! You can see your gift experience points in
+        the star at the top left panel (shown here with 9 gift experience points
+        with the mouse pointer resting over it):
+      </p>
+      <img src={AwardExperience1} />
+      <p>
+        To gift experience points, simply click on the message from your partner
+        that you deemed worthy of praise:
+      </p>
+      <img src={AwardExperience2} />
     </div>
   );
 };
