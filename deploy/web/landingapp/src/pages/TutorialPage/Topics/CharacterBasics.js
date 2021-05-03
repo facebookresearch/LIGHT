@@ -15,14 +15,14 @@ const CharacterBasics = (props) => {
         Quest: If you want to be reminded what character you are playing and
         your goals type “quest”:
       </p>
-      <img src={CharacterBasicsQuest} />
+      <img className="tutorialpage-image__75" src={CharacterBasicsQuest} />
       <p>
         Inventory: To see what you are carrying you can type “inventory” or
         “inv” or even “i” for short:
       </p>
-      <img src={CharacterBasicsInventory} />
+      <img className="tutorialpage-image__75" src={CharacterBasicsInventory} />
       <p>Stats: To see your stats, type “stats:</p>
-      <img src={CharacterBasicsStats} />
+      <img className="tutorialpage-image__quarter" src={CharacterBasicsStats} />
       <p>
         Help! You can also type “help” at any time to see a short list of
         instructions.

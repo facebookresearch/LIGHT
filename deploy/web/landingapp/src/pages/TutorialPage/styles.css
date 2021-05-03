@@ -29,6 +29,13 @@
 .tutorialpage-image__half {
   width: 50%;
 }
+.tutorialpage-image__75 {
+  width: 75%;
+}
 .tutorialpage-image__quarter {
   width: 25%;
+}
+
+.tutorial-text {
+  font-size: 14;
 }
