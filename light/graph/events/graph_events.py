@@ -1134,7 +1134,7 @@ class DeathEvent(TriggeredEvent):
 
         # Trigger the actual death
         world.oo_graph.agent_die(self.actor)
-        world.purgatory.clear_soul(self.actor)
+        # world.purgatory.clear_soul(self.actor) todo - clear soul only after message queue consumed
         return []
 
     @proper_caps_wrapper
