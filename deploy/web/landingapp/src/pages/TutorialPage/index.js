@@ -6,6 +6,7 @@ import HowToPlay from "./Topics/HowToPlay";
 import ExperiencePointsSystem from "./Topics/ExperiencePointsSystem";
 import CharacterBasics from "./Topics/CharacterBasics";
 import InteractingWithTheWorld from "./Topics/InteractingWithTheWorld";
+import Actions from "./Topics/Actions";
 
 import "./styles.css";
 
@@ -16,6 +17,7 @@ const TutorialPage = (props) => {
       <ExperiencePointsSystem />
       <CharacterBasics />
       <InteractingWithTheWorld />
+      <Actions />
     </div>
   );
 };
