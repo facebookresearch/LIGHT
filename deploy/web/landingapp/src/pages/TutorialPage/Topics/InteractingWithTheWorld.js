@@ -12,9 +12,9 @@ import Emote2 from "../../../assets/images/screenshots/Tutorial/Interacting/Emot
 const InteractingWithTheWorld = (props) => {
   return (
     <div className="interactingWiththeworld-container">
-      <h1>Interacting with the World</h1>
-      <h4>Talking</h4>
-      <p>
+      <h1 className="tutorial-header">Interacting with the World</h1>
+      <h4 className="tutorial-subheader">Talking</h4>
+      <p className="tutorial-text">
         As you have already seen, talking is one of the most important parts of
         playing your role in the world of LIGHT. You can say, whisper, shout or
         tell something to other individuals — all using free-form text, e.g.tell
@@ -27,7 +27,7 @@ const InteractingWithTheWorld = (props) => {
         <img className="tutorialpage-image__quarter" src={InteractingShout} />
         <img className="tutorialpage-image__quarter" src={InteractingRespond} />
       </div>
-      <p>
+      <p className="tutorial-text">
         Using a whisper command, only the other speaker can hear it. A *tell*
         command is directed to a speaker, but others in the room can hear it.
         The *shout* command may be heard by people also in nearby rooms. Just
@@ -35,8 +35,8 @@ const InteractingWithTheWorld = (props) => {
         cooking”) can be heard by everyone in the room and is not necessarily
         directed at anyone in particular.
       </p>
-      <h4>Showing Emotions</h4>
-      <p>
+      <h4 className="tutorial-subheader">Showing Emotions</h4>
+      <p className="tutorial-text">
         You can also express your emotions in the game with _emote actions_,
         e.g. smile, grin, scream or dance. The full list is: laugh, cry,
         smile,ponder,blush,shrug,sigh, wink, yawn, wave, stare, scream, pout,

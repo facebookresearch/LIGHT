@@ -10,20 +10,23 @@ import CharacterBasicsStats from "../../../assets/images/screenshots/Tutorial/Ch
 const CharacterBasics = (props) => {
   return (
     <div className="characterbasics-container">
-      <h1>Character Basics</h1>
-      <p>
-        Quest: If you want to be reminded what character you are playing and
-        your goals type “quest”:
+      <h1 className="tutorial-header">Character Basics</h1>
+      <p className="tutorial-text">
+        <span style={{ fontWeight: "bolder" }}>Quest: </span>If you want to be
+        reminded what character you are playing and your goals type “quest”:
       </p>
       <img className="tutorialpage-image__75" src={CharacterBasicsQuest} />
-      <p>
-        Inventory: To see what you are carrying you can type “inventory” or
-        “inv” or even “i” for short:
+      <p className="tutorial-text">
+        <span style={{ fontWeight: "bolder" }}>Inventory: </span>To see what you
+        are carrying you can type “inventory” or “inv” or even “i” for short:
       </p>
       <img className="tutorialpage-image__75" src={CharacterBasicsInventory} />
-      <p>Stats: To see your stats, type “stats:</p>
+      <p className="tutorial-text">
+        <span style={{ fontWeight: "bolder" }}>Stats: </span>To see your stats,
+        type “stats:
+      </p>
       <img className="tutorialpage-image__quarter" src={CharacterBasicsStats} />
-      <p>
+      <p className="tutorial-text">
         Help! You can also type “help” at any time to see a short list of
         instructions.
       </p>
