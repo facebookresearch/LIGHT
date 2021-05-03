@@ -24,7 +24,7 @@ const ExperiencePointsSystem = (props) => {
         You can see your overall experience points and level in the top left
         panel. Earn enough experience to rise to the next level!
       </p>
-      <img src={ExperienceImg2} />
+      <img className="tutorialpage-image__quarter" src={ExperienceImg2} />
       <p>
         This panel also tells you your character’s persona, and their mission.
         Roleplaying your character well means playing this described role!
@@ -36,19 +36,19 @@ const ExperiencePointsSystem = (props) => {
         the star at the top left panel (shown here with 9 gift experience points
         with the mouse pointer resting over it):
       </p>
-      <img src={AwardExperience1} />
+      <img className="tutorialpage-image__half" src={AwardExperience1} />
       <p>
         To gift experience points, simply click on the message from your partner
         that you deemed worthy of praise:
       </p>
-      <img src={AwardExperience2} />
+      <img className="tutorialpage-image__row" src={AwardExperience2} />
       <h4>Reporting Players</h4>
       <p>
         If you see bad behavior by any player, you can report it. This could
         include clearly not playing their role, or offensive messages. To report
         it simply click on the flag icon next to their message:
       </p>
-      <img src={ReportPlayer1} />
+      <img className="tutorialpage-image__half" src={ReportPlayer1} />
     </div>
   );
 };
