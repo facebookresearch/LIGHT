@@ -7,7 +7,7 @@
 from light.graph.events.base import (
     GraphEvent,
     TriggeredEvent,
-    proper_caps,
+    proper_caps_wrapper,
 )
 
 from light.graph.events.graph_events import DeathEvent, HealthEvent
@@ -27,14 +27,53 @@ class UseTriggeredEvent(TriggeredEvent):
         super().__init__(actor, target_nodes)
         self.event_params = event_params
 
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        """UseTriggeredEvents should have text in the UseEvent"""
+        return None
+
+    def get_view_component(
+        self, viewer: GraphAgent, actor_text: str, recipient_text: str
+    ) -> Optional[str]:
+        """UseTriggeredEvents can specify part of a view for a UseEvent"""
+        return None
+
 
 class BroadcastMessageEvent(UseTriggeredEvent):
     """Event to broadcast a message to the room the agent currently is inside"""
 
     def execute(self, world: "World") -> List[GraphEvent]:
         self.messages = self.event_params
-        self._UseTriggeredEvent__msg_txt = self.messages["self_view"]
         world.broadcast_to_room(self)
+
+    @proper_caps_wrapper
+    def get_view_component(
+        self, viewer: GraphAgent, actor_text: str, recipient_text: str
+    ) -> Optional[str]:
+        """Parse out different view conditions"""
+        if viewer == self.actor:
+            s = ""
+            if "self_view" in self.messages:
+                s += self.messages["self_view"] + " "
+            if (
+                "self_as_target_view" in self.messages
+                and viewer == self.target_nodes[1]
+            ):
+                s += str.format(self.messages["self_as_target_view"], **locals())
+            if (
+                "self_not_target_view" in self.messages
+                and viewer != self.target_nodes[1]
+            ):
+                s += str.format(self.messages["self_not_target_view"], **locals())
+            return s
+        else:
+            if (
+                "self_not_target_view" in self.messages
+                and viewer != self.target_nodes[1]
+            ):
+                return str.format(self.messages["self_not_target_view"], **locals())
+            elif "room_view" in self.messages:
+                return str.format(self.messages["room_view"], **locals())
+        return None
 
 
 class CreateEntityEvent(UseTriggeredEvent):
@@ -58,6 +97,9 @@ class CreateEntityEvent(UseTriggeredEvent):
             self.event_params["object"]["name"], self.event_params["object"]
         )
         n.force_move_to(location)
+
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        return None  # Broadcast messages cover the text here
 
 
 class ModifyAttributeEvent(UseTriggeredEvent):
@@ -94,3 +136,6 @@ class ModifyAttributeEvent(UseTriggeredEvent):
                     target_nodes=[self.actor, target],
                     text_content="HealthOnHitEvent",
                 ).execute(world)
+
+    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+        return None  # Broadcast messages cover the text here

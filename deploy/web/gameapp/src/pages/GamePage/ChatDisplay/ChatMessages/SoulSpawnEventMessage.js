@@ -29,7 +29,8 @@ const SoulSpawnEventMessage = ({
   return (
     <div id="soulspawn" className="soulspawn-container message type-setting">
       <p className="soulspawn-text soulspawn-star">{StarShine1}</p>
-      <p className="soulspawn-header">{Character}</p>
+      <p className="soulspawn-header">Let there be LIGHT</p>
+      <p className="soulspawn-text">{Character}</p>
       <p></p>
       <p className="soulspawn-text" style={{ padding: "0 3em 0 3em" }}>
         {Description}
