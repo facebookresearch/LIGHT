@@ -22,3 +22,5 @@ main_act/model
 /home/ubuntu/data/models/acting/model
 --disable-builder
 True
+--is-logging
+True

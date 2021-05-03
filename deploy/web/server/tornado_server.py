@@ -403,6 +403,7 @@ class LandingApplication(tornado.web.Application):
             (r"/#/error", NotFoundHandler, {"database": database}),
             (r"/play", GameHandler, {"database": database}),
             (r"/play/?id=.*", GameHandler, {"database": database}),
+            (r"/play/*", GameHandler, {"database": database}),
             (r"/build", BuildHandler, {"database": database}),
             (
                 r"/login",
@@ -501,7 +502,7 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
                 code=self.get_argument("code"),
             )
             self.set_current_user(fb_user["id"])
-            self.redirect("/play")
+            self.redirect("/play/")
             return
         self.authorize_redirect(
             redirect_uri=redirect,
@@ -542,7 +543,7 @@ class LoginHandler(BaseHandler):
                 _ = ldb.create_user(name)
             self.set_current_user(name)
             # self.redirect(self.get_argument("next", "/"))
-            self.redirect("/play")
+            self.redirect("/play/")
         else:
             error_msg = "?error=" + tornado.escape.url_escape("incorrect")
             self.redirect("/#/login" + error_msg)

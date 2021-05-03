@@ -88,6 +88,23 @@ class SystemMessageEvent(TriggeredEvent):
 class SpeechEvent(GraphEvent):
     """Base speaking class mostly to handle dialogue safety."""
 
+    def __init__(
+        self,
+        actor: GraphAgent,
+        target_nodes: Optional[List[GraphNode]] = None,
+        text_content: Optional[str] = None,
+        event_id: Optional[str] = None,
+    ):
+        super().__init__(
+            actor,
+            target_nodes=target_nodes,
+            text_content=text_content,
+            event_id=event_id,
+        )
+        # Give opportunity to skip the safety after initialization
+        # for debug reasons
+        self.skip_safety = False
+
     def is_dialogue_safe(self, text):
         if safety_classifier is None:
             self.safe = True
@@ -109,7 +126,7 @@ class SayEvent(SpeechEvent):
         """On execution, store the expected views, then broadcast"""
         assert not self.executed
         actor_name = self.actor.get_prefix_view()
-        if self.is_dialogue_safe(self.text_content):
+        if self.skip_safety or self.is_dialogue_safe(self.text_content):
             self.__in_room_view = f'{actor_name} said "{self.text_content}"'
             self.__self_view = None
         else:
@@ -1157,7 +1174,7 @@ class SoulSpawnEvent(TriggeredEvent):
 
         sun_txt = emoji.emojize(":star2:", use_aliases=True) * 31
         msg_txt = sun_txt + "\n"
-        msg_txt += f"Your soul possesses {self.actor.get_view()}.\n"
+        msg_txt += f"Your soul possesses {actor_name}. Roleplay well, my friend, and earn experience points!\n"
         msg_txt += "Your character:\n"
         msg_txt += self.actor.persona + "\n"
         msg_txt += sun_txt + "\n"
@@ -1308,6 +1325,10 @@ class HitEvent(GraphEvent):
             self.block_verb = random.choice(block_verb)
             self.hit_details = random.choice(hit_details)
 
+        # Mark as a coming death if this is death, as no response can occur
+        if attack_target.health <= self.attack - self.defend:
+            attack_target.mark_dying()
+
         world.broadcast_to_room(self)
 
         if self.attack - self.defend > 1:
@@ -1315,6 +1336,7 @@ class HitEvent(GraphEvent):
             health = attack_target.health
             health = max(0, health - (self.attack - self.defend))
             attack_target.health = health
+
             if health == 0:
                 DeathEvent(attack_target).execute(world)
             else:
