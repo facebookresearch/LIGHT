@@ -1,6 +1,13 @@
 import React from "react";
 
 import "../styles.css";
+//IMAGE
+import InteractingTell from "../../../assets/images/screenshots/Tutorial/Interacting/InteractingTell.png";
+import InteractingWhisper from "../../../assets/images/screenshots/Tutorial/Interacting/InteractingWhisper.png";
+import InteractingShout from "../../../assets/images/screenshots/Tutorial/Interacting/InteractingShout.png";
+import InteractingRespond from "../../../assets/images/screenshots/Tutorial/Interacting/InteractingRespond.png";
+import Emote1 from "../../../assets/images/screenshots/Tutorial/Interacting/Emote1.png";
+import Emote2 from "../../../assets/images/screenshots/Tutorial/Interacting/Emote2.png";
 
 const InteractingWithTheWorld = (props) => {
   return (
@@ -14,9 +21,14 @@ const InteractingWithTheWorld = (props) => {
         the smithy “I’d love to own such a fine tool! It looks like wonderful
         craftsmanship, well done!” . Here are the example commands:
       </p>
-
+      <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+        <img className="tutorialpage-image__half" src={InteractingTell} />
+        <img className="tutorialpage-image__half" src={InteractingWhisper} />
+        <img className="tutorialpage-image__quarter" src={InteractingShout} />
+        <img className="tutorialpage-image__quarter" src={InteractingRespond} />
+      </div>
       <p>
-        Using a *whisper* command, only the other speaker can hear it. A *tell*
+        Using a whisper command, only the other speaker can hear it. A *tell*
         command is directed to a speaker, but others in the room can hear it.
         The *shout* command may be heard by people also in nearby rooms. Just
         putting quotes around what you want to say (“Mmmm I wonder what is
@@ -30,6 +42,10 @@ const InteractingWithTheWorld = (props) => {
         smile,ponder,blush,shrug,sigh, wink, yawn, wave, stare, scream, pout,
         nudge, nod, growl, groan, grin, gasp, frown, dance, applaud.
       </p>
+      <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+        <img className="tutorialpage-image__quarter" src={Emote1} />
+        <img className="tutorialpage-image__quarter" src={Emote2} />
+      </div>
     </div>
   );
 };

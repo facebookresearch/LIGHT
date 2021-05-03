@@ -35,7 +35,12 @@
 .tutorialpage-image__quarter {
   width: 25%;
 }
-
+.tutorial-header {
+  font-size: 14;
+}
+.tutorial-subheader {
+  font-size: 14;
+}
 .tutorial-text {
   font-size: 14;
 }
