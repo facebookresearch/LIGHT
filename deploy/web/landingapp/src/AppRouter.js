@@ -4,6 +4,7 @@ import { HashRouter, Route, Redirect, Switch } from "react-router-dom";
 import AboutPage from "./pages/AboutPage";
 import LandingPage from "./pages/LandingPage";
 import TermsPage from "./pages/TermsPage";
+import TutorialPage from "./pages/TutorialPage";
 import LoginPage from "./pages/LoginPage";
 import LogoutPage from "./pages/LogoutPage";
 import ErrorPage from "./pages/ErrorPage";
@@ -16,6 +17,7 @@ const AppRouter = () => {
       <HashRouter>
         <Switch>
           <Route path="/" component={LandingPage} exact />
+          <Route path="/tutorial" component={TutorialPage} exact />
           <Route path="/about" component={AboutPage} exact />
           <Route path="/terms" component={TermsPage} exact />
           <Route path="/login" component={LoginPage} exact />

@@ -46,7 +46,7 @@ const Entry = ({
         {msg.caller == "SoulSpawnEvent" ? (
           <SoulSpawnEventMessage text={msg.text} />
         ) : msg.questComplete ? (
-          <MissionCompleteMessage />
+          <MissionCompleteMessage xp={msg.xp} name={msg.text} />
         ) : (
           <Message
             text={msg.text}

@@ -41,6 +41,8 @@ const SoulSpawnEventMessage = ({
           textDecoration: "underline",
           marginBottom: "0",
           fontFamily: "fantasy",
+          fontWeight: "900",
+          fontSize: "18px",
         }}
       >
         YOUR MISSION
