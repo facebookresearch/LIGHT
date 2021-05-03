@@ -36,7 +36,7 @@ import tornado.web  # noqa E402: gotta install ioloop first
 import tornado.auth  # noqa E402: gotta install ioloop first
 import tornado.websocket  # noqa E402: gotta install ioloop first
 import tornado.escape  # noqa E402: gotta install ioloop first
-from light.graph.events.graph_events import SoulSpawnEvent
+from light.graph.events.graph_events import SoulSpawnEvent, SystemMessageEvent
 
 from typing import Dict, Optional, TYPE_CHECKING
 
@@ -653,6 +653,20 @@ class TornadoPlayerProvider(PlayerProvider):
         return self.socket.alive
 
     def on_reap_soul(self, soul):
+        action = SystemMessageEvent(
+            None,
+            [],
+            text_content=(
+                "Your soul slips of into the ether, unbound by your previous character. "
+                '"Oh no... this won\'t do", says the Dungeon Master, before peering over '
+                'into the world to see what has happened. "I can try to find a new place '
+                "for your soul, if you'd like?\" Send anything to respawn."
+            ),
+        )
+        dat = action.to_frontend_form(None)
+        self.socket.safe_write_message(
+            json.dumps({"command": "actions", "data": [dat]})
+        )
         if self.user is not None:
             if self.db is not None:
                 with self.db as ldb:

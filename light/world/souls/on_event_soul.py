@@ -213,6 +213,7 @@ class OnEventSoul(ModelSoul):
     def tell_goal_heuristics(self, event) -> bool:
         agent = self.target_node
         event_name = event.__class__.__name__
+        partner = self.get_last_interaction_partner(agent)
         # Tell Mission to Other Agent (or not).
         if (
             (event_name == "SayEvent" and event.actor != agent)
@@ -221,7 +222,7 @@ class OnEventSoul(ModelSoul):
                 and event.actor != agent
                 and event.target_nodes[0] == agent
             )
-        ) and (self.get_last_interaction_partner(agent) == event.actor.node_id):
+        ) and (partner is not None and partner.node_id == event.actor.node_id):
             about_goals = False
             for words in ["mission", "goal", "quest", "what you want"]:
                 if words in event.text_content:
@@ -420,7 +421,6 @@ class OnEventSoul(ModelSoul):
                         return True
 
         # Random movement for NPCs..
-
         if (
             random.randint(0, 300) < agent.speed
             and self.get_last_interaction_partner(agent) is None

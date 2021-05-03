@@ -1134,8 +1134,7 @@ class DeathEvent(TriggeredEvent):
 
         # Trigger the actual death
         world.oo_graph.agent_die(self.actor)
-        # TODO any other world processing of a death event, perhaps to
-        # update the player
+        world.purgatory.clear_soul(self.actor)
         return []
 
     @proper_caps_wrapper

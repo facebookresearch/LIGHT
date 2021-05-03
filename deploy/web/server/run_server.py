@@ -170,7 +170,7 @@ def main():
     parser.add_argument(
         "--cookie-secret",
         type=str,
-        default="0123456789",
+        default="temp8000800080008000",
         help="Cookie secret for issueing cookies (SECRET!!!)",
     )
     parser.add_argument(
