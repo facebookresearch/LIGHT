@@ -7,17 +7,24 @@ import ExperiencePointsSystem from "./Topics/ExperiencePointsSystem";
 import CharacterBasics from "./Topics/CharacterBasics";
 import InteractingWithTheWorld from "./Topics/InteractingWithTheWorld";
 import Actions from "./Topics/Actions";
+//IMAGES
+import Scribe from "../../assets/images/scribe.png";
 
 import "./styles.css";
 
 const TutorialPage = (props) => {
   return (
     <div className="tutorialpage-container">
-      <HowToPlay />
-      <ExperiencePointsSystem />
-      <CharacterBasics />
-      <InteractingWithTheWorld />
-      <Actions />
+      <div className="tutorialpage-content">
+        <div>
+          <image src={Scribe} />
+        </div>
+        <HowToPlay />
+        <ExperiencePointsSystem />
+        <CharacterBasics />
+        <InteractingWithTheWorld />
+        <Actions />
+      </div>
     </div>
   );
 };

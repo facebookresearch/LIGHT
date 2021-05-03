@@ -1,0 +1,34 @@
+.tutorialpage-container {
+  background-image: url("../../assets/images/InexplicableTavern.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.tutorialpage-content {
+  background-color: white;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  width: 80%;
+  height: 80%;
+  margin: 3em;
+  border-style: ridge;
+  border-color: darkgrey;
+  opacity: 0.95;
+  border-width: 1em;
+  padding: 2em;
+}
+
+.tutorialpage-image__row {
+  width: 100%;
+}
+.tutorialpage-image__half {
+  width: 50%;
+}
+.tutorialpage-image__quarter {
+  width: 25%;
+}

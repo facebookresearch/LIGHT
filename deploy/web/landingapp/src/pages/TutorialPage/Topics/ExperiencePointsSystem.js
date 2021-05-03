@@ -19,7 +19,7 @@ const ExperiencePointsSystem = (props) => {
         to a goblin earns 4 EXP, as can be seen from the yellow star next to the
         message.
       </p>
-      <img src={ExperienceImg1} />
+      <img className="tutorialpage-image__row" src={ExperienceImg1} />
       <p>
         You can see your overall experience points and level in the top left
         panel. Earn enough experience to rise to the next level!
