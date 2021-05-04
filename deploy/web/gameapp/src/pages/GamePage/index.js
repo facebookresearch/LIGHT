@@ -272,12 +272,18 @@ function Chat({
         sessionGiftXpSpent={sessionGiftXpSpent}
         setSessionGiftXpSpent={setSessionGiftXpSpent}
       />
-      <Modal
-        showModal={showInstructionModal}
-        setShowModal={setShowInstructionModal}
-      >
-        <InstructionModalContent />
-      </Modal>
+      {showInstructionModal ? (
+        <Modal
+          showModal={showInstructionModal}
+          setShowModal={setShowInstructionModal}
+        >
+          <InstructionModalContent
+            buttonFunction={() => {
+              setShowInstructionModal(false);
+            }}
+          />
+        </Modal>
+      ) : null}
     </div>
   );
 }

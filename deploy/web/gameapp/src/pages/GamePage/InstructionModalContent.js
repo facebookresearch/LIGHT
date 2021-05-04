@@ -11,7 +11,7 @@ import WrappedText from "../../assets/screenshots/Tutorial/Interacting/Interacti
 
 import "./styles.css";
 
-const InstructionModalContent = (props) => {
+const InstructionModalContent = ({ buttonFunction }) => {
   return (
     <div className="instructionmodalcontent-container">
       <div className="instructionmodalcontent-header">
@@ -42,7 +42,12 @@ const InstructionModalContent = (props) => {
         </p>
       </div>
       <div className="instructionmodalcontent-row">
-        <div className="instructionmodalcontent-button">READY</div>
+        <div
+          className="instructionmodalcontent-button"
+          onClick={buttonFunction}
+        >
+          READY
+        </div>
       </div>
     </div>
   );
