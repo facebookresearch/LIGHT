@@ -8,7 +8,7 @@ from light.world.souls.soul import Soul
 from copy import deepcopy
 import os
 import asyncio
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 from light.graph.events.graph_events import SystemMessageEvent
 
 if TYPE_CHECKING:
@@ -32,10 +32,13 @@ class BaseSoul(Soul):
         self.target_node._last_interaction_partner_id = None
         self.reset_interaction_history(self.target_node)
 
-    def get_last_interaction_partner(self, node=None):
+    def get_last_interaction_partner(self, node=None) -> Optional["GraphAgent"]:
         if node == None:
             node = self.target_node
-        return node._last_interaction_partner_id
+        partner_id = node._last_interaction_partner_id
+        if partner_id is None:
+            return None
+        return self.world.oo_graph.get_node(partner_id)
 
     def log_interaction_from_event(self, event):
         event_name = event.__class__.__name__

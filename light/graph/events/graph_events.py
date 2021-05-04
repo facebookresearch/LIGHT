@@ -1134,8 +1134,7 @@ class DeathEvent(TriggeredEvent):
 
         # Trigger the actual death
         world.oo_graph.agent_die(self.actor)
-        # TODO any other world processing of a death event, perhaps to
-        # update the player
+        # world.purgatory.clear_soul(self.actor) todo - clear soul only after message queue consumed
         return []
 
     @proper_caps_wrapper
@@ -3150,10 +3149,12 @@ class ExamineEvent(GraphEvent):
             inv_text = world.view.get_inventory_text_for(object_id, give_empty=False)
             if inv_text != "":
                 base_desc += f"\n{self.__target_name} is {inv_text} "
-            if hasattr(
-                self.target_nodes[0], "_last_action_time"
-            ) and actor_has_no_recent_action(
-                self.target_nodes[0]._last_action_time, time.time()
+            if (
+                self.target_nodes[0].is_player
+                and hasattr(self.target_nodes[0], "_last_action_time")
+                and actor_has_no_recent_action(
+                    self.target_nodes[0]._last_action_time, time.time()
+                )
             ):
                 base_desc += "\nThey appear to be dozing off right now."
         elif isinstance(target, GraphObject) and target.container:

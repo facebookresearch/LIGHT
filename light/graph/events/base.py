@@ -213,7 +213,12 @@ class GraphEvent(object):
         event = class_(*arglist)
         for k, v in attribute_dict.items():
             event.__dict__[k] = v
+        event.post_json_load(world)
         return event
+
+    def post_json_load(self, world: "World") -> None:
+        """Rectify any state following a load from json."""
+        pass
 
     def to_json(self, viewer: GraphAgent = None, indent: int = None) -> str:
         """

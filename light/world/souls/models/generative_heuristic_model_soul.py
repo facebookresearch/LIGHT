@@ -274,17 +274,13 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
 
         # Get agents
         agent = self.target_node
-        partner_id = self.get_last_interaction_partner(agent)
-        if partner_id is None:
-            return
-        partner = self.world.oo_graph.get_node(partner_id)
         agent_id = agent.node_id
-        partner_id = self.get_last_interaction_partner()
-        if partner_id != None:
-            partner = self.world.oo_graph.get_node(partner_id)
+        partner = self.get_last_interaction_partner()
+        if partner is None:
+            return
+        partner_name = None
+        if partner != None:
             partner_name = partner.name
-        else:
-            partner_name = None
 
         quest_txt = None
         if not hasattr(agent, "quests") or agent.quests is None:
@@ -388,13 +384,9 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         agent_id = agent.node_id
 
         if obs is None:
-            partner_id = self.get_last_interaction_partner(agent)
-            if partner_id is None:
-                return
-            partner = self.world.oo_graph.get_node(partner_id)
+            partner = self.get_last_interaction_partner(agent)
         else:
             partner = obs.actor
-            partner_id = partner.node_id
             partner_interactor_id = partner._last_interaction_partner_id
             if (
                 isinstance(obs, SayEvent)
@@ -474,7 +466,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             partner = random.choice(agents)
             partner_id = partner.node_id
             if (
-                partner.node_id != agent_id
+                partner_id != agent_id
                 and partner.get_prop("speed", 0) > 0
                 and self.get_last_interaction_partner(partner) is None
             ):

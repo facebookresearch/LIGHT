@@ -26,7 +26,10 @@ from light.graph.events.constraint import (
     AttributeCompareValueConstraint,
 )
 from light.graph.elements.graph_nodes import GraphAgent, GraphNode, GraphObject
-from typing import Union, List, Optional
+from typing import Union, List, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from light.world.world import World
 
 
 class UseEvent(GraphEvent):
@@ -326,3 +329,9 @@ class UseEvent(GraphEvent):
                 valid_actions.append(cls(actor, target_nodes=[obj, entity]))
 
         return valid_actions
+
+    def post_json_load(self, world: "World") -> None:
+        """Do a json load on the processed event array"""
+        self.events = [
+            GraphEvent.from_json(json_event, world) for json_event in self.events
+        ]
