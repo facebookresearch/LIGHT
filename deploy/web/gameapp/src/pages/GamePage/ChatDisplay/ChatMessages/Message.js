@@ -163,7 +163,13 @@ const Message = ({
     <div className={classNames}>
       {actor ? (
         <div className="agent">
-          <span style={{ fontFamily: "fantasy" }}>
+          <span
+            style={{
+              fontFamily: "fantasy",
+              fontSize: "1em",
+              marginRight: "50px",
+            }}
+          >
             {actor ? actor.toUpperCase() : null}
           </span>
           {isSelf ? (
@@ -182,9 +188,11 @@ const Message = ({
                         fontFamily: "fantasy",
                         backgroundColor: "white",
                         color: "gold",
+                        position: "relative",
+                        paddingLeft: "40px",
                       }}
                     >
-                      <p style={{ display: "inline" }}>{xp}</p>
+                      <p id="message-star__number">{xp}</p>
                       <i className="fa fa-star message-star" />
                     </span>
                   </Tooltip>
@@ -193,7 +201,7 @@ const Message = ({
             </React.Fragment>
           ) : (
             <React.Fragment>
-              <span style={{ backgroundColor: "white" }}>
+              <span style={{ backgroundColor: "white", position: "inline" }}>
                 <Tooltip
                   title={
                     playerGiftXp > 0
@@ -202,14 +210,29 @@ const Message = ({
                   }
                   position="top"
                 >
-                  {isLiked ? (
-                    <i className="fa fa-star message-star" />
-                  ) : (
-                    <i className="fa fa-star-o" onClick={likeHandler} />
-                  )}
+                  <div style={{ position: "relative", marginRight: "150%" }}>
+                    {isLiked ? (
+                      <i className="fa fa-star message-star" />
+                    ) : (
+                      <i
+                        className="fa fa-star-o"
+                        style={{
+                          position: "absolute",
+                          top: "5%",
+                          right: "1%",
+                          fontSize: "2em",
+                        }}
+                        onClick={likeHandler}
+                      />
+                    )}
+                  </div>
                 </Tooltip>{" "}
                 <Tooltip title={`tell ${actor}...`} position="top">
-                  <i className="fa fa-reply" onClick={() => onReply(actor)} />
+                  <i
+                    style={{ fontSize: "2em" }}
+                    className="fa fa-reply"
+                    onClick={() => onReply(actor)}
+                  />
                 </Tooltip>{" "}
                 {/* <Tooltip
                   title={`Do you think something else should have been said instead? Provide feedback via an edit...`}
@@ -225,6 +248,7 @@ const Message = ({
                   position="top"
                 >
                   <i
+                    style={{ fontSize: "2em" }}
                     className="fa fa-flag "
                     onClick={() => setReportMode(true)}
                   />
