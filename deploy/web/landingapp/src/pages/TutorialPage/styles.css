@@ -23,6 +23,26 @@
   padding: 2em;
 }
 
+.tutorialpage-button {
+  color: gold;
+  font-weight: bolder;
+  cursor: pointer;
+  border-radius: 15px;
+}
+
+.tutorialpage-button:hover {
+  color: yellow;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.tutorialpage-button:active {
+  color: yellow;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 900;
+}
+
 .tutorialpage-image__row {
   width: 100%;
 }
