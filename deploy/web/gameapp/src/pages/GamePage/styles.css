@@ -7,7 +7,6 @@
   border-color: yellow;
   border-radius: 15px;
 }
-
 .mission-container {
   background-color: yellow;
   box-shadow: 2px 2px 2px black;
@@ -31,4 +30,35 @@
   text-align: center;
   margin: 0px;
   font-size: 14px;
+}
+/* Instruction Modal*/
+.instructionmodalcontent-container {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+}
+
+.instructionmodalcontent-header {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: space-around;
+  padding: 1em;
+}
+
+.instructionmodalcontent-header__text {
+  font-size: 3em;
+  text-align: center;
+}
+
+.instructionmodalcontent-image {
+  width: 30%;
+  height: 30%;
+}
+
+.instructionmodalcontent-body {
+}
+
+.instructionmodalcontent-body__text {
 }

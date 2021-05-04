@@ -5,7 +5,7 @@ import { FaWindowMinimize } from "react-icons/fa";
 
 import "./styles.css";
 
-const CollapsibleBox = ({ showModal, setModal, children }) => {
+const Modal = ({ showModal, setModal, children }) => {
   const openHandler = () => setModal(true);
   const closeHandler = () => setModal(false);
 
@@ -16,4 +16,4 @@ const CollapsibleBox = ({ showModal, setModal, children }) => {
   );
 };
 
-export default CollapsibleBox;
+export default Modal;

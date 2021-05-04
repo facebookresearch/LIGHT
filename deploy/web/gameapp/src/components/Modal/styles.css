@@ -15,5 +15,5 @@
   border-color: lightgrey;
   border-width: 1em;
   border-style: ridge;
-  padding: 1em;
+  border-radius: 15px;
 }

@@ -18,6 +18,7 @@ import LoadingScreen from "../../LoadingScreen";
 import Sidebar from "./Sidebar";
 import ChatDisplay from "./ChatDisplay";
 import Modal from "../../components/Modal";
+import InstructionModalContent from "./InstructionModalContent";
 
 import CONFIG from "../../config.js";
 
@@ -275,7 +276,7 @@ function Chat({
         showModal={showInstructionModal}
         setShowModal={setShowInstructionModal}
       >
-        <div>Instructions</div>
+        <InstructionModalContent />
       </Modal>
     </div>
   );
