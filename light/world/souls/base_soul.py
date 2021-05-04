@@ -210,7 +210,7 @@ class BaseSoul(Soul):
             is_safe = d[0][2]
             if not is_safe:
                 # reset conversation when unsafe utterances are in the history
-                dtxt = self.build_context(quest_txt)
+                txt = ""
         dtxt = dtxt.lstrip(" ")
         return txt + dtxt
 
