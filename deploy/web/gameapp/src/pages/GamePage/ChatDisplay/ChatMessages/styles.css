@@ -126,6 +126,16 @@
   font-weight: bolder;
 }
 
+.soulspawn-subheader {
+  text-decoration: underline;
+  margin-bottom: 0;
+  font-family: fantasy;
+  font-weight: 900;
+  font-size: 18px;
+  color: #fff;
+  text-align: center;
+}
+
 .soulspawn-text {
   color: #fff;
   text-align: center;
