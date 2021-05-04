@@ -17,6 +17,7 @@ import Logo from "../../components/Logo/index.js";
 import LoadingScreen from "../../LoadingScreen";
 import Sidebar from "./Sidebar";
 import ChatDisplay from "./ChatDisplay";
+import Modal from "../../components/Modal";
 
 import CONFIG from "../../config.js";
 
@@ -102,15 +103,21 @@ function Chat({
   agents,
   disconnectFromSession,
 }) {
+  //MODAL STATE
+  const [showInstructionModal, setShowInstructionModal] = React.useState(true);
+  //IDLE STATE
   const [idleTime, setIdleTime] = React.useState(0);
   const [idle, setIdle] = React.useState(false);
+  //CHAT TEXT STATE
   const [enteredText, setEnteredText] = React.useState("");
+  const chatContainerRef = React.useRef(null);
+  //PLAYER XP AND GIFT XP
   const [playerXp, setPlayerXp] = React.useState(0);
   const [playerGiftXp, setPlayerGiftXp] = React.useState(0);
   const [sessionXp, setSessionXp] = React.useState(0);
   const [sessionGiftXp, setSessionGiftXp] = React.useState(0);
   const [sessionGiftXpSpent, setSessionGiftXpSpent] = React.useState(0);
-  const chatContainerRef = React.useRef(null);
+  // AGENT AND CHARACTER STATE
   const getAgentName = (agent) => (agents ? agents[agent] : agent);
   const getEntityId = (agent) => agent.match(/\d+$/)[0];
   const dataModelHost = getDataModelAddress();
@@ -264,6 +271,12 @@ function Chat({
         sessionGiftXpSpent={sessionGiftXpSpent}
         setSessionGiftXpSpent={setSessionGiftXpSpent}
       />
+      <Modal
+        showModal={showInstructionModal}
+        setShowModal={setShowInstructionModal}
+      >
+        <div>Instructions</div>
+      </Modal>
     </div>
   );
 }
