@@ -105,7 +105,7 @@ function Chat({
   disconnectFromSession,
 }) {
   //MODAL STATE
-  const [showInstructionModal, setShowInstructionModal] = React.useState(true);
+  const [showInstructionModal, setShowInstructionModal] = React.useState(false);
   //IDLE STATE
   const [idleTime, setIdleTime] = React.useState(0);
   const [idle, setIdle] = React.useState(false);
@@ -201,6 +201,9 @@ function Chat({
 
   React.useEffect(() => {
     const { xp, giftXp } = persona;
+    if (xp <= 10) {
+      setShowInstructionModal(true);
+    }
     setPlayerXp(xp);
     setPlayerGiftXp(giftXp);
     console.log("GIFT EXP:  ", giftXp);
