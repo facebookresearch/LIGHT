@@ -11,7 +11,7 @@ import ReportPlayer1 from "../../../assets/images/screenshots/Tutorial/ReportPla
 const ExperiencePointsSystem = (props) => {
   return (
     <div className="experiencepointssystem-container">
-      <h1 className="tutorial-header">Exprience Points System</h1>
+      <h1 className="tutorial-header">Experience Points System</h1>
       <h4 className="tutorial-subheader">Receiving Experience Points</h4>
       <p className="tutorial-text">
         Playing your role well will earn you experience points (EXP). For
