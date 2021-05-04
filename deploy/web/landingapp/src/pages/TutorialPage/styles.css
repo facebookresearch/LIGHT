@@ -18,7 +18,7 @@
   margin: 3em;
   border-style: ridge;
   border-color: darkgrey;
-  opacity: 0.95;
+  background-color: rgba(255, 255, 255, 0.95);
   border-width: 1em;
   padding: 2em;
 }
