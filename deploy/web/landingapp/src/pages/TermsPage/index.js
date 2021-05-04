@@ -1,9 +1,10 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 import "../../styles.css";
 
 const TermsPage = (props) => {
+  let history = useHistory();
   return (
     <div className="termspage-container">
       <div
@@ -19,17 +20,21 @@ const TermsPage = (props) => {
         }}
       >
         <div style={{ width: "100%", flexDirection: "flexStart" }}>
-          <Link style={{ textDecoration: "none", color: "yellow" }} to="/">
+          <div className="back-button" onClick={() => history.goBack()}>
             Back
-          </Link>
+          </div>
         </div>
         <h1 style={{ color: "white" }}>Terms</h1>
         <p>
           Facebook will process the messages you send in playing the game in
-          accordance with our Data Policy (<a href="http://facebook.com/policy" target="_blank">facebook.com/policy</a>). Messages you
-          send in playing the game may be used by Facebook for research purposes
-          and as otherwise specified in our Data Policy, and may be used by
-          and/or shared with third parties in connection with this research.
+          accordance with our Data Policy (
+          <a href="http://facebook.com/policy" target="_blank">
+            facebook.com/policy
+          </a>
+          ). Messages you send in playing the game may be used by Facebook for
+          research purposes and as otherwise specified in our Data Policy, and
+          may be used by and/or shared with third parties in connection with
+          this research.
         </p>
         <p>
           This may involve public disclosure of the messages as part of a

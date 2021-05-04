@@ -830,6 +830,27 @@ body .fadeShow {
   width: 100%;
 }
 
+/* Back Button */
+.back-button {
+  color: gold;
+  font-weight: bolder;
+  cursor: pointer;
+  border-radius: 15px;
+}
+
+.back-button:hover {
+  color: yellow;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.back-button:active {
+  color: yellow;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 900;
+}
+
 @media only screen and (max-width: 1224px) {
   .instructions-container {
     width: 100%;
