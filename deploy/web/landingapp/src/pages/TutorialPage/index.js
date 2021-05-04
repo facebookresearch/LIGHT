@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 //Topics
 import HowToPlay from "./Topics/HowToPlay";
@@ -7,26 +7,18 @@ import ExperiencePointsSystem from "./Topics/ExperiencePointsSystem";
 import CharacterBasics from "./Topics/CharacterBasics";
 import InteractingWithTheWorld from "./Topics/InteractingWithTheWorld";
 import Actions from "./Topics/Actions";
-//IMAGES
-import Scribe from "../../assets/images/scribe.png";
 
 import "./styles.css";
 
 const TutorialPage = (props) => {
+  let history = useHistory();
   return (
     <div className="tutorialpage-container">
       <div className="tutorialpage-content">
         <div style={{ width: "100%", display: "flex" }}>
-          <Link
-            style={{
-              textDecoration: "none",
-              color: "gold",
-              fontWeight: "bolder",
-            }}
-            to="/"
-          >
+          <div className="tutorialpage-button" onClick={() => history.goBack()}>
             Back
-          </Link>
+          </div>
         </div>
         <HowToPlay />
         <ExperiencePointsSystem />

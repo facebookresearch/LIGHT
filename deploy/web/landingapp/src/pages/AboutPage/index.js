@@ -1,11 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 import "../../styles.css";
 
 import Unicorn from "../../assets/images/unicorn.jpg";
 
 const AboutPage = (props) => {
+  let history = useHistory();
   return (
     <div className="aboutpage-container">
       <div
@@ -18,16 +19,16 @@ const AboutPage = (props) => {
         }}
       >
         <div style={{ width: "100%", flexDirection: "flexStart" }}>
-          <Link style={{ textDecoration: "none", color: "yellow" }} to="/">
+          <div className="back-button" onClick={() => history.goBack()}>
             Back
-          </Link>
+          </div>
         </div>
         <h1 style={{ color: "white" }}>About LIGHT</h1>
         <p style={{ color: "white" }}>
           LIGHT is a research project focused on creating realistic interactive
           AI. LIGHT stands for
-           <i>“Learning in Interactive Games with Humans and Text.”</i>
-           The LIGHT game is a direct application of
+          <i>“Learning in Interactive Games with Humans and Text.”</i>
+          The LIGHT game is a direct application of
           <a href="https://parl.ai/projects/light/"> our research</a>, and also
           acts as a live environment to allow players to interact with models
           and other players directly. We believe that by collecting gameplay

@@ -7,7 +7,6 @@
   border-color: yellow;
   border-radius: 15px;
 }
-
 .mission-container {
   background-color: yellow;
   box-shadow: 2px 2px 2px black;
@@ -31,4 +30,101 @@
   text-align: center;
   margin: 0px;
   font-size: 14px;
+}
+/* Instruction Modal*/
+.instructionmodalcontent-container {
+  width: 100%;
+  height: 100%;
+  background-color: burlywood;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.instructionmodalcontent-row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.instructionmodalcontent-header {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: space-around;
+  padding: 1em;
+}
+
+.instructionmodalcontent-header__text {
+  color: white;
+  font-size: 3em;
+  text-align: left;
+}
+
+.instructionmodalcontent-header__light {
+  animation: pulse 3s ease-in-out infinite;
+  text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #eef079, 0 0 20px #eef079,
+    0 0 25px #eef079, 0 0 30px #eef079, 0 0 35px #eef079;
+}
+
+.instructionmodalcontent-scribe {
+  width: 20%;
+}
+
+.instructionmodalcontent-image {
+  width: 50%;
+  margin-left: 1em;
+}
+.instructionmodalcontent-image__list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.instructionmodalcontent-body {
+}
+
+.instructionmodalcontent-body__text {
+  font-size: 1em;
+  text-align: left;
+  margin-left: 1em;
+  font-weight: bold;
+  color: white;
+}
+
+@keyframes pulse {
+  from {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #eef079, 0 0 20px #eef079,
+      0 0 25px #eef079, 0 0 30px #eef079, 0 0 35px #eef079;
+  }
+  to {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #eef079,
+      0 0 40px #eef079, 0 0 50px #eef079, 0 0 60px #eef079, 0 0 70px #eef079;
+  }
+}
+
+.instructionmodalcontent-button {
+  color: white;
+  font-size: 1em;
+  background-color: gold;
+  width: 5em;
+  text-align: center;
+  padding: 0.5em;
+  border-radius: 15px;
+  border-style: double;
+  border-color: white;
+  box-shadow: 1px 1px 4px black;
+  cursor: pointer;
+}
+
+.instructionmodalcontent-button:hover {
+  animation: pulse 1s infinite;
+}
+
+.instructionmodalcontent-button:active {
+  animation: pulse 1s infinite;
+  box-shadow: 0px 0px 0px black;
 }
