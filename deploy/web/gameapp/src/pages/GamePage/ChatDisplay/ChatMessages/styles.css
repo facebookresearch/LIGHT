@@ -82,9 +82,42 @@
 }
 
 .message-star {
-  margin-left: 5px;
-  animation: shine infinite 2s;
+  position: absolute;
+  animation: shrink 1s normal;
   color: #ffe205;
+  top: 3%;
+  right: 5%;
+  font-size: 2em;
+}
+
+#message-star__number {
+  margin-right: 2em;
+  display: inline;
+  font-size: 1.25em;
+  animation: 4s slide normal;
+}
+
+@keyframes shrink {
+  0% {
+    color: #ffe205;
+    font-size: 10em;
+    z-index: 100;
+  }
+  100% {
+    color: #ffe205;
+    text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
+    font-size: 2em;
+    z-index: 100;
+  }
+}
+
+@keyframes slide {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes shine {
@@ -124,6 +157,16 @@
   text-align: center;
   animation: pulse 1s ease-in-out infinite alternate;
   font-weight: bolder;
+}
+
+.soulspawn-subheader {
+  text-decoration: underline;
+  margin-bottom: 0;
+  font-family: fantasy;
+  font-weight: 900;
+  font-size: 18px;
+  color: #fff;
+  text-align: center;
 }
 
 .soulspawn-text {

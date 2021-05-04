@@ -2,10 +2,8 @@ import React from "react";
 
 import "./styles.css";
 import "react-tippy/dist/tippy.css";
-import "emoji-mart/css/emoji-mart.css";
 
 import { Tooltip } from "react-tippy";
-import { Picker, emojiIndex } from "emoji-mart";
 import cx from "classnames";
 import onClickOutside from "react-onclickoutside";
 
@@ -61,36 +59,12 @@ const ChatDisplay = ({
     scrollToBottom();
   }, [scrollToBottom, messages]);
 
-  const defaultEmoji = "❓";
   const { presentAgents } = getLocationState(messages);
-  const [showEmojiPicker, setShowEmojiPicker] = React.useState(false);
-  const [selectedEmoji, setSelectedEmoji] = React.useState(defaultEmoji);
 
   const chatInputRef = React.useRef();
   React.useLayoutEffect(() => {
     chatInputRef.current.focus();
   }, []);
-
-  React.useEffect(() => {
-    if (persona === null || persona.name === null) return;
-    const skipWords = ["a", "the", "an", "of", "with", "holding"];
-    const tryPickEmojis = !persona
-      ? []
-      : persona.name
-          .split(" ")
-          .filter((token) => !!token)
-          .map((token) => token.replace(/\.$/, ""))
-          .filter((word) => skipWords.indexOf(word.toLowerCase()) === -1)
-          .flatMap((term) =>
-            emojiIndex.search(term).map((o) => {
-              return o.native;
-            })
-          );
-
-    const autopickedEmoji =
-      tryPickEmojis.length > 0 ? tryPickEmojis[0] : defaultEmoji;
-    setSelectedEmoji(autopickedEmoji);
-  }, [persona, setSelectedEmoji]);
 
   const setTextTellAgent = React.useCallback(
     (agent) => {
