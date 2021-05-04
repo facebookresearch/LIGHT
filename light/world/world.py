@@ -910,7 +910,7 @@ class World(object):
             self.send_msg(actor, random.choice(errs))
             return False
 
-        executable = instruction_list[0]
+        executable = instruction_list[0].lower()
         arguments = " ".join(instruction_list[1:])
 
         hint_calls = ["a", "actions", "hints"]

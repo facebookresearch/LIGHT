@@ -485,6 +485,17 @@ class GraphRoom(GraphNode):
         else:
             return self.name
 
+    def get_prefix_view_from(self, from_node=None):
+        """Return how this node would look like from the given location"""
+        if from_node is None:
+            return f"{self.name_prefix} {self.name}"
+        elif from_node == self:
+            return f"{self.name_prefix} {self.name}"
+        elif self in from_node.get_neighbors():
+            return from_node.get_edge_to(self).label
+        else:
+            return f"{self.name_prefix} {self.name}"
+
     def add_neighbor(
         self,
         other_node,
