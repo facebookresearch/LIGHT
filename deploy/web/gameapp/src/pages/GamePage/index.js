@@ -5,6 +5,8 @@ import "./styles.css";
 import "react-tippy/dist/tippy.css";
 import "emoji-mart/css/emoji-mart.css";
 
+import { DefaultEmojiMapper } from "../../utils";
+
 import { Picker, emojiIndex } from "emoji-mart";
 import onClickOutside from "react-onclickoutside";
 
@@ -150,21 +152,14 @@ function Chat({
   const [selectedEmoji, setSelectedEmoji] = React.useState(defaultEmoji);
 
   React.useEffect(() => {
+    let characterEmoji = DefaultEmojiMapper(persona.name);
     if (persona === null || persona.name === null) return;
     const skipWords = ["a", "the", "an", "of", "with", "holding"];
     const tryPickEmojis = !persona
       ? []
-      : persona.name
-          .split(" ")
-          .filter((token) => !!token)
-          .map((token) => token.replace(/\.$/, ""))
-          .filter((word) => skipWords.indexOf(word.toLowerCase()) === -1)
-          .flatMap((term) =>
-            emojiIndex.search(term).map((o) => {
-              return o.native;
-            })
-          );
-
+      : emojiIndex.search(characterEmoji).map((o) => {
+          return o.native;
+        });
     const autopickedEmoji =
       tryPickEmojis.length > 0 ? tryPickEmojis[0] : defaultEmoji;
     setSelectedEmoji(autopickedEmoji);
