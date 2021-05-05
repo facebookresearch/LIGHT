@@ -12,7 +12,7 @@ const HelpMessage = ({ text }) => {
     <div className="helpmessage-container">
       <div className="helpmessage-box">
         <p>
-          You pull some scribbled notes on a torn manuscript out of your pocket.
+          You pull some scribbled notes on a torn manuscript out of your pocket:
         </p>
         <div className="helpmessage-parchment">
           <p>{Parchment}</p>
