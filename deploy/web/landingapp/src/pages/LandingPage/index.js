@@ -107,12 +107,12 @@ const LandingPage = (props) => {
                     </p>
                     <p>
                       <b>Actions:</b> You can move into new locations (e.g.,{" "}
-                      <i>go west</i>), pick up objects (e.g., <i>get tool</i>),
+                      <i> go west</i>), pick up objects (e.g., <i>get tool</i>),
                       give objects (e.g.,
                       <i>give tool to smithy</i>), wear clothing, wield weapons,
-                      eat, drink, try to steal objects, and more. Type{" "}
-                      <i>help</i>
-                      in game for the full list of actions.
+                      eat, drink, try to steal objects, and more. Type
+                      <i> help </i>
+                      in game for the full flist of actions.
                     </p>
                   </>
                 ) : null}
