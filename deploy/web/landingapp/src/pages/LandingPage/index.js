@@ -112,7 +112,7 @@ const LandingPage = (props) => {
                       <i>give tool to smithy</i>), wear clothing, wield weapons,
                       eat, drink, try to steal objects, and more. Type
                       <i> help </i>
-                      in game for the full flist of actions.
+                      in game for the full list of actions.
                     </p>
                   </>
                 ) : null}
