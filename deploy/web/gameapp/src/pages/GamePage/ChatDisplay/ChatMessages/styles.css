@@ -185,7 +185,7 @@
   display: flex;
   justify-content: center;
   height: 10em;
-  width: 100%em;
+  width: 100%;
   z-index: 1;
 }
 
@@ -238,4 +238,36 @@
   z-index: 6;
   text-align: center;
   font-size: 11px;
+}
+
+/*HELP MESSAGE*/
+.helpmessage-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.helpmessage-box {
+  background-color: #efefef;
+  width: 65%;
+  padding: 10px 1em 10px 1em;
+  justify-content: center;
+  margin: 10px 0 10px 0;
+  min-width: 460px;
+}
+.helpmessage-parchment {
+  background-color: burlywood;
+  box-shadow: 2px 2px 5px black;
+  text-align: center;
+  padding: 2px 0 2px 0;
+  border-style: double;
+  border-width: 4px;
+  border-color: rgb(243, 220, 189);
+  min-width: 460px;
+}
+
+.helpmessage-text {
+  margin: 0 0 3px 1em;
+  text-align: left;
 }

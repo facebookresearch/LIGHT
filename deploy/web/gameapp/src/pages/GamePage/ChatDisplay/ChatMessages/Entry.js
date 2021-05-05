@@ -4,6 +4,7 @@ import "../../styles.css";
 
 import Message from "./Message";
 import MissionCompleteMessage from "./MissionCompleteMessage";
+import HelpMessage from "./HelpMessage";
 import SettingMessage from "./SettingMessage";
 import SoulSpawnEventMessage from "./SoulSpawnEventMessage";
 
@@ -38,7 +39,11 @@ const Entry = ({
     ].includes(msg.caller) ||
     msg.caller === null
   ) {
-    return <SettingMessage text={msg.text} />;
+    if (msg.caller == "HelpEvent") {
+      return <HelpMessage text={msg.text} />;
+    } else {
+      return <SettingMessage text={msg.text} />;
+    }
   } else {
     var actor = get_msg_actor(msg);
     return (
