@@ -29,7 +29,16 @@ def clean(msg):
     txt = msg["text"]
     res = []
     app = ""
-    
+    convo_has_started = False
+    for t in txt.split("\n"):
+        if "_self_say " in t:
+            convo_has_started = True
+        if "_partner_say " in t:
+            convo_has_started = True
+        if "_partner_name " in t:
+            partner_name = t.replace("_partner_name ", "")
+            
+    first_convo_line = True
     for t in txt.split("\n"):
         if t.startswith("_") and "_object_desc" not in t:
             if (
@@ -44,13 +53,22 @@ def clean(msg):
                 t = t.replace("_partner_emote ", "")
                 app = app + " *" + t + "*"
             else:
+                #if ("_partner_say " in t) or ("_self_say" in t):
+                #    #import pdb; pdb.set_trace()
+                if ("_partner_say " in t) or ("_self_say" in t):
+                    first_convo_line = False
                 t = t.replace("_self_say ", "")
                 t = t.replace("_partner_say ", "")
                 res.append(t + app)
                 app = ""
+
+    if not convo_has_started:
+        res.append("START " + partner_name)
+    else:
+        res.append("CONTINUE " + partner_name)
+                
     msg.force_set("text", "\n".join(res))
-    # print(res)
-    # import pdb; pdb.set_trace()
+    #print(res)
     return msg
 
 

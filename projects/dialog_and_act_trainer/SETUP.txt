@@ -35,6 +35,13 @@ py convert.py -t fromfile -ffdp  /checkpoint/light/projects/dialog_and_act_train
 
 etc.   (for all the files in  /checkpoint/light/projects/dialog_and_act_trainer/raw/ .. )
 
+#OR
+#
+# we make that final data we want with convo starter tokens (to try to preent starting convo as if in middle ):
+
+py convert_withstarter.py -t fromfile -ffdp  /checkpoint/light/projects/dialog_and_act_trainer/raw/light_train.txt  -of  /checkpoint/light/projects/dialog_and_act_trainer/light_withstarter_train.txt
+
+
 AND
 
 # for the type picker (dialog, act, emote) task:
