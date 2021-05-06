@@ -190,24 +190,6 @@ class BaseSoul(Soul):
             txt += quest_txt
         txt += "\n"
         return txt
-
-    def add_startswith_tokens(self, context, dialogue_txt):
-        # extract partner name
-        partner_name = ""
-        if self.target_node._last_interaction_partner_id != None:
-            partner = self.world.oo_graph.get_node(
-                self.target_node._last_interaction_partner_id
-            )
-        if partner is not None:
-            partner_name = partner.get_prefix_view()
-        if len(dialogue_txt) < 3:
-            feature = "START " + partner_name
-        else:
-            feature = "CONTINUE " + partner_name
-        final = context + dialogue_txt + '\n' + feature
-        print(final)
-        return final
-        
         
     def build_dialog_context(self, quest_txt=None):
         # Initial context.
@@ -230,13 +212,7 @@ class BaseSoul(Soul):
                 # reset conversation when unsafe utterances are in the history
                 dtxt = self.build_context(quest_txt)
         dtxt = dtxt.lstrip(" ")
-
-        if True:
-            # Add starting context features, can help the model.            
-            final = self.add_startswith_tokens(txt, dtxt)
-        else:
-            final = txt + dtxt
-
+        final = txt + dtxt
         return final
 
     @classmethod
