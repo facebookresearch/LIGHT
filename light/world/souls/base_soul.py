@@ -190,7 +190,7 @@ class BaseSoul(Soul):
             txt += quest_txt
         txt += "\n"
         return txt
-
+        
     def build_dialog_context(self, quest_txt=None):
         # Initial context.
         txt = self.build_context(quest_txt)
@@ -212,7 +212,8 @@ class BaseSoul(Soul):
                 # reset conversation when unsafe utterances are in the history
                 txt = ""
         dtxt = dtxt.lstrip(" ")
-        return txt + dtxt
+        final = txt + dtxt
+        return final
 
     @classmethod
     def load_generic_act_model(cls, generic_act_model_file):
