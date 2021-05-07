@@ -39,6 +39,20 @@ const ChatInput = ({
         className="chatbox"
         placeholder="Enter text to interact with the world here..."
       />
+      <div
+        className="chatbox-button"
+        onClick={(e) => {
+          e.preventDefault();
+
+          if (!!enteredText) {
+            onSubmit(enteredText);
+            setEnteredText("");
+            scrollToBottom();
+          }
+        }}
+      >
+        SEND
+      </div>
     </form>
   );
 };
