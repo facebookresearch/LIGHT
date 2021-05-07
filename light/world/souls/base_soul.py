@@ -332,6 +332,8 @@ class BaseSoul(Soul):
         human_msg = contextsplit[-1]
         if len(human_msg.split()) < 5:
             return 0
+        if 'DEBUG' in human_msg:
+            return 0
         # check for n-gram match with context
         if self.too_much_string_overlap(context, human_msg):
             return 0
