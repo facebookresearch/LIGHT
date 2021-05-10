@@ -7,6 +7,7 @@ import MissionCompleteMessage from "./MissionCompleteMessage";
 import HelpMessage from "./HelpMessage";
 import SettingMessage from "./SettingMessage";
 import SoulSpawnEventMessage from "./SoulSpawnEventMessage";
+import StatusMessage from "./StatusMessage";
 
 function get_msg_actor(msg) {
   if (msg.actors === undefined) {
@@ -36,11 +37,15 @@ const Entry = ({
       "ErrorEvent",
       "HelpEvent",
       "text",
+      "HealthEvent",
     ].includes(msg.caller) ||
     msg.caller === null
   ) {
     if (msg.caller == "HelpEvent") {
       return <HelpMessage text={msg.text} />;
+    }
+    if (msg.caller == "HealthEvent") {
+      return <StatusMessage text={msg.text} />;
     } else {
       return <SettingMessage text={msg.text} />;
     }
