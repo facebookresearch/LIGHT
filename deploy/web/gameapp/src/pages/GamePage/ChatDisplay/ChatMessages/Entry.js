@@ -3,6 +3,7 @@ import React from "react";
 import "../../styles.css";
 
 import Message from "./Message";
+import InventoryMessage from "./InventoryMessage";
 import MissionCompleteMessage from "./MissionCompleteMessage";
 import HelpMessage from "./HelpMessage";
 import SettingMessage from "./SettingMessage";
@@ -36,11 +37,15 @@ const Entry = ({
       "ErrorEvent",
       "HelpEvent",
       "text",
+      "InventoryEvent",
     ].includes(msg.caller) ||
     msg.caller === null
   ) {
     if (msg.caller == "HelpEvent") {
       return <HelpMessage text={msg.text} />;
+    }
+    if (msg.caller == "InventoryEvent") {
+      return <InventoryMessage text={msg.text} />;
     } else {
       return <SettingMessage text={msg.text} />;
     }
