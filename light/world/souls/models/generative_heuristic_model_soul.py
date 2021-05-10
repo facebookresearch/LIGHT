@@ -422,7 +422,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             event.skip_safety = True
             event.execute(self.world)
             return
-
+        
         # Send to model to process
         msg = {"text": context, "episode_done": True}
         self.npc_dialog_model.observe(msg)

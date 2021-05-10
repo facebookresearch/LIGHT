@@ -11,7 +11,8 @@ from light.graph.events.magic import check_if_cast_magic_from_event
 from typing import TYPE_CHECKING, Optional
 import random
 import time
-
+from light.graph.events.graph_events import SystemMessageEvent
+    
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
     from light.world.world import World
@@ -73,10 +74,21 @@ class PlayerSoul(BaseSoul):
         PlayerSouls must process act text sent from players and enact them on the world.
         This method is called by the player provider when an action is taken.
         """
+        if act_text == '"DEBUG_HUMANS"':
+            # print debug information about humans playing instead
+            humans = self.world.oo_graph.get_humans()
+            num = len(humans)
+            txt = "There are " + str(num) + " LIGHT denizen(s) from your world on this plane: " + str(humans)
+            event = SystemMessageEvent(self.target_node, [], text_content=txt)
+            event.skip_safety = True
+            event.execute(self.world)
+            return
+
         actor = self.target_node
         actor._last_action_time = time.time()
         self.world.parse_exec(self.target_node, act_text, event_id=event_id)
-
+        
+        
     def new_quest(self):
         if random.random() > 0.01:
             # Turn these mostly off for now.

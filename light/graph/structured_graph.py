@@ -307,6 +307,15 @@ class OOGraph(object):
     def get_all_nodes(self):
         return list(self.all_nodes.values())
 
+    def get_humans(self):
+        """Get a list of agent nodes that are currently being played by
+        a human character"""
+        return [
+            x
+            for x in self.agents.values()
+            if x.is_player and not x.get_prop("dead")
+        ]
+
     def get_npcs(self):
         """Get a list of agent nodes that aren't currently being played by
         a human character"""
