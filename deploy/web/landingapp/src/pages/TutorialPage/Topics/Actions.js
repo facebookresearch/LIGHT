@@ -102,6 +102,11 @@ const Actions = (props) => {
         alt="Fight Chat Screenshot"
         src={ActionFight}
       />
+
+      <p className="tutorial-text">
+        You now know all you need about Light to play. Click below when you are
+        ready:
+      </p>
     </div>
   );
 };

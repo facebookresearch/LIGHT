@@ -80,7 +80,6 @@
   color: white;
   font-size: 1em;
   background-color: gold;
-  width: 5em;
   text-align: center;
   padding: 0.5em;
   border-radius: 15px;
@@ -88,6 +87,7 @@
   border-color: white;
   box-shadow: 1px 1px 4px black;
   cursor: pointer;
+  font-weight: 900;
 }
 
 .tutorial-button:hover {

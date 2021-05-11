@@ -25,11 +25,12 @@ const TutorialPage = (props) => {
         <CharacterBasics />
         <InteractingWithTheWorld />
         <Actions />
+        <p></p>
         <div
           style={{ width: "100%", display: "flex", justifyContent: "center" }}
         >
           <a style={{ textDecoration: "none" }} href="/play/">
-            <div className="tutorial-button ">PLAY LIGHT</div>
+            <div className="tutorial-button ">BEGIN YOUR JOURNEY</div>
           </a>
         </div>
       </div>
