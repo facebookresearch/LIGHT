@@ -241,34 +241,73 @@
 }
 
 /*HELP MESSAGE*/
-.helpmessage-container {
+.help-container {
   display: flex;
   justify-content: center;
-  align-items: center;
+  height: 48em;
   width: 100%;
+  z-index: 1;
 }
 
-.helpmessage-box {
-  background-color: #efefef;
-  width: 65%;
-  padding: 10px 1em 10px 1em;
-  justify-content: center;
-  margin: 10px 0 10px 0;
-  min-width: 460px;
+.help-question__container {
+  position: relative;
+  z-index: 3;
+  width: 40em;
 }
-.helpmessage-parchment {
-  background-color: burlywood;
-  box-shadow: 2px 2px 5px black;
+
+.help-question {
+  position: absolute;
+  z-index: 1;
+  left: 10%;
+  top: 10%;
+}
+
+.help-content {
+  color: black;
+  z-index: 10;
   text-align: center;
-  padding: 2px 0 2px 0;
-  border-style: double;
-  border-width: 4px;
-  border-color: rgb(243, 220, 189);
-  min-width: 460px;
+  position: absolute;
+  font-family: fantasy;
+  font-weight: bolder;
+  width: 40em;
+  background-color: #0072ff;
+  border-color: #0072ff;
+  border-style: solid;
+  border-width: 0.2em;
+  opacity: 0.8;
+  border-radius: 15px;
+  overflow-y: hidden;
+  box-shadow: 4px 4px 6px black;
 }
 
-.helpmessage-text {
-  margin: 0 0 3px 1em;
+.help-content__header {
+  color: black;
+  z-index: 6;
+  text-align: center;
+  font-size: 14px;
+  background-color: #0072ff;
+  width: 100%;
+  z-index: 6;
+  color: white;
+  font-weight: bolder;
+  margin: 0;
+}
+
+.help-content__entries {
+  background-color: white;
+  z-index: 7;
+  height: 100%;
+  width: 100%;
+  padding-top: 2px;
+  overflow-y: scroll;
+}
+
+.help-content__entry {
+  color: black;
+  z-index: 6;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bolder;
 }
 
 /* Inventory Message*/
