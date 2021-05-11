@@ -10,7 +10,7 @@ const InventoryMessage = ({ text }) => {
   return (
     <div className=" inventory-container">
       <div className="inventory-bag__container">
-        <GiSwapBag className="inventory-bag" color="#bf8315" size="27em" />
+        <GiSwapBag className="inventory-bag" color="#bf8315" size="19em" />
         <div className="inventory-content">
           <p className="inventory-content__entry" style={{ marginTop: "1px" }}>
             {inventory}
