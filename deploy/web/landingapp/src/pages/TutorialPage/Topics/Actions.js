@@ -104,7 +104,7 @@ const Actions = (props) => {
       />
 
       <p className="tutorial-text">
-        You now know all you need about Light to play. Click below when you are
+        You now know all you need about LIGHT to play. Click below when you are
         ready:
       </p>
     </div>
