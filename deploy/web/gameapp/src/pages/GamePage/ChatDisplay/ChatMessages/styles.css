@@ -270,3 +270,51 @@
 .helpmessage-text {
   margin: 0 0 3px 1em;
 }
+
+/*Status Message*/
+.status-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 20em;
+  z-index: 1;
+}
+
+.status-heart__container {
+  position: relative;
+  width: 20em;
+  z-index: 3;
+}
+
+.status-heart {
+  position: absolute;
+  z-index: 1;
+  opacity: 0.8;
+  left: 0.7em;
+}
+
+.status-content {
+  position: absolute;
+  z-index: 4;
+  padding-top: 2.5em;
+  margin: 0;
+  width: 100%;
+  height: 16em;
+  border-color: red;
+  border-width: 0.2em;
+  border-style: solid;
+  background-color: #efefef;
+  opacity: 0.9;
+  border-radius: 15px;
+  overflow-y: hidden;
+  box-shadow: 4px 4px 6px black;
+}
+
+.status-content__entry {
+  color: black;
+  z-index: 6;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bolder;
+  padding-top: 1em;
+}
