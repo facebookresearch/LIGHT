@@ -6,9 +6,7 @@ import { Tooltip } from "react-tippy";
 const QuestMessage = ({ text }) => {
   const [questInfoArr, setQuestInfoArr] = useState([]);
   useEffect(() => {
-    console.log(text);
     let infoArr = text.split("\n");
-    console.log("Quest Array", infoArr);
     setQuestInfoArr(infoArr);
   }, [text]);
 
