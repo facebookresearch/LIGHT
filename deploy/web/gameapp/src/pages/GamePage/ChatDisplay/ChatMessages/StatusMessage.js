@@ -15,7 +15,7 @@ const StatusMessage = ({ text }) => {
   return (
     <div className=" status-container">
       <div className="status-heart__container">
-        <FaHeart className="status-heart" color="red" size="20em" />
+        <FaHeart className="status-heart" color="red" size="19em" />
 
         <div className="status-content">
           <p className="status-content__entry" style={{ marginTop: "1px" }}>
