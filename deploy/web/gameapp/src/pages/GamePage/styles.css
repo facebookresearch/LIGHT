@@ -151,6 +151,24 @@
 }
 
 @media only screen and (max-width: 1224px) {
+  .instructionmodalcontent-image {
+    width: 50%;
+    margin-left: 1em;
+  }
+
+  .instructionmodalcontent-button {
+    margin-bottom: 3em;
+  }
+
+  .instructionmodalcontent-header {
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+  }
+
+  .instructionmodalcontent-header__text {
+    font-size: 1.5em;
+  }
 }
 
 @media only screen and (max-width: 950px) {
@@ -168,6 +186,24 @@
     width: 100%;
     height: 100%;
     padding: 0;
+  }
+  .instructionmodalcontent-image {
+    width: 90%;
+    margin-left: 1em;
+  }
+
+  .instructionmodalcontent-button {
+    margin-bottom: 3em;
+  }
+
+  .instructionmodalcontent-header {
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+  }
+
+  .instructionmodalcontent-header__text {
+    font-size: 1.5em;
   }
 }
 

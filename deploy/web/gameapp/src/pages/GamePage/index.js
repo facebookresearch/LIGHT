@@ -104,6 +104,10 @@ function Chat({
   agents,
   disconnectFromSession,
 }) {
+  //MOBILE STATE
+  const [isMobile, setIsMobile] = React.useState(false);
+  //DRAWER STATE
+  const [showDrawer, setShowDrawer] = React.useState(false);
   //MODAL STATE
   const [showInstructionModal, setShowInstructionModal] = React.useState(false);
   //IDLE STATE
@@ -229,67 +233,108 @@ function Chat({
     }
   }, [sessionXp, sessionGiftXpSpent]);
 
+  React.useEffect(() => {
+    console.log("WINDOW SIZE", window.innerWidth);
+    let screenSize = parseInt(window.innerWidth);
+    if (screenSize <= 950) {
+      setIsMobile(true);
+    }
+  }, []);
+
   return (
     <div className="gamepage-container" onMouseMove={resetIdleTimer}>
-      <div className="sidebar-container">
-        {persona ? (
-          <Sidebar
-            persona={persona}
-            location={location}
-            dataModelHost={dataModelHost}
-            getEntityId={getEntityId}
-            selectedEmoji={selectedEmoji}
-            setSelectedEmoji={setSelectedEmoji}
-            playerXp={playerXp}
-            playerGiftXp={playerGiftXp}
-          />
+      {isMobile ? (
+        showDrawer ? (
+          <div className="sidebar-container">
+            {persona ? (
+              <Sidebar
+                persona={persona}
+                location={location}
+                dataModelHost={dataModelHost}
+                getEntityId={getEntityId}
+                selectedEmoji={selectedEmoji}
+                setSelectedEmoji={setSelectedEmoji}
+                playerXp={playerXp}
+                playerGiftXp={playerGiftXp}
+              />
+            ) : (
+              <div />
+            )}
+          </div>
         ) : (
-          <div />
-        )}
-      </div>
-      {/* <Map /> */}
-      {/* <div className="app-controls">
-          <label>
-            <input
-              type="checkbox"
-              checked={isAdminMode}
-              onChange={e => setAdminMode(!isAdminMode)}
-            />{" "}
-            Admin Mode
-          </label>
-        </div> */}
-      <div className="chat-container">
-        <ChatDisplay
-          scrollToBottom={scrollToBottom}
-          messages={messages}
-          onSubmit={onSubmit}
-          persona={persona}
-          location={location}
-          agents={agents}
-          getDataModelAddress={getDataModelAddress}
-          getLocationState={getLocationState}
-          idle={idle}
-          resetIdleTimer={resetIdleTimer}
-          setPlayerXp={setPlayerXp}
-          setPlayerGiftXp={setPlayerGiftXp}
-          playerXp={playerXp}
-          playerGiftXp={playerGiftXp}
-          sessionGiftXpSpent={sessionGiftXpSpent}
-          setSessionGiftXpSpent={setSessionGiftXpSpent}
-        />
-        {showInstructionModal ? (
-          <Modal
-            showModal={showInstructionModal}
-            setShowModal={setShowInstructionModal}
-          >
-            <InstructionModalContent
-              buttonFunction={() => {
-                setShowInstructionModal(false);
-              }}
+          <div className="chat-container">
+            <ChatDisplay
+              scrollToBottom={scrollToBottom}
+              messages={messages}
+              onSubmit={onSubmit}
+              persona={persona}
+              location={location}
+              agents={agents}
+              getDataModelAddress={getDataModelAddress}
+              getLocationState={getLocationState}
+              idle={idle}
+              resetIdleTimer={resetIdleTimer}
+              setPlayerXp={setPlayerXp}
+              setPlayerGiftXp={setPlayerGiftXp}
+              playerXp={playerXp}
+              playerGiftXp={playerGiftXp}
+              sessionGiftXpSpent={sessionGiftXpSpent}
+              setSessionGiftXpSpent={setSessionGiftXpSpent}
             />
-          </Modal>
-        ) : null}
-      </div>
+          </div>
+        )
+      ) : (
+        <>
+          <div className="sidebar-container">
+            {persona ? (
+              <Sidebar
+                persona={persona}
+                location={location}
+                dataModelHost={dataModelHost}
+                getEntityId={getEntityId}
+                selectedEmoji={selectedEmoji}
+                setSelectedEmoji={setSelectedEmoji}
+                playerXp={playerXp}
+                playerGiftXp={playerGiftXp}
+              />
+            ) : (
+              <div />
+            )}
+          </div>
+          <div className="chat-container">
+            <ChatDisplay
+              scrollToBottom={scrollToBottom}
+              messages={messages}
+              onSubmit={onSubmit}
+              persona={persona}
+              location={location}
+              agents={agents}
+              getDataModelAddress={getDataModelAddress}
+              getLocationState={getLocationState}
+              idle={idle}
+              resetIdleTimer={resetIdleTimer}
+              setPlayerXp={setPlayerXp}
+              setPlayerGiftXp={setPlayerGiftXp}
+              playerXp={playerXp}
+              playerGiftXp={playerGiftXp}
+              sessionGiftXpSpent={sessionGiftXpSpent}
+              setSessionGiftXpSpent={setSessionGiftXpSpent}
+            />
+          </div>
+        </>
+      )}
+      {showInstructionModal ? (
+        <Modal
+          showModal={showInstructionModal}
+          setShowModal={setShowInstructionModal}
+        >
+          <InstructionModalContent
+            buttonFunction={() => {
+              setShowInstructionModal(false);
+            }}
+          />
+        </Modal>
+      ) : null}
     </div>
   );
 }
