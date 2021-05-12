@@ -1,4 +1,7 @@
 .chatlog {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 /*Message  */
 .message {
@@ -13,26 +16,22 @@
 }
 
 .message.me {
-  float: left;
-  margin-right: 80px;
+  flex-direction: row;
+  justify-content: flex-start;
 }
 
 .message.other {
-  float: right;
-  margin-left: 80px;
+  flex-direction: row;
+  justify-content: flex-end;
 }
 
 .message.type-setting {
   /* font-style: italic; */
+  justify-content: center;
   background-color: #efefef;
   color: rgb(42, 42, 42);
   border: none;
   font-size: 18px;
-  padding: 10px;
-  margin-bottom: 20px;
-  margin-top: 10px;
-  margin-left: 130px;
-  margin-right: 130px;
   text-align: left;
   display: block;
   white-space: pre-wrap;
@@ -415,4 +414,26 @@
 }
 
 @media only screen and (max-width: 600px) {
+  .message.type-setting {
+    width: 90%;
+    margin: auto 0 auto 0;
+  }
+
+  .status-content {
+    width: 98%;
+    overflow-x: hidden;
+  }
+
+  .status-content__entry {
+    font-size: 11px;
+  }
+
+  .inventory-content {
+    width: 98%;
+    overflow-x: hidden;
+  }
+
+  .inventory-content__text {
+    font-size: 11px;
+  }
 }

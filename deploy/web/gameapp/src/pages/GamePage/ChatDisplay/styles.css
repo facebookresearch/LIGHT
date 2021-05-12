@@ -3,7 +3,8 @@
   flex-direction: column;
   animation: popInApp 0.3s 0.3s cubic-bezier(0.5, 0, 0, 1);
   animation-fill-mode: forwards;
-  overflow-y: auto;
+  overflow-y: scroll;
+  overflow-x: hidden;
   opacity: 0;
   min-height: 500px;
   height: 100%;
@@ -13,15 +14,14 @@
   height: 100%;
   border: 1px solid rgb(184, 184, 184);
   background-color: rgb(228, 226, 221);
-  margin: 30px 20px 0px;
-  overflow-y: auto;
+  margin: 30px 0px 0px;
+  overflow-y: scroll;
+  overflow-x: hidden;
   border-radius: 10px 10px 0px 0px;
   position: relative;
   border-style: ridge;
   border-color: lightgray;
   border-width: 10px 10px 0px 10px;
-
-  /* box-shadow: 0px 10px 10px rgba(250, 199, 169, 0.5); */
 }
 
 @media only screen and (max-width: 1224px) {
@@ -31,7 +31,7 @@
 }
 
 @media only screen and (max-width: 600px) {
-  .chat {
+  .chat-wrapper {
     width: 100%;
   }
 }

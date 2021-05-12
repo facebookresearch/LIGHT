@@ -1,6 +1,6 @@
 .gamepage-container {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: row;
   background-color: lightgrey;
@@ -9,7 +9,8 @@
 .sidebar-container {
   justify-content: center;
   width: 30%;
-  height: 100%;
+
+  min-width: 20em;
 }
 
 .chat-container {
@@ -153,7 +154,37 @@
 }
 
 @media only screen and (max-width: 950px) {
+  .gamepage-container {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .sidebar-container {
+    justify-content: center;
+    width: 30%;
+    min-width: 20em;
+  }
+  .chat-container {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+  }
 }
 
 @media only screen and (max-width: 600px) {
+  .gamepage-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column-reverse;
+    background-color: lightgrey;
+  }
+  .sidebar-container {
+    display: none;
+  }
+  .chat-container {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+  }
 }

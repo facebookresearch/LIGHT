@@ -25,13 +25,14 @@
   margin-left: 1em;
 }
 
-@media only screen and (max-width: 900px) {
+@media only screen and (max-width: 1224px) {
+}
+
+@media only screen and (max-width: 950px) {
   .sidebar {
-    display: flex;
-    flex-direction: column;
-    overflow-y: scroll;
-    border-radius: 15px;
-    min-width: 400px;
-    align-items: center;
+    display: none;
   }
+}
+
+@media only screen and (max-width: 600px) {
 }
