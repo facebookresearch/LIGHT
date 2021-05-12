@@ -9,6 +9,7 @@ import HelpMessage from "./HelpMessage";
 import SettingMessage from "./SettingMessage";
 import SoulSpawnEventMessage from "./SoulSpawnEventMessage";
 import StatusMessage from "./StatusMessage";
+import QuestMessage from "./QuestMessage";
 
 function get_msg_actor(msg) {
   if (msg.actors === undefined) {
@@ -40,6 +41,7 @@ const Entry = ({
       "text",
       "InventoryEvent",
       "HealthEvent",
+      "QuestEvent",
     ].includes(msg.caller) ||
     msg.caller === null
   ) {
@@ -49,6 +51,8 @@ const Entry = ({
       return <InventoryMessage text={msg.text} />;
     } else if (msg.caller == "HealthEvent") {
       return <StatusMessage text={msg.text} />;
+    } else if (msg.caller == "QuestEvent") {
+      return <QuestMessage text={msg.text} />;
     } else {
       return <SettingMessage text={msg.text} />;
     }
