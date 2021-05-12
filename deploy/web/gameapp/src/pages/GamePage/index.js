@@ -10,6 +10,9 @@ import { DefaultEmojiMapper } from "../../utils";
 import { Picker, emojiIndex } from "emoji-mart";
 import onClickOutside from "react-onclickoutside";
 
+import Scribe from "../../assets/images/scribe.png";
+import Beer from "../../assets/images/Beer.png";
+
 //Custom Components
 import { useWSDataSource } from "../../useWSDataSource";
 import ExperienceInfo from "../../components/ExperienceInfo";
@@ -105,6 +108,7 @@ function Chat({
   disconnectFromSession,
 }) {
   //MOBILE STATE
+  const [screenSize, setScreenSize] = React.useState(null);
   const [isMobile, setIsMobile] = React.useState(false);
   //DRAWER STATE
   const [showDrawer, setShowDrawer] = React.useState(false);
@@ -233,34 +237,59 @@ function Chat({
     }
   }, [sessionXp, sessionGiftXpSpent]);
 
+  const updateDimensions = () => {
+    setScreenSize(window.innerWidth);
+  };
+
   React.useEffect(() => {
-    console.log("WINDOW SIZE", window.innerWidth);
-    let screenSize = parseInt(window.innerWidth);
-    if (screenSize <= 950) {
+    window.addEventListener("resize", updateDimensions);
+    let startingSize = window.innerWidth;
+    if (startingSize <= 950) {
       setIsMobile(true);
+    } else if (startingSize > 950) {
+      setIsMobile(false);
     }
   }, []);
+
+  React.useEffect(() => {
+    if (screenSize <= 950) {
+      setIsMobile(true);
+    } else if (screenSize > 950) {
+      setIsMobile(false);
+    }
+  }, [screenSize]);
 
   return (
     <div className="gamepage-container" onMouseMove={resetIdleTimer}>
       {isMobile ? (
+        <div
+          onClick={() => setShowDrawer(!showDrawer)}
+          className="drawerbar-container"
+        >
+          {showDrawer ? (
+            <img className="drawerbar-img" src={Beer} />
+          ) : (
+            <img className="drawerbar-img" src={Scribe} />
+          )}
+          <span className="drawerbar-button">
+            {showDrawer ? "GAME" : "PROFILE"}
+          </span>
+        </div>
+      ) : null}
+      {isMobile ? (
         showDrawer ? (
-          <div className="sidebar-container">
-            {persona ? (
-              <Sidebar
-                persona={persona}
-                location={location}
-                dataModelHost={dataModelHost}
-                getEntityId={getEntityId}
-                selectedEmoji={selectedEmoji}
-                setSelectedEmoji={setSelectedEmoji}
-                playerXp={playerXp}
-                playerGiftXp={playerGiftXp}
-              />
-            ) : (
-              <div />
-            )}
-          </div>
+          persona ? (
+            <Sidebar
+              persona={persona}
+              location={location}
+              dataModelHost={dataModelHost}
+              getEntityId={getEntityId}
+              selectedEmoji={selectedEmoji}
+              setSelectedEmoji={setSelectedEmoji}
+              playerXp={playerXp}
+              playerGiftXp={playerGiftXp}
+            />
+          ) : null
         ) : (
           <div className="chat-container">
             <ChatDisplay

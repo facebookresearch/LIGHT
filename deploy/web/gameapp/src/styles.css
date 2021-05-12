@@ -1,16 +1,4 @@
 .App {
-  display: grid;
-  grid-template-columns: 400px 1fr;
-  height: 100vh;
-  margin: 0 auto;
-  padding: 0px;
-  align-items: stretch;
-  justify-content: center;
-  font-size: 18px;
-  box-sizing: border-box;
-  overflow: auto;
-  background-image: url("./assets/images/InexplicableTavern_hungover.png");
-  font-family: Lora, serif;
 }
 
 body.dark-mode {
@@ -19,10 +7,6 @@ body.dark-mode {
 
 body {
   background-color: #d4cab8;
-}
-
-.App.no-sidebar {
-  grid-template-columns: 1fr;
 }
 
 .app-controls {
@@ -36,15 +20,6 @@ a {
 }
 
 @media only screen and (max-width: 900px) {
-  div.App {
-    grid-template-columns: 1fr;
-    grid-template-rows: min-content 1fr;
-  }
-
-  div.sidebar {
-    margin: 0px;
-  }
-
   div.leaflet-container {
     border: none;
     border-radius: 0px;
@@ -172,9 +147,8 @@ input.edit-message {
   width: 100%;
   padding: 3px;
   box-sizing: border-box;
-} */
-
-.controls span.action {
+}
+*/ .controls span.action {
   margin: 5px 3px;
   padding: 5px;
   display: inline-block;

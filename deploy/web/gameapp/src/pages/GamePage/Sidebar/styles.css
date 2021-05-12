@@ -30,7 +30,11 @@
 
 @media only screen and (max-width: 950px) {
   .sidebar {
-    display: none;
+    margin: 0;
+  }
+  .sidebar-row {
+    justify-content: center;
+    align-items: center;
   }
 }
 

@@ -23,9 +23,7 @@ const ExperienceInfo = ({ experience, giftExperience }) => {
       expToLevel = currentLevel * 10;
     }
     let nextLevel = currentLevel * 5 * (currentLevel + 1);
-    console.log("NEXT LEVEL", nextLevel);
     let percent = Math.floor((experience / nextLevel) * 100);
-    console.log("PERCENT", percent);
     setLevel(currentLevel);
     setNeededExp(nextLevel);
     setExp(experience);
