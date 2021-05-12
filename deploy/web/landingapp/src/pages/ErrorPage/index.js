@@ -1,24 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import "../../styles.css";
+import "./styles.css";
 
 const ErrorPage = (props) => {
   return (
     <div className="errorpage-container">
-      <div
-        className="main-container"
-        style={{
-          backgroundColor: "#253a20",
-          alignItems: "center",
-          height: "90%",
-          padding: "3em",
-          color: "white",
-          opacity: "0.7",
-          justifyContent: "flex-start",
-        }}
-      >
-        <div style={{ width: "100%", flexDirection: "flexStart" }}>
+      <div className="errorpage-body">
+        <div
+          style={{
+            width: "100%",
+            flexDirection: "flexStart",
+            paddingLeft: "20px",
+          }}
+        >
           <Link style={{ textDecoration: "none", color: "yellow" }} to="/">
             Return Home
           </Link>
