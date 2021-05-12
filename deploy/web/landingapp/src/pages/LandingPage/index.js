@@ -4,7 +4,7 @@ import "react-tippy/dist/tippy.css";
 import "emoji-mart/css/emoji-mart.css";
 
 import Scribe from "../../assets/images/scribe.png";
-import "../../styles.css";
+import "./styles.css";
 
 const LandingPage = (props) => {
   let [page, setPage] = useState(0);

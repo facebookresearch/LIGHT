@@ -1,0 +1,66 @@
+.aboutpage-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 1em 5em 4em 5em;
+  background-image: url("../../assets/images/InexplicableTavern.png");
+  background-size: cover;
+  height: 100%;
+  overflow: scroll;
+}
+
+/* Component Containers*/
+.main-container {
+  width: 100%;
+  background-color: gray;
+  opacity: 0.9;
+  border: darkgray;
+  border-width: 1em;
+  border-style: ridge;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  box-shadow: 0.25em 0.25em 0.25em black;
+}
+
+/* Back Button */
+.back-button {
+  color: gold;
+  font-weight: bolder;
+  cursor: pointer;
+  border-radius: 15px;
+}
+
+.back-button:hover {
+  color: yellow;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.back-button:active {
+  color: yellow;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 900;
+}
+
+@media only screen and (max-width: 1224px) {
+}
+
+@media only screen and (max-width: 950px) {
+}
+
+@media only screen and (max-width: 600px) {
+  .aboutpage-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 1em 5em 4em 5em;
+    background-size: cover;
+    height: 100%;
+    overflow: scroll;
+  }
+  .aboutpage-body {
+  }
+}
