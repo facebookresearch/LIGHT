@@ -459,6 +459,12 @@
 }
 
 @media only screen and (max-width: 950px) {
+  .message {
+    font-size: 15px;
+  }
+  .message .agent {
+    font-size: 8px;
+  }
 }
 
 @media only screen and (max-width: 600px) {

@@ -240,7 +240,6 @@ function Chat({
   const updateDimensions = () => {
     setScreenSize(window.innerWidth);
   };
-
   React.useEffect(() => {
     window.addEventListener("resize", updateDimensions);
     let startingSize = window.innerWidth;
@@ -249,7 +248,7 @@ function Chat({
     } else if (startingSize > 950) {
       setIsMobile(false);
     }
-  }, []);
+  });
 
   React.useEffect(() => {
     if (screenSize <= 950) {
