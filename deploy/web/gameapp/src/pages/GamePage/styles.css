@@ -1,3 +1,23 @@
+.gamepage-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  background-color: lightgrey;
+}
+
+.sidebar-container {
+  justify-content: center;
+  width: 30%;
+  height: 100%;
+}
+
+.chat-container {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
 .header-container {
   padding: 10px;
   z-index: -1;
@@ -127,4 +147,13 @@
 .instructionmodalcontent-button:active {
   animation: pulse 1s infinite;
   box-shadow: 0px 0px 0px black;
+}
+
+@media only screen and (max-width: 1224px) {
+}
+
+@media only screen and (max-width: 950px) {
+}
+
+@media only screen and (max-width: 600px) {
 }

@@ -10,7 +10,7 @@
 }
 
 .chat {
-  flex: 1;
+  height: 100%;
   border: 1px solid rgb(184, 184, 184);
   background-color: rgb(228, 226, 221);
   margin: 30px 20px 0px;
@@ -22,4 +22,16 @@
   border-width: 10px 10px 0px 10px;
 
   /* box-shadow: 0px 10px 10px rgba(250, 199, 169, 0.5); */
+}
+
+@media only screen and (max-width: 1224px) {
+}
+
+@media only screen and (max-width: 950px) {
+}
+
+@media only screen and (max-width: 600px) {
+  .chat {
+    width: 100%;
+  }
 }

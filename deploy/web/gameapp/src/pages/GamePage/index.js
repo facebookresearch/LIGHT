@@ -231,21 +231,23 @@ function Chat({
   }, [sessionXp, sessionGiftXpSpent]);
 
   return (
-    <div className="App" onMouseMove={resetIdleTimer}>
-      {persona ? (
-        <Sidebar
-          persona={persona}
-          location={location}
-          dataModelHost={dataModelHost}
-          getEntityId={getEntityId}
-          selectedEmoji={selectedEmoji}
-          setSelectedEmoji={setSelectedEmoji}
-          playerXp={playerXp}
-          playerGiftXp={playerGiftXp}
-        />
-      ) : (
-        <div />
-      )}
+    <div className="gamepage-container" onMouseMove={resetIdleTimer}>
+      <div className="sidebar-container">
+        {persona ? (
+          <Sidebar
+            persona={persona}
+            location={location}
+            dataModelHost={dataModelHost}
+            getEntityId={getEntityId}
+            selectedEmoji={selectedEmoji}
+            setSelectedEmoji={setSelectedEmoji}
+            playerXp={playerXp}
+            playerGiftXp={playerGiftXp}
+          />
+        ) : (
+          <div />
+        )}
+      </div>
       {/* <Map /> */}
       {/* <div className="app-controls">
           <label>
@@ -257,36 +259,38 @@ function Chat({
             Admin Mode
           </label>
         </div> */}
-      <ChatDisplay
-        scrollToBottom={scrollToBottom}
-        messages={messages}
-        onSubmit={onSubmit}
-        persona={persona}
-        location={location}
-        agents={agents}
-        getDataModelAddress={getDataModelAddress}
-        getLocationState={getLocationState}
-        idle={idle}
-        resetIdleTimer={resetIdleTimer}
-        setPlayerXp={setPlayerXp}
-        setPlayerGiftXp={setPlayerGiftXp}
-        playerXp={playerXp}
-        playerGiftXp={playerGiftXp}
-        sessionGiftXpSpent={sessionGiftXpSpent}
-        setSessionGiftXpSpent={setSessionGiftXpSpent}
-      />
-      {showInstructionModal ? (
-        <Modal
-          showModal={showInstructionModal}
-          setShowModal={setShowInstructionModal}
-        >
-          <InstructionModalContent
-            buttonFunction={() => {
-              setShowInstructionModal(false);
-            }}
-          />
-        </Modal>
-      ) : null}
+      <div className="chat-container">
+        <ChatDisplay
+          scrollToBottom={scrollToBottom}
+          messages={messages}
+          onSubmit={onSubmit}
+          persona={persona}
+          location={location}
+          agents={agents}
+          getDataModelAddress={getDataModelAddress}
+          getLocationState={getLocationState}
+          idle={idle}
+          resetIdleTimer={resetIdleTimer}
+          setPlayerXp={setPlayerXp}
+          setPlayerGiftXp={setPlayerGiftXp}
+          playerXp={playerXp}
+          playerGiftXp={playerGiftXp}
+          sessionGiftXpSpent={sessionGiftXpSpent}
+          setSessionGiftXpSpent={setSessionGiftXpSpent}
+        />
+        {showInstructionModal ? (
+          <Modal
+            showModal={showInstructionModal}
+            setShowModal={setShowInstructionModal}
+          >
+            <InstructionModalContent
+              buttonFunction={() => {
+                setShowInstructionModal(false);
+              }}
+            />
+          </Modal>
+        ) : null}
+      </div>
     </div>
   );
 }

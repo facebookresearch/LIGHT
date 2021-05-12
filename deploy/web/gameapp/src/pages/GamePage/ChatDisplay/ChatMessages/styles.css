@@ -1,3 +1,5 @@
+.chatlog {
+}
 /*Message  */
 .message {
   padding: 20px 10px 10px;
@@ -404,4 +406,13 @@
   font-size: 14px;
   font-weight: bolder;
   padding-top: 1em;
+}
+
+@media only screen and (max-width: 1224px) {
+}
+
+@media only screen and (max-width: 950px) {
+}
+
+@media only screen and (max-width: 600px) {
 }
