@@ -1,0 +1,65 @@
+.termspage-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1em 5em 4em 5em;
+  background-image: url("../../assets/images/deer.png");
+  background-size: cover;
+  background-color: rgb(37, 58, 32, 0.7);
+  height: 100%;
+  overflow: scroll;
+  width: 100%;
+}
+.termspage-body {
+  width: 80%;
+  border: darkgray;
+  border-width: 1em;
+  border-style: ridge;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3em;
+  box-shadow: 0.25em 0.25em 0.25em black;
+  background-color: rgb(37, 58, 32, 0.9);
+  align-items: center;
+  height: 90%;
+  padding: 3em;
+}
+
+.termspage-header {
+  color: white;
+}
+
+.termspage-text__container {
+  color: white;
+}
+
+@media only screen and (max-width: 1224px) {
+}
+
+@media only screen and (max-width: 950px) {
+}
+
+@media only screen and (max-width: 600px) {
+  .termspage-container {
+    padding: 0;
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+  .termspage-body {
+    width: 90%;
+    height: 100%;
+    border: darkgray;
+    border-width: 0.7em;
+    background-color: rgb(37, 58, 32, 0.7);
+    padding: 0;
+    margin: 0;
+    overflow-y: scroll;
+  }
+  .termspage-text__container {
+    padding-left: 3px;
+  }
+}
