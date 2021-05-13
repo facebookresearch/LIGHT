@@ -24,7 +24,7 @@
   flex-direction: row;
   justify-content: flex-end;
 }
-
+/*SETTING MESSAGE*/
 .message.type-setting {
   /* font-style: italic; */
   justify-content: center;
@@ -468,9 +468,19 @@
 }
 
 @media only screen and (max-width: 600px) {
+  /*MESSAGE */
+  .message {
+    font-size: 11px;
+  }
+  .message .agent {
+    font-size: 8px;
+  }
+  /*SETTING MESSAGE*/
   .message.type-setting {
     width: 90%;
     margin: auto 0 auto 0;
+    font-size: 11px;
+    text-align: center;
   }
 
   .status-content {
@@ -496,6 +506,13 @@
   }
 
   .quest-content__entry {
+    font-size: 11px;
+  }
+  .soulspawn-header {
+    font-size: 14px;
+  }
+
+  .soulspawn-subheader {
     font-size: 11px;
   }
 }
