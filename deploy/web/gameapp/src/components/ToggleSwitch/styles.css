@@ -1,3 +1,15 @@
+.toggle-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.toggle-label {
+  font-family: fantasy;
+  font-weight: bold;
+  color: white;
+  margin-right: 10px;
+}
 .toggle-switch {
   position: relative;
   display: inline-block;

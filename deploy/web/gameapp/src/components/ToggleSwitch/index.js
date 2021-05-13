@@ -1,7 +1,10 @@
 import React from "react";
+
+import { Tooltip } from "react-tippy";
+
 import "./styles.css";
 
-const ToggleSwitch = ({ isOn, setOn, setOff }) => {
+const ToggleSwitch = ({ isOn, setOn, setOff, toolTipText, switchLabel }) => {
   const toggle = () => {
     if (isOn) {
       setOff();
@@ -10,10 +13,15 @@ const ToggleSwitch = ({ isOn, setOn, setOff }) => {
     }
   };
   return (
-    <label className="toggle-switch">
-      <input type="checkbox" checked={isOn} onChange={toggle} />
-      <span className="switch" />
-    </label>
+    <div className="toggle-container ">
+      <span className="toggle-label">{switchLabel}</span>
+      <Tooltip title={toolTipText}>
+        <label className="toggle-switch">
+          <input type="checkbox" checked={isOn} onChange={toggle} />
+          <span className="switch" />
+        </label>
+      </Tooltip>
+    </div>
   );
 };
 

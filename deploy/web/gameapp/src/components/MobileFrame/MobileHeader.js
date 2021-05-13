@@ -15,6 +15,12 @@ const MobileHeader = ({ buttons, showDrawer, openDrawer, closeDrawer }) => {
       </div>
       <div className="mobileheader-tools">
         <ToggleSwitch
+          switchLabel="CHARACTER INFO"
+          toolTipText={
+            showDrawer
+              ? "Click to return to the game"
+              : "Click to open your character info."
+          }
           isOn={showDrawer}
           setOn={openDrawer}
           setOff={closeDrawer}

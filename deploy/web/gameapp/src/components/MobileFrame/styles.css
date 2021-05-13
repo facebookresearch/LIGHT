@@ -57,6 +57,10 @@
 
 .mobileheader-tools {
   padding-left: 3em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 @media only screen and (max-width: 950px) {
