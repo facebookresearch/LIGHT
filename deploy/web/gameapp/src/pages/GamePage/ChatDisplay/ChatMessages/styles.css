@@ -1,7 +1,6 @@
 .chatlog {
   width: 100%;
-  display: flex;
-  flex-direction: column;
+  display: block;
 }
 /*Message  */
 .message {
@@ -13,17 +12,16 @@
   text-align: center;
   position: relative;
   width: auto;
+  max-width: 60%;
   /* font-size: 16px; */
 }
 
 .message.me {
-  flex-direction: row;
-  justify-content: flex-start;
+  float: left;
 }
 
 .message.other {
-  flex-direction: row;
-  justify-content: flex-end;
+  float: right;
 }
 
 .message-xp {
@@ -158,9 +156,8 @@
 
 /* Soul Spawn Message  */
 .soulspawn-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: block;
+  margin: auto;
 }
 
 #soulspawn {

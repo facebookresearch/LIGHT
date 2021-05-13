@@ -35,7 +35,7 @@ const ExperienceInfo = ({ experience, giftExperience }) => {
   return (
     <div className="experienceinfo-container">
       <LevelDisplay level={level} giftExperience={Math.floor(giftExperience)} />
-      <div style={{ width: "100%", marginLeft: "10%", marginRight: 0 }}>
+      <div className="experienceinfo-progressbar">
         <Tooltip title={`Earn ${neededExp - exp}XP to level up`} position="top">
           <Progressbar
             bgcolor={"yellow"}
