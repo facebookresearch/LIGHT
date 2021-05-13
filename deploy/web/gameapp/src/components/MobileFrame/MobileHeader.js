@@ -6,15 +6,15 @@ import ToggleSwitch from "../ToggleSwitch";
 
 const MobileHeader = ({ buttons, showDrawer, openDrawer, closeDrawer }) => {
   return (
-    <div className="mobile-container">
-      <div className="mobile-header">
-        <ToggleSwitch
-          isOn={showDrawer}
-          setOn={openDrawer}
-          setOff={closeDrawer}
+    <div className="mobile-header">
+      <ToggleSwitch isOn={showDrawer} setOn={openDrawer} setOff={closeDrawer} />
+      {buttons.map((button, index) => (
+        <GlowingButton
+          id={index}
+          label={button.label}
+          buttonFunction={button.clickFunction}
         />
-        {}
-      </div>
+      ))}
     </div>
   );
 };
