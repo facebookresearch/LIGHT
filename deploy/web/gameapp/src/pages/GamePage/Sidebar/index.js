@@ -88,74 +88,78 @@ const SideBar = ({
           <GameButton text={"LOGOUT"} clickFunction={() => {}} />
         </a>
       </div>
-      <IconCollapsibleBox
-        title={`You are ${persona.prefix} ${persona.name}`}
-        showEmojiPicker={showEmojiPicker}
-        selectedEmoji={selectedEmoji}
-        setShowEmojiPicker={setShowEmojiPicker}
-        BlurClosingPicker={BlurClosingPicker}
-        setSelectedEmoji={setSelectedEmoji}
-        titleBg={"gold"}
-      >
-        <p className="persona-text" style={{ fontSize: "14px" }}>
-          {persona.description.slice(
-            0,
-            persona.description.indexOf("Your Mission:")
-          )}
-        </p>
-      </IconCollapsibleBox>
-      <CollapseibleBox
-        title="Mission"
-        titleBg="yellow"
-        containerBg="lightyellow"
-      >
-        {
-          <p className="mission-text">
+      <div className="sidebar-body__container">
+        <IconCollapsibleBox
+          title={`You are ${persona.prefix} ${persona.name}`}
+          showEmojiPicker={showEmojiPicker}
+          selectedEmoji={selectedEmoji}
+          setShowEmojiPicker={setShowEmojiPicker}
+          BlurClosingPicker={BlurClosingPicker}
+          setSelectedEmoji={setSelectedEmoji}
+          titleBg={"gold"}
+        >
+          <p className="persona-text" style={{ fontSize: "14px" }}>
             {persona.description.slice(
-              persona.description.indexOf(":") + 1,
-              persona.description.length
+              0,
+              persona.description.indexOf("Your Mission:")
             )}
           </p>
-        }
-      </CollapseibleBox>
-      {location ? (
+        </IconCollapsibleBox>
         <CollapseibleBox
-          title="Location"
-          titleBg="#76dada"
-          containerBg="#e0fffe"
+          title="Mission"
+          titleBg="yellow"
+          containerBg="lightyellow"
         >
-          <div className="location" style={{ margin: 0 }}>
-            <h3
-              style={{
-                textDecoration: "underline",
-                backgroundColor: "none",
-                fontFamily: "fantasy",
-              }}
-            >
-              {location.name ? location.name.toUpperCase() : null}
-            </h3>
-            {location.description.split("\n").map((para, idx) => (
-              <p key={idx}>{para}</p>
-            ))}
-            {dataModelHost && (
-              <Tooltip
-                style={{ position: "absolute", bottom: 0, right: 5 }}
-                title={`suggest changes for ${location.name.split(" the ")[1]}`}
-                position="bottom"
-              >
-                <a
-                  className="data-model-deep-link"
-                  href={`${dataModelHost}/edit/${getEntityId(location.id)}`}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  <i className="fa fa-edit" aria-hidden="true" />
-                </a>
-              </Tooltip>
-            )}
-          </div>
+          {
+            <p className="mission-text">
+              {persona.description.slice(
+                persona.description.indexOf(":") + 1,
+                persona.description.length
+              )}
+            </p>
+          }
         </CollapseibleBox>
-      ) : null}
+        {location ? (
+          <CollapseibleBox
+            title="Location"
+            titleBg="#76dada"
+            containerBg="#e0fffe"
+          >
+            <div className="location" style={{ margin: 0 }}>
+              <h3
+                style={{
+                  textDecoration: "underline",
+                  backgroundColor: "none",
+                  fontFamily: "fantasy",
+                }}
+              >
+                {location.name ? location.name.toUpperCase() : null}
+              </h3>
+              {location.description.split("\n").map((para, idx) => (
+                <p key={idx}>{para}</p>
+              ))}
+              {dataModelHost && (
+                <Tooltip
+                  style={{ position: "absolute", bottom: 0, right: 5 }}
+                  title={`suggest changes for ${
+                    location.name.split(" the ")[1]
+                  }`}
+                  position="bottom"
+                >
+                  <a
+                    className="data-model-deep-link"
+                    href={`${dataModelHost}/edit/${getEntityId(location.id)}`}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <i className="fa fa-edit" aria-hidden="true" />
+                  </a>
+                </Tooltip>
+              )}
+            </div>
+          </CollapseibleBox>
+        ) : null}
+      </div>
     </div>
   );
 };

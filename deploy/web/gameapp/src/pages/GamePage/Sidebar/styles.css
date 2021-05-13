@@ -46,6 +46,13 @@
   border-color: yellow;
   border-radius: 15px;
 }
+.sidebar-body__container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 30em;
+}
 
 .sidebar-row {
   width: 100%;
