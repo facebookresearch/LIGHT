@@ -168,6 +168,8 @@ const Message = ({
               fontFamily: "fantasy",
               fontSize: "1em",
               marginRight: "50px",
+              maxWidth: "80%",
+              overflowX: "hidden",
             }}
           >
             {actor ? actor.toUpperCase() : null}
@@ -200,41 +202,34 @@ const Message = ({
               ) : null}
             </React.Fragment>
           ) : (
-            <React.Fragment>
-              <span style={{ backgroundColor: "white", position: "inline" }}>
-                <Tooltip
-                  title={
-                    playerGiftXp > 0
-                      ? `Award ${actor} Experience`
-                      : "Not enough Gift Experience"
-                  }
-                  position="top"
-                >
-                  <div style={{ position: "relative", marginRight: "150%" }}>
-                    {isLiked ? (
-                      <i className="fa fa-star message-star" />
-                    ) : (
-                      <i
-                        className="fa fa-star-o"
-                        style={{
-                          position: "absolute",
-                          top: "5%",
-                          right: "1%",
-                          fontSize: "2em",
-                        }}
-                        onClick={likeHandler}
-                      />
-                    )}
-                  </div>
-                </Tooltip>{" "}
-                <Tooltip title={`tell ${actor}...`} position="top">
-                  <i
-                    style={{ fontSize: "2em" }}
-                    className="fa fa-reply"
-                    onClick={() => onReply(actor)}
-                  />
-                </Tooltip>{" "}
-                {/* <Tooltip
+            <div className="message-icon__container">
+              <Tooltip
+                title={
+                  playerGiftXp > 0
+                    ? `Award ${actor} Experience`
+                    : "Not enough Gift Experience"
+                }
+                position="top"
+              >
+                <div style={{ position: "relative", marginRight: "150%" }}>
+                  {isLiked ? (
+                    <i id="message-star" className="fa fa-star message-star" />
+                  ) : (
+                    <i
+                      id="message-star-O"
+                      className="fa fa-star-o "
+                      onClick={likeHandler}
+                    />
+                  )}
+                </div>
+              </Tooltip>{" "}
+              <Tooltip title={`tell ${actor}...`} position="top">
+                <i
+                  className="fa fa-reply message-icon"
+                  onClick={() => onReply(actor)}
+                />
+              </Tooltip>{" "}
+              {/* <Tooltip
                   title={`Do you think something else should have been said instead? Provide feedback via an edit...`}
                   position="top"
                 >
@@ -243,18 +238,16 @@ const Message = ({
                     onClick={() => setEditMode(true)}
                   />
                 </Tooltip> */}
-                <Tooltip
-                  title={`Was this offensive or inappropriate? Click to report.`}
-                  position="top"
-                >
-                  <i
-                    style={{ fontSize: "2em" }}
-                    className="fa fa-flag "
-                    onClick={() => setReportMode(true)}
-                  />
-                </Tooltip>
-              </span>
-            </React.Fragment>
+              <Tooltip
+                title={`Was this offensive or inappropriate? Click to report.`}
+                position="top"
+              >
+                <i
+                  className="fa fa-flag message-icon"
+                  onClick={() => setReportMode(true)}
+                />
+              </Tooltip>
+            </div>
           )}
         </div>
       ) : null}

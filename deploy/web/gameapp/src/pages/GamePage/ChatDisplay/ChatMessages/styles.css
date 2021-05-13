@@ -12,6 +12,7 @@
   border-radius: 7px;
   text-align: center;
   position: relative;
+  width: auto;
   /* font-size: 16px; */
 }
 
@@ -24,6 +25,79 @@
   flex-direction: row;
   justify-content: flex-end;
 }
+
+.message-xp {
+}
+/* MESSAGE ICONS*/
+.message-icon__container {
+  display: flex;
+  flex-direction: row;
+  margin-right: 4px;
+}
+.message-icon {
+  font-size: 2em;
+}
+#message-star {
+  position: absolute;
+  animation: shrink 1s normal;
+  color: #ffe205;
+  top: 3%;
+  right: 5%;
+  font-size: 2em;
+}
+
+#message-star-O {
+  position: absolute;
+  top: 5%;
+  right: 1%;
+  font-size: 2em;
+}
+
+#message-star__number {
+  margin-right: 2em;
+  display: inline;
+  font-size: 1.25em;
+  animation: 4s slide normal;
+}
+
+@keyframes shrink {
+  0% {
+    color: #ffe205;
+    font-size: 10em;
+    z-index: 100;
+  }
+  100% {
+    color: #ffe205;
+    text-shadow: 3px 0 0px #ffe205, 7px 0 0px #ffe205, 20 0 0px #edd205;
+    font-size: 2em;
+    z-index: 100;
+  }
+}
+
+@keyframes slide {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes shine {
+  0% {
+    color: #ffe205;
+    text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
+  }
+  50% {
+    color: gold;
+    text-shadow: 0 0 0px #ffe205, 0 0 0px #ffe205, 0 0 0px #edd205;
+  }
+  100% {
+    color: #ffe205;
+    text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
+  }
+}
+
 /*SETTING MESSAGE*/
 .message.type-setting {
   /* font-style: italic; */
@@ -80,63 +154,6 @@
   padding: 1px 5px;
   border-top-left-radius: 7px;
   margin-right: 7px;
-}
-
-.message-star {
-  position: absolute;
-  animation: shrink 1s normal;
-  color: #ffe205;
-  top: 3%;
-  right: 5%;
-  font-size: 2em;
-}
-
-#message-star__number {
-  margin-right: 2em;
-  display: inline;
-  font-size: 1.25em;
-  animation: 4s slide normal;
-}
-
-@keyframes shrink {
-  0% {
-    color: #ffe205;
-    font-size: 10em;
-    z-index: 100;
-  }
-  100% {
-    color: #ffe205;
-    text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
-    font-size: 2em;
-    z-index: 100;
-  }
-}
-
-@keyframes slide {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes shine {
-  0% {
-    color: #ffe205;
-    text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
-  }
-  50% {
-    color: gold;
-    text-shadow: 0 0 0px #ffe205, 0 0 0px #ffe205, 0 0 0px #edd205;
-  }
-  100% {
-    color: #ffe205;
-    text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
-  }
-}
-
-.message-xp {
 }
 
 /* Soul Spawn Message  */
@@ -482,7 +499,38 @@
     font-size: 11px;
     text-align: center;
   }
+  /*MESSAGE ICONS*/
+  .message-icon__container {
+    display: flex;
+    flex-direction: row;
+  }
+  .message-icon {
+    font-size: 2em;
+  }
 
+  .message-star {
+    position: absolute;
+    animation: shrink 1s normal;
+    color: #ffe205;
+    top: 3%;
+    right: 5%;
+    font-size: 2em;
+  }
+
+  #message-star-O {
+    position: absolute;
+    top: 5%;
+    right: 1%;
+    font-size: 2em;
+  }
+
+  #message-star__number {
+    margin-right: 2em;
+    display: inline;
+    font-size: 0.75em;
+    animation: 4s slide normal;
+  }
+  /* STATUS MESSSAGE*/
   .status-content {
     width: 98%;
     overflow-x: hidden;
