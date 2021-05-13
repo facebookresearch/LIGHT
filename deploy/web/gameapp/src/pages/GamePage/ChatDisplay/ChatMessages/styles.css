@@ -157,7 +157,6 @@
 /* Soul Spawn Message  */
 .soulspawn-container {
   display: block;
-  margin: auto;
 }
 
 #soulspawn {
@@ -165,6 +164,7 @@
   border-style: groove;
   border-color: ivory;
   border-width: 0.5em;
+  margin: auto;
 }
 
 .soulspawn-header {
@@ -489,14 +489,14 @@
   .message .agent {
     font-size: 8px;
   }
-  /*SETTING MESSAGE*/
+  /* SETTING MESSAGE */
   .message.type-setting {
     width: 90%;
     margin: auto 0 auto 0;
     font-size: 11px;
     text-align: center;
   }
-  /*MESSAGE ICONS*/
+  /* MESSAGE ICONS */
   .message-icon__container {
     display: flex;
     flex-direction: row;
@@ -527,7 +527,7 @@
     font-size: 0.75em;
     animation: 4s slide normal;
   }
-  /* STATUS MESSSAGE*/
+  /* STATUS MESSSAGE */
   .status-content {
     width: 98%;
     overflow-x: hidden;
@@ -536,7 +536,7 @@
   .status-content__entry {
     font-size: 11px;
   }
-
+  /* INVENTORY MESSAGE*/
   .inventory-content {
     width: 98%;
     overflow-x: hidden;
@@ -545,13 +545,18 @@
   .inventory-content__text {
     font-size: 11px;
   }
-
+  /* QUEST MESSAGE*/
   .quest-content {
     width: 98%;
   }
 
   .quest-content__entry {
     font-size: 11px;
+  }
+
+  /* SOULSPAWN MESSAGE*/
+
+  #soulspawn {
   }
   .soulspawn-header {
     font-size: 14px;
