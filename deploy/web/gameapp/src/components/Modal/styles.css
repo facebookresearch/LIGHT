@@ -16,4 +16,11 @@
   border-width: 1em;
   border-style: ridge;
   border-radius: 15px;
+  overflow: hidden;
+}
+
+@media only screen and (max-width: 950px) {
+  .modal-window {
+    width: 95%;
+  }
 }

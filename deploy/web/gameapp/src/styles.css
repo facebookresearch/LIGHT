@@ -1,16 +1,4 @@
 .App {
-  display: grid;
-  grid-template-columns: 400px 1fr;
-  height: 100vh;
-  margin: 0 auto;
-  padding: 0px;
-  align-items: stretch;
-  justify-content: center;
-  font-size: 18px;
-  box-sizing: border-box;
-  overflow: auto;
-  background-image: url("./assets/images/InexplicableTavern_hungover.png");
-  font-family: Lora, serif;
 }
 
 body.dark-mode {
@@ -19,10 +7,6 @@ body.dark-mode {
 
 body {
   background-color: #d4cab8;
-}
-
-.App.no-sidebar {
-  grid-template-columns: 1fr;
 }
 
 .app-controls {
@@ -36,15 +20,6 @@ a {
 }
 
 @media only screen and (max-width: 900px) {
-  div.App {
-    grid-template-columns: 1fr;
-    grid-template-rows: min-content 1fr;
-  }
-
-  div.sidebar {
-    margin: 0px;
-  }
-
   div.leaflet-container {
     border: none;
     border-radius: 0px;
@@ -151,29 +126,14 @@ a {
   border-radius: 7px;
   text-align: center;
   position: relative;
-  /* font-size: 16px; */
 }
 
-/* input::placeholder {
-  font-style: italic;
-  color: #aaa;
-}
-
-input.chatbox:active,
-input.chatbox:focus {
-  border: 3px solid #fcff56;
-  outline: none;
-  font-style: normal;
-}
-*/
-
-input.edit-message {
+.input.edit-message {
   font: inherit;
   width: 100%;
   padding: 3px;
   box-sizing: border-box;
-} */
-
+}
 .controls span.action {
   margin: 5px 3px;
   padding: 5px;
@@ -335,18 +295,6 @@ body .fadeShow {
 
 .data-model-deep-link {
   color: black;
-}
-
-.neon-text2 {
-  color: #fff;
-  text-shadow: 0.1vw 0vw 0.25vw #d0d3ec, 0.2vw 0vw 0.25vw #d0d3ec,
-    0.4vw 0vw 0.25vw #d0d3ec, 0.1vw 0vw 0vw #d0d3ec, 0.2vw 0vw 0vw #d0d3ec,
-    0.4vw 0vw 0vw #d0d3ec, 0.1vw 0vw 0.1vw #9798c5, 0.2vw 0vw 0.1vw #9798c5,
-    0.4vw 0vw 0.1vw #9798c5, 0.1vw 0vw 2vw #6061c9, 0.2vw 0vw 2vw #6061c9,
-    0.4vw 0vw 2vw #6061c9, 0.1vw 0vw 1vw #2d2ba1, 0.2vw 0vw 1vw #2d2ba1,
-    0.4vw 0vw 5vw #2d2ba1, 0.1vw 0vw 5vw #181ab1, 0.2vw 0vw 20vw #181ab1,
-    0.4vw 0vw 10vw #181ab1, 0.1vw 0vw 10vw #04139e, 0.2vw 0vw 30vw #04139e,
-    0.4vw 0vw 10vw #04139e;
 }
 
 .header-text {

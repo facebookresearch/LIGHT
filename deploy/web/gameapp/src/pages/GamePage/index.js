@@ -10,8 +10,12 @@ import { DefaultEmojiMapper } from "../../utils";
 import { Picker, emojiIndex } from "emoji-mart";
 import onClickOutside from "react-onclickoutside";
 
+import Scribe from "../../assets/images/scribe.png";
+import Beer from "../../assets/images/Beer.png";
+
 //Custom Components
 import { useWSDataSource } from "../../useWSDataSource";
+import MobileFrame from "../../components/MobileFrame";
 import ExperienceInfo from "../../components/ExperienceInfo";
 import Logo from "../../components/Logo/index.js";
 import LoadingScreen from "../../LoadingScreen";
@@ -104,6 +108,11 @@ function Chat({
   agents,
   disconnectFromSession,
 }) {
+  //MOBILE STATE
+  const [screenSize, setScreenSize] = React.useState(null);
+  const [isMobile, setIsMobile] = React.useState(false);
+  //DRAWER STATE
+  const [showDrawer, setShowDrawer] = React.useState(false);
   //MODAL STATE
   const [showInstructionModal, setShowInstructionModal] = React.useState(false);
   //IDLE STATE
@@ -229,51 +238,112 @@ function Chat({
     }
   }, [sessionXp, sessionGiftXpSpent]);
 
+  const updateDimensions = () => {
+    setScreenSize(window.innerWidth);
+  };
+  React.useEffect(() => {
+    window.addEventListener("resize", updateDimensions);
+    let startingSize = window.innerWidth;
+    if (startingSize <= 950) {
+      setIsMobile(true);
+    } else if (startingSize > 950) {
+      setIsMobile(false);
+    }
+  });
+
+  React.useEffect(() => {
+    if (screenSize <= 950) {
+      setIsMobile(true);
+    } else if (screenSize > 950) {
+      setIsMobile(false);
+    }
+  }, [screenSize]);
+
+  const openDrawer = () => setShowDrawer(true);
+  const closeDrawer = () => setShowDrawer(false);
+  const buttons = [];
   return (
-    <div className="App" onMouseMove={resetIdleTimer}>
-      {persona ? (
-        <Sidebar
-          persona={persona}
-          location={location}
-          dataModelHost={dataModelHost}
-          getEntityId={getEntityId}
-          selectedEmoji={selectedEmoji}
-          setSelectedEmoji={setSelectedEmoji}
-          playerXp={playerXp}
-          playerGiftXp={playerGiftXp}
-        />
+    <div className="gamepage-container" onMouseMove={resetIdleTimer}>
+      {isMobile ? (
+        <MobileFrame
+          showDrawer={showDrawer}
+          openDrawer={openDrawer}
+          closeDrawer={closeDrawer}
+          buttons={buttons}
+        >
+          {persona ? (
+            <Sidebar
+              persona={persona}
+              location={location}
+              dataModelHost={dataModelHost}
+              getEntityId={getEntityId}
+              selectedEmoji={selectedEmoji}
+              setSelectedEmoji={setSelectedEmoji}
+              playerXp={playerXp}
+              playerGiftXp={playerGiftXp}
+              isMobile={isMobile}
+              showDrawer={showDrawer}
+            />
+          ) : null}
+          <ChatDisplay
+            scrollToBottom={scrollToBottom}
+            messages={messages}
+            onSubmit={onSubmit}
+            persona={persona}
+            location={location}
+            agents={agents}
+            getDataModelAddress={getDataModelAddress}
+            getLocationState={getLocationState}
+            idle={idle}
+            resetIdleTimer={resetIdleTimer}
+            setPlayerXp={setPlayerXp}
+            setPlayerGiftXp={setPlayerGiftXp}
+            playerXp={playerXp}
+            playerGiftXp={playerGiftXp}
+            sessionGiftXpSpent={sessionGiftXpSpent}
+            setSessionGiftXpSpent={setSessionGiftXpSpent}
+          />
+        </MobileFrame>
       ) : (
-        <div />
+        <>
+          <div className="sidebar-container">
+            {persona ? (
+              <Sidebar
+                persona={persona}
+                location={location}
+                dataModelHost={dataModelHost}
+                getEntityId={getEntityId}
+                selectedEmoji={selectedEmoji}
+                setSelectedEmoji={setSelectedEmoji}
+                playerXp={playerXp}
+                playerGiftXp={playerGiftXp}
+              />
+            ) : (
+              <div />
+            )}
+          </div>
+          <div className="chat-container">
+            <ChatDisplay
+              scrollToBottom={scrollToBottom}
+              messages={messages}
+              onSubmit={onSubmit}
+              persona={persona}
+              location={location}
+              agents={agents}
+              getDataModelAddress={getDataModelAddress}
+              getLocationState={getLocationState}
+              idle={idle}
+              resetIdleTimer={resetIdleTimer}
+              setPlayerXp={setPlayerXp}
+              setPlayerGiftXp={setPlayerGiftXp}
+              playerXp={playerXp}
+              playerGiftXp={playerGiftXp}
+              sessionGiftXpSpent={sessionGiftXpSpent}
+              setSessionGiftXpSpent={setSessionGiftXpSpent}
+            />
+          </div>
+        </>
       )}
-      {/* <Map /> */}
-      {/* <div className="app-controls">
-          <label>
-            <input
-              type="checkbox"
-              checked={isAdminMode}
-              onChange={e => setAdminMode(!isAdminMode)}
-            />{" "}
-            Admin Mode
-          </label>
-        </div> */}
-      <ChatDisplay
-        scrollToBottom={scrollToBottom}
-        messages={messages}
-        onSubmit={onSubmit}
-        persona={persona}
-        location={location}
-        agents={agents}
-        getDataModelAddress={getDataModelAddress}
-        getLocationState={getLocationState}
-        idle={idle}
-        resetIdleTimer={resetIdleTimer}
-        setPlayerXp={setPlayerXp}
-        setPlayerGiftXp={setPlayerGiftXp}
-        playerXp={playerXp}
-        playerGiftXp={playerGiftXp}
-        sessionGiftXpSpent={sessionGiftXpSpent}
-        setSessionGiftXpSpent={setSessionGiftXpSpent}
-      />
       {showInstructionModal ? (
         <Modal
           showModal={showInstructionModal}

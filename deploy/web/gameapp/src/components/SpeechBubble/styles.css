@@ -19,13 +19,10 @@
   min-width: 60px;
 }
 
-.speechbubble::after {
+.speechbubble-tail {
   position: absolute;
   content: "";
   border: 20px solid transparent;
-}
-
-.bottom.speechbubble::after {
   border-top-color: white;
   border-bottom: 0;
   left: 34%;
@@ -43,4 +40,27 @@
   text-align: center;
   padding: 0;
   margin: 0;
+}
+
+@media only screen and (max-width: 600px) {
+  .speechbubble {
+    font-family: fantasy;
+    font-size: 8px;
+    color: black;
+
+    padding: 5px 5px 3px 10px;
+    border-radius: 10px;
+    z-index: 10;
+    margin: 10px;
+    min-width: 40px;
+  }
+  .speechbubble-tail {
+    border: 1.5em solid transparent;
+    border-top-color: white;
+    border-bottom: 0;
+    left: 34%;
+    margin-left: -38%;
+    top: 20%;
+    z-index: -1;
+  }
 }

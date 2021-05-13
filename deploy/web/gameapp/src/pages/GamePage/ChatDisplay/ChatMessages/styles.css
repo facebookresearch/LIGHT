@@ -1,3 +1,7 @@
+.chatlog {
+  width: 100%;
+  display: block;
+}
 /*Message  */
 .message {
   padding: 20px 10px 10px;
@@ -7,30 +11,99 @@
   border-radius: 7px;
   text-align: center;
   position: relative;
+  width: auto;
+  max-width: 60%;
   /* font-size: 16px; */
 }
 
 .message.me {
   float: left;
-  margin-right: 80px;
 }
 
 .message.other {
   float: right;
-  margin-left: 80px;
 }
 
+.message-xp {
+}
+/* MESSAGE ICONS*/
+.message-icon__container {
+  display: flex;
+  flex-direction: row;
+  margin-right: 4px;
+}
+.message-icon {
+  font-size: 2em;
+}
+#message-star {
+  position: absolute;
+  animation: shrink 1s normal;
+  color: #ffe205;
+  top: 3%;
+  right: 5%;
+  font-size: 2em;
+}
+
+#message-star-O {
+  position: absolute;
+  top: 5%;
+  right: 1%;
+  font-size: 2em;
+}
+
+#message-star__number {
+  margin-right: 2em;
+  display: inline;
+  font-size: 1.25em;
+  animation: 4s slide normal;
+}
+
+@keyframes shrink {
+  0% {
+    color: #ffe205;
+    font-size: 10em;
+    z-index: 100;
+  }
+  100% {
+    color: #ffe205;
+    text-shadow: 3px 0 0px #ffe205, 7px 0 0px #ffe205, 20 0 0px #edd205;
+    font-size: 2em;
+    z-index: 100;
+  }
+}
+
+@keyframes slide {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes shine {
+  0% {
+    color: #ffe205;
+    text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
+  }
+  50% {
+    color: gold;
+    text-shadow: 0 0 0px #ffe205, 0 0 0px #ffe205, 0 0 0px #edd205;
+  }
+  100% {
+    color: #ffe205;
+    text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
+  }
+}
+
+/*SETTING MESSAGE*/
 .message.type-setting {
   /* font-style: italic; */
+  justify-content: center;
   background-color: #efefef;
   color: rgb(42, 42, 42);
   border: none;
   font-size: 18px;
-  padding: 10px;
-  margin-bottom: 20px;
-  margin-top: 10px;
-  margin-left: 130px;
-  margin-right: 130px;
   text-align: left;
   display: block;
   white-space: pre-wrap;
@@ -81,68 +154,9 @@
   margin-right: 7px;
 }
 
-.message-star {
-  position: absolute;
-  animation: shrink 1s normal;
-  color: #ffe205;
-  top: 3%;
-  right: 5%;
-  font-size: 2em;
-}
-
-#message-star__number {
-  margin-right: 2em;
-  display: inline;
-  font-size: 1.25em;
-  animation: 4s slide normal;
-}
-
-@keyframes shrink {
-  0% {
-    color: #ffe205;
-    font-size: 10em;
-    z-index: 100;
-  }
-  100% {
-    color: #ffe205;
-    text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
-    font-size: 2em;
-    z-index: 100;
-  }
-}
-
-@keyframes slide {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes shine {
-  0% {
-    color: #ffe205;
-    text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
-  }
-  50% {
-    color: gold;
-    text-shadow: 0 0 0px #ffe205, 0 0 0px #ffe205, 0 0 0px #edd205;
-  }
-  100% {
-    color: #ffe205;
-    text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
-  }
-}
-
-.message-xp {
-}
-
 /* Soul Spawn Message  */
 .soulspawn-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: block;
 }
 
 #soulspawn {
@@ -150,6 +164,7 @@
   border-style: groove;
   border-color: ivory;
   border-width: 0.5em;
+  margin: auto;
 }
 
 .soulspawn-header {
@@ -452,4 +467,102 @@
   font-size: 14px;
   font-weight: bolder;
   padding-top: 1em;
+}
+
+@media only screen and (max-width: 1224px) {
+}
+
+@media only screen and (max-width: 950px) {
+  .message {
+    font-size: 15px;
+  }
+  .message .agent {
+    font-size: 8px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  /*MESSAGE */
+  .message {
+    font-size: 11px;
+  }
+  .message .agent {
+    font-size: 8px;
+  }
+  /* SETTING MESSAGE */
+  .message.type-setting {
+    width: 90%;
+    margin: auto 0 auto 0;
+    font-size: 11px;
+    text-align: center;
+  }
+  /* MESSAGE ICONS */
+  .message-icon__container {
+    display: flex;
+    flex-direction: row;
+  }
+  .message-icon {
+    font-size: 2em;
+  }
+
+  .message-star {
+    position: absolute;
+    animation: shrink 1s normal;
+    color: #ffe205;
+    top: 3%;
+    right: 5%;
+    font-size: 2em;
+  }
+
+  #message-star-O {
+    position: absolute;
+    top: 5%;
+    right: 1%;
+    font-size: 2em;
+  }
+
+  #message-star__number {
+    margin-right: 2em;
+    display: inline;
+    font-size: 0.75em;
+    animation: 4s slide normal;
+  }
+  /* STATUS MESSSAGE */
+  .status-content {
+    width: 98%;
+    overflow-x: hidden;
+  }
+
+  .status-content__entry {
+    font-size: 11px;
+  }
+  /* INVENTORY MESSAGE*/
+  .inventory-content {
+    width: 98%;
+    overflow-x: hidden;
+  }
+
+  .inventory-content__text {
+    font-size: 11px;
+  }
+  /* QUEST MESSAGE*/
+  .quest-content {
+    width: 98%;
+  }
+
+  .quest-content__entry {
+    font-size: 11px;
+  }
+
+  /* SOULSPAWN MESSAGE*/
+
+  #soulspawn {
+  }
+  .soulspawn-header {
+    font-size: 14px;
+  }
+
+  .soulspawn-subheader {
+    font-size: 11px;
+  }
 }
