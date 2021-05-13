@@ -126,29 +126,15 @@ a {
   border-radius: 7px;
   text-align: center;
   position: relative;
-  /* font-size: 16px; */
 }
 
-/* input::placeholder {
-  font-style: italic;
-  color: #aaa;
-}
-
-input.chatbox:active,
-input.chatbox:focus {
-  border: 3px solid #fcff56;
-  outline: none;
-  font-style: normal;
-}
-*/
-
-input.edit-message {
+.input.edit-message {
   font: inherit;
   width: 100%;
   padding: 3px;
   box-sizing: border-box;
 }
-*/ .controls span.action {
+.controls span.action {
   margin: 5px 3px;
   padding: 5px;
   display: inline-block;
