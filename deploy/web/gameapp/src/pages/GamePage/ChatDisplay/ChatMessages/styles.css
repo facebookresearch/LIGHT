@@ -17,10 +17,12 @@
 }
 
 .message.me {
+  display: block;
   float: left;
 }
 
 .message.other {
+  display: block;
   float: right;
 }
 
@@ -262,6 +264,7 @@
   height: 48em;
   width: 100%;
   z-index: 1;
+  margin-bottom: 6em;
 }
 
 .help-question__container {
