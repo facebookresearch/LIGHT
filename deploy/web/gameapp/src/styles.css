@@ -297,18 +297,6 @@ body .fadeShow {
   color: black;
 }
 
-.neon-text2 {
-  color: #fff;
-  text-shadow: 0.1vw 0vw 0.25vw #d0d3ec, 0.2vw 0vw 0.25vw #d0d3ec,
-    0.4vw 0vw 0.25vw #d0d3ec, 0.1vw 0vw 0vw #d0d3ec, 0.2vw 0vw 0vw #d0d3ec,
-    0.4vw 0vw 0vw #d0d3ec, 0.1vw 0vw 0.1vw #9798c5, 0.2vw 0vw 0.1vw #9798c5,
-    0.4vw 0vw 0.1vw #9798c5, 0.1vw 0vw 2vw #6061c9, 0.2vw 0vw 2vw #6061c9,
-    0.4vw 0vw 2vw #6061c9, 0.1vw 0vw 1vw #2d2ba1, 0.2vw 0vw 1vw #2d2ba1,
-    0.4vw 0vw 5vw #2d2ba1, 0.1vw 0vw 5vw #181ab1, 0.2vw 0vw 20vw #181ab1,
-    0.4vw 0vw 10vw #181ab1, 0.1vw 0vw 10vw #04139e, 0.2vw 0vw 30vw #04139e,
-    0.4vw 0vw 10vw #04139e;
-}
-
 .header-text {
   font-size: 80px;
   text-align: center;

@@ -36,14 +36,28 @@ const SideBar = ({
   setSelectedEmoji,
   playerXp,
   playerGiftXp,
+  isMobile,
+  showDrawer,
 }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   return (
-    <div className="sidebar">
-      <div className="header-container">
-        <Logo />
-        <ExperienceInfo experience={playerXp} giftExperience={playerGiftXp} />
+    <div
+      className={
+        isMobile
+          ? showDrawer
+            ? "mobile-sidebar open"
+            : "mobile-sidebar"
+          : "sidebar"
+      }
+    >
+      <div className="sidebar-header__container">
+        {isMobile ? null : <Logo />}
+        <ExperienceInfo
+          isMobile={isMobile}
+          experience={playerXp}
+          giftExperience={playerGiftXp}
+        />
       </div>
       <div
         className={cx("icon", { editing: showEmojiPicker })}

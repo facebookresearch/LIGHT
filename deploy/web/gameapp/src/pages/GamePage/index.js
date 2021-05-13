@@ -282,6 +282,7 @@ function Chat({
               playerXp={playerXp}
               playerGiftXp={playerGiftXp}
               isMobile={isMobile}
+              showDrawer={showDrawer}
             />
           ) : null}
           <ChatDisplay

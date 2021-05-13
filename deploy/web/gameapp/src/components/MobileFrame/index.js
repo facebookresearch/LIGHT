@@ -11,7 +11,7 @@ const MobileFrame = ({
   children,
 }) => {
   return (
-    <div className="mobile-container">
+    <div id="mobile-container">
       <MobileHeader
         buttons={buttons}
         showDrawer={showDrawer}

@@ -1,4 +1,5 @@
 import React from "react";
+import "./styles.css";
 
 const ToggleSwitch = ({ isOn, setOn, setOff }) => {
   const toggle = () => {
@@ -9,16 +10,10 @@ const ToggleSwitch = ({ isOn, setOn, setOff }) => {
     }
   };
   return (
-    <div className="toggle-switch">
-      <input
-        type="checkbox"
-        className="toggle-switch-checkbox"
-        name="toggleSwitch"
-        id="toggleSwitch"
-        checked={isOn}
-        onChange={toggle}
-      />
-    </div>
+    <label className="toggle-switch">
+      <input type="checkbox" checked={isOn} onChange={toggle} />
+      <span className="switch" />
+    </label>
   );
 };
 
