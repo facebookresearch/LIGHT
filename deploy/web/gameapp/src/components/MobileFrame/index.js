@@ -16,7 +16,7 @@ const MobileFrame = ({
         buttons={buttons}
         showDrawer={showDrawer}
         openDrawer={openDrawer}
-        closeDrawer={closerDrawer}
+        closeDrawer={closeDrawer}
       />
       <div className="mobile-content">{children}</div>
     </div>

@@ -15,6 +15,7 @@ import Beer from "../../assets/images/Beer.png";
 
 //Custom Components
 import { useWSDataSource } from "../../useWSDataSource";
+import MobileFrame from "../../components/MobileFrame";
 import ExperienceInfo from "../../components/ExperienceInfo";
 import Logo from "../../components/Logo/index.js";
 import LoadingScreen from "../../LoadingScreen";
@@ -258,26 +259,19 @@ function Chat({
     }
   }, [screenSize]);
 
+  const openDrawer = () => setShowDrawer(true);
+  const closeDrawer = () => setShowDrawer(false);
+  const buttons = [];
   return (
     <div className="gamepage-container" onMouseMove={resetIdleTimer}>
       {isMobile ? (
-        <div
-          onClick={() => setShowDrawer(!showDrawer)}
-          className="drawerbar-container"
+        <MobileFrame
+          showDrawer={showDrawer}
+          openDrawer={openDrawer}
+          closeDrawer={closeDrawer}
+          buttons={buttons}
         >
-          {showDrawer ? (
-            <img className="drawerbar-img" src={Beer} />
-          ) : (
-            <img className="drawerbar-img" src={Scribe} />
-          )}
-          <span className="drawerbar-button">
-            {showDrawer ? "GAME" : "PROFILE"}
-          </span>
-        </div>
-      ) : null}
-      {isMobile ? (
-        showDrawer ? (
-          persona ? (
+          {persona ? (
             <Sidebar
               persona={persona}
               location={location}
@@ -287,30 +281,28 @@ function Chat({
               setSelectedEmoji={setSelectedEmoji}
               playerXp={playerXp}
               playerGiftXp={playerGiftXp}
+              isMobile={isMobile}
             />
-          ) : null
-        ) : (
-          <div className="chat-container">
-            <ChatDisplay
-              scrollToBottom={scrollToBottom}
-              messages={messages}
-              onSubmit={onSubmit}
-              persona={persona}
-              location={location}
-              agents={agents}
-              getDataModelAddress={getDataModelAddress}
-              getLocationState={getLocationState}
-              idle={idle}
-              resetIdleTimer={resetIdleTimer}
-              setPlayerXp={setPlayerXp}
-              setPlayerGiftXp={setPlayerGiftXp}
-              playerXp={playerXp}
-              playerGiftXp={playerGiftXp}
-              sessionGiftXpSpent={sessionGiftXpSpent}
-              setSessionGiftXpSpent={setSessionGiftXpSpent}
-            />
-          </div>
-        )
+          ) : null}
+          <ChatDisplay
+            scrollToBottom={scrollToBottom}
+            messages={messages}
+            onSubmit={onSubmit}
+            persona={persona}
+            location={location}
+            agents={agents}
+            getDataModelAddress={getDataModelAddress}
+            getLocationState={getLocationState}
+            idle={idle}
+            resetIdleTimer={resetIdleTimer}
+            setPlayerXp={setPlayerXp}
+            setPlayerGiftXp={setPlayerGiftXp}
+            playerXp={playerXp}
+            playerGiftXp={playerGiftXp}
+            sessionGiftXpSpent={sessionGiftXpSpent}
+            setSessionGiftXpSpent={setSessionGiftXpSpent}
+          />
+        </MobileFrame>
       ) : (
         <>
           <div className="sidebar-container">
