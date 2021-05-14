@@ -23,7 +23,7 @@ const StatusMessage = ({ text }) => {
                   className="status-content__entry"
                   style={{ marginTop: "1px" }}
                 >
-                  EXPERIENCE POINTS: {starStat}
+                  EXPERIENCE {index == 1 ? "GIFT " : ""}POINTS: {starStat}
                   <span>
                     <FaStar color="yellow" />
                   </span>

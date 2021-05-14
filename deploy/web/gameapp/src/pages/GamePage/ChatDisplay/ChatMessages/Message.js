@@ -163,15 +163,7 @@ const Message = ({
     <div className={classNames}>
       {actor ? (
         <div className="agent">
-          <span
-            style={{
-              fontFamily: "fantasy",
-              fontSize: "1em",
-              marginRight: "50px",
-              maxWidth: "80%",
-              overflowX: "hidden",
-            }}
-          >
+          <span id="message-nameplate">
             {actor ? actor.toUpperCase() : null}
           </span>
           {isSelf ? (

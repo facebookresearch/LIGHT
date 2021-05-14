@@ -27,7 +27,12 @@ const TutorialPage = (props) => {
         <Actions />
         <p></p>
         <div
-          style={{ width: "100%", display: "flex", justifyContent: "center" }}
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            marginBottom: "10vh",
+          }}
         >
           <a style={{ textDecoration: "none" }} href="/play/">
             <div className="tutorial-button ">BEGIN YOUR JOURNEY</div>

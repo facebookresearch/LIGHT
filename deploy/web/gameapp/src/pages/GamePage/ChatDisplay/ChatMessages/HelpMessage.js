@@ -34,7 +34,7 @@ const HelpMessage = ({ text }) => {
     // </div>
     <div className=" help-container">
       <div className="help-question__container">
-        <FaQuestion className="help-question" color="#0072ff" size="34em" />
+        <FaQuestion className="help-question" color="#0072ff" />
         <div className="help-content">
           <p className="help-content__header">COMMANDS</p>
           <div className="help-content__entries">
