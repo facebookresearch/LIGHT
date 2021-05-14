@@ -3,14 +3,16 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
-  overflow-x: hidden;
 }
 
 .mobile-content {
   width: 100%;
   height: 70%;
+  margin-top: 20vh;
   margin-bottom: 20em;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: fixed;
 }
 
 /*MOBILE HEADER*/
@@ -20,7 +22,8 @@
   flex-direction: column;
   background-color: #421001;
   z-index: 100;
-  height: 20%;
+  height: 20vh;
+  position: fixed;
 }
 
 .mobileheader-logo {
@@ -89,7 +92,7 @@
 
   .mobile-content {
     width: 100%;
-    height: 80%;
+    height: 70%;
     margin-bottom: 20em;
   }
 
