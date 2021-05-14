@@ -1,7 +1,5 @@
 import React from "react";
 
-import "../../styles.css";
-
 import Message from "./Message";
 import InventoryMessage from "./InventoryMessage";
 import MissionCompleteMessage from "./MissionCompleteMessage";

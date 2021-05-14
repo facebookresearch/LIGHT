@@ -1,7 +1,5 @@
 import React from "react";
 
-import "../../styles.css";
-
 const SettingMessage = (props) => {
   return (
     <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>

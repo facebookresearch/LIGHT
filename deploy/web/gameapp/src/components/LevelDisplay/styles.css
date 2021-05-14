@@ -1,8 +1,9 @@
 .levelDisplay-container {
   display: flex;
   flex-direction: row;
-  width: 40%;
+  width: 100%;
   justify-content: center;
+  padding-top: 12px;
 }
 .level-container {
   width: 2.5em;

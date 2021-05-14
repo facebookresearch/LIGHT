@@ -95,22 +95,6 @@ a {
   font-style: italic;
 }
 
-.message .agent {
-  font-size: 13px;
-  top: 0;
-  left: 0;
-  margin: -19px -10px 5px -10px;
-  color: #666;
-  font-style: italic;
-}
-
-.message .agent span {
-  background-color: rgba(0, 0, 0, 0.07);
-  padding: 1px 5px;
-  border-top-left-radius: 7px;
-  margin-right: 7px;
-}
-
 .message {
   padding: 20px 10px 10px;
   clear: both;

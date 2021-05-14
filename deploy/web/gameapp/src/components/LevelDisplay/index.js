@@ -17,11 +17,7 @@ const LevelDisplay = ({ level, giftExperience }) => {
       </Tooltip>
       <div>
         <Tooltip title="Gift Experience" position="top">
-          <NumberStar
-            number={giftExperience}
-            iconStyle="number-star"
-            size="2em"
-          />
+          <NumberStar number={giftExperience} iconStyle="number-star" />
         </Tooltip>
       </div>
     </div>

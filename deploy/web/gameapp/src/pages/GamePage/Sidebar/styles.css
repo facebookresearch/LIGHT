@@ -46,6 +46,7 @@
   border-radius: 15px;
   width: 97%;
   padding: 5px 0 7px 0;
+  min-width: 200px;
 }
 .sidebar-body__container {
   height: 100%;

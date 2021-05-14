@@ -19,6 +19,7 @@
   text-align: center;
   margin: 0;
   font-size: 0.8em;
+  position: absolute;
 }
 
 .number-star {
@@ -27,4 +28,5 @@
   z-index: 1;
   height: 2.5em;
   width: 2.5em;
+  font-size: 1em;
 }
