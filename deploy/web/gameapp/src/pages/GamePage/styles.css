@@ -1,6 +1,6 @@
 .gamepage-container {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: row;
   background-image: url("../../assets/images/InexplicableTavern.png");
@@ -215,7 +215,6 @@
     width: 100%;
     height: 100%;
     justify-content: center;
-    min-width: 20em;
   }
   .chat-container {
     width: 100%;

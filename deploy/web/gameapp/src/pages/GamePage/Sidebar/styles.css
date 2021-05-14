@@ -45,6 +45,7 @@
   border-style: double;
   border-color: yellow;
   border-radius: 15px;
+  width: 100%;
 }
 .sidebar-body__container {
   height: 100%;
@@ -75,7 +76,7 @@
     border-style: double;
     border-color: yellow;
     border-radius: 15px;
-    width: 90%;
+    width: 100%;
     flex-direction: column;
   }
   .sidebar {

@@ -1,12 +1,13 @@
 .experienceinfo-container {
   display: flex;
   flex-direction: row;
-  margin-right: 4em;
-  margin-top: 1em;
+  margin: 0;
   width: 100%;
   justify-content: center;
   align-items: center;
   font-family: fantasy;
+  border-top-right-radius: 15px;
+  border-top-left-radius: 15px;
 }
 .experienceinfo-progressbar {
   width: 100%;
