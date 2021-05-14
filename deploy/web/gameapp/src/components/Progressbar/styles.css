@@ -2,13 +2,14 @@
   height: 1.2em;
   background-color: #e0e0de;
   border-radius: 5;
-  margin: 50;
   border-style: outset;
   border-radius: 15px;
   box-shadow: 5px 2px 5px;
   border-color: silver;
   border-width: thick;
-  max-width: 15em;
+  width: 70%;
+  max-width: 20em;
+  min-width: 200px;
 }
 
 .bar-filler {
@@ -21,25 +22,20 @@
 }
 
 .bar-label {
-  color: grey;
+  position: relative;
+  color: darkgrey;
   font-weight: bold;
-  position: absolute;
-  left: 60%;
+  padding-top: 5px;
+}
+
+.bar-label__text {
 }
 @media only screen and (max-width: 950px) {
   .bar-label {
-    color: grey;
-    font-weight: bold;
-    position: absolute;
-    left: 40%;
   }
 }
 
 @media only screen and (max-width: 600px) {
   .bar-label {
-    color: grey;
-    font-weight: bold;
-    position: absolute;
-    left: 30%;
   }
 }

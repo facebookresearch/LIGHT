@@ -20,3 +20,11 @@
   margin: 0;
   font-size: 0.8em;
 }
+
+.number-star {
+  color: yellow;
+  position: absolute;
+  z-index: 1;
+  height: 2.5em;
+  width: 2.5em;
+}

@@ -9,6 +9,11 @@
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
 }
+
+.experienceinfo-leveldisplay {
+  width: 100%;
+  margin-right: 0;
+}
 .experienceinfo-progressbar {
   width: 100%;
   margin-left: 10%;

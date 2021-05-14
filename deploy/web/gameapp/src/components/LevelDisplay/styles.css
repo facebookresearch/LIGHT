@@ -22,10 +22,6 @@
 
 @media only screen and (max-width: 600px) {
   .levelDisplay-container {
-    display: flex;
-    flex-direction: row;
-    width: 40%;
-    justify-content: center;
   }
   .level-container {
     width: 2.5em;
