@@ -3,20 +3,18 @@
   height: 100vh;
   display: flex;
   flex-direction: row;
-  background-color: lightgrey;
+  background-image: url("../../assets/images/InexplicableTavern.png");
 }
 
 .sidebar-container {
   justify-content: center;
-  width: 30%;
-
+  width: 25%;
   min-width: 20em;
 }
 
 .chat-container {
-  width: 100%;
+  width: 75%;
   height: 100%;
-  padding: 0;
 }
 
 .drawerbar-container {

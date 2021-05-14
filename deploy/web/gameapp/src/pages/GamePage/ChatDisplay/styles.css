@@ -8,10 +8,13 @@
   opacity: 0;
   min-height: 500px;
   height: 100%;
+  width: 100%;
+  padding-left: 10px;
 }
 
 .chat {
   height: 100%;
+  width: 100%;
   border: 1px solid rgb(184, 184, 184);
   background-color: rgb(228, 226, 221);
   margin: 30px 0px 0px;
@@ -38,7 +41,7 @@
     overflow-y: scroll;
     opacity: 0;
     min-height: 455px;
-    height: 80vh;
+    height: 100%;
   }
   .chat {
     margin: 0px 0px 0px 0px;
@@ -48,5 +51,11 @@
 @media only screen and (max-width: 600px) {
   .chat-wrapper {
     width: 100%;
+  }
+}
+
+@media only screen and (max-height: 650px) and(orientation: landscape) {
+  .chat-wrapper {
+    height: 10%;
   }
 }
