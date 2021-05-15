@@ -15,6 +15,7 @@
   /* font-size: 16px; */
 }
 
+
 /*
 .message .agent {
   font-size: 13px;
@@ -36,6 +37,7 @@
 #message-nameplate {
   font-family: fantasy;
   font-size: 13px;
+  margin-right: 50px;
   max-width: 80%;
   overflow-x: hidden;
 }
