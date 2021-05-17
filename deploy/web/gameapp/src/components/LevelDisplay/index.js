@@ -7,13 +7,6 @@ import "./styles.css";
 import NumberStar from "../CustomIcons/NumberStar";
 
 const LevelDisplay = ({ level, giftExperience }) => {
-  const iconStyle = {
-    color: "yellow",
-    position: "absolute",
-    zIndex: "1",
-    height: "2.5em",
-    width: "2.5em",
-  };
   return (
     <div className="levelDisplay-container">
       <Tooltip title="Player Level" position="top">
@@ -24,11 +17,7 @@ const LevelDisplay = ({ level, giftExperience }) => {
       </Tooltip>
       <div>
         <Tooltip title="Gift Experience" position="top">
-          <NumberStar
-            number={giftExperience}
-            iconStyle={iconStyle}
-            size="2em"
-          />
+          <NumberStar number={giftExperience} iconStyle="number-star" />
         </Tooltip>
       </div>
     </div>

@@ -94,6 +94,6 @@
     align-items: center;
     box-shadow: 0.25em 0.25em 0.25em black;
     padding: 0;
-    margin: 0;
+    margin: 0 0 20vh 0;
   }
 }

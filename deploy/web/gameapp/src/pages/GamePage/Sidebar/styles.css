@@ -38,13 +38,15 @@
 }
 
 .sidebar-header__container {
-  padding: 10px;
   z-index: -1;
   background-color: #bf8315;
   box-shadow: 0 4px 4px -2px black;
   border-style: double;
   border-color: yellow;
   border-radius: 15px;
+  width: 97%;
+  padding: 5px 0 7px 0;
+  min-width: 200px;
 }
 .sidebar-body__container {
   height: 100%;
@@ -60,7 +62,7 @@
   justify-content: flex-start;
   align-items: center;
   margin-top: 7px;
-  margin-left: 1em;
+  margin-left: 30px;
 }
 
 @media only screen and (max-width: 1224px) {
@@ -68,15 +70,6 @@
 
 @media only screen and (max-width: 950px) {
   .sidebar-header__container {
-    padding: 10px;
-    z-index: -1;
-    background-color: #bf8315;
-    box-shadow: 0 4px 4px -2px black;
-    border-style: double;
-    border-color: yellow;
-    border-radius: 15px;
-    width: 90%;
-    flex-direction: column;
   }
   .sidebar {
     margin: 0;

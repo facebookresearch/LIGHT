@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-import "../../styles.css";
 import { Tooltip } from "react-tippy";
 import CONFIG from "../../../../config.js";
 

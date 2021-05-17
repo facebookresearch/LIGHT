@@ -2,7 +2,6 @@
   /* justify-self: flex-end; */
   min-height: 100px;
   background-color: rgb(228, 226, 221);
-  margin: 0px 2px 0px;
   box-shadow: 0px 10px 10px rgba(109, 90, 48, 0.2);
   border-radius: 0px 0px 10px 10px;
   display: flex;
@@ -13,6 +12,8 @@
   border-style: ridge;
   border-color: lightgray;
   border-width: 10px 10px 10px 10px;
+  max-height: 20%;
+  padding: 3px;
 }
 
 .actions {
@@ -132,19 +133,7 @@ input:focus {
 
 @media only screen and (max-width: 600px) {
   .controls {
-    /* justify-self: flex-end; */
-    min-height: 100px;
-    background-color: rgb(228, 226, 221);
-    margin: 0px 2px 0px;
-    box-shadow: 0px 10px 10px rgba(109, 90, 48, 0.2);
-    border-radius: 0px 0px 10px 10px;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid rgb(184, 184, 184);
-    border-top: none;
-    overflow: hidden;
-    border-style: ridge;
-    border-color: lightgray;
-    border-width: 10px 10px 10px 10px;
   }
+}
+@media (orientation: landscape) {
 }
