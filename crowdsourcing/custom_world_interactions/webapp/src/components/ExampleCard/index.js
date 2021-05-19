@@ -1,5 +1,6 @@
 import React from "react";
 import "./styles.css"
+import { BsFillExclamationDiamondFill } from "react-icons/bs";
 
 const ExampleCard =  ({primary, secondary, narration, badReason})=>(
     <div className="card-container">
@@ -25,7 +26,7 @@ const ExampleCard =  ({primary, secondary, narration, badReason})=>(
         badReason ?
         <div className="card-row">
             <div className="card-item">
-                <p className="card-text" style={{color:"red"}}><span className="card-label"><i className="bi bi-exclamation-circle" /> WHAT'S WRONG? </span> {badReason}</p>
+                <p className="card-text" style={{color:"red"}}><span className="card-label"><BsFillExclamationDiamondFill color="red" /> WHAT'S WRONG? </span> {badReason}</p>
             </div>
         </div>
         :

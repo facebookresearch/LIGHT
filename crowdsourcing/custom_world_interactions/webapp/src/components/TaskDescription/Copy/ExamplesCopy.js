@@ -12,7 +12,7 @@ const GoodExamples = [
     {
         primary:"Rock",
         secondary:"Tree",
-        narration:"You throw the rock at the tree. It hits a branch, and a bird flies away."
+        narration:"You throw the rock at the tree. It hits a branch, and a stick falls to the ground."
     }
 ]
 

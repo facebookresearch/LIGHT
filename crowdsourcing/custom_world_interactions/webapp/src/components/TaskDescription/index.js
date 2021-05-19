@@ -10,31 +10,54 @@ const TaskDescription = ()=> {
   return (
     <>
       <div className="description-container">
-        <p>
-          We're trying to crowdsource interactions between two objects. These interactions will be set in a medieval fantasy scenario, and as such should not refer to real people, places, or modern day technologies. Ultimately, we'll want someone to be able to select two objects and be told the outcome of them using these objects together, in a second-person "choose your adventure" narrative style.
-        </p>
-        <p>
-          After that, write a simple <b>interaction</b> between these two objects
-          in the textbox.
-        </p>
-        <br />
-        <p>
-          For this, we define an interaction as something that can be done with two entities. Here we'll call them the "Primary" entity and the "Secondary" entity, and they have distinct characteristics.
-          Primary: Should be an object that a person can hold or physically move.
-          Secondary: Can be any entity that a person could use the primary object with. Can be held, but doesn't necessarily have to be. May be a living thing.
-        </p>
-        <br />
-        <p>
-          For example, let's say we have a fire torch as the primary object and a
-          wooden table as the secondary object.
-        </p>
-        <p>
-          In this case, a good action description would be:{" "}
-          <i>
-            "You light the table on fire with the torch. It ignites and burns to
-            the ground, leaving a pile of ash."
-          </i>
-        </p>
+        <div className="description-section">
+          <p className="description-section__label">
+            Overview:
+          </p>
+          <p className="description-section__text">
+            We're trying to crowdsource interactions between two objects. These interactions will be set in a <b>medieval fantasy scenario</b>, and as such should <b>not refer to real people, places, or modern day technologies.</b> Ultimately, we'll want someone to be able to select two objects and be told the outcome of them using these objects together, in a second-person <i>"choose your adventure"</i> narrative style.
+          </p>
+        </div>
+        <div className="description-section">
+          <p className="description-section__label">
+            Details:
+          </p>
+          <div className="description-subsection">
+            <p className="description-section__text">
+              For this, we define an <span style={{color:"green"}}><b>interaction</b></span> as something that can be done with two entities. Here we'll call them the <span style={{color:"gold"}} ><b> Primary </b></span> entity and the <span style={{color:"blue"}} ><b> Secondary </b></span> entity, and they have distinct characteristics.
+            </p>
+            <div className="description-section">
+              <p className="description-section__label">
+                <span style={{color:"gold"}} ><b>Primary: </b></span>
+              </p>
+              <p className="description-section__text">
+                Should be an object that a person can hold or physically move.
+              </p>
+            </div>
+            <div className="description-section">
+              <p className="description-section__label">
+                <span style={{color:"blue"}} ><b>Secondary: </b></span>
+              </p>
+              <p className="description-section__text">
+                Can be any entity that a person could use the primary object with, can be held (but doesn't necessarily have to be), and may be a living thing.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="description-section">
+          <p className="description-section__label">
+            <b>For example:</b>
+          </p>
+          <p className="description-section__text">
+            Let's say we have a  <b>fire torch </b> as the <span style={{color:"gold"}} ><b> primary object </b></span> and a
+            <b> wooden table</b> as the <span style={{color:"blue"}} ><b>  secondary object</b></span>.
+            In this case, a good action <span style={{color:"green"}}><b> description </b></span>  would be:{" "}
+            <span style={{color:"green"}}><i>
+              "You light the <span style={{color:"blue"}} ><b> table </b></span> on fire with <span style={{color:"gold"}} ><b>the torch </b></span>. It ignites and burns to
+              the ground, leaving a pile of ash."
+            </i></span>
+          </p>
+        </div>
       </div>
       <br />
       <div className="examples-container">

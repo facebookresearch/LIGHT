@@ -1,12 +1,33 @@
 /*TaskDescription*/
 .description-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
     flex-direction: column;
-    width: 60%;
+    width: 100%;
+}
+
+.description-section {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: flex-start;
+    padding-left: 5%;
+}
+.description-subsection {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: flex-start;
+}
+.description-section__label{
     font-size: 20px;
+    font-weight:bold;
+    margin-right: 3px;
+}
+
+.description-section__text{
+    font-size: 20px;
+    text-align: left;
+    width:80%;
 }
 
 .examples-container {
@@ -21,7 +42,7 @@
     margin-top: 10px;
     width:90%;
     display:flex;
-    justify-content: right;
+    justify-content: flex-end;
 }
 .note-text{
     width: 50%;
