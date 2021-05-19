@@ -9,7 +9,7 @@ const BadExampleList = ()=>{
         <div className="list-container" style={{borderColor:"red"}}>
             <div className="list-header" style={{backgroundColor:"red"}}>
                 <p className="list-header__text">
-                    Bad EXAMPLES
+                    BAD EXAMPLES
                 </p>
             </div>
             {

@@ -1,12 +1,12 @@
 .card-container {
     display: flex;
     flex-direction: column;
-    width: 60%;
-    border-width: 1em;
-    box-shadow: 4px 4px 8px black;
+    width: 90%;
+    border-width: 2px;
     margin: 10px 0 10px 0;
-    border-color: blue;
+    border-color: black;
     border-style: solid;
+    padding: 4px;
 }
 
 .card-row {
@@ -22,4 +22,5 @@
 
 .card-text {
     font-size: 1em;
+    text-align: center;
 }
