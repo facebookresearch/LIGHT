@@ -7,6 +7,8 @@
 var path = require("path");
 var webpack = require("webpack");
 
+const PORT = process.env.port || 3010;
+
 module.exports = {
   entry: "./src/main.js",
   output: {

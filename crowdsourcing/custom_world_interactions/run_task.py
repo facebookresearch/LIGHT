@@ -30,7 +30,7 @@ from dataclasses import dataclass, field
 from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-LIGHT_DB_PATH = "/checkpoint/light/data/database3.db"
+LIGHT_DB_PATH = "~/ParlAI/data/LIGHT/merged.db"
 PRIMARY_OBJECT_LIST_SIZE = 5
 SECONDARY_OBJECT_LIST_SIZE = 5
 DEFAULT_NUM_TASKS = 20
@@ -56,7 +56,6 @@ class TestScriptConfig(RunScriptConfig):
     primary_object_list_size: int = PRIMARY_OBJECT_LIST_SIZE
     secondary_object_list_size: int = SECONDARY_OBJECT_LIST_SIZE
     num_tasks: int = DEFAULT_NUM_TASKS
-
 
 
 def get_object_list(db_path):
