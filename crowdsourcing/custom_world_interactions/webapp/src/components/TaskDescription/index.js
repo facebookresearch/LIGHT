@@ -24,7 +24,7 @@ const TaskDescription = ()=> {
           </p>
           <div className="description-subsection">
             <p className="description-section__text">
-              For this, we define an <span style={{color:"green"}}><b>interaction</b></span> as something that can be done with two entities. Here we'll call them the <span style={{color:"gold"}} ><b> Primary </b></span> entity and the <span style={{color:"blue"}} ><b> Secondary </b></span> entity, and they have distinct characteristics.
+              For this, we define an <span style={{color:"green"}}><b>interaction</b></span> as something that can be done with two entities. Here we'll call them the <span style={{color:"gold"}} ><b> Primary </b></span> entity and the <span style={{color:"blue"}} ><b> Secondary </b></span> entity, and they have distinct characteristics.  Using the Primary and Secondary entities, you should then come up with an interaction that may occur if some actor where to try to use the two entities together. This interaction should be in second-person, as if you were narrating the outcome to that actor. The interaction should be directly between both entities, but a direct action of the actor, and should be appropriate for a medieval fantasy adventure. The interaction should only involve the actor, the two entities, and possibly something directly created by the two things interacting. Do not assume that other entities exist or use them in your narration.
             </p>
             <div className="description-section">
               <p className="description-section__label">
