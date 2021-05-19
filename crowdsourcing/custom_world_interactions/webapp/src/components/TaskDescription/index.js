@@ -1,18 +1,15 @@
 import React from "react";
 import "./styles.css";
 
+//CUSTOM COMPONENTS
+import ExampleCard from "../ExampleCard";
+
 const TaskDescription = ()=> {
   return (
-    <div>
-      <div className="title is-3">Objects Interactions Annotation Task</div>
+    <>
+      <div className="title is-3">Object Interaction Narrations</div>
       <p>
-        We're trying to crowdsource possible interactions between a set of
-        items. These interactions are set in a <b>medieval fantasy scenario</b>,
-        and as such should not refer to real people, places, or modern day
-        technologies. In this task you will be able to select two objects from a
-        randomized list: Primary Object and Secondary Object. If none of the
-        objects are compatible, please feel free to use the <i>Other</i> field
-        to do the task with a Secondary Object of your choice.
+        We're trying to crowdsource interactions between two objects. These interactions will be set in a medieval fantasy scenario, and as such should not refer to real people, places, or modern day technologies. Ultimately, we'll want someone to be able to select two objects and be told the outcome of them using these objects together, in a second-person "choose your adventure" narrative style.
       </p>
       <p>
         After that, write a simple <b>interaction</b> between these two objects
@@ -37,10 +34,33 @@ const TaskDescription = ()=> {
         </i>
       </p>
       <br />
-      <h2>
-        <b>Good Examples:</b>
-      </h2>
-      <br />
+      <div className="">
+        <div>
+          <h2>
+            <b>Good Examples:</b>
+          </h2>
+        </div>
+        <div>
+          <ExampleCard
+            primary="Rusty key"
+            secondary="Bucket"
+            narration="You scrape the key on the edge of the bucket. It sounds terrible,
+            and leaves a mark."
+          />
+          <ExampleCard
+            primary="Towel"
+            secondary="Rock"
+            narration="You rub the rock with the towel. The rock is now shiny, but the
+            towel could use a cleaning."
+          />
+          <ExampleCard
+            primary="Rock"
+            secondary="Tree"
+            narration="You throw the rock at the tree. It hits a branch, and a bird flies
+            away."
+          />
+        </div>
+      </div>
       <div>
         <ul>
           <li>
@@ -131,7 +151,7 @@ const TaskDescription = ()=> {
           </li>
         </ul>
       </div>
-    </div>
+    </>
   );
 }
 

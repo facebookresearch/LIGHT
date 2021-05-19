@@ -15,6 +15,9 @@ import { LoadingScreen } from "./components/core_components.jsx";
 import { useMephistoTask } from "mephisto-task";
 import { SubmitButton } from "./components/submit_button.jsx";
 
+/* ================= Container Components ================= */
+import Preview from "./Views/Preview";
+
 /* ================= Application Components ================= */
 
 function MainApp() {
@@ -44,13 +47,7 @@ function MainApp() {
 
   if (isPreview) {
     return (
-      <div>
-        <section className="hero is-medium is-link">
-          <div className="hero-body">
-            <TaskDescription />
-          </div>
-        </section>
-      </div>
+      <Preview/>
     );
   }
 
