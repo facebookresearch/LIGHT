@@ -20,7 +20,8 @@ const BadExamples =[
     {
         primary:"shirt",
         secondary:"bucket",
-        narration:"You put the shirt in the bucket and it transforms into a pair of pants.", badReason: "This interaction isn't very plausible.  Interactions don't need to be expected or mundane, but they should be a realistic occurrence."
+        narration:"You put the shirt in the bucket and it transforms into a pair of pants.",
+        badReason: "This interaction isn't very plausible.  Interactions don't need to be expected or mundane, but they should be a realistic occurrence."
     },
     {
         primary:"Ball",

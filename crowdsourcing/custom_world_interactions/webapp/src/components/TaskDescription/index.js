@@ -61,32 +61,6 @@ const TaskDescription = ()=> {
           />
         </div>
       </div>
-      <div>
-        <ul>
-          <li>
-            <b>Primary:</b> Rusty key. <b>Target:</b> Bucket. <b>Interaction</b>
-            :{" "}
-            <i>
-              You scrape the key on the edge of the bucket. It sounds terrible,
-              and leaves a mark.
-            </i>
-          </li>
-          <li>
-            <b>Primary:</b> Towel. <b>Target:</b> Rock. <b>Interaction</b>:{" "}
-            <i>
-              You rub the rock with the towel. The rock is now shiny, but the
-              towel could use a cleaning.
-            </i>
-          </li>
-          <li>
-            <b>Primary:</b> Rock. <b>Target:</b> Tree. <b>Interaction</b>:{" "}
-            <i>
-              You throw the rock at the tree. It hits a branch, and a bird flies
-              away.
-            </i>
-          </li>
-        </ul>
-      </div>
       <br />
       <p>
         Avoid submitting interactions which are physically impossible or

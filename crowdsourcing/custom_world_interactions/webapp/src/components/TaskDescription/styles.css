@@ -1,0 +1,20 @@
+/*TaskDescription*/
+
+/*ExampleList*/
+.list-container{
+    display:flex;
+    flex-direction: column;
+    border-style: solid;
+    border-width: 1em;
+    justify-content: center;
+}
+
+.list-header{
+    width: 100%;
+}
+
+.list-header__{
+    color:white;
+    font-weight: bold;
+    text-align: center;
+}
