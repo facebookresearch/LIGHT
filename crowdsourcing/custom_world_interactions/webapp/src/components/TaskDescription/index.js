@@ -52,11 +52,11 @@ const TaskDescription = ()=> {
             <b>For example:</b>
           </p>
           <p className="description-section__text">
-            Let's say we have a  <b>fire torch </b> as the <span style={{color:"gold"}} ><b> primary object </b></span> and a
+            Let's say we have a  <b>lit torch </b> as the <span style={{color:"gold"}} ><b> primary object </b></span> and a
             <b> wooden table</b> as the <span style={{color:"blue"}} ><b>  secondary object</b></span>.
             In this case, a good action <span style={{color:"green"}}><b> description </b></span>  would be:{" "}
             <span style={{color:"green"}}><i>
-              "You light the <span style={{color:"blue"}} ><b> table </b></span> on fire with <span style={{color:"gold"}} ><b>the torch </b></span>. It ignites and burns to
+              "You light the <span style={{color:"blue"}} ><b> table </b></span> on fire with <span style={{color:"gold"}} ><b>the lit torch </b></span>. It ignites and burns to
               the ground, leaving a pile of ash."
             </i></span>
           </p>
