@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 
+import { BiWindow } from "react-icons/bi";
+import { FaWindowMinimize } from "react-icons/fa";
 
 import "./styles.css";
 
 const CollapsibleBox = (props) => {
-  const { title, titleBg, containerBg, collapsedContent, children } = props;
+  const { title, titleBg, containerBg, collapsedContent } = props;
 
   const [isCollapsed, setIsCollapsed] = useState(false);
   const openHandler = () => setIsCollapsed(false);
@@ -23,9 +25,9 @@ const CollapsibleBox = (props) => {
         <h3 className="collapsible-header--text">{title}</h3>
         <div className="collapsible-header--icon">
           {isCollapsed ? (
-            <i className="bi bi-window" onClick={openHandler} />
+            <BiWindow color="black" onClick={openHandler} />
           ) : (
-            <i className="bi bi-dash" onClick={closeHandler} />
+            <FaWindowMinimize color="black" onClick={closeHandler} />
           )}
         </div>
       </div>
@@ -36,7 +38,7 @@ const CollapsibleBox = (props) => {
           className="collapsible-body"
           style={{ backgroundColor: containerBg }}
         >
-          {children}
+          {props.children}
         </div>
       )}
     </div>
