@@ -14,8 +14,10 @@
     "mephisto-task": "^1.0.14",
     "react": "16.13.1",
     "react-bootstrap": "^1.5.0",
+    "react-bootstrap-icons": "^1.5.0",
     "react-dom": "16.13.1",
-    "react-dropdown": "^1.9.2"
+    "react-dropdown": "^1.9.2",
+    "react-icons": "^4.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",
