@@ -20,3 +20,63 @@
     text-align: center;
     font-size: 4em;
 }
+
+.task-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.object-selectors{
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-header {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: underline;
+    color: blue;
+    text-shadow: 5px 5px 10px black;
+    margin-bottom: 10px;
+}
+
+.form-instructions {
+
+}
+
+.description-form{
+    width:75%;
+    font-size: 16px;
+    border-width: 5px;
+    border-color: silver;
+    border-style: ridge;
+    border-radius: 5px;
+    padding:3px;
+}
+
+.submit-button {
+    color: white;
+    background-color: green;
+    font-weight: bold;
+    text-align: center;
+    padding:1em;
+    border-radius: 15px;
+    border-style: double;
+    border-width: 4px;
+    box-shadow: 3px 3px 6px black;
+    font-size: 16px;
+    width:10em;
+    margin-top: 10px;
+}

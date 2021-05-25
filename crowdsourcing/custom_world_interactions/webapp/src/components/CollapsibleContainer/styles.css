@@ -12,6 +12,14 @@
     border-top-left-radius: 25px;
     border-top-right-radius: 25px;
     padding-right: 10px;
+    background-color: blue;
+  }
+
+  .collapsible-header--icon {
+    font-size: 2em;
+    display:flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .collapsible-header--text {
@@ -19,6 +27,9 @@
     margin-top: 2px;
     text-align: center;
     margin-left: 2em;
+    font-weight: bold;
+    color:white;
+    padding: 15px;
   }
 
 
