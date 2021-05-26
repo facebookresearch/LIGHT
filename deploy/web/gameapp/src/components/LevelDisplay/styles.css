@@ -6,11 +6,12 @@
   padding-top: 12px;
 }
 .level-container {
-  width: 2.5em;
-  height: 2.5em;
+  display: flex;
+  width: 2.7em;
+  height: 2.7em;
   background-color: yellow;
   display: flex;
-  border-radius: 1.25em;
+  border-radius: 1.35em;
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -19,11 +20,12 @@
 .level-number {
   color: grey;
   margin: 0;
+  font-size: 14px;
+  padding: 0;
 }
 
 @media only screen and (max-width: 900px) {
   .level-number {
-    font-size: 16px;
   }
 }
 
