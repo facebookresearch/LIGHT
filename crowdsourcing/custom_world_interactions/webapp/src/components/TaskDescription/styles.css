@@ -39,6 +39,12 @@
     justify-content: space-around;
     flex-wrap: wrap;
 }
+
+.example-img {
+    width: 80%;
+    margin-right:5%;
+}
+
 .note-container {
     margin-top: 10px;
     width:90%;
@@ -70,4 +76,11 @@
     color:white;
     font-weight: bold;
     text-align: center;
+}
+
+.description-row {
+    width:100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

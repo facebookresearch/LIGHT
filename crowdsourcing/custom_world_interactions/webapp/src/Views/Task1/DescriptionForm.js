@@ -20,7 +20,7 @@ const DescriptionForm = ({formVal, formFunction})=>{
                 className="description-form"
                 onChange={changeHandler}
                 value={formVal}
-                rows="5"
+                rows="7"
                 type="text"
                 placeholder="Describe the interaction between these two objects (Remember to commit to the medieval fantasy setting) - Start with 'You...'"
             />

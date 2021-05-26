@@ -4,6 +4,7 @@ import "./styles.css";
 import Toast from 'react-bootstrap/Toast';
 import ToastHeader from 'react-bootstrap/ToastHeader';
 import ToastBody from 'react-bootstrap/ToastBody';
+import { BsExclamationOctagonFill, BsCheck, BsX } from "react-icons/bs";
 //CUSTOM COMPONENTS
 import CollapsibleContainer from "../../components/CollapsibleContainer";
 import TaskDescription from "../../components/TaskDescription";
@@ -27,7 +28,7 @@ const Task1 = ({
   const [secondaryObjectList, setSecondaryObjectList] = useState([]);
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [errorMessage, setErrorMessage]
+  const [errorMessage, setErrorMessage] = useState([])
 
   const toggleShowSuccess = () => setShowSuccess(!showSuccess);
   const toggleShowError = () => setShowError(!showError);
@@ -47,11 +48,6 @@ const Task1 = ({
     setSecondaryObject(selection)
   }
 
-  const descHandler = (selection)=>{
-    setOtherActive={selection}
-
-  }
-
   const otherHandler = (selection)=>{
     setOtherActive={selection}
 
@@ -67,8 +63,9 @@ const Task1 = ({
     clearHandler()
     }else{
       let {primaryObject, secondaryObject} = payload;
-      let ErrorMessage = `${primaryObject ? "": "Must select a primary object"} ${secondaryObject ? "": "Must select a secondary Object"} ${actionDescription ? "": "Action description cannot be blank"}`
-      setError(ErrorMessage)
+      let ErrorMessage = `${primaryObject ? "": "Must select a primary object"}${secondaryObject ? "": ",Must select a secondary Object"}${actionDescription ? "": ",Action description cannot be blank"}`.split(",")
+      console.log(ErrorMessage)
+      setErrorMessage(ErrorMessage)
       setShowError(true)
     }
   }
@@ -79,21 +76,33 @@ const Task1 = ({
         <h1 className="header__text">Object Interaction Narrations</h1>
       </div>
       <>
-        <Toast show={showError} onClose={toggleShowError}>
-          <Toast.Header style={{backgroundColor:"red", color:"white"}}>
-            <img src="holder.js/20x20?text=%20" className="rounded mr-2" alt="" />
-            <strong className="mr-auto">Bootstrap</strong>
-            <small>just now</small>
+        <Toast show={showError} onClose={toggleShowError} style={{backgroundColor:"red"}} delay={3000} autohide >
+          <Toast.Header closeButton={false} style={{backgroundColor:"red", color:"white",textDecoration:"underline", textDecorationColor:"white", display:"flex", justifyContent:"space-between", alignItems:"center", paddingLeft:'2em'}}>
+            <span style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+              <BsExclamationOctagonFill color="white" style={{fontSize:"18px"}}/>
+              <strong className="mr-auto" style={{color:"white", fontWeight:"bold", marginLeft:"5px"}}>ERROR</strong>
+            </span>
+            <BsX color="white" onClick={toggleShowError} style={{fontSize:"18px"}} />
           </Toast.Header>
-          <Toast.Body>See? Just like this.</Toast.Body>
+          <Toast.Body style={{fontSize:"18px", color:"white", paddingLeft:'4em'}}>
+            <ul>
+              {
+              errorMessage.map((err, id)=>{
+                if(err.length){
+                  return <li key={id}>{err}</li>
+                  }
+                })
+              }
+            </ul>
+            </Toast.Body>
         </Toast>
-        <Toast show={showSuccess} onClose={toggleShowSuccess} >
-          <Toast.Header>
-            <img src="holder.js/20x20?text=%20" className="rounded mr-2" alt="" />
-            <strong className="mr-auto">Bootstrap</strong>
-            <small>2 seconds ago</small>
+        <Toast show={showSuccess} onClose={toggleShowSuccess} delay={3000} autohide >
+          <Toast.Header closeButton={false} style={{backgroundColor:"green", color:"white"}}>
+            <BsCheck color="white" style={{fontSize:"18px"}}/>
+            <strong className="mr-auto">SUCCESS</strong>
+            <BsX color="white" oncClick={toggleShowSuccess} style={{fontSize:"18px"}}/>
           </Toast.Header>
-          <Toast.Body>Heads up, toasts will stack automatically</Toast.Body>
+          <Toast.Body>You have successfully completed task</Toast.Body>
         </Toast>
       </>
       <div className="task-container">
@@ -105,19 +114,29 @@ const Task1 = ({
         {
           (primaryObjectList.length && secondaryObjectList.length) ?
           <div className="object-selectors">
-            <ObjectSelector label="Primary Object" items={primaryObjectList} selectFunction={primaryHandler} />
-            <ObjectSelector label="Secondary Object" items={secondaryObjectList} selectFunction={secondaryHandler} />
+            <ObjectSelector label="Primary Object" items={[...primaryObjectList]} selectFunction={primaryHandler} />
+            <ObjectSelector label="Secondary Object" items={[...secondaryObjectList]} selectFunction={secondaryHandler} />
           </div>
           :
           <div/>
         }
         <DescriptionForm formVal={actionDescription} formFunction={setActionDescription} />
-        <div
-          disabled={!active}
-          className="submit-button"
-          onClick={submitHandler}>
-          SUBMIT
-        </div>
+        {
+          active
+          ?
+          <div
+            className="submit-button"
+            onClick={submitHandler}>
+              SUBMIT
+          </div>
+          :
+          <div
+            disabled
+            className="submit-button"
+            onClick={submitHandler}>
+              SUBMIT
+          </div>
+        }
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import React from "react";
 import "./styles.css";
 
+import TaskExample1 from "../../assets/images/TaskExample1.png"
 //CUSTOM COMPONENTS
 import GoodExampleList from "./GoodExampleList";
 import BadExampleList from "./BadExampleList";
@@ -61,6 +62,9 @@ const TaskDescription = ()=> {
             </i></span>
           </p>
         </div>
+      </div>
+      <div className="description-row">
+        <img src={TaskExample1} className="example-img" />
       </div>
       <br />
       <div className="examples-container">

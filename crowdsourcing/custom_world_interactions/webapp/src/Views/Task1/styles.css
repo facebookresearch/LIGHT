@@ -1,3 +1,18 @@
+ul{
+    list-style: none;
+}
+
+ul li::before {
+    content: "\2022";
+    color: white;
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+  }
+
+
+
 .app-container {
     height: 100%;
     width: 100%;
@@ -48,7 +63,6 @@
     text-align: center;
     text-decoration: underline;
     color: blue;
-    text-shadow: 5px 5px 10px black;
     margin-bottom: 10px;
 }
 
@@ -57,7 +71,7 @@
 }
 
 .description-form{
-    width:75%;
+    width:40%;
     font-size: 16px;
     border-width: 5px;
     border-color: silver;
@@ -79,4 +93,12 @@
     font-size: 16px;
     width:10em;
     margin-top: 10px;
+}
+
+.submit-button:hover {
+    font-size: 18px;
+}
+
+.submit-button:active {
+    box-shadow: 0px 0px 0px black;
 }
