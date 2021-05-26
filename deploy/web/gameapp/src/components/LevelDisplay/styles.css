@@ -21,22 +21,14 @@
   margin: 0;
 }
 
-@media only screen and (max-width: 600px) {
-  .levelDisplay-container {
-  }
-  .level-container {
-    width: 2.5em;
-    height: 2.5em;
-    background-color: yellow;
-    display: flex;
-    border-radius: 1.25em;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    margin-right: 0.3rem;
-  }
+@media only screen and (max-width: 900px) {
   .level-number {
-    color: grey;
-    margin: 0;
+    font-size: 16px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .level-number {
+    font-size: 12px;
   }
 }
