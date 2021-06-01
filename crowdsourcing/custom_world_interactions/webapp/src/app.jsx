@@ -6,21 +6,27 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-import React from "react";
+
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { ObjectSelector } from "./components/object_selector.jsx";
-import { InteractionDescription } from "./components/interaction_description.jsx";
-import { TaskDescription } from "./components/task_description.jsx";
-import { LoadingScreen } from "./components/core_components.jsx";
-import { useMephistoTask } from "mephisto-task";
-import { SubmitButton } from "./components/submit_button.jsx";
+
+
+import {LoadingScreen } from "./components/core_components.jsx";
+import { useMephistoTask, ErrorBoundary } from "mephisto-task";
 
 /* ================= Container Components ================= */
 import Preview from "./Views/Preview";
+import Task1 from "./Views/Task1";
 
 /* ================= Application Components ================= */
 
 function MainApp() {
+
+  const [primaryObject, setPrimaryObject] = React.useState("");
+  const [secondaryObject, setSecondaryObject] = React.useState("");
+  const [actionDescription, setActionDescription] = React.useState("");
+  const [otherActive, setOtherActive] = React.useState(false);
+
   const {
     blockedReason,
     blockedExplanation,
@@ -28,12 +34,10 @@ function MainApp() {
     isLoading,
     initialTaskData,
     handleSubmit,
+    handleFatalError,
+    isOnboarding,
+    loaded
   } = useMephistoTask();
-
-  const [primaryObject, onChangePrimaryObject] = React.useState("");
-  const [secondaryObject, onChangeSecondaryObject] = React.useState("");
-  const [actionDescription, onChangeActionDescription] = React.useState("");
-  const [otherActive, onChangeOtherActive] = React.useState(false);
 
   if (blockedReason !== null) {
     return (
@@ -44,66 +48,73 @@ function MainApp() {
       </section>
     );
   }
-
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
   if (isPreview) {
     return (
       <Preview/>
     );
   }
 
-  // Check if initial task data returns null
-  if (isLoading || initialTaskData == null) {
-    return <LoadingScreen />;
-  }
-
-  const primaryObjectList = initialTaskData["primary_object_list"];
-  const secondaryObjectList = initialTaskData["secondary_object_list"];
-
-  const state = {
+  const payload = {
     primaryObject: primaryObject,
     secondaryObject: secondaryObject,
     actionDescription: actionDescription,
   };
 
   const active =
-    state.actionDescription.length > 0 &&
-    state.secondaryObject.length > 0 &&
-    state.primaryObject.length > 0;
+    payload.actionDescription.length > 0 &&
+    payload.secondaryObject.length > 0 &&
+    payload.primaryObject.length > 0;
 
   return (
-    <div>
-      <section className="hero is-medium is-link">
-        <div className="hero-body">
-          <TaskDescription />
-          <br />
-          <br />
-          <ObjectSelector
-            primaryObjectList={primaryObjectList}
-            secondaryObjectList={secondaryObjectList}
-            onChangeCurrentPrimaryObject={onChangePrimaryObject}
-            onChangeCurrentSecondaryObject={onChangeSecondaryObject}
-            otherActive={otherActive}
-            onChangeOtherActive={onChangeOtherActive}
-          />
-          <br />
-          <br />
-          <p>
-            You are narrating the <b>interaction</b> of a character in a
-            medieval fantasy adventure <b>trying to</b>{" "}
-            <i>
-              "use {state.primaryObject} with {state.secondaryObject}".
-            </i>
-          </p>
-          <InteractionDescription
-            description={state.actionDescription}
-            onChangeDescription={onChangeActionDescription}
-          />
-          <br />
-          <SubmitButton active={active} state={state} onSubmit={handleSubmit} />
-        </div>
-      </section>
-    </div>
-  );
+    <>
+      <ErrorBoundary handleError={handleFatalError}>
+        <Task1
+          actionDescription={actionDescription}
+          taskData={initialTaskData}
+          setPrimaryObject={setPrimaryObject}
+          setSecondaryObject={setSecondaryObject}
+          setActionDescription={setActionDescription}
+          setOtherActive={setOtherActive}
+          onSubmit={handleSubmit}
+          isOnboarding={isOnboarding}
+          onError={handleFatalError}
+          payload={payload}
+          active={active}
+        />
+      </ErrorBoundary>
+    </>
+  )
 }
 
 ReactDOM.render(<MainApp />, document.getElementById("app"));
+
+
+
+
+
+// import React, { useEffect, useState } from "react";
+// import ReactDOM from "react-dom";
+// import ViewRouter from "./ViewRouter"
+
+// import { useMephistoTask } from "mephisto-task";
+
+// const MainApp = ()=>{
+//   const appData = useMephistoTask();
+
+//   return(
+//       <div>
+//       {
+//         appData ?
+//         <ViewRouter appData={appData} />
+//         :
+//         <div/>
+//       }
+//     </div>
+//   )
+
+// }
+
+// ReactDOM.render(<MainApp />, document.getElementById("app"));
