@@ -33,6 +33,9 @@ from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 INPUT_FILE_TASK = "objects-interaction-task-11"
+LIGHT_DB_PATH = "~/ParlAI/data/LIGHT/merged.db"
+PRIMARY_OBJECT_LIST_SIZE = 5
+SECONDARY_OBJECT_LIST_SIZE = 5
 DEFAULT_NUM_TASKS = 20
 
 db = LocalMephistoDB()
@@ -54,6 +57,39 @@ class TestScriptConfig(RunScriptConfig):
     task_dir: str = TASK_DIRECTORY
     input_file_task: str = INPUT_FILE_TASK
     num_tasks: int = DEFAULT_NUM_TASKS
+
+
+def get_object_list(db_path):
+    db = LIGHTDatabase(db_path)
+    with db as ldb:
+        object_list = [dict(obj)["name"] for obj in ldb.get_object()]
+
+    return object_list
+
+
+def create_task_data(
+    object_list, primary_object_list_size, secondary_object_list_size, num_tasks
+):
+    random.shuffle(object_list)
+    task_data_array = []
+
+    for idx in range(num_tasks):
+        obj_name = object_list[idx % len(object_list)]
+
+        random_object_list = random.sample(
+            object_list, primary_object_list_size + secondary_object_list_size
+        )
+        primary_object_list = random_object_list[:primary_object_list_size]
+        secondary_object_list = random_object_list[primary_object_list_size:]
+
+        task_data_array.append(
+            {
+                "primary_object_list": primary_object_list,
+                "secondary_object_list": secondary_object_list,
+            }
+        )
+
+    return task_data_array
 
 
 register_script_config(name="scriptconfig", module=TestScriptConfig)
