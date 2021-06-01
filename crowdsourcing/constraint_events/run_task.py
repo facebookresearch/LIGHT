@@ -86,17 +86,17 @@ def build_task(task_dir):
 
 
 def create_task_data(input_file_task, num_tasks):
-    units = mephisto_data_browser.get_units_for_task_name(input_file_task)
-    random.shuffle(units)
-    data = []
-    for unit in units:
-        data.append(
-            mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
-                "final_data"
-            ]
-        )
+    # units = mephisto_data_browser.get_units_for_task_name(input_file_task)
+    # random.shuffle(units)
+    # data = []
+    # for unit in units:
+    #    data.append(
+    #        mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
+    #            "final_data"
+    #        ]
+    #    )
 
-    return data[:num_tasks]
+    return [{}]  # data[:num_tasks]
 
 
 def validate_unit(unit):
