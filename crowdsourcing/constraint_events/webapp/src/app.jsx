@@ -8,11 +8,13 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-import { ObjectSelector } from "./components/object_selector.jsx";
-import { InteractionDescription } from "./components/interaction_description.jsx";
 import { TaskDescription } from "./components/task_description.jsx";
+import { ActionDescription } from "./components/action_description.jsx";
+import { ConstraintBlock } from "./components/constraint_element.jsx";
+import { EventsBlock } from "./components/event_elements.jsx";
 import { LoadingScreen } from "./components/core_components.jsx";
 import { useMephistoTask } from "mephisto-task";
+import { TimesComponent } from "./components/times_component.jsx";
 import { SubmitButton } from "./components/submit_button.jsx";
 
 /* ================= Application Components ================= */
@@ -27,10 +29,7 @@ function MainApp() {
     handleSubmit,
   } = useMephistoTask();
 
-  const [primaryObject, onChangePrimaryObject] = React.useState("");
-  const [secondaryObject, onChangeSecondaryObject] = React.useState("");
-  const [actionDescription, onChangeActionDescription] = React.useState("");
-  const [otherActive, onChangeOtherActive] = React.useState(false);
+  const [timesRemaining, setTimesRemaining] = React.useState("");
 
   if (blockedReason !== null) {
     return (
@@ -59,19 +58,40 @@ function MainApp() {
     return <LoadingScreen />;
   }
 
-  const primaryObjectList = initialTaskData["primary_object_list"];
-  const secondaryObjectList = initialTaskData["secondary_object_list"];
+  // const state = initialTaskData;
+  const mephistoData = initialTaskData;
+
+  const active = true;
 
   const state = {
-    primaryObject: primaryObject,
-    secondaryObject: secondaryObject,
-    actionDescription: actionDescription,
-  };
+    'constraints': [],
+    'events': [],
+    'times_remaining': timesRemaining
+  }
 
-  const active =
-    state.actionDescription.length > 0 &&
-    state.secondaryObject.length > 0 &&
-    state.primaryObject.length > 0;
+  for (let i = 0; i < state['constraints'].length; i++) {
+    constraint = state['constraints'][i];
+
+    if(constraint['active'] == "" || (constraint['active'] == 1 && constraint['format'] == None)) {
+      active = false;
+      break;
+    } else {
+      console.log('This constraint is fine: ', constraint);
+    }
+  }
+
+  for (let i = 0; i < state['events'].length; i++) {
+    useEvent = state['events'][i];
+
+    if(useEvent['active'] == "" || (useEvent['active'] == 1 && useEvent['format'] == None)) {
+      active = false;
+      break;
+    } else {
+      console.log('This constraint is fine: ', constraint);
+    }
+  }
+
+  console.log('active? ', active);
 
   return (
     <div>
@@ -80,29 +100,15 @@ function MainApp() {
           <TaskDescription />
           <br />
           <br />
-          <ObjectSelector
-            primaryObjectList={primaryObjectList}
-            secondaryObjectList={secondaryObjectList}
-            onChangeCurrentPrimaryObject={onChangePrimaryObject}
-            onChangeCurrentSecondaryObject={onChangeSecondaryObject}
-            otherActive={otherActive}
-            onChangeOtherActive={onChangeOtherActive}
-          />
+          <ActionDescription state={mephistoData} />
           <br />
+          <ConstraintBlock state={mephistoData} constraintArray={state['constraints']} />
           <br />
-          <p>
-            You are narrating the <b>interaction</b> of a character in a
-            medieval fantasy adventure <b>trying to</b>{" "}
-            <i>
-              "use {state.primaryObject} with {state.secondaryObject}".
-            </i>
-          </p>
-          <InteractionDescription
-            description={state.actionDescription}
-            onChangeDescription={onChangeActionDescription}
-          />
+          <EventsBlock state={mephistoData} eventArray={state['events']} />
           <br />
-          <SubmitButton active={active} state={state} onSubmit={handleSubmit} />
+          <TimesComponent setTimesRemaining={setTimesRemaining} />
+          <br />
+          <SubmitButton active={active} state={state} onSubmit={handleSubmit}/>
         </div>
       </section>
     </div>
