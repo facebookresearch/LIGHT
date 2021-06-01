@@ -1,12 +1,30 @@
-import React, { useEffect } from "react";
+import React, {useEffect, useRef} from "react";
 
 
-const FormQuestion = ({  }) => {
-    return (
-      <div>
-        FormQuestion
-      </div>
-    );
+
+const FormQuestion = ({question, placeholder, formVal, formFunction})=>{
+    const changeHandler = e=>{
+        e.preventDefault()
+        formFunction(e.target.value)
+
+    }
+    return(
+        <div className="form-container" >
+            <h1 className="form-header">
+                {question}
+            </h1>
+        <p >
+
+        </p>
+            <textarea
+                className="answer-form"
+                onChange={changeHandler}
+                value={formVal}
+                rows="7"
+                type="text"
+                placeholder={placeholder}
+            />
+        </div>
+    )
 }
-
-export default FormQuestion ;
+export default FormQuestion;

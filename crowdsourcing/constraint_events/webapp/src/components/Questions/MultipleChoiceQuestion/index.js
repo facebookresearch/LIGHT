@@ -5,8 +5,8 @@ import "./styles.css";
 import ObjectButton from "./ObjectButton";
 
 const MultipleChoiceQuestion = ({question, answers})=>{
-    const [selectedItem, setSelectedItem] = useState(null);
-    const [objectList, setObjectList] = useState([])
+    const [selectedAnswer, setSelectedAnswer] = useState(null);
+    const [answerList, setAnswerList] = useState([])
 
     const clickHandler = (id, selection)=>{
         setSelectedItem(id);
@@ -16,15 +16,15 @@ const MultipleChoiceQuestion = ({question, answers})=>{
         setObjectList(items)
     }, [items])
     return(
-        <div className="selector-container" >
-            <h1 className="selector-header">
-                {label}
+        <div className="question-container" >
+            <h1 className="question-text">
+                {question}
             </h1>
-            <div className="options-container">
+            <div className="answer-container">
             {
-                [objectList].length
+                [answerList].length
                 ?
-                objectList.map((item, index)=><ObjectButton key={index} name={item} selectFunction={()=>clickHandler(index, item)} isSelected={selectedItem==index} />)
+                answerList.map((answer, index)=><ObjectButton key={index} name={item} selectFunction={()=>clickHandler(index, item)} isSelected={selectedItem==index} />)
                 :
                 null
             }
