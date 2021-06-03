@@ -14,8 +14,8 @@ const TaskButton = ({
 })=>{
 
     return(
-        <div className={isSelected ? unselectedContainer : selectedContainer} onClick={selectFunction}>
-            <p className={isSelected ? unselectedText : selectedText}>
+        <div className={isSelected ?  selectedContainer : unselectedContainer} onClick={selectFunction}>
+            <p className={isSelected ? selectedText : unselectedText}>
                 {name.toUpperCase()}
             </p>
         </div>

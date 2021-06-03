@@ -9,9 +9,7 @@
     font-size: 20px;
     font-weight: bold;
     text-align: center;
-    text-decoration: underline;
-    color: blue;
-    margin-bottom: 10px;
+    margin-bottom: 4px;
 }
 
 .form-instructions {
@@ -19,7 +17,6 @@
 }
 
 .answer-form{
-    width:40%;
     font-size: 16px;
     border-width: 5px;
     border-color: silver;

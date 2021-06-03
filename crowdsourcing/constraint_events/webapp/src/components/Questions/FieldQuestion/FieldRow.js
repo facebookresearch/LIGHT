@@ -9,7 +9,7 @@ const FieldRow = ({field})=>{
 
     }
     return(
-        <div className="form-container" >
+        <div className="row-container" >
             <div className="field-container">
                 <p className="field-text">
                     {field}

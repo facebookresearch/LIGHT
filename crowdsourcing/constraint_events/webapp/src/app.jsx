@@ -18,6 +18,7 @@ import { useMephistoTask } from "mephisto-task";
 // import { TimesComponent } from "./components/times_component.jsx";
 // import { SubmitButton } from "./components/submit_button.jsx";
 
+import "./styles.css"
 /* ================= Application Components ================= */
 
 function MainApp() {
@@ -97,24 +98,26 @@ function MainApp() {
   return (
     <div>
       <Task />
-      {/* <section className="hero is-medium is-link">
-        <div className="hero-body">
-          <TaskDescription />
-          <br />
-          <br />
-          <ActionDescription state={mephistoData} />
-          <br />
-          <ConstraintBlock state={mephistoData} constraintArray={state['constraints']} />
-          <br />
-          <EventsBlock state={mephistoData} eventArray={state['events']} />
-          <br />
-          <TimesComponent setTimesRemaining={setTimesRemaining} />
-          <br />
-          <SubmitButton active={active} state={state} onSubmit={handleSubmit}/>
-        </div>
-      </section> */}
     </div>
   );
 }
 
 ReactDOM.render(<MainApp />, document.getElementById("app"));
+
+
+/* <section className="hero is-medium is-link">
+  <div className="hero-body">
+    <TaskDescription />
+    <br />
+    <br />
+    <ActionDescription state={mephistoData} />
+    <br />
+    <ConstraintBlock state={mephistoData} constraintArray={state['constraints']} />
+    <br />
+    <EventsBlock state={mephistoData} eventArray={state['events']} />
+    <br />
+    <TimesComponent setTimesRemaining={setTimesRemaining} />
+    <br />
+    <SubmitButton active={active} state={state} onSubmit={handleSubmit}/>
+  </div>
+</section> */

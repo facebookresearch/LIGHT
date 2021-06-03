@@ -8,13 +8,15 @@ import FieldRow from "./FieldRow";
 const FieldQuestion = ({question, fields})=>{
     const answerRef = useRef();
     return(
-        <div className="form-container" >
-            <p className="form-header">{question}</p>
-            {
-                fields ?
-                fields.map((field, index)=><FieldRow key={index} field={field} />)
-                :null
-            }
+        <div className="question-container" >
+            <p className="question-header">{question}</p>
+            <div className="fieldlist-container">
+                {
+                    fields ?
+                    fields.map((field, index)=><FieldRow key={index} field={field.toUpperCase()} />)
+                    :null
+                }
+            </div>
         </div>
     )
 }

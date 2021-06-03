@@ -20,8 +20,25 @@ const BooleanQuestion = ({question, trueAnswer, falseAnswer, children})=>{
                 {question}
             </h1>
             <div className="answer-container">
-                <TaskButton name={trueAnswer.name} isSelected={answer} onClick={trueHandler}/>
-                <TaskButton name={falseAnswer.name} isSelected={answer===false} onClick={falseHandler} />
+                <TaskButton
+                    name={trueAnswer.name}
+                    isSelected={answer}
+                    selectFunction={trueHandler}
+                    unselectedContainer="b-button__container true"
+                    selectedContainer="b-selectedbutton__container true"
+                    unselectedText="b-button__text true"
+                    selectedText=" b-selectedbutton__text"
+
+                    />
+                <TaskButton name={falseAnswer.name}
+                    isSelected={answer===false}
+                    selectFunction={falseHandler}
+                    unselectedContainer="b-button__container false"
+                    selectedContainer="b-selectedbutton__container false"
+                    unselectedText="b-button__text false"
+                    selectedText=" b-selectedbutton__text"
+
+                    />
             </div>
             {
                 answer && children ?

@@ -20,8 +20,8 @@ const Questions = () => {
             />
             <BooleanQuestion
                 question={QuestionList[2]}
-                trueAnswer="YES"
-                falseAnswer="NO"
+                trueAnswer={{name:"YES"} }
+                falseAnswer={{name:"NO"} }
             >
                 <FieldQuestion
                     question={QuestionList[3]}
@@ -31,10 +31,10 @@ const Questions = () => {
             </BooleanQuestion>
             <BooleanQuestion
                 question={QuestionList[4]}
-                trueAnswer="YES"
-                falseAnswer="NO"
+                trueAnswer={{name:"YES"} }
+                falseAnswer={{name:"NO"} }
             >
-                <div >
+                <div style={{display:"flex", flexDirection:"row"}}>
                     <FormQuestion
                         question="OBJECT 1"
                         placeholder ="Description"

@@ -6,9 +6,9 @@ import Header from "../../components/Header";
 import Constraints from "./Constraints"
 import Events from "./Events"
 
-const Task = ({  }) => {
+const Task = () => {
     return (
-      <div>
+      <div className="view-container">
         <Header/>
         <div className="task-container">
             <Events/>

@@ -1,0 +1,18 @@
+.question-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.question-text {
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.answer-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}

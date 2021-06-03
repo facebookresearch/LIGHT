@@ -1,5 +1,6 @@
 import React, {useEffect, useRef} from "react";
 
+import "./styles.css"
 
 
 const FormQuestion = ({question, placeholder, formVal, formFunction})=>{

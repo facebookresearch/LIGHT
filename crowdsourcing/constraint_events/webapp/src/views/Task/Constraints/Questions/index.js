@@ -16,19 +16,19 @@ const Questions = () => {
             <AttributeSetter />
             <BooleanQuestion
                 question={QuestionList[2]}
-                trueAnswer="YES"
-                falseAnswer="NO"
+                trueAnswer={{name:"YES"} }
+                falseAnswer={{name:"NO"} }
             />
             <BooleanQuestion
                 question={QuestionList[3]}
-                trueAnswer="YES"
-                falseAnswer="NO"
+                trueAnswer={{name:"YES"} }
+                falseAnswer={{name:"NO"} }
             />
 
             <BooleanQuestion
                 question={QuestionList[4]}
-                trueAnswer="YES"
-                falseAnswer="NO"
+                trueAnswer={{name:"YES"} }
+                falseAnswer={{name:"NO"} }
             >
             </BooleanQuestion>
             <AttributeSetter />
