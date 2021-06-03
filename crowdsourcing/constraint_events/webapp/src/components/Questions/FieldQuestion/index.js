@@ -18,4 +18,4 @@ const FieldQuestion = ({question, fields})=>{
         </div>
     )
 }
-export default FormQuestion;
+export default FieldQuestion;
