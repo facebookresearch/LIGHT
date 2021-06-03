@@ -8,11 +8,12 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
+import Task from "./views/Task";
 import { TaskDescription } from "./components/task_description.jsx";
 // import { ActionDescription } from "./components/action_description.jsx";
 // import { ConstraintBlock } from "./components/constraint_element.jsx";
 // import { EventsBlock } from "./components/event_elements.jsx";
-// import { LoadingScreen } from "./components/core_components.jsx";
+import LoadingScreen from "./components/LoadingScreen"
 import { useMephistoTask } from "mephisto-task";
 // import { TimesComponent } from "./components/times_component.jsx";
 // import { SubmitButton } from "./components/submit_button.jsx";
@@ -95,7 +96,8 @@ function MainApp() {
 
   return (
     <div>
-      <section className="hero is-medium is-link">
+      <Task />
+      {/* <section className="hero is-medium is-link">
         <div className="hero-body">
           <TaskDescription />
           <br />
@@ -110,7 +112,7 @@ function MainApp() {
           <br />
           <SubmitButton active={active} state={state} onSubmit={handleSubmit}/>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }

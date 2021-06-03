@@ -1,11 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 
+import "./styles.css"
 
-const Header = ({  }) => {
+const Header = () => {
     return (
-      <div>
-        Header
-      </div>
+        <div className="header">
+            <h1 className="header__text">Interaction Constraints</h1>
+        </div>
     );
 }
 

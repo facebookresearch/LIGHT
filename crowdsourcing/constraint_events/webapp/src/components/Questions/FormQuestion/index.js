@@ -5,7 +5,7 @@ import React, {useEffect, useRef} from "react";
 const FormQuestion = ({question, placeholder, formVal, formFunction})=>{
     const changeHandler = e=>{
         e.preventDefault()
-        formFunction(e.target.value)
+        //formFunction(e.target.value)
 
     }
     return(

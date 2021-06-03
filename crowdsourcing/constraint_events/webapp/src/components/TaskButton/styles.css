@@ -1,0 +1,40 @@
+/* BUTTON */
+.button-container {
+    background-color: blue;
+    border-color:white;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 5px 2px 5px black;
+    margin: 10px;
+}
+.button-text{
+    color: white;
+    font-size: 16px;
+    padding:6px;
+    font-weight: bold;
+}
+
+.selectedbutton-container {
+    background-color: white;
+    border-color:blue;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 5px 2px 5px black;
+    margin: 10px;
+}
+
+.selectedbutton-text {
+    color: blue;
+    font-size: 16px;
+    padding:6px;
+    font-weight: bold;
+}
+
+.button-container:hover {
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+.button-container:active {
+box-shadow: 0em 0em 0em;
+}

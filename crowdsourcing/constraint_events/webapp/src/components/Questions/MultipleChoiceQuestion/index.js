@@ -2,19 +2,19 @@ import React, {useEffect, useState} from "react";
 import "./styles.css";
 
 //CUSTOM COMPONENTS
-import ObjectButton from "./ObjectButton";
+import TaskButton from "../../TaskButton"
 
-const MultipleChoiceQuestion = ({question, answers})=>{
+const MultipleChoiceQuestion = ({question, answers, selectFunction})=>{
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [answerList, setAnswerList] = useState([])
 
-    const clickHandler = (id, selection)=>{
-        setSelectedItem(id);
-        selectFunction(selection);
+    const clickHandler = (id, answer)=>{
+        setSelectedAnswer(id);
+        selectFunction(answer);
     }
     useEffect(()=>{
-        setObjectList(items)
-    }, [items])
+        setAnswerList(answers)
+    }, [answers])
     return(
         <div className="question-container" >
             <h1 className="question-text">
@@ -24,7 +24,7 @@ const MultipleChoiceQuestion = ({question, answers})=>{
             {
                 [answerList].length
                 ?
-                answerList.map((answer, index)=><ObjectButton key={index} name={item} selectFunction={()=>clickHandler(index, item)} isSelected={selectedItem==index} />)
+                answerList.map((answer, index)=><TaskButton key={index} name={answer} selectFunction={()=>clickHandler(index, answer)} isSelected={selectedItem==index} />)
                 :
                 null
             }
