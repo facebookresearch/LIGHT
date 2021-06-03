@@ -1,26 +1,20 @@
 import React, {useEffect, useRef} from "react";
 
+import "./styles.css"
 
+//CUSTOM COMPONENTS
+import FieldRow from "./FieldRow";
 
-const FieldQuestion = ({field})=>{
+const FieldQuestion = ({question, fields})=>{
     const answerRef = useRef();
-    const changeHandler = e=>{
-        e.preventDefault()
-
-    }
     return(
         <div className="form-container" >
-            <div className="field-container">
-                <p className="field-text">
-                    {field}
-                </p>
-            </div>
-            <div className="answer-container">
-                <input
-                    className="answer-text"
-                    ref={answerRef}
-                />
-            </div>
+            <p className="form-header">{question}</p>
+            {
+                fields ?
+                fields.map((field, index)=><FieldRow key={index} field={field} />)
+                :null
+            }
         </div>
     )
 }

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import "./styles.css";
 
 //CUSTOM COMPONENTS
-import TaskButton from "./ObjectButton";
+import TaskButton from "../../TaskButton"
 
 const BooleanQuestion = ({question, trueAnswer, falseAnswer, children})=>{
     const [answer, setAnswer] = useState(null);
@@ -20,8 +20,8 @@ const BooleanQuestion = ({question, trueAnswer, falseAnswer, children})=>{
                 {question}
             </h1>
             <div className="answer-container">
-                <ObjectButton />
-                <ObjectButton />
+                <TaskButton />
+                <TaskButton />
             </div>
             {
                 answer && children ?
