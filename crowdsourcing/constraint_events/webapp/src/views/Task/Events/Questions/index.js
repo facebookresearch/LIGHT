@@ -8,7 +8,7 @@ import QuestionList from "./QuestionCopy";
 import FormQuestion from "../../../../components/Questions/FormQuestion";
 import BooleanQuestion from "../../../../components/Questions/BooleanQuestion"
 import FieldQuestion from "../../../../components/Questions/FieldQuestion"
-
+import AttributeSetter from "../../../../components/AttributeSetter"
 
 const Questions = () => {
     return (
@@ -23,9 +23,31 @@ const Questions = () => {
                 trueAnswer="YES"
                 falseAnswer="NO"
             >
-
+                <FieldQuestion
+                    question={QuestionList[3]}
+                    fields={["name", "desc", "location"]}
+                />
 
             </BooleanQuestion>
+            <BooleanQuestion
+                question={QuestionList[4]}
+                trueAnswer="YES"
+                falseAnswer="NO"
+            >
+                <div >
+                    <FormQuestion
+                        question="OBJECT 1"
+                        placeholder ="Description"
+                        formVal=""
+                    />
+                    <FormQuestion
+                        question="OBJECT 1"
+                        placeholder ="Description"
+                        formVal=""
+                    />
+                </div>
+            </BooleanQuestion>
+            <AttributeSetter />
        </>
     );
 }
