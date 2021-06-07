@@ -10,11 +10,11 @@ const MultipleSelectQuestion = ({question, answers, selectFunction})=>{
 
     const clickHandler = (id, answer)=>{
         let updatedAnswers;
-        if(selectedAnswers.indexOf(answer)<0){
+        if(selectedAnswers.indexOf(id)<0){
             updatedAnswers = [...selectedAnswers, id];
             setSelectedAnswers(updatedAnswers)
         }
-        if(selectedAnswers.indexOf(answer)>=0){
+        if(selectedAnswers.indexOf(id)>=0){
             updatedAnswers = selectedAnswers.filter(answer => (answer!==id))
             setSelectedAnswers(updatedAnswers)
             selectFunction(answer);
@@ -37,7 +37,11 @@ const MultipleSelectQuestion = ({question, answers, selectFunction})=>{
                     key={index}
                     name={answer}
                     selectFunction={()=>clickHandler(index, answer)}
-                    isSelected={(selectedAnswers.indexOf(answer)>=0)}
+                    isSelected={(selectedAnswers.indexOf(index)>=0)}
+                    unselectedContainer="mc-button__container"
+                    selectedContainer="mc-selectedbutton__container"
+                    unselectedText="mc-button__text"
+                    selectedText="mc-selectedbutton__text"
                 />
                 ))
                 :

@@ -4,13 +4,13 @@ import "./styles.css"
 
 import Questions from "./Questions"
 
-const Constraints = () => {
+const Constraints = ({object1, object2, interaction}) => {
     return (
         <div className="constraints-container">
             <div className="constraints-header">
                 <p>CONSTRAINTS</p>
             </div>
-            <Questions />
+            <Questions object1={object1} object1={object2} interaction={interaction} />
         </div>
     );
 }

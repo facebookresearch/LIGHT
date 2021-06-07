@@ -94,10 +94,30 @@ function MainApp() {
   }
 
   console.log('active? ', active);
-
+    const dummyData= {
+      object1: {
+      name: "key",
+      desc:"A ordinary key that will unlock or lock something.",
+      attributes:{
+        hot: false,
+        valuable: true,
+        brittle:false
+      }
+    },
+    object2: {
+      name: "lock",
+      desc:"A ordinary lock that will be unlocked or locked by a key.",
+      attributes:{
+        hot: false,
+        valuable: true,
+        locked:true
+      }
+    },
+    interaction: "You place the key in the lock and turn.  After a satifying click the lock becomes unlocked."
+  }
   return (
     <div>
-      <Task />
+      <Task data={dummyData}/>
     </div>
   );
 }

@@ -10,10 +10,10 @@ import BooleanQuestion from "../../../../components/Questions/BooleanQuestion"
 import FieldQuestion from "../../../../components/Questions/FieldQuestion"
 import AttributeSetter from "../../../../components/AttributeSetter"
 
-const Questions = () => {
+const Questions = ({object1, object2, interaction}) => {
     return (
        <>
-            <AttributeSetter />
+            <AttributeSetter object1={object1} object1={object2}/>
             <BooleanQuestion
                 question={QuestionList[2]}
                 trueAnswer={{name:"YES"} }
@@ -31,7 +31,7 @@ const Questions = () => {
                 falseAnswer={{name:"NO"} }
             >
             </BooleanQuestion>
-            <AttributeSetter />
+            <AttributeSetter object1={object1} object1={object2} />
        </>
     );
 }
