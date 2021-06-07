@@ -7,6 +7,7 @@ import QuestionList from "./QuestionCopy";
 //CUSTOM COMPONENENTS
 import FormQuestion from "../../../../components/Questions/FormQuestion";
 import BooleanQuestion from "../../../../components/Questions/BooleanQuestion"
+import MultipleSelectQuestion from "../../../../components/Questions/MultipleSelectQuestion"
 import FieldQuestion from "../../../../components/Questions/FieldQuestion"
 import AttributeSetter from "../../../../components/AttributeSetter"
 
@@ -18,6 +19,16 @@ const Questions = () => {
                 placeholder ="Description"
                 formVal=""
             />
+            <BooleanQuestion
+                question={QuestionList[2]}
+                trueAnswer={{name:"YES"} }
+                falseAnswer={{name:"NO"} }
+            >
+                <MultipleSelectQuestion
+                    question={QuestionList[0]}
+                    answers={["Object 1", "Object 2"]}
+                />
+            </BooleanQuestion>
             <BooleanQuestion
                 question={QuestionList[2]}
                 trueAnswer={{name:"YES"} }
