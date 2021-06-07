@@ -21,7 +21,7 @@ const Questions = ({object1, object2, interaction}) => {
                 falseAnswer={{name:"NO"} }
             />
             <BooleanQuestion
-                question={QuestionList[3]}
+                question={`Could one use ${object2.name.toUpperCase()} with ${object1.name.toUpperCase()}  and expect the same outcome?`}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
             />
@@ -31,6 +31,11 @@ const Questions = ({object1, object2, interaction}) => {
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
             >
+                <FormQuestion
+                    question="Where would that location be?"
+                    placeholder ="Description"
+                    formVal=""
+                />
             </BooleanQuestion>
        </>
     );
