@@ -13,7 +13,8 @@ import AttributeSetter from "../../../../components/AttributeSetter"
 const Questions = ({object1, object2, interaction}) => {
     return (
        <>
-            <AttributeSetter object1={object1} object1={object2}/>
+            <AttributeSetter objectName={object1.name} objectColor="blue" header=" Attribute Constraints" attributes={object1.attributes} />
+            <AttributeSetter objectName={object2.name} objectColor="orange" header=" Attribute Constraints" attributes={object2.attributes} />
             <BooleanQuestion
                 question={QuestionList[2]}
                 trueAnswer={{name:"YES"} }
@@ -31,7 +32,6 @@ const Questions = ({object1, object2, interaction}) => {
                 falseAnswer={{name:"NO"} }
             >
             </BooleanQuestion>
-            <AttributeSetter object1={object1} object1={object2} />
        </>
     );
 }

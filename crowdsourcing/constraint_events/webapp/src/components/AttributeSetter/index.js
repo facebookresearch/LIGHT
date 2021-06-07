@@ -5,7 +5,7 @@ import "./styles.css"
 import AttributeRow from "./AttributeRow"
 
 
-const AttributeSetter = ({header, attributes}) => {
+const AttributeSetter = ({header, objectName, objectColor, attributes}) => {
     const [attributeList, setAttributeList] = useState([])
     useEffect(()=>{
         if(attributes){
@@ -22,7 +22,7 @@ const AttributeSetter = ({header, attributes}) => {
                 <div></div>
                 <div className="label-container">
                     <p className="label-text">
-                        {header}
+                        <span style={{fontWeight:"bold", color: objectColor}}>{objectName.toUpperCase()}</span> {header}
                     </p>
                 </div>
                 <div className="button-container" onClick={addAttributeHandler}>

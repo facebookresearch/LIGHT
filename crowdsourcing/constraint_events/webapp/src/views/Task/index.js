@@ -12,8 +12,8 @@ const Task = ({data}) => {
       <div className="view-container">
         <Header/>
         <div className="task-container">
-            <Events object1={object1} object1={object2} interaction={interaction}/>
-            <Constraints object1={object1} object1={object2} interaction={interaction}/>
+            <Events object1={object1} object2={object2} interaction={interaction}/>
+            <Constraints object1={object1} object2={object2} interaction={interaction}/>
         </div>
       </div>
     );

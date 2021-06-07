@@ -10,7 +10,7 @@ const Constraints = ({object1, object2, interaction}) => {
             <div className="constraints-header">
                 <p>CONSTRAINTS</p>
             </div>
-            <Questions object1={object1} object1={object2} interaction={interaction} />
+            <Questions object1={object1} object2={object2} interaction={interaction} />
         </div>
     );
 }

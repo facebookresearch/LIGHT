@@ -5,7 +5,7 @@ import TaskButton from "../TaskButton"
 const AttributeRow = ({attribute})=>{
     const [attributeName, setAttributeName] = useState("");
     const [attributeVal, setAttributeVal] = useState(false)
-    const answerRef = useRef();
+    const nameRef = useRef();
     const changeHandler = e=>{
         e.preventDefault()
 
@@ -24,14 +24,14 @@ const AttributeRow = ({attribute})=>{
     },[])
     return(
         <div className="row-container" >
-            <div className="answer-container">
+            <div className="attribute-container">
                 <input
-                    className="answer-text"
-                    ref={answerRef}
+                    className="name-text"
+                    ref={nameRef}
                     defaultValue={attributeName}
                 />
             </div>
-            <div className="answer-container">
+            <div className="value-container">
                 <TaskButton
                     name="TRUE"
                     isSelected={attributeVal}

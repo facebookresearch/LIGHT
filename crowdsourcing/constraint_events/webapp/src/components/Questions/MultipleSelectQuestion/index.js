@@ -38,10 +38,10 @@ const MultipleSelectQuestion = ({question, answers, selectFunction})=>{
                     name={answer}
                     selectFunction={()=>clickHandler(index, answer)}
                     isSelected={(selectedAnswers.indexOf(index)>=0)}
-                    unselectedContainer="mc-button__container"
-                    selectedContainer="mc-selectedbutton__container"
-                    unselectedText="mc-button__text"
-                    selectedText="mc-selectedbutton__text"
+                    selectedContainer="mc-button__container"
+                    unselectedContainer="mc-selectedbutton__container"
+                    selectedText="mc-button__text"
+                    unselectedText="mc-selectedbutton__text"
                 />
                 ))
                 :

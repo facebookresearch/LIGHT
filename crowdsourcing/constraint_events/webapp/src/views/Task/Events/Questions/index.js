@@ -11,7 +11,7 @@ import MultipleSelectQuestion from "../../../../components/Questions/MultipleSel
 import FieldQuestion from "../../../../components/Questions/FieldQuestion"
 import AttributeSetter from "../../../../components/AttributeSetter"
 
-const Questions = () => {
+const Questions = ({object1, object2, interaction}) => {
     return (
        <>
             <FormQuestion
@@ -26,39 +26,40 @@ const Questions = () => {
             >
                 <MultipleSelectQuestion
                     question={QuestionList[0]}
-                    answers={["Object 1", "Object 2"]}
+                    answers={[object1.name, object2.name]}
                 />
-            </BooleanQuestion>
-            <BooleanQuestion
-                question={QuestionList[2]}
-                trueAnswer={{name:"YES"} }
-                falseAnswer={{name:"NO"} }
-            >
-                <FieldQuestion
-                    question={QuestionList[3]}
-                    fields={["name", "desc", "location"]}
-                />
-
             </BooleanQuestion>
             <BooleanQuestion
                 question={QuestionList[4]}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
             >
+                <FieldQuestion
+                    question={""}
+                    fields={["name", "desc", "location"]}
+                />
+
+            </BooleanQuestion>
+            <BooleanQuestion
+                question={QuestionList[3]}
+                trueAnswer={{name:"YES"} }
+                falseAnswer={{name:"NO"} }
+            >
                 <div style={{display:"flex", flexDirection:"row"}}>
                     <FormQuestion
-                        question="OBJECT 1"
+                        question={object1.name}
                         placeholder ="Description"
                         formVal=""
                     />
                     <FormQuestion
-                        question="OBJECT 1"
+                        question={object2.name}
                         placeholder ="Description"
                         formVal=""
                     />
                 </div>
             </BooleanQuestion>
-            <AttributeSetter />
+            <AttributeSetter objectName={object1.name} objectColor="blue" header=" Attributes" attributes={object1.attributes}/>
+            <AttributeSetter objectName={object2.name} objectColor="orange" header=" Attributes" attributes={object2.attributes}/>
        </>
     );
 }
