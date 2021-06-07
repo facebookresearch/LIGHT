@@ -3,7 +3,7 @@ import React, {useEffect, useRef} from "react";
 import "./styles.css"
 
 
-const FormQuestion = ({question, placeholder, formVal, formFunction})=>{
+const FormQuestion = ({question, placeholder, questionColor, upperCaseQuestion, formVal, formFunction})=>{
     const changeHandler = e=>{
         e.preventDefault()
         //formFunction(e.target.value)
@@ -11,8 +11,8 @@ const FormQuestion = ({question, placeholder, formVal, formFunction})=>{
     }
     return(
         <div className="form-container" >
-            <h1 className="form-header">
-                {question}
+            <h1 className="form-header" style={{color: (questionColor ?  questionColor : "black")}}>
+                {upperCaseQuestion ? question.toUpperCase() : question}
             </h1>
         <p >
 

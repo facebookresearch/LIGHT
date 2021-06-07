@@ -2,10 +2,10 @@
     width: 48%;
     display: flex;
     flex-direction: column;
-    border-color: black;
-    border-width: 4px;
     border-radius: 15px;
-    border-style: solid;
+    box-shadow: 4px 4px 4px black;
+    align-items: center;
+    padding-bottom:20px;
 }
 
 .events-header {
@@ -15,4 +15,6 @@
     color: white;
     font-size: 16px;
     text-align: center;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
 }

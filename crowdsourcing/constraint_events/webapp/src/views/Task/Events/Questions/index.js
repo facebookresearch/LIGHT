@@ -48,11 +48,15 @@ const Questions = ({object1, object2, interaction}) => {
                 <div style={{display:"flex", flexDirection:"row"}}>
                     <FormQuestion
                         question={object1.name}
+                        upperCaseQuestion={true}
+                        questionColor="blue"
                         placeholder ="Description"
                         formVal=""
                     />
                     <FormQuestion
                         question={object2.name}
+                        upperCaseQuestion={true}
+                        questionColor="orange"
                         placeholder ="Description"
                         formVal=""
                     />
