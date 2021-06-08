@@ -1,0 +1,36 @@
+
+
+
+
+
+/* Data Card */
+.card-container {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: lightgrey;
+    border-radius: 15px;
+
+}
+.card-header__container{
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    width: 100%;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.card-header__text {
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+    color:white;
+}
+.card-body__container{
+
+}
+
+.card-body__text {
+
+}

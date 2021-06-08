@@ -2,10 +2,10 @@ import React from "react";
 
 import "./styles.css"
 
-const DataCard = ({header, body}) => {
+const DataCard = ({header, body, color}) => {
     return (
        <div className="card-container">
-           <div className="card-header__container">
+           <div className="card-header__container" style={{backgroundColor: color}}>
                <p className="card-header__text">
                 {header}
                </p>

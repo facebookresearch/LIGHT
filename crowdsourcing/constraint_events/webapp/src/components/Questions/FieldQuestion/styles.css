@@ -40,6 +40,11 @@
     color: white;
     font-weight: bold;
     font-size: 14px;
+    border-width: 5px;
+    border-color: silver;
+    border-style: ridge;
+    border-radius: 5px;
+    padding:3px;
 }
 .answer-container {
 
