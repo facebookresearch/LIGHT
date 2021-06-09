@@ -10,7 +10,9 @@ const Events = ({object1, object2, interaction}) => {
             <div className="events-header">
                 <p>EVENTS</p>
             </div>
-            <Questions object1={object1} object2={object2} interaction={interaction} />
+            <div className="events-body">
+                <Questions object1={object1} object2={object2} interaction={interaction} />
+            </div>
         </div>
     );
 }
