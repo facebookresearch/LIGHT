@@ -11,17 +11,21 @@ import FieldQuestion from "../../../../components/Questions/FieldQuestion"
 import AttributeSetter from "../../../../components/AttributeSetter"
 
 const Questions = ({object1, object2, interaction}) => {
+    let objName1 = object1.name.toUpperCase();
+    let objName2 = object2.name.toUpperCase()
     return (
        <>
             <AttributeSetter objectName={object1.name} objectColor="blue" header=" Attribute Constraints" attributes={object1.attributes} />
             <AttributeSetter objectName={object2.name} objectColor="orange" header=" Attribute Constraints" attributes={object2.attributes} />
             <BooleanQuestion
-                question={`Does ${object2.name.toUpperCase()} need to be held?`}
+                question={"Does # need to be held?"}
+                keywords={[{color:"orange", item:objName2}]}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
             />
             <BooleanQuestion
-                question={`Could one use ${object2.name.toUpperCase()} with ${object1.name.toUpperCase()}  and expect the same outcome?`}
+                question={"Could one use # with # and expect the same outcome?"}
+                keywords={[{color:"orange", item:objName2}, {color:"blue", item:objName1}]}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
             />

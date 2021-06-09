@@ -3,8 +3,9 @@ import "./styles.css";
 
 //CUSTOM COMPONENTS
 import TaskButton from "../../TaskButton"
+import FormQuestion from "../../Utils/FormatQuestion";
 
-const BooleanQuestion = ({question, trueAnswer, falseAnswer, children})=>{
+const BooleanQuestion = ({question, trueAnswer, falseAnswer, keywords, children})=>{
     const [answer, setAnswer] = useState(null);
 
     const trueHandler = ()=>{
@@ -16,9 +17,11 @@ const BooleanQuestion = ({question, trueAnswer, falseAnswer, children})=>{
 
     return(
         <div className="question-container" >
-            <h1 className="question-text">
-                {question}
-            </h1>
+                <FormQuestion
+                    question={question}
+                    keywords={keywords}
+                    containerStyle="question-text"
+                />
             <div className="answer-container">
                 <TaskButton
                     name={trueAnswer.name}
