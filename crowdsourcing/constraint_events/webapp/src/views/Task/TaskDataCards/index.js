@@ -11,19 +11,20 @@ const TaskDataCards = ({object1, object2, interaction}) => {
        <div className="taskdatacards-container">
             <div className="items-container">
                 <DataCard
-                    header={()=><p className="card-header__text" >{obj1Name}</p>}
+                    header={obj1Name}
                     body={object1.desc}
                     color="blue"
                 />
                 <DataCard
-                    header={()=><p className="card-header__text" >{obj2Name}</p>}
+                    header={obj2Name}
                     body={object2.desc}
                     color="orange"
                 />
             </div>
             <div className="desc-container">
                 <DataCard
-                    header={()=><p className="card-header__text">Interaction Description: Use <span style={{color:"blue"}}>{obj1Name}</span> with <span style={{color:"orange"}}>{obj2Name}</span></p>}
+                    header={"Interaction Description: Use # with #"}
+                    keywords={[{color:"blue", item:obj1Name}, {color:"orange", item:obj2Name}]}
                     body={interaction}
                     color="green"
                 />

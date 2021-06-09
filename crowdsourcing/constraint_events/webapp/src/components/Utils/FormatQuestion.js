@@ -1,28 +1,28 @@
 import React, {useState} from "react";
 
-import "./styles.css"
-
 const FormatQuestion = ({
-    question, keywords, containterStyle
+    question,
+    keywords,
+    containerStyle
 })=>{
-    let questionArr = question.split(" ")
+    let questionArr = question.split(" ");
     let keywordsArr = keywords;
     return(
-        <div className={containterStyle}>
+        <div className={containerStyle}>
             {
                 questionArr.map((questionPiece,index)=>{
-                    if(questionPiece=="#"){
+                    if(questionPiece=="#" && keywordsArr[0]){
                         let currentKeyword = keywordsArr[0]
                         keywordsArr.shift()
                         return (
                         <span key={index} style={{color:currentKeyword.color}}>
-                            {currentKeyword.item}
+                            {`${currentKeyword.item} `}
                         </span>
                         )
                     }
                     return (
                         <span key={index}>
-                            {questionPiece}
+                            {`${questionPiece} `}
                         </span>
                     )
                 })
