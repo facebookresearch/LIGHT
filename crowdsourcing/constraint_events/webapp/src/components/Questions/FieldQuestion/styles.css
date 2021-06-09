@@ -3,7 +3,7 @@
     justify-content: center;
     width: 100%;
     flex-direction: column;
-    justify-content: center;
+    align-items: center;
 }
 
 .question-header {
@@ -39,7 +39,7 @@
 .field-text {
     color: white;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 20px;
 }
 .answer-container {
 

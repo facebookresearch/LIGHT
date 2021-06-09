@@ -57,6 +57,11 @@
 }
 .name-text {
     font-size: 20px;
+    border-radius: 5px;
+    border-color: silver;
+    border-style: ridge;
+    padding: 3px;
+    border-width: 4px;
 }
 .value-container{
     display:flex;

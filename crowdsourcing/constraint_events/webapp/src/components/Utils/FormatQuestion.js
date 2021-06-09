@@ -1,19 +1,21 @@
-import React, {useState} from "react";
+import React, {useState,useEffect} from "react";
 
 const FormatQuestion = ({
     question,
     keywords,
     containerStyle
 })=>{
+    //const [keywordPosition, setKeywordPosition] = useState(0)
+
     let questionArr = question.split(" ");
-    let keywordsArr = keywords;
+    let keywordPosition = 0;
     return(
         <div className={containerStyle}>
             {
                 questionArr.map((questionPiece,index)=>{
-                    if(questionPiece=="#" && keywordsArr[0]){
-                        let currentKeyword = keywordsArr[0]
-                        keywordsArr.shift()
+                    if(questionPiece=="#" && keywords[keywordPosition]){
+                        let currentKeyword = keywords[keywordPosition]
+                        keywordPosition++
                         return (
                         <span key={index} style={{color:currentKeyword.color}}>
                             {`${currentKeyword.item} `}
