@@ -17,6 +17,7 @@
   border-style: ridge;
   border-radius: 15px;
   overflow: hidden;
+  z-index: 100;
 }
 
 @media only screen and (max-width: 950px) {

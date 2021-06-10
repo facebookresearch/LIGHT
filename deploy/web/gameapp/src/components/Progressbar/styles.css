@@ -32,10 +32,12 @@
 }
 @media only screen and (max-width: 950px) {
   .bar-label {
+    font-size: 14px;
   }
 }
 
 @media only screen and (max-width: 600px) {
   .bar-label {
+    font-size: 12px;
   }
 }

@@ -114,6 +114,9 @@ input:focus {
   border-color: white;
   box-shadow: 1px 1px 4px black;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .chatbox-button:hover {
