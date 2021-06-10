@@ -13,7 +13,7 @@ const FieldQuestion = ({question, fields})=>{
             <div className="fieldlist-container">
                 {
                     fields ?
-                    fields.map((field, index)=><FieldRow key={index} field={field.toUpperCase()} />)
+                    fields.map((field, index)=><FieldRow key={index} field={field.name.toUpperCase()} dropdown={field.dropdown} options={field.options} />)
                     :null
                 }
             </div>

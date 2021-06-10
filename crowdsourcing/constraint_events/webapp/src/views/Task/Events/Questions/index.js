@@ -36,7 +36,7 @@ const Questions = ({object1, object2, interaction}) => {
             >
                 <FieldQuestion
                     question={""}
-                    fields={["name", "desc", "location"]}
+                    fields={[{name:"name", dropdown:false}, {name:"desc", dropdown:false}, {name:"location", dropdown:true, options:["in room", "held by actor", `in ${object1.name.toUpperCase()}`, `in ${object2.name.toUpperCase()}`]}]}
                 />
 
             </BooleanQuestion>
