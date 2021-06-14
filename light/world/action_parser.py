@@ -147,6 +147,7 @@ class ActionParser:
 
     def post_process(self, txt, actor=None):
         txt = txt.rstrip("\n").rstrip("\r")
+        txt = txt.replace("“", '"').replace("”", '"')
         if '"' in txt:
             return txt
 
