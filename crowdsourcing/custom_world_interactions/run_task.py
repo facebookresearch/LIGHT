@@ -55,7 +55,9 @@ from mephisto.operations.hydra_config import RunScriptConfig, register_script_co
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
-    input_file_task: str = INPUT_FILE_TASK
+    light_db_path: str = LIGHT_DB_PATH
+    primary_object_list_size: int = PRIMARY_OBJECT_LIST_SIZE
+    secondary_object_list_size: int = SECONDARY_OBJECT_LIST_SIZE
     num_tasks: int = DEFAULT_NUM_TASKS
 
 
@@ -134,52 +136,29 @@ def build_task(task_dir):
     os.chdir(return_dir)
 
 
-def create_task_data(input_file_task, num_tasks):
-    units = mephisto_data_browser.get_units_for_task_name(input_file_task)
-    random.shuffle(units)
-    data = []
-    for unit in units:
-        data.append(
-            mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
-                "final_data"
-            ]
-        )
-
-    return data[:num_tasks]
-
-
 def validate_unit(unit):
     if unit.get_assigned_agent() is None:
         return
 
-    print("Task Directory: ", TASK_DIRECTORY)
-
     data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
         "final_data"
     ]
-    print("Data: ", data)
+    action_description = data["actionDescription"]
 
-    constraints = data["constraints"]
-    events = data["events"]
-
-    has_active = False
-
-    for constraint in constraints:
-        if constraint["active"] == "1":
-            has_active = True
-            break
-
-    for event in events:
-        if event["active"] == "1":
-            has_active = True
-            break
-
-    if not has_active:
-        print("Unit not validated!")
+    if (
+        len(action_description) <= 20
+        or action_description.lower().find("you") == -1
+        or (
+            action_description.lower()[-1] != "."
+            and action_description.lower()[-1] != "?"
+            and action_description.lower()[-1] != "!"
+        )
+    ):
+        # Not in second person or invalid punctuation
+        print("Action " + action_description + " was not validated!")
         unit.get_assigned_agent().soft_reject_work()
         worker = unit.get_assigned_agent().get_worker()
-        worker.grant_qualification("constraints_events_task_block", 1)
-
+        worker.grant_qualification("objects_interaction_task_block", 1)
     return
 
 
@@ -191,7 +170,7 @@ def main(cfg: DictConfig) -> None:
         return True
 
     primary_objects, secondary_objects = get_object_lists(
-        cfg.light_db_path, cfg.num_tasks
+        cfg.light_db_path,
     )
 
     shared_state = SharedStaticTaskState(
