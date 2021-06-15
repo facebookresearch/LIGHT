@@ -1,17 +1,18 @@
-.question-container {
+.booleanquestion-container {
     display: flex;
     justify-content: flex-start;
     width: 100%;
     align-items: flex-start;
+    flex-direction: column;
 }
 
-.question-text {
+.booleanquestion-text {
     text-align: left;
     font-weight: bold;
     font-size: 20px;
 }
 
-.answer-container {
+.booleananswer-container {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;

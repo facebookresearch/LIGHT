@@ -16,13 +16,13 @@ const BooleanQuestion = ({question, trueAnswer, falseAnswer, keywords, children}
     }
 
     return(
-        <div className="question-container" >
+        <div className="booleanquestion-container" >
                 <FormQuestion
                     question={question}
                     keywords={keywords}
-                    containerStyle="question-text"
+                    containerStyle="booleanquestion-text"
                 />
-            <div className="answer-container">
+            <div className="booleananswer-container">
                 <TaskButton
                     name={trueAnswer.name}
                     isSelected={answer}
@@ -43,12 +43,14 @@ const BooleanQuestion = ({question, trueAnswer, falseAnswer, keywords, children}
 
                     />
             </div>
+            <div style={{marginLeft:"30px", marginTop:"10px"}}>
             {
                 answer && children ?
                 children
                 :
                 null
             }
+            </div>
         </div>
     )
 }

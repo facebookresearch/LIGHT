@@ -8,8 +8,8 @@ import FieldRow from "./FieldRow";
 const FieldQuestion = ({question, fields})=>{
     const answerRef = useRef();
     return(
-        <div className="question-container" >
-            <p className="question-header">{question}</p>
+        <div className="fieldquestion-container" >
+            <p className="fieldquestion-header">{question}</p>
             <div className="fieldlist-container">
                 {
                     fields ?

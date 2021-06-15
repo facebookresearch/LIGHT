@@ -48,7 +48,7 @@
     box-shadow: 0px 0px 0px black;
 }
 /* Attribute Row */
-.row-container {
+.attributerow-container{
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -58,11 +58,12 @@
 }
 
 .attribute-label__container {
-    width:20%
+
 }
 
 .attribute-label__text {
-
+    text-align: left;
+    font-size: 20px;
 }
 
 .name-text {
@@ -80,7 +81,11 @@
     align-items: center;
     margin-left:4px;
     margin-right: 6px;
-    width: 50%;
+    width: 30%;
+}
+
+.attribute-container{
+    width: 50;
 }
 
 .attribute-icon {

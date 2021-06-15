@@ -44,6 +44,7 @@ box-shadow: 0em 0em 0em;
     border-style: solid;
     border-width: 1px;
     box-shadow: 5px 2px 5px black;
+    height: 100%;
 }
 
 .b-button__container.true {

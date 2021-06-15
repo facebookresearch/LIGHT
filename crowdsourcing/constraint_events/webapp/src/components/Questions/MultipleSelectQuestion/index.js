@@ -24,11 +24,11 @@ const MultipleSelectQuestion = ({question, answers, selectFunction})=>{
         setAnswerList(answers)
     }, [answers])
     return(
-        <div className="question-container" >
-            <h1 className="question-text">
+        <div className="multipleselectquestion-container" >
+            <h1 className="multipleselectquestion-text">
                 {question}
             </h1>
-            <div className="answer-container">
+            <div className="multipleselectanswer-container">
             {
                 [answerList].length
                 ?

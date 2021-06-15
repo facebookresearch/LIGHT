@@ -17,6 +17,10 @@ const AttributeSetter = ({header, objectName, objectColor, attributes, isConstra
         const newAtt = [...attributeList, {name:"", val:true}]
         setAttributeList(newAtt)
     }
+    const removeAttributeHandler = (deletedIndex)=>{
+        let updatedArr = attributeList.filter((item, index)=> (index !== deletedIndex))
+        setAttributeList(updatedArr)
+    }
     return (
         <div className="setter-container">
             <div className="setter-header">
@@ -36,7 +40,7 @@ const AttributeSetter = ({header, objectName, objectColor, attributes, isConstra
                 {
                   attributeList.length ?
                   attributeList.map((att, index)=>(
-                      <AttributeRow key={index} objectName={objectName} objectColor={objectColor} attribute={att} isConstraint={isConstraint}/>
+                      <AttributeRow key={index} objectName={objectName} objectColor={objectColor} attribute={att} isConstraint={isConstraint} deleteHandler={()=>removeAttributeHandler(index)}/>
                   ))
                   :
                   null

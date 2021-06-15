@@ -14,28 +14,28 @@ const FieldRow = ({field, dropdown, options})=>{
     if(dropdown){
 
         return(
-            <div className="row-container" >
+            <div className="fieldrow-container" >
                 <div className="field-container">
                     <p className="field-text">
                         {field}
                     </p>
                 </div>
-                <div className="answer-container">
+                <div className="fieldanswer-container">
                     <DropdownSelect options={options} />
                 </div>
             </div>
         )
     }else{
         return(
-            <div className="row-container" >
+            <div className="fieldrow-container" >
                 <div className="field-container">
                     <p className="field-text">
                         {field}
                     </p>
                 </div>
-                <div className="answer-container">
+                <div className="fieldanswer-container">
                     <input
-                        className="answer-text"
+                        className="fieldanswer-text"
                         ref={answerRef}
                     />
                 </div>

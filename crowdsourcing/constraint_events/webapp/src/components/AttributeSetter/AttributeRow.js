@@ -3,7 +3,7 @@ import React, {useState, useEffect, useRef} from "react";
 import TaskButton from "../TaskButton"
 import { MdCancel } from "react-icons/md";
 
-const AttributeRow = ({attribute, objectName, objectColor, isConstraint})=>{
+const AttributeRow = ({attribute, objectName, objectColor, isConstraint, deleteHandler})=>{
     const [attributeName, setAttributeName] = useState("");
     const [attributeVal, setAttributeVal] = useState(true)
     const [isExistingAttribute, setIsExistingAttribute] = useState(false)
@@ -24,9 +24,9 @@ const AttributeRow = ({attribute, objectName, objectColor, isConstraint})=>{
         setAttributeName(name)
         setAttributeVal(val)
         setIsExistingAttribute(isExisting)
-    },[])
+    },[attribute])
     return(
-        <div className="row-container" >
+        <div className="attributerow-container" >
             <div className="attribute-label__container ">
             {isConstraint?
             <p className="attribute-label__text"><span style={{fontWeight:"bold", color: objectColor}}>{objectName.toUpperCase()} </span></p>
@@ -63,7 +63,7 @@ const AttributeRow = ({attribute, objectName, objectColor, isConstraint})=>{
                     disabled={isExistingAttribute ? true : false}
                 />
             </div>
-            <MdCancel color="red" className="attribute-icon" />
+            <MdCancel onClick={deleteHandler} color="red" className="attribute-icon" />
         </div>
     )
 }
