@@ -12,16 +12,19 @@ const FieldRow = ({field, dropdown, options})=>{
     }
 
     if(dropdown){
-        <div className="row-container" >
-            <div className="field-container">
-                <p className="field-text">
-                    {field}
-                </p>
+
+        return(
+            <div className="row-container" >
+                <div className="field-container">
+                    <p className="field-text">
+                        {field}
+                    </p>
+                </div>
+                <div className="answer-container">
+                    <DropdownSelect options={options} />
+                </div>
             </div>
-            <div className="answer-container">
-                <DropdownSelect options={options} />
-            </div>
-        </div>
+        )
     }else{
         return(
             <div className="row-container" >

@@ -5,15 +5,16 @@ import "./styles.css"
 import AttributeRow from "./AttributeRow"
 
 
-const AttributeSetter = ({header, objectName, objectColor, attributes}) => {
+const AttributeSetter = ({header, objectName, objectColor, attributes, isConstraint}) => {
     const [attributeList, setAttributeList] = useState([])
     useEffect(()=>{
         if(attributes){
-        setAttributeList(attributes)
+        const existingAttributes = attributes.map(att => ({...att, isExisting:true}))
+        setAttributeList(existingAttributes)
         }
     },[attributes])
     const addAttributeHandler = ()=>{
-        const newAtt = [...attributeList, {name:"", val:false}]
+        const newAtt = [...attributeList, {name:"", val:true}]
         setAttributeList(newAtt)
     }
     return (
@@ -35,7 +36,7 @@ const AttributeSetter = ({header, objectName, objectColor, attributes}) => {
                 {
                   attributeList.length ?
                   attributeList.map((att, index)=>(
-                      <AttributeRow key={index} attribute={att} />
+                      <AttributeRow key={index} objectName={objectName} objectColor={objectColor} attribute={att} isConstraint={isConstraint}/>
                   ))
                   :
                   null

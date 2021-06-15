@@ -1,12 +1,16 @@
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useState, useRef} from "react";
 
 import "./styles.css"
 
 
 const FormQuestion = ({question, placeholder, questionColor, upperCaseQuestion, formVal, formFunction})=>{
+    const [description, setDescription] = useState("")
+    useEffect(()=>{
+        setDescription(formVal)
+    },[])
     const changeHandler = e=>{
         e.preventDefault()
-        //formFunction(e.target.value)
+        setDescription(e.target.value)
 
     }
     return(
@@ -17,14 +21,15 @@ const FormQuestion = ({question, placeholder, questionColor, upperCaseQuestion, 
         <p >
 
         </p>
+        <div className="answer-container">
             <textarea
                 className="answer-form"
                 onChange={changeHandler}
-                value={formVal}
+                value={description}
                 rows="7"
                 type="text"
-                placeholder={placeholder}
             />
+        </div>
         </div>
     )
 }

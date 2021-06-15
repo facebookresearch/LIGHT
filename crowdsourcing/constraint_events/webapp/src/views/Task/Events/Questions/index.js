@@ -16,8 +16,7 @@ const Questions = ({object1, object2, interaction}) => {
        <>
             <FormQuestion
                 question={QuestionList[1]}
-                placeholder ="Description"
-                formVal=""
+                formVal={interaction}
             />
             <BooleanQuestion
                 question={QuestionList[2]}
@@ -62,8 +61,8 @@ const Questions = ({object1, object2, interaction}) => {
                     />
                 </div>
             </BooleanQuestion>
-            <AttributeSetter objectName={object1.name} objectColor="blue" header=" Attributes" attributes={object1.attributes}/>
-            <AttributeSetter objectName={object2.name} objectColor="orange" header=" Attributes" attributes={object2.attributes}/>
+            <AttributeSetter objectName={object1.name} objectColor="blue" header=" After this action:" attributes={object1.attributes} isConstraint={false}/>
+            <AttributeSetter objectName={object2.name} objectColor="orange" header="  After this action:" attributes={object2.attributes} isConstraint={false}/>
        </>
     );
 }

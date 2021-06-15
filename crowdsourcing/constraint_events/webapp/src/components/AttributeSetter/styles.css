@@ -54,7 +54,17 @@
     justify-content: center;
     align-items: center;
     margin: 5px 0px 5px 0px;
+    width: 100%;
 }
+
+.attribute-label__container {
+    width:20%
+}
+
+.attribute-label__text {
+
+}
+
 .name-text {
     font-size: 20px;
     border-radius: 5px;
@@ -69,4 +79,10 @@
     justify-content: center;
     align-items: center;
     margin-left:4px;
+    margin-right: 6px;
+    width: 50%;
+}
+
+.attribute-icon {
+    font-size: 50px;
 }
