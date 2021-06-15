@@ -45,7 +45,7 @@ defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    {"conf": "constraints_events_task"},
+    {"conf": "objects_interaction_task"},
 ]
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
