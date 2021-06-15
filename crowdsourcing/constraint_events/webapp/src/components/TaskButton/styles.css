@@ -107,3 +107,34 @@ box-shadow: 0em 0em 0em;
 .b-button__container:active {
 box-shadow: 0em 0em 0em;
 }
+
+/* SUBMISSION BUTTON */
+
+.submission-button__container {
+    border-style: ridge;
+    border-width: 3px;
+    box-shadow: 5px 2px 5px black;
+    height: 100%;
+    background-color: chartreuse;
+    border-color: silver;
+    border-radius: 15px;
+    width: 20%;
+}
+
+.submission-selectedbutton__text {
+    font-size: 16px;
+    padding:6px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
+
+
+.submission-button__container:hover {
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+.submission-button__container:active {
+box-shadow: 0em 0em 0em;
+}

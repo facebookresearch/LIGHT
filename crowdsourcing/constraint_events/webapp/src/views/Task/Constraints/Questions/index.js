@@ -15,16 +15,16 @@ const Questions = ({object1, object2, interaction}) => {
     let objName2 = object2.name.toUpperCase()
     return (
        <>
-            <AttributeSetter objectName={object1.name} objectColor="blue" header=" Constraints for interaction:" attributes={[]} isConstraint={true} />
-            <AttributeSetter objectName={object2.name} objectColor="orange" header=" Constraints for interaction:" attributes={[]} isConstraint={true} />
+            <AttributeSetter objectName={object1.name} objectColor="blue" header=" Constraints for interaction:" attributes={object1.attributes} isConstraint={true} />
+            <AttributeSetter objectName={object2.name} objectColor="orange" header=" Constraints for interaction:" attributes={object2.attributes} isConstraint={true} />
             <BooleanQuestion
-                question={"Does # need to be held?"}
+                question={"1.  Does # need to be held?"}
                 keywords={[{color:"orange", item:objName2}]}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
             />
             <BooleanQuestion
-                question={"Could one use # with # and expect the same outcome?"}
+                question={"2.  Could one use # with # and expect the same outcome?"}
                 keywords={[{color:"orange", item:objName2}, {color:"blue", item:objName1}]}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }

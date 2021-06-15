@@ -19,8 +19,8 @@
 .answer-container {
     width: 100%;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 
 .answer-form{
@@ -30,4 +30,6 @@
     border-style: ridge;
     border-radius: 5px;
     padding:3px;
+    margin-left:10px;
+    width: 60%;
 }

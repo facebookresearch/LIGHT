@@ -3,7 +3,7 @@
 }
 
 .dropdown-select {
-    font-size: 30px;
+    font-size: 24px;
     border-radius: 5px;
     border-color: silver;
     border-style: ridge;
@@ -12,7 +12,7 @@
 }
 
 .dropdown-option {
-    font-size: 30px;
+    font-size: 24px;
     border-radius: 5px;
     border-color: silver;
     border-style: ridge;

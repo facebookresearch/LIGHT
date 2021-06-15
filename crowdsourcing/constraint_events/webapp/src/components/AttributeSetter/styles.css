@@ -1,13 +1,13 @@
 .setter-container {
     display:flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: flex-start;
 }
 .setter-header {
     display:flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
     margin: 5px;
@@ -51,10 +51,11 @@
 .attributerow-container{
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    margin: 5px 0px 5px 0px;
+    margin: 5px 0px 5px 20px;
     width: 100%;
+
 }
 
 .attribute-label__container {

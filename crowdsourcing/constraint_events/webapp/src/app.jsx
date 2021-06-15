@@ -9,6 +9,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Task from "./views/Task";
+import Submission from "./components/Submission"
 import { TaskDescription } from "./components/task_description.jsx";
 // import { ActionDescription } from "./components/action_description.jsx";
 // import { ConstraintBlock } from "./components/constraint_element.jsx";
@@ -118,6 +119,9 @@ function MainApp() {
   return (
     <div>
       <Task data={dummyData}/>
+      <div>
+        <Submission />
+      </div>
     </div>
   );
 }
