@@ -11,8 +11,8 @@ const LevelDisplay = ({ level, giftExperience }) => {
     <div className="levelDisplay-container">
       <Tooltip title="Player Level" position="top">
         <div className="level-container">
-          <h5 className="level-number"> LVL </h5>
-          <h5 className="level-number">{level}</h5>
+          <p className="level-number"> LVL </p>
+          <p className="level-number">{level}</p>
         </div>
       </Tooltip>
       <div>

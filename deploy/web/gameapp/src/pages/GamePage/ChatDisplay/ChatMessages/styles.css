@@ -36,6 +36,7 @@
 #message-nameplate {
   font-family: fantasy;
   font-size: 13px;
+  margin-right: 50px;
   max-width: 80%;
   overflow-x: hidden;
 }
@@ -503,9 +504,14 @@
 @media only screen and (max-width: 950px) {
   .message {
     font-size: 15px;
+    max-width: 100%;
   }
   .message .agent {
     font-size: 8px;
+  }
+  /* SOUL SPAWN*/
+  .soulspawn-container {
+    width: 90%;
   }
 }
 
@@ -606,8 +612,6 @@
 
   /* HELP MESSAGE*/
   .help-container {
-    display: flex;
-    justify-content: center;
     height: 35em;
     width: 100%;
     z-index: 1;
