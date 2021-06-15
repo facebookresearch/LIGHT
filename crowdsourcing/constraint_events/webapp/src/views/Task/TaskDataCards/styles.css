@@ -1,0 +1,60 @@
+.taskdatacards-container{
+    width: 80%;
+    margin-top:10px;
+    margin-bottom: 10px;
+}
+
+
+.items-container{
+    display:flex;
+    flex-direction: row;
+    width:100%;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+
+.desc-container{
+    display:flex;
+    flex-direction: row;
+    width:100%;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+/* Data Card */
+.card-container {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 15px;
+    box-shadow: 3px 3px 5px black;
+    width:500px;
+    margin:5px;
+}
+.card-header__container{
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    width: 100%;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.card-header__text {
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+    color:white;
+}
+.card-body__container{
+    padding: 4px 1em 1em 1em;
+    border-style: solid;
+    border-width: 3px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+.card-body__text {
+    font-weight: bold;
+    font-size: 16px;
+}

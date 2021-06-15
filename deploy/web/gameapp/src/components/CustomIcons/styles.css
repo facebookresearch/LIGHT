@@ -30,3 +30,15 @@
   width: 2.5em;
   font-size: 1em;
 }
+
+@media only screen and (max-width: 900px) {
+  .customicon-text {
+    font-size: 16px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .customicon-text {
+    font-size: 12px;
+  }
+}

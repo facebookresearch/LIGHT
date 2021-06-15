@@ -11,6 +11,7 @@ import subprocess
 from mephisto.operations.operator import Operator
 from mephisto.operations.utils import get_root_dir
 from mephisto.tools.scripts import load_db_and_process_config
+from mephisto.abstractions.blueprint import BlueprintArgs
 from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint import (
     BLUEPRINT_TYPE,
 )
@@ -25,11 +26,13 @@ from mephisto.data_model.unit import Unit
 
 import hydra
 import json
+import random
 from omegaconf import DictConfig
 from dataclasses import dataclass, field
 from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+INPUT_FILE_TASK = "objects-interaction-task-11"
 LIGHT_DB_PATH = "~/ParlAI/data/LIGHT/merged.db"
 PRIMARY_OBJECT_LIST_SIZE = 5
 SECONDARY_OBJECT_LIST_SIZE = 5
@@ -42,7 +45,7 @@ defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    {"conf": "objects_interaction_task"},
+    {"conf": "constraints_events_task"},
 ]
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
@@ -52,9 +55,7 @@ from mephisto.operations.hydra_config import RunScriptConfig, register_script_co
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
-    light_db_path: str = LIGHT_DB_PATH
-    primary_object_list_size: int = PRIMARY_OBJECT_LIST_SIZE
-    secondary_object_list_size: int = SECONDARY_OBJECT_LIST_SIZE
+    input_file_task: str = INPUT_FILE_TASK
     num_tasks: int = DEFAULT_NUM_TASKS
 
 
@@ -120,29 +121,52 @@ def build_task(task_dir):
     os.chdir(return_dir)
 
 
+def create_task_data(input_file_task, num_tasks):
+    units = mephisto_data_browser.get_units_for_task_name(input_file_task)
+    random.shuffle(units)
+    data = []
+    for unit in units:
+        data.append(
+            mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
+                "final_data"
+            ]
+        )
+
+    return data[:num_tasks]
+
+
 def validate_unit(unit):
     if unit.get_assigned_agent() is None:
         return
 
+    print("Task Directory: ", TASK_DIRECTORY)
+
     data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
         "final_data"
     ]
-    action_description = data["actionDescription"]
+    print("Data: ", data)
 
-    if (
-        len(action_description) <= 20
-        or action_description.lower().find("you") == -1
-        or (
-            action_description.lower()[-1] != "."
-            and action_description.lower()[-1] != "?"
-            and action_description.lower()[-1] != "!"
-        )
-    ):
-        # Not in second person or invalid punctuation
-        print("Action " + action_description + " was not validated!")
+    constraints = data["constraints"]
+    events = data["events"]
+
+    has_active = False
+
+    for constraint in constraints:
+        if constraint["active"] == "1":
+            has_active = True
+            break
+
+    for event in events:
+        if event["active"] == "1":
+            has_active = True
+            break
+
+    if not has_active:
+        print("Unit not validated!")
         unit.get_assigned_agent().soft_reject_work()
         worker = unit.get_assigned_agent().get_worker()
-        worker.grant_qualification("objects_interaction_task_block", 1)
+        worker.grant_qualification("constraints_events_task_block", 1)
+
     return
 
 
@@ -154,15 +178,10 @@ def main(cfg: DictConfig) -> None:
         return True
 
     shared_state = SharedStaticTaskState(
-        static_task_data=create_task_data(
-            get_object_list(cfg.light_db_path),
-            cfg.primary_object_list_size,
-            cfg.secondary_object_list_size,
-            cfg.num_tasks,
-        ),
+        static_task_data=create_task_data(cfg.input_file_task, cfg.num_tasks),
         validate_onboarding=onboarding_always_valid,
+        on_unit_submitted=validate_unit,
     )
-    shared_state.on_unit_submitted = validate_unit
 
     shared_state.mturk_specific_qualifications = [
         {
