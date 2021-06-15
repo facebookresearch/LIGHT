@@ -153,6 +153,10 @@ def main(cfg: DictConfig) -> None:
     def onboarding_always_valid(onboarding_data):
         return True
 
+    primary_objects, secondary_objects = get_object_lists(
+        cfg.light_db_path,
+    )
+
     shared_state = SharedStaticTaskState(
         static_task_data=create_task_data(
             get_object_list(cfg.light_db_path),
