@@ -55,7 +55,9 @@ from mephisto.operations.hydra_config import RunScriptConfig, register_script_co
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
-    input_file_task: str = INPUT_FILE_TASK
+    light_db_path: str = LIGHT_DB_PATH
+    primary_object_list_size: int = PRIMARY_OBJECT_LIST_SIZE
+    secondary_object_list_size: int = SECONDARY_OBJECT_LIST_SIZE
     num_tasks: int = DEFAULT_NUM_TASKS
 
 
