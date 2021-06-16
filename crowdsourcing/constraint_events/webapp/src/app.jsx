@@ -38,7 +38,7 @@ function MainApp() {
   const [broadcastMessage, setBroadcastMessage] = useState("");
   const [isCreatingEntity, setIsCreatingEntity] = useState(false);
   const [createdEntity, setcreatedEntity] = useState("");
-  const [isObjectRemoved, setIsObjectRemoved] = useState("");
+  const [isRemovingObjects, setIsRemovingObjects] = useState("");
   const [removedObjects, setRemovedObjects] = useState([])
     //Primary
   const [primaryRemainingUses, setPrimaryRemainingUses]= useState("");
@@ -152,6 +152,10 @@ function MainApp() {
           }
         }
     ]
+    let updatedConstraints = [
+
+    ]
+    if()
     const payload = {
         remaining_uses: remainingUses,
         reversible: true,
