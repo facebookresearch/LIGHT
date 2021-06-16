@@ -5,14 +5,16 @@ import "./styles.css";
 import TaskButton from "../../TaskButton"
 import FormQuestion from "../../Utils/FormatQuestion";
 
-const BooleanQuestion = ({question, trueAnswer, falseAnswer, keywords, inverted, children})=>{
+const BooleanQuestion = ({question, trueAnswer, falseAnswer, keywords, inverted, children, formFunction})=>{
     const [answer, setAnswer] = useState(null);
 
     const trueHandler = ()=>{
         setAnswer(true)
+        formFunction(true)
     }
     const falseHandler = ()=>{
         setAnswer(false)
+        formFunction(false)
     }
 
     return(
