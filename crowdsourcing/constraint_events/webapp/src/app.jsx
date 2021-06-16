@@ -38,6 +38,8 @@ function MainApp() {
   const [broadcastMessage, setBroadcastMessage] = useState("");
   const [isCreatingEntity, setIsCreatingEntity] = useState(false);
   const [createdEntity, setcreatedEntity] = useState("");
+  const [isObjectRemoved, setIsObjectRemoved] = useState("");
+  const [removedObjects, setRemovedObjects] = useState([])
     //Primary
   const [primaryRemainingUses, setPrimaryRemainingUses]= useState("");
   const [primaryModifiedAttributes, setPrimaryModifiedAttributes]= useState([]);
@@ -48,7 +50,6 @@ function MainApp() {
   //Constraint State
   const [isSecondaryHeld, setIsSecondaryHeld] = useState(false);
   const [isReversible, setIsReversible] = useState(false);
-  const [isReversible, setIsReversible]= useState(false);
 
 
   if (blockedReason !== null) {
@@ -138,72 +139,29 @@ function MainApp() {
   const submissionHandler = ()=>{
     let updatedBroadcastMessage = broadcastMessage;
 
-    if(!updatedBroadcastMessage || ()){
+    if(!updatedBroadcastMessage){
 
     }
-      const updatePrimary = {
-        "object_id": {
-
-          "name": "object_name",
-
-          "contain_size": 0,
+    let updatedIsReversible = isReversible;
+    let updatedEvents = [
+      {
+        type: "broadcast_message",
+        params: {
+          self_view: dummyData.interaction,
+          room_view: updatedBroadcastMessage
+          }
+        }
+    ]
+    const payload = {
         remaining_uses: remainingUses,
         reversible: true,
-        events: [
-          {
-              type: ...,
-              params: {...},
-          },
-          {
-          type: "broadcast_message",
-          params: {
-            self_view: dummyData.interaction,
-            room_view:
-            }
-          }
-
-
-        ],
+        events: updatedEvents,
         constraints: [
-          {
-              type: ...,
-              params: {...},
-          },
-          ...
-        ],
+        ]
     }
-  }
-
-      const payload = {
-        "object_id": {
-
-          "name": "object_name",
-
-          "contain_size": 0,
-        remaining_uses: remainingUses,
-        reversible: true,
-        events: [
-          {
-              type: ...,
-              params: {...},
-          },
-          {
-          type: "broadcast_message",
-          params: {
-            self_view: dummyData.interaction,
-            room_view:
-            }
-          }
-
-
-        ],
-        constraints: [
-          {
-              type: ...,
-              params: {...},
-          },
-          ...
-        ],
+    let complete = false
+    if(complete){
+        handleSubmit(payload)
     }
   }
 
@@ -236,3 +194,34 @@ ReactDOM.render(<MainApp />, document.getElementById("app"));
     <SubmitButton active={active} state={state} onSubmit={handleSubmit}/>
   </div>
 </section> */
+
+//     const updatePrimary = {
+  //       object_id: {
+  //         "name": "object_name",
+  //         "contain_size": 0,
+  //       remaining_uses: remainingUses,
+  //       reversible: true,
+  //       events: [
+  //         {
+  //             type: ...,
+  //             params: {...},
+  //         },
+  //         {
+  //         type: "broadcast_message",
+  //         params: {
+  //           self_view: dummyData.interaction,
+  //           room_view:
+  //           }
+  //         }
+
+
+  //       ],
+  //       constraints: [
+  //         {
+  //             type: ...,
+  //             params: {...},
+  //         },
+  //         ...
+  //       ],
+  //   }
+  // }
