@@ -32,7 +32,7 @@ const Task1 = ({
 
   const toggleShowSuccess = () => setShowSuccess(!showSuccess);
   const toggleShowError = () => setShowError(!showError);
-
+console.log("TASK DATA:  ", taskData)
 
 
   useEffect(()=>{
@@ -114,8 +114,8 @@ const Task1 = ({
         {
           (primaryObjectList.length && secondaryObjectList.length) ?
           <div className="object-selectors">
-            <ObjectSelector label="Primary Object" items={[...primaryObjectList]} selectFunction={primaryHandler} />
-            <ObjectSelector label="Secondary Object" items={[...secondaryObjectList]} selectFunction={secondaryHandler} />
+            <ObjectSelector label="Primary Object" items={[...primaryObjectList, {name:"LIT TORCH", desc:"A high quality torch burns brightly.  The torches' flame shows no sign of dying down."}]} selectFunction={primaryHandler} />
+            <ObjectSelector label="Secondary Object" items={[...secondaryObjectList, {name:"WOODEN TABLE", desc:"The table is old, scratched, and worn.  Its surface is dry and laden with splinters."}]} selectFunction={secondaryHandler} />
           </div>
           :
           <div/>

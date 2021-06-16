@@ -8,8 +8,8 @@ const ObjectSelector = ({label, items, selectFunction})=>{
     const [selectedItem, setSelectedItem] = useState(null);
     const [objectList, setObjectList] = useState([])
 
-    const clickHandler = (id, selection)=>{
-        setSelectedItem(id);
+    const clickHandler = (selection)=>{
+        setSelectedItem(selection);
         selectFunction(selection);
     }
     useEffect(()=>{
@@ -24,11 +24,19 @@ const ObjectSelector = ({label, items, selectFunction})=>{
             {
                 [objectList].length
                 ?
-                objectList.map((item, index)=><ObjectButton key={index} name={item} selectFunction={()=>clickHandler(index, item)} isSelected={selectedItem==index} />)
+                objectList.map((item, index)=>(
+                <ObjectButton
+                    key={index}
+                    name={item.name}
+                    selectFunction={()=>clickHandler(item)}
+                    isSelected={selectedItem ? selectedItem.name==item.name : false}
+                />
+                ))
                 :
                 null
             }
             </div>
+            {selectedItem ? <p className="selection-description" ><span style={{fontWeight:"bold"}}>{selectedItem.name.toUpperCase()}:  </span>{selectedItem.desc}</p> : null}
         </div>
     )
 }
