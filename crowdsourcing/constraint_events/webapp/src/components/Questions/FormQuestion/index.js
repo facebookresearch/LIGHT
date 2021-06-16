@@ -11,7 +11,7 @@ const FormQuestion = ({question, placeholder, questionColor, upperCaseQuestion, 
     const changeHandler = e=>{
         e.preventDefault()
         setDescription(e.target.value)
-
+        formFunction(description)
     }
     return(
         <div className="form-container" >

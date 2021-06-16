@@ -9,15 +9,15 @@ const Copy ={
         ]
     },
     event:{
-        questions:[
-            "1.  Can this interaction be done infinitely?",
-            "1a.  How many uses remain for the objects after the interaction?",
-            "2.  Narrate this interaction to another observer who sees it happen.",
-            "3.  Are objects removed?",
-            "3a.  Which object(s)?",
-            "4.  Are objects created?",
-            "5.  Does an object's description change?",
-            "# After this action:  "
-        ]
+        questions:{
+            1: "1.  Narrate this interaction to another observer who sees it happen.",
+            2: "2.  Can this interaction be done infinitely?",
+            a2 : "2a.  How many uses remain for the objects after the interaction?",
+            3: "3.  Are objects removed?",
+            a3: "3a.  Which object(s)?",
+            4: "4.  Are objects created?",
+            5: "5.  Does an object's description change?",
+            setter: "# After this action:  "
+        }
     }
 }
