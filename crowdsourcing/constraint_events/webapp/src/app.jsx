@@ -33,13 +33,23 @@ function MainApp() {
   } = useMephistoTask();
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  //Events State
   const [timesRemaining, setTimesRemaining] = useState("");
-  const [remainingUses, setRemainingUses]= useState("");
-  const [isReversible, setIsReversible]= useState(false);
   const [broadcastMessage, setBroadcastMessage] = useState("");
   const [isCreatingEntity, setIsCreatingEntity] = useState(false);
   const [createdEntity, setcreatedEntity] = useState("");
-  const [modifiedAttributess, setModifiedAttributes]= useState([]);
+    //Primary
+  const [primaryRemainingUses, setPrimaryRemainingUses]= useState("");
+  const [primaryModifiedAttributes, setPrimaryModifiedAttributes]= useState([]);
+    //Secondary
+  const [secondaryRemainingUses, setSecondaryRemainingUses]= useState("");
+  const [secondaryModifiedAttributes, setSecondaryModifiedAttributes]= useState([]);
+
+  //Constraint State
+  const [isSecondaryHeld, setIsSecondaryHeld] = useState(false);
+  const [isReversible, setIsReversible] = useState(false);
+  const [isReversible, setIsReversible]= useState(false);
+
 
   if (blockedReason !== null) {
     return (
@@ -104,15 +114,17 @@ function MainApp() {
   console.log('active? ', active);
     const dummyData= {
       object1: {
-      name: "key",
-      desc:"A ordinary key that will unlock or lock something.",
-      attributes:[
-        {name: "hot", val: false},
-        {name: "valuable", val: true},
-        {name: "brittle", val: false}
-      ]
+        id:2,
+        name: "key",
+        desc:"A ordinary key that will unlock or lock something.",
+        attributes:[
+          {name: "hot", val: false},
+          {name: "valuable", val: true},
+          {name: "brittle", val: false}
+        ]
     },
     object2: {
+      id:2,
       name: "lock",
       desc:"A ordinary lock that will be unlocked or locked by a key.",
       attributes:[
@@ -124,7 +136,17 @@ function MainApp() {
     interaction: "You place the key in the lock and turn.  After a satifying click the lock becomes unlocked."
   }
   const submissionHandler = ()=>{
-      const payload = {
+    let updatedBroadcastMessage = broadcastMessage;
+
+    if(!updatedBroadcastMessage || ()){
+
+    }
+      const updatePrimary = {
+        "object_id": {
+
+          "name": "object_name",
+
+          "contain_size": 0,
         remaining_uses: remainingUses,
         reversible: true,
         events: [
@@ -136,7 +158,40 @@ function MainApp() {
           type: "broadcast_message",
           params: {
             self_view: dummyData.interaction,
-            room_view: broadcastMessage
+            room_view:
+            }
+          }
+
+
+        ],
+        constraints: [
+          {
+              type: ...,
+              params: {...},
+          },
+          ...
+        ],
+    }
+  }
+
+      const payload = {
+        "object_id": {
+
+          "name": "object_name",
+
+          "contain_size": 0,
+        remaining_uses: remainingUses,
+        reversible: true,
+        events: [
+          {
+              type: ...,
+              params: {...},
+          },
+          {
+          type: "broadcast_message",
+          params: {
+            self_view: dummyData.interaction,
+            room_view:
             }
           }
 
