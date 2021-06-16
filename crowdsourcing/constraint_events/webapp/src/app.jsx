@@ -146,25 +146,25 @@ function MainApp() {
     interaction: "You place the key in the lock and turn.  After a satifying click the lock becomes unlocked."
   }
   const submissionHandler = ()=>{
+    let updatedEvents = []
+    let updatedConstraints = []
     //ERROR HANDLING
     if(!updatedBroadcastMessage){
 
     }
+    if(!showError){
   // EVENT UPDATES
     let updatedBroadcastMessage = broadcastMessage;
-    let updatedEvents = [
-      {
+    updatedBroadcastMessage = {
         type: "broadcast_message",
         params: {
           self_view: dummyData.interaction,
-          room_view: updatedBroadcastMessage
+          room_view: broadcastMessage
           }
-        }
-    ]
-    let updatedConstraints = [
+    }
+    updatedEvents = [...updatedEvents, updatedBroadcastMessage]
 
-    ]
-
+    //OBJECT REMOVAL EVENT
     if(isRemovingObjects){
       let updatedRemovedObjects = removedObjects.map(obj=>(
         {type:"remove_object",
@@ -174,6 +174,7 @@ function MainApp() {
       }))
       updatedEvents = [...updatedEvents, ...updatedRemovedObjects]
     }
+    //ENTITY CREATION EVENT
     if(isCreatingEntity){
       const {name, desc, location } = createdEntity;
       let updatedCreatedEntityEvent = {
@@ -188,6 +189,7 @@ function MainApp() {
       }
       updatedEvents = [...updatedEvents, updatedCreatedEntityEvent]
     }
+    //DESCRIPTION CHANGE EVENT
     if(isChangingDescription){
       let updatedDescriptions = [
         {
@@ -209,6 +211,7 @@ function MainApp() {
       ]
       updatedEvents = [...updatedEvents, ...updatedDescriptions]
     }
+    //ATTRIBUTE MODIFICATION EVENTS
     if(primaryModifiedAttributes.length){
       let updatedPrimaryModifiedAttributes = primaryModifiedAttributes.map(attribute=>({
         type:"modify_attribute",
@@ -231,7 +234,8 @@ function MainApp() {
       }))
       updatedEvents = [...updatedEvents, ...updatedSecondaryModifiedAttributes]
     }
-    // CONSTRAINT UPDATES
+    //CONSTRAINT UPDATES
+    //CONSTRAINING ATTRIBUTES
     if(primaryConstrainingAttributes.length){
       let updatedPrimaryConstrainingAttributes = primaryConstrainingAttributes.map(attribute=>({
         type:"attribute_compare_value",
@@ -256,6 +260,7 @@ function MainApp() {
       }))
       updatedConstraints = [...updatedConstraints, ...updatedSecondaryModifiedAttributes]
     }
+    // HELD CONSTRAINT
     if(isSecondaryHeld){
       let updatedSecondaryHeldConstraint = {
           type: "is_holding",
@@ -266,22 +271,61 @@ function MainApp() {
       updatedConstraints = [...updatedConstraints, updatedSecondaryHeldConstraint]
     }
     let updatedIsReversible = isReversible;
-
+    // LOCATION CONSTRAINT
+    if(isLocationConstrained){
+      let updatedLocationConstraint = {
+        type: "in_room",
+        params: {
+            room_name: constraintLocation
+        }
+      }
+      updatedConstraints = [...updatedConstraints, updatedLocationConstraint]
+    }
     const payload = {
         remaining_uses: remainingUses,
         reversible: updatedIsReversible,
         events: updatedEvents,
         constraints: updatedConstraints
     }
-    let complete = false
-    if(complete){
-        handleSubmit(payload)
+    handleSubmit(payload)
     }
   }
 
   return (
     <div>
-      <Task data={dummyData}/>
+      <Task
+        data={dummyData}
+        broadcastMessage={broadcastMessage}
+        setBroadcastMessage={setBroadcastMessage}
+        isCreatingEntity={isCreatingEntity}
+        setIsCreatingEntity={setIsCreatingEntity}
+        isRemovingObjects={isRemovingObjects}
+        setIsRemovingObjects={setIsRemovingObjects}
+        removedObjects={removedObjects}
+        setRemovedObjects={setRemovedObjects}
+        isChangingDescription={isChangingDescription}
+        setIsChangingDescription={setIsChangingDescription}
+        primaryDescription={primaryDescription}
+        setPrimaryDescription={setPrimaryDescription}
+        secondaryDescription={secondaryDescription}
+        setSecondaryDescription={setSecondaryDescription}
+        primaryModifiedAttributes={primaryModifiedAttributes}
+        setPrimaryModifiedAttributes={setPrimaryModifiedAttributes}
+        secondaryModifiedAttributes={secondaryModifiedAttributes}
+        setSecondaryModifiedAttributes={setSecondaryModifiedAttributes}
+        isSecondaryHeld={isSecondaryHeld}
+        setIsSecondaryHeld={setIsSecondaryHeld}
+        isReversible={isReversible}
+        setIsReversible={setIsReversible}
+        isLocationConstrained={isLocationConstrained}
+        setIsLocationConstrained={setIsLocationConstrained}
+        constraintLocation={constraintLocation}
+        setConstraintLocation={setConstraintLocation}
+        primaryConstrainingAttributes={primaryConstrainingAttributes}
+        setPrimaryConstrainingAttributes={setPrimaryConstrainingAttributes}
+        secondaryConstrainingAttributes={secondaryConstrainingAttributes}
+        setSecondaryConstrainingAttributes={setSecondaryConstrainingAttributes}
+      />
       <div>
         <Submission />
       </div>
@@ -292,7 +336,37 @@ function MainApp() {
 ReactDOM.render(<MainApp />, document.getElementById("app"));
 
 
-/* <section className="hero is-medium is-link">
+/*
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  //Events State
+  const [timesRemaining, setTimesRemaining] = useState("");
+  const [broadcastMessage, setBroadcastMessage] = useState("");
+  const [isCreatingEntity, setIsCreatingEntity] = useState(false);
+  const [createdEntity, setcreatedEntity] = useState(null);
+  const [isRemovingObjects, setIsRemovingObjects] = useState("");
+  const [removedObjects, setRemovedObjects] = useState([]);
+  const [isChangingDescription, setIsChangingDescription] = useState(false);
+    //Primary
+  const [primaryRemainingUses, setPrimaryRemainingUses]= useState("");
+  const [primaryModifiedAttributes, setPrimaryModifiedAttributes]= useState([]);
+  const [primaryDescription, setPrimaryDescription] = useState("");
+    //Secondary
+  const [secondaryRemainingUses, setSecondaryRemainingUses]= useState("");
+  const [secondaryModifiedAttributes, setSecondaryModifiedAttributes]= useState([]);
+  const [secondaryDescription, setSecondaryDescription] = useState("");
+
+  //Constraint State
+  const [isSecondaryHeld, setIsSecondaryHeld] = useState(false);
+  const [isReversible, setIsReversible] = useState(false);
+  const [isLocationConstrained, setIsLocationConstrained] = useState(false);
+  const [constraintLocation, setConstraintLocation] = useState("");
+    //Primary
+  const [primaryConstrainingAttributes, setPrimaryConstrainingAttributes]= useState([]);
+    //Secondary
+  const [secondaryConstrainingAttributes, setSecondaryConstrainingAttributes]= useState([]);
+
+<section className="hero is-medium is-link">
   <div className="hero-body">
     <TaskDescription />
     <br />
