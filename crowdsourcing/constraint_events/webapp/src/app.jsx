@@ -37,7 +37,7 @@ function MainApp() {
   const [timesRemaining, setTimesRemaining] = useState("");
   const [broadcastMessage, setBroadcastMessage] = useState("");
   const [isCreatingEntity, setIsCreatingEntity] = useState(false);
-  const [createdEntity, setcreatedEntity] = useState("");
+  const [createdEntity, setcreatedEntity] = useState(null);
   const [isRemovingObjects, setIsRemovingObjects] = useState("");
   const [removedObjects, setRemovedObjects] = useState([])
     //Primary
@@ -155,13 +155,40 @@ function MainApp() {
     let updatedConstraints = [
 
     ]
-    if()
+    if(isRemovingObjects){
+      let updatedRemovedObjects = removedObjects.map(obj=>(
+        {type:"remove_object",
+          params:{
+            name:obj
+          }
+      }))
+      updatedEvents = [...updatedEvents, ...updatedRemovedObjects]
+    }
+    if(isCreatingEntity){
+      const {name, desc, location } = createdEntity
+      let updatedCreatedEntityEvent = {
+        type: "create_entity",
+        params: {
+
+          "type": location,
+
+          object: {
+
+            name: name,
+
+            desc: desc
+
+          }
+
+          }
+      }
+      updatedEvents = [...updatedEvents, updatedCreatedEntityEvent]
+    }
     const payload = {
         remaining_uses: remainingUses,
         reversible: true,
         events: updatedEvents,
-        constraints: [
-        ]
+        constraints: updatedConstraints
     }
     let complete = false
     if(complete){
