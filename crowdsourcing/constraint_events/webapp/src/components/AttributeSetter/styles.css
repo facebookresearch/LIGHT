@@ -1,13 +1,13 @@
 .setter-container {
     display:flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+    justify-content: center;
+    align-items: center;
 }
 .setter-header {
     display:flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     width: 100%;
     margin: 5px;
@@ -48,14 +48,13 @@
     box-shadow: 0px 0px 0px black;
 }
 /* Attribute Row */
-.attributerow-container{
+.attributerow-container {
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    margin: 5px 0px 5px 20px;
+    margin: 5px 0px 5px 0px;
     width: 100%;
-
 }
 
 .attribute-label__container {
@@ -82,12 +81,10 @@
     align-items: center;
     margin-left:4px;
     margin-right: 6px;
-    width: 30%;
+    width: 50%;
 }
 
-.attribute-container{
-    width: 50;
-}
+.attribute-container{}
 
 .attribute-icon {
     font-size: 50px;

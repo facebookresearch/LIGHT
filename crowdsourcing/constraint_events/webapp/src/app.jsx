@@ -6,7 +6,7 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-import React from "react";
+import React, {useState} from "react";
 import ReactDOM from "react-dom";
 import Task from "./views/Task";
 import Submission from "./components/Submission"
@@ -32,7 +32,13 @@ function MainApp() {
     handleSubmit,
   } = useMephistoTask();
 
-  const [timesRemaining, setTimesRemaining] = React.useState("");
+  const [timesRemaining, setTimesRemaining] = useState("");
+  const [remainingUses, setRemainingUses]= useState("")
+  const [isReversible, setIsReversible]= useState(false)
+  const [broadcastMessage, setBroadcastMessage] = useState("");
+  const [isCreatingEntity, setIsCreatingEntity] = useState(false)
+  const [createdEntity, setcreatedEntity] = useState("");
+  const [modifiedAttributess, setModifiedAttributes]= useState([])
 
   if (blockedReason !== null) {
     return (
@@ -116,6 +122,27 @@ function MainApp() {
     },
     interaction: "You place the key in the lock and turn.  After a satifying click the lock becomes unlocked."
   }
+  const submissionHandler = ()=>{
+      const payload = {
+        remaining_uses: "inf",
+        reversible: true,
+        events: [
+          {
+              type: ...,
+              params: {...},
+          },
+          ...
+        ],
+        constraints: [
+          {
+              type: ...,
+              params: {...},
+          },
+          ...
+        ],
+    }
+  }
+
   return (
     <div>
       <Task data={dummyData}/>
