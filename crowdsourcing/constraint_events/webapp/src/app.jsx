@@ -39,17 +39,26 @@ function MainApp() {
   const [isCreatingEntity, setIsCreatingEntity] = useState(false);
   const [createdEntity, setcreatedEntity] = useState(null);
   const [isRemovingObjects, setIsRemovingObjects] = useState("");
-  const [removedObjects, setRemovedObjects] = useState([])
+  const [removedObjects, setRemovedObjects] = useState([]);
+  const [isChangingDescription, setIsChangingDescription] = useState(false);
     //Primary
   const [primaryRemainingUses, setPrimaryRemainingUses]= useState("");
   const [primaryModifiedAttributes, setPrimaryModifiedAttributes]= useState([]);
+  const [primaryDescription, setPrimaryDescription] = useState("");
     //Secondary
   const [secondaryRemainingUses, setSecondaryRemainingUses]= useState("");
   const [secondaryModifiedAttributes, setSecondaryModifiedAttributes]= useState([]);
+  const [secondaryDescription, setSecondaryDescription] = useState("");
 
   //Constraint State
   const [isSecondaryHeld, setIsSecondaryHeld] = useState(false);
   const [isReversible, setIsReversible] = useState(false);
+  const [isLocationConstrained, setIsLocationConstrained] = useState(false);
+  const [constraintLocation, setConstraintLocation] = useState("");
+    //Primary
+  const [primaryConstrainingAttributes, setPrimaryConstrainingAttributes]= useState([]);
+    //Secondary
+  const [secondaryConstrainingAttributes, setSecondaryConstrainingAttributes]= useState([]);
 
 
   if (blockedReason !== null) {
@@ -137,12 +146,12 @@ function MainApp() {
     interaction: "You place the key in the lock and turn.  After a satifying click the lock becomes unlocked."
   }
   const submissionHandler = ()=>{
-    let updatedBroadcastMessage = broadcastMessage;
-
+    //ERROR HANDLING
     if(!updatedBroadcastMessage){
 
     }
-    let updatedIsReversible = isReversible;
+  // EVENT UPDATES
+    let updatedBroadcastMessage = broadcastMessage;
     let updatedEvents = [
       {
         type: "broadcast_message",
@@ -155,6 +164,7 @@ function MainApp() {
     let updatedConstraints = [
 
     ]
+
     if(isRemovingObjects){
       let updatedRemovedObjects = removedObjects.map(obj=>(
         {type:"remove_object",
@@ -165,28 +175,101 @@ function MainApp() {
       updatedEvents = [...updatedEvents, ...updatedRemovedObjects]
     }
     if(isCreatingEntity){
-      const {name, desc, location } = createdEntity
+      const {name, desc, location } = createdEntity;
       let updatedCreatedEntityEvent = {
         type: "create_entity",
         params: {
-
           "type": location,
-
           object: {
-
             name: name,
-
             desc: desc
-
           }
-
-          }
+        }
       }
       updatedEvents = [...updatedEvents, updatedCreatedEntityEvent]
     }
+    if(isChangingDescription){
+      let updatedDescriptions = [
+        {
+          type:"modify_attribute",
+          params:{
+            type:"in_used_item",
+            key:"desc",
+            value: primaryDescription
+          }
+        },
+        {
+          type:"modify_attribute",
+          params:{
+            type:"in_used_target_item",
+            key:"desc",
+            value: secondaryDescription
+          }
+        }
+      ]
+      updatedEvents = [...updatedEvents, ...updatedDescriptions]
+    }
+    if(primaryModifiedAttributes.length){
+      let updatedPrimaryModifiedAttributes = primaryModifiedAttributes.map(attribute=>({
+        type:"modify_attribute",
+        params:{
+          type:"in_used_item",
+          key: attribute.name,
+          value: attribute.value
+        }
+      }))
+      updatedEvents = [...updatedEvents, ...updatedPrimaryModifiedAttributes]
+    }
+    if(secondaryModifiedAttributes.length){
+      let updatedSecondaryModifiedAttributes = secondaryModifiedAttributes.map(attribute=>({
+        type:"modify_attribute",
+        params:{
+          type:"in_used_target_item",
+          key: attribute.name,
+          value: attribute.value
+        }
+      }))
+      updatedEvents = [...updatedEvents, ...updatedSecondaryModifiedAttributes]
+    }
+    // CONSTRAINT UPDATES
+    if(primaryConstrainingAttributes.length){
+      let updatedPrimaryConstrainingAttributes = primaryConstrainingAttributes.map(attribute=>({
+        type:"attribute_compare_value",
+        params:{
+          type:"in_used_item",
+          key: attribute.name,
+          list: [attribute.value],
+          cmp_type: "eq"
+        }
+      }))
+      updatedConstraints = [...updatedConstraints, ...updatedPrimaryModifiedAttributes]
+    }
+    if(updatedSecondaryConstrainingAttributes.length){
+      let updatedSecondaryConstrainingAttributes = secondaryConstrainingAttributes.map(attribute=>({
+        type:"attribute_compare_value",
+        params:{
+          type:"in_used_target_item",
+          key: attribute.name,
+          list: [attribute.value],
+          cmp_type: "eq"
+        }
+      }))
+      updatedConstraints = [...updatedConstraints, ...updatedSecondaryModifiedAttributes]
+    }
+    if(isSecondaryHeld){
+      let updatedSecondaryHeldConstraint = {
+          type: "is_holding",
+          params: {
+            complement: "used_target_item"
+          }
+      }
+      updatedConstraints = [...updatedConstraints, updatedSecondaryHeldConstraint]
+    }
+    let updatedIsReversible = isReversible;
+
     const payload = {
         remaining_uses: remainingUses,
-        reversible: true,
+        reversible: updatedIsReversible,
         events: updatedEvents,
         constraints: updatedConstraints
     }
