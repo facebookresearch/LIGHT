@@ -31,14 +31,15 @@ function MainApp() {
     initialTaskData,
     handleSubmit,
   } = useMephistoTask();
-
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [timesRemaining, setTimesRemaining] = useState("");
-  const [remainingUses, setRemainingUses]= useState("")
-  const [isReversible, setIsReversible]= useState(false)
+  const [remainingUses, setRemainingUses]= useState("");
+  const [isReversible, setIsReversible]= useState(false);
   const [broadcastMessage, setBroadcastMessage] = useState("");
-  const [isCreatingEntity, setIsCreatingEntity] = useState(false)
+  const [isCreatingEntity, setIsCreatingEntity] = useState(false);
   const [createdEntity, setcreatedEntity] = useState("");
-  const [modifiedAttributess, setModifiedAttributes]= useState([])
+  const [modifiedAttributess, setModifiedAttributes]= useState([]);
 
   if (blockedReason !== null) {
     return (
@@ -124,14 +125,22 @@ function MainApp() {
   }
   const submissionHandler = ()=>{
       const payload = {
-        remaining_uses: "inf",
+        remaining_uses: remainingUses,
         reversible: true,
         events: [
           {
               type: ...,
               params: {...},
           },
-          ...
+          {
+          type: "broadcast_message",
+          params: {
+            self_view: dummyData.interaction,
+            room_view: broadcastMessage
+            }
+          }
+
+
         ],
         constraints: [
           {
