@@ -114,8 +114,8 @@ console.log("TASK DATA:  ", taskData)
         {
           (primaryObjectList.length && secondaryObjectList.length) ?
           <div className="object-selectors">
-            <ObjectSelector label="Primary Object" items={[...primaryObjectList, {name:"LIT TORCH", desc:"A high quality torch burns brightly.  The torches' flame shows no sign of dying down."}]} selectFunction={primaryHandler} />
-            <ObjectSelector label="Secondary Object" items={[...secondaryObjectList, {name:"WOODEN TABLE", desc:"The table is old, scratched, and worn.  Its surface is dry and laden with splinters."}]} selectFunction={secondaryHandler} />
+            <ObjectSelector label="Primary Object" items={[...primaryObjectList]} selectFunction={primaryHandler} />
+            <ObjectSelector label="Secondary Object" items={[...secondaryObjectList]} selectFunction={secondaryHandler} />
           </div>
           :
           <div/>
@@ -143,3 +143,6 @@ console.log("TASK DATA:  ", taskData)
 }
 
 export default Task1 ;
+
+// {name:"LIT TORCH", desc:"A high quality torch burns brightly.  The torches' flame shows no sign of dying down."}
+// {name:"WOODEN TABLE", desc:"The table is old, scratched, and worn.  Its surface is dry laden with splinters."}

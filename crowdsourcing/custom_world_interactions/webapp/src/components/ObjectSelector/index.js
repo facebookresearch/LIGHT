@@ -10,7 +10,7 @@ const ObjectSelector = ({label, items, selectFunction})=>{
 
     const clickHandler = (selection)=>{
         setSelectedItem(selection);
-        selectFunction(selection);
+        selectFunction(selection.name);
     }
     useEffect(()=>{
         setObjectList(items)
