@@ -11,6 +11,7 @@ import subprocess
 from mephisto.operations.operator import Operator
 from mephisto.operations.utils import get_root_dir
 from mephisto.tools.scripts import load_db_and_process_config
+from mephisto.abstractions.blueprint import BlueprintArgs
 from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint import (
     BLUEPRINT_TYPE,
 )
@@ -25,12 +26,14 @@ from mephisto.data_model.unit import Unit
 
 import hydra
 import json
+import random
 from omegaconf import DictConfig
 from dataclasses import dataclass, field
 from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-LIGHT_DB_PATH = "/checkpoint/light/data/database3.db"
+INPUT_FILE_TASK = "objects-interaction-task-11"
+LIGHT_DB_PATH = "~/ParlAI/data/LIGHT/merged.db"
 PRIMARY_OBJECT_LIST_SIZE = 5
 SECONDARY_OBJECT_LIST_SIZE = 5
 DEFAULT_NUM_TASKS = 20
@@ -42,7 +45,7 @@ defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    {"conf": "objects_interaction_task"},
+    {"conf": "constraints_events_task"},
 ]
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
@@ -58,28 +61,41 @@ class TestScriptConfig(RunScriptConfig):
     num_tasks: int = DEFAULT_NUM_TASKS
 
 
-def get_object_list(db_path):
+def get_object_lists(db_path):
     db = LIGHTDatabase(db_path)
     with db as ldb:
-        object_list = [dict(obj)["name"] for obj in ldb.get_object()]
+        all_objects = [dict(obj) for obj in ldb.get_object()]
 
-    return object_list
+    primary_objects = [
+        {"name": obj["name"], "desc": obj["physical_description"]}
+        for obj in all_objects
+        if obj["is_gettable"] > 0.5
+    ]
+
+    secondary_objects = [
+        {"name": obj["name"], "desc": obj["physical_description"]}
+        for obj in all_objects
+    ]
+
+    return primary_objects, secondary_objects
 
 
 def create_task_data(
-    object_list, primary_object_list_size, secondary_object_list_size, num_tasks
+    primary_objects,
+    secondary_objects,
+    primary_object_list_size,
+    secondary_object_list_size,
+    num_tasks,
 ):
-    random.shuffle(object_list)
+    random.shuffle(primary_objects)
+    random.shuffle(secondary_objects)
     task_data_array = []
 
     for idx in range(num_tasks):
-        obj_name = object_list[idx % len(object_list)]
-
-        random_object_list = random.sample(
-            object_list, primary_object_list_size + secondary_object_list_size
+        primary_object_list = random.sample(primary_objects, primary_object_list_size)
+        secondary_object_list = random.sample(
+            secondary_objects, secondary_object_list_size
         )
-        primary_object_list = random_object_list[:primary_object_list_size]
-        secondary_object_list = random_object_list[primary_object_list_size:]
 
         task_data_array.append(
             {
@@ -159,14 +175,15 @@ def main(cfg: DictConfig) -> None:
 
     shared_state = SharedStaticTaskState(
         static_task_data=create_task_data(
-            get_object_list(cfg.light_db_path),
+            primary_objects,
+            secondary_objects,
             cfg.primary_object_list_size,
             cfg.secondary_object_list_size,
             cfg.num_tasks,
         ),
         validate_onboarding=onboarding_always_valid,
+        on_unit_submitted=validate_unit,
     )
-    shared_state.on_unit_submitted = validate_unit
 
     shared_state.mturk_specific_qualifications = [
         {
