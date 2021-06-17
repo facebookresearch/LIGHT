@@ -6,41 +6,49 @@ const ExampleCard =  ({primary, primary_desc, secondary, secondary_desc, narrati
     <div className="card-container">
         <div className="card-row">
             <div className="card-item">
-                <p className="card-item__label">
-                    <span style={{color:"gold"}}>PRIMARY:</span>
-                </p>
-                <p className="card-item__text">
-                    <span style={{fontWeight:"bold"}}>{primary.toUpperCase()} - </span>{primary_desc}
-                </p>
-            </div>
-        </div>
-        <div className="card-row">
-            <div className="card-item">
-                <p className="card-item__label">
-                    <span style={{color:"blue"}}>SECONDARY:</span>
-                </p>
-                <p className="card-item__text">
-                    <span style={{fontWeight:"bold"}}>{secondary.toUpperCase()} - </span>{secondary_desc}
+                <p>
+                    <span className="card-item__label">
+                        <span style={{color:"gold"}}>PRIMARY:</span>
+                    </span>
+                    <span className="card-item__text">
+                        <span style={{fontWeight:"bold"}}>{primary.toUpperCase()} - </span>{primary_desc}
+                    </span>
                 </p>
             </div>
         </div>
         <div className="card-row">
             <div className="card-item">
-                <p className="card-item__label">
-                    <span style={{color:"orange"}}>ACTION:</span>
-                </p>
-                <p className="card-item__text">
-                    {`USE ${primary} WITH ${secondary}`}
+                <p>
+                    <span className="card-item__label">
+                        <span style={{color:"blue"}}>SECONDARY:</span>
+                    </span>
+                    <span className="card-item__text">
+                        <span style={{fontWeight:"bold"}}>{secondary.toUpperCase()} - </span>{secondary_desc}
+                    </span>
                 </p>
             </div>
         </div>
         <div className="card-row">
             <div className="card-item">
-                <p className="card-item__label">
-                    <span className="card-label" style={{color:"green"}}>NARRATION:</span>
+                <p>
+                    <span className="card-item__label">
+                        <span style={{color:"orange"}}>ACTION:</span>
+                    </span>
+                    <span className="card-item__text">
+                        {`USE ${primary} WITH ${secondary}`}
+                    </span>
                 </p>
-                <p className="card-item__text">
-                    {narration}
+            </div>
+        </div>
+        <div className="card-row">
+            <div className="card-item">
+                <p>
+                    <span className="card-item__label">
+                        <span className="card-label" style={{color:"green"}}>NARRATION:</span>
+                    </span>
+                    <span className="card-item__text">
+                        {narration}
+                    </span>
                 </p>
             </div>
         </div>
