@@ -37,7 +37,7 @@ function MainApp() {
   const [timesRemaining, setTimesRemaining] = useState("");
   const [broadcastMessage, setBroadcastMessage] = useState("");
   const [isCreatingEntity, setIsCreatingEntity] = useState(false);
-  const [createdEntity, setcreatedEntity] = useState(null);
+  const [createdEntity, setCreatedEntity] = useState(null);
   const [isRemovingObjects, setIsRemovingObjects] = useState("");
   const [removedObjects, setRemovedObjects] = useState([]);
   const [isChangingDescription, setIsChangingDescription] = useState(false);
@@ -299,6 +299,8 @@ function MainApp() {
         setBroadcastMessage={setBroadcastMessage}
         isCreatingEntity={isCreatingEntity}
         setIsCreatingEntity={setIsCreatingEntity}
+        createdEntity={createdEntity}
+        setCreatedEntity={setCreatedEntity}
         isRemovingObjects={isRemovingObjects}
         setIsRemovingObjects={setIsRemovingObjects}
         removedObjects={removedObjects}
@@ -343,7 +345,7 @@ ReactDOM.render(<MainApp />, document.getElementById("app"));
   const [timesRemaining, setTimesRemaining] = useState("");
   const [broadcastMessage, setBroadcastMessage] = useState("");
   const [isCreatingEntity, setIsCreatingEntity] = useState(false);
-  const [createdEntity, setcreatedEntity] = useState(null);
+  const [createdEntity, setCreatedEntity] = useState(null);
   const [isRemovingObjects, setIsRemovingObjects] = useState("");
   const [removedObjects, setRemovedObjects] = useState([]);
   const [isChangingDescription, setIsChangingDescription] = useState(false);

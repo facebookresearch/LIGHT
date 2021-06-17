@@ -12,6 +12,8 @@ const Events = ({
     setBroadcastMessage,
     isCreatingEntity,
     setIsCreatingEntity,
+    createdEntity,
+    setCreatedEntity,
     isRemovingObjects,
     setIsRemovingObjects,
     removedObjects,
@@ -41,6 +43,8 @@ const Events = ({
                     setBroadcastMessage={setBroadcastMessage}
                     isCreatingEntity={isCreatingEntity}
                     setIsCreatingEntity={setIsCreatingEntity}
+                    createdEntity={createdEntity}
+                    setCreatedEntity={setCreatedEntity}
                     isRemovingObjects={isRemovingObjects}
                     setIsRemovingObjects={setIsRemovingObjects}
                     removedObjects={removedObjects}

@@ -3,7 +3,7 @@ import React from "react";
 import "./styles.css"
 
 //COPY
-import QuestionCopy from "../../../../TaskCopy";
+import QuestionCopy from "../../../../TaskCopy.js";
 //CUSTOM COMPONENENTS
 import FormQuestion from "../../../../components/Questions/FormQuestion";
 import BooleanQuestion from "../../../../components/Questions/BooleanQuestion"
@@ -19,6 +19,8 @@ const Questions = ({
     setBroadcastMessage,
     isCreatingEntity,
     setIsCreatingEntity,
+    createdEntity,
+    setcreatedEntity,
     isRemovingObjects,
     setIsRemovingObjects,
     removedObjects,
@@ -54,20 +56,23 @@ const Questions = ({
                 question={QuestionList[3]}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
+                formFunction={setIsRemovingObjects}
             >
                 <MultipleSelectQuestion
-                    question={QuestionList[a3]}
+                    question={QuestionList.a3}
                     answers={[object1.name, object2.name]}
+                    selectFunction={setRemovedObjects}
                 />
             </BooleanQuestion>
             <BooleanQuestion
                 question={QuestionList[4]}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
+                formFunction={setIsCreatingEntity}
             >
                 <FieldQuestion
 
-                    fields={[{name:"name", dropdown:false}, {name:"desc", dropdown:false}, {name:"location", dropdown:true, options:["in room", "held by actor", `in/on ${object1.name.toUpperCase()}`, `in/on ${object2.name.toUpperCase()}`]}]}
+                    fields={[{name:"name", dropdown:false}, {name:"desc", dropdown:false}, {name:"location", dropdown:true, options:[{name:"in room", val:""}, {name:"held by actor", val:""}, {name:`in/on ${object1.name.toUpperCase()}`, val:""}, {name:`in/on ${object2.name.toUpperCase()}`, val:""}]}]}
                 />
 
             </BooleanQuestion>

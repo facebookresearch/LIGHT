@@ -13,6 +13,8 @@ const Task = ({
   setBroadcastMessage,
   isCreatingEntity,
   setIsCreatingEntity,
+  createdEntity,
+  setCreatedEntity,
   isRemovingObjects,
   setIsRemovingObjects,
   removedObjects,
@@ -58,6 +60,8 @@ const Task = ({
               setBroadcastMessage={setBroadcastMessage}
               isCreatingEntity={isCreatingEntity}
               setIsCreatingEntity={setIsCreatingEntity}
+              createdEntity={createdEntity}
+              setCreatedEntity={setCreatedEntity}
               isRemovingObjects={isRemovingObjects}
               setIsRemovingObjects={setIsRemovingObjects}
               removedObjects={removedObjects}

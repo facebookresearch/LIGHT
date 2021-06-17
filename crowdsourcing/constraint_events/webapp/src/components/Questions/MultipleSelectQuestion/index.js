@@ -13,11 +13,12 @@ const MultipleSelectQuestion = ({question, answers, selectFunction})=>{
         if(selectedAnswers.indexOf(id)<0){
             updatedAnswers = [...selectedAnswers, id];
             setSelectedAnswers(updatedAnswers)
+            selectFunction(updatedAnswers)
         }
         if(selectedAnswers.indexOf(id)>=0){
             updatedAnswers = selectedAnswers.filter(answer => (answer!==id))
             setSelectedAnswers(updatedAnswers)
-            selectFunction(answer);
+            selectFunction(updatedAnswers);
         }
     }
     useEffect(()=>{
