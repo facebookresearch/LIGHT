@@ -2,7 +2,7 @@ import React from "react";
 import "./styles.css"
 import { BsFillExclamationDiamondFill } from "react-icons/bs";
 
-const ExampleCard =  ({primary, secondary, narration, badReason})=>(
+const ExampleCard =  ({primary, primary_desc, secondary, secondary_desc, narration, badReason})=>(
     <div className="card-container">
         <div className="card-row">
             <div className="card-item">
@@ -10,7 +10,7 @@ const ExampleCard =  ({primary, secondary, narration, badReason})=>(
                     <span style={{color:"gold"}}>PRIMARY:</span>
                 </p>
                 <p className="card-item__text">
-                    {primary}
+                    <span style={{fontWeight:"bold"}}>{primary.toUpperCase()} - </span>{primary_desc}
                 </p>
             </div>
         </div>
@@ -20,7 +20,7 @@ const ExampleCard =  ({primary, secondary, narration, badReason})=>(
                     <span style={{color:"blue"}}>SECONDARY:</span>
                 </p>
                 <p className="card-item__text">
-                    {secondary}
+                    <span style={{fontWeight:"bold"}}>{secondary.toUpperCase()} - </span>{secondary_desc}
                 </p>
             </div>
         </div>
