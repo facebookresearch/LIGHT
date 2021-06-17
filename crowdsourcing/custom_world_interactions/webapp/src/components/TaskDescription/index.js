@@ -44,7 +44,7 @@ const TaskDescription = ()=> {
               </p>
             </div>
             <p className="description-section__text">
-              Using the Primary and Secondary entities, you should then come up with an interaction that may occur if some actor where to try to use the two entities together. This interaction should be in second-person, as if you were narrating the outcome to that actor. The interaction should be directly between both entities, but a direct action of the actor, and should be appropriate for a medieval fantasy adventure. The interaction should only involve the actor, the two entities, and possibly something directly created by the two things interacting. Do not assume that other entities exist or use them in your narration.
+              Using the Primary and Secondary entities, you should then come up with an interaction that may occur if some actor where to try to use the two entities together. This interaction should be in second-person, as if you were narrating the outcome to that actor. The interaction should be directly between both entities, but a direct action of the actor, and should be appropriate for a medieval fantasy adventure. The interaction should only involve the actor, the two entities, and possibly something directly created by the two things interacting. Do not assume that other entities exist or use them in your narration.  After selecting an object it's description will appear, when narrating this interaction feel free to include details from this description but do not add attributes or context to the objects.  Remember the interaction you are narrating is <b>between </b>the two objects.
             </p>
           </div>
         </div>

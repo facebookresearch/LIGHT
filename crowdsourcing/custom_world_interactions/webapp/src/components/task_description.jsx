@@ -21,7 +21,7 @@ function TaskDescription() {
       <p>
         Imagine a character in a medieval fantasy adventure were to try to{" "}
         <b>'Use PRIMARY_OBJECT with SECONDARY_OBJECT'</b>. Narrate the
-        interaction to them.
+        interaction to them.  After selecting an object it's description will appear, when narrating this interaction feel free to include details from this description but do not add attributes or context to the objects.  Remember the interaction you are narrating is <b>between </b>the two objects.
       </p>
       <br />
       <p>
