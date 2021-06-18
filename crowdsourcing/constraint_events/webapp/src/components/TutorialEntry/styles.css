@@ -1,0 +1,31 @@
+.tutorialentry-container {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.tutorialentry-header{
+
+
+}
+
+.tutorialentry-header__text{
+    font-size: 20px;
+    font-weight: bold;
+    color: gold;
+    text-decoration: underline;
+    padding-left: 4px;
+}
+
+.tutorialentry-body{
+
+}
+
+.tutorialentry-body__text{
+    padding: 0px 4px 0px 4px;
+    font-size: 16px;
+}
+
+.tutorialentry-img{
+
+}

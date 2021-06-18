@@ -9,6 +9,7 @@
 import React, {useState} from "react";
 import ReactDOM from "react-dom";
 import Task from "./views/Task";
+import Preview from "./views/Preview"
 import Submission from "./components/Submission"
 import { TaskDescription } from "./components/task_description.jsx";
 // import { ActionDescription } from "./components/action_description.jsx";
@@ -20,6 +21,7 @@ import { useMephistoTask } from "mephisto-task";
 // import { SubmitButton } from "./components/submit_button.jsx";
 
 import "./styles.css"
+import 'react-tippy/dist/tippy.css'
 /* ================= Application Components ================= */
 
 function MainApp() {
@@ -74,11 +76,7 @@ function MainApp() {
   if (isPreview) {
     return (
       <div>
-        <section className="hero is-medium is-link">
-          <div className="hero-body">
-            <TaskDescription />
-          </div>
-        </section>
+        <Preview />
       </div>
     );
   }

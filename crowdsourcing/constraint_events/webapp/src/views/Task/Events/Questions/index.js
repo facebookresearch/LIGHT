@@ -41,12 +41,14 @@ const Questions = ({
         setSecondaryDescription(object2.desc)
     },[object1, object2])
     const QuestionList = QuestionCopy.event.questions
+    const TipList = QuestionCopy.event.tutorialCopy
     return (
        <>
             <FormQuestion
                 question={QuestionList[1]}
                 formVal={interaction}
                 formFunction={setBroadcastMessage}
+                toolTipCopy={TipList[1].explaination}
             />
             <BooleanQuestion
                 question={QuestionList[2]}
