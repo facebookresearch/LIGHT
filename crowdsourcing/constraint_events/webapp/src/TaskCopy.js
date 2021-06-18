@@ -1,5 +1,7 @@
 const Copy ={
+    tutorialIntro:"We're trying to crowdsource interactions between two objects. These interactions will be set in a medieval fantasy scenario, and as such should not refer to real people, places, or modern day technologies.  The objective of this task is to focus on two aspects of the interaction:  The events that occur during the interaction and the constraints required for the interaction to take place.  At the top of the screen you will be presented with 3 cards, the first two will be the names and a brief description of the objects involved in the interaction, the third contains the narration for the interaction itself.  Reference this information while completing the task.",
     constraint:{
+        tutorialIntro:"The Constraints section focuses on what conditions must be met in order for this interaction to occur.  So for this portion you will be thinking in terms of what must be true for the interaction to have happened in the first place based on the narration.",
         questions:[
             "# Constraints for Interaction:  ",
             "1.  Does # need to be held?",
@@ -22,11 +24,7 @@ const Copy ={
                 constraints that are relevant for your example.`
             },
             {
-                question:"2) Does object2 need to be held",
-                explaination:`We generally assume that the actor is already holding the first item in the interaction. If the interaction requires the actor to be holding both objects (like if the actor is combining objects), you should mark it here.  For example, for the interaction "You put the gem into the key, then turn it over in your hands. It it's a perfect fit." you would say both objects need to be held.  In contrast for the interaction "You swing the axe at the tree and it rebounds back. Not a mark, this tree must be magic." You would answer that the tree does not need to be held.`
-            },
-            {
-                question:"Narrate this interaction",
+                question:"2) Does object2 need to be held?",
                 explaination:`We generally assume that the actor is already holding the first item in the interaction. If the interaction requires the actor to be holding both objects (like if the actor is combining objects), you should mark it here.  For example, for the interaction "You put the gem into the key, then turn it over in your hands. It it's a perfect fit." you would say both objects need to be held.  In contrast for the interaction "You swing the axe at the tree and it rebounds back. Not a mark, this tree must be magic." You would answer that the tree does not need to be held.`
             },
             {
@@ -57,7 +55,7 @@ const Copy ={
                 For bidirectional cases like the latter, it would be true.`
             },
             {
-                question:"5) does this interaction need to have in a specific place.",
+                question:"5) Does this interaction need to have in a specific place?",
                 explaination:`If the interaction description implies that the interaction
                 occurs somewhere specifically, provide a name for the place
                 you believe it is happening.
@@ -76,6 +74,7 @@ const Copy ={
         ]
     },
     event:{
+        tutorialIntro:"The events section pertains to what changes(if any) occured during the interaction.  You will be tasked with narrating what this interaction looks like to a third party then describing anything that was created, destroyed, or changed as result of the interaction.",
         questions:{
             1: "1.  Narrate this interaction to another observer who sees it happen.",
             2: "2.  Are objects removed?",
@@ -90,7 +89,7 @@ const Copy ={
                 explaination:'The new narration should be directed to someone observing the interaction take place, say in the same location.  If you want to refer to the actor, location, or either the key or the lock, use `ACTOR`, `LOCATION`, `KEY`, `LOCK`.For example, "You place the key in the lock and turn. After a satisfying click the lock becomes unlocked " could be seen as "ACTOR fumbles with a KEY in the LOCK for a moment, before you hear a click echo through LOCATION."'
             },
             {
-                question:"2) Are objects removed",
+                question:"2) Are objects removed?",
                 explaination:`If the interaction would cause one of the
                 used objects not exist anymore, mark those
                 objects.
@@ -115,7 +114,7 @@ const Copy ={
                 deep scratches in one side."`
             },
             {
-                question:"4) Are objects created",
+                question:"4) Are objects created?",
                 explaination:`If the interaction creates new objects in the
                 scene, you should list them here. You should
                 describe the object and note where the object
@@ -131,7 +130,7 @@ const Copy ={
                 in the room.`
             },
             {
-                question:"5) Attribute changes.",
+                question:"5) Attribute changes",
                 explaination:`If the interaction changes something physical
                 about an object, you should mark the attribute
                 changes here. For instance, if an interaction is
