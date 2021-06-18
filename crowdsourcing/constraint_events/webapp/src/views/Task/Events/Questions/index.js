@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 
 import "./styles.css"
 
@@ -36,6 +36,10 @@ const Questions = ({
     secondaryModifiedAttributes,
     setSecondaryModifiedAttributes
 }) => {
+    useEffect(()=>{
+        setPrimaryDescription(object1.desc)
+        setSecondaryDescription(object2.desc)
+    },[object1, object2])
     const QuestionList = QuestionCopy.event.questions
     return (
        <>
@@ -48,21 +52,38 @@ const Questions = ({
                 question={QuestionList[2]}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
-                inverted={true}
+                formFunction={setIsRemovingObjects}
             >
-
+                <MultipleSelectQuestion
+                    question={QuestionList.a2}
+                    answers={[object1.name, object2.name]}
+                    selectFunction={setRemovedObjects}
+                />
             </BooleanQuestion>
             <BooleanQuestion
                 question={QuestionList[3]}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
-                formFunction={setIsRemovingObjects}
+                formFunction={setIsChangingDescription}
             >
-                <MultipleSelectQuestion
-                    question={QuestionList.a3}
-                    answers={[object1.name, object2.name]}
-                    selectFunction={setRemovedObjects}
-                />
+                <div style={{display:"flex", flexDirection:"row", width:"100%"}}>
+                    <FormQuestion
+                        question={object1.name}
+                        upperCaseQuestion={true}
+                        questionColor="blue"
+                        placeholder ="Description"
+                        formVal={primaryDescription}
+                        formFunction={setPrimaryDescription}
+                    />
+                    <FormQuestion
+                        question={object2.name}
+                        upperCaseQuestion={true}
+                        questionColor="orange"
+                        placeholder ="Description"
+                        formVal={secondaryDescription}
+                        formFunction={setSecondaryDescription}
+                    />
+                </div>
             </BooleanQuestion>
             <BooleanQuestion
                 question={QuestionList[4]}
@@ -75,28 +96,6 @@ const Questions = ({
                     fields={[{name:"name", dropdown:false}, {name:"desc", dropdown:false}, {name:"location", dropdown:true, options:[{name:"in room", val:""}, {name:"held by actor", val:""}, {name:`in/on ${object1.name.toUpperCase()}`, val:""}, {name:`in/on ${object2.name.toUpperCase()}`, val:""}]}]}
                 />
 
-            </BooleanQuestion>
-            <BooleanQuestion
-                question={QuestionList[5]}
-                trueAnswer={{name:"YES"} }
-                falseAnswer={{name:"NO"} }
-            >
-                <div style={{display:"flex", flexDirection:"row"}}>
-                    <FormQuestion
-                        question={object1.name}
-                        upperCaseQuestion={true}
-                        questionColor="blue"
-                        placeholder ="Description"
-                        formVal=""
-                    />
-                    <FormQuestion
-                        question={object2.name}
-                        upperCaseQuestion={true}
-                        questionColor="orange"
-                        placeholder ="Description"
-                        formVal=""
-                    />
-                </div>
             </BooleanQuestion>
             <AttributeSetter objectName={object1.name} objectColor="blue" header=" After this action:" attributes={object1.attributes} isConstraint={false}/>
             <AttributeSetter objectName={object2.name} objectColor="orange" header="  After this action:" attributes={object2.attributes} isConstraint={false}/>

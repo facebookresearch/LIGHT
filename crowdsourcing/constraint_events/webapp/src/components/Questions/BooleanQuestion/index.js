@@ -45,7 +45,7 @@ const BooleanQuestion = ({question, trueAnswer, falseAnswer, keywords, inverted,
 
                     />
             </div>
-            <div style={{marginLeft:"30px", marginTop:"10px"}}>
+            <div style={{width:"100%", marginTop:"10px"}}>
             {
                 ((!!inverted ? !answer : answer) && children) ?
                 children

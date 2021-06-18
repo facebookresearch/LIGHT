@@ -27,7 +27,13 @@
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
+    flex-wrap: wrap;
 }
+.fieldrow-container__section--half {
+    display:flex;
+    width:50%;
+}
+
 .field-container {
     background-color: green;
     border-radius: 5px;

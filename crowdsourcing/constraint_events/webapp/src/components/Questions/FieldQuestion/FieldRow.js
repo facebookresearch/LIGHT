@@ -15,12 +15,14 @@ const FieldRow = ({field, dropdown, options})=>{
 
         return(
             <div className="fieldrow-container" >
-                <div className="field-container">
-                    <p className="field-text">
-                        {field}
-                    </p>
+                <div className="fieldrow-container__section--half" style={{justifyContent:"flex-end"}} >
+                    <div className="field-container">
+                        <p className="field-text">
+                            {field}
+                        </p>
+                    </div>
                 </div>
-                <div className="fieldanswer-container">
+                <div className="fieldrow-container__section--half" style={{justifyContent:"flex-start"}}>
                     <DropdownSelect options={options} />
                 </div>
             </div>
@@ -28,16 +30,20 @@ const FieldRow = ({field, dropdown, options})=>{
     }else{
         return(
             <div className="fieldrow-container" >
-                <div className="field-container">
-                    <p className="field-text">
-                        {field}
-                    </p>
+                <div className="fieldrow-container__section--half" style={{justifyContent:"flex-end"}}>
+                    <div className="field-container">
+                        <p className="field-text">
+                            {field}
+                        </p>
+                    </div>
                 </div>
-                <div className="fieldanswer-container">
-                    <input
-                        className="fieldanswer-text"
-                        ref={answerRef}
-                    />
+                <div className="fieldrow-container__section--half" style={{justifyContent:"flex-start"}} >
+                    <div className="fieldanswer-container">
+                        <input
+                            className="fieldanswer-text"
+                            ref={answerRef}
+                        />
+                    </div>
                 </div>
             </div>
         )

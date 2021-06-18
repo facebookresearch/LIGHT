@@ -246,7 +246,7 @@ function MainApp() {
           cmp_type: "eq"
         }
       }))
-      updatedConstraints = [...updatedConstraints, ...updatedPrimaryModifiedAttributes]
+      updatedConstraints = [...updatedConstraints, ...updatedPrimaryConstrainingAttributes]
     }
     if(updatedSecondaryConstrainingAttributes.length){
       let updatedSecondaryConstrainingAttributes = secondaryConstrainingAttributes.map(attribute=>({
@@ -258,7 +258,7 @@ function MainApp() {
           cmp_type: "eq"
         }
       }))
-      updatedConstraints = [...updatedConstraints, ...updatedSecondaryModifiedAttributes]
+      updatedConstraints = [...updatedConstraints, ...updatedSecondaryConstrainingAttributes]
     }
     // HELD CONSTRAINT
     if(isSecondaryHeld){
