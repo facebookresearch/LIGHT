@@ -16,6 +16,8 @@
 .intro-container{
     width:90%;
     margin-top:10px;
+    display: flex;
+    justify-content: center;
 }
 .intro-text{
     font-size: 20px;
@@ -28,6 +30,7 @@
     border-radius: 15px;
     box-shadow: 4px 4px 4px black;
     align-items: flex-start;
+    margin-top: 10px;
 }
 
 .eventpreview-header{
@@ -61,6 +64,7 @@
     border-radius: 15px;
     box-shadow: 4px 4px 4px black;
     align-items: flex-start;
+    margin-top: 10px;
 }
 
 .constraintpreview-header{

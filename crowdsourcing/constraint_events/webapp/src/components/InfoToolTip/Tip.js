@@ -7,11 +7,11 @@ import { BsInfoCircle } from "react-icons/bs";
 const Tip = ({tutorialCopy})=>{
 
     return (
-        <>
+        <div className="tip-container">
             <p className="tip-text">
                 {tutorialCopy}
             </p>
-        </>
+        </div>
     )
 }
 

@@ -1,5 +1,26 @@
+//HEADER SCREENSHOT
+const HeaderShot = require("./assets/images/Tutorial/HeaderShot.png");
+//EVENT SCREENSHOTS
+const EventShot1 = require("./assets/images/Tutorial/Event/EventShot1.png");
+const EventShot2 = require("./assets/images/Tutorial/Event/EventShot2.png");
+const EventShot3 = require("./assets/images/Tutorial/Event/EventShot3.png");
+const EventShot4 = require("./assets/images/Tutorial/Event/EventShot4.png");
+const EventShot5 = require("./assets/images/Tutorial/Event/EventShot5.png");
+
+
+//CONSTRAINT SCREENSHOTS
+const ConstraintShot1 = require("./assets/images/Tutorial/Constraint/ConstraintShot1.png");
+const ConstraintShot2 = require("./assets/images/Tutorial/Constraint/ConstraintShot2.png");
+const ConstraintShot3 = require("./assets/images/Tutorial/Constraint/ConstraintShot3.png");
+//const ConstraintShot4 = require("./assets/images/Tutorial/Constraint/ConstraintShot4.png");
+const ConstraintShot5 = require("./assets/images/Tutorial/Constraint/ConstraintShot5.png");
+
+
 const Copy ={
-    tutorialIntro:"We're trying to crowdsource interactions between two objects. These interactions will be set in a medieval fantasy scenario, and as such should not refer to real people, places, or modern day technologies.  The objective of this task is to focus on two aspects of the interaction:  The events that occur during the interaction and the constraints required for the interaction to take place.  At the top of the screen you will be presented with 3 cards, the first two will be the names and a brief description of the objects involved in the interaction, the third contains the narration for the interaction itself.  Reference this information while completing the task.",
+    tutorialIntro:{
+        explaination:"We're trying to crowdsource interactions between two objects. These interactions will be set in a medieval fantasy scenario, and as such should not refer to real people, places, or modern day technologies.  The objective of this task is to focus on two aspects of the interaction:  The events that occur during the interaction and the constraints required for the interaction to take place.  At the top of the screen you will be presented with 3 cards, the first two will be the names and a brief description of the objects involved in the interaction, the third contains the narration for the interaction itself.  Reference this information while completing the task.",
+        screenshot: HeaderShot
+    },
     constraint:{
         tutorialIntro:"The Constraints section focuses on what conditions must be met in order for this interaction to occur.  So for this portion you will be thinking in terms of what must be true for the interaction to have happened in the first place based on the narration.",
         questions:[
@@ -21,11 +42,13 @@ const Copy ={
                 constraint that the logs must not be wet.
 
                 Use common sense understanding to determine
-                constraints that are relevant for your example.`
+                constraints that are relevant for your example.`,
+                screenshot: ConstraintShot1
             },
             {
                 question:"2) Does object2 need to be held?",
-                explaination:`We generally assume that the actor is already holding the first item in the interaction. If the interaction requires the actor to be holding both objects (like if the actor is combining objects), you should mark it here.  For example, for the interaction "You put the gem into the key, then turn it over in your hands. It it's a perfect fit." you would say both objects need to be held.  In contrast for the interaction "You swing the axe at the tree and it rebounds back. Not a mark, this tree must be magic." You would answer that the tree does not need to be held.`
+                explaination:`We generally assume that the actor is already holding the first item in the interaction. If the interaction requires the actor to be holding both objects (like if the actor is combining objects), you should mark it here.  For example, for the interaction "You put the gem into the key, then turn it over in your hands. It it's a perfect fit." you would say both objects need to be held.  In contrast for the interaction "You swing the axe at the tree and it rebounds back. Not a mark, this tree must be magic." You would answer that the tree does not need to be held.`,
+                screenshot: ConstraintShot2
             },
             {
                 question:"3) Can this operation be done an infinite number of times?",
@@ -52,7 +75,8 @@ const Copy ={
                 "use milk with flour" or "use flour with milk".
 
                 For unidirectional cases like the former, this would be false.
-                For bidirectional cases like the latter, it would be true.`
+                For bidirectional cases like the latter, it would be true.`,
+                screenshot: ConstraintShot3
             },
             {
                 question:"5) Does this interaction need to have in a specific place?",
@@ -69,7 +93,8 @@ const Copy ={
                 However, for something like "You throw the spear at the dragon
                 and it recoils, spraying fire breath into the forest around you" then
                 this interaction must occur in the forest as it is implied by the
-                narration.`
+                narration.`,
+                screenshot: ConstraintShot5
             }
         ]
     },
@@ -86,7 +111,9 @@ const Copy ={
         tutorialCopy:[
             {
                 question:"1)  Narrate this interaction",
-                explaination:'The new narration should be directed to someone observing the interaction take place, say in the same location.  If you want to refer to the actor, location, or either the key or the lock, use `ACTOR`, `LOCATION`, `KEY`, `LOCK`.For example, "You place the key in the lock and turn. After a satisfying click the lock becomes unlocked " could be seen as "ACTOR fumbles with a KEY in the LOCK for a moment, before you hear a click echo through LOCATION."'
+                explaination:'The new narration should be directed to someone observing the interaction take place, say in the same location.  If you want to refer to the actor, location, or either the key or the lock, use `ACTOR`, `LOCATION`, `KEY`, `LOCK`.For example, "You place the key in the lock and turn. After a satisfying click the lock becomes unlocked " could be seen as "ACTOR fumbles with a KEY in the LOCK for a moment, before you hear a click echo through LOCATION."',
+                screenshot: EventShot1
+
             },
             {
                 question:"2) Are objects removed?",
@@ -99,7 +126,8 @@ const Copy ={
                 to the ground, leaving a pile of ashes."
                 In this case you would mark that an object
                 is removed, specifically the table. The torch
-                is not removed.`
+                is not removed.`,
+                screenshot: EventShot2
             },
             {
                 question:"3) Do object descriptions change?",
@@ -111,7 +139,8 @@ const Copy ={
                 may change from "A shiny bucket that must
                 have been bought recently" to "A shiny new
                 bucket. It would be perfect, if not for the
-                deep scratches in one side."`
+                deep scratches in one side."`,
+                screenshot: EventShot3
             },
             {
                 question:"4) Are objects created?",
@@ -127,7 +156,8 @@ const Copy ={
                 a wooden table, where the table burns to ashes,
                 you may create "Pile of Ash: These ashes are
                 fresh and still a little hot." and it would be created
-                in the room.`
+                in the room.`,
+                screenshot: EventShot4
             },
             {
                 question:"5) Attribute changes",
@@ -143,7 +173,8 @@ const Copy ={
                 You can also mark that, after the interaction, some
                 attributes must not be true. For instance, after the
                 above interaction, you could mark that the towel
-                will not be "clean" afterwards.`
+                will not be "clean" afterwards.`,
+                screenshot: EventShot5
             }
         ]
     }

@@ -1,14 +1,29 @@
 .info-container {
     display: flex;
     flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
 }
 
 /* TIP */
-
+.tip-container{
+    height: 100%;
+    width: 100%;
+}
 .tip-text {
     font-size: 16px;
     color:white;
     background-color:rgba(0, 0, 0, 0.5);
     padding:4px;
     border-radius: 15px;
+}
+
+.info-icon{
+    color: black;
+    font-size: 30px;
+    margin-left:6px;
+}
+
+.info-icon:hover {
+    color: blue;
 }

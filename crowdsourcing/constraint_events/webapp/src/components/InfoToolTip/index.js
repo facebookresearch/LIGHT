@@ -20,9 +20,9 @@ const InfoToolTip = ({tutorialCopy, children})=>{
             <Tip tutorialCopy={tutorialCopy}/>
             }
             position="left"
-            theme="transparent"
+            theme="dark"
         >
-            <BsInfoCircle />
+            <BsInfoCircle className="info-icon" />
       </Tooltip>
     </div>
     )

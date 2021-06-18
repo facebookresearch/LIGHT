@@ -3,12 +3,12 @@ import React, { useEffect } from "react";
 import "./styles.css"
 //COPY
 import Copy from "../../TaskCopy"
-const PreviewTutorial = Copy.tutorialIntro;
+const PreviewTutorial = Copy.tutorialIntro.explaination;
+const PreviewTutorialImg= Copy.tutorialIntro.screenshot;
 const EventTutorialIntro = Copy.event.tutorialIntro;
 const ConstraintTutorialIntro = Copy.constraint.tutorialIntro;
 const EventTutorial = Copy.event.tutorialCopy;
 const ConstraintTutorial = Copy.constraint.tutorialCopy;
-
 
 //Custom Components
 import TutorialEntry from "../../components/TutorialEntry"
@@ -25,6 +25,7 @@ const Preview = ({}) => {
           <p className="intro-text">
             {PreviewTutorial}
           </p>
+          <img src={PreviewTutorialImg} style={{width:"50%"}} />
         </div>
         <div className="preview-container">
           <div className="eventpreview-container">
@@ -35,8 +36,8 @@ const Preview = ({}) => {
               {EventTutorialIntro}
               {
                 EventTutorial.map((entry, index)=>{
-                  const {question, explaination} = entry;
-                  return <TutorialEntry key={index} question={question} explaination={explaination} />
+                  const {question, explaination, screenshot} = entry;
+                  return <TutorialEntry key={index} question={question} explaination={explaination} screenshot={screenshot}/>
                 })
               }
             </div>
@@ -49,8 +50,8 @@ const Preview = ({}) => {
                 {ConstraintTutorialIntro}
                 {
                   ConstraintTutorial.map((entry, index)=>{
-                    const {question, explaination} = entry;
-                    return <TutorialEntry key={index} question={question} explaination={explaination} />
+                    const {question, explaination, screenshot} = entry;
+                    return <TutorialEntry key={index} question={question} explaination={explaination} screenshot={screenshot} />
                   })
                 }
               </div>

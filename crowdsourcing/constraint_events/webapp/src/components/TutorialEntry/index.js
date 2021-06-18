@@ -21,7 +21,7 @@ const TutorialEntry = ({
                 </p>
             </div>
             <div className="tutorialentry-img">
-
+                {screenshot ? <img style={{width:"50%"}} src={screenshot} />: null}
             </div>
         </div>
     )
