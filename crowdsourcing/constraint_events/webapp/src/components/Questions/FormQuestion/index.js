@@ -2,6 +2,9 @@ import React, {useEffect, useState, useRef} from "react";
 
 import "./styles.css"
 
+//CUSTOM COMPONENT
+import InfoToolTip from "../../InfoToolTip";
+
 
 const FormQuestion = ({question, placeholder, questionColor, upperCaseQuestion, formVal, formFunction})=>{
     const [description, setDescription] = useState("")
@@ -15,9 +18,11 @@ const FormQuestion = ({question, placeholder, questionColor, upperCaseQuestion, 
     }
     return(
         <div className="form-container" >
-            <h1 className="form-header" style={{color: (questionColor ?  questionColor : "black")}}>
-                {upperCaseQuestion ? question.toUpperCase() : question}
-            </h1>
+            <InfoToolTip tutorialCopy={"TESTING TESTING 123"}>
+                <h1 className="form-header" style={{color: (questionColor ?  questionColor : "black")}}>
+                    {upperCaseQuestion ? question.toUpperCase() : question}
+                </h1>
+            </InfoToolTip>
         <p >
 
         </p>
