@@ -1,15 +1,15 @@
+//REACT
 import React, {useEffect} from "react";
-
+//STYLE
 import "./styles.css"
-
 //COPY
 import QuestionCopy from "../../../../TaskCopy.js";
 //CUSTOM COMPONENENTS
 import FormQuestion from "../../../../components/Questions/FormQuestion";
-import BooleanQuestion from "../../../../components/Questions/BooleanQuestion"
-import MultipleSelectQuestion from "../../../../components/Questions/MultipleSelectQuestion"
-import FieldQuestion from "../../../../components/Questions/FieldQuestion"
-import AttributeSetter from "../../../../components/AttributeSetter"
+import BooleanQuestion from "../../../../components/Questions/BooleanQuestion";
+import MultipleSelectQuestion from "../../../../components/Questions/MultipleSelectQuestion";
+import FieldQuestion from "../../../../components/Questions/FieldQuestion";
+import AttributeSetter from "../../../../components/AttributeSetter";
 
 const Questions = ({
     object1,
