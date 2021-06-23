@@ -20,7 +20,7 @@ const Questions = ({
     isCreatingEntity,
     setIsCreatingEntity,
     createdEntity,
-    setcreatedEntity,
+    setCreatedEntity,
     isRemovingObjects,
     setIsRemovingObjects,
     removedObjects,
@@ -95,7 +95,17 @@ const Questions = ({
             >
                 <FieldQuestion
 
-                    fields={[{name:"name", dropdown:false}, {name:"desc", dropdown:false}, {name:"location", dropdown:true, options:[{name:"in room", val:""}, {name:"held by actor", val:""}, {name:`in/on ${object1.name.toUpperCase()}`, val:""}, {name:`in/on ${object2.name.toUpperCase()}`, val:""}]}]}
+                    fields={[
+                        {name:"name", dropdown:false},
+                        {name:"desc", dropdown:false},
+                        {name:"location", dropdown:true,
+                        options:[{name:"in room", val:"in_room"},
+                        {name:"held by actor", val:"in_actor"},
+                        {name:`in/on ${object1.name.toUpperCase()}`, val:"in_used_item"},
+                        {name:`in/on ${object2.name.toUpperCase()}`, val:"in_used_target_item"}]}
+                    ]}
+                    formFunction={setCreatedEntity}
+                    formState={createdEntity}
                 />
 
             </BooleanQuestion>
