@@ -3,20 +3,32 @@ import React, {useState, useEffect, useRef} from "react";
 import TaskButton from "../TaskButton"
 import { MdCancel } from "react-icons/md";
 
-const AttributeRow = ({attribute, objectName, objectColor, isConstraint, deleteHandler})=>{
+const AttributeRow = ({
+    attribute,
+    objectName,
+    objectColor,
+    isConstraint,
+    updateHandler,
+    deleteHandler
+})=>{
     const [attributeName, setAttributeName] = useState("");
     const [attributeVal, setAttributeVal] = useState(true)
     const [isExistingAttribute, setIsExistingAttribute] = useState(false)
-    const nameRef = useRef();
     const changeHandler = e=>{
         e.preventDefault()
-
+        console.log("CHANGE HANDLER WORKING")
+        setAttributeName(e.target.value)
+        updateHandler({...attribute, name:e.target.value})
     }
     const trueHandler = ()=>{
+        console.log("TRUE HANDLER WORKING")
         setAttributeVal(true)
+        updateHandler({...attribute, val:true})
     }
     const falseHandler = ()=>{
+        console.log("FALSE HANDLER WORKING")
         setAttributeVal(false)
+        updateHandler({...attribute, val:false})
     }
 
     useEffect(()=>{
@@ -58,8 +70,8 @@ const AttributeRow = ({attribute, objectName, objectColor, isConstraint, deleteH
             <div className="attribute-container">
                 <input
                     className="name-text"
-                    ref={nameRef}
-                    defaultValue={attributeName}
+                    onChange={changeHandler}
+                    value={attributeName}
                     disabled={isExistingAttribute ? true : false}
                 />
             </div>

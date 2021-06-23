@@ -5,21 +5,36 @@ import "./styles.css"
 import AttributeRow from "./AttributeRow"
 
 
-const AttributeSetter = ({header, objectName, objectColor, attributes, isConstraint}) => {
+const AttributeSetter = ({
+    header,
+    objectName,
+    objectColor,
+    attributes,
+    isConstraint,
+    setter
+}) => {
     const [attributeList, setAttributeList] = useState([])
     useEffect(()=>{
         if(attributes){
         const existingAttributes = attributes.map(att => ({...att, isExisting:true}))
         setAttributeList(existingAttributes)
         }
-    },[attributes])
+    },[])
     const addAttributeHandler = ()=>{
         const newAtt = [...attributeList, {name:"", val:true}]
         setAttributeList(newAtt)
+        setter(newAtt)
+    }
+    const updateAttributeHandler = (updateIndex, update) => {
+        let updatedArr = attributeList.filter((item, index)=> (index !== updateIndex))
+        updatedArr = [...updatedArr.filter, update]
+        setAttributeList(updatedArr)
+        setter(updatedArr)
     }
     const removeAttributeHandler = (deletedIndex)=>{
         let updatedArr = attributeList.filter((item, index)=> (index !== deletedIndex))
         setAttributeList(updatedArr)
+        setter(updatedArr)
     }
     return (
         <div className="setter-container">
@@ -40,7 +55,15 @@ const AttributeSetter = ({header, objectName, objectColor, attributes, isConstra
                 {
                   attributeList.length ?
                   attributeList.map((att, index)=>(
-                      <AttributeRow key={index} objectName={objectName} objectColor={objectColor} attribute={att} isConstraint={isConstraint} deleteHandler={()=>removeAttributeHandler(index)}/>
+                      <AttributeRow
+                        key={index}
+                        objectName={objectName}
+                        objectColor={objectColor}
+                        attribute={att}
+                        isConstraint={isConstraint}
+                        updateHandler={(update)=>updateAttributeHandler(index, update)}
+                        deleteHandler={()=>removeAttributeHandler(index)}
+                    />
                   ))
                   :
                   null

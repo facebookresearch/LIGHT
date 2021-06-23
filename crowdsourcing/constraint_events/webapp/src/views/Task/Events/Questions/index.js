@@ -36,9 +36,13 @@ const Questions = ({
     secondaryModifiedAttributes,
     setSecondaryModifiedAttributes
 }) => {
+    let obj1Attr = object1.attributes
+    let obj2Attr = object2.attributes
     useEffect(()=>{
-        setPrimaryDescription(object1.desc)
-        setSecondaryDescription(object2.desc)
+        let obj1Desc = object1.desc;
+        let obj2Desc = object2.desc;
+        setPrimaryDescription(obj1Desc)
+        setSecondaryDescription(obj2Desc)
     },[object1, object2])
     const QuestionList = QuestionCopy.event.questions
     const TipList = QuestionCopy.event.tutorialCopy
@@ -109,8 +113,22 @@ const Questions = ({
                 />
 
             </BooleanQuestion>
-            <AttributeSetter objectName={object1.name} objectColor="blue" header=" After this action:" attributes={object1.attributes} isConstraint={false}/>
-            <AttributeSetter objectName={object2.name} objectColor="orange" header="  After this action:" attributes={object2.attributes} isConstraint={false}/>
+            <AttributeSetter
+                objectName={object1.name}
+                objectColor="blue"
+                header=" After this action:"
+                attributes={obj1Attr}
+                isConstraint={false}
+                setter={setPrimaryModifiedAttributes}
+            />
+            <AttributeSetter
+                objectName={object2.name}
+                objectColor="orange"
+                header="  After this action:"
+                attributes={obj2Attr}
+                isConstraint={false}
+                setter={setSecondaryModifiedAttributes}
+            />
        </>
     );
 }

@@ -4,14 +4,46 @@ import "./styles.css"
 
 import Questions from "./Questions"
 
-const Constraints = ({object1, object2, interaction}) => {
+const Constraints = ({
+    object1,
+    object2,
+    interaction,
+    isSecondaryHeld,
+    setIsSecondaryHeld,
+    isReversible,
+    setIsReversible,
+    isLocationConstrained,
+    setIsLocationConstrained,
+    constraintLocation,
+    setConstraintLocation,
+    primaryConstrainingAttributes,
+    setPrimaryConstrainingAttributes,
+    secondaryConstrainingAttributes,
+    setSecondaryConstrainingAttributes,
+}) => {
     return (
         <div className="constraints-container">
             <div className="constraints-header">
                 <p>CONSTRAINTS</p>
             </div>
             <div className="events-body">
-                <Questions object1={object1} object2={object2} interaction={interaction} />
+                <Questions
+                    object1={object1}
+                    object2={object2}
+                    interaction={interaction}
+                    isSecondaryHeld={isSecondaryHeld}
+                    setIsSecondaryHeld={setIsSecondaryHeld}
+                    isReversible={isReversible}
+                    setIsReversible={setIsReversible}
+                    isLocationConstrained={isLocationConstrained}
+                    setIsLocationConstrained={setIsLocationConstrained}
+                    constraintLocation={constraintLocation}
+                    setConstraintLocation={setConstraintLocation}
+                    primaryConstrainingAttributes={primaryConstrainingAttributes}
+                    setPrimaryConstrainingAttributes={setPrimaryConstrainingAttributes}
+                    secondaryConstrainingAttributes={secondaryConstrainingAttributes}
+                    setSecondaryConstrainingAttributes={setSecondaryConstrainingAttributes}
+                />
             </div>
         </div>
     );
