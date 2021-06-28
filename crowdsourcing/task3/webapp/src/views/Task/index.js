@@ -1,12 +1,16 @@
+//REACT
 import React, { useEffect } from "react";
-
+//STYLING
 import "./styles.css"
+//CUSTOM COMPONENTS
+import Header from "../../components/Header";
+import ScaleQuestion from "../../components/Questions/ScaleQuestion";
 
 const Task = ({data}) => {
- // const {object1, object2, interaction}= data;
     return (
       <div className="view-container">
-        TASK 3 CONTAINER
+        <Header/>
+        <ScaleQuestion/>
       </div>
     );
 }
