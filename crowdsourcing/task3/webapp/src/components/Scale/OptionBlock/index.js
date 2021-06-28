@@ -1,38 +1,55 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { render } from 'react-dom';
-import { Stage, Layer, Rect, Text, Group } from 'react-konva';
+import { Stage, Layer, Rect, Text, Group, Line } from 'react-konva';
 
-function generateShapes() {
-  return [...Array(10)].map((_, i) => ({
-    id: i.toString(),
-    x: 1,
-    y: i *10,
-    isDragging: false,
-  }));
+const generateShapes = (arr)=> {
+    if(arr){
+        return [...arr.map(
+            (name, i) => ({
+                name:name,
+                id: i.toString(),
+                x: 1,
+                y: i*60,
+                isDragging: false,
+                })
+            )
+        ];
+    }
 }
 
 const INITIAL_STATE = generateShapes();
 
-const OptionBlock = ({height, width}) => {
-  const [optionBlocks, setOptionBlocks] = React.useState(INITIAL_STATE);
+const OptionBlock = ({height, width, actors}) => {
+    const [optionBlocks, setOptionBlocks] = React.useState([]);
+    useEffect(()=>{
+        if(actors){
+        let updatedBlocks = generateShapes(actors)
+        setOptionBlocks(updatedBlocks)
+        }
+    },[actors])
 
-  const handleDragStart = (e) => {
+
+    const handleDragStart = (e) => {
     const id = e.target.id();
     setOptionBlocks(
         optionBlocks.map((block) => {
         return {
           ...block,
           isDragging: block.id === id,
+          drawLine:"false"
         };
       })
     );
   };
   const handleDragEnd = (e) => {
+
+    console.log(e.target)
     setOptionBlocks(
         optionBlocks.map((block) => {
         return {
-          ...block,
-          isDragging: false,
+            ...block,
+            isDragging: false,
+            drawLine:true
         };
       })
     );
@@ -40,7 +57,6 @@ const OptionBlock = ({height, width}) => {
 
   return (
     <>
-        <Text text="Try to drag a block" />
         {optionBlocks.map((block) => (
             <Group
             key={block.id}
@@ -51,10 +67,17 @@ const OptionBlock = ({height, width}) => {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
             >
+                <Line
+                points={[block.x+100, 0, block.x+100, 500]}
+                stroke={block.drawLine ? "black" : "white"}
+                strokeWidth={15}
+
+                />
+
                 <Rect
-                width={100}
-                height={100}
-                fill="red"
+                width={200}
+                height={50}
+                fill="blue"
                 opacity={0.8}
                 shadowColor="black"
                 shadowBlur={10}
@@ -65,11 +88,12 @@ const OptionBlock = ({height, width}) => {
                 scaleY={block.isDragging ? 1.2 : 1}
                 />
                 <Text
-                    text="BLOCK LABEL"
+                    text={block.name}
                     fontSize={20}
-                    width={100}
-                    height={100}
+                    width={200}
+                    height={50}
                     align={"center"}
+                    verticalAlign={"middle"}
                     fill="white"
                     opacity={0.8}
                     shadowOpacity={0.6}

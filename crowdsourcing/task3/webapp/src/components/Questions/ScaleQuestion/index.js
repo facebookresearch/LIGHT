@@ -23,7 +23,7 @@ const DummyData = {
         "Butcher",
         "Baker",
         "Candlestick Maker",
-        "Kroktar Devourer of Soulss"
+        "Kroktar Devourer of Souls"
     ]
 }
 const ScaleQuestion = ({
