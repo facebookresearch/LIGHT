@@ -8,7 +8,7 @@ const generateShapes = (arr)=> {
             (name, i) => ({
                 name:name,
                 id: i.toString(),
-                x: 1,
+                x: 50,
                 y: i*60,
                 isDragging: false,
                 })
@@ -31,33 +31,49 @@ const OptionBlock = ({height, width, actors}) => {
 
     const handleDragStart = (e) => {
     const id = e.target.id();
+    console.log(e.target)
     setOptionBlocks(
         optionBlocks.map((block) => {
         return {
           ...block,
           isDragging: block.id === id,
-          drawLine:"false"
+          drawLine:block.id === id
         };
       })
     );
   };
   const handleDragEnd = (e) => {
-
+    const id = e.target.id();
+    const blockX = e.target.x();
+    const blockY = e.target.x();
+    console.log("X", blockX)
     console.log(e.target)
     setOptionBlocks(
         optionBlocks.map((block) => {
-        return {
-            ...block,
-            isDragging: false,
-            drawLine:true
-        };
-      })
+            if(block.id=== id){
+                return {
+                    ...block,
+                    isDragging: false,
+                    drawLine:blockX  > 200,
+                    blockX:blockX,
+                    blockY:blockY
+                };
+            }else{
+                return {
+                ...block,
+                isDragging: false,
+                drawLine:block.id === id,
+                };
+            }
+        })
     );
   };
 
   return (
     <>
-        {optionBlocks.map((block) => (
+        {optionBlocks.map((block, i) => {
+            console.log("BLOCK #", i, "  ", block)
+            return (
             <Group
             key={block.id}
             id={block.id}
@@ -69,16 +85,16 @@ const OptionBlock = ({height, width, actors}) => {
             >
                 <Line
                 points={[block.x+100, 0, block.x+100, 500]}
-                stroke={block.drawLine ? "black" : "white"}
-                strokeWidth={15}
-
+                stroke={(block.drawLine||(block.blockX  > 100)) ? "black" : "white"}
+                strokeWidth={10}
+                opacity={(block.drawLine||(block.blockX > 100)) ? 1 : 0}
                 />
 
                 <Rect
                 width={200}
                 height={50}
                 fill="blue"
-                opacity={0.8}
+                opacity={1}
                 shadowColor="black"
                 shadowBlur={10}
                 shadowOpacity={0.6}
@@ -103,7 +119,8 @@ const OptionBlock = ({height, width, actors}) => {
                 >
                 </Text>
             </Group>
-        ))}
+        )}
+    )}
     </>
   );
 };

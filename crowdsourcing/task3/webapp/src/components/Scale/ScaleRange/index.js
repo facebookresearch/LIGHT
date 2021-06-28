@@ -8,16 +8,18 @@ import "./styles.css"
 const ScaleRange = ({trait, actors}) => {
 
   return (
-    <div style={{width:"100%", display:"flex", justifyContent:"space-between", backgroundColor:"grey"}}>
-        <p>
-            MIN
-        </p>
-        <p>
-            {trait.name}
-        </p>
-        <p>
-            MAX
-        </p>
+    <div style={{width:"100%", display:"flex", flexDirection:"row"}}>
+        <div style={{width:"100%", display:"flex", justifyContent:"space-between", backgroundColor:"grey",}}>
+            <p >
+                MIN
+            </p>
+            <p>
+                {trait.name}
+            </p>
+            <p>
+                MAX
+            </p>
+        </div>
     </div>
   );
 };
