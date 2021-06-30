@@ -1,13 +1,27 @@
-import React, {useState} from "react";
-
+//REACT
+import React, {useState, useEffect} from "react";
+//STYLING
 import "./styles.css"
 //CUSTOM COMPONENTS
 import TaskButton from "../TaskButton"
 import Checklist from "./Checklist"
 
 const Submission = ({
-
+    submitFunction,
+    broadcastMessage,
+    isCreatingEntity,
+    createdEntity,
+    isRemovingObjects,
+    removedObjects,
+    isChangingDescription,
+    isSecondaryHeld,
+    isReversible,
+    isInfinite,
+    timesRemaining,
+    isLocationConstrained,
+    constraintLocation
 })=>{
+
     const dummydata = {
         eventsData:[
             {status:true, question: "1. Narrate this interaction to another observer who sees it happen. "},
@@ -21,7 +35,6 @@ const Submission = ({
             {status:true, question: "3. Would this have to happen in a specific place?"},
         ]
     }
-    const clickHandler = ()=>{}
     return(
         <div className="submission-container" >
             <div className="submission-checklists">
@@ -38,11 +51,11 @@ const Submission = ({
                 />
             </div>
             <TaskButton
-            name="Submit"
-            isSelected={false}
-            unselectedContainer="submission-button__container"
-            unselectedText="submission-selectedbutton__text "
-            selectFunction={clickHandler}
+                name="Submit"
+                isSelected={false}
+                unselectedContainer="submission-button__container"
+                unselectedText="submission-selectedbutton__text "
+                selectFunction={submitFunction}
             />
         </div>
     )

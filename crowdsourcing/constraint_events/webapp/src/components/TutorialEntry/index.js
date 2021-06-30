@@ -5,7 +5,7 @@ import "./styles.css"
 
 const TutorialEntry = ({
     question,
-    explaination,
+    explanation,
     screenshot,
 })=>{
     return(
@@ -17,7 +17,7 @@ const TutorialEntry = ({
             </div>
             <div className="tutorialentry-body">
                 <p className="tutorialentry-body__text">
-                    {explaination}
+                    {explanation}
                 </p>
             </div>
             <div className="tutorialentry-img">

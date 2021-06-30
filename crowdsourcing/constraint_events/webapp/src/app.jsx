@@ -33,28 +33,28 @@ function MainApp() {
     initialTaskData,
     handleSubmit,
   } = useMephistoTask();
+  //Error Handling
   const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessages, setErrorMessages] = useState("");
   //Events State
-  const [timesRemaining, setTimesRemaining] = useState("");
   const [broadcastMessage, setBroadcastMessage] = useState("");
-  const [isCreatingEntity, setIsCreatingEntity] = useState(false);
+  const [isCreatingEntity, setIsCreatingEntity] = useState(null);
   const [createdEntity, setCreatedEntity] = useState(null);
-  const [isRemovingObjects, setIsRemovingObjects] = useState("");
+  const [isRemovingObjects, setIsRemovingObjects] = useState(null);
   const [removedObjects, setRemovedObjects] = useState([]);
   const [isChangingDescription, setIsChangingDescription] = useState(false);
     //Primary
-  const [primaryRemainingUses, setPrimaryRemainingUses]= useState("");
   const [primaryModifiedAttributes, setPrimaryModifiedAttributes]= useState([]);
   const [primaryDescription, setPrimaryDescription] = useState("");
     //Secondary
-  const [secondaryRemainingUses, setSecondaryRemainingUses]= useState("");
   const [secondaryModifiedAttributes, setSecondaryModifiedAttributes]= useState([]);
   const [secondaryDescription, setSecondaryDescription] = useState("");
 
   //Constraint State
   const [isSecondaryHeld, setIsSecondaryHeld] = useState(false);
   const [isReversible, setIsReversible] = useState(false);
+  const [isInfinite, setIsInifinite] = useState(true)
+  const [timesRemaining, setTimesRemaining] = useState(0);
   const [isLocationConstrained, setIsLocationConstrained] = useState(false);
   const [constraintLocation, setConstraintLocation] = useState("");
     //Primary
@@ -94,7 +94,7 @@ function MainApp() {
   const state = {
     'constraints': [],
     'events': [],
-    'times_remaining': timesRemaining
+    'times_remaining':""
   }
 
   for (let i = 0; i < state['constraints'].length; i++) {
@@ -146,9 +146,12 @@ function MainApp() {
   const submissionHandler = ()=>{
     let updatedEvents = []
     let updatedConstraints = []
-    //ERROR HANDLING
-    if(!updatedBroadcastMessage){
+    let updatedTimesRemaining
 
+    //ERROR HANDLING
+    if(!broadcastMessage){
+      setErrorMessages()
+      setShowError(true)
     }
     if(!showError){
   // EVENT UPDATES
@@ -246,7 +249,7 @@ function MainApp() {
       }))
       updatedConstraints = [...updatedConstraints, ...updatedPrimaryConstrainingAttributes]
     }
-    if(updatedSecondaryConstrainingAttributes.length){
+    if(secondaryConstrainingAttributes.length){
       let updatedSecondaryConstrainingAttributes = secondaryConstrainingAttributes.map(attribute=>({
         type:"attribute_compare_value",
         params:{
@@ -269,6 +272,14 @@ function MainApp() {
       updatedConstraints = [...updatedConstraints, updatedSecondaryHeldConstraint]
     }
     let updatedIsReversible = isReversible;
+
+    //TIMES REMAINING CONSTRAINT
+    if(isInfinite){
+      updatedTimesRemaining = "inf"
+    }else{
+      updatedTimesRemaining = timesRemaining
+    }
+
     // LOCATION CONSTRAINT
     if(isLocationConstrained){
       let updatedLocationConstraint = {
@@ -280,12 +291,13 @@ function MainApp() {
       updatedConstraints = [...updatedConstraints, updatedLocationConstraint]
     }
     const payload = {
-        remaining_uses: remainingUses,
+        times_remaining: updatedTimesRemaining,
         reversible: updatedIsReversible,
         events: updatedEvents,
         constraints: updatedConstraints
     }
-    handleSubmit(payload)
+    console.log(payload)
+    //handleSubmit(payload)
     }
   }
 
@@ -325,9 +337,28 @@ function MainApp() {
         setPrimaryConstrainingAttributes={setPrimaryConstrainingAttributes}
         secondaryConstrainingAttributes={secondaryConstrainingAttributes}
         setSecondaryConstrainingAttributes={setSecondaryConstrainingAttributes}
+        isInfinite={isInfinite}
+        setIsInifinite={setIsInifinite}
+        timesRemaining={timesRemaining}
+        setTimesRemaining={setTimesRemaining}
       />
       <div>
-        <Submission />
+        <Submission
+          submitFunction={submissionHandler}
+          broadcastMessage={broadcastMessage}
+          isCreatingEntity={isCreatingEntity}
+          createdEntity={createdEntity}
+          isRemovingObjects={isRemovingObjects}
+          removedObjects={removedObjects}
+          isChangingDescription={isChangingDescription}
+          isSecondaryHeld={isSecondaryHeld}
+          isReversible={isReversible}
+          isInfinite={isInfinite}
+          timesRemaining={timesRemaining}
+          isLocationConstrained={isLocationConstrained}
+          constraintLocation={constraintLocation}
+
+        />
       </div>
     </div>
   );

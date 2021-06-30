@@ -41,6 +41,10 @@ const Task = ({
   setPrimaryConstrainingAttributes,
   secondaryConstrainingAttributes,
   setSecondaryConstrainingAttributes,
+  isInfinite,
+  setIsInifinite,
+  timesRemaining,
+  setTimesRemaining,
 }) => {
   const {object1, object2, interaction}= data;
     return (
@@ -93,6 +97,10 @@ const Task = ({
               setPrimaryConstrainingAttributes={setPrimaryConstrainingAttributes}
               secondaryConstrainingAttributes={secondaryConstrainingAttributes}
               setSecondaryConstrainingAttributes={setSecondaryConstrainingAttributes}
+              isInfinite={isInfinite}
+              setIsInifinite={setIsInifinite}
+              timesRemaining={timesRemaining}
+              setTimesRemaining={setTimesRemaining}
             />
         </div>
       </div>

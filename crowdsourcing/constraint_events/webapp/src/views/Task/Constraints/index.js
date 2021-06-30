@@ -20,6 +20,10 @@ const Constraints = ({
     setPrimaryConstrainingAttributes,
     secondaryConstrainingAttributes,
     setSecondaryConstrainingAttributes,
+    isInfinite,
+    setIsInifinite,
+    timesRemaining,
+    setTimesRemaining,
 }) => {
     return (
         <div className="constraints-container">
@@ -43,6 +47,10 @@ const Constraints = ({
                     setPrimaryConstrainingAttributes={setPrimaryConstrainingAttributes}
                     secondaryConstrainingAttributes={secondaryConstrainingAttributes}
                     setSecondaryConstrainingAttributes={setSecondaryConstrainingAttributes}
+                    isInfinite={isInfinite}
+                    setIsInifinite={setIsInifinite}
+                    timesRemaining={timesRemaining}
+                    setTimesRemaining={setTimesRemaining}
                 />
             </div>
         </div>

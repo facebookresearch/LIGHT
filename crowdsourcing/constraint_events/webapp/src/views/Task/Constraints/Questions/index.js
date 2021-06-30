@@ -3,7 +3,7 @@ import React from "react";
 //STYLING
 import "./styles.css"
 //COPY
-import QuestionList from "./QuestionCopy";
+import QuestionCopy from "../../../../TaskCopy.js";
 //CUSTOM COMPONENENTS
 import FormQuestion from "../../../../components/Questions/FormQuestion";
 import BooleanQuestion from "../../../../components/Questions/BooleanQuestion";
@@ -27,53 +27,82 @@ const Questions = ({
     setPrimaryConstrainingAttributes,
     secondaryConstrainingAttributes,
     setSecondaryConstrainingAttributes,
-
+    isInfinite,
+    setIsInifinite,
+    timesRemaining,
+    setTimesRemaining,
 }) => {
     let obj1Attr = object1.attributes
     let obj2Attr = object2.attributes
     let objName1 = object1.name.toUpperCase();
     let objName2 = object2.name.toUpperCase();
+    const QuestionList = QuestionCopy.constraint.questions
+    const TipList = QuestionCopy.constraint.tutorialCopy
     return (
        <>
             <AttributeSetter
                 objectName={object1.name}
                 objectColor="blue"
-                header=" Constraints for interaction:"
+                header={QuestionList[0]}
                 attributes={obj1Attr}
                 isConstraint={true}
                 setter={setPrimaryConstrainingAttributes}
+                toolTipCopy={TipList[0].explanation}
+                hasToolTip={true}
             />
             <AttributeSetter
                 objectName={object2.name}
                 objectColor="orange"
-                header=" Constraints for interaction:"
+                header={QuestionList[0]}
                 attributes={obj2Attr}
                 isConstraint={true}
                 setter={setSecondaryConstrainingAttributes}
+                toolTipCopy={TipList[0].explanation}
+                hasToolTip={true}
             />
             <BooleanQuestion
-                question={"1.  Does # need to be held?"}
+                question={QuestionList[1]}
                 keywords={[{color:"orange", item:objName2}]}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
                 formFunction={setIsSecondaryHeld}
+                toolTipCopy={TipList[0].explanation}
+                hasToolTip={true}
             />
             <BooleanQuestion
-                question={"2.  Could one use # with # and expect the same outcome?"}
+                question={QuestionList[2]}
                 keywords={[{color:"orange", item:objName2}, {color:"blue", item:objName1}]}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
                 formFunction={setIsReversible}
+                toolTipCopy={TipList[1].explanation}
+                hasToolTip={true}
             />
+            <BooleanQuestion
+                question={QuestionList[3]}
+                trueAnswer={{name:"YES"} }
+                falseAnswer={{name:"NO"} }
+                formFunction={setIsInifinite}
+                inverted={true}
+                toolTipCopy={TipList[2].explanation}
+                hasToolTip={true}
+            >
+                <NumberQuestion
+                    question={QuestionList[4]}
+                    formFunction={setTimesRemaining}
+                />
+            </BooleanQuestion>
 
             <BooleanQuestion
-                question={QuestionList[4]}
+                question={QuestionList[5]}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
                 formFunction={setIsLocationConstrained}
+                toolTipCopy={TipList[3].explanation}
+                hasToolTip={true}
             >
                 <FormQuestion
-                    question="Where would that location be?"
+                    question={QuestionList[6]}
                     placeholder ="Description"
                     formVal={constraintLocation}
                     formFunction={setConstraintLocation}

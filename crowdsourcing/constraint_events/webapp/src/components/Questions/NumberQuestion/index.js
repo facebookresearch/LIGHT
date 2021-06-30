@@ -6,17 +6,17 @@ import "./styles.css"
 const NumberQuestion = ({question, formFunction})=>{
     const [formNumber, setFormNumber] = useState(0)
     useEffect(()=>{
-        setDescription(formVal)
+        formFunction(formNumber)
     },[])
     const changeHandler = e=>{
         e.preventDefault()
         setFormNumber(e.target.value)
-        formFunction(description)
+        formFunction(e.target.value)
     }
     return(
         <div className="numberform-container" >
             <div className="numberanswer-container">
-                <label for="limit"> {question} </label>
+                <label className="numberanswer-header" > {question} </label>
                 <input
                     type="number"
                     id="limit"
@@ -24,6 +24,7 @@ const NumberQuestion = ({question, formFunction})=>{
                     min="1"
                     onChange={changeHandler}
                     value={formNumber}
+                    className="numberanswer-input"
                 />
 
             </div>

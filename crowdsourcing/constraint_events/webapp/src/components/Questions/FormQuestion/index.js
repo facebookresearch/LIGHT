@@ -6,7 +6,16 @@ import "./styles.css"
 import InfoToolTip from "../../InfoToolTip";
 
 
-const FormQuestion = ({question, placeholder, questionColor, upperCaseQuestion, formVal, formFunction, toolTipCopy})=>{
+const FormQuestion = ({
+    question,
+    placeholder,
+    questionColor,
+    upperCaseQuestion,
+    formVal,
+    formFunction,
+    toolTipCopy,
+    hasToolTip
+})=>{
     const [description, setDescription] = useState("")
     useEffect(()=>{
         setDescription(formVal)
@@ -18,11 +27,21 @@ const FormQuestion = ({question, placeholder, questionColor, upperCaseQuestion, 
     }
     return(
         <div className="form-container" >
-            <InfoToolTip tutorialCopy={toolTipCopy}>
+            {
+            hasToolTip
+            ?
+            <InfoToolTip
+            tutorialCopy={toolTipCopy}
+            >
                 <h1 className="form-header" style={{color: (questionColor ?  questionColor : "black")}}>
                     {upperCaseQuestion ? question.toUpperCase() : question}
                 </h1>
             </InfoToolTip>
+            :
+            <h1 className="form-header" style={{color: (questionColor ?  questionColor : "black")}}>
+                {upperCaseQuestion ? question.toUpperCase() : question}
+            </h1>
+            }
         <p >
 
         </p>

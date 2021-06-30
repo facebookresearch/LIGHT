@@ -18,7 +18,7 @@ const ConstraintShot5 = require("./assets/images/Tutorial/Constraint/ConstraintS
 
 const Copy ={
     tutorialIntro:{
-        explaination:"We're trying to crowdsource interactions between two objects. These interactions will be set in a medieval fantasy scenario, and as such should not refer to real people, places, or modern day technologies.  The objective of this task is to focus on two aspects of the interaction:  The events that occur during the interaction and the constraints required for the interaction to take place.  At the top of the screen you will be presented with 3 cards, the first two will be the names and a brief description of the objects involved in the interaction, the third contains the narration for the interaction itself.  Reference this information while completing the task.",
+        explanation:"We're trying to crowdsource interactions between two objects. These interactions will be set in a medieval fantasy scenario, and as such should not refer to real people, places, or modern day technologies.  The objective of this task is to focus on two aspects of the interaction:  The events that occur during the interaction and the constraints required for the interaction to take place.  At the top of the screen you will be presented with 3 cards, the first two will be the names and a brief description of the objects involved in the interaction, the third contains the narration for the interaction itself.  Reference this information while completing the task.",
         screenshot: HeaderShot
     },
     constraint:{
@@ -27,13 +27,15 @@ const Copy ={
             "# Constraints for Interaction:  ",
             "1.  Does # need to be held?",
             "2.  Could one use # with # and expect the same outcome?",
-            "3.  Would this have to happen in a specific place?",
-            "Where would that location be?",
+            "3.  Can this operation be done an infinite number of times?",
+            "3a. How many more times can it be done?",
+            "4.  Would this have to happen in a specific place?",
+            "4a.  Where would that location be?",
         ],
         tutorialCopy:[
             {
                 question:"1) Attributes",
-                explaination:`If the interaction requires that the object have
+                explanation:`If the interaction requires that the object have
                 certain attributes or conditions, they should be listed.
 
                 For instance, if the interaction is "You use the torch
@@ -47,12 +49,12 @@ const Copy ={
             },
             {
                 question:"2) Does object2 need to be held?",
-                explaination:`We generally assume that the actor is already holding the first item in the interaction. If the interaction requires the actor to be holding both objects (like if the actor is combining objects), you should mark it here.  For example, for the interaction "You put the gem into the key, then turn it over in your hands. It it's a perfect fit." you would say both objects need to be held.  In contrast for the interaction "You swing the axe at the tree and it rebounds back. Not a mark, this tree must be magic." You would answer that the tree does not need to be held.`,
+                explanation:`We generally assume that the actor is already holding the first item in the interaction. If the interaction requires the actor to be holding both objects (like if the actor is combining objects), you should mark it here.  For example, for the interaction "You put the gem into the key, then turn it over in your hands. It it's a perfect fit." you would say both objects need to be held.  In contrast for the interaction "You swing the axe at the tree and it rebounds back. Not a mark, this tree must be magic." You would answer that the tree does not need to be held.`,
                 screenshot: ConstraintShot2
             },
             {
                 question:"3) Can this operation be done an infinite number of times?",
-                explaination:`Some interactions are limited in the number of uses. Here
+                explanation:`Some interactions are limited in the number of uses. Here
                 you should estimate the number of times the interaction
                 could be repeated. For instance, for the interaction: "You
                 give a piece of the pie to the fox. It eats it quickly and scurries
@@ -67,7 +69,7 @@ const Copy ={
             },
             {
                 question:"4) Could one use Y with X and expect the same outcome?",
-                explaination:`Some interactions could be considered to have a direction, for
+                explanation:`Some interactions could be considered to have a direction, for
                 instance "using an axe with a tree" is different from "using a
                 tree with an axe", though the second here doesn't even make
                 sense. However, an interaction like "you mix the milk and the
@@ -80,7 +82,7 @@ const Copy ={
             },
             {
                 question:"5) Does this interaction need to have in a specific place?",
-                explaination:`If the interaction description implies that the interaction
+                explanation:`If the interaction description implies that the interaction
                 occurs somewhere specifically, provide a name for the place
                 you believe it is happening.
 
@@ -111,13 +113,13 @@ const Copy ={
         tutorialCopy:[
             {
                 question:"1)  Narrate this interaction",
-                explaination:'The new narration should be directed to someone observing the interaction take place, say in the same location.  If you want to refer to the actor, location, or either the key or the lock, use `ACTOR`, `LOCATION`, `KEY`, `LOCK`.For example, "You place the key in the lock and turn. After a satisfying click the lock becomes unlocked " could be seen as "ACTOR fumbles with a KEY in the LOCK for a moment, before you hear a click echo through LOCATION."',
+                explanation:'The new narration should be directed to someone observing the interaction take place, say in the same location.  If you want to refer to the actor, location, or either the key or the lock, use `ACTOR`, `LOCATION`, `KEY`, `LOCK`.For example, "You place the key in the lock and turn. After a satisfying click the lock becomes unlocked " could be seen as "ACTOR fumbles with a KEY in the LOCK for a moment, before you hear a click echo through LOCATION."',
                 screenshot: EventShot1
 
             },
             {
                 question:"2) Are objects removed?",
-                explaination:`If the interaction would cause one of the
+                explanation:`If the interaction would cause one of the
                 used objects not exist anymore, mark those
                 objects.
 
@@ -131,7 +133,7 @@ const Copy ={
             },
             {
                 question:"3) Do object descriptions change?",
-                explaination:`If an object remains in the scene, but it ends
+                explanation:`If an object remains in the scene, but it ends
                 up changed by the interaction, it's description
                 should change. For instance given "You
                 scratch the side of the shiny bucket with
@@ -144,7 +146,7 @@ const Copy ={
             },
             {
                 question:"4) Are objects created?",
-                explaination:`If the interaction creates new objects in the
+                explanation:`If the interaction creates new objects in the
                 scene, you should list them here. You should
                 describe the object and note where the object
                 exists. The object can only be created either the
@@ -161,7 +163,7 @@ const Copy ={
             },
             {
                 question:"5) Attribute changes",
-                explaination:`If the interaction changes something physical
+                explanation:`If the interaction changes something physical
                 about an object, you should mark the attribute
                 changes here. For instance, if an interaction is
                 "You dip the towel in the bucket of oil. It seeps

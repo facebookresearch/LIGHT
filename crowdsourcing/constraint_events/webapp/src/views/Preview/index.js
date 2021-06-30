@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import "./styles.css"
 //COPY
 import Copy from "../../TaskCopy"
-const PreviewTutorial = Copy.tutorialIntro.explaination;
+const PreviewTutorial = Copy.tutorialIntro.explanation;
 const PreviewTutorialImg= Copy.tutorialIntro.screenshot;
 const EventTutorialIntro = Copy.event.tutorialIntro;
 const ConstraintTutorialIntro = Copy.constraint.tutorialIntro;
@@ -36,8 +36,8 @@ const Preview = ({}) => {
               {EventTutorialIntro}
               {
                 EventTutorial.map((entry, index)=>{
-                  const {question, explaination, screenshot} = entry;
-                  return <TutorialEntry key={index} question={question} explaination={explaination} screenshot={screenshot}/>
+                  const {question, explanation, screenshot} = entry;
+                  return <TutorialEntry key={index} question={question} explanation={explanation} screenshot={screenshot}/>
                 })
               }
             </div>
@@ -50,8 +50,8 @@ const Preview = ({}) => {
                 {ConstraintTutorialIntro}
                 {
                   ConstraintTutorial.map((entry, index)=>{
-                    const {question, explaination, screenshot} = entry;
-                    return <TutorialEntry key={index} question={question} explaination={explaination} screenshot={screenshot} />
+                    const {question, explanation, screenshot} = entry;
+                    return <TutorialEntry key={index} question={question} explanation={explanation} screenshot={screenshot} />
                   })
                 }
               </div>

@@ -1,11 +1,23 @@
+//REACT
 import React, {useEffect, useState} from "react";
+//STYLING
 import "./styles.css";
-
 //CUSTOM COMPONENTS
 import TaskButton from "../../TaskButton"
-import FormQuestion from "../../Utils/FormatQuestion";
+import FormatQuestion from "../../Utils/FormatQuestion";
+import InfoToolTip from "../../InfoToolTip";
 
-const BooleanQuestion = ({question, trueAnswer, falseAnswer, keywords, inverted, children, formFunction})=>{
+const BooleanQuestion = ({
+    question,
+    trueAnswer,
+    falseAnswer,
+    keywords,
+    inverted,
+    children,
+    formFunction,
+    toolTipCopy,
+    hasToolTip
+})=>{
     const [answer, setAnswer] = useState(null);
 
     const trueHandler = ()=>{
@@ -19,11 +31,23 @@ const BooleanQuestion = ({question, trueAnswer, falseAnswer, keywords, inverted,
 
     return(
         <div className="booleanquestion-container" >
-                <FormQuestion
+            {
+            hasToolTip
+            ?
+            <InfoToolTip tutorialCopy={toolTipCopy}>
+                <FormatQuestion
                     question={question}
                     keywords={keywords}
                     containerStyle="booleanquestion-text"
                 />
+            </InfoToolTip>
+                :
+            <FormatQuestion
+                question={question}
+                keywords={keywords}
+                containerStyle="booleanquestion-text"
+            />
+            }
             <div className="booleananswer-container">
                 <TaskButton
                     name={trueAnswer.name}
@@ -47,7 +71,7 @@ const BooleanQuestion = ({question, trueAnswer, falseAnswer, keywords, inverted,
             </div>
             <div style={{width:"100%", marginTop:"10px"}}>
             {
-                ((!!inverted ? !answer : answer) && children) ?
+                ((!!inverted ? (!answer && answer!==null) : answer) && children) ?
                 children
                 :
                 null

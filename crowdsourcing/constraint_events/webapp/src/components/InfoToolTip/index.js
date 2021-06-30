@@ -9,7 +9,7 @@ import { BsInfoCircle } from "react-icons/bs";
 import Tip from "./Tip"
 
 const InfoToolTip = ({tutorialCopy, children})=>{
-    const [isHovering, setIsHovering] =useState(false)
+
     return (
     <div className="info-container">
         <div className="child-container">
@@ -21,6 +21,7 @@ const InfoToolTip = ({tutorialCopy, children})=>{
             }
             position="left"
             theme="dark"
+            size="big"
         >
             <BsInfoCircle className="info-icon" />
       </Tooltip>

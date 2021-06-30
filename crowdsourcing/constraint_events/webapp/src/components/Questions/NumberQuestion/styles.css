@@ -1,0 +1,23 @@
+.numberform-container {
+ display: flex;
+ flex-direction: column;
+}
+
+.numberanswer-container {
+
+}
+
+.numberanswer-header{
+    text-align: left;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.numberanswer-input {
+    font-size: 20px;
+    border-radius: 5px;
+    border-color: silver;
+    border-style: ridge;
+    padding: 3px;
+    border-width: 4px;
+}

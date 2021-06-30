@@ -52,13 +52,16 @@ const Questions = ({
                 question={QuestionList[1]}
                 formVal={interaction}
                 formFunction={setBroadcastMessage}
-                toolTipCopy={TipList[1].explaination}
+                toolTipCopy={TipList[0].explanation}
+                hasToolTip={true}
             />
             <BooleanQuestion
                 question={QuestionList[2]}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
                 formFunction={setIsRemovingObjects}
+                toolTipCopy={TipList[1].explanation}
+                hasToolTip={true}
             >
                 <MultipleSelectQuestion
                     question={QuestionList.a2}
@@ -71,6 +74,8 @@ const Questions = ({
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
                 formFunction={setIsChangingDescription}
+                toolTipCopy={TipList[2].explanation}
+                hasToolTip={true}
             >
                 <div style={{display:"flex", flexDirection:"row", width:"100%"}}>
                     <FormQuestion
@@ -80,6 +85,7 @@ const Questions = ({
                         placeholder ="Description"
                         formVal={primaryDescription}
                         formFunction={setPrimaryDescription}
+                        hasToolTip={false}
                     />
                     <FormQuestion
                         question={object2.name}
@@ -88,6 +94,7 @@ const Questions = ({
                         placeholder ="Description"
                         formVal={secondaryDescription}
                         formFunction={setSecondaryDescription}
+                        hasToolTip={false}
                     />
                 </div>
             </BooleanQuestion>
@@ -96,6 +103,8 @@ const Questions = ({
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
                 formFunction={setIsCreatingEntity}
+                toolTipCopy={TipList[3].explanation}
+                hasToolTip={true}
             >
                 <FieldQuestion
 
@@ -120,6 +129,8 @@ const Questions = ({
                 attributes={obj1Attr}
                 isConstraint={false}
                 setter={setPrimaryModifiedAttributes}
+                toolTipCopy={TipList[4].explanation}
+                hasToolTip={true}
             />
             <AttributeSetter
                 objectName={object2.name}
@@ -128,6 +139,8 @@ const Questions = ({
                 attributes={obj2Attr}
                 isConstraint={false}
                 setter={setSecondaryModifiedAttributes}
+                toolTipCopy={TipList[4].explanation}
+                hasToolTip={true}
             />
        </>
     );
