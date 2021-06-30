@@ -125,7 +125,7 @@ const Questions = ({
             <AttributeSetter
                 objectName={object1.name}
                 objectColor="blue"
-                header=" After this action:"
+                header={QuestionList.setter}
                 attributes={obj1Attr}
                 isConstraint={false}
                 setter={setPrimaryModifiedAttributes}
@@ -135,7 +135,7 @@ const Questions = ({
             <AttributeSetter
                 objectName={object2.name}
                 objectColor="orange"
-                header="  After this action:"
+                header={QuestionList.setter}
                 attributes={obj2Attr}
                 isConstraint={false}
                 setter={setSecondaryModifiedAttributes}

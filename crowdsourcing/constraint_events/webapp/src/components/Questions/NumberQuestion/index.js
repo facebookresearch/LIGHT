@@ -16,7 +16,7 @@ const NumberQuestion = ({question, formFunction})=>{
     return(
         <div className="numberform-container" >
             <div className="numberanswer-container">
-                <label className="numberanswer-header" > {question} </label>
+                <p className="numberanswer-header" > {question} </p>
                 <input
                     type="number"
                     id="limit"

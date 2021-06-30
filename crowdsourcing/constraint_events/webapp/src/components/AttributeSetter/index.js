@@ -49,7 +49,9 @@ const AttributeSetter = ({
                     <div></div>
                     <div className="label-container">
                         <p className="label-text">
-                            <span style={{fontWeight:"bold", color: objectColor}}>{objectName.toUpperCase()}</span> {header}
+                            <span style={{fontWeight:"bold", color: objectColor}}>
+                                {objectName.toUpperCase()}
+                            </span> {header}
                         </p>
                     </div>
                     <div className="button-container" onClick={addAttributeHandler}>

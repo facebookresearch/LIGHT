@@ -24,7 +24,7 @@ const Copy ={
     constraint:{
         tutorialIntro:"The Constraints section focuses on what conditions must be met in order for this interaction to occur.  So for this portion you will be thinking in terms of what must be true for the interaction to have happened in the first place based on the narration.",
         questions:[
-            "# Constraints for Interaction:  ",
+            " Constraints for Interaction:  ",
             "1.  Does # need to be held?",
             "2.  Could one use # with # and expect the same outcome?",
             "3.  Can this operation be done an infinite number of times?",
@@ -108,7 +108,7 @@ const Copy ={
             a2: "2a.  Which object(s)?",
             3: "3.  Does an object's description change?",
             4: "4.  Are objects created?",
-            setter: "# After this action:  "
+            setter: " After this action:  "
         },
         tutorialCopy:[
             {
