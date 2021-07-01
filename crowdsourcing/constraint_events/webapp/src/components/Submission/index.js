@@ -22,6 +22,20 @@ const Submission = ({
     constraintLocation
 })=>{
 
+    //Event State
+    const [eventQuestion1, setEventQuestion1] = useState(null);
+    const [eventQuestion2, setEventQuestion2] = useState(null);
+    const [eventQuestion3, setEventQuestion3] = useState(null);
+    const [eventQuestion4, setEventQuestion4] = useState(null);
+    //Constraint State
+    const [constraintQuestion1, setConstraintQuestion1] = useState(null);
+    const [constraintQuestion2, setConstraintQuestion2] = useState(null);
+    const [constraintQuestion3, setConstraintQuestion3] = useState(null);
+
+
+    useEffect(()=>{
+
+    },)
     const dummydata = {
         eventsData:[
             {status:true, question: "1. Narrate this interaction to another observer who sees it happen. "},

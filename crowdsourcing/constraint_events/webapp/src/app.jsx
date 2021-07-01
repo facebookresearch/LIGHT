@@ -5,24 +5,28 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  */
-
+//REACT
 import React, {useState} from "react";
 import ReactDOM from "react-dom";
-import Task from "./views/Task";
-import Preview from "./views/Preview"
-import Submission from "./components/Submission"
 import { TaskDescription } from "./components/task_description.jsx";
 // import { ActionDescription } from "./components/action_description.jsx";
 // import { ConstraintBlock } from "./components/constraint_element.jsx";
 // import { EventsBlock } from "./components/event_elements.jsx";
-import LoadingScreen from "./components/LoadingScreen"
+//MEPHISTO
 import { useMephistoTask } from "mephisto-task";
 // import { TimesComponent } from "./components/times_component.jsx";
 // import { SubmitButton } from "./components/submit_button.jsx";
-
+//STYLING
 import "./styles.css"
+//TOOLTIPS
 import 'react-tippy/dist/tippy.css'
-/* ================= Application Components ================= */
+//CUSTOM COMPONENTS
+import Task from "./views/Task";
+import Preview from "./views/Preview"
+import Submission from "./components/Submission"
+import LoadingScreen from "./components/LoadingScreen"
+//UTILS
+import TaskCopy from "./TaskCopy"
 
 function MainApp() {
   const {
@@ -147,14 +151,52 @@ function MainApp() {
     let updatedEvents = []
     let updatedConstraints = []
     let updatedTimesRemaining
+    let updatedErrors =[]
 
-    //ERROR HANDLING
-    if(!broadcastMessage){
-      setErrorMessages()
-      setShowError(true)
-    }
-    if(!showError){
+//ERROR HANDLING
+    //EVENT ERRORS
+      //BROADCAST MESSAGE
+      if(!broadcastMessage){
+        updatedErrors.push(TaskCopy.errorKey.events.q1Blank)
+      }
+      //REMOVE OBJECT
+      if(isRemovingObjects===null){
+        updatedErrors.push(TaskCopy.errorKey.events.q2Null)
+      }
+      if(isRemovingObjects && removedObjects.length){
+        updatedErrors.push(TaskCopy.errorKey.events.q2Empty)
+      }
+      // DESCRIPTION
+      if(isChangingDescription===null){
+        updatedErrors.push(TaskCopy.errorKey.events.q3Null)
+      }
+      if(isChangingDescription && (primaryDescription || secondaryDescription)){
+        updatedErrors.push(TaskCopy.errorKey.events.q3Blank)
+      }
+      //CREATE ENTITY
+      if(isCreatingEntity===null){
+        updatedErrors.push(TaskCopy.errorKey.events.q4Null)
+      }
+    //CONSTRAINT ERRORS
+      //HELD
+      if(isSecondaryHeld===null){
+        updatedErrors.push(TaskCopy.errorKey.constraint.q1Blank)
+      }
+      //REVERSIBLE
+      if(isReversible===null){
+        updatedErrors.push(TaskCopy.errorKey.constraint.q1Blank)
+      }
+      //TIMES REMAINING
+      if(isInfinite===null){
+        updatedErrors.push(TaskCopy.errorKey.constraint.q1Blank)
+      }
+      //LOCATIONS
+      if(isLocationConstrained===null){
+
+      }
+  if(!showError && updatedErrors.length<=0){
   // EVENT UPDATES
+    //BROADCASTMESSAGE
     let updatedBroadcastMessage = broadcastMessage;
     updatedBroadcastMessage = {
         type: "broadcast_message",
@@ -214,14 +256,19 @@ function MainApp() {
     }
     //ATTRIBUTE MODIFICATION EVENTS
     if(primaryModifiedAttributes.length){
-      let updatedPrimaryModifiedAttributes = primaryModifiedAttributes.map(attribute=>({
+      let updatedPrimaryModifiedAttributes = primaryModifiedAttributes.map(attribute=>{
+        if(!attribute.name){
+
+        }
+        return({
         type:"modify_attribute",
         params:{
           type:"in_used_item",
           key: attribute.name,
           value: attribute.value
         }
-      }))
+      })
+    })
       updatedEvents = [...updatedEvents, ...updatedPrimaryModifiedAttributes]
     }
     if(secondaryModifiedAttributes.length){
@@ -296,11 +343,15 @@ function MainApp() {
         events: updatedEvents,
         constraints: updatedConstraints
     }
-    console.log(payload)
-    //handleSubmit(payload)
+    if(!updatedErrors.length){
+      console.log(payload)
+      //handleSubmit(payload)
+    }else{
+      setErrorMessages(updatedErrors)
+      setShowError(true)
     }
   }
-
+  }
   return (
     <div>
       <Task
@@ -365,82 +416,3 @@ function MainApp() {
 }
 
 ReactDOM.render(<MainApp />, document.getElementById("app"));
-
-
-/*
-  const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  //Events State
-  const [timesRemaining, setTimesRemaining] = useState("");
-  const [broadcastMessage, setBroadcastMessage] = useState("");
-  const [isCreatingEntity, setIsCreatingEntity] = useState(false);
-  const [createdEntity, setCreatedEntity] = useState(null);
-  const [isRemovingObjects, setIsRemovingObjects] = useState("");
-  const [removedObjects, setRemovedObjects] = useState([]);
-  const [isChangingDescription, setIsChangingDescription] = useState(false);
-    //Primary
-  const [primaryRemainingUses, setPrimaryRemainingUses]= useState("");
-  const [primaryModifiedAttributes, setPrimaryModifiedAttributes]= useState([]);
-  const [primaryDescription, setPrimaryDescription] = useState("");
-    //Secondary
-  const [secondaryRemainingUses, setSecondaryRemainingUses]= useState("");
-  const [secondaryModifiedAttributes, setSecondaryModifiedAttributes]= useState([]);
-  const [secondaryDescription, setSecondaryDescription] = useState("");
-
-  //Constraint State
-  const [isSecondaryHeld, setIsSecondaryHeld] = useState(false);
-  const [isReversible, setIsReversible] = useState(false);
-  const [isLocationConstrained, setIsLocationConstrained] = useState(false);
-  const [constraintLocation, setConstraintLocation] = useState("");
-    //Primary
-  const [primaryConstrainingAttributes, setPrimaryConstrainingAttributes]= useState([]);
-    //Secondary
-  const [secondaryConstrainingAttributes, setSecondaryConstrainingAttributes]= useState([]);
-
-<section className="hero is-medium is-link">
-  <div className="hero-body">
-    <TaskDescription />
-    <br />
-    <br />
-    <ActionDescription state={mephistoData} />
-    <br />
-    <ConstraintBlock state={mephistoData} constraintArray={state['constraints']} />
-    <br />
-    <EventsBlock state={mephistoData} eventArray={state['events']} />
-    <br />
-    <TimesComponent setTimesRemaining={setTimesRemaining} />
-    <br />
-    <SubmitButton active={active} state={state} onSubmit={handleSubmit}/>
-  </div>
-</section> */
-
-//     const updatePrimary = {
-  //       object_id: {
-  //         "name": "object_name",
-  //         "contain_size": 0,
-  //       remaining_uses: remainingUses,
-  //       reversible: true,
-  //       events: [
-  //         {
-  //             type: ...,
-  //             params: {...},
-  //         },
-  //         {
-  //         type: "broadcast_message",
-  //         params: {
-  //           self_view: dummyData.interaction,
-  //           room_view:
-  //           }
-  //         }
-
-
-  //       ],
-  //       constraints: [
-  //         {
-  //             type: ...,
-  //             params: {...},
-  //         },
-  //         ...
-  //       ],
-  //   }
-  // }

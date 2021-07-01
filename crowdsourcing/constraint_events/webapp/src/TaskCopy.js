@@ -179,6 +179,25 @@ const Copy ={
                 screenshot: EventShot5
             }
         ]
-    }
+    },
+    errorKey:{
+        events:{
+          q1Blank: "Narration cannot be blank",
+          q2Null: "Please click yes or no for object removal event",
+          q2Empty:"Please select the item that was removed or click no for this event.",
+          q3Null: "Please click yes or no for object description change event",
+          q3Blank:"Description cannot be blank",
+          q4Null:  "Please click yes or no for object creation event",
+          q4MissingField:  "Please click yes or no for object creation event"
+        },
+        constraint:{
+          q1Null:  "Please click yes or no for held constraint",
+          q2Null:  "Please click yes or no for reversible constraint",
+          q3Null:  "Please click yes or no for times remaining constraint",
+          q3Blank:  "Description cannot be blank",
+          q4Null:  "Please click yes or no for location constraint",
+          q4blank:  "Location cannot be blank please write a location or click no"
+        }
+      }
 }
 export default Copy
