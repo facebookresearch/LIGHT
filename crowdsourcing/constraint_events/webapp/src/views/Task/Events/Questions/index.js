@@ -54,6 +54,7 @@ const Questions = ({
                 formFunction={setBroadcastMessage}
                 toolTipCopy={TipList[0].explanation}
                 hasToolTip={true}
+                isComplete={(broadcastMessage.length && broadcastMessage!==interaction)}
             />
             <BooleanQuestion
                 question={QuestionList[2]}
@@ -62,6 +63,7 @@ const Questions = ({
                 formFunction={setIsRemovingObjects}
                 toolTipCopy={TipList[1].explanation}
                 hasToolTip={true}
+                isComplete={(isRemovingObjects!==null && (isRemovingObjects==false || (isRemovingObjects===true && removedObjects.length)))}
             >
                 <MultipleSelectQuestion
                     question={QuestionList.a2}

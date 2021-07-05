@@ -3,9 +3,10 @@ import React, {useEffect, useState} from "react";
 //STYLING
 import "./styles.css";
 //CUSTOM COMPONENTS
-import TaskButton from "../../TaskButton"
+import TaskButton from "../../TaskButton";
 import FormatQuestion from "../../Utils/FormatQuestion";
 import InfoToolTip from "../../InfoToolTip";
+import Checkbox from "../../Checkbox";
 
 const BooleanQuestion = ({
     question,
@@ -16,7 +17,8 @@ const BooleanQuestion = ({
     children,
     formFunction,
     toolTipCopy,
-    hasToolTip
+    hasToolTip,
+    isComplete
 })=>{
     const [answer, setAnswer] = useState(null);
 
@@ -35,11 +37,14 @@ const BooleanQuestion = ({
             hasToolTip
             ?
             <InfoToolTip tutorialCopy={toolTipCopy}>
-                <FormatQuestion
-                    question={question}
-                    keywords={keywords}
-                    containerStyle="booleanquestion-text"
-                />
+                <div style={{display:"flex", flexDirection:"row"}}>
+                    <Checkbox isComplete={isComplete} />
+                    <FormatQuestion
+                        question={question}
+                        keywords={keywords}
+                        containerStyle="booleanquestion-text"
+                    />
+                </div>
             </InfoToolTip>
                 :
             <FormatQuestion

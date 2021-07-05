@@ -1,10 +1,11 @@
+//REACT
 import React, {useEffect, useState, useRef} from "react";
-
+//STYLES
 import "./styles.css"
 
 //CUSTOM COMPONENT
 import InfoToolTip from "../../InfoToolTip";
-
+import Checkbox from "../../Checkbox";
 
 const FormQuestion = ({
     question,
@@ -14,7 +15,8 @@ const FormQuestion = ({
     formVal,
     formFunction,
     toolTipCopy,
-    hasToolTip
+    hasToolTip,
+    isComplete
 })=>{
     const [description, setDescription] = useState("")
     useEffect(()=>{
@@ -33,9 +35,12 @@ const FormQuestion = ({
             <InfoToolTip
             tutorialCopy={toolTipCopy}
             >
-                <h1 className="form-header" style={{color: (questionColor ?  questionColor : "black")}}>
-                    {upperCaseQuestion ? question.toUpperCase() : question}
-                </h1>
+                <div style={{display:"flex", flexDirection:"row"}}>
+                    <Checkbox isComplete={isComplete} />
+                    <h1 className="form-header" style={{color: (questionColor ?  questionColor : "black")}}>
+                        {upperCaseQuestion ? question.toUpperCase() : question}
+                    </h1>
+                </div>
             </InfoToolTip>
             :
             <h1 className="form-header" style={{color: (questionColor ?  questionColor : "black")}}>

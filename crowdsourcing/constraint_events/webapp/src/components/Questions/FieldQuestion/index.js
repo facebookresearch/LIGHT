@@ -1,7 +1,7 @@
+//REACT
 import React, {useEffect, useRef} from "react";
-
+//STYLING
 import "./styles.css"
-
 //CUSTOM COMPONENTS
 import FieldRow from "./FieldRow";
 

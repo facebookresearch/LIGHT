@@ -17,16 +17,18 @@ import { useMephistoTask } from "mephisto-task";
 // import { TimesComponent } from "./components/times_component.jsx";
 // import { SubmitButton } from "./components/submit_button.jsx";
 //STYLING
-import "./styles.css"
+import "./styles.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 //TOOLTIPS
 import 'react-tippy/dist/tippy.css'
 //CUSTOM COMPONENTS
 import Task from "./views/Task";
-import Preview from "./views/Preview"
-import Submission from "./components/Submission"
-import LoadingScreen from "./components/LoadingScreen"
+import Preview from "./views/Preview";
+import Submission from "./components/Submission";
+import LoadingScreen from "./components/LoadingScreen";
+import ErrorToast from "./components/ErrorToast";
 //UTILS
-import TaskCopy from "./TaskCopy"
+import TaskCopy from "./TaskCopy";
 
 function MainApp() {
   const {
@@ -39,14 +41,14 @@ function MainApp() {
   } = useMephistoTask();
   //Error Handling
   const [showError, setShowError] = useState(false);
-  const [errorMessages, setErrorMessages] = useState("");
+  const [errorMessages, setErrorMessages] = useState([]);
   //Events State
   const [broadcastMessage, setBroadcastMessage] = useState("");
   const [isCreatingEntity, setIsCreatingEntity] = useState(null);
   const [createdEntity, setCreatedEntity] = useState(null);
   const [isRemovingObjects, setIsRemovingObjects] = useState(null);
   const [removedObjects, setRemovedObjects] = useState([]);
-  const [isChangingDescription, setIsChangingDescription] = useState(false);
+  const [isChangingDescription, setIsChangingDescription] = useState(null);
     //Primary
   const [primaryModifiedAttributes, setPrimaryModifiedAttributes]= useState([]);
   const [primaryDescription, setPrimaryDescription] = useState("");
@@ -55,11 +57,11 @@ function MainApp() {
   const [secondaryDescription, setSecondaryDescription] = useState("");
 
   //Constraint State
-  const [isSecondaryHeld, setIsSecondaryHeld] = useState(false);
-  const [isReversible, setIsReversible] = useState(false);
-  const [isInfinite, setIsInifinite] = useState(true)
+  const [isSecondaryHeld, setIsSecondaryHeld] = useState(null);
+  const [isReversible, setIsReversible] = useState(null);
+  const [isInfinite, setIsInifinite] = useState(null)
   const [timesRemaining, setTimesRemaining] = useState(0);
-  const [isLocationConstrained, setIsLocationConstrained] = useState(false);
+  const [isLocationConstrained, setIsLocationConstrained] = useState(null);
   const [constraintLocation, setConstraintLocation] = useState("");
     //Primary
   const [primaryConstrainingAttributes, setPrimaryConstrainingAttributes]= useState([]);
@@ -180,21 +182,20 @@ function MainApp() {
     //CONSTRAINT ERRORS
       //HELD
       if(isSecondaryHeld===null){
-        updatedErrors.push(TaskCopy.errorKey.constraint.q1Blank)
+        updatedErrors.push(TaskCopy.errorKey.constraint.q1Null)
       }
       //REVERSIBLE
       if(isReversible===null){
-        updatedErrors.push(TaskCopy.errorKey.constraint.q1Blank)
+        updatedErrors.push(TaskCopy.errorKey.constraint.q2Null)
       }
       //TIMES REMAINING
       if(isInfinite===null){
-        updatedErrors.push(TaskCopy.errorKey.constraint.q1Blank)
+        updatedErrors.push(TaskCopy.errorKey.constraint.q3Null)
       }
       //LOCATIONS
       if(isLocationConstrained===null){
-
+        updatedErrors.push(TaskCopy.errorKey.constraint.q4Null)
       }
-  if(!showError && updatedErrors.length<=0){
   // EVENT UPDATES
     //BROADCASTMESSAGE
     let updatedBroadcastMessage = broadcastMessage;
@@ -351,9 +352,9 @@ function MainApp() {
       setShowError(true)
     }
   }
-  }
   return (
     <div>
+      <ErrorToast errors={errorMessages} showError={showError} hideError={()=>setShowError(false)}/>
       <Task
         data={dummyData}
         broadcastMessage={broadcastMessage}

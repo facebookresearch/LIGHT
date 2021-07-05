@@ -3,29 +3,31 @@ import React, {useState} from "react";
 //STYLING
 import "./styles.css"
 //BOOTSTRAP COMPONENTS
-import Toast from 'react-bootstrap/Toast'
+import Alert from 'react-bootstrap/Alert'
 
-const ErrorToast = ({
+const ErrorToast= ({
     errors,
     showError,
-    hideErrors,
+    hideError,
 })=>{
 
 
     return(
-        <Toast>
-            <Toast.Body>
+        <Alert variant="danger" dismissible className="toast-container" onClose={hideError} show={showError} >
+            <p className="toast-header">
+                ERROR
+            </p>
                 <ul>
                     {
                     errors.map((err, index)=>(
-                    <li key={index}>
+                    <li style={{width: "90vw"}} className={"toast-error"} key={index}>
                         {err}
                     </li>
                     ))
                     }
                 </ul>
-            </Toast.Body>
-        </Toast>
+
+        </Alert>
     )}
 
 export default ErrorToast
