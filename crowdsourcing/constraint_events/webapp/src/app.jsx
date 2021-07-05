@@ -161,18 +161,21 @@ function MainApp() {
       if(!broadcastMessage){
         updatedErrors.push(TaskCopy.errorKey.events.q1Blank)
       }
+      if(broadcastMessage!==dummyData.interaction){
+        updatedErrors.push(TaskCopy.errorKey.events.q1Blank)
+      }
       //REMOVE OBJECT
       if(isRemovingObjects===null){
         updatedErrors.push(TaskCopy.errorKey.events.q2Null)
       }
-      if(isRemovingObjects && removedObjects.length){
+      if(isRemovingObjects && !removedObjects.length){
         updatedErrors.push(TaskCopy.errorKey.events.q2Empty)
       }
       // DESCRIPTION
       if(isChangingDescription===null){
         updatedErrors.push(TaskCopy.errorKey.events.q3Null)
       }
-      if(isChangingDescription && (primaryDescription || secondaryDescription)){
+      if(isChangingDescription && (!primaryDescription || !secondaryDescription)){
         updatedErrors.push(TaskCopy.errorKey.events.q3Blank)
       }
       //CREATE ENTITY
