@@ -68,6 +68,7 @@ const Questions = ({
                 formFunction={setIsSecondaryHeld}
                 toolTipCopy={TipList[0].explanation}
                 hasToolTip={true}
+                isComplete={isSecondaryHeld!==null}
             />
             <BooleanQuestion
                 question={QuestionList[2]}
@@ -77,6 +78,7 @@ const Questions = ({
                 formFunction={setIsReversible}
                 toolTipCopy={TipList[1].explanation}
                 hasToolTip={true}
+                isComplete={isReversible!==null}
             />
             <BooleanQuestion
                 question={QuestionList[3]}
@@ -86,6 +88,7 @@ const Questions = ({
                 inverted={true}
                 toolTipCopy={TipList[2].explanation}
                 hasToolTip={true}
+                isComplete={isInfinite!==null}
             >
                 <NumberQuestion
                     question={QuestionList[4]}
@@ -100,6 +103,7 @@ const Questions = ({
                 formFunction={setIsLocationConstrained}
                 toolTipCopy={TipList[3].explanation}
                 hasToolTip={true}
+                isComplete={isLocationConstrained!==null && (isLocationConstrained==false || (isLocationConstrained==true && constraintLocation.length))}
             >
                 <FormQuestion
                     question={QuestionList[6]}

@@ -78,6 +78,7 @@ const Questions = ({
                 formFunction={setIsChangingDescription}
                 toolTipCopy={TipList[2].explanation}
                 hasToolTip={true}
+                isComplete={isChangingDescription!==null}
             >
                 <div style={{display:"flex", flexDirection:"row", width:"100%"}}>
                     <FormQuestion
@@ -107,6 +108,7 @@ const Questions = ({
                 formFunction={setIsCreatingEntity}
                 toolTipCopy={TipList[3].explanation}
                 hasToolTip={true}
+                isComplete={(isCreatingEntity!==null && (isCreatingEntity==false || (isCreatingEntity===true && (createdEntity.name && createdEntity.desc && createdEntity.location))))}
             >
                 <FieldQuestion
 

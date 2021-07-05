@@ -45,7 +45,7 @@ function MainApp() {
   //Events State
   const [broadcastMessage, setBroadcastMessage] = useState("");
   const [isCreatingEntity, setIsCreatingEntity] = useState(null);
-  const [createdEntity, setCreatedEntity] = useState(null);
+  const [createdEntity, setCreatedEntity] = useState({});
   const [isRemovingObjects, setIsRemovingObjects] = useState(null);
   const [removedObjects, setRemovedObjects] = useState([]);
   const [isChangingDescription, setIsChangingDescription] = useState(null);

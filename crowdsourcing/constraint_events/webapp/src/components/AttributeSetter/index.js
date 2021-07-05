@@ -5,6 +5,8 @@ import "./styles.css"
 //CUSTOM COMPONENTS
 import AttributeRow from "./AttributeRow"
 import InfoToolTip from "../InfoToolTip";
+//ICONS
+import { AiOutlinePlus } from "react-icons/ai";
 
 const AttributeSetter = ({
     header,
@@ -55,9 +57,7 @@ const AttributeSetter = ({
                         </p>
                     </div>
                     <div className="button-container" onClick={addAttributeHandler}>
-                        <p className="button-text">
-                            +
-                        </p>
+                        <AiOutlinePlus/>
                     </div>
                 </div>
             </InfoToolTip>
@@ -70,9 +70,7 @@ const AttributeSetter = ({
                     </p>
                 </div>
                 <div className="button-container" onClick={addAttributeHandler}>
-                    <p className="button-text">
-                        +
-                    </p>
+                    <AiOutlinePlus/>
                 </div>
             </div>
             }
