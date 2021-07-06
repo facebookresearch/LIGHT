@@ -31,8 +31,8 @@ const AttributeSetter = ({
         setter(newAtt)
     }
     const updateAttributeHandler = (updateIndex, update) => {
-        let updatedArr = attributeList.filter((item, index)=> (index !== updateIndex))
-        updatedArr = [...updatedArr.filter, update]
+        let filteredListPreUpdate = attributeList.filter((item, index)=> (index !== updateIndex))
+        let updatedArr = [...filteredListPreUpdate, update]
         setAttributeList(updatedArr)
         setter(updatedArr)
     }

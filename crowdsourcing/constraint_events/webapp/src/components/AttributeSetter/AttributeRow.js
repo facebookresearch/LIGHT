@@ -14,24 +14,31 @@ const AttributeRow = ({
     const [attributeName, setAttributeName] = useState("");
     const [attributeVal, setAttributeVal] = useState(true)
     const [isExistingAttribute, setIsExistingAttribute] = useState(false)
+
+    useEffect(()=>{
+        setAttributeName(attribute.name);
+        setAttributeVal(attribute.val);
+    },[])
+
     const changeHandler = e=>{
         e.preventDefault()
-        console.log("CHANGE HANDLER WORKING")
+        console.log("CHANGE HANDLER WORKING", attribute, e.target.value)
         setAttributeName(e.target.value)
-        updateHandler({...attribute, name:e.target.value})
+        updateHandler({name:e.target.value, val:attributeVal})
     }
     const trueHandler = ()=>{
         console.log("TRUE HANDLER WORKING")
         setAttributeVal(true)
-        updateHandler({...attribute, val:true})
+        updateHandler({name:attributeName, val:true})
     }
     const falseHandler = ()=>{
         console.log("FALSE HANDLER WORKING")
         setAttributeVal(false)
-        updateHandler({...attribute, val:false})
+        updateHandler({name:attributeName, val:false})
     }
 
     useEffect(()=>{
+        console.log(attribute)
         const {name, val, isExisting} = attribute;
         setAttributeName(name)
         setAttributeVal(val)

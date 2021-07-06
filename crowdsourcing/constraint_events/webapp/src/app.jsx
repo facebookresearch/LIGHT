@@ -154,14 +154,14 @@ function MainApp() {
     let updatedConstraints = []
     let updatedTimesRemaining
     let updatedErrors =[]
-
+    console.log("BROADCAST MESSAGE", broadcastMessage, !broadcastMessage, broadcastMessage!==dummyData.interaction)
 //ERROR HANDLING
     //EVENT ERRORS
       //BROADCAST MESSAGE
       if(!broadcastMessage){
         updatedErrors.push(TaskCopy.errorKey.events.q1Blank)
       }
-      if(broadcastMessage!==dummyData.interaction){
+      if(broadcastMessage===dummyData.interaction){
         updatedErrors.push(TaskCopy.errorKey.events.q1Blank)
       }
       //REMOVE OBJECT
@@ -261,8 +261,9 @@ function MainApp() {
     //ATTRIBUTE MODIFICATION EVENTS
     if(primaryModifiedAttributes.length){
       let updatedPrimaryModifiedAttributes = primaryModifiedAttributes.map(attribute=>{
+        console.log("PRIMARY ATTRIBUTES EVENT", attribute)
         if(!attribute.name){
-
+          return
         }
         return({
         type:"modify_attribute",
@@ -276,20 +277,31 @@ function MainApp() {
       updatedEvents = [...updatedEvents, ...updatedPrimaryModifiedAttributes]
     }
     if(secondaryModifiedAttributes.length){
-      let updatedSecondaryModifiedAttributes = secondaryModifiedAttributes.map(attribute=>({
+      let updatedSecondaryModifiedAttributes = secondaryModifiedAttributes.map(attribute=>{
+      console.log("SECONDARY ATTRIBUTES EVENT", attribute)
+      if(!attribute.name){
+        return
+      }
+      return ({
         type:"modify_attribute",
         params:{
           type:"in_used_target_item",
           key: attribute.name,
           value: attribute.value
         }
-      }))
+      })
+    })
       updatedEvents = [...updatedEvents, ...updatedSecondaryModifiedAttributes]
     }
     //CONSTRAINT UPDATES
     //CONSTRAINING ATTRIBUTES
     if(primaryConstrainingAttributes.length){
-      let updatedPrimaryConstrainingAttributes = primaryConstrainingAttributes.map(attribute=>({
+      let updatedPrimaryConstrainingAttributes = primaryConstrainingAttributes.map(attribute=>{
+      console.log("PRIMARY ATTRIBUTES CONSTRAINTS", attribute)
+      if(!attribute.name){
+        return
+      }
+      return ({
         type:"attribute_compare_value",
         params:{
           type:"in_used_item",
@@ -297,19 +309,26 @@ function MainApp() {
           list: [attribute.value],
           cmp_type: "eq"
         }
-      }))
+      })
+    })
       updatedConstraints = [...updatedConstraints, ...updatedPrimaryConstrainingAttributes]
     }
     if(secondaryConstrainingAttributes.length){
-      let updatedSecondaryConstrainingAttributes = secondaryConstrainingAttributes.map(attribute=>({
-        type:"attribute_compare_value",
-        params:{
-          type:"in_used_target_item",
-          key: attribute.name,
-          list: [attribute.value],
-          cmp_type: "eq"
-        }
-      }))
+      let updatedSecondaryConstrainingAttributes = secondaryConstrainingAttributes.map(attribute=>{
+      console.log("SECONDARY ATTRIBUTES CONSTRAINTS", attribute)
+      if(!attribute.name){
+        return
+      }
+      return ({
+          type:"attribute_compare_value",
+          params:{
+            type:"in_used_target_item",
+            key: attribute.name,
+            list: [attribute.value],
+            cmp_type: "eq"
+          }
+      })
+    })
       updatedConstraints = [...updatedConstraints, ...updatedSecondaryConstrainingAttributes]
     }
     // HELD CONSTRAINT
