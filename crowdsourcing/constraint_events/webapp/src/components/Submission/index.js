@@ -1,17 +1,14 @@
 //REACT
-import React, {useState, useEffect} from "react";
+import React from "react";
 //STYLING
 import "./styles.css"
 //CUSTOM COMPONENTS
 import TaskButton from "../TaskButton"
-import Checklist from "./Checklist"
 
+//Submission - renders submission button
 const Submission = ({
     submitFunction
 })=>{
-
-
-
     return(
         <div className="submission-container" >
             <TaskButton

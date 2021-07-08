@@ -4,17 +4,19 @@ import React, {useEffect} from "react";
 import "./styles.css"
 //COPY
 import QuestionCopy from "../../../../TaskCopy.js";
-//CUSTOM COMPONENENTS
+//CUSTOM COMPONENTS
 import FormQuestion from "../../../../components/Questions/FormQuestion";
 import BooleanQuestion from "../../../../components/Questions/BooleanQuestion";
 import MultipleSelectQuestion from "../../../../components/Questions/MultipleSelectQuestion";
 import FieldQuestion from "../../../../components/Questions/FieldQuestion";
 import AttributeSetter from "../../../../components/AttributeSetter";
 
+// Questions Component - Contains all of the forms relevant to the Events Questions and passes relevant state and setState functions to corresponding questions
 const Questions = ({
     object1,
     object2,
     interaction,
+    //Payload state and corresponding setState functions
     broadcastMessage,
     setBroadcastMessage,
     isCreatingEntity,
@@ -36,16 +38,18 @@ const Questions = ({
     secondaryModifiedAttributes,
     setSecondaryModifiedAttributes
 }) => {
+    // Assigning object attributes to variables for readability
     let obj1Attr = object1.attributes
     let obj2Attr = object2.attributes
+    const QuestionList = QuestionCopy.event.questions
+    const TipList = QuestionCopy.event.tutorialCopy
+    //Upon object change sets descriptions for relevant object
     useEffect(()=>{
         let obj1Desc = object1.desc;
         let obj2Desc = object2.desc;
         setPrimaryDescription(obj1Desc)
         setSecondaryDescription(obj2Desc)
     },[object1, object2])
-    const QuestionList = QuestionCopy.event.questions
-    const TipList = QuestionCopy.event.tutorialCopy
     return (
        <>
             <FormQuestion

@@ -7,14 +7,15 @@ import QuestionCopy from "../../../../TaskCopy.js";
 //CUSTOM COMPONENENTS
 import FormQuestion from "../../../../components/Questions/FormQuestion";
 import BooleanQuestion from "../../../../components/Questions/BooleanQuestion";
-import FieldQuestion from "../../../../components/Questions/FieldQuestion";
 import AttributeSetter from "../../../../components/AttributeSetter";
 import NumberQuestion from "../../../../components/Questions/NumberQuestion";
 
+// Questions Component - Contains all of the forms relevant to the Constraint Questions and passes relevant state and setState functions to corresponding questions
 const Questions = ({
     object1,
     object2,
     interaction,
+    //Payload state and corresponding setState functions
     isSecondaryHeld,
     setIsSecondaryHeld,
     isReversible,
@@ -32,6 +33,7 @@ const Questions = ({
     timesRemaining,
     setTimesRemaining,
 }) => {
+    // Assigning object attributes to variables for readability
     let obj1Attr = object1.attributes
     let obj2Attr = object2.attributes
     let objName1 = object1.name.toUpperCase();

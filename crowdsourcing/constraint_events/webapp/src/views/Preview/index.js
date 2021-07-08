@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+//REACT
+import React from "react";
 //STYLES
 import "./styles.css"
 //COPY
@@ -9,14 +10,11 @@ const EventTutorialIntro = Copy.event.tutorialIntro;
 const ConstraintTutorialIntro = Copy.constraint.tutorialIntro;
 const EventTutorial = Copy.event.tutorialCopy;
 const ConstraintTutorial = Copy.constraint.tutorialCopy;
-
 //Custom Components
 import TutorialEntry from "../../components/TutorialEntry"
 import Header from "../../components/Header";
 
-
-
-
+//Preview - Renders the Task Preview with tutorial components and entries.
 const Preview = ({}) => {
     return (
       <div className="view-container">

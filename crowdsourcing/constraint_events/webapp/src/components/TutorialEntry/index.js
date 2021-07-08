@@ -1,12 +1,13 @@
-import React, {useEffect, useState, useRef} from "react";
-
+//REACT
+import React from "react";
+//Styling
 import "./styles.css"
 
-
+// Tutorial Entry - renders a formated entry for tutorial with relevant question, tutorial text, and screenshot
 const TutorialEntry = ({
-    question,
-    explanation,
-    screenshot,
+    question,//Question being explained
+    explanation,//Explanation text
+    screenshot,// Screenshot of question and UI
 })=>{
     return(
         <div className="tutorialentry-container">

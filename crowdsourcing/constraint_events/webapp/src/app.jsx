@@ -19,7 +19,6 @@ import { useMephistoTask } from "mephisto-task";
 //STYLING
 import "./styles.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
-//TOOLTIPS
 import 'react-tippy/dist/tippy.css'
 //CUSTOM COMPONENTS
 import Task from "./views/Task";
@@ -295,6 +294,7 @@ function MainApp() {
     }
     //CONSTRAINT UPDATES
     //CONSTRAINING ATTRIBUTES
+
     if(primaryConstrainingAttributes.length){
       let updatedPrimaryConstrainingAttributes = primaryConstrainingAttributes.map(attribute=>{
       console.log("PRIMARY ATTRIBUTES CONSTRAINTS", attribute)
@@ -360,16 +360,19 @@ function MainApp() {
       }
       updatedConstraints = [...updatedConstraints, updatedLocationConstraint]
     }
+    // Actualy data payload properly formatted for submission
     const payload = {
         times_remaining: updatedTimesRemaining,
         reversible: updatedIsReversible,
         events: updatedEvents,
         constraints: updatedConstraints
     }
+    // If the function has reached this point with an empty error array the payload is ready.
     if(!updatedErrors.length){
       console.log(payload)
-      //handleSubmit(payload)
+      handleSubmit(payload)
     }else{
+      // Each error in the updatedErrors Array will be listed in the Error Toast
       setErrorMessages(updatedErrors)
       setShowError(true)
     }

@@ -4,6 +4,7 @@ import "./styles.css";
 //Custom Components
 import DataCard from "./DataCard";
 
+//TaskDataCards - renders object1, object 2, and interaction datacards with proper layout
 const TaskDataCards = ({object1, object2, interaction}) => {
     const obj1Name = object1.name.toUpperCase()
     const obj2Name = object2.name.toUpperCase()

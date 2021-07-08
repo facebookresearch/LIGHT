@@ -1,3 +1,4 @@
+/* ATTRIBUTE SETTER STYLES */
 .setter-container {
     display:flex;
     flex-direction: column;
@@ -21,7 +22,7 @@
     font-weight: bold;
     font-size: 20px;
 }
-
+/*Button styles*/
 .button-container {
     width: 40px;
     height: 40px;

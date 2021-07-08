@@ -1,9 +1,10 @@
+//REACT
 import React from "react";
-
+//STYLING
 import "./styles.css"
-
+//CUSTOM COMPONENTS
 import Questions from "./Questions"
-
+// Events Component - Container for Events questions
 const Events = ({
     object1,
     object2,

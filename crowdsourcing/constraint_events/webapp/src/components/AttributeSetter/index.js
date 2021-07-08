@@ -7,35 +7,40 @@ import AttributeRow from "./AttributeRow"
 import InfoToolTip from "../InfoToolTip";
 //ICONS
 import { AiOutlinePlus } from "react-icons/ai";
-
+//Allows user to add and  set value of attributes
 const AttributeSetter = ({
-    header,
-    objectName,
-    objectColor,
-    attributes,
-    isConstraint,
-    setter,
-    toolTipCopy,
-    hasToolTip
+    header, // Label of setter
+    objectName, //  Name of object to whom the Attributes belong
+    objectColor, //  Text color of object
+    attributes,  //  Array of attributes taken from target object
+    isConstraint,  // Formats component for constraint case where attributes in place cannot be changed but can still be removed.
+    setter, // The setState function that connects the values in Attributes Array to the payload being submitted
+    toolTipCopy, //  Copy for relevant tooltip
+    hasToolTip // signifies whether the component has a tooltip or not.
 }) => {
+    //Local State for Attributes being listed and changed in component
     const [attributeList, setAttributeList] = useState([])
+    //Sets is existing attribute for attributes that already exist before interaction
     useEffect(()=>{
         if(attributes){
         const existingAttributes = attributes.map(att => ({...att, isExisting:true}))
         setAttributeList(existingAttributes)
         }
     },[])
+    //Function used to add a "blank attribute to the array."
     const addAttributeHandler = ()=>{
         const newAtt = [...attributeList, {name:"", val:true}]
         setAttributeList(newAtt)
         setter(newAtt)
     }
+    //Function used to update attributes
     const updateAttributeHandler = (updateIndex, update) => {
-        let filteredListPreUpdate = attributeList.filter((item, index)=> (index !== updateIndex))
-        let updatedArr = [...filteredListPreUpdate, update]
-        setAttributeList(updatedArr)
-        setter(updatedArr)
+        let filteredListPreUpdate = attributeList.filter((item, index)=> (index !== updateIndex))//Unupdated entry removed from array
+        let updatedArr = [...filteredListPreUpdate, update] // Updated Entry added to array
+        setAttributeList(updatedArr) // Array with updated entry set to local state
+        setter(updatedArr) // Array with updated entry set to payload state
     }
+    //Function used to remove Attributes
     const removeAttributeHandler = (deletedIndex)=>{
         let updatedArr = attributeList.filter((item, index)=> (index !== deletedIndex))
         setAttributeList(updatedArr)
@@ -43,10 +48,7 @@ const AttributeSetter = ({
     }
     return (
         <div className="setter-container">
-            {
-            hasToolTip
-            ?
-            <InfoToolTip tutorialCopy={toolTipCopy}>
+            <InfoToolTip tutorialCopy={toolTipCopy} hasToolTip={hasToolTip}>
                 <div className="setter-header">
                     <div></div>
                     <div className="label-container">
@@ -61,19 +63,6 @@ const AttributeSetter = ({
                     </div>
                 </div>
             </InfoToolTip>
-            :
-            <div className="setter-header">
-                <div></div>
-                <div className="label-container">
-                    <p className="label-text">
-                        <span style={{fontWeight:"bold", color: objectColor}}>{objectName.toUpperCase()}</span> {header}
-                    </p>
-                </div>
-                <div className="button-container" onClick={addAttributeHandler}>
-                    <AiOutlinePlus/>
-                </div>
-            </div>
-            }
             <div className="attributes-container">
                 {
                   attributeList.length ?

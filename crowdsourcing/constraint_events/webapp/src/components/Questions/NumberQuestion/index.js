@@ -3,16 +3,24 @@ import React, {useEffect, useState, useRef} from "react";
 //STYLING
 import "./styles.css"
 
-const NumberQuestion = ({question, formFunction})=>{
+//NumberQuestion - Question with number for answer.
+const NumberQuestion = ({
+    question, //Question Text
+    formFunction // setState function that connects to payload state
+})=>{
+    //Local State
     const [formNumber, setFormNumber] = useState(0)
-    useEffect(()=>{
-        formFunction(formNumber)
-    },[])
+
+    //changeHandler - updates both local and payload state with answer
     const changeHandler = e=>{
         e.preventDefault()
         setFormNumber(e.target.value)
         formFunction(e.target.value)
     }
+
+    useEffect(()=>{
+        formFunction(formNumber)
+    },[])
     return(
         <div className="numberform-container" >
             <div className="numberanswer-container">

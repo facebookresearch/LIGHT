@@ -1,19 +1,20 @@
 //REACT
-import React, {useEffect, useRef} from "react";
+import Reacts from "react";
 //STYLING
 import "./styles.css"
 //CUSTOM COMPONENTS
 import FieldRow from "./FieldRow";
 
+// FieldQuestion - a question who's answer is a form with multiple fields.  these fields can be text input or dropdown.
 const FieldQuestion = ({
-    question,
-    fields,
-    formFunction,
-    formState
+    question,//question text
+    fields,//an array of objects with a string name attribute, a dropdown boolean attribute, and if boolean is true an array of options for the dropdown
+    formFunction,// function that connects question answer to payload state.
+    formState, // payload state
 })=>{
+    //updates payload state with for inputs
     const ChangeHandler = (formName, formVal)=>{
         let updatedState = {...formState, [formName]:formVal}
-        console.log("UPDATE", updatedState)
         formFunction(updatedState)
     }
     return(
@@ -29,7 +30,6 @@ const FieldQuestion = ({
                         dropdown={field.dropdown}
                         options={field.options}
                         changeFunction={val=>ChangeHandler(field.name, val)}
-                        formState={formState}
                         />
                         ))
                     :null

@@ -1,9 +1,11 @@
+//REACT
 import React from "react";
-
+//STYLING
 import "./styles.css"
-
+//CUSTOM COMPONENTS
 import Questions from "./Questions"
 
+//Constraints -
 const Constraints = ({
     object1,
     object2,

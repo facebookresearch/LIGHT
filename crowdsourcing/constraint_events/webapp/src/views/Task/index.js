@@ -1,14 +1,16 @@
+//REACT
 import React, { useEffect } from "react";
-
+//STYLING
 import "./styles.css"
 //Custom Components
 import Header from "../../components/Header";
 import TaskDataCards from "./TaskDataCards"
 import Constraints from "./Constraints"
 import Events from "./Events"
-
+//Task - Primary View for task, contains the Header, both the events and constraints, and the Task Cards.
 const Task = ({
-  data,
+  data,//Data from backend
+  //STATE AND CORRESPONDING FUNCTIONS TO SET STATE
   broadcastMessage,
   setBroadcastMessage,
   isCreatingEntity,
@@ -46,6 +48,7 @@ const Task = ({
   timesRemaining,
   setTimesRemaining,
 }) => {
+  //Abstracts object and interaction information off data from backend
   const {object1, object2, interaction}= data;
     return (
       <div className="view-container">
