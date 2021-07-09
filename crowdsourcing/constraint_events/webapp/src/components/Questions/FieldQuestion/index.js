@@ -1,5 +1,5 @@
 //REACT
-import Reacts from "react";
+import React from "react";
 //STYLING
 import "./styles.css"
 //CUSTOM COMPONENTS

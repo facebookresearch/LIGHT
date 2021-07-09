@@ -20,10 +20,10 @@ const Preview = ({}) => {
       <div className="view-container">
         <Header />
         <div className="intro-container">
+          <img src={PreviewTutorialImg} style={{width:"100%"}} />
           <p className="intro-text">
             {PreviewTutorial}
           </p>
-          <img src={PreviewTutorialImg} style={{width:"50%"}} />
         </div>
         <div className="preview-container">
           <div className="eventpreview-container">

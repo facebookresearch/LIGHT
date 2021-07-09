@@ -28,7 +28,7 @@ const FormQuestion = ({
     const changeHandler = e=>{
         e.preventDefault()
         setDescription(e.target.value)
-        formFunction(description)
+        formFunction(e.target.value)
     }
     return(
         <div className="form-container" >
@@ -37,7 +37,7 @@ const FormQuestion = ({
             hasToolTip={hasToolTip}
             >
                 <div style={{display:"flex", flexDirection:"row"}}>
-                    <Checkbox isComplete={isComplete} />
+                    {hasToolTip ? <Checkbox isComplete={isComplete} />:null}
                     <h1 className="form-header" style={{color: (questionColor ?  questionColor : "black")}}>
                         {upperCaseQuestion ? question.toUpperCase() : question}
                     </h1>

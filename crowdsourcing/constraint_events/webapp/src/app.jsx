@@ -6,7 +6,7 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 //REACT
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import ReactDOM from "react-dom";
 import { TaskDescription } from "./components/task_description.jsx";
 // import { ActionDescription } from "./components/action_description.jsx";
@@ -146,8 +146,9 @@ function MainApp() {
         {name: "locked", val: true}
       ],
     },
-    interaction: "You place the key in the lock and turn.  After a satifying click the lock becomes unlocked."
+    interaction: "You place the key in the lock and turn.  After a satisfying click the lock becomes unlocked."
   }
+
   const submissionHandler = ()=>{
     let updatedEvents = []
     let updatedConstraints = []
@@ -370,7 +371,7 @@ function MainApp() {
     // If the function has reached this point with an empty error array the payload is ready.
     if(!updatedErrors.length){
       console.log(payload)
-      handleSubmit(payload)
+      //handleSubmit(payload)
     }else{
       // Each error in the updatedErrors Array will be listed in the Error Toast
       setErrorMessages(updatedErrors)

@@ -50,6 +50,9 @@ const Questions = ({
         setPrimaryDescription(obj1Desc)
         setSecondaryDescription(obj2Desc)
     },[object1, object2])
+    useEffect(()=>{
+        setBroadcastMessage(interaction)
+       },[interaction])
     return (
        <>
             <FormQuestion

@@ -36,14 +36,16 @@ const BooleanQuestion = ({
 
     return(
         <div className="booleanquestion-container" >
-            <InfoToolTip tutorialCopy={toolTipCopy}>
+            <InfoToolTip
+            tutorialCopy={toolTipCopy}
+            hasToolTip={hasToolTip}
+            >
                 <div style={{display:"flex", flexDirection:"row"}}>
-                    <Checkbox isComplete={isComplete} />
+                    {hasToolTip?<Checkbox isComplete={isComplete} />:null}
                     <FormatQuestion
                         question={question}
                         keywords={keywords}
                         containerStyle="booleanquestion-text"
-                        hasToolTip={hasToolTip}
                     />
                 </div>
             </InfoToolTip>

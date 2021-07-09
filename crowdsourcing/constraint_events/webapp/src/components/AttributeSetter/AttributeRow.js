@@ -24,17 +24,17 @@ const AttributeRow = ({
     const changeHandler = e=>{
         e.preventDefault()
         setAttributeName(e.target.value)
-        updateHandler({name:e.target.value, val:attributeVal})
+        updateHandler({...attribute, name:e.target.value, val:attributeVal})
     }
     //Sets Val attribute to true
     const trueHandler = ()=>{
         setAttributeVal(true)
-        updateHandler({name:attributeName, val:true})
+        updateHandler({...attribute, name:attributeName, val:true})
     }
     //Sets Val attribute to true
     const falseHandler = ()=>{
         setAttributeVal(false)
-        updateHandler({name:attributeName, val:false})
+        updateHandler({...attribute, name:attributeName, val:false})
     }
 
     useEffect(()=>{
@@ -46,11 +46,11 @@ const AttributeRow = ({
     return(
         <div className="attributerow-container" >
             <div className="attribute-label__container ">
-                <p className="attribute-label__text">{isConstraint?"Now the":"" }<span style={{fontWeight:"bold", color: objectColor}}>{objectName.toUpperCase()} </span></p>
+                <p className="attribute-label__text">{isConstraint ? "": " Now the "}<span style={{fontWeight:"bold", color: objectColor}}>{objectName.toUpperCase()} </span></p>
             </div>
             <div className="value-container">
                 <TaskButton
-                    name={isConstraint? "MUST BE":"IS "}
+                    name={isConstraint ? " MUST BE ":" IS "}
                     isSelected={attributeVal}
                     selectFunction={trueHandler}
                     unselectedContainer="b-button__container true"
@@ -60,7 +60,7 @@ const AttributeRow = ({
 
                     />
                 <TaskButton
-                    name={isConstraint? "MUST NOT BE":"IS NOT"}
+                    name={isConstraint ? " MUST NOT BE ":" IS NOT "}
                     isSelected={attributeVal===false}
                     selectFunction={falseHandler}
                     unselectedContainer="b-button__container false"
@@ -77,7 +77,7 @@ const AttributeRow = ({
                     disabled={isExistingAttribute ? true : false}
                 />
             </div>
-            <MdCancel onClick={deleteHandler} color="red" className="attribute-icon" />
+            {isExistingAttribute ? <div style={{width:"10%"}}/> : <MdCancel onClick={deleteHandler} color="red" className="attribute-icon" />}
         </div>
     )
 }
