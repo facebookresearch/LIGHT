@@ -1,0 +1,8 @@
+/*SCALE STYLES*/
+.scale-container {
+    width:90%;
+    border-color: blue;
+    border-width:6px;
+    border-radius: 15px;
+    border-style: solid;
+}

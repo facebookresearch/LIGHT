@@ -2,7 +2,7 @@ import React, {useState} from "react";
 
 import "./styles.css"
 //CUSTOM COMPONENTS
-import Scale from "../../Scale";
+import Scale from "./Scale";
 
 const DummyData = {
     trait:{
@@ -31,7 +31,7 @@ const ScaleQuestion = ({
 })=>{
 
     return(
-        <div style={{width:"100%"}}>
+        <div className="scalequestion-container">
             <Scale
                 trait={DummyData.trait}
                 actors={DummyData.options}

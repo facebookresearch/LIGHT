@@ -70,7 +70,7 @@ function MainApp() {
     const dummyData= {
   }
   return (
-    <div>
+    <div className="view-container">
       <Task data={dummyData}/>
     </div>
   );

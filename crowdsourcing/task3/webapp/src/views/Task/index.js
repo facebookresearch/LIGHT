@@ -8,7 +8,7 @@ import ScaleQuestion from "../../components/Questions/ScaleQuestion";
 
 const Task = ({data}) => {
     return (
-      <div className="view-container">
+      <div className="task-container">
         <Header/>
         <ScaleQuestion/>
       </div>
