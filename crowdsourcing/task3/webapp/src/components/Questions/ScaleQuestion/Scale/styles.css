@@ -5,6 +5,7 @@
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
     border-style: solid;
+    overflow: hidden;
 }
 
 .scalelabels-container {

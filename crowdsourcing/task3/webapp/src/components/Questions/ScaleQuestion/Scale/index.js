@@ -39,8 +39,8 @@ const Scale = ({scale, actors}) => {
                     </div>
                 </div>
                 <div >
-                    <Stage width={(width*.89)+5} height={height/2}>
-                        <Layer width={width}>
+                    <Stage width={width} height={height/2}>
+                        <Layer width={(width*.89)+5}>
                         <Line
                             points={[width*.252, 0, width*.253, height]}
                             stroke={"blue"}
@@ -50,7 +50,7 @@ const Scale = ({scale, actors}) => {
                                 width={width*.89}
                                 height={height/2}
                                 actors={actors}
-                                boundary={width*.252}
+                                boundary={(width*.165)}
                             />
                             {
                             scale.map((label, index)=>{
@@ -77,10 +77,10 @@ const Scale = ({scale, actors}) => {
                                 closed
                                 stroke="black"
                                 fillLinearGradientStartPoint={{ x: 0, y: 0 }}
-                                fillLinearGradientEndPoint={{ x: width/5, y: height*-.075 }}
-                                fillLinearGradientStartPoint={{ x: width/5, y: height*-.075 }}
-                                fillLinearGradientEndPoint={{ x: width/2, y: height*-.15 }}
-                                fillLinearGradientColorStops={[0, 'green', 0.5, "blue", 1, 'red']}
+                                fillLinearGradientEndPoint={{ x: width*.13, y: height*-.075 }}
+                                fillLinearGradientStartPoint={{ x: width*.13, y: height*-.075 }}
+                                fillLinearGradientEndPoint={{ x: width*.6, y: height*-.15 }}
+                                fillLinearGradientColorStops={[0, 'green', 0.3, "blue", 1, 'red']}
                             />
                         </Layer>
                     </Stage>
