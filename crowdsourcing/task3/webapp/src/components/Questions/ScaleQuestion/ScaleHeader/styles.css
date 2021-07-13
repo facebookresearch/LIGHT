@@ -1,0 +1,20 @@
+/*SCALEHEADER STYLES*/
+.scaleheader-container {
+    border-top-left-radius:15px;
+    border-top-right-radius:15px;
+    font-weight: bold;
+    color:white;
+    background-color: blue;
+    text-align: center;
+    border-style: solid;
+    border-color: blue;
+    width:90%;
+}
+
+.scaleheader-trait__text {
+    font-size: 32px;
+}
+
+.scaleheader-description__text {
+    font-size: 18px;
+}

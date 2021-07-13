@@ -7,10 +7,15 @@ import Header from "../../components/Header";
 import ScaleQuestion from "../../components/Questions/ScaleQuestion";
 
 const Task = ({data}) => {
+  const {trait, scale, actors} = data
     return (
       <div className="task-container">
         <Header/>
-        <ScaleQuestion/>
+        <ScaleQuestion
+          scale={scale}
+          actors={actors}
+          trait={trait}
+        />
       </div>
     );
 }

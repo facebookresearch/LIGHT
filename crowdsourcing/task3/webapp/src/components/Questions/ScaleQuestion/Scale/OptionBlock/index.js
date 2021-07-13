@@ -8,7 +8,7 @@ const generateShapes = (arr)=> {
             (name, i) => ({
                 name:name,
                 id: i.toString(),
-                x: 50,
+                x: 25,
                 y: i*60,
                 isDragging: false,
                 })
@@ -45,29 +45,32 @@ const OptionBlock = ({height, width, actors}) => {
   const handleDragEnd = (e) => {
     const id = e.target.id();
     const blockX = e.target.x();
-    const blockY = e.target.x();
+    const blockY = e.target.y();
     console.log("X", blockX)
+    console.log("Y", blockY)
     console.log(e.target)
-    setOptionBlocks(
-        optionBlocks.map((block) => {
-            if(block.id=== id){
-                return {
+    if(blockX>200 && blockX<width){
+        setOptionBlocks(
+            optionBlocks.map((block) => {
+                if(block.id=== id){
+                    return {
+                        ...block,
+                        isDragging: false,
+                        drawLine:blockX  > 200,
+                        blockX:blockX,
+                        blockY:blockY
+                    };
+                }else{
+                    return {
                     ...block,
                     isDragging: false,
-                    drawLine:blockX  > 200,
-                    blockX:blockX,
-                    blockY:blockY
-                };
-            }else{
-                return {
-                ...block,
-                isDragging: false,
-                drawLine:block.id === id,
-                };
-            }
-        })
-    );
-  };
+                    drawLine:block.id === id,
+                    };
+                }
+            })
+        );
+    }
+};
 
   return (
     <>
@@ -84,7 +87,7 @@ const OptionBlock = ({height, width, actors}) => {
             onDragEnd={handleDragEnd}
             >
                 <Line
-                points={[block.x+100, 0, block.x+100, 500]}
+                points={[block.x+50, 0, block.x+50, height*2]}
                 stroke={(block.drawLine||(block.blockX  > 100)) ? "black" : "white"}
                 strokeWidth={10}
                 opacity={(block.drawLine||(block.blockX > 100)) ? 1 : 0}

@@ -68,7 +68,24 @@ function MainApp() {
 
   //console.log('active? ', active);
     const dummyData= {
+      trait:{
+        name: "STRENGTH",
+        description:"The raw physical power an actor can exert typically fort he express purpose of attacking."
+      },
+      scale:{
+        min:"Rat",
+        mid:"Peasant",
+        max:"Dragon"
+      },
+      actors:[
+        "Butcher",
+        "Baker",
+        "Candlestick Maker",
+        "Kroktar Devourer of Souls"
+        ]
   }
+
+options:
   return (
     <div className="view-container">
       <Task data={dummyData}/>

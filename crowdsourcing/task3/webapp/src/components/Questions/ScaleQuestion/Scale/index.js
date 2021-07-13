@@ -10,7 +10,7 @@ import OptionBlock from "./OptionBlock"
 //Utils
 import GetWindowDimensions from "../../../../utils/GetDimensions.js"
 //Scale - Component that contains actual scale UI for ScaleQuestion component.  Allows user to drag and drop name plates on a range that will supply rating to the backend.
-const Scale = ({trait, actors}) => {
+const Scale = ({scale, actors}) => {
     const [dimensions, setDimensions]= useState(GetWindowDimensions())
     useEffect(()=>{
         const handleResize = ()=>{
@@ -22,24 +22,36 @@ const Scale = ({trait, actors}) => {
     const {width, height}= dimensions
     return (
         <div className="scale-container">
-            <div style={{width:"100%", height:"50%" }}>
-                <div style={{width:"260px", backgroundColor:"white"}}>
-                    <p style={{textAlign:"center", borderColor:"blue", borderWidth: "3px", borderStyle:"solid", padding:"2px", fontWeight:"bold", color:"blue"}}>
-                        ACTORS
-                    </p>
+            <div style={{width:"100%", height:"100%" }}>
+                <div className="scalelabels-container">
+                    <div className="optionblock-label__container">
+                        <p className="optionblock-label__text">
+                            ACTORS
+                        </p>
+                    </div>
+                    <div className="scalefield-label__container">
+                        <p className="scalefield-label__text">
+                            Scale
+                        </p>
+                    </div>
                 </div>
                 <div >
                     <Stage width={width} height={height/2}>
-                        <Layer>
+                        <Layer width={width}>
+                        <Line
+                            points={[width*.25, 0, width*.25, height]}
+                            stroke={"blue"}
+                            strokeWidth={5}
+                        />
                             <OptionBlock
-                                width={width}
-                                height={height/4}
+                                width={width*.9}
+                                height={height/2}
                                 actors={actors}
                             />
                             <Line closed points={[100, 0, 100, -100, 0, 0]} fill="red" />
                         </Layer>
                     </Stage>
-                    <ScaleRange trait={trait} />
+                    <ScaleRange actorBlockMargin={"260px"} scale={scale} />
                 </div>
             </div>
         </div>

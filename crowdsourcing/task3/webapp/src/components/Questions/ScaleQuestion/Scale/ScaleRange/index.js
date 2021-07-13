@@ -5,16 +5,20 @@ import React, {useState} from "react";
 import "./styles.css"
 //CUSTOM COMPONENTS
 
-const ScaleRange = ({trait, actors}) => {
+const ScaleRange = ({
+    scale,
+    actorBlockMargin
+}) => {
 
   return (
-    <div style={{width:"100%", display:"flex", flexDirection:"row"}}>
-        <div style={{width:"100%", display:"flex", justifyContent:"space-between", backgroundColor:"grey",}}>
+    <div className="scalerange-container">
+        <div className="optionblock-footer"></div>
+        <div className={scalerange-text__container}>
             <p >
                 MIN
             </p>
             <p>
-                {trait.name}
+                MID
             </p>
             <p>
                 MAX

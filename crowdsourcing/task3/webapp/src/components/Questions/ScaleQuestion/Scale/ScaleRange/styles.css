@@ -2,9 +2,25 @@
 
 }
 
+/* SCALERANGE STYLES*/
+.scalerange-container {
+    width:100%;
+    display:flex;
+    flex-direction:row;
+}
+
+.optionblock-footer{
+    background-color: blue;
+    width: 25%;
+}
+
 .scalerange-text__container {
-    margin-left: 260px;
-    margin-right: 130px;
+    width: 70%;
+    display:flex;
+    justify-content:space-between;
+    background-color:grey;
+    border-style:solid;
+    border-color:blue;
 }
 
 .scalerange-text__container {
