@@ -72,11 +72,11 @@ function MainApp() {
         name: "STRENGTH",
         description:"The raw physical power an actor can exert typically fort he express purpose of attacking."
       },
-      scale:{
-        min:"Rat",
-        mid:"Peasant",
-        max:"Dragon"
-      },
+      scale:[
+        "Rat",
+        "Peasant",
+        "Dragon"
+      ],
       actors:[
         "Butcher",
         "Baker",

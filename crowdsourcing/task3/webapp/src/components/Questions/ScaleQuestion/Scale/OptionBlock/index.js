@@ -1,6 +1,7 @@
+//REACT
 import React, { useEffect } from 'react';
-import { render } from 'react-dom';
-import { Stage, Layer, Rect, Text, Group, Line } from 'react-konva';
+//KONVA
+import { Rect, Text, Group, Line } from 'react-konva';
 
 const generateShapes = (arr)=> {
     if(arr){
@@ -9,7 +10,7 @@ const generateShapes = (arr)=> {
                 name:name,
                 id: i.toString(),
                 x: 25,
-                y: i*60,
+                y: 25+(i*60),
                 isDragging: false,
                 })
             )
@@ -19,29 +20,33 @@ const generateShapes = (arr)=> {
 
 const INITIAL_STATE = generateShapes();
 
-const OptionBlock = ({height, width, actors}) => {
+const OptionBlock = ({
+    height,
+    width,
+    actors,
+    boundary
+}) => {
     const [optionBlocks, setOptionBlocks] = React.useState([]);
     useEffect(()=>{
         if(actors){
-        let updatedBlocks = generateShapes(actors)
-        setOptionBlocks(updatedBlocks)
+            let updatedBlocks = generateShapes(actors);
+            setOptionBlocks(updatedBlocks);
         }
     },[actors])
 
 
     const handleDragStart = (e) => {
-    const id = e.target.id();
-    console.log(e.target)
-    setOptionBlocks(
-        optionBlocks.map((block) => {
-        return {
-          ...block,
-          isDragging: block.id === id,
-          drawLine:block.id === id
-        };
-      })
-    );
-  };
+        const id = e.target.id();
+        console.log(e.target)
+        setOptionBlocks(
+            optionBlocks.map((block) => {
+            return {
+            ...block,
+            isDragging: block.id === id,
+            drawLine:block.id === id
+            };
+        }));
+    };
   const handleDragEnd = (e) => {
     const id = e.target.id();
     const blockX = e.target.x();
@@ -49,14 +54,13 @@ const OptionBlock = ({height, width, actors}) => {
     console.log("X", blockX)
     console.log("Y", blockY)
     console.log(e.target)
-    if(blockX>200 && blockX<width){
         setOptionBlocks(
             optionBlocks.map((block) => {
                 if(block.id=== id){
                     return {
                         ...block,
                         isDragging: false,
-                        drawLine:blockX  > 200,
+                        drawLine:blockX  > boundary,
                         blockX:blockX,
                         blockY:blockY
                     };
@@ -69,7 +73,6 @@ const OptionBlock = ({height, width, actors}) => {
                 }
             })
         );
-    }
 };
 
   return (
@@ -78,38 +81,38 @@ const OptionBlock = ({height, width, actors}) => {
             console.log("BLOCK #", i, "  ", block)
             return (
             <Group
-            key={block.id}
-            id={block.id}
-            x={block.x}
-            y={block.y}
-            draggable
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
+                key={block.id}
+                id={block.id}
+                x={block.x}
+                y={block.y}
+                draggable
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
             >
                 <Line
-                points={[block.x+50, 0, block.x+50, height*2]}
-                stroke={(block.drawLine||(block.blockX  > 100)) ? "black" : "white"}
-                strokeWidth={10}
-                opacity={(block.drawLine||(block.blockX > 100)) ? 1 : 0}
+                    points={[block.x+width*.08, 0, block.x+width*.08, height*2]}
+                    stroke={(block.drawLine||(block.blockX  > width*.252)) ? "blue" : "white"}
+                    strokeWidth={5}
+                    opacity={(block.drawLine||(block.blockX > width*.252)) ? 1 : 0}
                 />
 
                 <Rect
-                width={200}
-                height={50}
-                fill="blue"
-                opacity={1}
-                shadowColor="black"
-                shadowBlur={10}
-                shadowOpacity={0.6}
-                shadowOffsetX={block.isDragging ? 10 : 5}
-                shadowOffsetY={block.isDragging ? 10 : 5}
-                scaleX={block.isDragging ? 1.2 : 1}
-                scaleY={block.isDragging ? 1.2 : 1}
+                    width={width*.20}
+                    height={50}
+                    fill="blue"
+                    opacity={1}
+                    shadowColor="black"
+                    shadowBlur={10}
+                    shadowOpacity={0.6}
+                    shadowOffsetX={block.isDragging ? 10 : 5}
+                    shadowOffsetY={block.isDragging ? 10 : 5}
+                    scaleX={block.isDragging ? 1.2 : 1}
+                    scaleY={block.isDragging ? 1.2 : 1}
                 />
                 <Text
                     text={block.name}
                     fontSize={20}
-                    width={200}
+                    width={width*.20}
                     height={50}
                     align={"center"}
                     verticalAlign={"middle"}

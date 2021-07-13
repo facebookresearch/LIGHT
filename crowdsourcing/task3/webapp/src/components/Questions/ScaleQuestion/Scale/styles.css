@@ -2,7 +2,6 @@
 .scale-container {
     width:90%;
     border-color: blue;
-    border-width:6px;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
     border-style: solid;
