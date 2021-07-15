@@ -1,67 +1,63 @@
 //REACT
-import React, {useState} from "react";
+import React, { useEffect } from 'react';
 //KONVA
 import { Rect, Text, Group, Line } from 'react-konva';
-//STYLING
-import "./styles.css"
 
 
 const ScaleFlag = ({
-    xPosition,
-    yPosition,
-    width,
     height,
-    label,
-    color
+    width,
+    actors,
+    boundary
 }) => {
 
-return (
-    <Group
-        x={xPosition}
-        y={yPosition}
-    >
-        <Line
-            points={[width*.075, 0, width*.075, height*2]}
-            stroke= {color>1? "red": color>0 ? "blue": "green"}
-            strokeWidth={5}
-        />
 
-        <Rect
-            width={width*.15}
-            height={50}
-            fill={color>1? "red": color>0 ? "blue": "green"}
-            opacity={1}
-            shadowColor="black"
-            shadowBlur={10}
-            shadowOpacity={0.6}
-        />
-        <Rect
-            width={width*.13}
-            height={40}
-            offsetX={width*-.01}
-            offsetY={-5}
-            fill="white"
-            opacity={1}
-            shadowColor="black"
-            shadowBlur={10}
-            shadowOpacity={0.6}
-        />
-        <Text
-            text={label}
-            fontSize={20}
-            width={width*.13}
-            height={50}
-            offsetX={width*-.01}
-            offsetY={-5}
-            align={"center"}
-            verticalAlign={"middle"}
-            fill="red"
-            opacity={0.8}
-            shadowOpacity={0.6}
-            style={{zIndex:"100"}}
+  return (
+            <Group
+            key={block.id}
+            id={block.id}
+            x={block.x}
+            y={block.y}
+            draggable
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
         >
-        </Text>
-    </Group>
-    )
-}
-export default ScaleFlag;
+            <Line
+                points={[block.x+width*.08, 0, block.x+width*.08, height*2]}
+                stroke={(block.drawLine||(block.blockX  > width*.252)) ? "blue" : "white"}
+                strokeWidth={5}
+                opacity={(block.drawLine||(block.blockX > width*.252)) ? 1 : 0}
+            />
+
+            <Rect
+                width={width*.20}
+                height={50}
+                fill="blue"
+                opacity={1}
+                shadowColor="black"
+                shadowBlur={10}
+                shadowOpacity={0.6}
+                shadowOffsetX={block.isDragging ? 10 : 5}
+                shadowOffsetY={block.isDragging ? 10 : 5}
+                scaleX={block.isDragging ? 1.2 : 1}
+                scaleY={block.isDragging ? 1.2 : 1}
+            />
+            <Text
+                text={block.name}
+                fontSize={20}
+                width={width*.20}
+                height={50}
+                align={"center"}
+                verticalAlign={"middle"}
+                fill="white"
+                opacity={0.8}
+                shadowOpacity={0.6}
+                scaleX={block.isDragging ? 1.2 : 1}
+                scaleY={block.isDragging ? 1.2 : 1}
+                style={{zIndex:"100"}}
+            >
+            </Text>
+        </Group>
+)}
+
+export default ScaleFlag

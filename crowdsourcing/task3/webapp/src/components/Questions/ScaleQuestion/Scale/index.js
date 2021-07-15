@@ -7,7 +7,7 @@ import "./styles.css";
 //CUSTOM COMPONENTS
 import ScaleRange from "./ScaleRange";
 import OptionBlock from "./OptionBlock";
-import ScaleFlag from "./ScaleFlag";
+import ScaleFlag from "./ExampleFlag";
 //Utils;
 import GetWindowDimensions from "../../../../utils/GetDimensions.js";
 

@@ -24,7 +24,8 @@ const OptionBlock = ({
     height,
     width,
     actors,
-    boundary
+    leftSoftBoundary,
+    rightSoftBoundary,
 }) => {
     const [optionBlocks, setOptionBlocks] = React.useState([]);
     useEffect(()=>{
@@ -33,7 +34,8 @@ const OptionBlock = ({
             setOptionBlocks(updatedBlocks);
         }
     },[actors])
-
+    const flagWidth = width*.10;
+    const flagHeight = 50
 
     const handleDragStart = (e) => {
         const id = e.target.id();
@@ -51,18 +53,21 @@ const OptionBlock = ({
     const id = e.target.id();
     const blockX = e.target.x();
     const blockY = e.target.y();
+    const boundaryOffset =
     console.log("X", blockX)
     console.log("Y", blockY)
     console.log(e.target)
+
         setOptionBlocks(
             optionBlocks.map((block) => {
                 if(block.id=== id){
                     return {
                         ...block,
                         isDragging: false,
-                        drawLine:blockX  > boundary,
+                        drawLine:blockX  > leftSoftBoundary,
                         blockX:blockX,
-                        blockY:blockY
+                        blockY:blockY,
+                        truePosition:
                     };
                 }else{
                     return {
@@ -74,6 +79,24 @@ const OptionBlock = ({
             })
         );
 };
+const dragBoundaryHandler = (pos)=>{
+    const{x, y}= pos
+    console.log("DRAG EVENT:  ", pos)
+    const blockX = x;
+    const blockY = y;
+    const leftXBoundary = 0;
+    const rightXBoundary = width-(width*.05);
+    const topYBoundary = 0;
+    const bottomYBoundary = height - 50// 50 is rect Rect height
+    console.log("X", blockX)
+    console.log("Y", blockY)
+    let newBlockX = blockX < leftXBoundary ? leftXBoundary : blockX>rightXBoundary ? rightXBoundary :blockX;
+    let newBlockY = blockY < topYBoundary ? topYBoundary : blockY>bottomYBoundary ? bottomYBoundary :blockY;
+    return {
+        x: newBlockX,
+        y: newBlockY,
+      };
+}
 
   return (
     <>
@@ -88,16 +111,17 @@ const OptionBlock = ({
                 draggable
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
+                dragBoundFunc={dragBoundaryHandler}
             >
                 <Line
-                    points={[block.x+width*.08, 0, block.x+width*.08, height*2]}
+                    points={[block.x+width*.05, 0, block.x+width*.05, height*2]}
                     stroke={(block.drawLine||(block.blockX  > width*.252)) ? "blue" : "white"}
                     strokeWidth={5}
                     opacity={(block.drawLine||(block.blockX > width*.252)) ? 1 : 0}
                 />
 
                 <Rect
-                    width={width*.20}
+                    width={flagWidth}
                     height={50}
                     fill="blue"
                     opacity={1}
@@ -106,21 +130,19 @@ const OptionBlock = ({
                     shadowOpacity={0.6}
                     shadowOffsetX={block.isDragging ? 10 : 5}
                     shadowOffsetY={block.isDragging ? 10 : 5}
-                    scaleX={block.isDragging ? 1.2 : 1}
-                    scaleY={block.isDragging ? 1.2 : 1}
+                    style={{zIndex:"99"}}
                 />
                 <Text
                     text={block.name}
-                    fontSize={20}
-                    width={width*.20}
+                    fontSize={12}
+                    fontStyle={"bold"}
+                    width={width*.10}
                     height={50}
                     align={"center"}
                     verticalAlign={"middle"}
                     fill="white"
                     opacity={0.8}
                     shadowOpacity={0.6}
-                    scaleX={block.isDragging ? 1.2 : 1}
-                    scaleY={block.isDragging ? 1.2 : 1}
                     style={{zIndex:"100"}}
                 >
                 </Text>
