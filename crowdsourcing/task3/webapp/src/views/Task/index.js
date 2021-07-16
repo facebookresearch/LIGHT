@@ -13,7 +13,7 @@ const Task = ({data}) => {
         <Header/>
         <ScaleQuestion
           scale={scale}
-          actors={actors}
+          selection={actors}
           trait={trait}
         />
       </div>

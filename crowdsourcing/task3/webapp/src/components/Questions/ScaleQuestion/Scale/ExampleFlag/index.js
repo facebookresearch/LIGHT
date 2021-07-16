@@ -3,8 +3,9 @@ import React, {useState} from "react";
 //KONVA
 import { Rect, Text, Group, Line } from 'react-konva';
 //STYLING
-import "./styles.css"
-
+import "./styles.css";
+//UTILS
+import GetFlagDimensions from "../../../../../utils/GetFlagDimensions.js";
 
 const ExampleFlag = ({
     xPosition,
@@ -14,7 +15,7 @@ const ExampleFlag = ({
     label,
     color
 }) => {
-
+const FlagDimensions = GetFlagDimensions(label, width, 10, 40)
 return (
     <Group
         x={xPosition}
@@ -27,8 +28,8 @@ return (
         />
 
         <Rect
-            width={width*.10}
-            height={50}
+            width={flagWidth}
+            height={flagHeight}
             fill={color>1? "red": color>0 ? "blue": "green"}
             opacity={1}
             shadowColor="black"
@@ -36,8 +37,8 @@ return (
             shadowOpacity={0.6}
         />
         <Rect
-            width={width*.09}
-            height={40}
+            width={flagWidth}
+            height={flagHeight}
             offsetX={width*-.005}
             offsetY={-5}
             fill="white"
@@ -48,9 +49,9 @@ return (
         />
         <Text
             text={label}
-            fontSize={14}
-            width={width*.09}
-            height={50}
+            fontSize={18}
+            width={labelContainerWidth}
+            height={flagHeight}
             offsetX={width*-.01}
             offsetY={-5}
             align={"center"}

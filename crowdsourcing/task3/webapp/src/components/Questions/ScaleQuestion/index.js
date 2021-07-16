@@ -3,23 +3,23 @@ import React, {useState} from "react";
 import "./styles.css"
 //CUSTOM COMPONENTS
 import Scale from "./Scale";
-import ScaleHeader from "./ScaleHeader"
+import ScaleQuestionHeader from "./ScaleQuestionHeader"
 
 const ScaleQuestion = ({
-    actors,
+    selection,
     scale,
     trait
 })=>{
 
     return(
         <div className="scalequestion-container">
-            <ScaleHeader
+            <ScaleQuestionHeader
                 trait={trait.name}
                 traitDescription={trait.description}
             />
             <Scale
                 scale={scale}
-                actors={actors}
+                selection={selection}
             />
         </div>
     )

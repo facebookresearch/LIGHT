@@ -22,7 +22,7 @@ const generateShapes = (arr)=> {
 
 const INITIAL_STATE = generateShapes();
 
-const OptionBlock = ({
+const ScaleField = ({
     height,
     width,
     actors,
@@ -220,4 +220,4 @@ const dragBoundaryHandler = (pos)=>{
   );
 };
 
-export default OptionBlock
+export default ScaleField

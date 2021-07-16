@@ -7,8 +7,8 @@ import { Rect, Text, Group, Line } from 'react-konva';
 const ScaleFlag = ({
     height,
     width,
-    actors,
-    boundary
+    flagText,
+    formFunction
 }) => {
 
 
