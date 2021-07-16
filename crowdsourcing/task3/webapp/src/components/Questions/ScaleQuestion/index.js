@@ -1,5 +1,6 @@
+//REACT
 import React, {useState} from "react";
-
+//STYLING
 import "./styles.css"
 //CUSTOM COMPONENTS
 import Scale from "./Scale";

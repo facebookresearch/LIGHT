@@ -74,14 +74,17 @@ function MainApp() {
       },
       scaleRange:[
         {
-        name: "Rat",
+        name:"MIN",
+        example: "Rat",
         color:"green"
         },
         {
-        name: "Peasant",
+        name:"MID",
+        example: "Peasant",
         color:"blue"
         },{
-        name: "Dragon",
+        name:"MAX",
+        example: "Dragon",
         color:"red"
         }
       ],

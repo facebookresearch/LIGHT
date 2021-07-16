@@ -7,12 +7,12 @@ import Header from "../../components/Header";
 import ScaleQuestion from "../../components/Questions/ScaleQuestion";
 
 const Task = ({data}) => {
-  const {trait, scale, actors} = data
+  const {trait, scaleRange, actors} = data
     return (
       <div className="task-container">
         <Header/>
         <ScaleQuestion
-          scale={scale}
+          scaleRange={scaleRange}
           selection={actors}
           trait={trait}
         />

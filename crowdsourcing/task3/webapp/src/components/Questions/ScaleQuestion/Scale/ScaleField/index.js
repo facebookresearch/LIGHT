@@ -2,8 +2,8 @@
 import React, { useEffect } from 'react';
 //KONVA
 import { Layer, Rect, Text, Group, Line } from 'react-konva';
-
-import ScaleFlag from "../ExampleFlag";
+//CUSTOM COMPONENTS
+import ExampleFlag from "../ExampleFlag";
 
 const generateShapes = (arr)=> {
     if(arr){
@@ -25,7 +25,7 @@ const INITIAL_STATE = generateShapes();
 const ScaleField = ({
     height,
     width,
-    actors,
+    selection,
     scale
     // leftSoftBoundary,
     // rightSoftBoundary,
@@ -36,11 +36,11 @@ const ScaleField = ({
         setScaleContainerWidth(width*.8)
     },[width])
     useEffect(()=>{
-        if(actors){
-            let updatedBlocks = generateShapes(actors);
+        if(selection){
+            let updatedBlocks = generateShapes(selection);
             setOptionBlocks(updatedBlocks);
         }
-    },[actors])
+    },[selection])
     const flagWidth = width*.10;
     const flagHeight = 50;
     const polePosition = flagWidth/2
@@ -188,18 +188,19 @@ const dragBoundaryHandler = (pos)=>{
         )}
     )}
     {
-    scale.map((label, index)=>{
-        let xOffset =(width*.27)
-        let xPosition = ((width*.23)*index) +xOffset
+    scale.map((example, index)=>{
+        const {name, color} = example;
+        let xOffset =(width*.27);
+        let xPosition = ((width*.23)*index) + xOffset;
         return(
-            <ScaleFlag
+            <ExampleFlag
                 key={index}
                 xPosition={xPosition}
                 yPosition={200}
                 width={width}
                 height={height}
-                label={label}
-                color={index}
+                label={name}
+                color={color}
             />
         )})
     }

@@ -2,31 +2,32 @@
 import React, {useState} from "react";
 //STYLING
 import "./styles.css"
-//CUSTOM COMPONENTS
 
+//ScaleRange - Generates range for flags from scaleRange array producing a section for each object in array with associated label and color
 const ScaleRange = ({
-    scale
+    scaleRange
 }) => {
-
   return (
     <div className="scalerange-container">
         <div className="optionblock-footer"></div>
         <div className="scalerange-keys">
-            <div className="scalerange-key__container" style={{backgroundColor:"green", borderBottomLeftRadius:"15px"}}>
-                <p className="scalerange-key__text" >
-                    MIN
-                </p>
-            </div>
-            <div className="scalerange-key__container" style={{backgroundColor:"blue"}}>
-                <p className="scalerange-key__text">
-                    MID
-                </p>
-            </div>
-            <div className="scalerange-key__container" style={{backgroundColor:"red"}} >
-                <p className="scalerange-key__text">
-                    MAX
-                </p>
-            </div>
+            {
+                scaleRange.length
+                ?
+                scaleRange.map((range, index)=>{
+                    const {name, color} =range;
+                    let rangeWidth = 100/scaleRange.length
+                    return (
+                        <div key={index} className="scalerange-key__container" style={{width:rangeWidth, backgroundColor:color, borderBottomLeftRadius:index==0 ? "15px" : 0}}>
+                            <p className="scalerange-key__text" >
+                                {name}
+                            </p>
+                        </div>
+                    )
+                })
+                :
+                null
+            }
         </div>
     </div>
   );

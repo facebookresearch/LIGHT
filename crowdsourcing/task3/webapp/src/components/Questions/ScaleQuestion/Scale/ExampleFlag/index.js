@@ -16,6 +16,7 @@ const ExampleFlag = ({
     color
 }) => {
 const FlagDimensions = GetFlagDimensions(label, width, 10, 40)
+const {flagLabel, flagLabelWidth, flagWidth, flagHeight} = FlagDimensions;
 return (
     <Group
         x={xPosition}
@@ -23,14 +24,14 @@ return (
     >
         <Line
             points={[width*.05, 0, width*.05, height*2]}
-            stroke= {color>1? "red": color>0 ? "blue": "green"}
+            stroke= {color}
             strokeWidth={5}
         />
 
         <Rect
             width={flagWidth}
             height={flagHeight}
-            fill={color>1? "red": color>0 ? "blue": "green"}
+            fill={color}
             opacity={1}
             shadowColor="black"
             shadowBlur={10}
@@ -48,9 +49,9 @@ return (
             shadowOpacity={0.6}
         />
         <Text
-            text={label}
+            text={flagLabel}
             fontSize={18}
-            width={labelContainerWidth}
+            width={flagLabelWidth}
             height={flagHeight}
             offsetX={width*-.01}
             offsetY={-5}

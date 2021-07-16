@@ -11,7 +11,7 @@ import ScaleField from "./ScaleField";
 import GetWindowDimensions from "../../../../utils/GetWindowDimensions.js";
 
 //Scale - Component that contains actual scale UI for ScaleQuestion component.  Allows user to drag and drop name plates on a range that will supply rating to the backend.
-const Scale = ({scale, actors}) => {
+const Scale = ({scale, selection}) => {
     const [dimensions, setDimensions]= useState(GetWindowDimensions())
     useEffect(()=>{
         const handleResize = ()=>{
@@ -28,7 +28,7 @@ const Scale = ({scale, actors}) => {
                 <ScaleField
                     width={width}
                     height={height/2}
-                    actors={actors}
+                    selection={selection}
                     scale={scale}
                 />
             </Stage>
