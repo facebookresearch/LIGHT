@@ -1,10 +1,10 @@
 //REACT
-import React, {useState} from "react";
+import React from "react";
 //STYLING
 import "./styles.css"
 
 //ScaleRange - Generates range for flags from scaleRange array producing a section for each object in array with associated label and color
-const ScaleRange = ({
+const ScaleFooter = ({
     scaleRange
 }) => {
   return (
@@ -33,4 +33,4 @@ const ScaleRange = ({
   );
 };
 
-export default ScaleRange;
+export default ScaleFooter;

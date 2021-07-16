@@ -5,7 +5,7 @@ import { Stage, Layer, Line, RegularPolygon} from 'react-konva';
 //STYLING
 import "./styles.css";
 //CUSTOM COMPONENTS
-import ScaleRange from "./ScaleRange";
+import ScaleFooter from "./ScaleFooter";
 import ScaleField from "./ScaleField";
 //Utils;
 import GetWindowDimensions from "../../../../utils/GetWindowDimensions.js";
@@ -32,7 +32,7 @@ const Scale = ({scale, selection}) => {
                     scale={scale}
                 />
             </Stage>
-            <ScaleRange scale={scale} />
+            <ScaleFooter scale={scale} />
         </div>
     );
 };
