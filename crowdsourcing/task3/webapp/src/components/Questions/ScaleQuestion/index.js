@@ -8,18 +8,19 @@ import ScaleQuestionHeader from "./ScaleQuestionHeader"
 
 const ScaleQuestion = ({
     selection,
-    scale,
+    scaleRange,
     trait
 })=>{
+    const {name, description} = trait;
 
     return(
         <div className="scalequestion-container">
             <ScaleQuestionHeader
-                trait={trait.name}
-                traitDescription={trait.description}
+                trait={name}
+                traitDescription={description}
             />
             <Scale
-                scale={scale}
+                scaleRange={scaleRange}
                 selection={selection}
             />
         </div>

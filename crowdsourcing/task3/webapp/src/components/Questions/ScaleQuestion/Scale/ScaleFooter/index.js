@@ -18,7 +18,7 @@ const ScaleFooter = ({
                     const {name, color} =range;
                     let rangeWidth = 100/scaleRange.length
                     return (
-                        <div key={index} className="scalerange-key__container" style={{width:rangeWidth, backgroundColor:color, borderBottomLeftRadius:index==0 ? "15px" : 0}}>
+                        <div key={index} className="scalerange-key__container" style={{width:(rangeWidth+"%"), backgroundColor:color, borderBottomLeftRadius:index==0 ? "15px" : 0}}>
                             <p className="scalerange-key__text" >
                                 {name}
                             </p>

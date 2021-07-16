@@ -26,7 +26,7 @@ const ScaleField = ({
     height,
     width,
     selection,
-    scale
+    scaleRange
     // leftSoftBoundary,
     // rightSoftBoundary,
 }) => {
@@ -188,8 +188,8 @@ const dragBoundaryHandler = (pos)=>{
         )}
     )}
     {
-    scale.map((example, index)=>{
-        const {name, color} = example;
+    scaleRange.map((section, index)=>{
+        const {example, color} = section;
         let xOffset =(width*.27);
         let xPosition = ((width*.23)*index) + xOffset;
         return(
@@ -199,7 +199,7 @@ const dragBoundaryHandler = (pos)=>{
                 yPosition={200}
                 width={width}
                 height={height}
-                label={name}
+                label={example}
                 color={color}
             />
         )})
