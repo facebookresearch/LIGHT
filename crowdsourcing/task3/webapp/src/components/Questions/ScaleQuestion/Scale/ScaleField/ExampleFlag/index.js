@@ -5,7 +5,7 @@ import { Rect, Text, Group, Line } from 'react-konva';
 //STYLING
 import "./styles.css";
 //UTILS
-import GetFlagDimensions from "../../../../../utils/GetFlagDimensions.js";
+import GetFlagDimensions from "../../../../../../utils/GetFlagDimensions";
 
 const ExampleFlag = ({
     xPosition,
@@ -15,15 +15,18 @@ const ExampleFlag = ({
     label,
     color
 }) => {
-const FlagDimensions = GetFlagDimensions(label, width, 10, 40)
-const {flagLabel, flagLabelWidth, flagWidth, flagHeight} = FlagDimensions;
+const FlagDimensions = GetFlagDimensions(label, width, 10, 40);
+const {flagLabel, flagLabelWidth, flagLabelHeight, flagWidth, flagHeight} = FlagDimensions;
+const flagXOffset = (flagLabelWidth-flagWidth)/2;
+const flagYOffset = (flagLabelHeight -flagHeight)/2;
+const polePosition = flagWidth/2;
 return (
     <Group
         x={xPosition}
         y={yPosition}
     >
         <Line
-            points={[width*.05, 0, width*.05, height*2]}
+            points={[polePosition, 0, polePosition, height*2]}
             stroke= {color}
             strokeWidth={5}
         />
@@ -36,28 +39,25 @@ return (
             shadowColor="black"
             shadowBlur={10}
             shadowOpacity={0.6}
+
         />
         <Rect
-            width={flagWidth}
-            height={flagHeight}
-            offsetX={width*-.005}
-            offsetY={-5}
+            width={flagLabelWidth}
+            height={flagLabelHeight}
+            offsetX={flagXOffset}
+            offsetY={flagYOffset}
             fill="white"
-            opacity={1}
-            shadowColor="black"
-            shadowBlur={10}
-            shadowOpacity={0.6}
         />
         <Text
             text={flagLabel}
             fontSize={18}
             width={flagLabelWidth}
-            height={flagHeight}
-            offsetX={width*-.01}
-            offsetY={-5}
+            height={flagLabelHeight}
+            offsetX={flagXOffset}
+            offsetY={flagYOffset}
             align={"center"}
             verticalAlign={"middle"}
-            fill="red"
+            fill={color}
             opacity={0.8}
             shadowOpacity={0.6}
             style={{zIndex:"100"}}
