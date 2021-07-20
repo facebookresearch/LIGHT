@@ -11,12 +11,14 @@ import ScaleQuestionHeader from "./ScaleQuestionHeader"
 const ScaleQuestion = ({
     selection,//The values that will be rated
     scaleRange,// An array of ranges to divide the scale into sections.
-    trait
+    trait,
+    isInputHeader
 })=>{
     const {name, description} = trait;
     return(
         <div className="scalequestion-container">
             <ScaleQuestionHeader
+                isInputHeader={isInputHeader}
                 trait={name}
                 traitDescription={description}
             />

@@ -7,6 +7,7 @@ import "./styles.css";
 //UTILS
 import GetFlagDimensions from "../../../../../../utils/GetFlagDimensions";
 
+//ExampleFlag - Flags with fixed positions to showcase where example selections would fall on the scale.
 const ExampleFlag = ({
     xPosition,
     yPosition,

@@ -1,16 +1,17 @@
+//REACT
 import React, {useState} from "react";
-
+//STYLE
 import "./styles.css"
-//CUSTOM COMPONENTS
 
+// taskeButton - an all purpose, customizable button.
 const TaskButton = ({
-    unselectedContainer,
-    selectedContainer,
-    unselectedText,
-    selectedText,
-    name,
-    selectFunction,
-    isSelected
+    unselectedContainer, //default style for the button container
+    selectedContainer,// style of button container if there is a "selected" state the button can be
+    unselectedText,// default style for button label
+    selectedText,// style of label if button is selected.
+    name, // text in label
+    selectFunction, // function that is invoked when button is clicked
+    isSelected // boolean that dictates selected styles being applied
 })=>{
 
     return(

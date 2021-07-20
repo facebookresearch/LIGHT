@@ -15,6 +15,13 @@ const Task = ({data}) => {
           scaleRange={scaleRange}
           selection={actors}
           trait={trait}
+          isInputHeader={false}
+        />
+        <ScaleQuestion
+          scaleRange={scaleRange}
+          selection={actors}
+          trait={trait}
+          isInputHeader={true}
         />
       </div>
     );

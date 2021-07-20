@@ -6,29 +6,27 @@ import { Rect, Text, Group, Line } from 'react-konva';
 import GetFlagDimensions from "../../../../../../../utils/GetFlagDimensions";
 
 const ScaleFlag = ({
-    width,
-    height,
-    id,
-    x,
-    y,
-    flagX,
-    flagY,
-    label,
-    drawLine,
-    poleOffset,
-    isDragging,
-    handleDragStart,
-    handleDragEnd,
-    dragBoundaryHandler,
-    leftSoftBoundary,
-    rightSoftBoundary
+    width,//container width
+    height,//container height
+    id,// flag id
+    x,// x axis position
+    y,// y axis position
+    flagX, // Saved X position
+    flagY,// Saved Y position
+    label,//  Flag Label text
+    showPole, //Boolean value that determins whether or not to show "flag pole"
+    poleOffset,// how far the pole and flag are offset depending on their proximity to either of the "soft boundaries"
+    isDragging,// boolean value that selects which flag is being dragged
+    handleDragStart, // function that handles the initiation of the drag action
+    handleDragEnd, //  function that handles the end of the drag action and what happens when a flag is placed.
+    dragBoundaryHandler, // function the creates boundaries for the drag action.
+    leftSoftBoundary, // the boundary between the scale and the gallery
+    rightSoftBoundary // the boundary at the right side of the scale
 }) => {
     const FlagDimensions = GetFlagDimensions(label, width, 20, 40);
     const {flagLabel, flagLabelWidth, flagLabelHeight, flagWidth, flagHeight} = FlagDimensions;
     let polePosition = width/2 +poleOffset;
-    console.log("LEFT SOFT boundary  :", leftSoftBoundary)
-    console.log("flagX+ offset:  ", flagX-poleOffset)
-    console.log("SHOW POLE IN FLAG COMPONENT", flagX-poleOffset>leftSoftBoundary)
+
     return (
         <Group
             key={id}
@@ -41,16 +39,10 @@ const ScaleFlag = ({
             dragBoundFunc={dragBoundaryHandler}
         >
             <Line
-                points={[0, 0, 0, height*2]}
-                stroke={ "green"}
-                strokeWidth={5}
-                opacity={1}
-            />
-            <Line
                 points={[polePosition, 0, polePosition, height*2]}
-                stroke={drawLine || ((flagX-poleOffset)>=leftSoftBoundary) ? "blue" : "white"}
+                stroke={showPole || ((flagX-poleOffset)>=leftSoftBoundary) ? "blue" : "white"}
                 strokeWidth={5}
-                opacity={drawLine || ((flagX-poleOffset)>=leftSoftBoundary) ? 1 : 0}
+                opacity={showPole || ((flagX-poleOffset)>=leftSoftBoundary) ? 1 : 0}
             />
             <Rect
                 width={flagWidth}

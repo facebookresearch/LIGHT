@@ -1,10 +1,13 @@
 //REACT
 import React, { useEffect } from 'react';
+//KONVA
+import {Rect, Text, Group} from 'react-konva';
 //CUSTOM COMPONENTS
 import ScaleFlag from "./ScaleFlag"
 
 
 const SelectionGallery = ({
+    width,
     height,
     flagWidth,
     selection,
@@ -17,6 +20,43 @@ const SelectionGallery = ({
 
   return (
     <>
+        <Group
+            x={0}
+            y={0}
+        >
+            <Rect
+                width={width}
+                height={40}
+                fill="blue"
+                opacity={1}
+                shadowColor="black"
+                style={{zIndex:"98"}}
+            />
+            <Rect
+                width={width-(width*.2)}
+                height={20}
+                fill="white"
+                opacity={1}
+                style={{zIndex:"99"}}
+                offsetX={width*-.1}
+                offsetY={-10}
+            />
+            <Text
+                text={"Selection"}
+                fontSize={20}
+                fontStyle={"bold"}
+                width={width-(width*.2)}
+                height={20}
+                align={"center"}
+                verticalAlign={"middle"}
+                fill="blue"
+                opacity={1}
+                style={{zIndex:"100"}}
+                offsetX={width*-.025}
+                offsetY={-10}
+            >
+            </Text>
+        </Group>
         {selection.map((selectionFlag, i) => {
             const {
                 id,
@@ -24,7 +64,7 @@ const SelectionGallery = ({
                 y,
                 flagX,
                 flagY,
-                drawLine,
+                showPole,
                 poleOffset,
                 isDragging,
                 name,
@@ -41,7 +81,7 @@ const SelectionGallery = ({
                     flagX={flagX}
                     flagY={flagY}
                     label={name}
-                    drawLine={drawLine}
+                    showPole={showPole}
                     poleOffset={poleOffset}
                     isDragging={isDragging}
                     handleDragStart={handleDragStart}

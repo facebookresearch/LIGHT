@@ -9,9 +9,19 @@
     border-style: solid;
     border-color: blue;
     width:90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.scaleheader-input{
+    width: 40%;
 }
 
 .scaleheader-trait__text {
+    font-size: 32px;
+}
+.scaleheader-trait__text  {
     font-size: 32px;
 }
 
