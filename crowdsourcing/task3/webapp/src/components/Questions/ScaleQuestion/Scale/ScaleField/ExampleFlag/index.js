@@ -15,7 +15,7 @@ const ExampleFlag = ({
     label,
     color
 }) => {
-const FlagDimensions = GetFlagDimensions(label, width, 10, 40);
+const FlagDimensions = GetFlagDimensions(label, width, 20, 40);
 const {flagLabel, flagLabelWidth, flagLabelHeight, flagWidth, flagHeight} = FlagDimensions;
 const flagXOffset = (flagLabelWidth-flagWidth)/2;
 const flagYOffset = (flagLabelHeight -flagHeight)/2;

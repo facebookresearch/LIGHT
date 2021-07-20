@@ -27,8 +27,9 @@ const SelectionGallery = ({
                 drawLine,
                 poleOffset,
                 isDragging,
-                name
+                name,
             } = selectionFlag;
+
             return (
                 <ScaleFlag
                     key={id}

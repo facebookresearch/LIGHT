@@ -21,15 +21,14 @@ const ScaleFlag = ({
     handleDragEnd,
     dragBoundaryHandler,
     leftSoftBoundary,
-    rightSoftBoundary,
+    rightSoftBoundary
 }) => {
-    const FlagDimensions = GetFlagDimensions(label, width, 10, 40);
-    console.log("FLAG DIMENSIONS:  ", FlagDimensions)
+    const FlagDimensions = GetFlagDimensions(label, width, 20, 40);
     const {flagLabel, flagLabelWidth, flagLabelHeight, flagWidth, flagHeight} = FlagDimensions;
-    const polePosition = flagWidth/2;
-    console.log("flagX:  ", flagX)
-    console.log("flagY:  ", flagY)
-    console.log("polePosition:  ", polePosition)
+    let polePosition = width/2 +poleOffset;
+    console.log("LEFT SOFT boundary  :", leftSoftBoundary)
+    console.log("flagX+ offset:  ", flagX-poleOffset)
+    console.log("SHOW POLE IN FLAG COMPONENT", flagX-poleOffset>leftSoftBoundary)
     return (
         <Group
             key={id}
@@ -42,10 +41,16 @@ const ScaleFlag = ({
             dragBoundFunc={dragBoundaryHandler}
         >
             <Line
-                points={[polePosition, 0, polePosition, height*2]}
-                stroke={(drawLine||(flagX  > leftSoftBoundary)) ? "blue" : "white"}
+                points={[0, 0, 0, height*2]}
+                stroke={ "green"}
                 strokeWidth={5}
-                opacity={(drawLine||(flagX > leftSoftBoundary)) ? 1 : 0}
+                opacity={1}
+            />
+            <Line
+                points={[polePosition, 0, polePosition, height*2]}
+                stroke={drawLine || ((flagX-poleOffset)>=leftSoftBoundary) ? "blue" : "white"}
+                strokeWidth={5}
+                opacity={drawLine || ((flagX-poleOffset)>=leftSoftBoundary) ? 1 : 0}
             />
             <Rect
                 width={flagWidth}

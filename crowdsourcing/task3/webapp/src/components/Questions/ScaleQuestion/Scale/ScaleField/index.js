@@ -14,7 +14,7 @@ const ScaleField = ({
     scaleRange,
 }) => {
     const generateFlags = (arr)=> {
-        const xPos = (width*.253)*.3;
+        const xPos = (width*.06);
         if(arr){
             return [...arr.map(
                 (name, i) => ({
@@ -23,6 +23,8 @@ const ScaleField = ({
                     x: xPos,
                     y: 25+(i*80),
                     isDragging: false,
+                    flagX:xPos,
+                    flagY:25+(i*80)
                     })
                 )
             ];
@@ -44,12 +46,11 @@ const ScaleField = ({
     },[selection])
 
     const flagWidth = width*.1;
-    const leftSoftBoundary = (width*.253);
-    const rightSoftBoundary = scaleContainerWidth
-
+    const leftSoftBoundary = (width*.253)-(flagWidth/2);
+    const rightSoftBoundary = scaleContainerWidth+(flagWidth/2);
+//handleDragStart - Handles Dragging event updating dragged flag's information in state.
     const handleDragStart = (e) => {
         const id = e.target.id();
-        console.log(e.target)
         setSelectionFlags(
             selectionFlags.map((flag) => {
             return {
@@ -65,30 +66,35 @@ const ScaleField = ({
     const flagX = e.target.x();//flag's x coordinates
     const flagY = e.target.y();//flag's y coordinates
     const leftEdge= flagX;//Left edge of flag
-
     const rightEdge= flagX+flagWidth// Right edge of flag
-    const leftBoundaryOffset = (leftEdge<leftSoftBoundary && (leftEdge+(flagWidth/2))>leftSoftBoundary) ? leftEdge -leftSoftBoundary: 0;
-    const rightBoundaryOffset = rightEdge>rightSoftBoundary ? (rightEdge-rightSoftBoundary)/2 : 0;
+    let leftBoundaryCrossed =(leftEdge - leftSoftBoundary);
+    let rightBoundaryCrossed =(rightEdge-rightSoftBoundary);
+    const leftBoundaryOffset = leftEdge <leftSoftBoundary && (leftEdge+(flagWidth/2)>leftSoftBoundary) ? leftBoundaryCrossed: 0;
+    const rightBoundaryOffset = rightEdge>rightSoftBoundary ? rightBoundaryCrossed/2: 0;
+    const poleOffset = rightBoundaryOffset + leftBoundaryOffset;
+    const polePosition = flagX+(flagWidth*.5)+poleOffset;
     console.log("LEFT SOFTBOUNDARY:  ", leftSoftBoundary)
     console.log("RIGHT SOFTBOUNDARY:  ", rightSoftBoundary)
     console.log("LEFT BOUNDARY OFFSET:  ", leftBoundaryOffset, leftEdge<leftSoftBoundary)
     console.log("RIGHT BOUNDARY OFFSET:  ", rightBoundaryOffset, rightEdge>rightSoftBoundary )
-    const polePosition = flagX+(flagWidth/2);
-    const poleOffset = rightBoundaryOffset + leftBoundaryOffset;
+    let showPole = flagX>leftSoftBoundary+poleOffset ? true :false
+    console.log("SHOW POLE LOGIC:  ", leftSoftBoundary-poleOffset )
+    console.log("SHOW POLE BOOL:  ", showPole)
     console.log("OFFSET ", poleOffset)
     console.log("X", flagX)
     console.log("Y", flagY)
+    console.log("POLE POSITION:  ", polePosition)
+
         setSelectionFlags(
             selectionFlags.map((flag) => {
                 if(flag.id=== id){
                     return {
                         ...flag,
                         isDragging: false,
-                        drawLine:polePosition > leftSoftBoundary,
+                        drawLine:showPole,
                         flagX:flagX,
                         flagY:flagY,
-                        poleOffset:poleOffset
-
+                        poleOffset:poleOffset,
                     };
                 }else{
                     return {
@@ -109,8 +115,8 @@ const dragBoundaryHandler = (pos)=>{
     const rightXBoundary = scaleContainerWidth;
     const topYBoundary = 0;
     const bottomYBoundary = height - 50// 50 is rect Rect height
-    let newflagX = flagX < leftXBoundary ? leftXBoundary : ((flagX+flagWidth)>rightXBoundary) ? rightXBoundary :flagX;
-    let newflagY = flagY < topYBoundary ? topYBoundary : flagY>bottomYBoundary ? bottomYBoundary :flagY;
+    let newflagX = flagX < leftXBoundary ? leftXBoundary : ((flagX>rightXBoundary) ? rightXBoundary :flagX);
+    let newflagY = flagY < topYBoundary ? topYBoundary : ((flagY>bottomYBoundary)? bottomYBoundary :flagY);
     return {
         x: newflagX,
         y: newflagY,
@@ -134,11 +140,7 @@ const dragBoundaryHandler = (pos)=>{
             stroke={"blue"}
             strokeWidth={5}
         />
-        <Line
-            points={[scaleContainerWidth, 0, scaleContainerWidth, height]}
-            stroke={"blue"}
-            strokeWidth={5}
-        />
+
     {
     scaleRange.map((section, index)=>{
         const {example, color} = section;
