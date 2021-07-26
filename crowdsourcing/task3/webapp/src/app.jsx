@@ -10,12 +10,14 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Task from "./views/Task";
 import { TaskDescription } from "./components/task_description.jsx";
-import LoadingScreen from "./components/LoadingScreen"
+import LoadingScreen from "./components/LoadingScreen";
 import { useMephistoTask } from "mephisto-task";
 // import { TimesComponent } from "./components/times_component.jsx";
 // import { SubmitButton } from "./components/submit_button.jsx";
 
-import "./styles.css"
+import "./styles.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 /* ================= Application Components ================= */
 
 function MainApp() {
@@ -68,27 +70,7 @@ function MainApp() {
 
   //console.log('active? ', active);
     const dummyData= {
-      trait:{
-        name: "STRENGTH",
-        description:"The raw physical power an actor can exert typically fort he express purpose of attacking."
-      },
-      scaleRange:[
-        {
-        name:"MIN",
-        example: "Rat",
-        color:"green"
-        },
-        {
-        name:"MID",
-        example: "Peasant",
-        color:"blue"
-        },{
-        name:"MAX",
-        example: "Dragon",
-        color:"red"
-        }
-      ],
-      actors:[
+      characters:[
         "Butcher",
         "Baker",
         "Candlestick Maker",

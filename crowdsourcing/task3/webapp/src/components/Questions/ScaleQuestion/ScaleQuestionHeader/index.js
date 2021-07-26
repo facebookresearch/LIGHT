@@ -2,6 +2,7 @@
 import React, {useEffect, useState} from "react";
 //STYLING
 import "./styles.css"
+import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
 
 //ScaleHeader - renders header of ScaleQuestion component displayinng Trait and short description trait
 const ScaleHeader = ({
@@ -28,7 +29,14 @@ const ScaleHeader = ({
                 <label className="scaleheader-trait__text">
                     TRAIT NAME
                 </label>
-                <input className="scaleheader-input" type="text" name={"traitName"} value={traitNameInput} onChange={inputChangeHandler}/>
+                <Typeahead
+                    id="basic-typeahead-single"
+                    className="scaleheader-input"
+                    type="text" name={"traitName"}
+                    value={traitNameInput}
+                    onChange={inputChangeHandler}
+                    options={["strength", "dexterity", "stamina"]}
+                />
                 <label className="scaleheader-description__text">
                     TRAIT DESCRIPTION
                 </label>
