@@ -1,5 +1,12 @@
 const Copy ={
     objects:{
+        booleanAttributes:[
+            "container",
+            "surface",
+            "living",
+            "wieldable",
+            "wearable",
+        ],
         traits:[
             {
                 name: "SIZE",
@@ -70,101 +77,101 @@ const Copy ={
                 scaleRange:[
                     {
                     name:"MIN",
-                    example: "Living Statue",
+                    example: "Stick",
                     color:"green"
                     },
                     {
                     name:"MID",
-                    example: "Peasant",
+                    example: "Sword",
                     color:"blue"
                     },
                     {
                     name:"MAX",
-                    example: "Legendary Thief",
+                    example: "Ballista",
                     color:"red"
                     }
                 ]
             },
             {
-                name: "INTELLIGENCE",
-                description:"The ability of an actor to learn and retain knowledge both magical and practical.",
+                name: "ARMOR RATING",
+                description:"The amount of protection a wearable object offers",
                 scaleRange:[
                     {
                     name:"MIN",
-                    example: "A Stump",
+                    example: "Shirt",
                     color:"green"
                     },
                     {
                     name:"MID",
-                    example: "Student",
+                    example: "Leather Vest",
                     color:"blue"
                     },
                     {
                     name:"MAX",
-                    example: "Wizard Prodigy",
+                    example: "Platemail",
                     color:"red"
                     }
                 ]
             },
             {
-                name: "WISDOM",
-                description:"An actor's willpower to make good decisions and experience to know what decisions are good.",
+                name: "REFRESHMENT",
+                description:"How refreshing an object is when consumed.",
                 scaleRange:[
                     {
                     name:"MIN",
-                    example: "Wildboar",
+                    example: "Millet",
                     color:"green"
                     },
                     {
                     name:"MID",
-                    example: "Peasant",
+                    example: "Bread",
                     color:"blue"
                     },
                     {
                     name:"MAX",
-                    example: "Ancient Sage",
+                    example: "A feast",
                     color:"red"
                     }
                 ]
             },
             {
-                name: "SIZE",
-                description:"The physical size of an actor",
+                name: "WEIGHT",
+                description:"The heaviness of an object.",
                 scaleRange:[
                     {
                     name:"MIN",
-                    example: "An Ant",
+                    example: "A Feather",
                     color:"green"
                     },
                     {
                     name:"MID",
-                    example: "Human",
+                    example: "Pile of wood",
                     color:"blue"
                     },
                     {
                     name:"MAX",
-                    example: "A Giant",
+                    example: "A Large Boulder",
                     color:"red"
                     }
                 ]
             },
             {
                 name: "RARITY",
-                description:"How common the actor is in the world.",
+                description:"How common the object is in the world.",
                 scaleRange:[
                     {
                     name:"MIN",
-                    example: "Peasant",
+                    example: "A rock",
                     color:"green"
                     },
                     {
                     name:"MID",
-                    example: "Knight",
+                    example: "Iron",
                     color:"blue"
                     },
                     {
                     name:"MAX",
-                    example: "Royalty",
+                    example: "Excalibur",
                     color:"red"
                     }
                 ]
@@ -172,6 +179,9 @@ const Copy ={
         ]
         },
     characters:{
+        booleanAttributes:[
+            "arm and leg counts",
+        ],
         traits:[
             {
                 name: "STRENGTH",
@@ -221,7 +231,7 @@ const Copy ={
                 scaleRange:[
                     {
                     name:"MIN",
-                    example: "Gelatenous Cube",
+                    example: "A Gelatinous Cube",
                     color:"green"
                     },
                     {
@@ -344,6 +354,10 @@ const Copy ={
         ]
       },
       locations:{
+        booleanAttributes:[
+            "indoors",
+            "outdoors"
+        ],
         traits:[
             {
                 name: "SIZE",

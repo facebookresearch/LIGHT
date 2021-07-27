@@ -11,6 +11,7 @@ const Task = ({data}) => {
     return (
       <div className="task-container">
         <Header/>
+
         <ScaleQuestion
           scaleRange={scaleRange}
           selection={actors}
