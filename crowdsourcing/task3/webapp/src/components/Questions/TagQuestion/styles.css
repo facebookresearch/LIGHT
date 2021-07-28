@@ -1,0 +1,24 @@
+/*TAG QUESTION STYLES*/
+.tagquestion-container{
+    width:90%;
+    border-color: blue;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-style: solid;
+}
+
+/*TAG ROW*/
+.tagrow-container{
+    display:flex;
+    flex-direction: row;
+    width: 80%;
+}
+
+.tagrow-text {
+    color:white;
+    text-align: center;
+    font-weight: bold;
+    background-color: blue;
+    border-radius: 15px;
+    margin-bottom: 0;
+}

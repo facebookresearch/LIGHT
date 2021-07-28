@@ -10,7 +10,7 @@ const Copy ={
         traits:[
             {
                 name: "SIZE",
-                description:"The raw physical power an actor can exert typically fort he express purpose of attacking.",
+                description:"The physical size of an object",
                 scaleRange:[
                     {
                     name:"MIN",
@@ -31,7 +31,7 @@ const Copy ={
             },
             {
                 name: "VALUE",
-                description:"The physical toughness and ability to take damage possessed by an actor",
+                description:"The monetary value of an object.",
                 scaleRange:[
                     {
                     name:"MIN",
@@ -443,6 +443,27 @@ const Copy ={
                     }
                 ]
             },
+        ]
+      },
+      input:{
+        defaultBooleanAttributes:[
+        ],
+        defaultScaleRange:[
+            {
+            name:"MIN",
+            example: "Min",
+            color:"green"
+            },
+            {
+            name:"MID",
+            example: "Mid",
+            color:"blue"
+            },
+            {
+            name:"MAX",
+            example: "Max",
+            color:"red"
+            }
         ]
       },
 }

@@ -29,8 +29,6 @@ function MainApp() {
     initialTaskData,
     handleSubmit,
   } = useMephistoTask();
-  const [dataType, setDataType] = useState("object")
-  const [dummyData, setDummyData] = useState({})
 
   if (blockedReason !== null) {
     return (
@@ -128,21 +126,16 @@ function MainApp() {
         }
       ]
 
-    if(dataType==="object"){
-      setDummyData(ObjectDummyData)
-    }else if(dataType==="character"){
-      setDummyData(CharacterDummyData)
-    }else if(dataType==="location"){
-      setDummyData(LocationDummyData)
-    }
+
 
 
   return (
     <div className="view-container">
       <Task
-        data={dummyData}
-        dataType={dataType}
-        setDataType={setDataType}
+        // data={CharacterDummyData}
+        ObjectDummyData={ObjectDummyData}
+        CharacterDummyData={CharacterDummyData}
+        LocationDummyData={LocationDummyData}
         />
     </div>
   );

@@ -17,8 +17,8 @@ const ScaleField = ({
         const xPos = (width*.06);//initial position of
         if(arr){
             return [...arr.map(
-                (name, i) => ({
-                    name:name,
+                (flag, i) => ({
+                    name:flag.name,
                     id: i.toString(),
                     x: xPos,
                     y: 50+(i*80),

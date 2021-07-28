@@ -5,60 +5,58 @@ import "./styles.css"
 //CUSTOM COMPONENTS
 import Header from "../../components/Header";
 import ScaleQuestion from "../../components/Questions/ScaleQuestion";
+import TagQuestion from "../../components/Questions/TagQuestion";
+import SelectionList from "../../components/SelectionList";
 //COPY
 import TaskCopy from "../../TaskCopy";
 
 //Task - Renders component that contains all questionns relevant to task.
 const Task = ({
-  dummyData,
-  dataType,
-  setDataType
+  ObjectDummyData,
+  CharacterDummyData,
+  LocationDummyData
 }) => {
-  const {objects, characters, locations} = TaskeCopy;
+  //COPY
+  const {objects, characters, locations, input} = TaskCopy;
+  //STATE
+  const [data, setData]= useState(ObjectDummyData);
+  const [dataType, setDataType]= useState("objects");
   const [traits, setTraits]= useState([]);
   const [booleanAttributes, setBooleanAttributes]= useState([]);
+  //useEffect will handle data type
   useEffect(()=>{
-    if(dataType==="object"){
-      const {booleanAttributes, traits}= objects;
+    if(dataType==="objects"){
+      setData(ObjectDummyData)
+      let {booleanAttributes, traits}= objects;
       setTraits(traits)
       setBooleanAttributes(booleanAttributes)
-    }else if(dataType==="character"){
-      const {booleanAttributes, traits}= characters;
+    }else if(dataType==="characters"){
+      setData(CharacterDummyData)
+      let {booleanAttributes, traits}= characters;
       setTraits(traits)
       setBooleanAttributes(booleanAttributes)
-    }else if(dataType==="location"){
-      const {booleanAttributes, traits}= locations;
+    }else if(dataType==="locations"){
+      setData(LocationDummyData)
+      let {booleanAttributes, traits}= locations;
       setTraits(traits)
       setBooleanAttributes(booleanAttributes)
     }
   },[dataType])
-  const [selectionType, setSelectionType] = useState("object");
-  const {trait, scaleRange, actors} = data
-
+  console.log("DUMMY DATA", data)
+  console.log("DATA TYPE", dataType)
+  console.log("TRAITS", traits)
+  const {defaultBooleanAttributes, defaultScaleRange} = input
     return (
       <div className="task-container">
         <Header/>
-        <div>
-          {
-            dummyData ?
-            dummyData.map((selection, index)=>{
-              return(
-                <div key={index}>
-                  <p>
-                    {selection.name}
-                  </p>
-                  <p>
-                    {selection.description}
-                  </p>
-                </div>
-              )
-            })
-            :
-            null
-          }
-        </div>
       {
-        traits
+        data.length ?
+        <SelectionList selection={data} />
+        :
+        null
+      }
+      {
+        traits.length
         ?
         traits.map((trait, index)=>{
           let {scaleRange} = trait;
@@ -66,7 +64,7 @@ const Task = ({
             <ScaleQuestion
               key={index}
               scaleRange={scaleRange}
-              selection={dummyData}
+              selection={data}
               trait={trait}
               isInputHeader={false}
             />
@@ -76,16 +74,20 @@ const Task = ({
         null
       }
         <ScaleQuestion
-          scaleRange={scaleRange}
-          selection={dummyData}
-          trait={trait}
+          scaleRange={defaultScaleRange}
+          selection={data}
+          trait={"trait"}
           isInputHeader={true}
         />
         <ScaleQuestion
-          scaleRange={scaleRange}
-          selection={dummyData}
-          trait={trait}
+          scaleRange={defaultScaleRange}
+          selection={data}
+          trait={"trait"}
           isInputHeader={true}
+        />
+        <TagQuestion
+          selection={data}
+          booleanAttributes={booleanAttributes}
         />
       </div>
     );

@@ -2,7 +2,8 @@
 import React, {useEffect, useState} from "react";
 //STYLING
 import "./styles.css"
-import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
+//TYPEAHEAD TOKENIZER
+import { Typeahead } from 'react-bootstrap-typeahead';
 
 //ScaleHeader - renders header of ScaleQuestion component displayinng Trait and short description trait
 const ScaleHeader = ({
