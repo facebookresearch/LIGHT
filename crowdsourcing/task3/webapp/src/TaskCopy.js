@@ -446,3 +446,5 @@ const Copy ={
         ]
       },
 }
+
+export default Copy;
