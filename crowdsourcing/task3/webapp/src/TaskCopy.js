@@ -1,4 +1,5 @@
 const Copy ={
+    tagQuestionHeader:"ATTRIBUTES",
     objects:{
         booleanAttributes:[
             "container",

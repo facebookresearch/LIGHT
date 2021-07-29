@@ -1,5 +1,5 @@
 //REACT
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 //STYLES
 import "./styles.css";
 //BOOTSTRAP
@@ -14,7 +14,8 @@ const TagRow = ({
     name,
     description,
     startingAttributes,
-    booleanAttributes
+    booleanAttributes,
+    attributeRef
 })=>{
     const [attributes, setAttributes]=useState([])
     const [typeAheadTokens, setTypeAheadTokens] = useState([])
@@ -55,7 +56,8 @@ const TagRow = ({
               multiple
               newSelectionPrefix="Add a new item: "
               options={booleanAttributes}
-              placeholder="Type anything..."
+              placeholder="Add Attributes here"
+              ref={attributeRef}
             />
             </div>
         </div>

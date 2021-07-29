@@ -1,5 +1,5 @@
 //REACT
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 //STYLING
 import "./styles.css"
 //CUSTOM COMPONENTS
@@ -18,12 +18,14 @@ const Task = ({
   LocationDummyData
 }) => {
   //COPY
-  const {objects, characters, locations, input} = TaskCopy;
+  const {objects, characters, locations, input, tagQuestionHeader} = TaskCopy;
   //STATE
   const [data, setData]= useState(ObjectDummyData);
   const [dataType, setDataType]= useState("objects");
   const [traits, setTraits]= useState([]);
   const [booleanAttributes, setBooleanAttributes]= useState([]);
+  //REFS
+  const attributeRef = useRef();
   //useEffect will handle data type
   useEffect(()=>{
     if(dataType==="objects"){
@@ -141,8 +143,10 @@ const Task = ({
           isInputHeader={true}
         />
         <TagQuestion
+          header={tagQuestionHeader}
           selection={data}
           booleanAttributes={booleanAttributes}
+          attributeRef={attributeRef}
         />
       </div>
     );

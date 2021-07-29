@@ -11,7 +11,8 @@ import NumberForm from "../../NumberForm"
 const TagQuestion = ({
     header,
     selection,
-    booleanAttributes
+    booleanAttributes,
+    attributeRef
 })=>{
 
 
@@ -19,7 +20,7 @@ const TagQuestion = ({
     return(
       <div className="tagquestion-container">
         <h3 className="tagquestion-header">
-          ATTRIBUTES
+          {header}
         </h3>
         <div className="tagquestion-body">
           {
@@ -45,6 +46,7 @@ const TagQuestion = ({
                     description={description}
                     startingAttributes={startingAttributes}
                     booleanAttributes={booleanAttributes}
+                    attributeRef={attributeRef}
                   />
                   {
                     hasLimbs ?
