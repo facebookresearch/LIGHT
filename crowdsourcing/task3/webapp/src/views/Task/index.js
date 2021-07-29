@@ -7,6 +7,7 @@ import Header from "../../components/Header";
 import ScaleQuestion from "../../components/Questions/ScaleQuestion";
 import TagQuestion from "../../components/Questions/TagQuestion";
 import SelectionList from "../../components/SelectionList";
+import TaskButton from "../../components/TaskButton"
 //COPY
 import TaskCopy from "../../TaskCopy";
 
@@ -46,9 +47,41 @@ const Task = ({
   console.log("DATA TYPE", dataType)
   console.log("TRAITS", traits)
   const {defaultBooleanAttributes, defaultScaleRange} = input
+  const SelectObjects = ()=>setDataType("objects")
+  const SelectCharacters = ()=>setDataType("characters")
+  const SelectLocations = ()=>setDataType("locations")
     return (
       <div className="task-container">
         <Header/>
+        <div style={{display:"flex", flexDirection:"row", width:"90%", margin:"15px" }}>
+          <TaskButton
+            name="Objects"
+            isSelected={dataType==="objects"}
+            selectFunction={SelectObjects}
+            unselectedContainer="b-button__container"
+            unselectedText="b-button__text"
+            selectedContainer="b-selectedbutton__container true"
+            selectedText="b-selectedbutton__text"
+          />
+          <TaskButton
+            name="Characters"
+            isSelected={dataType==="characters"}
+            selectFunction={SelectCharacters}
+            unselectedContainer="b-button__container"
+            unselectedText="b-button__text"
+            selectedContainer="b-selectedbutton__container true"
+            selectedText="b-selectedbutton__text"
+          />
+          <TaskButton
+            name="Locations"
+            isSelected={dataType==="locations"}
+            selectFunction={SelectLocations}
+            unselectedContainer="b-button__container"
+            unselectedText="b-button__text"
+            selectedContainer="b-selectedbutton__container true"
+            selectedText="b-selectedbutton__text"
+          />
+        </div>
       {
         data.length ?
         <SelectionList selection={data} />

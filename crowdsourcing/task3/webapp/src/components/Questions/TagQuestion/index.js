@@ -3,7 +3,7 @@ import React, {useState, useEffect} from "react";
 //STYLE
 import "./styles.css";
 //CUSTOM COMPONENTS
-import TagRow from "./TagRow";
+import TagRow from "./TagRow/index.js";
 
 
 // TagQuestion - Container for typeahead boolean values

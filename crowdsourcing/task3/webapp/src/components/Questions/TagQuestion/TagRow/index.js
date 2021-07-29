@@ -1,7 +1,7 @@
 //REACT
 import React, {useState, useEffect} from "react";
 //STYLES
-import "./styles"
+import "./styles.css";
 //BOOTSTRAP
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
