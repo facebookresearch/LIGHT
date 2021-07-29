@@ -4,6 +4,7 @@ import React, {useState, useEffect} from "react";
 import "./styles.css";
 //CUSTOM COMPONENTS
 import TagRow from "./TagRow/index.js";
+import NumberForm from "../../NumberForm"
 
 
 // TagQuestion - Container for typeahead boolean values
@@ -24,14 +25,32 @@ const TagQuestion = ({
           {
             selection.length ?
             selection.map((item, index)=>{
-              let {name, description}=item
+              let {name, description, attributes}=item;
+              let limbAttr =attributes.filter(attr => (attr.name=="limbs")) //filters for limb attribute in attributes array
+              let hasLimbs = limbAttr.length// checks to see if limb attribute is present
+              let startingLimbCount =0
+              if(hasLimbs){
+                startingLimbCount = limbAttr[0].value //Take limb count from value key of limb attribute
+              }
               return (
-                <TagRow
-                  key={index}
-                  name={name}
-                  description={description}
-                  booleanAttributes={booleanAttributes}
-                />
+                <>
+                  <TagRow
+                    key={index}
+                    name={name}
+                    description={description}
+                    booleanAttributes={booleanAttributes}
+                  />
+                  {
+                    hasLimbs ?
+                    <NumberForm
+                      key={name}
+                      header="Limb Count"
+                      formFunction={()=>{}}
+                      startingVal={startingLimbCount}
+                    />
+                    :null
+                  }
+                </>
               )
           })
           :

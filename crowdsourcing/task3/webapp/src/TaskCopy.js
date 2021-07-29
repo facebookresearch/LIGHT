@@ -53,6 +53,7 @@ const Copy ={
             {
                 name: "CONTAINER SIZE",
                 description:"The space available inside container for storage.",
+                requiredAttribute:"container",
                 scaleRange:[
                     {
                     name:"MIN",
@@ -74,6 +75,7 @@ const Copy ={
             {
                 name: "WEAPON DAMAGE",
                 description:"The base damage a weapon does when wielded agaisnt a foe.",
+                requiredAttribute:"wieldable",
                 scaleRange:[
                     {
                     name:"MIN",
@@ -95,6 +97,7 @@ const Copy ={
             {
                 name: "ARMOR RATING",
                 description:"The amount of protection a wearable object offers",
+                requiredAttribute:"armor",
                 scaleRange:[
                     {
                     name:"MIN",
@@ -116,6 +119,7 @@ const Copy ={
             {
                 name: "REFRESHMENT",
                 description:"How refreshing an object is when consumed.",
+                requiredAttribute:"consumable",
                 scaleRange:[
                     {
                     name:"MIN",

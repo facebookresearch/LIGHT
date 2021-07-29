@@ -71,18 +71,22 @@ function MainApp() {
   const ObjectDummyData= [
         {
           name:"Sword",
+          attributes:[{name:"wieldable",value:true}],
           description: "A normal iron longsword, unscratched, with a comfortable grip."
         },
         {
           name:"Shield",
+          attributes:[{name:"armor",value:true}],
           description: "A large metal shield with the crest of the local lord painted and etched on the front."
         },
         {
           name:"Magic Lamp",
+          attributes:[],
           description:"An ordinary looking lamp that pulses with potential to the magically attuned."
         },
         {
           name:"Treasure Chest",
+          attributes:[{name:"container",value:true}],
           description: "A massive ornate chest over flowing with gold coins and precious gems."
         }
       ]
@@ -91,18 +95,22 @@ function MainApp() {
   const CharacterDummyData= [
         {
           name:"Butcher",
+          attributes:[{name:"limbs",value:4}],
           description: "A humble carver and seller of meats."
         },
         {
           name:"Baker",
+          attributes:[{name:"limbs",value:4}],
           description: "A talented and thoughtful distributor of baked goods they prepare."
         },
         {
           name:"Candlestick Maker",
+          attributes:[{name:"limbs",value:4}],
           description:"A wealthy and arrogant wax sculptor."
         },
         {
           name:"Kroktar Devourer of Souls",
+          attributes:[{name:"limbs",value:8}],
           description: "An armor clad, ageless horror who is said to have felled a thousand armies."
         }
       ]
@@ -110,18 +118,22 @@ function MainApp() {
   const LocationDummyData= [
         {
           name:"Smithing Hut",
+          attributes:[{name:"indoors",value:true}],
           description: "A blacksmith's workshop laden with tools and at the center is a forge"
         },
         {
           name:"Dungeon",
+          attributes:[{name:"indoors",value:true}],
           description: "A castle's windowless dungeon, the walls made of stone, bars line some cells and chains hang from the walls."
         },
         {
           name:"Wizard Tower",
+          attributes:[{name:"indoors",value:true}],
           description:"A tall amethyst tower with floating on stones high in the sky, filled with books, artefacts, and presumably a wizard."
         },
         {
           name:"Ice Giant Camp",
+          attributes:[{name:"outdoors",value:true}],
           description: "A circle of massive tents around a fire the size of an average human's house.  The camp is covered in think layers of icy snow."
         }
       ]
