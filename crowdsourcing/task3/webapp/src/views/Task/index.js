@@ -92,7 +92,29 @@ const Task = ({
         traits.length
         ?
         traits.map((trait, index)=>{
-          let {scaleRange} = trait;
+          let {scaleRange, requiredAttribute} = trait;
+          if(requiredAttribute){
+            let filteredSelection = data.filter(item =>{
+              let {attributes} = item;
+              let matchedAttributes = attributes.filter(attr=>(attr.name==requiredAttribute));
+              let hasAttribute = !!matchedAttributes.length;
+              return hasAttribute
+            } )
+            if(!filteredSelection.length){
+              return null;
+            }
+            if(filteredSelection.length){
+              return (
+                <ScaleQuestion
+                  key={index}
+                  scaleRange={scaleRange}
+                  selection={filteredSelection}
+                  trait={trait}
+                  isInputHeader={false}
+                />
+              )
+            }
+          }else{
           return(
             <ScaleQuestion
               key={index}
@@ -101,7 +123,7 @@ const Task = ({
               trait={trait}
               isInputHeader={false}
             />
-          )
+          )}
         })
         :
         null

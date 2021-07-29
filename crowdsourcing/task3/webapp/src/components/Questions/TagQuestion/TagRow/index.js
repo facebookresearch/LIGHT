@@ -13,12 +13,20 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 const TagRow = ({
     name,
     description,
+    startingAttributes,
     booleanAttributes
 })=>{
     const [attributes, setAttributes]=useState([])
+    const [typeAheadTokens, setTypeAheadTokens] = useState([])
     useEffect(()=>{
-        setAttributes(booleanAttributes)
+        setTypeAheadTokens(booleanAttributes)
+        setAttributes(startingAttributes)
     },[])
+
+    useEffect(()=>{
+        console.log("ATT UPDATE", attributes)
+        setAttributes(startingAttributes)
+    },[startingAttributes])
 
 
     const renderTooltip = (props) => (
@@ -27,7 +35,7 @@ const TagRow = ({
         </Tooltip>
       );
 
-
+        console.log(attributes)
     return(
         <div className="tagrow-container">
             <div className="tagrow-item__container">
@@ -39,15 +47,17 @@ const TagRow = ({
                     <p className="tagrow-item__text">{name}</p>
                 </OverlayTrigger>
             </div>
+            <div style={{width:"70%"}}>
             <Typeahead
               allowNew
+              defaultSelected={startingAttributes}
               id="custom-selections-example"
               multiple
               newSelectionPrefix="Add a new item: "
-              options={attributes}
+              options={booleanAttributes}
               placeholder="Type anything..."
             />
-
+            </div>
         </div>
     )
 }

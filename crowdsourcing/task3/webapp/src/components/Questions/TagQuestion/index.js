@@ -32,12 +32,18 @@ const TagQuestion = ({
               if(hasLimbs){
                 startingLimbCount = limbAttr[0].value //Take limb count from value key of limb attribute
               }
+              let startingAttributes = attributes.map(attr=>{ //Generates array of attribute name strings that have a value of true
+                if(attr.value){
+                return(attr.name)
+                }
+              })
               return (
                 <>
                   <TagRow
                     key={index}
                     name={name}
                     description={description}
+                    startingAttributes={startingAttributes}
                     booleanAttributes={booleanAttributes}
                   />
                   {
