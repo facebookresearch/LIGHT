@@ -2,23 +2,18 @@
 .tagquestion-container{
     width:90%;
     border-color: blue;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
+    border-radius: 15px;
     border-style: solid;
+    background-color: blue;
 }
-
-/*TAG ROW*/
-.tagrow-container{
-    display:flex;
-    flex-direction: row;
-    width: 80%;
-}
-
-.tagrow-text {
-    color:white;
+.tagquestion-header {
     text-align: center;
     font-weight: bold;
-    background-color: blue;
-    border-radius: 15px;
-    margin-bottom: 0;
+    color:white;
+}
+.tagquestion-body{
+    width: 100%;
+    background-color: white;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
 }

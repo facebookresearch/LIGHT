@@ -1,7 +1,7 @@
 //REACT
 import React, {useState, useEffect} from "react";
-//STYLE
-import "./styles.css";
+//STYLES
+import "./styles"
 //BOOTSTRAP
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -30,13 +30,15 @@ const TagRow = ({
 
     return(
         <div className="tagrow-container">
-            <OverlayTrigger
-            placement="top"
-            delay={{ show: 250, hide: 400 }}
-            overlay={renderTooltip}
-            >
-            <p className="tagrow-text">{name}</p>
-            </OverlayTrigger>,
+            <div className="tagrow-item__container">
+                <OverlayTrigger
+                    placement="top"
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={renderTooltip}
+                >
+                    <p className="tagrow-item__text">{name}</p>
+                </OverlayTrigger>
+            </div>
             <Typeahead
               allowNew
               id="custom-selections-example"
@@ -45,6 +47,7 @@ const TagRow = ({
               options={attributes}
               placeholder="Type anything..."
             />
+
         </div>
     )
 }

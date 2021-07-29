@@ -1,0 +1,24 @@
+/*TAG ROW STYLES*/
+.tagrow-container{
+    display:flex;
+    flex-direction: row;
+    width: 80%;
+    padding:10px
+}
+
+.tagrow-item__container{
+    width:20%;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    background-color: blue;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.tagrow-item__text {
+    color:white;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 0;
+}

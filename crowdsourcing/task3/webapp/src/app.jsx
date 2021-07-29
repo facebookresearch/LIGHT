@@ -83,7 +83,7 @@ function MainApp() {
         },
         {
           name:"Treasure Chest",
-          description: "A massive ornate chest over flowingn with gold coins and precious gems."
+          description: "A massive ornate chest over flowing with gold coins and precious gems."
         }
       ]
 

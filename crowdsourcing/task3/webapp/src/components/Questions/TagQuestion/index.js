@@ -8,29 +8,36 @@ import TagRow from "./TagRow";
 
 // TagQuestion - Container for typeahead boolean values
 const TagQuestion = ({
+    header,
     selection,
     booleanAttributes
 })=>{
 
 
+
     return(
       <div className="tagquestion-container">
-        {
-          selection.length ?
-          selection.map((item, index)=>{
-            let {name, description}=item
-            return (
-              <TagRow
-                key={index}
-                name={name}
-                description={description}
-                booleanAttributes={booleanAttributes}
-              />
-            )
-        })
-        :
-        null
-        }
+        <h3 className="tagquestion-header">
+          ATTRIBUTES
+        </h3>
+        <div className="tagquestion-body">
+          {
+            selection.length ?
+            selection.map((item, index)=>{
+              let {name, description}=item
+              return (
+                <TagRow
+                  key={index}
+                  name={name}
+                  description={description}
+                  booleanAttributes={booleanAttributes}
+                />
+              )
+          })
+          :
+          null
+          }
+        </div>
       </div>
     )
 }
