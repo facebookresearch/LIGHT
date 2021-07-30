@@ -1,9 +1,12 @@
+/* BOOLEAN QUESTION STYLES */
 .booleanquestion-container {
     display: flex;
     justify-content: flex-start;
-    width: 100%;
+    width: 90%;
     align-items: flex-start;
     flex-direction: column;
+    margin-top:10px;
+    margin-bottom: 10px;
 }
 
 .booleanquestion-text {
@@ -18,4 +21,5 @@
     justify-content: flex-start;
     align-items: center;
     padding-left: 30px;
+    width: 100%;
 }

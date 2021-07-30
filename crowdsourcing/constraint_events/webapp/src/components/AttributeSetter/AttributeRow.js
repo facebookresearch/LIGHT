@@ -2,21 +2,39 @@ import React, {useState, useEffect, useRef} from "react";
 
 import TaskButton from "../TaskButton"
 import { MdCancel } from "react-icons/md";
-
-const AttributeRow = ({attribute, objectName, objectColor, isConstraint, deleteHandler})=>{
+//AttributeRow - Tracks names and values for each attribute and allows used to edit the names and values with buttons assigning a boolean value and an input to change name of attribute
+const AttributeRow = ({
+    attribute,//Attribute object containing name and val keys
+    objectName, //Name of Object
+    objectColor, // Color of Object
+    isConstraint, //Boolean value that alters text for each row.
+    updateHandler, // Function that handles updates the attribute Array
+    deleteHandler // Function that handles removing attributes from attribute Array
+})=>{
+    //Local state tracking and setting name and val of Attributes as well as whether or not attribute already existed prior to Task input.
     const [attributeName, setAttributeName] = useState("");
     const [attributeVal, setAttributeVal] = useState(true)
     const [isExistingAttribute, setIsExistingAttribute] = useState(false)
-    const nameRef = useRef();
+    //Sets Starting values of local state
+    useEffect(()=>{
+        setAttributeName(attribute.name);
+        setAttributeVal(attribute.val);
+    },[])
+    //Updates Local and Payload state with changes to object name attribute
     const changeHandler = e=>{
         e.preventDefault()
-
+        setAttributeName(e.target.value)
+        updateHandler({...attribute, name:e.target.value, val:attributeVal})
     }
+    //Sets Val attribute to true
     const trueHandler = ()=>{
         setAttributeVal(true)
+        updateHandler({...attribute, name:attributeName, val:true})
     }
+    //Sets Val attribute to true
     const falseHandler = ()=>{
         setAttributeVal(false)
+        updateHandler({...attribute, name:attributeName, val:false})
     }
 
     useEffect(()=>{
@@ -28,15 +46,11 @@ const AttributeRow = ({attribute, objectName, objectColor, isConstraint, deleteH
     return(
         <div className="attributerow-container" >
             <div className="attribute-label__container ">
-            {isConstraint?
-            <p className="attribute-label__text"><span style={{fontWeight:"bold", color: objectColor}}>{objectName.toUpperCase()} </span></p>
-            :
-            <p className="attribute-label__text">Now the <span style={{fontWeight:"bold", color: objectColor}}>{objectName.toUpperCase()} </span></p>
-            }
+                <p className="attribute-label__text">{isConstraint ? "": " Now the "}<span style={{fontWeight:"bold", color: objectColor}}>{objectName.toUpperCase()} </span></p>
             </div>
             <div className="value-container">
                 <TaskButton
-                    name={isConstraint? "MUST BE":"IS "}
+                    name={isConstraint ? " MUST BE ":" IS "}
                     isSelected={attributeVal}
                     selectFunction={trueHandler}
                     unselectedContainer="b-button__container true"
@@ -46,7 +60,7 @@ const AttributeRow = ({attribute, objectName, objectColor, isConstraint, deleteH
 
                     />
                 <TaskButton
-                    name={isConstraint? "MUST NOT BE":"IS NOT"}
+                    name={isConstraint ? " MUST NOT BE ":" IS NOT "}
                     isSelected={attributeVal===false}
                     selectFunction={falseHandler}
                     unselectedContainer="b-button__container false"
@@ -58,12 +72,12 @@ const AttributeRow = ({attribute, objectName, objectColor, isConstraint, deleteH
             <div className="attribute-container">
                 <input
                     className="name-text"
-                    ref={nameRef}
-                    defaultValue={attributeName}
+                    onChange={changeHandler}
+                    value={attributeName}
                     disabled={isExistingAttribute ? true : false}
                 />
             </div>
-            <MdCancel onClick={deleteHandler} color="red" className="attribute-icon" />
+            {isExistingAttribute ? <div style={{width:"10%"}}/> : <MdCancel onClick={deleteHandler} color="red" className="attribute-icon" />}
         </div>
     )
 }

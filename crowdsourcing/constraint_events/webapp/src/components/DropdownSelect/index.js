@@ -1,20 +1,25 @@
+//REACT
 import React, {useState} from "react";
-import Dropdown from 'react-bootstrap/Dropdown'
-
+//STYLING
 import "./styles.css"
-
-const DropdownSelect = ({options})=>{
+//DropdownSelect - takes options and function connecting it to payload state as props
+const DropdownSelect = ({options, selectFunction})=>{
+  // local state for the selected value in the dropdown
     const [selectedOption, setSelectedOption]= useState("Select Location")
+  //State to disable default option which has no value upon user interacting with dropdown
+    const [firstSelect, setFirstSelect] =useState(false)
+  //Upon selection updates both the localstate and the payload state.
     const selectHandler = (selection)=>{
-        setSelectedOption(selection)
+      setFirstSelect(true)
+      setSelectedOption(selection.value)
+      selectFunction(selection)
     }
-    console.log("OPTIONS", options)
     return(
     <div className="dropdown-container">
-        <select className="dropdown-select" id="locations">
-          <option  className="dropdown-option" value="Select Location" selected>Select Location</option>
+        <select className="dropdown-select" id="locations" onChange={selectHandler} value={selectedOption}>
+          <option  className="dropdown-option" disabled={firstSelect} value={"Select Location"} >Select Location</option>
           {
-            options.map((option, index) =><option key={index} className="dropdown-option" value={option}>{option}</option>)
+            options.map((option, index) =><option key={index} className="dropdown-option" value={option.val}>{option.name}</option>)
           }
         </select>
     </div>

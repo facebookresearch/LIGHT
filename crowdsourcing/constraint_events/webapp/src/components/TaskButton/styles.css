@@ -1,3 +1,4 @@
+/* TASK BUTTON STYLES */
 /* Multiple choice button styles */
 .mc-button__container {
     background-color: red;
@@ -12,6 +13,7 @@
     font-size: 16px;
     padding:6px;
     font-weight: bold;
+    margin-bottom: 0;
 }
 
 .mc-selectedbutton__container {
@@ -28,6 +30,7 @@
     font-size: 16px;
     padding:6px;
     font-weight: bold;
+    margin-bottom: 0;
 }
 
 .mc-button__container:hover {
@@ -45,6 +48,9 @@ box-shadow: 0em 0em 0em;
     border-width: 1px;
     box-shadow: 5px 2px 5px black;
     height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .b-button__container.true {
@@ -63,6 +69,7 @@ box-shadow: 0em 0em 0em;
     font-size: 16px;
     padding:6px;
     font-weight: bold;
+    margin-bottom: 0;
 }
 
 .b-button__text.true{
@@ -96,6 +103,7 @@ box-shadow: 0em 0em 0em;
     padding:6px;
     font-weight: bold;
     color: white;
+    margin-bottom: 0;
 }
 
 
@@ -127,6 +135,7 @@ box-shadow: 0em 0em 0em;
     font-weight: bold;
     color: white;
     text-align: center;
+    margin-bottom: 0px;
 }
 
 
