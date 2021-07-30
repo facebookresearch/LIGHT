@@ -90,31 +90,3 @@ function MainApp() {
 }
 
 ReactDOM.render(<MainApp />, document.getElementById("app"));
-
-
-
-
-
-// import React, { useEffect, useState } from "react";
-// import ReactDOM from "react-dom";
-// import ViewRouter from "./ViewRouter"
-
-// import { useMephistoTask } from "mephisto-task";
-
-// const MainApp = ()=>{
-//   const appData = useMephistoTask();
-
-//   return(
-//       <div>
-//       {
-//         appData ?
-//         <ViewRouter appData={appData} />
-//         :
-//         <div/>
-//       }
-//     </div>
-//   )
-
-// }
-
-// ReactDOM.render(<MainApp />, document.getElementById("app"));

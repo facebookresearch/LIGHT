@@ -5,9 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
-from mephisto.tools.examine_utils import run_examine_by_worker
+from mephisto.tools.examine_utils import run_examine_by_worker, print_results
 from mephisto.data_model.worker import Worker
-
 
 db = LocalMephistoDB()
 
@@ -26,10 +25,25 @@ def format_data_for_printing(data):
 
     if contents["inputs"] is not None and contents["outputs"] is not None:
         inputs = contents["inputs"]
-        inputs_string = f"Input:\n\tPrimary Object List: {inputs['primary_object_list']}\n\tSecondary Object List: {inputs['secondary_object_list']}\n\n"
-
         outputs = contents["outputs"]["final_data"]
-        outputs_string = f"Output:\n\tUse {outputs['primaryObject']} with {outputs['secondaryObject']}\n\tAction: {outputs['actionDescription']}\n"
+        primary = outputs["primaryObject"]
+        secondary = outputs["secondaryObject"]
+        primary_object_map = {
+            i["name"]: i["desc"] for i in inputs["primary_object_list"]
+        }
+        primary_object_stringlist = list(primary_object_map.keys())
+        secondary_object_map = {
+            i["name"]: i["desc"] for i in inputs["secondary_object_list"]
+        }
+        secondary_object_stringlist = list(secondary_object_map.keys())
+        inputs_string = (
+            f"Input:\n\tPrimary Object List: {primary_object_stringlist}\n"
+            f"\tSecondary Object List: {secondary_object_stringlist}\n"
+            f"\tSelected Context:\n"
+            f"\t\t{primary}: {primary_object_map[primary]}\n"
+            f"\t\t{secondary}: {secondary_object_map[secondary]}\n\n"
+        )
+        outputs_string = f"Output:\n\tUse {primary} with {secondary}\n\tAction: {outputs['actionDescription']}\n"
 
     return f"-------------------\n{metadata_string}{inputs_string}{outputs_string}"
 

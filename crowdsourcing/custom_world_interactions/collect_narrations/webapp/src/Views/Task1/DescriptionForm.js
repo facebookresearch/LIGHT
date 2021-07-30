@@ -2,12 +2,14 @@ import React, {useEffect, useRef} from "react";
 
 import TipsCopy from "./TipsCopy"
 
-const DescriptionForm = ({formVal, formFunction})=>{
+const DescriptionForm = ({formVal, formFunction, primaryObject, secondaryObject})=>{
     const changeHandler = e=>{
         e.preventDefault()
         formFunction(e.target.value)
 
     }
+    let primaryText = primaryObject ? primaryObject : "(primary)";
+    let secondaryText = secondaryObject ? secondaryObject : "(secondary)";
     return(
         <div className="form-container" >
             <h1 className="form-header">
@@ -24,6 +26,9 @@ const DescriptionForm = ({formVal, formFunction})=>{
                 :
                 null
             }
+            </div>
+            <div>
+                <b>Your interaction is "Use {primaryText} with {secondaryText}":</b>
             </div>
             <textarea
                 className="description-form"
