@@ -6,16 +6,18 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-import React from "react";
+import React, {useEffect, useState} from "react";
 import ReactDOM from "react-dom";
 import Task from "./views/Task";
 import { TaskDescription } from "./components/task_description.jsx";
-import LoadingScreen from "./components/LoadingScreen"
+import LoadingScreen from "./components/LoadingScreen";
 import { useMephistoTask } from "mephisto-task";
 // import { TimesComponent } from "./components/times_component.jsx";
 // import { SubmitButton } from "./components/submit_button.jsx";
 
-import "./styles.css"
+import "./styles.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 /* ================= Application Components ================= */
 
 function MainApp() {
@@ -27,8 +29,6 @@ function MainApp() {
     initialTaskData,
     handleSubmit,
   } = useMephistoTask();
-
-  const [timesRemaining, setTimesRemaining] = React.useState("");
 
   if (blockedReason !== null) {
     return (
@@ -67,39 +67,88 @@ function MainApp() {
 
 
   //console.log('active? ', active);
-    const dummyData= {
-      trait:{
-        name: "STRENGTH",
-        description:"The raw physical power an actor can exert typically fort he express purpose of attacking."
-      },
-      scaleRange:[
+
+  const ObjectDummyData= [
         {
-        name:"MIN",
-        example: "Rat",
-        color:"green"
+          name:"Sword",
+          attributes:[{name:"wieldable",value:true}],
+          description: "A normal iron longsword, unscratched, with a comfortable grip."
         },
         {
-        name:"MID",
-        example: "Peasant",
-        color:"blue"
-        },{
-        name:"MAX",
-        example: "Dragon",
-        color:"red"
+          name:"Shield",
+          attributes:[{name:"armor",value:true}],
+          description: "A large metal shield with the crest of the local lord painted and etched on the front."
+        },
+        {
+          name:"Magic Lamp",
+          attributes:[],
+          description:"An ordinary looking lamp that pulses with potential to the magically attuned."
+        },
+        {
+          name:"Treasure Chest",
+          attributes:[{name:"container",value:true}],
+          description: "A massive ornate chest over flowing with gold coins and precious gems."
         }
-      ],
-      actors:[
-        "Butcher",
-        "Baker",
-        "Candlestick Maker",
-        "Kroktar Devourer of Souls"
-        ]
-  }
+      ]
 
-options:
+
+  const CharacterDummyData= [
+        {
+          name:"Butcher",
+          attributes:[{name:"limbs",value:4}],
+          description: "A humble carver and seller of meats."
+        },
+        {
+          name:"Baker",
+          attributes:[{name:"limbs",value:4}],
+          description: "A talented and thoughtful distributor of baked goods they prepare."
+        },
+        {
+          name:"Candlestick Maker",
+          attributes:[{name:"limbs",value:4}],
+          description:"A wealthy and arrogant wax sculptor."
+        },
+        {
+          name:"Kroktar Devourer of Souls",
+          attributes:[{name:"limbs",value:8}],
+          description: "An armor clad, ageless horror who is said to have felled a thousand armies."
+        }
+      ]
+
+  const LocationDummyData= [
+        {
+          name:"Smithing Hut",
+          attributes:[{name:"indoors",value:true}],
+          description: "A blacksmith's workshop laden with tools and at the center is a forge"
+        },
+        {
+          name:"Dungeon",
+          attributes:[{name:"indoors",value:true}],
+          description: "A castle's windowless dungeon, the walls made of stone, bars line some cells and chains hang from the walls."
+        },
+        {
+          name:"Wizard Tower",
+          attributes:[{name:"indoors",value:true}],
+          description:"A tall amethyst tower with floating on stones high in the sky, filled with books, artefacts, and presumably a wizard."
+        },
+        {
+          name:"Ice Giant Camp",
+          attributes:[{name:"outdoors",value:true}],
+          description: "A circle of massive tents around a fire the size of an average human's house.  The camp is covered in think layers of icy snow."
+        }
+      ]
+
+
+
+
   return (
     <div className="view-container">
-      <Task data={dummyData}/>
+      <Task
+        // data={CharacterDummyData}
+        ObjectDummyData={ObjectDummyData}
+        CharacterDummyData={CharacterDummyData}
+        LocationDummyData={LocationDummyData}
+        />
     </div>
   );
 }

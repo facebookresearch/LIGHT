@@ -17,6 +17,7 @@
     "popper.js": "^1.16.1",
     "react": "16.13.1",
     "react-bootstrap": "^1.5.0",
+    "react-bootstrap-typeahead": "^5.2.0",
     "react-dom": "16.13.1",
     "react-draggable": "^4.4.3",
     "react-dropdown": "^1.9.2",

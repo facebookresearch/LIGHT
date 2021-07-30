@@ -3,7 +3,7 @@ import React, {useState} from "react";
 //STYLE
 import "./styles.css"
 
-// taskeButton - an all purpose, customizable button.
+// TaskButton - an all purpose, customizable button.
 const TaskButton = ({
     unselectedContainer, //default style for the button container
     selectedContainer,// style of button container if there is a "selected" state the button can be
