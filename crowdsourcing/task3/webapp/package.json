@@ -12,13 +12,16 @@
   "dependencies": {
     "bootstrap": "^4.6.0",
     "jquery": "^3.6.0",
+    "konva": "^8.0.4",
     "mephisto-task": "^1.0.14",
     "popper.js": "^1.16.1",
     "react": "16.13.1",
     "react-bootstrap": "^1.5.0",
     "react-dom": "16.13.1",
+    "react-draggable": "^4.4.3",
     "react-dropdown": "^1.9.2",
-    "react-icons": "^4.2.0"
+    "react-icons": "^4.2.0",
+    "react-konva": "^17.0.2-4"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",

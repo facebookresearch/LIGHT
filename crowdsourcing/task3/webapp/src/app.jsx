@@ -68,9 +68,37 @@ function MainApp() {
 
   //console.log('active? ', active);
     const dummyData= {
+      trait:{
+        name: "STRENGTH",
+        description:"The raw physical power an actor can exert typically fort he express purpose of attacking."
+      },
+      scaleRange:[
+        {
+        name:"MIN",
+        example: "Rat",
+        color:"green"
+        },
+        {
+        name:"MID",
+        example: "Peasant",
+        color:"blue"
+        },{
+        name:"MAX",
+        example: "Dragon",
+        color:"red"
+        }
+      ],
+      actors:[
+        "Butcher",
+        "Baker",
+        "Candlestick Maker",
+        "Kroktar Devourer of Souls"
+        ]
   }
+
+options:
   return (
-    <div>
+    <div className="view-container">
       <Task data={dummyData}/>
     </div>
   );

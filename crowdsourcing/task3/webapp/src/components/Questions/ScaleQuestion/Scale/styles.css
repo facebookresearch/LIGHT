@@ -1,0 +1,44 @@
+/*SCALE STYLES*/
+.scale-container {
+    width:90%;
+    border-color: blue;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-style: solid;
+    overflow: hidden;
+}
+
+.scalelabels-container {
+    width:100%;
+    background-color:white;
+    display:flex;
+    justify-content:space-between;
+}
+
+.optionblock-label__container {
+    width:28.3%;
+    border-color:blue;
+    border-width: 10px;
+    border-style:double;
+}
+
+.optionblock-label__text {
+    text-align:center;
+    padding:2px;
+    font-weight:bold;
+    color:blue;
+}
+
+.scalefield-label__container {
+    width: 71.7%;
+    border-color: blue;
+    border-width: 10px;
+    border-style: double;
+}
+
+.scalefield-label__text {
+    text-align:center;
+    padding:2px;
+    font-weight:bold;
+    color:blue;
+}
