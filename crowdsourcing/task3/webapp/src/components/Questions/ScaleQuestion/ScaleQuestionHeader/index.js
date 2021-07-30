@@ -21,7 +21,6 @@ const ScaleHeader = ({
         }else if(name==="traitDescription"){
             setTraitDescriptionInput(value);
         }
-
     }
     return (
         <div className="scaleheader-container">

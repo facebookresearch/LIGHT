@@ -13,9 +13,9 @@ import TaskCopy from "../../TaskCopy";
 
 //Task - Renders component that contains all questionns relevant to task.
 const Task = ({
-  ObjectDummyData,
-  CharacterDummyData,
-  LocationDummyData
+  data,
+  submissionHandler,
+  setPayloadData
 }) => {
   //COPY
   const {objects, characters, locations, input, tagQuestionHeader} = TaskCopy;

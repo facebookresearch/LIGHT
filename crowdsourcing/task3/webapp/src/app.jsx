@@ -6,7 +6,7 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import ReactDOM from "react-dom";
 import Task from "./views/Task";
 import { TaskDescription } from "./components/task_description.jsx";
@@ -29,6 +29,8 @@ function MainApp() {
     initialTaskData,
     handleSubmit,
   } = useMephistoTask();
+
+  const [submissionData, setSubmissionData]= useState([])
 
   if (blockedReason !== null) {
     return (
@@ -70,21 +72,25 @@ function MainApp() {
 
   const ObjectDummyData= [
         {
+          id:1,
           name:"Sword",
           attributes:[{name:"wieldable",value:true}],
           description: "A normal iron longsword, unscratched, with a comfortable grip."
         },
         {
+          id:2,
           name:"Shield",
           attributes:[{name:"armor",value:true}],
           description: "A large metal shield with the crest of the local lord painted and etched on the front."
         },
         {
+          id:3,
           name:"Magic Lamp",
           attributes:[],
           description:"An ordinary looking lamp that pulses with potential to the magically attuned."
         },
         {
+          id:4,
           name:"Treasure Chest",
           attributes:[{name:"container",value:true}],
           description: "A massive ornate chest over flowing with gold coins and precious gems."
@@ -138,16 +144,22 @@ function MainApp() {
         }
       ]
 
+const submissionHandler = ()=>{
 
+
+  handleSubmit(payloadData)
+}
 
 
   return (
     <div className="view-container">
       <Task
-        // data={CharacterDummyData}
-        ObjectDummyData={ObjectDummyData}
-        CharacterDummyData={CharacterDummyData}
-        LocationDummyData={LocationDummyData}
+        data={ObjectDummyData}
+        //ObjectDummyData={ObjectDummyData}
+        // CharacterDummyData={CharacterDummyData}
+        // LocationDummyData={LocationDummyData}
+        submissionHandler={submissionHandler}
+        setPayloadData = {setPayloadData}
         />
     </div>
   );
