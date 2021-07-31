@@ -12,7 +12,8 @@ const ScaleQuestion = ({
     selection,//The values that will be rated
     scaleRange,// An array of ranges to divide the scale into sections.
     trait,
-    isInputHeader
+    isInputHeader,
+    dragFunction
 })=>{
     const {name, description} = trait;
     return(
@@ -25,6 +26,7 @@ const ScaleQuestion = ({
             <Scale
                 scaleRange={scaleRange}
                 selection={selection}
+                dragFunction={dragFunction}
             />
         </div>
     )

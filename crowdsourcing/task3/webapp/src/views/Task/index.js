@@ -89,13 +89,18 @@ const Task = ({
   //HANDLERS
   //AttributeUpdateHandler
   const attributeUpdateHandler=(attributeName, itemName, update)=>{
-    let updatedAttribute =scaleAttributePayload[attributeName][item]=itemName;
+    console.log("DRAG UPDATE: ", update)
+    console.log("attributeName: ", attributeName)
+    console.log("itemName: ", itemName)
+    let updatedAttribute = {...scaleAttributePayload}
+    updatedAttribute[attributeName][itemName]=update
+    console.log("updatedAttribute:  ", updatedAttribute)
     setScaleAttributePayload(updatedAttribute)
   }
   //SubmissionHandler
   const submissionHandler=()=>{
     let submissionPayload = {
-      nodes:scaleAttributePayload,
+      nodes:booleanPayload,
       attributes: scaleAttributePayload
     }
     console.log("DUMMY DATA", selectionData)
@@ -119,7 +124,7 @@ const Task = ({
         traits.length
         ?
         traits.map((trait, index)=>{
-          let {scaleRange, requiredAttribute} = trait;
+          let {name, scaleRange, requiredAttribute} = trait;
           if(requiredAttribute){
             let filteredSelection = selectionData.filter(item =>{
               let {attributes} = item;
@@ -138,7 +143,7 @@ const Task = ({
                   selection={filteredSelection}
                   trait={trait}
                   isInputHeader={false}
-                  attributeUpdateHandler={()=>{attributeUpdateHandler()}}
+                  dragFunction={(selectionName, update)=>{attributeUpdateHandler(name, selectionName, update )}}
                 />
               )
             }
@@ -150,6 +155,7 @@ const Task = ({
               selection={selectionData}
               trait={trait}
               isInputHeader={false}
+              dragFunction={(selectionName, update)=>{attributeUpdateHandler(name, selectionName, update )}}
             />
           )}
         })

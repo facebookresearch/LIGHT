@@ -12,6 +12,7 @@ const ScaleField = ({
     width,// component width
     selection, // array of objects being rated
     scaleRange,// The example objects and colors for the rating scale
+    dragFunction
 }) => {
     const generateFlags = (arr)=> {
         const xPos = (width*.06);//initial position of
@@ -79,6 +80,8 @@ const ScaleField = ({
         setSelectionFlags(
             selectionFlags.map((flag) => {
                 if(flag.id=== id){
+                    console.log("FLAG UPDATE :  ", flag, width, flagWidth, flag.name, polePosition/scaleContainerWidth)
+                    dragFunction(flag.name, polePosition/scaleContainerWidth)
                     return {
                         ...flag,
                         isDragging: false,
