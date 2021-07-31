@@ -12,7 +12,6 @@ const TagQuestion = ({
     header,
     selection,
     booleanAttributes,
-    attributeRef
 })=>{
 
 
@@ -26,7 +25,7 @@ const TagQuestion = ({
           {
             selection.length ?
             selection.map((item, index)=>{
-              let {name, description, attributes}=item;
+              let {id, name, description, attributes}=item;
               let limbAttr =attributes.filter(attr => (attr.name=="limbs")) //filters for limb attribute in attributes array
               let hasLimbs = limbAttr.length// checks to see if limb attribute is present
               let startingLimbCount =0
@@ -42,11 +41,11 @@ const TagQuestion = ({
                 <>
                   <TagRow
                     key={index}
+                    id={id}
                     name={name}
                     description={description}
                     startingAttributes={startingAttributes}
                     booleanAttributes={booleanAttributes}
-                    attributeRef={attributeRef}
                   />
                   {
                     hasLimbs ?

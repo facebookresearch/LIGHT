@@ -15,78 +15,76 @@ import TaskCopy from "../../TaskCopy";
 const Task = ({
   data,
   submissionHandler,
-  setPayloadData
 }) => {
   //COPY
   const {objects, characters, locations, input, tagQuestionHeader} = TaskCopy;
   //STATE
-  const [data, setData]= useState(ObjectDummyData);
-  const [dataType, setDataType]= useState("objects");
+  const [selectionData, setSelectionData]= useState([]);
+  const [selectionDataType, setSelectionDataType]= useState("");
   const [traits, setTraits]= useState([]);
   const [booleanAttributes, setBooleanAttributes]= useState([]);
-  //REFS
-  const attributeRef = useRef();
+  const [booleanPayload, setBooleanPayload] = useState([])
+  const [scaleAttributePayload, setScaleAttributePayload] = useState({})
+  const [customAttributePayload, setCustomAttributePayload] = useState([])
   //useEffect will handle data type
   useEffect(()=>{
-    if(dataType==="objects"){
-      setData(ObjectDummyData)
+    const {itemCategory, selection} = data;
+    setSelectionDataType(itemCategory)
+    setSelectionData(selection)
+    if(itemCategory==="objects"){
       let {booleanAttributes, traits}= objects;
       setTraits(traits)
       setBooleanAttributes(booleanAttributes)
-    }else if(dataType==="characters"){
-      setData(CharacterDummyData)
+    }else if(itemCategory==="characters"){
       let {booleanAttributes, traits}= characters;
       setTraits(traits)
       setBooleanAttributes(booleanAttributes)
-    }else if(dataType==="locations"){
-      setData(LocationDummyData)
+    }else if(itemCategory==="locations"){
       let {booleanAttributes, traits}= locations;
       setTraits(traits)
       setBooleanAttributes(booleanAttributes)
     }
-  },[dataType])
-  console.log("DUMMY DATA", data)
-  console.log("DATA TYPE", dataType)
+  },[data])
+
+  useEffect(()=>{
+    let baseScaleAttributePayload = {}
+    //Adds attributes' names as keys and trait object as value
+    console.log("TRAITS IN USE EFFECT :  ", traits)
+    traits.map((trait, index)=>{
+      let scaleAttributeBaseValues = {}
+      let filteredSelection = selectionData;
+      if(trait.requiredAttribute){
+        let {requiredAttribute} = trait;
+        filteredSelection = selectionData.filter(item=>{
+          let {attributes}=item;
+          return attributes.filter(attribute => attribute.name == requiredAttribute).length
+        })
+      }
+      //Adds selection names as keys without values as value to attribute
+      filteredSelection.map((selection,index)=>{
+        let {name}=selection
+        scaleAttributeBaseValues = {...scaleAttributeBaseValues, [name]:null}
+      })
+      baseScaleAttributePayload[trait.name]=scaleAttributeBaseValues
+    })
+    setScaleAttributePayload(baseScaleAttributePayload)
+  }, [traits])
+  console.log("DUMMY DATA", selectionData)
+  console.log("DATA TYPE", selectionDataType)
   console.log("TRAITS", traits)
+  console.log("ScaleAttributePayload :  ", scaleAttributePayload)
   const {defaultBooleanAttributes, defaultScaleRange} = input
-  const SelectObjects = ()=>setDataType("objects")
-  const SelectCharacters = ()=>setDataType("characters")
-  const SelectLocations = ()=>setDataType("locations")
+  const clickHandler=()=>{
+    console.log("DUMMY DATA", selectionData)
+    console.log("DATA TYPE", selectionDataType)
+    console.log("ScaleAttributePayload :  ", scaleAttributePayload)
+  }
     return (
       <div className="task-container">
         <Header/>
-        <div style={{display:"flex", flexDirection:"row", width:"90%", margin:"15px" }}>
-          <TaskButton
-            name="Objects"
-            isSelected={dataType==="objects"}
-            selectFunction={SelectObjects}
-            unselectedContainer="b-button__container"
-            unselectedText="b-button__text"
-            selectedContainer="b-selectedbutton__container true"
-            selectedText="b-selectedbutton__text"
-          />
-          <TaskButton
-            name="Characters"
-            isSelected={dataType==="characters"}
-            selectFunction={SelectCharacters}
-            unselectedContainer="b-button__container"
-            unselectedText="b-button__text"
-            selectedContainer="b-selectedbutton__container true"
-            selectedText="b-selectedbutton__text"
-          />
-          <TaskButton
-            name="Locations"
-            isSelected={dataType==="locations"}
-            selectFunction={SelectLocations}
-            unselectedContainer="b-button__container"
-            unselectedText="b-button__text"
-            selectedContainer="b-selectedbutton__container true"
-            selectedText="b-selectedbutton__text"
-          />
-        </div>
       {
         data.length ?
-        <SelectionList selection={data} />
+        <SelectionList selection={selectionData} />
         :
         null
       }
@@ -96,7 +94,7 @@ const Task = ({
         traits.map((trait, index)=>{
           let {scaleRange, requiredAttribute} = trait;
           if(requiredAttribute){
-            let filteredSelection = data.filter(item =>{
+            let filteredSelection = selectionData.filter(item =>{
               let {attributes} = item;
               let matchedAttributes = attributes.filter(attr=>(attr.name==requiredAttribute));
               let hasAttribute = !!matchedAttributes.length;
@@ -121,7 +119,7 @@ const Task = ({
             <ScaleQuestion
               key={index}
               scaleRange={scaleRange}
-              selection={data}
+              selection={selectionData}
               trait={trait}
               isInputHeader={false}
             />
@@ -132,24 +130,48 @@ const Task = ({
       }
         <ScaleQuestion
           scaleRange={defaultScaleRange}
-          selection={data}
+          selection={selectionData}
           trait={"trait"}
           isInputHeader={true}
         />
         <ScaleQuestion
           scaleRange={defaultScaleRange}
-          selection={data}
+          selection={selectionData}
           trait={"trait"}
           isInputHeader={true}
         />
         <TagQuestion
           header={tagQuestionHeader}
-          selection={data}
+          selection={selectionData}
           booleanAttributes={booleanAttributes}
-          attributeRef={attributeRef}
+        />
+        <TaskButton
+          name="Submit"
+          isSelected={false}
+          unselectedContainer="submission-button__container"
+          unselectedText="submission-selectedbutton__text "
+          selectFunction={clickHandler}
         />
       </div>
     );
 }
 
 export default Task ;
+
+
+// {
+//   'nodes': [
+//       'node1': {
+//           'boolean-numeric-attribute1': value,
+//            .... rest of boolean/numeric attributes....
+//       },
+//       ... rest of provided nodes ....
+//   ],
+//   'attributes': {
+//       'scaled_attribute_1': {'obj1': val, ...},
+//       'custom_attributes': [
+//           {'name': attribute name, 'vals': {'objx': val, ...}},
+//           ...
+//       ],
+//   },
+// }

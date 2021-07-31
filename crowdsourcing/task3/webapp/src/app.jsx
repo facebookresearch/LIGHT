@@ -30,7 +30,6 @@ function MainApp() {
     handleSubmit,
   } = useMephistoTask();
 
-  const [submissionData, setSubmissionData]= useState([])
 
   if (blockedReason !== null) {
     return (
@@ -70,7 +69,9 @@ function MainApp() {
 
   //console.log('active? ', active);
 
-  const ObjectDummyData= [
+  const ObjectDummyData= {
+    itemCategory:"objects",
+    selection:[
         {
           id:1,
           name:"Sword",
@@ -96,6 +97,7 @@ function MainApp() {
           description: "A massive ornate chest over flowing with gold coins and precious gems."
         }
       ]
+    }
 
 
   const CharacterDummyData= [
@@ -144,10 +146,10 @@ function MainApp() {
         }
       ]
 
-const submissionHandler = ()=>{
+const submissionHandler = (payload)=>{
 
-
-  handleSubmit(payloadData)
+  console.log("PAYLOAD:  ", payload)
+  //handleSubmit(payload)
 }
 
 
@@ -159,7 +161,6 @@ const submissionHandler = ()=>{
         // CharacterDummyData={CharacterDummyData}
         // LocationDummyData={LocationDummyData}
         submissionHandler={submissionHandler}
-        setPayloadData = {setPayloadData}
         />
     </div>
   );

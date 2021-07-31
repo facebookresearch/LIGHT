@@ -11,14 +11,18 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 
 // SelectionList - A container for each selection item and their description
 const TagRow = ({
+    id,
     name,
     description,
     startingAttributes,
     booleanAttributes,
-    attributeRef
 })=>{
+    //STATE
     const [attributes, setAttributes]=useState([])
     const [typeAheadTokens, setTypeAheadTokens] = useState([])
+    //REFS
+    const attributeRef = useRef();
+
     useEffect(()=>{
         setTypeAheadTokens(booleanAttributes)
         setAttributes(startingAttributes)
