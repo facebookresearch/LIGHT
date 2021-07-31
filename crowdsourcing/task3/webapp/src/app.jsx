@@ -146,12 +146,6 @@ function MainApp() {
         }
       ]
 
-const submissionHandler = (payload)=>{
-
-  console.log("PAYLOAD:  ", payload)
-  //handleSubmit(payload)
-}
-
 
   return (
     <div className="view-container">
@@ -160,7 +154,7 @@ const submissionHandler = (payload)=>{
         //ObjectDummyData={ObjectDummyData}
         // CharacterDummyData={CharacterDummyData}
         // LocationDummyData={LocationDummyData}
-        submissionHandler={submissionHandler}
+        handleSubmit={handleSubmit}
         />
     </div>
   );

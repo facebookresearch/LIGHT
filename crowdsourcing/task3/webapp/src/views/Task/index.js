@@ -14,7 +14,7 @@ import TaskCopy from "../../TaskCopy";
 //Task - Renders component that contains all questionns relevant to task.
 const Task = ({
   data,
-  submissionHandler,
+  handleSubmit,
 }) => {
   //COPY
   const {objects, characters, locations, input, tagQuestionHeader} = TaskCopy;
@@ -44,6 +44,17 @@ const Task = ({
       setTraits(traits)
       setBooleanAttributes(booleanAttributes)
     }
+    let booleanAttributeBaseValues = selection.map(item=>{
+      let {name, attributes}=item;
+      let valObj ={}
+      attributes.map(attr=>{
+        let {name, value} =attr;
+        valObj[name]=value
+      })
+      let booleanAttributeObj = {name:name, values:valObj, custom:[]}
+      return booleanAttributeObj
+    })
+    setBooleanPayload(booleanAttributeBaseValues)
   },[data])
 
   useEffect(()=>{
@@ -74,10 +85,26 @@ const Task = ({
   console.log("TRAITS", traits)
   console.log("ScaleAttributePayload :  ", scaleAttributePayload)
   const {defaultBooleanAttributes, defaultScaleRange} = input
-  const clickHandler=()=>{
+
+  //HANDLERS
+  //AttributeUpdateHandler
+  const attributeUpdateHandler=(attributeName, itemName, update)=>{
+    let updatedAttribute =scaleAttributePayload[attributeName][item]=itemName;
+    setScaleAttributePayload(updatedAttribute)
+  }
+  //SubmissionHandler
+  const submissionHandler=()=>{
+    let submissionPayload = {
+      nodes:scaleAttributePayload,
+      attributes: scaleAttributePayload
+    }
     console.log("DUMMY DATA", selectionData)
     console.log("DATA TYPE", selectionDataType)
     console.log("ScaleAttributePayload :  ", scaleAttributePayload)
+    console.log("BOOLEAN PAYLOAD:  ", booleanPayload)
+    console.log("submissionPayload:  ", submissionPayload)
+
+    //handleSubmit()
   }
     return (
       <div className="task-container">
@@ -111,6 +138,7 @@ const Task = ({
                   selection={filteredSelection}
                   trait={trait}
                   isInputHeader={false}
+                  attributeUpdateHandler={()=>{attributeUpdateHandler()}}
                 />
               )
             }
@@ -150,7 +178,7 @@ const Task = ({
           isSelected={false}
           unselectedContainer="submission-button__container"
           unselectedText="submission-selectedbutton__text "
-          selectFunction={clickHandler}
+          selectFunction={submissionHandler}
         />
       </div>
     );
