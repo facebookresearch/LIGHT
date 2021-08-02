@@ -32,7 +32,7 @@ const Task = ({
   const [booleanPayload, setBooleanPayload] = useState([]);
   const [scaleAttributePayload, setScaleAttributePayload] = useState({});
 
-  const [customScaleAttributesPayload, setCustomScaleAttributesPayload] = useState([{name:"", description:"" }, {name:"", description:"" }]);
+  const [customScaleAttributesPayload, setCustomScaleAttributesPayload] = useState([{name:"", description:"", vals:{} }, {name:"", description:"" }]);
   //useEffect will handle data type
   useEffect(()=>{
     const {itemCategory, selection} = data;
@@ -118,14 +118,30 @@ const Task = ({
     setBooleanPayload(updatedAttributes)
   }
 
-  const customScaleAttributeUpdateHandler=(id, itemName, updateKey, updateValue)=>{
-
-    console.log("DRAG UPDATE: ", update)
-    console.log("attributeName: ", attributeName)
-    console.log("itemName: ", itemName)
-    let unupdatedCustomAttribute=updatedAttribute[id]
-    let updatedCustomAttribute = {...unupdatedCustomAttribute, [updateKey]:updateValue}
-    let updatedCustomAttributes = [...customScaleAttributesPayload, updatedCustomAttribute]
+  const customScaleAttributeUpdateHandler=(position, fieldName, updateKey, updateValue)=>{
+    let updatedCustomAttributes;
+    let updatedCustomAttribute;
+    let unupdatedCustomAttribute = customScaleAttributesPayload[position]
+    console.log("CUSTOM DRAG UPDATE: ", updateValue)
+    console.log("CUSTOM FIELD NAME: ", fieldName)
+    if(fieldName=="vals"){
+      let unupdatedRatingValues = unupdatedCustomAttribute.vals
+      let updatedRatingValues = {...unupdatedRatingValues, [updateKey]:updateValue}
+      unupdatedCustomAttribute.vals = updatedRatingValues;
+      updatedCustomAttribute = unupdatedCustomAttribute
+    }else{
+      unupdatedCustomAttribute[fieldName] = updateValue
+    }
+    updatedCustomAttribute = unupdatedCustomAttribute
+    console.log("CUSTOM ATTS:  ", customScaleAttributesPayload)
+    updatedCustomAttributes = customScaleAttributesPayload.map((attr, index) =>{
+      console.log("CUSTOM ATTR:  ", attr)
+      if(index == position){
+        return updatedCustomAttribute;
+      }else{
+        return attr;
+      }
+    })
     console.log("updatedAttribute:  ", updatedCustomAttributes)
     setCustomScaleAttributesPayload(updatedCustomAttributes)
   }
@@ -197,17 +213,16 @@ const Task = ({
       {
         customScaleAttributesPayload ?
         customScaleAttributesPayload.map((trait, index)=>{
-          let {name, description}=trait
+
           return(
             <ScaleQuestion
               key={index}
               id={index}
               scaleRange={defaultScaleRange}
               selection={selectionData}
-              trait={name}
-              traitDescription={description}
+              trait={trait}
               isCustom={true}
-              updateFunction={(selectionName,  updateKey, updateValue)=>{customScaleAttributeUpdateHandler(index, selectionName, updateKey, updateValue)}}
+              updateFunction={(fieldName,  updateKey, updateValue)=>{customScaleAttributeUpdateHandler(index, fieldName, updateKey, updateValue)}}
             />
           )
         })

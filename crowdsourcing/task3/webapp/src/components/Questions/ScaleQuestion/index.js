@@ -12,23 +12,23 @@ const ScaleQuestion = ({
     selection,//The values that will be rated
     scaleRange,// An array of ranges to divide the scale into sections.
     trait,
-    traitDescription,
     isCustom,
     updateFunction,
 })=>{
     const {name, description} = trait;
+
     return(
         <div className="scalequestion-container">
             <ScaleQuestionHeader
                 isCustom={isCustom}
                 trait={name}
-                traitDescription={traitDescription}
-                updateFunction={( updateKey, updateValue)=>updateFunction(name,  updateKey, updateValue)}
+                traitDescription={description}
+                updateFunction={(fieldName, updateValue)=>updateFunction(fieldName,  "none", updateValue)}
             />
             <Scale
                 scaleRange={scaleRange}
                 selection={selection}
-                dragFunction={isCustom ? ( updateValue)=>updateFunction(name,name, updateValue): updateFunction}
+                dragFunction={isCustom ? ( updateKey, updateValue)=>updateFunction("vals", updateKey, updateValue): updateFunction}
             />
         </div>
     )
