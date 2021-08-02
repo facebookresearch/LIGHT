@@ -100,28 +100,35 @@ function MainApp() {
     }
 
 
-  const CharacterDummyData= [
-        {
-          name:"Butcher",
-          attributes:[{name:"limbs",value:4}],
-          description: "A humble carver and seller of meats."
-        },
-        {
-          name:"Baker",
-          attributes:[{name:"limbs",value:4}],
-          description: "A talented and thoughtful distributor of baked goods they prepare."
-        },
-        {
-          name:"Candlestick Maker",
-          attributes:[{name:"limbs",value:4}],
-          description:"A wealthy and arrogant wax sculptor."
-        },
-        {
-          name:"Kroktar Devourer of Souls",
-          attributes:[{name:"limbs",value:8}],
-          description: "An armor clad, ageless horror who is said to have felled a thousand armies."
-        }
-      ]
+  const CharacterDummyData= {
+    itemCategory:"characters",
+    selection:[
+          {
+            id:1,
+            name:"Butcher",
+            attributes:[{name:"limbs",value:4}],
+            description: "A humble carver and seller of meats."
+          },
+          {
+            id:2,
+            name:"Baker",
+            attributes:[{name:"limbs",value:4}],
+            description: "A talented and thoughtful distributor of baked goods they prepare."
+          },
+          {
+            id:3,
+            name:"Candlestick Maker",
+            attributes:[{name:"limbs",value:4}],
+            description:"A wealthy and arrogant wax sculptor."
+          },
+          {
+            id:4,
+            name:"Kroktar Devourer of Souls",
+            attributes:[{name:"limbs",value:8}],
+            description: "An armor clad, ageless horror who is said to have felled a thousand armies."
+          }
+        ]
+  }
 
   const LocationDummyData= [
         {
@@ -146,11 +153,10 @@ function MainApp() {
         }
       ]
 
-
   return (
     <div className="view-container">
       <Task
-        data={ObjectDummyData}
+        data={CharacterDummyData}
         //ObjectDummyData={ObjectDummyData}
         // CharacterDummyData={CharacterDummyData}
         // LocationDummyData={LocationDummyData}

@@ -12,7 +12,8 @@ const TagQuestion = ({
     header,
     selection,
     booleanAttributes,
-    updateFunction
+    updateFunction,
+    numericAttributeUpdateFunction
 })=>{
 
 
@@ -54,7 +55,9 @@ const TagQuestion = ({
                     <NumberForm
                       key={name}
                       header="Limb Count"
-                      formFunction={()=>{}}
+                      formFunction={(updateValue)=>{
+                        numericAttributeUpdateFunction(index, "limbs", updateValue)
+                      }}
                       startingVal={startingLimbCount}
                     />
                     :null
