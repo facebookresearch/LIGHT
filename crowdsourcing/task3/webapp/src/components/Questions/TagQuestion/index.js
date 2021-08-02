@@ -12,6 +12,7 @@ const TagQuestion = ({
     header,
     selection,
     booleanAttributes,
+    updateFunction
 })=>{
 
 
@@ -46,6 +47,7 @@ const TagQuestion = ({
                     description={description}
                     startingAttributes={startingAttributes}
                     booleanAttributes={booleanAttributes}
+                    updateFunction={(update)=>updateFunction(index, update)}
                   />
                   {
                     hasLimbs ?

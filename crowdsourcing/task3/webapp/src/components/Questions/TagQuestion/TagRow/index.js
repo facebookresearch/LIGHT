@@ -16,6 +16,7 @@ const TagRow = ({
     description,
     startingAttributes,
     booleanAttributes,
+    updateFunction
 })=>{
     //STATE
     const [attributes, setAttributes]=useState([])
@@ -39,8 +40,27 @@ const TagRow = ({
           {description}
         </Tooltip>
       );
+    const changeHandler = ()=>{
+        let {current} = attributeRef;
+        let {state} =current;
+        let {selected} = state;
+        if(selected){
+            let entries = selected
+            let standardBooleanEntries = {}
+            let customBooleanEntries = []
+            entries.map((entry,index)=>{
+                if(typeof entry ==="string"){
+                    standardBooleanEntries[entry]=true
+                }else if(entry.label){
+                    let {label} =entry;
+                    customBooleanEntries = [...customBooleanEntries, label]
+                }
+            })
+            let rowUpdate = {...standardBooleanEntries, custom: customBooleanEntries}
+            updateFunction(rowUpdate)
+        }
+    }
 
-        console.log(attributes)
     return(
         <div className="tagrow-container">
             <div className="tagrow-item__container">
@@ -62,6 +82,7 @@ const TagRow = ({
               options={booleanAttributes}
               placeholder="Add Attributes here"
               ref={attributeRef}
+              onChange={changeHandler}
             />
             </div>
         </div>

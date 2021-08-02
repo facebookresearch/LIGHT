@@ -80,8 +80,10 @@ const ScaleField = ({
         setSelectionFlags(
             selectionFlags.map((flag) => {
                 if(flag.id=== id){
-                    console.log("FLAG UPDATE :  ", flag, width, flagWidth, flag.name, polePosition/scaleContainerWidth)
-                    dragFunction(flag.name, polePosition/scaleContainerWidth)
+                    console.log("FLAG UPDATE :  ", flag, width, flagWidth, flag.name, (polePosition-leftSoftBoundary)/(width-leftSoftBoundary))
+                    if(showPole){
+                        dragFunction(flag.name, (polePosition-leftSoftBoundary)/(width-leftSoftBoundary))
+                    }
                     return {
                         ...flag,
                         isDragging: false,
