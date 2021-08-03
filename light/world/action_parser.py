@@ -9,6 +9,8 @@ import parlai.utils.logging as logging
 from parlai.core.message import Message
 import copy
 
+import threading
+
 args = {}
 args["help"] = 0
 args["inventory"] = 0
@@ -104,43 +106,47 @@ class ActionParser:
         }  # , "no_cuda": True}
         self.agent = create_agent(self.opt, requireModelExists=True)
         self.agent.opt.log()
+        # Lock to handle concurrency, fixed better with asycio
+        self.parse_lock = threading.Condition()
 
     def parse(self, txt, actor=None):
         if self.agent is None:
             # No model installed, return an empty string.
             return ""
 
-        # Predict verb first.
-        txt = txt.lower()
-        verbs = list(args.keys())
-        query = Message(
-            {
-                "id": "context",
-                "text": txt,
-                "label_candidates": verbs,
-                "episode_done": True,
-            }
-        )
-        self.agent.observe(query)
-        res = self.agent.act()
-        verb = res["text"]
-
-        # Given verb, predict the args (unless it's a no-arg action(.
-        if args[verb] > 0:
-            cands = get_input_cands(txt, verb, txt)
-            query2 = Message(
+        with self.parse_lock:
+            # Predict verb first.
+            txt = txt.lower()
+            verbs = list(args.keys())
+            query = Message(
                 {
                     "id": "context",
                     "text": txt,
-                    "label_candidates": cands,
+                    "label_candidates": verbs,
                     "episode_done": True,
                 }
             )
-            self.agent.observe(query2)
-            res2 = self.agent.act()
-            txt = res2["text"]
-        else:
-            txt = verb
+            self.agent.observe(query)
+            res = self.agent.act()
+            verb = res["text"]
+
+        with self.parse_lock:
+            # Given verb, predict the args (unless it's a no-arg action(.
+            if args[verb] > 0:
+                cands = get_input_cands(txt, verb, txt)
+                query2 = Message(
+                    {
+                        "id": "context",
+                        "text": txt,
+                        "label_candidates": cands,
+                        "episode_done": True,
+                    }
+                )
+                self.agent.observe(query2)
+                res2 = self.agent.act()
+                txt = res2["text"]
+            else:
+                txt = verb
         txt = self.post_process(txt, actor)
 
         return txt
