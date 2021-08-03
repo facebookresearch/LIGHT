@@ -191,20 +191,20 @@ def main(cfg: DictConfig) -> None:
         on_unit_submitted=validator,
     )
 
-    shared_state.mturk_specific_qualifications = [
-        {
-            "QualificationTypeId": "00000000000000000040",
-            "Comparator": "GreaterThanOrEqualTo",
-            "IntegerValues": [1500],
-            "ActionsGuarded": "DiscoverPreviewAndAccept",
-        },
-        {
-            "QualificationTypeId": "000000000000000000L0",
-            "Comparator": "GreaterThanOrEqualTo",
-            "IntegerValues": [95],
-            "ActionsGuarded": "DiscoverPreviewAndAccept",
-        },
-    ]
+    # shared_state.mturk_specific_qualifications = [
+    #     {
+    #         "QualificationTypeId": "00000000000000000040",
+    #         "Comparator": "GreaterThanOrEqualTo",
+    #         "IntegerValues": [1500],
+    #         "ActionsGuarded": "DiscoverPreviewAndAccept",
+    #     },
+    #     {
+    #         "QualificationTypeId": "000000000000000000L0",
+    #         "Comparator": "GreaterThanOrEqualTo",
+    #         "IntegerValues": [95],
+    #         "ActionsGuarded": "DiscoverPreviewAndAccept",
+    #     },
+    # ]
 
     built_file = os.path.join(task_dir, "webapp", "build", "bundle.js")
     if cfg.force_rebuild or not os.path.exists(built_file):

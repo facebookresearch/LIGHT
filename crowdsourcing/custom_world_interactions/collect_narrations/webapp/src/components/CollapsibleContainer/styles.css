@@ -15,6 +15,12 @@
     background-color: blue;
   }
 
+  .collapsible-header--icon-text {
+    font-size: 16px;
+    color: white;
+    padding-right: 6px;
+  }
+
   .collapsible-header--icon {
     font-size: 2em;
     display:flex;
