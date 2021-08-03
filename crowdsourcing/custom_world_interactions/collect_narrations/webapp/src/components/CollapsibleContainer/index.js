@@ -15,7 +15,7 @@ const CollapsibleBox = ({ title, titleBg, containerBg, collapsedContent, childre
   const iconHelpText = isCollapsed ? "Expand" : "Collapse";
   const iconBody = isCollapsed ? <BiWindow color="white" /> : <FaWindowMinimize color="white" />;
   const expander = <div className="collapsible-header--icon" onClick={onIconClick}>
-    <span className=".collapsible-header--icon-text">{iconHelpText}</span>
+    <span className="collapsible-header--icon-text">{iconHelpText}</span>
     {iconBody}
   </div>
 
