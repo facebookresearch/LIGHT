@@ -82,7 +82,9 @@ const ScaleField = ({
                 if(flag.id=== id){
                     console.log("FLAG UPDATE :  ", flag, width, flagWidth, flag.name, (polePosition-leftSoftBoundary)/(width-leftSoftBoundary))
                     if(showPole){
-                        dragFunction(flag.name, (polePosition-leftSoftBoundary)/(width-leftSoftBoundary))
+                        let rating = ((polePosition-leftSoftBoundary)/(width-leftSoftBoundary))*100
+                        console.log("RATING VALUE:  ", rating)
+                        dragFunction(flag.name, rating)
                     }
                     return {
                         ...flag,

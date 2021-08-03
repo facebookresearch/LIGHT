@@ -104,7 +104,8 @@ const Task = ({
     console.log("attributeName: ", attributeName)
     console.log("itemName: ", itemName)
     let unupdatedAttributes = {...scaleAttributePayload}
-    let updatedAttributes= unupdatedAttributes[attributeName][itemName]=update
+    unupdatedAttributes[attributeName][itemName]=update
+    let updatedAttributes= unupdatedAttributes
     console.log("updatedAttribute:  ", updatedAttributes)
     setScaleAttributePayload(updatedAttributes)
   }
@@ -160,7 +161,7 @@ const Task = ({
   const submissionHandler=()=>{
     let submissionPayload = {
       nodes:booleanPayload,
-      attributes: {...scaleAttributePayload,custom_attributes:customScaleAttributesPayload}
+      attributes: {...scaleAttributePayload, custom_attributes:customScaleAttributesPayload}
     }
     console.log("DUMMY DATA", selectionData)
     console.log("DATA TYPE", selectionDataType)
@@ -258,40 +259,3 @@ const Task = ({
 }
 
 export default Task ;
-
-
-// {
-//   'nodes': [
-//       'node1': {
-//           'boolean-numeric-attribute1': value,
-//            .... rest of boolean/numeric attributes....
-//       },
-//       ... rest of provided nodes ....
-//   ],
-//   'attributes': {
-//       'scaled_attribute_1': {'obj1': val, ...},
-//       'custom_attributes': [
-//           {'name': attribute name, 'vals': {'objx': val, ...}},
-//           ...
-//       ],
-//   },
-// }
-
-// {
-//   'nodes': [
-//       {'name': node1, 'values': {
-//           'boolean-numeric-attribute1': value,
-//            .... rest of boolean/numeric attributes....
-//            'custom': ['tokenized', 'values'],
-//       }},
-//       ... rest of provided nodes ....
-//   ],
-//   'attributes': {
-//       'scaled_attribute_1': {'obj1': val, ...},
-//       ... rest of preset scale attributes ...,
-//       'custom_attributes': [
-//           {'name': attribute name, 'vals': {'objx': val, ...}},
-//           ...
-//       ],
-//   },
-// }

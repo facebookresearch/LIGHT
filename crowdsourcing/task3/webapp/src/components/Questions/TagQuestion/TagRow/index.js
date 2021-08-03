@@ -7,6 +7,8 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 //TYPEAHEAD TOKENIZER
 import { Typeahead } from 'react-bootstrap-typeahead';
+//CUSTOM COMPONENTS
+import NumberForm from "../../../NumberForm"
 
 
 // SelectionList - A container for each selection item and their description
