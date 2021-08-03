@@ -32,11 +32,10 @@ from dataclasses import dataclass, field
 from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-INPUT_FILE_TASK = "objects-interaction-task-11"
-LIGHT_DB_PATH = "~/ParlAI/data/LIGHT/merged.db"
-PRIMARY_OBJECT_LIST_SIZE = 5
-SECONDARY_OBJECT_LIST_SIZE = 5
-DEFAULT_NUM_TASKS = 20
+LIGHT_DB_PATH = "/checkpoint/light/data/database3.db"
+PRIMARY_OBJECT_LIST_SIZE = 6
+SECONDARY_OBJECT_LIST_SIZE = 6
+DEFAULT_NUM_TASKS = 50
 
 db = LocalMephistoDB()
 mephisto_data_browser = MephistoDataBrowser(db=db)
@@ -45,7 +44,7 @@ defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    {"conf": "constraints_events_task"},
+    {"conf": "objects_interaction_task"},
 ]
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config

@@ -48,12 +48,19 @@ def format_for_printing_data(data):
 
     if contents["inputs"] is not None and contents["outputs"] is not None:
         inputs = contents["inputs"]
-        inputs_string = f"Input:\n\tPrimary Object List: {inputs['primary_object_list']}\n\tSecondary Object List: {inputs['secondary_object_list']}\n\n"
-
+        primary_list = inputs['primary_object_list']
+        secondary_list = inputs['secondary_object_list']
+        try:
+            primary_dict = {d['name']:d['desc'] for d in primary_list}
+            secondary_dict = {d['name']:d['desc'] for d in secondary_list}
+        except:
+            return "old_entry"
+        inputs = f"Lists: {primary_dict}, {secondary_dict}\n"
         outputs = contents["outputs"]["final_data"]
+        selections = f"Primary: {outputs['primaryObject']} - {primary_dict[outputs['primaryObject']]}\nSecondary: {outputs['secondaryObject']} - {secondary_dict[outputs['secondaryObject']]}\n"
         outputs_string = f"Output:\n\tUse {outputs['primaryObject']} with {outputs['secondaryObject']}\n\tAction: {outputs['actionDescription']}\n"
 
-    return f"-------------------\n{metadata_string}{inputs_string}{outputs_string}"
+    return f"-------------------\n{metadata_string}{inputs}{selections}{outputs_string}"
 
 
 disqualification_name = None
