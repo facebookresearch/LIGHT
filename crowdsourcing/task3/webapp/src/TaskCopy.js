@@ -182,11 +182,32 @@ const Copy ={
                     }
                 ]
             },
+            {
+                name: "USEFULNESS",
+                description:"How likely is the it that he object will be used?",
+                scaleRange:[
+                    {
+                    name:"MIN",
+                    example: "Almost Never",
+                    color:"green"
+                    },
+                    {
+                    name:"MID",
+                    example: "Fairly Often",
+                    color:"blue"
+                    },
+                    {
+                    name:"MAX",
+                    example: "Almost Never",
+                    color:"red"
+                    }
+                ]
+            },
         ]
         },
     characters:{
         booleanAttributes:[
-            "arm and leg counts",
+            "limbs",
         ],
         traits:[
             {

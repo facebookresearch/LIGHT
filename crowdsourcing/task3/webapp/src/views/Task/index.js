@@ -13,8 +13,8 @@ import TaskCopy from "../../TaskCopy";
 
 //Task - Renders component that contains all questionns relevant to task.
 const Task = ({
-  data,
-  handleSubmit,
+  data,//selection data retrieved from backend
+  handleSubmit,//function that submits payload to backend
 }) => {
   //COPY
   const {
