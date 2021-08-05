@@ -2,13 +2,34 @@ const Copy ={
     tagQuestionHeader:"ATTRIBUTES",
     numericAttributes:["limbs"],
     objects:{
-        booleanAttributes:[
-            "container",
-            "surface",
-            "living",
-            "wieldable",
-            "wearable",
+        defaultQuestions:[
+            {
+                questionType:"multipleSelect",
+                question:"# object is:",
+                options:[
+                    {
+                        name:"a container.",
+                        value: "container"
+                    },
+                    {
+                        name:"a surface.",
+                        value: "surface"
+                    },
+                    {
+                        name:"a living.",
+                        value: "living"
+                    },
+                    {
+                        name:"a wieldable.",
+                        value: "wieldable"
+                    },                    {
+                        name:"a wearable.",
+                        value: "wearable"
+                    }
+                ]
+            }
         ],
+        defaultBooleanAttributeOptions:[],
         traits:[
             {
                 name: "SIZE",
@@ -206,9 +227,17 @@ const Copy ={
         ]
         },
     characters:{
-        booleanAttributes:[
-            "limbs",
+        defaultQuestions:[
+            {
+                question:"# arm count",
+                questionType:"numeric",
+            },
+            {
+                question:"# leg count",
+                questionType:"numeric",
+            }
         ],
+        defaultBooleanAttributeOptions:[],
         traits:[
             {
                 name: "STRENGTH",
@@ -381,10 +410,23 @@ const Copy ={
         ]
       },
       locations:{
-        booleanAttributes:[
-            "indoors",
-            "outdoors"
+        defaultQuestions:[
+            {
+                questionType:"multipleChoice",
+                question:"# is:",
+                options:[
+                    {
+                        name:"Indoors",
+                        value: "indoors"
+                    },
+                    {
+                        name:"Outdoors",
+                        value: "outdoors"
+                    }
+                ]
+            }
         ],
+        defaultBooleanAttributeOptions:[],
         traits:[
             {
                 name: "SIZE",
