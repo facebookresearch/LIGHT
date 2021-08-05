@@ -15,7 +15,6 @@ const TagQuestion = ({
     selection,// Objects who's attributes are being added and removed
     booleanAttributes, // the default attributes for the selected object type
     updateFunction,// the function to update the attributes for the objects
-    numericAttributeUpdateFunction// tthe function that updates numeric attribute values
 })=>{
 
 

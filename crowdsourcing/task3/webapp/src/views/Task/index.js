@@ -1,13 +1,14 @@
 //REACT
 import React, { useEffect, useState,useRef } from "react";
 //STYLING
-import "./styles.css"
+import "./styles.css";
 //CUSTOM COMPONENTS
 import Header from "../../components/Header";
 import ScaleQuestion from "../../components/Questions/ScaleQuestion";
+import AttributeQuestions from "./AttributeQuestions";
 import TagQuestion from "../../components/Questions/TagQuestion";
 import SelectionList from "../../components/SelectionList";
-import TaskButton from "../../components/TaskButton"
+import TaskButton from "../../components/TaskButton";
 //COPY
 import TaskCopy from "../../TaskCopy";
 
@@ -51,17 +52,20 @@ const Task = ({
     setSelectionDataType(itemCategory)
     setSelectionData(selection)
     if(itemCategory==="objects"){
-      let {defaultBooleanAttributeOptions, traits}= objects;
+      let {defaultBooleanAttributeOptions, traits, defaultQuestions}= objects;
       setTraits(traits)
       setBooleanAttributeOptions(defaultBooleanAttributeOptions)
+      setAttributeQuestions(defaultQuestions)
     }else if(itemCategory==="characters"){
-      let {defaultBooleanAttributeOptions, traits}= characters;
+      let {defaultBooleanAttributeOptions, traits, defaultQuestions}= characters;
       setTraits(traits)
       setBooleanAttributeOptions(defaultBooleanAttributeOptions)
+      setAttributeQuestions(defaultQuestions)
     }else if(itemCategory==="locations"){
-      let {defaultBooleanAttributeOptions, traits}= locations;
+      let {defaultBooleanAttributeOptions, traits, defaultQuestions}= locations;
       setTraits(traits)
       setBooleanAttributeOptions(defaultBooleanAttributeOptions)
+      setAttributeQuestions(defaultQuestions)
     }
     let booleanAttributeBaseValues = selection.map(item=>{
       let {name, attributes}=item;
@@ -248,13 +252,18 @@ const Task = ({
         })
         :null
       }
-        <TagQuestion
-          header={tagQuestionHeader}
-          selection={selectionData}
-          booleanAttributeOptions={booleanAttributeOptions}
-          updateFunction={booleanAttributeUpdateHandler}
-          numericAttributeUpdateFunction={numericAttributeHandler}
-        />
+      <AttributeQuestions
+
+
+      >
+          <TagQuestion
+            header={tagQuestionHeader}
+            selection={selectionData}
+            booleanAttributeOptions={booleanAttributeOptions}
+            updateFunction={booleanAttributeUpdateHandler}
+            numericAttributeUpdateFunction={numericAttributeHandler}
+          />
+        </AttributeQuestions>
         <TaskButton
           name="Submit"
           isSelected={false}

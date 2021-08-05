@@ -21,7 +21,6 @@ const TagRow = ({
     startingAttributes,//  Initial attributes selected in typeahead tokenizer
     booleanAttributes,//  Attributes that appear in tokenizer dropdown
     updateFunction, // function that updates payload data
-    isNumericAttribute,
     startingNumericAttributeCount,
     numericUpdateFunction
 
