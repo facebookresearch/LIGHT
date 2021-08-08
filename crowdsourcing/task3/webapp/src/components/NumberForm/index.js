@@ -9,7 +9,7 @@ const NumberForm = ({
     formFunction, // setState function that connects to payload state
     startingVal // initial value of form
 })=>{
-    //Local State
+    /*---------- State ----------*/
     const [formNumber, setFormNumber] = useState(startingVal)
 
     //changeHandler - updates both local and payload state with answer
@@ -25,7 +25,9 @@ const NumberForm = ({
     return(
         <div className="numberform-container" >
             <div className="numberanswer-container">
-                <p className="numberanswer-header" > {header} </p>
+                <p className="numberanswer-header" >
+                    {header}
+                </p>
                 <input
                     type="number"
                     id="limit"

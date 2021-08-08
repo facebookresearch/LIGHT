@@ -1,11 +1,10 @@
 const Copy ={
-    tagQuestionHeader:"ATTRIBUTES",
-    numericAttributes:["limbs"],
+    attributeQuestionHeader:"ATTRIBUTES",
     objects:{
         defaultQuestions:[
             {
                 questionType:"multipleSelect",
-                question:"# object is:",
+                question:"# is:  ",
                 options:[
                     {
                         name:"a container.",
@@ -16,14 +15,14 @@ const Copy ={
                         value: "surface"
                     },
                     {
-                        name:"a living.",
+                        name:"living.",
                         value: "living"
                     },
                     {
-                        name:"a wieldable.",
+                        name:"wieldable.",
                         value: "wieldable"
                     },                    {
-                        name:"a wearable.",
+                        name:"wearable.",
                         value: "wearable"
                     }
                 ]
@@ -229,12 +228,14 @@ const Copy ={
     characters:{
         defaultQuestions:[
             {
-                question:"# arm count",
+                question:"# arm count:  ",
                 questionType:"numeric",
+                field:"arms"
             },
             {
-                question:"# leg count",
+                question:"# leg count:  ",
                 questionType:"numeric",
+                field:"legs"
             }
         ],
         defaultBooleanAttributeOptions:[],
@@ -413,7 +414,7 @@ const Copy ={
         defaultQuestions:[
             {
                 questionType:"multipleChoice",
-                question:"# is:",
+                question:"# is:  ",
                 options:[
                     {
                         name:"Indoors",

@@ -1,5 +1,5 @@
 //REACT
-import React, {useState, useEffect, useRef} from "react";
+import React from "react";
 //STYLES
 import "./styles.css";
 //BOOTSTRAP
@@ -7,14 +7,14 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
 
-// AttributeQuestions - Renders all default questions for a item type
-const AttributeQuestions = ({
+//AttributeQuestions - Renders all default questions for a item type
+const ToolTip = ({
     toolTipText,
     children
 })=>{
     const renderTooltip = (props) => (
         <Tooltip id="button-tooltip" {...props}>
-          {description}
+          {toolTipText}
         </Tooltip>
       );
 
@@ -31,4 +31,4 @@ const AttributeQuestions = ({
         </>
     )
 }
-export default AttributeQuestions;
+export default ToolTip;

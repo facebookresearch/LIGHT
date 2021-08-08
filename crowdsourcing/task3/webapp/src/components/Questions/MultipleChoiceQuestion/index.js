@@ -1,14 +1,22 @@
+//REACT
 import React, {useEffect, useState} from "react";
+//STYLE
 import "./styles.css";
-
+//BOOSTRAP
+import Form from 'react-bootstrap/Form';
 //CUSTOM COMPONENTS
 import TaskButton from "../../TaskButton"
 
+// MultipleChoiceQuestion - Form type that allows user to select single answer from multiple option to answer question
 const MultipleChoiceQuestion = ({question, answers, selectFunction})=>{
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [answerList, setAnswerList] = useState([])
 
     const clickHandler = (id, answer)=>{
+        if(selectedAnswer==index){
+            setSelectedAnswer(null);
+            selectFunction(answer.value, false);
+        }
         setSelectedAnswer(id);
         selectFunction(answer);
     }
@@ -24,7 +32,19 @@ const MultipleChoiceQuestion = ({question, answers, selectFunction})=>{
             {
                 [answerList].length
                 ?
-                answerList.map((answer, index)=><TaskButton key={index} name={answer} selectFunction={()=>clickHandler(index, answer)} isSelected={selectedItem==index} />)
+                answerList.map((answer, index)=>{
+                    const {name, value} =answer;
+                    return(
+                        <Form.Check
+                            key={index}
+                            label={name}
+                            name={name}
+                            type={"radio"}
+                            checked={selectedAnswer==index}
+                            onChange={()=>clickHandler(index, value)}
+                        />
+                    )
+            })
                 :
                 null
             }

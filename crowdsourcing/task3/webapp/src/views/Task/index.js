@@ -23,7 +23,7 @@ const Task = ({
     characters,
     locations,
     input,
-    tagQuestionHeader
+    attributeQuestionHeader
   } = TaskCopy;
   /*------------------------------------STATE------------------------------------*/
   //Selection Recieved from Backend.
@@ -44,6 +44,10 @@ const Task = ({
   const [scaleAttributePayload, setScaleAttributePayload] = useState({});
   // Payload for custom Scale Attribute ratings and input
   const [customScaleAttributesPayload, setCustomScaleAttributesPayload] = useState([{name:"", description:"", vals:{} }, {name:"", description:"" }]);
+
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState([])
 
   /*------------------------------------LIFE CYCLE------------------------------------*/
   //useEffect will handle setting the datatype from the selection
@@ -149,17 +153,17 @@ const Task = ({
       console.log("updatedAttribute:  ", updatedCustomAttributes)
       setCustomScaleAttributesPayload(updatedCustomAttributes)
     }
+
   //booleanAttributeUpdateHandler
   const booleanAttributeUpdateHandler=(position, update)=>{
-
     let unupdatedAttributes = booleanPayload
     unupdatedAttributes[position].values = update;
     let updatedAttributes = unupdatedAttributes
     console.log("BOOLEAN UPDATES TO PAYLOAD  ATTR:  ", updatedAttributes, )
     setBooleanPayload(updatedAttributes)
   }
-  //numericAttributeHandler
-  const numericAttributeHandler = (position, updateKey, updateValue)=>{
+//defaultAttributeQuestionHandler
+  const defaultAttributeQuestionHandler = (position, updateKey, updateValue)=>{
     let unupdatedAttributes = booleanPayload;
     let unupdatedValues = unupdatedAttributes[position].values;
     let updatedValues = {...unupdatedValues, [updateKey]:updateValue};
@@ -175,6 +179,7 @@ const Task = ({
       nodes:booleanPayload,
       attributes: {...scaleAttributePayload, custom_attributes:customScaleAttributesPayload}
     }
+    //SUBMISSIONN CHECKS
     console.log("DUMMY DATA", selectionData)
     console.log("DATA TYPE", selectionDataType)
     console.log("ScaleAttributePayload :  ", scaleAttributePayload)
@@ -252,19 +257,22 @@ const Task = ({
         })
         :null
       }
-      <AttributeQuestions
-
-
-      >
-          <TagQuestion
-            header={tagQuestionHeader}
-            selection={selectionData}
-            booleanAttributeOptions={booleanAttributeOptions}
-            updateFunction={booleanAttributeUpdateHandler}
-            numericAttributeUpdateFunction={numericAttributeHandler}
-          />
-        </AttributeQuestions>
-        <TaskButton
+      <div className="attributequestion-container">
+        <h1 className="attributequestion-header">
+          {attributeQuestionHeader}
+        </h1>
+        <AttributeQuestions
+          selection={selectionData}
+          defaultQuestions={attributeQuestions}
+          updateFunction={defaultAttributeQuestionHandler}
+        />
+        <TagQuestion
+          selection={selectionData}
+          booleanAttributeOptions={booleanAttributeOptions}
+          updateFunction={booleanAttributeUpdateHandler}
+        />
+      </div>
+      <TaskButton
           name="Submit"
           isSelected={false}
           unselectedContainer="submission-button__container"

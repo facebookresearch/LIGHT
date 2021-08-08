@@ -3,28 +3,35 @@ import React, {useState, useEffect} from "react";
 //STYLE
 import "./styles.css";
 //CUSTOM COMPONENTS
-import MultipleSelectQuestion from "../../../components/Questions/MultipleSelectQuestion";
-import MultipleChoiceQuestion from "../../../components/Questions/MultipleChoiceQuestion";
-import NumberForm from "../../../components/NumberForm"
+import AttributeQuestionRow from "./AttributeQuestionRow";
 
 
 // AttributeQuestions - Renders all default questions for a item type
 const AttributeQuestions = ({
-    header,//Text at head of container
     selection,// Objects who's attributes are being added and removed
-    booleanAttributes, // the default attributes for the selected object type
-    updateFunction,// the function to update the attributes for the objects
-    numericAttributeUpdateFunction,// tthe function that updates numeric attribute values
-    children
+    defaultQuestions,
+    updateFunction// the function to update the attributes for the objects
 })=>{
 
 
 
     return(
-        <div>
-            <div>
-                {children}
-            </div>
+        <div className="attributequestion-body" >
+                {
+                    selection.length ?
+                    selection.map((node, index)=>{
+                        return (
+                            <AttributeQuestionRow
+                                key={index}
+                                selection={node}
+                                defaultQuestions={defaultQuestions}
+                                updateFunction={(updateKey, updateValue)=>updateFunction(index, updateKey, updateValue)}
+                            />
+                        )
+                    })
+                    :
+                    null
+                }
         </div>
     )
 }

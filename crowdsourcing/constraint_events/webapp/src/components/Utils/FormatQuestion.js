@@ -5,7 +5,6 @@ const FormatQuestion = ({
     keywords,
     containerStyle
 })=>{
-    //const [keywordPosition, setKeywordPosition] = useState(0)
 
     let questionArr = question.split(" ");
     let keywordPosition = 0;

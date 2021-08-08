@@ -7,3 +7,16 @@
     padding-bottom: 20px;
     overflow: scroll;
 }
+
+.attributequestion-container{
+    width:90%;
+    border-color: blue;
+    border-radius: 15px;
+    border-style: solid;
+    background-color: blue;
+}
+.attributequestion-header {
+    text-align: center;
+    font-weight: bold;
+    color:white;
+}
