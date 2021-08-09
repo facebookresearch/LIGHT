@@ -1,5 +1,6 @@
 const Copy ={
     attributeQuestionHeader:"ATTRIBUTES",
+    successMessage:"You have successfully submitted completed task!",
     objects:{
         defaultQuestions:[
             {

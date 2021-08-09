@@ -25,7 +25,8 @@ const Task = ({
     characters,
     locations,
     input,
-    attributeQuestionHeader
+    attributeQuestionHeader,
+    successMessage
   } = TaskCopy;
   /*------------------------------------STATE------------------------------------*/
   //Selection Recieved from Backend.
@@ -46,9 +47,11 @@ const Task = ({
   const [scaleAttributePayload, setScaleAttributePayload] = useState({});
   // Payload for custom Scale Attribute ratings and input
   const [customScaleAttributesPayload, setCustomScaleAttributesPayload] = useState([{name:"", description:"", vals:{} }, {name:"", description:"" }]);
-
+  // Boolean value that determines when Success Banner renders
   const [showSuccess, setShowSuccess] = useState(false);
+  // Boolean value that determines when Error Banner renders
   const [showError, setShowError] = useState(false);
+  // Array of strings populated by incomplete steps found during task submission
   const [errorMessage, setErrorMessage] = useState([])
 
   /*------------------------------------LIFE CYCLE------------------------------------*/
@@ -215,10 +218,6 @@ const Task = ({
       })
     }
   })
-    console.log("DUMMY DATA", selectionData)
-    console.log("DATA TYPE", selectionDataType)
-    console.log("ScaleAttributePayload :  ", scaleAttributePayload)
-    console.log("BOOLEAN PAYLOAD:  ", booleanPayload)
     console.log("submissionPayload:  ", submissionPayload)
     if(!errorList.length){
       console.log("SUCCESSFULLY READY TO SUBMIT")
@@ -235,6 +234,7 @@ const Task = ({
         <SuccessBanner
           showSuccess={showSuccess}
           toggleShowSuccess={()=>setShowSuccess(!showSuccess)}
+          successMessage={successMessage}
         />
         <ErrorBanner
           showError={showError}

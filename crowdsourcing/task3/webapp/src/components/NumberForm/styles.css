@@ -4,13 +4,13 @@
     flex-direction: column;
     margin-top:10px;
     margin-bottom: 10px;
-    padding-left: 10%;
+    width:40%;
    }
 
    .numberanswer-container {
        display: flex;
        flex-direction: column;
-       align-items: flex-start;
+       align-items: center;
        justify-content: center;
    }
 
@@ -18,7 +18,6 @@
        text-align: center;
        font-weight: bold;
        font-size: 20px;
-       padding-left: 20px;
        margin-bottom: 0px;
    }
 
