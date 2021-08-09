@@ -4,21 +4,22 @@ import React, {useEffect, useState} from "react";
 import "./styles.css";
 //BOOSTRAP
 import Form from 'react-bootstrap/Form';
-//CUSTOM COMPONENTS
-import TaskButton from "../../TaskButton"
 
 // MultipleChoiceQuestion - Form type that allows user to select single answer from multiple option to answer question
-const MultipleChoiceQuestion = ({question, answers, selectFunction})=>{
+const MultipleChoiceQuestion = ({question, answers, selectFunction, selection})=>{
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [answerList, setAnswerList] = useState([])
-
-    const clickHandler = (id)=>{
-        console.log("CLICK HANDLER:  ID:", id)
-        setSelectedAnswer(id);
-        answerList.map((ans, index)=>{
+    useEffect(()=>{
+        setAnswerList(answers)
+    }, [])
+    const clickHandler = (answer)=>{
+        console.log("selectedAnswer", answer)
+        console.log("ANSWER", answer)
+        setSelectedAnswer(answer);
+        answerList.map((ans)=>{
             const {value} = ans;
-            console.log("CLICK HANDLER:  ", id==index,  "ans:  ", ans, "index:", index)
-            if(id==index){
+            console.log("Comparison", answer==value)
+            if(answer==value){
                 selectFunction(value, true);
             }else{
                 selectFunction(value, false);
@@ -26,9 +27,8 @@ const MultipleChoiceQuestion = ({question, answers, selectFunction})=>{
 
         })
     }
-    useEffect(()=>{
-        setAnswerList(answers)
-    }, [answers])
+
+
     return(
         <div className="question-container" >
             <h1 className="question-text">
@@ -39,16 +39,16 @@ const MultipleChoiceQuestion = ({question, answers, selectFunction})=>{
                 answerList.length
                 ?
                 answerList.map((answer, index)=>{
-                    const {name} =answer;
+                    const {name, value} =answer;
                     return(
                         <Form.Check
                             inline
                             key={index}
                             label={name}
-                            name={name}
+                            name={selection.name}
                             type={"radio"}
-                            checked={selectedAnswer==index}
-                            onChange={()=>clickHandler(index, answer)}
+                            checked={selectedAnswer==value}
+                            onChange={(e)=>clickHandler(value)}
                         />
                     )
             })

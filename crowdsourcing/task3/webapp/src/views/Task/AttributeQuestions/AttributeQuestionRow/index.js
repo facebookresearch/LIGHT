@@ -44,6 +44,7 @@ const AttributeQuestionRow = ({
                         question={formattedQuestion}
                         answers={options}
                         selectFunction={(updateKey, updateValue)=>updateFunction(updateKey, updateValue)}
+                        selection={selection}
                     />
                 )
             default:

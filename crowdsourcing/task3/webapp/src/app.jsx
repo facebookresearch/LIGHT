@@ -136,25 +136,25 @@ function MainApp() {
         {
           id:1,
           name:"Smithing Hut",
-          attributes:[{name:"indoors",value:true}],
+          attributes:[],
           description: "A blacksmith's workshop laden with tools and at the center is a forge"
         },
         {
           id:2,
           name:"Dungeon",
-          attributes:[{name:"indoors",value:true}],
+          attributes:[],
           description: "A castle's windowless dungeon, the walls made of stone, bars line some cells and chains hang from the walls."
         },
         {
           id:3,
           name:"Wizard Tower",
-          attributes:[{name:"indoors",value:true}],
+          attributes:[],
           description:"A tall amethyst tower with floating on stones high in the sky, filled with books, artefacts, and presumably a wizard."
         },
         {
           id:4,
           name:"Ice Giant Camp",
-          attributes:[{name:"outdoors",value:true}],
+          attributes:[],
           description: "A circle of massive tents around a fire the size of an average human's house.  The camp is covered in think layers of icy snow."
         }
       ]
