@@ -40,7 +40,7 @@ const ScaleHeader = ({
             </>
             :
             <>
-                <p className="scaleheader-trait__text">{trait}</p>
+                <p className="scaleheader-trait__text">{`${trait}  -  `}</p>
                 <p className="scaleheader-description__text">{traitDescription}</p>
             </>
             }

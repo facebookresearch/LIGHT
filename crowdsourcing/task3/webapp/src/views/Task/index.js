@@ -242,7 +242,7 @@ const Task = ({
           errors={errorMessage}
         />
       {
-        data.length ?
+        selectionData.length ?
         <SelectionList selection={selectionData} />
         :
         null

@@ -70,7 +70,7 @@ const ScaleField = ({
     const leftEdge= flagX;//Left edge of flag
     const rightEdge= flagX+flagWidth// Right edge of flag
     let leftBoundaryCrossed =(leftEdge - leftSoftBoundary);//space left edge of flag has passed the left soft boundary.
-    let rightBoundaryCrossed =(rightEdge-rightSoftBoundary);//space right edge of flag has passed the right soft boundary.
+    let rightBoundaryCrossed =(rightEdge-rightSoftBoundary)*1.25;//space right edge of flag has passed the right soft boundary.
     const leftBoundaryOffset = (leftEdge <leftSoftBoundary) && ((leftEdge-leftBoundaryCrossed)<=(leftEdge+(flagWidth/2)+leftBoundaryCrossed)) ? leftBoundaryCrossed: 0;// ternary that limits when offset of left boundary is applied
     const rightBoundaryOffset = rightEdge>rightSoftBoundary ? rightBoundaryCrossed/2: 0;// ternary that limits when offset of right boundary is applied
     const poleOffset = rightBoundaryOffset + leftBoundaryOffset;// xoffset applied to "flag" and "flag pole"
