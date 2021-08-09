@@ -163,7 +163,7 @@ function MainApp() {
   return (
     <div className="view-container">
       <Task
-        data={LocationDummyData}
+        data={CharacterDummyData}
         //ObjectDummyData={ObjectDummyData}
         // CharacterDummyData={CharacterDummyData}
         // LocationDummyData={LocationDummyData}

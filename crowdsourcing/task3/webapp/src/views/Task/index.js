@@ -9,6 +9,8 @@ import AttributeQuestions from "./AttributeQuestions";
 import TagQuestion from "../../components/Questions/TagQuestion";
 import SelectionList from "../../components/SelectionList";
 import TaskButton from "../../components/TaskButton";
+import SuccessBanner from "../../components/SuccessBanner";
+import ErrorBanner from "../../components/ErrorBanner";
 //COPY
 import TaskCopy from "../../TaskCopy";
 
@@ -162,8 +164,8 @@ const Task = ({
     console.log("BOOLEAN UPDATES TO PAYLOAD  ATTR:  ", updatedAttributes, )
     setBooleanPayload(updatedAttributes)
   }
-//defaultAttributeQuestionHandler
-  const defaultAttributeQuestionHandler = (position, updateKey, updateValue)=>{
+//defaultAttributeQuestionUpdateHandler
+  const defaultAttributeQuestionUpdateHandler = (position, updateKey, updateValue)=>{
     let unupdatedAttributes = booleanPayload;
     let unupdatedValues = unupdatedAttributes[position].values;
     let updatedValues = {...unupdatedValues, [updateKey]:updateValue};
@@ -175,22 +177,70 @@ const Task = ({
 
   //submissionHandler
   const submissionHandler=()=>{
-    let submissionPayload = {
+    let errorList =[];
+    const submissionPayload = {
       nodes:booleanPayload,
       attributes: {...scaleAttributePayload, custom_attributes:customScaleAttributesPayload}
     }
-    //SUBMISSIONN CHECKS
+
+    /*---------- SUBMISSION CHECKS ----------*/
+    /*Scale Attributes Ratings*/
+    const {attributes} = submissionPayload ;
+    Object.keys(attributes).forEach(attr=>{
+    //CUSTOM ATTRIBUTE CHECK
+      if(attr == "custom_attributes"){
+        let customAttributes = attributes[attr];
+        customAttributes.map((custAttr, index)=>{
+          Object.keys(custAttr).forEach(custAttrField=>{
+            if(custAttrField == "vals"){
+              let customAttributeRatings = custAttr[custAttrField];
+              selectionData.map(selection => {
+                const {name} = selection ;
+                if(!customAttributeRatings[name]){
+                  errorList.push(`${name} missing custom attribute ${index+1} rating`)
+                }
+              })
+            }else if(!custAttr[custAttrField]){
+              errorList.push(`Custom Attribute ${index+1} missing ${custAttrField} `)
+            }
+          })
+        })
+      }else{
+      //DEFAULT ATTRIBUTE CHECK
+        let nodeRatings = attributes[attr];
+        Object.keys(nodeRatings).forEach(node=>{
+          if(!nodeRatings[node]){
+            errorList.push(`${node} missing ${attr} rating`)
+          }
+      })
+    }
+  })
     console.log("DUMMY DATA", selectionData)
     console.log("DATA TYPE", selectionDataType)
     console.log("ScaleAttributePayload :  ", scaleAttributePayload)
     console.log("BOOLEAN PAYLOAD:  ", booleanPayload)
     console.log("submissionPayload:  ", submissionPayload)
-
-    //handleSubmit()
+    if(!errorList.length){
+      console.log("SUCCESSFULLY READY TO SUBMIT")
+      setShowSuccess(true);
+      //handleSubmit()
+    }else{
+      setErrorMessage(errorList);
+      setShowError(true);
+    }
   }
     return (
       <div className="task-container">
         <Header/>
+        <SuccessBanner
+          showSuccess={showSuccess}
+          toggleShowSuccess={()=>setShowSuccess(!showSuccess)}
+        />
+        <ErrorBanner
+          showError={showError}
+          hideError={()=>setShowError(false)}
+          errors={errorMessage}
+        />
       {
         data.length ?
         <SelectionList selection={selectionData} />
@@ -264,7 +314,7 @@ const Task = ({
         <AttributeQuestions
           selection={selectionData}
           defaultQuestions={attributeQuestions}
-          updateFunction={defaultAttributeQuestionHandler}
+          updateFunction={defaultAttributeQuestionUpdateHandler}
         />
         <TagQuestion
           selection={selectionData}

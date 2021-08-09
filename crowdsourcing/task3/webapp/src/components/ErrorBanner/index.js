@@ -1,44 +1,35 @@
 //REACT
-import React from "react";
-//STYLES
-import "./styles.css";
-//BOOTSTRAP
-import Toast from 'react-bootstrap/Toast';
-import ToastHeader from 'react-bootstrap/ToastHeader';
-import ToastBody from 'react-bootstrap/ToastBody';
+import React, {useState} from "react";
+//STYLING
+import "./styles.css"
+//BOOTSTRAP COMPONENTS
+import Alert from 'react-bootstrap/Alert'
 //ICONS
 import { BsExclamationOctagonFill, BsCheck, BsX } from "react-icons/bs";
 
-
-
-const ErrorBanner = ({
-    showError,
-    toggleShowError,
-    errorMessage
+// ErrorToast - renders toast for user with relevant errors rendered as a bulleted list in the toast.
+const ErrorBanner= ({
+    errors, // Array of Errors from App state generated when user attempts an erroneous submission
+    showError, //Boolean signaling toast to render.
+    hideError, // Function that will hide toast upon clicking the x in the top right corner
 })=>{
-    return (
-        <>
-            <Toast show={showError} onClose={toggleShowError} style={{backgroundColor:"red"}} delay={3000} autohide >
-            <Toast.Header closeButton={false} style={{backgroundColor:"red", color:"white",textDecoration:"underline", textDecorationColor:"white", display:"flex", justifyContent:"space-between", alignItems:"center", paddingLeft:'2em'}}>
-                <span style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-                <BsExclamationOctagonFill color="white" style={{fontSize:"18px"}}/>
-                <strong className="mr-auto" style={{color:"white", fontWeight:"bold", marginLeft:"5px"}}>ERROR</strong>
-                </span>
-                <BsX color="white" onClick={toggleShowError} style={{fontSize:"18px"}} />
-            </Toast.Header>
-            <Toast.Body style={{fontSize:"18px", color:"white", paddingLeft:'4em'}}>
+    return(
+        <Alert variant="danger" dismissible id="toast-container" onClose={hideError} show={showError} >
+            <p id="toast-header">
+                ERROR
+            </p>
                 <ul>
-                {
-                errorMessage.map((err, id)=>{
-                    if(err.length){
-                    return <li key={id}>{err}</li>
+                    {
+                    errors.map((err, index)=>(
+                    <li style={{width: "90vw"}} id="toast-error" key={index}>
+                        {err}
+                    </li>
+                    ))
                     }
-                    })
-                }
                 </ul>
-                </Toast.Body>
-            </Toast>
-        </>
+
+        </Alert>
     )
 }
+
 export default ErrorBanner;

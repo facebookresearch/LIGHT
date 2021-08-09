@@ -53,7 +53,7 @@ const AttributeQuestionRow = ({
     }
 
     return(
-        <div>
+        <div className="attributequestionrow-container">
             {
                 defaultQuestions
                 ?
