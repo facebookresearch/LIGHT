@@ -12,13 +12,19 @@ const MultipleChoiceQuestion = ({question, answers, selectFunction})=>{
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [answerList, setAnswerList] = useState([])
 
-    const clickHandler = (id, answer)=>{
-        if(selectedAnswer==index){
-            setSelectedAnswer(null);
-            selectFunction(answer.value, false);
-        }
+    const clickHandler = (id)=>{
+        console.log("CLICK HANDLER:  ID:", id)
         setSelectedAnswer(id);
-        selectFunction(answer);
+        answerList.map((ans, index)=>{
+            const {value} = ans;
+            console.log("CLICK HANDLER:  ", id==index,  "ans:  ", ans, "index:", index)
+            if(id==index){
+                selectFunction(value, true);
+            }else{
+                selectFunction(value, false);
+            }
+
+        })
     }
     useEffect(()=>{
         setAnswerList(answers)
@@ -30,18 +36,19 @@ const MultipleChoiceQuestion = ({question, answers, selectFunction})=>{
             </h1>
             <div className="answer-container">
             {
-                [answerList].length
+                answerList.length
                 ?
                 answerList.map((answer, index)=>{
-                    const {name, value} =answer;
+                    const {name} =answer;
                     return(
                         <Form.Check
+                            inline
                             key={index}
                             label={name}
                             name={name}
                             type={"radio"}
                             checked={selectedAnswer==index}
-                            onChange={()=>clickHandler(index, value)}
+                            onChange={()=>clickHandler(index, answer)}
                         />
                     )
             })

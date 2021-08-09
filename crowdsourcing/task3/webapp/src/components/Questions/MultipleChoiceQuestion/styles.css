@@ -1,7 +1,7 @@
 /* MULTIPLE CHOICE QUESTION */
 .question-container {
     display:flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     margin: 15px 0px 10px 0;
@@ -10,8 +10,6 @@
     font-size: 20px;
     font-weight: bold;
     text-align: center;
-    text-decoration: underline;
-    color: blue;
     margin-bottom: 5px;
 }
 .answer-container {
