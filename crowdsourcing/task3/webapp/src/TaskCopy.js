@@ -16,14 +16,37 @@ const Copy ={
         }
     },
     tagQuestionHeader:"ATTRIBUTES",
+    attributeQuestionHeader:"ATTRIBUTES",
+    successMessage:"You have successfully submitted completed task!",
     objects:{
-        booleanAttributes:[
-            "container",
-            "surface",
-            "living",
-            "wieldable",
-            "wearable",
+        defaultQuestions:[
+            {
+                questionType:"multipleSelect",
+                question:"# is:  ",
+                options:[
+                    {
+                        name:"a container.",
+                        value: "container"
+                    },
+                    {
+                        name:"a surface.",
+                        value: "surface"
+                    },
+                    {
+                        name:"living.",
+                        value: "living"
+                    },
+                    {
+                        name:"wieldable.",
+                        value: "wieldable"
+                    },                    {
+                        name:"wearable.",
+                        value: "wearable"
+                    }
+                ]
+            }
         ],
+        defaultBooleanAttributeOptions:[],
         traits:[
             {
                 name: "SIZE",
@@ -197,12 +220,43 @@ const Copy ={
                     }
                 ]
             },
+            {
+                name: "USEFULNESS",
+                description:"How likely is the it that he object will be used?",
+                scaleRange:[
+                    {
+                    name:"MIN",
+                    example: "Almost Never",
+                    color:"green"
+                    },
+                    {
+                    name:"MID",
+                    example: "Fairly Often",
+                    color:"blue"
+                    },
+                    {
+                    name:"MAX",
+                    example: "Almost Never",
+                    color:"red"
+                    }
+                ]
+            },
         ]
         },
     characters:{
-        booleanAttributes:[
-            "arm and leg counts",
+        defaultQuestions:[
+            {
+                question:"# arm count:  ",
+                questionType:"numeric",
+                field:"arms"
+            },
+            {
+                question:"# leg count:  ",
+                questionType:"numeric",
+                field:"legs"
+            }
         ],
+        defaultBooleanAttributeOptions:[],
         traits:[
             {
                 name: "STRENGTH",
@@ -375,10 +429,23 @@ const Copy ={
         ]
       },
       locations:{
-        booleanAttributes:[
-            "indoors",
-            "outdoors"
+        defaultQuestions:[
+            {
+                questionType:"multipleChoice",
+                question:"# is:  ",
+                options:[
+                    {
+                        name:"Indoors",
+                        value: "indoors"
+                    },
+                    {
+                        name:"Outdoors",
+                        value: "outdoors"
+                    }
+                ]
+            }
         ],
+        defaultBooleanAttributeOptions:[],
         traits:[
             {
                 name: "SIZE",

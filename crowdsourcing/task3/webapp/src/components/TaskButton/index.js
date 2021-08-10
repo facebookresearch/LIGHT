@@ -1,5 +1,5 @@
 //REACT
-import React, {useState} from "react";
+import React from "react";
 //STYLE
 import "./styles.css"
 
@@ -16,7 +16,7 @@ const TaskButton = ({
 
     return(
         <div className={isSelected ?  selectedContainer : unselectedContainer} onClick={selectFunction}>
-            <p className={isSelected ? selectedText : unselectedText}>
+            <p className={isSelected ? selectedText : unselectedText} style={{marginBottom:"0px"}}>
                 {name.toUpperCase()}
             </p>
         </div>

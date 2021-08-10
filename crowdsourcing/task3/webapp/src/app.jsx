@@ -30,7 +30,6 @@ function MainApp() {
     handleSubmit,
   } = useMephistoTask();
 
-  const [submissionData, setSubmissionData]= useState([])
 
   if (blockedReason !== null) {
     return (
@@ -70,7 +69,9 @@ function MainApp() {
 
   //console.log('active? ', active);
 
-  const ObjectDummyData= [
+  const ObjectDummyData= {
+    itemCategory:"objects",
+    selection:[
         {
           id:1,
           name:"Sword",
@@ -96,66 +97,77 @@ function MainApp() {
           description: "A massive ornate chest over flowing with gold coins and precious gems."
         }
       ]
+    }
 
 
-  const CharacterDummyData= [
-        {
-          name:"Butcher",
-          attributes:[{name:"limbs",value:4}],
-          description: "A humble carver and seller of meats."
-        },
-        {
-          name:"Baker",
-          attributes:[{name:"limbs",value:4}],
-          description: "A talented and thoughtful distributor of baked goods they prepare."
-        },
-        {
-          name:"Candlestick Maker",
-          attributes:[{name:"limbs",value:4}],
-          description:"A wealthy and arrogant wax sculptor."
-        },
-        {
-          name:"Kroktar Devourer of Souls",
-          attributes:[{name:"limbs",value:8}],
-          description: "An armor clad, ageless horror who is said to have felled a thousand armies."
-        }
-      ]
+  const CharacterDummyData= {
+    itemCategory:"characters",
+    selection:[
+          {
+            id:1,
+            name:"Butcher",
+            attributes:[],
+            description: "A humble carver and seller of meats."
+          },
+          {
+            id:2,
+            name:"Baker",
+            attributes:[],
+            description: "A talented and thoughtful distributor of baked goods they prepare."
+          },
+          {
+            id:3,
+            name:"Candlestick Maker",
+            attributes:[],
+            description:"A wealthy and arrogant wax sculptor."
+          },
+          {
+            id:4,
+            name:"Kroktar Devourer of Souls",
+            attributes:[],
+            description: "An armor clad, ageless horror who is said to have felled a thousand armies."
+          }
+        ]
+  }
 
-  const LocationDummyData= [
+  const LocationDummyData= {
+    itemCategory:"locations",
+    selection:[
         {
+          id:1,
           name:"Smithing Hut",
-          attributes:[{name:"indoors",value:true}],
+          attributes:[],
           description: "A blacksmith's workshop laden with tools and at the center is a forge"
         },
         {
+          id:2,
           name:"Dungeon",
-          attributes:[{name:"indoors",value:true}],
+          attributes:[],
           description: "A castle's windowless dungeon, the walls made of stone, bars line some cells and chains hang from the walls."
         },
         {
+          id:3,
           name:"Wizard Tower",
-          attributes:[{name:"indoors",value:true}],
+          attributes:[],
           description:"A tall amethyst tower with floating on stones high in the sky, filled with books, artefacts, and presumably a wizard."
         },
         {
+          id:4,
           name:"Ice Giant Camp",
-          attributes:[{name:"outdoors",value:true}],
+          attributes:[],
           description: "A circle of massive tents around a fire the size of an average human's house.  The camp is covered in think layers of icy snow."
         }
       ]
-
-const submissionHandler = ()=>{
-
-
-  handleSubmit(payloadData)
-}
-
+  }
 
   return (
     <div className="view-container">
       <Task
-        data={LocationDummyData}
-        submissionHandler={submissionHandler}
+        data={CharacterDummyData}
+        //ObjectDummyData={ObjectDummyData}
+        // CharacterDummyData={CharacterDummyData}
+        // LocationDummyData={LocationDummyData}
+        handleSubmit={handleSubmit}
         />
     </div>
   );

@@ -12,6 +12,7 @@ const ScaleField = ({
     width,// component width
     selection, // array of objects being rated
     scaleRange,// The example objects and colors for the rating scale
+    dragFunction
 }) => {
     const generateFlags = (arr)=> {
         const xPos = (width*.06);//initial position of
@@ -69,7 +70,7 @@ const ScaleField = ({
     const leftEdge= flagX;//Left edge of flag
     const rightEdge= flagX+flagWidth// Right edge of flag
     let leftBoundaryCrossed =(leftEdge - leftSoftBoundary);//space left edge of flag has passed the left soft boundary.
-    let rightBoundaryCrossed =(rightEdge-rightSoftBoundary);//space right edge of flag has passed the right soft boundary.
+    let rightBoundaryCrossed =(rightEdge-rightSoftBoundary)*1.25;//space right edge of flag has passed the right soft boundary.
     const leftBoundaryOffset = (leftEdge <leftSoftBoundary) && ((leftEdge-leftBoundaryCrossed)<=(leftEdge+(flagWidth/2)+leftBoundaryCrossed)) ? leftBoundaryCrossed: 0;// ternary that limits when offset of left boundary is applied
     const rightBoundaryOffset = rightEdge>rightSoftBoundary ? rightBoundaryCrossed/2: 0;// ternary that limits when offset of right boundary is applied
     const poleOffset = rightBoundaryOffset + leftBoundaryOffset;// xoffset applied to "flag" and "flag pole"
@@ -79,6 +80,12 @@ const ScaleField = ({
         setSelectionFlags(
             selectionFlags.map((flag) => {
                 if(flag.id=== id){
+                    console.log("FLAG UPDATE :  ", flag, width, flagWidth, flag.name, (polePosition-leftSoftBoundary)/(width-leftSoftBoundary))
+                    if(showPole){
+                        let rating = ((polePosition-leftSoftBoundary)/(width-leftSoftBoundary))*100
+                        console.log("RATING VALUE:  ", rating)
+                        dragFunction(flag.name, rating)
+                    }
                     return {
                         ...flag,
                         isDragging: false,
