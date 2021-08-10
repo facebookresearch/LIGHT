@@ -154,12 +154,8 @@ const submissionHandler = ()=>{
   return (
     <div className="view-container">
       <Task
-        data={ObjectDummyData}
-        //ObjectDummyData={ObjectDummyData}
-        // CharacterDummyData={CharacterDummyData}
-        // LocationDummyData={LocationDummyData}
+        data={LocationDummyData}
         submissionHandler={submissionHandler}
-        setPayloadData = {setPayloadData}
         />
     </div>
   );
