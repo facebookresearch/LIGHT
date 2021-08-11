@@ -1,0 +1,25 @@
+/* PREVIEW STYLES */
+.view-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 20px;
+}
+
+.preview-container {
+    margin-top: 5px;
+    width:90%;
+    display: flex;
+    flex-direction: column;
+}
+.intro-container{
+    width:90%;
+    margin-top:10px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+.intro-text{
+    font-size: 20px;
+}
