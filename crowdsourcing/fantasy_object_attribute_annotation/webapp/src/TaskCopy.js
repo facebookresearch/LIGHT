@@ -1,3 +1,46 @@
+/*----------------SCREENSHOTS/IMAGES----------------*/
+/*SELECTION*/
+import Selection from "./assets/images/tutorial/Selection.png";
+/*SUBMIT BUTTON*/
+import SubmitButton from "./assets/images/tutorial/SubmitButton.png";
+/*TOOLTIP*/
+import BooleanAttributeTooltip from "./assets/images/tutorial/BooleanAttributeTooltip.png";
+/*---------STEP SCREENSHOTS---------*/
+
+/*-------SCALES-------*/
+/*ATTRIBUTE SCALE STEPS*/
+import AttributeScale1 from "./assets/images/tutorial/AttributeScale/AttributeScale1.png";
+import AttributeScale2 from "./assets/images/tutorial/AttributeScale/AttributeScale2.png";
+import AttributeScale3 from "./assets/images/tutorial/AttributeScale/AttributeScale3.png";
+
+/*CUSTOM ATTRIBUTE SCALE STEPS*/
+import CustomAttributeScale1 from "./assets/images/tutorial/CustomAttributeScale/CustomAttributeScale1.png";
+import CustomAttributeScale2 from "./assets/images/tutorial/CustomAttributeScale/CustomAttributeScale2.png";
+import CustomAttributeScale3 from "./assets/images/tutorial/CustomAttributeScale/CustomAttributeScale3.png";
+
+/*-------TYPE SPECIFIC-------*/
+/*ATTRIBUTE CHECKLIST STEPS*/
+import AttributeChecklist1 from "./assets/images/tutorial/AttributeChecklist/AttributeChecklist1.png";
+import AttributeChecklist2 from "./assets/images/tutorial/AttributeChecklist/AttributeChecklist2.png";
+import AttributeChecklist3 from "./assets/images/tutorial/AttributeChecklist/AttributeChecklist3.png";
+
+/*NUMERIC ATTRIBUTE STEPS*/
+import NumericAttribute1 from "./assets/images/tutorial/NumericAttribute/NumericAttribute1.png";
+import NumericAttribute2 from "./assets/images/tutorial/NumericAttribute/NumericAttribute2.png";
+import NumericAttribute3 from "./assets/images/tutorial/NumericAttribute/NumericAttribute3.png";
+
+/*ATTRIBUTE RADIO STEPS*/
+import AttributeRadio1 from "./assets/images/tutorial/AttributeRadio/AttributeRadio1.png";
+import AttributeRadio2 from "./assets/images/tutorial/AttributeRadio/AttributeRadio2.png";
+import AttributeRadio3 from "./assets/images/tutorial/AttributeRadio/AttributeRadio3.png";
+
+/*-------BOOLEAN-------*/
+/*BOOLEAN ATTRIBUTE STEPS*/
+import BooleanAttribute1 from "./assets/images/tutorial/BooleanAttribute/BooleanAttribute1.png";
+import BooleanAttribute2 from "./assets/images/tutorial/BooleanAttribute/BooleanAttribute2.png";
+import BooleanAttribute3 from "./assets/images/tutorial/BooleanAttribute/BooleanAttribute3.png";
+
+
 const Copy ={
     taskHeader:"Fantasy Object Attribute Annotation",
     previewCopy:{
