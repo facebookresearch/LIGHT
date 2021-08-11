@@ -6,37 +6,42 @@ import { Layer, Rect, Text, Group, Line } from 'react-konva';
 import SelectionGallery from "./SelectionGallery"
 import ExampleFlag from "./ExampleFlag";
 
+//CONSTANTS
+const SELECTION_BOX_WIDTH_PERCENTAGE = .253;
+const RIGHT_BOUNDARY_QUICKFIX = 1.25;
+
+
 //ScaleField - Primary componenent that acts as the field the scaleFlags can moved around on.
 const ScaleField = ({
     height,//component Height
     width,// component width
     selection, // array of objects being rated
     scaleRange,// The example objects and colors for the rating scale
-    dragFunction
+    dragFunction// Function for collecting rating that is being applied to the drag action on the flags
 }) => {
     const generateFlags = (arr)=> {
-        const xPos = (width*.06);//initial position of
+        const xPos = (width*.06);//initial position of flag on x axis
         if(arr){
             return [...arr.map(
                 (flag, i) => ({
                     name:flag.name,
                     id: i.toString(),
                     x: xPos,
-                    y: 50+(i*80),
+                    y: 50+(i*80),////initial position of flag on y axis starting at 50 as a "top margin" then based on index in array shifting downward in increments of 80
                     isDragging: false,
                     flagX:xPos,
-                    flagY:50+(i*80)
+                    flagY:50+(i*80)//
                     })
                 )
             ];
         }
     }
-/**************************STATE***************************************************************/
+/*----------------------STATE----------------------*/
     const [scaleContainerWidth, setScaleContainerWidth] = React.useState(0)//containerwidth of entire field
     const [selectionFlags, setSelectionFlags] = React.useState([]);//Array of objects being rated
-
+/*----------------------LIFECYCLE----------------------*/
     useEffect(()=>{
-        setScaleContainerWidth(width*.8)
+        setScaleContainerWidth(width)
     },[width])
 
     useEffect(()=>{
@@ -47,7 +52,7 @@ const ScaleField = ({
     },[selection])
 
     const flagWidth = width*.1;
-    const leftSoftBoundary = (width*.253);
+    const leftSoftBoundary = (width*SELECTION_BOX_WIDTH_PERCENTAGE);
     const rightSoftBoundary = scaleContainerWidth+(flagWidth/2);
     const scaleHeaderWidth = width-leftSoftBoundary
 //handleDragStart - Handles Dragging event updating dragged flag's information in state.
@@ -70,11 +75,11 @@ const ScaleField = ({
     const leftEdge= flagX;//Left edge of flag
     const rightEdge= flagX+flagWidth// Right edge of flag
     let leftBoundaryCrossed =(leftEdge - leftSoftBoundary);//space left edge of flag has passed the left soft boundary.
-    let rightBoundaryCrossed =(rightEdge-rightSoftBoundary)*1.25;//space right edge of flag has passed the right soft boundary.
+    let rightBoundaryCrossed =(rightEdge-rightSoftBoundary)*RIGHT_BOUNDARY_QUICKFIX//space right edge of flag has passed the right soft boundary.
     const leftBoundaryOffset = (leftEdge <leftSoftBoundary) && ((leftEdge-leftBoundaryCrossed)<=(leftEdge+(flagWidth/2)+leftBoundaryCrossed)) ? leftBoundaryCrossed: 0;// ternary that limits when offset of left boundary is applied
     const rightBoundaryOffset = rightEdge>rightSoftBoundary ? rightBoundaryCrossed/2: 0;// ternary that limits when offset of right boundary is applied
     const poleOffset = rightBoundaryOffset + leftBoundaryOffset;// xoffset applied to "flag" and "flag pole"
-    const polePosition = flagX+(flagWidth*.5)+poleOffset; //Flag pole position on scale after offset
+    const polePosition = flagX+(flagWidth/2)+poleOffset; //Flag pole position on scale after offset
     let showPole = ((leftEdge-leftBoundaryCrossed)<=(leftEdge+(flagWidth/2)+leftBoundaryCrossed)) ? true :false // ternary that sets the condition of when the "flag pole" is visible
     let ratingValue = ((polePosition-leftSoftBoundary)/(width-leftSoftBoundary))  // value being sent to payload state.
         setSelectionFlags(
@@ -112,7 +117,7 @@ const dragBoundaryHandler = (pos)=>{
     const leftXBoundary = 0;
     const rightXBoundary = scaleContainerWidth;
     const topYBoundary = 0;
-    const bottomYBoundary = height - 50// 50 is rect Rect height
+    const bottomYBoundary = height - 50// 50 is Rect height
     let newflagX = flagX < leftXBoundary ? leftXBoundary : ((flagX>rightXBoundary) ? rightXBoundary :flagX);//ternary setting the conditions that define the drag boundary for the X axis
     let newflagY = flagY < topYBoundary ? topYBoundary : ((flagY>bottomYBoundary)? bottomYBoundary :flagY);//ternary setting the conditions that define the drag boundary for the Y axis
     return {
@@ -124,7 +129,7 @@ const dragBoundaryHandler = (pos)=>{
   return (
     <Layer>
         <Group
-            x={width*.253}
+            x={width*SELECTION_BOX_WIDTH_PERCENTAGE}
             y={0}
         >
             <Rect
@@ -141,7 +146,7 @@ const dragBoundaryHandler = (pos)=>{
                 fill="white"
                 opacity={1}
                 style={{zIndex:"99"}}
-                offsetX={scaleHeaderWidth*-.010}
+                offsetX={scaleHeaderWidth*-.01}
                 offsetY={-10}
             />
             <Text
@@ -182,12 +187,12 @@ const dragBoundaryHandler = (pos)=>{
         let flagSpacing = width*.23;//space between example flags
         let flagWidth = (width/(scaleRange.length)) -flagSpacing
         let xOffset =(width*.27);
-        let xPosition = ((width*.23)*index) + xOffset;
+        let xPosition = (flagSpacing*index) + xOffset;
         return(
             <ExampleFlag
                 key={index}
                 xPosition={xPosition}
-                yPosition={200}
+                yPosition={200} //Fix heigh position of example flags
                 width={flagWidth}
                 height={height}
                 label={example}
@@ -196,9 +201,9 @@ const dragBoundaryHandler = (pos)=>{
         )})
     }
         <Line
-            x={width*.253}
+            x={width*SELECTION_BOX_WIDTH_PERCENTAGE}
             y={height}
-            points={[0, 0, width, 0, width, height*-.15]}
+            points={[0, 0, width, 0, width, height*-.15]}//Draw points, for scale [x, y, x, y...] so bottom left corner to bottom right corner to right edge 15% of height then connecting to form triangle
             tension={0}
             closed
             stroke="black"

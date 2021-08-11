@@ -66,7 +66,7 @@ const TagRow = ({
                     defaultSelected={startingAttributes}
                     id="custom-selections-example"
                     multiple
-                    newSelectionPrefix="Add a new item: "
+                    newSelectionPrefix="Add a new attribute:  "
                     options={booleanAttributeOptions}
                     placeholder="Add Attributes here"
                     ref={attributeRef}

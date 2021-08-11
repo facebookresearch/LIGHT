@@ -1,5 +1,5 @@
 //REACT
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 //KONVA
 import { Stage, Layer, Line, RegularPolygon} from 'react-konva';
 //STYLING
@@ -17,6 +17,7 @@ const Scale = ({
     dragFunction
 }) => {
     const [dimensions, setDimensions]= useState(GetWindowDimensions())
+
     useEffect(()=>{
         const handleResize = ()=>{
             console.log("RESIZE WORKING")

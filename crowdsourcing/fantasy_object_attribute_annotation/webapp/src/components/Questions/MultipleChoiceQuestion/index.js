@@ -51,7 +51,7 @@ const MultipleChoiceQuestion = ({question, answers, selectFunction, selection})=
                             onChange={(e)=>clickHandler(value)}
                         />
                     )
-            })
+                })
                 :
                 null
             }

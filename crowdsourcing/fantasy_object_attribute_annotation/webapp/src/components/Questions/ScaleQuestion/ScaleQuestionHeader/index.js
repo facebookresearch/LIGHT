@@ -2,7 +2,6 @@
 import React, {useEffect, useState} from "react";
 //STYLING
 import "./styles.css"
-//TYPEAHEAD TOKENIZER
 
 //ScaleHeader - renders header of ScaleQuestion component displayinng Trait and short description trait
 const ScaleHeader = ({
@@ -11,8 +10,12 @@ const ScaleHeader = ({
     isCustom,
     updateFunction
 }) => {
+
+    /*----------------------STATE----------------------*/
     const [traitNameInput, setTraitNameInput] = useState("");
     const [traitDescriptionInput, setTraitDescriptionInput] = useState("");
+
+    /*----------------------EVENTHANDLERS----------------------*/
     const inputChangeHandler = (e)=>{
         let {target} = e;
         let{name, value} =target;
@@ -29,14 +32,20 @@ const ScaleHeader = ({
             {isCustom
              ?
             <>
-                <label className="scaleheader-trait__text">
-                    TRAIT NAME
-                </label>
-                <input className="scaleheader-input" type="text" name={"traitName"} value={traitNameInput} onChange={inputChangeHandler}/>
-                <label className="scaleheader-description__text">
-                    TRAIT DESCRIPTION
-                </label>
-                <input className="scaleheader-input" type="text" name={"traitDescription"} value={traitDescriptionInput} onChange={inputChangeHandler}/>
+                <input
+                    className="scaleheader-input"
+                    type="text" name={"traitName"}
+                    value={traitNameInput}
+                    onChange={inputChangeHandler}
+                    placeholder="Enter custom trait name here"
+                />
+                <input
+                    className="scaleheader-input"
+                    type="text" name={"traitDescription"}
+                    value={traitDescriptionInput}
+                    onChange={inputChangeHandler}
+                    placeholder="Enter a description for this trait"
+                />
             </>
             :
             <>
