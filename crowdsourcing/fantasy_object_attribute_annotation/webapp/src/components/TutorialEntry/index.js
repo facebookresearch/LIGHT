@@ -8,6 +8,7 @@ const TutorialEntry = ({
     question,//Question being explained
     explanation,//Explanation text
     screenshot,// Screenshot of question and UI
+    children
 })=>{
     return(
         <div className="tutorialentry-container">
@@ -24,6 +25,7 @@ const TutorialEntry = ({
             <div className="tutorialentry-img">
                 {screenshot ? <img style={{width:"50%"}} src={screenshot} />: null}
             </div>
+            {children}
         </div>
     )
 }

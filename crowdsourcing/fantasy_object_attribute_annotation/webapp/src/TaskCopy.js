@@ -136,15 +136,15 @@ const Copy ={
                     questionName: "Boolean Attributes",
                     steps:[
                         {
-                            stepCopy: "For this form you will be provided with a list of mutually exclusive attributes next to each of the selection.",
+                            stepCopy: "For this form you will either be adding attributes to each of the selection.",
                             stepImg: BooleanAttribute1
                         },
                         {
-                            stepCopy: 'Only one of the attributes can be selected at a time so select the attribute that best fits its corresponding selection.',
+                            stepCopy: 'Sometimes possible attributes will be showcased in the dropdown but if none are seen you are to create your own.',
                             stepImg: BooleanAttribute2
                         },
                         {
-                            stepCopy: 'The form will be completed when each selection has been given an attribute.',
+                            stepCopy: 'The form is complete when at least 4 attributes have been given to each of the selection.',
                             stepImg: BooleanAttribute3
                         }
                     ]

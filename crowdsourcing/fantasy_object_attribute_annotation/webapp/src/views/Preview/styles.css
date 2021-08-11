@@ -1,17 +1,12 @@
 /* PREVIEW STYLES */
-.view-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: 20px;
-}
 
 .preview-container {
     margin-top: 5px;
     width:90%;
     display: flex;
     flex-direction: column;
+    overflow-y: scroll;
+    background-color: white;
 }
 .intro-container{
     width:90%;
