@@ -165,7 +165,7 @@ function MainApp() {
   return (
     <div className="view-container">
       <Task
-        data={CharacterDummyData}
+        data={LocationDummyData}
         handleSubmit={handleSubmit}
         />
     </div>
