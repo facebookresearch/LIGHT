@@ -51,11 +51,104 @@ const Copy ={
                     questionName: "Rating Scale",
                     steps:[
                         {
-                            stepCopy: "",
-                            stepImg: ""
+                            stepCopy: "To rate the given selection take not of the gallery of flags in the box to the left in the Scale form and the range and examples in the container to the right.",
+                            stepImg: AttributeScale1
+                        },
+                        {
+                            stepCopy: 'Click and drag the "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.',
+                            stepImg: AttributeScale2
+                        },
+                        {
+                            stepCopy: 'The form will be completed when all of the flags are planted.  Once this done you can move on to the next Scale.',
+                            stepImg: AttributeScale3
                         }
                     ]
-                }
+                },
+                {
+                    questionName: "Custom Rating Scale",
+                    steps:[
+                        {
+                            stepCopy: "This form is similar to the previous Rating Scale however in this form you will be creating an attribute that applies to all of the selection.  Input the attribute name and description in the fields provided at the head of the form.",
+                            stepImg: CustomAttributeScale1
+                        },
+                        {
+                            stepCopy: 'Once you fill in the fields the rating is done the same as the previous Scale Rating form.  Click and drag the "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.',
+                            stepImg: CustomAttributeScale2
+                        },
+                        {
+                            stepCopy: 'The form will be completed when all of the flags are planted and when the name and description fields have been filled in. After that you are all set to move on to the next section.',
+                            stepImg: CustomAttributeScale3
+                        }
+                    ]
+                },
+                {
+                    questionName: "Attribute Checklist",
+                    steps:[
+                        {
+                            stepCopy: "In this form you will be given the selection with a list of attributes with checkboxes next to them.",
+                            stepImg: AttributeChecklist1
+                        },
+                        {
+                            stepCopy: 'Check each attribute that applies to the selection item next to it.',
+                            stepImg: AttributeChecklist2
+                        },
+                        {
+                            stepCopy: 'The form will be completed when you have assigned the relevant attributes to the entire selection.',
+                            stepImg: AttributeChecklist3
+                        }
+                    ]
+                },
+                {
+                    questionName: "Numeric Attributes",
+                    steps:[
+                        {
+                            stepCopy: "For this form you will be provided with the an attribute or attributes that are associated with a specific number.",
+                            stepImg: NumericAttribute1
+                        },
+                        {
+                            stepCopy: 'Using what you know about the selection assign a number to the value of these attributes as they relate to their selection item.',
+                            stepImg: NumericAttribute2
+                        },
+                        {
+                            stepCopy: 'The form will be completed when you have assigned a number to every attribute for the entire selection.',
+                            stepImg: NumericAttribute3
+                        }
+                    ]
+                },
+                {
+                    questionName: "Attribute Choice",
+                    steps:[
+                        {
+                            stepCopy: "For this form you will be provided with a list of mutually exclusive attributes next to each of the selection.",
+                            stepImg: AttributeRadio1
+                        },
+                        {
+                            stepCopy: 'Only one of the attributes can be selected at a time so select the attribute that best fits its corresponding selection.',
+                            stepImg: AttributeRadio2
+                        },
+                        {
+                            stepCopy: 'The form will be completed when each selection has been given an attribute.',
+                            stepImg: AttributeRadio3
+                        }
+                    ]
+                },
+                {
+                    questionName: "Boolean Attributes",
+                    steps:[
+                        {
+                            stepCopy: "For this form you will be provided with a list of mutually exclusive attributes next to each of the selection.",
+                            stepImg: BooleanAttribute1
+                        },
+                        {
+                            stepCopy: 'Only one of the attributes can be selected at a time so select the attribute that best fits its corresponding selection.',
+                            stepImg: BooleanAttribute2
+                        },
+                        {
+                            stepCopy: 'The form will be completed when each selection has been given an attribute.',
+                            stepImg: BooleanAttribute3
+                        }
+                    ]
+                },
             ]
         }
     },
