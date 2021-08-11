@@ -41,7 +41,7 @@ const ScaleField = ({
     const [selectionFlags, setSelectionFlags] = React.useState([]);//Array of objects being rated
 /*----------------------LIFECYCLE----------------------*/
     useEffect(()=>{
-        setScaleContainerWidth(width)
+        setScaleContainerWidth(width*.8)
     },[width])
 
     useEffect(()=>{
