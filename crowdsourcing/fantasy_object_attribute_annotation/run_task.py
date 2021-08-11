@@ -32,7 +32,7 @@ from dataclasses import dataclass, field
 from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-INPUT_FILE_TASK = "task-3"
+INPUT_FILE_TASK = "fantasy-object-attribute-annotation-task-14"
 DEFAULT_NUM_TASKS = 20
 
 db = LocalMephistoDB()
@@ -42,7 +42,7 @@ defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    {"conf": "task_3"},
+    {"conf": "fantasy_object_attribute_annotation_task"},
 ]
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
@@ -129,7 +129,7 @@ def validate_unit(unit):
         print("Unit not validated!")
         unit.get_assigned_agent().soft_reject_work()
         worker = unit.get_assigned_agent().get_worker()
-        worker.grant_qualification("constraints_events_task_block", 1)
+        worker.grant_qualification("fantasy_object_attribute_annotation_task_block", 1)
 
     return
 

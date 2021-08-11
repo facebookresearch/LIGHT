@@ -8,8 +8,10 @@
 
 import React, {useState} from "react";
 import ReactDOM from "react-dom";
+//VIEWS
 import Task from "./views/Task";
-import { TaskDescription } from "./components/task_description.jsx";
+import Preview from "./views/Preview";
+
 import LoadingScreen from "./components/LoadingScreen";
 import { useMephistoTask } from "mephisto-task";
 // import { TimesComponent } from "./components/times_component.jsx";
@@ -46,7 +48,7 @@ function MainApp() {
       <div>
         <section className="hero is-medium is-link">
           <div className="hero-body">
-            <TaskDescription />
+            <Preview />
           </div>
         </section>
       </div>
@@ -164,9 +166,6 @@ function MainApp() {
     <div className="view-container">
       <Task
         data={CharacterDummyData}
-        //ObjectDummyData={ObjectDummyData}
-        // CharacterDummyData={CharacterDummyData}
-        // LocationDummyData={LocationDummyData}
         handleSubmit={handleSubmit}
         />
     </div>
