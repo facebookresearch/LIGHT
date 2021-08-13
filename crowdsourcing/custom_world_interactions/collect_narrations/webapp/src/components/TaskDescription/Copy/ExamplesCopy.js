@@ -25,14 +25,14 @@ const GoodExamples = [
         secondary:"Benches",
         primary_desc:"A perfect surface for slicing and dicing.",
         secondary_desc:"These benches are stable and great for sitting.",
-        narration:"You use the cutting board with benches to create a workbench. It stays steady and allows you to cut safely."
+        narration:"You use the cutting board with the benches to create a workbench. It stays steady and allows you to cut safely."
     },
     {
         primary:"Coarse work clothes",
         secondary:"Large wooden door",
         primary_desc:"These clothes feel rough to the touch, and wouldn't be fun to wear...",
         secondary_desc:"The door is ornate and made of fine wood. A chilly draft is coming in from beneath this door.",
-        narration:"You use the cutting board with benches to create a workbench. It stays steady and allows you to cut safely."
+        narration:"You jam the coarse work clothes into the space beneath the large wooden door. The draft subsides."
     }
 ]
 

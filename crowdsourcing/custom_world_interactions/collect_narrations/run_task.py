@@ -44,7 +44,7 @@ defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    {"conf": "collect_narrations"},
+    # {"conf": "collect_narrations"},
 ]
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
@@ -59,7 +59,7 @@ class TestScriptConfig(RunScriptConfig):
     secondary_object_list_size: int = SECONDARY_OBJECT_LIST_SIZE
     num_tasks: int = DEFAULT_NUM_TASKS
     force_rebuild: bool = False
-    use_validation: bool = True
+    qualify_new_workers: bool = False
 
 
 def get_object_lists(db_path):
@@ -141,6 +141,11 @@ def validate_unit(unit):
     if unit.get_assigned_agent() is None:
         return
 
+    output = mephisto_data_browser.get_data_from_unit(unit)["data"]
+
+    if output is None:
+        return
+        
     data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
         "final_data"
     ]
@@ -157,7 +162,7 @@ def validate_unit(unit):
     ):
         # Not in second person or invalid punctuation
         print("Action " + action_description + " was not validated!")
-        unit.get_assigned_agent().soft_reject_work()
+        # unit.get_assigned_agent().soft_reject_work() => must wait for async version
         worker = unit.get_assigned_agent().get_worker()
         worker.grant_qualification("collect_narrations_task_block", 1)
     return
@@ -165,6 +170,7 @@ def validate_unit(unit):
 
 @hydra.main(config_path="hydra_configs", config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
+    print(cfg)
     task_dir = cfg.task_dir
 
     def onboarding_always_valid(onboarding_data):
@@ -174,7 +180,7 @@ def main(cfg: DictConfig) -> None:
         cfg.light_db_path,
     )
 
-    if not cfg.use_validation:
+    if not cfg.qualify_new_workers:
         validator = lambda u: True
     else:
         validator = validate_unit
@@ -191,20 +197,21 @@ def main(cfg: DictConfig) -> None:
         on_unit_submitted=validator,
     )
 
-    # shared_state.mturk_specific_qualifications = [
-    #     {
-    #         "QualificationTypeId": "00000000000000000040",
-    #         "Comparator": "GreaterThanOrEqualTo",
-    #         "IntegerValues": [1500],
-    #         "ActionsGuarded": "DiscoverPreviewAndAccept",
-    #     },
-    #     {
-    #         "QualificationTypeId": "000000000000000000L0",
-    #         "Comparator": "GreaterThanOrEqualTo",
-    #         "IntegerValues": [95],
-    #         "ActionsGuarded": "DiscoverPreviewAndAccept",
-    #     },
-    # ]
+    if cfg.qualify_new_workers:
+        shared_state.mturk_specific_qualifications = [
+            {
+                "QualificationTypeId": "00000000000000000040",
+                "Comparator": "GreaterThanOrEqualTo",
+                "IntegerValues": [1500],
+                "ActionsGuarded": "DiscoverPreviewAndAccept",
+            },
+            {
+                "QualificationTypeId": "000000000000000000L0",
+                "Comparator": "GreaterThanOrEqualTo",
+                "IntegerValues": [95],
+                "ActionsGuarded": "DiscoverPreviewAndAccept",
+            },
+        ]
 
     built_file = os.path.join(task_dir, "webapp", "build", "bundle.js")
     if cfg.force_rebuild or not os.path.exists(built_file):
