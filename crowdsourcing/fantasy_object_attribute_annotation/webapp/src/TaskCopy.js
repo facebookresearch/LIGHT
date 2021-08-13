@@ -45,21 +45,21 @@ const Copy ={
     taskHeader:"Fantasy Object Attribute Annotation",
     previewCopy:{
         tutorial:{
-            intro: "We're trying to crowdsource defining and rating attributes of a selection of objects, characters, and locations.  The setting for this will be in a medieval fantasy scenario, and as such should not refer to real people, places, or modern day technologies.  The first objective of this task is, given this selection of a specific type, rate where they fall on scales of various inherent attribtutes relative to each other and the examples on the scales.  The second objective is to name and describe an attribute that applies to the entire selection and then rate selection in the same way as the first objective.  The final objective is to define attributes for each of this selection.  The inherent attributes will be at the top of this section, selecting possible attributes or creating custom attributes is done in the second part of this section.  At the top of the task each thing in the selection will be listed next to a description.  Reference this during the task as needed.  The description will appear when you hover your cursor over the name of the entry.",
+            intro: "In this task you will be given a list of objects, and asked to do a number of annotations of the types listed below. Familiarize yourself with these before getting started.",
             questionsCopy:[
                 {
                     questionName: "Rating Scale",
                     steps:[
                         {
-                            stepCopy: "To rate the given selection take not of the gallery of flags in the box to the left in the Scale form and the range and examples in the container to the right.",
+                            stepCopy: "The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right.",
                             stepImg: AttributeScale1
                         },
                         {
-                            stepCopy: 'Click and drag the "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.',
+                            stepCopy: 'Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.',
                             stepImg: AttributeScale2
                         },
                         {
-                            stepCopy: 'The form will be completed when all of the flags are planted.  Once this done you can move on to the next Scale.',
+                            stepCopy: 'The form will be completed when all of the flags are planted.',
                             stepImg: AttributeScale3
                         }
                     ]
@@ -68,15 +68,15 @@ const Copy ={
                     questionName: "Custom Rating Scale",
                     steps:[
                         {
-                            stepCopy: "This form is similar to the previous Rating Scale however in this form you will be creating an attribute that applies to all of the selection.  Input the attribute name and description in the fields provided at the head of the form.",
+                            stepCopy: "This form is similar to the previous Rating Scale however in this form you will be naming and describing an attribute that applies to all of the selection.  Input the attribute name and description in the fields provided at the top of the form.",
                             stepImg: CustomAttributeScale1
                         },
                         {
-                            stepCopy: 'Once you fill in the fields the rating is done the same as the previous Scale Rating form.  Click and drag the "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.',
+                            stepCopy: 'Once you fill in the fields to rate the selection click and drag the "flag" of the selection you wish to rate, once out of the selection gallery box you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.',
                             stepImg: CustomAttributeScale2
                         },
                         {
-                            stepCopy: 'The form will be completed when all of the flags are planted and when the name and description fields have been filled in. After that you are all set to move on to the next section.',
+                            stepCopy: 'The form will be completed when all of the flags are planted and when the name and description fields have been filled in.',
                             stepImg: CustomAttributeScale3
                         }
                     ]
@@ -85,11 +85,11 @@ const Copy ={
                     questionName: "Attribute Checklist",
                     steps:[
                         {
-                            stepCopy: "In this form you will be given the selection with a list of attributes with checkboxes next to them.",
+                            stepCopy: "In this form you will be given the selection with a list of attributes and there corresponding checkboxes.",
                             stepImg: AttributeChecklist1
                         },
                         {
-                            stepCopy: 'Check each attribute that applies to the selection item next to it.',
+                            stepCopy: 'Check the box of each attribute that applies to the selection item next to it.',
                             stepImg: AttributeChecklist2
                         },
                         {
@@ -106,7 +106,7 @@ const Copy ={
                             stepImg: NumericAttribute1
                         },
                         {
-                            stepCopy: 'Using what you know about the selection assign a number to the value of these attributes as they relate to their selection item.',
+                            stepCopy: 'Using what you know about the selection assign a number value to each of these attributes as they relate to their selection item.',
                             stepImg: NumericAttribute2
                         },
                         {
@@ -119,15 +119,15 @@ const Copy ={
                     questionName: "Attribute Choice",
                     steps:[
                         {
-                            stepCopy: "For this form you will be provided with a list of mutually exclusive attributes next to each of the selection.",
+                            stepCopy: "For this form you will be provided with a list of mutually exclusive attributes next to each selection item.",
                             stepImg: AttributeRadio1
                         },
                         {
-                            stepCopy: 'Only one of the attributes can be selected at a time so select the attribute that best fits its corresponding selection.',
+                            stepCopy: 'Only one of the attributes can be selected at a time so select the attribute that best fits based on your knowledge of the selection.',
                             stepImg: AttributeRadio2
                         },
                         {
-                            stepCopy: 'The form will be completed when each selection has been given an attribute.',
+                            stepCopy: 'The form will be completed when the entire selection has been given attributes.',
                             stepImg: AttributeRadio3
                         }
                     ]
@@ -136,11 +136,11 @@ const Copy ={
                     questionName: "Boolean Attributes",
                     steps:[
                         {
-                            stepCopy: "For this form you will either be adding attributes to each of the selection.",
+                            stepCopy: "For this form you will be either choosing existing attributes from a dropdown or adding your own attributes to the entire selection.",
                             stepImg: BooleanAttribute1
                         },
                         {
-                            stepCopy: 'Sometimes possible attributes will be showcased in the dropdown but if none are seen you are to create your own.',
+                            stepCopy: 'Each input may have some options in a dropdown but you can add your own attributes as well by typing the attribute and clicking add new attribute in the dropdown.',
                             stepImg: BooleanAttribute2
                         },
                         {
