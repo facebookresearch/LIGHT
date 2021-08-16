@@ -291,7 +291,6 @@ function MainApp() {
       ]
       updatedEvents = [...updatedEvents, ...updatedlLocation]
     }
-    }
     //ATTRIBUTE MODIFICATION EVENTS
     if(primaryModifiedAttributes.length){
       let updatedPrimaryModifiedAttributes = primaryModifiedAttributes.map(attribute=>{
