@@ -52,6 +52,7 @@
     border-width: 3px;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
+    height: 100%;
 }
 
 .card-body__text {

@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from "react";
 
-
+import TipsCopy from "./TipsCopy"
 
 const DescriptionForm = ({formVal, formFunction})=>{
     const changeHandler = e=>{
@@ -13,9 +13,18 @@ const DescriptionForm = ({formVal, formFunction})=>{
             <h1 className="form-header">
                 Description
             </h1>
-        <p >
-
-        </p>
+            <div className="tip-container">
+            {
+                TipsCopy ?
+                TipsCopy.map((tip, index) => (
+                <p className="form-tip" key={index}>
+                    <span style={{fontWeight:"bold"}} >* </span>{tip}
+                </p>
+                ))
+                :
+                null
+            }
+            </div>
             <textarea
                 className="description-form"
                 onChange={changeHandler}

@@ -30,7 +30,7 @@ module.exports = {
         test: /\.(js|jsx)$/,
         loader: "babel-loader",
         exclude: /node_modules/,
-        options: { presets: ["@babel/env"] },
+        options: { presets: ["@babel/env", "@babel/preset-react"] },
       },
       {
         test: /\.css$/,
@@ -38,7 +38,10 @@ module.exports = {
       },
       {
         test: /\.(svg|png|jpe?g|ttf)$/,
-        loader: "url-loader?limit=100000",
+        loader: "url-loader",
+        options: {
+          limit:300000,
+        }
       },
       {
         test: /\.jpg$/,

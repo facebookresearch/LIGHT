@@ -1,7 +1,15 @@
+//REACT
 import React from "react";
+//Custom Components
 import FormatQuestion from "../../../components/Utils/FormatQuestion";
 
-const DataCard = ({header, body, color, keywords}) => {
+//DataCard - renders formatted card with object and interaction data
+const DataCard = ({
+    header, //Header text
+    body, //  Body text
+    color, // header background and container border color
+    keywords // Keywords that will replace # in Format question function
+}) => {
     return (
        <div className="card-container">
            <div className="card-header__container" style={{backgroundColor: color}}>
