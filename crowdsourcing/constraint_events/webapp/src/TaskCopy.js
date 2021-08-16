@@ -6,6 +6,7 @@ const EventShot2 = require("./assets/images/Tutorial/Event/EventShot2.png");
 const EventShot3 = require("./assets/images/Tutorial/Event/EventShot3.png");
 const EventShot4 = require("./assets/images/Tutorial/Event/EventShot4.png");
 const EventShot5 = require("./assets/images/Tutorial/Event/EventShot5.png");
+const EventShot6 = require("./assets/images/Tutorial/Event/EventShot6.png");
 
 
 //CONSTRAINT SCREENSHOTS
@@ -108,6 +109,8 @@ const Copy ={
             a2: "2a.  Which object(s)?",
             3: "3.  Does an object's description change?",
             4: "4.  Are objects created?",
+            5: "5.  Do any of the objects change location?",
+            a5: "Where does selected object move?",
             setter: " After this action:  "
         },
         tutorialCopy:[
@@ -162,7 +165,12 @@ const Copy ={
                 screenshot: EventShot4
             },
             {
-                question:"5) Attribute changes",
+            question:"5) Location Changes",
+            explanation:`If the described interaction changes the location of an item, use this to mark where the item should be after the interaction`,
+            screenshot: EventShot5
+            },
+            {
+                question:"6) Attribute changes",
                 explanation:`If the interaction changes something physical
                 about an object, you should mark the attribute
                 changes here. For instance, if an interaction is
@@ -176,7 +184,7 @@ const Copy ={
                 attributes must not be true. For instance, after the
                 above interaction, you could mark that the towel
                 will not be "clean" afterwards.`,
-                screenshot: EventShot5
+                screenshot: EventShot6
             }
         ]
     },

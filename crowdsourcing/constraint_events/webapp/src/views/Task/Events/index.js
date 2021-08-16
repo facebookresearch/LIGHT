@@ -25,6 +25,14 @@ const Events = ({
     setPrimaryDescription,
     secondaryDescription,
     setSecondaryDescription,
+    primaryIsChangingLocation,
+    setPrimaryIsChangingLocation,
+    primaryNewLocation,
+    setPrimaryNewLocation,
+    secondaryIsChangingLocation,
+    setSecondaryIsChangingLocation,
+    secondaryNewLocation,
+    setSecondaryNewLocation,
     primaryModifiedAttributes,
     setPrimaryModifiedAttributes,
     secondaryModifiedAttributes,
@@ -56,6 +64,14 @@ const Events = ({
                     setPrimaryDescription={setPrimaryDescription}
                     secondaryDescription={secondaryDescription}
                     setSecondaryDescription={setSecondaryDescription}
+                    primaryIsChangingLocation={primaryIsChangingLocation}
+                    setPrimaryIsChangingLocation={setPrimaryIsChangingLocation}
+                    primaryNewLocation={primaryNewLocation}
+                    setPrimaryNewLocation={setPrimaryNewLocation}
+                    secondaryIsChangingLocation={secondaryIsChangingLocation}
+                    setSecondaryIsChangingLocation={setSecondaryIsChangingLocation}
+                    secondaryNewLocation={secondaryNewLocation}
+                    setSecondaryNewLocation={setSecondaryNewLocation}
                     primaryModifiedAttributes={primaryModifiedAttributes}
                     setPrimaryModifiedAttributes={setPrimaryModifiedAttributes}
                     secondaryModifiedAttributes={secondaryModifiedAttributes}

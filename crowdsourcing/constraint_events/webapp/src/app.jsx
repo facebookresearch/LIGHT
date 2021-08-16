@@ -41,7 +41,7 @@ function MainApp() {
   //Error Handling
   const [showError, setShowError] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
-  //Events State
+  /*-----------Events State-----------*/
   const [broadcastMessage, setBroadcastMessage] = useState("");
   const [isCreatingEntity, setIsCreatingEntity] = useState(null);
   const [createdEntity, setCreatedEntity] = useState({});
@@ -49,13 +49,17 @@ function MainApp() {
   const [removedObjects, setRemovedObjects] = useState([]);
   const [isChangingDescription, setIsChangingDescription] = useState(null);
     //Primary
+  const [primaryIsChangingLocation, setPrimaryIsChangingLocation] = useState(false);
+  const [primaryNewLocation, setPrimaryNewLocation] = useState(null);
   const [primaryModifiedAttributes, setPrimaryModifiedAttributes]= useState([]);
   const [primaryDescription, setPrimaryDescription] = useState("");
     //Secondary
+  const [secondaryIsChangingLocation, setSecondaryIsChangingLocation] = useState(false);
+  const [secondaryNewLocation, setSecondaryNewLocation] = useState(null);
   const [secondaryModifiedAttributes, setSecondaryModifiedAttributes]= useState([]);
   const [secondaryDescription, setSecondaryDescription] = useState("");
 
-  //Constraint State
+  /*-----------Constraint State-----------*/
   const [isSecondaryHeld, setIsSecondaryHeld] = useState(null);
   const [isReversible, setIsReversible] = useState(null);
   const [isInfinite, setIsInifinite] = useState(null)
@@ -258,6 +262,36 @@ function MainApp() {
       ]
       updatedEvents = [...updatedEvents, ...updatedDescriptions]
     }
+    // LOCATION CHANGE EVENT
+      //Primary
+    if(primaryIsChangingLocation){
+      let updatedlLocation = [
+        {
+          type:"modify_attribute",
+          params:{
+            type:"in_used_item",
+            key:"location",
+            value: primaryNewLocation
+          }
+        }
+      ]
+      updatedEvents = [...updatedEvents, ...updatedlLocation]
+    }
+      //Secondary
+    if(secondaryIsChangingLocation){
+      let updatedlLocation = [
+        {
+          type:"modify_attribute",
+          params:{
+            type:"in_used_target_item",
+            key:"location",
+            value: secondaryNewLocation
+          }
+        }
+      ]
+      updatedEvents = [...updatedEvents, ...updatedlLocation]
+    }
+    }
     //ATTRIBUTE MODIFICATION EVENTS
     if(primaryModifiedAttributes.length){
       let updatedPrimaryModifiedAttributes = primaryModifiedAttributes.map(attribute=>{
@@ -399,6 +433,14 @@ function MainApp() {
         setPrimaryDescription={setPrimaryDescription}
         secondaryDescription={secondaryDescription}
         setSecondaryDescription={setSecondaryDescription}
+        primaryIsChangingLocation={primaryIsChangingLocation}
+        setPrimaryIsChangingLocation={setPrimaryIsChangingLocation}
+        primaryNewLocation={primaryNewLocation}
+        setPrimaryNewLocation={setPrimaryNewLocation}
+        secondaryIsChangingLocation={secondaryIsChangingLocation}
+        setSecondaryIsChangingLocation={setSecondaryIsChangingLocation}
+        secondaryNewLocation={secondaryNewLocation}
+        setSecondaryNewLocation={setSecondaryNewLocation}
         primaryModifiedAttributes={primaryModifiedAttributes}
         setPrimaryModifiedAttributes={setPrimaryModifiedAttributes}
         secondaryModifiedAttributes={secondaryModifiedAttributes}

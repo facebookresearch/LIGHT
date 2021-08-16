@@ -5,6 +5,7 @@ import "./styles.css"
 //COPY
 import QuestionCopy from "../../../../TaskCopy.js";
 //CUSTOM COMPONENTS
+import QuestionOnSelect from "../../../../components/QuestionOnSelect";
 import FormQuestion from "../../../../components/Questions/FormQuestion";
 import BooleanQuestion from "../../../../components/Questions/BooleanQuestion";
 import MultipleSelectQuestion from "../../../../components/Questions/MultipleSelectQuestion";
@@ -33,6 +34,14 @@ const Questions = ({
     setPrimaryDescription,
     secondaryDescription,
     setSecondaryDescription,
+    primaryIsChangingLocation,
+    setPrimaryIsChangingLocation,
+    primaryNewLocation,
+    setPrimaryNewLocation,
+    secondaryIsChangingLocation,
+    setSecondaryIsChangingLocation,
+    secondaryNewLocation,
+    setSecondaryNewLocation,
     primaryModifiedAttributes,
     setPrimaryModifiedAttributes,
     secondaryModifiedAttributes,
@@ -43,6 +52,7 @@ const Questions = ({
     let obj2Attr = object2.attributes
     const QuestionList = QuestionCopy.event.questions
     const TipList = QuestionCopy.event.tutorialCopy
+
     //Upon object change sets descriptions for relevant object
     useEffect(()=>{
         let obj1Desc = object1.desc;
@@ -123,16 +133,58 @@ const Questions = ({
                         {name:"name", dropdown:false},
                         {name:"desc", dropdown:false},
                         {name:"location", dropdown:true,
-                        options:[{name:"in room", val:"in_room"},
-                        {name:"held by actor", val:"in_actor"},
-                        {name:`in/on ${object1.name.toUpperCase()}`, val:"in_used_item"},
-                        {name:`in/on ${object2.name.toUpperCase()}`, val:"in_used_target_item"}]}
+                            options:[
+                                {name:"in room", val:"in_room"},
+                                {name:"held by actor", val:"in_actor"},
+                                {name:`in/on ${object1.name.toUpperCase()}`, val:"in_used_item"},
+                                {name:`in/on ${object2.name.toUpperCase()}`, val:"in_used_target_item"}
+                            ]
+                        }
                     ]}
                     formFunction={setCreatedEntity}
                     formState={createdEntity}
                 />
 
             </BooleanQuestion>
+            <QuestionOnSelect
+                question={QuestionList[5]}
+                secondaryQuestion={QuestionList.a5}
+                answers={[
+                    {
+                        name:object1.name.toUpperCase(),
+                        questionColor:"blue",
+                        onSelectFunction:(status)=>setPrimaryIsChangingLocation(status),
+                        secondaryQuestion:{
+                            type:"dropdown",
+                            question:object1.name,
+                            secondaryOnSelectFunction: (update)=>setPrimaryNewLocation(update),
+                            answers:[
+                                {name:"in room", val:"in_room"},
+                                {name:"held by actor", val:"in_actor"},
+                                {name:`in/on ${object2.name.toUpperCase()}`, val:"in_used_target_item"},
+                            ]
+                        }
+                    },
+                    {
+                        name:object2.name.toUpperCase(),
+                        questionColor:"orange",
+                        onSelectFunction:(status)=>setSecondaryIsChangingLocation(status),
+                        secondaryQuestion:{
+                            type:"dropdown",
+                            question:object2.name,
+                            secondaryOnSelectFunction: (update)=>setSecondaryNewLocation(update),
+                            answers:[
+                                {name:"in room", val:"in_room"},
+                                {name:"held by actor", val:"in_actor"},
+                                {name:`in/on ${object1.name.toUpperCase()}`, val:"in_used_item"},
+                            ]
+                        }
+                    }
+                ]}
+                toolTipCopy={TipList[4].explanation}
+                hasToolTip={true}
+                isComplete={((!primaryIsChangingLocation && !secondaryIsChangingLocation) || (primaryIsChangingLocation && primaryNewLocation)|| (secondaryIsChangingLocation && secondaryNewLocation))}
+            />
             <AttributeSetter
                 objectName={object1.name}
                 objectColor="blue"
@@ -140,7 +192,7 @@ const Questions = ({
                 attributes={obj1Attr}
                 isConstraint={false}
                 setter={setPrimaryModifiedAttributes}
-                toolTipCopy={TipList[4].explanation}
+                toolTipCopy={TipList[5].explanation}
                 hasToolTip={true}
             />
             <AttributeSetter
@@ -150,7 +202,7 @@ const Questions = ({
                 attributes={obj2Attr}
                 isConstraint={false}
                 setter={setSecondaryModifiedAttributes}
-                toolTipCopy={TipList[4].explanation}
+                toolTipCopy={TipList[5].explanation}
                 hasToolTip={true}
             />
        </>
