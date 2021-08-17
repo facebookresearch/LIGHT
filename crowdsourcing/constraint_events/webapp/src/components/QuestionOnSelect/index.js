@@ -33,11 +33,8 @@ const QuestionOnSelect= ({
     }, [answers])
     /*------HANDLERS------*/
     const selectHandler = (updatedAnswers)=>{
-        console.log("UNUPDATED ANSWERS:  ", selectedAnswers)
-        console.log("UPDATED ANSWERS:  ", updatedAnswers)
         answerList.map((ans,index)=>{
             const {name, onSelectFunction} = ans;
-            console.log("SELECT HANDLER:  ", ans)
             if(updatedAnswers.indexOf(name)>=0){
                 onSelectFunction(true)
             }else{
@@ -50,12 +47,9 @@ const QuestionOnSelect= ({
     const secondaryQuestionSwitch = (answerObject)=>{
         const {secondaryQuestion } = answerObject;
         const {answers, question, secondaryOnSelectFunction, type}= secondaryQuestion;
-        console.log("ANSWER:  ", secondaryQuestion)
-        console.log("ANSWER type:  ", type)
         switch (type) {
             case "dropdown":
                 let selectFunction = (update)=>{
-                    console.log("DROPDOWN SELECT:  ", update)
                     secondaryOnSelectFunction(update)
                 }
                 return (
@@ -70,7 +64,6 @@ const QuestionOnSelect= ({
               return null
         }
     }
-
 
     return(
         <div>
@@ -92,10 +85,10 @@ const QuestionOnSelect= ({
                 answers={multipleSelectAnswers}
                 selectFunction={selectHandler}
             />
-            <div style={{display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
+            <div className="select-question__container">
                 {selectedAnswers.length ? <p className="select-question__header">{secondaryQuestion}</p> : null}
             </div>
-            <div style={{display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
+            <div className="secondaryquestion-container" >
             {
                 selectedAnswers.length
                 ?

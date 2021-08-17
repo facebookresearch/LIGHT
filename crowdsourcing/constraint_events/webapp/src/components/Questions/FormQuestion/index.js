@@ -1,5 +1,5 @@
 //REACT
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useState} from "react";
 //STYLES
 import "./styles.css"
 //CUSTOM COMPONENT
@@ -18,12 +18,14 @@ const FormQuestion = ({
     hasToolTip,// boolean that adds tooltip icon and text if true
     isComplete// completion condition
 })=>{
-    //local state of form
+    /*------STATE------*/
     const [description, setDescription] = useState("")
+     /*------LIFECYCLE------*/
     //Sets initial value on render
     useEffect(()=>{
         setDescription(formVal)
     },[])
+    /*------HANDLERS------*/
     //Updates both local and payload state with answer
     const changeHandler = e=>{
         e.preventDefault()

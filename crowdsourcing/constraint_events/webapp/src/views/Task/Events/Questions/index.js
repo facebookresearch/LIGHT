@@ -52,7 +52,7 @@ const Questions = ({
     let obj2Attr = object2.attributes
     const QuestionList = QuestionCopy.event.questions
     const TipList = QuestionCopy.event.tutorialCopy
-
+    /*------LIFECYCLE------*/
     //Upon object change sets descriptions for relevant object
     useEffect(()=>{
         let obj1Desc = object1.desc;
@@ -60,9 +60,11 @@ const Questions = ({
         setPrimaryDescription(obj1Desc)
         setSecondaryDescription(obj2Desc)
     },[object1, object2])
+
     useEffect(()=>{
         setBroadcastMessage(interaction)
        },[interaction])
+
     return (
        <>
             <FormQuestion

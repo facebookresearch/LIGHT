@@ -2,12 +2,14 @@
 import React, {useState} from "react";
 //STYLING
 import "./styles.css"
-//DropdownSelect - takes options and function connecting it to payload state as props
+//DropdownSelect - component takes options and function connecting it to payload state as props
 const DropdownSelect = ({options, selectFunction})=>{
-  // local state for the selected value in the dropdown
+  /*------STATE------*/
+  // selected value in the dropdown
     const [selectedOption, setSelectedOption]= useState("Select Location")
   //State to disable default option which has no value upon user interacting with dropdown
-    const [firstSelect, setFirstSelect] =useState(false)
+    const [firstSelect, setFirstSelect] = useState(false)
+  /*------HANDLERS------*/
   //Upon selection updates both the localstate and the payload state.
     const selectHandler = (selection)=>{
       setFirstSelect(true)
