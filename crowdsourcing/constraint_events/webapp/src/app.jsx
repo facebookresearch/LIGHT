@@ -186,6 +186,10 @@ function MainApp() {
       if(isCreatingEntity===null){
         updatedErrors.push(TaskCopy.errorKey.events.q4Null)
       }
+      //LOCATION CHANGE
+      if((primaryIsChangingLocation && !primaryNewLocation)||(secondaryIsChangingLocation && !secondaryNewLocation)){
+        updatedErrors.push(TaskCopy.errorKey.events.q5Blank)
+      }
     //CONSTRAINT ERRORS
       //HELD
       if(isSecondaryHeld===null){
@@ -264,7 +268,7 @@ function MainApp() {
     }
     // LOCATION CHANGE EVENT
       //Primary
-    if(primaryIsChangingLocation){
+    if(primaryIsChangingLocation && primaryNewLocation){
       let updatedlLocation = [
         {
           type:"modify_attribute",
@@ -278,7 +282,7 @@ function MainApp() {
       updatedEvents = [...updatedEvents, ...updatedlLocation]
     }
       //Secondary
-    if(secondaryIsChangingLocation){
+    if(secondaryIsChangingLocation && secondaryNewLocation){
       let updatedlLocation = [
         {
           type:"modify_attribute",
@@ -404,7 +408,7 @@ function MainApp() {
     // If the function has reached this point with an empty error array the payload is ready.
     if(!updatedErrors.length){
       console.log(payload)
-      //handleSubmit(payload)
+      handleSubmit(payload)
     }else{
       // Each error in the updatedErrors Array will be listed in the Error Toast
       setErrorMessages(updatedErrors)

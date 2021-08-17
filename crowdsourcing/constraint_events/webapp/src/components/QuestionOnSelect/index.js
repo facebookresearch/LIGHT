@@ -13,10 +13,10 @@ import Checkbox from "../Checkbox";
 // Answers example [{name, secondaryQuestion:{type, question, answer(s)}}]
 //QuestionOnSelect - Component that presents secondary question only when item is selected based on the selection
 const QuestionOnSelect= ({
-    question,
-    secondaryQuestion,
+    question,//Multiple Select question
+    secondaryQuestion,//Question prompted by selection
     answers, //Array of answers
-    keywords,
+    keywords,// keywords replacing any # in questions after formatting
     toolTipCopy,// Copy for desired tooltip
     hasToolTip,// Boolean stating whether or not this component has a tooltip
     isComplete,// Completion condition for question to be satisfactorily answered
