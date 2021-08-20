@@ -1,8 +1,8 @@
+//REACT
 import React from "react";
 import ReactDOM from "react-dom";
-
+//ROUTER
 import GameRouter from "./GameRouter";
-import Game from "./pages/GamePage";
 
 const rootElement = document.getElementById("root");
 

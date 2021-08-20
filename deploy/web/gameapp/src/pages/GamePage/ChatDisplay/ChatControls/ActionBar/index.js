@@ -1,11 +1,13 @@
+//REACT
 import React from "react";
-
+//TOOLTIP
 import { Tooltip } from "react-tippy";
-
+//STYLES
+import "./styles.css";
 //CUSTOM COMPONENTS
-import SpeechBubble from "../../../../components/SpeechBubble";
+import SpeechBubble from "../../../../../components/SpeechBubble";
 
-const ChatControls = ({
+const ActionBar = ({
   persona,
   presentAgents,
   setTextTellAgent,
@@ -56,4 +58,4 @@ const ChatControls = ({
   );
 };
 
-export default ChatControls;
+export default ActionBar;

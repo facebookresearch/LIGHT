@@ -5,6 +5,7 @@ import "./styles.css";
 //Custom Components
 import ChatInput from "./ChatInput";
 import ActionBar from "./ActionBar";
+import DisconnectMessage from "./DisconnectMessage";
 
 const ChatControls = ({
   persona,
@@ -24,18 +25,7 @@ const ChatControls = ({
   return (
     <div className="controls">
       {idle ? (
-        <div className="disconnect-container">
-          <h2 className="disconnect-text">
-            You have been disconnected due to inactivity.
-          </h2>
-          <h2
-            onClick={() => window.location.reload()}
-            style={{ textDecoration: "underline" }}
-            className="disconnect-text__reload"
-          >
-            Click Here to re-enter world.
-          </h2>
-        </div>
+        <DisconnectMessage />
       ) : (
         <>
           <ChatInput
