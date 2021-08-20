@@ -1,25 +1,20 @@
-import React from "react";
-
+//REACT
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useLayoutEffect,
+} from "react";
+//STYLES
 import "./styles.css";
+//TOOLTIP
 import "react-tippy/dist/tippy.css";
-
-import { Tooltip } from "react-tippy";
-import cx from "classnames";
-import onClickOutside from "react-onclickoutside";
-
 //Custom Components
-import Entry from "./ChatMessages/Entry";
 import ChatMessages from "./ChatMessages";
 import ChatControls from "./ChatControls";
-
+//UTILS
 import { setCaretPosition } from "../../../utils";
-
-import CONFIG from "../../../config.js";
-
-//Icons
-import { FaStar } from "react-icons/fa";
-import { BiWindow } from "react-icons/bi";
-import { FaWindowMinimize } from "react-icons/fa";
 
 const ChatDisplay = ({
   messages,
@@ -38,14 +33,17 @@ const ChatDisplay = ({
   sessionGiftXpSpent,
   setSessionGiftXpSpent,
 }) => {
-  const [showCharacter, setShowCharacter] = React.useState(true);
-  const [enteredText, setEnteredText] = React.useState("");
-  const chatContainerRef = React.useRef(null);
+  /*---------------STATE----------------*/
+  const [enteredText, setEnteredText] = useState("");
+  /*---------------REFS----------------*/
+  const chatContainerRef = useRef(null);
+  const chatInputRef = useRef();
+  /*---------------UT----------------*/
   const getAgentName = (agent) => (agents ? agents[agent] : agent);
   const getEntityId = (agent) => agent.match(/\d+$/)[0];
   const dataModelHost = getDataModelAddress();
-
-  const scrollToBottom = React.useCallback(
+  /*---------------CALLBACKS----------------*/
+  const scrollToBottom = useCallback(
     () =>
       setTimeout(() => {
         if (chatContainerRef.current)
@@ -54,19 +52,7 @@ const ChatDisplay = ({
       }, 0),
     [chatContainerRef]
   );
-
-  React.useEffect(() => {
-    scrollToBottom();
-  }, [scrollToBottom, messages]);
-
-  const { presentAgents } = getLocationState(messages);
-
-  const chatInputRef = React.useRef();
-  React.useLayoutEffect(() => {
-    chatInputRef.current.focus();
-  }, []);
-
-  const setTextTellAgent = React.useCallback(
+  const setTextTellAgent = useCallback(
     (agent) => {
       const message = `tell ${agent} ""`;
       setEnteredText(message);
@@ -77,6 +63,16 @@ const ChatDisplay = ({
     },
     [setEnteredText, chatInputRef]
   );
+  /*---------------LIFECYCLE----------------*/
+  useEffect(() => {
+    scrollToBottom();
+  }, [scrollToBottom, messages]);
+
+  const { presentAgents } = getLocationState(messages);
+
+  useLayoutEffect(() => {
+    chatInputRef.current.focus();
+  }, []);
 
   return (
     <div className="chat-wrapper">

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 //STYLES
 import "./styles.css";
 
-// ChatInput -
+// ChatInput - Component that renders chat bar along with Say/Do buttons and send button
 const ChatInput = ({
   onSubmit,
   enteredText,
@@ -12,8 +12,9 @@ const ChatInput = ({
   scrollToBottom,
   resetIdleTimer,
 }) => {
+  /*---------------STATE----------------*/
   const [isSaying, setIsSaying] = useState(true);
-
+  /*---------------HANDLERS----------------*/
   const handleIsSayingToggle = (e) => {
     setIsSaying(!isSaying);
   };
@@ -48,11 +49,13 @@ const ChatInput = ({
           resetIdleTimer();
           setEnteredText(e.target.value);
         }}
-        onKeyPress={(e) => {
+        onKeyDown={(e) => {
           if (e.key == "Tab" && e.shiftKey) {
             e.preventDefault();
             handleIsSayingToggle();
           }
+        }}
+        onKeyPress={(e) => {
           if (e.key === "Enter" && e.shiftKey) {
             const prefix = e.target.value.startsWith('"') ? "" : '"';
             const suffix = e.target.value.endsWith('"') ? "" : '"';
