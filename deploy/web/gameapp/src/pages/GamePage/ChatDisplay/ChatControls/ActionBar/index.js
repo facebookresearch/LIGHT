@@ -14,6 +14,8 @@ const ActionBar = ({
   getAgentName,
   getEntityId,
   dataModelHost,
+  setIsSaying,
+  setTellTarget,
 }) => {
   return (
     <div className="actions">
@@ -27,7 +29,9 @@ const ActionBar = ({
             <span
               key={agentName}
               onClick={() => {
-                setTextTellAgent(agentName);
+                setIsSaying(false);
+                setTellTarget(agentName);
+                //setTextTellAgent(agentName);
               }}
             >
               <Tooltip title={`tell ${agentName}...`} position="bottom">

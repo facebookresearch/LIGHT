@@ -1,7 +1,7 @@
-import React from "react";
-
+//REACT
+import React, { useState } from "react";
+//STYLES
 import "./styles.css";
-
 //Custom Components
 import ChatInput from "./ChatInput";
 import ActionBar from "./ActionBar";
@@ -22,6 +22,14 @@ const ChatControls = ({
   idle,
   resetIdleTimer,
 }) => {
+  /*---------------STATE----------------*/
+  const [tellTarget, setTellTarget] = useState(null);
+  const [isSaying, setIsSaying] = useState(true);
+  /*---------------HANDLERS----------------*/
+  const isSayingToggleHandler = (e) => {
+    setTellTarget(null);
+    setIsSaying(!isSaying);
+  };
   return (
     <div className="controls">
       {idle ? (
@@ -35,6 +43,9 @@ const ChatControls = ({
             chatInputRef={chatInputRef}
             scrollToBottom={scrollToBottom}
             resetIdleTimer={resetIdleTimer}
+            isSaying={isSaying}
+            toggleIsSaying={isSayingToggleHandler}
+            tellTarget={tellTarget}
           />
           <ActionBar
             persona={persona}
@@ -43,6 +54,8 @@ const ChatControls = ({
             getAgentName={getAgentName}
             getEntityId={getEntityId}
             dataModelHost={dataModelHost}
+            setIsSaying={setIsSaying}
+            setTellTarget={setTellTarget}
           />
         </>
       )}

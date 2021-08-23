@@ -1,44 +1,121 @@
-.customicon {
+/*NUMBER STAR STYLES*/
+.numberstar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
 }
 
-.customicon-text__container {
+.numberstar-text__container {
   position: absolute;
   display: flex;
-  width: 2.5em;
-  height: 2.5em;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  top: 2px;
 }
 
-.customicon-text {
-  z-index: 2;
+.numberstar-text {
+  z-index: 100;
   color: grey;
   text-align: center;
   margin: 0;
   font-size: 0.8em;
-  position: absolute;
 }
 
-.number-star {
+.star-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.gift-star {
   color: yellow;
   position: absolute;
   z-index: 1;
-  height: 2.5em;
-  width: 2.5em;
+  height: 3em;
+  width: 3em;
   font-size: 1em;
 }
 
+/*NUMBER CIRCLE STYLES*/
+
+.numbercircle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.numbercircle-text__container {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.numbercircle-text {
+  z-index: 100;
+  color: grey;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  font-size: 0.8em;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.circle-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.level-circle {
+  color: yellow;
+  position: absolute;
+  z-index: 1;
+  height: 3em;
+  width: 3em;
+}
+
 @media only screen and (max-width: 900px) {
-  .customicon-text {
+  /*NUMBER STAR STYLES 900px */
+  .numberstar-text {
     font-size: 16px;
   }
+
+  /*NUMBER CIRCLE STYLES 900px*/
 }
 
 @media only screen and (max-width: 600px) {
-  .customicon-text {
+  /*NUMBER STAR STYLES 600px*/
+  .gift-star {
+    color: yellow;
+    position: absolute;
+    z-index: 1;
+    height: 4em;
+    width: 4em;
+  }
+
+  .numberstar-text {
+    font-size: 12px;
+  }
+
+  /*NUMBER CIRCLE STYLES 600px*/
+  .level-circle {
+    color: yellow;
+    position: absolute;
+    z-index: 1;
+    height: 4em;
+    width: 4em;
+  }
+
+  .numbercircle-text {
     font-size: 12px;
   }
 }

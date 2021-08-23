@@ -11,35 +11,52 @@ const ChatInput = ({
   chatInputRef,
   scrollToBottom,
   resetIdleTimer,
+  isSaying,
+  toggleIsSaying,
+  tellTarget,
 }) => {
-  /*---------------STATE----------------*/
-  const [isSaying, setIsSaying] = useState(true);
   /*---------------HANDLERS----------------*/
-  const handleIsSayingToggle = (e) => {
-    setIsSaying(!isSaying);
+  const chatSubmissionHandler = (e) => {
+    e.preventDefault();
+    let textSubmission;
+    if (!!enteredText) {
+      if (tellTarget !== null) {
+        textSubmission = `tell ${tellTarget} ${enteredText}`;
+      } else if (isSaying) {
+        textSubmission = `${enteredText}`;
+      } else {
+        textSubmission = enteredText;
+      }
+      console.log("TEXT SUBMISSION:  ", textSubmission);
+      onSubmit(textSubmission);
+      setEnteredText("");
+      scrollToBottom();
+    }
+  };
+
+  /*---------------HELPERS----------------*/
+  const formatTellTargetForButton = (str) => {
+    let formattedTellTargetName = str.toUpperCase();
+    if (str.length > 10) {
+      formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 10)}...`;
+    }
+    return formattedTellTargetName;
   };
 
   return (
-    <form
-      style={{ display: "flex" }}
-      onSubmit={(e) => {
-        e.preventDefault();
-
-        if (!!enteredText) {
-          onSubmit(enteredText);
-          setEnteredText("");
-          scrollToBottom();
-        }
-      }}
-    >
+    <form style={{ display: "flex" }} onSubmit={chatSubmissionHandler}>
       <div
         className={`chatbox-button ${isSaying ? "say" : "do"}`}
         onClick={(e) => {
           e.preventDefault();
-          handleIsSayingToggle();
+          toggleIsSaying();
         }}
       >
-        {isSaying ? "SAY" : "DO"}
+        {tellTarget !== null
+          ? `TELL ${formatTellTargetForButton(tellTarget)}`
+          : isSaying
+          ? "SAY"
+          : "DO"}
       </div>
       <input
         className="chatbox-input"
@@ -50,9 +67,9 @@ const ChatInput = ({
           setEnteredText(e.target.value);
         }}
         onKeyDown={(e) => {
-          if (e.key == "Tab" && e.shiftKey) {
+          if (e.key == "`") {
             e.preventDefault();
-            handleIsSayingToggle();
+            toggleIsSaying();
           }
         }}
         onKeyPress={(e) => {
@@ -63,7 +80,11 @@ const ChatInput = ({
           }
         }}
         className="chatbox"
-        placeholder="Enter text to interact with the world here..."
+        placeholder={
+          isSaying
+            ? "Enter what you wish to say."
+            : "Enter what you wish to do here."
+        }
       />
       <div
         className="chatbox-button send"

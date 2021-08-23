@@ -1,6 +1,6 @@
 .bar-container {
   height: 1.2em;
-  background-color: #e0e0de;
+  background-color: white;
   border-radius: 5;
   border-style: outset;
   border-radius: 15px;
@@ -10,6 +10,7 @@
   width: 70%;
   max-width: 20em;
   min-width: 140px;
+  position: relative;
 }
 
 .bar-filler {
@@ -19,25 +20,32 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
+}
+
+.bar-label__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .bar-label {
-  position: relative;
   color: darkgrey;
   font-weight: bold;
-  padding-top: 5px;
+  z-index: 100;
+  font-size: 14px;
 }
 
 .bar-label__text {
 }
 @media only screen and (max-width: 950px) {
   .bar-label {
-    font-size: 14px;
+    font-size: 8px;
   }
 }
 
 @media only screen and (max-width: 600px) {
   .bar-label {
-    font-size: 12px;
+    font-size: 8px;
   }
 }
