@@ -87,10 +87,17 @@
 @media only screen and (max-width: 900px) {
   /*NUMBER STAR STYLES 900px */
   .numberstar-text {
-    font-size: 16px;
+    font-size: 12px;
+    padding-top: 0.75em;
+    padding-right: 0.5em;
   }
 
   /*NUMBER CIRCLE STYLES 900px*/
+  .numbercircle-text {
+    font-size: 10px;
+    padding-top: 0.75em;
+    padding-right: 0.5em;
+  }
 }
 
 @media only screen and (max-width: 600px) {
@@ -117,6 +124,8 @@
   }
 
   .numbercircle-text {
-    font-size: 12px;
+    font-size: 10px;
+    padding-top: 0.75em;
+    padding-right: 0.5em;
   }
 }
