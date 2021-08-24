@@ -71,7 +71,10 @@ const ChatDisplay = ({
   const { presentAgents } = getLocationState(messages);
 
   useLayoutEffect(() => {
-    chatInputRef.current.focus();
+    const { current } = chatInputRef;
+    if (current) {
+      current.focus();
+    }
   }, []);
 
   return (

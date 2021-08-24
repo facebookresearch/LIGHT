@@ -21,9 +21,9 @@ const ChatInput = ({
     let textSubmission;
     if (!!enteredText) {
       if (tellTarget !== null) {
-        textSubmission = `tell ${tellTarget} ${enteredText}`;
+        textSubmission = `"tell ${tellTarget} ${enteredText}"`;
       } else if (isSaying) {
-        textSubmission = `${enteredText}`;
+        textSubmission = `"${enteredText}"`;
       } else {
         textSubmission = enteredText;
       }
@@ -86,18 +86,7 @@ const ChatInput = ({
             : "Enter what you wish to do here."
         }
       />
-      <div
-        className="chatbox-button send"
-        onClick={(e) => {
-          e.preventDefault();
-
-          if (!!enteredText) {
-            onSubmit(enteredText);
-            setEnteredText("");
-            scrollToBottom();
-          }
-        }}
-      >
+      <div className="chatbox-button send" onClick={chatSubmissionHandler}>
         SEND
       </div>
     </form>
