@@ -2,9 +2,9 @@
 input {
   border: none;
   padding: 10px;
-  font-size: 18px;
+  font-size: 1em;
   background-color: white;
-  border: 3px solid #dedede;
+  border: 0px solid #dedede;
   font-family: Lora, serif;
   width: 100%;
 }
@@ -16,7 +16,6 @@ input::placeholder {
 
 input:active,
 input:focus {
-  border: 3px solid #fcff56;
   outline: none;
   font-style: normal;
 }
@@ -28,25 +27,35 @@ input:focus {
   box-sizing: border-box;
 }
 
+.chatbar {
+  display: flex;
+  flex-direction: row;
+  width: 90%;
+  justify-content: center;
+}
+
 .chatbox-button {
   color: white;
-  font-size: 1em;
-  width: 5em;
+  font-size: 0.7em;
+  width: 10em;
   text-align: center;
   padding: 0 0.5em 0 0.5em;
-  box-shadow: 1px 1px 4px black;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0px 5px 0px 5px;
+  margin: 0px 0px 0px 5px;
 }
 
 .say {
   background-color: green;
+  font-size: 1em;
 }
 .do {
   background-color: blue;
+  font-size: 1em;
 }
 
 .send {
@@ -55,6 +64,8 @@ input:focus {
   border-style: double;
   border-color: white;
   box-shadow: 1px 1px 4px black;
+  width: 5em;
+  font-size: 1em;
 }
 
 @keyframes pulse {
