@@ -5,8 +5,9 @@ import "./styles.css";
 //CUSTOM COMPONENTS
 import Header from "../../components/Header";
 import QuestionBlock from "../../components/QuestionBlock";
-
-
+//COPY
+import TaskCopy from "../../TaskCopy";
+const {taskHeader, defaultQuestions} = TaskCopy
 
 const Task = ({
   data
@@ -36,7 +37,9 @@ const Task = ({
   }
   return (
       <div className="app-container" >
-        <Header/>
+        <Header
+          headerText={taskHeader}
+        />
         <div>
         {
           selectionData.length ?
@@ -44,7 +47,11 @@ const Task = ({
             const {id, sentence} = selection;
             return(
               <QuestionBlock
-
+                key={id}
+                headerText={sentence}
+                selectionNode={selection}
+                defaultQuestions={defaultQuestions}
+                updateFunction={(field, value)=>UpdateHandler(id, field, value)}
               />
             )
           })

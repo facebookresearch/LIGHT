@@ -3,41 +3,24 @@ import React, {useState, useEffect} from "react";
 //STYLE
 import "./styles.css";
 //CUSTOM COMPONENTS
-import MultipleSelectQuestion from "../../../../components/Questions/MultipleSelectQuestion";
 import MultipleChoiceQuestion from "../../../../components/Questions/MultipleChoiceQuestion";
-import NumberForm from "../../../../components/NumberForm";
 //UTILS
 import FormatQuestion from "../../../../utils/FormatQuestion";
 // QuestionBlock - Renders a list of questions for a pertaining to a single node
 const QuestionBlock = ({
     selectionNode,
+    headerText,
     defaultQuestions,
     updateFunction// the function to update the attributes for the objects
 })=>{
 
 
     const Question = ({questionInfo, updateFunction})=>{
-        console.log("SELECTION:  ", selection, "QUESTION:  ", questionInfo)
+        console.log("selectionNode:  ", selectionNode, "QUESTION:  ", questionInfo)
         const {question, options, questionType}= questionInfo;
-        const {name}= selection;
-        let formattedQuestion = FormatQuestion(question, [name])
+        const {sentence}= selectionNode;
+        let formattedQuestion = FormatQuestion(question, [])
         switch(questionType) {
-            case "multipleSelect":
-            return (
-                <MultipleSelectQuestion
-                    question={formattedQuestion}
-                    answers={options}
-                    selectFunction={(updateKey, updateValue)=>updateFunction(updateKey, updateValue)}
-                />
-            )
-            case "numeric":
-                return (
-                    <NumberForm
-                        header={formattedQuestion}
-                        formFunction={(updateValue)=>updateFunction(questionInfo.field, updateValue)}
-                        startingVal={0}
-                    />
-                )
             case "multipleChoice":
                 return(
                     <MultipleChoiceQuestion
@@ -55,14 +38,33 @@ const QuestionBlock = ({
     return(
         <div className="questionblock-container">
             {
+                headerText ?
+                <div className="questionblock-header">
+                    <h5>
+                        {headerText}
+                    </h5>
+                </div>
+                :
+                null
+            }
+            <div>
+            {
                 defaultQuestions
                 ?
                 defaultQuestions.map((defaultQuestion, index)=>{
-                    return <Question key={index} questionInfo={defaultQuestion} updateFunction={updateFunction}/>
+                    return (
+                        <Question
+                            key={index}
+                            questionInfo={defaultQuestion}
+                            updateFunction={updateFunction}
+
+                        />
+                    )
                 })
                 :
                 null
             }
+            </div>
         </div>
     )
 }
