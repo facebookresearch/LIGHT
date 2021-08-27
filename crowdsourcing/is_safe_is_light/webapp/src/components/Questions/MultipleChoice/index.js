@@ -4,9 +4,9 @@ import React, {useEffect, useState} from "react";
 import "./styles.css";
 //CUSTOM COMPONENTS
 import TaskButton from "../../TaskButton";
-import Tooltip from "../../ToolTip"
+import ToolTip from "../../ToolTip"
 //ICONS
-
+import Checkbox from "../../Checkbox"
 
 
 // MultipleChoiceQuestion - Form type that allows user to select single answer from multiple option to answer question
@@ -14,8 +14,10 @@ const MultipleChoiceQuestion = ({
     question,
     answers,
     selectFunction,
-    selection,
-    isComplete
+    isComplete,
+    hasToolTip,
+    toolTipText,
+    hasCheckbox
 })=>{
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [answerList, setAnswerList] = useState([])
@@ -23,36 +25,28 @@ const MultipleChoiceQuestion = ({
         setAnswerList(answers)
     }, [])
     const clickHandler = (answer)=>{
+        const {value} = answer;
         console.log("selectedAnswer", answer)
         console.log("ANSWER", answer)
-        setSelectedAnswer(answer);
-        answerList.map((ans)=>{
-            const {value} = ans;
-            console.log("Comparison", answer==value)
-            if(answer==value){
-                selectFunction(value, true);
-            }else{
-                selectFunction(value, false);
-            }
-
-        })
+        setSelectedAnswer(value);
+        selectFunction(value)
     }
 
 
     return(
-        <div className="question-container" >
-            <div>
-
+        <div className="mcquestion-container" >
+            <div className="mcquestion-header">
+                {hasCheckbox ? <Checkbox isComplete={isComplete}/> : null }
                 <ToolTip
                     hasToolTip={hasToolTip}
                     tipText={toolTipText}
                 >
-                    <h1 className="question-text">
+                    <h1 className="mcquestion-text">
                         {question}
                     </h1>
                 </ToolTip>
             </div>
-            <div className="answer-container">
+            <div className="mcanswer-container">
             {
                 answerList.length
                 ?

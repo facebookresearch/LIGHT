@@ -23,6 +23,7 @@
     "react-dom": "16.13.1",
     "react-dropdown": "^1.9.2",
     "react-icons": "^4.2.0",
+    "react-tippy": "^1.4.0",
     "regenerator-runtime": "^0.13.7"
   },
   "devDependencies": {

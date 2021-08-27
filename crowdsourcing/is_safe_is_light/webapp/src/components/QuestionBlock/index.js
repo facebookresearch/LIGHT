@@ -3,9 +3,9 @@ import React, {useState, useEffect} from "react";
 //STYLE
 import "./styles.css";
 //CUSTOM COMPONENTS
-import MultipleChoiceQuestion from "../../../../components/Questions/MultipleChoiceQuestion";
+import MultipleChoiceQuestion from "../Questions/MultipleChoice";
 //UTILS
-import FormatQuestion from "../../../../utils/FormatQuestion";
+import FormatQuestion from "../../utils/FormatQuestion";
 // QuestionBlock - Renders a list of questions for a pertaining to a single node
 const QuestionBlock = ({
     payloadData,
@@ -16,7 +16,7 @@ const QuestionBlock = ({
 
 
     const Question = ({questionInfo, updateFunction})=>{
-        const {question, questionType, questionField, options, hasToolTip, toolTipText}= questionInfo;
+        const {question, questionType, questionField, options, hasToolTip, toolTipText, hasCheckbox}= questionInfo;
         let formattedQuestion = FormatQuestion(question, [])
         switch(questionType) {
             case "multipleChoice":
@@ -25,10 +25,10 @@ const QuestionBlock = ({
                         question={formattedQuestion}
                         answers={options}
                         selectFunction={(updateValue)=>updateFunction(questionField, updateValue)}
-                        selection={selection}
                         isComplete={payloadData[questionField]!==null}
                         hasToolTip={hasToolTip}
                         toolTipText={toolTipText}
+                        hasCheckbox={hasCheckbox}
                     />
                 )
             default:
@@ -41,14 +41,14 @@ const QuestionBlock = ({
             {
                 headerText ?
                 <div className="questionblock-header">
-                    <h5>
+                    <h5 className="questionblock-header__text">
                         {headerText}
                     </h5>
                 </div>
                 :
                 null
             }
-            <div>
+            <div className="questionblock-body">
             {
                 defaultQuestions
                 ?

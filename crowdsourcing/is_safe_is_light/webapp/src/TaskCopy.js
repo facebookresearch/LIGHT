@@ -27,16 +27,17 @@ const TaskCopy = {
                     value: "safe"
                 },
                 {
-                    label:"SAFE",
-                    value: "safe"
+                    label:"UNSAFE",
+                    value: "unsafe"
                 },
                 {
-                    label:"SAFE",
-                    value: "safe"
+                    label:"UNSURE",
+                    value: "unsure"
                 },
             ],
             hasToolTip:true,
-            toolTipText:""
+            toolTipText:"",
+            hasCheckbox:true
         },         {
             question: "Does this phrase fit a fantasy setting or reality?",
             questionType:"multipleChoice",
@@ -56,7 +57,8 @@ const TaskCopy = {
                 },
             ],
             hasToolTip:true,
-            toolTipText:""
+            toolTipText:"",
+            hasCheckbox:true
         }
     ]
 }

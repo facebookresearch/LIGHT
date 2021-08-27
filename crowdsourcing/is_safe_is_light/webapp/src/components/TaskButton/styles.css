@@ -1,23 +1,23 @@
 /*TASK BUTTON STYLES*/
 /* Multiple choice button styles */
 .mc-button__container {
-    background-color: red;
-    border-color:white;
+    background-color: white;
+    border-color:blue;
     border-style: solid;
     border-width: 1px;
     box-shadow: 5px 2px 5px black;
     margin: 10px;
 }
 .mc-button__text{
-    color: white;
+    color: blue;
     font-size: 16px;
     padding:6px;
     font-weight: bold;
 }
 
 .mc-selectedbutton__container {
-    background-color: white;
-    border-color:red;
+    background-color: blue;
+    border-color:white;
     border-style: solid;
     border-width: 1px;
     box-shadow: 5px 2px 5px black;
@@ -25,7 +25,7 @@
 }
 
 .mc-selectedbutton__text {
-    color: red;
+    color: white;
     font-size: 16px;
     padding:6px;
     font-weight: bold;
@@ -37,75 +37,6 @@
   }
 
 .mc-button__container:active {
-box-shadow: 0em 0em 0em;
-}
-
-/* Boolean button styles */
-.b-button__container {
-    border-style: solid;
-    border-width: 1px;
-    box-shadow: 5px 2px 5px black;
-    height: 100%;
-}
-
-.b-button__container.true {
-    background-color: white;
-    border-color:green;
-    border-radius: 10px 0 0 10px;
-}
-
-.b-button__container.false {
-    background-color: white;
-    border-color:red;
-    border-radius: 0 10px 10px 0px;
-}
-
-.b-button__text{
-    font-size: 16px;
-    padding:6px;
-    font-weight: bold;
-}
-
-.b-button__text.true{
-    color: green;
-}
-
-.b-button__text.false{
-    color: red;
-}
-
-.b-selectedbutton__container {
-    border-width: 1px;
-    box-shadow: 5px 2px 5px black;
-    border-style: solid;
-}
-
-.b-selectedbutton__container.true {
-    background-color: green;
-    border-color:green;
-    border-radius: 10px 0 0 10px;
-}
-.b-selectedbutton__container.false {
-    background-color: red;
-    border-color:red;
-    border-radius: 0 10px 10px 0px;
-}
-
-
-.b-selectedbutton__text {
-    font-size: 16px;
-    padding:6px;
-    font-weight: bold;
-    color: white;
-}
-
-
-.b-button__container:hover {
-    cursor: pointer;
-    font-size: 20px;
-  }
-
-.b-button__container:active {
 box-shadow: 0em 0em 0em;
 }
 
