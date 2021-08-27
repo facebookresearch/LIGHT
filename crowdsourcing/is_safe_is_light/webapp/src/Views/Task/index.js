@@ -1,10 +1,10 @@
+//REACT
 import React, {useEffect, useState} from "react";
+//STYLES
 import "./styles.css";
-//BOOTSTRAP COMPONENTS
-
 //CUSTOM COMPONENTS
 import Header from "../../components/Header";
-import MultipleChoice from "../../components/Questions/MultipleChoice";
+import QuestionBlock from "../../components/QuestionBlock";
 
 
 
@@ -18,7 +18,6 @@ const Task = ({
   const [payloadData, setPayloadData]= useState([]);
 
   /*------------------------------------LIFE CYCLE------------------------------------*/
-  //
   useEffect(()=>{
     let initialPayload = {}
     let initialSelectionData = Object.keys(data).map(selectionId=>{
@@ -28,24 +27,31 @@ const Task = ({
     setPayloadData(initialPayload);
     setSelectionData(initialSelectionData);
   },[data])
-
-
+  /*------------------------------------HANDLERS------------------------------------*/
+  const UpdateHandler = (id, field, value)=>{
+    let unupdatedValue = payloadData[id]
+    let updatededValue = {...unupdatedValue, [field]:value}
+    let updatedPayloadData = {...payloadData, [id]: updatededValue}
+    setPayloadData(updatedPayloadData)
+  }
   return (
       <div className="app-container" >
         <Header/>
+        <div>
         {
           selectionData.length ?
           selectionData.map((selection, index)=>{
             const {id, sentence} = selection;
             return(
-              <div>
+              <QuestionBlock
 
-              </div>
+              />
             )
           })
           :
           null
         }
+        </div>
       </div>
   );
 }

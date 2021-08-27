@@ -1,0 +1,39 @@
+/*SELECTION LIST STYLES*/
+.selectionlist-container {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-style: ridge;
+    border-color: blue;
+    border-width: 10px;
+    border-radius: 15px;
+    width: 80%;
+    padding:20px;
+    margin-top:10px;
+}
+/*SELECTION LIST ITEM*/
+.selection-row {
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin: 5px 0 5px 0;
+    width: 100%;
+}
+
+.selection-name__container{
+    background-color: blue;
+    border-radius: 10px 0 0 10px;
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.selection-name__text {
+    color: white;
+    font-weight: bold;
+    margin-bottom: 0;
+    padding:5px;
+    text-align: center;
+}

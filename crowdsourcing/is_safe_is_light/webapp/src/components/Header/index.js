@@ -1,10 +1,10 @@
 //REACT
 import React from "react";
 
-const Header = ()=>{
+const Header = ({headerText})=>{
     return(
         <div className="header">
-            <h1 className="header__text">Object Interaction Narrations</h1>
+            <h1 className="header__text">{headerText}</h1>
         </div>
     )
 }
