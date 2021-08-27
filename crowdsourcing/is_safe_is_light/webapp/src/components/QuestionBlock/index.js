@@ -23,12 +23,12 @@ const QuestionBlock = ({
                 return(
                     <MultipleChoiceQuestion
                         question={formattedQuestion}
-                        hasToolTip={hasToolTip}
-                        toolTipText={toolTipText}
                         answers={options}
                         selectFunction={(updateValue)=>updateFunction(questionField, updateValue)}
                         selection={selection}
                         isComplete={payloadData[questionField]!==null}
+                        hasToolTip={hasToolTip}
+                        toolTipText={toolTipText}
                     />
                 )
             default:

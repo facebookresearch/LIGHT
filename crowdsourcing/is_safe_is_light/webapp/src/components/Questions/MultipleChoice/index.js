@@ -4,6 +4,9 @@ import React, {useEffect, useState} from "react";
 import "./styles.css";
 //CUSTOM COMPONENTS
 import TaskButton from "../../TaskButton";
+import Tooltip from "../../ToolTip"
+//ICONS
+
 
 
 // MultipleChoiceQuestion - Form type that allows user to select single answer from multiple option to answer question
@@ -38,26 +41,33 @@ const MultipleChoiceQuestion = ({
 
     return(
         <div className="question-container" >
-            <h1 className="question-text">
-                {question}
-            </h1>
+            <div>
+
+                <ToolTip
+                    hasToolTip={hasToolTip}
+                    tipText={toolTipText}
+                >
+                    <h1 className="question-text">
+                        {question}
+                    </h1>
+                </ToolTip>
+            </div>
             <div className="answer-container">
             {
                 answerList.length
                 ?
                 answerList.map((answer, index)=>{
-                    const {name, value} =answer;
+                    const {label, value} = answer;
                     return(
                         <TaskButton
                             key={index}
-                            unselectedContainer={}
-                            selectedContainer={}
-                            unselectedText={}
-                            selectedText
-                            name={name}
-                            selectFunction={}
+                            unselectedContainer={"mc-button__container"}
+                            selectedContainer={"mc-selectedbutton__container"}
+                            unselectedText={"mc-button__text"}
+                            selectedText={"mc-selectedbutton__text"}
+                            name={label}
+                            selectFunction={clickHandler}
                             isSelected ={selectedAnswer==value}
-                            checked={selectedAnswer==value}
                         />
                     )
                 })

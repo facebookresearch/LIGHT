@@ -13,7 +13,7 @@ import Tip from "./Tip"
 // InfoToolTip - renders an info icon that will display tooltip copy provided by props if has tooltip boolean value is true.  Other wise it will plainly render the child component
 const InfoToolTip = ({
     hasToolTip,//Boolean value stating whether child component has tool tip or not.
-    tutorialCopy, //  Tool Tip Copy passed as string
+    tipText, //  Tool Tip Copy passed as string
     children //  JSX next to tooltip
 })=>{
 
@@ -25,7 +25,7 @@ const InfoToolTip = ({
             </div>
             <Tooltip
                 html={
-                <Tip tutorialCopy={tutorialCopy}/>
+                <Tip tipText={tipText}/>
                 }
                 position="left"
                 theme="dark"
