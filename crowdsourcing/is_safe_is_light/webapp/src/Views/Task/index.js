@@ -44,13 +44,9 @@ const Task = ({
   },[data])
   /*------------------------------------HANDLERS------------------------------------*/
   const updateHandler = (id, field, value)=>{
-    console.log("ID:  ", id)
-    console.log("FIELD:  ", field)
-    console.log("VALUE:  ", value)
     let unupdatedValue = payloadData[id]
     let updatedValue = {...unupdatedValue, [field]:value}
     let updatedPayloadData = {...payloadData, [id]: updatedValue}
-    console.log("UPDATED  PAYLOAD:  ", updatedPayloadData)
     setPayloadData(updatedPayloadData)
   }
   const submissionHandler = ()=>{
@@ -62,7 +58,7 @@ const Task = ({
       Object.keys(submissionValue).map(attrKey=>{
         const attrValue = submissionValue[attrKey]
         if(attrValue===null){
-          errorList.push(`No scoring for ${attrKey} was given for ${sentence}.`)
+          errorList.push(`No scoring for ${attrKey} was given for "${sentence}."`)
         }
       })
     })

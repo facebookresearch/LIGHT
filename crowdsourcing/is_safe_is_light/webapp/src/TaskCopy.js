@@ -1,11 +1,17 @@
 /*----------------SCREENSHOTS/IMAGES----------------*/
 /*SELECTION*/
-
+import Intro from "./assets/images/tutorialScreenShots/Intro.png";
+/*---------STEP SCREENSHOTS---------*/
+import Unanswered1 from "./assets/images/tutorialScreenShots/Unanswered1.png";
+import SafeFantasy from "./assets/images/tutorialScreenShots/SafeFantasy.png";
+import SafeEither from "./assets/images/tutorialScreenShots/SafeEither.png";
+import Unsafe from "./assets/images/tutorialScreenShots/Unsafe.png";
+import UnsureEither from "./assets/images/tutorialScreenShots/UnsureEither.png";
 /*SUBMIT BUTTON*/
-
+import SubmitButton from "./assets/images/tutorialScreenShots/SubmitButton.png";
 /*TOOLTIP*/
 
-/*---------STEP SCREENSHOTS---------*/
+
 
 
 const TaskCopy = {
@@ -20,11 +26,11 @@ const TaskCopy = {
                     steps:[
                         {
                             stepCopy: "Read the sentences at the top of the section then consider whether the sentences above the questions are safe for other users.",
-                            stepImg: ""
+                            stepImg: Unanswered1
                         },
                         {
                             stepCopy: "Once you have gauged the safety of a sentence select one of the buttons that best fits.  Do this for each sentence provided.",
-                            stepImg: ""
+                            stepImg: SafeFantasy
                         }
                     ]
                 },
@@ -33,11 +39,20 @@ const TaskCopy = {
                     steps:[
                         {
                             stepCopy: "Read the sentences above each set of questions, and consider whether the fit the theme of a medieval fantasy world, if they are too modern, or if they would be appropriate regardsless of setting.",
-                            stepImg: ""
+                            stepImg: SafeEither
                         },
                         {
                             stepCopy: "Once you have decided click the button that best describes how you would rate each sentence.",
-                            stepImg: ""
+                            stepImg: UnsureEither
+                        }
+                    ]
+                },
+                {
+                    questionName: "Submitting the Task",
+                    steps:[
+                        {
+                            stepCopy: "Once every sentence has been had it's context and safety rated submit the task using the submit button at the bottom of the screen.",
+                            stepImg: SubmitButton
                         }
                     ]
                 }
@@ -64,7 +79,7 @@ const TaskCopy = {
                 },
             ],
             hasToolTip:true,
-            toolTipText:"Answer this question by clicking what safety rating you feel best fits the sentence above.",
+            toolTipText: "Read the sentences at the top of the section then consider whether the sentences above the questions are safe for other users.  Once you have gauged the safety of a sentence select one of the buttons that best fits.  Do this for each sentence provided.",
             hasCheckbox:true
         },         {
             question: "Does this phrase fit a fantasy setting or reality?",
@@ -85,7 +100,7 @@ const TaskCopy = {
                 },
             ],
             hasToolTip:true,
-            toolTipText:"",
+            toolTipText:"Read the sentences above each set of questions, and consider whether the fit the theme of a medieval fantasy world, if they are too modern, or if they would be appropriate regardsless of setting.  Read the sentences above each set of questions, and consider whether the fit the theme of a medieval fantasy world, if they are too modern, or if they would be appropriate regardsless of setting.",
             hasCheckbox:true
         }
     ]

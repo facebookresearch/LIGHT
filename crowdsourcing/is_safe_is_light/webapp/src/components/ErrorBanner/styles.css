@@ -22,14 +22,14 @@ ul li::before {
     max-height: 30vh;
 }
 #toast-header{
-    background-color: white;
+    background-color: red;
     width: 100vw;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 #toast-header__text{
-    color:red;
+    color:white;
     font-size: 20;
     font-weight: bold;
 }
@@ -43,4 +43,12 @@ ul li::before {
     color: white;
     text-align: left;
     width: 90vw;
+}
+
+.alert-dismissible {
+   padding-right: 0;
+}
+
+.alert {
+    padding:0;
 }

@@ -27,7 +27,7 @@ const InfoToolTip = ({
                 html={
                 <Tip tipText={tipText}/>
                 }
-                position="left"
+                position="top"
                 theme="dark"
                 size="big"
             >

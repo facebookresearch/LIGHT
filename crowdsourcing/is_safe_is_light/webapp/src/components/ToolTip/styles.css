@@ -30,4 +30,5 @@
 
 .info-icon:hover {
     color: blue;
+    cursor: help;
 }

@@ -1,11 +1,11 @@
 /* PREVIEW STYLES */
 .preview-container {
-    margin-top: 5px;
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
     background-color: blue;
     align-items: center;
+    height: 100vh;
 }
 .intro-container{
     width:90%;

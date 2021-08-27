@@ -38,7 +38,7 @@ const MultipleChoiceQuestion = ({
     return(
         <div className="mcquestion-container" >
             <div className="mcquestion-header">
-            {hasCheckbox ? <Checkbox isComplete={selectedAnswer!==null}/> : null }
+                {hasCheckbox ? <Checkbox isComplete={selectedAnswer!==null}/> : null }
                 <ToolTip
                     hasToolTip={hasToolTip}
                     tipText={toolTipText}
