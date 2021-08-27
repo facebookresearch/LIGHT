@@ -1,17 +1,15 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
-from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
+from mephisto.tools.examine_utils import run_examine_by_worker
 from mephisto.data_model.worker import Worker
 
+
 db = LocalMephistoDB()
-mephisto_data_browser = MephistoDataBrowser(db=db)
-
-units = mephisto_data_browser.get_units_for_task_name(input("Input task name: "))
-
-tasks_to_show = input("Tasks to see? (a)ll/(u)nreviewed: ")
-if tasks_to_show in ["all", "a"]:
-    pass
-else:
-    units = [u for u in units if u.get_status() == "completed"]
 
 
 def format_action(action_obj):
@@ -51,7 +49,7 @@ def get_timeline_string(times, values):
     return timeline_string
 
 
-def format_for_printing_data(data):
+def format_data_for_printing(data):
     worker_name = Worker(db, data["worker_id"]).worker_name
     contents = data["data"]
     duration = contents["times"]["task_end"] - contents["times"]["task_start"]
@@ -75,6 +73,4 @@ def format_for_printing_data(data):
     return f"-------------------\n{metadata_string}{inputs_string}{output_string}"
 
 
-for unit in units:
-    print(format_for_printing_data(mephisto_data_browser.get_data_from_unit(unit)))
-    # TODO can add review stuff if desired?
+run_examine_by_worker(db, format_data_for_printing)

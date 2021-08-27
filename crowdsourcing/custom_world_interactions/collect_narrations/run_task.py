@@ -32,10 +32,9 @@ from dataclasses import dataclass, field
 from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-INPUT_FILE_TASK = "objects-interaction-task-11"
 LIGHT_DB_PATH = "~/ParlAI/data/LIGHT/merged.db"
-PRIMARY_OBJECT_LIST_SIZE = 5
-SECONDARY_OBJECT_LIST_SIZE = 5
+PRIMARY_OBJECT_LIST_SIZE = 8
+SECONDARY_OBJECT_LIST_SIZE = 8
 DEFAULT_NUM_TASKS = 20
 
 db = LocalMephistoDB()
@@ -45,7 +44,7 @@ defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    {"conf": "constraints_events_task"},
+    {"conf": "collect_narrations"},
 ]
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
@@ -59,6 +58,8 @@ class TestScriptConfig(RunScriptConfig):
     primary_object_list_size: int = PRIMARY_OBJECT_LIST_SIZE
     secondary_object_list_size: int = SECONDARY_OBJECT_LIST_SIZE
     num_tasks: int = DEFAULT_NUM_TASKS
+    force_rebuild: bool = False
+    qualify_new_workers: bool = False
 
 
 def get_object_lists(db_path):
@@ -140,10 +141,15 @@ def validate_unit(unit):
     if unit.get_assigned_agent() is None:
         return
 
+    output = mephisto_data_browser.get_data_from_unit(unit)["data"]
+
+    if output is None:
+        return
+        
     data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
         "final_data"
     ]
-    action_description = data["actionDescription"]
+    action_description = data["actionDescription"].strip()
 
     if (
         len(action_description) <= 20
@@ -156,14 +162,15 @@ def validate_unit(unit):
     ):
         # Not in second person or invalid punctuation
         print("Action " + action_description + " was not validated!")
-        unit.get_assigned_agent().soft_reject_work()
+        # unit.get_assigned_agent().soft_reject_work() => must wait for async version
         worker = unit.get_assigned_agent().get_worker()
-        worker.grant_qualification("objects_interaction_task_block", 1)
+        worker.grant_qualification("collect_narrations_task_block", 1)
     return
 
 
-@hydra.main(config_name="scriptconfig")
+@hydra.main(config_path="hydra_configs", config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
+    print(cfg)
     task_dir = cfg.task_dir
 
     def onboarding_always_valid(onboarding_data):
@@ -172,6 +179,11 @@ def main(cfg: DictConfig) -> None:
     primary_objects, secondary_objects = get_object_lists(
         cfg.light_db_path,
     )
+
+    if not cfg.qualify_new_workers:
+        validator = lambda u: True
+    else:
+        validator = validate_unit
 
     shared_state = SharedStaticTaskState(
         static_task_data=create_task_data(
@@ -182,25 +194,28 @@ def main(cfg: DictConfig) -> None:
             cfg.num_tasks,
         ),
         validate_onboarding=onboarding_always_valid,
-        on_unit_submitted=validate_unit,
+        on_unit_submitted=validator,
     )
 
-    shared_state.mturk_specific_qualifications = [
-        {
-            "QualificationTypeId": "00000000000000000040",
-            "Comparator": "GreaterThanOrEqualTo",
-            "IntegerValues": [3000],
-            "ActionsGuarded": "DiscoverPreviewAndAccept",
-        },
-        {
-            "QualificationTypeId": "000000000000000000L0",
-            "Comparator": "GreaterThanOrEqualTo",
-            "IntegerValues": [97],
-            "ActionsGuarded": "DiscoverPreviewAndAccept",
-        },
-    ]
+    if cfg.qualify_new_workers:
+        shared_state.mturk_specific_qualifications = [
+            {
+                "QualificationTypeId": "00000000000000000040",
+                "Comparator": "GreaterThanOrEqualTo",
+                "IntegerValues": [1500],
+                "ActionsGuarded": "DiscoverPreviewAndAccept",
+            },
+            {
+                "QualificationTypeId": "000000000000000000L0",
+                "Comparator": "GreaterThanOrEqualTo",
+                "IntegerValues": [95],
+                "ActionsGuarded": "DiscoverPreviewAndAccept",
+            },
+        ]
 
-    build_task(task_dir)
+    built_file = os.path.join(task_dir, "webapp", "build", "bundle.js")
+    if cfg.force_rebuild or not os.path.exists(built_file):
+        build_task(task_dir)
 
     db, cfg = load_db_and_process_config(cfg)
     operator = Operator(db)
