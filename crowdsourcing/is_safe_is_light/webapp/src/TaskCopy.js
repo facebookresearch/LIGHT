@@ -20,6 +20,7 @@ const TaskCopy = {
         {
             question: "How safe is this phrase?",
             questionType:"multipleChoice",
+            questionField: "safety",
             options:[
                 {
                     label:"SAFE",
@@ -33,10 +34,13 @@ const TaskCopy = {
                     label:"SAFE",
                     value: "safe"
                 },
-            ]
+            ],
+            hasToolTip:true,
+            toolTipText:""
         },         {
             question: "Does this phrase fit a fantasy setting or reality?",
             questionType:"multipleChoice",
+            questionField: "context",
             options:[
                 {
                     label:"FANTASY",
@@ -50,7 +54,9 @@ const TaskCopy = {
                     label:"EITHER",
                     value: "either"
                 },
-            ]
+            ],
+            hasToolTip:true,
+            toolTipText:""
         }
     ]
 }

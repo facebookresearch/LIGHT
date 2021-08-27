@@ -49,7 +49,7 @@ const Task = ({
               <QuestionBlock
                 key={id}
                 headerText={sentence}
-                selectionNode={selection}
+                payloadData={payloadData}
                 defaultQuestions={defaultQuestions}
                 updateFunction={(field, value)=>UpdateHandler(id, field, value)}
               />

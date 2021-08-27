@@ -8,7 +8,7 @@ import MultipleChoiceQuestion from "../../../../components/Questions/MultipleCho
 import FormatQuestion from "../../../../utils/FormatQuestion";
 // QuestionBlock - Renders a list of questions for a pertaining to a single node
 const QuestionBlock = ({
-    selectionNode,
+    payloadData,
     headerText,
     defaultQuestions,
     updateFunction// the function to update the attributes for the objects
@@ -16,18 +16,19 @@ const QuestionBlock = ({
 
 
     const Question = ({questionInfo, updateFunction})=>{
-        console.log("selectionNode:  ", selectionNode, "QUESTION:  ", questionInfo)
-        const {question, options, questionType}= questionInfo;
-        const {sentence}= selectionNode;
+        const {question, questionType, questionField, options, hasToolTip, toolTipText}= questionInfo;
         let formattedQuestion = FormatQuestion(question, [])
         switch(questionType) {
             case "multipleChoice":
                 return(
                     <MultipleChoiceQuestion
                         question={formattedQuestion}
+                        hasToolTip={hasToolTip}
+                        toolTipText={toolTipText}
                         answers={options}
-                        selectFunction={(updateKey, updateValue)=>updateFunction(updateKey, updateValue)}
+                        selectFunction={(updateValue)=>updateFunction(questionField, updateValue)}
                         selection={selection}
+                        isComplete={payloadData[questionField]!==null}
                     />
                 )
             default:

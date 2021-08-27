@@ -1,4 +1,3 @@
-
 //FormatQuestion - component that takes a string and replaces # with dynamic keywords
 const FormatQuestion = (
     question,

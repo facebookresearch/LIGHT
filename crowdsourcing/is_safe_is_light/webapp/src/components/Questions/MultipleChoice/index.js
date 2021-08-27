@@ -2,8 +2,6 @@
 import React, {useEffect, useState} from "react";
 //STYLES
 import "./styles.css";
-//BOOSTRAP
-import Form from 'react-bootstrap/Form';
 //CUSTOM COMPONENTS
 import TaskButton from "../../TaskButton";
 
@@ -13,7 +11,8 @@ const MultipleChoiceQuestion = ({
     question,
     answers,
     selectFunction,
-    selection
+    selection,
+    isComplete
 })=>{
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [answerList, setAnswerList] = useState([])
