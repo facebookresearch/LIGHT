@@ -11,6 +11,14 @@ const CollapsibleBox = ({ title, titleBg, containerBg, collapsedContent, childre
   const openHandler = () => setIsCollapsed(false);
   const closeHandler = () => setIsCollapsed(true);
 
+  const onIconClick = isCollapsed ? openHandler : closeHandler;
+  const iconHelpText = isCollapsed ? "Expand" : "Collapse";
+  const iconBody = isCollapsed ? <BiWindow color="white" /> : <FaWindowMinimize color="white" />;
+  const expander = <div className="collapsible-header--icon" onClick={onIconClick}>
+    <span className="collapsible-header--icon-text">{iconHelpText}</span>
+    {iconBody}
+  </div>
+
   return (
     <div className="collapsible-container">
       <div
@@ -21,13 +29,7 @@ const CollapsibleBox = ({ title, titleBg, containerBg, collapsedContent, childre
       >
         <div />
         <h3 className="collapsible-header--text">{title}</h3>
-        <div className="collapsible-header--icon">
-          {isCollapsed ? (
-            <BiWindow color="white" onClick={openHandler} />
-          ) : (
-            <FaWindowMinimize color="white" onClick={closeHandler} />
-          )}
-        </div>
+        {expander}
       </div>
       {isCollapsed ? (
         <div>{collapsedContent}</div>

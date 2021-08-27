@@ -34,6 +34,7 @@ const Task1 = ({
   const toggleShowError = () => setShowError(!showError);
 console.log("TASK DATA:  ", taskData)
 
+  const {primaryObject, secondaryObject} = payload;
 
   useEffect(()=>{
       setPrimaryObjectList(taskData["primary_object_list"]);
@@ -62,7 +63,6 @@ console.log("TASK DATA:  ", taskData)
     onSubmit(payload);
     clearHandler()
     }else{
-      let {primaryObject, secondaryObject} = payload;
       let ErrorMessage = `${primaryObject ? "": "Must select a primary object"}${secondaryObject ? "": ",Must select a secondary Object"}${actionDescription ? "": ",Action description cannot be blank"}`.split(",")
       console.log(ErrorMessage)
       setErrorMessage(ErrorMessage)
@@ -120,7 +120,12 @@ console.log("TASK DATA:  ", taskData)
           :
           <div/>
         }
-        <DescriptionForm formVal={actionDescription} formFunction={setActionDescription} />
+        <DescriptionForm
+          formVal={actionDescription}
+          formFunction={setActionDescription}
+          primaryObject={primaryObject}
+          secondaryObject={secondaryObject}
+        />
         {
           active
           ?
@@ -143,6 +148,3 @@ console.log("TASK DATA:  ", taskData)
 }
 
 export default Task1 ;
-
-// {name:"LIT TORCH", desc:"A high quality torch burns brightly.  The torches' flame shows no sign of dying down."}
-// {name:"WOODEN TABLE", desc:"The table is old, scratched, and worn.  Its surface is dry laden with splinters."}
