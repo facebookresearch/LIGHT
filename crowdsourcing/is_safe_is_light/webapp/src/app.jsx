@@ -52,43 +52,22 @@ function MainApp() {
       <Preview/>
     );
   }
-
+  const DummyData = {
+    111:"This sentence is safe and fantasy based.",
+    222:"This sentence is unsafe and based in reality.",
+    333:"This sentence is safe and could be either fantasy or real.",
+    444:"This sentence has uncertain safety and could be either fantasy or real.",
+  }
 
   return (
     <>
       <ErrorBoundary handleError={handleFatalError}>
-        <Task/>
+        <Task
+          data={DummyData}
+        />
       </ErrorBoundary>
     </>
   )
 }
 
 ReactDOM.render(<MainApp />, document.getElementById("app"));
-
-
-
-
-
-// import React, { useEffect, useState } from "react";
-// import ReactDOM from "react-dom";
-// import ViewRouter from "./ViewRouter"
-
-// import { useMephistoTask } from "mephisto-task";
-
-// const MainApp = ()=>{
-//   const appData = useMephistoTask();
-
-//   return(
-//       <div>
-//       {
-//         appData ?
-//         <ViewRouter appData={appData} />
-//         :
-//         <div/>
-//       }
-//     </div>
-//   )
-
-// }
-
-// ReactDOM.render(<MainApp />, document.getElementById("app"));

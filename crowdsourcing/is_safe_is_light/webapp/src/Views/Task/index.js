@@ -3,12 +3,13 @@ import "./styles.css";
 //BOOTSTRAP COMPONENTS
 
 //CUSTOM COMPONENTS
-import Header from "../../components";
+import Header from "../../components/Header";
+import MultipleChoice from "../../components/Questions/MultipleChoice";
 
 
 
 const Task = ({
-
+  data
 })=> {
 /*------------------------------------STATE------------------------------------*/
   //Selection Recieved from Backend.
@@ -19,19 +20,32 @@ const Task = ({
   /*------------------------------------LIFE CYCLE------------------------------------*/
   //
   useEffect(()=>{
-    const {selection} = data;
     let initialPayload = {}
-    Object.keys(selection).forEach(selectionId=>{
-      initialPayload.selectionId = {id:selectionId, sentence:selection[selectionId], safety:null, context:null}
+    let initialSelectionData = Object.keys(data).map(selectionId=>{
+      initialPayload.selectionId = {id:selectionId, sentence:data[selectionId], safety:null, context:null}
+      return {id:selectionId, sentence:data[selectionId]}
     })
-    setPayloadData(initialPayload)
+    setPayloadData(initialPayload);
+    setSelectionData(initialSelectionData);
   },[data])
 
 
   return (
       <div className="app-container" >
         <Header/>
+        {
+          selectionData.length ?
+          selectionData.map((selection, index)=>{
+            const {id, sentence} = selection;
+            return(
+              <div>
 
+              </div>
+            )
+          })
+          :
+          null
+        }
       </div>
   );
 }
