@@ -53,12 +53,12 @@ const QuestionBlock = ({
                     let formattedQuestion = FormatQuestion(question, [])
                     return (
                         <MultipleChoiceQuestion
-                        question={formattedQuestion}
-                        answers={options}
-                        selectFunction={(updateValue)=>updateFunction(questionField, updateValue)}
-                        hasToolTip={hasToolTip}
-                        toolTipText={toolTipText}
-                        hasCheckbox={hasCheckbox}
+                            question={formattedQuestion}
+                            answers={options}
+                            selectFunction={(updateValue)=>updateFunction(questionField, updateValue)}
+                            hasToolTip={hasToolTip}
+                            toolTipText={toolTipText}
+                            hasCheckbox={hasCheckbox}
                     />
                     )
                 })

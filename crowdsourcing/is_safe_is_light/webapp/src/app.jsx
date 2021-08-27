@@ -17,6 +17,9 @@ import { useMephistoTask, ErrorBoundary } from "mephisto-task";
 /* ================= Container Components ================= */
 import Preview from "./Views/Preview";
 import Task from "./Views/Task";
+/* ================= Styles ================= */
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 /* ================= Application Components ================= */
 
@@ -53,9 +56,9 @@ function MainApp() {
     );
   }
   const DummyData = {
-    111:"This sentence is safe and fantasy based.",
-    222:"This sentence is unsafe and based in reality.",
-    333:"This sentence is safe and could be either fantasy or real.",
+    111:"I used my broadsword to slay a minotaur last week.",
+    222:"May I have your credit card info?",
+    333:"I had a drink at the Prancing Horse Inn last week.",
     444:"This sentence has uncertain safety and could be either fantasy or real.",
   }
 

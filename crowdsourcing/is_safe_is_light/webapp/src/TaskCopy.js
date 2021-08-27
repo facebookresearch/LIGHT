@@ -1,15 +1,42 @@
+/*----------------SCREENSHOTS/IMAGES----------------*/
+/*SELECTION*/
+
+/*SUBMIT BUTTON*/
+
+/*TOOLTIP*/
+
+/*---------STEP SCREENSHOTS---------*/
+
+
 const TaskCopy = {
     taskHeader:"Annotate Phrase Safety and Realism",
     successMessage:"You have successfully submitted completed task!",
     previewCopy:{
         tutorial:{
-            intro: "We're trying to crowdsource defining and rating attributes of a selection of objects, characters, and locations.  The setting for this will be in a medieval fantasy scenario, and as such should not refer to real people, places, or modern day technologies.  The first objective of this task is, given this selection of a specific type, rate where they fall on scales of various inherent attribtutes relative to each other and the examples on the scales.  The second objective is to name and describe an attribute that applies to the entire selection and then rate selection in the same way as the first objective.  The final objective is to define attributes for each of this selection.  The inherent attributes will be at the top of this section, selecting possible attributes or creating custom attributes is done in the second part of this section.  At the top of the task each thing in the selection will be listed next to a description.  Reference this during the task as needed.  The description will appear when you hover your cursor over the name of the entry.",
+            intro: "We're trying to crowdsource the propriety and safety of various sentences in a medieval fantasy game.  Select the answer that you feel best fits the sentence in regards to whether it is setting appropriate and whether it is safe for the users.",
             questionsCopy:[
                 {
-                    questionName: "Rating Scale",
+                    questionName: "Safety Assessment",
                     steps:[
                         {
-                            stepCopy: "",
+                            stepCopy: "Read the sentences at the top of the section then consider whether the sentences above the questions are safe for other users.",
+                            stepImg: ""
+                        },
+                        {
+                            stepCopy: "Once you have gauged the safety of a sentence select one of the buttons that best fits.  Do this for each sentence provided.",
+                            stepImg: ""
+                        }
+                    ]
+                },
+                {
+                    questionName: "Context Assessment",
+                    steps:[
+                        {
+                            stepCopy: "Read the sentences above each set of questions, and consider whether the fit the theme of a medieval fantasy world, if they are too modern, or if they would be appropriate regardsless of setting.",
+                            stepImg: ""
+                        },
+                        {
+                            stepCopy: "Once you have decided click the button that best describes how you would rate each sentence.",
                             stepImg: ""
                         }
                     ]
@@ -37,7 +64,7 @@ const TaskCopy = {
                 },
             ],
             hasToolTip:true,
-            toolTipText:"",
+            toolTipText:"Answer this question by clicking what safety rating you feel best fits the sentence above.",
             hasCheckbox:true
         },         {
             question: "Does this phrase fit a fantasy setting or reality?",

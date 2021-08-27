@@ -1,22 +1,63 @@
-.app-container {
-    height: 100%;
-    width: 100%;
+/* PREVIEW STYLES */
+.preview-container {
+    margin-top: 5px;
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
-    overflow-x: hidden;
-    padding-bottom: 5em;
+    background-color: blue;
+    align-items: center;
+}
+.intro-container{
+    width:90%;
+    margin-top:10px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    background-color: white;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    border-style: double;
+    border-color: gold;
+    box-shadow: 4px 4px 4px black;
 }
 
-.header {
-    background-color:blue;
+.intro-header__container{
+    border-bottom-color: gold;
+    border-bottom-style: double;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
-    padding: 4px;
-    margin-bottom: 20px;
 }
-.header__text{
+
+.intro-header__text{
+    font-size: 30px;
     font-weight: bold;
-    color: white;
+    color: darkblue;
+    padding-left: 4px;
+    margin-bottom: 0;
+}
+
+.intro-body__container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.intro-body__text{
+    padding: 0px 4px 0px 4px;
+    font-size: 20px;
     text-align: center;
-    font-size: 4em;
+    font-weight: bold;
+}
+
+.section-container {
+    background-color: white;
+    width:90%;
+    margin-bottom: 30px;
+    border-radius: 15px;
+    border-style: double;
+    border-color: gold;
+    box-shadow: 4px 4px 4px black;
 }

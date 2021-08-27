@@ -68,6 +68,7 @@ const Task = ({
     })
     console.log("submissionPayload:  ", submissionData)
     if(!errorList.length){
+      setShowError(false);
       console.log("SUCCESSFULLY READY TO SUBMIT")
       setShowSuccess(true);
       //handleSubmit()
