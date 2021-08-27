@@ -14,19 +14,20 @@ const MultipleChoiceQuestion = ({
     question,
     answers,
     selectFunction,
-    isComplete,
     hasToolTip,
     toolTipText,
     hasCheckbox
 })=>{
+/*------------------------------------STATE------------------------------------*/
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [answerList, setAnswerList] = useState([])
+/*------------------------------------LIFE CYCLE------------------------------------*/
     useEffect(()=>{
         setAnswerList(answers)
     }, [])
-    const clickHandler = (e)=>{
-        const {target} = e
-        const {value} = target;
+
+/*------------------------------------HANDLERS------------------------------------*/
+    const clickHandler = (value)=>{
         console.log("selectedAnswer", value)
         console.log("ANSWER", value)
         setSelectedAnswer(value);
@@ -37,7 +38,7 @@ const MultipleChoiceQuestion = ({
     return(
         <div className="mcquestion-container" >
             <div className="mcquestion-header">
-                {hasCheckbox ? <Checkbox isComplete={isComplete}/> : null }
+            {hasCheckbox ? <Checkbox isComplete={selectedAnswer!==null}/> : null }
                 <ToolTip
                     hasToolTip={hasToolTip}
                     tipText={toolTipText}
@@ -49,10 +50,11 @@ const MultipleChoiceQuestion = ({
             </div>
             <div className="mcanswer-container">
             {
-                answerList.length
-                ?
-                answerList.map((answer, index)=>{
+                answers.map((answer, index)=>{
                     const {label, value} = answer;
+                    console.log("TYPEOF:  ", typeof value)
+                    console.log("selectedAnswer:  ", selectedAnswer)
+                    let isSelected = selectedAnswer==value
                     return(
                         <TaskButton
                             key={index}
@@ -61,13 +63,11 @@ const MultipleChoiceQuestion = ({
                             unselectedText={"mc-button__text"}
                             selectedText={"mc-selectedbutton__text"}
                             name={label}
-                            selectFunction={clickHandler}
-                            isSelected ={selectedAnswer==value}
+                            selectFunction={()=>clickHandler(value)}
+                            isSelected ={isSelected}
                         />
                     )
                 })
-                :
-                null
             }
             </div>
         </div>

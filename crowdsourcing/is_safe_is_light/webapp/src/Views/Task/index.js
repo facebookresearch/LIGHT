@@ -24,7 +24,7 @@ const Task = ({
   //Selection Recieved from Backend.
   const [selectionData, setSelectionData]= useState([]);
   //Data that will be sent in Payload
-  const [payloadData, setPayloadData]= useState([]);
+  const [payloadData, setPayloadData]= useState(null);
   // Boolean value that determines when Success Banner renders
   const [showSuccess, setShowSuccess] = useState(false);
   // Boolean value that determines when Error Banner renders
@@ -36,7 +36,7 @@ const Task = ({
   useEffect(()=>{
     let initialPayload = {}
     let initialSelectionData = Object.keys(data).map(selectionId=>{
-      initialPayload.selectionId = {id:selectionId, sentence:data[selectionId], safety:null, context:null}
+      initialPayload[selectionId] = {id:selectionId, sentence:data[selectionId], safety:null, context:null}
       return {id:selectionId, sentence:data[selectionId]}
     })
     setPayloadData(initialPayload);
@@ -44,12 +44,16 @@ const Task = ({
   },[data])
   /*------------------------------------HANDLERS------------------------------------*/
   const updateHandler = (id, field, value)=>{
+    console.log("ID:  ", id)
+    console.log("FIELD:  ", field)
+    console.log("VALUE:  ", value)
     let unupdatedValue = payloadData[id]
-    let updatededValue = {...unupdatedValue, [field]:value}
-    let updatedPayloadData = {...payloadData, [id]: updatededValue}
+    let updatedValue = {...unupdatedValue, [field]:value}
+    let updatedPayloadData = {...payloadData, [id]: updatedValue}
+    console.log("UPDATED  PAYLOAD:  ", updatedPayloadData)
     setPayloadData(updatedPayloadData)
   }
-  const submissionHandler = (id, field, value)=>{
+  const submissionHandler = ()=>{
     let errorList =[];
     const submissionData = payloadData;
     Object.keys(submissionData).map(submissionKey=>{
@@ -98,9 +102,8 @@ const Task = ({
               const {id, sentence} = selection;
               return(
                 <QuestionBlock
-                  key={id}
+                  key={index}
                   headerText={sentence}
-                  payloadData={payloadData}
                   defaultQuestions={defaultQuestions}
                   updateFunction={(field, value)=>updateHandler(id, field, value)}
                 />

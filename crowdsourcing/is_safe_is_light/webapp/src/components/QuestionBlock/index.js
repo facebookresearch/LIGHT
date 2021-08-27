@@ -8,7 +8,6 @@ import MultipleChoiceQuestion from "../Questions/MultipleChoice";
 import FormatQuestion from "../../utils/FormatQuestion";
 // QuestionBlock - Renders a list of questions for a pertaining to a single node
 const QuestionBlock = ({
-    payloadData,
     headerText,
     defaultQuestions,
     updateFunction// the function to update the attributes for the objects
@@ -18,8 +17,6 @@ const QuestionBlock = ({
     const Question = ({questionInfo, updateFunction})=>{
         const {question, questionType, questionField, options, hasToolTip, toolTipText, hasCheckbox}= questionInfo;
         let formattedQuestion = FormatQuestion(question, [])
-
-        console.log("TRUE:  ", payloadData[questionField]===false, "FALSE:  ", payloadData[questionField]);
         switch(questionType) {
             case "multipleChoice":
                 return(
@@ -27,7 +24,6 @@ const QuestionBlock = ({
                         question={formattedQuestion}
                         answers={options}
                         selectFunction={(updateValue)=>updateFunction(questionField, updateValue)}
-                        isComplete={payloadData[questionField]===false || payloadData[questionField]}
                         hasToolTip={hasToolTip}
                         toolTipText={toolTipText}
                         hasCheckbox={hasCheckbox}
@@ -52,20 +48,20 @@ const QuestionBlock = ({
             }
             <div className="questionblock-body">
             {
-                defaultQuestions
-                ?
                 defaultQuestions.map((defaultQuestion, index)=>{
+                    const {question, questionType, questionField, options, hasToolTip, toolTipText, hasCheckbox}= defaultQuestion;
+                    let formattedQuestion = FormatQuestion(question, [])
                     return (
-                        <Question
-                            key={index}
-                            questionInfo={defaultQuestion}
-                            updateFunction={updateFunction}
-
-                        />
+                        <MultipleChoiceQuestion
+                        question={formattedQuestion}
+                        answers={options}
+                        selectFunction={(updateValue)=>updateFunction(questionField, updateValue)}
+                        hasToolTip={hasToolTip}
+                        toolTipText={toolTipText}
+                        hasCheckbox={hasCheckbox}
+                    />
                     )
                 })
-                :
-                null
             }
             </div>
         </div>

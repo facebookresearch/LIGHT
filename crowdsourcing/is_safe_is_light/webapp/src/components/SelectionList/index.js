@@ -14,7 +14,7 @@ const SelectionList = ({
         <div className="selectionlist-container">
             {
                 selection.length ?
-                selection.map((selectionItem, index) =><SelectionListItem key={index} number={index++} selectionNode={selectionItem}/>)
+                selection.map((selectionItem, index) =><SelectionListItem key={index} number={index+1} selectionNode={selectionItem}/>)
                 :
                 null
             }
