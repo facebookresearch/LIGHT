@@ -4,7 +4,11 @@ import React, {useEffect, useState} from "react";
 import "./styles.css";
 //CUSTOM COMPONENTS
 import Header from "../../components/Header";
+import SelectionList from "../../components/SelectionList";
 import QuestionBlock from "../../components/QuestionBlock";
+import TaskButton from "../../components/TaskButton";
+import SuccessBanner from "../../components/SuccessBanner";
+import ErrorBanner from "../../components/ErrorBanner";
 //COPY
 import TaskCopy from "../../TaskCopy";
 const {taskHeader, defaultQuestions} = TaskCopy
@@ -17,6 +21,12 @@ const Task = ({
   const [selectionData, setSelectionData]= useState([]);
   //Data that will be sent in Payload
   const [payloadData, setPayloadData]= useState([]);
+  // Boolean value that determines when Success Banner renders
+  const [showSuccess, setShowSuccess] = useState(false);
+  // Boolean value that determines when Error Banner renders
+  const [showError, setShowError] = useState(false);
+  // Array of strings populated by incomplete steps found during task submission
+  const [errorMessage, setErrorMessage] = useState([])
 
   /*------------------------------------LIFE CYCLE------------------------------------*/
   useEffect(()=>{
@@ -29,36 +39,81 @@ const Task = ({
     setSelectionData(initialSelectionData);
   },[data])
   /*------------------------------------HANDLERS------------------------------------*/
-  const UpdateHandler = (id, field, value)=>{
+  const updateHandler = (id, field, value)=>{
     let unupdatedValue = payloadData[id]
     let updatededValue = {...unupdatedValue, [field]:value}
     let updatedPayloadData = {...payloadData, [id]: updatededValue}
     setPayloadData(updatedPayloadData)
+  }
+  const submissionHandler = (id, field, value)=>{
+    let errorList =[];
+    const submissionData = payloadData;
+    Object.keys(submissionData).map(submissionKey=>{
+      const submissionValue = submissionData[submissionKey]
+      const {sentence}= submissionValue
+      Object.keys(submissionValue).map(attrKey=>{
+        const attrValue = submissionValue[attrKey]
+        if(attrValue===null){
+          errorList.push(`No scoring for ${attrKey} was given for ${sentence}.`)
+        }
+      })
+    })
+    console.log("submissionPayload:  ", submissionData)
+    if(!errorList.length){
+      console.log("SUCCESSFULLY READY TO SUBMIT")
+      setShowSuccess(true);
+      //handleSubmit()
+    }else{
+      setErrorMessage(errorList);
+      setShowError(true);
+    }
   }
   return (
       <div className="app-container" >
         <Header
           headerText={taskHeader}
         />
-        <div>
+        <SuccessBanner
+          showSuccess={showSuccess}
+          toggleShowSuccess={()=>setShowSuccess(!showSuccess)}
+          successMessage={successMessage}
+        />
+        <ErrorBanner
+          showError={showError}
+          hideError={()=>setShowError(false)}
+          errors={errorMessage}
+        />
         {
           selectionData.length ?
-          selectionData.map((selection, index)=>{
-            const {id, sentence} = selection;
-            return(
-              <QuestionBlock
-                key={id}
-                headerText={sentence}
-                payloadData={payloadData}
-                defaultQuestions={defaultQuestions}
-                updateFunction={(field, value)=>UpdateHandler(id, field, value)}
-              />
-            )
-          })
+          <div>
+            <SelectionList
+              selection={selectionData}
+            />
+            {
+            selectionData.map((selection, index)=>{
+              const {id, sentence} = selection;
+              return(
+                <QuestionBlock
+                  key={id}
+                  headerText={sentence}
+                  payloadData={payloadData}
+                  defaultQuestions={defaultQuestions}
+                  updateFunction={(field, value)=>updateHandler(id, field, value)}
+                />
+              )
+            })
+            }
+          </div>
           :
           null
         }
-        </div>
+        <TaskButton
+          name="Submit"
+          isSelected={false}
+          unselectedContainer="submission-button__container"
+          unselectedText="submission-selectedbutton__text "
+          selectFunction={submissionHandler}
+        />
       </div>
   );
 }

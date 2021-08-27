@@ -18,6 +18,8 @@ const QuestionBlock = ({
     const Question = ({questionInfo, updateFunction})=>{
         const {question, questionType, questionField, options, hasToolTip, toolTipText, hasCheckbox}= questionInfo;
         let formattedQuestion = FormatQuestion(question, [])
+
+        console.log("TRUE:  ", payloadData[questionField]===false, "FALSE:  ", payloadData[questionField]);
         switch(questionType) {
             case "multipleChoice":
                 return(
@@ -25,7 +27,7 @@ const QuestionBlock = ({
                         question={formattedQuestion}
                         answers={options}
                         selectFunction={(updateValue)=>updateFunction(questionField, updateValue)}
-                        isComplete={payloadData[questionField]!==null}
+                        isComplete={payloadData[questionField]===false || payloadData[questionField]}
                         hasToolTip={hasToolTip}
                         toolTipText={toolTipText}
                         hasCheckbox={hasCheckbox}

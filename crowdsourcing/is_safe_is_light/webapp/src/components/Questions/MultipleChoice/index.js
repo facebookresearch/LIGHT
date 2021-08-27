@@ -24,10 +24,11 @@ const MultipleChoiceQuestion = ({
     useEffect(()=>{
         setAnswerList(answers)
     }, [])
-    const clickHandler = (answer)=>{
-        const {value} = answer;
-        console.log("selectedAnswer", answer)
-        console.log("ANSWER", answer)
+    const clickHandler = (e)=>{
+        const {target} = e
+        const {value} = target;
+        console.log("selectedAnswer", value)
+        console.log("ANSWER", value)
         setSelectedAnswer(value);
         selectFunction(value)
     }
