@@ -15,19 +15,20 @@ const ErrorBanner= ({
 })=>{
     return(
         <Alert variant="danger" dismissible id="toast-container" onClose={hideError} show={showError} >
-            <p id="toast-header">
-                ERROR
-            </p>
-                <ul>
-                    {
-                    errors.map((err, index)=>(
-                    <li style={{width: "90vw"}} id="toast-error" key={index}>
-                        {err}
-                    </li>
-                    ))
-                    }
-                </ul>
-
+            <div id="toast-header">
+                <p id="toast-header__text">
+                    ERROR
+                </p>
+            </div>
+            <ul>
+                {
+                errors.map((err, index)=>(
+                <li style={{width: "90vw"}} id="toast-error" key={index}>
+                    {err}
+                </li>
+                ))
+                }
+            </ul>
         </Alert>
     )
 }

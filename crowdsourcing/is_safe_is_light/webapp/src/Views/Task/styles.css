@@ -85,6 +85,13 @@ ul li::before {
     padding:3px;
 }
 
+.submit-container{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
 .submit-button {
     color: white;
     background-color: green;

@@ -22,14 +22,21 @@ ul li::before {
     max-height: 30vh;
 }
 #toast-header{
-    color:white;
-    background-color: red;
+    background-color: white;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#toast-header__text{
+    color:red;
+    font-size: 20;
     font-weight: bold;
-    width: 90vw;
 }
 #toast-text{
     text-align: center;
     font-weight: bold;
+    width: 90%;
 }
 
 #toast-error{

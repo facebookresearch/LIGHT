@@ -11,7 +11,11 @@ import SuccessBanner from "../../components/SuccessBanner";
 import ErrorBanner from "../../components/ErrorBanner";
 //COPY
 import TaskCopy from "../../TaskCopy";
-const {taskHeader, defaultQuestions} = TaskCopy
+const {
+  taskHeader,
+  defaultQuestions,
+  successMessage
+} = TaskCopy;
 
 const Task = ({
   data
@@ -107,13 +111,15 @@ const Task = ({
           :
           null
         }
-        <TaskButton
-          name="Submit"
-          isSelected={false}
-          unselectedContainer="submission-button__container"
-          unselectedText="submission-selectedbutton__text "
-          selectFunction={submissionHandler}
-        />
+        <div className="submit-container">
+          <TaskButton
+            name="Submit"
+            isSelected={false}
+            unselectedContainer="submission-button__container"
+            unselectedText="submission-selectedbutton__text "
+            selectFunction={submissionHandler}
+          />
+        </div>
       </div>
   );
 }

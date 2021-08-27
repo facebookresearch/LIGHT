@@ -1,18 +1,19 @@
 //REACT
-import React, {useState} from "react";
+import React from "react";
 //STYLE
 import "./styles.css"
 
 // SelectionListRow - Row in selection list.
 const SelectionListRow = ({
-    selectionNode
+    selectionNode,
+    number
 })=>{
     const {sentence} = selectionNode;
     return(
         <div className="selection-row">
            <div className="selection-name__container">
                 <p className="selection-name__text">
-                    {sentence}
+                    {`${number}.  ${sentence}`}
                 </p>
            </div>
         </div>

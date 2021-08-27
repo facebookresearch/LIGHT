@@ -8,32 +8,30 @@
     border-color: blue;
     border-width: 10px;
     border-radius: 15px;
-    width: 80%;
+    width: 100%;
     padding:20px;
-    margin-top:10px;
+    margin:10px 5px 10px 5px;
 }
 /*SELECTION LIST ITEM*/
 .selection-row {
     display:flex;
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: flex-start;
     margin: 5px 0 5px 0;
     width: 100%;
 }
 
 .selection-name__container{
-    background-color: blue;
-    border-radius: 10px 0 0 10px;
-    width: 20%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .selection-name__text {
-    color: white;
+    color: blue;
     font-weight: bold;
     margin-bottom: 0;
     padding:5px;
     text-align: center;
+    font-size: 34;
 }
