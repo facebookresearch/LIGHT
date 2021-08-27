@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
-from mephisto.tools.examine_utils import run_examine_by_worker, print_results
+from mephisto.tools.examine_utils import run_examine_or_review, print_results
 from mephisto.data_model.worker import Worker
 
 db = LocalMephistoDB()
@@ -48,4 +48,10 @@ def format_data_for_printing(data):
     return f"-------------------\n{metadata_string}{inputs_string}{outputs_string}"
 
 
-run_examine_by_worker(db, format_data_for_printing)
+def main():
+    db = LocalMephistoDB()
+    run_examine_or_review(db, format_data_for_printing)
+
+
+if __name__ == '__main__':
+    main()
