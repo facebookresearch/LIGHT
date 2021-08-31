@@ -6,6 +6,7 @@
   "main": "src/index.js",
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.1",
+    "@types/react-redux": "^7.1.18",
     "classnames": "^2.2.6",
     "emoji-mart": "^2.11.1",
     "eslint-plugin-react-hooks": "^1.6.1",
