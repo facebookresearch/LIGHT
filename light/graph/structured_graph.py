@@ -311,9 +311,7 @@ class OOGraph(object):
         """Get a list of agent nodes that are currently being played by
         a human character"""
         return [
-            x
-            for x in self.agents.values()
-            if x.is_player and not x.get_prop("dead")
+            x for x in self.agents.values() if x.is_player and not x.get_prop("dead")
         ]
 
     def get_npcs(self):
@@ -551,8 +549,15 @@ class OOGraph(object):
         # Follows
         for char in oo_graph.agents.values():
             char_dict = node_dicts[char.node_id]
-            if char_dict["following"] is not None:
-                char.follow(sync_nodes[char_dict["following"]["target_id"]])
+            followed_char = char_dict["following"]
+            if followed_char is not None:
+                followed_char_id = followed_char["target_id"]
+                if followed_char_id not in sync_nodes:
+                    print(
+                        f"Warning - followed char {followed_char_id} not present in this graph, followed by {char}"
+                    )
+                else:
+                    char.follow(sync_nodes[followed_char_id])
 
         # Neighbors/locks
         for room in oo_graph.rooms.values():

@@ -104,6 +104,7 @@ class SpeechEvent(GraphEvent):
         # Give opportunity to skip the safety after initialization
         # for debug reasons
         self.skip_safety = False
+        self.safe = None
 
     def is_dialogue_safe(self, text):
         if safety_classifier is None:
