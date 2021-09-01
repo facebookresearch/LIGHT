@@ -1,0 +1,19 @@
+#@package _global_
+mephisto:
+  blueprint:
+    task_source: ${task_dir}/webapp/build/bundle.js
+    extra_source_dir: ${task_dir}/webapp/src/static
+    units_per_assignment: 1
+    block_qualification: collect_narrations_task_block
+  task:
+    maximum_units_per_worker: 5
+    max_num_concurrent_units: 100
+    task_name: "objects-interaction-task-pilot-1"
+    task_title: "Annotate an interaction between two objects. (pilot)"
+    task_description: "In this task you will recieve two object lists. You will be asked to select one from each, and then describe in second person an interaction that would occur if one were to use the objects together."
+    task_reward: 0.70
+    task_tags: "fantasy,object,interaction"
+  database: 
+    _database_type: singleton
+num_tasks: 150
+qualify_new_workers: true

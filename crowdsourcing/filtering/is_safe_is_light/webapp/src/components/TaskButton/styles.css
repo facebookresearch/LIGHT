@@ -1,0 +1,72 @@
+/*TASK BUTTON STYLES*/
+/* Multiple choice button styles */
+.mc-button__container {
+    background-color: white;
+    border-color:blue;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 5px 2px 5px black;
+    margin: 10px;
+}
+.mc-button__text{
+    color: blue;
+    font-size: 16px;
+    padding:6px;
+    font-weight: bold;
+}
+
+.mc-selectedbutton__container {
+    background-color: blue;
+    border-color:white;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 5px 2px 5px black;
+    margin: 10px;
+}
+
+.mc-selectedbutton__text {
+    color: white;
+    font-size: 16px;
+    padding:6px;
+    font-weight: bold;
+}
+
+.mc-button__container:hover {
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+.mc-button__container:active {
+box-shadow: 0em 0em 0em;
+}
+
+/* SUBMISSION BUTTON */
+
+.submission-button__container {
+    border-style: ridge;
+    border-width: 3px;
+    box-shadow: 5px 2px 5px black;
+    height: 100%;
+    background-color: chartreuse;
+    border-color: silver;
+    border-radius: 15px;
+    width: 20%;
+}
+
+.submission-selectedbutton__text {
+    font-size: 16px;
+    padding:6px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
+
+
+.submission-button__container:hover {
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+.submission-button__container:active {
+box-shadow: 0em 0em 0em;
+}
