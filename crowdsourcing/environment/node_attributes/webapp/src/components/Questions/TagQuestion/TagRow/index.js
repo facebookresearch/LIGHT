@@ -26,7 +26,6 @@ const TagRow = ({
     /*--------------------REFS--------------------*/
     const attributeRef = useRef();
 
-
     const changeHandler = ()=>{
         let {current} = attributeRef;
         let {state} =current;
@@ -48,7 +47,6 @@ const TagRow = ({
             updateFunction(rowUpdate)
         }
     }
-
 
     return(
         <>

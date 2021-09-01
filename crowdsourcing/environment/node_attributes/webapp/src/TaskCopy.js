@@ -42,7 +42,7 @@ import BooleanAttribute3 from "./assets/images/tutorial/BooleanAttribute/Boolean
 
 
 const Copy ={
-    taskHeader:"Fantasy Object Attribute Annotation",
+    taskHeader:"Fantasy Entity Attribute Annotation",
     previewCopy:{
         tutorial:{
             intro: "In this task you will be given a list of objects, and asked to do a number of annotations of the types listed below. Familiarize yourself with these before getting started.",
@@ -89,12 +89,8 @@ const Copy ={
                             stepImg: AttributeChecklist1
                         },
                         {
-                            stepCopy: 'Check the box of each attribute that applies to the selection item next to it.',
+                            stepCopy: 'Check the box of each attribute that applies to the selection item next to it. The form will be completed when you have assigned the relevant attributes to the entire selection.',
                             stepImg: AttributeChecklist2
-                        },
-                        {
-                            stepCopy: 'The form will be completed when you have assigned the relevant attributes to the entire selection.',
-                            stepImg: AttributeChecklist3
                         }
                     ]
                 },
@@ -166,7 +162,7 @@ const Copy ={
                         value: "container"
                     },
                     {
-                        name:"a surface.",
+                        name:"a surface (to place things on).",
                         value: "surface"
                     },
                     {
@@ -183,7 +179,12 @@ const Copy ={
                 ]
             }
         ],
-        defaultBooleanAttributeOptions:[],
+        defaultBooleanAttributeOptions:[
+            'wieldable', 'armor', 'food', 'drink', 'container', 'surface', 'carryable',
+            'wet', 'dark', 'bright', 'hot', 'cold', 'sharp', 'dull', 'hard', 'soft',
+            'fluffy', 'moist', 'damp', 'dry', 'delicious', 'glass', 'wooden', 'metallic',
+            'colorful', 'distorted', 'odd',
+        ],
         traits:[
             {
                 name: "SIZE",
@@ -191,7 +192,7 @@ const Copy ={
                 scaleRange:[
                     {
                     name:"MIN",
-                    example: "Nail",
+                    example: "Coin",
                     color:"green"
                     },
                     {
@@ -222,19 +223,19 @@ const Copy ={
                     },
                     {
                     name:"MAX",
-                    example: "Treasure",
+                    example: "Diamonds",
                     color:"red"
                     }
                 ]
             },
             {
                 name: "CONTAINER SIZE",
-                description:"The space available inside container for storage.",
+                description:"The space available inside a container or on a surface for storage.",
                 requiredAttribute:"container",
                 scaleRange:[
                     {
                     name:"MIN",
-                    example: "A Locket",
+                    example: "A dish",
                     color:"green"
                     },
                     {
@@ -256,17 +257,17 @@ const Copy ={
                 scaleRange:[
                     {
                     name:"MIN",
-                    example: "Stick",
+                    example: "Flimsy stick",
                     color:"green"
                     },
                     {
                     name:"MID",
-                    example: "Sword",
+                    example: "Dull sword",
                     color:"blue"
                     },
                     {
                     name:"MAX",
-                    example: "Ballista",
+                    example: "Flaming battleaxe",
                     color:"red"
                     }
                 ]
@@ -300,7 +301,7 @@ const Copy ={
                 scaleRange:[
                     {
                     name:"MIN",
-                    example: "Millet",
+                    example: "Moldy Apple",
                     color:"green"
                     },
                     {
@@ -310,7 +311,7 @@ const Copy ={
                     },
                     {
                     name:"MAX",
-                    example: "A feast",
+                    example: "A complete meal",
                     color:"red"
                     }
                 ]
@@ -326,19 +327,19 @@ const Copy ={
                     },
                     {
                     name:"MID",
-                    example: "Pile of wood",
+                    example: "Bowling ball",
                     color:"blue"
                     },
                     {
                     name:"MAX",
-                    example: "A Large Boulder",
+                    example: "A 5ft stone statue",
                     color:"red"
                     }
                 ]
             },
             {
                 name: "RARITY",
-                description:"How common the object is in the world.",
+                description:"How common the object might be in the world.",
                 scaleRange:[
                     {
                     name:"MIN",
@@ -359,21 +360,21 @@ const Copy ={
             },
             {
                 name: "USEFULNESS",
-                description:"How likely is the it that he object will be used?",
+                description:"How likely would someone be able to make use of this item?",
                 scaleRange:[
                     {
                     name:"MIN",
-                    example: "Almost Never",
+                    example: "pebble",
                     color:"green"
                     },
                     {
                     name:"MID",
-                    example: "Fairly Often",
+                    example: "torch",
                     color:"blue"
                     },
                     {
                     name:"MAX",
-                    example: "Almost Never",
+                    example: "toolbox",
                     color:"red"
                     }
                 ]
@@ -397,7 +398,7 @@ const Copy ={
         traits:[
             {
                 name: "STRENGTH",
-                description:"The raw physical power an actor can exert typically fort he express purpose of attacking.",
+                description:"The raw physical power an actor can exert typically for the express purpose of attacking.",
                 scaleRange:[
                     {
                     name:"MIN",
@@ -506,7 +507,7 @@ const Copy ={
                 scaleRange:[
                     {
                     name:"MIN",
-                    example: "Wildboar",
+                    example: "Wild boar",
                     color:"green"
                     },
                     {
@@ -544,7 +545,7 @@ const Copy ={
             },
             {
                 name: "RARITY",
-                description:"How common the actor is in the world.",
+                description:"How rare it would be to find this actor in a fantasy world.",
                 scaleRange:[
                     {
                     name:"MIN",
@@ -590,17 +591,17 @@ const Copy ={
                 scaleRange:[
                     {
                     name:"MIN",
-                    example: "Hut",
+                    example: "Closet",
                     color:"green"
                     },
                     {
                     name:"MID",
-                    example: "Field",
+                    example: "Swimming pool",
                     color:"blue"
                     },
                     {
                     name:"MAX",
-                    example: "Castle",
+                    example: "Field",
                     color:"red"
                     }
                 ]
@@ -628,7 +629,7 @@ const Copy ={
             },
             {
                 name: "TEMPERATURE",
-                description:"The room temperature of a location",
+                description:"The expected temperature of a location",
                 scaleRange:[
                     {
                     name:"MIN",
@@ -649,7 +650,7 @@ const Copy ={
             },
             {
                 name: "RARITY",
-                description:"The rarity of a location",
+                description:"The unlikelihood of stumbling into this space in a fantasy world.",
                 scaleRange:[
                     {
                     name:"MIN",
@@ -663,7 +664,7 @@ const Copy ={
                     },
                     {
                     name:"MAX",
-                    example: "Secret Room",
+                    example: "Archwizard's Lab",
                     color:"red"
                     }
                 ]

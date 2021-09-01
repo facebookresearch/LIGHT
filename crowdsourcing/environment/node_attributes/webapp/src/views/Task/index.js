@@ -46,7 +46,7 @@ const Task = ({
   // Payload for Scale Attribute ratings
   const [scaleAttributePayload, setScaleAttributePayload] = useState({});
   // Payload for custom Scale Attribute ratings and input
-  const [customScaleAttributesPayload, setCustomScaleAttributesPayload] = useState([{name:"", description:"", vals:{} }, {name:"", description:"" }]);
+  const [customScaleAttributesPayload, setCustomScaleAttributesPayload] = useState([{name:"", description:"", vals:{} }, /*{name:"", description:"" }*/]);
   // Boolean value that determines when Success Banner renders
   const [showSuccess, setShowSuccess] = useState(false);
   // Boolean value that determines when Error Banner renders
@@ -239,7 +239,7 @@ const Task = ({
     if(!errorList.length){
       console.log("SUCCESSFULLY READY TO SUBMIT")
       setShowSuccess(true);
-      //handleSubmit()
+      handleSubmit(submissionPayload)
     }else{
       setErrorMessage(errorList);
       setShowError(true);

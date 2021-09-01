@@ -14,7 +14,7 @@ const SelectionList = ({
         <div className="selectionlist-container">
             {
                 selection.length ?
-                selection.map(selectionItem =><SelectionListItem item={selectionItem}/>)
+                selection.map(selectionItem =><SelectionListItem item={selectionItem} key={'item-'+selectionItem.id}/>)
                 :
                 null
             }
