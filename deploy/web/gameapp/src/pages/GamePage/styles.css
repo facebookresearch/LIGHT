@@ -1,0 +1,252 @@
+.gamepage-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  background-image: url("../../assets/images/InexplicableTavern.png");
+}
+
+.sidebar-container {
+  justify-content: center;
+  width: 25%;
+  min-width: 20em;
+}
+
+.chat-container {
+  width: 75%;
+  height: 100%;
+}
+
+.drawerbar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  width: 100%;
+  background-color: #421001;
+}
+
+.drawerbar-img {
+  height: 4em;
+}
+
+.drawerbar-button {
+  color: white;
+  font-size: 1em;
+  background-color: gold;
+  width: 5em;
+  text-align: center;
+  padding: 0.5em;
+  border-radius: 15px;
+  border-style: double;
+  border-color: white;
+  box-shadow: 1px 1px 4px black;
+  cursor: pointer;
+}
+
+.drawerbar-button:hover {
+  animation: pulse 1s infinite;
+}
+
+.drawerbar-button:active {
+  animation: pulse 1s infinite;
+  box-shadow: 0px 0px 0px black;
+}
+
+.header-container {
+  padding: 10px;
+  z-index: -1;
+  background-color: #bf8315;
+  box-shadow: 0 4px 4px -2px black;
+  border-style: double;
+  border-color: yellow;
+  border-radius: 15px;
+}
+.mission-container {
+  background-color: yellow;
+  box-shadow: 2px 2px 2px black;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.mission-header {
+  text-decoration: underline;
+  font-weight: bolder;
+  color: white;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  text-shadow: 1px 1px black;
+}
+
+.mission-text {
+  text-align: center;
+  margin: 0px;
+  font-size: 14px;
+}
+/* Instruction Modal*/
+.instructionmodalcontent-container {
+  width: 100%;
+  height: 100%;
+  background-color: burlywood;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.instructionmodalcontent-row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.instructionmodalcontent-header {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: space-around;
+  padding: 1em;
+}
+
+.instructionmodalcontent-header__text {
+  color: white;
+  font-size: 3em;
+  text-align: left;
+}
+
+.instructionmodalcontent-header__light {
+  animation: pulse 3s ease-in-out infinite;
+  text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #eef079, 0 0 20px #eef079,
+    0 0 25px #eef079, 0 0 30px #eef079, 0 0 35px #eef079;
+}
+
+.instructionmodalcontent-scribe {
+  width: 20%;
+}
+
+.instructionmodalcontent-image {
+  width: 50%;
+  margin-left: 1em;
+}
+.instructionmodalcontent-image__list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.instructionmodalcontent-body {
+}
+
+.instructionmodalcontent-body__text {
+  font-size: 1em;
+  text-align: left;
+  margin-left: 1em;
+  font-weight: bold;
+  color: white;
+}
+
+@keyframes pulse {
+  from {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #eef079, 0 0 20px #eef079,
+      0 0 25px #eef079, 0 0 30px #eef079, 0 0 35px #eef079;
+  }
+  to {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #eef079,
+      0 0 40px #eef079, 0 0 50px #eef079, 0 0 60px #eef079, 0 0 70px #eef079;
+  }
+}
+
+.instructionmodalcontent-button {
+  color: white;
+  font-size: 1em;
+  background-color: gold;
+  width: 5em;
+  text-align: center;
+  padding: 0.5em;
+  border-radius: 15px;
+  border-style: double;
+  border-color: white;
+  box-shadow: 1px 1px 4px black;
+  cursor: pointer;
+}
+
+.instructionmodalcontent-button:hover {
+  animation: pulse 1s infinite;
+}
+
+.instructionmodalcontent-button:active {
+  animation: pulse 1s infinite;
+  box-shadow: 0px 0px 0px black;
+}
+
+@media only screen and (max-width: 1224px) {
+  .instructionmodalcontent-image {
+    width: 50%;
+    margin-left: 1em;
+  }
+
+  .instructionmodalcontent-button {
+    margin-bottom: 3em;
+  }
+
+  .instructionmodalcontent-header {
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+  }
+
+  .instructionmodalcontent-header__text {
+    font-size: 1.5em;
+  }
+}
+
+@media only screen and (max-width: 950px) {
+  .gamepage-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-container {
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+  }
+  .chat-container {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+  }
+  .instructionmodalcontent-image {
+    width: 90%;
+    margin-left: 1em;
+  }
+
+  .instructionmodalcontent-button {
+    margin-bottom: 3em;
+  }
+
+  .instructionmodalcontent-header {
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+  }
+
+  .instructionmodalcontent-header__text {
+    font-size: 1.5em;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .gamepage-container {
+  }
+  .chat-container {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+  }
+}

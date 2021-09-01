@@ -3,6 +3,8 @@ import json
 import math
 import random
 
+from light.graph.events.graph_events import SystemMessageEvent
+
 
 class QuestLoader:
     """
@@ -360,24 +362,32 @@ class QuestCreator:
         # Assign XP.
         if not hasattr(actor, "xp"):
             actor.xp = 0
-        xp = quest.get("goal_xp", 50)
+        xp = quest.get("goal_xp", 20)
         actor.xp += xp
 
         if actor.node_id == quest["actor"]:
             text = "Quest Complete: " + quest["text"].rstrip(".").rstrip("!") + "!"
-            world.send_msg(
-                actor, text + "\nYou gained " + str(xp) + " experience points."
-            )
+            text += "\nYou gained " + str(xp) + " experience points."
         else:
             # This actor helped another on their quest.
-            world.send_msg(
-                actor,
-                "You gained "
-                + str(xp)
-                + " experience points for helping "
-                + quest["actor_str"]
-                + "!",
+            text = (
+                f"You gained {xp} experience points for helping {quest['actor_str']}!"
             )
+
+        event_id = None
+        if event is not None:
+            event_id = event.event_id
+        xp_event_message = SystemMessageEvent(
+            actor,
+            [],
+            text_content=text,
+            event_data={
+                "event_type": "quest_experience",
+                "reward": xp,
+                "target_event": event_id,
+            },
+        )
+        xp_event_message.execute(world)
 
     def quest_matches_event(world, quest, event):
         qc = QuestCreator

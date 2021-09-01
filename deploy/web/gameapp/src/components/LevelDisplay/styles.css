@@ -1,0 +1,36 @@
+.levelDisplay-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  padding-top: 12px;
+}
+.level-container {
+  display: flex;
+  width: 2.7em;
+  height: 2.7em;
+  background-color: yellow;
+  display: flex;
+  border-radius: 1.35em;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-right: 0.3rem;
+}
+.level-number {
+  color: grey;
+  margin: 0;
+  font-size: 14px;
+  padding: 0;
+}
+
+@media only screen and (max-width: 900px) {
+  .level-number {
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .level-number {
+    font-size: 12px;
+  }
+}

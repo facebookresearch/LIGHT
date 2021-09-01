@@ -1616,19 +1616,37 @@
       "object": true,
       "on_use": [
         {
-          "post": [
-            [
-              "broadcast_message",
-              {
+          "remaining_uses": 5,
+          "events": [
+            {
+              "type": "broadcast_message",
+              "params": {
                 "room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} seems to glow for a second.",
                 "self_as_target_view": "Suddenly you feel a lightness upon you and you feel more fleet of foot. Your dexterity has increased!",
                 "self_not_target_view": "{recipient_text} feels a lightness upon them and they feel more fleet of foot. Their dexterity has increased!",
                 "self_view": "You say the words aloud, and runes on the scroll glow with gold."
               }
-            ],
-            ["modify_attribute", "in_used_target_item", "dexterity", "+2"]
+            },
+            {
+              "type": "modify_attribute",
+              "params": {
+                "type": "in_used_target_item",
+                "key": "dexterity",
+                "value": "+2"
+              }
+            }
           ],
-          "pre": [["is_holding", "used_item"], ["used_with_agent"]]
+          "constraints": [
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_agent"
+            }
+          ]
         }
       ],
       "room": false,
@@ -2200,28 +2218,41 @@
       "object": true,
       "on_use": [
         {
-          "post": [
-            [
-              "create_entity",
-              "in_actor",
-              {
-                "desc": "Mmm you could just eat this thing raw.",
-                "is_food": 1.0,
-                "is_wearable": false,
-                "name": "tasty looking fish",
-                "name_prefix": "a"
+          "remaining_uses": "inf",
+          "events": [
+            {
+              "type": "create_entity",
+              "params": {
+                "type": "in_actor",
+                "object": {
+                  "desc": "Mmm you could just eat this thing raw.",
+                  "is_food": 1.0,
+                  "is_wearable": false,
+                  "name": "tasty looking fish",
+                  "name_prefix": "a"
+                }
               }
-            ],
-            [
-              "broadcast_message",
-              {
+            },
+            {
+              "type": "broadcast_message",
+              "params": {
                 "self_view": "You fish for a while..and oh my golly, you caught something!!"
               }
-            ]
+            }
           ],
-          "pre": [
-            ["is_holding", "used_item"],
-            ["used_with_item_name", "pond"]
+          "constraints": [
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_item_name",
+              "params": {
+                "item": "pond"
+              }
+            }
           ]
         }
       ],
@@ -2493,7 +2524,7 @@
       "max_distance_from_start_location": 1000000,
       "max_wearable_items": 3,
       "max_wieldable_items": 1,
-      "mission": "",
+      "mission": "Make the best soup possible.",
       "movement_energy_cost": 0.0,
       "name": "goblin",
       "name_prefix": "a",
@@ -2628,7 +2659,71 @@
       "names": ["gray stone"],
       "node_id": "gray stone_78",
       "object": true,
-      "on_use": null,
+      "on_use": [
+        {
+          "remaining_uses": "40",
+          "events": [
+            {
+              "type": "create_entity",
+              "params": {
+                "type": "in_room",
+                "object": {
+                  "desc": "Mmm.. perfectly ripe.",
+                  "is_food": 1.0,
+                  "is_wearable": false,
+                  "name": "delicious crisp apple",
+                  "name_prefix": "a"
+                }
+              }
+            },
+            {
+              "type": "broadcast_message",
+              "params": {
+                "self_view": "You toss the stone.. and land a hit! You knock an apple right off!"
+              }
+            }
+          ],
+          "constraints": [
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_item_name",
+              "params": {
+                "item": "apple tree"
+              }
+            }
+          ]
+        },
+        {
+          "remaining_uses": "inf",
+          "events": [
+            {
+              "type": "broadcast_message",
+              "params": {
+                "self_view": "You toss the stone.. and land a hit!"
+              }
+            }
+          ],
+          "constraints": [
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_item_name",
+              "params": {
+                "item": "apple tree"
+              }
+            }
+          ]
+        }
+      ],
       "room": false,
       "size": 1,
       "stats": {
@@ -2638,34 +2733,7 @@
       "surface_type": "on",
       "value": 1,
       "wearable": false,
-      "wieldable": false,
-      "on_use": [
-        {
-          "post": [
-            [
-              "create_entity",
-              "in_room",
-              {
-                "desc": "Mmm.. perfectly ripe.",
-                "is_food": 1.0,
-                "is_wearable": false,
-                "name": "delicious crisp apple",
-                "name_prefix": "a"
-              }
-            ],
-            [
-              "broadcast_message",
-              {
-                "self_view": "You toss the stone.. and land a hit! You knock an apple right off!"
-              }
-            ]
-          ],
-          "pre": [
-            ["is_holding", "used_item"],
-            ["used_with_item_name", "apple tree"]
-          ]
-        }
-      ]
+      "wieldable": false
     },
     "groundskeeper_95": {
       "agent": true,
@@ -2992,28 +3060,66 @@
       "object": true,
       "on_use": [
         {
-          "post": [
-            [
-              "create_entity",
-              "in_room",
-              {
-                "desc": "Mmm.. perfectly ripe.",
-                "is_food": 1.0,
-                "is_wearable": false,
-                "name": "delicious crisp apple",
-                "name_prefix": "a"
+          "remaining_uses": "40",
+          "events": [
+            {
+              "type": "create_entity",
+              "params": {
+                "type": "in_room",
+                "object": {
+                  "desc": "Mmm.. perfectly ripe.",
+                  "is_food": 1.0,
+                  "is_wearable": false,
+                  "name": "delicious crisp apple",
+                  "name_prefix": "a"
+                }
               }
-            ],
-            [
-              "broadcast_message",
-              {
-                "self_view": "You toss the rock ..and land a hit! You knock an apple right off!"
+            },
+            {
+              "type": "broadcast_message",
+              "params": {
+                "self_view": "You toss the stone.. and land a hit! You knock an apple right off!"
               }
-            ]
+            }
           ],
-          "pre": [
-            ["is_holding", "used_item"],
-            ["used_with_item_name", "apple tree"]
+          "constraints": [
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_item_name",
+              "params": {
+                "item": "apple tree"
+              }
+            }
+          ]
+        },
+        {
+          "remaining_uses": "inf",
+          "events": [
+            {
+              "type": "broadcast_message",
+              "params": {
+                "self_view": "You toss the stone.. and land a hit!"
+              }
+            }
+          ],
+          "constraints": [
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_item_name",
+              "params": {
+                "item": "apple tree"
+              }
+            }
           ]
         }
       ],
@@ -3774,19 +3880,37 @@
       "object": true,
       "on_use": [
         {
-          "post": [
-            [
-              "broadcast_message",
-              {
+          "remaining_uses": 5,
+          "events": [
+            {
+              "type": "broadcast_message",
+              "params": {
                 "room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} seems to glow for a second.. and appears to be getting larger!",
                 "self_as_target_view": "Suddenly you feel a voluminous about you and you feel ... LARGER! You are  growing!",
                 "self_not_target_view": "{recipient_text} appears to be growing larger!!!",
                 "self_view": "You say the words aloud, and runes on the scroll glow with gold."
               }
-            ],
-            ["modify_attribute", "in_used_target_item", "size", "+2"]
+            },
+            {
+              "type": "modify_attribute",
+              "params": {
+                "type": "in_used_target_item",
+                "key": "size",
+                "value": "+2"
+              }
+            }
           ],
-          "pre": [["is_holding", "used_item"], ["used_with_agent"]]
+          "constraints": [
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_agent"
+            }
+          ]
         }
       ],
       "room": false,
@@ -4551,19 +4675,37 @@
       "object": true,
       "on_use": [
         {
-          "post": [
-            [
-              "broadcast_message",
-              {
+          "remaining_uses": 5,
+          "events": [
+            {
+              "type": "broadcast_message",
+              "params": {
                 "room_view": "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} is struck with searing pain!",
                 "self_as_target_view": "You are struck with searing pain!",
                 "self_not_target_view": "{recipient_text} is struck with searing pain!",
                 "self_view": "You say the words aloud, and runes on the scroll glow with gold."
               }
-            ],
-            ["modify_attribute", "in_used_target_item", "health", "-20"]
+            },
+            {
+              "type": "modify_attribute",
+              "params": {
+                "type": "in_used_target_item",
+                "key": "health",
+                "value": "-20"
+              }
+            }
           ],
-          "pre": [["is_holding", "used_item"], ["used_with_agent"]]
+          "constraints": [
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_agent"
+            }
+          ]
         }
       ],
       "room": false,
@@ -5513,7 +5655,46 @@
       "names": ["primitive fishing pole"],
       "node_id": "primitive fishing pole_92",
       "object": true,
-      "on_use": null,
+      "on_use": [
+        {
+          "remaining_uses": "inf",
+          "events": [
+            {
+              "type": "create_entity",
+              "params": {
+                "type": "in_actor",
+                "object": {
+                  "desc": "Mmm you could just eat this thing raw.",
+                  "is_food": 1.0,
+                  "is_wearable": false,
+                  "name": "tasty looking fish",
+                  "name_prefix": "a"
+                }
+              }
+            },
+            {
+              "type": "broadcast_message",
+              "params": {
+                "self_view": "You fish for a while..and oh my golly, you caught something!!"
+              }
+            }
+          ],
+          "constraints": [
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_item_name",
+              "params": {
+                "item": "pond"
+              }
+            }
+          ]
+        }
+      ],
       "room": false,
       "size": 1,
       "stats": {
@@ -5522,34 +5703,7 @@
       "surface_type": "on",
       "value": 5,
       "wearable": false,
-      "wieldable": true,
-      "on_use": [
-        {
-          "post": [
-            [
-              "create_entity",
-              "in_actor",
-              {
-                "desc": "Mmm you could just eat this thing raw.",
-                "is_food": 1.0,
-                "is_wearable": false,
-                "name": "tasty looking fish",
-                "name_prefix": "a"
-              }
-            ],
-            [
-              "broadcast_message",
-              {
-                "self_view": "You fish for a while..and oh my golly, you caught something!!"
-              }
-            ]
-          ],
-          "pre": [
-            ["is_holding", "used_item"],
-            ["used_with_item_name", "pond"]
-          ]
-        }
-      ]
+      "wieldable": true
     },
     "rare wood from a tree that doesn't exist anymore_166": {
       "agent": false,
@@ -5614,7 +5768,7 @@
       "max_distance_from_start_location": 1000000,
       "max_wearable_items": 3,
       "max_wieldable_items": 1,
-      "mission": "",
+      "mission": "Find the tastiest things, and the comfiest places to rest.",
       "movement_energy_cost": 0.0,
       "name": "rat",
       "name_prefix": "a",
@@ -6276,27 +6430,40 @@
       "object": true,
       "on_use": [
         {
-          "post": [
-            [
-              "create_entity",
-              "in_used_target_item",
-              {
-                "desc": "A beautiful and mysterious ring.. could it have magical powers?",
-                "is_wearable": true,
-                "name": "dark emerald ring",
-                "name_prefix": "an"
+          "remaining_uses": 1,
+          "events": [
+            {
+              "type": "create_entity",
+              "params": {
+                "type": "in_used_target_item",
+                "object": {
+                  "name_prefix": "an",
+                  "is_wearable": true,
+                  "name": "emerald ring",
+                  "desc": "A beautiful and mysterious ring.. could it have magical powers?"
+                }
               }
-            ],
-            [
-              "broadcast_message",
-              {
+            },
+            {
+              "type": "broadcast_message",
+              "params": {
                 "self_view": "You dig into the sodden mud, and spy something glistening within!"
               }
-            ]
+            }
           ],
-          "pre": [
-            ["is_holding", "used_item"],
-            ["used_with_item_name", "muddy area"]
+          "constraints": [
+            {
+              "type": "is_holding",
+              "params": {
+                "complement": "used_item"
+              }
+            },
+            {
+              "type": "used_with_item_name",
+              "params": {
+                "item": "muddy area"
+              }
+            }
           ]
         }
       ],
@@ -6339,7 +6506,7 @@
       "max_distance_from_start_location": 1000000,
       "max_wearable_items": 3,
       "max_wieldable_items": 1,
-      "mission": "",
+      "mission": "Aid my Wizard master in their goals.",
       "movement_energy_cost": 0.0,
       "name": "skeleton assistant",
       "name_prefix": "a",

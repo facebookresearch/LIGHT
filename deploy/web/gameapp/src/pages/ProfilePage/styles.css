@@ -1,0 +1,62 @@
+table,
+th,
+td {
+  border: 1px solid gold;
+}
+
+.profilepage-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1em 1em 4em 1em;
+  background-color: #dcb580;
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+}
+
+.nameplate-container {
+  display: flex;
+  align-items: center;
+  margin-top: 3em;
+}
+
+.nameplate {
+  background-color: gold;
+  width: 40%;
+  height: 4em;
+  border-style: double;
+  display: flex;
+  align-items: center;
+  margin-left: 1em;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  z-index: 5;
+  min-width: 280px;
+}
+
+.nameplate-portrait {
+  height: 6em;
+  width: 6em;
+  border-radius: 3em;
+  z-index: 10;
+  position: fixed;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.profiledata-container {
+  width: 50%;
+  height: 80%;
+  background-color: #a26f12;
+  opacity: 0.9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  flex-direction: column;
+  margin-top: 3.5em;
+  border-radius: 15px;
+  box-shadow: 5px 2px 15px black;
+}

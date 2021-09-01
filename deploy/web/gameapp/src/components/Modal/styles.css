@@ -1,0 +1,27 @@
+.modal-overlay {
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-window {
+  width: 50%;
+  height: 70%;
+  background-color: white;
+  border-color: lightgrey;
+  border-width: 1em;
+  border-style: ridge;
+  border-radius: 15px;
+  overflow: hidden;
+  z-index: 100;
+}
+
+@media only screen and (max-width: 950px) {
+  .modal-window {
+    width: 95%;
+  }
+}

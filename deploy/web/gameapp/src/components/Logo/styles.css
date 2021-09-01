@@ -1,0 +1,46 @@
+.header {
+  font-size: 15px;
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  font-family: fantasy;
+}
+.header img {
+  width: 6em;
+  height: 6em;
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  text-align: center;
+  color: #fff;
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+
+.logo-title {
+  text-align: center;
+  color: #fff;
+  animation: pulse 1s ease-in-out infinite alternate;
+  margin: 0;
+}
+
+@keyframes pulse {
+  from {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #eef079, 0 0 20px #eef079,
+      0 0 25px #eef079, 0 0 30px #eef079, 0 0 35px #eef079;
+  }
+  to {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #eef079,
+      0 0 40px #eef079, 0 0 50px #eef079, 0 0 60px #eef079, 0 0 70px #eef079;
+  }
+}
+
+.logo-text {
+  text-align: center;
+  color: #fff;
+  margin: 0;
+}

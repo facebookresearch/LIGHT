@@ -17,12 +17,16 @@ from typing import Any, Dict
 
 class GraphEncoder(json.JSONEncoder):
     def default(self, o):
+        from light.graph.events.base import GraphEvent
+
         if isinstance(o, set):
             return sorted(list(o))
         if isinstance(o, list):
             return sorted(o)
         if isinstance(o, GraphEdge):
             return {k: v for k, v in o.__dict__.copy().items() if not k.startswith("_")}
+        if isinstance(o, GraphEvent):
+            return o.to_json()
         if not isinstance(o, GraphNode):
             return super().default(o)
         use_dict = {k: v for k, v in o.__dict__.copy().items() if not k.startswith("_")}

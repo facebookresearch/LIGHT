@@ -1,0 +1,44 @@
+.customicon {
+  position: relative;
+}
+
+.customicon-text__container {
+  position: absolute;
+  display: flex;
+  width: 2.5em;
+  height: 2.5em;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  top: 2px;
+}
+
+.customicon-text {
+  z-index: 2;
+  color: grey;
+  text-align: center;
+  margin: 0;
+  font-size: 0.8em;
+  position: absolute;
+}
+
+.number-star {
+  color: yellow;
+  position: absolute;
+  z-index: 1;
+  height: 2.5em;
+  width: 2.5em;
+  font-size: 1em;
+}
+
+@media only screen and (max-width: 900px) {
+  .customicon-text {
+    font-size: 16px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .customicon-text {
+    font-size: 12px;
+  }
+}

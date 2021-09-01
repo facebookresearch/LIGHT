@@ -1,0 +1,43 @@
+.bar-container {
+  height: 1.2em;
+  background-color: #e0e0de;
+  border-radius: 5;
+  border-style: outset;
+  border-radius: 15px;
+  box-shadow: 5px 2px 5px;
+  border-color: silver;
+  border-width: thick;
+  width: 70%;
+  max-width: 20em;
+  min-width: 140px;
+}
+
+.bar-filler {
+  height: 100%;
+  border-radius: inherit;
+  text-align: right;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bar-label {
+  position: relative;
+  color: darkgrey;
+  font-weight: bold;
+  padding-top: 5px;
+}
+
+.bar-label__text {
+}
+@media only screen and (max-width: 950px) {
+  .bar-label {
+    font-size: 14px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .bar-label {
+    font-size: 12px;
+  }
+}

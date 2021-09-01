@@ -485,6 +485,17 @@ class GraphRoom(GraphNode):
         else:
             return self.name
 
+    def get_prefix_view_from(self, from_node=None):
+        """Return how this node would look like from the given location"""
+        if from_node is None:
+            return f"{self.name_prefix} {self.name}"
+        elif from_node == self:
+            return f"{self.name_prefix} {self.name}"
+        elif self in from_node.get_neighbors():
+            return from_node.get_edge_to(self).label
+        else:
+            return f"{self.name_prefix} {self.name}"
+
     def add_neighbor(
         self,
         other_node,
@@ -577,7 +588,7 @@ class GraphAgent(GraphNode):
             self.dead = False
         # Flag to resolve when a death event is in the stack, but possibly not processed
         self._dying = False
-        self.is_player = self._props.get("is_player", False)
+        self.is_player = self._props.get("is_player", self._props.get("_human", False))
         self.usually_npc = self._props.get("usually_npc", False)
         self.pacifist = self._props.get("pacifist", False)
         self.tags = self._props.get("tags", self.DEFAULT_TAGS)
@@ -608,7 +619,6 @@ class GraphAgent(GraphNode):
         self.mission = self._props.get("mission", "")
 
         # Game properties to track for this agent, TODO move to other class?
-        self._human = False
         self._current_player = None
         self.clear_memory()
 
@@ -743,7 +753,7 @@ class GraphAgent(GraphNode):
 
     def set_player(self, current_player):
         """Have a new player take over this agent. None returns to npc"""
-        self._human = current_player is not None
+        self.is_player = current_player is not None
         self.clear_memory()
         self._current_player = current_player
 
@@ -758,6 +768,7 @@ class GraphAgent(GraphNode):
         """Kill off this agent, turn them into an object"""
         self.desc = random.choice(DEAD_DESCRIPTIONS)
         self.set_prop("dead", True)
+        self.mark_dying()
         new_node_id = self.node_id + "__dead__"
         new_node = GraphObject(new_node_id, self.name, self.__dict__)
         room = self.get_room()

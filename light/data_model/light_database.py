@@ -1424,7 +1424,19 @@ class LIGHTDatabase:
             """
             CREATE TABLE IF NOT EXISTS user_table (
             id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-            username text UNIQUE NOT NULL);
+            extern_id text UNIQUE NOT NULL,
+            username text);
+            """
+        )
+
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS scores_table (
+            id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+            user_id text NOT NULL,
+            character_id text,
+            experience int NOT NULL,
+            reward_points int);
             """
         )
 
@@ -2162,18 +2174,26 @@ class LIGHTDatabase:
 
         # Check the table for size, contain_size, shape, value columns and add if nonexistent
         # this should be deprecated soon when a legacy table is opened
-        has_size_column = self.c.execute(
-            " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='size' "
-        )
-        has_contain_size_column = self.c.execute(
-            " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='contain_size' "
-        )
-        has_shape_column = self.c.execute(
-            " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='shape' "
-        )
-        has_value_column = self.c.execute(
-            " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='value' "
-        )
+        has_size_column = dict(
+            self.c.execute(
+                " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='size' "
+            ).fetchone()
+        )["CNTREC"]
+        has_contain_size_column = dict(
+            self.c.execute(
+                " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='contain_size' "
+            ).fetchone()
+        )["CNTREC"]
+        has_shape_column = dict(
+            self.c.execute(
+                " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='shape' "
+            ).fetchone()
+        )["CNTREC"]
+        has_value_column = dict(
+            self.c.execute(
+                " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='value' "
+            ).fetchone()
+        )["CNTREC"]
 
         if not (
             has_size_column
@@ -3527,21 +3547,21 @@ class LIGHTDatabase:
             id = int(result[0][0])
         return (id, inserted)
 
-    def create_user(self, username):
+    def create_user(self, extern_id):
         self.c.execute(
             """
-            INSERT or IGNORE INTO user_table(username)
+            INSERT or IGNORE INTO user_table(extern_id)
             VALUES (?)
             """,
-            (username,),
+            (extern_id,),
         )
         inserted = bool(self.c.rowcount)
         if not inserted:
             self.c.execute(
                 """
-                SELECT id from user_table WHERE username = ?
+                SELECT id from user_table WHERE extern_id = ?
                 """,
-                (username,),
+                (extern_id,),
             )
             result = self.c.fetchall()
             assert len(result) == 1
@@ -3550,14 +3570,95 @@ class LIGHTDatabase:
             id = self.c.lastrowid
         return (id, inserted)
 
-    def get_user_id(self, username):
+    def get_user_id(self, extern_id):
         self.c.execute(
             """
-                SELECT id from user_table WHERE username = ?
-                """,
-            (username,),
+            SELECT id from user_table WHERE extern_id = ?
+            """,
+            (extern_id,),
         )
         result = self.c.fetchall()
         assert len(result) == 1
         id = int(result[0][0])
         return id
+
+    def initialize_agent_score(self, target_node, user):
+        """
+        Initialize this agent with the current scores written in the database for the given user
+        """
+        user_id = self.get_user_id(user)
+        db_id = target_node.db_id
+        self.c.execute(
+            """SELECT * FROM scores_table WHERE user_id = ? AND character_id IS NULL""",
+            (user_id,),
+        )
+        result = self.c.fetchone()
+        if result is None:
+            self.c.execute(
+                """
+                INSERT OR IGNORE INTO scores_table(user_id, experience, reward_points)
+                values (?,?,?)
+                """,
+                (user_id, 0, 0),
+            )
+            result = {"experience": 0, "reward_points": 0}
+
+        # TODO refactor public/private `GraphNode` attributes, discussion:
+        # https://github.com/facebookresearch/LIGHT/pull/192#discussion_r616161265
+        target_node.xp = result["experience"]
+        target_node.reward_xp = result["reward_points"]
+        target_node._base_class_experience = 0
+        target_node._base_experience = target_node.xp
+        target_node._base_reward_points = target_node.reward_xp
+
+        if db_id is not None:
+            self.c.execute(
+                """SELECT * FROM scores_table WHERE user_id = ? AND character_id = ?""",
+                (user_id, db_id),
+            )
+            result = self.c.fetchone()
+            if result is None:
+                self.c.execute(
+                    """
+                    INSERT OR IGNORE INTO scores_table(user_id, char_id, score, reward_points)
+                    values (?,?,?)
+                    """,
+                    (user_id, db_id, 0, 0),
+                )
+
+    def store_agent_score(self, target_node, user):
+        """
+        Write the updated score values back to the table
+        """
+        user_id = self.get_user_id(user)
+        gained_experience = target_node.xp - target_node._base_experience
+        net_reward_points = target_node.reward_xp - target_node._base_reward_points
+        self.c.execute(
+            """
+            UPDATE scores_table
+            SET experience = experience + ?, reward_points = reward_points + ?
+            WHERE user_id = ? AND character_id is NULL
+            """,
+            (
+                gained_experience,
+                net_reward_points,
+                user_id,
+            ),
+        )
+
+        # Extract the target node's db_id, which corresponds to its character
+        # in the database, if it is set
+        db_id = target_node.db_id
+        if db_id is not None:
+            self.c.execute(
+                """
+                UPDATE scores_table
+                SET experience = experience + ?
+                WHERE user_id = ? AND character_id = ?
+                """,
+                (gained_experience, user_id, db_id),
+            )
+
+        # Checkpoint that these changes are now in the DB.
+        target_node._base_experience = target_node.xp
+        target_node._base_reward_points = target_node.reward_xp

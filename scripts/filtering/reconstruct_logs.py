@@ -52,7 +52,7 @@ def get_world(uuid, graph_dir):
     graph_file = os.path.join(graph_dir, f"{uuid}.json")
     with open(graph_file, "r") as graph_json_file:
         graph = OOGraph.from_json(graph_json_file.read())
-    world = World(None, None, False)
+    world = World({}, None, False)
     world.oo_graph = graph
     return world
 

@@ -1,0 +1,99 @@
+.aboutpage-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 1em 5em 4em 5em;
+  background-image: url("../../assets/images/InexplicableTavern.png");
+  background-size: cover;
+  height: 100%;
+  overflow: scroll;
+}
+
+.aboutpage-body {
+  width: 100%;
+  background-color: rgba(105, 123, 77, 0.9);
+  border: darkgray;
+  border-width: 1em;
+  border-style: ridge;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3em;
+  box-shadow: 0.25em 0.25em 0.25em black;
+}
+
+.aboutpage-text__container {
+  color: white;
+  padding-left: 7px;
+}
+
+.aboutpage-header {
+  text-align: center;
+  color: white;
+}
+
+.aboutpage-text {
+  text-align: center;
+}
+
+.aboutpage-image {
+  height: auto;
+  width: 90%;
+  max-width: 70em;
+}
+
+.back-button {
+  color: gold;
+  font-weight: bolder;
+  cursor: pointer;
+  border-radius: 15px;
+}
+
+.back-button:hover {
+  color: yellow;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.back-button:active {
+  color: yellow;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 900;
+}
+
+@media only screen and (max-width: 1224px) {
+}
+
+@media only screen and (max-width: 950px) {
+}
+
+@media only screen and (max-width: 600px) {
+  .aboutpage-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    background-image: url("../../assets/images/InexplicableTavern.png");
+    background-size: cover;
+    height: 100%;
+    overflow: scroll;
+    padding: 0;
+  }
+
+  .aboutpage-body {
+    width: 90%;
+    background-color: rgba(105, 123, 77, 0.9);
+    border: darkgray;
+    border-width: 1em;
+    border-style: ridge;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0.25em 0.25em 0.25em black;
+    padding: 0;
+    margin: 0 0 20vh 0;
+  }
+}

@@ -4,6 +4,7 @@ WEBDIR="$(dirname "${BASH_SOURCE[0]}")"  # get the directory name
 WEBDIR="$(realpath "${WEBDIR}")"    # resolve its full path if need becd $WEBDIR
 BUILDER_DIR="${WEBDIR}/builderapp/"
 GAME_DIR="${WEBDIR}/gameapp/"
+LANDING_DIR="${WEBDIR}/landingapp/"
 SERVER_FILE="${WEBDIR}/server/run_server.py"
 
 CONF_FN="./configs/"$1"/config.js"
@@ -24,5 +25,8 @@ cd $BUILDER_DIR
 npm install
 CI=false npm run build
 cd $GAME_DIR
+npm install
+CI=false npm run build
+cd $LANDING_DIR
 npm install
 CI=false npm run build

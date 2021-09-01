@@ -1,0 +1,93 @@
+.loginpage-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  padding: 1em 5em 4em 0.5em;
+  background-image: url("../../assets/images/InexplicableTavern.png");
+  background-size: cover;
+  height: 100%;
+}
+
+.login-form__container {
+  width: 50%;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #cfb47d;
+  border-color: #9d733d;
+  border-style: ridge;
+  border-width: 1em;
+  padding: 1em;
+  color: white;
+}
+
+.login-form__field {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+}
+
+.login-form__label {
+  font-family: fantasy;
+  font-weight: bold;
+  font-size: 1.3em;
+  margin-right: 10px;
+}
+
+.login-form__input {
+  font-size: 1rem;
+  font-family: fantasy;
+  font-weight: bold;
+  border: none;
+  background: transparent;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  color: white;
+}
+
+.login-form__submit {
+  padding: 5px 15px;
+  font-family: fantasy;
+  font-weight: bold;
+  background: white;
+  border-radius: 15px;
+  border: 0 none;
+  cursor: pointer;
+  box-shadow: 0.25em 0.2em 0.2em black;
+}
+
+.login-form__submit:active {
+  box-shadow: 0em 0em 0em black;
+}
+
+@media only screen and (max-width: 1224px) {
+}
+
+@media only screen and (max-width: 950px) {
+}
+
+@media only screen and (max-width: 600px) {
+  .loginpage-container {
+    padding: 0;
+    margin: 0;
+  }
+  .login-form__container {
+    width: 30%;
+    min-width: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #cfb47d;
+    border-color: #9d733d;
+    border-style: ridge;
+    border-width: 1em;
+    padding: 1em;
+    color: white;
+  }
+}

@@ -27,7 +27,7 @@ from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 from light.world.views import WorldViewer
 from light.world.purgatory import Purgatory
 
-from typing import List, TYPE_CHECKING, Dict, Any
+from typing import List, Optional, TYPE_CHECKING, Dict, Any
 
 if TYPE_CHECKING:
     from light.registry.model_pool import ModelPool
@@ -257,77 +257,6 @@ class World(object):
     def node_contains(self, id):
         # TODO deprecate calls here, go to oo_graph
         return [x.node_id for x in self.oo_graph.get_node(id).get_contents()]
-
-    def get_available_actions_fast(self, agent_id):
-        """Get available actions quickly, some of these may not be possible.
-        NOTE: Jack can clean up later, but this seems to do everything need for NPCs
-        right now. Essentially I think such a function shouldn't be using strings
-        at all during reasoning, only ids all the way down until the last conversion
-        to action strings, which the existing code didn't seem to do..?
-        NOTE2: I've only included here actions actually in the LIGHT Turked dataset.
-        Easy to add more of course, such as wield.
-        This code is fairly fast (i measured like 10,000 calls in 0.8 secs).
-        """
-        # TODO improve with graphs
-        acts = []
-        room_id = self.room(agent_id)
-        nearby_ids = self.node_contains(room_id)
-        carrying_ids = self.node_contains(agent_id)
-        container_ids = []
-
-        for id in nearby_ids:
-            if id == agent_id:
-                continue
-            id_txt = self.node_to_desc(id).lower()
-            if self.has_prop(id, "agent"):
-                acts.append("hit " + id_txt)
-                acts.append("hug " + id_txt)
-                acts.append("examine " + id_txt)
-                for id2 in carrying_ids:
-                    id2_txt = self.node_to_desc(id2).lower()
-                    acts.append("give " + id2_txt + " to " + id_txt)
-                neighbor_carrying_ids = self.node_contains(id)
-                for id2 in neighbor_carrying_ids:
-                    id2_txt = self.node_to_desc(id2).lower()
-                    acts.append("steal " + id2_txt + " from " + id_txt)
-            if self.has_prop(id, "object"):
-                if not self.has_prop(id, "not_gettable"):
-                    acts.append("get " + id_txt)
-                if not self.has_prop(id, "not_gettable") or self.has_prop(id, "human"):
-                    # objects are examinable,
-                    # except for non-gettable by NPCs, as it's boring.
-                    acts.append("examine " + id_txt)
-            if self.has_prop(id, "container"):
-                container_ids.append(id)
-
-        for id in carrying_ids:
-            if self.has_prop(id, "container"):
-                container_ids.append(id)
-
-        for id in carrying_ids:
-            id_txt = self.node_to_desc(id).lower()
-            acts.append("examine " + id_txt)
-            acts.append("drop " + id_txt)
-            if self.has_prop(id, "equipped"):
-                acts.append("remove " + id_txt)
-            elif self.has_prop(id, "wearable"):
-                acts.append("wear " + id_txt)
-            if self.has_prop(id, "food"):
-                acts.append("eat " + id_txt)
-            if self.has_prop(id, "drink"):
-                acts.append("drink " + id_txt)
-            for id2 in container_ids:
-                id2_txt = self.node_to_desc(id2).lower()
-                acts.append("put " + id_txt + " in " + id2_txt)
-
-        for id in container_ids:
-            id_txt = self.node_to_desc(id).lower()
-            inside_ids = self.node_contains(id)
-            for id2 in inside_ids:
-                id2_txt = self.node_to_desc(id2).lower()
-                acts.append("get " + id_txt + " from " + id2_txt)
-
-        return acts
 
     @deprecated
     def desc_to_nodes(self, desc, nearbyid=None, nearbytype=None):
@@ -827,15 +756,15 @@ class World(object):
         h = ["Have you tried typing help?"]
         return random.choice(h)
 
-    def parse_exec(self, actor, inst=None):
+    def parse_exec(self, actor, inst=None, event_id: Optional[str] = None):
         if not isinstance(actor, GraphNode):
             actor = self.oo_graph.get_node(actor)
         if self.opt.get("dont_catch_errors", False):
-            return self.parse_exec_internal(actor, inst)
+            return self.parse_exec_internal(actor, inst=inst, event_id=event_id)
 
         else:
             try:
-                return self.parse_exec_internal(actor, inst)
+                return self.parse_exec_internal(actor, inst=inst, event_id=event_id)
             except Exception:
                 import traceback
 
@@ -845,7 +774,9 @@ class World(object):
                 )
                 return False, "FailedParseExec"
 
-    def attempt_parse_event(self, EventClass, actor_node, arguments):
+    def attempt_parse_event(
+        self, EventClass, actor_node, arguments, event_id: Optional[str] = None
+    ):
         """Return the possible parsed event given the event, actor, and arguments"""
         # Parse the text into string args
         possible_text_args = EventClass.split_text_args(actor_node, arguments)
@@ -864,9 +795,11 @@ class World(object):
             return result
 
         # Create the final event. May be an error but that's okay
-        return EventClass.construct_from_args(actor_node, result.targets, result.text)
+        return EventClass.construct_from_args(
+            actor_node, result.targets, result.text, event_id=event_id
+        )
 
-    def parse_exec_internal(self, actor, inst=None):
+    def parse_exec_internal(self, actor, inst=None, event_id: Optional[str] = None):
         """Try to parse and execute the given event"""
         # basic replacements
         inst = self.action_parser.post_process(inst, actor)
@@ -912,7 +845,7 @@ class World(object):
             self.send_msg(actor, random.choice(errs))
             return False
 
-        executable = instruction_list[0]
+        executable = instruction_list[0].lower()
         arguments = " ".join(instruction_list[1:])
 
         hint_calls = ["a", "actions", "hints"]
@@ -957,7 +890,7 @@ class World(object):
 
         EventClass = ALL_EVENTS[executable]
 
-        parsed_event = self.attempt_parse_event(EventClass, actor, arguments)
+        parsed_event = self.attempt_parse_event(EventClass, actor, arguments, event_id)
         if isinstance(parsed_event, ErrorEvent):
             self.broadcast_to_agents(parsed_event, [actor])
             return False, inst

@@ -7,6 +7,7 @@
 import parlai.utils.logging as logging
 from parlai.core.message import Message
 import copy
+import threading
 
 from typing import TYPE_CHECKING
 
@@ -99,49 +100,54 @@ class ActionParser:
             self.agent = model_pool.get_model("parser")
         else:
             self.agent = None
+        # Lock to handle concurrency, fixed better with asycio
+        self.parse_lock = threading.Condition()
 
     def parse(self, txt, actor=None):
         if self.agent is None:
             # No model installed, return an empty string.
             return ""
 
-        # Predict verb first.
-        txt = txt.lower()
-        verbs = list(args.keys())
-        query = Message(
-            {
-                "id": "context",
-                "text": txt,
-                "label_candidates": verbs,
-                "episode_done": True,
-            }
-        )
-        self.agent.observe(query)
-        res = self.agent.act()
-        verb = res["text"]
-
-        # Given verb, predict the args (unless it's a no-arg action(.
-        if args[verb] > 0:
-            cands = get_input_cands(txt, verb, txt)
-            query2 = Message(
+        with self.parse_lock:
+            # Predict verb first.
+            txt = txt.lower()
+            verbs = list(args.keys())
+            query = Message(
                 {
                     "id": "context",
                     "text": txt,
-                    "label_candidates": cands,
+                    "label_candidates": verbs,
                     "episode_done": True,
                 }
             )
-            self.agent.observe(query2)
-            res2 = self.agent.act()
-            txt = res2["text"]
-        else:
-            txt = verb
+            self.agent.observe(query)
+            res = self.agent.act()
+            verb = res["text"]
+
+        with self.parse_lock:
+            # Given verb, predict the args (unless it's a no-arg action(.
+            if args[verb] > 0:
+                cands = get_input_cands(txt, verb, txt)
+                query2 = Message(
+                    {
+                        "id": "context",
+                        "text": txt,
+                        "label_candidates": cands,
+                        "episode_done": True,
+                    }
+                )
+                self.agent.observe(query2)
+                res2 = self.agent.act()
+                txt = res2["text"]
+            else:
+                txt = verb
         txt = self.post_process(txt, actor)
 
         return txt
 
     def post_process(self, txt, actor=None):
         txt = txt.rstrip("\n").rstrip("\r")
+        txt = txt.replace("“", '"').replace("”", '"')
         if '"' in txt:
             return txt
 
@@ -162,5 +168,7 @@ class ActionParser:
 
         if new_txt.startswith("point at"):
             new_txt = new_txt.replace("point at", "point")
+        if new_txt.startswith("point to"):
+            new_txt = new_txt.replace("point to", "point")
 
         return new_txt

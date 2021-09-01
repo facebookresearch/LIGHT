@@ -98,7 +98,7 @@ class OnEventSoul(ModelSoul):
                 return agent2._agent_interactions[agent.node_id]
         return 0
 
-    def on_events_heuristics(self, event):
+    def on_events_heuristics(self, event) -> bool:
         agent = self.target_node
         event_name = event.__class__.__name__
 
@@ -112,6 +112,7 @@ class OnEventSoul(ModelSoul):
             self.execute_event(["BlockEvent", other_agent])  # block!
             self.execute_event(["HitEvent", other_agent])  # hit back!
             agent.aggression_target = other_agent.node_id
+            return True
 
         # StealEvent
         if (
@@ -123,20 +124,96 @@ class OnEventSoul(ModelSoul):
             self.execute_event(["BlockEvent", other_agent])  # block!
             self.execute_event(["HitEvent", other_agent])  # hit back!
             agent.aggression_target = other_agent.node_id
+            return True
+        return False
+
+    def _find_object_of_value(self, agent, value, find="less"):
+        item = None
+        for o in agent.get_contents():
+            if find == "less" and o.value <= value:
+                item = o
+            if find == "more" and o.value >= value:
+                item = o
+        return item
+
+    def trade_event_heuristics(self, event) -> bool:
+        agent = self.target_node
+        other_agent = event.actor
+        event_name = event.__class__.__name__
 
         # GiveObjectEvent
         if event_name == "GiveObjectEvent" and event.target_nodes[1] == agent:
-            if agent.dont_accept_gifts:
-                obj = event.target_nodes[0]
-                self.execute_event(["DropEvent", obj])
-                say_text = "I don't want that."
+            if hasattr(self, "willing_to_trade") and self.willing_to_trade is not None:
+                trade = False
+                item1 = event.target_nodes[0]
+                if item1 == self.willing_to_trade[1]:
+                    for o in agent.get_contents():
+                        if o == self.willing_to_trade[0]:
+                            trade = True
+                else:
+                    trade = False
+                if trade:
+                    self.execute_event(
+                        ["GiveObjectEvent", self.willing_to_trade[0], other_agent]
+                    )
+                    say_text = random.choice(
+                        ["Thanks for the trade.", "Good doing business with you."]
+                    )
+                    self.execute_event(["SayEvent", say_text])
+                    self.willing_to_trade = None
+                else:
+                    say_text = random.choice(
+                        ["I don't want that.", "Not interested, thanks."]
+                    )
+                    self.execute_event(["SayEvent", say_text])
+                    obj = event.target_nodes[0]
+                    self.execute_event(["DropEvent", obj])
             else:
-                say_text = "Err.. thanks."
-            self.execute_event(["SayEvent", say_text])
+                if agent.dont_accept_gifts:
+                    obj = event.target_nodes[0]
+                    self.execute_event(["DropEvent", obj])
+                    say_text = "I don't want that."
+                else:
+                    say_text = "Err.. thanks."
+                self.execute_event(["SayEvent", say_text])
+            return True
 
-    def tell_goal_heuristics(self, event):
+        # PointEvent
+        if event_name == "PointEvent" and event.target_nodes[0].object:
+            item = event.target_nodes[0]
+            value = item.value
+            say_text = ""
+            if item.get_container() == other_agent:
+                item2 = self._find_object_of_value(agent, value, "less")
+                if item2 is None:
+                    say_text = "That looks nice, but I'm not interested."
+                else:
+                    say_text = (
+                        "I'm willing to trade that for " + item2.get_prefix_view()
+                    )
+                    self.willing_to_trade = (item2, item)
+
+            if item.get_container() == agent:
+                item2 = self._find_object_of_value(other_agent, value, "more")
+                if item2 is None:
+                    say_text = (
+                        "Nice isn't it? I don't think you have anything I want though."
+                    )
+                else:
+                    say_text = (
+                        "I'm willing to trade that for " + item2.get_prefix_view()
+                    )
+                    self.willing_to_trade = (item, item2)
+
+            if say_text != "":
+                self.execute_event(["TellEvent", other_agent, say_text])
+                return True
+        return False
+
+    def tell_goal_heuristics(self, event) -> bool:
         agent = self.target_node
         event_name = event.__class__.__name__
+        partner = self.get_last_interaction_partner(agent)
         # Tell Mission to Other Agent (or not).
         if (
             (event_name == "SayEvent" and event.actor != agent)
@@ -145,7 +222,7 @@ class OnEventSoul(ModelSoul):
                 and event.actor != agent
                 and event.target_nodes[0] == agent
             )
-        ) and (self.get_last_interaction_partner(agent) == event.actor.node_id):
+        ) and (partner is not None and partner.node_id == event.actor.node_id):
             about_goals = False
             for words in ["mission", "goal", "quest", "what you want"]:
                 if words in event.text_content:
@@ -209,7 +286,7 @@ class OnEventSoul(ModelSoul):
                     return None  # failed to resolve
         return effect
 
-    def on_events(self, event):
+    def on_events(self, event) -> bool:
         agent = self.target_node
         executed = False
         if hasattr(agent, "on_events") and agent.on_events is not None:
@@ -224,7 +301,9 @@ class OnEventSoul(ModelSoul):
                         executed = True
 
         if not executed:
-            self.on_events_heuristics(event)
+            return self.on_events_heuristics(event)
+        else:
+            return True  # Note that we did something with on_events
 
     def new_quest(self):
         graph = self.world.oo_graph
@@ -271,6 +350,7 @@ class OnEventSoul(ModelSoul):
             return  # We're dying, don't do any responding.
         self.quest_events(event)
         self.on_events(event)
+        self.trade_event_heuristics(event)
         self.tell_goal_heuristics(event)
 
     def is_too_far(self, agent, room):
@@ -341,7 +421,6 @@ class OnEventSoul(ModelSoul):
                         return True
 
         # Random movement for NPCs..
-
         if (
             random.randint(0, 300) < agent.speed
             and self.get_last_interaction_partner(agent) is None

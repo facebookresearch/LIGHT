@@ -154,13 +154,23 @@ def main():
     DEFAULT_PORT = 35494
     DEFAULT_HOSTNAME = "localhost"
 
+    def str2bool(v):
+        if isinstance(v, bool):
+            return v
+        if v.lower() in ("yes", "true", "t", "y", "1"):
+            return True
+        elif v.lower() in ("no", "false", "f", "n", "0"):
+            return False
+        else:
+            raise argparse.ArgumentTypeError("Boolean value expected.")
+
     parser = argparse.ArgumentParser(
         description="Start the game server.", fromfile_prefix_chars="@"
     )
     parser.add_argument(
         "--cookie-secret",
         type=str,
-        default="0123456789",
+        default="temp8000800080008000",
         help="Cookie secret for issueing cookies (SECRET!!!)",
     )
     parser.add_argument(
@@ -244,6 +254,12 @@ def main():
         "--generic-act-model-file",
         type=str,
         default="",
+    )
+    parser.add_argument(
+        "--is-logging",
+        type=str2bool,
+        default=False,
+        help="flag to enable storing logs of interactions",
     )
     FLAGS, _unknown = parser.parse_known_args()
 

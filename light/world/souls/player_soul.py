@@ -8,9 +8,10 @@ from light.world.souls.base_soul import BaseSoul
 from light.world.content_loggers import AgentInteractionLogger
 from light.world.quest_loader import QuestCreator
 from light.graph.events.magic import check_if_cast_magic_from_event
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 import random
 import time
+from light.graph.events.graph_events import SystemMessageEvent
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -42,9 +43,7 @@ class PlayerSoul(BaseSoul):
         """
         super().__init__(target_node, world)
         assert not target_node.is_player, "Cannot have two players in the same agent!"
-        # TODO merge these flags across LIGHT
         target_node.is_player = True
-        target_node._human = True
         target_node._last_action_time = time.time()
         self.player_id = player_id
         self.provider = provider  # TODO link with real provider
@@ -69,14 +68,29 @@ class PlayerSoul(BaseSoul):
             self.target_node.get_room().node_id
         ]._add_player()
 
-    def handle_act(self, act_text):
+    def handle_act(self, act_text, event_id: Optional[str] = None):
         """
         PlayerSouls must process act text sent from players and enact them on the world.
         This method is called by the player provider when an action is taken.
         """
+        if act_text == '"DEBUG_HUMANS"':
+            # print debug information about humans playing instead
+            humans = self.world.oo_graph.get_humans()
+            num = len(humans)
+            txt = (
+                "There are "
+                + str(num)
+                + " LIGHT denizen(s) from your world on this plane: "
+                + str(humans)
+            )
+            event = SystemMessageEvent(self.target_node, [], text_content=txt)
+            event.skip_safety = True
+            event.execute(self.world)
+            return
+
         actor = self.target_node
         actor._last_action_time = time.time()
-        self.world.parse_exec(self.target_node, act_text)
+        self.world.parse_exec(self.target_node, act_text, event_id=event_id)
 
     def new_quest(self):
         if random.random() > 0.01:
@@ -128,7 +142,6 @@ class PlayerSoul(BaseSoul):
         """
         super().reap()
         self.target_node.is_player = False
-        self.target_node._human = False
         self.target_node.persona = self.target_node.persona.split(QUEST_TEXT)[0]
         self.world.oo_graph.room_id_to_loggers[
             self.target_node.get_room().node_id

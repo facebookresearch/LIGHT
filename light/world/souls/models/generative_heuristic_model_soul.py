@@ -74,11 +74,18 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         # NPC on_events + heuristics.
         super().set_interaction_partners_from_event(event)
         super().log_interaction_from_event(event)
+        if self.target_node._dying:
+            return
         super().quest_events(event)
-        super().on_events(event)
+        did_event = super().on_events(event)
+        did_trade = super().trade_event_heuristics(event)
 
         if event.actor == self.target_node:
             self._last_action_time = time.time() + self._get_random_time_offset()
+            return
+
+        if did_event or did_trade:
+            # Already did a heuristic-based action
             return
 
         self._pending_observations.append(event)
@@ -153,17 +160,13 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
 
         # Get agents
         agent = self.target_node
-        partner_id = self.get_last_interaction_partner(agent)
-        if partner_id is None:
-            return
-        partner = self.world.oo_graph.get_node(partner_id)
         agent_id = agent.node_id
-        partner_id = self.get_last_interaction_partner()
-        if partner_id != None:
-            partner = self.world.oo_graph.get_node(partner_id)
+        partner = self.get_last_interaction_partner()
+        if partner is None:
+            return
+        partner_name = None
+        if partner != None:
             partner_name = partner.name
-        else:
-            partner_name = None
 
         quest_txt = None
         if not hasattr(agent, "quests") or agent.quests is None:
@@ -267,13 +270,9 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         agent_id = agent.node_id
 
         if obs is None:
-            partner_id = self.get_last_interaction_partner(agent)
-            if partner_id is None:
-                return
-            partner = self.world.oo_graph.get_node(partner_id)
+            partner = self.get_last_interaction_partner(agent)
         else:
             partner = obs.actor
-            partner_id = partner.node_id
             partner_interactor_id = partner._last_interaction_partner_id
             if (
                 isinstance(obs, SayEvent)
@@ -286,7 +285,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             self.dialogue_switch_partner(agent, partner)
 
         # TODO refactor with is_human when human flag is refactored
-        if not ALLOW_INTERBOT_CHAT and not partner._human:
+        if not ALLOW_INTERBOT_CHAT and not partner.is_player:
             return
 
         quest_txt = None
@@ -303,9 +302,10 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         # context = '\n'.join(contexts); print(context)
         # context = context.replace('_self_persona ', "_self_persona I believe the milk man is south of here. ")
 
-        if obs is not None and obs.text_content == "DEBUG":
+        if obs is not None and obs.text_content.strip() == "DEBUG":
             # print debug information instead
             event = SayEvent(agent, target_nodes=[], text_content="DEBUG: " + context)
+            event.skip_safety = True
             event.execute(self.world)
             return
 
@@ -352,7 +352,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             partner = random.choice(agents)
             partner_id = partner.node_id
             if (
-                partner.node_id != agent_id
+                partner_id != agent_id
                 and partner.get_prop("speed", 0) > 0
                 and self.get_last_interaction_partner(partner) is None
             ):

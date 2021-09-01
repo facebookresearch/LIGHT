@@ -8,7 +8,8 @@ from light.world.souls.soul import Soul
 from copy import deepcopy
 import os
 import asyncio
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
+from light.graph.events.graph_events import SystemMessageEvent
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -33,10 +34,13 @@ class BaseSoul(Soul):
         self.model_pool = world.model_pool
         self.roleplaying_score_model = self.model_pool.get_model("role_playing_score")
 
-    def get_last_interaction_partner(self, node=None):
+    def get_last_interaction_partner(self, node=None) -> Optional["GraphAgent"]:
         if node == None:
             node = self.target_node
-        return node._last_interaction_partner_id
+        partner_id = node._last_interaction_partner_id
+        if partner_id is None:
+            return None
+        return self.world.oo_graph.get_node(partner_id)
 
     def log_interaction_from_event(self, event):
         event_name = event.__class__.__name__
@@ -53,7 +57,7 @@ class BaseSoul(Soul):
             text = event.text_content
             if not (text.startswith("DEBUG")):
                 agent._last_interaction_history.append(
-                    [(event_actor_id, event_name), text]
+                    [(event_actor_id, event_name, event.safe), text]
                 )
         if (agent_id == event_actor_id or partner_id == event_actor_id) and (
             event_name == "EmoteEvent"
@@ -61,7 +65,7 @@ class BaseSoul(Soul):
             # log event
             text = event.text_content
             agent._last_interaction_history.append(
-                [(event_actor_id, event_name), "*" + text + "*"]
+                [(event_actor_id, event_name, True), "*" + text + "*"]
             )
         # Only log these kind of act events.
         act_events = [
@@ -91,9 +95,8 @@ class BaseSoul(Soul):
         ):
             # log event
             text = event.to_canonical_form()
-            # import pdb; pdb.set_trace()
             agent._last_interaction_history.append(
-                [(event_actor_id, event_name), "*" + text + "*"]
+                [(event_actor_id, event_name, True), "*" + text + "*"]
             )
 
     def set_interaction_partners_from_event(self, event):
@@ -205,7 +208,13 @@ class BaseSoul(Soul):
                 dtxt = dtxt.lstrip(" ")
                 dtxt += "\n" + d[1]
             turn_id = current_turn_id
-        return txt + dtxt
+            is_safe = d[0][2]
+            if not is_safe:
+                # reset conversation when unsafe utterances are in the history
+                txt = ""
+        dtxt = dtxt.lstrip(" ")
+        final = txt + dtxt
+        return final
 
     ## ----- ROLE PLAYING SCORE FUNCTIONS BELOW
 
@@ -248,6 +257,7 @@ class BaseSoul(Soul):
 
     def score_conversation(self):
         if not hasattr(self, "roleplaying_score_model"):
+            # For local testing of exp with no models, set this to nonzero
             return 0
 
         context1 = self.build_dialog_context()
@@ -256,6 +266,8 @@ class BaseSoul(Soul):
         context = "\n".join(contextsplit[:-1])
         human_msg = contextsplit[-1]
         if len(human_msg.split()) < 5:
+            return 0
+        if "DEBUG" in human_msg:
             return 0
         # check for n-gram match with context
         if self.too_much_string_overlap(context, human_msg):
@@ -307,8 +319,16 @@ class BaseSoul(Soul):
                 agent.reward_xp += stars / 4.0
                 # Send star score message.
                 if stars > 0:
-                    self.world.send_msg(
-                        agent.node_id, "(You gained " + str(stars) + " XP!)"
+                    xp_event_message = SystemMessageEvent(
+                        agent,
+                        [],
+                        text_content="(You gained " + str(stars) + " XP!)",
+                        event_data={
+                            "event_type": "model_experience",
+                            "reward": stars,
+                            "target_event": event.event_id,
+                        },
                     )
+                    xp_event_message.execute(self.world)
                 # if hasattr(self.world, 'debug'):
                 #    print(str(agent) +" score: " + str(agent._agent_interactions[agent2_id]))

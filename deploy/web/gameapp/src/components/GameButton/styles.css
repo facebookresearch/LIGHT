@@ -1,0 +1,26 @@
+.button-container {
+  border-radius: 25px;
+  background-color: yellow;
+  padding: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0.2em 0.2em 0.2em black;
+}
+.button-text {
+  font-size: 12px;
+  font-family: fantasy;
+  margin: 0;
+  padding: 0;
+  color: darkgrey;
+}
+
+.button-text:hover {
+  cursor: pointer;
+  text-shadow: 5px 5px 5px pink;
+  color: red;
+}
+
+.button-container:active {
+  box-shadow: 0em 0em 0em;
+}

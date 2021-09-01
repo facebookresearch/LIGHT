@@ -1,0 +1,38 @@
+.collapsible-container {
+  border-radius: 25px;
+  box-shadow: 5px 2px 5px;
+  margin: 10px 10px 0px 10px;
+  width: 90%;
+}
+
+.collapsible-header {
+  display: flex;
+  flex: row;
+  justify-content: space-between;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  padding-right: 10px;
+}
+
+.collapsible-header--text {
+  margin-bottom: 0px;
+  margin-top: 2px;
+  font-family: fantasy;
+  text-align: center;
+  margin-left: 2em;
+}
+
+.collapsible-header--icon {
+  display: flex;
+  justify-content: flex-end;
+  align-content: center;
+  padding: 0.5em;
+  cursor: pointer;
+  margin-right: 0.1em;
+}
+
+.collapsible-body {
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  padding: 10px;
+}

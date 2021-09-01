@@ -1,21 +1,63 @@
 import React from "react";
 
+// Generate a random id
+function uuidv4() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    var r = (Math.random() * 16) | 0,
+      v = c == "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 const reducer = (state, msg) => {
-  // TODO replace the specific incomprehensible message somehow instead
+  console.log("MESSAGES", state);
+  console.log("MESSAGE", msg);
   if (
     msg.text &&
-    msg.text.startsWith("You mumble something incomprehensible")
+    msg.text.indexOf("You mumble something incomprehensible") >= 0
   ) {
-    let last_message = state[state.length - 1];
-    if (last_message.is_self) {
-      const slicedState = [...state.slice(0, state.length - 1), msg];
-      console.groupCollapsed(
-        "New message overwritten old. Total: " + slicedState.length
-      );
-      console.table(slicedState);
-      console.groupEnd();
-      return slicedState;
-    }
+    let { event_id } = msg;
+    const updatedState = state.map((message) => {
+      if (event_id == message.event_id) {
+        return msg;
+      } else {
+        return message;
+      }
+    });
+    return updatedState;
+  }
+  if (msg.text.indexOf("Quest Complete:") >= 0) {
+    const { text } = msg;
+    let questExpIndex = text.indexOf("experience");
+    let questExp = parseInt(text.slice(questExpIndex - 4, questExpIndex));
+    let updatedQuestMsg = { ...msg, xp: questExp, questComplete: true };
+    const updatedState = [...state, updatedQuestMsg];
+    return updatedState;
+  }
+  if (
+    (msg.caller === "SystemMessageEvent" && msg.text.indexOf("XP") >= 0) ||
+    (msg.caller === "RewardEvent" && msg.text.indexOf("XP") >= 0)
+  ) {
+    console.log("EXP MESSAGE", msg);
+    let { event_data } = msg;
+    let {
+      target_event, //UUID OF MESSAGE THAT TRIGGERED EXP
+      reward, //XP AWARDED FROM BACKEND
+    } = event_data;
+    //MESSAGE BEFORE EXP
+    let unUpdatedMsg = state.filter((message, index) => {
+      return message.event_id == target_event;
+    })[0];
+    //MESSAGE WITH EXP
+    let updatedMsg = { ...unUpdatedMsg, xp: unUpdatedMsg.exp + reward };
+    //UPDATED MESSAGE PLACED IN PROPER POSITION IN STATE
+    let updatedState = state.map((message) => {
+      if (message.event_id == target_event) {
+        return updatedMsg;
+      }
+      return message;
+    });
+    return updatedState;
   }
   const updatedState = [...state, msg];
   console.groupCollapsed("New message. Total: " + updatedState.length);
@@ -102,6 +144,9 @@ export function useWSDataSource(url) {
               name: action.actor.name,
               description: action.actor.persona,
               id: action.actor.node_id,
+              prefix: action.actor.name_prefix,
+              xp: action.actor.xp,
+              giftXp: action.actor.reward_xp,
             });
           }
           const neighbors = getNeighbors(action);
@@ -113,9 +158,11 @@ export function useWSDataSource(url) {
               "\n" +
               "There is " +
               items +
+              "." +
               "\n" +
               "You notice " +
-              neighbors,
+              neighbors +
+              ".",
             id: action.room.node_id,
           });
           buffer.push(action);
@@ -134,14 +181,20 @@ export function useWSDataSource(url) {
 
   const submitMessage = React.useCallback(
     (txt) => {
+      let event_id = uuidv4();
       appendMessage({
         caller: "say",
         text: txt,
+        event_id: event_id,
         is_self: true,
         actors: [persona.id],
+        exp: 0,
       });
 
-      const msg = JSON.stringify({ command: "act", data: txt });
+      const msg = JSON.stringify({
+        command: "act",
+        data: { text: txt, event_id: event_id },
+      });
       return websocket.current.send(msg);
     },
     [websocket, appendMessage, persona]
@@ -164,6 +217,10 @@ export function useWSDataSource(url) {
       websocket.current = null;
     };
   }
+  const disconnectFromSession = () => {
+    setConnected(false);
+    websocket.current = null;
+  };
 
   return {
     isConnected,
@@ -174,5 +231,6 @@ export function useWSDataSource(url) {
     isErrored,
     agents,
     isFull,
+    disconnectFromSession,
   };
 }
