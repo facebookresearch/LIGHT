@@ -21,7 +21,10 @@
   "dependencies": {
     "bootstrap": "^5.0.1",
     "jquery": "^3.6.0",
+    "konva": "^8.0.4",
     "popper.js": "^1.16.1",
-    "react-bootstrap": "^1.6.1"
+    "react-bootstrap": "^1.6.1",
+    "react-bootstrap-typeahead": "^5.2.0",
+    "react-konva": "^17.0.2-4"
   }
 }

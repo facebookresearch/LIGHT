@@ -1,0 +1,14 @@
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: blue;
+}
+
+.header__text {
+    text-align: center;
+    font-size: 4em;
+    font-weight: bold;
+    color: white;
+}

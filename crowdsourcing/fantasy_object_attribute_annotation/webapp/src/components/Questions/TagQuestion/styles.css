@@ -1,0 +1,20 @@
+/*TAG QUESTION STYLES*/
+.tagquestion-container{
+    width:90%;
+    border-color: blue;
+    border-radius: 15px;
+    border-style: solid;
+    background-color: blue;
+}
+.tagquestion-header {
+    text-align: center;
+    font-weight: bold;
+    color:white;
+}
+.tagquestion-body{
+    width: 100%;
+    background-color: white;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    padding-bottom: 10px;
+}

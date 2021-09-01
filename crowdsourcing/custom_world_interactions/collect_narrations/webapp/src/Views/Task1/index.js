@@ -100,7 +100,7 @@ console.log("TASK DATA:  ", taskData)
           <Toast.Header closeButton={false} style={{backgroundColor:"green", color:"white"}}>
             <BsCheck color="white" style={{fontSize:"18px"}}/>
             <strong className="mr-auto">SUCCESS</strong>
-            <BsX color="white" oncClick={toggleShowSuccess} style={{fontSize:"18px"}}/>
+            <BsX color="white" onClick={toggleShowSuccess} style={{fontSize:"18px"}}/>
           </Toast.Header>
           <Toast.Body>You have successfully completed task</Toast.Body>
         </Toast>
