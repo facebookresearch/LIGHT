@@ -1,0 +1,9 @@
+/* CHECKBOX STYLES */
+.checkbox-container {
+    margin-left: 6px;
+    margin-right: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+}

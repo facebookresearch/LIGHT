@@ -1,0 +1,15 @@
+/* SUCCESS BANNER STYLES */
+.successbanner-container{
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+}
+.successbanner-header{
+    background-color: green;
+    color:white;
+}
+
+.successbanner-body{
+    background-color: white;
+    color:green;
+}
