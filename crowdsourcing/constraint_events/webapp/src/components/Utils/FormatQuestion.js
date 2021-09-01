@@ -1,11 +1,12 @@
-import React, {useState,useEffect} from "react";
+//REACT
+import React from "react";
 
+//FormatQuestion- formats question and replaces any # with desired keywords in provided array
 const FormatQuestion = ({
-    question,
-    keywords,
-    containerStyle
+    question,// question text
+    keywords,// array of strings that will replace each # in question text
+    containerStyle// style of container component
 })=>{
-
     let questionArr = question.split(" ");
     let keywordPosition = 0;
     return(

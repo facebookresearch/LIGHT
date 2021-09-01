@@ -1,7 +1,8 @@
+//REACT
 import React from "react";
-
+//STYLES
 import "./styles.css"
-
+// header - renders task header
 const Header = () => {
     return (
         <div className="header">

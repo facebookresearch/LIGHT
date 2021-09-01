@@ -1,8 +1,9 @@
+//REACT
 import React from "react";
-
+//STYLING
 import "./styles.css"
 
-
+// loadingScreen - what will be rendered when mephisto isLoading prop is true
 const LoadingScreen = ()=> {
   return (
     <section className="hero is-light">

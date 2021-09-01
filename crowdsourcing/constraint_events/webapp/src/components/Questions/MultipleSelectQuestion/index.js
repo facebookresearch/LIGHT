@@ -1,25 +1,37 @@
+//REACT
 import React, {useEffect, useState} from "react";
+//STYLING
 import "./styles.css";
-
 //CUSTOM COMPONENTS
 import TaskButton from "../../TaskButton"
 
-const MultipleSelectQuestion = ({question, answers, selectFunction})=>{
+//MultipleSelectQuestion - Question where answer comes from clicking a button and more than one button may be selected at a time
+const MultipleSelectQuestion = ({
+    question, //Question Text
+    answers, //Array of answers
+    selectFunction // setState function connected to payload state
+})=>{
+    //Local State
     const [selectedAnswers, setSelectedAnswers] = useState([]);
     const [answerList, setAnswerList] = useState([])
 
+    //clickHandler - handles selection and unselection of answers
     const clickHandler = (id, answer)=>{
         let updatedAnswers;
+        //Selecting answer
         if(selectedAnswers.indexOf(id)<0){
             updatedAnswers = [...selectedAnswers, id];
             setSelectedAnswers(updatedAnswers)
+            selectFunction(updatedAnswers)
         }
+        //Unselecting answer
         if(selectedAnswers.indexOf(id)>=0){
             updatedAnswers = selectedAnswers.filter(answer => (answer!==id))
             setSelectedAnswers(updatedAnswers)
-            selectFunction(answer);
+            selectFunction(updatedAnswers);
         }
     }
+
     useEffect(()=>{
         setAnswerList(answers)
     }, [answers])

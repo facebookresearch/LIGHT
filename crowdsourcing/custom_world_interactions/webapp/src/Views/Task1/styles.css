@@ -65,9 +65,14 @@ ul li::before {
     color: blue;
     margin-bottom: 10px;
 }
-
-.form-instructions {
-
+.tip-container{
+    width:40%;
+    display: flex;
+    flex-direction: column;
+}
+.form-tip {
+    color:#0697f1;
+    text-align: left;
 }
 
 .description-form{

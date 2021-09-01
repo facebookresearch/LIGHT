@@ -1,27 +1,54 @@
+//REACT
 import React, {useEffect, useState} from "react";
+//STYLING
 import "./styles.css";
-
 //CUSTOM COMPONENTS
-import TaskButton from "../../TaskButton"
-import FormQuestion from "../../Utils/FormatQuestion";
-
-const BooleanQuestion = ({question, trueAnswer, falseAnswer, keywords, children})=>{
+import TaskButton from "../../TaskButton";
+import FormatQuestion from "../../Utils/FormatQuestion";
+import InfoToolTip from "../../InfoToolTip";
+import Checkbox from "../../Checkbox";
+//BooleanQuestion - a component that renders a question that expects a boolean answer.  If a component is wrapped by this component under the "true" answer it will conditionally render that child.
+const BooleanQuestion = ({
+    question, // The Question posed by the question
+    trueAnswer, //Object that will have a name attribute which will be the text rendered on the "true" button
+    falseAnswer,//Object that will have a name attribute which will be the text rendered on the "false" button
+    keywords, //key words will replace any # in the header text being formatted by the formatQuestion function
+    inverted,// Will render children based on a false answer rather that true if this value is true
+    formFunction,// setState function that connects the answer to the payload state
+    toolTipCopy,// Copy for desired tooltip
+    hasToolTip,// Boolean stating whether or not this component has a tooltip
+    isComplete,// Completion condition for question to be satisfactorily answered
+    children
+})=>{
+    //local state for question answer
     const [answer, setAnswer] = useState(null);
 
+    //sets both local and payload state to true
     const trueHandler = ()=>{
         setAnswer(true)
+        formFunction(true)
     }
+        //sets both local and payload state to false
     const falseHandler = ()=>{
         setAnswer(false)
+        formFunction(false)
     }
 
     return(
         <div className="booleanquestion-container" >
-                <FormQuestion
-                    question={question}
-                    keywords={keywords}
-                    containerStyle="booleanquestion-text"
-                />
+            <InfoToolTip
+            tutorialCopy={toolTipCopy}
+            hasToolTip={hasToolTip}
+            >
+                <div style={{display:"flex", flexDirection:"row"}}>
+                    {hasToolTip?<Checkbox isComplete={isComplete} />:null}
+                    <FormatQuestion
+                        question={question}
+                        keywords={keywords}
+                        containerStyle="booleanquestion-text"
+                    />
+                </div>
+            </InfoToolTip>
             <div className="booleananswer-container">
                 <TaskButton
                     name={trueAnswer.name}
@@ -43,9 +70,9 @@ const BooleanQuestion = ({question, trueAnswer, falseAnswer, keywords, children}
 
                     />
             </div>
-            <div style={{marginLeft:"30px", marginTop:"10px"}}>
-            {
-                answer && children ?
+            <div style={{width:"100%", marginTop:"10px"}}>
+            {   //if inverted it will only render child if answer is false not if answer == null
+                ((!!inverted ? (!answer && answer!==null) : answer) && children) ?
                 children
                 :
                 null

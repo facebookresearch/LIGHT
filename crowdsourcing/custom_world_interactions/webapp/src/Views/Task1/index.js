@@ -32,7 +32,7 @@ const Task1 = ({
 
   const toggleShowSuccess = () => setShowSuccess(!showSuccess);
   const toggleShowError = () => setShowError(!showError);
-
+console.log("TASK DATA:  ", taskData)
 
 
   useEffect(()=>{
@@ -143,3 +143,6 @@ const Task1 = ({
 }
 
 export default Task1 ;
+
+// {name:"LIT TORCH", desc:"A high quality torch burns brightly.  The torches' flame shows no sign of dying down."}
+// {name:"WOODEN TABLE", desc:"The table is old, scratched, and worn.  Its surface is dry laden with splinters."}

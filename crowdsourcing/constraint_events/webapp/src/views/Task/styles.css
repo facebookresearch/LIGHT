@@ -14,3 +14,14 @@
     flex-direction: row;
     justify-content: space-evenly;
 }
+
+@media only screen and (max-width: 1000px) {
+    .task-container {
+        margin-top: 5px;
+        width:95%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+}
