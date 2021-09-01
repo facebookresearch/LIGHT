@@ -45,12 +45,8 @@ function MainApp() {
 
   if (isPreview) {
     return (
-      <div>
-        <section className="hero is-medium is-link">
-          <div className="hero-body">
+      <div className="view-container">
             <Preview />
-          </div>
-        </section>
       </div>
     );
   }
@@ -165,7 +161,7 @@ function MainApp() {
   return (
     <div className="view-container">
       <Task
-        data={CharacterDummyData}
+        data={LocationDummyData}
         handleSubmit={handleSubmit}
         />
     </div>

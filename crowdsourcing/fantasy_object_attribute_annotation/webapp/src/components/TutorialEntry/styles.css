@@ -2,29 +2,37 @@
 .tutorialentry-container {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 
 .tutorialentry-header{
-
-
+    border-bottom-color: gold;
+    border-bottom-style: double;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 .tutorialentry-header__text{
-    font-size: 20px;
+    font-size: 30px;
     font-weight: bold;
-    color: gold;
-    text-decoration: underline;
+    color: darkblue;
     padding-left: 4px;
+    margin-bottom: 0;
 }
 
 .tutorialentry-body{
-
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
 }
 
 .tutorialentry-body__text{
     padding: 0px 4px 0px 4px;
-    font-size: 16px;
+    font-size: 20px;
 }
 
 .tutorialentry-img{

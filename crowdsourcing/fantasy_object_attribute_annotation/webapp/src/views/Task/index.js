@@ -188,7 +188,7 @@ const Task = ({
 
     /*---------- SUBMISSION CHECKS ----------*/
     /*Scale Attributes Ratings*/
-    const {attributes} = submissionPayload ;
+    const {attributes} = submissionPayload;
     Object.keys(attributes).forEach(attr=>{
     //CUSTOM ATTRIBUTE CHECK
       if(attr == "custom_attributes"){
@@ -216,6 +216,23 @@ const Task = ({
             errorList.push(`${node} missing ${attr} rating`)
           }
       })
+    }
+  })
+  //BOOLEAN ATTRIBUTE CHECK
+  const {nodes} = submissionPayload;
+  nodes.map(node=>{
+    let {name, values} = node;
+    let {custom} = values;
+    if(custom !== undefined){
+      let customAttributesCount = custom.length;
+      if(customAttributesCount == undefined){
+        errorList.push(`${name} requires at least 4 custom attributes`)
+      }else if(customAttributesCount<4){
+        let requiredAttributesNumber = 4 - customAttributesCount;
+        errorList.push(`${name} requires ${requiredAttributesNumber} more attributes`)
+      }
+    }else{
+      errorList.push(`${name} requires at least 4 custom attributes`)
     }
   })
     console.log("submissionPayload:  ", submissionPayload)

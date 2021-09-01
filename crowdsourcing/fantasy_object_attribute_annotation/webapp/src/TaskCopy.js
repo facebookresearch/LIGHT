@@ -1,18 +1,154 @@
+/*----------------SCREENSHOTS/IMAGES----------------*/
+/*SELECTION*/
+import Selection from "./assets/images/tutorial/Selection.png";
+/*SUBMIT BUTTON*/
+import SubmitButton from "./assets/images/tutorial/SubmitButton.png";
+/*TOOLTIP*/
+import BooleanAttributeTooltip from "./assets/images/tutorial/BooleanAttributeTooltip.png";
+/*---------STEP SCREENSHOTS---------*/
+
+/*-------SCALES-------*/
+/*ATTRIBUTE SCALE STEPS*/
+import AttributeScale1 from "./assets/images/tutorial/AttributeScale/AttributeScale1.png";
+import AttributeScale2 from "./assets/images/tutorial/AttributeScale/AttributeScale2.png";
+import AttributeScale3 from "./assets/images/tutorial/AttributeScale/AttributeScale3.png";
+
+/*CUSTOM ATTRIBUTE SCALE STEPS*/
+import CustomAttributeScale1 from "./assets/images/tutorial/CustomAttributeScale/CustomAttributeScale1.png";
+import CustomAttributeScale2 from "./assets/images/tutorial/CustomAttributeScale/CustomAttributeScale2.png";
+import CustomAttributeScale3 from "./assets/images/tutorial/CustomAttributeScale/CustomAttributeScale3.png";
+
+/*-------TYPE SPECIFIC-------*/
+/*ATTRIBUTE CHECKLIST STEPS*/
+import AttributeChecklist1 from "./assets/images/tutorial/AttributeChecklist/AttributeChecklist1.png";
+import AttributeChecklist2 from "./assets/images/tutorial/AttributeChecklist/AttributeChecklist2.png";
+import AttributeChecklist3 from "./assets/images/tutorial/AttributeChecklist/AttributeChecklist3.png";
+
+/*NUMERIC ATTRIBUTE STEPS*/
+import NumericAttribute1 from "./assets/images/tutorial/NumericAttribute/NumericAttribute1.png";
+import NumericAttribute2 from "./assets/images/tutorial/NumericAttribute/NumericAttribute2.png";
+import NumericAttribute3 from "./assets/images/tutorial/NumericAttribute/NumericAttribute3.png";
+
+/*ATTRIBUTE RADIO STEPS*/
+import AttributeRadio1 from "./assets/images/tutorial/AttributeRadio/AttributeRadio1.png";
+import AttributeRadio2 from "./assets/images/tutorial/AttributeRadio/AttributeRadio2.png";
+import AttributeRadio3 from "./assets/images/tutorial/AttributeRadio/AttributeRadio3.png";
+
+/*-------BOOLEAN-------*/
+/*BOOLEAN ATTRIBUTE STEPS*/
+import BooleanAttribute1 from "./assets/images/tutorial/BooleanAttribute/BooleanAttribute1.png";
+import BooleanAttribute2 from "./assets/images/tutorial/BooleanAttribute/BooleanAttribute2.png";
+import BooleanAttribute3 from "./assets/images/tutorial/BooleanAttribute/BooleanAttribute3.png";
+
+
 const Copy ={
     taskHeader:"Fantasy Object Attribute Annotation",
     previewCopy:{
         tutorial:{
-            intro: "We're trying to crowdsource defining and rating attributes of a selection of objects, characters, and locations.  The setting for this will be in a medieval fantasy scenario, and as such should not refer to real people, places, or modern day technologies.  The first objective of this task is, given this selection of a specific type, rate where they fall on scales of various inherent attribtutes relative to each other and the examples on the scales.  The second objective is to name and describe an attribute that applies to the entire selection and then rate selection in the same way as the first objective.  The final objective is to define attributes for each of this selection.  The inherent attributes will be at the top of this section, selecting possible attributes or creating custom attributes is done in the second part of this section.  At the top of the task each thing in the selection will be listed next to a description.  Reference this during the task as needed.  The description will appear when you hover your cursor over the name of the entry.",
+            intro: "In this task you will be given a list of objects, and asked to do a number of annotations of the types listed below. Familiarize yourself with these before getting started.",
             questionsCopy:[
                 {
                     questionName: "Rating Scale",
                     steps:[
                         {
-                            stepCopy: "",
-                            stepImg: ""
+                            stepCopy: "The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right.",
+                            stepImg: AttributeScale1
+                        },
+                        {
+                            stepCopy: 'Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.',
+                            stepImg: AttributeScale2
+                        },
+                        {
+                            stepCopy: 'The form will be completed when all of the flags are planted.',
+                            stepImg: AttributeScale3
                         }
                     ]
-                }
+                },
+                {
+                    questionName: "Custom Rating Scale",
+                    steps:[
+                        {
+                            stepCopy: "This form is similar to the previous Rating Scale however in this form you will be naming and describing an attribute that applies to all of the selection.  Input the attribute name and description in the fields provided at the top of the form.",
+                            stepImg: CustomAttributeScale1
+                        },
+                        {
+                            stepCopy: 'Once you fill in the fields to rate the selection click and drag the "flag" of the selection you wish to rate, once out of the selection gallery box you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.',
+                            stepImg: CustomAttributeScale2
+                        },
+                        {
+                            stepCopy: 'The form will be completed when all of the flags are planted and when the name and description fields have been filled in.',
+                            stepImg: CustomAttributeScale3
+                        }
+                    ]
+                },
+                {
+                    questionName: "Attribute Checklist",
+                    steps:[
+                        {
+                            stepCopy: "In this form you will be given the selection with a list of attributes and there corresponding checkboxes.",
+                            stepImg: AttributeChecklist1
+                        },
+                        {
+                            stepCopy: 'Check the box of each attribute that applies to the selection item next to it.',
+                            stepImg: AttributeChecklist2
+                        },
+                        {
+                            stepCopy: 'The form will be completed when you have assigned the relevant attributes to the entire selection.',
+                            stepImg: AttributeChecklist3
+                        }
+                    ]
+                },
+                {
+                    questionName: "Numeric Attributes",
+                    steps:[
+                        {
+                            stepCopy: "For this form you will be provided with the an attribute or attributes that are associated with a specific number.",
+                            stepImg: NumericAttribute1
+                        },
+                        {
+                            stepCopy: 'Using what you know about the selection assign a number value to each of these attributes as they relate to their selection item.',
+                            stepImg: NumericAttribute2
+                        },
+                        {
+                            stepCopy: 'The form will be completed when you have assigned a number to every attribute for the entire selection.',
+                            stepImg: NumericAttribute3
+                        }
+                    ]
+                },
+                {
+                    questionName: "Attribute Choice",
+                    steps:[
+                        {
+                            stepCopy: "For this form you will be provided with a list of mutually exclusive attributes next to each selection item.",
+                            stepImg: AttributeRadio1
+                        },
+                        {
+                            stepCopy: 'Only one of the attributes can be selected at a time so select the attribute that best fits based on your knowledge of the selection.',
+                            stepImg: AttributeRadio2
+                        },
+                        {
+                            stepCopy: 'The form will be completed when the entire selection has been given attributes.',
+                            stepImg: AttributeRadio3
+                        }
+                    ]
+                },
+                {
+                    questionName: "Boolean Attributes",
+                    steps:[
+                        {
+                            stepCopy: "For this form you will be either choosing existing attributes from a dropdown or adding your own attributes to the entire selection.",
+                            stepImg: BooleanAttribute1
+                        },
+                        {
+                            stepCopy: 'Each input may have some options in a dropdown but you can add your own attributes as well by typing the attribute and clicking add new attribute in the dropdown.',
+                            stepImg: BooleanAttribute2
+                        },
+                        {
+                            stepCopy: 'The form is complete when at least 4 attributes have been given to each of the selection.',
+                            stepImg: BooleanAttribute3
+                        }
+                    ]
+                },
             ]
         }
     },

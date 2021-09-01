@@ -8,22 +8,34 @@ const TutorialEntry = ({
     question,//Question being explained
     explanation,//Explanation text
     screenshot,// Screenshot of question and UI
+    children
 })=>{
     return(
         <div className="tutorialentry-container">
-            <div className="tutorialentry-header">
-                <p className="tutorialentry-header__text">
-                    {question}
-                </p>
-            </div>
-            <div className="tutorialentry-body">
-                <p className="tutorialentry-body__text">
-                    {explanation}
-                </p>
-            </div>
+            {
+                question ?
+                <div className="tutorialentry-header">
+                    <p className="tutorialentry-header__text">
+                        {question}
+                    </p>
+                </div>
+                :
+                null
+            }
+            {
+                explanation ?
+                <div className="tutorialentry-body">
+                    <p className="tutorialentry-body__text">
+                        {explanation}
+                    </p>
+                </div>
+                :
+                null
+            }
             <div className="tutorialentry-img">
                 {screenshot ? <img style={{width:"50%"}} src={screenshot} />: null}
             </div>
+            {children}
         </div>
     )
 }
