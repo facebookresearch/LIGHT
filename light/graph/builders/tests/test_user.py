@@ -120,9 +120,6 @@ class TestWorldGraphBuilder(unittest.TestCase):
         contained_room_1 = len(self.testGraph.get_node(gRoomId).contained_nodes)
         contained_room_2 = len(self.testGraph.get_node(gRoomId2).contained_nodes)
         self.assertTrue(contained_room_1 == 3 or contained_room_2 == 3)
-        # Trying to add again will not work, since all characters in world!
-        self.graphBuilder.add_random_new_agent_to_graph(self.testWorld)
-        self.assertEqual(len(self.testGraph.agents), 3)
 
     def test_builder_returns_graph(self):
         self.assertIsInstance(self.testGraph, OOGraph)

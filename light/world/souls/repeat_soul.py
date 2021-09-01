@@ -32,7 +32,7 @@ class RepeatSoul(Soul):
         """
         if event.actor == self.target_node:
             return
-        if not (event.actor.is_player or event.actor._human):
+        if not (event.actor.is_player):
             return
         if self.target_node.is_dying():
             return  # Going to die, can't do anything

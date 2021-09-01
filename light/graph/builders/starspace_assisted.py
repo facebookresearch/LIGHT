@@ -374,7 +374,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         agent_node = g.add_agent(
             use_desc, self._props_from_char(char), db_id=char.db_id
         )
-        # added as a NPC Nothing needs to be done as agent is added as x._human = False
+        # added as a NPC
         agent_node.move_to(room_node)
         objs = {}
         if self.suggestion_type != "model":
