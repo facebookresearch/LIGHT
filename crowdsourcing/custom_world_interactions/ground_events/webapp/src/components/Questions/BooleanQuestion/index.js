@@ -37,8 +37,8 @@ const BooleanQuestion = ({
     return(
         <div className="booleanquestion-container" >
             <InfoToolTip
-            tutorialCopy={toolTipCopy}
-            hasToolTip={hasToolTip}
+                tutorialCopy={toolTipCopy}
+                hasToolTip={hasToolTip}
             >
                 <div style={{display:"flex", flexDirection:"row"}}>
                     {hasToolTip?<Checkbox isComplete={isComplete} />:null}
