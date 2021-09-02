@@ -6,6 +6,11 @@
     margin-right:10px;
 }
 
+.info-icon:hover {
+    color: rgb(116, 215, 233);
+    cursor: help;
+}
+
 .info-icon__dark{
     color: black;
     font-size: 30px;
@@ -13,7 +18,8 @@
     margin-right:10px;
 }
 
-.info-icon:hover {
+
+.info-icon__dark:hover {
     color: rgb(116, 215, 233);
     cursor: help;
 }

@@ -2,7 +2,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 5013,pine needles,the needle is sharp and picky.,True,False,False,False,False,False,True,0,0
 5041,stones,Rocks or pebbles that are common most places. Could be used as ammunition for a sling or other such devices.,True,False,False,False,False,False,True,0,0
 5057,holy book,The holy book has old worn pages.,True,False,False,False,False,False,True,0,0
-5079,rope,"Coiled neatly, the old rope is now worn and beginning to fray at it's end throughout it's coil.",True,False,False,False,False,False,True,1,0
+5079,rope,"Coiled neatly, the old rope is now worn and beginning to fray at it's end throughout it's coil.",True,False,False,False,False,False,True,2,0
 5097,swords,"The sword seems to be unused, the shiny silver of the blade gleams where the light touches it.",True,False,False,False,False,False,True,0,0
 5113,rocks,You see the small rock has many sharp edges.,True,False,False,False,False,False,True,0,0
 5121,legendary swords made from the greatest sword makers,The sword maker creates legendary swords for battle. They are large and as sharp as humanly possible.,True,False,False,False,False,False,True,0,0
@@ -16,7 +16,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 5269,metal bucket,The bucket is rusted and old.,True,False,False,False,True,False,True,0,0
 5271,metal meal tray,The tray is made of metal and is cool to the touch.  There are sections to put food on the tray.,True,False,False,False,False,True,True,1,0
 5275,arrows,"The arrow is bent from use, the tip dull and rusted.",True,False,False,False,False,False,True,0,0
-5277,bow,"The bow is old and used, made of wood and some type of string.",True,False,False,False,False,False,True,0,0
+5277,bow,"The bow is old and used, made of wood and some type of string.",True,False,False,False,False,False,True,1,0
 5285,red brick,The brick has crumbled and looked very weathered.,True,False,False,False,False,False,True,0,0
 5293,king's sword,"The king's sword is magnificent and ornate, with impressive metalwork around the hilt.",True,False,False,False,False,False,True,1,0
 5317,torture instruments,The torture instruments thick with rust no longer able to harm,True,False,False,False,False,False,True,1,0
@@ -28,7 +28,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 5365,stone,The stone is circular and worn but is not large. It can be hoisted easily.,True,False,False,False,False,False,True,0,0
 5369,few rusted pieces of block,"The block seems to have had a letter engraved on it, though now you can barley make out what it is under all the rust.",True,False,False,False,False,True,True,0,0
 5371,abandoned axes,The rusty old axes had dull blades. Rust and time have worn away their sharpness.,True,False,False,False,False,False,True,0,0
-5425,hand carved stone,The hand-carved stone contains markings in a language that you do not understand.,True,False,False,False,False,False,True,0,0
+5425,hand carved stone,The hand-carved stone contains markings in a language that you do not understand.,True,False,False,False,False,False,True,1,0
 5427,garden bench,Then bench is long enough for everyone to sit on.,True,False,False,False,False,True,False,0,0
 5451,hair brush,The queen's ivory hair brush has horse hair bristles. It's pearly white handle is hand-carved and accented with jewels.,True,False,False,False,False,False,True,0,0
 5465,rake,This rake is made of carefully split wood with a sturdy looking handle. Seems useful for keeping the leaves under control.,True,False,False,False,False,False,True,0,0
@@ -41,14 +41,14 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 5519,wooden crucifix decorations,The power of the crucifix becomes known to enemies of those who would oppose its possessor.,True,False,False,False,False,False,True,0,0
 5551,fishing rod,What an odd fishing rod. why is it so short and slimy? maybe it's very old,True,False,False,False,False,False,True,0,0
 5555,bar,The bar is notched and gnarled with rust with patches of dark iron still peeking through the red.,True,False,False,False,False,False,True,0,0
-5557,cup,"The cup is old and broken, with the handle chipped from being dropped",True,False,False,False,False,True,True,1,0
+5557,cup,"The cup is old and broken, with the handle chipped from being dropped",True,False,False,False,False,True,True,2,0
 5561,pole,the pole is old and run down. there are still brackets that used to hold relevant signs years ago.,True,False,False,False,False,True,True,0,0
 5577,serving platters,"The serving platter is clearly very old, but it has been polished recently and it gleams in the light.  Someone has taken very good care of this platter over the years.",True,False,False,False,False,True,True,0,0
 5611,brown feces,The smell of the brown feces is undescribable. Its stench clings to everything it touched.,True,False,False,False,False,False,True,0,0
 5627,trays,A heavy wooden tray is covered in scratches and stains from long use. It has handles on the side for carrying.,True,False,False,False,False,True,True,0,0
 5639,slime,A green mass of gelatinous sludge. Filthy and to be avoided. It's difficult to clean off anything.,True,False,False,False,False,False,True,1,0
 5653,broken cutlass,"This cutlass looks as though it has seen better days.  The jagged edge of its broken blade is still sharp, though.",True,False,False,False,False,False,True,0,0
-5663,stool,The stool is sitting alone asking for someone to sit on it,True,False,False,False,False,True,True,0,0
+5663,stool,The stool is sitting alone asking for someone to sit on it,True,False,False,False,False,True,True,1,0
 5679,utensils,All of the silver utensils are polished to perfection by the kitchen staff.,True,False,False,False,False,True,True,0,0
 5689,sword,"Sword's blade was sharp and sturdy. Holding it, you could tell it is well versed in the art of war, and is no stranger to the taste of blood, bone and steel.",True,False,False,False,False,False,True,0,0
 5697,knife,A knife with a leather grip is now dull from use.,True,False,False,False,False,False,True,0,0
@@ -61,7 +61,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 5743,horse bows,The bow looks worn from a lot of use.,True,False,False,False,False,False,True,0,0
 5745,crossbows,There are several notches on the crossbow to mark how strong it can be.,True,False,False,False,False,False,True,0,0
 5747,shields,The shield is heavy and large.  It has the crest of the king on it.,True,False,False,False,False,False,True,0,0
-5765,serving dishes,"The dish is made of a fine porcelain, patterned with roses and swords.   A gold inlay around the rim adds a touch of majesty to an otherwise commonplace item.",True,False,False,False,False,True,True,0,0
+5765,serving dishes,"The dish is made of a fine porcelain, patterned with roses and swords.   A gold inlay around the rim adds a touch of majesty to an otherwise commonplace item.",True,False,False,False,False,True,True,1,0
 5775,sticks,stick can be used to chase away animals,True,False,False,False,False,False,True,0,0
 5781,bow,The bow is stained dark and the string feels supple to pull.,True,False,False,False,False,False,True,0,0
 5787,wooden cranes,The wooden crane is cracked and rusty from lifting the king's heavy furniture,True,False,False,False,False,True,False,0,0
@@ -97,7 +97,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6295,axe,The axe glistens with the blood of its enemies dried on the blade.,True,False,False,False,False,False,True,0,0
 6315,large and well stocked wine rack,The rack is being used to store an extensive collection.,True,False,False,True,False,True,False,0,0
 6353,pike,"The pike's handle is scratched from years of battles, there is a stain of blood on it's tip.",True,False,False,False,False,False,True,0,0
-6365,specks of dust,The specks of dust are thick and layered on one another.,True,False,False,False,False,False,True,0,0
+6365,specks of dust,The specks of dust are thick and layered on one another.,True,False,False,False,False,False,True,1,0
 6373,shiny things,"The thing is plentiful in the room, leaving a person wondering what the value is.",True,False,False,False,False,False,False,1,0
 6387,pirate swords,"A sword such a this you know to be used by pirates. It is gilded in gold and jewels, and you're wary about its owner looking to retrieve it.",True,False,False,False,False,False,True,0,0
 6399,pitchfork,"This pitchfork has sharp metal tines for lifting up hay, and an oak wooden handle.  It looks like it's been well used, as the handle is smoothly polished where one holds it.",True,False,False,False,False,False,True,0,0
@@ -157,7 +157,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 7211,crow bar,"The crow bar is shiny and beutiful, it is made out of a weird metal alloy.",True,False,False,False,False,False,True,0,0
 7215,small metal bucket,"The metal bucket appears to be made of copper, with multiple dents and scratches on the the surface.",True,False,False,False,True,False,True,0,0
 7217,bars,"The bars of gold have a wonderful glow, even though they have been hidden for years.",True,False,False,False,False,False,False,1,0
-7229,arrows,"The arrow is so beat up and dirty, you can see indention's in it.",True,False,False,False,False,False,True,0,0
+7229,arrows,"The arrow is so beat up and dirty, you can see indention's in it.",True,False,False,False,False,False,True,1,0
 7231,bows,This bow has very detailed carvings,True,False,False,False,False,False,True,0,0
 7277,thin sticks,Thin sticks that may be used to stoke a fire.,True,False,False,False,False,False,True,1,0
 7319,sickle,"The handle has been worn from use, and the blade is old and caked with dirt. This is a real farmer's tool, not something that's been used as ornamentation.",True,False,False,False,False,False,True,0,0
@@ -186,10 +186,10 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 7583,spider legs,The pider leg is hairy and the sight of it makes you panic.,True,False,False,False,False,False,True,0,0
 7589,scepter,"On its handle, you see two red gems gleaming like eyes of an animal.",True,False,False,False,False,False,True,0,0
 7601,knife,The knife is clean and well polished.,True,False,False,False,False,False,True,0,0
-7623,broom,This broom has never seen dirt. The straws are perfect and unscathed.,True,False,False,False,False,False,True,0,0
+7623,broom,This broom has never seen dirt. The straws are perfect and unscathed.,True,False,False,False,False,False,True,1,0
 7647,tool,The tool has a metal surface and is very shiny.,True,False,False,False,False,False,True,0,0
 7661,empty mug,The mug has been used for tea for a very long time.,True,False,False,False,True,False,True,0,0
-7679,gold and silver sculptures,The sculpture shines brightly. A gleaming testament to the material it embodies.,True,False,False,False,False,False,False,0,0
+7679,gold and silver sculptures,The sculpture shines brightly. A gleaming testament to the material it embodies.,True,False,False,False,False,False,False,1,0
 7699,broken weapons,"This pike was broken in half at some point, and its point appears to be quite dull and rusty.",True,False,False,False,False,False,True,0,0
 7709,primitive fishing pole,The fishing pole was splintered and worn.,True,False,False,False,False,False,True,0,0
 7711,hatchet,The hatchet is old and worn out.,True,False,False,False,False,False,True,0,0
@@ -206,7 +206,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 8027,axes,The axe has a chipped blade and the handle seems to be cracked towards the top.,True,False,False,False,False,False,True,0,0
 8029,dagger,The dagger is curved with a golden hilt.,True,False,False,False,False,False,True,0,0
 8035,broken fishing pole,The fishing pole is made of weak wood.  It has been broken in half.,True,False,False,False,False,False,True,0,0
-8047,plate,The plate is crafted from pure gold and ivory.,True,False,False,False,False,True,True,0,0
+8047,plate,The plate is crafted from pure gold and ivory.,True,False,False,False,False,True,True,1,0
 8083,long table,The kitchen table has been used for dining for many years.,True,False,False,False,False,True,False,0,0
 8087,blacksmith's hammer,"The hammer is made of sturdy iron, but is covered in a layer of rust.",True,False,False,False,False,False,True,0,0
 8101,copper knives,A knife made out of copper. Doesn't rust but it's metal isn't as sturdy as something made out of other metals.,True,False,False,False,False,False,True,0,0
@@ -243,7 +243,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 8621,pick axe,The axe is poorly constructed and very dull from much use.,True,False,False,False,False,False,True,0,0
 8649,big stones,This stones craving can still be interpreted.,True,False,False,False,False,False,True,0,0
 8653,cannon,"The cannon is rusty, but still loaded.",True,False,False,False,False,False,True,0,0
-8655,sword of the guards,The sword is sturdy and so heavy that you have trouble lifting it.,True,False,False,False,False,False,True,0,0
+8655,sword of the guards,The sword is sturdy and so heavy that you have trouble lifting it.,True,False,False,False,False,False,True,1,0
 8677,prayer books,One book can change the world,True,False,False,False,False,False,True,0,0
 8681,cooking pot,The cooking pot is rusted at the bottom and no longer usable,True,False,False,False,False,True,True,0,0
 8683,witch's broom,"You suspect this broom was once wielded by a witch, as it gives off an air of power and electricity.",True,False,False,False,False,False,True,0,0
@@ -252,7 +252,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 8701,cannons,"The cannon is long and heavy, and luckily only needed in times of battle.",True,False,False,False,False,False,False,0,0
 8711,pitch fork,"The pitch fork has a wooden handle and long, pointy, rusty tines.",True,False,False,False,False,False,True,0,0
 8727,shattered windows,The shattered windows are made of stained glass. They lay on the ground and reflect light off them,True,False,False,False,False,False,False,0,0
-8775,footstool,The footstool is decorated with an intricate floral design the likes of which you have never seen.,True,False,False,False,False,True,True,0,0
+8775,footstool,The footstool is decorated with an intricate floral design the likes of which you have never seen.,True,False,False,False,False,True,True,1,0
 8785,variety of torture implements,the torture implements are very scary.,True,False,False,False,False,False,True,0,0
 8795,herbs,"This herb is not edible, it looks poisonous but it's probably used to make some medicine",True,False,True,False,False,False,True,0,0
 8815,bunch of knives,The knife has a long blade. It looks as though someone sharpened it recently.,True,False,False,False,False,False,True,0,0
@@ -310,7 +310,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9355,slingshot,The slingshot looks as though it's been used in combat as there is blood on the handle.,True,False,False,False,False,True,True,0,0
 9377,golden broadsword,"A broadsword so wide and so golden that one could not help but notice it gleaming in the sunlight - even from a far distance, it is difficult to hide.",True,False,False,False,False,False,True,0,0
 9403,sceptre,The sceptre is bright gold,True,False,False,False,False,False,True,1,0
-9445,wand,"The wand is made out of wood, it is thin and has a sharp point. It has a dark brown wooden color.",True,False,False,False,False,False,True,0,0
+9445,wand,"The wand is made out of wood, it is thin and has a sharp point. It has a dark brown wooden color.",True,False,False,False,False,False,True,1,0
 9453,crude rolling pin,The pin was very crude in design but surprisingly didn't have any chips or damage,True,False,False,False,False,False,True,1,0
 9515,platters,The platter is made of silver and has a few dents in it upon inspection.,True,False,False,False,False,False,True,0,0
 9519,lyre,The lyre is mahogany in color and has several scratches on the body from years of use. It plays out of tune despite repeated attempts to correct it.,True,False,False,False,False,False,True,0,0
@@ -322,7 +322,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9619,various wands,"The wand is long. slim, and smooth to the touch.",True,False,False,False,False,False,True,0,0
 9633,bo staffs,"The bo staffs are long and wooden, tied together by a leather cord. Some of the staffs have ancient runes on them.",True,False,False,False,False,False,True,0,0
 9635,"small, but well-maintained farm plot",The plot is rusty on the sides and looks worned out. It looks old but at the same time strong and sturdy,True,False,False,False,False,False,True,0,0
-9647,glasses,The glass looks beautiful and carefully crafted with symbol of sword and shield. It is suited for a king or a land lord.,True,False,False,False,True,True,False,0,0
+9647,glasses,The glass looks beautiful and carefully crafted with symbol of sword and shield. It is suited for a king or a land lord.,True,False,False,False,True,True,False,1,0
 9653,staff,The staff has intricate patterns and spells engraved into the pole along with a precious gem at the top,True,False,False,False,False,False,False,0,0
 9663,fronds,"The palm fronds appear simple, but the branches and leaves are actually quite spiky and dangerous.",True,False,False,False,False,True,True,0,0
 9677,musical instrument,The instrument has 6 chords and its made out of wood. It looks old and has stains of wine on the top.,True,False,False,False,False,False,True,0,0
@@ -390,7 +390,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10355,sharp claws,The sharp claws of the dragon sliced through the armor of the knights.,True,False,False,False,False,False,False,0,0
 10367,dwelling shoes,The pristine sole on the shoe with worn straps must mean that the shoe is only for use within the dwelling.,True,True,False,False,False,False,True,1,0
 10375,cooking utensils,An old rusted set of various pots and pans.,True,False,False,False,False,False,True,0,0
-10385,magelight,The magelight appears to be emitting a magical aura,True,False,False,False,False,False,True,0,0
+10385,magelight,The magelight appears to be emitting a magical aura,True,False,False,False,False,False,True,1,0
 10393,file for prying things open,"The file was made of heavy gray metal, with a rasp at one end and a comfortable handle at the other. It looked old and worn, it had seen many uses.",True,False,False,False,False,False,True,0,0
 10399,shovel,The shovel is dirt-encrusted and grimy.,True,False,False,False,False,False,True,0,0
 10401,gold cane,The gleaming cane was of immeasurable value.,True,False,False,False,False,False,True,0,0
@@ -400,7 +400,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10451,stars,These hand-crafted throwing stars are sharp enough to cut with.,True,False,False,False,False,False,True,0,0
 10469,winged darts,The darts are pointed and sharp with winged tips to guide them to their intended target.  But what is that?  A bit of dried blood is on the tip.,True,False,False,False,False,False,True,0,0
 10483,bow,The bow is long and fashionably engraved.,True,False,False,False,False,False,True,0,0
-10487,magical staff,The staff emanates magic as is glows a fluorescent shade of blue.,True,False,False,False,False,False,True,0,0
+10487,magical staff,The staff emanates magic as is glows a fluorescent shade of blue.,True,False,False,False,False,False,True,1,0
 10499,riffle,The antique rifle is dull looking and not very well made but it will do the trick in a pinch when needed.,True,False,False,False,False,False,True,1,0
 10501,hooks,"The hooks are tiny, dull, and tangled, and are of no use to anyone in this condition.",True,False,False,False,False,False,True,0,0
 10503,small knife,"Sharp and hardened, this small knife glimmers in the light.",True,False,False,False,False,False,False,0,0
@@ -423,7 +423,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10679,bow and arrows,The bow looks damaged and is covered in mold,True,False,False,False,False,False,True,0,0
 10691,small guns,The gun is tattered and dull gray with rust.,True,False,False,False,True,False,True,1,0
 10703,sharp sword,the sword can be kind of old but it is still very sharp,True,False,False,False,False,False,False,0,0
-10725,bowstaff,The bowstaff is incredibly long and durable.,True,False,False,False,False,False,True,0,0
+10725,bowstaff,The bowstaff is incredibly long and durable.,True,False,False,False,False,False,True,1,0
 10729,unsharpened daggers,The dagger is incredibly dull and ugly.,True,False,False,False,False,False,True,1,0
 10737,hard rock,"An ordinary rock, light enough to carry and heavy enough to dispatch a foe.",True,False,False,False,False,False,True,0,0
 10745,wooden club,This wooden club is covered in blood and hair. It has definitely been used many times.,True,False,False,False,False,False,True,0,0
@@ -432,7 +432,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10787,huge broadsword,"This was a huge broadsword, not just any man could weild it because of it",True,False,False,False,False,False,True,0,0
 10809,large club,The large club is rounded and battered.,True,False,False,False,False,False,True,0,0
 10823,brass candle stick,The stick is shining gold and contains wax.,True,False,False,False,False,False,True,0,0
-10825,zombies,"Object is a death and life with rotting skin and deformed, twisted facial features.  Object does not stand upright, but distorted. Object moves with a haggard gait and groans rather than speaks.",True,False,False,False,False,False,True,0,0
+10825,zombies,"Object is a death and life with rotting skin and deformed, twisted facial features.  Object does not stand upright, but distorted. Object moves with a haggard gait and groans rather than speaks.",True,False,False,False,False,False,True,1,0
 10831,orb,The orb looks harmless but the magic radiating from it makes the air fill with tension.,True,False,False,False,False,False,True,0,0
 10839,"hungry, need food sign",The sign is a wooden plank nailed to a branch that reads hungry in red paint.,True,False,False,False,False,False,True,0,0
 10855,axe,"The axe is rusty, perhaps from having sat out in the rain for too long.",True,False,False,False,False,False,True,2,0
@@ -511,7 +511,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 11681,big stick,The stick is large and has someone's initials carved into it.,True,False,False,False,False,False,True,0,0
 11701,pickaxe,"The pickaxe looks to have been recently sharpened, glistening in the light on one end.",True,False,False,False,False,False,True,0,0
 11703,skinning knife,This skinning knife still has bits of fur and blood on the blade.,True,False,False,False,False,False,True,0,0
-11723,steel sword,The steel sword shines silver in the light.,True,False,False,False,False,False,True,0,0
+11723,steel sword,The steel sword shines silver in the light.,True,False,False,False,False,False,True,1,0
 11747,knight's suit of armor,"This suit of armor, made from metal, is made for a knight.",True,True,False,False,False,False,True,0,0
 11759,sharp knives,The knife was sharp and pointy.,True,False,False,False,False,False,True,0,0
 11761,stubby knife,"The knife was short, but it was thick. Perfect to use if you wanted to cut thick materials.",True,False,False,False,False,False,True,0,0

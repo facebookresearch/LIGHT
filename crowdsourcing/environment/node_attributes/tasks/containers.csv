@@ -10,7 +10,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 5061,mosses,"Curly and soft, like a thick blanket, the moss looks like it could be a good place to rest.",False,False,False,False,False,True,True,0,0
 5071,campfire burning,"The campfire has a bright red glow to it, it's flames reaching to shoulder blade height.",False,False,False,False,False,True,False,0,0
 5077,ship,The ship is worn and decrepit from long battles at sea.,False,False,False,False,False,True,False,0,0
-5101,gold cups,"The ornate gold cup is wide at it's stop and has a narrow base, it's gold plating embroidered with King's crest.",False,False,False,False,True,False,True,0,0
+5101,gold cups,"The ornate gold cup is wide at it's stop and has a narrow base, it's gold plating embroidered with King's crest.",False,False,False,False,True,False,True,1,0
 5103,silver spoons,The spoon is very tarnished and in need of polishing,False,False,False,False,False,True,True,0,0
 5117,treasure chests filled to the brim with gold,The treasure chest has intricate details and can be locked.,False,False,False,False,True,False,False,0,0
 5137,nests,The nest appears to be abandon.,False,False,False,False,True,False,True,1,0
@@ -65,9 +65,9 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 5497,ships,The ship is large and made out of wood. It sits in the harbor and bobs up and down in the water.,False,False,False,False,False,True,False,1,0
 5499,cargo crates,A protective box used for the storage and transport of cargo.,False,False,False,False,True,False,False,0,0
 5501,fishing nets,"In its tangled mess, you see a shining object.",True,False,False,False,True,False,True,0,0
-5515,cases for jewels,"The outside of the case has a design of flowers painted on it. On the inside, its lined with velvet.",False,False,False,False,True,False,True,0,0
+5515,cases for jewels,"The outside of the case has a design of flowers painted on it. On the inside, its lined with velvet.",False,False,False,False,True,False,True,1,0
 5527,empty coin bag,"The coin bag is devoid of anything of value. You knew this before even looking, but still held a small amount of hope that your fortunes has changed.",False,False,False,False,True,False,True,0,0
-5533,floor,The floor is made of marble with detailed carvings of past wars.,False,False,False,False,False,True,False,0,0
+5533,floor,The floor is made of marble with detailed carvings of past wars.,False,False,False,False,False,True,False,1,0
 5545,carpets made of silk,"The carpet is smooth and colorful. Since it is made out of silk, it is very light weight.",False,False,False,False,False,True,True,1,0
 5557,cup,"The cup is old and broken, with the handle chipped from being dropped",True,False,False,False,False,True,True,0,0
 5559,seats,"This seat looks to be made of some type of wood, and has been polished by many a rear resting upon it.",False,False,False,False,False,True,False,0,0
@@ -163,7 +163,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6115,baby bassinets,A bassinet is woven from strands of fine linen.,False,False,False,False,True,False,False,0,0
 6123,boxes,It's a cubical box with a crest on the side.  It looks perfect for storing all kinds of items.,False,False,False,False,True,False,True,0,0
 6125,cabinet,The cabinet contains dishes and cups and is very dusty.,False,False,False,False,True,False,False,0,0
-6153,silk pillows,"A dark red liquid has stained the king's large, purple silk pillow.  It appeared to be either blood or red wine.",False,False,False,False,False,True,True,1,0
+6153,silk pillows,"A dark red liquid has stained the king's large, purple silk pillow.  It appeared to be either blood or red wine.",False,False,False,False,False,True,True,2,0
 6157,wooden cart,The wooden cart has a platform made from sturdy worn boards. Its large wheels keep it from getting stuck in the mud.,False,False,False,False,False,True,False,0,0
 6161,hard wooden chair under the eaves,"This hard wooden chair under the eaves is made out of pine, it has wine stains on it, also it's all scratched up",False,False,False,False,False,True,False,0,0
 6167,docks,The dock is large and sturdy against the coming tides.,False,False,False,False,False,True,False,0,0
@@ -174,7 +174,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6215,incense holders,The incense holder is covered in ashes.,False,False,False,False,True,False,False,0,0
 6219,wood aisles,The aisle is between the rows of seats. It is wide enough for three men to walk abreast.,False,False,False,False,False,True,False,0,0
 6221,big wooden table,"The table is large, with rough boards and a few knot holes in the wood.",False,False,False,False,False,True,False,0,0
-6223,scale,The alchemist's scale was made of solid gold.,False,False,False,False,False,True,True,0,0
+6223,scale,The alchemist's scale was made of solid gold.,False,False,False,False,False,True,True,1,0
 6225,porcelain vase,The vase is made of porcelain and contains beautiful engravings and patterns.,False,False,False,False,True,False,True,0,0
 6229,basket of grain,The basket has a leather-hinged lid to keep its contents secure. The inside is large and would hold a great deal.,False,False,False,False,True,False,True,0,0
 6237,small lake,The lake is a bit murky in terms of its waters but seems to be mostly calm.,False,False,False,True,True,False,False,0,0
@@ -182,7 +182,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6251,well,The well is worn out. Those who once used it are gone.,False,False,False,False,True,False,False,0,0
 6263,stall,"It is tall and rather dusty, like nobody has sat on it for a while.",True,False,False,False,False,True,False,0,0
 6269,pail,The pail is old and beginning to rust in places.,False,False,False,False,True,False,True,0,0
-6291,broken lanterns,The lantern's glass that once protected the candle is broken and the wood itself is splintered and worn.,False,False,False,False,True,False,True,1,0
+6291,broken lanterns,The lantern's glass that once protected the candle is broken and the wood itself is splintered and worn.,False,False,False,False,True,False,True,2,0
 6313,beach,The meeting of sandy shores with dancing blue water. This beach has been around for ages.,False,False,False,False,False,True,False,0,0
 6315,large and well stocked wine rack,The rack is being used to store an extensive collection.,True,False,False,True,False,True,False,0,0
 6317,luxuriously soft couch,The couch has a velvet soft covering that shimmers under the light.,False,False,False,False,False,True,False,0,0
@@ -202,14 +202,14 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6451,forge,"The forge is dark and steamy with a musky scent.  It is mysterious and enchanting, repelling the observer while pulling them in.",False,False,False,False,True,False,False,0,0
 6453,wooden workbench,"This workbench looks quite worn from years of use, and has odd divots in the wood where a project might have gone astray.",False,False,False,False,False,True,False,0,0
 6483,shrine,"The shrine is meticulously clean, and it holds a few offerings and some incense.",False,False,False,False,False,True,False,0,0
-6503,expensive carpet,A carpet made of the finest silk and with intricate patterns woven in.,False,False,False,False,False,True,True,0,0
+6503,expensive carpet,A carpet made of the finest silk and with intricate patterns woven in.,False,False,False,False,False,True,True,1,0
 6511,wooden chest,the wooden chest contains the special items of the man's past.,False,False,False,False,True,False,False,0,0
 6517,guard's toilet basin,You see a rancid toilet basin. Its stench fills the air.,False,False,False,False,True,False,False,0,0
 6533,fire pit,The fire pit is rather large and can be used.,False,False,False,False,True,False,False,1,0
 6535,fountain,"The fountain flows red with the blood of soldiers.  The stone is stained red, and no water emerges from the spout.",False,False,False,False,False,True,False,0,0
 6541,jar of seeds,"The jar contained an assortment of seeds, varying in size and color. But unlike the seeds, which had long expired, the dusty jar is certain to be given a second life in the future.",False,False,False,False,True,False,False,0,0
 6543,money box,The money box is made of hard steel and looks like it could withstand an attack from any weapon imaginable.  A rusted padlock secured the lid.  It looks like it hasn't been opened in ages.,False,False,False,False,True,False,True,0,0
-6549,land,"Vast green reaches as far as the eye can see, the land is well preserved and manicured.",False,False,False,False,False,True,False,1,0
+6549,land,"Vast green reaches as far as the eye can see, the land is well preserved and manicured.",False,False,False,False,False,True,False,2,0
 6553,grimy stools,This stool is old and dusty and has a broken leg,False,False,False,False,False,True,False,0,0
 6555,wooden bar,"The bar is old, but still has plenty life left in it. Passed down through generations, it's surface is adorned in scratches, knife marks, and name carvings that add a sense of beauty and immeasurable value to the aging piece.",False,False,False,False,False,True,False,1,0
 6563,wooden tables,The table is old and broken with scratches on the surface.,False,False,False,False,False,True,False,0,0
@@ -242,13 +242,13 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6753,tithe plate,"A shallow plate, but wrapped in gold, the tithe plate serves to host the devious church goers offerings.",False,False,False,False,True,True,True,0,0
 6767,large bed,The large bed had seven pillows on it.,False,False,False,False,False,True,False,0,0
 6779,large wardrobe,"The wardrobe is made from solid oak and stained a rich, dark brown.",False,False,False,False,True,False,False,0,0
-6837,two home made wooden crosses,the cross has nails stuck on it.,False,False,False,False,False,True,True,0,0
+6837,two home made wooden crosses,the cross has nails stuck on it.,False,False,False,False,False,True,True,1,0
 6843,elaborate carpet pieces,"The carpet piece is beautifully colored with red, purple and silver hues.",False,False,False,False,False,True,False,1,0
 6847,wooden pews,The pew is weather-worn and splintery.  You don't think it would support your weight.,False,False,False,False,False,True,False,0,0
 6849,brick walls,"The brick wall is so old and dirty, it seems to have been here for quite a while.",False,False,False,False,False,True,False,0,0
-6865,pink and white outline,"The outline of the object, pink and white in color, remained on the ground.",False,False,False,False,False,True,False,0,0
+6865,pink and white outline,"The outline of the object, pink and white in color, remained on the ground.",False,False,False,False,False,True,False,1,0
 6879,wooden stool,The stool is old and uneven.,False,False,False,False,False,True,True,0,0
-6887,kettle,"The kettle has a large dent on one side, and is scratched in a few places.",False,False,False,False,True,False,True,0,0
+6887,kettle,"The kettle has a large dent on one side, and is scratched in a few places.",False,False,False,False,True,False,True,1,0
 6889,small bed,"A source of comfort for weary, this bed has layers of woolen blankets, and a straw mattress.",False,False,False,False,False,True,False,0,0
 6893,desk,The desk is made of sturdy oak but is very low to the floor.,False,False,False,False,False,True,False,1,0
 6895,desk chair,The desk chair is well worn. It is clear someone spent many a days completing work while sitting there.,False,False,False,False,False,True,True,0,0
@@ -280,7 +280,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 7163,pamphlets,The pamphlet is made out of paper and has a lot of information inside it.,False,False,False,False,False,True,True,0,0
 7165,heavy trunk,"The trunk is heavy and the wood painted a deep black. It has a gold lock on it, and you cann't help but wonder what treasures it contained.",False,False,False,False,True,False,False,0,0
 7169,polishing cloth,The polishing cloth is covered in dark polish.  It is tattered and frayed as though it has been used for several years.,False,True,False,False,False,True,True,0,0
-7171,clothes brushes,"The cloth was clean and bright in all its colors, stealing it comes to mind.",False,True,False,False,False,True,True,0,0
+7171,clothes brushes,"The cloth was clean and bright in all its colors, stealing it comes to mind.",False,True,False,False,False,True,True,1,0
 7175,pans,"The pan is rusty, not having been ished in sometime",True,False,False,False,True,False,True,0,0
 7183,computer,"The computer, also known as an abacus, is a wooden square with faded paint delicately holding metal rods and sliding beads.",False,False,False,False,False,True,True,0,0
 7191,headstones,"Here are the headstones, in this sacred field, where lie the heroes who gave their lives, so that this kingdom would survive before the fiefs that wanted to plunder it and take advantage of its wealth.",False,False,False,False,False,True,False,0,0
@@ -310,7 +310,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 7399,wood is gathered to make fire,"The wood lay scorched on the ground, and warm to the touch.",False,False,False,False,False,True,True,0,0
 7407,horse trough,The horse trough is already empty and it surprised you.,False,False,False,False,True,False,False,1,0
 7419,cookpot,"The cookpot is large, heavy, and round. Peering inside, you have trouble seeing the bottom.",False,False,False,False,True,False,True,0,0
-7421,shelf,The shelf is sturdy and held in place with rusty iron brackets.  It held a collection of vials and potions.  The bottles are dusty and looked like they've been there for years.,False,False,False,False,False,True,False,0,0
+7421,shelf,The shelf is sturdy and held in place with rusty iron brackets.  It held a collection of vials and potions.  The bottles are dusty and looked like they've been there for years.,False,False,False,False,False,True,False,1,0
 7429,stacks of gold plates,The plate is made of glass and is white with a gold rim around it.,False,False,False,False,False,True,True,1,0
 7441,ice goblet,"This goblet is freezing cold to the touch and, while it might keep whatever liquid is inside it very cold, it might also cause your hands to get frostbite.  It seems to shimmer gently as you look upon it.",False,False,False,False,True,False,True,0,0
 7463,barn,The barn is huge and red in color!,False,False,False,False,True,False,False,1,0
@@ -326,7 +326,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 7505,hand carved 30 person kings dining table,A piece of furniture used to set food on while you eat.,False,False,False,False,False,True,False,0,0
 7507,hand woven rug,"You admire the colorful pattern of the hand woven rug, with hues of intense blues and greens.",False,False,False,False,False,True,False,0,0
 7513,jug that holds the wine the servants fill glasses with,The jug is very useful for filling glasses of tea at dinner.,True,False,False,False,True,False,True,0,0
-7523,"old machinery lying around, rusting",The machinery is obviously no longer in working condition,True,False,False,False,False,True,False,0,0
+7523,"old machinery lying around, rusting",The machinery is obviously no longer in working condition,True,False,False,False,False,True,False,1,0
 7527,mining carts,The mining cart has seen better days. It is old and battered.,False,False,False,False,True,False,False,0,0
 7537,gardens,"The aroma of the garden is relaxing and refreshing, with the plants giving off an assortment of various colors.",False,False,False,False,True,False,False,0,0
 7547,screen,The screen is semi-transparent and has a few holes here and there.,False,False,False,False,False,True,False,0,0
@@ -435,14 +435,14 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 8457,cozy fur rug,"The cozy fur rug is large and heavy, who ever claimed it would have put in quite the fight.",False,False,False,False,False,True,False,0,0
 8461,big bed,"With its covers stripped, you see a large stain that can only be blood.",False,False,False,False,False,True,False,0,0
 8463,light fireplaces,The fireplace is hot and full of fire that heats the house.,False,False,False,False,False,True,False,0,0
-8467,beakers,"The glass that the beaker is made of looks warped, with small bubbles and strange whorls.",False,False,False,False,True,False,True,0,0
+8467,beakers,"The glass that the beaker is made of looks warped, with small bubbles and strange whorls.",False,False,False,False,True,False,True,1,0
 8471,vat,"This vat is quite large and is made of metal that has a pitted, rough surface to it.",False,False,False,False,True,False,True,0,0
 8481,creepy steps,"Old and dark grey, with split treads and cracking risers, the step looks as if it would collapse into splinters under your weight.",False,False,False,False,False,True,False,0,0
 8483,cottage,The tiny stone cottage displays its age with its moss coated outer walls and cobwebbed corners.,False,False,False,False,True,False,False,0,0
 8485,moor,The moor is vast and filled with wild plants and animals. It has been untouched by any man.,False,False,False,False,True,False,False,0,0
 8493,wood pile,A pile of firewood is neatly stacked as tall as a man in preparation for winter.,False,False,False,False,True,False,False,0,0
 8501,small fire,"The small fire provides a suitable cooking arrangement or a place for warmth, it's hot glowing embers burning a bright red.",True,False,False,False,False,True,False,1,0
-8507,seats made of plant roots,The seat blends in with its natural surroundings.  It looks as though it has grown from preordained design with some specific purpose in mind.,False,False,False,False,False,True,False,0,0
+8507,seats made of plant roots,The seat blends in with its natural surroundings.  It looks as though it has grown from preordained design with some specific purpose in mind.,False,False,False,False,False,True,False,1,0
 8511,basket of flowers,The basket is filled with wilted flowers dying flowers.,False,False,False,False,True,False,True,0,0
 8523,candle holders,The holder is so old it couldn't even hold a candle anymore. It's rusted out.,False,False,False,False,True,False,True,0,0
 8533,bassinets,"The bassinet is made of simple pine, and it is the perfect size for a baby.",False,False,False,False,True,False,False,0,0
@@ -537,7 +537,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9257,black leather hood,The hood shows signs of extensive wear. It has an elastic band to ensure a tight fit.,False,True,False,False,True,False,True,0,0
 9261,pathways,The pathway was long and looked very neglected.,False,False,False,False,True,True,False,0,0
 9273,hygiene supplies,This hygiene supply item is in pristine condition and ready to be used,False,False,False,False,True,False,False,0,0
-9275,textile,the textile is new and colorful,False,False,False,False,True,False,True,0,0
+9275,textile,the textile is new and colorful,False,False,False,False,True,False,True,1,0
 9279,dessert,"Dessert for the feast was a pastry made of honey, barley and spices.",False,False,True,False,True,False,True,0,0
 9303,charcoal,Charcoal is the best to grill all kinds of meat on!,False,False,False,False,False,True,True,0,0
 9311,satchels of spices,The satchels of spices smell fragrant.,False,True,False,False,True,False,True,0,0
@@ -584,7 +584,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9747,bunks,The bunk is damp and musty-smelling.,False,False,False,False,True,True,False,0,0
 9753,empty looking coin pouch,The pouch is empty.,False,True,False,False,True,False,True,0,0
 9757,possessions,"The possession is wooden and has a message carved within. The message seems to be written in some ancient, Egyptian language.",False,False,False,False,False,True,True,0,0
-9759,gold candle fixtures,The fixture in inlayed with gold and has a place for a candle.,True,False,False,False,True,True,False,0,0
+9759,gold candle fixtures,The fixture in inlayed with gold and has a place for a candle.,True,False,False,False,True,True,False,1,0
 9777,mantel,The mantel is a deep brown wood polished wood.,False,False,False,False,False,True,False,1,0
 9783,wooden knight,The knight is wooden.,False,False,False,False,True,True,False,0,0
 9787,jumpsuit,"Looking closely at this green wool jumpsuit, one can see detailed stitching. It appears to have been made by an expert.",False,True,False,False,True,False,True,0,0
@@ -596,7 +596,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9837,backpack,The backpack is salty in terms of condition with a few tears and field repairs,False,True,False,False,True,True,True,0,0
 9851,mortar,"this mortar is so magnanimous from the look of it,so beautiful.",False,False,False,False,False,True,False,0,0
 9855,easel,"This easel is made out of wood, its old and with a few holes in it.",False,False,False,False,False,True,False,0,0
-9861,endless mounds,"This mound of dirt looks like it might be a shallow grave.  You probably wouldn't want to stand on top of it, just to be safe.",False,False,False,False,False,True,False,0,0
+9861,endless mounds,"This mound of dirt looks like it might be a shallow grave.  You probably wouldn't want to stand on top of it, just to be safe.",False,False,False,False,False,True,False,1,0
 9869,cloak,"The dark cloak was black as night, and offered protection against the elements.",False,True,False,False,False,True,True,0,0
 9887,toilets,The toilets were dank and smelly from months of accumulated waste.,False,False,False,False,False,True,False,0,0
 9893,cages,The cage is made for an animal of medium size such as a coyote or fox. The metal looks used but seems to have been cared for.,True,False,False,False,True,False,True,0,0
@@ -653,7 +653,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10261,ornate tapestries,"a heavy handwoven reversible textile used for hangings, curtains, and upholstery and characterized by complicated pictorial designs.",False,False,False,False,False,True,True,0,0
 10277,pit of quicksand,The resulting sand is a mushy mixture of sand and water that can no longer support any weight.,False,False,False,False,True,False,False,0,0
 10279,satchel of dried meat,"The satchel smelled of seasoned meat, the inside of it had a greasy look to it, it had a long rope to loop it around your neck.",False,False,True,False,True,False,True,0,0
-10281,ankle boots,It's a disgusting sight as you realize there is still a goblin foot in the boot.,False,True,False,False,False,True,True,0,0
+10281,ankle boots,It's a disgusting sight as you realize there is still a goblin foot in the boot.,False,True,False,False,False,True,True,1,0
 10287,cot,"Women who smoke during pregnancy increase their risk of miscarriage, premature delivery and cot death",False,False,False,False,True,True,False,0,0
 10293,portal for evil to access,The portal somehow seems to emit a dark form of light; only horrible things could be inside.,False,False,False,False,True,False,False,0,0
 10295,book,And chosen people is the tittle of the book within the book,False,False,False,False,True,False,True,0,0
@@ -661,7 +661,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10303,manacles,On the alleged torture and abusive treatment is manacles,True,False,False,False,True,False,True,0,0
 10305,old fire pit,This fire pit looks ancient. It could have been used for cooking or forging weapons.,False,False,False,False,False,True,False,0,0
 10309,piece of bread,"This bread is old, stale, and inedible. there seems to be mold growing from it.",False,False,True,False,False,True,True,0,0
-10317,glass vial of some liquid,The vial is filled with a mysterious red liquid that reeks of ammonia.,True,False,False,False,True,False,True,0,0
+10317,glass vial of some liquid,The vial is filled with a mysterious red liquid that reeks of ammonia.,True,False,False,False,True,False,True,1,0
 10319,stairs,The stair was decayed beyond use.,False,False,False,False,False,True,False,1,0
 10325,small ball of light,"glowing with such intensity, it is difficult to stare directly at the ball of light. Magic is required to wield this item.",True,False,False,False,True,False,True,0,0
 10347,bench,"The bench was simple but classy, strait sturdy peices of wood that looked like they would never budge, it included a small carving by the maker on the leg.",False,False,False,False,False,True,False,1,0
@@ -679,7 +679,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10447,money bag,A small leather purse with a string to pull it taut.,False,False,False,False,True,False,True,0,0
 10459,cages,The cage is large and shiny with a silver appearance.,False,False,False,False,True,False,True,0,0
 10461,shelves,The shelf is made of beautifully stained oak and looks very well maintained.,False,False,False,False,True,True,False,0,0
-10465,supply bag,"Deep and durable, this supply bag could carry plenteous amounts of items.",False,False,False,False,True,False,False,0,0
+10465,supply bag,"Deep and durable, this supply bag could carry plenteous amounts of items.",False,False,False,False,True,False,False,1,0
 10477,money pouch,"You can imagine the jingle of coins as you turn the leather pouch over in your hands. The maker has stamped their brand onto the bottom, which you appreciate.",False,False,False,False,True,False,True,0,0
 10481,shack,"In the middle of this deserted forest a shack sits, with a mossy roof and stained glass windows.",False,False,False,False,True,False,False,0,0
 10489,jail cells,"The cells are bare with rusty bars on the doors, a bucket for excrement and a pile of hay in the corner for sleeping.",False,False,False,False,True,True,False,0,0
@@ -759,11 +759,11 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 11043,test kits,the kit is old and is missing a few components essential for speedy armor/weapon repairs,False,False,False,False,True,False,True,0,0
 11045,toolbox,The toolbox is deep red in color and houses a variety of items.,False,False,False,False,True,False,True,0,0
 11049,vase,The vase looks like a mosaic covered in emeralds and rubies.,False,False,False,False,True,False,True,0,0
-11051,bucket,The bucket is dulled over and silver.,False,False,False,False,True,True,True,0,0
+11051,bucket,The bucket is dulled over and silver.,False,False,False,False,True,True,True,1,0
 11065,royal robe,"The royal robe is a luscious violet color, made from a soft yet durable material.",False,True,False,False,True,False,True,0,0
 11081,bag for carrying things,The bag for carrying things is plump and ovular.,False,False,False,False,True,False,True,0,0
 11091,green grass,You observe that the grass is tall and hard to wade through.,False,False,False,False,False,True,True,0,0
-11103,raw metals,The raw metals were forged into weapons as the threat of war grew stronger.,False,False,False,False,True,False,False,0,0
+11103,raw metals,The raw metals were forged into weapons as the threat of war grew stronger.,False,False,False,False,True,False,False,1,0
 11113,abode,A humble and rustic hut with a rounded roof. Simple and only the single room within.,False,False,False,False,True,True,False,0,0
 11115,tattered tunic,The tattered tunic is in such poor condition that you can barely make out the original shape of the tunic.,False,True,False,False,True,False,True,0,0
 11127,ratty pants,The pant faintly smells of rum and is in poor condition.,False,True,False,False,True,False,True,0,0
@@ -791,7 +791,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 11315,drawing compass,His drawing compass is shiny and silver. It hold his drawing pencil firmly as he uses it.,True,False,False,False,True,False,True,0,0
 11317,road,"The knight cried ""Huzzah!"" upon the journey forth on the road to righteousness.",False,False,False,False,False,True,False,1,0
 11325,store,The store is large and voluminous within.,False,False,False,False,True,False,False,0,0
-11327,bridge,You see the rugged bridge and wonder how old it is.,False,False,False,False,False,True,False,0,0
+11327,bridge,You see the rugged bridge and wonder how old it is.,False,False,False,False,False,True,False,1,0
 11329,teapot,The teapot is large and smells delicious.,False,False,False,True,True,False,True,0,0
 11347,ragged trousers,Ripped at the knees and hip these trousers are well worn.,False,True,False,False,True,False,True,1,0
 11357,dart board,A dart board with many holes in it from many previous dart games.,False,False,False,False,False,True,False,0,0
@@ -824,12 +824,12 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 11641,dustpan,The dustpan hand sweeper brush cleaning kitchen,False,False,False,False,True,False,True,0,0
 11647,leather utility strap with glass potion bottles,The utility strap appears useful and would be great for your travels.,False,False,False,False,True,True,True,0,0
 11665,sconces,The sconces are adorned in plated gold and are designed for the consumer of highest taste.,False,False,False,False,True,False,True,0,0
-11675,wallet,The wallet is large and plump from years of overuse.,False,False,False,False,True,False,True,1,0
+11675,wallet,The wallet is large and plump from years of overuse.,False,False,False,False,True,False,True,3,0
 11677,shops,The shops are open for business and contain a variety of wares from the local village.  The shop with the darkened windows is the most curious of all the buildings.,False,False,False,False,True,False,False,0,0
 11679,hall,Room of a building or piece of an immediate house at the main entrance door.,False,False,False,False,False,True,False,0,0
 11683,tables constructed of beautiful coral,"the table has a history of it's own, full of color and scratches with each telling a tale",False,False,False,False,False,True,True,0,0
 11687,wooden wardrobe,The old wardrobe is wasting away and taking up space.,False,False,False,False,True,True,True,0,0
-11689,refrigerator,The refrigerator is large and white with spacious interior.,False,False,False,False,True,False,False,0,0
+11689,refrigerator,The refrigerator is large and white with spacious interior.,False,False,False,False,True,False,False,1,0
 11693,skulls on stakes,The skull looks like it could fall apart if you were to pick it up due to its age.,False,False,False,False,True,False,True,0,0
 11705,locket with baby's hair,"The locket is silver, with an ornately engraved floral motif. A few strands of delicate, wispy hair rest within.",False,True,False,False,True,False,True,0,0
 11713,traveling bag,"This bag is worn from travel, and may contain clothing and supplies.",False,False,False,False,True,False,True,0,0

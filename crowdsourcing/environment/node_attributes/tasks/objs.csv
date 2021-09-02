@@ -442,7 +442,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 5889,small crucifix,A small crucifix does not necessarily mean small faith.,False,True,False,False,False,False,True,0,0
 5891,animal heads,This animal head looks back at you with mournful eyes.,False,False,False,False,False,False,True,0,0
 5893,bear rug,"The bear rug lies in the weapon room, with sharp teeth and giant paws.",False,False,False,False,False,False,False,0,0
-5895,hunting rifle,"The rifle is long, its stock barrel and grip has nicks on it from use.",True,False,False,False,False,False,True,0,0
+5895,hunting rifle,"The rifle is long, its stock barrel and grip has nicks on it from use.",True,False,False,False,False,False,True,1,0
 5897,bow and arrows,A bow an arrow. Made from fine materials. Mostly used for hunting and protection.,True,False,False,False,False,False,True,0,0
 5899,remains,the remains are smelling bad,False,False,False,False,False,False,False,0,0
 5901,spikes,"The spike is rusty, but you that it is sharp enough to kill.",True,False,False,False,False,False,True,1,0
@@ -775,7 +775,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6555,wooden bar,"The bar is old, but still has plenty life left in it. Passed down through generations, it's surface is adorned in scratches, knife marks, and name carvings that add a sense of beauty and immeasurable value to the aging piece.",False,False,False,False,False,True,False,0,0
 6557,barnacles,"Upon further investigation of the barnacles, they appear to be brown, hard and wet from the sea.",False,False,False,False,False,False,True,0,0
 6559,bodily fluids,Bodily fluids created a viscous sheen on the floor where the incident occurred.,False,False,False,True,False,False,False,0,0
-6561,mug of mead,The mug of meed looks tempting.,False,False,False,True,False,False,True,0,0
+6561,mug of mead,The mug of meed looks tempting.,False,False,False,True,False,False,True,1,0
 6563,wooden tables,The table is old and broken with scratches on the surface.,False,False,False,False,False,True,False,0,0
 6565,buildings,A large welcoming structure that would keep out the rain and wind.,False,False,False,False,False,False,False,0,0
 6567,candy shop,"The shelves in the candy shop are stocked with caramel, fudge and peppermint.   The doors are open on this hot summer day and the candy can be smelled a block away.",False,False,False,False,True,False,False,0,0
@@ -927,7 +927,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6859,outside temple,The temple has blood on the floor leading to the doorway.,False,False,False,False,False,False,False,0,0
 6861,lush green trees,"the tree is strong and tall, it is full of life and a unique green color",False,False,False,False,False,False,False,0,0
 6863,beautiful blossoming jasmine flowers,The beautiful blossoming jasmine flower shows its delicate white petals extending off its gentle brown stem.,False,False,False,False,False,False,True,0,0
-6865,pink and white outline,"The outline of the object, pink and white in color, remained on the ground.",False,False,False,False,False,True,False,0,0
+6865,pink and white outline,"The outline of the object, pink and white in color, remained on the ground.",False,False,False,False,False,True,False,1,0
 6867,place,"The place is abandoned, but you can hear echoes of its previous history.",False,False,False,False,False,False,False,0,0
 6869,entrance,everyone comes in through the entrance of building.,False,False,False,False,False,False,False,0,0
 6871,mountain,"The mountain is tall and its peak is coated in a fresh, white fall of snow.",False,False,False,False,False,False,False,0,0
@@ -1092,7 +1092,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 7189,giant firepit,The firepit is made of large stones.  Dead grass fills the center.,False,False,False,False,False,False,False,0,0
 7191,headstones,"Here are the headstones, in this sacred field, where lie the heroes who gave their lives, so that this kingdom would survive before the fiefs that wanted to plunder it and take advantage of its wealth.",False,False,False,False,False,True,False,0,0
 7193,mausoleum,The mausoleum is shrouded in fog and you think you hear strange noises from within.,False,False,False,False,False,False,False,0,0
-7195,shovels,The shovel has a wooden handle and a metal bottom. The handle has some blood stained on it and the metal is weather beaten.,True,False,False,False,False,False,True,0,0
+7195,shovels,The shovel has a wooden handle and a metal bottom. The handle has some blood stained on it and the metal is weather beaten.,True,False,False,False,False,False,True,1,0
 7197,seat,The seat is dirty with the blood from the farmers.,False,False,False,False,False,True,False,0,0
 7199,golden trim,The trim is beautiful and expensive. You wonder who would wear something like this.,False,True,False,False,False,False,True,0,0
 7201,golden cloth,The cloth is gold and shimmers when moved in light.,False,True,False,False,False,True,True,0,0
@@ -1676,7 +1676,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 8357,"old, sun-bleached sailcloth","The sailcloth has been bleached almost white by years of sunlight, and it is fraying at the edges.",False,False,False,False,False,False,True,0,0
 8359,stained wooden troughs,The trough is deeply stained due to use and has a few holes in it.,False,False,False,False,True,False,True,0,0
 8361,cash box,This old wooden cash box has a lock on it. It is rustic and has initials embroidered and carved in it.,False,False,False,False,True,False,True,0,0
-8363,fish wrap ( or butcher paper),"The fish wrap seems dirty and used, hopefully no one uses it.",False,True,False,False,False,False,True,0,0
+8363,fish wrap ( or butcher paper),"The fish wrap seems dirty and used, hopefully no one uses it.",False,True,False,False,False,False,True,1,0
 8365,cutting board,"The cutting board is made of light colored wood. Many knife marks cover the surface, as if it has been used for many years.",False,False,False,False,False,False,True,0,0
 8367,walls of the cave,"The wall of the cave is dark, rough and bumpy to the touch.",False,False,False,False,False,True,False,0,0
 8369,bear,"The bear has a big scar in its eye, it is big and brown and has a magestic size.",False,False,False,False,False,False,False,0,0
@@ -1821,7 +1821,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 8647,food trays,the food tray held many different types of food in its time,False,False,False,False,False,True,True,0,0
 8649,big stones,This stones craving can still be interpreted.,True,False,False,False,False,False,True,0,0
 8651,lookout tower,The tower offers a good place to keep watch over things.,False,False,False,False,False,False,False,0,0
-8653,cannon,"The cannon is rusty, but still loaded.",True,False,False,False,False,False,True,0,0
+8653,cannon,"The cannon is rusty, but still loaded.",True,False,False,False,False,False,True,1,0
 8655,sword of the guards,The sword is sturdy and so heavy that you have trouble lifting it.,True,False,False,False,False,False,True,0,0
 8657,path to the old mine,The path to the old mine was not well maintained and steep.,False,False,False,False,False,False,False,0,0
 8659,spiders,"The spider itself is bigger than any toddler, and its fangs as long as a grown man's forearm.",False,False,True,False,False,False,False,0,0
@@ -2126,7 +2126,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9257,black leather hood,The hood shows signs of extensive wear. It has an elastic band to ensure a tight fit.,False,True,False,False,True,False,True,0,0
 9259,hand saw,The saw is small enough to be held in your hand.,True,False,False,False,False,False,True,0,0
 9261,pathways,The pathway was long and looked very neglected.,False,False,False,False,True,True,False,0,0
-9263,drinks,The drink looks to have a refreshing taste.,False,False,False,True,False,False,False,0,0
+9263,drinks,The drink looks to have a refreshing taste.,False,False,False,True,False,False,False,1,0
 9265,blue doublet,"The blue doublet looks brand new, as if it has never been worn.",False,True,False,False,False,False,True,0,0
 9267,carrots,The carrot is large and tangled.,False,False,True,False,False,False,True,0,0
 9269,horse treats,"The horse treats are nutritious, but their taste is awful.",False,False,True,False,False,False,True,0,0
@@ -2149,7 +2149,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9303,charcoal,Charcoal is the best to grill all kinds of meat on!,False,False,False,False,False,True,True,0,0
 9305,monkeys brains,"To your horror, the merchant tells you the mysterious object floating in the jar is a monkey brain. Supposedly consuming one will cure any sickness.",False,False,True,False,False,False,True,0,0
 9307,worn boots,"The worn boots are missing laces, and have many holes in the soles.",False,True,False,False,False,False,True,0,0
-9309,outer wear made from the warmest furs,The outer wear was made from the warm fur of the wild boars of the kingdom.,False,True,False,False,False,False,False,0,0
+9309,outer wear made from the warmest furs,The outer wear was made from the warm fur of the wild boars of the kingdom.,False,True,False,False,False,False,False,1,0
 9311,satchels of spices,The satchels of spices smell fragrant.,False,True,False,False,True,False,True,0,0
 9313,pie,The pie appears to be warm and filled with apples.,False,False,True,False,False,False,False,0,0
 9315,"handsome, cozy farmhouse",The farmhouse acted as shelter for lost travelers.,False,False,False,False,True,False,False,0,0

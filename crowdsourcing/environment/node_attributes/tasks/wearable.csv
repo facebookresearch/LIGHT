@@ -1,5 +1,5 @@
 id,name,description,wieldable,wearable,food,drink,container,surface,carryable,assigned,annotated
-5053,mystical necklace with a colorful crystal,the mystical necklace is magical and scary,False,True,False,False,False,False,True,0,0
+5053,mystical necklace with a colorful crystal,the mystical necklace is magical and scary,False,True,False,False,False,False,True,1,0
 5073,large glimmering ruby,The ruby is a very large size but beautifully faceted.,False,True,False,False,False,False,True,0,0
 5083,precious jewels,"The jewels had such a glow to them that you couldn't help but be drawn to them. They had to belong to royalty, but why were they here? Who left them?",False,True,False,False,False,False,True,0,0
 5095,crowns,"At first glance, the diamond encrusted crown glistens in the light.",False,True,False,False,False,False,True,0,0
@@ -54,7 +54,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6057,tassels,"The tassels came in different material, which resulted in different colors.",False,True,False,False,False,False,True,0,0
 6059,gauzy purple fabric,The gauzy fabric is very old and tattered.,False,True,False,False,False,False,True,0,0
 6065,king's clothing,The king's clothing is made of the finest silk,False,True,False,False,False,False,True,0,0
-6069,king's armor,The king's armor is dented and scratched from the recent battle with the neighboring country,False,True,False,False,False,False,True,0,0
+6069,king's armor,The king's armor is dented and scratched from the recent battle with the neighboring country,False,True,False,False,False,False,True,1,0
 6089,enchanted amulet.,"The amulet gleams subtly, and it gives of an aura of mysticism.",False,True,False,False,False,False,True,0,0
 6093,adornments,"The adornment appears to be made of gold, with lapis lazuli insets.",False,True,False,False,False,False,True,1,0
 6105,patches,The patch is worn and faded. Unwearable in its current state.,False,True,False,False,False,False,True,0,0
@@ -81,7 +81,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6703,pile of discarded armor,The discarded armor seems to have something of value to it.,False,True,False,False,False,False,True,0,0
 6743,armor,"The armor is well worn, not old, but seemingly used a great deal.",False,True,False,False,False,False,True,0,0
 6793,feathers,the feather is white and very soft,False,True,False,False,False,False,True,0,0
-6953,heavy blanket,The heavy blanket is incredibly comfortable.,False,True,False,False,False,False,True,1,0
+6953,heavy blanket,The heavy blanket is incredibly comfortable.,False,True,False,False,False,False,True,2,0
 6969,pieces of armor,The piece of armor is polished to a dazzling shine.  It is unscratched and flawless.,False,True,False,False,False,False,True,0,0
 6991,horse tack,The horse tack is made of hardened leather and molded iron. It is designed perfectly to fit a horse.,False,True,False,False,False,False,True,0,0
 7009,variety of drapes,"The drape is heavy and course but as a covering, you can use it as protection from the cold.",False,True,False,False,False,False,True,0,0
@@ -94,7 +94,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 7141,helmets,"The helmet is cracked and dented, but still polished to a pristine shine.",False,True,False,False,False,False,True,0,0
 7167,racks of plain clothing,the clothing is long and colorful.,False,True,False,False,False,False,True,0,0
 7169,polishing cloth,The polishing cloth is covered in dark polish.  It is tattered and frayed as though it has been used for several years.,False,True,False,False,False,True,True,0,0
-7171,clothes brushes,"The cloth was clean and bright in all its colors, stealing it comes to mind.",False,True,False,False,False,True,True,1,0
+7171,clothes brushes,"The cloth was clean and bright in all its colors, stealing it comes to mind.",False,True,False,False,False,True,True,2,0
 7199,golden trim,The trim is beautiful and expensive. You wonder who would wear something like this.,False,True,False,False,False,False,True,0,0
 7201,golden cloth,The cloth is gold and shimmers when moved in light.,False,True,False,False,False,True,True,0,0
 7203,prayer beads,The prayer beads are made of wood and look well worn.,False,True,False,False,False,False,True,0,0
@@ -104,13 +104,13 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 7339,blankets for the stable workers to sleep with,"The blanket is dirty and stained, and has a musty smell to it.",False,True,False,False,False,True,False,0,0
 7353,towels,"The towel is moldy and damp, its usefulness long since passed.",False,True,False,False,False,False,True,0,0
 7395,wooden cross,The wooden cross is faded in color from being worn too much by the priest,False,True,False,False,False,False,True,0,0
-7415,crown,"Thought of as a holy item, the crown goes only to those who are worthy enough.",False,True,False,False,False,False,True,0,0
+7415,crown,"Thought of as a holy item, the crown goes only to those who are worthy enough.",False,True,False,False,False,False,True,1,0
 7423,cross,The cross is broken and with a few dents in the sides.,False,True,False,False,False,False,True,1,0
 7425,harnesses,The harness is made of leather and beautiful.,False,True,False,False,False,False,True,0,0
 7519,old armor,The armor is rusted and dented.,False,True,False,False,False,False,True,0,0
 7553,cleaning cloth,"Stained with dirt and grit, the cloth is losing its effectiveness.",False,True,False,False,False,False,True,0,0
 7579,cauldron,The cauldron can be used for cooking vegetables,False,True,False,False,False,False,False,0,0
-7587,fairy wings,"It is so light and almost transparent, with light shining through it.",False,True,False,False,False,False,True,0,0
+7587,fairy wings,"It is so light and almost transparent, with light shining through it.",False,True,False,False,False,False,True,1,0
 7599,shackles on the wall,The shackle is rusted and dirty from holding many prisoners,False,True,False,False,False,False,True,0,0
 7625,curtains,The curtains were made from the best royal blue silk in the land and the Queen's initials were sewn into them.,False,True,False,False,False,False,True,0,0
 7657,cloth sacks,The stained cloth sack has holes cut out for arms to fit through.,False,True,False,False,True,False,True,0,0
@@ -142,13 +142,13 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 8543,big robes,the robe is made with various materials,False,True,False,False,False,False,True,0,0
 8573,tack for the work horses,The tack seems to be loose and worn out from being used by uncooperative horses.,False,True,False,False,False,False,True,0,0
 8587,seaweed,"The seaweed is a deep green, and the damp stalk wraps around itself making messy tangles.",False,True,True,False,False,False,True,0,0
-8669,shells,"This shell has been polished smooth by the waves, and has an interesting pinkish hue to it.",False,True,False,False,False,False,True,0,0
+8669,shells,"This shell has been polished smooth by the waves, and has an interesting pinkish hue to it.",False,True,False,False,False,False,True,1,0
 8671,sea turtles,"The large sea turtle had eyes like an old warrior; wrinkled and weary from battle, but wise to the malice within men's hearts.",False,True,True,False,False,False,False,0,0
 8689,gems,The gem sparkles in the light. The colored stone is a dazzling sight.,False,True,False,False,False,False,True,0,0
 8733,seeds,The seed has a strange smell and is sticky after being extracted from a fruit,False,True,True,False,False,False,True,0,0
 8741,rope,The rope is thick and looks as if it could hold a lot of weight.,False,True,False,False,False,False,True,0,0
 8791,clothes made of various plant matter such as large leaves and vines,The living vines that once hung in the trees now mask the flesh of man.,False,True,False,False,False,False,True,0,0
-8797,bags,The bag is large and wide with extra pouches for more items.,False,True,False,False,True,False,True,0,0
+8797,bags,The bag is large and wide with extra pouches for more items.,False,True,False,False,True,False,True,1,0
 8807,fabrics,"The fabric is aged, but still vibrantly colored - as if it has been dyed recently.",False,True,False,False,False,False,True,1,0
 8819,flowers,These flowers grow tall behind the castle. They are medicinal and used in teas for the Kind and Queen.,False,True,False,False,False,False,True,0,0
 8843,locket,A locket is the most elegant thing a woman can wear.,False,True,False,False,False,False,True,0,0
@@ -171,7 +171,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 8965,hair pin,Milady's hair pin is carved of bone and engraved with silver.,False,True,False,False,False,False,True,0,0
 8971,boots,The worn boots are dusty and suggest someone has walked quite a way in them.,False,True,False,False,False,False,False,0,0
 8973,leather outfit,this outfit really looks so gorgeous on you.,False,True,False,False,False,False,False,0,0
-8979,armour,The armour is worn with battle marks on the front chest.,False,True,False,False,False,False,True,0,0
+8979,armour,The armour is worn with battle marks on the front chest.,False,True,False,False,False,False,True,1,0
 8981,silk pants,"The pant is thin and made of silk, very soft to the touch.",False,True,False,False,False,False,True,2,0
 8983,sleeping cap,This cap was knitted by someone who clearly has not much practice.  It looks to be a bit drafty for sleeping in.,False,True,False,False,False,False,True,0,0
 8989,thick layer of fur,The fur is light brown and very thick and warm to the touch.,False,True,False,False,False,False,True,0,0
@@ -189,13 +189,13 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9045,worn leather boots,The boot is made of leather and very worn and old.,False,True,False,False,False,False,True,0,0
 9047,laundry,The laundry is freshly cleaned and stain free,False,True,False,False,False,False,False,0,0
 9049,dirty pants,The pants were stained with mud.,False,True,False,False,False,False,True,0,0
-9055,worn pants,the pants are worn out,False,True,False,False,False,False,True,0,0
+9055,worn pants,the pants are worn out,False,True,False,False,False,False,True,1,0
 9059,hood,The hood could the face and provide the wearer with a bit of mystery.,False,True,False,False,False,False,False,0,0
 9081,bonnet,The bonnet appears to be expensive and made from the finest silk,False,True,False,False,False,False,True,0,0
 9085,beautiful overcoat of the best furs,a lady will surely look beautiful and gorgeous in this overcoat.,False,True,False,False,False,False,False,0,0
 9087,brown tunic,The earth colored tunic has a few holes and patches to cover nasty tears,False,True,False,False,False,False,False,1,0
 9091,leather goods,The leather on the goods looks worn and used.,False,True,False,False,False,False,True,0,0
-9095,sailor hat,This old sailor hat is torn and tattered. The elements have clearly not been kind to it.,False,True,False,False,False,False,True,0,0
+9095,sailor hat,This old sailor hat is torn and tattered. The elements have clearly not been kind to it.,False,True,False,False,False,False,True,1,0
 9103,rings,"The ring is made oh great metal and rubys. Though, it is full of rust, it must be very old.",False,True,False,False,False,False,True,0,0
 9107,single sock,the sock was clean and new,False,True,False,False,False,False,False,1,0
 9111,torn pants,You notice your pants have been ripped and several places.,False,True,False,False,True,False,True,0,0
@@ -237,7 +237,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9329,wolf's tooth,The wolfs tooth is sharp to the touch.,False,True,False,False,False,False,True,0,0
 9335,bright colored suit,"The bright colored suit seem to be brand new, it sparkles in the light.",False,True,False,False,False,False,True,0,0
 9337,coin satchel,The satchel is heavy enough for it to be obvious that it is filled with coins.,False,True,False,False,False,False,True,0,0
-9359,ripped pants,"The ripped pants appeared to be made of wool. Frayed at the edges, the pants had been worn for a long time without being cleaned. Stained with mud, the pants could have been worn by a man or teenaged male, but these pants still had some use if found in a pile of rags.",False,True,False,False,False,False,False,0,0
+9359,ripped pants,"The ripped pants appeared to be made of wool. Frayed at the edges, the pants had been worn for a long time without being cleaned. Stained with mud, the pants could have been worn by a man or teenaged male, but these pants still had some use if found in a pile of rags.",False,True,False,False,False,False,False,1,0
 9361,goddess' insignia,The Insignia was worn which made it hard to see the Goddess and it had a crack in the middle and was caked with dirt all over it.,False,True,False,False,False,False,True,0,0
 9367,goods,"The goods lay scattered, but still appear to be usable.",False,True,True,True,True,False,True,0,0
 9375,king's seal,This seal shows the royal crest upon it.  It looks to still have a fleck of red sealing wax on it from the last time it was used.,False,True,False,False,False,False,True,0,0
@@ -248,10 +248,10 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9393,tunic,"The tunic has a hole in it, though only someone observant would notice.",False,True,False,False,False,False,False,0,0
 9399,neck chain,"The neck chain is made of solid gold, and glistens in the light.",False,True,False,False,False,False,True,0,0
 9401,handcuffs,A device used to shackle the arms or feet.,False,True,False,False,False,False,True,1,0
-9411,cotton sweater,The cotton sweater is lovingly made with great craftsmanship.  The sweater is heavy in a dark hue.,False,True,False,False,False,False,True,0,0
+9411,cotton sweater,The cotton sweater is lovingly made with great craftsmanship.  The sweater is heavy in a dark hue.,False,True,False,False,False,False,True,1,0
 9413,monkey's hand,"The hand is small and shriveled, and altogether it is a bit gruesome to behold.",False,True,False,False,False,False,True,0,0
 9415,military pins,"A small metallic symbol of status, speckled with traces of rust-colored blood.",False,True,False,False,False,False,True,0,0
-9423,black pants,"this pant will be so gorgeous on you,very beautiful.",False,True,False,False,False,False,False,0,0
+9423,black pants,"this pant will be so gorgeous on you,very beautiful.",False,True,False,False,False,False,False,1,0
 9425,clean tunic,"The tunic is freshly washed, ready to be worn.",False,True,False,False,False,False,False,0,0
 9437,torn shirt,"The worn shirt looks to have been through a battle, torn and bloody.",False,True,False,False,False,False,False,0,0
 9441,clean pants,"The soft cotton pants smell lovely. They have just been laundered, and seem to provide much protection from the elements.",False,True,False,False,False,False,True,0,0
@@ -315,11 +315,11 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9753,empty looking coin pouch,The pouch is empty.,False,True,False,False,True,False,True,0,0
 9775,slippers,the slipper fits your foot perfectly well.,False,True,False,False,False,False,True,0,0
 9779,freshly grown carrots,Awesome that pretty carrots look very fresh and delicious to make a salad,False,True,True,False,False,False,True,0,0
-9785,tights,The tights are black in color and have the pattern of spiderwebs scattered around it.,False,True,False,False,False,False,True,0,0
-9787,jumpsuit,"Looking closely at this green wool jumpsuit, one can see detailed stitching. It appears to have been made by an expert.",False,True,False,False,True,False,True,0,0
+9785,tights,The tights are black in color and have the pattern of spiderwebs scattered around it.,False,True,False,False,False,False,True,1,0
+9787,jumpsuit,"Looking closely at this green wool jumpsuit, one can see detailed stitching. It appears to have been made by an expert.",False,True,False,False,True,False,True,1,0
 9797,earring,"Here's one earring, I wonder where the other went?",False,True,False,False,False,False,True,0,0
 9801,wolf costume,This wolf costume is ratty and appears to have served its useful life. It also smells as if it may have been used for rodent bedding.,False,True,False,False,True,False,False,0,0
-9805,mask,The mask is bright green and has a smile etched in where the your mouth would be. It looks rather frightening.,False,True,False,False,False,False,True,0,0
+9805,mask,The mask is bright green and has a smile etched in where the your mouth would be. It looks rather frightening.,False,True,False,False,False,False,True,1,0
 9807,big overcoat lined with pockets,Whoever owned this coat was either a trinket salesman or a pack rat.,False,True,False,False,True,False,True,0,0
 9821,diamond ring,"The diamonds in the ring jiggle, as if they may fall out.",False,True,False,False,False,False,True,0,0
 9825,breastplate,The breastplate shines as though it was just polished.,False,True,False,False,False,False,False,1,0
@@ -329,7 +329,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9847,leather armor,The leather armor was cracked suggesting it had not been cared for for some time.,False,True,False,False,False,False,False,0,0
 9849,pocket watch,"this watch looks so good,and it will be expensive from the look.",False,True,False,False,False,False,True,0,0
 9859,filthy tunic,"The filthy tunic is grey, but it is covered in brown stains. Upon closer inspection, the stains smell like human vomit.",False,True,False,False,False,False,True,1,0
-9863,white wig,The wig is powdered white and rolled in curls on the end.,False,True,False,False,False,False,True,0,0
+9863,white wig,The wig is powdered white and rolled in curls on the end.,False,True,False,False,False,False,True,1,0
 9867,lace handkerchief,This beautiful handkerchief of fine tatted lace likely belongs to a lady of very high caliber.,False,True,False,False,False,False,True,0,0
 9869,cloak,"The dark cloak was black as night, and offered protection against the elements.",False,True,False,False,False,True,True,0,0
 9885,finest garments from far away lands,"The garments are made of the finest silks, hand embroidered with lace trim.",False,True,False,False,False,False,False,0,0
@@ -356,20 +356,20 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10005,fur pelts,The thick fur looks like it would keep you nice and warm in the winter.,False,True,False,False,False,False,True,0,0
 10007,headgear,"The headgear is new, gleaming with mesh metalwork.",False,True,False,False,False,False,False,0,0
 10009,ballgown,"Decorated in colorful buttons, the ballgown is yellow and flows beautifully on any woman who chooses to adorn it.",False,True,False,False,False,False,True,1,0
-10023,ruby ring,The ring shines with a subtle incandescent flame. Ruby symbolizes creativity.,False,True,False,False,False,False,True,0,0
+10023,ruby ring,The ring shines with a subtle incandescent flame. Ruby symbolizes creativity.,False,True,False,False,False,False,True,1,0
 10027,long flowy white garment,The garment flowed like the wind in the spring.,False,True,False,False,False,False,False,1,0
 10035,lab apron,The apron is dirty and covered in strange chemicals,False,True,False,False,False,False,True,0,0
 10047,lightweight sash,"The sash was very light weight and silk, it was dyed a red color with bits of purple mixed in a pattern, it looked to be of very high quality.",False,True,False,False,False,False,True,0,0
 10051,long simple skirt,"A plain skirt made of cotton, the type a peasent would wear.",False,True,False,False,False,False,True,0,0
 10061,jewelry and hair decorations,The decorations are shiny gems and golden charms that are used to adorn the hair and body.,False,True,False,False,False,False,False,0,0
-10063,hoe,"The hole has a splintered handle, and the head is caked with crumbling, drying mud.",False,True,False,False,False,False,True,0,0
+10063,hoe,"The hole has a splintered handle, and the head is caked with crumbling, drying mud.",False,True,False,False,False,False,True,1,0
 10069,converse sneakers,The slippers are out of place and appear to be of an era that has not yet come.  They bare the image of a star on the sides.,True,True,False,False,False,False,True,0,0
 10079,shoes of cloth of gold,"Run your fingers over the cloth, and you can feel how well crafted these golden shoes really are. The stitches are tight and the soles are sturdy.",False,True,False,False,False,False,True,0,0
 10081,velvet waistcoat,A proper gentleman's accessory. You can't imagine wearing this waistcoat without matching it to a proper pair of trousers.,False,True,False,False,False,False,True,1,0
 10095,long flowing shirt dress,The piece of clothing was light cotton and could have been a night dress.,False,True,False,False,False,False,True,0,0
 10099,animal skins,The animal skins were finely tanned and she wore them with pride.,True,True,False,False,False,True,True,0,0
 10105,leather boots,The leather boots helps to prevent a harmful inscet,False,True,False,False,True,False,False,0,0
-10109,gold chains,Such a simple gold chain can make such a big fashion statement. You're nearly positive it'd take a year's wages to purchase such a thing.,False,True,False,False,False,False,True,0,0
+10109,gold chains,Such a simple gold chain can make such a big fashion statement. You're nearly positive it'd take a year's wages to purchase such a thing.,False,True,False,False,False,False,True,1,0
 10113,sunglasses,"A pair of standard metal and glass spectacles, but enchanted to dim the sun's rays. The marvels of magic never cease to amaze you.",False,True,False,False,False,False,True,0,0
 10121,thick leather belt,A fashionable yet thick and sturdy belt. Made of genuine leather by the town tanner.,True,True,False,False,False,False,True,0,0
 10127,brazier,The brazier looks to be made of fine silk,False,True,False,False,False,False,True,0,0
@@ -400,7 +400,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10289,fashionable sneakers,The sneaker looks to be made from cheap leather and worn by peasants,False,True,False,False,False,False,False,0,0
 10297,green tunic,"The green tunic is stained with sweat and dirt, and there are holes in one of the arms.",False,True,False,False,False,False,True,0,0
 10307,rope belt,A belt made of rope works to hold up pants.,False,True,False,False,False,False,True,0,0
-10321,long purple coat trimmed in ermine,"This coat seems made for royalty. The ermine denotes a rare type of fur, expensive.",False,True,False,False,False,False,False,0,0
+10321,long purple coat trimmed in ermine,"This coat seems made for royalty. The ermine denotes a rare type of fur, expensive.",False,True,False,False,False,False,False,2,0
 10331,white robes,The white robe glistens white and is long in stature.,False,True,False,False,False,False,True,0,0
 10337,collar,"A collar that has been worn by an animal. It was slightly worn, but still useable.",False,True,False,False,False,False,True,0,0
 10341,royal insignia,The royal insignia is purple is color and shines in the light,False,True,False,False,False,False,True,0,0
@@ -418,8 +418,8 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10407,worn shoes,The soles on this pair of worn shoes are nearly see through. They've certainly covered some miles in their time.,False,True,False,False,True,False,True,0,0
 10417,ragged neck chain,"While it may not be pretty, this ragged chain is made of silver and gold.",False,True,False,False,False,False,False,0,0
 10419,pointed hat,A pointed hat to protect you from the harsh sun or just to look good in.,False,True,False,False,False,False,True,0,0
-10425,lace cap,The lace cap sparkled in the light.,False,True,False,False,False,False,False,0,0
-10427,small coat,The coat is quite small and tattered. You certainly will not be able to wear the coat given its size.,False,True,False,False,False,False,False,0,0
+10425,lace cap,The lace cap sparkled in the light.,False,True,False,False,False,False,False,1,0
+10427,small coat,The coat is quite small and tattered. You certainly will not be able to wear the coat given its size.,False,True,False,False,False,False,False,1,0
 10441,slippers,The silk of the slipper is embroidered with flowers and birds. It would be ruined if it were worn outside.,False,True,False,False,False,False,True,1,0
 10443,torn leather clothing,The clothing is leathery brown and tattered from years of use.,False,True,False,False,False,False,True,0,0
 10445,blanket,The blanket is large and purple in color.,False,True,False,False,False,False,True,0,0
@@ -428,7 +428,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10457,loin cloth,"Just a scrap, the cloth would barely cover anything.",False,True,False,False,False,False,False,0,0
 10467,dirty shirt,The woolen shirt is stained with blood and has holes in it.,False,True,False,False,False,False,True,0,0
 10471,shiny rings,The shiny ring is made of gold and jewels. Only the wealthy could afford such an item.,False,True,False,False,False,False,True,0,0
-10473,shirt,"The shirt is worn and tattered, but could still be used to cover up.",False,True,False,False,False,False,True,0,0
+10473,shirt,"The shirt is worn and tattered, but could still be used to cover up.",False,True,False,False,False,False,True,1,0
 10491,skull cap,"A common, but itchy, head protector for the farmers out working the fields. Made of burlap or other fabric scraps, this skull cap will protect your scalp from the midday sun.",False,True,False,False,False,False,True,0,0
 10505,sack,"The sack is weathered and worn, showing signs of many years of use.",False,True,False,False,True,False,True,0,0
 10515,wings of opulence,The wing has a slight sheen to it. Perhaps it is imbued with some power...,False,True,False,False,False,False,False,0,0
@@ -444,7 +444,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10573,badge of honor,The badge of honor glimmers gold to the eye.,False,True,False,False,False,False,True,0,0
 10575,metal belt,Six loops sit on this belt designed with a knight's comfort in mind.,False,True,False,False,False,False,True,0,0
 10579,boots,The bottom of the boot sunk into the mud like it was quicksand.,True,True,False,False,False,False,True,0,0
-10587,soleless shoes,The shoe was torn from the bottom and looks as if it had been worn for many years,False,True,False,False,False,False,False,1,0
+10587,soleless shoes,The shoe was torn from the bottom and looks as if it had been worn for many years,False,True,False,False,False,False,False,2,0
 10595,silk tunic,The soft material of the tunic is quite soothing to the touch.,False,True,False,False,False,False,True,0,0
 10597,hooded leather cape,"The cape is torn and covered in dirt, possibly from being used in combat",False,True,False,False,False,False,True,1,0
 10599,coarse work clothes,"The clothes are coarse and rugged, not comfortable but durable for the wear and tear of the daily job.",False,True,False,False,False,False,True,0,0
@@ -452,8 +452,8 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10613,maid outfit,The outfit looks very soft and seems to be made from velvet,False,True,False,False,False,False,True,0,0
 10617,fancy blouse,The blouse appears to have belonged to someone of significant importance given the materials.,False,True,False,False,False,False,False,0,0
 10619,black cloak,The cloak appears as a well worn but still well loved article of clothing; its' black color meant to conceal the wearer in shadows or the black of night.,False,True,False,False,False,False,True,0,0
-10621,white petticoat,The petticoat's white body was absolutely spotless.,False,True,False,False,False,False,True,0,0
-10627,chain mesh sleeves,The sleeves appear to be crafted from a heavy chain mesh for protection.,False,True,False,False,False,False,True,0,0
+10621,white petticoat,The petticoat's white body was absolutely spotless.,False,True,False,False,False,False,True,1,0
+10627,chain mesh sleeves,The sleeves appear to be crafted from a heavy chain mesh for protection.,False,True,False,False,False,False,True,1,0
 10645,belt with pouch,The belt with pouch was tightened around the knight's waist as he prepared for battle.,False,True,False,False,True,False,True,0,0
 10647,cloak,The cloak has the finest jewels embedded on it.,False,True,False,False,False,False,True,0,0
 10655,chainmail,The chainmail seems to be rusty and damaged from battle,False,True,False,False,False,False,True,0,0
@@ -471,7 +471,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10701,slacks,The slack is long and red with gold embroidery.,False,True,False,False,False,False,True,0,0
 10713,ancient armor,The armor looks to be from ages past.,False,True,False,False,False,False,True,0,0
 10715,draped clothing of deep colors,"The garment is dyed a myriad of rich hues - purple, red, green, blue - and drapes down in modest folds.",False,True,False,False,False,False,True,1,0
-10721,leather gloves,The gloves are leathery and dark brown to the eye.,False,True,False,False,False,False,True,0,0
+10721,leather gloves,The gloves are leathery and dark brown to the eye.,False,True,False,False,False,False,True,1,0
 10723,dead king's crown,The rusted crown of a long dead king. A powerful presence can be felt when it is held.,False,True,False,False,True,False,True,0,0
 10727,cowl,The cowl is tattered and worn but serves it's purpose as a covering.,False,True,False,False,False,False,True,1,0
 10731,red silk pants,"The red silk pants are threadbare, with strings hanging loose.",False,True,False,False,False,False,True,0,0
@@ -490,7 +490,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10807,clothes,The clothes appears to be made of cotton and embedded with the royal emblem,False,True,False,False,False,False,False,0,0
 10813,big neck chain,The chain is bulky and heavy with wear from age.,False,True,False,False,False,False,True,0,0
 10817,white dress pants,These white dress pants stain very easily.,False,True,False,False,False,False,True,0,0
-10821,sun bleached jacket,An old jacket that someone left out in the sun for far too long. There is no way to know it's original color.,False,True,False,False,True,False,True,0,0
+10821,sun bleached jacket,An old jacket that someone left out in the sun for far too long. There is no way to know it's original color.,False,True,False,False,True,False,True,1,0
 10837,ragged tunic,There is a tunic but it is ripped and torn.,False,True,False,False,False,False,True,0,0
 10841,garments with pockets,The garment featured lots of space and many compartments with a glimmering purple color.,False,True,False,False,False,False,False,0,0
 10843,cotton clothing,The clothing is lush and fluffy with cotton fabric,False,True,False,False,False,False,True,0,0
@@ -526,14 +526,14 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 11039,singed sleeves,The sleeve has burns and is tattered and worn.,False,True,False,False,False,False,False,0,0
 11059,armor,"It looks like this armor hasn't seen battle in many, many years judging from the thick layer of dust you see on it.",False,True,False,False,False,False,False,0,0
 11063,rusted helmet,The helmet is old and silver with bouts of red rust along it.,True,True,False,False,False,False,True,0,0
-11065,royal robe,"The royal robe is a luscious violet color, made from a soft yet durable material.",False,True,False,False,True,False,True,0,0
+11065,royal robe,"The royal robe is a luscious violet color, made from a soft yet durable material.",False,True,False,False,True,False,True,1,0
 11067,mask,This wooden mask is worn smooth on the back from rubbing against the wearer's face. The bright white paint on the front contrasts with the oak for a striking effect.,False,True,False,False,False,False,False,0,0
 11089,torn clothes,The cloth is so badly deteriorated that it could hardly be worn anymore.,False,True,False,False,False,False,True,0,0
 11101,sturdy leather boots,The boot is quite sturdy given its thick leather construction.,False,True,False,False,False,False,True,0,0
 11115,tattered tunic,The tattered tunic is in such poor condition that you can barely make out the original shape of the tunic.,False,True,False,False,True,False,True,0,0
 11125,jewels,"the jewels are usually expensive, a precious stone, typically a single crystal or piece of a hard lustrous or translucent mineral cut into shape with flat facets or smoothed and polished for use as an ornament.",False,True,False,False,False,False,True,0,0
 11127,ratty pants,The pant faintly smells of rum and is in poor condition.,False,True,False,False,True,False,True,0,0
-11131,wizard hat,"The wizard hat, although grey in color, seems to emanate a white aura from it's wide brim to the very tip of it's pointed top.",False,True,False,False,False,False,True,0,0
+11131,wizard hat,"The wizard hat, although grey in color, seems to emanate a white aura from it's wide brim to the very tip of it's pointed top.",False,True,False,False,False,False,True,1,0
 11135,red jacket,The jacket is red and embedded with the royal emblem,False,True,False,False,False,False,True,1,0
 11137,necklace from bones,This enchanted necklace was made from the bones of an ancient dragon.,False,True,False,False,True,False,True,0,0
 11143,bulletproof vest,"The item of clothing was bizarre and made of a strange material. It could best be described as a vest, but heavy and cumbersome.",True,True,False,False,False,False,True,0,0
@@ -626,7 +626,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 11623,fancy pants,"The pant is long and warm, colored blue.",False,True,False,False,False,False,True,0,0
 11637,raggedy clothes,The raggedy clothes looks dirty and smells of rotten milk,False,True,False,False,False,False,False,1,0
 11645,silk scarf,"The scarf of the highest quality silk and must have been made in a land far, far away.",False,True,False,False,False,False,True,0,0
-11653,thin white robe,This robe is soft and nearly see through; designed to be worn to bed.,False,True,False,False,False,False,False,0,0
+11653,thin white robe,This robe is soft and nearly see through; designed to be worn to bed.,False,True,False,False,False,False,False,1,0
 11661,pants,A pair of leather breeches. Good for hiding one's shame.,False,True,False,False,False,False,False,0,0
 11663,ripped shirt,The precise rips on the back of the shirt show what seems to be a tailoring work in progress.,False,True,False,False,False,False,True,0,0
 11695,tiny shoes,usually the baby use tiny shoes,False,True,False,False,False,False,True,0,0
@@ -634,7 +634,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 11707,cross necklace encrusted with rubies,A small golden cross dangles elegantly from a necklace of shining rubies.,False,True,False,False,False,False,True,0,0
 11709,furs,"The fur is rich, luscious and soft - perfect for a lavish occasion.",False,True,False,False,False,False,True,0,0
 11711,crown,The crown is made of gold and embedded with rare jewels,False,True,False,False,False,False,True,0,0
-11717,gold decorations,The gold decorations glistened in the sunlight highlighting the shine of the metal.,False,True,False,False,True,False,True,0,0
+11717,gold decorations,The gold decorations glistened in the sunlight highlighting the shine of the metal.,False,True,False,False,True,False,True,1,0
 11721,wrinkled and worn pointed hat,"The hat is old, battered, and overly creased.",False,True,False,False,False,False,True,0,0
 11729,cotton tunic,"The tunic is soft to the touch, and would probably be quite comfortable.",False,True,False,False,False,False,False,0,0
 11735,dark sunglasses,The glasses are of dark lenses that have been enchanted to deflect the rays of the sun from penetrating them.,False,True,False,False,False,False,True,0,0
@@ -658,7 +658,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 11843,wet fur,You're pretty positive this is the source of that wet dog smell you've been sniffing. This fur must still be fairly fresh.,False,True,False,False,False,False,True,0,0
 11849,ragged shirt,The shirt is so tattered and ragged that it will barely stay on the wearer's shoulders.,False,True,False,False,False,False,True,0,0
 11851,gilt sash of red,Good condition with the color remaining bright. Accompanied by a officers bullion sword knot and short black brush hackle.,False,True,False,False,False,False,False,1,0
-11863,white lab coat with many pockets,"this coat looks stained with blood but seems comfortable, whoever wore this before was strong",False,True,False,False,True,False,True,0,0
+11863,white lab coat with many pockets,"this coat looks stained with blood but seems comfortable, whoever wore this before was strong",False,True,False,False,True,False,True,1,0
 11867,tweed pants,The pant is deep blue in hue and long and tattered.,False,True,False,False,False,False,True,0,0
 11869,tabard,"Tabard is made of off-white medium cotton with black trim, closed at the sides with cotton strings.",False,True,False,False,False,False,False,2,0
 11871,bonnet,"This bonnet will keep the sun out of your face and the pests out of your hair, if you don't mind the wide brim in your vision.",False,True,False,False,False,False,True,0,0

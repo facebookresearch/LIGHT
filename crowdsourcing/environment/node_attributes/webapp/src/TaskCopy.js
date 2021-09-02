@@ -90,7 +90,7 @@ const Copy ={
                         },
                         {
                             stepCopy: 'Check the box of each attribute that applies to the selection item next to it. The form will be completed when you have assigned the relevant attributes to the entire selection.',
-                            stepImg: AttributeChecklist2
+                            stepImg: AttributeChecklist3
                         }
                     ]
                 },

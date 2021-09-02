@@ -8,9 +8,9 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 5539,candy,The candy is hard and shiny on the outside and made from sweet sugar and honey.,False,False,True,False,False,False,True,0,0
 5563,beer glass,The worn out beer glass is chipped around the bottom and a bit foggy to see through.,False,False,False,True,False,False,True,0,0
 5569,ingredients,The ingredient that causes the strong smell is unknown to you.,False,False,True,True,False,False,True,0,0
-5625,meat,"As if fresh from the butcher shop, the meat is a vibrant blood red, and would surely make for a great meal once cooked.",False,False,True,False,False,False,True,0,0
+5625,meat,"As if fresh from the butcher shop, the meat is a vibrant blood red, and would surely make for a great meal once cooked.",False,False,True,False,False,False,True,2,0
 5749,small pool of water,the water is clean and safe for drinking.,False,False,False,True,False,True,False,1,0
-5755,jug of water,"A heavy vat made of clay, used to store water.",False,False,False,True,True,False,True,0,0
+5755,jug of water,"A heavy vat made of clay, used to store water.",False,False,False,True,True,False,True,1,0
 5823,moldy bread,The bread is moldy and is littered with green and black spots.,True,False,True,False,False,False,True,2,0
 5973,red wine,The wine is a deep shade of red.,False,False,False,True,False,False,False,1,0
 6073,coconuts,"The coconut is larger than most coconuts, and the milk can be heard sloshing around inside it.",False,False,True,True,False,False,True,0,0
@@ -22,14 +22,14 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6237,small lake,The lake is a bit murky in terms of its waters but seems to be mostly calm.,False,False,False,True,True,False,False,2,0
 6241,honeysuckle that was allowed to climb the garden wall,"The honeysuckle is growing up the garden wall. It smells of sweet nectar, its white petals tempting you to pluck it off its green vine and eat it.",False,False,True,False,False,False,True,0,0
 6271,tropical bird,The tropical bird is brightly colored with a simple pattern.,False,False,True,False,False,False,True,0,0
-6275,wildlife,"Exoitc wildlife surrounds the castle, kept as pets for the kings viewing pleasure",False,False,True,False,False,False,False,0,0
+6275,wildlife,"Exoitc wildlife surrounds the castle, kept as pets for the kings viewing pleasure",False,False,True,False,False,False,False,1,0
 6315,large and well stocked wine rack,The rack is being used to store an extensive collection.,True,False,False,True,False,True,False,0,0
 6319,lake,"The lake is full of fish and other life, and as you look upon it, you cann't help but marvel at its beauty.",False,False,False,True,False,False,False,0,0
 6369,turquoise color water,the turqoise colored water is not quite transparent. it may house a creature that is not currently visible,False,False,False,True,False,False,False,0,0
 6377,crabs,Look at those beautiful crabs! That would make a tasty dinner,False,False,True,False,False,False,True,0,0
 6381,water wells,"The well is deep and dark; a cool breeze rises up from its depths.  Looking down, you can see the gray slime that has formed on its close-fitting stone sides.",False,False,False,True,True,False,False,1,0
 6391,snakes,"The snake is full of bright green scales interlaced with black and dark brown ones. When startled, the snake's tail curls up like that of a pig.",False,False,True,False,False,False,True,0,0
-6423,roasting meat,The meat smells as though it were freshly cooked over a fire.,False,False,True,False,False,False,True,0,0
+6423,roasting meat,The meat smells as though it were freshly cooked over a fire.,False,False,True,False,False,False,True,1,0
 6425,wine,"A coarse, woody drink, young and unrefined.  Purple in color and cheap to buy",False,False,False,True,False,False,True,1,0
 6427,fruit,"The piece of fruit is slightly overripe and produces a mild tangy scent. When pressed, you can feel the soft insides give.",False,False,True,False,False,False,True,1,0
 6527,plant matter,The plant matter is a vivid green and extremely moist,False,False,True,False,False,False,False,1,0
@@ -55,17 +55,17 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 7157,chocolate milk,"The glass of chocolate milk has a slight film on top, as though it has been sitting out for a long time.",False,False,False,True,False,False,True,1,0
 7179,medicine,"The is so much medicine, you can barely pick which one you need. Perhaps you don't need any of it....",True,False,True,True,False,False,True,0,0
 7239,potions and cures for sale,There are potions and cures for sale every morning in the market.,False,False,False,True,False,False,False,0,0
-7295,algae,That algae may look harmless until it starts eating your flesh.,False,False,True,True,False,False,True,0,0
+7295,algae,That algae may look harmless until it starts eating your flesh.,False,False,True,True,False,False,True,1,0
 7405,"plants besides the trees, like bushes and grass.",The plant was very colorful and came in many shapes and sizes.,False,False,True,False,False,False,True,0,0
 7469,barrels of beer,The beer is a rich amber ale that smells of hops.,False,False,False,True,False,False,True,0,0
 7653,vegetable or plant,"This plant is long and hard, growing in a field. It is only edible when boiled.",False,False,True,False,False,False,True,0,0
-7655,low grass,"The grass, no doubt, required many sheep to keep it low.",False,False,True,False,False,False,False,0,0
+7655,low grass,"The grass, no doubt, required many sheep to keep it low.",False,False,True,False,False,False,False,1,0
 7689,meals,The meal was amouthwatering roasted chicken with cheese and bread as the sides.,False,False,True,False,False,False,True,0,0
 7729,product,This product is unque and a great peice of art.,True,False,True,True,False,False,True,0,0
 7751,thick water,The water is dark and murky. Drinking it would be dangerous.,False,False,False,True,False,False,False,0,0
 7755,corn,"The corn is tasty and delicious, it is big and vast.",False,False,True,False,False,False,True,0,0
-7757,sheep,"The sheep is fluffy and healthy looking, it is and chewing its grass happily in the sun.",False,False,True,False,False,False,False,1,0
-7763,dozens and dozens of brim fish,"The fish had a beautiful shine of red, radiating from it's scales.",False,False,True,False,False,False,True,0,0
+7757,sheep,"The sheep is fluffy and healthy looking, it is and chewing its grass happily in the sun.",False,False,True,False,False,False,False,2,0
+7763,dozens and dozens of brim fish,"The fish had a beautiful shine of red, radiating from it's scales.",False,False,True,False,False,False,True,1,0
 7767,lush green vegetation,The plant is lush and well kept and remains fruitful to this day.,False,False,True,False,False,False,True,0,0
 7775,roots,"The root grew so fast, you can see leaves starting to grow on it.",False,False,True,False,False,False,True,0,0
 7845,salt,"The salt is clean and white, looking more like a crystal than something to eat.",False,False,True,False,False,False,True,0,0
@@ -77,17 +77,17 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 7967,royal meals,The royal meal is lavish and full of luxury foods.,False,False,True,False,False,False,True,0,0
 8133,herd of sheep,The sheep is standing on a rock and surveying the field.,False,False,True,False,False,False,False,0,0
 8171,chicken,The chicken had a golden brown hue and was decorated with the finest vegetables that only fit for the King.,False,False,True,False,False,False,True,1,0
-8233,blood,This blood is bright red and warm. It smells as it permeates the land after a long battle.,False,True,False,True,False,False,True,1,0
+8233,blood,This blood is bright red and warm. It smells as it permeates the land after a long battle.,False,True,False,True,False,False,True,2,0
 8251,bugs flying,"With its wings moving rapidly, it is flying in circles.",False,False,True,False,False,False,True,0,0
 8279,small mammal,"The small mammals seem injured, it's possible they are being hunted.",False,False,True,False,False,False,False,0,0
-8311,banana,"Bright and yellow, this banana comes fresh from the tropics.",False,False,True,False,False,False,True,0,0
+8311,banana,"Bright and yellow, this banana comes fresh from the tropics.",False,False,True,False,False,False,True,1,0
 8313,coconut,The coconut is not yet ripe and will make one sick if eaten.,False,False,False,True,False,False,True,0,0
 8327,fancy dinners,The diner is comprised of several courses of hearty and delicious looking foods and drinks.,False,False,True,True,False,False,False,0,0
 8355,crackers,The cracker is over-seasoned with salt and is hard to eat,False,False,True,False,False,False,True,0,0
 8469,potions,The potion looks very dangerous.,True,False,False,True,False,False,True,0,0
 8475,monkeys,"The monkey is small, male and without a tail and cries pitifully when caged.",False,False,True,False,False,False,False,0,0
 8477,buzzing insects,The insect makes a loud buzzing noise as it rubs its wings together.,False,False,True,False,False,False,True,2,0
-8503,half-dozen coconuts,"The skin of the coconut is tough and stringy, its tender meat locked inside its tough shell.",True,False,True,True,False,False,True,0,0
+8503,half-dozen coconuts,"The skin of the coconut is tough and stringy, its tender meat locked inside its tough shell.",True,False,True,True,False,False,True,1,0
 8505,colorful lizard,It flickers its forked tongue like tasting the air.,False,False,True,False,False,False,False,0,0
 8515,beautiful seasonal flowers,"These seasonal flowers are tall and voluptuous. They are bright and warm yellow, and give off an inviting smell",False,False,True,False,False,False,True,1,0
 8583,herb garden,The herb garden is full of tasty herbs.,False,False,True,False,False,False,False,0,0
@@ -98,8 +98,8 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 8659,spiders,"The spider itself is bigger than any toddler, and its fangs as long as a grown man's forearm.",False,False,True,False,False,False,False,1,0
 8671,sea turtles,"The large sea turtle had eyes like an old warrior; wrinkled and weary from battle, but wise to the malice within men's hearts.",False,True,True,False,False,False,False,0,0
 8673,clams,This clam is so shiny and unbelievably sparkly you can see it from far,False,False,True,False,False,False,True,1,0
-8697,dripping water,"The water is murky and dark. It drips from the pipe into a bog, making a small echo with each drop.",False,False,False,True,False,False,False,0,0
-8703,grog,You can already tell this grog is much more bitter than you'd like.,False,False,False,True,False,False,True,0,0
+8697,dripping water,"The water is murky and dark. It drips from the pipe into a bog, making a small echo with each drop.",False,False,False,True,False,False,False,1,0
+8703,grog,You can already tell this grog is much more bitter than you'd like.,False,False,False,True,False,False,True,1,0
 8705,citrus fruit,"The citrus fruit still has a few leaves attached to the stem, and it gives off a pleasing scent.",False,False,True,False,False,False,True,0,0
 8707,fresh coconuts,The coconut is fresh and smells delicious.,False,False,True,False,False,False,True,0,0
 8719,sweetmeats,"The sweetmeat is an oddity, it is soft and it's taste pleasurable.",False,False,True,False,False,False,True,0,0
@@ -141,10 +141,10 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9405,oils,"Slimy extract of nut, seed or if you are lucky, a mushroom.",False,False,False,True,False,False,True,1,0
 9409,catch,You brought back good catches.,False,False,True,False,False,False,True,0,0
 9421,bits of straw,Thou straw was piled up as a mule's manure.,False,False,True,False,False,True,True,0,0
-9435,treats,The treat is a lozenge of hardened syrup. You think it would taste delicious.,False,False,True,False,False,False,True,0,0
+9435,treats,The treat is a lozenge of hardened syrup. You think it would taste delicious.,False,False,True,False,False,False,True,1,0
 9449,berries,A berry is the sweetest of treats - coming straight from nature!,False,False,True,False,False,False,False,1,0
 9475,carrot,This carrot is bright orange and the green top looks very fresh.,False,False,True,False,False,False,True,1,0
-9477,herbal tincture,On further inspection the herbal tincture had the King's coat of arms on the front and the container was of the finest glass in the kingdom.,False,False,False,True,False,False,True,1,0
+9477,herbal tincture,On further inspection the herbal tincture had the King's coat of arms on the front and the container was of the finest glass in the kingdom.,False,False,False,True,False,False,True,2,0
 9485,canteen,The canteen is well worn and has a chipped circular wooden base and a dark leather strap,False,False,False,True,False,False,True,0,0
 9487,half-eaten brains,The brain is slimy and jello-like. It smells of vomit and rotting flesh.,False,False,True,False,False,False,True,0,0
 9489,garlic,"The garlic has a strong aroma, but the taste, in small amounts, is extraordinary.",False,False,True,False,False,False,True,0,0
@@ -155,7 +155,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9593,orange,"The orange has a darkened peel, as if it has been here too long.",False,False,True,False,False,False,False,0,0
 9599,stale bread,"The stale bread has a whiff of mold, and it is rough to the touch.",False,False,True,False,False,False,True,0,0
 9667,animal test subject,The test subject looked emaciated and was shivering. It also was missing its left eye.,False,False,True,False,False,False,True,0,0
-9693,depiction of wheat crops,The depiction of wheat crop is that of a flowing ocean of amber.,False,False,True,False,False,False,True,0,0
+9693,depiction of wheat crops,The depiction of wheat crop is that of a flowing ocean of amber.,False,False,True,False,False,False,True,1,0
 9725,dog food,The food is made of leftover animal pieces mixed in a brown gravy.,False,False,True,False,False,False,True,0,0
 9763,tarts,The tart is made of strawberries and blueberries. It has been slightly burned from overcooking.,False,False,True,False,False,False,True,1,0
 9779,freshly grown carrots,Awesome that pretty carrots look very fresh and delicious to make a salad,False,True,True,False,False,False,True,0,0
@@ -163,7 +163,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9843,condiments,The brightly colored condiment adds some flavor to the dish,False,False,True,False,False,False,False,0,0
 9853,food rations,Your food rations are hardly a meal.,False,False,True,False,False,False,True,0,0
 9857,berries,The berry looks rotten and inedible.,False,False,False,True,False,False,True,0,0
-9877,chocolate,And the chocolate is usually reserved for the high classes and their appetites.,False,False,True,False,False,False,False,0,0
+9877,chocolate,And the chocolate is usually reserved for the high classes and their appetites.,False,False,True,False,False,False,False,1,0
 9881,fish,The fish does not have all of its scales scrubbed off; it has not been prepared to eat yet.,False,False,True,False,False,False,True,0,0
 9891,piece of cheese,The yellow piece of cheese is fresh and ready to be eaten,False,False,True,False,False,False,False,0,0
 9903,tomatoes,"The tomato was ripe, with a beautiful shade of orange-red.",False,False,True,False,False,False,True,1,0
@@ -173,11 +173,11 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9977,communion bread,"The communion bread, it is the greatest way to celebrate sacrifices that have been made!",False,False,True,False,False,False,False,1,0
 9997,dead bird,"Some people eat dead birds raw, but I prefer to cut them open and cook them over an open fire.",False,False,True,False,False,False,True,1,0
 10001,rabbit,The rabbit appears to be freshly killed and smoked.,False,False,True,False,False,False,False,0,0
-10011,cheese,This cheese is fragrant and will make a filling snack.,False,False,True,False,False,False,True,0,0
+10011,cheese,This cheese is fragrant and will make a filling snack.,False,False,True,False,False,False,True,1,0
 10033,potion supplies,The potion supplies are viscous and green.,False,False,False,True,True,False,False,0,0
 10043,jug of water,"The jug appeared ancient. Cracked and moldy, but held refreshing water.",False,False,False,True,True,False,True,0,0
-10045,cheese,The cheese looks less than fresh with several spots of mold beginning to form on it's sides.,False,False,True,False,False,False,True,0,0
-10111,thick blue ice,On the winter season thick blue ice formed over lake,False,False,False,True,True,False,False,0,0
+10045,cheese,The cheese looks less than fresh with several spots of mold beginning to form on it's sides.,False,False,True,False,False,False,True,1,0
+10111,thick blue ice,On the winter season thick blue ice formed over lake,False,False,False,True,True,False,False,1,0
 10137,piece of bread,"A stale, hard old piece of bread. Taking a bite might cost you a tooth.",False,False,True,False,False,False,True,0,0
 10163,toad,"The toad is a warty little creature and his appearance is very average, except for the eyes.  The eyes seem to hold the soul of a much wiser creature.",False,False,True,False,True,False,True,0,0
 10177,flask,"With a subtle smell of jasmine, this flask bubbles in response to being held.",False,False,False,True,False,False,True,0,0
@@ -185,7 +185,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10309,piece of bread,"This bread is old, stale, and inedible. there seems to be mold growing from it.",False,False,True,False,False,True,True,0,0
 10351,fish,"The market cart contained wet, shimmering fish, available for sale.",False,False,True,False,False,False,True,0,0
 10463,bottle of spirits,"This bottle is dusty, probably stored in an underground wine room. There's a cork in it.",False,False,False,True,False,False,False,1,0
-10591,drinks,"The drink fizzes and seems discolored. It does, however, smell delightful.",False,False,False,True,False,False,True,0,0
+10591,drinks,"The drink fizzes and seems discolored. It does, however, smell delightful.",False,False,False,True,False,False,True,1,0
 10717,raw meats,The meat is rotten and smells of expired eggs,False,False,True,False,False,False,False,0,0
 10739,wine,The wine smells of aromatic grapes,False,False,False,True,False,False,True,0,0
 10761,trail rations,The rations are a pint of wine and salted pork wrapped in a cheese cloth.,False,False,True,True,False,False,True,2,0
@@ -193,13 +193,13 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 10887,rotten apple,A rotten apple full of wrinkles and brown spots.,False,False,True,False,False,False,True,0,0
 10895,jar of mysterious fluid,The jar contains an unfamiliar liquid which gives off a sickly sweet scent and appears to glow in the dark.,False,False,False,True,True,False,True,0,0
 10897,potions,The sports player drank a health potions,False,False,False,True,False,False,False,0,0
-10933,bowl of soup,It was the most vile bowl of soup ever created,False,False,True,True,False,False,True,0,0
+10933,bowl of soup,It was the most vile bowl of soup ever created,False,False,True,True,False,False,True,1,0
 10959,moss,The moss was emerald in color and cool to his touch.,False,True,True,False,True,True,True,0,0
 10961,onions,The humble onion. Important for flavoring stews and keeping peasants alive through harsh winters.,False,False,True,False,False,False,True,0,0
 10975,sacramental bread,"The bread emitted a delicious, aromatic smell",False,False,True,False,False,False,False,0,0
 10979,goblet of wine,The goblet contains a rather dark wine. Perhaps it is more than just alcoholic...,False,False,False,True,True,False,True,0,0
 11017,magical forest flowers,"The flower graces the countryside, it's vibrant colors bringing beauty to an otherwise barren landscape.",False,False,True,False,False,False,True,0,0
-11069,herbs,"It seems to be a plant of some kind, an herb.",False,False,True,True,False,False,True,0,0
+11069,herbs,"It seems to be a plant of some kind, an herb.",False,False,True,True,False,False,True,1,0
 11075,water,"The water was cool and clear, something was special about this water, water isn't usually this clean, and it tastes like heaven.",False,False,False,True,False,False,False,0,0
 11093,meals,A warm and savory meal which fills the air with delicious aroma.,False,False,True,False,False,False,True,1,0
 11167,berries,"A juicy berry for eating, indistinguishable from the poisonous ones.",False,False,True,False,False,False,True,0,0
@@ -208,20 +208,20 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 11197,little flowers,The field is full of little flowers. The smell is magnificent and the sight is beautiful.,False,False,True,False,False,False,True,0,0
 11205,ale,The golden ale is the color of honey and tastes just as sweet.,False,False,False,True,False,False,True,0,0
 11209,whisky,"A finely aged mug of whisky does an adventurer good! This batch tastes of vanilla, and burns your throat a little as it goes down.",False,False,False,True,False,False,True,0,0
-11231,bread,The bread smells of fine wine and wheat,False,False,True,False,False,False,True,0,0
+11231,bread,The bread smells of fine wine and wheat,False,False,True,False,False,False,True,1,0
 11259,grass,"The cool, green grass stretched far and wide.",False,False,True,False,False,True,True,0,0
 11267,seaweed,"The beach is destroyed from the storm, there is seaweed every where.",False,False,True,False,False,False,True,0,0
 11273,skin potion,The skin potion can improve a body glowing,False,False,False,True,False,False,False,0,0
-11301,moldy piece of bread,The bread is disgusting and covered in blue mold. You would probably get sick if you were to eat it.,False,False,True,False,False,False,True,1,0
+11301,moldy piece of bread,The bread is disgusting and covered in blue mold. You would probably get sick if you were to eat it.,False,False,True,False,False,False,True,2,0
 11329,teapot,The teapot is large and smells delicious.,False,False,False,True,True,False,True,0,0
-11379,turkey leg,"A roasted delight, with a built in handle! The meat is tender in your mouth and filling in your stomach.",False,False,True,False,False,False,True,0,0
+11379,turkey leg,"A roasted delight, with a built in handle! The meat is tender in your mouth and filling in your stomach.",False,False,True,False,False,False,True,1,0
 11383,nuts,The nut is brown and strong. Its hard outer shell protects it from curious creatures.,False,False,True,False,False,False,True,1,0
 11417,food,It would take a desperate soul to eat this moldy food. Even the rats won't touch it.,False,False,True,False,False,False,True,1,0
 11425,ice,The ice is clear and mystical.,False,False,False,True,False,False,True,0,0
 11483,canteen,"This was a leather canteen, made by a craftmans hands and looked to be used heavily. It could hold a good amount of liquid too.",False,False,False,True,False,False,False,0,0
 11507,body of water,The body of water must be maintained in high level during summer,False,False,False,True,True,True,True,0,0
 11515,sea turtle,"The turtle is an almost ancient creature in itself, with a size and beat-up looking shell that speaks of the long life it has lived.",False,False,True,True,False,False,True,0,0
-11517,dead bodies,"The bodies are decomposing and stink of death, flies have begun to swarm around them.",False,False,True,False,True,True,True,1,0
+11517,dead bodies,"The bodies are decomposing and stink of death, flies have begun to swarm around them.",False,False,True,False,True,True,True,2,0
 11523,little mushrooms,The little mushrooms grew at the base of the largest trees in the forest.,False,False,True,False,False,False,True,0,0
 11535,dried blood,The blood is dried and crusty with a smell of iron.,False,False,True,False,False,False,False,0,0
 11541,leaves,The leaves are brown and crisp having fallen several months before.  They make a lovely crunching sound under foot.,False,True,True,False,False,True,True,1,0
