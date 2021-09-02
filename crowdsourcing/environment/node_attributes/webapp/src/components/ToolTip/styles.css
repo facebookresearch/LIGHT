@@ -1,5 +1,5 @@
+/* TOOL TIP STYLES*/
 
-
-#task-tooltip > .tooltip-inner {
-    width: 100%;
+.tooltip-inner {
+    max-width: 1000px !important;
 }

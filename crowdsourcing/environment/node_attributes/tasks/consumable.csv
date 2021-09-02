@@ -24,7 +24,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6271,tropical bird,The tropical bird is brightly colored with a simple pattern.,False,False,True,False,False,False,True,0,0
 6275,wildlife,"Exoitc wildlife surrounds the castle, kept as pets for the kings viewing pleasure",False,False,True,False,False,False,False,1,0
 6315,large and well stocked wine rack,The rack is being used to store an extensive collection.,True,False,False,True,False,True,False,0,0
-6319,lake,"The lake is full of fish and other life, and as you look upon it, you cann't help but marvel at its beauty.",False,False,False,True,False,False,False,0,0
+6319,lake,"The lake is full of fish and other life, and as you look upon it, you cann't help but marvel at its beauty.",False,False,False,True,False,False,False,1,0
 6369,turquoise color water,the turqoise colored water is not quite transparent. it may house a creature that is not currently visible,False,False,False,True,False,False,False,0,0
 6377,crabs,Look at those beautiful crabs! That would make a tasty dinner,False,False,True,False,False,False,True,0,0
 6381,water wells,"The well is deep and dark; a cool breeze rises up from its depths.  Looking down, you can see the gray slime that has formed on its close-fitting stone sides.",False,False,False,True,True,False,False,1,0
@@ -47,7 +47,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6833,mushrooms,the mushroom is sweet and eaten by many,False,False,True,False,False,False,True,0,0
 6855,animals,Common creatures that inhabit most land. Often hunted as food or kept as pets.,False,False,True,False,False,False,False,0,0
 6913,cows grazing,The cows grazing contently in the green field belied the fierce battle that was approaching.,False,False,True,False,False,False,False,1,0
-6989,babbling brook,The babbling brook flows gently over rocks. This brook supplies my horses and crops with water.,False,False,False,True,False,False,False,0,0
+6989,babbling brook,The babbling brook flows gently over rocks. This brook supplies my horses and crops with water.,False,False,False,True,False,False,False,1,0
 6997,medicines,"The medicine is a dark brown color, and looks like it tastes disgusting.",False,False,False,True,False,False,True,1,0
 7053,worms,"The worm is motionless and black, and you're not sure if it is still alive.",False,False,True,False,False,False,True,0,0
 7075,flasks,The small flasks contain a liquid that could only be described as intoxicating.,False,False,False,True,True,False,True,1,0
@@ -56,7 +56,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 7179,medicine,"The is so much medicine, you can barely pick which one you need. Perhaps you don't need any of it....",True,False,True,True,False,False,True,0,0
 7239,potions and cures for sale,There are potions and cures for sale every morning in the market.,False,False,False,True,False,False,False,0,0
 7295,algae,That algae may look harmless until it starts eating your flesh.,False,False,True,True,False,False,True,1,0
-7405,"plants besides the trees, like bushes and grass.",The plant was very colorful and came in many shapes and sizes.,False,False,True,False,False,False,True,0,0
+7405,"plants besides the trees, like bushes and grass.",The plant was very colorful and came in many shapes and sizes.,False,False,True,False,False,False,True,1,0
 7469,barrels of beer,The beer is a rich amber ale that smells of hops.,False,False,False,True,False,False,True,0,0
 7653,vegetable or plant,"This plant is long and hard, growing in a field. It is only edible when boiled.",False,False,True,False,False,False,True,0,0
 7655,low grass,"The grass, no doubt, required many sheep to keep it low.",False,False,True,False,False,False,False,1,0
@@ -83,7 +83,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 8311,banana,"Bright and yellow, this banana comes fresh from the tropics.",False,False,True,False,False,False,True,1,0
 8313,coconut,The coconut is not yet ripe and will make one sick if eaten.,False,False,False,True,False,False,True,0,0
 8327,fancy dinners,The diner is comprised of several courses of hearty and delicious looking foods and drinks.,False,False,True,True,False,False,False,0,0
-8355,crackers,The cracker is over-seasoned with salt and is hard to eat,False,False,True,False,False,False,True,0,0
+8355,crackers,The cracker is over-seasoned with salt and is hard to eat,False,False,True,False,False,False,True,1,0
 8469,potions,The potion looks very dangerous.,True,False,False,True,False,False,True,0,0
 8475,monkeys,"The monkey is small, male and without a tail and cries pitifully when caged.",False,False,True,False,False,False,False,0,0
 8477,buzzing insects,The insect makes a loud buzzing noise as it rubs its wings together.,False,False,True,False,False,False,True,2,0
@@ -145,7 +145,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9449,berries,A berry is the sweetest of treats - coming straight from nature!,False,False,True,False,False,False,False,1,0
 9475,carrot,This carrot is bright orange and the green top looks very fresh.,False,False,True,False,False,False,True,1,0
 9477,herbal tincture,On further inspection the herbal tincture had the King's coat of arms on the front and the container was of the finest glass in the kingdom.,False,False,False,True,False,False,True,2,0
-9485,canteen,The canteen is well worn and has a chipped circular wooden base and a dark leather strap,False,False,False,True,False,False,True,0,0
+9485,canteen,The canteen is well worn and has a chipped circular wooden base and a dark leather strap,False,False,False,True,False,False,True,1,0
 9487,half-eaten brains,The brain is slimy and jello-like. It smells of vomit and rotting flesh.,False,False,True,False,False,False,True,0,0
 9489,garlic,"The garlic has a strong aroma, but the taste, in small amounts, is extraordinary.",False,False,True,False,False,False,True,0,0
 9511,rotten flesh,The rotten flesh smells of death and is covered in flies.,False,False,True,False,False,False,True,0,0
@@ -158,7 +158,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9693,depiction of wheat crops,The depiction of wheat crop is that of a flowing ocean of amber.,False,False,True,False,False,False,True,1,0
 9725,dog food,The food is made of leftover animal pieces mixed in a brown gravy.,False,False,True,False,False,False,True,0,0
 9763,tarts,The tart is made of strawberries and blueberries. It has been slightly burned from overcooking.,False,False,True,False,False,False,True,1,0
-9779,freshly grown carrots,Awesome that pretty carrots look very fresh and delicious to make a salad,False,True,True,False,False,False,True,0,0
+9779,freshly grown carrots,Awesome that pretty carrots look very fresh and delicious to make a salad,False,True,True,False,False,False,True,1,0
 9809,can of herbs,The herb is in good condition and ready to be mixed into a concoction,False,False,True,True,False,False,False,1,0
 9843,condiments,The brightly colored condiment adds some flavor to the dish,False,False,True,False,False,False,False,0,0
 9853,food rations,Your food rations are hardly a meal.,False,False,True,False,False,False,True,0,0
@@ -166,7 +166,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9877,chocolate,And the chocolate is usually reserved for the high classes and their appetites.,False,False,True,False,False,False,False,1,0
 9881,fish,The fish does not have all of its scales scrubbed off; it has not been prepared to eat yet.,False,False,True,False,False,False,True,0,0
 9891,piece of cheese,The yellow piece of cheese is fresh and ready to be eaten,False,False,True,False,False,False,False,0,0
-9903,tomatoes,"The tomato was ripe, with a beautiful shade of orange-red.",False,False,True,False,False,False,True,1,0
+9903,tomatoes,"The tomato was ripe, with a beautiful shade of orange-red.",False,False,True,False,False,False,True,2,0
 9923,wolf treats,"This treat looks like it's made of some kind of dried meat.  While it's probably not made for humanoid consumption, you could probably eat it, in a pinch.",False,False,True,False,False,False,True,2,0
 9927,pumpkins,"The pumpkin looks fresh and tasty, it has a live orange color and its huge.",False,False,True,False,False,False,True,0,0
 9941,tea,this tea must taste so delicious,False,False,False,True,False,False,False,0,0
@@ -218,7 +218,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 11383,nuts,The nut is brown and strong. Its hard outer shell protects it from curious creatures.,False,False,True,False,False,False,True,1,0
 11417,food,It would take a desperate soul to eat this moldy food. Even the rats won't touch it.,False,False,True,False,False,False,True,1,0
 11425,ice,The ice is clear and mystical.,False,False,False,True,False,False,True,0,0
-11483,canteen,"This was a leather canteen, made by a craftmans hands and looked to be used heavily. It could hold a good amount of liquid too.",False,False,False,True,False,False,False,0,0
+11483,canteen,"This was a leather canteen, made by a craftmans hands and looked to be used heavily. It could hold a good amount of liquid too.",False,False,False,True,False,False,False,1,0
 11507,body of water,The body of water must be maintained in high level during summer,False,False,False,True,True,True,True,0,0
 11515,sea turtle,"The turtle is an almost ancient creature in itself, with a size and beat-up looking shell that speaks of the long life it has lived.",False,False,True,True,False,False,True,0,0
 11517,dead bodies,"The bodies are decomposing and stink of death, flies have begun to swarm around them.",False,False,True,False,True,True,True,2,0

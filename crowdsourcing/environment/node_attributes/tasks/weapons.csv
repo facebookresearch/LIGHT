@@ -58,7 +58,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 5737,quill,"The quill is old and worn, it looks like it fell long ago and has lost its color.",True,False,False,False,False,False,True,0,0
 5739,swords,"This sword looks to be quite sharp, and, while it doesn't look very flashy, seems to be well balanced.  There is a faint scent of oil from it to keep it from rusting.",True,False,False,False,False,False,True,0,0
 5741,longbow,Many a great knight with high aspirations has been felled by the swift arrow from a humble longbow.,True,False,False,False,False,False,True,0,0
-5743,horse bows,The bow looks worn from a lot of use.,True,False,False,False,False,False,True,0,0
+5743,horse bows,The bow looks worn from a lot of use.,True,False,False,False,False,False,True,1,0
 5745,crossbows,There are several notches on the crossbow to mark how strong it can be.,True,False,False,False,False,False,True,0,0
 5747,shields,The shield is heavy and large.  It has the crest of the king on it.,True,False,False,False,False,False,True,0,0
 5765,serving dishes,"The dish is made of a fine porcelain, patterned with roses and swords.   A gold inlay around the rim adds a touch of majesty to an otherwise commonplace item.",True,False,False,False,False,True,True,1,0
@@ -141,7 +141,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6979,money,"The small, tarnished coin is imprinted with a seal you don't recognize.",True,False,False,False,False,False,True,0,0
 7021,torch,The torch is stained brown from all the times it was lit.,True,False,False,False,False,False,True,0,0
 7027,rake,The rake is well worn and missing some of its long grabbing teeth.,True,False,False,False,False,False,True,0,0
-7085,rusty bars,"Look at those rusty bars, doesn't look like anyone has been using them for a while.",True,False,False,False,False,False,False,0,0
+7085,rusty bars,"Look at those rusty bars, doesn't look like anyone has been using them for a while.",True,False,False,False,False,False,False,1,0
 7093,prayer book,The book contains many prayers. It has many pages and filled with many words on each.,True,False,False,False,False,False,True,0,0
 7101,tree branches,"The tree branch is wet and rotting. It's so thick, you can barely wrap your hand around it.",True,False,False,False,False,False,True,0,0
 7111,quill,The quill is long and black and writes smoothly. It is smooth to touch and the feather is soft.,True,False,False,False,False,False,True,0,0
@@ -328,7 +328,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9677,musical instrument,The instrument has 6 chords and its made out of wood. It looks old and has stains of wine on the top.,True,False,False,False,False,False,True,0,0
 9679,type of handcuff,These restraints would make sure whoever they hold captive could not get away.,True,False,False,False,False,False,False,0,0
 9701,plate mail,The plate mail was old and rusty but still strong.,True,False,False,False,False,False,False,0,0
-9705,chopping ax,The ax is good for chopping firewood.,True,False,False,False,False,False,True,0,0
+9705,chopping ax,The ax is good for chopping firewood.,True,False,False,False,False,False,True,1,0
 9715,acid,The acid seems as if it could melt through wood and stone,True,False,False,False,False,False,False,0,0
 9717,mighty hammer,"The hammer is a heavy item that has a wooden, beaten up handle. It is used hard by workers to build things.",True,False,False,False,False,False,True,0,0
 9759,gold candle fixtures,The fixture in inlayed with gold and has a place for a candle.,True,False,False,False,True,True,False,0,0
@@ -341,7 +341,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9827,spade,the spade is old and rusty,True,False,False,False,False,False,True,0,0
 9893,cages,The cage is made for an animal of medium size such as a coyote or fox. The metal looks used but seems to have been cared for.,True,False,False,False,True,False,True,0,0
 9895,lures,The lure is a metal object used in the sport of fishing. It is a metal hook or a similar metal object used to attract the fish to be caught.,True,False,False,False,True,True,True,0,0
-9907,hail stones,The stone is created from hail so it is big and round.,True,False,False,False,False,False,True,0,0
+9907,hail stones,The stone is created from hail so it is big and round.,True,False,False,False,False,False,True,1,0
 9925,ball and chain,"The ball and chain has a very long chain, allowing an extended reach.",True,False,False,False,False,False,True,0,0
 9949,scrap of metal that has been wielded into a mini sword,"Though it was once a scrap of metal, this is now a fine mini sword.",True,False,False,False,False,False,True,0,0
 9973,scraper,The scraper is made of rusty iron.,True,False,False,False,False,False,True,0,0

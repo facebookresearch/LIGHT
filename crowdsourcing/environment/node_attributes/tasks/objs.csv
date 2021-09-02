@@ -378,7 +378,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 5761,candle pieces,"The candle is broken in several places, the pieces littering the floor.  The bits are coated with blobs of still-warm melted wax.",False,False,False,False,False,False,True,0,0
 5763,set of candle sticks,"With dripping wax solidified on the side, the candle stick was clearly in heavy use.",False,False,False,False,False,False,False,0,0
 5765,serving dishes,"The dish is made of a fine porcelain, patterned with roses and swords.   A gold inlay around the rim adds a touch of majesty to an otherwise commonplace item.",True,False,False,False,False,True,True,0,0
-5767,goblet,Who would drink out of this golden goblet? It has a whole in it and it's so dirty,False,False,False,False,False,False,True,0,0
+5767,goblet,Who would drink out of this golden goblet? It has a whole in it and it's so dirty,False,False,False,False,False,False,True,1,0
 5769,twine,Twine can be used best when tying things together.,False,True,False,False,False,False,True,0,0
 5771,vine,The vine is long and reaches out.  The tendrils curl every way.,False,False,False,False,False,False,False,0,0
 5773,branches,The branch is thin and thorny. It is brittle to the touch.,False,False,False,False,False,False,True,0,0
@@ -673,7 +673,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6351,paper,The paper is torn and yellowing around the edges.,False,False,False,False,False,False,True,0,0
 6353,pike,"The pike's handle is scratched from years of battles, there is a stain of blood on it's tip.",True,False,False,False,False,False,True,0,0
 6355,small door,This old door still has its original knocker,False,False,False,False,False,False,False,0,0
-6357,sky,The sky was as blue as a smurf on that summer day.,False,False,False,False,False,False,False,0,0
+6357,sky,The sky was as blue as a smurf on that summer day.,False,False,False,False,False,False,False,1,0
 6359,gray stone blocks,The stone block is jagged and well-worn.  It has seen some history.,False,False,False,False,False,False,True,0,0
 6361,doorway,The doorway is made of wood that shows axe marks and is rough and splintery.,False,False,False,False,False,False,False,0,0
 6363,rough stone floor,The floor is well worn with uneven stones.,False,False,False,False,False,True,False,0,0
@@ -2088,7 +2088,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 9181,seeds of creation,The seeds of creation are smaller than you'd think. Hundreds could fit in the palm of your hand.,False,False,False,False,False,False,False,0,0
 9183,rations,The rations may be just enough to keep you going.,False,False,True,True,False,False,True,0,0
 9185,wooden sword,The wooden sword is four feet in length with a two inch wide blade.  The handle is dark and well used.,True,False,False,False,False,False,True,0,0
-9187,table cloth,The table cloth was worn and possessed much steel cutlery.,False,False,False,False,True,True,False,0,0
+9187,table cloth,The table cloth was worn and possessed much steel cutlery.,False,False,False,False,True,True,False,1,0
 9189,hand ax,The hand ax is heavy with a long ornate handle. The head is well balanced and makes it easy to swing.,True,False,False,False,False,False,True,0,0
 9191,eyepatch,A leather covering for one's eye. Can be used for disguising or preventing infections.,False,True,False,False,False,False,True,0,0
 9193,umbrella stand,The stand is made of bronze and holds an umbrella inside it.,True,False,False,False,False,False,True,0,0
@@ -3186,7 +3186,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 11377,"coral, pearl, and seashells",The coral looks chipped from being played with by kids,False,False,False,False,False,False,False,0,0
 11379,turkey leg,"A roasted delight, with a built in handle! The meat is tender in your mouth and filling in your stomach.",False,False,True,False,False,False,True,0,0
 11381,red awning proclaiming dragon lift in golden script,The awning is made of fine silk and appears strong enough to protect against hail,False,False,False,False,False,False,False,0,0
-11383,nuts,The nut is brown and strong. Its hard outer shell protects it from curious creatures.,False,False,True,False,False,False,True,0,0
+11383,nuts,The nut is brown and strong. Its hard outer shell protects it from curious creatures.,False,False,True,False,False,False,True,1,0
 11385,jeweled cross of gold,The jeweled cross of gold is vibrant and shining.,False,True,False,False,False,False,True,0,0
 11387,magical quill,The quill is fashioned from a marvelous feather.,False,False,False,False,False,False,True,0,0
 11389,rock,"The rock is large, dull, and ovular.",True,False,False,False,False,False,True,0,0

@@ -223,7 +223,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6591,basin for water,"The pottery basin is chipped on one side.  Upon closer inspection, you see that it is also cracked.",False,False,False,False,True,False,True,0,0
 6611,steering wheel,It is obvious this steering wheel had been used many times.,False,False,False,False,False,True,False,0,0
 6617,wooden floor,"A flat surface for walking, made of oddly shaped boards, which were strategically fit together.",False,False,False,False,False,True,False,0,0
-6625,wine glasses,the wine glass has a lovely shape.,False,False,False,False,False,True,False,0,0
+6625,wine glasses,the wine glass has a lovely shape.,False,False,False,False,False,True,False,1,0
 6627,coffins,The coffin is clearly very old and covered in a layers of dust.,False,False,False,False,True,False,False,0,0
 6633,wood flooring,An expanse of wooden boards that have been cut to fit together.,False,False,False,False,False,True,False,0,0
 6639,big bed,"The bed creaks easily, its wooden headboard worn smooth by years of use.",False,False,False,False,False,True,False,0,0
@@ -236,7 +236,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 6677,altar,The altar is made of wood and looks well worn.,False,False,False,False,False,True,False,1,0
 6683,draw bridge,The draw bridge is open but don't expect as much openness from the people on the other side of it.,False,False,False,False,False,True,False,1,0
 6709,pots,"The dusty, clay pot is artistically crafted into the form of a slender woman, seductive and enchanting to behold.",True,False,False,False,True,False,True,0,0
-6711,plates,the plate is exceptionally colorful and interesting,False,False,False,False,False,True,True,0,0
+6711,plates,the plate is exceptionally colorful and interesting,False,False,False,False,False,True,True,1,0
 6737,chalice,The chalice is made of solid gold. It appears to have some wine stains along the rim.,False,False,False,False,True,False,True,0,0
 6751,pulpit,The pulpit is made of fine wood and has papers of the old priests speeches on it,False,False,False,False,False,True,False,0,0
 6753,tithe plate,"A shallow plate, but wrapped in gold, the tithe plate serves to host the devious church goers offerings.",False,False,False,False,True,True,True,0,0
@@ -282,7 +282,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 7169,polishing cloth,The polishing cloth is covered in dark polish.  It is tattered and frayed as though it has been used for several years.,False,True,False,False,False,True,True,0,0
 7171,clothes brushes,"The cloth was clean and bright in all its colors, stealing it comes to mind.",False,True,False,False,False,True,True,1,0
 7175,pans,"The pan is rusty, not having been ished in sometime",True,False,False,False,True,False,True,0,0
-7183,computer,"The computer, also known as an abacus, is a wooden square with faded paint delicately holding metal rods and sliding beads.",False,False,False,False,False,True,True,0,0
+7183,computer,"The computer, also known as an abacus, is a wooden square with faded paint delicately holding metal rods and sliding beads.",False,False,False,False,False,True,True,1,0
 7191,headstones,"Here are the headstones, in this sacred field, where lie the heroes who gave their lives, so that this kingdom would survive before the fiefs that wanted to plunder it and take advantage of its wealth.",False,False,False,False,False,True,False,0,0
 7197,seat,The seat is dirty with the blood from the farmers.,False,False,False,False,False,True,False,0,0
 7201,golden cloth,The cloth is gold and shimmers when moved in light.,False,True,False,False,False,True,True,0,0
@@ -410,7 +410,7 @@ id,name,description,wieldable,wearable,food,drink,container,surface,carryable,as
 8255,carpet,The carpet is so thick you could rest your aching body on it.,False,False,False,False,False,True,False,0,0
 8259,marble furniture,The marble furniture Is used by the king and queen during royal dinners.,False,False,False,False,False,True,False,0,0
 8269,large earthenware jug of water for cooking and drinking,The jug is simple earthenware with a bit of blue glaze around the rim.,False,False,False,False,True,False,True,0,0
-8273,pot for cooking,The pot is hot and somehow ready for cooking.,False,False,False,False,True,False,True,0,0
+8273,pot for cooking,The pot is hot and somehow ready for cooking.,False,False,False,False,True,False,True,1,0
 8283,small pool of water,"The pool of water is small and oblong in shape. The water is murky, so it's hard to tell how deep it is.",False,False,False,False,True,False,False,0,0
 8285,wood walls,"The wood walls, despite looking well worn they remained standing and strong.",False,False,False,False,False,True,False,0,0
 8289,sewers,That sewer is filthy and clogged and needs some cleaning and repair.,False,False,False,False,True,False,False,0,0
