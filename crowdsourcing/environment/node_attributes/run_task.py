@@ -93,7 +93,7 @@ def construct_complete_task_list():
             'name': o['name'],
             'description': o['physical_description'],
             'wieldable': o['is_weapon'] > 0.5,
-            'armor': o['is_wearable'] > 0.5,
+            'wearable': o['is_wearable'] > 0.5,
             'food': o['is_food'] > 0.5,
             'drink': o['is_drink'] > 0.5,
             'container': o['is_container'] > 0.5,
@@ -127,7 +127,7 @@ def construct_complete_task_list():
 
     containers = [o for o in parsed_objects if o['container'] or o['surface']]
     weapons = [o for o in parsed_objects if o['wieldable']]
-    armor = [o for o in parsed_objects if o['armor']]
+    wearable = [o for o in parsed_objects if o['wearable']]
     consumable = [o for o in parsed_objects if o['food'] or o['drink']]
     
     dfs = {
@@ -136,7 +136,7 @@ def construct_complete_task_list():
         'rooms': pd.DataFrame(parsed_rooms),
         'containers': pd.DataFrame(containers),
         'weapons': pd.DataFrame(weapons),
-        'armor': pd.DataFrame(armor),
+        'wearable': pd.DataFrame(wearable),
         'consumable': pd.DataFrame(consumable),
     }
    
@@ -165,7 +165,7 @@ def select_one_task(df):
         ).tolist()
     entries = []
     ATTRIBUTES = [
-        'wieldable', 'armor', 'food', 'drink', 'container', 'surface', 'carryable'
+        'wieldable', 'wearable', 'food', 'drink', 'container', 'surface', 'carryable'
     ]
     for idx in idxs:
         df.at[idx, 'assigned'] += 1
@@ -191,7 +191,7 @@ def construct_tasks(num_tasks, task_types=None):
 
     If a task type is provided, only selects from that task type
     """
-    csv_names = ['objs', 'chars', 'rooms', 'containers', 'weapons', 'armor', 'consumable']
+    csv_names = ['objs', 'chars', 'rooms', 'containers', 'weapons', 'wearable', 'consumable']
     if task_types is None: 
         task_types = csv_names
     csv_dfs = {name: pd.read_csv(os.path.join(REMAINING_TASKS_DIRECTORY, f"{name}.csv")) for name in csv_names}

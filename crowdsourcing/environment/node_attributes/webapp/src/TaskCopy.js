@@ -180,7 +180,7 @@ const Copy ={
             }
         ],
         defaultBooleanAttributeOptions:[
-            'wieldable', 'armor', 'food', 'drink', 'container', 'surface', 'carryable',
+            'wieldable', 'wearable', 'food', 'drink', 'container', 'surface', 'carryable',
             'wet', 'dark', 'bright', 'hot', 'cold', 'sharp', 'dull', 'hard', 'soft',
             'fluffy', 'moist', 'damp', 'dry', 'delicious', 'glass', 'wooden', 'metallic',
             'colorful', 'distorted', 'odd',
@@ -275,7 +275,7 @@ const Copy ={
             {
                 name: "ARMOR RATING",
                 description:"The amount of protection a wearable object offers",
-                requiredAttribute:"armor",
+                requiredAttribute:"wearable",
                 scaleRange:[
                     {
                     name:"MIN",
