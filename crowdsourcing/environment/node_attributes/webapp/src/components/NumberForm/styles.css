@@ -13,8 +13,12 @@
        align-items: center;
        justify-content: center;
    }
-
    .numberanswer-header{
+        display: flex;
+        flex-direction: row;
+   }
+
+   .numberanswer-header__text{
        text-align: center;
        font-weight: bold;
        font-size: 20px;

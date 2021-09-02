@@ -15,10 +15,9 @@ const AttributeQuestionRow = ({
     updateFunction// the function to update the attributes for the objects
 })=>{
 
-
     const Question = ({questionInfo, updateFunction})=>{
         console.log("SELECTION:  ", selection, "QUESTION:  ", questionInfo)
-        const {question, options, questionType}= questionInfo;
+        const {question, toolTip, options, questionType}= questionInfo;
         const {name}= selection;
         let formattedQuestion = FormatQuestion(question, [name])
         switch(questionType) {
@@ -28,6 +27,7 @@ const AttributeQuestionRow = ({
                     question={formattedQuestion}
                     answers={options}
                     selectFunction={(updateKey, updateValue)=>updateFunction(updateKey, updateValue)}
+                    toolTip={toolTip}
                 />
             )
             case "numeric":
@@ -36,6 +36,7 @@ const AttributeQuestionRow = ({
                         header={formattedQuestion}
                         formFunction={(updateValue)=>updateFunction(questionInfo.field, updateValue)}
                         startingVal={0}
+                        toolTip={toolTip}
                     />
                 )
             case "multipleChoice":
@@ -45,6 +46,7 @@ const AttributeQuestionRow = ({
                         answers={options}
                         selectFunction={(updateKey, updateValue)=>updateFunction(updateKey, updateValue)}
                         selection={selection}
+                        toolTip={toolTip}
                     />
                 )
             default:
@@ -53,7 +55,7 @@ const AttributeQuestionRow = ({
     }
 
     return(
-        <div className="attributequestionrow-container">
+        <div className="attributequestionrow-container" >
             {
                 defaultQuestions
                 ?

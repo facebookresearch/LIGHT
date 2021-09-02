@@ -12,11 +12,14 @@ const ToolTip = ({
     toolTipText,
     children
 })=>{
-    const renderTooltip = (props) => (
-        <Tooltip id="button-tooltip" {...props}>
+    const renderTooltip = (props) => {
+        console.log("TOOL TIP:  ", toolTipText)
+        return (
+        <Tooltip id="task-tooltip" {...props}>
           {toolTipText}
         </Tooltip>
-      );
+        )
+    };
 
 
     return(

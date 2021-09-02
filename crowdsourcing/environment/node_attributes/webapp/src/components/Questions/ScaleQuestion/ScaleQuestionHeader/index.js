@@ -2,13 +2,17 @@
 import React, {useEffect, useState} from "react";
 //STYLING
 import "./styles.css"
+//CUSTOM COMPONENTS
+import InfoIcon from "../../../Icons/Info";
+import ToolTip from "../../../ToolTip/index.js"
 
 //ScaleHeader - renders header of ScaleQuestion component displayinng Trait and short description trait
 const ScaleHeader = ({
     trait,
     traitDescription,
     isCustom,
-    updateFunction
+    updateFunction,
+    toolTip
 }) => {
 
     /*----------------------STATE----------------------*/
@@ -53,6 +57,13 @@ const ScaleHeader = ({
                 <p className="scaleheader-description__text">{traitDescription}</p>
             </>
             }
+            <ToolTip
+                toolTipText={toolTip}
+            >
+                <div>
+                    <InfoIcon/>
+                </div>
+            </ToolTip>
         </div>
     );
 };

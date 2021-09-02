@@ -21,11 +21,10 @@
 
 .scaleheader-trait__text {
     font-size: 32px;
-}
-.scaleheader-trait__text  {
-    font-size: 32px;
+    margin-bottom: 0;
 }
 
 .scaleheader-description__text {
     font-size: 18px;
+    margin-bottom: 0;
 }

@@ -150,12 +150,15 @@ const Copy ={
     },
     tagQuestionHeader:"ATTRIBUTES",
     attributeQuestionHeader:"ATTRIBUTES",
+    customAttributeQuestionToolTip:'This form is similar to the previous Rating Scale however in this form you will be naming and describing an attribute that applies to all of the selection.  Input the attribute name and description in the fields provided at the top of the form. \n Once you fill in the fields to rate the selection click and drag the "flag" of the selection you wish to rate, once out of the selection gallery box you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items. \n The form will be completed when all of the flags are planted and when the name and description fields have been filled in.',
+    booleanAttributeToolTip:'For this form you will be either choosing existing attributes from a dropdown or adding your own attributes to the entire selection. \n Each input may have some options in a dropdown but you can add your own attributes as well by typing the attribute and clicking add new attribute in the dropdown. \n The form is complete when at least 4 attributes have been given to each of the selection.',
     successMessage:"You have successfully submitted completed task!",
     objects:{
         defaultQuestions:[
             {
                 questionType:"multipleSelect",
                 question:"# is:  ",
+                toolTip: "In this form you will be given the selection with a list of attributes and there corresponding checkboxes. \n Check the box of each attribute that applies to the selection item next to it. The form will be completed when you have assigned the relevant attributes to the entire selection.",
                 options:[
                     {
                         name:"a container.",
@@ -189,6 +192,7 @@ const Copy ={
             {
                 name: "SIZE",
                 description:"The physical size of an object",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -210,6 +214,7 @@ const Copy ={
             {
                 name: "VALUE",
                 description:"The monetary value of an object.",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -231,6 +236,7 @@ const Copy ={
             {
                 name: "CONTAINER SIZE",
                 description:"The space available inside a container or on a surface for storage.",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 requiredAttribute:"container",
                 scaleRange:[
                     {
@@ -253,6 +259,7 @@ const Copy ={
             {
                 name: "WEAPON DAMAGE",
                 description:"The base damage a weapon does when wielded agaisnt a foe.",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 requiredAttribute:"wieldable",
                 scaleRange:[
                     {
@@ -275,6 +282,7 @@ const Copy ={
             {
                 name: "ARMOR RATING",
                 description:"The amount of protection a wearable object offers",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 requiredAttribute:"wearable",
                 scaleRange:[
                     {
@@ -297,6 +305,7 @@ const Copy ={
             {
                 name: "REFRESHMENT",
                 description:"How refreshing an object is when consumed.",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 requiredAttribute:"consumable",
                 scaleRange:[
                     {
@@ -319,6 +328,7 @@ const Copy ={
             {
                 name: "WEIGHT",
                 description:"The heaviness of an object.",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -340,6 +350,7 @@ const Copy ={
             {
                 name: "RARITY",
                 description:"How common the object might be in the world.",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -361,6 +372,7 @@ const Copy ={
             {
                 name: "USEFULNESS",
                 description:"How likely would someone be able to make use of this item?",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -386,10 +398,12 @@ const Copy ={
             {
                 question:"# arm count:  ",
                 questionType:"numeric",
+                toolTip:"For this form you will be provided with the an attribute or attributes that are associated with a specific number. \n Using what you know about the selection assign a number value to each of these attributes as they relate to their selection item. \n The form will be completed when you have assigned a number to every attribute for the entire selection.",
                 field:"arms"
             },
             {
                 question:"# leg count:  ",
+                toolTip:"For this form you will be provided with the an attribute or attributes that are associated with a specific number. \n Using what you know about the selection assign a number value to each of these attributes as they relate to their selection item. \n The form will be completed when you have assigned a number to every attribute for the entire selection.",
                 questionType:"numeric",
                 field:"legs"
             }
@@ -399,6 +413,7 @@ const Copy ={
             {
                 name: "STRENGTH",
                 description:"The raw physical power an actor can exert typically for the express purpose of attacking.",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -420,6 +435,7 @@ const Copy ={
             {
                 name: "CONSTITUTION",
                 description:"The physical toughness and ability to take damage possessed by an actor",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -441,6 +457,7 @@ const Copy ={
             {
                 name: "CHARISMA",
                 description:"",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -462,6 +479,7 @@ const Copy ={
             {
                 name: "DEXTERITY",
                 description:"The speed, skill, and agility of an actor.",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -483,6 +501,7 @@ const Copy ={
             {
                 name: "INTELLIGENCE",
                 description:"The ability of an actor to learn and retain knowledge both magical and practical.",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -504,6 +523,7 @@ const Copy ={
             {
                 name: "WISDOM",
                 description:"An actor's willpower to make good decisions and experience to know what decisions are good.",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -525,6 +545,7 @@ const Copy ={
             {
                 name: "SIZE",
                 description:"The physical size of an actor",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -546,6 +567,7 @@ const Copy ={
             {
                 name: "RARITY",
                 description:"How rare it would be to find this actor in a fantasy world.",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -571,6 +593,7 @@ const Copy ={
             {
                 questionType:"multipleChoice",
                 question:"# is:  ",
+                toolTip: "For this form you will be provided with a list of mutually exclusive attributes next to each selection item. \n Only one of the attributes can be selected at a time so select the attribute that best fits based on your knowledge of the selection. \n The form will be completed when the entire selection has been given attributes.",
                 options:[
                     {
                         name:"Indoors",
@@ -588,6 +611,7 @@ const Copy ={
             {
                 name: "SIZE",
                 description:"The size of a location.",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -609,6 +633,7 @@ const Copy ={
             {
                 name: "BRIGHTNESS",
                 description:"The natural light and visibility of a location.",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -630,6 +655,7 @@ const Copy ={
             {
                 name: "TEMPERATURE",
                 description:"The expected temperature of a location",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",
@@ -651,6 +677,7 @@ const Copy ={
             {
                 name: "RARITY",
                 description:"The unlikelihood of stumbling into this space in a fantasy world.",
+                toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
                     name:"MIN",

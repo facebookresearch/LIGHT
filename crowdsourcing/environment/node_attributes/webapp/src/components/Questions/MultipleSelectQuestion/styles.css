@@ -1,6 +1,6 @@
 .multipleselectquestion-container{
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     width: 100%;
     flex-direction: row;
     align-items: center;
@@ -11,6 +11,7 @@
     text-align: left;
     font-weight: bold;
     font-size: 18px;
+    margin-bottom: 0;
 }
 
 .multipleselectanswer-container{

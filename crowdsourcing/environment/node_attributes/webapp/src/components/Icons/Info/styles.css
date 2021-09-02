@@ -1,0 +1,19 @@
+/*INFO ICON STYLES*/
+.info-icon{
+    color: white;
+    font-size: 30px;
+    margin-left:6px;
+    margin-right:10px;
+}
+
+.info-icon__dark{
+    color: black;
+    font-size: 30px;
+    margin-left:6px;
+    margin-right:10px;
+}
+
+.info-icon:hover {
+    color: rgb(116, 215, 233);
+    cursor: help;
+}

@@ -5,7 +5,9 @@ import "./styles.css"
 //CUSTOM COMPONENTS
 import Scale from "./Scale";
 import ScaleQuestionHeader from "./ScaleQuestionHeader"
-
+//COPY
+import TaskCopy from "../../../TaskCopy"
+const {customAttributeQuestionToolTip} = TaskCopy
 // ScaleQuestion - form that allows worker to rate an attribute of a selection.
 // On a scale from lowest to highest the worker can place a "flag" on where they believe the selections falls on the scale.
 const ScaleQuestion = ({
@@ -15,7 +17,7 @@ const ScaleQuestion = ({
     isCustom,
     updateFunction,
 })=>{
-    const {name, description} = trait;
+    const {name, description, toolTip} = trait;
 
     return(
         <div className="scalequestion-container">
@@ -24,6 +26,7 @@ const ScaleQuestion = ({
                 trait={name}
                 traitDescription={description}
                 updateFunction={(fieldName, updateValue)=>updateFunction(fieldName,  "none", updateValue)}
+                toolTip={isCustom ? customAttributeQuestionToolTip : toolTip}
             />
             <Scale
                 scaleRange={scaleRange}

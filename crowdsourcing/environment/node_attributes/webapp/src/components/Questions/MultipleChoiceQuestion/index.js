@@ -4,9 +4,12 @@ import React, {useEffect, useState} from "react";
 import "./styles.css";
 //BOOSTRAP
 import Form from 'react-bootstrap/Form';
+//CUSTOM COMPONENTS
+import InfoIcon from "../../Icons/Info";
+import ToolTip from "../../ToolTip/index.js"
 
 // MultipleChoiceQuestion - Form type that allows user to select single answer from multiple option to answer question
-const MultipleChoiceQuestion = ({question, answers, selectFunction, selection})=>{
+const MultipleChoiceQuestion = ({question, answers, selectFunction, selection, toolTip})=>{
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [answerList, setAnswerList] = useState([])
     useEffect(()=>{
@@ -31,6 +34,13 @@ const MultipleChoiceQuestion = ({question, answers, selectFunction, selection})=
 
     return(
         <div className="question-container" >
+            <ToolTip
+                toolTipText={toolTip}
+            >
+                <div>
+                    <InfoIcon dark={true}/>
+                </div>
+            </ToolTip>
             <h1 className="question-text">
                 {question}
             </h1>
