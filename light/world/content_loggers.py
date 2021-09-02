@@ -296,7 +296,6 @@ class RoomInteractionLogger(InteractionLogger):
         for node_id in self.graph.all_nodes[self.room_id].contained_nodes:
             if self.graph.all_nodes[node_id].agent and (
                 self.graph.all_nodes[node_id].is_player
-                or self.graph.all_nodes[node_id]._human
             ):
                 self._add_player()
 
@@ -406,7 +405,6 @@ class RoomInteractionLogger(InteractionLogger):
 
     def human_controlled(self, event):
         """
-        Determines if an event is controlled by a human or not -
-        need ._human for legacy (web)
+        Determines if an event is controlled by a human or not
         """
-        return event.actor.is_player or event.actor._human
+        return event.actor.is_player

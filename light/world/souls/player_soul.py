@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Optional
 import random
 import time
 from light.graph.events.graph_events import SystemMessageEvent
-    
+
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
     from light.world.world import World
@@ -43,9 +43,7 @@ class PlayerSoul(BaseSoul):
         """
         super().__init__(target_node, world)
         assert not target_node.is_player, "Cannot have two players in the same agent!"
-        # TODO merge these flags across LIGHT
         target_node.is_player = True
-        target_node._human = True
         target_node._last_action_time = time.time()
         self.player_id = player_id
         self.provider = provider  # TODO link with real provider
@@ -78,7 +76,12 @@ class PlayerSoul(BaseSoul):
             # print debug information about humans playing instead
             humans = self.world.oo_graph.get_humans()
             num = len(humans)
-            txt = "There are " + str(num) + " LIGHT denizen(s) from your world on this plane: " + str(humans)
+            txt = (
+                "There are "
+                + str(num)
+                + " LIGHT denizen(s) from your world on this plane: "
+                + str(humans)
+            )
             event = SystemMessageEvent(self.target_node, [], text_content=txt)
             event.skip_safety = True
             event.execute(self.world)
@@ -87,8 +90,7 @@ class PlayerSoul(BaseSoul):
         actor = self.target_node
         actor._last_action_time = time.time()
         self.world.parse_exec(self.target_node, act_text, event_id=event_id)
-        
-        
+
     def new_quest(self):
         if random.random() > 0.01:
             # Turn these mostly off for now.
@@ -139,7 +141,6 @@ class PlayerSoul(BaseSoul):
         """
         super().reap()
         self.target_node.is_player = False
-        self.target_node._human = False
         self.target_node.persona = self.target_node.persona.split(QUEST_TEXT)[0]
         self.world.oo_graph.room_id_to_loggers[
             self.target_node.get_room().node_id

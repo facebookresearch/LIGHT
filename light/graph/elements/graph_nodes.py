@@ -588,7 +588,7 @@ class GraphAgent(GraphNode):
             self.dead = False
         # Flag to resolve when a death event is in the stack, but possibly not processed
         self._dying = False
-        self.is_player = self._props.get("is_player", False)
+        self.is_player = self._props.get("is_player", self._props.get("_human", False))
         self.usually_npc = self._props.get("usually_npc", False)
         self.pacifist = self._props.get("pacifist", False)
         self.tags = self._props.get("tags", self.DEFAULT_TAGS)
@@ -619,7 +619,6 @@ class GraphAgent(GraphNode):
         self.mission = self._props.get("mission", "")
 
         # Game properties to track for this agent, TODO move to other class?
-        self._human = False
         self._current_player = None
         self.clear_memory()
 
@@ -754,7 +753,7 @@ class GraphAgent(GraphNode):
 
     def set_player(self, current_player):
         """Have a new player take over this agent. None returns to npc"""
-        self._human = current_player is not None
+        self.is_player = current_player is not None
         self.clear_memory()
         self._current_player = current_player
 

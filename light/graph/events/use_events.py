@@ -332,6 +332,8 @@ class UseEvent(GraphEvent):
 
     def post_json_load(self, world: "World") -> None:
         """Do a json load on the processed event array"""
+        if self.events is None:
+            self.events = []
         self.events = [
             GraphEvent.from_json(json_event, world) for json_event in self.events
         ]

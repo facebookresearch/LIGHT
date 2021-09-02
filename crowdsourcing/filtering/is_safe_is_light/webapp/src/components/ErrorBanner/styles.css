@@ -1,0 +1,54 @@
+/* ERROR TOAST STYLES */
+ul{
+    list-style: none;
+    overflow: scroll;
+}
+
+ul li::before {
+    content: "\2022";
+    color: white;
+    font-weight: bold;
+    display: inline-block;
+    width: 3em;
+    margin-left: 1em;
+  }
+
+#toast-container{
+    position: fixed;
+    background-color: red;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    max-height: 30vh;
+}
+#toast-header{
+    background-color: red;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#toast-header__text{
+    color:white;
+    font-size: 20;
+    font-weight: bold;
+}
+#toast-text{
+    text-align: center;
+    font-weight: bold;
+    width: 90%;
+}
+
+#toast-error{
+    color: white;
+    text-align: left;
+    width: 90vw;
+}
+
+.alert-dismissible {
+   padding-right: 0;
+}
+
+.alert {
+    padding:0;
+}

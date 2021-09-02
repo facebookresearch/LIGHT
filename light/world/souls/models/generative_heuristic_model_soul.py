@@ -399,7 +399,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             self.dialogue_switch_partner(agent, partner)
 
         # TODO refactor with is_human when human flag is refactored
-        if not ALLOW_INTERBOT_CHAT and not partner._human:
+        if not ALLOW_INTERBOT_CHAT and not partner.is_player:
             return
 
         quest_txt = None
@@ -422,7 +422,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             event.skip_safety = True
             event.execute(self.world)
             return
-        
+
         # Send to model to process
         msg = {"text": context, "episode_done": True}
         self.npc_dialog_model.observe(msg)

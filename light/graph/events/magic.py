@@ -13,7 +13,7 @@ magic_db = None
 
 def init_magic(datapath):
     global magic_db
-    if datapath is not None and len(datapath) > 0:
+    if datapath is not None and len(datapath) > 0 and magic_db is None:
         files = datapath.split(",")
         magic_db = []
         for f in files:
