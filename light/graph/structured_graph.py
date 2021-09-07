@@ -318,7 +318,9 @@ class OOGraph(object):
         """Get a list of agent nodes that aren't currently being played by
         a human character"""
         return [
-            x for x in self.agents.values() if x.is_player and not x.get_prop("dead")
+            x
+            for x in self.agents.values()
+            if not x.is_player and not x.get_prop("dead")
         ]
 
     def set_desc(self, id, desc):
