@@ -1,21 +1,17 @@
-//REACT
 import React from "react";
-//TOOLTIP
-import { Tooltip } from "react-tippy";
-//STYLES
-import "./styles.css";
-//CUSTOM COMPONENTS
-import SpeechBubble from "../../../../../components/SpeechBubble";
 
-const ActionBar = ({
+import { Tooltip } from "react-tippy";
+
+//CUSTOM COMPONENTS
+import SpeechBubble from "../../../../components/SpeechBubble";
+
+const ChatControls = ({
   persona,
   presentAgents,
   setTextTellAgent,
   getAgentName,
   getEntityId,
   dataModelHost,
-  setIsSaying,
-  setTellTarget,
 }) => {
   return (
     <div className="actions">
@@ -29,9 +25,7 @@ const ActionBar = ({
             <span
               key={agentName}
               onClick={() => {
-                setIsSaying(false);
-                setTellTarget(agentName);
-                //setTextTellAgent(agentName);
+                setTextTellAgent(agentName);
               }}
             >
               <Tooltip title={`tell ${agentName}...`} position="bottom">
@@ -62,4 +56,4 @@ const ActionBar = ({
   );
 };
 
-export default ActionBar;
+export default ChatControls;

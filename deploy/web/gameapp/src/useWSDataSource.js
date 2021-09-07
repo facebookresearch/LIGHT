@@ -1,13 +1,6 @@
-//REACT
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useReducer,
-} from "react";
+import React from "react";
 
-// Generates a random id
+// Generate a random id
 function uuidv4() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
     var r = (Math.random() * 16) | 0,
@@ -16,7 +9,6 @@ function uuidv4() {
   });
 }
 
-// MESSAGE REDUCER
 const reducer = (state, msg) => {
   console.log("MESSAGES", state);
   console.log("MESSAGE", msg);
@@ -119,24 +111,19 @@ const getItems = (action) => {
   return stringifyList(objects, "nothing of interest");
 };
 
-//
 export function useWSDataSource(url) {
-  /*---------------STATE----------------*/
-  const [isConnected, setConnected] = useState(false);
-  const [isErrored, setErrored] = useState(false);
-  const [isFull, setFull] = useState(false);
-  const [persona, setPersona] = useState(null);
-  const [location, setLocation] = useState(null);
-  const [agents, setAgents] = useState({});
-  /*---------------REFS----------------*/
-  const websocket = useRef();
-  const agentList = useRef(agents);
-  /*---------------REDUCERS----------------*/
-  const [messages, appendMessage] = useReducer(reducer, []);
-
+  const websocket = React.useRef();
+  const [isConnected, setConnected] = React.useState(false);
+  const [isErrored, setErrored] = React.useState(false);
+  const [isFull, setFull] = React.useState(false);
+  const [messages, appendMessage] = React.useReducer(reducer, []);
+  const [persona, setPersona] = React.useState(null);
+  const [location, setLocation] = React.useState(null);
+  const [agents, setAgents] = React.useState({});
+  const agentList = React.useRef(agents);
   agentList.current = agents;
 
-  const handleMessage = useCallback(
+  const handleMessage = React.useCallback(
     (msg) => {
       const cmd = JSON.parse(msg.data);
       if (cmd.command === "actions") {
@@ -188,11 +175,11 @@ export function useWSDataSource(url) {
     [appendMessage, setPersona, setAgents, setLocation]
   );
 
-  useEffect(() => {
+  React.useEffect(() => {
     websocket.current.onmessage = handleMessage;
   }, [handleMessage]);
 
-  const submitMessage = useCallback(
+  const submitMessage = React.useCallback(
     (txt) => {
       let event_id = uuidv4();
       appendMessage({
@@ -219,7 +206,7 @@ export function useWSDataSource(url) {
     // websocket.current.onmessage = handleMessage;
 
     websocket.current.onopen = () => {
-      console.log("openned");
+      console.log("opened");
       setConnected(true);
     };
 

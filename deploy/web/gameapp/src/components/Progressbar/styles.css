@@ -1,17 +1,15 @@
-/* PROGRESSBAR STYLES */
 .bar-container {
   height: 1.2em;
-  background-color: white;
+  background-color: #e0e0de;
   border-radius: 5;
   border-style: outset;
   border-radius: 15px;
   box-shadow: 5px 2px 5px;
   border-color: silver;
   border-width: thick;
-  width: 80%;
+  width: 70%;
   max-width: 20em;
   min-width: 140px;
-  position: relative;
 }
 
 .bar-filler {
@@ -21,32 +19,25 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
-}
-
-.bar-label__container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .bar-label {
+  position: relative;
   color: darkgrey;
   font-weight: bold;
-  z-index: 100;
-  font-size: 14px;
+  padding-top: 5px;
 }
 
 .bar-label__text {
 }
 @media only screen and (max-width: 950px) {
   .bar-label {
-    font-size: 8px;
+    font-size: 14px;
   }
 }
 
 @media only screen and (max-width: 600px) {
   .bar-label {
-    font-size: 8px;
+    font-size: 12px;
   }
 }

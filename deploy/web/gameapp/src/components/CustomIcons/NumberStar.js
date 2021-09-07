@@ -6,12 +6,10 @@ const NumberStar = (props) => {
   const { number, iconStyle, size } = props;
 
   return (
-    <div className="numberstar-container">
-      <div className="star-container">
-        <FaStar className="gift-star" />
-      </div>
-      <div className="numberstar-text__container">
-        <h5 className="numberstar-text">{number} </h5>
+    <div className="customicon ">
+      <FaStar className={iconStyle} />
+      <div className="customicon-text__container">
+        <h5 className="customicon-text">{number} </h5>
       </div>
     </div>
   );

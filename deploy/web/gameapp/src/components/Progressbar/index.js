@@ -9,8 +9,7 @@ const ProgressBar = (props) => {
       <div
         className="bar-filler"
         style={{ width: `${percentCompleted}%`, backgroundColor: bgcolor }}
-      ></div>
-      <div className="bar-label__container">
+      >
         <span className="bar-label">{`${exp}/ ${nextLevel} EXP`}</span>
       </div>
     </div>

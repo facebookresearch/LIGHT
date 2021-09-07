@@ -1,11 +1,10 @@
-//REACT
-import React, { useState } from "react";
-//STYLES
+import React from "react";
+
 import "./styles.css";
+
 //Custom Components
 import ChatInput from "./ChatInput";
 import ActionBar from "./ActionBar";
-import DisconnectMessage from "./DisconnectMessage";
 
 const ChatControls = ({
   persona,
@@ -22,18 +21,21 @@ const ChatControls = ({
   idle,
   resetIdleTimer,
 }) => {
-  /*---------------STATE----------------*/
-  const [tellTarget, setTellTarget] = useState(null);
-  const [isSaying, setIsSaying] = useState(true);
-  /*---------------HANDLERS----------------*/
-  const isSayingToggleHandler = (e) => {
-    setTellTarget(null);
-    setIsSaying(!isSaying);
-  };
   return (
     <div className="controls">
       {idle ? (
-        <DisconnectMessage />
+        <div className="disconnect-container">
+          <h2 className="disconnect-text">
+            You have been disconnected due to inactivity.
+          </h2>
+          <h2
+            onClick={() => window.location.reload()}
+            style={{ textDecoration: "underline" }}
+            className="disconnect-text__reload"
+          >
+            Click Here to re-enter world.
+          </h2>
+        </div>
       ) : (
         <>
           <ChatInput
@@ -43,9 +45,6 @@ const ChatControls = ({
             chatInputRef={chatInputRef}
             scrollToBottom={scrollToBottom}
             resetIdleTimer={resetIdleTimer}
-            isSaying={isSaying}
-            toggleIsSaying={isSayingToggleHandler}
-            tellTarget={tellTarget}
           />
           <ActionBar
             persona={persona}
@@ -54,8 +53,6 @@ const ChatControls = ({
             getAgentName={getAgentName}
             getEntityId={getEntityId}
             dataModelHost={dataModelHost}
-            setIsSaying={setIsSaying}
-            setTellTarget={setTellTarget}
           />
         </>
       )}
