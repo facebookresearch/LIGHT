@@ -221,7 +221,7 @@ def construct_tasks(num_tasks, task_types=None):
 
     # Write out the newly selected annotations
     for csv_name, df in csv_dfs.items():
-        print(df['assigned'].sum())
+        print((len(df['assigned'])*2 - df['assigned'].sum())/ENTITIES_PER_TASK)
         df.to_csv(os.path.join(REMAINING_TASKS_DIRECTORY, f"{csv_name}.csv"), index=False)
 
     return tasks

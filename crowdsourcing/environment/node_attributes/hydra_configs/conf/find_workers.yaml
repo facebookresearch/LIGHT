@@ -9,5 +9,5 @@ mephisto:
     task_name: "fantasy-entity-attribute-annotation-pilot"
     task_title: "Annotate attributes of entities in a fantasy text adventure game world."
     task_description: "In this task, you'll be given a few entities, and asked to compare them on a few scales and provide them with attributes."
-    task_reward: 0.89
+    task_reward: 1.85
     task_tags: "fantasy,attributes,annotation,text"

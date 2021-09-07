@@ -99,8 +99,9 @@ const Task = ({
         let {requiredAttribute} = trait;
         filteredSelection = selectionData.filter(item=>{
           let {attributes}=item;
-          return attributes.filter(attribute => attribute.name == requiredAttribute).length
+          return attributes.filter(attribute => requiredAttribute.includes(attribute.name) && attribute.value).length
         })
+        console.log("New filtered selection", filteredSelection, requiredAttribute);
       }
       //Adds selection names as keys without values as value to attribute
       filteredSelection.map((selection,index)=>{
@@ -222,17 +223,19 @@ const Task = ({
   const {nodes} = submissionPayload;
   nodes.map(node=>{
     let {name, values} = node;
-    let {custom} = values;
+    let {custom, ...others} = values;
+    const presetAttributesCount = Object.keys(others).length;
+    let customAttributesCount = 0;
     if(custom !== undefined){
-      let customAttributesCount = custom.length;
+      customAttributesCount = custom.length;
       if(customAttributesCount == undefined){
-        errorList.push(`${name} requires at least 4 custom attributes`)
-      }else if(customAttributesCount<4){
-        let requiredAttributesNumber = 4 - customAttributesCount;
-        errorList.push(`${name} requires ${requiredAttributesNumber} more attributes`)
+        customAttributesCount = 0;
       }
-    }else{
-      errorList.push(`${name} requires at least 4 custom attributes`)
+    }
+    const attributesCount = presetAttributesCount + customAttributesCount;
+    if (attributesCount < 4) {
+      const requiredAttributesNumber = 4 - attributesCount;
+      errorList.push(`${name} requires ${requiredAttributesNumber} more attributes`)
     }
   })
     console.log("submissionPayload:  ", submissionPayload)
@@ -272,7 +275,7 @@ const Task = ({
           if(requiredAttribute){
             let filteredSelection = selectionData.filter(item =>{
               let {attributes} = item;
-              let matchedAttributes = attributes.filter(attr=>(attr.name==requiredAttribute));
+              let matchedAttributes = attributes.filter(attr=>(requiredAttribute.includes(attr.name) && attr.value));
               let hasAttribute = !!matchedAttributes.length;
               return hasAttribute
             } )
