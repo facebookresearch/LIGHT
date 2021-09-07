@@ -456,7 +456,7 @@ const Copy ={
             },
             {
                 name: "CHARISMA",
-                description:"",
+                description:"The ability of an actor to befriend and persuade people.",
                 toolTip:'The Rating Scale form shows an attribute and description at the top and contains a selection of flags in the box to the left and the range and examples in the container to the right. \n Click and drag a "flag" of the selection you wish to rate.  Once out of the gallery you will notice a "pole" will appear when you release the "flag."  Place the pole where you believe the selection falls on the scale relative to the provided examples and other selection items.  \n The form will be completed when all of the flags are planted.',
                 scaleRange:[
                     {
@@ -466,12 +466,12 @@ const Copy ={
                     },
                     {
                     name:"MID",
-                    example: "Bard",
+                    example: "Barkeep",
                     color:"blue"
                     },
                     {
                     name:"MAX",
-                    example: "Dryad",
+                    example: "Cult Leader",
                     color:"red"
                     }
                 ]
