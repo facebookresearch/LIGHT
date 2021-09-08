@@ -3,15 +3,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 /* TYPING THE STATE */
 interface GiftXpState {
-  description: string;
-  id: string;
-  name: string;
+  value: number;
 }
 
 const initialState: GiftXpState = {
-  description: "",
-  id: "",
-  name: "",
+  value: 0,
 };
 //Create slice will generate action objects for us
 const giftXpSlice = createSlice({
@@ -22,6 +18,9 @@ const giftXpSlice = createSlice({
     //immer will handle immutability in state changess
     updateGiftXp(state, action: PayloadAction<GiftXpState>) {
       return { ...state, ...action.payload };
+    },
+    decrementGiftXp(state) {
+      state.value--;
     },
   },
 });

@@ -3,15 +3,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 /* TYPING THE STATE */
 interface XpState {
-  description: string;
-  id: string;
-  name: string;
+  value: number;
 }
 
 const initialState: XpState = {
-  description: "",
-  id: "",
-  name: "",
+  value: 0,
 };
 //Create slice will generate action objects for us
 const xpSlice = createSlice({
@@ -22,6 +18,9 @@ const xpSlice = createSlice({
     //immer will handle immutability in state changess
     updateXp(state, action: PayloadAction<XpState>) {
       return { ...state, ...action.payload };
+    },
+    increaseXp(state, action: PayloadAction<number>) {
+      state.value += action.payload;
     },
   },
 });
