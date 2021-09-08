@@ -75,9 +75,9 @@ const reducer = (state, msg) => {
 };
 
 /*
-  Concatentates a list of items with an oxford style comma
-  If the items is empty, returns the default message instead
-*/
+    Concatentates a list of items with an oxford style comma
+    If the items is empty, returns the default message instead
+  */
 const stringifyList = (listItems, defaultMsg) => {
   var res = "";
   for (let i = 0; i < listItems.length; i++) {
@@ -96,8 +96,8 @@ const stringifyList = (listItems, defaultMsg) => {
 };
 
 /*
-  Get the labels on paths from neighbors, and display them on screen
-*/
+    Get the labels on paths from neighbors, and display them on screen
+  */
 const getNeighbors = (action) => {
   var paths = [];
   Object.keys(action.room.neighbors).forEach((neighbor_id) => {
@@ -108,8 +108,8 @@ const getNeighbors = (action) => {
 };
 
 /*
-  Get the objects in the room to display them
-*/
+    Get the objects in the room to display them
+  */
 const getItems = (action) => {
   var objects = [];
   Object.keys(action.objects).forEach((object_id) => {
@@ -139,6 +139,7 @@ export function useWSDataSource(url) {
   const handleMessage = useCallback(
     (msg) => {
       const cmd = JSON.parse(msg.data);
+      console.log("CMD", cmd);
       if (cmd.command === "actions") {
         const buffer = [];
 

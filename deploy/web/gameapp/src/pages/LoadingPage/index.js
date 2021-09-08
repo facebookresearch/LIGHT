@@ -1,7 +1,8 @@
 import React from "react";
-import Logo from "./Logo";
+import Logo from "../../Logo";
 
-function LoadingScreen(isFull) {
+function LoadingScreen({ isFull }) {
+  console.log(isFull);
   const [isTimedOut, setTimedOut] = React.useState(false);
   const TIMEOUT_SECONDS = 10;
 

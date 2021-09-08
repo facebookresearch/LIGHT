@@ -1,24 +1,29 @@
+//REACT
 import React from "react";
-
+//REDUX
+import { useAppDispatch } from "../../app/hooks";
+import { updatePersona } from "../../features/playerInfo/persona-slice.ts";
+import { updateLocation } from "../../features/playerInfo/location-slice.ts";
+//STYLES
 import "../../styles.css";
 import "./styles.css";
 import "react-tippy/dist/tippy.css";
 import "emoji-mart/css/emoji-mart.css";
-
+//EMOJI MAPPER
 import { DefaultEmojiMapper } from "../../utils";
-
 import { Picker, emojiIndex } from "emoji-mart";
-import onClickOutside from "react-onclickoutside";
 
+import onClickOutside from "react-onclickoutside";
+//ASSETS
 import Scribe from "../../assets/images/scribe.png";
 import Beer from "../../assets/images/Beer.png";
 
 //Custom Components
-import { useWSDataSource } from "../../useWSDataSource";
+import { useWSDataSource } from "../../WebSockets/useWSDataSource";
 import MobileFrame from "../../components/MobileFrame";
 import ExperienceInfo from "../../components/ExperienceInfo";
 import Logo from "../../components/Logo/index.js";
-import LoadingScreen from "../../LoadingScreen";
+import LoadingPage from "../../pages/LoadingPage";
 import Sidebar from "./Sidebar";
 import ChatDisplay from "./ChatDisplay";
 import Modal from "../../components/Modal";
@@ -27,9 +32,13 @@ import InstructionModalContent from "./InstructionModalContent";
 import CONFIG from "../../config.js";
 
 const createWebSocketUrlFromBrowserUrl = (url) => {
+  console.log("URL", url);
   const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
+  console.log("wsProtocol", wsProtocol);
   const optionalServerHost = new URL(url).searchParams.get("server");
+  console.log("optionalServerHost", optionalServerHost);
   var optionalGameId = new URL(url).searchParams.get("id");
+  console.log("optionalGameId", optionalGameId);
   if (!optionalGameId) {
     optionalGameId = "";
   }
@@ -43,6 +52,7 @@ const createWebSocketUrlFromBrowserUrl = (url) => {
     websocketURL += ":" + CONFIG.port;
   }
   websocketURL += `/game${optionalGameId}/socket`;
+  console.log("WS URL", websocketURL, "CONFIG", CONFIG);
   return websocketURL;
 };
 
@@ -85,9 +95,12 @@ function ConnectedApp() {
     );
 
   if (messages.length === 0) {
-    return <LoadingScreen isFull={isFull} />;
+    return <LoadingPage isFull={isFull} />;
   }
-
+  console.log("PERSONA", persona);
+  console.log("AGENTS", agents);
+  console.log("LOCATION", location);
+  console.log("MESSSAGES", messages);
   return (
     <Chat
       messages={messages}
@@ -108,6 +121,8 @@ function Chat({
   agents,
   disconnectFromSession,
 }) {
+  // REDUX DISPATCH FUNCTION
+  const dispatch = useAppDispatch();
   //MOBILE STATE
   const [screenSize, setScreenSize] = React.useState(null);
   const [isMobile, setIsMobile] = React.useState(false);
@@ -143,6 +158,11 @@ function Chat({
   );
 
   React.useEffect(() => {
+    dispatch(updatePersona(persona));
+    dispatch(updateLocation(location));
+  }, [persona, location]);
+
+  React.useEffect(() => {
     scrollToBottom();
     let timer = null;
     timer = setInterval(() => {
@@ -163,32 +183,6 @@ function Chat({
   React.useEffect(() => {
     scrollToBottom();
   }, [scrollToBottom, messages]);
-
-  // Previous Emoji Mapper
-  // const defaultEmoji = "❓";
-  // const { presentAgents } = getLocationState(messages);
-  // const [selectedEmoji, setSelectedEmoji] = React.useState(defaultEmoji);
-
-  // React.useEffect(() => {
-  //   if (persona === null || persona.name === null) return;
-  //   const skipWords = ["a", "the", "an", "of", "with", "holding"];
-  //   const tryPickEmojis = !persona
-  //     ? []
-  //     : persona.name
-  //         .split(" ")
-  //         .filter((token) => !!token)
-  //         .map((token) => token.replace(/\.$/, ""))
-  //         .filter((word) => skipWords.indexOf(word.toLowerCase()) === -1)
-  //         .flatMap((term) =>
-  //           emojiIndex.search(term).map((o) => {
-  //             return o.native;
-  //           })
-  //         );
-
-  //   const autopickedEmoji =
-  //     tryPickEmojis.length > 0 ? tryPickEmojis[0] : defaultEmoji;
-  //   setSelectedEmoji(autopickedEmoji);
-  // }, [persona, setSelectedEmoji]);
 
   const defaultEmoji = "❓";
   const { presentAgents } = getLocationState(messages);
