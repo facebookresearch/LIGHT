@@ -15,7 +15,6 @@ const giftXpSlice = createSlice({
   initialState,
   /* REDUCER ACTIONS */
   reducers: {
-    //immer will handle immutability in state changess
     updateGiftXp(state, action: PayloadAction<GiftXpState>) {
       return { ...state, ...action.payload };
     },
