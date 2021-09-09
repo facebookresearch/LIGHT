@@ -6,14 +6,8 @@ mephisto:
     units_per_assignment: 1
     block_qualification: node_attributes_task_block
   task:
-    maximum_units_per_worker: 4
-    max_num_concurrent_units: 100
-    task_name: "fantasy-entity-attribute-annotation-pilot-1"
-    task_title: "Annotate attributes of entities in a fantasy text adventure game world. (pilot)"
+    task_name: "fantasy-entity-attribute-annotation-pilot-test"
+    task_title: "Annotate attributes of entities in a fantasy text adventure game world."
     task_description: "In this task, you'll be given a few entities, and asked to compare them on a few scales and provide them with attributes."
-    task_reward: 2.4
+    task_reward: 1.85
     task_tags: "fantasy,attributes,annotation,text"
-  database: 
-    _database_type: singleton
-num_tasks: 40
-qualify_new_workers: True

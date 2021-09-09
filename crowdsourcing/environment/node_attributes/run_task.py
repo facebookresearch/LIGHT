@@ -59,6 +59,7 @@ class TestScriptConfig(RunScriptConfig):
     task_dir: str = TASK_DIRECTORY
     num_tasks: int = DEFAULT_NUM_TASKS
     force_rebuild: bool = False
+    qualify_new_workers: bool = False
 
 
 register_script_config(name="scriptconfig", module=TestScriptConfig)
@@ -220,10 +221,16 @@ def construct_tasks(num_tasks, task_types=None):
         )
 
     # Write out the newly selected annotations
+    entities_left = 0
     for csv_name, df in csv_dfs.items():
-        print((len(df['assigned'])*2 - df['assigned'].sum())/ENTITIES_PER_TASK)
+        entities_left += len(df['assigned'])*2 - df['assigned'].sum()
         df.to_csv(os.path.join(REMAINING_TASKS_DIRECTORY, f"{csv_name}.csv"), index=False)
 
+    print(
+        f"At the rate of {ENTITIES_PER_TASK} entities per task, "
+        f"there are still {entities_left/ENTITIES_PER_TASK} more tasks to launch "
+        "after this batch."
+    )
     return tasks
 
 
@@ -298,25 +305,26 @@ def main(cfg: DictConfig) -> None:
         return True
 
     shared_state = SharedStaticTaskState(
-        static_task_data=construct_tasks(4),
+        static_task_data=construct_tasks(cfg.num_tasks),
         validate_onboarding=onboarding_always_valid,
         on_unit_submitted=validate_unit,
     )
 
-    shared_state.mturk_specific_qualifications = [
-        {
-            "QualificationTypeId": "00000000000000000040",
-            "Comparator": "GreaterThanOrEqualTo",
-            "IntegerValues": [3000],
-            "ActionsGuarded": "DiscoverPreviewAndAccept",
-        },
-        {
-            "QualificationTypeId": "000000000000000000L0",
-            "Comparator": "GreaterThanOrEqualTo",
-            "IntegerValues": [97],
-            "ActionsGuarded": "DiscoverPreviewAndAccept",
-        },
-    ]
+    if cfg.qualify_new_workers:
+        shared_state.mturk_specific_qualifications = [
+            {
+                "QualificationTypeId": "00000000000000000040",
+                "Comparator": "GreaterThanOrEqualTo",
+                "IntegerValues": [3000],
+                "ActionsGuarded": "DiscoverPreviewAndAccept",
+            },
+            {
+                "QualificationTypeId": "000000000000000000L0",
+                "Comparator": "GreaterThanOrEqualTo",
+                "IntegerValues": [97],
+                "ActionsGuarded": "DiscoverPreviewAndAccept",
+            },
+        ]
 
     built_file = os.path.join(task_dir, "webapp", "build", "bundle.js")
     if cfg.force_rebuild or not os.path.exists(built_file):
