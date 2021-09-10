@@ -7,6 +7,7 @@ import { updateLocation } from "../../features/playerInfo/location-slice.ts";
 import { updatePersona } from "../../features/playerInfo/persona-slice.ts";
 import { updateXp } from "../../features/playerInfo/xp-slice.ts";
 import { updateGiftXp } from "../../features/playerInfo/giftxp-slice.ts";
+import { updateSessionXp } from "../../features/sessionInfo/sessionxp-slice";
 //STYLES
 import "../../styles.css";
 import "./styles.css";
@@ -160,9 +161,23 @@ function Chat({
 
   React.useEffect(() => {
     const { xp, giftXp } = persona;
+    //Connection to redux state
     dispatch(updatePersona(persona));
     dispatch(updateXp(xp));
     dispatch(updateGiftXp(giftXp));
+    //Show Tutorial Modal condition
+    if (xp <= 10) {
+      setShowInstructionModal(true);
+    }
+    /* ----SESSION INFO---- */
+    /* SESSION XP */
+    let sessionXpUpdate = 0;
+    messages.map((message) => {
+      if (message.is_self && message.xp > 0) {
+        sessionXpUpdate += message.xp;
+      }
+    });
+    dispatch(updateSessionXp(sessionXpUpdate));
   }, [persona]);
 
   React.useEffect(() => {
@@ -216,25 +231,6 @@ function Chat({
       tryPickEmojis.length > 0 ? tryPickEmojis[0] : defaultEmoji;
     setSelectedEmoji(autopickedEmoji);
   }, [persona, setSelectedEmoji]);
-
-  React.useEffect(() => {
-    const { xp, giftXp } = persona;
-    if (xp <= 10) {
-      setShowInstructionModal(true);
-    }
-    setPlayerXp(xp);
-    setPlayerGiftXp(giftXp);
-  }, [persona]);
-
-  React.useEffect(() => {
-    let sessionXpUpdate = 0;
-    messages.map((message) => {
-      if (message.is_self && message.xp > 0) {
-        sessionXpUpdate += message.xp;
-      }
-    });
-    setSessionXp(sessionXpUpdate);
-  }, [messages]);
 
   React.useEffect(() => {
     const { xp, giftXp } = persona;
