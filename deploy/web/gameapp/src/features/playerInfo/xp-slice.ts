@@ -1,14 +1,16 @@
 //REDUX
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-/* TYPING THE STATE */
+/* STATE TYPE */
 interface XpState {
   value: number;
 }
 
+/* Initial value of the state */
 const initialState: XpState = {
   value: 0,
 };
+
 //Create slice will generate action objects for us
 const xpSlice = createSlice({
   name: "xp",
@@ -25,5 +27,8 @@ const xpSlice = createSlice({
   },
 });
 
+/* EXPORTED REDUCER ACTIONS */
+// import anywhere in app to use
 export const { updateXp } = xpSlice.actions;
+/* SLICE REDUCER */
 export default xpSlice.reducer;

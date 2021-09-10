@@ -2,8 +2,11 @@
 import React from "react";
 //REDUX
 import { useAppDispatch } from "../../app/hooks";
-import { updatePersona } from "../../features/playerInfo/persona-slice.ts";
+import { updateAgents } from "../../features/agents/agents-slice.ts";
 import { updateLocation } from "../../features/playerInfo/location-slice.ts";
+import { updatePersona } from "../../features/playerInfo/persona-slice.ts";
+import { updateXp } from "../../features/playerInfo/xp-slice.ts";
+import { updateGiftXp } from "../../features/playerInfo/giftxp-slice.ts";
 //STYLES
 import "../../styles.css";
 import "./styles.css";
@@ -21,8 +24,6 @@ import Beer from "../../assets/images/Beer.png";
 //Custom Components
 import { useWSDataSource } from "../../WebSockets/useWSDataSource";
 import MobileFrame from "../../components/MobileFrame";
-import ExperienceInfo from "../../components/ExperienceInfo";
-import Logo from "../../components/Logo/index.js";
 import LoadingPage from "../../pages/LoadingPage";
 import Sidebar from "./Sidebar";
 import ChatDisplay from "./ChatDisplay";
@@ -158,9 +159,23 @@ function Chat({
   );
 
   React.useEffect(() => {
+    const { xp, giftXp } = persona;
     dispatch(updatePersona(persona));
+    dispatch(updateXp(xp));
+    dispatch(updateGiftXp(giftXp));
+  }, [persona]);
+
+  React.useEffect(() => {
     dispatch(updateLocation(location));
-  }, [persona, location]);
+  }, [location]);
+
+  React.useEffect(() => {
+    dispatch(updateAgents(agents));
+  }, [agents]);
+
+  React.useEffect(() => {
+    dispatch(updateLocation(location));
+  }, [location]);
 
   React.useEffect(() => {
     scrollToBottom();

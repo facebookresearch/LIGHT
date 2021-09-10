@@ -1,12 +1,17 @@
+//REACT
 import React, { useState } from "react";
-
+//REDUX
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+//TOOLTIPS
 import "react-tippy/dist/tippy.css";
-import "emoji-mart/css/emoji-mart.css";
-import "./styles.css";
-
 import { Tooltip } from "react-tippy";
-import cx from "classnames";
+//EMOJI PICKER AND LIBRARIES
+import "emoji-mart/css/emoji-mart.css";
 import { Picker, emojiIndex } from "emoji-mart";
+//STYLES
+import "./styles.css";
+import cx from "classnames";
+
 import onClickOutside from "react-onclickoutside";
 
 //CUSTOM COMPONENTS
@@ -28,8 +33,6 @@ const BlurClosingPicker = onClickOutside(EmojiPicker, {
 });
 
 const SideBar = ({
-  persona,
-  location,
   dataModelHost,
   getEntityId,
   selectedEmoji,
@@ -40,6 +43,9 @@ const SideBar = ({
   showDrawer,
 }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  //REDUX STATE
+  const persona = useAppSelector((state) => state.persona);
+  const location = useAppSelector((state) => state.location);
 
   return (
     <div

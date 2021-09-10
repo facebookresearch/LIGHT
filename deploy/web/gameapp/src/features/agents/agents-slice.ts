@@ -2,31 +2,27 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 /* STATE TYPE */
-interface GiftXpState {
-  value: number;
+interface AgentsState {
+  [key: string]: string;
 }
 
 /* Initial value of the state */
-const initialState: GiftXpState = {
-  value: 0,
-};
+const initialState: AgentsState = {};
+
 //Create slice will generate action objects for us
-const giftXpSlice = createSlice({
-  name: "giftXp",
+const agentsSlice = createSlice({
+  name: "agents",
   initialState,
   /* REDUCER ACTIONS */
   reducers: {
-    updateGiftXp(state, action: PayloadAction<GiftXpState>) {
+    updateAgents(state, action: PayloadAction<AgentsState>) {
       return { ...state, ...action.payload };
-    },
-    decrementGiftXp(state) {
-      state.value--;
     },
   },
 });
 
 /* EXPORTED REDUCER ACTIONS */
 // import anywhere in app to use
-export const { updateGiftXp } = giftXpSlice.actions;
+export const { updateAgents } = agentsSlice.actions;
 /* SLICE REDUCER */
-export default giftXpSlice.reducer;
+export default agentsSlice.reducer;

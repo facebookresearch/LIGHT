@@ -2,31 +2,28 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 /* STATE TYPE */
-interface GiftXpState {
+interface MessagesState {
   value: number;
 }
 
 /* Initial value of the state */
-const initialState: GiftXpState = {
+const initialState: MessagesState = {
   value: 0,
 };
 //Create slice will generate action objects for us
-const giftXpSlice = createSlice({
-  name: "giftXp",
+const messagesSlice = createSlice({
+  name: "messagesSlice",
   initialState,
   /* REDUCER ACTIONS */
   reducers: {
-    updateGiftXp(state, action: PayloadAction<GiftXpState>) {
+    updateMessages(state, action: PayloadAction<MessagesState>) {
       return { ...state, ...action.payload };
-    },
-    decrementGiftXp(state) {
-      state.value--;
     },
   },
 });
 
 /* EXPORTED REDUCER ACTIONS */
 // import anywhere in app to use
-export const { updateGiftXp } = giftXpSlice.actions;
+export const { updateMessages } = messagesSlice.actions;
 /* SLICE REDUCER */
-export default giftXpSlice.reducer;
+export default messagesSlice.reducer;

@@ -1,13 +1,14 @@
 //REDUX
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-/* TYPING THE STATE */
+/* STATE TYPE */
 interface LocationState {
   description: string;
   id: string;
   name: string;
 }
 
+/* Initial value of the state */
 const initialState: LocationState = {
   description: "",
   id: "",
@@ -19,12 +20,14 @@ const locationSlice = createSlice({
   initialState,
   /* REDUCER ACTIONS */
   reducers: {
-    //immer will handle immutability in state changess
     updateLocation(state, action: PayloadAction<LocationState>) {
       return { ...state, ...action.payload };
     },
   },
 });
 
+/* EXPORTED REDUCER ACTIONS */
+// import anywhere in app to use
 export const { updateLocation } = locationSlice.actions;
+/* SLICE REDUCER */
 export default locationSlice.reducer;
