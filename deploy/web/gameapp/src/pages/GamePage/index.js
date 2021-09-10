@@ -8,6 +8,7 @@ import { updatePersona } from "../../features/playerInfo/persona-slice.ts";
 import { updateXp } from "../../features/playerInfo/xp-slice.ts";
 import { updateGiftXp } from "../../features/playerInfo/giftxp-slice.ts";
 import { updateSessionXp } from "../../features/sessionInfo/sessionxp-slice";
+import { updateSessionSpentGiftXp } from "../../features/sessionInfo/sessionspentgiftxp-slice";
 //STYLES
 import "../../styles.css";
 import "./styles.css";
@@ -215,7 +216,7 @@ function Chat({
   }, [scrollToBottom, messages]);
 
   const defaultEmoji = "❓";
-  const { presentAgents } = getLocationState(messages);
+  //const { presentAgents } = getLocationState(messages);
   const [selectedEmoji, setSelectedEmoji] = React.useState(defaultEmoji);
 
   React.useEffect(() => {

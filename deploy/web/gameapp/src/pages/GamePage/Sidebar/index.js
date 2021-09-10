@@ -20,9 +20,6 @@ import Logo from "../../../components/Logo/index.js";
 import CollapseibleBox from "../../../components/CollapsibleBox";
 import IconCollapsibleBox from "../../../components/IconCollapsibleBox";
 import GameButton from "../../../components/GameButton";
-//Icons
-import { BiWindow } from "react-icons/bi";
-import { FaWindowMinimize } from "react-icons/fa";
 
 const EmojiPicker = ({ onBlur, ...props }) => {
   EmojiPicker.handleClickOutside = () => onBlur();
@@ -37,8 +34,6 @@ const SideBar = ({
   getEntityId,
   selectedEmoji,
   setSelectedEmoji,
-  playerXp,
-  playerGiftXp,
   isMobile,
   showDrawer,
 }) => {
@@ -59,11 +54,7 @@ const SideBar = ({
     >
       <div className="sidebar-header__container">
         {isMobile ? null : <Logo />}
-        <ExperienceInfo
-          isMobile={isMobile}
-          experience={playerXp}
-          giftExperience={playerGiftXp}
-        />
+        <ExperienceInfo isMobile={isMobile} />
       </div>
       <div
         className={cx("icon", { editing: showEmojiPicker })}
