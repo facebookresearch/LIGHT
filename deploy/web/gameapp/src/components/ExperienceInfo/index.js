@@ -12,7 +12,7 @@ import LevelDisplay from "../LevelDisplay";
 
 // ExperienceInfo - component that calculates a players level and progress from their xp
 //then renders the Level Display and Progress bar with those values
-const ExperienceInfo = ({ giftExperience }) => {
+const ExperienceInfo = ({}) => {
   const xp = useAppSelector((state) => state.xp.value);
   const giftXp = useAppSelector((state) => state.giftXp.value);
 
