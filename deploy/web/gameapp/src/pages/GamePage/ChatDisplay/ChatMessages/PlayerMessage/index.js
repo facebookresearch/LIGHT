@@ -47,7 +47,7 @@ function handleReward(messageId, messageOwner) {
   });
 }
 
-const Message = ({
+const PlayerMessage = ({
   text,
   caller,
   actor,
@@ -258,4 +258,4 @@ const Message = ({
     </div>
   );
 };
-export default Message;
+export default PlayerMessage;

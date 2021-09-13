@@ -1,35 +1,61 @@
 /* REACT */
-import React, { useState } from "react";
-//STYLES
+import React, { useState, useEffect } from "react";
+/* REDUX */
+import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
+/* ---- REDUCER ACTIONS ---- */
+import {
+  updateChatText,
+  updateIsSaying,
+  updateTellTarget,
+  updateSubmittedMessages,
+} from "../../../../../features/chatInput/chatinput-slice";
+/* STYLES */
 import "./styles.css";
 
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
-const ChatInput = ({
-  onSubmit,
-  enteredText,
-  setEnteredText,
-  chatInputRef,
-  scrollToBottom,
-  resetIdleTimer,
-  isSaying,
-  toggleIsSaying,
-  tellTarget,
-}) => {
+const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
+  /* REDUX DISPATCH FUNCTION */
+  const dispatch = useAppDispatch();
+  /* ------ REDUX STATE ------ */
+  // CHAT STATE
+  const chatText = useAppSelector((state) => state.chatInput.chatText);
+  const isSaying = useAppSelector((state) => state.chatInput.isSaying);
+  const tellTarget = useAppSelector((state) => state.chatInput.tellTarget);
+  const submittedMessages = useAppSelector(
+    (state) => state.chatInput.submittedMessages
+  );
+
+  /*---------------LOCAL STATE----------------*/
+  const [cycleMessagesPosition, setCycleMessagesPosition] = useState(0);
+  /*---------------LIFECYCLE----------------*/
+  useEffect(() => {
+    setCycleMessagesPosition(submittedMessages.length);
+  }, [submittedMessages]);
+
   /*---------------HANDLERS----------------*/
+  const toggleIsSaying = () => {
+    if (tellTarget) {
+      dispatch(updateTellTarget(""));
+      dispatch(updateIsSaying(true));
+    } else {
+      let toggledValue = !isSaying;
+      dispatch(updateIsSaying(toggledValue));
+    }
+  };
   const chatSubmissionHandler = (e) => {
     e.preventDefault();
     let textSubmission;
-    if (!!enteredText) {
-      if (tellTarget !== null) {
-        textSubmission = `tell ${tellTarget} "${enteredText}"`;
+    if (!!chatText) {
+      if (tellTarget !== "") {
+        textSubmission = `tell ${tellTarget} "${chatText}"`;
       } else if (isSaying) {
-        textSubmission = `"${enteredText}"`;
+        textSubmission = `"${chatText}"`;
       } else {
-        textSubmission = enteredText;
+        textSubmission = chatText;
       }
-      console.log("TEXT SUBMISSION:  ", textSubmission);
+      dispatch(updateSubmittedMessages(chatText));
       onSubmit(textSubmission);
-      setEnteredText("");
+      dispatch(updateChatText(""));
       scrollToBottom();
     }
   };
@@ -53,7 +79,7 @@ const ChatInput = ({
             toggleIsSaying();
           }}
         >
-          {tellTarget !== null
+          {tellTarget !== ""
             ? `TELL ${formatTellTargetForButton(tellTarget)}`
             : isSaying
             ? "SAY"
@@ -61,23 +87,42 @@ const ChatInput = ({
         </div>
         <input
           className="chatbox-input"
-          ref={chatInputRef}
-          value={enteredText}
+          value={chatText}
           onChange={(e) => {
             resetIdleTimer();
-            setEnteredText(e.target.value);
+            dispatch(updateChatText(e.target.value));
           }}
           onKeyDown={(e) => {
             if (e.key == "`") {
               e.preventDefault();
               toggleIsSaying();
             }
-          }}
-          onKeyPress={(e) => {
+            if (submittedMessages.length > 0) {
+              if (e.key == "ArrowUp") {
+                e.preventDefault();
+                console.log("UPSHIFT");
+                let updatedPosition = cycleMessagesPosition - 1;
+                if (updatedPosition < 0) {
+                  updatedPosition = submittedMessages.length;
+                }
+                setCycleMessagesPosition(updatedPosition);
+                dispatch(updateChatText(submittedMessages[updatedPosition]));
+              }
+              if (e.key == "ArrowDown") {
+                e.preventDefault();
+                console.log("DOWNSHIFT");
+                let updatedPosition = cycleMessagesPosition + 1;
+                if (updatedPosition >= submittedMessages.length) {
+                  updatedPosition = 0;
+                }
+                setCycleMessagesPosition(updatedPosition);
+                dispatch(updateChatText(submittedMessages[updatedPosition]));
+              }
+            }
             if (e.key === "Enter" && e.shiftKey) {
               const prefix = e.target.value.startsWith('"') ? "" : '"';
               const suffix = e.target.value.endsWith('"') ? "" : '"';
-              setEnteredText(prefix + e.target.value + suffix);
+              dispatch(updateChatText(`${prefix} e.target.value ${suffix}`));
             }
           }}
           className="chatbox"

@@ -1,6 +1,8 @@
+/* REACT */
 import React, { useState, useEffect } from "react";
-
+/* ICONS */
 import { GiSwapBag } from "react-icons/gi";
+/* TOOLTIPS */
 import { Tooltip } from "react-tippy";
 
 const InventoryMessage = ({ text }) => {

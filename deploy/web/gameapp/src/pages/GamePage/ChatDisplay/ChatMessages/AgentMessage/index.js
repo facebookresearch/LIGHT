@@ -47,7 +47,7 @@ function handleReward(messageId, messageOwner) {
   });
 }
 
-const Message = ({
+const AgentMessage = ({
   text,
   caller,
   actor,
@@ -95,15 +95,13 @@ const Message = ({
       <div className={classNames}>
         <div className="agent">
           <span>{actor}</span>
-          {isSelf ? null : (
-            <React.Fragment>
-              <i className="fa fa-reply" onClick={() => onReply(actor)} />{" "}
-              <i
-                className="fa fa-commenting-o "
-                onClick={() => setEditMode(false)}
-              />
-            </React.Fragment>
-          )}
+          <>
+            <i className="fa fa-reply" onClick={() => onReply(actor)} />{" "}
+            <i
+              className="fa fa-commenting-o "
+              onClick={() => setEditMode(false)}
+            />
+          </>
         </div>
         <div style={{ opacity: 0, height: 1, pointerEvents: "none" }}>
           {text}
@@ -177,34 +175,7 @@ const Message = ({
           <span id="message-nameplate">
             {actor ? actor.toUpperCase() : null}
           </span>
-          {isSelf ? (
-            <>
-              {xp ? (
-                <>
-                  <Tooltip
-                    title={
-                      xp > 0
-                        ? `${xp} Experience Points Earned For Roleplaying`
-                        : null
-                    }
-                  >
-                    <span
-                      style={{
-                        fontFamily: "fantasy",
-                        backgroundColor: "white",
-                        color: "gold",
-                        position: "relative",
-                        paddingLeft: "40px",
-                      }}
-                    >
-                      <p id="message-star__number">{xp}</p>
-                      <i className="fa fa-star message-star" />
-                    </span>
-                  </Tooltip>
-                </>
-              ) : null}
-            </>
-          ) : (
+          {
             <div className="message-icon__container">
               <Tooltip
                 title={
@@ -251,11 +222,11 @@ const Message = ({
                 />
               </Tooltip>
             </div>
-          )}
+          }
         </div>
       ) : null}
       {text}
     </div>
   );
 };
-export default Message;
+export default AgentMessage;

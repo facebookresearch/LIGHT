@@ -1,5 +1,14 @@
 /* REACT */
 import React from "react";
+/* REDUX */
+import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
+/* ---- REDUCER ACTIONS ---- */
+import {
+  updateChatText,
+  updateIsSaying,
+  updateTellTarget,
+  updateSubmittedMessages,
+} from "../../../../../features/chatInput/chatinput-slice";
 //TOOLTIP
 import { Tooltip } from "react-tippy";
 //STYLES
@@ -8,15 +17,20 @@ import "./styles.css";
 import SpeechBubble from "../../../../../components/SpeechBubble";
 
 const ActionBar = ({
-  persona,
   presentAgents,
-  setTextTellAgent,
   getAgentName,
   getEntityId,
   dataModelHost,
-  setIsSaying,
-  setTellTarget,
 }) => {
+  /* REDUX DISPATCH FUNCTION */
+  const dispatch = useAppDispatch();
+  /* ------ REDUX STATE ------ */
+  const persona = useAppSelector((state) => state.persona);
+  const isSaying = useAppSelector((state) => state.chatInput.isSaying);
+  const tellTarget = useAppSelector((state) => state.chatInput.tellTarget);
+  const submittedMessages = useAppSelector(
+    (state) => state.chatInput.submittedMessages
+  );
   return (
     <div className="actions">
       {/* {location ? <span>{location.name} &mdash; </span> : null} */}
@@ -29,8 +43,8 @@ const ActionBar = ({
             <span
               key={agentName}
               onClick={() => {
-                setIsSaying(false);
-                setTellTarget(agentName);
+                dispatch(updateIsSaying(false));
+                dispatch(updateTellTarget(agentName));
                 //setTextTellAgent(agentName);
               }}
             >

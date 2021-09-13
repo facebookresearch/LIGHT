@@ -1,23 +1,9 @@
+/* REACT */
 import React, { useState } from "react";
-
+/* TOOLTIP */
 import { Tooltip } from "react-tippy";
 
-const SoulSpawnEventMessage = ({
-  text,
-  caller,
-  actor,
-  isSelf,
-  onReply,
-  setPlayerXp,
-  setPlayerGiftXp,
-  playerGiftXp,
-  playerXp,
-  xp,
-  eventId,
-  actorId,
-  sessionGiftXpSpent,
-  setSessionGiftXpSpent,
-}) => {
+const SoulSpawnEventMessage = ({ text }) => {
   let SpawnArr = text.split("\n");
   let StarShine1 = SpawnArr[0];
   let Character = SpawnArr[1];

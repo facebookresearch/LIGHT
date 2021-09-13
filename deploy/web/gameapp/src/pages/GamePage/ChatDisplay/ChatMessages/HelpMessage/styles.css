@@ -1,0 +1,71 @@
+/*HELP MESSAGE STYLES*/
+.help-container {
+  display: flex;
+  justify-content: center;
+  height: 48em;
+  width: 100%;
+  z-index: 1;
+  margin-bottom: 6em;
+}
+
+.help-question__container {
+  position: relative;
+  z-index: 3;
+  width: 40em;
+}
+
+.help-question {
+  position: absolute;
+  z-index: 1;
+  left: 5%;
+  top: 10%;
+  font-size: 39em;
+}
+
+.help-content {
+  color: black;
+  z-index: 10;
+  text-align: center;
+  position: absolute;
+  font-family: fantasy;
+  font-weight: bolder;
+  width: 40em;
+  background-color: #0072ff;
+  border-color: #0072ff;
+  border-style: solid;
+  border-width: 0.2em;
+  opacity: 0.8;
+  border-radius: 15px;
+  overflow-y: hidden;
+  box-shadow: 4px 4px 6px black;
+}
+
+.help-content__header {
+  color: black;
+  z-index: 6;
+  text-align: center;
+  font-size: 14px;
+  background-color: #0072ff;
+  width: 100%;
+  z-index: 6;
+  color: white;
+  font-weight: bolder;
+  margin: 0;
+}
+
+.help-content__entries {
+  background-color: white;
+  z-index: 7;
+  height: 100%;
+  width: 100%;
+  padding-top: 2px;
+  overflow-y: scroll;
+}
+
+.help-content__entry {
+  color: black;
+  z-index: 6;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bolder;
+}

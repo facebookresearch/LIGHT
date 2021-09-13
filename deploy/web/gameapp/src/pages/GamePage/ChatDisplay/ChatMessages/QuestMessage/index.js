@@ -1,6 +1,8 @@
+/* REACT */
 import React, { useState, useEffect } from "react";
-
+/* ICONS */
 import { GiHolyGrail } from "react-icons/gi";
+/* TOOLTIP */
 import { Tooltip } from "react-tippy";
 
 const QuestMessage = ({ text }) => {

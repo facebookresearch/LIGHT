@@ -1,6 +1,10 @@
+/* REACT */
 import React from "react";
 
+/* MESSAGE COMPONENTS */
 import Message from "./Message";
+import PlayerMessage from "./PlayerMessage";
+import AgentMessage from "./AgentMessage";
 import InventoryMessage from "./InventoryMessage";
 import MissionCompleteMessage from "./MissionCompleteMessage";
 import HelpMessage from "./HelpMessage";
@@ -22,10 +26,8 @@ const Entry = ({
   onReply,
   agents,
   selfId,
-  setPlayerXp,
   setPlayerGiftXp,
   playerGiftXp,
-  playerXp,
   sessionGiftXpSpent,
   setSessionGiftXpSpent,
 }) => {
@@ -62,8 +64,22 @@ const Entry = ({
           <SoulSpawnEventMessage text={msg.text} />
         ) : msg.questComplete ? (
           <MissionCompleteMessage xp={msg.xp} name={msg.text} />
+        ) : msg.is_self || actor === selfId ? (
+          <PlayerMessage
+            text={msg.text}
+            isSelf={msg.is_self || actor === selfId}
+            actor={agents[actor]}
+            onReply={onReply}
+            xp={msg.xp}
+            actorId={actor}
+            eventId={msg.event_id}
+            playerGiftXp={playerGiftXp}
+            setPlayerGiftXp={setPlayerGiftXp}
+            sessionGiftXpSpent={sessionGiftXpSpent}
+            setSessionGiftXpSpent={setSessionGiftXpSpent}
+          />
         ) : (
-          <Message
+          <AgentMessage
             text={msg.text}
             isSelf={msg.is_self || actor === selfId}
             actor={agents[actor]}
@@ -81,4 +97,5 @@ const Entry = ({
     );
   }
 };
+
 export default Entry;

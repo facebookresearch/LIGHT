@@ -1,6 +1,8 @@
+/* REACT */
 import React, { useState, useEffect } from "react";
-
+/* ICONS */
 import { FaHeart, FaStar } from "react-icons/fa";
+/* TOOLTIP */
 import { Tooltip } from "react-tippy";
 
 const StatusMessage = ({ text }) => {

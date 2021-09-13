@@ -20,7 +20,6 @@ const ChatDisplay = ({
   messages,
   onSubmit,
   persona,
-  location,
   agents,
   getDataModelAddress,
   getLocationState,
@@ -70,20 +69,18 @@ const ChatDisplay = ({
 
   const { presentAgents } = getLocationState(messages);
 
-  useLayoutEffect(() => {
-    const { current } = chatInputRef;
-    if (current) {
-      current.focus();
-    }
-  }, []);
+  // useLayoutEffect(() => {
+  //   const { current } = chatInputRef;
+  //   if (current) {
+  //     current.focus();
+  //   }
+  // }, []);
 
   return (
     <div className="chat-wrapper">
       <div className="chat" ref={chatContainerRef}>
         <ChatMessages
           messages={messages}
-          agents={agents}
-          persona={persona}
           setTextTellAgent={setTextTellAgent}
           setPlayerXp={setPlayerXp}
           setPlayerGiftXp={setPlayerGiftXp}
@@ -95,15 +92,10 @@ const ChatDisplay = ({
       </div>
       <ChatControls
         onSubmit={onSubmit}
-        persona={persona}
         presentAgents={presentAgents}
-        setTextTellAgent={setTextTellAgent}
         getAgentName={getAgentName}
         getEntityId={getEntityId}
         dataModelHost={dataModelHost}
-        chatInputRef={chatInputRef}
-        setEnteredText={setEnteredText}
-        enteredText={enteredText}
         scrollToBottom={scrollToBottom}
         idle={idle}
         resetIdleTimer={resetIdleTimer}

@@ -10,6 +10,7 @@ import messagesReducer from "../features/messages/messages-slice";
 import personaReducer from "../features/playerInfo/persona-slice";
 import sessionXpReducer from "../features/sessionInfo/sessionxp-slice";
 import sessionSpentGiftXpReducer from "../features/sessionInfo/sessionspentgiftxp-slice";
+import tutorialsReducer from "../features/tutorials/tutorials-slice";
 import viewReducer from "../features/view/view-slice";
 import xpReducer from "../features/playerInfo/xp-slice";
 
@@ -26,6 +27,7 @@ export const store = configureStore({
     persona: personaReducer,
     sessionXp: sessionXpReducer,
     sessionSpentGiftXp: sessionSpentGiftXpReducer,
+    tutorials: tutorialsReducer,
     view: viewReducer,
     xp: xpReducer,
   },
