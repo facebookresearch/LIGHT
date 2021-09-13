@@ -2,7 +2,6 @@
 import React from "react";
 
 /* MESSAGE COMPONENTS */
-import Message from "./Message";
 import PlayerMessage from "./PlayerMessage";
 import AgentMessage from "./AgentMessage";
 import InventoryMessage from "./InventoryMessage";

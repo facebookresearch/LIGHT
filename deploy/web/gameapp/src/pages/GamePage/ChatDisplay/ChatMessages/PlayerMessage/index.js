@@ -1,32 +1,13 @@
 /* REACT */
 import React, { useState } from "react";
 /* REDUX */
-import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
-import { updateSessionSpentGiftXp } from "../../../../features/sessionInfo/sessionspentgiftxp-slice";
+import { updateSessionSpentGiftXp } from "../../../../../features/sessionInfo/sessionspentgiftxp-slice";
 //TOOLTIP
 import { Tooltip } from "react-tippy";
 //CONFIG
-import CONFIG from "../../../../config.js";
-
-function handleReport(reportedMessage, reportReason) {
-  let base_url = window.location.protocol + "//" + CONFIG.hostname;
-  if (CONFIG.port != "80") {
-    base_url += ":" + CONFIG.port;
-  }
-
-  fetch(`${base_url}/report`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "same-origin",
-    body: JSON.stringify({
-      message: reportedMessage,
-      reason: reportReason,
-    }),
-  });
-}
+import CONFIG from "../../../../../config.js";
 
 function handleReward(messageId, messageOwner) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
@@ -115,57 +96,6 @@ const PlayerMessage = ({
         <button type="submit" onClick={() => setEditMode(false)}>
           Suggest edit
         </button>
-      </div>
-    );
-  }
-
-  if (isReportMode) {
-    return (
-      <div className={classNames}>
-        <div className="agent">
-          <span>{actor}</span>
-        </div>
-        {text}
-        <div>
-          <b>Why are you reporting this message?</b>
-        </div>
-        <input
-          className="edit-message"
-          defaultValue={"Enter reason here"}
-          value={reportReason}
-          onChange={(evt) => setReportReason(evt.target.value)}
-        />
-        <button
-          type="submit"
-          disabled={reportReason.length == 0}
-          onClick={() => {
-            handleReport(text, reportReason);
-            setReportReason("");
-            setReported(true);
-            setReportMode(false);
-          }}
-        >
-          Report
-        </button>
-        <button
-          type="submit"
-          onClick={() => {
-            setReportMode(false);
-          }}
-        >
-          Cancel
-        </button>
-      </div>
-    );
-  }
-
-  if (isReported) {
-    return (
-      <div className={classNames}>
-        <div className="agent">
-          <span>{actor}</span>
-        </div>
-        <i>We have logged your report of this message</i>
       </div>
     );
   }

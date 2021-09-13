@@ -29,21 +29,23 @@ const ChatMessages = ({
   return (
     <>
       {messages.map((msg, idx) => (
-        <Entry
-          key={msg.event_id}
-          msg={msg}
-          agents={agents}
-          onReply={(agent) => {
-            dispatch(updateTellTarget(agent));
-          }}
-          selfId={persona.id}
-          setPlayerXp={setPlayerXp}
-          setPlayerGiftXp={setPlayerGiftXp}
-          playerGiftXp={playerGiftXp}
-          playerXp={playerXp}
-          sessionGiftXpSpent={sessionGiftXpSpent}
-          setSessionGiftXpSpent={setSessionGiftXpSpent}
-        />
+        <div className="message-row">
+          <Entry
+            key={msg.event_id}
+            msg={msg}
+            agents={agents}
+            onReply={(agent) => {
+              dispatch(updateTellTarget(agent));
+            }}
+            selfId={persona.id}
+            setPlayerXp={setPlayerXp}
+            setPlayerGiftXp={setPlayerGiftXp}
+            playerGiftXp={playerGiftXp}
+            playerXp={playerXp}
+            sessionGiftXpSpent={sessionGiftXpSpent}
+            setSessionGiftXpSpent={setSessionGiftXpSpent}
+          />
+        </div>
       ))}
     </>
   );

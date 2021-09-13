@@ -1,13 +1,13 @@
 /* REACT */
 import React, { useState } from "react";
 /* REDUX */
-import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
-import { updateSessionSpentGiftXp } from "../../../../features/sessionInfo/sessionspentgiftxp-slice";
+import { updateSessionSpentGiftXp } from "../../../../../features/sessionInfo/sessionspentgiftxp-slice";
 //TOOLTIP
 import { Tooltip } from "react-tippy";
 //CONFIG
-import CONFIG from "../../../../config.js";
+import CONFIG from "../../../../../config.js";
 
 function handleReport(reportedMessage, reportReason) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
