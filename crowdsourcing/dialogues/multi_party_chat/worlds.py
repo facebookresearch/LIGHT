@@ -11,6 +11,9 @@ import time
 from joblib import Parallel, delayed
 
 
+SHORT_FORCED_TIMEOUT_TIME = 0.0001
+
+
 class LIGHTMultiAgentDialogOnboardWorld(CrowdOnboardWorld):
     def __init__(self, opt, agent):
         super().__init__(opt, agent)
@@ -122,7 +125,7 @@ class LIGHTMultiAgentDialogWorld(CrowdTaskWorld):
         """
         for index, agent in enumerate(self.agents):
             if time.time() - self.last_act_times[index] > self.opt["turn_timeout"]:
-                agent.act(timeout=0.0001)
+                agent.act(timeout=SHORT_FORCED_TIMEOUT_TIME)
 
     def is_done(self):
         """Check to see if all agents have taken the minimum turns"""
@@ -145,6 +148,8 @@ class LIGHTMultiAgentDialogWorld(CrowdTaskWorld):
                 for other_agent in self.agents:
                     if other_agent != agent:
                         other_agent.observe(validate(act))
+
+        time.sleep(0.1) # Preventing tight loop on parley calls
 
         self.try_agent_timeouts()
         if self.is_done():

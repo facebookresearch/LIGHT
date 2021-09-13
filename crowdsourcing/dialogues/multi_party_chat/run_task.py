@@ -38,7 +38,7 @@ class ScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: hydra_defaults)
     task_dir: str = TASK_DIRECTORY
     num_turns: int = field(
-        default=6,
+        default=8,
         metadata={
             "help": "Number of min turns per worker before a conversation is complete"
         },
@@ -50,6 +50,7 @@ class ScriptConfig(RunScriptConfig):
             "a worker out, default 300 seconds"
         },
     )
+    qualify_new_workers: bool = False
 
 
 register_script_config(name="scriptconfig", module=ScriptConfig)
@@ -67,7 +68,7 @@ def main(cfg: DictConfig) -> None:
             ldb=ldb,
             opt={
                 "db_path": LIGHT_DB_PATH,
-                "model_path": os.path.expanduser("~/LIGHT/models/"),
+                "model_path": "/checkpoint/light/models",
                 "suggestion_type": "hybrid",
                 "hybridity_prob": 0.2,
             },
@@ -85,6 +86,22 @@ def main(cfg: DictConfig) -> None:
     shared_state = SharedParlAITaskState(
         world_opt=world_opt, onboarding_world_opt=world_opt
     )
+
+    if cfg.qualify_new_workers:
+        shared_state.mturk_specific_qualifications = [
+            {
+                "QualificationTypeId": "00000000000000000040",
+                "Comparator": "GreaterThanOrEqualTo",
+                "IntegerValues": [1500],
+                "ActionsGuarded": "DiscoverPreviewAndAccept",
+            },
+            {
+                "QualificationTypeId": "000000000000000000L0",
+                "Comparator": "GreaterThanOrEqualTo",
+                "IntegerValues": [95],
+                "ActionsGuarded": "DiscoverPreviewAndAccept",
+            },
+        ]
 
     operator = Operator(db)
 
