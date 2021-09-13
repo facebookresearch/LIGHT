@@ -27,7 +27,6 @@ const personaSlice = createSlice({
   initialState,
   /* REDUCER ACTIONS */
   reducers: {
-    //immer will handle immutability in state changess
     updatePersona(state, action: PayloadAction<PersonaState>) {
       return { ...state, ...action.payload };
     },

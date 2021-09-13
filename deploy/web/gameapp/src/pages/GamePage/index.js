@@ -124,7 +124,7 @@ const Chat = ({
 }) => {
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
-  /* REDUX STATE */
+  /* ------ REDUX STATE ------ */
   //SESSION XP STATE
   const sessionXp = useAppSelector((state) => state.sessionXp);
   //SESSION GIFT XP STATE
@@ -133,12 +133,11 @@ const Chat = ({
   const isMobile = useAppSelector((state) => state.view.isMobile);
   //DRAWER
   const showDrawer = useAppSelector((state) => state.view.showDrawer);
-  /* LOCAL STATE */
-  const [screenSize, setScreenSize] = React.useState(null);
-  //DRAWER STATE
   /* REDUX ACTIONS */
   const selectEmoji = (emoji) => dispatch(updateEmoji(emoji));
 
+  /* ------ LOCAL STATE ------ */
+  const [screenSize, setScreenSize] = React.useState(null);
   //MODAL STATE
   const [showInstructionModal, setShowInstructionModal] = React.useState(false);
   //IDLE STATE
@@ -198,10 +197,12 @@ const Chat = ({
     });
     dispatch(updateSessionXp(sessionXpUpdate));
   }, [persona]);
+
   /* LOCATION UPDATES TO REDUX STORE */
   React.useEffect(() => {
     dispatch(updateLocation(location));
   }, [location]);
+
   /* AGENT UPDATES TO REDUX STORE */
   React.useEffect(() => {
     dispatch(updateAgents(agents));
