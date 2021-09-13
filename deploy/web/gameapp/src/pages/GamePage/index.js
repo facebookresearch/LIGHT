@@ -1,7 +1,7 @@
 /* REACT */
 import React from "react";
 /* REDUX */
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
 import { updateAgents } from "../../features/agents/agents-slice.ts";
 import { updateEmoji } from "../../features/playerInfo/emoji-slice";
@@ -10,8 +10,8 @@ import { updatePersona } from "../../features/playerInfo/persona-slice.ts";
 import { updateXp } from "../../features/playerInfo/xp-slice.ts";
 import { updateGiftXp } from "../../features/playerInfo/giftxp-slice.ts";
 import { updateSessionXp } from "../../features/sessionInfo/sessionxp-slice";
-import { updateSessionSpentGiftXp } from "../../features/sessionInfo/sessionspentgiftxp-slice";
-//STYLES
+import { updateIsMobile } from "../../features/view/view-slice";
+/* STYLES */
 import "../../styles.css";
 import "./styles.css";
 import "react-tippy/dist/tippy.css";
@@ -31,15 +31,15 @@ import InstructionModalContent from "./InstructionModalContent";
 //CONFIG
 import CONFIG from "../../config.js";
 
-//WEBSOCKECT CONNECTION FUNCTION
+//WEBSOCKET CONNECTION FUNCTION
 const createWebSocketUrlFromBrowserUrl = (url) => {
-  console.log("URL", url);
+  //console.log("URL", url);
   const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
-  console.log("wsProtocol", wsProtocol);
+  //console.log("wsProtocol", wsProtocol);
   const optionalServerHost = new URL(url).searchParams.get("server");
-  console.log("optionalServerHost", optionalServerHost);
+  //console.log("optionalServerHost", optionalServerHost);
   var optionalGameId = new URL(url).searchParams.get("id");
-  console.log("optionalGameId", optionalGameId);
+  //console.log("optionalGameId", optionalGameId);
   if (!optionalGameId) {
     optionalGameId = "";
   }
@@ -73,7 +73,8 @@ const getDataModelAddress = () => {
 //   "#ffe8eb" //red
 // ];
 
-function ConnectedApp() {
+//ConnectedApp - Creates socket and renders Chat Component upon successful connection to backend.
+const ConnectedApp = () => {
   const wsUrl = React.useMemo(
     () => createWebSocketUrlFromBrowserUrl(window.location),
     []
@@ -99,10 +100,7 @@ function ConnectedApp() {
   if (messages.length === 0) {
     return <LoadingPage isFull={isFull} />;
   }
-  console.log("PERSONA", persona);
-  console.log("AGENTS", agents);
-  console.log("LOCATION", location);
-  console.log("MESSSAGES", messages);
+
   return (
     <Chat
       messages={messages}
@@ -113,23 +111,34 @@ function ConnectedApp() {
       disconnectFromSession={disconnectFromSession}
     />
   );
-}
+};
 
-function Chat({
+//Chat - Renders game all all visual components
+const Chat = ({
   messages,
   onSubmit,
   persona,
   location,
   agents,
   disconnectFromSession,
-}) {
-  // REDUX DISPATCH FUNCTION
+}) => {
+  /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
+  /* REDUX STATE */
+  //SESSION XP STATE
+  const sessionXp = useAppSelector((state) => state.sessionXp);
+  //SESSION GIFT XP STATE
+  const sessionGiftXp = useAppSelector((state) => state.sessionGiftXp);
   //MOBILE STATE
+  const isMobile = useAppSelector((state) => state.view.isMobile);
+  //DRAWER
+  const showDrawer = useAppSelector((state) => state.view.showDrawer);
+  /* LOCAL STATE */
   const [screenSize, setScreenSize] = React.useState(null);
-  const [isMobile, setIsMobile] = React.useState(false);
   //DRAWER STATE
-  const [showDrawer, setShowDrawer] = React.useState(false);
+  /* REDUX ACTIONS */
+  const selectEmoji = (emoji) => dispatch(updateEmoji(emoji));
+
   //MODAL STATE
   const [showInstructionModal, setShowInstructionModal] = React.useState(false);
   //IDLE STATE
@@ -141,8 +150,6 @@ function Chat({
   //PLAYER XP AND GIFT XP
   const [playerXp, setPlayerXp] = React.useState(0);
   const [playerGiftXp, setPlayerGiftXp] = React.useState(0);
-  const [sessionXp, setSessionXp] = React.useState(0);
-  const [sessionGiftXp, setSessionGiftXp] = React.useState(0);
   const [sessionGiftXpSpent, setSessionGiftXpSpent] = React.useState(0);
   // AGENT AND CHARACTER STATE
   const getAgentName = (agent) => (agents ? agents[agent] : agent);
@@ -159,6 +166,7 @@ function Chat({
     [chatContainerRef]
   );
 
+  /* PLAYER AND SESSION INFO UPDATES TO REDUX STORE */
   React.useEffect(() => {
     const { xp, giftXp } = persona;
     /* ----PLAYER INFO---- */
@@ -190,15 +198,16 @@ function Chat({
     });
     dispatch(updateSessionXp(sessionXpUpdate));
   }, [persona]);
-
+  /* LOCATION UPDATES TO REDUX STORE */
   React.useEffect(() => {
     dispatch(updateLocation(location));
   }, [location]);
-
+  /* AGENT UPDATES TO REDUX STORE */
   React.useEffect(() => {
     dispatch(updateAgents(agents));
   }, [agents]);
 
+  /* IDLE TIMER */
   React.useEffect(() => {
     scrollToBottom();
     let timer = null;
@@ -217,15 +226,15 @@ function Chat({
     setIdleTime(0);
   };
 
+  // SCROLL TO BOTTOM UPON RECIEVING NEW MESSAGES
   React.useEffect(() => {
     scrollToBottom();
   }, [scrollToBottom, messages]);
 
-  const defaultEmoji = "❓";
   //const { presentAgents } = getLocationState(messages);
-  const [selectedEmoji, setSelectedEmoji] = React.useState(defaultEmoji);
 
   React.useEffect(() => {
+    const defaultEmoji = "❓";
     let characterEmoji = DefaultEmojiMapper(persona.name);
     if (persona === null || persona.name === null) return;
     const skipWords = ["a", "the", "an", "of", "with", "holding"];
@@ -236,17 +245,18 @@ function Chat({
         });
     const autopickedEmoji =
       tryPickEmojis.length > 0 ? tryPickEmojis[0] : defaultEmoji;
-    setSelectedEmoji(autopickedEmoji);
-  }, [persona, setSelectedEmoji]);
+    selectEmoji(autopickedEmoji);
+  }, [persona]);
 
+  /* SESSION AND GIFT XP UPDATE PLAYER XP and GIFT XP */
   React.useEffect(() => {
     const { xp, giftXp } = persona;
-    setPlayerXp(xp + sessionXp);
+    dispatch(updateXp(xp + sessionXp));
     let sessionGiftXpUpdate = sessionXp / 4;
     if (sessionGiftXpUpdate >= 1) {
-      setPlayerGiftXp(giftXp + sessionGiftXpUpdate - sessionGiftXpSpent);
+      dispatch(updateGiftXp(giftXp + sessionGiftXpUpdate - sessionGiftXpSpent));
     } else {
-      setPlayerGiftXp(giftXp - sessionGiftXpSpent);
+      dispatch(updateGiftXp(giftXp - sessionGiftXpSpent));
     }
   }, [sessionXp, sessionGiftXpSpent]);
 
@@ -260,43 +270,29 @@ function Chat({
     window.addEventListener("resize", updateDimensions);
     let startingSize = window.innerWidth;
     if (startingSize <= 950) {
-      setIsMobile(true);
+      dispatch(updateIsMobile(true));
     } else if (startingSize > 950) {
-      setIsMobile(false);
+      dispatch(updateIsMobile(false));
     }
   });
 
   React.useEffect(() => {
     if (screenSize <= 950) {
-      setIsMobile(true);
+      dispatch(updateIsMobile(true));
     } else if (screenSize > 950) {
-      setIsMobile(false);
+      dispatch(updateIsMobile(false));
     }
   }, [screenSize]);
 
-  /* DRAWER */
-  const openDrawer = () => setShowDrawer(true);
-  const closeDrawer = () => setShowDrawer(false);
   const buttons = [];
   return (
     <div className="gamepage-container" onMouseMove={resetIdleTimer}>
       {isMobile ? (
-        <MobileFrame
-          showDrawer={showDrawer}
-          openDrawer={openDrawer}
-          closeDrawer={closeDrawer}
-          buttons={buttons}
-        >
+        <MobileFrame buttons={buttons}>
           {persona ? (
             <Sidebar
-              persona={persona}
-              location={location}
               dataModelHost={dataModelHost}
               getEntityId={getEntityId}
-              selectedEmoji={selectedEmoji}
-              setSelectedEmoji={setSelectedEmoji}
-              playerXp={playerXp}
-              playerGiftXp={playerGiftXp}
               isMobile={isMobile}
               showDrawer={showDrawer}
             />
@@ -325,12 +321,8 @@ function Chat({
           <div className="sidebar-container">
             {persona ? (
               <Sidebar
-                persona={persona}
-                location={location}
                 dataModelHost={dataModelHost}
                 getEntityId={getEntityId}
-                selectedEmoji={selectedEmoji}
-                setSelectedEmoji={setSelectedEmoji}
                 playerXp={playerXp}
                 playerGiftXp={playerGiftXp}
               />
@@ -374,15 +366,7 @@ function Chat({
       ) : null}
     </div>
   );
-}
-
-const EmojiPicker = ({ onBlur, ...props }) => {
-  EmojiPicker.handleClickOutside = () => onBlur();
-  return <Picker {...props} />;
 };
-const BlurClosingPicker = onClickOutside(EmojiPicker, {
-  handleClickOutside: () => EmojiPicker.handleClickOutside,
-});
 
 function getLocationState(messages) {
   var valid_messages = messages.filter(

@@ -28,8 +28,9 @@ const EmojiPicker = ({ onBlur, ...props }) => {
 const SideBar = ({ dataModelHost, getEntityId, isMobile, showDrawer }) => {
   /* LOCAL STATE */
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  /* REDUX STATE */
+  // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();
+  /* REDUX STATE */
   //PERSONA
   const persona = useAppSelector((state) => state.persona);
   //LOCATION

@@ -1,4 +1,13 @@
+/* REACT */
 import React from "react";
+/* REDUX */
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+/* ---- REDUCER ACTIONS ---- */
+import {
+  updateIsMobile,
+  updateShowDrawer,
+} from "../../features/view/view-slice";
+/* STYLES */
 import "./styles.css";
 //IMAGES
 import Scribe from "../../assets/images/scribe.png";
@@ -6,7 +15,17 @@ import Scribe from "../../assets/images/scribe.png";
 import GlowingButton from "../GlowingButton";
 import ToggleSwitch from "../ToggleSwitch";
 
-const MobileHeader = ({ buttons, showDrawer, openDrawer, closeDrawer }) => {
+// MobileHeader -
+const MobileHeader = ({ buttons }) => {
+  /* REDUX DISPATCH FUNCTION */
+  const dispatch = useAppDispatch();
+  /* REDUX STATE */
+  //DRAWER
+  const showDrawer = useAppSelector((state) => state.view.showDrawer);
+  /* REDUX ACTIONS */
+  const openDrawer = () => dispatch(updateShowDrawer(true));
+  const closeDrawer = () => dispatch(updateShowDrawer(false));
+
   return (
     <div className="mobileheader-container">
       <div className="mobileheader-logo">
