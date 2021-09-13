@@ -1,6 +1,6 @@
-//REACT
+/* REACT */
 import React, { useState, useEffect } from "react";
-//REDUX
+/* REDUX */
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 //TOOLTIP
 import { Tooltip } from "react-tippy";

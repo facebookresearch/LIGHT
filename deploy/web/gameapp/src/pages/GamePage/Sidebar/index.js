@@ -1,19 +1,18 @@
-//REACT
+/* REACT */
 import React, { useState } from "react";
-//REDUX
+/* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { updateEmoji } from "../../../features/playerInfo/emoji-slice";
 //TOOLTIPS
 import "react-tippy/dist/tippy.css";
 import { Tooltip } from "react-tippy";
 //EMOJI PICKER AND LIBRARIES
 import "emoji-mart/css/emoji-mart.css";
 import { Picker, emojiIndex } from "emoji-mart";
+import onClickOutside from "react-onclickoutside";
 //STYLES
 import "./styles.css";
 import cx from "classnames";
-
-import onClickOutside from "react-onclickoutside";
-
 //CUSTOM COMPONENTS
 import ExperienceInfo from "../../../components/ExperienceInfo";
 import Logo from "../../../components/Logo/index.js";
@@ -25,22 +24,21 @@ const EmojiPicker = ({ onBlur, ...props }) => {
   EmojiPicker.handleClickOutside = () => onBlur();
   return <Picker style={{ zIndex: "100" }} {...props} />;
 };
-const BlurClosingPicker = onClickOutside(EmojiPicker, {
-  handleClickOutside: () => EmojiPicker.handleClickOutside,
-});
 
-const SideBar = ({
-  dataModelHost,
-  getEntityId,
-  selectedEmoji,
-  setSelectedEmoji,
-  isMobile,
-  showDrawer,
-}) => {
+const SideBar = ({ dataModelHost, getEntityId, isMobile, showDrawer }) => {
+  /* LOCAL STATE */
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  //REDUX STATE
+  /* REDUX STATE */
+  const dispatch = useAppDispatch();
+  //PERSONA
   const persona = useAppSelector((state) => state.persona);
+  //LOCATION
   const location = useAppSelector((state) => state.location);
+  //EMOJI
+  const selectedEmoji = useAppSelector((state) => state.emoji.selectedEmoji);
+  const setEmoji = (emoji) => {
+    dispatch(updateEmoji(emoji));
+  };
 
   return (
     <div
@@ -91,8 +89,7 @@ const SideBar = ({
           showEmojiPicker={showEmojiPicker}
           selectedEmoji={selectedEmoji}
           setShowEmojiPicker={setShowEmojiPicker}
-          BlurClosingPicker={BlurClosingPicker}
-          setSelectedEmoji={setSelectedEmoji}
+          setSelectedEmoji={setEmoji}
           titleBg={"gold"}
         >
           <p className="persona-text" style={{ fontSize: "14px" }}>

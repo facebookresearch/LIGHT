@@ -1,4 +1,4 @@
-//REDUX
+/* REDUX */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 /* STATE TYPE */

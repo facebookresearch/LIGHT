@@ -1,8 +1,10 @@
-//REACT
+/* REACT */
 import React from "react";
-//REDUX
+/* REDUX */
 import { useAppDispatch } from "../../app/hooks";
+/* ---- REDUCER ACTIONS ---- */
 import { updateAgents } from "../../features/agents/agents-slice.ts";
+import { updateEmoji } from "../../features/playerInfo/emoji-slice";
 import { updateLocation } from "../../features/playerInfo/location-slice.ts";
 import { updatePersona } from "../../features/playerInfo/persona-slice.ts";
 import { updateXp } from "../../features/playerInfo/xp-slice.ts";
@@ -14,16 +16,11 @@ import "../../styles.css";
 import "./styles.css";
 import "react-tippy/dist/tippy.css";
 import "emoji-mart/css/emoji-mart.css";
-//EMOJI MAPPER
+//EMOJI
 import { DefaultEmojiMapper } from "../../utils";
 import { Picker, emojiIndex } from "emoji-mart";
-
 import onClickOutside from "react-onclickoutside";
-//ASSETS
-import Scribe from "../../assets/images/scribe.png";
-import Beer from "../../assets/images/Beer.png";
-
-//Custom Components
+//CUSTOM COMPONENTS
 import { useWSDataSource } from "../../WebSockets/useWSDataSource";
 import MobileFrame from "../../components/MobileFrame";
 import LoadingPage from "../../pages/LoadingPage";
@@ -31,9 +28,10 @@ import Sidebar from "./Sidebar";
 import ChatDisplay from "./ChatDisplay";
 import Modal from "../../components/Modal";
 import InstructionModalContent from "./InstructionModalContent";
-
+//CONFIG
 import CONFIG from "../../config.js";
 
+//WEBSOCKECT CONNECTION FUNCTION
 const createWebSocketUrlFromBrowserUrl = (url) => {
   console.log("URL", url);
   const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
@@ -59,6 +57,7 @@ const createWebSocketUrlFromBrowserUrl = (url) => {
   return websocketURL;
 };
 
+//MODEL ADDRESS HELPER FUNCTION
 const getDataModelAddress = () => {
   return new URL(window.location).searchParams.get("builder");
 };
@@ -162,11 +161,22 @@ function Chat({
 
   React.useEffect(() => {
     const { xp, giftXp } = persona;
-    //Connection to redux state
+    /* ----PLAYER INFO---- */
     dispatch(updatePersona(persona));
     dispatch(updateXp(xp));
     dispatch(updateGiftXp(giftXp));
     //Show Tutorial Modal condition
+    let characterEmoji = DefaultEmojiMapper(persona.name);
+    if (persona === null || persona.name === null) return;
+    const skipWords = ["a", "the", "an", "of", "with", "holding"];
+    const tryPickEmojis = !persona
+      ? []
+      : emojiIndex.search(characterEmoji).map((o) => {
+          return o.native;
+        });
+    const autopickedEmoji = tryPickEmojis.length > 0 ? tryPickEmojis[0] : "?";
+    dispatch(updateEmoji(autopickedEmoji));
+    /* ---- INSTRUCTION MODAL---- */
     if (xp <= 10) {
       setShowInstructionModal(true);
     }
@@ -188,10 +198,6 @@ function Chat({
   React.useEffect(() => {
     dispatch(updateAgents(agents));
   }, [agents]);
-
-  React.useEffect(() => {
-    dispatch(updateLocation(location));
-  }, [location]);
 
   React.useEffect(() => {
     scrollToBottom();
@@ -244,9 +250,12 @@ function Chat({
     }
   }, [sessionXp, sessionGiftXpSpent]);
 
+  /* ----------VIEW--------- */
+  /* SCREEN SIZE */
   const updateDimensions = () => {
     setScreenSize(window.innerWidth);
   };
+  /* MOBILE */
   React.useEffect(() => {
     window.addEventListener("resize", updateDimensions);
     let startingSize = window.innerWidth;
@@ -265,6 +274,7 @@ function Chat({
     }
   }, [screenSize]);
 
+  /* DRAWER */
   const openDrawer = () => setShowDrawer(true);
   const closeDrawer = () => setShowDrawer(false);
   const buttons = [];

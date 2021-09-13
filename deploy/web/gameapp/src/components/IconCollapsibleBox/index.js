@@ -1,28 +1,40 @@
+/* REACT */
 import React, { useState, useEffect } from "react";
-
+/* ICONS */
 import { BiWindow } from "react-icons/bi";
 import { FaWindowMinimize } from "react-icons/fa";
+/* TOOLTIP */
 import { Tooltip } from "react-tippy";
+/* EMOJI */
 import { Picker, emojiIndex } from "emoji-mart";
-import cx from "classnames";
 import onClickOutside from "react-onclickoutside";
-
+/* STYLES */
 import "./styles.css";
+import cx from "classnames";
 
 const IconCollapsibleBox = ({
   showEmojiPicker,
   setSelectedEmoji,
   setShowEmojiPicker,
   selectedEmoji,
-  BlurClosingPicker,
   title,
   titleBg,
   containerBg,
   children,
 }) => {
+  /* LOCAL STATE */
   const [isCollapsed, setIsCollapsed] = useState(false);
   const openHandler = () => setIsCollapsed(false);
   const closeHandler = () => setIsCollapsed(true);
+
+  const EmojiPicker = ({ onBlur, ...props }) => {
+    EmojiPicker.handleClickOutside = () => onBlur();
+    return <Picker style={{ zIndex: "100" }} {...props} />;
+  };
+
+  const BlurClosingPicker = onClickOutside(EmojiPicker, {
+    handleClickOutside: () => EmojiPicker.handleClickOutside,
+  });
 
   return (
     <div className="collapsible-container__icon">

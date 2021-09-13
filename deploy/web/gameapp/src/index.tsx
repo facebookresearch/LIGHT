@@ -1,7 +1,7 @@
-//REACT
+/* REACT */
 import React from "react";
 import ReactDOM from "react-dom";
-//REDUX
+/* REDUX */
 import { Provider } from "react-redux";
 import { store } from "./app/store";
 //STYLES

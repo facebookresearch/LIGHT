@@ -1,4 +1,4 @@
-//REACT
+/* REACT */
 import React from "react";
 //ROUTES
 import Routes from "./GameRouter";

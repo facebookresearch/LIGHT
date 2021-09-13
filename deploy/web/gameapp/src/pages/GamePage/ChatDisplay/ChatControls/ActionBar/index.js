@@ -1,4 +1,4 @@
-//REACT
+/* REACT */
 import React from "react";
 //TOOLTIP
 import { Tooltip } from "react-tippy";

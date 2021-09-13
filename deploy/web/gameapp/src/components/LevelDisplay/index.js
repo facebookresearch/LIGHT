@@ -1,4 +1,4 @@
-//REACT
+/* REACT */
 import React, { useState, useEffect } from "react";
 //TOOLTIP
 import { Tooltip } from "react-tippy";

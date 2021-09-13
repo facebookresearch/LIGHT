@@ -1,4 +1,4 @@
-//REACT
+/* REACT */
 import React from "react";
 //ROUTER COMPONENTS
 import { HashRouter, Route, Redirect, Switch } from "react-router-dom";

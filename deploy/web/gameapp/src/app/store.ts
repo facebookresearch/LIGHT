@@ -1,7 +1,8 @@
-//REDUX
+/* REDUX */
 import { configureStore } from "@reduxjs/toolkit";
 //REDUCERS
 import agentsReducer from "../features/agents/agents-slice";
+import emojiReducer from "../features/playerInfo/emoji-slice";
 import giftXpReducer from "../features/playerInfo/giftxp-slice";
 import locationReducer from "../features/playerInfo/location-slice";
 import messagesReducer from "../features/messages/messages-slice";
@@ -15,6 +16,7 @@ export const store = configureStore({
   //Combined reducer of all slices
   reducer: {
     agents: agentsReducer,
+    emoji: emojiReducer,
     giftXp: giftXpReducer,
     location: locationReducer,
     messages: messagesReducer,
