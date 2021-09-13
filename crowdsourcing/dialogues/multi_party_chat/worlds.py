@@ -125,7 +125,10 @@ class LIGHTMultiAgentDialogWorld(CrowdTaskWorld):
         """
         for index, agent in enumerate(self.agents):
             if time.time() - self.last_act_times[index] > self.opt["turn_timeout"]:
-                agent.act(timeout=SHORT_FORCED_TIMEOUT_TIME)
+                # Forced timeout loop even catches if someone sends a message right after the timeout
+                # without breaking
+                while agent.act(timeout=SHORT_FORCED_TIMEOUT_TIME) is not None:
+                    pass
 
     def is_done(self):
         """Check to see if all agents have taken the minimum turns"""
