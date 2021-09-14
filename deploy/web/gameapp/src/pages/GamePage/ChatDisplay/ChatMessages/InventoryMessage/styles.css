@@ -46,3 +46,14 @@
   text-align: center;
   font-size: 11px;
 }
+
+@media only screen and (max-width: 600px) {
+  .inventory-content {
+    width: 98%;
+    overflow-x: hidden;
+  }
+
+  .inventory-content__text {
+    font-size: 11px;
+  }
+}

@@ -1,4 +1,4 @@
-/* Quest Message */
+/* QUEST MESSAGE STYLES */
 .quest-container {
   display: flex;
   justify-content: center;
@@ -44,4 +44,14 @@
   font-size: 14px;
   font-weight: bolder;
   padding-top: 1em;
+}
+
+@media only screen and (max-width: 600px) {
+  .quest-content {
+    width: 98%;
+  }
+
+  .quest-content__entry {
+    font-size: 11px;
+  }
 }

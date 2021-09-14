@@ -1,13 +1,11 @@
+/* REACT */
 import React, { useState, useEffect } from "react";
 import { Link } from "react-dom";
 
-import { BiWindow } from "react-icons/bi";
-import { FaWindowMinimize } from "react-icons/fa";
 //IMAGES
-import Scribe from "../../assets/images/scribe.png";
-import ActionText1 from "../../assets/screenshots/Tutorial/Interacting/Emote1.png";
-import ActionText2 from "../../assets/screenshots/Tutorial/Interacting/Emote2.png";
-import WrappedText from "../../assets/screenshots/Tutorial/Interacting/InteractingRespond.png";
+import Scribe from "../../../assets/images/scribe.png";
+import ActionText1 from "../../../assets/screenshots/Tutorial/Interacting/Emote1.png";
+import WrappedText from "../../../assets/screenshots/Tutorial/Interacting/InteractingRespond.png";
 
 import "./styles.css";
 

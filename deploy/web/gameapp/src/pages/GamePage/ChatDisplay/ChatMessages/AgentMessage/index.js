@@ -1,5 +1,7 @@
 /* REACT */
 import React, { useState } from "react";
+/* STYLES */
+import "./styles.css";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */

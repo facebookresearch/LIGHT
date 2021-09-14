@@ -1,5 +1,7 @@
 /* REACT */
 import React, { useState } from "react";
+/* STYLES */
+import "./styles.css";
 /* ICONS */
 import { FaStar } from "react-icons/fa";
 /* TOOLTIP */

@@ -1,5 +1,7 @@
 /* REACT */
 import React, { useState, useEffect } from "react";
+/* STYLES */
+import "./styles.css";
 /* ICONS */
 import { FaHeart, FaStar } from "react-icons/fa";
 /* TOOLTIP */

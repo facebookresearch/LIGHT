@@ -1,5 +1,7 @@
 /* REACT */
 import React, { useState } from "react";
+/* STYLES */
+import "./styles.css";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
@@ -77,13 +79,13 @@ const PlayerMessage = ({
         <div className="agent">
           <span>{actor}</span>
           {isSelf ? null : (
-            <React.Fragment>
+            <>
               <i className="fa fa-reply" onClick={() => onReply(actor)} />{" "}
               <i
                 className="fa fa-commenting-o "
                 onClick={() => setEditMode(false)}
               />
-            </React.Fragment>
+            </>
           )}
         </div>
         <div style={{ opacity: 0, height: 1, pointerEvents: "none" }}>

@@ -1,5 +1,7 @@
 /* REACT */
 import React, { useState } from "react";
+/* STYLES */
+import "./styles.css";
 /* TOOLTIP */
 import { Tooltip } from "react-tippy";
 
