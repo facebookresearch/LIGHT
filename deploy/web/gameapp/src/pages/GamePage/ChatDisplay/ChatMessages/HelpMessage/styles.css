@@ -4,20 +4,29 @@
   flex-direction: column;
   width: 100%;
   z-index: 1;
-  margin-bottom: 6em;
+  margin-bottom: 20px;
   overflow-y: scroll;
+  overflow-x: hidden;
+  justify-content: center;
+  align-items: center;
 }
 
 .help-question__container {
   position: relative;
   z-index: 3;
-  width: 40em;
+  width: 90%;
 }
 
 .help-question {
   position: absolute;
   z-index: 1;
-  left: 5%;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 38em;
+  top: 75px;
 }
 
 .help-content {
@@ -28,7 +37,7 @@
   text-align: center;
   font-family: fantasy;
   font-weight: bolder;
-  width: 100%;
+  width: 90%;
   background-color: #0072ff;
   border-color: #0072ff;
   border-style: solid;
@@ -36,15 +45,16 @@
   opacity: 0.8;
   border-radius: 15px;
   overflow-y: scroll;
+  overflow-x: hidden;
   box-shadow: 4px 4px 6px black;
-  padding-top: 2.5em;
+  padding-top: 10px;
 }
 
 .help-content__header {
   color: black;
   z-index: 6;
   text-align: center;
-  font-size: 14px;
+  font-size: 20px;
   background-color: #0072ff;
   width: 100%;
   z-index: 6;
@@ -59,6 +69,8 @@
   height: 100%;
   width: 100%;
   padding-top: 2px;
+  padding-bottom: 16px;
+  overflow-x: hidden;
 }
 
 .help-content__entry {
@@ -74,10 +86,8 @@
 
 @media only screen and (max-width: 600px) {
   .help-container {
-    height: 35em;
     width: 100%;
     z-index: 1;
-    margin-bottom: 6em;
   }
 
   .help-question__container {
@@ -87,6 +97,7 @@
   .help-question {
     z-index: 1;
     font-size: 19em;
+    top: 100px;
   }
 
   .help-content {
@@ -119,11 +130,14 @@
   }
 
   .help-content__entries {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     background-color: white;
     z-index: 7;
     height: 100%;
     width: 100%;
-    padding-top: 2px;
     overflow-y: scroll;
   }
 
@@ -131,7 +145,8 @@
     color: black;
     z-index: 6;
     text-align: center;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: bolder;
+    font-family: "Courier New", Courier, monospace;
   }
 }
