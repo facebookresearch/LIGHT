@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import pandas as pd
 import numpy as np
+import time
 from mephisto.operations.operator import Operator
 from mephisto.operations.utils import get_root_dir
 from mephisto.tools.scripts import load_db_and_process_config
@@ -20,6 +21,7 @@ from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint i
 from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint import (
     SharedStaticTaskState,
 )
+from mephisto.data_model.qualification import QUAL_EQUAL, QUAL_NOT_EXIST, make_qualification_dict
 from light.data_model.light_database import LIGHTDatabase
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
@@ -31,7 +33,7 @@ import json
 import random
 from omegaconf import DictConfig
 from dataclasses import dataclass, field
-from typing import List, Any
+from typing import List, Any, Optional
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 REMAINING_TASKS_DIRECTORY = os.path.join(TASK_DIRECTORY, 'tasks')
@@ -44,6 +46,7 @@ db = LocalMephistoDB()
 mephisto_data_browser = MephistoDataBrowser(db=db)
 
 defaults = [
+    "_self_",
     {"mephisto/blueprint": BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
@@ -60,6 +63,8 @@ class TestScriptConfig(RunScriptConfig):
     num_tasks: int = DEFAULT_NUM_TASKS
     force_rebuild: bool = False
     qualify_new_workers: bool = False
+    require_qualified_workers: bool = False
+    approved_qualification: Optional[str] = None
 
 
 register_script_config(name="scriptconfig", module=TestScriptConfig)
@@ -143,7 +148,10 @@ def construct_complete_task_list():
    
     for csv_name, df in dfs.items():
         df.to_csv(os.path.join(REMAINING_TASKS_DIRECTORY, f"{csv_name}.csv"), index=False)
-    
+
+    with open(os.path.join(REMAINING_TASKS_DIRECTORY, "last_sync.txt"), "w+") as sync_file:
+        sync_file.write(str(time.time()))
+
 
 def select_one_task(df):
     df.sort_values(by=['assigned'])
@@ -216,6 +224,7 @@ def construct_tasks(num_tasks, task_types=None):
         tasks.append(
             {
                 "itemCategory": item_category,
+                "taskType": task_type,
                 "selection": selections,
             }
         )
@@ -261,37 +270,58 @@ def build_task(task_dir):
 
 
 def validate_unit(unit):
+    TOO_CLOSE_TO_MEAN = 3.5
+    MIN_VALS_OUTSIDE_MEAN = 5
+    REQUIRED_UNIQUE_ORDERS = 3
+
     if unit.get_assigned_agent() is None:
         return
-
-    print("Task Directory: ", TASK_DIRECTORY)
 
     data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
         "final_data"
     ]
     print("Data: ", data)
 
-    # constraints = data["constraints"]
-    # events = data["events"]
+    flagged = False
 
-    # has_active = False
+    ### Heuristics for likely bad completions of the tasks
+    # single word descriptions for the custom attribute are likely bad
+    custom_attribute_desc = data['attributes']['custom_attributes'][0]['description']
+    if len(custom_attribute_desc.split()) < 2:
+        flagged = True
+        print("Flagged because bad description")
 
-    # for constraint in constraints:
-    #     if constraint["active"] == "1":
-    #         has_active = True
-    #         break
+    # single and 2 letter attribute names are likely junk:
+    for node in data['nodes']:
+        for attr_name in node['values']['custom']:
+            if len(attr_name) < 2:
+                flagged = True
+                print("Flagged because bad custom attributes")
+                break
 
-    # for event in events:
-    #     if event["active"] == "1":
-    #         has_active = True
-    #         break
+    # if all of the items are always in the same order on the scales, it's likely bad
+    scales = {k: v for k, v in data['attributes'].items() if k != 'custom_attributes' and len(v) == 4}
+    sorted_scales = [sorted([(n, f) for n, f in scale.items()], key=lambda x: x[1]) for scale in scales.values()]
+    orderings = set(["".join([n[0] for n in scale]) for scale in sorted_scales])
+    if len(orderings) < REQUIRED_UNIQUE_ORDERS:
+        flagged = True
+        print("Flagged because not enough orderings")
 
-    # if not has_active:
-    #     print("Unit not validated!")
-    #     unit.get_assigned_agent().soft_reject_work()
-    #     worker = unit.get_assigned_agent().get_worker()
-    #     worker.grant_qualification("fantasy_object_attribute_annotation_task_block", 1)
+    # if elements are always placed in roughly the same area, it's likely bad
+    avg_vals = {k: sum([scale[k] for scale in scales.values()]) / len(scales) for k, _ in sorted_scales[0]}
+    vals_outside_mean = 0
+    for node, avg in avg_vals.items():
+        for scale in scales.values():
+            if abs(scale[node] - avg) > TOO_CLOSE_TO_MEAN:
+                vals_outside_mean += 1
+    if vals_outside_mean < MIN_VALS_OUTSIDE_MEAN:
+        flagged = True
+        print("Flagged because values were not sufficiently outside of the mean")
 
+    if flagged:
+        worker = unit.get_assigned_agent().get_worker()
+        worker.grant_qualification("light_node_attributes_task_block", 1)
+    
     return
 
 
@@ -301,13 +331,18 @@ def main(cfg: DictConfig) -> None:
 
     construct_complete_task_list()
 
+    if cfg.qualify_new_workers:
+        validator = lambda u: True
+    else:
+        validator = validate_unit
+
     def onboarding_always_valid(onboarding_data):
         return True
 
     shared_state = SharedStaticTaskState(
         static_task_data=construct_tasks(cfg.num_tasks),
         validate_onboarding=onboarding_always_valid,
-        on_unit_submitted=validate_unit,
+        on_unit_submitted=validator,
     )
 
     if cfg.qualify_new_workers:
@@ -324,6 +359,29 @@ def main(cfg: DictConfig) -> None:
                 "IntegerValues": [97],
                 "ActionsGuarded": "DiscoverPreviewAndAccept",
             },
+        ]
+        shared_state.qualifications = [
+            make_qualification_dict(
+                cfg.mephisto.blueprint.block_qualification,
+                QUAL_NOT_EXIST,
+                None,
+            ),
+        ]
+        if cfg.approved_qualification is not None:
+            shared_state.qualifications.append(
+                make_qualification_dict(
+                    cfg.approved_qualification,
+                    QUAL_NOT_EXIST,
+                    None,
+                ),
+            )
+    elif cfg.require_qualified_workers and cfg.approved_qualification is not None:
+        shared_state.qualifications = [
+            make_qualification_dict(
+                cfg.approved_qualification,
+                QUAL_EQUAL,
+                1,
+            ),
         ]
 
     built_file = os.path.join(task_dir, "webapp", "build", "bundle.js")

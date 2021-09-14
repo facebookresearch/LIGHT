@@ -224,7 +224,16 @@ const Task = ({
   nodes.map(node=>{
     let {name, values} = node;
     let {custom, ...others} = values;
-    const presetAttributesCount = Object.keys(others).length;
+    let presetAttributesCount = 0
+    for (const attr in others) {
+      if (!others[attr]) {
+        continue;
+      }
+      if (["wearable", "wieldable", "food", "drink", "surface", "container", "carryable"].includes(attr)) {
+        continue;
+      }
+      presetAttributesCount += 1;
+    }
     let customAttributesCount = 0;
     if(custom !== undefined){
       customAttributesCount = custom.length;

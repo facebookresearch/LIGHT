@@ -395,18 +395,18 @@ const Copy ={
         },
     characters:{
         defaultQuestions:[
-            {
-                question:"# arm count:  ",
-                questionType:"numeric",
-                toolTip:"For this form you will be provided with the an attribute or attributes that are associated with a specific number. \n Using what you know about the selection assign a number value to each of these attributes as they relate to their selection item. \n The form will be completed when you have assigned a number to every attribute for the entire selection.",
-                field:"arms"
-            },
-            {
-                question:"# leg count:  ",
-                toolTip:"For this form you will be provided with the an attribute or attributes that are associated with a specific number. \n Using what you know about the selection assign a number value to each of these attributes as they relate to their selection item. \n The form will be completed when you have assigned a number to every attribute for the entire selection.",
-                questionType:"numeric",
-                field:"legs"
-            }
+            // {
+            //     question:"# arm count:  ",
+            //     questionType:"numeric",
+            //     toolTip:"For this form you will be provided with the an attribute or attributes that are associated with a specific number. \n Using what you know about the selection assign a number value to each of these attributes as they relate to their selection item. \n The form will be completed when you have assigned a number to every attribute for the entire selection.",
+            //     field:"arms"
+            // },
+            // {
+            //     question:"# leg count:  ",
+            //     toolTip:"For this form you will be provided with the an attribute or attributes that are associated with a specific number. \n Using what you know about the selection assign a number value to each of these attributes as they relate to their selection item. \n The form will be completed when you have assigned a number to every attribute for the entire selection.",
+            //     questionType:"numeric",
+            //     field:"legs"
+            // }
         ],
         defaultBooleanAttributeOptions:[],
         traits:[

@@ -4,7 +4,7 @@ mephisto:
     task_source: ${task_dir}/webapp/build/bundle.js
     extra_source_dir: ${task_dir}/webapp/src/static
     units_per_assignment: 1
-    block_qualification: node_attributes_task_block
+    block_qualification: light_node_attributes_task_block
   task:
     maximum_units_per_worker: 4
     max_num_concurrent_units: 100
@@ -17,3 +17,5 @@ mephisto:
     _database_type: singleton
 num_tasks: 40
 qualify_new_workers: True
+approved_qualification: light_node_attributes_task_qualified
+require_qualified_workers: False

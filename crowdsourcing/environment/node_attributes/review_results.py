@@ -7,6 +7,7 @@
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.tools.examine_utils import run_examine_or_review, print_results
 from mephisto.data_model.worker import Worker
+from light.colors import Colors as C
 
 db = LocalMephistoDB()
 
@@ -24,15 +25,25 @@ def format_data_for_printing(data):
         } for node in nodes
     }
 
-    display_nodes = [
-        f"{name}: {v['desc']}\n - attributes: [{', '.join(v['attributes'])}]"
-        for name, v in node_map.items()
-    ]
-    print("\n".join(display_nodes))
-
     result_map = {n['name']: n['values']['custom'] + [k for k in n['values'].keys() if n['values'][k] and k != 'custom'] for n in results['nodes']}
 
-    print(result_map)
+    def make_colored_attributes(old_list, new_list):
+        atts = []
+        for att in old_list:
+            if att in new_list:
+                atts.append(att)
+            else:
+                atts.append(f"{C.BOLD_RED}{att}{C.RESET}")
+        for att in new_list:
+            if att not in old_list:
+                atts.append(f"{C.BOLD_GREEN}{att}{C.RESET}")
+        return ", ".join(atts)
+
+    display_nodes = [
+        f"{C.BOLD_BLUE}{name}{C.RESET}: {v['desc']}\n - attributes: [{make_colored_attributes(v['attributes'], result_map[name])}]"
+        for name, v in node_map.items()
+    ]
+    attributes_string = "\n".join(display_nodes)
 
     scale_attributes = results['attributes']
     custom_scale_attributes = scale_attributes['custom_attributes']
@@ -44,19 +55,19 @@ def format_data_for_printing(data):
             continue
         items.sort(key=lambda x: x[1])
         item_names = '\t'.join([i[0] for i in items])
-        item_vals = '\t'.join([f"{i[1]:.3f}" for i in items])
+        item_vals = '\t'.join([f"{' '*(len(i[0])-6)}{i[1]:2.3f}" for i in items])
         display_attributes.append(
-            f"{att_name}:\n {item_names}\n{item_vals}"
+            f"{C.BOLD_BLUE}{att_name}{C.RESET}:\n {item_names}\n {item_vals}"
         )
     for att_dict in custom_scale_attributes:
         items = [(k, v) for k, v in att_dict['vals'].items()]
         items.sort(key=lambda x: x[1])
         item_names = '\t'.join([i[0] for i in items])
-        item_vals = '\t'.join([f"{i[1]:.3f}" for i in items])
+        item_vals = '\t'.join([f"{' '*(len(i[0])-6)}{i[1]:2.3f}" for i in items])
         display_attributes.append(
-            f"{att_dict['name']}: {att_dict['description']}\n {item_names}\n{item_vals}"
+            f"{C.BOLD_BLUE}{att_dict['name']}{C.RESET}: {att_dict['description']}\n {item_names}\n {item_vals}"
         )
-    print("\n".join(display_attributes))
+    scale_string = "\n".join(display_attributes)
 
     worker_name = Worker.get(db, data["worker_id"]).worker_name
     contents = data["data"]
@@ -66,32 +77,7 @@ def format_data_for_printing(data):
         f"Duration: {int(duration)}\nStatus: {data['status']}\n"
     )
 
-    inputs_string = ""
-    outputs_string = ""
-
-    if contents["inputs"] is not None and contents["outputs"] is not None:
-        inputs = contents["inputs"]
-        outputs = contents["outputs"]["final_data"]
-        primary = outputs["primaryObject"]
-        secondary = outputs["secondaryObject"]
-        primary_object_map = {
-            i["name"]: i["desc"] for i in inputs["primary_object_list"]
-        }
-        primary_object_stringlist = list(primary_object_map.keys())
-        secondary_object_map = {
-            i["name"]: i["desc"] for i in inputs["secondary_object_list"]
-        }
-        secondary_object_stringlist = list(secondary_object_map.keys())
-        inputs_string = (
-            f"Input:\n\tPrimary Object List: {primary_object_stringlist}\n"
-            f"\tSecondary Object List: {secondary_object_stringlist}\n"
-            f"\tSelected Context:\n"
-            f"\t\t{primary}: {primary_object_map[primary]}\n"
-            f"\t\t{secondary}: {secondary_object_map[secondary]}\n\n"
-        )
-        outputs_string = f"Output:\n\tUse {primary} with {secondary}\n\tAction: {outputs['actionDescription']}\n"
-
-    return f"-------------------\n{metadata_string}{inputs_string}{outputs_string}"
+    return f"-------------------\n{metadata_string}\n{attributes_string}\n{scale_string}"
 
 
 def main():
