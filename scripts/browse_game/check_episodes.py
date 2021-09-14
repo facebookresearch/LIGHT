@@ -17,61 +17,49 @@ import glob
 from collections import defaultdict
 from light.graph.events.graph_events import SpeechEvent, GoEvent
 from light.graph.events.base import ErrorEvent
+from light.colors import Colors as C
 
 from typing import List, Any, Tuple, Dict
 
 Episode = Tuple[Any, Any]
 
-CYAN = "\u001b[36m"
-BOLD_CYAN = "\u001b[36;1m"
-RED = "\u001b[31m"
-BOLD_RED = "\u001b[31;1m"
-GREEN = "\u001b[32m"
-BOLD_GREEN = "\u001b[32;1m"
-YELLOW = "\u001b[33m"
-BOLD_YELLOW = "\u001b[33;1m"
-BLUE = "\u001b[34m"
-BOLD_BLUE = "\u001b[34;1m"
-PURPLE = "\u001b[35m"
-BOLD_PURPLE = "\u001b[35;1m"
 
 COLORS = [
-    CYAN,
-    RED,
-    GREEN,
-    YELLOW,
-    BLUE,
-    PURPLE,
-    RED,
-    GREEN,
-    YELLOW,
-    BLUE,
-    PURPLE,
-    RED,
-    GREEN,
-    YELLOW,
-    BLUE,
-    PURPLE,
+    C.CYAN,
+    C.RED,
+    C.GREEN,
+    C.YELLOW,
+    C.BLUE,
+    C.PURPLE,
+    C.RED,
+    C.GREEN,
+    C.YELLOW,
+    C.BLUE,
+    C.PURPLE,
+    C.RED,
+    C.GREEN,
+    C.YELLOW,
+    C.BLUE,
+    C.PURPLE,
 ]
 HUMAN_COLORS = [
-    BOLD_CYAN,
-    BOLD_RED,
-    BOLD_GREEN,
-    BOLD_YELLOW,
-    BOLD_BLUE,
-    BOLD_PURPLE,
-    BOLD_RED,
-    BOLD_GREEN,
-    BOLD_YELLOW,
-    BOLD_BLUE,
-    BOLD_PURPLE,
-    BOLD_RED,
-    BOLD_GREEN,
-    BOLD_YELLOW,
-    BOLD_BLUE,
-    BOLD_PURPLE,
+    C.BOLD_CYAN,
+    C.BOLD_RED,
+    C.BOLD_GREEN,
+    C.BOLD_YELLOW,
+    C.BOLD_BLUE,
+    C.BOLD_PURPLE,
+    C.BOLD_RED,
+    C.BOLD_GREEN,
+    C.BOLD_YELLOW,
+    C.BOLD_BLUE,
+    C.BOLD_PURPLE,
+    C.BOLD_RED,
+    C.BOLD_GREEN,
+    C.BOLD_YELLOW,
+    C.BOLD_BLUE,
+    C.BOLD_PURPLE,
 ]
-RESET = "\u001b[0m"
 
 
 def print_episode(episode: Episode) -> None:
@@ -105,10 +93,10 @@ def print_episode(episode: Episode) -> None:
                 name = f"*{name}*"
             e_string += f"{color}{name}"
             if not isinstance(event, SpeechEvent):
-                e_string += RESET
+                e_string += C.RESET
         else:
             e_string += event.actor.get_view()
-        e_string += f" {event}{RESET}"
+        e_string += f" {event}{C.RESET}"
         print(e_string)
 
 
@@ -380,24 +368,24 @@ def main():
     error_list = get_errors(action_episodes)
 
     print(
-        f"{BOLD_CYAN}---- Episode Stats -----{RESET}\n"
+        f"{BOLD_CYAN}---- Episode Stats -----{C.RESET}\n"
         f"Total Count: {len(episodes)} \tNontrivial: {nontrivial_count} ({nontrivial_prop:2.2f}%)\n"
-        f"{BOLD_CYAN}---- Remaining stats on Nontrivial ----{RESET}\n"
+        f"{BOLD_CYAN}---- Remaining stats on Nontrivial ----{C.RESET}\n"
         f"Overall Interaction count stats: {overall_turn_details['string']}\n"
         f"Rooms Travelled stats: {movement_turn_details['string']}\n"
         f"Speech Count: {speech_count} ({speech_prop:2.2f}% of nontrivial)\n"
-        f"{BOLD_YELLOW}---- Error Analysis ----{RESET}\n"
+        f"{BOLD_YELLOW}---- Error Analysis ----{C.RESET}\n"
         f"Total errors: {len(error_list)}\n"
         f"Episodes with parse errors: {error_count} ({error_prop:2.2f}%)\n"
-        f"{BOLD_CYAN}---- Remaining stats on Speech ----{RESET}\n"
+        f"{BOLD_CYAN}---- Remaining stats on Speech ----{C.RESET}\n"
         f"Overall speech turn stats: {speech_turn_details['string']}\n"
         f"Human speech turn stats: {human_turn_details['string']}\n"
         f"Multi-player: 2 or more: {multi_human_count} ({multi_human_prop:2.2f}%) \t"
         f"3 or more: {three_party_count} ({three_party_prop:2.2f}%)\n"
-        f"{BOLD_YELLOW}---- Safety ----{RESET}\n"
+        f"{BOLD_YELLOW}---- Safety ----{C.RESET}\n"
         f"Unsafe by player: {actor_unsafe_count} ({actor_unsafe_prop:2.2f}%) \t"
         f"Unsafe by any: {any_unsafe_count} ({any_unsafe_prop:2.2f}%)\n"
-        f"{BOLD_CYAN}----- Player action breakdown ----{RESET}\n"
+        f"{BOLD_CYAN}----- Player action breakdown ----{C.RESET}\n"
         f"Overall action breakdown: {overall_action_breakdown}\n"
     )
 

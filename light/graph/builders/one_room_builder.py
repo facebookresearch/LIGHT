@@ -81,6 +81,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             parlai_datapath = opt["datapath"]
             db_path = os.path.join(parlai_datapath, "light", "database3.db")
         self.db_path = db_path
+        self.dpath = os.path.expanduser("~/ParlAI/data/light_maps/")
         model_path = opt.get("model_path")
         if model_path is None:
             model_path = opt.get("light_model_root")
@@ -493,7 +494,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             )
         return g, world
 
-    def _get_constrained_graph(self, location=None, player=None):
+    def _get_constrained_graph(self, location=None, player=None, num_partners=1):
         """
         Location is of the form "Location Name. location description"
         player is of the form "Player Name. player persona"
@@ -544,13 +545,14 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             player_char = self.get_char_from_id(self.charfeats_to_id(player.lower()))
             self_char_id = self.add_new_agent_to_graph(g, player_char, room_node)
 
-        partner_char = random.choice(possible_chars)
-        possible_chars.remove(partner_char)
-        parner_char_id = self.add_new_agent_to_graph(g, partner_char, room_node)
-        while parner_char_id is None:
+        for _ in range(num_partners):
             partner_char = random.choice(possible_chars)
             possible_chars.remove(partner_char)
             parner_char_id = self.add_new_agent_to_graph(g, partner_char, room_node)
+            while parner_char_id is None:
+                partner_char = random.choice(possible_chars)
+                possible_chars.remove(partner_char)
+                parner_char_id = self.add_new_agent_to_graph(g, partner_char, room_node)
 
         if "db" in set_room.ex_objects:
             for item_id in set_room.ex_objects["db"]:
@@ -597,7 +599,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         world.oo_graph = g
         return g, world
 
-    def get_constrained_graph(self, location=None, player=None):
+    def get_constrained_graph(self, location=None, player=None, num_partners=1):
         """Take a few attempts to get the graph meeting the given constraints"""
         attempts = 9
         graph = None
@@ -606,7 +608,9 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             try:
                 random.seed(time.time())
                 graph, world = self._get_constrained_graph(
-                    location=location, player=player
+                    location=location,
+                    player=player,
+                    num_partners=num_partners,
                 )
             except Exception as _e:
                 print(_e)
@@ -617,7 +621,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         """Construct a graph using the grid created with build_world after
         selecting new characters and objects to place within.
         """
-        return self.get_constrained_graph(None, None)
+        return self.get_constrained_graph(None, None, num_partners=1)
 
     def get_contained_items(
         self, container_id, container_type, num_results=5, banned_items=None
