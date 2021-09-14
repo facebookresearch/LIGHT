@@ -1,11 +1,9 @@
 /* REACT */
-import React, { useState } from "react";
+import React from "react";
 /* STYLES */
 import "./styles.css";
 /* ICONS */
 import { FaStar } from "react-icons/fa";
-/* TOOLTIP */
-import { Tooltip } from "react-tippy";
 
 const MissionCompleteMessage = ({ xp, name }) => {
   return (

@@ -11,22 +11,20 @@ import React, {
 function uuidv4() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
     var r = (Math.random() * 16) | 0,
-      v = c == "x" ? r : (r & 0x3) | 0x8;
+      v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
 
 // MESSAGE REDUCER
 const reducer = (state, msg) => {
-  console.log("MESSAGES", state);
-  console.log("MESSAGE", msg);
   if (
     msg.text &&
     msg.text.indexOf("You mumble something incomprehensible") >= 0
   ) {
     let { event_id } = msg;
     const updatedState = state.map((message) => {
-      if (event_id == message.event_id) {
+      if (event_id === message.event_id) {
         return msg;
       } else {
         return message;
@@ -54,13 +52,13 @@ const reducer = (state, msg) => {
     } = event_data;
     //MESSAGE BEFORE EXP
     let unUpdatedMsg = state.filter((message, index) => {
-      return message.event_id == target_event;
+      return message.event_id === target_event;
     })[0];
     //MESSAGE WITH EXP
     let updatedMsg = { ...unUpdatedMsg, xp: unUpdatedMsg.exp + reward };
     //UPDATED MESSAGE PLACED IN PROPER POSITION IN STATE
     let updatedState = state.map((message) => {
-      if (message.event_id == target_event) {
+      if (message.event_id === target_event) {
         return updatedMsg;
       }
       return message;
@@ -139,7 +137,6 @@ export function useWSDataSource(url) {
   const handleMessage = useCallback(
     (msg) => {
       const cmd = JSON.parse(msg.data);
-      console.log("CMD", cmd);
       if (cmd.command === "actions") {
         const buffer = [];
 
@@ -220,7 +217,6 @@ export function useWSDataSource(url) {
     // websocket.current.onmessage = handleMessage;
 
     websocket.current.onopen = () => {
-      console.log("openned");
       setConnected(true);
     };
 

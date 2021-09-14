@@ -17,10 +17,11 @@
 
 #message-nameplate {
   font-family: fantasy;
-  font-size: 13px;
+  font-size: 14px;
   margin-right: 50px;
   max-width: 80%;
   overflow-x: hidden;
+  padding-top: 4px;
 }
 
 .message.me {
@@ -44,6 +45,15 @@
 .message-icon {
   font-size: 2em;
 }
+
+#message-star__container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
+
 #message-star {
   position: absolute;
   animation: shrink 1s normal;
@@ -61,10 +71,11 @@
 }
 
 #message-star__number {
-  margin-right: 2em;
+  margin-right: 1.3em;
   display: inline;
-  font-size: 1.25em;
+  font-size: 24px;
   animation: 4s slide normal;
+  color: #ffe205;
 }
 
 @keyframes shrink {
@@ -150,7 +161,7 @@
   top: 0;
   left: 0;
   margin: -19px -10px 5px -10px;
-  color: #666;
+  color: black;
   font-style: italic;
   display: flex;
   justify-content: space-between;
@@ -185,8 +196,8 @@
     font-size: 8px;
   }
   #message-nameplate {
-    font-family: fantasy;
-    font-size: 1em;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 16px;
     margin-right: 50px;
     max-width: 80%;
     overflow-x: hidden;
@@ -207,26 +218,29 @@
     font-size: 2em;
   }
 
-  .message-star {
+  #message-star {
     position: absolute;
     animation: shrink 1s normal;
     color: #ffe205;
     top: 3%;
     right: 5%;
-    font-size: 2em;
+    font-size: 2.5em;
   }
 
   #message-star-O {
     position: absolute;
     top: 5%;
     right: 1%;
-    font-size: 2em;
+    font-size: 2.5em;
   }
 
   #message-star__number {
-    margin-right: 2em;
+    margin-right: 1em;
     display: inline;
     font-size: 0.75em;
     animation: 4s slide normal;
+    color: #ffe205;
+    font-size: 20px;
+    font-family: "Courier New", Courier, monospace;
   }
 }

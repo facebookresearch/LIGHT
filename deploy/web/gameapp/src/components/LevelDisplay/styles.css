@@ -27,4 +27,21 @@
 }
 
 @media only screen and (max-width: 600px) {
+  .level-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3em;
+    width: 3em;
+    margin-left: 20px;
+  }
+
+  .gift-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3em;
+    width: 3em;
+    margin-left: 40px;
+  }
 }

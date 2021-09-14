@@ -1,10 +1,12 @@
+/* REACT */
 import React from "react";
+/* STYLES */
 import "./styles.css";
+/* ICONS */
 import { BsCircleFill } from "react-icons/bs";
 
-const NumberCircle = (props) => {
-  const { number, size } = props;
-
+//NumberCircle - Renders number at center of custom styled circle
+const NumberCircle = ({ number }) => {
   return (
     <div className="numbercircle-container">
       <div className="circle-container">

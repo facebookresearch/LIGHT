@@ -1,10 +1,9 @@
 /* REACT */
-import React, { useState } from "react";
+import React from "react";
 /* STYLES */
 import "./styles.css";
-/* TOOLTIP */
-import { Tooltip } from "react-tippy";
 
+//SoulSpawnEventyMessage - renders soul spawn event bubbles and formats text for that event
 const SoulSpawnEventMessage = ({ text }) => {
   let SpawnArr = text.split("\n");
   let StarShine1 = SpawnArr[0];

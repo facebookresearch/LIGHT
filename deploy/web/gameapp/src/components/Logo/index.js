@@ -1,13 +1,14 @@
 /* REACT */
-import React, { useState, useEffect } from "react";
-//STYLES
+import React from "react";
+/* STYLES */
 import "./styles.css";
-//IMAGE
+/* IMAGES */
 import Scribe from "../../assets/images/scribe.png";
 
-const Logo = (props) => {
-  const builder_url =
-    window.location.protocol + "//" + window.location.host + "/builder/";
+//Logo - renders game logo along with Title and blurb with custom styling
+const Logo = () => {
+  // const builder_url =
+  //   window.location.protocol + "//" + window.location.host + "/builder/";
   return (
     <div className="header">
       <img alt="logo" src={Scribe} />

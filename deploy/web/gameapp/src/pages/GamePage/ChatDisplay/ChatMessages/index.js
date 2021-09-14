@@ -9,15 +9,8 @@ import "./styles.css";
 //CUSTOM COMPONENTS
 import Entry from "./Entry";
 
-const ChatMessages = ({
-  messages,
-  setPlayerXp,
-  setPlayerGiftXp,
-  playerGiftXp,
-  playerXp,
-  sessionGiftXpSpent,
-  setSessionGiftXpSpent,
-}) => {
+//ChatMessages - Renders messages in chat display by iterating through message reducer returning Entry components
+const ChatMessages = ({ messages }) => {
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
@@ -29,21 +22,14 @@ const ChatMessages = ({
   return (
     <>
       {messages.map((msg, idx) => (
-        <div className="message-row">
+        <div className="message-row" key={msg.event_id}>
           <Entry
-            key={msg.event_id}
             msg={msg}
             agents={agents}
             onReply={(agent) => {
               dispatch(updateTellTarget(agent));
             }}
             selfId={persona.id}
-            setPlayerXp={setPlayerXp}
-            setPlayerGiftXp={setPlayerGiftXp}
-            playerGiftXp={playerGiftXp}
-            playerXp={playerXp}
-            sessionGiftXpSpent={sessionGiftXpSpent}
-            setSessionGiftXpSpent={setSessionGiftXpSpent}
           />
         </div>
       ))}

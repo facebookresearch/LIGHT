@@ -1,12 +1,13 @@
 /* REACT */
-import React, { useState } from "react";
-//STYLES
+import React from "react";
+/* STYLES */
 import "./styles.css";
-//Custom Components
+/* CUSTOM COMPONENTS */
 import ChatInput from "./ChatInput";
 import ActionBar from "./ActionBar";
 import DisconnectMessage from "./DisconnectMessage";
 
+//ChatControls - render container that holds both chat input and "action bar" which contains quick chat speech bubbles for each npc in vincinity
 const ChatControls = ({
   presentAgents,
   getAgentName,

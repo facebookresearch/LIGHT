@@ -20,16 +20,8 @@ function get_msg_actor(msg) {
   }
 }
 
-const Entry = ({
-  msg,
-  onReply,
-  agents,
-  selfId,
-  setPlayerGiftXp,
-  playerGiftXp,
-  sessionGiftXpSpent,
-  setSessionGiftXpSpent,
-}) => {
+//Entry - Renders specific type of message component based on individual message object's attributes
+const Entry = ({ msg, onReply, agents, selfId }) => {
   if (
     [
       "LookEvent",
@@ -44,13 +36,13 @@ const Entry = ({
     ].includes(msg.caller) ||
     msg.caller === null
   ) {
-    if (msg.caller == "HelpEvent") {
+    if (msg.caller === "HelpEvent") {
       return <HelpMessage text={msg.text} />;
-    } else if (msg.caller == "InventoryEvent") {
+    } else if (msg.caller === "InventoryEvent") {
       return <InventoryMessage text={msg.text} />;
-    } else if (msg.caller == "HealthEvent") {
+    } else if (msg.caller === "HealthEvent") {
       return <StatusMessage text={msg.text} />;
-    } else if (msg.caller == "QuestEvent") {
+    } else if (msg.caller === "QuestEvent") {
       return <QuestMessage text={msg.text} />;
     } else {
       return <SettingMessage text={msg.text} />;
@@ -59,7 +51,7 @@ const Entry = ({
     var actor = get_msg_actor(msg);
     return (
       <>
-        {msg.caller == "SoulSpawnEvent" ? (
+        {msg.caller === "SoulSpawnEvent" ? (
           <SoulSpawnEventMessage text={msg.text} />
         ) : msg.questComplete ? (
           <MissionCompleteMessage xp={msg.xp} name={msg.text} />
@@ -70,26 +62,15 @@ const Entry = ({
             actor={agents[actor]}
             onReply={onReply}
             xp={msg.xp}
-            actorId={actor}
-            eventId={msg.event_id}
-            playerGiftXp={playerGiftXp}
-            setPlayerGiftXp={setPlayerGiftXp}
-            sessionGiftXpSpent={sessionGiftXpSpent}
-            setSessionGiftXpSpent={setSessionGiftXpSpent}
           />
         ) : (
           <AgentMessage
             text={msg.text}
-            isSelf={msg.is_self || actor === selfId}
             actor={agents[actor]}
             onReply={onReply}
             xp={msg.xp}
             actorId={actor}
             eventId={msg.event_id}
-            playerGiftXp={playerGiftXp}
-            setPlayerGiftXp={setPlayerGiftXp}
-            sessionGiftXpSpent={sessionGiftXpSpent}
-            setSessionGiftXpSpent={setSessionGiftXpSpent}
           />
         )}
       </>

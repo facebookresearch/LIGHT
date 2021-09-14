@@ -1,7 +1,7 @@
 /* REACT */
 import React, { useState, useEffect } from "react";
 /* REDUX */
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppSelector } from "../../app/hooks";
 //TOOLTIP
 import { Tooltip } from "react-tippy";
 //STYLES
@@ -12,7 +12,7 @@ import LevelDisplay from "../LevelDisplay";
 
 // ExperienceInfo - component that calculates a players level and progress from their xp
 //then renders the Level Display and Progress bar with those values
-const ExperienceInfo = ({}) => {
+const ExperienceInfo = () => {
   const xp = useAppSelector((state) => state.xp.value);
   const giftXp = useAppSelector((state) => state.giftXp.value);
 

@@ -1,19 +1,18 @@
 /* REACT */
-import React, { useState, useEffect } from "react";
-import { Link } from "react-dom";
-
-//IMAGES
+import React from "react";
+/* STYLES */
+import "./styles.css";
+/* IMAGES */
 import Scribe from "../../../assets/images/scribe.png";
 import ActionText1 from "../../../assets/screenshots/Tutorial/Interacting/Emote1.png";
 import WrappedText from "../../../assets/screenshots/Tutorial/Interacting/InteractingRespond.png";
 
-import "./styles.css";
-
+//InstructionModalContent - renders content and copy for introduction modal that appears only to new players
 const InstructionModalContent = ({ buttonFunction }) => {
   return (
     <div className="instructionmodalcontent-container">
       <div className="instructionmodalcontent-header">
-        <img className="instructionmodalcontent-scribe" src={Scribe} />
+        <img className="instructionmodalcontent-scribe" src={Scribe} alt="" />
         <h1 className="instructionmodalcontent-header__text">
           Playing{" "}
           <span className="instructionmodalcontent-header__light">LIGHT</span>
@@ -24,12 +23,20 @@ const InstructionModalContent = ({ buttonFunction }) => {
           The LIGHT interface attempts to interpret anything typed into it as an
           action.
         </p>
-        <img className="instructionmodalcontent-image" src={ActionText1} />
+        <img
+          className="instructionmodalcontent-image"
+          src={ActionText1}
+          alt="example of chat input"
+        />
         <p className="instructionmodalcontent-body__text">
           To speak, you should wrap your sentence in quotes, or use shift+enter
           to send your messages.
         </p>
-        <img className="instructionmodalcontent-image" src={WrappedText} />
+        <img
+          className="instructionmodalcontent-image"
+          src={WrappedText}
+          alt="example of sentence wrapped in quotes"
+        />
         <p className="instructionmodalcontent-body__text">
           A list of commands can be displayed with "help" and you can find a
           more complete list of instructions{" "}

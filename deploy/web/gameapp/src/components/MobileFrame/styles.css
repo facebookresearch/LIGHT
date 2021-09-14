@@ -10,7 +10,6 @@
   height: 70%;
   margin-top: 20vh;
   margin-bottom: 20em;
-  overflow-y: scroll;
   overflow-x: hidden;
   position: fixed;
 }

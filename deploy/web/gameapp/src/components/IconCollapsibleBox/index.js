@@ -1,12 +1,10 @@
 /* REACT */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 /* ICONS */
 import { BiWindow } from "react-icons/bi";
 import { FaWindowMinimize } from "react-icons/fa";
-/* TOOLTIP */
-import { Tooltip } from "react-tippy";
 /* EMOJI */
-import { Picker, emojiIndex } from "emoji-mart";
+import { Picker } from "emoji-mart";
 import onClickOutside from "react-onclickoutside";
 /* STYLES */
 import "./styles.css";

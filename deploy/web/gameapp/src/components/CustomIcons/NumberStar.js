@@ -1,10 +1,12 @@
+/* REACT */
 import React from "react";
+/* STYLES */
 import "./styles.css";
+/* ICONS */
 import { FaStar } from "react-icons/fa";
 
-const NumberStar = (props) => {
-  const { number, iconStyle, size } = props;
-
+//NumberStar - Renders number at center of custom styled star
+const NumberStar = ({ number }) => {
   return (
     <div className="numberstar-container">
       <div className="star-container">

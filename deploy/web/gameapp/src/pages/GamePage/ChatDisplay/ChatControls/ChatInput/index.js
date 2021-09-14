@@ -100,7 +100,6 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
             if (submittedMessages.length > 0) {
               if (e.key == "ArrowUp") {
                 e.preventDefault();
-                console.log("UPSHIFT");
                 let updatedPosition = cycleMessagesPosition - 1;
                 if (updatedPosition < 0) {
                   updatedPosition = submittedMessages.length;
@@ -110,7 +109,6 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
               }
               if (e.key == "ArrowDown") {
                 e.preventDefault();
-                console.log("DOWNSHIFT");
                 let updatedPosition = cycleMessagesPosition + 1;
                 if (updatedPosition >= submittedMessages.length) {
                   updatedPosition = 0;

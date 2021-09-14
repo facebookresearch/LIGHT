@@ -1,42 +1,27 @@
-//REACT
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useLayoutEffect,
-} from "react";
-//STYLES
+/* REACT */
+import React, { useEffect, useCallback, useRef } from "react";
+/* STYLES */
 import "./styles.css";
-//TOOLTIP
+/* TOOLTIPS */
 import "react-tippy/dist/tippy.css";
-//Custom Components
+/* CUSTOM COMPONENTS */
 import ChatMessages from "./ChatMessages";
 import ChatControls from "./ChatControls";
-//UTILS
+/* UTILS */
 import { setCaretPosition } from "../../../utils";
 
+//ChatDisplay - renders primary container for both chat and entirety of chat controls
 const ChatDisplay = ({
   messages,
   onSubmit,
-  persona,
   agents,
   getDataModelAddress,
   getLocationState,
   idle,
   resetIdleTimer,
-  setPlayerXp,
-  setPlayerGiftXp,
-  playerGiftXp,
-  playerXp,
-  sessionGiftXpSpent,
-  setSessionGiftXpSpent,
 }) => {
-  /*---------------STATE----------------*/
-  const [enteredText, setEnteredText] = useState("");
   /*---------------REFS----------------*/
   const chatContainerRef = useRef(null);
-  const chatInputRef = useRef();
   /*---------------UT----------------*/
   const getAgentName = (agent) => (agents ? agents[agent] : agent);
   const getEntityId = (agent) => agent.match(/\d+$/)[0];
@@ -50,17 +35,6 @@ const ChatDisplay = ({
             chatContainerRef.current.scrollHeight;
       }, 0),
     [chatContainerRef]
-  );
-  const setTextTellAgent = useCallback(
-    (agent) => {
-      const message = `tell ${agent} ""`;
-      setEnteredText(message);
-      setTimeout(
-        () => setCaretPosition(chatInputRef.current, message.length - 1),
-        0 /* 0s timeout to schedule this task to occur after the layout is updated */
-      );
-    },
-    [setEnteredText, chatInputRef]
   );
   /*---------------LIFECYCLE----------------*/
   useEffect(() => {
@@ -79,16 +53,7 @@ const ChatDisplay = ({
   return (
     <div className="chat-wrapper">
       <div className="chat" ref={chatContainerRef}>
-        <ChatMessages
-          messages={messages}
-          setTextTellAgent={setTextTellAgent}
-          setPlayerXp={setPlayerXp}
-          setPlayerGiftXp={setPlayerGiftXp}
-          playerGiftXp={playerGiftXp}
-          playerXp={playerXp}
-          sessionGiftXpSpent={sessionGiftXpSpent}
-          setSessionGiftXpSpent={setSessionGiftXpSpent}
-        />
+        <ChatMessages messages={messages} />
       </div>
       <ChatControls
         onSubmit={onSubmit}

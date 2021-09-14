@@ -16,11 +16,10 @@ import "../../styles.css";
 import "./styles.css";
 import "react-tippy/dist/tippy.css";
 import "emoji-mart/css/emoji-mart.css";
-//EMOJI
+/* EMOJI */
 import { DefaultEmojiMapper } from "../../utils";
-import { Picker, emojiIndex } from "emoji-mart";
-import onClickOutside from "react-onclickoutside";
-//CUSTOM COMPONENTS
+import { emojiIndex } from "emoji-mart";
+/* CUSTOM COMPONENTS */
 import { useWSDataSource } from "../../WebSockets/useWSDataSource";
 import MobileFrame from "../../components/MobileFrame";
 import LoadingPage from "../../pages/LoadingPage";
@@ -28,7 +27,7 @@ import Sidebar from "./Sidebar";
 import ChatDisplay from "./ChatDisplay";
 import Modal from "../../components/Modal";
 import InstructionModalContent from "./InstructionModalContent";
-//CONFIG
+/* CONFIG */
 import CONFIG from "../../config.js";
 
 //WEBSOCKET CONNECTION FUNCTION
@@ -49,7 +48,7 @@ const createWebSocketUrlFromBrowserUrl = (url) => {
 
   let websocketURL =
     wsProtocol + "://" + (optionalServerHost || CONFIG.hostname);
-  if (CONFIG.port != "80") {
+  if (CONFIG.port !== "80") {
     websocketURL += ":" + CONFIG.port;
   }
   websocketURL += `/game${optionalGameId}/socket`;
@@ -125,10 +124,14 @@ const Chat = ({
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
+  //GIFT XP STATE
+  const giftXp = useAppSelector((state) => state.giftXp.value);
   //SESSION XP STATE
-  const sessionXp = useAppSelector((state) => state.sessionXp);
+  const sessionXp = useAppSelector((state) => state.sessionXp.value);
   //SESSION GIFT XP STATE
-  const sessionGiftXp = useAppSelector((state) => state.sessionGiftXp);
+  const sessionGiftXpSpent = useAppSelector(
+    (state) => state.sessionSpentGiftXp.value
+  );
   //MOBILE STATE
   const isMobile = useAppSelector((state) => state.view.isMobile);
   //DRAWER
@@ -144,12 +147,10 @@ const Chat = ({
   const [idleTime, setIdleTime] = React.useState(0);
   const [idle, setIdle] = React.useState(false);
   //CHAT TEXT STATE
-  const [enteredText, setEnteredText] = React.useState("");
   const chatContainerRef = React.useRef(null);
   //PLAYER XP AND GIFT XP
   const [playerXp, setPlayerXp] = React.useState(0);
   const [playerGiftXp, setPlayerGiftXp] = React.useState(0);
-  const [sessionGiftXpSpent, setSessionGiftXpSpent] = React.useState(0);
   // AGENT AND CHARACTER STATE
   const getAgentName = (agent) => (agents ? agents[agent] : agent);
   const getEntityId = (agent) => agent.match(/\d+$/)[0];
@@ -198,6 +199,9 @@ const Chat = ({
     dispatch(updateSessionXp(sessionXpUpdate));
   }, [persona]);
 
+  React.useEffect(() => {
+    dispatch(updateGiftXp(giftXp - sessionGiftXpSpent));
+  }, [sessionGiftXpSpent]);
   /* LOCATION UPDATES TO REDUX STORE */
   React.useEffect(() => {
     dispatch(updateLocation(location));
@@ -238,7 +242,7 @@ const Chat = ({
     const defaultEmoji = "❓";
     let characterEmoji = DefaultEmojiMapper(persona.name);
     if (persona === null || persona.name === null) return;
-    const skipWords = ["a", "the", "an", "of", "with", "holding"];
+    //const skipWords = ["a", "the", "an", "of", "with", "holding"];
     const tryPickEmojis = !persona
       ? []
       : emojiIndex.search(characterEmoji).map((o) => {
@@ -313,8 +317,6 @@ const Chat = ({
             setPlayerGiftXp={setPlayerGiftXp}
             playerXp={playerXp}
             playerGiftXp={playerGiftXp}
-            sessionGiftXpSpent={sessionGiftXpSpent}
-            setSessionGiftXpSpent={setSessionGiftXpSpent}
           />
         </MobileFrame>
       ) : (
@@ -347,8 +349,6 @@ const Chat = ({
               setPlayerGiftXp={setPlayerGiftXp}
               playerXp={playerXp}
               playerGiftXp={playerGiftXp}
-              sessionGiftXpSpent={sessionGiftXpSpent}
-              setSessionGiftXpSpent={setSessionGiftXpSpent}
             />
           </div>
         </>

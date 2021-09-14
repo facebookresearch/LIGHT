@@ -1,5 +1,5 @@
 /* REACT */
-import React, { useState } from "react";
+import React from "react";
 /* STYLES */
 import "./styles.css";
 /* REDUX */
@@ -13,7 +13,7 @@ import CONFIG from "../../../../../config.js";
 
 function handleReport(reportedMessage, reportReason) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
-  if (CONFIG.port != "80") {
+  if (CONFIG.port !== "80") {
     base_url += ":" + CONFIG.port;
   }
 
@@ -32,7 +32,7 @@ function handleReport(reportedMessage, reportReason) {
 
 function handleReward(messageId, messageOwner) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
-  if (CONFIG.port != "80") {
+  if (CONFIG.port !== "80") {
     base_url += ":" + CONFIG.port;
   }
 
@@ -49,21 +49,12 @@ function handleReward(messageId, messageOwner) {
   });
 }
 
-const AgentMessage = ({
-  text,
-  caller,
-  actor,
-  isSelf,
-  onReply,
-  playerGiftXp,
-  xp,
-  eventId,
-  actorId,
-}) => {
+const AgentMessage = ({ text, caller, actor, onReply, eventId, actorId }) => {
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
-  //SESSION XP STATE
+  //GIFT XP STATE
+  const giftXp = useAppSelector((state) => state.giftXp.value);
 
   //SESSION SPENT GIFT XP STATE
   const sessionSpentGiftXp = useAppSelector(
@@ -78,7 +69,7 @@ const AgentMessage = ({
   const [isLiked, setIsLiked] = React.useState(false);
 
   const likeHandler = () => {
-    if (playerGiftXp >= 1) {
+    if (giftXp >= 1) {
       handleReward(eventId, actorId);
       setIsLiked(true);
       dispatch(updateSessionSpentGiftXp(sessionSpentGiftXp + 1));
@@ -90,7 +81,7 @@ const AgentMessage = ({
     text = "&ldquo;" + text + "&rdquo;";
     classNames = "message type-dialogue ";
   }
-  classNames += isSelf ? "me" : "other";
+  classNames += "other";
 
   if (isEditMode) {
     return (
@@ -137,7 +128,7 @@ const AgentMessage = ({
         />
         <button
           type="submit"
-          disabled={reportReason.length == 0}
+          disabled={reportReason.length === 0}
           onClick={() => {
             handleReport(text, reportReason);
             setReportReason("");
@@ -181,7 +172,7 @@ const AgentMessage = ({
             <div className="message-icon__container">
               <Tooltip
                 title={
-                  playerGiftXp > 0
+                  giftXp > 0
                     ? `Award ${actor} Experience`
                     : "Not enough Gift Experience"
                 }

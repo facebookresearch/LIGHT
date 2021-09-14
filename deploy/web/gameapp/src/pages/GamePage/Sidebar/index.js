@@ -3,34 +3,28 @@ import React, { useState } from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { updateEmoji } from "../../../features/playerInfo/emoji-slice";
-//TOOLTIPS
+/* TOOLTIPS */
 import "react-tippy/dist/tippy.css";
 import { Tooltip } from "react-tippy";
-//EMOJI PICKER AND LIBRARIES
+/* EMOJI PICKER AND LIBRARIES */
 import "emoji-mart/css/emoji-mart.css";
-import { Picker, emojiIndex } from "emoji-mart";
-import onClickOutside from "react-onclickoutside";
-//STYLES
+/* STYLES */
 import "./styles.css";
 import cx from "classnames";
-//CUSTOM COMPONENTS
+/* CUSTOM COMPONENTS */
 import ExperienceInfo from "../../../components/ExperienceInfo";
 import Logo from "../../../components/Logo/index.js";
 import CollapseibleBox from "../../../components/CollapsibleBox";
 import IconCollapsibleBox from "../../../components/IconCollapsibleBox";
 import GameButton from "../../../components/GameButton";
 
-const EmojiPicker = ({ onBlur, ...props }) => {
-  EmojiPicker.handleClickOutside = () => onBlur();
-  return <Picker style={{ zIndex: "100" }} {...props} />;
-};
-
+//SiderBar - renders Sidebar for application container player, location, mission, and character info as well as xp, giftxp, and progress
 const SideBar = ({ dataModelHost, getEntityId, isMobile, showDrawer }) => {
   /* LOCAL STATE */
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();
-  /* REDUX STATE */
+  /* ----REDUX STATE---- */
   //PERSONA
   const persona = useAppSelector((state) => state.persona);
   //LOCATION

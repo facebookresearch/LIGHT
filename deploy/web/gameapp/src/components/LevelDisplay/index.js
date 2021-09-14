@@ -1,13 +1,14 @@
 /* REACT */
-import React, { useState, useEffect } from "react";
-//TOOLTIP
-import { Tooltip } from "react-tippy";
-//STYLE
+import React from "react";
+/* STYLES */
 import "./styles.css";
-//CUSTOM COMPONENTS
+/* TOOLTIPS */
+import { Tooltip } from "react-tippy";
+/* CUSTOM COMPONENTS */
 import NumberStar from "../CustomIcons/NumberStar";
 import NumberCircle from "../CustomIcons/NumberCircle";
 
+//LevelDisplay-Renders Level and gift exp on custom icons at the head of the side bar in player info component
 const LevelDisplay = ({ level, giftExperience }) => {
   return (
     <div className="leveldisplay-container">
