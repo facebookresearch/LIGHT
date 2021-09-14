@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { updateTellTarget } from "../../../../features/chatInput/chatinput-slice";
 /* STYLES */
 import "./styles.css";
-//CUSTOM COMPONENTS
+/* CUSTOM COMPONENTS */
 import Entry from "./Entry";
 
 //ChatMessages - Renders messages in chat display by iterating through message reducer returning Entry components

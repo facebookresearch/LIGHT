@@ -127,6 +127,7 @@
   text-align: left;
   display: block;
   white-space: pre-wrap;
+  width: 100%;
 }
 
 .message.type-setting p,
@@ -208,6 +209,7 @@
     margin: auto 0 auto 0;
     font-size: 11px;
     text-align: center;
+    width: 100%;
   }
   /* MESSAGE ICONS */
   .message-icon__container {

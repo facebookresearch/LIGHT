@@ -1,6 +1,7 @@
 .App {
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
 }
 
 body.dark-mode {
@@ -9,11 +10,13 @@ body.dark-mode {
 
 body {
   background-color: #d4cab8;
+  overflow-y: hidden;
 }
 
 .app-controls {
   font-size: 12px;
   font-family: sans-serif;
+  padding: 10px;
 }
 
 a {
@@ -54,6 +57,7 @@ p {
   text-align: left;
   display: block;
   white-space: pre-wrap;
+  width: 100%;
 }
 
 .floatFix {

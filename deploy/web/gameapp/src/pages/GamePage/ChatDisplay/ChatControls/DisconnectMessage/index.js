@@ -1,10 +1,10 @@
 /* REACT */
 import React from "react";
-//STYLES
+/* STYLES */
 import "./styles.css";
 
 // DisconnectMessage - Renders Disconnect messagee and reload link upon player being idle for too long
-const DisconnectMessage = ({}) => {
+const DisconnectMessage = () => {
   return (
     <div className="disconnect-container">
       <h2 className="disconnect-text">

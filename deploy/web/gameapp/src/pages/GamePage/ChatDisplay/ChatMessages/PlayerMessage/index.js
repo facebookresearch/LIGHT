@@ -2,18 +2,17 @@
 import React from "react";
 /* STYLES */
 import "./styles.css";
-/* REDUX */
-import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
-//TOOLTIP
+/* TOOLTIPS */
 import { Tooltip } from "react-tippy";
 
-const PlayerMessage = ({ text, caller, actor, isSelf, xp }) => {
+//PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message
+const PlayerMessage = ({ text, caller, actor, xp }) => {
   let classNames = "message type-dialogue ";
   if (["tell", "say", "whisper"].includes(caller)) {
     text = "&ldquo;" + text + "&rdquo;";
     classNames = "message type-dialogue ";
   }
-  classNames += isSelf ? "me" : "other";
+  classNames += "me";
 
   return (
     <div className={classNames}>

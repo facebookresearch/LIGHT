@@ -1,16 +1,32 @@
+/* GAMEPAGE STYLES */
 .gamepage-container {
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-size: cover;
   background-image: url("../../assets/images/InexplicableTavern.png");
-  min-height: 100vh;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+#fullscreen-gamepage {
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: flex-start;
+  display: flex;
+  overflow: hidden;
+  flex-direction: row;
 }
 
 .sidebar-container {
   justify-content: center;
   width: 25%;
   min-width: 20em;
+  height: 100%;
+  overflow-y: scroll;
 }
 
 .chat-container {
@@ -24,7 +40,6 @@
   align-items: center;
   margin: 0;
   width: 100%;
-  background-color: #421001;
 }
 
 .drawerbar-img {

@@ -4,18 +4,17 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
 import {
-  updateChatText,
   updateIsSaying,
   updateTellTarget,
-  updateSubmittedMessages,
 } from "../../../../../features/chatInput/chatinput-slice";
-//TOOLTIP
+/* TOOLTIPS */
 import { Tooltip } from "react-tippy";
-//STYLES
+/* STYLES */
 import "./styles.css";
-//CUSTOM COMPONENTS
+/* CUSTOM COMPONENTS */
 import SpeechBubble from "../../../../../components/SpeechBubble";
 
+//ActionBar - Renders container for speech bubbles that act as "quick tell" button for all present NPCS
 const ActionBar = ({
   presentAgents,
   getAgentName,
@@ -26,11 +25,6 @@ const ActionBar = ({
   const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
   const persona = useAppSelector((state) => state.persona);
-  const isSaying = useAppSelector((state) => state.chatInput.isSaying);
-  const tellTarget = useAppSelector((state) => state.chatInput.tellTarget);
-  const submittedMessages = useAppSelector(
-    (state) => state.chatInput.submittedMessages
-  );
   return (
     <div className="actions">
       {/* {location ? <span>{location.name} &mdash; </span> : null} */}

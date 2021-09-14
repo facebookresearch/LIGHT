@@ -33,7 +33,7 @@
   background-color: #efefef;
   opacity: 0.9;
   border-radius: 15px;
-  overflow-y: hidden;
+  overflow-y: scroll;
   box-shadow: 4px 4px 6px black;
 }
 

@@ -23,7 +23,7 @@
 .quest-content {
   position: absolute;
   z-index: 4;
-  padding-top: 2.5em;
+  padding: 2.5em 6px 6px 6px;
   margin: 0;
   width: 100%;
   height: 16em;
@@ -33,8 +33,8 @@
   background-color: white;
   opacity: 0.6;
   border-radius: 15px;
-  overflow-y: hidden;
   box-shadow: 4px 4px 6px black;
+  overflow-y: scroll;
 }
 
 .quest-content__entry {

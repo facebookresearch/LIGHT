@@ -6,9 +6,9 @@ import "./styles.css";
 import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
 import { updateSessionSpentGiftXp } from "../../../../../features/sessionInfo/sessionspentgiftxp-slice";
-//TOOLTIP
+/* TOOLTIPS */
 import { Tooltip } from "react-tippy";
-//CONFIG
+/* CONFIG */
 import CONFIG from "../../../../../config.js";
 
 function handleReport(reportedMessage, reportReason) {

@@ -42,14 +42,6 @@ const ChatDisplay = ({
   }, [scrollToBottom, messages]);
 
   const { presentAgents } = getLocationState(messages);
-
-  // useLayoutEffect(() => {
-  //   const { current } = chatInputRef;
-  //   if (current) {
-  //     current.focus();
-  //   }
-  // }, []);
-
   return (
     <div className="chat-wrapper">
       <div className="chat" ref={chatContainerRef}>

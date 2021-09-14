@@ -47,6 +47,32 @@
 
 @media only screen and (max-width: 600px) {
   .bar-label {
-    font-size: 8px;
+    font-size: 14px;
+  }
+}
+
+/* BROWSER SPECIFIC QUERIES */
+/* Safari 11+ */
+@media not all and (min-resolution: 0.001dpcm) {
+  @supports (-webkit-appearance: none) and (stroke-color: transparent) {
+    .bar-container {
+      height: 2.2em;
+    }
+  }
+}
+
+/* Safari 10.1 */
+@media not all and (min-resolution: 0.001dpcm) {
+  @supports (-webkit-appearance: none) and (not (stroke-color: transparent)) {
+    .bar-container {
+      height: 2.2em;
+    }
+  }
+}
+
+/* Safari 6.1-10.0 (but not 10.1) */
+@media screen and (min-color-index: 0) and(-webkit-min-device-pixel-ratio:0) {
+  .bar-container {
+    height: 2.2em;
   }
 }

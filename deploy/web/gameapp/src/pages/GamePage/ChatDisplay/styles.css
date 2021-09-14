@@ -2,11 +2,8 @@
 .chat-wrapper {
   display: flex;
   flex-direction: column;
-  animation: popInApp 0.3s 0.3s cubic-bezier(0.5, 0, 0, 1);
-  animation-fill-mode: forwards;
   overflow-x: hidden;
-  overflow-y: scroll;
-  opacity: 0;
+  opacity: 1;
   min-height: 500px;
   height: 100%;
   padding-left: 10px;
@@ -17,7 +14,6 @@
   border: 1px solid rgb(184, 184, 184);
   background-color: rgb(228, 226, 221);
   margin: 30px 0px 0px;
-  overflow-y: scroll;
   overflow-x: hidden;
   border-radius: 10px 10px 0px 0px;
   position: relative;
@@ -33,11 +29,8 @@
   .chat-wrapper {
     display: flex;
     flex-direction: column;
-    animation: popInApp 0.3s 0.3s cubic-bezier(0.5, 0, 0, 1);
-    animation-fill-mode: forwards;
     overflow-x: hidden;
-    overflow-y: scroll;
-    opacity: 0;
+    opacity: 1;
     min-height: 200px;
     height: 100%;
     padding-left: 0;

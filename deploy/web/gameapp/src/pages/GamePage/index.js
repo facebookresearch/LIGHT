@@ -12,7 +12,7 @@ import { updateGiftXp } from "../../features/playerInfo/giftxp-slice.ts";
 import { updateSessionXp } from "../../features/sessionInfo/sessionxp-slice";
 import { updateIsMobile } from "../../features/view/view-slice";
 /* STYLES */
-import "../../styles.css";
+
 import "./styles.css";
 import "react-tippy/dist/tippy.css";
 import "emoji-mart/css/emoji-mart.css";
@@ -166,6 +166,18 @@ const Chat = ({
     [chatContainerRef]
   );
 
+  const getLocationState = (messages) => {
+    var valid_messages = messages.filter(
+      (m) => m.is_self !== true && m.caller !== null
+    );
+    if (valid_messages.length === 0) return [null, []];
+    var lastMessage = valid_messages[valid_messages.length - 1];
+    return {
+      currentRoom: lastMessage.room_id,
+      presentAgents: Object.keys(lastMessage.present_agent_ids),
+    };
+  };
+
   /* PLAYER AND SESSION INFO UPDATES TO REDUX STORE */
   React.useEffect(() => {
     const { xp, giftXp } = persona;
@@ -313,21 +325,15 @@ const Chat = ({
             getLocationState={getLocationState}
             idle={idle}
             resetIdleTimer={resetIdleTimer}
-            setPlayerXp={setPlayerXp}
-            setPlayerGiftXp={setPlayerGiftXp}
-            playerXp={playerXp}
-            playerGiftXp={playerGiftXp}
           />
         </MobileFrame>
       ) : (
-        <>
+        <div id="fullscreen-gamepage">
           <div className="sidebar-container">
             {persona ? (
               <Sidebar
                 dataModelHost={dataModelHost}
                 getEntityId={getEntityId}
-                playerXp={playerXp}
-                playerGiftXp={playerGiftXp}
               />
             ) : (
               <div />
@@ -345,13 +351,9 @@ const Chat = ({
               getLocationState={getLocationState}
               idle={idle}
               resetIdleTimer={resetIdleTimer}
-              setPlayerXp={setPlayerXp}
-              setPlayerGiftXp={setPlayerGiftXp}
-              playerXp={playerXp}
-              playerGiftXp={playerGiftXp}
             />
           </div>
-        </>
+        </div>
       )}
       {showInstructionModal ? (
         <Modal
@@ -369,15 +371,15 @@ const Chat = ({
   );
 };
 
-function getLocationState(messages) {
-  var valid_messages = messages.filter(
-    (m) => m.is_self !== true && m.caller !== null
-  );
-  if (valid_messages.length === 0) return [null, []];
-  var lastMessage = valid_messages[valid_messages.length - 1];
-  return {
-    currentRoom: lastMessage.room_id,
-    presentAgents: Object.keys(lastMessage.present_agent_ids),
-  };
-}
+// function getLocationState(messages) {
+//   var valid_messages = messages.filter(
+//     (m) => m.is_self !== true && m.caller !== null
+//   );
+//   if (valid_messages.length === 0) return [null, []];
+//   var lastMessage = valid_messages[valid_messages.length - 1];
+//   return {
+//     currentRoom: lastMessage.room_id,
+//     presentAgents: Object.keys(lastMessage.present_agent_ids),
+//   };
+// }
 export default ConnectedApp;

@@ -2,6 +2,8 @@
 import React from "react";
 //ROUTES
 import Routes from "./GameRouter";
+//STYLES
+import "./styles.css";
 
 function App() {
   return (

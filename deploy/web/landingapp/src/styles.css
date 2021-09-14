@@ -1,7 +1,7 @@
 .App {
   display: grid;
   grid-template-columns: 400px 1fr;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   margin: 0 auto;
   padding: 0px 0;
@@ -50,10 +50,6 @@ td {
 
   .chat-wrapper {
     grid-row-start: 2;
-  }
-
-  div.sidebar {
-    margin: 0px;
   }
 
   div.leaflet-container {
