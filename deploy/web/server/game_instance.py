@@ -8,6 +8,7 @@
 
 from light.graph.builders.starspace_all import StarspaceBuilder
 from light.graph.builders.map_json_builder import MapJsonBuilder
+from light.graph.builders.tutorial_builder import TutorialWorldBuilder
 from light.world.souls.repeat_soul import RepeatSoul
 from light.world.souls.models.generative_heuristic_model_soul import (
     GenerativeHeuristicModelSoul,
@@ -165,3 +166,37 @@ class GameInstance:
         ags = self.world.clean_corpses_and_respawn()
         for ag in ags:
             self.world.purgatory.fill_soul(ag)
+
+
+class TutorialInstance(GameInstance):
+    """
+    Version of the game meant to run tutorials, not for general play
+    """
+
+    def __init__(self, game_id, ldb, opt=None):
+        _, tutorial_world = TutorialWorldBuilder(ldb, opt).get_graph()
+        self.db = ldb
+        self._created_time = time.time()
+        self._player_node = tutorial_world.oo_graph.find_nodes_by_name("You")[0]
+        self._target_destination = tutorial_world.oo_graph.find_nodes_by_name(
+            "Ethereal Mist"
+        )[0]
+        super().__init__(game_id, ldb, g=tutorial_world, opt=opt)
+        self._should_shutdown = False
+        self._did_complete = True
+
+    def fill_souls(self, _FLAGS, _model_resources):
+        """Tutorials directly register the tutorial to the DM"""
+        self.world.purgatory.register_filler_soul_provider(
+            "tutorial", RepeatSoul, lambda: []
+        )
+        dm_agent = list(self.world.oo_graph.agents.values())[1]
+        assert dm_agent.name == "Dungeon Master", "Did not find DM!"
+        self.world.purgatory.fill_soul(dm_agent, "tutorial")
+
+    def run_graph_step(self):
+        super().run_graph_step()
+        self._did_complete = self._player_node.get_room() == self._target_destination
+        self._should_shutdown = (
+            len(self.players) == 0 and time.time() - self._created_time > 60
+        )

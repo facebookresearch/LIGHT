@@ -3603,7 +3603,7 @@ class LIGHTDatabase:
         id = int(result[0][0])
         return id
 
-    def get_user_flags(self, user):
+    def get_user_flags(self, extern_id):
         self.c.execute(
             """
             SELECT onboarding_flags from user_table WHERE extern_id = ?
@@ -3624,7 +3624,7 @@ class LIGHTDatabase:
                 SET onboarding_flags = ?
                 WHERE extern_id = ?
                 """,
-                (new_flags,),
+                (new_flags, user),
             )
 
     def initialize_agent_score(self, target_node, user):

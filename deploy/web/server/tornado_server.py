@@ -14,6 +14,7 @@ from light.data_model.light_database import LIGHTDatabase
 from light.world.player_provider import PlayerProvider
 from light.world.quest_loader import QuestLoader
 from light.graph.events.graph_events import init_safety_classifier, RewardEvent
+from light.world.souls.tutorial_player_soul import TutorialPlayerSoul
 
 import argparse
 import inspect
@@ -203,25 +204,40 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
     def set_player(self, player):
         self.player = player
 
+    def user_should_do_tutorial(self, user_id):
+        with self.db as ldb:
+            flags = ldb.get_user_flags(user_id)
+            return not flags.completed_onboarding
+
     def open(self, game_id):
         user_json = self.get_secure_cookie("user")
         if user_json:
-            logging.info("Opened new socket from ip: {}".format(self.request.remote_ip))
-            logging.info("For game: {}".format(game_id))
-            if game_id not in self.app.graphs:
+            logging.info(f"Opened new socket from ip: {self.request.remote_ip}")
+            logging.info(f"For game: {game_id}")
+            user_id = json.loads(user_json)
+            # First check for tutorials
+            if self.user_should_do_tutorial(user_id):
+                # Spawn a tutorial world for this user, or inject them into
+                # their existing world
+                if user_id in self.app.registry.tutorial_map:
+                    game_id = self.app.registry.tutorial_map[user_id]
+                else:
+                    game_id = self.app.registry.run_tutorial(user_id)
+            # Check for custom game world
+            elif game_id not in self.app.registry.game_instances:
                 self.close()
                 # TODO: Have an error page about game deleted
                 self.redirect("/game/")
-            graph_purgatory = self.app.graphs[game_id].world.purgatory
+            graph_purgatory = self.app.registry.game_instances[game_id].world.purgatory
             if self.alive:
                 new_player = TornadoPlayerProvider(
                     self,
                     graph_purgatory,
                     db=self.db,
-                    user=json.loads(user_json),
+                    user=user_id,
                 )
                 new_player.init_soul()
-                self.app.graphs[game_id].players.append(new_player)
+                self.app.registry.game_instances[game_id].players.append(new_player)
         else:
             self.close()
             self.redirect("/#/login")
@@ -677,7 +693,7 @@ class TornadoPlayerProvider(PlayerProvider):
             json.dumps({"command": "actions", "data": [dat]})
         )
         if self.user is not None:
-            if self.db is not None:
+            if self.db is not None and not isinstance(soul, TutorialPlayerSoul):
                 with self.db as ldb:
                     ldb.store_agent_score(soul.target_node, self.user)
             self.app.user_node_map[self.user] = None
@@ -692,14 +708,14 @@ class TornadoPlayerFactory:
 
     def __init__(
         self,
-        graphs,
+        registry,
         hostname=DEFAULT_HOSTNAME,
         port=DEFAULT_PORT,
         db=None,
         listening=False,
         given_tornado_settings=None,
     ):
-        self.graphs = graphs
+        self.registry = registry
         self.app = None
         self.db = db
 
@@ -712,7 +728,7 @@ class TornadoPlayerFactory:
             self.app = Application(
                 given_tornado_settings=given_tornado_settings, db=self.db
             )
-            self.app.graphs = self.graphs
+            self.app.registry = self.registry
             if listening:
                 self.app.listen(port, max_buffer_size=1024 ** 3)
                 print(
