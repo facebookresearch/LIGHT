@@ -1,5 +1,8 @@
 /* REACT */
 import React, { useEffect, useCallback, useRef } from "react";
+/* REDUX */
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { updateSelectedTip } from "../../../features/tutorials/tutorials-slice";
 /* STYLES */
 import "./styles.css";
 /* TOOLTIPS */
@@ -7,6 +10,7 @@ import "react-tippy/dist/tippy.css";
 /* CUSTOM COMPONENTS */
 import ChatMessages from "./ChatMessages";
 import ChatControls from "./ChatControls";
+import TutorialPopover from "../../../components/TutorialPopover";
 /* UTILS */
 import { setCaretPosition } from "../../../utils";
 
@@ -20,6 +24,16 @@ const ChatDisplay = ({
   idle,
   resetIdleTimer,
 }) => {
+  /* ----REDUX STATE---- */
+  //TUTORIAL;
+  const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
+  const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
+  /* ----REDUX ACTIONS---- */
+  // REDUX DISPATCH FUNCTION
+  const dispatch = useAppDispatch();
+  const setSelectedTip = (tipNumber) => {
+    dispatch(updateSelectedTip(tipNumber));
+  };
   /*---------------REFS----------------*/
   const chatContainerRef = useRef(null);
   /*---------------UT----------------*/
@@ -44,8 +58,18 @@ const ChatDisplay = ({
   const { presentAgents } = getLocationState(messages);
   return (
     <div className="chat-wrapper">
-      <div className="chat" ref={chatContainerRef}>
-        <ChatMessages messages={messages} />
+      <div
+        className="chat"
+        ref={chatContainerRef}
+        onMouseOver={() => setSelectedTip(2)}
+      >
+        <TutorialPopover
+          tipNumber={3}
+          open={inHelpMode && selectedTip === 2}
+          position="bottom"
+        >
+          <ChatMessages messages={messages} />
+        </TutorialPopover>
       </div>
       <ChatControls
         onSubmit={onSubmit}

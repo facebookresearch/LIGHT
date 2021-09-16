@@ -15,7 +15,6 @@ const TutorialPopover = ({ tipNumber, open, position, children }) => {
 
   return (
     <Tooltip
-      style={{ all: "initial" }}
       html={
         <>
           <h5>{title}</h5>
@@ -26,7 +25,7 @@ const TutorialPopover = ({ tipNumber, open, position, children }) => {
       position={position}
       arrow={true}
     >
-      {children}
+      <>{children}</>
     </Tooltip>
   );
 };
