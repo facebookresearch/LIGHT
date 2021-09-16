@@ -57,7 +57,7 @@
 .sidebar-row {
   width: 100%;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-around;
   align-items: center;
   margin-top: 7px;
   margin-left: 30px;
@@ -73,7 +73,6 @@
     margin: 0;
   }
   .sidebar-row {
-    justify-content: flex-start;
     align-items: center;
   }
 }

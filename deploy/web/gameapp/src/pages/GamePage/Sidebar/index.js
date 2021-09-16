@@ -3,6 +3,7 @@ import React, { useState } from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { updateEmoji } from "../../../features/playerInfo/emoji-slice";
+import { updateInHelpMode } from "../../../features/tutorials/tutorials-slice";
 /* TOOLTIPS */
 import "react-tippy/dist/tippy.css";
 import { Tooltip } from "react-tippy";
@@ -17,6 +18,7 @@ import Logo from "../../../components/Logo/index.js";
 import CollapseibleBox from "../../../components/CollapsibleBox";
 import IconCollapsibleBox from "../../../components/IconCollapsibleBox";
 import GameButton from "../../../components/GameButton";
+import IconButton from "../../../components/IconButton";
 
 //SiderBar - renders Sidebar for application container player, location, mission, and character info as well as xp, giftxp, and progress
 const SideBar = ({ dataModelHost, getEntityId, isMobile, showDrawer }) => {
@@ -33,6 +35,13 @@ const SideBar = ({ dataModelHost, getEntityId, isMobile, showDrawer }) => {
   const selectedEmoji = useAppSelector((state) => state.emoji.selectedEmoji);
   const setEmoji = (emoji) => {
     dispatch(updateEmoji(emoji));
+  };
+  //TUTORIAL;
+  const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
+
+  const toggleHelpMode = () => {
+    let helpModeUpdate = !inHelpMode;
+    dispatch(updateInHelpMode(helpModeUpdate));
   };
 
   return (
@@ -77,6 +86,7 @@ const SideBar = ({ dataModelHost, getEntityId, isMobile, showDrawer }) => {
         >
           <GameButton text={"LOGOUT"} clickFunction={() => {}} />
         </a>
+        <IconButton buttonFunction={toggleHelpMode} />
       </div>
       <div className="sidebar-body__container">
         <IconCollapsibleBox
