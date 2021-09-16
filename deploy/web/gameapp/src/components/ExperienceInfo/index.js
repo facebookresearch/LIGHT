@@ -13,13 +13,16 @@ import LevelDisplay from "../LevelDisplay";
 // ExperienceInfo - component that calculates a players level and progress from their xp
 //then renders the Level Display and Progress bar with those values
 const ExperienceInfo = () => {
-  const xp = useAppSelector((state) => state.xp.value);
-  const giftXp = useAppSelector((state) => state.giftXp.value);
-
+  /* ----LOCAL STATE---- */
   const [level, setLevel] = useState(1);
   const [neededExp, setNeededExp] = useState(0);
   const [exp, setExp] = useState(0);
   const [progressPercent, setProgressPercent] = useState(0);
+  /* ----REDUX STATE---- */
+  //XP
+  const xp = useAppSelector((state) => state.xp.value);
+  //GIFTXP
+  const giftXp = useAppSelector((state) => state.giftXp.value);
 
   const levelCalculator = () => {
     let currentLevel = 1;
@@ -37,6 +40,7 @@ const ExperienceInfo = () => {
     setExp(xp);
     setProgressPercent(percent);
   };
+
   useEffect(() => {
     levelCalculator();
   }, [xp]);

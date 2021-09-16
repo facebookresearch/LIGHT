@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { store } from "./app/store";
 //STYLES
 import "./index.css";
+import "react-tippy/dist/tippy.css";
 //CUSTOM  COMPONENTS
 import App from "./App";
 //TOOLS

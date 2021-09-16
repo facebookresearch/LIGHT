@@ -1,32 +1,33 @@
 /* REACT */
-import React from "react";
+import React, { useState, useEffect } from "react";
 /* STYLES */
 import "./styles.css";
-/* BOOTSTRAP COMPONENTS */
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Popover from "react-bootstrap/Popover";
+/* TOOLTIPS */
+import { Tooltip } from "react-tippy";
+/* COPY */
+import GameCopy from "../../GameCopy";
+const { tutorialTips } = GameCopy;
 
-const TutorialPopover = ({}) => {
+const TutorialPopover = ({ tipNumber, open, position, children }) => {
+  const currentTip = tutorialTips[tipNumber];
+
+  const { title, description } = currentTip;
+
   return (
-    <>
-      {["top", "right", "bottom", "left"].map((placement) => (
-        <OverlayTrigger
-          trigger="click"
-          key={placement}
-          placement={placement}
-          overlay={
-            <Popover id={`popover-positioned-${placement}`}>
-              <Popover.Header as="h3">{`Popover ${placement}`}</Popover.Header>
-              <Popover.Body>
-                <strong>Holy guacamole!</strong> Check this info.
-              </Popover.Body>
-            </Popover>
-          }
-        >
-          <Button variant="secondary">Popover on {placement}</Button>
-        </OverlayTrigger>
-      ))}
-    </>
+    <Tooltip
+      style={{ all: "initial" }}
+      html={
+        <>
+          <h5>{title}</h5>
+          <p>{description}</p>
+        </>
+      }
+      open={open}
+      position={position}
+      arrow={true}
+    >
+      {children}
+    </Tooltip>
   );
 };
 

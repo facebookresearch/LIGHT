@@ -4,6 +4,10 @@
   overflow: hidden;
 }
 
+#helpmode {
+  cursor: help;
+}
+
 body.dark-mode {
   background-color: #222;
 }
