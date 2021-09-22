@@ -11,7 +11,7 @@ import "./styles.css";
 import { Tooltip } from "react-tippy";
 
 //PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message
-const PlayerMessage = ({ text, caller, actor, xp }) => {
+const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
   let classNames = "message type-dialogue ";
   if (["tell", "say", "whisper"].includes(caller)) {
     text = "&ldquo;" + text + "&rdquo;";
@@ -23,19 +23,16 @@ const PlayerMessage = ({ text, caller, actor, xp }) => {
   //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
-  /* ----REDUX ACTIONS---- */
-  // REDUX DISPATCH FUNCTION
-  const dispatch = useAppDispatch();
-  const setSelectedTip = (tipNumber) => {
-    dispatch(updateSelectedTip(tipNumber));
-  };
 
   return (
-    <div className={classNames}>
+    <div
+      className={`${classNames} ${inHelpMode ? "active" : ""}`}
+      onClick={onClickFunction}
+    >
       <TutorialPopover
-        tipNumber={0}
-        open={inHelpMode && selectedTip === 0}
-        position="left"
+        tipNumber={17}
+        open={inHelpMode && selectedTip === 17}
+        position="top"
       >
         <div className="agent">
           <span id="message-nameplate">

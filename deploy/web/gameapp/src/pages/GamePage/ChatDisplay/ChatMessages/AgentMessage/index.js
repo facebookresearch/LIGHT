@@ -73,7 +73,6 @@ const AgentMessage = ({
   const sessionSpentGiftXp = useAppSelector(
     (state) => state.sessionSpentGiftXp.value
   );
-  /* REDUX ACTIONS */
   /* ------ LOCAL STATE ------ */
   const [isEditMode, setEditMode] = React.useState(false);
   const [isReportMode, setReportMode] = React.useState(false);
@@ -98,7 +97,7 @@ const AgentMessage = ({
 
   if (isEditMode) {
     return (
-      <div className={`${classNames} ${inHelpMode ? "active" : ""}`}>
+      <div className={classNames}>
         <div className="agent">
           <span>{actor}</span>
           <>
@@ -110,13 +109,7 @@ const AgentMessage = ({
           </>
         </div>
         <div style={{ opacity: 0, height: 1, pointerEvents: "none" }}>
-          <TutorialPopover
-            tipNumber={17}
-            open={inHelpMode && selectedTip === 17}
-            position="bottom"
-          >
-            {text}
-          </TutorialPopover>
+          {text}
         </div>
         <input className="edit-message" defaultValue={text} />
         <button type="submit" onClick={() => setEditMode(false)}>
@@ -181,7 +174,10 @@ const AgentMessage = ({
   }
 
   return (
-    <div className={classNames}>
+    <div
+      className={`${classNames} ${inHelpMode ? "active" : ""}`}
+      onClick={onClickFunction}
+    >
       {actor ? (
         <div className="agent">
           <span id="message-nameplate">
@@ -237,7 +233,13 @@ const AgentMessage = ({
           }
         </div>
       ) : null}
-      {text}
+      <TutorialPopover
+        tipNumber={16}
+        open={inHelpMode && selectedTip === 16}
+        position="bottom"
+      >
+        {text}
+      </TutorialPopover>
     </div>
   );
 };

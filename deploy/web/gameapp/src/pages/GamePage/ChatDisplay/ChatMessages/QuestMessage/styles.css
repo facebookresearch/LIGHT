@@ -7,10 +7,6 @@
   z-index: 1;
 }
 
-.quest-container.active:hover {
-  animation: glow 1s ease-in-out infinite alternate;
-}
-
 .quest-grail__container {
   position: relative;
   width: 20em;
@@ -39,6 +35,9 @@
   border-radius: 15px;
   box-shadow: 4px 4px 6px black;
   overflow-y: scroll;
+}
+.quest-content.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
 }
 
 .quest-content__entry {

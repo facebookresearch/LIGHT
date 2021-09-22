@@ -10,17 +10,11 @@ import { FaQuestion } from "react-icons/fa";
 /* CUSTOM COMPONENTS */
 import TutorialPopover from "../../../../../components/TutorialPopover";
 
-const HelpMessage = ({ text }) => {
+const HelpMessage = ({ text, onClickFunction }) => {
   /* ----REDUX STATE---- */
   //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
-  /* ----REDUX ACTIONS---- */
-  // REDUX DISPATCH FUNCTION
-  const dispatch = useAppDispatch();
-  const setSelectedTip = (tipNumber) => {
-    dispatch(updateSelectedTip(tipNumber));
-  };
   /* ---- LOCAL STATE ---- */
   const [commandList, setCommandList] = useState([]);
   /* ---- LIFECYCLE ---- */
@@ -35,7 +29,10 @@ const HelpMessage = ({ text }) => {
       <div className="help-question__container">
         <FaQuestion className="help-question" color="#0072ff" />
       </div>
-      <div className="help-content">
+      <div
+        className={`help-content ${inHelpMode ? "active" : ""}`}
+        onClick={onClickFunction}
+      >
         <p className="help-content__header">COMMANDS</p>
         <div className="help-content__entries">
           {commandList.map((command, index) => {
@@ -49,6 +46,11 @@ const HelpMessage = ({ text }) => {
               </p>
             );
           })}
+          <TutorialPopover
+            tipNumber={10}
+            open={inHelpMode && selectedTip === 10}
+            position="bottom"
+          />
         </div>
       </div>
     </div>

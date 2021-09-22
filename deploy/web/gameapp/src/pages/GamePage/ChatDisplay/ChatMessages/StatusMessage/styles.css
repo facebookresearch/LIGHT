@@ -7,10 +7,6 @@
   z-index: 1;
 }
 
-.status-container.active:hover {
-  animation: glow 1s ease-in-out infinite alternate;
-}
-
 .status-heart__container {
   position: relative;
   width: 20em;
@@ -39,6 +35,10 @@
   border-radius: 15px;
   overflow-y: scroll;
   box-shadow: 4px 4px 6px black;
+}
+
+.status-content.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
 }
 
 .status-content__entry {

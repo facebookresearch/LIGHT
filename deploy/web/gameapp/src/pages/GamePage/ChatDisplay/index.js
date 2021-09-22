@@ -56,11 +56,7 @@ const ChatDisplay = ({
   const { presentAgents } = getLocationState(messages);
   return (
     <div className="chat-wrapper">
-      <div
-        className="chat"
-        ref={chatContainerRef}
-        onMouseOver={() => setSelectedTip(2)}
-      >
+      <div className="chat" ref={chatContainerRef}>
         <ChatMessages messages={messages} />
       </div>
       <ChatControls

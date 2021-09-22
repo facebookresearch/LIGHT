@@ -1,5 +1,5 @@
 /* AGENT MESSAGE */
-.message.active:hover {
+.active:hover {
   animation: glow 1s ease-in-out infinite alternate;
 }
 

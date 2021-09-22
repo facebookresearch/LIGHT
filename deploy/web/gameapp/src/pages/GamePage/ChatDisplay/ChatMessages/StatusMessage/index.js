@@ -6,6 +6,8 @@ import { useAppSelector } from "../../../../../app/hooks";
 import "./styles.css";
 /* ICONS */
 import { FaHeart, FaStar } from "react-icons/fa";
+/* CUSTOM COMPONENTS */
+import TutorialPopover from "../../../../../components/TutorialPopover";
 
 //StatusMessage - Renders Status Message detailing players stats and experience.
 const StatusMessage = ({ text, onClickFunction }) => {
@@ -22,38 +24,41 @@ const StatusMessage = ({ text, onClickFunction }) => {
   }, [text]);
 
   return (
-    <div
-      className={`status-container ${inHelpMode ? "active" : ""}`}
-      onClick={onClickFunction}
-    >
+    <div className="status-container" onClick={onClickFunction}>
       <div className="status-heart__container">
         <FaHeart className="status-heart" color="red" size="19em" />
-        <div className="status-content">
-          {statusArr.map((stat, index) => {
-            if (index <= 1) {
-              let starStat = parseInt(stat.split(":")[1]);
-              return (
-                <p
-                  className="status-content__entry"
-                  style={{ marginTop: "1px" }}
-                >
-                  EXPERIENCE {index == 1 ? "GIFT " : ""}POINTS: {starStat}
-                  <span>
-                    <FaStar color="yellow" />
-                  </span>
-                </p>
-              );
-            } else {
-              return (
-                <p
-                  className="status-content__entry"
-                  style={{ marginTop: "1px" }}
-                >
-                  {stat}
-                </p>
-              );
-            }
-          })}
+        <div className={`status-content ${inHelpMode ? "active" : ""}`}>
+          <TutorialPopover
+            tipNumber={12}
+            open={inHelpMode && selectedTip === 12}
+            position="left"
+          >
+            {statusArr.map((stat, index) => {
+              if (index <= 1) {
+                let starStat = parseInt(stat.split(":")[1]);
+                return (
+                  <p
+                    className="status-content__entry"
+                    style={{ marginTop: "1px" }}
+                  >
+                    EXPERIENCE {index == 1 ? "GIFT " : ""}POINTS: {starStat}
+                    <span>
+                      <FaStar color="yellow" />
+                    </span>
+                  </p>
+                );
+              } else {
+                return (
+                  <p
+                    className="status-content__entry"
+                    style={{ marginTop: "1px" }}
+                  >
+                    {stat}
+                  </p>
+                );
+              }
+            })}
+          </TutorialPopover>
         </div>
       </div>
     </div>

@@ -108,7 +108,7 @@ const IconCollapsibleBox = ({
           {isCollapsed ? null : (
             <div
               className={`collapsible-body`}
-              style={{ backgroundColor: containerBg }}
+              style={{ backgroundColor: containerBg, animation: null }}
             >
               {children}
             </div>

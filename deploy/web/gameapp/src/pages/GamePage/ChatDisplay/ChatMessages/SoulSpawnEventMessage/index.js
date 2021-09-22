@@ -36,8 +36,8 @@ const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
       <h5 className="soulspawn-subheader">YOUR CHARACTER</h5>
       <p className="soulspawn-text" style={{ padding: "0 3em 0 3em" }}>
         <TutorialPopover
-          tipNumber={5}
-          open={inHelpMode && selectedTip === 5}
+          tipNumber={9}
+          open={inHelpMode && selectedTip === 9}
           position="bottom"
         >
           {Description}

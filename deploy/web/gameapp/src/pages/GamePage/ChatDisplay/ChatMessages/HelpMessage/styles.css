@@ -11,10 +11,6 @@
   align-items: center;
 }
 
-.help-container.active:hover {
-  animation: glow 1s ease-in-out infinite alternate;
-}
-
 .help-question__container {
   position: relative;
   z-index: 3;
@@ -52,6 +48,10 @@
   overflow-x: hidden;
   box-shadow: 4px 4px 6px black;
   padding-top: 10px;
+}
+
+.help-content.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
 }
 
 .help-content__header {

@@ -24,17 +24,17 @@ const QuestMessage = ({ text, onClickFunction }) => {
   }, [text]);
 
   return (
-    <div
-      className={`quest-container ${inHelpMode ? "active" : ""}`}
-      onClick={onClickFunction}
-    >
+    <div className="quest-container">
       <div className="quest-grail__container">
-        <GiHolyGrail className="quest-grail" color="yellow" size="19em" />
-        <div className="quest-content">
-          <TutorialPopover
-            tipNumber={13}
-            open={inHelpMode && selectedTip === 13}
-            position="left"
+        <TutorialPopover
+          tipNumber={13}
+          open={inHelpMode && selectedTip === 13}
+          position="top"
+        >
+          <GiHolyGrail className="quest-grail" color="yellow" size="19em" />
+          <div
+            className={`quest-content ${inHelpMode ? "active" : ""}`}
+            onClick={onClickFunction}
           >
             {questInfoArr.map((info, index) => {
               if (info.indexOf(":") >= 0) {
@@ -65,8 +65,8 @@ const QuestMessage = ({ text, onClickFunction }) => {
                 );
               }
             })}
-          </TutorialPopover>
-        </div>
+          </div>
+        </TutorialPopover>
       </div>
     </div>
   );
