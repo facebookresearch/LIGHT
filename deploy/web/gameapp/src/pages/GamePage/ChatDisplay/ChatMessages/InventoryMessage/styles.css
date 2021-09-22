@@ -8,10 +8,6 @@
   z-index: 1;
 }
 
-.inventory-container.active:hover {
-  animation: glow 1s ease-in-out infinite alternate;
-}
-
 .inventory-bag__container {
   position: relative;
   width: 20em;
@@ -42,6 +38,10 @@
   overflow-y: scroll;
   box-shadow: 4px 4px 6px black;
   padding-top: 2.5em;
+}
+
+.inventory-content.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
 }
 
 .inventory-content__text {

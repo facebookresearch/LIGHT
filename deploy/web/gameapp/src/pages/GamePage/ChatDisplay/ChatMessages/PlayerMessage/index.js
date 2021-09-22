@@ -3,12 +3,12 @@ import React from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
 import { updateSelectedTip } from "../../../../../features/tutorials/tutorials-slice";
-/* CUSTOM COMPONENTS */
-import TutorialPopover from "../../../../../components/TutorialPopover";
 /* STYLES */
 import "./styles.css";
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
+/* CUSTOM COMPONENTS */
+import TutorialPopover from "../../../../../components/TutorialPopover";
 
 //PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message
 const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {

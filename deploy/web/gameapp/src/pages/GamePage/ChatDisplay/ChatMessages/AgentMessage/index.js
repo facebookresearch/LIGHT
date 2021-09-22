@@ -1,5 +1,5 @@
 /* REACT */
-import React from "react";
+import React, { useState } from "react";
 /* STYLES */
 import "./styles.css";
 /* REDUX */
@@ -74,18 +74,23 @@ const AgentMessage = ({
     (state) => state.sessionSpentGiftXp.value
   );
   /* ------ LOCAL STATE ------ */
-  const [isEditMode, setEditMode] = React.useState(false);
-  const [isReportMode, setReportMode] = React.useState(false);
-  const [reportReason, setReportReason] = React.useState("");
-  const [isReported, setReported] = React.useState(false);
-  const [isLiked, setIsLiked] = React.useState(false);
-
+  const [isEditMode, setEditMode] = useState(false);
+  const [isReportMode, setReportMode] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [isReported, setReported] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [helpEventId, setHelpEventId] = useState(0);
   const likeHandler = () => {
     if (giftXp >= 1) {
       handleReward(eventId, actorId);
       setIsLiked(true);
       dispatch(updateSessionSpentGiftXp(sessionSpentGiftXp + 1));
     }
+  };
+
+  const onAgentClick = () => {
+    setHelpEventId(eventId);
+    onClickFunction();
   };
 
   let classNames = "message type-dialogue ";
@@ -176,7 +181,7 @@ const AgentMessage = ({
   return (
     <div
       className={`${classNames} ${inHelpMode ? "active" : ""}`}
-      onClick={onClickFunction}
+      onClick={onAgentClick}
     >
       {actor ? (
         <div className="agent">
@@ -235,7 +240,7 @@ const AgentMessage = ({
       ) : null}
       <TutorialPopover
         tipNumber={16}
-        open={inHelpMode && selectedTip === 16}
+        open={helpEventId === eventId && inHelpMode && selectedTip === 16}
         position="bottom"
       >
         {text}
