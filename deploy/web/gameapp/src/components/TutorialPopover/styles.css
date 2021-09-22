@@ -1,0 +1,6 @@
+.tooltip-container {
+  display: flex;
+  display: inherit;
+  height: auto;
+  width: inherit;
+}

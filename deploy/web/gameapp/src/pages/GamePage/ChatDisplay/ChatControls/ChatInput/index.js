@@ -70,71 +70,73 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   };
 
   return (
-    <form style={{ display: "flex" }} onSubmit={chatSubmissionHandler}>
-      <div className="chatbar">
-        <div
-          className={`chatbox-button ${isSaying ? "say" : "do"}`}
-          onClick={(e) => {
-            e.preventDefault();
-            toggleIsSaying();
-          }}
-        >
-          {tellTarget !== ""
-            ? `TELL ${formatTellTargetForButton(tellTarget)}`
-            : isSaying
-            ? "SAY"
-            : "DO"}
-        </div>
-        <input
-          className="chatbox-input"
-          value={chatText}
-          onChange={(e) => {
-            resetIdleTimer();
-            dispatch(updateChatText(e.target.value));
-          }}
-          onKeyDown={(e) => {
-            if (e.key == "`") {
+    <div className="chatbar-container">
+      <form style={{ display: "flex" }} onSubmit={chatSubmissionHandler}>
+        <div className="chatbar">
+          <div
+            className={`chatbox-button ${isSaying ? "say" : "do"}`}
+            onClick={(e) => {
               e.preventDefault();
               toggleIsSaying();
-            }
-            if (submittedMessages.length > 0) {
-              if (e.key == "ArrowUp") {
+            }}
+          >
+            {tellTarget !== ""
+              ? `TELL ${formatTellTargetForButton(tellTarget)}`
+              : isSaying
+              ? "SAY"
+              : "DO"}
+          </div>
+          <input
+            className="chatbox-input"
+            value={chatText}
+            onChange={(e) => {
+              resetIdleTimer();
+              dispatch(updateChatText(e.target.value));
+            }}
+            onKeyDown={(e) => {
+              if (e.key == "`") {
                 e.preventDefault();
-                let updatedPosition = cycleMessagesPosition - 1;
-                if (updatedPosition < 0) {
-                  updatedPosition = submittedMessages.length;
-                }
-                setCycleMessagesPosition(updatedPosition);
-                dispatch(updateChatText(submittedMessages[updatedPosition]));
+                toggleIsSaying();
               }
-              if (e.key == "ArrowDown") {
-                e.preventDefault();
-                let updatedPosition = cycleMessagesPosition + 1;
-                if (updatedPosition >= submittedMessages.length) {
-                  updatedPosition = 0;
+              if (submittedMessages.length > 0) {
+                if (e.key == "ArrowUp") {
+                  e.preventDefault();
+                  let updatedPosition = cycleMessagesPosition - 1;
+                  if (updatedPosition < 0) {
+                    updatedPosition = submittedMessages.length;
+                  }
+                  setCycleMessagesPosition(updatedPosition);
+                  dispatch(updateChatText(submittedMessages[updatedPosition]));
                 }
-                setCycleMessagesPosition(updatedPosition);
-                dispatch(updateChatText(submittedMessages[updatedPosition]));
+                if (e.key == "ArrowDown") {
+                  e.preventDefault();
+                  let updatedPosition = cycleMessagesPosition + 1;
+                  if (updatedPosition >= submittedMessages.length) {
+                    updatedPosition = 0;
+                  }
+                  setCycleMessagesPosition(updatedPosition);
+                  dispatch(updateChatText(submittedMessages[updatedPosition]));
+                }
               }
+              if (e.key === "Enter" && e.shiftKey) {
+                const prefix = e.target.value.startsWith('"') ? "" : '"';
+                const suffix = e.target.value.endsWith('"') ? "" : '"';
+                dispatch(updateChatText(`${prefix} e.target.value ${suffix}`));
+              }
+            }}
+            className="chatbox"
+            placeholder={
+              isSaying
+                ? "Enter what you wish to say."
+                : "Enter what you wish to do here."
             }
-            if (e.key === "Enter" && e.shiftKey) {
-              const prefix = e.target.value.startsWith('"') ? "" : '"';
-              const suffix = e.target.value.endsWith('"') ? "" : '"';
-              dispatch(updateChatText(`${prefix} e.target.value ${suffix}`));
-            }
-          }}
-          className="chatbox"
-          placeholder={
-            isSaying
-              ? "Enter what you wish to say."
-              : "Enter what you wish to do here."
-          }
-        />
-      </div>
-      <div className="chatbox-button send" onClick={chatSubmissionHandler}>
-        SEND
-      </div>
-    </form>
+          />
+        </div>
+        <div className="chatbox-button send" onClick={chatSubmissionHandler}>
+          SEND
+        </div>
+      </form>
+    </div>
   );
 };
 

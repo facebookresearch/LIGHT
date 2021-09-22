@@ -6,6 +6,6 @@
   width: 100%;
   overflow: scroll;
   flex-wrap: wrap;
-  height: 4em;
+  height: 50%;
   align-items: center;
 }

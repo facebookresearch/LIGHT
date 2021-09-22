@@ -1,21 +1,31 @@
 /* REACT */
 import React, { useState, useEffect } from "react";
+/* REDUX */
+import { useAppSelector } from "../../../../../app/hooks";
 /* STYLES */
 import "./styles.css";
 /* ICONS */
 import { FaHeart, FaStar } from "react-icons/fa";
-/* TOOLTIP */
-import { Tooltip } from "react-tippy";
 
-const StatusMessage = ({ text }) => {
+//StatusMessage - Renders Status Message detailing players stats and experience.
+const StatusMessage = ({ text, onClickFunction }) => {
+  /* ----REDUX STATE---- */
+  //TUTORIAL;
+  const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
+  const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
+  /* ----LOCAL STATE ---- */
   const [statusArr, setStatusArr] = useState([]);
+  /* ---- LIFECYCLE ---- */
   useEffect(() => {
     let statusArr = text.split("\n");
     setStatusArr(statusArr);
   }, [text]);
 
   return (
-    <div className=" status-container">
+    <div
+      className={`status-container ${inHelpMode ? "active" : ""}`}
+      onClick={onClickFunction}
+    >
       <div className="status-heart__container">
         <FaHeart className="status-heart" color="red" size="19em" />
         <div className="status-content">

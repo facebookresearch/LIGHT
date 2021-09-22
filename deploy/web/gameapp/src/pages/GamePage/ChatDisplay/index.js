@@ -5,8 +5,6 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { updateSelectedTip } from "../../../features/tutorials/tutorials-slice";
 /* STYLES */
 import "./styles.css";
-/* TOOLTIPS */
-import "react-tippy/dist/tippy.css";
 /* CUSTOM COMPONENTS */
 import ChatMessages from "./ChatMessages";
 import ChatControls from "./ChatControls";
@@ -63,13 +61,7 @@ const ChatDisplay = ({
         ref={chatContainerRef}
         onMouseOver={() => setSelectedTip(2)}
       >
-        <TutorialPopover
-          tipNumber={3}
-          open={inHelpMode && selectedTip === 2}
-          position="bottom"
-        >
-          <ChatMessages messages={messages} />
-        </TutorialPopover>
+        <ChatMessages messages={messages} />
       </div>
       <ChatControls
         onSubmit={onSubmit}

@@ -1,8 +1,12 @@
 .collapsible-container {
   border-radius: 25px;
   box-shadow: 5px 2px 5px;
-  margin: 10px 10px 0px 10px;
+  margin: 10px auto 10px auto;
   width: 90%;
+}
+
+.collapsible-container.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
 }
 
 .collapsible-header {
@@ -35,6 +39,19 @@
   border-bottom-left-radius: 25px;
   border-bottom-right-radius: 25px;
   padding: 10px;
+  text-align: center;
+  margin: 0px;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 1px #fff, 0 0 2px #fff, 0 0 3px #85e3fa, 0 0 4px #85e3fa,
+      0 0 5px #85e3fa, 0 0 6px #85e3fa, 0 0 7px #85e3fa;
+  }
+  to {
+    box-shadow: 0 0 10px #fff, 0 0 11px #fff, 0 0 12px #85e3fa, 0 0 13px #85e3fa,
+      0 0 14px #85e3fa, 0 0 15px #85e3fa, 0 0 16px #85e3fa;
+  }
 }
 
 @media only screen and (max-width: 600px) {

@@ -22,11 +22,13 @@
 }
 
 .sidebar-container {
-  justify-content: center;
   width: 25%;
   min-width: 20em;
   height: 100%;
   overflow-y: scroll;
+  overflow-x: visible;
+  display: flex;
+  justify-content: center;
 }
 
 .chat-container {

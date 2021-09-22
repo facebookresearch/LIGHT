@@ -12,7 +12,7 @@
   border-style: ridge;
   border-color: lightgray;
   border-width: 10px 10px 10px 10px;
-  max-height: 20%;
+  height: 20%;
   padding: 3px;
 }
 

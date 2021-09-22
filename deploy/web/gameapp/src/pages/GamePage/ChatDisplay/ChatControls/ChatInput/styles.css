@@ -1,4 +1,8 @@
 /* CHATINPUT STYLES*/
+.chatbar-container {
+  height: 30%;
+  width: 100%;
+}
 input {
   border: none;
   padding: 10px;

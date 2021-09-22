@@ -8,6 +8,8 @@ import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
 import { updateSessionSpentGiftXp } from "../../../../../features/sessionInfo/sessionspentgiftxp-slice";
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
+/* CUSTOM COMPONENTS */
+import TutorialPopover from "../../../../../components/TutorialPopover";
 /* CONFIG */
 import CONFIG from "../../../../../config.js";
 
@@ -49,10 +51,21 @@ function handleReward(messageId, messageOwner) {
   });
 }
 
-const AgentMessage = ({ text, caller, actor, onReply, eventId, actorId }) => {
+const AgentMessage = ({
+  text,
+  caller,
+  actor,
+  onReply,
+  eventId,
+  actorId,
+  onClickFunction,
+}) => {
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
+  //TUTORIAL;
+  const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
+  const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   //GIFT XP STATE
   const giftXp = useAppSelector((state) => state.giftXp.value);
 
@@ -85,7 +98,7 @@ const AgentMessage = ({ text, caller, actor, onReply, eventId, actorId }) => {
 
   if (isEditMode) {
     return (
-      <div className={classNames}>
+      <div className={`${classNames} ${inHelpMode ? "active" : ""}`}>
         <div className="agent">
           <span>{actor}</span>
           <>
@@ -97,7 +110,13 @@ const AgentMessage = ({ text, caller, actor, onReply, eventId, actorId }) => {
           </>
         </div>
         <div style={{ opacity: 0, height: 1, pointerEvents: "none" }}>
-          {text}
+          <TutorialPopover
+            tipNumber={17}
+            open={inHelpMode && selectedTip === 17}
+            position="bottom"
+          >
+            {text}
+          </TutorialPopover>
         </div>
         <input className="edit-message" defaultValue={text} />
         <button type="submit" onClick={() => setEditMode(false)}>
