@@ -426,15 +426,6 @@ body .fadeShow {
   height: 100%;
 }
 
-.profilepage-container {
-  display: flex;
-  flex-direction: column;
-  padding: 1em 1em 4em 1em;
-  background-image: url("./assets/images/InexplicableTavern.png");
-  background-size: cover;
-  height: 100%;
-}
-
 /* Component Containers*/
 .main-container {
   width: 100%;

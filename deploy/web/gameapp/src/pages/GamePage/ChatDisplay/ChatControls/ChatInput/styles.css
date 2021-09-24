@@ -1,4 +1,13 @@
 /* CHATINPUT STYLES*/
+.chatbar-container {
+  height: 30%;
+  width: 100%;
+  border: 1px solid rgb(184, 184, 184);
+  border-top: none;
+  border-width: 0px 0px 10px 0px;
+  border-style: ridge;
+  padding: 5px;
+}
 input {
   border: none;
   padding: 10px;
@@ -30,14 +39,15 @@ input:focus {
 .chatbar {
   display: flex;
   flex-direction: row;
-  width: 90%;
+  width: 85%;
   justify-content: center;
 }
 
 .chatbox-button {
   color: white;
   font-size: 0.7em;
-  width: 10em;
+  width: 15%;
+  min-width: 50px;
   text-align: center;
   padding: 0 0.5em 0 0.5em;
   border-top-left-radius: 5px;
@@ -49,41 +59,33 @@ input:focus {
   margin: 0px 0px 0px 5px;
 }
 
-.say {
+.chatbox-button.say {
   background-color: green;
-  font-size: 1em;
 }
-.do {
+.chatbox-button.do {
   background-color: blue;
-  font-size: 1em;
 }
 
-.send {
+.chatbox-button.tell {
+  background-color: orange;
+}
+
+.chatbox-button.send {
   background-color: gold;
   border-radius: 15px;
   border-style: double;
   border-color: white;
   box-shadow: 1px 1px 4px black;
-  width: 5em;
-  font-size: 1em;
+  width: 10%;
+  min-width: 30px;
+  font-size: 0.8em;
 }
 
-@keyframes pulse {
-  from {
-    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #eef079, 0 0 20px #eef079,
-      0 0 25px #eef079, 0 0 30px #eef079, 0 0 35px #eef079;
-  }
-  to {
-    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #eef079,
-      0 0 40px #eef079, 0 0 50px #eef079, 0 0 60px #eef079, 0 0 70px #eef079;
-  }
-}
-
-.chatbox-button:hover {
+.chatbox-button.active:hover {
   animation: pulse 1s infinite;
 }
 
-.chatbox-button:active {
+.chatbox-button.active:active {
   animation: pulse 1s infinite;
   box-shadow: 0px 0px 0px black;
 }
@@ -91,5 +93,48 @@ input:focus {
 .chatbox-input {
 }
 
+.chatbox-input.active:hover {
+  animation: glow 1s infinite;
+}
+
 .chatbox {
+}
+
+@keyframes pulse {
+  from {
+    box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #eef079, 0 0 20px #eef079,
+      0 0 25px #eef079, 0 0 30px #eef079, 0 0 35px #eef079;
+  }
+  to {
+    box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #eef079, 0 0 40px #eef079,
+      0 0 50px #eef079, 0 0 60px #eef079, 0 0 70px #eef079;
+  }
+}
+
+@media only screen and (max-width: 950px) {
+}
+
+@media only screen and (max-width: 650px) {
+  .chatbox-button {
+    width: 20%;
+    min-width: 50px;
+  }
+  input {
+    width: 90%;
+  }
+  .send {
+    background-color: gold;
+    border-radius: 15px;
+    border-style: double;
+    border-color: white;
+    box-shadow: 1px 1px 4px black;
+    width: 25%;
+    min-width: 30px;
+  }
+}
+
+@media (orientation: landscape) {
+  input {
+    width: 90%;
+  }
 }

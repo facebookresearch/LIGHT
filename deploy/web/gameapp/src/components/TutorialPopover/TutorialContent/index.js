@@ -1,0 +1,24 @@
+/* REACT */
+import React, { useState, useEffect } from "react";
+/* STYLES */
+import "./styles.css";
+/* IMAGES */
+import Scribe from "../../../assets/images/scribe.png";
+
+const TutorialContent = ({ tip }) => {
+  const [tipPage, setTipPage] = useState(0);
+  const { title, description } = tip;
+  return (
+    <div className="tip-container">
+      <div className="tip-portrait__container">
+        <img className="tip-portrait" src={Scribe} />
+      </div>
+      <div className="tip-chatbubble">
+        <h5 className="tip-chatbubble__header">{title}</h5>
+        <p className="tip-chatbubble__body">{description}</p>
+      </div>
+    </div>
+  );
+};
+
+export default TutorialContent;

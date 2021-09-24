@@ -40,6 +40,10 @@
   padding-top: 2.5em;
 }
 
+.inventory-content.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
 .inventory-content__text {
   color: black;
   z-index: 6;

@@ -50,6 +50,10 @@
   padding-top: 10px;
 }
 
+.help-content.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
 .help-content__header {
   color: black;
   z-index: 6;

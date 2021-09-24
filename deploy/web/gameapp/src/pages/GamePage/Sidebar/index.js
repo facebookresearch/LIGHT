@@ -3,8 +3,11 @@ import React, { useState } from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { updateEmoji } from "../../../features/playerInfo/emoji-slice";
+import {
+  updateSelectedTip,
+  updateInHelpMode,
+} from "../../../features/tutorials/tutorials-slice";
 /* TOOLTIPS */
-import "react-tippy/dist/tippy.css";
 import { Tooltip } from "react-tippy";
 /* EMOJI PICKER AND LIBRARIES */
 import "emoji-mart/css/emoji-mart.css";
@@ -14,25 +17,38 @@ import cx from "classnames";
 /* CUSTOM COMPONENTS */
 import ExperienceInfo from "../../../components/ExperienceInfo";
 import Logo from "../../../components/Logo/index.js";
-import CollapseibleBox from "../../../components/CollapsibleBox";
+import CollapsibleBox from "../../../components/CollapsibleBox";
 import IconCollapsibleBox from "../../../components/IconCollapsibleBox";
 import GameButton from "../../../components/GameButton";
+import IconButton from "../../../components/IconButtons/InfoButton";
+import TutorialPopover from "../../../components/TutorialPopover";
 
 //SiderBar - renders Sidebar for application container player, location, mission, and character info as well as xp, giftxp, and progress
-const SideBar = ({ dataModelHost, getEntityId, isMobile, showDrawer }) => {
+const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
   /* LOCAL STATE */
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  // REDUX DISPATCH FUNCTION
-  const dispatch = useAppDispatch();
   /* ----REDUX STATE---- */
+  //IsMobile
+  const isMobile = useAppSelector((state) => state.view.isMobile);
   //PERSONA
   const persona = useAppSelector((state) => state.persona);
   //LOCATION
   const location = useAppSelector((state) => state.location);
   //EMOJI
   const selectedEmoji = useAppSelector((state) => state.emoji.selectedEmoji);
+  //TUTORIAL;
+  const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
+  const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
+  /* ----REDUX ACTIONS---- */
+  // REDUX DISPATCH FUNCTION
+  const dispatch = useAppDispatch();
   const setEmoji = (emoji) => {
     dispatch(updateEmoji(emoji));
+  };
+  const setSelectedTip = (tipNumber) => {
+    if (inHelpMode) {
+      dispatch(updateSelectedTip(tipNumber));
+    }
   };
 
   return (
@@ -45,10 +61,19 @@ const SideBar = ({ dataModelHost, getEntityId, isMobile, showDrawer }) => {
           : "sidebar"
       }
     >
-      <div className="sidebar-header__container">
-        {isMobile ? null : <Logo />}
-        <ExperienceInfo isMobile={isMobile} />
-      </div>
+      <TutorialPopover
+        tipNumber={1}
+        open={inHelpMode && selectedTip === 1}
+        position="right"
+      >
+        <div
+          className={`sidebar-header__container ${inHelpMode ? "active" : ""} `}
+          onClick={() => setSelectedTip(1)}
+        >
+          {isMobile ? null : <Logo />}
+          <ExperienceInfo isMobile={isMobile} />
+        </div>
+      </TutorialPopover>
       <div
         className={cx("icon", { editing: showEmojiPicker })}
         style={{ cursor: "pointer" }}
@@ -77,8 +102,9 @@ const SideBar = ({ dataModelHost, getEntityId, isMobile, showDrawer }) => {
         >
           <GameButton text={"LOGOUT"} clickFunction={() => {}} />
         </a>
+        {isMobile ? null : <IconButton />}
       </div>
-      <div className="sidebar-body__container">
+      <div className={`sidebar-body__container ${isMobile ? "mobile" : ""}`}>
         <IconCollapsibleBox
           title={`You are ${persona.prefix} ${persona.name}`}
           showEmojiPicker={showEmojiPicker}
@@ -86,43 +112,65 @@ const SideBar = ({ dataModelHost, getEntityId, isMobile, showDrawer }) => {
           setShowEmojiPicker={setShowEmojiPicker}
           setSelectedEmoji={setEmoji}
           titleBg={"gold"}
+          onClickFunction={() => setSelectedTip(2)}
         >
           <p className="persona-text" style={{ fontSize: "14px" }}>
-            {persona.description.slice(
-              0,
-              persona.description.indexOf("Your Mission:")
-            )}
+            <TutorialPopover
+              tipNumber={2}
+              open={inHelpMode && selectedTip === 2}
+              position={isMobile ? "top" : "right"}
+            >
+              {persona.description.slice(
+                0,
+                persona.description.indexOf("Your Mission:")
+              )}
+            </TutorialPopover>
           </p>
         </IconCollapsibleBox>
-        <CollapseibleBox
+        <CollapsibleBox
           title="Mission"
           titleBg="yellow"
           containerBg="lightyellow"
+          onClickFunction={() => setSelectedTip(3)}
         >
           {
             <p className="mission-text">
-              {persona.description.slice(
-                persona.description.indexOf(":") + 1,
-                persona.description.length
-              )}
+              <TutorialPopover
+                tipNumber={3}
+                open={inHelpMode && selectedTip === 3}
+                osition={isMobile ? "top" : "right"}
+              >
+                {persona.description.slice(
+                  persona.description.indexOf(":") + 1,
+                  persona.description.length
+                )}
+              </TutorialPopover>
             </p>
           }
-        </CollapseibleBox>
+        </CollapsibleBox>
         {location ? (
-          <CollapseibleBox
+          <CollapsibleBox
             title="Location"
             titleBg="#76dada"
             containerBg="#e0fffe"
+            onClickFunction={() => setSelectedTip(4)}
           >
-            <div className="location" style={{ margin: 0 }}>
+            <div className="location">
               <h3
                 style={{
                   textDecoration: "underline",
                   backgroundColor: "none",
                   fontFamily: "fantasy",
+                  marginBottom: "0px",
                 }}
               >
-                {location.name ? location.name.toUpperCase() : null}
+                <TutorialPopover
+                  tipNumber={4}
+                  open={inHelpMode && selectedTip === 4}
+                  position={isMobile ? "top" : "right"}
+                >
+                  {location.name ? location.name.toUpperCase() : null}
+                </TutorialPopover>
               </h3>
               {location.description.split("\n").map((para, idx) => (
                 <p key={idx}>{para}</p>
@@ -146,7 +194,7 @@ const SideBar = ({ dataModelHost, getEntityId, isMobile, showDrawer }) => {
                 </Tooltip>
               )}
             </div>
-          </CollapseibleBox>
+          </CollapsibleBox>
         ) : null}
       </div>
     </div>

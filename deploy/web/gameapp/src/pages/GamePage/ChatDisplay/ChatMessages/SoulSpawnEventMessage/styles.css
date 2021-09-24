@@ -11,6 +11,10 @@
   margin: auto;
 }
 
+#soulspawn.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
 .soulspawn-header {
   color: #fff;
   text-align: center;

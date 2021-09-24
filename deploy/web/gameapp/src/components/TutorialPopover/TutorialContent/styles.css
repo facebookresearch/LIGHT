@@ -1,0 +1,36 @@
+/* TUTORIAL CONTENT */
+.tip-container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+}
+
+.tip-portrait__container {
+  width: 25%;
+}
+
+.tip-portrait {
+  width: 100%;
+  height: auto;
+}
+
+.tip-chatbubble {
+  display: flex;
+  flex-direction: column;
+  width: 75%;
+  background-color: white;
+  border-radius: 15px;
+  color: black;
+}
+
+.tip-chatbubble__header {
+  color: black;
+  margin: 0px;
+  padding: 0px;
+}
+
+.tip-chatbubble__body {
+  margin: 0px;
+  padding: 0px;
+}

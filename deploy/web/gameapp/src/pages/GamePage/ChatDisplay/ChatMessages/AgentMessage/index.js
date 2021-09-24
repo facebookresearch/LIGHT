@@ -1,5 +1,5 @@
 /* REACT */
-import React from "react";
+import React, { useState } from "react";
 /* STYLES */
 import "./styles.css";
 /* REDUX */
@@ -8,6 +8,8 @@ import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
 import { updateSessionSpentGiftXp } from "../../../../../features/sessionInfo/sessionspentgiftxp-slice";
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
+/* CUSTOM COMPONENTS */
+import TutorialPopover from "../../../../../components/TutorialPopover";
 /* CONFIG */
 import CONFIG from "../../../../../config.js";
 
@@ -49,10 +51,21 @@ function handleReward(messageId, messageOwner) {
   });
 }
 
-const AgentMessage = ({ text, caller, actor, onReply, eventId, actorId }) => {
+const AgentMessage = ({
+  text,
+  caller,
+  actor,
+  onReply,
+  eventId,
+  actorId,
+  onClickFunction,
+}) => {
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
+  //TUTORIAL;
+  const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
+  const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   //GIFT XP STATE
   const giftXp = useAppSelector((state) => state.giftXp.value);
 
@@ -60,20 +73,24 @@ const AgentMessage = ({ text, caller, actor, onReply, eventId, actorId }) => {
   const sessionSpentGiftXp = useAppSelector(
     (state) => state.sessionSpentGiftXp.value
   );
-  /* REDUX ACTIONS */
   /* ------ LOCAL STATE ------ */
-  const [isEditMode, setEditMode] = React.useState(false);
-  const [isReportMode, setReportMode] = React.useState(false);
-  const [reportReason, setReportReason] = React.useState("");
-  const [isReported, setReported] = React.useState(false);
-  const [isLiked, setIsLiked] = React.useState(false);
-
+  const [isEditMode, setEditMode] = useState(false);
+  const [isReportMode, setReportMode] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [isReported, setReported] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [helpEventId, setHelpEventId] = useState(0);
   const likeHandler = () => {
     if (giftXp >= 1) {
       handleReward(eventId, actorId);
       setIsLiked(true);
       dispatch(updateSessionSpentGiftXp(sessionSpentGiftXp + 1));
     }
+  };
+
+  const onAgentClick = () => {
+    setHelpEventId(eventId);
+    onClickFunction();
   };
 
   let classNames = "message type-dialogue ";
@@ -162,7 +179,10 @@ const AgentMessage = ({ text, caller, actor, onReply, eventId, actorId }) => {
   }
 
   return (
-    <div className={classNames}>
+    <div
+      className={`${classNames} ${inHelpMode ? "active" : ""}`}
+      onClick={onAgentClick}
+    >
       {actor ? (
         <div className="agent">
           <span id="message-nameplate">
@@ -218,7 +238,13 @@ const AgentMessage = ({ text, caller, actor, onReply, eventId, actorId }) => {
           }
         </div>
       ) : null}
-      {text}
+      <TutorialPopover
+        tipNumber={16}
+        open={helpEventId === eventId && inHelpMode && selectedTip === 16}
+        position="bottom"
+      >
+        {text}
+      </TutorialPopover>
     </div>
   );
 };

@@ -148,11 +148,7 @@ const Chat = ({
   const [idle, setIdle] = React.useState(false);
   //CHAT TEXT STATE
   const chatContainerRef = React.useRef(null);
-  //PLAYER XP AND GIFT XP
-  const [playerXp, setPlayerXp] = React.useState(0);
-  const [playerGiftXp, setPlayerGiftXp] = React.useState(0);
   // AGENT AND CHARACTER STATE
-  const getAgentName = (agent) => (agents ? agents[agent] : agent);
   const getEntityId = (agent) => agent.match(/\d+$/)[0];
   const dataModelHost = getDataModelAddress();
 

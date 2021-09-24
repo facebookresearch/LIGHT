@@ -7,6 +7,10 @@
   z-index: 1;
 }
 
+.missionsuccess-container.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
 #missionsuccess-header {
   color: black;
   z-index: 10;

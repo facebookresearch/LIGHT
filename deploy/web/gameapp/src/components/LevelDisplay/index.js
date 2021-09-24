@@ -1,5 +1,8 @@
 /* REACT */
 import React from "react";
+/* REDUX */
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { updateSelectedTip } from "../../features/tutorials/tutorials-slice";
 /* STYLES */
 import "./styles.css";
 /* TOOLTIPS */

@@ -1,5 +1,8 @@
 .setting-container {
   /* font-style: italic; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   background-color: #efefef;
   color: rgb(42, 42, 42);
   border: solid;
@@ -10,11 +13,14 @@
   margin-bottom: 20px;
   margin-top: 10px;
   text-align: left;
-  display: block;
   white-space: pre-wrap;
   width: 100%;
   text-align: center;
   border-radius: 10px;
+}
+
+.setting-container.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
 }
 
 @media only screen and (max-width: 950px) {

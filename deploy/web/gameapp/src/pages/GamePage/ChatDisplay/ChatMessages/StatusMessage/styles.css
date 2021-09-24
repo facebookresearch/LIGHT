@@ -37,6 +37,10 @@
   box-shadow: 4px 4px 6px black;
 }
 
+.status-content.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
 .status-content__entry {
   color: black;
   z-index: 6;

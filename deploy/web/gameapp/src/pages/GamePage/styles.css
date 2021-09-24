@@ -7,8 +7,6 @@
   align-items: center;
   background-size: cover;
   background-image: url("../../assets/images/InexplicableTavern.png");
-  overflow-y: hidden;
-  overflow-x: hidden;
 }
 
 #fullscreen-gamepage {
@@ -22,11 +20,10 @@
 }
 
 .sidebar-container {
-  justify-content: center;
   width: 25%;
   min-width: 20em;
-  height: 100%;
-  overflow-y: scroll;
+  display: flex;
+  justify-content: center;
 }
 
 .chat-container {
