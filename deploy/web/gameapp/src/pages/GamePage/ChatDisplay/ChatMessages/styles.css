@@ -15,6 +15,10 @@
   /* font-size: 16px; */
 }
 
+.message-row {
+  width: 100%;
+}
+
 #message-nameplate {
   font-family: fantasy;
   font-size: 14px;

@@ -2,6 +2,7 @@
 import React from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
+import { updateSelectedTip } from "../../../../../features/tutorials/tutorials-slice";
 /* ---- REDUCER ACTIONS ---- */
 import {
   updateIsSaying,
@@ -13,6 +14,7 @@ import { Tooltip } from "react-tippy";
 import "./styles.css";
 /* CUSTOM COMPONENTS */
 import SpeechBubble from "../../../../../components/SpeechBubble";
+import TutorialPopover from "../../../../../components/TutorialPopover";
 
 //ActionBar - Renders container for speech bubbles that act as "quick tell" button for all present NPCS
 const ActionBar = ({
@@ -21,12 +23,28 @@ const ActionBar = ({
   getEntityId,
   dataModelHost,
 }) => {
-  /* REDUX DISPATCH FUNCTION */
-  const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
+  const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
+  const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   const persona = useAppSelector((state) => state.persona);
+  /* ----REDUX ACTIONS---- */
+  // REDUX DISPATCH FUNCTION
+  const dispatch = useAppDispatch();
+  const setSelectedTip = (tipNumber) => {
+    if (inHelpMode) {
+      dispatch(updateSelectedTip(tipNumber));
+    }
+  };
   return (
-    <div className="actions">
+    <div
+      className={`actions ${inHelpMode ? "active" : ""}`}
+      onClick={() => setSelectedTip(8)}
+    >
+      <TutorialPopover
+        tipNumber={8}
+        open={inHelpMode && selectedTip === 8}
+        position="top"
+      ></TutorialPopover>
       {/* {location ? <span>{location.name} &mdash; </span> : null} */}
       {presentAgents
         .filter((id) => id !== persona.id) // only show users other than self
@@ -37,9 +55,10 @@ const ActionBar = ({
             <span
               key={agentName}
               onClick={() => {
-                dispatch(updateIsSaying(false));
-                dispatch(updateTellTarget(agentName));
-                //setTextTellAgent(agentName);
+                if (!inHelpMode) {
+                  dispatch(updateIsSaying(false));
+                  dispatch(updateTellTarget(agentName));
+                }
               }}
             >
               <Tooltip title={`tell ${agentName}...`} position="bottom">

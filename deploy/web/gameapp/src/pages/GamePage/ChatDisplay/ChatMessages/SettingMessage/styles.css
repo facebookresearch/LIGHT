@@ -1,5 +1,8 @@
 .setting-container {
   /* font-style: italic; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   background-color: #efefef;
   color: rgb(42, 42, 42);
   border: solid;
@@ -10,7 +13,6 @@
   margin-bottom: 20px;
   margin-top: 10px;
   text-align: left;
-  display: block;
   white-space: pre-wrap;
   width: 100%;
   text-align: center;
@@ -19,17 +21,6 @@
 
 .setting-container.active:hover {
   animation: glow 1s ease-in-out infinite alternate;
-}
-
-@keyframes glow {
-  from {
-    box-shadow: 0 0 1px #fff, 0 0 2px #fff, 0 0 3px #85e3fa, 0 0 4px #85e3fa,
-      0 0 5px #85e3fa, 0 0 6px #85e3fa, 0 0 7px #85e3fa;
-  }
-  to {
-    box-shadow: 0 0 10px #fff, 0 0 11px #fff, 0 0 12px #85e3fa, 0 0 13px #85e3fa,
-      0 0 14px #85e3fa, 0 0 15px #85e3fa, 0 0 16px #85e3fa;
-  }
 }
 
 @media only screen and (max-width: 950px) {

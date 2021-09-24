@@ -11,7 +11,7 @@ const GameCopy = {
       tipId: 1,
       title: "Player Info",
       description:
-        "You character's experience, level, gift experience, and progress can be tracked here.  You character will level up based on how well you role play.  If you roleplay well enough you can also be awarded with gift xp which you can away to other players.",
+        "You character's experience, level, gift experience, and progress can be tracked here.  You character will level up based on how well you role play.  If you roleplay well enough you can also be awarded gift xp which you can award to other players.",
     },
     {
       tipId: 2,
@@ -36,7 +36,7 @@ const GameCopy = {
       tipId: 5,
       title: "Interaction Mode",
       description:
-        "With this button and the ` key you can toggle between saying and doing things.  You can use this button to toggle away from a tell target.",
+        "With this button (or by using the ` key) you can toggle between saying and doing things.  You can use this button to toggle away from a tell target.",
     },
     {
       tipId: 6,

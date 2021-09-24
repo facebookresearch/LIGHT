@@ -1,7 +1,4 @@
 .App {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
 }
 
 #helpmode {
@@ -30,6 +27,17 @@ p {
   margin: 0;
 }
 
+@keyframes glow {
+  from {
+    box-shadow: 0 0 1px #fff, 0 0 2px #fff, 0 0 3px #85e3fa, 0 0 4px #85e3fa,
+      0 0 5px #85e3fa, 0 0 6px #85e3fa, 0 0 7px #85e3fa;
+  }
+  to {
+    box-shadow: 0 0 10px #fff, 0 0 11px #fff, 0 0 12px #85e3fa, 0 0 13px #85e3fa,
+      0 0 14px #85e3fa, 0 0 15px #85e3fa, 0 0 16px #85e3fa;
+  }
+}
+
 @media only screen and (max-width: 900px) {
   div.leaflet-container {
     border: none;
@@ -37,7 +45,6 @@ p {
   }
 
   .app-controls {
-    margin-bottom: -20px;
     background-color: rgb(255, 255, 235);
   }
 }
@@ -289,12 +296,6 @@ body .fadeShow {
   text-align: center;
   color: #fff;
   animation: glow 1s ease-in-out infinite alternate;
-}
-
-.app-container {
-  height: 100vh;
-  width: 100vw;
-  scroll-behavior: smooth;
 }
 
 @media only screen and (max-width: 1224px) {

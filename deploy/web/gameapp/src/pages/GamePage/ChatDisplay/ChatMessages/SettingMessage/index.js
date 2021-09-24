@@ -14,20 +14,19 @@ const SettingMessage = ({ text, onClickFunction }) => {
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   return (
     <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-      <TutorialPopover
-        tipNumber={15}
-        open={inHelpMode && selectedTip === 15}
-        position="top"
+      <div
+        className={`setting-container ${inHelpMode ? "active" : ""}`}
+        onClick={onClickFunction}
       >
-        <div
-          className={`setting-container ${inHelpMode ? "active" : ""}`}
-          onClick={onClickFunction}
-        >
-          {text.split("\n").map((para, idx) => (
-            <p key={idx}>{para}</p>
-          ))}
-        </div>
-      </TutorialPopover>
+        <TutorialPopover
+          tipNumber={15}
+          open={inHelpMode && selectedTip === 15}
+          position="top"
+        />
+        {text.split("\n").map((para, idx) => (
+          <p key={idx}>{para}</p>
+        ))}
+      </div>
     </div>
   );
 };

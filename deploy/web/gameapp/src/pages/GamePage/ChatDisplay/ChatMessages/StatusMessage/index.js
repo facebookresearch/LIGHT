@@ -12,6 +12,8 @@ import TutorialPopover from "../../../../../components/TutorialPopover";
 //StatusMessage - Renders Status Message detailing players stats and experience.
 const StatusMessage = ({ text, onClickFunction }) => {
   /* ----REDUX STATE---- */
+  //VIEW
+  const isMobile = useAppSelector((state) => state.view.isMobile);
   //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
@@ -31,7 +33,7 @@ const StatusMessage = ({ text, onClickFunction }) => {
           <TutorialPopover
             tipNumber={12}
             open={inHelpMode && selectedTip === 12}
-            position="left"
+            osition={isMobile ? "top" : "right"}
           >
             {statusArr.map((stat, index) => {
               if (index <= 1) {

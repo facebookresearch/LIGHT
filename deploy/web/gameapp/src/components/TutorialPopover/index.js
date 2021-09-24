@@ -35,7 +35,9 @@ const TutorialPopover = ({
       arrow={true}
       className="tooltip-container"
       sticky={true}
+      style={{ animation: "none" }}
       theme="dark"
+      size="small"
       popperOptions={{
         modifiers: {
           preventOverflow: { enabled: false },

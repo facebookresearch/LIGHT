@@ -13,7 +13,7 @@
   border-color: lightgray;
   border-width: 10px 10px 10px 10px;
   height: 20%;
-  padding: 3px;
+  padding: 0px;
 }
 
 @media only screen and (max-width: 1224px) {

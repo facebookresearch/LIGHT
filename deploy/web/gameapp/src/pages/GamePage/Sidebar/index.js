@@ -104,7 +104,7 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
         </a>
         {isMobile ? null : <IconButton />}
       </div>
-      <div className="sidebar-body__container">
+      <div className={`sidebar-body__container ${isMobile ? "mobile" : ""}`}>
         <IconCollapsibleBox
           title={`You are ${persona.prefix} ${persona.name}`}
           showEmojiPicker={showEmojiPicker}
@@ -138,7 +138,7 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
               <TutorialPopover
                 tipNumber={3}
                 open={inHelpMode && selectedTip === 3}
-                position="right"
+                osition={isMobile ? "top" : "right"}
               >
                 {persona.description.slice(
                   persona.description.indexOf(":") + 1,
@@ -167,7 +167,7 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
                 <TutorialPopover
                   tipNumber={4}
                   open={inHelpMode && selectedTip === 4}
-                  position="right"
+                  position={isMobile ? "top" : "right"}
                 >
                   {location.name ? location.name.toUpperCase() : null}
                 </TutorialPopover>

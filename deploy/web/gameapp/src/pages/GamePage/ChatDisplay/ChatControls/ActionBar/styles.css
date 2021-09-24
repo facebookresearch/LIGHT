@@ -9,3 +9,11 @@
   height: 50%;
   align-items: center;
 }
+
+.actions.active:hover {
+  animation: glow 1s infinite;
+}
+
+.actions.active:active {
+  animation: glow 1s infinite;
+}

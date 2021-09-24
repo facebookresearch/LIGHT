@@ -37,7 +37,7 @@ const IconButton = ({ buttonFunction, active }) => {
         position="right"
       >
         <BsInfo
-          className={`iconbutton ${inHelpMode ? "active" : ""} `}
+          className={`iconbutton-icon ${inHelpMode ? "active" : ""} `}
           onClick={toggleHelpMode}
         />
       </TutorialPopover>
