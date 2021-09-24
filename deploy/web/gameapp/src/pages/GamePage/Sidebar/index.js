@@ -18,14 +18,16 @@ import Logo from "../../../components/Logo/index.js";
 import CollapsibleBox from "../../../components/CollapsibleBox";
 import IconCollapsibleBox from "../../../components/IconCollapsibleBox";
 import GameButton from "../../../components/GameButton";
-import IconButton from "../../../components/IconButton";
+import IconButton from "../../../components/IconButtons/InfoButton";
 import TutorialPopover from "../../../components/TutorialPopover";
 
 //SiderBar - renders Sidebar for application container player, location, mission, and character info as well as xp, giftxp, and progress
-const SideBar = ({ dataModelHost, getEntityId, isMobile, showDrawer }) => {
+const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
   /* LOCAL STATE */
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   /* ----REDUX STATE---- */
+  //IsMobile
+  const isMobile = useAppSelector((state) => state.view.isMobile);
   //PERSONA
   const persona = useAppSelector((state) => state.persona);
   //LOCATION
@@ -40,10 +42,6 @@ const SideBar = ({ dataModelHost, getEntityId, isMobile, showDrawer }) => {
   const dispatch = useAppDispatch();
   const setEmoji = (emoji) => {
     dispatch(updateEmoji(emoji));
-  };
-  const toggleHelpMode = () => {
-    let helpModeUpdate = !inHelpMode;
-    dispatch(updateInHelpMode(helpModeUpdate));
   };
   const setSelectedTip = (tipNumber) => {
     if (inHelpMode) {
@@ -102,7 +100,7 @@ const SideBar = ({ dataModelHost, getEntityId, isMobile, showDrawer }) => {
         >
           <GameButton text={"LOGOUT"} clickFunction={() => {}} />
         </a>
-        <IconButton active={inHelpMode} buttonFunction={toggleHelpMode} />
+        {isMobile ? null : <IconButton />}
       </div>
       <div className="sidebar-body__container">
         <IconCollapsibleBox
@@ -118,7 +116,7 @@ const SideBar = ({ dataModelHost, getEntityId, isMobile, showDrawer }) => {
             <TutorialPopover
               tipNumber={2}
               open={inHelpMode && selectedTip === 2}
-              position="right"
+              position={isMobile ? "top" : "right"}
             >
               {persona.description.slice(
                 0,

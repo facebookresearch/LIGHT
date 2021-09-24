@@ -1,12 +1,15 @@
 /* REACT */
 import React from "react";
 /* REDUX */
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { updateSelectedTip } from "../../features/tutorials/tutorials-slice";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import {
+  updateSelectedTip,
+  updateInHelpMode,
+} from "../../../features/tutorials/tutorials-slice";
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */
-import TutorialPopover from "../TutorialPopover";
+import TutorialPopover from "../../TutorialPopover";
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
 /* ICONS */
@@ -21,9 +24,11 @@ const IconButton = ({ buttonFunction, active }) => {
   /* ----REDUX ACTIONS---- */
   // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();
-  const setSelectedTip = (tipNumber) => {
-    dispatch(updateSelectedTip(tipNumber));
+  const toggleHelpMode = () => {
+    let helpModeUpdate = !inHelpMode;
+    dispatch(updateInHelpMode(helpModeUpdate));
   };
+
   return (
     <Tooltip title="HELP MODE" position="top">
       <TutorialPopover
@@ -32,8 +37,8 @@ const IconButton = ({ buttonFunction, active }) => {
         position="right"
       >
         <BsInfo
-          className={`iconbutton ${active ? "active" : ""} `}
-          onClick={buttonFunction}
+          className={`iconbutton ${inHelpMode ? "active" : ""} `}
+          onClick={toggleHelpMode}
         />
       </TutorialPopover>
     </Tooltip>

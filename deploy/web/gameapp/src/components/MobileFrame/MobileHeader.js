@@ -3,23 +3,22 @@ import React from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
-import {
-  updateIsMobile,
-  updateShowDrawer,
-} from "../../features/view/view-slice";
+import { updateShowDrawer } from "../../features/view/view-slice";
 /* STYLES */
 import "./styles.css";
 //IMAGES
 import Scribe from "../../assets/images/scribe.png";
 //CUSTOM COMPONENTS
-import GlowingButton from "../GlowingButton";
 import ToggleSwitch from "../ToggleSwitch";
+import IconButton from "../IconButtons/InfoButton";
 
 // MobileHeader -
-const MobileHeader = ({ buttons }) => {
+const MobileHeader = ({}) => {
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
   /* REDUX STATE */
+  //IsMobile
+  const isMobile = useAppSelector((state) => state.view.isMobile);
   //DRAWER
   const showDrawer = useAppSelector((state) => state.view.showDrawer);
   /* REDUX ACTIONS */
@@ -44,13 +43,7 @@ const MobileHeader = ({ buttons }) => {
           setOn={openDrawer}
           setOff={closeDrawer}
         />
-        {buttons.map((button, index) => (
-          <GlowingButton
-            id={index}
-            label={button.label}
-            buttonFunction={button.clickFunction}
-          />
-        ))}
+        <IconButton />
       </div>
     </div>
   );
