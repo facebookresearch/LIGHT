@@ -4,6 +4,7 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
 import { updateShowDrawer } from "../../features/view/view-slice";
+import { updateSelectedTip } from "../../features/tutorials/tutorials-slice";
 /* STYLES */
 import "./styles.css";
 //IMAGES
@@ -22,8 +23,18 @@ const MobileHeader = ({}) => {
   //DRAWER
   const showDrawer = useAppSelector((state) => state.view.showDrawer);
   /* REDUX ACTIONS */
-  const openDrawer = () => dispatch(updateShowDrawer(true));
-  const closeDrawer = () => dispatch(updateShowDrawer(false));
+  const openDrawer = () => {
+    if (isMobile) {
+      dispatch(updateSelectedTip(0));
+    }
+    dispatch(updateShowDrawer(true));
+  };
+  const closeDrawer = () => {
+    if (isMobile) {
+      dispatch(updateSelectedTip(0));
+    }
+    dispatch(updateShowDrawer(false));
+  };
 
   return (
     <div className="mobileheader-container">

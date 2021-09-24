@@ -3,8 +3,10 @@ import React, { useState } from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { updateEmoji } from "../../../features/playerInfo/emoji-slice";
-import { updateInHelpMode } from "../../../features/tutorials/tutorials-slice";
-import { updateSelectedTip } from "../../../features/tutorials/tutorials-slice";
+import {
+  updateSelectedTip,
+  updateInHelpMode,
+} from "../../../features/tutorials/tutorials-slice";
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
 /* EMOJI PICKER AND LIBRARIES */
