@@ -63,4 +63,11 @@
     top: 20%;
     z-index: -1;
   }
+  .speechbubble-text {
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+  }
 }

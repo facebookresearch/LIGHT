@@ -18,6 +18,7 @@ export function setCaretPosition(elem, caretPos) {
   }
 }
 
+// DefaultEmojiMapper - Maps corresponding emoji to actor based on name
 export const DefaultEmojiMapper = (name) => {
   let characterName = name;
   characterName = characterName.replace(/-/g, "_");

@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from "react";
-
-import { BiWindow } from "react-icons/bi";
-import { FaWindowMinimize } from "react-icons/fa";
-
+/* REACT */
+import React from "react";
+/* STYLES */
 import "./styles.css";
 
-const Modal = ({ showModal, setModal, children }) => {
-  const openHandler = () => setModal(true);
-  const closeHandler = () => setModal(false);
-
+// Modal - generates modal frame with overlay
+const Modal = ({ children }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-window">{children}</div>

@@ -1,7 +1,8 @@
+/* REACT */
 import React from "react";
 
 import { Tooltip } from "react-tippy";
-
+/* STYLES */
 import "./styles.css";
 
 const ToggleSwitch = ({ isOn, setOn, setOff, toolTipText, switchLabel }) => {
