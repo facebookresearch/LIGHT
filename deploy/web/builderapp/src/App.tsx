@@ -1,10 +1,17 @@
+/* REACT */
 import React from 'react';
+/* REDUX */
 import {useAppDispatch, useAppSelector} from './app/hooks';
 import {incremented, amountAdded} from './features/counter/counter-slice';
-import logo from './logo.svg';
+/* STYLES */
 import './App.css';
+/* CUSTOM COMPONENTS */
+import NavBar from "./components/NavBar";
+import { Navbar } from 'react-bootstrap';
+import Routes from "./Routes";
 
-function App() {
+
+const App = ()=> {
   const count = useAppSelector((state)=> state.counter.value);
   const dispatch = useAppDispatch()
 
@@ -14,24 +21,8 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <p>Hello</p>
-        <button onClick={handleClick}>
-          count : {count}
-        </button>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div style={{width:"100%", background:"blue", height:"50px"}}/>
+      <Routes/>
     </div>
   );
 }

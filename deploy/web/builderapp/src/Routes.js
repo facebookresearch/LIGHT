@@ -1,28 +1,24 @@
+/* REACT */
 import React from "react";
+/* REACT ROUTER */
 import { HashRouter, Route, Redirect } from "react-router-dom";
-
-import NavBar from "./components/NavBar";
+/* CUSTOM COMPONENTS */
+//PAGES
+import HomePage from "./pages/HomePage";
+import EditWorldPage from "./pages/EditWorldPage";
+//ORIGINALPAGES
 import ExplorePage from "./components/ExplorePage";
 import CreatePage from "./components/CreatePage";
 import ReviewPage from "./components/ReviewPage";
 import WorldBuilderPage from "./components/WorldBuilderPage";
 import EditPage from "./components/EditPage";
 
-function App() {
+const Routes = ()=> {
   return (
-    <div className="App">
-      <HashRouter>
-        <Routes />
-      </HashRouter>
-    </div>
-  );
-}
-
-export function Routes() {
-  return (
-    <>
-      <NavBar />
       <div style={{ margin: "40px 30px" }}>
+      <HashRouter>
+        <Route path="/" component={HomePage} exact />
+        <Route path="/editworld" component={EditWorldPage} exact />
         <Route path="/explore" component={ExplorePage} exact />
         <Route path="/create" component={CreatePage} exact />
         <Route path="/review" component={ReviewPage} exact />
@@ -33,10 +29,10 @@ export function Routes() {
           )}
         />
         <Route path="/edit/:id" component={EditPage} exact />
-        <Route exact path="/" render={() => <Redirect to="/explore" />} exact />
+    </HashRouter>
       </div>
-    </>
   );
 }
 
-export default App;
+export default Routes;
+//<Route exact path="/" render={() => <Redirect to="/explore" />} exact />
