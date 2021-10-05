@@ -2,6 +2,9 @@
 import React from 'react';
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {
+  setModal,
+} from "../../features/modal/modal-slice";
 /* STYLES */
 import './styles.css';
 /* BOOTSTRAP COMPONENTS */
@@ -34,9 +37,16 @@ const ModalContainer = ()=> {
   //MODALS;
   const showModal = useAppSelector((state) => state.modal.showModal);
   const modalType = useAppSelector((state) => state.modal.modalType);
-
+  /* ----REDUX ACTIONS---- */
+  // REDUX DISPATCH FUNCTION
+  const dispatch = useAppDispatch();
+  //MODALS
+  const closeModal = ()=> dispatch(setModal({showModal:false, modalType:""}));
     return (
-        <Modal>
+        <Modal
+          show={showModal} 
+          onHide={closeModal}
+        >
             <ModalContent
                 modalType={modalType}
             />

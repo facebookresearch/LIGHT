@@ -15,16 +15,12 @@ const initialState: ModalState = {
 
 //Create slice will generate action objects for us
 const modalSlice = createSlice({
-  name: "modal",
-  initialState,
-  /* REDUCER ACTIONS */
-  reducers: {
-        toggleModal(state, action: PayloadAction<ModalState>) {
-            if(!state.showModal){
-                return action.payload
-            }else {
-                return { showModal: false, modalType: "" }
-            }
+    name: "modal",
+    initialState,
+    /* REDUCER ACTIONS */
+    reducers: {
+        setModal(state, action: PayloadAction<ModalState>) {
+            return action.payload
         },
     }
 });
@@ -32,7 +28,7 @@ const modalSlice = createSlice({
 /* EXPORTED REDUCER ACTIONS */
 // import anywhere in app to use
 export const {
-    toggleModal
+    setModal,
 } = modalSlice.actions;
 /* SLICE REDUCER */
 export default modalSlice.reducer;

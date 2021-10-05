@@ -1,5 +1,10 @@
 /* REACT */
 import React from "react";
+/* REDUX */
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {
+  setModal,
+} from "../../features/modal/modal-slice";
 /* STYLES */
 import "./styles.css";
 /* ICONS */
@@ -12,6 +17,11 @@ import { AiFillDelete } from 'react-icons/ai';
 const WorldRow = ({
     world
  }) => {
+    /* ----REDUX ACTIONS---- */
+    // REDUX DISPATCH FUNCTION
+    const dispatch = useAppDispatch();
+    //MODALS
+    const openModal = (modalType)=> dispatch(setModal({showModal:true, modalType:modalType}));
     const {name, tags} = world;
     return (
         <div className="worldrow-container">
@@ -24,10 +34,10 @@ const WorldRow = ({
                 <input className="worldrow-name__text" value={name} />
             </div>
             <div className="worldrow-icons__container" >
-                <BsDownload />
-                <FaShare />
-                <IoDuplicateOutline />
-                <AiFillDelete color="red" />
+                <BsDownload onClick={()=>openModal("download")}  />
+                <FaShare onClick={()=>openModal("share")}  />
+                <IoDuplicateOutline onClick={()=>openModal("duplicate")} />
+                <AiFillDelete onClick={()=>openModal("delete")} color="red" />
             </div>
         </div>
     );
