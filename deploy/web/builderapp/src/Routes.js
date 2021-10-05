@@ -3,6 +3,7 @@ import React from "react";
 /* REACT ROUTER */
 import { HashRouter, Route, Redirect } from "react-router-dom";
 /* CUSTOM COMPONENTS */
+import NavHeader from "./components/NavHeader"
 //PAGES
 import HomePage from "./pages/HomePage";
 import EditWorldPage from "./pages/EditWorldPage";
@@ -15,21 +16,22 @@ import EditPage from "./components/EditPage";
 
 const Routes = ()=> {
   return (
-      <div style={{ margin: "40px 30px" }}>
-      <HashRouter>
-        <Route path="/" component={HomePage} exact />
-        <Route path="/editworld" component={EditWorldPage} exact />
-        <Route path="/explore" component={ExplorePage} exact />
-        <Route path="/create" component={CreatePage} exact />
-        <Route path="/review" component={ReviewPage} exact />
-        <Route
-          path="/world_builder"
-          render={(props) => (
-            <WorldBuilderPage {...props} key={Math.random()} exact />
-          )}
-        />
-        <Route path="/edit/:id" component={EditPage} exact />
-    </HashRouter>
+      <div>
+        <HashRouter>
+            <NavHeader/>
+            <Route path="/" component={HomePage} exact />
+            <Route path="/editworld" component={EditWorldPage} exact />
+            <Route path="/explore" component={ExplorePage} exact />
+            <Route path="/create" component={CreatePage} exact />
+            <Route path="/review" component={ReviewPage} exact />
+            <Route
+            path="/world_builder"
+            render={(props) => (
+                <WorldBuilderPage {...props} key={Math.random()} exact />
+            )}
+            />
+            <Route path="/edit/:id" component={EditPage} exact />
+        </HashRouter>
       </div>
   );
 }

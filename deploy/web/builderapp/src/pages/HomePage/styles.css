@@ -1,1 +1,19 @@
 /* HOMEPAGE STYLES */
+.homepage-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.homepage-label__column {
+    display: flex;
+    width: 20%;
+    justify-content: flex-end;
+    background-color: blue;
+}
+
+.homepage-world__column {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    background-color: lime;
+}

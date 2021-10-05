@@ -1,0 +1,31 @@
+/* WORLDROW STYLES */
+.worldrow-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 6px;
+}
+
+.worldrow-tags__container {
+    display: flex;
+    flex-direction: row;
+    width:20%;
+}
+
+.worldrow-tags__text {
+   
+}
+
+.worldrow-name__container {
+    width:30%;
+}
+.worldrow-name__text {
+    width:90%;
+}
+
+.worldrow-icons__container {
+    display: flex;
+    flex-direction: row;
+    width:40%;
+}

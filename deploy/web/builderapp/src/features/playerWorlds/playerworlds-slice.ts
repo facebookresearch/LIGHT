@@ -17,12 +17,13 @@ const playerWorldsSlice = createSlice({
   initialState,
   /* REDUCER ACTIONS */
   reducers: {
-    updatePlayerWorlds(state, action: PayloadAction<string>) {
-      return {
-        ...state,
-        customWorlds: [...state.customWorlds, action.payload],
-      };
-    },
+        updatePlayerWorlds(state, action: PayloadAction<string>) {
+            return {
+                ...state,
+                customWorlds: [...state.customWorlds, action.payload],
+            };
+        },
+    }
 });
 
 /* EXPORTED REDUCER ACTIONS */
