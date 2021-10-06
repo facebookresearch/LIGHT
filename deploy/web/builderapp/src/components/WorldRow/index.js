@@ -12,6 +12,9 @@ import { BsDownload } from 'react-icons/bs';
 import { FaShare } from 'react-icons/fa';
 import { IoDuplicateOutline } from 'react-icons/io5';
 import { AiFillDelete } from 'react-icons/ai';
+/* CUSTOM COMPONENTS */
+import TextButton from "../Buttons/TextButton"
+
 
 //WorldRow - Row for custom worlds
 const WorldRow = ({
@@ -31,13 +34,16 @@ const WorldRow = ({
                 }
             </div>
             <div className="worldrow-name__container" >
-                <input className="worldrow-name__text" value={name} />
+                <TextButton 
+                    text={name} 
+                    clickFunction={()=>{}}
+                />
             </div>
             <div className="worldrow-icons__container" >
-                <BsDownload onClick={()=>openModal("download")}  />
-                <FaShare onClick={()=>openModal("share")}  />
-                <IoDuplicateOutline onClick={()=>openModal("duplicate")} />
-                <AiFillDelete onClick={()=>openModal("delete")} color="red" />
+                <BsDownload className="worldrow-icon download" onClick={()=>openModal("download")}  />
+                <FaShare className="worldrow-icon share"  onClick={()=>openModal("share")}  />
+                <IoDuplicateOutline className="worldrow-icon duplicate"  onClick={()=>openModal("duplicate")} />
+                <AiFillDelete className="worldrow-icon delete"  onClick={()=>openModal("delete")} color="red" />
             </div>
         </div>
     );

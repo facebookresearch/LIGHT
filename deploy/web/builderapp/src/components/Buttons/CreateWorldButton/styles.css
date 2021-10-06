@@ -1,27 +1,31 @@
-/* TEXT BUTTON STYLES */
-.textbutton-container {
+/* CREATE WORLD BUTTON STYLES */
+.createworldbutton-container{
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    width:80%;
+    width:49%;
     border-style: solid;
     border-color: black;
     background-color: white;
     border-width: 2px;
     box-shadow: 1px 1px 4px black;
+    padding: 2px;
 }
 
-.textbutton-text {
-    color:black;
+.createworld-icon {
     font-size: 16px;
 }
-  
-.textbutton-container:hover {
+
+.createworldbutton-text {
 
 }
   
-  .textbutton-container:active {
+  .createworldbutton-container:hover {
+    cursor: pointer;
+  }
+  
+  .createworldbutton-container:active {
     box-shadow: 0px 0px 0px black;
   }
   

@@ -7,9 +7,7 @@ import "./styles.css";
 const IconButton = ({ clickFunction, text }) => {
   return (
     <div className="iconbutton-container" onClick={clickFunction}>
-      <p style={{ margin: 0, padding: 0 }} className="iconbutton-text">
-        {text}
-      </p>
+      
     </div>
   );
 };
