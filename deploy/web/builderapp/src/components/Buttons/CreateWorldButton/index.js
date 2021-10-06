@@ -5,7 +5,7 @@ import "./styles.css";
 /* ICONS */
 import { BsFillPlusCircleFill } from 'react-icons/bs';
 //IconButton - 
-const CreateWorldButton = ({ clickFunction, text }) => {
+const CreateWorldButton = ({ clickFunction }) => {
   return (
     <div className="createworldbutton-container" onClick={clickFunction}>
         <BsFillPlusCircleFill className="createworld-icon" />

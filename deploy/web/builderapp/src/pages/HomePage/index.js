@@ -1,5 +1,6 @@
 /* REACT */
 import React, {useEffect} from 'react';
+import { useHistory } from 'react-router-dom';
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 /* STYLES */
@@ -10,6 +11,7 @@ import WorldRow from "../../components/WorldRow";
 import CreateWorldButton from "../../components/Buttons/CreateWorldButton";
 
 const HomePage = ()=> {
+  let history = useHistory();
   const dummyData = [{id:1111, name: "Mars", tags:["#red", "#haunted", "#dry"]}, {id:2222, name: "Norrath", tags:["#magical", "#amazing", "#dragons"]}, {id:3333, name:"Asgard", tags:["#vikings", "#gods", "#magic"]}]
   return (
     <div className="homepage-container">
@@ -27,7 +29,7 @@ const HomePage = ()=> {
           </div>
         </div>
         {
-          dummyData.map(world=><WorldRow key={world.id} world={world} />)
+          dummyData.map(world=><WorldRow key={world.id} world={world} clickFunction={()=>history.push(`/editworld/${world.id}`)} />)
         }
         <div className="createworldbutton-row">
           <CreateWorldButton

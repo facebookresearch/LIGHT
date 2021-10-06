@@ -18,7 +18,8 @@ import TextButton from "../Buttons/TextButton"
 
 //WorldRow - Row for custom worlds
 const WorldRow = ({
-    world
+    world,
+    clickFunction
  }) => {
     /* ----REDUX ACTIONS---- */
     // REDUX DISPATCH FUNCTION
@@ -36,7 +37,7 @@ const WorldRow = ({
             <div className="worldrow-name__container" >
                 <TextButton 
                     text={name} 
-                    clickFunction={()=>{}}
+                    clickFunction={clickFunction}
                 />
             </div>
             <div className="worldrow-icons__container" >
