@@ -13,10 +13,13 @@ import ModalBody from 'react-bootstrap/ModalBody'
 const DownloadModal = ()=> {
   return (
     <div className="downloadmodal-container">
-        <Modal.Header closeButton>
+        <Modal.Header style={{backgroundColor:"lightblue"}} className="modalheader" closeButton>
           <Modal.Title>DOWNLOAD</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Click to download this world in the default LIGHT format.  It can be edited with any text editor, used with the LIGHT OSS tools, or re-uploaded here later.</Modal.Body>
+        <Modal.Body>
+          <p>Click to download this world in the default LIGHT format.  It can be edited with any text editor, used with the LIGHT OSS tools, or re-uploaded here later.</p>
+
+        </Modal.Body>
     </div>
   );
 }

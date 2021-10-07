@@ -41,7 +41,9 @@ const ModalContainer = ()=> {
   // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();
   //MODALS
-  const closeModal = ()=> dispatch(setModal({showModal:false, modalType:""}));
+  const closeModal = ()=> {
+    dispatch(setModal({showModal:false, modalType:""}))
+  };
     return (
         <Modal
           show={showModal} 

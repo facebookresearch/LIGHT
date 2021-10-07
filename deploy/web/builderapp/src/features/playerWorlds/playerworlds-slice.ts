@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 /* CUSTOM TYPES */
 interface World {
     id: Number;
+    name:String;
   }
   
 /* STATE TYPE */

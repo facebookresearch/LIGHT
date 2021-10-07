@@ -5,6 +5,9 @@ import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {
   setModal,
 } from "../../features/modal/modal-slice";
+import { 
+    selectWorld 
+} from "../../features/playerWorlds/playerworlds-slice.ts";
 /* STYLES */
 import "./styles.css";
 /* ICONS */
@@ -25,7 +28,11 @@ const WorldRow = ({
     // REDUX DISPATCH FUNCTION
     const dispatch = useAppDispatch();
     //MODALS
-    const openModal = (modalType)=> dispatch(setModal({showModal:true, modalType:modalType}));
+    const openModal = (modalType, clickedWorld)=> {
+        let {id, name} = clickedWorld;
+        dispatch(selectWorld({id:id, name:name}))
+        dispatch(setModal({showModal:true, modalType:modalType}))
+    };
     const {name, tags} = world;
     return (
         <div className="worldrow-container">
@@ -41,10 +48,10 @@ const WorldRow = ({
                 />
             </div>
             <div className="worldrow-icons__container" >
-                <BsDownload className="worldrow-icon download" onClick={()=>openModal("download")}  />
-                <FaShare className="worldrow-icon share"  onClick={()=>openModal("share")}  />
-                <IoDuplicateOutline className="worldrow-icon duplicate"  onClick={()=>openModal("duplicate")} />
-                <AiFillDelete className="worldrow-icon delete"  onClick={()=>openModal("delete")} color="red" />
+                <BsDownload className="worldrow-icon download" onClick={()=>openModal("download", world)}  />
+                <FaShare className="worldrow-icon share"  onClick={()=>openModal("share", world)}  />
+                <IoDuplicateOutline className="worldrow-icon duplicate"  onClick={()=>openModal("copy", world)} />
+                <AiFillDelete className="worldrow-icon delete"  onClick={()=>openModal("delete", world)} color="red" />
             </div>
         </div>
     );
