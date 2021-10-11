@@ -22,7 +22,7 @@ const EditWorldPage = ()=> {
   let { worldId } = useParams();
   let { path, url } = useRouteMatch();
 
-  function handleClick(sectionName) {
+  const handleClick = (sectionName)=>{
     history.push(`${url}/${sectionName}`);
   }
   

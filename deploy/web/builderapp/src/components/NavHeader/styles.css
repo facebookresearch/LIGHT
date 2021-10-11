@@ -1,4 +1,7 @@
 /* NAVHEADER STYLES */
+#navbar {
+  margin-bottom: 10px;
+}
 .light-logo {
     text-align: center;
     color: lightyellow;

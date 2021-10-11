@@ -27,19 +27,19 @@ const Routes = ()=> {
                         <Details/>
                     </Route>
                     <Route path={`${path}/rooms`}>
-                        <Details/>
+                        <Rooms/>
                     </Route>
                     <Route path={`${path}/characters`}>
-                        <Details/>
+                        <Characters/>
                     </Route>
                     <Route path={`${path}/objects`}>
-                        <Details/>
+                        <Objects/>
                     </Route>
                     <Route path={`${path}/interactions`}>
                         <Details/>
                     </Route>
                     <Route path={`${path}/quests`}>
-                        <Details/>
+                        <Quests/>
                     </Route>
                 </Switch>
             </HashRouter>
