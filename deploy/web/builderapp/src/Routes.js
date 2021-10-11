@@ -20,7 +20,7 @@ const Routes = ()=> {
         <HashRouter>
             <NavHeader/>
             <Route path="/" component={HomePage} exact />
-            <Route path="/editworld/:worldId" component={EditWorldPage} />
+            <Route path="/editworld/:worldId/:categories" component={EditWorldPage} />
             <Route path="/explore" component={ExplorePage} exact />
             <Route path="/create" component={CreatePage} exact />
             <Route path="/review" component={ReviewPage} exact />

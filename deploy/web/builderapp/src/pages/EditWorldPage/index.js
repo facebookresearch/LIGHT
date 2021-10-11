@@ -14,63 +14,61 @@ import Col from 'react-bootstrap/Col';
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Button from 'react-bootstrap/Button'
 /* CUSTOM COMPONENTS */
-import WorldEditRoutes from "./WorldEditRoutes"
+import WorldEditBody from "./WorldEditBody"
+import ButtonGroups from "../../components/ButtonGroups"
 
 
 const EditWorldPage = ()=> {
   const history = useHistory();
-  let { worldId } = useParams();
+  let { worldId, categories } = useParams();
   let { path, url } = useRouteMatch();
 
   const handleClick = (sectionName)=>{
-    history.push(`${url}/${sectionName}`);
+    history.push(`/editworld/${worldId}/${sectionName}`);
   }
+  const SideBarButtons = [
+    {
+      name: "details",
+      clickFunction: () => handleClick("details"),
+      activeCondition: (categories == "details")
+    },
+    {
+      name: "characters",
+      clickFunction: () => handleClick("characters"),
+      activeCondition: (categories == "characters")
+    },
+    {
+      name: "rooms",
+      clickFunction: () => handleClick("rooms"),
+      activeCondition: (categories == "rooms")
+    },
+    {
+      name: "quests",
+      clickFunction: () => handleClick("quests"),
+      activeCondition: (categories == "quests")
+    },
+    {
+      name: "objects",
+      clickFunction: () => handleClick("objects"),
+      activeCondition: (categories == "objects")
+    },
+    {
+      name: "interactions",
+      clickFunction: () => handleClick("interactions"),
+      activeCondition: (categories == "interactions")
+    }
+  ];
   
   return (
     <Container>
         <Row>
           <Col xs={2}>
-                  <ButtonGroup vertical>
-                    <Button 
-                      variant="outline-secondary" 
-                      onClick={()=>handleClick("details")}
-                    >
-                      Details
-                    </Button>
-                    <Button 
-                      variant="outline-secondary" 
-                      onClick={()=>handleClick("rooms")}
-                    >
-                      Rooms
-                    </Button>
-                    <Button 
-                      variant="outline-secondary" 
-                      onClick={()=>handleClick("characters")}
-                    >
-                      Characters
-                    </Button>
-                    <Button 
-                      variant="outline-secondary" 
-                      onClick={()=>handleClick("objects")}
-                    >
-                      Objects
-                    </Button>
-                    <Button 
-                      variant="outline-secondary" 
-                      onClick={()=>handleClick("interactions")}
-                    >
-                      Interactions
-                    </Button>
-                    <Button 
-                      variant="outline-secondary" 
-                      onClick={()=>handleClick("quests")}
-                    >
-                      Quests
-                    </Button>
-                  </ButtonGroup>
+            <ButtonGroups 
+              buttons={SideBarButtons}
+            />
           </Col>
           <Col>
-            <WorldEditRoutes/>
+            <WorldEditBody/>
           </Col>
         </Row>
     </Container>

@@ -10,9 +10,6 @@ import './styles.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-//BUTTON
-import ButtonGroup from 'react-bootstrap/ButtonGroup'
-import Button from 'react-bootstrap/Button'
 /* CUSTOM COMPONENTS */
 import StatBlock from "../../../../components/StatBlock";
 
@@ -21,6 +18,7 @@ const Characters = ()=> {
   
   return (
     <Container>
+      CHARACTERS
         <Row>
             <Col>
             <Row>

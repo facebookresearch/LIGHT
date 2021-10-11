@@ -10,7 +10,7 @@ import './styles.css';
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Button from 'react-bootstrap/Button'
 /* CUSTOM COMPONENTS */
-import WorldEditRoutes from "./WorldEditRoutes"
+
 
 
 const ButtonGroups = ({buttons, orientation})=> {
@@ -29,7 +29,7 @@ const ButtonGroups = ({buttons, orientation})=> {
                         onClick={clickFunction}
                         active={activeCondition}
                     >
-                        {name}
+                        {name.toUpperCase()}
                     </Button>
                 )}
             )
