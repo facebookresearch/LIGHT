@@ -1,6 +1,6 @@
 /* REACT */
 import React from 'react';
-import { useParams } from "react-router-dom";
+import { useParams, useRouteMatch } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 /* STYLES */
@@ -14,11 +14,12 @@ import Col from 'react-bootstrap/Col';
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Button from 'react-bootstrap/Button'
 /* CUSTOM COMPONENTS */
-import StatBlock from "../../components/StatBlock";
+
 
 const EditWorldPage = ()=> {
 
   let { worldId } = useParams();
+  let { path, url } = useRouteMatch();
   
   return (
     <Container>
@@ -33,30 +34,9 @@ const EditWorldPage = ()=> {
                     <Button variant="outline-secondary">Interactions</Button>
                     <Button variant="outline-secondary">Quests</Button>
                   </ButtonGroup>
-                </Col>
-            <Col>
-            <Col>
-              <Row>
-                <Col>
-                  <Row>
-                    <StatBlock
-                      title={"Configuration"}
-                      fieldNames={["Peaceful", "Heuristic Trading"]}
-                      data={{}}
-                    />
-                  </Row>
-                  <Row>
-                    <StatBlock
-                      title={"Statistics"}
-                      fieldNames={["Room count", "Object Count", "Character count", "- Playable characters", "- NPC-only characters", "OtherStats"]}
-                      data={{}}
-                    />
-                  </Row>
-                </Col>
-              </Row>
-            </Col>
-            <Col>
-          </Col>  
+          </Col>
+          <Col>
+            {}
           </Col>
         </Row>
     </Container>
