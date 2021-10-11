@@ -18,7 +18,6 @@ const Characters = ()=> {
   
   return (
     <Container>
-      CHARACTERS
         <Row>
             <Col>
             <Row>
