@@ -12,6 +12,10 @@ import {
 /* CUSTOM COMPONENTS */
 //SECTIONS
 import Details from "../EditWorldSections/Details";
+import Characters from "../EditWorldSections/Characters";
+import Objects from "../EditWorldSections/Objects";
+import Quests from "../EditWorldSections/Quests";
+import Rooms from "../EditWorldSections/Rooms";
 
 const Routes = ()=> {
     let { path, url } = useRouteMatch();

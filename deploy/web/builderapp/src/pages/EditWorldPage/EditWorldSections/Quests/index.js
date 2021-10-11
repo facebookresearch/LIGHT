@@ -16,7 +16,7 @@ import Button from 'react-bootstrap/Button'
 /* CUSTOM COMPONENTS */
 import StatBlock from "../../../../components/StatBlock";
 
-const Characters = ()=> {
+const Quests = ()=> {
 
   
   return (
@@ -43,4 +43,4 @@ const Characters = ()=> {
   );
 }
 
-export default Characters;
+export default Quests;
