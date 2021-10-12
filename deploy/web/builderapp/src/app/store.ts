@@ -1,13 +1,15 @@
 //REDUX
 import {configureStore} from "@reduxjs/toolkit";
 //REDUCERS
-import playerWorldsReducer from '../features/playerWorlds/playerworlds-slice';
+import PlayerWorldsReducer from '../features/playerWorlds/playerworlds-slice';
 import ModalReducer from '../features/modal/modal-slice';
+import SideBarReducer from "../features/sidebars/sidebars-slice";
 
 export const store = configureStore({
     reducer:{
-        playerWorlds: playerWorldsReducer,
-        modal: ModalReducer
+        playerWorlds: PlayerWorldsReducer,
+        modal: ModalReducer,
+        sidebars: SideBarReducer
     }
 });
 
