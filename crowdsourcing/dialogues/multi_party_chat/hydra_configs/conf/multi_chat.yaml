@@ -6,7 +6,7 @@ mephisto:
     onboarding_qualification: light-multi-party-chat-qualification
     block_qualification: light-multi-party-chat-block
     custom_source_dir: ${task_dir}/frontend
-    num_conversations: 10
+    num_conversations: 25
   task:
     task_name: light-multi-party-chat-pilot
     task_title: "Multi-Party Fantasy Chat"
@@ -15,7 +15,7 @@ mephisto:
       in a fantasy setting. You will all be given characters, and should
       have a conversation about your assigned characters and the setting,
       taking natural turns.
-    task_reward: 1.80
+    task_reward: 3.00
     max_num_concurrent_units: 15
     task_tags: "dynamic,chat,testing,fantasy,role-playing"
     assignment_duration_in_seconds: 2400
