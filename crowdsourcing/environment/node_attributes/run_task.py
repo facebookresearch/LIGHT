@@ -331,7 +331,7 @@ def main(cfg: DictConfig) -> None:
 
     construct_complete_task_list()
 
-    if cfg.qualify_new_workers:
+    if not cfg.qualify_new_workers:
         validator = lambda u: True
     else:
         validator = validate_unit

@@ -15,6 +15,7 @@ from parlai.core.params import ParlaiParser
 from light.data_model.conversation_checkpoint_parser import ConversationCheckpointParser
 from light.data_model.environment_checkpoint_parser import EnvironmentCheckpointParser
 from light.graph.utils import get_article
+from light.data_model.onboarding_flags import OnboardingFlags
 import sys
 import parlai.utils.misc as parlai_utils
 import json
@@ -277,6 +278,7 @@ class LIGHTDatabase:
             self.init_game_tables()
             self.create_triggers()
             self.check_custom_tags_objects_tables()
+            self.check_user_onboarding_tags()
 
         # Dictionaries to convert between previous pickle IDs and current
         # database IDs
@@ -1425,7 +1427,8 @@ class LIGHTDatabase:
             CREATE TABLE IF NOT EXISTS user_table (
             id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
             extern_id text UNIQUE NOT NULL,
-            username text);
+            username text,
+            onboarding_flags integer DEFAULT 0);
             """
         )
 
@@ -2205,6 +2208,23 @@ class LIGHTDatabase:
             self.c.execute("ALTER TABLE objects_table ADD COLUMN contain_size;")
             self.c.execute("ALTER TABLE objects_table ADD COLUMN shape;")
             self.c.execute("ALTER TABLE objects_table ADD COLUMN value;")
+
+    def check_user_onboarding_tags(self):
+        """
+        Check if the tables has the attrs related to the custom tagged attributes. If not, add them.
+        """
+
+        # Check the table for size, contain_size, shape, value columns and add if nonexistent
+        # this should be deprecated soon when a legacy table is opened
+        has_flags_column = dict(
+            self.c.execute(
+                " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('user_table') WHERE name='onboarding_flags' "
+            ).fetchone()
+        )["CNTREC"]
+
+        if not has_flags_column:
+            self.c.execute("ALTER TABLE user_table ADD COLUMN onboarding_flags INTEGER DEFAULT 0;")
+
 
     def add_single_conversation(self, room, participants, turns):
         """
@@ -3581,6 +3601,30 @@ class LIGHTDatabase:
         assert len(result) == 1
         id = int(result[0][0])
         return id
+
+    def get_user_flags(self, user):
+        self.c.execute(
+            """
+            SELECT onboarding_flags from user_table WHERE extern_id = ?
+            """,
+            (extern_id,),
+        )
+        result = self.c.fetchall()
+        assert len(result) == 1
+        flags = int(result[0][0])
+        return OnboardingFlags(flags)
+
+    def set_user_flags(self, user, flags: "OnboardingFlags"):
+        if flags.flag_did_update():
+            new_flags = flags.get_flag()
+            self.c.execute(
+                """
+                UPDATE user_table
+                SET onboarding_flags = ?
+                WHERE extern_id = ?
+                """,
+                (new_flags,),
+            )
 
     def initialize_agent_score(self, target_node, user):
         """

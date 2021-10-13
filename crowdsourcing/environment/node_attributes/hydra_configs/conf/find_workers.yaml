@@ -15,7 +15,7 @@ mephisto:
     task_tags: "fantasy,attributes,annotation,text"
   database: 
     _database_type: singleton
-num_tasks: 40
+num_tasks: 75
 qualify_new_workers: True
 approved_qualification: light_node_attributes_task_qualified
 require_qualified_workers: False
