@@ -91,14 +91,13 @@ class World(object):
         self.action_parser = ActionParser(opt)
 
     @staticmethod
-    def from_graph(graph):
-        world = World(graph._opt, graph.world)
+    def from_graph(graph, graph_builder=None):
+        """Loads the world from the older versions of graph."""
+        world = World(graph._opt, graph_builder)
         world.oo_graph = OOGraph.from_graph(graph)
         world._node_freeze = graph._node_freeze
         world._cnt = graph._cnt
-        world._player_cnt = graph._player_cnt
-        world._playerid_to_agentid = graph._playerid_to_agentid
-        world._agentid_to_playerid = graph._agentid_to_playerid
+        world._player_cnt = len(world.oo_graph.agents)
         return world
 
     # ------- debug and test helpers ------#
