@@ -92,6 +92,7 @@ class World(object):
 
     @staticmethod
     def from_graph(graph, graph_builder=None):
+        """Loads the world from the older versions of graph."""
         world = World(graph._opt, graph_builder)
         world.oo_graph = OOGraph.from_graph(graph)
         world._node_freeze = graph._node_freeze
