@@ -40,7 +40,7 @@ const EditWorldPage = ()=> {
     {
       name: "details",
       clickFunction: () => handleClick("details"),
-      activeCondition: (categories == "details")
+      activeCondition: (categories == "details" || !categories)
     },
     {
       name: "characters",

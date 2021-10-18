@@ -23,20 +23,25 @@ const Details = ()=> {
     <Container>
         <Row>
             <Col>
-            <Row>
-                <StatBlock
-                title={"Configuration"}
-                fieldNames={["Peaceful", "Heuristic Trading"]}
-                data={{}}
-                />
-            </Row>
-            <Row>
-                <StatBlock
-                title={"Statistics"}
-                fieldNames={["Room count", "Object Count", "Character count", "- Playable characters", "- NPC-only characters", "OtherStats"]}
-                data={{}}
-                />
-            </Row>
+              <Row>
+                  <StatBlock
+                  title={"Configuration"}
+                  fieldNames={["Peaceful", "Heuristic Trading"]}
+                  data={{}}
+                  />
+              </Row>
+              <Row>
+                  <StatBlock
+                  title={"Statistics"}
+                  fieldNames={["Room count", "Object Count", "Character count", "- Playable characters", "- NPC-only characters", "OtherStats"]}
+                  data={{}}
+                  />
+              </Row>
+            </Col>
+            <Col>
+              <div  >
+                <Button> MINIMAP PLACEHOLDER</Button>
+              </div>
             </Col>
         </Row>
     </Container>

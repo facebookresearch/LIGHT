@@ -7,6 +7,11 @@ import NavHeader from "./components/NavHeader"
 //PAGES
 import HomePage from "./pages/HomePage";
 import EditWorldPage from "./pages/EditWorldPage";
+import MapPage from "./pages/MapPage"
+import RoomPage from "./pages/RoomPage"
+import CharacterPage from "./pages/CharacterPage"
+import ObjectPage from "./pages/ObjectPage"
+
 //ORIGINALPAGES
 import ExplorePage from "./components/ExplorePage";
 import CreatePage from "./components/CreatePage";
@@ -20,7 +25,12 @@ const Routes = ()=> {
         <HashRouter>
             <NavHeader/>
             <Route path="/" component={HomePage} exact />
-            <Route path="/editworld/:worldId/:categories" component={EditWorldPage} />
+            <Route path="/editworld/:worldId" component={EditWorldPage} exact/>
+            <Route path="/editworld/:worldId/:categories" component={EditWorldPage} exact/>
+            <Route path="/editworld/:worldId/:categories/map" component={MapPage} />
+            <Route path="/editworld/:worldId/:categories/map/room/:id" component={RoomPage} />
+            <Route path="/editworld/:worldId/:categories/map/room/:id/character/:id" component={CharacterPage} />
+            <Route path="/editworld/:worldId/:categories/map/room/:id/object/:id" component={ObjectPage} />
             <Route path="/explore" component={ExplorePage} exact />
             <Route path="/create" component={CreatePage} exact />
             <Route path="/review" component={ReviewPage} exact />

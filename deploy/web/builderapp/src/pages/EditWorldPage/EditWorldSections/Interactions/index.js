@@ -18,29 +18,21 @@ import StatBlock from "../../../../components/StatBlock";
 
 const Interactions = ()=> {
 
+    // const DummyObjectsFields = [
+    //   {label:"ID", key:"id"}, 
+    //   {label:"NAME", key:"name"}, 
+    //   {label:"Description", key:"description"}
+    // ]
+    // const DummyObjectsData = [
+    //   {id:0, name: "A bone club", description:"A crude weapon made from a large bone."},
+    //   {id:1, name: "A plate helmet", description:"A shiny piece of armor for one's head."},
+    //   {id:2, name: "A bucket", description:"An empty vessel that could be used to carry any number of things."}
+    // ]
   
   return (
-    <Container>
-        <Row>
-            <Col>
-            <Row>
-                <StatBlock
-                title={"Configuration"}
-                fieldNames={["Peaceful", "Heuristic Trading"]}
-                data={{}}
-                />
-            </Row>
-            <Row>
-                <StatBlock
-                title={"Statistics"}
-                fieldNames={["Room count", "Object Count", "Character count", "- Playable characters", "- NPC-only characters", "OtherStats"]}
-                data={{}}
-                />
-            </Row>
-            </Col>
-        </Row>
-    </Container>
-  );
+  
+      <div></div>
+    );
 }
 
 export default Interactions;

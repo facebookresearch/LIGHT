@@ -14,32 +14,27 @@ import Col from 'react-bootstrap/Col';
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Button from 'react-bootstrap/Button'
 /* CUSTOM COMPONENTS */
-import StatBlock from "../../../../components/StatBlock";
+import GeneralTable from "../../../../components/Tables"
 
 const Rooms = ()=> {
-
+  const DummyRoomFields = [
+    {label:"ID", key:"id"}, 
+    {label:"NAME", key:"name"}, 
+    {label:"Description", key:"description"}
+  ]
+  const DummyRoomData = [
+    {id:0, name: "Dungeon", description:"A dark, cold prison."},
+    {id:1, name: "Forest", description:"A wild maze of trees."},
+    {id:2, name: "Village", description:"A quiet village."}
+  ]
   
   return (
-    <Container>
-        <Row>
-            <Col>
-            <Row>
-                <StatBlock
-                title={"Configuration"}
-                fieldNames={["Peaceful", "Heuristic Trading"]}
-                data={{}}
-                />
-            </Row>
-            <Row>
-                <StatBlock
-                title={"Statistics"}
-                fieldNames={["Room count", "Object Count", "Character count", "- Playable characters", "- NPC-only characters", "OtherStats"]}
-                data={{}}
-                />
-            </Row>
-            </Col>
-        </Row>
-    </Container>
+    <div>
+      <GeneralTable 
+        fields={DummyRoomFields} 
+        data={DummyRoomData}
+      />
+    </div>
   );
 }
 

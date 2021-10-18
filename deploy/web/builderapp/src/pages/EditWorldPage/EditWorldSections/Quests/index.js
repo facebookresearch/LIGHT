@@ -14,32 +14,27 @@ import Col from 'react-bootstrap/Col';
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Button from 'react-bootstrap/Button'
 /* CUSTOM COMPONENTS */
-import StatBlock from "../../../../components/StatBlock";
+import GeneralTable from "../../../../components/Tables/";
 
 const Quests = ()=> {
-
+  const DummyQuestsFields = [
+    {label:"ID", key:"id"}, 
+    {label:"NAME", key:"name"}, 
+    {label:"Description", key:"description"}
+  ]
+  const DummyQuestsData = [
+    {id:0, name: "Find the wizard keys", description:"Wizards are always losing their keys.  Help a wizard find their key."},
+    {id:1, name: "Seek the Holy Grail", description:"A once and future classic, find a chalice a divine being drank from."},
+    {id:2, name: "Slay a Dragon", description:"Exactly as hard as it sounds, search far and wide for a fire breathing monster and return it's head to the King."}
+  ]
   
   return (
-    <Container>
-        <Row>
-            <Col>
-            <Row>
-                <StatBlock
-                title={"Configuration"}
-                fieldNames={["Peaceful", "Heuristic Trading"]}
-                data={{}}
-                />
-            </Row>
-            <Row>
-                <StatBlock
-                title={"Statistics"}
-                fieldNames={["Room count", "Object Count", "Character count", "- Playable characters", "- NPC-only characters", "OtherStats"]}
-                data={{}}
-                />
-            </Row>
-            </Col>
-        </Row>
-    </Container>
+    <div>
+      <GeneralTable
+        fields={DummyQuestsFields} 
+        data={DummyQuestsData}
+      />
+    </div>
   );
 }
 
