@@ -11,12 +11,11 @@ import subprocess
 from mephisto.operations.operator import Operator
 from mephisto.operations.utils import get_root_dir
 from mephisto.tools.scripts import load_db_and_process_config
-from mephisto.abstractions.blueprint import BlueprintArgs
-from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint import (
+from static_gold_blueprint import (
     BLUEPRINT_TYPE,
-)
-from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint import (
-    SharedStaticTaskState,
+    StaticGoldBlueprint,
+    StaticGoldBlueprintArgs,
+    StaticGoldSharedState,
 )
 from light.data_model.light_database import LIGHTDatabase
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
@@ -29,22 +28,20 @@ import json
 import random
 from omegaconf import DictConfig
 from dataclasses import dataclass, field
-from typing import List, Any
+from typing import List, Any, Tuple, Dict
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-INPUT_FILE_TASK = "is-safe-is-light-task-20"
-LIGHT_DB_PATH = "~/ParlAI/data/LIGHT/merged.db"
-PRIMARY_OBJECT_LIST_SIZE = 5
-SECONDARY_OBJECT_LIST_SIZE = 5
-DEFAULT_NUM_TASKS = 20
+GOLD_FOLDER = os.path.join(TASK_DIRECTORY, "data", "golds")
+TARGET_FOLDER = os.path.join(TASK_DIRECTORY, "data", "targets")
+DEFAULT_UNITS_PER_RUN = 30
+DEFAULT_ANNOTATIONS_PER_UNIT = 10
 
 db = LocalMephistoDB()
 mephisto_data_browser = MephistoDataBrowser(db=db)
 
-defaults = [
+default_config = [
+    "_self_",
     {"mephisto/blueprint": BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
     {"conf": "is_safe_is_light_task"},
 ]
 
@@ -53,49 +50,20 @@ from mephisto.operations.hydra_config import RunScriptConfig, register_script_co
 
 @dataclass
 class TestScriptConfig(RunScriptConfig):
-    defaults: List[Any] = field(default_factory=lambda: defaults)
+    defaults: List[Any] = field(default_factory=lambda: default_config)
     task_dir: str = TASK_DIRECTORY
-    light_db_path: str = LIGHT_DB_PATH
-    primary_object_list_size: int = PRIMARY_OBJECT_LIST_SIZE
-    secondary_object_list_size: int = SECONDARY_OBJECT_LIST_SIZE
-    num_tasks: int = DEFAULT_NUM_TASKS
-
-
-def get_object_lists(db_path):
-    db = LIGHTDatabase(db_path)
-    with db as ldb:
-        all_objects = [dict(obj) for obj in ldb.get_object()]
-
-    primary_objects = [{}]
-
-    secondary_objects = [{}]
-
-    return primary_objects, secondary_objects
+    gold_path: str = GOLD_FOLDER
+    target_folder: str = TARGET_FOLDER
+    units_per_run: int = DEFAULT_UNITS_PER_RUN
+    annotations_per_unit: int = DEFAULT_ANNOTATIONS_PER_UNIT
 
 
 def create_task_data(
-    primary_objects,
-    secondary_objects,
-    primary_object_list_size,
-    secondary_object_list_size,
     num_tasks,
+    annotations_per_unit,
+    annotation_source,
 ):
-    # random.shuffle(primary_objects)
-    # random.shuffle(secondary_objects)
     task_data_array = [{}]
-
-    # for idx in range(num_tasks):
-    # primary_object_list = random.sample(primary_objects, primary_object_list_size)
-    # secondary_object_list = random.sample(
-    #    secondary_objects, secondary_object_list_size
-    # )
-
-    # task_data_array.append(
-    #    {
-    #        "primary_object_list": primary_object_list,
-    #        "secondary_object_list": secondary_object_list,
-    #    }
-    # )
 
     return task_data_array
 
@@ -129,30 +97,13 @@ def build_task(task_dir):
     os.chdir(return_dir)
 
 
-def validate_unit(unit):
-    if unit.get_assigned_agent() is None:
-        return
-
-    data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
-        "final_data"
-    ]
-    action_description = data["actionDescription"]
-
-    if (
-        len(action_description) <= 20
-        or action_description.lower().find("you") == -1
-        or (
-            action_description.lower()[-1] != "."
-            and action_description.lower()[-1] != "?"
-            and action_description.lower()[-1] != "!"
-        )
-    ):
-        # Not in second person or invalid punctuation
-        print("Action " + action_description + " was not validated!")
-        unit.get_assigned_agent().soft_reject_work()
-        worker = unit.get_assigned_agent().get_worker()
-        worker.grant_qualification("objects_interaction_task_block", 1)
-    return
+def make_golds(
+    gold_path: str,
+) -> Tuple[Dict[str, Dict[str, bool]], Dict[str, Dict[str, str]]]:
+    """
+    Given a gold folder, returns an id->gold label dict as well as an id->annotation dict
+    """
+    pass
 
 
 @hydra.main(config_name="scriptconfig")
@@ -162,19 +113,25 @@ def main(cfg: DictConfig) -> None:
     def onboarding_always_valid(onboarding_data):
         return True
 
-    primary_objects, secondary_objects = get_object_lists(
-        cfg.light_db_path,
+    gold_answers, gold_questions = make_golds(cfg.gold_path)
+
+    def unit_matches_gold(unit) -> bool:
+        """
+        Check against the answer list for the given ID to return
+        if the given unit's data matches
+        """
+        return False
+
+    validate_unit = StaticGoldBlueprint.create_validation_function(
+        cfg.mephisto, unit_matches_gold
     )
 
-    shared_state = SharedStaticTaskState(
+    shared_state = StaticGoldSharedState(
         static_task_data=create_task_data(
-            primary_objects,
-            secondary_objects,
-            cfg.primary_object_list_size,
-            cfg.secondary_object_list_size,
-            cfg.num_tasks,
+            cfg.units_per_run,
+            cfg.annotations_per_unit,
+            cfg.target_folder,
         ),
-        validate_onboarding=onboarding_always_valid,
         on_unit_submitted=validate_unit,
     )
 

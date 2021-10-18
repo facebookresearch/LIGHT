@@ -1,4 +1,7 @@
 #@package _global_
+defaults:
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
 mephisto:
   blueprint:
     task_source: ${task_dir}/webapp/build/bundle.js
