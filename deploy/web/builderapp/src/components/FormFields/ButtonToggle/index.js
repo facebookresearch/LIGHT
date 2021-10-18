@@ -1,26 +1,43 @@
 /* REACT */
-import React, {useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* STYLES */
 import './styles.css';
 /* BOOTSTRAP COMPONENTS */
 //FORM
-import Form from 'react-bootstrap/Form'
-import FloatingLabel from 'react-bootstrap/FloatingLabel'
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import ToggleButton from 'react-bootstrap/ToggleButton'
+import Button from 'react-bootstrap/Button'
 /* CUSTOM COMPONENTS */
 
 
 const ButtonToggle = ({
-    label
+    buttonOptions
 })=> {
-    
+        const [selectedButtonValue, setSelectedButtonValue] = useState('1');
 
-    return (
-        <div className="ButtonToggle-container">
-            
-        </div>
-    );
-}
+        return (
+          <>
+          
+            <ButtonGroup>
+              {buttonOptions.map((button, id) => (
+                <ToggleButton
+                  key={id}
+                  id={`radio-${id}`}
+                  type="radio"
+                  variant={id % 2 ? 'outline-success' : 'outline-danger'}
+                  name="toggle"
+                  value={button.value}
+                  checked={selectedButtonValue === button.value}
+                  onChange={(e) => setSelectedButtonValue(e.currentTarget.value)}
+                >
+                  {button.name}
+                </ToggleButton>
+              ))}
+            </ButtonGroup>
+          </>
+        );
+      }
 
 export default ButtonToggle;

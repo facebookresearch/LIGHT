@@ -18,7 +18,7 @@ const HomePage = ()=> {
   //REACT ROUTER
   let history = useHistory();
   //DUMMY DATA
-  const dummyData = [{id:1111, name: "Mars", tags:["#red", "#haunted", "#dry"]}, {id:2222, name: "Norrath", tags:["#magical", "#amazing", "#dragons"]}, {id:3333, name:"Asgard", tags:["#vikings", "#gods", "#magic"]}]
+  const dummyData = [{id:0, name: "Mars", tags:["#red", "#haunted", "#dry"]}, {id:1, name: "Norrath", tags:["#magical", "#amazing", "#dragons"]}, {id:2, name:"Asgard", tags:["#vikings", "#gods", "#magic"]}]
   /* ----REDUX ACTIONS---- */
     // REDUX DISPATCH FUNCTION
     const dispatch = useAppDispatch();

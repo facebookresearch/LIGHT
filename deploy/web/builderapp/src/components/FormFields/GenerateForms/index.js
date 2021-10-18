@@ -18,24 +18,26 @@ import Button from 'react-bootstrap/Button'
 
 const GenerateForms = ({label, clickFunction})=> {
   return (
-    <Form>
-            <Row>
-                <Col xs={4}>
-                    <Form.Label>{label}</Form.Label>
-                </Col>
-                <Col xs={6}/>
-                <Col xs={2}>  
-                    <Button variant="primary" type="submit">
-                        Generate
-                    </Button>
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <Form.Control type={label} />
-                </Col>
-            </Row>
-    </Form>
+    <div className="generateform-container">
+        <Form>
+                <Row>
+                    <Col xs={4}>
+                        <Form.Label>{label}</Form.Label>
+                    </Col>
+                    <Col xs={6}/>
+                    <Col xs={2}>  
+                        <Button variant="primary" type="submit">
+                            Generate
+                        </Button>
+                    </Col>
+                </Row>
+                <Row style={{marginTop:"5px"}}>
+                    <Col>
+                        <Form.Control type={label} />
+                    </Col>
+                </Row>
+        </Form>
+    </div>
         
   );
 }

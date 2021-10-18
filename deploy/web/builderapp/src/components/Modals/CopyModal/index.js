@@ -9,6 +9,7 @@ import Modal from 'react-bootstrap/Modal'
 import ModalTitle from 'react-bootstrap/ModalTitle'
 import ModalBody from 'react-bootstrap/ModalBody'
 /* CUSTOM COMPONENTS */
+import TextInput from "../../FormFields/TextInput";
 import TextButton from "../../Buttons/TextButton"
 
 const CopyModal = ()=> {
@@ -23,7 +24,9 @@ const CopyModal = ()=> {
           <p>This allows you to make a copy of your world to edit.</p>
           <p>Provide a name to duplicate this world into.</p>
           <div style={{width:"30%", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
-            <input/>
+              <TextInput 
+                label={"New World Name"}
+              />
               <TextButton 
                 text="COPY"
                 clickFunction={()=>{}}

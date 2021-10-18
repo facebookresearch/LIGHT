@@ -24,14 +24,14 @@ const Slider = ({
     return (
         <div className="slider-container">
             <Row>
-                <Form.Label>{label}</Form.Label>
+                <h5>{label}</h5>
             </Row>
             <Row>
                 <Col>
                     <Form.Label>{minLabel}</Form.Label>
                 </Col>
-                <Col>
-                <Form.Range ref={SliderRef} />
+                <Col xs={8}>
+                    <Form.Range ref={SliderRef} />
                 </Col>
                 <Col>
                 <   Form.Label>{maxLabel}</Form.Label>
