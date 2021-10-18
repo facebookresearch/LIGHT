@@ -31,6 +31,7 @@ const Quests = ()=> {
   return (
     <div>
       <GeneralTable
+        hasSearchBar={true}
         fields={DummyQuestsFields} 
         data={DummyQuestsData}
       />

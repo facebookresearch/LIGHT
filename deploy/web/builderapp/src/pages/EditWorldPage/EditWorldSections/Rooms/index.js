@@ -31,6 +31,7 @@ const Rooms = ()=> {
   return (
     <div>
       <GeneralTable 
+        hasSearchBar={true}
         fields={DummyRoomFields} 
         data={DummyRoomData}
       />

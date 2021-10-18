@@ -28,6 +28,7 @@ const Characters = ()=> {
   return (
     <div>
       <GeneralTable 
+        hasSearchBar={true}
         fields={DummyCharacterFields} 
         data={DummyCharacterData}
       />

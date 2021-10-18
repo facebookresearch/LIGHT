@@ -1,6 +1,6 @@
 /* REACT */
 import React from 'react';
-import { useParams, useRouteMatch } from "react-router-dom";
+import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
 /* STYLES */
@@ -17,7 +17,12 @@ import Button from 'react-bootstrap/Button'
 import StatBlock from "../../../../components/StatBlock";
 
 const Details = ()=> {
-
+  //REACT ROUTER
+  const history = useHistory();
+  let { worldId, categories } = useParams();
+  const handleClick = ()=>{
+    history.push(`/editworld/${worldId}/${categories}/map`);
+  }
   
   return (
     <Container>
@@ -40,7 +45,7 @@ const Details = ()=> {
             </Col>
             <Col>
               <div  >
-                <Button> MINIMAP PLACEHOLDER</Button>
+                <Button onClick={handleClick}> MINIMAP PLACEHOLDER</Button>
               </div>
             </Col>
         </Row>

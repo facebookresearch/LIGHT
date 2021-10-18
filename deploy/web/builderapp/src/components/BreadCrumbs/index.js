@@ -12,10 +12,10 @@ const BreadCrumbs = ({crumbs }) => {
   return (
     <Breadcrumb>
         {
-            crumbs.map(crumb=> {
+            crumbs.map((crumb, index)=> {
                 const {name, linkUrl} = crumb;
                 return(
-                    <Breadcrumb.Item key={linkUrl} as={Link} to={linkUrl}>
+                    <Breadcrumb.Item key={linkUrl} linkAs={Link} linkProps= {{to:linkUrl}}>
                         {name}
                     </Breadcrumb.Item>
                 )

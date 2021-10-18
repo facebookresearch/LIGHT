@@ -28,9 +28,9 @@ const Routes = ()=> {
             <Route path="/editworld/:worldId" component={EditWorldPage} exact/>
             <Route path="/editworld/:worldId/:categories" component={EditWorldPage} exact/>
             <Route path="/editworld/:worldId/:categories/map" component={MapPage} />
-            <Route path="/editworld/:worldId/:categories/map/room/:id" component={RoomPage} />
-            <Route path="/editworld/:worldId/:categories/map/room/:id/character/:id" component={CharacterPage} />
-            <Route path="/editworld/:worldId/:categories/map/room/:id/object/:id" component={ObjectPage} />
+            <Route path="/editworld/:worldId/:categories/map/room/:roomid" component={RoomPage} />
+            <Route path="/editworld/:worldId/:categories/map/room/:roomid/character/:charid" component={CharacterPage} />
+            <Route path="/editworld/:worldId/:categories/map/room/:roomid/object/:objectid" component={ObjectPage} />
             <Route path="/explore" component={ExplorePage} exact />
             <Route path="/create" component={CreatePage} exact />
             <Route path="/review" component={ReviewPage} exact />
