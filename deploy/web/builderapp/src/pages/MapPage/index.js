@@ -19,8 +19,8 @@ const MapPage = ()=> {
 //REACT ROUTER
   const history = useHistory();
   let { worldId, categories } = useParams(); 
-  const handleClick = (sectionName)=>{
-    history.push(`/editworld/${worldId}/${sectionName}`);
+  const handleClick = (roomId)=>{
+    history.push(`/editworld/${worldId}/${categories}/map/rooms/${roomId}`);
   }
 //CRUMBS
   const crumbs= [{name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`}, {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`}]
@@ -36,13 +36,19 @@ const MapPage = ()=> {
         </Row>
         <Row>
             <Col>
-                <Button></Button>
+                <Button onClick={()=>handleClick(2)}>
+                    The Village
+                </Button>
             </Col>
             <Col>
-                <Button></Button>
+                <Button onClick={()=>handleClick(0)}>
+                    A Dungeon
+                </Button>
             </Col>
             <Col>
-                <Button></Button>
+                <Button onClick={()=>handleClick(1)}>
+                    The Forest
+                </Button>
             </Col>
         </Row>
     </Container>

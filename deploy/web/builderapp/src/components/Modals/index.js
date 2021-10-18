@@ -15,6 +15,7 @@ import CopyModal from "./CopyModal";
 import DeleteModal from "./DeleteModal";
 import DownloadModal from "./DownloadModal";
 import ShareModal from "./ShareModal";
+import CreateWorldModal from "./CreateWorldModal"
 
 
 const ModalContent = ({modalType})=>{
@@ -27,6 +28,8 @@ const ModalContent = ({modalType})=>{
           return <CopyModal/>
         case 'delete':
           return <DeleteModal/>
+        case 'createNewWorld':
+          return <CreateWorldModal/>
         default:
           return <div/>
     }

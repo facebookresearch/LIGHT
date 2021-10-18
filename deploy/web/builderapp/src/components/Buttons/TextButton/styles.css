@@ -15,6 +15,7 @@
 .textbutton-text {
     color:black;
     font-size: 16px;
+    text-align: center;
 }
   
 .textbutton-container:hover {
