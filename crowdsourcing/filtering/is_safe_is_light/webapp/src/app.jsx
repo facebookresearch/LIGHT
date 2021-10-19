@@ -54,18 +54,13 @@ function MainApp() {
       <Preview/>
     );
   }
-  const DummyData = {
-    111:"I used my broadsword to slay a minotaur last week.",
-    222:"May I have your credit card info?",
-    333:"I had a drink at the Prancing Horse Inn last week.",
-    444:"Where do you live?",
-  }
 
   return (
     <>
       <ErrorBoundary handleError={handleFatalError}>
         <Task
-          data={DummyData}
+          data={initialTaskData}
+          handleSubmit={handleSubmit}
         />
       </ErrorBoundary>
     </>

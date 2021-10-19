@@ -43,6 +43,7 @@ class StaticGoldBlueprintArgs(UseGoldUnitArgs, StaticReactBlueprintArgs):
     _blueprint_type: str = BLUEPRINT_TYPE
 
 
+@dataclass
 class StaticGoldSharedState(GoldUnitSharedState, SharedStaticTaskState):
     pass
 

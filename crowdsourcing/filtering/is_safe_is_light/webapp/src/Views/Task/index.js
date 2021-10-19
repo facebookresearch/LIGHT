@@ -18,7 +18,7 @@ const {
 } = TaskCopy;
 
 const Task = ({
-  data
+  data, handleSubmit
 })=> {
 /*------------------------------------STATE------------------------------------*/
   //Selection Recieved from Backend.
@@ -35,9 +35,9 @@ const Task = ({
   /*------------------------------------LIFE CYCLE------------------------------------*/
   useEffect(()=>{
     let initialPayload = {}
-    let initialSelectionData = Object.keys(data).map(selectionId=>{
-      initialPayload[selectionId] = {id:selectionId, sentence:data[selectionId], safety:null, context:null}
-      return {id:selectionId, sentence:data[selectionId]}
+    let initialSelectionData = data.texts.map((entry, idx)=>{
+      initialPayload[idx] = {id:idx, sentence:entry.text, safety:null, context:null}
+      return {id:idx, sentence:entry.text}
     })
     setPayloadData(initialPayload);
     setSelectionData(initialSelectionData);
@@ -67,7 +67,7 @@ const Task = ({
       setShowError(false);
       console.log("SUCCESSFULLY READY TO SUBMIT")
       setShowSuccess(true);
-      //handleSubmit()
+      handleSubmit(submissionData)
     }else{
       setErrorMessage(errorList);
       setShowError(true);

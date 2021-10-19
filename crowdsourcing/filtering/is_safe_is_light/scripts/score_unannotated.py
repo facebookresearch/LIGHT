@@ -77,7 +77,7 @@ def get_light_confidence(model, utterance):
     return 0
 
 
-@hydra.main(config_path="../hydra_config", config_name="scriptconfig")
+@hydra.main(config_path="../hydra_configs", config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     print("Adding score predictions for all unannotated targets")
     safety_model = None  # cfg.is_safe_model_path

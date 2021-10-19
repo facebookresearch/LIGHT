@@ -17,6 +17,7 @@ from static_gold_blueprint import (
     StaticGoldBlueprintArgs,
     StaticGoldSharedState,
 )
+from mephisto.abstractions.blueprints.mixins.use_gold_unit import get_gold_factory
 from light.data_model.light_database import LIGHTDatabase
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
@@ -26,15 +27,17 @@ from mephisto.data_model.unit import Unit
 import hydra
 import json
 import random
-from omegaconf import DictConfig
+import pandas as pd
+import numpy as np
+from omegaconf import DictConfig, MISSING
 from dataclasses import dataclass, field
 from typing import List, Any, Tuple, Dict
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 GOLD_FOLDER = os.path.join(TASK_DIRECTORY, "data", "golds")
 TARGET_FOLDER = os.path.join(TASK_DIRECTORY, "data", "targets")
-DEFAULT_UNITS_PER_RUN = 30
-DEFAULT_ANNOTATIONS_PER_UNIT = 10
+DEFAULT_UNITS_PER_RUN = 10
+DEFAULT_ANNOTATIONS_PER_UNIT = 5
 
 db = LocalMephistoDB()
 mephisto_data_browser = MephistoDataBrowser(db=db)
@@ -52,8 +55,8 @@ from mephisto.operations.hydra_config import RunScriptConfig, register_script_co
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: default_config)
     task_dir: str = TASK_DIRECTORY
-    gold_path: str = GOLD_FOLDER
-    target_folder: str = TARGET_FOLDER
+    gold_path: str = MISSING
+    target_file: str = MISSING
     units_per_run: int = DEFAULT_UNITS_PER_RUN
     annotations_per_unit: int = DEFAULT_ANNOTATIONS_PER_UNIT
 
@@ -63,9 +66,47 @@ def create_task_data(
     annotations_per_unit,
     annotation_source,
 ):
-    task_data_array = [{}]
+    df = pd.read_csv(annotation_source)
 
-    return task_data_array
+    # TODO sort based on least confident of safe or LIGHT
+
+    df_dict_list = df.to_dict("records")
+
+    remaining_annotations = len(df["annotations"]) - df["annotations"].sum()
+    if remaining_annotations < num_tasks * annotations_per_unit:
+        print(
+            f"Not enough data for the tasks present, only launching  "
+            f"{remaining_annotations // num_tasks + 1} rather than {num_tasks}"
+        )
+        num_tasks = remaining_annotations // num_tasks + 1
+
+    tasks = []
+    curr_idx = 0
+    while len(tasks) < num_tasks:
+        subtasks = []
+        while len(subtasks) < annotations_per_unit:
+            entry = df_dict_list[curr_idx]
+            curr_idx = (curr_idx + 1) % len(df_dict_list)
+            if entry["annotations"]:
+                continue
+            subtasks.append(
+                {
+                    "text": entry["text"],
+                }
+            )
+            df["launched"] = df.apply(
+                lambda x: x["launched"] + 1
+                if x["text"] == entry["text"]
+                else x["launched"],
+                axis=1,
+            )
+        tasks.append(
+            {
+                "texts": subtasks,
+            }
+        )
+
+    return tasks
 
 
 register_script_config(name="scriptconfig", module=TestScriptConfig)
@@ -97,29 +138,62 @@ def build_task(task_dir):
     os.chdir(return_dir)
 
 
+SafeLightAnnotation = Dict[str, bool]
+FrontendSubUnit = Dict[str, str]
+GoldTask = Dict[str, List[FrontendSubUnit]]
+
+
 def make_golds(
     gold_path: str,
-) -> Tuple[Dict[str, Dict[str, bool]], Dict[str, Dict[str, str]]]:
+    annotations_per_unit: int,
+) -> Tuple[Dict[str, SafeLightAnnotation], List[GoldTask]]:
     """
-    Given a gold folder, returns an id->gold label dict as well as an id->annotation dict
+    Given a gold folder, returns an id->gold label dict as well as a
+    list of gold annotations
     """
-    pass
+    goldframe = pd.read_csv(gold_path)
+    gold_dict_list = goldframe.to_dict("records")
+    golds = []
+    gold_map = {}
+    random.shuffle(gold_dict_list)
+    idx = 0
+    while len(gold_dict_list) >= annotations_per_unit:
+        sub_golds = gold_dict_list[-annotations_per_unit:]
+        gold_dict_list = gold_dict_list[:-annotations_per_unit]
+        task_texts = []
+        for gold in sub_golds:
+            task_texts.append({"id": idx, "text": gold["text"]})
+            gold_map[idx] = {
+                "is_safe": gold["is_safe"],
+                "is_light": gold["is_light"],
+            }
+            idx += 1
+        task = {"texts": task_texts}
+        golds.append(task)
+    return gold_map, golds
 
 
-@hydra.main(config_name="scriptconfig")
+@hydra.main(config_path="hydra_configs", config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     task_dir = cfg.task_dir
+    target_path = os.path.join(task_dir, cfg.target_file)
+    gold_path = os.path.join(task_dir, cfg.gold_path)
 
     def onboarding_always_valid(onboarding_data):
         return True
 
-    gold_answers, gold_questions = make_golds(cfg.gold_path)
+    gold_answers, gold_questions = make_golds(gold_path, cfg.annotations_per_unit)
 
     def unit_matches_gold(unit) -> bool:
         """
         Check against the answer list for the given ID to return
         if the given unit's data matches
         """
+        if unit.get_assigned_agent() is None:
+            return False
+
+        data = unit.get_assigned_agent().state.get_data()
+        print(data, gold_answers)
         return False
 
     validate_unit = StaticGoldBlueprint.create_validation_function(
@@ -130,9 +204,10 @@ def main(cfg: DictConfig) -> None:
         static_task_data=create_task_data(
             cfg.units_per_run,
             cfg.annotations_per_unit,
-            cfg.target_folder,
+            target_path,
         ),
         on_unit_submitted=validate_unit,
+        get_gold_for_worker=get_gold_factory(gold_questions),
     )
 
     shared_state.mturk_specific_qualifications = [

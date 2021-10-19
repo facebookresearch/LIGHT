@@ -83,7 +83,7 @@ def build_target_file(target_path: str, new_contents: Set[str]):
     df.to_csv(f"{target_path}.csv", index=False)
 
 
-@hydra.main(config_path="../hydra_config", config_name="scriptconfig")
+@hydra.main(config_path="../hydra_configs", config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     source_path = os.path.join(TASK_DIRECTORY, cfg.source_path)
     target_filename = cfg.target_filename
