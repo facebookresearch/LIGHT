@@ -15,7 +15,7 @@ import Button from 'react-bootstrap/Button'
 const ButtonToggle = ({
     buttonOptions
 })=> {
-        const [selectedButtonValue, setSelectedButtonValue] = useState('1');
+        const [selectedButtonValue, setSelectedButtonValue] = useState(0);
 
         return (
           <>
@@ -24,6 +24,7 @@ const ButtonToggle = ({
               {buttonOptions.map((button, id) => (
                 <ToggleButton
                   key={id}
+                  active={button.value == selectedButtonValue}
                   id={`radio-${id}`}
                   type="radio"
                   variant={id % 2 ? 'outline-success' : 'outline-danger'}

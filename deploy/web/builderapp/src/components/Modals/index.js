@@ -16,6 +16,9 @@ import DeleteModal from "./DeleteModal";
 import DownloadModal from "./DownloadModal";
 import ShareModal from "./ShareModal";
 import CreateWorldModal from "./CreateWorldModal"
+import CreateFromFileWorldModal from "./CreateFromFileWorldModal";
+import CreateFromScratchWorldModal from "./CreateFromScratchWorldModal"
+import CreatePreGenWorldModal from "./CreatePreGenWorldModal"
 
 
 const ModalContent = ({modalType})=>{
@@ -30,6 +33,12 @@ const ModalContent = ({modalType})=>{
           return <DeleteModal/>
         case 'createNewWorld':
           return <CreateWorldModal/>
+          case 'preGenWorld':
+            return <CreatePreGenWorldModal/>
+          case 'uploadWorld':
+            return <CreateFromFileWorldModal/>
+          case 'fromScratchWorld':
+            return <CreateFromScratchWorldModal/>
         default:
           return <div/>
     }

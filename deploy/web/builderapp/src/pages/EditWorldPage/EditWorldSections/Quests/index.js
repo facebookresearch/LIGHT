@@ -24,7 +24,7 @@ const Quests = ()=> {
   ]
   const DummyQuestsData = [
     {id:0, name: "Find the wizard keys", description:"Wizards are always losing their keys.  Help a wizard find their key."},
-    {id:1, name: "Seek the Holy Grail", description:"A once and future classic, find a chalice a divine being drank from."},
+    {id:1, name: "Seek the Holy Grail", description:"A once and future classic, find a chalice a divine being once drank from."},
     {id:2, name: "Slay a Dragon", description:"Exactly as hard as it sounds, search far and wide for a fire breathing monster and return it's head to the King."}
   ]
   

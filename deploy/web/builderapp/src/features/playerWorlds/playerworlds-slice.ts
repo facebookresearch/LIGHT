@@ -1,14 +1,21 @@
 /* REDUX */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 /* CUSTOM TYPES */
+
+
+
 interface World {
     id: Number;
+    agents: Array<string>;
+    nodes: any;
     name:String;
+    objects: Array<string>;
+    room: Array<string>;
   }
   
 /* STATE TYPE */
 interface PlayerWorldsState {
-  customWorlds: Array<string>;
+  customWorlds: Array<World>;
   selectedWorld: World | null;
 }
 
@@ -36,7 +43,7 @@ const playerWorldsSlice = createSlice({
                 selectedWorld: action.payload,
             };
         },
-        updatePlayerWorlds(state, action: PayloadAction<string>) {
+        updatePlayerWorlds(state, action: PayloadAction<World>) {
             return {
                 ...state,
                 customWorlds: [...state.customWorlds, action.payload],

@@ -1,11 +1,6 @@
 /* REACT */
 import React from 'react';
 /* REDUX */
-import {useAppDispatch, useAppSelector} from '../../../app/hooks';
-//ACTIONSS
-import {
-  setModal,
-} from "../../../features/modal/modal-slice";
 
 /* STYLES */
 import './styles.css';
@@ -22,14 +17,7 @@ import ModalBody from 'react-bootstrap/ModalBody'
 import TextInput from "../../FormFields/TextInput";
 import TextButton from "../../Buttons/TextButton"
 
-const CreateWorldModal = ()=> {
-    /* ----REDUX ACTIONS---- */
-    // REDUX DISPATCH FUNCTION
-    const dispatch = useAppDispatch();
-    //MODALS
-    const clickHandler = (creationType)=> {
-        dispatch(setModal({showModal:true, modalType:creationType}))
-    };
+const CreatePreGenWorldModal = ()=> {
   return (
     <div className="createworldmodal-container">
         <Modal.Header style={{backgroundColor:"lightblue"}} closeButton>
@@ -37,22 +25,24 @@ const CreateWorldModal = ()=> {
         </Modal.Header>
         <Modal.Body>
           <Row>
+            <TextInput 
+              label={"New World Name"}
+            />
+          </Row>
+          <Row>
             <Col>
               <TextButton
                 text="Select Pregenerated World"
-                clickFunction={()=>clickHandler("preGenWorld")}
               />
             </Col>
             <Col>
               <TextButton
                 text="Generate World From File"
-                clickFunction={()=>clickHandler("uploadWorld")}
               />
             </Col>
             <Col>
               <TextButton
                 text="Generate World From Scratch"
-                clickFunction={()=>clickHandler("fromScratchWorld")}
               />
             </Col>
           </Row>
@@ -61,4 +51,4 @@ const CreateWorldModal = ()=> {
   );
 }
 
-export default CreateWorldModal;
+export default CreatePreGenWorldModal;

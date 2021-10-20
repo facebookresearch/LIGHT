@@ -14,6 +14,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button'
 /* CUSTOM COMPONENTS */
 import BreadCrumbs from "../../components/BreadCrumbs"
+import WorldBuiderPage from "../../components/WorldBuilderPage"
 
 const MapPage = ()=> {
 //REACT ROUTER
@@ -32,7 +33,9 @@ const MapPage = ()=> {
             />
         </Row>
         <Row>
-            
+        <WorldBuiderPage
+            location={{}}
+        />
         </Row>
         <Row>
             <Col>
