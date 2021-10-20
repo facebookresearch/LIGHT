@@ -173,6 +173,21 @@ def make_golds(
     return gold_map, golds
 
 
+def frontend_to_gold_format(frontend_val: Dict[str, str]) -> Dict[str, bool]:
+    return {
+        "is_safe": frontend_val["safety"] == "safe",
+        "is_light": frontend_val["context"] != "reality",
+    }
+
+
+def gold_matches(test: Dict[str, Any], gold: Dict[str, Any]) -> bool:
+    print(test, gold)
+    for key in test.keys():
+        if bool(test[key]) != bool(gold[key]):
+            return False
+    return True
+
+
 @hydra.main(config_path="hydra_configs", config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     task_dir = cfg.task_dir
@@ -193,8 +208,15 @@ def main(cfg: DictConfig) -> None:
             return False
 
         data = unit.get_assigned_agent().state.get_data()
-        print(data, gold_answers)
-        return False
+        gold_ids = [d["id"] for d in data["inputs"]["texts"]]
+        annotations = data["outputs"]["final_data"]
+        for idx, gold_id in enumerate(gold_ids):
+            if not gold_matches(
+                frontend_to_gold_format(annotations[str(idx)]),
+                gold_answers[gold_id],
+            ):
+                return False
+        return True
 
     validate_unit = StaticGoldBlueprint.create_validation_function(
         cfg.mephisto, unit_matches_gold
@@ -208,6 +230,7 @@ def main(cfg: DictConfig) -> None:
         ),
         on_unit_submitted=validate_unit,
         get_gold_for_worker=get_gold_factory(gold_questions),
+        qualifications=StaticGoldBlueprint.get_mixin_qualifications(cfg.mephisto),
     )
 
     shared_state.mturk_specific_qualifications = [

@@ -1,0 +1,19 @@
+#@package _global_
+defaults:
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
+mephisto:
+  blueprint:
+    task_source: ${task_dir}/webapp/build/bundle.js
+    extra_source_dir: ${task_dir}/webapp/src/static
+    units_per_assignment: 1
+    gold_qualification_base: is_safe_is_light_gold
+    block_qualification: is_safe_is_light_task_block
+    use_golds: true
+  task:
+    task_name: "is-safe-is-light-task-20"
+    task_title: "Gauging safety of sentences."
+    task_description: "In this task you will receive a main object. You will be able to select another object from a list of 10 randomly selected objects. After that, write a simple interaction between these two objects in the textbox."
+    task_reward: 0.31
+    task_tags: "safety,interactions"
+    allowed_concurrent: 1
