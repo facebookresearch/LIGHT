@@ -1,0 +1,63 @@
+/* MISSION SUCCESS MESSAGE STYLES  */
+.missionsuccess-container {
+  display: flex;
+  justify-content: center;
+  height: 10em;
+  width: 100%;
+  z-index: 1;
+}
+
+.missionsuccess-container.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+#missionsuccess-header {
+  color: black;
+  z-index: 10;
+  text-align: center;
+  position: absolute;
+  top: -6%;
+  font-family: fantasy;
+  font-weight: bolder;
+}
+
+.missionsuccess-star__container {
+  position: relative;
+  width: 10em;
+  z-index: 3;
+}
+
+.missionsuccess-star {
+  position: absolute;
+  z-index: 1;
+}
+
+.missionsuccess-star__exp {
+  position: absolute;
+  z-index: 10;
+  font-family: fantasy;
+  color: white;
+  top: 20%;
+  left: 30%;
+  text-align: center;
+  text-shadow: 1px 1px 1px black;
+}
+
+.missionsuccess-banner {
+  position: absolute;
+  background-color: white;
+  z-index: 4;
+  top: 60%;
+  left: 5%;
+  box-shadow: 2px 2px 4px black;
+  padding-top: 1px;
+  margin: 0;
+  width: 90%;
+}
+
+.missionsuccess-banner__text {
+  color: black;
+  z-index: 6;
+  text-align: center;
+  font-size: 11px;
+}

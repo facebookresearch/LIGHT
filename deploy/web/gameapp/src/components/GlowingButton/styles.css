@@ -23,3 +23,9 @@
 
 .glowingbutton-text {
 }
+
+@media only screen and (max-width: 650px) {
+  .glowingbutton-text {
+    font-size: 12px;
+  }
+}

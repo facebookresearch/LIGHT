@@ -1,19 +1,36 @@
-import React, { useState, useEffect } from "react";
-
+/* REACT */
+import React, { useState } from "react";
+/* REDUX */
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { updateSelectedTip } from "../../features/tutorials/tutorials-slice";
+/* ICONS */
 import { BiWindow } from "react-icons/bi";
 import { FaWindowMinimize } from "react-icons/fa";
-
+/* STYLES */
 import "./styles.css";
 
-const CollapsibleBox = (props) => {
-  const { title, titleBg, containerBg, collapsedContent } = props;
-
+// CollapsibleBox - renders collapsible container with customizable colors, header, and hides children upon "collapse"
+const CollapsibleBox = ({
+  title,
+  titleBg,
+  containerBg,
+  collapsedContent,
+  children,
+  onClickFunction,
+}) => {
+  /* ----REDUX STATE---- */
+  //TUTORIAL;
+  const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
+  /* ----LOCAL STATE---- */
   const [isCollapsed, setIsCollapsed] = useState(false);
   const openHandler = () => setIsCollapsed(false);
   const closeHandler = () => setIsCollapsed(true);
 
   return (
-    <div className="collapsible-container">
+    <div
+      className={`collapsible-container ${inHelpMode ? "active" : ""} `}
+      onClick={onClickFunction}
+    >
       <div
         className="collapsible-header"
         style={{
@@ -38,7 +55,7 @@ const CollapsibleBox = (props) => {
           className="collapsible-body"
           style={{ backgroundColor: containerBg }}
         >
-          {props.children}
+          {children}
         </div>
       )}
     </div>

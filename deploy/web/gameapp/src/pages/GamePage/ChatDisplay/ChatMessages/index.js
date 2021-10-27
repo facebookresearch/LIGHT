@@ -1,40 +1,39 @@
+/* REACT */
 import React from "react";
+/* REDUX */
+import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
+/* ---- REDUCER ACTIONS ---- */
+import { updateTellTarget } from "../../../../features/chatInput/chatinput-slice";
+/* STYLES */
 import "./styles.css";
-//CUSTOM COMPONENTS
+/* CUSTOM COMPONENTS */
 import Entry from "./Entry";
 
-const ChatMessages = ({
-  messages,
-  agents,
-  persona,
-  setTextTellAgent,
-  setPlayerXp,
-  setPlayerGiftXp,
-  playerGiftXp,
-  playerXp,
-  sessionGiftXpSpent,
-  setSessionGiftXpSpent,
-}) => {
+//ChatMessages - Renders messages in chat display by iterating through message reducer returning Entry components
+const ChatMessages = ({ messages }) => {
+  /* REDUX DISPATCH FUNCTION */
+  const dispatch = useAppDispatch();
+  /* ------ REDUX STATE ------ */
+  //AGENTS STATE
+  const agents = useAppSelector((state) => state.agents);
+  //PERSONA STATE
+  const persona = useAppSelector((state) => state.persona);
+
   return (
-    <div className="chatlog">
+    <>
       {messages.map((msg, idx) => (
-        <Entry
-          key={msg.event_id}
-          msg={msg}
-          agents={agents}
-          onReply={(agent) => {
-            setTextTellAgent(agent);
-          }}
-          selfId={persona.id}
-          setPlayerXp={setPlayerXp}
-          setPlayerGiftXp={setPlayerGiftXp}
-          playerGiftXp={playerGiftXp}
-          playerXp={playerXp}
-          sessionGiftXpSpent={sessionGiftXpSpent}
-          setSessionGiftXpSpent={setSessionGiftXpSpent}
-        />
+        <div className="message-row" key={msg.event_id}>
+          <Entry
+            msg={msg}
+            agents={agents}
+            onReply={(agent) => {
+              dispatch(updateTellTarget(agent));
+            }}
+            selfId={persona.id}
+          />
+        </div>
       ))}
-    </div>
+    </>
   );
 };
 

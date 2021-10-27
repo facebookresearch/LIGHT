@@ -1,6 +1,8 @@
+/* REACT */
 import React from "react";
+/* STYLES */
 import "./styles.css";
-//CUSTOM COMPONENTS
+/* CUSTOM COMPONENTS */
 import MobileHeader from "./MobileHeader";
 
 const MobileFrame = ({

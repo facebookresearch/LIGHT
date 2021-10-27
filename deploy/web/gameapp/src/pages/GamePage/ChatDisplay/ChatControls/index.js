@@ -1,22 +1,19 @@
+/* REACT */
 import React from "react";
-
+/* STYLES */
 import "./styles.css";
-
-//Custom Components
+/* CUSTOM COMPONENTS */
 import ChatInput from "./ChatInput";
 import ActionBar from "./ActionBar";
+import DisconnectMessage from "./DisconnectMessage";
 
+//ChatControls - render container that holds both chat input and "action bar" which contains quick chat speech bubbles for each npc in vincinity
 const ChatControls = ({
-  persona,
   presentAgents,
-  setTextTellAgent,
   getAgentName,
   getEntityId,
   dataModelHost,
-  chatInputRef,
   onSubmit,
-  enteredText,
-  setEnteredText,
   scrollToBottom,
   idle,
   resetIdleTimer,
@@ -24,32 +21,16 @@ const ChatControls = ({
   return (
     <div className="controls">
       {idle ? (
-        <div className="disconnect-container">
-          <h2 className="disconnect-text">
-            You have been disconnected due to inactivity.
-          </h2>
-          <h2
-            onClick={() => window.location.reload()}
-            style={{ textDecoration: "underline" }}
-            className="disconnect-text__reload"
-          >
-            Click Here to re-enter world.
-          </h2>
-        </div>
+        <DisconnectMessage />
       ) : (
         <>
           <ChatInput
             onSubmit={onSubmit}
-            enteredText={enteredText}
-            setEnteredText={setEnteredText}
-            chatInputRef={chatInputRef}
             scrollToBottom={scrollToBottom}
             resetIdleTimer={resetIdleTimer}
           />
           <ActionBar
-            persona={persona}
             presentAgents={presentAgents}
-            setTextTellAgent={setTextTellAgent}
             getAgentName={getAgentName}
             getEntityId={getEntityId}
             dataModelHost={dataModelHost}

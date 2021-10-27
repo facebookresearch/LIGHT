@@ -1848,7 +1848,7 @@ equipped_node = test_graph_3_before_equip_sword.get_node("sword_from_a_stone_4")
 actor_node = test_graph_3_before_equip_sword.get_node("carrier_12")
 assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
 assert isinstance(actor_node, GraphAgent), "Graph parsing failed"
-equipped_node.equipped = True
+equipped_node.equipped = 'equip'
 actor_node.damage += 1
 actor_node.num_wieldable_items = 1
 actor_node.num_wearable_items = 0
@@ -1856,7 +1856,7 @@ test_graph_3_after_equip_sword = test_graph_3_before_equip_sword.to_json()
 
 equipped_node = test_graph_3_before_equip_sword.get_node("hat_5")
 assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
-equipped_node.equipped = True
+equipped_node.equipped = 'equip'
 actor_node.defense += 1
 actor_node.num_wieldable_items = 1
 actor_node.num_wearable_items = 1
@@ -1867,7 +1867,7 @@ equipped_node = test_graph_3_before_equip_hat.get_node("hat_5")
 actor_node = test_graph_3_before_equip_hat.get_node("carrier_12")
 assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
 assert isinstance(actor_node, GraphAgent), "Graph parsing failed"
-equipped_node.equipped = True
+equipped_node.equipped = 'equip'
 actor_node.defense += 1
 actor_node.num_wieldable_items = 0
 actor_node.num_wearable_items = 1
@@ -1914,6 +1914,16 @@ class EquipObjectEventTest(GraphEventTests):
     ]
     EVENT_CLASS = EquipObjectEvent
 
+test_graph_3_before_wearing_hat = OOGraph.from_json(test_graph_3)
+actor_node = test_graph_3_before_wearing_hat.get_node("carrier_12")
+equipped_node = test_graph_3_before_wearing_hat.get_node("hat_5")
+assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
+equipped_node.equipped = 'wear'
+actor_node.defense += 1
+actor_node.num_wieldable_items = 0
+actor_node.num_wearable_items = 1
+test_graph_3_after_wearing_hat = test_graph_3_before_wearing_hat.to_json()
+
 
 class WearEventTest(GraphEventTests):
 
@@ -1934,11 +1944,48 @@ class WearEventTest(GraphEventTests):
             "hat",
             ["hat_5"],
             None,
-            test_graph_3_after_equip_hat,
+            test_graph_3_after_wearing_hat,
             [WearEvent],
         )
     ]
     EVENT_CLASS = WearEvent
+
+
+class RemovenWearingObjectEventTest(GraphEventTests):
+
+    INPUT_WORLD_JSON = test_graph_3_after_wearing_hat
+    ERROR_CASES: List[Tuple[str, str]] = [
+        ("sword_dealer_14", "chest"),  # Cant equip things you don't have
+        ("carrier_12", "123"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("sword_dealer_14", "carrier"),  # Can't equip people
+        ("carrier_12", "carrier"),  # Can't equip to self
+    ]
+    SUCCESS_CASES: List[
+        Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
+    ] = [
+        (
+            "carrier_12",
+            "hat",
+            ["hat_5"],
+            None,
+            test_graph_3,
+            [RemoveObjectEvent],
+        ),
+    ]
+    EVENT_CLASS = RemoveObjectEvent
+
+
+test_graph_3_before_wield_sword = OOGraph.from_json(test_graph_3)
+equipped_node = test_graph_3_before_wield_sword.get_node("sword_from_a_stone_4")
+actor_node = test_graph_3_before_wield_sword.get_node("carrier_12")
+assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
+assert isinstance(actor_node, GraphAgent), "Graph parsing failed"
+equipped_node.equipped = 'wield'
+actor_node.damage += 1
+actor_node.num_wieldable_items = 1
+actor_node.num_wearable_items = 0
+test_graph_3_after_wield_sword = test_graph_3_before_wield_sword.to_json()
 
 
 class WieldEventTest(GraphEventTests):
@@ -1960,7 +2007,7 @@ class WieldEventTest(GraphEventTests):
             "sword from a stone",
             ["sword_from_a_stone_4"],
             None,
-            test_graph_3_after_equip_sword,
+            test_graph_3_after_wield_sword,
             [WieldEvent],
         ),
         (
@@ -1968,11 +2015,37 @@ class WieldEventTest(GraphEventTests):
             "sword",
             ["sword_from_a_stone_4"],
             None,
-            test_graph_3_after_equip_sword,
+            test_graph_3_after_wield_sword,
             [WieldEvent],
         ),
     ]
     EVENT_CLASS = WieldEvent
+
+
+class RemovenWieldingObjectEventTest(GraphEventTests):
+
+    INPUT_WORLD_JSON = test_graph_3_after_wield_sword
+    ERROR_CASES: List[Tuple[str, str]] = [
+        ("sword_dealer_14", "chest"),  # Cant equip things you don't have
+        ("carrier_12", "123"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("sword_dealer_14", "carrier"),  # Can't equip people
+        ("carrier_12", "carrier"),  # Can't equip to self
+        ("carrier_12", "hat"),  # can't wield wearables
+    ]
+    SUCCESS_CASES: List[
+        Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
+    ] = [
+        (
+            "carrier_12",
+            "sword from a stone",
+            ["sword_from_a_stone_4"],
+            None,
+            test_graph_3,
+            [RemoveObjectEvent],
+        ),
+    ]
+    EVENT_CLASS = RemoveObjectEvent
 
 
 class RemoveObjectEventTest(GraphEventTests):

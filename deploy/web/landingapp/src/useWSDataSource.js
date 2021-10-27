@@ -28,7 +28,6 @@ const reducer = (state, msg) => {
     (msg.caller === "SystemMessageEvent" && msg.text.indexOf("XP") >= 0) ||
     (msg.caller === "RewardEvent" && msg.text.indexOf("XP") >= 0)
   ) {
-    console.log("EXP MESSAGE", msg);
     let { event_data } = msg;
     let {
       target_event, //UUID OF MESSAGE THAT TRIGGERED EXP

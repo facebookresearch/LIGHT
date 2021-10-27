@@ -1,12 +1,17 @@
 .App {
 }
 
+#helpmode {
+  cursor: help;
+}
+
 body.dark-mode {
   background-color: #222;
 }
 
 body {
   background-color: #d4cab8;
+  overflow-y: hidden;
 }
 
 .app-controls {
@@ -18,6 +23,20 @@ body {
 a {
   color: #165cb9;
 }
+p {
+  margin: 0;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 1px #fff, 0 0 2px #fff, 0 0 3px #85e3fa, 0 0 4px #85e3fa,
+      0 0 5px #85e3fa, 0 0 6px #85e3fa, 0 0 7px #85e3fa;
+  }
+  to {
+    box-shadow: 0 0 10px #fff, 0 0 11px #fff, 0 0 12px #85e3fa, 0 0 13px #85e3fa,
+      0 0 14px #85e3fa, 0 0 15px #85e3fa, 0 0 16px #85e3fa;
+  }
+}
 
 @media only screen and (max-width: 900px) {
   div.leaflet-container {
@@ -26,7 +45,6 @@ a {
   }
 
   .app-controls {
-    margin-bottom: -20px;
     background-color: rgb(255, 255, 235);
   }
 }
@@ -50,6 +68,7 @@ a {
   text-align: left;
   display: block;
   white-space: pre-wrap;
+  width: 100%;
 }
 
 .floatFix {
@@ -191,20 +210,6 @@ i.fa {
   padding: 0px 10px 5px 10px;
 }
 
-.persona h3,
-.location h3 {
-  text-align: center;
-  font-size: 14px;
-  margin: 0;
-}
-
-.location p {
-  margin: 0;
-  font-size: 14px;
-  white-space: pre-line;
-  text-align: center;
-}
-
 .persona .icon {
   position: absolute;
   left: 50%;
@@ -228,12 +233,6 @@ i.fa {
   margin: 0px;
   text-align: center;
   margin-bottom: 4px;
-}
-
-.location {
-  font-size: 16px;
-  margin-bottom: 20px;
-  border-radius: 10px;
 }
 
 .overlay {
@@ -297,12 +296,6 @@ body .fadeShow {
   text-align: center;
   color: #fff;
   animation: glow 1s ease-in-out infinite alternate;
-}
-
-.app-container {
-  height: 100vh;
-  width: 100vw;
-  scroll-behavior: smooth;
 }
 
 @media only screen and (max-width: 1224px) {

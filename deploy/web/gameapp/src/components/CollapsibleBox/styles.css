@@ -1,8 +1,12 @@
 .collapsible-container {
   border-radius: 25px;
   box-shadow: 5px 2px 5px;
-  margin: 10px 10px 0px 10px;
+  margin: 10px auto 10px auto;
   width: 90%;
+}
+
+.collapsible-container.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
 }
 
 .collapsible-header {
@@ -35,4 +39,17 @@
   border-bottom-left-radius: 25px;
   border-bottom-right-radius: 25px;
   padding: 10px;
+  text-align: center;
+  margin: 0px;
+}
+
+@media only screen and (max-width: 600px) {
+  .collapsible-header--text {
+    margin-bottom: 0px;
+    margin-top: 2px;
+    font-family: fantasy;
+    text-align: center;
+    margin-left: 2em;
+    font-size: 10;
+  }
 }
