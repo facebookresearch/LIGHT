@@ -56,6 +56,7 @@ if QUESTS_LOCATION is not None and os.path.exists(QUESTS_LOCATION):
     quest_loader = QuestLoader(QUESTS_LOCATION)
 else:
     quest_loader = None
+TRANSITION_AFTER_TUTORIAL = 8
 here = os.path.abspath(os.path.dirname(__file__))
 
 _seen_warnings = set()
@@ -209,6 +210,23 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             flags = ldb.get_user_flags(user_id)
             return not flags.completed_onboarding
 
+    def launch_game_for_user(self, user_id, game_id):
+        # Check for custom game world
+        if game_id not in self.app.registry.game_instances:
+            self.close()
+            # TODO: Have an error page about game deleted
+            self.redirect("/game/")
+        graph_purgatory = self.app.registry.game_instances[game_id].world.purgatory
+        if self.alive:
+            new_player = TornadoPlayerProvider(
+                self,
+                graph_purgatory,
+                db=self.db,
+                user=user_id,
+            )
+            new_player.init_soul()
+            self.app.registry.game_instances[game_id].players.append(new_player)
+
     def open(self, game_id):
         user_json = self.get_secure_cookie("user")
         if user_json:
@@ -222,22 +240,14 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                 if user_id in self.app.registry.tutorial_map:
                     game_id = self.app.registry.tutorial_map[user_id]
                 else:
-                    game_id = self.app.registry.run_tutorial(user_id)
-            # Check for custom game world
-            elif game_id not in self.app.registry.game_instances:
-                self.close()
-                # TODO: Have an error page about game deleted
-                self.redirect("/game/")
-            graph_purgatory = self.app.registry.game_instances[game_id].world.purgatory
-            if self.alive:
-                new_player = TornadoPlayerProvider(
-                    self,
-                    graph_purgatory,
-                    db=self.db,
-                    user=user_id,
-                )
-                new_player.init_soul()
-                self.app.registry.game_instances[game_id].players.append(new_player)
+                    orig_game_id = game_id
+
+                    def on_complete():
+                        time.sleep(TRANSITION_AFTER_TUTORIAL)
+                        self.launch_game_for_user(user_id, orig_game_id)
+
+                    game_id = self.app.registry.run_tutorial(user_id, on_complete)
+            self.launch_game_for_user(user_id, game_id)
         else:
             self.close()
             self.redirect("/#/login")

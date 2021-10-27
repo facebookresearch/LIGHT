@@ -104,7 +104,7 @@ class RegistryApplication(tornado.web.Application):
         self.step_callbacks[game_id].start()
         return game
 
-    def run_tutorial(self, user_id):
+    def run_tutorial(self, user_id, on_complete):
         game_id = get_rand_id()
 
         game = TutorialInstance(game_id, self.ldb, opt=vars(self.FLAGS))
@@ -119,9 +119,7 @@ class RegistryApplication(tornado.web.Application):
                         flags = ldb.get_user_flags(user_id)
                         flags.completed_onboarding = True
                         ldb.set_user_flags(user_id, flags)
-                        print("Completed onboarding!")
-                    # TODO convert to new world
-                    print("Will convert to new world here!")
+                    on_complete()
                 self.step_callbacks[game_id].stop()
                 del self.step_callbacks[game_id]
                 # TODO delete this game instance
