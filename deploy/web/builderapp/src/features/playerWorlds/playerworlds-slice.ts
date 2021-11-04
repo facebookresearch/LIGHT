@@ -31,6 +31,12 @@ const playerWorldsSlice = createSlice({
   initialState,
   /* REDUCER ACTIONS */
   reducers: {
+        fetchWorlds(state, action: PayloadAction<Array<World>>){
+            return {
+                ...state,
+                customWorlds: action.payload
+            }
+        },
         selectWorld(state, action: PayloadAction<World>) {
             return {
                 ...state,
@@ -55,7 +61,9 @@ const playerWorldsSlice = createSlice({
 /* EXPORTED REDUCER ACTIONS */
 // import anywhere in app to use
 export const {
+    fetchWorlds,
     selectWorld,
+    updateSelectedWorld,
     updatePlayerWorlds
 } = playerWorldsSlice.actions;
 /* SLICE REDUCER */

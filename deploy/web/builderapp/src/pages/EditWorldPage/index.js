@@ -1,9 +1,13 @@
 /* REACT */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
+import { fetchWorlds, selectWorld } from "../../features/playerWorlds/playerworlds-slice.ts";
+import { updateRooms} from "../../features/rooms/rooms-slice.ts";
+import { updateObjects} from "../../features/objects/objects-slice.ts";
+import { updateCharacters } from "../../features/characters/characters-slice.ts";
 import { setLeftSidebar } from "../../features/sidebars/sidebars-slice.ts";
 /* STYLES */
 import './styles.css';
@@ -16,7 +20,8 @@ import Col from 'react-bootstrap/Col';
 import SideBarDrawer from "../../components/SideBarDrawer"
 import WorldEditBody from "./WorldEditBody"
 import ButtonGroups from "../../components/ButtonGroups"
-
+//Dummy Data
+import DummyWorlds from "../../Copy/DummyData"
 
 const EditWorldPage = ()=> {
   //REACT ROUTER
@@ -26,6 +31,9 @@ const EditWorldPage = ()=> {
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
+  //WORLDS
+  const customWorlds = useAppSelector((state) => state.playerWorlds.customWorlds);
+  const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
   //DRAWER
   const showLeftDrawer = useAppSelector((state) => state.sidebars.showLeftSidebar);
   /* REDUX ACTIONS */
@@ -35,6 +43,57 @@ const EditWorldPage = ()=> {
   const handleClick = (sectionName)=>{
     history.push(`/editworld/${worldId}/${sectionName}`);
   }
+
+  const WorldNodeSorter = (world)=>{
+    let CharacterNodes = [];
+    let RoomNodes = [];
+    let ObjectNodes = [];
+    const {nodes} = world;
+    const WorldNodeKeys = Object.keys(nodes);
+    WorldNodeKeys.map((nodeKey)=>{
+      let WorldNode = nodes[nodeKey];
+      if(WorldNode.classes){
+        let NodeClass = WorldNode.classes[0]
+        switch(NodeClass) {
+          case "agent":
+            CharacterNodes.push(WorldNode);
+            break;
+          case "object":
+            ObjectNodes.push(WorldNode);
+            break;
+          case "room":
+            RoomNodes.push(WorldNode);
+            break;
+          default:
+            break;
+          }
+        }
+      })
+      dispatch(updateRooms(RoomNodes))
+      dispatch(updateObjects(ObjectNodes))
+      dispatch(updateCharacters(CharacterNodes))
+  }
+    /* --- LIFE CYCLE FUNCTIONS --- */
+    useEffect(()=>{
+      dispatch(fetchWorlds(DummyWorlds))
+    },[])
+
+    useEffect(()=>{
+      if(customWorlds.length){
+        customWorlds.map((world) =>{
+          const {id} = world;
+          if(worldId == id){
+            dispatch(selectWorld(world))
+          }
+        })
+      }
+    },[customWorlds])
+
+    useEffect(()=>{
+      if(selectedWorld){
+        WorldNodeSorter(selectedWorld)
+      }
+    },[selectedWorld])
 
   const SideBarButtons = [
     {

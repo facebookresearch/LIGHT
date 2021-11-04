@@ -17,7 +17,6 @@ const Characters = ()=> {
   const DummyCharacterFields = [
     {label:"ID", key:"id"}, 
     {label:"NAME", key:"name"}, 
-    {label:"Description", key:"description"}
   ]
   const DummyCharacterData = [
     {id:0, name: "Orky the Orc", description:"Smarter than your average orc."},

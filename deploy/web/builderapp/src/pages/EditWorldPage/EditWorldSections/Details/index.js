@@ -20,6 +20,10 @@ const Details = ()=> {
   //REACT ROUTER
   const history = useHistory();
   let { worldId, categories } = useParams();
+  /* ------ REDUX STATE ------ */
+  //WORLDS
+  const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
+  /* ------ HANDLERS ------ */
   const handleClick = ()=>{
     history.push(`/editworld/${worldId}/${categories}/map`);
   }
