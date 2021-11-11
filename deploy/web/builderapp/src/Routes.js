@@ -7,7 +7,7 @@ import NavHeader from "./components/NavHeader"
 //PAGES
 import HomePage from "./pages/HomePage";
 import EditWorldPage from "./pages/EditWorldPage";
-import MapPage from "./pages/MapPage"
+import MapPage2 from "./pages/MapPage2"
 import RoomPage from "./pages/RoomPage"
 import CharacterPage from "./pages/CharacterPage"
 import ObjectPage from "./pages/ObjectPage"
@@ -27,7 +27,7 @@ const Routes = ()=> {
             <Route path="/" component={HomePage} exact />
             <Route path="/editworld/:worldId" component={EditWorldPage} exact/>
             <Route path="/editworld/:worldId/:categories" component={EditWorldPage} exact/>
-            <Route path="/editworld/:worldId/:categories/map" component={MapPage} exact/>
+            <Route path="/editworld/:worldId/:categories/map" component={MapPage2} exact/>
             <Route path="/editworld/:worldId/:categories/map/rooms/:roomid" component={RoomPage} exact/>
             <Route path="/editworld/:worldId/:categories/map/rooms/:roomid/character/:charid" component={CharacterPage} exact/>
             <Route path="/editworld/:worldId/:categories/map/rooms/:roomid/object/:objectid" component={ObjectPage} exact/>

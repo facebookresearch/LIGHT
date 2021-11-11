@@ -25,7 +25,7 @@ const Details = ()=> {
   const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
   /* ------ HANDLERS ------ */
   const handleClick = ()=>{
-    history.push(`/editworld/${worldId}/${categories}/map`);
+    history.push(`/editworld/${worldId}/${"details"}/map`);
   }
   
   return (

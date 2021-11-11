@@ -49,6 +49,7 @@ interface WorldRoomsState {
 }
 
 /* Initial value of the state */
+
 const initialState: WorldRoomsState = {
     worldRooms: [],
     selectedRoom: null
