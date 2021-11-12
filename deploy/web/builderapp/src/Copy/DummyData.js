@@ -308,7 +308,7 @@ const SimpleWorld = {
         object: false,
         room: true,
         size: 1,
-        grid_location: [-1, 0, 0],
+        grid_location: [1, 0, 0],
         surface_type: "in"
       },
       orc_2_4: {
@@ -781,7 +781,7 @@ const SimpleWorld2 = {
         object: false,
         room: true,
         size: 1,
-        grid_location: [-1, 0, 0],
+        grid_location: [1, 0, 0],
         surface_type: "in"
       },
       orc_2_4: {

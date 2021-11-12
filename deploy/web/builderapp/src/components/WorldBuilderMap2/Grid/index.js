@@ -14,14 +14,14 @@ import { cloneDeep, isEmpty, isEqual } from "lodash";
 import { Button, Drawer, Classes } from "@blueprintjs/core";
 /* CUSTOM COMPONENTS */
 import Tile from "../Tile";
-/* UTILS */
-import {calculateMapBorders} from "../Utils"
 
 const SIZE = 150;
 const MARGIN = 24;
 
 const Grid = ({
-    dimensions
+    dimensions,
+    viewLoc,
+    borders
 })=>{
     //REACT ROUTER
     const history = useHistory();
@@ -32,64 +32,38 @@ const Grid = ({
     /* ------ REDUX STATE ------ */
     //ROOMS
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
-    const selectedRoom= useAppSelector((state) => state.worldRooms.selectedWorld);
     /* REDUX ACTIONS */
   
     /* ------ LOCAL STATE ------ */
     const [viewGrid, setViewGrid] = useState([])
     const [worldBorders, setWorldBorders] = useState(null)
-    const [viewLoc, setViewLoc] = useState(
-        {
-            x: 0,
-            y: 0
-        }
-    )
     const [viewFloor, setViewFloor] = useState(0)
     
     
 
-    const formatGridData = () =>{
+    const formatGridData = (rooms) =>{
+        console.log("ROOMS", rooms)
         const {x, y} = viewLoc;
         const tiles = []
-        for (let i = y+2; i<= y-2; i--){
-            for (let j = x-2; j <= x+2; j++) {
+        for (let i = -2; i < 3; i++){
+            for (let j = -2; j < 3; j++) {
                 let roomData = {
                     grid_location:[j, i, viewFloor]
                 };
-                viewGrid.map((roomNode)=>{
+                rooms.map((roomNode)=>{
+                    console.log("room Nodes")
                     let {grid_location} = roomNode;
-                    let xLoc = grid_location[0]
-                    let yLoc = grid_location[1]
-                    if(i==yLoc && j==xLoc){
+                    let RoomXPosition = grid_location[0]
+                    let RoomYPosition = grid_location[1]
+                    if(((i))==RoomYPosition -x && ((j))==RoomXPosition -y){
                         roomData = roomNode
+                        console.log("ROOM DATA", roomData)
                     }
                 })
-                tiles.push(
-                    <div
-                      key={`${j}, ${i}`}
-                      data-grid={{
-                        x: j,
-                        y: i,
-                        w: 1,
-                        h: 1,
-    
-                      }}
-                    >
-                        <Tile
-                            x={j}
-                            y={i}
-                            tileStyle={{
-                                width: SIZE,
-                                height: SIZE,
-                                maxWidth: SIZE,
-                                maxHeight: SIZE,
-                            }}
-                            roomData={roomData}
-                        />
-                    </div>
-                  );
+                tiles.push(roomData);
             }
         }
+        console.log("TILES", tiles)
         setViewGrid(tiles);
     }
 
@@ -97,38 +71,79 @@ const Grid = ({
         const filteredRooms= worldRooms.filter((worldRoomNode)=>{
             let {grid_location} = worldRoomNode;
             let z = grid_location[2]
+            console.log("VIEW FLOOR", viewFloor == z)
             return viewFloor == z
         })
+        console.log("FILTERED", filteredRooms)
         formatGridData(filteredRooms)
     }
 
 
     /* REACT LIFECYCLE */
     useEffect(()=>{
-        let borders = calculateMapBorders(worldRooms)
-        setWorldBorders(borders)
         filterByFloor()
     },[])
 
+    useEffect(()=>{
+        filterByFloor()
+    },[worldRooms])
 
+    useEffect(()=>{
+        filterByFloor()
+    },[viewLoc])
     return(
         <GridLayout
-            cols={dimensions.width}
+            className="layout"
+            cols={5}
             rowHeight={SIZE}
             width={
             dimensions.width * SIZE +
             (dimensions.width + 1) * MARGIN
             }
-            margin={[MARGIN, MARGIN]}
             isResizable={false}
-            maxRows={dimensions.height}
-            style={{
-            width:
-                dimensions.width * SIZE +
-                (dimensions.width + 1) * MARGIN,
-            }}
+            maxRows={5}
+
         >
-            {viewGrid}
+            {
+            viewGrid.length
+            ?
+            viewGrid.map(gridTile=> {
+
+                let {grid_location} = gridTile;
+                let x = grid_location[0]+2
+                let y = grid_location[1]+2 
+                let xLoc = viewLoc.x +x;
+                let yLoc = viewLoc.y +y;
+                return(
+                <div
+                    key={`${x}, ${y}`}
+                    data-grid={{
+                        x: x,
+                        y: y,
+                        w: 1,
+                        h: 1,
+                    }}
+                >
+                    <Tile
+                        key={`${x}, ${y}`}
+                        data-grid={{
+                        x: x,
+                        y: y,
+                        w: 1,
+                        h: 1,
+                        }}
+                        x={x}
+                        y={y}
+                        xPosition={xLoc}
+                        yPosition={yLoc}
+                        tileData={gridTile}
+                    />
+                </div>
+                )
+            })
+            :
+            null
+        }
         </GridLayout>
     )
 }

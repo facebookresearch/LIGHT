@@ -34,16 +34,18 @@ const Details = ()=> {
             <Col>
               <Row>
                   <StatBlock
-                  title={"Configuration"}
-                  fieldNames={["Peaceful", "Heuristic Trading"]}
-                  data={{}}
+                    key="config"
+                    title={"Configuration"}
+                    fieldNames={["Peaceful", "Heuristic Trading"]}
+                    data={{}}
                   />
               </Row>
               <Row>
                   <StatBlock
-                  title={"Statistics"}
-                  fieldNames={["Room count", "Object Count", "Character count", "- Playable characters", "- NPC-only characters", "OtherStats"]}
-                  data={{}}
+                    key="statistics"
+                    title={"Statistics"}
+                    fieldNames={["Room count", "Object Count", "Character count", "- Playable characters", "- NPC-only characters", "OtherStats"]}
+                    data={{}}
                   />
               </Row>
             </Col>

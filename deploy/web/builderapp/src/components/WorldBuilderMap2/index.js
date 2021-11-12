@@ -1,5 +1,5 @@
 /* REACT */
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
@@ -20,6 +20,9 @@ import {
   } from "@blueprintjs/core";
 /* STYLES */
 
+/* UTILS */
+import {calculateMapBorders} from "./Utils"
+
 
 const STARTING_WIDTH = 5;
 const STARTING_HEIGHT = 5;
@@ -29,7 +32,18 @@ const SIZE = 150;
 const MARGIN = 24;
 
 const WorldBuilderMap2 = ()=> {
-    const [dimensions, setDimensions] = React.useState( 
+    //REACT ROUTER
+    const history = useHistory();
+    let { worldId } = useParams();
+    //let { path, url } = useRouteMatch();
+    /* REDUX DISPATCH FUNCTION */
+    const dispatch = useAppDispatch();
+    /* ------ REDUX STATE ------ */
+    //ROOMS
+    const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
+    const selectedRoom= useAppSelector((state) => state.worldRooms.selectedWorld);
+    /* ------ LOCAL STATE ------ */
+    const [dimensions, setDimensions] = useState( 
         {
             name: null,
             height: STARTING_HEIGHT,
@@ -37,6 +51,26 @@ const WorldBuilderMap2 = ()=> {
             floors: STARTING_FLOORS,
         }
     );
+    const [viewLoc, setViewLoc] = useState(
+        {
+            x: 0,
+            y: 0
+        }
+    )
+    const [worldBorders, setWorldBorders] = useState(null)
+
+    /* REACT LIFECYCLE */
+    useEffect(()=>{
+        let borders = calculateMapBorders(worldRooms)
+        console.log("LIFE CYLCE", borders)
+        setWorldBorders(borders)
+    },[])
+    /* ------ Handlers ------ */
+    const shiftView = (axis, amount)=>{
+        let updatedView = {...viewLoc, [axis]: viewLoc[axis]+amount}
+        console.log("updated view", updatedView)
+        setViewLoc(updatedView)
+    }
     return(
     <div
         style={{
@@ -58,6 +92,7 @@ const WorldBuilderMap2 = ()=> {
             margin: "auto",
             }}
             icon="arrow-up"
+            onClick={()=>shiftView("y", 1)}
         />
         <div style={{ display: "flex" }}>
             <Button
@@ -70,6 +105,7 @@ const WorldBuilderMap2 = ()=> {
                 margin: "10px 0",
                 }}
                 icon="arrow-left"
+                onClick={()=>shiftView("x", -1)}
             />
             <div
                 className="map-container"
@@ -84,6 +120,8 @@ const WorldBuilderMap2 = ()=> {
             >
                 <Grid
                     dimensions={dimensions}
+                    viewLoc={viewLoc}
+                    borders={worldBorders}
                 />
         </div>
         <Button
@@ -96,6 +134,7 @@ const WorldBuilderMap2 = ()=> {
               margin: "10px 0",
             }}
             icon="arrow-right"
+            onClick={()=>shiftView("x", 1)}
           />
         </div>
         <Button
@@ -108,6 +147,7 @@ const WorldBuilderMap2 = ()=> {
             margin: "auto",
           }}
           icon="arrow-down"
+          onClick={()=>shiftView("y", -1)}
         />
       </div>
     )

@@ -1,8 +1,13 @@
 /* REACT */
-import React, {useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
+/* ---- REDUCER ACTIONS ---- */
+import { fetchWorlds, selectWorld } from "../../features/playerWorlds/playerworlds-slice.ts";
+import { updateRooms} from "../../features/rooms/rooms-slice.ts";
+import { updateObjects} from "../../features/objects/objects-slice.ts";
+import { updateCharacters } from "../../features/characters/characters-slice.ts";
 /* STYLES */
 
 /* BOOTSTRAP COMPONENTS */
@@ -36,200 +41,180 @@ import {
 import ListWorldsOverlay from "../../components/WorldManager";
 import { launchWorld, postAutosave, postWorld } from "../../components/WorldManager";
 
+//Dummy Data
+import DummyWorlds from "../../Copy/DummyData"
 
-function WorldBuilderPage({ location }) {
+function WorldBuilderPage({ location }) { 
     //REACT ROUTER
-  const history = useHistory();
-  let { worldId, categories } = useParams(); 
-  const handleClick = (roomId)=>{
-    history.push(`/editworld/${worldId}/${categories}/map/rooms/${roomId}`);
-  }
-
-
-//CRUMBS
-  const crumbs= [{name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`}, {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`}]
-  return (
-    <div>
-      <h2 data-testid="header" className="bp3-heading">
-        World Builder
-      </h2>
-      <div>
-        <WorldBuilder upload={location.state} />
-      </div>
-    </div>
-  );
-}
-
-const getManageOn = () => {
-  // Try and get if we should start with overlay or not
-  const loc = window.location.href;
-  const paramsIdx = loc.indexOf("?");
-  var initOverlay = false;
-  if (paramsIdx != -1) {
-    const params = loc.substring(paramsIdx + 1);
-    var res = params.split("=");
-    if (res[0] === "manage") {
-      initOverlay = res[1] == "true";
+    const history = useHistory();
+    let { worldId, categories } = useParams();
+    //let { path, url } = useRouteMatch();
+    /* REDUX DISPATCH FUNCTION */
+    const dispatch = useAppDispatch();
+    /* ------ REDUX STATE ------ */
+    //WORLDS
+    const customWorlds = useAppSelector((state) => state.playerWorlds.customWorlds);
+    const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
+    const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms)
+    const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom)
+    /* ------ LOCAL STATE ------ */
+    const [mapBorders, setMapBorders] = useState({
+        top: 2,
+        bottom: -2,
+        left: -2,
+        right: 2
+    })
+    //UTILS
+    const calculateMapBorders = (roomNodes)=>{
+        let borders = {
+            top: 2,
+            bottom: -2,
+            left: -2,
+            right: 2
+        }
+        roomNodes.map((roomNode)=>{
+            let {grid_location} = roomNode;
+            let x = grid_location[0]
+            let y = grid_location[1]
+            borders.top = borders.top > y ? borders.top : y;
+            borders.bottom = borders.bottom < y ? borders.bottom : y;
+            borders.right = borders.right > x ? borders.right : x;
+            borders.left = borders.left < x ? borders.left : x;
+        })
+        return setMapBorders(borders);
     }
-  }
-  return initOverlay;
-};
 
-function WorldBuilder({ upload }) {
-  const state = useWorldBuilder(upload);
-  const [advanced, setAdvanced] = React.useState(false);
-
-  const [isOverlayOpen, setIsOverlayOpen] = React.useState(getManageOn());
-  const world_name =
-    state.dimensions.name == null ? " " : state.dimensions.name;
-  const stateRef = React.useRef(state);
-  stateRef.current = state;
-  const TWO_MINUTES = 120000;
-
-  useEffect(() => {
-    const timer = setTimeout(function autosave() {
-      postAutosave(stateRef.current);
-      console.log("Autosaved!");
-      setTimeout(autosave, TWO_MINUTES);
-    }, TWO_MINUTES);
-    return () => clearTimeout(timer);
-  }, []);
-
-  return (
-    <>
-        <h3>World: {world_name}</h3>
-        <ListWorldsOverlay
-            isOverlayOpen={isOverlayOpen}
-            setIsOverlayOpen={setIsOverlayOpen}
-        />
-        <FormGroup
-            inline
-            label="World Name"
-            labelFor="name-input"
-            labelInfo={`(optional)`}
-        >
-            <ControlGroup>
-            <InputGroup
-                id="name-input"
-                placeholder={
-                state.dimensions.name == null
-                    ? "Unnamed World"
-                    : state.dimensions.name
-                }
-            />
-            <Button
-                intent={Intent.PRIMARY}
-                onClick={() => {
-                state.setDimensions({
-                    ...state.dimensions,
-                    name: document.getElementById("name-input").value.trim(),
-                });
-                }}
-            >
-                Update
-            </Button>
-            </ControlGroup>
-        </FormGroup>
-        <FormGroup
-            inline
-            label="World Dimensions"
-            labelInfo={`WxH (Max ${MAX_WIDTH}x${MAX_HEIGHT})`}
-        >
-            <ControlGroup>
-            <NumericInput
-                value={state.dimensions.width}
-                style={{ width: "3rem" }}
-                max={MAX_WIDTH}
-                min={1}
-                onValueChange={(value) => {
-                state.setDimensions({ ...state.dimensions, width: value });
-                }}
-            />
-
-            <NumericInput
-                value={state.dimensions.height}
-                style={{ width: "3rem" }}
-                max={MAX_HEIGHT}
-                min={1}
-                onValueChange={(value) => {
-                state.setDimensions({ ...state.dimensions, height: value });
-                }}
-            />
-            </ControlGroup>
-        </FormGroup>
-        <FormGroup
-            inline
-            label={
-            <>
-                Floor{" "}
-                <Tooltip
-                content={
-                    "Right click floor for more options. Click and hold floor to reorder."
-                }
-                position={Position.BOTTOM}
-                className="inline"
-                >
-                <Icon icon="help" />
-                </Tooltip>
-            </>
+    const WorldNodeSorter = (world)=>{
+        let CharacterNodes = [];
+        let RoomNodes = [];
+        let ObjectNodes = [];
+        const {nodes} = world;
+        const WorldNodeKeys = Object.keys(nodes);
+        WorldNodeKeys.map((nodeKey)=>{
+          let WorldNode = nodes[nodeKey];
+          if(WorldNode.classes){
+            let NodeClass = WorldNode.classes[0]
+            switch(NodeClass) {
+              case "agent":
+                CharacterNodes.push(WorldNode);
+                break;
+              case "object":
+                ObjectNodes.push(WorldNode);
+                break;
+              case "room":
+                RoomNodes.push(WorldNode);
+                break;
+              default:
+                break;
+              }
             }
-            labelInfo={`Max ${MAX_FLOORS}`}
-            style={{ marginBottom: "0px" }}
-        >
-            {/* <FloorSelector
-            max={MAX_FLOORS}
-            manager={state.floorManager}
-            map={state.map}
-            currFloor={state.currFloor}
-            /> */}
-        </FormGroup>
-        <FormGroup inline label="Advanced">
-            <Switch onChange={() => setAdvanced(!advanced)} checked={!!advanced} />
-        </FormGroup>
-        <WorldBuilderMap/>
-        <div
-            style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            position: "fixed",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: "50px",
-            }}
-            className="bp3-navbar"
-        >
-            <Button
-            onClick={() => launchWorld(state)}
-            intent="primary"
-            style={{ margin: "10px" }}
-            >
-            Launch Game
-            </Button>
-            <Button
-            onClick={() => setIsOverlayOpen(!isOverlayOpen)}
-            intent="primary"
-            style={{ margin: "10px" }}
-            >
-            Manage Worlds
-            </Button>
-            <Button
-            onClick={() => postWorld(state)}
-            intent="primary"
-            style={{ margin: "10px" }}
-            >
-            Save
-            </Button>
-            <Button
-            onClick={state.exportWorld}
-            intent="primary"
-            style={{ margin: "10px" }}
-            >
-            Export
-            </Button>
+          })
+          dispatch(updateRooms(RoomNodes))
+          dispatch(updateObjects(ObjectNodes))
+          dispatch(updateCharacters(CharacterNodes))
+      }
+
+    /* --- LIFE CYCLE FUNCTIONS --- */
+    useEffect(()=>{
+        dispatch(fetchWorlds(DummyWorlds))
+    },[])
+
+    useEffect(()=>{
+        if(customWorlds.length){
+            customWorlds.map((world) =>{
+                const {id} = world;
+                if(worldId == id){
+                    dispatch(selectWorld(world))
+                }
+            })
+        }
+    },[customWorlds])
+
+    useEffect(()=>{
+        if(customWorlds.length){
+            customWorlds.map((world) =>{
+                const {id} = world;
+                if(worldId == id){
+                    dispatch(selectWorld(world))
+                }
+            })
+        }
+    },[customWorlds])
+
+    useEffect(()=>{
+        if(selectedWorld){
+          WorldNodeSorter(selectedWorld)
+        }
+      },[selectedWorld])
+
+    useEffect(()=>{
+        calculateMapBorders(worldRooms)
+        console.log("BORDER OBJECT", mapBorders)
+    },[worldRooms])
+
+
+    const handleClick = (roomId)=>{
+        history.push(`/editworld/${worldId}/${categories}/map/rooms/${roomId}`);
+    }
+
+
+    //CRUMBS
+    const crumbs= [{name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`}, {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`}]
+    return (
+        <div>
+            <h2 data-testid="header" className="bp3-heading">
+                World Builder
+            </h2>
+            <h3>World: {selectedWorld ? selectedWorld.name : null}</h3>
+            {worldRooms.length ? worldRooms.map(room=><div>{room.name ? room.name : null}</div>) : null}
         </div>
-    </>
-  );
-}
+    );
+    }
+
+//     const getManageOn = () => {
+//     // Try and get if we should start with overlay or not
+//     const loc = window.location.href;
+//     const paramsIdx = loc.indexOf("?");
+//     var initOverlay = false;
+//     if (paramsIdx != -1) {
+//         const params = loc.substring(paramsIdx + 1);
+//         var res = params.split("=");
+//         if (res[0] === "manage") {
+//         initOverlay = res[1] == "true";
+//         }
+//     }
+//     return initOverlay;
+//     };
+
+// function WorldBuilder({ upload, world }) {
+//     const {name } = world;
+//     const state = useWorldBuilder(upload);
+//     const [advanced, setAdvanced] = React.useState(false);
+
+//     const [isOverlayOpen, setIsOverlayOpen] = React.useState(getManageOn());
+//     const world_name =
+//         state.dimensions.name == null ? " " : state.dimensions.name;
+//     const stateRef = React.useRef(state);
+//     stateRef.current = state;
+//     const TWO_MINUTES = 120000;
+
+//     useEffect(() => {
+//         const timer = setTimeout(function autosave() {
+//         postAutosave(stateRef.current);
+//         console.log("Autosaved!");
+//         setTimeout(autosave, TWO_MINUTES);
+//         }, TWO_MINUTES);
+//         return () => clearTimeout(timer);
+//     }, []);
+
+
+
+//   return (
+//     <div>
+//         <h3>World: {name}</h3>
+
+//     </div>
+//   );
+// }
 
 export default WorldBuilderPage;
