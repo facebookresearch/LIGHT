@@ -167,6 +167,16 @@ function WorldBuilderPage({ location }) {
             </h2>
             <h3>World: {selectedWorld ? selectedWorld.name : null}</h3>
             {worldRooms.length ? worldRooms.map(room=><div>{room.name ? room.name : null}</div>) : null}
+            {
+            (worldRooms.length && mapBorders)
+            ?
+            <WorldBuilderMap
+                worldRoomsData={worldRooms}
+                worldBorders={mapBorders}
+            />
+            :
+            null
+            }
         </div>
     );
     }

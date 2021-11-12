@@ -3,19 +3,54 @@ import { Colors } from "@blueprintjs/core";
 import { cloneDeep, isEmpty, merge } from "lodash";
 import equal from "fast-deep-equal";
 import { emojiIndex } from "emoji-mart";
+//Checks to see if coordinate has existing room data
+export function roomChecker(x, y, z, room){
+    const {grid_location} = room;
+    const roomXLoc = grid_location[0];
+    const roomYLoc = grid_location[1];
+    const roomZLoc = grid_location[2];
+    if(x==roomXLoc && y==roomYLoc && z ==roomZLoc){
+        return true
+    }
+    return false
+}
 
 //Generates data for grid
-export function gridDataGenerator(gridBorders, roomData, currentFloor){
+export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
     const {top, bottom, left, right} = gridBorders;
     let gridData = {};
-    let tileData = {
 
-    };
-    for( ){
-        for(){
-
+    for(let i = top; i > bottom; i-- ){
+        for(let j = left; j < right; j++){
+            let tileData = {
+                agent: false,
+                classes: ["room"],
+                contain_size: 0,
+                contained_nodes: {},
+                db_id: null,
+                desc: "",
+                extra_desc: "",
+                name: "",
+                name_prefix: "",
+                names:[],
+                neighbors: [],
+                node_id: "",
+                object: false,
+                room: true,
+                size:1,
+                grid_location: [],
+                surface_type: "",
+            };
+            let coordinateKey = `${j}, ${i}, ${currentFloor}`;
+            worldRoomsData.map((roomData)=>{
+                if(roomChecker(j, i, currentFloor, roomData)){
+                    tileData=roomData;
+                }
+            })
+            gridData[coordinateKey]=tileData
         }
     }
+    return gridData
 }
 // Sets "edges" of world map using the most extreme x and y values on the matrix 
 export function calculateMapBorders(roomNodes){

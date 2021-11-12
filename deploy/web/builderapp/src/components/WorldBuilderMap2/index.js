@@ -21,7 +21,7 @@ import {
 /* STYLES */
 
 /* UTILS */
-import {calculateMapBorders} from "./Utils"
+import {calculateMapBorders, gridDataGenerator} from "./Utils"
 
 
 const STARTING_WIDTH = 5;
@@ -31,7 +31,7 @@ const STARTING_FLOORS = 1;
 const SIZE = 150;
 const MARGIN = 24;
 
-const WorldBuilderMap2 = ()=> {
+const WorldBuilderMap2 = ({worldRoomsData, worldBorders})=> {
     //REACT ROUTER
     const history = useHistory();
     let { worldId } = useParams();
@@ -40,8 +40,8 @@ const WorldBuilderMap2 = ()=> {
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
     //ROOMS
-    const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
-    const selectedRoom= useAppSelector((state) => state.worldRooms.selectedWorld);
+    // const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
+    // const selectedRoom= useAppSelector((state) => state.worldRooms.selectedWorld);
     /* ------ LOCAL STATE ------ */
     const [dimensions, setDimensions] = useState( 
         {
@@ -57,14 +57,14 @@ const WorldBuilderMap2 = ()=> {
             y: 0
         }
     )
-    const [worldBorders, setWorldBorders] = useState(null)
+    const [gridData, setGridData] = useState(null)
 
     /* REACT LIFECYCLE */
     useEffect(()=>{
-        let borders = calculateMapBorders(worldRooms)
-        console.log("LIFE CYLCE", borders)
-        setWorldBorders(borders)
-    },[])
+        let updatedGridData = gridDataGenerator(worldBorders, worldRoomsData, 0);
+        console.log("GRID DATA OBJECT  ", updatedGridData)
+        setGridData(updatedGridData)
+    },[worldRoomsData])
     /* ------ Handlers ------ */
     const shiftView = (axis, amount)=>{
         let updatedView = {...viewLoc, [axis]: viewLoc[axis]+amount}
@@ -109,20 +109,8 @@ const WorldBuilderMap2 = ()=> {
             />
             <div
                 className="map-container"
-                style={{
-                width:
-                    dimensions.width * SIZE +
-                    (dimensions.width + 1) * MARGIN,
-                height:
-                    dimensions.height * SIZE +
-                    (dimensions.height + 1) * MARGIN,
-                }}
-            >
-                <Grid
-                    dimensions={dimensions}
-                    viewLoc={viewLoc}
-                    borders={worldBorders}
-                />
+                >
+
         </div>
         <Button
             className="bp3-button"
