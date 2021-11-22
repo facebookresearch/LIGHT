@@ -66,6 +66,7 @@ function WorldBuilderPage({ location }) {
     })
     //UTILS
     const calculateMapBorders = (roomNodes)=>{
+        console.log("CALCULATING MAP BORDERS")
         let borders = {
             top: 2,
             bottom: -2,

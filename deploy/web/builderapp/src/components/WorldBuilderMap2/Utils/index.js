@@ -19,9 +19,11 @@ export function roomChecker(x, y, z, room){
 export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
     const {top, bottom, left, right} = gridBorders;
     let gridData = {};
+    let rows =[]
 
-    for(let i = top; i > bottom; i-- ){
-        for(let j = left; j < right; j++){
+    for(let i = top; i >= bottom; i-- ){
+        let row = []
+        for(let j = left; j <= right; j++){
             let tileData = {
                 agent: false,
                 classes: ["room"],
@@ -38,7 +40,7 @@ export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
                 object: false,
                 room: true,
                 size:1,
-                grid_location: [],
+                grid_location: [j , i, currentFloor],
                 surface_type: "",
             };
             let coordinateKey = `${j}, ${i}, ${currentFloor}`;
@@ -48,8 +50,12 @@ export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
                 }
             })
             gridData[coordinateKey]=tileData
+            row.push(tileData)
         }
+        rows.push(row)
     }
+    console.log()
+    gridData.rows = rows;
     return gridData
 }
 // Sets "edges" of world map using the most extreme x and y values on the matrix 

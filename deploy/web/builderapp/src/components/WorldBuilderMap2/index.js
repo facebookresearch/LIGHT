@@ -19,7 +19,7 @@ import {
     Intent,
   } from "@blueprintjs/core";
 /* STYLES */
-
+import "./styles.css"
 /* UTILS */
 import {calculateMapBorders, gridDataGenerator} from "./Utils"
 
@@ -31,7 +31,10 @@ const STARTING_FLOORS = 1;
 const SIZE = 150;
 const MARGIN = 24;
 
-const WorldBuilderMap2 = ({worldRoomsData, worldBorders})=> {
+const WorldBuilderMap2 = ({
+    worldRoomsData, 
+    worldBorders
+  })=> {
     //REACT ROUTER
     const history = useHistory();
     let { worldId } = useParams();
@@ -110,8 +113,17 @@ const WorldBuilderMap2 = ({worldRoomsData, worldBorders})=> {
             <div
                 className="map-container"
                 >
-
-        </div>
+                    {
+                        gridData
+                        ?
+                        <Grid
+                            gridData={gridData}
+                            borders={worldBorders}
+                        />
+                        :
+                        null // NOTE: Add loading icon and placeholder div in future
+                    } 
+            </div>
         <Button
             className="bp3-button"
             style={{

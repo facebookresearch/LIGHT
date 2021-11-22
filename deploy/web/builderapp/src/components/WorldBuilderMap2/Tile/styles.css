@@ -1,0 +1,41 @@
+.tile-area {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    flex-direction: column;
+}
+.ypath-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+}
+.xpath-container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.tile-row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+
+}
+.tile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    height: 200px;
+    border-style: solid;
+    border-width: 3px;
+    border-color: grey;
+    border-radius: 15px;
+}
+
+.tile-label {
+
+}

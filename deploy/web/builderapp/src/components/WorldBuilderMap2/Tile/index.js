@@ -1,26 +1,73 @@
-import React from "react";
-import { Popover, Icon, Tooltip } from "@blueprintjs/core";
-import { isEmpty, cloneDeep } from "lodash";
+/* REACT */
+import React, {useState, useEffect} from "react";
+/* STYLES */
+import "./styles.css"
+/* CUSTOM COMPONENTS */
+import TilePath from "./TilePath"
+/* UTILS */
 
-import { invertColor } from "../Utils";
 
-/**
- * Component for each Tile in the map grid
- */
-function Tile({
-    tile,
-    tileStyle,
-    xPosition,
-    yPosition,
-    tileData
-}) {
-    console.log("TILE DATA", tileData)
+const Tile = ({
+    data,
+    borders
+})=> {
+    console.log("TILE DATA", data)
+    console.log("BORDERS", borders)
+    const xBorderChecker = () =>{
+        const {grid_location} = data;
+        let xPosition = grid_location[0];
+        let LeftBorder = borders.left;
+        if(LeftBorder < xPosition){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    const yBorderChecker = () =>{
+        const {grid_location} = data
+        let yPosition = grid_location[1]
+        let TopBorder = borders.top;
+        if(TopBorder > yPosition){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
   return (
-    <div
-    >
-      {tileData.name ? tileData.name : ""}
-      {xPosition}
-      {yPosition}
+    <div className="tile-area">
+            {
+                yBorderChecker() 
+                ?
+                <div style={{paddingLeft: (xBorderChecker() ? "50%" : 0)}} className={`ypath-container`}>
+                    <TilePath
+                        data={data}
+                        alignment="vertical"
+                    />
+                </div>
+                :
+                null
+            }
+            <div className="tile-row">
+                {
+                    xBorderChecker() 
+                    ?
+                    <div  className="xpath-container">
+                        <TilePath
+                            data={data}
+                            alignment="horizontal"
+                        />
+                    </div>
+                    :
+                    <div  className="xpath-container"/>
+                }
+                <div
+                    className="tile-container"
+                >
+                {data.name ? data.name : ""}
+            </div>
+            </div>
   </div>
   );
 }

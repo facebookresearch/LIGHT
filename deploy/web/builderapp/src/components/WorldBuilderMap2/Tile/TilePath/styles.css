@@ -1,0 +1,22 @@
+.path-container {
+  border-style:solid;  
+  border-color: grey;
+  border-radius: 15px;
+}
+
+.path-container.horizontal {
+    border-color: grey;
+    height: 10px;
+    width: 50px
+}
+
+.path-container.vertical {
+    border-color: grey;
+    height: 50px;
+    width: 10px
+}
+
+
+.active {
+    background-color: grey;
+}
