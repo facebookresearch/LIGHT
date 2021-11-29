@@ -142,8 +142,7 @@ class TutorialPurgatory(Purgatory):
         agent: Optional["GraphAgent"] = None,
     ):
         with self.player_assign_condition:
-            ag = list(self.world.oo_graph.agents.values())[0]
-            assert ag.name == "You", f"Could not find you! {ag} instead"
+            ag = [a for a in self.world.oo_graph.agents.values() if a.name == "You"][0]
             self.clear_soul(ag)
             soul = TutorialPlayerSoul(
                 ag,

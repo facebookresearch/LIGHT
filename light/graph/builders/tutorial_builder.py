@@ -6,7 +6,7 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.graph.builders.base import GraphBuilder
+from light.graph.builders.map_json_builder import MapJsonBuilder
 from light.world.world import World
 from light.world.purgatory import TutorialPurgatory
 from light.graph.structured_graph import OOGraph
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from light.data_model.light_database import LIGHTDatabase
 
 
-class TutorialWorldBuilder(GraphBuilder):
+class TutorialWorldBuilder(MapJsonBuilder):
     """
     Simple world builder to deal with worlds that are
     made to run tutorials. Generally like a single room builder.
@@ -32,8 +32,10 @@ class TutorialWorldBuilder(GraphBuilder):
         """Add an agent to the graph in a random room somewhere"""
         raise Exception("Agents should not be added to tutorials!")
 
-    def get_graph(self):
-        """Create and return a tutorial graph"""
+    def build_new_graph(self):
+        """
+        Create a tutorial graph, not from file
+        """
         graph = OOGraph(self.opt)
         room_node = graph.add_room(
             "Impossible Tavern",
@@ -128,6 +130,14 @@ class TutorialWorldBuilder(GraphBuilder):
             None,
             "You feel as if this portal leads somewhere unusual.",
         )
+        return graph
+
+    def get_graph(self):
+        """Create and return a tutorial graph"""
+        if self.opt.get("load_map", None) is not None:
+            graph, _ = super().get_graph()
+        else:
+            graph = self.build_new_graph()
 
         world = World(self.opt, self)
         world.oo_graph = graph

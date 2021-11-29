@@ -559,6 +559,12 @@ class OOGraph(object):
                 else:
                     char.follow(sync_nodes[followed_char_id])
 
+        # Blocking
+        for char in oo_graph.agents.values():
+            char_dict = node_dicts[char.node_id]
+            if char_dict["blocking"] is not None:
+                char.block(sync_nodes[char_dict["blocking"]["target_id"]])
+
         # Neighbors/locks
         for room in oo_graph.rooms.values():
             room_id = room.node_id
