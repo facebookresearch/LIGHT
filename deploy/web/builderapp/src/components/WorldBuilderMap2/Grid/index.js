@@ -16,7 +16,9 @@ const MARGIN = 24;
 
 const Grid = ({
     gridData,
-    borders
+    borders,
+    xOffset,
+    yOffset
 })=>{
     //REACT ROUTER
     const history = useHistory();
@@ -30,24 +32,41 @@ const Grid = ({
     /* REDUX ACTIONS */
   
     /* ------ LOCAL STATE ------ */
-    const [gridRows, setGridRows] = useState([])
+    const [gridRows, setGridRows] = useState([]);
+    const [gridWidth, setGridWidth] = useState(0);
+    const [gridHeight, setGridHeight] = useState(0);
     
-    
-
-
     /* REACT LIFECYCLE */
     useEffect(()=>{
         let {rows} = gridData
+        let columns = rows[0]
         setGridRows(rows)
+        let rowCount = rows.length;
+        let columnCount = columns.length;
+        console.log("ROW AND COLUMN COUNTS", rowCount , columnCount)
+        let height = rowCount * 200;
+        let width = columnCount * 250;
+        console.log("HEIGHT AND WIDTH", height , width)
+        setGridWidth(width);
+        setGridHeight(height);
     },[gridData])
 
     return(
-        <div className="grid-container">
+        <div 
+            style={{
+                left:xOffset, 
+                top:yOffset,
+                width: gridWidth,
+                height: gridHeight,
+            }} 
+            className="grid-container"
+        >
             {
                 gridRows.length
                 ?
-                gridRows.map(row=>(
+                gridRows.map((row, index)=>(
                     <Row 
+                        key={borders.top-index}
                         data={row}
                         borders={borders}  
                     />

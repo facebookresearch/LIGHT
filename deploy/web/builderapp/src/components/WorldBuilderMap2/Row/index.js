@@ -13,8 +13,10 @@ const Row = ({
     data, 
     borders
 })=>{
+    /* ------ LOCAL STATE ------ */
     const [rowData, setRowData] = useState([])
-    console.log("ROW", data)
+
+    /* --- LIFE CYCLE FUNCTIONS --- */
     useEffect(()=>{
         setRowData(data)
     }, data)
@@ -25,8 +27,9 @@ const Row = ({
             {
                 rowData.length
                 ?
-                rowData.map((tileData)=>(
+                rowData.map((tileData, index)=>(
                     <Tile 
+                        key={index}
                         data={tileData}
                         borders={borders}
                     />

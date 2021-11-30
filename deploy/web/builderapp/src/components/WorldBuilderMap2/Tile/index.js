@@ -11,8 +11,6 @@ const Tile = ({
     data,
     borders
 })=> {
-    console.log("TILE DATA", data)
-    console.log("BORDERS", borders)
     const xBorderChecker = () =>{
         const {grid_location} = data;
         let xPosition = grid_location[0];
@@ -37,10 +35,12 @@ const Tile = ({
     }
   return (
     <div className="tile-area">
+        <div className="tile-row top">
+            <div style={{width:"25%", backgroundColor:"green"}}/>
             {
                 yBorderChecker() 
                 ?
-                <div style={{paddingLeft: (xBorderChecker() ? "50%" : 0)}} className={`ypath-container`}>
+                <div className={`ypath-container`}>
                     <TilePath
                         data={data}
                         alignment="vertical"
@@ -49,26 +49,27 @@ const Tile = ({
                 :
                 null
             }
-            <div className="tile-row">
-                {
-                    xBorderChecker() 
-                    ?
-                    <div  className="xpath-container">
-                        <TilePath
-                            data={data}
-                            alignment="horizontal"
-                        />
-                    </div>
-                    :
-                    <div  className="xpath-container"/>
-                }
-                <div
-                    className="tile-container"
-                >
-                {data.name ? data.name : ""}
-            </div>
-            </div>
-  </div>
+        </div>
+        <div className="tile-row bottom">
+            {
+                xBorderChecker() 
+                ?
+                <div  className="xpath-container">
+                    <TilePath
+                        data={data}
+                        alignment="horizontal"
+                    />
+                </div>
+                :
+                <div  className="xpath-container"/>
+            }
+            <div
+                className="tile-container"
+            >
+            {data.name ? data.name : ""}
+        </div>
+        </div>
+    </div>
   );
 }
 

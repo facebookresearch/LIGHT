@@ -3,4 +3,9 @@
     overflow-y: hidden;
     overflow-x: hidden;
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 800px;
+    width: 1000px;
 }

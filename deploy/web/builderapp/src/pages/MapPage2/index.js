@@ -32,15 +32,6 @@ import {
   Intent,
 } from "@blueprintjs/core";
 
-import {
-  useWorldBuilder,
-  MAX_HEIGHT,
-  MAX_WIDTH,
-  MAX_FLOORS,
-} from "../../components/worldbuilding/utils";
-import ListWorldsOverlay from "../../components/WorldManager";
-import { launchWorld, postAutosave, postWorld } from "../../components/WorldManager";
-
 //Dummy Data
 import DummyWorlds from "../../Copy/DummyData"
 
@@ -66,7 +57,6 @@ function WorldBuilderPage({ location }) {
     })
     //UTILS
     const calculateMapBorders = (roomNodes)=>{
-        console.log("CALCULATING MAP BORDERS")
         let borders = {
             top: 2,
             bottom: -2,
@@ -150,7 +140,6 @@ function WorldBuilderPage({ location }) {
 
     useEffect(()=>{
         calculateMapBorders(worldRooms)
-        console.log("BORDER OBJECT", mapBorders)
     },[worldRooms])
 
 

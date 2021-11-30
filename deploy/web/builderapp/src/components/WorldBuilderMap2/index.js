@@ -28,9 +28,6 @@ const STARTING_WIDTH = 5;
 const STARTING_HEIGHT = 5;
 const STARTING_FLOORS = 1;
 
-const SIZE = 150;
-const MARGIN = 24;
-
 const WorldBuilderMap2 = ({
     worldRoomsData, 
     worldBorders
@@ -46,17 +43,9 @@ const WorldBuilderMap2 = ({
     // const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
     // const selectedRoom= useAppSelector((state) => state.worldRooms.selectedWorld);
     /* ------ LOCAL STATE ------ */
-    const [dimensions, setDimensions] = useState( 
-        {
-            name: null,
-            height: STARTING_HEIGHT,
-            width: STARTING_WIDTH,
-            floors: STARTING_FLOORS,
-        }
-    );
     const [viewLoc, setViewLoc] = useState(
         {
-            x: 0,
+            x: -100,
             y: 0
         }
     )
@@ -77,38 +66,30 @@ const WorldBuilderMap2 = ({
     return(
     <div
         style={{
-          width:
-            dimensions.width * SIZE +
-            (dimensions.width + 1) * MARGIN +
-            60,
-          margin: "0 auto 75px auto",
+          width: "100%",
           textAlign: "center",
+          display:"flex",
+          justifyContent:"center",
+          alignItems:"center",
+          flexDirection:"column"
         }}
     >
         <Button
             className="bp3-button"
             style={{
-            width:
-                dimensions.width * SIZE +
-                (dimensions.width + 1) * MARGIN -
-                20,
-            margin: "auto",
+              width: "1000px"
             }}
             icon="arrow-up"
-            onClick={()=>shiftView("y", 1)}
+            onClick={()=>shiftView("y", 40)}
         />
         <div style={{ display: "flex" }}>
             <Button
                 className="bp3-button"
                 style={{
-                height:
-                    dimensions.height * SIZE +
-                    (dimensions.height + 1) * MARGIN -
-                    20,
-                margin: "10px 0",
+                height: "800px",
                 }}
                 icon="arrow-left"
-                onClick={()=>shiftView("x", -1)}
+                onClick={()=>shiftView("x", 40)}
             />
             <div
                 className="map-container"
@@ -119,6 +100,8 @@ const WorldBuilderMap2 = ({
                         <Grid
                             gridData={gridData}
                             borders={worldBorders}
+                            xOffset={viewLoc.x}
+                            yOffset={viewLoc.y}
                         />
                         :
                         null // NOTE: Add loading icon and placeholder div in future
@@ -127,27 +110,19 @@ const WorldBuilderMap2 = ({
         <Button
             className="bp3-button"
             style={{
-              height:
-                dimensions.height * SIZE +
-                (dimensions.height + 1) * MARGIN -
-                20,
-              margin: "10px 0",
+              height:"800px"
             }}
             icon="arrow-right"
-            onClick={()=>shiftView("x", 1)}
+            onClick={()=>shiftView("x", -40)}
           />
         </div>
         <Button
           className="bp3-button"
           style={{
-            width:
-              dimensions.width * SIZE +
-              (dimensions.width + 1) * MARGIN -
-              20,
-            margin: "auto",
+            width:"1000px",
           }}
           icon="arrow-down"
-          onClick={()=>shiftView("y", -1)}
+          onClick={()=>shiftView("y", -40)}
         />
       </div>
     )

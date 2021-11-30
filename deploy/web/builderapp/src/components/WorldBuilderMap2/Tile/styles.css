@@ -1,14 +1,17 @@
 .tile-area {
     display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
     flex-direction: column;
+    width: 200px;
+    height: 200px;
+    border-style: dashed;
+    border-color: black;
+    border-width: 10px;
 }
 .ypath-container{
-    width: 100%;
+    width: 75%;
     display: flex;
     justify-content: center;
-
+    background-color: brown;
 }
 .xpath-container{
     width: 100%;
@@ -21,19 +24,33 @@
     display: flex;
     flex-direction: row;
     width: 100%;
-    align-items: center;
+    justify-content: flex-end;
 
 }
+
+.tile-row.top{
+    height: 25%;
+}
+
+.tile-row.bottom{
+    height: 50%;
+}
+
+
 .tile-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 200px;
-    height: 200px;
+    width: 75%;
+    height: 75%;
     border-style: solid;
     border-width: 3px;
     border-color: grey;
     border-radius: 15px;
+}
+
+.tile-container:hover {
+    box-shadow: black 3px 3px 3px;
 }
 
 .tile-label {

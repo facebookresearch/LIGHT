@@ -13,7 +13,9 @@
 .path-container.vertical {
     border-color: grey;
     height: 50px;
-    width: 10px
+    width: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 
