@@ -29,22 +29,76 @@ class LIGHTMultiAgentDialogOnboardWorld(CrowdOnboardWorld):
                 "other workers who are also playing characters. Try to "
                 "remain in character while talking about your character's "
                 "motivations, or the given setting, or anything that seems "
-                "appropriate. Send anything to continue.",
+                "appropriate. To continue, enter the number of other workers "
+                "you will be interacting with.",
             }
         )
-        x = self.agent.act(timeout=self.opt["turn_timeout"])
+        x = self.agent.act(timeout=self.opt["turn_timeout"])['text']
+        while x.lower() not in ['2', 'two', 'two workers']:
+            self.agent.observe(
+                {
+                    'id': "System",
+                    "text": "Answer not recognized, please try again."
+                }
+            )
+            x = self.agent.act(timeout=self.opt["turn_timeout"])['text']
+
+        self.agent.observe(
+            {
+                "id": "System",
+                "text": "You can find information about your character and location "
+                "in the left pane. It is reqired that you pretend to be this character. "
+                "Do not simply copy and paste content from here, but do pretend to have "
+                "the characteristics, interests, or backstory of the character given. "
+                "To continue, where can you find your character info in the real task?",
+            }
+        )
+        x = self.agent.act(timeout=self.opt["turn_timeout"])['text']
+        while "left" not in x.lower():
+            self.agent.observe(
+                {
+                    'id': "System",
+                    "text": "Answer not recognized, please try again."
+                }
+            )
+            x = self.agent.act(timeout=self.opt["turn_timeout"])['text']
+
         self.agent.observe(
             {
                 "id": "System",
                 "text": "You will be able to take turns freely, and the conversation "
                 "will end after everyone has taken the minimum number of turns. "
+                "It may also end if someone doesn't answer in a reasonable amount "
+                "of time, allowing those who are still present to submit. "
                 "Please try to pace the conversation appropriately, rather than "
                 "just sending multiple messages in rapid succession. Those found "
                 "not having natural conversations will be blocked from working "
-                "on future tasks. Send anything to continue. ",
+                "on future tasks. Send anything to coninue.",
             }
         )
         x = self.agent.act(timeout=self.opt["turn_timeout"])
+
+        self.agent.observe(
+            {
+                "id": "System",
+                "text": "Rejections: Your task will be rejected if it is poor quality. "
+                "If you do not pretend to be your character, if you send only short messages "
+                "without much content, send unrelated information to the task, send "
+                "too many messages in a row, talk about the real world in any way, or "
+                "send inappropriate messages, your task will be rejected. Please send "
+                "'I acknowledge' if you understand.",
+            }
+        )
+        x = self.agent.act(timeout=self.opt["turn_timeout"])['text']
+        while "i acknowledge" not in x.lower():
+            self.agent.observe(
+                {
+                    'id': "System",
+                    "text": "Answer not recognized, please try again."
+                }
+            )
+            x = self.agent.act(timeout=self.opt["turn_timeout"])['text']
+
         self.agent.observe(
             {
                 "id": "System",

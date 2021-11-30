@@ -25,6 +25,7 @@ TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 LIGHT_DB_PATH = "~/ParlAI/data/LIGHT/merged.db"
 
 hydra_defaults = [
+    "_self_",
     {"mephisto/blueprint": BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
@@ -94,6 +95,10 @@ def make_unit_validator(db, block_qual):
         repeat_prop = repeat_count / len(m_info)
         return repeat_prop > MAX_REPEAT_MESSAGE_PROPORTION
 
+    def is_all_caps(m_info):
+        uppers = [m for m in m_info if m['text'].upper() == m['text']]
+        return len(uppers) / len(m_info) >= 0.5
+
     mephisto_data_browser = MephistoDataBrowser(db=db)
 
     def validate_unit(unit):
@@ -130,14 +135,19 @@ def make_unit_validator(db, block_qual):
                     }
                 )
 
+        if len(message_info) < 5:
+            return
+
         valids = [
             too_long_between_messages(message_info),
             too_short_between_messages(message_info),
             messages_too_short(message_info),
             too_many_repeated(message_info),
+            is_all_caps(message_info),
         ]
         if any(valids):
-            print(f"VALID FAIL {message_info}\nMessages  was not validated: {valids}")
+            texts = [m['text'] for m in message_info]
+            print(f"VALID FAIL {texts}\nMessages  was not validated: {valids}")
             # unit.get_assigned_agent().soft_reject_work() => must wait for async version
             worker = unit.get_assigned_agent().get_worker()
             worker.grant_qualification(block_qual, 1)
@@ -192,7 +202,7 @@ def main(cfg: DictConfig) -> None:
             {
                 "QualificationTypeId": "000000000000000000L0",
                 "Comparator": "GreaterThanOrEqualTo",
-                "IntegerValues": [95],
+                "IntegerValues": [98],
                 "ActionsGuarded": "DiscoverPreviewAndAccept",
             },
         ]

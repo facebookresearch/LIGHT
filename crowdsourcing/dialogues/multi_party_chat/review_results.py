@@ -24,11 +24,16 @@ def format_data_for_printing(data):
     messages = messages[1:]
 
     def format_message(message):
+        if 'text' not in message:
+            return f"{message}"
         color = C.BOLD_GREEN if message['id'].lower() == character['name'].lower() else C.RESET
         return f"{color}{message['id']}{C.RESET}: {message['text']}"
 
 
     formatted_messages = [format_message(m) for m in messages]
+    for m in messages:
+        if 'text' not in m:
+            m['text'] = "[NO TEXT]"
     message_text = "\n".join(formatted_messages)
 
     player_messages = [m for m in messages if m['id'].lower() == character['name'].lower()]
