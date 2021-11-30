@@ -2,23 +2,33 @@
   border-style:solid;  
   border-color: grey;
   border-radius: 15px;
+  background-color: grey;
+  opacity: 0;
 }
 
+.path-container:hover{
+
+    opacity: .2;
+}
+  
+
 .path-container.horizontal {
-    border-color: grey;
-    height: 10px;
-    width: 50px
+    height: 5%;
+    width: 100%;
 }
 
 .path-container.vertical {
-    border-color: grey;
-    height: 50px;
-    width: 10px;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    height: 100%;
+    width: 5%;
 }
 
 
 .active {
     background-color: grey;
+    opacity: 1;
+}
+
+.path-container.active:hover{
+
+    opacity: 1;
 }

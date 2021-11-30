@@ -36,7 +36,7 @@ const Tile = ({
   return (
     <div className="tile-area">
         <div className="tile-row top">
-            <div style={{width:"25%", backgroundColor:"green"}}/>
+            <div style={{width:"25%"}}/>
             {
                 yBorderChecker() 
                 ?

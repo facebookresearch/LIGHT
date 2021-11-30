@@ -23,11 +23,6 @@ import "./styles.css"
 /* UTILS */
 import {calculateMapBorders, gridDataGenerator} from "./Utils"
 
-
-const STARTING_WIDTH = 5;
-const STARTING_HEIGHT = 5;
-const STARTING_FLOORS = 1;
-
 const WorldBuilderMap2 = ({
     worldRoomsData, 
     worldBorders
@@ -45,7 +40,7 @@ const WorldBuilderMap2 = ({
     /* ------ LOCAL STATE ------ */
     const [viewLoc, setViewLoc] = useState(
         {
-            x: -100,
+            x: -20,
             y: 0
         }
     )
@@ -83,14 +78,19 @@ const WorldBuilderMap2 = ({
             onClick={()=>shiftView("y", 40)}
         />
         <div style={{ display: "flex" }}>
-            <Button
+            {
+              viewLoc.x<-20
+              ?
+              <Button
                 className="bp3-button"
                 style={{
                 height: "800px",
                 }}
                 icon="arrow-left"
                 onClick={()=>shiftView("x", 40)}
-            />
+            />:
+            <div/>
+            }
             <div
                 className="map-container"
                 >

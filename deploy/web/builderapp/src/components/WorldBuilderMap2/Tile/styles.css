@@ -3,18 +3,17 @@
     flex-direction: column;
     width: 200px;
     height: 200px;
-    border-style: dashed;
+    border-style: solid;
     border-color: black;
-    border-width: 10px;
+    border-width: 1px;
 }
 .ypath-container{
     width: 75%;
     display: flex;
     justify-content: center;
-    background-color: brown;
 }
 .xpath-container{
-    width: 100%;
+    width: 25%;
     height: 100%;
     display: flex;
     justify-content: center;
@@ -33,7 +32,7 @@
 }
 
 .tile-row.bottom{
-    height: 50%;
+    height: 75%;
 }
 
 
@@ -41,8 +40,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 75%;
-    height: 75%;
+    width: 100%;
+    height: 100%;
     border-style: solid;
     border-width: 3px;
     border-color: grey;
