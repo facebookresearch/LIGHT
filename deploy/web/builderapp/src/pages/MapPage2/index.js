@@ -16,10 +16,11 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 /* CUSTOM COMPONENTS */
-import BreadCrumbs from "../../components/BreadCrumbs"
-import WorldBuilderMap from "../../components/WorldBuilderMap2"
-import SideBarDrawer from "../../components/SideBarDrawer"
-import BasicEditRoomBody from "./BasicEditRoomBody"
+import BreadCrumbs from "../../components/BreadCrumbs";
+import NumberButtonInput from "../../components/NumberButtonInput";
+import WorldBuilderMap from "../../components/WorldBuilderMap2";
+import SideBarDrawer from "../../components/SideBarDrawer";
+import BasicEditRoomBody from "./BasicEditRoomBody";
 /* BLUEPRINT JS COMPONENTS */
 import {
   NumericInput,
@@ -34,9 +35,9 @@ import {
   Intent,
 } from "@blueprintjs/core";
 /* STYLES */
-import "./styles.css"
+import "./styles.css";
 //Dummy Data
-import DummyWorlds from "../../Copy/DummyData"
+import DummyWorlds from "../../Copy/DummyData";
 
 const WorldBuilderPage = ()=> { 
     //REACT ROUTER
@@ -125,16 +126,6 @@ const WorldBuilderPage = ()=> {
         }
     },[customWorlds])
 
-    useEffect(()=>{
-        if(customWorlds.length){
-            customWorlds.map((world) =>{
-                const {id} = world;
-                if(worldId == id){
-                    dispatch(selectWorld(world))
-                }
-            })
-        }
-    },[customWorlds])
 
     useEffect(()=>{
         if(selectedWorld){
@@ -170,10 +161,9 @@ const WorldBuilderPage = ()=> {
                 <BreadCrumbs
                     crumbs={crumbs}
                 />
-                <h2 data-testid="header" className="bp3-heading">
-                    World Builder
-                </h2>
-                <h3>World: {selectedWorld ? selectedWorld.name : null}</h3>
+                <div className="toolbar-container">
+                    <NumberButtonInput/>
+                </div>
             </div>
             <div className="mappage-body">
                 {worldRooms.length ? worldRooms.map(room=><div>{room.name ? room.name : null}</div>) : null}

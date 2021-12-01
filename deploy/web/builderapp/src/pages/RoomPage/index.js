@@ -3,6 +3,11 @@ import React, {useState, useEffect} from 'react';
 import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
+/* ---- REDUCER ACTIONS ---- */
+import { fetchWorlds, selectWorld } from "../../features/playerWorlds/playerworlds-slice.ts";
+import { updateRooms, selectRoom} from "../../features/rooms/rooms-slice.ts";
+import { updateObjects} from "../../features/objects/objects-slice.ts";
+import { updateCharacters } from "../../features/characters/characters-slice.ts";
 /* STYLES */
 import './styles.css';
 /* BOOTSTRAP COMPONENTS */
@@ -20,18 +25,54 @@ import BreadCrumbs from "../../components/BreadCrumbs"
 import DummyData from "../../Copy/DummyData"
 
 const RoomPage = ()=> {
+    //REACT ROUTER
     const history = useHistory();
-    let { worldId, categories, roomid } = useParams();
-    let currentData=DummyData[worldId]
-    let roomList = currentData.rooms
-    let currentRoom = roomList[roomid]
+    let { worldId, roomid } = useParams();
+    /* REDUX DISPATCH FUNCTION */
+    const dispatch = useAppDispatch();
+    /* ------ REDUX STATE ------ */
+    //WORLDS
+    const customWorlds = useAppSelector((state) => state.playerWorlds.customWorlds);
+    const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
+    const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom)
+    /* ------ LOCAL STATE ------ */
+
+    //UTILS
+
+    /* --- LIFE CYCLE FUNCTIONS --- */
+    useEffect(()=>{
+        dispatch(fetchWorlds(DummyData))
+    },[])
+
+    useEffect(()=>{
+        if(customWorlds.length){
+            customWorlds.map((world) =>{
+                const {id} = world;
+                if(worldId == id){
+                    dispatch(selectWorld(world))
+                }
+            })
+        }
+    },[customWorlds])
+
+    useEffect(()=>{
+        if(selectedWorld){
+            let {nodes}= selectedWorld
+            let currentRoom = nodes[roomid]
+            console.log("CURRENT ROOMS", currentRoom)
+            dispatch(selectRoom(currentRoom))
+        }
+      },[selectedWorld])
+
+
+    //HANDLERS
     const handleClick = ()=>{
 
-        history.push(`/editworld/${worldId}/${categories}/map/rooms/${roomid}/`);
+        history.push(`/editworld/${worldId}/details/map/rooms/${roomid}/`);
       }
     //CRUMBS
-    const crumbs= [{name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`}, {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`},  {name:` Room:  ${currentRoom.name}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomid}`}]
-
+    const crumbs= [{name:` Overview` , linkUrl:`/editworld/${worldId}/details`}, {name:` Map` , linkUrl:`/editworld/${worldId}/details/map`},  {name:` Room:  ${selectedRoom.name}` , linkUrl:`/editworld/${worldId}/details/map/rooms/${roomid}`}]
+    //BUTTON COPY
     const buttonOptions = [
         {
             name: "Indoors",
@@ -45,6 +86,10 @@ const RoomPage = ()=> {
 
     return (
         <Container>
+            {
+            selectedRoom
+            ?
+            <>
             <Row>
                 <BreadCrumbs 
                     crumbs={crumbs}
@@ -72,7 +117,7 @@ const RoomPage = ()=> {
                         <h5>In-Game appearance:</h5>
                     </Row>
                     <Row>
-                        <h5>{currentRoom.description}</h5>
+                        <h5>{selectedRoom.description}</h5>
                     </Row>
                     <Row>
                         <h5>Attributes</h5>
@@ -98,6 +143,10 @@ const RoomPage = ()=> {
                     </Row>
                 </Col>
             </Row>
+            </>
+            :
+            <div/>
+            }
         </Container>
     );
 }
