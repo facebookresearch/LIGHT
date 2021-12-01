@@ -5,11 +5,11 @@ import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
 import { fetchWorlds, selectWorld } from "../../features/playerWorlds/playerworlds-slice.ts";
-import { updateRooms} from "../../features/rooms/rooms-slice.ts";
+import { updateRooms, selectRoom} from "../../features/rooms/rooms-slice.ts";
 import { updateObjects} from "../../features/objects/objects-slice.ts";
 import { updateCharacters } from "../../features/characters/characters-slice.ts";
 /* STYLES */
-
+import "./styles.css"
 /* BOOTSTRAP COMPONENTS */
 //LAYOUT
 import Container from 'react-bootstrap/Container';
@@ -18,6 +18,8 @@ import Col from 'react-bootstrap/Col';
 /* CUSTOM COMPONENTS */
 import BreadCrumbs from "../../components/BreadCrumbs"
 import WorldBuilderMap from "../../components/WorldBuilderMap2"
+import SideBarDrawer from "../../components/SideBarDrawer"
+import BasicEditRoomBody from "./BasicEditRoomBody"
 /* BLUEPRINT JS COMPONENTS */
 import {
   NumericInput,
@@ -31,11 +33,12 @@ import {
   Button,
   Intent,
 } from "@blueprintjs/core";
-
+/* STYLES */
+import "./styles.css"
 //Dummy Data
 import DummyWorlds from "../../Copy/DummyData"
 
-function WorldBuilderPage({ location }) { 
+const WorldBuilderPage = ()=> { 
     //REACT ROUTER
     const history = useHistory();
     let { worldId, categories } = useParams();
@@ -55,6 +58,7 @@ function WorldBuilderPage({ location }) {
         left: -2,
         right: 2
     })
+    const [mapSideBarOpen, setMapSideBarOpen] = useState(false);
     //UTILS
     const calculateMapBorders = (roomNodes)=>{
         let borders = {
@@ -142,79 +146,60 @@ function WorldBuilderPage({ location }) {
         calculateMapBorders(worldRooms)
     },[worldRooms])
 
+    //HANDLERS
+    // const handleClick = (roomId)=>{
+    //     history.push(`/editworld/${worldId}/${categories}/map/rooms/${roomId}`);
+    // }
 
-    const handleClick = (roomId)=>{
-        history.push(`/editworld/${worldId}/${categories}/map/rooms/${roomId}`);
+    const closeSidebar = ()=>{
+        setMapSideBarOpen(false)
     }
 
+    const handleTileClick= (room)=>{
+        dispatch(selectRoom(room))
+        setMapSideBarOpen(true)
+    }
 
     //CRUMBS
     const crumbs= [{name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`}, {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`}]
+
+
     return (
-        <div>
-            <h2 data-testid="header" className="bp3-heading">
-                World Builder
-            </h2>
-            <h3>World: {selectedWorld ? selectedWorld.name : null}</h3>
-            {worldRooms.length ? worldRooms.map(room=><div>{room.name ? room.name : null}</div>) : null}
-            {
-            (worldRooms.length && mapBorders)
-            ?
-            <WorldBuilderMap
-                worldRoomsData={worldRooms}
-                worldBorders={mapBorders}
-            />
-            :
-            null
-            }
+        <div className="mappage-container">
+            <div className="mappage-header">
+                <BreadCrumbs
+                    crumbs={crumbs}
+                />
+                <h2 data-testid="header" className="bp3-heading">
+                    World Builder
+                </h2>
+                <h3>World: {selectedWorld ? selectedWorld.name : null}</h3>
+            </div>
+            <div className="mappage-body">
+                {worldRooms.length ? worldRooms.map(room=><div>{room.name ? room.name : null}</div>) : null}
+                {
+                (worldRooms.length && mapBorders)
+                ?
+                <WorldBuilderMap
+                    worldRoomsData={worldRooms}
+                    worldBorders={mapBorders}
+                    tileClickFunction={handleTileClick}
+                />
+                :
+                null
+                }
+                <SideBarDrawer
+                    showSideBar={mapSideBarOpen}
+                    closeSideBarFunction={(closeSidebar)}
+                    headerText="Edit Room"
+                >
+                    <BasicEditRoomBody
+
+                    />
+                </SideBarDrawer>
+            </div>
         </div>
     );
     }
-
-//     const getManageOn = () => {
-//     // Try and get if we should start with overlay or not
-//     const loc = window.location.href;
-//     const paramsIdx = loc.indexOf("?");
-//     var initOverlay = false;
-//     if (paramsIdx != -1) {
-//         const params = loc.substring(paramsIdx + 1);
-//         var res = params.split("=");
-//         if (res[0] === "manage") {
-//         initOverlay = res[1] == "true";
-//         }
-//     }
-//     return initOverlay;
-//     };
-
-// function WorldBuilder({ upload, world }) {
-//     const {name } = world;
-//     const state = useWorldBuilder(upload);
-//     const [advanced, setAdvanced] = React.useState(false);
-
-//     const [isOverlayOpen, setIsOverlayOpen] = React.useState(getManageOn());
-//     const world_name =
-//         state.dimensions.name == null ? " " : state.dimensions.name;
-//     const stateRef = React.useRef(state);
-//     stateRef.current = state;
-//     const TWO_MINUTES = 120000;
-
-//     useEffect(() => {
-//         const timer = setTimeout(function autosave() {
-//         postAutosave(stateRef.current);
-//         console.log("Autosaved!");
-//         setTimeout(autosave, TWO_MINUTES);
-//         }, TWO_MINUTES);
-//         return () => clearTimeout(timer);
-//     }, []);
-
-
-
-//   return (
-//     <div>
-//         <h3>World: {name}</h3>
-
-//     </div>
-//   );
-// }
 
 export default WorldBuilderPage;

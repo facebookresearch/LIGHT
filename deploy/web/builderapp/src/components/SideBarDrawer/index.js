@@ -17,6 +17,7 @@ import Offcanvas from 'react-bootstrap/Offcanvas'
 const SideBarDrawer = ({
     showSideBar,
     closeSideBarFunction, 
+    headerText,
     children
 })=> {
 
@@ -26,9 +27,11 @@ const SideBarDrawer = ({
         show={showSideBar} 
         onHide={closeSideBarFunction}
         backdrop={false}
+        placement="end"
+        style={{opacity:"0.8"}}
     >
         <Offcanvas.Header closeButton>
-            <Offcanvas.Title>Offcanvas</Offcanvas.Title>
+            <Offcanvas.Title>{headerText}</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
            {children}

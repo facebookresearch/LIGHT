@@ -9,7 +9,8 @@ import TilePath from "./TilePath"
 
 const Tile = ({
     data,
-    borders
+    borders,
+    tileClickFunction
 })=> {
     const xBorderChecker = () =>{
         const {grid_location} = data;
@@ -32,6 +33,11 @@ const Tile = ({
         else {
             return false;
         }
+    }
+
+    //HANDLERS
+    const handleTileClick = ()=>{
+        tileClickFunction(data)
     }
   return (
     <div className="tile-area">
@@ -65,6 +71,7 @@ const Tile = ({
             }
             <div
                 className="tile-container"
+                onClick={handleTileClick}
             >
             {data.name ? data.name : ""}
         </div>

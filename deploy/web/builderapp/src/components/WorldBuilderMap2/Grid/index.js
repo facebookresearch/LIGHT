@@ -18,7 +18,8 @@ const Grid = ({
     gridData,
     borders,
     xOffset,
-    yOffset
+    yOffset,
+    tileClickFunction
 })=>{
     //REACT ROUTER
     const history = useHistory();
@@ -68,7 +69,8 @@ const Grid = ({
                     <Row 
                         key={borders.top-index}
                         data={row}
-                        borders={borders}  
+                        borders={borders}
+                        tileClickFunction={tileClickFunction}
                     />
                 ))
                 :

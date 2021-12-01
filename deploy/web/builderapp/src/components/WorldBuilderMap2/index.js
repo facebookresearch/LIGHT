@@ -25,7 +25,8 @@ import {calculateMapBorders, gridDataGenerator} from "./Utils"
 
 const WorldBuilderMap2 = ({
     worldRoomsData, 
-    worldBorders
+    worldBorders,
+    tileClickFunction
   })=> {
     //REACT ROUTER
     const history = useHistory();
@@ -41,7 +42,7 @@ const WorldBuilderMap2 = ({
     const [viewLoc, setViewLoc] = useState(
         {
             x: -20,
-            y: 0
+            y: -20
         }
     )
     const [gridData, setGridData] = useState(null)
@@ -79,17 +80,23 @@ const WorldBuilderMap2 = ({
         />
         <div style={{ display: "flex" }}>
             {
-              viewLoc.x<-20
+              viewLoc.x<=0
               ?
               <Button
                 className="bp3-button"
                 style={{
                 height: "800px",
+                width:"20px"
                 }}
                 icon="arrow-left"
                 onClick={()=>shiftView("x", 40)}
             />:
-            <div/>
+            <div                 
+              style={{
+                height: "800px",
+                width:"20px"
+              }}
+            />
             }
             <div
                 className="map-container"
@@ -102,6 +109,7 @@ const WorldBuilderMap2 = ({
                             borders={worldBorders}
                             xOffset={viewLoc.x}
                             yOffset={viewLoc.y}
+                            tileClickFunction={tileClickFunction}
                         />
                         :
                         null // NOTE: Add loading icon and placeholder div in future

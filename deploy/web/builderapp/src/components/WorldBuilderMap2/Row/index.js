@@ -11,7 +11,8 @@ import { invertColor } from "../Utils";
 
 const Row = ({
     data, 
-    borders
+    borders,
+    tileClickFunction
 })=>{
     /* ------ LOCAL STATE ------ */
     const [rowData, setRowData] = useState([])
@@ -32,6 +33,7 @@ const Row = ({
                         key={index}
                         data={tileData}
                         borders={borders}
+                        tileClickFunction={tileClickFunction}
                     />
                 ))
                 :

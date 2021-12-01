@@ -1,0 +1,15 @@
+/* MAP PAGE STYLES */
+.mappage-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.mappage-header{
+    width: 90%;
+}
+
+.mappage-body{
+    
+}
