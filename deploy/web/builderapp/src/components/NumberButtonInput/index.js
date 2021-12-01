@@ -24,7 +24,7 @@ const NumberButtonInput = ({
             type="number"
             className="number-input"
             value={value}
-            onChange={changeFunction}
+            onChange={(e)=>{changeFunction(e.target.value)}}
 
         />
         <div className="number-button" onClick={incrementFunction}>

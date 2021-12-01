@@ -53,6 +53,7 @@ const WorldBuilderPage = ()=> {
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms)
     const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom)
     /* ------ LOCAL STATE ------ */
+    const [floor, setFloor]= useState(0)
     const [mapBorders, setMapBorders] = useState({
         top: 2,
         bottom: -2,
@@ -162,11 +163,15 @@ const WorldBuilderPage = ()=> {
                     crumbs={crumbs}
                 />
                 <div className="toolbar-container">
-                    <NumberButtonInput/>
+                    <NumberButtonInput
+                            incrementFunction={()=>{setFloor(floor+1)}}
+                            decrementFunction={()=>{setFloor(floor-1)}}
+                            changeFunction={(update)=>setFloor(update)}
+                            value={floor}
+                    />
                 </div>
             </div>
             <div className="mappage-body">
-                {worldRooms.length ? worldRooms.map(room=><div>{room.name ? room.name : null}</div>) : null}
                 {
                 (worldRooms.length && mapBorders)
                 ?
@@ -174,6 +179,7 @@ const WorldBuilderPage = ()=> {
                     worldRoomsData={worldRooms}
                     worldBorders={mapBorders}
                     tileClickFunction={handleTileClick}
+                    floor={floor}
                 />
                 :
                 null

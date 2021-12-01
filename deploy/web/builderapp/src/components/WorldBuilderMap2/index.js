@@ -26,7 +26,8 @@ import {calculateMapBorders, gridDataGenerator} from "./Utils"
 const WorldBuilderMap2 = ({
     worldRoomsData, 
     worldBorders,
-    tileClickFunction
+    tileClickFunction,
+    floor
   })=> {
     //REACT ROUTER
     const history = useHistory();
@@ -49,10 +50,10 @@ const WorldBuilderMap2 = ({
 
     /* REACT LIFECYCLE */
     useEffect(()=>{
-        let updatedGridData = gridDataGenerator(worldBorders, worldRoomsData, 0);
+        let updatedGridData = gridDataGenerator(worldBorders, worldRoomsData, floor);
         console.log("GRID DATA OBJECT  ", updatedGridData)
         setGridData(updatedGridData)
-    },[worldRoomsData])
+    },[worldRoomsData, floor])
     /* ------ Handlers ------ */
     const shiftView = (axis, amount)=>{
         let updatedView = {...viewLoc, [axis]: viewLoc[axis]+amount}
