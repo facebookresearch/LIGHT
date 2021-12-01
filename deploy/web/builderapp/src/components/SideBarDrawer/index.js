@@ -28,7 +28,6 @@ const SideBarDrawer = ({
         onHide={closeSideBarFunction}
         backdrop={false}
         placement="end"
-        style={{opacity:"0.8"}}
     >
         <Offcanvas.Header closeButton>
             <Offcanvas.Title>{headerText}</Offcanvas.Title>

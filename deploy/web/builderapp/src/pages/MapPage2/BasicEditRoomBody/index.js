@@ -48,17 +48,16 @@ const BasicEditRoom = ()=> {
     /* --- LIFE CYCLE FUNCTIONS --- */
 
     //HANDLERS
-    const handleClick = (roomId)=>{
-        history.push(`/editworld/${worldId}/${categories}/map/rooms/${roomId}`);
+    const handleAdvancedClick = ()=>{
+        const {node_id} = selectedRoom
+        let formattedRoomId = node_id.replace(" ", "_");
+        history.push(`/editworld/${worldId}/details/map/rooms/${formattedRoomId}`);
     }
 
     return (
         <div className="basiceditroom-container">
             <div>
-                <Button>
-                    Describe it!
-                </Button>
-                <Button>
+                <Button onClick={handleAdvancedClick}>
                     Advanced
                 </Button>
             </div>

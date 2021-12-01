@@ -37,6 +37,7 @@ const Tile = ({
 
     //HANDLERS
     const handleTileClick = ()=>{
+        console.log("TILE DATA", data)
         tileClickFunction(data)
     }
   return (
