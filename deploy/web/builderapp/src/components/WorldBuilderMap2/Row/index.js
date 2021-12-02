@@ -10,32 +10,40 @@ import Tile from "../Tile"
 import { invertColor } from "../Utils";
 
 const Row = ({
-    data, 
+    previousRowData,
+    rowData, 
     borders,
     tileClickFunction
 })=>{
     /* ------ LOCAL STATE ------ */
-    const [rowData, setRowData] = useState([])
+    const [data, setData] = useState([])
 
     /* --- LIFE CYCLE FUNCTIONS --- */
     useEffect(()=>{
-        setRowData(data)
-    }, data)
+        setData(rowData)
+    }, rowData)
     return (
         <div
             className="row-container"
         >
             {
-                rowData.length
+                data.length
                 ?
-                rowData.map((tileData, index)=>(
-                    <Tile 
-                        key={index}
-                        data={tileData}
-                        borders={borders}
-                        tileClickFunction={tileClickFunction}
-                    />
-                ))
+                data.map((tileData, index)=>{
+                    let leftTile = data[index-1] ? data[index-1]: false;
+                    let topTile = previousRowData ? previousRowData[index] : false
+
+                    return(
+                        <Tile 
+                            key={index}
+                            data={tileData}
+                            borders={borders}
+                            tileClickFunction={tileClickFunction}
+                            leftNeighbor={leftTile}
+                            topNeighbor={topTile}
+                        />
+                    )}
+                )
                 :
                 null
             }

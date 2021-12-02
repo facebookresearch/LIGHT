@@ -65,14 +65,18 @@ const Grid = ({
             {
                 gridRows.length
                 ?
-                gridRows.map((row, index)=>(
-                    <Row 
-                        key={borders.top-index}
-                        data={row}
-                        borders={borders}
-                        tileClickFunction={tileClickFunction}
-                    />
-                ))
+                gridRows.map((row, index)=>{
+                    let previousRowData= gridRows[index-1] ? gridRows[index-1]:[]
+                    return(
+                        <Row 
+                            key={borders.top-index}
+                            previousRowData={previousRowData}
+                            rowData={row}
+                            borders={borders}
+                            tileClickFunction={tileClickFunction}
+                        />
+                    )}
+                )
                 :
                 null
             }

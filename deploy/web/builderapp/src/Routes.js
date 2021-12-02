@@ -1,5 +1,9 @@
 /* REACT */
-import React from "react";
+import React, {useEffect} from "react";
+/* REDUX */
+import {useAppDispatch, useAppSelector} from './app/hooks';
+//ACTIONS
+import {fetchWorlds} from './features/playerWorlds/playerworlds-slice';
 /* REACT ROUTER */
 import { HashRouter, Route, Redirect } from "react-router-dom";
 /* CUSTOM COMPONENTS */
@@ -18,8 +22,22 @@ import CreatePage from "./components/CreatePage";
 import ReviewPage from "./components/ReviewPage";
 import WorldBuilderPage from "./components/WorldBuilderPage";
 import EditPage from "./components/EditPage";
+//Dummy Data
+import DummyWorlds from "./Copy/DummyData"
 
 const Routes = ()=> {
+    //DUMMY DATA
+  /* ----REDUX ACTIONS---- */
+    // REDUX DISPATCH FUNCTION
+    const dispatch = useAppDispatch();
+    //REDUX STATE
+    const fetchPlayerWorlds = ()=>{
+      dispatch(fetchWorlds(DummyWorlds))
+    }
+    /* --- LIFE CYCLE FUNCTIONS --- */
+    useEffect(()=>{
+      fetchPlayerWorlds()
+    },[])
   return (
       <div>
         <HashRouter>

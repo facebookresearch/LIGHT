@@ -10,8 +10,30 @@ import TilePath from "./TilePath"
 const Tile = ({
     data,
     borders,
-    tileClickFunction
+    tileClickFunction,
+    leftNeighbor,
+    topNeighbor
 })=> {
+    /* ------ LOCAL STATE ------ */
+    const [hasLeftPath, setHasLeftPath] = useState(false)
+    const [hasTopPath, setHasTopPath] = useState(false)
+
+    /* ------ LIFE CYCLE ------ */
+    useEffect(()=>{
+        if(leftNeighbor){
+            let updatedHasLeftPath = leftNeighbor.node_id ? true : false;
+            setHasLeftPath(updatedHasLeftPath)
+        }
+    },[leftNeighbor])
+
+    useEffect(()=>{
+        if(topNeighbor){
+            let updatedHasTopPath = topNeighbor.node_id ? true : false;
+            setHasTopPath(updatedHasTopPath)
+        }
+    },[topNeighbor])
+
+    /* ------ UTILS ------ */
     const xBorderChecker = () =>{
         const {grid_location} = data;
         let xPosition = grid_location[0];
@@ -48,10 +70,16 @@ const Tile = ({
                 yBorderChecker() 
                 ?
                 <div className={`ypath-container`}>
-                    <TilePath
-                        data={data}
-                        alignment="vertical"
-                    />
+                    {
+                        hasTopPath
+                        ?
+                        <TilePath
+                            data={data}
+                            alignment="vertical"
+                        />
+                        :
+                        null
+                    }
                 </div>
                 :
                 null
@@ -62,10 +90,16 @@ const Tile = ({
                 xBorderChecker() 
                 ?
                 <div  className="xpath-container">
-                    <TilePath
+                    {
+                        hasLeftPath
+                        ?
+                        <TilePath
                         data={data}
                         alignment="horizontal"
                     />
+                    :
+                    null
+                    }
                 </div>
                 :
                 <div  className="xpath-container"/>
