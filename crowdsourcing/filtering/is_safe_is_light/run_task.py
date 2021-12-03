@@ -37,7 +37,7 @@ TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 GOLD_FOLDER = os.path.join(TASK_DIRECTORY, "data", "golds")
 TARGET_FOLDER = os.path.join(TASK_DIRECTORY, "data", "targets")
 DEFAULT_UNITS_PER_RUN = 10
-DEFAULT_ANNOTATIONS_PER_UNIT = 5
+DEFAULT_ANNOTATIONS_PER_UNIT = 8
 
 db = LocalMephistoDB()
 mephisto_data_browser = MephistoDataBrowser(db=db)
@@ -67,7 +67,6 @@ def create_task_data(
     annotation_source,
 ):
     df = pd.read_csv(annotation_source)
-
     # TODO sort based on least confident of safe or LIGHT
 
     df_dict_list = df.to_dict("records")
@@ -86,7 +85,6 @@ def create_task_data(
         subtasks = []
         while len(subtasks) < annotations_per_unit:
             entry = df_dict_list[curr_idx]
-            curr_idx = (curr_idx + 1) % len(df_dict_list)
             if entry["annotations"]:
                 continue
             subtasks.append(
@@ -94,17 +92,15 @@ def create_task_data(
                     "text": entry["text"],
                 }
             )
-            df["launched"] = df.apply(
-                lambda x: x["launched"] + 1
-                if x["text"] == entry["text"]
-                else x["launched"],
-                axis=1,
-            )
+            df.at[curr_idx, "launched"] = df.at[curr_idx, "launched"] + 1
+            curr_idx = (curr_idx + 1) % len(df_dict_list)
         tasks.append(
             {
                 "texts": subtasks,
             }
         )
+
+    # df.to_csv(annotation_source, index=False)
 
     return tasks
 
@@ -181,7 +177,6 @@ def frontend_to_gold_format(frontend_val: Dict[str, str]) -> Dict[str, bool]:
 
 
 def gold_matches(test: Dict[str, Any], gold: Dict[str, Any]) -> bool:
-    print(test, gold)
     for key in test.keys():
         if bool(test[key]) != bool(gold[key]):
             return False
@@ -197,7 +192,15 @@ def main(cfg: DictConfig) -> None:
     def onboarding_always_valid(onboarding_data):
         return True
 
+    print("Creating golds from given path...")
     gold_answers, gold_questions = make_golds(gold_path, cfg.annotations_per_unit)
+
+    print(f"Creating task data for {cfg.units_per_run} units")
+    task_data = create_task_data(
+        cfg.units_per_run,
+        cfg.annotations_per_unit,
+        target_path,
+    ),
 
     def unit_matches_gold(unit) -> bool:
         """
@@ -223,11 +226,7 @@ def main(cfg: DictConfig) -> None:
     )
 
     shared_state = StaticGoldSharedState(
-        static_task_data=create_task_data(
-            cfg.units_per_run,
-            cfg.annotations_per_unit,
-            target_path,
-        ),
+        static_task_data=task_data,
         on_unit_submitted=validate_unit,
         get_gold_for_worker=get_gold_factory(gold_questions),
         qualifications=StaticGoldBlueprint.get_mixin_qualifications(cfg.mephisto),

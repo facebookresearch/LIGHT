@@ -30,6 +30,7 @@ const InfoToolTip = ({
                 position="top"
                 theme="dark"
                 size="big"
+                interactive={true}
             >
                 <BsInfoCircle className="info-icon" />
             </Tooltip>

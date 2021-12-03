@@ -9,7 +9,7 @@
 /* TIP */
 .tip-container{
     height: 100%;
-    width: 100%;
+    width: 600px;
     z-index: 100;
     background-color: black;
     border-radius: 15px;

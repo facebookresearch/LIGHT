@@ -15,7 +15,7 @@ import SubmitButton from "./assets/images/tutorialScreenShots/SubmitButton.png";
 
 
 const TaskCopy = {
-    taskHeader:"Annotate Phrase Safety and Realism",
+    taskHeader:"Annotate Phrase Safety and Context",
     successMessage:"You have successfully submitted completed task!",
     previewCopy:{
         tutorial:{
@@ -25,11 +25,11 @@ const TaskCopy = {
                     questionName: "Safety Assessment",
                     steps:[
                         {
-                            stepCopy: "Read the sentences at the top of the section then consider whether the sentences above the questions are safe for other users.",
+                            stepCopy: "Read the text in white at the top of the section then consider whether the sentences above the questions are safe for other users. Messages are safe if they avoid sexism, racism, touchy issues, and content of a sexual nature. Messages are unsafe if they attempt to discern real information about a user, make clear sexual advancements, or display extreme violence outside what may be seen in a PG-13 movie.",
                             stepImg: Unanswered1
                         },
                         {
-                            stepCopy: "Once you have gauged the safety of a sentence select one of the buttons that best fits.  Do this for each sentence provided.",
+                            stepCopy: "Select safe if the message doesn't violate any listed policies, unsafe if it clearly violates something, and unsure if it's hard to tell. Please use unsure sparingly if possible.",
                             stepImg: SafeFantasy
                         }
                     ]
@@ -38,11 +38,11 @@ const TaskCopy = {
                     questionName: "Context Assessment",
                     steps:[
                         {
-                            stepCopy: "Read the sentences above each set of questions, and consider whether the fit the theme of a medieval fantasy world, if they are too modern, or if they would be appropriate regardsless of setting.",
+                            stepCopy: "Read the text above each set of questions, and consider whether the fit the theme of a medieval fantasy world, if they are too modern, or if they would be appropriate regardsless of setting. Only mark things as reality if they absolutely don't work in a fantasy setting, due to referring to real world people, events, politics, locations, etc.",
                             stepImg: SafeEither
                         },
                         {
-                            stepCopy: "Once you have decided click the button that best describes how you would rate each sentence.",
+                            stepCopy: "Select fantasy if it clearly fits into a fantasy setting, reality if content in the message relates to real-world or modern content, or either if the text may be said in either setting.",
                             stepImg: UnsureEither
                         }
                     ]
@@ -51,7 +51,7 @@ const TaskCopy = {
                     questionName: "Submitting the Task",
                     steps:[
                         {
-                            stepCopy: "Once every sentence has been had it's context and safety rated submit the task using the submit button at the bottom of the screen.",
+                            stepCopy: "Once you've annotated all of the sentences, you may advance with the submit button at the bottom of the page.",
                             stepImg: SubmitButton
                         }
                     ]
@@ -79,7 +79,7 @@ const TaskCopy = {
                 },
             ],
             hasToolTip:true,
-            toolTipText: "Read the sentences at the top of the section then consider whether the sentences above the questions are safe for other users.  Once you have gauged the safety of a sentence select one of the buttons that best fits.  Do this for each sentence provided.",
+            toolTipText: "Read the sentences at the top of the section then consider whether the sentences above the questions are safe for other users. Messages are safe if they avoid sexism, racism, touchy issues, and content of a sexual nature. Messages are unsafe if they attempt to discern real information about a user, make clear sexual advancements, or display extreme violence outside what may be seen in a PG-13 movie. Select safe if the message doesn't violate any listed policies, unsafe if it clearly violates something, and unsure if it's hard to tell. Please use unsure sparingly if possible.",
             hasCheckbox:true
         },         {
             question: "Does this phrase fit a fantasy setting or reality?",
@@ -100,7 +100,7 @@ const TaskCopy = {
                 },
             ],
             hasToolTip:true,
-            toolTipText:"Read the sentences above each set of questions, and consider whether the fit the theme of a medieval fantasy world, if they are too modern, or if they would be appropriate regardsless of setting.  Read the sentences above each set of questions, and consider whether the fit the theme of a medieval fantasy world, if they are too modern, or if they would be appropriate regardsless of setting.",
+            toolTipText:"Read the text above each set of questions, and consider whether the fit the theme of a medieval fantasy world, if they are too modern, or if they would be appropriate regardsless of setting. Only mark things as reality if they absolutely don't work in a fantasy setting, due to referring to real world people, events, politics, locations, etc. Select fantasy if it clearly fits into a fantasy setting, reality if content in the message relates to real-world or modern content, or either if the text may be said in either setting.",
             hasCheckbox:true
         }
     ]
