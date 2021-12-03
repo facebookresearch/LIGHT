@@ -21,19 +21,6 @@ import NumberButtonInput from "../../components/NumberButtonInput";
 import WorldBuilderMap from "../../components/WorldBuilderMap2";
 import SideBarDrawer from "../../components/SideBarDrawer";
 import BasicEditRoomBody from "./BasicEditRoomBody";
-/* BLUEPRINT JS COMPONENTS */
-import {
-  NumericInput,
-  InputGroup,
-  ControlGroup,
-  FormGroup,
-  Tooltip,
-  Position,
-  Icon,
-  Switch,
-  Button,
-  Intent,
-} from "@blueprintjs/core";
 /* STYLES */
 import "./styles.css";
 //Dummy Data
@@ -51,7 +38,6 @@ const WorldBuilderPage = ()=> {
     const customWorlds = useAppSelector((state) => state.playerWorlds.customWorlds);
     const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms)
-    const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom)
     /* ------ LOCAL STATE ------ */
     const [floor, setFloor]= useState(0)
     const [mapBorders, setMapBorders] = useState({

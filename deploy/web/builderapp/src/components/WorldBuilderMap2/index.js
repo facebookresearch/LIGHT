@@ -30,15 +30,11 @@ const WorldBuilderMap2 = ({
     floor
   })=> {
     //REACT ROUTER
-    const history = useHistory();
-    let { worldId } = useParams();
-    //let { path, url } = useRouteMatch();
+
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
-    //ROOMS
-    // const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
-    // const selectedRoom= useAppSelector((state) => state.worldRooms.selectedWorld);
+
     /* ------ LOCAL STATE ------ */
     const [viewLoc, setViewLoc] = useState(
         {
@@ -55,9 +51,11 @@ const WorldBuilderMap2 = ({
         setGridData(updatedGridData)
     },[worldRoomsData, floor])
     /* ------ Handlers ------ */
-    const shiftView = (axis, amount)=>{
-        let updatedView = {...viewLoc, [axis]: viewLoc[axis]+amount}
-        console.log("updated view", updatedView)
+    const shiftView = (axes, amount)=>{
+      let updatedView = viewLoc
+        axes.map((axis, index)=>{
+          updatedView = {...updatedView, [axis]: updatedView[axis]+amount[index]}
+        })
         setViewLoc(updatedView)
     }
     return(
@@ -71,14 +69,35 @@ const WorldBuilderMap2 = ({
           flexDirection:"column"
         }}
     >
-        <Button
-            className="bp3-button"
-            style={{
-              width: "1000px"
-            }}
-            icon="arrow-up"
-            onClick={()=>shiftView("y", 40)}
-        />
+        <div>
+          <Button
+              className="bp3-button"
+              style={{
+                width: "20px",
+                height: "20px",
+              }}
+              icon="arrow-top-left"
+              onClick={()=>shiftView(["x","y"], [40, 40])}
+          />
+          <Button
+              className="bp3-button"
+              style={{
+                width: "1000px",
+                height: "20px",
+              }}
+              icon="arrow-up"
+              onClick={()=>shiftView(["y"], [40])}
+          />
+          <Button
+              className="bp3-button"
+              style={{
+                width: "20px",
+                height: "20px",
+              }}
+              icon="arrow-top-right"
+              onClick={()=>shiftView(["x","y"], [-40, 40])}
+          />
+        </div>
         <div style={{ display: "flex" }}>
             {
               viewLoc.x<=0
@@ -90,7 +109,7 @@ const WorldBuilderMap2 = ({
                 width:"20px"
                 }}
                 icon="arrow-left"
-                onClick={()=>shiftView("x", 40)}
+                onClick={()=>shiftView(["x"], [40])}
             />:
             <div                 
               style={{
@@ -122,17 +141,37 @@ const WorldBuilderMap2 = ({
               height:"800px"
             }}
             icon="arrow-right"
-            onClick={()=>shiftView("x", -40)}
+            onClick={()=>shiftView(["x"], [-40])}
           />
         </div>
-        <Button
-          className="bp3-button"
-          style={{
-            width:"1000px",
-          }}
-          icon="arrow-down"
-          onClick={()=>shiftView("y", -40)}
-        />
+        <div>
+          <Button
+              className="bp3-button"
+              style={{
+                width: "20px",
+                height: "20px",
+              }}
+              icon="arrow-bottom-left"
+              onClick={()=>shiftView(["x", "y"], [40, -40])}
+          />
+          <Button
+            className="bp3-button"
+            style={{
+              width:"1000px",
+            }}
+            icon="arrow-down"
+            onClick={()=>shiftView(["y"], [-40])}
+          />
+          <Button
+            className="bp3-button"
+            style={{
+              width: "20px",
+              height: "20px",
+            }}
+            icon="arrow-bottom-right"
+            onClick={()=>shiftView(["x", "y"], [-40, -40])}
+          />
+        </div>
       </div>
     )
 }

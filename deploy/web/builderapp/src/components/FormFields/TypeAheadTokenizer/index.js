@@ -1,22 +1,54 @@
 /* REACT */
-import React, {useState, useEffect} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 
-import { Typeahead } from 'react-bootstrap-typeahead';
+import { Typeahead, TypeaheadInputMulti } from 'react-bootstrap-typeahead';
 
-/* BOOTSTRAP COMPONENTS */
-//LAYOUT
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-
+import Token from "./Token"
 
 const TypeAheadTokenizerForm = ({
-    formLabel
+    formLabel,
+    options
 })=>{
+    const [selected, setSelected] = useState([]);
+
+    const onMove = useCallback(
+      (dragIndex, hoverIndex) => {
+        const item = selected[dragIndex];
+  
+        const newSelected = selected.slice();
+        newSelected.splice(dragIndex, 1);
+        newSelected.splice(hoverIndex, 0, item);
+  
+        setSelected(newSelected);
+      },
+      [selected]
+    );
 
     return(
         <div>
             <h5>{formLabel}</h5>
+            <Typeahead
+                id="dnd-token-example"
+                multiple
+                onChange={setSelected}
+                options={options}
+                placeholder="Choose a state..."
+                renderInput={(inputProps, props) => (
+                    <TypeaheadInputMulti {...inputProps} selected={selected}>
+                        {selected.map((option, idx) => (
+                            <Token
+                                index={idx}
+                                key={option.label}
+                                onMove={onMove}
+                                onRemove={props.onRemove}
+                                option={option}>
+                                {option.label}
+                            </Token>
+                        ))}
+                    </TypeaheadInputMulti>
+                )}
+                selected={selected}
+      />
             <Typeahead
                 multiple
                 labelKey={option => `${option.firstName} ${option.lastName}`}
