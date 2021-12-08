@@ -39,7 +39,10 @@ const BasicEditRoom = ()=> {
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
-    const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom)
+    const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
+    const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
+    const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
+    const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
     /* ------ LOCAL STATE ------ */
 
     //UTILS
@@ -64,15 +67,16 @@ const BasicEditRoom = ()=> {
             <div>
                 <TypeAheadTokenizerForm
                     formLabel="Room Name:"
+                    tokenOptions={worldRooms}
                 />
-                <TypeAheadTokenizerForm
-                    formLabel="Description:"
-                />
+                <input/>
                 <TypeAheadTokenizerForm
                     formLabel="Characters:"
+                    tokenOptions={worldCharacters}
                 />
                 <TypeAheadTokenizerForm
                     formLabel="Objects:"
+                    tokenOptions={worldObjects}
                 />
                 <input/>
             </div>

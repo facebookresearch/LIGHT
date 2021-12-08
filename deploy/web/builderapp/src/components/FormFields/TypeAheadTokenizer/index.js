@@ -1,67 +1,70 @@
-/* REACT */
-import React, {useState, useCallback, useEffect} from 'react';
-
+import React, { useCallback, useState, useEffect } from 'react';
 import { Typeahead, TypeaheadInputMulti } from 'react-bootstrap-typeahead';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import Token from "./Token"
+import Token from './Token';
 
-const TypeAheadTokenizerForm = ({
+import options from './dummyTokenOptionData';
+
+import 'react-bootstrap-typeahead/css/Typeahead.css';
+import './styles.css';
+import { BsGear } from 'react-icons/bs';
+
+const TypeaheadExample = ({
     formLabel,
-    options
-})=>{
+    tokenOptions
+}) => {
+    const [tokenList, setTokenList] = useState([]);
     const [selected, setSelected] = useState([]);
 
-    const onMove = useCallback(
-      (dragIndex, hoverIndex) => {
-        const item = selected[dragIndex];
-  
-        const newSelected = selected.slice();
-        newSelected.splice(dragIndex, 1);
-        newSelected.splice(hoverIndex, 0, item);
-  
-        setSelected(newSelected);
-      },
-      [selected]
-    );
+    useEffect(() => {
+        if(tokenOptions.length){
+            console.log("TOKEN OPTIONS    ", tokenOptions)
+            let updatedTokenList = tokenOptions.map((tokendata, index)=>{
+                let updatedTokenData = {
+                    index: index,
+                    label: tokendata.name,
+                    key: tokendata.node_id,
+                    data: tokendata
+                }
+                return updatedTokenData;
+            })
+            setTokenList(updatedTokenList)
+        }
+    }, [tokenOptions])
 
-    return(
-        <div>
-            <h5>{formLabel}</h5>
-            <Typeahead
-                id="dnd-token-example"
-                multiple
-                onChange={setSelected}
-                options={options}
-                placeholder="Choose a state..."
-                renderInput={(inputProps, props) => (
-                    <TypeaheadInputMulti {...inputProps} selected={selected}>
-                        {selected.map((option, idx) => (
-                            <Token
-                                index={idx}
-                                key={option.label}
-                                onMove={onMove}
-                                onRemove={props.onRemove}
-                                option={option}>
-                                {option.label}
-                            </Token>
-                        ))}
-                    </TypeaheadInputMulti>
-                )}
-                selected={selected}
-      />
-            <Typeahead
-                multiple
-                labelKey={option => `${option.firstName} ${option.lastName}`}
-                options={[
-                    {firstName: 'Art', lastName: 'Blakey'},
-                    {firstName: 'Jimmy', lastName: 'Cobb'},
-                    {firstName: 'Elvin', lastName: 'Jones'},
-                    {firstName: 'Max', lastName: 'Roach'},
-                    {firstName: 'Tony', lastName: 'Williams'},
-                  ]}
-            />
-        </div>
-    )
-}
+console.log(formLabel, tokenOptions)
+  return (
+    <DndProvider backend={HTML5Backend}>
+        <h5>
+            {formLabel}
+        </h5>
+        <Typeahead
+            id="typeahead-tokenizer"
+            allowNew={true}
+            multiple
+            onChange={setSelected}
+            options={tokenList}
+            placeholder="Select one"
+            renderInput={(inputProps, props) => (
+            <TypeaheadInputMulti {...inputProps} selected={selected}>
+                {selected.map((option, idx) => (
+                    <Token
+                        index={idx}
+                        option={option}
+                        key={option.key}
+                    >  
+                        {option.label}
+                    </Token>
+                ))}
+            </TypeaheadInputMulti>
+            )}
+            selected={selected}
+        />
+    </DndProvider>
+  );
+};
 
-export default TypeAheadTokenizerForm;
+
+export default TypeaheadExample;

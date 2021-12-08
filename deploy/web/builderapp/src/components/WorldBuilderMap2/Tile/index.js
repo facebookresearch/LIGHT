@@ -21,14 +21,14 @@ const Tile = ({
     /* ------ LIFE CYCLE ------ */
     useEffect(()=>{
         if(leftNeighbor){
-            let updatedHasLeftPath = leftNeighbor.node_id ? true : false;
+            let updatedHasLeftPath = (leftNeighbor.node_id && data.node_id) ? true : false;
             setHasLeftPath(updatedHasLeftPath)
         }
     },[leftNeighbor])
 
     useEffect(()=>{
         if(topNeighbor){
-            let updatedHasTopPath = topNeighbor.node_id ? true : false;
+            let updatedHasTopPath = (topNeighbor.node_id && data.node_id) ? true : false;
             setHasTopPath(updatedHasTopPath)
         }
     },[topNeighbor])

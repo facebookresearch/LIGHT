@@ -1,9 +1,8 @@
 .path-container {
   border-style:solid;  
   border-color: grey;
-  border-radius: 15px;
-  background-color: grey;
-  opacity: 0;
+  border-width: 5px;
+  opacity: .6;
 }
 
 .path-container:hover{
@@ -13,13 +12,13 @@
   
 
 .path-container.horizontal {
-    height: 5%;
+    height: 35%;
     width: 100%;
 }
 
 .path-container.vertical {
     height: 100%;
-    width: 5%;
+    width: 35%;
 }
 
 
