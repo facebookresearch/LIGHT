@@ -30,7 +30,7 @@ const TaskCopy = {
                         },
                         {
                             stepCopy: "Select safe if the message doesn't violate any listed policies, unsafe if it clearly violates something, and unsure if it's hard to tell. Please use unsure sparingly if possible.",
-                            stepImg: SafeFantasy
+                            stepImg: UnsureEither
                         }
                     ]
                 },
@@ -43,7 +43,7 @@ const TaskCopy = {
                         },
                         {
                             stepCopy: "Select fantasy if it clearly fits into a fantasy setting, reality if content in the message relates to real-world or modern content, or either if the text may be said in either setting.",
-                            stepImg: UnsureEither
+                            stepImg: SafeFantasy
                         }
                     ]
                 },

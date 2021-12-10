@@ -100,7 +100,7 @@ def create_task_data(
             }
         )
 
-    # df.to_csv(annotation_source, index=False)
+    df.to_csv(annotation_source, index=False)
 
     return tasks
 
@@ -200,7 +200,7 @@ def main(cfg: DictConfig) -> None:
         cfg.units_per_run,
         cfg.annotations_per_unit,
         target_path,
-    ),
+    )
 
     def unit_matches_gold(unit) -> bool:
         """
