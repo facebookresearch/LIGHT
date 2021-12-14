@@ -176,7 +176,7 @@ const WorldBuilderPage = ()=> {
                     headerText="Edit Room"
                 >
                     <BasicEditRoomBody
-
+                        worldId={worldId}
                     />
                 </SideBarDrawer>
             </div>

@@ -21,7 +21,7 @@ import ButtonToggle from "../../components/FormFields/ButtonToggle"
 import Slider from "../../components/FormFields/Slider"
 import GenerateForms from "../../components/FormFields/GenerateForms"
 import BreadCrumbs from "../../components/BreadCrumbs"
-//DUMMY DATE
+//DUMMY DATA
 import DummyData from "../../Copy/DummyData"
 
 const RoomPage = ()=> {

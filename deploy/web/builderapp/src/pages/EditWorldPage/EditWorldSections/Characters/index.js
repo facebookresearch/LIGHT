@@ -1,5 +1,5 @@
 /* REACT */
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { useParams, useRouteMatch } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
@@ -14,22 +14,43 @@ import Col from 'react-bootstrap/Col';
 import GeneralTable from "../../../../components/Tables/";
 
 const Characters = ()=> {
-  const DummyCharacterFields = [
+
+    /* ------ REDUX STATE ------ */
+    //Characters
+    const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
+
+  const TableFields = [
     {label:"ID", key:"id"}, 
-    {label:"NAME", key:"name"}, 
+    {label:"NAME", key:"name"},
+    {label:"TYPE", key:"type"}, 
+    {label:"PERSONA", key:"persona"},
+    {label:"DESCRIPTION", key:"desc"}, 
   ]
-  const DummyCharacterData = [
-    {id:0, name: "Orky the Orc", description:"Smarter than your average orc."},
-    {id:1, name: "Gobbles the Goblin", description:"A hungry, hungry goblin."},
-    {id:2, name: "Hugh Mann", description:"Just a regular peasant trying to get by."}
-  ]
-  
+  /* ------ LOCAL STATE ------ */
+  const [formattedCharacterData, setFormattedCharacterData]= useState([]);
+
+  useEffect(() => {
+    let updatedCharacterData = worldCharacters.map(char=>{
+      let {name, node_id, persona, desc, char_type} = char;
+      let formattedId = node_id.slice((node_id.indexOf("_")+1));
+      let formattedCharacter = {
+        id: formattedId,
+        name:name,
+        type:char_type,
+        persona: persona,
+        desc: desc
+      }
+      return formattedCharacter;
+    })
+    setFormattedCharacterData(updatedCharacterData)
+  }, [worldCharacters])
+
   return (
     <div>
       <GeneralTable 
         hasSearchBar={true}
-        fields={DummyCharacterFields} 
-        data={DummyCharacterData}
+        fields={TableFields} 
+        data={formattedCharacterData}
       />
     </div>
   );

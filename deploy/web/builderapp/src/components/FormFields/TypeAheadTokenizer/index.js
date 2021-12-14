@@ -13,7 +13,10 @@ import { BsGear } from 'react-icons/bs';
 
 const TypeaheadExample = ({
     formLabel,
-    tokenOptions
+    tokenOptions,
+    worldId,
+    sectionName,
+    roomId
 }) => {
     const [tokenList, setTokenList] = useState([]);
     const [selected, setSelected] = useState([]);
@@ -54,7 +57,10 @@ console.log(formLabel, tokenOptions)
                         index={idx}
                         option={option}
                         key={option.key}
-                    >  
+                        worldId={worldId}
+                        sectionName={sectionName}
+                        roomId={roomId}
+                    >   
                         {option.label}
                     </Token>
                 ))}

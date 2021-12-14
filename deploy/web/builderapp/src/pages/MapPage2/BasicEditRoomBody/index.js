@@ -44,16 +44,21 @@ const BasicEditRoom = ()=> {
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
     /* ------ LOCAL STATE ------ */
-
+    const [formattedRoomId, setFormattedRoomId] = useState(null)
     //UTILS
 
 
     /* --- LIFE CYCLE FUNCTIONS --- */
+    useEffect(() => {
+        const {node_id} = selectedRoom
+        let updatedFormattedRoomId = node_id.replace(" ", "_");
+        updatedFormattedRoomId = node_id.replace(" ", "_");
+        console.log("updated roomId", updatedFormattedRoomId)
+        setFormattedRoomId(updatedFormattedRoomId)
+    }, [selectedRoom])
 
     //HANDLERS
     const handleAdvancedClick = ()=>{
-        const {node_id} = selectedRoom
-        let formattedRoomId = node_id.replace(" ", "_");
         history.push(`/editworld/${worldId}/details/map/rooms/${formattedRoomId}`);
     }
 
@@ -65,18 +70,21 @@ const BasicEditRoom = ()=> {
                 </Button>
             </div>
             <div>
-                <TypeAheadTokenizerForm
-                    formLabel="Room Name:"
-                    tokenOptions={worldRooms}
-                />
                 <input/>
                 <TypeAheadTokenizerForm
                     formLabel="Characters:"
                     tokenOptions={worldCharacters}
+                    worldId={worldId}
+                    sectionName={"characters"}
+                    roomId={formattedRoomId}
                 />
                 <TypeAheadTokenizerForm
                     formLabel="Objects:"
                     tokenOptions={worldObjects}
+                    worldId={worldId}
+
+                    sectionName={"objects"}
+                    roomId={formattedRoomId}
                 />
                 <input/>
             </div>

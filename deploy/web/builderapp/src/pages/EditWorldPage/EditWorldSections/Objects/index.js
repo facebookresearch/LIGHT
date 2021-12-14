@@ -1,39 +1,47 @@
 /* REACT */
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { useParams, useRouteMatch } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
 /* STYLES */
 import './styles.css';
-/* BOOTSTRAP COMPONENTS */
-//LAYOUT
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-//BUTTON
-import ButtonGroup from 'react-bootstrap/ButtonGroup'
-import Button from 'react-bootstrap/Button'
 /* CUSTOM COMPONENTS */
 import GeneralTable from "../../../../components/Tables/";
 
 const Objects = ()=> {
-    const DummyObjectsFields = [
-      {label:"ID", key:"id"}, 
-      {label:"NAME", key:"name"}, 
-      {label:"Description", key:"description"}
-    ]
-    const DummyObjectsData = [
-      {id:0, name: "A bone club", description:"A crude weapon made from a large bone."},
-      {id:1, name: "A plate helmet", description:"A shiny piece of armor for one's head."},
-      {id:2, name: "A bucket", description:"An empty vessel that could be used to carry any number of things."}
-    ]
+
+    /* ------ REDUX STATE ------ */
+    //Characters
+    const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
+
+  const TableFields = [
+    {label:"ID", key:"id"}, 
+    {label:"NAME", key:"name"},
+    {label:"DESCRIPTION", key:"desc"}, 
+  ]
+  /* ------ LOCAL STATE ------ */
+  const [formattedObjectData, setFormattedObjectData]= useState([]);
+
+  useEffect(() => {
+    let updatedObjectData = worldObjects.map(worldObject=>{
+      let {name, node_id, desc} = worldObject;
+      let formattedId = node_id.slice((node_id.indexOf("_")+1));
+      let formattedObject = {
+        id: formattedId,
+        name:name,
+        desc: desc
+      }
+      return formattedObject;
+    })
+    setFormattedObjectData(updatedObjectData)
+  }, [worldObjects])
     
     return (
       <div>
         <GeneralTable
           hasSearchBar={true}
-          fields={DummyObjectsFields} 
-          data={DummyObjectsData}
+          fields={TableFields} 
+          data={formattedObjectData}
         />
       </div>
     );
