@@ -1,5 +1,5 @@
 /* REACT */
-import React from 'react';
+import React, {useState, useEffect}  from 'react';
 import { useParams, useRouteMatch } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
@@ -17,23 +17,35 @@ import Button from 'react-bootstrap/Button'
 import GeneralTable from "../../../../components/Tables/";
 
 const Quests = ()=> {
-  const DummyQuestsFields = [
+  /* ------ REDUX STATE ------ */
+  //Quests
+  const worldQuests = useAppSelector((state) => state.worldQuests.worldQuests);
+
+  const TableFields = [
     {label:"ID", key:"id"}, 
-    {label:"NAME", key:"name"}, 
-    {label:"Description", key:"description"}
+    {label:"NAME", key:"name"},
   ]
-  const DummyQuestsData = [
-    {id:0, name: "Find the wizard keys", description:"Wizards are always losing their keys.  Help a wizard find their key."},
-    {id:1, name: "Seek the Holy Grail", description:"A once and future classic, find a chalice a divine being once drank from."},
-    {id:2, name: "Slay a Dragon", description:"Exactly as hard as it sounds, search far and wide for a fire breathing monster and return it's head to the King."}
-  ]
-  
+  /* ------ LOCAL STATE ------ */
+  const [formattedQuestData, setFormattedQuestData]= useState([]);
+
+  useEffect(() => {
+    let updatedRoomData = worldQuests.map(quest=>{
+      let {name, node_id} = quest;
+      let formattedId = node_id.slice((node_id.indexOf("_")+1));
+      let formattedQuest = {
+        id: formattedId,
+        name:name,
+      }
+      return formattedQuest;
+    })
+    setFormattedQuestData(updatedRoomData)
+  }, [worldQuests])
   return (
     <div>
       <GeneralTable
         hasSearchBar={true}
-        fields={DummyQuestsFields} 
-        data={DummyQuestsData}
+        fields={TableFields} 
+        data={formattedQuestData}
       />
     </div>
   );

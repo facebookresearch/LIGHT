@@ -27,7 +27,9 @@ const WorldBuilderMap2 = ({
     worldRoomsData, 
     worldBorders,
     tileClickFunction,
-    floor
+    floor,
+    width,
+    height
   })=> {
     //REACT ROUTER
 
@@ -50,26 +52,30 @@ const WorldBuilderMap2 = ({
         console.log("GRID DATA OBJECT  ", updatedGridData)
         setGridData(updatedGridData)
     },[worldRoomsData, floor])
+
+    useEffect(()=>{
+      let initialViewLoc = {
+        x: width/4,
+        y: height/4
+      }
+      console.log("INITIAL VIEW LOC", initialViewLoc)
+      setViewLoc(initialViewLoc)
+  },[])
     /* ------ Handlers ------ */
     const shiftView = (axes, amount)=>{
-      let updatedView = viewLoc
+      let updatedView = viewLoc;
         axes.map((axis, index)=>{
           updatedView = {...updatedView, [axis]: updatedView[axis]+amount[index]}
         })
+        console.log("UPDATED VIEW", updatedView)
         setViewLoc(updatedView)
     }
     return(
-    <div
-        style={{
-          width: "100%",
-          textAlign: "center",
-          display:"flex",
-          justifyContent:"center",
-          alignItems:"center",
-          flexDirection:"column"
-        }}
-    >
-        <div>
+    <div className="map-container">
+        <div className="button-row ">
+          {
+           ( viewLoc.x<=0 || viewLoc.y<=0)
+            ?
           <Button
               className="bp3-button"
               style={{
@@ -79,15 +85,38 @@ const WorldBuilderMap2 = ({
               icon="arrow-top-left"
               onClick={()=>shiftView(["x","y"], [40, 40])}
           />
-          <Button
-              className="bp3-button"
-              style={{
-                width: "1000px",
-                height: "20px",
-              }}
-              icon="arrow-up"
-              onClick={()=>shiftView(["y"], [40])}
+          :
+          <div                 
+            style={{
+              height: "20px",
+              width:"20px"
+            }}
           />
+            
+          }
+          {
+            viewLoc.y<=0
+            ?
+            <Button
+                className="bp3-button"
+                style={{
+                  width: "1000px",
+                  height: "20px",
+                }}
+                icon="arrow-up"
+                onClick={()=>shiftView(["y"], [40])}
+            />
+            :
+            <div                 
+            style={{
+              height: "20px",
+              width:"1000px"
+            }}
+          />
+          }
+          {
+          ((viewLoc.x > (width+600)) || (viewLoc.y<=0))
+          ?
           <Button
               className="bp3-button"
               style={{
@@ -97,20 +126,29 @@ const WorldBuilderMap2 = ({
               icon="arrow-top-right"
               onClick={()=>shiftView(["x","y"], [-40, 40])}
           />
+          :
+          <div                 
+          style={{
+            height: "20px",
+            width:"20px"
+          }}
+        />
+          }
         </div>
-        <div style={{ display: "flex" }}>
+        <div className="view-row">
             {
               viewLoc.x<=0
               ?
               <Button
-                className="bp3-button"
+                className="button"
                 style={{
                 height: "800px",
                 width:"20px"
                 }}
                 icon="arrow-left"
                 onClick={()=>shiftView(["x"], [40])}
-            />:
+            />
+            :
             <div                 
               style={{
                 height: "800px",
@@ -119,7 +157,7 @@ const WorldBuilderMap2 = ({
             />
             }
             <div
-                className="map-container"
+                className="view-container"
                 >
                     {
                         gridData
@@ -135,16 +173,30 @@ const WorldBuilderMap2 = ({
                         null // NOTE: Add loading icon and placeholder div in future
                     } 
             </div>
-        <Button
-            className="bp3-button"
+        {
+          (viewLoc.x > width+600)
+          ?
+          <Button
+              className="bp3-button"
+              style={{
+                height:"800px"
+              }}
+              icon="arrow-right"
+              onClick={()=>shiftView(["x"], [-40])}
+            />
+            :
+            <div                 
             style={{
-              height:"800px"
+              height: "800px",
+              width:"20px"
             }}
-            icon="arrow-right"
-            onClick={()=>shiftView(["x"], [-40])}
           />
+        }
         </div>
-        <div>
+        <div className="button-row">
+        {
+            (viewLoc.y>=height || viewLoc.x<=0 )
+            ?
           <Button
               className="bp3-button"
               style={{
@@ -154,23 +206,53 @@ const WorldBuilderMap2 = ({
               icon="arrow-bottom-left"
               onClick={()=>shiftView(["x", "y"], [40, -40])}
           />
-          <Button
-            className="bp3-button"
+          :
+          <div                 
             style={{
-              width:"1000px",
-            }}
-            icon="arrow-down"
-            onClick={()=>shiftView(["y"], [-40])}
-          />
-          <Button
-            className="bp3-button"
-            style={{
-              width: "20px",
               height: "20px",
+              width:"20px"
             }}
-            icon="arrow-bottom-right"
-            onClick={()=>shiftView(["x", "y"], [-40, -40])}
           />
+          }
+          {
+            (viewLoc.y >= height)
+              ?
+            <Button
+              className="bp3-button"
+              style={{
+                width:"1000px",
+              }}
+              icon="arrow-down"
+              onClick={()=>shiftView(["y"], [-40])}
+            />
+            :
+            <div                 
+              style={{
+                height: "20px",
+                width:"1000px"
+              }}
+            />
+          }
+          {
+            (viewLoc.y>=height || viewLoc.x > width+600)
+            ?
+            <Button
+              className="bp3-button"
+              style={{
+                width: "20px",
+                height: "20px",
+              }}
+              icon="arrow-bottom-right"
+              onClick={()=>shiftView(["x", "y"], [-40, -40])}
+            />
+            :
+            <div                 
+              style={{
+                height: "20px",
+                width:"20px"
+              }}
+            />
+          }
         </div>
       </div>
     )

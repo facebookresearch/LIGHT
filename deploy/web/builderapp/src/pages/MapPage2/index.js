@@ -39,13 +39,15 @@ const WorldBuilderPage = ()=> {
     const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms)
     /* ------ LOCAL STATE ------ */
-    const [floor, setFloor]= useState(0)
+    const [floor, setFloor]= useState(0);
     const [mapBorders, setMapBorders] = useState({
         top: 2,
         bottom: -2,
         left: -2,
         right: 2
-    })
+    });
+    const [mapWidth, setMapWidth]= useState(0);
+    const [mapHeight, setMapHeight] = useState(0);
     const [mapSideBarOpen, setMapSideBarOpen] = useState(false);
     //UTILS
     const calculateMapBorders = (roomNodes)=>{
@@ -124,6 +126,18 @@ const WorldBuilderPage = ()=> {
         calculateMapBorders(worldRooms)
     },[worldRooms])
 
+    useEffect(()=>{
+        let {top, right, bottom, left} = mapBorders;
+        let updatedMapWidthMultiplier = Math.abs(left) + right;
+        let updatedMapHeightMultiplier = Math.abs(bottom) + top;
+        let updatedMapWidth = updatedMapWidthMultiplier * -200;
+        let updatedMapHeight = updatedMapHeightMultiplier * -200;
+        console.log("WIDTH", updatedMapWidth)
+        console.log("HEIGHT", updatedMapHeight)
+        setMapWidth(updatedMapWidth);
+        setMapHeight(updatedMapHeight);
+    },[mapBorders])
+
     //HANDLERS
     // const handleClick = (roomId)=>{
     //     history.push(`/editworld/${worldId}/${categories}/map/rooms/${roomId}`);
@@ -166,6 +180,8 @@ const WorldBuilderPage = ()=> {
                     worldBorders={mapBorders}
                     tileClickFunction={handleTileClick}
                     floor={floor}
+                    height={mapHeight}
+                    width={mapWidth}
                 />
                 :
                 null
