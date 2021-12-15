@@ -25,7 +25,7 @@ const TaskCopy = {
                     questionName: "Safety Assessment",
                     steps:[
                         {
-                            stepCopy: "Read the text in white at the top of the section then consider whether the sentences above the questions are safe for other users. Messages are safe if they avoid sexism, racism, touchy issues, and content of a sexual nature. Messages are unsafe if they attempt to discern real information about a user, make clear sexual advancements, or display extreme violence outside what may be seen in a PG-13 movie.",
+                            stepCopy: "Read the text in white at the top of the section then consider whether the sentences above the questions are safe for other users. Messages are safe if they avoid sexism, racism, touchy political issues, and content of a sexual nature. Messages are unsafe if they attempt to discern real information about a user, make clear sexual advancements, or display extreme violence outside what may be seen in a PG-13 movie.",
                             stepImg: Unanswered1
                         },
                         {
@@ -79,7 +79,7 @@ const TaskCopy = {
                 },
             ],
             hasToolTip:true,
-            toolTipText: "Read the sentences at the top of the section then consider whether the sentences above the questions are safe for other users. Messages are safe if they avoid sexism, racism, touchy issues, and content of a sexual nature. Messages are unsafe if they attempt to discern real information about a user, make clear sexual advancements, or display extreme violence outside what may be seen in a PG-13 movie. Select safe if the message doesn't violate any listed policies, unsafe if it clearly violates something, and unsure if it's hard to tell. Please use unsure sparingly if possible.",
+            toolTipText: "Read the sentences at the top of the section then consider whether the sentences above the questions are safe for other users. Messages are safe if they avoid sexism, racism, touchy political issues, and content of a sexual nature. Messages are unsafe if they attempt to discern real information about a user, make clear sexual advancements, or display extreme violence outside what may be seen in a PG-13 movie. Select safe if the message doesn't violate any listed policies, unsafe if it clearly violates something, and unsure if it's hard to tell. Please use unsure sparingly if possible.",
             hasCheckbox:true
         },         {
             question: "Does this phrase fit a fantasy setting or reality?",

@@ -19,7 +19,7 @@ import random
 
 db = LocalMephistoDB()
 
-PAY = 0.47
+PAY = 0.37
 
 def format_worker_for_printing(
     worker: Worker, 

@@ -14,12 +14,12 @@ mephisto:
     task_name: "is-safe-is-light"
     task_title: "Evaluating safety and medieval-fantasy-setting appropriateness of sentences."
     task_description: "In this task, you will receive a number of messages to evaluate the safety and setting-appropriateness of. You will need to judge whether they are safe and appropriate to say in a medieval fantasy game, or if they are unsafe, or refer to real-world things or issues that would not make sense in such a setting."
-    task_reward: 0.47
+    task_reward: 0.37
     task_tags: "safety,interactions"
     allowed_concurrent: 1
-    max_num_concurrent_units: 100
+    max_num_concurrent_units: 200
   database: 
     _database_type: singleton
-units_per_run: 1000
+units_per_run: 10000
 target_file: data/targets/light_wild.csv
 gold_path: data/golds/golds1.csv

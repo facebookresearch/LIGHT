@@ -38,6 +38,7 @@ GOLD_FOLDER = os.path.join(TASK_DIRECTORY, "data", "golds")
 TARGET_FOLDER = os.path.join(TASK_DIRECTORY, "data", "targets")
 DEFAULT_UNITS_PER_RUN = 10
 DEFAULT_ANNOTATIONS_PER_UNIT = 8
+TARGET_ANNOTATIONS_PER_TURN = 1
 
 db = LocalMephistoDB()
 mephisto_data_browser = MephistoDataBrowser(db=db)
@@ -71,7 +72,10 @@ def create_task_data(
 
     df_dict_list = df.to_dict("records")
 
-    remaining_annotations = len(df["annotations"]) - df["annotations"].sum()
+    total_annotation_count = len(df["annotations"]) * TARGET_ANNOTATIONS_PER_TURN
+    launched_annotations = df["launched"].sum()
+    completed_annotations = df["annotations"].sum()
+    remaining_annotations = total_annotation_count - (launched_annotations + completed_annotations)
     if remaining_annotations < num_tasks * annotations_per_unit:
         print(
             f"Not enough data for the tasks present, only launching  "
@@ -85,14 +89,13 @@ def create_task_data(
         subtasks = []
         while len(subtasks) < annotations_per_unit:
             entry = df_dict_list[curr_idx]
-            if entry["annotations"]:
-                continue
-            subtasks.append(
-                {
-                    "text": entry["text"],
-                }
-            )
-            df.at[curr_idx, "launched"] = df.at[curr_idx, "launched"] + 1
+            if entry["launched"] + entry["annotations"] < TARGET_ANNOTATIONS_PER_TURN:
+                subtasks.append(
+                    {
+                        "text": entry["text"],
+                    }
+                )
+                df.at[curr_idx, "launched"] = df.at[curr_idx, "launched"] + 1
             curr_idx = (curr_idx + 1) % len(df_dict_list)
         tasks.append(
             {
