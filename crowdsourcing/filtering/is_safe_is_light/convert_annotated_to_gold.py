@@ -280,7 +280,7 @@ def main(cfg: DictConfig) -> None:
     examples_per_group = get_grouped_examples(accepted_units)
     examples = parse_good_examples(examples_per_group)
 
-    with open(gold_filename, 'w+') as gold_file:
+    with open(os.path.join(TASK_DIRECTORY, 'data', 'golds', gold_filename), 'w+') as gold_file:
         writer = csv.writer(gold_file)
         writer.writerow(['text', 'is_safe', 'is_light'])
         writer.writerows(arr)

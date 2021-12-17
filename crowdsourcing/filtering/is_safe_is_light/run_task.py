@@ -75,13 +75,15 @@ def create_task_data(
     total_annotation_count = len(df["annotations"]) * TARGET_ANNOTATIONS_PER_TURN
     launched_annotations = df["launched"].sum()
     completed_annotations = df["annotations"].sum()
+    print(f"TOT {total_annotation_count}, launch: {launched_annotations}, comp {completed_annotations}")
     remaining_annotations = total_annotation_count - (launched_annotations + completed_annotations)
+    print(f"Remain {remaining_annotations}")
     if remaining_annotations < num_tasks * annotations_per_unit:
         print(
             f"Not enough data for the tasks present, only launching  "
-            f"{remaining_annotations // num_tasks + 1} rather than {num_tasks}"
+            f"{remaining_annotations // annotations_per_unit + 1} rather than {num_tasks}"
         )
-        num_tasks = remaining_annotations // num_tasks + 1
+        num_tasks = remaining_annotations // annotations_per_unit + 1
 
     tasks = []
     curr_idx = 0

@@ -17,7 +17,7 @@ mephisto:
     task_reward: 0.37
     task_tags: "safety,interactions"
     allowed_concurrent: 1
-    max_num_concurrent_units: 200
+    max_num_concurrent_units: 150
   database: 
     _database_type: singleton
 units_per_run: 10000
