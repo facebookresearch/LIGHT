@@ -97,9 +97,8 @@ class TutorialModelSoul(OnEventSoul):
             "beam_context_block_ngram": 3,
             "beam_size": 10,
             "beam_min_length": 20,
+            "model": "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent"
         }
-        # dialog_opt['override']['inference'] = 'topk'
-        # dialog_opt['override']['topk'] = 40
         return create_agent(dialog_opt, requireModelExists=True)
 
     @classmethod
