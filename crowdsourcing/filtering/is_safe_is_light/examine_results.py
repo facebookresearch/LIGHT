@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from mephisto.abstractions.databases.local_database import LocalMephistoDB
+from mephisto.abstractions.databases.local_singleton_database import MephistoSingletonDB
 from mephisto.tools.examine_utils import run_examine_or_review, print_results
 from mephisto.data_model.worker import Worker
 from mephisto.operations.logger_core import set_mephisto_log_level
@@ -17,7 +17,7 @@ from static_gold_blueprint import (
 from typing import List, Dict, Any
 import random
 
-db = LocalMephistoDB()
+db = MephistoSingletonDB()
 
 PAY = 0.37
 
@@ -121,7 +121,7 @@ def format_data_for_printing(data):
 
 
 def main():
-    db = LocalMephistoDB()
+    db = MephistoSingletonDB()
     set_mephisto_log_level(level='WARNING')
     run_examine_or_review(
         db, 

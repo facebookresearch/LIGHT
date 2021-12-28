@@ -283,7 +283,7 @@ def main(cfg: DictConfig) -> None:
     with open(os.path.join(TASK_DIRECTORY, 'data', 'golds', gold_filename), 'w+') as gold_file:
         writer = csv.writer(gold_file)
         writer.writerow(['text', 'is_safe', 'is_light'])
-        writer.writerows(arr)
+        writer.writerows(examples)
 
 
 if __name__ == "__main__":

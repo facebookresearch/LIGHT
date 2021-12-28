@@ -218,13 +218,14 @@ def main(cfg: DictConfig) -> None:
         data = unit.get_assigned_agent().state.get_data()
         gold_ids = [d["id"] for d in data["inputs"]["texts"]]
         annotations = data["outputs"]["final_data"]
+        wrong_count = 0
         for idx, gold_id in enumerate(gold_ids):
             if not gold_matches(
                 frontend_to_gold_format(annotations[str(idx)]),
                 gold_answers[gold_id],
             ):
-                return False
-        return True
+                wrong_count += 1
+        return wrong_count <= 1
 
     validate_unit = StaticGoldBlueprint.create_validation_function(
         cfg.mephisto, unit_matches_gold
