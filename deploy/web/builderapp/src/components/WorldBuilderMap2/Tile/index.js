@@ -8,11 +8,12 @@ import TilePath from "./TilePath"
 
 
 const Tile = ({
-    data,
+    tileData,
     borders,
     tileClickFunction,
     leftNeighbor,
-    topNeighbor
+    topNeighbor,
+    gridUpdateFunction
 })=> {
     /* ------ LOCAL STATE ------ */
     const [hasLeftPath, setHasLeftPath] = useState(false)
@@ -21,21 +22,21 @@ const Tile = ({
     /* ------ LIFE CYCLE ------ */
     useEffect(()=>{
         if(leftNeighbor){
-            let updatedHasLeftPath = (leftNeighbor.node_id && data.node_id) ? true : false;
+            let updatedHasLeftPath = (leftNeighbor.node_id && tileData.node_id) ? true : false;
             setHasLeftPath(updatedHasLeftPath)
         }
-    },[leftNeighbor])
+    },[leftNeighbor, tileData])
 
     useEffect(()=>{
         if(topNeighbor){
-            let updatedHasTopPath = (topNeighbor.node_id && data.node_id) ? true : false;
+            let updatedHasTopPath = (topNeighbor.node_id && tileData.node_id) ? true : false;
             setHasTopPath(updatedHasTopPath)
         }
-    },[topNeighbor])
+    },[topNeighbor, tileData])
 
     /* ------ UTILS ------ */
     const xBorderChecker = () =>{
-        const {grid_location} = data;
+        const {grid_location} = tileData;
         let xPosition = grid_location[0];
         let LeftBorder = borders.left;
         if(LeftBorder < xPosition){
@@ -46,7 +47,7 @@ const Tile = ({
         }
     }
     const yBorderChecker = () =>{
-        const {grid_location} = data
+        const {grid_location} = tileData
         let yPosition = grid_location[1]
         let TopBorder = borders.top;
         if(TopBorder > yPosition){
@@ -59,8 +60,8 @@ const Tile = ({
 
     //HANDLERS
     const handleTileClick = ()=>{
-        console.log("TILE DATA", data)
-        tileClickFunction(data)
+        console.log("TILE DATA", tileData)
+        tileClickFunction(tileData)
     }
   return (
     <div className="tile-area">
@@ -74,8 +75,12 @@ const Tile = ({
                         hasTopPath
                         ?
                         <TilePath
-                            data={data}
+                            tileData={tileData}
                             alignment="vertical"
+                            neighbors={tileData.neighbors}
+                            neighboringTile={topNeighbor}
+                            neighboringTileNeighbors={topNeighbor.neighbors}
+                            gridUpdateFunction={gridUpdateFunction}
                         />
                         :
                         null
@@ -94,8 +99,11 @@ const Tile = ({
                         hasLeftPath
                         ?
                         <TilePath
-                        data={data}
+                        tileData={tileData}
                         alignment="horizontal"
+                        neighbors={tileData.neighbors}
+                        neighboringTile={leftNeighbor}
+                        neighboringTileNeighbors={leftNeighbor.neighbors}
                     />
                     :
                     null
@@ -108,7 +116,7 @@ const Tile = ({
                 className="tile-container"
                 onClick={handleTileClick}
             >
-            {data.name ? data.name : ""}
+            {tileData.name ? tileData.name : ""}
         </div>
         </div>
     </div>

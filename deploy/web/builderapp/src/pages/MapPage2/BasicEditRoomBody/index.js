@@ -18,14 +18,6 @@ import Col from 'react-bootstrap/Col';
 import TypeAheadTokenizerForm from "../../../components/FormFields/TypeAheadTokenizer"
 /* BLUEPRINT JS COMPONENTS */
 import {
-  NumericInput,
-  InputGroup,
-  ControlGroup,
-  FormGroup,
-  Tooltip,
-  Position,
-  Icon,
-  Switch,
   Button,
 } from "@blueprintjs/core";
 /* STYLES */
@@ -45,7 +37,6 @@ const BasicEditRoom = ()=> {
     const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
     /* ------ LOCAL STATE ------ */
     const [formattedRoomId, setFormattedRoomId] = useState(null)
-    //UTILS
 
 
     /* --- LIFE CYCLE FUNCTIONS --- */

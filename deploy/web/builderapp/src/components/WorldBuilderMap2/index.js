@@ -1,23 +1,12 @@
 /* REACT */
 import React, {useEffect, useState} from 'react';
-import { useParams, useRouteMatch, useHistory } from "react-router-dom";
+
 /* REDUX */
-import {useAppDispatch, useAppSelector} from '../../app/hooks';
+
 /* CUSTOM COMPONENTS */
 import Grid from "./Grid"
 /* BLUEPRINT JS COMPONENTS */
-import {
-    NumericInput,
-    InputGroup,
-    ControlGroup,
-    FormGroup,
-    Tooltip,
-    Position,
-    Icon,
-    Switch,
-    Button,
-    Intent,
-  } from "@blueprintjs/core";
+import {Button } from "@blueprintjs/core";
 /* STYLES */
 import "./styles.css"
 /* UTILS */
@@ -33,11 +22,8 @@ const WorldBuilderMap2 = ({
   })=> {
     //REACT ROUTER
 
-    /* REDUX DISPATCH FUNCTION */
-    const dispatch = useAppDispatch();
-    /* ------ REDUX STATE ------ */
-
     /* ------ LOCAL STATE ------ */
+    const [mapWorldData, setMapWorldData] = useState(null)
     const [viewLoc, setViewLoc] = useState(
         {
             x: -20,
@@ -51,7 +37,7 @@ const WorldBuilderMap2 = ({
         let updatedGridData = gridDataGenerator(worldBorders, worldRoomsData, floor);
         console.log("GRID DATA OBJECT  ", updatedGridData)
         setGridData(updatedGridData)
-    },[worldRoomsData, floor])
+    },[ worldRoomsData, worldBorders, floor])
 
     useEffect(()=>{
       let initialViewLoc = {
@@ -60,7 +46,8 @@ const WorldBuilderMap2 = ({
       }
       console.log("INITIAL VIEW LOC", initialViewLoc)
       setViewLoc(initialViewLoc)
-  },[])
+    },[gridData])
+
     /* ------ Handlers ------ */
     const shiftView = (axes, amount)=>{
       let updatedView = viewLoc;
@@ -70,11 +57,21 @@ const WorldBuilderMap2 = ({
         console.log("UPDATED VIEW", updatedView)
         setViewLoc(updatedView)
     }
+    const HandleMapUpdate = (id, update)=>{
+      let updatedGridData = gridData.map((room, index)=>{
+        let updatedRoom = room;
+        if(id===room.node_id){
+          updatedRoom = update;
+        }
+        return updatedRoom
+      })
+      setGridData(updatedGridData)
+    }
     return(
     <div className="map-container">
         <div className="button-row ">
           {
-           ( viewLoc.x<=0 || viewLoc.y<=0)
+           ( viewLoc.x<=0 && viewLoc.y<=0)
             ?
           <Button
               className="bp3-button"
@@ -115,7 +112,7 @@ const WorldBuilderMap2 = ({
           />
           }
           {
-          ((viewLoc.x > (width+600)) || (viewLoc.y<=0))
+          ((viewLoc.x > (width+200)) && (viewLoc.y<=0))
           ?
           <Button
               className="bp3-button"
@@ -164,6 +161,7 @@ const WorldBuilderMap2 = ({
                         ?
                         <Grid
                             gridData={gridData}
+                            gridUpdateFunction = {HandleMapUpdate}
                             borders={worldBorders}
                             xOffset={viewLoc.x}
                             yOffset={viewLoc.y}
@@ -174,7 +172,7 @@ const WorldBuilderMap2 = ({
                     } 
             </div>
         {
-          (viewLoc.x > width+600)
+          (viewLoc.x > width+250)
           ?
           <Button
               className="bp3-button"
@@ -195,7 +193,7 @@ const WorldBuilderMap2 = ({
         </div>
         <div className="button-row">
         {
-            (viewLoc.y>=height || viewLoc.x<=0 )
+            (viewLoc.y>=height+200 && viewLoc.x<=0 )
             ?
           <Button
               className="bp3-button"
@@ -215,7 +213,7 @@ const WorldBuilderMap2 = ({
           />
           }
           {
-            (viewLoc.y >= height)
+            (viewLoc.y >= height+200)
               ?
             <Button
               className="bp3-button"
@@ -234,7 +232,7 @@ const WorldBuilderMap2 = ({
             />
           }
           {
-            (viewLoc.y>=height || viewLoc.x > width+600)
+            (viewLoc.y>=height+200 && viewLoc.x > width+250)
             ?
             <Button
               className="bp3-button"

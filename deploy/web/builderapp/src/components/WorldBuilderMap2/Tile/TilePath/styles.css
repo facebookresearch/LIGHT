@@ -2,12 +2,12 @@
   border-style:solid;  
   border-color: grey;
   border-width: 5px;
-  opacity: .6;
+  opacity: .2;
 }
 
 .path-container:hover{
 
-    opacity: .2;
+    opacity: .6;
 }
   
 

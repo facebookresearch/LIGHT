@@ -1,12 +1,12 @@
 /* REACT */
 import React, {useRef} from 'react';
 /* REDUX */
-import {useAppDispatch, useAppSelector} from '../../../app/hooks';
+
 /* STYLES */
 import './styles.css';
 /* BOOTSTRAP COMPONENTS */
 //LAYOUT
-import Container from 'react-bootstrap/Container';
+
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 //FORM

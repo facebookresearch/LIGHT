@@ -1,8 +1,5 @@
 /* REACT */
 import React from 'react';
-import { useParams, useRouteMatch, useHistory } from "react-router-dom";
-/* REDUX */
-import {useAppDispatch, useAppSelector} from '../../app/hooks';
 /* STYLES */
 import './styles.css';
 /* BOOTSTRAP COMPONENTS */
@@ -14,8 +11,6 @@ import Button from 'react-bootstrap/Button'
 
 
 const ButtonGroups = ({buttons, orientation})=> {
-  const history = useHistory();
-
   
   return (
     <ButtonGroup vertical>

@@ -1,7 +1,7 @@
 /* REACT */
 import React from "react";
 /* REACT ROUTER */
-import { Switch, Route, Link } from 'react-router-dom';
+import {  Link } from 'react-router-dom';
 /* STYLES */
 import "./styles.css";
 

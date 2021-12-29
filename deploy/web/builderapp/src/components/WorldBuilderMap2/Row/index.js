@@ -13,7 +13,8 @@ const Row = ({
     previousRowData,
     rowData, 
     borders,
-    tileClickFunction
+    tileClickFunction,
+    gridUpdateFunction
 })=>{
     /* ------ LOCAL STATE ------ */
     const [data, setData] = useState([])
@@ -21,7 +22,7 @@ const Row = ({
     /* --- LIFE CYCLE FUNCTIONS --- */
     useEffect(()=>{
         setData(rowData)
-    }, rowData)
+    }, [rowData])
     return (
         <div
             className="row-container"
@@ -30,17 +31,19 @@ const Row = ({
                 data.length
                 ?
                 data.map((tileData, index)=>{
-                    let leftTile = data[index-1] ? data[index-1]: false;
-                    let topTile = previousRowData ? previousRowData[index] : false
-
+                    let leftTileData= data[index-1];
+                    let isLeftTile = leftTileData ? true: false;
+                    let topTileData= previousRowData[index];
+                    let isTopTile = topTileData ? true: false;
                     return(
                         <Tile 
                             key={index}
-                            data={tileData}
+                            tileData={tileData}
                             borders={borders}
                             tileClickFunction={tileClickFunction}
-                            leftNeighbor={leftTile}
-                            topNeighbor={topTile}
+                            leftNeighbor={leftTileData}
+                            topNeighbor={topTileData}
+                            gridUpdateFunction={gridUpdateFunction}
                         />
                     )}
                 )

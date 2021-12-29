@@ -3,9 +3,9 @@ import React, {useEffect} from "react";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from './app/hooks';
 //ACTIONS
-import {fetchWorlds} from './features/playerWorlds/playerworlds-slice';
+import {fetchWorlds, setWorldDrafts} from './features/playerWorlds/playerworlds-slice';
 /* REACT ROUTER */
-import { HashRouter, Route, Redirect } from "react-router-dom";
+import { HashRouter, Route } from "react-router-dom";
 /* CUSTOM COMPONENTS */
 import NavHeader from "./components/NavHeader"
 //PAGES
@@ -31,13 +31,33 @@ const Routes = ()=> {
     // REDUX DISPATCH FUNCTION
     const dispatch = useAppDispatch();
     //REDUX STATE
+    const customWorlds = useAppSelector((state) => state.playerWorlds.customWorlds);
+    //REDUX ACTIONS
     const fetchPlayerWorlds = ()=>{
       dispatch(fetchWorlds(DummyWorlds))
     }
+    // Checks for drafts on local storage then saves them to state.
+    const setPlayerWorldDrafts = ()=>{
+      let updatedDrafted = customWorlds.map((world)=>{
+        let worldDraft  = JSON.parse(window.localStorage.getItem(world.id));
+        if(worldDraft){
+          return worldDraft;
+        }else{
+          return world;
+        }
+      })
+      dispatch(setWorldDrafts(updatedDrafted))
+    }
     /* --- LIFE CYCLE FUNCTIONS --- */
+    // Pulls worlds from backend
     useEffect(()=>{
       fetchPlayerWorlds()
     },[])
+    useEffect(() => {
+      setPlayerWorldDrafts()
+    }, [customWorlds])
+
+    
   return (
       <div>
         <HashRouter>

@@ -11,10 +11,7 @@ import { updateCharacters } from "../../features/characters/characters-slice.ts"
 /* STYLES */
 import "./styles.css"
 /* BOOTSTRAP COMPONENTS */
-//LAYOUT
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+
 /* CUSTOM COMPONENTS */
 import BreadCrumbs from "../../components/BreadCrumbs";
 import NumberButtonInput from "../../components/NumberButtonInput";
@@ -26,20 +23,17 @@ import "./styles.css";
 //Dummy Data
 import DummyWorlds from "../../Copy/DummyData";
 
-const WorldBuilderPage = ()=> { 
-    //REACT ROUTER
-    const history = useHistory();
+const WorldBuilderPage = ()=> {
     let { worldId, categories } = useParams();
-    //let { path, url } = useRouteMatch();
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
     //WORLDS
-    const customWorlds = useAppSelector((state) => state.playerWorlds.customWorlds);
+    const worldDrafts = useAppSelector((state) => state.playerWorlds.worldDrafts);
     const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms)
     /* ------ LOCAL STATE ------ */
-    const [floor, setFloor]= useState(0);
+    const [floor, setFloor]= useState(0); 
     const [mapBorders, setMapBorders] = useState({
         top: 2,
         bottom: -2,
@@ -50,15 +44,17 @@ const WorldBuilderPage = ()=> {
     const [mapHeight, setMapHeight] = useState(0);
     const [mapSideBarOpen, setMapSideBarOpen] = useState(false);
     //UTILS
+    // calculateMapBorders- Calculates borders from array of roomnodes and sets border values.
     const calculateMapBorders = (roomNodes)=>{
         let borders = {
-            top: 2,
-            bottom: -2,
-            left: -2,
-            right: 2
+            top: Number.MIN_SAFE_INTEGER,
+            bottom: Number.MAX_SAFE_INTEGER,
+            left: Number.MAX_SAFE_INTEGER,
+            right: Number.MIN_SAFE_INTEGER
         }
         roomNodes.map((roomNode)=>{
             let {grid_location} = roomNode;
+            console.log("GRID LOC", grid_location)
             let x = grid_location[0]
             let y = grid_location[1]
             borders.top = borders.top > y ? borders.top : y;
@@ -66,10 +62,20 @@ const WorldBuilderPage = ()=> {
             borders.right = borders.right > x ? borders.right : x;
             borders.left = borders.left < x ? borders.left : x;
         })
+        // while((borders.top - borders.bottom)<3){
+        //     borders.top = borders.top++;
+        //     borders.bottom = borders.bottom--;
+        // }
+        // while((borders.right - borders.left)<3){
+        //     borders.right = borders.right++;
+        //     borders.left = borders.left--;
+        // }
+        console.log("BORDERS", borders)
         return setMapBorders(borders);
     }
 
-    const WorldNodeSorter = (world)=>{
+    // worldNodeSorter - Sorts the the different types of nodes in a world into arrays
+    const worldNodeSorter = (world)=>{
         let CharacterNodes = [];
         let RoomNodes = [];
         let ObjectNodes = [];
@@ -100,32 +106,36 @@ const WorldBuilderPage = ()=> {
       }
 
     /* --- LIFE CYCLE FUNCTIONS --- */
+    // Fetch world data from backend or from draft data if it exists.
     useEffect(()=>{
         dispatch(fetchWorlds(DummyWorlds))
     },[])
-
+    
+    // Selects world from draft or world Data using params (worldId) *** discuss
     useEffect(()=>{
-        if(customWorlds.length){
-            customWorlds.map((world) =>{
+        if(worldDrafts.length){
+            worldDrafts.map((world) =>{
                 const {id} = world;
                 if(worldId == id){
                     dispatch(selectWorld(world))
                 }
             })
         }
-    },[customWorlds])
+    },[worldDrafts])
 
-
+    // Uses worldNodeSorter helper function to break nodes into arrays and send them to respective redux slices.
     useEffect(()=>{
         if(selectedWorld){
-          WorldNodeSorter(selectedWorld)
+          worldNodeSorter(selectedWorld)
         }
       },[selectedWorld])
 
+    // Uses calculateMapBorders helper function to set borders that will be applied to Map to component data using room data
     useEffect(()=>{
         calculateMapBorders(worldRooms)
     },[worldRooms])
 
+    // Sets MapWidth and MapHeight state.
     useEffect(()=>{
         let {top, right, bottom, left} = mapBorders;
         let updatedMapWidthMultiplier = Math.abs(left) + right;
@@ -138,11 +148,7 @@ const WorldBuilderPage = ()=> {
         setMapHeight(updatedMapHeight);
     },[mapBorders])
 
-    //HANDLERS
-    // const handleClick = (roomId)=>{
-    //     history.push(`/editworld/${worldId}/${categories}/map/rooms/${roomId}`);
-    // }
-
+    // Handler
     const closeSidebar = ()=>{
         setMapSideBarOpen(false)
     }
@@ -153,7 +159,10 @@ const WorldBuilderPage = ()=> {
     }
 
     //CRUMBS
-    const crumbs= [{name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`}, {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`}]
+    const crumbs= [
+        {name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`}, 
+        {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`}
+    ]
 
 
     return (
@@ -176,6 +185,7 @@ const WorldBuilderPage = ()=> {
                 (worldRooms.length && mapBorders)
                 ?
                 <WorldBuilderMap
+                    worldData={selectedWorld}
                     worldRoomsData={worldRooms}
                     worldBorders={mapBorders}
                     tileClickFunction={handleTileClick}

@@ -16,12 +16,14 @@ interface World {
 /* STATE TYPE */
 interface PlayerWorldsState {
   customWorlds: Array<World>;
+  worldDrafts: Array<World>;
   selectedWorld: World | null;
 }
 
 /* Initial value of the state */
 const initialState: PlayerWorldsState = {
     customWorlds: [],
+    worldDrafts:[],
     selectedWorld: null
 };
 
@@ -35,6 +37,12 @@ const playerWorldsSlice = createSlice({
             return {
                 ...state,
                 customWorlds: action.payload
+            }
+        },
+        setWorldDrafts(state, action: PayloadAction<Array<World>>){
+            return {
+                ...state,
+                worldDrafts: action.payload
             }
         },
         selectWorld(state, action: PayloadAction<World>) {
@@ -62,6 +70,7 @@ const playerWorldsSlice = createSlice({
 // import anywhere in app to use
 export const {
     fetchWorlds,
+    setWorldDrafts,
     selectWorld,
     updateSelectedWorld,
     updatePlayerWorlds

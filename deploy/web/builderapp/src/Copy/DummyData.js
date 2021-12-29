@@ -1116,37 +1116,37 @@ const SimpleWorld2 = {
 //LARGE GAME SIZED WORLD WITH MANY NODES OF ALL SIZES
 
 const ComplexWorld1 = {
-  id:1,
-    name: "Complex World",
-    tags:["#big", "#intricate", "#populated"],
+  id:3,
+  name: "Complex World",
+  tags:["#red", "#haunted", "#dry"],
   agents: [
     "assassin_139",
-    "assistant chef_130",
+    "assistant_chef_130",
     "bandit_153",
-    "battle master_99",
-    "big sheep-like brown dog_169",
-    "bighorn sheep_136",
+    "battle_master_99",
+    "big_sheep_like_brown_dog_169",
+    "bighorn_sheep_136",
     "butler_68",
-    "drunk reeling out of the saloon_163",
+    "drunk_reeling_out_of_the_163",
     "fox_150",
     "goblin_16",
-    "graveyard keeper_58",
+    "graveyard_keeper_58",
     "groundskeeper_95",
-    "half wild cat_123",
+    "half_wild_cat_123",
     "jailer_157",
-    "lady of the house_76",
+    "lady_of_the_house_76",
     "lord_108",
-    "master-at-arms_43",
-    "milk man_145",
-    "monkey friend_98",
+    "master_at_arms_43",
+    "milk_man_145",
+    "monkey_friend_98",
     "pig_140",
     "priest_116",
     "rat_165",
-    "serving boy_51",
-    "skeleton assistant_15",
-    "small aggressive-looking dog_83",
+    "serving_boy_51",
+    "skeleton_assistant_15",
+    "small_aggressive_looking_83",
     "smith_160",
-    "town doctor_142"
+    "town_doctor_142"
   ],
   nodes: {
     abandoned_farm_21: {
@@ -1157,7 +1157,7 @@ const ComplexWorld1 = {
       contain_size: 1980,
       contained_nodes: {
         bighorn_sheep_136: {
-          target_id: "bighorn sheep_136"
+          target_id: "bighorn_sheep_136"
         }
       },
       container_node: {
@@ -1189,22 +1189,22 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "the forest_22"
+          target_id: "the_forest_22"
         },
         unsettling_forest_area_20: {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "unsettling forest area_20"
+          target_id: "unsettling_forest_area_20"
         },
         wealthy_area_of_town_19: {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "wealthy area of town_19"
+          target_id: "wealthy_area_of_town_19"
         }
       },
-      node_id: "abandoned farm_21",
+      node_id: "abandoned_farm_21",
       object: false,
       room: true,
       size: 2000,
@@ -1219,7 +1219,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: true,
       container_node: {
-        target_id: "picnic area_14"
+        target_id: "picnic_area_14"
       },
       db_id: null,
       dead: false,
@@ -1235,7 +1235,7 @@ const ComplexWorld1 = {
       names: [
         "apple tree"
       ],
-      node_id: "apple tree_13",
+      node_id: "apple_tree_13",
       object: true,
       on_use: null,
       room: false,
@@ -1259,7 +1259,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "assistant chef_130"
+        target_id: "assistant_chef_130"
       },
       db_id: null,
       dead: false,
@@ -1301,7 +1301,7 @@ const ComplexWorld1 = {
       contain_size: 20,
       contained_nodes: {},
       container_node: {
-        target_id: "modest living area_18"
+        target_id: "modest_living_area_18"
       },
       damage: 1,
       db_id: null,
@@ -1360,7 +1360,7 @@ const ComplexWorld1 = {
         }
       },
       container_node: {
-        target_id: "disposal area_16"
+        target_id: "disposal_area_16"
       },
       damage: 1,
       db_id: null,
@@ -1384,7 +1384,7 @@ const ComplexWorld1 = {
       names: [
         "assistant chef"
       ],
-      node_id: "assistant chef_130",
+      node_id: "assistant_chef_130",
       num_wearable_items: 0,
       num_wieldable_items: 0,
       object: false,
@@ -1415,11 +1415,11 @@ const ComplexWorld1 = {
           target_id: "harness_154"
         },
         treasure_chest_155: {
-          target_id: "treasure chest_155"
+          target_id: "treasure_chest_155"
         }
       },
       container_node: {
-        target_id: "unsettling forest area_20"
+        target_id: "unsettling_forest_area_20"
       },
       damage: 1,
       db_id: null,
@@ -1484,7 +1484,7 @@ const ComplexWorld1 = {
       names: [
         "bathroom pot"
       ],
-      node_id: "bathroom pot_61",
+      node_id: "bathroom_pot_61",
       object: true,
       on_use: null,
       room: false,
@@ -1514,14 +1514,14 @@ const ComplexWorld1 = {
           target_id: "cargo_100"
         },
         map_of_the_kingdom_102: {
-          target_id: "map of the kingdom_102"
+          target_id: "map_of_the_kingdom_102"
         },
         paper_101: {
           target_id: "paper_101"
         }
       },
       container_node: {
-        target_id: "small hut_11"
+        target_id: "small_hut_11"
       },
       damage: 1,
       db_id: null,
@@ -1545,7 +1545,7 @@ const ComplexWorld1 = {
       names: [
         "battle master"
       ],
-      node_id: "battle master_99",
+      node_id: "battle_master_99",
       num_wearable_items: 0,
       num_wieldable_items: 0,
       object: false,
@@ -1569,7 +1569,7 @@ const ComplexWorld1 = {
       contain_size: 1,
       contained_nodes: {
         luxurious_bedding_66: {
-          target_id: "luxurious bedding_66"
+          target_id: "luxurious_bedding_66"
         },
         tent_67: {
           target_id: "tent_67"
@@ -1577,7 +1577,7 @@ const ComplexWorld1 = {
       },
       container: true,
       container_node: {
-        target_id: "personal quarters_2"
+        target_id: "personal_quarters_2"
       },
       db_id: null,
       dead: false,
@@ -1617,7 +1617,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "serving boy_51"
+        target_id: "serving_boy_51"
       },
       db_id: null,
       dead: false,
@@ -1659,7 +1659,7 @@ const ComplexWorld1 = {
       contain_size: 20,
       contained_nodes: {},
       container_node: {
-        target_id: "outside castle_32"
+        target_id: "outside_castle_32"
       },
       damage: 1,
       db_id: null,
@@ -1683,7 +1683,7 @@ const ComplexWorld1 = {
       names: [
         "big sheep-like brown dog"
       ],
-      node_id: "big sheep-like brown dog_169",
+      node_id: "big_sheep_like_brown_dog_169",
       num_wearable_items: 0,
       num_wieldable_items: 0,
       object: false,
@@ -1715,7 +1715,7 @@ const ComplexWorld1 = {
         }
       },
       container_node: {
-        target_id: "abandoned farm_21"
+        target_id: "abandoned_farm_21"
       },
       damage: 1,
       db_id: null,
@@ -1739,7 +1739,7 @@ const ComplexWorld1 = {
       names: [
         "bighorn sheep"
       ],
-      node_id: "bighorn sheep_136",
+      node_id: "bighorn_sheep_136",
       num_wearable_items: 0,
       num_wieldable_items: 0,
       object: false,
@@ -1748,11 +1748,11 @@ const ComplexWorld1 = {
       persona: "I am a sheep with the biggest horns in the area. Other sheep give me food and drink. I know how to get humans to check on me.\nYour Mission: Find the best grazeable nibbles in the kingdom",
       quests: [
         {
-          actor: "bighorn sheep_136",
+          actor: "bighorn_sheep_136",
           actor_name: "bighorn sheep",
           actor_persona: "I am a sheep with the biggest horns in the area. Other sheep give me food and drink. I know how to get humans to check on me.\nYour Mission: Find the best grazeable nibbles in the kingdom",
           actor_str: "a bighorn sheep",
-          agent: "half wild cat_123",
+          agent: "half_wild_cat_123",
           container: null,
           goal_action: "give some corn to a half wild cat",
           goal_verb: "give",
@@ -1779,7 +1779,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "half wild cat_123"
+        target_id: "half_wild_cat_123"
       },
       db_id: null,
       dead: false,
@@ -1795,7 +1795,7 @@ const ComplexWorld1 = {
       names: [
         "blacksmith's hammer"
       ],
-      node_id: "blacksmith's hammer_128",
+      node_id: "blacksmiths_hammer_128",
       object: true,
       on_use: null,
       room: false,
@@ -1818,7 +1818,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "personal rooms_0"
+        target_id: "personal_rooms_0"
       },
       db_id: null,
       dead: false,
@@ -1872,7 +1872,7 @@ const ComplexWorld1 = {
       names: [
         "block and tackle"
       ],
-      node_id: "block and tackle_111",
+      node_id: "block_and_tackle_111",
       object: true,
       on_use: null,
       room: false,
@@ -1896,7 +1896,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "drunk reeling out of the saloon_163"
+        target_id: "drunk_reeling_out_of_the_163"
       },
       db_id: null,
       dead: false,
@@ -1912,7 +1912,7 @@ const ComplexWorld1 = {
       names: [
         "bottle of wine"
       ],
-      node_id: "bottle of wine_164",
+      node_id: "bottle_of_wine_164",
       object: true,
       on_use: null,
       room: false,
@@ -1936,7 +1936,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "main gate_8"
+        target_id: "main_gate_8"
       },
       db_id: null,
       dead: false,
@@ -1952,7 +1952,7 @@ const ComplexWorld1 = {
       names: [
         "bow and arrows"
       ],
-      node_id: "bow and arrows_82",
+      node_id: "bow_and_arrows_82",
       object: true,
       on_use: null,
       room: false,
@@ -1975,7 +1975,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "main gate_8"
+        target_id: "main_gate_8"
       },
       db_id: null,
       dead: false,
@@ -2014,7 +2014,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "small graveyard_10"
+        target_id: "small_graveyard_10"
       },
       db_id: null,
       dead: false,
@@ -2030,7 +2030,7 @@ const ComplexWorld1 = {
       names: [
         "bowl of fruit"
       ],
-      node_id: "bowl of fruit_94",
+      node_id: "bowl_of_fruit_94",
       object: true,
       on_use: null,
       room: false,
@@ -2053,7 +2053,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "personal rooms_0"
+        target_id: "personal_rooms_0"
       },
       db_id: null,
       dead: false,
@@ -2069,7 +2069,7 @@ const ComplexWorld1 = {
       names: [
         "broken glass"
       ],
-      node_id: "broken glass_36",
+      node_id: "broken_glass_36",
       object: true,
       on_use: null,
       room: false,
@@ -2083,7 +2083,7 @@ const ComplexWorld1 = {
       wearable: false,
       wieldable: false
     },
-    bucket_for_eliminating_waste_87: {
+    bucket_for_eliminating_wa87: {
       agent: false,
       classes: [
         "container",
@@ -2109,7 +2109,7 @@ const ComplexWorld1 = {
       names: [
         "bucket for eliminating waste"
       ],
-      node_id: "bucket for eliminating waste_87",
+      node_id: "bucket_for_eliminating_wa87",
       object: true,
       on_use: null,
       room: false,
@@ -2139,14 +2139,14 @@ const ComplexWorld1 = {
           target_id: "chicken_69"
         },
         fresh_red_paint_70: {
-          target_id: "fresh red paint_70"
+          target_id: "fresh_red_paint_70"
         },
         sapphire_71: {
           target_id: "sapphire_71"
         }
       },
       container_node: {
-        target_id: "personal quarters_2"
+        target_id: "personal_quarters_2"
       },
       damage: 1,
       db_id: null,
@@ -2194,7 +2194,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "wood is gathered to make fire_113"
+        target_id: "wood_is_gathered_to_make_113"
       },
       db_id: null,
       dead: false,
@@ -2234,7 +2234,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "small graveyard_10"
+        target_id: "small_graveyard_10"
       },
       db_id: null,
       dead: false,
@@ -2313,7 +2313,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: true,
       container_node: {
-        target_id: "battle master_99"
+        target_id: "battle_master_99"
       },
       db_id: null,
       dead: false,
@@ -2371,13 +2371,13 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "outside castle_32"
+          target_id: "outside_castle_32"
         },
         the_forsaken_castle_35: {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "the forsaken castle_35"
+          target_id: "the_forsaken_castle_35"
         }
       },
       node_id: "castle_34",
@@ -2420,10 +2420,10 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "main house_3"
+          target_id: "main_house_3"
         }
       },
-      node_id: "central garden_4",
+      node_id: "central_garden_4",
       object: false,
       room: true,
       size: 2000,
@@ -2438,7 +2438,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: true,
       container_node: {
-        target_id: "wizard's quarters_3"
+        target_id: "wizards_quarters_3"
       },
       db_id: null,
       dead: false,
@@ -2478,7 +2478,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: true,
       container_node: {
-        target_id: "graveyard keeper_58"
+        target_id: "graveyard_keeper_58"
       },
       db_id: null,
       dead: false,
@@ -2494,7 +2494,7 @@ const ComplexWorld1 = {
       names: [
         "chamber pot"
       ],
-      node_id: "chamber pot_60",
+      node_id: "chamber_pot_60",
       object: true,
       on_use: null,
       room: false,
@@ -2588,7 +2588,7 @@ const ComplexWorld1 = {
       wearable: false,
       wieldable: false
     },
-    clothes_made_of_various_plant_matter_such_as_large_leaves_and_vines_138: {
+    clothes_made_of_various_p138: {
       agent: false,
       classes: [
         "object",
@@ -2598,7 +2598,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "modest living area_18"
+        target_id: "modest_living_area_18"
       },
       db_id: null,
       dead: false,
@@ -2614,7 +2614,7 @@ const ComplexWorld1 = {
       names: [
         "clothes made of various plant matter such as large leaves and vines"
       ],
-      node_id: "clothes made of various plant matter such as large leaves and vines_138",
+      node_id: "clothes_made_of_various_p138",
       object: true,
       on_use: null,
       room: false,
@@ -2636,15 +2636,15 @@ const ComplexWorld1 = {
       contain_size: 1,
       contained_nodes: {
         hair_brush_50: {
-          target_id: "hair brush_50"
+          target_id: "hair_brush_50"
         },
-        mystical_necklace_with_a_colorful_crystal_49: {
-          target_id: "mystical necklace with a colorful crystal_49"
+        mystical_necklace_with_a_49: {
+          target_id: "mystical_necklace_with_a_49"
         }
       },
       container: true,
       container_node: {
-        target_id: "master-at-arms_43"
+        target_id: "master_at_arms_43"
       },
       db_id: null,
       dead: false,
@@ -2683,12 +2683,12 @@ const ComplexWorld1 = {
       contain_size: 2,
       contained_nodes: {
         roasting_meat_132: {
-          target_id: "roasting meat_132"
+          target_id: "roasting_meat_132"
         }
       },
       container: true,
       container_node: {
-        target_id: "assistant chef_130"
+        target_id: "assistant_chef_130"
       },
       db_id: null,
       dead: false,
@@ -2728,7 +2728,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "bighorn sheep_136"
+        target_id: "bighorn_sheep_136"
       },
       db_id: null,
       dead: false,
@@ -2766,7 +2766,7 @@ const ComplexWorld1 = {
       contain_size: 1979,
       contained_nodes: {
         ink_jar_156: {
-          target_id: "ink jar_156"
+          target_id: "ink_jar_156"
         },
         jailer_157: {
           target_id: "jailer_157"
@@ -2793,19 +2793,19 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "abandoned farm_21"
+          target_id: "abandoned_farm_21"
         },
         saokras_blacksmith_shop_25: {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "saokra's blacksmith shop_25"
+          target_id: "saokras_blacksmith_shop_25"
         },
         shop_in_bazaar_24: {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "shop in bazaar_24"
+          target_id: "shop_in_bazaar_24"
         }
       },
       node_id: "countryside_23",
@@ -2829,7 +2829,7 @@ const ComplexWorld1 = {
       },
       container: true,
       container_node: {
-        target_id: "table area_17"
+        target_id: "table_area_17"
       },
       db_id: null,
       dead: false,
@@ -2869,12 +2869,12 @@ const ComplexWorld1 = {
           target_id: "scroll_7"
         },
         wizards_tome_12: {
-          target_id: "wizard's tome_12"
+          target_id: "wizards_tome_12"
         }
       },
       container: true,
       container_node: {
-        target_id: "wizard's quarters_3"
+        target_id: "wizards_quarters_3"
       },
       db_id: null,
       dead: false,
@@ -2913,7 +2913,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "lavish desk piled high with books._6"
+        target_id: "lavish_desk_piled_high_wi6"
       },
       db_id: null,
       dead: false,
@@ -2929,7 +2929,7 @@ const ComplexWorld1 = {
       names: [
         "dexteritate scroll"
       ],
-      node_id: "dexteritate scroll_9",
+      node_id: "dexteritate_scroll_9",
       object: true,
       on_use: [
         {
@@ -2985,10 +2985,10 @@ const ComplexWorld1 = {
       contain_size: 1978,
       contained_nodes: {
         assistant_chef_130: {
-          target_id: "assistant chef_130"
+          target_id: "assistant_chef_130"
         },
         homestead_equipment_129: {
-          target_id: "homestead equipment_129"
+          target_id: "homestead_equipment_129"
         },
         shovel_1: {
           target_id: "shovel_1"
@@ -3015,16 +3015,16 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "reception area_12"
+          target_id: "reception_area_12"
         },
         table_area_17: {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "table area_17"
+          target_id: "table_area_17"
         }
       },
-      node_id: "disposal area_16",
+      node_id: "disposal_area_16",
       object: false,
       room: true,
       size: 2000,
@@ -3040,7 +3040,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "small aggressive-looking dog_83"
+        target_id: "small_aggressive_looking_83"
       },
       db_id: null,
       dead: false,
@@ -3069,7 +3069,7 @@ const ComplexWorld1 = {
       wearable: true,
       wieldable: false
     },
-    drunk_reeling_out_of_the_saloon_163: {
+    drunk_reeling_out_of_the_163: {
       agent: true,
       aggression: 0,
       attack_tagged_agents: [],
@@ -3082,11 +3082,11 @@ const ComplexWorld1 = {
       contain_size: 20,
       contained_nodes: {
         bottle_of_wine_164: {
-          target_id: "bottle of wine_164"
+          target_id: "bottle_of_wine_164"
         }
       },
       container_node: {
-        target_id: "table area_17"
+        target_id: "table_area_17"
       },
       damage: 1,
       db_id: null,
@@ -3110,7 +3110,7 @@ const ComplexWorld1 = {
       names: [
         "drunk reeling out of the saloon"
       ],
-      node_id: "drunk reeling out of the saloon_163",
+      node_id: "drunk_reeling_out_of_the_163",
       num_wearable_items: 0,
       num_wieldable_items: 0,
       object: false,
@@ -3133,7 +3133,7 @@ const ComplexWorld1 = {
       contain_size: 100000,
       contained_nodes: {
         skeleton_assistant_15: {
-          target_id: "skeleton assistant_15"
+          target_id: "skeleton_assistant_15"
         }
       },
       container_node: {
@@ -3163,10 +3163,10 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "wizard's quarters_3"
+          target_id: "wizards_quarters_3"
         }
       },
-      node_id: "dungeon within a castle_2",
+      node_id: "dungeon_within_a_castle_2",
       object: false,
       room: true,
       size: 1,
@@ -3204,13 +3204,13 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "dungeon within a castle_2"
+          target_id: "dungeon_within_a_castle_2"
         },
         entrance_to_a_cave_0: {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "entrance to a cave_0"
+          target_id: "entrance_to_a_cave_0"
         }
       },
       node_id: "dungeon_1",
@@ -3228,7 +3228,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "main graveyard_9"
+        target_id: "main_graveyard_9"
       },
       db_id: null,
       dead: false,
@@ -3244,7 +3244,7 @@ const ComplexWorld1 = {
       names: [
         "embalming equipment"
       ],
-      node_id: "embalming equipment_90",
+      node_id: "embalming_equipment_90",
       object: true,
       on_use: null,
       room: false,
@@ -3288,16 +3288,16 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "fish market_28"
+          target_id: "fish_market_28"
         },
         saokras_blacksmith_shop_25: {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "saokra's blacksmith shop_25"
+          target_id: "saokras_blacksmith_shop_25"
         }
       },
-      node_id: "empty storage room_27",
+      node_id: "empty_storage_room_27",
       object: false,
       room: true,
       size: 2000,
@@ -3337,16 +3337,16 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "the forest_22"
+          target_id: "the_forest_22"
         }
       },
-      node_id: "entrance to a cave_0",
+      node_id: "entrance_to_a_cave_0",
       object: false,
       room: true,
       size: 1,
       surface_type: "in"
     },
-    entrance_to_the_pine_trees_15: {
+    entrance_to_the_pine_tree15: {
       agent: false,
       classes: [
         "room"
@@ -3354,7 +3354,7 @@ const ComplexWorld1 = {
       contain_size: 1999,
       contained_nodes: {
         hefty_rock_14: {
-          target_id: "hefty rock_14"
+          target_id: "hefty_rock_14"
         }
       },
       container_node: {
@@ -3378,16 +3378,16 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "pine tree graveyard_13"
+          target_id: "pine_tree_graveyard_13"
         },
         reception_area_12: {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "reception area_12"
+          target_id: "reception_area_12"
         }
       },
-      node_id: "entrance to the pine trees_15",
+      node_id: "entrance_to_the_pine_tree15",
       object: false,
       room: true,
       size: 2000,
@@ -3402,15 +3402,15 @@ const ComplexWorld1 = {
       contain_size: 1,
       contained_nodes: {
         ritual_dagger_39: {
-          target_id: "ritual dagger_39"
+          target_id: "ritual_dagger_39"
         },
         worn_quilt_38: {
-          target_id: "worn quilt_38"
+          target_id: "worn_quilt_38"
         }
       },
       container: true,
       container_node: {
-        target_id: "personal rooms_0"
+        target_id: "personal_rooms_0"
       },
       db_id: null,
       dead: false,
@@ -3426,7 +3426,7 @@ const ComplexWorld1 = {
       names: [
         "expensive carpet"
       ],
-      node_id: "expensive carpet_37",
+      node_id: "expensive_carpet_37",
       object: true,
       on_use: null,
       room: false,
@@ -3449,7 +3449,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "pine tree graveyard_13"
+        target_id: "pine_tree_graveyard_13"
       },
       db_id: null,
       dead: false,
@@ -3465,7 +3465,7 @@ const ComplexWorld1 = {
       names: [
         "feather fountain pen"
       ],
-      node_id: "feather fountain pen_112",
+      node_id: "feather_fountain_pen_112",
       object: true,
       on_use: null,
       room: false,
@@ -3505,7 +3505,7 @@ const ComplexWorld1 = {
       names: [
         "finest silk and velvet"
       ],
-      node_id: "finest silk and velvet_158",
+      node_id: "finest_silk_and_velvet_158",
       object: true,
       on_use: null,
       room: false,
@@ -3550,16 +3550,16 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "empty storage room_27"
+          target_id: "empty_storage_room_27"
         }
       },
-      node_id: "fish market_28",
+      node_id: "fish_market_28",
       object: false,
       room: true,
       size: 2000,
       surface_type: "in"
     },
-    fish_wrap_or_butcher_paper_85: {
+    fish_wrap__or_butcher_pap85: {
       agent: false,
       classes: [
         "object",
@@ -3569,7 +3569,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "small aggressive-looking dog_83"
+        target_id: "small_aggressive_looking_83"
       },
       db_id: null,
       dead: false,
@@ -3585,7 +3585,7 @@ const ComplexWorld1 = {
       names: [
         "fish wrap ( or butcher paper)"
       ],
-      node_id: "fish wrap ( or butcher paper)_85",
+      node_id: "fish_wrap__or_butcher_pap85",
       object: true,
       on_use: null,
       room: false,
@@ -3607,7 +3607,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "small hut_11"
+        target_id: "small_hut_11"
       },
       db_id: null,
       dead: false,
@@ -3623,7 +3623,7 @@ const ComplexWorld1 = {
       names: [
         "fishing rod"
       ],
-      node_id: "fishing rod_1",
+      node_id: "fishing_rod_1",
       object: true,
       on_use: [
         {
@@ -3702,7 +3702,7 @@ const ComplexWorld1 = {
       names: [
         "flower pot"
       ],
-      node_id: "flower pot_75",
+      node_id: "flower_pot_75",
       object: true,
       on_use: null,
       room: false,
@@ -3726,7 +3726,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: true,
       container_node: {
-        target_id: "picnic area_14"
+        target_id: "picnic_area_14"
       },
       db_id: null,
       dead: false,
@@ -3742,7 +3742,7 @@ const ComplexWorld1 = {
       names: [
         "food tray"
       ],
-      node_id: "food tray_119",
+      node_id: "food_tray_119",
       object: true,
       on_use: null,
       room: false,
@@ -3772,11 +3772,11 @@ const ComplexWorld1 = {
           target_id: "chamberpot_152"
         },
         sword_of_the_guards_151: {
-          target_id: "sword of the guards_151"
+          target_id: "sword_of_the_guards_151"
         }
       },
       container_node: {
-        target_id: "unsettling forest area_20"
+        target_id: "unsettling_forest_area_20"
       },
       damage: 1,
       db_id: null,
@@ -3825,7 +3825,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "main house_3"
+        target_id: "main_house_3"
       },
       db_id: null,
       dead: false,
@@ -3841,7 +3841,7 @@ const ComplexWorld1 = {
       names: [
         "fresh dry house shoes"
       ],
-      node_id: "fresh dry house shoes_72",
+      node_id: "fresh_dry_house_shoes_72",
       object: true,
       on_use: null,
       room: false,
@@ -3879,7 +3879,7 @@ const ComplexWorld1 = {
       names: [
         "fresh red paint"
       ],
-      node_id: "fresh red paint_70",
+      node_id: "fresh_red_paint_70",
       object: true,
       on_use: null,
       room: false,
@@ -3903,7 +3903,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "master-at-arms_43"
+        target_id: "master_at_arms_43"
       },
       db_id: null,
       dead: false,
@@ -3919,7 +3919,7 @@ const ComplexWorld1 = {
       names: [
         "giant club"
       ],
-      node_id: "giant club_46",
+      node_id: "giant_club_46",
       object: true,
       on_use: null,
       room: false,
@@ -3995,7 +3995,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "main hallway_1"
+        target_id: "main_hallway_1"
       },
       db_id: null,
       dead: false,
@@ -4011,7 +4011,7 @@ const ComplexWorld1 = {
       names: [
         "grappling hook"
       ],
-      node_id: "grappling hook_56",
+      node_id: "grappling_hook_56",
       object: true,
       on_use: null,
       room: false,
@@ -4037,17 +4037,17 @@ const ComplexWorld1 = {
       contain_size: 14,
       contained_nodes: {
         chamber_pot_60: {
-          target_id: "chamber pot_60"
+          target_id: "chamber_pot_60"
         },
         lush_green_vegetation_63: {
-          target_id: "lush green vegetation_63"
+          target_id: "lush_green_vegetation_63"
         },
         name_placard_59: {
-          target_id: "name placard_59"
+          target_id: "name_placard_59"
         }
       },
       container_node: {
-        target_id: "main hallway_1"
+        target_id: "main_hallway_1"
       },
       damage: 1,
       db_id: null,
@@ -4071,7 +4071,7 @@ const ComplexWorld1 = {
       names: [
         "Graveyard Keeper"
       ],
-      node_id: "graveyard keeper_58",
+      node_id: "graveyard_keeper_58",
       num_wearable_items: 0,
       num_wieldable_items: 0,
       object: false,
@@ -4095,7 +4095,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "main street_6"
+        target_id: "main_street_6"
       },
       db_id: null,
       dead: false,
@@ -4111,7 +4111,7 @@ const ComplexWorld1 = {
       names: [
         "gray stone"
       ],
-      node_id: "gray stone_78",
+      node_id: "gray_stone_78",
       object: true,
       on_use: [
         {
@@ -4206,7 +4206,7 @@ const ComplexWorld1 = {
         }
       },
       container_node: {
-        target_id: "small graveyard_10"
+        target_id: "small_graveyard_10"
       },
       damage: 1,
       db_id: null,
@@ -4271,7 +4271,7 @@ const ComplexWorld1 = {
       names: [
         "hair brush"
       ],
-      node_id: "hair brush_50",
+      node_id: "hair_brush_50",
       object: true,
       on_use: null,
       room: false,
@@ -4297,20 +4297,20 @@ const ComplexWorld1 = {
       contain_size: 14,
       contained_nodes: {
         blacksmiths_hammer_128: {
-          target_id: "blacksmith's hammer_128"
+          target_id: "blacksmiths_hammer_128"
         },
         magical_crystal_127: {
-          target_id: "magical crystal_127"
+          target_id: "magical_crystal_127"
         },
         magical_lights_124: {
-          target_id: "magical lights_124"
+          target_id: "magical_lights_124"
         },
         wooden_spit_125: {
-          target_id: "wooden spit_125"
+          target_id: "wooden_spit_125"
         }
       },
       container_node: {
-        target_id: "pine tree graveyard_13"
+        target_id: "pine_tree_graveyard_13"
       },
       damage: 1,
       db_id: null,
@@ -4334,7 +4334,7 @@ const ComplexWorld1 = {
       names: [
         "half wild cat"
       ],
-      node_id: "half wild cat_123",
+      node_id: "half_wild_cat_123",
       num_wearable_items: 0,
       num_wieldable_items: 0,
       object: false,
@@ -4343,11 +4343,11 @@ const ComplexWorld1 = {
       persona: "I used to live with people, but I was abandoned young to learn how to fend for myself. I like to scratch people. I love to eat their babies!\nYour Mission: Trick people into giving me food, or if they are small enough, their life!",
       quests: [
         {
-          actor: "half wild cat_123",
+          actor: "half_wild_cat_123",
           actor_name: "half wild cat",
           actor_persona: "I used to live with people, but I was abandoned young to learn how to fend for myself. I like to scratch people. I love to eat their babies!\nYour Mission: Trick people into giving me food, or if they are small enough, their life!",
           actor_str: "a half wild cat",
-          agent: "serving boy_51",
+          agent: "serving_boy_51",
           container: null,
           goal_action: "a serving boy smiles",
           goal_verb: "smile",
@@ -4389,7 +4389,7 @@ const ComplexWorld1 = {
       names: [
         "hand plow"
       ],
-      node_id: "hand plow_109",
+      node_id: "hand_plow_109",
       object: true,
       on_use: null,
       room: false,
@@ -4452,7 +4452,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "small graveyard_10"
+        target_id: "small_graveyard_10"
       },
       db_id: null,
       dead: false,
@@ -4491,7 +4491,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "reception area_12"
+        target_id: "reception_area_12"
       },
       db_id: null,
       dead: false,
@@ -4507,7 +4507,7 @@ const ComplexWorld1 = {
       names: [
         "heavy blanket"
       ],
-      node_id: "heavy blanket_103",
+      node_id: "heavy_blanket_103",
       object: true,
       on_use: null,
       room: false,
@@ -4529,7 +4529,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "entrance to the pine trees_15"
+        target_id: "entrance_to_the_pine_tree15"
       },
       db_id: null,
       dead: false,
@@ -4545,7 +4545,7 @@ const ComplexWorld1 = {
       names: [
         "hefty rock"
       ],
-      node_id: "hefty rock_14",
+      node_id: "hefty_rock_14",
       object: true,
       on_use: [
         {
@@ -4633,7 +4633,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "disposal area_16"
+        target_id: "disposal_area_16"
       },
       db_id: null,
       dead: false,
@@ -4649,7 +4649,7 @@ const ComplexWorld1 = {
       names: [
         "homestead equipment"
       ],
-      node_id: "homestead equipment_129",
+      node_id: "homestead_equipment_129",
       object: true,
       on_use: null,
       room: false,
@@ -4672,7 +4672,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "main graveyard_9"
+        target_id: "main_graveyard_9"
       },
       db_id: null,
       dead: false,
@@ -4688,7 +4688,7 @@ const ComplexWorld1 = {
       names: [
         "horse tack"
       ],
-      node_id: "horse tack_89",
+      node_id: "horse_tack_89",
       object: true,
       on_use: null,
       room: false,
@@ -4727,7 +4727,7 @@ const ComplexWorld1 = {
       names: [
         "huge cast iron pot"
       ],
-      node_id: "huge cast iron pot_62",
+      node_id: "huge_cast_iron_pot_62",
       object: true,
       on_use: null,
       room: false,
@@ -4766,7 +4766,7 @@ const ComplexWorld1 = {
       names: [
         "ink jar"
       ],
-      node_id: "ink jar_156",
+      node_id: "ink_jar_156",
       object: true,
       on_use: null,
       room: false,
@@ -4789,7 +4789,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "personal quarters_2"
+        target_id: "personal_quarters_2"
       },
       db_id: null,
       dead: false,
@@ -4805,7 +4805,7 @@ const ComplexWorld1 = {
       names: [
         "ink well"
       ],
-      node_id: "ink well_64",
+      node_id: "ink_well_64",
       object: true,
       on_use: null,
       room: false,
@@ -4828,7 +4828,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "town doctor_142"
+        target_id: "town_doctor_142"
       },
       db_id: null,
       dead: false,
@@ -4871,10 +4871,10 @@ const ComplexWorld1 = {
       contain_size: 18,
       contained_nodes: {
         finest_silk_and_velvet_158: {
-          target_id: "finest silk and velvet_158"
+          target_id: "finest_silk_and_velvet_158"
         },
         moldy_bread_159: {
-          target_id: "moldy bread_159"
+          target_id: "moldy_bread_159"
         }
       },
       container_node: {
@@ -4927,7 +4927,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "wood is gathered to make fire_113"
+        target_id: "wood_is_gathered_to_make_113"
       },
       db_id: null,
       dead: false,
@@ -4969,7 +4969,7 @@ const ComplexWorld1 = {
       contain_size: 20,
       contained_nodes: {},
       container_node: {
-        target_id: "main house_3"
+        target_id: "main_house_3"
       },
       damage: 1,
       db_id: null,
@@ -4993,7 +4993,7 @@ const ComplexWorld1 = {
       names: [
         "lady of the house"
       ],
-      node_id: "lady of the house_76",
+      node_id: "lady_of_the_house_76",
       num_wearable_items: 0,
       num_wieldable_items: 0,
       object: false,
@@ -5048,7 +5048,7 @@ const ComplexWorld1 = {
       wearable: false,
       wieldable: true
     },
-    large_earthenware_jug_of_water_for_cooking_and_drinking_74: {
+    large_earthenware_jug_of_74: {
       agent: false,
       classes: [
         "container",
@@ -5058,7 +5058,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: true,
       container_node: {
-        target_id: "main house_3"
+        target_id: "main_house_3"
       },
       db_id: null,
       dead: false,
@@ -5074,7 +5074,7 @@ const ComplexWorld1 = {
       names: [
         "large earthenware jug of water for cooking and drinking"
       ],
-      node_id: "large earthenware jug of water for cooking and drinking_74",
+      node_id: "large_earthenware_jug_of_74",
       object: true,
       on_use: null,
       room: false,
@@ -5097,7 +5097,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "main house_3"
+        target_id: "main_house_3"
       },
       db_id: null,
       dead: false,
@@ -5113,7 +5113,7 @@ const ComplexWorld1 = {
       names: [
         "large pile of hay"
       ],
-      node_id: "large pile of hay_73",
+      node_id: "large_pile_of_hay_73",
       object: true,
       on_use: null,
       room: false,
@@ -5127,7 +5127,7 @@ const ComplexWorld1 = {
       wearable: false,
       wieldable: false
     },
-    lavish_desk_piled_high_with_books_6: {
+    lavish_desk_piled_high_wi6: {
       agent: false,
       classes: [
         "object"
@@ -5135,12 +5135,12 @@ const ComplexWorld1 = {
       contain_size: 19,
       contained_nodes: {
         dexteritate_scroll_9: {
-          target_id: "dexteritate scroll_9"
+          target_id: "dexteritate_scroll_9"
         }
       },
       container: true,
       container_node: {
-        target_id: "wizard's quarters_3"
+        target_id: "wizards_quarters_3"
       },
       db_id: null,
       dead: false,
@@ -5156,7 +5156,7 @@ const ComplexWorld1 = {
       names: [
         "lavish desk piled high with books"
       ],
-      node_id: "lavish desk piled high with books._6",
+      node_id: "lavish_desk_piled_high_wi6",
       object: true,
       on_use: null,
       room: false,
@@ -5183,17 +5183,17 @@ const ComplexWorld1 = {
       contain_size: 17,
       contained_nodes: {
         block_and_tackle_111: {
-          target_id: "block and tackle_111"
+          target_id: "block_and_tackle_111"
         },
         hand_plow_109: {
-          target_id: "hand plow_109"
+          target_id: "hand_plow_109"
         },
         lance_110: {
           target_id: "lance_110"
         }
       },
       container_node: {
-        target_id: "reception area_12"
+        target_id: "reception_area_12"
       },
       damage: 1,
       db_id: null,
@@ -5242,7 +5242,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "graveyard keeper_58"
+        target_id: "graveyard_keeper_58"
       },
       db_id: null,
       dead: false,
@@ -5258,7 +5258,7 @@ const ComplexWorld1 = {
       names: [
         "lush green vegetation"
       ],
-      node_id: "lush green vegetation_63",
+      node_id: "lush_green_vegetation_63",
       object: true,
       on_use: null,
       room: false,
@@ -5297,7 +5297,7 @@ const ComplexWorld1 = {
       names: [
         "luxurious bedding"
       ],
-      node_id: "luxurious bedding_66",
+      node_id: "luxurious_bedding_66",
       object: true,
       on_use: null,
       room: false,
@@ -5359,7 +5359,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "half wild cat_123"
+        target_id: "half_wild_cat_123"
       },
       db_id: null,
       dead: false,
@@ -5375,7 +5375,7 @@ const ComplexWorld1 = {
       names: [
         "magical crystal"
       ],
-      node_id: "magical crystal_127",
+      node_id: "magical_crystal_127",
       object: true,
       on_use: null,
       room: false,
@@ -5398,7 +5398,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "half wild cat_123"
+        target_id: "half_wild_cat_123"
       },
       db_id: null,
       dead: false,
@@ -5414,7 +5414,7 @@ const ComplexWorld1 = {
       names: [
         "magical lights"
       ],
-      node_id: "magical lights_124",
+      node_id: "magical_lights_124",
       object: true,
       on_use: null,
       room: false,
@@ -5453,7 +5453,7 @@ const ComplexWorld1 = {
       names: [
         "magnitudo scroll"
       ],
-      node_id: "magnitudo scroll_10",
+      node_id: "magnitudo_scroll_10",
       object: true,
       on_use: [
         {
@@ -5509,7 +5509,7 @@ const ComplexWorld1 = {
       contain_size: 1998,
       contained_nodes: {
         suit_of_armor_79: {
-          target_id: "suit of armor_79"
+          target_id: "suit_of_armor_79"
         },
         sword_80: {
           target_id: "sword_80"
@@ -5536,10 +5536,10 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "main street_6"
+          target_id: "main_street_6"
         }
       },
-      node_id: "main entrance_7",
+      node_id: "main_entrance_7",
       object: false,
       room: true,
       size: 2000,
@@ -5553,13 +5553,13 @@ const ComplexWorld1 = {
       contain_size: 1978,
       contained_nodes: {
         bow_and_arrows_82: {
-          target_id: "bow and arrows_82"
+          target_id: "bow_and_arrows_82"
         },
         bow_81: {
           target_id: "bow_81"
         },
-        small_aggressive_looking_dog_83: {
-          target_id: "small aggressive-looking dog_83"
+        small_aggressive_looking_83: {
+          target_id: "small_aggressive_looking_83"
         }
       },
       container_node: {
@@ -5583,16 +5583,16 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "main street_6"
+          target_id: "main_street_6"
         },
         outside_castle_32: {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "outside castle_32"
+          target_id: "outside_castle_32"
         }
       },
-      node_id: "main gate_8",
+      node_id: "main_gate_8",
       object: false,
       room: true,
       size: 2000,
@@ -5606,10 +5606,10 @@ const ComplexWorld1 = {
       contain_size: 1998,
       contained_nodes: {
         embalming_equipment_90: {
-          target_id: "embalming equipment_90"
+          target_id: "embalming_equipment_90"
         },
         horse_tack_89: {
-          target_id: "horse tack_89"
+          target_id: "horse_tack_89"
         }
       },
       container_node: {
@@ -5633,16 +5633,16 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "main street_6"
+          target_id: "main_street_6"
         },
         small_graveyard_10: {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "small graveyard_10"
+          target_id: "small_graveyard_10"
         }
       },
-      node_id: "main graveyard_9",
+      node_id: "main_graveyard_9",
       object: false,
       room: true,
       size: 2000,
@@ -5656,13 +5656,13 @@ const ComplexWorld1 = {
       contain_size: 1978,
       contained_nodes: {
         grappling_hook_56: {
-          target_id: "grappling hook_56"
+          target_id: "grappling_hook_56"
         },
         graveyard_keeper_58: {
-          target_id: "graveyard keeper_58"
+          target_id: "graveyard_keeper_58"
         },
         torn_fabric_57: {
-          target_id: "torn fabric_57"
+          target_id: "torn_fabric_57"
         }
       },
       container_node: {
@@ -5686,10 +5686,10 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "personal rooms_0"
+          target_id: "personal_rooms_0"
         }
       },
-      node_id: "main hallway_1",
+      node_id: "main_hallway_1",
       object: false,
       room: true,
       size: 2000,
@@ -5703,16 +5703,16 @@ const ComplexWorld1 = {
       contain_size: 1974,
       contained_nodes: {
         fresh_dry_house_shoes_72: {
-          target_id: "fresh dry house shoes_72"
+          target_id: "fresh_dry_house_shoes_72"
         },
         lady_of_the_house_76: {
-          target_id: "lady of the house_76"
+          target_id: "lady_of_the_house_76"
         },
-        large_earthenware_jug_of_water_for_cooking_and_drinking_74: {
-          target_id: "large earthenware jug of water for cooking and drinking_74"
+        large_earthenware_jug_of_74: {
+          target_id: "large_earthenware_jug_of_74"
         },
         large_pile_of_hay_73: {
-          target_id: "large pile of hay_73"
+          target_id: "large_pile_of_hay_73"
         }
       },
       container_node: {
@@ -5736,28 +5736,28 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "central garden_4"
+          target_id: "central_garden_4"
         },
         main_street_6: {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "main street_6"
+          target_id: "main_street_6"
         },
         personal_rooms_0: {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "personal rooms_0"
+          target_id: "personal_rooms_0"
         },
         stretch_of_road_5: {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "stretch of road_5"
+          target_id: "stretch_of_road_5"
         }
       },
-      node_id: "main house_3",
+      node_id: "main_house_3",
       object: false,
       room: true,
       size: 2000,
@@ -5771,10 +5771,10 @@ const ComplexWorld1 = {
       contain_size: 1998,
       contained_nodes: {
         gray_stone_78: {
-          target_id: "gray stone_78"
+          target_id: "gray_stone_78"
         },
         ritual_knife_77: {
-          target_id: "ritual knife_77"
+          target_id: "ritual_knife_77"
         }
       },
       container_node: {
@@ -5798,28 +5798,28 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "main entrance_7"
+          target_id: "main_entrance_7"
         },
         main_gate_8: {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "main gate_8"
+          target_id: "main_gate_8"
         },
         main_graveyard_9: {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "main graveyard_9"
+          target_id: "main_graveyard_9"
         },
         main_house_3: {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "main house_3"
+          target_id: "main_house_3"
         }
       },
-      node_id: "main street_6",
+      node_id: "main_street_6",
       object: false,
       room: true,
       size: 2000,
@@ -5834,7 +5834,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "battle master_99"
+        target_id: "battle_master_99"
       },
       db_id: null,
       dead: false,
@@ -5850,7 +5850,7 @@ const ComplexWorld1 = {
       names: [
         "map of the kingdom"
       ],
-      node_id: "map of the kingdom_102",
+      node_id: "map_of_the_kingdom_102",
       object: true,
       on_use: null,
       room: false,
@@ -5880,10 +5880,10 @@ const ComplexWorld1 = {
           target_id: "computer_48"
         },
         giant_club_46: {
-          target_id: "giant club_46"
+          target_id: "giant_club_46"
         },
-        old_sun_bleached_sailcloth_44: {
-          target_id: "old, sun-bleached sailcloth_44"
+        old_sun_bleached_sailclot44: {
+          target_id: "old_sun_bleached_sailclot44"
         },
         shield_47: {
           target_id: "shield_47"
@@ -5893,7 +5893,7 @@ const ComplexWorld1 = {
         }
       },
       container_node: {
-        target_id: "personal rooms_0"
+        target_id: "personal_rooms_0"
       },
       damage: 1,
       db_id: null,
@@ -5917,7 +5917,7 @@ const ComplexWorld1 = {
       names: [
         "master-at-arms"
       ],
-      node_id: "master-at-arms_43",
+      node_id: "master_at_arms_43",
       num_wearable_items: 0,
       num_wieldable_items: 0,
       object: false,
@@ -5942,7 +5942,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "town doctor_142"
+        target_id: "town_doctor_142"
       },
       db_id: null,
       dead: false,
@@ -6022,7 +6022,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: true,
       container_node: {
-        target_id: "milk man_145"
+        target_id: "milk_man_145"
       },
       db_id: null,
       dead: false,
@@ -6038,7 +6038,7 @@ const ComplexWorld1 = {
       names: [
         "metal bucket"
       ],
-      node_id: "metal bucket_148",
+      node_id: "metal_bucket_148",
       object: true,
       on_use: null,
       room: false,
@@ -6078,7 +6078,7 @@ const ComplexWorld1 = {
       names: [
         "metal meal tray"
       ],
-      node_id: "metal meal tray_120",
+      node_id: "metal_meal_tray_120",
       object: true,
       on_use: null,
       room: false,
@@ -6104,17 +6104,17 @@ const ComplexWorld1 = {
       contain_size: 14,
       contained_nodes: {
         metal_bucket_148: {
-          target_id: "metal bucket_148"
+          target_id: "metal_bucket_148"
         },
         milk_146: {
           target_id: "milk_146"
         },
         mug_of_mead_147: {
-          target_id: "mug of mead_147"
+          target_id: "mug_of_mead_147"
         }
       },
       container_node: {
-        target_id: "wealthy area of town_19"
+        target_id: "wealthy_area_of_town_19"
       },
       damage: 1,
       db_id: null,
@@ -6138,7 +6138,7 @@ const ComplexWorld1 = {
       names: [
         "milk man"
       ],
-      node_id: "milk man_145",
+      node_id: "milk_man_145",
       num_wearable_items: 0,
       num_wieldable_items: 0,
       object: false,
@@ -6163,7 +6163,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "milk man_145"
+        target_id: "milk_man_145"
       },
       db_id: null,
       dead: false,
@@ -6203,8 +6203,8 @@ const ComplexWorld1 = {
         assassin_139: {
           target_id: "assassin_139"
         },
-        clothes_made_of_various_plant_matter_such_as_large_leaves_and_vines_138: {
-          target_id: "clothes made of various plant matter such as large leaves and vines_138"
+        clothes_made_of_various_p138: {
+          target_id: "clothes_made_of_various_p138"
         },
         pig_140: {
           target_id: "pig_140"
@@ -6231,10 +6231,10 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "table area_17"
+          target_id: "table_area_17"
         }
       },
-      node_id: "modest living area_18",
+      node_id: "modest_living_area_18",
       object: false,
       room: true,
       size: 2000,
@@ -6267,7 +6267,7 @@ const ComplexWorld1 = {
       names: [
         "moldy bread"
       ],
-      node_id: "moldy bread_159",
+      node_id: "moldy_bread_159",
       object: true,
       on_use: null,
       room: false,
@@ -6293,7 +6293,7 @@ const ComplexWorld1 = {
       contain_size: 20,
       contained_nodes: {},
       container_node: {
-        target_id: "small hut_11"
+        target_id: "small_hut_11"
       },
       damage: 1,
       db_id: null,
@@ -6317,7 +6317,7 @@ const ComplexWorld1 = {
       names: [
         "monkey friend"
       ],
-      node_id: "monkey friend_98",
+      node_id: "monkey_friend_98",
       num_wearable_items: 0,
       num_wieldable_items: 0,
       object: false,
@@ -6357,7 +6357,7 @@ const ComplexWorld1 = {
       names: [
         "mortem scroll"
       ],
-      node_id: "mortem scroll_8",
+      node_id: "mortem_scroll_8",
       object: true,
       on_use: [
         {
@@ -6414,7 +6414,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: true,
       container_node: {
-        target_id: "small graveyard_10"
+        target_id: "small_graveyard_10"
       },
       db_id: null,
       dead: false,
@@ -6430,7 +6430,7 @@ const ComplexWorld1 = {
       names: [
         "muddy area"
       ],
-      node_id: "muddy area_0",
+      node_id: "muddy_area_0",
       object: true,
       on_use: null,
       room: false,
@@ -6454,7 +6454,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "milk man_145"
+        target_id: "milk_man_145"
       },
       db_id: null,
       dead: false,
@@ -6470,7 +6470,7 @@ const ComplexWorld1 = {
       names: [
         "mug of mead"
       ],
-      node_id: "mug of mead_147",
+      node_id: "mug_of_mead_147",
       object: true,
       on_use: null,
       room: false,
@@ -6484,7 +6484,7 @@ const ComplexWorld1 = {
       wearable: false,
       wieldable: false
     },
-    mystical_necklace_with_a_colorful_crystal_49: {
+    mystical_necklace_with_a_49: {
       agent: false,
       classes: [
         "object",
@@ -6510,7 +6510,7 @@ const ComplexWorld1 = {
       names: [
         "mystical necklace with a colorful crystal"
       ],
-      node_id: "mystical necklace with a colorful crystal_49",
+      node_id: "mystical_necklace_with_a_49",
       object: true,
       on_use: null,
       room: false,
@@ -6532,7 +6532,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "graveyard keeper_58"
+        target_id: "graveyard_keeper_58"
       },
       db_id: null,
       dead: false,
@@ -6548,7 +6548,7 @@ const ComplexWorld1 = {
       names: [
         "name placard"
       ],
-      node_id: "name placard_59",
+      node_id: "name_placard_59",
       object: true,
       on_use: null,
       room: false,
@@ -6594,10 +6594,10 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "the forsaken castle_35"
+          target_id: "the_forsaken_castle_35"
         }
       },
-      node_id: "neptune's throne room_0",
+      node_id: "neptunes_throne_room_0",
       object: false,
       room: true,
       size: 1,
@@ -6613,7 +6613,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "the forsaken castle_35"
+        target_id: "the_forsaken_castle_35"
       },
       db_id: null,
       dead: false,
@@ -6629,7 +6629,7 @@ const ComplexWorld1 = {
       names: [
         "old armor"
       ],
-      node_id: "old armor_170",
+      node_id: "old_armor_170",
       object: true,
       on_use: null,
       room: false,
@@ -6652,7 +6652,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "small hut_11"
+        target_id: "small_hut_11"
       },
       db_id: null,
       dead: false,
@@ -6668,7 +6668,7 @@ const ComplexWorld1 = {
       names: [
         "old broom"
       ],
-      node_id: "old broom_97",
+      node_id: "old_broom_97",
       object: true,
       on_use: null,
       room: false,
@@ -6690,7 +6690,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "serving boy_51"
+        target_id: "serving_boy_51"
       },
       db_id: null,
       dead: false,
@@ -6706,7 +6706,7 @@ const ComplexWorld1 = {
       names: [
         "old prayer books"
       ],
-      node_id: "old prayer books_54",
+      node_id: "old_prayer_books_54",
       object: true,
       on_use: null,
       room: false,
@@ -6720,7 +6720,7 @@ const ComplexWorld1 = {
       wearable: false,
       wieldable: false
     },
-    old_sun_bleached_sailcloth_44: {
+    old_sun_bleached_sailclot44: {
       agent: false,
       classes: [
         "object"
@@ -6729,7 +6729,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "master-at-arms_43"
+        target_id: "master_at_arms_43"
       },
       db_id: null,
       dead: false,
@@ -6745,7 +6745,7 @@ const ComplexWorld1 = {
       names: [
         "old, sun-bleached sailcloth"
       ],
-      node_id: "old, sun-bleached sailcloth_44",
+      node_id: "old_sun_bleached_sailclot44",
       object: true,
       on_use: null,
       room: false,
@@ -6784,7 +6784,7 @@ const ComplexWorld1 = {
       names: [
         "orb of creation"
       ],
-      node_id: "orb of creation_2",
+      node_id: "orb_of_creation_2",
       object: true,
       on_use: null,
       room: false,
@@ -6807,7 +6807,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "personal rooms_0"
+        target_id: "personal_rooms_0"
       },
       db_id: null,
       dead: false,
@@ -6823,7 +6823,7 @@ const ComplexWorld1 = {
       names: [
         "ornate goblet"
       ],
-      node_id: "ornate goblet_41",
+      node_id: "ornate_goblet_41",
       object: true,
       on_use: null,
       room: false,
@@ -6845,13 +6845,13 @@ const ComplexWorld1 = {
       contain_size: 1977,
       contained_nodes: {
         big_sheep_like_brown_dog_169: {
-          target_id: "big sheep-like brown dog_169"
+          target_id: "big_sheep_like_brown_dog_169"
         },
-        rare_wood_from_a_tree_that_doesnt_exist_anymore_166: {
-          target_id: "rare wood from a tree that doesn't exist anymore_166"
+        rare_wood_from_a_tree_tha166: {
+          target_id: "rare_wood_from_a_tree_tha166"
         },
         red_brick_167: {
-          target_id: "red brick_167"
+          target_id: "red_brick_167"
         },
         salt_168: {
           target_id: "salt_168"
@@ -6884,16 +6884,16 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "main gate_8"
+          target_id: "main_gate_8"
         },
         unused_chamber_33: {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "unused chamber_33"
+          target_id: "unused_chamber_33"
         }
       },
-      node_id: "outside castle_32",
+      node_id: "outside_castle_32",
       object: false,
       room: true,
       size: 2000,
@@ -6908,12 +6908,12 @@ const ComplexWorld1 = {
       contain_size: 2,
       contained_nodes: {
         water_pail_106: {
-          target_id: "water pail_106"
+          target_id: "water_pail_106"
         }
       },
       container: true,
       container_node: {
-        target_id: "reception area_12"
+        target_id: "reception_area_12"
       },
       db_id: null,
       dead: false,
@@ -6952,7 +6952,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "battle master_99"
+        target_id: "battle_master_99"
       },
       db_id: null,
       dead: false,
@@ -6996,7 +6996,7 @@ const ComplexWorld1 = {
           target_id: "butler_68"
         },
         ink_well_64: {
-          target_id: "ink well_64"
+          target_id: "ink_well_64"
         }
       },
       container_node: {
@@ -7020,10 +7020,10 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "personal rooms_0"
+          target_id: "personal_rooms_0"
         }
       },
-      node_id: "personal quarters_2",
+      node_id: "personal_quarters_2",
       object: false,
       room: true,
       size: 2000,
@@ -7040,19 +7040,19 @@ const ComplexWorld1 = {
           target_id: "blanket_42"
         },
         broken_glass_36: {
-          target_id: "broken glass_36"
+          target_id: "broken_glass_36"
         },
         expensive_carpet_37: {
-          target_id: "expensive carpet_37"
+          target_id: "expensive_carpet_37"
         },
         master_at_arms_43: {
-          target_id: "master-at-arms_43"
+          target_id: "master_at_arms_43"
         },
         ornate_goblet_41: {
-          target_id: "ornate goblet_41"
+          target_id: "ornate_goblet_41"
         },
         serving_boy_51: {
-          target_id: "serving boy_51"
+          target_id: "serving_boy_51"
         },
         whip_40: {
           target_id: "whip_40"
@@ -7079,22 +7079,22 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "main hallway_1"
+          target_id: "main_hallway_1"
         },
         main_house_3: {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "main house_3"
+          target_id: "main_house_3"
         },
         personal_quarters_2: {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "personal quarters_2"
+          target_id: "personal_quarters_2"
         }
       },
-      node_id: "personal rooms_0",
+      node_id: "personal_rooms_0",
       object: false,
       room: true,
       size: 2000,
@@ -7108,13 +7108,13 @@ const ComplexWorld1 = {
       contain_size: 1994,
       contained_nodes: {
         apple_tree_13: {
-          target_id: "apple tree_13"
+          target_id: "apple_tree_13"
         },
         food_tray_119: {
-          target_id: "food tray_119"
+          target_id: "food_tray_119"
         },
         rotting_meat_122: {
-          target_id: "rotting meat_122"
+          target_id: "rotting_meat_122"
         },
         sleet_121: {
           target_id: "sleet_121"
@@ -7141,10 +7141,10 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "pine tree graveyard_13"
+          target_id: "pine_tree_graveyard_13"
         }
       },
-      node_id: "picnic area_14",
+      node_id: "picnic_area_14",
       object: false,
       room: true,
       size: 2000,
@@ -7163,7 +7163,7 @@ const ComplexWorld1 = {
       contain_size: 20,
       contained_nodes: {},
       container_node: {
-        target_id: "modest living area_18"
+        target_id: "modest_living_area_18"
       },
       damage: 1,
       db_id: null,
@@ -7210,16 +7210,16 @@ const ComplexWorld1 = {
       contain_size: 1955,
       contained_nodes: {
         feather_fountain_pen_112: {
-          target_id: "feather fountain pen_112"
+          target_id: "feather_fountain_pen_112"
         },
         half_wild_cat_123: {
-          target_id: "half wild cat_123"
+          target_id: "half_wild_cat_123"
         },
         priest_116: {
           target_id: "priest_116"
         },
-        wood_is_gathered_to_make_fire_113: {
-          target_id: "wood is gathered to make fire_113"
+        wood_is_gathered_to_make_113: {
+          target_id: "wood_is_gathered_to_make_113"
         }
       },
       container_node: {
@@ -7239,26 +7239,26 @@ const ComplexWorld1 = {
         "Pine tree graveyard"
       ],
       neighbors: {
-        entrance_to_the_pine_trees_15: {
+        entrance_to_the_pine_tree15: {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "entrance to the pine trees_15"
+          target_id: "entrance_to_the_pine_tree15"
         },
         picnic_area_14: {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "picnic area_14"
+          target_id: "picnic_area_14"
         },
         small_graveyard_10: {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "small graveyard_10"
+          target_id: "small_graveyard_10"
         }
       },
-      node_id: "pine tree graveyard_13",
+      node_id: "pine_tree_graveyard_13",
       object: false,
       room: true,
       size: 2000,
@@ -7273,7 +7273,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: true,
       container_node: {
-        target_id: "central garden_4"
+        target_id: "central_garden_4"
       },
       db_id: null,
       dead: false,
@@ -7329,7 +7329,7 @@ const ComplexWorld1 = {
       names: [
         "prayer book"
       ],
-      node_id: "prayer book_118",
+      node_id: "prayer_book_118",
       object: true,
       on_use: null,
       room: false,
@@ -7351,7 +7351,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "serving boy_51"
+        target_id: "serving_boy_51"
       },
       db_id: null,
       dead: false,
@@ -7367,7 +7367,7 @@ const ComplexWorld1 = {
       names: [
         "priceless painting"
       ],
-      node_id: "priceless painting_52",
+      node_id: "priceless_painting_52",
       object: true,
       on_use: null,
       room: false,
@@ -7394,14 +7394,14 @@ const ComplexWorld1 = {
       contain_size: 18,
       contained_nodes: {
         prayer_book_118: {
-          target_id: "prayer book_118"
+          target_id: "prayer_book_118"
         },
         wooden_cross_117: {
-          target_id: "wooden cross_117"
+          target_id: "wooden_cross_117"
         }
       },
       container_node: {
-        target_id: "pine tree graveyard_13"
+        target_id: "pine_tree_graveyard_13"
       },
       damage: 1,
       db_id: null,
@@ -7450,7 +7450,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "small graveyard_10"
+        target_id: "small_graveyard_10"
       },
       db_id: null,
       dead: false,
@@ -7466,7 +7466,7 @@ const ComplexWorld1 = {
       names: [
         "primitive fishing pole"
       ],
-      node_id: "primitive fishing pole_92",
+      node_id: "primitive_fishing_pole_92",
       object: true,
       on_use: [
         {
@@ -7518,7 +7518,7 @@ const ComplexWorld1 = {
       wearable: false,
       wieldable: true
     },
-    rare_wood_from_a_tree_that_doesnt_exist_anymore_166:{
+    rare_wood_from_a_tree_tha166: {
       agent: false,
       classes: [
         "object"
@@ -7527,7 +7527,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "outside castle_32"
+        target_id: "outside_castle_32"
       },
       db_id: null,
       dead: false,
@@ -7543,7 +7543,7 @@ const ComplexWorld1 = {
       names: [
         "rare wood from a tree that doesn't exist anymore"
       ],
-      node_id: "rare wood from a tree that doesn't exist anymore_166",
+      node_id: "rare_wood_from_a_tree_tha166",
       object: true,
       on_use: null,
       room: false,
@@ -7570,7 +7570,7 @@ const ComplexWorld1 = {
       contain_size: 20,
       contained_nodes: {},
       container_node: {
-        target_id: "fish market_28"
+        target_id: "fish_market_28"
       },
       damage: 1,
       db_id: null,
@@ -7617,7 +7617,7 @@ const ComplexWorld1 = {
       contain_size: 1974,
       contained_nodes: {
         heavy_blanket_103: {
-          target_id: "heavy blanket_103"
+          target_id: "heavy_blanket_103"
         },
         lord_108: {
           target_id: "lord_108"
@@ -7650,22 +7650,22 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "disposal area_16"
+          target_id: "disposal_area_16"
         },
-        entrance_to_the_pine_trees_15: {
+        entrance_to_the_pine_tree15: {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "entrance to the pine trees_15"
+          target_id: "entrance_to_the_pine_tree15"
         },
         small_graveyard_10: {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "small graveyard_10"
+          target_id: "small_graveyard_10"
         }
       },
-      node_id: "reception area_12",
+      node_id: "reception_area_12",
       object: false,
       room: true,
       size: 2000,
@@ -7681,7 +7681,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "outside castle_32"
+        target_id: "outside_castle_32"
       },
       db_id: null,
       dead: false,
@@ -7697,7 +7697,7 @@ const ComplexWorld1 = {
       names: [
         "red brick"
       ],
-      node_id: "red brick_167",
+      node_id: "red_brick_167",
       object: true,
       on_use: null,
       room: false,
@@ -7720,7 +7720,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "expensive carpet_37"
+        target_id: "expensive_carpet_37"
       },
       db_id: null,
       dead: false,
@@ -7736,7 +7736,7 @@ const ComplexWorld1 = {
       names: [
         "ritual dagger"
       ],
-      node_id: "ritual dagger_39",
+      node_id: "ritual_dagger_39",
       object: true,
       on_use: null,
       room: false,
@@ -7759,7 +7759,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "main street_6"
+        target_id: "main_street_6"
       },
       db_id: null,
       dead: false,
@@ -7775,7 +7775,7 @@ const ComplexWorld1 = {
       names: [
         "ritual knife"
       ],
-      node_id: "ritual knife_77",
+      node_id: "ritual_knife_77",
       object: true,
       on_use: null,
       room: false,
@@ -7814,7 +7814,7 @@ const ComplexWorld1 = {
       names: [
         "roasting meat"
       ],
-      node_id: "roasting meat_132",
+      node_id: "roasting_meat_132",
       object: true,
       on_use: null,
       room: false,
@@ -7838,7 +7838,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "reception area_12"
+        target_id: "reception_area_12"
       },
       db_id: null,
       dead: false,
@@ -7877,7 +7877,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "picnic area_14"
+        target_id: "picnic_area_14"
       },
       db_id: null,
       dead: false,
@@ -7893,7 +7893,7 @@ const ComplexWorld1 = {
       names: [
         "rotting meat"
       ],
-      node_id: "rotting meat_122",
+      node_id: "rotting_meat_122",
       object: true,
       on_use: null,
       room: false,
@@ -7917,7 +7917,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "outside castle_32"
+        target_id: "outside_castle_32"
       },
       db_id: null,
       dead: false,
@@ -7985,7 +7985,7 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "empty storage room_27"
+          target_id: "empty_storage_room_27"
         },
         town_26: {
           examine_desc: null,
@@ -7994,7 +7994,7 @@ const ComplexWorld1 = {
           target_id: "town_26"
         }
       },
-      node_id: "saokra's blacksmith shop_25",
+      node_id: "saokras_blacksmith_shop_25",
       object: false,
       room: true,
       size: 2000,
@@ -8049,7 +8049,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "wealthy area of town_19"
+        target_id: "wealthy_area_of_town_19"
       },
       db_id: null,
       dead: false,
@@ -8065,7 +8065,7 @@ const ComplexWorld1 = {
       names: [
         "scrap of fur"
       ],
-      node_id: "scrap of fur_141",
+      node_id: "scrap_of_fur_141",
       object: true,
       on_use: null,
       room: false,
@@ -8091,7 +8091,7 @@ const ComplexWorld1 = {
       },
       db_id: null,
       dead: false,
-      desc: "The scroll contains an oddly written text. You hardly recognize the language. There is a faded drawing of an emerald looking ring and the words locus a liquid",
+      desc: 'The scroll contains an oddly written text. You hardly recognize the language. There is a faded drawing of an emerald looking ring and the words "locus aliquid"',
       drink: 0,
       equipped: null,
       food: 0,
@@ -8133,17 +8133,17 @@ const ComplexWorld1 = {
           target_id: "bell_53"
         },
         old_prayer_books_54: {
-          target_id: "old prayer books_54"
+          target_id: "old_prayer_books_54"
         },
         priceless_painting_52: {
-          target_id: "priceless painting_52"
+          target_id: "priceless_painting_52"
         },
         wall_hanging_55: {
-          target_id: "wall hanging_55"
+          target_id: "wall_hanging_55"
         }
       },
       container_node: {
-        target_id: "personal rooms_0"
+        target_id: "personal_rooms_0"
       },
       damage: 1,
       db_id: null,
@@ -8167,7 +8167,7 @@ const ComplexWorld1 = {
       names: [
         "serving boy"
       ],
-      node_id: "serving boy_51",
+      node_id: "serving_boy_51",
       num_wearable_items: 0,
       num_wieldable_items: 0,
       object: false,
@@ -8190,15 +8190,15 @@ const ComplexWorld1 = {
       contain_size: 18,
       contained_nodes: {
         magnitudo_scroll_10: {
-          target_id: "magnitudo scroll_10"
+          target_id: "magnitudo_scroll_10"
         },
         mortem_scroll_8: {
-          target_id: "mortem scroll_8"
+          target_id: "mortem_scroll_8"
         }
       },
       container: true,
       container_node: {
-        target_id: "wizard's quarters_3"
+        target_id: "wizards_quarters_3"
       },
       db_id: null,
       dead: false,
@@ -8238,7 +8238,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "master-at-arms_43"
+        target_id: "master_at_arms_43"
       },
       db_id: null,
       dead: false,
@@ -8302,10 +8302,10 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "the forest_22"
+          target_id: "the_forest_22"
         }
       },
-      node_id: "shop in bazaar_24",
+      node_id: "shop_in_bazaar_24",
       object: false,
       room: true,
       size: 2000,
@@ -8320,7 +8320,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "disposal area_16"
+        target_id: "disposal_area_16"
       },
       db_id: null,
       dead: false,
@@ -8401,7 +8401,7 @@ const ComplexWorld1 = {
       contain_size: 21,
       contained_nodes: {},
       container_node: {
-        target_id: "dungeon within a castle_2"
+        target_id: "dungeon_within_a_castle_2"
       },
       damage: 1,
       db_id: null,
@@ -8425,7 +8425,7 @@ const ComplexWorld1 = {
       names: [
         "skeleton assistant"
       ],
-      node_id: "skeleton assistant_15",
+      node_id: "skeleton_assistant_15",
       num_wearable_items: 0,
       num_wieldable_items: 0,
       object: false,
@@ -8434,11 +8434,11 @@ const ComplexWorld1 = {
       persona: "I was created by my master to assist him in his endeavors. I make many mistakes as I have no brain and therefore no critical thinking skills. I am also extremely clumsy as my depth perception is lacking with out actual eyeballs.",
       quests: [
         {
-          actor: "skeleton assistant_15",
+          actor: "skeleton_assistant_15",
           actor_name: "skeleton assistant",
           actor_persona: "I was created by my master to assist him in his endeavors. I make many mistakes as I have no brain and therefore no critical thinking skills. I am also extremely clumsy as my depth perception is lacking with out actual eyeballs.",
           actor_str: "a skeleton assistant",
-          agent: "drunk reeling out of the saloon_163",
+          agent: "drunk_reeling_out_of_the_163",
           container: null,
           goal_action: "a drunk reeling out of the saloon smiles",
           goal_verb: "smile",
@@ -8466,7 +8466,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "picnic area_14"
+        target_id: "picnic_area_14"
       },
       db_id: null,
       dead: false,
@@ -8496,7 +8496,7 @@ const ComplexWorld1 = {
       wearable: false,
       wieldable: false
     },
-    small_aggressive_looking_dog_83: {
+    small_aggressive_looking_83: {
       agent: true,
       aggression: 0,
       attack_tagged_agents: [],
@@ -8511,18 +8511,18 @@ const ComplexWorld1 = {
         dress_88: {
           target_id: "dress_88"
         },
-        fish_wrap_or_butcher_paper_85: {
-          target_id: "fish wrap ( or butcher paper)_85"
+        fish_wrap__or_butcher_pap85: {
+          target_id: "fish_wrap__or_butcher_pap85"
         },
         small_bucket_86: {
-          target_id: "small bucket_86"
+          target_id: "small_bucket_86"
         },
         small_crucifix_84: {
-          target_id: "small crucifix_84"
+          target_id: "small_crucifix_84"
         }
       },
       container_node: {
-        target_id: "main gate_8"
+        target_id: "main_gate_8"
       },
       damage: 1,
       db_id: null,
@@ -8546,7 +8546,7 @@ const ComplexWorld1 = {
       names: [
         "small aggressive-looking dog"
       ],
-      node_id: "small aggressive-looking dog_83",
+      node_id: "small_aggressive_looking_83",
       num_wearable_items: 0,
       num_wieldable_items: 0,
       object: false,
@@ -8571,7 +8571,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: true,
       container_node: {
-        target_id: "small aggressive-looking dog_83"
+        target_id: "small_aggressive_looking_83"
       },
       db_id: null,
       dead: false,
@@ -8587,7 +8587,7 @@ const ComplexWorld1 = {
       names: [
         "small bucket"
       ],
-      node_id: "small bucket_86",
+      node_id: "small_bucket_86",
       object: true,
       on_use: null,
       room: false,
@@ -8611,7 +8611,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "small aggressive-looking dog_83"
+        target_id: "small_aggressive_looking_83"
       },
       db_id: null,
       dead: false,
@@ -8627,7 +8627,7 @@ const ComplexWorld1 = {
       names: [
         "small crucifix"
       ],
-      node_id: "small crucifix_84",
+      node_id: "small_crucifix_84",
       object: true,
       on_use: null,
       room: false,
@@ -8648,7 +8648,7 @@ const ComplexWorld1 = {
       contain_size: 1973,
       contained_nodes: {
         bowl_of_fruit_94: {
-          target_id: "bowl of fruit_94"
+          target_id: "bowl_of_fruit_94"
         },
         candy_93: {
           target_id: "candy_93"
@@ -8660,10 +8660,10 @@ const ComplexWorld1 = {
           target_id: "hatchet_91"
         },
         muddy_area_0: {
-          target_id: "muddy area_0"
+          target_id: "muddy_area_0"
         },
         primitive_fishing_pole_92: {
-          target_id: "primitive fishing pole_92"
+          target_id: "primitive_fishing_pole_92"
         }
       },
       container_node: {
@@ -8687,28 +8687,28 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "main graveyard_9"
+          target_id: "main_graveyard_9"
         },
         pine_tree_graveyard_13: {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "pine tree graveyard_13"
+          target_id: "pine_tree_graveyard_13"
         },
         reception_area_12: {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "reception area_12"
+          target_id: "reception_area_12"
         },
         small_hut_11: {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "small hut_11"
+          target_id: "small_hut_11"
         }
       },
-      node_id: "small graveyard_10",
+      node_id: "small_graveyard_10",
       object: false,
       room: true,
       size: 2000,
@@ -8722,16 +8722,16 @@ const ComplexWorld1 = {
       contain_size: 1958,
       contained_nodes: {
         battle_master_99: {
-          target_id: "battle master_99"
+          target_id: "battle_master_99"
         },
         fishing_rod_1: {
-          target_id: "fishing rod_1"
+          target_id: "fishing_rod_1"
         },
         monkey_friend_98: {
-          target_id: "monkey friend_98"
+          target_id: "monkey_friend_98"
         },
         old_broom_97: {
-          target_id: "old broom_97"
+          target_id: "old_broom_97"
         }
       },
       container_node: {
@@ -8755,10 +8755,10 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "small graveyard_10"
+          target_id: "small_graveyard_10"
         }
       },
-      node_id: "small hut_11",
+      node_id: "small_hut_11",
       object: false,
       room: true,
       size: 2000,
@@ -8791,7 +8791,7 @@ const ComplexWorld1 = {
       names: [
         "small metal bucket"
       ],
-      node_id: "small metal bucket_149",
+      node_id: "small_metal_bucket_149",
       object: true,
       on_use: null,
       room: false,
@@ -8824,7 +8824,7 @@ const ComplexWorld1 = {
         }
       },
       container_node: {
-        target_id: "saokra's blacksmith shop_25"
+        target_id: "saokras_blacksmith_shop_25"
       },
       damage: 1,
       db_id: null,
@@ -8932,10 +8932,10 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "main house_3"
+          target_id: "main_house_3"
         }
       },
-      node_id: "stretch of road_5",
+      node_id: "stretch_of_road_5",
       object: false,
       room: true,
       size: 2000,
@@ -8951,7 +8951,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "main entrance_7"
+        target_id: "main_entrance_7"
       },
       db_id: null,
       dead: false,
@@ -8967,7 +8967,7 @@ const ComplexWorld1 = {
       names: [
         "suit of armor"
       ],
-      node_id: "suit of armor_79",
+      node_id: "suit_of_armor_79",
       object: true,
       on_use: null,
       room: false,
@@ -9006,7 +9006,7 @@ const ComplexWorld1 = {
       names: [
         "sword of the guards"
       ],
-      node_id: "sword of the guards_151",
+      node_id: "sword_of_the_guards_151",
       object: true,
       on_use: null,
       room: false,
@@ -9029,7 +9029,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "main entrance_7"
+        target_id: "main_entrance_7"
       },
       db_id: null,
       dead: false,
@@ -9068,8 +9068,8 @@ const ComplexWorld1 = {
         cup_134: {
           target_id: "cup_134"
         },
-        drunk_reeling_out_of_the_saloon_163: {
-          target_id: "drunk reeling out of the saloon_163"
+        drunk_reeling_out_of_the_163: {
+          target_id: "drunk_reeling_out_of_the_163"
         }
       },
       container_node: {
@@ -9093,28 +9093,28 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "disposal area_16"
+          target_id: "disposal_area_16"
         },
         modest_living_area_18: {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "modest living area_18"
+          target_id: "modest_living_area_18"
         },
         unsettling_forest_area_20: {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "unsettling forest area_20"
+          target_id: "unsettling_forest_area_20"
         },
         wealthy_area_of_town_19: {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "wealthy area of town_19"
+          target_id: "wealthy_area_of_town_19"
         }
       },
-      node_id: "table area_17",
+      node_id: "table_area_17",
       object: false,
       room: true,
       size: 2000,
@@ -9187,22 +9187,22 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "abandoned farm_21"
+          target_id: "abandoned_farm_21"
         },
         entrance_to_a_cave_0: {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "entrance to a cave_0"
+          target_id: "entrance_to_a_cave_0"
         },
         shop_in_bazaar_24: {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "shop in bazaar_24"
+          target_id: "shop_in_bazaar_24"
         }
       },
-      node_id: "the forest_22",
+      node_id: "the_forest_22",
       object: false,
       room: true,
       size: 2000,
@@ -9216,7 +9216,7 @@ const ComplexWorld1 = {
       contain_size: 1999,
       contained_nodes: {
         old_armor_170: {
-          target_id: "old armor_170"
+          target_id: "old_armor_170"
         }
       },
       container_node: {
@@ -9246,10 +9246,10 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "neptune's throne room_0"
+          target_id: "neptunes_throne_room_0"
         }
       },
-      node_id: "the forsaken castle_35",
+      node_id: "the_forsaken_castle_35",
       object: false,
       room: true,
       size: 2000,
@@ -9263,12 +9263,12 @@ const ComplexWorld1 = {
       contain_size: 19,
       contained_nodes: {
         orb_of_creation_2: {
-          target_id: "orb of creation_2"
+          target_id: "orb_of_creation_2"
         }
       },
       container: true,
       container_node: {
-        target_id: "neptune's throne room_0"
+        target_id: "neptunes_throne_room_0"
       },
       db_id: null,
       dead: false,
@@ -9324,7 +9324,7 @@ const ComplexWorld1 = {
       names: [
         "tithe plate"
       ],
-      node_id: "tithe plate_107",
+      node_id: "tithe_plate_107",
       object: true,
       on_use: null,
       room: false,
@@ -9348,7 +9348,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "master-at-arms_43"
+        target_id: "master_at_arms_43"
       },
       db_id: null,
       dead: false,
@@ -9386,7 +9386,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "main hallway_1"
+        target_id: "main_hallway_1"
       },
       db_id: null,
       dead: false,
@@ -9402,7 +9402,7 @@ const ComplexWorld1 = {
       names: [
         "torn fabric"
       ],
-      node_id: "torn fabric_57",
+      node_id: "torn_fabric_57",
       object: true,
       on_use: null,
       room: false,
@@ -9444,10 +9444,10 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "town garden_30"
+          target_id: "town_garden_30"
         }
       },
-      node_id: "town courtroom_31",
+      node_id: "town_courtroom_31",
       object: false,
       room: true,
       size: 2000,
@@ -9473,7 +9473,7 @@ const ComplexWorld1 = {
         }
       },
       container_node: {
-        target_id: "wealthy area of town_19"
+        target_id: "wealthy_area_of_town_19"
       },
       damage: 1,
       db_id: null,
@@ -9497,7 +9497,7 @@ const ComplexWorld1 = {
       names: [
         "town doctor"
       ],
-      node_id: "town doctor_142",
+      node_id: "town_doctor_142",
       num_wearable_items: 0,
       num_wieldable_items: 0,
       object: false,
@@ -9542,16 +9542,16 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "town courtroom_31"
+          target_id: "town_courtroom_31"
         },
         town_theater_29: {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "town theater_29"
+          target_id: "town_theater_29"
         }
       },
-      node_id: "town garden_30",
+      node_id: "town_garden_30",
       object: false,
       room: true,
       size: 2000,
@@ -9585,7 +9585,7 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "town garden_30"
+          target_id: "town_garden_30"
         },
         town_26: {
           examine_desc: null,
@@ -9594,7 +9594,7 @@ const ComplexWorld1 = {
           target_id: "town_26"
         }
       },
-      node_id: "town theater_29",
+      node_id: "town_theater_29",
       object: false,
       room: true,
       size: 2000,
@@ -9628,13 +9628,13 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "saokra's blacksmith shop_25"
+          target_id: "saokras_blacksmith_shop_25"
         },
         town_theater_29: {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "town theater_29"
+          target_id: "town_theater_29"
         }
       },
       node_id: "town_26",
@@ -9668,7 +9668,7 @@ const ComplexWorld1 = {
       names: [
         "treasure chest"
       ],
-      node_id: "treasure chest_155",
+      node_id: "treasure_chest_155",
       object: true,
       on_use: null,
       room: false,
@@ -9717,16 +9717,16 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "abandoned farm_21"
+          target_id: "abandoned_farm_21"
         },
         table_area_17: {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "table area_17"
+          target_id: "table_area_17"
         }
       },
-      node_id: "unsettling forest area_20",
+      node_id: "unsettling_forest_area_20",
       object: false,
       room: true,
       size: 2000,
@@ -9762,10 +9762,10 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the west",
           locked_edge: null,
-          target_id: "outside castle_32"
+          target_id: "outside_castle_32"
         }
       },
-      node_id: "unused chamber_33",
+      node_id: "unused_chamber_33",
       object: false,
       room: true,
       size: 2000,
@@ -9780,7 +9780,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "serving boy_51"
+        target_id: "serving_boy_51"
       },
       db_id: null,
       dead: false,
@@ -9796,7 +9796,7 @@ const ComplexWorld1 = {
       names: [
         "wall hanging"
       ],
-      node_id: "wall hanging_55",
+      node_id: "wall_hanging_55",
       object: true,
       on_use: null,
       room: false,
@@ -9835,7 +9835,7 @@ const ComplexWorld1 = {
       names: [
         "water pail"
       ],
-      node_id: "water pail_106",
+      node_id: "water_pail_106",
       object: true,
       on_use: null,
       room: false,
@@ -9857,13 +9857,13 @@ const ComplexWorld1 = {
       contain_size: 1959,
       contained_nodes: {
         milk_man_145: {
-          target_id: "milk man_145"
+          target_id: "milk_man_145"
         },
         scrap_of_fur_141: {
-          target_id: "scrap of fur_141"
+          target_id: "scrap_of_fur_141"
         },
         town_doctor_142: {
-          target_id: "town doctor_142"
+          target_id: "town_doctor_142"
         }
       },
       container_node: {
@@ -9887,16 +9887,16 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the east",
           locked_edge: null,
-          target_id: "abandoned farm_21"
+          target_id: "abandoned_farm_21"
         },
         table_area_17: {
           examine_desc: null,
           label: "a path to the south",
           locked_edge: null,
-          target_id: "table area_17"
+          target_id: "table_area_17"
         }
       },
-      node_id: "wealthy area of town_19",
+      node_id: "wealthy_area_of_town_19",
       object: false,
       room: true,
       size: 2000,
@@ -9912,7 +9912,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "personal rooms_0"
+        target_id: "personal_rooms_0"
       },
       db_id: null,
       dead: false,
@@ -9954,8 +9954,8 @@ const ComplexWorld1 = {
         cupboard_11: {
           target_id: "cupboard_11"
         },
-        lavish_desk_piled_high_with_books_6: {
-          target_id: "lavish desk piled high with books._6"
+        lavish_desk_piled_high_wi6: {
+          target_id: "lavish_desk_piled_high_wi6"
         },
         shelf_4: {
           target_id: "shelf_4"
@@ -9982,10 +9982,10 @@ const ComplexWorld1 = {
           examine_desc: null,
           label: "a path to the north",
           locked_edge: null,
-          target_id: "dungeon within a castle_2"
+          target_id: "dungeon_within_a_castle_2"
         }
       },
-      node_id: "wizard's quarters_3",
+      node_id: "wizards_quarters_3",
       object: false,
       room: true,
       size: 1,
@@ -10016,7 +10016,7 @@ const ComplexWorld1 = {
       names: [
         "wizard's tome"
       ],
-      node_id: "wizard's tome_12",
+      node_id: "wizards_tome_12",
       object: true,
       on_use: null,
       room: false,
@@ -10030,7 +10030,7 @@ const ComplexWorld1 = {
       wearable: 0,
       wieldable: 0
     },
-    wood_is_gathered_to_make_fire_113: {
+    wood_is_gathered_to_make_113: {
       agent: false,
       classes: [
         "container",
@@ -10047,7 +10047,7 @@ const ComplexWorld1 = {
       },
       container: true,
       container_node: {
-        target_id: "pine tree graveyard_13"
+        target_id: "pine_tree_graveyard_13"
       },
       db_id: null,
       dead: false,
@@ -10063,7 +10063,7 @@ const ComplexWorld1 = {
       names: [
         "wood is gathered to make fire"
       ],
-      node_id: "wood is gathered to make fire_113",
+      node_id: "wood_is_gathered_to_make_113",
       object: true,
       on_use: null,
       room: false,
@@ -10103,7 +10103,7 @@ const ComplexWorld1 = {
       names: [
         "wooden bed"
       ],
-      node_id: "wooden bed_126",
+      node_id: "wooden_bed_126",
       object: true,
       on_use: null,
       room: false,
@@ -10143,7 +10143,7 @@ const ComplexWorld1 = {
       names: [
         "wooden cross"
       ],
-      node_id: "wooden cross_117",
+      node_id: "wooden_cross_117",
       object: true,
       on_use: null,
       room: false,
@@ -10166,7 +10166,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: true,
       container_node: {
-        target_id: "half wild cat_123"
+        target_id: "half_wild_cat_123"
       },
       db_id: null,
       dead: false,
@@ -10182,7 +10182,7 @@ const ComplexWorld1 = {
       names: [
         "wooden spit"
       ],
-      node_id: "wooden spit_125",
+      node_id: "wooden_spit_125",
       object: true,
       on_use: null,
       room: false,
@@ -10206,7 +10206,7 @@ const ComplexWorld1 = {
       contained_nodes: {},
       container: false,
       container_node: {
-        target_id: "expensive carpet_37"
+        target_id: "expensive_carpet_37"
       },
       db_id: null,
       dead: false,
@@ -10222,7 +10222,7 @@ const ComplexWorld1 = {
       names: [
         "worn quilt"
       ],
-      node_id: "worn quilt_38",
+      node_id: "worn_quilt_38",
       object: true,
       on_use: null,
       room: false,
@@ -10237,176 +10237,176 @@ const ComplexWorld1 = {
     }
   },
   objects: [
-    "apple tree_13",
+    "apple_tree_13",
     "apron_133",
-    "bathroom pot_61",
+    "bathroom_pot_61",
     "bedding_65",
     "bell_53",
-    "blacksmith's hammer_128",
+    "blacksmiths_hammer_128",
     "blanket_42",
-    "block and tackle_111",
-    "bottle of wine_164",
-    "bow and arrows_82",
+    "block_and_tackle_111",
+    "bottle_of_wine_164",
+    "bow_and_arrows_82",
     "bow_81",
-    "bowl of fruit_94",
-    "broken glass_36",
-    "bucket for eliminating waste_87",
+    "bowl_of_fruit_94",
+    "broken_glass_36",
+    "bucket_for_eliminating_wa87",
     "candle_114",
     "candy_93",
     "cannon_96",
     "cargo_100",
     "chair_5",
-    "chamber pot_60",
+    "chamber_pot_60",
     "chamberpot_152",
     "chicken_69",
-    "clothes made of various plant matter such as large leaves and vines_138",
+    "clothes_made_of_various_p138",
     "computer_48",
     "cookpot_131",
     "corn_137",
     "cup_134",
     "cupboard_11",
-    "dexteritate scroll_9",
+    "dexteritate_scroll_9",
     "dress_88",
-    "embalming equipment_90",
-    "expensive carpet_37",
-    "feather fountain pen_112",
-    "finest silk and velvet_158",
-    "fish wrap ( or butcher paper)_85",
-    "fishing rod_1",
-    "flower pot_75",
-    "food tray_119",
-    "fresh dry house shoes_72",
-    "fresh red paint_70",
-    "giant club_46",
-    "grappling hook_56",
-    "gray stone_78",
-    "hair brush_50",
-    "hand plow_109",
+    "embalming_equipment_90",
+    "expensive_carpet_37",
+    "feather_fountain_pen_112",
+    "finest_silk_and_velvet_158",
+    "fish_wrap__or_butcher_pap85",
+    "fishing_rod_1",
+    "flower_pot_75",
+    "food_tray_119",
+    "fresh_dry_house_shoes_72",
+    "fresh_red_paint_70",
+    "giant_club_46",
+    "grappling_hook_56",
+    "gray_stone_78",
+    "hair_brush_50",
+    "hand_plow_109",
     "harness_154",
     "hatchet_91",
-    "heavy blanket_103",
-    "hefty rock_14",
-    "homestead equipment_129",
-    "horse tack_89",
-    "huge cast iron pot_62",
-    "ink jar_156",
-    "ink well_64",
+    "heavy_blanket_103",
+    "hefty_rock_14",
+    "homestead_equipment_129",
+    "horse_tack_89",
+    "huge_cast_iron_pot_62",
+    "ink_jar_156",
+    "ink_well_64",
     "ink_143",
     "key_115",
     "lance_110",
-    "large earthenware jug of water for cooking and drinking_74",
-    "large pile of hay_73",
-    "lavish desk piled high with books._6",
-    "lush green vegetation_63",
-    "luxurious bedding_66",
+    "large_earthenware_jug_of_74",
+    "large_pile_of_hay_73",
+    "lavish_desk_piled_high_wi6",
+    "lush_green_vegetation_63",
+    "luxurious_bedding_66",
     "mace_162",
-    "magical crystal_127",
-    "magical lights_124",
-    "magnitudo scroll_10",
-    "map of the kingdom_102",
+    "magical_crystal_127",
+    "magical_lights_124",
+    "magnitudo_scroll_10",
+    "map_of_the_kingdom_102",
     "materials_144",
     "meat_161",
-    "metal bucket_148",
-    "metal meal tray_120",
+    "metal_bucket_148",
+    "metal_meal_tray_120",
     "milk_146",
-    "moldy bread_159",
-    "mortem scroll_8",
-    "muddy area_0",
-    "mug of mead_147",
-    "mystical necklace with a colorful crystal_49",
-    "name placard_59",
-    "old armor_170",
-    "old broom_97",
-    "old prayer books_54",
-    "old, sun-bleached sailcloth_44",
-    "orb of creation_2",
-    "ornate goblet_41",
+    "moldy_bread_159",
+    "mortem_scroll_8",
+    "muddy_area_0",
+    "mug_of_mead_147",
+    "mystical_necklace_with_a_49",
+    "name_placard_59",
+    "old_armor_170",
+    "old_broom_97",
+    "old_prayer_books_54",
+    "old_sun_bleached_sailclot44",
+    "orb_of_creation_2",
+    "ornate_goblet_41",
     "pail_105",
     "paper_101",
     "pond_0",
-    "prayer book_118",
-    "priceless painting_52",
-    "primitive fishing pole_92",
-    "rare wood from a tree that doesn't exist anymore_166",
-    "red brick_167",
-    "ritual dagger_39",
-    "ritual knife_77",
-    "roasting meat_132",
+    "prayer_book_118",
+    "priceless_painting_52",
+    "primitive_fishing_pole_92",
+    "rare_wood_from_a_tree_tha166",
+    "red_brick_167",
+    "ritual_dagger_39",
+    "ritual_knife_77",
+    "roasting_meat_132",
     "rock_104",
-    "rotting meat_122",
+    "rotting_meat_122",
     "salt_168",
     "sapphire_71",
-    "scrap of fur_141",
+    "scrap_of_fur_141",
     "scroll_7",
     "shelf_4",
     "shield_47",
     "shovel_1",
     "sleet_121",
-    "small bucket_86",
-    "small crucifix_84",
-    "small metal bucket_149",
+    "small_bucket_86",
+    "small_crucifix_84",
+    "small_metal_bucket_149",
     "spoon_135",
-    "suit of armor_79",
-    "sword of the guards_151",
+    "suit_of_armor_79",
+    "sword_of_the_guards_151",
     "sword_80",
     "tent_67",
     "throne_1",
-    "tithe plate_107",
+    "tithe_plate_107",
     "torch_45",
-    "torn fabric_57",
-    "treasure chest_155",
-    "wall hanging_55",
-    "water pail_106",
+    "torn_fabric_57",
+    "treasure_chest_155",
+    "wall_hanging_55",
+    "water_pail_106",
     "whip_40",
-    "wizard's tome_12",
-    "wood is gathered to make fire_113",
-    "wooden bed_126",
-    "wooden cross_117",
-    "wooden spit_125",
-    "worn quilt_38"
+    "wizards_tome_12",
+    "wood_is_gathered_to_make_113",
+    "wooden_bed_126",
+    "wooden_cross_117",
+    "wooden_spit_125",
+    "worn_quilt_38"
   ],
   rooms: [
-    "abandoned farm_21",
+    "abandoned_farm_21",
     "castle_34",
-    "central garden_4",
+    "central_garden_4",
     "countryside_23",
-    "disposal area_16",
-    "dungeon within a castle_2",
+    "disposal_area_16",
+    "dungeon_within_a_castle_2",
     "dungeon_1",
-    "empty storage room_27",
-    "entrance to a cave_0",
-    "entrance to the pine trees_15",
-    "fish market_28",
-    "main entrance_7",
-    "main gate_8",
-    "main graveyard_9",
-    "main hallway_1",
-    "main house_3",
-    "main street_6",
-    "modest living area_18",
-    "neptune's throne room_0",
-    "outside castle_32",
-    "personal quarters_2",
-    "personal rooms_0",
-    "picnic area_14",
-    "pine tree graveyard_13",
-    "reception area_12",
-    "saokra's blacksmith shop_25",
-    "shop in bazaar_24",
-    "small graveyard_10",
-    "small hut_11",
-    "stretch of road_5",
-    "table area_17",
-    "the forest_22",
-    "the forsaken castle_35",
-    "town courtroom_31",
-    "town garden_30",
-    "town theater_29",
+    "empty_storage_room_27",
+    "entrance_to_a_cave_0",
+    "entrance_to_the_pine_tree15",
+    "fish_market_28",
+    "main_entrance_7",
+    "main_gate_8",
+    "main_graveyard_9",
+    "main_hallway_1",
+    "main_house_3",
+    "main_street_6",
+    "modest_living_area_18",
+    "neptunes_throne_room_0",
+    "outside_castle_32",
+    "personal_quarters_2",
+    "personal_rooms_0",
+    "picnic_area_14",
+    "pine_tree_graveyard_13",
+    "reception_area_12",
+    "saokras_blacksmith_shop_25",
+    "shop_in_bazaar_24",
+    "small_graveyard_10",
+    "small_hut_11",
+    "stretch_of_road_5",
+    "table_area_17",
+    "the_forest_22",
+    "the_forsaken_castle_35",
+    "town_courtroom_31",
+    "town_garden_30",
+    "town_theater_29",
     "town_26",
-    "unsettling forest area_20",
-    "unused chamber_33",
-    "wealthy area of town_19",
-    "wizard's quarters_3"
+    "unsettling_forest_area_20",
+    "unused_chamber_33",
+    "wealthy_area_of_town_19",
+    "wizards_quarters_3"
   ]
 }
 

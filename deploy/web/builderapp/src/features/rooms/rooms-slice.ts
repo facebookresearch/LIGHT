@@ -40,6 +40,7 @@ interface Room {
     size:number;
     grid_location: Array<Number>;
     surface_type: string;
+    color: string | null;
   }
   
 /* STATE TYPE */
