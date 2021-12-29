@@ -41,8 +41,8 @@ const WorldBuilderMap2 = ({
 
     useEffect(()=>{
       let initialViewLoc = {
-        x: width/4,
-        y: height/4
+        x: width/2,
+        y: height/2
       }
       console.log("INITIAL VIEW LOC", initialViewLoc)
       setViewLoc(initialViewLoc)
