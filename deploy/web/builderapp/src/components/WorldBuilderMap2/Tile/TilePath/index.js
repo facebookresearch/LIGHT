@@ -42,62 +42,49 @@ const TilePath = ({
     } ,[tileData])
     /* HANDLERS */
     const pathClickHandler = ()=>{
-
-        let updatedRooms
         if(active){
-            updatedRooms = worldRooms.map((roomNode, index)=>{
-                let updatedRoomNode = roomNode;
-                if(roomNode.node_id == tileData.node_id){
-                    let updatedNeighbors = {...neighbors};
-                    delete updatedNeighbors[neighboringTile.node_id];
-                    updatedRoomNode ={...roomNode, neighbors: updatedNeighbors};
-                }
-                if(roomNode.node_id == neighboringTile.node_id){
-                    let updatedNeighboringTileNeighbors = {...neighboringTileNeighbors};
-                    delete updatedNeighboringTileNeighbors[neighboringTile.node_id];
-                    updatedRoomNode ={...roomNode, neighbors: updatedNeighboringTileNeighbors};
 
-                }
-                return updatedRoomNode
-            })
-            updateRooms(updatedRooms)
-            setActive(false)
+            let updatedRoomNode = tileData;
+            let updatedNeighbors = {...neighbors};
+            delete updatedNeighbors[neighboringTile.node_id];
+            updatedRoomNode ={...tileData, neighbors: updatedNeighbors};
+
+            let updatedNeighborNode = neighboringTile;
+            let updatedNeighboringTileNeighbors = {...neighboringTileNeighbors};
+            delete updatedNeighboringTileNeighbors[neighboringTile.node_id];
+            updatedNeighborNode ={...updatedNeighborNode, neighbors: updatedNeighboringTileNeighbors};
+
+            gridUpdateFunction(updatedRoomNode.node_id, updatedRoomNode);
+            gridUpdateFunction(updatedNeighborNode.node_id, updatedNeighborNode);
+            setActive(false);
         }else{
-            updatedRooms = worldRooms.map((roomNode, index)=>{
-                let updatedRoomNode = roomNode;
-                if(roomNode.node_id == tileData.node_id){
-                    let updatedNeighbors = neighbors;
-                    let neighborInfo = {
-                        examine_desc: null,
-                        label: `a path to ${alignment==="vertical" ? "the south": "the east"}`,
-                        locked_edge: null,
-                        target_id: neighboringTile.node_id
-                    }
-                    updatedNeighbors = {...neighbors, [neighboringTile.node_id]:neighborInfo};
-                    updatedRoomNode = {...roomNode, neighbors:updatedNeighbors};
-                }
-                if(roomNode.node_id == neighboringTile.node_id){
-                    let updatedNeighboringTileNeighbors = neighboringTileNeighbors;
-                    let neighboringTileNeighborInfo = {
-                        examine_desc: null,
-                        label: `a path to ${alignment==="vertical" ? "the north": "the west"}`,
-                        locked_edge: null,
-                        target_id: tileData.node_id
-                    }
-                    updatedNeighboringTileNeighbors = {...neighboringTileNeighborInfo, [tileData.node_id]: neighboringTileNeighborInfo};
-                    updatedRoomNode = {...roomNode, neighbors:updatedNeighboringTileNeighbors};
-                }
-                return updatedRoomNode
-            })
-            console.log(updatedRooms)
-            updateRooms(updatedRooms)
-            setActive(true)
+            let updatedRoomNode = tileData;
+            let updatedNeighbors = neighbors;
+            let neighborInfo = {
+                examine_desc: null,
+                label: `a path to ${alignment==="vertical" ? "the south": "the east"}`,
+                locked_edge: null,
+                target_id: neighboringTile.node_id
+            };
+            updatedNeighbors = {...neighbors, [neighboringTile.node_id]:neighborInfo};
+            updatedRoomNode = {...tileData, neighbors:updatedNeighbors};
+                    
+            let updatedNeighborNode = neighboringTile;
+            let updatedNeighboringTileNeighbors = neighboringTileNeighbors;
+            let neighboringTileNeighborInfo = {
+                examine_desc: null,
+                label: `a path to ${alignment==="vertical" ? "the north": "the west"}`,
+                locked_edge: null,
+                target_id: tileData.node_id
+            };
+            updatedNeighboringTileNeighbors = {...neighboringTileNeighborInfo, [tileData.node_id]: neighboringTileNeighborInfo};
+            updatedNeighborNode = {...neighboringTile, neighbors:updatedNeighboringTileNeighbors};
+            gridUpdateFunction(updatedRoomNode.node_id, updatedRoomNode);
+            gridUpdateFunction(updatedNeighborNode.node_id, updatedNeighborNode);
+            setActive(true);
         }
     }
 
-    let pathClickHandler2 = ()=>{
-        
-    }
 
     return(
         <div

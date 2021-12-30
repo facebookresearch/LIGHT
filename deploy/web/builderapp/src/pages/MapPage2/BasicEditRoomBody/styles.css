@@ -1,0 +1,13 @@
+.basiceditroom-subheader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.basiceditroom-form {
+    width: 100%;
+    border-color: lightgray;
+    font-size: 18px;
+}

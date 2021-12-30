@@ -37,7 +37,9 @@ const BasicEditRoom = ()=> {
     const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
     /* ------ LOCAL STATE ------ */
     const [formattedRoomId, setFormattedRoomId] = useState(null)
-
+    const [roomName, setRoomName] = useState("");
+    const [roomCharacters, setRoomCharacters] =useState([]);
+    const [roomObjects, setRoomObjects] =useState([]);
 
     /* --- LIFE CYCLE FUNCTIONS --- */
     useEffect(() => {
@@ -46,6 +48,21 @@ const BasicEditRoom = ()=> {
         updatedFormattedRoomId = node_id.replace(" ", "_");
         console.log("updated roomId", updatedFormattedRoomId)
         setFormattedRoomId(updatedFormattedRoomId)
+        let updatedRoomCharacters = worldCharacters.filter(char=>{
+            let {container_node} = char;
+            let {target_id} = container_node;
+            return target_id == node_id
+        })
+        let updatedRoomObjects = worldObjects.filter(objs=>{
+            let {container_node} = objs;
+            let {target_id} = container_node;
+            return target_id == node_id
+        })
+
+        console.log("NAME O", selectedRoom)
+        setRoomName(selectedRoom.name)
+        setRoomCharacters(updatedRoomCharacters)
+        setRoomObjects(updatedRoomObjects)
     }, [selectedRoom])
 
     //HANDLERS
@@ -53,31 +70,77 @@ const BasicEditRoom = ()=> {
         history.push(`/editworld/${worldId}/details/map/rooms/${formattedRoomId}`);
     }
 
+    const SaveHandler = ()=>{
+
+    }
+    // * NOTE:  Condense handlers next update
+    const RoomNameChangeHandler = (e)=>{
+        let updatedRoomName = e.target.value;
+        let updatedSelectedRoom = {...selectedRoom, name: updatedRoomName }
+        // updateSelectedRoom( updatedSelectedRoom)
+        setRoomName(updatedRoomName)
+    }
+
+    const AddCharacterHandler = (character)=>{
+        let updatedRoomCharacters = [...roomCharacters, character];
+        setRoomCharacters(updatedRoomCharacters);
+    }
+    const AddObjectHandler = (obj)=>{
+        let updatedRoomObjects = [...roomObjects, obj]
+        setRoomObjects(updatedRoomObjects)
+    }
+
+    const RemovedCharacterHandler = (id)=>{
+        let updatedRoomCharacters = roomCharacters.filter(obj=>obj.node_id==id);
+    }
+
+    const RemovedObjectHandler = (id)=>{
+        let updatedRoomObjects = roomObjects.filter(obj=>obj.node_id==id);
+    }
+
+    //COMMON SENSE FORM FUNCTION
+    const CommonSenseClickHandler = ()=>{}
+
     return (
         <div className="basiceditroom-container">
-            <div>
+            <div className="basiceditroom-subheader">
                 <Button onClick={handleAdvancedClick}>
-                    Advanced
+                    ADVANCED EDITOR
+                </Button>
+                <Button onClick={CommonSenseClickHandler}>
+                    DESCRIBE IT
                 </Button>
             </div>
-            <div>
-                <input/>
+            <div className="basiceditroom-forms">
+                <h5>
+                    ROOM NAME
+                </h5>
+                <input className="basiceditroom-form" onChange={RoomNameChangeHandler} value={roomName}/>
                 <TypeAheadTokenizerForm
-                    formLabel="Characters:"
+                    formLabel="CHARACTERS"
                     tokenOptions={worldCharacters}
                     worldId={worldId}
                     sectionName={"characters"}
                     roomId={formattedRoomId}
+                    defaultTokens={roomCharacters}
+                    onTokenAddition={AddCharacterHandler}
+                    onTokenRemoval={RemovedCharacterHandler}
                 />
                 <TypeAheadTokenizerForm
-                    formLabel="Objects:"
+                    formLabel="OBJECTS"
                     tokenOptions={worldObjects}
                     worldId={worldId}
-
                     sectionName={"objects"}
                     roomId={formattedRoomId}
+                    defaultTokens={roomObjects}
+                    onTokenAddition={AddObjectHandler}
+                    onTokenRemoval={RemovedObjectHandler}
                 />
-                <input/>
+            </div>
+            <div className="basiceditroom-button">
+                <Button onClick={SaveHandler}>
+                    SAVE
+                </Button>
             </div>
         </div>
     );

@@ -4,14 +4,16 @@ import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
-import { fetchWorlds, selectWorld } from "../../features/playerWorlds/playerworlds-slice.ts";
+import { fetchWorlds, selectWorld, setWorldDrafts, updateSelectedWorld } from "../../features/playerWorlds/playerworlds-slice.ts";
 import { updateRooms, selectRoom} from "../../features/rooms/rooms-slice.ts";
 import { updateObjects} from "../../features/objects/objects-slice.ts";
 import { updateCharacters } from "../../features/characters/characters-slice.ts";
 /* STYLES */
 import "./styles.css"
 /* BOOTSTRAP COMPONENTS */
-
+import Button from 'react-bootstrap/Button'
+/* SKETCH PICKER COMPONENTS */
+import { SketchPicker } from 'react-color';
 /* CUSTOM COMPONENTS */
 import BreadCrumbs from "../../components/BreadCrumbs";
 import NumberButtonInput from "../../components/NumberButtonInput";
@@ -31,7 +33,19 @@ const WorldBuilderPage = ()=> {
     //WORLDS
     const worldDrafts = useAppSelector((state) => state.playerWorlds.worldDrafts);
     const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
-    const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms)
+    const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
+    const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
+    /* ------ REDUX ACTIONS ------ */
+    const updateWorldsDraft = ()=>{
+        let updatedWorlds = worldDrafts.map(world=> {
+            if(world.id==worldId){
+                return selectedWorld;
+            }
+            return world;
+        })
+        dispatch(setWorldDrafts(updatedWorlds))
+    }
+
     /* ------ LOCAL STATE ------ */
     const [floor, setFloor]= useState(0); 
     const [mapBorders, setMapBorders] = useState({
@@ -43,7 +57,12 @@ const WorldBuilderPage = ()=> {
     const [mapWidth, setMapWidth]= useState(0);
     const [mapHeight, setMapHeight] = useState(0);
     const [mapSideBarOpen, setMapSideBarOpen] = useState(false);
+    const [inColorMode, setInColorMode] = useState(false);
+    const [selectedColor, setSelectedColor] = useState("");
+
     //UTILS
+
+
     // calculateMapBorders- Calculates borders from array of roomnodes and sets border values.
     const calculateMapBorders = (roomNodes)=>{
         let borders = {
@@ -153,10 +172,27 @@ const WorldBuilderPage = ()=> {
         setMapSideBarOpen(false)
     }
 
+    const ColorModeToggleHandler = ()=>{
+        let updatedColorMode = !inColorMode
+        setInColorMode(updatedColorMode)
+    }
+
     const handleTileClick= (room)=>{
+        if(inColorMode){
+            let{nodes} = selectedWorld;
+            let updatedWorld = {...nodes, [room.node_id]:{...room, color: selectedWorld}}
+            dispatch(updateSelectedWorld(updatedWorld))
+            
+        }else{
         dispatch(selectRoom(room))
         setMapSideBarOpen(true)
+        }
     }
+
+    const ColorChangeHandler = (color) => {
+        console.log("COLOR", color)
+        setSelectedColor(color);
+      };
 
     //CRUMBS
     const crumbs= [
@@ -171,6 +207,7 @@ const WorldBuilderPage = ()=> {
                 <BreadCrumbs
                     crumbs={crumbs}
                 />
+                <h5>FLOOR</h5>
                 <div className="toolbar-container">
                     <NumberButtonInput
                             incrementFunction={()=>{setFloor(floor+1)}}
@@ -178,6 +215,25 @@ const WorldBuilderPage = ()=> {
                             changeFunction={(update)=>setFloor(update)}
                             value={floor}
                     />
+                    <div >
+                        <Button
+                            variant={inColorMode ? "primary":"secondary"}
+                            
+                            onClick={ColorModeToggleHandler}
+                        >
+                            {inColorMode ? "COLOR MODE: ON": "COLOR MODE: OFF" }
+                        </Button>
+                    </div>
+                    <div>
+                        {
+                            inColorMode ?
+                            <SketchPicker 
+                                onChangeComplete={ColorChangeHandler}
+                            />
+                            :
+                            null
+                        }
+                    </div>
                 </div>
             </div>
             <div className="mappage-body">
@@ -199,10 +255,11 @@ const WorldBuilderPage = ()=> {
                 <SideBarDrawer
                     showSideBar={mapSideBarOpen}
                     closeSideBarFunction={(closeSidebar)}
-                    headerText="Edit Room"
+                    headerText={selectedRoom ? selectedRoom.node_id ? "EDIT ROOM" : "CREATE ROOM" : null}
                 >
                     <BasicEditRoomBody
                         worldId={worldId}
+                        saveFunction = {updateWorldsDraft}
                     />
                 </SideBarDrawer>
             </div>

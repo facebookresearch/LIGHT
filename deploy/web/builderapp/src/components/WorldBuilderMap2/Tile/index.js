@@ -96,14 +96,15 @@ const Tile = ({
                 ?
                 <div  className="xpath-container">
                     {
-                        hasLeftPath
-                        ?
-                        <TilePath
+                    hasLeftPath
+                    ?
+                    <TilePath
                         tileData={tileData}
                         alignment="horizontal"
                         neighbors={tileData.neighbors}
                         neighboringTile={leftNeighbor}
                         neighboringTileNeighbors={leftNeighbor.neighbors}
+                        gridUpdateFunction={gridUpdateFunction}
                     />
                     :
                     null
@@ -113,6 +114,7 @@ const Tile = ({
                 <div  className="xpath-container"/>
             }
             <div
+                style={{backgroundColor: (tileData.color ? tileData.color: "white")}}
                 className="tile-container"
                 onClick={handleTileClick}
             >

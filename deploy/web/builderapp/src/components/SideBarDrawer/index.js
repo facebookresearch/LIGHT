@@ -29,7 +29,7 @@ const SideBarDrawer = ({
         backdrop={false}
         placement="end"
     >
-        <Offcanvas.Header closeButton>
+        <Offcanvas.Header className="drawer-header" closeButton>
             <Offcanvas.Title>{headerText}</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>

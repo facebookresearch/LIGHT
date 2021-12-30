@@ -20,10 +20,10 @@ export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
     console.log("GRID BORDERS", gridBorders)
     const {top, bottom, left, right} = gridBorders;
     let gridData = {};
-    let rows =[]
+    let rows =[];
 
     for(let i = top+1; i >= bottom-1; i-- ){
-        let row = []
+        let row = [];
         for(let j = left-1; j <= right+1; j++){
             let tileData = {
                 agent: false,

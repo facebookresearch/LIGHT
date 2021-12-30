@@ -11,16 +11,33 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import './styles.css';
 import { BsGear } from 'react-icons/bs';
 
-const TypeaheadExample = ({
+const TypeaheadTokenizer = ({
     formLabel,
     tokenOptions,
     worldId,
     sectionName,
-    roomId
+    roomId,
+    defaultTokens,
+    onTokenAddition,
+    onTokenRemoval
 }) => {
     const [tokenList, setTokenList] = useState([]);
     const [selected, setSelected] = useState([]);
-
+    useEffect(() => {
+       if(defaultTokens.length){
+        console.log("DEFAULT TOKENS", defaultTokens)
+        let updatedDefaultTokens = defaultTokens.map((tokendata, index)=>{
+            let updatedDefaultTokenData = {
+                index: index,
+                label: tokendata.name,
+                key: tokendata.node_id,
+                data: tokendata
+            }
+            return updatedDefaultTokenData;
+        })
+        setSelected([...updatedDefaultTokens]) 
+       }
+    }, [defaultTokens])
     useEffect(() => {
         if(tokenOptions.length){
             console.log("TOKEN OPTIONS    ", tokenOptions)
@@ -73,4 +90,4 @@ console.log(formLabel, tokenOptions)
 };
 
 
-export default TypeaheadExample;
+export default TypeaheadTokenizer;

@@ -9,7 +9,15 @@
 .mappage-header{
     width: 90%;
     margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
 }
+
+.toolbar-container {
+    display: flex;
+    flex-direction: row;
+}
+
 
 .mappage-body{
     margin-bottom: 200px;
