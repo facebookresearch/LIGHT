@@ -178,14 +178,20 @@ const WorldBuilderPage = ()=> {
     }
 
     const handleTileClick= (room)=>{
+        console.log("CLICKED ROOM:  ", room)
         if(inColorMode){
-            let{nodes} = selectedWorld;
-            let updatedWorld = {...nodes, [room.node_id]:{...room, color: selectedWorld}}
-            dispatch(updateSelectedWorld(updatedWorld))
-            
+            let {nodes} = selectedWorld;
+            let updatedNode = nodes[room];
+            if(updatedNode){
+                updatedNode = {...updatedNode, color: selectedColor};
+                let updatedNodes = {...nodes, [room.node_id]:updatedNode};
+                let updatedWorld = {...selectedWorld, nodes:updatedNodes};
+                dispatch(updateSelectedWorld(updatedWorld));
+                updateWorldsDraft();
+            }    
         }else{
-        dispatch(selectRoom(room))
-        setMapSideBarOpen(true)
+            dispatch(selectRoom(room))
+            setMapSideBarOpen(true)
         }
     }
 
