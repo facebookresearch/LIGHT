@@ -265,14 +265,22 @@ const WorldBuilderPage = ()=> {
     const handleTileClick= (room)=>{
         console.log("CLICKED ROOM:  ", room)
         if(inColorMode){
+            console.log("IN LIVING COLOR")
             let {nodes} = selectedWorld;
-            let updatedNode = nodes[room];
+            let updatedNode = nodes[room.node_id];
+            console.log("UPDATED NODE:  ", updatedNode)
             if(updatedNode){
-                updatedNode = {...updatedNode, color: selectedColor};
+                updatedNode = {...updatedNode, color: selectedColor.hex};
                 let updatedNodes = {...nodes, [room.node_id]:updatedNode};
                 let updatedWorld = {...selectedWorld, nodes:updatedNodes};
-                dispatch(updateSelectedWorld(updatedWorld));
-                updateWorldsDraft();
+                let updatedWorlds = worldDrafts.map(world=> {
+                    if(world.id==worldId){
+                        return updatedWorld;
+                    }
+                    return world;
+                })
+                console.log("UPDATED WORLDS", updatedWorlds)
+                dispatch(setWorldDrafts(updatedWorlds))
             }    
         }else{
             dispatch(selectRoom(room))
@@ -343,6 +351,8 @@ const WorldBuilderPage = ()=> {
                     floor={floor}
                     height={mapHeight}
                     width={mapWidth}
+                    addRoom={addRoom}
+                    updateRoom={updateRoom}
                 />
                 :
                 null

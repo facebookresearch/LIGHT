@@ -18,7 +18,9 @@ const WorldBuilderMap2 = ({
     tileClickFunction,
     floor,
     width,
-    height
+    height,
+    addRoom,
+    updateRoom
   })=> {
     //REACT ROUTER
 
