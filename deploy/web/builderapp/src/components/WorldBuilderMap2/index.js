@@ -35,11 +35,10 @@ const WorldBuilderMap2 = ({
     /* REACT LIFECYCLE */
     useEffect(()=>{
       setMapWorldData(worldRoomsData)
-  },[ worldRoomsData])
+    },[worldRoomsData])
 
     useEffect(()=>{
         let updatedGridData = gridDataGenerator(worldBorders, mapWorldData, floor);
-        console.log("GRID DATA OBJECT  ", updatedGridData)
         setGridData(updatedGridData)
     },[ mapWorldData, worldBorders, floor])
 

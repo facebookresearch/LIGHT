@@ -27,18 +27,14 @@ const Grid = ({
     
     /* REACT LIFECYCLE */
     useEffect(()=>{
-       
-        console.log("GRID DATA:  ", gridData)
         let {rows} = gridData;
         if(rows.length){
             let columns = rows[0];
             setGridRows(rows);
             let rowCount = rows.length;
             let columnCount = columns.length;
-            console.log("ROW AND COLUMN COUNTS", rowCount , columnCount);
             let height = rowCount * 250;
             let width = columnCount * 250;
-            console.log("HEIGHT AND WIDTH", height , width);
             setGridWidth(width);
             setGridHeight(height);
         }

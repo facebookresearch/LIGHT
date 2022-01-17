@@ -17,11 +17,9 @@ export function roomChecker(x, y, z, room){
 
 //Generates data for grid
 export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
-    console.log("GRID BORDERS", gridBorders)
     const {top, bottom, left, right} = gridBorders;
     let gridData = {};
     let rows =[];
-
     for(let i = top+1; i >= bottom-1; i-- ){
         let row = [];
         for(let j = left-1; j <= right+1; j++){
@@ -54,7 +52,6 @@ export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
             row.push(tileData)
         }
         rows.push(row)
-        console.log("ROW", i, row)
     }
     gridData.rows = rows;
     return gridData

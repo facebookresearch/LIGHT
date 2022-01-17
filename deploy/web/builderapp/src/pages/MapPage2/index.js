@@ -22,8 +22,6 @@ import SideBarDrawer from "../../components/SideBarDrawer";
 import BasicEditRoomBody from "./BasicEditRoomBody";
 /* STYLES */
 import "./styles.css";
-//Dummy Data
-import DummyWorlds from "../../Copy/DummyData";
 
 const WorldBuilderPage = ()=> {
     let { worldId, categories } = useParams();
@@ -33,9 +31,15 @@ const WorldBuilderPage = ()=> {
     //WORLDS
     const worldDrafts = useAppSelector((state) => state.playerWorlds.worldDrafts);
     const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
+    //ROOMS
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
     const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
+    //OBJECTS
+    const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
+    //CHARACTERS
+    const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     /* ------ REDUX ACTIONS ------ */
+    //WORLD DRAFT
     const updateWorldsDraft = ()=>{
         let updatedWorlds = worldDrafts.map(world=> {
             if(world.id==worldId){
@@ -45,7 +49,86 @@ const WorldBuilderPage = ()=> {
         })
         dispatch(setWorldDrafts(updatedWorlds))
     }
+   //ROOMS
+    const addRoom = (room)=>{
+        let unupdatedWorld = selectedWorld;
+        let {rooms, nodes } = unupdatedWorld;
+        let updatedRooms = [...rooms, room.id]
+        let updatedNodes = {...nodes, [room.id]:room}
+        let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes}
+        dispatch(updateSelectedWorld(updatedWorld))
+    }
+    const updateRoom = (id, update) =>{
+        let unupdatedWorld = selectedWorld;
+        let {nodes } = unupdatedWorld;
+        let updatedNodes = {...nodes, [id]:update}
+        let updatedWorld ={...selectedWorld, nodes:updatedNodes}
+        dispatch(updateSelectedWorld(updatedWorld))
+    }
+    const deleteRoom = (id)=>{
+        let unupdatedWorld = selectedWorld;
+        let {rooms, nodes } = unupdatedWorld;
+        let updatedRooms = rooms.filter(room => id !== room);
+        let updatedNodes = delete nodes[id];
+        let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes};
+        dispatch(updateSelectedWorld(updatedWorld));
+    }
+    //CHARACTERS
+    const addCharacter = (char)=>{
+        let unupdatedWorld = selectedWorld;
+        let {agents, nodes } = unupdatedWorld;
+        let updatedAgents = [...agents, char.id]
+        let updatedNodes = {...nodes, [char.id]:char}
+        let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes}
+        dispatch(updateSelectedWorld(updatedWorld))
+    }
+    const updateCharacter = (id, update) =>{
+        let unupdatedWorld = selectedWorld;
+        let {nodes } = unupdatedWorld;
+        let updatedNodes = {...nodes, [id]:update}
+        let updatedWorld ={...selectedWorld, nodes:updatedNodes}
+        dispatch(updateSelectedWorld(updatedWorld))
+    }
+    const deleteCharacter = (id)=>{
+        let unupdatedWorld = selectedWorld;
+        let {agents, nodes } = unupdatedWorld;
+        let updatedAgents = agents.filter(char => id !== char);
+        let updatedNodes = delete nodes[id];
+        let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes};
+        dispatch(updateSelectedWorld(updatedWorld));
+    }
+    //OBJECTS
+    const addObject = (obj)=>{
+        let unupdatedWorld = selectedWorld;
+        let {objects, nodes } = unupdatedWorld;
+        let updatedObjects = [...objects, obj.id]
+        let updatedNodes = {...nodes, [obj.id]:obj}
+        let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes}
+        dispatch(updateSelectedWorld(updatedWorld))
+    }
+    const updateObject = (id, update) =>{
+        let unupdatedWorld = selectedWorld;
+        let {nodes } = unupdatedWorld;
+        let updatedNodes = {...nodes, [id]:update}
+        let updatedWorld ={...selectedWorld, nodes:updatedNodes}
+        dispatch(updateSelectedWorld(updatedWorld))
+    }
+    const deleteObject = (id)=>{
+        let unupdatedWorld = selectedWorld;
+        let {objects, nodes } = unupdatedWorld;
+        let updatedObjects = objects.filter(obj => id !== obj);
+        let updatedNodes = delete nodes[id];
+        let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
+        dispatch(updateSelectedWorld(updatedWorld));
+    }
 
+    // const SelectedWorldUpdateHandler = (update)=>{
+    //     if(selectedWorld){
+    //         let unupdatedWorld = selectedWorld;
+    //         let {agents, nodes, objects, rooms} = selectedWorld;
+    //         console.log("UPDATE", update)
+    //     }
+    // }
     /* ------ LOCAL STATE ------ */
     const [floor, setFloor]= useState(0); 
     const [mapBorders, setMapBorders] = useState({
@@ -73,7 +156,6 @@ const WorldBuilderPage = ()=> {
         }
         roomNodes.map((roomNode)=>{
             let {grid_location} = roomNode;
-            console.log("GRID LOC", grid_location)
             let x = grid_location[0]
             let y = grid_location[1]
             borders.top = borders.top > y ? borders.top : y;
@@ -89,7 +171,6 @@ const WorldBuilderPage = ()=> {
         //     borders.right = borders.right++;
         //     borders.left = borders.left--;
         // }
-        console.log("BORDERS", borders)
         return setMapBorders(borders);
     }
 
@@ -118,17 +199,15 @@ const WorldBuilderPage = ()=> {
                 break;
               }
             }
-          })
-          dispatch(updateRooms(RoomNodes))
-          dispatch(updateObjects(ObjectNodes))
-          dispatch(updateCharacters(CharacterNodes))
-      }
+        })
+        dispatch(updateRooms(RoomNodes))
+        dispatch(updateObjects(ObjectNodes))
+        dispatch(updateCharacters(CharacterNodes))
+    }
 
     /* --- LIFE CYCLE FUNCTIONS --- */
     // Fetch world data from backend or from draft data if it exists.
-    useEffect(()=>{
-        dispatch(fetchWorlds(DummyWorlds))
-    },[])
+
     
     // Selects world from draft or world Data using params (worldId) *** discuss
     useEffect(()=>{
@@ -145,7 +224,8 @@ const WorldBuilderPage = ()=> {
     // Uses worldNodeSorter helper function to break nodes into arrays and send them to respective redux slices.
     useEffect(()=>{
         if(selectedWorld){
-          worldNodeSorter(selectedWorld)
+            console.log("SELECTED WORLD:  ", selectedWorld)
+            worldNodeSorter(selectedWorld)
         }
       },[selectedWorld])
 
@@ -161,13 +241,18 @@ const WorldBuilderPage = ()=> {
         let updatedMapHeightMultiplier = Math.abs(bottom) + top;
         let updatedMapWidth = updatedMapWidthMultiplier * -200;
         let updatedMapHeight = updatedMapHeightMultiplier * -200;
-        console.log("WIDTH", updatedMapWidth)
-        console.log("HEIGHT", updatedMapHeight)
         setMapWidth(updatedMapWidth);
         setMapHeight(updatedMapHeight);
     },[mapBorders])
 
     // Handler
+    const WorldSaveHandler = ()=>{
+        let worldUpdates = {...worldRooms, worldObjects, worldCharacters}
+        let updatedWorld = {...selectedWorld, nodes: worldUpdates}
+        dispatch(updateSelectedWorld(updatedWorld))
+        updateWorldsDraft()
+        console.log("WORLD SAVE UPDATE:", updatedWorld)
+    }
     const closeSidebar = ()=>{
         setMapSideBarOpen(false)
     }
@@ -199,6 +284,8 @@ const WorldBuilderPage = ()=> {
         console.log("COLOR", color)
         setSelectedColor(color);
       };
+
+    
 
     //CRUMBS
     const crumbs= [
@@ -233,9 +320,11 @@ const WorldBuilderPage = ()=> {
                     <div>
                         {
                             inColorMode ?
-                            <SketchPicker 
-                                onChangeComplete={ColorChangeHandler}
-                            />
+                            <div>
+                                <SketchPicker 
+                                    onChangeComplete={ColorChangeHandler}
+                                />
+                            </div>
                             :
                             null
                         }
@@ -264,8 +353,17 @@ const WorldBuilderPage = ()=> {
                     headerText={selectedRoom ? selectedRoom.node_id ? "EDIT ROOM" : "CREATE ROOM" : null}
                 >
                     <BasicEditRoomBody
-                        worldId={worldId}
-                        saveFunction = {updateWorldsDraft}
+                        saveFunction = {WorldSaveHandler}
+                        addRoom={addRoom}
+                        updateRoom={updateRoom}
+                        deleteRoom={deleteRoom}
+                        addCharacter={addCharacter}
+                        updateCharacter={updateCharacter}
+                        deleteCharacter={deleteCharacter}
+                        addObject={addObject}
+                        updateObject={updateObject}
+                        deleteObject={deleteObject}
+
                     />
                 </SideBarDrawer>
             </div>

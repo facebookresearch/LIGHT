@@ -32,13 +32,14 @@ const Routes = ()=> {
     const dispatch = useAppDispatch();
     //REDUX STATE
     const customWorlds = useAppSelector((state) => state.playerWorlds.customWorlds);
+    const worldDrafts = useAppSelector((state) => state.playerWorlds.worldDrafts);
     //REDUX ACTIONS
     const fetchPlayerWorlds = ()=>{
       dispatch(fetchWorlds(DummyWorlds))
     }
     // Checks for drafts on local storage then saves them to state.
     const setPlayerWorldDrafts = ()=>{
-      let updatedDrafted = customWorlds.map((world)=>{
+      let updatedDraft = customWorlds.map((world)=>{
         let worldDraft  = JSON.parse(window.localStorage.getItem(world.id));
         if(worldDraft){
           return worldDraft;
@@ -46,7 +47,8 @@ const Routes = ()=> {
           return world;
         }
       })
-      dispatch(setWorldDrafts(updatedDrafted))
+      console.log("DRAFT  ", updatedDraft)
+      dispatch(setWorldDrafts(updatedDraft))
     }
     /* --- LIFE CYCLE FUNCTIONS --- */
     // Pulls worlds from backend
@@ -56,7 +58,14 @@ const Routes = ()=> {
     useEffect(() => {
       setPlayerWorldDrafts()
     }, [customWorlds])
-
+    //WHEN WORLD DRAFTS UPDATE THE WORLD IS SAVED TO LOCAL STORAGE
+    useEffect(() => {
+      if(worldDrafts){ 
+          worldDrafts.map(draft => {
+          window.localStorage.setItem(draft.id, JSON.stringify(draft))
+        })
+      }
+    }, [worldDrafts])
     
   return (
       <div>

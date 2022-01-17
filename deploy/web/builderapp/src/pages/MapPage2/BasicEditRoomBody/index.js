@@ -23,7 +23,18 @@ import {
 /* STYLES */
 import "./styles.css"
 
-const BasicEditRoom = ()=> { 
+const BasicEditRoom = ({
+    saveFunction,
+    addRoom,
+    updateRoom,
+    deleteRoom,
+    addCharacter,
+    updateCharacter,
+    deleteCharacter,
+    addObject,
+    updateObject,
+    deleteObject,
+})=> { 
     //REACT ROUTER
     const history = useHistory();
     let { worldId, categories } = useParams();
@@ -35,6 +46,8 @@ const BasicEditRoom = ()=> {
     const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
+    /* ------ REDUX ACTIONS ------ */
+
     /* ------ LOCAL STATE ------ */
     const [formattedRoomId, setFormattedRoomId] = useState(null)
     const [roomName, setRoomName] = useState("");
@@ -66,18 +79,19 @@ const BasicEditRoom = ()=> {
     }, [selectedRoom])
 
     //HANDLERS
+    const SaveHandler = ()=>{
+        saveFunction()
+    }
+
     const handleAdvancedClick = ()=>{
         history.push(`/editworld/${worldId}/details/map/rooms/${formattedRoomId}`);
     }
 
-    const SaveHandler = ()=>{
-
-    }
     // * NOTE:  Condense handlers next update
     const RoomNameChangeHandler = (e)=>{
         let updatedRoomName = e.target.value;
         let updatedSelectedRoom = {...selectedRoom, name: updatedRoomName }
-        // updateSelectedRoom( updatedSelectedRoom)
+        updateRoom(selectedRoom.id, updatedSelectedRoom)
         setRoomName(updatedRoomName)
     }
 
@@ -92,10 +106,12 @@ const BasicEditRoom = ()=> {
 
     const RemovedCharacterHandler = (id)=>{
         let updatedRoomCharacters = roomCharacters.filter(obj=>obj.node_id==id);
+        setRoomCharacters(updatedRoomCharacters);
     }
 
     const RemovedObjectHandler = (id)=>{
         let updatedRoomObjects = roomObjects.filter(obj=>obj.node_id==id);
+        setRoomObjects(updatedRoomObjects)
     }
 
     //COMMON SENSE FORM FUNCTION
