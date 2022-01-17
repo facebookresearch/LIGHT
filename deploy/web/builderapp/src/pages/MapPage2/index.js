@@ -86,17 +86,27 @@ const WorldBuilderPage = ()=> {
     const addCharacter = (char)=>{
         let unupdatedWorld = selectedWorld;
         let {agents, nodes } = unupdatedWorld;
-        let formattedAgentId = char.id;
+        console.log("CHARACTER BEING ADDED DATA", char)
+        let formattedAgentId = char.node_id;
+        
         while(agents.indexOf(formattedAgentId)>=0){
-            let splitFormattedAgentId = formattedAgentId.split("_")
+            console.log("WHILE LOOP RUNNING",agents.indexOf(formattedAgentId)>=0);
+            let splitFormattedAgentId = formattedAgentId.split("_");
+            console.log("FORMATTEDID:  ", splitFormattedAgentId);
             let idNumber = splitFormattedAgentId[splitFormattedAgentId.length-1]
-            idNumber = idNumber++;
+            console.log("idNumber:  ", idNumber);
+            idNumber = (idNumber*1)+1;
+            idNumber = idNumber.toString()
+            console.log("idNumber+:  ", idNumber);
             splitFormattedAgentId[splitFormattedAgentId.length-1] = idNumber
+            console.log("splitFormattedAgentId+:  ", splitFormattedAgentId);
             formattedAgentId = splitFormattedAgentId.join("_")
+            console.log("FORMATTEDIDEND:  ", formattedAgentId);
         }
         let updatedCharacterData = {...char, node_id:formattedAgentId};
         let updatedAgents = [...agents, formattedAgentId];
-        let updatedNodes = {...nodes, [formattedAgentId]:updatedCharacterData}
+        let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedAgentId]:{target_id: formattedAgentId}}}
+        let updatedNodes = {...nodes, [formattedAgentId]:updatedCharacterData, [selectedRoom.node_id]: updatedRoomData}
         let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes}
         dispatch(updateSelectedWorld(updatedWorld))
     }
@@ -119,17 +129,25 @@ const WorldBuilderPage = ()=> {
     const addObject = (obj)=>{
         let unupdatedWorld = selectedWorld;
         let {objects, nodes } = unupdatedWorld;
-        let formattedObjectId = obj.id;
+        let formattedObjectId = obj.node_id;
         while(objects.indexOf(formattedObjectId)>=0){
-            let splitFormattedObjectId = formattedObjectId.split("_")
+            console.log("WHILE LOOP RUNNING", objects.indexOf(formattedObjectId)>=0);
+            let splitFormattedObjectId = formattedObjectId.split("_");
+            console.log("FORMATTEDID:  ", splitFormattedObjectId);
             let idNumber = splitFormattedObjectId[splitFormattedObjectId.length-1]
-            idNumber = idNumber++;
+            console.log("idNumber:  ", idNumber);
+            idNumber = (idNumber*1)+1;
+            idNumber = idNumber.toString()
+            console.log("idNumber+:  ", idNumber);
             splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber
+            console.log("splitFormattedObjectId+:  ", splitFormattedObjectId);
             formattedObjectId = splitFormattedObjectId.join("_")
+            console.log("FORMATTEDIDEND:  ", formattedObjectId);
         }
-        let updatedObjectData = {...objects, node_id:formattedObjectId};
+        let updatedObjectData = {...obj, node_id:formattedObjectId, container_node:{target_id:selectedRoom.node_id}};
         let updatedObjects = [...objects, formattedObjectId]
-        let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData}
+        let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}}
+        let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedRoom.node_id]: updatedRoomData}
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes}
         dispatch(updateSelectedWorld(updatedWorld))
     }

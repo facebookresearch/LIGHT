@@ -56,8 +56,9 @@ const TypeaheadTokenizer = ({
 
 console.log(formLabel, tokenOptions)
 const SelectHandler = (selected)=>{
-    
-
+    console.log("SELECTED:  ",selected);
+    let newSelection = selected[selected.length-1].data
+    onTokenAddition(newSelection)
 }
 
   return (
@@ -69,7 +70,7 @@ const SelectHandler = (selected)=>{
             id="typeahead-tokenizer"
             allowNew={true}
             multiple
-            onChange={setSelected}
+            onChange={SelectHandler}
             options={tokenList}
             placeholder="Select one"
             renderInput={(inputProps, props) => (
