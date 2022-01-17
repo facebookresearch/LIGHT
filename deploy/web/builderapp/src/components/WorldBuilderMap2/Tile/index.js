@@ -119,7 +119,10 @@ const Tile = ({
                 onClick={handleTileClick}
             >
             {tileData.name ? tileData.name : ""}
-        </div>
+            </div>
+            <div>
+                {/* charcter list goes here */}
+            </div>
         </div>
     </div>
   );

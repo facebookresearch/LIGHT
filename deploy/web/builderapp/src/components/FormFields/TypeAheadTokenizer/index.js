@@ -55,6 +55,11 @@ const TypeaheadTokenizer = ({
     }, [tokenOptions])
 
 console.log(formLabel, tokenOptions)
+const SelectHandler = (selected)=>{
+    
+
+}
+
   return (
     <DndProvider backend={HTML5Backend}>
         <h5>

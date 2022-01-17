@@ -48,6 +48,7 @@ const BasicEditRoom = ({
     const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
     /* ------ REDUX ACTIONS ------ */
 
+
     /* ------ LOCAL STATE ------ */
     const [formattedRoomId, setFormattedRoomId] = useState(null)
     const [roomName, setRoomName] = useState("");
@@ -71,7 +72,6 @@ const BasicEditRoom = ({
             let {target_id} = container_node;
             return target_id == node_id
         })
-
         console.log("NAME O", selectedRoom)
         setRoomName(selectedRoom.name)
         setRoomCharacters(updatedRoomCharacters)
@@ -97,9 +97,13 @@ const BasicEditRoom = ({
 
     const AddCharacterHandler = (character)=>{
         let updatedRoomCharacters = [...roomCharacters, character];
+
         setRoomCharacters(updatedRoomCharacters);
     }
     const AddObjectHandler = (obj)=>{
+        let {data, id} = obj
+
+        let newObject = 
         let updatedRoomObjects = [...roomObjects, obj]
         setRoomObjects(updatedRoomObjects)
     }

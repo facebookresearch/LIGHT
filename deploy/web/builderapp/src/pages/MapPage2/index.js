@@ -53,8 +53,17 @@ const WorldBuilderPage = ()=> {
     const addRoom = (room)=>{
         let unupdatedWorld = selectedWorld;
         let {rooms, nodes } = unupdatedWorld;
-        let updatedRooms = [...rooms, room.id]
-        let updatedNodes = {...nodes, [room.id]:room}
+        let formattedRoomId = room.id;
+        while(rooms.indexOf(formattedRoomId)>=0){
+            let splitFormattedRoomId = formattedRoomId.split("_")
+            let idNumber = splitFormattedRoomId[splitFormattedRoomId.length-1]
+            idNumber = idNumber++;
+            splitFormattedRoomId[splitFormattedRoomId.length-1] = idNumber
+            formattedRoomId = splitFormattedRoomId.join("_")
+        }
+        let updatedRoomData = {...room, node_id:formattedRoomId};
+        let updatedRooms = [...rooms, formattedRoomId]
+        let updatedNodes = {...nodes, [formattedRoomId]:updatedRoomData}
         let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes}
         dispatch(updateSelectedWorld(updatedWorld))
     }
@@ -77,8 +86,17 @@ const WorldBuilderPage = ()=> {
     const addCharacter = (char)=>{
         let unupdatedWorld = selectedWorld;
         let {agents, nodes } = unupdatedWorld;
-        let updatedAgents = [...agents, char.id]
-        let updatedNodes = {...nodes, [char.id]:char}
+        let formattedAgentId = char.id;
+        while(agents.indexOf(formattedAgentId)>=0){
+            let splitFormattedAgentId = formattedAgentId.split("_")
+            let idNumber = splitFormattedAgentId[splitFormattedAgentId.length-1]
+            idNumber = idNumber++;
+            splitFormattedAgentId[splitFormattedAgentId.length-1] = idNumber
+            formattedAgentId = splitFormattedAgentId.join("_")
+        }
+        let updatedCharacterData = {...char, node_id:formattedAgentId};
+        let updatedAgents = [...agents, formattedAgentId];
+        let updatedNodes = {...nodes, [formattedAgentId]:updatedCharacterData}
         let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes}
         dispatch(updateSelectedWorld(updatedWorld))
     }
@@ -101,8 +119,17 @@ const WorldBuilderPage = ()=> {
     const addObject = (obj)=>{
         let unupdatedWorld = selectedWorld;
         let {objects, nodes } = unupdatedWorld;
-        let updatedObjects = [...objects, obj.id]
-        let updatedNodes = {...nodes, [obj.id]:obj}
+        let formattedObjectId = obj.id;
+        while(objects.indexOf(formattedObjectId)>=0){
+            let splitFormattedObjectId = formattedObjectId.split("_")
+            let idNumber = splitFormattedObjectId[splitFormattedObjectId.length-1]
+            idNumber = idNumber++;
+            splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber
+            formattedObjectId = splitFormattedObjectId.join("_")
+        }
+        let updatedObjectData = {...objects, node_id:formattedObjectId};
+        let updatedObjects = [...objects, formattedObjectId]
+        let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData}
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes}
         dispatch(updateSelectedWorld(updatedWorld))
     }
@@ -263,12 +290,9 @@ const WorldBuilderPage = ()=> {
     }
 
     const handleTileClick= (room)=>{
-        console.log("CLICKED ROOM:  ", room)
         if(inColorMode){
-            console.log("IN LIVING COLOR")
             let {nodes} = selectedWorld;
             let updatedNode = nodes[room.node_id];
-            console.log("UPDATED NODE:  ", updatedNode)
             if(updatedNode){
                 updatedNode = {...updatedNode, color: selectedColor.hex};
                 let updatedNodes = {...nodes, [room.node_id]:updatedNode};
