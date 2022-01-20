@@ -38,12 +38,16 @@ const WorldBuilderMap2 = ({
 
     /* REACT LIFECYCLE */
     useEffect(()=>{
-      setMapWorldData(worldRoomsData)
+      if(worldRoomsData){
+        setMapWorldData(worldRoomsData)
+      }
     },[worldRoomsData])
 
     useEffect(()=>{
-        let updatedGridData = gridDataGenerator(worldBorders, mapWorldData, floor);
-        setGridData(updatedGridData)
+        if(mapWorldData && worldBorders){
+          let updatedGridData = gridDataGenerator(worldBorders, mapWorldData, floor);
+          setGridData(updatedGridData)
+        }
     },[ mapWorldData, worldBorders, floor])
 
     useEffect(()=>{

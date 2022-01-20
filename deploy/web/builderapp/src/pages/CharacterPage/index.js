@@ -18,6 +18,7 @@ import Col from 'react-bootstrap/Col';
 /* CUSTOM COMPONENTS */
 import GenerateForms from "../../components/FormFields/GenerateForms";
 import TextInput from "../../components/FormFields/TextInput";
+import TextButton from "../../components/Buttons/TextButton";
 import ButtonToggle from "../../components/FormFields/ButtonToggle";
 import Slider from "../../components/FormFields/Slider";
 import BreadCrumbs from "../../components/BreadCrumbs";
@@ -377,6 +378,25 @@ const CharacterPage = ()=> {
                         />
                     </Row>
                 </Col>
+                <Row>
+                <Col>
+                    <Row>
+                    <Col>
+                        <TextButton
+                        text={selectedCharacter.node_id ? "Save Changes" : "Create Object" }
+
+                        />
+                    </Col>
+                    <Col>
+                        <TextButton
+                        text={"Delete Object"}
+                        
+                        />
+                    </Col>
+                    </Row>
+                </Col>
+                <Col/>
+                </Row>
             </Row>
             </>
             :

@@ -127,7 +127,7 @@ const WorldBuilderPage = ()=> {
 
     const disconnectRooms = (primaryRoom, primaryRoomNeighbors, secondaryRoom, secondaryRoomNeighbors)=>{
         let unupdatedWorld = selectedWorld;
-        
+
         let primaryId = primaryRoom.node_id;
         let secondaryId = secondaryRoom.node_id;
 
@@ -457,7 +457,7 @@ const WorldBuilderPage = ()=> {
             </div>
             <div className="mappage-body">
                 {
-                (worldRooms.length && mapBorders)
+                (selectedWorld.id && worldRooms.length && mapBorders)
                 ?
                 <WorldBuilderMap
                     worldData={selectedWorld}
