@@ -457,7 +457,7 @@ const WorldBuilderPage = ()=> {
             </div>
             <div className="mappage-body">
                 {
-                (selectedWorld.id && worldRooms.length && mapBorders)
+                (selectedWorld && worldRooms.length && mapBorders)
                 ?
                 <WorldBuilderMap
                     worldData={selectedWorld}

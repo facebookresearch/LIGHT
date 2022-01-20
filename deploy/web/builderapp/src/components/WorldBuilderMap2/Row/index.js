@@ -14,7 +14,6 @@ const Row = ({
     rowData, 
     borders,
     tileClickFunction,
-    gridUpdateFunction,
     connectRooms,
     disconnectRooms
 })=>{
@@ -45,7 +44,6 @@ const Row = ({
                             tileClickFunction={tileClickFunction}
                             leftNeighbor={leftTileData}
                             topNeighbor={topTileData}
-                            gridUpdateFunction={gridUpdateFunction}
                             connectRooms={connectRooms}
                             disconnectRooms={disconnectRooms}
                         />

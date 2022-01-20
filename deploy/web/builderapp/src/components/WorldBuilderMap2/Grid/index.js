@@ -13,7 +13,6 @@ import Row from "../Row"
 
 const Grid = ({
     gridData,
-    gridUpdateFunction,
     borders,
     xOffset,
     yOffset,
@@ -63,7 +62,6 @@ const Grid = ({
                             previousRowData={previousRowData}
                             rowData={row}
                             borders={borders}
-                            gridUpdateFunction={gridUpdateFunction}
                             tileClickFunction={tileClickFunction}
                             connectRooms={connectRooms}
                             disconnectRooms={disconnectRooms}

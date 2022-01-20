@@ -4,6 +4,9 @@ import React, {useState, useEffect} from "react";
 import "./styles.css"
 /* CUSTOM COMPONENTS */
 import TilePath from "./TilePath"
+/* ICONS */
+import { Gi3DStairs } from "react-icons/gi";
+import { BsArrowDownSquareFill, BsArrowUpSquareFill } from "react-icons/bs";
 /* UTILS */
 
 
@@ -13,15 +16,28 @@ const Tile = ({
     tileClickFunction,
     leftNeighbor,
     topNeighbor,
-    gridUpdateFunction,
     connectRooms,
     disconnectRooms
 })=> {
     /* ------ LOCAL STATE ------ */
+    const [tileContentNodes, setTileContentNodes] = useState([])
     const [hasLeftPath, setHasLeftPath] = useState(false)
     const [hasTopPath, setHasTopPath] = useState(false)
 
     /* ------ LIFE CYCLE ------ */
+    useEffect(()=>{
+        console.log("TILE DATA: ", tileData)
+        let updatedTileContent =[]
+        if(tileData.node_id){
+            const {contained_nodes}= tileData;
+            const tileContentNodeKeys = Object.keys(contained_nodes)
+            updatedTileContent = [...tileContentNodeKeys]
+            if(updatedTileContent.length){
+                setTileContentNodes(updatedTileContent);
+            }
+        }
+    },[tileData])
+
     useEffect(()=>{
         if(leftNeighbor){
             let updatedHasLeftPath = (leftNeighbor.node_id && tileData.node_id) ? true : false;
@@ -82,7 +98,6 @@ const Tile = ({
                             neighbors={tileData.neighbors}
                             neighboringTile={topNeighbor}
                             neighboringTileNeighbors={topNeighbor.neighbors}
-                            gridUpdateFunction={gridUpdateFunction}
                             connectRooms={connectRooms}
                             disconnectRooms={disconnectRooms}
                         />
@@ -108,7 +123,6 @@ const Tile = ({
                         neighbors={tileData.neighbors}
                         neighboringTile={leftNeighbor}
                         neighboringTileNeighbors={leftNeighbor.neighbors}
-                        gridUpdateFunction={gridUpdateFunction}
                         connectRooms={connectRooms}
                         disconnectRooms={disconnectRooms}
                     />
@@ -124,11 +138,45 @@ const Tile = ({
                 className="tile-container"
                 onClick={handleTileClick}
             >
-            {tileData.name ? tileData.name : ""}
+                {
+                tileData.node_id
+                ?
+                <>
+                    <div className="tile-header">
+                        <Gi3DStairs size="30"/>
+                        <BsArrowUpSquareFill size="30"/>
+                    </div>
+                    <div className="tile-label">
+                        <p>{tileData.name ? tileData.name.toUpperCase() : ""}</p>
+                    </div>
+                    <div className="tile-body">
+                        {
+                            tileContentNodes.length
+                            ?
+                            <ul className="tile-content__list">
+                                {
+                                    tileContentNodes.map(node => {
+                                        let formattedNode = node.replaceAll("_", " ")
+                                        return (
+                                            <li className="tile-content__list--item">
+                                                {formattedNode.toUpperCase()}
+                                            </li>
+                                        )
+                                    })
+                                }
+                            </ul>
+                            :null
+                        }
+                    </div>
+                    <div className="tile-footer">
+                        <BsArrowDownSquareFill size="30"/>
+                        <Gi3DStairs size="30"/>
+                    </div>
+            </>
+                :null
+            }
             </div>
-            <div>
-                {/* charcter list goes here */}
-            </div>
+
         </div>
     </div>
   );

@@ -38,17 +38,11 @@ const WorldBuilderMap2 = ({
 
     /* REACT LIFECYCLE */
     useEffect(()=>{
-      if(worldRoomsData){
-        setMapWorldData(worldRoomsData)
-      }
-    },[worldRoomsData])
-
-    useEffect(()=>{
-        if(mapWorldData && worldBorders){
-          let updatedGridData = gridDataGenerator(worldBorders, mapWorldData, floor);
+        if(worldRoomsData && worldBorders){
+          let updatedGridData = gridDataGenerator(worldBorders, worldRoomsData, floor);
           setGridData(updatedGridData)
         }
-    },[ mapWorldData, worldBorders, floor])
+    },[ worldRoomsData, worldBorders, floor])
 
     useEffect(()=>{
       let initialViewLoc = {
@@ -66,17 +60,17 @@ const WorldBuilderMap2 = ({
         })
         setViewLoc(updatedView)
     }
-    const mapUpdateHandler = (id, update)=>{
-      let updatedWorldData = mapWorldData.map((room, index)=>{
-        let updatedRoom = room;
-        if(id===room.node_id){
-          updatedRoom = update;
-        }
-        return updatedRoom
-      })
+    // const mapUpdateHandler = (id, update)=>{
+    //   let updatedWorldData = mapWorldData.map((room, index)=>{
+    //     let updatedRoom = room;
+    //     if(id===room.node_id){
+    //       updatedRoom = update;
+    //     }
+    //     return updatedRoom
+    //   })
 
-      setMapWorldData(updatedWorldData)
-    }
+    //   setMapWorldData(updatedWorldData)
+    // }
     return(
     <div className="map-container">
         <div className="button-row ">
@@ -171,7 +165,6 @@ const WorldBuilderMap2 = ({
                         ?
                         <Grid
                             gridData={gridData}
-                            gridUpdateFunction = {mapUpdateHandler}
                             borders={worldBorders}
                             xOffset={viewLoc.x}
                             yOffset={viewLoc.y}
