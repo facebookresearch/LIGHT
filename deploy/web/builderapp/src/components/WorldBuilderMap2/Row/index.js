@@ -14,7 +14,9 @@ const Row = ({
     rowData, 
     borders,
     tileClickFunction,
-    gridUpdateFunction
+    gridUpdateFunction,
+    connectRooms,
+    disconnectRooms
 })=>{
     /* ------ LOCAL STATE ------ */
     const [data, setData] = useState([])
@@ -44,6 +46,8 @@ const Row = ({
                             leftNeighbor={leftTileData}
                             topNeighbor={topTileData}
                             gridUpdateFunction={gridUpdateFunction}
+                            connectRooms={connectRooms}
+                            disconnectRooms={disconnectRooms}
                         />
                     )}
                 )

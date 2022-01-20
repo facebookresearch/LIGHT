@@ -16,7 +16,7 @@ import Button from 'react-bootstrap/Button'
 
 /* CUSTOM COMPONENTS */
 
-const GenerateForms = ({label, clickFunction})=> {
+const GenerateForms = ({label, value, changeHandler, clickFunction})=> {
   return (
     <div className="generateform-container">
         <Form>
@@ -26,14 +26,14 @@ const GenerateForms = ({label, clickFunction})=> {
                     </Col>
                     <Col xs={6}/>
                     <Col xs={2}>  
-                        <Button variant="primary" type="submit">
+                        <Button onClick={clickFunction} variant="primary" type="submit">
                             Generate
                         </Button>
                     </Col>
                 </Row>
                 <Row style={{marginTop:"5px"}}>
                     <Col>
-                        <Form.Control type={label} />
+                        <Form.Control onChange={changeHandler} value={value} type={label} />
                     </Col>
                 </Row>
         </Form>

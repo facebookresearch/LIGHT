@@ -17,7 +17,9 @@ const Grid = ({
     borders,
     xOffset,
     yOffset,
-    tileClickFunction
+    tileClickFunction,
+    connectRooms,
+    disconnectRooms
 })=>{
   
     /* ------ LOCAL STATE ------ */
@@ -63,6 +65,8 @@ const Grid = ({
                             borders={borders}
                             gridUpdateFunction={gridUpdateFunction}
                             tileClickFunction={tileClickFunction}
+                            connectRooms={connectRooms}
+                            disconnectRooms={disconnectRooms}
                         />
                     )}
                 )

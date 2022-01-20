@@ -7,6 +7,7 @@ import { useDrag, useDrop } from 'react-dnd';
 import { Token as RBTToken } from 'react-bootstrap-typeahead';
 /* ICONS */
 import { BsGear } from 'react-icons/bs';
+import { MdCancel } from "react-icons/md";
 
 const Token = ({
     index,
@@ -45,7 +46,8 @@ const Token = ({
             
             >
                 {children}
-                <BsGear onClick={gearClickHandler}/>
+                <BsGear color="black" onClick={gearClickHandler}/>
+                <MdCancel color="red" />
             </RBTToken>
         </span>
     );

@@ -82,7 +82,79 @@ const WorldBuilderPage = ()=> {
         let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     }
+
+    const connectRooms = (primaryRoom, primaryRoomNeighbors, secondaryRoom, secondaryRoomNeighbors, alignment)=>{
+        let unupdatedWorld = selectedWorld;
+        let {nodes} = unupdatedWorld;
+        let primaryId = primaryRoom.node_id;
+        let secondaryId = secondaryRoom.node_id;
+
+        let updatedRoomNode = primaryRoom;
+        let updatedNeighbors = primaryRoomNeighbors;
+        let neighborInfo = {
+            examine_desc: null,
+            label: `a path to ${alignment==="vertical" ? "the south": "the east"}`,
+            locked_edge: null,
+            target_id: secondaryRoom.node_id
+        };
+        updatedNeighbors = {...primaryRoomNeighbors, [secondaryId]: neighborInfo};
+        console.log("NEIGHBOR POST UPDATE", updatedNeighbors)
+        updatedRoomNode = {...primaryRoom, neighbors: updatedNeighbors};
+        console.log("ROOM", primaryRoom.node_id, neighborInfo)    
+        let updatedNeighborNode = secondaryRoom;
+        let updatedNeighboringTileNeighbors = secondaryRoomNeighbors;
+        let neighboringTileNeighborInfo = {
+            examine_desc: null,
+            label: `a path to ${alignment==="vertical" ? "the north": "the west"}`,
+            locked_edge: null,
+            target_id: primaryRoom.node_id
+        };
+        console.log("NEINEI", neighboringTileNeighborInfo) 
+        updatedNeighboringTileNeighbors = {...secondaryRoomNeighbors, [primaryId]: neighboringTileNeighborInfo};
+        console.log("NEIGHBOR NEIGHBORS POST UPDATE", updatedNeighboringTileNeighbors)
+        updatedNeighborNode = {...secondaryRoom, neighbors:updatedNeighboringTileNeighbors};
+        let updatedNodes = {...nodes, [updatedRoomNode.node_id]:updatedRoomNode, [updatedNeighborNode.node_id]: updatedNeighborNode};
+        let updatedWorld = {...unupdatedWorld, nodes: updatedNodes};
+        console.log("UPDATED WORLD CONNECT", updatedWorld)
+        let updatedWorlds = worldDrafts.map(world=> {
+            if(world.id==worldId){
+                return updatedWorld;
+            }
+            return world;
+        })
+        dispatch(setWorldDrafts(updatedWorlds))
+    }
+
+    const disconnectRooms = (primaryRoom, primaryRoomNeighbors, secondaryRoom, secondaryRoomNeighbors)=>{
+        let unupdatedWorld = selectedWorld;
+        
+        let primaryId = primaryRoom.node_id;
+        let secondaryId = secondaryRoom.node_id;
+
+        let updatedRoomNode = primaryRoom;
+        let updatedNeighbors = {...primaryRoomNeighbors};
+        delete updatedNeighbors[secondaryRoom.node_id];
+        updatedRoomNode ={...primaryRoom, neighbors: updatedNeighbors};
+
+        let updatedNeighborNode = secondaryRoom;
+        let updatedNeighboringTileNeighbors = {...secondaryRoomNeighbors};
+        delete updatedNeighboringTileNeighbors[primaryRoom.node_id];
+        updatedNeighborNode ={...updatedNeighborNode, neighbors: updatedNeighboringTileNeighbors};
+
+        let {nodes} = unupdatedWorld;
+        let updatedNodes = {...nodes, [updatedRoomNode.node_id]:updatedRoomNode, [updatedNeighborNode.node_id]: updatedNeighborNode};
+        let updatedWorld = {...unupdatedWorld, nodes: updatedNodes};
+        console.log("UPDATED WORLD DISCONNECT", updatedWorld)
+        let updatedWorlds = worldDrafts.map(world=> {
+            if(world.id==worldId){
+                return updatedWorld;
+            }
+            return world;
+        })
+        dispatch(setWorldDrafts(updatedWorlds))
+    }
     //CHARACTERS
+    // Adds new Character to selectedWorld state
     const addCharacter = (char)=>{
         let unupdatedWorld = selectedWorld;
         let {agents, nodes } = unupdatedWorld;
@@ -110,6 +182,7 @@ const WorldBuilderPage = ()=> {
         let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes}
         dispatch(updateSelectedWorld(updatedWorld))
     }
+    //Updates Character in selectedWorld state
     const updateCharacter = (id, update) =>{
         let unupdatedWorld = selectedWorld;
         let {nodes } = unupdatedWorld;
@@ -117,6 +190,7 @@ const WorldBuilderPage = ()=> {
         let updatedWorld ={...selectedWorld, nodes:updatedNodes}
         dispatch(updateSelectedWorld(updatedWorld))
     }
+    //Removes Character from selectedWorld state
     const deleteCharacter = (id)=>{
         let unupdatedWorld = selectedWorld;
         let {agents, nodes } = unupdatedWorld;
@@ -395,6 +469,8 @@ const WorldBuilderPage = ()=> {
                     width={mapWidth}
                     addRoom={addRoom}
                     updateRoom={updateRoom}
+                    connectRooms={connectRooms}
+                    disconnectRooms={disconnectRooms}
                 />
                 :
                 null

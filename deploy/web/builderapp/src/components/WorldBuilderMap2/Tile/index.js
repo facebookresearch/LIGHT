@@ -13,7 +13,9 @@ const Tile = ({
     tileClickFunction,
     leftNeighbor,
     topNeighbor,
-    gridUpdateFunction
+    gridUpdateFunction,
+    connectRooms,
+    disconnectRooms
 })=> {
     /* ------ LOCAL STATE ------ */
     const [hasLeftPath, setHasLeftPath] = useState(false)
@@ -81,6 +83,8 @@ const Tile = ({
                             neighboringTile={topNeighbor}
                             neighboringTileNeighbors={topNeighbor.neighbors}
                             gridUpdateFunction={gridUpdateFunction}
+                            connectRooms={connectRooms}
+                            disconnectRooms={disconnectRooms}
                         />
                         :
                         null
@@ -105,6 +109,8 @@ const Tile = ({
                         neighboringTile={leftNeighbor}
                         neighboringTileNeighbors={leftNeighbor.neighbors}
                         gridUpdateFunction={gridUpdateFunction}
+                        connectRooms={connectRooms}
+                        disconnectRooms={disconnectRooms}
                     />
                     :
                     null

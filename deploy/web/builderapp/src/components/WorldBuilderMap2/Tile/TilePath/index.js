@@ -17,7 +17,9 @@ const TilePath = ({
     neighbors,
     neighboringTile,
     neighboringTileNeighbors,
-    gridUpdateFunction
+    gridUpdateFunction,
+    connectRooms,
+    disconnectRooms
 })=>{
     /* ------ REDUX STATE ------ */
     //ROOMS
@@ -42,46 +44,52 @@ const TilePath = ({
     } ,[tileData])
     /* HANDLERS */
     const pathClickHandler = ()=>{
+        console.log("TILE DATA", tileData, neighboringTile)
+        console.log("NEIGHBORS", neighbors)
+        console.log("NEIGHBORTILENEIGHBORS", neighboringTileNeighbors)
+        
         if(active){
+            disconnectRooms(tileData, neighbors, neighboringTile, neighboringTileNeighbors, alignment)
+            // let updatedRoomNode = tileData;
+            // let updatedNeighbors = {...neighbors};
+            // delete updatedNeighbors[neighboringTile.node_id];
+            // updatedRoomNode ={...tileData, neighbors: updatedNeighbors};
 
-            let updatedRoomNode = tileData;
-            let updatedNeighbors = {...neighbors};
-            delete updatedNeighbors[neighboringTile.node_id];
-            updatedRoomNode ={...tileData, neighbors: updatedNeighbors};
+            // let updatedNeighborNode = neighboringTile;
+            // let updatedNeighboringTileNeighbors = {...neighboringTileNeighbors};
+            // delete updatedNeighboringTileNeighbors[neighboringTile.node_id];
+            // updatedNeighborNode ={...updatedNeighborNode, neighbors: updatedNeighboringTileNeighbors};
 
-            let updatedNeighborNode = neighboringTile;
-            let updatedNeighboringTileNeighbors = {...neighboringTileNeighbors};
-            delete updatedNeighboringTileNeighbors[neighboringTile.node_id];
-            updatedNeighborNode ={...updatedNeighborNode, neighbors: updatedNeighboringTileNeighbors};
-
-            gridUpdateFunction(updatedRoomNode.node_id, updatedRoomNode);
-            gridUpdateFunction(updatedNeighborNode.node_id, updatedNeighborNode);
-            setActive(false);
+            // gridUpdateFunction(updatedRoomNode.node_id, updatedRoomNode);
+            // gridUpdateFunction(updatedNeighborNode.node_id, updatedNeighborNode);
+            
         }else{
-            let updatedRoomNode = tileData;
-            let updatedNeighbors = neighbors;
-            let neighborInfo = {
-                examine_desc: null,
-                label: `a path to ${alignment==="vertical" ? "the south": "the east"}`,
-                locked_edge: null,
-                target_id: neighboringTile.node_id
-            };
-            updatedNeighbors = {...neighbors, [neighboringTile.node_id]:neighborInfo};
-            updatedRoomNode = {...tileData, neighbors:updatedNeighbors};
+            connectRooms(tileData, neighbors, neighboringTile, neighboringTileNeighbors, alignment)
+
+            // let updatedRoomNode = tileData;
+            // let updatedNeighbors = neighbors;
+            // let neighborInfo = {
+            //     examine_desc: null,
+            //     label: `a path to ${alignment==="vertical" ? "the south": "the east"}`,
+            //     locked_edge: null,
+            //     target_id: neighboringTile.node_id
+            // };
+            // updatedNeighbors = {...neighbors, [neighboringTile.node_id]:neighborInfo};
+            // updatedRoomNode = {...tileData, neighbors:updatedNeighbors};
                     
-            let updatedNeighborNode = neighboringTile;
-            let updatedNeighboringTileNeighbors = neighboringTileNeighbors;
-            let neighboringTileNeighborInfo = {
-                examine_desc: null,
-                label: `a path to ${alignment==="vertical" ? "the north": "the west"}`,
-                locked_edge: null,
-                target_id: tileData.node_id
-            };
-            updatedNeighboringTileNeighbors = {...neighboringTileNeighborInfo, [tileData.node_id]: neighboringTileNeighborInfo};
-            updatedNeighborNode = {...neighboringTile, neighbors:updatedNeighboringTileNeighbors};
-            gridUpdateFunction(updatedRoomNode.node_id, updatedRoomNode);
-            gridUpdateFunction(updatedNeighborNode.node_id, updatedNeighborNode);
-            setActive(true);
+            // let updatedNeighborNode = neighboringTile;
+            // let updatedNeighboringTileNeighbors = neighboringTileNeighbors;
+            // let neighboringTileNeighborInfo = {
+            //     examine_desc: null,
+            //     label: `a path to ${alignment==="vertical" ? "the north": "the west"}`,
+            //     locked_edge: null,
+            //     target_id: tileData.node_id
+            // };
+            // updatedNeighboringTileNeighbors = {...neighboringTileNeighborInfo, [tileData.node_id]: neighboringTileNeighborInfo};
+            // updatedNeighborNode = {...neighboringTile, neighbors:updatedNeighboringTileNeighbors};
+            // gridUpdateFunction(updatedRoomNode.node_id, updatedRoomNode);
+            // gridUpdateFunction(updatedNeighborNode.node_id, updatedNeighborNode);
+            
         }
     }
 

@@ -20,7 +20,9 @@ const WorldBuilderMap2 = ({
     width,
     height,
     addRoom,
-    updateRoom
+    updateRoom,
+    connectRooms,
+    disconnectRooms
   })=> {
     //REACT ROUTER
 
@@ -170,6 +172,8 @@ const WorldBuilderMap2 = ({
                             xOffset={viewLoc.x}
                             yOffset={viewLoc.y}
                             tileClickFunction={tileClickFunction}
+                            connectRooms={connectRooms}
+                            disconnectRooms={disconnectRooms}
                         />
                         :
                         null // NOTE: Add loading icon and placeholder div in future

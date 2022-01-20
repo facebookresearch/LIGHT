@@ -17,9 +17,13 @@ import Form from 'react-bootstrap/Form'
 const Slider = ({
     label,
     maxLabel,
-    minLabel
+    minLabel,
+    value,
+    min,
+    max,
+    changeHandler
 })=> {
-    const SliderRef = useRef(null);
+    
 
     return (
         <div className="slider-container">
@@ -31,7 +35,12 @@ const Slider = ({
                     <Form.Label>{minLabel}</Form.Label>
                 </Col>
                 <Col xs={8}>
-                    <Form.Range ref={SliderRef} />
+                    <Form.Range 
+                        value={value}
+                        onChange={changeHandler}
+                        min={min}
+                        max={max}
+                    />
                 </Col>
                 <Col>
                 <   Form.Label>{maxLabel}</Form.Label>

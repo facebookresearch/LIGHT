@@ -12,7 +12,9 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel'
 
 
 const TextInput = ({
-    label
+    label,
+    value,
+    changeHandler
 })=> {
     const textInputRef = useRef(null);
 
@@ -22,7 +24,7 @@ const TextInput = ({
                 label={label}
                 className="mb-3"
             >
-                <Form.Control ref={textInputRef} type="text" placeholder={label} />
+                <Form.Control value={value} onChange={changeHandler} type="text" placeholder={label} />
             </FloatingLabel>
         </div>
     );

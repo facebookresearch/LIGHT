@@ -84,7 +84,7 @@ const SelectHandler = (selected)=>{
                         sectionName={sectionName}
                         roomId={roomId}
                     >   
-                        {option.label}
+                        {option.label.toUpperCase()}
                     </Token>
                 ))}
             </TypeaheadInputMulti>
