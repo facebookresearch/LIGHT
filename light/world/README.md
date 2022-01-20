@@ -2,9 +2,9 @@
 
 The LIGHT World operates on a level above the LIGHT Graph, and it is responsible for maintaining track of agents within the world, listening to their actions, parsing them, and executing them on the underlying graph.
 
-## Purgatory
+## World
 
-`Purgatory` is responsible for managing `Soul`'s. It should be created as a member of a `World` when the world is created. Whatever created that world can then register souls to fill up the `World`'s agents by using `register_filler_soul_provider` and `fill_soul`.
+TODO - describe the world class itself and how it interacts with other levels
 
 ## Content Loggers
 
@@ -21,3 +21,14 @@ Files ending in `event.log` record a meta episode from the POV of the room or ag
     event_to_json
 
 All event logs are in the `log_path/light_event_dumps` directory.  The graph_uuid references a graph in the `log_path/light_graph_dumps` directory
+
+## Subdirectories
+- **`souls`**: Directory containing `Soul`s, which are used as the layer allowing models or players to assume the role of a `GraphAgent` and observe and interact within a LIGHT `World`.
+- **`tests`**: Testing to ensure that the `World` is functional.
+- **`utils`**: Utility classes for `World`-related code.
+
+## Other Classes:
+- [**`PlayerProvider`**](https://github.com/facebookresearch/LIGHT/tree/main/light/world/player_provider.py): Abstraction defining required functions for a human agent to be able to interact within LIGHT.
+- [**`Purgatory`**](https://github.com/facebookresearch/LIGHT/tree/main/light/world/purgatory.py): `Purgatory` is responsible for managing `Soul`'s. It should be created as a member of a `World` when the world is created. Whatever created that world can then register souls to fill up the `World`'s agents by using `register_filler_soul_provider` and `fill_soul`.
+- [**`WorldViewer`**](https://github.com/facebookresearch/LIGHT/tree/main/light/world/quest_loader.py): Class used to load in saved 'motivations' and quests for characters, as well as to generate new ones after one has been completed.
+- [**`QuestLoader`**](https://github.com/facebookresearch/LIGHT/tree/main/light/world/views.py): Baseline implementation of a class defining how contents of the world should _look_ to an observer. May be overwritten for special cases.
