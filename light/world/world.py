@@ -9,7 +9,6 @@ import emoji
 import os
 import random
 
-# TODO don't use * imports
 from light.graph.utils import rm, deprecated
 from light.graph.events.base import GraphEvent, ErrorEvent
 from light.graph.events.graph_events import (

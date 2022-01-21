@@ -1,10 +1,21 @@
 # LIGHT World
 
-The LIGHT World operates on a level above the LIGHT Graph, and it is responsible for maintaining track of agents within the world, listening to their actions, parsing them, and executing them on the underlying graph.
+The LIGHT World operates on a level above the LIGHT Graph, and it is responsible for maintaining track of agents within the world, listening to their actions, parsing them, and executing them on the underlying graph. While this directory contains other classes, the core unifying principle is that they operate on top of a live `OOGraph`.
 
 ## World
 
-TODO - describe the world class itself and how it interacts with other levels
+The world class itself is a wrapper around an `OOGraph` that keeps track of session-dependent attributes and provides helpful functions for interacting on a graph live. It delegates some of this responsiblity to the `Purgatory`, `WorldViewer` classes described below. This section covers an overview on other core functionality. Additional functionality of the `World` has been deprecated and marked as such.
+
+### Parsing Text to `GraphEvent`s
+The `World`'s parsing methods are responsible for executing the construction methods for a `GraphEvent` in the correct order, and handling errors properly along the way. This is handled by the `parse_exec` function, which extracts the target `GraphEvent` type and uses `attempt_parse_event` to try and create the event if it's valid.
+
+The `World` is also able to determine all possible `GraphEvent`s for an agent with `get_possible_events`.
+
+### Broadcasting executed events
+Once an event is executed on a LIGHT graph, it's the `World`'s responsiblity to ensure that expected listeners (including loggers) are able to observe what just occurred. These responsibilities are handled with the `broadcast_to_room`, `broadcast_to_agents`, and `broadcast_to_all_agents` methods. These ultimately rely on `send_action` and `send_msg` to direct the observations to the correct `Soul`s.
+
+### Removing corpses
+One issue with a text world, especially one where characters can die in, is that eventually it becomes filled with corpses if they aren't removed. The LIGHT `World` takes up this responsibility with `clean_corpses_and_respawn`, ensuring that nodes can be removed and replaced with new characters as death inevitably occurs.
 
 ## Content Loggers
 
