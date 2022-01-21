@@ -8,7 +8,15 @@ We use `GraphEvent`s to parse text commands into valid actions, find all possibl
 ## Base Graph Events
 The base events are `GraphEvent`, representing any action on the graph, `ErrorEvent`, which represents a failure to parse or execute an event, and `TriggeredEvent`, which represents an event that can only be created directly by another event, rather than being parsed out from a determined action.
 
-TODO - Describe the structure of a Graph Event, it's subcomponents, and how we parse and use it in the graph world
+The `GraphEvent` itself sets a baseline API for interacting with an `OOGraph` and making controllable transitions over it. This interface covers the direct and parsed creation of an event, as well as execution and failure conditions. Details are further expanded on in the `base.py` file and class definition, but the following gives a brief overview:
+- `__init__`: Generally, `GraphEvent`s are boiled down to an interaction between nodes, but can also include arbitrary text (for directly messaging, or updating graph text state). As such, graphs require an `actor`, and then optionally have `target_nodes` which may be involved in the interaction, as well as `text_content` which can be any string used in the event.
+- `execute`: Actually make direct changes to the `OOGraph`, or broadcast observable messages to agents in the `OOGraph`. At the moment, assumes that the event _can_ be successfully executed if it is properly constructed.
+- `split_text_args`: Given a string, split into a list of possibly valid text lists to parse into arguments to form an event. Return an `ErrorEvent` if no such parsing is possible.
+- `find_nodes_for_args`: Given a list of text args, find appropriate elements in the graph that both match the name and event requirements. Return an `ErrorEvent` if no such find is possible.
+- `construct_from_args`: Use the given args returned from `find_nodes_for_args` to construct a `GraphEvent` of this type.
+- `to_canonical_form`: Produces a standard text representation for the event, such that a `split_text_args -> find_nodes_for_args -> construct_from_args` pass would produce the same event.
+- `get_valid_actions`: Return a list of `GraphEvent`s of this type that a given agent would be able to perform on the given graph, if any.
+- `view_as`: Provides a string representation for the event from the perpsective of a given agent.
 
 A complete list of instances of events is defined in `graph_events.py`.
 
@@ -45,7 +53,7 @@ Every constraint and event is a dictionary of the format:
 
 Every `on_use` function is an array of Use events, which are arrays of `Constraints` and `Events` as described above. In general, when describing an object, the format of their custom interactions will be:
 
-```
+```json
 "object_id": {
     "name": "object_name",
     "contain_size": 0,
