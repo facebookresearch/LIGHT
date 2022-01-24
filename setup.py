@@ -48,7 +48,7 @@ if __name__ == "__main__":
         install_requires=reqs.strip().split("\n"),
         include_package_data=True,
         entry_points={
-            "console_scripts": ["light=light.scripts.light_cli:main"],
+            "console_scripts": ["light=light.light_cli:main"],
         },
         classifiers=[
             "Programming Language :: Python :: 3",
