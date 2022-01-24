@@ -60,9 +60,6 @@ class World(object):
         graph_builder,
         debug=False,
     ):
-        # TODO re-investigate callbacks during action refactor
-        self.callbacks = {}
-        self.variables = {}
         self._opt = opt
         self._node_freeze = False
         self._cnt = 0
@@ -76,7 +73,6 @@ class World(object):
         self._player_cnt = 0
         self._playerid_to_agentid = {}
         self._agentid_to_playerid = {}
-        self.__message_callbacks = {}
 
         self.graph_builder = graph_builder  # TODO replace with builder
 
@@ -131,10 +127,7 @@ class World(object):
         result = cls.__new__(cls)
         memo[id(self)] = result
         for k, v in self.__dict__.items():
-            if "__message_callbacks" not in k:  # we cant copy callback anchors
-                setattr(result, k, deepcopy(v, memo))
-            else:
-                setattr(result, k, {})
+            setattr(result, k, {})
         return result
 
     def all_node_ids(self):
@@ -158,23 +151,6 @@ class World(object):
 
     def version(self):
         return 4
-
-    # TODO refactor players
-    def add_message_callback(self, id, func):
-        self.__message_callbacks[id] = func
-
-    def clear_message_callback(self, id):
-        if id in self.__message_callbacks:
-            del self.__message_callbacks[id]
-
-    # -- Callbacks and variables -- #
-
-    def register_callbacks(self, callbacks, variables):
-        self.callbacks = callbacks
-        self.variables = variables
-
-    def register_parser(self, file_parser):
-        self.parser = file_parser
 
     # -- Full node editors/creators/getters/deleters -- #
     def add_node(self, desc, props, is_player=False, uid="", is_room=False):
@@ -268,6 +244,7 @@ class World(object):
         assert isinstance(room, GraphRoom)
         return [x.node_id for x in room.get_neighbors()]
 
+    @deprecated
     def get_actionable_ids(self, actor_id):
         # TODO deprectate when new action generator done
         o = self.get_local_ids(actor_id)
@@ -376,8 +353,6 @@ class World(object):
         # TODO remove below when server game has Soul-based PlayerProvider
         agent.observe_action(txt, action)
         pos_playerid = self.agentid_to_playerid(agent_id)
-        if pos_playerid in self.__message_callbacks:
-            self.__message_callbacks[pos_playerid](self, action)
 
     def broadcast_to_agents(self, action, agents, exclude_agents=None):
         """send a message to agents in the specified list """
