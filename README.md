@@ -18,8 +18,7 @@ LIGHT is part Text-Adventure game, part Dialogue + Natural Language research pla
 This repo contains a few directories related to the LIGHT project. More details can be found in each directory:
 - [**`crowdsourcing`**](https://github.com/facebookresearch/LIGHT/tree/main/crowdsourcing): Contains the full setup and deploy code for (nearly) all of the crowdsourced data used in LIGHT. Useful examples of how to collect similar types of data.
 - [**`deploy`**](https://github.com/facebookresearch/LIGHT/tree/main/deploy): Contains code relevant for various deploys of LIGHT for public consumption.
-- [**`light`**](https://github.com/facebookresearch/LIGHT/tree/main/light): Contains the core LIGHT game engine. Includes the `OOGraph` data model, descriptions of all of the node types, actions and manipulations on the graph (`GraphEvent`s), and the abstract API (`Soul`s) for creating agents that can act in LIGHT.
-- [**`modeling`**](): A (currently-nonexistant) directory of code for agents and teachers that can be trained to work in LIGHT.
+- [**`light`**](https://github.com/facebookresearch/LIGHT/tree/main/light): Contains the core LIGHT game engine, modeling, and tasks. The core includes the `OOGraph` data model, descriptions of all of the node types, actions and manipulations on the graph (`GraphEvent`s), and the abstract API (`Soul`s) for creating agents that can act in LIGHT.
 - [**`projects`**](https://github.com/facebookresearch/LIGHT/tree/main/projects): Contains code that's still in-development, either for research endeavors that haven't yet been incorporated into the game, or works that derive from work but ultimately don't feed back in. Also contains code relevant preserved to reproduce specific paper results.
 - [**`scripts`**](https://github.com/facebookresearch/LIGHT/tree/main/scripts): Contains execution code for running LIGHT, exploring our dataset, filtering through examples, and more.
 
@@ -51,3 +50,16 @@ TODO - Fill out once all of the required minimal models are hosted for access ou
 ### Launching the full game server locally
 
 TODO - more details are in the [web deploy](https://github.com/facebookresearch/LIGHT/tree/main/deploy/web/) directory.
+
+## Creating tasks and agents
+We use the "register" syntax so that new agents and tasks are visible to the parlai module. Note, however,
+that in any script that uses these tasks or agents, you will have to make a call to the functions `register_all_agents()` and `register_all_tasks()` which can be found in `light/modeling/loading.py`.
+
+**ALTERNATIVELY** you can consider using the supercommand: `light`. The following commands accomplish the same thing:
+
+- `python scripts/train_model.py` and `light tm`
+- `python scripts/display_data.py` and `light dd`
+- `python scripts/eval_model.py` and `light em`
+- etc.
+
+Using `light` will automatically load the correct modules from inside this repo so that they are visible to ParlAI.

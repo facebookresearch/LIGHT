@@ -47,7 +47,9 @@ if __name__ == "__main__":
         ),
         install_requires=reqs.strip().split("\n"),
         include_package_data=True,
-        # entry_points={"flake8.extension": ["PAI = parlai.utils.flake8:ParlAIChecker"]},
+        entry_points={
+            "console_scripts": ["light=light.scripts.light_cli:main"],
+        },
         classifiers=[
             "Programming Language :: Python :: 3",
             "License :: OSI Approved :: MIT License",

@@ -7,6 +7,7 @@ At the moment, subdirectories contain a mixture of complete and ready examples a
 Not everything here will remain here, and may be more appropriately stored elsewhere in the future.
 
 **Subdirectories:**
+- **`parlai`**: LIGHT-specific versions of ParlAI scripts that have access to our datasets and tasks.
 - **`browse_game`**: Scripts we use to explore contents of the LIGHT main web deploy database.
 - **`examples`**: Scripts that allow local live interaction with specific parts of the LIGHT platform.
 - **`filtering`**: Scripts used to process and filter incoming data, primarily from the messenger project.
