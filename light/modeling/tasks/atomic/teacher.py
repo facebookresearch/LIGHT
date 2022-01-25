@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+
 from parlai.core.teachers import ParlAIDialogTeacher
 from parlai.core.loader import register_teacher
 from light.constants import LIGHT_DATAPATH
@@ -23,9 +30,25 @@ def _path(opt):
 
 @register_teacher("light:atomic")
 class AtomicTeacher(ParlAIDialogTeacher):
+    @staticmethod
+    def add_cmdline_args(argparser, partial_opt=None):
+        argparser.add_argument(
+            "-fill",
+            "--fill",
+            type=str,
+            default="bert",
+            choices=["bert", "rand"],
+            help=(
+                "Strategy for filling ATOMIC entities with LIGHT versions. Options are "
+                "['bert', 'rand'], and bert is the default."
+            ),
+        )
+        argparser = ParlAIDialogTeacher.add_cmdline_args(argparser, partial_opt)
+        return argparser
+
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt["fill"] = "bert"  # TODO expose option for fill=rand
+        opt["light_datapath"] = opt.get("light_datapath", LIGHT_DATAPATH)
         build(opt)
         datafile = _path(opt)
         opt["parlaidialogteacher_datafile"] = datafile
@@ -37,5 +60,4 @@ class AtomicTeacher(ParlAIDialogTeacher):
 
 class DefaultTeacher(AtomicTeacher):
     def __init__(self, opt, shared=None):
-        opt["light_datapath"] = opt.get("light_datapath", LIGHT_DATAPATH)
         super().__init__(opt, shared)

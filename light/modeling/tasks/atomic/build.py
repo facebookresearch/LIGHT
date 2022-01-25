@@ -15,7 +15,6 @@ import time
 import shutil
 import light.modeling.tasks.utils as utils
 from light.data_model.light_database import LIGHTDatabase
-from light.constants import LIGHT_DATAPATH
 import parlai.core.build_data as build_data
 from parlai.core.build_data import DownloadableFile
 
@@ -61,7 +60,7 @@ RESOURCES = [
 
 def download(opt, task):
     version = "v1.0"
-    # download pickled database
+
     base_dpath = opt["light_datapath"]
     full_dpath = os.path.join(base_dpath, task)
     if not build_data.built(full_dpath, version):
@@ -73,13 +72,7 @@ def download(opt, task):
 
         # Download the data.
         for downloadable_file in RESOURCES:
-            target_dir = os.path.dirname(
-                os.path.join(base_dpath, downloadable_file.file_name)
-            )
-            file_name = os.path.basename(downloadable_file.file_name)
-            downloadable_file.file_name = file_name
-            build_data.make_dir(target_dir)
-            downloadable_file.download_file(target_dir)
+            utils.download_for_light(base_dpath, downloadable_file)
 
         # Move the bert data to another directory
         bert_fin_path = os.path.join(base_dpath, "atomic/bert/")
@@ -568,9 +561,6 @@ def build_atomic(dpath, odpath, opt):
 
 
 def build(opt):
-    # get path to data directory
-    opt["light_datapath"] = opt.get("light_datapath", LIGHT_DATAPATH)
-
     # Download base atomic and LIGHT db
     full_dpath, version = download(opt, "atomic")
     atomic_basepath = os.path.join(full_dpath, "base")
