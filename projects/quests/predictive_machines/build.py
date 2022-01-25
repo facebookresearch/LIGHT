@@ -6,7 +6,7 @@
 
 import parlai.core.build_data as build_data
 import os
-from parlai_internal.tasks.light_predictive_machines.builder import build_from_db
+from .builder import build_from_db
 import pickle
 from parlai.core.params import ParlaiParser
 
