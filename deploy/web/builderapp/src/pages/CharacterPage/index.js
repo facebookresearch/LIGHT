@@ -27,7 +27,7 @@ import TypeAheadTokenizerForm from "../../components/FormFields/TypeAheadTokeniz
 const CharacterPage = ()=> {
     //REACT ROUTER
     const history = useHistory();
-    let { worldId, roomid, charid } = useParams();
+    let { worldId, categories, roomid, charid } = useParams();
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
@@ -273,10 +273,18 @@ const CharacterPage = ()=> {
     }, [selectedCharacter])
   
 //   //CRUMBS
-//   const crumbs= [{name:` Overview` , linkUrl:`/editworld/${worldId}/details`}, {name:` Map` , linkUrl:`/editworld/${worldId}/details/map`},  {name:` Room:  ${selectedRoom.name}` , linkUrl:`/editworld/${worldId}/details/map/rooms/${roomid}`},{name:` Map` , linkUrl:`/editworld/${worldId}/details/map`},  {name:` Character:  ${selectedCharacter.name}` , linkUrl:`/editworld/${worldId}/details/map/rooms/${roomid}`} ]
+const crumbs= [
+    {name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`}, 
+    {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`},
+    {name:` ${roomid}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomid}`},
+    {name:` ${charid}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomid}/characters/${charid}`}
+  ];
   
   return (
     <Container>
+            <BreadCrumbs
+                crumbs={crumbs}
+            />
             {
             selectedCharacter
             ?
@@ -342,9 +350,10 @@ const CharacterPage = ()=> {
                         <h5>In-Game appearance:</h5>
                     </Row>
                     <Row>
-                        <Col xs={1}>
+                        <Col xs={2}>
                             <input
                                 value={selectedCharacter.name_prefix}
+                                style={{width:"50%"}}
                             />
                         </Col>
                         <Col xs={10}>

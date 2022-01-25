@@ -26,7 +26,7 @@ import TypeAheadTokenizerForm from "../../components/FormFields/TypeAheadTokeniz
 const RoomPage = ()=> {
     //REACT ROUTER
     const history = useHistory();
-    let { worldId, roomid } = useParams();
+    let { worldId, categories, roomid } = useParams();
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
@@ -297,8 +297,18 @@ const RoomPage = ()=> {
         }
     }, [selectedRoom])
 
+    //CRUMBS
+    const crumbs= [
+        {name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`}, 
+        {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`},
+        {name:` ${roomid}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomid}`}
+    ];
+
     return (
         <Container>
+            <BreadCrumbs
+                crumbs={crumbs}
+            />
             {
             selectedRoom
             ?

@@ -27,7 +27,6 @@ const WorldBuilderMap2 = ({
     //REACT ROUTER
 
     /* ------ LOCAL STATE ------ */
-    const [mapWorldData, setMapWorldData] = useState(null)
     const [viewLoc, setViewLoc] = useState(
         {
             x: -20,

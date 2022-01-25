@@ -17,16 +17,16 @@ const TypeaheadTokenizer = ({
     worldId,
     sectionName,
     roomId,
-    defaultTokens,
+    tokens,
     onTokenAddition,
     onTokenRemoval
 }) => {
     const [tokenList, setTokenList] = useState([]);
     const [selected, setSelected] = useState([]);
     useEffect(() => {
-       if(defaultTokens.length){
-        console.log("DEFAULT TOKENS", defaultTokens)
-        let updatedDefaultTokens = defaultTokens.map((tokendata, index)=>{
+       if(tokens){
+        console.log("DEFAULT TOKENS", tokens)
+        let updatedtokens = tokens.map((tokendata, index)=>{
             let updatedDefaultTokenData = {
                 index: index,
                 label: tokendata.name,
@@ -35,9 +35,11 @@ const TypeaheadTokenizer = ({
             }
             return updatedDefaultTokenData;
         })
-        setSelected([...updatedDefaultTokens]) 
+        setSelected([...updatedtokens]) 
+       }else{
+        setSelected([]) 
        }
-    }, [defaultTokens])
+    }, [tokens, roomId])
     useEffect(() => {
         if(tokenOptions.length){
             console.log("TOKEN OPTIONS    ", tokenOptions)
@@ -71,6 +73,7 @@ const SelectHandler = (selected)=>{
             allowNew={true}
             multiple
             onChange={SelectHandler}
+            selected={selected}
             options={tokenList}
             placeholder="Select one"
             renderInput={(inputProps, props) => (
@@ -89,7 +92,6 @@ const SelectHandler = (selected)=>{
                 ))}
             </TypeaheadInputMulti>
             )}
-            selected={selected}
         />
     </DndProvider>
   );

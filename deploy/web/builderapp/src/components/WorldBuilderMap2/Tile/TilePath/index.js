@@ -17,7 +17,6 @@ const TilePath = ({
     neighbors,
     neighboringTile,
     neighboringTileNeighbors,
-    gridUpdateFunction,
     connectRooms,
     disconnectRooms
 })=>{
@@ -25,11 +24,6 @@ const TilePath = ({
     //ROOMS
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
     /* ------ REDUX ACTIONS ------ */
-
-    const dispatch = useAppDispatch();
-
-    const updateRooms = (update) => dispatch(updateRooms(update))
-    ;
     /* ------ LOCAL STATE ------ */
     const [active, setActive] = useState(false);
 
@@ -41,7 +35,7 @@ const TilePath = ({
                 setActive(true)
             }
         })
-    } ,[tileData])
+    } ,[neighbors, neighboringTileNeighbors])
     /* HANDLERS */
     const pathClickHandler = ()=>{
         console.log("TILE DATA", tileData, neighboringTile)
@@ -49,6 +43,7 @@ const TilePath = ({
         console.log("NEIGHBORTILENEIGHBORS", neighboringTileNeighbors)
         
         if(active){
+            console.log("DISCONNECTING ROOMS")
             disconnectRooms(tileData, neighbors, neighboringTile, neighboringTileNeighbors, alignment)
             // let updatedRoomNode = tileData;
             // let updatedNeighbors = {...neighbors};
@@ -64,6 +59,7 @@ const TilePath = ({
             // gridUpdateFunction(updatedNeighborNode.node_id, updatedNeighborNode);
             
         }else{
+            console.log("CONNECTING ROOMS")
             connectRooms(tileData, neighbors, neighboringTile, neighboringTileNeighbors, alignment)
 
             // let updatedRoomNode = tileData;

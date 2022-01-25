@@ -6,7 +6,7 @@ import "./styles.css"
 import TilePath from "./TilePath"
 /* ICONS */
 import { Gi3DStairs } from "react-icons/gi";
-import { BsArrowDownSquareFill, BsArrowUpSquareFill } from "react-icons/bs";
+import { BsArrowDownShort, BsArrowUpShort } from "react-icons/bs";
 /* UTILS */
 
 
@@ -26,7 +26,6 @@ const Tile = ({
 
     /* ------ LIFE CYCLE ------ */
     useEffect(()=>{
-        console.log("TILE DATA: ", tileData)
         let updatedTileContent =[]
         if(tileData.node_id){
             const {contained_nodes}= tileData;
@@ -142,10 +141,6 @@ const Tile = ({
                 tileData.node_id
                 ?
                 <>
-                    <div className="tile-header">
-                        <Gi3DStairs size="30"/>
-                        <BsArrowUpSquareFill size="30"/>
-                    </div>
                     <div className="tile-label">
                         <p>{tileData.name ? tileData.name.toUpperCase() : ""}</p>
                     </div>
@@ -158,7 +153,7 @@ const Tile = ({
                                     tileContentNodes.map(node => {
                                         let formattedNode = node.replaceAll("_", " ")
                                         return (
-                                            <li className="tile-content__list--item">
+                                            <li key={node} className="tile-content__list--item">
                                                 {formattedNode.toUpperCase()}
                                             </li>
                                         )
@@ -169,10 +164,16 @@ const Tile = ({
                         }
                     </div>
                     <div className="tile-footer">
-                        <BsArrowDownSquareFill size="30"/>
-                        <Gi3DStairs size="30"/>
+                        <span>
+                            <Gi3DStairs size="16"/>
+                            <BsArrowUpShort size="16"/>
+                        </span>
+                        <span>
+                            <BsArrowDownShort size="16"/>
+                            <Gi3DStairs size="16"/>
+                        </span>
                     </div>
-            </>
+                </>
                 :null
             }
             </div>

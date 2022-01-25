@@ -27,7 +27,7 @@ import TypeAheadTokenizerForm from "../../components/FormFields/TypeAheadTokeniz
 const ObjectPage = ()=> {
   //REACT ROUTER
   const history = useHistory();
-  let { worldId, roomid, objectid} = useParams();
+  let { worldId, categories, roomid, objectid} = useParams();
 
 
    /* REDUX DISPATCH FUNCTION */
@@ -278,9 +278,22 @@ const ObjectPage = ()=> {
   //   {name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`}, 
   //   {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`}
   // ]
+  //CRUMBS
+  const crumbs= [
+    {name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`}, 
+    {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`},
+    {name:` ${roomid}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomid}`},
+    {name:` ${objectid}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomid}/objects/${objectid}`}
+  ];
   return (
     <Container>
-      
+      <BreadCrumbs
+        crumbs={crumbs}
+      />
+      {
+        selectedObject
+        ?
+        <>
         <Row>
             <Col>
               <Row>
@@ -379,6 +392,9 @@ const ObjectPage = ()=> {
           </Col>
           <Col/>
         </Row>
+        </>
+        :null
+      }
     </Container>
   );
 }

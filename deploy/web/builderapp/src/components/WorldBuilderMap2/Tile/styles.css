@@ -94,8 +94,7 @@
 .tile-footer {
     display: flex;
     width: 100%;
-    align-items: center;
-    justify-content: flex-end;
-    padding-right: 6px;
-    padding-bottom: 6px;
+    align-items: flex-end;
+    justify-content: space-between;
+
 }

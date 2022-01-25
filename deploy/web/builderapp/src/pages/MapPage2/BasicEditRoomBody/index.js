@@ -42,6 +42,8 @@ const BasicEditRoom = ({
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
+    //WORLDS
+    const worldDrafts = useAppSelector((state) => state.playerWorlds.worldDrafts);
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
     const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
@@ -57,6 +59,7 @@ const BasicEditRoom = ({
 
     /* --- LIFE CYCLE FUNCTIONS --- */
     useEffect(() => {
+        console.log("SELECTED ROOM CHANGE:  ", selectedRoom)
         const {node_id} = selectedRoom
         let updatedFormattedRoomId = node_id.replace(" ", "_");
         updatedFormattedRoomId = node_id.replace(" ", "_");
@@ -83,6 +86,16 @@ const BasicEditRoom = ({
         saveFunction()
     }
 
+    const RoomCreateHandler = () =>{
+        let updatedSelectedRoom = {...selectedRoom, name: roomName }
+        console.log("CREATE ROOM", updatedSelectedRoom)
+        addRoom(updatedSelectedRoom)
+    }
+
+    const RoomDeleteHandler = ()=>{
+        deleteRoom(selectedRoom.node_id)
+    }
+
     const handleAdvancedClick = ()=>{
         history.push(`/editworld/${worldId}/details/map/rooms/${formattedRoomId}`);
     }
@@ -91,8 +104,10 @@ const BasicEditRoom = ({
     const RoomNameChangeHandler = (e)=>{
         let updatedRoomName = e.target.value;
         let updatedSelectedRoom = {...selectedRoom, name: updatedRoomName }
-        updateRoom(selectedRoom.id, updatedSelectedRoom)
         setRoomName(updatedRoomName)
+        if(selectedRoom.id){
+            updateRoom(selectedRoom.id, updatedSelectedRoom)
+        }
     }
 
     const AddCharacterHandler = (character)=>{
@@ -139,7 +154,7 @@ const BasicEditRoom = ({
                     worldId={worldId}
                     sectionName={"characters"}
                     roomId={formattedRoomId}
-                    defaultTokens={roomCharacters}
+                    tokens={roomCharacters}
                     onTokenAddition={AddCharacterHandler}
                     onTokenRemoval={RemovedCharacterHandler}
                 />
@@ -149,15 +164,30 @@ const BasicEditRoom = ({
                     worldId={worldId}
                     sectionName={"objects"}
                     roomId={formattedRoomId}
-                    defaultTokens={roomObjects}
+                    tokens={roomObjects}
                     onTokenAddition={AddObjectHandler}
                     onTokenRemoval={RemovedObjectHandler}
                 />
             </div>
             <div className="basiceditroom-button">
-                <Button onClick={SaveHandler}>
-                    SAVE
-                </Button>
+                {
+                    formattedRoomId ?
+                    <Button onClick={SaveHandler}>
+                        SAVE
+                    </Button>
+                    :
+                    <Button onClick={RoomCreateHandler}>
+                        CREATE
+                    </Button>
+                }
+                                {
+                    formattedRoomId ?
+                    <Button onClick={RoomDeleteHandler}>
+                        DELETE
+                    </Button>
+                    :
+                    null
+                }
             </div>
         </div>
     );
