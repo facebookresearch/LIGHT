@@ -52,10 +52,10 @@ CONFIG_BASELINE_INIT = (
 )
 """grid = {
     '-t': [
-        'parlai_internal.projects.light.quests.tasks.quest_hobbot.teacher:QuestHobbotTeacher'
+        'light.modeling.tasks.quests.wild_chats.teacher:QuestHobbotTeacher'
     ],
     '-et': [
-        'parlai_internal.projects.light.quests.tasks.quest_hobbot.teacher:QuestHobbotTeacher'
+        'light.modeling.tasks.quests.wild_chats.teacher:QuestHobbotTeacher'
     ],
     # '--multitask-weights': ['0.5,0.5', '0.8,0.2', '0.2,0.8', '0.25,0.75'],
     '-bs': [64],
@@ -82,12 +82,8 @@ CONFIG_SCRATCH = (
 )
 
 grid = {
-    "-t": [
-        "parlai_internal.projects.light.quests.tasks.quest_hobbot.teacher:QuestHobbotTeacher"
-    ],
-    "-et": [
-        "parlai_internal.projects.light.quests.tasks.quest_hobbot.teacher:QuestHobbotTeacher"
-    ],
+    "-t": ["light.modeling.tasks.quests.wild_chats.teacher:QuestHobbotTeacher"],
+    "-et": ["light.modeling.tasks.quests.wild_chats.teacher:QuestHobbotTeacher"],
     "--model": [
         f"transformer/polyencoder {CONFIG_SCRATCH}",
     ],

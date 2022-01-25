@@ -28,10 +28,10 @@ CONFIG_BASELINE = (
 
 grid = {
     "-t": [
-        "parlai_internal.projects.light.quests.tasks.atomic.teacher:AtomicTeacher:datatype=train:fill=bert"
+        "light.modeling.tasks.atomic.teacher:AtomicTeacher:datatype=train:fill=bert"
     ],
     "-et": [
-        "parlai_internal.projects.light.quests.tasks.atomic.teacher:AtomicTeacher:datatype=valid:fill=bert"
+        "light.modeling.tasks.atomic.teacher:AtomicTeacher:datatype=valid:fill=bert"
     ],
     "--model": [
         f"transformer/polyencoder {CONFIG_BASELINE}",

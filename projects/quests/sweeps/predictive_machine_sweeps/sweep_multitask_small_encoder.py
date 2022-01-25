@@ -32,11 +32,9 @@ grid = {
         4,
     ],
     "-t": [
-        f"parlai_internal.projects.light.quests.tasks.quest_hobbot.teacher:QuestHobbotTeacher,{CONFIG_QUEST_PRED_MACHINES}"
+        f"light.modeling.tasks.quests.wild_chats.teacher:QuestHobbotTeacher,{CONFIG_QUEST_PRED_MACHINES}"
     ],
-    "-et": [
-        "parlai_internal.projects.light.quests.tasks.quest_hobbot.teacher:QuestHobbotTeacher"
-    ],
+    "-et": ["light.modeling.tasks.quests.wild_chats.teacher:QuestHobbotTeacher"],
     "--multitask-weights": ["0.2,0.8", "0.5,0.5"],
     "--model": [f"transformer/biencoder {CONFIG_SCRATCH}"],
     "--eval-batchsize": [8],

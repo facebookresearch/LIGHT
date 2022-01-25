@@ -16,10 +16,10 @@ tasks = [
 grid_tasks = []
 for t in tasks:
     gtask = (
-        "light_dialog:simple_multi:light_label=speech,parlai_internal.projects.light.quests.tasks.quest_base.teacher:QuestTeacher:stask="
+        "light_dialog:simple_multi:light_label=speech,light.modeling.tasks.quests.goals.teacher:QuestTeacher:stask="
         + t
         + ":datatype=train:easy=False "
-        + "-et parlai_internal.projects.light.quests.tasks.quest_base.teacher:QuestTeacher:stask="
+        + "-et light.modeling.tasks.quests.goals.teacher:QuestTeacher:stask="
         + t
         + ":datatype=valid:easy=False"
     )
@@ -27,7 +27,7 @@ for t in tasks:
 
 grid = {
     "-t": grid_tasks,
-    # ['"parlai_internal.projects.light.quests.tasks.quest_base.teacher:QuestTeacher:stask=seq_timeline_prediction"'],
+    # ['"light.modeling.tasks.quests.goals.teacher:QuestTeacher:stask=seq_timeline_prediction"'],
     "--model": ["transformer/generator"],
     # , 'parlai.agents.bert_ranker.bi_encoder_ranker:BiEncoderRankerAgent'],
     # '--dict-file': ['/checkpoint/rajammanabrolu/lighttest/all.dict'],

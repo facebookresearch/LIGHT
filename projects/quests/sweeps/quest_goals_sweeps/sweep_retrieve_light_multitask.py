@@ -34,14 +34,14 @@ tasks = [
 grid_tasks = []
 for t in tasks:
     gtask = (
-        "light_dialog:simple_multi:light_label_type=action,parlai_internal.projects.light.quests.tasks.quest_base.teacher:QuestTeacher:stask="
+        "light_dialog:simple_multi:light_label_type=action,light.modeling.tasks.quests.goals.teacher:QuestTeacher:stask="
         + t
         + ":datatype=train:easy=False "
-        + "-et parlai_internal.projects.light.quests.tasks.quest_base.teacher:QuestTeacher:stask="
+        + "-et light.modeling.tasks.quests.goals.teacher:QuestTeacher:stask="
         + t
         + ":datatype=valid:easy=True"
     )
-    # "-et parlai_internal.projects.light.quests.tasks.quest_base.teacher:QuestTeacher:stask=" + t + ":datatype=valid"
+    # "-et light.modeling.tasks.quests.goals.teacher:QuestTeacher:stask=" + t + ":datatype=valid"
 
     grid_tasks.append(gtask)
 

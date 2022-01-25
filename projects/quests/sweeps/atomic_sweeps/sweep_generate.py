@@ -8,12 +8,12 @@ HOURS = 8
 
 grid = {
     "-t": [
-        "parlai_internal.projects.light.quests.tasks.atomic.teacher:AtomicTeacher:datatype=train:fill=rand"
+        "light.modeling.tasks.atomic.teacher:AtomicTeacher:datatype=train:fill=rand"
     ],
     "-et": [
-        "parlai_internal.projects.light.quests.tasks.atomic.teacher:AtomicTeacher:datatype=valid:fill=rand"
+        "light.modeling.tasks.atomic.teacher:AtomicTeacher:datatype=valid:fill=rand"
     ],
-    # ['"parlai_internal.projects.light.quests.tasks.quest_base.teacher:QuestTeacher:stask=seq_timeline_prediction"'],
+    # ['"light.modeling.tasks.quests.goals.teacher:QuestTeacher:stask=seq_timeline_prediction"'],
     "--model": ["transformer/generator"],
     # , 'parlai.agents.bert_ranker.bi_encoder_ranker:BiEncoderRankerAgent'],
     # '--dict-file': ['/checkpoint/rajammanabrolu/lighttest/all.dict'],

@@ -15,9 +15,7 @@ grid = {
     "--batchsize": [
         64,
     ],
-    "-t": [
-        "parlai_internal.projects.light.quests.tasks.quest_hobbot.teacher:QuestHobbotTeacher"
-    ],
+    "-t": ["light.modeling.tasks.quests.wild_chats.teacher:QuestHobbotTeacher"],
     "--model": ["transformer/biencoder"],
     "--eval-batchsize": [1],
     "--warmup_updates": [

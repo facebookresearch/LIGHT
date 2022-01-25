@@ -34,10 +34,10 @@ tasks = [
 grid_tasks = []
 for t in tasks:
     gtask = (
-        "parlai_internal.projects.light.quests.tasks.quest_base.teacher:QuestTeacher:stask="
+        "light.modeling.tasks.quests.goals.teacher:QuestTeacher:stask="
         + t
         + ":datatype=train:easy=False "
-        + "-et parlai_internal.projects.light.quests.tasks.quest_base.teacher:QuestTeacher:stask="
+        + "-et light.modeling.tasks.quests.goals.teacher:QuestTeacher:stask="
         + t
         + ":datatype=valid:easy=True"
     )

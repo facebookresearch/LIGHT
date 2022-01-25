@@ -22,7 +22,7 @@ CONFIG_SCRATCH = (
 
 CONFIG_QUEST_PRED_MACHINES = "parlai_internal.projects.light.quests.tasks.quest_predictive_machines.teacher:datatype=train:light_use_repeat=none:light_use_setting=True:light_unseen_test=False:light_use_person_names=True:light_use_persona=all:light_use_objects=False:light_use_emote=none:light_use_speech=all:light_use_action=all:light_use_current_self_output=none:light_label_type=speech:light_use_cands=20:light_use_clip_cands=20:light_mask_speech=True:light_mask_emote=False:light_mask_action=True:light_mask_window=1:light_use_future=False:light_use_past=False:light_use_future_speech=False:light_use_future_act=False:light_use_future_emote=False:light_use_only_cluster=False:num_clusters=50:light_add_cluster=False:cluster_folder=/checkpoint/rajammanabrolu/saved/light/clusters/:cluster_encoder_file=/checkpoint/rajammanabrolu/saved/light/biranker_dialogue/model:use_all_ex=False:strip_future=False"
 
-CONFIG_QUEST_BOA = "parlai_internal.projects.light.quests.tasks.quest_base.teacher:QuestTeacher:stask=boa_timeline_prediction:datatype=train:easy=none:maxexperc=1.0"
+CONFIG_QUEST_BOA = "light.modeling.tasks.quests.goals.teacher:QuestTeacher:stask=boa_timeline_prediction:datatype=train:easy=none:maxexperc=1.0"
 
 grid = {
     #'--init-model': [
@@ -33,11 +33,9 @@ grid = {
         32,
     ],
     "-t": [
-        f"parlai_internal.projects.light.quests.tasks.quest_hobbot.teacher:QuestHobbotTeacher,{CONFIG_QUEST_PRED_MACHINES},{CONFIG_QUEST_BOA}"
+        f"light.modeling.tasks.quests.wild_chats.teacher:QuestHobbotTeacher,{CONFIG_QUEST_PRED_MACHINES},{CONFIG_QUEST_BOA}"
     ],
-    "-et": [
-        "parlai_internal.projects.light.quests.tasks.quest_hobbot.teacher:QuestHobbotTeacher"
-    ],
+    "-et": ["light.modeling.tasks.quests.wild_chats.teacher:QuestHobbotTeacher"],
     "--multitask-weights": ["0.2,0.6,0.2", "0.33,0.33,0.34"],
     "--model": [f"transformer/biencoder {CONFIG_SCRATCH}"],
     "--eval-batchsize": [1],
