@@ -7,7 +7,7 @@
 
 import json
 from glob import glob
-from parlai_internal.projects.light.v1.graph_model.structured_graph import OOGraph
+from light.graph.structured_graph import OOGraph
 
 
 class QuestEnv(object):
