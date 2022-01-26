@@ -5,8 +5,10 @@ from itertools import islice
 from parlai.core.torch_agent import Output
 from light.modeling.agents.quests.rl.shared.process.constants import *
 from light.modeling.agents.quests.rl.shared.models.transformer import (
-    LightPolyencoderAgent,
     LightBiencoderAgent,
+)
+from light.modeling.agents.quests.rl.switch.models.transformer import (
+    LightPolyencoderAgent,
 )
 from light.modeling.agents.quests.rl.shared.environments.history import (
     GoalOrientedHistory,

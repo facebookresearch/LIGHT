@@ -10,7 +10,7 @@ from light.modeling.agents.quests.rl.shared.process.constants import *
 from light.modeling.agents.quests.rl.shared.environments.history import (
     GoalOrientedHistory,
 )
-from light.modeling.agents.quests.rl.shared.models.transformer import (
+from light.modeling.agents.quests.rl.switch.models.transformer import (
     LightPolyencoderAgent,
 )
 

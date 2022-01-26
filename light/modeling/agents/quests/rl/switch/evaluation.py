@@ -5,11 +5,14 @@ import torch
 from light.modeling.agents.quests.rl.switch.algo.a2c_acktr import A2C_ACKTR
 from light.modeling.agents.quests.rl.switch.arguments import get_args
 from light.modeling.agents.quests.rl.switch.environments.envs import EnvironmentWrapper
-from models.model import Policy  # where is this?
+from light.modeling.agents.quests.rl.switch.models.model import Policy
 from light.modeling.agents.quests.rl.switch.environments.topk import (
     TopKEnvironmentWrapper,
 )
-from models.topkmodel import TopKPolicy, TopKBiencoderPolicy  # Where is this?
+from light.modeling.agents.quests.rl.switch.models.topkmodel import (
+    TopKPolicy,
+    TopKBiencoderPolicy,
+)
 from light.modeling.agents.quests.rl.switch.environments.random_baseline_envs import (
     EnvironmentWrapper as RandomEnvironmentWrapper,
 )
