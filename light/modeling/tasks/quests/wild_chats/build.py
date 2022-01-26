@@ -92,7 +92,16 @@ def write_dialog(opt, fw, d, masking_entities, noInst):
     d["action"] = []
     for a in d["acts"]:
         if a["type"] == "speech":
-            d["speech"].append(a["text"])
+            text = a["text"].replace("\\u2018", "'").replace("\\u2019", "'")
+            text = text.replace("\\u201c", '"').replace("\\u201d", '"')
+            if "\\u" in text:
+                text = (
+                    text.encode("utf-8")
+                    .decode("unicode-escape")
+                    .encode("utf-16", "surrogatepass")
+                    .decode("utf-16")
+                )
+            d["speech"].append(text)
         else:
             d["speech"].append("")
 
@@ -200,8 +209,6 @@ def write_dialog(opt, fw, d, masking_entities, noInst):
 
 def write_alldata(opt, db, dpath, split_name):
     masking_entities = ["speech", "action"]
-    masking_entities.append("speech")
-    masking_entities.append("action")
     noInst = {"speech": 0, "emote": 0, "action": 0}
 
     fname = os.path.join(dpath, split_name + ".txt")
@@ -211,13 +218,6 @@ def write_alldata(opt, db, dpath, split_name):
         d["self_agent"] = d["characters"][1]
         d["partner_agent"] = d["characters"][0]
         noInst = write_dialog(opt, fw_tst, d, masking_entities, noInst)
-        d2 = d.copy()
-        d2["self_agent"] = d["characters"][0]
-        d2["partner_agent"] = d["characters"][1]
-        d2["acts"] = list(d2["acts"])
-        d2["acts"].insert(0, {"type": "speech", "text": ""})
-
-        noInst = write_dialog(opt, fw_tst, d2, masking_entities, noInst)
 
     fw_tst.close()
     print("Written instances in " + fname)
