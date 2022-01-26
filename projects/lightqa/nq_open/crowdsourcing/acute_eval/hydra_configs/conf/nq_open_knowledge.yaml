@@ -1,0 +1,25 @@
+#@package _global_
+mephisto:
+  blueprint:
+    acute_eval_type: knowledgeable
+    subtasks_per_unit: 7
+    root_dir: ${run_dir}/task_config_knowledge
+    randomize_conversations: True
+    task: nq_open
+    matchups_per_pair: 1
+    additional_task_description_prefix: "On the right you see two chat windows. The chats are identical <strong>except for the last turn</strong>. Each conversation starts with a knowledge grounding in the first utterance. After that, it's a casual chat about a certain topic. The last utterance from the partner is always a question starting with 'By the way, ...'. Your task is to judge the <strong>final reply</strong> to this question in the conversational flow."
+    dialogues_input_dir: "/checkpoint/ladolphs/projects/light/lightqa/nq_open/crowdsource/history"
+    add_history: True
+    add_knowledge: True
+  task:
+    allowed_concurrent: 1
+    assignment_duration_in_seconds: 600
+    max_num_concurrent_units: 0  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes
+    maximum_units_per_worker: 1  # important for replicability and reliability
+    task_description: "Evaluate quality of conversations through comparison."
+    task_name: acute_eval_${current_time}
+    task_reward: 0.5
+    task_tags: "chat,evaluation,comparison,conversation"
+    task_title: "Which Conversational Partner is Better?"
+mturk:
+  worker_blocklist_paths: "parlai_standard"

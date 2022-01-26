@@ -1,0 +1,213 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - their family members <SEP> The viewing room is where those who have passed on
+      come to watch their family members one day per year.
+    id: lightqa
+    text: 'Viewing room, Somewhere
+
+      The viewing room is where those who have passed on come to watch their family
+      members in the living world one day per year. The room resembles an opera theater.
+      There are seats throughout the room and boxes for those who were wealthy in
+      life to sit in. There is a stage with a large magical dome on it for viewing.
+
+      dancer: "I have been a prisoner for most of my life. When I was a small child
+      I was taken from my family, simply because I was beautiful. Now, I am an entertainer
+      for the king. When he wants me to dance, I do. I hate it."
+
+      dancer: "Hey what brings you here"
+
+      family member: "Hello dancer, are you going to perform tonight?"
+
+      dancer: "I only dance if I''m made"
+
+      family member: "I am here to entertain the king and his court. I am not here
+      to dance. I am a jester"
+
+      dancer: "Oh well in that case maybe you can help me escape?"
+
+      family member: "I can try my best, but I am not the best jester. I am only a
+      humble servant."
+
+      dancer: "Servant of who?"
+
+      family member: "I am a jester, I entertain the king and his royal court. I entertain
+      the king and his royal court."
+
+      dancer: "Could you try to help me escape I''m am sick and tired of the king
+      forcing me to dance constantly. I miss my family"
+
+      family member: "I am a royal breed jester, I can do anything you want me to
+      do. I can even make you a deal."
+
+      family member: "Who does the viewing room allow people to watch?"'
+- - episode_done: true
+    eval_labels:
+    - a large magical dome <SEP> There is a stage with a large magical dome on it
+      for viewing.
+    id: lightqa
+    text: 'Viewing room, Somewhere
+
+      The viewing room is where those who have passed on come to watch their family
+      members in the living world one day per year. The room resembles an opera theater.
+      There are seats throughout the room and boxes for those who were wealthy in
+      life to sit in. There is a stage with a large magical dome on it for viewing.
+
+      dancer: "I have been a prisoner for most of my life. When I was a small child
+      I was taken from my family, simply because I was beautiful. Now, I am an entertainer
+      for the king. When he wants me to dance, I do. I hate it."
+
+      dancer: "Hey what brings you here"
+
+      family member: "Hello dancer, are you going to perform tonight?"
+
+      dancer: "I only dance if I''m made"
+
+      family member: "I am here to entertain the king and his court. I am not here
+      to dance. I am a jester"
+
+      dancer: "Oh well in that case maybe you can help me escape?"
+
+      family member: "I can try my best, but I am not the best jester. I am only a
+      humble servant."
+
+      dancer: "Servant of who?"
+
+      family member: "I am a jester, I entertain the king and his royal court. I entertain
+      the king and his royal court."
+
+      dancer: "Could you try to help me escape I''m am sick and tired of the king
+      forcing me to dance constantly. I miss my family"
+
+      family member: "I am a royal breed jester, I can do anything you want me to
+      do. I can even make you a deal."
+
+      family member: "What is on the stage?"'
+- - episode_done: true
+    eval_labels:
+    - boxes <SEP> There are seats throughout the room and boxes for those who were
+      wealthy in life to sit in.
+    id: lightqa
+    text: 'Viewing room, Somewhere
+
+      The viewing room is where those who have passed on come to watch their family
+      members in the living world one day per year. The room resembles an opera theater.
+      There are seats throughout the room and boxes for those who were wealthy in
+      life to sit in. There is a stage with a large magical dome on it for viewing.
+
+      dancer: "I have been a prisoner for most of my life. When I was a small child
+      I was taken from my family, simply because I was beautiful. Now, I am an entertainer
+      for the king. When he wants me to dance, I do. I hate it."
+
+      dancer: "Hey what brings you here"
+
+      family member: "Hello dancer, are you going to perform tonight?"
+
+      dancer: "I only dance if I''m made"
+
+      family member: "I am here to entertain the king and his court. I am not here
+      to dance. I am a jester"
+
+      dancer: "Oh well in that case maybe you can help me escape?"
+
+      family member: "I can try my best, but I am not the best jester. I am only a
+      humble servant."
+
+      dancer: "Servant of who?"
+
+      family member: "I am a jester, I entertain the king and his royal court. I entertain
+      the king and his royal court."
+
+      dancer: "Could you try to help me escape I''m am sick and tired of the king
+      forcing me to dance constantly. I miss my family"
+
+      family member: "I am a royal breed jester, I can do anything you want me to
+      do. I can even make you a deal."
+
+      family member: "What is there for those who were wealthy in life to sit in?"'
+- - episode_done: true
+    eval_labels:
+    - stage <SEP> There is a stage with a large magical dome on it for viewing.
+    id: lightqa
+    text: 'Viewing room, Somewhere
+
+      The viewing room is where those who have passed on come to watch their family
+      members in the living world one day per year. The room resembles an opera theater.
+      There are seats throughout the room and boxes for those who were wealthy in
+      life to sit in. There is a stage with a large magical dome on it for viewing.
+
+      dancer: "I have been a prisoner for most of my life. When I was a small child
+      I was taken from my family, simply because I was beautiful. Now, I am an entertainer
+      for the king. When he wants me to dance, I do. I hate it."
+
+      dancer: "Hey what brings you here"
+
+      family member: "Hello dancer, are you going to perform tonight?"
+
+      dancer: "I only dance if I''m made"
+
+      family member: "I am here to entertain the king and his court. I am not here
+      to dance. I am a jester"
+
+      dancer: "Oh well in that case maybe you can help me escape?"
+
+      family member: "I can try my best, but I am not the best jester. I am only a
+      humble servant."
+
+      dancer: "Servant of who?"
+
+      family member: "I am a jester, I entertain the king and his royal court. I entertain
+      the king and his royal court."
+
+      dancer: "Could you try to help me escape I''m am sick and tired of the king
+      forcing me to dance constantly. I miss my family"
+
+      family member: "I am a royal breed jester, I can do anything you want me to
+      do. I can even make you a deal."
+
+      family member: "What is the dome on that is used for viewing?"'
+- - episode_done: true
+    eval_labels:
+    - The viewing room <SEP> The viewing room is where those who have passed on come
+      to watch their family members one day per year.
+    id: lightqa
+    text: 'Viewing room, Somewhere
+
+      The viewing room is where those who have passed on come to watch their family
+      members in the living world one day per year. The room resembles an opera theater.
+      There are seats throughout the room and boxes for those who were wealthy in
+      life to sit in. There is a stage with a large magical dome on it for viewing.
+
+      dancer: "I have been a prisoner for most of my life. When I was a small child
+      I was taken from my family, simply because I was beautiful. Now, I am an entertainer
+      for the king. When he wants me to dance, I do. I hate it."
+
+      dancer: "Hey what brings you here"
+
+      family member: "Hello dancer, are you going to perform tonight?"
+
+      dancer: "I only dance if I''m made"
+
+      family member: "I am here to entertain the king and his court. I am not here
+      to dance. I am a jester"
+
+      dancer: "Oh well in that case maybe you can help me escape?"
+
+      family member: "I can try my best, but I am not the best jester. I am only a
+      humble servant."
+
+      dancer: "Servant of who?"
+
+      family member: "I am a jester, I entertain the king and his royal court. I entertain
+      the king and his royal court."
+
+      dancer: "Could you try to help me escape I''m am sick and tired of the king
+      forcing me to dance constantly. I miss my family"
+
+      family member: "I am a royal breed jester, I can do anything you want me to
+      do. I can even make you a deal."
+
+      family member: "Where do people who have passed on come to watch their family
+      members one day per year?"'
+num_episodes: 6694
+num_examples: 6694

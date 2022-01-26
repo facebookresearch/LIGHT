@@ -1,0 +1,22 @@
+#@package _global_
+mephisto:
+  blueprint:
+    acute_eval_type: knowledgeable
+    subtasks_per_unit: 4
+    root_dir: ${task_dir}/task_config
+    randomize_conversations: True
+    task: nq_open
+    matchups_per_pair: 1
+  task:
+    allowed_concurrent: 1
+    assignment_duration_in_seconds: 600
+    max_num_concurrent_units: 0  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes
+    maximum_units_per_worker: 1  # important for replicability and reliability
+    task_description: "Evaluate quality of conversations through comparison."
+    task_name: acute_eval_${current_time}
+    task_reward: 0.5
+    task_tags: "chat,evaluation,comparison,conversation"
+    task_title: "Which Conversational Partner is Better?"
+    additional_task_description_prefix: "On the right you see two chat windows with the same structure: First, a longer context from a Wikipedia article, followed by a question about this topic."
+mturk:
+  worker_blocklist_paths: "parlai_standard"
