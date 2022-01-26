@@ -4,7 +4,7 @@ if __name__ == "__main__":
     import torch
     import torch.nn as nn
     import torch.optim as optim
-    from models.topkmodel import TopKPolicy
+    from light.modeling.agents.quests.rl.base.models.topkmodel import TopKPolicy
     from light.modeling.agents.quests.rl.base.environments.environment import (
         Environment,
     )

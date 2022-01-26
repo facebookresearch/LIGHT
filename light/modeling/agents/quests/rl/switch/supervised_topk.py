@@ -14,7 +14,7 @@ from light.modeling.agents.quests.rl.switch.arguments import get_args
 from light.modeling.agents.quests.rl.switch.environments.topk import (
     TopKEnvironmentWrapper,
 )
-from models.topkmodel import TopKPolicy  # where is this?
+from light.modeling.agents.quests.rl.switch.models.topkmodel import TopKPolicy
 
 torch.autograd.set_detect_anomaly(True)
 
