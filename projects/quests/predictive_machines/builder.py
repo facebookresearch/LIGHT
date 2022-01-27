@@ -355,7 +355,7 @@ def build_from_db(opt, db_path, data_path):
         Encoder_opt = {
             "model_file": opt["cluster_encoder_file"],
             "override": {
-                "model": "parlai_internal.projects.light_rl." "rl_agent:RLAgent"
+                "model": "light.modeling.agents.quests.rl.base.rl_agent:RLAgent"
             },
         }
         encoder = create_agent(Encoder_opt)

@@ -7,8 +7,9 @@
 import parlai.core.build_data as build_data
 import os
 from .builder import build_from_db
-import pickle
 from parlai.core.params import ParlaiParser
+import light.modeling.tasks.utils as utils
+from parlai.core.build_data import DownloadableFile
 
 ParlaiParser()  # instantiate to set PARLAI_HOME environment var
 
@@ -16,11 +17,39 @@ PARLAI_PATH = os.environ["PARLAI_HOME"]
 USER = os.environ["USER"]
 
 
+RESOURCES = [
+    DownloadableFile(
+        "http://parl.ai/downloads/light_project/quests/quest_predictive_machine_resources.tar.gz",
+        "quests/quest_predictive_machine_resources.tar.gz",
+        "cb966bd6b7a4d0bd56e8b39abf99fbdd30f8df80b2d2cafc577f39f16b96ff43",
+        zipped=True,
+    ),
+]
+
+
+def download(opt, version):
+    base_dpath = opt["light_datapath"]
+    full_dpath = os.path.join(base_dpath, "quests/pred_mach_models/")
+    if not build_data.built(full_dpath, version):
+        print("[building data: " + full_dpath + "]")
+        if build_data.built(full_dpath):
+            # An older version exists, so remove these outdated files.
+            build_data.remove_dir(full_dpath)
+        build_data.make_dir(full_dpath)
+
+        # Download the data.
+        for downloadable_file in RESOURCES:
+            utils.download_for_light(base_dpath, downloadable_file)
+
+        # Mark the data as built.
+        build_data.mark_done(full_dpath, version)
+
+    return full_dpath, version
+
+
 def build(opt):
     version = "3"
-    dpath = os.path.join(
-        "/private/home/rajammanabrolu/ParlAI/data/light_quests/predictive_machines"
-    )
+    dpath = os.path.join(opt["light_datapath"], "quests/predictive_machines/")
 
     # create particular instance of dataset depending on flags..
     fields = ["emote", "speech", "action"]
@@ -56,7 +85,7 @@ def build(opt):
         if opt["strip_future"]:
             fpath += "_stripfuture"
     print(fpath)
-    dpath2 = os.path.join(PARLAI_PATH, "data", "quest_predictive_machines", fpath)
+    dpath2 = os.path.join(dpath, fpath)
 
     if not build_data.built(dpath2, version):
         if build_data.built(dpath2):

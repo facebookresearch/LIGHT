@@ -10,6 +10,8 @@ from parlai_internal.projects.light.quests.tasks.quest_predictive_machines.build
     build,
 )
 
+from light.constants import LIGHT_DATAPATH
+
 import copy
 import os
 import random
@@ -20,10 +22,9 @@ ParlaiParser()  # instantiate to set PARLAI_HOME environment var
 
 PARLAI_PATH = os.environ["PARLAI_HOME"]
 
-
-DEFAULT_CLUSTER_DIR = "/checkpoint/rajammanabrolu/saved/light/clusters/"
-CLUSTER_ENCODER_MODEL_FILE = (
-    "/checkpoint/rajammanabrolu/saved/light/biranker_dialogue/model"
+DEFAULT_CLUSTER_DIR = os.path.join(LIGHT_DATAPATH, "quests/pred_mach_models/clusters")
+CLUSTER_ENCODER_MODEL_FILE = os.path.join(
+    LIGHT_DATAPATH, "quests/pred_mach_models/biranker_dialogue/model"
 )
 
 
@@ -64,13 +65,13 @@ def _path(opt):
             fpath += "_stripfuture"
     # print(fpath)
     return os.path.join(
-        PARLAI_PATH, "data", "quest_predictive_machines", fpath, dt + ".txt"
+        opt["light_datapath"], "quests/predictive_machines/", fpath, dt + ".txt"
     )
 
 
 class DefaultTeacher(ParlAIDialogTeacher):
     @staticmethod
-    def add_cmdline_args(argparser):
+    def add_cmdline_args(argparser, partial_opt=None):
         agent = argparser.add_argument_group("LIGHT Dialogue options")
         agent.add_argument(
             "--light_use_repeat",
@@ -154,9 +155,12 @@ class DefaultTeacher(ParlAIDialogTeacher):
 
         agent.add_argument("--use_all_ex", type="bool", default=False)
         agent.add_argument("--strip_future", type="bool", default=False)
+        argparser = ParlAIDialogTeacher.add_cmdline_args(argparser, partial_opt)
+        return argparser
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
+        opt["light_datapath"] = opt.get("light_datapath", LIGHT_DATAPATH)
         self.opt = opt
         opt["parlaidialogteacher_datafile"] = _path(opt)
         super().__init__(opt, shared)
