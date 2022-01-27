@@ -1,4 +1,3 @@
-from parlai_internal.projects.light.quests.agents.quest_learner import QuestLearner
 import random
 import argparse
 
@@ -6,6 +5,7 @@ from parlai.scripts.display_data import display_data
 from parlai.scripts.train_model import TrainLoop, setup_args
 from parlai.scripts.eval_model import eval_model
 from parlai.scripts.build_dict import build_dict
+from light.constants import LIGHT_DATAPATH
 
 # from parlai.core.params import ParlaiParser
 # from parlai.agents.transformer.transformer import add_common_cmdline_args
@@ -52,7 +52,6 @@ if __name__ == "__main__":
         # "multitask_weights": [1.0, 2.0],
         #'stask': 'seq_timeline_prediction',
         "model": model,
-        #'dict-file': '/checkpoint/rajammanabrolu/lighttest/all.dict',
         "dict_maxexs": 100000,
         #'model': 'bert_ranker/bi_encoder_ranker',
         #'model': 'parlai.agents.bert_ranker.bi_encoder_ranker:BiEncoderRankerAgent',
@@ -61,7 +60,9 @@ if __name__ == "__main__":
         + stask
         + ":datatype=valid",
         "validation-every-n-epochs": 30,
-        "model_file": "/checkpoint/rajammanabrolu/lighttest/" + tname + "_" + model,
+        "model_file": os.path.join(
+            LIGHT_DATAPATH, "out/quests/test_model", tname + "_" + model
+        ),
         "save_every_n_secs": 30,
         "num_epochs": 150,
         #'num_examples': 10,
@@ -83,22 +84,5 @@ if __name__ == "__main__":
     print(default_args)
 
     TrainLoop(default_args).train()
-
-    opt = {
-        "datatype": "test",
-        "report_filename": "/checkpoint/rajammanabrolu/lighttest/"
-        + tname
-        + "_"
-        + model
-        + "_evals",
-        "model_file": "/checkpoint/rajammanabrolu/lighttest/" + tname + "_" + model,
-        "save_world_logs": "/checkpoint/rajammanabrolu/lighttest/"
-        + tname
-        + "_"
-        + model
-        + "_evals",
-    }
-
-    default_args.update(opt)
 
     eval_model(default_args)
