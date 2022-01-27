@@ -19,4 +19,5 @@ def register_all_agents():
 def register_all_tasks():
     # list all tasks here
     # import light.modeling.tasks.<> # noqa: F401
-    pass
+    # pass
+    import light.modeling.tasks.common_sense.agents
