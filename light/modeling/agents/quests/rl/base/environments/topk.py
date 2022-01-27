@@ -851,7 +851,7 @@ class TopKEnvironmentWrapper(object):
     def generate_examples_step(self, action):
         """
         This probably doesn't work for topk yet, need modification
-        TODO @margaretli
+        TODO
         """
         MISSING_TAG = (
             MISSING_EMOTE_TAG if "emote" in self.goal_types else MISSING_ACT_TAG

@@ -516,13 +516,3 @@ class EnvironmentGenerator(object):
             print("SHUFFLED")
             np.random.shuffle(eps)
         return eps
-
-    # Deprecating to unifiy with from_fixed_episodes_file
-    # def from_achievable_settings(self):
-    #     '''
-    #     Loads from achievable file and returns the data
-    #     '''
-    #     "FROM ACHIEVABLE"
-    #     with open(self.achievable_file, 'rb') as inp:
-    #         data = pickle.load(inp)
-    #     return data

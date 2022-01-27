@@ -10,6 +10,7 @@ from glob import glob
 import json
 from light.graph.structured_graph import OOGraph
 from light.world.world import World
+from light.constants import LIGHT_DATAPATH
 import copy
 
 import os
@@ -97,10 +98,6 @@ USE_ACTIONS = [
     "drink",
 ]
 
-# with open('/private/home/rajammanabrolu/ParlAI/data/light_quests/hobbot/filtered_light_cands.txt', 'r') as f:
-#    for line in f:
-#        speech_cands.add(str(line))
-
 
 def preprocess(args):
     def sequence(dialogue):
@@ -122,17 +119,10 @@ def preprocess(args):
     all_quests = []
     speech_cands = set()
 
-    quests_original_raw = []
-
-    for fname in glob(
-        "/private/home/rajammanabrolu/ParlAI/data/light_quests" + "/raw/*.json"
-    ):
-        with open(fname, "r") as f:
-            quests_original_raw.append(json.load(f)["data"])
-
     hobbot_raw = json.loads(
         open(
-            "/private/home/rajammanabrolu/ParlAI/data/light_quests/hobbot/raw/perfect1.json",
+            # TODO REPLACE
+            "/private/home/rajammanabrolu/ParlAI/data/light_quests/hobbot/raw/perfect2.json",
             "r",
         ).read()
     )
@@ -276,7 +266,8 @@ def preprocess(args):
         all_quests_train = all_quests_test = [all_quests[i] for i in save_idx]
 
     path = os.path.join(
-        "/private/home/rajammanabrolu/ParlAI/data/light_quests/hobbot/",
+        LIGHT_DATAPATH,
+        "quests/rl_quests_resources/",
         args["allfname"],
     )
 
@@ -289,10 +280,6 @@ def preprocess(args):
     ofile = open(os.path.join(path, "formatted_hobbot_quests_test.pkl"), "wb")
     pickle.dump(all_quests_test, ofile)
     ofile.close()
-
-    # ofile = open('/private/home/rajammanabrolu/ParlAI/data/light_quests/hobbot/supervised/formatted_hobbot_quests.pkl', 'wb')
-    # pickle.dump(all_quests, ofile)
-    # ofile.close()
 
     with open(os.path.join(path, "quest_act_cands.txt"), "w") as f:
         for a in act_cands:

@@ -19,28 +19,6 @@ from light.modeling.agents.quests.rl.switch.environments.env_generator import (
 )
 from light.modeling.agents.quests.rl.shared.process.constants import *
 
-"""
-RL_MODEL_FILES = {
-    'action': {
-        10: '/checkpoint/margaretli/saved/light/rl/actgoals/10clusters/model',
-        20: '/checkpoint/margaretli/saved/light/rl/actgoals/20clusters/model',
-        50: '/checkpoint/margaretli/saved/light/rl/actgoals/clusteronly/model',
-        100: '/checkpoint/margaretli/saved/light/rl/actgoals/100clusters/model',
-        200: '/checkpoint/margaretli/saved/light/rl/actgoals/200clusters/model',
-        500: '/checkpoint/margaretli/saved/light/rl/actgoals/500clusters/model'
-
-    },
-    'emote': {
-        10: '/checkpoint/margaretli/saved/light/rl/emotegoals/10clusters/model',
-        20: '/checkpoint/margaretli/saved/light/rl/emotegoals/20clusters/model',
-        50: '/checkpoint/margaretli/saved/light/rl/emotegoals/clusteronly/model',
-        100: '/checkpoint/margaretli/saved/light/rl/emotegoals/100clusters/model',
-        200: '/checkpoint/margaretli/saved/light/rl/emotegoals/200clusters/model',
-        500: '/checkpoint/margaretli/saved/light/rl/emotegoals/500clusters/model',
-    },
-}
-"""
-
 
 class EnvironmentWrapper(object):
     def __init__(self, opt):
@@ -52,31 +30,6 @@ class EnvironmentWrapper(object):
         self.random_embeddings = {}
         self.tokenizer = SimpleTokenizer()
         self.refill = True
-        """
-        rl_model_file = RL_MODEL_FILES.get(opt['goal_types']).get(opt['num_clusters'])
-        print(rl_model_file)
-
-
-        RLAgent_opt = {
-            'model_file': '/home/shrimai/Documents/code/FAIR19/ParlAI/data/lightrlmodelsanddata/act_env_model',
-            'override': {
-                'model': 'parlai_internal.projects.light.quests.tasks.rl_switch.agents.rl_agent:RLAgent',
-                'person_tokens': True,
-                'eval_candidates': 'fixed',
-                'encode_candidate_vecs': True,
-                'fixed_candidates_path': opt['speech_fixed_candidate_file'],
-                'fp16': True,
-            },
-        }
-
-        RLAgent_opt = {
-            'override': {
-                'model': 'RandomCandidateAgent',
-                'label_candidates_file': opt['speech_fixed_candidate_file'],
-                'fp16': False,
-            },
-        }
-        """
 
         EnvAgent_opt = {
             "model_file": opt["env_model_file"],
@@ -90,12 +43,6 @@ class EnvironmentWrapper(object):
             },
         }
 
-        """
-        self.rl_encoder = create_agent(RLAgent_opt)
-        with torch.no_grad():
-            self.rl_encoder.model.eval()
-        rl_share = self.rl_encoder.share()
-        """
         self.env_agent = create_agent(EnvAgent_opt)
         with torch.no_grad():
             self.env_agent.model.eval()
@@ -104,10 +51,6 @@ class EnvironmentWrapper(object):
         self.rl_encoders, self.rl_retrievers, self.env_agents = [], [], []
         self.envs = []
         for idx in range(self.no_envs):
-            # rl_share['batchindex'] = idx
-            # self.rl_encoders.append(create_agent_from_shared(rl_share))
-            # ret_share['batchindex'] = idx
-            # self.rl_retrievers.append(create_agent_from_shared(ret_share))
             env_share["batchindex"] = idx
             self.env_agents.append(create_agent_from_shared(env_share))
 

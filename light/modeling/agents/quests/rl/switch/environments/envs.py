@@ -17,27 +17,30 @@ from light.modeling.agents.quests.rl.switch.environments.env_generator import (
 from light.modeling.agents.quests.rl.shared.process.constants import *
 from light.modeling.agents.quests.rl.switch.agents.env_agents import LightRetrievalAgent
 
-# TODO find and expose these?
-# RL_MODEL_FILES = {
-#     'action': {
-#         10: '/checkpoint/margaretli/saved/light/rl/actgoals/10clusters/model',
-#         20: '/checkpoint/margaretli/saved/light/rl/actgoals/20clusters/model',
-#         50: '/checkpoint/margaretli/saved/light/rl/actgoals/clusteronly/model',
-#         100: '/checkpoint/margaretli/saved/light/rl/actgoals/100clusters/model',
-#         200: '/checkpoint/margaretli/saved/light/rl/actgoals/200clusters/model',
-#         500: '/checkpoint/margaretli/saved/light/rl/actgoals/500clusters/model',
-#         1000: '/checkpoint/margaretli/saved/light/rl/actgoals/1000clusters/model',
-#     },
-#     'emote': {
-#         10: '/checkpoint/margaretli/saved/light/rl/emotegoals/10clusters/model',
-#         20: '/checkpoint/margaretli/saved/light/rl/emotegoals/20clusters/model',
-#         50: '/checkpoint/margaretli/saved/light/rl/emotegoals/clusteronly/model',
-#         100: '/checkpoint/margaretli/saved/light/rl/emotegoals/100clusters/model',
-#         200: '/checkpoint/margaretli/saved/light/rl/emotegoals/200clusters/model',
-#         500: '/checkpoint/margaretli/saved/light/rl/emotegoals/500clusters/model',
-#         1000: '/checkpoint/margaretli/saved/light/rl/emotegoals/1000clusters/model',
-#     },
-# }
+RL_MODEL_FILES = {
+    "action": {
+        10: os.path.join(
+            LIGHT_DATAPATH, "rl_quests_resources/actgoals/10clusters/model"
+        ),
+        100: os.path.join(
+            LIGHT_DATAPATH, "rl_quests_resources/actgoals/100clusters/model"
+        ),
+        500: os.path.join(
+            LIGHT_DATAPATH, "rl_quests_resources/actgoals/500clusters/model"
+        ),
+    },
+    "emote": {
+        10: os.path.join(
+            LIGHT_DATAPATH, "rl_quests_resources/emotegoals/10clusters/model"
+        ),
+        100: os.path.join(
+            LIGHT_DATAPATH, "rl_quests_resources/emotegoals/100clusters/model"
+        ),
+        500: os.path.join(
+            LIGHT_DATAPATH, "rl_quests_resources/emotegoals/500clusters/model"
+        ),
+    },
+}
 
 
 class EnvironmentWrapper(object):
@@ -53,10 +56,10 @@ class EnvironmentWrapper(object):
         self.random_embeddings = {}
         self.tokenizer = SimpleTokenizer()
         self.refill = True
-        # rl_model_file = RL_MODEL_FILES.get(opt['goal_types']).get(opt['num_clusters'])
+        rl_model_file = RL_MODEL_FILES.get(opt["goal_types"]).get(opt["num_clusters"])
 
         RLAgent_opt = {
-            # 'model_file': rl_model_file,
+            "model_file": rl_model_file,
             "model": "light.modeling.agents.quests.rl.switch.agents.rl_agent:RLAgent",
             "person_tokens": True,
             "eval_candidates": "fixed",
