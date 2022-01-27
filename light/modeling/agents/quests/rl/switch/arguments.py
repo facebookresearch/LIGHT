@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import torch
+from light.constants import LIGHT_DATAPATH
 
 
 def get_args():
@@ -44,50 +45,41 @@ def get_args():
     parser.add_argument(
         "--speech_fixed_candidate_file",
         type=str,
-        default="quest_speech_cands.txt",
-        # default='/private/home/rajammanabrolu/ParlAI/data/light_quests/hobbot/filtered_light_cands.txt'
+        default="quest_speech_cands.txt",  # TODO replace with LIGHT path after finishing format
     )
     parser.add_argument(
         "--quest_all_cands",
         type=str,
-        default="quest_all_cands.txt",
-        # default='/private/home/rajammanabrolu/ParlAI/data/light_quests/hobbot/filtered_light_cands.txt'
+        default="quest_all_cands.txt",  # TODO replace with LIGHT path after finishing format
     )
     parser.add_argument(
         "--env_all_cands",
         type=str,
-        default="env_all_cands.txt",
-        # default='/private/home/rajammanabrolu/ParlAI/data/light_quests/hobbot/filtered_light_cands.txt'
+        default="env_all_cands.txt",  # TODO replace with LIGHT path after finishing format
     )
     parser.add_argument(
         "--env_act_cands",
         type=str,
-        default="env_act_cands.txt",
-        # default='/private/home/rajammanabrolu/ParlAI/data/light_quests/hobbot/filtered_light_cands.txt'
+        default="env_act_cands.txt",  # TODO replace with LIGHT path after finishing format
     )
     parser.add_argument(
         "--act_fixed_candidate_file",
         type=str,
-        # default='quest_clip_act_cands.txt',
-        default="quest_act_cands.txt",
+        default="quest_act_cands.txt",  # TODO replace with LIGHT path after finishing format
     )
 
     parser.add_argument(
         "--rl_model_file",
         type=str,
-        # default='/checkpoint/rajammanabrolu/20200713/sweep_retrieve_multitask_evensmoler/5b1_jobid=1/model'
-        # large biencoder
-        # default='/checkpoint/rajammanabrolu/hobbot/rl/model'
-        # small biencoder
-        # default='/checkpoint/rajammanabrolu/hobbot/rl/test/model'
         # kitchen sink large polyencoder
-        # default='/checkpoint/rajammanabrolu/20200701/sweep_retrieve_lightact_multitask_atomic_bert_transfer_lc_fulls/405_jobid=8/model'
+        # default=os.path.join(LIGHT_DATAPATH, "quests/rl_quests_resources/base_models/kitchen_sink/model"),
         # hobbot large polyencoder
-        # default='/checkpoint/rajammanabrolu/20200721/sweep_retrieve_rl_encoder/_jobid=1/model'
-        # hobbot only small polyencoder
-        # default='/checkpoint/rajammanabrolu/20200726/sweep_retrieve_rl_encoder_poly_small/_jobid=1/model'
+        # default=os.path.join(LIGHT_DATAPATH, "quests/rl_quests_resources/wild_large_poly/kitchen_sink/model"),
         # untrained small polyencoder
-        default="/checkpoint/rajammanabrolu/20200802/sweep_retrieve_rl_encoder_poly_small/_jobid=1/model",
+        default=os.path.join(
+            LIGHT_DATAPATH,
+            "quests/rl_quests_resources/base_models/untrained_small_poly/model",
+        ),
     )
     parser.add_argument(
         "--flow-encoder",
@@ -97,40 +89,41 @@ def get_args():
     parser.add_argument(
         "--env_model_file",
         type=str,
-        # default='/checkpoint/rajammanabrolu/hobbot/env/multitask/model'
-        # default='/checkpoint/rajammanabrolu/20200701/sweep_retrieve_lightact_multitask_atomic_bert_transfer_lc_fulls/405_jobid=8/model'
-        default="/checkpoint/rajammanabrolu/20200721/sweep_retrieve_env/_jobid=1/model"
-        # default='/checkpoint/rajammanabrolu/20200726/sweep_retrieve_rl_encoder_poly_small/_jobid=1/model'
+        default=os.path.join(
+            LIGHT_DATAPATH, "quests/rl_quests_resources/env_model/model"
+        ),
     )
 
     parser.add_argument(
         "--dm_model_file",
         type=str,
-        default="/checkpoint/rajammanabrolu/hobbot/dm/model",
+        default=os.path.join(
+            LIGHT_DATAPATH, "quests/rl_quests_resources/dm_model/model"
+        ),
     )
     parser.add_argument(
         "--data_file",
-        type=str,
-        # default='/private/home/rajammanabrolu/ParlAI/data/light_quests/hobbot/train_convs.pkl',
-        # default='/private/home/rajammanabrolu/ParlAI/data/light_quests/hobbot/formatted_hobbot_quests.pkl'
-        default=".pkl",
+        type=str,  # TODO update data file to json rather than .pkl, replace with quests/wild_chats/formatted_wild_completions.json
+        default=os.path.join(
+            LIGHT_DATAPATH, "quests/wild_chats/formatted_wild_completions.json"
+        ),
     )
     parser.add_argument("--fixed_episodes_file", type=str, default=None)
     parser.add_argument("--shuffle_episodes", type=bool, default=False)
     parser.add_argument(
         "--write_reward_file",
         type=str,
-        default="/private/home/rajammanabrolu/ParlAI/data/light_quests/hobbot/action_rewards.csv",
+        default=os.path.join(LIGHT_DATAPATH, "out/quests/action_rewards.csv"),
     )
     parser.add_argument(
         "--save_dir",
         type=str,
-        default="/private/home/rajammanabrolu/ParlAI/parlai_internal/projects/light/quests/tasks/rl_switch/logs",
+        default=os.path.join(LIGHT_DATAPATH, "out/quests/rl_switch/logs"),
     )
     parser.add_argument(
         "--model_dir",
         type=str,
-        default="/private/home/rajammanabrolu/ParlAI/parlai_internal/projects/light/quests/tasks/rl_switch/models",
+        default=os.path.join(LIGHT_DATAPATH, "out/quests/rl_switch/models"),
     )
     parser.add_argument(
         "--combo",
@@ -163,11 +156,10 @@ def get_args():
     parser.add_argument(
         "--write_results_dir",
         type=str,
-        default="/private/home/rajammanabrolu/ParlAI/parlai_internal/projects/light/quests/tasks/rl_switch",
+        default=os.path.join(LIGHT_DATAPATH, "out/quests/rl_switch/results"),
     )
     parser.add_argument("--write_results_file", type=str, default=None)
 
-    parser.add_argument("--achievable_file", type=str, default="")
     parser.add_argument(
         "--train_from",
         type=str,

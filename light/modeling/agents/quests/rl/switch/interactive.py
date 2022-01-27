@@ -2,6 +2,7 @@ import torch
 from copy import copy
 from copy import deepcopy
 import os
+from light.constants import LIGHT_DATAPATH
 
 from parlai.core.agents import create_agent, create_agent_from_shared
 from light.modeling.agents.quests.rl.switch.environments.environment import Environment
@@ -23,18 +24,18 @@ PARLAI_PATH = os.environ["PARLAI_HOME"]
 class InteractiveLoop:
     def __init__(self, opt):
         if not opt["rl_model_file"]:
-            opt[
-                "rl_model_file"
-            ] = "/checkpoint/margaretli/saved/light/rl/actgoals/20190906/model"
+            opt["rl_model_file"] = (
+                os.path.join(
+                    LIGHT_DATAPATH,
+                    "quests/rl_quests_resources/base_models/untrained_small_poly/model",
+                ),
+            )
         if not opt["env_model_file"]:
-            opt[
-                "env_model_file"
-            ] = "/checkpoint/margaretli/saved/light/env/20190904/model"
+            opt["env_model_file"] = os.path.join(
+                LIGHT_DATAPATH, "quests/rl_quests_resources/env_model/model"
+            )
         # opt['combo'] = 'train_ex'
         opt["combo"] = "achievable"
-        opt[
-            "achievable_file"
-        ] = "/checkpoint/margaretli/saved/light/rl/actgoals/20190906/achievable_settings_subset_NEW.pkl"
 
         self.EnvGen = EnvironmentGenerator(opt)
         self.no_envs = opt["num_processes"]
