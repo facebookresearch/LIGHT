@@ -17,6 +17,41 @@ import os
 from light.modeling.agents.quests.rl.switch.environments import quest
 import math
 
+import light.modeling.tasks.utils as utils
+from parlai.core.build_data import DownloadableFile
+import parlai.core.build_data as build_data
+
+
+RESOURCES = [
+    DownloadableFile(
+        "http://parl.ai/downloads/light_project/quests/rl_quests_resources.tar.gz",
+        "quests/rl_quests_resources.tar.gz",
+        "baf958329e04d7366900b4c02f5af3d4b9e2db731fa24a72d2c3d2f0d0643f95",
+        zipped=True,
+    ),
+]
+
+
+def download(version):
+    base_dpath = LIGHT_DATAPATH
+    full_dpath = os.path.join(base_dpath, "quests/rl_quests_resources/")
+    if not build_data.built(full_dpath, version):
+        print("[building data: " + full_dpath + "]")
+        if build_data.built(full_dpath):
+            # An older version exists, so remove these outdated files.
+            build_data.remove_dir(full_dpath)
+        build_data.make_dir(full_dpath)
+
+        # Download the data.
+        for downloadable_file in RESOURCES:
+            utils.download_for_light(base_dpath, downloadable_file)
+
+        # Mark the data as built.
+        build_data.mark_done(full_dpath, version)
+
+    return full_dpath, version
+
+
 conv_pickle_template = {
     "graph": None,
     "accepted_agents": [],
@@ -101,6 +136,25 @@ USE_ACTIONS = [
 
 
 def preprocess(args):
+    version = "1.0"
+    download(version)
+
+    target_path = os.path.join(
+        LIGHT_DATAPATH,
+        "quests/rl_quests_resources/",
+        args["allfname"],
+    )
+
+    if build_data.built(target_path, version):
+        # Build already exists, return values
+        with open(os.path.join(target_path, "meta.json")) as jsonf:
+            res = json.load(res)
+        return res[0], (res[1], res[2]), res[3]
+    elif build_data.built(target_path):
+        # Build data exists, but isn't correct version
+        build_data.remove_dir(target_path)
+
+    # Build things anew
     def sequence(dialogue):
         c = 0
         s = 0
@@ -126,7 +180,10 @@ def preprocess(args):
 
     hobbot_raw = json.loads(
         open(
-            "/private/home/rajammanabrolu/ParlAI/data/light_quests/hobbot/raw/perfect2.json",
+            os.path.join(
+                LIGHT_DATAPATH,
+                "quests/rl_quests_resources/wild_quest_completions/perfect2.json",
+            ),
             "r",
         ).read()
     )
@@ -168,8 +225,10 @@ def preprocess(args):
         location = raw["location"]
         quest_file = json.load(
             open(
-                "/private/home/rajammanabrolu/ParlAI/data/light_quests/raw/"
-                + location["quest_file"]
+                os.path.join(
+                    LIGHT_DATAPATH, "quests/stems/batch_1", location["quest_file"]
+                ),
+                "r",
             )
         )["data"]
 
@@ -378,4 +437,10 @@ def preprocess(args):
         math.pow(float(len(speech_cands)), min(avg_speech_seq, 1))
     )
     print("Branching factor ratio: ", ratio)
+
+    # write out build results
+    with open(os.path.join(path, "meta.json"), "w+") as jsonf:
+        json.dump([path, len(act_cands), len(speech_cands), ratio], jsonf)
+    build_data.mark_done(path)
+
     return path, (len(act_cands), len(speech_cands)), ratio
