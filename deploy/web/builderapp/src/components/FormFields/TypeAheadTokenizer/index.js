@@ -58,12 +58,14 @@ const TypeaheadTokenizer = ({
 console.log(formLabel, tokenOptions)
 const SelectHandler = (selected)=>{
     console.log("SELECTED:  ",selected);
-    selected.map((selectedToken,index)=>{
+    selected.map((selectedToken, index)=>{
         const {id, data, customOption, label}= selectedToken;
+
+
         let selectedUpdate
         if(index==(selected.length-1)){
-            switch (tokenType) {
-                case 'characters':
+            console.log("TOKEN TYPE:  ", tokenType, customOption)
+                if( tokenType === 'characters'){
                     if(customOption){
                         let newCharacterTokenData = {
                             agent:true,
@@ -110,16 +112,22 @@ const SelectHandler = (selected)=>{
                             tags:[],
                             usually_npc:false
                         };
+                        console.log("NEW CHAR DATA:  ", newCharacterTokenData)
                         let newCharacterToken = {
                             key:{label},
                             label: label,
                             data: newCharacterTokenData
                         }
-                        selectedUpdate= newCharacterToken
+                        console.log("NEW CHAR TOKEN DATA:  ", newCharacterToken)
+                        selectedToken= newCharacterToken
+                        console.log("NEW CHAR UPDATE:  ", selectedUpdate)
                     }else{
-                    selectedUpdate= selectedToken
+                        selectedUpdate= selectedToken
+                        console.log("NEW CHAR UPDATE:  ", selectedUpdate)
                     }
-                case 'objects':
+                }
+                if( tokenType === 'objects'){
+                    console.log("OBJECTO:  ", selectedToken)
                     if(customOption){
                         let newObjectTokenData = {
                             agent:false,
@@ -156,12 +164,11 @@ const SelectHandler = (selected)=>{
                             label: label,
                             data: newObjectTokenData
                         }
-                        selectedUpdate= newObjectToken
+                        selectedToken= newObjectToken
                     }
-                    selectedUpdate= selectedToken
-                default:
-                console.log(`Token Type ${tokenType} no found.`);
-            }
+                }
+            selectedUpdate= selectedToken
+            console.log("ON TOKEN ADDITION DATA:  ", selectedUpdate)
             onTokenAddition(selectedUpdate.data)
         }
     })
@@ -190,6 +197,7 @@ const SelectHandler = (selected)=>{
                         worldId={worldId}
                         sectionName={sectionName}
                         roomId={roomId}
+                        deleteTokenFunction={onTokenRemoval}
                     >   
                         {option.label.toUpperCase()}
                     </Token>

@@ -257,21 +257,26 @@ const WorldBuilderPage = ()=> {
         let unupdatedWorld = selectedWorld;
         let {agents, nodes } = unupdatedWorld;
         console.log("CHARACTER BEING ADDED DATA", char)
-        let formattedAgentId = char.node_id;
+        let formattedAgentId
+        if(char.node_id){
+            formattedAgentId = char.node_id;
         
-        while(agents.indexOf(formattedAgentId)>=0){
-            console.log("WHILE LOOP RUNNING",agents.indexOf(formattedAgentId)>=0);
-            let splitFormattedAgentId = formattedAgentId.split("_");
-            console.log("FORMATTEDID:  ", splitFormattedAgentId);
-            let idNumber = splitFormattedAgentId[splitFormattedAgentId.length-1]
-            console.log("idNumber:  ", idNumber);
-            idNumber = (idNumber*1)+1;
-            idNumber = idNumber.toString()
-            console.log("idNumber+:  ", idNumber);
-            splitFormattedAgentId[splitFormattedAgentId.length-1] = idNumber
-            console.log("splitFormattedAgentId+:  ", splitFormattedAgentId);
-            formattedAgentId = splitFormattedAgentId.join("_")
-            console.log("FORMATTEDIDEND:  ", formattedAgentId);
+            while(agents.indexOf(formattedAgentId)>=0){
+                console.log("WHILE LOOP RUNNING",agents.indexOf(formattedAgentId)>=0);
+                let splitFormattedAgentId = formattedAgentId.split("_");
+                console.log("FORMATTEDID:  ", splitFormattedAgentId);
+                let idNumber = splitFormattedAgentId[splitFormattedAgentId.length-1]
+                console.log("idNumber:  ", idNumber);
+                idNumber = (idNumber*1)+1;
+                idNumber = idNumber.toString()
+                console.log("idNumber+:  ", idNumber);
+                splitFormattedAgentId[splitFormattedAgentId.length-1] = idNumber
+                console.log("splitFormattedAgentId+:  ", splitFormattedAgentId);
+                formattedAgentId = splitFormattedAgentId.join("_")
+                console.log("FORMATTEDIDEND:  ", formattedAgentId);
+            }
+        }else{
+            formattedAgentId = char.name +"_1"
         }
         let unupdatedRoomData = nodes[selectedRoom.node_id]
         let updatedCharacterData = {...char, node_id:formattedAgentId, container_node:{target_id: selectedRoom.node_id}};
@@ -298,8 +303,16 @@ const WorldBuilderPage = ()=> {
         let unupdatedWorld = selectedWorld;
         let {agents, nodes } = unupdatedWorld;
         let updatedAgents = agents.filter(char => id !== char);
-        let updatedNodes = delete nodes[id];
-        let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes};
+        let updatedNodes = {...nodes}
+        console.log("CHARACTER DELETION ID:  ", id)
+        delete updatedNodes[id];
+        console.log("POST CHARACTER DELETION UPDATED NODES:  ", updatedNodes)
+        let unupdatedRoomData = {...nodes[selectedRoom.node_id]};
+        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes};
+        delete updatedContainedNodes[id];
+        let updatedRoomData = {...unupdatedRoomData, contained_nodes:updatedContainedNodes}
+        updatedNodes = {...updatedNodes, [selectedRoom.node_id]:updatedRoomData}
+        let updatedWorld ={...unupdatedWorld, agents: updatedAgents, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     }
     //OBJECTS
@@ -321,9 +334,12 @@ const WorldBuilderPage = ()=> {
             formattedObjectId = splitFormattedObjectId.join("_")
             console.log("FORMATTEDIDEND:  ", formattedObjectId);
         }
+        let unupdatedRoomData = nodes[selectedRoom.node_id]
         let updatedObjectData = {...obj, node_id:formattedObjectId, container_node:{target_id:selectedRoom.node_id}};
-        let updatedObjects = [...objects, formattedObjectId]
-        let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}}
+        let updatedObjects = [...objects, formattedObjectId];
+        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}
+        console.log("UPDATED CONTAAINED NODES:  ", updatedContainedNodes )
+        let updatedRoomData = {...unupdatedRoomData, contained_nodes:updatedContainedNodes}
         let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedRoom.node_id]: updatedRoomData}
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes}
         dispatch(updateSelectedWorld(updatedWorld))
@@ -339,7 +355,15 @@ const WorldBuilderPage = ()=> {
         let unupdatedWorld = selectedWorld;
         let {objects, nodes } = unupdatedWorld;
         let updatedObjects = objects.filter(obj => id !== obj);
-        let updatedNodes = delete nodes[id];
+        let updatedNodes = {...nodes}
+        console.log("OBJECT DELETION ID:  ", id)
+        delete updatedNodes[id];
+        let unupdatedRoomData = {...nodes[selectedRoom.node_id]};
+        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes};
+        delete updatedContainedNodes[id];
+        let updatedRoomData = {...unupdatedRoomData, contained_nodes:updatedContainedNodes}
+        updatedNodes = {...updatedNodes, [selectedRoom.node_id]:updatedRoomData}
+        console.log("POST OBJECT DELETION UPDATED NODES:  ", updatedNodes)
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     }
@@ -402,6 +426,15 @@ const WorldBuilderPage = ()=> {
         let RoomNodes = [];
         let ObjectNodes = [];
         const {nodes} = world;
+        const sortFunction = (a, b)=>{
+            let firstItem=a.name.toLowerCase()
+            let nextItem=b.name.toLowerCase();
+            if (firstItem < nextItem) //sort string ascending
+             return -1;
+            if (firstItem > nextItem)
+             return 1;
+            return 0; //default return value (no sorting)
+           };
         const WorldNodeKeys = Object.keys(nodes);
         WorldNodeKeys.map((nodeKey)=>{
           let WorldNode = nodes[nodeKey];
@@ -422,6 +455,9 @@ const WorldBuilderPage = ()=> {
               }
             }
         })
+        RoomNodes = RoomNodes.sort(sortFunction)
+        ObjectNodes = ObjectNodes.sort(sortFunction)
+        CharacterNodes = CharacterNodes.sort(sortFunction)
         dispatch(updateRooms(RoomNodes))
         dispatch(updateObjects(ObjectNodes))
         dispatch(updateCharacters(CharacterNodes))
@@ -603,7 +639,6 @@ const WorldBuilderPage = ()=> {
                         addObject={addObject}
                         updateObject={updateObject}
                         deleteObject={deleteObject}
-
                     />
                     :null
                 }

@@ -15,6 +15,7 @@ const Token = ({
     worldId,
     roomId,
     sectionName,
+    deleteTokenFunction,
     children
  }) => {
     //REACT ROUTER
@@ -36,7 +37,12 @@ const Token = ({
         console.log("roomid", roomId)
         console.log(`/editworld/${worldId}/details/map/rooms/${roomId}/${sectionName}/${option.data.node_id}`)
         history.push(`/editworld/${worldId}/details/map/rooms/${roomId}/${sectionName}/${option.data.node_id}`);
-      }
+    }
+
+    const deleteClickHandler = ()=>{
+        console.log("TOKEN DATA:  ", option)
+        deleteTokenFunction(option.key)
+    }
 
     return (
         <span ref={ref}>
@@ -47,7 +53,7 @@ const Token = ({
             >
                 {children}
                 <BsGear color="black" onClick={gearClickHandler}/>
-                <MdCancel color="red" />
+                <MdCancel color="red" onClick={deleteClickHandler}/>
             </RBTToken>
         </span>
     );

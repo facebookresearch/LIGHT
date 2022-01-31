@@ -4,16 +4,16 @@ import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
-import { updateRooms, selectRoom, updateSelectedRoom} from "../../../features/rooms/rooms-slice.ts";
-import { updateObjects} from "../../../features/objects/objects-slice.ts";
-import { updateCharacters } from "../../../features/characters/characters-slice.ts";
+// import { updateRooms, selectRoom, updateSelectedRoom} from "../../../features/rooms/rooms-slice.ts";
+// import { updateObjects} from "../../../features/objects/objects-slice.ts";
+// import { updateCharacters } from "../../../features/characters/characters-slice.ts";
 /* STYLES */
 import "./styles.css";
 /* BOOTSTRAP COMPONENTS */
 //LAYOUT
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+// import Container from 'react-bootstrap/Container';
+// import Row from 'react-bootstrap/Row';
+// import Col from 'react-bootstrap/Col';
 /* CUSTOM COMPONENTS */
 import TypeAheadTokenizerForm from "../../../components/FormFields/TypeAheadTokenizer"
 /* BOOTSTRAP COMPONENTS */
@@ -124,22 +124,29 @@ const BasicEditRoom = ({
     }
 
     const AddCharacterHandler = (character)=>{
+        console.log("ADDING CHARACTER DATA:  ", character)
         addCharacter(character)
         let updatedRoomCharacters = [...roomCharacters, character];
         setRoomCharacters(updatedRoomCharacters);
     }
     const AddObjectHandler = (obj)=>{
+        console.log("ADDING OBJECT DATA:  ", obj)
+        addObject(obj)
         let updatedRoomObjects = [...roomObjects, obj]
         setRoomObjects(updatedRoomObjects)
     }
 
-    const RemovedCharacterHandler = (id)=>{
-        let updatedRoomCharacters = roomCharacters.filter(obj=>obj.node_id==id);
+    const RemoveCharacterHandler = (id)=>{
+        console.log(" REMOVED CHARACTER ID:  ", id)
+        deleteCharacter(id)
+        let updatedRoomCharacters = roomCharacters.filter(obj=>obj.node_id!=id);
         setRoomCharacters(updatedRoomCharacters);
     }
 
-    const RemovedObjectHandler = (id)=>{
-        let updatedRoomObjects = roomObjects.filter(obj=>obj.node_id==id);
+    const RemoveObjectHandler = (id)=>{
+        console.log(" REMOVED OBJECT ID:  ", id)
+        deleteObject(id)
+        let updatedRoomObjects = roomObjects.filter(obj=>obj.node_id!=id);
         setRoomObjects(updatedRoomObjects)
     }
 
@@ -178,7 +185,7 @@ const BasicEditRoom = ({
                             tokenType={"characters"}
                             tokens={roomCharacters}
                             onTokenAddition={AddCharacterHandler}
-                            onTokenRemoval={RemovedCharacterHandler}
+                            onTokenRemoval={RemoveCharacterHandler}
                         />
                         <TypeAheadTokenizerForm
                             formLabel="OBJECTS"
@@ -189,7 +196,7 @@ const BasicEditRoom = ({
                             tokenType={"objects"}
                             tokens={roomObjects}
                             onTokenAddition={AddObjectHandler}
-                            onTokenRemoval={RemovedObjectHandler}
+                            onTokenRemoval={RemoveObjectHandler}
                         />
                     </>
                     :null
