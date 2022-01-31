@@ -1,8 +1,6 @@
+//REACT
 import React from "react";
-import { Colors } from "@blueprintjs/core";
-import { cloneDeep, isEmpty, merge } from "lodash";
-import equal from "fast-deep-equal";
-import { emojiIndex } from "emoji-mart";
+
 //Checks to see if coordinate has existing room data
 export function roomChecker(x, y, z, room){
     const {grid_location} = room;
@@ -19,41 +17,46 @@ export function roomChecker(x, y, z, room){
 export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
     const {top, bottom, left, right} = gridBorders;
     let gridData = {};
-    let rows =[];
-    for(let i = top+1; i >= bottom-1; i-- ){
-        let row = [];
-        for(let j = left-1; j <= right+1; j++){
-            let tileData = {
-                agent: false,
-                classes: ["room"],
-                contain_size: 0,
-                contained_nodes: {},
-                db_id: null,
-                desc: "",
-                extra_desc: "",
-                name: "",
-                name_prefix: "",
-                names:[],
-                neighbors: [],
-                node_id: "",
-                object: false,
-                room: true,
-                size:1,
-                grid_location: [j , i, currentFloor],
-                surface_type: "",
-            };
-            let coordinateKey = `${j}, ${i}, ${currentFloor}`;
-            worldRoomsData.map((roomData)=>{
-                if(roomChecker(j, i, currentFloor, roomData)){
-                    tileData=roomData;
-                }
-            })
-            gridData[coordinateKey]=tileData
-            row.push(tileData)
+    let floors =[];
+    for(let k = currentFloor-1; k <= currentFloor+1; k++){
+        let rows =[];
+        for(let i = top+1; i >= bottom-1; i-- ){
+            let row = [];
+            for(let j = left-1; j <= right+1; j++){
+                let tileData = {
+                    agent: false,
+                    classes: ["room"],
+                    contain_size: 0,
+                    contained_nodes: {},
+                    db_id: null,
+                    desc: "",
+                    extra_desc: "",
+                    name: "",
+                    name_prefix: "",
+                    names:[],
+                    neighbors: [],
+                    node_id: "",
+                    object: false,
+                    room: true,
+                    size:1,
+                    grid_location: [j , i, currentFloor],
+                    surface_type: "",
+                };
+                let coordinateKey = `${j}, ${i}, ${currentFloor}`;
+                worldRoomsData.map((roomData)=>{
+                    if(roomChecker(j, i, currentFloor, roomData)){
+                        tileData=roomData;
+                    }
+                })
+                gridData[coordinateKey]=tileData
+                row.push(tileData)
+            }
+            rows.push(row);
         }
-        rows.push(row)
+
+        floors.push(rows);
     }
-    gridData.rows = rows;
+    gridData.floors = floors;
     return gridData
 }
 // Sets "edges" of world map using the most extreme x and y values on the matrix 

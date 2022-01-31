@@ -11,6 +11,8 @@ import { invertColor } from "../Utils";
 
 const Row = ({
     previousRowData,
+    aboveRowData,
+    belowRowData,
     rowData, 
     borders,
     tileClickFunction,
@@ -18,24 +20,20 @@ const Row = ({
     disconnectRooms
 })=>{
     /* ------ LOCAL STATE ------ */
-    const [data, setData] = useState([])
 
     /* --- LIFE CYCLE FUNCTIONS --- */
-    useEffect(()=>{
-        setData(rowData)
-    }, [rowData])
     return (
         <div
             className="row-container"
         >
             {
-                data.length
+                rowData.length
                 ?
-                data.map((tileData, index)=>{
-                    let leftTileData= data[index-1];
-                    let isLeftTile = leftTileData ? true: false;
+                rowData.map((tileData, index)=>{
+                    let leftTileData= rowData[index-1];
                     let topTileData= previousRowData[index];
-                    let isTopTile = topTileData ? true: false;
+                    let aboveTileData= aboveRowData[index];
+                    let belowTileData= belowRowData[index];
                     return(
                         <Tile 
                             key={index}
@@ -44,6 +42,8 @@ const Row = ({
                             tileClickFunction={tileClickFunction}
                             leftNeighbor={leftTileData}
                             topNeighbor={topTileData}
+                            aboveNeighbor={aboveTileData}
+                            belowNeighbor={belowTileData}
                             connectRooms={connectRooms}
                             disconnectRooms={disconnectRooms}
                         />

@@ -23,21 +23,32 @@ const Grid = ({
   
     /* ------ LOCAL STATE ------ */
     const [gridRows, setGridRows] = useState([]);
+    const [gridBelowRows, setGridBelowRows] = useState([]);
+    const [gridAboveRows, setGridAboveRows] = useState([]);
     const [gridWidth, setGridWidth] = useState(0);
     const [gridHeight, setGridHeight] = useState(0);
     
     /* REACT LIFECYCLE */
     useEffect(()=>{
-        let {rows} = gridData;
-        if(rows.length){
-            let columns = rows[0];
-            setGridRows(rows);
-            let rowCount = rows.length;
+        let {floors} = gridData;
+        let belowFloorRows = floors[0];
+        let currentFloorRows = floors[1]
+        let aboveFloorRows = floors[2]
+        if(currentFloorRows.length){
+            let columns = currentFloorRows[0];
+            setGridRows(currentFloorRows);
+            let rowCount = currentFloorRows.length;
             let columnCount = columns.length;
             let height = rowCount * 250;
             let width = columnCount * 250;
             setGridWidth(width);
             setGridHeight(height);
+        }
+        if(belowFloorRows.length){
+            setGridBelowRows(belowFloorRows)
+        }
+        if(aboveFloorRows.length){
+            setGridAboveRows(aboveFloorRows)
         }
     },[gridData])
 
@@ -60,6 +71,8 @@ const Grid = ({
                         <Row 
                             key={borders.top-index}
                             previousRowData={previousRowData}
+                            aboveRowData= {gridAboveRows}
+                            belowRowData= {gridBelowRows}
                             rowData={row}
                             borders={borders}
                             tileClickFunction={tileClickFunction}

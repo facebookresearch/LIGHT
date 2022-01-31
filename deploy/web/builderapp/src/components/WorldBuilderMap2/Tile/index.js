@@ -16,6 +16,8 @@ const Tile = ({
     tileClickFunction,
     leftNeighbor,
     topNeighbor,
+    aboveNeighbor,
+    belowNeighbor,
     connectRooms,
     disconnectRooms
 })=> {
@@ -23,6 +25,8 @@ const Tile = ({
     const [tileContentNodes, setTileContentNodes] = useState([])
     const [hasLeftPath, setHasLeftPath] = useState(false)
     const [hasTopPath, setHasTopPath] = useState(false)
+    const [hasAboveNeighbor, setHasAboveNeighbor] = useState(false)
+    const [hasBelowNeighbor, setHasBelowNeighbor] = useState(false)
 
     /* ------ LIFE CYCLE ------ */
     useEffect(()=>{
@@ -37,6 +41,20 @@ const Tile = ({
         }
     },[tileData])
 
+    useEffect(()=>{
+        if(aboveNeighbor){
+            let updatedHasAboveNeighbor = (aboveNeighbor.node_id && tileData.node_id) ? true : false;
+            setHasAboveNeighbor(updatedHasAboveNeighbor)
+        }
+    },[aboveNeighbor, tileData])
+
+    useEffect(()=>{
+        if(belowNeighbor){
+            let updatedHasBelowNeighbor = (belowNeighbor.node_id && tileData.node_id) ? true : false;
+            setHasBelowNeighbor(updatedHasBelowNeighbor)
+        }
+    },[belowNeighbor, tileData])
+    
     useEffect(()=>{
         if(leftNeighbor){
             let updatedHasLeftPath = (leftNeighbor.node_id && tileData.node_id) ? true : false;
@@ -163,16 +181,38 @@ const Tile = ({
                             :null
                         }
                     </div>
-                    <div className="tile-footer">
-                        <span>
-                            <Gi3DStairs size="16"/>
-                            <BsArrowUpShort size="16"/>
-                        </span>
-                        <span>
-                            <BsArrowDownShort size="16"/>
-                            <Gi3DStairs size="16"/>
-                        </span>
-                    </div>
+                        {
+                            (hasAboveNeighbor || hasBelowNeighbor)
+                            ?
+                            <div className="tile-footer">
+                                <span>
+                                    {
+                                        hasAboveNeighbor
+                                        ?
+                                        <>
+                                            <Gi3DStairs size="16"/>
+                                            <BsArrowUpShort size="16"/>
+                                        </>
+                                        :
+                                        <span/>
+                                    }
+                                </span>
+                                <span>
+                                    {
+                                        hasBelowNeighbor
+                                        ?
+                                        <>
+                                            <BsArrowDownShort size="16"/>
+                                            <Gi3DStairs size="16"/>
+                                        </>
+                                        :
+                                        <span/>
+                                    }
+                                </span>
+                            </div>
+                            :
+                            null
+                            }
                 </>
                 :null
             }

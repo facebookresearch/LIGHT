@@ -4,16 +4,22 @@ import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
+//WORLD
 import { fetchWorlds, selectWorld, setWorldDrafts, updateSelectedWorld } from "../../features/playerWorlds/playerworlds-slice.ts";
+//ROOMS
 import { updateRooms, selectRoom} from "../../features/rooms/rooms-slice.ts";
+//MAP
+import {updateFloor, updateDimensions, updatePosition, updateBorders} from "../../features/map/map-slice"
+//OBJECTS
 import { updateObjects} from "../../features/objects/objects-slice.ts";
+//CHARACTERS
 import { updateCharacters } from "../../features/characters/characters-slice.ts";
 /* STYLES */
 import "./styles.css"
 /* BOOTSTRAP COMPONENTS */
 import Button from 'react-bootstrap/Button'
 /* SKETCH PICKER COMPONENTS */
-import { SketchPicker } from 'react-color';
+import { TwitterPicker } from 'react-color';
 /* CUSTOM COMPONENTS */
 import BreadCrumbs from "../../components/BreadCrumbs";
 import NumberButtonInput from "../../components/NumberButtonInput";
@@ -22,6 +28,7 @@ import SideBarDrawer from "../../components/SideBarDrawer";
 import BasicEditRoomBody from "./BasicEditRoomBody";
 /* STYLES */
 import "./styles.css";
+import { updateSelectedRoom } from '../../features/rooms/rooms-slice';
 
 const WorldBuilderPage = ()=> {
     let { worldId, categories } = useParams();
@@ -36,6 +43,12 @@ const WorldBuilderPage = ()=> {
     const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
     //OBJECTS
     const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
+    //MAP
+    const floor = useAppSelector((state) => state.map.floor);
+    const mapBorders = useAppSelector((state) => state.map.mapBorders);
+    const mapPosition = useAppSelector((state) => state.map.mapPosition);
+    const mapWidth = useAppSelector((state) => state.map.mapWidth);
+    const mapHeight = useAppSelector((state) => state.map.mapHeight);
     //CHARACTERS
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     /* ------ REDUX ACTIONS ------ */
@@ -54,7 +67,7 @@ const WorldBuilderPage = ()=> {
         let unupdatedWorld = selectedWorld;
         let {rooms, nodes } = unupdatedWorld;
 
-        let formattedRoomId = room.name + "_1";
+        let formattedRoomId = room.name.replaceAll(" ", "_") + "_1";
         console.log("FOORMATTED CREATE ROOM NAME:  ", formattedRoomId)
         while(rooms.indexOf(formattedRoomId)>=0){
             let splitFormattedRoomId = formattedRoomId.split("_")
@@ -80,6 +93,7 @@ const WorldBuilderPage = ()=> {
         })
         console.log("UPDATED WORLDS UPON CREATION:  ", updatedWorlds)
         dispatch(setWorldDrafts(updatedWorlds))
+        dispatch(updateSelectedRoom(updatedRoomData))
     }
     const updateRoom = (id, update) =>{
         let unupdatedWorld = selectedWorld;
@@ -91,6 +105,26 @@ const WorldBuilderPage = ()=> {
     const deleteRoom = (id)=>{
         let unupdatedWorld = selectedWorld;
         let {rooms, nodes } = unupdatedWorld;
+        let tileLocation = nodes[id].grid_location
+        let clearedTileData = {
+            agent: false,
+            classes: ["room"],
+            contain_size: 0,
+            contained_nodes: {},
+            db_id: null,
+            desc: "",
+            extra_desc: "",
+            name: "",
+            name_prefix: "",
+            names:[],
+            neighbors: [],
+            node_id: "",
+            object: false,
+            room: true,
+            size:1,
+            grid_location: tileLocation,
+            surface_type: "",
+        };
         let updatedRooms = rooms.filter(room => id !== room);
         let updatedNodes = {...nodes};
         delete updatedNodes[id]
@@ -102,8 +136,10 @@ const WorldBuilderPage = ()=> {
             }
             return world;
         })
+
         console.log("UPDATED WORLDS UPON CREATION:  ", updatedWorlds)
         dispatch(setWorldDrafts(updatedWorlds))
+        dispatch(updateSelectedRoom(clearedTileData))
     }
 
     const connectRooms = (primaryRoom, primaryRoomNeighbors, secondaryRoom, secondaryRoomNeighbors, pathAlignment)=>{
@@ -189,6 +225,31 @@ const WorldBuilderPage = ()=> {
             return world;
         })
         dispatch(setWorldDrafts(updatedWorlds))
+    }
+    //MAP
+    const incrementFloorHandler = ()=> {
+        const updatedFloor = floor+1;
+        console.log(typeof updatedFloor, updatedFloor)
+        dispatch(updateFloor(updatedFloor))
+    }
+    const decrementFloorHandler = ()=> {
+        const updatedFloor = floor-1;
+        console.log(typeof updatedFloor, updatedFloor)
+        dispatch(updateFloor(updatedFloor))
+    }
+    const floorChangeHandler = (updatedFloor)=> {
+        const newFloorValue = Number(updatedFloor)
+        console.log(typeof newFloorValue, newFloorValue)
+        dispatch(updateFloor(newFloorValue))
+    }
+    const DimensionSetter = (updatedDimensions)=>{
+        dispatch(updateDimensions(updatedDimensions))
+    }
+    const BorderSetter = (updatedBorders)=>{
+        dispatch(updateBorders(updatedBorders))
+    }
+    const PositionChangeHandler = (updatedPosition)=>{
+        dispatch(updatedPosition(updatedPosition))
     }
     //CHARACTERS
     // Adds new Character to selectedWorld state
@@ -286,15 +347,15 @@ const WorldBuilderPage = ()=> {
     //     }
     // }
     /* ------ LOCAL STATE ------ */
-    const [floor, setFloor]= useState(0); 
-    const [mapBorders, setMapBorders] = useState({
-        top: 2,
-        bottom: -2,
-        left: -2,
-        right: 2
-    });
-    const [mapWidth, setMapWidth]= useState(0);
-    const [mapHeight, setMapHeight] = useState(0);
+    // const [floor, setFloor]= useState(0); 
+    // const [mapBorders, setMapBorders] = useState({
+    //     top: 2,
+    //     bottom: -2,
+    //     left: -2,
+    //     right: 2
+    // });
+    // const [mapWidth, setMapWidth]= useState(0);
+    // const [mapHeight, setMapHeight] = useState(0);
     const [mapSideBarOpen, setMapSideBarOpen] = useState(false);
     const [inColorMode, setInColorMode] = useState(false);
     const [selectedColor, setSelectedColor] = useState("");
@@ -327,7 +388,7 @@ const WorldBuilderPage = ()=> {
         //     borders.right = borders.right++;
         //     borders.left = borders.left--;
         // }
-        return setMapBorders(borders);
+        return BorderSetter(borders);
     }
 
     // worldNodeSorter - Sorts the the different types of nodes in a world into arrays
@@ -402,17 +463,17 @@ const WorldBuilderPage = ()=> {
         let updatedMapHeightMultiplier = Math.abs(bottom) + top;
         let updatedMapWidth = updatedMapWidthMultiplier * -200;
         let updatedMapHeight = updatedMapHeightMultiplier * -200;
-        setMapWidth(updatedMapWidth);
-        setMapHeight(updatedMapHeight);
+        const updatedBorders = {
+            width: updatedMapWidth,
+            height: updatedMapHeight
+        }
+        DimensionSetter(updatedBorders);
     },[mapBorders])
 
     // Handler
     const WorldSaveHandler = ()=>{
-        let worldUpdates = {...worldRooms, worldObjects, worldCharacters}
-        let updatedWorld = {...selectedWorld, nodes: worldUpdates}
-        dispatch(updateSelectedWorld(updatedWorld))
+        console.log("WORLD SAVE UPDATE:", selectedWorld)
         updateWorldsDraft()
-        console.log("WORLD SAVE UPDATE:", updatedWorld)
     }
     const closeSidebar = ()=>{
         setMapSideBarOpen(false)
@@ -469,12 +530,12 @@ const WorldBuilderPage = ()=> {
                 <h5>FLOOR</h5>
                 <div className="toolbar-container">
                     <NumberButtonInput
-                            incrementFunction={()=>{setFloor(floor+1)}}
-                            decrementFunction={()=>{setFloor(floor-1)}}
-                            changeFunction={(update)=>setFloor(update)}
+                            incrementFunction={incrementFloorHandler}
+                            decrementFunction={decrementFloorHandler}
+                            changeFunction={(update)=>floorChangeHandler(update)}
                             value={floor}
                     />
-                    <div >
+                    <div className="colorbutton-container">
                         <Button
                             variant={inColorMode ? "primary":"secondary"}
                             
@@ -486,8 +547,9 @@ const WorldBuilderPage = ()=> {
                     <div>
                         {
                             inColorMode ?
-                            <div>
-                                <SketchPicker 
+                            <div className="colorpicker-container">
+                                <TwitterPicker 
+                                    triangle="left"
                                     onChangeComplete={ColorChangeHandler}
                                 />
                             </div>
@@ -521,8 +583,11 @@ const WorldBuilderPage = ()=> {
                     showSideBar={mapSideBarOpen}
                     closeSideBarFunction={(closeSidebar)}
                     headerText={selectedRoom ? selectedRoom.node_id ? "EDIT ROOM" : "CREATE ROOM" : null}
-                >
+                >{
+                    selectedRoom
+                    ?
                     <BasicEditRoomBody
+                        currentRoom= {selectedRoom}
                         saveFunction = {WorldSaveHandler}
                         addRoom={addRoom}
                         updateRoom={updateRoom}
@@ -535,6 +600,8 @@ const WorldBuilderPage = ()=> {
                         deleteObject={deleteObject}
 
                     />
+                    :null
+                }
                 </SideBarDrawer>
             </div>
         </div>

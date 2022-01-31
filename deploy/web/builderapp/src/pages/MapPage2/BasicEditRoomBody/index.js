@@ -16,10 +16,9 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 /* CUSTOM COMPONENTS */
 import TypeAheadTokenizerForm from "../../../components/FormFields/TypeAheadTokenizer"
-/* BLUEPRINT JS COMPONENTS */
-import {
-  Button,
-} from "@blueprintjs/core";
+/* BOOTSTRAP COMPONENTS */
+import Button from 'react-bootstrap/Button'
+import Modal from 'react-bootstrap/Modal'
 /* STYLES */
 import "./styles.css"
 
@@ -52,34 +51,46 @@ const BasicEditRoom = ({
 
 
     /* ------ LOCAL STATE ------ */
+    const [currentRoomData, setCurrentRoomData] = useState(null)
+    const [isNewRoom, setIsNewRoom] = useState(true)
     const [formattedRoomId, setFormattedRoomId] = useState(null)
     const [roomName, setRoomName] = useState("");
     const [roomCharacters, setRoomCharacters] =useState([]);
     const [roomObjects, setRoomObjects] =useState([]);
 
     /* --- LIFE CYCLE FUNCTIONS --- */
+    useEffect(()=>{
+        if(selectedRoom.node_id){
+            setIsNewRoom(false)
+        }else{
+            setIsNewRoom(true)
+        }
+        setCurrentRoomData(selectedRoom)
+    },[selectedRoom])
     useEffect(() => {
         console.log("SELECTED ROOM CHANGE:  ", selectedRoom)
-        const {node_id} = selectedRoom
-        let updatedFormattedRoomId = node_id.replace(" ", "_");
-        updatedFormattedRoomId = node_id.replace(" ", "_");
-        console.log("updated roomId", updatedFormattedRoomId)
-        setFormattedRoomId(updatedFormattedRoomId)
-        let updatedRoomCharacters = worldCharacters.filter(char=>{
-            let {container_node} = char;
-            let {target_id} = container_node;
-            return target_id == node_id
-        })
-        let updatedRoomObjects = worldObjects.filter(objs=>{
-            let {container_node} = objs;
-            let {target_id} = container_node;
-            return target_id == node_id
-        })
-        console.log("NAME O", selectedRoom)
-        setRoomName(selectedRoom.name)
-        setRoomCharacters(updatedRoomCharacters)
-        setRoomObjects(updatedRoomObjects)
-    }, [selectedRoom])
+        if(selectedRoom){
+            const {node_id} = selectedRoom;
+            let updatedFormattedRoomId = node_id.replace(" ", "_");
+            updatedFormattedRoomId = node_id.replace(" ", "_");
+            console.log("updated roomId", updatedFormattedRoomId)
+            setFormattedRoomId(updatedFormattedRoomId)
+            let updatedRoomCharacters = worldCharacters.filter(char=>{
+                let {container_node} = char;
+                let {target_id} = container_node;
+                return target_id == node_id
+            })
+            let updatedRoomObjects = worldObjects.filter(objs=>{
+                let {container_node} = objs;
+                let {target_id} = container_node;
+                return target_id == node_id
+            })
+            console.log("NAME O", selectedRoom)
+            setRoomName(selectedRoom.name)
+            setRoomCharacters(updatedRoomCharacters)
+            setRoomObjects(updatedRoomObjects)
+        }
+    }, [currentRoomData])
 
     //HANDLERS
     const SaveHandler = ()=>{
@@ -105,8 +116,10 @@ const BasicEditRoom = ({
         let updatedRoomName = e.target.value;
         let updatedSelectedRoom = {...selectedRoom, name: updatedRoomName }
         setRoomName(updatedRoomName)
-        if(selectedRoom.id){
-            updateRoom(selectedRoom.id, updatedSelectedRoom)
+        if(selectedRoom){
+            if(selectedRoom.node_id){
+                updateRoom(selectedRoom.node_id, updatedSelectedRoom)
+            }
         }
     }
 
@@ -136,9 +149,14 @@ const BasicEditRoom = ({
     return (
         <div className="basiceditroom-container">
             <div className="basiceditroom-subheader">
-                <Button onClick={handleAdvancedClick}>
-                    ADVANCED EDITOR
-                </Button>
+                {
+                    formattedRoomId ?
+                    <Button onClick={handleAdvancedClick}>
+                        ADVANCED EDITOR
+                    </Button>
+                    :
+                    null
+                }
                 <Button onClick={CommonSenseClickHandler}>
                     DESCRIBE IT
                 </Button>
@@ -148,40 +166,51 @@ const BasicEditRoom = ({
                     ROOM NAME
                 </h5>
                 <input className="basiceditroom-form" onChange={RoomNameChangeHandler} value={roomName}/>
-                <TypeAheadTokenizerForm
-                    formLabel="CHARACTERS"
-                    tokenOptions={worldCharacters}
-                    worldId={worldId}
-                    sectionName={"characters"}
-                    roomId={formattedRoomId}
-                    tokens={roomCharacters}
-                    onTokenAddition={AddCharacterHandler}
-                    onTokenRemoval={RemovedCharacterHandler}
-                />
-                <TypeAheadTokenizerForm
-                    formLabel="OBJECTS"
-                    tokenOptions={worldObjects}
-                    worldId={worldId}
-                    sectionName={"objects"}
-                    roomId={formattedRoomId}
-                    tokens={roomObjects}
-                    onTokenAddition={AddObjectHandler}
-                    onTokenRemoval={RemovedObjectHandler}
-                />
+                {
+                    !isNewRoom ?
+                    <>
+                        <TypeAheadTokenizerForm
+                            formLabel="CHARACTERS"
+                            tokenOptions={worldCharacters}
+                            worldId={worldId}
+                            sectionName={"characters"}
+                            roomId={formattedRoomId}
+                            tokenType={"characters"}
+                            tokens={roomCharacters}
+                            onTokenAddition={AddCharacterHandler}
+                            onTokenRemoval={RemovedCharacterHandler}
+                        />
+                        <TypeAheadTokenizerForm
+                            formLabel="OBJECTS"
+                            tokenOptions={worldObjects}
+                            worldId={worldId}
+                            sectionName={"objects"}
+                            roomId={formattedRoomId}
+                            tokenType={"objects"}
+                            tokens={roomObjects}
+                            onTokenAddition={AddObjectHandler}
+                            onTokenRemoval={RemovedObjectHandler}
+                        />
+                    </>
+                    :null
+                }
             </div>
             <div className="basiceditroom-button">
                 {
-                    formattedRoomId ?
+                    !isNewRoom ?
                     <Button onClick={SaveHandler}>
                         SAVE
                     </Button>
                     :
-                    <Button onClick={RoomCreateHandler}>
+                    <Button 
+                        onClick={RoomCreateHandler}
+                        // disable={!roomName}
+                    >
                         CREATE
                     </Button>
                 }
                                 {
-                    formattedRoomId ?
+                    !isNewRoom ?
                     <Button onClick={RoomDeleteHandler}>
                         DELETE
                     </Button>

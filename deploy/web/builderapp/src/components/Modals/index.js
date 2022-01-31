@@ -12,11 +12,11 @@ import Modal from 'react-bootstrap/Modal'
 /* CUSTOM COMPONENTS */
 // MODALS
 import CopyModal from "./CopyModal";
-import DeleteModal from "./DeleteModal";
-import DownloadModal from "./DownloadModal";
-import ShareModal from "./ShareModal";
+import DeleteModal from "./DeleteWorldModal";
+import DownloadModal from "./DownloadWorldModal";
+import ShareModal from "./ShareWorldModal";
 import CreateWorldModal from "./CreateWorldModal"
-import CreateFromFileWorldModal from "./CreateFromFileWorldModal";
+import CreateFromFileWorldModal from "./CreateWorldFromFileWorldModal";
 import CreateFromScratchWorldModal from "./CreateFromScratchWorldModal"
 import CreatePreGenWorldModal from "./CreatePreGenWorldModal"
 

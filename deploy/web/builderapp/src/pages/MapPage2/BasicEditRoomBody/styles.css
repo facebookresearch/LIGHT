@@ -11,3 +11,23 @@
     border-color: lightgray;
     font-size: 18px;
 }
+
+.mappage-header{
+}
+
+.toolbar-container{
+    display: flex;
+    align-items: center;
+}
+
+.colorbutton-container{
+    margin-left: 10px;
+}
+
+.colorpicker-container{
+    margin-left: 10px;
+}
+
+.mappage-body{
+    overflow-y: scroll;
+}

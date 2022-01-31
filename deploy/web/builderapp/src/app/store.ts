@@ -5,17 +5,19 @@ import PlayerWorldsReducer from '../features/playerWorlds/playerworlds-slice';
 import RoomsReducer from '../features/rooms/rooms-slice';
 import CharacterReducer from '../features/characters/characters-slice';
 import ObjectsReducer from '../features/objects/objects-slice';
+import MapReducer from "../features/map/map-slice";
 import ModalReducer from '../features/modal/modal-slice';
 import SideBarReducer from "../features/sidebars/sidebars-slice";
 
 export const store = configureStore({
     reducer:{
         playerWorlds: PlayerWorldsReducer,
-        worldRooms: RoomsReducer,
+        map: MapReducer,
+        modal: ModalReducer,
+        sidebars: SideBarReducer,
         worldCharacters: CharacterReducer,
         worldObjects: ObjectsReducer,
-        modal: ModalReducer,
-        sidebars: SideBarReducer
+        worldRooms: RoomsReducer
     }
 });
 

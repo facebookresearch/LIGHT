@@ -5,8 +5,6 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import Token from './Token';
 
-import options from './dummyTokenOptionData';
-
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import './styles.css';
 import { BsGear } from 'react-icons/bs';
@@ -18,6 +16,7 @@ const TypeaheadTokenizer = ({
     sectionName,
     roomId,
     tokens,
+    tokenType,
     onTokenAddition,
     onTokenRemoval
 }) => {
@@ -26,12 +25,12 @@ const TypeaheadTokenizer = ({
     useEffect(() => {
        if(tokens){
         console.log("DEFAULT TOKENS", tokens)
-        let updatedtokens = tokens.map((tokendata, index)=>{
+        let updatedtokens = tokens.map((tokenData, index)=>{
             let updatedDefaultTokenData = {
                 index: index,
-                label: tokendata.name,
-                key: tokendata.node_id,
-                data: tokendata
+                label: tokenData.name,
+                key: tokenData.node_id,
+                data: tokenData
             }
             return updatedDefaultTokenData;
         })
@@ -59,8 +58,113 @@ const TypeaheadTokenizer = ({
 console.log(formLabel, tokenOptions)
 const SelectHandler = (selected)=>{
     console.log("SELECTED:  ",selected);
-    let newSelection = selected[selected.length-1].data
-    onTokenAddition(newSelection)
+    selected.map((selectedToken,index)=>{
+        const {id, data, customOption, label}= selectedToken;
+        let selectedUpdate
+        if(index==(selected.length-1)){
+            switch (tokenType) {
+                case 'characters':
+                    if(customOption){
+                        let newCharacterTokenData = {
+                            agent:true,
+                            aggression:0,
+                            attack_taggedAgents:[],
+                            blocked_by:{},
+                            blocking:null,
+                            char_type:"person",
+                            classes:["agent"],
+                            contain_size: 0,
+                            contained_nodes:{},
+                            container_node:{target_id: roomId},
+                            damage:1,
+                            db_id:null,
+                            dead:false,
+                            defense:0,
+                            desc:"",
+                            dexterity:0,
+                            dont_accept_gifts:false,
+                            followed_by:{},
+                            follow:null,
+                            food_energy:1,
+                            health:2,
+                            is_player:false,
+                            max_distance_from_start_location: 1000000,
+                            max_wearable_items: 3,
+                            max_wieldable_items:1,
+                            mission: "",
+                            movement_energy_cost: 0,
+                            name:label,
+                            name_prefix:"",
+                            names:[label],
+                            node_id: null,
+                            num_wearable_items: 0,
+                            num_wieldable_items: 0,
+                            object:false,
+                            on_events:[],
+                            pacifist: false,
+                            persona: "",
+                            quests:[],
+                            size:20,
+                            speed:5,
+                            strength: 0,
+                            tags:[],
+                            usually_npc:false
+                        };
+                        let newCharacterToken = {
+                            key:{label},
+                            label: label,
+                            data: newCharacterTokenData
+                        }
+                        selectedUpdate= newCharacterToken
+                    }else{
+                    selectedUpdate= selectedToken
+                    }
+                case 'objects':
+                    if(customOption){
+                        let newObjectTokenData = {
+                            agent:false,
+                            classes:["object"],
+                            contain_size: 0,
+                            contained_nodes:{},
+                            container: false,
+                            container_node:{target_id: roomId},
+                            db_id:null,
+                            dead:false,
+                            desc:"",
+                            drink:false,
+                            equipped:null,
+                            food:false,
+                            food_energy:0,
+                            gettable:true,
+                            locked_edge:null,
+                            name:label,
+                            name_prefix:"",
+                            names:[label],
+                            node_id: null,
+                            object:true,
+                            on_use:null,
+                            room:false,
+                            size:1,
+                            stats:{damage:0, defense:0},
+                            surface_type:"on",
+                            value: 1,
+                            wearable: false,
+                            wieldable: false
+                        };
+                        let newObjectToken = {
+                            key:{label},
+                            label: label,
+                            data: newObjectTokenData
+                        }
+                        selectedUpdate= newObjectToken
+                    }
+                    selectedUpdate= selectedToken
+                default:
+                console.log(`Token Type ${tokenType} no found.`);
+            }
+            onTokenAddition(selectedUpdate.data)
+        }
+    })
 }
 
   return (
@@ -78,7 +182,7 @@ const SelectHandler = (selected)=>{
             placeholder="Select one"
             renderInput={(inputProps, props) => (
             <TypeaheadInputMulti {...inputProps} selected={selected}>
-                {selected.map((option, idx) => (
+                {selected.length ? selected.map((option, idx) => (
                     <Token
                         index={idx}
                         option={option}
@@ -89,7 +193,8 @@ const SelectHandler = (selected)=>{
                     >   
                         {option.label.toUpperCase()}
                     </Token>
-                ))}
+                )):
+                null}
             </TypeaheadInputMulti>
             )}
         />

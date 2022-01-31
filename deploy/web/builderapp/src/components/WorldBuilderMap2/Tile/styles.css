@@ -72,9 +72,6 @@
     border-top: black;
     border-top-style: solid;
     border-top-width: 1px;
-    border-bottom: black;
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
     height:60%;
     overflow-y: scroll;
     overflow-x: scroll;
@@ -96,5 +93,7 @@
     width: 100%;
     align-items: flex-end;
     justify-content: space-between;
-
+    border-top: black;
+    border-top-style: solid;
+    border-top-width: 1px;
 }

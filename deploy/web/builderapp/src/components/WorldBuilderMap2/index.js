@@ -10,7 +10,7 @@ import {Button } from "@blueprintjs/core";
 /* STYLES */
 import "./styles.css"
 /* UTILS */
-import {calculateMapBorders, gridDataGenerator} from "./Utils"
+import { gridDataGenerator} from "./Utils"
 
 const WorldBuilderMap2 = ({
     worldRoomsData, 
@@ -24,7 +24,7 @@ const WorldBuilderMap2 = ({
     connectRooms,
     disconnectRooms
   })=> {
-    //REACT ROUTER
+    /* ------ REDUX STATE ------ */
 
     /* ------ LOCAL STATE ------ */
     const [viewLoc, setViewLoc] = useState(
@@ -49,7 +49,7 @@ const WorldBuilderMap2 = ({
         y: height/2
       }
       setViewLoc(initialViewLoc)
-    },[gridData])
+    },[width, height])
 
     /* ------ Handlers ------ */
     const shiftView = (axes, amount)=>{
