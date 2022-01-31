@@ -37,6 +37,8 @@ const Tile = ({
             updatedTileContent = [...tileContentNodeKeys]
             if(updatedTileContent.length){
                 setTileContentNodes(updatedTileContent);
+            }else{
+                setTileContentNodes([])
             }
         }
     },[tileData])

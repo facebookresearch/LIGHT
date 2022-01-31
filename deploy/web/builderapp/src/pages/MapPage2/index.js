@@ -273,10 +273,15 @@ const WorldBuilderPage = ()=> {
             formattedAgentId = splitFormattedAgentId.join("_")
             console.log("FORMATTEDIDEND:  ", formattedAgentId);
         }
+        let unupdatedRoomData = nodes[selectedRoom.node_id]
         let updatedCharacterData = {...char, node_id:formattedAgentId, container_node:{target_id: selectedRoom.node_id}};
         let updatedAgents = [...agents, formattedAgentId];
-        let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedAgentId]:{target_id: formattedAgentId}}}
+        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes, [formattedAgentId]:{target_id: formattedAgentId}}
+        console.log("UPDATED CONTAAINED NODES:  ", updatedContainedNodes )
+        let updatedRoomData = {...selectedRoom, contained_nodes: updatedContainedNodes}
+        console.log("UPDATE CHARACTERS ROOM DATA:  ", updatedRoomData)
         let updatedNodes = {...nodes, [formattedAgentId]:updatedCharacterData, [selectedRoom.node_id]: updatedRoomData}
+        console.log("UPDATE CHARACTERS ROOM NODES:  ", updatedNodes)
         let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes}
         dispatch(updateSelectedWorld(updatedWorld))
     }
