@@ -11,3 +11,4 @@ Much of the code underneath isn't necessarily public-ready or well documented, b
 - **`long_context`**: Some code relevant to creating LIGHT longcontext examples.
 - **`quest_generator`**: Some code relevant to generating a relevant quest for a given agent node.
 - **`quest_scorer`**: Some code relevant to selecting a relevant quest for a given agent node.
+- **`quests`**: Related content from the [LIGHT-quests](https://arxiv.org/abs/2010.00685) paper.
