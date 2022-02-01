@@ -38,7 +38,9 @@ const WorldBuilderMap2 = ({
     /* REACT LIFECYCLE */
     useEffect(()=>{
         if(worldRoomsData && worldBorders){
+          console.log("WORLD ROOMS DATA PRE PROCESSED:  ", worldRoomsData)
           let updatedGridData = gridDataGenerator(worldBorders, worldRoomsData, floor);
+          console.log("GRID DATA PROCESSED:  ", updatedGridData)
           setGridData(updatedGridData)
         }
     },[ worldRoomsData, worldBorders, floor])

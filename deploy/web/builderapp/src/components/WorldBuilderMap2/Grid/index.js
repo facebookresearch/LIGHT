@@ -9,6 +9,7 @@ import { fetchWorlds, selectWorld } from "../../../features/playerWorlds/playerw
 import "./styles.css"
 /* CUSTOM COMPONENTS */
 import Row from "../Row"
+import { GiConsoleController } from "react-icons/gi";
 
 
 const Grid = ({
@@ -22,15 +23,19 @@ const Grid = ({
 })=>{
   
     /* ------ LOCAL STATE ------ */
+    //ROWS
     const [gridRows, setGridRows] = useState([]);
     const [gridBelowRows, setGridBelowRows] = useState([]);
     const [gridAboveRows, setGridAboveRows] = useState([]);
+    //DIMENSIONS
     const [gridWidth, setGridWidth] = useState(0);
     const [gridHeight, setGridHeight] = useState(0);
     
     /* REACT LIFECYCLE */
     useEffect(()=>{
         let {floors} = gridData;
+        console.log("GRID DATA AT GRID LEVEL:  ", gridData)
+        //ROWS
         let belowFloorRows = floors[0];
         let currentFloorRows = floors[1]
         let aboveFloorRows = floors[2]
@@ -71,8 +76,8 @@ const Grid = ({
                         <Row 
                             key={borders.top-index}
                             previousRowData={previousRowData}
-                            aboveRowData= {gridAboveRows}
-                            belowRowData= {gridBelowRows}
+                            aboveRowData= {gridAboveRows[index]}
+                            belowRowData= {gridBelowRows[index]}
                             rowData={row}
                             borders={borders}
                             tileClickFunction={tileClickFunction}

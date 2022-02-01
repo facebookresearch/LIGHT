@@ -22,6 +22,9 @@ const Row = ({
     /* ------ LOCAL STATE ------ */
 
     /* --- LIFE CYCLE FUNCTIONS --- */
+    useEffect(() => {
+        console.log("GRID DATA AT ROW LEVEL:  ", rowData)
+    }, [rowData])
     return (
         <div
             className="row-container"

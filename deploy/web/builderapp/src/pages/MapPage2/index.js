@@ -200,22 +200,22 @@ const WorldBuilderPage = ()=> {
 
         let primaryId = primaryRoom.node_id;
         let secondaryId = secondaryRoom.node_id;
-
+        //Primary Room update
         let updatedRoomNode = primaryRoom;
         let updatedNeighbors = {...primaryRoomNeighbors};
         delete updatedNeighbors[secondaryRoom.node_id];
         console.log("POST DELETE NEIGHBORS:  ", updatedNeighbors)
         updatedRoomNode ={...primaryRoom, neighbors: updatedNeighbors};
 
-
+        //Primary Room update
         let updatedNeighborNode = secondaryRoom;
         let updatedNeighboringTileNeighbors = {...secondaryRoomNeighbors};
-        delete updatedNeighboringTileNeighbors[primaryRoom.node_id];
+        delete updatedNeighboringTileNeighbors[primaryId];
         console.log("POST DELETE NEIGHBORS NEIGHBOR:  ", updatedNeighboringTileNeighbors)
         updatedNeighborNode ={...updatedNeighborNode, neighbors: updatedNeighboringTileNeighbors};
 
         let {nodes} = unupdatedWorld;
-        let updatedNodes = {...nodes, [updatedRoomNode.node_id]:updatedRoomNode, [updatedNeighborNode.node_id]: updatedNeighborNode};
+        let updatedNodes = {...nodes, [primaryId]:updatedRoomNode, [secondaryId]: updatedNeighborNode};
         let updatedWorld = {...unupdatedWorld, nodes: updatedNodes};
         console.log("UPDATED WORLD DISCONNECT", updatedWorld)
         let updatedWorlds = worldDrafts.map(world=> {
@@ -247,9 +247,6 @@ const WorldBuilderPage = ()=> {
     }
     const BorderSetter = (updatedBorders)=>{
         dispatch(updateBorders(updatedBorders))
-    }
-    const PositionChangeHandler = (updatedPosition)=>{
-        dispatch(updatedPosition(updatedPosition))
     }
     //CHARACTERS
     // Adds new Character to selectedWorld state

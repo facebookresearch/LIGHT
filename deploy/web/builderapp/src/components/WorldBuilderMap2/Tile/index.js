@@ -29,6 +29,15 @@ const Tile = ({
     const [hasBelowNeighbor, setHasBelowNeighbor] = useState(false)
 
     /* ------ LIFE CYCLE ------ */
+
+    useEffect(() => {
+        console.log("GRID DATA AT TILE LEVEL:  ", tileData)
+        console.log("GRID DATA AT leftNeighbor LEVEL:  ", leftNeighbor)
+        console.log("GRID DATA AT topNeighbor LEVEL:  ", topNeighbor)
+        console.log("GRID DATA AT aboveNeighbor LEVEL:  ", aboveNeighbor)
+        console.log("GRID DATA AT belowNeighbor LEVEL:  ", belowNeighbor)
+    }, [tileData])
+
     useEffect(()=>{
         let updatedTileContent =[]
         if(tileData.node_id){
@@ -45,14 +54,18 @@ const Tile = ({
 
     useEffect(()=>{
         if(aboveNeighbor){
+            console.log("AboveNeighbor", aboveNeighbor)
             let updatedHasAboveNeighbor = (aboveNeighbor.node_id && tileData.node_id) ? true : false;
+            console.log("HasAboveNeighbor", updatedHasAboveNeighbor)
             setHasAboveNeighbor(updatedHasAboveNeighbor)
         }
     },[aboveNeighbor, tileData])
 
     useEffect(()=>{
         if(belowNeighbor){
+            console.log("BelowNeighbor", belowNeighbor)
             let updatedHasBelowNeighbor = (belowNeighbor.node_id && tileData.node_id) ? true : false;
+            console.log("HasBelowNeighbor", updatedHasBelowNeighbor)
             setHasBelowNeighbor(updatedHasBelowNeighbor)
         }
     },[belowNeighbor, tileData])
@@ -60,6 +73,7 @@ const Tile = ({
     useEffect(()=>{
         if(leftNeighbor){
             let updatedHasLeftPath = (leftNeighbor.node_id && tileData.node_id) ? true : false;
+            console.log("LeftPath", updatedHasLeftPath)
             setHasLeftPath(updatedHasLeftPath)
         }
     },[leftNeighbor, tileData])
@@ -67,6 +81,7 @@ const Tile = ({
     useEffect(()=>{
         if(topNeighbor){
             let updatedHasTopPath = (topNeighbor.node_id && tileData.node_id) ? true : false;
+            console.log("TopPath", updatedHasTopPath)
             setHasTopPath(updatedHasTopPath)
         }
     },[topNeighbor, tileData])

@@ -17,8 +17,9 @@ export function roomChecker(x, y, z, room){
 export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
     const {top, bottom, left, right} = gridBorders;
     let gridData = {};
-    let floors =[];
+    let floors = [];
     for(let k = currentFloor-1; k <= currentFloor+1; k++){
+        let floorData = {}
         let rows =[];
         for(let i = top+1; i >= bottom-1; i-- ){
             let row = [];
@@ -42,13 +43,13 @@ export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
                     grid_location: [j , i, currentFloor],
                     surface_type: "",
                 };
-                let coordinateKey = `${j}, ${i}, ${currentFloor}`;
+                let coordinateKey = `${j}, ${i}, ${k}`;
                 worldRoomsData.map((roomData)=>{
-                    if(roomChecker(j, i, currentFloor, roomData)){
+                    if(roomChecker(j, i, k, roomData)){
                         tileData=roomData;
                     }
                 })
-                gridData[coordinateKey]=tileData
+                //floorData[coordinateKey]=tileData
                 row.push(tileData)
             }
             rows.push(row);
@@ -56,6 +57,8 @@ export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
 
         floors.push(rows);
     }
+    console.log("GRID DATA UTILS:  ", gridData)
+    console.log("FLOORS DATA UTILS:  ", floors)
     gridData.floors = floors;
     return gridData
 }
