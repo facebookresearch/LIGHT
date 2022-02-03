@@ -3,7 +3,8 @@ import React, {useState, useEffect} from "react";
 /* STYLES */
 import "./styles.css"
 /* CUSTOM COMPONENTS */
-import TilePath from "./TilePath"
+import TilePath from "./TilePath";
+import TileFooter from "./TileFooter";
 /* ICONS */
 import { Gi3DStairs } from "react-icons/gi";
 import { BsArrowDownShort, BsArrowUpShort } from "react-icons/bs";
@@ -30,14 +31,6 @@ const Tile = ({
 
     /* ------ LIFE CYCLE ------ */
 
-    useEffect(() => {
-        console.log("GRID DATA AT TILE LEVEL:  ", tileData)
-        console.log("GRID DATA AT leftNeighbor LEVEL:  ", leftNeighbor)
-        console.log("GRID DATA AT topNeighbor LEVEL:  ", topNeighbor)
-        console.log("GRID DATA AT aboveNeighbor LEVEL:  ", aboveNeighbor)
-        console.log("GRID DATA AT belowNeighbor LEVEL:  ", belowNeighbor)
-    }, [tileData])
-
     useEffect(()=>{
         let updatedTileContent =[]
         if(tileData.node_id){
@@ -54,18 +47,14 @@ const Tile = ({
 
     useEffect(()=>{
         if(aboveNeighbor){
-            console.log("AboveNeighbor", aboveNeighbor)
             let updatedHasAboveNeighbor = (aboveNeighbor.node_id && tileData.node_id) ? true : false;
-            console.log("HasAboveNeighbor", updatedHasAboveNeighbor)
             setHasAboveNeighbor(updatedHasAboveNeighbor)
         }
     },[aboveNeighbor, tileData])
 
     useEffect(()=>{
         if(belowNeighbor){
-            console.log("BelowNeighbor", belowNeighbor)
             let updatedHasBelowNeighbor = (belowNeighbor.node_id && tileData.node_id) ? true : false;
-            console.log("HasBelowNeighbor", updatedHasBelowNeighbor)
             setHasBelowNeighbor(updatedHasBelowNeighbor)
         }
     },[belowNeighbor, tileData])
@@ -73,7 +62,6 @@ const Tile = ({
     useEffect(()=>{
         if(leftNeighbor){
             let updatedHasLeftPath = (leftNeighbor.node_id && tileData.node_id) ? true : false;
-            console.log("LeftPath", updatedHasLeftPath)
             setHasLeftPath(updatedHasLeftPath)
         }
     },[leftNeighbor, tileData])
@@ -81,7 +69,6 @@ const Tile = ({
     useEffect(()=>{
         if(topNeighbor){
             let updatedHasTopPath = (topNeighbor.node_id && tileData.node_id) ? true : false;
-            console.log("TopPath", updatedHasTopPath)
             setHasTopPath(updatedHasTopPath)
         }
     },[topNeighbor, tileData])
@@ -130,7 +117,7 @@ const Tile = ({
                             tileData={tileData}
                             alignment="vertical"
                             neighbors={tileData.neighbors}
-                            neighboringTile={topNeighbor}
+                            neighboringTileData={topNeighbor}
                             neighboringTileNeighbors={topNeighbor.neighbors}
                             connectRooms={connectRooms}
                             disconnectRooms={disconnectRooms}
@@ -155,7 +142,7 @@ const Tile = ({
                         tileData={tileData}
                         alignment="horizontal"
                         neighbors={tileData.neighbors}
-                        neighboringTile={leftNeighbor}
+                        neighboringTileData={leftNeighbor}
                         neighboringTileNeighbors={leftNeighbor.neighbors}
                         connectRooms={connectRooms}
                         disconnectRooms={disconnectRooms}
@@ -201,32 +188,13 @@ const Tile = ({
                         {
                             (hasAboveNeighbor || hasBelowNeighbor)
                             ?
-                            <div className="tile-footer">
-                                <span>
-                                    {
-                                        hasAboveNeighbor
-                                        ?
-                                        <>
-                                            <Gi3DStairs size="16"/>
-                                            <BsArrowUpShort size="16"/>
-                                        </>
-                                        :
-                                        <span/>
-                                    }
-                                </span>
-                                <span>
-                                    {
-                                        hasBelowNeighbor
-                                        ?
-                                        <>
-                                            <BsArrowDownShort size="16"/>
-                                            <Gi3DStairs size="16"/>
-                                        </>
-                                        :
-                                        <span/>
-                                    }
-                                </span>
-                            </div>
+                              <TileFooter 
+                                tileData={tileData}
+                                aboveNeighbor={aboveNeighbor}
+                                belowNeighbor={belowNeighbor}
+                                connectRooms={connectRooms}
+                                disconnectRooms={disconnectRooms}
+                              />
                             :
                             null
                             }

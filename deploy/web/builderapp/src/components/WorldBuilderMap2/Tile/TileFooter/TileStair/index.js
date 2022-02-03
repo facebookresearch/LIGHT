@@ -2,16 +2,19 @@
 import { Utils } from "@blueprintjs/core";
 import React, {useState, useEffect} from "react";
 /* REDUX */
-import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
+import {useAppDispatch, useAppSelector} from '../../../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
-import { updateRooms} from "../../../../features/rooms/rooms-slice.ts";
+import { updateRooms} from "../../../../../features/rooms/rooms-slice.ts";
 /* STYLES */
 import "./styles.css"
 /* CUSTOM COMPONENTS */
 
+/* ICONS */
+import { Gi3DStairs } from "react-icons/gi";
+import { BsArrowDownShort, BsArrowUpShort } from "react-icons/bs";
 /* UTILS */
 
-const TilePath = ({
+const TileStair = ({
     alignment,
     tileData,
     neighbors,
@@ -38,7 +41,7 @@ const TilePath = ({
         }
     } ,[tileData])
     /* HANDLERS */
-    const pathClickHandler = ()=>{
+    const stairClickHandler = ()=>{
         console.log("IN PATH TILE DATA", tileData)
         console.log("IN PATH NEIGHBORS", neighbors)
         console.log("IN PATH NEIGHBORING TILE DATA", neighboringTileData)
@@ -54,10 +57,10 @@ const TilePath = ({
 
 
     return(
-        <div
-            onClick={pathClickHandler}
-            className={`path-container ${alignment} ${active ?  "active": "" }`}
-        />
-    )
+        <>
+            {(alignment=="below") ? <BsArrowDownShort size="16"/> : <BsArrowUpShort size="16"/> }
+            <Gi3DStairs size="16" color={active ? "black" : "lightgrey"} onClick={stairClickHandler}/>
+        </>
+)
 }
-export default TilePath;
+export default TileStair;

@@ -1,8 +1,6 @@
 /* REACT */
 import React, { useRef, useState, useEffect } from 'react';
 import { useParams, useRouteMatch, useHistory } from "react-router-dom";
-/* REACT DND */
-import { useDrag, useDrop } from 'react-dnd';
 /* TYPEAHEAD TOKENIZER */
 import { Token as RBTToken } from 'react-bootstrap-typeahead';
 /* ICONS */

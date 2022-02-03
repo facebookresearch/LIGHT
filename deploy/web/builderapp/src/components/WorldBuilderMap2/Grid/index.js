@@ -34,7 +34,6 @@ const Grid = ({
     /* REACT LIFECYCLE */
     useEffect(()=>{
         let {floors} = gridData;
-        console.log("GRID DATA AT GRID LEVEL:  ", gridData)
         //ROWS
         let belowFloorRows = floors[0];
         let currentFloorRows = floors[1]

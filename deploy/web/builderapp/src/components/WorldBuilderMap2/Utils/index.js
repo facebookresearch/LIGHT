@@ -57,8 +57,6 @@ export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
 
         floors.push(rows);
     }
-    console.log("GRID DATA UTILS:  ", gridData)
-    console.log("FLOORS DATA UTILS:  ", floors)
     gridData.floors = floors;
     return gridData
 }

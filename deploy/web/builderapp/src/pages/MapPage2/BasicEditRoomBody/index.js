@@ -4,21 +4,15 @@ import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
-// import { updateRooms, selectRoom, updateSelectedRoom} from "../../../features/rooms/rooms-slice.ts";
-// import { updateObjects} from "../../../features/objects/objects-slice.ts";
-// import { updateCharacters } from "../../../features/characters/characters-slice.ts";
+
 /* STYLES */
 import "./styles.css";
 /* BOOTSTRAP COMPONENTS */
-//LAYOUT
-// import Container from 'react-bootstrap/Container';
-// import Row from 'react-bootstrap/Row';
-// import Col from 'react-bootstrap/Col';
+
 /* CUSTOM COMPONENTS */
 import TypeAheadTokenizerForm from "../../../components/FormFields/TypeAheadTokenizer"
 /* BOOTSTRAP COMPONENTS */
 import Button from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal'
 /* STYLES */
 import "./styles.css"
 
@@ -67,13 +61,12 @@ const BasicEditRoom = ({
         }
         setCurrentRoomData(selectedRoom)
     },[selectedRoom])
+
     useEffect(() => {
-        console.log("SELECTED ROOM CHANGE:  ", selectedRoom)
         if(selectedRoom){
             const {node_id} = selectedRoom;
             let updatedFormattedRoomId = node_id.replace(" ", "_");
             updatedFormattedRoomId = node_id.replace(" ", "_");
-            console.log("updated roomId", updatedFormattedRoomId)
             setFormattedRoomId(updatedFormattedRoomId)
             let updatedRoomCharacters = worldCharacters.filter(char=>{
                 let {container_node} = char;
@@ -85,7 +78,6 @@ const BasicEditRoom = ({
                 let {target_id} = container_node;
                 return target_id == node_id
             })
-            console.log("NAME O", selectedRoom)
             setRoomName(selectedRoom.name)
             setRoomCharacters(updatedRoomCharacters)
             setRoomObjects(updatedRoomObjects)

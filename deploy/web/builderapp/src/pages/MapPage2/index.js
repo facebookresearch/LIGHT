@@ -155,9 +155,21 @@ const WorldBuilderPage = ()=> {
 
         let updatedRoomNode = primaryRoom;
         let updatedNeighbors = primaryRoomNeighbors;
+
+        let pathDirection
+        if(pathAlignment==="vertical"){
+            pathDirection= "the south"
+        } else if(pathAlignment==="horizontal"){
+            pathDirection= "the east"
+        }else if(pathAlignment==="above"){
+            pathDirection= "the floor beneath"
+        } else if(pathAlignment==="below"){
+            pathDirection= "the floor above"
+        }
+
         let neighborInfo = {
             examine_desc: null,
-            label: `a path to ${pathAlignment==="vertical" ? "the south": "the east"}`,
+            label: `a path to ${pathDirection}`,
             locked_edge: null,
             target_id: secondaryRoom.node_id
         };
@@ -168,9 +180,22 @@ const WorldBuilderPage = ()=> {
         console.log("ROOM", primaryRoom.node_id, neighborInfo)    
         let updatedNeighborNode = secondaryRoom;
         let updatedNeighboringTileNeighbors = secondaryRoomNeighbors;
+
+
+        let neighborPathDirection
+        if(pathAlignment==="vertical"){
+            neighborPathDirection= "the north"
+        } else if(pathAlignment==="horizontal"){
+            neighborPathDirection= "the west"
+        }else if(pathAlignment==="above"){
+            neighborPathDirection= "the floor above"
+        } else if(pathAlignment==="below"){
+            neighborPathDirection= "the floor beneath"
+        }
+
         let neighboringTileNeighborInfo = {
             examine_desc: null,
-            label: `a path to ${pathAlignment==="vertical" ? "the north": "the west"}`,
+            label: `a path to ${neighborPathDirection}`,
             locked_edge: null,
             target_id: primaryRoom.node_id
         };
@@ -201,14 +226,14 @@ const WorldBuilderPage = ()=> {
         let primaryId = primaryRoom.node_id;
         let secondaryId = secondaryRoom.node_id;
         //Primary Room update
-        let updatedRoomNode = primaryRoom;
+        let updatedRoomNode = {...primaryRoom};
         let updatedNeighbors = {...primaryRoomNeighbors};
         delete updatedNeighbors[secondaryRoom.node_id];
         console.log("POST DELETE NEIGHBORS:  ", updatedNeighbors)
         updatedRoomNode ={...primaryRoom, neighbors: updatedNeighbors};
 
         //Primary Room update
-        let updatedNeighborNode = secondaryRoom;
+        let updatedNeighborNode = {...secondaryRoom};
         let updatedNeighboringTileNeighbors = {...secondaryRoomNeighbors};
         delete updatedNeighboringTileNeighbors[primaryId];
         console.log("POST DELETE NEIGHBORS NEIGHBOR:  ", updatedNeighboringTileNeighbors)
