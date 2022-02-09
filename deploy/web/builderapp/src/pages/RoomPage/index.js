@@ -176,9 +176,14 @@ const RoomPage = ()=> {
     }
 
     /* ------ LOCAL STATE ------ */
+    const [roomName, setRoomName] = useState("");
+    const [roomDesc, setRoomDesc] = useState("");
+    
     const [roomCharacters, setRoomCharacters] = useState([]);
     const [roomObjects, setRoomObjects] = useState([]);
-    const [roomIsIndoors, setRoomIsIndoors]= useState(null)
+    const [roomIsIndoors, setRoomIsIndoors]= useState(null);
+    const [roomBrightness, setRoomBrightness] = useState(0);
+    const [roomTemperature, setRoomTemperature] = useState(0);
 
     //UTILS
     // worldNodeSorter - Sorts the the different types of nodes in a world into arrays
@@ -225,19 +230,6 @@ const RoomPage = ()=> {
 
         history.push(`/editworld/${worldId}/details/map/rooms/${roomid}/`);
       }
-    //CRUMBS
-    // const crumbs= [{name:` Overview` , linkUrl:`/editworld/${worldId}/details`}, {name:` Map` , linkUrl:`/editworld/${worldId}/details/map`},  {name:` Room:  ${selectedRoom.name}` , linkUrl:`/editworld/${worldId}/details/map/rooms/${roomid}`}]
-    //BUTTON COPY
-    const buttonOptions = [
-        {
-            name: "Indoors",
-            value:1
-        },
-        {
-            name: "Outdoors",
-            value:2
-        },
-    ]
 
     /* --- LIFE CYCLE FUNCTIONS --- */
     useEffect(()=>{
@@ -273,7 +265,24 @@ const RoomPage = ()=> {
         let CharacterNodes = [];
         let ObjectNodes = [];
             if(selectedRoom){
-                const {contained_nodes}= selectedRoom;
+                console.log("SELECTED ROOM DATA:  ", selectedRoom)
+                const {
+                    brightness,
+                    contain_size,
+                    contained_nodes,
+                    desc,
+                    extra_desc,
+                    name,
+                    name_prefix,
+                    node_id,
+                    is_indoors,
+                    temperature
+                }= selectedRoom;
+                setRoomName(name)
+                setRoomDesc(desc)
+                setRoomIsIndoors(is_indoors)
+                setRoomBrightness(brightness)
+                setRoomTemperature(temperature)
                 const roomContentNodesKeys = Object.keys(contained_nodes)
                 roomContentNodesKeys.map((nodeKey)=>{
                     let WorldNode = nodes[nodeKey];
@@ -296,6 +305,70 @@ const RoomPage = ()=> {
             setRoomCharacters(CharacterNodes)
         }
     }, [selectedRoom])
+    //HANDLERS
+    const RoomNameChangeHandler = (e)=>{
+        let updatedRoomName = e.target.value;
+        setRoomName(updatedRoomName)
+        let updatedSelectedRoom = {...selectedRoom, name: updatedRoomName }
+        if(selectedRoom){
+            if(selectedRoom.node_id){
+                updateRoom(selectedRoom.node_id, updatedSelectedRoom)
+            }
+        }
+    }
+
+    const RoomDescChangeHandler = (e)=>{
+        let updatedRoomDesc = e.target.value;
+        setRoomDesc(updatedRoomDesc)
+        let updatedSelectedRoom = {...selectedRoom, desc: updatedRoomDesc }
+        if(selectedRoom){
+            if(selectedRoom.node_id){
+                updateRoom(selectedRoom.node_id, updatedSelectedRoom)
+            }
+        }
+    }
+
+    const RoomIsIndoorsSetter = ()=>{
+        setRoomIsIndoors(true)
+        let updatedSelectedRoom = {...selectedRoom, is_indoors: true }
+        if(selectedRoom){
+            if(selectedRoom.node_id){
+                updateRoom(selectedRoom.node_id, updatedSelectedRoom)
+            }
+        }
+    }
+
+    const RoomIsOutdoorsSetter = ()=>{
+        setRoomIsIndoors(false)
+        let updatedSelectedRoom = {...selectedRoom, is_indoors: false }
+        if(selectedRoom){
+            if(selectedRoom.node_id){
+                updateRoom(selectedRoom.node_id, updatedSelectedRoom)
+            }
+        }
+    }
+
+    const RoomBrightnessChangeHandler = (e)=>{
+        let updatedRoomBrightness = e.target.value;
+        setRoomBrightness(updatedRoomBrightness);
+        let updatedSelectedRoom = {...selectedRoom, brightness: updatedRoomBrightness }
+        if(selectedRoom){
+            if(selectedRoom.node_id){
+                updateRoom(selectedRoom.node_id, updatedSelectedRoom)
+            }
+        }
+    }
+
+    const RoomTemperatureChangeHandler = (e)=>{
+        let updatedRoomTemperature = e.target.value;
+        setRoomTemperature(updatedRoomTemperature)
+        let updatedSelectedRoom = {...selectedRoom, temperature: updatedRoomTemperature }
+        if(selectedRoom){
+            if(selectedRoom.node_id){
+                updateRoom(selectedRoom.node_id, updatedSelectedRoom)
+            }
+        }
+    }
 
     //CRUMBS
     const crumbs= [
@@ -303,6 +376,20 @@ const RoomPage = ()=> {
         {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`},
         {name:` ${roomid}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomid}`}
     ];
+
+    //BUTTON COPY
+    const buttonOptions = [
+        {
+            name: "Indoors",
+            value:1,
+            clickFunction: ()=>RoomIsIndoorsSetter()
+        },
+        {
+            name: "Outdoors",
+            value:2,
+            clickFunction: ()=>RoomIsOutdoorsSetter()
+        },
+    ]
 
     return (
         <Container>
@@ -323,13 +410,15 @@ const RoomPage = ()=> {
                     <Row>
                         <TextInput
                             label="Room Name"
-                            value={selectedRoom.name}
+                            value={roomName}
+                            changeHandler={RoomNameChangeHandler}
                         />
                     </Row>
                     <Row>
                         <GenerateForms 
                             label="Room Description:" 
-                            value={selectedRoom.desc}
+                            value={roomDesc}
+                            changeHandler={RoomDescChangeHandler}
                         />
                     </Row>
                     <Row>
@@ -377,6 +466,10 @@ const RoomPage = ()=> {
                             label="Brightness"
                             maxLabel="The Sun"
                             minLabel="Pitch Black"
+                            value={roomBrightness}
+                            min={0}
+                            max={100}
+                            changeHandler={RoomBrightnessChangeHandler}
                         />
                     </Row>
                     <Row>
@@ -384,6 +477,10 @@ const RoomPage = ()=> {
                             label="Temperature"
                             maxLabel="Hot"
                             minLabel="Cold"
+                            value={roomTemperature}
+                            min={0}
+                            max={100}
+                            changeHandler={RoomTemperatureChangeHandler}
                         />
                     </Row>
                 </Col>

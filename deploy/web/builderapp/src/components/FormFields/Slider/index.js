@@ -36,7 +36,7 @@ const Slider = ({
                 </Col>
                 <Col xs={8}>
                     <Form.Range 
-                        value={value}
+                        value={(value==null) ? (min+max)/2 : value}
                         onChange={changeHandler}
                         min={min}
                         max={max}

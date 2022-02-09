@@ -28,6 +28,7 @@ interface Room {
     contain_size: Number;
     contained_nodes: ContainerNodes;
     db_id: string | null;
+    is_indoors: boolean | null;
     desc: string;
     extra_desc: string;
     name: string;
@@ -41,6 +42,8 @@ interface Room {
     grid_location: Array<Number>;
     surface_type: string;
     color: string | null;
+    brightness: number | null;
+    temperature: number | null;
   }
   
 /* STATE TYPE */

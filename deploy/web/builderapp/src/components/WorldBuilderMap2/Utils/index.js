@@ -26,10 +26,12 @@ export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
             for(let j = left-1; j <= right+1; j++){
                 let tileData = {
                     agent: false,
+                    brightness: null,
                     classes: ["room"],
                     contain_size: 0,
                     contained_nodes: {},
                     db_id: null,
+                    is_indoors:null,
                     desc: "",
                     extra_desc: "",
                     name: "",
@@ -42,6 +44,7 @@ export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
                     size:1,
                     grid_location: [j , i, currentFloor],
                     surface_type: "",
+                    temperature: null
                 };
                 let coordinateKey = `${j}, ${i}, ${k}`;
                 worldRoomsData.map((roomData)=>{

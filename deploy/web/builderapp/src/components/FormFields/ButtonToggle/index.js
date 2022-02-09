@@ -21,21 +21,27 @@ const ButtonToggle = ({
           <>
           
             <ButtonGroup>
-              {buttonOptions.map((button, id) => (
-                <ToggleButton
-                  key={id}
-                  active={button.value == selectedButtonValue}
-                  id={`radio-${id}`}
-                  type="radio"
-                  variant={id % 2 ? 'outline-success' : 'outline-danger'}
-                  name="toggle"
-                  value={button.value}
-                  checked={selectedButtonValue === button.value}
-                  onChange={(e) => setSelectedButtonValue(e.currentTarget.value)}
-                >
-                  {button.name}
-                </ToggleButton>
-              ))}
+              {buttonOptions.map((button, id) => {
+                const clickFunction = (e)=>{
+                  button.clickFunction()
+                  setSelectedButtonValue(e.currentTarget.value)
+                }
+                return (
+                  <ToggleButton
+                    key={id}
+                    active={button.value == selectedButtonValue}
+                    id={`radio-${id}`}
+                    type="radio"
+                    variant={id % 2 ? 'outline-success' : 'outline-danger'}
+                    name="toggle"
+                    value={button.value}
+                    checked={selectedButtonValue === button.value}
+                    onChange={clickFunction}
+                  >
+                    {button.name}
+                  </ToggleButton>
+                )}
+              )}
             </ButtonGroup>
           </>
         );
