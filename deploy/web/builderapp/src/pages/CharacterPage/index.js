@@ -53,41 +53,6 @@ const CharacterPage = ()=> {
         })
         dispatch(setWorldDrafts(updatedWorlds))
     }
-    //ROOMS
-    const addRoom = (room)=>{
-        let unupdatedWorld = selectedWorld;
-        let {rooms, nodes } = unupdatedWorld;
-        let formattedRoomId = room.id;
-        while(rooms.indexOf(formattedRoomId)>=0){
-            let splitFormattedRoomId = formattedRoomId.split("_")
-            let idNumber = splitFormattedRoomId[splitFormattedRoomId.length-1]
-            idNumber = idNumber++;
-            splitFormattedRoomId[splitFormattedRoomId.length-1] = idNumber
-            formattedRoomId = splitFormattedRoomId.join("_")
-        }
-        let updatedRoomData = {...room, node_id:formattedRoomId};
-        let updatedRooms = [...rooms, formattedRoomId]
-        let updatedNodes = {...nodes, [formattedRoomId]:updatedRoomData}
-        let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
-    }
-
-    const updateRoom = (id, update) =>{
-        let unupdatedWorld = selectedWorld;
-        let {nodes } = unupdatedWorld;
-        let updatedNodes = {...nodes, [id]:update}
-        let updatedWorld ={...selectedWorld, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
-    }
-
-    const deleteRoom = (id)=>{
-        let unupdatedWorld = selectedWorld;
-        let {rooms, nodes } = unupdatedWorld;
-        let updatedRooms = rooms.filter(room => id !== room);
-        let updatedNodes = delete nodes[id];
-        let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes};
-        dispatch(updateSelectedWorld(updatedWorld));
-    }
 
     //CHARACTERS
     // Adds new Character to selectedWorld state
@@ -177,8 +142,14 @@ const CharacterPage = ()=> {
         dispatch(updateSelectedWorld(updatedWorld));
     }
     /* ------ LOCAL STATE ------ */
-    const [characterObjects, setCharacterObjects] = useState([]);
-    const [roomIsIndoors, setRoomIsIndoors]= useState(null)
+    const [characterName, setCharacterName] = useState("");
+    const [characterDesc, setCharacterDesc] = useState("");
+    const [characterMotivation, setCharacterMotivation] = useState("")
+    const [characterPersona, setCharacterPersona] = useState("");
+    const [characterAggression, setCharacterAggression] = useState(0);
+    const [characterSize, setCharacterSize] = useState(0);
+    const [containedObjects, setContainedObjects] = useState([]);
+
     //UTILS
     const worldNodeSorter = (world)=>{
         let CharacterNodes = [];
@@ -252,7 +223,25 @@ const CharacterPage = ()=> {
         const {nodes} = selectedWorld;
         let ObjectNodes = [];
             if(selectedCharacter){
-                const {contained_nodes}= selectedCharacter;
+                const {                
+                    contain_size,
+                    contained_nodes,
+                    desc,
+                    extra_desc,
+                    motivation,
+                    name,
+                    name_prefix,
+                    node_id,
+                    persona,
+                    size,
+                    aggression
+                }= selectedCharacter;
+                setCharacterName(name)
+                setCharacterDesc(desc)
+                setCharacterPersona(persona)
+                setCharacterMotivation(motivation)
+                setCharacterAggression(aggression)
+                setCharacterSize(size)
                 const roomContentNodesKeys = Object.keys(contained_nodes)
                 roomContentNodesKeys.map((nodeKey)=>{
                     let WorldNode = nodes[nodeKey];
@@ -268,9 +257,65 @@ const CharacterPage = ()=> {
                     }
                 })
             }
-            setCharacterObjects(ObjectNodes)
+            setContainedObjects(ObjectNodes)
         }
     }, [selectedCharacter])
+
+    //HANDLERS
+    const CharacterNameChangeHandler = (e)=>{
+        let updatedCharacterName = e.target.value;
+        setCharacterName(updatedCharacterName)
+        let updatedSelectedCharacter = {...selectedCharacter, name: updatedCharacterName }
+        if(selectedCharacter){
+            if(selectedCharacter.node_id){
+                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter)
+            }
+        }
+    }
+    
+    const CharacterDescChangeHandler = (e)=>{
+        let updatedCharacterDesc = e.target.value;
+        setCharacterDesc(updatedCharacterDesc)
+        let updatedSelectedCharacter = {...selectedCharacter, desc: updatedCharacterDesc }
+        if(selectedCharacter){
+            if(selectedCharacter.node_id){
+                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter)
+            }
+        }
+    }
+
+    const CharacterPersonaChangeHandler = (e)=>{
+        let updatedCharacterPersona = e.target.value;
+        setCharacterPersona(updatedCharacterPersona)
+        let updatedSelectedCharacter = {...selectedCharacter, persona: updatedCharacterPersona }
+        if(selectedCharacter){
+            if(selectedCharacter.node_id){
+                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter)
+            }
+        }
+    }
+    
+    const CharacterSizeChangeHandler = (e)=>{
+        let updatedCharacterSize = e.target.value;
+        setCharacterSize(updatedCharacterSize);
+        let updatedSelectedCharacter = {...selectedCharacter, size: updatedCharacterSize }
+        if(selectedCharacter){
+            if(selectedCharacter.node_id){
+                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter)
+            }
+        }
+    }
+    
+    const CharacterAggressionChangeHandler = (e)=>{
+        let updatedCharacterAggression = e.target.value;
+        setCharacterAggression(updatedCharacterAggression)
+        let updatedSelectedCharacter = {...selectedCharacter, aggression: updatedCharacterAggression }
+        if(selectedCharacter){
+            if(selectedCharacter.node_id){
+                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter)
+            }
+        }
+    }
   
 //   //CRUMBS
 const crumbs= [
@@ -299,29 +344,32 @@ const crumbs= [
                     <Row>
                         <TextInput
                             label="Character Name"
-                            value={selectedCharacter.name}
+                            value={characterName}
+                            changeHandler={CharacterNameChangeHandler}
                         />
                     </Row>
                     <Row>
                         <GenerateForms 
                             label="Character Description:" 
-                            value={selectedCharacter.desc}
+                            value={characterDesc}
+                            changeHandler={CharacterDescChangeHandler}
                         />
                     </Row>
                     <Row>
                         <GenerateForms 
                             label="Character Persona:" 
-                            value={selectedCharacter.persona}
+                            value={characterPersona}
+                            changeHandler={CharacterPersonaChangeHandler}
                         />
                     </Row>
                     <Row>
                         <TypeAheadTokenizerForm
                             formLabel="Character Carrying"
-                            tokenOptions={characterObjects}
+                            tokenOptions={containedObjects}
                             worldId={worldId}
                             sectionName={"objects"}
                             roomId={selectedRoom.node_id}
-                            defaultTokens={characterObjects}
+                            defaultTokens={containedObjects}
                             onTokenAddition={addObject}
                             onTokenRemoval={deleteObject}
                         />
@@ -329,11 +377,11 @@ const crumbs= [
                     <Row>
                         <TypeAheadTokenizerForm
                             formLabel="Wielding/Wearing"
-                            tokenOptions={characterObjects}
+                            tokenOptions={containedObjects}
                             worldId={worldId}
                             sectionName={"objects"}
                             roomId={selectedRoom.node_id}
-                            defaultTokens={characterObjects}
+                            defaultTokens={containedObjects}
                             onTokenAddition={addObject}
                             onTokenRemoval={deleteObject}
                         />
@@ -371,9 +419,10 @@ const crumbs= [
                             label="Aggression"
                             maxLabel="Angry"
                             minLabel="Peaceful"
-                            value={selectedCharacter.aggression}
+                            value={characterAggression}
                             min={0}
                             max={100}
+                            changeHandler={CharacterAggressionChangeHandler}
                         />
                     </Row>
                     <Row>
@@ -381,9 +430,10 @@ const crumbs= [
                             label="Size"
                             maxLabel="Big"
                             minLabel="Little"
-                            value={selectedCharacter.size}
+                            value={characterSize}
                             min={0}
                             max={100}
+                            changeHandler={CharacterSizeChangeHandler}
                         />
                     </Row>
                 </Col>
@@ -392,14 +442,14 @@ const crumbs= [
                     <Row>
                     <Col>
                         <TextButton
-                        text={selectedCharacter.node_id ? "Save Changes" : "Create Object" }
+                            text={selectedCharacter.node_id ? "Save Changes" : "Create Character" }
 
                         />
                     </Col>
                     <Col>
                         <TextButton
-                        text={"Delete Object"}
-                        
+                            text={"Delete Character"}
+
                         />
                     </Col>
                     </Row>

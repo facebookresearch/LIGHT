@@ -6,7 +6,6 @@ import React, {useRef} from 'react';
 import './styles.css';
 /* BOOTSTRAP COMPONENTS */
 //LAYOUT
-
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 //FORM

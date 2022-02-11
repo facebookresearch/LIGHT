@@ -17,6 +17,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 /* CUSTOM COMPONENTS */
 import TextInput from "../../components/FormFields/TextInput";
+import TextButton from "../../components/Buttons/TextButton";
 import ButtonToggle from "../../components/FormFields/ButtonToggle";
 import Slider from "../../components/FormFields/Slider";
 import GenerateForms from "../../components/FormFields/GenerateForms";
@@ -485,6 +486,25 @@ const RoomPage = ()=> {
                     </Row>
                 </Col>
             </Row>
+            <Row>
+          <Col>
+            <Row>
+              <Col>
+                <TextButton
+                  text={selectedRoom.node_id ? "Save Changes" : "Create Object" }
+
+                />
+              </Col>
+              <Col>
+                <TextButton
+                  text={"Delete Room"}
+                  
+                />
+              </Col>
+            </Row>
+          </Col>
+          <Col/>
+        </Row>
             </>
             :
             <div/>

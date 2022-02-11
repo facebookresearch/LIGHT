@@ -27,7 +27,12 @@ import TypeAheadTokenizerForm from "../../components/FormFields/TypeAheadTokeniz
 const ObjectPage = ()=> {
   //REACT ROUTER
   const history = useHistory();
-  let { worldId, categories, roomid, objectid} = useParams();
+  let { 
+    worldId, 
+    categories, 
+    roomid, 
+    objectid
+  } = useParams();
 
 
    /* REDUX DISPATCH FUNCTION */
@@ -36,14 +41,10 @@ const ObjectPage = ()=> {
    //WORLD
    const worldDrafts = useAppSelector((state) => state.playerWorlds.worldDrafts);
    const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
-   //ROOMS
-   const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
    const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
    //OBJECTS
    const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
    const selectedObject = useAppSelector((state) => state.worldObjects.selectedObject);
-   //CHARACTERS
-   const selectedCharacter = useAppSelector((state) => state.worldCharacters.selectedCharacter);
    /* ------ REDUX ACTIONS ------ */
     //WORLD DRAFT
     const updateWorldsDraft = ()=>{
@@ -55,88 +56,7 @@ const ObjectPage = ()=> {
        })
        dispatch(setWorldDrafts(updatedWorlds))
    }
-   //ROOMS
-   const addRoom = (room)=>{
-       let unupdatedWorld = selectedWorld;
-       let {rooms, nodes } = unupdatedWorld;
-       let formattedRoomId = room.id;
-       while(rooms.indexOf(formattedRoomId)>=0){
-           let splitFormattedRoomId = formattedRoomId.split("_")
-           let idNumber = splitFormattedRoomId[splitFormattedRoomId.length-1]
-           idNumber = idNumber++;
-           splitFormattedRoomId[splitFormattedRoomId.length-1] = idNumber
-           formattedRoomId = splitFormattedRoomId.join("_")
-       }
-       let updatedRoomData = {...room, node_id:formattedRoomId};
-       let updatedRooms = [...rooms, formattedRoomId]
-       let updatedNodes = {...nodes, [formattedRoomId]:updatedRoomData}
-       let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes}
-       dispatch(updateSelectedWorld(updatedWorld))
-   }
-
-   const updateRoom = (id, update) =>{
-       let unupdatedWorld = selectedWorld;
-       let {nodes } = unupdatedWorld;
-       let updatedNodes = {...nodes, [id]:update}
-       let updatedWorld ={...selectedWorld, nodes:updatedNodes}
-       dispatch(updateSelectedWorld(updatedWorld))
-   }
-
-   const deleteRoom = (id)=>{
-       let unupdatedWorld = selectedWorld;
-       let {rooms, nodes } = unupdatedWorld;
-       let updatedRooms = rooms.filter(room => id !== room);
-       let updatedNodes = delete nodes[id];
-       let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes};
-       dispatch(updateSelectedWorld(updatedWorld));
-   }
-
-   //CHARACTERS
-   // Adds new Character to selectedWorld state
-   const addCharacter = (char)=>{
-       let unupdatedWorld = selectedWorld;
-       let {agents, nodes } = unupdatedWorld;
-       console.log("CHARACTER BEING ADDED DATA", char)
-       let formattedAgentId = char.node_id;
-       
-       while(agents.indexOf(formattedAgentId)>=0){
-           console.log("WHILE LOOP RUNNING",agents.indexOf(formattedAgentId)>=0);
-           let splitFormattedAgentId = formattedAgentId.split("_");
-           console.log("FORMATTEDID:  ", splitFormattedAgentId);
-           let idNumber = splitFormattedAgentId[splitFormattedAgentId.length-1]
-           console.log("idNumber:  ", idNumber);
-           idNumber = (idNumber*1)+1;
-           idNumber = idNumber.toString()
-           console.log("idNumber+:  ", idNumber);
-           splitFormattedAgentId[splitFormattedAgentId.length-1] = idNumber
-           console.log("splitFormattedAgentId+:  ", splitFormattedAgentId);
-           formattedAgentId = splitFormattedAgentId.join("_")
-           console.log("FORMATTEDIDEND:  ", formattedAgentId);
-       }
-       let updatedCharacterData = {...char, node_id:formattedAgentId};
-       let updatedAgents = [...agents, formattedAgentId];
-       let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedAgentId]:{target_id: formattedAgentId}}}
-       let updatedNodes = {...nodes, [formattedAgentId]:updatedCharacterData, [selectedRoom.node_id]: updatedRoomData}
-       let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes}
-       dispatch(updateSelectedWorld(updatedWorld))
-   }
-   //Updates Character in selectedWorld state
-   const updateCharacter = (id, update) =>{
-       let unupdatedWorld = selectedWorld;
-       let {nodes } = unupdatedWorld;
-       let updatedNodes = {...nodes, [id]:update}
-       let updatedWorld ={...selectedWorld, nodes:updatedNodes}
-       dispatch(updateSelectedWorld(updatedWorld))
-   }
-   //Removes Character from selectedWorld state
-   const deleteCharacter = (id)=>{
-       let unupdatedWorld = selectedWorld;
-       let {agents, nodes } = unupdatedWorld;
-       let updatedAgents = agents.filter(char => id !== char);
-       let updatedNodes = delete nodes[id];
-       let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes};
-       dispatch(updateSelectedWorld(updatedWorld));
-   }
+  
    //OBJECTS
    const addObject = (obj)=>{
        let unupdatedWorld = selectedWorld;
@@ -179,7 +99,11 @@ const ObjectPage = ()=> {
        dispatch(updateSelectedWorld(updatedWorld));
    }
    /* ------ LOCAL STATE ------ */
-   const [containedObjects, setContainedObjects] = useState([]);
+    const [objectName, setObjectName] = useState("");
+    const [objectDesc, setObjectDesc] = useState("");
+    const [objectValue, setObjectValue] = useState(0);
+    const [objectSize, setObjectSize] = useState(0);
+    const [containedObjects, setContainedObjects] = useState([]);
   //UTILS
   const worldNodeSorter = (world)=>{
        let CharacterNodes = [];
@@ -254,7 +178,24 @@ const ObjectPage = ()=> {
        const {nodes} = selectedWorld;
        let ObjectNodes = [];
            if(selectedObject){
-               const {contained_nodes}= selectedObject;
+
+              const { 
+                contain_size,
+                contained_nodes,
+                desc,
+                extra_desc,
+                name,
+                name_prefix,
+                node_id,
+                size,
+                value
+               }= selectedObject;
+
+              setObjectName(name)
+              setObjectDesc(desc)
+              setObjectSize(size)
+              setObjectValue(value)
+
                const roomContentNodesKeys = Object.keys(contained_nodes)
                roomContentNodesKeys.map((nodeKey)=>{
                    let WorldNode = nodes[nodeKey];
@@ -273,11 +214,52 @@ const ObjectPage = ()=> {
            setContainedObjects(ObjectNodes)
        }
    }, [selectedObject])
-  // //CRUMBS
-  // const crumbs= [
-  //   {name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`}, 
-  //   {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`}
-  // ]
+
+
+ //HANDLERS
+ const ObjectNameChangeHandler = (e)=>{
+  let updatedObjectName = e.target.value;
+  setObjectName(updatedObjectName)
+  let updatedSelectedObject = {...selectedObject, name: updatedObjectName }
+  if(selectedObject){
+      if(selectedObject.node_id){
+          updateObject(selectedObject.node_id, updatedSelectedObject)
+      }
+  }
+}
+
+const ObjectDescChangeHandler = (e)=>{
+  let updatedObjectDesc = e.target.value;
+  setObjectDesc(updatedObjectDesc)
+  let updatedSelectedObject = {...selectedObject, desc: updatedObjectDesc }
+  if(selectedObject){
+      if(selectedObject.node_id){
+          updateObject(selectedObject.node_id, updatedSelectedObject)
+      }
+  }
+}
+
+const ObjectSizeChangeHandler = (e)=>{
+  let updatedObjectSize = e.target.value;
+  setObjectSize(updatedObjectSize);
+  let updatedSelectedObject = {...selectedObject, size: updatedObjectSize }
+  if(selectedObject){
+      if(selectedObject.node_id){
+          updateObject(selectedObject.node_id, updatedSelectedObject)
+      }
+  }
+}
+
+const ObjectValueChangeHandler = (e)=>{
+  let updatedObjectValue = e.target.value;
+  setObjectValue(updatedObjectValue)
+  let updatedSelectedObject = {...selectedObject, value: updatedObjectValue }
+  if(selectedObject){
+      if(selectedObject.node_id){
+          updateObject(selectedObject.node_id, updatedSelectedObject)
+      }
+  }
+}
   //CRUMBS
   const crumbs= [
     {name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`}, 
@@ -299,13 +281,15 @@ const ObjectPage = ()=> {
               <Row>
                 <TextInput
                     label="Object Name"
-                    value={selectedObject.name}
+                    value={objectName}
+                    changeHandler={ObjectNameChangeHandler}
                 />
               </Row>
               <Row>
                 <GenerateForms 
                   label="Object Description:" 
-                  value={selectedObject.desc}
+                  value={objectDesc}
+                  changeHandler={ObjectDescChangeHandler}
                 />
               </Row>
               <Row>
@@ -354,11 +338,12 @@ const ObjectPage = ()=> {
               <Row>
                 <Slider 
                     label="Value"
-                    maxLabel="Riches"
-                    minLabel="Nothing"
-                    value={selectedObject.value}
+                    maxLabel="Priceless"
+                    minLabel="Worthless"
+                    value={objectValue}
                     min={0}
                     max={100}
+                    changeHandler={ObjectValueChangeHandler}
                 />
               </Row>
               <Row>
@@ -366,9 +351,10 @@ const ObjectPage = ()=> {
                     label="Size"
                     maxLabel="Big"
                     minLabel="Little"
-                    value={selectedObject.size}
+                    value={objectSize}
                     min={0}
                     max={100}
+                    changeHandler={ObjectSizeChangeHandler}
                 />
               </Row>
             </Col>
