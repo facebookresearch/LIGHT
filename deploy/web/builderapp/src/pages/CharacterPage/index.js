@@ -17,6 +17,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 /* CUSTOM COMPONENTS */
 import GenerateForms from "../../components/FormFields/GenerateForms";
+import InlineTextInsertForm from "../../components/FormFields/InlineTextInsertForm";
 import TextInput from "../../components/FormFields/TextInput";
 import TextButton from "../../components/Buttons/TextButton";
 import ButtonToggle from "../../components/FormFields/ButtonToggle";
@@ -335,11 +336,6 @@ const crumbs= [
             ?
             <>
             <Row>
-                {/* <BreadCrumbs 
-                    crumbs={crumbs}
-                /> */}
-            </Row>
-            <Row>
                 <Col>
                     <Row>
                         <TextInput
@@ -397,17 +393,11 @@ const crumbs= [
                     <Row>
                         <h5>In-Game appearance:</h5>
                     </Row>
-                    <Row>
-                        <Col xs={2}>
-                            <input
-                                value={selectedCharacter.name_prefix}
-                                style={{width:"50%"}}
-                            />
-                        </Col>
-                        <Col xs={10}>
-                        <h5>{selectedCharacter.name}</h5>
-                        </Col>
-                    </Row>
+                    <InlineTextInsertForm 
+                        formText={selectedCharacter.name}
+                        value={"a"}
+                        textPlacement="after"
+                    />
                     <Row>
                         <h5>Attributes</h5>
                     </Row>

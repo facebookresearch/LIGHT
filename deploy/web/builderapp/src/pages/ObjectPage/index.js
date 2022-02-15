@@ -18,6 +18,7 @@ import Col from 'react-bootstrap/Col';
 /* CUSTOM COMPONENTS */
 import GenerateForms from "../../components/FormFields/GenerateForms";
 import TextInput from "../../components/FormFields/TextInput";
+import InlineTextInsertForm from "../../components/FormFields/InlineTextInsertForm";
 import TextButton from "../../components/Buttons/TextButton";
 import ButtonToggle from "../../components/FormFields/ButtonToggle";
 import Slider from "../../components/FormFields/Slider";
@@ -309,26 +310,21 @@ const ObjectValueChangeHandler = (e)=>{
               <Row>
                 <h5>In-Game appearance:</h5>
               </Row>
+              <InlineTextInsertForm 
+                formText={objectName}
+                value={selectedObject.name_prefix}
+                textPlacement="after"
+
+              />
               <Row>
-                <Col xs={1}>
-                    <input
-                        value={selectedObject.name_prefix}
-                    />
-                </Col>
-                <Col xs={10}>
-                <h5>{selectedObject.name}</h5>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
+                <Col xs={2}>
                   <h5>Plural:</h5>
                 </Col>
                 <Col>
-                  <h5>Some </h5>
-                </Col>
-                <Col>
-                  <input
-                    value={selectedObject.name_prefix}
+                  <InlineTextInsertForm 
+                    formText="Some"
+                    value={selectedObject.name}
+                    textPlacement="before"
                   />
                 </Col>
               </Row>

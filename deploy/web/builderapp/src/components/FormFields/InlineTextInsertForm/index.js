@@ -15,21 +15,37 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel'
 
 
 const InlineTextInsertForm = ({
-    label,
+    formText,
     value,
-    changeHandler
+    changeHandler,
+    textPlacement
 })=> {
     const textInputRef = useRef(null);
 
     return (
-        <div className="textinput-container">
-            <FloatingLabel
-                label={label}
-                className="mb-3"
-            >
-                <Form.Control value={value} onChange={changeHandler} type="text" placeholder={label} />
-            </FloatingLabel>
-        </div>
+        <Row className="inlinetextinsertform-container">
+            {
+                textPlacement=="before"
+            ?
+            <>
+                <Col xs={2}>
+                    <h5>{formText}</h5>
+                </Col>
+                <Col xs={10}>
+                    <Form.Control value={value} onChange={changeHandler} type="text" />
+                </Col>
+            </>
+            :
+            <>
+                <Col xs={2}>
+                    <Form.Control value={value} onChange={changeHandler} type="text" />
+                </Col>
+                <Col xs={10}>
+                    <h5>{formText}</h5>
+                </Col>
+            </>
+            }
+        </Row>
     );
 }
 
