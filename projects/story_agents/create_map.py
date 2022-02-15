@@ -35,7 +35,7 @@ if not os.path.exists(LIGHT_DB_FILE_LOC):
 
 if __name__ == "__main__":
     parser = ParlaiParser()
-    parser.add_argument("--out-file", type=str, default="map.json")
+    parser.add_argument("--map-file", type=str, default="map.json")
     ExampleBuilder.add_parser_arguments(parser)
     opt, _unknown = parser.parse_and_process_known_args()
     print("[loading db...]")
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     print("[Building light graph]")
     g, world = world_builder.get_graph()
     data = g.to_json()
-    target_loc = os.path.join(CURR_DIR, "outputs", opt["out_file"])
+    target_loc = os.path.join(CURR_DIR, "outputs", opt["map_file"])
     with open(target_loc, "w+") as mapfile:
         print(f"[Writing out file to {target_loc}]")
         mapfile.write(data)

@@ -54,10 +54,17 @@ class Soul(ABC):
 
                 traceback.print_exc()
 
-        loop = asyncio.get_running_loop()
-        self._observe_futures[future_id] = asyncio.ensure_future(
-            _await_observe_then_cleanup(), loop=loop
-        )
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = None
+        if loop is not None:
+            self._observe_futures[future_id] = asyncio.ensure_future(
+                _await_observe_then_cleanup(), loop=loop
+            )
+        else:
+            loop = asyncio.new_event_loop()
+            loop.run_until_complete(_observe_future)
 
     @abstractmethod
     async def observe_event(self, event: "GraphEvent"):
