@@ -14,7 +14,7 @@ const BreadCrumbs = ({crumbs }) => {
             {
                 crumbs.map((crumb, index)=> {
                     const {name, linkUrl} = crumb;
-                    const formattedCrumb = name.replaceAll("_", " ")
+                    const formattedCrumb = name.replaceAll("_", " ").toUpperCase()
                     if(index==crumbs.length-1){
                         return(
                             <Breadcrumb.Item className="crumb-active" active key={linkUrl} >

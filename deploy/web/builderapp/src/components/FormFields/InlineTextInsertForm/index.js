@@ -20,7 +20,6 @@ const InlineTextInsertForm = ({
     changeHandler,
     textPlacement
 })=> {
-    const textInputRef = useRef(null);
 
     return (
         <Row className="inlinetextinsertform-container">
