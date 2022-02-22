@@ -93,13 +93,38 @@ const ObjectPage = ()=> {
    }
    const deleteObject = (id)=>{
        let unupdatedWorld = selectedWorld;
-       let {objects, nodes } = unupdatedWorld;
-
+       let updatedWorld = containedNodesRemover(id, unupdatedWorld)
+       let {objects, nodes } = updatedWorld;
        let updatedObjects = objects.filter(obj => id !== obj);
-       let updatedNodes = delete nodes[id];
-       let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
+       let updatedNodes ={...nodes};
+       delete updatedNodes[id];
+       updatedWorld ={...updatedWorld, objects: updatedObjects, nodes:updatedNodes};
        dispatch(updateSelectedWorld(updatedWorld));
    }
+
+   const deleteSelectedObject = ()=>{
+    let unupdatedWorld = selectedWorld;
+    let updatedRoom = selectedWorld.nodes[roomid]
+    let updatedRoomContent = {...updatedRoom.contained_nodes};
+    delete updatedRoomContent[objectid];
+    unupdatedWorld ={...unupdatedWorld, nodes: {...unupdatedWorld.nodes, roomid: updatedRoom}}
+    let updatedWorld = containedNodesRemover(objectid, unupdatedWorld)
+    let {objects, nodes } = updatedWorld;
+    let updatedObjects = objects.filter(obj => objectid !== obj);
+    let updatedNodes ={...nodes};
+    delete updatedNodes[objectid];
+    updatedWorld ={...updatedWorld, objects: updatedObjects, nodes:updatedNodes};
+    let updatedWorlds = worldDrafts.map(world=> {
+        if(world.id==worldId){
+            return updatedWorld;
+        }
+        return world;
+    })
+
+    console.log("UPDATED WORLDS UPON CREATION:  ", updatedWorlds)
+    dispatch(setWorldDrafts(updatedWorlds))
+    history.push(`/editworld/${worldId}/${categories}/map/rooms/${roomid}`)
+}
    /* ------ LOCAL STATE ------ */
     const [objectName, setObjectName] = useState("");
     const [objectPluralName, setObjectPluralName] = useState("");
@@ -110,16 +135,33 @@ const ObjectPage = ()=> {
     const [containedObjects, setContainedObjects] = useState([]);
   //UTILS
   const containedNodesRemover = (nodeId, world)=>{
-    let {nodes} = world;
+    console.log("RECURSIVE CONTAINED NODES REMOVER:  ", nodeId, world)
+    let {nodes, objects, rooms, agents} = world;
     let unupdatedNode = nodes[nodeId];
+    let {classes} = unupdatedNode;
     let containedNodes = unupdatedNode.contained_nodes;
     let containedNodesList = Object.keys(containedNodes);
+    let updatedWorld = world;
     if(!containedNodesList.length){
-
-      return world;
+      if(classes[0]==="agent"){
+        let updatedCharacters = agents.filter(char => nodeId !== char);
+        updatedWorld = {...updatedWorld, agents: updatedCharacters}
+      }else if(classes[0]==="object"){
+        let updatedObjects = objects.filter(obj => nodeId !== obj);
+        updatedWorld = {...updatedWorld, objects: updatedObjects}
+      }else if(classes[0]==="room"){
+        let updatedRooms = rooms.filter(room => nodeId !== room);
+        updatedWorld = {...updatedWorld, rooms: updatedRooms}
+      }
+      console.log("#NODES", nodes)
+      let updatedNodes = {...nodes};
+      delete updatedNodes[nodeId];
+      updatedWorld = {...updatedWorld, nodes: updatedNodes}
+      console.log("NESTED CONTAINED NODE REMOVER",  updatedWorld)
+      return updatedWorld;
     }else {
       containedNodes.map((containedNodeId)=>{
-
+        containedNodesRemover(containedNodeId, world)
       })
     }
   }
@@ -423,7 +465,7 @@ const ObjectValueChangeHandler = (e)=>{
               <Col>
                 <TextButton
                   text={"Delete Object"}
-                  
+                  clickFunction={deleteSelectedObject}
                 />
               </Col>
             </Row>
