@@ -235,15 +235,21 @@ const CharacterPage = ()=> {
                     name_prefix,
                     node_id,
                     persona,
+                    prefix,
                     size,
                     aggression
                 }= selectedCharacter;
-                setCharacterName(name)
-                setCharacterDesc(desc)
-                setCharacterPersona(persona)
-                setCharacterMotivation(motivation)
-                setCharacterAggression(aggression)
-                setCharacterSize(size)
+                setCharacterName(name);
+                setCharacterDesc(desc);
+                if(!name_prefix){
+                    setCharacterPrefix("a");
+                }else {
+                    setCharacterPrefix(name_prefix);
+                }
+                setCharacterPersona(persona);
+                setCharacterMotivation(motivation);
+                setCharacterAggression(aggression);
+                setCharacterSize(size);
                 const roomContentNodesKeys = Object.keys(contained_nodes)
                 roomContentNodesKeys.map((nodeKey)=>{
                     let WorldNode = nodes[nodeKey];
@@ -296,6 +302,18 @@ const CharacterPage = ()=> {
             }
         }
     }
+
+    const CharacterPrefixChangeHandler = (e)=>{
+        let updatedCharacterPrefix = e.target.value;
+        setCharacterPrefix(updatedCharacterPrefix)
+        let updatedSelectedCharacter = {...selectedCharacter, prefix: updatedCharacterPrefix }
+        if(selectedCharacter){
+            if(selectedCharacter.node_id){
+                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter)
+            }
+        }
+      }
+      
     
     const CharacterSizeChangeHandler = (e)=>{
         let updatedCharacterSize = e.target.value;
@@ -396,7 +414,8 @@ const crumbs= [
                     </Row>
                     <InlineTextInsertForm 
                         formText={selectedCharacter.name}
-                        value={"a"}
+                        value={characterPrefix}
+                        changeHandler={CharacterPrefixChangeHandler}
                         textPlacement="after"
                     />
                     <Row>
