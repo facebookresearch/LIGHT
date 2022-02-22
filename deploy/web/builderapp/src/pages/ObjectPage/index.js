@@ -94,6 +94,7 @@ const ObjectPage = ()=> {
    const deleteObject = (id)=>{
        let unupdatedWorld = selectedWorld;
        let {objects, nodes } = unupdatedWorld;
+
        let updatedObjects = objects.filter(obj => id !== obj);
        let updatedNodes = delete nodes[id];
        let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
@@ -101,11 +102,27 @@ const ObjectPage = ()=> {
    }
    /* ------ LOCAL STATE ------ */
     const [objectName, setObjectName] = useState("");
+    const [objectPluralName, setObjectPluralName] = useState("");
+    const [objectPrefix, setObjectPrefix] = useState("");
     const [objectDesc, setObjectDesc] = useState("");
     const [objectValue, setObjectValue] = useState(0);
     const [objectSize, setObjectSize] = useState(0);
     const [containedObjects, setContainedObjects] = useState([]);
   //UTILS
+  const containedNodesRemover = (nodeId, world)=>{
+    let {nodes} = world;
+    let unupdatedNode = nodes[nodeId];
+    let containedNodes = unupdatedNode.contained_nodes;
+    let containedNodesList = Object.keys(containedNodes);
+    if(!containedNodesList.length){
+
+      return world;
+    }else {
+      containedNodes.map((containedNodeId)=>{
+
+      })
+    }
+  }
   const worldNodeSorter = (world)=>{
        let CharacterNodes = [];
        let RoomNodes = [];
@@ -188,12 +205,27 @@ const ObjectPage = ()=> {
                 name,
                 name_prefix,
                 node_id,
+                plural,
                 size,
                 value
                }= selectedObject;
-
+               
               setObjectName(name)
               setObjectDesc(desc)
+              if(!name_prefix){
+                setObjectPrefix("a")
+              }else {
+                setObjectPrefix(name_prefix)
+              }
+              if(plural===undefined && (name[name.length-1]==="s")){
+                let endsWithSDefaultPluralName = `${name}es`
+                setObjectPluralName(endsWithSDefaultPluralName)
+              }else if(plural===undefined){
+                let defaultPluralName = `${name}s`
+                setObjectPluralName(defaultPluralName)
+              }else{
+                setObjectPluralName(plural)
+              }
               setObjectSize(size)
               setObjectValue(value)
 
@@ -233,6 +265,28 @@ const ObjectDescChangeHandler = (e)=>{
   let updatedObjectDesc = e.target.value;
   setObjectDesc(updatedObjectDesc)
   let updatedSelectedObject = {...selectedObject, desc: updatedObjectDesc }
+  if(selectedObject){
+      if(selectedObject.node_id){
+          updateObject(selectedObject.node_id, updatedSelectedObject)
+      }
+  }
+}
+
+const ObjectPluralNameChangeHandler = (e)=>{
+  let updatedObjectPluralName = e.target.value;
+  setObjectPluralName(updatedObjectPluralName)
+  let updatedSelectedObject = {...selectedObject, plural: updatedObjectPluralName}
+  if(selectedObject){
+      if(selectedObject.node_id){
+          updateObject(selectedObject.node_id, updatedSelectedObject)
+      }
+  }
+}
+
+const ObjectPrefixChangeHandler = (e)=>{
+  let updatedObjectPrefix = e.target.value;
+  setObjectPrefix(updatedObjectPrefix)
+  let updatedSelectedObject = {...selectedObject, prefix: updatedObjectPrefix }
   if(selectedObject){
       if(selectedObject.node_id){
           updateObject(selectedObject.node_id, updatedSelectedObject)
@@ -312,7 +366,8 @@ const ObjectValueChangeHandler = (e)=>{
               </Row>
               <InlineTextInsertForm 
                 formText={objectName}
-                value={selectedObject.name_prefix}
+                value={objectPrefix}
+                changeHandler={ObjectPrefixChangeHandler}
                 textPlacement="after"
 
               />
@@ -323,7 +378,8 @@ const ObjectValueChangeHandler = (e)=>{
                 <Col>
                   <InlineTextInsertForm 
                     formText="Some"
-                    value={selectedObject.name}
+                    value={objectPluralName}
+                    changeHandler={ObjectPluralNameChangeHandler}
                     textPlacement="before"
                   />
                 </Col>

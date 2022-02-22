@@ -144,6 +144,7 @@ const CharacterPage = ()=> {
     }
     /* ------ LOCAL STATE ------ */
     const [characterName, setCharacterName] = useState("");
+    const [characterPrefix, setCharacterPrefix] = useState("");
     const [characterDesc, setCharacterDesc] = useState("");
     const [characterMotivation, setCharacterMotivation] = useState("")
     const [characterPersona, setCharacterPersona] = useState("");

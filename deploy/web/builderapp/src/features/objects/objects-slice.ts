@@ -63,6 +63,7 @@ interface WorldObject {
     node_id: String;
     object: Boolean;
     on_use: OnUseInteraction;
+    plural: String|null;
   }
   
 /* STATE TYPE */

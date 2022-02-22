@@ -48,6 +48,7 @@ interface Character {
     names: Array<String>;
     node_id: String;
     object: Boolean;
+    plural: String|null;
     tags: Array<String>;
     attack_tagged_agents:Array<String>;
     dont_accept_gifts: Boolean;
