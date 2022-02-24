@@ -108,7 +108,7 @@ const ObjectPage = ()=> {
     let updatedRoomContent = {...updatedRoom.contained_nodes};
     delete updatedRoomContent[objectid];
     unupdatedWorld ={...unupdatedWorld, nodes: {...unupdatedWorld.nodes, roomid: updatedRoom}}
-    let updatedWorld = containedNodesRemover(objectid, unupdatedWorld)
+    let updatedWorld = containedNodesRemover(objectid)
     let {objects, nodes } = updatedWorld;
     let updatedObjects = objects.filter(obj => objectid !== obj);
     let updatedNodes ={...nodes};
@@ -121,7 +121,7 @@ const ObjectPage = ()=> {
         return world;
     })
 
-    console.log("UPDATED WORLDS UPON CREATION:  ", updatedWorlds)
+    console.log("UPDATED WORLDS UPON OBJECT DELETION:  ", updatedWorlds)
     dispatch(setWorldDrafts(updatedWorlds))
     history.push(`/editworld/${worldId}/${categories}/map/rooms/${roomid}`)
 }
@@ -134,36 +134,52 @@ const ObjectPage = ()=> {
     const [objectSize, setObjectSize] = useState(0);
     const [containedObjects, setContainedObjects] = useState([]);
   //UTILS
-  const containedNodesRemover = (nodeId, world)=>{
-    console.log("RECURSIVE CONTAINED NODES REMOVER:  ", nodeId, world)
-    let {nodes, objects, rooms, agents} = world;
-    let unupdatedNode = nodes[nodeId];
-    let {classes} = unupdatedNode;
-    let containedNodes = unupdatedNode.contained_nodes;
-    let containedNodesList = Object.keys(containedNodes);
-    let updatedWorld = world;
-    if(!containedNodesList.length){
-      if(classes[0]==="agent"){
-        let updatedCharacters = agents.filter(char => nodeId !== char);
-        updatedWorld = {...updatedWorld, agents: updatedCharacters}
-      }else if(classes[0]==="object"){
-        let updatedObjects = objects.filter(obj => nodeId !== obj);
-        updatedWorld = {...updatedWorld, objects: updatedObjects}
-      }else if(classes[0]==="room"){
-        let updatedRooms = rooms.filter(room => nodeId !== room);
-        updatedWorld = {...updatedWorld, rooms: updatedRooms}
-      }
-      console.log("#NODES", nodes)
-      let updatedNodes = {...nodes};
-      delete updatedNodes[nodeId];
-      updatedWorld = {...updatedWorld, nodes: updatedNodes}
-      console.log("NESTED CONTAINED NODE REMOVER",  updatedWorld)
-      return updatedWorld;
-    }else {
-      containedNodes.map((containedNodeId)=>{
-        containedNodesRemover(containedNodeId, world)
-      })
+  const containedNodesRemover = (nodeId)=>{
+
+    console.log("RECURSIVE CONTAINED NODES REMOVER:  ", nodeId)
+    const nodeDigger = (id, removalArray)=>{
+      let {nodes} = selectedWorld;
+      let unupdatedNode = nodes[id];
+      let {classes, contained_nodes} = unupdatedNode;
+      let containedNodes = contained_nodes;
+      let containedNodesList = Object.keys(containedNodes);
+
+      if(!containedNodesList.length){
+          removalArray.push({nodeId: id, class: classes[0]})
+          return removalArray
+        }else{
+          removalArray.push({nodeId: id, class: classes[0]})
+          containedNodesList.map((containedNodeId)=>{
+            removalArray.push({nodeId: containedNodeId, class: classes[0]})
+            return containedNodesRemover(containedNodeId, removalArray)
+          })
+        }
     }
+    console.log("NODE DIGGER RETURN RESULT", nodeDigger(nodeId, []))
+    const removalList = nodeDigger(nodeId, [])
+    
+    let {nodes, objects, rooms, agents} = selectedWorld;
+    let updatedWorld = selectedWorld;
+    removalList.map((removedNode)=>{
+      let removedNodeClass = removedNode.class;
+      let removedNodeId = removedNode.nodeId
+        if(removedNodeClass[0]==="agent"){
+          let updatedCharacters = agents.filter(char => removedNodeId !== char);
+          updatedWorld = {...updatedWorld, agents: updatedCharacters}
+        }else if(removedNodeClass[0]==="object"){
+          let updatedObjects = objects.filter(obj => removedNodeId !== obj);
+          updatedWorld = {...updatedWorld, objects: updatedObjects}
+        }else if(removedNodeClass[0]==="room"){
+          let updatedRooms = rooms.filter(room => removedNodeId !== room);
+          updatedWorld = {...updatedWorld, rooms: updatedRooms}
+        }
+        console.log("#NODES", nodes)
+        let updatedNodes = {...nodes};
+        delete updatedNodes[removedNodeId];
+        updatedWorld = {...updatedWorld, nodes: updatedNodes}
+        console.log("NESTED CONTAINED NODE REMOVER",  updatedWorld)
+    })
+    return updatedWorld;
   }
   const worldNodeSorter = (world)=>{
        let CharacterNodes = [];
@@ -396,7 +412,8 @@ const ObjectValueChangeHandler = (e)=>{
                     worldId={worldId}
                     sectionName={"objects"}
                     roomId={selectedRoom.node_id}
-                    defaultTokens={containedObjects}
+                    tokens={containedObjects}
+                    tokenType={'objects'}
                     onTokenAddition={addObject}
                     onTokenRemoval={deleteObject}
                 />

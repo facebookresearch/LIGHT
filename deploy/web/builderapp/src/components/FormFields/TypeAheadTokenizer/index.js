@@ -9,6 +9,7 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import './styles.css';
 import { BsGear } from 'react-icons/bs';
 
+
 const TypeaheadTokenizer = ({
     formLabel,
     tokenOptions,
@@ -20,6 +21,7 @@ const TypeaheadTokenizer = ({
     onTokenAddition,
     onTokenRemoval
 }) => {
+    //LOCAL STATE
     const [tokenList, setTokenList] = useState([]);
     const [selected, setSelected] = useState([]);
     useEffect(() => {

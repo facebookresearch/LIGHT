@@ -88,6 +88,25 @@ const RoomPage = ()=> {
         dispatch(updateSelectedWorld(updatedWorld));
     }
 
+    const deleteSelectedRoom = ()=>{
+        let updatedWorld = containedNodesRemover(roomid)
+        console.log("POST DELETION WORLD", updatedWorld)
+        // let {rooms, nodes } = updatedWorld;
+        // let updatedRooms = rooms.filter(room => roomid !== room);
+        // let updatedNodes ={...nodes};
+        // delete updatedNodes[roomid];
+        // updatedWorld ={...updatedWorld, rooms: updatedRooms, nodes:updatedNodes};
+        let updatedWorlds = worldDrafts.map(world=> {
+            if(world.id==worldId){
+                return updatedWorld;
+            }
+            return world;
+        })
+    console.log("UPDATED WORLDS UPON (ROOM DELETION):  ", updatedWorlds)
+    dispatch(setWorldDrafts(updatedWorlds))
+    history.push(`/editworld/${worldId}/${categories}/map`)
+}
+
     //CHARACTERS
     // Adds new Character to selectedWorld state
     const addCharacter = (char)=>{
@@ -175,6 +194,7 @@ const RoomPage = ()=> {
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     }
+    
 
     /* ------ LOCAL STATE ------ */
     const [roomName, setRoomName] = useState("");
@@ -187,6 +207,58 @@ const RoomPage = ()=> {
     const [roomTemperature, setRoomTemperature] = useState(0);
 
     //UTILS
+    const containedNodesRemover = (nodeId)=>{
+
+        console.log("RECURSIVE CONTAINED NODES REMOVER:  ", nodeId)
+    
+        let updatedWorld = selectedWorld;
+        let {nodes} = updatedWorld;
+
+        const nodeDigger = (id)=>{
+          console.log("DIGGER ID AND ARRAY", id)
+          let unupdatedNode = nodes[id];
+          let {classes, contained_nodes} = unupdatedNode;
+          let containedNodes = contained_nodes;
+          let containedNodesList = Object.keys(containedNodes);
+          console.log("containedNodesList", containedNodesList)
+          let updatedRemovalArray = [{nodeId: id, class: classes[0]}]
+          if(!containedNodesList){
+            console.log("Non mapping REMOVAAL ARRAY", updatedRemovalArray)
+            return updatedRemovalArray
+          }else{
+            while(containedNodesList.length){
+                let currentNode = containedNodesList.pop()
+                updatedRemovalArray=[...updatedRemovalArray, ...nodeDigger(currentNode)]
+            }
+            return updatedRemovalArray
+          }
+        }
+        let removalList = []
+        removalList = nodeDigger(nodeId)
+        
+        removalList.map((removedNode, index)=>{
+            let {agents, objects, rooms, nodes}= updatedWorld
+            console.log("REMOVED NODES", removedNode, index)
+          let removedNodeClass = removedNode.class;
+          let removedNodeId = removedNode.nodeId
+            if(removedNodeClass[0]==="agent"){
+              let updatedCharacters = agents.filter(char => removedNodeId !== char);
+              updatedWorld = {...updatedWorld, agents: updatedCharacters}
+            }else if(removedNodeClass[0]==="object" || removedNodeClass[0]==="container"){
+              let updatedObjects = objects.filter(obj => removedNodeId !== obj);
+              updatedWorld = {...updatedWorld, objects: updatedObjects}
+            }else if(removedNodeClass[0]==="room"){
+              let updatedRooms = rooms.filter(room => removedNodeId !== room);
+              updatedWorld = {...updatedWorld, rooms: updatedRooms}
+            }
+            let updatedNodes = {...nodes};
+            delete updatedNodes[removedNodeId];
+            console.log("updated post delete nodes", updatedNodes)
+            updatedWorld = {...updatedWorld, nodes: updatedNodes}
+        })
+        console.log("UPDATED WORLD POST DIG AND DELETE",  updatedWorld)
+        return updatedWorld;
+      }
     // worldNodeSorter - Sorts the the different types of nodes in a world into arrays
     const worldNodeSorter = (world)=>{
         let CharacterNodes = [];
@@ -306,6 +378,7 @@ const RoomPage = ()=> {
             setRoomCharacters(CharacterNodes)
         }
     }, [selectedRoom])
+
     //HANDLERS
     const RoomNameChangeHandler = (e)=>{
         let updatedRoomName = e.target.value;
@@ -429,19 +502,21 @@ const RoomPage = ()=> {
                             worldId={worldId}
                             sectionName={"objects"}
                             roomId={selectedRoom.node_id}
-                            defaultTokens={roomObjects}
+                            tokens={roomObjects}
+                            tokenType={'objects'}
                             onTokenAddition={addObject}
                             onTokenRemoval={deleteObject}
                         />
                     </Row>
                     <Row>
                         <TypeAheadTokenizerForm
-                            formLabel="Character Objects"
+                            formLabel="Room Characters"
                             tokenOptions={roomCharacters}
                             worldId={worldId}
                             sectionName={"characters"}
                             roomId={selectedRoom.node_id}
-                            defaultTokens={roomCharacters}
+                            tokens={roomCharacters}
+                            tokenType={'characters'}
                             onTokenAddition={addCharacter}
                             onTokenRemoval={deleteCharacter}
                         />
@@ -498,7 +573,7 @@ const RoomPage = ()=> {
               <Col>
                 <TextButton
                   text={"Delete Room"}
-                  
+                  clickFunction={deleteSelectedRoom}
                 />
               </Col>
             </Row>

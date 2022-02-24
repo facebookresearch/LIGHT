@@ -380,11 +380,12 @@ const crumbs= [
                     <Row>
                         <TypeAheadTokenizerForm
                             formLabel="Character Carrying"
-                            tokenOptions={containedObjects}
+                            tokenOptions={worldObjects}
                             worldId={worldId}
                             sectionName={"objects"}
                             roomId={selectedRoom.node_id}
-                            defaultTokens={containedObjects}
+                            tokens={containedObjects}
+                            tokenType={'objects'}
                             onTokenAddition={addObject}
                             onTokenRemoval={deleteObject}
                         />
@@ -392,11 +393,12 @@ const crumbs= [
                     <Row>
                         <TypeAheadTokenizerForm
                             formLabel="Wielding/Wearing"
-                            tokenOptions={containedObjects}
+                            tokenOptions={worldObjects}
                             worldId={worldId}
                             sectionName={"objects"}
                             roomId={selectedRoom.node_id}
-                            defaultTokens={containedObjects}
+                            tokens={containedObjects}
+                            tokenType={'objects'}
                             onTokenAddition={addObject}
                             onTokenRemoval={deleteObject}
                         />
