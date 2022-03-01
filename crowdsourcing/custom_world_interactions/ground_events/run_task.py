@@ -33,8 +33,6 @@ from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 LIGHT_DB_PATH = "~/ParlAI/data/light/environment/db/d3/database3.db"
-# INPUT_FILE_TASK = "objects-interaction-task-11"
-# INPUT_FILE_TASK = "constraints-events-task-1"
 INPUT_FILE_TASK = "objects-interaction-task-pilot-sandbox"
 
 DEFAULT_NUM_TASKS = 20
@@ -94,19 +92,21 @@ def match_object_to_list(object_name, object_list):
     return [obj for obj in object_list if obj['name'] == object_name][0]
 
 def create_task_data(input_file_task, num_tasks):
-    # all_objects = get_objects()
-
+    # get data from collect-narration submissions
     units = mephisto_data_browser.get_units_for_task_name(input_file_task)
     random.shuffle(units)
     data = []
     for unit in units:
+        # iterate over narration units and resolve names with their corresponding objects (which have descriptions)
         unit_data = mephisto_data_browser.get_data_from_unit(unit)["data"]
         primary_objects, secondary_objects = unit_data['inputs']['primary_object_list'], unit_data['inputs']['secondary_object_list']
         output_data = unit_data['outputs']['final_data']
+        # get primary and secondary objects from their corresponding lists
         primary_object = match_object_to_list(output_data['primaryObject'], primary_objects)
         primary_object['attributes'] = []
         secondary_object = match_object_to_list(output_data['secondaryObject'], secondary_objects)
         secondary_object['attributes'] = []
+        # input to this grounding task has both objects and their interaction text
         data.append(
             {
                 'object1': primary_object,

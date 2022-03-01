@@ -15,6 +15,7 @@ mephisto_data_browser = MephistoDataBrowser(db=db)
 DO_REVIEW = True
 
 # units = mephisto_data_browser.get_units_for_task_name(input("Input task name: "))
+# We're only examining this task with this file, but in the future could rely on mephisto.tools.examine_utils.run_examine_or_review
 units = mephisto_data_browser.get_units_for_task_name("constraints-events-task-1")
 
 tasks_to_show = input("Tasks to see? (a)ll/(u)nreviewed: ")
@@ -35,6 +36,7 @@ else:
 
 
 def nice_location_name(new_location, primary_name, secondary_name):
+    # Convert location name to a more readable format
     new_location_name = new_location
     if new_location == "in_room":
         new_location_name = "room"
@@ -48,6 +50,8 @@ def nice_location_name(new_location, primary_name, secondary_name):
 
 
 def obj_from_key(key, primary_obj, secondary_obj):
+    # separated in case of naming convention change
+    # currently in_used_item refers to the primary object, in_used_target_item refers to the secondary object
     return primary_obj if key == "in_used_item" else secondary_obj
 
 

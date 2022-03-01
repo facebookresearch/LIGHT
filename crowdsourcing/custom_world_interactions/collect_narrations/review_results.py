@@ -24,8 +24,6 @@ def format_data_for_printing(data):
     outputs_string = ""
 
     if contents["inputs"] is not None and contents["outputs"] is not None:
-        print("INPUTS")
-        print(contents['inputs'])
         inputs = contents["inputs"]
         outputs = contents["outputs"]["final_data"]
         primary = outputs["primaryObject"]
