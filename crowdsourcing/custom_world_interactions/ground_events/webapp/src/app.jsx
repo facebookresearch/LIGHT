@@ -6,7 +6,7 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 //REACT
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { TaskDescription } from "./components/task_description.jsx";
 // import { ActionDescription } from "./components/action_description.jsx";
@@ -38,6 +38,7 @@ function MainApp() {
     initialTaskData,
     handleSubmit,
   } = useMephistoTask();
+  
   //Error Handling
   const [showError, setShowError] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
@@ -45,37 +46,41 @@ function MainApp() {
   const [broadcastMessage, setBroadcastMessage] = useState("");
   const [isCreatingEntity, setIsCreatingEntity] = useState(null);
   const [createdEntity, setCreatedEntity] = useState({});
-  const [isRemovingObjects, setIsRemovingObjects] = useState(null);
+  // const [isRemovingObjects, setIsRemovingObjects] = useState(null);
+  // default removing objects to true to encourage removing when applicable
+  const [isRemovingObjects, setIsRemovingObjects] = useState(true);
   const [removedObjects, setRemovedObjects] = useState([]);
-  const [isChangingDescription, setIsChangingDescription] = useState(null);
-    //Primary
+  // const [isChangingDescription, setIsChangingDescription] = useState(null);
+  // default changing description to true to encourage writing new description text
+  const [isChangingDescription, setIsChangingDescription] = useState(true);
+  //Primary
   const [primaryIsChangingLocation, setPrimaryIsChangingLocation] = useState(false);
   const [primaryNewLocation, setPrimaryNewLocation] = useState(null);
-  const [primaryModifiedAttributes, setPrimaryModifiedAttributes]= useState([]);
+  const [primaryModifiedAttributes, setPrimaryModifiedAttributes] = useState([]);
   const [primaryDescription, setPrimaryDescription] = useState("");
-    //Secondary
+  //Secondary
   const [secondaryIsChangingLocation, setSecondaryIsChangingLocation] = useState(false);
   const [secondaryNewLocation, setSecondaryNewLocation] = useState(null);
-  const [secondaryModifiedAttributes, setSecondaryModifiedAttributes]= useState([]);
+  const [secondaryModifiedAttributes, setSecondaryModifiedAttributes] = useState([]);
   const [secondaryDescription, setSecondaryDescription] = useState("");
 
   /*-----------Constraint State-----------*/
   const [isSecondaryHeld, setIsSecondaryHeld] = useState(null);
   const [isReversible, setIsReversible] = useState(null);
-  const [isInfinite, setIsInifinite] = useState(null)
+  const [isInfinite, setIsInfinite] = useState(null)
   const [timesRemaining, setTimesRemaining] = useState(0);
   const [isLocationConstrained, setIsLocationConstrained] = useState(null);
   const [constraintLocation, setConstraintLocation] = useState("");
-    //Primary
-  const [primaryConstrainingAttributes, setPrimaryConstrainingAttributes]= useState([]);
-    //Secondary
-  const [secondaryConstrainingAttributes, setSecondaryConstrainingAttributes]= useState([]);
+  //Primary
+  const [primaryConstrainingAttributes, setPrimaryConstrainingAttributes] = useState([]);
+  //Secondary
+  const [secondaryConstrainingAttributes, setSecondaryConstrainingAttributes] = useState([]);
 
 
   if (blockedReason !== null) {
     return (
       <section className="hero is-medium is-danger">
-        <div class="hero-body">
+        <div className="hero-body">
           <h2 className="title is-3">{blockedExplanation}</h2>{" "}
         </div>
       </section>
@@ -95,21 +100,18 @@ function MainApp() {
     return <LoadingScreen />;
   }
 
-  // const state = initialTaskData;
-  const mephistoData = initialTaskData;
-
   const active = true;
 
   const state = {
     'constraints': [],
     'events': [],
-    'times_remaining':""
+    'times_remaining': ""
   }
 
   for (let i = 0; i < state['constraints'].length; i++) {
     constraint = state['constraints'][i];
 
-    if(constraint['active'] == "" || (constraint['active'] == 1 && constraint['format'] == None)) {
+    if (constraint['active'] == "" || (constraint['active'] == 1 && constraint['format'] == None)) {
       active = false;
       break;
     } else {
@@ -120,7 +122,7 @@ function MainApp() {
   for (let i = 0; i < state['events'].length; i++) {
     useEvent = state['events'][i];
 
-    if(useEvent['active'] == "" || (useEvent['active'] == 1 && useEvent['format'] == None)) {
+    if (useEvent['active'] == "" || (useEvent['active'] == 1 && useEvent['format'] == None)) {
       active = false;
       break;
     } else {
@@ -129,109 +131,90 @@ function MainApp() {
   }
 
   console.log('active? ', active);
-    const dummyData= {
-      object1: {
-        id:2,
-        name: "key",
-        desc:"A ordinary key that will unlock or lock something.",
-        attributes:[
-          {name: "hot", val: false},
-          {name: "valuable", val: true},
-          {name: "brittle", val: false}
-        ]
-    },
-    object2: {
-      id:2,
-      name: "lock",
-      desc:"A ordinary lock that will be unlocked or locked by a key.",
-      attributes:[
-        {name: "hot", val: false},
-        {name: "valuable", val: true},
-        {name: "locked", val: true}
-      ],
-    },
-    interaction: "You place the key in the lock and turn.  After a satisfying click the lock becomes unlocked."
-  }
+  const mephistoData = initialTaskData;
 
-  const submissionHandler = ()=>{
+  const submissionHandler = () => {
     let updatedEvents = []
     let updatedConstraints = []
     let updatedTimesRemaining
-    let updatedErrors =[]
-    console.log("BROADCAST MESSAGE", broadcastMessage, !broadcastMessage, broadcastMessage!==dummyData.interaction)
-//ERROR HANDLING
+    let updatedErrors = []
+    //ERROR HANDLING
     //EVENT ERRORS
-      //BROADCAST MESSAGE
-      if(!broadcastMessage){
-        updatedErrors.push(TaskCopy.errorKey.events.q1Blank)
-      }
-      if(broadcastMessage===dummyData.interaction){
-        updatedErrors.push(TaskCopy.errorKey.events.q1Blank)
-      }
-      //REMOVE OBJECT
-      if(isRemovingObjects===null){
-        updatedErrors.push(TaskCopy.errorKey.events.q2Null)
-      }
-      if(isRemovingObjects && !removedObjects.length){
-        updatedErrors.push(TaskCopy.errorKey.events.q2Empty)
-      }
-      // DESCRIPTION
-      if(isChangingDescription===null){
-        updatedErrors.push(TaskCopy.errorKey.events.q3Null)
-      }
-      if(isChangingDescription && (!primaryDescription || !secondaryDescription)){
-        updatedErrors.push(TaskCopy.errorKey.events.q3Blank)
-      }
-      //CREATE ENTITY
-      if(isCreatingEntity===null){
-        updatedErrors.push(TaskCopy.errorKey.events.q4Null)
-      }
-      //LOCATION CHANGE
-      if((primaryIsChangingLocation && !primaryNewLocation)||(secondaryIsChangingLocation && !secondaryNewLocation)){
-        updatedErrors.push(TaskCopy.errorKey.events.q5Blank)
-      }
+    //BROADCAST MESSAGE
+    if (!broadcastMessage) {
+      updatedErrors.push(TaskCopy.errorKey.events.q1Blank)
+    }
+    if (broadcastMessage === mephistoData.interaction) {
+      updatedErrors.push(TaskCopy.errorKey.events.q1Blank)
+    }
+    //REMOVE OBJECT
+    if (isRemovingObjects === null) {
+      updatedErrors.push(TaskCopy.errorKey.events.q2Null)
+    }
+    if (isRemovingObjects && !removedObjects.length) {
+      updatedErrors.push(TaskCopy.errorKey.events.q2Empty)
+    }
+    // DESCRIPTION
+    if (isChangingDescription === null) {
+      updatedErrors.push(TaskCopy.errorKey.events.q3Null)
+    }
+    if (isChangingDescription && (!primaryDescription || !secondaryDescription)) {
+      updatedErrors.push(TaskCopy.errorKey.events.q3Blank);
+    }
+    if (isChangingDescription && (primaryDescription === mephistoData.object1.desc && secondaryDescription === mephistoData.object2.desc)) {
+      updatedErrors.push(TaskCopy.errorKey.events.q3NoChange);
+    }
+    //CREATE ENTITY
+    if (isCreatingEntity === null) {
+      updatedErrors.push(TaskCopy.errorKey.events.q4Null)
+    }
+    //LOCATION CHANGE
+    if ((primaryIsChangingLocation && !primaryNewLocation) || (secondaryIsChangingLocation && !secondaryNewLocation)) {
+      updatedErrors.push(TaskCopy.errorKey.events.q5Blank)
+    }
     //CONSTRAINT ERRORS
-      //HELD
-      if(isSecondaryHeld===null){
-        updatedErrors.push(TaskCopy.errorKey.constraint.q1Null)
-      }
-      //REVERSIBLE
-      if(isReversible===null){
-        updatedErrors.push(TaskCopy.errorKey.constraint.q2Null)
-      }
-      //TIMES REMAINING
-      if(isInfinite===null){
-        updatedErrors.push(TaskCopy.errorKey.constraint.q3Null)
-      }
-      //LOCATIONS
-      if(isLocationConstrained===null){
-        updatedErrors.push(TaskCopy.errorKey.constraint.q4Null)
-      }
-  // EVENT UPDATES
+    //HELD
+    if (isSecondaryHeld === null) {
+      updatedErrors.push(TaskCopy.errorKey.constraint.q1Null)
+    }
+    //REVERSIBLE
+    if (isReversible === null) {
+      updatedErrors.push(TaskCopy.errorKey.constraint.q2Null)
+    }
+    //TIMES REMAINING
+    if (isInfinite === null) {
+      updatedErrors.push(TaskCopy.errorKey.constraint.q3Null)
+    }
+    //LOCATIONS
+    if (isLocationConstrained === null) {
+      updatedErrors.push(TaskCopy.errorKey.constraint.q4Null)
+    }
+    // EVENT UPDATES
     //BROADCASTMESSAGE
     let updatedBroadcastMessage = broadcastMessage;
     updatedBroadcastMessage = {
-        type: "broadcast_message",
-        params: {
-          self_view: dummyData.interaction,
-          room_view: broadcastMessage
-          }
+      type: "broadcast_message",
+      params: {
+        self_view: mephistoData.interaction,
+        room_view: broadcastMessage
+      }
     }
     updatedEvents = [...updatedEvents, updatedBroadcastMessage]
 
     //OBJECT REMOVAL EVENT
-    if(isRemovingObjects){
-      let updatedRemovedObjects = removedObjects.map(obj=>(
-        {type:"remove_object",
-          params:{
-            name:obj
+    if (isRemovingObjects) {
+      let updatedRemovedObjects = removedObjects.map(obj => (
+        {
+          type: "remove_object",
+          params: {
+            name: obj
           }
-      }))
+        }))
       updatedEvents = [...updatedEvents, ...updatedRemovedObjects]
     }
     //ENTITY CREATION EVENT
-    if(isCreatingEntity){
-      const {name, desc, location } = createdEntity;
+    if (isCreatingEntity) {
+      const { name, desc, location } = createdEntity;
       let updatedCreatedEntityEvent = {
         type: "create_entity",
         params: {
@@ -245,21 +228,21 @@ function MainApp() {
       updatedEvents = [...updatedEvents, updatedCreatedEntityEvent]
     }
     //DESCRIPTION CHANGE EVENT
-    if(isChangingDescription){
+    if (isChangingDescription) {
       let updatedDescriptions = [
         {
-          type:"modify_attribute",
-          params:{
-            type:"in_used_item",
-            key:"desc",
+          type: "modify_attribute_primary_description",
+          params: {
+            type: "in_used_item",
+            key: "desc",
             value: primaryDescription
           }
         },
         {
-          type:"modify_attribute",
-          params:{
-            type:"in_used_target_item",
-            key:"desc",
+          type: "modify_attribute_secondary_description",
+          params: {
+            type: "in_used_target_item",
+            key: "desc",
             value: secondaryDescription
           }
         }
@@ -267,28 +250,28 @@ function MainApp() {
       updatedEvents = [...updatedEvents, ...updatedDescriptions]
     }
     // LOCATION CHANGE EVENT
-      //Primary
-    if(primaryIsChangingLocation && primaryNewLocation){
+    //Primary
+    if (primaryIsChangingLocation && primaryNewLocation) {
       let updatedlLocation = [
         {
-          type:"modify_attribute",
-          params:{
-            type:"in_used_item",
-            key:"location",
+          type: "modify_attribute_primary_location",
+          params: {
+            type: "in_used_item",
+            key: "location",
             value: primaryNewLocation
           }
         }
       ]
       updatedEvents = [...updatedEvents, ...updatedlLocation]
     }
-      //Secondary
-    if(secondaryIsChangingLocation && secondaryNewLocation){
+    //Secondary
+    if (secondaryIsChangingLocation && secondaryNewLocation) {
       let updatedlLocation = [
         {
-          type:"modify_attribute",
-          params:{
-            type:"in_used_target_item",
-            key:"location",
+          type: "modify_attribute_secondary_location",
+          params: {
+            type: "in_used_target_item",
+            key: "location",
             value: secondaryNewLocation
           }
         }
@@ -296,120 +279,116 @@ function MainApp() {
       updatedEvents = [...updatedEvents, ...updatedlLocation]
     }
     //ATTRIBUTE MODIFICATION EVENTS
-    if(primaryModifiedAttributes.length){
-      let updatedPrimaryModifiedAttributes = primaryModifiedAttributes.map(attribute=>{
-        console.log("PRIMARY ATTRIBUTES EVENT", attribute)
-        if(!attribute.name){
+    if (primaryModifiedAttributes.length) {
+      let updatedPrimaryModifiedAttributes = primaryModifiedAttributes.map(attribute => {
+        if (!attribute.name) {
           return
         }
-        return({
-        type:"modify_attribute",
-        params:{
-          type:"in_used_item",
-          key: attribute.name,
-          value: attribute.value
-        }
+        return ({
+          type: "modify_attribute_primary",
+          params: {
+            type: "in_used_item",
+            key: attribute.name,
+            value: attribute.value
+          }
+        })
       })
-    })
       updatedEvents = [...updatedEvents, ...updatedPrimaryModifiedAttributes]
     }
-    if(secondaryModifiedAttributes.length){
-      let updatedSecondaryModifiedAttributes = secondaryModifiedAttributes.map(attribute=>{
-      console.log("SECONDARY ATTRIBUTES EVENT", attribute)
-      if(!attribute.name){
-        return
-      }
-      return ({
-        type:"modify_attribute",
-        params:{
-          type:"in_used_target_item",
-          key: attribute.name,
-          value: attribute.value
+    if (secondaryModifiedAttributes.length) {
+      let updatedSecondaryModifiedAttributes = secondaryModifiedAttributes.map(attribute => {
+        if (!attribute.name) {
+          return
         }
+        return ({
+          type: "modify_attribute_secondary",
+          params: {
+            type: "in_used_target_item",
+            key: attribute.name,
+            value: attribute.value
+          }
+        })
       })
-    })
       updatedEvents = [...updatedEvents, ...updatedSecondaryModifiedAttributes]
     }
     //CONSTRAINT UPDATES
     //CONSTRAINING ATTRIBUTES
 
-    if(primaryConstrainingAttributes.length){
-      let updatedPrimaryConstrainingAttributes = primaryConstrainingAttributes.map(attribute=>{
-      console.log("PRIMARY ATTRIBUTES CONSTRAINTS", attribute)
-      if(!attribute.name){
-        return
-      }
-      return ({
-        type:"attribute_compare_value",
-        params:{
-          type:"in_used_item",
-          key: attribute.name,
-          list: [attribute.value],
-          cmp_type: "eq"
+    if (primaryConstrainingAttributes.length) {
+      let updatedPrimaryConstrainingAttributes = primaryConstrainingAttributes.map(attribute => {
+        if (!attribute.name) {
+          return
         }
-      })
-    })
-      updatedConstraints = [...updatedConstraints, ...updatedPrimaryConstrainingAttributes]
-    }
-    if(secondaryConstrainingAttributes.length){
-      let updatedSecondaryConstrainingAttributes = secondaryConstrainingAttributes.map(attribute=>{
-      console.log("SECONDARY ATTRIBUTES CONSTRAINTS", attribute)
-      if(!attribute.name){
-        return
-      }
-      return ({
-          type:"attribute_compare_value",
-          params:{
-            type:"in_used_target_item",
+        return ({
+          type: "attribute_compare_value_primary",
+          params: {
+            type: "in_used_item",
             key: attribute.name,
             list: [attribute.value],
-            cmp_type: "eq"
+            cmp_type: attribute.value ? "eq" : "neq", 
           }
+        })
       })
-    })
+      updatedConstraints = [...updatedConstraints, ...updatedPrimaryConstrainingAttributes]
+    }
+    if (secondaryConstrainingAttributes.length) {
+      let updatedSecondaryConstrainingAttributes = secondaryConstrainingAttributes.map(attribute => {
+        if (!attribute.name) {
+          return
+        }
+        return ({
+          type: "attribute_compare_value_secondary",
+          params: {
+            type: "in_used_target_item",
+            key: attribute.name,
+            list: [attribute.value],
+            cmp_type: attribute.value ? "eq" : "neq"
+          }
+        })
+      })
       updatedConstraints = [...updatedConstraints, ...updatedSecondaryConstrainingAttributes]
     }
     // HELD CONSTRAINT
-    if(isSecondaryHeld){
+    if (isSecondaryHeld) {
       let updatedSecondaryHeldConstraint = {
-          type: "is_holding",
-          params: {
-            complement: "used_target_item"
-          }
+        type: "is_holding_secondary",
+        params: {
+          complement: "used_target_item"
+        }
       }
       updatedConstraints = [...updatedConstraints, updatedSecondaryHeldConstraint]
     }
     let updatedIsReversible = isReversible;
 
     //TIMES REMAINING CONSTRAINT
-    if(isInfinite){
+    if (isInfinite) {
       updatedTimesRemaining = "inf"
-    }else{
+    } else {
       updatedTimesRemaining = timesRemaining
     }
 
     // LOCATION CONSTRAINT
-    if(isLocationConstrained){
+    if (isLocationConstrained) {
       let updatedLocationConstraint = {
         type: "in_room",
         params: {
-            room_name: constraintLocation
+          room_name: constraintLocation
         }
       }
       updatedConstraints = [...updatedConstraints, updatedLocationConstraint]
     }
     // Actualy data payload properly formatted for submission
     const payload = {
-        times_remaining: updatedTimesRemaining,
-        reversible: updatedIsReversible,
-        events: updatedEvents,
-        constraints: updatedConstraints
+      times_remaining: updatedTimesRemaining,
+      reversible: updatedIsReversible,
+      events: updatedEvents,
+      constraints: updatedConstraints
     }
     // If the function has reached this point with an empty error array the payload is ready.
-    if(!updatedErrors.length){
+    if (!updatedErrors.length) {
       console.log(payload)
       handleSubmit(payload)
-    }else{
+    } else {
       // Each error in the updatedErrors Array will be listed in the Error Toast
       setErrorMessages(updatedErrors)
       setShowError(true)
@@ -417,9 +396,9 @@ function MainApp() {
   }
   return (
     <div>
-      <ErrorToast errors={errorMessages} showError={showError} hideError={()=>setShowError(false)}/>
+      <ErrorToast errors={errorMessages} showError={showError} hideError={() => setShowError(false)} />
       <Task
-        data={dummyData}
+        data={mephistoData}
         broadcastMessage={broadcastMessage}
         setBroadcastMessage={setBroadcastMessage}
         isCreatingEntity={isCreatingEntity}
@@ -461,7 +440,7 @@ function MainApp() {
         secondaryConstrainingAttributes={secondaryConstrainingAttributes}
         setSecondaryConstrainingAttributes={setSecondaryConstrainingAttributes}
         isInfinite={isInfinite}
-        setIsInifinite={setIsInifinite}
+        setIsInfinite={setIsInfinite}
         timesRemaining={timesRemaining}
         setTimesRemaining={setTimesRemaining}
       />

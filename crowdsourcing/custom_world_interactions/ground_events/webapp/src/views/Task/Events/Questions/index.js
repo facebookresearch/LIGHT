@@ -82,6 +82,7 @@ const Questions = ({
                 formFunction={setIsRemovingObjects}
                 toolTipCopy={TipList[1].explanation}
                 hasToolTip={true}
+                defaultOption={isRemovingObjects}
                 isComplete={(isRemovingObjects!==null && (isRemovingObjects==false || (isRemovingObjects===true && removedObjects.length)))}
             >
                 <MultipleSelectQuestion
@@ -97,7 +98,8 @@ const Questions = ({
                 formFunction={setIsChangingDescription}
                 toolTipCopy={TipList[2].explanation}
                 hasToolTip={true}
-                isComplete={isChangingDescription!==null}
+                isComplete={isChangingDescription!==null && (primaryDescription !== object1.desc || secondaryDescription !== object2.desc)}
+                defaultOption={isChangingDescription}
             >
                 <div style={{display:"flex", flexDirection:"row", width:"100%"}}>
                     <FormQuestion

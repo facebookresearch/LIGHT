@@ -32,7 +32,11 @@ from dataclasses import dataclass, field
 from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-INPUT_FILE_TASK = "objects-interaction-task-11"
+LIGHT_DB_PATH = "~/ParlAI/data/light/environment/db/d3/database3.db"
+# INPUT_FILE_TASK = "objects-interaction-task-11"
+# INPUT_FILE_TASK = "constraints-events-task-1"
+INPUT_FILE_TASK = "objects-interaction-task-pilot-sandbox"
+
 DEFAULT_NUM_TASKS = 20
 
 db = LocalMephistoDB()
@@ -84,19 +88,38 @@ def build_task(task_dir):
         )
     os.chdir(return_dir)
 
+def match_object_to_list(object_name, object_list):
+    # TODO: handle non-found case, which shouldn't theoretically happen
+    # currently returns the first matching object with the information we have, technically multiple could apply 
+    return [obj for obj in object_list if obj['name'] == object_name][0]
 
 def create_task_data(input_file_task, num_tasks):
-    # units = mephisto_data_browser.get_units_for_task_name(input_file_task)
-    # random.shuffle(units)
-    # data = []
-    # for unit in units:
-    #    data.append(
-    #        mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
-    #            "final_data"
-    #        ]
-    #    )
+    # all_objects = get_objects()
 
-    return [{}]  # data[:num_tasks]
+    units = mephisto_data_browser.get_units_for_task_name(input_file_task)
+    random.shuffle(units)
+    data = []
+    for unit in units:
+        unit_data = mephisto_data_browser.get_data_from_unit(unit)["data"]
+        primary_objects, secondary_objects = unit_data['inputs']['primary_object_list'], unit_data['inputs']['secondary_object_list']
+        output_data = unit_data['outputs']['final_data']
+        primary_object = match_object_to_list(output_data['primaryObject'], primary_objects)
+        primary_object['attributes'] = []
+        secondary_object = match_object_to_list(output_data['secondaryObject'], secondary_objects)
+        secondary_object['attributes'] = []
+        data.append(
+            {
+                'object1': primary_object,
+                'object2': secondary_object,
+                'interaction':output_data['actionDescription']
+            }
+        )
+
+    print(f"len(data): {len(data)}")
+    print(data[0])
+
+    return data[:num_tasks]
+    # return [{}]  # data[:num_tasks]
 
 
 def validate_unit(unit):
@@ -113,19 +136,12 @@ def validate_unit(unit):
     constraints = data["constraints"]
     events = data["events"]
 
-    has_active = False
+    # front-end already handles basic validation (e.g. all answers exist, aren't inherently invalid)
+    validated = True
 
-    for constraint in constraints:
-        if constraint["active"] == "1":
-            has_active = True
-            break
+    # TODO: extra heuristic-based validation
 
-    for event in events:
-        if event["active"] == "1":
-            has_active = True
-            break
-
-    if not has_active:
+    if not validated:
         print("Unit not validated!")
         unit.get_assigned_agent().soft_reject_work()
         worker = unit.get_assigned_agent().get_worker()

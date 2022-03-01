@@ -29,7 +29,7 @@ const Questions = ({
     secondaryConstrainingAttributes,
     setSecondaryConstrainingAttributes,
     isInfinite,
-    setIsInifinite,
+    setIsInfinite,
     timesRemaining,
     setTimesRemaining,
 }) => {
@@ -86,7 +86,7 @@ const Questions = ({
                 question={QuestionList[3]}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
-                formFunction={setIsInifinite}
+                formFunction={setIsInfinite}
                 inverted={true}
                 toolTipCopy={TipList[2].explanation}
                 hasToolTip={true}

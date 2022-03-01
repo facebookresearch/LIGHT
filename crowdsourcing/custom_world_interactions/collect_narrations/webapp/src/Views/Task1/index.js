@@ -88,7 +88,7 @@ console.log("TASK DATA:  ", taskData)
             <ul>
               {
               errorMessage.map((err, id)=>{
-                if(err.length){
+                if(err !== undefined && err.length){
                   return <li key={id}>{err}</li>
                   }
                 })

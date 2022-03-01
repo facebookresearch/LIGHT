@@ -32,7 +32,8 @@ from dataclasses import dataclass, field
 from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-LIGHT_DB_PATH = "~/ParlAI/data/LIGHT/merged.db"
+# LIGHT_DB_PATH = "~/ParlAI/data/LIGHT/merged.db"
+LIGHT_DB_PATH = "~/ParlAI/data/light/environment/db/d3/database3.db"
 PRIMARY_OBJECT_LIST_SIZE = 8
 SECONDARY_OBJECT_LIST_SIZE = 8
 DEFAULT_NUM_TASKS = 20
@@ -219,7 +220,6 @@ def main(cfg: DictConfig) -> None:
 
     db, cfg = load_db_and_process_config(cfg)
     operator = Operator(db)
-
     operator.validate_and_run_config(cfg.mephisto, shared_state)
     operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=30)
 

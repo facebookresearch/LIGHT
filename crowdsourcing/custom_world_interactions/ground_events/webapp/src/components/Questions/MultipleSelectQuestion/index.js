@@ -49,7 +49,6 @@ const MultipleSelectQuestion = ({
                 answerList.map((answer, index)=>(
                 <>
                     <TaskButton
-                        key={index}
                         name={answer}
                         selectFunction={()=>clickHandler(index, answer)}
                         isSelected={(selectedAnswers.indexOf(answer)>=0)}

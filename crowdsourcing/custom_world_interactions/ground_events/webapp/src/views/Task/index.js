@@ -52,7 +52,7 @@ const Task = ({
   secondaryConstrainingAttributes,
   setSecondaryConstrainingAttributes,
   isInfinite,
-  setIsInifinite,
+  setIsInfinite,
   timesRemaining,
   setTimesRemaining,
 }) => {
@@ -117,7 +117,7 @@ const Task = ({
               secondaryConstrainingAttributes={secondaryConstrainingAttributes}
               setSecondaryConstrainingAttributes={setSecondaryConstrainingAttributes}
               isInfinite={isInfinite}
-              setIsInifinite={setIsInifinite}
+              setIsInfinite={setIsInfinite}
               timesRemaining={timesRemaining}
               setTimesRemaining={setTimesRemaining}
             />

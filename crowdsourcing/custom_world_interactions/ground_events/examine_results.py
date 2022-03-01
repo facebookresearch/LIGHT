@@ -14,7 +14,8 @@ mephisto_data_browser = MephistoDataBrowser(db=db)
 
 DO_REVIEW = True
 
-units = mephisto_data_browser.get_units_for_task_name(input("Input task name: "))
+# units = mephisto_data_browser.get_units_for_task_name(input("Input task name: "))
+units = mephisto_data_browser.get_units_for_task_name("constraints-events-task-1")
 
 tasks_to_show = input("Tasks to see? (a)ll/(u)nreviewed: ")
 if tasks_to_show in ["all", "a"]:
@@ -33,9 +34,26 @@ else:
     )
 
 
+def nice_location_name(new_location, primary_name, secondary_name):
+    new_location_name = new_location
+    if new_location == "in_room":
+        new_location_name = "room"
+    elif new_location == "in_actor":
+        new_location_name = "held by actor"
+    elif new_location == "in_used_item":
+        new_location_name = "in/on " + primary_name
+    elif new_location == "in_used_target_item":
+        new_location_name = "in/on " + secondary_name
+    return new_location_name
+
+
+def obj_from_key(key, primary_obj, secondary_obj):
+    return primary_obj if key == "in_used_item" else secondary_obj
+
+
 def format_for_printing_data(data):
     # Custom tasks can define methods for how to display their data in a relevant way
-    worker_name = Worker(db, data["worker_id"]).worker_name
+    worker_name = Worker.get(db, data["worker_id"]).worker_name
     contents = data["data"]
     duration = contents["times"]["task_end"] - contents["times"]["task_start"]
     metadata_string = (
@@ -44,22 +62,90 @@ def format_for_printing_data(data):
     )
 
     inputs = contents["inputs"]
-    inputs_string = f"Inputs:\n\tPrimary Object: {inputs['primaryObject']}\tSecondary Object List: {inputs['secondaryObject']}\n\tAction Description: {inputs['actionDescription']}\n\n"
+
+    # get primary and secondary object for inputs and names
+    primary_obj = inputs.get("object1", {})
+    secondary_obj = inputs.get("object2", {})
+    inputs_string = f"Inputs:\n\t(Primary Object) {primary_obj.get('name')}: {primary_obj.get('desc')}\n\t(Secondary Object) {secondary_obj.get('name')}: {secondary_obj.get('desc')}\n\tAction Description: {inputs.get('interaction')}\n\n"
 
     outputs = contents["outputs"]["final_data"]
+
     outputs_string = f"Output:\n"
 
-    for constraint in outputs["constraints"]:
-        if constraint["active"] == "1":
-            # Active constraint
-            outputs_string += f"\tConstraint:\n\t\tType: {constraint['format']['type']}\n\t\tFormat: {constraint['format']}\n\n"
-
     outputs_string += "\n\n\n"
+    outputs_string += f"\tTimes Remaining: {outputs['times_remaining']}\n\n"
+    outputs_string += f"\tReversible: {outputs['reversible']}\n\n"
 
+    # want to print new narration first
+    broadcast_messages = [
+        e for e in outputs["events"] if e["type"] == "broadcast_message"
+    ]
+    if len(broadcast_messages) == 1:
+        # character agnostic narration; Narration \t narration_text
+        event = broadcast_messages[0]
+        outputs_string += f"\tNarration:\n\t\t{event['params']['room_view']}\n\n"
+
+    outputs_string += f"\tEvents:\n\n"
     for event in outputs["events"]:
-        if event["active"] == "1":
-            # Active event
-            outputs_string += f"\tEvent:\n\t\tType: {event['format']['type']}\n\t\tFormat: {event['format']}\n\n"
+        if event["type"] == "broadcast_message":
+            # already added message
+            continue
+        elif event["type"] == "remove_object":
+            # any objects removed; [Remove] (object_name)
+            outputs_string += f"\t\t[Remove] ({event['params']['name']})\n\n"
+        elif event["type"] == "create_entity":
+            # any entities created; [Create Object] (object_name) with description: object_description
+            outputs_string += f"\t\t[Create Object] ({event['params']['object']['name']}) with description: {event['params']['object']['desc']} \n\n"
+        elif (
+            event["type"] == "modify_attribute_primary"
+            or event["type"] == "modify_attribute_secondary"
+        ):
+            # new/modified attributes after action; [Changed Attribute] ({object_name) \t is/isn't \t attribute
+            cur_obj = obj_from_key(event['params']['type'], primary_obj, secondary_obj)
+            is_isnt = "is" if event["params"].get("value") else "isn't"
+            outputs_string += f"\t\t[Changed Attribute] ({cur_obj.get('name')})\t{is_isnt}\t{event['params']['key']}\n\n"
+        elif (
+            event["type"] == "modify_attribute_primary_description"
+            or event["type"] == "modify_attribute_secondary_description"
+        ):
+            # new description for items; [New Description] (object_name): object_description
+            cur_obj = obj_from_key(event['params']['type'], primary_obj, secondary_obj)
+            outputs_string += f"\t\t[New Description] ({cur_obj.get('name')}): {event['params']['value']}\n\n"
+        elif event["params"]["key"] == "location":
+            # new location, map to more legible
+            new_location = event["params"]["value"]
+            new_location_name = nice_location_name(
+                new_location, primary_obj.get("name"), secondary_obj.get("name")
+            )
+            cur_obj = obj_from_key(event['params']['type'], primary_obj, secondary_obj)
+
+            outputs_string += f"\t\t[Changed Location] ({cur_obj.get('name')}): {new_location_name}\n\n"
+        else:
+            # malformed event, exclude
+            continue
+
+    outputs_string += f"\tConstraints:\n\n"
+    for constraint in outputs["constraints"]:
+        if constraint["type"] == "is_holding_secondary":
+            cur_obj = obj_from_key(constraint['params']['complement'], primary_obj, secondary_obj)
+            outputs_string += (
+                f"\t\t[Must Hold] {cur_obj.get('name')}\n\n"
+            )
+        elif constraint["type"] == "in_room":
+            outputs_string += f"\t\t[Required Location Description] {constraint['params']['room_name']}\n\n"
+        elif (
+            constraint["type"] == "attribute_compare_value_primary"
+            or constraint["type"] == "attribute_compare_value_secondary"
+        ):
+            cur_obj = obj_from_key(constraint['params']['type'], primary_obj, secondary_obj)
+            
+            comparison = (
+                "must be" if constraint["params"]["cmp_type"] == "eq" else "must not be"
+            )
+            outputs_string += f"\t\t[Constraint] {cur_obj.get('name')} \t {comparison} \t {constraint['params']['key']}\n\n"
+        else:
+            # malformed constraint, example
+            continue
 
     return f"-------------------\n{metadata_string}{inputs_string}{outputs_string}"
 

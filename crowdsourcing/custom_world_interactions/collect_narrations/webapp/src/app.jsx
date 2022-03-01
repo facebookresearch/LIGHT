@@ -42,7 +42,7 @@ function MainApp() {
   if (blockedReason !== null) {
     return (
       <section className="hero is-medium is-danger">
-        <div class="hero-body">
+        <div className="hero-body">
           <h2 className="title is-3">{blockedExplanation}</h2>{" "}
         </div>
       </section>
