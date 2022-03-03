@@ -61,6 +61,13 @@ class TestScriptConfig(RunScriptConfig):
 register_script_config(name="scriptconfig", module=TestScriptConfig)
 
 
+def get_light_objects():
+    db = LIGHTDatabase(LIGHT_DB_PATH)
+    all_objects = []
+    with db as ldb:
+        all_objects = [dict(obj) for obj in ldb.get_object()]
+    return all_objects
+
 def build_task(task_dir):
     """Rebuild the frontend for this task"""
 
@@ -91,9 +98,29 @@ def match_object_to_list(object_name, object_list):
     # currently returns the first matching object with the information we have, technically multiple could apply 
     return [obj for obj in object_list if obj['name'] == object_name][0]
 
+def find_light_object(light_objects, cur_obj):
+    # search through light objects for object whose name and physical description match the input
+    matching_objects = [o for o in light_objects if o['name'] == cur_obj['name'] and o['physical_description'] == cur_obj['desc']]
+    if len(matching_objects) == 0:
+        # no matching object found
+        return None
+    # should be only one matching object, but regardless return the first one
+    return matching_objects[0]
+
+def get_attributes_from_light_obj(obj):
+    # all attributes start with is_, ignore is_plural because it's not the kind of thing that changes
+    return [{'name':k.replace("is_", ""), 'val':v > 0.5} for k, v in obj.items() if k.startswith("is_") and k != "is_plural"]
+
+def get_attributes_from_obj(light_objects, obj):
+    light_obj = find_light_object(light_objects, obj)
+    if light_obj is None:
+        return []
+    return get_attributes_from_light_obj(light_obj)
+
 def create_task_data(input_file_task, num_tasks):
     # get data from collect-narration submissions
     units = mephisto_data_browser.get_units_for_task_name(input_file_task)
+    all_light_objects = get_light_objects()
     random.shuffle(units)
     data = []
     for unit in units:
@@ -103,9 +130,10 @@ def create_task_data(input_file_task, num_tasks):
         output_data = unit_data['outputs']['final_data']
         # get primary and secondary objects from their corresponding lists
         primary_object = match_object_to_list(output_data['primaryObject'], primary_objects)
-        primary_object['attributes'] = []
+        primary_object['attributes'] = get_attributes_from_obj(all_light_objects, primary_object)
+        
         secondary_object = match_object_to_list(output_data['secondaryObject'], secondary_objects)
-        secondary_object['attributes'] = []
+        secondary_object['attributes'] = get_attributes_from_obj(all_light_objects, secondary_object)
         # input to this grounding task has both objects and their interaction text
         data.append(
             {
