@@ -35,8 +35,8 @@ const AttributeSetter = ({
     }
     //Function used to update attributes
     const updateAttributeHandler = (updateIndex, update) => {
-        let updatedArr = attributeList;
-        updatedArr[updateIndex] = {...update, value: update.value}; // update attribute at given index, used to reorder but now does in-place
+        // update attribute at given index, used to reorder but now does in-place
+        let updatedArr = attributeList.map((value, i) => {return i === updateIndex ? update : value});
         setAttributeList(updatedArr) // Array with updated entry set to local state
         setter(updatedArr) // Array with updated entry set to payload state
     }
