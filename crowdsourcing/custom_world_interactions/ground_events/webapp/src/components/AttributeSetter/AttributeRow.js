@@ -17,29 +17,29 @@ const AttributeRow = ({
     //Sets Starting values of local state
     useEffect(()=>{
         setAttributeName(attribute.name);
-        setAttributeVal(attribute.val);
+        setAttributeVal(attribute.value);
     },[])
     //Updates Local and Payload state with changes to object name attribute
     const changeHandler = e=>{
-        e.preventDefault();
-        setAttributeName(e.target.value);
-        updateHandler({...attribute, name:e.target.value, val:attributeVal});
+        e.preventDefault()
+        setAttributeName(e.target.value)
+        updateHandler({...attribute, name:e.target.value, value:attributeVal})
     }
     //Sets Val attribute to true
     const trueHandler = ()=>{
-        setAttributeVal(true);
-        updateHandler({...attribute, name:attributeName, val:true});
+        setAttributeVal(true)
+        updateHandler({...attribute, name:attributeName, value:true})
     }
     //Sets Val attribute to true
     const falseHandler = ()=>{
         setAttributeVal(false);
-        updateHandler({...attribute, name:attributeName, val:false});
+        updateHandler({...attribute, name:attributeName, value:false});
     }
 
     useEffect(()=>{
-        const {name, val} = attribute;
+        const {name, value, isExisting} = attribute;
         setAttributeName(name);
-        setAttributeVal(val);
+        setAttributeVal(value);
     },[attribute])
     return(
         <div className="attributerow-container" >

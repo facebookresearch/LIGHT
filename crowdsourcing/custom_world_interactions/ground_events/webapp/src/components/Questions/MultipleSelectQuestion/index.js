@@ -47,8 +47,8 @@ const MultipleSelectQuestion = ({
                 [answerList].length
                 ?
                 answerList.map((answer, index)=>(
-                <>
                     <TaskButton
+                        key={index}
                         name={answer}
                         selectFunction={()=>clickHandler(index, answer)}
                         isSelected={(selectedAnswers.indexOf(answer)>=0)}
@@ -57,7 +57,6 @@ const MultipleSelectQuestion = ({
                         selectedText="mc-button__text"
                         unselectedText="mc-selectedbutton__text"
                     />
-                </>
                 ))
                 :
                 null

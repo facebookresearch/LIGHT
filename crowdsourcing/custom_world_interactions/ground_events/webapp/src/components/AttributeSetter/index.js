@@ -29,14 +29,14 @@ const AttributeSetter = ({
     },[])
     //Function used to add a "blank attribute to the array."
     const addAttributeHandler = ()=>{
-        const newAtt = [...attributeList, {name:"", val:true, value:true}]
+        const newAtt = [...attributeList, {name:"", value:true}]
         setAttributeList(newAtt)
         setter(newAtt)
     }
     //Function used to update attributes
     const updateAttributeHandler = (updateIndex, update) => {
         let updatedArr = attributeList;
-        updatedArr[updateIndex] = {...update, value: update.val}; // update attribute at given index, used to reorder but now does in-place
+        updatedArr[updateIndex] = {...update, value: update.value}; // update attribute at given index, used to reorder but now does in-place
         setAttributeList(updatedArr) // Array with updated entry set to local state
         setter(updatedArr) // Array with updated entry set to payload state
     }
