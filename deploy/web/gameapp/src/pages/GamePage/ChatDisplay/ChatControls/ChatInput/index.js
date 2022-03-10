@@ -57,6 +57,7 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   };
   const chatSubmissionHandler = (e) => {
     e.preventDefault();
+
     if (!inHelpMode) {
       let textSubmission;
       if (!!chatText) {
@@ -67,6 +68,13 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
         } else {
           textSubmission = chatText;
         }
+        // window.top.postMessage(
+        //   JSON.stringify({
+        //     error: false,
+        //     message: textSubmission,
+        //   }),
+        //   "*"
+        // );
         dispatch(updateSubmittedMessages(chatText));
         onSubmit(textSubmission);
         dispatch(updateChatText(""));
@@ -190,7 +198,6 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
                   );
                 }
               }}
-              className="chatbox"
               placeholder={
                 isSaying
                   ? "Enter what you wish to say."
