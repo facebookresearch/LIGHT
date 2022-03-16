@@ -1,0 +1,38 @@
+
+.radioform-container{
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-direction: column;
+
+}
+.question-container{
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-direction: column;
+    width:100%
+}
+
+.question-img {
+    width:80%;
+}
+
+.answers-container{
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-direction: column;
+    width:100%
+}
+
+.answer-container{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width:100%
+}
+
+.answer-img {
+    width:80%;
+}

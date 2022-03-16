@@ -1,18 +1,19 @@
 /* REACT */
 import React, {useEffect, useState} from "react";
 /* REDUX */
-import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import {addMessage} from "../../features/workerActivity/workerActivity-slice"
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import {addMessage} from "../../features/workerActivity/workerActivity-slice";
 /* STYLES */
-import "./styles.css"
+import "./styles.css";
 /* CUSTOM COMPONENTS */
-import TaskToolBar from "../../components/TaskToolBar"
-import RadioForm from "../../components/Forms/RadioForm"
+import TaskToolBar from "../../components/TaskToolBar";
+import RadioForm from "../../components/Forms/RadioForm";
 /* BOOTSTRAP COMPONENTS */
-import Modal from 'react-bootstrap/Modal'
-import Button from 'react-bootstrap/Button'
+import Navbar from 'react-bootstrap/Navbar'
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 /* COPY */
-import TaskCopy from "../../TaskCopy"
+import TaskCopy from "../../TaskCopy";
 
 
 const OnboardingView = ()=>{
@@ -32,10 +33,19 @@ const OnboardingView = ()=>{
 
 
   return (
-    <div className="task-container">
-        <RadioForm
-            questions={TaskCopy}
-        />
+    <div className="onboarding-container">
+        <Navbar bg="dark" variant="dark">
+            <div className="tool-container">
+                <Navbar.Text>
+                    <span className="task-label">GAMEPLAY TASK ONBOARDING</span>
+                </Navbar.Text>
+            </div>
+        </Navbar>
+        <div className="onboarding-body">
+            <RadioForm
+                questionData={TaskCopy[0]}
+            />
+        </div>
     </div>
   );
 }

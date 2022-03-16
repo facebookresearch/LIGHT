@@ -11,8 +11,8 @@ const AppRouter = () => {
   return (
     <HashRouter>
       <Routes>
-        <Route path="/" element={<Task/>} exact />
-        <Route path="/onboarding" element={<Onboarding/>} exact />
+        <Route path="/" element={<Onboarding/>} exact />
+        <Route path="/task" element={<Task/>} exact />
       </Routes>
     </HashRouter>
   );

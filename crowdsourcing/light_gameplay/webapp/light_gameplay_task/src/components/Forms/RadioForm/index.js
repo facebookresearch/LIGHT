@@ -1,36 +1,34 @@
+/* REACT */
 import react from "react";
+
+/* STYLES */
+import "./styles.css";
 /* BOOTSTRAP COMPONENTS */
 import Form from 'react-bootstrap/form'
 
-const RadioForm = ({questions})=>{
-
+const RadioForm = ({questionData})=>{
+    let {question, answers}= questionData
     return (
-    <Form>
-        {
-            questions.length
-            ?
-            questions.map((questionObj) => {
-                let {question, answers}= questionObj
-                return (
-                    <div className="mb-3">
+    <Form className="radioform-container">
+                    <div className="question-container">
                         <Form.Label>{}</Form.Label>
-                        <img src={question} />
+                        <img className="question-img" src={question} />
                         {
-                            answers.map(answer=>(
-                                <Form.Check
-                                inline
-                                type={'radio'}
-                                >
-                                    <img src={answer} />
-                                </Form.Check>
-                            ))
+                            <div className="answers-container">
+                                {
+                                    answers.map(answer=>(
+                                        <div className="answer-container">
+                                            <Form.Check
+                                            inline
+                                            type={'radio'}
+                                            />
+                                            <img className="answer-img" src={answer} />
+                                        </div>
+                                    ))
+                                }
+                            </div>
                         }
                     </div>
-                )
-            })
-            :
-            null
-        }
     </Form>
     )
 }
