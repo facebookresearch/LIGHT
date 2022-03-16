@@ -585,7 +585,11 @@ class LoginHandler(BaseHandler):
     def set_current_user(self, user):
         if user:
             self.set_secure_cookie(
-                "user", tornado.escape.json_encode(user), domain=self.hostname
+                "user",
+                tornado.escape.json_encode(user),
+                domain=self.hostname,
+                # secure=True, login handler is for local testing
+                httponly=True,
             )
         else:
             self.clear_cookie("user")
