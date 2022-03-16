@@ -544,7 +544,11 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
             with self.db as ldb:
                 _ = ldb.create_user(user)
             self.set_secure_cookie(
-                "user", tornado.escape.json_encode(user), domain=self.hostname
+                "user",
+                tornado.escape.json_encode(user),
+                domain=self.hostname,
+                secure=True,
+                httponly=True,
             )
         else:
             self.clear_cookie("user")
