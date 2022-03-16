@@ -4,6 +4,7 @@ import React from "react";
 import { HashRouter, Route, Redirect, Routes } from "react-router-dom";
 //VIEWS
 import Task from "./Views/Task"
+import Onboarding from "./Views/OnboardingView"
 
 // GameRouter - manages routes of react app
 const AppRouter = () => {
@@ -11,6 +12,7 @@ const AppRouter = () => {
     <HashRouter>
       <Routes>
         <Route path="/" element={<Task/>} exact />
+        <Route path="/onboarding" element={<Onboarding/>} exact />
       </Routes>
     </HashRouter>
   );

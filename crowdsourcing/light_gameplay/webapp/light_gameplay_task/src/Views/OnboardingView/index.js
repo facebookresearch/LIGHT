@@ -7,9 +7,12 @@ import {addMessage} from "../../features/workerActivity/workerActivity-slice"
 import "./styles.css"
 /* CUSTOM COMPONENTS */
 import TaskToolBar from "../../components/TaskToolBar"
+import RadioForm from "../../components/Forms/RadioForm"
 /* BOOTSTRAP COMPONENTS */
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
+/* COPY */
+import TaskCopy from "../../TaskCopy"
 
 
 const OnboardingView = ()=>{
@@ -30,7 +33,9 @@ const OnboardingView = ()=>{
 
   return (
     <div className="task-container">
-
+        <RadioForm
+            questions={TaskCopy}
+        />
     </div>
   );
 }
