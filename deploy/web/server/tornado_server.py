@@ -204,8 +204,19 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.player = player
 
     def open(self, game_id):
-        user_json = self.get_secure_cookie("user")
-        if user_json:
+        preauth_context = self.get_secure_cookie("preauth_context")
+        user = None
+        if preauth_context is not None:
+            preauth = self.get_secure_cookie("preauth")
+            user = json.loads(preauth)
+            preauth_context = json.loads(preauth)
+        else:
+            user_json = self.get_secure_cookie("user")
+            if user_json is not None:
+                user = json.loads(user_json)
+
+        print("Requesting for user", user)
+        if user is not None:
             logging.info("Opened new socket from ip: {}".format(self.request.remote_ip))
             logging.info("For game: {}".format(game_id))
             if game_id not in self.app.graphs:
@@ -218,7 +229,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                     self,
                     graph_purgatory,
                     db=self.db,
-                    user=json.loads(user_json),
+                    user=user,
                 )
                 new_player.init_soul()
                 self.app.graphs[game_id].players.append(new_player)
@@ -258,7 +269,9 @@ class BaseHandler(tornado.web.RequestHandler):
         return "/#/login"
 
     def get_current_user(self):
-        user_json = self.get_secure_cookie("user")
+        user_json = self.get_secure_cookie(
+            "user"
+        )  # Need to refactor into 'get_identity', then have base and preauth handler implementations
         if user_json:
             user_decoded = tornado.escape.json_decode(user_json)
             if len(user_decoded) == 0:
@@ -291,7 +304,6 @@ class BaseHandler(tornado.web.RequestHandler):
             )
         if self.settings.get("debug") and "exc_info" in kwargs:
             logging.error("rendering error page")
-            import traceback
 
             exc_info = kwargs["exc_info"]
             # exc_info is a tuple consisting of:
@@ -405,6 +417,11 @@ class LandingApplication(tornado.web.Application):
             (r"/#(.*)", LandingHandler, {"database": database}),
             (r"/#/login", LandingHandler, {"database": database}),
             (r"/#/error", NotFoundHandler, {"database": database}),
+            (
+                r"/preauth/(.*)/(.*)/(.*)/",
+                PreauthGameHandler,
+                {"database": database, "hostname": hostname},
+            ),
             (r"/play", GameHandler, {"database": database}),
             (r"/play/?id=.*", GameHandler, {"database": database}),
             (r"/play/*", GameHandler, {"database": database}),
@@ -459,6 +476,50 @@ class GameHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         self.render(here + "/../build/game.html")
+
+
+class PreauthGameHandler(BaseHandler):
+    def initialize(
+        self,
+        database,
+        hostname=DEFAULT_HOSTNAME,
+    ):
+        self.db = database
+        self.hostname = hostname
+
+    def validate_login_details(self, user_id, context_id, auth_token) -> bool:
+        if user_id != "1":
+            return False
+        elif context_id != "2":
+            return False
+        elif auth_token != "3":
+            return False
+        return True
+
+    def get(self, user_id, context_id, auth_token):
+        if self.validate_login_details(user_id, context_id, auth_token):
+            hashed_user_id = "preauth-" + str(
+                hash(tornado_settings["preauth_secret"] + user_id)
+            )
+            with self.db as ldb:
+                _ = ldb.create_user(hashed_user_id)
+            self.set_secure_cookie(
+                "preauth",
+                tornado.escape.json_encode(hashed_user_id),
+                expires_days=1,
+                domain=self.hostname,
+                httponly=True,
+            )
+            self.set_secure_cookie(
+                "preauth_context",
+                tornado.escape.json_encode(context_id),
+                expires_days=1,
+                domain=self.hostname,
+                httponly=True,
+            )
+            self.render(here + "/../build/game.html")
+        else:
+            self.redirect("/#/error")
 
 
 class NotFoundHandler(BaseHandler):
