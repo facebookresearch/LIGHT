@@ -1,7 +1,7 @@
 /* REACT */
 import React from "react";
 //ROUTER COMPONENTS
-import { HashRouter, Route, Redirect, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 //VIEWS
 import Task from "./Views/Task"
 
