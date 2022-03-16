@@ -30,17 +30,23 @@ const workerActivitySlice = createSlice({
   /* REDUCER ACTIONS */
   reducers: {
     addMessage(state, action: PayloadAction<any>) {
-      let newMessageList = action.payload;
+      let newMessageList = [...state.LightMessageList, action.payload];
       let updatedCounter = newMessageList.length;
       console.log("UPDATED MESSAGE LIST:  ", newMessageList)
       console.log("NEW MESSAGE:  ", newMessageList)
       return { ...state, counter: updatedCounter, LightMessageList: newMessageList };
     },
+    clearMessages(state, action: PayloadAction<any>) {
+      return { ...state, counter: 0, LightMessageList:[] };
+    }
   },
 });
 
 /* EXPORTED REDUCER ACTIONS */
 // import anywhere in app to use
-export const { addMessage } = workerActivitySlice.actions;
+export const {
+  addMessage,
+  clearMessages
+} = workerActivitySlice.actions;
 /* SLICE REDUCER */
 export default workerActivitySlice.reducer;

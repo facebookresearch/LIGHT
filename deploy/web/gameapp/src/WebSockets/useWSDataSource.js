@@ -65,6 +65,9 @@ const reducer = (state, msg) => {
     });
     return updatedState;
   }
+  if (msg.caller !== "SoulSpawnEvent") {
+    window.top.postMessage(JSON.stringify(msg), "*");
+  }
   const updatedState = [...state, msg];
   console.groupCollapsed("New message. Total: " + updatedState.length);
   console.table(updatedState);

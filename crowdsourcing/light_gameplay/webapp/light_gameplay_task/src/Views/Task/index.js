@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import {addMessage} from "../../features/workerActivity/workerActivity-slice"
+import {addMessage, clearMessages} from "../../features/workerActivity/workerActivity-slice"
 /* STYLES */
 import "./styles.css"
 /* CUSTOM COMPONENTS */
@@ -26,10 +26,12 @@ const App = ()=>{
   const AddLightMessage = (msg) => {
       dispatch(addMessage(msg));
   };
+  const ClearPlayerMessages = () => {
+    dispatch(clearMessages());
+};
 
   /*---------------HANDLERS----------------*/
   const DataUpdateHandler = (data)=>{
-
     AddLightMessage(data)
   }
 
@@ -44,6 +46,7 @@ const App = ()=>{
 
   /*---------------LIFECYCLE----------------*/
   useEffect(() => {
+    ClearPlayerMessages()
     const handler = event => {
       console.log("EVENT", event)
       const data = JSON.parse(event.data)

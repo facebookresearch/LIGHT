@@ -173,13 +173,6 @@ const Chat = ({
       presentAgents: Object.keys(lastMessage.present_agent_ids),
     };
   };
-  /* Message Transmission */
-  React.useEffect(() => {
-    window.top.postMessage(JSON.stringify([]), "*");
-  }, []);
-  React.useEffect(() => {
-    window.top.postMessage(JSON.stringify(messages), "*");
-  }, [messages]);
 
   /* PLAYER AND SESSION INFO UPDATES TO REDUX STORE */
   React.useEffect(() => {

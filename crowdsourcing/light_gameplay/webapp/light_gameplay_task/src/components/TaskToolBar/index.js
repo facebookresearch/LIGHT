@@ -1,8 +1,5 @@
 /* REACT */
-import React, {useEffect, useState} from "react";
-/* REDUX */
-import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import {addMessage} from "../../features/workerActivity/workerActivity-slice"
+import React from "react";
 /* STYLES */
 import "./styles.css"
 /* BOOTSTRAP COMPONENTS */

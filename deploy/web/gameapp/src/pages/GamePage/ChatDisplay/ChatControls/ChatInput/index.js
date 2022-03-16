@@ -68,13 +68,6 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
         } else {
           textSubmission = chatText;
         }
-        // window.top.postMessage(
-        //   JSON.stringify({
-        //     error: false,
-        //     message: textSubmission,
-        //   }),
-        //   "*"
-        // );
         dispatch(updateSubmittedMessages(chatText));
         onSubmit(textSubmission);
         dispatch(updateChatText(""));
