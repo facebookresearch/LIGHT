@@ -18,6 +18,7 @@ function uuidv4() {
 
 // MESSAGE REDUCER
 const reducer = (state, msg) => {
+  window.top.postMessage(JSON.stringify(msg), "*");
   if (
     msg.text &&
     msg.text.indexOf("You mumble something incomprehensible") >= 0
@@ -64,9 +65,6 @@ const reducer = (state, msg) => {
       return message;
     });
     return updatedState;
-  }
-  if (msg.caller !== "SoulSpawnEvent") {
-    window.top.postMessage(JSON.stringify(msg), "*");
   }
   const updatedState = [...state, msg];
   console.groupCollapsed("New message. Total: " + updatedState.length);
