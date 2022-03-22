@@ -56,25 +56,11 @@ function MainApp() {
   //Primary
   const [primaryIsChangingLocation, setPrimaryIsChangingLocation] = useState(false);
   const [primaryNewLocation, setPrimaryNewLocation] = useState(null);
-  const [primaryModifiedAttributes, setPrimaryModifiedAttributes] = useState([]);
   const [primaryDescription, setPrimaryDescription] = useState("");
   //Secondary
   const [secondaryIsChangingLocation, setSecondaryIsChangingLocation] = useState(false);
   const [secondaryNewLocation, setSecondaryNewLocation] = useState(null);
-  const [secondaryModifiedAttributes, setSecondaryModifiedAttributes] = useState([]);
   const [secondaryDescription, setSecondaryDescription] = useState("");
-
-  /*-----------Constraint State-----------*/
-  const [isSecondaryHeld, setIsSecondaryHeld] = useState(null);
-  const [isReversible, setIsReversible] = useState(null);
-  const [isInfinite, setIsInfinite] = useState(null)
-  const [timesRemaining, setTimesRemaining] = useState(0);
-  const [isLocationConstrained, setIsLocationConstrained] = useState(null);
-  const [constraintLocation, setConstraintLocation] = useState("");
-  //Primary
-  const [primaryConstrainingAttributes, setPrimaryConstrainingAttributes] = useState([]);
-  //Secondary
-  const [secondaryConstrainingAttributes, setSecondaryConstrainingAttributes] = useState([]);
 
 
   if (blockedReason !== null) {
@@ -108,35 +94,12 @@ function MainApp() {
     'times_remaining': ""
   }
 
-  for (let i = 0; i < state['constraints'].length; i++) {
-    constraint = state['constraints'][i];
-
-    if (constraint['active'] == "" || (constraint['active'] == 1 && constraint['format'] == None)) {
-      active = false;
-      break;
-    } else {
-      console.log('This constraint is fine: ', constraint);
-    }
-  }
-
-  for (let i = 0; i < state['events'].length; i++) {
-    useEvent = state['events'][i];
-
-    if (useEvent['active'] == "" || (useEvent['active'] == 1 && useEvent['format'] == None)) {
-      active = false;
-      break;
-    } else {
-      console.log('This constraint is fine: ', constraint);
-    }
-  }
-
   console.log('active? ', active);
   const mephistoData = initialTaskData;
 
   const submissionHandler = () => {
     let updatedEvents = []
     let updatedConstraints = []
-    let updatedTimesRemaining
     let updatedErrors = []
     //ERROR HANDLING
     //EVENT ERRORS
@@ -172,26 +135,24 @@ function MainApp() {
     if ((primaryIsChangingLocation && !primaryNewLocation) || (secondaryIsChangingLocation && !secondaryNewLocation)) {
       updatedErrors.push(TaskCopy.errorKey.events.q5Blank)
     }
-    //CONSTRAINT ERRORS
-    //HELD
-    if (isSecondaryHeld === null) {
-      updatedErrors.push(TaskCopy.errorKey.constraint.q1Null)
-    }
-    //REVERSIBLE
-    if (isReversible === null) {
-      updatedErrors.push(TaskCopy.errorKey.constraint.q2Null)
-    }
-    //TIMES REMAINING
-    if (isInfinite === null) {
-      updatedErrors.push(TaskCopy.errorKey.constraint.q3Null)
-    }
-    //LOCATIONS
-    if (isLocationConstrained === null) {
-      updatedErrors.push(TaskCopy.errorKey.constraint.q4Null)
-    }
     // EVENT UPDATES
     //BROADCASTMESSAGE
     let updatedBroadcastMessage = broadcastMessage;
+    let this_task_state = {
+      broadcastMessage,
+      isRemovingObjects,
+      removedObjects,
+      isCreatingEntity,
+      createdEntity,
+      isChangingDescription,
+      primaryDescription,
+      secondaryDescription,
+      primaryIsChangingLocation,
+      primaryNewLocation,
+      secondaryIsChangingLocation,
+      secondaryNewLocation,
+      ...initialTaskData
+    }
     updatedBroadcastMessage = {
       type: "broadcast_message",
       params: {
@@ -278,111 +239,11 @@ function MainApp() {
       ]
       updatedEvents = [...updatedEvents, ...updatedlLocation]
     }
-    //ATTRIBUTE MODIFICATION EVENTS
-    if (primaryModifiedAttributes.length) {
-      let updatedPrimaryModifiedAttributes = primaryModifiedAttributes.map(attribute => {
-        if (!attribute.name) {
-          return
-        }
-        return ({
-          type: "modify_attribute_primary",
-          params: {
-            type: "in_used_item",
-            key: attribute.name,
-            value: attribute.value
-          }
-        })
-      })
-      updatedEvents = [...updatedEvents, ...updatedPrimaryModifiedAttributes]
-    }
-    if (secondaryModifiedAttributes.length) {
-      let updatedSecondaryModifiedAttributes = secondaryModifiedAttributes.map(attribute => {
-        if (!attribute.name) {
-          return
-        }
-        return ({
-          type: "modify_attribute_secondary",
-          params: {
-            type: "in_used_target_item",
-            key: attribute.name,
-            value: attribute.value
-          }
-        })
-      })
-      updatedEvents = [...updatedEvents, ...updatedSecondaryModifiedAttributes]
-    }
-    //CONSTRAINT UPDATES
-    //CONSTRAINING ATTRIBUTES
-
-    if (primaryConstrainingAttributes.length) {
-      let updatedPrimaryConstrainingAttributes = primaryConstrainingAttributes.map(attribute => {
-        if (!attribute.name) {
-          return
-        }
-        return ({
-          type: "attribute_compare_value_primary",
-          params: {
-            type: "in_used_item",
-            key: attribute.name,
-            list: [attribute.value],
-            cmp_type: attribute.value ? "eq" : "neq", 
-          }
-        })
-      })
-      updatedConstraints = [...updatedConstraints, ...updatedPrimaryConstrainingAttributes]
-    }
-    if (secondaryConstrainingAttributes.length) {
-      let updatedSecondaryConstrainingAttributes = secondaryConstrainingAttributes.map(attribute => {
-        if (!attribute.name) {
-          return
-        }
-        return ({
-          type: "attribute_compare_value_secondary",
-          params: {
-            type: "in_used_target_item",
-            key: attribute.name,
-            list: [attribute.value],
-            cmp_type: attribute.value ? "eq" : "neq"
-          }
-        })
-      })
-      updatedConstraints = [...updatedConstraints, ...updatedSecondaryConstrainingAttributes]
-    }
-    // HELD CONSTRAINT
-    if (isSecondaryHeld) {
-      let updatedSecondaryHeldConstraint = {
-        type: "is_holding_secondary",
-        params: {
-          complement: "used_target_item"
-        }
-      }
-      updatedConstraints = [...updatedConstraints, updatedSecondaryHeldConstraint]
-    }
-    let updatedIsReversible = isReversible;
-
-    //TIMES REMAINING CONSTRAINT
-    if (isInfinite) {
-      updatedTimesRemaining = "inf"
-    } else {
-      updatedTimesRemaining = timesRemaining
-    }
-
-    // LOCATION CONSTRAINT
-    if (isLocationConstrained) {
-      let updatedLocationConstraint = {
-        type: "in_room",
-        params: {
-          room_name: constraintLocation
-        }
-      }
-      updatedConstraints = [...updatedConstraints, updatedLocationConstraint]
-    }
     // Actualy data payload properly formatted for submission
     const payload = {
-      times_remaining: updatedTimesRemaining,
-      reversible: updatedIsReversible,
       events: updatedEvents,
-      constraints: updatedConstraints
+      constraints: updatedConstraints,
+      this_task_state
     }
     // If the function has reached this point with an empty error array the payload is ready.
     if (!updatedErrors.length) {
@@ -423,26 +284,6 @@ function MainApp() {
         setSecondaryIsChangingLocation={setSecondaryIsChangingLocation}
         secondaryNewLocation={secondaryNewLocation}
         setSecondaryNewLocation={setSecondaryNewLocation}
-        primaryModifiedAttributes={primaryModifiedAttributes}
-        setPrimaryModifiedAttributes={setPrimaryModifiedAttributes}
-        secondaryModifiedAttributes={secondaryModifiedAttributes}
-        setSecondaryModifiedAttributes={setSecondaryModifiedAttributes}
-        isSecondaryHeld={isSecondaryHeld}
-        setIsSecondaryHeld={setIsSecondaryHeld}
-        isReversible={isReversible}
-        setIsReversible={setIsReversible}
-        isLocationConstrained={isLocationConstrained}
-        setIsLocationConstrained={setIsLocationConstrained}
-        constraintLocation={constraintLocation}
-        setConstraintLocation={setConstraintLocation}
-        primaryConstrainingAttributes={primaryConstrainingAttributes}
-        setPrimaryConstrainingAttributes={setPrimaryConstrainingAttributes}
-        secondaryConstrainingAttributes={secondaryConstrainingAttributes}
-        setSecondaryConstrainingAttributes={setSecondaryConstrainingAttributes}
-        isInfinite={isInfinite}
-        setIsInfinite={setIsInfinite}
-        timesRemaining={timesRemaining}
-        setTimesRemaining={setTimesRemaining}
       />
       <div>
         <Submission
@@ -453,13 +294,6 @@ function MainApp() {
           isRemovingObjects={isRemovingObjects}
           removedObjects={removedObjects}
           isChangingDescription={isChangingDescription}
-          isSecondaryHeld={isSecondaryHeld}
-          isReversible={isReversible}
-          isInfinite={isInfinite}
-          timesRemaining={timesRemaining}
-          isLocationConstrained={isLocationConstrained}
-          constraintLocation={constraintLocation}
-
         />
       </div>
     </div>

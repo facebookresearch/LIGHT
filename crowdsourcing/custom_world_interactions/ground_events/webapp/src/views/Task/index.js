@@ -35,26 +35,6 @@ const Task = ({
   setSecondaryIsChangingLocation,
   secondaryNewLocation,
   setSecondaryNewLocation,
-  primaryModifiedAttributes,
-  setPrimaryModifiedAttributes,
-  secondaryModifiedAttributes,
-  setSecondaryModifiedAttributes,
-  isSecondaryHeld,
-  setIsSecondaryHeld,
-  isReversible,
-  setIsReversible,
-  isLocationConstrained,
-  setIsLocationConstrained,
-  constraintLocation,
-  setConstraintLocation,
-  primaryConstrainingAttributes,
-  setPrimaryConstrainingAttributes,
-  secondaryConstrainingAttributes,
-  setSecondaryConstrainingAttributes,
-  isInfinite,
-  setIsInfinite,
-  timesRemaining,
-  setTimesRemaining,
 }) => {
   //Abstracts object and interaction information off data from backend
   const {object1, object2, interaction}= data;
@@ -95,31 +75,6 @@ const Task = ({
               setSecondaryIsChangingLocation={setSecondaryIsChangingLocation}
               secondaryNewLocation={secondaryNewLocation}
               setSecondaryNewLocation={setSecondaryNewLocation}
-              primaryModifiedAttributes={primaryModifiedAttributes}
-              setPrimaryModifiedAttributes={setPrimaryModifiedAttributes}
-              secondaryModifiedAttributes={secondaryModifiedAttributes}
-              setSecondaryModifiedAttributes={setSecondaryModifiedAttributes}
-            />
-            <Constraints
-              object1={object1}
-              object2={object2}
-              interaction={interaction}
-              isSecondaryHeld={isSecondaryHeld}
-              setIsSecondaryHeld={setIsSecondaryHeld}
-              isReversible={isReversible}
-              setIsReversible={setIsReversible}
-              isLocationConstrained={isLocationConstrained}
-              setIsLocationConstrained={setIsLocationConstrained}
-              constraintLocation={constraintLocation}
-              setConstraintLocation={setConstraintLocation}
-              primaryConstrainingAttributes={primaryConstrainingAttributes}
-              setPrimaryConstrainingAttributes={setPrimaryConstrainingAttributes}
-              secondaryConstrainingAttributes={secondaryConstrainingAttributes}
-              setSecondaryConstrainingAttributes={setSecondaryConstrainingAttributes}
-              isInfinite={isInfinite}
-              setIsInfinite={setIsInfinite}
-              timesRemaining={timesRemaining}
-              setTimesRemaining={setTimesRemaining}
             />
         </div>
       </div>

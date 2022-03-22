@@ -16,7 +16,7 @@ DO_REVIEW = True
 
 # units = mephisto_data_browser.get_units_for_task_name(input("Input task name: "))
 # We're only examining this task with this file, but in the future could rely on mephisto.tools.examine_utils.run_examine_or_review
-units = mephisto_data_browser.get_units_for_task_name("constraints-events-task-1")
+units = mephisto_data_browser.get_units_for_task_name("ground-stage-1-task-1")
 
 tasks_to_show = input("Tasks to see? (a)ll/(u)nreviewed: ")
 if tasks_to_show in ["all", "a"]:
@@ -77,8 +77,6 @@ def format_for_printing_data(data):
     outputs_string = f"Output:\n"
 
     outputs_string += "\n\n\n"
-    outputs_string += f"\tTimes Remaining: {outputs['times_remaining']}\n\n"
-    outputs_string += f"\tReversible: {outputs['reversible']}\n\n"
 
     # want to print new narration first
     broadcast_messages = [
@@ -100,6 +98,7 @@ def format_for_printing_data(data):
         elif event["type"] == "create_entity":
             # any entities created; [Create Object] (object_name) with description: object_description
             outputs_string += f"\t\t[Create Object] ({event['params']['object']['name']}) with description: {event['params']['object']['desc']} \n\n"
+            print(event['params']['object'])
         elif (
             event["type"] == "modify_attribute_primary"
             or event["type"] == "modify_attribute_secondary"
@@ -126,29 +125,6 @@ def format_for_printing_data(data):
             outputs_string += f"\t\t[Changed Location] ({cur_obj.get('name')}): {new_location_name}\n\n"
         else:
             # malformed event, exclude
-            continue
-
-    outputs_string += f"\tConstraints:\n\n"
-    for constraint in outputs["constraints"]:
-        if constraint["type"] == "is_holding_secondary":
-            cur_obj = obj_from_key(constraint['params']['complement'], primary_obj, secondary_obj)
-            outputs_string += (
-                f"\t\t[Must Hold] {cur_obj.get('name')}\n\n"
-            )
-        elif constraint["type"] == "in_room":
-            outputs_string += f"\t\t[Required Location Description] {constraint['params']['room_name']}\n\n"
-        elif (
-            constraint["type"] == "attribute_compare_value_primary"
-            or constraint["type"] == "attribute_compare_value_secondary"
-        ):
-            cur_obj = obj_from_key(constraint['params']['type'], primary_obj, secondary_obj)
-            
-            comparison = (
-                "must be" if constraint["params"]["cmp_type"] == "eq" else "must not be"
-            )
-            outputs_string += f"\t\t[Constraint] {cur_obj.get('name')} \t {comparison} \t {constraint['params']['key']}\n\n"
-        else:
-            # malformed constraint, example
             continue
 
     return f"-------------------\n{metadata_string}{inputs_string}{outputs_string}"

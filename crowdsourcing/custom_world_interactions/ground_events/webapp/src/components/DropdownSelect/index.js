@@ -14,8 +14,8 @@ const DropdownSelect = ({options, selectFunction})=>{
     const selectHandler = (selection)=>{
       setFirstSelect(true)
       // setSelectedOption(selection.value)
-      setSelectedOption(selection.target.value)
-      selectFunction(selection.target.value)
+      setSelectedOption(selection)
+      selectFunction(selection)
     }
     return(
     <div className="dropdown-container">

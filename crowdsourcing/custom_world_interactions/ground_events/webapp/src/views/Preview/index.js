@@ -34,25 +34,14 @@ const Preview = ({}) => {
               {EventTutorialIntro}
               {
                 EventTutorial.map((entry, index)=>{
+                  if (index >= 5) {
+                    return <div />
+                  }
                   const {question, explanation, screenshot} = entry;
                   return <TutorialEntry key={index} question={question} explanation={explanation} screenshot={screenshot}/>
                 })
               }
             </div>
-          </div>
-          <div className="constraintpreview-container">
-            <div className="constraintpreview-header">
-                <p>CONSTRAINTS</p>
-            </div>
-              <div className="constraintpreview-body">
-                {ConstraintTutorialIntro}
-                {
-                  ConstraintTutorial.map((entry, index)=>{
-                    const {question, explanation, screenshot} = entry;
-                    return <TutorialEntry key={index} question={question} explanation={explanation} screenshot={screenshot} />
-                  })
-                }
-              </div>
           </div>
         </div>
       </div>

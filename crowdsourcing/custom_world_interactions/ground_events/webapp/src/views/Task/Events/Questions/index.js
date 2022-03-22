@@ -189,7 +189,7 @@ const Questions = ({
                 hasToolTip={true}
                 isComplete={((!primaryIsChangingLocation && !secondaryIsChangingLocation) || (primaryIsChangingLocation && primaryNewLocation)|| (secondaryIsChangingLocation && secondaryNewLocation))}
             />
-            <AttributeSetter
+            {/* <AttributeSetter
                 objectName={object1.name}
                 objectColor="blue"
                 header={QuestionList.setter}
@@ -208,7 +208,7 @@ const Questions = ({
                 setter={setSecondaryModifiedAttributes}
                 toolTipCopy={TipList[5].explanation}
                 hasToolTip={true}
-            />
+            /> */}
        </>
     );
 }

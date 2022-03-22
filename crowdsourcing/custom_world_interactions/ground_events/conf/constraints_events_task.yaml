@@ -1,13 +1,19 @@
 #@package _global_
+# defaults:
+#   - /mephisto/blueprint: static_task
+#   - /mephisto/architect: ec2   # To launch live, we'll need an external server
+  # - /mephisto/provider: mturk_sandbox  # And an external provider
 mephisto:
+  # provider:
+  #   requester_name: alexgurung_sandbox
   blueprint:
     task_source: ${task_dir}/webapp/build/bundle.js
     extra_source_dir: ${task_dir}/webapp/src/static
     units_per_assignment: 1
     block_qualification: constraints_events_task_block
   task:
-    task_name: "constraints-events-task-1"
-    task_title: "Determine the constraints and events of a single interaction."
-    task_description: "In this task you will receive two objects with an interaction between them described in text format. You will fill a list of constraints and events related to this description."
+    task_name: "ground-stage-1-task-1"
+    task_title: "Determine the results of a single interaction."
+    task_description: "In this task you will receive two objects with an interaction between them described in text format. You will answer questions related to the result of this description."
     task_reward: 0.89
     task_tags: "fantasy,interaction,constraints,events"
