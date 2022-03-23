@@ -26,6 +26,7 @@ import traceback
 import uuid
 import warnings
 import asyncio
+import hashlib
 from collections import defaultdict
 from zmq.eventloop import ioloop
 
@@ -118,6 +119,12 @@ def warn_once(msg, warningtype=None):
         warnings.warn(msg, warningtype, stacklevel=2)
 
 
+def get_salted_hash(in_string):
+    """Return a hash string for the given string using sha-256"""
+    salted_string = in_string + tornado_settings["preauth_secret"] + in_string
+    return hashlib.sha256(salted_string.encode("utf-8")).hexdigest()[:20]
+
+
 def get_rand_id():
     return str(uuid.uuid4())
 
@@ -204,12 +211,25 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.player = player
 
     def open(self, game_id):
+        """
+        Open a websocket, validated either by a valid user cookie or
+        by a validated preauth.
+        """
         preauth_context = self.get_secure_cookie("preauth_context")
         user = None
-        if preauth_context is not None:
+        if preauth_context is not None:  # If there is any preauth
             preauth = self.get_secure_cookie("preauth")
             user = json.loads(preauth)
-            preauth_context = json.loads(preauth)
+
+            # See if the context matches our generated hash
+            context_token = json.loads(self.get_secure_cookie("context_token"))
+            preauth_context = json.loads(preauth_context)
+            context_hash = get_salted_hash(preauth_context)
+            if context_hash != context_token:
+                # User created their own context cookie
+                print(f"Logged in user {user} tried to use invalid preauth context!")
+                self.close()
+                return
         else:
             user_json = self.get_secure_cookie("user")
             if user_json is not None:
@@ -230,6 +250,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                     graph_purgatory,
                     db=self.db,
                     user=user,
+                    context=preauth_context,
                 )
                 new_player.init_soul()
                 self.app.graphs[game_id].players.append(new_player)
@@ -488,19 +509,28 @@ class PreauthGameHandler(BaseHandler):
         self.hostname = hostname
 
     def validate_login_details(self, user_id, context_id, auth_token) -> bool:
-        if user_id != "1":
-            return False
-        elif context_id != "2":
-            return False
-        elif auth_token != "3":
-            return False
-        return True
+        """
+        Check if the provided details are correct, as the user id + context id + secret
+        should hash to the auth token.
+        """
+        combo_string = f"{user_id}-{context_id}"
+        hashed_key = get_salted_hash(combo_string)
+        return hashed_key == auth_token
 
     def get(self, user_id, context_id, auth_token):
+        """
+        Preauth access requires that the salted hash of user_id and context_id matches
+        the provided auth_token, which ensures that our server was the one to generate
+        the auth token.
+
+        We then set a cookie with a preauth user id, the context of the preauth, and
+        a context auth token we generate the hash for (this way we can assert the
+        cookie contents weren't edited).
+        """
         if self.validate_login_details(user_id, context_id, auth_token):
-            hashed_user_id = "preauth-" + str(
-                hash(tornado_settings["preauth_secret"] + user_id)
-            )
+            user_hash = get_salted_hash(user_id)
+            context_hash = get_salted_hash(context_id)
+            hashed_user_id = f"preauth-{user_hash}"
             with self.db as ldb:
                 _ = ldb.create_user(hashed_user_id)
             self.set_secure_cookie(
@@ -513,6 +543,13 @@ class PreauthGameHandler(BaseHandler):
             self.set_secure_cookie(
                 "preauth_context",
                 tornado.escape.json_encode(context_id),
+                expires_days=1,
+                domain=self.hostname,
+                httponly=True,
+            )
+            self.set_secure_cookie(
+                "context_token",
+                tornado.escape.json_encode(context_hash),
                 expires_days=1,
                 domain=self.hostname,
                 httponly=True,
@@ -649,7 +686,7 @@ class TornadoPlayerProvider(PlayerProvider):
     Player Provider for the web app
     """
 
-    def __init__(self, socket, purgatory, db=None, user=None):
+    def __init__(self, socket, purgatory, db=None, user=None, context=None):
         self.socket = socket
         self.player_soul = None
         self.purgatory = purgatory
@@ -659,6 +696,7 @@ class TornadoPlayerProvider(PlayerProvider):
         socket.send_alive()
         self.db = db
         self.user = user
+        self.context = context
         # TODO a TornadoPlayerProvider refactor is likely desired, combining
         # the APIs for socket and HTTP requests to use logged in user
         # and their state in the world at the same time.
@@ -718,6 +756,8 @@ class TornadoPlayerProvider(PlayerProvider):
                 self.purgatory.world
             )
             self.player_soul.handle_act("look")
+            self.player_soul.target_node.user_id = self.user
+            self.player_soul.target_node.context_id = self.context
 
     def is_alive(self):
         return self.socket.alive
@@ -733,6 +773,8 @@ class TornadoPlayerProvider(PlayerProvider):
                 "for your soul, if you'd like?\" Send anything to respawn."
             ),
         )
+        soul.target_node.user_id = None
+        soul.target_node.context_id = None
         dat = action.to_frontend_form(soul.target_node)
         self.socket.safe_write_message(
             json.dumps({"command": "actions", "data": [dat]})
