@@ -1,46 +1,88 @@
-
-/* IMAGES */
-/* DOCTOR */
-//Question
-import doctorquestion from "./assets/screenshots/doctor/doctorquestion.png"
-//Answers
-import doctoranswer1 from "./assets/screenshots/doctor/answers/doctoranswer1.png"
-import doctoranswer2 from "./assets/screenshots/doctor/answers/doctoranswer2.png"
-import doctoranswer3 from "./assets/screenshots/doctor/answers/doctoranswer3.png"
-import doctoranswer4 from "./assets/screenshots/doctor/answers/doctoranswer4.png"
-import doctoranswer5 from "./assets/screenshots/doctor/answers/doctoranswer5.png"
-import doctoranswer6 from "./assets/screenshots/doctor/answers/doctoranswer6.png"
-import doctoranswer7 from "./assets/screenshots/doctor/answers/doctoranswer7.png"
-/* DOCTOR */
-//Question
-import assistantchefquestion from "./assets/screenshots/assistantchef/assistantchefquestion.png"
-//Answers
-import assistantchefanswer1 from "./assets/screenshots/assistantchef/answers/assistantchefanswer1.png"
-import assistantchefanswer2 from "./assets/screenshots/assistantchef/answers/assistantchefanswer2.png"
-import assistantchefanswer3 from "./assets/screenshots/assistantchef/answers/assistantchefanswer3.png"
-import assistantchefanswer4 from "./assets/screenshots/assistantchef/answers/assistantchefanswer4.png"
-import assistantchefanswer5 from "./assets/screenshots/assistantchef/answers/assistantchefanswer5.png"
-
+// Question copy for onBoarding
 const OnboardingQuestions = [
     {
-        question:doctorquestion,
+        question:[
+            {
+                speaker: "Town Doctor",
+                player: true,
+                text:"Is anyone feeling sick?"
+            },
+            {
+                speaker: "Lady of the House",
+                player: false,
+                text:"Yes, you can help me!  I need a doctor to take a look at me."
+            }],
         answers:[
-            doctoranswer1,
-            doctoranswer2,
-            doctoranswer3,
-            doctoranswer4,
-            doctoranswer5,
-            doctoranswer7
+            {
+                isSay: true,
+                text: "What is the matter my lady?",
+                isCorrect: true
+            },
+            {
+                isSay: false,
+                text: "Look at the Lady of the House",
+                isCorrect: true
+            },
+            {
+                isSay: false,
+                text: "Treat Lady of the House",
+                isCorrect: true
+            },
+            {
+                isSay: false,
+                text: "Attack Lady of the House",
+                isCorrect: false
+            },
+            {
+                isSay: false,
+                text: "cure Lady of the House",
+                isCorrect: true
+            },
+            {
+                isSay: true,
+                text: "Witch!",
+                isCorrect: false
+            },
         ]
     },
     {
-        question: assistantchefquestion,
+        question:[
+            {
+                speaker: "Assistant Chef",
+                player: true,
+                text:"Hello Milk Man I am here to pick up the milk for the chef"
+            },
+            {
+                speaker: "Milk Man",
+                player: false,
+                text:"Hello, chef!  How goes the business today?  I bring milk to the town daily, and it's always fresh!"
+            }],
         answers:[
-            assistantchefanswer1,
-            assistantchefanswer2,
-            assistantchefanswer3,
-            assistantchefanswer4,
-            assistantchefanswer5
+            {
+                isSay: false,
+                text: "Buy milk",
+                isCorrect: true
+            },
+            {
+                isSay: false,
+                text: "Take milk",
+                isCorrect: true
+            },
+            {
+                isSay: true,
+                text: "Give me the milk please.",
+                isCorrect: true
+            },
+            {
+                isSay: false,
+                text: "Attack Milk Man",
+                isCorrect: false
+            },
+            {
+                isSay: true,
+                text: "How much does the milk cost?",
+                isCorrect: true
+            },
         ]
     }
 ]

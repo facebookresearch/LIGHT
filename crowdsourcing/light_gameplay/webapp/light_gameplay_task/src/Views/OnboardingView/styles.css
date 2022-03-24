@@ -6,5 +6,18 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 70%;
+    width: 100%;
+}
+
+.onboarding-question {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-color: grey;
+    border-style: ridge;
+    border-radius: 10px;
+    width: 80%;
+    border-width: 10px;
+    padding-right: 10%;
+    background-color: lightgrey;
 }
