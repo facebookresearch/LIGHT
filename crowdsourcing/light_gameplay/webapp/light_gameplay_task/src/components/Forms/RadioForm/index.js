@@ -17,15 +17,22 @@ const RadioForm = ({
                         {
                             <div className="answers-container">
                                 {
-                                    answerData.map(answer=>(
-                                        <div className="answer-container">
-                                            <Form.Check
-                                            inline
-                                            type={'radio'}
-                                            />
-                                            <ChatInputOption
-                                                answer= {answer}
-                                            />
+                                    answerData.map((answer, index)=>(
+                                        <div
+                                            key={index}
+                                            className="answer-container"
+                                        >
+                                            <div className="answer-checkbox_container">
+                                                <Form.Check
+                                                inline
+                                                type={'radio'}
+                                                />
+                                            </div>
+                                            <div className="answer-chatinput_container">
+                                                <ChatInputOption
+                                                    answer= {answer}
+                                                />
+                                            </div>
                                         </div>
                                     ))
                                 }

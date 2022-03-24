@@ -7,19 +7,21 @@
   min-height: 500px;
   margin-top: 30px;
   width:80%;
+  align-items: flex-end;
 }
 
 .chat {
-  width: 90%;
+  width: 95%;
   background-color: rgb(228, 226, 221);
   overflow-x: hidden;
   border-radius: 10px 10px 0px 0px;
   position: relative;
   border-style: ridge;
-  border-color: lightgray;
+  border-color: rgb(184, 184, 184);
   border-width: 10px 10px 10px 10px;
-  width:97%;
-  margin-left: 3%;
+}
+.chat-answers{
+  width: 100%;
 }
 
 @media only screen and (max-width: 1224px) {

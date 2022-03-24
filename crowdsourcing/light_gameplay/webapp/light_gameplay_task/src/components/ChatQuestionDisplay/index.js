@@ -18,7 +18,7 @@ const ChatQuestionDisplay = ({
           messages={questionData}
         />
       </div>
-      <div>
+      <div className="chat-answers">
         {children}
       </div>
     </div>

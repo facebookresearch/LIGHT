@@ -11,6 +11,7 @@
 
 .onboarding-question {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     border-color: grey;
@@ -19,4 +20,16 @@
     width: 80%;
     border-width: 10px;
     background-color: lightgrey;
+}
+
+.onboarding-buttons_container{
+    width: 20%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.onboarding-button {
+    font-size:30px;
+    margin:4px;
 }
