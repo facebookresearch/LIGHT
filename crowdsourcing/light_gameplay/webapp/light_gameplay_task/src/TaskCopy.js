@@ -14,32 +14,32 @@ const OnboardingQuestions = [
             }],
         answers:[
             {
-                isSay: true,
+                isSaying: true,
                 text: "What is the matter my lady?",
                 isCorrect: true
             },
             {
-                isSay: false,
+                isSaying: false,
                 text: "Look at the Lady of the House",
                 isCorrect: true
             },
             {
-                isSay: false,
+                isSaying: false,
                 text: "Treat Lady of the House",
                 isCorrect: true
             },
             {
-                isSay: false,
+                isSaying: false,
                 text: "Attack Lady of the House",
                 isCorrect: false
             },
             {
-                isSay: false,
+                isSaying: false,
                 text: "cure Lady of the House",
                 isCorrect: true
             },
             {
-                isSay: true,
+                isSaying: true,
                 text: "Witch!",
                 isCorrect: false
             },
@@ -59,27 +59,27 @@ const OnboardingQuestions = [
             }],
         answers:[
             {
-                isSay: false,
+                isSaying: false,
                 text: "Buy milk",
                 isCorrect: true
             },
             {
-                isSay: false,
+                isSaying: false,
                 text: "Take milk",
                 isCorrect: true
             },
             {
-                isSay: true,
+                isSaying: true,
                 text: "Give me the milk please.",
                 isCorrect: true
             },
             {
-                isSay: false,
+                isSaying: false,
                 text: "Attack Milk Man",
                 isCorrect: false
             },
             {
-                isSay: true,
+                isSaying: true,
                 text: "How much does the milk cost?",
                 isCorrect: true
             },

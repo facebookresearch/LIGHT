@@ -14,8 +14,6 @@ const RadioForm = ({
     return (
     <Form className="radioform-container">
                     <div className="question-container">
-                        <Form.Label>{}</Form.Label>
-
                         {
                             <div className="answers-container">
                                 {

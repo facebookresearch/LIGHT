@@ -5,19 +5,21 @@
   overflow-x: hidden;
   opacity: 1;
   min-height: 500px;
-  padding-left: 10px;
   margin-top: 30px;
+  width:80%;
 }
 
 .chat {
-  height: 75vh;
+  width: 90%;
   background-color: rgb(228, 226, 221);
   overflow-x: hidden;
   border-radius: 10px 10px 0px 0px;
   position: relative;
   border-style: ridge;
   border-color: lightgray;
-  border-width: 10px 10px 0px 10px;
+  border-width: 10px 10px 10px 10px;
+  width:97%;
+  margin-left: 3%;
 }
 
 @media only screen and (max-width: 1224px) {

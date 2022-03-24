@@ -16,17 +16,21 @@ const ChatInputOption = ({
               isSaying ? "say" : "do"
             } `}
           >
+            {
+              isSaying ? "SAY" : "DO"
+            }
           </div>
             <input
               className={`chatbox-input`}
               value={text}
             />
-        </div>
         <div
           className="chatbox-button send"
         >
           SEND
         </div>
+      </div>
+
     </div>
   );
 };

@@ -4,13 +4,13 @@
   width: 100%;
   border: 1px solid rgb(184, 184, 184);
   border-top: none;
-  border-width: 0px 0px 10px 0px;
+  border-width: 0px 10px 10px 10px;
   border-style: ridge;
-  padding: 5px;
+
 }
 input {
   border: none;
-  padding: 10px;
+
   font-size: 1em;
   background-color: white;
   border: 0px solid #dedede;
@@ -39,7 +39,7 @@ input:focus {
 .chatbar {
   display: flex;
   flex-direction: row;
-  width: 85%;
+  background-color: white;
   justify-content: center;
 }
 
