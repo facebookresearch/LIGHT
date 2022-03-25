@@ -8,15 +8,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { store } from './app/store'
 import { Provider } from 'react-redux'
 /* COMPONENTS */
-import AppRouter from './AppRouter'
-/* TESTING */
-import reportWebVitals from './reportWebVitals';
+import LIGHTAppTaskFrame from './LIGHTAppTaskFrame'
 
 ReactDOM.render(
   <Provider store={store}>
-    <AppRouter />
+    <LIGHTAppTaskFrame />
   </Provider>,
-  document.getElementById('root')
+  document.getElementById('app')
 )
-
-reportWebVitals();

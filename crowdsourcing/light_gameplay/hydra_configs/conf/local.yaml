@@ -1,0 +1,6 @@
+#@package _global_
+defaults:
+  - base
+game_url: "http://localhost:35494/"
+preauth_secret: "0123456789"
+num_tasks: 10

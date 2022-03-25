@@ -12,7 +12,7 @@ import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 
 
-const App = ()=>{
+const App = ({url, handleSubmit})=>{
   /* ------ REDUX STATE ------ */
   // VIEW STATE
   const LightMessageList = useAppSelector((state) => state.workerActivity.LightMessageList);
@@ -49,7 +49,13 @@ const App = ()=>{
     ClearPlayerMessages()
     const handler = event => {
       console.log("EVENT", event)
-      const data = JSON.parse(event.data)
+      let data;
+      try {
+        data = JSON.parse(event.data)
+      } catch {
+        // Pass - Json data didn't exist, maybe another event?
+        return
+      }
       DataUpdateHandler(data)
     }
 
@@ -69,7 +75,7 @@ const App = ()=>{
         />
         <div className="iframe-container">
             <iframe
-                src="http://localhost:3001/#/"
+                src={url}
                 width="100%"
                 height="100%"
             >
