@@ -213,6 +213,7 @@ const Questions = ({
                 toolTipCopy={TipList[4].explanation}
                 hasToolTip={true}
                 isComplete={true}
+                disabled={true}
             />
             <AttributeSetter
                 objectName={object1.name}
