@@ -24,6 +24,8 @@ const Constraints = ({
     setPrimaryConstrainingAttributes,
     secondaryConstrainingAttributes,
     setSecondaryConstrainingAttributes,
+    hasBackstory,
+    setHasBackstory,
     isInfinite,
     setIsInfinite,
     timesRemaining,
@@ -53,6 +55,8 @@ const Constraints = ({
                     setPrimaryConstrainingAttributes={setPrimaryConstrainingAttributes}
                     secondaryConstrainingAttributes={secondaryConstrainingAttributes}
                     setSecondaryConstrainingAttributes={setSecondaryConstrainingAttributes}
+                    hasBackstory={hasBackstory}
+                    setHasBackstory={setHasBackstory}
                     isInfinite={isInfinite}
                     setIsInfinite={setIsInfinite}
                     timesRemaining={timesRemaining}

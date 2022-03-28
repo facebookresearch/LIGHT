@@ -105,8 +105,9 @@ def create_task_data(input_file_task, num_tasks):
         new_data = unit_data['inputs']
         for key, val in unit_data['outputs']['final_data'].items():
             new_data[key] = val
-        if "this_task_state" in new_data and (not new_data['this_task_state']['isCreatingEntity'] or 'createdModifiedAttributes' in new_data['this_task_state']):
-            data.append(new_data)
+        if "this_task_state" in new_data:
+            if 'hasBackstory' in new_data['this_task_state'] and (not new_data['this_task_state']['isCreatingEntity'] or 'createdModifiedAttributes' in new_data['this_task_state']):
+                data.append(new_data)
 
         # # iterate over narration units and resolve names with their corresponding objects (which have descriptions)
         # unit_data = mephisto_data_browser.get_data_from_unit(unit)["data"]

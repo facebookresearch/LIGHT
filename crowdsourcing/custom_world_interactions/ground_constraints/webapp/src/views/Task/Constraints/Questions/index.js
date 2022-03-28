@@ -28,6 +28,8 @@ const Questions = ({
     setPrimaryConstrainingAttributes,
     secondaryConstrainingAttributes,
     setSecondaryConstrainingAttributes,
+    hasBackstory,
+    setHasBackstory,
     isCreatingEntity,
     createdEntity,
     isInfinite,
@@ -67,52 +69,63 @@ const Questions = ({
             defaultAttributes={secondaryConstrainingAttributes}
         />
         <BooleanQuestion
-            question={QuestionList[1]}
+                question={QuestionList[1]}
+                trueAnswer={{name:"YES"} }
+                falseAnswer={{name:"NO"} }
+                formFunction={()=>{}}
+                toolTipCopy={TipList[1].explanation}
+                hasToolTip={true}
+                defaultOption={hasBackstory}
+                isComplete={true}
+                disabled={true}
+            />
+        <BooleanQuestion
+            question={QuestionList[2]}
             keywords={[{color:"orange", item:objName2}]}
             trueAnswer={{name:"YES"} }
             falseAnswer={{name:"NO"} }
             formFunction={setIsSecondaryHeld}
-            toolTipCopy={TipList[0].explanation}
+            toolTipCopy={TipList[2].explanation}
             hasToolTip={true}
             isComplete={isSecondaryHeld!==null}
         />
         <BooleanQuestion
-            question={QuestionList[2]}
+            question={QuestionList[3]}
             keywords={[{color:"orange", item:objName2}, {color:"blue", item:objName1}]}
             trueAnswer={{name:"YES"} }
             falseAnswer={{name:"NO"} }
             formFunction={setIsReversible}
-            toolTipCopy={TipList[1].explanation}
+            toolTipCopy={TipList[3].explanation}
             hasToolTip={true}
             isComplete={isReversible!==null}
         />
         <BooleanQuestion
-            question={QuestionList[3]}
+            question={QuestionList[4]}
             trueAnswer={{name:"YES"} }
             falseAnswer={{name:"NO"} }
             formFunction={setIsInfinite}
             inverted={true}
-            toolTipCopy={TipList[2].explanation}
+            toolTipCopy={TipList[4].explanation}
             hasToolTip={true}
             isComplete={isInfinite!==null}
         >
             <NumberQuestion
-                question={QuestionList[4]}
+                question={QuestionList[5]}
                 formFunction={setTimesRemaining}
             />
         </BooleanQuestion>
 
         <BooleanQuestion
-            question={QuestionList[5]}
+            question={QuestionList[6]}
             trueAnswer={{name:"YES"} }
             falseAnswer={{name:"NO"} }
             formFunction={setIsLocationConstrained}
-            toolTipCopy={TipList[3].explanation}
+            toolTipCopy={TipList[5].explanation}
             hasToolTip={true}
             isComplete={isLocationConstrained!==null && (isLocationConstrained==false || (isLocationConstrained==true && constraintLocation.length))}
         >
             <FormQuestion
-                question={QuestionList[6]}
+                question={QuestionList[7]}
                 placeholder ="Description"
                 formVal={constraintLocation}
                 formFunction={setConstraintLocation}

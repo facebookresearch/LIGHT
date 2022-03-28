@@ -15,7 +15,7 @@ const TaskButton = ({
     disabled
 })=>{
 // *Note - button does not have to have any selected class it will default to unselected if no isSelectedValue is provided
-const radiusStyle = disabled ? {borderRadius: "10px 10px 10px 10px", boxShadow:"none"} : {};
+    const radiusStyle = disabled ? {borderRadius: "10px 10px 10px 10px", boxShadow:"none"} : {};
     return(
         <div style={radiusStyle} className={isSelected ?  selectedContainer : unselectedContainer} onClick={selectFunction}>
             <p className={isSelected ? selectedText : unselectedText}>

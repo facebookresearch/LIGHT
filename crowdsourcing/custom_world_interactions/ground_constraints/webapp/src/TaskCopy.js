@@ -27,12 +27,13 @@ const Copy ={
         tutorialIntro:"The Constraints section focuses on what conditions must be met in order for this interaction to occur.  So for this portion you will be thinking in terms of what must be true for the interaction to have happened in the first place based on the narration.",
         questions:[
             " Constraints for Interaction:  ",
-            "1.  Does # need to be held?",
-            "2.  Could one use # with # and expect the same outcome?",
-            "3.  Can this operation be done an infinite number of times?",
-            "3a. How many more times can it be done?",
-            "4.  Would this have to happen in a specific place?",
-            "4a.  Where would that location be?",
+            "1. Is there backstory that can't be represented in constraints?",
+            "2.  Does # need to be held?",
+            "3.  Could one use # with # and expect the same outcome?",
+            "4.  Can this operation be done an infinite number of times?",
+            "4a. How many more times can it be done?",
+            "5.  Would this have to happen in a specific place?",
+            "5a.  Where would that location be?",
         ],
         tutorialCopy:[
             {

@@ -91,6 +91,7 @@ function MainApp() {
   const createdModifiedAttributes = mephistoData.this_task_state.createdModifiedAttributes;
   const primaryConstrainingAttributes = mephistoData.this_task_state.primaryConstrainingAttributes;
   const secondaryConstrainingAttributes = mephistoData.this_task_state.secondaryConstrainingAttributes;
+  const hasBackstory = mephistoData.this_task_state.hasBackstory;
   console.group("MEPHISTO TASK DATA");
   console.log(mephistoData.this_task_state);
   console.groupEnd();
@@ -305,6 +306,14 @@ function MainApp() {
       })
       updatedConstraints = [...updatedConstraints, ...updatedSecondaryConstrainingAttributes]
     }
+
+    updatedConstraints = [...updatedConstraints, {
+      type: "has_backstory",
+      params: {
+        value: hasBackstory,
+        key: "has_backstory",
+      }
+    }]
     
     let this_task_state = {
       broadcastMessage,
@@ -324,6 +333,13 @@ function MainApp() {
       primaryModifiedAttributes,
       secondaryModifiedAttributes,
       createdModifiedAttributes,
+      hasBackstory,
+      isSecondaryHeld,
+      isReversible,
+      isInfinite,
+      timesRemaining,
+      isLocationConstrained,
+      constraintLocation,
       ...initialTaskData
     }
     // Actualy data payload properly formatted for submission
@@ -381,6 +397,8 @@ function MainApp() {
         setPrimaryConstrainingAttributes={() => {}}
         secondaryConstrainingAttributes={secondaryConstrainingAttributes}
         setSecondaryConstrainingAttributes={() => {}}
+        hasBackstory={hasBackstory}
+        setHasBackstory={() => {}}
         isInfinite={isInfinite}
         setIsInfinite={setIsInfinite}
         timesRemaining={timesRemaining}

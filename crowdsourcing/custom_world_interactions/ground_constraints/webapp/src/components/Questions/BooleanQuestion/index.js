@@ -42,6 +42,7 @@ const BooleanQuestion = ({
         setAnswer(false)
         formFunction(false)
     }
+    console.log(`${question}: ${defaultOption};;;;; ${defaultOption === false}`)
 
     return (
         <div className="booleanquestion-container" >
@@ -61,7 +62,7 @@ const BooleanQuestion = ({
             <div className="booleananswer-container">
                 {!disabled || answer ? <TaskButton
                     name={trueAnswer.name}
-                    isSelected={answer}
+                    isSelected={disabled || answer}
                     selectFunction={trueHandler}
                     unselectedContainer="b-button__container true"
                     selectedContainer="b-selectedbutton__container true"
@@ -71,7 +72,7 @@ const BooleanQuestion = ({
 
                 /> : null}
                 {!disabled || !answer ? <TaskButton name={falseAnswer.name}
-                    isSelected={answer === false}
+                    isSelected={disabled || answer === false}
                     selectFunction={falseHandler}
                     unselectedContainer="b-button__container false"
                     selectedContainer="b-selectedbutton__container false"

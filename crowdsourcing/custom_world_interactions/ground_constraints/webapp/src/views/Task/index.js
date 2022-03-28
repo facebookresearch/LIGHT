@@ -45,6 +45,8 @@ const Task = ({
   setPrimaryConstrainingAttributes,
   secondaryConstrainingAttributes,
   setSecondaryConstrainingAttributes,
+  hasBackstory,
+  setHasBackstory,
   isSecondaryHeld,
   setIsSecondaryHeld,
   isReversible,
@@ -120,6 +122,8 @@ const Task = ({
           setPrimaryConstrainingAttributes={setPrimaryConstrainingAttributes}
           secondaryConstrainingAttributes={secondaryConstrainingAttributes}
           setSecondaryConstrainingAttributes={setSecondaryConstrainingAttributes}
+          hasBackstory={hasBackstory}
+          setHasBackstory={setHasBackstory}
           isInfinite={isInfinite}
           setIsInfinite={setIsInfinite}
           timesRemaining={timesRemaining}
