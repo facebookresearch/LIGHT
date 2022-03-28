@@ -48,7 +48,7 @@ const MultipleSelectQuestion = ({
             {
                 [answerList].length
                 ?
-                answerList.map((answer, index)=>(
+                answerList.filter(answer => (selectedAnswers.indexOf(answer)>=0)).map((answer, index)=>(
                     <TaskButton
                         key={index}
                         name={answer}
@@ -58,6 +58,7 @@ const MultipleSelectQuestion = ({
                         unselectedContainer="mc-selectedbutton__container"
                         selectedText="mc-button__text"
                         unselectedText="mc-selectedbutton__text"
+                        disabled={disabled}
                     />
                 ))
                 :

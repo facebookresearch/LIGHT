@@ -38,7 +38,7 @@ function MainApp() {
     initialTaskData,
     handleSubmit,
   } = useMephistoTask();
-  
+
   //Error Handling
   const [showError, setShowError] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
@@ -47,11 +47,16 @@ function MainApp() {
   const [primaryModifiedAttributes, setPrimaryModifiedAttributes] = useState([]);
   //Secondary
   const [secondaryModifiedAttributes, setSecondaryModifiedAttributes] = useState([]);
-  
+  //Created
+  const [createdModifiedAttributes, setCreatedModifiedAttributes] = useState([]);
+
   //Primary
   const [primaryConstrainingAttributes, setPrimaryConstrainingAttributes] = useState([]);
   //Secondary
   const [secondaryConstrainingAttributes, setSecondaryConstrainingAttributes] = useState([]);
+
+  // Has extra backstory
+  const [hasBackstory, setHasBackstory] = useState(null);
 
   if (blockedReason !== null) {
     return (
@@ -248,6 +253,22 @@ function MainApp() {
       })
       updatedEvents = [...updatedEvents, ...updatedSecondaryModifiedAttributes]
     }
+    if (createdModifiedAttributes.length) {
+      let updatedCreatedModifiedAttributes = createdModifiedAttributes.map(attribute => {
+        if (!attribute.name) {
+          return
+        }
+        return ({
+          type: "modify_attribute_created",
+          params: {
+            type: "in_used_target_item",
+            key: attribute.name,
+            value: attribute.value
+          }
+        })
+      })
+      updatedEvents = [...updatedEvents, ...updatedCreatedModifiedAttributes]
+    }
     //CONSTRAINT UPDATES
     //CONSTRAINING ATTRIBUTES
 
@@ -262,7 +283,7 @@ function MainApp() {
             type: "in_used_item",
             key: attribute.name,
             list: [attribute.value],
-            cmp_type: attribute.value ? "eq" : "neq", 
+            cmp_type: attribute.value ? "eq" : "neq",
           }
         })
       })
@@ -285,6 +306,16 @@ function MainApp() {
       })
       updatedConstraints = [...updatedConstraints, ...updatedSecondaryConstrainingAttributes]
     }
+
+
+    updatedConstraints = [...updatedConstraints, {
+      type: "has_backstory",
+      params: {
+        value: hasBackstory,
+        key: "has_backstory",
+      }
+    }]
+
     let this_task_state = {
       broadcastMessage,
       isRemovingObjects,
@@ -302,6 +333,8 @@ function MainApp() {
       secondaryConstrainingAttributes,
       primaryModifiedAttributes,
       secondaryModifiedAttributes,
+      createdModifiedAttributes,
+      hasBackstory,
       ...initialTaskData
     }
     // Actualy data payload properly formatted for submission
@@ -326,37 +359,41 @@ function MainApp() {
       <Task
         data={mephistoData}
         broadcastMessage={broadcastMessage}
-        setBroadcastMessage={() => {}}
+        setBroadcastMessage={() => { }}
         isCreatingEntity={isCreatingEntity}
-        setIsCreatingEntity={() => {}}
+        setIsCreatingEntity={() => { }}
         createdEntity={createdEntity}
-        setCreatedEntity={() => {}}
+        setCreatedEntity={() => { }}
         isRemovingObjects={isRemovingObjects}
-        setIsRemovingObjects={() => {}}
+        setIsRemovingObjects={() => { }}
         removedObjects={removedObjects}
-        setRemovedObjects={() => {}}
+        setRemovedObjects={() => { }}
         isChangingDescription={isChangingDescription}
-        setIsChangingDescription={() => {}}
+        setIsChangingDescription={() => { }}
         primaryDescription={primaryDescription}
-        setPrimaryDescription={() => {}}
+        setPrimaryDescription={() => { }}
         secondaryDescription={secondaryDescription}
-        setSecondaryDescription={() => {}}
+        setSecondaryDescription={() => { }}
         primaryIsChangingLocation={primaryIsChangingLocation}
-        setPrimaryIsChangingLocation={() => {}}
+        setPrimaryIsChangingLocation={() => { }}
         primaryNewLocation={primaryNewLocation}
-        setPrimaryNewLocation={() => {}}
+        setPrimaryNewLocation={() => { }}
         secondaryIsChangingLocation={secondaryIsChangingLocation}
-        setSecondaryIsChangingLocation={() => {}}
+        setSecondaryIsChangingLocation={() => { }}
         secondaryNewLocation={secondaryNewLocation}
-        setSecondaryNewLocation={() => {}}
+        setSecondaryNewLocation={() => { }}
         primaryModifiedAttributes={primaryModifiedAttributes}
         setPrimaryModifiedAttributes={setPrimaryModifiedAttributes}
         secondaryModifiedAttributes={secondaryModifiedAttributes}
         setSecondaryModifiedAttributes={setSecondaryModifiedAttributes}
+        createdModifiedAttributes={createdModifiedAttributes}
+        setCreatedModifiedAttributes={setCreatedModifiedAttributes}
         primaryConstrainingAttributes={primaryConstrainingAttributes}
         setPrimaryConstrainingAttributes={setPrimaryConstrainingAttributes}
         secondaryConstrainingAttributes={secondaryConstrainingAttributes}
         setSecondaryConstrainingAttributes={setSecondaryConstrainingAttributes}
+        hasBackstory={hasBackstory}
+        setHasBackstory={setHasBackstory}
       />
       <div>
         <Submission
@@ -367,7 +404,6 @@ function MainApp() {
           isRemovingObjects={isRemovingObjects}
           removedObjects={removedObjects}
           isChangingDescription={isChangingDescription}
-
         />
       </div>
     </div>

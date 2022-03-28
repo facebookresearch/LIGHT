@@ -62,6 +62,7 @@
 
 .attribute-label__container {
     width:30%;
+    padding-right: 10px;
 }
 
 .attribute-label__text {

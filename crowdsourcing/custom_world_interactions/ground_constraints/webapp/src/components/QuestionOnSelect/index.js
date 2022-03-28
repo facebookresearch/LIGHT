@@ -20,13 +20,12 @@ const QuestionOnSelect= ({
     toolTipCopy,// Copy for desired tooltip
     hasToolTip,// Boolean stating whether or not this component has a tooltip
     isComplete,// Completion condition for question to be satisfactorily answered
-    curSelected
+    curSelected,
+    disabled
 })=>{
     /*------STATE------*/
     // curSelected should be list
     const [selectedAnswers, setSelectedAnswers] = useState(curSelected);
-    console.log('selectedAnswers');
-    console.log(selectedAnswers);
     const [answerList, setAnswerList] = useState([])
     const [multipleSelectAnswers, setMultipleSelectAnswers] = useState([])
     /*------LIFECYCLE------*/
@@ -56,14 +55,16 @@ const QuestionOnSelect= ({
                 let selectFunction = (update)=>{
                     secondaryOnSelectFunction(update);
                 }
-                console.log(`creating new dropdown with valud: ${selectedValue}`)
                 return (
                     <div style={{width:"40%"}}>
+                        {disabled ?
+                        <p style={{textAlign:"center", fontWeight:"bold"}}>{selectedValue}</p>
+                        :
                         <DropdownSelect
                             options={answers}
                             selectFunction={selectFunction}
                             selectedValue={selectedValue}
-                        />
+                        />}
                     </div>
                 )
             default:
@@ -78,7 +79,7 @@ const QuestionOnSelect= ({
                 hasToolTip={hasToolTip}
             >
                 <div style={{display:"flex", flexDirection:"row"}}>
-                    {hasToolTip?<Checkbox isComplete={isComplete} />:null}
+                    {hasToolTip && !disabled ?<Checkbox isComplete={isComplete} />:null}
                     <FormatQuestion
                         question={question}
                         keywords={keywords}

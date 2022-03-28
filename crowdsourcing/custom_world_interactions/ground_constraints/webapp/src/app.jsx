@@ -88,6 +88,7 @@ function MainApp() {
   const secondaryNewLocation = mephistoData.this_task_state.secondaryNewLocation;
   const primaryModifiedAttributes = mephistoData.this_task_state.primaryModifiedAttributes;
   const secondaryModifiedAttributes = mephistoData.this_task_state.secondaryModifiedAttributes;
+  const createdModifiedAttributes = mephistoData.this_task_state.createdModifiedAttributes;
   const primaryConstrainingAttributes = mephistoData.this_task_state.primaryConstrainingAttributes;
   const secondaryConstrainingAttributes = mephistoData.this_task_state.secondaryConstrainingAttributes;
   console.group("MEPHISTO TASK DATA");
@@ -251,6 +252,22 @@ function MainApp() {
       })
       updatedEvents = [...updatedEvents, ...updatedSecondaryModifiedAttributes]
     }
+    if (createdModifiedAttributes.length) {
+      let updatedCreatedModifiedAttributes = createdModifiedAttributes.map(attribute => {
+        if (!attribute.name) {
+          return
+        }
+        return ({
+          type: "modify_attribute_created",
+          params: {
+            type: "in_used_target_item",
+            key: attribute.name,
+            value: attribute.value
+          }
+        })
+      })
+      updatedEvents = [...updatedEvents, ...updatedCreatedModifiedAttributes]
+    }
     //CONSTRAINT UPDATES
     //CONSTRAINING ATTRIBUTES
 
@@ -288,6 +305,7 @@ function MainApp() {
       })
       updatedConstraints = [...updatedConstraints, ...updatedSecondaryConstrainingAttributes]
     }
+    
     let this_task_state = {
       broadcastMessage,
       isRemovingObjects,
@@ -305,6 +323,7 @@ function MainApp() {
       secondaryConstrainingAttributes,
       primaryModifiedAttributes,
       secondaryModifiedAttributes,
+      createdModifiedAttributes,
       ...initialTaskData
     }
     // Actualy data payload properly formatted for submission
@@ -356,6 +375,8 @@ function MainApp() {
         setPrimaryModifiedAttributes={() => {}}
         secondaryModifiedAttributes={secondaryModifiedAttributes}
         setSecondaryModifiedAttributes={() => {}}
+        createdModifiedAttributes={createdModifiedAttributes}
+        setCreatedModifiedAttributes={() => {}}
         primaryConstrainingAttributes={primaryConstrainingAttributes}
         setPrimaryConstrainingAttributes={() => {}}
         secondaryConstrainingAttributes={secondaryConstrainingAttributes}

@@ -22,9 +22,6 @@ const FormQuestion = ({
     const [description, setDescription] = useState("")
      /*------LIFECYCLE------*/
     //Sets initial value on render
-    useEffect(()=>{
-        setDescription(formVal)
-    },[])
     /*------HANDLERS------*/
     //Updates both local and payload state with answer
     const changeHandler = e=>{

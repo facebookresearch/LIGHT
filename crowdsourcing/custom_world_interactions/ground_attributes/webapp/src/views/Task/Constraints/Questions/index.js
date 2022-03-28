@@ -20,6 +20,10 @@ const Questions = ({
     setPrimaryConstrainingAttributes,
     secondaryConstrainingAttributes,
     setSecondaryConstrainingAttributes,
+    isCreatingEntity,
+    createdEntity,
+    hasBackstory,
+    setHasBackstory
 }) => {
     // Assigning object attributes to variables for readability
     let obj1Attr = object1.attributes
@@ -49,6 +53,16 @@ const Questions = ({
                 setter={setSecondaryConstrainingAttributes}
                 toolTipCopy={TipList[0].explanation}
                 hasToolTip={true}
+            />
+            <BooleanQuestion
+                question={QuestionList[1]}
+                keywords={[{color:"orange", item:objName2}]}
+                trueAnswer={{name:"YES"} }
+                falseAnswer={{name:"NO"} }
+                formFunction={setHasBackstory}
+                toolTipCopy={TipList[1].explanation}
+                hasToolTip={true}
+                isComplete={hasBackstory!==null}
             />
        </>
     );

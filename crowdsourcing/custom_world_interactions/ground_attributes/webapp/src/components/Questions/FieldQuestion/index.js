@@ -11,6 +11,7 @@ const FieldQuestion = ({
     fields,//an array of objects with a string name attribute, a dropdown boolean attribute, and if boolean is true an array of options for the dropdown
     formFunction,// function that connects question answer to payload state.
     formState, // payload state
+    disabled
 })=>{
     //updates payload state with for inputs
     const ChangeHandler = (formName, formVal)=>{
@@ -31,6 +32,7 @@ const FieldQuestion = ({
                         options={field.options}
                         defaultValue={field.value}
                         changeFunction={val=>ChangeHandler(field.name, val)}
+                        disabled={disabled}
                         />
                         ))
                     :null

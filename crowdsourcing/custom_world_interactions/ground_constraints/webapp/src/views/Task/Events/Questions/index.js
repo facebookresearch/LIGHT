@@ -45,7 +45,9 @@ const Questions = ({
     primaryModifiedAttributes,
     setPrimaryModifiedAttributes,
     secondaryModifiedAttributes,
-    setSecondaryModifiedAttributes
+    setSecondaryModifiedAttributes,
+    createdModifiedAttributes,
+    setCreatedModifiedAttributes
 }) => {
     // Assigning object attributes to variables for readability
     let obj1Attr = object1.attributes
@@ -61,15 +63,15 @@ const Questions = ({
         setSecondaryDescription(obj2Desc)
     },[object1, object2])
 
-    useEffect(()=>{
-        setBroadcastMessage(interaction)
-       },[interaction])
+    // useEffect(()=>{
+    //     setBroadcastMessage(interaction)
+    //    },[interaction])
 
     return (
        <>
             <FormQuestion
                 question={QuestionList[1]}
-                formVal={interaction}
+                formVal={broadcastMessage}
                 formFunction={()=>{}}
                 formFunction={setBroadcastMessage}
                 toolTipCopy={TipList[0].explanation}
@@ -156,6 +158,7 @@ const Questions = ({
                     ]}
                     formFunction={()=>{}}
                     formState={createdEntity}
+                    disabled={true}
                 />
 
             </BooleanQuestion>
@@ -200,6 +203,7 @@ const Questions = ({
                 toolTipCopy={TipList[4].explanation}
                 hasToolTip={true}
                 isComplete={true}
+                disabled={true}
             />
             <AttributeSetter
                 objectName={object1.name}
@@ -223,6 +227,17 @@ const Questions = ({
                 hasToolTip={true}
                 defaultAttributes={secondaryModifiedAttributes}
             />
+            {isCreatingEntity ? <AttributeSetter
+                objectName={createdEntity.name}
+                objectColor="green"
+                header={QuestionList.setter}
+                attributes={obj2Attr}
+                isConstraint={false}
+                setter={setCreatedModifiedAttributes}
+                toolTipCopy={TipList[5].explanation}
+                defaultAttributes={createdModifiedAttributes}
+                hasToolTip={true}
+            /> : <div />}
        </>
     );
 }

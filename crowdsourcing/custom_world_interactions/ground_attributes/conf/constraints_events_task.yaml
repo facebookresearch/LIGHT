@@ -4,8 +4,8 @@
 #   - /mephisto/architect: ec2   # To launch live, we'll need an external server
   # - /mephisto/provider: mturk_sandbox  # And an external provider
 mephisto:
-  # provider:
-  #   requester_name: alexgurung_sandbox
+  provider:
+    requester_name: alexgurung_sandbox
   blueprint:
     task_source: ${task_dir}/webapp/build/bundle.js
     extra_source_dir: ${task_dir}/webapp/src/static

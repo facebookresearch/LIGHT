@@ -1,5 +1,5 @@
 //REACT
-import React, {useState} from "react";
+import React, { useState } from "react";
 //CUSTOM COMPONENTS
 import DropdownSelect from "../../DropdownSelect";
 
@@ -10,53 +10,60 @@ const FieldRow = ({
     options, //  Options in the dropdown an array of objects which have name and val attributes
     changeFunction, //function that updates the field question state
     defaultValue,
-})=>{
+    disabled
+}) => {
     //field local state
     const [fieldVal, setFieldVal] = useState(defaultValue ? defaultValue : "");
     //updates state in field question component
-    const changeHandler = e=>{
+    const changeHandler = e => {
         e.preventDefault()
         setFieldVal(e.target.value)
         changeFunction(e.target.value)
     }
     // if dropdown is true renders field with dropdown input
-    if(dropdown){
-        return(
+    if (dropdown) {
+        return (
             <div className="fieldrow-container" >
-                <div className="fieldrow-container__section--half" style={{justifyContent:"flex-end"}} >
+                <div className="fieldrow-container__section--half" style={{ justifyContent: "flex-end" }} >
                     <div className="field-container">
                         <p className="field-text">
                             {field.name.toUpperCase()}
                         </p>
                     </div>
                 </div>
-                <div className="fieldrow-container__section--half" style={{justifyContent:"flex-start"}}>
-                    <DropdownSelect
-                        options={options}
-                        selectFunction={changeHandler}
-                    />
+                <div className="fieldrow-container__section--half" style={{ justifyContent: "flex-start" }}>
+                {disabled ?
+                        <p className="fieldanswer-text" style={{ borderStyle: "none", paddingLeft: "5px" }}>{fieldVal}</p>
+                        :
+                        <DropdownSelect
+                            options={options}
+                            selectFunction={changeHandler}
+                        />}
                 </div>
             </div>
         )
-    }else{
+    } else {
         //if dropdown if false renders field with text input
-        return(
+        return (
             <div className="fieldrow-container" >
-                <div className="fieldrow-container__section--half" style={{justifyContent:"flex-end"}}>
+                <div className="fieldrow-container__section--half" style={{ justifyContent: "flex-end" }}>
                     <div className="field-container">
                         <p className="field-text">
                             {field.name.toUpperCase()}
                         </p>
                     </div>
                 </div>
-                <div className="fieldrow-container__section--half" style={{justifyContent:"flex-start"}} >
+                <div className="fieldrow-container__section--half" style={{ justifyContent: "flex-start" }} >
                     <div className="fieldanswer-container">
-                        <input
-                            className="fieldanswer-text"
-                            onChange={changeHandler}
-                            value={fieldVal}
-                            disabled={true}
-                        />
+                        {disabled ?
+                            <p className="fieldanswer-text" style={{borderStyle:"none", paddingLeft:"5px" }}>{fieldVal}</p>
+                            :
+                            <input
+                                className="fieldanswer-text"
+                                onChange={changeHandler}
+                                value={fieldVal}
+                            />}
+
                     </div>
                 </div>
             </div>

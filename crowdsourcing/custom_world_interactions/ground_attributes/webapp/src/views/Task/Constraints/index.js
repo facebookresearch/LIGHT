@@ -10,10 +10,14 @@ const Constraints = ({
     object1,
     object2,
     interaction,
+    createdEntity,
+    isCreatingEntity,
     primaryConstrainingAttributes,
     setPrimaryConstrainingAttributes,
     secondaryConstrainingAttributes,
     setSecondaryConstrainingAttributes,
+    hasBackstory,
+    setHasBackstory
 }) => {
     return (
         <div className="constraints-container">
@@ -25,10 +29,14 @@ const Constraints = ({
                     object1={object1}
                     object2={object2}
                     interaction={interaction}
+                    isCreatingEntity={isCreatingEntity}
+                    createdEntity={createdEntity}
                     primaryConstrainingAttributes={primaryConstrainingAttributes}
                     setPrimaryConstrainingAttributes={setPrimaryConstrainingAttributes}
                     secondaryConstrainingAttributes={secondaryConstrainingAttributes}
                     setSecondaryConstrainingAttributes={setSecondaryConstrainingAttributes}
+                    hasBackstory={hasBackstory}
+                    setHasBackstory={setHasBackstory}
                 />
             </div>
         </div>

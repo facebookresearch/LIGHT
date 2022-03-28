@@ -25,8 +25,6 @@ const QuestionOnSelect= ({
     /*------STATE------*/
     // curSelected should be list
     const [selectedAnswers, setSelectedAnswers] = useState(curSelected);
-    console.log('selectedAnswers');
-    console.log(selectedAnswers);
     const [answerList, setAnswerList] = useState([])
     const [multipleSelectAnswers, setMultipleSelectAnswers] = useState([])
     /*------LIFECYCLE------*/
@@ -56,7 +54,6 @@ const QuestionOnSelect= ({
                 let selectFunction = (update)=>{
                     secondaryOnSelectFunction(update);
                 }
-                console.log(`creating new dropdown with valud: ${selectedValue}`)
                 return (
                     <div style={{width:"40%"}}>
                         <DropdownSelect
@@ -78,7 +75,6 @@ const QuestionOnSelect= ({
                 hasToolTip={hasToolTip}
             >
                 <div style={{display:"flex", flexDirection:"row"}}>
-                    {hasToolTip?<Checkbox isComplete={isComplete} />:null}
                     <FormatQuestion
                         question={question}
                         keywords={keywords}

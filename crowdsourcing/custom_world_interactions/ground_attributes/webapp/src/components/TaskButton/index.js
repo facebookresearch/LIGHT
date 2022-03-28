@@ -11,11 +11,13 @@ const TaskButton = ({
     selectedText,// css class for button text when selected
     name,// Button label text
     selectFunction,// Button onClick function
-    isSelected// Boolean determines whether button has been selected or not.
+    isSelected,// Boolean determines whether button has been selected or not.
+    disabled
 })=>{
 // *Note - button does not have to have any selected class it will default to unselected if no isSelectedValue is provided
+const radiusStyle = disabled ? {borderRadius: "10px 10px 10px 10px", boxShadow:"none"} : {};
     return(
-        <div className={isSelected ?  selectedContainer : unselectedContainer} onClick={selectFunction}>
+        <div style={radiusStyle} className={isSelected ?  selectedContainer : unselectedContainer} onClick={selectFunction}>
             <p className={isSelected ? selectedText : unselectedText}>
                 {name.toUpperCase()}
             </p>

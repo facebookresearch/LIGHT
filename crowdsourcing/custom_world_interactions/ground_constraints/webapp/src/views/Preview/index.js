@@ -52,7 +52,7 @@ const Preview = ({ }) => {
             {ConstraintTutorialIntro}
             {
               ConstraintTutorial.map((entry, index) => {
-                const { question, explanation, screenshot } = entry;
+                let { question, explanation, screenshot } = entry;
                 if (index == 0) {
                   question = question + " (Already Filled in For You)";
                 }

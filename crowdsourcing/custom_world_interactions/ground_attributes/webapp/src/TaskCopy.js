@@ -12,9 +12,6 @@ const EventShot6 = require("./assets/images/Tutorial/Event/EventShot6.png");
 //CONSTRAINT SCREENSHOTS
 const ConstraintShot1 = require("./assets/images/Tutorial/Constraint/ConstraintShot1.png");
 const ConstraintShot2 = require("./assets/images/Tutorial/Constraint/ConstraintShot2.png");
-const ConstraintShot3 = require("./assets/images/Tutorial/Constraint/ConstraintShot3.png");
-//const ConstraintShot4 = require("./assets/images/Tutorial/Constraint/ConstraintShot4.png");
-const ConstraintShot5 = require("./assets/images/Tutorial/Constraint/ConstraintShot5.png");
 
 
 const Copy ={
@@ -26,12 +23,13 @@ const Copy ={
         tutorialIntro:"The Constraints section focuses on what conditions must be met in order for this interaction to occur.  So for this portion you will be thinking in terms of what must be true for the interaction to have happened in the first place based on the narration.",
         questions:[
             " Constraints for Interaction:  ",
-            "1.  Does # need to be held?",
-            "2.  Could one use # with # and expect the same outcome?",
-            "3.  Can this operation be done an infinite number of times?",
-            "3a. How many more times can it be done?",
-            "4.  Would this have to happen in a specific place?",
-            "4a.  Where would that location be?",
+            "1. Is there backstory that can't be represented in constraints?",
+            "2.  Does # need to be held?",
+            "3.  Could one use # with # and expect the same outcome?",
+            "4.  Can this operation be done an infinite number of times?",
+            "4a. How many more times can it be done?",
+            "5.  Would this have to happen in a specific place?",
+            "5a.  Where would that location be?",
         ],
         tutorialCopy:[
             {
@@ -49,56 +47,14 @@ const Copy ={
                 screenshot: ConstraintShot1
             },
             {
-                question:"2) Does object2 need to be held?",
-                explanation:`We generally assume that the actor is already holding the first item in the interaction. If the interaction requires the actor to be holding both objects (like if the actor is combining objects), you should mark it here.  For example, for the interaction "You put the gem into the key, then turn it over in your hands. It it's a perfect fit." you would say both objects need to be held.  In contrast for the interaction "You swing the axe at the tree and it rebounds back. Not a mark, this tree must be magic." You would answer that the tree does not need to be held.`,
+                question:"2) Backstory",
+                explanation:`Some narrations rely on backstory that cannot be created through object constraints.
+
+                For instance, the interaction is "You slowly clean the shield with the cloth, 
+                thinking about all the fun times you had with your brother", includes backstory (i.e. the brother)
+                that is not an inherent attribute of the objects. As a result such an example would be marked true.`,
                 screenshot: ConstraintShot2
             },
-            {
-                question:"3) Can this operation be done an infinite number of times?",
-                explanation:`Some interactions are limited in the number of uses. Here
-                you should estimate the number of times the interaction
-                could be repeated. For instance, for the interaction: "You
-                give a piece of the pie to the fox. It eats it quickly and scurries
-                back away from you." This kind of interaction must have some
-                kind of limit, as your pie has a constant amount. As such you
-                may say this interaction could be done 12 times. While we
-                don't expect an exact number on this, an estimation will be fine.
-
-                In contrast "You swing the stick at the bucket and it rings out
-                loudly, likely annoying anyone in earshot" is an interaction
-                that could probably be done indefinitely.`
-            },
-            {
-                question:"4) Could one use Y with X and expect the same outcome?",
-                explanation:`Some interactions could be considered to have a direction, for
-                instance "using an axe with a tree" is different from "using a
-                tree with an axe", though the second here doesn't even make
-                sense. However, an interaction like "you mix the milk and the
-                flour to start creating some dough" could work with either
-                "use milk with flour" or "use flour with milk".
-
-                For unidirectional cases like the former, this would be false.
-                For bidirectional cases like the latter, it would be true.`,
-                screenshot: ConstraintShot3
-            },
-            {
-                question:"5) Does this interaction need to have in a specific place?",
-                explanation:`If the interaction description implies that the interaction
-                occurs somewhere specifically, provide a name for the place
-                you believe it is happening.
-
-                If it doesn't have any specification, then leave blank.
-
-                For instance the interaction "You mix the the flour and milk
-                together to start creating some dough." could happen anywhere,
-                so you should say no for an interaction like this.
-
-                However, for something like "You throw the spear at the dragon
-                and it recoils, spraying fire breath into the forest around you" then
-                this interaction must occur in the forest as it is implied by the
-                narration.`,
-                screenshot: ConstraintShot5
-            }
         ]
     },
     event:{

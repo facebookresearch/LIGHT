@@ -13,8 +13,9 @@ const EventShot6 = require("./assets/images/Tutorial/Event/EventShot6.png");
 const ConstraintShot1 = require("./assets/images/Tutorial/Constraint/ConstraintShot1.png");
 const ConstraintShot2 = require("./assets/images/Tutorial/Constraint/ConstraintShot2.png");
 const ConstraintShot3 = require("./assets/images/Tutorial/Constraint/ConstraintShot3.png");
-//const ConstraintShot4 = require("./assets/images/Tutorial/Constraint/ConstraintShot4.png");
+const ConstraintShot4 = require("./assets/images/Tutorial/Constraint/ConstraintShot4.png");
 const ConstraintShot5 = require("./assets/images/Tutorial/Constraint/ConstraintShot5.png");
+const ConstraintShot6 = require("./assets/images/Tutorial/Constraint/ConstraintShot6.png");
 
 
 const Copy ={
@@ -49,24 +50,18 @@ const Copy ={
                 screenshot: ConstraintShot1
             },
             {
-                question:"2) Does object2 need to be held?",
-                explanation:`We generally assume that the actor is already holding the first item in the interaction. If the interaction requires the actor to be holding both objects (like if the actor is combining objects), you should mark it here.  For example, for the interaction "You put the gem into the key, then turn it over in your hands. It it's a perfect fit." you would say both objects need to be held.  In contrast for the interaction "You swing the axe at the tree and it rebounds back. Not a mark, this tree must be magic." You would answer that the tree does not need to be held.`,
+                question:"2) Backstory",
+                explanation:`Some narrations rely on backstory that cannot be created through object constraints.
+
+                For instance, the interaction is "You slowly clean the shield with the cloth, 
+                thinking about all the fun times you had with your brother", includes backstory (i.e. the brother)
+                that is not an inherent attribute of the objects. As a result such an example would be marked true.`,
                 screenshot: ConstraintShot2
             },
             {
-                question:"3) Can this operation be done an infinite number of times?",
-                explanation:`Some interactions are limited in the number of uses. Here
-                you should estimate the number of times the interaction
-                could be repeated. For instance, for the interaction: "You
-                give a piece of the pie to the fox. It eats it quickly and scurries
-                back away from you." This kind of interaction must have some
-                kind of limit, as your pie has a constant amount. As such you
-                may say this interaction could be done 12 times. While we
-                don't expect an exact number on this, an estimation will be fine.
-
-                In contrast "You swing the stick at the bucket and it rings out
-                loudly, likely annoying anyone in earshot" is an interaction
-                that could probably be done indefinitely.`
+                question:"3) Does object2 need to be held?",
+                explanation:`We generally assume that the actor is already holding the first item in the interaction. If the interaction requires the actor to be holding both objects (like if the actor is combining objects), you should mark it here.  For example, for the interaction "You put the gem into the key, then turn it over in your hands. It it's a perfect fit." you would say both objects need to be held.  In contrast for the interaction "You swing the axe at the tree and it rebounds back. Not a mark, this tree must be magic." You would answer that the tree does not need to be held.`,
+                screenshot: ConstraintShot3
             },
             {
                 question:"4) Could one use Y with X and expect the same outcome?",
@@ -79,10 +74,26 @@ const Copy ={
 
                 For unidirectional cases like the former, this would be false.
                 For bidirectional cases like the latter, it would be true.`,
-                screenshot: ConstraintShot3
+                screenshot: ConstraintShot4
             },
             {
-                question:"5) Does this interaction need to have in a specific place?",
+                question:"5) Can this operation be done an infinite number of times?",
+                explanation:`Some interactions are limited in the number of uses. Here
+                you should estimate the number of times the interaction
+                could be repeated. For instance, for the interaction: "You
+                give a piece of the pie to the fox. It eats it quickly and scurries
+                back away from you." This kind of interaction must have some
+                kind of limit, as your pie has a constant amount. As such you
+                may say this interaction could be done 12 times. While we
+                don't expect an exact number on this, an estimation will be fine.
+
+                In contrast "You swing the stick at the bucket and it rings out
+                loudly, likely annoying anyone in earshot" is an interaction
+                that could probably be done indefinitely.`,
+                screenshot: ConstraintShot5
+            },
+            {
+                question:"6) Does this interaction need to have in a specific place?",
                 explanation:`If the interaction description implies that the interaction
                 occurs somewhere specifically, provide a name for the place
                 you believe it is happening.
@@ -97,7 +108,7 @@ const Copy ={
                 and it recoils, spraying fire breath into the forest around you" then
                 this interaction must occur in the forest as it is implied by the
                 narration.`,
-                screenshot: ConstraintShot5
+                screenshot: ConstraintShot6
             }
         ]
     },

@@ -18,6 +18,8 @@ const Constraints = ({
     setIsLocationConstrained,
     constraintLocation,
     setConstraintLocation,
+    createdEntity,
+    isCreatingEntity,
     primaryConstrainingAttributes,
     setPrimaryConstrainingAttributes,
     secondaryConstrainingAttributes,
@@ -45,6 +47,8 @@ const Constraints = ({
                     setIsLocationConstrained={setIsLocationConstrained}
                     constraintLocation={constraintLocation}
                     setConstraintLocation={setConstraintLocation}
+                    isCreatingEntity={isCreatingEntity}
+                    createdEntity={createdEntity}
                     primaryConstrainingAttributes={primaryConstrainingAttributes}
                     setPrimaryConstrainingAttributes={setPrimaryConstrainingAttributes}
                     secondaryConstrainingAttributes={secondaryConstrainingAttributes}

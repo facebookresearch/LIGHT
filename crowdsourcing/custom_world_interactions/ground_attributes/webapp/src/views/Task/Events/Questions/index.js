@@ -45,7 +45,9 @@ const Questions = ({
     primaryModifiedAttributes,
     setPrimaryModifiedAttributes,
     secondaryModifiedAttributes,
-    setSecondaryModifiedAttributes
+    setSecondaryModifiedAttributes,
+    createdModifiedAttributes,
+    setCreatedModifiedAttributes
 }) => {
     // Assigning object attributes to variables for readability
     let obj1Attr = object1.attributes
@@ -91,14 +93,15 @@ const Questions = ({
                 isComplete={true}
                 disabled={true}
             >
-                <MultipleSelectQuestion
+                {isRemovingObjects ? <MultipleSelectQuestion
                     question={QuestionList.a2}
-                    answers={[object1.name, object2.name]}
+                    answers={removedObjects}
                     // selectFunction={setRemovedObjects}
                     selectFunction={()=>{}}
                     disabled={true}
                     curSelectedAnswers={removedObjects}
-                />
+                /> : <div />
+                }
             </BooleanQuestion>
             <BooleanQuestion
                 question={QuestionList[3]}
@@ -150,7 +153,6 @@ const Questions = ({
                 defaultOption={isCreatingEntity}
             >
                 <FieldQuestion
-
                     fields={[
                         {name:"name", dropdown:false, value:isCreatingEntity ? createdEntity.name : null},
                         {name:"desc", dropdown:false, value:isCreatingEntity ? createdEntity.desc : null},
@@ -166,6 +168,7 @@ const Questions = ({
                     // formFunction={setCreatedEntity}
                     formFunction={()=>{}}
                     formState={createdEntity}
+                    disabled={true}
                 />
 
             </BooleanQuestion>
@@ -209,7 +212,6 @@ const Questions = ({
                 ]}
                 toolTipCopy={TipList[4].explanation}
                 hasToolTip={true}
-                // isComplete={((!primaryIsChangingLocation && !secondaryIsChangingLocation) || (primaryIsChangingLocation && primaryNewLocation)|| (secondaryIsChangingLocation && secondaryNewLocation))}
                 isComplete={true}
             />
             <AttributeSetter
@@ -232,6 +234,16 @@ const Questions = ({
                 toolTipCopy={TipList[5].explanation}
                 hasToolTip={true}
             />
+            {isCreatingEntity ? <AttributeSetter
+                objectName={createdEntity.name}
+                objectColor="green"
+                header={QuestionList.setter}
+                attributes={obj2Attr}
+                isConstraint={false}
+                setter={setCreatedModifiedAttributes}
+                toolTipCopy={TipList[5].explanation}
+                hasToolTip={true}
+            /> : <div />}
        </>
     );
 }

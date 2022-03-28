@@ -5,7 +5,6 @@ import "./styles.css"
 //Custom Components
 import Header from "../../components/Header";
 import TaskDataCards from "./TaskDataCards"
-import Constraints from "./Constraints"
 import Events from "./Events"
 //Task - Primary View for task, contains the Header, both the events and constraints, and the Task Cards.
 const Task = ({

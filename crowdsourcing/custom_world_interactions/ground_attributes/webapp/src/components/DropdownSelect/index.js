@@ -18,8 +18,6 @@ const DropdownSelect = ({options, selectFunction, selectedValue})=>{
       setSelectedOption(selection.target.value)
       selectFunction(selection.target.value)
     }
-    console.log('drop down: ')
-    console.log(selectedOption)
     return(
     <div className="dropdown-container">
         <select className="dropdown-select" id="locations" onChange={selectHandler} value={selectedOption} disabled={true}>

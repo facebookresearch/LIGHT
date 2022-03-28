@@ -37,6 +37,8 @@ const Events = ({
     setPrimaryModifiedAttributes,
     secondaryModifiedAttributes,
     setSecondaryModifiedAttributes,
+    createdModifiedAttributes,
+    setCreatedModifiedAttributes,
 }) => {
     return (
         <div className="events-container">
@@ -76,6 +78,8 @@ const Events = ({
                     setPrimaryModifiedAttributes={setPrimaryModifiedAttributes}
                     secondaryModifiedAttributes={secondaryModifiedAttributes}
                     setSecondaryModifiedAttributes={setSecondaryModifiedAttributes}
+                    createdModifiedAttributes={createdModifiedAttributes}
+                    setCreatedModifiedAttributes={setCreatedModifiedAttributes}
                 />
             </div>
         </div>

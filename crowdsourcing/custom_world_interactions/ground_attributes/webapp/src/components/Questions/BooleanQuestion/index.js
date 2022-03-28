@@ -1,5 +1,5 @@
 //REACT
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 //STYLING
 import "./styles.css";
 //CUSTOM COMPONENTS
@@ -21,36 +21,36 @@ const BooleanQuestion = ({
     defaultOption,
     children,
     disabled
-})=>{
+}) => {
     //local state for question answer
     // const [answer, setAnswer] = useState(null);
     const [answer, setAnswer] = useState(defaultOption ? defaultOption : null);
 
     //sets both local and payload state to true
-    const trueHandler = ()=>{
-        if (disabled){
+    const trueHandler = () => {
+        if (disabled) {
             return;
         }
         setAnswer(true)
         formFunction(true)
     }
-        //sets both local and payload state to false
-    const falseHandler = ()=>{
-        if (disabled){
+    //sets both local and payload state to false
+    const falseHandler = () => {
+        if (disabled) {
             return;
         }
         setAnswer(false)
         formFunction(false)
     }
 
-    return(
+    return (
         <div className="booleanquestion-container" >
             <InfoToolTip
                 tutorialCopy={toolTipCopy}
                 hasToolTip={hasToolTip}
             >
-                <div style={{display:"flex", flexDirection:"row"}}>
-                    {hasToolTip?<Checkbox isComplete={isComplete} />:null}
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                {hasToolTip && !disabled ? <Checkbox isComplete={isComplete} /> : null}
                     <FormatQuestion
                         question={question}
                         keywords={keywords}
@@ -59,7 +59,7 @@ const BooleanQuestion = ({
                 </div>
             </InfoToolTip>
             <div className="booleananswer-container">
-                <TaskButton
+                {!disabled || answer ? <TaskButton
                     name={trueAnswer.name}
                     isSelected={answer}
                     selectFunction={trueHandler}
@@ -67,25 +67,27 @@ const BooleanQuestion = ({
                     selectedContainer="b-selectedbutton__container true"
                     unselectedText="b-button__text true"
                     selectedText=" b-selectedbutton__text"
+                    disabled={disabled}
 
-                    />
-                <TaskButton name={falseAnswer.name}
-                    isSelected={answer===false}
+                /> : null}
+                {!disabled || !answer ? <TaskButton name={falseAnswer.name}
+                    isSelected={answer === false}
                     selectFunction={falseHandler}
                     unselectedContainer="b-button__container false"
                     selectedContainer="b-selectedbutton__container false"
                     unselectedText="b-button__text false"
                     selectedText=" b-selectedbutton__text"
+                    disabled={disabled}
+                /> : null}
 
-                    />
             </div>
-            <div style={{width:"100%", marginTop:"10px"}}>
-            {   //if inverted it will only render child if answer is false not if answer == null
-                ((!!inverted ? (!answer && answer!==null) : answer) && children) ?
-                children
-                :
-                null
-            }
+            <div style={{ width: "100%", marginTop: "10px" }}>
+                {   //if inverted it will only render child if answer is false not if answer == null
+                    ((!!inverted ? (!answer && answer !== null) : answer) && children) ?
+                        children
+                        :
+                        null
+                }
             </div>
         </div>
     )

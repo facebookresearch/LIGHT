@@ -7,9 +7,7 @@ import Copy from "../../TaskCopy"
 const PreviewTutorial = Copy.tutorialIntro.explanation;
 const PreviewTutorialImg= Copy.tutorialIntro.screenshot;
 const EventTutorialIntro = Copy.event.tutorialIntro;
-const ConstraintTutorialIntro = Copy.constraint.tutorialIntro;
 const EventTutorial = Copy.event.tutorialCopy;
-const ConstraintTutorial = Copy.constraint.tutorialCopy;
 //Custom Components
 import TutorialEntry from "../../components/TutorialEntry"
 import Header from "../../components/Header";

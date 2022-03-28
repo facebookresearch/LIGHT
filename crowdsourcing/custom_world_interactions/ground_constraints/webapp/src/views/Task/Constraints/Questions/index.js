@@ -28,6 +28,8 @@ const Questions = ({
     setPrimaryConstrainingAttributes,
     secondaryConstrainingAttributes,
     setSecondaryConstrainingAttributes,
+    isCreatingEntity,
+    createdEntity,
     isInfinite,
     setIsInfinite,
     timesRemaining,
@@ -114,6 +116,7 @@ const Questions = ({
                 placeholder ="Description"
                 formVal={constraintLocation}
                 formFunction={setConstraintLocation}
+                disabled={false}
             />
         </BooleanQuestion>
    </>
