@@ -21,18 +21,3 @@
     flex-direction: column;
     width:100%
 }
-
-.answer-container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width:100%
-}
-
-.answer-checkbox_container {
-    width:5%;
-}
-
-.answer-chatinput_container {
-    width:95%;
-}
