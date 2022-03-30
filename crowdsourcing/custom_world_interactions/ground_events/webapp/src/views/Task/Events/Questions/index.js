@@ -1,5 +1,5 @@
 //REACT
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 //STYLE
 import "./styles.css"
 //COPY
@@ -54,36 +54,38 @@ const Questions = ({
     const TipList = QuestionCopy.event.tutorialCopy
     /*------LIFECYCLE------*/
     //Upon object change sets descriptions for relevant object
-    useEffect(()=>{
+    useEffect(() => {
         let obj1Desc = object1.desc;
         let obj2Desc = object2.desc;
         setPrimaryDescription(obj1Desc)
         setSecondaryDescription(obj2Desc)
-    },[object1, object2])
+    }, [object1, object2])
 
-    useEffect(()=>{
+    useEffect(() => {
         setBroadcastMessage(interaction)
-       },[interaction])
+    }, [interaction])
 
+    console.log("removedObjects:")
+    console.log(removedObjects);
     return (
-       <>
+        <>
             <FormQuestion
                 question={QuestionList[1]}
                 formVal={interaction}
                 formFunction={setBroadcastMessage}
                 toolTipCopy={TipList[0].explanation}
                 hasToolTip={true}
-                isComplete={(broadcastMessage.length && broadcastMessage!==interaction)}
+                isComplete={(broadcastMessage.length && broadcastMessage !== interaction)}
             />
             <BooleanQuestion
                 question={QuestionList[2]}
-                trueAnswer={{name:"YES"} }
-                falseAnswer={{name:"NO"} }
+                trueAnswer={{ name: "YES" }}
+                falseAnswer={{ name: "NO" }}
                 formFunction={setIsRemovingObjects}
                 toolTipCopy={TipList[1].explanation}
                 hasToolTip={true}
                 defaultOption={isRemovingObjects}
-                isComplete={(isRemovingObjects!==null && (isRemovingObjects==false || (isRemovingObjects===true && removedObjects.length)))}
+                isComplete={(isRemovingObjects !== null && (isRemovingObjects == false || (isRemovingObjects === true && removedObjects.length)))}
             >
                 <MultipleSelectQuestion
                     question={QuestionList.a2}
@@ -93,55 +95,56 @@ const Questions = ({
             </BooleanQuestion>
             <BooleanQuestion
                 question={QuestionList[3]}
-                trueAnswer={{name:"YES"} }
-                falseAnswer={{name:"NO"} }
+                trueAnswer={{ name: "YES" }}
+                falseAnswer={{ name: "NO" }}
                 formFunction={setIsChangingDescription}
                 toolTipCopy={TipList[2].explanation}
                 hasToolTip={true}
-                isComplete={isChangingDescription!==null && (!isChangingDescription || (primaryDescription !== object1.desc || secondaryDescription !== object2.desc))}
+                isComplete={isChangingDescription !== null && (!isChangingDescription || (primaryDescription !== object1.desc || secondaryDescription !== object2.desc))}
                 defaultOption={isChangingDescription}
             >
-                <div style={{display:"flex", flexDirection:"row", width:"100%"}}>
-                    <FormQuestion
+                <div style={{ display: "flex", flexDirection: "row", width: "100%" }}>
+                    {!removedObjects.includes(object1.name) && <FormQuestion
                         question={object1.name}
                         upperCaseQuestion={true}
                         questionColor="blue"
-                        placeholder ="Description"
+                        placeholder="Description"
                         formVal={primaryDescription}
                         formFunction={setPrimaryDescription}
                         hasToolTip={false}
-                    />
-                    <FormQuestion
+                    />}
+                    {!removedObjects.includes(object2.name) && <FormQuestion
                         question={object2.name}
                         upperCaseQuestion={true}
                         questionColor="orange"
-                        placeholder ="Description"
+                        placeholder="Description"
                         formVal={secondaryDescription}
                         formFunction={setSecondaryDescription}
                         hasToolTip={false}
-                    />
+                    />}
                 </div>
             </BooleanQuestion>
             <BooleanQuestion
                 question={QuestionList[4]}
-                trueAnswer={{name:"YES"} }
-                falseAnswer={{name:"NO"} }
+                trueAnswer={{ name: "YES" }}
+                falseAnswer={{ name: "NO" }}
                 formFunction={setIsCreatingEntity}
                 toolTipCopy={TipList[3].explanation}
                 hasToolTip={true}
-                isComplete={(isCreatingEntity!==null && (isCreatingEntity==false || (isCreatingEntity===true && (createdEntity.name && createdEntity.desc && createdEntity.location))))}
+                isComplete={(isCreatingEntity !== null && (isCreatingEntity == false || (isCreatingEntity === true && (createdEntity.name && createdEntity.desc && createdEntity.location))))}
             >
                 <FieldQuestion
 
                     fields={[
-                        {name:"name", dropdown:false},
-                        {name:"desc", dropdown:false},
-                        {name:"location", dropdown:true,
-                            options:[
-                                {name:"in room", val:"in_room"},
-                                {name:"held by actor", val:"in_actor"},
-                                {name:`in/on ${object1.name.toUpperCase()}`, val:"in_used_item"},
-                                {name:`in/on ${object2.name.toUpperCase()}`, val:"in_used_target_item"}
+                        { name: "name", dropdown: false },
+                        { name: "desc", dropdown: false },
+                        {
+                            name: "location", dropdown: true,
+                            options: [
+                                { name: "in room", val: "in_room" },
+                                { name: "held by actor", val: "in_actor" },
+                                { name: `in/on ${object1.name.toUpperCase()}`, val: "in_used_item" },
+                                { name: `in/on ${object2.name.toUpperCase()}`, val: "in_used_target_item" }
                             ]
                         }
                     ]}
@@ -155,62 +158,44 @@ const Questions = ({
                 secondaryQuestion={QuestionList.a5}
                 answers={[
                     {
-                        name:object1.name.toUpperCase(),
-                        questionColor:"blue",
-                        onSelectFunction:(status)=>setPrimaryIsChangingLocation(status),
-                        secondaryQuestion:{
-                            type:"dropdown",
-                            question:object1.name,
-                            secondaryOnSelectFunction: (update)=>setPrimaryNewLocation(update),
-                            answers:[
-                                {name:"in room", val:"in_room"},
-                                {name:"held by actor", val:"in_actor"},
-                                {name:`in/on ${object2.name.toUpperCase()}`, val:"in_used_target_item"},
+                        name: object1.name.toUpperCase(),
+                        disabled:removedObjects.includes(object1.name),
+                        questionColor: "blue",
+                        onSelectFunction: (status) => setPrimaryIsChangingLocation(status),
+                        secondaryQuestion: {
+                            type: "dropdown",
+                            question: object1.name,
+                            secondaryOnSelectFunction: (update) => setPrimaryNewLocation(update),
+                            answers: [
+                                { name: "in room", val: "in_room" },
+                                { name: "held by actor", val: "in_actor" },
+                                { name: `in/on ${object2.name.toUpperCase()}`, val: "in_used_target_item" },
                             ]
                         }
                     },
                     {
-                        name:object2.name.toUpperCase(),
-                        questionColor:"orange",
-                        onSelectFunction:(status)=>setSecondaryIsChangingLocation(status),
-                        secondaryQuestion:{
-                            type:"dropdown",
-                            question:object2.name,
-                            secondaryOnSelectFunction: (update)=>setSecondaryNewLocation(update),
-                            answers:[
-                                {name:"in room", val:"in_room"},
-                                {name:"held by actor", val:"in_actor"},
-                                {name:`in/on ${object1.name.toUpperCase()}`, val:"in_used_item"},
+                        name: object2.name.toUpperCase(),
+                        disabled:removedObjects.includes(object2.name),
+                        questionColor: "orange",
+                        onSelectFunction: (status) => setSecondaryIsChangingLocation(status),
+                        secondaryQuestion: {
+                            type: "dropdown",
+                            question: object2.name,
+                            secondaryOnSelectFunction: (update) => setSecondaryNewLocation(update),
+                            answers: [
+                                { name: "in room", val: "in_room" },
+                                { name: "held by actor", val: "in_actor" },
+                                { name: `in/on ${object1.name.toUpperCase()}`, val: "in_used_item" },
                             ]
                         }
                     }
-                ]}
+                ].filter(({ disabled }) => !disabled)}
                 toolTipCopy={TipList[4].explanation}
                 hasToolTip={true}
-                isComplete={((!primaryIsChangingLocation && !secondaryIsChangingLocation) || (primaryIsChangingLocation && primaryNewLocation)|| (secondaryIsChangingLocation && secondaryNewLocation))}
+                isComplete={((!primaryIsChangingLocation && !secondaryIsChangingLocation) || (primaryIsChangingLocation && primaryNewLocation) || (secondaryIsChangingLocation && secondaryNewLocation))}
             />
-            {/* <AttributeSetter
-                objectName={object1.name}
-                objectColor="blue"
-                header={QuestionList.setter}
-                attributes={obj1Attr}
-                isConstraint={false}
-                setter={setPrimaryModifiedAttributes}
-                toolTipCopy={TipList[5].explanation}
-                hasToolTip={true}
-            />
-            <AttributeSetter
-                objectName={object2.name}
-                objectColor="orange"
-                header={QuestionList.setter}
-                attributes={obj2Attr}
-                isConstraint={false}
-                setter={setSecondaryModifiedAttributes}
-                toolTipCopy={TipList[5].explanation}
-                hasToolTip={true}
-            /> */}
-       </>
+        </>
     );
 }
 
-export default Questions ;
+export default Questions;

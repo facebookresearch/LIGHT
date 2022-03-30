@@ -15,5 +15,5 @@ mephisto:
     task_name: "ground-stage-1-task-1"
     task_title: "Determine the results of a single interaction."
     task_description: "In this task you will receive two objects with an interaction between them described in text format. You will answer questions related to the result of this description."
-    task_reward: 0.89
+    task_reward: 0.43
     task_tags: "fantasy,interaction,constraints,events"

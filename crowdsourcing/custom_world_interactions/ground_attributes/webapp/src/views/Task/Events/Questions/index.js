@@ -117,26 +117,24 @@ const Questions = ({
                 disabled={true}
             >
                 <div style={{display:"flex", flexDirection:"row", width:"100%"}}>
-                    <FormQuestion
+                {!removedObjects.includes(object1.name) && <FormQuestion
                         question={object1.name}
                         upperCaseQuestion={true}
                         questionColor="blue"
-                        placeholder ="Description"
+                        placeholder="Description"
                         formVal={primaryDescription}
-                        // formFunction={setPrimaryDescription}
                         hasToolTip={false}
                         disabled={true}
-                    />
-                    <FormQuestion
+                    />}
+                    {!removedObjects.includes(object2.name) && <FormQuestion
                         question={object2.name}
                         upperCaseQuestion={true}
                         questionColor="orange"
-                        placeholder ="Description"
+                        placeholder="Description"
                         formVal={secondaryDescription}
-                        // formFunction={setSecondaryDescription}
                         hasToolTip={false}
                         disabled={true}
-                    />
+                    />}
                 </div>
             </BooleanQuestion>
             <BooleanQuestion
@@ -175,45 +173,44 @@ const Questions = ({
             <QuestionOnSelect
                 question={QuestionList[5]}
                 secondaryQuestion={QuestionList.a5}
-                curSelected={[primaryIsChangingLocation ? object1.name.toUpperCase() : null, secondaryIsChangingLocation ? object2.name.toUpperCase() : null].filter(name => name !== null)}
                 answers={[
                     {
-                        name:object1.name.toUpperCase(),
-                        questionColor:"blue",
-                        onSelectFunction:(status)=>setPrimaryIsChangingLocation(status),
-                        selectedValue:primaryNewLocation,
-                        secondaryQuestion:{
-                            type:"dropdown",
-                            question:object1.name,
-                            secondaryOnSelectFunction: (update)=>setPrimaryNewLocation(update),
-                            answers:[
-                                {name:"in room", val:"in_room"},
-                                {name:"held by actor", val:"in_actor"},
-                                {name:`in/on ${object2.name.toUpperCase()}`, val:"in_used_target_item"},
+                        name: object1.name.toUpperCase(),
+                        disabled:removedObjects.includes(object1.name),
+                        questionColor: "blue",
+                        onSelectFunction: (status) => setPrimaryIsChangingLocation(status),
+                        secondaryQuestion: {
+                            type: "dropdown",
+                            question: object1.name,
+                            secondaryOnSelectFunction: (update) => setPrimaryNewLocation(update),
+                            answers: [
+                                { name: "in room", val: "in_room" },
+                                { name: "held by actor", val: "in_actor" },
+                                { name: `in/on ${object2.name.toUpperCase()}`, val: "in_used_target_item" },
                             ]
                         }
                     },
                     {
-                        name:object2.name.toUpperCase(),
-                        questionColor:"orange",
-                        onSelectFunction:(status)=>setSecondaryIsChangingLocation(status),
-                        selectedValue: secondaryNewLocation,
-                        secondaryQuestion:{
-                            type:"dropdown",
-                            question:object2.name,
-                            secondaryOnSelectFunction: (update)=>setSecondaryNewLocation(update),
-                            answers:[
-                                {name:"in room", val:"in_room"},
-                                {name:"held by actor", val:"in_actor"},
-                                {name:`in/on ${object1.name.toUpperCase()}`, val:"in_used_item"},
+                        name: object2.name.toUpperCase(),
+                        disabled:removedObjects.includes(object2.name),
+                        questionColor: "orange",
+                        onSelectFunction: (status) => setSecondaryIsChangingLocation(status),
+                        secondaryQuestion: {
+                            type: "dropdown",
+                            question: object2.name,
+                            secondaryOnSelectFunction: (update) => setSecondaryNewLocation(update),
+                            answers: [
+                                { name: "in room", val: "in_room" },
+                                { name: "held by actor", val: "in_actor" },
+                                { name: `in/on ${object1.name.toUpperCase()}`, val: "in_used_item" },
                             ]
                         }
                     }
-                ]}
+                ].filter(({ disabled }) => !disabled)}
                 toolTipCopy={TipList[4].explanation}
                 hasToolTip={true}
-                isComplete={true}
                 disabled={true}
+                isComplete={true}
             />
              {removedObjects.includes(object1.name) && <AttributeSetter
                 objectName={object1.name}

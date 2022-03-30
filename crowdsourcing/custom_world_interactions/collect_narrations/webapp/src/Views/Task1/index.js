@@ -13,6 +13,7 @@ import DescriptionForm from "./DescriptionForm";
 
 const Task1 = ({
   actionDescription,
+  rawAction,
   taskData,
   onSubmit,
   isOnboarding,
@@ -20,6 +21,7 @@ const Task1 = ({
   setPrimaryObject,
   setSecondaryObject,
   setActionDescription,
+  setRawAction,
   setOtherActive,
   payload,
   active
@@ -121,10 +123,24 @@ console.log("TASK DATA:  ", taskData)
           <div/>
         }
         <DescriptionForm
+          formVal={rawAction}
+          formFunction={setRawAction}
+          primaryObject={primaryObject}
+          secondaryObject={secondaryObject}
+          name={"Action Phrase"}
+          placeholder={"In simple terms state the action between the two objects, e.g. swing axe at tree"}
+          taskTemplate={"The action phrase should involve you using {primaryText} with {secondaryText}:"}
+          tips={false}
+        />
+        <DescriptionForm
           formVal={actionDescription}
           formFunction={setActionDescription}
           primaryObject={primaryObject}
           secondaryObject={secondaryObject}
+          name={"Description"}
+          placeholder={"Describe the interaction between these two objects (Remember to commit to the medieval fantasy setting) - Start with 'You...'"}
+          taskTemplate={"Your action should describe you using {primaryText} with {secondaryText}:"}
+          tips={true}
         />
         {
           active

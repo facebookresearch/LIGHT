@@ -1,34 +1,34 @@
-import React, {useEffect, useRef} from "react";
+import React, { useEffect, useRef } from "react";
 
 import TipsCopy from "./TipsCopy"
 
-const DescriptionForm = ({formVal, formFunction, primaryObject, secondaryObject})=>{
-    const changeHandler = e=>{
+const DescriptionForm = ({ formVal, formFunction, primaryObject, secondaryObject, name, placeholder, taskTemplate, tips }) => {
+    const changeHandler = e => {
         e.preventDefault()
         formFunction(e.target.value)
-
     }
     let primaryText = primaryObject ? primaryObject : "(primary)";
     let secondaryText = secondaryObject ? secondaryObject : "(secondary)";
-    return(
+    let taskText = taskTemplate.replace("{primaryText}", primaryText).replace("{secondaryText}", secondaryText);
+    return (
         <div className="form-container" >
             <h1 className="form-header">
-                Description
+                {name}
             </h1>
-            <div className="tip-container">
-            {
-                TipsCopy ?
-                TipsCopy.map((tip, index) => (
-                <p className="form-tip" key={index}>
-                    <span style={{fontWeight:"bold"}} >* </span>{tip}
-                </p>
-                ))
-                :
-                null
-            }
-            </div>
+            {tips && <div className="tip-container">
+                {
+                    TipsCopy ?
+                        TipsCopy.map((tip, index) => (
+                            <p className="form-tip" key={index}>
+                                <span style={{ fontWeight: "bold" }} >* </span>{tip}
+                            </p>
+                        ))
+                        :
+                        null
+                }
+            </div>}
             <div>
-                <b>Your action should describe you using {primaryText} with {secondaryText}:</b>
+                <b>{taskText}</b>
             </div>
             <textarea
                 className="description-form"
@@ -36,7 +36,7 @@ const DescriptionForm = ({formVal, formFunction, primaryObject, secondaryObject}
                 value={formVal}
                 rows="7"
                 type="text"
-                placeholder="Describe the interaction between these two objects (Remember to commit to the medieval fantasy setting) - Start with 'You...'"
+                placeholder={placeholder}
             />
         </div>
     )

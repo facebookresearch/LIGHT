@@ -41,6 +41,7 @@ db = LocalMephistoDB()
 mephisto_data_browser = MephistoDataBrowser(db=db)
 
 defaults = [
+    "_self_",
     {"mephisto/blueprint": BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
