@@ -28,7 +28,7 @@ const DescriptionForm = ({formVal, formFunction, primaryObject, secondaryObject}
             }
             </div>
             <div>
-                <b>Your interaction is "Use {primaryText} with {secondaryText}":</b>
+                <b>Your action should describe you using {primaryText} with {secondaryText}:</b>
             </div>
             <textarea
                 className="description-form"

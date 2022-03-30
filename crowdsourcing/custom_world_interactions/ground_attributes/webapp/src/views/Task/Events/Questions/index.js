@@ -215,7 +215,7 @@ const Questions = ({
                 isComplete={true}
                 disabled={true}
             />
-            <AttributeSetter
+             {removedObjects.includes(object1.name) && <AttributeSetter
                 objectName={object1.name}
                 objectColor="blue"
                 header={QuestionList.setter}
@@ -224,8 +224,8 @@ const Questions = ({
                 setter={setPrimaryModifiedAttributes}
                 toolTipCopy={TipList[5].explanation}
                 hasToolTip={true}
-            />
-            <AttributeSetter
+            />}
+            {removedObjects.includes(object2.name) && <AttributeSetter
                 objectName={object2.name}
                 objectColor="orange"
                 header={QuestionList.setter}
@@ -234,8 +234,8 @@ const Questions = ({
                 setter={setSecondaryModifiedAttributes}
                 toolTipCopy={TipList[5].explanation}
                 hasToolTip={true}
-            />
-            {isCreatingEntity ? <AttributeSetter
+            />}
+            {isCreatingEntity && <AttributeSetter
                 objectName={createdEntity.name}
                 objectColor="green"
                 header={QuestionList.setter}
@@ -244,7 +244,7 @@ const Questions = ({
                 setter={setCreatedModifiedAttributes}
                 toolTipCopy={TipList[5].explanation}
                 hasToolTip={true}
-            /> : <div />}
+            />}
        </>
     );
 }
