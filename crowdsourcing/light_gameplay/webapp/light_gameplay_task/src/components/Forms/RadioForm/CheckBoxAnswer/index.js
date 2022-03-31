@@ -1,5 +1,5 @@
 /* REACT */
-import react, {useState} from "react";
+import react, {useState, useEffect} from "react";
 /* STYLES */
 import "./styles.css";
 /* BOOTSTRAP COMPONENTS */
@@ -9,18 +9,29 @@ import ChatInputOption from "../../../ChatInputOption";
 
 const CheckBoxAnswer = ({
     answer,
-    answerUpdateHandler
+    answerUpdateHandler,
+    currentlySelectedAnswers
 })=>{
-    //LOCAL STATE
-    const [selectedAnswer, setSelectedAnswer] = useState(false);
-
+    /*---------------LOCAL STATE----------------*/
+    const [isSelected, setIsSelected] = useState([])
+    /*---------------HANDLERS----------------*/
     const SelectionHandler = e => {
-        if(selectedAnswer){
-            setSelectedAnswer(false);
-        }else {
-        setSelectedAnswer(true);
-        }
+        console.log("CLICKED ANSWER DATA:  ", answer)
+        answerUpdateHandler(answer)
     }
+    /*---------------LIFECYCLE----------------*/
+
+    useEffect(() => {
+        if(currentlySelectedAnswers){
+            currentlySelectedAnswers.map(selectedAnswer =>{
+                if(selectedAnswer.id === answer.id){
+                    setIsSelected(true);
+                }else{
+                    setIsSelected(false);
+                }
+            })
+        }
+    }, [currentlySelectedAnswers])
 
     return(
         <div
@@ -31,7 +42,7 @@ const CheckBoxAnswer = ({
                 inline
                 type={'checkbox'}
                 onChange={SelectionHandler}
-                checked={selectedAnswer}
+                checked={isSelected}
                 />
             </div>
             <div className="answer-chatinput_container">

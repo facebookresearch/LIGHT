@@ -10,41 +10,51 @@ import CheckBoxAnswer from "./CheckBoxAnswer"
 
 const RadioForm = ({
     answerData,
-
+    answerCollectionHandler,
+    currentlySelectedAnswers
 })=>{
-    /*---------------UTIL----------------*/
-    const ANSWERCOUNT = 4
-    const getRandomNumber= (max)=> {
-        return Math.floor(Math.random() * max);
-    }
     /*---------------LOCAL STATE----------------*/
-      const [answerBank, setAnswerBank] = useState([]);
+      const [selectedAnswers, setSelectedAnswers] = useState([])
     /*---------------LIFECYCLE----------------*/
+
     useEffect(() => {
-        let answers= answerData
-        let updatedAnswerBank =[]
-        for(let i=0; i<ANSWERCOUNT; i++){
-            let remainingAnswersCount = answers.length;
-            let newSelectedAnswerIndex = getRandomNumber(remainingAnswersCount);
-            updatedAnswerBank.push(answers[newSelectedAnswerIndex]);
-            answers = answers.filter((answer, index)=> (index!==newSelectedAnswerIndex));
-            console.log("next set of answers", answers)
+        if(currentlySelectedAnswers){
+            setSelectedAnswers(currentlySelectedAnswers)
         }
-        console.log("UPDATED ANSWERS BANK", updatedAnswerBank);
-        setAnswerBank(updatedAnswerBank);
-    }, [answerData])
+    }, [currentlySelectedAnswers])
+    /*---------------HANDLERS----------------*/
+    const answerUpdateHandler = (answer)=>{
+        let updatedAnswers = selectedAnswers;
+        let isNew = false;
+        updatedAnswers.map(currentAnswer => {
+            if(answer.id !== currentAnswer.id ){
+                return currentAnswer;
+            }else {
+                isNew = true;
+            }
+        })
+        if(isNew){
+            console.log("IS NEW ANSWER")
+            updatedAnswers = [...updatedAnswers, answer];
+        }
+        answerCollectionHandler(updatedAnswers)
+    }
     return (
     <Form className="radioform-container">
         <div className="question-container">
             {
                 <div className="answers-container">
                     {
-                        answerBank.map((answer, index)=>(
-                            <CheckBoxAnswer
-                                key={index}
-                                answer={answer}
-                            />
-                        ))
+                        answerData.map((answer, index)=>{
+                            return (
+                                <CheckBoxAnswer
+                                    key={index}
+                                    answer={answer}
+                                    answerUpdateHandler={answerUpdateHandler}
+                                    currentlySelectedAnswers={selectedAnswers}
+                                />
+                            )
+                        })
                     }
                 </div>
             }

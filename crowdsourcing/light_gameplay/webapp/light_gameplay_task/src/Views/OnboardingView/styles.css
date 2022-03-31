@@ -7,6 +7,13 @@
     justify-content: center;
     align-items: center;
     width: 100%;
+    flex-direction: column;
+}
+
+.onboarding-info_container{
+    display: flex;
+    flex-direction: row;
+    width: 80%;
 }
 
 .onboarding-question {
@@ -26,7 +33,7 @@
     width: 20%;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 30px 0 30px 0;
 }
 
 .onboarding-button {
