@@ -9,34 +9,31 @@ import Form from 'react-bootstrap/form';
 import CheckBoxAnswer from "./CheckBoxAnswer"
 
 const RadioForm = ({
-    answerData,
+    selectedQuestion,
     answerCollectionHandler,
-    currentlySelectedAnswers
 })=>{
     /*---------------LOCAL STATE----------------*/
-      const [selectedAnswers, setSelectedAnswers] = useState([])
+    const [possibleAnswers, setPossibleAnswers] = useState([]);
+    const [selectedAnswers, setSelectedAnswers] = useState([]);
     /*---------------LIFECYCLE----------------*/
 
     useEffect(() => {
-        if(currentlySelectedAnswers){
-            setSelectedAnswers(currentlySelectedAnswers)
+        console.log("RADIO FORM SELECTED QUESTION: ", selectedQuestion)
+        setPossibleAnswers(selectedQuestion.answers)
+        if(selectedQuestion.selectedAnswers){
+            setSelectedAnswers(selectedQuestion.selectedAnswers)
         }
-    }, [currentlySelectedAnswers])
+    }, [selectedQuestion])
     /*---------------HANDLERS----------------*/
     const answerUpdateHandler = (answer)=>{
-        let updatedAnswers = selectedAnswers;
-        let isNew = false;
-        updatedAnswers.map(currentAnswer => {
-            if(answer.id !== currentAnswer.id ){
-                return currentAnswer;
-            }else {
-                isNew = true;
-            }
-        })
-        if(isNew){
-            console.log("IS NEW ANSWER")
+        let updatedAnswers = [...selectedAnswers];
+        let sameAnswersFound = updatedAnswers.filter(ans => answer.id===ans.id);
+        if(sameAnswersFound.length){
+            updatedAnswers = updatedAnswers.filter(ans => answer.id!==ans.id);
+        } else {
             updatedAnswers = [...updatedAnswers, answer];
         }
+        console.log("UPDATED SELECTED ANSWERS: ", updatedAnswers)
         answerCollectionHandler(updatedAnswers)
     }
     return (
@@ -45,13 +42,14 @@ const RadioForm = ({
             {
                 <div className="answers-container">
                     {
-                        answerData.map((answer, index)=>{
+                        possibleAnswers.map((answer, index)=>{
                             return (
                                 <CheckBoxAnswer
                                     key={index}
+                                    selectedQuestion={selectedQuestion}
                                     answer={answer}
                                     answerUpdateHandler={answerUpdateHandler}
-                                    currentlySelectedAnswers={selectedAnswers}
+                                    selectedAnswers={selectedAnswers}
                                 />
                             )
                         })

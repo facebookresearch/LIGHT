@@ -8,30 +8,36 @@ import Form from 'react-bootstrap/form';
 import ChatInputOption from "../../../ChatInputOption";
 
 const CheckBoxAnswer = ({
+    selectedQuestion,
     answer,
     answerUpdateHandler,
-    currentlySelectedAnswers
+    selectedAnswers
 })=>{
     /*---------------LOCAL STATE----------------*/
-    const [isSelected, setIsSelected] = useState([])
+    const [isSelected, setIsSelected] = useState(false)
     /*---------------HANDLERS----------------*/
     const SelectionHandler = e => {
         console.log("CLICKED ANSWER DATA:  ", answer)
         answerUpdateHandler(answer)
+        if(isSelected){
+            setIsSelected(false)
+        }else {
+            setIsSelected(true)
+        }
     }
     /*---------------LIFECYCLE----------------*/
 
     useEffect(() => {
-        if(currentlySelectedAnswers){
-            currentlySelectedAnswers.map(selectedAnswer =>{
-                if(selectedAnswer.id === answer.id){
+        console.log("CURRENTLY SELECTED ANSWERS:  ", selectedAnswers)
+        if(selectedAnswers.length){
+            let answerSelected = selectedAnswers.filter(ans => answer.id===ans.id);
+                if(answerSelected.length){
                     setIsSelected(true);
                 }else{
                     setIsSelected(false);
                 }
-            })
         }
-    }, [currentlySelectedAnswers])
+    }, [selectedAnswers, selectedQuestion])
 
     return(
         <div

@@ -1,5 +1,5 @@
 /* REACT */
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useReducer} from "react";
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */
@@ -21,14 +21,20 @@ const OnboardingView = ()=>{
         return Math.floor(Math.random() * max);
     }
 
-  /*---------------LOCAL STATE----------------*/
+/*---------------LOCAL STATE----------------*/
     const [questionBank, setQuestionBank] = useState([]);
     const [currentQuestionPosition, setCurrentQuestionPosition] = useState(0);
     const [selectedQuestion, setSelectedQuestion] = useState(null);
-    const [answeredQuestions, setAnsweredQuestions] = useState([]);
+    const [answeredQuestions, setAnsweredQuestions] = useState(0);
     const [showModal, setShowModal] = useState(false);
-
-  /*---------------HANDLERS----------------*/
+/*---------------REDUCERS----------------*/
+// [answers, updateAnswer] = useReducer(
+//     (oldAnswers, newAnswer) => {
+//         return oldAnswers.map((answer, idx) => (idx == currentQuestionPosition) ? newAnswer : answer);
+//     },
+//     getEmptyAnswers(),
+// )
+/*---------------HANDLERS----------------*/
     const handleCloseModal = () => setShowModal(false);
     const handleShowModal = () => setShowModal(true);
     const QuestionChangeHandler = (direction)=>{
@@ -43,12 +49,22 @@ const OnboardingView = ()=>{
         setSelectedQuestion(questionBank[updatedQuestionPosition])
     }
 
-    const AnswerCollectionHandler = (answer)=>{
+    const AnswerCollectionHandler = (answers)=>{
         let updatedAnsweredQuestion = selectedQuestion;
-        updatedAnsweredQuestion.selectedAnswers = answer;
-        let updatedQuestions = questionBank.filter(question => (question.id!==updatedAnsweredQuestion.id));
+        console.log("Question being answered: ", updatedAnsweredQuestion);
+        console.log("Answers: ", answers)
+        updatedAnsweredQuestion.selectedAnswers = answers;
+        console.log("COLLECTED ANSWER: ", updatedAnsweredQuestion)
+        let updatedQuestions = questionBank.map(question => {
+            if(question.id!==updatedAnsweredQuestion.id){
+                return question
+            }else{
+                return updatedAnsweredQuestion
+            }
+        });
         let updatedQuestionBank = [...updatedQuestions, updatedAnsweredQuestion];
-        console.log("ANSWERED QUESTIONS: ", updatedAnsweredQuestion)
+        console.log("ANSWERED QUESTION: ", updatedAnsweredQuestion)
+        console.log("UPDATED QUESTION BANK: ", updatedAnsweredQuestion)
         setQuestionBank(updatedQuestionBank)
     }
 
@@ -57,6 +73,18 @@ const OnboardingView = ()=>{
     }
 
   /*---------------LIFECYCLE----------------*/
+    useEffect(() => {
+        let updatedAnsweredQuestionCount = questionBank.filter(question=>{
+            let {selectedAnswers} = question;
+            let isAnswered = selectedAnswers ? selectedAnswers : [];
+            return isAnswered.length
+        })
+        setAnsweredQuestions(updatedAnsweredQuestionCount.length)
+
+        let updatedCurrentQuestion = questionBank[currentQuestionPosition];
+        setSelectedQuestion(updatedCurrentQuestion)
+    }, [questionBank])
+
     useEffect(() => {
         let questions= TaskCopy
         let updatedQuestionBank =[]
@@ -91,7 +119,7 @@ const OnboardingView = ()=>{
                     <span className="task-label">GAMEPLAY TASK ONBOARDING</span>
                 </Navbar.Text>
                 <Navbar.Text>
-                    <span>{` QUESTIONS ANSWERED: ${answeredQuestions.length}/${questionBank.length}`}</span>
+                    <span>{` QUESTIONS ANSWERED: ${answeredQuestions}/${questionBank.length}`}</span>
                 </Navbar.Text>
             </div>
         </Navbar>
@@ -142,9 +170,8 @@ const OnboardingView = ()=>{
                         questionData={selectedQuestion.question}
                     >
                         <RadioForm
-                            answerData={selectedQuestion.answers}
+                            selectedQuestion={selectedQuestion}
                             answerCollectionHandler = {AnswerCollectionHandler}
-                            currentlySelectedAnswers = {selectedQuestion.selectedAnswers}
                         />
                     </ChatQuestionDisplay>
                     <div className="onboarding-buttons_container">
