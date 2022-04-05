@@ -46,7 +46,6 @@ const OnboardingView = ()=>{
             updatedQuestionPosition = currentQuestionPosition + 1;
         }
         setCurrentQuestionPosition(updatedQuestionPosition);
-        setSelectedQuestion(questionBank[updatedQuestionPosition])
     }
 
     const AnswerCollectionHandler = (answers)=>{
@@ -57,12 +56,15 @@ const OnboardingView = ()=>{
         updatedAnsweredQuestion.selectedAnswers = answers;
         console.log("COLLECTED ANSWER: ", updatedAnsweredQuestion)
         let updatedQuestions = questionBank.map(question => {
-            if(question.id!==updatedAnsweredQuestion.id){
+            if(question.id !== updatedAnsweredQuestion.id){
+                console.log("REGULAR QUESTION COLLECTED:  ", question)
                 return question
             }else{
+                console.log("REPLACED QUESTION COLLECTED:  ", updatedAnsweredQuestion)
                 return updatedAnsweredQuestion
             }
         });
+        console.log("updated  QUESTION bank: ", updatedQuestions)
         let updatedQuestionBank = updatedQuestions;
         console.log("ANSWERED QUESTION: ", updatedAnsweredQuestion)
         console.log("UPDATED QUESTION BANK: ", updatedAnsweredQuestion)
@@ -89,7 +91,7 @@ const OnboardingView = ()=>{
     useEffect(() => {
         let updatedCurrentQuestion = questionBank[currentQuestionPosition];
         setSelectedQuestion(updatedCurrentQuestion)
-    }, [selectedQuestion])
+    }, [currentQuestionPosition])
 
     useEffect(() => {
         let updatedAnsweredQuestionCount = questionBank.filter(question=>{
@@ -185,6 +187,7 @@ const OnboardingView = ()=>{
                         questionData={selectedQuestion.question}
                     >
                         <RadioForm
+                            questionBank={questionBank}
                             selectedQuestion={selectedQuestion}
                             answerCollectionHandler = {AnswerCollectionHandler}
                         />
@@ -216,6 +219,7 @@ const OnboardingView = ()=>{
                                 className="onboarding-button"
                                 variant ="success"
                                 onClick={handleShowModal}
+                                disabled={((answeredQuestions/questionBank.length)===1) ? false : true }
                             >
                             Submit
                         </Button>

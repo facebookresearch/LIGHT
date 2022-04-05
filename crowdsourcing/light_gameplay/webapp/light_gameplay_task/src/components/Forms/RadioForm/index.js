@@ -14,19 +14,27 @@ const RadioForm = ({
     answerCollectionHandler,
 })=>{
     /*---------------LOCAL STATE----------------*/
+    const [formQuestion, setFormQuestion]= useState(null)
     const [possibleAnswers, setPossibleAnswers] = useState([]);
     const [selectedAnswers, setSelectedAnswers] = useState([]);
     /*---------------LIFECYCLE----------------*/
+    useEffect(() => {
+        setFormQuestion(selectedQuestion)
+        console.log("QUESTION IN FORM", selectedQuestion)
+    }, [selectedQuestion, questionBank])
 
     useEffect(() => {
-        console.log("RADIO FORM SELECTED QUESTION: ", selectedQuestion)
         setPossibleAnswers(selectedQuestion.answers)
-        if(selectedQuestion.selectedAnswers){
-            setSelectedAnswers(selectedQuestion.selectedAnswers)
-        }else {
+    }, [formQuestion])
+
+    useEffect(() => {
+        console.log("RADIO FORM SELECTED QUESTION CHANGED!", selectedQuestion)
+        if(selectedQuestion.selectedAnswers===undefined){
             setSelectedAnswers([])
+        }else {
+            setSelectedAnswers(selectedQuestion.selectedAnswers)
         }
-    }, [selectedQuestion, questionBank])
+    }, [selectedQuestion, questionBank, possibleAnswers])
     /*---------------HANDLERS----------------*/
     const answerUpdateHandler = (answer)=>{
         let updatedAnswers = [...selectedAnswers];
@@ -41,6 +49,8 @@ const RadioForm = ({
     }
     return (
     <Form className="radioform-container">
+        {formQuestion
+        ?
         <div className="question-container">
             {
                 <div className="answers-container">
@@ -49,10 +59,9 @@ const RadioForm = ({
                             return (
                                 <CheckBoxAnswer
                                     key={index}
-                                    selectedQuestion={selectedQuestion}
+                                    selectedQuestion={formQuestion}
                                     answer={answer}
                                     answerUpdateHandler={answerUpdateHandler}
-                                    selectedAnswers={selectedAnswers}
                                 />
                             )
                         })
@@ -60,6 +69,8 @@ const RadioForm = ({
                 </div>
             }
         </div>
+        :null
+        }
     </Form>
     )
 }
