@@ -9,6 +9,7 @@ import Form from 'react-bootstrap/form';
 import CheckBoxAnswer from "./CheckBoxAnswer"
 
 const RadioForm = ({
+    questionBank,
     selectedQuestion,
     answerCollectionHandler,
 })=>{
@@ -22,8 +23,10 @@ const RadioForm = ({
         setPossibleAnswers(selectedQuestion.answers)
         if(selectedQuestion.selectedAnswers){
             setSelectedAnswers(selectedQuestion.selectedAnswers)
+        }else {
+            setSelectedAnswers([])
         }
-    }, [selectedQuestion])
+    }, [selectedQuestion, questionBank])
     /*---------------HANDLERS----------------*/
     const answerUpdateHandler = (answer)=>{
         let updatedAnswers = [...selectedAnswers];

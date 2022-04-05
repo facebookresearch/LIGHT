@@ -50,6 +50,7 @@ const OnboardingView = ()=>{
     }
 
     const AnswerCollectionHandler = (answers)=>{
+        console.log("ANSWER COLLECTION HANDLER PRE UPDATE:  ", answers)
         let updatedAnsweredQuestion = selectedQuestion;
         console.log("Question being answered: ", updatedAnsweredQuestion);
         console.log("Answers: ", answers)
@@ -62,7 +63,7 @@ const OnboardingView = ()=>{
                 return updatedAnsweredQuestion
             }
         });
-        let updatedQuestionBank = [...updatedQuestions, updatedAnsweredQuestion];
+        let updatedQuestionBank = updatedQuestions;
         console.log("ANSWERED QUESTION: ", updatedAnsweredQuestion)
         console.log("UPDATED QUESTION BANK: ", updatedAnsweredQuestion)
         setQuestionBank(updatedQuestionBank)
@@ -74,16 +75,30 @@ const OnboardingView = ()=>{
 
   /*---------------LIFECYCLE----------------*/
     useEffect(() => {
+        console.log("Question Bank: ", questionBank)
+        let updatedAnsweredQuestionCount = questionBank.filter(question=>{
+            let {selectedAnswers} = question;
+            let isAnswered = selectedAnswers ? selectedAnswers : [];
+            return (isAnswered.length>0);
+        })
+        setAnsweredQuestions(updatedAnsweredQuestionCount.length)
+        let updatedCurrentQuestion = questionBank[currentQuestionPosition];
+        setSelectedQuestion(updatedCurrentQuestion)
+    }, [questionBank])
+
+    useEffect(() => {
+        let updatedCurrentQuestion = questionBank[currentQuestionPosition];
+        setSelectedQuestion(updatedCurrentQuestion)
+    }, [selectedQuestion])
+
+    useEffect(() => {
         let updatedAnsweredQuestionCount = questionBank.filter(question=>{
             let {selectedAnswers} = question;
             let isAnswered = selectedAnswers ? selectedAnswers : [];
             return isAnswered.length
         })
         setAnsweredQuestions(updatedAnsweredQuestionCount.length)
-
-        let updatedCurrentQuestion = questionBank[currentQuestionPosition];
-        setSelectedQuestion(updatedCurrentQuestion)
-    }, [questionBank])
+    }, [selectedQuestion])
 
     useEffect(() => {
         let questions= TaskCopy
