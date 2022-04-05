@@ -10,15 +10,13 @@ import ChatInputOption from "../../../ChatInputOption";
 const CheckBoxAnswer = ({
     selectedQuestion,
     answer,
-    answerUpdateHandler,
-    selectedAnswers
+    answerUpdateHandler
 })=>{
     /*---------------LOCAL STATE----------------*/
     const [currentlySelectedAnswers, setCurrentlySelectedAnswers] = useState([])
     const [isSelected, setIsSelected] = useState(false)
     /*---------------HANDLERS----------------*/
     const SelectionHandler = e => {
-        console.log("CLICKED ANSWER DATA:  ", answer)
         answerUpdateHandler(answer)
         if(isSelected){
             setIsSelected(false)
@@ -29,18 +27,14 @@ const CheckBoxAnswer = ({
     /*---------------LIFECYCLE----------------*/
 
     useEffect(() => {
-        console.log("CHECKBOX SELECTED QUESTION CHANGED!")
         if(selectedQuestion.selectedAnswers!== undefined){
-            console.log("CHECKBOX ANSWER IN ARRAY:  ", selectedQuestion.selectedAnswers)
             setCurrentlySelectedAnswers(selectedQuestion.selectedAnswers);
         }else {
-            console.log("CHECKBOX NO ANSWERS IN ARRAY:  ", selectedQuestion.selectedAnswers, isSelected)
             setCurrentlySelectedAnswers([]);
         }
     }, [selectedQuestion])
 
     useEffect(() => {
-        console.log("CURRENTLY SELECTED ANSWERS:  ", currentlySelectedAnswers)
             let answerSelected = currentlySelectedAnswers.filter(ans => answer.id===ans.id);
                 if(answerSelected.length){
                     setIsSelected(true);

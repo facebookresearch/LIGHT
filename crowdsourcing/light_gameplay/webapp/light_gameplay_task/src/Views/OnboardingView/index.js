@@ -15,8 +15,8 @@ import TaskCopy from "../../TaskCopy";
 
 const OnboardingView = ()=>{
   /*---------------UTIL----------------*/
-  const QUESTIONCOUNT = 3
-  const ANSWERCOUNT = 4
+    const QUESTIONCOUNT = 3
+    const ANSWERCOUNT = 4
     const getRandomNumber= (max)=> {
         return Math.floor(Math.random() * max);
     }
@@ -33,7 +33,7 @@ const OnboardingView = ()=>{
 //         return oldAnswers.map((answer, idx) => (idx == currentQuestionPosition) ? newAnswer : answer);
 //     },
 //     getEmptyAnswers(),
-// )
+// ) # NOTE: Discuss with Jack
 /*---------------HANDLERS----------------*/
     const handleCloseModal = () => setShowModal(false);
     const handleShowModal = () => setShowModal(true);
@@ -49,25 +49,16 @@ const OnboardingView = ()=>{
     }
 
     const AnswerCollectionHandler = (answers)=>{
-        console.log("ANSWER COLLECTION HANDLER PRE UPDATE:  ", answers)
         let updatedAnsweredQuestion = selectedQuestion;
-        console.log("Question being answered: ", updatedAnsweredQuestion);
-        console.log("Answers: ", answers)
         updatedAnsweredQuestion.selectedAnswers = answers;
-        console.log("COLLECTED ANSWER: ", updatedAnsweredQuestion)
         let updatedQuestions = questionBank.map(question => {
             if(question.id !== updatedAnsweredQuestion.id){
-                console.log("REGULAR QUESTION COLLECTED:  ", question)
                 return question
             }else{
-                console.log("REPLACED QUESTION COLLECTED:  ", updatedAnsweredQuestion)
                 return updatedAnsweredQuestion
             }
         });
-        console.log("updated  QUESTION bank: ", updatedQuestions)
         let updatedQuestionBank = updatedQuestions;
-        console.log("ANSWERED QUESTION: ", updatedAnsweredQuestion)
-        console.log("UPDATED QUESTION BANK: ", updatedAnsweredQuestion)
         setQuestionBank(updatedQuestionBank)
     }
 
@@ -77,7 +68,6 @@ const OnboardingView = ()=>{
 
   /*---------------LIFECYCLE----------------*/
     useEffect(() => {
-        console.log("Question Bank: ", questionBank)
         let updatedAnsweredQuestionCount = questionBank.filter(question=>{
             let {selectedAnswers} = question;
             let isAnswered = selectedAnswers ? selectedAnswers : [];
@@ -120,9 +110,7 @@ const OnboardingView = ()=>{
             formattedQuestion.answers = formattedAnswers;
             updatedQuestionBank.push(questions[newSelectedQuestionIndex]);
             questions = questions.filter((question, index)=> (index!==newSelectedQuestionIndex));
-            console.log("next set of questions", questions)
         }
-        console.log("UPDATED QUESTION BANK", updatedQuestionBank);
         setQuestionBank(updatedQuestionBank);
         let updatedCurrentQuestion = updatedQuestionBank[currentQuestionPosition];
         setSelectedQuestion(updatedCurrentQuestion)

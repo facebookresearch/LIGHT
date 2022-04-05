@@ -1,6 +1,5 @@
 /* REACT */
 import react, {useState, useEffect} from "react";
-
 /* STYLES */
 import "./styles.css";
 /* BOOTSTRAP COMPONENTS */
@@ -20,7 +19,6 @@ const RadioForm = ({
     /*---------------LIFECYCLE----------------*/
     useEffect(() => {
         setFormQuestion(selectedQuestion)
-        console.log("QUESTION IN FORM", selectedQuestion)
     }, [selectedQuestion, questionBank])
 
     useEffect(() => {
@@ -28,7 +26,6 @@ const RadioForm = ({
     }, [formQuestion])
 
     useEffect(() => {
-        console.log("RADIO FORM SELECTED QUESTION CHANGED!", selectedQuestion)
         if(selectedQuestion.selectedAnswers===undefined){
             setSelectedAnswers([])
         }else {
@@ -44,7 +41,6 @@ const RadioForm = ({
         } else {
             updatedAnswers = [...updatedAnswers, answer];
         }
-        console.log("UPDATED SELECTED ANSWERS: ", updatedAnswers)
         answerCollectionHandler(updatedAnswers)
     }
     return (
