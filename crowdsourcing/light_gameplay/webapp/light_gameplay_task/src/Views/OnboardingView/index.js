@@ -15,17 +15,18 @@ import TaskCopy from "../../TaskCopy";
 
 const OnboardingView = ()=>{
   /*---------------UTIL----------------*/
-    const QUESTIONCOUNT = 3
-    const ANSWERCOUNT = 4
+    const QUESTIONCOUNT = 3 //Questions being pulled from Task Copy
+    const ANSWERCOUNT = 4 // Answers being pulled from Question
+    //getRandomNumber - generates integer between 0 and argument given.
     const getRandomNumber= (max)=> {
         return Math.floor(Math.random() * max);
     }
 
 /*---------------LOCAL STATE----------------*/
-    const [questionBank, setQuestionBank] = useState([]);
-    const [currentQuestionPosition, setCurrentQuestionPosition] = useState(0);
-    const [selectedQuestion, setSelectedQuestion] = useState(null);
-    const [answeredQuestions, setAnsweredQuestions] = useState(0);
+    const [questionBank, setQuestionBank] = useState([]);//Questions being used in session
+    const [currentQuestionPosition, setCurrentQuestionPosition] = useState(0);// Sets Selected question using this value as the index in the questiion bank array
+    const [selectedQuestion, setSelectedQuestion] = useState(null); //Question Data displayed to user
+    const [answeredQuestions, setAnsweredQuestions] = useState(0); // Questions and answer that
     const [showModal, setShowModal] = useState(false);
 /*---------------REDUCERS----------------*/
 // [answers, updateAnswer] = useReducer(
@@ -47,7 +48,7 @@ const OnboardingView = ()=>{
         }
         setCurrentQuestionPosition(updatedQuestionPosition);
     }
-
+    // AnswerCollectionHandler - updates questionBank object with selectedAnswers key
     const AnswerCollectionHandler = (answers)=>{
         let updatedAnsweredQuestion = selectedQuestion;
         updatedAnsweredQuestion.selectedAnswers = answers;
