@@ -41,6 +41,7 @@ const App = ({url, handleSubmit})=>{
 
   const SubmissionHandler = ()=>{
     console.log("SESSION DATA:  ", workerData)
+    handleSubmit(workerData)
     setShow(false)
   }
 
