@@ -2,6 +2,7 @@
 import React from "react";
 //VIEWS
 import Task from "./Views/Task"
+import OnboardingView from "./Views/OnboardingView"
 // Task context
 import {
   MephistoContext,
@@ -85,7 +86,7 @@ function LIGHTAppTaskFrame() {
     // an onboarding agent
 
     // At the moment, this task has no onboarding
-    return <h1>TODO Onboarding Task goes here!</h1>;
+    return <OnboardingView/>;
   }
   if (blockedReason !== null) {
     return <h1>{blockedExplanation}</h1>;
