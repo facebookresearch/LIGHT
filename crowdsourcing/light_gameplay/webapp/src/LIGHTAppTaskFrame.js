@@ -82,11 +82,9 @@ function LIGHTAppTaskFrame() {
   }, [initialTaskData, mephistoWorkerId, agentId])
 
   if (isOnboarding) {
-    // TODO You can use this as an opportunity to display anything you want for
-    // an onboarding agent
-
-    // At the moment, this task has no onboarding
-    return <OnboardingView/>;
+    return <OnboardingView
+            onBoardingSubmitFunction={handleSubmit}
+          />;
   }
   if (blockedReason !== null) {
     return <h1>{blockedExplanation}</h1>;

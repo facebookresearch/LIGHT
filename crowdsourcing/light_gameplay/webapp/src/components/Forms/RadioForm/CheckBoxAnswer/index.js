@@ -1,5 +1,5 @@
 /* REACT */
-import react, {useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 /* STYLES */
 import "./styles.css";
 /* BOOTSTRAP COMPONENTS */

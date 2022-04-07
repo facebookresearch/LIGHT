@@ -13,7 +13,9 @@ import Modal from 'react-bootstrap/Modal';
 /* COPY */
 import TaskCopy from "../../TaskCopy";
 
-const OnboardingView = ()=>{
+const OnboardingView = ({
+    onBoardingSubmitFunction
+})=>{
   /*---------------UTIL----------------*/
     const QUESTIONCOUNT = 3 //Questions being pulled from Task Copy
     const ANSWERCOUNT = 4 // Answers being pulled from Question
@@ -65,6 +67,7 @@ const OnboardingView = ()=>{
 
     const SubmissionHandler = ()=>{
        console.log("ANSWER SUBMISSION:  ", questionBank)
+       onBoardingSubmitFunction(questionBank)
     }
 
   /*---------------LIFECYCLE----------------*/

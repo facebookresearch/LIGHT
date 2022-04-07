@@ -12,7 +12,10 @@ import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 
 
-const App = ({url, handleSubmit})=>{
+const App = ({
+  url,
+  handleSubmit
+})=>{
   /* ------ REDUX STATE ------ */
   // VIEW STATE
   const LightMessageList = useAppSelector((state) => state.workerActivity.LightMessageList);
@@ -47,6 +50,7 @@ const App = ({url, handleSubmit})=>{
 
   /*---------------LIFECYCLE----------------*/
   useEffect(() => {
+    console.log("URL:  ", url)
     ClearPlayerMessages()
     const handler = event => {
       console.log("EVENT", event)
@@ -69,6 +73,10 @@ const App = ({url, handleSubmit})=>{
   }, [LightMessageList])
 
   return (
+  <>
+    {
+      url
+      ?
     <div className="task-container">
         <TaskToolBar
           activityCounter={activityCounter}
@@ -105,6 +113,9 @@ const App = ({url, handleSubmit})=>{
         </Modal.Body>
       </Modal>
     </div>
+    :null
+    }
+  </>
   );
 }
 
