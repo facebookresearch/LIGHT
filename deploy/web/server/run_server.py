@@ -47,6 +47,7 @@ def read_secrets():
     if not os.path.exists(loc):
         return {
             "cookie_secret": "0123456789",
+            "preauth_secret": "0123456789",
         }
     with open(loc, "r") as secret_file:
         for line in secret_file:
@@ -64,6 +65,7 @@ tornado_settings = {
     "compiled_template_cache": False,
     "debug": "/dbg/" in __file__,
     "login_url": "/login",
+    "preauth_secret": SECRETS["preauth_secret"],
     "template_path": get_path("static"),
 }
 

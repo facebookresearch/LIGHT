@@ -18,6 +18,7 @@ function uuidv4() {
 
 // MESSAGE REDUCER
 const reducer = (state, msg) => {
+  window.top.postMessage(JSON.stringify(msg), "*");
   if (
     msg.text &&
     msg.text.indexOf("You mumble something incomprehensible") >= 0
