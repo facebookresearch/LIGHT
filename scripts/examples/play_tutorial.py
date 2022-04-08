@@ -41,9 +41,10 @@ async def ainput(string: str) -> str:
 def init_world():
     world_builder = TutorialWorldBuilder(None, opt={"load_map": TUTORIAL_FILE})
     g, world = world_builder.get_graph()
-    # TODO provide these paths
+    # NOTE: I just took the act_model_path from elsewhere
     shared_resources = TutorialModelSoul.load_models(
-        dialog_model_path="", act_model_path=""
+        dialog_model_path="zoo:light_whoami/profile_expanded_attention_128/model",
+        act_model_path="/checkpoint/light/models/game2021/act_model/model"
     )
     # shared_resources = {}
     purgatory = world.purgatory

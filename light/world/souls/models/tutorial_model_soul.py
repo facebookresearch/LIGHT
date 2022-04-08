@@ -70,15 +70,13 @@ class TutorialModelSoul(OnEventSoul):
         Load up the dialog model for use with this class
         """
         # Reranker args
-        # TODO @Kurt replace with the new model?
         dialog_args = [
             "-m",
-            "internal:light_whoami/generative_rerank",
+            "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent",
             "--predictor-model-file",
-            # "/home/ubuntu/data/models/rerank/model",
-            "/checkpoint/kshuster/projects/continual_learning/light_whoami/whoami_sweep3b_Tue_Oct_13/943/model",
+            "zoo:light_whoami/rpa_reranker/model",
             "--inference",
-            "delayedbeam",
+            "beam",
             "-dt",
             "valid",
             "--beam-context-block-ngram",
@@ -97,11 +95,10 @@ class TutorialModelSoul(OnEventSoul):
         dialog_opt["override"] = {
             "inference": "beam",
             "beam_context_block_ngram": 3,
-            "beam_size": 2,
+            "beam_size": 10,
             "beam_min_length": 20,
+            "model": "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent"
         }
-        # dialog_opt['override']['inference'] = 'topk'
-        # dialog_opt['override']['topk'] = 40
         return create_agent(dialog_opt, requireModelExists=True)
 
     @classmethod
@@ -159,11 +156,11 @@ class TutorialModelSoul(OnEventSoul):
         """
         self._pending_observations = []
         self._last_action_time = time.time() + self._get_random_time_offset()
-        # self.npc_dialog_model = create_agent_from_shared(models["shared_dialog_model"])
-        # if models["shared_action_model"] is not None:
-        #     self.npc_act_model = create_agent_from_shared(models["shared_action_model"])
-        # else:
-        #     self.npc_act_model = None
+        self.npc_dialog_model = create_agent_from_shared(models["shared_dialog_model"])
+        if models["shared_action_model"] is not None:
+            self.npc_act_model = create_agent_from_shared(models["shared_action_model"])
+        else:
+            self.npc_act_model = None
         self.reset_interaction_history(self.target_node)
 
         self.num_dialogue_without_action = 0
