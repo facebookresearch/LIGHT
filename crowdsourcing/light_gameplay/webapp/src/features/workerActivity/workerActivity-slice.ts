@@ -32,8 +32,6 @@ const workerActivitySlice = createSlice({
     addMessage(state, action: PayloadAction<any>) {
       let newMessageList = [...state.LightMessageList, action.payload];
       let updatedCounter = newMessageList.length;
-      console.log("UPDATED MESSAGE LIST:  ", newMessageList)
-      console.log("NEW MESSAGE:  ", newMessageList)
       return { ...state, counter: updatedCounter, LightMessageList: newMessageList };
     },
     clearMessages(state, action: PayloadAction<any>) {
