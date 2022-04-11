@@ -50,17 +50,14 @@ const App = ({
   }
 
   const SubmissionHandler = ()=>{
-    console.log("SESSION DATA:  ", workerData)
     handleSubmit(workerData)
     setShow(false)
   }
 
   /*---------------LIFECYCLE----------------*/
   useEffect(() => {
-    console.log("URL:  ", url)
     ClearPlayerMessages()
     const handler = event => {
-      console.log("EVENT", event)
       let data;
       try {
         data = JSON.parse(event.data)
@@ -81,22 +78,17 @@ const App = ({
 
   useEffect(() => {
     let workerActivity = workerData.filter(msg => msg.is_self);
-    console.log("WORKER ACTIVITY:  ", workerActivity)
     let workerActivityCount = workerActivity.length;
     setActivityCounter(workerActivityCount)
-    console.log("WORKER ACTIVITY COUNT:  ", workerActivityCount)
     let workerSaidActivity = workerActivity.filter(msg=>{
       let {text}=msg;
       let isTell = text.indexOf('tell');
       let openingQuote = text.indexOf('"');
       let closingQuote = text[text.length-1]
-      console.log("OPENING QUOTE:  ", openingQuote, "CLOSING QUOTE:  ", closingQuote)
-      console.log("MSG TEXT:  ", text)
       return ((openingQuote>=0) || (isTell>=0 && closingQuote === '"') )
     })
     let updatedWorkerSayCount = workerSaidActivity.length;
     let updatedWorkerDoCount = workerActivityCount - updatedWorkerSayCount;
-    console.log("UPDATED WORKER SAY COUNT:  ", updatedWorkerSayCount, "UPDATED WORKER SAY COUNT:  ", updatedWorkerDoCount)
     setSayCounter(updatedWorkerSayCount);
     setDoCounter(updatedWorkerDoCount);
   }, [workerData])
