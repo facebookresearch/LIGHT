@@ -12,7 +12,8 @@ import Button from 'react-bootstrap/Button'
 
 
 const TaskToolBar = ({
-    activityCounter,
+    doCounter,
+    sayCounter,
     buttonFunction
 })=>{
 
@@ -24,7 +25,8 @@ const TaskToolBar = ({
                 </Navbar.Text>
                 <Navbar.Text>
                     <span className="tool-label" >ACTIVITY COUNT:</span>
-                        <span className="tool-text" >{activityCounter}</span>
+                        <span className="tool-text do" >{`DO:  ${doCounter}`}</span>
+                        <span className="tool-text say" >{`SAY:  ${sayCounter}`}</span>
                 </Navbar.Text>
                 <Button variant="success" onClick={buttonFunction}>Submit</Button>{' '}
             </div>

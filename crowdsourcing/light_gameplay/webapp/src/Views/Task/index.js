@@ -11,6 +11,10 @@ import TaskToolBar from "../../components/TaskToolBar"
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 
+//DO MINIMUM
+const MINIMUM_NUMBER_OF_DOS = 15;
+//SAY MINIMUM
+const MINIMUM_NUMBER_OF_SAYS = 15;
 
 const App = ({
   url,
@@ -19,9 +23,12 @@ const App = ({
   /* ------ REDUX STATE ------ */
   // VIEW STATE
   const LightMessageList = useAppSelector((state) => state.workerActivity.LightMessageList);
-  const activityCounter = useAppSelector((state) => state.workerActivity.counter);
   /*---------------LOCAL STATE----------------*/
+
   const [workerData, setWorkerData] = useState([]);
+  const [activityCounter, setActivityCounter] = useState(0);
+  const [sayCounter, setSayCounter] = useState(0);
+  const [doCounter, setDoCounter] = useState(0);
   const [show, setShow] = useState(false);
   /* ----REDUX ACTIONS---- */
   // REDUX DISPATCH FUNCTION
@@ -72,6 +79,28 @@ const App = ({
     setWorkerData(LightMessageList)
   }, [LightMessageList])
 
+  useEffect(() => {
+    let workerActivity = workerData.filter(msg => msg.is_self);
+    console.log("WORKER ACTIVITY:  ", workerActivity)
+    let workerActivityCount = workerActivity.length;
+    setActivityCounter(workerActivityCount)
+    console.log("WORKER ACTIVITY COUNT:  ", workerActivityCount)
+    let workerSaidActivity = workerActivity.filter(msg=>{
+      let {text}=msg;
+      let isTell = text.indexOf('tell');
+      let openingQuote = text.indexOf('"');
+      let closingQuote = text[text.length-1]
+      console.log("OPENING QUOTE:  ", openingQuote, "CLOSING QUOTE:  ", closingQuote)
+      console.log("MSG TEXT:  ", text)
+      return ((openingQuote>=0) || (isTell>=0 && closingQuote === '"') )
+    })
+    let updatedWorkerSayCount = workerSaidActivity.length;
+    let updatedWorkerDoCount = workerActivityCount - updatedWorkerSayCount;
+    console.log("UPDATED WORKER SAY COUNT:  ", updatedWorkerSayCount, "UPDATED WORKER SAY COUNT:  ", updatedWorkerDoCount)
+    setSayCounter(updatedWorkerSayCount);
+    setDoCounter(updatedWorkerDoCount);
+  }, [workerData])
+
   return (
   <>
     {
@@ -79,7 +108,8 @@ const App = ({
       ?
     <div className="task-container">
         <TaskToolBar
-          activityCounter={activityCounter}
+          doCounter={doCounter}
+          sayCounter={sayCounter}
           buttonFunction={OpenModal}
         />
         <div className="iframe-container">
@@ -96,20 +126,35 @@ const App = ({
         onHide={() => setShow(false)}
         dialogClassName="modal-90w"
         aria-labelledby="example-custom-modal-styling-title"
-      >
+        >
         <Modal.Header closeButton>
           <Modal.Title id="modal-header">
             Submit Session Data
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>
-            Are you sure you are finished with this session?
-          </p>
-          <div>
-          <Button variant="success" onClick={SubmissionHandler}>Submit</Button>{' '}
-          <Button variant="danger" onClick={() => setShow(false)}>Cancel</Button>{' '}
-          </div>
+          {
+            ((MINIMUM_NUMBER_OF_SAYS <= sayCounter) && (MINIMUM_NUMBER_OF_DOS <= doCounter))
+            ?
+            <>
+              <p>
+                Are you sure you are finished with this session?
+              </p>
+              <div>
+                <Button variant="success" onClick={SubmissionHandler}>Submit</Button>{' '}
+                <Button variant="danger" onClick={() => setShow(false)}>Cancel</Button>{' '}
+              </div>
+            </>
+            :
+            <>
+              <p>
+                {`To complete this task you must submit a minimum of ${MINIMUM_NUMBER_OF_DOS} do actions and ${MINIMUM_NUMBER_OF_SAYS} said actions`}
+              </p>
+              <div>
+                <Button variant="danger" onClick={() => setShow(false)}>Return to task</Button>{' '}
+              </div>
+            </>
+          }
         </Modal.Body>
       </Modal>
     </div>
