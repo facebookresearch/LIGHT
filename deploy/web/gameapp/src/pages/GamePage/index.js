@@ -25,8 +25,6 @@ import MobileFrame from "../../components/MobileFrame";
 import LoadingPage from "../../pages/LoadingPage";
 import Sidebar from "./Sidebar";
 import ChatDisplay from "./ChatDisplay";
-import Modal from "../../components/Modal";
-import InstructionModalContent from "./InstructionModalContent";
 /* CONFIG */
 import CONFIG from "../../config.js";
 
@@ -141,8 +139,6 @@ const Chat = ({
 
   /* ------ LOCAL STATE ------ */
   const [screenSize, setScreenSize] = React.useState(null);
-  //MODAL STATE
-  const [showInstructionModal, setShowInstructionModal] = React.useState(false);
   //IDLE STATE
   const [idleTime, setIdleTime] = React.useState(0);
   const [idle, setIdle] = React.useState(false);
@@ -194,7 +190,7 @@ const Chat = ({
     dispatch(updateEmoji(autopickedEmoji));
     /* ---- INSTRUCTION MODAL---- */
     if (xp <= 10) {
-      setShowInstructionModal(true);
+      //NEW Tutorial triggers
     }
     /* ----SESSION INFO---- */
     /* SESSION XP */
@@ -351,31 +347,8 @@ const Chat = ({
           </div>
         </div>
       )}
-      {showInstructionModal ? (
-        <Modal
-          showModal={showInstructionModal}
-          setShowModal={setShowInstructionModal}
-        >
-          <InstructionModalContent
-            buttonFunction={() => {
-              setShowInstructionModal(false);
-            }}
-          />
-        </Modal>
-      ) : null}
     </div>
   );
 };
 
-// function getLocationState(messages) {
-//   var valid_messages = messages.filter(
-//     (m) => m.is_self !== true && m.caller !== null
-//   );
-//   if (valid_messages.length === 0) return [null, []];
-//   var lastMessage = valid_messages[valid_messages.length - 1];
-//   return {
-//     currentRoom: lastMessage.room_id,
-//     presentAgents: Object.keys(lastMessage.present_agent_ids),
-//   };
-// }
 export default ConnectedApp;
