@@ -13,6 +13,9 @@ from light.world.souls.repeat_soul import RepeatSoul
 from light.world.souls.models.generative_heuristic_model_soul import (
     GenerativeHeuristicModelSoul,
 )
+from light.world.souls.models.tutorial_model_soul import (
+    TutorialModelSoul,
+)
 
 import os.path
 import time
@@ -185,10 +188,12 @@ class TutorialInstance(GameInstance):
         self._should_shutdown = False
         self._did_complete = True
 
-    def fill_souls(self, _FLAGS, _model_resources):
+    def fill_souls(self, _FLAGS, model_resources):
         """Tutorials directly register the tutorial to the DM"""
         self.world.purgatory.register_filler_soul_provider(
-            "tutorial", RepeatSoul, lambda: []
+            "tutorial",
+            TutorialModelSoul,
+            lambda: [model_resources["shared_model_content"]],
         )
         dm_agent = list(self.world.oo_graph.agents.values())[1]
         assert dm_agent.name == "Dungeon Master", "Did not find DM!"
