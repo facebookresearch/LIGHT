@@ -97,7 +97,7 @@ class TutorialModelSoul(OnEventSoul):
             "beam_context_block_ngram": 3,
             "beam_size": 10,
             "beam_min_length": 20,
-            "model": "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent"
+            "model": "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent",
         }
         return create_agent(dialog_opt, requireModelExists=True)
 
@@ -385,7 +385,8 @@ class TutorialModelSoul(OnEventSoul):
         if self.num_dialogue_without_action > 5:
             return (
                 "While I'm happy to talk all day, I do want to be sure you know how to do things "
-                "as well. <INSERT INSTRUCTIONS FOR WEB TOGGLING>."
+                "as well. You can toggle between saying and doing things with the button below, "
+                "or quickly with the ` key."
             )
         # Likely have other canned responses
 
@@ -454,7 +455,7 @@ class TutorialModelSoul(OnEventSoul):
                         UnblockEvent(self.target_node).execute(self.world)
                     response_content = (
                         "Good to see you get those on your feet! Before we walk, we crawl. "
-                        "Before we crawl, we put on footware."
+                        "Before we crawl, we put on footwear."
                     )
             elif isinstance(last_action, ExamineEvent):
                 response_content = (
@@ -462,14 +463,13 @@ class TutorialModelSoul(OnEventSoul):
                     "Examining can be a great way to discover what you want to do next. "
                 )
             else:  # Can make easter egg if boots removed?
-                print(last_action)
-                print("Maybe should do something with this?")
+                print("Maybe should do something with this?", last_action)
 
         if response_content is not None:
             SayEvent(self.target_node, text_content=response_content).execute(
                 self.world
             )
-            # TODO how do we best get this into the context?
+            self.npc_dialog_model.self_observe({"text": response_content})
             return True
         else:
             return None

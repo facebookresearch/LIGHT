@@ -41,8 +41,13 @@ class TutorialWorldBuilder(MapJsonBuilder):
             "Impossible Tavern",
             {
                 "room": True,
-                "desc": "A tutorial tavern",
-                "extra_desc": "Extra tutorial description",
+                "desc": "The tavern is odd. It almost feels like a dream, as nothing you "
+                "see appears to stay for very long. It's almost hard to focus in "
+                "here. There's a ton of background chatter you can't make out, "
+                "yet the space is almost entirely empty. One thing is certain, "
+                "this is a strange yet suited place to start an adventure.",
+                "extra_desc": "You wonder if this place is all in the dungeon master's mind, "
+                "after all they do seem to be entirely at home here.",
                 "size": 2000,
                 "contain_size": 2000,
                 "name_prefix": "the",
@@ -64,8 +69,9 @@ class TutorialWorldBuilder(MapJsonBuilder):
                 "char_type": "person",
                 "desc": "Looks like someone who plays LIGHT...",
                 "name_prefix": "",
-                "persona": "You are, well, yourself... a wandering soul who "
-                "has yet to become someone in the full LIGHT world. ",
+                "persona": "You are, well, yourself... a wandering soul who has yet to "
+                "become someone in the full LIGHT world. Perhaps you may be "
+                "granted admission by the dungeon master?",
             },
         )
         agent_node.move_to(room_node)
@@ -81,7 +87,12 @@ class TutorialWorldBuilder(MapJsonBuilder):
                 "speed": 5,
                 "char_type": "person",
                 "desc": "The ever-wise curious dungeon master. They appear to be observing you closely.",
-                "persona": "You are the dungeon master, and should be able to help people learn to play LIGHT!",
+                "persona": "I am the dungeon master, and am looking for new people to "
+                "explore my fantasy world. Players may be able to find help "
+                "by exploring their surroundings and the interface. I would "
+                "like to help you get started in a text-adventure game. The "
+                "goal is to explore, be curious, interact with others, and "
+                "live an experience as somebody entirely different.",
             },
         )
         dungeon_master_node.move_to(room_node)
@@ -106,7 +117,9 @@ class TutorialWorldBuilder(MapJsonBuilder):
                 "size": 1,
                 "food_energy": 0,
                 "value": 1,
-                "desc": "Your welcome ticket to LIGHT! You don't recall where you got this, but it seems important.",
+                "desc": "A welcome ticket to LIGHT! 'Admits one soul to try out LIGHT'"
+                "it reads across the front. You don't recall where you got "
+                "this, but it seems important.",
             },
         )
         ticket_node.move_to(agent_node)
@@ -116,7 +129,7 @@ class TutorialWorldBuilder(MapJsonBuilder):
             {
                 "room": True,
                 "desc": "You feel yourself stretched into a different reality",
-                "extra_desc": "Extra tutorial description",
+                "extra_desc": "The swirling is all-encompassing!",
                 "size": 2000,
                 "contain_size": 2000,
                 "name_prefix": "the",
