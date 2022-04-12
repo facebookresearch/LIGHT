@@ -84,7 +84,7 @@ class World(object):
 
         # Set up action parser.
 
-        self.action_parser = opt.get["_action_parser"]
+        self.action_parser = opt.get("_action_parser")
         if self.action_parser is None:
             self.action_parser = ActionParser(opt)
 
