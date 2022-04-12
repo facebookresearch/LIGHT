@@ -245,6 +245,9 @@ const Chat = ({
   React.useEffect(() => {
     const defaultEmoji = "❓";
     let characterEmoji = DefaultEmojiMapper(persona.name);
+    if (characterEmoji === undefined) {
+      characterEmoji = persona.name;
+    }
     if (persona === null || persona.name === null) return;
     //const skipWords = ["a", "the", "an", "of", "with", "holding"];
     const tryPickEmojis = !persona

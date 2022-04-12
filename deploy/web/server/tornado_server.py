@@ -14,6 +14,7 @@ from light.data_model.light_database import LIGHTDatabase
 from light.world.player_provider import PlayerProvider
 from light.world.quest_loader import QuestLoader
 from light.graph.events.graph_events import init_safety_classifier, RewardEvent
+from light.world.souls.tutorial_player_soul import TutorialPlayerSoul
 
 import argparse
 import inspect
@@ -56,6 +57,7 @@ if QUESTS_LOCATION is not None and os.path.exists(QUESTS_LOCATION):
     quest_loader = QuestLoader(QUESTS_LOCATION)
 else:
     quest_loader = None
+TRANSITION_AFTER_TUTORIAL = 8
 here = os.path.abspath(os.path.dirname(__file__))
 
 _seen_warnings = set()
@@ -210,6 +212,28 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
     def set_player(self, player):
         self.player = player
 
+    def user_should_do_tutorial(self, user_id):
+        with self.db as ldb:
+            flags = ldb.get_user_flags(user_id)
+            return not flags.completed_onboarding
+
+    def launch_game_for_user(self, user_id, game_id):
+        # Check for custom game world
+        if game_id not in self.app.registry.game_instances:
+            self.close()
+            # TODO: Have an error page about game deleted
+            self.redirect("/game/")
+        graph_purgatory = self.app.registry.game_instances[game_id].world.purgatory
+        if self.alive:
+            new_player = TornadoPlayerProvider(
+                self,
+                graph_purgatory,
+                db=self.db,
+                user=user_id,
+            )
+            new_player.init_soul()
+            self.app.registry.game_instances[game_id].players.append(new_player)
+
     def open(self, game_id):
         """
         Open a websocket, validated either by a valid user cookie or
@@ -239,21 +263,21 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         if user is not None:
             logging.info("Opened new socket from ip: {}".format(self.request.remote_ip))
             logging.info("For game: {}".format(game_id))
-            if game_id not in self.app.graphs:
-                self.close()
-                # TODO: Have an error page about game deleted
-                self.redirect("/game/")
-            graph_purgatory = self.app.graphs[game_id].world.purgatory
-            if self.alive:
-                new_player = TornadoPlayerProvider(
-                    self,
-                    graph_purgatory,
-                    db=self.db,
-                    user=user,
-                    context=preauth_context,
-                )
-                new_player.init_soul()
-                self.app.graphs[game_id].players.append(new_player)
+            # First check for tutorials
+            if self.user_should_do_tutorial(user):
+                # Spawn a tutorial world for this user, or inject them into
+                # their existing world
+                if user in self.app.registry.tutorial_map:
+                    game_id = self.app.registry.tutorial_map[user]
+                else:
+                    orig_game_id = game_id
+
+                    def on_complete():
+                        time.sleep(TRANSITION_AFTER_TUTORIAL)
+                        self.launch_game_for_user(user, orig_game_id)
+
+                    game_id = self.app.registry.run_tutorial(user, on_complete)
+            self.launch_game_for_user(user, game_id)
         else:
             self.close()
             self.redirect("/#/login")
@@ -616,7 +640,11 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
             with self.db as ldb:
                 _ = ldb.create_user(user)
             self.set_secure_cookie(
-                "user", tornado.escape.json_encode(user), domain=self.hostname
+                "user",
+                tornado.escape.json_encode(user),
+                domain=self.hostname,
+                secure=True,
+                httponly=True,
             )
         else:
             self.clear_cookie("user")
@@ -653,7 +681,11 @@ class LoginHandler(BaseHandler):
     def set_current_user(self, user):
         if user:
             self.set_secure_cookie(
-                "user", tornado.escape.json_encode(user), domain=self.hostname
+                "user",
+                tornado.escape.json_encode(user),
+                domain=self.hostname,
+                # secure=True, login handler is for local testing
+                httponly=True,
             )
         else:
             self.clear_cookie("user")
@@ -780,7 +812,7 @@ class TornadoPlayerProvider(PlayerProvider):
             json.dumps({"command": "actions", "data": [dat]})
         )
         if self.user is not None:
-            if self.db is not None:
+            if self.db is not None and not isinstance(soul, TutorialPlayerSoul):
                 with self.db as ldb:
                     ldb.store_agent_score(soul.target_node, self.user)
             self.app.user_node_map[self.user] = None
@@ -795,14 +827,14 @@ class TornadoPlayerFactory:
 
     def __init__(
         self,
-        graphs,
+        registry,
         hostname=DEFAULT_HOSTNAME,
         port=DEFAULT_PORT,
         db=None,
         listening=False,
         given_tornado_settings=None,
     ):
-        self.graphs = graphs
+        self.registry = registry
         self.app = None
         self.db = db
 
@@ -815,7 +847,7 @@ class TornadoPlayerFactory:
             self.app = Application(
                 given_tornado_settings=given_tornado_settings, db=self.db
             )
-            self.app.graphs = self.graphs
+            self.app.registry = self.registry
             if listening:
                 self.app.listen(port, max_buffer_size=1024 ** 3)
                 print(
