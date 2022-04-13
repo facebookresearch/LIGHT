@@ -1,12 +1,6 @@
 /* CHATINPUT STYLES*/
 .chatbar-container {
-  height: 30%;
-  width: 100%;
-  border: 1px solid rgb(184, 184, 184);
-  border-top: none;
-  border-width: 0px 0px 10px 0px;
-  border-style: ridge;
-  padding: 5px;
+  
 }
 input {
   border: none;

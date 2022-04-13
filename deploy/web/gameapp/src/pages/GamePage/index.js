@@ -27,6 +27,7 @@ import Sidebar from "./Sidebar";
 import ChatDisplay from "./ChatDisplay";
 import Modal from "../../components/Modal";
 import InstructionModalContent from "./InstructionModalContent";
+import UserBadge from "./UserBadge";
 /* CONFIG */
 import CONFIG from "../../config.js";
 
@@ -194,7 +195,7 @@ const Chat = ({
     dispatch(updateEmoji(autopickedEmoji));
     /* ---- INSTRUCTION MODAL---- */
     if (xp <= 10) {
-      setShowInstructionModal(true);
+      setShowInstructionModal(false);
     }
     /* ----SESSION INFO---- */
     /* SESSION XP */
@@ -325,12 +326,13 @@ const Chat = ({
         </MobileFrame>
       ) : (
         <div id="fullscreen-gamepage">
+          { persona ? <div className="fixed top-7 left-7"><UserBadge level={1}>{persona.name}</UserBadge></div> : null}
           <div className="sidebar-container">
             {persona ? (
-              <Sidebar
-                dataModelHost={dataModelHost}
-                getEntityId={getEntityId}
-              />
+                <Sidebar
+                  dataModelHost={dataModelHost}
+                  getEntityId={getEntityId}
+                />
             ) : (
               <div />
             )}

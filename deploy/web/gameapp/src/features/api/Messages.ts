@@ -51,4 +51,5 @@ export const api = createApi({
   }),
 });
 
+// @ts-ignore
 export const { useGetMessagesQuery } = api;

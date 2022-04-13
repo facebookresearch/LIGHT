@@ -89,7 +89,7 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   };
 
   return (
-    <div className="chatbar-container">
+    <div className="chatbar-container bg-transparent m-6 border-teal-400 border-2 p-4 rounded">
       <form style={{ display: "flex" }} onSubmit={chatSubmissionHandler}>
         <div className="chatbar">
           <div

@@ -51,6 +51,14 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
     }
   };
 
+  const locationInfo = location?.description?.split("\n").map((para, idx) => <p className=" text-sm leading-5 tracking-tight mb-3" key={idx}>{para}</p> );
+
+  return <div className={`pl-7 pr-10 align-self-center text-white`}>
+    <h3 className=" text-white text-base mb-2 font-semibold">{location.name}</h3>
+    {locationInfo}
+  </div>;
+
+/*
   return (
     <div
       className={
@@ -199,5 +207,7 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
       </div>
     </div>
   );
+*/
+
 };
 export default SideBar;

@@ -12,12 +12,18 @@ import TutorialPopover from "../../../../../components/TutorialPopover";
 
 //PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message
 const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
+
+  /*
   let classNames = "message type-dialogue ";
   if (["tell", "say", "whisper"].includes(caller)) {
     text = "&ldquo;" + text + "&rdquo;";
     classNames = "message type-dialogue ";
   }
   classNames += "me";
+  */
+
+  // Let's test tailwind.css here!
+  const classNames = "inline-flex items-center px-2.5 py-0.5 rounded-l text-sm font-medium bg-indigo-400 text-yellow-200";
 
   /* ----REDUX STATE---- */
   //TUTORIAL;
@@ -35,7 +41,7 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
         position="top"
       >
         <div className="agent">
-          <span id="message-nameplate">
+          <span id="message-nameplate text-white">
             {actor ? actor.toUpperCase() : null}
           </span>
           <>

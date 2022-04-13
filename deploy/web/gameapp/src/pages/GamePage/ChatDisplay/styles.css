@@ -1,23 +1,23 @@
 /* CHATDISPLAY STYLES */
 .chat-wrapper {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
+  align-self: flex-end;
   overflow-x: hidden;
   opacity: 1;
-  min-height: 500px;
   padding-left: 10px;
-  margin-top: 30px;
+  margin-right: 1.75rem;
+  height: 100%;
 }
 
 .chat {
-  height: 75vh;
-  background-color: rgb(228, 226, 221);
+  margin-top: 1rem;
+  flex: 1 1 auto;
+  background-color: rgb(255,255,255, .12);
   overflow-x: hidden;
   border-radius: 10px 10px 0px 0px;
   position: relative;
-  border-style: ridge;
-  border-color: lightgray;
-  border-width: 10px 10px 0px 10px;
 }
 
 @media only screen and (max-width: 1224px) {

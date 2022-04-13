@@ -10,7 +10,7 @@ body.dark-mode {
 }
 
 body {
-  background-color: #d4cab8;
+  background-image: linear-gradient( to bottom, #001 80%, #090020, #250435 );
   overflow-y: hidden;
 }
 

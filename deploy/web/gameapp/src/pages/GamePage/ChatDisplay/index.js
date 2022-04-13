@@ -9,6 +9,7 @@ import "./styles.css";
 import ChatMessages from "./ChatMessages";
 import ChatControls from "./ChatControls";
 import TutorialPopover from "../../../components/TutorialPopover";
+import ActionBar from "./ChatControls/ActionBar";
 /* UTILS */
 import { setCaretPosition } from "../../../utils";
 
@@ -54,8 +55,17 @@ const ChatDisplay = ({
   }, [scrollToBottom, messages]);
 
   const { presentAgents } = getLocationState(messages);
+
   return (
     <div className="chat-wrapper">
+      <div className="bg-transparent mt-7">
+        <ActionBar
+          presentAgents={presentAgents}
+          getAgentName={getAgentName}
+          getEntityId={getEntityId}
+          dataModelHost={dataModelHost}
+        />
+      </div> 
       <div className="chat" ref={chatContainerRef}>
         <ChatMessages messages={messages} />
       </div>

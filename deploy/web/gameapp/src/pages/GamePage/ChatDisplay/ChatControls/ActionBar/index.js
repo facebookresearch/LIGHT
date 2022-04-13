@@ -15,6 +15,7 @@ import "./styles.css";
 /* CUSTOM COMPONENTS */
 import SpeechBubble from "../../../../../components/SpeechBubble";
 import TutorialPopover from "../../../../../components/TutorialPopover";
+import UserBadge from "../../../UserBadge";
 
 //ActionBar - Renders container for speech bubbles that act as "quick tell" button for all present NPCS
 const ActionBar = ({
@@ -52,7 +53,7 @@ const ActionBar = ({
           const agentName = getAgentName(agent);
           const agentId = getEntityId(agent);
           return (
-            <span
+            <UserBadge action outline><span
               key={agentName}
               onClick={() => {
                 if (!inHelpMode) {
@@ -62,7 +63,8 @@ const ActionBar = ({
               }}
             >
               <Tooltip title={`tell ${agentName}...`} position="bottom">
-                <SpeechBubble text={`${agentName}`} />
+                {/* <SpeechBubble text={`${agentName}`} /> */}
+                <span>{agentName}</span>
               </Tooltip>
               {dataModelHost && (
                 <>
@@ -83,6 +85,7 @@ const ActionBar = ({
                 </>
               )}
             </span>
+            </UserBadge>
           );
         })}
     </div>

@@ -12,7 +12,7 @@ function App() {
   //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   return (
-    <div id={`${inHelpMode ? "helpmode" : ""}`} className={"App"}>
+    <div id={`${inHelpMode ? "helpmode" : ""}`} className={`App h-screen w-screen`}>
       <Routes />
     </div>
   );
