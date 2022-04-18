@@ -1,12 +1,24 @@
-/* Instruction Modal*/
+/* PREVIEW VIEW STYLES */
 .previewview-container {
   width: 100%;
   height: 100%;
-  background-color: burlywood;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.previewinfo-container {
+  width: 90%;
+  height: 80%;
+  background-color: #e4e2dc;
   overflow-y: scroll;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  border-width: 10px;
+  border-style: ridge;
+  border-radius: 5px;
+  border-color: darkgray;
 }
 
 .previewview-container-header {
@@ -16,6 +28,10 @@
   align-items: center;
   justify-content: space-around;
   padding: 1em;
+}
+
+.previewinfo-header__text {
+  text-align: center;
 }
 
 .previewview-container-body {

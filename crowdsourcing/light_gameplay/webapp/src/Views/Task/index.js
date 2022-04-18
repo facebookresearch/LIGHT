@@ -1,15 +1,17 @@
 /* REACT */
 import React, {useEffect, useState} from "react";
 /* REDUX */
-import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import {addMessage, clearMessages} from "../../features/workerActivity/workerActivity-slice"
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import {addMessage, clearMessages} from "../../features/workerActivity/workerActivity-slice";
 /* STYLES */
-import "./styles.css"
+import "./styles.css";
 /* CUSTOM COMPONENTS */
-import TaskToolBar from "../../components/TaskToolBar"
+import TaskToolBar from "../../components/TaskToolBar";
+import PreviewContent from "../../Views/PreviewView/PreviewContent";
 /* BOOTSTRAP COMPONENTS */
-import Modal from 'react-bootstrap/Modal'
-import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 
 //DO MINIMUM
 const MINIMUM_NUMBER_OF_DOS = 15;
@@ -26,9 +28,11 @@ const App = ({
   /*---------------LOCAL STATE----------------*/
 
   const [workerData, setWorkerData] = useState([]);
+  const [workerComments, setWorkerComments] = useState("");
   const [activityCounter, setActivityCounter] = useState(0);
   const [sayCounter, setSayCounter] = useState(0);
   const [doCounter, setDoCounter] = useState(0);
+  const [showInstructions, setShowInstructions] = useState(false);
   const [show, setShow] = useState(false);
   /* ----REDUX ACTIONS---- */
   // REDUX DISPATCH FUNCTION
@@ -49,8 +53,23 @@ const App = ({
     setShow(true)
   }
 
+  const ToggleInstructionsModal = ()=>{
+    let updatedToggleValue = !showInstructions
+    setShowInstructions(updatedToggleValue)
+  }
+
+
+  const CommentChangeHandler = (e)=>{
+    let updatedWorkerComments = e.target.value;
+    setWorkerComments(updatedWorkerComments)
+  }
+
   const SubmissionHandler = ()=>{
-    handleSubmit(workerData)
+    let workerSubmission = {
+      data: workerData,
+      comments: workerComments
+    }
+    handleSubmit(workerSubmission)
     setShow(false)
   }
 
@@ -103,6 +122,8 @@ const App = ({
           doCounter={doCounter}
           sayCounter={sayCounter}
           buttonFunction={OpenModal}
+          toggleFunction={ToggleInstructionsModal}
+          toggleValue={showInstructions}
         />
         <div className="iframe-container">
             <iframe
@@ -114,12 +135,11 @@ const App = ({
             </iframe>
         </div>
         <Modal
-        show={show}
-        onHide={() => setShow(false)}
-        dialogClassName="modal-90w"
-        aria-labelledby="example-custom-modal-styling-title"
+          show={show}
+          onHide={() => setShow(false)}
+          dialogClassName="modal-90w"
         >
-        <Modal.Header closeButton>
+        <Modal.Header >
           <Modal.Title id="modal-header">
             Submit Session Data
           </Modal.Title>
@@ -132,6 +152,14 @@ const App = ({
               <p>
                 Are you sure you are finished with this session?
               </p>
+              <div>
+              <Form>
+                <Form.Group className="mb-3" >
+                  <Form.Label>TASK COMMENTS AND FEEDBACK</Form.Label>
+                  <Form.Control value={workerComments} onChange={CommentChangeHandler} as="textarea" rows={4} />
+                </Form.Group>
+              </Form>
+              </div>
               <div>
                 <Button variant="success" onClick={SubmissionHandler}>Submit</Button>{' '}
                 <Button variant="danger" onClick={() => setShow(false)}>Cancel</Button>{' '}
@@ -147,6 +175,21 @@ const App = ({
               </div>
             </>
           }
+        </Modal.Body>
+      </Modal>
+      <Modal
+        show={showInstructions}
+        onHide={() => setShowInstructions(false)}
+        dialogClassName="modal-90w"
+
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="modal-header">
+            INSTRUCTIONS
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <PreviewContent/>
         </Modal.Body>
       </Modal>
     </div>
