@@ -42,7 +42,7 @@ const PreviewCopy = {
         },
         {
             image: TellChatBar,
-            text: "Characters in the vicinity can be seen on the bottom of the chat bar.  Clicking on a character's name will allow you tell them something, meaning you can speak to them exclusively."
+            text: "Characters in the vicinity can be seen on the bottom of the chat bar.  Clicking on a character's name will allow you tell them something directly, meaning they know you're addressing them specifically."
         }
     ]
 }
