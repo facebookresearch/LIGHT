@@ -32,13 +32,13 @@ const OnboardingQuestions = [
             {
                 id:1,
                 isSaying: false,
-                text: "Look at the Lady of the House",
+                text: "Examine Lady of the House",
                 isCorrect: true
             },
             {
                 id:2,
                 isSaying: false,
-                text: "Treat Lady of the House",
+                text: "Give medicine to Lady of the House",
                 isCorrect: true
             },
             {
@@ -50,7 +50,7 @@ const OnboardingQuestions = [
             {
                 id:4,
                 isSaying: false,
-                text: "cure Lady of the House",
+                text: "wear gloves",
                 isCorrect: true
             },
             {
@@ -87,13 +87,13 @@ const OnboardingQuestions = [
             {
                 id:0,
                 isSaying: false,
-                text: "Buy milk",
+                text: "give payment to milk man",
                 isCorrect: true
             },
             {
                 id:1,
                 isSaying: false,
-                text: "Take milk",
+                text: "Take milk from milk man",
                 isCorrect: true
             },
             {
@@ -115,7 +115,8 @@ const OnboardingQuestions = [
                 isCorrect: true
             },
         ]
-    }, {
+    },
+    {
         id: 2,
         character: {
             name: "Bandit",
@@ -141,7 +142,7 @@ const OnboardingQuestions = [
             {
                 id:0,
                 isSaying: false,
-                text: "Rob Lord",
+                text: "Take money from Lord",
                 isCorrect: true
             },
             {
@@ -159,7 +160,7 @@ const OnboardingQuestions = [
             {
                 id:3,
                 isSaying: false,
-                text: "Dance with Lord",
+                text: "Dance",
                 isCorrect: false
             }
         ]
@@ -172,8 +173,8 @@ const OnboardingQuestions = [
             emoji: "hammer"
         },
         setting: {
-            name: "Main Entrance",
-            description: "There are religious statues standing outside this temple. The outside of the temple is fairly plain itself and imposing looking. The floor is made out of stone with a bridge leading to the entrance.  There is a suit of armor, and a sword.  You notice a path to the north."
+            name: "Blacksmith's shop",
+            description: "The clang of metal drowns out most sounds here, but you can tell there's quality craftsmanship here by the items lining the walls.  There is a suit of armor, and a sword.  You notice a path to the north."
         },
         question:[
             {
@@ -216,6 +217,12 @@ const OnboardingQuestions = [
                 isSaying: true,
                 text: "Wrong place lord, I don't do such things.",
                 isCorrect: false
+            },
+            {
+                id:5,
+                isSaying: true,
+                text: "Sorry, could you say that a little louder? It's hard to hear in here!!",
+                isCorrect: true
             },
         ]
     },
@@ -277,67 +284,67 @@ const OnboardingQuestions = [
                 text: "Where can I get some rest around here?",
                 isCorrect: true
             },
+        ],
+    },
+    {
+        id:5,
+        character: {
+            name: "Painter",
+            description: "I am the product of a renowned painting academy; my work has been displayed in galleries all over the world."
+        },
+        setting: {
+            name: "Art studio",
+            description: "You are in a fully equipped studio, with a nobleman who wishes to commission a painting. To your north is the exit, and to your south is your supply closet."
+        },
+        question:[
             {
-                id:5,
-                character: {
-                    name: "Painter",
-                    description: "I am the product of a renowned painting academy; my work has been displayed in galleries all over the world."
-                },
-                setting: {
-                    name: "Art studio",
-                    description: "You are in your art studio, with a nobleman who wishes to commission a painting. To your north is the exit, and to your south is your supply closet."
-                },
-                question:[
-                    {
-                        speaker: "Painter",
-                        player: true,
-                        text:"Hello there, good sir. How can I help you today?"
-                    },
-                    {
-                        speaker: "Nobleman",
-                        player: false,
-                        text:"Hello! I am in need of a decorative piece for my newly built study in my mansion."
-                    }],
-                answers:[
-                    {
-                        id: 0,
-                        isSaying: true,
-                        text: "I do not paint, I am a blacksmith.",
-                        isCorrect: false
-                    },
-                    {
-                        id: 1,
-                        isSaying: false,
-                        text: "examine customer",
-                        isCorrect: true
-                    },
-                    {
-                        id: 2,
-                        isSaying: false,
-                        text: "throw paint at customer",
-                        isCorrect: false
-                    },
-                    {
-                        id: 3,
-                        isSaying: true,
-                        text: "My good sir, I have just the right piece for you!",
-                        isCorrect: true
-                    },
-                    {
-                        id: 4,
-                        isSaying: true,
-                        text: "For a suitable price, I can paint anything your heart desires.",
-                        isCorrect: true
-                    },
-                    {
-                        id: 5,
-                        isSaying: false,
-                        text: "look at paintings on wall",
-                        isCorrect: true
-                    },
-                ]
-            }
-        ]
+                speaker: "Painter",
+                player: true,
+                text:"Hello there, good sir. How can I help you today?"
+            },
+            {
+                speaker: "Nobleman",
+                player: false,
+                text:"Hello! I am in need of a decorative piece for my newly built study in my mansion."
+            }],
+        answers:[
+            {
+                id: 0,
+                isSaying: true,
+                text: "I do not paint, I am a blacksmith.",
+                isCorrect: false
+            },
+            {
+                id: 1,
+                isSaying: false,
+                text: "examine customer",
+                isCorrect: true
+            },
+            {
+                id: 2,
+                isSaying: false,
+                text: "throw paint at customer",
+                isCorrect: false
+            },
+            {
+                id: 3,
+                isSaying: true,
+                text: "My good sir, I have just the right piece for you!",
+                isCorrect: true
+            },
+            {
+                id: 4,
+                isSaying: true,
+                text: "For a suitable price, I can paint anything your heart desires.",
+                isCorrect: true
+            },
+            {
+                id: 5,
+                isSaying: false,
+                text: "look at paintings on wall",
+                isCorrect: true
+            },
+        ],
     },
     {
         id: 6,
@@ -370,13 +377,13 @@ const OnboardingQuestions = [
             {
                 id: 1,
                 isSaying: false,
-                text: "show the talisman on your table to the alchemist",
+                text: "give enchanted talisman to alchemist",
                 isCorrect: true
             },
             {
                 id: 2,
                 isSaying: false,
-                text: "run away",
+                text: "go south",
                 isCorrect: false
             },
             {
@@ -394,8 +401,8 @@ const OnboardingQuestions = [
             {
                 id: 5,
                 isSaying: false,
-                text: "whispers magic spells at talisman",
-                isCorrect: true
+                text: "hit alchemist",
+                isCorrect: false
             },
         ]
     },
@@ -473,7 +480,7 @@ const OnboardingQuestions = [
             {
                 speaker: "Frog",
                 player: true,
-                text:"Wow you look strong!  can I show you some cool mushrooms?"
+                text:"Wow you look strong! Can I show you some cool mushrooms?"
             },
             {
                 speaker: "Wandering adventurer",
@@ -502,7 +509,7 @@ const OnboardingQuestions = [
             {
                 id: 3,
                 isSaying: false,
-                text: "run away",
+                text: "go south",
                 isCorrect: false
             },
             {
