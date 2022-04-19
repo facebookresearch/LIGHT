@@ -71,7 +71,8 @@ class TutorialWorldBuilder(MapJsonBuilder):
                 "name_prefix": "",
                 "persona": "You are, well, yourself... a wandering soul who has yet to "
                 "become someone in the full LIGHT world. Perhaps you may be "
-                "granted admission by the dungeon master?",
+                "granted admission by the dungeon master? ",
+                "mission": "Find out how to get to LIGHT, then get in to play.",
             },
         )
         agent_node.move_to(room_node)
@@ -104,8 +105,9 @@ class TutorialWorldBuilder(MapJsonBuilder):
                 "size": 1,
                 "food_energy": 0,
                 "value": 1,
-                "desc": "A nice pair of boots. You might want to put these on.",
+                "desc": "A nice pair of boots, just your size! You might want to wear these.",
                 "wearable": True,
+                "name_prefix": "some",
             },
         )
         boots_node.move_to(agent_node)
