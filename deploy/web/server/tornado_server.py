@@ -57,7 +57,7 @@ if QUESTS_LOCATION is not None and os.path.exists(QUESTS_LOCATION):
     quest_loader = QuestLoader(QUESTS_LOCATION)
 else:
     quest_loader = None
-TRANSITION_AFTER_TUTORIAL = 8
+TRANSITION_AFTER_TUTORIAL = 4
 here = os.path.abspath(os.path.dirname(__file__))
 
 _seen_warnings = set()

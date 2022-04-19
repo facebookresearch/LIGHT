@@ -47,6 +47,25 @@ SAFE_PHRASES = [
     "How about a new conversation?",
 ]
 
+SCRIPTED_RESPONSES = {
+    (""): (
+        "Welcome my friend to the impossible tavern. I'm glad you're here! "
+        "I'm looking for curious souls to inhabit the residents of the "
+        "world beyond that shimmering portal. If you have a ticket "
+        "I can let you in and provide you a story to play. "
+    ),
+    ("boots", "boot"): (
+        "While you're just a soul in here, it's worthwhile to have some footwear. "
+        "Take a look at those boots, they're perfectly suited for you."
+    ),
+    ("what next", "what's next", "now what"): (
+        "Well, are you trying to get to LIGHT? Have you tried going into the portal?"
+    ),
+    ("carrying", "holding"): (
+        "You can see what you're carrying with the `inv` command"
+    ),
+}
+
 
 class TutorialModelSoul(OnEventSoul):
     """
@@ -166,6 +185,7 @@ class TutorialModelSoul(OnEventSoul):
         self.num_dialogue_without_action = 0
         self.partner_wearing_boots = False
         self.partner_gave_ticket = False
+        self.used_responses = set()
 
     async def observe_event(self, event: "GraphEvent"):
         """
@@ -376,19 +396,32 @@ class TutorialModelSoul(OnEventSoul):
         Possibly respond to incoming scripted text, if not previously said?
         """
         response_content = None
+        if text_content.strip() in ["help", "inv", "inventory"]:
+            return (
+                "Ah, if you want to use these, you'll need to DO them. Click the "
+                "SAY button to switch to DO mode (or use the backtick (`) key), then send 'help'."
+            )
         if "help" in text_content:
             return (
                 "I'm happy to try and answer your questions, though you can always use the "
-                "'help' command to see what you are capable of."
+                "'help' command to see what you are capable of. As far as what you need to be "
+                "doing right now, you can try checking your persona on the left. "
             )
 
         if self.num_dialogue_without_action > 5:
             return (
                 "While I'm happy to talk all day, I do want to be sure you know how to do things "
                 "as well. You can toggle between saying and doing things with the button below, "
-                "or quickly with the ` key."
+                "or quickly with the ` key. Try it now! See what you're carrying with `inv`, or "
+                "maybe `examine` some of the things in this room."
             )
-        # Likely have other canned responses
+
+        for key_group in SCRIPTED_RESPONSES.keys():
+            if key_group not in self.used_responses:
+                for key in key_group:
+                    if key in text_content:
+                        self.used_responses.add(key_group)
+                        return SCRIPTED_RESPONSES[key_group]
 
         return response_content
 
@@ -469,7 +502,6 @@ class TutorialModelSoul(OnEventSoul):
             SayEvent(self.target_node, text_content=response_content).execute(
                 self.world
             )
-            self.npc_dialog_model.self_observe({"text": response_content})
             return True
         else:
             return None
