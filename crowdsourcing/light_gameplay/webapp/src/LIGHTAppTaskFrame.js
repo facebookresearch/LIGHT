@@ -1,6 +1,7 @@
 /* REACT */
 import React from "react";
 //VIEWS
+import PreviewView from "./Views/PreviewView"
 import Task from "./Views/Task"
 import OnboardingView from "./Views/OnboardingView"
 // Task context
@@ -90,7 +91,7 @@ function LIGHTAppTaskFrame() {
     return <h1>{blockedExplanation}</h1>;
   }
   if (isPreview) {
-    return <Instructions />;
+    return <PreviewView />;
   }
   if (isLoading || authToken === null) {
     return <LoadingScreen />;

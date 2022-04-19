@@ -8,13 +8,15 @@ import "./styles.css"
 /* BOOTSTRAP COMPONENTS */
 import Navbar from 'react-bootstrap/Navbar'
 import Button from 'react-bootstrap/Button'
-
+import Form from 'react-bootstrap/Form'
 
 
 const TaskToolBar = ({
     doCounter,
     sayCounter,
-    buttonFunction
+    buttonFunction,
+    toggleFunction,
+    toggleValue
 })=>{
 
     return(
@@ -23,6 +25,14 @@ const TaskToolBar = ({
                 <Navbar.Text>
                     <span className="task-label">GAMEPLAY TASK</span>
                 </Navbar.Text>
+
+                    <Button
+                        variant= "info"
+                        onClick={toggleFunction}
+                    >
+                        Instructions
+                    </Button>
+
                 <Navbar.Text>
                     <span className="tool-label" >ACTIVITY COUNT:</span>
                         <span className="tool-text do" >{`DO:  ${doCounter}`}</span>
