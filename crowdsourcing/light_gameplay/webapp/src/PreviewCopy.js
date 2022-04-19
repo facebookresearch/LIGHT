@@ -12,7 +12,7 @@ import SettingInfo from "./assets/screenshots/settinginfo.png";
 
 // Copy for Preview Blurb
 const PreviewCopy = {
-    intro: "In this task you will be playing a text based adventure game.  In this game you will be expected to stay in character and must complete a minimum number of 15 say interactions and 15 do interactions.  These are the absolute minimum.  Once you have completed your session you will be able to submit your session data for evaluatioon and comment on your experience.  Any feedback about your experience is appreciated.",
+    intro: "In this task you will be playing a text based adventure game.  In this game you will be expected to stay in character and must complete a minimum number of 15 say interactions and 15 do interactions.  These are the absolute minimum, but additional quality interactions will be bonused proportionately.  Once you have completed your session you will be able to submit your session data for evaluatioon and comment on your experience.  Any feedback about your experience is appreciated.",
     uiSteps:[
         {
             image: CharacterInfo,
@@ -34,7 +34,7 @@ const PreviewCopy = {
         },
         {
             image: SayChatBar,
-            text: "You can switch between Say and Do mode by clicking the Say/Do button or pressin the ` key.  Saying something will be heard by every character in the vincinity."
+            text: "You can switch between Say and Do mode by clicking the Say/Do button or pressing the ` key.  Saying something will be heard by every character in the vincinity."
         },
         {
             image: DoChatBar,
