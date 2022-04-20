@@ -5,6 +5,7 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
+    "@babel/runtime": "^7.17.9",
     "@reduxjs/toolkit": "^1.6.1",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
@@ -17,7 +18,8 @@
     "@types/react-router-dom": "^5.1.8",
     "axios": "^0.21.1",
     "classnames": "^2.2.6",
-    "emoji-mart": "^2.11.1",
+    "daisyui": "^2.14.1",
+    "emoji-mart": "^3.0.1",
     "eslint-plugin-react-hooks": "^1.6.1",
     "leaflet": "1.4.0",
     "react": "16.8.3",
@@ -27,12 +29,15 @@
     "react-onclickoutside": "^6.8.0",
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "2.1.8",
+    "react-scripts": "^5.1.0-next.14",
     "react-tippy": "^1.2.3",
     "typescript": "^4.4.2",
     "web-vitals": "^1.1.2"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.4",
+    "postcss": "^8.4.12",
+    "tailwindcss": "^3.0.24",
     "typescript": "^3.3.3"
   },
   "scripts": {
