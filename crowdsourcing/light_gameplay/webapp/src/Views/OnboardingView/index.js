@@ -174,7 +174,7 @@ const OnboardingView = ({
                 (selectedQuestion)
                 ?
                 <div className="onboarding-question">
-                    <h5>Select the answer or answers that most appropriately fit an in character action or response.  Click Next to move on to the next question.  You can return to the previously answered questions at anytime but clicking the Submit button </h5>
+                    <h5>Select all answers that fit an in character action or response for the given scenario with the above context.  Click Next to move on to the next question.  You can return to the previously answered questions at anytime before clicking the Submit button </h5>
                     <ChatQuestionDisplay
                         questionData={selectedQuestion.question}
                     >

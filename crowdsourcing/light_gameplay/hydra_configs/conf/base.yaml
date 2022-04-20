@@ -12,12 +12,12 @@ mephisto:
     units_per_assignment: 1
   task:
     allowed_concurrent: 1
-    task_name: remote-procedure-test-task
+    task_name: light-gameplay-task
     task_title: "Pretend to be a character in a fantasy text-adventure world"
     task_description: >
       You will be provided a character to play as in a text adventure game.
       After a brief tutorial, you can navigate the world and interact with other players in the world.
       Try to stay in character and accomplish your goal.
     # NOTE set a reasonable reward
-    task_reward: 0.05
+    task_reward: 4.00
     task_tags: "fantasy,text,role-playing,adventure,dialogue"

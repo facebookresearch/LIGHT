@@ -371,7 +371,7 @@ const OnboardingQuestions = [
             {
                 id: 0,
                 isSaying: true,
-                text: "I have seen cities built with bricks of gold and windows from rubby, alchmey is not what you are looking for.",
+                text: "I have seen cities built with bricks of gold and windows from ruby, alchmey is not what you are looking for.",
                 isCorrect: true
             },
             {

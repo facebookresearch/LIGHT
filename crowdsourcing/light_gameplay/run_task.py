@@ -23,10 +23,16 @@ from typing import List, Any, Dict
 from dataclasses import dataclass, field
 
 
+MAX_INCORRECT = 3
+
+
 def get_salted_hash(in_string, salt):
     """Return a hash string for the given string using sha-256"""
+    print(f"Salting {in_string} with {salt}")
     salted_string = in_string + salt + in_string
-    return hashlib.sha256(salted_string.encode("utf-8")).hexdigest()[:20]
+    res = hashlib.sha256(salted_string.encode("utf-8")).hexdigest()[:20]
+    print(f"Got res {res}")
+    return res
 
 
 @dataclass
@@ -49,6 +55,18 @@ def main(operator: Operator, cfg: DictConfig) -> None:
     tasks: List[Dict[str, Any]] = [{"url": cfg.game_url}] * cfg.num_tasks
     preauth_secret = cfg.preauth_secret
 
+    def worker_did_enough_correct(onboarding_data):
+        incorrect_count = 0
+        questions = onboarding_data["final_submission"]
+        for question in questions:
+            answers = question["answers"]
+            correct_ids = set(a["id"] for a in answers if a["isCorrect"])
+            selected_answers = question["selectedAnswers"]
+            selected_ids = set(a["id"] for a in selected_answers)
+            wrong_answers = len(correct_ids.symmetric_difference(selected_ids))
+            incorrect_count += wrong_answers
+        return incorrect_count < MAX_INCORRECT
+
     def get_auth_token(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
     ) -> Dict[str, Any]:
@@ -67,6 +85,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
     shared_state = SharedRemoteProcedureTaskState(
         static_task_data=tasks,
         function_registry=function_registry,
+        validate_onboarding=worker_did_enough_correct,
     )
 
     task_dir = cfg.task_dir

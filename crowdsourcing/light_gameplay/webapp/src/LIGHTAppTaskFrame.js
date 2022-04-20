@@ -12,24 +12,6 @@ import {
 } from "mephisto-task";
 
 
-// TODO move somewhere else as you may like, fill out
-function Instructions() {
-  return (
-    <div>
-      <h1>Fantasy Text Adventure Gameplay Task</h1>
-      <p>
-        For this task, you'll need to ... for ... turns. Before getting started,
-        you'll need to complete an onboarding test to ensure you've understood
-        instructions. On your first paid task, you'll work through the in-game
-        tutorial, and then future tasks will be the full game.
-      </p>
-      <p>
-        TODO we need to finish the instruction section
-      </p>
-    </div>
-  );
-}
-
 // TODO move somewhere shared
 function LoadingScreen({ children }) {
   return (
@@ -75,7 +57,7 @@ function LIGHTAppTaskFrame() {
     if (agentId === null || mephistoWorkerId == null) {
       return
     }
-    if (authToken === null) {
+    if (authToken === null && !agentId.includes('onboarding')) {
       getAuthToken({worker_id: mephistoWorkerId, agent_id: agentId}).then((res) => {
         setAuthToken(res['auth_token'])
       });
@@ -93,7 +75,7 @@ function LIGHTAppTaskFrame() {
   if (isPreview) {
     return <PreviewView />;
   }
-  if (isLoading || authToken === null) {
+  if (isLoading || authToken === null || initialTaskData['task_data'] == null) {
     return <LoadingScreen />;
   }
 

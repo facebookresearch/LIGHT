@@ -14,7 +14,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
 //DO MINIMUM
-const MINIMUM_NUMBER_OF_DOS = 15;
+const MINIMUM_NUMBER_OF_DOS = 10;
 //SAY MINIMUM
 const MINIMUM_NUMBER_OF_SAYS = 15;
 
@@ -66,7 +66,7 @@ const App = ({
 
   const SubmissionHandler = ()=>{
     let workerSubmission = {
-      data: workerData,
+      data: workerData.map((entry) => {return {text: entry.text, caller: entry.caller, actor: entry?.actor?.name}}),
       comments: workerComments
     }
     handleSubmit(workerSubmission)
@@ -96,6 +96,7 @@ const App = ({
   }, [LightMessageList])
 
   useEffect(() => {
+    let errorEvents = workerData.filter(msg => msg.caller == 'ErrorEvent');
     let workerActivity = workerData.filter(msg => msg.is_self);
     let workerActivityCount = workerActivity.length;
     setActivityCounter(workerActivityCount)
@@ -107,7 +108,7 @@ const App = ({
       return ((openingQuote>=0) || (isTell>=0 && closingQuote === '"') )
     })
     let updatedWorkerSayCount = workerSaidActivity.length;
-    let updatedWorkerDoCount = workerActivityCount - updatedWorkerSayCount;
+    let updatedWorkerDoCount = workerActivityCount - updatedWorkerSayCount - errorEvents.length;
     setSayCounter(updatedWorkerSayCount);
     setDoCounter(updatedWorkerDoCount);
   }, [workerData])

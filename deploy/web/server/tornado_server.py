@@ -539,6 +539,7 @@ class PreauthGameHandler(BaseHandler):
                 expires_days=1,
                 domain=self.hostname,
                 httponly=True,
+                secure=True,
             )
             self.set_secure_cookie(
                 "preauth_context",
@@ -546,6 +547,7 @@ class PreauthGameHandler(BaseHandler):
                 expires_days=1,
                 domain=self.hostname,
                 httponly=True,
+                secure=True,
             )
             self.set_secure_cookie(
                 "context_token",
@@ -553,6 +555,7 @@ class PreauthGameHandler(BaseHandler):
                 expires_days=1,
                 domain=self.hostname,
                 httponly=True,
+                secure=True,
             )
             self.render(here + "/../build/game.html")
         else:
