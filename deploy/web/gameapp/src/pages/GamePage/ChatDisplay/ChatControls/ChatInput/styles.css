@@ -5,15 +5,16 @@
 input {
   border: none;
   padding: 10px;
-  font-size: 1em;
+  font-size: 1rem;
   background-color: white;
   border: 0px solid #dedede;
-  font-family: Lora, serif;
+  /* font-family: Lora, serif; */
+  color: #fff;
   width: 100%;
 }
 
 input::placeholder {
-  font-style: italic;
+  /* font-style: italic; */
   color: #aaa;
 }
 

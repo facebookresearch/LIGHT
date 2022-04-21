@@ -21,8 +21,9 @@ const ChatMessages = ({ messages }) => {
 
   return (
     <>
+      
       {messages.map((msg, idx) => (
-        <div className="message-row" key={msg.event_id}>
+        <div className="m-6 _message-row" key={msg.event_id}>
           <Entry
             msg={msg}
             agents={agents}

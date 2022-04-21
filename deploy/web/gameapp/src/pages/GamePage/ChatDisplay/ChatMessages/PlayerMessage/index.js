@@ -23,7 +23,7 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
   */
 
   // Let's test tailwind.css here!
-  const classNames = "inline-flex items-center px-2.5 py-0.5 rounded-l text-sm font-medium bg-indigo-400 text-yellow-200";
+  
 
   /* ----REDUX STATE---- */
   //TUTORIAL;
@@ -32,17 +32,13 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
 
   return (
     <div
-      className={`${classNames} ${inHelpMode ? "active" : ""}`}
+      className={`flex flex-row items-center ${inHelpMode ? "active" : ""}`}
       onClick={onClickFunction}
     >
-      <TutorialPopover
-        tipNumber={17}
-        open={inHelpMode && selectedTip === 17}
-        position="top"
-      >
-        <div className="agent">
-          <span id="message-nameplate text-white">
-            {actor ? actor.toUpperCase() : null}
+      <div className="agent text-white mr-4">
+          <span id="_message-nameplate">
+            {/* {actor ? actor.toUpperCase() : null} */}
+            You
           </span>
           <>
             {xp ? (
@@ -63,7 +59,12 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
             ) : null}
           </>
         </div>
-        {text}
+      <TutorialPopover
+        tipNumber={17}
+        open={inHelpMode && selectedTip === 17}
+        position="top"
+      >
+        <div className="btn bg-white border-0 border-l-4 border-purple-600 text-black">{text}</div>
       </TutorialPopover>
     </div>
   );

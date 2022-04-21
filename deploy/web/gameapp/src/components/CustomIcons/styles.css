@@ -1,6 +1,6 @@
 /*NUMBER STAR STYLES*/
 .numberstar-container {
-  display: flex;
+  display: flex; 
   justify-content: center;
   align-items: center;
   position: relative;

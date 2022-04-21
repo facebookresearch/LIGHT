@@ -89,12 +89,12 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   };
 
   return (
-    <div className="chatbar-container bg-transparent m-6 border-teal-400 border-2 p-4 rounded">
-      <form style={{ display: "flex" }} onSubmit={chatSubmissionHandler}>
-        <div className="chatbar">
+    <div className="_chatbar-container bg-transparent m-6 border-teal-400 border-2 p-2 rounded">
+      <form className="flex justify-between" onSubmit={chatSubmissionHandler}>
+        <div className="_chatbar flex w-full">
           <div
-            className={`chatbox-button ${
-              tellTarget !== "" ? "tell" : isSaying ? "say" : "do"
+            className={`_chatbox-button btn btn-${
+              tellTarget !== "" ? "warning" : isSaying ? "primary" : "secondary"
             } ${inHelpMode ? "active" : ""}`}
             onClick={(e) => {
               e.preventDefault();
@@ -122,7 +122,7 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
             position="top"
           >
             <input
-              className={`chatbox-input ${inHelpMode ? "active" : ""}`}
+              className={`w-full bg-transparent border-none _chatbox-input ${inHelpMode ? "active" : ""}`}
               value={chatText}
               onClick={(e) => {
                 e.preventDefault();
@@ -200,7 +200,7 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
           </TutorialPopover>
         </div>
         <div
-          className="chatbox-button send"
+          className="btn btn-ghost text-teal-500 _chatbox-button _send"
           onClick={inHelpMode ? () => setSelectedTip(7) : chatSubmissionHandler}
         >
           <TutorialPopover
@@ -208,7 +208,7 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
             open={inHelpMode && selectedTip === 7}
             position="left"
           ></TutorialPopover>
-          SEND
+          Send
         </div>
       </form>
     </div>
