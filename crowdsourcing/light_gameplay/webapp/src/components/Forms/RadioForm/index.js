@@ -3,7 +3,7 @@ import React, {useState, useEffect} from "react";
 /* STYLES */
 import "./styles.css";
 /* BOOTSTRAP COMPONENTS */
-import Form from 'react-bootstrap/form';
+import Form from 'react-bootstrap/Form';
 /* CUSTOM COMPONENTS */
 import CheckBoxAnswer from "./CheckBoxAnswer"
 

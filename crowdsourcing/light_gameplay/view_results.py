@@ -8,6 +8,7 @@ from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.tools.examine_utils import run_examine_or_review, print_results
 from mephisto.data_model.worker import Worker
 from light.colors import Colors as C
+from utils import was_tutorial, had_full_game
 
 db = LocalMephistoDB()
 
@@ -17,7 +18,7 @@ def format_data_for_printing(data):
     duration = data["task_end"] - data["task_start"]
     metadata_string = (
         f"Worker: {worker_name}\nUnit: {data['unit_id']}\n"
-        f"Duration: {int(duration)}\nStatus: {data['status']}\n"
+        f"Duration: {int(duration) / 60.0}\nStatus: {data['status']}\n"
     )
 
     dialogue_string = ""
@@ -49,9 +50,21 @@ def format_data_for_printing(data):
             text = text.replace("\n", "\n    ")
             dialogue_string += f"  {C.PURPLE}{text}{C.RESET}\n"
 
+    dialogue_had_tutorial = was_tutorial(dialogue_data)
+    dialogue_had_full_game = had_full_game(dialogue_data)
+    episode_type = f"{C.BOLD_PURPLE}UNKNOWN{C.RESET}"
+    if dialogue_had_tutorial:
+        if dialogue_had_full_game:
+            episode_type = f"{C.BOLD_GREEN}COMPELTED TUTORIAL{C.RESET}"
+        else:
+            episode_type = f"{C.BOLD_RED}FAILED TUTORIAL{C.RESET}"
+    elif dialogue_had_full_game:
+        episode_type = f"{C.BOLD_BLUE}RETURNING WORKER{C.RESET}"
+         
     return (
         f"{metadata_string}"
         f"Says: {says}, Dos: {dos}\n"
+        f"Type: {episode_type}\n"
         f"Feedback: {feedback}\n\n"
         f"{dialogue_string}-----------\n\n"
     )

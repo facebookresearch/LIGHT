@@ -22,16 +22,15 @@ from omegaconf import DictConfig, MISSING
 from typing import List, Any, Dict
 from dataclasses import dataclass, field
 
+from utils import was_tutorial, had_full_game
 
 MAX_INCORRECT = 3
 
 
 def get_salted_hash(in_string, salt):
     """Return a hash string for the given string using sha-256"""
-    print(f"Salting {in_string} with {salt}")
     salted_string = in_string + salt + in_string
     res = hashlib.sha256(salted_string.encode("utf-8")).hexdigest()[:20]
-    print(f"Got res {res}")
     return res
 
 
@@ -48,6 +47,28 @@ class ParlAITaskConfig(build_default_task_config("local")):  # type: ignore
             "preauth secret on the LIGHT game site."
         },
     )
+
+
+def validate_unit(unit):
+    agent = unit.get_assigned_agent()
+    if agent is None:
+        return
+    
+    data = agent.state.get_data()
+
+    if data['final_submission'] is None:
+        return
+
+    dialogue_data = data["final_submission"]["data"]
+
+    if had_full_game(dialogue_data):
+        return # No action, made it to full game
+
+    if was_tutorial(dialogue_data):
+        worker = agent.get_worker()
+        print(f"Soft blocking {worker.worker_name} due to failed tutorial")
+        worker.grant_qualification("light-gameplay-ineligible")
+    return
 
 
 @task_script(config=ParlAITaskConfig)
@@ -86,6 +107,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         static_task_data=tasks,
         function_registry=function_registry,
         validate_onboarding=worker_did_enough_correct,
+        on_unit_submitted=validate_unit,
     )
 
     task_dir = cfg.task_dir
