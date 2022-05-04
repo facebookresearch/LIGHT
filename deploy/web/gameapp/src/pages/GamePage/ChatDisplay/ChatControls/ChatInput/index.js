@@ -88,10 +88,16 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
     return formattedTellTargetName;
   };
 
+  /* ----------TAILWIND CLASSES--------- */
+  const classNames = {
+    chatbarContainer: "flex flex-row w-full border-4 rounded border-green-400",
+    chatbar: "flex flex-row",
+  };
+
   return (
-    <div className="chatbar-container">
-      <form style={{ display: "flex" }} onSubmit={chatSubmissionHandler}>
-        <div className="chatbar">
+    <div className={classNames.chatbarContainer}>
+      <form onSubmit={chatSubmissionHandler}>
+        <div className={classNames.chatbar}>
           <div
             className={`chatbox-button ${
               tellTarget !== "" ? "tell" : isSaying ? "say" : "do"

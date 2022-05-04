@@ -18,8 +18,13 @@ const ChatControls = ({
   idle,
   resetIdleTimer,
 }) => {
+  /* ----------TAILWIND CLASSES--------- */
+  const classNames = {
+    controls: " w-full",
+  };
+
   return (
-    <div className="controls">
+    <div className={classNames.controls}>
       {idle ? (
         <DisconnectMessage />
       ) : (
