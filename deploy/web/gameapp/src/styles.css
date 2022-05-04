@@ -1,17 +1,6 @@
-.App {
-}
-
+/* APP STYLES */
 #helpmode {
   cursor: help;
-}
-
-body.dark-mode {
-  background-color: #222;
-}
-
-body {
-  background-color: #d4cab8;
-  overflow-y: hidden;
 }
 
 .app-controls {
@@ -47,11 +36,6 @@ p {
   .app-controls {
     background-color: rgb(255, 255, 235);
   }
-}
-
-.leaflet-container {
-  border-radius: 10px;
-  border: 1px solid black;
 }
 
 .message.type-setting {

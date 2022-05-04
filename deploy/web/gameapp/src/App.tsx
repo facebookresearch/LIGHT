@@ -11,8 +11,12 @@ function App() {
   /* ----REDUX STATE---- */
   //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
+  /* ----------TAILWIND CLASSES--------- */
+  const classNames = {
+    app: "bg-black",
+  };
   return (
-    <div id={`${inHelpMode ? "helpmode" : ""}`} className={"App"}>
+    <div id={`${inHelpMode ? "helpmode" : ""}`} className={classNames.app}>
       <Routes />
     </div>
   );

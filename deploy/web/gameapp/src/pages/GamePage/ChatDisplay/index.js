@@ -52,11 +52,15 @@ const ChatDisplay = ({
   useEffect(() => {
     scrollToBottom();
   }, [scrollToBottom, messages]);
-
+  /* ----------TAILWIND CLASSES--------- */
+  const classNames = {
+    chatWrapper: " w-full h-full",
+    chat: "flex flex-col bg-indigo-900 bg-opacity-50 w-full",
+  };
   const { presentAgents } = getLocationState(messages);
   return (
-    <div className="chat-wrapper">
-      <div className="chat" ref={chatContainerRef}>
+    <div className={classNames.chatWrapper}>
+      <div className={classNames.chat} ref={chatContainerRef}>
         <ChatMessages messages={messages} />
       </div>
       <ChatControls

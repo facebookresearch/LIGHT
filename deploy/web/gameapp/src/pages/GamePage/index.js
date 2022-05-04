@@ -297,8 +297,13 @@ const Chat = ({
   }, [screenSize]);
 
   const buttons = [];
+
+  /* ----------TAILWIND CLASSES--------- */
+  const classNames = {
+    gamepageContainer: "container h-full max-h-full",
+  };
   return (
-    <div className="gamepage-container" onMouseMove={resetIdleTimer}>
+    <div className={classNames.gamepageContainer} onMouseMove={resetIdleTimer}>
       {isMobile ? (
         <MobileFrame buttons={buttons}>
           {persona ? (
@@ -323,8 +328,8 @@ const Chat = ({
           />
         </MobileFrame>
       ) : (
-        <div id="fullscreen-gamepage">
-          <div className="sidebar-container">
+        <div className="flex max-h-full">
+          <div className="w-1/4">
             {persona ? (
               <Sidebar
                 dataModelHost={dataModelHost}
@@ -334,7 +339,7 @@ const Chat = ({
               <div />
             )}
           </div>
-          <div className="chat-container">
+          <div className=" w-3/4">
             <ChatDisplay
               scrollToBottom={scrollToBottom}
               messages={messages}
