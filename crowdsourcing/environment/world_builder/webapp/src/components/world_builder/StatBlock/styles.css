@@ -1,0 +1,15 @@
+/* STATBLOCK STYLES */
+.stat-row{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.stat-text {
+    font-size: 16px;
+}
+
+.stat-text.label {
+    font-weight: bold;
+}

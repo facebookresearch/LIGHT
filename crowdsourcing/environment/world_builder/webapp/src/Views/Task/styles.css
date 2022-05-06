@@ -1,0 +1,20 @@
+/* TASK STYLES */
+
+.task-container{
+    height: 95vh;
+    width: 100vw;
+    margin-top: 50px;
+}
+
+.header-container {
+
+}
+
+.iframe-container{
+    height: 100%;
+}
+
+.modal-header {
+    background-color: blue;
+    color: white;
+}

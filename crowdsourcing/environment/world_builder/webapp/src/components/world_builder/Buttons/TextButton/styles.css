@@ -1,0 +1,30 @@
+/* TEXT BUTTON STYLES */
+.textbutton-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width:80%;
+    border-style: solid;
+    border-color: black;
+    background-color: white;
+    border-width: 2px;
+    box-shadow: 1px 1px 4px black;
+}
+
+.textbutton-text {
+    color:black;
+    font-size: 16px;
+    text-align: center;
+}
+
+.textbutton-container:hover {
+
+}
+
+  .textbutton-container:active {
+    box-shadow: 0px 0px 0px black;
+  }
+
+  @media only screen and (max-width: 650px) {
+  }

@@ -1,0 +1,22 @@
+#@package _global_
+defaults:
+  - base
+game_url: "https://www.light-rpg.ai/"
+preauth_secret: "TODO"
+num_tasks: 50
+mephisto:
+  blueprint:
+    onboarding_qualification: "light-gameplay-onboarding"
+  task:
+    allowed_concurrent: 1
+    task_name: light-gameplay-task-pilot
+    task_title: "Pretend to be a character in a fantasy text-adventure world"
+    task_description: >
+      You will be provided a character to play as in a text adventure game.
+      After a brief tutorial, you can navigate the world and interact with other characters in the world.
+      Try to stay in character and accomplish your goal.
+      You must do 15 actions and have 15 turns of dialogue minimum to submit the task.
+    task_reward: 4.00
+    task_tags: "fantasy,text,role-playing,adventure,dialogue"
+    maximum_units_per_worker: 3
+    max_num_concurrent_units: 15

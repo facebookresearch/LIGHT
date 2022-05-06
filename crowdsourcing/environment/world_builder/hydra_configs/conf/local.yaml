@@ -1,0 +1,8 @@
+#@package _global_
+defaults:
+  - base
+game_url: "unused"
+num_tasks: 10
+# mephisto:
+#   blueprint:
+#     onboarding_qualification: "test"

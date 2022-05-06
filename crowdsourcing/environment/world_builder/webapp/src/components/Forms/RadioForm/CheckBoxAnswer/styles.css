@@ -1,0 +1,18 @@
+/* CHECKBOX ANSWER STYLES */
+.answer-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:100%
+}
+
+.answer-checkbox_container {
+    width:5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.answer-chatinput_container {
+    width:95%;
+}

@@ -1,0 +1,20 @@
+/* TUTORIAL IMAGE LARGE STYLES */
+
+.tutorial-container__lg {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.lgtutorial-image__container{
+    width: 100%;
+}
+
+.lgtutorial-text__container{
+    width:100%;
+}
+
+.lgtutorial-text {
+    text-align: center;
+    font-size: 24px;
+}

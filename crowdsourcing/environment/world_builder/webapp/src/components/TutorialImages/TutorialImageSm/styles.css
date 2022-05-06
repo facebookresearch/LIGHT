@@ -1,0 +1,22 @@
+/* TUTORIAL IMAGE LARGE STYLES */
+
+.tutorial-container__sm {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.smtutorial-image__container{
+    width: 50%;
+}
+
+.smtutorial-text__container{
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.smtutorial-text{
+    font-size: 24px;
+}
