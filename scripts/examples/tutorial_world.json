@@ -1,0 +1,244 @@
+{
+  "agents": ["dungeon master_2", "you_1"],
+  "nodes": {
+    "boots_3": {
+      "agent": false,
+      "classes": ["object"],
+      "contain_size": 0,
+      "contained_nodes": {},
+      "container": false,
+      "container_node": {
+        "target_id": "you_1"
+      },
+      "db_id": null,
+      "dead": false,
+      "desc": "A nice pair of boots. You might want to put these on.",
+      "drink": false,
+      "equipped": null,
+      "food": false,
+      "food_energy": 0,
+      "gettable": true,
+      "locked_edge": null,
+      "name": "boots",
+      "name_prefix": "a",
+      "names": ["boots"],
+      "node_id": "boots_3",
+      "object": true,
+      "on_use": null,
+      "room": false,
+      "size": 1,
+      "stats": {
+        "damage": 0,
+        "defense": 1
+      },
+      "surface_type": "on",
+      "value": 1,
+      "wearable": true,
+      "wieldable": false
+    },
+    "dungeon master_2": {
+      "agent": true,
+      "aggression": 0,
+      "attack_tagged_agents": [],
+      "blocked_by": {},
+      "blocking": {
+        "target_id": "you_1"
+      },
+      "char_type": "person",
+      "classes": ["agent"],
+      "contain_size": 20,
+      "contained_nodes": {},
+      "container_node": {
+        "target_id": "impossible tavern_0"
+      },
+      "damage": 1,
+      "db_id": null,
+      "dead": false,
+      "defense": 0,
+      "desc": "The ever-wise curious dungeon master. They appear to be observing you closely.",
+      "dexterity": 0,
+      "dont_accept_gifts": false,
+      "followed_by": {},
+      "following": null,
+      "food_energy": 1,
+      "health": 200,
+      "is_player": false,
+      "max_distance_from_start_location": 1000000,
+      "max_wearable_items": 3,
+      "max_wieldable_items": 1,
+      "mission": "",
+      "movement_energy_cost": 0.0,
+      "name": "Dungeon Master",
+      "name_prefix": "the",
+      "names": ["Dungeon Master"],
+      "node_id": "dungeon master_2",
+      "num_wearable_items": 0,
+      "num_wieldable_items": 0,
+      "object": false,
+      "on_events": [],
+      "pacifist": false,
+      "persona": "You are the dungeon master, and should be able to help people learn to play LIGHT!",
+      "quests": [],
+      "room": false,
+      "size": 20,
+      "speed": 5,
+      "strength": 0,
+      "tags": [],
+      "usually_npc": false
+    },
+    "ethereal mist_5": {
+      "agent": false,
+      "classes": ["room"],
+      "contain_size": 2000,
+      "contained_nodes": {},
+      "container_node": {
+        "target_id": "VOID"
+      },
+      "db_id": null,
+      "desc": "You feel yourself stretched into a different reality",
+      "extra_desc": "The world around you is a blur. Your perception of senses distorts infinitely.",
+      "grid_location": [1, 0, 0],
+      "name": "Ethereal Mist",
+      "name_prefix": "the",
+      "names": ["Ethereal Mist"],
+      "neighbors": {},
+      "node_id": "ethereal mist_5",
+      "object": false,
+      "room": true,
+      "size": 2000,
+      "surface_type": "in"
+    },
+    "impossible tavern_0": {
+      "agent": false,
+      "classes": ["room"],
+      "contain_size": 1960,
+      "contained_nodes": {
+        "dungeon master_2": {
+          "target_id": "dungeon master_2"
+        },
+        "you_1": {
+          "target_id": "you_1"
+        }
+      },
+      "container_node": {
+        "target_id": "VOID"
+      },
+      "db_id": null,
+      "desc": "A tutorial tavern. There's something inexplicable about it.",
+      "extra_desc": "Extra tutorial description",
+      "grid_location": [0, 0, 0],
+      "name": "Impossible Tavern",
+      "name_prefix": "the",
+      "names": ["Impossible Tavern"],
+      "neighbors": {
+        "ethereal mist_5": {
+          "examine_desc": "You feel as if this portal leads somewhere unusual.",
+          "label": "A shimmering portal",
+          "locked_edge": null,
+          "target_id": "ethereal mist_5"
+        }
+      },
+      "node_id": "impossible tavern_0",
+      "object": false,
+      "room": true,
+      "size": 2000,
+      "surface_type": "in"
+    },
+    "ticket to light_4": {
+      "agent": false,
+      "classes": ["object"],
+      "contain_size": 0,
+      "contained_nodes": {},
+      "container": false,
+      "container_node": {
+        "target_id": "you_1"
+      },
+      "db_id": null,
+      "dead": false,
+      "desc": "Your welcome ticket to LIGHT! You don't recall where you got this, but it seems important.",
+      "drink": false,
+      "equipped": null,
+      "food": false,
+      "food_energy": 0,
+      "gettable": true,
+      "locked_edge": null,
+      "name": "ticket to LIGHT",
+      "name_prefix": "a",
+      "names": ["ticket to LIGHT"],
+      "node_id": "ticket to light_4",
+      "object": true,
+      "on_use": null,
+      "room": false,
+      "size": 1,
+      "stats": {
+        "damage": 0,
+        "defense": 0
+      },
+      "surface_type": "on",
+      "value": 1,
+      "wearable": false,
+      "wieldable": false
+    },
+    "you_1": {
+      "agent": true,
+      "aggression": 0,
+      "attack_tagged_agents": [],
+      "blocked_by": {
+        "dungeon master_2": {
+          "target_id": "dungeon master_2"
+        }
+      },
+      "blocking": null,
+      "char_type": "person",
+      "classes": ["agent"],
+      "contain_size": 18,
+      "contained_nodes": {
+        "boots_3": {
+          "target_id": "boots_3"
+        },
+        "ticket to light_4": {
+          "target_id": "ticket to light_4"
+        }
+      },
+      "container_node": {
+        "target_id": "impossible tavern_0"
+      },
+      "damage": 1,
+      "db_id": null,
+      "dead": false,
+      "defense": 0,
+      "desc": "Looks like someone who plays LIGHT...",
+      "dexterity": 0,
+      "dont_accept_gifts": false,
+      "followed_by": {},
+      "following": null,
+      "food_energy": 1,
+      "health": 2,
+      "is_player": false,
+      "max_distance_from_start_location": 1000000,
+      "max_wearable_items": 3,
+      "max_wieldable_items": 1,
+      "mission": "",
+      "movement_energy_cost": 0.0,
+      "name": "You",
+      "name_prefix": "",
+      "names": ["You"],
+      "node_id": "you_1",
+      "num_wearable_items": 0,
+      "num_wieldable_items": 0,
+      "object": false,
+      "on_events": [],
+      "pacifist": false,
+      "persona": "You are, well, yourself... a wandering soul who has yet to become someone in the full LIGHT world. ",
+      "quests": [],
+      "room": false,
+      "size": 20,
+      "speed": 5,
+      "strength": 0,
+      "tags": [],
+      "usually_npc": false
+    }
+  },
+  "objects": ["boots_3", "ticket to light_4"],
+  "rooms": ["ethereal mist_5", "impossible tavern_0"]
+}

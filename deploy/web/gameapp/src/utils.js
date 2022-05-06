@@ -52,6 +52,7 @@ export const DefaultEmojiMapper = (name) => {
     small_aggressive_looking_dog: "dog",
     smith: "hammer",
     town_doctor: "syringe",
+    you: "smiley",
   };
 
   return EmojiMap[characterName];

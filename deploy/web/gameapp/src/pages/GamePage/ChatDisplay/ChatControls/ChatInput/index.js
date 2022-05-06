@@ -57,6 +57,7 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   };
   const chatSubmissionHandler = (e) => {
     e.preventDefault();
+
     if (!inHelpMode) {
       let textSubmission;
       if (!!chatText) {
@@ -190,7 +191,6 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
                   );
                 }
               }}
-              className="chatbox"
               placeholder={
                 isSaying
                   ? "Enter what you wish to say."

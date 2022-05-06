@@ -70,7 +70,7 @@ def interactive(opt, print_parser=None):
     if print_parser:
         # Show arguments after loading model
         print_parser.opt = agent.opt
-        print_parser.print_args()
+        print_parser.opt.log()
 
     # choose personas
     personas = json.loads(open(personas_path, "rb").read())
@@ -109,21 +109,22 @@ def interactive(opt, print_parser=None):
     cnt = 0
     last_act = None
     while True:
-        new_act = {"epsiode_done": True}
+        new_act = {"episode_done": True}
         human_act = human_agent.act()
         bot_obs.append(PARTNER_SAY + human_act["text"])
         new_act["text"] = "\n".join(bot_obs)
         agent.observe(new_act)
         last_act = agent.act()
         # get a unique utterance among 100 available candidates
-        for cand in last_act["text_candidates"]:
-            if cand not in used_cands:
-                used_cands.append(cand)
-                if type(last_act) == dict:
-                    last_act["text"] = cand
-                else:
-                    last_act.force_set("text", cand)
-                break
+        if "text_candidates" in last_act:
+            for cand in last_act["text_candidates"]:
+                if cand not in used_cands:
+                    used_cands.append(cand)
+                    if type(last_act) == dict:
+                        last_act["text"] = cand
+                    else:
+                        last_act.force_set("text", cand)
+                    break
         bot_obs.append(SELF_SAY + last_act["text"])
         human_agent.observe(last_act)
         cnt += 1
