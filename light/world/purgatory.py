@@ -6,13 +6,14 @@
 
 import random
 import threading
-from typing import TYPE_CHECKING, List, Tuple, Type, Callable, Any, Optional
+from typing import TYPE_CHECKING, List, Tuple, Type, Callable, Any, Optional, Dict
 
 from light.world.souls.player_soul import PlayerSoul
+from light.world.souls.tutorial_player_soul import TutorialPlayerSoul
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
-    from light.graph.world.world import World
+    from light.world.world import World
     from light.graph.events.base import GraphEvent
     from light.world.souls.soul import Soul
 
@@ -130,3 +131,27 @@ class Purgatory:
                 self.players += 1
                 return soul
         return None
+
+
+class TutorialPurgatory(Purgatory):
+    """Version of purgatory that only ever puts a player into the tutorial character"""
+
+    def get_soul_for_player(
+        self,
+        player_provider,
+        agent: Optional["GraphAgent"] = None,
+    ):
+        with self.player_assign_condition:
+            ag = [a for a in self.world.oo_graph.agents.values() if a.name == "You"][0]
+            self.clear_soul(ag)
+            soul = TutorialPlayerSoul(
+                ag,
+                self.world,
+                self.players,
+                player_provider,
+                self.shared_args,
+            )
+            self.node_id_to_soul[ag.node_id] = soul
+            self.player_soul_id_to_soul[self.players] = soul
+            self.players += 1
+            return soul
