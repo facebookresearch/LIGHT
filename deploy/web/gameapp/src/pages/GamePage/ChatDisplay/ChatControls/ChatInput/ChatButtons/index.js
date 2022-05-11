@@ -19,31 +19,31 @@ import TutorialPopover from "../../../../../components/TutorialPopover";
 const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   /* ------ REDUX STATE ------ */
   // VIEW STATE
-  const isMobile = useAppSelector((state) => state.view.isMobile);
-  // CHAT STATE
-  const chatText = useAppSelector((state) => state.chatInput.chatText);
-  const isSaying = useAppSelector((state) => state.chatInput.isSaying);
-  const tellTarget = useAppSelector((state) => state.chatInput.tellTarget);
-  const submittedMessages = useAppSelector(
-    (state) => state.chatInput.submittedMessages
-  );
-  //TUTORIAL;
-  const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
-  const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
-  /* ----REDUX ACTIONS---- */
-  // REDUX DISPATCH FUNCTION
-  const dispatch = useAppDispatch();
-  const setSelectedTip = (tipNumber) => {
-    if (inHelpMode) {
-      dispatch(updateSelectedTip(tipNumber));
-    }
-  };
-  /*---------------LOCAL STATE----------------*/
-  const [cycleMessagesPosition, setCycleMessagesPosition] = useState(0);
-  /*---------------LIFECYCLE----------------*/
-  useEffect(() => {
-    setCycleMessagesPosition(submittedMessages.length);
-  }, [submittedMessages]);
+  //   const isMobile = useAppSelector((state) => state.view.isMobile);
+  //   // CHAT STATE
+  //   const chatText = useAppSelector((state) => state.chatInput.chatText);
+  //   const isSaying = useAppSelector((state) => state.chatInput.isSaying);
+  //   const tellTarget = useAppSelector((state) => state.chatInput.tellTarget);
+  //   const submittedMessages = useAppSelector(
+  //     (state) => state.chatInput.submittedMessages
+  //   );
+  //   //TUTORIAL;
+  //   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
+  //   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
+  //   /* ----REDUX ACTIONS---- */
+  //   // REDUX DISPATCH FUNCTION
+  //   const dispatch = useAppDispatch();
+  //   const setSelectedTip = (tipNumber) => {
+  //     if (inHelpMode) {
+  //       dispatch(updateSelectedTip(tipNumber));
+  //     }
+  //   };
+  //   /*---------------LOCAL STATE----------------*/
+  //   const [cycleMessagesPosition, setCycleMessagesPosition] = useState(0);
+  //   /*---------------LIFECYCLE----------------*/
+  //   useEffect(() => {
+  //     setCycleMessagesPosition(submittedMessages.length);
+  //   }, [submittedMessages]);
 
   /*---------------HANDLERS----------------*/
   const toggleIsSaying = () => {
@@ -80,78 +80,7 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
 
   return (
     <>
-      <div
-        className={`chatbox-button ${
-          tellTarget !== "" ? "tell" : isSaying ? "say" : "do"
-        } ${inHelpMode ? "active" : ""}`}
-        onClick={(e) => {
-          e.preventDefault();
-          if (inHelpMode) {
-            setSelectedTip(5);
-          } else {
-            toggleIsSaying();
-          }
-        }}
-      >
-        {tellTarget !== ""
-          ? `TELL ${formatTellTargetForButton(tellTarget)}`
-          : isSaying
-          ? "SAY"
-          : "DO"}
-        <TutorialPopover
-          tipNumber={5}
-          open={inHelpMode && selectedTip === 5}
-          position="right"
-        ></TutorialPopover>
-      </div>
-      <div
-        className={`chatbox-button ${
-          tellTarget !== "" ? "tell" : isSaying ? "say" : "do"
-        } ${inHelpMode ? "active" : ""}`}
-        onClick={(e) => {
-          e.preventDefault();
-          if (inHelpMode) {
-            setSelectedTip(5);
-          } else {
-            toggleIsSaying();
-          }
-        }}
-      >
-        {tellTarget !== ""
-          ? `TELL ${formatTellTargetForButton(tellTarget)}`
-          : isSaying
-          ? "SAY"
-          : "DO"}
-        <TutorialPopover
-          tipNumber={5}
-          open={inHelpMode && selectedTip === 5}
-          position="right"
-        ></TutorialPopover>
-      </div>
-      <div
-        className={`chatbox-button ${
-          tellTarget !== "" ? "tell" : isSaying ? "say" : "do"
-        } ${inHelpMode ? "active" : ""}`}
-        onClick={(e) => {
-          e.preventDefault();
-          if (inHelpMode) {
-            setSelectedTip(5);
-          } else {
-            toggleIsSaying();
-          }
-        }}
-      >
-        {tellTarget !== ""
-          ? `TELL ${formatTellTargetForButton(tellTarget)}`
-          : isSaying
-          ? "SAY"
-          : "DO"}
-        <TutorialPopover
-          tipNumber={5}
-          open={inHelpMode && selectedTip === 5}
-          position="right"
-        ></TutorialPopover>
-      </div>
+      <div></div>
     </>
   );
 };

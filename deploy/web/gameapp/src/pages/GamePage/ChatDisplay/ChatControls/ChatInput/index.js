@@ -13,6 +13,7 @@ import {
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */
+import ChatButtons from "./ChatButtons";
 import TutorialPopover from "../../../../../components/TutorialPopover";
 
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
@@ -98,123 +99,16 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
     <div className={classNames.chatbarContainer}>
       <form onSubmit={chatSubmissionHandler}>
         <div className={classNames.chatbar}>
+          <ChatButtons />
+
           <div
-            className={`chatbox-button ${
-              tellTarget !== "" ? "tell" : isSaying ? "say" : "do"
-            } ${inHelpMode ? "active" : ""}`}
-            onClick={(e) => {
-              e.preventDefault();
-              if (inHelpMode) {
-                setSelectedTip(5);
-              } else {
-                toggleIsSaying();
-              }
-            }}
+            className="chatbox-button send"
+            onClick={
+              inHelpMode ? () => setSelectedTip(7) : chatSubmissionHandler
+            }
           >
-            {tellTarget !== ""
-              ? `TELL ${formatTellTargetForButton(tellTarget)}`
-              : isSaying
-              ? "SAY"
-              : "DO"}
-            <TutorialPopover
-              tipNumber={5}
-              open={inHelpMode && selectedTip === 5}
-              position="right"
-            ></TutorialPopover>
+            SEND
           </div>
-          <TutorialPopover
-            tipNumber={6}
-            open={inHelpMode && selectedTip === 6}
-            position="top"
-          >
-            <input
-              className={`chatbox-input ${inHelpMode ? "active" : ""}`}
-              value={chatText}
-              onClick={(e) => {
-                e.preventDefault();
-                if (inHelpMode) {
-                  setSelectedTip(6);
-                }
-              }}
-              onChange={(e) => {
-                resetIdleTimer();
-                dispatch(updateChatText(e.target.value));
-              }}
-              onKeyDown={(e) => {
-                if (e.key == "`") {
-                  e.preventDefault();
-                  toggleIsSaying();
-                }
-                if (e.key == "ArrowUp") {
-                  e.preventDefault();
-                  if (inHelpMode) {
-                    console.log(" HELP MODE ARROW UP KEY PRESS");
-                    let nextTip = selectedTip + 1;
-                    if (nextTip > 8) {
-                      nextTip = 0;
-                    }
-                    console.log("TIP cylce", nextTip);
-                    setSelectedTip(nextTip);
-                  } else {
-                    if (submittedMessages.length > 0) {
-                      let updatedPosition = cycleMessagesPosition - 1;
-                      if (updatedPosition < 0) {
-                        updatedPosition = submittedMessages.length;
-                      }
-                      setCycleMessagesPosition(updatedPosition);
-                      dispatch(
-                        updateChatText(submittedMessages[updatedPosition])
-                      );
-                    }
-                  }
-                }
-                if (e.key == "ArrowDown") {
-                  e.preventDefault();
-                  if (inHelpMode) {
-                    let lastTip = selectedTip - 1;
-                    if (lastTip < 0) {
-                      lastTip = 8;
-                    }
-                    setSelectedTip(lastTip);
-                  } else {
-                    if (submittedMessages.length > 0) {
-                      let updatedPosition = cycleMessagesPosition + 1;
-                      if (updatedPosition >= submittedMessages.length) {
-                        updatedPosition = 0;
-                      }
-                      setCycleMessagesPosition(updatedPosition);
-                      dispatch(
-                        updateChatText(submittedMessages[updatedPosition])
-                      );
-                    }
-                  }
-                }
-                if (e.key === "Enter" && e.shiftKey) {
-                  const prefix = e.target.value.startsWith('"') ? "" : '"';
-                  const suffix = e.target.value.endsWith('"') ? "" : '"';
-                  dispatch(
-                    updateChatText(`${prefix} e.target.value ${suffix}`)
-                  );
-                }
-              }}
-              placeholder={
-                isSaying
-                  ? "Enter what you wish to say."
-                  : "Enter what you wish to do here."
-              }
-            />
-          </TutorialPopover>
-        </div>
-        <div
-          className="chatbox-button send"
-          onClick={inHelpMode ? () => setSelectedTip(7) : chatSubmissionHandler}
-        >
-          <TutorialPopover
-            tipNumber={7}
-            open={inHelpMode && selectedTip === 7}
-            position="left"
-          ></TutorialPopover>
-          SEND
         </div>
       </form>
     </div>
@@ -222,3 +116,127 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
 };
 
 export default ChatInput;
+
+// <div className={classNames.chatbarContainer}>
+// <form onSubmit={chatSubmissionHandler}>
+//   <div className={classNames.chatbar}>
+//     <div
+//       className={`chatbox-button ${
+//         tellTarget !== "" ? "tell" : isSaying ? "say" : "do"
+//       } ${inHelpMode ? "active" : ""}`}
+//       onClick={(e) => {
+//         e.preventDefault();
+//         if (inHelpMode) {
+//           setSelectedTip(5);
+//         } else {
+//           toggleIsSaying();
+//         }
+//       }}
+//     >
+//       {tellTarget !== ""
+//         ? `TELL ${formatTellTargetForButton(tellTarget)}`
+//         : isSaying
+//         ? "SAY"
+//         : "DO"}
+//       <TutorialPopover
+//         tipNumber={5}
+//         open={inHelpMode && selectedTip === 5}
+//         position="right"
+//       ></TutorialPopover>
+//     </div>
+//     <TutorialPopover
+//       tipNumber={6}
+//       open={inHelpMode && selectedTip === 6}
+//       position="top"
+//     >
+//       <input
+//         className={`chatbox-input ${inHelpMode ? "active" : ""}`}
+//         value={chatText}
+//         onClick={(e) => {
+//           e.preventDefault();
+//           if (inHelpMode) {
+//             setSelectedTip(6);
+//           }
+//         }}
+//         onChange={(e) => {
+//           resetIdleTimer();
+//           dispatch(updateChatText(e.target.value));
+//         }}
+//         onKeyDown={(e) => {
+//           if (e.key == "`") {
+//             e.preventDefault();
+//             toggleIsSaying();
+//           }
+//           if (e.key == "ArrowUp") {
+//             e.preventDefault();
+//             if (inHelpMode) {
+//               console.log(" HELP MODE ARROW UP KEY PRESS");
+//               let nextTip = selectedTip + 1;
+//               if (nextTip > 8) {
+//                 nextTip = 0;
+//               }
+//               console.log("TIP cylce", nextTip);
+//               setSelectedTip(nextTip);
+//             } else {
+//               if (submittedMessages.length > 0) {
+//                 let updatedPosition = cycleMessagesPosition - 1;
+//                 if (updatedPosition < 0) {
+//                   updatedPosition = submittedMessages.length;
+//                 }
+//                 setCycleMessagesPosition(updatedPosition);
+//                 dispatch(
+//                   updateChatText(submittedMessages[updatedPosition])
+//                 );
+//               }
+//             }
+//           }
+//           if (e.key == "ArrowDown") {
+//             e.preventDefault();
+//             if (inHelpMode) {
+//               let lastTip = selectedTip - 1;
+//               if (lastTip < 0) {
+//                 lastTip = 8;
+//               }
+//               setSelectedTip(lastTip);
+//             } else {
+//               if (submittedMessages.length > 0) {
+//                 let updatedPosition = cycleMessagesPosition + 1;
+//                 if (updatedPosition >= submittedMessages.length) {
+//                   updatedPosition = 0;
+//                 }
+//                 setCycleMessagesPosition(updatedPosition);
+//                 dispatch(
+//                   updateChatText(submittedMessages[updatedPosition])
+//                 );
+//               }
+//             }
+//           }
+//           if (e.key === "Enter" && e.shiftKey) {
+//             const prefix = e.target.value.startsWith('"') ? "" : '"';
+//             const suffix = e.target.value.endsWith('"') ? "" : '"';
+//             dispatch(
+//               updateChatText(`${prefix} e.target.value ${suffix}`)
+//             );
+//           }
+//         }}
+//         placeholder={
+//           isSaying
+//             ? "Enter what you wish to say."
+//             : "Enter what you wish to do here."
+//         }
+//       />
+//     </TutorialPopover>
+//   </div>
+//   <div
+//     className="chatbox-button send"
+//     onClick={inHelpMode ? () => setSelectedTip(7) : chatSubmissionHandler}
+//   >
+//     <TutorialPopover
+//       tipNumber={7}
+//       open={inHelpMode && selectedTip === 7}
+//       position="left"
+//     ></TutorialPopover>
+//     SEND
+//   </div>
+// </form>
+// </div>
