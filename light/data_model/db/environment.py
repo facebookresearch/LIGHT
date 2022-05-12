@@ -4,13 +4,203 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.data_model.db.base import BaseDB
+from light.data_model.db.base import BaseDB, DBStatus, DBSplitType
+from light.graph.structured_graph import OOGraph
 from omegaconf import MISSING, DictConfig
 from typing import Optional, Union, Dict, Any
+from dataclasses import dataclass
+from enum import Enum
 
 
-DB_STATUS_REVIEW = "unreviewed"
-DB_SPLIT_UNSET = "no_set_split"
+class DBEdgeType(Enum):
+    """Edges in the LIGHT Environment DB"""
+
+    CONTAINS = "contains"
+    MAY_CONTAIN = "may_contain"
+    WEARING = "wearing"
+    MAY_WEAR = "may_wear"
+    WIELDING = "wielding"
+    MAY_WIELD = "may_wield"
+    CONTAINED_IN = "contained_in"
+    MAY_BE_INSIDE = "may_contained_in"
+
+
+# Base Components
+
+
+@dataclass
+class DBBaseElem:
+    """
+    Class for the shared db base components, as all have just an
+    id and a name
+    """
+
+    db_id: str
+    name: str
+
+
+@dataclass
+class DBBaseAgent(DBBaseElem):
+    """
+    Class containing the expected elements for a base agent,
+    with any supporting methods
+    """
+
+
+@dataclass
+class DBBaseObject(DBBaseElem):
+    """
+    Class containing the expected elements for a base object,
+    with any supporting methods
+    """
+
+
+@dataclass
+class DBBaseRoom(DBBaseElem):
+    """
+    Class containing the expected elements for a base room,
+    with any supporting methods
+    """
+
+
+# Graph nodes
+
+
+@dataclass
+class DBElem:
+    """Class for shared attributes for all graph model components"""
+
+    db_id: str
+    base_id: str
+    name: str
+    status: DBStatus
+    split: DBSplitType
+    creator_id: Optional[str]
+
+
+@dataclass
+class DBAgent(DBElem):
+    """
+    Class containing the expected elements for an agent,
+    with any supporting methods
+    """
+
+    persona: str
+    physical_description: str
+    name_prefix: Optional[str] = None
+    is_plural: Optional[str] = None
+    size: Optional[int] = None
+    contain_size: Optional[int] = None
+    constitution: Optional[int] = None
+    charisma: Optional[int] = None
+    strength: Optional[int] = None
+    dexterity: Optional[int] = None
+    intelligence: Optional[int] = None
+    wisdom: Optional[int] = None
+
+
+@dataclass
+class DBObject(DBElem):
+    """
+    Class containing the expected elements for an object,
+    with any supporting methods
+    """
+
+    name: str
+    physical_description: str
+    is_container: float
+    is_drink: float
+    is_food: float
+    is_gettable: float
+    is_surface: float
+    is_wearable: float
+    is_weapon: float
+    name_prefix: Optional[str] = None
+    is_plural: Optional[str] = None
+    size: Optional[int] = None
+    contain_size: Optional[int] = None
+    value: Optional[float] = None
+    rarity: Optional[float] = None
+
+
+@dataclass
+class DBRoom(DBElem):
+    """
+    Class containing the expected elements for a room,
+    with any supporting methods
+    """
+
+    name: str
+    description: str
+    backstory: str
+    size: Optional[int] = None
+    indoor_status: Optional[str] = None
+
+
+# Graph edges and attributes
+
+
+@dataclass
+class DBEdgeBase:
+    """Base attributes for an edge as stored in the environment DB"""
+
+    parent_id: str
+    edge_type: str
+    edge_strength: int = 1
+    status: DBStatus
+    edge_label: Optional[str] = None
+    creator_id: Optional[str] = None
+
+
+@dataclass
+class DBEdge(DBEdgeBase):
+    child_id: str
+
+
+@dataclass
+class DBTextEdge(DBEdgeBase):
+    child_text: str
+
+
+# Other
+
+
+@dataclass
+class DBEdit:
+    edit_id: str
+    user_id: str
+    table: str
+    node_id: str
+    field: str
+    value: Any
+
+
+@dataclass
+class DBFlag:
+    flag_id: str
+    user_id: str
+    table: str
+    node_id: str
+    reason: str
+
+
+@dataclass
+class DBQuest:
+    quest_id: str
+    agent_id: str
+    text_motivation: str
+    target_type: str
+    target: str
+    status: DBStatus
+    creator_id: Optional[str] = None
+
+
+@dataclass
+class DBGraph:
+    graph_id: str
+    graph_name: str
+    creator_id: str
+    file_path: str
 
 
 class EnvDB(BaseDB):
@@ -69,8 +259,8 @@ class EnvDB(BaseDB):
         dexterity: Optional[int] = None,
         intelligence: Optional[int] = None,
         wisdom: Optional[int] = None,
-        status: str = DB_STATUS_REVIEW,
-        split: str = DB_SPLIT_UNSET,
+        status: DBStatus = DBStatus.REVIEW,
+        split: DBSplitType = DBSplitType.UNSET,
         creator_id: Optional[str] = None,
     ) -> str:
         """Create this agent, making a base_agent first if required"""
@@ -84,8 +274,8 @@ class EnvDB(BaseDB):
         physical_description: Optional[str] = None,
         name_prefix: Optional[str] = None,
         is_plural: Optional[str] = None,
-        status: Optional[str] = None,
-        split: Optional[str] = None,
+        status: Optional[DBStatus] = None,
+        split: Optional[DBSplitType] = None,
         creator_id: Optional[str] = None,
     ) -> List["DBAgent"]:
         """Return all agents matching the given parameters"""
@@ -121,8 +311,8 @@ class EnvDB(BaseDB):
         contain_size: Optional[int] = None,
         value: Optional[float] = None,
         rarity: Optional[float] = None,
-        status: str = DB_STATUS_REVIEW,
-        split: str = DB_SPLIT_UNSET,
+        status: DBStatus = DBStatus.REVIEW,
+        split: DBSplitType = DBSplitType.UNSET,
         creator_id: Optional[str] = None,
     ) -> str:
         """Create a new object, making a base_object first if required"""
@@ -142,8 +332,8 @@ class EnvDB(BaseDB):
         is_weapon: Optional[bool] = None,
         name_prefix: Optional[str] = None,
         is_plural: Optional[str] = None,
-        status: Optional[str] = None,
-        split: Optional[str] = None,
+        status: Optional[DBStatus] = None,
+        split: Optional[DBSplitType] = None,
         creator_id: Optional[str] = None,
     ) -> List["DBObject"]:
         """Return all objects matching the given parameters"""
@@ -172,8 +362,8 @@ class EnvDB(BaseDB):
         size: Optional[int] = None,
         indoor_status: Optional[str] = None,
         rarity: Optional[float] = None,
-        status: str = DB_STATUS_REVIEW,
-        split: str = DB_SPLIT_UNSET,
+        status: DBStatus = DBStatus.REVIEW,
+        split: DBSplitType = DBSplitType.UNSET,
         creator_id: Optional[str] = None,
     ) -> str:
         """Create a new room, making a base_room first if required"""
@@ -186,8 +376,8 @@ class EnvDB(BaseDB):
         description: Optional[str] = None,
         backstory: Optional[str] = None,
         indoor_status: Optional[str] = None,
-        status: Optional[str] = None,
-        split: Optional[str] = None,
+        status: Optional[DBStatus] = None,
+        split: Optional[DBSplitType] = None,
         creator_id: Optional[str] = None,
     ) -> List["DBRoom"]:
         """Return all rooms matching the given parameters"""
@@ -202,7 +392,7 @@ class EnvDB(BaseDB):
         target_id: str,
         attribute_name: str,
         attribute_value_string: str,
-        status: str = DB_STATUS_REVIEW,
+        status: DBStatus = DBStatus.REVIEW,
         creator_id: Optional[str] = None,
     ) -> None:
         """Create an arbitrary attribute entry for the target node"""
@@ -215,7 +405,8 @@ class EnvDB(BaseDB):
         child_id: str,
         edge_type: str,
         edge_strength: int = 1,
-        status: str = DB_STATUS_REVIEW,
+        edge_label: Optional[str] = None,
+        status: DBStatus = DBStatus.REVIEW,
         creator_id: Optional[str] = None,
     ) -> str:
         """Create an edge between two nodes"""
@@ -225,9 +416,10 @@ class EnvDB(BaseDB):
         parent_id: Optional[str] = None,
         child_id: Optional[str] = None,
         edge_type: Optional[str] = None,
-        status: Optional[str] = None,
+        status: Optional[DBStatus] = None,
         creator_id: Optional[str] = None,
-    ):
+        min_strength: Optional[int] = 0,
+    ) -> List["DBEdge"]:
         """Return all edges matching the given parameters"""
 
     def create_text_edge(
@@ -236,7 +428,8 @@ class EnvDB(BaseDB):
         child_text: str,
         edge_type: str,
         edge_strength: int = 1,
-        status: str = DB_STATUS_REVIEW,
+        edge_label: Optional[str] = None,
+        status: DBStatus = DBStatus.REVIEW,
         creator_id: Optional[str] = None,
     ) -> str:
         """Create an edge between a node and the name of a possible leaf"""
@@ -246,9 +439,10 @@ class EnvDB(BaseDB):
         parent_id: Optional[str] = None,
         child_text: Optional[str] = None,
         edge_type: Optional[str] = None,
-        status: Optional[str] = None,
+        status: Optional[DBStatus] = None,
         creator_id: Optional[str] = None,
-    ):
+        min_strength: Optional[int] = 0,
+    ) -> List["DBTextEdge"]:
         """Return all text edges matching the given parameters"""
 
     # Flags and edits
@@ -269,7 +463,7 @@ class EnvDB(BaseDB):
         table: Optional[str] = None,
         node_id: Optional[str] = None,
         field: Optional[str] = None,
-        status: Optional[str] = None,
+        status: Optional[DBStatus] = None,
     ) -> List["DBEdit"]:
         """Return all edits matching the given parameters"""
 
@@ -290,15 +484,49 @@ class EnvDB(BaseDB):
         user_id: str,
         table: str,
         node_id: str,
-        status: Optional[str] = None,
+        status: Optional[DBStatus] = None,
     ) -> List["DBFlag"]:
         """Return all flags matching the given parameters"""
 
     # Quests
 
-    ## TODO Figure out a format for quests/motivations -> target action? Subquests?
-    ## motivation text -> desired action outcome, or list of subquests, associated characters
+    def create_quest(
+        self,
+        agent_id: str,
+        text_motivation: str,
+        target_type: str,
+        target: str,
+        status: DBStatus = DBStatus.REVIEW,
+        creator_id: Optional[str] = None,
+    ) -> str:
+        """
+        Creates a Quest, which is a mapping from character and motivation
+        text to a desired action or list of subquests
+        """
 
-    # Worlds
+    def find_quests(
+        self,
+        agent_id: Optional[str] = None,
+        text_motivation: Optional[str] = None,
+        target_type: Optional[str] = None,
+        target: Optional[str] = None,
+        status: Optional[DBStatus] = None,
+        creator_id: Optional[str] = None,
+    ) -> List["DBQuest"]:
+        """Return all text edges matching the given parameters"""
 
-    ## TODO Figure out the world saving format. Likely just owner+metadata and write to file
+    # Graphs
+
+    def save_graph(self, graph: "OOGraph", creator_id: str) -> str:
+        """Save this graph to a file for the given user"""
+
+    def load_graph(self, graph_id: str) -> "DBGraph":
+        """Return the queried graph, raising if nonexistent"""
+
+    def find_graphs(
+        self,
+        graph_name: Optional[str] = None,
+        creator_id: Optional[str] = None,
+        # ... TODO can add other search attributes?
+    ) -> List["DBGraph"]:
+        """Return all graphs matching the provided parameters"""

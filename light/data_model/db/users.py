@@ -7,6 +7,27 @@
 from light.data_model.db.base import BaseDB
 from omegaconf import MISSING, DictConfig
 from typing import Optional, Union, Dict, Any
+from dataclasses import dataclass
+from enum import Enum
+
+
+class PlayerStatus(Enum):
+    STANDARD = "standard"
+    BLOCKED = "blocked"
+    TUTORIAL = "in tutorial"
+    ADMIN = "admin"
+
+
+@dataclass
+class DBPlayer:
+    """Class containing the expected elements for a Player as stored in the db"""
+
+    extern_id: str
+    is_preauth: bool
+    flag_count: int
+    safety_trigger_count: int
+    total_messages: int
+    account_status: PlayerStatus
 
 
 class UserDB(BaseDB):
@@ -35,7 +56,7 @@ class UserDB(BaseDB):
     ) -> int:
         """Create the specified player"""
 
-    def get_user_by_id(self, extern_id: str) -> "DBPlayer":
+    def get_user_by_id(self, extern_id: str) -> DBPlayer:
         """Find the specified player, raise exception if non-existent"""
 
     def get_agent_score(

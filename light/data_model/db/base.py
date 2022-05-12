@@ -8,8 +8,28 @@
 from abc import ABC, abstractmethod
 from omegaconf import MISSING, DictConfig
 from contextlib import contextmanager
-
+from enum import Enum
 from typing import Optional, Union, Dict, Any
+
+
+class DBStatus(Enum):
+    """Current review status for contents"""
+
+    REVIEW = "unreviewed"
+    PRODUCTION = "production"
+    REJECTED = "rejected"
+    QUESTIONABLE = "questionable"
+    ACCEPTED = "accepted"
+
+
+class DBSplitType(Enum):
+    """Splits in the LIGHT Environment DB"""
+
+    UNSET = "no_split_set"
+    TRAIN = "train"
+    TEST = "test"
+    VALID = "valid"
+    UNSEEN = "unseen_test"
 
 
 class BaseDB(ABC):
