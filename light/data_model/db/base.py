@@ -54,14 +54,12 @@ class BaseDB(ABC):
         """
         Complete implementation-specific initialization
         """
-        raise NotImplementedError()
 
     @abstractmethod
     def _validate_init(self):
         """
         Ensure that this database is initialized correctly
         """
-        raise NotImplementedError()
 
     def write_data_to_file(
         self, data: Union[str, Dict[str, Any]], filename: str, json_encode: bool = False

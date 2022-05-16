@@ -22,14 +22,14 @@ class DBEdgeType(Enum):
     WIELDING = "wielding"
     MAY_WIELD = "may_wield"
     CONTAINED_IN = "contained_in"
-    MAY_BE_INSIDE = "may_contained_in"
+    MAY_BE_CONTAINED_IN = "may_be_contained_in"
 
 
-# Base Components
+# Name Key Components - Should be text searchable
 
 
 @dataclass
-class DBBaseElem:
+class DBNameKey:
     """
     Class for the shared db base components, as all have just an
     id and a name
@@ -40,25 +40,25 @@ class DBBaseElem:
 
 
 @dataclass
-class DBBaseAgent(DBBaseElem):
+class DBAgentName(DBNameKey):
     """
-    Class containing the expected elements for a base agent,
+    Class containing the expected elements for an agent name,
     with any supporting methods
     """
 
 
 @dataclass
-class DBBaseObject(DBBaseElem):
+class DBObjectName(DBNameKey):
     """
-    Class containing the expected elements for a base object,
+    Class containing the expected elements for an object name,
     with any supporting methods
     """
 
 
 @dataclass
-class DBBaseRoom(DBBaseElem):
+class DBRoomName(DBNameKey):
     """
-    Class containing the expected elements for a base room,
+    Class containing the expected elements for a room name,
     with any supporting methods
     """
 
@@ -71,7 +71,7 @@ class DBElem:
     """Class for shared attributes for all graph model components"""
 
     db_id: str
-    base_id: str
+    name_id: str
     name: str
     status: DBStatus
     split: DBSplitType
@@ -235,14 +235,14 @@ class EnvDB(BaseDB):
 
     # Agents
 
-    def create_base_agent(self, name: str) -> str:
+    def create_agent_name(self, name: str) -> str:
         """Create a new agent name in the database"""
-        # Return base_char_id
+        # Return agent name_id
 
-    def get_base_agent(
+    def get_agent_name(
         self, name: Optional[str] = None, id: Optional[str] = None
-    ) -> "DBBaseAgent":
-        """Get a specific base agent, assert that it exists"""
+    ) -> "DBAgentName":
+        """Get a specific agent name, assert that it exists"""
 
     def create_agent_entry(
         self,
@@ -263,12 +263,12 @@ class EnvDB(BaseDB):
         split: DBSplitType = DBSplitType.UNSET,
         creator_id: Optional[str] = None,
     ) -> str:
-        """Create this agent, making a base_agent first if required"""
+        """Create this agent, making an agent name first if required"""
         # Return agent_id
 
     def find_agents(
         self,
-        base_id: Optional[str] = None,
+        name_id: Optional[str] = None,
         name: Optional[str] = None,
         persona: Optional[str] = None,
         physical_description: Optional[str] = None,
@@ -285,14 +285,14 @@ class EnvDB(BaseDB):
 
     # Objects
 
-    def create_base_object(self, name: str) -> str:
+    def create_object_name(self, name: str) -> str:
         """Create a new object name in the database"""
-        # Return base_obj_id
+        # Return object name_id
 
-    def get_base_object(
+    def get_object_name(
         self, name: Optional[str] = None, id: Optional[str] = None
-    ) -> "DBBaseObject":
-        """Get a specific base object, assert that it exists"""
+    ) -> "DBObjectName":
+        """Get a specific object name, assert that it exists"""
 
     def create_object_entry(
         self,
@@ -315,12 +315,12 @@ class EnvDB(BaseDB):
         split: DBSplitType = DBSplitType.UNSET,
         creator_id: Optional[str] = None,
     ) -> str:
-        """Create a new object, making a base_object first if required"""
+        """Create a new object, making a object_name first if required"""
         # Return object_id
 
     def find_objects(
         self,
-        base_id: Optional[str] = None,
+        name_id: Optional[str] = None,
         name: Optional[str] = None,
         physical_description: Optional[str] = None,
         is_container: Optional[bool] = None,
@@ -343,16 +343,16 @@ class EnvDB(BaseDB):
 
     # Rooms
 
-    def create_base_room(self, name: str) -> str:
+    def create_room_name(self, name: str) -> str:
         """Create a new room name in the database"""
-        # Return base_room_id
+        # Return room name_id
 
-    def get_base_room(
+    def get_room_name(
         self,
         id: Optional[str] = None,
         name: Optional[str] = None,
-    ) -> "DBBaseRoom":
-        """Return all base rooms matching the given parameters"""
+    ) -> "DBRoomName":
+        """Return all room names matching the given parameters"""
 
     def create_room_entry(
         self,
@@ -366,12 +366,12 @@ class EnvDB(BaseDB):
         split: DBSplitType = DBSplitType.UNSET,
         creator_id: Optional[str] = None,
     ) -> str:
-        """Create a new room, making a base_room first if required"""
+        """Create a new room, making a room name first if required"""
         # Return room_id
 
     def find_rooms(
         self,
-        base_id: Optional[str] = None,
+        name_id: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
         backstory: Optional[str] = None,

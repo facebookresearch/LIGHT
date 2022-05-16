@@ -14,7 +14,7 @@ from enum import Enum
 class PlayerStatus(Enum):
     STANDARD = "standard"
     BLOCKED = "blocked"
-    TUTORIAL = "in tutorial"
+    TUTORIAL = "in_tutorial"
     ADMIN = "admin"
 
 
