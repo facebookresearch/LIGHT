@@ -7,9 +7,21 @@
 
 from abc import ABC, abstractmethod
 from omegaconf import MISSING, DictConfig
-from contextlib import contextmanager
+from sqlalchemy import create_engine
 from enum import Enum
 from typing import Optional, Union, Dict, Any
+from dataclasses import dataclass
+
+from hydra.core.config_store import ConfigStore
+
+
+@dataclass
+class LightDBConfig:
+    backend: str = "test"
+
+
+cs = ConfigStore.instance()
+cs.store(name="config1", node=LightDBConfig)
 
 
 class DBStatus(Enum):
@@ -48,6 +60,12 @@ class BaseDB(ABC):
         Create this database, either connecting to a remote host or local
         files and instances.
         """
+        # TODO replace with a swappable engine that persists the data
+        if config.backend == "test":
+            self.engine = create_engine("sqlite+pysqlite:///:memory:", future=True)
+        else:
+            raise NotImplementedError()
+        self._complete_init(config)
 
     @abstractmethod
     def _complete_init(self, config: "DictConfig"):
@@ -82,14 +100,3 @@ class BaseDB(ABC):
             yield file
         finally:
             file.close()
-
-    @contextmanager
-    def get_database_connection(self):
-        """Get a connection to the database that can be used for a transaction"""
-        try:
-            # Get DB connection
-            # yield db connection
-            raise NotImplementedError()
-        finally:
-            # close DB connection, rollback if there's an issue
-            pass
