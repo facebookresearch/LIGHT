@@ -81,7 +81,7 @@ class TestUserDB(unittest.TestCase):
         )
         self.assertEqual(
             player_1_by_id.account_status,
-            PlayerStatus.TUTORIAL.value,
+            PlayerStatus.TUTORIAL,
             "Did not initialize to tutorial",
         )
 
@@ -111,7 +111,7 @@ class TestUserDB(unittest.TestCase):
         )
         self.assertEqual(
             player_2_by_id.account_status,
-            PlayerStatus.TUTORIAL.value,
+            PlayerStatus.TUTORIAL,
             "Did not initialize to tutorial",
         )
 
@@ -211,8 +211,8 @@ class TestUserDB(unittest.TestCase):
             player = db.get_player(player_id_1)
             self.assertEqual(
                 player.account_status,
-                player_status.value,
-                f"Did not find expected status {player_status.value}, instead {player.account_status}",
+                player_status,
+                f"Did not find expected status {player_status}, instead {player.account_status}",
             )
 
         # Ensure update on nonexisting player fails

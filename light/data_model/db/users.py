@@ -7,14 +7,23 @@
 from light.data_model.db.base import BaseDB
 from omegaconf import MISSING, DictConfig
 from typing import Optional, Union, Dict, Any
-from sqlalchemy import insert, select, Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import (
+    insert,
+    select,
+    Enum,
+    Column,
+    Integer,
+    String,
+    Boolean,
+    ForeignKey,
+)
 from sqlalchemy.orm import declarative_base, relationship, Session
-from enum import Enum
+import enum
 
 SQLBase = declarative_base()
 
 
-class PlayerStatus(Enum):
+class PlayerStatus(enum.Enum):
     STANDARD = "standard"
     BLOCKED = "blocked"
     TUTORIAL = "in_tutorial"
@@ -32,7 +41,7 @@ class DBPlayer(SQLBase):
     flag_count = Column(Integer, nullable=False)
     safety_trigger_count = Column(Integer, nullable=False)
     total_messages = Column(Integer, nullable=False)
-    account_status = Column(String(15), nullable=False)  # of type PlayerStatus
+    account_status = Column(Enum(PlayerStatus), nullable=False)
     scores = relationship("DBScoreEntry")
 
     def __repr__(self):
@@ -90,7 +99,7 @@ class UserDB(BaseDB):
                 flag_count=0,
                 safety_trigger_count=0,
                 total_messages=0,
-                account_status=PlayerStatus.TUTORIAL.value,
+                account_status=PlayerStatus.TUTORIAL,
             )
             base_score = DBScoreEntry(
                 score=0,
@@ -199,5 +208,5 @@ class UserDB(BaseDB):
         get_player = select(DBPlayer).where(DBPlayer.id == player_id)
         with Session(self.engine) as session:
             player = self._enforce_get_first(session, get_player, "Player not found")
-            player.account_status = new_status.value
+            player.account_status = new_status
             session.commit()
