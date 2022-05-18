@@ -42,6 +42,7 @@ class InteractionLogger(abc.ABC):
         self.graph = graph
         self.players: Set[str] = set()
         self.actions: int = 0
+        self._last_episode_logged: Optional[int] = None
 
         # All loggers should have graph state history and a buffer for events
         # State history is just the json of the graph the event executed on
@@ -65,20 +66,13 @@ class InteractionLogger(abc.ABC):
         self._log_interactions()
         raise NotImplementedError
 
-    def _log_interactions(self) -> None:
-        """
-        Writes out the buffers to the location specified by data location,
-        handling any data specific formatting
-        """
-        raise NotImplementedError
-
     def observe_event(self, event) -> None:
         """
         Examine event passed in, deciding how to save it to the logs
         """
         raise NotImplementedError
 
-    def _dump_graphs(self) -> List[Dict[str, str]]:
+    def _prep_graphs(self) -> List[Dict[str, str]]:
         """
         This method is responsible for preparing the graphs for this event logger
         """
@@ -96,7 +90,7 @@ class InteractionLogger(abc.ABC):
             )
         return states
 
-    def _dump_events(
+    def _prep_events(
         self,
         graph_states: List[Dict[str, str]],
         target_id: str,
@@ -107,11 +101,9 @@ class InteractionLogger(abc.ABC):
         """
         unique_event_name = str(uuid.uuid4())[:8]
         id_name = f"{target_id}".replace(" ", "_")[:20]
-        event_file_name = (
-            f"{id_name}_{time.time():.0f}_{unique_event_name}_events.json "
-        )
+        event_file_name = f"{id_name}_{time.time():.0f}_{unique_event_name}_events.json"
         events = []
-        for (graph_idx, hashed, event, time) in self.event_buffer:
+        for (graph_idx, hashed, event, timestamp) in self.event_buffer:
             events.append(
                 {
                     "graph_key": graph_states[graph_idx]["key"],
@@ -121,12 +113,12 @@ class InteractionLogger(abc.ABC):
             )
         return (event_file_name, events)
 
-    def _log_interactions(self, episode_type: "EpisodeLogType", target_id: str):
+    def _log_interactions(self, episode_type: "EpisodeLogType", target_id: str) -> None:
         if self.db is None:
             return  # not actually logging
         graphs = self._prep_graphs()
         events = self._prep_events(graphs, target_id)
-        self.db.write_episode(
+        self._last_episode_logged = self.db.write_episode(
             graphs=graphs,
             events=events,
             log_type=episode_type,
@@ -329,6 +321,17 @@ class RoomInteractionLogger(InteractionLogger):
     def observe_event(self, event) -> None:
         if not self.is_active:
             return
+
+        # Check if we need to set initial logging state, or flush because we are done
+        event_t = type(event)
+        if (
+            event_t is ArriveEvent or event_t is SoulSpawnEvent
+        ) and self.human_controlled(event):
+            if not self._is_logging():
+                self._add_player()
+                return  # Add and return to start logging
+            self._add_player()
+
         if self._is_players_afk() or not self._is_logging():
             if not self.human_controlled(event):
                 return  # Skip these events
@@ -336,13 +339,7 @@ class RoomInteractionLogger(InteractionLogger):
                 self._begin_meta_episode()
                 return  # Don't have previous context, will start on the next one
 
-        # Check if we need to set initial logging state, or flush because we are done
-        event_t = type(event)
-        if (
-            event_t is ArriveEvent or event_t is SoulSpawnEvent
-        ) and self.human_controlled(event):
-            self._add_player()
-        elif event_t not in [TellEvent, SayEvent, ShoutEvent, WhisperEvent]:
+        if event_t not in [TellEvent, SayEvent, ShoutEvent, WhisperEvent]:
             self.actions += 1
 
         # Keep track of human events
