@@ -663,9 +663,9 @@ class GoEvent(GraphEvent):
         health = self.actor.health
         eps = self.actor.movement_energy_cost
         if health > eps:
-            health_text = world.health(self.actor.node_id)
+            health_text = world.view.get_health_text_for(self.actor.node_id)
             self.actor.health = max(0, health - eps)
-            new_health_text = world.health(self.actor.node_id)
+            new_health_text = world.view.get_health_text_for(self.actor.node_id)
             if health_text != new_health_text:
                 HealthEvent(self.actor, text_content="HealthOnMoveEvent").execute(world)
 
@@ -2436,7 +2436,7 @@ class EquipObjectEvent(GraphEvent):
         ), f"Can only equip GraphObjects, not {equip_target}"
         # The current children of EquipObjectEvent have ONLY one name.
         # Joining for any future possibility that may have more than one.
-        equip_target.equipped = ','.join(self.NAMES)
+        equip_target.equipped = ",".join(self.NAMES)
         for n, s in equip_target.get_prop("stats", {"defense": 1}).items():
             self.actor.set_prop(n, self.actor.get_prop(n) + s)
         if equip_target.wieldable:
@@ -2724,9 +2724,9 @@ class IngestEvent(GraphEvent):
 
         world.broadcast_to_room(self)
 
-        health_text = world.health(self.actor.node_id)
+        health_text = world.view.get_health_text_for(self.actor.node_id)
         self.actor.health = max(self.actor.health + fe, 0)
-        new_health_text = world.health(self.actor.node_id)
+        new_health_text = world.view.get_health_text_for(self.actor.node_id)
         if self.actor.health <= 0:
             DeathEvent(self.actor).execute(world)
         elif health_text != new_health_text:
@@ -3599,7 +3599,7 @@ class HealthEvent(NoArgumentEvent):
         """
         assert not self.executed
         self.__actor_name = self.actor.get_prefix_view()
-        self.__health_text = world.health(self.actor.node_id)
+        self.__health_text = world.view.get_health_text_for(self.actor.node_id)
         to_agents = [self.actor]
         for t in self.target_nodes:
             to_agents.append(t)
