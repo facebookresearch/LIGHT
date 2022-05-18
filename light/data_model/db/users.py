@@ -136,7 +136,7 @@ class UserDB(BaseDB):
             return score_entry
 
     def update_agent_score(
-        self, player_id: str, agent_name_id: str, points: int, turns: int
+        self, player_id: str, agent_name_id: str, points: int, num_turns: int
     ):
         """Add to both the base agent score and total score for a player"""
         player_stmt = select(DBPlayer).where(DBPlayer.id == player_id)
@@ -153,7 +153,7 @@ class UserDB(BaseDB):
 
         with Session(self.engine) as session:
             player = self._enforce_get_first(session, player_stmt, "Player not found")
-            player.total_messages += turns
+            player.total_messages += num_turns
 
             base_score = session.scalars(base_stmt).first()
             if base_score is None:
