@@ -79,6 +79,16 @@ class BaseDB(ABC):
         Ensure that this database is initialized correctly
         """
 
+    def _enforce_get_first(self, session, stmt, error_text) -> Any:
+        """
+        Enforce getting the first element using stmt, raise a key_error
+        with error_text if fails to find
+        """
+        result = session.scalars(stmt).first()
+        if result is None:
+            raise KeyError(error_text)
+        return result
+
     def write_data_to_file(
         self, data: Union[str, Dict[str, Any]], filename: str, json_encode: bool = False
     ):

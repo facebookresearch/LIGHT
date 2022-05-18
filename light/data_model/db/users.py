@@ -24,7 +24,7 @@ class PlayerStatus(Enum):
 class DBPlayer(SQLBase):
     """Class containing the expected elements for a Player as stored in the db"""
 
-    __tablename__ = "user_account"
+    __tablename__ = "user_accounts"
 
     id = Column(Integer, primary_key=True)
     extern_id = Column(String(60), nullable=False, index=True, unique=True)
@@ -45,7 +45,9 @@ class DBScoreEntry(SQLBase):
     __tablename__ = "user_scores"
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("user_account.id"), nullable=False, index=True)
+    user_id = Column(
+        Integer, ForeignKey("user_accounts.id"), nullable=False, index=True
+    )
     agent_name_id = Column(Integer, index=True)  # Null for overall score for an agent
     score = Column(Integer, nullable=False)
     count = Column(Integer, nullable=False)
@@ -105,9 +107,7 @@ class UserDB(BaseDB):
         """Find the specified player, raise exception if non-existent"""
         stmt = select(DBPlayer).where(DBPlayer.id == player_id)
         with Session(self.engine) as session:
-            player = session.scalars(stmt).first()
-            if player is None:
-                raise KeyError("Player ID did not map to player")
+            player = self._enforce_get_first(session, stmt, "Player not found")
             session.expunge_all()
             return player
 
@@ -115,9 +115,7 @@ class UserDB(BaseDB):
         """Find the specified player, raise exception if non-existent"""
         stmt = select(DBPlayer).where(DBPlayer.extern_id == extern_id)
         with Session(self.engine) as session:
-            player = session.scalars(stmt).first()
-            if player is None:
-                raise KeyError("Extern ID did not map to player")
+            player = self._enforce_get_first(session, stmt, "Player not found")
             session.expunge_all()
             return player
 
@@ -131,9 +129,9 @@ class UserDB(BaseDB):
             .where(DBScoreEntry.agent_name_id == agent_name_id)
         )
         with Session(self.engine) as session:
-            score_entry = session.scalars(stmt).first()
-            if score_entry is None:
-                raise KeyError("Player ID or agent_name_id not found")
+            score_entry = self._enforce_get_first(
+                session, stmt, "Player or agent not found"
+            )
             session.expunge_all()
             return score_entry
 
@@ -154,9 +152,7 @@ class UserDB(BaseDB):
         )
 
         with Session(self.engine) as session:
-            player = session.scalars(player_stmt).first()
-            if player is None:
-                raise KeyError("Player ID not found")
+            player = self._enforce_get_first(session, player_stmt, "Player not found")
             player.total_messages += turns
 
             base_score = session.scalars(base_stmt).first()
@@ -186,9 +182,7 @@ class UserDB(BaseDB):
         """Mark that a player has been flagged"""
         get_player = select(DBPlayer).where(DBPlayer.id == player_id)
         with Session(self.engine) as session:
-            player = session.scalars(get_player).first()
-            if player is None:
-                raise KeyError("Player ID not found")
+            player = self._enforce_get_first(session, get_player, "Player not found")
             player.flag_count += 1
             session.commit()
 
@@ -196,9 +190,7 @@ class UserDB(BaseDB):
         """mark that a specific player has triggered the safety"""
         get_player = select(DBPlayer).where(DBPlayer.id == player_id)
         with Session(self.engine) as session:
-            player = session.scalars(get_player).first()
-            if player is None:
-                raise KeyError("Player ID not found")
+            player = self._enforce_get_first(session, get_player, "Player not found")
             player.safety_trigger_count += 1
             session.commit()
 
@@ -206,8 +198,6 @@ class UserDB(BaseDB):
         """Update the status for a given player"""
         get_player = select(DBPlayer).where(DBPlayer.id == player_id)
         with Session(self.engine) as session:
-            player = session.scalars(get_player).first()
-            if player is None:
-                raise KeyError("Player ID not found")
+            player = self._enforce_get_first(session, get_player, "Player not found")
             player.account_status = new_status.value
             session.commit()
