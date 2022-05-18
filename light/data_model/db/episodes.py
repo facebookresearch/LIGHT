@@ -5,14 +5,25 @@
 # LICENSE file in the root directory of this source tree.
 
 from light.data_model.db.base import BaseDB, DBStatus, DBSplitType
-from light.graph.structured_graph import OOGraph
 from omegaconf import MISSING, DictConfig
-from typing import Optional, Union, Dict, Any
-from dataclasses import dataclass
-from enum import Enum
+from typing import Optional, List, Tuple, Union, Dict, Any, Set, TYPE_CHECKING
+from sqlalchemy import insert, select, Enum, Column, Integer, String, Float, ForeignKey
+from sqlalchemy.orm import declarative_base, relationship, Session
+from light.graph.events.base import GraphEvent
+import enum
+import os
+
+if TYPE_CHECKING:
+    from light.graph.structured_graph import OOGraph
+
+SQLBase = declarative_base()
+
+DEFAULT_LOG_PATH = "".join(
+    [os.path.abspath(os.path.dirname(__file__)), "/../../../logs"]
+)
 
 
-class DBGroupName(Enum):
+class DBGroupName(enum.Enum):
     """Edges in the LIGHT Environment DB"""
 
     ORIG = "orig"
@@ -22,26 +33,107 @@ class DBGroupName(Enum):
     RELEASE = "full_release"
 
 
-@dataclass
-class DBEpisode:
+class EpisodeLogType(enum.Enum):
+    """Types of episodes in LIGHT"""
+
+    ROOM = "room"
+    AGENT = "agent"
+    FULL = "full"
+
+
+class DBEpisode(SQLBase):
     """Class containing the expected elements for an episode as stored in the db"""
 
-    group: DBGroupName
-    split: DBSplitType
-    status: DBStatus
-    actors: List[str]
-    dump_file: str
-    after_graph: str
-    timestamp: float
+    __tablename__ = "episodes"
+
+    id = Column(Integer, primary_key=True)
+    group = Column(Enum(DBGroupName), nullable=False, index=True)
+    split = Column(Enum(DBSplitType), nullable=False, index=True)
+    status = Column(Enum(DBStatus), nullable=False, index=True)
+    actors = Column(
+        String
+    )  # Comma separated list of actor IDs. Cleared on release data
+    dump_file_path = Column(String(60), nullable=False)  # Path to data
+    turn_count = Column(Integer, nullable=False)
+    human_count = Column(Integer, nullable=False)
+    action_count = Column(Integer, nullable=False)
+    timestamp = Column(Float, nullable=False)
+    log_type = Column(Enum(EpisodeLogType), nullable=False)
+    first_graph_id = Column(ForeignKey("graphs.id"))
+    final_graph_id = Column(ForeignKey("graphs.id"))
+    graphs = relationship("DBGraph")
+
+    _cached_map = None
+
+    def get_actors(self) -> List[str]:
+        """Return the actors in this episode"""
+        return self.actors.split(",")
+
+    def get_parsed_episodes(self, db: "EpisodeDB") -> Dict[str, List["GraphEvent"]]:
+        """
+        Return all of the actions and turns from this episode,
+        split by the graph key ID relevant to those actions
+        """
+        events = self.read_data_from_file(self.dump_file_path, json_encoded=True)[
+            "events"
+        ]
+        episodes: Dict[str, List["GraphEvent"]] = {}
+        episode = None
+        curr_graph = None
+        for event_turn in events:
+            if event_turn["graph_key"] != curr_graph:
+                if episode is not None:
+                    episodes[curr_graph] = episode
+                episode: List["GraphEvent"] = []
+            episode.append(GraphEvent.from_json(event_turn["event_json"], None))
+        episodes[curr_graph] = episode
+        return episodes
 
     def get_before_graph(self, db: "EpisodeDB") -> "OOGraph":
         """Return the state of the graph before this episode"""
+        return self.get_graph(self.first_graph_id, db)
 
-    def get_parsed_episode(self, db: "EpisodeDB") -> List[Any]:
-        """Return all of the actions and turns from this episode"""
+    def get_graph(self, id_or_key: str, db: "EpisodeDB") -> "OOGraph":
+        """Return a specific graph by id or key"""
+        return get_graph_map()[id_or_key].get_graph(db)
 
     def get_after_graph(self, db: "EpisodeDB") -> "OOGraph":
         """Return the state of the graph after this episode"""
+        return self.get_graph(self.final_graph_id, db)
+
+    def get_graph_map(self):
+        """Return a mapping from both graph keys and graph ids to their graph"""
+        if self._cached_map is None:
+            key_map = {graph.graph_key_id: graph for graph in self.graphs}
+            id_map = {graph.id: graph for graph in self.graphs}
+            key_map.update(id_map)
+            self._cached_map = key_map
+        return self._cached_map
+
+    def __repr__(self):
+        return f"DBEpisode(ids:[{self.id!r}] group/split:[{self.group!r}/{self.split!r}] File:[{self.dump_file_path!r}])"
+
+
+class DBGraph(BaseDB):
+    """Class containing expected elements for a stored graph"""
+
+    __tablename__ = "graphs"
+
+    id = Column(Integer, primary_key=True)
+    episode_id = Column(Integer, ForeignKey("episodes.id"), nullable=False, index=True)
+    full_path = Column(String(80), nullable=False)
+    graph_key_id = Column(String(60), nullable=False, index=True)
+
+    def get_graph(self, db: "EpisodeDB") -> "OOGraph":
+        """Return the initialized graph based on this file"""
+        from light.graph.structured_graph import OOGraph
+
+        graph_json = db.read_data_from_file(self.full_path)
+        graph = OOGraph.from_json(graph_json)
+        return graph
+
+    def __repr__(self):
+        return f"DBGraph(ids:[{self.id!r},{self.graph_key_id!r}], episode:{self.episode_id!r})"
 
 
 class EpisodeDB(BaseDB):
@@ -58,28 +150,96 @@ class EpisodeDB(BaseDB):
         Initialize any specific episode-related paths. Populate
         the list of available splits and datasets.
         """
-        raise NotImplementedError()
+        SQLBase.metadata.create_all(self.engine)
 
     def _validate_init(self):
         """
         Ensure that the episode directory is properly loaded
         """
-        raise NotImplementedError()
+        # TODO Check the table for any possible consistency issues
+        # and ensure that the episode directories for listed splits exist
 
-    def write_episode(self, args) -> str:
+    def write_episode(
+        self,
+        graphs: List[Dict[str, str]],
+        events: Tuple[str, List[Dict[str, str]]],
+        log_type: EpisodeLogType,
+        action_count: int,
+        players: Set[str],
+        group: DBGroupName,
+    ) -> str:
         """
         Create an entry given the current argument data, store it
         to file on the database
         """
+        actor_string = ",".join(list(players))
+        event_filename = events[0]
+        event_list = events[1]
+        dump_file_path = os.path.join(group.value, log_type.value, event_filename)
+        graph_dump_root = os.path.join(
+            group.value,
+            log_type.value,
+            "graphs",
+        )
+
+        # File writes
+        self.write_data_to_file(
+            {"events": event_list}, dump_file_path, json_encode=True
+        )
+        for graph_info in graphs:
+            graph_full_path = os.path.join(graph_dump_root, graph_info["filename"])
+            self.write_data_to_file(graph_info["graph_json"], graph_full_path)
+
+        # DB Writes
+        with Session(self.engine) as session:
+            episode = DBEpisode(
+                group=group,
+                split=DBSplitType.UNSET,
+                status=DBStatus.REVIEW,
+                actors=actor_string,
+                dump_file_path=dump_file_path,
+                turn_count=len(event_list),
+                human_count=len(players),
+                action_count=action_count,
+                timestamp=time.time(),
+                log_type=log_type,
+            )
+            first_graph = None
+            for idx, graph_info in enumerate(graphs):
+                graph_full_path = os.path.join(graph_dump_root, graph_info["filename"])
+                db_graph = DBGraph(
+                    graph_key_id=graph_info["key"],
+                    full_path=graph_full_path,
+                )
+                if idx == 0:
+                    first_graph = db_graph
+                episode.graphs.append(db_graph)
+            session.add(episode)
+            session.flush()
+            episode.first_graph_id = first_graph.id
+            episode.final_graph_id = db_graph.id
+
+            episode_id = episode.id
+            session.commit()
+
+        return episode_id
 
     def get_episode(self, episode_id: str) -> "DBEpisode":
         """
         Return a specific episode by id, raising an issue if it doesnt exist
         """
+        stmt = select(DBEpisode).where(DBEpisode.id == episode_id)
+        with Session(self.engine) as session:
+            episode = self._enforce_get_first(session, stmt, "Episode did not exist")
+            for graph in episode.graphs:
+                # Load all the graph keys
+                assert graph.id is not None
+            session.expunge_all()
+            return episode
 
     def get_episodes(
         self,
-        group: Optional[str] = None,
+        group: Optional[DBGroupName] = None,
         split: Optional[DBSplitType] = None,
         min_turns: Optional[int] = None,
         min_humans: Optional[int] = None,
@@ -93,3 +253,26 @@ class EpisodeDB(BaseDB):
         """
         Return all matching episodes
         """
+        stmt = select(DBEpisode)
+        if group is not None:
+            stmt = stmt.where(DBEpisode.group == group.value)
+        if split is not None:
+            stmt = stmt.where(DBEpisode.split == split.value)
+        if min_turns is not None:
+            stmt = stmt.where(DBEpisode.turn_count >= min_turns)
+        if min_humans is not None:
+            stmt = stmt.where(DBEpisode.human_count >= min_humans)
+        if min_actions is not None:
+            stmt = stmt.where(DBEpisode.action_count >= min_actions)
+        if status is not None:
+            stmt = stmt.where(DBEpisode.status == status.value)
+        if user_id is not None:
+            stmt = stmt.where(DBEpisode.actors.contains(user_id))
+        if min_creation_time is not None:
+            stmt = stmt.where(DBEpisode.timestamp >= min_creation_time)
+        if max_creation_time is not None:
+            stmt = stmt.where(DBEpisode.timestamp <= max_creation_time)
+        with Session(self.engine) as session:
+            episodes = session.scalars(stmt).all()
+            session.expunge_all()
+            return episodes

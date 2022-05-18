@@ -11,6 +11,10 @@ from sqlalchemy import create_engine
 from enum import Enum
 from typing import Optional, Union, Dict, Any
 from dataclasses import dataclass
+from tempfile import mkdtemp
+import shutil
+import os
+import json
 
 from hydra.core.config_store import ConfigStore
 
@@ -18,6 +22,7 @@ from hydra.core.config_store import ConfigStore
 @dataclass
 class LightDBConfig:
     backend: str = "test"
+    file_root: Optional[str] = None
 
 
 cs = ConfigStore.instance()
@@ -61,8 +66,14 @@ class BaseDB(ABC):
         files and instances.
         """
         # TODO replace with a swappable engine that persists the data
+        self.backend = config.backend
         if config.backend == "test":
             self.engine = create_engine("sqlite+pysqlite:///:memory:", future=True)
+            self.made_temp_dir = config.file_root is None
+            if self.made_temp_dir:
+                self.file_root = mkdtemp()
+            else:
+                self.file_root = config.file_root
         else:
             raise NotImplementedError()
         self._complete_init(config)
@@ -91,18 +102,37 @@ class BaseDB(ABC):
 
     def write_data_to_file(
         self, data: Union[str, Dict[str, Any]], filename: str, json_encode: bool = False
-    ):
+    ) -> None:
         """
         Write the given data to the provided filename
         in the correct storage location (local or remote)
         """
-        # Expects data to be a string, unless json_encode is True
+        if self.backend in ["test", "local"]:
+            full_path = os.path.join(self.file_root, filename)
+            with open(full_path, "w+") as target_file:
+                if json_encode:
+                    json.dump(data, target_file)
+                else:
+                    target_file.write(data)
+        else:
+            raise NotImplementedError()
 
-    def read_data_from_file(self, filename: str, json_encoded: bool = False):
+    def read_data_from_file(
+        self, filename: str, json_encoded: bool = False
+    ) -> Union[str, Dict[str, Any]]:
         """
         Read the data from the given filename from wherever it
         is currently stored (local or remote)
         """
+        if self.backend in ["test", "local"]:
+            full_path = os.path.join(self.file_root, filename)
+            with open(full_path, "r") as target_file:
+                if json_encoded:
+                    return json.load(target_file)
+                else:
+                    return target_file.read()
+        else:
+            raise NotImplementedError()
 
     def open_file(self):
         try:
@@ -110,3 +140,8 @@ class BaseDB(ABC):
             yield file
         finally:
             file.close()
+
+    def shutdown(self):
+        if self.backend == "test":
+            if self.made_temp_dir:
+                shutil.rmtree(self.file_root)
