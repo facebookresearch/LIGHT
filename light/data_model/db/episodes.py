@@ -10,6 +10,7 @@ from typing import Optional, List, Tuple, Union, Dict, Any, Set, TYPE_CHECKING
 from sqlalchemy import insert, select, Enum, Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship, Session
 from light.graph.events.base import GraphEvent
+import time
 import enum
 import os
 
@@ -61,32 +62,44 @@ class DBEpisode(SQLBase):
     log_type = Column(Enum(EpisodeLogType), nullable=False)
     first_graph_id = Column(ForeignKey("graphs.id"))
     final_graph_id = Column(ForeignKey("graphs.id"))
-    graphs = relationship("DBGraph")
 
     _cached_map = None
 
     def get_actors(self) -> List[str]:
         """Return the actors in this episode"""
+        if len(self.actors.strip()) == 0:
+            return []
         return self.actors.split(",")
 
-    def get_parsed_episodes(self, db: "EpisodeDB") -> Dict[str, List["GraphEvent"]]:
+    def get_parsed_events(
+        self, db: "EpisodeDB"
+    ) -> List[Tuple[str, List["GraphEvent"]]]:
         """
         Return all of the actions and turns from this episode,
         split by the graph key ID relevant to those actions
         """
-        events = self.read_data_from_file(self.dump_file_path, json_encoded=True)[
+        from light.world.world import World
+
+        events = db.read_data_from_file(self.dump_file_path, json_encoded=True)[
             "events"
         ]
-        episodes: Dict[str, List["GraphEvent"]] = {}
+        episodes: List[Tuple[str, List["GraphEvent"]]] = []
         episode = None
+        curr_graph_key = None
         curr_graph = None
+        tmp_world = None
         for event_turn in events:
-            if event_turn["graph_key"] != curr_graph:
+            if event_turn["graph_key"] != curr_graph_key:
                 if episode is not None:
-                    episodes[curr_graph] = episode
+                    episodes.append((curr_graph_key, episode))
+                curr_graph_key = event_turn["graph_key"]
                 episode: List["GraphEvent"] = []
-            episode.append(GraphEvent.from_json(event_turn["event_json"], None))
-        episodes[curr_graph] = episode
+                curr_graph = self.get_graph(curr_graph_key, db)
+                tmp_world = World({}, None)
+                tmp_world.oo_graph = curr_graph
+            episode.append(GraphEvent.from_json(event_turn["event_json"], tmp_world))
+        if episode is not None:
+            episodes.append((curr_graph_key, episode))
         return episodes
 
     def get_before_graph(self, db: "EpisodeDB") -> "OOGraph":
@@ -95,7 +108,7 @@ class DBEpisode(SQLBase):
 
     def get_graph(self, id_or_key: str, db: "EpisodeDB") -> "OOGraph":
         """Return a specific graph by id or key"""
-        return get_graph_map()[id_or_key].get_graph(db)
+        return self.get_graph_map()[id_or_key].get_graph(db)
 
     def get_after_graph(self, db: "EpisodeDB") -> "OOGraph":
         """Return the state of the graph after this episode"""
@@ -111,10 +124,10 @@ class DBEpisode(SQLBase):
         return self._cached_map
 
     def __repr__(self):
-        return f"DBEpisode(ids:[{self.id!r}] group/split:[{self.group!r}/{self.split!r}] File:[{self.dump_file_path!r}])"
+        return f"DBEpisode(ids:[{self.id!r}] group/split:[{self.group.value!r}/{self.split.value!r}] File:[{self.dump_file_path!r}])"
 
 
-class DBGraph(BaseDB):
+class DBGraph(SQLBase):
     """Class containing expected elements for a stored graph"""
 
     __tablename__ = "graphs"
@@ -123,6 +136,7 @@ class DBGraph(BaseDB):
     episode_id = Column(Integer, ForeignKey("episodes.id"), nullable=False, index=True)
     full_path = Column(String(80), nullable=False)
     graph_key_id = Column(String(60), nullable=False, index=True)
+    episode = relationship("DBEpisode", backref="graphs", foreign_keys=[episode_id])
 
     def get_graph(self, db: "EpisodeDB") -> "OOGraph":
         """Return the initialized graph based on this file"""
@@ -248,6 +262,7 @@ class EpisodeDB(BaseDB):
         user_id: Optional[str] = None,
         min_creation_time: Optional[float] = None,
         max_creation_time: Optional[float] = None,
+        log_type: Optional[EpisodeLogType] = None,
         # ... other args
     ) -> List["DBEpisode"]:
         """
@@ -255,9 +270,9 @@ class EpisodeDB(BaseDB):
         """
         stmt = select(DBEpisode)
         if group is not None:
-            stmt = stmt.where(DBEpisode.group == group.value)
+            stmt = stmt.where(DBEpisode.group == group)
         if split is not None:
-            stmt = stmt.where(DBEpisode.split == split.value)
+            stmt = stmt.where(DBEpisode.split == split)
         if min_turns is not None:
             stmt = stmt.where(DBEpisode.turn_count >= min_turns)
         if min_humans is not None:
@@ -265,9 +280,11 @@ class EpisodeDB(BaseDB):
         if min_actions is not None:
             stmt = stmt.where(DBEpisode.action_count >= min_actions)
         if status is not None:
-            stmt = stmt.where(DBEpisode.status == status.value)
+            stmt = stmt.where(DBEpisode.status == status)
         if user_id is not None:
             stmt = stmt.where(DBEpisode.actors.contains(user_id))
+        if log_type is not None:
+            stmt = stmt.where(DBEpisode.log_type == log_type)
         if min_creation_time is not None:
             stmt = stmt.where(DBEpisode.timestamp >= min_creation_time)
         if max_creation_time is not None:

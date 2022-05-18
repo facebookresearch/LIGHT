@@ -109,6 +109,7 @@ class BaseDB(ABC):
         """
         if self.backend in ["test", "local"]:
             full_path = os.path.join(self.file_root, filename)
+            os.makedirs(os.path.dirname(full_path), exist_ok=True)
             with open(full_path, "w+") as target_file:
                 if json_encode:
                     json.dump(data, target_file)
