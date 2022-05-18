@@ -1,11 +1,10 @@
 /* REACT */
 import React, {useState, useEffect} from 'react';
-import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
 //WORLD
-import { fetchWorlds, selectWorld, setWorldDrafts, updateSelectedWorld } from "../../../features/playerWorlds/playerworlds-slice.ts";
+import { fetchWorld, selectWorld, setWorldDraft, updateSelectedWorld } from "../../../features/playerWorlds/playerworld-slice.ts";
 //ROOMS
 import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
 //MAP
@@ -31,7 +30,6 @@ import "./styles.css";
 import { updateSelectedRoom } from '../../../features/rooms/rooms-slice';
 
 const WorldBuilderPage = ()=> {
-    let { worldId, categories } = useParams();
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */

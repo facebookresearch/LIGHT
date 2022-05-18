@@ -2,7 +2,8 @@
 import React, {useEffect, useState} from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-
+//ACTIONS
+import {setWorldDraft, updateSelectedWorld} from './features/playerWorlds/playerworlds-slice';
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */
@@ -13,6 +14,8 @@ import MapPage2 from "../builder_pages/MapPage2";
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+/* DEFAULT WORLD */
+import DefaultWorld from "../../StartingWorldCopy";
 
 const BuilderRouter = ({virtualPath, api}) => {
   // TODO will likely need to do something similar to the router for the full builder
@@ -24,9 +27,12 @@ const App = ({
   api,
   handleSubmit
 })=>{
+  //REDUX STATE
+    const selectedWorld = useAppSelector((state) => state.playerWorld.selectedWorld);
+    const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
   /* ------ REDUX STATE ------ */
+
   // VIEW STATE
-  // TODO configure loading the world state? Below is dummy
   const [currentWorld, updateWorld] = useState({});
   /*---------------LOCAL STATE----------------*/
 
@@ -36,9 +42,17 @@ const App = ({
   const [workerComments, setWorkerComments] = useState("");
   const [showInstructions, setShowInstructions] = useState(false);
   const [show, setShow] = useState(false);
-  /* ----REDUX ACTIONS---- */
   // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();
+  /* ----REDUX ACTIONS---- */
+  //Sets the worldDraft to the initial "blank world"
+  const setInitialWorldDraft = ()=>{
+    dispatch(setWorldDraft(DefaultWorld))
+  }
+  //Updates current selectedWorld state
+  const setSelectedWorld = (newWorldData)=>{
+    dispatch(updateSelectedWorld(newWorldData))
+  }
 
   /*---------------HANDLERS----------------*/
   const OpenModal = ()=>{
@@ -69,6 +83,20 @@ const App = ({
   }
 
   /*---------------LIFECYCLE----------------*/
+  //Initial pull to set default world as draft
+  useEffect(() => {
+    let initialDraft  = JSON.parse(window.localStorage.getItem("taskWorld"))
+    if(!initialDraft){
+      window.localStorage.setItem("taskWorld", JSON.stringify(DefaultWorld))
+      setInitialWorldDraft()
+    }
+    window.localStorage.setItem("currentLocation", JSON.stringify("/"))
+
+  }, [])
+
+  useEffect(() => {
+    setSelectedWorld(worldDraft)
+  }, [worldDraft])
 
   return (
   <>

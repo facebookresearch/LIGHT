@@ -4,7 +4,7 @@ import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
-import { fetchWorlds, selectWorld } from "../../../../features/playerWorlds/playerworlds-slice.ts";
+import { fetchWorlds, selectWorld } from "../../../../features/playerWorlds/playerworld-slice.ts";
 /* STYLES */
 import "./styles.css"
 /* CUSTOM COMPONENTS */
