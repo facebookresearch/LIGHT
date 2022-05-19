@@ -19,10 +19,6 @@ if TYPE_CHECKING:
 
 SQLBase = declarative_base()
 
-DEFAULT_LOG_PATH = "".join(
-    [os.path.abspath(os.path.dirname(__file__)), "/../../../logs"]
-)
-
 
 class DBGroupName(enum.Enum):
     """Edges in the LIGHT Environment DB"""

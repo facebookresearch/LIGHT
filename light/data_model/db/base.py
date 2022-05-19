@@ -18,11 +18,15 @@ import json
 
 from hydra.core.config_store import ConfigStore
 
+DEFAULT_LOG_PATH = "".join(
+    [os.path.abspath(os.path.dirname(__file__)), "/../../../logs"]
+)
+
 
 @dataclass
 class LightDBConfig:
     backend: str = "test"
-    file_root: Optional[str] = None
+    file_root: Optional[str] = DEFAULT_LOG_PATH
 
 
 cs = ConfigStore.instance()
