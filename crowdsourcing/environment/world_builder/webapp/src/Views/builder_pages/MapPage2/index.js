@@ -34,8 +34,8 @@ const WorldBuilderPage = ()=> {
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
     //WORLDS
-    const worldDrafts = useAppSelector((state) => state.playerWorlds.worldDrafts);
-    const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
+    const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
+    const selectedWorld = useAppSelector((state) => state.playerWorld.selectedWorld);
     //ROOMS
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
     const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
@@ -76,15 +76,8 @@ const WorldBuilderPage = ()=> {
         let updatedNodes = {...nodes, [formattedRoomId]:updatedRoomData};
         console.log("UPDATED NODES UPON CREATION:  ", updatedNodes)
         let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes};
-        console.log("UPDATED WORLD UPON CREATION:  ", updatedWorld)
-        let updatedWorlds = worldDrafts.map(world=> {
-            if(world.id==worldId){
-                return updatedWorld;
-            }
-            return world;
-        })
         console.log("UPDATED WORLDS UPON CREATION:  ", updatedWorlds)
-        dispatch(setWorldDraft(updatedWorlds))
+        dispatch(setWorldDraft(updatedWorld))
         dispatch(updateSelectedRoom(updatedRoomData))
     }
     const updateRoom = (id, update) =>{
@@ -122,15 +115,7 @@ const WorldBuilderPage = ()=> {
         delete updatedNodes[id]
         console.log("UPDAtED NODES DELETE:  ", updatedNodes)
         let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes};
-        let updatedWorlds = worldDrafts.map(world=> {
-            if(world.id==worldId){
-                return updatedWorld;
-            }
-            return world;
-        })
-
-        console.log("UPDATED WORLDS UPON CREATION:  ", updatedWorlds)
-        dispatch(setWorldDraft(updatedWorlds))
+        dispatch(setWorldDraft(updatedWorld))
         dispatch(updateSelectedRoom(clearedTileData))
     }
 
@@ -197,13 +182,7 @@ const WorldBuilderPage = ()=> {
         let updatedNodes = {...nodes, [updatedRoomNode.node_id]:updatedRoomNode, [updatedNeighborNode.node_id]: updatedNeighborNode};
         let updatedWorld = {...unupdatedWorld, nodes: updatedNodes};
         console.log("UPDATED WORLD CONNECT", updatedWorld)
-        let updatedWorlds = worldDrafts.map(world=> {
-            if(world.id==worldId){
-                return updatedWorld;
-            }
-            return world;
-        })
-        dispatch(setWorldDraft(updatedWorlds))
+        dispatch(setWorldDraft(updatedWorld))
     }
 
     const disconnectRooms = (primaryRoom, primaryRoomNeighbors, secondaryRoom, secondaryRoomNeighbors, pathAlignment)=>{
@@ -233,14 +212,7 @@ const WorldBuilderPage = ()=> {
         let {nodes} = unupdatedWorld;
         let updatedNodes = {...nodes, [primaryId]:updatedRoomNode, [secondaryId]: updatedNeighborNode};
         let updatedWorld = {...unupdatedWorld, nodes: updatedNodes};
-        console.log("UPDATED WORLD DISCONNECT", updatedWorld)
-        let updatedWorlds = worldDrafts.map(world=> {
-            if(world.id==worldId){
-                return updatedWorld;
-            }
-            return world;
-        })
-        dispatch(setWorldDraft(updatedWorlds))
+        dispatch(setWorldDraft(updatedWorld))
     }
     //MAP
     const incrementFloorHandler = ()=> {
@@ -490,7 +462,7 @@ const WorldBuilderPage = ()=> {
     useEffect(()=>{
         console.log("WORLD DRAFT CHANGE DETECTED")
         fetchWorldCurrentWorld()
-    },[worldDrafts])
+    },[worldDraft])
 
     // Uses worldNodeSorter helper function to break nodes into arrays and send them to respective redux slices.
     useEffect(()=>{
@@ -541,14 +513,7 @@ const WorldBuilderPage = ()=> {
                 updatedNode = {...updatedNode, color: selectedColor.hex};
                 let updatedNodes = {...nodes, [room.node_id]:updatedNode};
                 let updatedWorld = {...selectedWorld, nodes:updatedNodes};
-                let updatedWorlds = worldDrafts.map(world=> {
-                    if(world.id==worldId){
-                        return updatedWorld;
-                    }
-                    return world;
-                })
-                console.log("UPDATED WORLDS", updatedWorlds)
-                dispatch(setWorldDraft(updatedWorlds))
+                dispatch(setWorldDraft(updatedWorld))
             }
         }else{
             dispatch(selectRoom(room))
