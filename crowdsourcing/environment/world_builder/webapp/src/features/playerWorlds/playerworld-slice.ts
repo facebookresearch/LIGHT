@@ -41,13 +41,7 @@ const playerWorldSlice = createSlice({
                 ...state,
                 selectedWorld: action.payload,
             };
-        },
-        updatePlayerWorld(state, action: PayloadAction<World>) {
-            return {
-                ...state,
-                customWorld: action.payload,
-            };
-        },
+        }
     }
 });
 
@@ -56,7 +50,6 @@ const playerWorldSlice = createSlice({
 export const {
     setWorldDraft,
     updateSelectedWorld,
-    updatePlayerWorld
 } = playerWorldSlice.actions;
 /* SLICE REDUCER */
 export default playerWorldSlice.reducer;

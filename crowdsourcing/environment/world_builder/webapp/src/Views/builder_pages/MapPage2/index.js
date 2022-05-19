@@ -4,7 +4,7 @@ import React, {useState, useEffect} from 'react';
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
 //WORLD
-import { fetchWorld, selectWorld, setWorldDraft, updateSelectedWorld } from "../../../features/playerWorlds/playerworld-slice.ts";
+import { setWorldDraft, updateSelectedWorld } from "../../../features/playerWorlds/playerworld-slice.ts";
 //ROOMS
 import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
 //MAP
@@ -52,13 +52,7 @@ const WorldBuilderPage = ()=> {
     /* ------ REDUX ACTIONS ------ */
     //WORLD DRAFT
     const updateWorldsDraft = ()=>{
-        let updatedWorlds = worldDrafts.map(world=> {
-            if(world.id==worldId){
-                return selectedWorld;
-            }
-            return world;
-        })
-        dispatch(setWorldDrafts(updatedWorlds))
+        dispatch(setWorldDraft(selectedWorld))
     }
    //ROOMS
     const addRoom = (room)=>{
@@ -90,7 +84,7 @@ const WorldBuilderPage = ()=> {
             return world;
         })
         console.log("UPDATED WORLDS UPON CREATION:  ", updatedWorlds)
-        dispatch(setWorldDrafts(updatedWorlds))
+        dispatch(setWorldDraft(updatedWorlds))
         dispatch(updateSelectedRoom(updatedRoomData))
     }
     const updateRoom = (id, update) =>{
@@ -136,7 +130,7 @@ const WorldBuilderPage = ()=> {
         })
 
         console.log("UPDATED WORLDS UPON CREATION:  ", updatedWorlds)
-        dispatch(setWorldDrafts(updatedWorlds))
+        dispatch(setWorldDraft(updatedWorlds))
         dispatch(updateSelectedRoom(clearedTileData))
     }
 
@@ -210,7 +204,7 @@ const WorldBuilderPage = ()=> {
             }
             return world;
         })
-        dispatch(setWorldDrafts(updatedWorlds))
+        dispatch(setWorldDraft(updatedWorlds))
     }
 
     const disconnectRooms = (primaryRoom, primaryRoomNeighbors, secondaryRoom, secondaryRoomNeighbors, pathAlignment)=>{
@@ -247,7 +241,7 @@ const WorldBuilderPage = ()=> {
             }
             return world;
         })
-        dispatch(setWorldDrafts(updatedWorlds))
+        dispatch(setWorldDraft(updatedWorlds))
     }
     //MAP
     const incrementFloorHandler = ()=> {
@@ -560,7 +554,7 @@ const WorldBuilderPage = ()=> {
                     return world;
                 })
                 console.log("UPDATED WORLDS", updatedWorlds)
-                dispatch(setWorldDrafts(updatedWorlds))
+                dispatch(setWorldDraft(updatedWorlds))
             }
         }else{
             dispatch(selectRoom(room))
