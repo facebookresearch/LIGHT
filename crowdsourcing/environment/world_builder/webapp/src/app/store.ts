@@ -1,7 +1,7 @@
 //REDUX
 import {configureStore} from "@reduxjs/toolkit";
 //REDUCERS
-import PlayerWorldReducer from '../features/playerWorlds/playerworld-slice';
+import PlayerWorldReducer from '../features/playerWorld/playerworld-slice';
 import RoomsReducer from '../features/rooms/rooms-slice';
 import CharacterReducer from '../features/characters/characters-slice';
 import ObjectsReducer from '../features/objects/objects-slice';

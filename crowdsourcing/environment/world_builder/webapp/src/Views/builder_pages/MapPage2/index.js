@@ -4,7 +4,7 @@ import React, {useState, useEffect} from 'react';
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
 //WORLD
-import { setWorldDraft, updateSelectedWorld } from "../../../features/playerWorlds/playerworld-slice.ts";
+import { setWorldDraft, updateSelectedWorld } from "../../../features/playerWorld/playerworld-slice.ts";
 //ROOMS
 import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
 //MAP
@@ -60,7 +60,7 @@ const WorldBuilderPage = ()=> {
         let {rooms, nodes } = unupdatedWorld;
 
         let formattedRoomId = room.name.replaceAll(" ", "_") + "_1";
-        console.log("FOORMATTED CREATE ROOM NAME:  ", formattedRoomId)
+        console.log("FORMATTED CREATE ROOM NAME:  ", formattedRoomId)
         while(rooms.indexOf(formattedRoomId)>=0){
             let splitFormattedRoomId = formattedRoomId.split("_")
             let idNumber = splitFormattedRoomId[splitFormattedRoomId.length-1]
@@ -191,7 +191,6 @@ const WorldBuilderPage = ()=> {
             locked_edge: null,
             target_id: primaryRoom.node_id
         };
-        console.log("NEINEI", neighboringTileNeighborInfo)
         updatedNeighboringTileNeighbors = {...secondaryRoomNeighbors, [primaryId]: neighboringTileNeighborInfo};
         console.log("NEIGHBOR NEIGHBORS POST UPDATE", updatedNeighboringTileNeighbors)
         updatedNeighborNode = {...secondaryRoom, neighbors:updatedNeighboringTileNeighbors};
@@ -478,14 +477,9 @@ const WorldBuilderPage = ()=> {
     }
 
     const fetchWorldCurrentWorld = ()=> {
-        if(worldDrafts.length){
-            worldDrafts.map((world) =>{
-                const {id} = world;
-                if(worldId == id){
-                    dispatch(selectWorld(world))
-                }
-            })
-        }
+        let unupdatedWorld  = JSON.parse(window.localStorage.getItem("taskWorld"))
+
+        dispatch(selectWorld(unupdatedWorld))
     }
 
     /* --- LIFE CYCLE FUNCTIONS --- */

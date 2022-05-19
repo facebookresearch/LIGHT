@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 //ACTIONS
-import {setWorldDraft, updateSelectedWorld} from './features/playerWorlds/playerworlds-slice';
+import {setWorldDraft, updateSelectedWorld} from '../../features/playerWorld/playerworld-slice.ts';
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */

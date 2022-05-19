@@ -7,7 +7,7 @@ import {
 } from "../../features/modal/modal-slice";
 import {
     selectWorld
-} from "../../features/playerWorlds/playerworlds-slice.ts";
+} from "../../features/playerWorld/playerworld-slice.ts";
 /* STYLES */
 import "./styles.css";
 /* ICONS */

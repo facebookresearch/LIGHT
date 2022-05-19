@@ -4,7 +4,7 @@ import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
-import { fetchWorlds, updateSelectedWorld, selectWorld, setWorldDrafts} from "../../../features/playerWorlds/playerworld-slice.ts";
+import { fetchWorlds, updateSelectedWorld, selectWorld, setWorldDrafts} from "../../../features/playerWorld/playerworld-slice.ts";
 import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
 import { updateObjects, selectObject} from "../../../features/objects/objects-slice.ts";
 import { updateCharacters, selectCharacter } from "../../../features/characters/characters-slice.ts";
