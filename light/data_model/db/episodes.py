@@ -50,7 +50,7 @@ class DBEpisode(SQLBase):
     actors = Column(
         String
     )  # Comma separated list of actor IDs. Cleared on release data
-    dump_file_path = Column(String(60), nullable=False)  # Path to data
+    dump_file_path = Column(String(90), nullable=False)  # Path to data
     turn_count = Column(Integer, nullable=False)
     human_count = Column(Integer, nullable=False)
     action_count = Column(Integer, nullable=False)
@@ -185,6 +185,10 @@ class EpisodeDB(BaseDB):
         actor_string = ",".join(list(players))
         event_filename = events[0]
         event_list = events[1]
+        # Trim the filename from the left if too long
+        if len(event_filename) > 70:
+            event_filename = event_filename[-70:]
+        assert len(event_filename) <= 70
         dump_file_path = os.path.join(group.value, log_type.value, event_filename)
         graph_dump_root = os.path.join(
             group.value,
