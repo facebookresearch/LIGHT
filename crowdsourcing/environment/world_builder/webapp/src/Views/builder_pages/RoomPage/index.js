@@ -4,7 +4,7 @@ import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
-import { fetchWorlds, updateSelectedWorld, selectWorld, setWorldDrafts } from "../../../features/playerWorld/playerworld-slice.ts";
+import { fetchWorlds, updateSelectedWorld, selectWorld, setWorldDraft } from "../../../features/playerWorld/playerworld-slice.ts";
 import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
 import { updateObjects} from "../../../features/objects/objects-slice.ts";
 import { updateCharacters } from "../../../features/characters/characters-slice.ts";
@@ -32,7 +32,7 @@ const RoomPage = ()=> {
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
     //WORLD
-    const worldDrafts = useAppSelector((state) => state.playerWorlds.worldDrafts);
+    const worldDraft = useAppSelector((state) => state.playerWorlds.worldDraft);
     const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
     //ROOMS
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
@@ -43,14 +43,8 @@ const RoomPage = ()=> {
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     /* ------ REDUX ACTIONS ------ */
     //WORLD DRAFT
-    const updateWorldsDraft = ()=>{
-        let updatedWorlds = worldDrafts.map(world=> {
-            if(world.id==worldId){
-                return selectedWorld;
-            }
-            return world;
-        })
-        dispatch(setWorldDrafts(updatedWorlds))
+    const updateWorldDraft = ()=>{
+        dispatch(setWorldDraft(selectedWorld))
     }
     //ROOMS
     const addRoom = (room)=>{
@@ -96,14 +90,7 @@ const RoomPage = ()=> {
         // let updatedNodes ={...nodes};
         // delete updatedNodes[roomid];
         // updatedWorld ={...updatedWorld, rooms: updatedRooms, nodes:updatedNodes};
-        let updatedWorlds = worldDrafts.map(world=> {
-            if(world.id==worldId){
-                return updatedWorld;
-            }
-            return world;
-        })
-    console.log("UPDATED WORLDS UPON (ROOM DELETION):  ", updatedWorlds)
-    dispatch(setWorldDrafts(updatedWorlds))
+    dispatch(setWorldDraft(updatedWorld))
     history.push(`/editworld/${worldId}/${categories}/map`)
 }
 
@@ -306,15 +293,8 @@ const RoomPage = ()=> {
 
     /* --- LIFE CYCLE FUNCTIONS --- */
     useEffect(()=>{
-        if(worldDrafts.length){
-            worldDrafts.map((world) =>{
-                const {id} = world;
-                if(worldId == id){
-                    dispatch(selectWorld(world))
-                }
-            })
-        }
-    },[worldDrafts])
+        dispatch(selectWorld(worldDraft))
+    },[worldDraft])
 
     useEffect(()=>{
         if(selectedWorld){

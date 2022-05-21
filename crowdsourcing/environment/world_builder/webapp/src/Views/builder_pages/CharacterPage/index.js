@@ -4,7 +4,7 @@ import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
-import { fetchWorlds, updateSelectedWorld, selectWorld, setWorldDrafts} from "../../../features/playerWorld/playerworld-slice.ts";
+import { fetchWorlds, updateSelectedWorld, selectWorld, setWorldDraft} from "../../../features/playerWorld/playerworld-slice.ts";
 import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
 import { updateObjects} from "../../../features/objects/objects-slice.ts";
 import { updateCharacters, selectCharacter } from "../../../features/characters/characters-slice.ts";
@@ -32,7 +32,7 @@ const CharacterPage = ()=> {
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
     //WORLD
-    const worldDrafts = useAppSelector((state) => state.playerWorlds.worldDrafts);
+    const worldDraft = useAppSelector((state) => state.playerWorlds.worldDraft);
     const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
     //ROOMS
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
@@ -44,14 +44,8 @@ const CharacterPage = ()=> {
     const selectedCharacter = useAppSelector((state) => state.worldCharacters.selectedCharacter);
     /* ------ REDUX ACTIONS ------ */
      //WORLD DRAFT
-     const updateWorldsDraft = ()=>{
-        let updatedWorlds = worldDrafts.map(world=> {
-            if(world.id==worldId){
-                return selectedWorld;
-            }
-            return world;
-        })
-        dispatch(setWorldDrafts(updatedWorlds))
+     const updateWorldDraft = ()=>{
+        dispatch(setWorldDraft(selectedWorld))
     }
 
     //CHARACTERS

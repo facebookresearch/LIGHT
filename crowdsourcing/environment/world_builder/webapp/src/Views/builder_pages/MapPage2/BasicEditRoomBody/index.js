@@ -36,7 +36,7 @@ const BasicEditRoom = ({
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
     //WORLDS
-    const worldDrafts = useAppSelector((state) => state.playerWorlds.worldDrafts);
+    const worldDraft = useAppSelector((state) => state.playerWorlds.worldDraft);
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
     const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);

@@ -4,7 +4,7 @@ import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
-import { fetchWorlds, updateSelectedWorld, selectWorld, setWorldDrafts} from "../../../features/playerWorld/playerworld-slice.ts";
+import { fetchWorlds, updateSelectedWorld, selectWorld, setWorldDraft} from "../../../features/playerWorld/playerworld-slice.ts";
 import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
 import { updateObjects, selectObject} from "../../../features/objects/objects-slice.ts";
 import { updateCharacters, selectCharacter } from "../../../features/characters/characters-slice.ts";
@@ -39,7 +39,7 @@ const ObjectPage = ()=> {
    const dispatch = useAppDispatch();
    /* ------ REDUX STATE ------ */
    //WORLD
-   const worldDrafts = useAppSelector((state) => state.playerWorlds.worldDrafts);
+   const worldDraft = useAppSelector((state) => state.playerWorlds.worldDraft);
    const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
    const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
    //OBJECTS
@@ -48,13 +48,8 @@ const ObjectPage = ()=> {
    /* ------ REDUX ACTIONS ------ */
     //WORLD DRAFT
     const updateWorldsDraft = ()=>{
-       let updatedWorlds = worldDrafts.map(world=> {
-           if(world.id==worldId){
-               return selectedWorld;
-           }
-           return world;
-       })
-       dispatch(setWorldDrafts(updatedWorlds))
+
+       dispatch(setWorldDraft(selectedWorld))
    }
 
    //OBJECTS
@@ -113,15 +108,8 @@ const ObjectPage = ()=> {
     let updatedNodes ={...nodes};
     delete updatedNodes[objectid];
     updatedWorld ={...updatedWorld, objects: updatedObjects, nodes:updatedNodes};
-    let updatedWorlds = worldDrafts.map(world=> {
-        if(world.id==worldId){
-            return updatedWorld;
-        }
-        return world;
-    })
-
-    console.log("UPDATED WORLDS UPON OBJECT DELETION:  ", updatedWorlds)
-    dispatch(setWorldDrafts(updatedWorlds))
+    console.log("UPDATED WORLDS UPON OBJECT DELETION:  ", updatedWorld)
+    dispatch(setWorldDraft(updatedWorld))
     history.push(`/editworld/${worldId}/${categories}/map/rooms/${roomid}`)
 }
    /* ------ LOCAL STATE ------ */
@@ -212,16 +200,8 @@ const ObjectPage = ()=> {
 
   /* --- LIFE CYCLE FUNCTIONS --- */
   useEffect(()=>{
-      if(worldDrafts.length){
-          worldDrafts.map((world) =>{
-              const {id} = world;
-              if(worldId == id){
-                  dispatch(selectWorld(world))
-              }
-          })
-      }
-
-  },[worldDrafts])
+    dispatch(selectWorld(worldDraft))
+  },[worldDraft])
 
    useEffect(()=>{
        if(selectedWorld){

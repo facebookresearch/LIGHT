@@ -95,7 +95,8 @@ const App = ({
   }, [])
 
   useEffect(() => {
-    setSelectedWorld(worldDraft)
+    console.log("WORLD DRAFT UPDATE", worldDraft)
+    window.localStorage.setItem("taskWorld", JSON.stringify(worldDraft))
   }, [worldDraft])
 
   return (
