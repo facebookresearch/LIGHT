@@ -1,7 +1,7 @@
 /* REACT */
 import React, { useRef, useState, useEffect } from 'react';
 /* ---- REDUCER ACTIONS ---- */
-import {  setTaskRouterCurrentLocation, updateTaskRouterHistory } from "../../../features/taskRouter/taskrouter-slice.ts";
+import {  setTaskRouterCurrentLocation, updateTaskRouterHistory } from "../../../../../features/taskRouter/taskrouter-slice.ts";
 /* TYPEAHEAD TOKENIZER */
 import { Token as RBTToken } from 'react-bootstrap-typeahead';
 /* ICONS */

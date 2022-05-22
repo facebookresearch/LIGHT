@@ -1,8 +1,5 @@
 /* REACT */
 import React, {useEffect, useState} from 'react';
-
-/* REDUX */
-
 /* CUSTOM COMPONENTS */
 import Grid from "./Grid"
 /* BLUEPRINT JS COMPONENTS */

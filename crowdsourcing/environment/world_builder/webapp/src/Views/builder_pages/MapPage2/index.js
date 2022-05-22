@@ -33,6 +33,9 @@ const WorldBuilderPage = ()=> {
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
+
+
+
     //WORLDS
     const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
     const selectedWorld = useAppSelector((state) => state.playerWorld.selectedWorld);
@@ -51,7 +54,7 @@ const WorldBuilderPage = ()=> {
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     /* ------ REDUX ACTIONS ------ */
     //WORLD DRAFT
-    const updateWorldsDraft = ()=>{
+    const updateWorldDraft = ()=>{
         dispatch(setWorldDraft(selectedWorld))
     }
    //ROOMS
@@ -451,7 +454,7 @@ const WorldBuilderPage = ()=> {
     const fetchWorldCurrentWorld = ()=> {
         let unupdatedWorld  = JSON.parse(window.localStorage.getItem("taskWorld"))
 
-        dispatch(selectWorld(unupdatedWorld))
+        dispatch(updateSelectedWorld(unupdatedWorld))
     }
 
     /* --- LIFE CYCLE FUNCTIONS --- */
@@ -494,7 +497,7 @@ const WorldBuilderPage = ()=> {
     // Handler
     const WorldSaveHandler = ()=>{
         console.log("WORLD SAVE UPDATE:", selectedWorld)
-        updateWorldsDraft()
+        updateWorldDraft()
     }
     const closeSidebar = ()=>{
         setMapSideBarOpen(false)
@@ -528,19 +531,9 @@ const WorldBuilderPage = ()=> {
 
 
 
-    //CRUMBS
-    const crumbs= [
-        {name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`},
-        {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`}
-    ];
-
-
     return (
         <div className="mappage-container">
             <div className="mappage-header">
-                <BreadCrumbs
-                    crumbs={crumbs}
-                />
                 <h5>FLOOR</h5>
                 <div className="toolbar-container">
                     <NumberButtonInput
@@ -575,7 +568,7 @@ const WorldBuilderPage = ()=> {
             </div>
             <div className="mappage-body">
                 {
-                (selectedWorld && worldRooms.length && mapBorders)
+                (selectedWorld && mapBorders)
                 ?
                 <WorldBuilderMap
                     worldData={selectedWorld}

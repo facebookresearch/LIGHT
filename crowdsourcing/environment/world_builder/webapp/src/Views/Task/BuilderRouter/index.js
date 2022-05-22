@@ -36,7 +36,7 @@ const BuilderRouter = ({virtualPath, api}) => {
         let formattedLocation="/"
         let formattedLocationArray = currentLocation.split('/')
         if(formattedLocationArray.length){
-            formattedLocation= formattedLocationArray[0]
+            formattedLocation= formattedLocationArray[formattedLocationArray.length-2]
         }
         switch(builderRouterCurrentLocation) {
             case '/':

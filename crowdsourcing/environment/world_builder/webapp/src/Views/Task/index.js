@@ -47,6 +47,7 @@ const App = ({
   /* ----REDUX ACTIONS---- */
   //Sets the worldDraft to the initial "blank world"
   const setInitialWorldDraft = ()=>{
+    window.localStorage.setItem("taskWorld", JSON.stringify(DefaultWorld))
     dispatch(setWorldDraft(DefaultWorld))
   }
   //Updates current selectedWorld state
@@ -86,18 +87,15 @@ const App = ({
   //Initial pull to set default world as draft
   useEffect(() => {
     let initialDraft  = JSON.parse(window.localStorage.getItem("taskWorld"))
+    console.log("INITIAL DRAFT:  ", initialDraft)
+    console.log("INITIAL DRAFT BOOLEAN:  ", (!initialDraft))
     if(!initialDraft){
-      window.localStorage.setItem("taskWorld", JSON.stringify(DefaultWorld))
       setInitialWorldDraft()
     }
     window.localStorage.setItem("currentLocation", JSON.stringify("/"))
 
   }, [])
 
-  useEffect(() => {
-    console.log("WORLD DRAFT UPDATE", worldDraft)
-    window.localStorage.setItem("taskWorld", JSON.stringify(worldDraft))
-  }, [worldDraft])
 
   return (
   <>

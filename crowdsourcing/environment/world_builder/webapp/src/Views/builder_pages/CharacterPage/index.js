@@ -7,7 +7,7 @@ import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 import { fetchWorlds, updateSelectedWorld, selectWorld, setWorldDraft} from "../../../features/playerWorld/playerworld-slice.ts";
 import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
 import { updateObjects} from "../../../features/objects/objects-slice.ts";
-import { updateCharacters, selectCharacter } from "../../../features/characters/characters-slice.ts";
+import { updateCharacters, selectCharacter } from "../../../features/characters/characters-slice.ts";import { updateCharacters, selectCharacter } from "../../../features/characters/characters-slice.ts";
 /* STYLES */
 import './styles.css';
 /* BOOTSTRAP COMPONENTS */
@@ -25,12 +25,16 @@ import BreadCrumbs from "../../../components/world_builder/BreadCrumbs";
 import TypeAheadTokenizerForm from "../../../components/world_builder/FormFields/TypeAheadTokenizer";
 
 const CharacterPage = ()=> {
-    //REACT ROUTER
-    const history = useHistory();
+    let formattedCurrentLocationArray = currentLocation.split("/")
+
+
     let { worldId, categories, roomid, charid } = useParams();
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
+    //TASKROUTER
+    const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
+    const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
     //WORLD
     const worldDraft = useAppSelector((state) => state.playerWorlds.worldDraft);
     const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
@@ -43,6 +47,15 @@ const CharacterPage = ()=> {
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     const selectedCharacter = useAppSelector((state) => state.worldCharacters.selectedCharacter);
     /* ------ REDUX ACTIONS ------ */
+    //TASKROUTER
+    const navigateToLocation = (nodeId)=>{
+        let newLocation = `rooms/${roomId}/${sectionName}/${nodeId}`
+        let updatedTaskRouterHistory = taskRouterHistory.push(newLocation)
+        console.log("NEW LOCATION:   ", newLocation)
+        console.log("UPDATED HISTORY:   ", updatedTaskRouterHistory)
+        dispatch(updateTaskRouterHistory(updatedTaskRouterHistory))
+        dispatch(setTaskRouterCurrentLocation(updatedTaskRouterHistory))
+    }
      //WORLD DRAFT
      const updateWorldDraft = ()=>{
         dispatch(setWorldDraft(selectedWorld))
