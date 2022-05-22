@@ -178,15 +178,8 @@ const CharacterPage = ()=> {
 
     /* --- LIFE CYCLE FUNCTIONS --- */
     useEffect(()=>{
-        if(worldDrafts.length){
-            worldDrafts.map((world) =>{
-                const {id} = world;
-                if(worldId == id){
-                    dispatch(selectWorld(world))
-                }
-            })
-        }
-    },[worldDrafts])
+        dispatch(selectWorld(worldDraft))
+    },[worldDraft])
 
     useEffect(()=>{
         if(selectedWorld){

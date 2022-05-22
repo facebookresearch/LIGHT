@@ -4,14 +4,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 /* STATE TYPE */
 interface TaskRouterState {
     currentLocation: String;
-    builderRouterHistory: Array<String>;
+    taskRouterHistory: Array<String>;
 
 }
 
 /* Initial value of the state */
 const initialState: TaskRouterState = {
     currentLocation: "/",
-    builderRouterHistory: [],
+    taskRouterHistory: [],
 };
 
 //Create slice will generate action objects for us
@@ -24,7 +24,7 @@ const taskRouterSlice = createSlice({
             state.currentLocation= action.payload
         },
         updTaskRouterHistory(state, action: PayloadAction<Array<String>>) {
-            state.builderRouterHistory= action.payload
+            state.taskRouterHistory= action.payload
         },
     }
 });

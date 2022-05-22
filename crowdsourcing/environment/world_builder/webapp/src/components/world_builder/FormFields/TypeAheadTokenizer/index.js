@@ -1,4 +1,5 @@
-import React, { useCallback, useState, useEffect } from 'react';
+/* REACT */
+import React, { useState, useEffect } from 'react';
 import { Typeahead, TypeaheadInputMulti } from 'react-bootstrap-typeahead';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -13,7 +14,6 @@ import { BsGear } from 'react-icons/bs';
 const TypeaheadTokenizer = ({
     formLabel,
     tokenOptions,
-    worldId,
     sectionName,
     roomId,
     tokens,
@@ -196,7 +196,6 @@ const SelectHandler = (selected)=>{
                         index={idx}
                         option={option}
                         key={option.key}
-                        worldId={worldId}
                         sectionName={sectionName}
                         roomId={roomId}
                         deleteTokenFunction={onTokenRemoval}
