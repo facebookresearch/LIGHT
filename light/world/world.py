@@ -83,7 +83,10 @@ class World(object):
         init_magic(self.opt.get("magic_db_path", "/scratch/light/data/magic.db"))
 
         # Set up action parser.
-        self.action_parser = ActionParser(opt)
+
+        self.action_parser = opt.get("_action_parser")
+        if self.action_parser is None:
+            self.action_parser = ActionParser(opt)
 
     @staticmethod
     def from_graph(graph, graph_builder=None):

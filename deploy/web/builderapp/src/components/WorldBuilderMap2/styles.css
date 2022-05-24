@@ -1,0 +1,30 @@
+.map-container {
+    text-align:  center ;
+    display: flex ;
+    justify-content: center ;
+    align-items: center ;
+    flex-direction: column ;
+}
+
+.button-row {
+    display: flex;
+    flex-direction: row;
+    width: 1040px;
+}
+
+.view-row {
+    display: flex;
+    flex-direction: row;
+    width: 1040px;
+}
+
+.view-container {
+    position: relative;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 800px;
+    width: 1000px;
+}

@@ -11,7 +11,7 @@
 
 #fullscreen-gamepage {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   justify-content: center;
   align-items: flex-start;
   display: flex;
