@@ -71,8 +71,9 @@ const App = ({
   }
 
   const SubmissionHandler = ()=>{
+    let updatedCurrentWorld = JSON.parse(window.localStorage.getItem("taskWorld"))
     let workerSubmission = {
-      data: currentWorld,
+      data: updatedCurrentWorld,
       comments: workerComments
     }
     handleSubmit(workerSubmission)
