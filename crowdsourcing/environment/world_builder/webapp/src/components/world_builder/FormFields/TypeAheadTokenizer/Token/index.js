@@ -1,5 +1,7 @@
 /* REACT */
 import React, { useRef, useState, useEffect } from 'react';
+/* REDUX */
+import {useAppDispatch, useAppSelector} from '../../../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
 import {  setTaskRouterCurrentLocation, updateTaskRouterHistory } from "../../../../../features/taskRouter/taskrouter-slice.ts";
 /* TYPEAHEAD TOKENIZER */
@@ -26,7 +28,7 @@ const Token = ({
     /* REDUX ACTIONS */
     const navigateToLocation = (nodeId)=>{
         let newLocation = `rooms/${roomId}/${sectionName}/${nodeId}`
-        let updatedTaskRouterHistory = taskRouterHistory.push(newLocation)
+        let updatedTaskRouterHistory = taskRouterHistory.push(currentLocation)
         console.log("NEW LOCATION:   ", newLocation)
         console.log("UPDATED HISTORY:   ", updatedTaskRouterHistory)
         dispatch(updateTaskRouterHistory(updatedTaskRouterHistory))
