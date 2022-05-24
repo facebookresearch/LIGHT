@@ -1,5 +1,6 @@
 //REACT
-import React, { useEffect } from "react";
+// import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 //STYLE
 import "./styles.css"
 //COPY
@@ -7,9 +8,12 @@ import QuestionCopy from "../../../../TaskCopy.js";
 //CUSTOM COMPONENTS
 import QuestionOnSelect from "../../../../components/QuestionOnSelect";
 import FormQuestion from "../../../../components/Questions/FormQuestion";
+import InfoToolTip from "../../../../components/InfoToolTip";
+import Checkbox from "../../../../components/Checkbox";
 import BooleanQuestion from "../../../../components/Questions/BooleanQuestion";
 import MultipleSelectQuestion from "../../../../components/Questions/MultipleSelectQuestion";
 import FieldQuestion from "../../../../components/Questions/FieldQuestion";
+import Highlightable from "highlightable";
 import AttributeSetter from "../../../../components/AttributeSetter";
 
 // Questions Component - Contains all of the forms relevant to the Events Questions and passes relevant state and setState functions to corresponding questions
@@ -20,6 +24,8 @@ const Questions = ({
     //Payload state and corresponding setState functions
     broadcastMessage,
     setBroadcastMessage,
+    ranges,
+    setRanges,
     isCreatingEntity,
     setIsCreatingEntity,
     createdEntity,
@@ -42,6 +48,7 @@ const Questions = ({
     setSecondaryIsChangingLocation,
     secondaryNewLocation,
     setSecondaryNewLocation,
+
     primaryModifiedAttributes,
     setPrimaryModifiedAttributes,
     secondaryModifiedAttributes,
@@ -51,7 +58,8 @@ const Questions = ({
     let obj1Attr = object1.attributes
     let obj2Attr = object2.attributes
     const QuestionList = QuestionCopy.event.questions
-    const TipList = QuestionCopy.event.tutorialCopy
+    const TipList = QuestionCopy.event.tutorialCopy;
+    let [selectedHighlighter, setSelectedHighlighter] = useState([]);
     /*------LIFECYCLE------*/
     //Upon object change sets descriptions for relevant object
     useEffect(() => {
@@ -65,20 +73,79 @@ const Questions = ({
         setBroadcastMessage(interaction)
     }, [interaction])
 
-    console.log("removedObjects:")
-    console.log(removedObjects);
+    let getHighlightStyle = (({ highlighter }, charIndex) => {
+        let style = highlighter === "ACTOR" ? {
+            backgroundColor: '#CE93D8'
+        } : highlighter === "OBJECT1" ? { backgroundColor: "#4FC3F7" } : highlighter === "OBJECT2" ? { backgroundColor: "#FFCC80" } : { backgroundColor: "#A5D6A7" };
+        return style;
+    });
+
+    let updateRangesWithoutOverlaps = (range) => {
+        if (selectedHighlighter.length > 0 && selectedHighlighter[0] !== "ERASER") {
+            // currently highlighting something
+            let { start: newStart, end: newEnd } = range;
+            let rangesWithoutOverlaps = ranges.filter(({ start, end }) => start > newEnd || end < newStart);
+            setRanges([...rangesWithoutOverlaps, { ...range, highlighter: selectedHighlighter[0] }]);
+        } else {
+            // Erase everything touching this highlight
+            let { start: newStart, end: newEnd } = range;
+            let rangesWithoutOverlaps = ranges.filter(({ start, end }) => start > newEnd || end < newStart);
+            setRanges(rangesWithoutOverlaps);
+        }
+    }
+
+    let updateBroadcastMessage = (broadcastMessage) => {
+        setBroadcastMessage(broadcastMessage);
+        setRanges([]);
+    }
+
     return (
         <>
             <FormQuestion
                 question={QuestionList[1]}
                 formVal={interaction}
-                formFunction={setBroadcastMessage}
+                // formFunction={setBroadcastMessage}
+                formFunction={updateBroadcastMessage}
                 toolTipCopy={TipList[0].explanation}
                 hasToolTip={true}
                 isComplete={(broadcastMessage.length && broadcastMessage !== interaction)}
             />
+            <div className="form-container">
+                <InfoToolTip
+                    tutorialCopy={TipList[1].explanation}
+                    hasToolTip={true}
+                >
+                    <div style={{ display: "flex", flexDirection: "row" }}>
+                        <Checkbox isComplete={ranges.length >= 3} />
+                        <h1 className="form-header" style={{ color: "black" }}>
+                            {QuestionList[2]}
+                        </h1>
+                    </div>
+                </InfoToolTip>
+
+                <MultipleSelectQuestion
+                    question={"SELECT THE CURRENT HIGHLIGHTER"}
+                    answers={["ACTOR", "OBJECT1", "OBJECT2", "LOCATION", "ERASER"]}
+                    colors={['#CE93D8', '#4FC3F7', '#FFCC80', '#A5D6A7']}
+                    onlySelectOne={true}
+                    selectFunction={setSelectedHighlighter}
+                />
+
+                <div className="highlightable-section">
+                    <Highlightable ranges={ranges}
+                        enabled={true}
+                        onTextHighlighted={updateRangesWithoutOverlaps}
+                        id={"uniqueId"}
+                        onMouseOverHighlightedWord={(range) => { console.log('overlap with '); console.log(range); }}
+                        highlightStyle={getHighlightStyle}
+                        // text={'some text to highlight'}
+                        text={broadcastMessage}
+                    />
+                </div>
+            </div>
+
             <BooleanQuestion
-                question={QuestionList[2]}
+                question={QuestionList[3]}
                 trueAnswer={{ name: "YES" }}
                 falseAnswer={{ name: "NO" }}
                 formFunction={setIsRemovingObjects}
@@ -94,7 +161,7 @@ const Questions = ({
                 />
             </BooleanQuestion>
             <BooleanQuestion
-                question={QuestionList[3]}
+                question={QuestionList[4]}
                 trueAnswer={{ name: "YES" }}
                 falseAnswer={{ name: "NO" }}
                 formFunction={setIsChangingDescription}
@@ -125,7 +192,7 @@ const Questions = ({
                 </div>
             </BooleanQuestion>
             <BooleanQuestion
-                question={QuestionList[4]}
+                question={QuestionList[5]}
                 trueAnswer={{ name: "YES" }}
                 falseAnswer={{ name: "NO" }}
                 formFunction={setIsCreatingEntity}
@@ -154,12 +221,12 @@ const Questions = ({
 
             </BooleanQuestion>
             <QuestionOnSelect
-                question={QuestionList[5]}
-                secondaryQuestion={QuestionList.a5}
+                question={QuestionList[6]}
+                secondaryQuestion={QuestionList.a6}
                 answers={[
                     {
                         name: object1.name.toUpperCase(),
-                        disabled:removedObjects.includes(object1.name),
+                        disabled: removedObjects.includes(object1.name),
                         questionColor: "blue",
                         onSelectFunction: (status) => setPrimaryIsChangingLocation(status),
                         secondaryQuestion: {
@@ -175,7 +242,7 @@ const Questions = ({
                     },
                     {
                         name: object2.name.toUpperCase(),
-                        disabled:removedObjects.includes(object2.name),
+                        disabled: removedObjects.includes(object2.name),
                         questionColor: "orange",
                         onSelectFunction: (status) => setSecondaryIsChangingLocation(status),
                         secondaryQuestion: {

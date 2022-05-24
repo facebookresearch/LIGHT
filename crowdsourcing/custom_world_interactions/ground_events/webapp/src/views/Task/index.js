@@ -12,6 +12,8 @@ const Task = ({
   //STATE AND CORRESPONDING FUNCTIONS TO SET STATE
   broadcastMessage,
   setBroadcastMessage,
+  ranges,
+  setRanges,
   isCreatingEntity,
   setIsCreatingEntity,
   createdEntity,
@@ -52,6 +54,8 @@ const Task = ({
               interaction={interaction}
               broadcastMessage={broadcastMessage}
               setBroadcastMessage={setBroadcastMessage}
+              ranges={ranges}
+              setRanges={setRanges}
               isCreatingEntity={isCreatingEntity}
               setIsCreatingEntity={setIsCreatingEntity}
               createdEntity={createdEntity}

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 
 import TipsCopy from "./TipsCopy"
 
-const DescriptionForm = ({ formVal, formFunction, primaryObject, secondaryObject, name, placeholder, taskTemplate, tips }) => {
+const DescriptionForm = ({ formVal, formFunction, primaryObject, secondaryObject, name, placeholder, taskTemplate, tips, bigForm }) => {
     const changeHandler = e => {
         e.preventDefault()
         formFunction(e.target.value)
@@ -34,7 +34,7 @@ const DescriptionForm = ({ formVal, formFunction, primaryObject, secondaryObject
                 className="description-form"
                 onChange={changeHandler}
                 value={formVal}
-                rows="7"
+                rows={bigForm ? "7" : "2"}
                 type="text"
                 placeholder={placeholder}
             />

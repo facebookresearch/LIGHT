@@ -23,7 +23,8 @@ const AttributeSetter = ({
     //Sets is existing attribute for attributes that already exist before interaction
     useEffect(()=>{
         if(attributes){
-        const existingAttributes = attributes.map(att => ({...att, isExisting:true}))
+        // const existingAttributes = attributes.map(att => ({...att, isExisting:true}))
+        const existingAttributes = attributes.map(att => ({...att, isExisting:false}))
         setAttributeList(existingAttributes)
         }
     },[])

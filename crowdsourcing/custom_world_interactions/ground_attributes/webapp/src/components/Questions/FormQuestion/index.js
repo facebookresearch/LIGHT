@@ -48,7 +48,7 @@ const FormQuestion = ({
             </InfoToolTip>
             <p >
             </p>
-            <div className="answer-container">
+            {disabled ? <div className="answer-container">
                 <p
                     // className="answer-form"
                     style={{ textAlign: "center", fontWeight: "bold" }}
@@ -59,7 +59,19 @@ const FormQuestion = ({
                     readOnly="readonly"
                     placeholder={placeholder}
                 > {description} </p>
-            </div>
+            </div> : null}
+            {!disabled ? 
+                <div className="answer-container">
+                    <textarea
+                        className="answer-form"
+                        onChange={changeHandler}
+                        value={description}
+                        rows="7"
+                        type="text"
+                        placeholder={placeholder}
+                    />
+                </div> : null
+            }
         </div>
     )
 }

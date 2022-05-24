@@ -44,6 +44,7 @@ function MainApp() {
   const [errorMessages, setErrorMessages] = useState([]);
   /*-----------Events State-----------*/
   const [broadcastMessage, setBroadcastMessage] = useState("");
+  const [ranges, setRanges] = useState([]);
   const [isCreatingEntity, setIsCreatingEntity] = useState(null);
   const [createdEntity, setCreatedEntity] = useState({});
   // const [isRemovingObjects, setIsRemovingObjects] = useState(null);
@@ -151,6 +152,7 @@ function MainApp() {
       primaryNewLocation,
       secondaryIsChangingLocation,
       secondaryNewLocation,
+      ranges,
       ...initialTaskData
     }
     updatedBroadcastMessage = {
@@ -262,6 +264,8 @@ function MainApp() {
         data={mephistoData}
         broadcastMessage={broadcastMessage}
         setBroadcastMessage={setBroadcastMessage}
+        ranges={ranges}
+        setRanges={setRanges}
         isCreatingEntity={isCreatingEntity}
         setIsCreatingEntity={setIsCreatingEntity}
         createdEntity={createdEntity}

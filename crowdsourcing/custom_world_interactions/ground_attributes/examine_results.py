@@ -8,6 +8,7 @@ from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
 from mephisto.data_model.worker import Worker
 from mephisto.data_model.unit import Unit
+from collections import Counter
 
 db = LocalMephistoDB()
 mephisto_data_browser = MephistoDataBrowser(db=db)
@@ -16,13 +17,20 @@ DO_REVIEW = True
 
 # units = mephisto_data_browser.get_units_for_task_name(input("Input task name: "))
 # We're only examining this task with this file, but in the future could rely on mephisto.tools.examine_utils.run_examine_or_review
-units = mephisto_data_browser.get_units_for_task_name("ground-stage-2-task-1")
+units = mephisto_data_browser.get_units_for_task_name("ground-stage-2-pilot-2")
 
 tasks_to_show = input("Tasks to see? (a)ll/(u)nreviewed: ")
 if tasks_to_show in ["all", "a"]:
+    print(f"prev len: {len(units)}")
+    print(Counter([u.get_status() for u in units]))
+    units = [u for u in units if u.get_status() == "completed"]
+    print(f"len: {len(units)}")
     DO_REVIEW = False
 else:
+    print(f"prev len: {len(units)}")
+    print(Counter([u.get_status() for u in units]))
     units = [u for u in units if u.get_status() == "completed"]
+    print(f"len: {len(units)}")
     print(
         "You will be reviewing actual tasks with this flow. Tasks that you either Accept or Pass "
         "will be paid out to the worker, while rejected tasks will not. Passed tasks will be "
@@ -72,7 +80,9 @@ def format_for_printing_data(data):
     secondary_obj = inputs.get("object2", {})
     inputs_string = f"Inputs:\n\t(Primary Object) {primary_obj.get('name')}: {primary_obj.get('desc')}\n\t(Secondary Object) {secondary_obj.get('name')}: {secondary_obj.get('desc')}\n\tAction Description: {inputs.get('interaction')}\n\n"
 
-    outputs = contents["outputs"]["final_data"]
+    outputs = contents["outputs"]
+    outputs["events"] = [e for e in outputs.get("events", []) if e is not None]
+    outputs["constraints"] = [e for e in outputs.get("constraints", []) if e is not None]
 
     outputs_string = f"Output:\n"
 
@@ -86,7 +96,8 @@ def format_for_printing_data(data):
         # character agnostic narration; Narration \t narration_text
         event = broadcast_messages[0]
         outputs_string += f"\tNarration:\n\t\t{event['params']['room_view']}\n\n"
-
+    outputs_string += f"\tReplaced Backstory:\t{outputs['this_task_state']['noBackstoryNarration']}\n\n"
+    outputs_string += f"\tBackstory Too Complex:\t{outputs['this_task_state']['hasBackstory']}\n\n"
     outputs_string += f"\tEvents:\n\n"
     for event in outputs["events"]:
         if event["type"] == "broadcast_message":

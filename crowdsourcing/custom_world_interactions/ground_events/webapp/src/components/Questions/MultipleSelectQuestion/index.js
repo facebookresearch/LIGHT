@@ -10,19 +10,28 @@ import TaskButton from "../../TaskButton"
 const MultipleSelectQuestion = ({
     question, //Question Text
     answers, //Array of answers
+    colors, // array of colors for each answer
     selectFunction, // setState function connected to payload state
-    hasSecondaryInput
+    onlySelectOne,
 })=>{
     //Local State
     const [selectedAnswers, setSelectedAnswers] = useState([]);
-    const [answerList, setAnswerList] = useState([])
+    const [answerList, setAnswerList] = useState([]);
+    
+    if (colors === undefined) {
+        colors = answers.map(a => undefined);
+    }
 
     //clickHandler - handles selection and unselection of answers
     const clickHandler = (id, answer)=>{
         let updatedAnswers;
         //Selecting answer
         if(selectedAnswers.indexOf(answer)<0){
-            updatedAnswers = [...selectedAnswers, answer];
+            if (onlySelectOne) {
+                updatedAnswers = [answer];
+            } else {
+                updatedAnswers = [...selectedAnswers, answer];
+            }
             setSelectedAnswers(updatedAnswers)
             selectFunction(updatedAnswers)
         }
@@ -52,6 +61,7 @@ const MultipleSelectQuestion = ({
                         name={answer}
                         selectFunction={()=>clickHandler(index, answer)}
                         isSelected={(selectedAnswers.indexOf(answer)>=0)}
+                        color={colors[index]}
                         selectedContainer="mc-button__container"
                         unselectedContainer="mc-selectedbutton__container"
                         selectedText="mc-button__text"

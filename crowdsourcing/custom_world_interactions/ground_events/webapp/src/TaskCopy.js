@@ -6,6 +6,7 @@ const EventShot2 = require("./assets/images/Tutorial/Event/EventShot2.png");
 const EventShot3 = require("./assets/images/Tutorial/Event/EventShot3.png");
 const EventShot4 = require("./assets/images/Tutorial/Event/EventShot4.png");
 const EventShot5 = require("./assets/images/Tutorial/Event/EventShot5.png");
+const EventShot6 = require("./assets/images/Tutorial/Event/EventShot6.png");
 
 const Copy ={
     tutorialIntro:{
@@ -15,24 +16,32 @@ const Copy ={
     event:{
         tutorialIntro:"The events section pertains to what changes(if any) occured during the interaction.  You will be tasked with narrating what this interaction looks like to a third party then describing anything that was created, destroyed, or changed as result of the interaction.",
         questions:{
-            1: "1.  Narrate this specific interaction to another observer who sees it happen.",
-            2: "2.  Are objects removed?",
-            a2: "2a.  Which object(s)?",
-            3: "3.  Does an object's description change?",
-            4: "4.  Are objects created?",
-            5: "5.  Do any of the objects change location?",
-            a5: "Where does selected object move?",
+            1: "1.  Narrate this specific interaction to another observer who sees it happen, as if a villager was performing the action.",
+            2: "2.  Highlight the actor, objects, and location (if present) in your narration text below.",
+            3: "3.  Are objects removed?",
+            a3: "3a.  Which object(s)?",
+            4: "4.  Does an object's description change?",
+            5: "5.  Are objects created?",
+            6: "6.  Do any of the objects change location?",
+            a6: "Where does selected object move?",
             setter: " After this action:  "
         },
         tutorialCopy:[
             {
                 question:"1)  Narrate this interaction",
-                explanation:'The new narration should be directed to someone observing the interaction take place, say in the same location.  If you want to refer to the actor, location, or either the key or the lock, use `ACTOR`, `LOCATION`, `OBJECT1`, `OBJECT2`.  For example, "You place the key in the lock and turn. After a satisfying click the lock becomes unlocked " could be seen as "ACTOR fumbles with a OBJECT1 in the OBJECT2 for a moment, before you hear a click echo through LOCATION."',
+                explanation:'The new narration should be directed to someone observing the interaction take place, say in the same location.  For example, "You place the key in the lock and turn. After a satisfying click the lock becomes unlocked " could be seen as "You see the villager fumble with a key in the lock for a moment, before you hear a click echo through the location."',
                 screenshot: EventShot1
 
             },
             {
-                question:"2) Are objects removed?",
+                question:"2) Highlight the actor and objects",
+                explanation:`Select each highlighter and drag across the corresponding actor, 
+                object, or location in your narration. The goal is to highlight the actor (e.g. the villager) and the two objects 
+                listed at the beginning of the task, as well as the location if applicable. To remove previous highlights, use the eraser.`,
+                screenshot: EventShot2
+            },
+            {
+                question:"3) Are objects removed?",
                 explanation:`If the interaction would cause one of the
                 used objects not exist anymore, mark those
                 objects.
@@ -43,10 +52,10 @@ const Copy ={
                 In this case you would mark that an object
                 is removed, specifically the table. The torch
                 is not removed.`,
-                screenshot: EventShot2
+                screenshot: EventShot3
             },
             {
-                question:"3) Do object descriptions change?",
+                question:"4) Do object descriptions change?",
                 explanation:`If an object remains in the scene, but it ends
                 up changed by the interaction, it's description
                 should change. For instance given "You
@@ -56,10 +65,10 @@ const Copy ={
                 have been bought recently" to "A shiny new
                 bucket. It would be perfect, if not for the
                 deep scratches in one side."`,
-                screenshot: EventShot3
+                screenshot: EventShot4
             },
             {
-                question:"4) Are objects created?",
+                question:"5) Are objects created?",
                 explanation:`If the interaction creates new objects in the
                 scene, you should list them here. You should
                 describe the object and note where the object
@@ -73,12 +82,12 @@ const Copy ={
                 you may create "Pile of Ash: These ashes are
                 fresh and still a little hot." and it would be created
                 in the room.`,
-                screenshot: EventShot4
+                screenshot: EventShot5
             },
             {
-            question:"5) Location Changes",
+            question:"6) Location Changes",
             explanation:`If the described interaction changes the location of an item, use this to mark where the item should be after the interaction`,
-            screenshot: EventShot5
+            screenshot: EventShot6
             },
         ]
     },

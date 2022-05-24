@@ -24,7 +24,7 @@ const BooleanQuestion = ({
 }) => {
     //local state for question answer
     // const [answer, setAnswer] = useState(null);
-    const [answer, setAnswer] = useState(defaultOption ? defaultOption : null);
+    const [answer, setAnswer] = useState(defaultOption !== undefined ? defaultOption : null);
 
     //sets both local and payload state to true
     const trueHandler = () => {
@@ -50,7 +50,7 @@ const BooleanQuestion = ({
                 hasToolTip={hasToolTip}
             >
                 <div style={{ display: "flex", flexDirection: "row" }}>
-                {hasToolTip && !disabled ? <Checkbox isComplete={isComplete} /> : null}
+                    {hasToolTip && !disabled ? <Checkbox isComplete={isComplete} /> : null}
                     <FormatQuestion
                         question={question}
                         keywords={keywords}
@@ -59,7 +59,7 @@ const BooleanQuestion = ({
                 </div>
             </InfoToolTip>
             <div className="booleananswer-container">
-                {!disabled || answer ? <TaskButton
+                {!disabled ? <TaskButton
                     name={trueAnswer.name}
                     isSelected={answer}
                     selectFunction={trueHandler}
@@ -68,7 +68,26 @@ const BooleanQuestion = ({
                     unselectedText="b-button__text true"
                     selectedText=" b-selectedbutton__text"
                     disabled={disabled}
+                /> : null }
+                {!disabled ? <TaskButton name={falseAnswer.name}
+                    isSelected={answer === false}
+                    selectFunction={falseHandler}
+                    unselectedContainer="b-button__container false"
+                    selectedContainer="b-selectedbutton__container false"
+                    unselectedText="b-button__text false"
+                    selectedText=" b-selectedbutton__text"
+                    disabled={disabled}
+                /> : null }
 
+                {/* {!disabled || answer ? <TaskButton
+                    name={trueAnswer.name}
+                    isSelected={answer}
+                    selectFunction={trueHandler}
+                    unselectedContainer="b-button__container true"
+                    selectedContainer="b-selectedbutton__container true"
+                    unselectedText="b-button__text true"
+                    selectedText=" b-selectedbutton__text"
+                    disabled={disabled}
                 /> : null}
                 {!disabled || !answer ? <TaskButton name={falseAnswer.name}
                     isSelected={answer === false}
@@ -78,7 +97,7 @@ const BooleanQuestion = ({
                     unselectedText="b-button__text false"
                     selectedText=" b-selectedbutton__text"
                     disabled={disabled}
-                /> : null}
+                /> : null} */}
 
             </div>
             <div style={{ width: "100%", marginTop: "10px" }}>

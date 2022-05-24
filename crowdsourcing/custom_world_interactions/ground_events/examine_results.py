@@ -8,6 +8,7 @@ from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
 from mephisto.data_model.worker import Worker
 from mephisto.data_model.unit import Unit
+from collections import Counter
 
 db = LocalMephistoDB()
 mephisto_data_browser = MephistoDataBrowser(db=db)
@@ -16,13 +17,22 @@ DO_REVIEW = True
 
 # units = mephisto_data_browser.get_units_for_task_name(input("Input task name: "))
 # We're only examining this task with this file, but in the future could rely on mephisto.tools.examine_utils.run_examine_or_review
-units = mephisto_data_browser.get_units_for_task_name("ground-stage-1-task-1")
+# units = mephisto_data_browser.get_units_for_task_name("ground-stage-1-task-1")
+# units = mephisto_data_browser.get_units_for_task_name("ground-stage-1-pilot-1")
+# units_2 = mephisto_data_browser.get_units_for_task_name("ground-stage-1-pilot-2")
+units_3 = mephisto_data_browser.get_units_for_task_name("ground-stage-1-pilot-3")
+# units_3 = mephisto_data_browser.get_units_for_task_name("ground-stage-1-pilot-4")
+# units = [*units_2, *units_3]
+units = units_3
 
 tasks_to_show = input("Tasks to see? (a)ll/(u)nreviewed: ")
 if tasks_to_show in ["all", "a"]:
     DO_REVIEW = False
 else:
+    print(f"prev len: {len(units)}")
+    print(Counter([u.get_status() for u in units]))
     units = [u for u in units if u.get_status() == "completed"]
+    print(f"len: {len(units)}")
     print(
         "You will be reviewing actual tasks with this flow. Tasks that you either Accept or Pass "
         "will be paid out to the worker, while rejected tasks will not. Passed tasks will be "
@@ -72,20 +82,29 @@ def format_for_printing_data(data):
     secondary_obj = inputs.get("object2", {})
     inputs_string = f"Inputs:\n\t(Primary Object) {primary_obj.get('name')}: {primary_obj.get('desc')}\n\t(Secondary Object) {secondary_obj.get('name')}: {secondary_obj.get('desc')}\n\tAction Description: {inputs.get('interaction')}\n\n"
 
-    outputs = contents["outputs"]["final_data"]
+    outputs = contents["outputs"]
 
     outputs_string = f"Output:\n"
 
     outputs_string += "\n\n\n"
+    if outputs is None:
+        return f"-------------------\n{metadata_string}{inputs_string}{outputs_string}"
 
     # want to print new narration first
     broadcast_messages = [
-        e for e in outputs["events"] if e["type"] == "broadcast_message"
+        e for e in outputs["events"] if e is not None and e["type"] == "broadcast_message"
     ]
     if len(broadcast_messages) == 1:
         # character agnostic narration; Narration \t narration_text
         event = broadcast_messages[0]
-        outputs_string += f"\tNarration:\n\t\t{event['params']['room_view']}\n\n"
+        outputs_string += f"\tNarration:\n\t\t{event['params']['room_view']}\n"
+        if 'ranges' not in outputs['this_task_state'] or len(outputs['this_task_state']['ranges']) == 0:
+            outputs_string += "\t\tRanges:\n\t\t NONE FOUND\n\n"
+        else:
+            for r in outputs['this_task_state']['ranges']:
+                s = r['start']
+                e = r['end']
+                outputs_string += f"\t\t{r['text'][s:e]}: {r['highlighter']}\n"
 
     outputs_string += f"\tEvents:\n\n"
     for event in outputs["events"]:
@@ -97,6 +116,8 @@ def format_for_printing_data(data):
             outputs_string += f"\t\t[Remove] ({event['params']['name']})\n\n"
         elif event["type"] == "create_entity":
             # any entities created; [Create Object] (object_name) with description: object_description
+            if len(event['params']['object']) == 0:
+                continue
             outputs_string += f"\t\t[Create Object] ({event['params']['object']['name']}) with description: {event['params']['object']['desc']} \n\n"
             print(event['params']['object'])
         elif (

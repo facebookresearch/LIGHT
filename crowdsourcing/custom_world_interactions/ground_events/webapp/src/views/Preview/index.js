@@ -32,7 +32,7 @@ const Preview = ({}) => {
               {EventTutorialIntro}
               {
                 EventTutorial.map((entry, index)=>{
-                  if (index >= 5) {
+                  if (index >= 6) {
                     return <div />
                   }
                   const {question, explanation, screenshot} = entry;

@@ -9,11 +9,9 @@ import random
 import shutil
 import subprocess
 from mephisto.operations.operator import Operator
-from mephisto.operations.utils import get_root_dir
 from mephisto.tools.scripts import load_db_and_process_config
-from mephisto.abstractions.blueprint import BlueprintArgs
 from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint import (
-    BLUEPRINT_TYPE,
+    BLUEPRINT_TYPE_STATIC_REACT as BLUEPRINT_TYPE,
 )
 from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint import (
     SharedStaticTaskState,
@@ -99,16 +97,19 @@ def build_task(task_dir):
 def create_task_data(input_file_task, num_tasks):
     # get data from collect-narration submissions
     units = mephisto_data_browser.get_units_for_task_name(input_file_task)
+    units = [u for u in units if u.get_db_status() == "accepted"]
+    print(f"len(accepted units): {len(units)}")
     random.shuffle(units)
     data = []
     for unit in units:
         unit_data = mephisto_data_browser.get_data_from_unit(unit)["data"]
         new_data = unit_data['inputs']
-        for key, val in unit_data['outputs']['final_data'].items():
+        for key, val in unit_data['outputs'].items():
             new_data[key] = val
         if "this_task_state" in new_data:
-            if 'hasBackstory' in new_data['this_task_state'] and (not new_data['this_task_state']['isCreatingEntity'] or 'createdModifiedAttributes' in new_data['this_task_state']):
-                data.append(new_data)
+            if not new_data['this_task_state']['isCreatingEntity'] or 'createdModifiedAttributes' in new_data['this_task_state']:
+                if 'ranges' in new_data['this_task_state']:
+                    data.append(new_data)
 
         # # iterate over narration units and resolve names with their corresponding objects (which have descriptions)
         # unit_data = mephisto_data_browser.get_data_from_unit(unit)["data"]
@@ -142,9 +143,7 @@ def validate_unit(unit):
 
     print("Task Directory: ", TASK_DIRECTORY)
 
-    data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
-        "final_data"
-    ]
+    data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"]
     print("Data: ", data)
 
     constraints = data["constraints"]

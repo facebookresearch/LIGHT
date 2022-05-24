@@ -1,7 +1,7 @@
 import React from "react";
 import "./styles.css";
 
-import TaskExample1 from "../../assets/images/TaskExample1.png"
+import TaskExample1 from "../../assets/images/TaskExample1.png";
 //CUSTOM COMPONENTS
 import GoodExampleList from "./GoodExampleList";
 import BadExampleList from "./BadExampleList";

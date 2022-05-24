@@ -9,11 +9,9 @@ import random
 import shutil
 import subprocess
 from mephisto.operations.operator import Operator
-from mephisto.operations.utils import get_root_dir
 from mephisto.tools.scripts import load_db_and_process_config
-from mephisto.abstractions.blueprint import BlueprintArgs
 from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint import (
-    BLUEPRINT_TYPE,
+    BLUEPRINT_TYPE_STATIC_REACT as BLUEPRINT_TYPE
 )
 from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint import (
     SharedStaticTaskState,
@@ -143,15 +141,20 @@ def validate_unit(unit):
     if unit.get_assigned_agent() is None:
         return
 
-    output = mephisto_data_browser.get_data_from_unit(unit)["data"]
+    unit_data = mephisto_data_browser.get_data_from_unit(unit)
+    unit_data = unit_data.get("data")
 
-    if output is None:
+    if unit_data is None:
         return
         
-    data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
-        "final_data"
-    ]
-    action_description = data["actionDescription"].strip()
+    data = unit_data.get("outputs")
+    
+    if data is None or "actionDescription" not in data:
+        return
+    action_description = data["actionDescription"]
+    if type(action_description) is not str:
+        return
+    action_description = action_description.strip()
 
     if (
         len(action_description) <= 20

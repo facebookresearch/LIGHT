@@ -42,6 +42,8 @@ const Questions = ({
     setSecondaryIsChangingLocation,
     secondaryNewLocation,
     setSecondaryNewLocation,
+    noBackstoryNarration,
+    setNoBackstoryNarration,
     primaryModifiedAttributes,
     setPrimaryModifiedAttributes,
     secondaryModifiedAttributes,
@@ -71,9 +73,8 @@ const Questions = ({
        <>
             <FormQuestion
                 question={QuestionList[1]}
-                formVal={interaction}
+                formVal={broadcastMessage}
                 formFunction={()=>{}}
-                formFunction={setBroadcastMessage}
                 toolTipCopy={TipList[0].explanation}
                 hasToolTip={true}
                 // isComplete={(broadcastMessage.length && broadcastMessage!==interaction)}
@@ -81,7 +82,7 @@ const Questions = ({
                 disabled={true}
             />
             <BooleanQuestion
-                question={QuestionList[2]}
+                question={isRemovingObjects ? QuestionList.t2 : QuestionList.f2}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
                 // formFunction={setIsRemovingObjects}
@@ -104,7 +105,8 @@ const Questions = ({
                 }
             </BooleanQuestion>
             <BooleanQuestion
-                question={QuestionList[3]}
+                // question={QuestionList[3]}
+                question={isChangingDescription ? QuestionList.t3 : QuestionList.f3}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
                 // formFunction={setIsChangingDescription}
@@ -138,7 +140,8 @@ const Questions = ({
                 </div>
             </BooleanQuestion>
             <BooleanQuestion
-                question={QuestionList[4]}
+                // question={QuestionList[4]}
+                question={isCreatingEntity ? QuestionList.t4 : QuestionList.f4}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
                 // formFunction={setIsCreatingEntity}
@@ -212,7 +215,16 @@ const Questions = ({
                 disabled={true}
                 isComplete={true}
             />
-             {removedObjects.includes(object1.name) && <AttributeSetter
+            <FormQuestion
+                question={QuestionList[6]}
+                formVal={broadcastMessage}
+                formFunction={setNoBackstoryNarration}
+                toolTipCopy={TipList[6].explanation}
+                hasToolTip={true}
+                isComplete={false}
+                disabled={false}
+            />
+             {!removedObjects.includes(object1.name) && <AttributeSetter
                 objectName={object1.name}
                 objectColor="blue"
                 header={QuestionList.setter}
@@ -222,7 +234,7 @@ const Questions = ({
                 toolTipCopy={TipList[5].explanation}
                 hasToolTip={true}
             />}
-            {removedObjects.includes(object2.name) && <AttributeSetter
+            {!removedObjects.includes(object2.name) && <AttributeSetter
                 objectName={object2.name}
                 objectColor="orange"
                 header={QuestionList.setter}

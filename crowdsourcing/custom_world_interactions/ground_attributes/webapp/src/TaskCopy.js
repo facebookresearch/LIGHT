@@ -62,11 +62,21 @@ const Copy ={
         questions:{
             1: "1.  Narrate this interaction to another observer who sees it happen.",
             2: "2.  Are objects removed?",
+            t2: "2.  Objects are removed",
+            f2: "2.  No objects are removed",
             a2: "2a.  Which object(s)?",
             3: "3.  Does an object's description change?",
+            t3: "3.  An object's description changes",
+            f3: "3.  No object descriptions change",
             4: "4.  Are objects created?",
-            5: "5.  Do any of the objects change location?",
+            t4: "4.  Objects are created",
+            f4: "4.  No objects are created",
+            // 5: "5.  Do any of the objects change location?",
+            5: "5.  The following objects change location",
+            // t5: "5.  Objects change location",
+            // f5: "5.  No objects change location",
             a5: "Where does selected object move?",
+            6: "Narration the interaction without any story-based backstory.",
             setter: " After this action:  "
         },
         tutorialCopy:[
@@ -141,6 +151,17 @@ const Copy ={
                 above interaction, you could mark that the towel
                 will not be "clean" afterwards.`,
                 screenshot: EventShot6
+            },
+            {
+                question:"7) Remove Backstory",
+                explanation:`If the provided narration contains
+                extra backstory (e.g. a reference to a character's past), 
+                rewrite the narration to remove it. For example, the 
+                narration "ACTOR hits the OBJECT1 into the OBJECT2, remembering 
+                how father used to do it before their demise." should 
+                become "ACTOR hits the OBJECT1 into the OBJECT2.".`,
+                // screenshot: EventShot7
+                screenshot: null
             }
         ]
     },

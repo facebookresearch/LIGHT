@@ -54,7 +54,7 @@ const Questions = ({
                 toolTipCopy={TipList[0].explanation}
                 hasToolTip={true}
             />
-            <BooleanQuestion
+            {/* <BooleanQuestion
                 question={QuestionList[1]}
                 keywords={[{color:"orange", item:objName2}]}
                 trueAnswer={{name:"YES"} }
@@ -63,7 +63,7 @@ const Questions = ({
                 toolTipCopy={TipList[1].explanation}
                 hasToolTip={true}
                 isComplete={hasBackstory!==null}
-            />
+            /> */}
        </>
     );
 }

@@ -25,7 +25,7 @@ const QuestionOnSelect= ({
 })=>{
     /*------STATE------*/
     // curSelected should be list
-    const [selectedAnswers, setSelectedAnswers] = useState(curSelected);
+    const [selectedAnswers, setSelectedAnswers] = useState(curSelected ? curSelected : []);
     const [answerList, setAnswerList] = useState([])
     const [multipleSelectAnswers, setMultipleSelectAnswers] = useState([])
     /*------LIFECYCLE------*/

@@ -56,6 +56,7 @@ function MainApp() {
   const [secondaryConstrainingAttributes, setSecondaryConstrainingAttributes] = useState([]);
 
   // Has extra backstory
+  const [noBackstoryNarration, setNoBackstoryNarration] = useState("");
   const [hasBackstory, setHasBackstory] = useState(null);
 
   if (blockedReason !== null) {
@@ -81,6 +82,9 @@ function MainApp() {
     return <LoadingScreen />;
   }
   const mephistoData = initialTaskData;
+  console.group("MEPHISTO DATA");
+  console.log(mephistoData);
+  console.groupEnd();
   const active = true;
   const broadcastMessage = mephistoData.this_task_state.broadcastMessage;
   const isRemovingObjects = mephistoData.this_task_state.isRemovingObjects;
@@ -335,6 +339,7 @@ function MainApp() {
       secondaryModifiedAttributes,
       createdModifiedAttributes,
       hasBackstory,
+      noBackstoryNarration,
       ...initialTaskData
     }
     // Actualy data payload properly formatted for submission
@@ -382,6 +387,8 @@ function MainApp() {
         setSecondaryIsChangingLocation={() => { }}
         secondaryNewLocation={secondaryNewLocation}
         setSecondaryNewLocation={() => { }}
+        noBackstoryNarration={noBackstoryNarration}
+        setNoBackstoryNarration={setNoBackstoryNarration}
         primaryModifiedAttributes={primaryModifiedAttributes}
         setPrimaryModifiedAttributes={setPrimaryModifiedAttributes}
         secondaryModifiedAttributes={secondaryModifiedAttributes}

@@ -45,6 +45,8 @@ const Task = ({
   setPrimaryConstrainingAttributes,
   secondaryConstrainingAttributes,
   setSecondaryConstrainingAttributes,
+  noBackstoryNarration,
+  setNoBackstoryNarration,
   hasBackstory,
   setHasBackstory
 }) => {
@@ -87,6 +89,8 @@ const Task = ({
           setSecondaryIsChangingLocation={setSecondaryIsChangingLocation}
           secondaryNewLocation={secondaryNewLocation}
           setSecondaryNewLocation={setSecondaryNewLocation}
+          noBackstoryNarration={noBackstoryNarration}
+          setNoBackstoryNarration={setNoBackstoryNarration}
           primaryModifiedAttributes={primaryModifiedAttributes}
           setPrimaryModifiedAttributes={setPrimaryModifiedAttributes}
           secondaryModifiedAttributes={secondaryModifiedAttributes}

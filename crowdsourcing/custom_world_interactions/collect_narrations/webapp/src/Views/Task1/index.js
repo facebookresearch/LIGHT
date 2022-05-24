@@ -128,9 +128,10 @@ console.log("TASK DATA:  ", taskData)
           primaryObject={primaryObject}
           secondaryObject={secondaryObject}
           name={"Action Phrase"}
-          placeholder={"In simple terms state the action between the two objects, e.g. swing axe at tree"}
+          placeholder={"In simple terms state the action between the two objects, e.g. swing axe at tree, wipe mirror with cloth"}
           taskTemplate={"The action phrase should involve you using {primaryText} with {secondaryText}:"}
           tips={false}
+          bigForm={false}
         />
         <DescriptionForm
           formVal={actionDescription}
@@ -138,9 +139,10 @@ console.log("TASK DATA:  ", taskData)
           primaryObject={primaryObject}
           secondaryObject={secondaryObject}
           name={"Description"}
-          placeholder={"Describe the interaction between these two objects (Remember to commit to the medieval fantasy setting) - Start with 'You...'"}
+          placeholder={"Describe the interaction between these two objects (Remember to commit to the medieval fantasy setting) - Start with 'You...', e.g. You swing the axe, easily felling the tree and releasing shards of bark everywhere."}
           taskTemplate={"Your action should describe you using {primaryText} with {secondaryText}:"}
           tips={true}
+          bigForm={true}
         />
         {
           active

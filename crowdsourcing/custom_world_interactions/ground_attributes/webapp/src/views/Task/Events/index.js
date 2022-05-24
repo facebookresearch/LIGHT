@@ -33,6 +33,8 @@ const Events = ({
     setSecondaryIsChangingLocation,
     secondaryNewLocation,
     setSecondaryNewLocation,
+    noBackstoryNarration,
+    setNoBackstoryNarration,
     primaryModifiedAttributes,
     setPrimaryModifiedAttributes,
     secondaryModifiedAttributes,
@@ -74,6 +76,8 @@ const Events = ({
                     setSecondaryIsChangingLocation={setSecondaryIsChangingLocation}
                     secondaryNewLocation={secondaryNewLocation}
                     setSecondaryNewLocation={setSecondaryNewLocation}
+                    noBackstoryNarration={noBackstoryNarration}
+                    setNoBackstoryNarration={setNoBackstoryNarration}
                     primaryModifiedAttributes={primaryModifiedAttributes}
                     setPrimaryModifiedAttributes={setPrimaryModifiedAttributes}
                     secondaryModifiedAttributes={secondaryModifiedAttributes}
