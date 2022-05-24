@@ -33,9 +33,9 @@ const WorldBuilderPage = ()=> {
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
-
-
-
+    //TASKROUTER
+    const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
+    const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
     //WORLDS
     const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
     const selectedWorld = useAppSelector((state) => state.playerWorld.selectedWorld);
@@ -398,13 +398,14 @@ const WorldBuilderPage = ()=> {
             borders.left = borders.left < x ? borders.left : x;
         })
         // while((borders.top - borders.bottom)<3){
-        //     borders.top = borders.top++;
-        //     borders.bottom = borders.bottom--;
+        //     borders.top = borders.top+1;
+        //     borders.bottom = borders.bottom-1;
         // }
         // while((borders.right - borders.left)<3){
-        //     borders.right = borders.right++;
-        //     borders.left = borders.left--;
+        //     borders.right = borders.right+1;
+        //     borders.left = borders.left-1;
         // }
+        console.log("BORDERS:  ", borders)
         return BorderSetter(borders);
     }
 

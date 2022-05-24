@@ -4,7 +4,7 @@ import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
-
+import {  setTaskRouterCurrentLocation, updateTaskRouterHistory } from "../../../../features/taskRouter/taskrouter-slice.ts";
 /* STYLES */
 import "./styles.css";
 /* BOOTSTRAP COMPONENTS */
@@ -30,11 +30,13 @@ const BasicEditRoom = ({
 })=> {
     //REACT ROUTER
     const history = useHistory();
-    let { worldId, categories } = useParams();
     //let { path, url } = useRouteMatch();
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
+    //TASKROUTER
+    const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
+    const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
     //WORLDS
     const worldDraft = useAppSelector((state) => state.playerWorlds.worldDraft);
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
@@ -100,7 +102,10 @@ const BasicEditRoom = ({
     }
 
     const handleAdvancedClick = ()=>{
-        history.push(`/editworld/${worldId}/details/map/rooms/${formattedRoomId}`);
+        let updatedRouterHistory = [...taskRouterHistory, currentLocation]
+        console.log("UPDATED ROUTER HISTORY IN ADVANCED CLICK EVENT: ", updatedRouterHistory)
+        dispatch(updateTaskRouterHistory(updatedRouterHistory))
+        dispatch(setTaskRouterCurrentLocation(`/rooms/${formattedRoomId}`))
     }
 
     // * NOTE:  Condense handlers next update
@@ -171,7 +176,6 @@ const BasicEditRoom = ({
                         <TypeAheadTokenizerForm
                             formLabel="CHARACTERS"
                             tokenOptions={worldCharacters}
-                            worldId={worldId}
                             sectionName={"characters"}
                             roomId={formattedRoomId}
                             tokenType={"characters"}
@@ -182,7 +186,6 @@ const BasicEditRoom = ({
                         <TypeAheadTokenizerForm
                             formLabel="OBJECTS"
                             tokenOptions={worldObjects}
-                            worldId={worldId}
                             sectionName={"objects"}
                             roomId={formattedRoomId}
                             tokenType={"objects"}

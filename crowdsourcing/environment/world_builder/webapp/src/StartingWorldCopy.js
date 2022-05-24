@@ -3,9 +3,35 @@ const BlankWorld = {
     name: "Starter World",
     tags:[],
     agents: [],
-    nodes: {},
+    nodes: {
+              starter_room_0_1: {
+        agent: false,
+        classes: ["room"],
+        contain_size: 100000,
+        contained_nodes: {
+
+        },
+        container_node: {
+          target_id: "VOID"
+        },
+        db_id: null,
+        desc: "",
+        extra_desc: "",
+        name: "Starter Room",
+        name_prefix: "the",
+        names: ["Starter Room"],
+        neighbors: {
+        },
+        node_id: "starter_room_0_1",
+        object: false,
+        room: true,
+        size: 1,
+        grid_location: [0, 0, 0],
+        surface_type: "in"
+      },
+    },
     objects: [],
-    rooms: []
+    rooms: ["starter_room_0_1"]
 }
 
 export default BlankWorld
