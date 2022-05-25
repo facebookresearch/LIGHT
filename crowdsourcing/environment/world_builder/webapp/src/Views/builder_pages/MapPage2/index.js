@@ -307,20 +307,26 @@ const WorldBuilderPage = ()=> {
     const addObject = (obj)=>{
         let unupdatedWorld = selectedWorld;
         let {objects, nodes } = unupdatedWorld;
-        let formattedObjectId = obj.node_id;
-        while(objects.indexOf(formattedObjectId)>=0){
-            console.log("WHILE LOOP RUNNING", objects.indexOf(formattedObjectId)>=0);
-            let splitFormattedObjectId = formattedObjectId.split("_");
-            console.log("FORMATTEDID:  ", splitFormattedObjectId);
-            let idNumber = splitFormattedObjectId[splitFormattedObjectId.length-1]
-            console.log("idNumber:  ", idNumber);
-            idNumber = (idNumber*1)+1;
-            idNumber = idNumber.toString()
-            console.log("idNumber+:  ", idNumber);
-            splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber
-            console.log("splitFormattedObjectId+:  ", splitFormattedObjectId);
-            formattedObjectId = splitFormattedObjectId.join("_")
-            console.log("FORMATTEDIDEND:  ", formattedObjectId);
+        let formattedObjectId
+        if(obj.node_id){
+
+            formattedObjectId = obj.node_id;
+            while(objects.indexOf(formattedObjectId)>=0){
+                console.log("WHILE LOOP RUNNING", objects.indexOf(formattedObjectId)>=0);
+                let splitFormattedObjectId = formattedObjectId.split("_");
+                console.log("FORMATTEDID:  ", splitFormattedObjectId);
+                let idNumber = splitFormattedObjectId[splitFormattedObjectId.length-1]
+                console.log("idNumber:  ", idNumber);
+                idNumber = (idNumber*1)+1;
+                idNumber = idNumber.toString()
+                console.log("idNumber+:  ", idNumber);
+                splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber
+                console.log("splitFormattedObjectId+:  ", splitFormattedObjectId);
+                formattedObjectId = splitFormattedObjectId.join("_")
+                console.log("FORMATTEDIDEND:  ", formattedObjectId);
+            }
+        } else {
+            formattedObjectId = obj.name +"_1"
         }
         let unupdatedRoomData = nodes[selectedRoom.node_id]
         let updatedObjectData = {...obj, node_id:formattedObjectId, container_node:{target_id:selectedRoom.node_id}};
