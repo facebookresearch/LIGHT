@@ -28,6 +28,19 @@ const BasicEditRoom = ({
     updateObject,
     deleteObject,
 })=> {
+    // Common sense API
+    let     {
+    getRoomAttributes,
+    getRoomFill,
+    suggestRoomContents,
+    suggestCharacterContents,
+    suggestObjectContents,
+    getObjectFill,
+    get
+    } = api
+
+
+
     //REACT ROUTER
     const history = useHistory();
     //let { path, url } = useRouteMatch();
@@ -104,6 +117,7 @@ const BasicEditRoom = ({
     const handleAdvancedClick = ()=>{
         let updatedRouterHistory = [...taskRouterHistory, currentLocation]
         console.log("UPDATED ROUTER HISTORY IN ADVANCED CLICK EVENT: ", updatedRouterHistory)
+        window.localStorage.setItem("currentLocation", JSON.stringify("/"))
         dispatch(updateTaskRouterHistory(updatedRouterHistory))
         dispatch(setTaskRouterCurrentLocation(`/rooms/${formattedRoomId}`))
     }
@@ -148,7 +162,9 @@ const BasicEditRoom = ({
     }
 
     //COMMON SENSE FORM FUNCTION
-    const CommonSenseClickHandler = ()=>{}
+    const CommonSenseClickHandler = ()=>{
+        console.log(selectedRoom)
+    }
 
     return (
         <div className="basiceditroom-container">

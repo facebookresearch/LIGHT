@@ -29,7 +29,9 @@ import BasicEditRoomBody from "./BasicEditRoomBody";
 import "./styles.css";
 import { updateSelectedRoom } from '../../../features/rooms/rooms-slice';
 
-const WorldBuilderPage = ()=> {
+const WorldBuilderPage = ({
+    api
+})=> {
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
@@ -615,6 +617,7 @@ const WorldBuilderPage = ()=> {
                         addObject={addObject}
                         updateObject={updateObject}
                         deleteObject={deleteObject}
+                        api={api}
                     />
                     :null
                 }
