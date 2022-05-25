@@ -79,7 +79,7 @@ const WorldBuilderPage = ()=> {
         let updatedNodes = {...nodes, [formattedRoomId]:updatedRoomData};
         console.log("UPDATED NODES UPON CREATION:  ", updatedNodes)
         let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes};
-        console.log("UPDATED WORLDS UPON CREATION:  ", updatedWorlds)
+        console.log("UPDATED WORLDS UPON CREATION:  ", updatedWorld)
         dispatch(setWorldDraft(updatedWorld))
         dispatch(updateSelectedRoom(updatedRoomData))
     }
@@ -464,8 +464,11 @@ const WorldBuilderPage = ()=> {
 
     // Selects world from draft or world Data using params (worldId) *** discuss
     useEffect(()=>{
+        if(worldDraft){
         console.log("WORLD DRAFT CHANGE DETECTED")
+        window.localStorage.setItem("taskWorld", JSON.stringify(worldDraft))
         fetchWorldCurrentWorld()
+        }
     },[worldDraft])
 
     // Uses worldNodeSorter helper function to break nodes into arrays and send them to respective redux slices.

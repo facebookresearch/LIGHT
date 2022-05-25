@@ -45,11 +45,6 @@ const App = ({
   // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();
   /* ----REDUX ACTIONS---- */
-  //Sets the worldDraft to the initial "blank world"
-  const setInitialWorldDraft = ()=>{
-    window.localStorage.setItem("taskWorld", JSON.stringify(DefaultWorld))
-    dispatch(setWorldDraft(DefaultWorld))
-  }
   //Updates current selectedWorld state
   const setSelectedWorld = (newWorldData)=>{
     dispatch(updateSelectedWorld(newWorldData))
@@ -91,7 +86,8 @@ const App = ({
     console.log("INITIAL DRAFT:  ", initialDraft)
     console.log("INITIAL DRAFT BOOLEAN:  ", (!initialDraft))
     if(!initialDraft){
-      setInitialWorldDraft()
+      window.localStorage.setItem("taskWorld", JSON.stringify(DefaultWorld))
+      dispatch(setWorldDraft(DefaultWorld))
     }
     window.localStorage.setItem("currentLocation", JSON.stringify("/"))
 

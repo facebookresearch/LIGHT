@@ -4,6 +4,8 @@ import React from "react";
 import PreviewView from "./Views/PreviewView"
 import Task from "./Views/Task"
 import OnboardingView from "./Views/OnboardingView"
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 // Task context
 import {
   MephistoContext,
