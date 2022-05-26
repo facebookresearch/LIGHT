@@ -35,6 +35,10 @@ from dataclasses import dataclass, field
 
 MAX_INCORRECT = 3
 
+##############################
+# TODO: add suggestion id
+############### ###############
+
 def get_salted_hash(in_string, salt):
     """Return a hash string for the given string using sha-256"""
     salted_string = in_string + salt + in_string
@@ -78,18 +82,17 @@ def main(operator: Operator, cfg: DictConfig) -> None:
 
     force = False
 
-    with open(f"/checkpoint/alexgurung/light/common_sense/add_format/{MODEL_NAME}/model.opt") as f:
-        opt = json.load(f)
+    # with open(f"/checkpoint/alexgurung/light/common_sense/add_format/{MODEL_NAME}/model.opt") as f:
+    #     opt = json.load(f)
 
-    if "override" not in opt:
-        opt['override'] = {}
-    opt['override']['skip_generation'] = False
-    # opt['override']['special_tok_lst'] = None
+    # if "override" not in opt:
+    #     opt['override'] = {}
+    # opt['override']['skip_generation'] = False
     
-    # TODO initialize agent as necessary for the below
-    world_builder_agent = CommonSenseAgent(
-        opt, model_name=MODEL_NAME, force_add=force, verbose=False, count_errors=True
-        )
+    # # TODO initialize agent as necessary for the below
+    # world_builder_agent = CommonSenseAgent(
+    #     opt, model_name=MODEL_NAME, force_add=force, verbose=False, count_errors=True
+    #     )
 
     def suggest_room(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
@@ -183,61 +186,65 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         target_id = args["target_id"]
         # Use `add_character_wearing`, `add_character_wielding`, `add_character_carrying`
         # to create three lists of suggestions
-        
-        room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
-        room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
-        room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
+        try:
+            room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
+            room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
+            room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
 
-        cur_room = target_room.replace(" ", "_")
-        original_rooms = room_graph['rooms']
-        room_graph['rooms'] = [cur_room]
+            cur_room = target_room.replace(" ", "_")
+            original_rooms = room_graph['rooms']
+            room_graph['rooms'] = [cur_room]
 
-        target_id = args["target_id"]
+            target_id = args["target_id"]
 
-        target_name = target_id
-        for n, node in args["nodes"].items():
-            if n == target_id:
-                target_name = node['name']
-                break
-        
-        graph = get_room_content_from_json(room_graph)
+            target_name = target_id
+            for n, node in args["nodes"].items():
+                if n == target_id:
+                    target_name = node['name']
+                    break
+            
+            graph = get_room_content_from_json(room_graph)
 
-        character_dict = None
-        for c in graph['characters']:
-            if c['name'] == target_name:
-                character_dict = c
-                break
-        original_carried = character_dict.get('carrying_objects', [])
-        original_wielded = character_dict.get('wielding_objects', [])
-        original_worn = character_dict.get('wearing_objects', [])
+            character_dict = None
+            for c in graph['characters']:
+                if c['name'] == target_name:
+                    character_dict = c
+                    break
+            original_carried = character_dict.get('carrying_objects', [])
+            original_wielded = character_dict.get('wielding_objects', [])
+            original_worn = character_dict.get('wearing_objects', [])
 
-        graph = world_builder_agent.add_character_carrying(
-            graph, target_name, count=3
-        )
-        graph = world_builder_agent.add_character_wearing(
-            graph, target_name, count=3
-        )
-        graph = world_builder_agent.add_character_wielding(
-            graph, target_name, count=3
-        )
-        character_dict = None
-        for c in graph['characters']:
-            if c['name'] == target_name:
-                character_dict = c
-                break
-        
-        # this should only modify 2 parts of the room graph
-        # 1) contained_nodes section of the corresponding character
-        # 2) the list of objects (which could contain more objects)
-        carried = character_dict.get('carrying_objects', [])
-        wielded = character_dict.get('wielding_objects', [])
-        worn = character_dict.get('wearing_objects', [])
-        new_carried = [o for o in carried if o not in original_carried]
-        new_wielded = [o for o in wielded if o not in original_wielded]
-        new_worn = [o for o in worn if o not in original_worn]
+            graph = world_builder_agent.add_character_carrying(
+                graph, target_name, count=3
+            )
+            graph = world_builder_agent.add_character_wearing(
+                graph, target_name, count=3
+            )
+            graph = world_builder_agent.add_character_wielding(
+                graph, target_name, count=3
+            )
+            character_dict = None
+            for c in graph['characters']:
+                if c['name'] == target_name:
+                    character_dict = c
+                    break
+            
+            # this should only modify 2 parts of the room graph
+            # 1) contained_nodes section of the corresponding character
+            # 2) the list of objects (which could contain more objects)
+            carried = character_dict.get('carrying_objects', [])
+            wielded = character_dict.get('wielding_objects', [])
+            worn = character_dict.get('wearing_objects', [])
+            new_carried = [o for o in carried if o not in original_carried]
+            new_wielded = [o for o in wielded if o not in original_wielded]
+            new_worn = [o for o in worn if o not in original_worn]
 
-        graph = add_character_secondary_objects_to_graph(room_graph, target_id, new_carried, new_wielded, new_worn)
-
+            graph = add_character_secondary_objects_to_graph(room_graph, target_id, new_carried, new_wielded, new_worn)
+        except Exception as e:
+            print(f"Exception found:")
+            print(e)
+            print("Returning room graph at current stage")
+            pass
         # final step, fix the room list
         room_graph['rooms'] = original_rooms
         return room_graph
@@ -249,52 +256,57 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         target_room = args["target_room"]
         # Use `add_object_contains` to create a list of object suggestions
         target_id = args["target_id"]
-        
-        room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
-        room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
-        room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
+        try:    
+            room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
+            room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
+            room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
 
-        cur_room = target_room.replace(" ", "_")
-        original_rooms = room_graph['rooms']
-        room_graph['rooms'] = [cur_room]
+            cur_room = target_room.replace(" ", "_")
+            original_rooms = room_graph['rooms']
+            room_graph['rooms'] = [cur_room]
 
-        graph = get_room_content_from_json(room_graph)
+            graph = get_room_content_from_json(room_graph)
 
-        # find the target object to get the underlying name
-        target_name = target_id
-        for n, node in args["nodes"].items():
-            if n == target_id:
-                target_name = node['name']
-                break
-        
-        # find the corresponding object dict in the model-graph to get the contained objects
-        object_dict = None
-        for o in graph['objects']:
-            if o['name'] == target_name:
-                object_dict = o
-                break
-        
-        original_contains = object_dict.get('containing_objects', [])
-        
-        # add objects to model-graph default number to attempt is 3
-        graph = world_builder_agent.add_object_contains(
-            graph, target_name, count=3
-        )
-        # find the corresponding object again, this time it will have the new contained objects
-        object_dict = None
-        for o in graph['objects']:
-            if o['name'] == target_name:
-                object_dict = o
-                break
-        
-        # this should only modify 2 parts of the room graph
-        # 1) contained_nodes section of the corresponding object
-        # 2) the list of objects (which could contain more objects)
-        contains = object_dict.get('carrying_objects', [])
-        
-        new_contains = [o for o in contains if o not in original_contains]
-        
-        graph = add_object_secondary_objects_to_graph(room_graph, target_id, new_contains)
+            # find the target object to get the underlying name
+            target_name = target_id
+            for n, node in args["nodes"].items():
+                if n == target_id:
+                    target_name = node['name']
+                    break
+            
+            # find the corresponding object dict in the model-graph to get the contained objects
+            object_dict = None
+            for o in graph['objects']:
+                if o['name'] == target_name:
+                    object_dict = o
+                    break
+            
+            original_contains = object_dict.get('containing_objects', [])
+            
+            # add objects to model-graph default number to attempt is 3
+            graph = world_builder_agent.add_object_contains(
+                graph, target_name, count=3
+            )
+            # find the corresponding object again, this time it will have the new contained objects
+            object_dict = None
+            for o in graph['objects']:
+                if o['name'] == target_name:
+                    object_dict = o
+                    break
+            
+            # this should only modify 2 parts of the room graph
+            # 1) contained_nodes section of the corresponding object
+            # 2) the list of objects (which could contain more objects)
+            contains = object_dict.get('carrying_objects', [])
+            
+            new_contains = [o for o in contains if o not in original_contains]
+            
+            graph = add_object_secondary_objects_to_graph(room_graph, target_id, new_contains)
+        except Exception as e:
+            print(f"Exception found:")
+            print(e)
+            print("Returning room graph at current stage")
+            pass
         # final step, fix the room list
         room_graph['rooms'] = original_rooms
         return room_graph
