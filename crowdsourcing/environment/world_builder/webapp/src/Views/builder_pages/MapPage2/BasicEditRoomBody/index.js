@@ -27,16 +27,17 @@ const BasicEditRoom = ({
     addObject,
     updateObject,
     deleteObject,
+    api,
 })=> {
     // Common sense API
-    let     {
-    getRoomAttributes,
-    getRoomFill,
-    suggestRoomContents,
-    suggestCharacterContents,
-    suggestObjectContents,
-    getObjectFill,
-    get
+    let {
+        getRoomAttributes,
+        getRoomFill,
+        suggestRoomContents,
+        suggestCharacterContents,
+        suggestObjectContents,
+        getObjectFill,
+        getCharacterFill,
     } = api
 
 
@@ -161,9 +162,37 @@ const BasicEditRoom = ({
         setRoomObjects(updatedRoomObjects)
     }
 
+    const AsyncSubmission = async ({target_room, room_graph})=>{
+        let result = await getRoomAttributes({target_room, room_graph});
+
+    }
     //COMMON SENSE FORM FUNCTION
-    const CommonSenseClickHandler = ()=>{
-        console.log(selectedRoom)
+    const CommonSenseClickHandler = async ()=>{
+        console.log(selectedRoom);
+        let target_room = selectedRoom['node_id'];
+        let nodes = {};
+        nodes[target_room] = selectedRoom;
+        for (let character of worldCharacters) {
+            nodes[character['node_id']] = character;
+        }
+        for (let object of worldObjects) {
+            nodes[object['node_id']] = object;
+        }
+        let agents = worldCharacters.map(c => c['node_id']);
+        let objects = worldObjects.map(c => c['node_id']);
+        let rooms = [target_room]
+        let room_graph = {nodes, agents, objects, rooms};
+        console.log("worldDraft");
+        console.log(worldDraft);
+        console.log("room graph");
+        console.log(room_graph);
+        console.log("selectedRoom");
+        console.log(target_room);
+        // let world_graph = {rooms: worldRooms
+        //getRoomAttributes({target_room, room_graph});
+        let result = AsyncSubmission({target_room, room_graph})
+        console.log("RESULT");
+        console.log(result);
     }
 
     return (
