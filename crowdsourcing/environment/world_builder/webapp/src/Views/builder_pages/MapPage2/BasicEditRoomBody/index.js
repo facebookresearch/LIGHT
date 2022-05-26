@@ -162,12 +162,12 @@ const BasicEditRoom = ({
         setRoomObjects(updatedRoomObjects)
     }
 
-    const AsyncSubmission = async ({target_room, room_graph})=>{
-        let result = await getRoomAttributes({target_room, room_graph});
-
-    }
+    // const AsyncSubmission = async ({target_room, room_graph})=>{
+    //     let result = await getRoomAttributes({target_room, room_graph});
+    //     return result;
+    // }
     //COMMON SENSE FORM FUNCTION
-    const CommonSenseClickHandler = async ()=>{
+    const CommonSenseClickHandler = ()=>{
         console.log(selectedRoom);
         let target_room = selectedRoom['node_id'];
         let nodes = {};
@@ -190,9 +190,16 @@ const BasicEditRoom = ({
         console.log(target_room);
         // let world_graph = {rooms: worldRooms
         //getRoomAttributes({target_room, room_graph});
-        let result = AsyncSubmission({target_room, room_graph})
-        console.log("RESULT");
-        console.log(result);
+        // let result = await getRoomAttributes({target_room, room_graph});
+        // let result = getRoomAttributes({target_room, room_graph});
+        // // let result = AsyncSubmission({target_room, room_graph})
+        getRoomAttributes({target_room, room_graph}).then((result) => {
+            console.log("Finished Describe");
+            console.log(result);
+
+        })
+        // console.log("RESULT");
+        // console.log(result);
     }
 
     return (
