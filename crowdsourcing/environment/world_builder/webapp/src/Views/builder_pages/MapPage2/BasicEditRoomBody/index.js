@@ -38,7 +38,7 @@ const BasicEditRoom = ({
         suggestObjectContents,
         getObjectFill,
         getCharacterFill,
-    } = api
+    } = api;
 
 
 
@@ -193,10 +193,11 @@ const BasicEditRoom = ({
         // let result = await getRoomAttributes({target_room, room_graph});
         // let result = getRoomAttributes({target_room, room_graph});
         // // let result = AsyncSubmission({target_room, room_graph})
-        getRoomAttributes({target_room, room_graph}).then((result) => {
+        // getRoomAttributes({target_room, room_graph}).then((result) => {
+        // suggestRoomContents({target_room, room_graph}).then((result) => {
+        suggestRoomContents({target_room, room_graph}).then((result) => {
             console.log("Finished Describe");
             console.log(result);
-
         })
         // console.log("RESULT");
         // console.log(result);

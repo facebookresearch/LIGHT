@@ -79,20 +79,21 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         return True
 
     MODEL_NAME = "bart_all_simple_Sun_Jan_23/c9d"
-
+    world_builder_agent = None
     force = False
+    opt_file = f"/checkpoint/alexgurung/light/common_sense/add_format/{MODEL_NAME}/model.opt"
+    if os.path.exists(opt_file):
+        with open(opt_file) as f:
+            opt = json.load(f)
 
-    # with open(f"/checkpoint/alexgurung/light/common_sense/add_format/{MODEL_NAME}/model.opt") as f:
-    #     opt = json.load(f)
-
-    # if "override" not in opt:
-    #     opt['override'] = {}
-    # opt['override']['skip_generation'] = False
-    
-    # # TODO initialize agent as necessary for the below
-    # world_builder_agent = CommonSenseAgent(
-    #     opt, model_name=MODEL_NAME, force_add=force, verbose=False, count_errors=True
-    #     )
+        if "override" not in opt:
+            opt['override'] = {}
+        opt['override']['skip_generation'] = False
+        
+        # TODO initialize agent as necessary for the below
+        world_builder_agent = CommonSenseAgent(
+            opt, model_name=MODEL_NAME, force_add=force, verbose=False, count_errors=True
+            )
 
     def suggest_room(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
@@ -103,6 +104,9 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         target_room = args["target_room"]
         room_graph = args["room_graph"]
         original_rooms = room_graph['rooms']
+        if world_builder_agent is None:
+            print("No world builder model found, path does not point to file")
+            return room_graph
         try:
             room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
             room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
@@ -139,6 +143,9 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         room_graph = args["room_graph"]
         target_room = args["target_room"]
         original_rooms = room_graph['rooms']
+        if world_builder_agent is None:
+            print("No world builder model found, path does not point to file")
+            return room_graph
         # Use `add_object` and `add_character` to generate a list of suggestions for
         # objects and characters
         # pass
@@ -184,6 +191,9 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         room_graph = args["room_graph"]
         target_room = args["target_room"]
         target_id = args["target_id"]
+        if world_builder_agent is None:
+            print("No world builder model found, path does not point to file")
+            return room_graph
         # Use `add_character_wearing`, `add_character_wielding`, `add_character_carrying`
         # to create three lists of suggestions
         try:
@@ -256,6 +266,9 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         target_room = args["target_room"]
         # Use `add_object_contains` to create a list of object suggestions
         target_id = args["target_id"]
+        if world_builder_agent is None:
+            print("No world builder model found, path does not point to file")
+            return room_graph
         try:    
             room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
             room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
@@ -319,6 +332,10 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         room_graph = args["room_graph"]
         target_room = args["target_room"]
         target_id = args["object_id"]
+        if world_builder_agent is None:
+            print("No world builder model found, path does not point to file")
+            return room_graph
+
         room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
         room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
         room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
@@ -349,14 +366,20 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # Fill the attributes and contents of character_id with `add_all_character_attributes`
         room_graph = args["room_graph"]
         room_graph = args["character_id"]
-        pass
+        if world_builder_agent is None:
+            print("No world builder model found, path does not point to file")
+            return room_graph
+        return room_graph
 
     def fill_room(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
     ):
         # Use add_object, add_character, fill_object, and fill_character to fill out this room
         room_graph = args["room_graph"]
-        pass
+        if world_builder_agent is None:
+            print("No world builder model found, path does not point to file")
+            return room_graph
+        return room_graph
 
     function_registry = {
         "suggest_room_contents": suggest_room_contents,
