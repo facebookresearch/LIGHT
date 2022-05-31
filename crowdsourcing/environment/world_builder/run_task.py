@@ -175,7 +175,10 @@ def main(operator: Operator, cfg: DictConfig) -> None:
             new_chars = [c for c in graph['characters'] if c['name'] in char_name_diff]
             for c in new_chars:
                 room_graph = add_character_to_graph(room_graph, cur_room, c)
-            
+            print(f"new room graph")
+            print(room_graph)
+            print(f"new_chars: {[c['name'] for c in new_chars]}")
+            print(f"new_objs: {[c['name'] for c in new_objects]}")
         except Exception as e:
             print(f"Exception found:")
             print(e)

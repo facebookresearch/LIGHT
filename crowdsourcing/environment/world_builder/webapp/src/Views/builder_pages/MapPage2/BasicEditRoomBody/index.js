@@ -162,13 +162,8 @@ const BasicEditRoom = ({
         setRoomObjects(updatedRoomObjects)
     }
 
-    // const AsyncSubmission = async ({target_room, room_graph})=>{
-    //     let result = await getRoomAttributes({target_room, room_graph});
-    //     return result;
-    // }
-    //COMMON SENSE FORM FUNCTION
-    const CommonSenseClickHandler = ()=>{
-        console.log(selectedRoom);
+    // COMMON SENSE FORM FUNCTION
+    const CommonSenseDescribeRoom = ()=>{
         let target_room = selectedRoom['node_id'];
         let nodes = {};
         nodes[target_room] = selectedRoom;
@@ -182,25 +177,38 @@ const BasicEditRoom = ({
         let objects = worldObjects.map(c => c['node_id']);
         let rooms = [target_room]
         let room_graph = {nodes, agents, objects, rooms};
-        console.log("worldDraft");
-        console.log(worldDraft);
         console.log("room graph");
         console.log(room_graph);
         console.log("selectedRoom");
         console.log(target_room);
-        // let world_graph = {rooms: worldRooms
-        //getRoomAttributes({target_room, room_graph});
-        // let result = await getRoomAttributes({target_room, room_graph});
-        // let result = getRoomAttributes({target_room, room_graph});
-        // // let result = AsyncSubmission({target_room, room_graph})
-        // getRoomAttributes({target_room, room_graph}).then((result) => {
-        // suggestRoomContents({target_room, room_graph}).then((result) => {
+        getRoomAttributes({target_room, room_graph}).then((result) => {
+            console.log("Finished describe room");
+            console.log(result);
+        })
+    }
+    // COMMON SENSE FORM FUNCTION
+    const CommonSenseRoomContents = ()=>{
+        let target_room = selectedRoom['node_id'];
+        let nodes = {};
+        nodes[target_room] = selectedRoom;
+        for (let character of worldCharacters) {
+            nodes[character['node_id']] = character;
+        }
+        for (let object of worldObjects) {
+            nodes[object['node_id']] = object;
+        }
+        let agents = worldCharacters.map(c => c['node_id']);
+        let objects = worldObjects.map(c => c['node_id']);
+        let rooms = [target_room]
+        let room_graph = {nodes, agents, objects, rooms};
+        console.log("room graph");
+        console.log(room_graph);
+        console.log("selectedRoom");
+        console.log(target_room);
         suggestRoomContents({target_room, room_graph}).then((result) => {
             console.log("Finished Describe");
             console.log(result);
         })
-        // console.log("RESULT");
-        // console.log(result);
     }
 
     return (
@@ -214,9 +222,18 @@ const BasicEditRoom = ({
                     :
                     null
                 }
-                <Button onClick={CommonSenseClickHandler}>
-                    DESCRIBE IT
+                <Button onClick={CommonSenseDescribeRoom}>
+                    DESCRIBE ROOM
                 </Button>
+                <Button onClick={CommonSenseRoomContents}>
+                    SUGGEST ROOM CONTENTS
+                </Button>
+                {/* <Button onClick={CommonSenseClickHandler}>
+                    FILL IN OBJECTS
+                </Button>
+                <Button onClick={CommonSenseClickHandler}>
+                    FILL IN CHARACTERS
+                </Button> */}
             </div>
             <div className="basiceditroom-forms">
                 <h5>

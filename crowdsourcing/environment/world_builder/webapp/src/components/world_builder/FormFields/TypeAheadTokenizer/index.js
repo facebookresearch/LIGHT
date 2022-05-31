@@ -195,7 +195,7 @@ const SelectHandler = (selected)=>{
                     <Token
                         index={idx}
                         option={option}
-                        key={option.key}
+                        key={option.key === null ? idx : option.key}
                         sectionName={sectionName}
                         roomId={roomId}
                         deleteTokenFunction={onTokenRemoval}
