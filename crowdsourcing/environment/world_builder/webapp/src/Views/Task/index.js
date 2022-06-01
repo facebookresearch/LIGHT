@@ -10,6 +10,7 @@ import "./styles.css";
 import TaskToolBar from "../../components/TaskToolBar";
 import PreviewContent from "../../Views/PreviewView/PreviewContent";
 import MapPage2 from "../builder_pages/MapPage2";
+import BuilderRouter from "./BuilderRouter"
 /* BOOTSTRAP COMPONENTS */
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
@@ -17,28 +18,29 @@ import Button from 'react-bootstrap/Button';
 /* DEFAULT WORLD */
 import DefaultWorld from "../../StartingWorldCopy";
 
-const BuilderRouter = ({virtualPath, api}) => {
-  // TODO will likely need to do something similar to the router for the full builder
-  // Perhaps we can use a MemoryRouter from the react router package?
-  return <MapPage2 api={api} />;
-}
+// const BuilderRouter = ({virtualPath, api}) => {
+//   // TODO will likely need to do something similar to the router for the full builder
+//   // Perhaps we can use a MemoryRouter from the react router package?
+//   return <MapPage2 api={api} />;
+// }
 
 const App = ({
   api,
   handleSubmit
 })=>{
   //REDUX STATE
-    const selectedWorld = useAppSelector((state) => state.playerWorld.selectedWorld);
-    const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
+  const selectedWorld = useAppSelector((state) => state.playerWorld.selectedWorld);
+  const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
   /* ------ REDUX STATE ------ */
-
+  //TASKROUTER
+  const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
+  const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
   // VIEW STATE
   const [currentWorld, updateWorld] = useState({});
   /*---------------LOCAL STATE----------------*/
 
   // TODO I'm not sure what the right call is for replacing the router
   // to work with the 4 intended views
-  const [virtualPath, setVirtualPath] = useState("");
   const [workerComments, setWorkerComments] = useState("");
   const [showInstructions, setShowInstructions] = useState(false);
   const [show, setShow] = useState(false);
@@ -88,11 +90,12 @@ const App = ({
     if(!initialDraft){
       window.localStorage.setItem("taskWorld", JSON.stringify(DefaultWorld))
       dispatch(setWorldDraft(DefaultWorld))
+    }else {
+      dispatch(setWorldDraft(initialDraft))
     }
     window.localStorage.setItem("currentLocation", JSON.stringify("/"))
 
   }, [])
-
 
   return (
   <>
@@ -103,7 +106,7 @@ const App = ({
         toggleValue={showInstructions}
       />
       <div className="builder-container">
-        <BuilderRouter virtualPath={virtualPath} api={api} />
+        <BuilderRouter api={api} />
       </div>
       <Modal
         show={show}

@@ -7,7 +7,7 @@ import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 import { fetchWorlds, updateSelectedWorld, selectWorld, setWorldDraft} from "../../../features/playerWorld/playerworld-slice.ts";
 import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
 import { updateObjects} from "../../../features/objects/objects-slice.ts";
-import { updateCharacters, selectCharacter } from "../../../features/characters/characters-slice.ts";import { updateCharacters, selectCharacter } from "../../../features/characters/characters-slice.ts";
+import { updateCharacters, selectCharacter } from "../../../features/characters/characters-slice.ts";
 /* STYLES */
 import './styles.css';
 /* BOOTSTRAP COMPONENTS */

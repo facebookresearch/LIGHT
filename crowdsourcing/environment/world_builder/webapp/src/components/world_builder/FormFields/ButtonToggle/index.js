@@ -1,7 +1,5 @@
 /* REACT */
 import React, {useState, useEffect} from 'react';
-/* REDUX */
-import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* STYLES */
 import './styles.css';
 /* BOOTSTRAP COMPONENTS */

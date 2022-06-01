@@ -58,8 +58,8 @@ const BasicEditRoom = ({
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
     /* ------ REDUX ACTIONS ------ */
-
-
+    const updateLocation = (loc)=>{     dispatch(setTaskRouterCurrentLocation(loc)) };
+    const updateHistory = (updatedHistory)=>{ dispatch(updateTaskRouterHistory(updatedHistory)) };
     /* ------ LOCAL STATE ------ */
     const [currentRoomData, setCurrentRoomData] = useState(null)
     const [isNewRoom, setIsNewRoom] = useState(true)
@@ -116,11 +116,14 @@ const BasicEditRoom = ({
     }
 
     const handleAdvancedClick = ()=>{
-        let updatedRouterHistory = [...taskRouterHistory, currentLocation]
+        let updatedLocation = `/rooms/${formattedRoomId}`
+        console.log("CURRENT LOCATION:  ", updatedLocation)
+        let updatedRouterHistory = [...taskRouterHistory, updatedLocation]
+        console.log("TASK ROUTER HISTORY:  ", updatedRouterHistory)
         console.log("UPDATED ROUTER HISTORY IN ADVANCED CLICK EVENT: ", updatedRouterHistory)
-        window.localStorage.setItem("currentLocation", JSON.stringify("/"))
-        dispatch(updateTaskRouterHistory(updatedRouterHistory))
-        dispatch(setTaskRouterCurrentLocation(`/rooms/${formattedRoomId}`))
+        window.localStorage.setItem("currentLocation", JSON.stringify(updatedLocation))
+        updateHistory(updatedRouterHistory)
+        updateLocation(updatedLocation)
     }
 
     // * NOTE:  Condense handlers next update

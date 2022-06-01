@@ -11,7 +11,7 @@ interface TaskRouterState {
 /* Initial value of the state */
 const initialState: TaskRouterState = {
     currentLocation: "/",
-    taskRouterHistory: [],
+    taskRouterHistory: []
 };
 
 //Create slice will generate action objects for us
