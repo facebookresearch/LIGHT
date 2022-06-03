@@ -16,28 +16,27 @@ const BuilderRouter = ({
     api
 }) => {
     //REDUX STATE
-    const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
-    const builderRouterHistory = useAppSelector((state) => state.taskRouter.builderRouterHistory);
+    // const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
+    // const builderRouterHistory = useAppSelector((state) => state.taskRouter.builderRouterHistory);
     // // REDUX DISPATCH FUNCTION
     // const dispatch = useAppDispatch();
     // /* ----REDUX ACTIONS---- */
 
 
     // /* ----LOCAL STATE---- */
-    const [builderRouterCurrentLocation, setBuilderRouterCurrentLocation] = useState("");
-
+    const [builderRouterCurrentLocation, setBuilderRouterCurrentLocation] = useState("/");
+    const [builderRouterHistory, setBuilderRouterHistory] = useState([]);
+    const builderRouterNavigate = (newLocation)=>{
+        let oldLocation = builderRouterCurrentLocation;
+        setBuilderRouterCurrentLocation(newLocation);
+        let updatedRouterHistory = [...builderRouterHistory, oldLocation]
+        setBuilderRouterHistory(updatedRouterHistory)
+    }
     /* --- LIFE CYCLE FUNCTIONS --- */
-    // Update location anytime Redux State Current Location Changes
+    //Update location anytime Redux State Current Location Changes
     useEffect(()=>{
-        console.log("CURRENT LOCATION IN ROUTER:  ", currentLocation)
-        let formattedLocation="/"
-        let formattedLocationArray = currentLocation.split('/')
-        console.log("FORMATTED VIRTUAL LOCATION ARRAY:  ", formattedLocationArray)
-        if(formattedLocationArray.length-1 !== ""){
-            formattedLocation= formattedLocationArray[formattedLocationArray.length-2]
-            console.log("FORMATTED LOCATION:  ", formattedLocation)
-        }
-        setBuilderRouterCurrentLocation(formattedLocation);
+        window.localStorage.setItem("currentLocation", JSON.stringify("/"))
+        window.localStorage.setItem("currentLocation", JSON.stringify("/"))
       },[currentLocation])
 
         // let formattedLocation="/"
@@ -48,15 +47,35 @@ const BuilderRouter = ({
     console.log("FORMATTED VIRTUAL LOCATION:  ", currentLocation)
     switch(builderRouterCurrentLocation) {
         case '/':
-            return <MapPage2 api={api} />;
+            return <MapPage2
+                        api={api}
+                        builderRouterNavigate={builderRouterNavigate}
+                        currentLocation={builderRouterCurrentLocation}
+                    />;
         case 'character':
-            return <CharacterPage api={api} />;
+            return <CharacterPage
+                        api={api}
+                        builderRouterNavigate={builderRouterNavigate}
+                        currentLocation={builderRouterCurrentLocation}
+                    />;
         case 'object':
-            return <ObjectPage api={api} />;
+            return <ObjectPage
+                        api={api}
+                        builderRouterNavigate={builderRouterNavigate}
+                        currentLocation={builderRouterCurrentLocation}
+                    />;
         case 'room':
-            return <RoomPage api={api} />;
+            return <RoomPage
+                        api={api}
+                        builderRouterNavigate={builderRouterNavigate}
+                        currentLocation={builderRouterCurrentLocation}
+                    />;
         default:
-            return <MapPage2 api={api} />;
+            return <MapPage2
+                        api={api}
+                        builderRouterNavigate={builderRouterNavigate}
+                        currentLocation={builderRouterCurrentLocation}
+                    />;
     }
 }
 
