@@ -24,8 +24,11 @@ const BuilderRouter = ({
 
 
     // /* ----LOCAL STATE---- */
-    const [builderRouterCurrentLocation, setBuilderRouterCurrentLocation] = useState("/");
+    const [builderRouterPath, setBuilderRouterPath]= useState("/");
+    const [builderRouterCurrentLocation, setBuilderRouterCurrentLocation] = useState("");
     const [builderRouterHistory, setBuilderRouterHistory] = useState([]);
+
+    /* HANDLERS */
     const builderRouterNavigate = (newLocation)=>{
         let oldLocation = builderRouterCurrentLocation;
         setBuilderRouterCurrentLocation(newLocation);
@@ -35,36 +38,40 @@ const BuilderRouter = ({
     /* --- LIFE CYCLE FUNCTIONS --- */
     //Update location anytime Redux State Current Location Changes
     useEffect(()=>{
-        window.localStorage.setItem("currentLocation", JSON.stringify("/"))
-        window.localStorage.setItem("currentLocation", JSON.stringify("/"))
-      },[currentLocation])
+        // window.localStorage.setItem("currentLocation", JSON.stringify("/"))
+        let locationArray = builderRouterCurrentLocation.split("/");
+        console.log("LOCATION ARRAY IN BUILDER ROUTER:  ", locationArray)
+        let updatedBuilderRouterPath = locationArray[locationArray.length-2];
+        console.log("FORMATED PATH IN BUILDER ROUTER:  ", locationArray[locationArray.length-2])
+        setBuilderRouterPath(updatedBuilderRouterPath)
+      },[builderRouterCurrentLocation])
 
         // let formattedLocation="/"
         // let formattedLocationArray = currentLocation.split('/')
         // if(formattedLocationArray.length){
         //     formattedLocation= formattedLocationArray[formattedLocationArray.length-2]
         // }
-    console.log("FORMATTED VIRTUAL LOCATION:  ", currentLocation)
-    switch(builderRouterCurrentLocation) {
+    console.log("FORMATTED VIRTUAL LOCATION:  ", builderRouterCurrentLocation)
+    switch(builderRouterPath) {
         case '/':
             return <MapPage2
                         api={api}
                         builderRouterNavigate={builderRouterNavigate}
                         currentLocation={builderRouterCurrentLocation}
                     />;
-        case 'character':
+        case 'characters':
             return <CharacterPage
                         api={api}
                         builderRouterNavigate={builderRouterNavigate}
                         currentLocation={builderRouterCurrentLocation}
                     />;
-        case 'object':
+        case 'objects':
             return <ObjectPage
                         api={api}
                         builderRouterNavigate={builderRouterNavigate}
                         currentLocation={builderRouterCurrentLocation}
                     />;
-        case 'room':
+        case 'rooms':
             return <RoomPage
                         api={api}
                         builderRouterNavigate={builderRouterNavigate}

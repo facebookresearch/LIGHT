@@ -30,14 +30,16 @@ import "./styles.css";
 import { updateSelectedRoom } from '../../../features/rooms/rooms-slice';
 
 const WorldBuilderPage = ({
-    api
+    api,
+    builderRouterNavigate,
+    currentLocation
 })=> {
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
-    /* ------ REDUX STATE ------ */
+    /* ------ REDUX STATE ------ */ //Currently Taskrouter Redux Slice not working due to react version incompatiblity
     //TASKROUTER
-    const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
-    const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
+    // const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
+    // const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
     //WORLDS
     const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
     const selectedWorld = useAppSelector((state) => state.playerWorld.selectedWorld);
@@ -618,6 +620,8 @@ const WorldBuilderPage = ({
                         updateObject={updateObject}
                         deleteObject={deleteObject}
                         api={api}
+                        builderRouterNavigate={builderRouterNavigate}
+                        currentLocation={currentLocation}
                     />
                     :null
                 }

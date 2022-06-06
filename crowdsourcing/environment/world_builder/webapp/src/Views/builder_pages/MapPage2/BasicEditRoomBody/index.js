@@ -28,6 +28,8 @@ const BasicEditRoom = ({
     updateObject,
     deleteObject,
     api,
+    builderRouterNavigate,
+    currentLocation
 })=> {
     // Common sense API
     let {
@@ -48,9 +50,10 @@ const BasicEditRoom = ({
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
+    //
     //TASKROUTER
-    const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
-    const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
+    // const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
+    // const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
     //WORLDS
     const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
@@ -58,8 +61,8 @@ const BasicEditRoom = ({
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
     /* ------ REDUX ACTIONS ------ */
-    const updateLocation = (loc)=>{     dispatch(setTaskRouterCurrentLocation(loc)) };
-    const updateHistory = (updatedHistory)=>{ dispatch(updateTaskRouterHistory(updatedHistory)) };
+    // const updateLocation = (loc)=>{     dispatch(setTaskRouterCurrentLocation(loc)) };
+    // const updateHistory = (updatedHistory)=>{ dispatch(updateTaskRouterHistory(updatedHistory)) };
     /* ------ LOCAL STATE ------ */
     const [currentRoomData, setCurrentRoomData] = useState(null)
     const [isNewRoom, setIsNewRoom] = useState(true)
@@ -118,12 +121,8 @@ const BasicEditRoom = ({
     const handleAdvancedClick = ()=>{
         let updatedLocation = `/rooms/${formattedRoomId}`
         console.log("CURRENT LOCATION:  ", updatedLocation)
-        let updatedRouterHistory = [...taskRouterHistory, updatedLocation]
-        console.log("TASK ROUTER HISTORY:  ", updatedRouterHistory)
-        console.log("UPDATED ROUTER HISTORY IN ADVANCED CLICK EVENT: ", updatedRouterHistory)
         window.localStorage.setItem("currentLocation", JSON.stringify(updatedLocation))
-        updateHistory(updatedRouterHistory)
-        updateLocation(updatedLocation)
+        builderRouterNavigate(updatedLocation)
     }
 
     // * NOTE:  Condense handlers next update

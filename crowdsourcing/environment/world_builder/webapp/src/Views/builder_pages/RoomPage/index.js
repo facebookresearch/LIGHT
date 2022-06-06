@@ -24,28 +24,50 @@ import GenerateForms from "../../../components/world_builder/FormFields/Generate
 import BreadCrumbs from "../../../components/world_builder/BreadCrumbs";
 import TypeAheadTokenizerForm from "../../../components/world_builder/FormFields/TypeAheadTokenizer";
 
-const RoomPage = ()=> {
-    //REACT ROUTER
-    const history = useHistory();
-    let { worldId, categories, roomid } = useParams();
-    /* REDUX DISPATCH FUNCTION */
-    const dispatch = useAppDispatch();
-    /* ------ REDUX STATE ------ */
+const RoomPage = ({
+    api,
+    builderRouterNavigate,
+    currentLocation
+})=> {
+
+    /* ------ LOCAL STATE ------ */
+    const [roomid, setRoomid] = useState(null);
     //WORLD
-    const worldDraft = useAppSelector((state) => state.playerWorlds.worldDraft);
-    const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
+    const [worldDraft, setWorldDraft] = useState(JSON.parse(window.localStorage.getItem("taskWorld")))
+    const [selectedWorld, setSelectedWorld] = useState(null);
     //ROOMS
-    const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
-    const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
+    const [worldRooms, setWorldRooms] = useState([]);
+    const [selectedRoom, setSelectedRoom] = useState(null);
     //OBJECTS
-    const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
+    const [worldObjects, setWorldObjects] = useState([]);
     //CHARACTERS
-    const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
+    const [worldCharacters, setWorldCharacters] = useState([]);
+    //ACTIONS
+    const updateWorldDraft = (world)=>{
+        window.localStorage.setItem("taskWorld", JSON.stringify(world));
+        setWorldDraft(world)
+    }
+
+
+    //REACT ROUTER
+    /* REDUX DISPATCH FUNCTION */
+    // const dispatch = useAppDispatch();
+    /* ------ REDUX STATE ------ */// TEMPORARILY UNAVAILABLE
+    //WORLD
+    // const worldDraft = JSON.parse(window.localStorage.getItem("taskWorld"))
+    // const selectedWorld = JSON.parse(window.localStorage.getItem("taskWorld"))
+    //ROOMS
+    // const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
+    // const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
+    //OBJECTS
+    // const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
+    //CHARACTERS
+    // const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     /* ------ REDUX ACTIONS ------ */
     //WORLD DRAFT
-    const updateWorldDraft = ()=>{
-        dispatch(setWorldDraft(selectedWorld))
-    }
+    // const updateWorldDraft = ()=>{
+    //     dispatch(setWorldDraft(selectedWorld))
+    // }
     //ROOMS
     const addRoom = (room)=>{
         let unupdatedWorld = selectedWorld;
@@ -62,7 +84,7 @@ const RoomPage = ()=> {
         let updatedRooms = [...rooms, formattedRoomId]
         let updatedNodes = {...nodes, [formattedRoomId]:updatedRoomData}
         let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
+        setSelectedWorld(updatedWorld)
     }
 
     const updateRoom = (id, update) =>{
@@ -70,7 +92,7 @@ const RoomPage = ()=> {
         let {nodes } = unupdatedWorld;
         let updatedNodes = {...nodes, [id]:update}
         let updatedWorld ={...selectedWorld, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
+        setSelectedWorld(updatedWorld)
     }
 
     const deleteRoom = (id)=>{
@@ -79,7 +101,7 @@ const RoomPage = ()=> {
         let updatedRooms = rooms.filter(room => id !== room);
         let updatedNodes = delete nodes[id];
         let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes};
-        dispatch(updateSelectedWorld(updatedWorld));
+        setSelectedWorld(updatedWorld);
     }
 
     const deleteSelectedRoom = ()=>{
@@ -90,8 +112,8 @@ const RoomPage = ()=> {
         // let updatedNodes ={...nodes};
         // delete updatedNodes[roomid];
         // updatedWorld ={...updatedWorld, rooms: updatedRooms, nodes:updatedNodes};
-    dispatch(setWorldDraft(updatedWorld))
-    history.push(`/editworld/${worldId}/${categories}/map`)
+        dispatch(setWorldDraft(updatedWorld))
+        builderRouterNavigate("/")
 }
 
     //CHARACTERS
@@ -121,7 +143,7 @@ const RoomPage = ()=> {
         let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedAgentId]:{target_id: formattedAgentId}}}
         let updatedNodes = {...nodes, [formattedAgentId]:updatedCharacterData, [selectedRoom.node_id]: updatedRoomData}
         let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
+        setSelectedWorld(updatedWorld)
     }
     //Updates Character in selectedWorld state
     const updateCharacter = (id, update) =>{
@@ -129,7 +151,7 @@ const RoomPage = ()=> {
         let {nodes } = unupdatedWorld;
         let updatedNodes = {...nodes, [id]:update}
         let updatedWorld ={...selectedWorld, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
+        setSelectedWorld(updatedWorld)
     }
     //Removes Character from selectedWorld state
     const deleteCharacter = (id)=>{
@@ -138,7 +160,7 @@ const RoomPage = ()=> {
         let updatedAgents = agents.filter(char => id !== char);
         let updatedNodes = delete nodes[id];
         let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes};
-        dispatch(updateSelectedWorld(updatedWorld));
+        setSelectedWorld(updatedWorld);
     }
     //OBJECTS
     const addObject = (obj)=>{
@@ -164,14 +186,14 @@ const RoomPage = ()=> {
         let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}}
         let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedRoom.node_id]: updatedRoomData}
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
+        setSelectedWorld(updatedWorld)
     }
     const updateObject = (id, update) =>{
         let unupdatedWorld = selectedWorld;
         let {nodes } = unupdatedWorld;
         let updatedNodes = {...nodes, [id]:update}
         let updatedWorld ={...selectedWorld, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
+        setSelectedWorld(updatedWorld)
     }
     const deleteObject = (id)=>{
         let unupdatedWorld = selectedWorld;
@@ -179,7 +201,7 @@ const RoomPage = ()=> {
         let updatedObjects = objects.filter(obj => id !== obj);
         let updatedNodes = delete nodes[id];
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
-        dispatch(updateSelectedWorld(updatedWorld));
+        setSelectedWorld(updatedWorld);
     }
 
 
@@ -207,21 +229,21 @@ const RoomPage = ()=> {
           let {classes, contained_nodes} = unupdatedNode;
           let containedNodes = contained_nodes;
           let containedNodesList = Object.keys(containedNodes);
-          console.log("containedNodesList", containedNodesList)
-          let updatedRemovalArray = [{nodeId: id, class: classes[0]}]
+          console.log("containedNodesList", containedNodesList);
+          let updatedRemovalArray = [{nodeId: id, class: classes[0]}];
           if(!containedNodesList){
-            console.log("Non mapping REMOVAAL ARRAY", updatedRemovalArray)
-            return updatedRemovalArray
+            console.log("Non mapping REMOVAAL ARRAY", updatedRemovalArray);
+            return updatedRemovalArray;
           }else{
             while(containedNodesList.length){
-                let currentNode = containedNodesList.pop()
-                updatedRemovalArray=[...updatedRemovalArray, ...nodeDigger(currentNode)]
-            }
-            return updatedRemovalArray
+                let currentNode = containedNodesList.pop();
+                updatedRemovalArray=[...updatedRemovalArray, ...nodeDigger(currentNode)];
+            };
+            return updatedRemovalArray;
           }
         }
-        let removalList = []
-        removalList = nodeDigger(nodeId)
+        let removalList = [];
+        removalList = nodeDigger(nodeId);
 
         removalList.map((removedNode, index)=>{
             let {agents, objects, rooms, nodes}= updatedWorld
@@ -237,13 +259,13 @@ const RoomPage = ()=> {
             }else if(removedNodeClass[0]==="room"){
               let updatedRooms = rooms.filter(room => removedNodeId !== room);
               updatedWorld = {...updatedWorld, rooms: updatedRooms}
-            }
+            };
             let updatedNodes = {...nodes};
             delete updatedNodes[removedNodeId];
-            console.log("updated post delete nodes", updatedNodes)
-            updatedWorld = {...updatedWorld, nodes: updatedNodes}
+            console.log("updated post delete nodes", updatedNodes);
+            updatedWorld = {...updatedWorld, nodes: updatedNodes};
         })
-        console.log("UPDATED WORLD POST DIG AND DELETE",  updatedWorld)
+        console.log("UPDATED WORLD POST DIG AND DELETE",  updatedWorld);
         return updatedWorld;
       }
     // worldNodeSorter - Sorts the the different types of nodes in a world into arrays
@@ -271,29 +293,25 @@ const RoomPage = ()=> {
                 break;
                 }
             }
-        })
-        dispatch(updateRooms(RoomNodes))
-        dispatch(updateObjects(ObjectNodes))
-        dispatch(updateCharacters(CharacterNodes))
+        });
+        setWorldRooms(RoomNodes);
+        setWorldObjects(ObjectNodes);
+        setWorldCharacters(CharacterNodes);
     }
 
     // Handler
     const WorldSaveHandler = ()=>{
-        let worldUpdates = {...worldRooms, worldObjects, worldCharacters}
-        let updatedWorld = {...selectedWorld, nodes: worldUpdates}
-        dispatch(updateSelectedWorld(updatedWorld))
-        updateWorldsDraft()
-        console.log("WORLD SAVE UPDATE:", updatedWorld)
+        let worldUpdates = {...worldRooms, worldObjects, worldCharacters};
+        let updatedWorld = {...selectedWorld, nodes: worldUpdates};
+        setSelectedWorld(updatedWorld);
+        updateWorldDraft(updatedWorld);
+        console.log("WORLD SAVE UPDATE:", updatedWorld);
     }
-
-    const handleClick = ()=>{
-
-        history.push(`/editworld/${worldId}/details/map/rooms/${roomid}/`);
-      }
 
     /* --- LIFE CYCLE FUNCTIONS --- */
     useEffect(()=>{
-        dispatch(selectWorld(worldDraft))
+        console.log("WORLD DRAFT IN ROOM PAGE:  ", worldDraft)
+        setSelectedWorld(worldDraft);
     },[worldDraft])
 
     useEffect(()=>{
@@ -308,7 +326,7 @@ const RoomPage = ()=> {
             let {nodes}= selectedWorld
             let currentRoom = nodes[roomid]
             console.log("CURRENT ROOMS", currentRoom)
-            dispatch(selectRoom(currentRoom))
+            setSelectedRoom(currentRoom);
         }
         },[selectedWorld])
 
@@ -358,6 +376,14 @@ const RoomPage = ()=> {
             setRoomCharacters(CharacterNodes)
         }
     }, [selectedRoom])
+
+    useEffect(()=>{
+        let locationArray = currentLocation.split("/");
+        console.log("LOCATION ARRAY IN ADVANCED ROOM PAGE:  ", locationArray)
+        let currentRoomid = locationArray[locationArray.length-1];
+        setRoomid(currentRoomid);
+
+    }, [currentLocation])
 
     //HANDLERS
     const RoomNameChangeHandler = (e)=>{
@@ -425,11 +451,11 @@ const RoomPage = ()=> {
     }
 
     //CRUMBS
-    const crumbs= [
-        {name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`},
-        {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`},
-        {name:` ${roomid}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomid}`}
-    ];
+//     const crumbs= [
+// s
+//         {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`},
+//         {name:` ${roomid}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomid}`}
+//     ];
 
     //BUTTON COPY
     const buttonOptions = [
@@ -447,9 +473,9 @@ const RoomPage = ()=> {
 
     return (
         <Container>
-            <BreadCrumbs
+            {/* <BreadCrumbs
                 crumbs={crumbs}
-            />
+            /> */}
             {
             selectedRoom
             ?
@@ -479,7 +505,6 @@ const RoomPage = ()=> {
                         <TypeAheadTokenizerForm
                             formLabel="Room Objects"
                             tokenOptions={roomObjects}
-                            worldId={worldId}
                             sectionName={"objects"}
                             roomId={selectedRoom.node_id}
                             tokens={roomObjects}
@@ -492,7 +517,6 @@ const RoomPage = ()=> {
                         <TypeAheadTokenizerForm
                             formLabel="Room Characters"
                             tokenOptions={roomCharacters}
-                            worldId={worldId}
                             sectionName={"characters"}
                             roomId={selectedRoom.node_id}
                             tokens={roomCharacters}

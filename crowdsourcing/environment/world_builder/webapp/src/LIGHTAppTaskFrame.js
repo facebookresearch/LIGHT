@@ -83,6 +83,7 @@ function LIGHTAppTaskFrame() {
   return (
     <ErrorBoundary handleError={handleFatalError}>
       <MephistoContext.Provider value={mephistoProps}>
+
         <div className="container-fluid" id="ui-container">
           <Task
             api={api}
