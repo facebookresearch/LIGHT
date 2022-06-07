@@ -1,0 +1,1 @@
+LIGHT_DB_PATH = "/private/home/alexgurung/ParlAI/data/light/environment/db/d3/database3.db"

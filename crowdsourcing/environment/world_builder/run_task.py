@@ -33,6 +33,12 @@ from omegaconf import DictConfig, MISSING
 from typing import List, Any, Dict
 from dataclasses import dataclass, field
 
+from light.data_model.light_database import LIGHTDatabase
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import linear_kernel
+import numpy as np
+from config import LIGHT_DB_PATH
+
 MAX_INCORRECT = 3
 
 ##############################
@@ -78,6 +84,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # TODO implement once we have an onboarding
         return True
 
+    USE_MODEL = False
     MODEL_NAME = "bart_all_simple_Sun_Jan_23/c9d"
     world_builder_agent = None
     force = False
@@ -95,18 +102,82 @@ def main(operator: Operator, cfg: DictConfig) -> None:
             opt, model_name=MODEL_NAME, force_add=force, verbose=False, count_errors=True
             )
 
+    db = None
+    obj_vectorizer, obj_vectors, all_objects = None, None, None
+    char_vectorizer, char_vectors, all_chars = None, None, None
+    room_vectorizer, room_vectors, all_rooms = None, None, None
+    if os.path.exists(LIGHT_DB_PATH):
+        db = LIGHTDatabase(LIGHT_DB_PATH)
+        with db as ldb:
+            all_objects = [dict(obj) for obj in ldb.get_object()]
+
+        with db as ldb:
+            all_chars = [dict(obj) for obj in ldb.get_character()]
+
+        with db as ldb:
+            all_rooms = [dict(obj) for obj in ldb.get_room()]
+
+        room_vectorizer = TfidfVectorizer(stop_words="english")
+        room_texts = [room["name"] + "\n" + room['description'] for room in all_rooms]
+        room_vectors = room_vectorizer.fit_transform(room_texts)
+
+        obj_vectorizer = TfidfVectorizer(stop_words="english")
+        obj_texts = [obj["name"] + "\n" + obj['physical_description'] for obj in all_objects]
+        obj_vectors = obj_vectorizer.fit_transform(obj_texts)
+
+        char_vectorizer = TfidfVectorizer(stop_words="english")
+        char_texts = [char["name"] + "\n" + char['physical_description'] + "\n" + char["persona"] for char in all_chars]
+        char_vectors = char_vectorizer.fit_transform(char_texts)
+        print(f"SET UP VECTORS")
+    
+    def get_most_similar(item, item_type):
+        item_text = item['name']
+        vectorizer = obj_vectorizer
+        type_vectors = obj_vectors
+        all_items = all_objects
+        if item_type == "object":
+            item_text += "\n" + item['physical_description']
+        elif item_type == "character":
+            item_text += "\n" + item['physical_description'] + "\n" + item['persona']
+            vectorizer = char_vectorizer
+            type_vectors = char_vectors
+            all_items = all_chars
+        else:
+            item_text += "\n" + item['desc'] + "\n"
+            vectorizer = room_vectorizer
+            type_vectors = room_vectors
+            all_items = all_rooms
+
+        item_vec = vectorizer.transform([item_text])
+        cosine_similarities = linear_kernel(item_vec, type_vectors).flatten()
+        max_index = np.argmax(cosine_similarities)
+        return all_items[max_index]
+
     def suggest_room(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
     ):
         # Use add_room_description and add_room_backstory to fill these
         # from a title alone
+        print("SUGGEST ROOM")
         print(f"args: {args}")
         target_room = args["target_room"]
         room_graph = args["room_graph"]
         original_rooms = room_graph['rooms']
-        if world_builder_agent is None:
+        if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
+            if db is not None:
+                print("using tfidf vectorizer to find similar room")
+                print(f"USING ROOM: ")
+                print(room_graph['nodes'][target_room])
+                most_similar = get_most_similar(room_graph['nodes'][target_room], "room")
+                print(most_similar)
+                room_desc = most_similar['description']
+                room_backstory = most_similar['backstory']
+                room_graph['nodes'][target_room]['desc'] = room_desc
+                room_graph['nodes'][target_room]['extra_desc'] = room_backstory
+                room_graph['nodes'][target_room]['graph_modified'] = True
             return room_graph
+            
         try:
             room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
             room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
@@ -143,12 +214,9 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         room_graph = args["room_graph"]
         target_room = args["target_room"]
         original_rooms = room_graph['rooms']
-        if world_builder_agent is None:
+        if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
             return room_graph
-        # Use `add_object` and `add_character` to generate a list of suggestions for
-        # objects and characters
-        # pass
         try:
             room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
             room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
@@ -194,7 +262,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         room_graph = args["room_graph"]
         target_room = args["target_room"]
         target_id = args["target_id"]
-        if world_builder_agent is None:
+        if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
             return room_graph
         # Use `add_character_wearing`, `add_character_wielding`, `add_character_carrying`
