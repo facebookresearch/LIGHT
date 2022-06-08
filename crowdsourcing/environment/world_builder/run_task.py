@@ -36,6 +36,8 @@ from dataclasses import dataclass, field
 from light.data_model.light_database import LIGHTDatabase
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
+
+from build_room_data import ROOM_ID_TO_ITEMS
 import numpy as np
 from config import LIGHT_DB_PATH
 
@@ -84,7 +86,8 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # TODO implement once we have an onboarding
         return True
 
-    USE_MODEL = False
+    # USE_MODEL = False
+    USE_MODEL = True
     MODEL_NAME = "bart_all_simple_Sun_Jan_23/c9d"
     world_builder_agent = None
     force = False
@@ -175,7 +178,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
                 room_backstory = most_similar['backstory']
                 room_graph['nodes'][target_room]['desc'] = room_desc
                 room_graph['nodes'][target_room]['extra_desc'] = room_backstory
-                room_graph['nodes'][target_room]['graph_modified'] = True
+                room_graph['nodes'][target_room]['from_retrieval'] = True
             return room_graph
             
         try:
@@ -216,6 +219,29 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         original_rooms = room_graph['rooms']
         if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
+            if db is not None:
+                print("using tfidf vectorizer to find similar room")
+                print(f"USING ROOM: ")
+                print(room_graph['nodes'][target_room])
+                most_similar = get_most_similar(room_graph['nodes'][target_room], "room")
+                items_from_most_similar = ROOM_ID_TO_ITEMS[most_similar['id']]
+                objects = items_from_most_similar['objects']
+                characters = items_from_most_similar['characters']
+                for o in objects:
+                    o['container_node']['target_id'] = target_room
+                    o['from_retrieval'] = True
+                    node_id = o['node_id']
+                    if node_id not in room_graph:
+                        room_graph['nodes'][node_id] = o
+                        room_graph['objects'].append(node_id)
+                for c in characters:
+                    c['container_node']['target_id'] = target_room
+                    c['from_retrieval'] = True
+                    node_id = c['node_id']
+                    if node_id not in room_graph:
+                        room_graph['nodes'][node_id] = c
+                        room_graph['agents'].append(node_id)
+
             return room_graph
         try:
             room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
