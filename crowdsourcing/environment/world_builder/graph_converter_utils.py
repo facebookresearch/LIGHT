@@ -248,7 +248,8 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
             "surface_type": "in",
             "value": 1,
             "wearable": False,
-            "wieldable": False
+            "wieldable": False,
+            "from_model": True
         }
         input_graph['objects'].append(new_node)
     
@@ -287,7 +288,8 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
             "surface_type": "in",
             "value": 1,
             "wearable": False,
-            "wieldable": True
+            "wieldable": True,
+            "from_model": True
         }
         input_graph['objects'].append(new_node)
 
@@ -326,7 +328,8 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
             "surface_type": "in",
             "value": 1,
             "wearable": True,
-            "wieldable": False
+            "wieldable": False,
+            "from_model": True
         }
         input_graph['objects'].append(new_node)
     return input_graph
@@ -374,7 +377,8 @@ def add_character_to_graph(input_graph, room_name, character_dict):
         "persona": character_dict.get('persona', ''),
         "room": False,
         "size": 20,
-        "speed": 20
+        "speed": 20,
+        "from_model": True
     }
     
     input_graph['nodes'][node_id] = new_node
@@ -417,7 +421,8 @@ def add_object_secondary_objects_to_graph(input_graph, node_id, contained):
             "surface_type": "in",
             "value": 1,
             "wearable": False,
-            "wieldable": False
+            "wieldable": False,
+            "from_model": True
         }
         input_graph['objects'].append(new_node)
     return input_graph
@@ -462,7 +467,8 @@ def add_object_to_graph(input_graph, room_name, object_dict):
         "surface_type": "in",
         "value": 1,
         "wearable": False,
-        "wieldable": False
+        "wieldable": False,
+        "from_model": True
       }
     
     input_graph['nodes'][node_id] = new_node
