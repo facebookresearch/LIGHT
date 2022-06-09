@@ -38,8 +38,8 @@ const WorldBuilderPage = ({
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */ //Currently Taskrouter Redux Slice not working due to react version incompatiblity
     //TASKROUTER
-    // const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
-    // const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
+    const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
+    const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
     //WORLDS
     const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
     const selectedWorld = useAppSelector((state) => state.playerWorld.selectedWorld);
