@@ -8,7 +8,7 @@ from tqdm import tqdm
 import parlai.core.build_data as build_data
 from parlai.utils.data import DatatypeHelper
 import parlai.utils.logging as logging
-import parlai_internal.tasks.light_common_sense.constants as consts
+import light.modeling.tasks.common_sense.constants as consts
 
 import random
 from config import LIGHT_DB_PATH
