@@ -33,7 +33,7 @@ const RoomPage = ({
     /* ------ LOCAL STATE ------ */
     const [roomid, setRoomid] = useState(null);
     //WORLD
-    const [worldDraft, setWorldDraft] = useState(JSON.parse(window.localStorage.getItem("taskWorld")))
+    // const [worldDraft, setWorldDraft] = useState(JSON.parse(window.localStorage.getItem("taskWorld")))
     const [selectedWorld, setSelectedWorld] = useState(null);
     //ROOMS
     const [worldRooms, setWorldRooms] = useState([]);
@@ -51,10 +51,10 @@ const RoomPage = ({
 
     //REACT ROUTER
     /* REDUX DISPATCH FUNCTION */
-    // const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */// TEMPORARILY UNAVAILABLE
     //WORLD
-    // const worldDraft = JSON.parse(window.localStorage.getItem("taskWorld"))
+    const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
     // const selectedWorld = JSON.parse(window.localStorage.getItem("taskWorld"))
     //ROOMS
     // const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);

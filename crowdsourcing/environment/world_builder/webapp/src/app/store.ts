@@ -16,7 +16,7 @@ export const store = configureStore({
         map: MapReducer,
         modal: ModalReducer,
         sidebars: SideBarReducer,
-        taskRouter:TaskRouterReducer,
+        taskRouter: TaskRouterReducer,
         worldCharacters: CharacterReducer,
         worldObjects: ObjectsReducer,
         worldRooms: RoomsReducer
