@@ -4,13 +4,14 @@ import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
-import { fetchWorlds, updateSelectedWorld, selectWorld, setWorldDraft } from "../../../features/playerWorld/playerworld-slice.ts";
+import { updateSelectedWorld, setWorldDraft } from "../../../features/playerWorld/playerworld-slice.ts";
 import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
 import { updateObjects} from "../../../features/objects/objects-slice.ts";
 import { updateCharacters } from "../../../features/characters/characters-slice.ts";
 /* STYLES */
 import './styles.css';
 /* BOOTSTRAP COMPONENTS */
+import Button from "react-bootstrap/Button"
 //LAYOUT
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -27,47 +28,50 @@ import TypeAheadTokenizerForm from "../../../components/world_builder/FormFields
 const RoomPage = ({
     api,
     builderRouterNavigate,
-    currentLocation
+    // currentLocation
 })=> {
 
     /* ------ LOCAL STATE ------ */
     const [roomid, setRoomid] = useState(null);
-    //WORLD
-    // const [worldDraft, setWorldDraft] = useState(JSON.parse(window.localStorage.getItem("taskWorld")))
-    const [selectedWorld, setSelectedWorld] = useState(null);
-    //ROOMS
-    const [worldRooms, setWorldRooms] = useState([]);
-    const [selectedRoom, setSelectedRoom] = useState(null);
-    //OBJECTS
-    const [worldObjects, setWorldObjects] = useState([]);
-    //CHARACTERS
-    const [worldCharacters, setWorldCharacters] = useState([]);
-    //ACTIONS
-    const updateWorldDraft = (world)=>{
-        window.localStorage.setItem("taskWorld", JSON.stringify(world));
-        setWorldDraft(world)
-    }
+    // //WORLD
+    // // const [worldDraft, setWorldDraft] = useState(JSON.parse(window.localStorage.getItem("taskWorld")))
+    // const [selectedWorld, setSelectedWorld] = useState(null);
+    // //ROOMS
+    // const [worldRooms, setWorldRooms] = useState([]);
+    // const [selectedRoom, setSelectedRoom] = useState(null);
+    // //OBJECTS
+    // const [worldObjects, setWorldObjects] = useState([]);
+    // //CHARACTERS
+    // const [worldCharacters, setWorldCharacters] = useState([]);
+    // //ACTIONS
+    // const updateWorldDraft = (world)=>{
+    //     window.localStorage.setItem("taskWorld", JSON.stringify(world));
+    //     setWorldDraft(world)
+    // }
 
 
     //REACT ROUTER
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
-    /* ------ REDUX STATE ------ */// TEMPORARILY UNAVAILABLE
+    /* ------ REDUX STATE ------ */
+    //TASKROUTER
+    const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
+    const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
     //WORLD
     const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
-    // const selectedWorld = JSON.parse(window.localStorage.getItem("taskWorld"))
+    const selectedWorld = useAppSelector((state) => state.playerWorld.selectedWorld)
     //ROOMS
-    // const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
-    // const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
+    const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
+    const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
     //OBJECTS
-    // const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
+    const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
     //CHARACTERS
-    // const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
+    const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     /* ------ REDUX ACTIONS ------ */
     //WORLD DRAFT
-    // const updateWorldDraft = ()=>{
-    //     dispatch(setWorldDraft(selectedWorld))
-    // }
+    const updateWorldDraft = ()=>{
+        dispatch(setWorldDraft(selectedWorld))
+    }
     //ROOMS
     const addRoom = (room)=>{
         let unupdatedWorld = selectedWorld;
@@ -84,7 +88,7 @@ const RoomPage = ({
         let updatedRooms = [...rooms, formattedRoomId]
         let updatedNodes = {...nodes, [formattedRoomId]:updatedRoomData}
         let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes}
-        setSelectedWorld(updatedWorld)
+        dispatch(updateSelectedWorld(updatedWorld))
     }
 
     const updateRoom = (id, update) =>{
@@ -92,7 +96,7 @@ const RoomPage = ({
         let {nodes } = unupdatedWorld;
         let updatedNodes = {...nodes, [id]:update}
         let updatedWorld ={...selectedWorld, nodes:updatedNodes}
-        setSelectedWorld(updatedWorld)
+        dispatch(updateSelectedWorld(updatedWorld))
     }
 
     const deleteRoom = (id)=>{
@@ -101,7 +105,7 @@ const RoomPage = ({
         let updatedRooms = rooms.filter(room => id !== room);
         let updatedNodes = delete nodes[id];
         let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes};
-        setSelectedWorld(updatedWorld);
+        dispatch(updateSelectedWorld(updatedWorld));
     }
 
     const deleteSelectedRoom = ()=>{
@@ -143,7 +147,7 @@ const RoomPage = ({
         let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedAgentId]:{target_id: formattedAgentId}}}
         let updatedNodes = {...nodes, [formattedAgentId]:updatedCharacterData, [selectedRoom.node_id]: updatedRoomData}
         let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes}
-        setSelectedWorld(updatedWorld)
+        dispatch(updateSelectedWorld(updatedWorld));
     }
     //Updates Character in selectedWorld state
     const updateCharacter = (id, update) =>{
@@ -151,7 +155,7 @@ const RoomPage = ({
         let {nodes } = unupdatedWorld;
         let updatedNodes = {...nodes, [id]:update}
         let updatedWorld ={...selectedWorld, nodes:updatedNodes}
-        setSelectedWorld(updatedWorld)
+        dispatch(updateSelectedWorld(updatedWorld));
     }
     //Removes Character from selectedWorld state
     const deleteCharacter = (id)=>{
@@ -160,7 +164,7 @@ const RoomPage = ({
         let updatedAgents = agents.filter(char => id !== char);
         let updatedNodes = delete nodes[id];
         let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes};
-        setSelectedWorld(updatedWorld);
+        dispatch(updateSelectedWorld(updatedWorld));
     }
     //OBJECTS
     const addObject = (obj)=>{
@@ -186,14 +190,14 @@ const RoomPage = ({
         let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}}
         let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedRoom.node_id]: updatedRoomData}
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes}
-        setSelectedWorld(updatedWorld)
+        dispatch(updateSelectedWorld(updatedWorld));
     }
     const updateObject = (id, update) =>{
         let unupdatedWorld = selectedWorld;
         let {nodes } = unupdatedWorld;
         let updatedNodes = {...nodes, [id]:update}
         let updatedWorld ={...selectedWorld, nodes:updatedNodes}
-        setSelectedWorld(updatedWorld)
+        dispatch(updateSelectedWorld(updatedWorld));
     }
     const deleteObject = (id)=>{
         let unupdatedWorld = selectedWorld;
@@ -201,7 +205,7 @@ const RoomPage = ({
         let updatedObjects = objects.filter(obj => id !== obj);
         let updatedNodes = delete nodes[id];
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
-        setSelectedWorld(updatedWorld);
+        dispatch(updateSelectedWorld(updatedWorld));
     }
 
 
@@ -294,24 +298,24 @@ const RoomPage = ({
                 }
             }
         });
-        setWorldRooms(RoomNodes);
-        setWorldObjects(ObjectNodes);
-        setWorldCharacters(CharacterNodes);
+        dispatch(updateRooms(RoomNodes));
+        dispatch(updateObjects(ObjectNodes));
+        dispatch(updateCharacters(CharacterNodes));
     }
 
     // Handler
     const WorldSaveHandler = ()=>{
         let worldUpdates = {...worldRooms, worldObjects, worldCharacters};
         let updatedWorld = {...selectedWorld, nodes: worldUpdates};
-        setSelectedWorld(updatedWorld);
-        updateWorldDraft(updatedWorld);
+        dispatch(updateSelectedWorld(updatedWorld));
+        dispatch(updateWorldDraft(updatedWorld));
         console.log("WORLD SAVE UPDATE:", updatedWorld);
     }
 
     /* --- LIFE CYCLE FUNCTIONS --- */
     useEffect(()=>{
         console.log("WORLD DRAFT IN ROOM PAGE:  ", worldDraft)
-        setSelectedWorld(worldDraft);
+        dispatch(updateSelectedWorld(worldDraft));
     },[worldDraft])
 
     useEffect(()=>{
@@ -326,7 +330,7 @@ const RoomPage = ({
             let {nodes}= selectedWorld
             let currentRoom = nodes[roomid]
             console.log("CURRENT ROOMS", currentRoom)
-            setSelectedRoom(currentRoom);
+            dispatch(selectRoom(currentRoom));
         }
         },[selectedWorld])
 
@@ -473,6 +477,7 @@ const RoomPage = ({
 
     return (
         <Container>
+            <Button onClick={()=>builderRouterNavigate("/")}> BACK </Button>
             {/* <BreadCrumbs
                 crumbs={crumbs}
             /> */}

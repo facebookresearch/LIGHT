@@ -5,7 +5,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface TaskRouterState {
     currentLocation: String;
     taskRouterHistory: Array<String>;
-
 }
 
 /* Initial value of the state */

@@ -50,7 +50,9 @@ const Token = ({
 
     /* HANDLERS */
     const gearClickHandler = ()=>{
-        navigateToLocation(`${option.data.node_id}`);
+        console.log("TOKEN VALUE:  ", option)
+        console.log("GEAR VIRTUAL URL:  ", `${option.data.node_id}`)
+        // navigateToLocation(`${option.data.node_id}`);
     }
 
     const deleteClickHandler = ()=>{

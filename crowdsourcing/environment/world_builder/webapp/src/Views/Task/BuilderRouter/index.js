@@ -16,24 +16,24 @@ const BuilderRouter = ({
     api
 }) => {
     //REDUX STATE
-    // const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
-    // const builderRouterHistory = useAppSelector((state) => state.taskRouter.builderRouterHistory);
-    // // REDUX DISPATCH FUNCTION
-    // const dispatch = useAppDispatch();
+    const builderRouterCurrentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
+    const builderRouterHistory = useAppSelector((state) => state.taskRouter.builderRouterHistory);
+    // REDUX DISPATCH FUNCTION
+    const dispatch = useAppDispatch();
     // /* ----REDUX ACTIONS---- */
 
 
     // /* ----LOCAL STATE---- */
     const [builderRouterPath, setBuilderRouterPath]= useState("/");
-    const [builderRouterCurrentLocation, setBuilderRouterCurrentLocation] = useState("");
-    const [builderRouterHistory, setBuilderRouterHistory] = useState([]);
+    // const [builderRouterCurrentLocation, setBuilderRouterCurrentLocation] = useState("");
+    // const [builderRouterHistory, setBuilderRouterHistory] = useState([]);
 
     /* HANDLERS */
     const builderRouterNavigate = (newLocation)=>{
         let oldLocation = builderRouterCurrentLocation;
-        setBuilderRouterCurrentLocation(newLocation);
+        dispatch(setTaskRouterCurrentLocation(newLocation));
         let updatedRouterHistory = [...builderRouterHistory, oldLocation]
-        setBuilderRouterHistory(updatedRouterHistory)
+        dispatch(updTaskRouterHistory(updatedRouterHistory));
     }
     /* --- LIFE CYCLE FUNCTIONS --- */
     //Update location anytime Redux State Current Location Changes

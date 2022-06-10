@@ -42,6 +42,7 @@ const TypeaheadTokenizer = ({
        }
     }, [tokens, roomId])
     useEffect(() => {
+        console.log("TOKEN OPTIONS BEING SET:  ", tokenOptions)
         if(tokenOptions.length){
             console.log("TOKEN OPTIONS    ", tokenOptions)
             let updatedTokenList = tokenOptions.map((tokendata, index)=>{
@@ -55,7 +56,7 @@ const TypeaheadTokenizer = ({
             })
             setTokenList(updatedTokenList)
         }
-    }, [tokenOptions])
+    }, [tokens, tokenOptions])
 
 console.log(formLabel, tokenOptions)
 const SelectHandler = (selected)=>{
