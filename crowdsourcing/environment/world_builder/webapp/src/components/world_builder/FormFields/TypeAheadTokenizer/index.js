@@ -40,7 +40,7 @@ const TypeaheadTokenizer = ({
        }else{
         setSelected([])
        }
-    }, [tokens, roomId])
+    }, [tokens, roomId, tokenOptions])
     useEffect(() => {
         console.log("TOKEN OPTIONS BEING SET:  ", tokenOptions)
         if(tokenOptions.length){

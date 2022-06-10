@@ -1,6 +1,5 @@
 /* REACT */
 import React, {useState, useEffect} from 'react';
-import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
@@ -45,7 +44,6 @@ const BasicEditRoom = ({
 
 
     //REACT ROUTER
-    const history = useHistory();
     //let { path, url } = useRouteMatch();
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
@@ -101,7 +99,7 @@ const BasicEditRoom = ({
             setRoomCharacters(updatedRoomCharacters)
             setRoomObjects(updatedRoomObjects)
         }
-    }, [currentRoomData])
+    }, [currentRoomData, worldRooms])
 
     //HANDLERS
     const SaveHandler = ()=>{
@@ -140,6 +138,7 @@ const BasicEditRoom = ({
     const AddCharacterHandler = (character)=>{
         console.log("ADDING CHARACTER DATA:  ", character)
         addCharacter(character)
+
         let updatedRoomCharacters = [...roomCharacters, character];
         setRoomCharacters(updatedRoomCharacters);
     }
