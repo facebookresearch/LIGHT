@@ -163,13 +163,16 @@ const CharacterPage = ({
     useEffect(()=>{
         let updatedCharData = currentLocation;
         let updatedRoomData = taskRouterHistory[taskRouterHistory.length-1]
-        setCharId(updatedCharData.id)
-        setRoomId(updatedRoomData.id)
-        let {nodes}= selectedWorld
-        let currentChar = nodes[setCharId]
-        console.log("LOCATION CHANGE CHAR PAGE ROOM CURRENT LOC:  ", currentLocation)
-        console.log("CURRENT CHAR", currentChar)
-        dispatch(selectCharacter(currentChar));
+        console.log("CHAR ID:  ", updatedCharData)
+        console.log("ROOM ID:  ", updatedRoomData)
+        if(updatedCharData){
+            setCharId(updatedCharData.id)
+        }
+        if(updatedRoomData){
+            setRoomId(updatedRoomData.id)
+        }
+        console.log("WORLD DRAFT:  ", worldDraft)
+        dispatch(updateSelectedWorld(worldDraft))
     },[currentLocation])
 
     useEffect(()=>{
@@ -186,9 +189,13 @@ const CharacterPage = ({
     useEffect(()=>{
         if(selectedWorld){
             let {nodes}= selectedWorld
+            console.log("SELECTED WORLD:  ", selectedWorld);
+            console.log("ROOM ID:  ", roomId)
             let currentRoom = nodes[roomId]
             console.log("CURRENT ROOM", currentRoom)
-            dispatch(selectRoom(currentRoom))
+            if(currentRoom){
+                dispatch(selectRoom(currentRoom))
+            }
         }
     },[selectedWorld])
 
@@ -197,7 +204,9 @@ const CharacterPage = ({
             let {nodes}= selectedWorld
             let currentCharacter = nodes[charId]
             console.log("CURRENT CHARACTER", currentCharacter)
-            dispatch(selectCharacter(currentCharacter))
+            if(currentCharacter){
+                dispatch(selectCharacter(currentCharacter))
+            }
         }
     },[selectedRoom])
 
@@ -245,8 +254,8 @@ const CharacterPage = ({
                         }
                     }
                 })
+                setContainedObjects(ObjectNodes)
             }
-            setContainedObjects(ObjectNodes)
         }
     }, [selectedCharacter])
 
@@ -355,9 +364,11 @@ const CharacterPage = ({
 
   return (
     <Container>
+        <Row>
             <BreadCrumbs
                 crumbs={crumbs}
             />
+        </Row>
             {
             selectedCharacter
             ?

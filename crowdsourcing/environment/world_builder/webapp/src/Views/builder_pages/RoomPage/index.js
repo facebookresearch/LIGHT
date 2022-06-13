@@ -457,15 +457,11 @@ const RoomPage = ({
 
     return (
         <Container>
-            <Button onClick={()=>builderRouterNavigate("/")}> BACK </Button>
             <Row>
                 <BreadCrumbs
                     crumbs={crumbs}
                 />
             </Row>
-            <BreadCrumbs
-                crumbs={crumbs}
-            />
             {
             selectedRoom
             ?
