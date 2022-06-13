@@ -24,33 +24,42 @@ import Slider from "../../../components/world_builder/FormFields/Slider";
 import BreadCrumbs from "../../../components/world_builder/BreadCrumbs";
 import TypeAheadTokenizerForm from "../../../components/world_builder/FormFields/TypeAheadTokenizer";
 
-const ObjectPage = ()=> {
-  //REACT ROUTER
-  const history = useHistory();
-  let {
-    worldId,
-    categories,
-    roomid,
-    objectid
-  } = useParams();
+const ObjectPage = ({
+  api,
+  builderRouterNavigate,
+})=> {
 
+   /* ------ LOCAL STATE ------ */
+   const [objectId, setObjectId] = useState("");
+   const [parentId, setParentId] = useState("");
+   const [objectName, setObjectName] = useState("");
+   const [objectPluralName, setObjectPluralName] = useState("");
+   const [objectPrefix, setObjectPrefix] = useState("");
+   const [objectDesc, setObjectDesc] = useState("");
+   const [objectValue, setObjectValue] = useState(0);
+   const [objectSize, setObjectSize] = useState(0);
+   const [containedObjects, setContainedObjects] = useState([]);
 
-   /* REDUX DISPATCH FUNCTION */
-   const dispatch = useAppDispatch();
-   /* ------ REDUX STATE ------ */
-   //WORLD
-   const worldDraft = useAppSelector((state) => state.playerWorlds.worldDraft);
-   const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
-   const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
-   //OBJECTS
-   const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
-   const selectedObject = useAppSelector((state) => state.worldObjects.selectedObject);
-   /* ------ REDUX ACTIONS ------ */
-    //WORLD DRAFT
-    const updateWorldsDraft = ()=>{
+  /* REDUX DISPATCH FUNCTION */
+  const dispatch = useAppDispatch();
+  /* ------ REDUX STATE ------ */
+  //TASKROUTER
+  const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
+  const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
+  //WORLD
+  const worldDraft = useAppSelector((state) => state.playerWorlds.worldDraft);
+  const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
+  //ROOMS
+  const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
+  //OBJECTS
+  const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
+  const selectedObject = useAppSelector((state) => state.worldObjects.selectedObject);
+  /* ------ REDUX ACTIONS ------ */
+  //WORLD DRAFT
+  const updateWorldsDraft = ()=>{
 
-       dispatch(setWorldDraft(selectedWorld))
-   }
+      dispatch(setWorldDraft(selectedWorld))
+  }
 
    //OBJECTS
    const addObject = (obj)=>{
@@ -98,28 +107,20 @@ const ObjectPage = ()=> {
 
    const deleteSelectedObject = ()=>{
     let unupdatedWorld = selectedWorld;
-    let updatedRoom = selectedWorld.nodes[roomid]
+    let updatedRoom = selectedWorld.nodes[parentId]
     let updatedRoomContent = {...updatedRoom.contained_nodes};
-    delete updatedRoomContent[objectid];
-    unupdatedWorld ={...unupdatedWorld, nodes: {...unupdatedWorld.nodes, roomid: updatedRoom}}
-    let updatedWorld = containedNodesRemover(objectid)
+    delete updatedRoomContent[objectId];
+    unupdatedWorld ={...unupdatedWorld, nodes: {...unupdatedWorld.nodes, parentId: updatedRoom}}
+    let updatedWorld = containedNodesRemover(objectId)
     let {objects, nodes } = updatedWorld;
-    let updatedObjects = objects.filter(obj => objectid !== obj);
+    let updatedObjects = objects.filter(obj => objectId !== obj);
     let updatedNodes ={...nodes};
-    delete updatedNodes[objectid];
+    delete updatedNodes[objectId];
     updatedWorld ={...updatedWorld, objects: updatedObjects, nodes:updatedNodes};
     console.log("UPDATED WORLDS UPON OBJECT DELETION:  ", updatedWorld)
     dispatch(setWorldDraft(updatedWorld))
-    history.push(`/editworld/${worldId}/${categories}/map/rooms/${roomid}`)
+    builderRouterNavigate({name:"map", id:null})
 }
-   /* ------ LOCAL STATE ------ */
-    const [objectName, setObjectName] = useState("");
-    const [objectPluralName, setObjectPluralName] = useState("");
-    const [objectPrefix, setObjectPrefix] = useState("");
-    const [objectDesc, setObjectDesc] = useState("");
-    const [objectValue, setObjectValue] = useState(0);
-    const [objectSize, setObjectSize] = useState(0);
-    const [containedObjects, setContainedObjects] = useState([]);
   //UTILS
   const containedNodesRemover = (nodeId)=>{
 
@@ -213,7 +214,7 @@ const ObjectPage = ()=> {
    useEffect(()=>{
        if(selectedWorld){
            let {nodes}= selectedWorld
-           let currentRoom = nodes[roomid]
+           let currentRoom = nodes[parentId]
            console.log("CURRENT ROOM", currentRoom)
            dispatch(selectRoom(currentRoom))
        }
@@ -222,143 +223,137 @@ const ObjectPage = ()=> {
    useEffect(()=>{
        if(selectedRoom){
            let {nodes}= selectedWorld
-           let currentObject = nodes[objectid]
+           let currentObject = nodes[objectId]
            console.log("CURRENT OBJECT", currentObject)
            dispatch(selectObject(currentObject))
        }
    },[selectedRoom])
 
-   useEffect(()=>{
-       if(selectedWorld){
-       const {nodes} = selectedWorld;
-       let ObjectNodes = [];
-           if(selectedObject){
+  useEffect(()=>{
+    if(selectedWorld){
+      const {nodes} = selectedWorld;
+      let ObjectNodes = [];
+          if(selectedObject){
 
-              const {
-                contain_size,
-                contained_nodes,
-                desc,
-                extra_desc,
-                name,
-                name_prefix,
-                node_id,
-                plural,
-                size,
-                value
-               }= selectedObject;
+            const {
+              contain_size,
+              contained_nodes,
+              desc,
+              extra_desc,
+              name,
+              name_prefix,
+              node_id,
+              plural,
+              size,
+              value
+              }= selectedObject;
 
-              setObjectName(name)
-              setObjectDesc(desc)
-              if(!name_prefix){
-                setObjectPrefix("a")
-              }else {
-                setObjectPrefix(name_prefix)
-              }
-              if(plural===undefined && (name[name.length-1]==="s")){
-                let endsWithSDefaultPluralName = `${name}es`
-                setObjectPluralName(endsWithSDefaultPluralName)
-              }else if(plural===undefined){
-                let defaultPluralName = `${name}s`
-                setObjectPluralName(defaultPluralName)
-              }else{
-                setObjectPluralName(plural)
-              }
-              setObjectSize(size)
-              setObjectValue(value)
+            setObjectName(name)
+            setObjectDesc(desc)
+            if(!name_prefix){
+              setObjectPrefix("a")
+            }else {
+              setObjectPrefix(name_prefix)
+            }
+            if(plural===undefined && (name[name.length-1]==="s")){
+              let endsWithSDefaultPluralName = `${name}es`
+              setObjectPluralName(endsWithSDefaultPluralName)
+            }else if(plural===undefined){
+              let defaultPluralName = `${name}s`
+              setObjectPluralName(defaultPluralName)
+            }else{
+              setObjectPluralName(plural)
+            }
+            setObjectSize(size)
+            setObjectValue(value)
 
-               const roomContentNodesKeys = Object.keys(contained_nodes)
-               roomContentNodesKeys.map((nodeKey)=>{
-                   let WorldNode = nodes[nodeKey];
-                   if(WorldNode.classes){
-                   let NodeClass = WorldNode.classes[0]
-                   switch(NodeClass) {
-                       case "object":
-                        ObjectNodes.push(WorldNode);
-                       break;
-                       default:
-                       break;
-                       }
-                   }
-               })
-           }
-           setContainedObjects(ObjectNodes)
-       }
-   }, [selectedObject])
-
+            const roomContentNodesKeys = Object.keys(contained_nodes)
+            roomContentNodesKeys.map((nodeKey)=>{
+                let WorldNode = nodes[nodeKey];
+                if(WorldNode.classes){
+                let NodeClass = WorldNode.classes[0]
+                switch(NodeClass) {
+                      case "object":
+                      ObjectNodes.push(WorldNode);
+                      break;
+                      default:
+                      break;
+                      }
+                  }
+              })
+          }
+          setContainedObjects(ObjectNodes)
+    }
+  }, [selectedObject])
 
  //HANDLERS
- const ObjectNameChangeHandler = (e)=>{
-  let updatedObjectName = e.target.value;
-  setObjectName(updatedObjectName)
-  let updatedSelectedObject = {...selectedObject, name: updatedObjectName }
-  if(selectedObject){
+  const ObjectNameChangeHandler = (e)=>{
+    let updatedObjectName = e.target.value;
+    setObjectName(updatedObjectName)
+    let updatedSelectedObject = {...selectedObject, name: updatedObjectName }
+    if(selectedObject){
       if(selectedObject.node_id){
-          updateObject(selectedObject.node_id, updatedSelectedObject)
+        updateObject(selectedObject.node_id, updatedSelectedObject)
       }
+    }
   }
-}
 
-const ObjectDescChangeHandler = (e)=>{
-  let updatedObjectDesc = e.target.value;
-  setObjectDesc(updatedObjectDesc)
-  let updatedSelectedObject = {...selectedObject, desc: updatedObjectDesc }
-  if(selectedObject){
-      if(selectedObject.node_id){
-          updateObject(selectedObject.node_id, updatedSelectedObject)
-      }
+  const ObjectDescChangeHandler = (e)=>{
+    let updatedObjectDesc = e.target.value;
+    setObjectDesc(updatedObjectDesc)
+    let updatedSelectedObject = {...selectedObject, desc: updatedObjectDesc }
+    if(selectedObject){
+        if(selectedObject.node_id){
+            updateObject(selectedObject.node_id, updatedSelectedObject)
+        }
+    }
   }
-}
 
-const ObjectPluralNameChangeHandler = (e)=>{
-  let updatedObjectPluralName = e.target.value;
-  setObjectPluralName(updatedObjectPluralName)
-  let updatedSelectedObject = {...selectedObject, plural: updatedObjectPluralName}
-  if(selectedObject){
-      if(selectedObject.node_id){
-          updateObject(selectedObject.node_id, updatedSelectedObject)
-      }
+  const ObjectPluralNameChangeHandler = (e)=>{
+    let updatedObjectPluralName = e.target.value;
+    setObjectPluralName(updatedObjectPluralName)
+    let updatedSelectedObject = {...selectedObject, plural: updatedObjectPluralName}
+    if(selectedObject){
+        if(selectedObject.node_id){
+            updateObject(selectedObject.node_id, updatedSelectedObject)
+        }
+    }
   }
-}
 
-const ObjectPrefixChangeHandler = (e)=>{
-  let updatedObjectPrefix = e.target.value;
-  setObjectPrefix(updatedObjectPrefix)
-  let updatedSelectedObject = {...selectedObject, prefix: updatedObjectPrefix }
-  if(selectedObject){
-      if(selectedObject.node_id){
-          updateObject(selectedObject.node_id, updatedSelectedObject)
-      }
+  const ObjectPrefixChangeHandler = (e)=>{
+    let updatedObjectPrefix = e.target.value;
+    setObjectPrefix(updatedObjectPrefix)
+    let updatedSelectedObject = {...selectedObject, prefix: updatedObjectPrefix }
+    if(selectedObject){
+        if(selectedObject.node_id){
+            updateObject(selectedObject.node_id, updatedSelectedObject)
+        }
+    }
   }
-}
 
-const ObjectSizeChangeHandler = (e)=>{
-  let updatedObjectSize = e.target.value;
-  setObjectSize(updatedObjectSize);
-  let updatedSelectedObject = {...selectedObject, size: updatedObjectSize }
-  if(selectedObject){
-      if(selectedObject.node_id){
-          updateObject(selectedObject.node_id, updatedSelectedObject)
-      }
+  const ObjectSizeChangeHandler = (e)=>{
+    let updatedObjectSize = e.target.value;
+    setObjectSize(updatedObjectSize);
+    let updatedSelectedObject = {...selectedObject, size: updatedObjectSize }
+    if(selectedObject){
+        if(selectedObject.node_id){
+            updateObject(selectedObject.node_id, updatedSelectedObject)
+        }
+    }
   }
-}
 
-const ObjectValueChangeHandler = (e)=>{
-  let updatedObjectValue = e.target.value;
-  setObjectValue(updatedObjectValue)
-  let updatedSelectedObject = {...selectedObject, value: updatedObjectValue }
-  if(selectedObject){
-      if(selectedObject.node_id){
-          updateObject(selectedObject.node_id, updatedSelectedObject)
-      }
+  const ObjectValueChangeHandler = (e)=>{
+    let updatedObjectValue = e.target.value;
+    setObjectValue(updatedObjectValue)
+    let updatedSelectedObject = {...selectedObject, value: updatedObjectValue }
+    if(selectedObject){
+        if(selectedObject.node_id){
+            updateObject(selectedObject.node_id, updatedSelectedObject)
+        }
+    }
   }
-}
   //CRUMBS
-  const crumbs= [
-    {name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`},
-    {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`},
-    {name:` ${roomid}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomid}`},
-    {name:` ${objectid}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomid}/objects/${objectid}`}
-  ];
+  const crumbs= [...taskRouterHistory, currentLocation];
   return (
     <Container>
       <BreadCrumbs
@@ -388,9 +383,8 @@ const ObjectValueChangeHandler = (e)=>{
                 <TypeAheadTokenizerForm
                     formLabel="Contents"
                     tokenOptions={worldObjects}
-                    worldId={worldId}
                     sectionName={"objects"}
-                    roomId={selectedRoom.node_id}
+                    parentId={selectedRoom.node_id}
                     tokens={containedObjects}
                     tokenType={'objects'}
                     onTokenAddition={addObject}
