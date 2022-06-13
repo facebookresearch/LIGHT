@@ -3,7 +3,6 @@ import React, {useEffect, useState} from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {updateTaskRouterHistory, setTaskRouterCurrentLocation} from '../../../features/taskRouter/taskrouter-slice';
-
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */
@@ -21,59 +20,51 @@ const BuilderRouter = ({
     // REDUX DISPATCH FUNCTION
     const dispatch = useAppDispatch();
     // /* ----REDUX ACTIONS---- */
-
-
-    // /* ----LOCAL STATE---- */
-    const [builderRouterPath, setBuilderRouterPath]= useState({name: "map", id: null});
-
-    /* HANDLERS */
+    //builderRouterNavigate - handles navigation to new locatinos and modifies the router history accordingly
+    //each time this function is invoked it will add the previous currentLocation object to the end of the history array
     const builderRouterNavigate = (newLocation)=>{
-        console.log("NEW LOCATION DURING NAVIGATION::  ", newLocation)
         let oldLocation = builderRouterCurrentLocation;
-        console.log("OLD LOCATION DURING NAVIGATION:  ", oldLocation)
         let updatedRouterHistory = [...builderRouterHistory, oldLocation]
-        console.log("UPDATED HISTORY DURING NAVIGATION:  ", updatedRouterHistory)
         dispatch(updateTaskRouterHistory(updatedRouterHistory));
         dispatch(setTaskRouterCurrentLocation(newLocation));
     }
+
+    /* ----LOCAL STATE---- */
+    const [builderRouterPath, setBuilderRouterPath]= useState({name: "map", id: null});
+
     /* --- LIFE CYCLE FUNCTIONS --- */
     //Update location anytime Redux State Current Location Changes
     useEffect(()=>{
         let updatedBuilderRouterPath = builderRouterCurrentLocation.name
-        console.log("CURRENT LOCATION PATH!:  ", updatedBuilderRouterPath)
         setBuilderRouterPath(updatedBuilderRouterPath);
     },[builderRouterCurrentLocation])
 
+    //Switch Case acts as a router for app using the name key of the current location to determine which page to render
     switch(builderRouterPath) {
         case 'map':
             return <MapPage2
                         api={api}
                         builderRouterNavigate={builderRouterNavigate}
-                        currentLocation={builderRouterCurrentLocation}
                     />;
         case 'characters':
             return <CharacterPage
                         api={api}
                         builderRouterNavigate={builderRouterNavigate}
-                        currentLocation={builderRouterCurrentLocation}
                     />;
         case 'objects':
             return <ObjectPage
                         api={api}
                         builderRouterNavigate={builderRouterNavigate}
-                        currentLocation={builderRouterCurrentLocation}
                     />;
         case 'rooms':
             return <RoomPage
                         api={api}
                         builderRouterNavigate={builderRouterNavigate}
-                        currentLocation={builderRouterCurrentLocation}
                     />;
         default:
             return <MapPage2
                         api={api}
                         builderRouterNavigate={builderRouterNavigate}
-                        currentLocation={builderRouterCurrentLocation}
                     />;
     }
 }

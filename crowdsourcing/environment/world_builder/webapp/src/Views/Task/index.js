@@ -9,7 +9,6 @@ import "./styles.css";
 /* CUSTOM COMPONENTS */
 import TaskToolBar from "../../components/TaskToolBar";
 import PreviewContent from "../../Views/PreviewView/PreviewContent";
-import MapPage2 from "../builder_pages/MapPage2";
 import BuilderRouter from "./BuilderRouter"
 /* BOOTSTRAP COMPONENTS */
 import Form from 'react-bootstrap/Form';
@@ -17,12 +16,6 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 /* DEFAULT WORLD */
 import DefaultWorld from "../../StartingWorldCopy";
-
-// const BuilderRouter = ({virtualPath, api}) => {
-//   // TODO will likely need to do something similar to the router for the full builder
-//   // Perhaps we can use a MemoryRouter from the react router package?
-//   return <MapPage2 api={api} />;
-// }
 
 const App = ({
   api,
@@ -62,11 +55,13 @@ const App = ({
     setShowInstructions(updatedToggleValue)
   }
 
+  //Updates text in comments section of submission form
   const CommentChangeHandler = (e)=>{
     let updatedWorkerComments = e.target.value;
     setWorkerComments(updatedWorkerComments)
   }
 
+  //Submission Handler - Will submit the worker's comments and world from local storage then clear the local storage upon successful submission of their complted draft
   const SubmissionHandler = ()=>{
     let updatedCurrentWorld = JSON.parse(window.localStorage.getItem("taskWorld"))
     let workerSubmission = {
@@ -77,25 +72,30 @@ const App = ({
     setShow(false)
   }
 
+  //A function that will run each time the world builder saves a draft and will alert worker wor when they have completed the task
   const isWorldBigEnough = () => {
     return true; // TODO actually check room, char, obj counts
   }
 
   /*---------------LIFECYCLE----------------*/
-  //Initial pull to set default world as draft
+  //This lifecycle evnt will attempt to pull a draft from local storage data first, if there is none it will pull
+  //the default world from the StartingWorldCopy.js file
   useEffect(() => {
     let initialDraft  = JSON.parse(window.localStorage.getItem("taskWorld"))
-    console.log("INITIAL DRAFT:  ", initialDraft)
-    console.log("INITIAL DRAFT BOOLEAN:  ", (!initialDraft))
     if(!initialDraft){
-      window.localStorage.setItem("taskWorld", JSON.stringify(DefaultWorld))
-      dispatch(setWorldDraft(DefaultWorld))
+      window.localStorage.setItem("taskWorld", JSON.stringify(DefaultWorld));
+      dispatch(setWorldDraft(DefaultWorld));
     }else {
-      dispatch(setWorldDraft(initialDraft))
+      dispatch(setWorldDraft(initialDraft));
     }
-    window.localStorage.setItem("currentLocation", JSON.stringify("/"))
-
+    window.localStorage.setItem("currentLocation", JSON.stringify("/"));
   }, [])
+
+  //Each time the worldDraft Redux state is updated the localStorage draft will be updated as well.
+  useEffect(() => {
+      //*** NOTE *** be sure to collect worker ID and use it as local storage key
+      window.localStorage.setItem("taskWorld", JSON.stringify(worldDraft))
+  }, [worldDraft])
 
   return (
   <>
