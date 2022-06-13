@@ -32,7 +32,8 @@ from typing import List, Any
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 LIGHT_DB_PATH = "~/ParlAI/data/light/environment/db/d3/database3.db"
 # INPUT_FILE_TASK = "objects-interaction-task-pilot-sandbox"
-INPUT_FILE_TASK = "ground-stage-2-task-1"
+# INPUT_FILE_TASK = "ground-stage-2-task-1"
+INPUT_FILE_TASKS = ["ground-stage-2-pilot-2", "ground-stage-2-pilot-3"]
 
 DEFAULT_NUM_TASKS = 20
 
@@ -54,8 +55,10 @@ from mephisto.operations.hydra_config import RunScriptConfig, register_script_co
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
-    input_file_task: str = INPUT_FILE_TASK
+    input_file_tasks: List[str] = field(default_factory=lambda: INPUT_FILE_TASKS)
     num_tasks: int = DEFAULT_NUM_TASKS
+    force_rebuild: bool = False
+    qualify_new_workers: bool = False
 
 
 register_script_config(name="scriptconfig", module=TestScriptConfig)
@@ -94,9 +97,13 @@ def build_task(task_dir):
     os.chdir(return_dir)
 
 
-def create_task_data(input_file_task, num_tasks):
+def create_task_data(input_file_tasks, num_tasks):
     # get data from collect-narration submissions
-    units = mephisto_data_browser.get_units_for_task_name(input_file_task)
+    units = []
+    for input_file_task in input_file_tasks:
+        cur_units = mephisto_data_browser.get_units_for_task_name(input_file_task)
+        print(f"{input_file_task}: {len(cur_units)}")
+        units.extend(cur_units)
     units = [u for u in units if u.get_db_status() == "accepted"]
     print(f"len(accepted units): {len(units)}")
     random.shuffle(units)
@@ -108,8 +115,14 @@ def create_task_data(input_file_task, num_tasks):
             new_data[key] = val
         if "this_task_state" in new_data:
             if not new_data['this_task_state']['isCreatingEntity'] or 'createdModifiedAttributes' in new_data['this_task_state']:
-                if 'ranges' in new_data['this_task_state']:
-                    data.append(new_data)
+                # if 'ranges' in new_data['this_task_state']:
+                data.append(new_data)
+                # else:
+                #     print("no ranges")
+        #     else:
+        #         print("subset")
+        # else:
+        #     print("no task state")
 
         # # iterate over narration units and resolve names with their corresponding objects (which have descriptions)
         # unit_data = mephisto_data_browser.get_data_from_unit(unit)["data"]
@@ -158,12 +171,13 @@ def validate_unit(unit):
         print("Unit not validated!")
         unit.get_assigned_agent().soft_reject_work()
         worker = unit.get_assigned_agent().get_worker()
-        worker.grant_qualification("constraints_events_task_block", 1)
+        worker.grant_qualification("ground_events_3_task_block", 1)
 
     return
 
 
-@hydra.main(config_name="scriptconfig")
+# @hydra.main(config_name="scriptconfig")
+@hydra.main(config_path="hydra_configs", config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     task_dir = cfg.task_dir
 
@@ -171,7 +185,7 @@ def main(cfg: DictConfig) -> None:
         return True
 
     shared_state = SharedStaticTaskState(
-        static_task_data=create_task_data(cfg.input_file_task, cfg.num_tasks),
+        static_task_data=create_task_data(cfg.input_file_tasks, cfg.num_tasks),
         validate_onboarding=onboarding_always_valid,
         on_unit_submitted=validate_unit,
     )

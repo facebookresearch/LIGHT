@@ -8,7 +8,7 @@ mephisto:
     block_qualification: ground_events_1_task_block
   task:
     maximum_units_per_worker: 5
-    max_num_concurrent_units: 100
+    max_num_concurrent_units: 20
     task_name: "ground-stage-1-pilot-4"
     task_title: "Determine the results of a single interaction."
     task_description: "In this task you will receive two objects with an interaction between them described in text format. You will answer questions related to the result of this description."
@@ -18,5 +18,5 @@ mephisto:
     _database_type: singleton
 # num_tasks: 150
 # num_tasks: 60
-num_tasks: 40
+num_tasks: 96
 qualify_new_workers: true

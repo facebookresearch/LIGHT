@@ -7,9 +7,22 @@
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.tools.examine_utils import run_examine_or_review, print_results
 from mephisto.data_model.worker import Worker
+from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
+from collections import Counter
 
 db = LocalMephistoDB()
 
+mephisto_data_browser = MephistoDataBrowser(db=db)
+task_names = ["objects-interaction-task-pilot-5", "objects-interaction-task-pilot-4"]
+
+units = []
+for t in task_names:
+    units.extend(mephisto_data_browser.get_units_for_task_name(t))
+
+print(f"prev len: {len(units)}")
+print(Counter([u.get_status() for u in units]))
+units = [u for u in units if u.get_status() == "completed"]
+print(f"len: {len(units)}")
 
 def format_data_for_printing(data):
     worker_name = Worker.get(db, data["worker_id"]).worker_name

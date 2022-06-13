@@ -20,19 +20,36 @@ DO_REVIEW = True
 # units = mephisto_data_browser.get_units_for_task_name("ground-stage-1-task-1")
 # units = mephisto_data_browser.get_units_for_task_name("ground-stage-1-pilot-1")
 # units_2 = mephisto_data_browser.get_units_for_task_name("ground-stage-1-pilot-2")
-units_3 = mephisto_data_browser.get_units_for_task_name("ground-stage-1-pilot-3")
+# units_3 = mephisto_data_browser.get_units_for_task_name("ground-stage-1-pilot-3")
 # units_3 = mephisto_data_browser.get_units_for_task_name("ground-stage-1-pilot-4")
 # units = [*units_2, *units_3]
-units = units_3
+# units = units_3
+task_names = ["ground-stage-1-pilot-4", "ground-stage-1-pilot-3"]
+units = []
+for t in task_names:
+    new_units = mephisto_data_browser.get_units_for_task_name(t)
+    print(t)
+    print(Counter([u.get_status() for u in new_units]))
+    units.extend(new_units)
+print(f"prev len: {len(units)}")
+print(Counter([u.get_status() for u in units]))
+
+unique_inputs = set()
+for unit in units:
+    data = mephisto_data_browser.get_data_from_unit(unit)
+    inputs_to_data = data['data']['inputs']['interaction'] + data['data']['inputs']['rawAction']
+    unique_inputs.add(inputs_to_data)
+
+print(f"len unique inputs: {len(unique_inputs)}")
+
+
+units = [u for u in units if u.get_status() == "completed"]
+print(f"len: {len(units)}")
 
 tasks_to_show = input("Tasks to see? (a)ll/(u)nreviewed: ")
 if tasks_to_show in ["all", "a"]:
     DO_REVIEW = False
 else:
-    print(f"prev len: {len(units)}")
-    print(Counter([u.get_status() for u in units]))
-    units = [u for u in units if u.get_status() == "completed"]
-    print(f"len: {len(units)}")
     print(
         "You will be reviewing actual tasks with this flow. Tasks that you either Accept or Pass "
         "will be paid out to the worker, while rejected tasks will not. Passed tasks will be "

@@ -34,9 +34,9 @@ TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 LIGHT_DB_PATH = "~/ParlAI/data/light/environment/db/d3/database3.db"
 # INPUT_FILE_TASK = "objects-interaction-task-pilot-sandbox"
 # INPUT_FILE_TASK = "objects-interaction-task-pilot-3"
-INPUT_FILE_TASK = "objects-interaction-task-pilot-4"
+INPUT_FILE_TASKS = ["objects-interaction-task-pilot-4", "objects-interaction-task-pilot-5"]
 # PREVIOUSLY_DONE_TASKS = ["ground-stage-1-pilot-2", "ground-stage-1-pilot-3"]
-PREVIOUSLY_DONE_TASKS = ["ground-stage-1-pilot-3"]
+PREVIOUSLY_DONE_TASKS = ["ground-stage-1-pilot-3", "ground-stage-1-pilot-4"]
 
 DEFAULT_NUM_TASKS = 20
 
@@ -58,7 +58,8 @@ from mephisto.operations.hydra_config import RunScriptConfig, register_script_co
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
-    input_file_task: str = INPUT_FILE_TASK
+    # input_file_task: str = INPUT_FILE_TASK
+    input_file_tasks: List[str] = field(default_factory=lambda: INPUT_FILE_TASKS)
     num_tasks: int = DEFAULT_NUM_TASKS
     force_rebuild: bool = False
     qualify_new_workers: bool = False
@@ -143,15 +144,20 @@ def new_unit_in_completed(new_unit_data, existing_units):
     interaction = new_unit_data['interaction']
     return (obj1, obj2, rawAction, interaction) in existing_units
 
-def create_task_data(input_file_task, num_tasks):
+def create_task_data(input_file_tasks, num_tasks):
     # get data from collect-narration submissions
-    units = mephisto_data_browser.get_units_for_task_name(input_file_task)
+    units = []
+    for t in input_file_tasks:
+        new_units = mephisto_data_browser.get_units_for_task_name(t)
+        units.extend(new_units)
+        print(f"{t}: {len(new_units)} -> {len(units)}")
     units = [u for u in units if u.get_db_status() == "accepted"]
     print(f"len(accepted units): {len(units)}")
     all_light_objects = get_light_objects()
     random.shuffle(units)
     data = []
     existing_units = get_previously_completed_unit_data()
+    print(f"len(existing) {len(existing_units)}")
     for unit in units:
         # iterate over narration units and resolve names with their corresponding objects (which have descriptions)
         unit_data = mephisto_data_browser.get_data_from_unit(unit)["data"]
@@ -222,7 +228,7 @@ def main(cfg: DictConfig) -> None:
         validator = validate_unit
 
     shared_state = SharedStaticTaskState(
-        static_task_data=create_task_data(cfg.input_file_task, cfg.num_tasks),
+        static_task_data=create_task_data(cfg.input_file_tasks, cfg.num_tasks),
         validate_onboarding=onboarding_always_valid,
         on_unit_submitted=validator,
     )
