@@ -57,14 +57,16 @@ const WorldBuilderPage = ({
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     /* ------ REDUX ACTIONS ------ */
     //WORLD DRAFT
+    //Acts as Save Draft function
     const updateWorldDraft = ()=>{
         dispatch(setWorldDraft(selectedWorld))
     }
    //ROOMS
+   //Adds New Room to map and draft
     const addRoom = (room)=>{
         let unupdatedWorld = selectedWorld;
         let {rooms, nodes } = unupdatedWorld;
-
+        //Room Id is initially generated from the new room's name a one added on.  It will iterate until it finds a unique key.
         let formattedRoomId = room.name.replaceAll(" ", "_") + "_1";
         console.log("FORMATTED CREATE ROOM NAME:  ", formattedRoomId)
         while(rooms.indexOf(formattedRoomId)>=0){
@@ -74,7 +76,6 @@ const WorldBuilderPage = ({
             splitFormattedRoomId[splitFormattedRoomId.length-1] = idNumber
             formattedRoomId = splitFormattedRoomId.join("_")
         }
-
         let updatedRoomData = {...room, node_id:formattedRoomId};
         console.log("UPDATED ROOM DATA:  ", updatedRoomData)
         let updatedRooms = [...rooms, formattedRoomId];
@@ -86,6 +87,8 @@ const WorldBuilderPage = ({
         dispatch(setWorldDraft(updatedWorld))
         dispatch(updateSelectedRoom(updatedRoomData))
     }
+
+    //Updates room with any changes
     const updateRoom = (id, update) =>{
         let unupdatedWorld = selectedWorld;
         let {nodes } = unupdatedWorld;

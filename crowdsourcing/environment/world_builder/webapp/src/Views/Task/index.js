@@ -21,15 +21,9 @@ const App = ({
   api,
   handleSubmit
 })=>{
-  //REDUX STATE
-  const selectedWorld = useAppSelector((state) => state.playerWorld.selectedWorld);
-  const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
   /* ------ REDUX STATE ------ */
-  //TASKROUTER
-  const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
-  const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
-  // VIEW STATE
-  const [currentWorld, updateWorld] = useState({});
+  const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
+
   /*---------------LOCAL STATE----------------*/
 
   // TODO I'm not sure what the right call is for replacing the router
@@ -42,24 +36,24 @@ const App = ({
   /* ----REDUX ACTIONS---- */
   //Updates current selectedWorld state
   const setSelectedWorld = (newWorldData)=>{
-    dispatch(updateSelectedWorld(newWorldData))
-  }
+    dispatch(updateSelectedWorld(newWorldData));
+  };
 
   /*---------------HANDLERS----------------*/
   const OpenModal = ()=>{
-    setShow(true)
-  }
+    setShow(true);
+  };
 
   const ToggleInstructionsModal = ()=>{
-    let updatedToggleValue = !showInstructions
-    setShowInstructions(updatedToggleValue)
-  }
+    let updatedToggleValue = !showInstructions;
+    setShowInstructions(updatedToggleValue);
+  };
 
   //Updates text in comments section of submission form
   const CommentChangeHandler = (e)=>{
     let updatedWorkerComments = e.target.value;
-    setWorkerComments(updatedWorkerComments)
-  }
+    setWorkerComments(updatedWorkerComments);
+  };
 
   //Submission Handler - Will submit the worker's comments and world from local storage then clear the local storage upon successful submission of their complted draft
   const SubmissionHandler = ()=>{
@@ -67,21 +61,21 @@ const App = ({
     let workerSubmission = {
       data: updatedCurrentWorld,
       comments: workerComments
-    }
-    handleSubmit(workerSubmission)
-    setShow(false)
-  }
+    };
+    handleSubmit(workerSubmission);
+    setShow(false);
+  };
 
   //A function that will run each time the world builder saves a draft and will alert worker wor when they have completed the task
   const isWorldBigEnough = () => {
     return true; // TODO actually check room, char, obj counts
-  }
+  };
 
   /*---------------LIFECYCLE----------------*/
   //This lifecycle evnt will attempt to pull a draft from local storage data first, if there is none it will pull
   //the default world from the StartingWorldCopy.js file
   useEffect(() => {
-    let initialDraft  = JSON.parse(window.localStorage.getItem("taskWorld"))
+    let initialDraft  = JSON.parse(window.localStorage.getItem("taskWorld"));
     if(!initialDraft){
       window.localStorage.setItem("taskWorld", JSON.stringify(DefaultWorld));
       dispatch(setWorldDraft(DefaultWorld));
@@ -89,13 +83,14 @@ const App = ({
       dispatch(setWorldDraft(initialDraft));
     }
     window.localStorage.setItem("currentLocation", JSON.stringify("/"));
-  }, [])
+  }, []);
 
   //Each time the worldDraft Redux state is updated the localStorage draft will be updated as well.
   useEffect(() => {
       //*** NOTE *** be sure to collect worker ID and use it as local storage key
-      window.localStorage.setItem("taskWorld", JSON.stringify(worldDraft))
-  }, [worldDraft])
+      window.localStorage.setItem("taskWorld", JSON.stringify(worldDraft));
+      setSelectedWorld(worldDraft);
+  }, [worldDraft]);
 
   return (
   <>
@@ -168,6 +163,5 @@ const App = ({
     </div>
   </>
   );
-}
-
+};
 export default App;
