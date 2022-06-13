@@ -32,7 +32,6 @@ import { updateSelectedRoom } from '../../../features/rooms/rooms-slice';
 const WorldBuilderPage = ({
     api,
     builderRouterNavigate,
-    currentLocation
 })=> {
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
@@ -469,9 +468,6 @@ const WorldBuilderPage = ({
     }
 
     /* --- LIFE CYCLE FUNCTIONS --- */
-    // Fetch world data from backend or from draft data if it exists.
-
-
     // Selects world from draft or world Data using params (worldId) *** discuss
     useEffect(()=>{
         if(worldDraft){
@@ -621,7 +617,6 @@ const WorldBuilderPage = ({
                         deleteObject={deleteObject}
                         api={api}
                         builderRouterNavigate={builderRouterNavigate}
-                        currentLocation={currentLocation}
                     />
                     :null
                 }

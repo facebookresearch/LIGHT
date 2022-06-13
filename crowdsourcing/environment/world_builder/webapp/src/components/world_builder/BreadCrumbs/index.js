@@ -14,29 +14,30 @@ const BreadCrumbs = ({crumbs}) => {
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
     //TASKROUTER
-    const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
     const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
     //HANDLERS
     const crumbClickHandler = (loc, position)=>{
-        dispatch(setTaskRouterCurrentLocation(loc));
-        let updatedHistory = taskRouterHistory.slice(position);
+        let updatedHistory = taskRouterHistory.slice(0, position);
+        console.log("UPDATED BREAD CRUMB HISTORY:  ", updatedHistory)
         dispatch(updateTaskRouterHistory(updatedHistory));
+        console.log("CRUMB CLICK LOC:  ", loc)
+        dispatch(setTaskRouterCurrentLocation(loc));
     }
     return (
         <Breadcrumb>
             {
                 crumbs.map((crumb, index)=> {
                     const {name, id} = crumb;
-                    const formattedCrumb = name.replaceAll("_", " ").toUpperCase()
+                    const formattedCrumb = id ? `${name.toUpperCase()}: ${id.replaceAll("_", " ").toUpperCase()}` : `${name.toUpperCase()}` ;
                     if(index==crumbs.length-1){
                         return(
-                            <Breadcrumb.Item className="crumb-active" active key={linkUrl} >
+                            <Breadcrumb.Item key={id} className="crumb-active" active >
                                 {formattedCrumb}
                             </Breadcrumb.Item>
                         )
                     }else{
                     return(
-                        <Breadcrumb.Item key={linkUrl} onClick={()=>crumbClickHandler(crumb, index)}>
+                        <Breadcrumb.Item key={id} onClick={()=>crumbClickHandler(crumb, index)}>
                             {formattedCrumb}
                         </Breadcrumb.Item>
                     )

@@ -28,27 +28,7 @@ import TypeAheadTokenizerForm from "../../../components/world_builder/FormFields
 const RoomPage = ({
     api,
     builderRouterNavigate,
-    // currentLocation
 })=> {
-
-    /* ------ LOCAL STATE ------ */
-    const [roomid, setRoomid] = useState(null);
-    // //WORLD
-    // // const [worldDraft, setWorldDraft] = useState(JSON.parse(window.localStorage.getItem("taskWorld")))
-    // const [selectedWorld, setSelectedWorld] = useState(null);
-    // //ROOMS
-    // const [worldRooms, setWorldRooms] = useState([]);
-    // const [selectedRoom, setSelectedRoom] = useState(null);
-    // //OBJECTS
-    // const [worldObjects, setWorldObjects] = useState([]);
-    // //CHARACTERS
-    // const [worldCharacters, setWorldCharacters] = useState([]);
-    // //ACTIONS
-    // const updateWorldDraft = (world)=>{
-    //     window.localStorage.setItem("taskWorld", JSON.stringify(world));
-    //     setWorldDraft(world)
-    // }
-
 
     //REACT ROUTER
     /* REDUX DISPATCH FUNCTION */
@@ -109,12 +89,12 @@ const RoomPage = ({
     }
 
     const deleteSelectedRoom = ()=>{
-        let updatedWorld = containedNodesRemover(roomid)
+        let updatedWorld = containedNodesRemover(roomId)
         console.log("POST DELETION WORLD", updatedWorld)
         // let {rooms, nodes } = updatedWorld;
-        // let updatedRooms = rooms.filter(room => roomid !== room);
+        // let updatedRooms = rooms.filter(room => roomId !== room);
         // let updatedNodes ={...nodes};
-        // delete updatedNodes[roomid];
+        // delete updatedNodes[roomId];
         // updatedWorld ={...updatedWorld, rooms: updatedRooms, nodes:updatedNodes};
         dispatch(setWorldDraft(updatedWorld))
         builderRouterNavigate("/")
@@ -210,6 +190,7 @@ const RoomPage = ({
 
 
     /* ------ LOCAL STATE ------ */
+    const [roomId, setRoomId] = useState(null);
     const [roomName, setRoomName] = useState("");
     const [roomDesc, setRoomDesc] = useState("");
 
@@ -285,19 +266,20 @@ const RoomPage = ({
             let NodeClass = WorldNode.classes[0]
             switch(NodeClass) {
                 case "agent":
-                CharacterNodes.push(WorldNode);
+                    CharacterNodes.push(WorldNode);
                 break;
                 case "object":
-                ObjectNodes.push(WorldNode);
+                    ObjectNodes.push(WorldNode);
                 break;
                 case "room":
-                RoomNodes.push(WorldNode);
+                    RoomNodes.push(WorldNode);
                 break;
                 default:
                 break;
                 }
             }
         });
+        console.log(" NODE BREAKDOWN COR:  ", CharacterNodes, ObjectNodes, RoomNodes)
         dispatch(updateRooms(RoomNodes));
         dispatch(updateObjects(ObjectNodes));
         dispatch(updateCharacters(CharacterNodes));
@@ -316,11 +298,12 @@ const RoomPage = ({
     useEffect(()=>{
         console.log("WORLD DRAFT IN ROOM PAGE:  ", worldDraft)
         dispatch(updateSelectedWorld(worldDraft));
+        setRoomId(currentLocation.id)
     },[worldDraft])
 
     useEffect(()=>{
         if(selectedWorld){
-            console.log("SELECTED WORLD:  ", selectedWorld)
+            console.log("SELECTED WORLD PRE SORTER:  ", selectedWorld)
             worldNodeSorter(selectedWorld)
         }
     },[selectedWorld])
@@ -328,14 +311,21 @@ const RoomPage = ({
     useEffect(()=>{
         if(selectedWorld){
             let {nodes}= selectedWorld
-            let currentRoom = nodes[roomid]
-            console.log("CURRENT ROOMS", currentRoom)
-            dispatch(selectRoom(currentRoom));
+            console.log("CURRENT ROOMS WORLD", selectedWorld)
+            console.log("CURRENT ROOMS WORLD", roomId)
+            let currentRoom = nodes[roomId]
+            console.log("CURRENT ROOM", currentRoom)
+            console.log("SelectedRoom ROOM", selectedRoom)
+            console.log("WORLD ROOMs", worldRooms)
+            if(currentRoom){
+                dispatch(selectRoom(currentRoom));
+            }
         }
-        },[selectedWorld])
+    },[selectedWorld])
 
     useEffect(()=>{
         if(selectedWorld){
+            console.log("FINAL UE SELECTED WORLD:  ", selectedWorld)
         const {nodes} = selectedWorld;
         let CharacterNodes = [];
         let ObjectNodes = [];
@@ -365,29 +355,23 @@ const RoomPage = ({
                     let NodeClass = WorldNode.classes[0]
                     switch(NodeClass) {
                         case "agent":
-                        CharacterNodes.push(WorldNode);
+                            CharacterNodes.push(WorldNode);
                         break;
                         case "object":
-                        ObjectNodes.push(WorldNode);
+                            ObjectNodes.push(WorldNode);
                         break;
                         default:
                         break;
                         }
                     }
                 })
+                setRoomObjects(ObjectNodes)
+                setRoomCharacters(CharacterNodes)
             }
-            setRoomObjects(ObjectNodes)
-            setRoomCharacters(CharacterNodes)
         }
+        console.log("FINAL USE EFFECT IN ROOM PAGE SELECTED ROOM", selectedRoom)
+        console.log("FINAL USE EFFECT IN ROOM PAGE SELECTED worldRooms", worldRooms)
     }, [selectedRoom])
-
-    useEffect(()=>{
-        let locationArray = currentLocation.split("/");
-        console.log("LOCATION ARRAY IN ADVANCED ROOM PAGE:  ", locationArray)
-        let currentRoomid = locationArray[locationArray.length-1];
-        setRoomid(currentRoomid);
-
-    }, [currentLocation])
 
     //HANDLERS
     const RoomNameChangeHandler = (e)=>{
@@ -474,6 +458,11 @@ const RoomPage = ({
     return (
         <Container>
             <Button onClick={()=>builderRouterNavigate("/")}> BACK </Button>
+            <Row>
+                <BreadCrumbs
+                    crumbs={crumbs}
+                />
+            </Row>
             <BreadCrumbs
                 crumbs={crumbs}
             />
@@ -481,11 +470,6 @@ const RoomPage = ({
             selectedRoom
             ?
             <>
-            <Row>
-                {/* <BreadCrumbs
-                    crumbs={crumbs}
-                /> */}
-            </Row>
             <Row>
                 <Col>
                     <Row>

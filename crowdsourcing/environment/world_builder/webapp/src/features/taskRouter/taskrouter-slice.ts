@@ -16,7 +16,7 @@ interface TaskRouterState {
 /* Initial value of the state */
 const initialState: TaskRouterState = {
     currentLocation: {
-        name: "home",
+        name: "map",
         id: null
     },
     taskRouterHistory: []

@@ -22,10 +22,10 @@ const Token = ({
  }) => {
     /* ------ REDUX STATE ------ */
     //TASKROUTER
-    const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
-    const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
+    // const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
+    // const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
     /* REDUX DISPATCH FUNCTION */
-    const dispatch = useAppDispatch();
+    // const dispatch = useAppDispatch();
     /* REDUX ACTIONS */
     //LOCAL STATE AND REF
     const ref = useRef(null);
@@ -42,9 +42,14 @@ const Token = ({
 
     /* HANDLERS */
     const gearClickHandler = ()=>{
+        const gearLocation = {
+            name: sectionName,
+            id: option.data.node_id
+        }
         console.log("TOKEN VALUE:  ", option)
-        console.log("GEAR VIRTUAL URL:  ", `${sectionName}/${option.data.node_id}`)
-        builderRouterNavigate(`${sectionName}/${option.data.node_id}`);
+        console.log("GEAR LOCATION:  ", gearLocation)
+
+        builderRouterNavigate(gearLocation);
     }
 
     const deleteClickHandler = ()=>{

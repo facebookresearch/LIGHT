@@ -26,9 +26,18 @@ import TypeAheadTokenizerForm from "../../../components/world_builder/FormFields
 const CharacterPage = ({
     api,
     builderRouterNavigate,
-    currentLocation,
 })=> {
-
+    /* ------ LOCAL STATE ------ */
+    const [roomId, setRoomId] = useState("")
+    const [charId, setCharId] = useState("")
+    const [characterName, setCharacterName] = useState("");
+    const [characterPrefix, setCharacterPrefix] = useState("");
+    const [characterDesc, setCharacterDesc] = useState("");
+    const [characterMotivation, setCharacterMotivation] = useState("")
+    const [characterPersona, setCharacterPersona] = useState("");
+    const [characterAggression, setCharacterAggression] = useState(0);
+    const [characterSize, setCharacterSize] = useState(0);
+    const [containedObjects, setContainedObjects] = useState([]);
 
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
@@ -148,48 +157,6 @@ const CharacterPage = ({
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     }
-    /* ------ LOCAL STATE ------ */
-    const [roomId, setRoomId] = useState("")
-    const [charId, setCharId] = useState("")
-    const [characterName, setCharacterName] = useState("");
-    const [characterPrefix, setCharacterPrefix] = useState("");
-    const [characterDesc, setCharacterDesc] = useState("");
-    const [characterMotivation, setCharacterMotivation] = useState("")
-    const [characterPersona, setCharacterPersona] = useState("");
-    const [characterAggression, setCharacterAggression] = useState(0);
-    const [characterSize, setCharacterSize] = useState(0);
-    const [containedObjects, setContainedObjects] = useState([]);
-
-    //UTILS
-    const worldNodeSorter = (world)=>{
-        let CharacterNodes = [];
-        let RoomNodes = [];
-        let ObjectNodes = [];
-        const {nodes} = world;
-        const WorldNodeKeys = Object.keys(nodes);
-        WorldNodeKeys.map((nodeKey)=>{
-            let WorldNode = nodes[nodeKey];
-            if(WorldNode.classes){
-            let NodeClass = WorldNode.classes[0]
-            switch(NodeClass) {
-                case "agent":
-                CharacterNodes.push(WorldNode);
-                break;
-                case "object":
-                ObjectNodes.push(WorldNode);
-                break;
-                case "room":
-                RoomNodes.push(WorldNode);
-                break;
-                default:
-                break;
-                }
-            }
-        })
-        dispatch(updateRooms(RoomNodes))
-        dispatch(updateObjects(ObjectNodes))
-        dispatch(updateCharacters(CharacterNodes))
-    }
 
     /* --- LIFE CYCLE FUNCTIONS --- */
 
@@ -198,6 +165,11 @@ const CharacterPage = ({
         let updatedRoomData = taskRouterHistory[taskRouterHistory.length-1]
         setCharId(updatedCharData.id)
         setRoomId(updatedRoomData.id)
+        let {nodes}= selectedWorld
+        let currentChar = nodes[setCharId]
+        console.log("LOCATION CHANGE CHAR PAGE ROOM CURRENT LOC:  ", currentLocation)
+        console.log("CURRENT CHAR", currentChar)
+        dispatch(selectCharacter(currentChar));
     },[currentLocation])
 
     useEffect(()=>{
@@ -214,6 +186,7 @@ const CharacterPage = ({
     useEffect(()=>{
         if(selectedWorld){
             let {nodes}= selectedWorld
+            let currentRoom = nodes[roomId]
             console.log("CURRENT ROOM", currentRoom)
             dispatch(selectRoom(currentRoom))
         }
@@ -276,6 +249,38 @@ const CharacterPage = ({
             setContainedObjects(ObjectNodes)
         }
     }, [selectedCharacter])
+
+    //UTILS
+    const worldNodeSorter = (world)=>{
+        let CharacterNodes = [];
+        let RoomNodes = [];
+        let ObjectNodes = [];
+        const {nodes} = world;
+        const WorldNodeKeys = Object.keys(nodes);
+        WorldNodeKeys.map((nodeKey)=>{
+            let WorldNode = nodes[nodeKey];
+            if(WorldNode.classes){
+            let NodeClass = WorldNode.classes[0]
+            switch(NodeClass) {
+                case "agent":
+                CharacterNodes.push(WorldNode);
+                break;
+                case "object":
+                ObjectNodes.push(WorldNode);
+                break;
+                case "room":
+                RoomNodes.push(WorldNode);
+                break;
+                default:
+                break;
+                }
+            }
+        })
+        dispatch(updateRooms(RoomNodes))
+        dispatch(updateObjects(ObjectNodes))
+        dispatch(updateCharacters(CharacterNodes))
+    }
+
 
     //HANDLERS
     const CharacterNameChangeHandler = (e)=>{
@@ -390,6 +395,7 @@ const CharacterPage = ({
                             tokenType={'objects'}
                             onTokenAddition={addObject}
                             onTokenRemoval={deleteObject}
+                            builderRouterNavigate={builderRouterNavigate}
                         />
                     </Row>
                     <Row>
@@ -402,6 +408,7 @@ const CharacterPage = ({
                             tokenType={'objects'}
                             onTokenAddition={addObject}
                             onTokenRemoval={deleteObject}
+                            builderRouterNavigate={builderRouterNavigate}
                         />
                     </Row>
                     <Row>

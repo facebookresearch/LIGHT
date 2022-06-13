@@ -24,47 +24,28 @@ const BuilderRouter = ({
 
 
     // /* ----LOCAL STATE---- */
-    const [builderRouterPath, setBuilderRouterPath]= useState({name: "home", id: null});
+    const [builderRouterPath, setBuilderRouterPath]= useState({name: "map", id: null});
 
     /* HANDLERS */
     const builderRouterNavigate = (newLocation)=>{
+        console.log("NEW LOCATION DURING NAVIGATION::  ", newLocation)
         let oldLocation = builderRouterCurrentLocation;
-        dispatch(setTaskRouterCurrentLocation(newLocation));
+        console.log("OLD LOCATION DURING NAVIGATION:  ", oldLocation)
         let updatedRouterHistory = [...builderRouterHistory, oldLocation]
-        dispatch(updTaskRouterHistory(updatedRouterHistory));
+        console.log("UPDATED HISTORY DURING NAVIGATION:  ", updatedRouterHistory)
+        dispatch(updateTaskRouterHistory(updatedRouterHistory));
+        dispatch(setTaskRouterCurrentLocation(newLocation));
     }
     /* --- LIFE CYCLE FUNCTIONS --- */
     //Update location anytime Redux State Current Location Changes
     useEffect(()=>{
-        // let currentLocationArray = builderRouterCurrentLocation.split("/");
-        // if(builderRouterHistory.length){
-        //     let updatedHistory = [...builderRouterHistory, builderRouterCurrentLocation];
-        //     for(let i = updatedHistory.length-1 ; i>=0 ; i--){
-
-        //         let locationArray = updatedHistory[i].split("/");
-        //         let currentSection = locationArray[0];
-        //         if(currentSection == "rooms"){
-        //             newRoomId = locationArray[1]
-        //         }else if(currentSection == "characters"){
-        //             newCharId = locationArray[1]
-        //         }else if(currentSection == "objects"){
-        //             newObjectId = locationArray[1]
-        //         }
-        //     }
-        //     setRoomId(newRoomId);
-        //     setCharacterId(newCharId);
-        //     setObjectId(newObjectId);
-        // }
-        let updatedBuilderRouterPath = builderRouterCurrentLocation.locationName
-        console.log("FORMATED PATH IN BUILDER ROUTER:  ", currentLocationArray[currentLocationArray.length-2])
-        let updatedHistory = [...builderRouterHistory, builderRouterCurrentLocation];
-        console.log("UPDATED ROUTER HISTORY:  ", updatedHistory)
-        dispatch(updateTaskRouterHistory(updatedHistory));
-        setBuilderRouterPath(updatedBuilderRouterPath)
+        let updatedBuilderRouterPath = builderRouterCurrentLocation.name
+        console.log("CURRENT LOCATION PATH!:  ", updatedBuilderRouterPath)
+        setBuilderRouterPath(updatedBuilderRouterPath);
     },[builderRouterCurrentLocation])
 
     switch(builderRouterPath) {
-        case 'home':
+        case 'map':
             return <MapPage2
                         api={api}
                         builderRouterNavigate={builderRouterNavigate}

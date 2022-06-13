@@ -28,7 +28,6 @@ const BasicEditRoom = ({
     deleteObject,
     api,
     builderRouterNavigate,
-    currentLocation
 })=> {
     // Common sense API
     let {
@@ -41,17 +40,12 @@ const BasicEditRoom = ({
         getCharacterFill,
     } = api;
 
-
-
-    //REACT ROUTER
-    //let { path, url } = useRouteMatch();
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
-    //
     //TASKROUTER
-    // const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
-    // const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
+    const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
+    const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
     //WORLDS
     const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
@@ -59,8 +53,7 @@ const BasicEditRoom = ({
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
     /* ------ REDUX ACTIONS ------ */
-    // const updateLocation = (loc)=>{     dispatch(setTaskRouterCurrentLocation(loc)) };
-    // const updateHistory = (updatedHistory)=>{ dispatch(updateTaskRouterHistory(updatedHistory)) };
+
     /* ------ LOCAL STATE ------ */
     const [currentRoomData, setCurrentRoomData] = useState(null)
     const [isNewRoom, setIsNewRoom] = useState(true)
@@ -104,23 +97,13 @@ const BasicEditRoom = ({
     }, [currentRoomData, worldRooms])
 
     //HANDLERS
+    //WORLD DRAFT
     //Saves any changes to world draft
     const SaveHandler = ()=>{
         saveFunction()
     }
 
-    //Creates room assigning it only a name.  Add room generates node_id
-    const RoomCreateHandler = () =>{
-        let updatedSelectedRoom = {...selectedRoom, name: roomName }
-        console.log("CREATE ROOM", updatedSelectedRoom)
-        addRoom(updatedSelectedRoom)
-    }
-
-    //Deletes room from draft using selected room node_id
-    const RoomDeleteHandler = ()=>{
-        deleteRoom(selectedRoom.node_id)
-    }
-
+    //NAVIGATION
     //Navigates to room's advanced edit page
     const handleAdvancedClick = ()=>{
         let updatedLocation = {
@@ -132,7 +115,35 @@ const BasicEditRoom = ({
         builderRouterNavigate(updatedLocation)
     }
 
+    const handleBasicGearClick = (newLoc)=>{
+        const {node_id} = selectedRoom;
+        console.log("BASIC GEAR CLICK:  ", node_id)
+        let roomLocation = {
+            name:"rooms",
+            id: node_id
+        };
+        let updatedGearLocation = newLoc;
+        const updatedRouterHistory = [...taskRouterHistory, currentLocation, roomLocation]
+        console.log("BASIC UPDATED HISTORY:  ", updatedRouterHistory);
+        dispatch(updateTaskRouterHistory(updatedRouterHistory));
+        console.log("CURRENT LOCATION:  ", updatedGearLocation);
+        dispatch(setTaskRouterCurrentLocation(updatedGearLocation));
+    }
+
     // * NOTE:  Condense handlers next update
+    // ROOM HANDLERS
+    //Creates room assigning it only a name.  Add room generates node_id
+    const RoomCreateHandler = () =>{
+        let updatedSelectedRoom = {...selectedRoom, name: roomName }
+        console.log("CREATE ROOM", updatedSelectedRoom)
+        addRoom(updatedSelectedRoom)
+    }
+
+    //Deletes room from draft using selected room node_id
+    const RoomDeleteHandler = ()=>{
+        deleteRoom(selectedRoom.node_id)
+    }
+    //Changes Name of selected room.  Name is required for new room to be created
     const RoomNameChangeHandler = (e)=>{
         let updatedRoomName = e.target.value;
         let updatedSelectedRoom = {...selectedRoom, name: updatedRoomName }
@@ -144,6 +155,7 @@ const BasicEditRoom = ({
         }
     }
 
+    //CHARACTER HANDLERS
     //Adds Character to room, changes will only change world draft upon clicking save button
     const AddCharacterHandler = (character)=>{
         console.log("ADDING CHARACTER DATA:  ", character)
@@ -152,13 +164,6 @@ const BasicEditRoom = ({
         setRoomCharacters(updatedRoomCharacters);
     }
 
-    //Adds Object to room, changes will only change world draft upon clicking save button
-    const AddObjectHandler = (obj)=>{
-        console.log("ADDING OBJECT DATA:  ", obj)
-        addObject(obj)
-        let updatedRoomObjects = [...roomObjects, obj]
-        setRoomObjects(updatedRoomObjects)
-    }
 
     //Removes Character from room, changes will only change world draft upon clicking save button
     const RemoveCharacterHandler = (id)=>{
@@ -166,6 +171,15 @@ const BasicEditRoom = ({
         deleteCharacter(id)
         let updatedRoomCharacters = roomCharacters.filter(obj=>obj.node_id!=id);
         setRoomCharacters(updatedRoomCharacters);
+    }
+
+    //OBJECT HANDLERS
+    //Adds Object to room, changes will only change world draft upon clicking save button
+    const AddObjectHandler = (obj)=>{
+        console.log("ADDING OBJECT DATA:  ", obj)
+        addObject(obj)
+        let updatedRoomObjects = [...roomObjects, obj]
+        setRoomObjects(updatedRoomObjects)
     }
 
     //Removes Object from room, changes will only change world draft upon clicking save button
@@ -269,7 +283,7 @@ const BasicEditRoom = ({
                             tokens={roomCharacters}
                             onTokenAddition={AddCharacterHandler}
                             onTokenRemoval={RemoveCharacterHandler}
-                            builderRouterNavigate={builderRouterNavigate}
+                            builderRouterNavigate={handleBasicGearClick}
                         />
                         <TypeAheadTokenizerForm
                             formLabel="OBJECTS"
@@ -280,7 +294,7 @@ const BasicEditRoom = ({
                             tokens={roomObjects}
                             onTokenAddition={AddObjectHandler}
                             onTokenRemoval={RemoveObjectHandler}
-                            builderRouterNavigate={builderRouterNavigate}
+                            builderRouterNavigate={handleBasicGearClick}
                         />
                     </>
                     :null
