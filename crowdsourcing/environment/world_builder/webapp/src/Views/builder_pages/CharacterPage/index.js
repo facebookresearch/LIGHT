@@ -206,8 +206,8 @@ const CharacterPage = ({
             console.log("CURRENT CHARACTER", currentCharacter)
             if(currentCharacter){
                 dispatch(selectCharacter(currentCharacter))
-            }
-        }
+            };
+        };
     },[selectedRoom])
 
     useEffect(()=>{

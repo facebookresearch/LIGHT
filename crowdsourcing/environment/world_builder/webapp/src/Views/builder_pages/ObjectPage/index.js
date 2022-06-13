@@ -4,7 +4,7 @@ import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
-import { fetchWorlds, updateSelectedWorld, selectWorld, setWorldDraft} from "../../../features/playerWorld/playerworld-slice.ts";
+import { updateSelectedWorld, setWorldDraft} from "../../../features/playerWorld/playerworld-slice.ts";
 import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
 import { updateObjects, selectObject} from "../../../features/objects/objects-slice.ts";
 import { updateCharacters, selectCharacter } from "../../../features/characters/characters-slice.ts";
@@ -47,9 +47,10 @@ const ObjectPage = ({
   const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
   const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
   //WORLD
-  const worldDraft = useAppSelector((state) => state.playerWorlds.worldDraft);
-  const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
+  const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
+  const selectedWorld = useAppSelector((state) => state.playerWorld.selectedWorld);
   //ROOMS
+  const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
   const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
   //OBJECTS
   const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
@@ -201,7 +202,22 @@ const ObjectPage = ({
 
   /* --- LIFE CYCLE FUNCTIONS --- */
   useEffect(()=>{
-    dispatch(selectWorld(worldDraft))
+    let updatedObjectData = currentLocation;
+    let updatedParentData = taskRouterHistory[taskRouterHistory.length-1]
+    console.log("OBJ ID:  ", updatedObjectData)
+    console.log("PARENT ID:  ", updatedParentData)
+    if(updatedObjectData){
+        setObjectId(updatedObjectData.id)
+    }
+    if(updatedParentData){
+        setParentId(updatedParentData.id)
+    }
+    console.log("WORLD DRAFT:  ", worldDraft)
+    dispatch(updateSelectedWorld(worldDraft))
+},[currentLocation])
+
+  useEffect(()=>{
+    dispatch(updateSelectedWorld(worldDraft))
   },[worldDraft])
 
    useEffect(()=>{
@@ -215,17 +231,21 @@ const ObjectPage = ({
        if(selectedWorld){
            let {nodes}= selectedWorld
            let currentRoom = nodes[parentId]
-           console.log("CURRENT ROOM", currentRoom)
-           dispatch(selectRoom(currentRoom))
+           console.log("CURRENT PARENT", currentRoom)
+           if(currentRoom){
+               dispatch(selectRoom(currentRoom))
+           }
        }
    },[selectedWorld])
 
    useEffect(()=>{
        if(selectedRoom){
-           let {nodes}= selectedWorld
-           let currentObject = nodes[objectId]
-           console.log("CURRENT OBJECT", currentObject)
-           dispatch(selectObject(currentObject))
+          let {nodes}= selectedWorld
+          let currentObject = nodes[objectId]
+          console.log("CURRENT OBJECT", currentObject)
+          if(currentObject){
+            dispatch(selectObject(currentObject))
+          };
        }
    },[selectedRoom])
 
@@ -269,20 +289,20 @@ const ObjectPage = ({
 
             const roomContentNodesKeys = Object.keys(contained_nodes)
             roomContentNodesKeys.map((nodeKey)=>{
-                let WorldNode = nodes[nodeKey];
-                if(WorldNode.classes){
-                let NodeClass = WorldNode.classes[0]
-                switch(NodeClass) {
-                      case "object":
-                      ObjectNodes.push(WorldNode);
-                      break;
-                      default:
-                      break;
-                      }
-                  }
-              })
+              let WorldNode = nodes[nodeKey];
+              if(WorldNode.classes){
+              let NodeClass = WorldNode.classes[0]
+              switch(NodeClass) {
+                case "object":
+                  ObjectNodes.push(WorldNode);
+                break;
+                default:
+                break;
+                }
+              }
+            })
+            setContainedObjects(ObjectNodes)
           }
-          setContainedObjects(ObjectNodes)
     }
   }, [selectedObject])
 
@@ -389,6 +409,7 @@ const ObjectPage = ({
                     tokenType={'objects'}
                     onTokenAddition={addObject}
                     onTokenRemoval={deleteObject}
+                    builderRouterNavigate={builderRouterNavigate}
                 />
               </Row>
             </Col>
