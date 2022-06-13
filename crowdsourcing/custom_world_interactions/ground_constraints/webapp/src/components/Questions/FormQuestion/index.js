@@ -40,33 +40,72 @@ const FormQuestion = ({
                 hasToolTip={hasToolTip}
             >
                 <div style={{ display: "flex", flexDirection: "row" }}>
+                    {/* {hasToolTip ? <Checkbox isComplete={isComplete} />:null} */}
                     <h1 className="form-header" style={{ color: (questionColor ? questionColor : "black") }}>
                         {upperCaseQuestion ? question.toUpperCase() : question}
                     </h1>
                 </div>
             </InfoToolTip>
-            <div className="answer-container">
-
-                {disabled ? <p
+            <p >
+            </p>
+            {disabled ? <div className="answer-container">
+                <p
                     // className="answer-form"
-                    style={{textAlign:"center", fontWeight:"bold"}}
+                    style={{ textAlign: "center", fontWeight: "bold" }}
                     onChange={() => { }}
                     value={description}
                     rows="7"
                     type="text"
                     readOnly="readonly"
                     placeholder={placeholder}
-                > {description} </p> : <textarea
-                    className="answer-form"
-                    onChange={changeHandler}
-                    value={description}
-                    rows="7"
-                    type="text"
-                    placeholder={placeholder}
-                />}
-
-            </div>
+                > {description} </p>
+            </div> : null}
+            {!disabled ? 
+                <div className="answer-container">
+                    <textarea
+                        className="answer-form"
+                        onChange={changeHandler}
+                        value={description}
+                        rows="7"
+                        type="text"
+                        placeholder={placeholder}
+                    />
+                </div> : null
+            }
         </div>
+        // <div className="form-container" >
+        //     <InfoToolTip
+        //         tutorialCopy={toolTipCopy}
+        //         hasToolTip={hasToolTip}
+        //     >
+        //         <div style={{ display: "flex", flexDirection: "row" }}>
+        //             <h1 className="form-header" style={{ color: (questionColor ? questionColor : "black") }}>
+        //                 {upperCaseQuestion ? question.toUpperCase() : question}
+        //             </h1>
+        //         </div>
+        //     </InfoToolTip>
+        //     <div className="answer-container">
+
+        //         {disabled ? <p
+        //             // className="answer-form"
+        //             style={{textAlign:"center", fontWeight:"bold"}}
+        //             onChange={() => { }}
+        //             value={description}
+        //             rows="7"
+        //             type="text"
+        //             readOnly="readonly"
+        //             placeholder={placeholder}
+        //         > {description} </p> : <textarea
+        //             className="answer-form"
+        //             onChange={changeHandler}
+        //             value={description}
+        //             rows="7"
+        //             type="text"
+        //             placeholder={placeholder}
+        //         />}
+
+        //     </div>
+        // </div>
     )
 }
 export default FormQuestion;

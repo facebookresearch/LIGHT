@@ -75,6 +75,7 @@ function MainApp() {
   const mephistoData = initialTaskData;
   const active = true;
   const broadcastMessage = mephistoData.this_task_state.broadcastMessage;
+  const noBackstoryNarration = mephistoData.this_task_state.noBackstoryNarration;
   const isRemovingObjects = mephistoData.this_task_state.isRemovingObjects;
   const removedObjects = mephistoData.this_task_state.removedObjects;
   const isCreatingEntity = mephistoData.this_task_state.isCreatingEntity;
@@ -364,6 +365,7 @@ function MainApp() {
       <Task
         data={mephistoData}
         broadcastMessage={broadcastMessage}
+        noBackstoryNarration={noBackstoryNarration}
         setBroadcastMessage={() => {}}
         isCreatingEntity={isCreatingEntity}
         setIsCreatingEntity={() => {}}
