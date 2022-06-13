@@ -194,8 +194,11 @@ const CharacterPage = ({
     /* --- LIFE CYCLE FUNCTIONS --- */
 
     useEffect(()=>{
-        dispatch(updateSelectedWorld(worldDraft))
-    },[worldDraft])
+        let updatedCharData = currentLocation;
+        let updatedRoomData = taskRouterHistory[taskRouterHistory.length-1]
+        setCharId(updatedCharData.id)
+        setRoomId(updatedRoomData.id)
+    },[currentLocation])
 
     useEffect(()=>{
         dispatch(updateSelectedWorld(worldDraft))
@@ -211,7 +214,6 @@ const CharacterPage = ({
     useEffect(()=>{
         if(selectedWorld){
             let {nodes}= selectedWorld
-            console.log("ROOM ID:char roomIChar          let currentRoom = nodes[roomId]
             console.log("CURRENT ROOM", currentRoom)
             dispatch(selectRoom(currentRoom))
         }
@@ -343,19 +345,14 @@ const CharacterPage = ({
         }
     }
 
-//   //CRUMBS
-// const crumbs= [
-//     {name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`},
-//     {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`},
-//     {name:` ${roomId}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomId}`},
-//     {name:` ${charId}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomId}/characters/${charId}`}
-//   ];
+    //CRUMBS
+    const crumbs= [...taskRouterHistory, currentLocation];
 
   return (
     <Container>
-            {/* <BreadCrumbs
+            <BreadCrumbs
                 crumbs={crumbs}
-            /> */}
+            />
             {
             selectedCharacter
             ?

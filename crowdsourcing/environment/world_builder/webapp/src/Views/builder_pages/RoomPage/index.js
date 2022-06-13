@@ -455,11 +455,7 @@ const RoomPage = ({
     }
 
     //CRUMBS
-//     const crumbs= [
-// s
-//         {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`},
-//         {name:` ${roomid}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomid}`}
-//     ];
+    const crumbs= [...taskRouterHistory, currentLocation];
 
     //BUTTON COPY
     const buttonOptions = [
@@ -478,9 +474,9 @@ const RoomPage = ({
     return (
         <Container>
             <Button onClick={()=>builderRouterNavigate("/")}> BACK </Button>
-            {/* <BreadCrumbs
+            <BreadCrumbs
                 crumbs={crumbs}
-            /> */}
+            />
             {
             selectedRoom
             ?
