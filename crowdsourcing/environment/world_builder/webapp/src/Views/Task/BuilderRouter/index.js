@@ -6,7 +6,7 @@ import {updateTaskRouterHistory, setTaskRouterCurrentLocation} from '../../../fe
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */
-import MapPage2 from "../../../Views/builder_pages/MapPage2";
+import MapPage from "../../builder_pages/MapPage";
 import CharacterPage from "../../../Views/builder_pages/CharacterPage";
 import ObjectPage from "../../../Views/builder_pages/ObjectPage";
 import RoomPage from "../../../Views/builder_pages/RoomPage";
@@ -42,7 +42,7 @@ const BuilderRouter = ({
     //Switch Case acts as a router for app using the name key of the current location to determine which page to render
     switch(builderRouterPath) {
         case 'map':
-            return <MapPage2
+            return <MapPage
                         api={api}
                         builderRouterNavigate={builderRouterNavigate}
                     />;
