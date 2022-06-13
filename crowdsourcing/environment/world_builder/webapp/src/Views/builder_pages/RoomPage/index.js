@@ -516,6 +516,7 @@ const RoomPage = ({
                             tokenType={'objects'}
                             onTokenAddition={addObject}
                             onTokenRemoval={deleteObject}
+                            builderRouterNavigate={builderRouterNavigate}
                         />
                     </Row>
                     <Row>
@@ -528,6 +529,7 @@ const RoomPage = ({
                             tokenType={'characters'}
                             onTokenAddition={addCharacter}
                             onTokenRemoval={deleteCharacter}
+                            builderRouterNavigate={builderRouterNavigate}
                         />
                     </Row>
                 </Col>

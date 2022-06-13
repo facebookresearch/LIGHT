@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import {updTaskRouterHistory, setTaskRouterCurrentLocation} from '../../../features/taskRouter/taskrouter-slice';
+import {updateTaskRouterHistory, setTaskRouterCurrentLocation} from '../../../features/taskRouter/taskrouter-slice';
 
 /* STYLES */
 import "./styles.css";
@@ -17,16 +17,14 @@ const BuilderRouter = ({
 }) => {
     //REDUX STATE
     const builderRouterCurrentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
-    const builderRouterHistory = useAppSelector((state) => state.taskRouter.builderRouterHistory);
+    const builderRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
     // REDUX DISPATCH FUNCTION
     const dispatch = useAppDispatch();
     // /* ----REDUX ACTIONS---- */
 
 
     // /* ----LOCAL STATE---- */
-    const [builderRouterPath, setBuilderRouterPath]= useState("/");
-    // const [builderRouterCurrentLocation, setBuilderRouterCurrentLocation] = useState("");
-    // const [builderRouterHistory, setBuilderRouterHistory] = useState([]);
+    const [builderRouterPath, setBuilderRouterPath]= useState({name: "home", id: null});
 
     /* HANDLERS */
     const builderRouterNavigate = (newLocation)=>{
@@ -38,22 +36,35 @@ const BuilderRouter = ({
     /* --- LIFE CYCLE FUNCTIONS --- */
     //Update location anytime Redux State Current Location Changes
     useEffect(()=>{
-        // window.localStorage.setItem("currentLocation", JSON.stringify("/"))
-        let locationArray = builderRouterCurrentLocation.split("/");
-        console.log("LOCATION ARRAY IN BUILDER ROUTER:  ", locationArray)
-        let updatedBuilderRouterPath = locationArray[locationArray.length-2];
-        console.log("FORMATED PATH IN BUILDER ROUTER:  ", locationArray[locationArray.length-2])
-        setBuilderRouterPath(updatedBuilderRouterPath)
-      },[builderRouterCurrentLocation])
+        // let currentLocationArray = builderRouterCurrentLocation.split("/");
+        // if(builderRouterHistory.length){
+        //     let updatedHistory = [...builderRouterHistory, builderRouterCurrentLocation];
+        //     for(let i = updatedHistory.length-1 ; i>=0 ; i--){
 
-        // let formattedLocation="/"
-        // let formattedLocationArray = currentLocation.split('/')
-        // if(formattedLocationArray.length){
-        //     formattedLocation= formattedLocationArray[formattedLocationArray.length-2]
+        //         let locationArray = updatedHistory[i].split("/");
+        //         let currentSection = locationArray[0];
+        //         if(currentSection == "rooms"){
+        //             newRoomId = locationArray[1]
+        //         }else if(currentSection == "characters"){
+        //             newCharId = locationArray[1]
+        //         }else if(currentSection == "objects"){
+        //             newObjectId = locationArray[1]
+        //         }
+        //     }
+        //     setRoomId(newRoomId);
+        //     setCharacterId(newCharId);
+        //     setObjectId(newObjectId);
         // }
-    console.log("FORMATTED VIRTUAL LOCATION:  ", builderRouterCurrentLocation)
+        let updatedBuilderRouterPath = builderRouterCurrentLocation.locationName
+        console.log("FORMATED PATH IN BUILDER ROUTER:  ", currentLocationArray[currentLocationArray.length-2])
+        let updatedHistory = [...builderRouterHistory, builderRouterCurrentLocation];
+        console.log("UPDATED ROUTER HISTORY:  ", updatedHistory)
+        dispatch(updateTaskRouterHistory(updatedHistory));
+        setBuilderRouterPath(updatedBuilderRouterPath)
+    },[builderRouterCurrentLocation])
+
     switch(builderRouterPath) {
-        case '/':
+        case 'home':
             return <MapPage2
                         api={api}
                         builderRouterNavigate={builderRouterNavigate}

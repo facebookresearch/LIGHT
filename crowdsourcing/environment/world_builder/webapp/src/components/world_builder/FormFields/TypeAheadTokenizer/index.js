@@ -19,7 +19,8 @@ const TypeaheadTokenizer = ({
     tokens,
     tokenType,
     onTokenAddition,
-    onTokenRemoval
+    onTokenRemoval,
+    builderRouterNavigate
 }) => {
     //LOCAL STATE
     const [tokenList, setTokenList] = useState([]);
@@ -200,6 +201,7 @@ const SelectHandler = (selected)=>{
                         sectionName={sectionName}
                         roomId={roomId}
                         deleteTokenFunction={onTokenRemoval}
+                        builderRouterNavigate={builderRouterNavigate}
                     >
                         {option.label.toUpperCase()}
                     </Token>

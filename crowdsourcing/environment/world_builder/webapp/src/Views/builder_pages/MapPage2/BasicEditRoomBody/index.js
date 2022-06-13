@@ -70,6 +70,7 @@ const BasicEditRoom = ({
     const [roomObjects, setRoomObjects] =useState([]);
 
     /* --- LIFE CYCLE FUNCTIONS --- */
+    //Sets isNewRoom state boolean based on presence of node_id.  This boolean determines rendered form fields and save on click function
     useEffect(()=>{
         if(selectedRoom.node_id){
             setIsNewRoom(false)
@@ -79,6 +80,7 @@ const BasicEditRoom = ({
         setCurrentRoomData(selectedRoom)
     },[selectedRoom])
 
+    //Upon any changes to world rooms, current room data, or world draft, room will update fields
     useEffect(() => {
         if(selectedRoom){
             const {node_id} = selectedRoom;
@@ -102,22 +104,29 @@ const BasicEditRoom = ({
     }, [currentRoomData, worldRooms])
 
     //HANDLERS
+    //Saves any changes to world draft
     const SaveHandler = ()=>{
         saveFunction()
     }
 
+    //Creates room assigning it only a name.  Add room generates node_id
     const RoomCreateHandler = () =>{
         let updatedSelectedRoom = {...selectedRoom, name: roomName }
         console.log("CREATE ROOM", updatedSelectedRoom)
         addRoom(updatedSelectedRoom)
     }
 
+    //Deletes room from draft using selected room node_id
     const RoomDeleteHandler = ()=>{
         deleteRoom(selectedRoom.node_id)
     }
 
+    //Navigates to room's advanced edit page
     const handleAdvancedClick = ()=>{
-        let updatedLocation = `/rooms/${formattedRoomId}`
+        let updatedLocation = {
+            name:"rooms",
+            id: formattedRoomId
+        };
         console.log("CURRENT LOCATION:  ", updatedLocation)
         window.localStorage.setItem("currentLocation", JSON.stringify(updatedLocation))
         builderRouterNavigate(updatedLocation)
@@ -135,13 +144,15 @@ const BasicEditRoom = ({
         }
     }
 
+    //Adds Character to room, changes will only change world draft upon clicking save button
     const AddCharacterHandler = (character)=>{
         console.log("ADDING CHARACTER DATA:  ", character)
         addCharacter(character)
-
         let updatedRoomCharacters = [...roomCharacters, character];
         setRoomCharacters(updatedRoomCharacters);
     }
+
+    //Adds Object to room, changes will only change world draft upon clicking save button
     const AddObjectHandler = (obj)=>{
         console.log("ADDING OBJECT DATA:  ", obj)
         addObject(obj)
@@ -149,6 +160,7 @@ const BasicEditRoom = ({
         setRoomObjects(updatedRoomObjects)
     }
 
+    //Removes Character from room, changes will only change world draft upon clicking save button
     const RemoveCharacterHandler = (id)=>{
         console.log(" REMOVED CHARACTER ID:  ", id)
         deleteCharacter(id)
@@ -156,6 +168,7 @@ const BasicEditRoom = ({
         setRoomCharacters(updatedRoomCharacters);
     }
 
+    //Removes Object from room, changes will only change world draft upon clicking save button
     const RemoveObjectHandler = (id)=>{
         console.log(" REMOVED OBJECT ID:  ", id)
         deleteObject(id)
@@ -163,7 +176,10 @@ const BasicEditRoom = ({
         setRoomObjects(updatedRoomObjects)
     }
 
-    // COMMON SENSE FORM FUNCTION
+
+    /* COMMON SENSE API INTERACTIONS */
+
+    // COMMON SENSE DESCRIBE ROOM FUNCTION
     const CommonSenseDescribeRoom = ()=>{
         let target_room = selectedRoom['node_id'];
         let nodes = {};
@@ -253,6 +269,7 @@ const BasicEditRoom = ({
                             tokens={roomCharacters}
                             onTokenAddition={AddCharacterHandler}
                             onTokenRemoval={RemoveCharacterHandler}
+                            builderRouterNavigate={builderRouterNavigate}
                         />
                         <TypeAheadTokenizerForm
                             formLabel="OBJECTS"
@@ -263,6 +280,7 @@ const BasicEditRoom = ({
                             tokens={roomObjects}
                             onTokenAddition={AddObjectHandler}
                             onTokenRemoval={RemoveObjectHandler}
+                            builderRouterNavigate={builderRouterNavigate}
                         />
                     </>
                     :null

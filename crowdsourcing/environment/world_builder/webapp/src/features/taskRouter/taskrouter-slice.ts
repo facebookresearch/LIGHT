@@ -1,15 +1,24 @@
 /* REDUX */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+/* CUSTOM TYPES */
+//Location
+interface Location {
+    name: String;
+    id: String | null;
+}
 
 /* STATE TYPE */
 interface TaskRouterState {
-    currentLocation: String;
-    taskRouterHistory: Array<String>;
+    currentLocation: Location;
+    taskRouterHistory: Array<Location>;
 }
 
 /* Initial value of the state */
 const initialState: TaskRouterState = {
-    currentLocation: "/",
+    currentLocation: {
+        name: "home",
+        id: null
+    },
     taskRouterHistory: []
 };
 
@@ -19,10 +28,10 @@ const taskRouterSlice = createSlice({
     initialState,
     /* REDUCER ACTIONS */
     reducers: {
-        setTaskRouterCurrentLocation(state, action: PayloadAction<string>) {
+        setTaskRouterCurrentLocation(state, action: PayloadAction<Location>) {
             state.currentLocation= action.payload
         },
-        updTaskRouterHistory(state, action: PayloadAction<Array<String>>) {
+        updateTaskRouterHistory(state, action: PayloadAction<Array<Location>>) {
             state.taskRouterHistory= action.payload
         },
     }
@@ -32,7 +41,7 @@ const taskRouterSlice = createSlice({
 // import anywhere in app to use
 export const {
     setTaskRouterCurrentLocation,
-    updTaskRouterHistory
+    updateTaskRouterHistory
 } = taskRouterSlice.actions;
 /* SLICE REDUCER */
 export default taskRouterSlice.reducer;

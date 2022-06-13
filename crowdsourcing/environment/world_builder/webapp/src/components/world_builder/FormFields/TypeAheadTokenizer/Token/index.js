@@ -17,6 +17,7 @@ const Token = ({
     roomId,
     sectionName,
     deleteTokenFunction,
+    builderRouterNavigate,
     children
  }) => {
     /* ------ REDUX STATE ------ */
@@ -26,15 +27,6 @@ const Token = ({
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* REDUX ACTIONS */
-    const navigateToLocation = (nodeId)=>{
-        let newLocation = `rooms/${roomId}/${sectionName}/${nodeId}`
-        let updatedTaskRouterHistory = taskRouterHistory.push(currentLocation)
-        console.log("NEW LOCATION:   ", newLocation)
-        console.log("UPDATED HISTORY:   ", updatedTaskRouterHistory)
-        dispatch(updateTaskRouterHistory(updatedTaskRouterHistory))
-        dispatch(setTaskRouterCurrentLocation(updatedTaskRouterHistory))
-    }
-
     //LOCAL STATE AND REF
     const ref = useRef(null);
     const [tokenData, setTokenData] = useState({})
@@ -51,8 +43,8 @@ const Token = ({
     /* HANDLERS */
     const gearClickHandler = ()=>{
         console.log("TOKEN VALUE:  ", option)
-        console.log("GEAR VIRTUAL URL:  ", `${option.data.node_id}`)
-        // navigateToLocation(`${option.data.node_id}`);
+        console.log("GEAR VIRTUAL URL:  ", `${sectionName}/${option.data.node_id}`)
+        builderRouterNavigate(`${sectionName}/${option.data.node_id}`);
     }
 
     const deleteClickHandler = ()=>{

@@ -1,10 +1,9 @@
 /* REACT */
 import React, {useState, useEffect} from 'react';
-import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
-import { fetchWorlds, updateSelectedWorld, selectWorld, setWorldDraft} from "../../../features/playerWorld/playerworld-slice.ts";
+import { updateSelectedWorld, setWorldDraft} from "../../../features/playerWorld/playerworld-slice.ts";
 import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
 import { updateObjects} from "../../../features/objects/objects-slice.ts";
 import { updateCharacters, selectCharacter } from "../../../features/characters/characters-slice.ts";
@@ -24,11 +23,13 @@ import Slider from "../../../components/world_builder/FormFields/Slider";
 import BreadCrumbs from "../../../components/world_builder/BreadCrumbs";
 import TypeAheadTokenizerForm from "../../../components/world_builder/FormFields/TypeAheadTokenizer";
 
-const CharacterPage = ()=> {
-    let formattedCurrentLocationArray = currentLocation.split("/")
+const CharacterPage = ({
+    api,
+    builderRouterNavigate,
+    currentLocation,
+})=> {
 
 
-    let { worldId, categories, roomid, charid } = useParams();
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
@@ -36,8 +37,8 @@ const CharacterPage = ()=> {
     const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
     const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
     //WORLD
-    const worldDraft = useAppSelector((state) => state.playerWorlds.worldDraft);
-    const selectedWorld = useAppSelector((state) => state.playerWorlds.selectedWorld);
+    const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
+    const selectedWorld = useAppSelector((state) => state.playerWorld.selectedWorld);
     //ROOMS
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
     const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
@@ -48,13 +49,12 @@ const CharacterPage = ()=> {
     const selectedCharacter = useAppSelector((state) => state.worldCharacters.selectedCharacter);
     /* ------ REDUX ACTIONS ------ */
     //TASKROUTER
-    const navigateToLocation = (nodeId)=>{
-        let newLocation = `rooms/${roomId}/${sectionName}/${nodeId}`
-        let updatedTaskRouterHistory = taskRouterHistory.push(newLocation)
-        console.log("NEW LOCATION:   ", newLocation)
-        console.log("UPDATED HISTORY:   ", updatedTaskRouterHistory)
-        dispatch(updateTaskRouterHistory(updatedTaskRouterHistory))
-        dispatch(setTaskRouterCurrentLocation(updatedTaskRouterHistory))
+    const navigateToLocation = (sectionName, nodeId)=>{
+        let newLocation = {
+            name: sectionName,
+            id: nodeId
+        };
+        builderRouterNavigate(newLocation)
     }
      //WORLD DRAFT
      const updateWorldDraft = ()=>{
@@ -149,6 +149,8 @@ const CharacterPage = ()=> {
         dispatch(updateSelectedWorld(updatedWorld));
     }
     /* ------ LOCAL STATE ------ */
+    const [roomId, setRoomId] = useState("")
+    const [charId, setCharId] = useState("")
     const [characterName, setCharacterName] = useState("");
     const [characterPrefix, setCharacterPrefix] = useState("");
     const [characterDesc, setCharacterDesc] = useState("");
@@ -190,8 +192,13 @@ const CharacterPage = ()=> {
     }
 
     /* --- LIFE CYCLE FUNCTIONS --- */
+
     useEffect(()=>{
-        dispatch(selectWorld(worldDraft))
+        dispatch(updateSelectedWorld(worldDraft))
+    },[worldDraft])
+
+    useEffect(()=>{
+        dispatch(updateSelectedWorld(worldDraft))
     },[worldDraft])
 
     useEffect(()=>{
@@ -204,7 +211,7 @@ const CharacterPage = ()=> {
     useEffect(()=>{
         if(selectedWorld){
             let {nodes}= selectedWorld
-            let currentRoom = nodes[roomid]
+            console.log("ROOM ID:char roomIChar          let currentRoom = nodes[roomId]
             console.log("CURRENT ROOM", currentRoom)
             dispatch(selectRoom(currentRoom))
         }
@@ -213,7 +220,7 @@ const CharacterPage = ()=> {
     useEffect(()=>{
         if(selectedRoom){
             let {nodes}= selectedWorld
-            let currentCharacter = nodes[charid]
+            let currentCharacter = nodes[charId]
             console.log("CURRENT CHARACTER", currentCharacter)
             dispatch(selectCharacter(currentCharacter))
         }
@@ -337,18 +344,18 @@ const CharacterPage = ()=> {
     }
 
 //   //CRUMBS
-const crumbs= [
-    {name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`},
-    {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`},
-    {name:` ${roomid}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomid}`},
-    {name:` ${charid}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomid}/characters/${charid}`}
-  ];
+// const crumbs= [
+//     {name:` Overview` , linkUrl:`/editworld/${worldId}/${categories}`},
+//     {name:` Map` , linkUrl:`/editworld/${worldId}/${categories}/map`},
+//     {name:` ${roomId}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomId}`},
+//     {name:` ${charId}` , linkUrl:`/editworld/${worldId}/${categories}/map/rooms/${roomId}/characters/${charId}`}
+//   ];
 
   return (
     <Container>
-            <BreadCrumbs
+            {/* <BreadCrumbs
                 crumbs={crumbs}
-            />
+            /> */}
             {
             selectedCharacter
             ?
@@ -380,7 +387,6 @@ const crumbs= [
                         <TypeAheadTokenizerForm
                             formLabel="Character Carrying"
                             tokenOptions={worldObjects}
-                            worldId={worldId}
                             sectionName={"objects"}
                             roomId={selectedRoom.node_id}
                             tokens={containedObjects}
@@ -393,7 +399,6 @@ const crumbs= [
                         <TypeAheadTokenizerForm
                             formLabel="Wielding/Wearing"
                             tokenOptions={worldObjects}
-                            worldId={worldId}
                             sectionName={"objects"}
                             roomId={selectedRoom.node_id}
                             tokens={containedObjects}

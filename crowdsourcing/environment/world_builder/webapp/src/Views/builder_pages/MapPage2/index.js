@@ -32,7 +32,7 @@ import { updateSelectedRoom } from '../../../features/rooms/rooms-slice';
 const WorldBuilderPage = ({
     api,
     builderRouterNavigate,
-    // currentLocation
+    currentLocation
 })=> {
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
