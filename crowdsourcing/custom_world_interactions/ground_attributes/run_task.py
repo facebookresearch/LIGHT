@@ -36,9 +36,10 @@ LIGHT_DB_PATH = "~/ParlAI/data/light/environment/db/d3/database3.db"
 # INPUT_FILE_TASK = "objects-interaction-task-pilot-sandbox"
 # INPUT_FILE_TASK = "ground-stage-1-task-1"
 # INPUT_FILE_TASK = "ground-stage-1-pilot-3"
+# INPUT_FILE_TASKS = ["ground-stage-1-pilot-3", "ground-stage-1-pilot-4", "ground-stage-1-pilot-5"]
 INPUT_FILE_TASKS = ["ground-stage-1-pilot-3", "ground-stage-1-pilot-4"]
 # PREVIOUSLY_DONE_TASKS = ["ground-stage-2-pilot-1"]
-PREVIOUSLY_DONE_TASKS = ["ground-stage-2-pilot-2"]
+PREVIOUSLY_DONE_TASKS = ["ground-stage-2-pilot-2", "ground-stage-2-pilot-3"]
 
 DEFAULT_NUM_TASKS = 20
 
@@ -121,6 +122,7 @@ def create_task_data(input_file_tasks, num_tasks):
     units = []
     for input_file_task in input_file_tasks:
         cur_units = mephisto_data_browser.get_units_for_task_name(input_file_task)
+        print(f"{input_file_task}: {len(cur_units)}")
         units.extend(cur_units)
     units = [u for u in units if u.get_db_status() == "accepted"]
     previous_messages = get_previously_completed_unit_data()

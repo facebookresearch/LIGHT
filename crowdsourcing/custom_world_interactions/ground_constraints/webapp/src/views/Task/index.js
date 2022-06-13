@@ -12,6 +12,7 @@ const Task = ({
   data,//Data from backend
   //STATE AND CORRESPONDING FUNCTIONS TO SET STATE
   broadcastMessage,
+  noBackstoryNarration,
   setBroadcastMessage,
   isCreatingEntity,
   setIsCreatingEntity,
@@ -76,6 +77,7 @@ const Task = ({
           object2={object2}
           interaction={interaction}
           broadcastMessage={broadcastMessage}
+          noBackstoryNarration={noBackstoryNarration}
           setBroadcastMessage={setBroadcastMessage}
           isCreatingEntity={isCreatingEntity}
           setIsCreatingEntity={setIsCreatingEntity}

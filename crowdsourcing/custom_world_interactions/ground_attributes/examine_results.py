@@ -17,7 +17,15 @@ DO_REVIEW = True
 
 # units = mephisto_data_browser.get_units_for_task_name(input("Input task name: "))
 # We're only examining this task with this file, but in the future could rely on mephisto.tools.examine_utils.run_examine_or_review
-units = mephisto_data_browser.get_units_for_task_name("ground-stage-2-pilot-2")
+prev_tasks = ["ground-stage-2-pilot-2", "ground-stage-2-pilot-3"]
+units = []
+#for t in prev_tasks:
+#    units.extend(mephisto_data_browser.get_units_for_task_name(t))
+for t in prev_tasks:
+    new_units = mephisto_data_browser.get_units_for_task_name(t)
+    print(t)
+    print(Counter([u.get_status() for u in new_units]))
+    units.extend(new_units)
 
 tasks_to_show = input("Tasks to see? (a)ll/(u)nreviewed: ")
 if tasks_to_show in ["all", "a"]:

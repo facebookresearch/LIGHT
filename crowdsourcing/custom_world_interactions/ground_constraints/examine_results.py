@@ -8,6 +8,7 @@ from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
 from mephisto.data_model.worker import Worker
 from mephisto.data_model.unit import Unit
+from collections import Counter
 
 db = LocalMephistoDB()
 mephisto_data_browser = MephistoDataBrowser(db=db)
@@ -16,13 +17,26 @@ DO_REVIEW = True
 
 # units = mephisto_data_browser.get_units_for_task_name(input("Input task name: "))
 # We're only examining this task with this file, but in the future could rely on mephisto.tools.examine_utils.run_examine_or_review
-units = mephisto_data_browser.get_units_for_task_name("ground-stage-3-task-1")
+task_names = ["ground-stage-3-task-1", "ground-stage-3-task-2"]
+
+units = []
+for t in task_names:
+    new_units = mephisto_data_browser.get_units_for_task_name(t)
+    print(t)
+    print(Counter([u.get_status() for u in new_units]))
+    units.extend(new_units)
+
+print(f"prev len: {len(units)}")
+print(Counter([u.get_status() for u in units]))
+
 
 tasks_to_show = input("Tasks to see? (a)ll/(u)nreviewed: ")
 if tasks_to_show in ["all", "a"]:
     DO_REVIEW = False
+    print(f"NOT REVIEWING TASKS")
 else:
     units = [u for u in units if u.get_status() == "completed"]
+    print(f"len: {len(units)}")
     print(
         "You will be reviewing actual tasks with this flow. Tasks that you either Accept or Pass "
         "will be paid out to the worker, while rejected tasks will not. Passed tasks will be "
@@ -56,7 +70,6 @@ def obj_from_key(key, primary_obj, secondary_obj):
 
 
 def format_for_printing_data(data):
-    # Custom tasks can define methods for how to display their data in a relevant way
     worker_name = Worker.get(db, data["worker_id"]).worker_name
     contents = data["data"]
     duration = contents["times"]["task_end"] - contents["times"]["task_start"]
@@ -72,13 +85,15 @@ def format_for_printing_data(data):
     secondary_obj = inputs.get("object2", {})
     inputs_string = f"Inputs:\n\t(Primary Object) {primary_obj.get('name')}: {primary_obj.get('desc')}\n\t(Secondary Object) {secondary_obj.get('name')}: {secondary_obj.get('desc')}\n\tAction Description: {inputs.get('interaction')}\n\n"
 
-    outputs = contents["outputs"]["final_data"]
+    outputs = contents["outputs"]
+    outputs["events"] = [e for e in outputs.get("events", []) if e is not None]
+    outputs["constraints"] = [e for e in outputs.get("constraints", []) if e is not None]
 
     outputs_string = f"Output:\n"
 
+    inputs_string += f"\tRaw Action:\t{outputs['this_task_state']['rawAction']}\n\n"
+
     outputs_string += "\n\n\n"
-    outputs_string += f"\tTimes Remaining: {outputs['times_remaining']}\n\n"
-    outputs_string += f"\tReversible: {outputs['reversible']}\n\n"
 
     # want to print new narration first
     broadcast_messages = [
@@ -87,19 +102,21 @@ def format_for_printing_data(data):
     if len(broadcast_messages) == 1:
         # character agnostic narration; Narration \t narration_text
         event = broadcast_messages[0]
-        outputs_string += f"\tNarration:\n\t\t{event['params']['room_view']}\n\n"
-
-    outputs_string += f"\tEvents:\n\n"
+        inputs_string += f"\tNarration:\n\t\t{event['params']['room_view']}\n\n"
+    nb = outputs['this_task_state']['noBackstoryNarration'] if "noBackstoryNarration" in outputs['this_task_state'] else "N/A"
+    inputs_string += f"\tReplaced Backstory:\t{nb}\n\n"
+    inputs_string += f"\tBackstory Too Complex:\t{outputs['this_task_state']['hasBackstory']}\n\n"
+    inputs_string += f"\tEvents:\n\n"
     for event in outputs["events"]:
         if event["type"] == "broadcast_message":
             # already added message
             continue
         elif event["type"] == "remove_object":
             # any objects removed; [Remove] (object_name)
-            outputs_string += f"\t\t[Remove] ({event['params']['name']})\n\n"
+            inputs_string += f"\t\t[Remove] ({event['params']['name']})\n\n"
         elif event["type"] == "create_entity":
             # any entities created; [Create Object] (object_name) with description: object_description
-            outputs_string += f"\t\t[Create Object] ({event['params']['object']['name']}) with description: {event['params']['object']['desc']} \n\n"
+            inputs_string += f"\t\t[Create Object] ({event['params']['object']['name']}) with description: {event['params']['object']['desc']} \n\n"
         elif (
             event["type"] == "modify_attribute_primary"
             or event["type"] == "modify_attribute_secondary"
@@ -107,14 +124,14 @@ def format_for_printing_data(data):
             # new/modified attributes after action; [Changed Attribute] ({object_name) \t is/isn't \t attribute
             cur_obj = obj_from_key(event['params']['type'], primary_obj, secondary_obj)
             is_isnt = "is" if event["params"].get("value") else "isn't"
-            outputs_string += f"\t\t[Changed Attribute] ({cur_obj.get('name')})\t{is_isnt}\t{event['params']['key']}\n\n"
+            inputs_string += f"\t\t[Changed Attribute] ({cur_obj.get('name')})\t{is_isnt}\t{event['params']['key']}\n\n"
         elif (
             event["type"] == "modify_attribute_primary_description"
             or event["type"] == "modify_attribute_secondary_description"
         ):
             # new description for items; [New Description] (object_name): object_description
             cur_obj = obj_from_key(event['params']['type'], primary_obj, secondary_obj)
-            outputs_string += f"\t\t[New Description] ({cur_obj.get('name')}): {event['params']['value']}\n\n"
+            inputs_string += f"\t\t[New Description] ({cur_obj.get('name')}): {event['params']['value']}\n\n"
         elif event["params"]["key"] == "location":
             # new location, map to more legible
             new_location = event["params"]["value"]
@@ -123,7 +140,7 @@ def format_for_printing_data(data):
             )
             cur_obj = obj_from_key(event['params']['type'], primary_obj, secondary_obj)
 
-            outputs_string += f"\t\t[Changed Location] ({cur_obj.get('name')}): {new_location_name}\n\n"
+            inputs_string += f"\t\t[Changed Location] ({cur_obj.get('name')}): {new_location_name}\n\n"
         else:
             # malformed event, exclude
             continue
@@ -150,9 +167,16 @@ def format_for_printing_data(data):
         else:
             # malformed constraint, example
             continue
-
+    for key in ["isSecondaryHeld",
+                "isReversible",
+                "isInfinite",
+                "timesRemaining",
+                "isLocationConstrained",
+                "constraintLocation"]:
+        value = outputs['this_task_state'][key] if key in outputs['this_task_state'] else "N/A"
+        outputs_string += f"\t[Constraint] {key} \t {value}\n\n"
+    
     return f"-------------------\n{metadata_string}{inputs_string}{outputs_string}"
-
 
 disqualification_name = None
 for unit in units:

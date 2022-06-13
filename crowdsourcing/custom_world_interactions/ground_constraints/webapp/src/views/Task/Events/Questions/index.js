@@ -19,6 +19,7 @@ const Questions = ({
     interaction,
     //Payload state and corresponding setState functions
     broadcastMessage,
+    noBackstoryNarration,
     setBroadcastMessage,
     isCreatingEntity,
     setIsCreatingEntity,
@@ -73,39 +74,45 @@ const Questions = ({
                 question={QuestionList[1]}
                 formVal={broadcastMessage}
                 formFunction={()=>{}}
-                formFunction={setBroadcastMessage}
                 toolTipCopy={TipList[0].explanation}
                 hasToolTip={true}
+                // isComplete={(broadcastMessage.length && broadcastMessage!==interaction)}
                 isComplete={true}
                 disabled={true}
             />
             <BooleanQuestion
-                question={QuestionList[2]}
+                question={isRemovingObjects ? QuestionList.t2 : QuestionList.f2}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
+                // formFunction={setIsRemovingObjects}
                 formFunction={()=>{}}
                 toolTipCopy={TipList[1].explanation}
                 hasToolTip={true}
                 defaultOption={isRemovingObjects}
+                // isComplete={(isRemovingObjects!==null && (isRemovingObjects==false || (isRemovingObjects===true && removedObjects.length)))}
                 isComplete={true}
                 disabled={true}
             >
-                <MultipleSelectQuestion
+                {isRemovingObjects ? <MultipleSelectQuestion
                     question={QuestionList.a2}
-                    answers={[object1.name, object2.name]}
+                    answers={removedObjects}
                     // selectFunction={setRemovedObjects}
                     selectFunction={()=>{}}
                     disabled={true}
                     curSelectedAnswers={removedObjects}
-                />
+                /> : <div />
+                }
             </BooleanQuestion>
             <BooleanQuestion
-                question={QuestionList[3]}
+                // question={QuestionList[3]}
+                question={isChangingDescription ? QuestionList.t3 : QuestionList.f3}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
+                // formFunction={setIsChangingDescription}
                 formFunction={()=>{}}
                 toolTipCopy={TipList[2].explanation}
                 hasToolTip={true}
+                // isComplete={isChangingDescription!==null && (!isChangingDescription || (primaryDescription !== object1.desc || secondaryDescription !== object2.desc))}
                 isComplete={true}
                 defaultOption={isChangingDescription}
                 disabled={true}
@@ -132,18 +139,20 @@ const Questions = ({
                 </div>
             </BooleanQuestion>
             <BooleanQuestion
-                question={QuestionList[4]}
+                // question={QuestionList[4]}
+                question={isCreatingEntity ? QuestionList.t4 : QuestionList.f4}
                 trueAnswer={{name:"YES"} }
                 falseAnswer={{name:"NO"} }
+                // formFunction={setIsCreatingEntity}
                 formFunction={()=>{}}
                 toolTipCopy={TipList[3].explanation}
                 hasToolTip={true}
+                // isComplete={(isCreatingEntity!==null && (isCreatingEntity==false || (isCreatingEntity===true && (createdEntity.name && createdEntity.desc && createdEntity.location))))}
                 isComplete={true}
                 disabled={true}
                 defaultOption={isCreatingEntity}
             >
                 <FieldQuestion
-
                     fields={[
                         {name:"name", dropdown:false, value:isCreatingEntity ? createdEntity.name : null},
                         {name:"desc", dropdown:false, value:isCreatingEntity ? createdEntity.desc : null},
@@ -156,6 +165,7 @@ const Questions = ({
                             ]
                         }
                     ]}
+                    // formFunction={setCreatedEntity}
                     formFunction={()=>{}}
                     formState={createdEntity}
                     disabled={true}
@@ -204,7 +214,15 @@ const Questions = ({
                 disabled={true}
                 isComplete={true}
             />
-            <AttributeSetter
+            <FormQuestion
+                question={QuestionList[6]}
+                formVal={noBackstoryNarration}
+                toolTipCopy={TipList[6].explanation}
+                hasToolTip={true}
+                isComplete={false}
+                disabled={true}
+            />
+            {!removedObjects.includes(object1.name) && <AttributeSetter
                 objectName={object1.name}
                 objectColor="blue"
                 header={QuestionList.setter}
@@ -214,8 +232,8 @@ const Questions = ({
                 toolTipCopy={TipList[5].explanation}
                 hasToolTip={true}
                 defaultAttributes={primaryModifiedAttributes}
-            />
-            <AttributeSetter
+            />}
+            {!removedObjects.includes(object2.name) && <AttributeSetter
                 objectName={object2.name}
                 objectColor="orange"
                 header={QuestionList.setter}
@@ -225,7 +243,7 @@ const Questions = ({
                 toolTipCopy={TipList[5].explanation}
                 hasToolTip={true}
                 defaultAttributes={secondaryModifiedAttributes}
-            />
+            />}
             {isCreatingEntity ? <AttributeSetter
                 objectName={createdEntity.name}
                 objectColor="green"
