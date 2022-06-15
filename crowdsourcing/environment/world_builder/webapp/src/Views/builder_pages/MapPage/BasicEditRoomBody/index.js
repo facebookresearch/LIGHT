@@ -119,6 +119,7 @@ const BasicEditRoom = ({
         builderRouterNavigate(updatedLocation)
     }
 
+    //the function that clicking a gear on the typeahead tokenizer invokes.  It saves the current worldState to the draft before navigating to the item or character's advanced page.
     const handleBasicGearClick = (newLoc)=>{
         saveFunction()
         const {node_id} = selectedRoom;
