@@ -109,6 +109,7 @@ const BasicEditRoom = ({
     //NAVIGATION
     //Navigates to room's advanced edit page
     const handleAdvancedClick = ()=>{
+        saveFunction()
         let updatedLocation = {
             name:"rooms",
             id: formattedRoomId
@@ -119,6 +120,7 @@ const BasicEditRoom = ({
     }
 
     const handleBasicGearClick = (newLoc)=>{
+        saveFunction()
         const {node_id} = selectedRoom;
         console.log("BASIC GEAR CLICK:  ", node_id)
         let roomLocation = {
