@@ -443,7 +443,7 @@ const WorldBuilderPage = ({
         dispatch(updateCharacters(CharacterNodes));
     };
 
-    //fetchWor
+    //fetchWorld
     // const fetchWorldCurrentWorld = ()=> {
     //     let unupdatedWorld  = JSON.parse(window.localStorage.getItem("taskWorld"))
     // }
@@ -484,20 +484,25 @@ const WorldBuilderPage = ({
     },[mapBorders]);
 
     // Handler
-    //
+    //Saves current selectWorldState to draft and local storage
     const WorldSaveHandler = ()=>{
-        console.log("WORLD SAVE UPDATE:", selectedWorld)
-        updateWorldDraft()
-    }
+        updateWorldDraft();
+    };
+
+    //Closes side drawer
     const closeSidebar = ()=>{
-        setMapSideBarOpen(false)
-    }
+        setMapSideBarOpen(false);
+    };
 
+    //Enters/exits color change mode.  User can click on existing rooms with color selected
     const ColorModeToggleHandler = ()=>{
-        let updatedColorMode = !inColorMode
-        setInColorMode(updatedColorMode)
-    }
+        let updatedColorMode = !inColorMode ;
+        setInColorMode(updatedColorMode);
+    };
 
+    //handleTileClick checks to see if map is in colorMode; if it is then it will color an existing tile otherwise it will select the room with the basic editor sidebar
+    //*Note it will only color rooms that already exist.
+    //*TODO: add pop up message when non existing room is clicked
     const handleTileClick= (room)=>{
         if(inColorMode){
             let {nodes} = selectedWorld;
@@ -507,19 +512,17 @@ const WorldBuilderPage = ({
                 let updatedNodes = {...nodes, [room.node_id]:updatedNode};
                 let updatedWorld = {...selectedWorld, nodes:updatedNodes};
                 dispatch(setWorldDraft(updatedWorld))
-            }
+            };
         }else{
-            dispatch(selectRoom(room))
-            setMapSideBarOpen(true)
-        }
-    }
+            dispatch(selectRoom(room));
+            setMapSideBarOpen(true);
+        };
+    };
 
+    //ColorChangeHandler sets the color of the "brush" of the tile painter
     const ColorChangeHandler = (color) => {
-        console.log("COLOR", color)
         setSelectedColor(color);
       };
-
-
 
     return (
         <div className="mappage-container">
@@ -535,7 +538,6 @@ const WorldBuilderPage = ({
                     <div className="colorbutton-container">
                         <Button
                             variant={inColorMode ? "primary":"secondary"}
-
                             onClick={ColorModeToggleHandler}
                         >
                             {inColorMode ? "COLOR MODE: ON": "COLOR MODE: OFF" }
