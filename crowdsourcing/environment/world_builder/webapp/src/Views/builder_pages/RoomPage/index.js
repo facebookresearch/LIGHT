@@ -129,7 +129,8 @@ const RoomPage = ({
         let updatedNodes = {...nodes, [id]:update}
         let updatedWorld ={...selectedWorld, nodes:updatedNodes}
         dispatch(updateSelectedWorld(updatedWorld));
-    }
+    };
+
     //Removes Character from selectedWorld state
     const deleteCharacter = (id)=>{
         let unupdatedWorld = selectedWorld;
@@ -138,40 +139,39 @@ const RoomPage = ({
         let updatedNodes = delete nodes[id];
         let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
-    }
+    };
+
     //OBJECTS
     const addObject = (obj)=>{
         let unupdatedWorld = selectedWorld;
         let {objects, nodes } = unupdatedWorld;
         let formattedObjectId = obj.node_id;
         while(objects.indexOf(formattedObjectId)>=0){
-            console.log("WHILE LOOP RUNNING", objects.indexOf(formattedObjectId)>=0);
             let splitFormattedObjectId = formattedObjectId.split("_");
-            console.log("FORMATTEDID:  ", splitFormattedObjectId);
-            let idNumber = splitFormattedObjectId[splitFormattedObjectId.length-1]
-            console.log("idNumber:  ", idNumber);
+            let idNumber = splitFormattedObjectId[splitFormattedObjectId.length-1];
             idNumber = (idNumber*1)+1;
-            idNumber = idNumber.toString()
-            console.log("idNumber+:  ", idNumber);
-            splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber
-            console.log("splitFormattedObjectId+:  ", splitFormattedObjectId);
+            idNumber = idNumber.toString();
+            splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
             formattedObjectId = splitFormattedObjectId.join("_")
-            console.log("FORMATTEDIDEND:  ", formattedObjectId);
-        }
+        };
         let updatedObjectData = {...obj, node_id:formattedObjectId, container_node:{target_id:selectedRoom.node_id}};
-        let updatedObjects = [...objects, formattedObjectId]
-        let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}}
-        let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedRoom.node_id]: updatedRoomData}
-        let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes}
+        let updatedObjects = [...objects, formattedObjectId];
+        let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}};
+        let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedRoom.node_id]: updatedRoomData};
+        let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
-    }
+    };
+
+
     const updateObject = (id, update) =>{
         let unupdatedWorld = selectedWorld;
         let {nodes } = unupdatedWorld;
-        let updatedNodes = {...nodes, [id]:update}
-        let updatedWorld ={...selectedWorld, nodes:updatedNodes}
+        let updatedNodes = {...nodes, [id]:update};
+        let updatedWorld ={...selectedWorld, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
-    }
+    };
+
+
     const deleteObject = (id)=>{
         let unupdatedWorld = selectedWorld;
         let {objects, nodes } = unupdatedWorld;
@@ -179,7 +179,7 @@ const RoomPage = ({
         let updatedNodes = delete nodes[id];
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
-    }
+    };
 
 
     /* ------ LOCAL STATE ------ */
