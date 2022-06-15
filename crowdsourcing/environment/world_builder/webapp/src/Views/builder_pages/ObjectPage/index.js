@@ -207,111 +207,7 @@ const ObjectPage = ({
     dispatch(updateCharacters(CharacterNodes))
   }
 
-  /* --- LIFE CYCLE FUNCTIONS --- */
-  useEffect(() => {
-    let updatedObjectData = currentLocation;
-    let updatedParentData = taskRouterHistory[taskRouterHistory.length - 1]
-    console.log("OBJ ID:  ", updatedObjectData)
-    console.log("PARENT ID:  ", updatedParentData)
-    if (updatedObjectData) {
-      setObjectId(updatedObjectData.id)
-    }
-    if (updatedParentData) {
-      setParentId(updatedParentData.id)
-    }
-    console.log("WORLD DRAFT:  ", worldDraft)
-    dispatch(updateSelectedWorld(worldDraft))
-  }, [currentLocation])
 
-  useEffect(() => {
-    dispatch(updateSelectedWorld(worldDraft))
-  }, [worldDraft])
-
-  useEffect(() => {
-    if (selectedWorld) {
-      console.log("SELECTED WORLD:  ", selectedWorld)
-      worldNodeSorter(selectedWorld)
-    }
-  }, [selectedWorld])
-
-  useEffect(() => {
-    if (selectedWorld) {
-      let { nodes } = selectedWorld
-      let currentRoom = nodes[parentId]
-      console.log("CURRENT PARENT", currentRoom)
-      if (currentRoom) {
-        dispatch(selectRoom(currentRoom))
-      }
-    }
-  }, [selectedWorld])
-
-  useEffect(() => {
-    if (selectedRoom) {
-      let { nodes } = selectedWorld
-      let currentObject = nodes[objectId]
-      console.log("CURRENT OBJECT", currentObject)
-      if (currentObject) {
-        dispatch(selectObject(currentObject))
-      };
-    }
-  }, [selectedRoom])
-
-  useEffect(() => {
-    if (selectedWorld) {
-      const { nodes } = selectedWorld;
-      let ObjectNodes = [];
-      if (selectedObject) {
-
-        const {
-          contain_size,
-          contained_nodes,
-          desc,
-          extra_desc,
-          name,
-          name_prefix,
-          node_id,
-          plural,
-          size,
-          value
-        } = selectedObject;
-
-        setObjectName(name)
-        setObjectDesc(desc)
-        if (!name_prefix) {
-          setObjectPrefix("a")
-        } else {
-          setObjectPrefix(name_prefix)
-        }
-        if (plural === undefined && (name[name.length - 1] === "s")) {
-          let endsWithSDefaultPluralName = `${name}es`
-          setObjectPluralName(endsWithSDefaultPluralName)
-        } else if (plural === undefined) {
-          let defaultPluralName = `${name}s`
-          setObjectPluralName(defaultPluralName)
-        } else {
-          setObjectPluralName(plural)
-        }
-        setObjectSize(size)
-        setObjectValue(value)
-
-        const roomContentNodesKeys = Object.keys(contained_nodes)
-        roomContentNodesKeys.map((nodeKey) => {
-          let WorldNode = nodes[nodeKey];
-          if (WorldNode.classes) {
-            let NodeClass = WorldNode.classes[0]
-            switch (NodeClass) {
-              case "object":
-                ObjectNodes.push(WorldNode);
-                break;
-              default:
-                break;
-            }
-          }
-        })
-        setContainedObjects(ObjectNodes)
-      }
-    }
-  }, [selectedObject])
 
   //HANDLERS
   const ObjectNameChangeHandler = (e) => {
@@ -434,6 +330,113 @@ const ObjectPage = ({
 
   //CRUMBS
   const crumbs = [...taskRouterHistory, currentLocation];
+
+  /* --- LIFE CYCLE FUNCTIONS --- */
+  useEffect(() => {
+    let updatedObjectData = currentLocation;
+    let updatedParentData = taskRouterHistory[taskRouterHistory.length - 1]
+    console.log("OBJ ID:  ", updatedObjectData)
+    console.log("PARENT ID:  ", updatedParentData)
+    if (updatedObjectData) {
+      setObjectId(updatedObjectData.id)
+    }
+    if (updatedParentData) {
+      setParentId(updatedParentData.id)
+    }
+    console.log("WORLD DRAFT:  ", worldDraft)
+    dispatch(updateSelectedWorld(worldDraft))
+  }, [currentLocation])
+
+  useEffect(() => {
+    dispatch(updateSelectedWorld(worldDraft))
+  }, [worldDraft])
+
+  useEffect(() => {
+    if (selectedWorld) {
+      console.log("SELECTED WORLD:  ", selectedWorld)
+      worldNodeSorter(selectedWorld)
+    }
+  }, [selectedWorld])
+
+  useEffect(() => {
+    if (parentId) {
+      let { nodes } = selectedWorld
+      let currentRoom = nodes[parentId]
+      console.log("CURRENT PARENT", currentRoom)
+      if (currentRoom) {
+        dispatch(selectRoom(currentRoom))
+      }
+    }
+  }, [parentId])
+
+  useEffect(() => {
+    if (objectId) {
+      let { nodes } = selectedWorld
+      let currentObject = nodes[objectId]
+      console.log("CURRENT OBJECT", currentObject)
+      if (currentObject) {
+        dispatch(selectObject(currentObject))
+      };
+    }
+  }, [objectId])
+
+  useEffect(() => {
+    if (selectedWorld) {
+      const { nodes } = selectedWorld;
+      let ObjectNodes = [];
+      if (selectedObject) {
+
+        const {
+          contain_size,
+          contained_nodes,
+          desc,
+          extra_desc,
+          name,
+          name_prefix,
+          node_id,
+          plural,
+          size,
+          value
+        } = selectedObject;
+
+        setObjectName(name)
+        setObjectDesc(desc)
+        if (!name_prefix) {
+          setObjectPrefix("a")
+        } else {
+          setObjectPrefix(name_prefix)
+        }
+        if (plural === undefined && (name[name.length - 1] === "s")) {
+          let endsWithSDefaultPluralName = `${name}es`
+          setObjectPluralName(endsWithSDefaultPluralName)
+        } else if (plural === undefined) {
+          let defaultPluralName = `${name}s`
+          setObjectPluralName(defaultPluralName)
+        } else {
+          setObjectPluralName(plural)
+        }
+        setObjectSize(size)
+        setObjectValue(value)
+
+        const roomContentNodesKeys = Object.keys(contained_nodes)
+        roomContentNodesKeys.map((nodeKey) => {
+          let WorldNode = nodes[nodeKey];
+          if (WorldNode.classes) {
+            let NodeClass = WorldNode.classes[0]
+            switch (NodeClass) {
+              case "object":
+                ObjectNodes.push(WorldNode);
+                break;
+              default:
+                break;
+            }
+          }
+        })
+        setContainedObjects(ObjectNodes)
+      }
+    }
+  }, [selectedObject])
+
   return (
     <Container>
       <BreadCrumbs
@@ -537,7 +540,7 @@ const ObjectPage = ({
                   <Col>
                     <TextButton
                       text={selectedObject.node_id ? "Save Changes" : "Create Object"}
-
+                      clickFunction={updateWorldsDraft}
                     />
                   </Col>
                   <Col>

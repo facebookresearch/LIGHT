@@ -62,7 +62,6 @@ const CharacterPage = ({
     const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
     const selectedWorld = useAppSelector((state) => state.playerWorld.selectedWorld);
     //ROOMS
-    const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
     const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
     //OBJECTS
     const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
@@ -120,7 +119,7 @@ const CharacterPage = ({
         let updatedWorld ={...selectedWorld, nodes:updatedNodes}
         dispatch(updateSelectedWorld(updatedWorld))
     }
-    //Removes Character from selectedWorld state
+    //Removes Current Character from selectedWorld state
     const deleteCharacter = (id)=>{
         let unupdatedWorld = selectedWorld;
         let {agents, nodes } = unupdatedWorld;
@@ -245,107 +244,6 @@ const CharacterPage = ({
         })
     }
 
-    /* --- LIFE CYCLE FUNCTIONS --- */
-
-    useEffect(()=>{
-        let updatedCharData = currentLocation;
-        let updatedRoomData = taskRouterHistory[taskRouterHistory.length-1]
-        console.log("CHAR ID:  ", updatedCharData)
-        console.log("ROOM ID:  ", updatedRoomData)
-        if(updatedCharData){
-            setCharId(updatedCharData.id)
-        }
-        if(updatedRoomData){
-            setRoomId(updatedRoomData.id)
-        }
-        console.log("WORLD DRAFT:  ", worldDraft)
-        dispatch(updateSelectedWorld(worldDraft))
-    },[currentLocation])
-
-    useEffect(()=>{
-        dispatch(updateSelectedWorld(worldDraft))
-    },[worldDraft])
-
-    useEffect(()=>{
-        if(selectedWorld){
-            console.log("SELECTED WORLD:  ", selectedWorld)
-            worldNodeSorter(selectedWorld)
-        }
-    },[selectedWorld])
-
-    useEffect(()=>{
-        if(selectedWorld){
-            let {nodes}= selectedWorld
-            console.log("SELECTED WORLD:  ", selectedWorld);
-            console.log("ROOM ID:  ", roomId)
-            let currentRoom = nodes[roomId]
-            console.log("CURRENT ROOM", currentRoom)
-            if(currentRoom){
-                dispatch(selectRoom(currentRoom))
-            }
-        }
-    },[selectedWorld])
-
-    useEffect(()=>{
-        if(selectedRoom){
-            let {nodes}= selectedWorld
-            let currentCharacter = nodes[charId]
-            console.log("CURRENT CHARACTER", currentCharacter)
-            if(currentCharacter){
-                dispatch(selectCharacter(currentCharacter))
-            };
-        };
-    },[selectedRoom])
-
-    useEffect(()=>{
-        if(selectedWorld){
-        const {nodes} = selectedWorld;
-        let ObjectNodes = [];
-            if(selectedCharacter){
-                const {
-                    contain_size,
-                    contained_nodes,
-                    desc,
-                    extra_desc,
-                    motivation,
-                    name,
-                    name_prefix,
-                    node_id,
-                    persona,
-                    prefix,
-                    size,
-                    aggression
-                }= selectedCharacter;
-                setCharacterName(name);
-                setCharacterDesc(desc);
-                if(!name_prefix){
-                    setCharacterPrefix("a");
-                }else {
-                    setCharacterPrefix(name_prefix);
-                }
-                setCharacterPersona(persona);
-                setCharacterMotivation(motivation);
-                setCharacterAggression(aggression);
-                setCharacterSize(size);
-                const roomContentNodesKeys = Object.keys(contained_nodes)
-                roomContentNodesKeys.map((nodeKey)=>{
-                    let WorldNode = nodes[nodeKey];
-                    if(WorldNode.classes){
-                    let NodeClass = WorldNode.classes[0]
-                    switch(NodeClass) {
-                        case "object":
-                        ObjectNodes.push(WorldNode);
-                        break;
-                        default:
-                        break;
-                        }
-                    }
-                })
-                setContainedObjects(ObjectNodes)
-            }
-        }
-    }, [selectedCharacter])
-
     //UTILS
     const worldNodeSorter = (world)=>{
         let CharacterNodes = [];
@@ -452,148 +350,253 @@ const CharacterPage = ({
 
     //CRUMBS
     const crumbs= [...taskRouterHistory, currentLocation];
+    /* --- LIFE CYCLE FUNCTIONS --- */
 
-  return (
-    <Container>
-        <Row>
-            <BreadCrumbs
-                crumbs={crumbs}
-            />
-        </Row>
-            {
-            selectedCharacter
-            ?
-            <>
-            <Row>
-                <Col>
-                    <Row>
-                        <TextInput
-                            label="Character Name"
-                            value={characterName}
-                            changeHandler={CharacterNameChangeHandler}
-                        />
-                    </Row>
-                    <Row>
-                        <GenerateForms
-                            label="Character Description:"
-                            value={characterDesc}
-                            changeHandler={CharacterDescChangeHandler}
-                            generateName={"Generate Description"}
-                            clickFunction={CommonSenseDescribeCharacter}
-                        />
-                    </Row>
-                    <Row>
-                        <GenerateForms
-                            label="Character Persona:"
-                            value={characterPersona}
-                            changeHandler={CharacterPersonaChangeHandler}
-                            generateName={"Generate Persona"}
-                            clickFunction={CommonSenseCharacterPersona}
-                        />
-                    </Row>
-                    <Row>
-                        <Button onClick={CommonSenseCharacterContents} variant="primary">
-                            Generate Character Contents
-                        </Button>
-                    </Row>
-                    <Row>
-                        <TypeAheadTokenizerForm
-                            formLabel="Character Carrying"
-                            tokenOptions={worldObjects}
-                            sectionName={"objects"}
-                            roomId={selectedRoom.node_id}
-                            tokens={containedObjects}
-                            tokenType={'objects'}
-                            onTokenAddition={addObject}
-                            onTokenRemoval={deleteObject}
-                            builderRouterNavigate={builderRouterNavigate}
-                        />
-                    </Row>
-                    <Row>
-                        <TypeAheadTokenizerForm
-                            formLabel="Wielding/Wearing"
-                            tokenOptions={worldObjects}
-                            sectionName={"objects"}
-                            roomId={selectedRoom.node_id}
-                            tokens={containedObjects}
-                            tokenType={'objects'}
-                            onTokenAddition={addObject}
-                            onTokenRemoval={deleteObject}
-                            builderRouterNavigate={builderRouterNavigate}
-                        />
-                    </Row>
-                    <Row>
-                        <TextInput
-                            label="Motivation"
-                            value={selectedCharacter.mission}
-                        />
-                    </Row>
-                </Col>
-                <Col>
-                    <Row>
-                        <h5>In-Game appearance:</h5>
-                    </Row>
-                    <InlineTextInsertForm
-                        formText={selectedCharacter.name}
-                        value={characterPrefix}
-                        changeHandler={CharacterPrefixChangeHandler}
-                        textPlacement="after"
-                    />
-                    <Row>
-                        <h5>Attributes</h5>
-                    </Row>
-                    <Row>
+    useEffect(()=>{
+        let updatedCharData = currentLocation;
+        let updatedRoomData = taskRouterHistory[taskRouterHistory.length-1];
+        console.log("CHAR ID:  ", updatedCharData)
+        console.log("ROOM ID:  ", updatedRoomData)
+        if(updatedCharData){
+            setCharId(updatedCharData.id);
+        }
+        if(updatedRoomData){
+            setRoomId(updatedRoomData.id);
+        }
+        console.log("WORLD DRAFT:  ", worldDraft);
+        dispatch(updateSelectedWorld(worldDraft));
+        console.log("CURRENT LOCATION USE EFFECT")
+    },[currentLocation])
 
-                    </Row>
-                    <Row>
-                        <Slider
-                            label="Aggression"
-                            maxLabel="Angry"
-                            minLabel="Peaceful"
-                            value={characterAggression}
-                            min={0}
-                            max={100}
-                            changeHandler={CharacterAggressionChangeHandler}
-                        />
-                    </Row>
-                    <Row>
-                        <Slider
-                            label="Size"
-                            maxLabel="Big"
-                            minLabel="Little"
-                            value={characterSize}
-                            min={0}
-                            max={100}
-                            changeHandler={CharacterSizeChangeHandler}
-                        />
-                    </Row>
-                </Col>
-                <Row>
-                <Col>
-                    <Row>
-                    <Col>
-                        <TextButton
-                            text={selectedCharacter.node_id ? "Save Changes" : "Create Character" }
+    useEffect(()=>{
+        dispatch(updateSelectedWorld(worldDraft))
+        console.log("WORLD DRAFT USE EFFECT")
+    },[worldDraft])
 
-                        />
-                    </Col>
-                    <Col>
-                        <TextButton
-                            text={"Delete Character"}
+    useEffect(()=>{
+        if(selectedWorld){
+            console.log("SELECTED WORLD:  ", selectedWorld)
+            worldNodeSorter(selectedWorld)
+        }
+        console.log("SELECTED WORLD USE EFFECT 1")
+    },[selectedWorld])
 
-                        />
-                    </Col>
-                    </Row>
-                </Col>
-                <Col/>
-                </Row>
-            </Row>
-            </>
-            :
-            <div/>
+    useEffect(()=>{
+        if(roomId){
+            let {nodes}= selectedWorld
+            console.log("SELECTED WORLD:  ", selectedWorld);
+            console.log("ROOM ID:  ", roomId)
+            let currentRoom = nodes[roomId]
+            console.log("CURRENT ROOM", currentRoom)
+            if(currentRoom){
+                dispatch(selectRoom(currentRoom))
             }
-    </Container>
-  );
-}
+        }
+        console.log("SELECTED ROOM USE EFFECT 2")
+    },[roomId])
 
+    useEffect(()=>{
+        if(charId){
+            let {nodes}= selectedWorld
+            let currentCharacter = nodes[charId]
+            console.log("CURRENT CHARACTER", currentCharacter)
+            if(currentCharacter){
+                dispatch(selectCharacter(currentCharacter))
+            };
+        };
+        console.log("SELECTED CHARACTER USE EFFECT")
+    },[charId])
+
+    useEffect(()=>{
+        if(selectedWorld){
+        const {nodes} = selectedWorld;
+        let ObjectNodes = [];
+            if(selectedCharacter){
+                const {
+                    contain_size,
+                    contained_nodes,
+                    desc,
+                    extra_desc,
+                    motivation,
+                    name,
+                    name_prefix,
+                    node_id,
+                    persona,
+                    prefix,
+                    size,
+                    aggression
+                }= selectedCharacter;
+                setCharacterName(name);
+                setCharacterDesc(desc);
+                if(!name_prefix){
+                    setCharacterPrefix("a");
+                }else {
+                    setCharacterPrefix(name_prefix);
+                }
+                setCharacterPersona(persona);
+                setCharacterMotivation(motivation);
+                setCharacterAggression(aggression);
+                setCharacterSize(size);
+                const roomContentNodesKeys = Object.keys(contained_nodes)
+                roomContentNodesKeys.map((nodeKey)=>{
+                    let WorldNode = nodes[nodeKey];
+                    if(WorldNode.classes){
+                    let NodeClass = WorldNode.classes[0]
+                    switch(NodeClass) {
+                        case "object":
+                        ObjectNodes.push(WorldNode);
+                        break;
+                        default:
+                        break;
+                        }
+                    }
+                })
+                setContainedObjects(ObjectNodes)
+            }
+        }
+        console.log("SELECTED CHARACTER USE EFFECT")
+    }, [selectedCharacter])
+
+    return (
+        <Container>
+            <Row>
+                <BreadCrumbs
+                    crumbs={crumbs}
+                />
+            </Row>
+                {
+                selectedCharacter
+                ?
+                <>
+                <Row>
+                    <Col>
+                        <Row>
+                            <TextInput
+                                label="Character Name"
+                                value={characterName}
+                                changeHandler={CharacterNameChangeHandler}
+                            />
+                        </Row>
+                        <Row>
+                            <GenerateForms
+                                label="Character Description:"
+                                value={characterDesc}
+                                changeHandler={CharacterDescChangeHandler}
+                                generateName={"Generate Description"}
+                                clickFunction={CommonSenseDescribeCharacter}
+                            />
+                        </Row>
+                        <Row>
+                            <GenerateForms
+                                label="Character Persona:"
+                                value={characterPersona}
+                                changeHandler={CharacterPersonaChangeHandler}
+                                generateName={"Generate Persona"}
+                                clickFunction={CommonSenseCharacterPersona}
+                            />
+                        </Row>
+                        <Row>
+                            <Button onClick={CommonSenseCharacterContents} variant="primary">
+                                Generate Character Contents
+                            </Button>
+                        </Row>
+                        <Row>
+                            <TypeAheadTokenizerForm
+                                formLabel="Character Carrying"
+                                tokenOptions={worldObjects}
+                                sectionName={"objects"}
+                                roomId={selectedRoom.node_id}
+                                tokens={containedObjects}
+                                tokenType={'objects'}
+                                onTokenAddition={addObject}
+                                onTokenRemoval={deleteObject}
+                                builderRouterNavigate={builderRouterNavigate}
+                            />
+                        </Row>
+                        <Row>
+                            <TypeAheadTokenizerForm
+                                formLabel="Wielding/Wearing"
+                                tokenOptions={worldObjects}
+                                sectionName={"objects"}
+                                roomId={selectedRoom.node_id}
+                                tokens={containedObjects}
+                                tokenType={'objects'}
+                                onTokenAddition={addObject}
+                                onTokenRemoval={deleteObject}
+                                builderRouterNavigate={builderRouterNavigate}
+                            />
+                        </Row>
+                        <Row>
+                            <TextInput
+                                label="Motivation"
+                                value={selectedCharacter.mission}
+                            />
+                        </Row>
+                    </Col>
+                    <Col>
+                        <Row>
+                            <h5>In-Game appearance:</h5>
+                        </Row>
+                        <InlineTextInsertForm
+                            formText={selectedCharacter.name}
+                            value={characterPrefix}
+                            changeHandler={CharacterPrefixChangeHandler}
+                            textPlacement="after"
+                        />
+                        <Row>
+                            <h5>Attributes</h5>
+                        </Row>
+                        <Row>
+
+                        </Row>
+                        <Row>
+                            <Slider
+                                label="Aggression"
+                                maxLabel="Angry"
+                                minLabel="Peaceful"
+                                value={characterAggression}
+                                min={0}
+                                max={100}
+                                changeHandler={CharacterAggressionChangeHandler}
+                            />
+                        </Row>
+                        <Row>
+                            <Slider
+                                label="Size"
+                                maxLabel="Big"
+                                minLabel="Little"
+                                value={characterSize}
+                                min={0}
+                                max={100}
+                                changeHandler={CharacterSizeChangeHandler}
+                            />
+                        </Row>
+                    </Col>
+                    <Row>
+                    <Col>
+                        <Row>
+                        <Col>
+                            <TextButton
+                                text={selectedCharacter.node_id ? "Save Changes" : "Create Character" }
+                                clickFunction={updateWorldDraft}
+                            />
+                        </Col>
+                        <Col>
+                            <TextButton
+                                text={"Delete Character"}
+
+                            />
+                        </Col>
+                        </Row>
+                    </Col>
+                    <Col/>
+                    </Row>
+                </Row>
+                </>
+                :
+                <div/>
+                }
+        </Container>
+    );
+}
 export default CharacterPage;

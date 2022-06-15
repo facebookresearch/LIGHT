@@ -195,9 +195,7 @@ const RoomPage = ({
 
     //UTILS
     const containedNodesRemover = (nodeId)=>{
-
         console.log("RECURSIVE CONTAINED NODES REMOVER:  ", nodeId)
-
         let updatedWorld = selectedWorld;
         let {nodes} = updatedWorld;
 
@@ -546,8 +544,8 @@ const RoomPage = ({
             <Row>
               <Col>
                 <TextButton
-                  text={selectedRoom.node_id ? "Save Changes" : "Create Object" }
-
+                    text={selectedRoom.node_id ? "Save Changes" : "Create Object" }
+                    clickFunction={updateWorldDraft}
                 />
               </Col>
               <Col>
