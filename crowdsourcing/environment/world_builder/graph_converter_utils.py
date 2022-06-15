@@ -214,7 +214,9 @@ def modify_room_attrs(input_graph, room_name, attr_name, attr_value):
 
 def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wielded, worn):
     for o in carried:
-        o_id = o + "_x"
+        if type(o) is str:
+            o = {'name':o}
+        o_id = o['name'] + "_x"
         new_node = {
             "agent": False,
             "classes": ["object"],
@@ -226,7 +228,7 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
             },
             "db_id": None,
             "dead": False,
-            "desc": '',
+            "desc": o.get('description', ''),
             "drink": False,
             "equipped": None,
             "food": False,
@@ -251,10 +253,14 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
             "wieldable": False,
             "from_model": True
         }
-        input_graph['objects'].append(new_node)
+        # input_graph['objects'].append(new_node)
+        input_graph['objects'].append(o_id)
+        input_graph['nodes'][o_id] = new_node
     
     for o in wielded:
-        o_id = o + "_x"
+        if type(o) is str:
+            o = {'name':o}
+        o_id = o['name'] + "_x"
         new_node = {
             "agent": False,
             "classes": ["object"],
@@ -266,7 +272,7 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
             },
             "db_id": None,
             "dead": False,
-            "desc": '',
+            "desc": o.get('description', ''),
             "drink": False,
             "equipped": None,
             "food": False,
@@ -291,10 +297,14 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
             "wieldable": True,
             "from_model": True
         }
-        input_graph['objects'].append(new_node)
+        # input_graph['objects'].append(new_node)
+        input_graph['objects'].append(o_id)
+        input_graph['nodes'][o_id] = new_node
 
     for o in worn:
-        o_id = o + "_x"
+        if type(o) is str:
+            o = {'name':o}
+        o_id = o['name'] + "_x"
         new_node = {
             "agent": False,
             "classes": ["object"],
@@ -306,7 +316,7 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
             },
             "db_id": None,
             "dead": False,
-            "desc": '',
+            "desc": o.get('description', ''),
             "drink": False,
             "equipped": None,
             "food": False,
@@ -331,7 +341,9 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
             "wieldable": False,
             "from_model": True
         }
-        input_graph['objects'].append(new_node)
+        # input_graph['objects'].append(new_node)
+        input_graph['objects'].append(o_id)
+        input_graph['nodes'][o_id] = new_node
     return input_graph
 
 def add_character_to_graph(input_graph, room_name, character_dict):
@@ -424,7 +436,9 @@ def add_object_secondary_objects_to_graph(input_graph, node_id, contained):
             "wieldable": False,
             "from_model": True
         }
-        input_graph['objects'].append(new_node)
+        input_graph['objects'].append(o_id)
+        input_graph['nodes'][o_id] = new_node
+        # input_graph['objects'].append(new_node)
     return input_graph
 
 def add_object_to_graph(input_graph, room_name, object_dict):

@@ -218,7 +218,7 @@ def find_item(existing_room_graph, target_id, item_type=None):
 
         item_list = existing_room_graph[primary_type]
         for _, item in enumerate(item_list):
-            if item.get("db_id", item["name"]) == target_id:
+            if item.get("db_id", item["name"]) == target_id or item['name'] == target_id:
                 return item
 
             # NOTE: to be changed once contained objects are complete dicts with attributes

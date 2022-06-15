@@ -19,6 +19,7 @@ import GenerateForms from "../../../components/world_builder/FormFields/Generate
 import InlineTextInsertForm from "../../../components/world_builder/FormFields/InlineTextInsertForm";
 import TextInput from "../../../components/world_builder/FormFields/TextInput";
 import TextButton from "../../../components/world_builder/Buttons/TextButton";
+import Button from 'react-bootstrap/Button';
 import Slider from "../../../components/world_builder/FormFields/Slider";
 import BreadCrumbs from "../../../components/world_builder/BreadCrumbs";
 import TypeAheadTokenizerForm from "../../../components/world_builder/FormFields/TypeAheadTokenizer";
@@ -38,6 +39,18 @@ const CharacterPage = ({
     const [characterAggression, setCharacterAggression] = useState(0);
     const [characterSize, setCharacterSize] = useState(0);
     const [containedObjects, setContainedObjects] = useState([]);
+
+    let {
+        getRoomAttributes,
+        getRoomFill,
+        suggestRoomContents,
+        suggestCharacterContents,
+        suggestCharacterDescription,
+        suggestCharacterPersona,
+        suggestObjectContents,
+        getObjectFill,
+        getCharacterFill,
+    } = api;
 
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
@@ -152,6 +165,84 @@ const CharacterPage = ({
         let updatedNodes = delete nodes[id];
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
+    }
+
+    // COMMON SENSE DESCRIBE CHARACTER FUNCTION
+    const CommonSenseDescribeCharacter = ()=>{
+        let target_room = selectedRoom['node_id'];
+        let target_id = charId;
+        let nodes = {};
+        nodes[target_room] = selectedRoom;
+        for (let character of worldCharacters) {
+            nodes[character['node_id']] = character;
+        }
+        for (let object of worldObjects) {
+            nodes[object['node_id']] = object;
+        }
+        let agents = worldCharacters.map(c => c['node_id']);
+        let objects = worldObjects.map(c => c['node_id']);
+        let rooms = [target_room]
+        let room_graph = {nodes, agents, objects, rooms};
+        console.log("room graph");
+        console.log(room_graph);
+        console.log("selectedRoom");
+        console.log(target_room);
+        suggestCharacterDescription({target_room, room_graph, target_id}).then((result) => {
+            console.log("Finished describe character");
+            console.log(result);
+        })
+    }
+
+    // COMMON SENSE PERSONA CHARACTER FUNCTION
+    const CommonSenseCharacterPersona = ()=>{
+        let target_room = selectedRoom['node_id'];
+        let target_id = charId;
+        let nodes = {};
+        nodes[target_room] = selectedRoom;
+        for (let character of worldCharacters) {
+            nodes[character['node_id']] = character;
+        }
+        for (let object of worldObjects) {
+            nodes[object['node_id']] = object;
+        }
+        let agents = worldCharacters.map(c => c['node_id']);
+        let objects = worldObjects.map(c => c['node_id']);
+        let rooms = [target_room]
+        let room_graph = {nodes, agents, objects, rooms};
+        console.log("room graph");
+        console.log(room_graph);
+        console.log("selectedRoom");
+        console.log(target_room);
+        suggestCharacterPersona({target_room, room_graph, target_id}).then((result) => {
+            console.log("Finished persona character");
+            console.log(result);
+        })
+    }
+
+    // COMMON SENSE CONTENTS CHARACTER FUNCTION
+    const CommonSenseCharacterContents = ()=>{
+        let target_room = selectedRoom['node_id'];
+        let target_id = charId;
+        let nodes = {};
+        nodes[target_room] = selectedRoom;
+        for (let character of worldCharacters) {
+            nodes[character['node_id']] = character;
+        }
+        for (let object of worldObjects) {
+            nodes[object['node_id']] = object;
+        }
+        let agents = worldCharacters.map(c => c['node_id']);
+        let objects = worldObjects.map(c => c['node_id']);
+        let rooms = [target_room]
+        let room_graph = {nodes, agents, objects, rooms};
+        console.log("room graph");
+        console.log(room_graph);
+        console.log("selectedRoom");
+        console.log(target_room);
+        suggestCharacterContents({target_room, room_graph, target_id}).then((result) => {
+            console.log("Finished character contents");
+            console.log(result);
+        })
     }
 
     /* --- LIFE CYCLE FUNCTIONS --- */
@@ -387,6 +478,8 @@ const CharacterPage = ({
                             label="Character Description:"
                             value={characterDesc}
                             changeHandler={CharacterDescChangeHandler}
+                            generateName={"Generate Description"}
+                            clickFunction={CommonSenseDescribeCharacter}
                         />
                     </Row>
                     <Row>
@@ -394,7 +487,14 @@ const CharacterPage = ({
                             label="Character Persona:"
                             value={characterPersona}
                             changeHandler={CharacterPersonaChangeHandler}
+                            generateName={"Generate Persona"}
+                            clickFunction={CommonSenseCharacterPersona}
                         />
+                    </Row>
+                    <Row>
+                        <Button onClick={CommonSenseCharacterContents} variant="primary">
+                            Generate Character Contents
+                        </Button>
                     </Row>
                     <Row>
                         <TypeAheadTokenizerForm

@@ -37,7 +37,7 @@ from light.data_model.light_database import LIGHTDatabase
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 
-from build_room_data import ROOM_ID_TO_ITEMS
+from build_room_data import ALL_CHARACTERS, ALL_OBJECTS, ROOM_ID_TO_ITEMS
 import numpy as np
 from config import LIGHT_DB_PATH
 
@@ -125,11 +125,13 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         room_vectors = room_vectorizer.fit_transform(room_texts)
 
         obj_vectorizer = TfidfVectorizer(stop_words="english")
-        obj_texts = [obj["name"] + "\n" + obj['physical_description'] for obj in all_objects]
+        obj_texts = [obj["name"] + "\n" + obj['description'] for obj in ALL_OBJECTS]
+        # obj_texts = [obj["name"] + "\n" + obj['physical_description'] for obj in all_objects]
         obj_vectors = obj_vectorizer.fit_transform(obj_texts)
 
         char_vectorizer = TfidfVectorizer(stop_words="english")
-        char_texts = [char["name"] + "\n" + char['physical_description'] + "\n" + char["persona"] for char in all_chars]
+        # char_texts = [char["name"] + "\n" + char['physical_description'] + "\n" + char["persona"] for char in all_chars]
+        char_texts = [char["name"] + "\n" + char['desc'] + "\n" + char["persona"] for char in ALL_CHARACTERS]
         char_vectors = char_vectorizer.fit_transform(char_texts)
         print(f"SET UP VECTORS")
     
@@ -137,16 +139,18 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         item_text = item['name']
         vectorizer = obj_vectorizer
         type_vectors = obj_vectors
-        all_items = all_objects
+        # all_items = all_objects
+        all_items = ALL_OBJECTS
         if item_type == "object":
-            item_text += "\n" + item['physical_description']
+            item_text += "\n" + item.get('physical_description', '')
         elif item_type == "character":
-            item_text += "\n" + item['physical_description'] + "\n" + item['persona']
+            item_text += "\n" + item.get('desc', '') + "\n" + item.get('persona', '')
             vectorizer = char_vectorizer
             type_vectors = char_vectors
-            all_items = all_chars
+            # all_items = all_chars
+            all_items = ALL_CHARACTERS
         else:
-            item_text += "\n" + item['desc'] + "\n"
+            item_text += "\n" + item.get('desc') + "\n"
             vectorizer = room_vectorizer
             type_vectors = room_vectors
             all_items = all_rooms
@@ -290,6 +294,18 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         target_id = args["target_id"]
         if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
+            if db is not None:
+                print("using tfidf vectorizer to find similar character")
+                print(f"USING CHARACTER: ")
+                print(room_graph['nodes'][target_id])
+                most_similar = get_most_similar(room_graph['nodes'][target_id], "character")
+                print(most_similar)
+                similar_wearing = most_similar.get("wearing_objects", [])
+                similar_carrying = most_similar.get("carrying_objects", [])
+                similar_wielding = most_similar.get("wielding_objects", [])
+                
+                room_graph = add_character_secondary_objects_to_graph(room_graph, target_id, similar_carrying, similar_wielding, similar_wearing)
+
             return room_graph
         # Use `add_character_wearing`, `add_character_wielding`, `add_character_carrying`
         # to create three lists of suggestions
@@ -356,6 +372,197 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         room_graph['rooms'] = original_rooms
         return room_graph
 
+    def suggest_object_description(
+        _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
+    ):
+        room_graph = args["room_graph"]
+        target_room = args["target_room"]
+        target_id = args["target_id"]
+        if world_builder_agent is None or not USE_MODEL:
+            print("No world builder model found, path does not point to file")
+            if db is not None:
+                print("using tfidf vectorizer to find similar object")
+                print(f"USING OBJECT: ")
+                print(room_graph['nodes'][target_id])
+                most_similar = get_most_similar(room_graph['nodes'][target_id], "object")
+                print(most_similar)
+
+                new_description = most_similar["physical_description"]
+                
+                room_graph['nodes'][target_id]['desc'] = new_description
+                room_graph['nodes'][target_id]['from_retrieval'] = True
+            return room_graph
+        try:
+            room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
+            room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
+            room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
+
+            cur_room = target_room.replace(" ", "_")
+            original_rooms = room_graph['rooms']
+            room_graph['rooms'] = [cur_room]
+
+            target_id = args["target_id"]
+
+            target_name = target_id
+            for n, node in room_graph["nodes"].items():
+                if n == target_id:
+                    target_name = node['name']
+                    break
+            
+            graph = get_room_content_from_json(room_graph)
+
+            graph = world_builder_agent.add_object_description(
+                graph, target_name
+            )
+            print("OUTPUT GRAPH")
+            print(graph)
+            target_obj = None
+            for node in graph["objects"]:
+                if node['name'] == target_name:
+                    target_obj = node
+                    break
+            print(f"TARGET OBJ: {target_obj}")
+            room_graph['nodes'][target_id]['desc'] = target_obj['description']
+            room_graph['nodes'][target_id]['from_model'] = True
+            print(f"Model predicted desc: {target_obj['description']}")
+
+        except Exception as e:
+            print(f"Exception found:")
+            print(e)
+            print("Returning room graph at current stage")
+            pass
+        # final step, fix the room list
+        room_graph['rooms'] = original_rooms
+        return room_graph
+    
+    def suggest_character_description(
+        _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
+    ):
+        room_graph = args["room_graph"]
+        target_room = args["target_room"]
+        target_id = args["target_id"]
+        if world_builder_agent is None or not USE_MODEL:
+            print("No world builder model found, path does not point to file")
+            if db is not None:
+                print("using tfidf vectorizer to find similar character")
+                print(f"USING CHARACTER: ")
+                print(room_graph['nodes'][target_id])
+                most_similar = get_most_similar(room_graph['nodes'][target_id], "character")
+                print(most_similar)
+
+                new_description = most_similar["physical_description"]
+                new_persona = most_similar["persona"]
+                # print(f"new desc: {new_description}")
+                # print(f"persona: {new_persona}")
+                room_graph['nodes'][target_id]['desc'] = new_description
+                room_graph['nodes'][target_id]['from_retrieval'] = True
+            return room_graph
+        try:
+            room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
+            room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
+            room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
+
+            cur_room = target_room.replace(" ", "_")
+            original_rooms = room_graph['rooms']
+            room_graph['rooms'] = [cur_room]
+
+            target_id = args["target_id"]
+
+            target_name = target_id
+            for n, node in room_graph["nodes"].items():
+                if n == target_id:
+                    target_name = node['name']
+                    break
+            
+            graph = get_room_content_from_json(room_graph)
+
+            graph = world_builder_agent.add_character_description(
+                graph, target_name
+            )
+            print("OUTPUT GRAPH")
+            print(graph)
+            target_char = None
+            for node in graph["characters"]:
+                if node['name'] == target_name:
+                    target_char = node
+                    break
+            print(f"TARGET CHAR: {target_char}")
+            room_graph['nodes'][target_id]['desc'] = target_char['desc']
+            room_graph['nodes'][target_id]['from_model'] = True
+            print(f"Model predicted desc: {target_char['desc']}")
+
+        except Exception as e:
+            print(f"Exception found:")
+            print(e)
+            print("Returning room graph at current stage")
+            pass
+        # final step, fix the room list
+        room_graph['rooms'] = original_rooms
+        return room_graph
+
+    def suggest_character_persona(
+        _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
+    ):
+        room_graph = args["room_graph"]
+        target_room = args["target_room"]
+        target_id = args["target_id"]
+        if world_builder_agent is None or not USE_MODEL:
+            print("No world builder model found, path does not point to file")
+            if db is not None:
+                print("using tfidf vectorizer to find similar character")
+                print(f"USING CHARACTER: ")
+                print(room_graph['nodes'][target_id])
+                most_similar = get_most_similar(room_graph['nodes'][target_id], "character")
+                print(most_similar)
+                new_persona = most_similar["persona"]
+                # print(f"new desc: {new_description}")
+                # print(f"persona: {new_persona}")
+                room_graph['nodes'][target_id]['persona'] = new_persona
+                room_graph['nodes'][target_id]['from_retrieval'] = True
+            return room_graph
+        try:
+            room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
+            room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
+            room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
+
+            cur_room = target_room.replace(" ", "_")
+            original_rooms = room_graph['rooms']
+            room_graph['rooms'] = [cur_room]
+
+            target_id = args["target_id"]
+
+            target_name = target_id
+            for n, node in room_graph["nodes"].items():
+                if n == target_id:
+                    target_name = node['name']
+                    break
+            
+            graph = get_room_content_from_json(room_graph)
+
+            graph = world_builder_agent.add_character_persona(
+                graph, target_name
+            )
+            print("OUTPUT GRAPH")
+            print(graph)
+            target_char = None
+            for node in graph["characters"]:
+                if node['name'] == target_name:
+                    target_char = node
+                    break
+            print(f"TARGET CHAR: {target_char}")
+            room_graph['nodes'][target_id]['persona'] = target_char['persona']
+            room_graph['nodes'][target_id]['from_model'] = True
+            print(f"Model predicted persona: {target_char['persona']}")
+
+        except Exception as e:
+            print(f"Exception found:")
+            print(e)
+            print("Returning room graph at current stage")
+            pass
+        # final step, fix the room list
+        room_graph['rooms'] = original_rooms
+        return room_graph
+
     def suggest_object_contents(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
     ):
@@ -365,7 +572,15 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         target_id = args["target_id"]
         if world_builder_agent is None:
             print("No world builder model found, path does not point to file")
-            return room_graph
+            if db is not None:
+                print("using tfidf vectorizer to find similar character")
+                print(f"USING CHARACTER: ")
+                print(room_graph['nodes'][target_id])
+                most_similar = get_most_similar(room_graph['nodes'][target_id], "object")
+                print(most_similar)
+                similar_contained = most_similar.get("containing_objects", [])
+                
+                room_graph = add_object_secondary_objects_to_graph(room_graph, target_id, similar_contained)
         try:    
             room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
             room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
@@ -480,8 +695,11 @@ def main(operator: Operator, cfg: DictConfig) -> None:
 
     function_registry = {
         "suggest_room_contents": suggest_room_contents,
+        "suggest_character_description": suggest_character_description,
+        "suggest_character_persona": suggest_character_persona,
         "suggest_character_contents": suggest_character_contents,
         "suggest_object_contents": suggest_object_contents,
+        "suggest_object_description": suggest_object_description,
         "suggest_room": suggest_room,
         "fill_object": fill_object,
         "fill_character": fill_character,
