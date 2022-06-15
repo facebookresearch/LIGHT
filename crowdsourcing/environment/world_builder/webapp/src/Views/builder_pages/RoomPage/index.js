@@ -97,7 +97,7 @@ const RoomPage = ({
         // delete updatedNodes[roomId];
         // updatedWorld ={...updatedWorld, rooms: updatedRooms, nodes:updatedNodes};
         dispatch(setWorldDraft(updatedWorld))
-        builderRouterNavigate("/")
+        builderRouterNavigate("/map")
 }
 
     //CHARACTERS
@@ -105,30 +105,23 @@ const RoomPage = ({
     const addCharacter = (char)=>{
         let unupdatedWorld = selectedWorld;
         let {agents, nodes } = unupdatedWorld;
-        console.log("CHARACTER BEING ADDED DATA", char)
         let formattedAgentId = char.node_id;
-
         while(agents.indexOf(formattedAgentId)>=0){
-            console.log("WHILE LOOP RUNNING",agents.indexOf(formattedAgentId)>=0);
             let splitFormattedAgentId = formattedAgentId.split("_");
-            console.log("FORMATTEDID:  ", splitFormattedAgentId);
             let idNumber = splitFormattedAgentId[splitFormattedAgentId.length-1]
-            console.log("idNumber:  ", idNumber);
             idNumber = (idNumber*1)+1;
-            idNumber = idNumber.toString()
-            console.log("idNumber+:  ", idNumber);
-            splitFormattedAgentId[splitFormattedAgentId.length-1] = idNumber
-            console.log("splitFormattedAgentId+:  ", splitFormattedAgentId);
+            idNumber = idNumber.toString();
+            splitFormattedAgentId[splitFormattedAgentId.length-1] = idNumber;
             formattedAgentId = splitFormattedAgentId.join("_")
-            console.log("FORMATTEDIDEND:  ", formattedAgentId);
         }
         let updatedCharacterData = {...char, node_id:formattedAgentId};
         let updatedAgents = [...agents, formattedAgentId];
-        let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedAgentId]:{target_id: formattedAgentId}}}
-        let updatedNodes = {...nodes, [formattedAgentId]:updatedCharacterData, [selectedRoom.node_id]: updatedRoomData}
-        let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes}
+        let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedAgentId]:{target_id: formattedAgentId}}};
+        let updatedNodes = {...nodes, [formattedAgentId]:updatedCharacterData, [selectedRoom.node_id]: updatedRoomData};
+        let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
-    }
+    };
+
     //Updates Character in selectedWorld state
     const updateCharacter = (id, update) =>{
         let unupdatedWorld = selectedWorld;

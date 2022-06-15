@@ -48,9 +48,12 @@ const BasicEditRoom = ({
     const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
     //WORLDS
     const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
+    //ROOMS
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
     const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
+    //CHARACTERS
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
+    //OBJECTS
     const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
     /* ------ REDUX ACTIONS ------ */
 

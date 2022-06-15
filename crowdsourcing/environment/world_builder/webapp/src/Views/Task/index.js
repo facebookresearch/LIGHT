@@ -21,16 +21,19 @@ const App = ({
   api,
   handleSubmit
 })=>{
-  /* ------ REDUX STATE ------ */
-  const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
-
-  /*---------------LOCAL STATE----------------*/
-
-  // TODO I'm not sure what the right call is for replacing the router
-  // to work with the 4 intended views
+  /* ------ LOCAL STATE ------  */
   const [workerComments, setWorkerComments] = useState("");
   const [showInstructions, setShowInstructions] = useState(false);
   const [show, setShow] = useState(false);
+  /* ------ REDUX STATE ------ */
+  //WORLDS
+  const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
+  //ROOMS
+  const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
+  //CHARACTERS
+  const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
+  //OBJECTS
+  const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
   // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();
   /* ----REDUX ACTIONS---- */
@@ -99,6 +102,9 @@ const App = ({
         buttonFunction={OpenModal}
         toggleFunction={ToggleInstructionsModal}
         toggleValue={showInstructions}
+        roomCount={worldRooms.length}
+        charCount={worldCharacters.length}
+        objectCount={worldObjects.length}
       />
       <div className="builder-container">
         <BuilderRouter api={api} />

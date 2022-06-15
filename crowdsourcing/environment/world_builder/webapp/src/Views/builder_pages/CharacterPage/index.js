@@ -122,33 +122,29 @@ const CharacterPage = ({
         let {objects, nodes } = unupdatedWorld;
         let formattedObjectId = obj.node_id;
         while(objects.indexOf(formattedObjectId)>=0){
-            console.log("WHILE LOOP RUNNING", objects.indexOf(formattedObjectId)>=0);
             let splitFormattedObjectId = formattedObjectId.split("_");
-            console.log("FORMATTEDID:  ", splitFormattedObjectId);
-            let idNumber = splitFormattedObjectId[splitFormattedObjectId.length-1]
-            console.log("idNumber:  ", idNumber);
+            let idNumber = splitFormattedObjectId[splitFormattedObjectId.length-1];
             idNumber = (idNumber*1)+1;
-            idNumber = idNumber.toString()
-            console.log("idNumber+:  ", idNumber);
-            splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber
-            console.log("splitFormattedObjectId+:  ", splitFormattedObjectId);
-            formattedObjectId = splitFormattedObjectId.join("_")
-            console.log("FORMATTEDIDEND:  ", formattedObjectId);
-        }
+            idNumber = idNumber.toString();
+            splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
+            formattedObjectId = splitFormattedObjectId.join("_");
+        };
         let updatedObjectData = {...obj, node_id:formattedObjectId, container_node:{target_id:selectedRoom.node_id}};
-        let updatedObjects = [...objects, formattedObjectId]
-        let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}}
-        let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedRoom.node_id]: updatedRoomData}
-        let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
+        let updatedObjects = [...objects, formattedObjectId];
+        let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}};
+        let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedRoom.node_id]: updatedRoomData};
+        let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
+        dispatch(updateSelectedWorld(updatedWorld));
     }
     const updateObject = (id, update) =>{
         let unupdatedWorld = selectedWorld;
         let {nodes } = unupdatedWorld;
-        let updatedNodes = {...nodes, [id]:update}
-        let updatedWorld ={...selectedWorld, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
-    }
+        let updatedNodes = {...nodes, [id]:update};
+        let updatedWorld ={...selectedWorld, nodes:updatedNodes};
+        dispatch(updateSelectedWorld(updatedWorld));
+    };
+
+
     const deleteObject = (id)=>{
         let unupdatedWorld = selectedWorld;
         let {objects, nodes } = unupdatedWorld;
@@ -292,72 +288,76 @@ const CharacterPage = ({
 
 
     //HANDLERS
+    //FORM CHANGE HANDLER
+    //CharacterNameChangeHandler handles any changes to character's name
     const CharacterNameChangeHandler = (e)=>{
         let updatedCharacterName = e.target.value;
-        setCharacterName(updatedCharacterName)
-        let updatedSelectedCharacter = {...selectedCharacter, name: updatedCharacterName }
+        setCharacterName(updatedCharacterName);
+        let updatedSelectedCharacter = {...selectedCharacter, name: updatedCharacterName };
         if(selectedCharacter){
             if(selectedCharacter.node_id){
-                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter)
-            }
-        }
-    }
+                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter);
+            };
+        };
+    };
 
+    //CharacterNameChangeHandler handles any changes to character's description
     const CharacterDescChangeHandler = (e)=>{
         let updatedCharacterDesc = e.target.value;
-        setCharacterDesc(updatedCharacterDesc)
-        let updatedSelectedCharacter = {...selectedCharacter, desc: updatedCharacterDesc }
+        setCharacterDesc(updatedCharacterDesc);
+        let updatedSelectedCharacter = {...selectedCharacter, desc: updatedCharacterDesc };
         if(selectedCharacter){
             if(selectedCharacter.node_id){
-                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter)
-            }
-        }
-    }
+                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter);
+            };
+        };
+    };
 
+    //CharacterNameChangeHandler handles any changes to character's persona
     const CharacterPersonaChangeHandler = (e)=>{
         let updatedCharacterPersona = e.target.value;
-        setCharacterPersona(updatedCharacterPersona)
-        let updatedSelectedCharacter = {...selectedCharacter, persona: updatedCharacterPersona }
+        setCharacterPersona(updatedCharacterPersona);
+        let updatedSelectedCharacter = {...selectedCharacter, persona: updatedCharacterPersona };
         if(selectedCharacter){
             if(selectedCharacter.node_id){
-                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter)
-            }
-        }
-    }
+                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter);
+            };
+        };
+    };
 
     const CharacterPrefixChangeHandler = (e)=>{
         let updatedCharacterPrefix = e.target.value;
-        setCharacterPrefix(updatedCharacterPrefix)
-        let updatedSelectedCharacter = {...selectedCharacter, prefix: updatedCharacterPrefix }
+        setCharacterPrefix(updatedCharacterPrefix);
+        let updatedSelectedCharacter = {...selectedCharacter, prefix: updatedCharacterPrefix };
         if(selectedCharacter){
             if(selectedCharacter.node_id){
-                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter)
-            }
-        }
-      }
+                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter);
+            };
+        };
+      };
 
 
     const CharacterSizeChangeHandler = (e)=>{
         let updatedCharacterSize = e.target.value;
         setCharacterSize(updatedCharacterSize);
-        let updatedSelectedCharacter = {...selectedCharacter, size: updatedCharacterSize }
+        let updatedSelectedCharacter = {...selectedCharacter, size: updatedCharacterSize };
         if(selectedCharacter){
             if(selectedCharacter.node_id){
-                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter)
-            }
-        }
-    }
+                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter);
+            };
+        };
+    };
 
     const CharacterAggressionChangeHandler = (e)=>{
         let updatedCharacterAggression = e.target.value;
-        setCharacterAggression(updatedCharacterAggression)
-        let updatedSelectedCharacter = {...selectedCharacter, aggression: updatedCharacterAggression }
+        setCharacterAggression(updatedCharacterAggression);
+        let updatedSelectedCharacter = {...selectedCharacter, aggression: updatedCharacterAggression };
         if(selectedCharacter){
             if(selectedCharacter.node_id){
-                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter)
-            }
-        }
-    }
+                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter);
+            };
+        };
+    };
 
     //CRUMBS
     const crumbs= [...taskRouterHistory, currentLocation];

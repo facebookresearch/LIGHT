@@ -13,7 +13,10 @@ import Form from 'react-bootstrap/Form'
 const TaskToolBar = ({
     buttonFunction,
     toggleFunction,
-    toggleValue
+    toggleValue,
+    roomCount,
+    charCount,
+    objectCount
 })=>{
 
     return(
@@ -31,7 +34,7 @@ const TaskToolBar = ({
                     </Button>
 
                 <Navbar.Text>
-                    <span className="tool-label" >World Size: TODO</span>
+                    <span className="tool-label" >{`World Size  Rooms ${roomCount} Characters ${charCount} Objects ${objectCount} `}</span>
                 </Navbar.Text>
                 <Button variant="success" onClick={buttonFunction}>Submit</Button>{' '}
             </div>
