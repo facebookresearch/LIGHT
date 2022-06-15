@@ -57,10 +57,10 @@ const WorldBuilderPage = ({
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     /* ------ REDUX ACTIONS ------ */
     //WORLD DRAFT
-    //Acts as Save Draft function
+    //Saves current SelectedWorld state to world draft and local storage
     const updateWorldDraft = ()=>{
-        dispatch(setWorldDraft(selectedWorld))
-    }
+        dispatch(setWorldDraft(selectedWorld));
+    };
    //ROOMS
    //Adds New Room to map and draft
     const addRoom = (room)=>{
@@ -68,38 +68,35 @@ const WorldBuilderPage = ({
         let {rooms, nodes } = unupdatedWorld;
         //Room Id is initially generated from the new room's name a one added on.  It will iterate until it finds a unique key.
         let formattedRoomId = room.name.replaceAll(" ", "_") + "_1";
-        console.log("FORMATTED CREATE ROOM NAME:  ", formattedRoomId)
         while(rooms.indexOf(formattedRoomId)>=0){
             let splitFormattedRoomId = formattedRoomId.split("_")
-            let idNumber = splitFormattedRoomId[splitFormattedRoomId.length-1]
+            let idNumber = splitFormattedRoomId[splitFormattedRoomId.length-1];
             idNumber = idNumber++;
-            splitFormattedRoomId[splitFormattedRoomId.length-1] = idNumber
-            formattedRoomId = splitFormattedRoomId.join("_")
-        }
+            splitFormattedRoomId[splitFormattedRoomId.length-1] = idNumber;
+            formattedRoomId = splitFormattedRoomId.join("_");
+        };
         let updatedRoomData = {...room, node_id:formattedRoomId};
-        console.log("UPDATED ROOM DATA:  ", updatedRoomData)
         let updatedRooms = [...rooms, formattedRoomId];
-        console.log("UPDATED ROOMS UPON CREATION:  ", updatedRoomData)
         let updatedNodes = {...nodes, [formattedRoomId]:updatedRoomData};
-        console.log("UPDATED NODES UPON CREATION:  ", updatedNodes)
         let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes};
-        console.log("UPDATED WORLDS UPON CREATION:  ", updatedWorld)
-        dispatch(setWorldDraft(updatedWorld))
-        dispatch(updateSelectedRoom(updatedRoomData))
-    }
+        dispatch(setWorldDraft(updatedWorld));
+        dispatch(updateSelectedRoom(updatedRoomData));
+    };
 
     //Updates room with any changes
     const updateRoom = (id, update) =>{
         let unupdatedWorld = selectedWorld;
         let {nodes } = unupdatedWorld;
-        let updatedNodes = {...nodes, [id]:update}
-        let updatedWorld ={...selectedWorld, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
-    }
+        let updatedNodes = {...nodes, [id]:update};
+        let updatedWorld ={...selectedWorld, nodes:updatedNodes};
+        dispatch(updateSelectedWorld(updatedWorld));
+    };
+
+    //Updates room with any changes removes room nodes by ID and replaces them with a blank tile
     const deleteRoom = (id)=>{
         let unupdatedWorld = selectedWorld;
         let {rooms, nodes } = unupdatedWorld;
-        let tileLocation = nodes[id].grid_location
+        let tileLocation = nodes[id].grid_location;
         let clearedTileData = {
             agent: false,
             classes: ["room"],
@@ -121,38 +118,41 @@ const WorldBuilderPage = ({
         };
         let updatedRooms = rooms.filter(room => id !== room);
         let updatedNodes = {...nodes};
-        delete updatedNodes[id]
-        console.log("UPDAtED NODES DELETE:  ", updatedNodes)
+        delete updatedNodes[id];
         let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes};
         dispatch(setWorldDraft(updatedWorld))
         dispatch(updateSelectedRoom(clearedTileData))
     }
 
-    const connectRooms = (primaryRoom, primaryRoomNeighbors, secondaryRoom, secondaryRoomNeighbors, pathAlignment)=>{
-        console.log("PRIMARY ROOM:  ", primaryRoom)
-        console.log("PRIMARY NEIGHBORS:  ", primaryRoomNeighbors)
-        console.log("SECONDARY ROOM:  ", secondaryRoom)
-        console.log("SECONDARY NEIGHBORS:  ", secondaryRoomNeighbors)
-        console.log("ALIGNMENT: ", pathAlignment)
+    //Handles connecting rooms via clicking paths between the components.  This automatically updates the draft.  This function can only be invoked if there is an existing room on both ends of the path.
+    const connectRooms = (
+        primaryRoom,
+        primaryRoomNeighbors,
+        secondaryRoom,
+        secondaryRoomNeighbors,
+        pathAlignment
+        )=>{
         let unupdatedWorld = selectedWorld;
         let {nodes} = unupdatedWorld;
         let primaryId = primaryRoom.node_id;
         let secondaryId = secondaryRoom.node_id;
-
+        /*---- PRIMARY TILE UPDATE----*/
         let updatedRoomNode = primaryRoom;
         let updatedNeighbors = primaryRoomNeighbors;
 
+        //PathDirection is text that is part of the room node and will state in which direction it's neighbor is connected
         let pathDirection
         if(pathAlignment==="vertical"){
-            pathDirection= "the south"
+            pathDirection= "the south";
         } else if(pathAlignment==="horizontal"){
-            pathDirection= "the east"
+            pathDirection= "the east";
         }else if(pathAlignment==="above"){
-            pathDirection= "the floor beneath"
+            pathDirection= "the floor beneath";
         } else if(pathAlignment==="below"){
-            pathDirection= "the floor above"
-        }
+            pathDirection= "the floor above";
+        };
 
+        //The primary tile's neighbor info template
         let neighborInfo = {
             examine_desc: null,
             label: `a path to ${pathDirection}`,
@@ -160,62 +160,62 @@ const WorldBuilderPage = ({
             target_id: secondaryRoom.node_id
         };
 
+        /*---- SECONDARY TILE UPDATE----*/
         updatedNeighbors = {...primaryRoomNeighbors, [secondaryId]: neighborInfo};
-        console.log("NEIGHBOR POST UPDATE", updatedNeighbors)
         updatedRoomNode = {...primaryRoom, neighbors: updatedNeighbors};
-        console.log("ROOM", primaryRoom.node_id, neighborInfo)
         let updatedNeighborNode = secondaryRoom;
         let updatedNeighboringTileNeighbors = secondaryRoomNeighbors;
 
-
-        let neighborPathDirection
+        let neighborPathDirection;
         if(pathAlignment==="vertical"){
-            neighborPathDirection= "the north"
+            neighborPathDirection= "the north";
         } else if(pathAlignment==="horizontal"){
-            neighborPathDirection= "the west"
+            neighborPathDirection= "the west";
         }else if(pathAlignment==="above"){
-            neighborPathDirection= "the floor above"
+            neighborPathDirection= "the floor above";
         } else if(pathAlignment==="below"){
-            neighborPathDirection= "the floor beneath"
-        }
+            neighborPathDirection= "the floor beneath";
+        };
 
+        //The secondary tile's neighbor info template
         let neighboringTileNeighborInfo = {
             examine_desc: null,
             label: `a path to ${neighborPathDirection}`,
             locked_edge: null,
             target_id: primaryRoom.node_id
         };
+
         updatedNeighboringTileNeighbors = {...secondaryRoomNeighbors, [primaryId]: neighboringTileNeighborInfo};
-        console.log("NEIGHBOR NEIGHBORS POST UPDATE", updatedNeighboringTileNeighbors)
         updatedNeighborNode = {...secondaryRoom, neighbors:updatedNeighboringTileNeighbors};
+
+        //Both Room nodes are updated and then update the world draft
         let updatedNodes = {...nodes, [updatedRoomNode.node_id]:updatedRoomNode, [updatedNeighborNode.node_id]: updatedNeighborNode};
         let updatedWorld = {...unupdatedWorld, nodes: updatedNodes};
-        console.log("UPDATED WORLD CONNECT", updatedWorld)
-        dispatch(setWorldDraft(updatedWorld))
+        dispatch(setWorldDraft(updatedWorld));
     }
 
-    const disconnectRooms = (primaryRoom, primaryRoomNeighbors, secondaryRoom, secondaryRoomNeighbors, pathAlignment)=>{
-        console.log("PRIMARY ROOM:  ", primaryRoom)
-        console.log("PRIMARY NEIGHBORS:  ", primaryRoomNeighbors)
-        console.log("SECONDARY ROOM:  ", secondaryRoom)
-        console.log("SECONDARY NEIGHBORS:  ", secondaryRoomNeighbors)
-        console.log("ALIGNMENT: ", pathAlignment)
+    //Handles disconnecting rooms via clicking paths between the components.  This automatically updates the draft.  This function can only be invoked if there is an existing room on both ends of the path.
+    const disconnectRooms = (
+        primaryRoom,
+        primaryRoomNeighbors,
+        secondaryRoom,
+        secondaryRoomNeighbors,
+        pathAlignment
+        )=>{
         let unupdatedWorld = selectedWorld;
-
         let primaryId = primaryRoom.node_id;
         let secondaryId = secondaryRoom.node_id;
-        //Primary Room update
+
+        /*---- PRIMARY TILE UPDATE----*/
         let updatedRoomNode = {...primaryRoom};
         let updatedNeighbors = {...primaryRoomNeighbors};
         delete updatedNeighbors[secondaryRoom.node_id];
-        console.log("POST DELETE NEIGHBORS:  ", updatedNeighbors)
         updatedRoomNode ={...primaryRoom, neighbors: updatedNeighbors};
 
-        //Primary Room update
+        /*---- SECONDARY TILE UPDATE----*/
         let updatedNeighborNode = {...secondaryRoom};
         let updatedNeighboringTileNeighbors = {...secondaryRoomNeighbors};
         delete updatedNeighboringTileNeighbors[primaryId];
-        console.log("POST DELETE NEIGHBORS NEIGHBOR:  ", updatedNeighboringTileNeighbors)
         updatedNeighborNode ={...updatedNeighborNode, neighbors: updatedNeighboringTileNeighbors};
 
         let {nodes} = unupdatedWorld;
@@ -223,11 +223,12 @@ const WorldBuilderPage = ({
         let updatedWorld = {...unupdatedWorld, nodes: updatedNodes};
         dispatch(setWorldDraft(updatedWorld))
     }
-    //MAP
+
+    /*---- MAP TRAVERSAL ----*/
+    /*- FLOORS -*/
     const incrementFloorHandler = ()=> {
         const updatedFloor = floor+1;
-        console.log(typeof updatedFloor, updatedFloor)
-        dispatch(updateFloor(updatedFloor))
+        dispatch(updateFloor(updatedFloor));
     }
     const decrementFloorHandler = ()=> {
         const updatedFloor = floor-1;
@@ -239,51 +240,46 @@ const WorldBuilderPage = ({
         console.log(typeof newFloorValue, newFloorValue)
         dispatch(updateFloor(newFloorValue))
     }
+
+    /*- MAP LAYOUT -*/
     const DimensionSetter = (updatedDimensions)=>{
         dispatch(updateDimensions(updatedDimensions))
     }
     const BorderSetter = (updatedBorders)=>{
         dispatch(updateBorders(updatedBorders))
     }
+
     //CHARACTERS
     // Adds new Character to selectedWorld state
     const addCharacter = (char)=>{
         let unupdatedWorld = selectedWorld;
         let {agents, nodes } = unupdatedWorld;
-        console.log("CHARACTER BEING ADDED DATA", char)
-        let formattedAgentId
+        let formattedAgentId;
+        //EXISTING CHARACTER
         if(char.node_id){
             formattedAgentId = char.node_id;
-
             while(agents.indexOf(formattedAgentId)>=0){
-                console.log("WHILE LOOP RUNNING",agents.indexOf(formattedAgentId)>=0);
                 let splitFormattedAgentId = formattedAgentId.split("_");
-                console.log("FORMATTEDID:  ", splitFormattedAgentId);
-                let idNumber = splitFormattedAgentId[splitFormattedAgentId.length-1]
-                console.log("idNumber:  ", idNumber);
+                let idNumber = splitFormattedAgentId[splitFormattedAgentId.length-1];
                 idNumber = (idNumber*1)+1;
-                idNumber = idNumber.toString()
-                console.log("idNumber+:  ", idNumber);
-                splitFormattedAgentId[splitFormattedAgentId.length-1] = idNumber
-                console.log("splitFormattedAgentId+:  ", splitFormattedAgentId);
-                formattedAgentId = splitFormattedAgentId.join("_")
-                console.log("FORMATTEDIDEND:  ", formattedAgentId);
-            }
+                idNumber = idNumber.toString();
+                splitFormattedAgentId[splitFormattedAgentId.length-1] = idNumber;
+                formattedAgentId = splitFormattedAgentId.join("_");
+            };
+        //NEW CHARACTER
         }else{
-            formattedAgentId = char.name +"_1"
-        }
-        let unupdatedRoomData = nodes[selectedRoom.node_id]
+            formattedAgentId = char.name +"_1" ;
+        };
+        let unupdatedRoomData = nodes[selectedRoom.node_id];
         let updatedCharacterData = {...char, node_id:formattedAgentId, container_node:{target_id: selectedRoom.node_id}};
         let updatedAgents = [...agents, formattedAgentId];
-        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes, [formattedAgentId]:{target_id: formattedAgentId}}
-        console.log("UPDATED CONTAAINED NODES:  ", updatedContainedNodes )
-        let updatedRoomData = {...selectedRoom, contained_nodes: updatedContainedNodes}
-        console.log("UPDATE CHARACTERS ROOM DATA:  ", updatedRoomData)
-        let updatedNodes = {...nodes, [formattedAgentId]:updatedCharacterData, [selectedRoom.node_id]: updatedRoomData}
-        console.log("UPDATE CHARACTERS ROOM NODES:  ", updatedNodes)
-        let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
-    }
+        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes, [formattedAgentId]:{target_id: formattedAgentId}};
+        let updatedRoomData = {...selectedRoom, contained_nodes: updatedContainedNodes};
+        let updatedNodes = {...nodes, [formattedAgentId]:updatedCharacterData, [selectedRoom.node_id]: updatedRoomData};
+        let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes};
+        dispatch(updateSelectedWorld(updatedWorld));
+    };
+
     //Updates Character in selectedWorld state
     const updateCharacter = (id, update) =>{
         let unupdatedWorld = selectedWorld;
@@ -291,107 +287,85 @@ const WorldBuilderPage = ({
         let updatedNodes = {...nodes, [id]:update}
         let updatedWorld ={...selectedWorld, nodes:updatedNodes}
         dispatch(updateSelectedWorld(updatedWorld))
-    }
+    };
+
     //Removes Character from selectedWorld state
     const deleteCharacter = (id)=>{
         let unupdatedWorld = selectedWorld;
         let {agents, nodes } = unupdatedWorld;
         let updatedAgents = agents.filter(char => id !== char);
-        let updatedNodes = {...nodes}
-        console.log("CHARACTER DELETION ID:  ", id)
+        let updatedNodes = {...nodes};
         delete updatedNodes[id];
-        console.log("POST CHARACTER DELETION UPDATED NODES:  ", updatedNodes)
         let unupdatedRoomData = {...nodes[selectedRoom.node_id]};
         let updatedContainedNodes = {...unupdatedRoomData.contained_nodes};
         delete updatedContainedNodes[id];
-        let updatedRoomData = {...unupdatedRoomData, contained_nodes:updatedContainedNodes}
-        updatedNodes = {...updatedNodes, [selectedRoom.node_id]:updatedRoomData}
+        let updatedRoomData = {...unupdatedRoomData, contained_nodes:updatedContainedNodes};
+        updatedNodes = {...updatedNodes, [selectedRoom.node_id]:updatedRoomData};
         let updatedWorld ={...unupdatedWorld, agents: updatedAgents, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     }
     //OBJECTS
+    // Adds new Object to selectedWorld state
     const addObject = (obj)=>{
         let unupdatedWorld = selectedWorld;
         let {objects, nodes } = unupdatedWorld;
-        let formattedObjectId
+        let formattedObjectId;
+        //EXISTING OBJECT
         if(obj.node_id){
-
             formattedObjectId = obj.node_id;
             while(objects.indexOf(formattedObjectId)>=0){
-                console.log("WHILE LOOP RUNNING", objects.indexOf(formattedObjectId)>=0);
                 let splitFormattedObjectId = formattedObjectId.split("_");
-                console.log("FORMATTEDID:  ", splitFormattedObjectId);
-                let idNumber = splitFormattedObjectId[splitFormattedObjectId.length-1]
-                console.log("idNumber:  ", idNumber);
+                let idNumber = splitFormattedObjectId[splitFormattedObjectId.length-1];
                 idNumber = (idNumber*1)+1;
-                idNumber = idNumber.toString()
-                console.log("idNumber+:  ", idNumber);
-                splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber
-                console.log("splitFormattedObjectId+:  ", splitFormattedObjectId);
-                formattedObjectId = splitFormattedObjectId.join("_")
-                console.log("FORMATTEDIDEND:  ", formattedObjectId);
+                idNumber = idNumber.toString();
+                splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
+                formattedObjectId = splitFormattedObjectId.join("_");
             }
         } else {
+        //NEW OBJECT
             formattedObjectId = obj.name +"_1"
         }
         let unupdatedRoomData = nodes[selectedRoom.node_id]
         let updatedObjectData = {...obj, node_id:formattedObjectId, container_node:{target_id:selectedRoom.node_id}};
         let updatedObjects = [...objects, formattedObjectId];
-        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}
-        console.log("UPDATED CONTAAINED NODES:  ", updatedContainedNodes )
-        let updatedRoomData = {...unupdatedRoomData, contained_nodes:updatedContainedNodes}
-        let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedRoom.node_id]: updatedRoomData}
-        let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
-    }
+        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}};
+        let updatedRoomData = {...unupdatedRoomData, contained_nodes:updatedContainedNodes};
+        let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedRoom.node_id]: updatedRoomData};
+        let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
+        dispatch(updateSelectedWorld(updatedWorld));
+    };
+
+    //Updates Object in selectedWorld state
     const updateObject = (id, update) =>{
         let unupdatedWorld = selectedWorld;
         let {nodes } = unupdatedWorld;
-        let updatedNodes = {...nodes, [id]:update}
-        let updatedWorld ={...selectedWorld, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
-    }
+        let updatedNodes = {...nodes, [id]:update};
+        let updatedWorld ={...selectedWorld, nodes:updatedNodes};
+        dispatch(updateSelectedWorld(updatedWorld));
+    };
+
+    //Removes Object from selectedWorld state
     const deleteObject = (id)=>{
         let unupdatedWorld = selectedWorld;
         let {objects, nodes } = unupdatedWorld;
         let updatedObjects = objects.filter(obj => id !== obj);
-        let updatedNodes = {...nodes}
-        console.log("OBJECT DELETION ID:  ", id)
+        let updatedNodes = {...nodes};
         delete updatedNodes[id];
         let unupdatedRoomData = {...nodes[selectedRoom.node_id]};
         let updatedContainedNodes = {...unupdatedRoomData.contained_nodes};
         delete updatedContainedNodes[id];
-        let updatedRoomData = {...unupdatedRoomData, contained_nodes:updatedContainedNodes}
-        updatedNodes = {...updatedNodes, [selectedRoom.node_id]:updatedRoomData}
-        console.log("POST OBJECT DELETION UPDATED NODES:  ", updatedNodes)
+        let updatedRoomData = {...unupdatedRoomData, contained_nodes:updatedContainedNodes};
+        updatedNodes = {...updatedNodes, [selectedRoom.node_id]:updatedRoomData};
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     }
 
-    // const SelectedWorldUpdateHandler = (update)=>{
-    //     if(selectedWorld){
-    //         let unupdatedWorld = selectedWorld;
-    //         let {agents, nodes, objects, rooms} = selectedWorld;
-    //         console.log("UPDATE", update)
-    //     }
-    // }
     /* ------ LOCAL STATE ------ */
-    // const [floor, setFloor]= useState(0);
-    // const [mapBorders, setMapBorders] = useState({
-    //     top: 2,
-    //     bottom: -2,
-    //     left: -2,
-    //     right: 2
-    // });
-    // const [mapWidth, setMapWidth]= useState(0);
-    // const [mapHeight, setMapHeight] = useState(0);
     const [mapSideBarOpen, setMapSideBarOpen] = useState(false);
     const [inColorMode, setInColorMode] = useState(false);
     const [selectedColor, setSelectedColor] = useState("");
 
     //UTILS
-
-
     // calculateMapBorders- Calculates borders from array of roomnodes and sets border values.
     const calculateMapBorders = (roomNodes)=>{
         let borders = {
@@ -399,7 +373,8 @@ const WorldBuilderPage = ({
             bottom: Number.MAX_SAFE_INTEGER,
             left: Number.MAX_SAFE_INTEGER,
             right: Number.MIN_SAFE_INTEGER
-        }
+        };
+
         roomNodes.map((roomNode)=>{
             let {grid_location} = roomNode;
             let x = grid_location[0]
@@ -408,7 +383,7 @@ const WorldBuilderPage = ({
             borders.bottom = borders.bottom < y ? borders.bottom : y;
             borders.right = borders.right > x ? borders.right : x;
             borders.left = borders.left < x ? borders.left : x;
-        })
+        });
         // while((borders.top - borders.bottom)<3){
         //     borders.top = borders.top+1;
         //     borders.bottom = borders.bottom-1;
@@ -419,14 +394,15 @@ const WorldBuilderPage = ({
         // }
         console.log("BORDERS:  ", borders)
         return BorderSetter(borders);
-    }
+    };
 
-    // worldNodeSorter - Sorts the the different types of nodes in a world into arrays
+    // worldNodeSorter sorts the the different types of nodes in a world into arrays
     const worldNodeSorter = (world)=>{
         let CharacterNodes = [];
         let RoomNodes = [];
         let ObjectNodes = [];
         const {nodes} = world;
+        //sortFunction sorts array of nodes by name attribute alphabetically
         const sortFunction = (a, b)=>{
             let firstItem=a.name.toLowerCase()
             let nextItem=b.name.toLowerCase();
@@ -437,6 +413,7 @@ const WorldBuilderPage = ({
             return 0; //default return value (no sorting)
            };
         const WorldNodeKeys = Object.keys(nodes);
+        //Filters all world nodes into arrays by class (agent, object, room)
         WorldNodeKeys.map((nodeKey)=>{
           let WorldNode = nodes[nodeKey];
           if(WorldNode.classes){
@@ -453,45 +430,44 @@ const WorldBuilderPage = ({
                 break;
               default:
                 break;
-              }
-            }
-        })
-        RoomNodes = RoomNodes.sort(sortFunction)
-        ObjectNodes = ObjectNodes.sort(sortFunction)
-        CharacterNodes = CharacterNodes.sort(sortFunction)
-        dispatch(updateRooms(RoomNodes))
-        dispatch(updateObjects(ObjectNodes))
-        dispatch(updateCharacters(CharacterNodes))
-    }
+              };
+            };
+        });
+        //Sorts each array alphabetically
+        RoomNodes = RoomNodes.sort(sortFunction);
+        ObjectNodes = ObjectNodes.sort(sortFunction);
+        CharacterNodes = CharacterNodes.sort(sortFunction);
+        //Updates each classes' state with updated arrays
+        dispatch(updateRooms(RoomNodes));
+        dispatch(updateObjects(ObjectNodes));
+        dispatch(updateCharacters(CharacterNodes));
+    };
 
-    const fetchWorldCurrentWorld = ()=> {
-        let unupdatedWorld  = JSON.parse(window.localStorage.getItem("taskWorld"))
-
-        dispatch(updateSelectedWorld(unupdatedWorld))
-    }
+    //fetchWor
+    // const fetchWorldCurrentWorld = ()=> {
+    //     let unupdatedWorld  = JSON.parse(window.localStorage.getItem("taskWorld"))
+    // }
 
     /* --- LIFE CYCLE FUNCTIONS --- */
     // Selects world from draft or world Data using params (worldId) *** discuss
     useEffect(()=>{
         if(worldDraft){
-        console.log("WORLD DRAFT CHANGE DETECTED")
-        window.localStorage.setItem("taskWorld", JSON.stringify(worldDraft))
-        fetchWorldCurrentWorld()
-        }
-    },[worldDraft])
+            window.localStorage.setItem("taskWorld", JSON.stringify(worldDraft));
+            dispatch(updateSelectedWorld(worldDraft));
+        };
+    },[worldDraft]);
 
     // Uses worldNodeSorter helper function to break nodes into arrays and send them to respective redux slices.
     useEffect(()=>{
         if(selectedWorld){
-            console.log("SELECTED WORLD:  ", selectedWorld)
-            worldNodeSorter(selectedWorld)
-        }
-      },[selectedWorld])
+            worldNodeSorter(selectedWorld);
+        };
+      },[selectedWorld]);
 
     // Uses calculateMapBorders helper function to set borders that will be applied to Map to component data using room data
     useEffect(()=>{
-        calculateMapBorders(worldRooms)
-    },[worldRooms])
+        calculateMapBorders(worldRooms);
+    },[worldRooms]);
 
     // Sets MapWidth and MapHeight state.
     useEffect(()=>{
@@ -503,11 +479,12 @@ const WorldBuilderPage = ({
         const updatedBorders = {
             width: updatedMapWidth,
             height: updatedMapHeight
-        }
+        };
         DimensionSetter(updatedBorders);
-    },[mapBorders])
+    },[mapBorders]);
 
     // Handler
+    //
     const WorldSaveHandler = ()=>{
         console.log("WORLD SAVE UPDATE:", selectedWorld)
         updateWorldDraft()
