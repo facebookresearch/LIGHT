@@ -101,6 +101,8 @@ room_cs_graph_builder = RoomCommonSenseGraphBuilder(LIGHT_DB_PATH, True)
 usable_rooms = room_cs_graph_builder.get_usable_rooms()
 
 all_room_data = []
+all_characters = []
+all_objects = []
 for room_id in tqdm(usable_rooms):
     room = room_cs_graph_builder.get_room_from_id(room_id)
     room_data = get_room_data(room)
@@ -117,20 +119,22 @@ for room_id in tqdm(usable_rooms):
         )
         if room_object_data[consts.IS_IN_ROOM]:
             room_data['objects'].append(room_object_data)
-
+        all_objects.append(room_object_data)
+        
     # Getting the list of characters in the room
     in_room_character_ids = room.in_characters['db']
     ex_room_character_ids = room.ex_characters['db']
     for room_character_id in in_room_character_ids + ex_room_character_ids:
-        room_characetr = room_cs_graph_builder.get_char_from_id(room_character_id)
-        if not room_characetr:
+        room_character = room_cs_graph_builder.get_char_from_id(room_character_id)
+        if not room_character:
             continue
-        room_characetr_data = get_character_data(room_characetr, room_cs_graph_builder)
-        room_characetr_data[consts.IS_IN_ROOM] = (
+        room_character_data = get_character_data(room_character, room_cs_graph_builder)
+        room_character_data[consts.IS_IN_ROOM] = (
             room_character_id in in_room_character_ids
         )
-        if room_characetr_data[consts.IS_IN_ROOM]:
-            room_data['characters'].append(room_characetr_data)
+        if room_character_data[consts.IS_IN_ROOM]:
+            room_data['characters'].append(room_character_data)
+        all_characters.append(room_character_data)
         
     all_room_data.append(room_data)
 
@@ -214,3 +218,5 @@ for rd in all_room_data:
         room_to_items[db_id]['objects'].append(object_node)
 
 ROOM_ID_TO_ITEMS = room_to_items
+ALL_CHARACTERS = all_characters
+ALL_OBJECTS = all_objects

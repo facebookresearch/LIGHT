@@ -62,7 +62,7 @@ const BuilderRouter = ({
                         builderRouterNavigate={builderRouterNavigate}
                     />;
         default:
-            return <MapPage2
+            return <MapPage
                         api={api}
                         builderRouterNavigate={builderRouterNavigate}
                     />;
