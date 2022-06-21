@@ -108,8 +108,8 @@ const WorldBuilderMap2 = ({
             :
             <div
             style={{
-              height: "20px",
-              width:"1000px"
+              width:"1000px",
+              height: "20px"
             }}
           />
           }
@@ -141,7 +141,7 @@ const WorldBuilderMap2 = ({
               <Button
                 className="button"
                 style={{
-                height: "800px",
+                height: "400px",
                 width:"20px"
                 }}
                 icon="arrow-left"
@@ -150,7 +150,7 @@ const WorldBuilderMap2 = ({
             :
             <div
               style={{
-                height: "800px",
+                height: "400px",
                 width:"20px"
               }}
             />
@@ -188,7 +188,7 @@ const WorldBuilderMap2 = ({
             :
             <div
             style={{
-              height: "800px",
+              height: "400px",
               width:"20px"
             }}
           />
@@ -216,7 +216,7 @@ const WorldBuilderMap2 = ({
           />
           }
           {
-            (viewLoc.y >= height+200)
+            (viewLoc.y >= height+400)
               ?
             <Button
               className="bp3-button"

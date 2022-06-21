@@ -29,6 +29,17 @@ const BasicEditRoom = ({
     api,
     builderRouterNavigate,
 })=> {
+
+                /*** NOTES/TODOS ***/
+    //1.  Connect recommendations to selectedWorld State.
+    //2.  Discuss Adding api reply that alerts user to not having any suggestions.
+    //3.  Add isLoading state and spinner with overlay for async API interactions.
+    //4.  Track Changes and block save button usage if nothing new is being applied.
+    //5.  Connect Local State more thought fully when it is updating selected room.
+    //6.  All formatting and updating when using the Common Sense API can be applied to Advanced Pages.
+
+
+
     // Common sense API
     let {
         getRoomAttributes,
@@ -48,6 +59,7 @@ const BasicEditRoom = ({
     const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
     //WORLDS
     const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
+    const selectedWorld = useAppSelector((state) => state.playerWorld.selectedWorld);
     //ROOMS
     const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
     const selectedRoom = useAppSelector((state) => state.worldRooms.selectedRoom);
@@ -220,6 +232,7 @@ const BasicEditRoom = ({
         console.log(target_room);
         getRoomAttributes({target_room, room_graph}).then((result) => {
             console.log("Finished describe room");
+
             console.log(result);
         })
     }
@@ -245,6 +258,10 @@ const BasicEditRoom = ({
         suggestRoomContents({target_room, room_graph}).then((result) => {
             console.log("Finished Describe");
             console.log(result);
+            const updatedRoomNodes = result[nodes]
+            console.log("CURRENT ROOM DATA", currentRoomData)
+            console.log("UPDATED ROOM", updatedRoomNodes)
+
         })
     }
 

@@ -476,10 +476,13 @@ const WorldBuilderPage = ({
         let updatedMapHeightMultiplier = Math.abs(bottom) + top;
         let updatedMapWidth = updatedMapWidthMultiplier * -200;
         let updatedMapHeight = updatedMapHeightMultiplier * -200;
+        console.log("HEIGHT AND MULT", updatedMapHeightMultiplier)
+        console.log("HEIGHT", updatedMapHeight)
         const updatedBorders = {
             width: updatedMapWidth,
             height: updatedMapHeight
         };
+        console.log("UPDATED BORDERS", updatedBorders)
         DimensionSetter(updatedBorders);
     },[mapBorders]);
 
