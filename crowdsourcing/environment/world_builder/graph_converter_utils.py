@@ -224,8 +224,8 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
             "contained_nodes": {},
             "container": True,
             "container_node": {
-            "target_id": node_id
-            },
+                "target_id": node_id
+                },
             "db_id": None,
             "dead": False,
             "desc": o.get('description', ''),
@@ -256,6 +256,7 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
         # input_graph['objects'].append(new_node)
         input_graph['objects'].append(o_id)
         input_graph['nodes'][o_id] = new_node
+        input_graph['nodes'][node_id]['contained_nodes'][o_id] = {"target_id": o_id}
     
     for o in wielded:
         if type(o) is str:
@@ -300,6 +301,7 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
         # input_graph['objects'].append(new_node)
         input_graph['objects'].append(o_id)
         input_graph['nodes'][o_id] = new_node
+        input_graph['nodes'][node_id]['contained_nodes'][o_id] = {"target_id": o_id}
 
     for o in worn:
         if type(o) is str:
@@ -344,6 +346,7 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
         # input_graph['objects'].append(new_node)
         input_graph['objects'].append(o_id)
         input_graph['nodes'][o_id] = new_node
+        input_graph['nodes'][node_id]['contained_nodes'][o_id] = {"target_id": o_id}
     return input_graph
 
 def add_character_to_graph(input_graph, room_name, character_dict):
@@ -394,6 +397,7 @@ def add_character_to_graph(input_graph, room_name, character_dict):
     }
     
     input_graph['nodes'][node_id] = new_node
+    input_graph['nodes'][room_name]['contained_nodes'][node_id] = {"target_id": node_id}
     input_graph['agents'].append(node_id)
     return input_graph
 
@@ -438,6 +442,7 @@ def add_object_secondary_objects_to_graph(input_graph, node_id, contained):
         }
         input_graph['objects'].append(o_id)
         input_graph['nodes'][o_id] = new_node
+        input_graph['nodes'][node_id]['contained_nodes'][o_id] = {"target_id": o_id}
         # input_graph['objects'].append(new_node)
     return input_graph
 
@@ -487,6 +492,7 @@ def add_object_to_graph(input_graph, room_name, object_dict):
     
     input_graph['nodes'][node_id] = new_node
     input_graph['objects'].append(node_id)
+    input_graph['nodes'][room_name]['contained_nodes'][node_id] = {"target_id": node_id}
     return input_graph
 
 ########################################################################################
