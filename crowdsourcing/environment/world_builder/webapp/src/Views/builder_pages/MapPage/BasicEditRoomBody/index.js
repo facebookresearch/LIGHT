@@ -259,7 +259,7 @@ const BasicEditRoom = ({
         suggestRoomContents({target_room, room_graph}).then((result) => {
             console.log("Finished Describe");
             console.log(result);
-            addContent(result)
+            addContent(target_room, result)
         })
     }
 

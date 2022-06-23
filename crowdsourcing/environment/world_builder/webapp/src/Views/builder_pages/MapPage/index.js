@@ -63,8 +63,10 @@ const WorldBuilderPage = ({
     };
     //GENERAL
     //Adds more than one node to currently selected room
-    const addContent = (newNodes)=>{
-        let unupdatedRoomData = nodes[selectedRoom.node_id]
+    const addContent = (roomId, newNodes)=>{
+        console.log("ROOM ID:  ", roomId)
+        let unupdatedRoomData = nodes[roomId]
+        console.log("ROOM DATA:  ", unupdatedRoomData)
         let unupdatedWorld = selectedWorld;
         let updatedNodes = {...nodes};
         let {agents, objects, nodes } = unupdatedWorld;
@@ -97,13 +99,13 @@ const WorldBuilderPage = ({
                 newObjects.push(formattedNewNodetId);
             };
 
-            formattedNewNode = {...newNode, node_id:formattedNewNodetId , container_node:{target_id: selectedRoom.node_id}};
+            formattedNewNode = {...newNode, node_id:formattedNewNodetId , container_node:{target_id: roomId}};
             updatedContainedNodes = {...updatedContainedNodes, [formattedNewNodetId]:{target_id: formattedNewNodetId}};
             console.log("FORMATTED NEW NODE:  ", formattedNewNode)
             updatedNodes = {...updatedNodes, [formattedNewNodetId]:formattedNewNode};
         });
         let updatedRoomData = {...selectedRoom, contained_nodes: updatedContainedNodes};
-        updatedNodes = {...nodes, [selectedRoom.node_id]: updatedRoomData};
+        updatedNodes = {...nodes, [roomId]: updatedRoomData};
         let updatedWorld ={...selectedWorld, agents: [...newAgents], objects:[...newObjects], nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     }
