@@ -185,7 +185,8 @@ def main(operator: Operator, cfg: DictConfig) -> None:
                 room_graph['nodes'][target_room]['extra_desc'] = room_backstory
                 room_graph['nodes'][target_room]['from_retrieval'] = True
             # return room_graph
-            return {'new_items':[], 'updated_object':room_graph['nodes'][target_room]}
+            new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+            return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_room]}
             
         try:
             room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
@@ -217,7 +218,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # room_graph['rooms'] = original_rooms
         # return room_graph
         new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
-        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_object':room_graph['nodes'][target_room]}
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_room]}
 
     def suggest_room_contents(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
@@ -243,6 +244,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
                     if node_id not in room_graph:
                         room_graph['nodes'][node_id] = o
                         room_graph['objects'].append(node_id)
+                        room_graph['nodes'][target_room]['contained_nodes'][node_id] = {'target_id': node_id}
                 for c in characters:
                     c['container_node']['target_id'] = target_room
                     c['from_retrieval'] = True
@@ -250,9 +252,11 @@ def main(operator: Operator, cfg: DictConfig) -> None:
                     if node_id not in room_graph:
                         room_graph['nodes'][node_id] = c
                         room_graph['agents'].append(node_id)
+                        room_graph['nodes'][target_room]['contained_nodes'][node_id] = {'target_id': node_id}
 
             # return room_graph
-            return {'new_items':[], 'updated_object':room_graph['nodes'][target_room]}
+            new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+            return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_room]}
         try:
             room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
             room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
@@ -292,7 +296,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # room_graph['rooms'] = original_rooms
         # return room_graph
         new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
-        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_object':room_graph['nodes'][target_room]}
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_room]}
 
     def suggest_character_contents(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
@@ -316,7 +320,8 @@ def main(operator: Operator, cfg: DictConfig) -> None:
                 room_graph = add_character_secondary_objects_to_graph(room_graph, target_id, similar_carrying, similar_wielding, similar_wearing)
 
             # return room_graph
-            return {'new_items':[], 'updated_object':room_graph['nodes'][target_id]}
+            new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+            return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
         # Use `add_character_wearing`, `add_character_wielding`, `add_character_carrying`
         # to create three lists of suggestions
         try:
@@ -382,7 +387,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # room_graph['rooms'] = original_rooms
         # return room_graph
         new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
-        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_object':room_graph['nodes'][target_id]}
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
 
     def suggest_object_description(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
@@ -405,7 +410,8 @@ def main(operator: Operator, cfg: DictConfig) -> None:
                 room_graph['nodes'][target_id]['desc'] = new_description
                 room_graph['nodes'][target_id]['from_retrieval'] = True
             # return room_graph
-            return {'new_items':[], 'updated_object':room_graph['nodes'][target_id]}
+            new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+            return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
         try:
             room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
             room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
@@ -449,7 +455,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # room_graph['rooms'] = original_rooms
         # return room_graph
         new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
-        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_object':room_graph['nodes'][target_id]}
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
     
     def suggest_character_description(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
@@ -474,7 +480,8 @@ def main(operator: Operator, cfg: DictConfig) -> None:
                 room_graph['nodes'][target_id]['desc'] = new_description
                 room_graph['nodes'][target_id]['from_retrieval'] = True
             # return room_graph
-            return {'new_items':[], 'updated_object':room_graph['nodes'][target_id]}
+            new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+            return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
         try:
             room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
             room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
@@ -518,7 +525,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # room_graph['rooms'] = original_rooms
         # return room_graph
         new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
-        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_object':room_graph['nodes'][target_id]}
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
 
     def suggest_character_persona(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
@@ -541,7 +548,8 @@ def main(operator: Operator, cfg: DictConfig) -> None:
                 room_graph['nodes'][target_id]['persona'] = new_persona
                 room_graph['nodes'][target_id]['from_retrieval'] = True
             # return room_graph
-            return {'new_items':[], 'updated_object':room_graph['nodes'][target_id]}
+            new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+            return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
         try:
             room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
             room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
@@ -585,7 +593,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # room_graph['rooms'] = original_rooms
         # return room_graph
         new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
-        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_object':room_graph['nodes'][target_id]}
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
 
     def suggest_object_contents(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
@@ -660,7 +668,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # final step, fix the room list
         # room_graph['rooms'] = original_rooms
         new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
-        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_object':room_graph['nodes']['target_id']}
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
 
     def fill_object(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
@@ -670,10 +678,11 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         room_graph = args["room_graph"]
         target_room = args["target_room"]
         target_id = args["object_id"]
+        original_ids = set(room_graph['nodes'].keys())
         if world_builder_agent is None:
             print("No world builder model found, path does not point to file")
             # return room_graph
-            return {'new_items':[], 'updated_object':room_graph['nodes'][target_id]}
+            return {'new_items':[], 'updated_item':room_graph['nodes'][target_id]}
 
         room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
         room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
@@ -699,7 +708,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         room_graph['rooms'] = original_rooms
         # return room_graph
         new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
-        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_object':room_graph['nodes']['target_id']}
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
 
     def fill_character(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
