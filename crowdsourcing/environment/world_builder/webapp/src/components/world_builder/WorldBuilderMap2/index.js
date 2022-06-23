@@ -52,6 +52,8 @@ const WorldBuilderMap2 = ({
 
     /* ------ Handlers ------ */
     const shiftView = (axes, amount)=>{
+      console.log("VIEW LOC: ", viewLoc)
+      console.log("HEIGHT: ", height)
       let updatedView = viewLoc;
         axes.map((axis, index)=>{
           updatedView = {...updatedView, [axis]: updatedView[axis]+amount[index]}
@@ -180,7 +182,7 @@ const WorldBuilderMap2 = ({
           <Button
               className="bp3-button"
               style={{
-                height:"800px"
+                height:"400px"
               }}
               icon="arrow-right"
               onClick={()=>shiftView(["x"], [-40])}
