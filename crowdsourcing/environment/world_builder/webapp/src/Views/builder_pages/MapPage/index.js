@@ -61,6 +61,54 @@ const WorldBuilderPage = ({
     const updateWorldDraft = ()=>{
         dispatch(setWorldDraft(selectedWorld));
     };
+    //GENERAL
+    //Adds more than one node to currently selected room
+    const addContent = (newNodes)=>{
+        let unupdatedRoomData = nodes[selectedRoom.node_id]
+        let unupdatedWorld = selectedWorld;
+        let updatedNodes = {...nodes};
+        let {agents, objects, nodes } = unupdatedWorld;
+        let newObjects =[...agents];
+        let newAgents = [...objects]
+        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes};
+        newNodes.map((newNode)=>{
+            let {classes} = newNode;
+            let nodeType = classes[0];
+            let formattedNewNode;
+            let formattedNewNodetId;
+            if(newNode.node_id){
+                formattedNewNodetId = newNode.node_id;
+                while((agents.indexOf(formattedNewNodetId)>=0) || objects.indexOf(formattedNewNodetId)>=0){
+                    let splitformattedNewNodetId = formattedNewNodetId.split("_");
+                    let idNumber = splitformattedNewNodetId[splitformattedNewNodetId.length-1];
+                    idNumber = (idNumber*1)+1;
+                    idNumber = idNumber.toString();
+                    splitformattedNewNodetId[splitformattedNewNodetId.length-1] = idNumber;
+                    formattedNewNodetId = splitformattedNewNodetId.join("_");
+                };
+            //
+            }else{
+                formattedNewNodetId = newNode.name +"_1" ;
+            };
+            if(nodeType === "agent"){
+                newAgents.push(formattedNewNodetId);
+            };
+            if(nodeType === "object"){
+                newObjects.push(formattedNewNodetId);
+            };
+
+            formattedNewNode = {...newNode, node_id:formattedNewNodetId , container_node:{target_id: selectedRoom.node_id}};
+            updatedContainedNodes = {...updatedContainedNodes, [formattedNewNodetId]:{target_id: formattedNewNodetId}};
+            console.log("FORMATTED NEW NODE:  ", formattedNewNode)
+            updatedNodes = {...updatedNodes, [formattedNewNodetId]:formattedNewNode};
+        });
+        let updatedRoomData = {...selectedRoom, contained_nodes: updatedContainedNodes};
+        updatedNodes = {...nodes, [selectedRoom.node_id]: updatedRoomData};
+        let updatedWorld ={...selectedWorld, agents: [...newAgents], objects:[...newObjects], nodes:updatedNodes};
+        dispatch(updateSelectedWorld(updatedWorld));
+    }
+
+
    //ROOMS
    //Adds New Room to map and draft
     const addRoom = (room)=>{
@@ -411,7 +459,7 @@ const WorldBuilderPage = ({
             if (firstItem > nextItem)
              return 1;
             return 0; //default return value (no sorting)
-           };
+        };
         const WorldNodeKeys = Object.keys(nodes);
         //Filters all world nodes into arrays by class (agent, object, room)
         WorldNodeKeys.map((nodeKey)=>{
@@ -478,12 +526,12 @@ const WorldBuilderPage = ({
         let updatedMapHeight = updatedMapHeightMultiplier * -200;
         console.log("HEIGHT AND MULT", updatedMapHeightMultiplier)
         console.log("HEIGHT", updatedMapHeight)
-        const updatedBorders = {
+        const updatedDimensions = {
             width: updatedMapWidth,
             height: updatedMapHeight
         };
-        console.log("UPDATED BORDERS", updatedBorders)
-        DimensionSetter(updatedBorders);
+        console.log("UPDATED DIMENSIONS:", updatedDimensions)
+        DimensionSetter(updatedDimensions);
     },[mapBorders]);
 
     // Handler
@@ -591,6 +639,7 @@ const WorldBuilderPage = ({
                     <BasicEditRoomBody
                         currentRoom= {selectedRoom}
                         saveFunction = {WorldSaveHandler}
+                        addContent={addContent}
                         addRoom={addRoom}
                         updateRoom={updateRoom}
                         deleteRoom={deleteRoom}
