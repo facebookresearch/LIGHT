@@ -16,7 +16,8 @@ mephisto_data_browser = MephistoDataBrowser(db=db)
 DO_REVIEW = True
 
 # task_names = ["objects-interaction-task-pilot-3", "objects-interaction-task-pilot-4", "objects-interaction-task-pilot-5"]
-task_names = ["objects-interaction-task-pilot-5"]
+# task_names = ["objects-interaction-task-pilot-5"]
+task_names = ["objects-interaction-task-allowlist-collection-2"]
 
 units = []
 for t in task_names:
@@ -28,13 +29,22 @@ print(Counter([u.get_status() for u in units]))
 # workers_to_res = {}
 # worker_name_to_worker = {}
 
-# for unit in units:
-#     status = unit.get_db_status()
-#     # contents = unit["data"]
-#     data = mephisto_data_browser.get_data_from_unit(unit)
-#     outputs = data['data']['outputs']
-#     if "pristine looking bucket, without a mark. Must have" in outputs['rawAction']:
-#         print(outputs)
-#         unit.set_db_status("soft_rejected")
-#         break
+# bad_raws = ["wear cross over cotton tunic", "Use stool with gilded mirror", "drop jugs on ground"]
+bad_raws = ["Use Rolling Pins on the Wooden Benches"]
+
+for unit in units:
+    status = unit.get_db_status()
+    # contents = unit["data"]
+    data = mephisto_data_browser.get_data_from_unit(unit)
+    outputs = data['data']['outputs']
+    if any(r in outputs['rawAction'] for r in bad_raws):
+        print(outputs)
+        unit.set_db_status("soft_rejected")
+    # if "Use stool with gilded mirror" in outputs['rawAction']:
+    #     print(outputs)
+    #     unit.set_db_status("soft_rejected")
+    #     # break
+    # if "drop jugs on ground" in outputs['rawAction']:
+    #     print(outputs)
+    #     unit.set_db_status("soft_rejected")
     

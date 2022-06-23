@@ -17,7 +17,8 @@ DO_REVIEW = True
 
 # units = mephisto_data_browser.get_units_for_task_name(input("Input task name: "))
 # We're only examining this task with this file, but in the future could rely on mephisto.tools.examine_utils.run_examine_or_review
-prev_tasks = ["ground-stage-2-pilot-2", "ground-stage-2-pilot-3"]
+# prev_tasks = ["ground-stage-2-pilot-2", "ground-stage-2-pilot-3"]
+prev_tasks = ["objects-interaction-task-allowlist-attributes-1"]
 units = []
 #for t in prev_tasks:
 #    units.extend(mephisto_data_browser.get_units_for_task_name(t))

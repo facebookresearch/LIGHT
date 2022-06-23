@@ -24,7 +24,8 @@ DO_REVIEW = True
 # units_3 = mephisto_data_browser.get_units_for_task_name("ground-stage-1-pilot-4")
 # units = [*units_2, *units_3]
 # units = units_3
-task_names = ["ground-stage-1-pilot-4", "ground-stage-1-pilot-3"]
+# task_names = ["ground-stage-1-pilot-4", "ground-stage-1-pilot-3"]
+task_names = ["objects-interaction-task-allowlist-events-1"]
 units = []
 for t in task_names:
     new_units = mephisto_data_browser.get_units_for_task_name(t)
