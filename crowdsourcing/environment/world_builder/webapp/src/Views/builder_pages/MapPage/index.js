@@ -64,12 +64,12 @@ const WorldBuilderPage = ({
     //GENERAL
     //Adds more than one node to currently selected room
     const addContent = (roomId, newNodes)=>{
+        let {agents, objects, nodes } = selectedWorld;
         console.log("ROOM ID:  ", roomId)
         let unupdatedRoomData = nodes[roomId]
         console.log("ROOM DATA:  ", unupdatedRoomData)
         let unupdatedWorld = selectedWorld;
         let updatedNodes = {...nodes};
-        let {agents, objects, nodes } = unupdatedWorld;
         let newObjects =[...agents];
         let newAgents = [...objects]
         let updatedContainedNodes = {...unupdatedRoomData.contained_nodes};
@@ -510,6 +510,7 @@ const WorldBuilderPage = ({
     // Uses worldNodeSorter helper function to break nodes into arrays and send them to respective redux slices.
     useEffect(()=>{
         if(selectedWorld){
+            console.log("NODES BEING SORTED:  ", selectedWorld)
             worldNodeSorter(selectedWorld);
         };
       },[selectedWorld]);

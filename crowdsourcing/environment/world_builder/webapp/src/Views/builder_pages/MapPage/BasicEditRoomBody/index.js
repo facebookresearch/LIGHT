@@ -15,6 +15,8 @@ import Button from 'react-bootstrap/Button'
 /* STYLES */
 import "./styles.css"
 
+
+
 const BasicEditRoom = ({
     saveFunction,
     addContent,
@@ -32,12 +34,13 @@ const BasicEditRoom = ({
 })=> {
 
                 /*** NOTES/TODOS ***/
-    //1.  Connect recommendations to selectedWorld State.
-    //2.  Discuss Adding api reply that alerts user to not having any suggestions.
+    //1.  Connect recommendations to selectedWorld State. X
+    //2.  Discuss Adding api reply that alerts user to not having any suggestions. X
     //3.  Add isLoading state and spinner with overlay for async API interactions.
     //4.  Track Changes and block save button usage if nothing new is being applied.
     //5.  Connect Local State more thought fully when it is updating selected room.
     //6.  All formatting and updating when using the Common Sense API can be applied to Advanced Pages.
+    //7.  Rebuild lifecycle function here
 
 
 
@@ -110,7 +113,7 @@ const BasicEditRoom = ({
             setRoomCharacters(updatedRoomCharacters)
             setRoomObjects(updatedRoomObjects)
         }
-    }, [currentRoomData, worldRooms])
+    }, [currentRoomData, worldRooms, selectedWorld])
 
     //HANDLERS
     //WORLD DRAFT
@@ -259,7 +262,8 @@ const BasicEditRoom = ({
         suggestRoomContents({target_room, room_graph}).then((result) => {
             console.log("Finished Describe");
             console.log(result);
-            addContent(target_room, result)
+            const newItems = result.new_items;
+            addContent(target_room, newItems)
         })
     }
 
