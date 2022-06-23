@@ -411,7 +411,7 @@ const WorldBuilderPage = ({
             if (firstItem > nextItem)
              return 1;
             return 0; //default return value (no sorting)
-           };
+        };
         const WorldNodeKeys = Object.keys(nodes);
         //Filters all world nodes into arrays by class (agent, object, room)
         WorldNodeKeys.map((nodeKey)=>{
@@ -478,12 +478,12 @@ const WorldBuilderPage = ({
         let updatedMapHeight = updatedMapHeightMultiplier * -200;
         console.log("HEIGHT AND MULT", updatedMapHeightMultiplier)
         console.log("HEIGHT", updatedMapHeight)
-        const updatedBorders = {
+        const updatedDimensions = {
             width: updatedMapWidth,
             height: updatedMapHeight
         };
-        console.log("UPDATED BORDERS", updatedBorders)
-        DimensionSetter(updatedBorders);
+        console.log("UPDATED DIMENSIONS:", updatedDimensions)
+        DimensionSetter(updatedDimensions);
     },[mapBorders]);
 
     // Handler

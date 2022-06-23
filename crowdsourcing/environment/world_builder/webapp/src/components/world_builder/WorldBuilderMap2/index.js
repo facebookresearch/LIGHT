@@ -196,7 +196,7 @@ const WorldBuilderMap2 = ({
         </div>
         <div className="button-row">
         {
-            (viewLoc.y>=height+200 && viewLoc.x<=0 )
+            (viewLoc.y>=height-200 && viewLoc.x<=0 )
             ?
           <Button
               className="bp3-button"
@@ -216,7 +216,7 @@ const WorldBuilderMap2 = ({
           />
           }
           {
-            (viewLoc.y >= height+400)
+            (viewLoc.y >= height-200)
               ?
             <Button
               className="bp3-button"
@@ -235,7 +235,7 @@ const WorldBuilderMap2 = ({
             />
           }
           {
-            (viewLoc.y>=height+200 && viewLoc.x > width+250)
+            (viewLoc.y>=height-200 && viewLoc.x > width+250)
             ?
             <Button
               className="bp3-button"

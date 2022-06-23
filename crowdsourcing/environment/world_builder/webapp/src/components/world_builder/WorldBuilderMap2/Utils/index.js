@@ -1,6 +1,3 @@
-//REACT
-import React from "react";
-
 //Checks to see if coordinate has existing room data
 export function roomChecker(x, y, z, room){
     const {grid_location} = room;
@@ -9,9 +6,9 @@ export function roomChecker(x, y, z, room){
     const roomZLoc = grid_location[2];
     if(x==roomXLoc && y==roomYLoc && z ==roomZLoc){
         return true
-    }
+    };
     return false
-}
+};
 
 //Generates data for grid
 export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
@@ -50,19 +47,18 @@ export function gridDataGenerator(gridBorders, worldRoomsData, currentFloor){
                 worldRoomsData.map((roomData)=>{
                     if(roomChecker(j, i, k, roomData)){
                         tileData=roomData;
-                    }
-                })
+                    };
+                });
                 //floorData[coordinateKey]=tileData
-                row.push(tileData)
-            }
+                row.push(tileData);
+            };
             rows.push(row);
-        }
-
+        };
         floors.push(rows);
-    }
+    };
     gridData.floors = floors;
-    return gridData
-}
+    return gridData;
+};
 // Sets "edges" of world map using the most extreme x and y values on the matrix
 export function calculateMapBorders(roomNodes){
     let borders = {
@@ -70,7 +66,7 @@ export function calculateMapBorders(roomNodes){
         bottom: 0,
         left: 0,
         right: 0
-    }
+    };
     roomNodes.map((roomNode)=>{
         let {grid_location} = roomNode;
         let x = grid_location[0]
