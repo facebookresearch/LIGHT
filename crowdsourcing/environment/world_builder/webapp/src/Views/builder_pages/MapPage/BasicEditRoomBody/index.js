@@ -17,6 +17,7 @@ import "./styles.css"
 
 const BasicEditRoom = ({
     saveFunction,
+    addContent,
     addRoom,
     updateRoom,
     deleteRoom,
@@ -258,10 +259,7 @@ const BasicEditRoom = ({
         suggestRoomContents({target_room, room_graph}).then((result) => {
             console.log("Finished Describe");
             console.log(result);
-            const updatedRoomNodes = result[nodes]
-            console.log("CURRENT ROOM DATA", currentRoomData)
-            console.log("UPDATED ROOM", updatedRoomNodes)
-
+            addContent(result)
         })
     }
 
