@@ -103,10 +103,12 @@ const WorldBuilderPage = ({
             updatedContainedNodes = {...updatedContainedNodes, [formattedNewNodetId]:{target_id: formattedNewNodetId}};
             console.log("FORMATTED NEW NODE:  ", formattedNewNode)
             updatedNodes = {...updatedNodes, [formattedNewNodetId]:formattedNewNode};
+            console.log("UPDATED NOTES IN ADD CONTENT FUNCTION IN MAPPING:  ", updatedNodes)
         });
         let updatedRoomData = {...selectedRoom, contained_nodes: updatedContainedNodes};
-        updatedNodes = {...nodes, [roomId]: updatedRoomData};
-        let updatedWorld ={...selectedWorld, agents: [...newAgents], objects:[...newObjects], nodes:updatedNodes};
+        updatedNodes = {...updatedNodes, [roomId]: updatedRoomData};
+        console.log("UPDATED NOTES IN ADD CONTENT FUNCTION FINAL VERSION:  ", updatedNodes)
+        let updatedWorld ={...selectedWorld, agents: [...newAgents], objects:[...newObjects], nodes: updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     }
 
@@ -452,6 +454,7 @@ const WorldBuilderPage = ({
         let RoomNodes = [];
         let ObjectNodes = [];
         const {nodes} = world;
+        console.log("SORTER NODES:  ", nodes)
         //sortFunction sorts array of nodes by name attribute alphabetically
         const sortFunction = (a, b)=>{
             let firstItem=a.name.toLowerCase()
@@ -463,11 +466,15 @@ const WorldBuilderPage = ({
             return 0; //default return value (no sorting)
         };
         const WorldNodeKeys = Object.keys(nodes);
+        console.log("WORLD KEY NODES:  ", nodes)
+        console.log("WORLD KEY NODES:  ", WorldNodeKeys)
         //Filters all world nodes into arrays by class (agent, object, room)
         WorldNodeKeys.map((nodeKey)=>{
           let WorldNode = nodes[nodeKey];
+          console.log("WORLD NODE:  ", WorldNode)
           if(WorldNode.classes){
             let NodeClass = WorldNode.classes[0]
+            console.log("NODE CLASS IN SORTER:  ", NodeClass)
             switch(NodeClass) {
               case "agent":
                 CharacterNodes.push(WorldNode);
@@ -487,6 +494,9 @@ const WorldBuilderPage = ({
         RoomNodes = RoomNodes.sort(sortFunction);
         ObjectNodes = ObjectNodes.sort(sortFunction);
         CharacterNodes = CharacterNodes.sort(sortFunction);
+        console.log("ROOM NODES IN SORTER:  ", RoomNodes)
+        console.log("CHARACTERS NODES IN SORTER:  ", CharacterNodes)
+        console.log("OBJECT NODES IN SORTER:  ", ObjectNodes)
         //Updates each classes' state with updated arrays
         dispatch(updateRooms(RoomNodes));
         dispatch(updateObjects(ObjectNodes));

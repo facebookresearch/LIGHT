@@ -94,11 +94,14 @@ const BasicEditRoom = ({
 
     //Upon any changes to world rooms, current room data, or world draft, room will update fields
     useEffect(() => {
+        console.log("BASIC EDIT BODY SELECTED ROOM HAS CHANGED:  ",  selectedRoom)
         if(selectedRoom){
             const {node_id} = selectedRoom;
             let updatedFormattedRoomId = node_id.replace(" ", "_");
             updatedFormattedRoomId = node_id.replace(" ", "_");
             setFormattedRoomId(updatedFormattedRoomId)
+            console.log("UPDATED CONTAINED ROOM CHARS:  ", worldCharacters)
+            console.log("UPDATED CONTAINED ROOM OBJS:  ", worldObjects)
             let updatedRoomCharacters = worldCharacters.filter(char=>{
                 let {container_node} = char;
                 let {target_id} = container_node;
@@ -109,6 +112,8 @@ const BasicEditRoom = ({
                 let {target_id} = container_node;
                 return target_id == node_id
             })
+            console.log("UPDATED CONTAINED ROOM CHARS:  ", updatedRoomCharacters)
+            console.log("UPDATED CONTAINED ROOM OBJS:  ", updatedRoomObjects)
             setRoomName(selectedRoom.name)
             setRoomCharacters(updatedRoomCharacters)
             setRoomObjects(updatedRoomObjects)
