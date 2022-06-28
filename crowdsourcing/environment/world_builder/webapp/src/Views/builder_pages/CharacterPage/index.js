@@ -29,12 +29,12 @@ const CharacterPage = ({
     builderRouterNavigate,
 })=> {
     /* ------ LOCAL STATE ------ */
-    const [roomId, setRoomId] = useState("")
-    const [charId, setCharId] = useState("")
+    const [roomId, setRoomId] = useState("");
+    const [charId, setCharId] = useState("");
     const [characterName, setCharacterName] = useState("");
     const [characterPrefix, setCharacterPrefix] = useState("");
     const [characterDesc, setCharacterDesc] = useState("");
-    const [characterMotivation, setCharacterMotivation] = useState("")
+    const [characterMotivation, setCharacterMotivation] = useState("");
     const [characterPersona, setCharacterPersona] = useState("");
     const [characterAggression, setCharacterAggression] = useState(0);
     const [characterSize, setCharacterSize] = useState(0);
@@ -75,12 +75,64 @@ const CharacterPage = ({
             name: sectionName,
             id: nodeId
         };
-        builderRouterNavigate(newLocation)
-    }
+        builderRouterNavigate(newLocation);
+    };
+
      //WORLD DRAFT
      const updateWorldDraft = ()=>{
-        dispatch(setWorldDraft(selectedWorld))
-    }
+        dispatch(setWorldDraft(selectedWorld));
+    };
+
+    //GENERAL
+    //Adds more than one node to currently selected character
+    const addContent = (roomId, newNodes)=>{
+        let {agents, objects, nodes } = selectedWorld;
+        console.log("ROOM ID:  ", roomId)
+        let unupdatedRoomData = nodes[roomId]
+        console.log("ROOM DATA:  ", unupdatedRoomData)
+        let unupdatedWorld = selectedWorld;
+        let updatedNodes = {...nodes};
+        let newObjects =[...agents];
+        let newAgents = [...objects]
+        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes};
+        newNodes.map((newNode)=>{
+            let {classes} = newNode;
+            let nodeType = classes[0];
+            let formattedNewNode;
+            let formattedNewNodetId;
+            if(newNode.node_id){
+                formattedNewNodetId = newNode.node_id;
+                while((agents.indexOf(formattedNewNodetId)>=0) || objects.indexOf(formattedNewNodetId)>=0){
+                    let splitformattedNewNodetId = formattedNewNodetId.split("_");
+                    let idNumber = splitformattedNewNodetId[splitformattedNewNodetId.length-1];
+                    idNumber = (idNumber*1)+1;
+                    idNumber = idNumber.toString();
+                    splitformattedNewNodetId[splitformattedNewNodetId.length-1] = idNumber;
+                    formattedNewNodetId = splitformattedNewNodetId.join("_");
+                };
+            //
+            }else{
+                formattedNewNodetId = newNode.name +"_1" ;
+            };
+            if(nodeType === "agent"){
+                newAgents.push(formattedNewNodetId);
+            };
+            if(nodeType === "object"){
+                newObjects.push(formattedNewNodetId);
+            };
+
+            formattedNewNode = {...newNode, node_id:formattedNewNodetId , container_node:{target_id: roomId}};
+            updatedContainedNodes = {...updatedContainedNodes, [formattedNewNodetId]:{target_id: formattedNewNodetId}};
+            console.log("FORMATTED NEW NODE:  ", formattedNewNode)
+            updatedNodes = {...updatedNodes, [formattedNewNodetId]:formattedNewNode};
+            console.log("UPDATED NOTES IN ADD CONTENT FUNCTION IN MAPPING:  ", updatedNodes)
+        });
+        let updatedRoomData = {...selectedRoom, contained_nodes: updatedContainedNodes};
+        updatedNodes = {...updatedNodes, [roomId]: updatedRoomData};
+        console.log("UPDATED NOTES IN ADD CONTENT FUNCTION FINAL VERSION:  ", updatedNodes)
+        let updatedWorld ={...selectedWorld, agents: [...newAgents], objects:[...newObjects], nodes: updatedNodes};
+        dispatch(updateSelectedWorld(updatedWorld));
+    };
 
     //CHARACTERS
     // Adds new Character to selectedWorld state
@@ -121,12 +173,13 @@ const CharacterPage = ({
     }
     //Removes Current Character from selectedWorld state
     const deleteCharacter = (id)=>{
+        console.log("DELETED ROOM ID:  ", id)
         let unupdatedWorld = selectedWorld;
         let {agents, nodes } = unupdatedWorld;
         let updatedAgents = agents.filter(char => id !== char);
-        let updatedNodes = delete nodes[id];
-        let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes};
-        dispatch(updateSelectedWorld(updatedWorld));
+        const updatedWorld = containedNodesRemover(id);
+        dispatch(setWorldDraft({...updatedWorld, agents: updatedAgents}));
+        builderRouterNavigate(taskRouterHistory[taskRouterHistory.length-2]);
     }
     //OBJECTS
     const addObject = (obj)=>{
@@ -348,6 +401,54 @@ const CharacterPage = ({
         };
     };
 
+    //UTILS
+    //containedNodesRemover - helper function that handles deleteing any contained nodes in node being deleted
+    const containedNodesRemover = (nodeId) => {
+        let updatedWorld = selectedWorld;
+        let {nodes} = updatedWorld;
+        // nodeDigger - digs through nodes checking each one for contained node to generate a list of nodes to be removed from the world
+        const nodeDigger = (id)=>{
+          let unupdatedNode = nodes[id];
+          let {classes, contained_nodes} = unupdatedNode;
+          let containedNodes = contained_nodes;
+          let containedNodesList = Object.keys(containedNodes);
+          let updatedRemovalArray = [{nodeId: id, class: classes[0]}];
+          if(!containedNodesList){
+            return updatedRemovalArray;
+          }else{
+            while(containedNodesList.length){
+                let currentNode = containedNodesList.pop();
+                updatedRemovalArray=[...updatedRemovalArray, ...nodeDigger(currentNode)];
+            };
+            return updatedRemovalArray;
+          };
+        };
+        let removalList = [];
+        removalList = nodeDigger(nodeId);
+        //Removal List is populated by nodeDigger function using the id of the deleted node then mapped through to remove nodes from the world
+        removalList.map((removedNode)=>{
+            let {agents, objects, rooms, nodes}= updatedWorld
+          let removedNodeClass = removedNode.class;
+          let removedNodeId = removedNode.nodeId;
+            if(removedNodeClass[0]==="agent"){
+              let updatedCharacters = agents.filter(char => removedNodeId !== char);
+              updatedWorld = {...updatedWorld, agents: updatedCharacters};
+            }else if(removedNodeClass[0]==="object" || removedNodeClass[0]==="container"){
+              let updatedObjects = objects.filter(obj => removedNodeId !== obj);
+              updatedWorld = {...updatedWorld, objects: updatedObjects};
+            }else if(removedNodeClass[0]==="room"){
+              let updatedRooms = rooms.filter(room => removedNodeId !== room);
+              updatedWorld = {...updatedWorld, rooms: updatedRooms};
+            }
+            let updatedNodes = {...nodes};
+            delete updatedNodes[removedNodeId];
+            updatedWorld = {...updatedWorld, nodes: updatedNodes};
+            console.log("updated post delete world", updatedWorld);
+            dispatch(updateSelectedWorld(updatedWorld));
+        });
+        return updatedWorld;
+    };
+
     //CRUMBS
     const crumbs= [...taskRouterHistory, currentLocation];
     /* --- LIFE CYCLE FUNCTIONS --- */
@@ -366,12 +467,12 @@ const CharacterPage = ({
         console.log("WORLD DRAFT:  ", worldDraft);
         dispatch(updateSelectedWorld(worldDraft));
         console.log("CURRENT LOCATION USE EFFECT")
-    },[currentLocation])
+    },[currentLocation]);
 
     useEffect(()=>{
         dispatch(updateSelectedWorld(worldDraft))
         console.log("WORLD DRAFT USE EFFECT")
-    },[worldDraft])
+    },[worldDraft]);
 
     useEffect(()=>{
         if(selectedWorld){
@@ -379,7 +480,7 @@ const CharacterPage = ({
             worldNodeSorter(selectedWorld)
         }
         console.log("SELECTED WORLD USE EFFECT 1")
-    },[selectedWorld])
+    },[selectedWorld]);
 
     useEffect(()=>{
         if(roomId){
@@ -393,7 +494,7 @@ const CharacterPage = ({
             }
         }
         console.log("SELECTED ROOM USE EFFECT 2")
-    },[roomId])
+    },[roomId]);
 
     useEffect(()=>{
         if(charId){
@@ -405,7 +506,7 @@ const CharacterPage = ({
             };
         };
         console.log("SELECTED CHARACTER USE EFFECT")
-    },[charId])
+    },[charId]);
 
     useEffect(()=>{
         if(selectedWorld){
@@ -584,7 +685,7 @@ const CharacterPage = ({
                         <Col>
                             <TextButton
                                 text={"Delete Character"}
-
+                                clickFunction={()=>{deleteCharacter(charId)}}
                             />
                         </Col>
                         </Row>

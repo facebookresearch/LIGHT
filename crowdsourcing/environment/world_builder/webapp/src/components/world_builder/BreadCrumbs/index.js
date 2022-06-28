@@ -36,11 +36,11 @@ const BreadCrumbs = ({crumbs}) => {
                             </Breadcrumb.Item>
                         )
                     }else{
-                    return(
-                        <Breadcrumb.Item key={id} onClick={()=>crumbClickHandler(crumb, index)}>
-                            {formattedCrumb}
-                        </Breadcrumb.Item>
-                    )
+                        return(
+                            <Breadcrumb.Item key={id} onClick={()=>crumbClickHandler(crumb, index)}>
+                                {formattedCrumb}
+                            </Breadcrumb.Item>
+                        )
                     }
                 })
             }

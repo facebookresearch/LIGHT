@@ -8,6 +8,7 @@ import { updateSelectedWorld, setWorldDraft } from "../../../features/playerWorl
 import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
 import { updateObjects} from "../../../features/objects/objects-slice.ts";
 import { updateCharacters } from "../../../features/characters/characters-slice.ts";
+import {updateTaskRouterHistory} from '../../../features/taskRouter/taskrouter-slice';
 /* STYLES */
 import './styles.css';
 /* BOOTSTRAP COMPONENTS */
@@ -62,6 +63,15 @@ const RoomPage = ({
     //WORLD DRAFT
     const updateWorldDraft = ()=>{
         dispatch(setWorldDraft(selectedWorld));
+    };
+    //NAVIGATION
+    const backStep = ()=>{
+        let previousLoc =  taskRouterHistory[taskRouterHistory.length-1]
+        console.log("history:  ", taskRouterHistory)
+        let updatedHistory = taskRouterHistory.slice(0, taskRouterHistory.length-1);
+        console.log("PREVIOUS LOC BACKSTEP:  ", previousLoc)
+        dispatch(updateTaskRouterHistory(updatedHistory));
+        builderRouterNavigate(previousLoc)
     };
     //GENERAL
     //Adds more than one node to currently selected room
@@ -149,14 +159,10 @@ const RoomPage = ({
     const deleteSelectedRoom = ()=>{
         let updatedWorld = containedNodesRemover(roomId)
         console.log("POST DELETION WORLD", updatedWorld)
-        // let {rooms, nodes } = updatedWorld;
-        // let updatedRooms = rooms.filter(room => roomId !== room);
-        // let updatedNodes ={...nodes};
-        // delete updatedNodes[roomId];
-        // updatedWorld ={...updatedWorld, rooms: updatedRooms, nodes:updatedNodes};
-        dispatch(setWorldDraft(updatedWorld))
-        builderRouterNavigate("/map")
-}
+        let updatedRooms = worldRooms.filter(room => roomId !== room);
+        dispatch(setWorldDraft({...updatedWorld, rooms: updatedRooms}));
+        backStep()
+    }
 
     //CHARACTERS
     // Adds new Character to selectedWorld state
@@ -252,53 +258,55 @@ const RoomPage = ({
     const [roomTemperature, setRoomTemperature] = useState(0);
 
     //UTILS
-    const containedNodesRemover = (nodeId)=>{
-        console.log("RECURSIVE CONTAINED NODES REMOVER:  ", nodeId)
+    //containedNodesRemover - helper function that handles deleteing any contained nodes in node being deleted
+    const containedNodesRemover = (nodeId) => {
         let updatedWorld = selectedWorld;
         let {nodes} = updatedWorld;
+        // nodeDigger - digs through nodes checking each one for contained node to generate a list of nodes to be removed from the world
+        const nodeDigger = (id)=>{
+          let unupdatedNode = nodes[id];
+          let {classes, contained_nodes} = unupdatedNode;
+          let containedNodes = contained_nodes;
+          let containedNodesList = Object.keys(containedNodes);
+          let updatedRemovalArray = [{nodeId: id, class: classes[0]}];
+          if(!containedNodesList){
+            return updatedRemovalArray;
+          }else{
+            while(containedNodesList.length){
+                let currentNode = containedNodesList.pop();
+                updatedRemovalArray=[...updatedRemovalArray, ...nodeDigger(currentNode)];
+            };
+            return updatedRemovalArray;
+          };
+        };
+        let removalList = [];
+        removalList = nodeDigger(nodeId);
 
-        const nodeDigger = (id, removalArray)=>{
-            let {nodes} = selectedWorld;
-            let unupdatedNode = nodes[id];
-            let {classes, contained_nodes} = unupdatedNode;
-            let containedNodes = contained_nodes;
-            let containedNodesList = Object.keys(containedNodes);
-
-            if(!containedNodesList.length){
-                removalArray.push({nodeId: id, class: classes[0]})
-                return removalArray
-              }else{
-                removalArray.push({nodeId: id, class: classes[0]})
-                containedNodesList.map((containedNodeId)=>{
-                  removalArray.push({nodeId: containedNodeId, class: classes[0]})
-                  return containedNodesRemover(containedNodeId, removalArray)
-                })
-              }
-          }
-          console.log("NODE DIGGER RETURN RESULT", nodeDigger(nodeId, []))
-          const removalList = nodeDigger(nodeId, [])
-
-          removalList.map((removedNode)=>{
-            let removedNodeClass = removedNode.class;
-            let removedNodeId = removedNode.nodeId
-              if(removedNodeClass[0]==="agent"){
-                let updatedCharacters = agents.filter(char => removedNodeId !== char);
-                updatedWorld = {...updatedWorld, agents: updatedCharacters}
-              }else if(removedNodeClass[0]==="object"){
-                let updatedObjects = objects.filter(obj => removedNodeId !== obj);
-                updatedWorld = {...updatedWorld, objects: updatedObjects}
-              }else if(removedNodeClass[0]==="room"){
-                let updatedRooms = rooms.filter(room => removedNodeId !== room);
-                updatedWorld = {...updatedWorld, rooms: updatedRooms}
-              }
-              console.log("#NODES", nodes)
-              let updatedNodes = {...nodes};
-              delete updatedNodes[removedNodeId];
-              updatedWorld = {...updatedWorld, nodes: updatedNodes}
-              console.log("NESTED CONTAINED NODE REMOVER",  updatedWorld)
-          })
-          return updatedWorld;
-      }
+        //Removal List is populated by nodeDigger function using the id of the deleted node then mapped through to remove nodes from the world
+        removalList.map((removedNode)=>{
+            let {agents, objects, rooms, nodes}= updatedWorld
+          let removedNodeClass = removedNode.class;
+          let removedNodeId = removedNode.nodeId;
+            if(removedNodeClass[0]==="agent"){
+              let updatedCharacters = agents.filter(char => removedNodeId !== char);
+              updatedWorld = {...updatedWorld, agents: updatedCharacters};
+            }else if(removedNodeClass[0]==="object" || removedNodeClass[0]==="container"){
+              let updatedObjects = objects.filter(obj => removedNodeId !== obj);
+              updatedWorld = {...updatedWorld, objects: updatedObjects};
+            }else if(removedNodeClass[0]==="room"){
+              let updatedRooms = rooms.filter(room => removedNodeId !== room);
+              updatedWorld = {...updatedWorld, rooms: updatedRooms};
+            }
+            let updatedNodes = {...nodes};
+            delete updatedNodes[removedNodeId];
+            updatedWorld = {...updatedWorld, nodes: updatedNodes};
+            console.log("updated post delete world", updatedWorld);
+            dispatch(updateSelectedWorld(updatedWorld));
+        });
+        //
+        console.log("UPDATED WORLD POST DIG AND DELETE",  updatedWorld)
+        return updatedWorld;
+    };
     // worldNodeSorter - Sorts the the different types of nodes in a world into arrays
     const worldNodeSorter = (world)=>{
         let CharacterNodes = [];
@@ -308,6 +316,7 @@ const RoomPage = ({
         const WorldNodeKeys = Object.keys(nodes);
         WorldNodeKeys.map((nodeKey)=>{
             let WorldNode = nodes[nodeKey];
+            console.log("WORLD NODE:  ", WorldNode)
             if(WorldNode.classes){
             let NodeClass = WorldNode.classes[0]
             switch(NodeClass) {
@@ -367,7 +376,7 @@ const RoomPage = ({
                 dispatch(selectRoom(currentRoom));
             }
         }
-    },[selectedWorld])
+    },[roomId])
 
     useEffect(()=>{
         if(selectedWorld){

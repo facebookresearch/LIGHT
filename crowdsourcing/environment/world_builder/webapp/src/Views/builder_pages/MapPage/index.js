@@ -111,7 +111,7 @@ const WorldBuilderPage = ({
         console.log("UPDATED NOTES IN ADD CONTENT FUNCTION FINAL VERSION:  ", updatedNodes)
         let updatedWorld ={...selectedWorld, agents: [...newAgents], objects:[...newObjects], nodes: updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
-    }
+    };
 
 
    //ROOMS
@@ -151,11 +151,6 @@ const WorldBuilderPage = ({
         let unupdatedWorld = selectedWorld;
         let {rooms, nodes } = unupdatedWorld;
         let updatedRooms = rooms.filter(room => id !== room);
-        // let updatedNodes = {...updatedWorld};
-        // delete updatedNodes[id];
-        // let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes};
-        console.log("UPDATED WORLD ON REMOVAL:  ", updatedWorld)
-        // dispatch(updateSelectedRoom(clearedTileData))
         const updatedWorld = containedNodesRemover(id);
         dispatch(setWorldDraft({...updatedWorld, rooms: updatedRooms}));
         closeSidebar()
@@ -451,7 +446,7 @@ const WorldBuilderPage = ({
         //
         console.log("UPDATED WORLD POST DIG AND DELETE",  updatedWorld)
         return updatedWorld;
-    }
+    };
     // calculateMapBorders- Calculates borders from array of roomnodes and sets border values.
     const calculateMapBorders = (roomNodes)=>{
         let borders = {
