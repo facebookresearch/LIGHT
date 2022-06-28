@@ -18,7 +18,7 @@ import Button from 'react-bootstrap/Button'
 
 const GenerateForms = ({label, value, changeHandler, clickFunction, generateName})=> {
   return (
-    <div className="generateform-container">
+    <Container className="generateform-container">
         <Form>
                 <Row>
                     <Col xs={4}>
@@ -38,7 +38,7 @@ const GenerateForms = ({label, value, changeHandler, clickFunction, generateName
                     </Col>
                 </Row>
         </Form>
-    </div>
+    </Container>
 
   );
 }

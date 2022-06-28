@@ -403,57 +403,52 @@ const WorldBuilderPage = ({
     const [selectedColor, setSelectedColor] = useState("");
 
     //UTILS
-
+    //containedNodesRemover - helper function that handles deleteing any contained nodes in node being deleted
     const containedNodesRemover = (nodeId) => {
-
-        console.log("RECURSIVE CONTAINED NODES REMOVER:  ", nodeId)
-
         let updatedWorld = selectedWorld;
         let {nodes} = updatedWorld;
-
+        // nodeDigger - digs through nodes checking each one for contained node to generate a list of nodes to be removed from the world
         const nodeDigger = (id)=>{
-          console.log("DIGGER ID AND ARRAY", id)
           let unupdatedNode = nodes[id];
           let {classes, contained_nodes} = unupdatedNode;
           let containedNodes = contained_nodes;
           let containedNodesList = Object.keys(containedNodes);
-          console.log("containedNodesList", containedNodesList)
-          let updatedRemovalArray = [{nodeId: id, class: classes[0]}]
+          let updatedRemovalArray = [{nodeId: id, class: classes[0]}];
           if(!containedNodesList){
-            console.log("Non mapping REMOVAAL ARRAY", updatedRemovalArray)
-            return updatedRemovalArray
+            return updatedRemovalArray;
           }else{
             while(containedNodesList.length){
-                let currentNode = containedNodesList.pop()
-                updatedRemovalArray=[...updatedRemovalArray, ...nodeDigger(currentNode)]
-            }
-            return updatedRemovalArray
-          }
-        }
-        let removalList = []
-        removalList = nodeDigger(nodeId)
+                let currentNode = containedNodesList.pop();
+                updatedRemovalArray=[...updatedRemovalArray, ...nodeDigger(currentNode)];
+            };
+            return updatedRemovalArray;
+          };
+        };
+        let removalList = [];
+        removalList = nodeDigger(nodeId);
 
-        removalList.map((removedNode, index)=>{
+        //Removal List is populated by nodeDigger function using the id of the deleted node then mapped through to remove nodes from the world
+        removalList.map((removedNode)=>{
             let {agents, objects, rooms, nodes}= updatedWorld
-            console.log("REMOVED NODES", removedNode, index)
           let removedNodeClass = removedNode.class;
-          let removedNodeId = removedNode.nodeId
+          let removedNodeId = removedNode.nodeId;
             if(removedNodeClass[0]==="agent"){
               let updatedCharacters = agents.filter(char => removedNodeId !== char);
-              updatedWorld = {...updatedWorld, agents: updatedCharacters}
+              updatedWorld = {...updatedWorld, agents: updatedCharacters};
             }else if(removedNodeClass[0]==="object" || removedNodeClass[0]==="container"){
               let updatedObjects = objects.filter(obj => removedNodeId !== obj);
-              updatedWorld = {...updatedWorld, objects: updatedObjects}
+              updatedWorld = {...updatedWorld, objects: updatedObjects};
             }else if(removedNodeClass[0]==="room"){
               let updatedRooms = rooms.filter(room => removedNodeId !== room);
-              updatedWorld = {...updatedWorld, rooms: updatedRooms}
+              updatedWorld = {...updatedWorld, rooms: updatedRooms};
             }
             let updatedNodes = {...nodes};
             delete updatedNodes[removedNodeId];
-            console.log("updated post delete nodes", updatedNodes)
-            updatedWorld = {...updatedWorld, nodes: updatedNodes}
+            updatedWorld = {...updatedWorld, nodes: updatedNodes};
+            console.log("updated post delete world", updatedWorld);
             dispatch(updateSelectedWorld(updatedWorld));
-        })
+        });
+        //
         console.log("UPDATED WORLD POST DIG AND DELETE",  updatedWorld)
         return updatedWorld;
     }
@@ -468,8 +463,8 @@ const WorldBuilderPage = ({
 
         roomNodes.map((roomNode)=>{
             let {grid_location} = roomNode;
-            let x = grid_location[0]
-            let y = grid_location[1]
+            let x = grid_location[0];
+            let y = grid_location[1];
             borders.top = borders.top > y ? borders.top : y;
             borders.bottom = borders.bottom < y ? borders.bottom : y;
             borders.right = borders.right > x ? borders.right : x;
@@ -483,7 +478,7 @@ const WorldBuilderPage = ({
         //     borders.right = borders.right+1;
         //     borders.left = borders.left-1;
         // }
-        console.log("BORDERS:  ", borders)
+        console.log("BORDERS:  ", borders);
         return BorderSetter(borders);
     };
 

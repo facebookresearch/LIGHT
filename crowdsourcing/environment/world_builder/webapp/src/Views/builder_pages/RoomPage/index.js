@@ -30,6 +30,17 @@ const RoomPage = ({
     builderRouterNavigate,
 })=> {
 
+    // Common sense API
+    let {
+        getRoomAttributes,
+        getRoomFill,
+        suggestRoomContents,
+        suggestCharacterContents,
+        suggestObjectContents,
+        getObjectFill,
+        getCharacterFill,
+    } = api;
+
     //REACT ROUTER
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
@@ -50,8 +61,55 @@ const RoomPage = ({
     /* ------ REDUX ACTIONS ------ */
     //WORLD DRAFT
     const updateWorldDraft = ()=>{
-        dispatch(setWorldDraft(selectedWorld))
+        dispatch(setWorldDraft(selectedWorld));
+    };
+    //GENERAL
+    //Adds more than one node to currently selected room
+    const addContent = (roomId, newNodes)=>{
+        let {agents, objects, nodes } = selectedWorld;
+        console.log("ROOM ID:  ", roomId)
+        let unupdatedRoomData = nodes[roomId]
+        console.log("ROOM DATA:  ", unupdatedRoomData)
+        let unupdatedWorld = selectedWorld;
+        let updatedNodes = {...nodes};
+        let newObjects =[...agents];
+        let newAgents = [...objects]
+        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes};
+        newNodes.map((newNode)=>{
+            let {classes} = newNode;
+            let nodeType = classes[0];
+            let formattedNewNode;
+            let formattedNewNodetId;
+            if(newNode.node_id){
+                formattedNewNodetId = newNode.node_id;
+                while((agents.indexOf(formattedNewNodetId)>=0) || objects.indexOf(formattedNewNodetId)>=0){
+                    let splitformattedNewNodetId = formattedNewNodetId.split("_");
+                    let idNumber = splitformattedNewNodetId[splitformattedNewNodetId.length-1];
+                    idNumber = (idNumber*1)+1;
+                    idNumber = idNumber.toString();
+                    splitformattedNewNodetId[splitformattedNewNodetId.length-1] = idNumber;
+                    formattedNewNodetId = splitformattedNewNodetId.join("_");
+                };
+            //
+            }else{
+                formattedNewNodetId = newNode.name +"_1" ;
+            };
+            if(nodeType === "agent"){
+                newAgents.push(formattedNewNodetId);
+            };
+            if(nodeType === "object"){
+                newObjects.push(formattedNewNodetId);
+            };
+            formattedNewNode = {...newNode, node_id:formattedNewNodetId , container_node:{target_id: roomId}};
+            updatedContainedNodes = {...updatedContainedNodes, [formattedNewNodetId]:{target_id: formattedNewNodetId}};
+            updatedNodes = {...updatedNodes, [formattedNewNodetId]:formattedNewNode};
+        });
+        let updatedRoomData = {...selectedRoom, contained_nodes: updatedContainedNodes};
+        updatedNodes = {...updatedNodes, [roomId]: updatedRoomData};
+        let updatedWorld ={...selectedWorld, agents: [...newAgents], objects:[...newObjects], nodes: updatedNodes};
+        dispatch(updateSelectedWorld(updatedWorld));
     }
+
     //ROOMS
     const addRoom = (room)=>{
         let unupdatedWorld = selectedWorld;
@@ -426,6 +484,61 @@ const RoomPage = ({
         }
     }
 
+
+    /* COMMON SENSE API INTERACTIONS */
+
+    // COMMON SENSE DESCRIBE ROOM FUNCTION
+    const CommonSenseDescribeRoom = ()=>{
+        let target_room = selectedRoom['node_id'];
+        let nodes = {};
+        nodes[target_room] = selectedRoom;
+        for (let character of worldCharacters) {
+            nodes[character['node_id']] = character;
+        }
+        for (let object of worldObjects) {
+            nodes[object['node_id']] = object;
+        }
+        let agents = worldCharacters.map(c => c['node_id']);
+        let objects = worldObjects.map(c => c['node_id']);
+        let rooms = [target_room]
+        let room_graph = {nodes, agents, objects, rooms};
+        console.log("room graph");
+        console.log(room_graph);
+        console.log("selectedRoom");
+        console.log(target_room);
+        getRoomAttributes({target_room, room_graph}).then((result) => {
+            console.log("Finished describe room");
+
+            console.log(result);
+        })
+    }
+    // COMMON SENSE FORM FUNCTION
+    const CommonSenseRoomContents = ()=>{
+        let target_room = selectedRoom['node_id'];
+        let nodes = {};
+        nodes[target_room] = selectedRoom;
+        for (let character of worldCharacters) {
+            nodes[character['node_id']] = character;
+        }
+        for (let object of worldObjects) {
+            nodes[object['node_id']] = object;
+        }
+        let agents = worldCharacters.map(c => c['node_id']);
+        let objects = worldObjects.map(c => c['node_id']);
+        let rooms = [target_room]
+        let room_graph = {nodes, agents, objects, rooms};
+        console.log("room graph");
+        console.log(room_graph);
+        console.log("selectedRoom");
+        console.log(target_room);
+        suggestRoomContents({target_room, room_graph}).then((result) => {
+            console.log("Finished Describe");
+            console.log(result);
+            const newItems = result.new_items;
+            addContent(target_room, newItems)
+        })
+    }
+
     //CRUMBS
     const crumbs= [...taskRouterHistory, currentLocation];
 
@@ -468,6 +581,7 @@ const RoomPage = ({
                             label="Room Description:"
                             value={roomDesc}
                             changeHandler={RoomDescChangeHandler}
+                            clickFunction={CommonSenseRoomContents}
                         />
                     </Row>
                     <Row>
