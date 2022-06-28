@@ -61,6 +61,7 @@ const WorldBuilderPage = ({
     const updateWorldDraft = ()=>{
         dispatch(setWorldDraft(selectedWorld));
     };
+
     //GENERAL
     //Adds more than one node to currently selected room
     const addContent = (roomId, newNodes)=>{
@@ -146,34 +147,18 @@ const WorldBuilderPage = ({
 
     //Updates room with any changes removes room nodes by ID and replaces them with a blank tile
     const deleteRoom = (id)=>{
+        console.log("DELETED ROOM ID:  ", id)
         let unupdatedWorld = selectedWorld;
         let {rooms, nodes } = unupdatedWorld;
-        let tileLocation = nodes[id].grid_location;
-        let clearedTileData = {
-            agent: false,
-            classes: ["room"],
-            contain_size: 0,
-            contained_nodes: {},
-            db_id: null,
-            desc: "",
-            extra_desc: "",
-            name: "",
-            name_prefix: "",
-            names:[],
-            neighbors: [],
-            node_id: "",
-            object: false,
-            room: true,
-            size:1,
-            grid_location: tileLocation,
-            surface_type: "",
-        };
         let updatedRooms = rooms.filter(room => id !== room);
-        let updatedNodes = {...nodes};
-        delete updatedNodes[id];
-        let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes};
-        dispatch(setWorldDraft(updatedWorld))
-        dispatch(updateSelectedRoom(clearedTileData))
+        // let updatedNodes = {...updatedWorld};
+        // delete updatedNodes[id];
+        // let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes};
+        console.log("UPDATED WORLD ON REMOVAL:  ", updatedWorld)
+        // dispatch(updateSelectedRoom(clearedTileData))
+        const updatedWorld = containedNodesRemover(id);
+        dispatch(setWorldDraft({...updatedWorld, rooms: updatedRooms}));
+        closeSidebar()
     }
 
     //Handles connecting rooms via clicking paths between the components.  This automatically updates the draft.  This function can only be invoked if there is an existing room on both ends of the path.
@@ -418,6 +403,60 @@ const WorldBuilderPage = ({
     const [selectedColor, setSelectedColor] = useState("");
 
     //UTILS
+
+    const containedNodesRemover = (nodeId) => {
+
+        console.log("RECURSIVE CONTAINED NODES REMOVER:  ", nodeId)
+
+        let updatedWorld = selectedWorld;
+        let {nodes} = updatedWorld;
+
+        const nodeDigger = (id)=>{
+          console.log("DIGGER ID AND ARRAY", id)
+          let unupdatedNode = nodes[id];
+          let {classes, contained_nodes} = unupdatedNode;
+          let containedNodes = contained_nodes;
+          let containedNodesList = Object.keys(containedNodes);
+          console.log("containedNodesList", containedNodesList)
+          let updatedRemovalArray = [{nodeId: id, class: classes[0]}]
+          if(!containedNodesList){
+            console.log("Non mapping REMOVAAL ARRAY", updatedRemovalArray)
+            return updatedRemovalArray
+          }else{
+            while(containedNodesList.length){
+                let currentNode = containedNodesList.pop()
+                updatedRemovalArray=[...updatedRemovalArray, ...nodeDigger(currentNode)]
+            }
+            return updatedRemovalArray
+          }
+        }
+        let removalList = []
+        removalList = nodeDigger(nodeId)
+
+        removalList.map((removedNode, index)=>{
+            let {agents, objects, rooms, nodes}= updatedWorld
+            console.log("REMOVED NODES", removedNode, index)
+          let removedNodeClass = removedNode.class;
+          let removedNodeId = removedNode.nodeId
+            if(removedNodeClass[0]==="agent"){
+              let updatedCharacters = agents.filter(char => removedNodeId !== char);
+              updatedWorld = {...updatedWorld, agents: updatedCharacters}
+            }else if(removedNodeClass[0]==="object" || removedNodeClass[0]==="container"){
+              let updatedObjects = objects.filter(obj => removedNodeId !== obj);
+              updatedWorld = {...updatedWorld, objects: updatedObjects}
+            }else if(removedNodeClass[0]==="room"){
+              let updatedRooms = rooms.filter(room => removedNodeId !== room);
+              updatedWorld = {...updatedWorld, rooms: updatedRooms}
+            }
+            let updatedNodes = {...nodes};
+            delete updatedNodes[removedNodeId];
+            console.log("updated post delete nodes", updatedNodes)
+            updatedWorld = {...updatedWorld, nodes: updatedNodes}
+            dispatch(updateSelectedWorld(updatedWorld));
+        })
+        console.log("UPDATED WORLD POST DIG AND DELETE",  updatedWorld)
+        return updatedWorld;
+    }
     // calculateMapBorders- Calculates borders from array of roomnodes and sets border values.
     const calculateMapBorders = (roomNodes)=>{
         let borders = {

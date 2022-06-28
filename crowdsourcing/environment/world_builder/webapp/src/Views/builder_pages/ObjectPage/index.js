@@ -176,7 +176,8 @@ const ObjectPage = ({
       console.log("NESTED CONTAINED NODE REMOVER", updatedWorld)
     })
     return updatedWorld;
-  }
+  };
+
   const worldNodeSorter = (world) => {
     let CharacterNodes = [];
     let RoomNodes = [];
