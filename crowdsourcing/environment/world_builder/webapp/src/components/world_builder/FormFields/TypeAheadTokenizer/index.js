@@ -38,7 +38,8 @@ const TypeaheadTokenizer = ({
                 data: tokenData
             };
             return updatedDefaultTokenData;
-        })
+        });
+        console.log("UPDATED TOKENS:  ", updatedtokens);
         setSelected([...updatedtokens]);
        }else{
         setSelected([]);

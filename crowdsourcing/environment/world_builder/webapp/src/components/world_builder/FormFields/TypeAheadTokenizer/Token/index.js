@@ -35,7 +35,7 @@ const Token = ({
         let updatedTokenData = {
             index: index,
             label: option.name,
-            id:option.node_id
+            id: option.node_id
         }
         setTokenData(updatedTokenData)
     },[option])
@@ -58,7 +58,7 @@ const Token = ({
     }
 
     return (
-        <span ref={ref}>
+        <span key={tokenData.id} ref={ref}>
             <RBTToken
                 index={index}
                 option={tokenData}

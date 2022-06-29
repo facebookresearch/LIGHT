@@ -121,39 +121,12 @@ const RoomPage = ({
     }
 
     //ROOMS
-    const addRoom = (room)=>{
-        let unupdatedWorld = selectedWorld;
-        let {rooms, nodes } = unupdatedWorld;
-        let formattedRoomId = room.id;
-        while(rooms.indexOf(formattedRoomId)>=0){
-            let splitFormattedRoomId = formattedRoomId.split("_")
-            let idNumber = splitFormattedRoomId[splitFormattedRoomId.length-1]
-            idNumber = idNumber++;
-            splitFormattedRoomId[splitFormattedRoomId.length-1] = idNumber
-            formattedRoomId = splitFormattedRoomId.join("_")
-        }
-        let updatedRoomData = {...room, node_id:formattedRoomId};
-        let updatedRooms = [...rooms, formattedRoomId]
-        let updatedNodes = {...nodes, [formattedRoomId]:updatedRoomData}
-        let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
-    }
-
     const updateRoom = (id, update) =>{
         let unupdatedWorld = selectedWorld;
         let {nodes } = unupdatedWorld;
         let updatedNodes = {...nodes, [id]:update}
         let updatedWorld ={...selectedWorld, nodes:updatedNodes}
         dispatch(updateSelectedWorld(updatedWorld))
-    }
-
-    const deleteRoom = (id)=>{
-        let unupdatedWorld = selectedWorld;
-        let {rooms, nodes } = unupdatedWorld;
-        let updatedRooms = rooms.filter(room => id !== room);
-        let updatedNodes = delete nodes[id];
-        let updatedWorld ={...selectedWorld, rooms: updatedRooms, nodes:updatedNodes};
-        dispatch(updateSelectedWorld(updatedWorld));
     }
 
     const deleteSelectedRoom = ()=>{
@@ -426,7 +399,7 @@ const RoomPage = ({
         }
         console.log("FINAL USE EFFECT IN ROOM PAGE SELECTED ROOM", selectedRoom)
         console.log("FINAL USE EFFECT IN ROOM PAGE SELECTED worldRooms", worldRooms)
-    }, [selectedRoom])
+    }, [selectedRoom, selectedWorld])
 
     //HANDLERS
     const RoomNameChangeHandler = (e)=>{
