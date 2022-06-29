@@ -426,15 +426,19 @@ const WorldBuilderPage = ({
         removalList.map((removedNode)=>{
             let {agents, objects, rooms, nodes}= updatedWorld
           let removedNodeClass = removedNode.class;
+          console.log("REMOVED NODE CLASS", removedNodeClass, "REMOVED NODE:  ", removedNode)
           let removedNodeId = removedNode.nodeId;
-            if(removedNodeClass[0]==="agent"){
+            if(removedNodeClass==="agent"){
               let updatedCharacters = agents.filter(char => removedNodeId !== char);
+              console.log("REMOVED AGENT", updatedCharacters)
               updatedWorld = {...updatedWorld, agents: updatedCharacters};
-            }else if(removedNodeClass[0]==="object" || removedNodeClass[0]==="container"){
+            }else if(removedNodeClass==="object" || removedNodeClass==="container"){
               let updatedObjects = objects.filter(obj => removedNodeId !== obj);
+              console.log("REMOVED OBJECT", updatedObjects)
               updatedWorld = {...updatedWorld, objects: updatedObjects};
-            }else if(removedNodeClass[0]==="room"){
+            }else if(removedNodeClass==="room"){
               let updatedRooms = rooms.filter(room => removedNodeId !== room);
+              console.log("REMOVED ROOM", updatedRooms)
               updatedWorld = {...updatedWorld, rooms: updatedRooms};
             }
             let updatedNodes = {...nodes};

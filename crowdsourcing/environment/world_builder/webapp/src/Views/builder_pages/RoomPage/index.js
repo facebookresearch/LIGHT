@@ -260,13 +260,13 @@ const RoomPage = ({
             let {agents, objects, rooms, nodes}= updatedWorld
           let removedNodeClass = removedNode.class;
           let removedNodeId = removedNode.nodeId;
-            if(removedNodeClass[0]==="agent"){
+            if(removedNodeClass ==="agent"){
               let updatedCharacters = agents.filter(char => removedNodeId !== char);
               updatedWorld = {...updatedWorld, agents: updatedCharacters};
-            }else if(removedNodeClass[0]==="object" || removedNodeClass[0]==="container"){
+            }else if(removedNodeClass ==="object" || removedNodeClass ==="container"){
               let updatedObjects = objects.filter(obj => removedNodeId !== obj);
               updatedWorld = {...updatedWorld, objects: updatedObjects};
-            }else if(removedNodeClass[0]==="room"){
+            }else if(removedNodeClass ==="room"){
               let updatedRooms = rooms.filter(room => removedNodeId !== room);
               updatedWorld = {...updatedWorld, rooms: updatedRooms};
             }
