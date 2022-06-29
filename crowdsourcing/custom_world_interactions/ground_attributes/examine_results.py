@@ -90,6 +90,8 @@ def format_for_printing_data(data):
     inputs_string = f"Inputs:\n\t(Primary Object) {primary_obj.get('name')}: {primary_obj.get('desc')}\n\t(Secondary Object) {secondary_obj.get('name')}: {secondary_obj.get('desc')}\n\tAction Description: {inputs.get('interaction')}\n\n"
 
     outputs = contents["outputs"]
+    if outputs is None:
+        return f"-------------------\n{metadata_string}{inputs_string}NONE"
     outputs["events"] = [e for e in outputs.get("events", []) if e is not None]
     outputs["constraints"] = [e for e in outputs.get("constraints", []) if e is not None]
 

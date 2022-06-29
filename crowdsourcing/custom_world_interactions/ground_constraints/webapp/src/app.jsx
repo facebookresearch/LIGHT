@@ -45,7 +45,6 @@ function MainApp() {
   /*-----------Constraint State-----------*/
   const [isSecondaryHeld, setIsSecondaryHeld] = useState(null);
   const [isReversible, setIsReversible] = useState(null);
-  const [isInfinite, setIsInfinite] = useState(null)
   const [timesRemaining, setTimesRemaining] = useState(0);
   const [isLocationConstrained, setIsLocationConstrained] = useState(null);
   const [constraintLocation, setConstraintLocation] = useState("");
@@ -337,7 +336,6 @@ function MainApp() {
       hasBackstory,
       isSecondaryHeld,
       isReversible,
-      isInfinite,
       timesRemaining,
       isLocationConstrained,
       constraintLocation,
@@ -401,8 +399,6 @@ function MainApp() {
         setSecondaryConstrainingAttributes={() => {}}
         hasBackstory={hasBackstory}
         setHasBackstory={() => {}}
-        isInfinite={isInfinite}
-        setIsInfinite={setIsInfinite}
         timesRemaining={timesRemaining}
         setTimesRemaining={setTimesRemaining}
         isSecondaryHeld={isSecondaryHeld}
@@ -425,7 +421,6 @@ function MainApp() {
           isChangingDescription={isChangingDescription}
           isSecondaryHeld={isSecondaryHeld}
           isReversible={isReversible}
-          isInfinite={isInfinite}
           timesRemaining={timesRemaining}
           isLocationConstrained={isLocationConstrained}
           constraintLocation={constraintLocation}

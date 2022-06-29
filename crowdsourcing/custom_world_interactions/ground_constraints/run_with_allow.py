@@ -8,8 +8,6 @@ import os
 import random
 import shutil
 import subprocess
-
-from numpy import broadcast
 from mephisto.operations.operator import Operator
 from mephisto.tools.scripts import load_db_and_process_config
 from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint import (
@@ -23,14 +21,6 @@ from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
 from mephisto.data_model.worker import Worker
 from mephisto.data_model.unit import Unit
-
-import hydra
-import json
-import random
-from omegaconf import DictConfig
-from dataclasses import dataclass, field
-from typing import List, Any
-
 from mephisto.utils.qualifications import make_qualification_dict
 from mephisto.data_model.qualification import QUAL_EXISTS
 from parlai_internal.crowdsourcing.projects.reverse_persona.utils.dataloading_utils import (
@@ -40,12 +30,21 @@ from mephisto.abstractions.providers.mturk.utils.script_utils import (
     direct_soft_block_mturk_workers,
 )
 
+import hydra
+import json
+import random
+from omegaconf import DictConfig
+from dataclasses import dataclass, field
+from typing import List, Any
+
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 LIGHT_DB_PATH = "~/ParlAI/data/light/environment/db/d3/database3.db"
+# INPUT_FILE_TASK = "objects-interaction-task-pilot-sandbox"
+# INPUT_FILE_TASK = "ground-stage-2-task-1"
+INPUT_FILE_TASKS = ["objects-interaction-task-allowlist-attributes-1"]
 
-INPUT_FILE_TASKS = ["objects-interaction-task-allowlist-events-1"]
-
-PREVIOUSLY_DONE_TASKS = ["objects-interaction-task-allowlist-attributes-1"]
+# PREVIOUSLY_DONE_TASKS = ["objects-interaction-task-allowlist-contraints-1", "objects-interaction-task-allowlist-constraints-2"]
+PREVIOUSLY_DONE_TASKS = []
 
 ALLOWLIST_QUAL_NAME = "OBJINTERACTION_ATTRIBUTES_DATA_ANNOTATION_TASK_ALLOWLIST"
 BLOCKLIST_QUAL_NAME = "OBJINTERACTION_ATTRIBUTES_DATA_ANNOTATION_TASK_BLOCKLIST"
@@ -75,18 +74,19 @@ defaults = [
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
 
+def get_previously_completed_unit_data():
+    existing_units = []
+    for task_name in PREVIOUSLY_DONE_TASKS:
+        task_units = mephisto_data_browser.get_units_for_task_name(task_name)
+        for unit in task_units:
+            inputs = mephisto_data_browser.get_data_from_unit(unit)["data"]['inputs']
+            existing_units.append(inputs['interaction'])
+    return set(existing_units)
 
-# @dataclass
-# class TestScriptConfig(RunScriptConfig):
-#     defaults: List[Any] = field(default_factory=lambda: defaults)
-#     task_dir: str = TASK_DIRECTORY
-#     input_file_task: str = INPUT_FILE_TASK
-#     num_tasks: int = DEFAULT_NUM_TASKS
 @dataclass
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
-    # input_file_tasks: str = INPUT_FILE_TASKS
     input_file_tasks: List[str] = field(default_factory=lambda: INPUT_FILE_TASKS)
     num_tasks: int = DEFAULT_NUM_TASKS
     force_rebuild: bool = False
@@ -127,14 +127,7 @@ def build_task(task_dir):
             "frontend. See the above error for more information."
         )
     os.chdir(return_dir)
-def get_previously_completed_unit_data():
-    existing_units = []
-    for task_name in PREVIOUSLY_DONE_TASKS:
-        task_units = mephisto_data_browser.get_units_for_task_name(task_name)
-        for unit in task_units:
-            inputs = mephisto_data_browser.get_data_from_unit(unit)["data"]['inputs']
-            existing_units.append(inputs['interaction'])
-    return set(existing_units)
+
 
 def create_task_data(input_file_tasks, num_tasks):
     # get data from collect-narration submissions
@@ -154,55 +147,27 @@ def create_task_data(input_file_tasks, num_tasks):
         new_data = unit_data['inputs']
         for key, val in unit_data['outputs'].items():
             new_data[key] = val
-        # filter for outputs created with new multi-stage tasks
-        # FIX RANGES
-        ranges = new_data['this_task_state']['ranges']
-        original_bm = new_data['interaction']
-        ranges = [r for r in ranges if r['start'] is not None and r['end'] is not None and r['text'] == original_bm]
-        ranges = [r for r in ranges if r['start'] >= 0 and r['start'] < len(original_bm) and r['end'] >= r['start'] and r['end'] < len(original_bm)]
-        ranges = sorted(ranges, key=lambda r: r['start'])
-        h_map = {}
-        for i, r in enumerate(ranges):
-            broadcastMessage = new_data['interaction']
-            start = r['start']
-            end = r['end']
-            # print(f"og overlap: {broadcastMessage[start:end+1]}")
-            if broadcastMessage[end].isalnum():
-                next_index = end + 1
-                while next_index < len(broadcastMessage) and broadcastMessage[next_index].isalnum():
-                    next_index += 1
-                end = next_index - 1
-            else:
-                end = end - 1
-            if broadcastMessage[start].isalnum():
-                prev_index = start - 1
-                while prev_index >= 0 and broadcastMessage[prev_index].isalnum():
-                    prev_index -= 1
-                start = prev_index + 1
-            else:
-                start = start + 1
-            h_map[broadcastMessage[start:end+1]] = r['highlighter']
+        if "this_task_state" in new_data:
+            if 'isCreatingEntity' in new_data['this_task_state'] or 'createdModifiedAttributes' in new_data['this_task_state']:
+                # if 'ranges' in new_data['this_task_state']:
+                broadcastMessage = new_data['this_task_state']['broadcastMessage']
+                if broadcastMessage in previous_messages:
+                    continue
+                data.append(new_data)
+                # else:
+                #     print("no ranges")
+            # else:
+            #     print(new_data)
+                # print("subset")
+        # else:
+        #     print("no task state")
 
-        broadcastMessage = original_bm
-        for word, highlighter in h_map.items():
-            broadcastMessage = broadcastMessage.replace(word, highlighter)
-        new_data['interaction'] = broadcastMessage
-        if broadcastMessage in previous_messages:
-            continue
-        # print(f"OUTPUT: {broadcastMessage}")
-        # print("-"*100)
-        new_data['object1']['attributes'] = []
-        new_data['object1']['attributes'] = [{'name':'', 'val':False}]
-        new_data['object2']['attributes'] = []
-        # new_data['object2']['attributes'] = []
-        new_data['object2']['attributes'] = [[{'name':'', 'val':False}]]
-        data.append(new_data)
+       
+
     print(f"len(data): {len(data)}")
     print(data[0])
-    # x = 1/0
-    data = data[:num_tasks]
-    print(f"Adjusted len(data): {len(data)}")
-    return data
+
+    return data[:num_tasks]
     # return [{}]  # data[:num_tasks]
 
 
@@ -215,8 +180,8 @@ def validate_unit(unit):
     data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"]
     print("Data: ", data)
 
-    # constraints = data["constraints"]
-    # events = data["events"]
+    constraints = data["constraints"]
+    events = data["events"]
 
     # front-end already handles basic validation (e.g. all answers exist, aren't inherently invalid)
     validated = True
@@ -238,13 +203,13 @@ def main(cfg: DictConfig) -> None:
 
     def onboarding_always_valid(onboarding_data):
         return True
+
+    db, cfg = load_db_and_process_config(cfg)
     
     if not cfg.qualify_new_workers:
         validator = lambda u: True
     else:
         validator = validate_unit
-
-    db, cfg = load_db_and_process_config(cfg)
 
     for fname in ALL_GOOD_USER_FILES:
         direct_soft_block_mturk_workers(

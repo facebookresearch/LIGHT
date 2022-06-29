@@ -182,7 +182,6 @@ def validate_unit(unit):
         print("Action " + action_description + " was not validated!")
         # unit.get_assigned_agent().soft_reject_work() => must wait for async version
         worker = unit.get_assigned_agent().get_worker()
-        worker.grant_qualification("collect_narrations_task_block", 1)
     return
 
 

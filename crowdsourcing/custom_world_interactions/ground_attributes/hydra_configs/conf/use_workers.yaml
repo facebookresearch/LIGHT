@@ -1,0 +1,20 @@
+#@package _global_
+mephisto:
+  blueprint:
+    task_source: ${task_dir}/webapp/build/bundle.js
+    extra_source_dir: ${task_dir}/webapp/src/static
+    units_per_assignment: 1
+    block_qualification: OBJINTERACTION_ATTRIBUTES_DATA_ANNOTATION_TASK_BLOCKLIST
+  task:
+    maximum_units_per_worker: 10
+    max_num_concurrent_units: 100
+    task_name: "objects-interaction-task-allowlist-attributes-1"
+    task_title: "Determine the attributes after a single interaction."
+    task_description: "In this task you will receive two objects with an interaction between them described in text format. You will answer questions related to the result of this description."
+    # task_reward: 0.89
+    task_reward: 0.95
+    task_tags: "fantasy,object,interaction"
+  database: 
+    _database_type: singleton
+num_tasks: 50
+# qualify_new_workers: true

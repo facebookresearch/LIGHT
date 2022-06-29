@@ -1,5 +1,5 @@
 //REACT
-import React from "react";
+import React, { useEffect, useState } from "react";
 //STYLING
 import "./styles.css"
 //COPY
@@ -9,6 +9,7 @@ import FormQuestion from "../../../../components/Questions/FormQuestion";
 import BooleanQuestion from "../../../../components/Questions/BooleanQuestion";
 import AttributeSetter from "../../../../components/AttributeSetter";
 import NumberQuestion from "../../../../components/Questions/NumberQuestion";
+import MultipleSelectQuestion from "../../../../components/Questions/MultipleSelectQuestion";
 
 // Questions Component - Contains all of the forms relevant to the Constraint Questions and passes relevant state and setState functions to corresponding questions
 const Questions = ({
@@ -32,8 +33,6 @@ const Questions = ({
     setHasBackstory,
     isCreatingEntity,
     createdEntity,
-    isInfinite,
-    setIsInfinite,
     timesRemaining,
     setTimesRemaining,
 }) => {
@@ -42,8 +41,9 @@ const Questions = ({
     let obj2Attr = object2.attributes
     let objName1 = object1.name.toUpperCase();
     let objName2 = object2.name.toUpperCase();
-    const QuestionList = QuestionCopy.constraint.questions
-    const TipList = QuestionCopy.constraint.tutorialCopy
+    const QuestionList = QuestionCopy.constraint.questions;
+    const TipList = QuestionCopy.constraint.tutorialCopy;
+    let [selectedNumTimes, setNumTimes] = useState([]);
     return (
         <>
         <AttributeSetter
@@ -99,7 +99,7 @@ const Questions = ({
             hasToolTip={true}
             isComplete={isReversible!==null}
         />
-        <BooleanQuestion
+        {/* <BooleanQuestion
             question={QuestionList[4]}
             trueAnswer={{name:"YES"} }
             falseAnswer={{name:"NO"} }
@@ -113,7 +113,18 @@ const Questions = ({
                 question={QuestionList[5]}
                 formFunction={setTimesRemaining}
             />
-        </BooleanQuestion>
+        </BooleanQuestion> */}
+
+        <MultipleSelectQuestion
+            question={"Select the number of times this action can be done, immediately one after another."}
+            answers={["ONCE", "A FEW TIMES", "INFINITE"]}
+            // colors={['#CE93D8', '#4FC3F7', '#FFCC80', '#A5D6A7']}
+            onlySelectOne={true}
+            toolTipCopy={TipList[4].explanation}
+            hasToolTip={true}
+            isComplete={timesRemaining !== undefined && timesRemaining.length > 0}
+            selectFunction={setTimesRemaining}
+        />
 
         <BooleanQuestion
             question={QuestionList[6]}

@@ -100,6 +100,7 @@ const Questions = ({
                     selectFunction={()=>{}}
                     disabled={true}
                     curSelectedAnswers={removedObjects}
+                    isComplete={true}
                 /> : <div />
                 }
             </BooleanQuestion>

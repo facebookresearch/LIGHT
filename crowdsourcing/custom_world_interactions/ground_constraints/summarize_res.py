@@ -17,7 +17,9 @@ DO_REVIEW = True
 
 # task_names = ["objects-interaction-task-pilot-3", "objects-interaction-task-pilot-4", "objects-interaction-task-pilot-5"]
 # task_names = ["objects-interaction-task-pilot-5"]
-task_names = ["objects-interaction-task-allowlist-attributes-1"]
+# task_names = ["objects-interaction-task-allowlist-contraints-1"]
+# task_names = ["objects-interaction-task-allowlist-constraints-2"]
+task_names = ["objects-interaction-task-allowlist-contraints-1", "objects-interaction-task-allowlist-constraints-2"]
 
 units = []
 for t in task_names:
@@ -46,8 +48,10 @@ for unit in units:
     status = unit.get_db_status()
     data = mephisto_data_browser.get_data_from_unit(unit)
     outputs = data['data']['outputs']
-    print(outputs)
-    break
+    
+    tR = outputs['this_task_state']['timesRemaining']
+    if type(tR) is list and ("A FEW TIMES" in tR or "INFINITE" in tR):
+        print(tR, outputs['this_task_state']['broadcastMessage'])
     # rawAction = outputs['rawAction']
     # actionDescription = outputs['actionDescription']
     # if any("wear" in word.lower() for word in rawAction.split(" ")):
@@ -66,7 +70,10 @@ all_accepted = sum([w[0] for w in user_to_count.values()])
 all_total = sum([w[1] for w in user_to_count.values()])
 print(f"Accepted: {all_accepted}")
 print(f"Total: {all_total}")
-pct = all_accepted / all_total * 100
+try:
+    pct = all_accepted / all_total * 100
+except:
+    pct = 0
 print(f"% Acc: {pct:0.3f}%")
 
 print("-"*100)
@@ -75,7 +82,10 @@ all_accepted = sum([w[0] for name, w in user_to_count.items() if name not in bad
 all_total = sum([w[1] for name, w in user_to_count.items() if name not in bad_users])
 print(f"Accepted: {all_accepted}")
 print(f"Total: {all_total}")
-pct = all_accepted / all_total * 100
+try:
+    pct = all_accepted / all_total * 100
+except:
+    pct = 0
 print(f"% Acc: {pct:0.3f}%")
 
 print("-"*100)
@@ -84,7 +94,10 @@ all_accepted = sum([w[0] for name, w in user_to_count.items() if name not in bad
 all_total = sum([w[1] for name, w in user_to_count.items() if name not in bad_users and w[0]/w[1] > 0.8])
 print(f"Accepted: {all_accepted}")
 print(f"Total: {all_total}")
-pct = all_accepted / all_total * 100
+try:
+    pct = all_accepted / all_total * 100
+except:
+    pct = 0
 print(f"% Acc: {pct:0.3f}%")
 
 print("*"*100)
