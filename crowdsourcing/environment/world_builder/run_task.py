@@ -405,7 +405,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
                 most_similar = get_most_similar(room_graph['nodes'][target_id], "object")
                 print(most_similar)
 
-                new_description = most_similar["physical_description"]
+                new_description = most_similar["desc"]
                 
                 room_graph['nodes'][target_id]['desc'] = new_description
                 room_graph['nodes'][target_id]['from_retrieval'] = True
@@ -473,7 +473,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
                 most_similar = get_most_similar(room_graph['nodes'][target_id], "character")
                 print(most_similar)
 
-                new_description = most_similar["physical_description"]
+                new_description = most_similar["desc"]
                 new_persona = most_similar["persona"]
                 # print(f"new desc: {new_description}")
                 # print(f"persona: {new_persona}")
