@@ -293,10 +293,14 @@ const WorldBuilderPage = ({
             while(agents.indexOf(formattedAgentId)>=0){
                 let splitFormattedAgentId = formattedAgentId.split("_");
                 let idNumber = splitFormattedAgentId[splitFormattedAgentId.length-1];
-                idNumber = (idNumber*1)+1;
-                idNumber = idNumber.toString();
-                splitFormattedAgentId[splitFormattedAgentId.length-1] = idNumber;
-                formattedAgentId = splitFormattedAgentId.join("_");
+                if((typeof idNumber) === "Number"){
+                    idNumber = (idNumber*1)+1;
+                    idNumber = idNumber.toString();
+                    splitFormattedAgentId[splitFormattedAgentId.length-1] = idNumber;
+                    formattedAgentId = splitFormattedAgentId.join("_");
+                }else{
+                    formattedAgentId = char.name +"_1" ;
+                }
             };
         //NEW CHARACTER
         }else{

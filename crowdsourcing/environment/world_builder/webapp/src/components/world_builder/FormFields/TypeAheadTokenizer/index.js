@@ -44,7 +44,7 @@ const TypeaheadTokenizer = ({
        }else{
         setSelected([]);
        }
-    }, [tokens, roomId, tokenOptions]);
+    }, [tokens]);
 
 
     useEffect(() => {
@@ -62,7 +62,7 @@ const TypeaheadTokenizer = ({
             })
             setTokenList(updatedTokenList);
         }
-    }, [tokens, tokenOptions]);
+    }, [tokenOptions]);
 
 console.log(formLabel, tokenOptions)
 const SelectHandler = (selected)=>{

@@ -4,6 +4,8 @@ import React, {useState, useEffect} from 'react';
 import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
 import {  setTaskRouterCurrentLocation, updateTaskRouterHistory } from "../../../../features/taskRouter/taskrouter-slice.ts";
+//ROOMS
+import { updateRooms, updateSelectedRoom} from "../../../../features/rooms/rooms-slice.ts";
 /* STYLES */
 import "./styles.css";
 /* BOOTSTRAP COMPONENTS */
@@ -82,6 +84,18 @@ const BasicEditRoom = ({
     const [roomObjects, setRoomObjects] =useState([]);
 
     /* --- LIFE CYCLE FUNCTIONS --- */
+    useEffect(()=>{
+        if(selectedWorld){
+            const {nodes} = selectedWorld;
+            if(selectedRoom.node_id){
+                let updatedSelectedRoom = nodes[selectedRoom.node_id]
+                dispatch(updateSelectedRoom(updatedSelectedRoom))
+            }
+        }
+    },[selectedWorld])
+
+
+
     //Sets isNewRoom state boolean based on presence of node_id.  This boolean determines rendered form fields and save on click function
     useEffect(()=>{
         if(selectedRoom.node_id){
@@ -118,7 +132,7 @@ const BasicEditRoom = ({
             setRoomCharacters(updatedRoomCharacters)
             setRoomObjects(updatedRoomObjects)
         }
-    }, [currentRoomData, worldRooms, selectedWorld])
+    }, [currentRoomData, selectedWorld])
 
     //HANDLERS
     //WORLD DRAFT
@@ -173,8 +187,10 @@ const BasicEditRoom = ({
     //Changes Name of selected room.  Name is required for new room to be created
     const RoomNameChangeHandler = (e)=>{
         let updatedRoomName = e.target.value;
+        console.log("UPDATED ROOM NAME:  ", updatedRoomName)
         let updatedSelectedRoom = {...selectedRoom, name: updatedRoomName }
-        setRoomName(updatedRoomName)
+        console.log("UPDATED selected ROOM:  ", updatedSelectedRoom)
+        dispatch(updateSelectedRoom(updatedSelectedRoom))
         if(selectedRoom){
             if(selectedRoom.node_id){
                 updateRoom(selectedRoom.node_id, updatedSelectedRoom)
@@ -196,8 +212,6 @@ const BasicEditRoom = ({
     const RemoveCharacterHandler = (id)=>{
         console.log(" REMOVED CHARACTER ID:  ", id)
         deleteCharacter(id)
-        let updatedRoomCharacters = roomCharacters.filter(obj=>obj.node_id!=id);
-        setRoomCharacters(updatedRoomCharacters);
     }
 
     //OBJECT HANDLERS
@@ -213,8 +227,6 @@ const BasicEditRoom = ({
     const RemoveObjectHandler = (id)=>{
         console.log(" REMOVED OBJECT ID:  ", id)
         deleteObject(id)
-        let updatedRoomObjects = roomObjects.filter(obj=>obj.node_id!=id);
-        setRoomObjects(updatedRoomObjects)
     }
 
 
@@ -283,12 +295,14 @@ const BasicEditRoom = ({
                     :
                     null
                 }
-                <Button onClick={CommonSenseDescribeRoom}>
-                    DESCRIBE ROOM
-                </Button>
-                <Button onClick={CommonSenseRoomContents}>
-                    SUGGEST ROOM CONTENTS
-                </Button>
+                {
+                    formattedRoomId ?
+                    <Button onClick={CommonSenseRoomContents}>
+                        SUGGEST ROOM CONTENTS
+                    </Button>
+                    :
+                    null
+                }
                 {/* <Button onClick={CommonSenseClickHandler}>
                     FILL IN OBJECTS
                 </Button>

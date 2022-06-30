@@ -1,6 +1,5 @@
 /* REACT */
 import React, {useState, useEffect} from 'react';
-import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
@@ -70,8 +69,8 @@ const RoomPage = ({
         console.log("history:  ", taskRouterHistory)
         let updatedHistory = taskRouterHistory.slice(0, taskRouterHistory.length-1);
         console.log("PREVIOUS LOC BACKSTEP:  ", previousLoc)
-        dispatch(updateTaskRouterHistory(updatedHistory));
         builderRouterNavigate(previousLoc)
+        dispatch(updateTaskRouterHistory(updatedHistory));
     };
     //GENERAL
     //Adds more than one node to currently selected room
@@ -142,29 +141,33 @@ const RoomPage = ({
     const addCharacter = (char)=>{
         let unupdatedWorld = selectedWorld;
         let {agents, nodes } = unupdatedWorld;
-        let formattedAgentId = char.node_id;
-        while(agents.indexOf(formattedAgentId)>=0){
-            let splitFormattedAgentId = formattedAgentId.split("_");
-            let idNumber = splitFormattedAgentId[splitFormattedAgentId.length-1]
-            idNumber = (idNumber*1)+1;
-            idNumber = idNumber.toString();
-            splitFormattedAgentId[splitFormattedAgentId.length-1] = idNumber;
-            formattedAgentId = splitFormattedAgentId.join("_")
-        }
-        let updatedCharacterData = {...char, node_id:formattedAgentId};
+        let formattedAgentId;
+        //EXISTING CHARACTER
+        if(char.node_id){
+            formattedAgentId = char.node_id;
+            while(agents.indexOf(formattedAgentId)>=0){
+                let splitFormattedAgentId = formattedAgentId.split("_");
+                let idNumber = splitFormattedAgentId[splitFormattedAgentId.length-1];
+                if((typeof idNumber) === "Number"){
+                    idNumber = (idNumber*1)+1;
+                    idNumber = idNumber.toString();
+                    splitFormattedAgentId[splitFormattedAgentId.length-1] = idNumber;
+                    formattedAgentId = splitFormattedAgentId.join("_");
+                }else{
+                    formattedAgentId = char.name +"_1" ;
+                }
+            };
+        //NEW CHARACTER
+        }else{
+            formattedAgentId = char.name +"_1" ;
+        };
+        let unupdatedRoomData = nodes[selectedRoom.node_id];
+        let updatedCharacterData = {...char, node_id:formattedAgentId, container_node:{target_id: selectedRoom.node_id}};
         let updatedAgents = [...agents, formattedAgentId];
-        let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedAgentId]:{target_id: formattedAgentId}}};
+        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes, [formattedAgentId]:{target_id: formattedAgentId}};
+        let updatedRoomData = {...selectedRoom, contained_nodes: updatedContainedNodes};
         let updatedNodes = {...nodes, [formattedAgentId]:updatedCharacterData, [selectedRoom.node_id]: updatedRoomData};
         let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes};
-        dispatch(updateSelectedWorld(updatedWorld));
-    };
-
-    //Updates Character in selectedWorld state
-    const updateCharacter = (id, update) =>{
-        let unupdatedWorld = selectedWorld;
-        let {nodes } = unupdatedWorld;
-        let updatedNodes = {...nodes, [id]:update}
-        let updatedWorld ={...selectedWorld, nodes:updatedNodes}
         dispatch(updateSelectedWorld(updatedWorld));
     };
 
@@ -173,8 +176,14 @@ const RoomPage = ({
         let unupdatedWorld = selectedWorld;
         let {agents, nodes } = unupdatedWorld;
         let updatedAgents = agents.filter(char => id !== char);
-        let updatedNodes = delete nodes[id];
-        let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes};
+        let updatedNodes = {...nodes};
+        delete updatedNodes[id];
+        let unupdatedRoomData = {...nodes[selectedRoom.node_id]};
+        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes};
+        delete updatedContainedNodes[id];
+        let updatedRoomData = {...unupdatedRoomData, contained_nodes:updatedContainedNodes};
+        updatedNodes = {...updatedNodes, [selectedRoom.node_id]:updatedRoomData};
+        let updatedWorld ={...unupdatedWorld, agents: updatedAgents, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     };
 
@@ -182,38 +191,47 @@ const RoomPage = ({
     const addObject = (obj)=>{
         let unupdatedWorld = selectedWorld;
         let {objects, nodes } = unupdatedWorld;
-        let formattedObjectId = obj.node_id;
-        while(objects.indexOf(formattedObjectId)>=0){
-            let splitFormattedObjectId = formattedObjectId.split("_");
-            let idNumber = splitFormattedObjectId[splitFormattedObjectId.length-1];
-            idNumber = (idNumber*1)+1;
-            idNumber = idNumber.toString();
-            splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
-            formattedObjectId = splitFormattedObjectId.join("_")
-        };
+        let formattedObjectId;
+        //EXISTING OBJECT
+        if(obj.node_id){
+            formattedObjectId = obj.node_id;
+            while(objects.indexOf(formattedObjectId)>=0){
+                let splitFormattedObjectId = formattedObjectId.split("_");
+                let idNumber = splitFormattedObjectId[splitFormattedObjectId.length-1];
+                if((typeof idNumber) === "Number"){
+                idNumber = (idNumber*1)+1;
+                idNumber = idNumber.toString();
+                splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
+                formattedObjectId = splitFormattedObjectId.join("_");
+                }else{
+                    formattedObjectId = obj.name +"_1"
+                }
+            }
+        } else {
+        //NEW OBJECT
+            formattedObjectId = obj.name +"_1"
+        }
+        let unupdatedRoomData = nodes[selectedRoom.node_id]
         let updatedObjectData = {...obj, node_id:formattedObjectId, container_node:{target_id:selectedRoom.node_id}};
         let updatedObjects = [...objects, formattedObjectId];
-        let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}};
+        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}};
+        let updatedRoomData = {...unupdatedRoomData, contained_nodes:updatedContainedNodes};
         let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedRoom.node_id]: updatedRoomData};
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     };
 
-
-    const updateObject = (id, update) =>{
-        let unupdatedWorld = selectedWorld;
-        let {nodes } = unupdatedWorld;
-        let updatedNodes = {...nodes, [id]:update};
-        let updatedWorld ={...selectedWorld, nodes:updatedNodes};
-        dispatch(updateSelectedWorld(updatedWorld));
-    };
-
-
     const deleteObject = (id)=>{
         let unupdatedWorld = selectedWorld;
         let {objects, nodes } = unupdatedWorld;
         let updatedObjects = objects.filter(obj => id !== obj);
-        let updatedNodes = delete nodes[id];
+        let updatedNodes = {...nodes};
+        delete updatedNodes[id];
+        let unupdatedRoomData = {...nodes[selectedRoom.node_id]};
+        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes};
+        delete updatedContainedNodes[id];
+        let updatedRoomData = {...unupdatedRoomData, contained_nodes:updatedContainedNodes};
+        updatedNodes = {...updatedNodes, [selectedRoom.node_id]:updatedRoomData};
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     };
@@ -290,20 +308,22 @@ const RoomPage = ({
         WorldNodeKeys.map((nodeKey)=>{
             let WorldNode = nodes[nodeKey];
             console.log("WORLD NODE:  ", WorldNode)
-            if(WorldNode.classes){
-            let NodeClass = WorldNode.classes[0]
-            switch(NodeClass) {
-                case "agent":
-                    CharacterNodes.push(WorldNode);
-                break;
-                case "object":
-                    ObjectNodes.push(WorldNode);
-                break;
-                case "room":
-                    RoomNodes.push(WorldNode);
-                break;
-                default:
-                break;
+            if(WorldNode){
+                if(WorldNode.classes){
+                    let NodeClass = WorldNode.classes[0]
+                    switch(NodeClass) {
+                        case "agent":
+                            CharacterNodes.push(WorldNode);
+                        break;
+                        case "object":
+                            ObjectNodes.push(WorldNode);
+                        break;
+                        case "room":
+                            RoomNodes.push(WorldNode);
+                        break;
+                        default:
+                        break;
+                     };
                 }
             }
         });
@@ -338,27 +358,20 @@ const RoomPage = ({
 
     useEffect(()=>{
         if(selectedWorld){
-            let {nodes}= selectedWorld
-            console.log("CURRENT ROOMS WORLD", selectedWorld)
-            console.log("CURRENT ROOMS WORLD", roomId)
-            let currentRoom = nodes[roomId]
-            console.log("CURRENT ROOM", currentRoom)
-            console.log("SelectedRoom ROOM", selectedRoom)
-            console.log("WORLD ROOMs", worldRooms)
+            let {nodes}= selectedWorld;
+            let currentRoom = nodes[roomId];
             if(currentRoom){
                 dispatch(selectRoom(currentRoom));
             }
         }
-    },[roomId])
+    },[roomId, selectedWorld])
 
     useEffect(()=>{
         if(selectedWorld){
-            console.log("FINAL UE SELECTED WORLD:  ", selectedWorld)
-        const {nodes} = selectedWorld;
-        let CharacterNodes = [];
-        let ObjectNodes = [];
+            const {nodes} = selectedWorld;
+            let CharacterNodes = [];
+            let ObjectNodes = [];
             if(selectedRoom){
-                console.log("SELECTED ROOM DATA:  ", selectedRoom)
                 const {
                     brightness,
                     contain_size,
@@ -371,35 +384,35 @@ const RoomPage = ({
                     is_indoors,
                     temperature
                 }= selectedRoom;
-                setRoomName(name)
-                setRoomDesc(desc)
-                setRoomIsIndoors(is_indoors)
-                setRoomBrightness(brightness)
-                setRoomTemperature(temperature)
-                const roomContentNodesKeys = Object.keys(contained_nodes)
+                setRoomName(name);
+                setRoomDesc(desc);
+                setRoomIsIndoors(is_indoors);
+                setRoomBrightness(brightness);
+                setRoomTemperature(temperature);
+                const roomContentNodesKeys = Object.keys(contained_nodes);
                 roomContentNodesKeys.map((nodeKey)=>{
-                    let WorldNode = nodes[nodeKey];
-                    if(WorldNode.classes){
-                    let NodeClass = WorldNode.classes[0]
-                    switch(NodeClass) {
-                        case "agent":
-                            CharacterNodes.push(WorldNode);
-                        break;
-                        case "object":
-                            ObjectNodes.push(WorldNode);
-                        break;
-                        default:
-                        break;
-                        }
-                    }
-                })
-                setRoomObjects(ObjectNodes)
-                setRoomCharacters(CharacterNodes)
-            }
-        }
-        console.log("FINAL USE EFFECT IN ROOM PAGE SELECTED ROOM", selectedRoom)
-        console.log("FINAL USE EFFECT IN ROOM PAGE SELECTED worldRooms", worldRooms)
-    }, [selectedRoom, selectedWorld])
+                    let worldNode = nodes[nodeKey];
+                    if(worldNode){
+                        if(worldNode.classes){
+                            let NodeClass = worldNode.classes[0]
+                            switch(NodeClass) {
+                                case "agent":
+                                    CharacterNodes.push(worldNode);
+                                break;
+                                case "object":
+                                    ObjectNodes.push(worldNode);
+                                break;
+                                default:
+                                break;
+                            };
+                        };
+                    };
+                });
+                setRoomObjects(ObjectNodes);
+                setRoomCharacters(CharacterNodes);
+            };
+        };
+    }, [selectedRoom])
 
     //HANDLERS
     const RoomNameChangeHandler = (e)=>{
