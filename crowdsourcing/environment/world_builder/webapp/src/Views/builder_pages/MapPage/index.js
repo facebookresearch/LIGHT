@@ -147,9 +147,8 @@ const WorldBuilderPage = ({
 
     //Updates room with any changes removes room nodes by ID and replaces them with a blank tile
     const deleteRoom = (id)=>{
-        console.log("DELETED ROOM ID:  ", id)
         let unupdatedWorld = selectedWorld;
-        let {rooms, nodes } = unupdatedWorld;
+        let {rooms } = unupdatedWorld;
         let updatedRooms = rooms.filter(room => id !== room);
         const updatedWorld = containedNodesRemover(id);
         dispatch(setWorldDraft({...updatedWorld, rooms: updatedRooms}));

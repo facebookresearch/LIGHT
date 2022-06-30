@@ -39,6 +39,8 @@ const CharacterPage = ({
     const [characterAggression, setCharacterAggression] = useState(0);
     const [characterSize, setCharacterSize] = useState(0);
     const [containedObjects, setContainedObjects] = useState([]);
+    const [carryObjects, setCarryObjects] = useState([]);
+    const [wornObjects, setWornObjects] = useState([]);
 
     let {
         getRoomAttributes,
@@ -85,16 +87,15 @@ const CharacterPage = ({
 
     //GENERAL
     //Adds more than one node to currently selected character
-    const addContent = (roomId, newNodes)=>{
+    const addContent = (charId, newNodes)=>{
         let {agents, objects, nodes } = selectedWorld;
-        console.log("ROOM ID:  ", roomId)
-        let unupdatedRoomData = nodes[roomId]
-        console.log("ROOM DATA:  ", unupdatedRoomData)
+        console.log("ROOM ID:  ", charId)
+        let unupdatedCharacterData = nodes[charId]
+        console.log("ROOM DATA:  ", unupdatedCharacterData)
         let unupdatedWorld = selectedWorld;
         let updatedNodes = {...nodes};
         let newObjects =[...agents];
-        let newAgents = [...objects]
-        let updatedContainedNodes = {...unupdatedRoomData.contained_nodes};
+        let updatedContainedNodes = {...unupdatedCharacterData.contained_nodes};
         newNodes.map((newNode)=>{
             let {classes} = newNode;
             let nodeType = classes[0];
@@ -102,7 +103,7 @@ const CharacterPage = ({
             let formattedNewNodetId;
             if(newNode.node_id){
                 formattedNewNodetId = newNode.node_id;
-                while((agents.indexOf(formattedNewNodetId)>=0) || objects.indexOf(formattedNewNodetId)>=0){
+                while( objects.indexOf(formattedNewNodetId)>=0){
                     let splitformattedNewNodetId = formattedNewNodetId.split("_");
                     let idNumber = splitformattedNewNodetId[splitformattedNewNodetId.length-1];
                     idNumber = (idNumber*1)+1;
@@ -114,55 +115,23 @@ const CharacterPage = ({
             }else{
                 formattedNewNodetId = newNode.name +"_1" ;
             };
-            if(nodeType === "agent"){
-                newAgents.push(formattedNewNodetId);
-            };
             if(nodeType === "object"){
                 newObjects.push(formattedNewNodetId);
             };
 
-            formattedNewNode = {...newNode, node_id:formattedNewNodetId , container_node:{target_id: roomId}};
+            formattedNewNode = {...newNode, node_id:formattedNewNodetId , container_node:{target_id: charId}};
             updatedContainedNodes = {...updatedContainedNodes, [formattedNewNodetId]:{target_id: formattedNewNodetId}};
             console.log("FORMATTED NEW NODE:  ", formattedNewNode)
             updatedNodes = {...updatedNodes, [formattedNewNodetId]:formattedNewNode};
             console.log("UPDATED NOTES IN ADD CONTENT FUNCTION IN MAPPING:  ", updatedNodes)
         });
-        let updatedRoomData = {...selectedRoom, contained_nodes: updatedContainedNodes};
-        updatedNodes = {...updatedNodes, [roomId]: updatedRoomData};
+        let updatedCharacterData = {...selectedCharacter, contained_nodes: updatedContainedNodes};
+        updatedNodes = {...updatedNodes, [charId]: updatedCharacterData};
         console.log("UPDATED NOTES IN ADD CONTENT FUNCTION FINAL VERSION:  ", updatedNodes)
-        let updatedWorld ={...selectedWorld, agents: [...newAgents], objects:[...newObjects], nodes: updatedNodes};
+        let updatedWorld ={...selectedWorld, objects:[...newObjects], nodes: updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     };
 
-    //CHARACTERS
-    // Adds new Character to selectedWorld state
-    const addCharacter = (char)=>{
-        let unupdatedWorld = selectedWorld;
-        let {agents, nodes } = unupdatedWorld;
-        console.log("CHARACTER BEING ADDED DATA", char)
-        let formattedAgentId = char.node_id;
-
-        while(agents.indexOf(formattedAgentId)>=0){
-            console.log("WHILE LOOP RUNNING",agents.indexOf(formattedAgentId)>=0);
-            let splitFormattedAgentId = formattedAgentId.split("_");
-            console.log("FORMATTEDID:  ", splitFormattedAgentId);
-            let idNumber = splitFormattedAgentId[splitFormattedAgentId.length-1]
-            console.log("idNumber:  ", idNumber);
-            idNumber = (idNumber*1)+1;
-            idNumber = idNumber.toString()
-            console.log("idNumber+:  ", idNumber);
-            splitFormattedAgentId[splitFormattedAgentId.length-1] = idNumber
-            console.log("splitFormattedAgentId+:  ", splitFormattedAgentId);
-            formattedAgentId = splitFormattedAgentId.join("_")
-            console.log("FORMATTEDIDEND:  ", formattedAgentId);
-        }
-        let updatedCharacterData = {...char, node_id:formattedAgentId};
-        let updatedAgents = [...agents, formattedAgentId];
-        let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedAgentId]:{target_id: formattedAgentId}}}
-        let updatedNodes = {...nodes, [formattedAgentId]:updatedCharacterData, [selectedRoom.node_id]: updatedRoomData}
-        let updatedWorld ={...selectedWorld, agents: updatedAgents, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
-    }
     //Updates Character in selectedWorld state
     const updateCharacter = (id, update) =>{
         let unupdatedWorld = selectedWorld;
@@ -175,48 +144,47 @@ const CharacterPage = ({
     const deleteCharacter = (id)=>{
         console.log("DELETED ROOM ID:  ", id)
         let unupdatedWorld = selectedWorld;
-        let {agents, nodes } = unupdatedWorld;
+        let {agents } = unupdatedWorld;
         let updatedAgents = agents.filter(char => id !== char);
         const updatedWorld = containedNodesRemover(id);
         dispatch(setWorldDraft({...updatedWorld, agents: updatedAgents}));
         builderRouterNavigate(taskRouterHistory[taskRouterHistory.length-2]);
     }
     //OBJECTS
+    // Adds new Object to character inventory state
     const addObject = (obj)=>{
         let unupdatedWorld = selectedWorld;
         let {objects, nodes } = unupdatedWorld;
         let formattedObjectId = obj.node_id;
-        while(objects.indexOf(formattedObjectId)>=0){
-            let splitFormattedObjectId = formattedObjectId.split("_");
-            let idNumber = splitFormattedObjectId[splitFormattedObjectId.length-1];
-            idNumber = (idNumber*1)+1;
-            idNumber = idNumber.toString();
-            splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
-            formattedObjectId = splitFormattedObjectId.join("_");
-        };
-        let updatedObjectData = {...obj, node_id:formattedObjectId, container_node:{target_id:selectedRoom.node_id}};
+        //EXISTING OBJECT
+        if(obj.node_id){
+            while(objects.indexOf(formattedObjectId)>=0){
+                let splitFormattedObjectId = formattedObjectId.split("_");
+                let idNumber = splitFormattedObjectId[splitFormattedObjectId.length-1];
+                idNumber = (idNumber*1)+1;
+                idNumber = idNumber.toString();
+                splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
+                formattedObjectId = splitFormattedObjectId.join("_");
+            };
+        }else {
+            //NEW OBJECT
+            formattedObjectId = obj.name +"_1"
+        }
+        let updatedObjectData = {...obj, node_id:formattedObjectId, container_node:{target_id: selectedCharacter.node_id}};
         let updatedObjects = [...objects, formattedObjectId];
-        let updatedRoomData = {...selectedRoom, contained_nodes:{...selectedRoom.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}};
-        let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedRoom.node_id]: updatedRoomData};
+        let updatedCharacterData = {...selectedCharacter, contained_nodes:{...selectedCharacter.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}};
+        let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedCharacter.node_id]: updatedCharacterData};
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
-        dispatch(updateSelectedWorld(updatedWorld));
-    }
-    const updateObject = (id, update) =>{
-        let unupdatedWorld = selectedWorld;
-        let {nodes } = unupdatedWorld;
-        let updatedNodes = {...nodes, [id]:update};
-        let updatedWorld ={...selectedWorld, nodes:updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     };
 
-
+    //Removes Object from selectedWorld state
     const deleteObject = (id)=>{
         let unupdatedWorld = selectedWorld;
-        let {objects, nodes } = unupdatedWorld;
+        let {objects } = unupdatedWorld;
         let updatedObjects = objects.filter(obj => id !== obj);
-        let updatedNodes = delete nodes[id];
-        let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
-        dispatch(updateSelectedWorld(updatedWorld));
+        const updatedWorld = containedNodesRemover(id);
+        dispatch(updateSelectedWorld({...updatedWorld, objects: updatedObjects}));
     }
 
     // COMMON SENSE DESCRIBE CHARACTER FUNCTION
@@ -513,7 +481,7 @@ const CharacterPage = ({
     useEffect(()=>{
         if(selectedWorld){
         const {nodes} = selectedWorld;
-        let ObjectNodes = [];
+        let objectNodes = [];
             if(selectedCharacter){
                 const {
                     contain_size,
@@ -540,25 +508,32 @@ const CharacterPage = ({
                 setCharacterMotivation(motivation);
                 setCharacterAggression(aggression);
                 setCharacterSize(size);
-                const roomContentNodesKeys = Object.keys(contained_nodes)
-                roomContentNodesKeys.map((nodeKey)=>{
+                const characterContentNodesKeys = Object.keys(contained_nodes);
+                characterContentNodesKeys.map((nodeKey)=>{
                     let WorldNode = nodes[nodeKey];
                     if(WorldNode.classes){
                     let NodeClass = WorldNode.classes[0]
                     switch(NodeClass) {
                         case "object":
-                        ObjectNodes.push(WorldNode);
+                            objectNodes.push(WorldNode);
                         break;
                         default:
                         break;
                         }
                     }
                 })
-                setContainedObjects(ObjectNodes)
+                setContainedObjects(objectNodes)
             }
         }
         console.log("SELECTED CHARACTER USE EFFECT")
     }, [selectedCharacter])
+
+    useEffect(()=>{
+        if(containedObjects.length){
+            let updatedCarryObjects = [];
+            let updatedWornObjects = [];
+        }
+    }, [containedObjects])
 
     return (
         <Container>
