@@ -41,6 +41,7 @@ const CharacterPage = ({
     const [containedObjects, setContainedObjects] = useState([]);
     const [carryObjects, setCarryObjects] = useState([]);
     const [wornObjects, setWornObjects] = useState([]);
+    const [wieldedObjects, setWieldedObjects] = useState([]);
 
     let {
         getRoomAttributes,
@@ -152,40 +153,75 @@ const CharacterPage = ({
     }
     //OBJECTS
     // Adds new Object to character inventory state
-    const addObject = (obj)=>{
+    const addObject = (obj, worn, wielded)=>{
         let unupdatedWorld = selectedWorld;
         let {objects, nodes } = unupdatedWorld;
         let formattedObjectId = obj.node_id;
+        console.log("OBJECT ADDED:  ", obj)
         //EXISTING OBJECT
         if(obj.node_id){
+            console.log("EXISTING OBJECT")
             while(objects.indexOf(formattedObjectId)>=0){
+                console.log("FORMATTING OBJECT ID:  ", formattedObjectId)
                 let splitFormattedObjectId = formattedObjectId.split("_");
-                let idNumber = splitFormattedObjectId[splitFormattedObjectId.length-1];
-                idNumber = (idNumber*1)+1;
-                idNumber = idNumber.toString();
-                splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
-                formattedObjectId = splitFormattedObjectId.join("_");
+                console.log("SPLIT FORMATTEDOBJECT ID:  ", splitFormattedObjectId)
+                let idNumber = parseInt(splitFormattedObjectId[splitFormattedObjectId.length-1]);
+                console.log("ID NUMBER:  ", idNumber)
+                console.log("ID NUMBER TYPE:  ", typeof (idNumber))
+                console.log("ID NUMBER NAN CHECK:  ", !Number.isNaN(idNumber))
+                if((typeof idNumber === "number") && (!Number.isNaN(idNumber))){
+                    console.log("IS A NUMBER  FORMATTED OBJECTID", formattedObjectId)
+                    console.log("IS A NUMBER  ID NUMBER ", idNumber)
+                    idNumber = parseInt(idNumber)
+                    idNumber = idNumber+1;
+                    idNumber = idNumber.toString();
+                    splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
+                    formattedObjectId = splitFormattedObjectId.join("_");
+                    console.log("IS A NUMBER  FORMATTED RESULT:  ", formattedObjectId)
+                }else{
+                    console.log("NOT A NUMBER  ", formattedObjectId)
+                    formattedObjectId = obj.name +"_1"
+                }
             };
         }else {
             //NEW OBJECT
+            console.log("NEW OBJECT")
             formattedObjectId = obj.name +"_1"
         }
         let updatedObjectData = {...obj, node_id:formattedObjectId, container_node:{target_id: selectedCharacter.node_id}};
+        if(worn){
+            updatedObjectData = {...updatedObjectData, equipped: "equipped", wearable:true};
+        }
+        if(wielded){
+            updatedObjectData = {...updatedObjectData, equipped: "equipped", wieldable:true};
+        }
         let updatedObjects = [...objects, formattedObjectId];
         let updatedCharacterData = {...selectedCharacter, contained_nodes:{...selectedCharacter.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}};
+        console.log("UPDATED CHARACTER DATA ON ADD", updatedCharacterData)
         let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedCharacter.node_id]: updatedCharacterData};
+        console.log("UPDATED ADDED OBJECT NODES:  ", updatedNodes)
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
+        console.log("UPDATED WORLD ADD OBJECT:  ", updatedWorld)
         dispatch(updateSelectedWorld(updatedWorld));
     };
 
     //Removes Object from selectedWorld state
     const deleteObject = (id)=>{
+        console.log("DELETE OBJECT:  ", id);
         let unupdatedWorld = selectedWorld;
         let {objects } = unupdatedWorld;
+        let {contained_nodes} = selectedCharacter
+        let updatedContainedNodes = {...contained_nodes}
+        delete updatedContainedNodes[id]
+        let updatedCharacterData  = {...selectedCharacter, contained_nodes: updatedContainedNodes }
         let updatedObjects = objects.filter(obj => id !== obj);
-        const updatedWorld = containedNodesRemover(id);
+        let updatedWorld = containedNodesRemover(id);
+
+        let updatedNodes = {...updatedWorld.nodes, [updatedCharacterData.node_id]: updatedCharacterData}
+        updatedWorld = {...updatedWorld, nodes:updatedNodes}
+        console.log("DELETE OBJECT POST NODE REMOVAL WORLD:  ", updatedWorld);
         dispatch(updateSelectedWorld({...updatedWorld, objects: updatedObjects}));
-    }
+    };
 
     // COMMON SENSE DESCRIBE CHARACTER FUNCTION
     const CommonSenseDescribeCharacter = ()=>{
@@ -269,11 +305,13 @@ const CharacterPage = ({
 
     //UTILS
     const worldNodeSorter = (world)=>{
+        console.log( "MID SORT:  ", world)
         let CharacterNodes = [];
         let RoomNodes = [];
         let ObjectNodes = [];
         const {nodes} = world;
         const WorldNodeKeys = Object.keys(nodes);
+        console.log( "MID SORT:  WorldNodeKeys")
         WorldNodeKeys.map((nodeKey)=>{
             let WorldNode = nodes[nodeKey];
             if(WorldNode.classes){
@@ -293,6 +331,9 @@ const CharacterPage = ({
                 }
             }
         })
+        console.log( "MID SORT ROOMS : ", RoomNodes)
+        console.log( "MID SORT CHARACTERS:  ", CharacterNodes)
+        console.log( "MID SORT OBJECTS", ObjectNodes)
         dispatch(updateRooms(RoomNodes))
         dispatch(updateObjects(ObjectNodes))
         dispatch(updateCharacters(CharacterNodes))
@@ -424,6 +465,7 @@ const CharacterPage = ({
     /* --- LIFE CYCLE FUNCTIONS --- */
 
     useEffect(()=>{
+        console.log("CURRENT LOCATION USE EFFECT:  ", currentLocation)
         let updatedCharData = currentLocation;
         let updatedRoomData = taskRouterHistory[taskRouterHistory.length-1];
         console.log("CHAR ID:  ", updatedCharData)
@@ -445,6 +487,7 @@ const CharacterPage = ({
     },[worldDraft]);
 
     useEffect(()=>{
+        console.log("SELECTED WORLD UPDATE IN USE EFFECT WIRH NODE SORTER:  ", selectedWorld)
         if(selectedWorld){
             console.log("SELECTED WORLD:  ", selectedWorld)
             worldNodeSorter(selectedWorld)
@@ -476,13 +519,15 @@ const CharacterPage = ({
             };
         };
         console.log("SELECTED CHARACTER USE EFFECT")
-    },[charId]);
+    },[charId, selectedWorld]);
 
     useEffect(()=>{
+        console.log("SELECTED WORLD UPDATING CHARACTER  :  ", selectedWorld)
         if(selectedWorld){
         const {nodes} = selectedWorld;
         let objectNodes = [];
             if(selectedCharacter){
+                console.log("SELECTED CHARACTER ATTRIBUTE SORTER USE EFFECT:  ", selectedCharacter)
                 const {
                     contain_size,
                     contained_nodes,
@@ -509,30 +554,56 @@ const CharacterPage = ({
                 setCharacterAggression(aggression);
                 setCharacterSize(size);
                 const characterContentNodesKeys = Object.keys(contained_nodes);
+                console.log("CONTAINED_NODES:  ",  contained_nodes);
+                console.log("CHARACTER CONTENT NODES:  ",  characterContentNodesKeys);
                 characterContentNodesKeys.map((nodeKey)=>{
-                    let WorldNode = nodes[nodeKey];
-                    if(WorldNode.classes){
-                    let NodeClass = WorldNode.classes[0]
-                    switch(NodeClass) {
-                        case "object":
-                            objectNodes.push(WorldNode);
-                        break;
-                        default:
-                        break;
-                        }
-                    }
-                })
-                setContainedObjects(objectNodes)
-            }
-        }
-        console.log("SELECTED CHARACTER USE EFFECT")
-    }, [selectedCharacter])
+                    console.log("NODE KEY:   ", nodeKey);
+                    let worldNode = nodes[nodeKey];
+                    if(worldNode){
+                        console.log("worldNode:  ", worldNode);
+                        let {classes} = worldNode;
+                        if(worldNode.classes){
+                            let nodeClass = classes[0]
+                            switch(nodeClass) {
+                                case "object":
+                                    objectNodes.push(worldNode);
+                                break;
+                                default:
+                                break;
+                                };
+                        };
+                    };
+                });
+                setContainedObjects(objectNodes);
+            };
+        };
+        console.log("SELECTED CHARACTER USE EFFECT");
+    }, [selectedCharacter]);
 
     useEffect(()=>{
+        let updatedCarryObjects = [];
+        let updatedWornObjects = [];
+        let updatedWieldedObjects = []
         if(containedObjects.length){
-            let updatedCarryObjects = [];
-            let updatedWornObjects = [];
-        }
+            containedObjects.map(obj=>{
+                if(obj.equipped){
+                    console.log("EQUIPPED OBJECTS:  ", obj)
+                    if(obj.wearable){
+                        updatedWornObjects.push(obj);
+                    }
+                    if(obj.wieldable){
+                        updatedWieldedObjects.push(obj)
+                    }
+                }else{
+                    updatedCarryObjects.push(obj);
+                };
+            });
+        };
+        console.log("UPDATED CARRY OBJECTS", updatedCarryObjects)
+        console.log("UPDATED WORN OBJECTS", updatedWornObjects)
+        setCarryObjects(updatedCarryObjects);
+        setWornObjects(updatedWornObjects);
+        setWieldedObjects(updatedWieldedObjects);
     }, [containedObjects])
 
     return (
@@ -574,6 +645,12 @@ const CharacterPage = ({
                             />
                         </Row>
                         <Row>
+                            <TextInput
+                                label="Motivation"
+                                value={selectedCharacter.mission}
+                            />
+                        </Row>
+                        <Row>
                             <Button onClick={CommonSenseCharacterContents} variant="primary">
                                 Generate Character Contents
                             </Button>
@@ -583,9 +660,11 @@ const CharacterPage = ({
                                 formLabel="Character Carrying"
                                 tokenOptions={worldObjects}
                                 sectionName={"objects"}
-                                roomId={selectedRoom.node_id}
-                                tokens={containedObjects}
+                                containerId={selectedCharacter.node_id}
                                 tokenType={'objects'}
+                                objectWorn={false}
+                                objectWielded={false}
+                                tokens={carryObjects}
                                 onTokenAddition={addObject}
                                 onTokenRemoval={deleteObject}
                                 builderRouterNavigate={builderRouterNavigate}
@@ -593,21 +672,30 @@ const CharacterPage = ({
                         </Row>
                         <Row>
                             <TypeAheadTokenizerForm
-                                formLabel="Wielding/Wearing"
+                                formLabel="Wearing"
                                 tokenOptions={worldObjects}
                                 sectionName={"objects"}
-                                roomId={selectedRoom.node_id}
-                                tokens={containedObjects}
+                                containerId={selectedCharacter.node_id}
                                 tokenType={'objects'}
-                                onTokenAddition={addObject}
+                                objectWorn={false}
+                                objectWielded={false}
+                                tokens={wornObjects}
+                                onTokenAddition={(obj)=>addObject(obj, true, false)}
                                 onTokenRemoval={deleteObject}
                                 builderRouterNavigate={builderRouterNavigate}
                             />
                         </Row>
                         <Row>
-                            <TextInput
-                                label="Motivation"
-                                value={selectedCharacter.mission}
+                            <TypeAheadTokenizerForm
+                                formLabel="Wielding"
+                                tokenOptions={worldObjects}
+                                sectionName={"objects"}
+                                containerId={selectedCharacter.node_id}
+                                tokenType={'objects'}
+                                tokens={wieldedObjects}
+                                onTokenAddition={(obj)=>addObject(obj, false, true)}
+                                onTokenRemoval={deleteObject}
+                                builderRouterNavigate={builderRouterNavigate}
                             />
                         </Row>
                     </Col>

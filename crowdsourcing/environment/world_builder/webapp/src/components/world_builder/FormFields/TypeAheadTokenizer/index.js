@@ -14,8 +14,10 @@ const TypeaheadTokenizer = ({
     formLabel, //Label
     tokenOptions,
     sectionName,
-    roomId,
+    containerId,
     tokens,
+    objectWorn,
+    objectWielded,
     tokenType,
     onTokenAddition,
     onTokenRemoval,
@@ -52,13 +54,20 @@ const TypeaheadTokenizer = ({
         if(tokenOptions.length){
             console.log("TOKEN OPTIONS    ", tokenOptions);
             let updatedTokenList = tokenOptions.map((tokendata, index)=>{
-                let updatedTokenData = {
+                let updatedTokenData = {...tokendata}
+                if(objectWorn){
+                    updatedTokenData = {...updatedTokenData, wearable: objectWorn, equipped:"equipped" }
+                }
+                if(objectWielded){
+                    updatedTokenData = {...updatedTokenData, wieldable: objectWielded, equipped:"equipped" }
+                }
+                let updatedToken = {
                     index: index,
                     label: tokendata.name,
                     key: tokendata.node_id,
                     data: tokendata
                 };
-                return updatedTokenData;
+                return updatedToken;
             })
             setTokenList(updatedTokenList);
         }
@@ -68,6 +77,7 @@ console.log(formLabel, tokenOptions)
 const SelectHandler = (selected)=>{
     console.log("SELECTED:  ",selected);
     selected.map((selectedToken, index)=>{
+        console.log("selected:   ", "#", index,  selectedToken)
         const {id, data, customOption, label}= selectedToken;
 
 
@@ -86,7 +96,7 @@ const SelectHandler = (selected)=>{
                             classes:["agent"],
                             contain_size: 0,
                             contained_nodes:{},
-                            container_node:{target_id: roomId},
+                            container_node:{target_id: containerId},
                             damage:1,
                             db_id:null,
                             dead:false,
@@ -144,12 +154,12 @@ const SelectHandler = (selected)=>{
                             contain_size: 0,
                             contained_nodes:{},
                             container: false,
-                            container_node:{target_id: roomId},
+                            container_node:{target_id: containerId},
                             db_id:null,
                             dead:false,
                             desc:"",
                             drink:false,
-                            equipped:null,
+                            equipped: (objectWorn ? "worn" : (objectWielded ? "wielded" : null)),
                             food:false,
                             food_energy:0,
                             gettable:true,
@@ -165,8 +175,8 @@ const SelectHandler = (selected)=>{
                             stats:{damage:0, defense:0},
                             surface_type:"on",
                             value: 1,
-                            wearable: false,
-                            wieldable: false
+                            wearable: {objectWorn},
+                            wieldable: {objectWielded}
                         };
                         let newObjectToken = {
                             key:{label},
@@ -204,7 +214,7 @@ const SelectHandler = (selected)=>{
                         option={option}
                         key={option.key === null ? idx : option.key}
                         sectionName={sectionName}
-                        roomId={roomId}
+                        containerId={containerId}
                         deleteTokenFunction={onTokenRemoval}
                         builderRouterNavigate={builderRouterNavigate}
                     >

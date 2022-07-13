@@ -24,7 +24,7 @@ const GenerateForms = ({label, value, changeHandler, clickFunction, generateName
                     <Col xs={4}>
                         <Form.Label>{label}</Form.Label>
                     </Col>
-                    <Col xs={6}/>
+
                     <Col xs={2}>
                         {/* <Button onClick={clickFunction} variant="primary" type={generateName !== undefined ? null : "submit"}> */}
                         <Button onClick={clickFunction} variant="primary">
