@@ -32,7 +32,7 @@ const Copy ={
             "3.  Could one use # with # and expect the same outcome? i.e. Flipping the objects in the narration has the same result.",
             "4.  Can this operation be done an infinite number of times?",
             "4a. How many more times can it be done?",
-            "5.  Would this have to happen in a specific place?",
+            "5.  Would this have to happen in a specific place mentioned in the narration? e.g. forest, castle",
             "5a.  Where would that location be?",
         ],
         tutorialCopy:[

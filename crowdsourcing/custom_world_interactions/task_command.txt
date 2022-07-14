@@ -1,0 +1,1 @@
+python run_task.py mephisto.provider.requester_name=alexgurung mephisto.architect.profile_name=mephisto-router-iam mephisto/architect=ec2 conf=find_workers

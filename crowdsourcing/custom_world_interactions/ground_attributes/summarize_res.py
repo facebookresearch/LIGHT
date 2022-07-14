@@ -46,8 +46,8 @@ for unit in units:
     status = unit.get_db_status()
     data = mephisto_data_browser.get_data_from_unit(unit)
     outputs = data['data']['outputs']
-    print(outputs)
-    break
+    # print(outputs)
+    # break
     # rawAction = outputs['rawAction']
     # actionDescription = outputs['actionDescription']
     # if any("wear" in word.lower() for word in rawAction.split(" ")):

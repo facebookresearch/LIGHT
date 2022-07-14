@@ -89,7 +89,7 @@ const Questions = ({
             hasToolTip={true}
             isComplete={isSecondaryHeld!==null}
         />
-        <BooleanQuestion
+        {/* <BooleanQuestion
             question={QuestionList[3]}
             keywords={[{color:"orange", item:objName2}, {color:"blue", item:objName1}]}
             trueAnswer={{name:"YES"} }
@@ -98,7 +98,7 @@ const Questions = ({
             toolTipCopy={TipList[3].explanation}
             hasToolTip={true}
             isComplete={isReversible!==null}
-        />
+        /> */}
         {/* <BooleanQuestion
             question={QuestionList[4]}
             trueAnswer={{name:"YES"} }

@@ -19,7 +19,8 @@ DO_REVIEW = True
 # We're only examining this task with this file, but in the future could rely on mephisto.tools.examine_utils.run_examine_or_review
 # task_names = ["ground-stage-3-task-1", "ground-stage-3-task-2"]
 # task_names = ["objects-interaction-task-allowlist-contraints-1"]
-task_names = ["objects-interaction-task-allowlist-constraints-2"]
+# task_names = ["objects-interaction-task-allowlist-constraints-2"]
+task_names = ["objects-interaction-task-allowlist-constraints-3"]
 
 units = []
 for t in task_names:
@@ -27,6 +28,14 @@ for t in task_names:
     print(t)
     print(Counter([u.get_status() for u in new_units]))
     units.extend(new_units)
+
+INPUT_FILE_TASKS = ["objects-interaction-task-allowlist-attributes-1"]
+input_units = []
+for t in INPUT_FILE_TASKS:
+    new_units = mephisto_data_browser.get_units_for_task_name(t)
+    print(t)
+    print(Counter([u.get_status() for u in new_units]))
+
 
 print(f"prev len: {len(units)}")
 print(Counter([u.get_status() for u in units]))
@@ -88,12 +97,15 @@ def format_for_printing_data(data):
     inputs_string = f"Inputs:\n\t(Primary Object) {primary_obj.get('name')}: {primary_obj.get('desc')}\n\t(Secondary Object) {secondary_obj.get('name')}: {secondary_obj.get('desc')}\n\tAction Description: {inputs.get('interaction')}\n\n"
 
     outputs = contents["outputs"]
-    outputs["events"] = [e for e in outputs.get("events", []) if e is not None]
-    outputs["constraints"] = [e for e in outputs.get("constraints", []) if e is not None]
+    try:
+        outputs["events"] = [e for e in outputs.get("events", []) if e is not None]
+        outputs["constraints"] = [e for e in outputs.get("constraints", []) if e is not None]
 
-    outputs_string = f"Output:\n"
+        outputs_string = f"Output:\n"
+        inputs_string += f"\tRaw Action:\t{outputs['this_task_state']['rawAction']}\n\n"
+    except:
+        return f"-------------------\n{metadata_string}{inputs_string}\nERROR"
 
-    inputs_string += f"\tRaw Action:\t{outputs['this_task_state']['rawAction']}\n\n"
 
     outputs_string += "\n\n\n"
 
@@ -170,7 +182,7 @@ def format_for_printing_data(data):
             # malformed constraint, example
             continue
     for key in ["isSecondaryHeld",
-                "isReversible",
+                # "isReversible",
                 "isInfinite",
                 "timesRemaining",
                 "isLocationConstrained",

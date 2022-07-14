@@ -54,7 +54,7 @@ const FormQuestion = ({
                     style={{ textAlign: "center", fontWeight: "bold" }}
                     onChange={() => { }}
                     value={description}
-                    rows="7"
+                    rows="1"
                     type="text"
                     readOnly="readonly"
                     placeholder={placeholder}

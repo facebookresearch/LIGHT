@@ -19,7 +19,9 @@ DO_REVIEW = True
 # task_names = ["objects-interaction-task-pilot-5"]
 # task_names = ["objects-interaction-task-allowlist-contraints-1"]
 # task_names = ["objects-interaction-task-allowlist-constraints-2"]
-task_names = ["objects-interaction-task-allowlist-contraints-1", "objects-interaction-task-allowlist-constraints-2"]
+task_names = ["objects-interaction-task-allowlist-constraints-3"]
+# task_names = ["objects-interaction-task-allowlist-contraints-1", "objects-interaction-task-allowlist-constraints-2"]
+# task_names = ["objects-interaction-task-allowlist-contraints-1", "objects-interaction-task-allowlist-constraints-2"]
 
 units = []
 for t in task_names:
@@ -41,6 +43,10 @@ with open('/private/home/alexgurung/LIGHT/crowdsourcing/custom_world_interaction
    d = f.read()
    bad_users.update(d.split("\n"))
 
+with open('/private/home/alexgurung/LIGHT/crowdsourcing/custom_world_interactions/ground_constraints/users_who_didnt_get_it.txt', 'r') as f:
+   d = f.read()
+   bad_users.update(d.split("\n"))
+
 user_to_count = {}
 user_to_data = {}
 
@@ -48,10 +54,13 @@ for unit in units:
     status = unit.get_db_status()
     data = mephisto_data_browser.get_data_from_unit(unit)
     outputs = data['data']['outputs']
-    
-    tR = outputs['this_task_state']['timesRemaining']
-    if type(tR) is list and ("A FEW TIMES" in tR or "INFINITE" in tR):
-        print(tR, outputs['this_task_state']['broadcastMessage'])
+    # print(outputs)
+    try:
+        tR = outputs['this_task_state']['timesRemaining']
+    except:
+        continue
+    # if type(tR) is list and ("A FEW TIMES" in tR or "INFINITE" in tR):
+    #     print(tR, outputs['this_task_state']['broadcastMessage'])
     # rawAction = outputs['rawAction']
     # actionDescription = outputs['actionDescription']
     # if any("wear" in word.lower() for word in rawAction.split(" ")):

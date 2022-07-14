@@ -44,7 +44,7 @@ LIGHT_DB_PATH = "~/ParlAI/data/light/environment/db/d3/database3.db"
 INPUT_FILE_TASKS = ["objects-interaction-task-allowlist-attributes-1"]
 
 # PREVIOUSLY_DONE_TASKS = ["objects-interaction-task-allowlist-contraints-1", "objects-interaction-task-allowlist-constraints-2"]
-PREVIOUSLY_DONE_TASKS = []
+PREVIOUSLY_DONE_TASKS = ["objects-interaction-task-allowlist-constraints-3"]
 
 ALLOWLIST_QUAL_NAME = "OBJINTERACTION_ATTRIBUTES_DATA_ANNOTATION_TASK_ALLOWLIST"
 BLOCKLIST_QUAL_NAME = "OBJINTERACTION_ATTRIBUTES_DATA_ANNOTATION_TASK_BLOCKLIST"
@@ -153,6 +153,8 @@ def create_task_data(input_file_tasks, num_tasks):
                 broadcastMessage = new_data['this_task_state']['broadcastMessage']
                 if broadcastMessage in previous_messages:
                     continue
+                if any(broadcastMessage.count(key) > 3 for key in ["OBJECT2", "OBJECT1", "ACTOR", "LOCATION"]):
+                    continue
                 data.append(new_data)
                 # else:
                 #     print("no ranges")
@@ -244,7 +246,8 @@ def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
     operator = Operator(db)
 
-    operator.validate_and_run_config(cfg.mephisto, shared_state)
+    # operator.validate_and_run_config(cfg.mephisto, shared_state)
+    operator.launch_task_run(cfg.mephisto, shared_state)
     operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=30)
 
 
