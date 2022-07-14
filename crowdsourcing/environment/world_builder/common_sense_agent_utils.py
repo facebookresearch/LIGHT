@@ -421,6 +421,9 @@ def conditional_add_secondary_item_to_graph(
         else:
             # correct item found, success
             secondary_items = item.get(secondary_edge_name, [])
+            logging.info(
+                    f"Success! Adding {secondary_item_name} to {primary_item_name} on {secondary_edge_name}."
+                )
             if item_type == "characters":
                 # currently character->secondary objects are dictionaries while object->secondary objects are not
                 secondary_items.append({'name': secondary_item_name})
@@ -428,6 +431,7 @@ def conditional_add_secondary_item_to_graph(
                 secondary_items.append(secondary_item_name)
             if errors is not None:
                 errors.append("correct")
+            item[secondary_edge_name] = secondary_items
     else:
         logging.warning(
             f"Failed to find matching item for target {target_id}, no secondary item added."

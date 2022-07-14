@@ -86,11 +86,12 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # TODO implement once we have an onboarding
         return True
 
-    USE_MODEL = False
-    # USE_MODEL = True
+    # USE_MODEL = False
+    USE_MODEL = True
     MODEL_NAME = "bart_all_simple_Sun_Jan_23/c9d"
     world_builder_agent = None
-    force = False
+    # force = False
+    force = True
     opt_file = f"/checkpoint/alexgurung/light/common_sense/add_format/{MODEL_NAME}/model.opt"
     if os.path.exists(opt_file):
         with open(opt_file) as f:
@@ -304,6 +305,8 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         room_graph = args["room_graph"]
         target_room = args["target_room"]
         target_id = args["target_id"]
+        print(f"Target ID: {target_id}")
+        print(f"Target Room: {target_room}")
         original_ids = set(room_graph['nodes'].keys())
         if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
@@ -336,7 +339,8 @@ def main(operator: Operator, cfg: DictConfig) -> None:
             target_id = args["target_id"]
 
             target_name = target_id
-            for n, node in args["nodes"].items():
+
+            for n, node in room_graph["nodes"].items():
                 if n == target_id:
                     target_name = node['name']
                     break
@@ -376,8 +380,14 @@ def main(operator: Operator, cfg: DictConfig) -> None:
             new_carried = [o for o in carried if o not in original_carried]
             new_wielded = [o for o in wielded if o not in original_wielded]
             new_worn = [o for o in worn if o not in original_worn]
+            print(graph)
+            print(new_carried)
+            print(new_wielded)
+            print(new_worn)
 
             graph = add_character_secondary_objects_to_graph(room_graph, target_id, new_carried, new_wielded, new_worn)
+            print(graph)
+            room_graph = graph
         except Exception as e:
             print(f"Exception found:")
             print(e)
@@ -387,6 +397,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # room_graph['rooms'] = original_rooms
         # return room_graph
         new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+        print(f"Adding new_ids: {new_ids}")
         return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
 
     def suggest_object_description(
@@ -627,7 +638,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
 
             # find the target object to get the underlying name
             target_name = target_id
-            for n, node in args["nodes"].items():
+            for n, node in room_graph["nodes"].items():
                 if n == target_id:
                     target_name = node['name']
                     break
