@@ -86,8 +86,8 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # TODO implement once we have an onboarding
         return True
 
-    # USE_MODEL = False
-    USE_MODEL = True
+    USE_MODEL = False
+    # USE_MODEL = True
     MODEL_NAME = "bart_all_simple_Sun_Jan_23/c9d"
     world_builder_agent = None
     # force = False
