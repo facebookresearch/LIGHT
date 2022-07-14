@@ -1,0 +1,75 @@
+{
+    "dialog": [
+        [
+            {
+                "text": "Throw the axe.",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "The axe hits the chair, which splinters into a thousand pieces.",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "inconsistent_setting"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "Sit down.",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "The small hut catches on fire and burns to the ground.",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "inconsistent_action"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "Give sword to peasant.",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "sowrd give. person is",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "disfluent"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "Use whetstone with sword.",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Using the whetstone you sharpen the sword. You are now ready for battle.",
+                "agent_idx": 1,
+                "episode_done": true,
+                "id": "model",
+                "answers": [
+                    "none_all_good"
+                ]
+            }
+        ]
+    ],
+    "min_correct": 3,
+    "max_incorrect": 1,
+    "max_failures_allowed": 1
+}

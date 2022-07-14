@@ -1,0 +1,8 @@
+# blender_90M: >
+#     --model-file zoo:blender/blender_90M/model
+# bart_rag: >
+#     --model-file zoo:hallucination/bart_rag_turn_do/model
+#     --model-file zoo:bart/bart_large/mode
+#     --model-file /checkpoint/alexgurung/light/common_sense/add_format/bart_all_simple_Sun_Jan_23/c9d/model
+bart: >
+    --model-file /checkpoint/alexgurung/light/common_sense/final_format/bart_all_balanced_universalgraph_Mon_May__2/b2d/model
