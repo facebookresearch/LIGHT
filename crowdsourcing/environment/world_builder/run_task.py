@@ -324,6 +324,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
 
             # return room_graph
             new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+        
             return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
         # Use `add_character_wearing`, `add_character_wielding`, `add_character_carrying`
         # to create three lists of suggestions
