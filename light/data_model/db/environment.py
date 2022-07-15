@@ -7,12 +7,196 @@
 from light.data_model.db.base import BaseDB, DBStatus, DBSplitType
 from light.graph.structured_graph import OOGraph
 from omegaconf import MISSING, DictConfig
-from typing import Optional, Union, Dict, Any
-from dataclasses import dataclass
-from enum import Enum
+from typing import Optional, List, Tuple, Union, Dict, Any, Set, TYPE_CHECKING
+from sqlalchemy import (
+    insert,
+    select,
+    Enum,
+    Column,
+    Integer,
+    String,
+    Float,
+    ForeignKey,
+    Boolean,
+)
+from sqlalchemy.orm import declarative_base, relationship, Session
+
+import enum
+import os
+
+SQLBase = declarative_base()
+
+BASE_NAME_LENGTH_CAP = 96
+WORLD_NAME_LENGTH_CAP = 128
+EDGE_LABEL_LENGTH_CAP = 64
+PERSONA_LENGTH_CAP = 512
+DESCRIPTION_LENGTH_CAP = 512
+NAME_PREFIX_LENGTH = 32
+ID_STRING_LENGTH = 32
+QUEST_MOTIVATION_LENGTH = 128
+REPORT_REASON_LENGTH = 1024
+FILE_PATH_LENGTH_CAP = 96
 
 
-class DBEdgeType(Enum):
+# Name Key Components - Should be text searchable
+
+
+class DBNameKey:
+    """
+    Class for the shared db base components, as all have just an
+    id and a name
+    """
+
+    db_id = Column(Integer, primary_key=True)
+    name = Column(String(BASE_NAME_LENGTH_CAP), nullable=False, index=True)
+    status = Column(Enum(DBStatus), nullable=False, index=True)
+    split = Column(Enum(DBSplitType), nullable=False, index=True)
+    create_timestamp = Column(Float, nullable=False)
+    creator_id = Column(
+        String(ID_STRING_LENGTH)
+    )  # temp retain the creator ID for new things
+
+
+class DBAgentName(DBNameKey, SQLBase):
+    """
+    Class containing the expected elements for an agent name,
+    with any supporting methods
+    """
+
+    __tablename__ = "agent_names"
+
+    def __repr__(self):
+        return f"DBAgentName({self.db_id!r}| {self.name})"
+
+
+class DBObjectName(DBNameKey, SQLBase):
+    """
+    Class containing the expected elements for an object name,
+    with any supporting methods
+    """
+
+    __tablename__ = "object_names"
+
+    def __repr__(self):
+        return f"DBObjectName({self.db_id!r}| {self.name})"
+
+
+class DBRoomName(DBNameKey, SQLBase):
+    """
+    Class containing the expected elements for a room name,
+    with any supporting methods
+    """
+
+    __tablename__ = "room_names"
+
+    def __repr__(self):
+        return f"DBRoomName({self.db_id!r}| {self.name})"
+
+
+# Graph nodes
+
+
+class DBElem:
+    """Class for shared attributes for all graph model components"""
+
+    db_id = Column(Integer, primary_key=True)
+    full_name = Column(String(BASE_NAME_LENGTH_CAP), nullable=False, index=True)
+    built_occurrences = Column(Integer, nullable=False, default=0)
+
+
+class DBAgent(DBElem, SQLBase):
+    """
+    Class containing the expected elements for an agent,
+    with any supporting methods
+    """
+
+    __tablename__ = "agents"
+
+    base_id = Column(ForeignKey("agent_names.db_id"), nullable=False)
+    persona = Column(String(PERSONA_LENGTH_CAP), nullable=False, index=True)
+    physical_description = Column(
+        String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True
+    )
+    name_prefix = Column(String(NAME_PREFIX_LENGTH), nullable=False)
+    is_plural = Column(Boolean)
+    size = Column(Integer)
+    contain_size = Column(Integer)
+    constitution = Column(Float)
+    charisma = Column(Float)
+    strength = Column(Float)
+    dexterity = Column(Float)
+    intelligence = Column(Float)
+    wisdom = Column(Float)
+
+    def __repr__(self):
+        return f"DBAgent({self.db_id!r}| {self.full_name})"
+
+
+class DBObject(DBElem, SQLBase):
+    """
+    Class containing the expected elements for an object,
+    with any supporting methods
+    """
+
+    __tablename__ = "objects"
+
+    base_id = Column(ForeignKey("object_names.db_id"), nullable=False)
+    physical_description = Column(
+        String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True
+    )
+    is_container = Column(Float)
+    is_drink = Column(Float)
+    is_food = Column(Float)
+    is_gettable = Column(Float)
+    is_surface = Column(Float)
+    is_wearable = Column(Float)
+    is_weapon = Column(Float)
+    name_prefix = Column(String(NAME_PREFIX_LENGTH), nullable=False)
+    is_plural = Column(Boolean)
+    size = Column(Integer)
+    contain_size = Column(Integer)
+    value = Column(Float)
+    rarity = Column(Float)
+
+    def __repr__(self):
+        return f"DBObject({self.db_id!r}| {self.full_name})"
+
+
+class DBRoomInsideType(enum.Enum):
+    """Types of indoor or outdoor statuses for rooms"""
+
+    INDOORS = "indoors"
+    ENCLOSED = "enclosed"
+    COVERED = "covered"
+    OUTSIDE = "outside"
+    HYBRID = "hybrid"
+    MULTI_ROOM = "multi_room"
+    OTHER = "other"
+    UNKNOWN = "unknown"
+
+
+class DBRoom(DBElem, SQLBase):
+    """
+    Class containing the expected elements for a room,
+    with any supporting methods
+    """
+
+    __tablename__ = "rooms"
+
+    base_id = Column(ForeignKey("room_names.db_id"), nullable=False)
+    description = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)
+    backstory = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)
+    size = Column(Integer)
+    indoor_status = Column(Enum(DBRoomInsideType), nullable=False)
+
+    def __repr__(self):
+        return f"DBRoom({self.db_id!r}| {self.full_name})"
+
+
+# Graph edges and attributes
+
+
+class DBEdgeType(enum.Enum):
     """Edges in the LIGHT Environment DB"""
 
     CONTAINS = "contains"
@@ -25,182 +209,146 @@ class DBEdgeType(Enum):
     MAY_BE_CONTAINED_IN = "may_be_contained_in"
 
 
-# Name Key Components - Should be text searchable
-
-
-@dataclass
-class DBNameKey:
-    """
-    Class for the shared db base components, as all have just an
-    id and a name
-    """
-
-    db_id: str
-    name: str
-
-
-@dataclass
-class DBAgentName(DBNameKey):
-    """
-    Class containing the expected elements for an agent name,
-    with any supporting methods
-    """
-
-
-@dataclass
-class DBObjectName(DBNameKey):
-    """
-    Class containing the expected elements for an object name,
-    with any supporting methods
-    """
-
-
-@dataclass
-class DBRoomName(DBNameKey):
-    """
-    Class containing the expected elements for a room name,
-    with any supporting methods
-    """
-
-
-# Graph nodes
-
-
-@dataclass
-class DBElem:
-    """Class for shared attributes for all graph model components"""
-
-    db_id: str
-    name_id: str
-    name: str
-    status: DBStatus
-    split: DBSplitType
-    creator_id: Optional[str]
-
-
-@dataclass
-class DBAgent(DBElem):
-    """
-    Class containing the expected elements for an agent,
-    with any supporting methods
-    """
-
-    persona: str
-    physical_description: str
-    name_prefix: Optional[str] = None
-    is_plural: Optional[str] = None
-    size: Optional[int] = None
-    contain_size: Optional[int] = None
-    constitution: Optional[int] = None
-    charisma: Optional[int] = None
-    strength: Optional[int] = None
-    dexterity: Optional[int] = None
-    intelligence: Optional[int] = None
-    wisdom: Optional[int] = None
-
-
-@dataclass
-class DBObject(DBElem):
-    """
-    Class containing the expected elements for an object,
-    with any supporting methods
-    """
-
-    name: str
-    physical_description: str
-    is_container: float
-    is_drink: float
-    is_food: float
-    is_gettable: float
-    is_surface: float
-    is_wearable: float
-    is_weapon: float
-    name_prefix: Optional[str] = None
-    is_plural: Optional[str] = None
-    size: Optional[int] = None
-    contain_size: Optional[int] = None
-    value: Optional[float] = None
-    rarity: Optional[float] = None
-
-
-@dataclass
-class DBRoom(DBElem):
-    """
-    Class containing the expected elements for a room,
-    with any supporting methods
-    """
-
-    name: str
-    description: str
-    backstory: str
-    size: Optional[int] = None
-    indoor_status: Optional[str] = None
-
-
-# Graph edges and attributes
-
-
-@dataclass
 class DBEdgeBase:
     """Base attributes for an edge as stored in the environment DB"""
 
-    parent_id: str
-    edge_type: str
-    edge_strength: int = 1
-    status: DBStatus
-    edge_label: Optional[str] = None
-    creator_id: Optional[str] = None
+    db_id = Column(Integer, primary_key=True)
+    parent_id = Column(String(ID_STRING_LENGTH))
+    edge_type = Column(Enum(DBEdgeType), nullable=False)
+    built_occurrences = Column(Integer, nullable=False, default=0)
+    status = Column(Enum(DBStatus), nullable=False, index=True)
+    edge_label = Column(String(EDGE_LABEL_LENGTH_CAP), nullable=False)
+    create_timestamp = Column(Float, nullable=False)
+    creator_id = Column(
+        String(ID_STRING_LENGTH)
+    )  # temp retain the creator ID for new things
 
 
-@dataclass
-class DBEdge(DBEdgeBase):
-    child_id: str
+class DBEdge(DBEdgeBase, SQLBase):
+    """Class for edges between two GraphNodes registered in the DB"""
+
+    __tablename__ = "edges"
+
+    # TODO function that executes this edge and gets the child
+    child_id = Column(String(ID_STRING_LENGTH))
+
+    def __repr__(self):
+        return (
+            f"DBEdge({self.db_id!r}| {self.parent_id}-{self.edge_type}-{self.child_id})"
+        )
 
 
-@dataclass
-class DBTextEdge(DBEdgeBase):
-    child_text: str
+class DBTextEdge(DBEdgeBase, SQLBase):
+    """Class for edges between a GraphNodes and a new entity in the DB"""
+
+    __tablename__ = "text_edges"
+
+    child_text = Column(String(BASE_NAME_LENGTH_CAP), nullable=False, index=True)
+
+    def __repr__(self):
+        return f"DBTextEdge({self.db_id!r}| {self.parent_id}-{self.edge_type}-{self.child_text})"
 
 
 # Other
 
 
-@dataclass
-class DBEdit:
-    edit_id: str
-    user_id: str
-    table: str
-    node_id: str
-    field: str
-    value: Any
+class DBEdit(SQLBase):
+    """Suggested change to some DB content"""
+
+    __tablename__ = "edits"
+
+    edit_id = Column(Integer, primary_key=True)
+    editor_id = Column(String(ID_STRING_LENGTH))  # temp retain the associated user ID
+    node_id = Column(
+        String(ID_STRING_LENGTH), nullable=False, index=True
+    )  # Id of entry in table
+    field = Column(String(ID_STRING_LENGTH), nullable=False)  # name of field in table
+    status = Column(Enum(DBStatus), nullable=False, index=True)
+    old_value = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)
+    new_value = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)
+    create_timestamp = Column(Float, nullable=False)
+
+    # TODO helper method for executing/accepting/rejecting an edit
+
+    def __repr__(self):
+        return f"DBEdit({self.edit_id!r}| {self.node_id}-{self.field}-{self.status})"
 
 
-@dataclass
-class DBFlag:
-    flag_id: str
-    user_id: str
-    table: str
-    node_id: str
-    reason: str
+class DBFlagTargetType(enum.Enum):
+    """Types of flags"""
+
+    FLAG_USER = "user_flag"  # Something wrong about a user's behavior
+    FLAG_UTTERANCE = "utterance_flag"  # Something specifically wrong about
+    FLAG_ENVIRONMENT = "env_flag"  # Flag something inappropriate in the environment
 
 
-@dataclass
-class DBQuest:
-    quest_id: str
-    agent_id: str
-    text_motivation: str
-    target_type: str
-    target: str
-    status: DBStatus
-    creator_id: Optional[str] = None
+class DBFlag(SQLBase):
+    """User-flagged content of some type"""
+
+    __tablename__ = "flags"
+
+    flag_id = Column(Integer, primary_key=True)
+    flag_type = Column(Enum(DBFlagTargetType), nullable=False)
+    target_id = Column(String(ID_STRING_LENGTH), nullable=False, index=True)
+    reason = Column(String(REPORT_REASON_LENGTH))
+    create_timestamp = Column(Float, nullable=False)
+
+    def __repr__(self):
+        return f"DBFlag({self.flag_id!r}| {self.target_id}-{self.flag_type})"
 
 
-@dataclass
-class DBGraph:
-    graph_id: str
-    graph_name: str
-    creator_id: str
-    file_path: str
+class DBQuestTargetType(enum.Enum):
+    """Types of quest targets"""
+
+    TEXT_ONLY = "text_only"  # only a map from character to motivation
+    SUBGOAL = "subgoal"  # Map from motivation to subgoal of motivation
+    TARGET_ACTION = "target_action"  # map from motivation to target action
+
+
+class DBQuest(SQLBase):
+    """Stores quest information for breaking down motivations"""
+
+    __tablename__ = "edges"
+
+    quest_id = Column(Integer, primary_key=True)
+    agent_id = Column(ForeignKey("agents.db_id"), nullable=False)
+    text_motivation = Column(String(QUEST_MOTIVATION_LENGTH), nullable=False)
+    target_type = Column(Enum(DBQuestTargetType), nullable=False)
+    target = Column(String(QUEST_MOTIVATION_LENGTH))
+    status = Column(Enum(DBStatus), nullable=False, index=True)
+    origin_filepath = Column(String(FILE_PATH_LENGTH_CAP))
+    creator_id = Column(
+        String(ID_STRING_LENGTH)
+    )  # temp retain the creator ID for new things
+    create_timestamp = Column(Float, nullable=False)
+
+    # TODO function to collect all subgoals
+
+    # TODO function to traverse through to parent
+
+    def __repr__(self):
+        return f"DBQuest({self.quest_id!r}| {self.agent_id}-{self.target_type})"
+
+
+class DBGraph(SQLBase):
+    """Manifest entry for a user-saved or created graph"""
+
+    __tablename__ = "saved_graphs"
+
+    graph_id = Column(Integer, primary_key=True)
+    graph_name = Column(String(WORLD_NAME_LENGTH_CAP), nulable=False, index=True)
+    creator_id = Column(
+        String(ID_STRING_LENGTH), nulable=False, index=True
+    )  # retain the creator ID, they own this
+    file_path = Column(String(FILE_PATH_LENGTH_CAP), nulable=False)
+    create_timestamp = Column(Float, nullable=False)
+
+    # TODO implement method to retrieve this graph
+
+    # TODO implement method to write this graph to the file
+
+    def __repr__(self):
+        return f"DBGraph({self.graph_id!r}| {self.graph_name})"
 
 
 class EnvDB(BaseDB):

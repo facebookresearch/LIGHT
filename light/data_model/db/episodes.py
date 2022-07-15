@@ -21,13 +21,13 @@ SQLBase = declarative_base()
 
 
 class DBGroupName(enum.Enum):
-    """Edges in the LIGHT Environment DB"""
+    """Data Releases in the LIGHT episode DB"""
 
     ORIG = "orig"
     WILD = "wild"
     MULTIPARTY = "multiparty"
     PRE_LAUNCH = "crowdsourced"
-    RELEASE = "full_release"
+    RELEASE_Q4_22 = "full_release_Q4_22"
 
 
 class EpisodeLogType(enum.Enum):
