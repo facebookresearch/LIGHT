@@ -5,7 +5,7 @@ import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
 import {  setTaskRouterCurrentLocation, updateTaskRouterHistory } from "../../../../features/taskRouter/taskrouter-slice.ts";
 //ROOMS
-import { updateRooms, updateSelectedRoom} from "../../../../features/rooms/rooms-slice.ts";
+import { updateSelectedRoom} from "../../../../features/rooms/rooms-slice.ts";
 /* STYLES */
 import "./styles.css";
 /* BOOTSTRAP COMPONENTS */
@@ -39,10 +39,10 @@ const BasicEditRoom = ({
     //1.  Connect recommendations to selectedWorld State. X
     //2.  Discuss Adding api reply that alerts user to not having any suggestions. X
     //3.  Add isLoading state and spinner with overlay for async API interactions.
-    //4.  Track Changes and block save button usage if nothing new is being applied.
-    //5.  Connect Local State more thought fully when it is updating selected room.
-    //6.  All formatting and updating when using the Common Sense API can be applied to Advanced Pages.
-    //7.  Rebuild lifecycle function here
+    //4.  Track Changes and block save button usage if nothing new is being applied.X
+    //5.  Connect Local State more thought fully when it is updating selected room.X
+    //6.  All formatting and updating when using the Common Sense API can be applied to Advanced Pages.X
+    //7.  Rebuild lifecycle function hereX
 
 
 
@@ -84,6 +84,7 @@ const BasicEditRoom = ({
     const [roomObjects, setRoomObjects] =useState([]);
 
     /* --- LIFE CYCLE FUNCTIONS --- */
+    //Updated currently selectedRoom any time selectedWorld changes
     useEffect(()=>{
         if(selectedWorld){
             const {nodes} = selectedWorld;
@@ -93,8 +94,6 @@ const BasicEditRoom = ({
             }
         }
     },[selectedWorld])
-
-
 
     //Sets isNewRoom state boolean based on presence of node_id.  This boolean determines rendered form fields and save on click function
     useEffect(()=>{

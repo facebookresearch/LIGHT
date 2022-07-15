@@ -29,6 +29,7 @@ const CharacterPage = ({
     builderRouterNavigate,
 })=> {
     /* ------ LOCAL STATE ------ */
+    //
     const [roomId, setRoomId] = useState("");
     const [charId, setCharId] = useState("");
     const [characterName, setCharacterName] = useState("");
@@ -73,6 +74,7 @@ const CharacterPage = ({
     const selectedCharacter = useAppSelector((state) => state.worldCharacters.selectedCharacter);
     /* ------ REDUX ACTIONS ------ */
     //TASKROUTER
+    //navigatess to clicked on node
     const navigateToLocation = (sectionName, nodeId)=>{
         let newLocation = {
             name: sectionName,
@@ -81,21 +83,26 @@ const CharacterPage = ({
         builderRouterNavigate(newLocation);
     };
 
-     //WORLD DRAFT
-     const updateWorldDraft = ()=>{
-        dispatch(setWorldDraft(selectedWorld));
+    //NAVIGATION
+    const backStep = ()=>{
+        let previousLoc =  taskRouterHistory[taskRouterHistory.length-1]
+        console.log("history:  ", taskRouterHistory)
+        let updatedHistory = taskRouterHistory.slice(0, taskRouterHistory.length-1);
+        console.log("PREVIOUS LOC BACKSTEP:  ", previousLoc)
+        builderRouterNavigate(previousLoc)
+        dispatch(updateTaskRouterHistory(updatedHistory));
     };
 
     //GENERAL
     //Adds more than one node to currently selected character
     const addContent = (charId, newNodes)=>{
-        let {agents, objects, nodes } = selectedWorld;
-        console.log("ROOM ID:  ", charId)
+        console.log("Character ID:  ", charId)
         let unupdatedCharacterData = nodes[charId]
-        console.log("ROOM DATA:  ", unupdatedCharacterData)
+        console.log("Character DATA:  ", unupdatedCharacterData)
         let unupdatedWorld = selectedWorld;
+        let {objects, nodes } = unupdatedWorld;
         let updatedNodes = {...nodes};
-        let newObjects =[...agents];
+        let newObjects =[...objects];
         let updatedContainedNodes = {...unupdatedCharacterData.contained_nodes};
         newNodes.map((newNode)=>{
             let {classes} = newNode;
@@ -107,28 +114,28 @@ const CharacterPage = ({
                 while( objects.indexOf(formattedNewNodetId)>=0){
                     let splitformattedNewNodetId = formattedNewNodetId.split("_");
                     let idNumber = splitformattedNewNodetId[splitformattedNewNodetId.length-1];
-                    idNumber = (idNumber*1)+1;
-                    idNumber = idNumber.toString();
-                    splitformattedNewNodetId[splitformattedNewNodetId.length-1] = idNumber;
-                    formattedNewNodetId = splitformattedNewNodetId.join("_");
+                    if((typeof idNumber === "number") && (!Number.isNaN(idNumber))){
+                        idNumber = parseInt(idNumber)
+                        idNumber = idNumber+1;
+                        idNumber = idNumber.toString();
+                        splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
+                        formattedObjectId = splitFormattedObjectId.join("_");
+                    }else{
+                        formattedObjectId = newNode.name +"_1"
+                    }
                 };
-            //
             }else{
                 formattedNewNodetId = newNode.name +"_1" ;
             };
             if(nodeType === "object"){
                 newObjects.push(formattedNewNodetId);
             };
-
             formattedNewNode = {...newNode, node_id:formattedNewNodetId , container_node:{target_id: charId}};
             updatedContainedNodes = {...updatedContainedNodes, [formattedNewNodetId]:{target_id: formattedNewNodetId}};
-            console.log("FORMATTED NEW NODE:  ", formattedNewNode)
             updatedNodes = {...updatedNodes, [formattedNewNodetId]:formattedNewNode};
-            console.log("UPDATED NOTES IN ADD CONTENT FUNCTION IN MAPPING:  ", updatedNodes)
         });
         let updatedCharacterData = {...selectedCharacter, contained_nodes: updatedContainedNodes};
         updatedNodes = {...updatedNodes, [charId]: updatedCharacterData};
-        console.log("UPDATED NOTES IN ADD CONTENT FUNCTION FINAL VERSION:  ", updatedNodes)
         let updatedWorld ={...selectedWorld, objects:[...newObjects], nodes: updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     };
@@ -142,14 +149,13 @@ const CharacterPage = ({
         dispatch(updateSelectedWorld(updatedWorld))
     }
     //Removes Current Character from selectedWorld state
-    const deleteCharacter = (id)=>{
-        console.log("DELETED ROOM ID:  ", id)
+    const deleteCurrentCharacter = ()=>{
         let unupdatedWorld = selectedWorld;
         let {agents } = unupdatedWorld;
-        let updatedAgents = agents.filter(char => id !== char);
+        let updatedAgents = agents.filter(char => charId !== char);
         const updatedWorld = containedNodesRemover(id);
         dispatch(setWorldDraft({...updatedWorld, agents: updatedAgents}));
-        builderRouterNavigate(taskRouterHistory[taskRouterHistory.length-2]);
+        backStep()
     }
     //OBJECTS
     // Adds new Object to character inventory state
@@ -187,21 +193,21 @@ const CharacterPage = ({
             //NEW OBJECT
             console.log("NEW OBJECT")
             formattedObjectId = obj.name +"_1"
-        }
+        };
         let updatedObjectData = {...obj, node_id:formattedObjectId, container_node:{target_id: selectedCharacter.node_id}};
         if(worn){
-            updatedObjectData = {...updatedObjectData, equipped: "equipped", wearable:true};
-        }
+            updatedObjectData = {...updatedObjectData, equipped: "worn", wearable:true};
+        };
         if(wielded){
-            updatedObjectData = {...updatedObjectData, equipped: "equipped", wieldable:true};
-        }
+            updatedObjectData = {...updatedObjectData, equipped: "wield", wieldable:true};
+        };
         let updatedObjects = [...objects, formattedObjectId];
         let updatedCharacterData = {...selectedCharacter, contained_nodes:{...selectedCharacter.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}};
-        console.log("UPDATED CHARACTER DATA ON ADD", updatedCharacterData)
+        console.log("UPDATED CHARACTER DATA ON ADD", updatedCharacterData);
         let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedCharacter.node_id]: updatedCharacterData};
-        console.log("UPDATED ADDED OBJECT NODES:  ", updatedNodes)
+        console.log("UPDATED ADDED OBJECT NODES:  ", updatedNodes);
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
-        console.log("UPDATED WORLD ADD OBJECT:  ", updatedWorld)
+        console.log("UPDATED WORLD ADD OBJECT:  ", updatedWorld);
         dispatch(updateSelectedWorld(updatedWorld));
     };
 
@@ -216,7 +222,6 @@ const CharacterPage = ({
         let updatedCharacterData  = {...selectedCharacter, contained_nodes: updatedContainedNodes }
         let updatedObjects = objects.filter(obj => id !== obj);
         let updatedWorld = containedNodesRemover(id);
-
         let updatedNodes = {...updatedWorld.nodes, [updatedCharacterData.node_id]: updatedCharacterData}
         updatedWorld = {...updatedWorld, nodes:updatedNodes}
         console.log("DELETE OBJECT POST NODE REMOVAL WORLD:  ", updatedWorld);
@@ -244,10 +249,14 @@ const CharacterPage = ({
         console.log("selectedRoom");
         console.log(target_room);
         suggestCharacterDescription({target_room, room_graph, target_id}).then((result) => {
-            console.log("Finished describe character");
-            console.log(result);
-        })
-    }
+            console.log("Finished character description");
+            const generatedData = result.updated_item;
+            const updatedDescription = generatedData.desc;
+            const updatedCharacter = {...selectedCharacter, desc:updatedDescription};
+            console.log(updatedCharacter);
+            updateCharacter(charId, updatedCharacter);
+        });
+    };
 
     // COMMON SENSE PERSONA CHARACTER FUNCTION
     const CommonSenseCharacterPersona = ()=>{
@@ -271,9 +280,43 @@ const CharacterPage = ({
         console.log(target_room);
         suggestCharacterPersona({target_room, room_graph, target_id}).then((result) => {
             console.log("Finished persona character");
-            console.log(result);
-        })
-    }
+            const generatedData = result.updated_item;
+            const updatedPersona = generatedData.persona;
+            const updatedCharacter = {...selectedCharacter, persona:updatedPersona};
+            console.log(updatedCharacter);
+            updateCharacter(charId, updatedCharacter);
+        });
+    };
+
+    // COMMON SENSE MOTIVATION CHARACTER FUNCTION
+    const CommonSenseCharacterMotivation = ()=>{
+        let target_room = selectedRoom['node_id'];
+        let target_id = charId;
+        let nodes = {};
+        nodes[target_room] = selectedRoom;
+        for (let character of worldCharacters) {
+            nodes[character['node_id']] = character;
+        }
+        for (let object of worldObjects) {
+            nodes[object['node_id']] = object;
+        }
+        let agents = worldCharacters.map(c => c['node_id']);
+        let objects = worldObjects.map(c => c['node_id']);
+        let rooms = [target_room]
+        let room_graph = {nodes, agents, objects, rooms};
+        console.log("room graph");
+        console.log(room_graph);
+        console.log("selectedRoom");
+        console.log(target_room);
+        suggestCharacterMotivation({target_room, room_graph, target_id}).then((result) => {
+            console.log("Finished persona character");
+            const generatedData = result.updated_item;
+            const updatedMotivation = generatedData.mission;
+            const updatedCharacter = {...selectedCharacter, mission:updatedMotivation};
+            console.log(updatedCharacter);
+            updateCharacter(charId, updatedCharacter);
+        });
+    };
 
     // COMMON SENSE CONTENTS CHARACTER FUNCTION
     const CommonSenseCharacterContents = ()=>{
@@ -296,26 +339,24 @@ const CharacterPage = ({
         console.log("selectedRoom");
         console.log(target_room);
         suggestCharacterContents({target_room, room_graph, target_id}).then((result) => {
-            console.log("Finished character contents");
-            console.log(result);
+            console.log("Finished character contents", result);
             const newItems = result.new_items;
             addContent(target_room, newItems)
         })
     }
 
     //UTILS
+    //worldNodeSorter - filters nodes into their appropriate state and arrays upon changes to the selected or draft world
     const worldNodeSorter = (world)=>{
-        console.log( "MID SORT:  ", world)
         let CharacterNodes = [];
         let RoomNodes = [];
         let ObjectNodes = [];
         const {nodes} = world;
         const WorldNodeKeys = Object.keys(nodes);
-        console.log( "MID SORT:  WorldNodeKeys")
         WorldNodeKeys.map((nodeKey)=>{
             let WorldNode = nodes[nodeKey];
             if(WorldNode.classes){
-            let NodeClass = WorldNode.classes[0]
+            let NodeClass = WorldNode.classes[0];
             switch(NodeClass) {
                 case "agent":
                 CharacterNodes.push(WorldNode);
@@ -328,19 +369,43 @@ const CharacterPage = ({
                 break;
                 default:
                 break;
-                }
-            }
-        })
+                };
+            };
+        });
         console.log( "MID SORT ROOMS : ", RoomNodes)
         console.log( "MID SORT CHARACTERS:  ", CharacterNodes)
         console.log( "MID SORT OBJECTS", ObjectNodes)
-        dispatch(updateRooms(RoomNodes))
-        dispatch(updateObjects(ObjectNodes))
-        dispatch(updateCharacters(CharacterNodes))
-    }
+        dispatch(updateRooms(RoomNodes));
+        dispatch(updateObjects(ObjectNodes));
+        dispatch(updateCharacters(CharacterNodes));
+    };
 
 
     //HANDLERS
+    //WORLD DRAFT
+    //updateWorldDraft - saves changes to currently selectedworld to world draft state and local storage
+    const WorldSaveHandler = ()=>{
+        dispatch(setWorldDraft(selectedWorld));
+    };
+
+    //TOKENIZER GEAR
+    //the function that clicking a gear on the typeahead tokenizer invokes.  It saves the current worldState to the draft before navigating to the item or character's advanced page.
+    const HandleBasicGearClick = (newLoc)=>{
+        WorldSaveHandler()
+        const {node_id} = selectedCharacter;
+        console.log("BASIC GEAR CLICK:  ", node_id)
+        let location = {
+            name:"character",
+            id: node_id
+        };
+        let updatedGearLocation = newLoc;
+        const updatedRouterHistory = [...taskRouterHistory, currentLocation, location]
+        console.log("BASIC UPDATED HISTORY:  ", updatedRouterHistory);
+        dispatch(updateTaskRouterHistory(updatedRouterHistory));
+        console.log("CURRENT LOCATION:  ", updatedGearLocation);
+        dispatch(setTaskRouterCurrentLocation(updatedGearLocation));
+    }
+
     //FORM CHANGE HANDLER
     //CharacterNameChangeHandler handles any changes to character's name
     const CharacterNameChangeHandler = (e)=>{
@@ -378,6 +443,19 @@ const CharacterPage = ({
         };
     };
 
+    //CharacterMotivationChangeHandler handles any changes to character's Motivation
+    const CharacterMotivationChangeHandler = (e)=>{
+        let updatedCharacterMotivation = e.target.value;
+        setCharacterMotivation(updatedCharacterMotivation);
+        let updatedSelectedCharacter = {...selectedCharacter, mission: updatedCharacterMotivation };
+        if(selectedCharacter){
+            if(selectedCharacter.node_id){
+                updateCharacter(selectedCharacter.node_id, updatedSelectedCharacter);
+            };
+        };
+    };
+
+    //CharacterPrefixChangeHandler handles changes to character's prefix
     const CharacterPrefixChangeHandler = (e)=>{
         let updatedCharacterPrefix = e.target.value;
         setCharacterPrefix(updatedCharacterPrefix);
@@ -389,7 +467,7 @@ const CharacterPage = ({
         };
       };
 
-
+    //CharacterSizeChangeHandler handles changes to character's size
     const CharacterSizeChangeHandler = (e)=>{
         let updatedCharacterSize = e.target.value;
         setCharacterSize(updatedCharacterSize);
@@ -401,6 +479,7 @@ const CharacterPage = ({
         };
     };
 
+    //CharacterAggressionChangeHandler handles changes to character's aggression
     const CharacterAggressionChangeHandler = (e)=>{
         let updatedCharacterAggression = e.target.value;
         setCharacterAggression(updatedCharacterAggression);
@@ -434,9 +513,9 @@ const CharacterPage = ({
             return updatedRemovalArray;
           };
         };
+        //Removal List is populated by nodeDigger function using the id of the deleted node then mapped through to remove nodes from the world
         let removalList = [];
         removalList = nodeDigger(nodeId);
-        //Removal List is populated by nodeDigger function using the id of the deleted node then mapped through to remove nodes from the world
         removalList.map((removedNode)=>{
             let {agents, objects, rooms, nodes}= updatedWorld
           let removedNodeClass = removedNode.class;
@@ -454,80 +533,71 @@ const CharacterPage = ({
             let updatedNodes = {...nodes};
             delete updatedNodes[removedNodeId];
             updatedWorld = {...updatedWorld, nodes: updatedNodes};
-            console.log("updated post delete world", updatedWorld);
+            //Any changes during removal update the selectedWorld state as the removal list is mapped through
             dispatch(updateSelectedWorld(updatedWorld));
         });
+        // The updated world is then returned for any additional changes that may need to be done
         return updatedWorld;
     };
 
     //CRUMBS
+    //Crumbes act as links to "pages" leading to the current page
     const crumbs= [...taskRouterHistory, currentLocation];
     /* --- LIFE CYCLE FUNCTIONS --- */
-
+    // Pulls params from current task router location anytime the currentLocation state changes
     useEffect(()=>{
-        console.log("CURRENT LOCATION USE EFFECT:  ", currentLocation)
         let updatedCharData = currentLocation;
         let updatedRoomData = taskRouterHistory[taskRouterHistory.length-1];
-        console.log("CHAR ID:  ", updatedCharData)
-        console.log("ROOM ID:  ", updatedRoomData)
         if(updatedCharData){
             setCharId(updatedCharData.id);
         }
         if(updatedRoomData){
             setRoomId(updatedRoomData.id);
         }
-        console.log("WORLD DRAFT:  ", worldDraft);
         dispatch(updateSelectedWorld(worldDraft));
-        console.log("CURRENT LOCATION USE EFFECT")
     },[currentLocation]);
 
+    // Updates selectedWorld state upon change to worldDraft
     useEffect(()=>{
         dispatch(updateSelectedWorld(worldDraft))
-        console.log("WORLD DRAFT USE EFFECT")
     },[worldDraft]);
 
+    // Updates all dependent Redux state upon change to selected world.
     useEffect(()=>{
-        console.log("SELECTED WORLD UPDATE IN USE EFFECT WIRH NODE SORTER:  ", selectedWorld)
         if(selectedWorld){
-            console.log("SELECTED WORLD:  ", selectedWorld)
-            worldNodeSorter(selectedWorld)
+            worldNodeSorter(selectedWorld);
         }
-        console.log("SELECTED WORLD USE EFFECT 1")
     },[selectedWorld]);
 
+    //Upon change to roomId state sets selectedRoom State
     useEffect(()=>{
         if(roomId){
-            let {nodes}= selectedWorld
-            console.log("SELECTED WORLD:  ", selectedWorld);
-            console.log("ROOM ID:  ", roomId)
-            let currentRoom = nodes[roomId]
-            console.log("CURRENT ROOM", currentRoom)
+            let {nodes}= selectedWorld;
+            let currentRoom = nodes[roomId];
             if(currentRoom){
-                dispatch(selectRoom(currentRoom))
-            }
-        }
-        console.log("SELECTED ROOM USE EFFECT 2")
-    },[roomId]);
-
-    useEffect(()=>{
-        if(charId){
-            let {nodes}= selectedWorld
-            let currentCharacter = nodes[charId]
-            console.log("CURRENT CHARACTER", currentCharacter)
-            if(currentCharacter){
-                dispatch(selectCharacter(currentCharacter))
+                dispatch(selectRoom(currentRoom));
             };
         };
-        console.log("SELECTED CHARACTER USE EFFECT")
+    },[roomId]);
+
+   //Upon change to charId state sets selectedCharacter State
+    useEffect(()=>{
+        if(charId){
+            let {nodes}= selectedWorld;
+            let currentCharacter = nodes[charId];
+            if(currentCharacter){
+                dispatch(selectCharacter(currentCharacter));
+            };
+        };
     },[charId, selectedWorld]);
 
+    // Sets local state attributes in forms based on changes to selectedCharacter
     useEffect(()=>{
-        console.log("SELECTED WORLD UPDATING CHARACTER  :  ", selectedWorld)
         if(selectedWorld){
         const {nodes} = selectedWorld;
         let objectNodes = [];
             if(selectedCharacter){
-                console.log("SELECTED CHARACTER ATTRIBUTE SORTER USE EFFECT:  ", selectedCharacter)
+                //The attributes of a character are abstracted off the selectedCharacter state and then update the local state for each corresponding attribute
                 const {
                     contain_size,
                     contained_nodes,
@@ -542,25 +612,21 @@ const CharacterPage = ({
                     size,
                     aggression
                 }= selectedCharacter;
-                setCharacterName(name);
-                setCharacterDesc(desc);
+                setCharacterName(name);//NAME
+                setCharacterDesc(desc);//DESCRIPTION
                 if(!name_prefix){
-                    setCharacterPrefix("a");
+                    setCharacterPrefix("a");//PREFIX
                 }else {
                     setCharacterPrefix(name_prefix);
-                }
-                setCharacterPersona(persona);
-                setCharacterMotivation(motivation);
-                setCharacterAggression(aggression);
-                setCharacterSize(size);
+                };
+                setCharacterPersona(persona);//PERSONA
+                setCharacterMotivation(motivation);//MOTIVATION
+                setCharacterAggression(aggression);//AGGRESSION
+                setCharacterSize(size);//SIZE
                 const characterContentNodesKeys = Object.keys(contained_nodes);
-                console.log("CONTAINED_NODES:  ",  contained_nodes);
-                console.log("CHARACTER CONTENT NODES:  ",  characterContentNodesKeys);
                 characterContentNodesKeys.map((nodeKey)=>{
-                    console.log("NODE KEY:   ", nodeKey);
                     let worldNode = nodes[nodeKey];
                     if(worldNode){
-                        console.log("worldNode:  ", worldNode);
                         let {classes} = worldNode;
                         if(worldNode.classes){
                             let nodeClass = classes[0]
@@ -574,12 +640,12 @@ const CharacterPage = ({
                         };
                     };
                 });
-                setContainedObjects(objectNodes);
+                setContainedObjects(objectNodes);//CONTENT
             };
         };
-        console.log("SELECTED CHARACTER USE EFFECT");
     }, [selectedCharacter]);
 
+    // Sorts objects in to local state for tokenizers upon changes to contained objects placing them into either carried, worn, or wielded object arrays
     useEffect(()=>{
         let updatedCarryObjects = [];
         let updatedWornObjects = [];
@@ -587,7 +653,6 @@ const CharacterPage = ({
         if(containedObjects.length){
             containedObjects.map(obj=>{
                 if(obj.equipped){
-                    console.log("EQUIPPED OBJECTS:  ", obj)
                     if(obj.wearable){
                         updatedWornObjects.push(obj);
                     }
@@ -599,8 +664,6 @@ const CharacterPage = ({
                 };
             });
         };
-        console.log("UPDATED CARRY OBJECTS", updatedCarryObjects)
-        console.log("UPDATED WORN OBJECTS", updatedWornObjects)
         setCarryObjects(updatedCarryObjects);
         setWornObjects(updatedWornObjects);
         setWieldedObjects(updatedWieldedObjects);
@@ -645,9 +708,12 @@ const CharacterPage = ({
                             />
                         </Row>
                         <Row>
-                            <TextInput
-                                label="Motivation"
-                                value={selectedCharacter.mission}
+                            <GenerateForms
+                                label="Motivation:"
+                                value={characterMotivation}
+                                changeHandler={CharacterMotivationChangeHandler}
+                                generateName={"Generate Motivation"}
+                                clickFunction={CommonSenseCharacterMotivation}
                             />
                         </Row>
                         <Row>
@@ -667,7 +733,7 @@ const CharacterPage = ({
                                 tokens={carryObjects}
                                 onTokenAddition={addObject}
                                 onTokenRemoval={deleteObject}
-                                builderRouterNavigate={builderRouterNavigate}
+                                builderRouterNavigate={HandleBasicGearClick}
                             />
                         </Row>
                         <Row>
@@ -682,7 +748,7 @@ const CharacterPage = ({
                                 tokens={wornObjects}
                                 onTokenAddition={(obj)=>addObject(obj, true, false)}
                                 onTokenRemoval={deleteObject}
-                                builderRouterNavigate={builderRouterNavigate}
+                                builderRouterNavigate={HandleBasicGearClick}
                             />
                         </Row>
                         <Row>
@@ -692,10 +758,12 @@ const CharacterPage = ({
                                 sectionName={"objects"}
                                 containerId={selectedCharacter.node_id}
                                 tokenType={'objects'}
+                                objectWorn={false}
+                                objectWielded={true}
                                 tokens={wieldedObjects}
                                 onTokenAddition={(obj)=>addObject(obj, false, true)}
                                 onTokenRemoval={deleteObject}
-                                builderRouterNavigate={builderRouterNavigate}
+                                builderRouterNavigate={HandleBasicGearClick}
                             />
                         </Row>
                     </Col>
@@ -744,13 +812,13 @@ const CharacterPage = ({
                         <Col>
                             <TextButton
                                 text={selectedCharacter.node_id ? "Save Changes" : "Create Character" }
-                                clickFunction={updateWorldDraft}
+                                clickFunction={WorldSaveHandler}
                             />
                         </Col>
                         <Col>
                             <TextButton
                                 text={"Delete Character"}
-                                clickFunction={()=>{deleteCharacter(charId)}}
+                                clickFunction={deleteCurrentCharacter}
                             />
                         </Col>
                         </Row>

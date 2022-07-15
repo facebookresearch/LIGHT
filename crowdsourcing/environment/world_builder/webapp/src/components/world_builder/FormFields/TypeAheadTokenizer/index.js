@@ -175,8 +175,8 @@ const SelectHandler = (selected)=>{
                             stats:{damage:0, defense:0},
                             surface_type:"on",
                             value: 1,
-                            wearable: {objectWorn},
-                            wieldable: {objectWielded}
+                            wearable: objectWorn,
+                            wieldable: objectWielded
                         };
                         let newObjectToken = {
                             key:{label},
