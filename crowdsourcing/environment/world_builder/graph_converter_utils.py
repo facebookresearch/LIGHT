@@ -75,7 +75,10 @@ def get_room_content_from_json(graph_dict):
                 if convert_to_float:
                     # convert bool to float which can then converted down the line to a binary str
                     original_value = new_item[edge_name]
-                    converted = float(original_value)
+                    try:
+                        converted = float(original_value)
+                    except:
+                        converted = 0
                     new_item[edge_name] = converted
             if container_node_id is None:
                 content['objects'].append(new_item)
