@@ -219,7 +219,7 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
     for o in carried:
         if type(o) is str:
             o = {'name':o}
-        o_id = o['name'] + "_x"
+        o_id = o['name']
         new_node = {
             "agent": False,
             "classes": ["object"],
@@ -264,7 +264,7 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
     for o in wielded:
         if type(o) is str:
             o = {'name':o}
-        o_id = o['name'] + "_x"
+        o_id = o['name']
         new_node = {
             "agent": False,
             "classes": ["object"],
@@ -309,7 +309,7 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
     for o in worn:
         if type(o) is str:
             o = {'name':o}
-        o_id = o['name'] + "_x"
+        o_id = o['name']
         new_node = {
             "agent": False,
             "classes": ["object"],
@@ -353,7 +353,7 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
     return input_graph
 
 def add_character_to_graph(input_graph, room_name, character_dict):
-    node_id = character_dict['name'] + "_x"
+    node_id = character_dict['name']
     print(f"Adding character: {node_id}")
     print(character_dict)
 
@@ -364,7 +364,7 @@ def add_character_to_graph(input_graph, room_name, character_dict):
     input_graph = add_character_secondary_objects_to_graph(input_graph, node_id, carried, wielded, worn)
 
     all_contained = [*carried, *wielded, *worn]
-    contained_nodes = {o+"_x":{"target_id":o+"_x"} for o in all_contained}
+    contained_nodes = {o:{"target_id":o} for o in all_contained}
     new_node = {
         "agent": True,
         "aggression": 0,
@@ -406,7 +406,7 @@ def add_character_to_graph(input_graph, room_name, character_dict):
 
 def add_object_secondary_objects_to_graph(input_graph, node_id, contained):
     for o in contained:
-        o_id = o + "_x"
+        o_id = o
         new_node = {
             "agent": False,
             "classes": ["object"],
@@ -450,7 +450,7 @@ def add_object_secondary_objects_to_graph(input_graph, node_id, contained):
     return input_graph
 
 def add_object_to_graph(input_graph, room_name, object_dict):
-    node_id = object_dict['name'] + "_x"
+    node_id = object_dict['name']
     print(f"Adding object: {node_id}")
     print(object_dict)
     contained = object_dict.get('containing_objects', [])
@@ -460,7 +460,7 @@ def add_object_to_graph(input_graph, room_name, object_dict):
         "agent": False,
         "classes": ["object"],
         "contain_size": 20,
-        "contained_nodes": {o+"_x":{"target_id":o+"_x"} for o in object_dict.get('containing_objects', [])},
+        "contained_nodes": {o:{"target_id":o} for o in object_dict.get('containing_objects', [])},
         "container": True,
         "container_node": {
           "target_id": room_name
