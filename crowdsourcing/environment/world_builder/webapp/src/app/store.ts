@@ -1,6 +1,8 @@
 //REDUX
 import {configureStore} from "@reduxjs/toolkit";
 //REDUCERS
+import ErrorReducer from '../features/errors/errors-slice';
+import LoadingReducer from '../features/loading/loading-slice';
 import PlayerWorldReducer from '../features/playerWorld/playerworld-slice';
 import RoomsReducer from '../features/rooms/rooms-slice';
 import CharacterReducer from '../features/characters/characters-slice';
@@ -12,6 +14,8 @@ import TaskRouterReducer from "../features/taskRouter/taskrouter-slice"
 
 export const store = configureStore({
     reducer:{
+        errors: ErrorReducer,
+        loading:LoadingReducer,
         playerWorld: PlayerWorldReducer,
         map: MapReducer,
         modal: ModalReducer,

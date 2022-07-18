@@ -69,6 +69,55 @@ const ObjectPage = ({
     dispatch(setWorldDraft(selectedWorld))
   }
 
+
+  //GENERAL
+  //Adds more than one node to currently selected character
+  const addContent = (objectId, newNodes)=>{
+    console.log("Object ID:  ", objectId)
+    let unupdatedObjectData = nodes[objectId]
+    console.log("Object DATA:  ", unupdatedObjectData)
+    let unupdatedWorld = selectedWorld;
+    let {objects, nodes } = unupdatedWorld;
+    let updatedNodes = {...nodes};
+    let newObjects =[...objects];
+    let updatedContainedNodes = {...unupdatedObjectData.contained_nodes};
+    newNodes.map((newNode)=>{
+        let {classes} = newNode;
+        let nodeType = classes[0];
+        let formattedNewNode;
+        let formattedNewNodetId;
+        if(newNode.node_id){
+            formattedNewNodetId = newNode.node_id;
+            while( objects.indexOf(formattedNewNodetId)>=0){
+                let splitformattedNewNodetId = formattedNewNodetId.split("_");
+                let idNumber = splitformattedNewNodetId[splitformattedNewNodetId.length-1];
+                if((typeof idNumber === "number") && (!Number.isNaN(idNumber))){
+                    idNumber = parseInt(idNumber)
+                    idNumber = idNumber+1;
+                    idNumber = idNumber.toString();
+                    splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
+                    formattedObjectId = splitFormattedObjectId.join("_");
+                }else{
+                    formattedObjectId = newNode.name +"_1"
+                }
+            };
+        }else{
+            formattedNewNodetId = newNode.name +"_1" ;
+        };
+        if(nodeType === "object"){
+            newObjects.push(formattedNewNodetId);
+        };
+        formattedNewNode = {...newNode, node_id:formattedNewNodetId , container_node:{target_id: parentId}};
+        updatedContainedNodes = {...updatedContainedNodes, [formattedNewNodetId]:{target_id: formattedNewNodetId}};
+        updatedNodes = {...updatedNodes, [formattedNewNodetId]:formattedNewNode};
+    });
+    let updatedObjectData = {...selectedCharacter, contained_nodes: updatedContainedNodes};
+    updatedNodes = {...updatedNodes, [objectId]: updatedObjectData};
+    let updatedWorld ={...selectedWorld, objects:[...newObjects], nodes: updatedNodes};
+    dispatch(updateSelectedWorld(updatedWorld));
+  };
+
+
   //OBJECTS
   const addObject = (obj) => {
     let unupdatedWorld = selectedWorld;
