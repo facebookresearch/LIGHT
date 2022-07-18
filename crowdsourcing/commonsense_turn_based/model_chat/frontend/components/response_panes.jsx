@@ -216,7 +216,7 @@ function CheckboxTextResponse({ onMessageSend, active, currentCheckboxes, curren
             inputRef.current = ref;
           }}
           value={textValue}
-          placeholder="Please enter here..."
+          placeholder="Please enter action here..."
           onKeyPress={(e) => handleKeyPress(e)}
           onChange={(e) => setTextValue(e.target.value)}
           disabled={!active || sending}
@@ -227,7 +227,7 @@ function CheckboxTextResponse({ onMessageSend, active, currentCheckboxes, curren
           disabled={textValue === "" || !active || sending}
           onClick={() => tryMessageSend()}
         >
-          Send
+          Do Action
         </Button>
       </div>
     </div>
