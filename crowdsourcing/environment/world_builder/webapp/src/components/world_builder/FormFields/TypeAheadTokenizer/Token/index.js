@@ -48,7 +48,6 @@ const Token = ({
         }
         console.log("TOKEN VALUE:  ", option)
         console.log("GEAR LOCATION:  ", gearLocation)
-
         builderRouterNavigate(gearLocation);
     }
 

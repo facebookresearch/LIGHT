@@ -61,12 +61,14 @@ const TypeaheadTokenizer = ({
                 if(objectWielded){
                     updatedTokenData = {...updatedTokenData, wieldable: objectWielded, equipped:"equipped" }
                 }
+
                 let updatedToken = {
                     index: index,
                     label: tokendata.name,
                     key: tokendata.node_id,
                     data: tokendata
                 };
+                console.log("UPDATED TOKEN:  ", updatedToken)
                 return updatedToken;
             })
             setTokenList(updatedTokenList);
@@ -133,7 +135,7 @@ const SelectHandler = (selected)=>{
                         };
                         console.log("NEW CHAR DATA:  ", newCharacterTokenData);
                         let newCharacterToken = {
-                            key:{label},
+                            key: label,
                             label: label,
                             data: newCharacterTokenData
                         };
@@ -208,19 +210,22 @@ const SelectHandler = (selected)=>{
             placeholder="Select one"
             renderInput={(inputProps, props) => (
             <TypeaheadInputMulti {...inputProps} selected={selected}>
-                {selected.length ? selected.map((option, idx) => (
-                    <Token
-                        index={idx}
-                        option={option}
-                        key={option.key === null ? idx : option.key}
-                        sectionName={sectionName}
-                        containerId={containerId}
-                        deleteTokenFunction={onTokenRemoval}
-                        builderRouterNavigate={builderRouterNavigate}
-                    >
-                        {option.label.toUpperCase()}
-                    </Token>
-                )):
+                {selected.length ? selected.map((option, idx) => {
+                    console.log("OPTION DATA:  ",option)
+                    return (
+                        <Token
+                            index={idx}
+                            option={option}
+                            key={option.key === null ? idx : option.key}
+                            sectionName={sectionName}
+                            containerId={containerId}
+                            deleteTokenFunction={onTokenRemoval}
+                            builderRouterNavigate={builderRouterNavigate}
+                        >
+                            {option.label.toUpperCase()}
+                        </Token>
+                    )
+                }):
                 null}
             </TypeaheadInputMulti>
             )}

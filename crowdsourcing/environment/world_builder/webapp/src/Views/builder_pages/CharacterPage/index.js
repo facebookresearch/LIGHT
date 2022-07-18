@@ -104,6 +104,7 @@ const CharacterPage = ({
         let updatedNodes = {...nodes};
         let newObjects =[...objects];
         let updatedContainedNodes = {...unupdatedCharacterData.contained_nodes};
+        console.log("UNUPDATED CONTAINED NODES:  ", updatedContainedNodes)
         newNodes.map((newNode)=>{
             let {classes} = newNode;
             let nodeType = classes[0];
@@ -137,6 +138,7 @@ const CharacterPage = ({
             formattedNewNode = {...newNode, node_id:formattedNewNodetId , container_node:{target_id: charId}};
             console.log("FORMATTED NEW NODE:  ", formattedNewNode)
             updatedContainedNodes = {...updatedContainedNodes, [formattedNewNodetId]:{target_id: formattedNewNodetId}};
+            console.log("CONTAINED NODES:  ", updatedContainedNodes)
             updatedNodes = {...updatedNodes, [formattedNewNodetId]:formattedNewNode};
         });
         let updatedCharacterData = {...selectedCharacter, contained_nodes: updatedContainedNodes};
