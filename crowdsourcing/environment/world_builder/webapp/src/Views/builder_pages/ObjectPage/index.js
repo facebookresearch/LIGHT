@@ -63,6 +63,15 @@ const ObjectPage = ({
   //CHARACTERS
   const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
   /* ------ REDUX ACTIONS ------ */
+  //NAVIGATION
+  const backStep = ()=>{
+    let previousLoc =  taskRouterHistory[taskRouterHistory.length-1]
+    console.log("history:  ", taskRouterHistory)
+    let updatedHistory = taskRouterHistory.slice(0, taskRouterHistory.length-1);
+    console.log("PREVIOUS LOC BACKSTEP:  ", previousLoc)
+    builderRouterNavigate(previousLoc)
+    dispatch(updateTaskRouterHistory(updatedHistory));
+  };
   //WORLD DRAFT
   const updateWorldsDraft = () => {
 
@@ -73,11 +82,11 @@ const ObjectPage = ({
   //GENERAL
   //Adds more than one node to currently selected character
   const addContent = (objectId, newNodes)=>{
+    let unupdatedWorld = selectedWorld;
+    let {objects, nodes } = unupdatedWorld;
     console.log("Object ID:  ", objectId)
     let unupdatedObjectData = nodes[objectId]
     console.log("Object DATA:  ", unupdatedObjectData)
-    let unupdatedWorld = selectedWorld;
-    let {objects, nodes } = unupdatedWorld;
     let updatedNodes = {...nodes};
     let newObjects =[...objects];
     let updatedContainedNodes = {...unupdatedObjectData.contained_nodes};
@@ -111,7 +120,7 @@ const ObjectPage = ({
         updatedContainedNodes = {...updatedContainedNodes, [formattedNewNodetId]:{target_id: formattedNewNodetId}};
         updatedNodes = {...updatedNodes, [formattedNewNodetId]:formattedNewNode};
     });
-    let updatedObjectData = {...selectedCharacter, contained_nodes: updatedContainedNodes};
+    let updatedObjectData = {...selectedObject, contained_nodes: updatedContainedNodes};
     updatedNodes = {...updatedNodes, [objectId]: updatedObjectData};
     let updatedWorld ={...selectedWorld, objects:[...newObjects], nodes: updatedNodes};
     dispatch(updateSelectedWorld(updatedWorld));
@@ -119,31 +128,54 @@ const ObjectPage = ({
 
 
   //OBJECTS
-  const addObject = (obj) => {
+  const addObject = (obj)=>{
     let unupdatedWorld = selectedWorld;
-    let { objects, nodes } = unupdatedWorld;
+    let {objects, nodes } = unupdatedWorld;
     let formattedObjectId = obj.node_id;
-    while (objects.indexOf(formattedObjectId) >= 0) {
-      console.log("WHILE LOOP RUNNING", objects.indexOf(formattedObjectId) >= 0);
-      let splitFormattedObjectId = formattedObjectId.split("_");
-      console.log("FORMATTEDID:  ", splitFormattedObjectId);
-      let idNumber = splitFormattedObjectId[splitFormattedObjectId.length - 1]
-      console.log("idNumber:  ", idNumber);
-      idNumber = (idNumber * 1) + 1;
-      idNumber = idNumber.toString()
-      console.log("idNumber+:  ", idNumber);
-      splitFormattedObjectId[splitFormattedObjectId.length - 1] = idNumber
-      console.log("splitFormattedObjectId+:  ", splitFormattedObjectId);
-      formattedObjectId = splitFormattedObjectId.join("_")
-      console.log("FORMATTEDIDEND:  ", formattedObjectId);
-    }
-    let updatedObjectData = { ...obj, node_id: formattedObjectId, container_node: { target_id: selectedRoom.node_id } };
-    let updatedObjects = [...objects, formattedObjectId]
-    let updatedRoomData = { ...selectedRoom, contained_nodes: { ...selectedRoom.contained_nodes, [formattedObjectId]: { target_id: formattedObjectId } } }
-    let updatedNodes = { ...nodes, [formattedObjectId]: updatedObjectData, [selectedRoom.node_id]: updatedRoomData }
-    let updatedWorld = { ...selectedWorld, objects: updatedObjects, nodes: updatedNodes }
-    dispatch(updateSelectedWorld(updatedWorld))
-  }
+    console.log("OBJECT ADDED:  ", obj)
+    //EXISTING OBJECT
+    if(obj.node_id){
+        console.log("EXISTING OBJECT")
+        while(objects.indexOf(formattedObjectId)>=0){
+            console.log("FORMATTING OBJECT ID:  ", formattedObjectId)
+            let splitFormattedObjectId = formattedObjectId.split("_");
+            console.log("SPLIT FORMATTEDOBJECT ID:  ", splitFormattedObjectId)
+            let idNumber = parseInt(splitFormattedObjectId[splitFormattedObjectId.length-1]);
+            console.log("ID NUMBER:  ", idNumber)
+            console.log("ID NUMBER TYPE:  ", typeof (idNumber))
+            console.log("ID NUMBER NAN CHECK:  ", !Number.isNaN(idNumber))
+            if((typeof idNumber === "number") && (!Number.isNaN(idNumber))){
+                console.log("IS A NUMBER  FORMATTED OBJECTID", formattedObjectId)
+                console.log("IS A NUMBER  ID NUMBER ", idNumber)
+                idNumber = parseInt(idNumber)
+                idNumber = idNumber+1;
+                idNumber = idNumber.toString();
+                splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
+                formattedObjectId = splitFormattedObjectId.join("_");
+                console.log("IS A NUMBER  FORMATTED RESULT:  ", formattedObjectId)
+            }else{
+                console.log("NOT A NUMBER  ", formattedObjectId)
+                formattedObjectId = obj.name +"_1"
+            }
+        };
+    }else {
+        //NEW OBJECT
+        console.log("NEW OBJECT")
+        formattedObjectId = obj.name +"_1"
+    };
+    let parentData = selectedObject;
+    let updatedObjectData = {...obj, node_id:formattedObjectId, container_node:{target_id: selectedObject.node_id}};
+    let updatedObjects = [...objects, formattedObjectId];
+    let updatedParentData = {...parentData, contained_nodes:{...parentData.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}};
+    console.log("UPDATED CHARACTER DATA ON ADD", updatedParentData);
+    let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [parentData.node_id]: updatedParentData};
+    console.log("UPDATED ADDED OBJECT NODES:  ", updatedNodes);
+    let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
+    console.log("UPDATED WORLD ADD OBJECT:  ", updatedWorld);
+    dispatch(updateSelectedWorld(updatedWorld));
+};
+
+
   const updateObject = (id, update) => {
     let unupdatedWorld = selectedWorld;
     let { nodes } = unupdatedWorld;
@@ -152,14 +184,19 @@ const ObjectPage = ({
     dispatch(updateSelectedWorld(updatedWorld))
   }
   const deleteObject = (id) => {
+    console.log("DELETE OBJECT:  ", id);
     let unupdatedWorld = selectedWorld;
-    let updatedWorld = containedNodesRemover(id, unupdatedWorld)
-    let { objects, nodes } = updatedWorld;
+    let {objects } = unupdatedWorld;
+    let {contained_nodes} = selectedObject
+    let updatedContainedNodes = {...contained_nodes}
+    delete updatedContainedNodes[id]
+    let updatedObjectData  = {...selectedObject, contained_nodes: updatedContainedNodes }
     let updatedObjects = objects.filter(obj => id !== obj);
-    let updatedNodes = { ...nodes };
-    delete updatedNodes[id];
-    updatedWorld = { ...updatedWorld, objects: updatedObjects, nodes: updatedNodes };
-    dispatch(updateSelectedWorld(updatedWorld));
+    let updatedWorld = containedNodesRemover(id);
+    let updatedNodes = {...updatedWorld.nodes, [updatedObjectData.node_id]: updatedObjectData}
+    updatedWorld = {...updatedWorld, nodes:updatedNodes}
+    console.log("DELETE OBJECT POST NODE REMOVAL WORLD:  ", updatedWorld);
+    dispatch(updateSelectedWorld({...updatedWorld, objects: updatedObjects}));
   }
 
   const deleteSelectedObject = () => {
@@ -375,6 +412,8 @@ const ObjectPage = ({
     suggestObjectContents({ target_room, room_graph, target_id }).then((result) => {
       console.log("Finished object contents");
       console.log(result);
+      const newItems = result.new_items;
+      addContent(target_id, newItems)
     })
   }
 
@@ -428,7 +467,7 @@ const ObjectPage = ({
         dispatch(selectObject(currentObject))
       };
     }
-  }, [objectId])
+  }, [objectId, selectedWorld])
 
   useEffect(() => {
     if (selectedWorld) {

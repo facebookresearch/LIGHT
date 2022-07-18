@@ -96,11 +96,11 @@ const CharacterPage = ({
     //GENERAL
     //Adds more than one node to currently selected character
     const addContent = (charId, newNodes)=>{
+        let unupdatedWorld = selectedWorld;
+        let {objects, nodes } = unupdatedWorld;
         console.log("Character ID:  ", charId)
         let unupdatedCharacterData = nodes[charId]
         console.log("Character DATA:  ", unupdatedCharacterData)
-        let unupdatedWorld = selectedWorld;
-        let {objects, nodes } = unupdatedWorld;
         let updatedNodes = {...nodes};
         let newObjects =[...objects];
         let updatedContainedNodes = {...unupdatedCharacterData.contained_nodes};
@@ -111,26 +111,31 @@ const CharacterPage = ({
             let formattedNewNodetId;
             if(newNode.node_id){
                 formattedNewNodetId = newNode.node_id;
+                console.log("FORMATTED NAME:  ", formattedNewNodetId)
                 while( objects.indexOf(formattedNewNodetId)>=0){
                     let splitformattedNewNodetId = formattedNewNodetId.split("_");
                     let idNumber = splitformattedNewNodetId[splitformattedNewNodetId.length-1];
                     if((typeof idNumber === "number") && (!Number.isNaN(idNumber))){
+                        console.log("I AM IN THE NUMBER ASSIGNMENT ADDER")
                         idNumber = parseInt(idNumber)
                         idNumber = idNumber+1;
                         idNumber = idNumber.toString();
                         splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
                         formattedObjectId = splitFormattedObjectId.join("_");
                     }else{
+                        console.log("I AM  NOT IN THE NUMBER ASSIGNMENT ADDER")
                         formattedObjectId = newNode.name +"_1"
                     }
                 };
             }else{
+                console.log("I AM  NEW")
                 formattedNewNodetId = newNode.name +"_1" ;
             };
             if(nodeType === "object"){
                 newObjects.push(formattedNewNodetId);
             };
             formattedNewNode = {...newNode, node_id:formattedNewNodetId , container_node:{target_id: charId}};
+            console.log("FORMATTED NEW NODE:  ", formattedNewNode)
             updatedContainedNodes = {...updatedContainedNodes, [formattedNewNodetId]:{target_id: formattedNewNodetId}};
             updatedNodes = {...updatedNodes, [formattedNewNodetId]:formattedNewNode};
         });
@@ -254,7 +259,7 @@ const CharacterPage = ({
             const updatedDescription = generatedData.desc;
             const updatedCharacter = {...selectedCharacter, desc:updatedDescription};
             console.log(updatedCharacter);
-            updateCharacter(charId, updatedCharacter);
+            updateCharacter(target_id, updatedCharacter);
         });
     };
 
@@ -341,7 +346,7 @@ const CharacterPage = ({
         suggestCharacterContents({target_room, room_graph, target_id}).then((result) => {
             console.log("Finished character contents", result);
             const newItems = result.new_items;
-            addContent(target_room, newItems)
+            addContent(charId, newItems)
         })
     }
 
