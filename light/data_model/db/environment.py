@@ -38,6 +38,10 @@ import os
 
 SQLBase = declarative_base()
 
+FILE_PATH_KEY = "env"
+GRAPH_PATH_KEY = "graphs"
+QUEST_PATH_KEY = "quests"
+
 BASE_NAME_LENGTH_CAP = 96
 WORLD_NAME_LENGTH_CAP = 128
 EDGE_LABEL_LENGTH_CAP = 64
@@ -146,7 +150,7 @@ class DBElem(HasDBIDMixin):
             use_session is not None
         ), "Must be in-session if not cached. Otherwise call `load_edges` first"
         stmt = select(DBTextEdge).where(DBEdge.parent_id == self.db_id)
-        text_edges = session.query(stmt).all()
+        text_edges = use_session.query(stmt).all()
         self._text_edges = text_edges
         return text_edges
 
@@ -161,7 +165,7 @@ class DBElem(HasDBIDMixin):
             use_session is not None
         ), "Must be in-session if not cached. Otherwise call `load_edges` first"
         stmt = select(DBEdge).where(DBEdge.parent_id == self.db_id)
-        text_edges = session.query(stmt).all()
+        text_edges = use_session.query(stmt).all()
         self._node_edges = node_edges
         for node_edge in node_edges:
             # Force load the children
@@ -192,7 +196,7 @@ class DBElem(HasDBIDMixin):
             use_session is not None
         ), "Must be in-session if not cached. Otherwise call `load_attributes` first"
         stmt = select(DBNodeAttribute).where(DBNodeAttribute.target_id == self.db_id)
-        attributes = session.query(stmt).all()
+        attributes = use_session.query(stmt).all()
         self._attributes = attributes
         return attributes
 
@@ -344,7 +348,6 @@ class DBEdgeBase(HasDBIDMixin):
     db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
     parent_id = Column(String(ID_STRING_LENGTH), nullable=False)
     edge_type = Column(Enum(DBEdgeType), nullable=False)
-    built_occurrences = Column(Integer, nullable=False, default=0)
     status = Column(Enum(DBStatus), nullable=False, index=True)
     edge_label = Column(String(EDGE_LABEL_LENGTH_CAP), nullable=False)
     create_timestamp = Column(Float, nullable=False)
@@ -359,8 +362,8 @@ class DBEdge(DBEdgeBase, SQLBase):
     __tablename__ = "edges"
     ID_PREFIX = "NED"
 
-    # TODO function that executes this edge and gets the child
     child_id = Column(String(ID_STRING_LENGTH))
+    built_occurrences = Column(Integer, nullable=False, default=0)
 
     @property
     def child(self) -> DBElem:
@@ -373,6 +376,8 @@ class DBEdge(DBEdgeBase, SQLBase):
             use_session is not None
         ), "Must be in-session if not cached. Otherwise call `expand_edge` first"
         # Determine return type
+        # This may be better wrapped as a utility of EnvDB,
+        # but that's not in-scope here
         if DBAgent.is_id(self.child_id):
             TargetClass = DBAgent
             stmt = select(DBAgent)
@@ -385,7 +390,7 @@ class DBEdge(DBEdgeBase, SQLBase):
         else:
             raise AssertionError("Edge type was none of Agent, room, or object")
         stmt = select(TargetClass).where(TargetClass.db_id == self.child_id)
-        child = session.query(stmt).one()
+        child = use_session.query(stmt).one()
         self._child = child
         return child
 
@@ -423,7 +428,7 @@ class DBTextEdge(DBEdgeBase, SQLBase):
 
 
 class DBEdit(SQLBase, HasDBIDMixin):
-    """Suggested change to some DB content"""
+    """Suggested change to some DBElem content"""
 
     __tablename__ = "edits"
     ID_PREFIX = "EDT"
@@ -439,7 +444,20 @@ class DBEdit(SQLBase, HasDBIDMixin):
     new_value = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)
     create_timestamp = Column(Float, nullable=False)
 
-    # TODO helper method for executing/accepting/rejecting an edit
+    def accept_and_apply(self, db: EnvDB) -> None:
+        """Accept and apply the given edit"""
+        # TODO Implement
+        raise NotImplementedError
+
+    def reject_edit(self, db: EnvDB) -> None:
+        """Reject the given edit"""
+        with Session(db.engine) as session:
+            edit = session.query(DBEdit).get(self.db_id)
+            edit.status = DBStatus.REJECTED
+            session.flush()
+            session.commit()
+            session.expunge_all()
+            self.status = DBStatus.REJECTED
 
     def __repr__(self):
         return f"DBEdit({self.db_id!r}| {self.node_id}-{self.field}-{self.status})"
@@ -453,7 +471,7 @@ class DBFlagTargetType(enum.Enum):
     FLAG_ENVIRONMENT = "env_flag"  # Flag something inappropriate in the environment
 
 
-class DBFlag(SQLBase, HasDBIDMixin):
+class DBFlag(HasDBIDMixin, SQLBase):
     """User-flagged content of some type"""
 
     __tablename__ = "flags"
@@ -463,6 +481,7 @@ class DBFlag(SQLBase, HasDBIDMixin):
     flag_type = Column(Enum(DBFlagTargetType), nullable=False)
     target_id = Column(String(ID_STRING_LENGTH), nullable=False, index=True)
     reason = Column(String(REPORT_REASON_LENGTH))
+    status = Column(Enum(DBStatus), nullable=False, index=True)
     create_timestamp = Column(Float, nullable=False)
 
     def __repr__(self):
@@ -473,7 +492,6 @@ class DBQuestTargetType(enum.Enum):
     """Types of quest targets"""
 
     TEXT_ONLY = "text_only"  # only a map from character to motivation
-    SUBGOAL = "subgoal"  # Map from motivation to subgoal of motivation
     TARGET_ACTION = "target_action"  # map from motivation to target action
 
 
@@ -485,6 +503,7 @@ class DBQuest(SQLBase, HasDBIDMixin):
 
     db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
     agent_id = Column(ForeignKey("agents.db_id"), nullable=False)
+    parent_id = Column(ForeignKey("quests.db_id"))  # Map to possible parent
     text_motivation = Column(String(QUEST_MOTIVATION_LENGTH), nullable=False)
     target_type = Column(Enum(DBQuestTargetType), nullable=False)
     target = Column(String(QUEST_MOTIVATION_LENGTH))
@@ -495,9 +514,60 @@ class DBQuest(SQLBase, HasDBIDMixin):
     )  # temp retain the creator ID for new things
     create_timestamp = Column(Float, nullable=False)
 
-    # TODO function to collect all subgoals
+    @property
+    def subgoals(self) -> List[DBQuest]:
+        """
+        Return the list of DBQuests that are a direct
+        subgoal of this one
+        """
+        if hasattr(self, "_subgoals") and self._subgoals is not None:
+            return self._subgoals
 
-    # TODO function to traverse through to parent
+        use_session = Session.object_session(self)
+        assert (
+            use_session is not None
+        ), "Must be in-session if not cached. Otherwise call `load_relations` first"
+
+        subgoals = use_session.query(DBQuest).where(DBQuest.parent_id == self.db_id)
+        self._subgoals = subgoals
+        return subgoals
+
+    @property
+    def parent_chain(self) -> List[DBQuest]:
+        """
+        Return the chain of quests/motivations above this level,
+        starting from the highest down to this one
+        """
+        if hasattr(self, "_parent_chain") and self._parent_chain is not None:
+            return self._parent_chain
+
+        use_session = Session.object_session(self)
+        assert (
+            use_session is not None
+        ), "Must be in-session if not cached. Otherwise call `load_relations` first"
+
+        parent_chain = [self]
+        curr_item = self
+        while curr_item.parent_id is not None:
+            parent_item = use_session.query(DBQuest).get(curr_item.parent_id)
+            parent_chain.append(parent_item)
+            curr_item = parent_item
+        parent_chain = reversed(parent_chain)
+
+        self._parent_chain = parent_chain
+        return parent_chain
+
+    def load_relations(self, db: "EnvDB") -> None:
+        """Expand the parent chain and subgoals for this item"""
+        # Load everything in a session
+        with Session(db.engine) as session:
+            assert self.parent_chain is not None
+            # Recurse through subgoals to load entire chain
+            subgoals_to_check = self.subgoals.copy()
+            while len(subgoals_to_check) > 0:
+                next_goal = subgoals_to_check.pop()
+                subgoals_to_check += next_goal.subgoals.copy()
+            session.expunge_all()
 
     def __repr__(self):
         return f"DBQuest({self.db_id!r}| {self.agent_id}-{self.target_type})"
@@ -515,11 +585,14 @@ class DBGraph(SQLBase, HasDBIDMixin):
         String(ID_STRING_LENGTH), nulable=False, index=True
     )  # retain the creator ID, they own this
     file_path = Column(String(FILE_PATH_LENGTH_CAP), nulable=False)
+    status = Column(Enum(DBStatus), nullable=False, index=True)
     create_timestamp = Column(Float, nullable=False)
 
-    # TODO implement method to retrieve this graph
-
-    # TODO implement method to write this graph to the file
+    def get_graph(self, db: EnvDB) -> OOGraph:
+        """Get an OOGraph for this DBGraph, loading from file"""
+        graph_json = db.read_data_from_file(self.file_path, json_encoded=False)
+        graph = OOGraph.from_json(graph_json)
+        return graph
 
     def __repr__(self):
         return f"DBGraph({self.db_id!r}| {self.graph_name})"
@@ -553,6 +626,7 @@ class EnvDB(BaseDB):
         relationships, to use for rapid construction of things
         without needing repeated queries
         """
+        # TODO we can use the cache in more of the core DB functions
         all_rooms = self.find_rooms()
         all_agents = self.find_agents()
         all_objects = self.find_objects()
@@ -627,12 +701,30 @@ class EnvDB(BaseDB):
             session.expunge_all()
             return db_name_key
 
-    def _get_elem_by_db_id(
+    def _resolve_id_to_db_elem(
+        self,
+        db_id: str,
+    ) -> DBElem:
+        """Query for the correct DBElem given the provided db_id"""
+        if DBAgent.is_id(db_id):
+            TargetClass = DBAgent
+            stmt = select(DBAgent)
+        elif DBObject.is_id(db_id):
+            TargetClass = DBObject
+            stmt = select(DBObject)
+        elif DBRoom.is_id(db_id):
+            TargetClass = DBRoom
+            stmt = select(DBRoom)
+        else:
+            raise AssertionError("Edge type was none of Agent, room, or object")
+        return self._get_elem_for_class(TargetClass, db_id)
+
+    def _get_elem_for_class(
         self,
         ElemClass: Type[DBElem],
         db_id: str,
     ) -> DBElem:
-        """Get a specific element by ID, asserting that it exists"""
+        """Get a specific element of the given class by ID, asserting that it exists"""
         assert ElemClass.is_id(db_id), f"Given id {db_id} not for {ElemClass}"
         stmt = select(ElemClass).where(ElemClass.db_id == db_id)
         with Session(self.engine) as session:
@@ -758,7 +850,7 @@ class EnvDB(BaseDB):
 
     def get_agent(self, db_id: str) -> DBAgent:
         """Return the given agent, raise an exception if non-existing"""
-        return cast(DBAgent, self._get_elem_by_db_id(DBAgent, db_id))
+        return cast(DBAgent, self._get_elem_for_class(DBAgent, db_id))
 
     # Objects
 
@@ -920,7 +1012,7 @@ class EnvDB(BaseDB):
 
     def get_object(self, db_id: str) -> DBObject:
         """Return the given object, raise exception if non-existing"""
-        return cast(DBObject, self._get_elem_by_db_id(DBObject, db_id))
+        return cast(DBObject, self._get_elem_for_class(DBObject, db_id))
 
     # Rooms
 
@@ -1021,7 +1113,7 @@ class EnvDB(BaseDB):
 
     def get_room(self, db_id: str) -> DBRoom:
         """Get a specific room, assert that it exists"""
-        return cast(DBRoom, self._get_elem_by_db_id(DBRoom, db_id))
+        return cast(DBRoom, self._get_elem_for_class(DBRoom, db_id))
 
     # Attributes
 
@@ -1085,12 +1177,27 @@ class EnvDB(BaseDB):
         parent_id: str,
         child_id: str,
         edge_type: str,
-        edge_strength: int = 1,
         edge_label: Optional[str] = None,
         status: DBStatus = DBStatus.REVIEW,
         creator_id: Optional[str] = None,
     ) -> str:
         """Create an edge between two nodes"""
+        with Session(self.engine) as session:
+            db_id = DBEdge.get_id()
+            edge = DBEdge(
+                db_id=db_id,
+                parent_id=parent_id,
+                edge_type=edge_type,
+                edge_label=edge_label,
+                status=status,
+                creator_id=creator_id,
+                create_timestamp=time.time(),
+                child_id=child_id,
+            )
+            session.add(edge)
+            session.flush()
+            session.commit()
+        return db_id
 
     def get_edges(
         self,
@@ -1099,21 +1206,69 @@ class EnvDB(BaseDB):
         edge_type: Optional[str] = None,
         status: Optional[DBStatus] = None,
         creator_id: Optional[str] = None,
-        min_strength: Optional[int] = 0,
-    ) -> List["DBEdge"]:
+        min_strength: Optional[float] = 0,
+    ) -> List[DBEdge]:
         """Return all edges matching the given parameters"""
+        # Construct query
+        stmt = select(DBEdge)
+        if parent_id is not None:
+            stmt = stmt.where(DBEdge.parent_id == parent_id)
+        if child_id is not None:
+            stmt = stmt.where(DBEdge.child_id == child_id)
+        if edge_type is not None:
+            stmt = stmt.where(DBEdge.edge_type == edge_type)
+        if status is not None:
+            stmt = stmt.where(DBEdge.status == status)
+        if creator_id is not None:
+            stmt = stmt.where(DBEdge.creator_id == creator_id)
+        # Do query
+        with Session(self.engine) as session:
+            edges = session.query(stmt).all()
+            if min_strength is not None:
+                # Need to post-filter out things below the min strength, where
+                # strength is defined as the proportion of edge occurrences to
+                # parent occurrences
+                filtered_edges = []
+                for edge in edges:
+                    edge_occurrences = edge.built_occurrences
+                    if edge_occurrences == 0:
+                        continue  # No occurrences of edge
+                    db_elem = self._resolve_id_to_db_elem(edge.parent_id)
+                    elem_occurrences = db_elem.built_occurrences
+                    if elem_occurrences == 0:
+                        continue  # No occurrences of elem
+                    if edge_occurrences / elem_occurrences >= min_strength:
+                        filtered_edges.append(edge)
+                edges = filtered_edges
+            session.expunge_all()
+            return edges
 
     def create_text_edge(
         self,
         parent_id: str,
         child_text: str,
         edge_type: str,
-        edge_strength: int = 1,
         edge_label: Optional[str] = None,
         status: DBStatus = DBStatus.REVIEW,
         creator_id: Optional[str] = None,
     ) -> str:
         """Create an edge between a node and the name of a possible leaf"""
+        with Session(self.engine) as session:
+            db_id = DBTextEdge.get_id()
+            edge = DBTextEdge(
+                db_id=db_id,
+                parent_id=parent_id,
+                edge_type=edge_type,
+                edge_label=edge_label,
+                status=status,
+                creator_id=creator_id,
+                create_timestamp=time.time(),
+                child_text=child_text,
+            )
+            session.add(edge)
+            session.flush()
+            session.commit()
+        return db_id
 
     def get_text_edges(
         self,
@@ -1122,52 +1277,138 @@ class EnvDB(BaseDB):
         edge_type: Optional[str] = None,
         status: Optional[DBStatus] = None,
         creator_id: Optional[str] = None,
-        min_strength: Optional[int] = 0,
-    ) -> List["DBTextEdge"]:
+    ) -> List[DBTextEdge]:
         """Return all text edges matching the given parameters"""
+        # Construct query
+        stmt = select(DBTextEdge)
+        if parent_id is not None:
+            stmt = stmt.where(DBTextEdge.parent_id == parent_id)
+        if child_text is not None:
+            stmt = stmt.where(DBTextEdge.child_text == child_text)
+        if edge_type is not None:
+            stmt = stmt.where(DBTextEdge.edge_type == edge_type)
+        if status is not None:
+            stmt = stmt.where(DBTextEdge.status == status)
+        if creator_id is not None:
+            stmt = stmt.where(DBTextEdge.creator_id == creator_id)
+        # Do query
+        with Session(self.engine) as session:
+            edges = session.query(stmt).all()
+            session.expunge_all()
+            return edges
 
     # Flags and edits
 
     def create_edit(
         self,
-        user_id: str,
-        table: str,
+        editor_id: str,
         node_id: str,
         field: str,
-        value: Any,
+        old_value: str,
+        new_value: str,
+        status: Optional[DBStatus] = DBStatus.REVIEW,
     ) -> str:
-        """Write a potential edit to file. Return the edit filename"""
+        """Write a potential edit to db. Return the edit db_id"""
+        with Session(self.engine) as session:
+            db_id = DBEdit.get_id()
+            edge = DBEdit(
+                db_id=db_id,
+                editor_id=editor_id,
+                node_id=node_id,
+                field=field,
+                old_value=old_value,
+                new_value=new_value,
+                status=status,
+                create_timestamp=time.time(),
+            )
+            session.add(edge)
+            session.flush()
+            session.commit()
+        return db_id
 
     def get_edits(
         self,
-        user_id: Optional[str] = None,
-        table: Optional[str] = None,
+        editor_id: Optional[str] = None,
         node_id: Optional[str] = None,
         field: Optional[str] = None,
+        old_value: Optional[str] = None,
+        new_value: Optional[str] = None,
         status: Optional[DBStatus] = None,
-    ) -> List["DBEdit"]:
+    ) -> List[DBEdit]:
         """Return all edits matching the given parameters"""
+        # Construct query
+        stmt = select(DBEdit)
+        if editor_id is not None:
+            stmt = stmt.where(DBEdit.editor_id == editor_id)
+        if node_id is not None:
+            stmt = stmt.where(DBEdit.node_id == node_id)
+        if field is not None:
+            stmt = stmt.where(DBEdit.field == field)
+        if old_value is not None:
+            stmt = stmt.where(DBEdit.old_value == old_value)
+        if new_value is not None:
+            stmt = stmt.where(DBEdit.new_value == new_value)
+        if status is not None:
+            stmt = stmt.where(DBEdit.status == status)
+        # Do query
+        with Session(self.engine) as session:
+            edits = session.query(stmt).all()
+            session.expunge_all()
+            return edits
 
     def flag_entry(
         self,
         user_id: str,
-        table: str,
-        node_id: str,
+        flag_type: DBFlagTargetType,
+        target_id: str,
         reason: str,
+        status: Optional[DBStatus] = DBStatus.REVIEW,
     ) -> str:
         """
-        Write a potential flag to file, update the node's status,
-        return the flag filename
+        Write a potential flag to db, return the flag id
         """
+        with Session(self.engine) as session:
+            db_id = DBFlag.get_id()
+            flag = DBFlag(
+                db_id=db_id,
+                flag_type=flag_type,
+                target_id=target_id,
+                reason=reason,
+                status=status,
+                create_timestamp=time.time(),
+            )
+            session.add(flag)
+            session.flush()
+            session.commit()
+            # TODO enough flags could perhaps move node to review status
+        return db_id
 
     def get_flags(
         self,
-        user_id: str,
-        table: str,
-        node_id: str,
+        user_id: Optional[str] = None,
+        flag_type: Optional[DBFlagTargetType] = None,
+        target_id: Optional[str] = None,
+        reason: Optional[str] = None,
         status: Optional[DBStatus] = None,
-    ) -> List["DBFlag"]:
+    ) -> List[DBFlag]:
         """Return all flags matching the given parameters"""
+        # Construct query
+        stmt = select(DBFlag)
+        if user_id is not None:
+            stmt = stmt.where(DBFlag.user_id == user_id)
+        if flag_type is not None:
+            stmt = stmt.where(DBFlag.flag_type == flag_type)
+        if target_id is not None:
+            stmt = stmt.where(DBFlag.target_id == target_id)
+        if reason is not None:
+            stmt = stmt.where(DBFlag.reason == reason)
+        if status is not None:
+            stmt = stmt.where(DBFlag.status == status)
+        # Do query
+        with Session(self.engine) as session:
+            flags = session.query(stmt).all()
+            session.expunge_all()
+            return flags
 
     # Quests
 
@@ -1177,6 +1418,7 @@ class EnvDB(BaseDB):
         text_motivation: str,
         target_type: str,
         target: str,
+        parent_id: Optional[str] = None,
         status: DBStatus = DBStatus.REVIEW,
         creator_id: Optional[str] = None,
     ) -> str:
@@ -1184,6 +1426,24 @@ class EnvDB(BaseDB):
         Creates a Quest, which is a mapping from character and motivation
         text to a desired action or list of subquests
         """
+        with Session(self.engine) as session:
+            db_id = DBQuest.get_id()
+            quest = DBQuest(
+                db_id=db_id,
+                agent_id=agent_id,
+                parent_id=parent_id,
+                text_motivation=text_motivation,
+                target_type=target_type,
+                target=target,
+                origin_filepath=origin_filepath,
+                status=status,
+                creator_id=creator_id,
+                create_timestamp=time.time(),
+            )
+            session.add(quest)
+            session.flush()
+            session.commit()
+        return db_id
 
     def find_quests(
         self,
@@ -1193,21 +1453,101 @@ class EnvDB(BaseDB):
         target: Optional[str] = None,
         status: Optional[DBStatus] = None,
         creator_id: Optional[str] = None,
-    ) -> List["DBQuest"]:
+    ) -> List[DBQuest]:
         """Return all text edges matching the given parameters"""
+        # Construct query
+        stmt = select(DBQuest)
+        if agent_id is not None:
+            stmt = stmt.where(DBQuest.agent_id == agent_id)
+        if text_motivation is not None:
+            stmt = stmt.where(DBQuest.text_motivation == text_motivation)
+        if target_type is not None:
+            stmt = stmt.where(DBQuest.target_type == target_type)
+        if target is not None:
+            stmt = stmt.where(DBQuest.target == target)
+        if new_value is not None:
+            stmt = stmt.where(DBQuest.new_value == new_value)
+        if status is not None:
+            stmt = stmt.where(DBQuest.status == status)
+        if creator_id is not None:
+            stmt = stmt.where(DBQuest.creator_id == creator_id)
+        # Do query
+        with Session(self.engine) as session:
+            quests = session.query(stmt).all()
+            session.expunge_all()
+            return quests
 
     # Graphs
 
     def save_graph(self, graph: "OOGraph", creator_id: str) -> str:
         """Save this graph to a file for the given user"""
+        # Find or assign a db_id for this graph
+        if hasattr(graph, "db_id") and graph.db_id is not None:
+            db_id = graph.db_id
+        else:
+            db_id = DBGraph.get_id()
+            graph.db_id = db_id
 
-    def load_graph(self, graph_id: str) -> "DBGraph":
+        dump_file_path = os.path.join(FILE_PATH_KEY, GRAPH_PATH_KEY, f"{db_id}.json")
+
+        for graph_info in graphs:
+            graph_full_path = os.path.join(graph_dump_root, graph_info["filename"])
+            self.write_data_to_file(graph_info["graph_json"], graph_full_path)
+
+        # Create or update the graph
+        with Session(self.engine) as session:
+            db_graph = session.query(DBGraph).get(db_id)
+            if db_graph is not None:
+                # Update old graph, ensure same creator
+                assert db_graph.creator_id == creator_id, (
+                    f"Creator ID mismatch on {db_id}, current "
+                    f"{db_graph.creator_id} and new {creator_id}"
+                )
+                self.write_data_to_file(
+                    graph.to_json(), dump_file_path, json_encode=False
+                )
+            else:
+                # New graph
+                db_graph = DBGraph(
+                    db_id=db_id,
+                    graph_name=graph.title,
+                    creator_id=creator_id,
+                    file_path=dump_file_path,
+                    status=DBStatus.REVIEW,
+                    create_timestamp=time.time(),
+                )
+                session.add(db_graph)
+                self.write_data_to_file(
+                    graph.to_json(), dump_file_path, json_encode=False
+                )
+            session.flush()
+            session.commit()
+        return db_id
+
+    def load_graph(self, graph_id: str) -> DBGraph:
         """Return the queried graph, raising if nonexistent"""
+        with Session(self.engine) as session:
+            db_graph = session.query(DBGraph).get(db_id)
+            if db_graph is None:
+                raise KeyError(f"Graph key {db_id} didn't exist!")
+            session.expunge_all()
+            return db_graph
 
     def find_graphs(
         self,
         graph_name: Optional[str] = None,
         creator_id: Optional[str] = None,
         # ... TODO can add other search attributes?
-    ) -> List["DBGraph"]:
+    ) -> List[DBGraph]:
         """Return all graphs matching the provided parameters"""
+        # Construct query
+        stmt = select(DBGraph)
+        if graph_name is not None:
+            stmt = stmt.where(DBGraph.graph_name == graph_name)
+        if creator_id is not None:
+            stmt = stmt.where(DBGraph.creator_id == creator_id)
+        # Do query
+        with Session(self.engine) as session:
+            db_graphs = session.query(stmt).all()
+            session.expunge_all()
+            return db_graphs

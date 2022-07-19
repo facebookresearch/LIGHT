@@ -31,6 +31,7 @@ class OOGraph(object):
         self._deleted_nodes = {}
         self.dead_nodes = {}
         self._opt = opt
+        self.title = opt.get("title", "untitled")
 
     @staticmethod
     def from_graph(graph, start_location=None):
@@ -463,6 +464,7 @@ class OOGraph(object):
             "agents": sorted(list(self.agents.keys())),
             "rooms": sorted(list(self.rooms.keys())),
             "nodes": self.all_nodes,
+            "title": self.title,
         }
         return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
 
@@ -522,7 +524,10 @@ class OOGraph(object):
     @staticmethod
     def from_json(input_json: str):
         dict_format = json.loads(input_json)
-        oo_graph = OOGraph()
+        opt = {}
+        if dict_format["title"]:
+            opt["title"] = dict_format["title"]
+        oo_graph = OOGraph(opt)
         object_ids = set(dict_format["objects"])
         agent_ids = set(dict_format["agents"])
         room_ids = set(dict_format["rooms"])

@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
 
 SQLBase = declarative_base()
+FILE_PATH_KEY = "episodes"
 
 
 class DBGroupName(enum.Enum):
@@ -189,8 +190,11 @@ class EpisodeDB(BaseDB):
         if len(event_filename) > 70:
             event_filename = event_filename[-70:]
         assert len(event_filename) <= 70
-        dump_file_path = os.path.join(group.value, log_type.value, event_filename)
+        dump_file_path = os.path.join(
+            FILE_PATH_KEY, group.value, log_type.value, event_filename
+        )
         graph_dump_root = os.path.join(
+            FILE_PATH_KEY,
             group.value,
             log_type.value,
             "graphs",
