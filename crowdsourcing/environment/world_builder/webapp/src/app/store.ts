@@ -10,7 +10,7 @@ import ObjectsReducer from '../features/objects/objects-slice';
 import MapReducer from "../features/map/map-slice";
 import ModalReducer from '../features/modal/modal-slice';
 import SideBarReducer from "../features/sidebars/sidebars-slice";
-import TaskRouterReducer from "../features/taskRouter/taskrouter-slice"
+import TaskRouterReducer from "../features/taskRouter/taskrouter-slice";
 
 export const store = configureStore({
     reducer:{

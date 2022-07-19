@@ -17,7 +17,7 @@ const loadingSlice = createSlice({
     initialState,
     /* REDUCER ACTIONS */
     reducers: {
-        setLoading(state, action: PayloadAction<boolean>) {
+        setIsLoading(state, action: PayloadAction<boolean>) {
             state.showLoadingSpinner= action.payload
         }
     }
@@ -26,7 +26,7 @@ const loadingSlice = createSlice({
 /* EXPORTED REDUCER ACTIONS */
 // import anywhere in app to use
 export const {
-    setLoading,
+    setIsLoading,
 } = loadingSlice.actions;
 /* SLICE REDUCER */
 export default loadingSlice.reducer;

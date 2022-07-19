@@ -4,7 +4,7 @@ import React, {useState, useEffect} from 'react';
 import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
 //LOADING
-import { setLoading} from "../../../../features/loading/loading-slice.ts";
+import { setIsLoading} from "../../../../features/loading/loading-slice.ts";
 //ERROR
 import { setShowError, setErrorMessage} from "../../../../features/errors/errors-slice.ts";
 //NAVIGATION
@@ -239,16 +239,16 @@ const BasicEditRoom = ({
     //GENERATE HANDLERS
     const generateButtonFunction = async ()=>{
         try{
-            dispatch(setIsLoading(true))
-            const payload = await CommonSenseRoomContents()
-            const {nodeId, data} = payload
+            dispatch(setIsLoading(true));
+            const payload = await CommonSenseRoomContents();
+            const {nodeId, data} = payload;
             addContent(nodeId, data);
-            dispatch(setIsLoading(false))
+            dispatch(setIsLoading(false));
         } catch (error) {
-            dispatch(setLoading(false));
+            dispatch(setIsLoading(false));
             console.log(error);
-            dispatch(setErrorMessage(error))
-            dispatch(setShowError(true))
+            dispatch(setErrorMessage(error));
+            dispatch(setShowError(true));
         }
     }
 
