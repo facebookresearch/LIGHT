@@ -84,11 +84,10 @@ const CharacterPage = ({
     };
 
     //NAVIGATION
+    //Goes to previous page
     const backStep = ()=>{
         let previousLoc =  taskRouterHistory[taskRouterHistory.length-1]
-        console.log("history:  ", taskRouterHistory)
         let updatedHistory = taskRouterHistory.slice(0, taskRouterHistory.length-1);
-        console.log("PREVIOUS LOC BACKSTEP:  ", previousLoc)
         builderRouterNavigate(previousLoc)
         dispatch(updateTaskRouterHistory(updatedHistory));
     };
@@ -98,13 +97,10 @@ const CharacterPage = ({
     const addContent = (charId, newNodes)=>{
         let unupdatedWorld = selectedWorld;
         let {objects, nodes } = unupdatedWorld;
-        console.log("Character ID:  ", charId)
         let unupdatedCharacterData = nodes[charId]
-        console.log("Character DATA:  ", unupdatedCharacterData)
         let updatedNodes = {...nodes};
         let newObjects =[...objects];
         let updatedContainedNodes = {...unupdatedCharacterData.contained_nodes};
-        console.log("UNUPDATED CONTAINED NODES:  ", updatedContainedNodes)
         newNodes.map((newNode)=>{
             let {classes} = newNode;
             let nodeType = classes[0];
@@ -112,33 +108,29 @@ const CharacterPage = ({
             let formattedNewNodetId;
             if(newNode.node_id){
                 formattedNewNodetId = newNode.node_id;
-                console.log("FORMATTED NAME:  ", formattedNewNodetId)
                 while( objects.indexOf(formattedNewNodetId)>=0){
                     let splitformattedNewNodetId = formattedNewNodetId.split("_");
                     let idNumber = splitformattedNewNodetId[splitformattedNewNodetId.length-1];
+                    //if ID exists
                     if((typeof idNumber === "number") && (!Number.isNaN(idNumber))){
-                        console.log("I AM IN THE NUMBER ASSIGNMENT ADDER")
                         idNumber = parseInt(idNumber)
                         idNumber = idNumber+1;
                         idNumber = idNumber.toString();
                         splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
                         formattedObjectId = splitFormattedObjectId.join("_");
-                    }else{
-                        console.log("I AM  NOT IN THE NUMBER ASSIGNMENT ADDER")
+                    }else{ //if "IDNUMBER" ISN'T A NUMBER
                         formattedObjectId = newNode.name +"_1"
                     }
                 };
             }else{
-                console.log("I AM  NEW")
+                //if ID Doesn't exist
                 formattedNewNodetId = newNode.name +"_1" ;
             };
-            if(nodeType === "object"){
+            if(nodeType === "object"){ //Updates Object Array
                 newObjects.push(formattedNewNodetId);
             };
             formattedNewNode = {...newNode, node_id:formattedNewNodetId , container_node:{target_id: charId}};
-            console.log("FORMATTED NEW NODE:  ", formattedNewNode)
             updatedContainedNodes = {...updatedContainedNodes, [formattedNewNodetId]:{target_id: formattedNewNodetId}};
-            console.log("CONTAINED NODES:  ", updatedContainedNodes)
             updatedNodes = {...updatedNodes, [formattedNewNodetId]:formattedNewNode};
         });
         let updatedCharacterData = {...selectedCharacter, contained_nodes: updatedContainedNodes};
@@ -170,35 +162,21 @@ const CharacterPage = ({
         let unupdatedWorld = selectedWorld;
         let {objects, nodes } = unupdatedWorld;
         let formattedObjectId = obj.node_id;
-        console.log("OBJECT ADDED:  ", obj)
-        //EXISTING OBJECT
-        if(obj.node_id){
-            console.log("EXISTING OBJECT")
+        if(obj.node_id){ //EXISTING OBJECT
             while(objects.indexOf(formattedObjectId)>=0){
-                console.log("FORMATTING OBJECT ID:  ", formattedObjectId)
                 let splitFormattedObjectId = formattedObjectId.split("_");
-                console.log("SPLIT FORMATTEDOBJECT ID:  ", splitFormattedObjectId)
                 let idNumber = parseInt(splitFormattedObjectId[splitFormattedObjectId.length-1]);
-                console.log("ID NUMBER:  ", idNumber)
-                console.log("ID NUMBER TYPE:  ", typeof (idNumber))
-                console.log("ID NUMBER NAN CHECK:  ", !Number.isNaN(idNumber))
                 if((typeof idNumber === "number") && (!Number.isNaN(idNumber))){
-                    console.log("IS A NUMBER  FORMATTED OBJECTID", formattedObjectId)
-                    console.log("IS A NUMBER  ID NUMBER ", idNumber)
                     idNumber = parseInt(idNumber)
                     idNumber = idNumber+1;
                     idNumber = idNumber.toString();
                     splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
                     formattedObjectId = splitFormattedObjectId.join("_");
-                    console.log("IS A NUMBER  FORMATTED RESULT:  ", formattedObjectId)
-                }else{
-                    console.log("NOT A NUMBER  ", formattedObjectId)
+                }else{ //if "IDNUMBER" ISN'T A NUMBER
                     formattedObjectId = obj.name +"_1"
                 }
             };
-        }else {
-            //NEW OBJECT
-            console.log("NEW OBJECT")
+        }else { //NEW OBJECT
             formattedObjectId = obj.name +"_1"
         };
         let updatedObjectData = {...obj, node_id:formattedObjectId, container_node:{target_id: selectedCharacter.node_id}};
@@ -210,17 +188,13 @@ const CharacterPage = ({
         };
         let updatedObjects = [...objects, formattedObjectId];
         let updatedCharacterData = {...selectedCharacter, contained_nodes:{...selectedCharacter.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}};
-        console.log("UPDATED CHARACTER DATA ON ADD", updatedCharacterData);
         let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [selectedCharacter.node_id]: updatedCharacterData};
-        console.log("UPDATED ADDED OBJECT NODES:  ", updatedNodes);
         let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
-        console.log("UPDATED WORLD ADD OBJECT:  ", updatedWorld);
         dispatch(updateSelectedWorld(updatedWorld));
     };
 
     //Removes Object from selectedWorld state
     const deleteObject = (id)=>{
-        console.log("DELETE OBJECT:  ", id);
         let unupdatedWorld = selectedWorld;
         let {objects } = unupdatedWorld;
         let {contained_nodes} = selectedCharacter
@@ -231,7 +205,6 @@ const CharacterPage = ({
         let updatedWorld = containedNodesRemover(id);
         let updatedNodes = {...updatedWorld.nodes, [updatedCharacterData.node_id]: updatedCharacterData}
         updatedWorld = {...updatedWorld, nodes:updatedNodes}
-        console.log("DELETE OBJECT POST NODE REMOVAL WORLD:  ", updatedWorld);
         dispatch(updateSelectedWorld({...updatedWorld, objects: updatedObjects}));
     };
 

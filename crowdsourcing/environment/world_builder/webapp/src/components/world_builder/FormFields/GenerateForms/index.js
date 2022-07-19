@@ -13,10 +13,18 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form'
 //BUTTON
 import Button from 'react-bootstrap/Button'
-
+import Spinner from 'react-bootstrap/Spinner';
 /* CUSTOM COMPONENTS */
 
-const GenerateForms = ({label, value, changeHandler, clickFunction, generateName})=> {
+const GenerateForms = ({
+    label,
+    value,
+    changeHandler,
+    clickFunction,
+    generateName,
+    isLoading
+})=> {
+
   return (
     <Container className="generateform-container">
         <Form>
@@ -27,8 +35,22 @@ const GenerateForms = ({label, value, changeHandler, clickFunction, generateName
 
                     <Col xs={2}>
                         {/* <Button onClick={clickFunction} variant="primary" type={generateName !== undefined ? null : "submit"}> */}
-                        <Button onClick={clickFunction} variant="primary">
-                            {generateName !== undefined ? generateName : "Generate"}
+                        <Button onClick={clickFunction} variant="primary" disabled={isLoading}>
+                            {
+                                isLoading ?
+                                <>
+                                <Spinner
+                                    as="span"
+                                    animation="grow"
+                                    size="sm"
+                                    role="status"
+                                    aria-hidden="true"
+                                />
+                                GENERATING...
+                              </>
+                                :
+                                generateName !== undefined ? generateName : "Generate"
+                            }
                         </Button>
                     </Col>
                 </Row>

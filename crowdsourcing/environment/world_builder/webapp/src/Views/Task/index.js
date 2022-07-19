@@ -14,6 +14,8 @@ import BuilderRouter from "./BuilderRouter"
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import Spinner from 'react-bootstrap/Spinner'
+import Alert from 'react-bootstrap/Alert';
 /* DEFAULT WORLD */
 import DefaultWorld from "../../StartingWorldCopy";
 
@@ -108,6 +110,7 @@ const App = ({
       />
       <div className="builder-container">
         <BuilderRouter api={api} />
+        <Spinner animation="border" variant="primary" />
       </div>
       <Modal
         show={show}
