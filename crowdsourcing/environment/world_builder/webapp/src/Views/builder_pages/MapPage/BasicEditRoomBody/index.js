@@ -334,15 +334,16 @@ const BasicEditRoom = ({
                             <Spinner
                                 as="span"
                                 animation="grow"
-                                size="sm"
+                                size="lg"
                                 role="status"
                                 aria-hidden="true"
+                                color="white"
                             />
                             GENERATING...
                         </>
                         :
                         <>
-                            "SUGGEST ROOM CONTENTS"
+                            SUGGEST ROOM CONTENTS
                         </>
                         }
                     </Button>

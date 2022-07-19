@@ -220,6 +220,8 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
         if type(o) is str:
             o = {'name':o}
         o_id = o['name']
+        if o_id in input_graph['nodes']:
+            continue
         new_node = {
             "agent": False,
             "classes": ["object"],
@@ -265,6 +267,8 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
         if type(o) is str:
             o = {'name':o}
         o_id = o['name']
+        if o_id in input_graph['nodes']:
+            continue
         new_node = {
             "agent": False,
             "classes": ["object"],
@@ -310,6 +314,8 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
         if type(o) is str:
             o = {'name':o}
         o_id = o['name']
+        if o_id in input_graph['nodes']:
+            continue
         new_node = {
             "agent": False,
             "classes": ["object"],
@@ -355,16 +361,17 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
 def add_character_to_graph(input_graph, room_name, character_dict):
     node_id = character_dict['name']
     print(f"Adding character: {node_id}")
-    print(character_dict)
+    if node_id in input_graph['nodes']:
+        print(f"Character with id {node_id} already found, skipping")
+        return input_graph
+    # print(character_dict)
 
     carried = character_dict.get('carrying_objects', [])
     wielded = character_dict.get('wielding_objects', [])
     worn = character_dict.get('wearing_objects', [])
 
-    input_graph = add_character_secondary_objects_to_graph(input_graph, node_id, carried, wielded, worn)
-
     all_contained = [*carried, *wielded, *worn]
-    contained_nodes = {o:{"target_id":o} for o in all_contained}
+    contained_nodes = {o['name']:{"target_id":o} for o in all_contained}
     new_node = {
         "agent": True,
         "aggression": 0,
@@ -402,10 +409,15 @@ def add_character_to_graph(input_graph, room_name, character_dict):
     input_graph['nodes'][node_id] = new_node
     input_graph['nodes'][room_name]['contained_nodes'][node_id] = {"target_id": node_id}
     input_graph['agents'].append(node_id)
+
+    input_graph = add_character_secondary_objects_to_graph(input_graph, node_id, carried, wielded, worn)
+
     return input_graph
 
 def add_object_secondary_objects_to_graph(input_graph, node_id, contained):
     for o in contained:
+        if o in input_graph['nodes']:
+            continue
         o_id = o
         new_node = {
             "agent": False,
@@ -452,7 +464,10 @@ def add_object_secondary_objects_to_graph(input_graph, node_id, contained):
 def add_object_to_graph(input_graph, room_name, object_dict):
     node_id = object_dict['name']
     print(f"Adding object: {node_id}")
-    print(object_dict)
+    if node_id in input_graph['nodes']:
+        print(f"Object with id {node_id} already found, skipping")
+        return input_graph
+    # print(object_dict)
     contained = object_dict.get('containing_objects', [])
     input_graph = add_object_secondary_objects_to_graph(input_graph, node_id, contained)
 
