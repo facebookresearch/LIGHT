@@ -53,8 +53,7 @@ FILE_PATH_LENGTH_CAP = 96
 class HasDBIDMixin:
     """Simple mixin for classes that define their own DBID schema"""
 
-    # ID prefix should be 3 characters max.
-    ID_PREFIX: int = "ZZZ"
+    ID_PREFIX: int  # ID prefix should be 3 characters max.
 
     @classmethod
     def get_id(cls: Type["HasDBIDMixin"]) -> str:
@@ -183,6 +182,32 @@ class DBElem(HasDBIDMixin):
                 assert self.node_edges is not None
                 session.expunge_all()
 
+    @property
+    def attributes(self) -> List[DBNodeAttribute]:
+        if hasattr(self, "_attributes") and self._attributes is not None:
+            return self._attributes
+
+        use_session = Session.object_session(self)
+        assert (
+            use_session is not None
+        ), "Must be in-session if not cached. Otherwise call `load_attributes` first"
+        stmt = select(DBNodeAttribute).where(DBNodeAttribute.target_id == self.db_id)
+        attributes = session.query(stmt).all()
+        self._attributes = attributes
+        return attributes
+
+    def load_attributes(self, db: "EnvDB", skip_cache=False) -> None:
+        """Expand arbitrary attributes for this node"""
+        if db._cache is not None and not skip_cache:
+            # Load the edges from the cache
+            node = db._cache["all"][self.db_id]
+            self._attributes = node.attributes.copy()
+        else:
+            # Load everything in a session
+            with Session(db.engine) as session:
+                assert self.attributes is not None
+                session.expunge_all()
+
 
 class DBAgent(DBElem, SQLBase):
     """
@@ -279,6 +304,24 @@ class DBRoom(DBElem, SQLBase):
         return f"DBRoom({self.db_id!r}| {self.name})"
 
 
+class DBNodeAttribute(HasDBIDMixin, SQLBase):
+    """
+    Class containing unique attribute values for specific element instances
+    """
+
+    __tablename__ = "node_attributes"
+    ID_PREFIX = "ATT"
+
+    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
+    target_id = Column(String(ID_STRING_LENGTH), nullable=False, index=True)
+    attribute_name = Column(String(EDGE_LABEL_LENGTH_CAP), nullable=False, index=True)
+    attribute_value_string = Column(String(EDGE_LABEL_LENGTH_CAP), nullable=False)
+    status: DBStatus = Column(Enum(DBStatus), nullable=False, index=True)
+    creator_id = Column(
+        String(ID_STRING_LENGTH)
+    )  # temp retain the creator ID for new things
+
+
 # Graph edges and attributes
 
 
@@ -299,7 +342,7 @@ class DBEdgeBase(HasDBIDMixin):
     """Base attributes for an edge as stored in the environment DB"""
 
     db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    parent_id = Column(String(ID_STRING_LENGTH))
+    parent_id = Column(String(ID_STRING_LENGTH), nullable=False)
     edge_type = Column(Enum(DBEdgeType), nullable=False)
     built_occurrences = Column(Integer, nullable=False, default=0)
     status = Column(Enum(DBStatus), nullable=False, index=True)
@@ -529,6 +572,12 @@ class EnvDB(BaseDB):
             # Load the edges skipping the cache, then resolving
             # children from the cache
             node.load_edges(self, skip_cache=True)
+            node._attributes = []
+
+        # manually link the attributes in a single pass
+        all_attributes = self.get_attributes()
+        for attribute in attributes:
+            self._cache["all"][attribute.target_id]._attributes.append(attribute)
 
     def _create_name_key(
         self,
@@ -983,8 +1032,51 @@ class EnvDB(BaseDB):
         attribute_value_string: str,
         status: DBStatus = DBStatus.REVIEW,
         creator_id: Optional[str] = None,
-    ) -> None:
+    ) -> str:
         """Create an arbitrary attribute entry for the target node"""
+        with Session(self.engine) as session:
+            db_id = DBNodeAttribute.get_id()
+            attribute = DBNodeAttribute(
+                db_id=db_id,
+                target_id=target_id,
+                attribute_name=attribute_name,
+                attribute_value_string=attribute_value_string,
+                status=status,
+                creator_id=creator_id,
+            )
+            session.add(attribute)
+            session.flush()
+            session.commit()
+        return db_id
+
+    def get_attributes(
+        self,
+        target_id: Optional[str] = None,
+        attribute_name: Optional[str] = None,
+        attribute_value_string: Optional[str] = None,
+        status: Optional[DBStatus] = None,
+        creator_id: Optional[str] = None,
+    ) -> List[DBNodeAttribute]:
+        """Return the list of all attributes stored that match the given filters"""
+        # Construct query
+        stmt = select(DBNodeAttribute)
+        if target_id is not None:
+            stmt = stmt.where(DBNodeAttribute.target_id == target_id)
+        if attribute_name is not None:
+            stmt = stmt.where(DBNodeAttribute.attribute_name == attribute_name)
+        if attribute_value_string is not None:
+            stmt = stmt.where(
+                DBNodeAttribute.attribute_value_string == attribute_value_string
+            )
+        if status is not None:
+            stmt = stmt.where(DBNodeAttribute.status == status)
+        if creator_id is not None:
+            stmt = stmt.where(DBNodeAttribute.creator_id == creator_id)
+        # Do query
+        with Session(self.engine) as session:
+            attributes = session.query(stmt).all()
+            session.expunge_all()
+            return attributes
 
     # Edges
 
