@@ -1,10 +1,10 @@
 /* REACT */
 import React from "react";
-//VIEWS
+// VIEWS
 import PreviewView from "./Views/PreviewView"
 import Task from "./Views/Task"
 import OnboardingView from "./Views/OnboardingView"
-
+/* BOOTSTRAP STYLES */
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Task context
 import {

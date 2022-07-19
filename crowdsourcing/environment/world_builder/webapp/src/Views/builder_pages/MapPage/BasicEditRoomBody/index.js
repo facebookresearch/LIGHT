@@ -3,6 +3,11 @@ import React, {useState, useEffect} from 'react';
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
+//LOADING
+import { setLoading} from "../../../../features/loading/loading-slice.ts";
+//ERROR
+import { setShowError, setErrorMessage} from "../../../../features/errors/errors-slice.ts";
+//NAVIGATION
 import {  setTaskRouterCurrentLocation, updateTaskRouterHistory } from "../../../../features/taskRouter/taskrouter-slice.ts";
 //ROOMS
 import { updateSelectedRoom} from "../../../../features/rooms/rooms-slice.ts";
@@ -11,9 +16,10 @@ import "./styles.css";
 /* BOOTSTRAP COMPONENTS */
 
 /* CUSTOM COMPONENTS */
-import TypeAheadTokenizerForm from "../../../../components/world_builder/FormFields/TypeAheadTokenizer"
+import TypeAheadTokenizerForm from "../../../../components/world_builder/FormFields/TypeAheadTokenizer";
 /* BOOTSTRAP COMPONENTS */
-import Button from 'react-bootstrap/Button'
+import Button from 'react-bootstrap/Button';
+import Spinner from 'react-bootstrap/Spinner';
 /* STYLES */
 import "./styles.css"
 
@@ -60,6 +66,8 @@ const BasicEditRoom = ({
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
+    //LOADING
+    const isLoading = useAppSelector((state) => state.loading.isLoading);
     //TASKROUTER
     const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
     const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
@@ -228,6 +236,21 @@ const BasicEditRoom = ({
         deleteObject(id)
     }
 
+    //GENERATE HANDLERS
+    const generateButtonFunction = async ()=>{
+        try{
+            dispatch(setIsLoading(true))
+            const payload = await CommonSenseRoomContents()
+            const {nodeId, data} = payload
+            addContent(nodeId, data);
+            dispatch(setIsLoading(false))
+        } catch (error) {
+            dispatch(setLoading(false));
+            console.log(error);
+            dispatch(setErrorMessage(error))
+            dispatch(setShowError(true))
+        }
+    }
 
     /* COMMON SENSE API INTERACTIONS */
 
@@ -279,7 +302,11 @@ const BasicEditRoom = ({
             console.log("Finished Describe");
             console.log(result);
             const newItems = result.new_items;
-            addContent(target_room, newItems)
+            const payload = {
+                nodeId: target_room,
+                data: newItems
+            }
+            return payload
         })
     }
 
@@ -296,8 +323,25 @@ const BasicEditRoom = ({
                 }
                 {
                     formattedRoomId ?
-                    <Button onClick={CommonSenseRoomContents}>
-                        SUGGEST ROOM CONTENTS
+                    <Button onClick={generateButtonFunction} disable={isLoading}>
+                        {
+                        isLoading
+                        ?
+                        <>
+                            <Spinner
+                                as="span"
+                                animation="grow"
+                                size="sm"
+                                role="status"
+                                aria-hidden="true"
+                            />
+                            GENERATING...
+                        </>
+                        :
+                        <>
+                            "SUGGEST ROOM CONTENTS"
+                        </>
+                        }
                     </Button>
                     :
                     null

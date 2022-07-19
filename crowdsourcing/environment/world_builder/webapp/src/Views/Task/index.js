@@ -4,18 +4,18 @@ import React, {useEffect, useState} from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 //ACTIONS
 import {setWorldDraft, updateSelectedWorld} from '../../features/playerWorld/playerworld-slice.ts';
+import {setShowError} from '../../features/errors/errors-slice.ts';
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */
 import TaskToolBar from "../../components/TaskToolBar";
 import PreviewContent from "../../Views/PreviewView/PreviewContent";
-import BuilderRouter from "./BuilderRouter"
+import BuilderRouter from "./BuilderRouter";
+import ErrorAlert from "../../components/ErrorAlert";
 /* BOOTSTRAP COMPONENTS */
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import Spinner from 'react-bootstrap/Spinner'
-import Alert from 'react-bootstrap/Alert';
 /* DEFAULT WORLD */
 import DefaultWorld from "../../StartingWorldCopy";
 
@@ -28,6 +28,9 @@ const App = ({
   const [showInstructions, setShowInstructions] = useState(false);
   const [show, setShow] = useState(false);
   /* ------ REDUX STATE ------ */
+  //ERROR
+  const showError = useAppSelector((state) => state.errors.showError);
+  const errorMessage = useAppSelector((state) => state.errors.errorMessage);
   //WORLDS
   const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
   //ROOMS
@@ -48,6 +51,10 @@ const App = ({
   const OpenModal = ()=>{
     setShow(true);
   };
+
+  const closeErrorAlert = ()=>{
+    dispatch(setShowError(false))
+  }
 
   const ToggleInstructionsModal = ()=>{
     let updatedToggleValue = !showInstructions;
@@ -110,7 +117,11 @@ const App = ({
       />
       <div className="builder-container">
         <BuilderRouter api={api} />
-        <Spinner animation="border" variant="primary" />
+        <ErrorAlert
+          closeFunction={closeErrorAlert}
+          showAlert={showError}
+          errorMessage={errorMessage}
+        />
       </div>
       <Modal
         show={show}

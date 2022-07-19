@@ -5,6 +5,11 @@
     width: 100vw;
     margin-top: 100px;
 }
+.builder-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .header-container {
 
