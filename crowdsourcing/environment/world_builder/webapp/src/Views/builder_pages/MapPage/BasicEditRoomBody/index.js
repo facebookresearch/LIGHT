@@ -280,35 +280,38 @@ const BasicEditRoom = ({
         })
     }
     // COMMON SENSE FORM FUNCTION
-    const CommonSenseRoomContents = ()=>{
-        let target_room = selectedRoom['node_id'];
-        let nodes = {};
-        nodes[target_room] = selectedRoom;
-        for (let character of worldCharacters) {
-            nodes[character['node_id']] = character;
-        }
-        for (let object of worldObjects) {
-            nodes[object['node_id']] = object;
-        }
-        let agents = worldCharacters.map(c => c['node_id']);
-        let objects = worldObjects.map(c => c['node_id']);
-        let rooms = [target_room]
-        let room_graph = {nodes, agents, objects, rooms};
-        console.log("room graph");
-        console.log(room_graph);
-        console.log("selectedRoom");
-        console.log(target_room);
-        suggestRoomContents({target_room, room_graph}).then((result) => {
-            console.log("Finished Describe");
-            console.log(result);
-            const newItems = result.new_items;
-            const payload = {
-                nodeId: target_room,
-                data: newItems
+    const CommonSenseRoomContents = async ()=>{
+        try{
+            let target_room = selectedRoom['node_id'];
+            let nodes = {};
+            nodes[target_room] = selectedRoom;
+            for (let character of worldCharacters) {
+                nodes[character['node_id']] = character;
             }
-            return payload
-        })
-    }
+            for (let object of worldObjects) {
+                nodes[object['node_id']] = object;
+            }
+            let agents = worldCharacters.map(c => c['node_id']);
+            let objects = worldObjects.map(c => c['node_id']);
+            let rooms = [target_room]
+            let room_graph = {nodes, agents, objects, rooms};
+            console.log("room graph");
+            console.log(room_graph);
+            console.log("selectedRoom");
+            console.log(target_room);
+            const result = await suggestRoomContents({target_room, room_graph})
+                console.log("Finished Describe");
+                console.log(result);
+                const newItems = result.new_items;
+                const payload = {
+                    nodeId: target_room,
+                    data: newItems
+                };
+                return payload;
+        } catch(error){
+            throw error;
+        };
+    };
 
     return (
         <div className="basiceditroom-container">
