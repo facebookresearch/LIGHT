@@ -78,7 +78,8 @@ def get_previously_completed_unit_data():
     existing_units = []
     for task_name in PREVIOUSLY_DONE_TASKS:
         task_units = mephisto_data_browser.get_units_for_task_name(task_name)
-        for unit in task_units:
+        accepted_units = [u for u in task_units if u.get_status() == "accepted"]
+        for unit in accepted_units:
             inputs = mephisto_data_browser.get_data_from_unit(unit)["data"]['inputs']
             existing_units.append(inputs['interaction'])
     return set(existing_units)

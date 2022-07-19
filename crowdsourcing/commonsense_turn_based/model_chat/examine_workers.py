@@ -18,7 +18,8 @@ mephisto_data_browser = MephistoDataBrowser(db=db)
 DO_REVIEW = True
 
 # task_names = ["model_chat"]
-task_names = ["commonsense_model_chat_pilot"]
+# task_names = ["commonsense_model_chat_pilot"]
+task_names = ["commonsense_model_chat_pilot_2"]
 
 units = []
 for t in task_names:
@@ -49,11 +50,19 @@ for unit in units:
 
 df = pd.DataFrame(message_data, columns=["action", "response", *r_keys, "error_text", "better_narration"])
 
-print(df)
+# print(df)
 
-for c in ['action', 'response', 'error_text', 'better_narration']:
-    df[c] = df[c].str.wrap(30)
+# for c in ['action', 'response', 'error_text', 'better_narration']:
+#     df[c] = df[c].str.wrap(30)
 print(df)
 # print(data)
 # print()
 # print(data.keys())
+
+for i, row in df.iterrows():
+    print("-"*100)
+    print(row['action'])
+    print(row['response'])
+    print(row['error_text'])
+    print("better: ", row['better_narration'])
+    print([r_keys[i] for i, k in enumerate(r_keys) if row[k]])

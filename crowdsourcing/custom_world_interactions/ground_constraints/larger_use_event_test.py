@@ -32,77 +32,91 @@ print(f"prev len: {len(units)}")
 print(Counter([u.get_status() for u in units]))
 
 accepted_units = [u for u in units if u.get_status() == "accepted"]
-unit = accepted_units[0]
+for unit in accepted_units[:10]:
+    # unit = accepted_units[0]
 
 
-# with open('./test_graph_from_build.pkl', 'rb') as f:
-#     GRAPH = pickle.load(f)
-data = []
-with jsonlines.open('/private/home/alexgurung/ParlAI/data/light_common_sense/gameplays/processed_test_convs.jsonl', 'r') as f:
-    for line in f:
-        data.append(line)
-        if len(data) > 5:
-            break
+    # with open('./test_graph_from_build.pkl', 'rb') as f:
+    #     GRAPH = pickle.load(f)
+    data = []
+    with jsonlines.open('/private/home/alexgurung/ParlAI/data/light_common_sense/gameplays/processed_test_convs.jsonl', 'r') as f:
+        for line in f:
+            data.append(line)
+            if len(data) > 5:
+                break
 
-GRAPH = json.loads(data[0][0]['game_state_before_action'])
+    GRAPH = json.loads(data[0][0]['game_state_before_action'])
 
-ROOM_ID = GRAPH['rooms'][0]
+    ROOM_ID = GRAPH['rooms'][0]
 
-data = mephisto_data_browser.get_data_from_unit(unit)
-print(data['data']['outputs']['events'])
-constraints = data['data']['outputs']['constraints']
-attributes = data['data']['outputs']['events']
-constraint_rows = []
-attribute_rows = []
-for c in constraints:
-    if 'attribute_compare_value' not in c['type']:
-        continue
-    # print(c)
-    attr_name = c['params']['key']
-    negated = c['params']['cmp_type'] == "neq"
-    attr_val = f"not {attr_name}" if negated else attr_name
-    object_name = data['data']['outputs']['this_task_state']['object1']['name']
-    if "secondary" in c['type']:
-        object_name = data['data']['outputs']['this_task_state']['object2']['name']
-    row = f"{object_name} -=- HAS_ATTRIBUTE -=- {attr_val}"
-    constraint_rows.append(row)
+    data = mephisto_data_browser.get_data_from_unit(unit)
+    # print(data['data']['outputs']['events'])
+    task_state = data['data']['outputs']['this_task_state']
+    raw = task_state['rawAction']
+    print("-"*100)
+    print(f"RAW: {raw}")
+    print(f"NARRATION: {task_state['interaction']}")
 
-print("CONSTRAINTS")
-for row in constraint_rows:
-    print(row)
-
-for c in attributes:
-    # print(c)
-    if 'modify_attribute' not in c['type']:
-        continue
-    if 'location' in c['type']:
-        obj = 'object1' if "primary" in c['type'] else 'object2'
-        object_name = data['data']['outputs']['this_task_state'][obj]['name']
-        target_obj = data['data']['outputs']['this_task_state']['object2']['name']
-        location = target_obj # in_used_target_item
-        if c['params']['value'] == 'in_used_item':
-            location = data['data']['outputs']['this_task_state']['object2']['name']
-        elif c['params']['value'] == 'in_actor':
-            location = "actor"
-        elif c['params']['value'] == 'in_room':
-            location = "room"
-
-        row = f"{object_name} -=- IS_INSIDE -=- {location}"
-        attribute_rows.append(row)
-    else:
+    constraints = data['data']['outputs']['constraints']
+    attributes = data['data']['outputs']['events']
+    constraint_rows = []
+    attribute_rows = []
+    for c in constraints:
+        if 'attribute_compare_value' not in c['type']:
+            continue
+        # print(c)
         attr_name = c['params']['key']
-        negated = not c['params']['value']
+        negated = c['params']['cmp_type'] == "neq"
         attr_val = f"not {attr_name}" if negated else attr_name
-        attr_val = attr_val.replace("not not ", "")
         object_name = data['data']['outputs']['this_task_state']['object1']['name']
         if "secondary" in c['type']:
             object_name = data['data']['outputs']['this_task_state']['object2']['name']
         row = f"{object_name} -=- HAS_ATTRIBUTE -=- {attr_val}"
-        attribute_rows.append(row)
+        constraint_rows.append(row)
 
-print("ATTRIBUTES")
-for row in attribute_rows:
-    print(row)
+    print("CONSTRAINTS")
+    for row in constraint_rows:
+        print(row)
+
+    for c in attributes:
+        if 'modify_attribute' not in c['type']:
+            continue
+        if 'location' in c['type']:
+            obj = 'object1' if "primary" in c['type'] else 'object2'
+            object_name = data['data']['outputs']['this_task_state'][obj]['name']
+            target_obj = data['data']['outputs']['this_task_state']['object2']['name']
+            location = target_obj # in_used_target_item
+            if c['params']['value'] == 'in_used_item':
+                location = data['data']['outputs']['this_task_state']['object2']['name']
+            elif c['params']['value'] == 'in_actor':
+                location = "actor"
+            elif c['params']['value'] == 'in_room':
+                location = "room"
+
+            row = f"{object_name} -=- IS_INSIDE -=- {location}"
+            attribute_rows.append(row)
+        elif "description" in c["type"]:
+            obj = 'object1' if "primary" in c['type'] else 'object2'
+            object_name = data['data']['outputs']['this_task_state'][obj]['name']
+            new_desc = c['params']['value']
+            if len(new_desc) <= 20:
+                continue
+            row = f"{object_name} -=- HAS_DESCRIPTION -=- {new_desc}"
+            attribute_rows.append(row)
+        else:
+            attr_name = c['params']['key']
+            negated = not c['params']['value']
+            attr_val = f"not {attr_name}" if negated else attr_name
+            attr_val = attr_val.replace("not not ", "")
+            object_name = data['data']['outputs']['this_task_state']['object1']['name']
+            if "secondary" in c['type']:
+                object_name = data['data']['outputs']['this_task_state']['object2']['name']
+            row = f"{object_name} -=- HAS_ATTRIBUTE -=- {attr_val}"
+            attribute_rows.append(row)
+
+    print("ATTRIBUTES")
+    for row in attribute_rows:
+        print(row)
 
 x = 1/0
 # print(data.keys())
