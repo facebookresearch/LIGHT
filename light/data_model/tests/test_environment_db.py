@@ -19,6 +19,7 @@ from light.data_model.db.environment import (
     DBEdgeType,
     DBFlagTargetType,
     DBQuestTargetType,
+    DBNodeAttribute,
     DBAgent,
     DBAgentName,
     DBObject,
@@ -1299,11 +1300,144 @@ class TestEnvironmentDB(unittest.TestCase):
             for text_edge in node.text_edges:
                 self.assertIsNotNone(text_edge.child_text)
 
-    def test_create_load_flags(self):
-        """Ensure it's possible to create and load flags"""
-
     def test_arbitrary_attributes(self):
         """Ensure the arbitrary attributes are created properly"""
+        db = EnvDB(self.config)
+
+        # get some things to use
+        agent_ids, room_ids, object_ids = self.set_up_some_nodes(db)
+        agent_1_id = agent_ids[0]
+        object_1_id = object_ids[0]
+        room_1_id = room_ids[0]
+
+        # create first attribute
+        attribute_1_id = db.create_arbitrary_attribute(
+            target_id=agent_1_id,
+            attribute_name="tested",
+            attribute_value_string="true",
+        )
+
+        self.assertTrue(DBNodeAttribute.is_id(attribute_1_id))
+        attributes = db.get_attributes(target_id=agent_1_id)
+        self.assertEqual(len(attributes), 1)
+        attribute_1 = attributes[0]
+
+        # Make sure it looks right
+        self.assertEqual(attribute_1.db_id, attribute_1_id)
+        self.assertEqual(attribute_1.target_id, agent_1_id)
+        self.assertEqual(attribute_1.attribute_name, "tested")
+        self.assertEqual(attribute_1.attribute_value_string, "true")
+        self.assertEqual(attribute_1.status, DBStatus.REVIEW)
+        self.assertIsNone(attribute_1.creator_id, agent_1_id)
+
+        # Ensure we can't duplicate
+        attribute_1_id_2 = db.create_arbitrary_attribute(
+            target_id=agent_1_id,
+            attribute_name="tested",
+            attribute_value_string="true",
+        )
+        self.assertEqual(attribute_1_id, attribute_1_id_2)
+        attributes = db.get_attributes(target_id=agent_1_id)
+        self.assertEqual(len(attributes), 1)
+
+        # Create more of them
+        attribute_2_id = db.create_arbitrary_attribute(
+            target_id=object_1_id,
+            attribute_name="tested",
+            attribute_value_string="true",
+        )
+        attribute_3_id = db.create_arbitrary_attribute(
+            target_id=room_1_id,
+            attribute_name="tested",
+            attribute_value_string="true",
+            status=DBStatus.ACCEPTED,
+            creator_id="test",
+        )
+        attribute_4_id = db.create_arbitrary_attribute(
+            target_id=agent_1_id,
+            attribute_name="tried",
+            attribute_value_string="false",
+        )
+        attributes = db.get_attributes()
+        self.assertEqual(len(attributes), 4)
+
+        # Query for arbitrary attributes
+        target_matches = db.get_attributes(target_id=agent_1_id)
+        self.assertEqual(len(target_matches), 2)
+        target_no_match = db.get_attributes(target_id="RME-fake")
+        self.assertEqual(len(target_no_match), 0)
+        attribute_match_3 = db.get_attributes(attribute_name="tested")
+        self.assertEqual(len(attribute_match_3), 3)
+        attribute_match_1 = db.get_attributes(attribute_name="tried")
+        self.assertEqual(len(attribute_match_1), 1)
+        attribute_match_0 = db.get_attributes(attribute_name="zzzzz")
+        self.assertEqual(len(attribute_match_0), 0)
+        value_match_3 = db.get_attributes(attribute_value_string="true")
+        self.assertEqual(len(value_match_3), 3)
+        value_match_1 = db.get_attributes(attribute_value_string="false")
+        self.assertEqual(len(value_match_1), 1)
+        value_match_0 = db.get_attributes(attribute_value_string="zzzzz")
+        self.assertEqual(len(value_match_0), 0)
+        status_match_3 = db.get_attributes(status=DBStatus.REVIEW)
+        self.assertEqual(len(status_match_3), 3)
+        status_match_1 = db.get_attributes(status=DBStatus.ACCEPTED)
+        self.assertEqual(len(status_match_1), 1)
+        status_match_0 = db.get_attributes(status=DBStatus.REJECTED)
+        self.assertEqual(len(status_match_0), 0)
+        creator_match_1 = db.get_attributes(creator_id="test")
+        self.assertEqual(len(creator_match_1), 1)
+        creator_match_0 = db.get_attributes(creator_id="zzzz")
+        self.assertEqual(len(creator_match_0), 0)
+
+        # see if we can load the attributes from the elem
+        room_1 = db.get_room(room_1_id)
+        agent_1 = db.get_agent(agent_1_id)
+        object_1 = db.get_object(object_1_id)
+
+        # Try expanding attributes
+        # All attributes fail when not loading first
+        with self.assertRaises(AssertionError):
+            _test_attributes = room_1.attributes
+        with self.assertRaises(AssertionError):
+            _test_attributes = agent_1.attributes
+        with self.assertRaises(AssertionError):
+            _test_attributes = object_1.attributes
+
+        room_1.load_attributes(db)
+        agent_1.load_attributes(db)
+        object_1.load_attributes(db)
+
+        self.assertEqual(len(room_1.attributes), 1)
+        self.assertEqual(len(agent_1.attributes), 2)
+        self.assertEqual(len(object_1.attributes), 1)
+
+        # Ensure that each of the attributes is valid
+        for node in [room_1, agent_1, object_1]:
+            for attribute in node.attributes:
+                self.assertIsNotNone(attribute.attribute_value_string)
+                self.assertEqual(attribute.target_id, node.db_id)
+
+        # Try creating the cache and reloading from that state
+        db.create_node_cache()
+
+        # Query edges for DBElems
+        room_1 = db.get_room(room_1_id)
+        agent_1 = db.get_agent(agent_1_id)
+        object_1 = db.get_object(object_1_id)
+
+        # Cached attributes should load no problem
+        self.assertEqual(len(room_1.attributes), 1)
+        self.assertEqual(len(agent_1.attributes), 2)
+        self.assertEqual(len(object_1.attributes), 1)
+
+        # Ensure that each of the attributes is valid
+        for node in [room_1, agent_1, object_1]:
+            for attribute in node.attributes:
+                self.assertIsNotNone(attribute.attribute_value_string)
+                self.assertEqual(attribute.target_id, node.db_id)
+
+    def test_create_load_flags(self):
+        """Ensure it's possible to create and load flags"""
 
     def test_create_load_edits(self):
         """Ensure it's possible to create, load, and reject edits"""

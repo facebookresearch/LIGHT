@@ -345,6 +345,11 @@ class DBNodeAttribute(HasDBIDMixin, SQLBase):
     """
 
     __tablename__ = "node_attributes"
+    __table_args__ = (
+        UniqueConstraint(
+            "target_id", "attribute_name", "attribute_value_string", name="att_details"
+        ),
+    )
     ID_PREFIX = "ATT"
 
     db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
@@ -1304,20 +1309,32 @@ class EnvDB(BaseDB):
         creator_id: Optional[str] = None,
     ) -> str:
         """Create an arbitrary attribute entry for the target node"""
-        with Session(self.engine) as session:
-            db_id = DBNodeAttribute.get_id()
-            attribute = DBNodeAttribute(
-                db_id=db_id,
+        try:
+            with Session(self.engine) as session:
+                db_id = DBNodeAttribute.get_id()
+                attribute = DBNodeAttribute(
+                    db_id=db_id,
+                    target_id=target_id,
+                    attribute_name=attribute_name,
+                    attribute_value_string=attribute_value_string,
+                    status=status,
+                    creator_id=creator_id,
+                )
+                session.add(attribute)
+                session.flush()
+                session.commit()
+            return db_id
+        except sqlalchemy.exc.IntegrityError:
+            # Duplicate, grab the existing
+            attributes = self.get_attributes(
                 target_id=target_id,
                 attribute_name=attribute_name,
                 attribute_value_string=attribute_value_string,
-                status=status,
-                creator_id=creator_id,
             )
-            session.add(attribute)
-            session.flush()
-            session.commit()
-        return db_id
+            assert len(attributes) == 1
+            db_id = attributes[0].db_id
+            assert db_id is not None
+            return db_id
 
     def get_attributes(
         self,

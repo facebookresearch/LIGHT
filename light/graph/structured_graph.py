@@ -506,6 +506,7 @@ class OOGraph(object):
             "nodes": {node.node_id: node for node in nodes},
             "objects": sorted(objects),
             "rooms": sorted(rooms),
+            "title": self.title,
         }
         return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
 
