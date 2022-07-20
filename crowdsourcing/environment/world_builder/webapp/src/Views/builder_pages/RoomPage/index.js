@@ -3,12 +3,12 @@ import React, {useState, useEffect} from 'react';
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
+//NAVIGATION
+import {updateTaskRouterHistory, setTaskRouterCurrentLocation} from '../../../features/taskRouter/taskrouter-slice';
 //LOADING
 import {setIsLoading} from "../../../features/loading/loading-slice";
 //ERROR
 import {setShowError, setErrorMessage} from "../../../features/errors/errors-slice";
-//NAVIGATION
-import {updateTaskRouterHistory} from '../../../features/taskRouter/taskrouter-slice';
 //WORLD
 import { updateSelectedWorld, setWorldDraft } from "../../../features/playerWorld/playerworld-slice.ts";
 //ROOMS
@@ -734,7 +734,6 @@ const RoomPage = ({
                 <TextButton
                     text={selectedRoom.node_id ? "Save Changes" : "Create Room" }
                     clickFunction={updateWorldDraft}
-                    disabled={roomName.length}
                 />
               </Col>
               <Col>

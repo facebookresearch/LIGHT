@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 /* REDUX */
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
+//NAVIGATION
+import {updateTaskRouterHistory, setTaskRouterCurrentLocation} from '../../../features/taskRouter/taskrouter-slice';
 //LOADING
 import { setIsLoading} from "../../../features/loading/loading-slice.ts";
 //ERROR
@@ -23,19 +25,26 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 /* CUSTOM COMPONENTS */
+//FORMS
+import TypeAheadTokenizerForm from "../../../components/world_builder/FormFields/TypeAheadTokenizer";
 import GenerateForms from "../../../components/world_builder/FormFields/GenerateForms";
 import TextInput from "../../../components/world_builder/FormFields/TextInput";
 import InlineTextInsertForm from "../../../components/world_builder/FormFields/InlineTextInsertForm";
+//BUTTONS
 import TextButton from "../../../components/world_builder/Buttons/TextButton";
-import Button from 'react-bootstrap/Button';
+import GenerateButton from "../../../components/world_builder/Buttons/GenerateButton";
+//INPUT COMPONENTS
 import Slider from "../../../components/world_builder/FormFields/Slider";
+//BREADCRUMBS
 import BreadCrumbs from "../../../components/world_builder/BreadCrumbs";
-import TypeAheadTokenizerForm from "../../../components/world_builder/FormFields/TypeAheadTokenizer";
 
+//ObjectPage - Advanced edit page for Selected Object allows user to modify all of object's attributes
 const ObjectPage = ({
   api,
   builderRouterNavigate,
 }) => {
+
+  //API
   let {
     suggestObjectDescription,
     suggestObjectContents
@@ -55,6 +64,8 @@ const ObjectPage = ({
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
+  //LOADING
+  const isLoading = useAppSelector((state) => state.loading.isLoading);
   //TASKROUTER
   const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
   const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
@@ -70,18 +81,30 @@ const ObjectPage = ({
   //CHARACTERS
   const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
   /* ------ REDUX ACTIONS ------ */
+  //LOADING
+  const startLoading = () =>{
+    dispatch(setIsLoading(true));
+  };
+  const stopLoading = () =>{
+      dispatch(setIsLoading(false));
+  };
+
+  //ERROR
+  const showError = ()=>{
+      dispatch(setShowError(true));
+  };
+  const setError = (errorMessage)=>{
+      dispatch(setErrorMessage(errorMessage));
+  };
   //NAVIGATION
   const backStep = ()=>{
     let previousLoc =  taskRouterHistory[taskRouterHistory.length-1]
-    console.log("history:  ", taskRouterHistory)
     let updatedHistory = taskRouterHistory.slice(0, taskRouterHistory.length-1);
-    console.log("PREVIOUS LOC BACKSTEP:  ", previousLoc)
     builderRouterNavigate(previousLoc)
     dispatch(updateTaskRouterHistory(updatedHistory));
   };
   //WORLD DRAFT
   const updateWorldsDraft = () => {
-
     dispatch(setWorldDraft(selectedWorld))
   }
 
@@ -91,9 +114,7 @@ const ObjectPage = ({
   const addContent = (objectId, newNodes)=>{
     let unupdatedWorld = selectedWorld;
     let {objects, nodes } = unupdatedWorld;
-    console.log("Object ID:  ", objectId)
     let unupdatedObjectData = nodes[objectId]
-    console.log("Object DATA:  ", unupdatedObjectData)
     let updatedNodes = {...nodes};
     let newObjects =[...objects];
     let updatedContainedNodes = {...unupdatedObjectData.contained_nodes};
@@ -133,7 +154,6 @@ const ObjectPage = ({
     dispatch(updateSelectedWorld(updatedWorld));
   };
 
-
   //OBJECTS
   const addObject = (obj)=>{
     let unupdatedWorld = selectedWorld;
@@ -142,43 +162,29 @@ const ObjectPage = ({
     console.log("OBJECT ADDED:  ", obj)
     //EXISTING OBJECT
     if(obj.node_id){
-        console.log("EXISTING OBJECT")
         while(objects.indexOf(formattedObjectId)>=0){
-            console.log("FORMATTING OBJECT ID:  ", formattedObjectId)
             let splitFormattedObjectId = formattedObjectId.split("_");
-            console.log("SPLIT FORMATTEDOBJECT ID:  ", splitFormattedObjectId)
             let idNumber = parseInt(splitFormattedObjectId[splitFormattedObjectId.length-1]);
-            console.log("ID NUMBER:  ", idNumber)
-            console.log("ID NUMBER TYPE:  ", typeof (idNumber))
-            console.log("ID NUMBER NAN CHECK:  ", !Number.isNaN(idNumber))
             if((typeof idNumber === "number") && (!Number.isNaN(idNumber))){
-                console.log("IS A NUMBER  FORMATTED OBJECTID", formattedObjectId)
-                console.log("IS A NUMBER  ID NUMBER ", idNumber)
                 idNumber = parseInt(idNumber)
                 idNumber = idNumber+1;
                 idNumber = idNumber.toString();
                 splitFormattedObjectId[splitFormattedObjectId.length-1] = idNumber;
                 formattedObjectId = splitFormattedObjectId.join("_");
-                console.log("IS A NUMBER  FORMATTED RESULT:  ", formattedObjectId)
             }else{
-                console.log("NOT A NUMBER  ", formattedObjectId)
-                formattedObjectId = obj.name +"_1"
-            }
+                formattedObjectId = obj.name +"_1" ;
+            };
         };
     }else {
         //NEW OBJECT
-        console.log("NEW OBJECT")
-        formattedObjectId = obj.name +"_1"
+        formattedObjectId = obj.name +"_1" ;
     };
     let parentData = selectedObject;
     let updatedObjectData = {...obj, node_id:formattedObjectId, container_node:{target_id: selectedObject.node_id}};
     let updatedObjects = [...objects, formattedObjectId];
     let updatedParentData = {...parentData, contained_nodes:{...parentData.contained_nodes, [formattedObjectId]:{target_id: formattedObjectId}}};
-    console.log("UPDATED CHARACTER DATA ON ADD", updatedParentData);
     let updatedNodes = {...nodes, [formattedObjectId]:updatedObjectData, [parentData.node_id]: updatedParentData};
-    console.log("UPDATED ADDED OBJECT NODES:  ", updatedNodes);
     let updatedWorld ={...selectedWorld, objects: updatedObjects, nodes:updatedNodes};
-    console.log("UPDATED WORLD ADD OBJECT:  ", updatedWorld);
     dispatch(updateSelectedWorld(updatedWorld));
 };
 
@@ -191,20 +197,18 @@ const ObjectPage = ({
     dispatch(updateSelectedWorld(updatedWorld))
   }
   const deleteObject = (id) => {
-    console.log("DELETE OBJECT:  ", id);
     let unupdatedWorld = selectedWorld;
     let {objects } = unupdatedWorld;
-    let {contained_nodes} = selectedObject
-    let updatedContainedNodes = {...contained_nodes}
-    delete updatedContainedNodes[id]
-    let updatedObjectData  = {...selectedObject, contained_nodes: updatedContainedNodes }
+    let {contained_nodes} = selectedObject;
+    let updatedContainedNodes = {...contained_nodes};
+    delete updatedContainedNodes[id];
+    let updatedObjectData  = {...selectedObject, contained_nodes: updatedContainedNodes };
     let updatedObjects = objects.filter(obj => id !== obj);
     let updatedWorld = containedNodesRemover(id);
     let updatedNodes = {...updatedWorld.nodes, [updatedObjectData.node_id]: updatedObjectData}
-    updatedWorld = {...updatedWorld, nodes:updatedNodes}
-    console.log("DELETE OBJECT POST NODE REMOVAL WORLD:  ", updatedWorld);
+    updatedWorld = {...updatedWorld, nodes:updatedNodes};
     dispatch(updateSelectedWorld({...updatedWorld, objects: updatedObjects}));
-  }
+  };
 
   const deleteSelectedObject = () => {
     let unupdatedWorld = selectedWorld;
@@ -218,14 +222,11 @@ const ObjectPage = ({
     let updatedNodes = { ...nodes };
     delete updatedNodes[objectId];
     updatedWorld = { ...updatedWorld, objects: updatedObjects, nodes: updatedNodes };
-    console.log("UPDATED WORLDS UPON OBJECT DELETION:  ", updatedWorld)
-    dispatch(setWorldDraft(updatedWorld))
-    builderRouterNavigate({ name: "map", id: null })
-  }
+    dispatch(setWorldDraft(updatedWorld));
+    backStep();
+  };
   //UTILS
   const containedNodesRemover = (nodeId) => {
-
-    console.log("RECURSIVE CONTAINED NODES REMOVER:  ", nodeId)
     const nodeDigger = (id, removalArray) => {
       let { nodes } = selectedWorld;
       let unupdatedNode = nodes[id];
@@ -234,40 +235,37 @@ const ObjectPage = ({
       let containedNodesList = Object.keys(containedNodes);
 
       if (!containedNodesList.length) {
-        removalArray.push({ nodeId: id, class: classes[0] })
-        return removalArray
+        removalArray.push({ nodeId: id, class: classes[0] });
+        return removalArray;
       } else {
-        removalArray.push({ nodeId: id, class: classes[0] })
+        removalArray.push({ nodeId: id, class: classes[0] });
         containedNodesList.map((containedNodeId) => {
-          removalArray.push({ nodeId: containedNodeId, class: classes[0] })
-          return containedNodesRemover(containedNodeId, removalArray)
-        })
-      }
-    }
-    console.log("NODE DIGGER RETURN RESULT", nodeDigger(nodeId, []))
-    const removalList = nodeDigger(nodeId, [])
+          removalArray.push({ nodeId: containedNodeId, class: classes[0] });
+          return containedNodesRemover(containedNodeId, removalArray);
+        });
+      };
+    };
+    const removalList = nodeDigger(nodeId, []);
 
     let { nodes, objects, rooms, agents } = selectedWorld;
     let updatedWorld = selectedWorld;
     removalList.map((removedNode) => {
       let removedNodeClass = removedNode.class;
-      let removedNodeId = removedNode.nodeId
+      let removedNodeId = removedNode.nodeId;
       if (removedNodeClass === "agent") {
         let updatedCharacters = agents.filter(char => removedNodeId !== char);
-        updatedWorld = { ...updatedWorld, agents: updatedCharacters }
+        updatedWorld = { ...updatedWorld, agents: updatedCharacters };
       } else if (removedNodeClass === "object") {
         let updatedObjects = objects.filter(obj => removedNodeId !== obj);
-        updatedWorld = { ...updatedWorld, objects: updatedObjects }
+        updatedWorld = { ...updatedWorld, objects: updatedObjects };
       } else if (removedNodeClass === "room") {
         let updatedRooms = rooms.filter(room => removedNodeId !== room);
-        updatedWorld = { ...updatedWorld, rooms: updatedRooms }
-      }
-      console.log("#NODES", nodes)
+        updatedWorld = { ...updatedWorld, rooms: updatedRooms };
+      };
       let updatedNodes = { ...nodes };
       delete updatedNodes[removedNodeId];
-      updatedWorld = { ...updatedWorld, nodes: updatedNodes }
-      console.log("NESTED CONTAINED NODE REMOVER", updatedWorld)
-    })
+      updatedWorld = { ...updatedWorld, nodes: updatedNodes };
+    });
     return updatedWorld;
   };
 
@@ -385,49 +383,73 @@ const ObjectPage = ({
         addContent(nodeId, data);
         dispatch(setIsLoading(false));
     } catch (error) {
-        dispatch(setIsLoading(false));
+      stopLoading();
+      console.log(error);
+      errorHandler(error);
+    };
+  };
+
+  const generateObjectDescButtonFunction = async ()=>{
+    try{
+        const payload = await CommonSenseDescribeObject();
+        const {nodeId, data} = payload;
+        updateObject(nodeId, data);
+        stopLoading();
+    } catch (error) {
+        stopLoading();
         console.log(error);
-        dispatch(setErrorMessage(error));
-        dispatch(setShowError(true));
-    }
-  }
+        errorHandler(error);
+    };
+  };
 
+  /* ------ END OF HANDLERS ------ */
 
-  // COMMON SENSE DESCRIBE OBJECT FUNCTION
+  /* COMMON SENSE API INTERACTIONS */
+  // COMMON SENSE OBJECT DESCRIPTION GENERATION FUNCTION
   const CommonSenseDescribeObject = async () => {
     try{
-    let target_room = selectedRoom['node_id'];
-    let target_id = objectId;
-    let nodes = {};
-    nodes[target_room] = selectedRoom;
-    for (let character of worldCharacters) {
-      nodes[character['node_id']] = character;
-    }
-    for (let object of worldObjects) {
-      nodes[object['node_id']] = object;
-    }
-    let agents = worldCharacters.map(c => c['node_id']);
-    let objects = worldObjects.map(c => c['node_id']);
-    let rooms = [target_room]
-    let room_graph = { nodes, agents, objects, rooms };
-    console.log("room graph");
-    console.log(room_graph);
-    console.log("selectedRoom");
-    console.log(target_room);
-    const result = await suggestObjectDescription({ target_room, room_graph, target_id })
+      startLoading()
+      let target_room = selectedRoom['node_id'];
+      let target_id = objectId;
+      let nodes = {};
+      nodes[target_room] = selectedRoom;
+      for (let character of worldCharacters) {
+        nodes[character['node_id']] = character;
+      }
+      for (let object of worldObjects) {
+        nodes[object['node_id']] = object;
+      }
+      let agents = worldCharacters.map(c => c['node_id']);
+      let objects = worldObjects.map(c => c['node_id']);
+      let rooms = [target_room]
+      let room_graph = { nodes, agents, objects, rooms };
+      console.log("room graph");
+      console.log(room_graph);
+      console.log("selectedRoom");
+      console.log(target_room);
+      const result = await suggestObjectDescription({ target_room, room_graph, target_id })
       console.log("Finished describe object");
       console.log(result);
+      const generatedData = result.updated_item;
+      const updatedDesc = generatedData.desc;
+      const updatedObject = {...selectedObject, desc: updatedDesc};
+      console.log(updatedObject);
+      const payload = {
+          nodeId: target_id,
+          data: updatedObject
+      };
+      return payload;
     } catch (error){
-        dispatch(setIsLoading(false));
-        dispatch(setErrorMessage(error));
-        dispatch(setShowError(true));
-        throw error;
-    }
-  }
+      stopLoading();
+      errorHandler(error);
+      throw error;
+    };
+  };
 
-  // COMMON SENSE CONTENTS OBJECT FUNCTION
+  // COMMON SENSE OBJECT CONTENTS GENERATION FUNCTION
   const CommonSenseObjectContents = async () => {
     try{
+      startLoading()
       let target_room = selectedRoom['node_id'];
       let target_id = objectId;
       let nodes = {};
@@ -456,9 +478,8 @@ const ObjectPage = ({
       };
       return payload;
     } catch (error){
-      dispatch(setIsLoading(false));
-      dispatch(setErrorMessage(error));
-      dispatch(setShowError(true));
+      stopLoading();
+      errorHandler(error);
       throw error;
     }
   }
@@ -469,51 +490,45 @@ const ObjectPage = ({
   /* --- LIFE CYCLE FUNCTIONS --- */
   useEffect(() => {
     let updatedObjectData = currentLocation;
-    let updatedParentData = taskRouterHistory[taskRouterHistory.length - 1]
-    console.log("OBJ ID:  ", updatedObjectData)
-    console.log("PARENT ID:  ", updatedParentData)
+    let updatedParentData = taskRouterHistory[taskRouterHistory.length - 1];
     if (updatedObjectData) {
-      setObjectId(updatedObjectData.id)
-    }
+      setObjectId(updatedObjectData.id);
+    };
     if (updatedParentData) {
-      setParentId(updatedParentData.id)
-    }
-    console.log("WORLD DRAFT:  ", worldDraft)
-    dispatch(updateSelectedWorld(worldDraft))
-  }, [currentLocation])
+      setParentId(updatedParentData.id);
+    };
+    dispatch(updateSelectedWorld(worldDraft));
+  }, [currentLocation]);
 
   useEffect(() => {
-    dispatch(updateSelectedWorld(worldDraft))
-  }, [worldDraft])
+    dispatch(updateSelectedWorld(worldDraft));
+  }, [worldDraft]);
 
   useEffect(() => {
     if (selectedWorld) {
-      console.log("SELECTED WORLD:  ", selectedWorld)
-      worldNodeSorter(selectedWorld)
-    }
-  }, [selectedWorld])
+      worldNodeSorter(selectedWorld);
+    };
+  }, [selectedWorld]);
 
   useEffect(() => {
     if (parentId) {
-      let { nodes } = selectedWorld
-      let currentRoom = nodes[parentId]
-      console.log("CURRENT PARENT", currentRoom)
+      let { nodes } = selectedWorld;
+      let currentRoom = nodes[parentId];
       if (currentRoom) {
-        dispatch(selectRoom(currentRoom))
-      }
-    }
-  }, [parentId])
+        dispatch(selectRoom(currentRoom));
+      };
+    };
+  }, [parentId]);
 
   useEffect(() => {
     if (objectId) {
-      let { nodes } = selectedWorld
-      let currentObject = nodes[objectId]
-      console.log("CURRENT OBJECT", currentObject)
+      let { nodes } = selectedWorld;
+      let currentObject = nodes[objectId];
       if (currentObject) {
-        dispatch(selectObject(currentObject))
+        dispatch(selectObject(currentObject));
       };
-    }
-  }, [objectId, selectedWorld])
+    };
+  }, [objectId, selectedWorld]);
 
   useEffect(() => {
     if (selectedWorld) {
@@ -534,24 +549,24 @@ const ObjectPage = ({
           value
         } = selectedObject;
 
-        setObjectName(name)
-        setObjectDesc(desc)
+        setObjectName(name);
+        setObjectDesc(desc);
         if (!name_prefix) {
-          setObjectPrefix("a")
+          setObjectPrefix("a");
         } else {
-          setObjectPrefix(name_prefix)
-        }
+          setObjectPrefix(name_prefix);
+        };
         if (plural === undefined && (name[name.length - 1] === "s")) {
-          let endsWithSDefaultPluralName = `${name}es`
-          setObjectPluralName(endsWithSDefaultPluralName)
+          let endsWithSDefaultPluralName = `${name}es` ;
+          setObjectPluralName(endsWithSDefaultPluralName);
         } else if (plural === undefined) {
-          let defaultPluralName = `${name}s`
-          setObjectPluralName(defaultPluralName)
+          let defaultPluralName = `${name}s` ;
+          setObjectPluralName(defaultPluralName);
         } else {
-          setObjectPluralName(plural)
-        }
-        setObjectSize(size)
-        setObjectValue(value)
+          setObjectPluralName(plural);
+        };
+        setObjectSize(size);
+        setObjectValue(value);
 
         const roomContentNodesKeys = Object.keys(contained_nodes)
         roomContentNodesKeys.map((nodeKey) => {
@@ -564,13 +579,13 @@ const ObjectPage = ({
                 break;
               default:
                 break;
-            }
-          }
-        })
-        setContainedObjects(ObjectNodes)
-      }
-    }
-  }, [selectedObject])
+            };
+          };
+        });
+        setContainedObjects(ObjectNodes);
+      };
+    };
+  }, [selectedObject]);
 
   return (
     <Container>
@@ -595,8 +610,9 @@ const ObjectPage = ({
                     label="Object Description:"
                     value={objectDesc}
                     changeHandler={ObjectDescChangeHandler}
-                    clickFunction={CommonSenseDescribeObject}
+                    clickFunction={generateObjectDescButtonFunction}
                     generateButtonLabel={"Generate Description"}
+                    isLoading={isLoading}
                   />
                 </Row>
                 <Row>
@@ -613,9 +629,11 @@ const ObjectPage = ({
                   />
                 </Row>
                 <Row>
-                  <Button onClick={generateContainedObjectsButtonFunction} variant="primary">
-                    Generate Object Contents
-                  </Button>
+                  <GenerateButton
+                    label={"Generate Object Contents"}
+                    clickFunction={generateContainedObjectsButtonFunction}
+                    isLoading={isLoading}
+                  />
                 </Row>
               </Col>
               <Col>

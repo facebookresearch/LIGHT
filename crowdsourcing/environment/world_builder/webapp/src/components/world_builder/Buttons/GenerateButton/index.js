@@ -12,12 +12,12 @@ import Spinner from 'react-bootstrap/Spinner';
 const GenerateButton = ({
   clickFunction,
   label,
-  isloading
+  isLoading
 }) => {
   return (
     <Button className="generatebutton-container" onClick={clickFunction} variant="primary" disabled={isLoading}>
     {
-        isloading
+        isLoading
         ?
         <>
           <Spinner
@@ -30,7 +30,7 @@ const GenerateButton = ({
           GENERATING...
         </>
         :
-        generateName !== undefined ? label  : "Generate"
+        label !== undefined ? label  : "Generate"
     }
     </Button>
   );

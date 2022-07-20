@@ -3,12 +3,12 @@ import React, {useState, useEffect} from 'react';
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
+//NAVIGATION
+import {  setTaskRouterCurrentLocation, updateTaskRouterHistory } from "../../../../features/taskRouter/taskrouter-slice.ts";
 //LOADING
 import { setIsLoading} from "../../../../features/loading/loading-slice.ts";
 //ERROR
 import { setShowError, setErrorMessage} from "../../../../features/errors/errors-slice.ts";
-//NAVIGATION
-import {  setTaskRouterCurrentLocation, updateTaskRouterHistory } from "../../../../features/taskRouter/taskrouter-slice.ts";
 //ROOMS
 import { updateSelectedRoom} from "../../../../features/rooms/rooms-slice.ts";
 /* STYLES */
@@ -388,7 +388,6 @@ const BasicEditRoom = ({
                     <TextButton
                         text={"CREATE"}
                         clickFunction={RoomCreateHandler}
-                        disabled={roomName.length}
                     />
                 }
                 {

@@ -39,7 +39,7 @@ const GenerateForms = ({
                         <GenerateButton
                             clickFunction={clickFunction}
                             label ={generateButtonLabel}
-                            isloading={isLoading}
+                            isLoading={isLoading}
                         />
                     </Col>
                 </Row>

@@ -3,6 +3,8 @@ import React, {useState, useEffect} from 'react';
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
+//NAVIGATION
+import {updateTaskRouterHistory, setTaskRouterCurrentLocation} from '../../../features/taskRouter/taskrouter-slice';
 //LOADING
 import {setIsLoading} from "../../../features/loading/loading-slice";
 //ERROR
@@ -36,7 +38,7 @@ import Slider from "../../../components/world_builder/FormFields/Slider";
 //BREADCRUMBS
 import BreadCrumbs from "../../../components/world_builder/BreadCrumbs";
 
-//CharacterPage - Advanced edit page for Selected Character
+//CharacterPage - Advanced edit page for Selected Character allows user to modify all of character's attributes
 const CharacterPage = ({
     api,
     builderRouterNavigate,
@@ -96,6 +98,7 @@ const CharacterPage = ({
     const stopLoading = () =>{
         dispatch(setIsLoading(false));
     };
+
     //ERROR
     const showError = ()=>{
         dispatch(setShowError(true));
@@ -231,6 +234,7 @@ const CharacterPage = ({
         dispatch(updateSelectedWorld({...updatedWorld, objects: updatedObjects}));
     };
 
+    /* ------ END OF REDUX ACTIONS ------ */
 
     //UTILS
     //worldNodeSorter - filters nodes into their appropriate state and arrays upon changes to the selected or draft world
@@ -431,7 +435,7 @@ const CharacterPage = ({
 
     //GENERATE HANDLERS
     //Generates Objects for Character
-    const generateRoomContentButtonFunction = async ()=>{
+    const generateCharacterInventoryButtonFunction = async ()=>{
         try{
             const payload = await CommonSenseCharacterContents();
             const {nodeId, data} = payload;
@@ -492,6 +496,7 @@ const CharacterPage = ({
     // COMMON SENSE CHARACTER DESCRIPTION GENERATION FUNCTION
     const CommonSenseDescribeCharacter = async ()=>{
         try{
+            startLoading()
             let target_room = selectedRoom['node_id'];
             let target_id = charId;
             let nodes = {};
@@ -531,6 +536,7 @@ const CharacterPage = ({
     // COMMON SENSE CHARACTER PERSONA GENERATION FUNCTION
     const CommonSenseCharacterPersona = async ()=>{
         try{
+            startLoading()
             let target_room = selectedRoom['node_id'];
             let target_id = charId;
             let nodes = {};
@@ -570,6 +576,7 @@ const CharacterPage = ({
     // COMMON SENSE CHARACTER MOTIVATION GENERATION FUNCTION
     const CommonSenseCharacterMotivation = async ()=>{
         try{
+            startLoading()
             let target_room = selectedRoom['node_id'];
             let target_id = charId;
             let nodes = {};
@@ -628,7 +635,7 @@ const CharacterPage = ({
             console.log(room_graph);
             console.log("selectedRoom");
             console.log(target_room);
-            const result = suggestCharacterContents({target_room, room_graph, target_id});
+            const result = await suggestCharacterContents({target_room, room_graph, target_id});
             console.log("Finished character contents", result);
             const newItems = result.new_items;
             const payload = {
@@ -818,9 +825,9 @@ const CharacterPage = ({
                         </Row>
                         <Row>
                             <GenerateButton
-                                label={"Generate Character Contents"}
-                                clickFunction={generateRoomContentButtonFunction}
-                                isloading={isLoading}
+                                label={"Generate Character Inventory"}
+                                clickFunction={generateCharacterInventoryButtonFunction}
+                                isLoading={isLoading}
                             />
                         </Row>
                         <Row>
