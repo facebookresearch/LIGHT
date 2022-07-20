@@ -82,7 +82,7 @@ function MainApp() {
           // gameText = task_data.game_text_dropoutless;
           gameText = "<b>Context</b> <br>" + task_data.setting_context_text_dropoutless;
           gameText = gameText + "<br><br> <b>Previous Actions: </b> <br>" + task_data.action_context_text_dropoutless;
-          bold_current_player = "<br><br><h3> You are: <b>" + task_data.current_player + "</b>. <br> Please give an action your character would want to perform and rate the response.</h3>";
+          bold_current_player = "<br><br><h3> You are: <b>" + task_data.current_player + "</b>. <br><br> Please give an <b>action</b> (not dialog) your character would want to perform and rate the response.</h3>";
           if (gameText !== undefined) {
             gameText = gameText.replaceAll("\n", "<br>");
             gameText = gameText + bold_current_player;

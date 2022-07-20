@@ -83,7 +83,10 @@ def obj_from_key(key, primary_obj, secondary_obj):
 def format_for_printing_data(data):
     worker_name = Worker.get(db, data["worker_id"]).worker_name
     contents = data["data"]
-    duration = contents["times"]["task_end"] - contents["times"]["task_start"]
+    duration = 0
+    if "times" in contents:
+        duration = contents["times"]["task_end"] - contents["times"]["task_start"]
+
     metadata_string = (
         f"Worker: {worker_name}\nUnit: {data['unit_id']}\n"
         f"Duration: {int(duration)}\nStatus: {data['status']}\n"

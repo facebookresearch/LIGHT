@@ -19,7 +19,8 @@ DO_REVIEW = True
 
 # task_names = ["model_chat"]
 # task_names = ["commonsense_model_chat_pilot"]
-task_names = ["commonsense_model_chat_pilot_2"]
+# task_names = ["commonsense_model_chat_pilot_2"]
+task_names = ["commonsense_model_chat_pilot_3"]
 
 units = []
 for t in task_names:
@@ -63,6 +64,6 @@ for i, row in df.iterrows():
     print("-"*100)
     print(row['action'])
     print(row['response'])
-    print(row['error_text'])
+    print("why error: ", row['error_text'])
     print("better: ", row['better_narration'])
     print([r_keys[i] for i, k in enumerate(r_keys) if row[k]])

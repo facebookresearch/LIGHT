@@ -80,10 +80,20 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes, cur
   const [ratings, setRatings] = React.useState(initialRatings)
 
   const tryMessageSend = React.useCallback(() => {
-
     let all_ratings_filled = ratings.every((r) => r !== "");
     let rating = ratings.join('|');
-
+    let finished = false;
+    let tFv = currentRatingValues.textFieldValues;
+    if (tFv[3] !== undefined) {
+      if (tFv[3]['better_narration'].length > 0) {
+        finished = true;
+      }
+    }
+    if (!finished) {
+      alert('Please provide a better narration');
+      return;
+    }
+    
     // if (all_ratings_filled && active && !sending) {
     if (!sending) {
       setSending(true);
@@ -228,6 +238,8 @@ function CheckboxTextResponse({ onMessageSend, active, currentCheckboxes, curren
           onClick={() => tryMessageSend()}
         >
           Do Action
+          <br></br>
+          (No Dialog)
         </Button>
       </div>
     </div>

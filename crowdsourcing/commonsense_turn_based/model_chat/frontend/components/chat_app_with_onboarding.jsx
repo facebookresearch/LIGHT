@@ -28,6 +28,16 @@ const INPUT_MODE = {
   READY_FOR_INPUT: "ready_for_input",
 };
 
+const replaceOnDocument = (pattern, string, {target = document.body} = {}) => {
+  // Handle `string` — see the last section
+  [
+    target,
+    ...target.querySelectorAll("*:not(script):not(noscript):not(style)")
+  ].forEach(({childNodes: [...nodes]}) => nodes
+    .filter(({nodeType}) => nodeType === document.TEXT_NODE)
+    .forEach((textNode) => textNode.textContent = textNode.textContent.replace(pattern, string)));
+};
+
 function CustomOnboardingChatApp({
   renderMessage,
   renderSidePane,
@@ -36,6 +46,7 @@ function CustomOnboardingChatApp({
   onMessagesChange,
   propAppSettings={},
 }) {
+  replaceOnDocument("Waiting for the next person to speak", "Waiting for you to give an action (e.g. chop down tree)");
   const [taskContext, updateContext] = React.useReducer(
     (oldContext, newContext) => Object.assign(oldContext, newContext),
     {}
