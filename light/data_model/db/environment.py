@@ -809,7 +809,10 @@ class EnvDB(BaseDB):
 
     def create_agent_name(self, name: str) -> str:
         """Create a new agent name in the database"""
-        return self._create_name_key(DBAgentName, name)
+        try:
+            return self.get_agent_name(name=name).db_id
+        except KeyError:
+            return self._create_name_key(DBAgentName, name)
 
     def find_agent_names(
         self,
@@ -885,6 +888,7 @@ class EnvDB(BaseDB):
                 contain_size=contain_size,
                 constitution=constitution,
                 charisma=charisma,
+                strength=strength,
                 dexterity=dexterity,
                 intelligence=intelligence,
                 wisdom=wisdom,

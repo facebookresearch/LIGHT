@@ -527,7 +527,7 @@ class OOGraph(object):
     def from_json(input_json: str):
         dict_format = json.loads(input_json)
         opt = {}
-        if dict_format["title"]:
+        if dict_format.get("title") is not None:
             opt["title"] = dict_format["title"]
         oo_graph = OOGraph(opt)
         object_ids = set(dict_format["objects"])
