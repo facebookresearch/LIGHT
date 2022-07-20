@@ -30,11 +30,13 @@ from sqlalchemy import (
     Float,
     ForeignKey,
     Boolean,
+    UniqueConstraint,
 )
 from sqlalchemy.orm import declarative_base, relationship, Session, join
 
 import enum
 import os
+import time
 
 SQLBase = declarative_base()
 
@@ -57,7 +59,7 @@ FILE_PATH_LENGTH_CAP = 96
 class HasDBIDMixin:
     """Simple mixin for classes that define their own DBID schema"""
 
-    ID_PREFIX: int  # ID prefix should be 3 characters max.
+    ID_PREFIX: str  # ID prefix should be 3 characters max.
 
     @classmethod
     def get_id(cls: Type["HasDBIDMixin"]) -> str:
@@ -65,7 +67,7 @@ class HasDBIDMixin:
         return f"{cls.ID_PREFIX}-{uuid4()}"
 
     @classmethod
-    def is_id(cls: Type["HasDBIDMixin"], test_id: str) -> str:
+    def is_id(cls: Type["HasDBIDMixin"], test_id: str) -> bool:
         """Check if a given ID refers to this class"""
         return test_id.startswith(f"{cls.ID_PREFIX}-")
 
@@ -139,10 +141,14 @@ class DBElem(HasDBIDMixin):
         String(ID_STRING_LENGTH)
     )  # temp retain the creator ID for new things
 
+    _text_edges: Optional[List["DBTextEdge"]] = None
+    _node_edges: Optional[List["DBEdge"]] = None
+    _attributes: Optional[List["DBNodeAttribute"]] = None
+
     @property
-    def text_edges(self) -> List[DBTextEdge]:
+    def text_edges(self) -> List["DBTextEdge"]:
         """Return the cached text edges, if available"""
-        if hasattr(self, "_text_edges") and self._text_edges is not None:
+        if self._text_edges is not None:
             return self._text_edges
 
         use_session = Session.object_session(self)
@@ -155,9 +161,9 @@ class DBElem(HasDBIDMixin):
         return text_edges
 
     @property
-    def node_edges(self) -> List[DBEdge]:
+    def node_edges(self) -> List["DBEdge"]:
         """Return the cached node edges, if available"""
-        if hasattr(self, "_node_edges") and self._node_edges is not None:
+        if self._node_edges is not None:
             return self._node_edges
 
         use_session = Session.object_session(self)
@@ -165,7 +171,7 @@ class DBElem(HasDBIDMixin):
             use_session is not None
         ), "Must be in-session if not cached. Otherwise call `load_edges` first"
         stmt = select(DBEdge).where(DBEdge.parent_id == self.db_id)
-        text_edges = use_session.query(stmt).all()
+        node_edges = use_session.query(stmt).all()
         self._node_edges = node_edges
         for node_edge in node_edges:
             # Force load the children
@@ -176,6 +182,7 @@ class DBElem(HasDBIDMixin):
         """Expand the node and text edges for this entity"""
         if db._cache is not None and not skip_cache:
             # Load the edges from the cache
+            assert self.db_id is not None
             node = db._cache["all"][self.db_id]
             self._text_edges = node.text_edges.copy()
             self._node_edges = node.node_edges.copy()
@@ -187,8 +194,8 @@ class DBElem(HasDBIDMixin):
                 session.expunge_all()
 
     @property
-    def attributes(self) -> List[DBNodeAttribute]:
-        if hasattr(self, "_attributes") and self._attributes is not None:
+    def attributes(self) -> List["DBNodeAttribute"]:
+        if self._attributes is not None:
             return self._attributes
 
         use_session = Session.object_session(self)
@@ -204,6 +211,7 @@ class DBElem(HasDBIDMixin):
         """Expand arbitrary attributes for this node"""
         if db._cache is not None and not skip_cache:
             # Load the edges from the cache
+            assert self.db_id is not None
             node = db._cache["all"][self.db_id]
             self._attributes = node.attributes.copy()
         else:
@@ -220,9 +228,14 @@ class DBAgent(DBElem, SQLBase):
     """
 
     __tablename__ = "agents"
+    __table_args__ = (
+        UniqueConstraint(
+            "name", "persona", "physical_description", name="text_characteristics"
+        ),
+    )
     ID_PREFIX = "AGE"
 
-    base_id = Column(ForeignKey("agent_names.db_id"), nullable=False)
+    base_id: str = Column(ForeignKey("agent_names.db_id"), nullable=False)
     persona = Column(String(PERSONA_LENGTH_CAP), nullable=False, index=True)
     physical_description = Column(
         String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True
@@ -237,7 +250,9 @@ class DBAgent(DBElem, SQLBase):
     dexterity = Column(Float)
     intelligence = Column(Float)
     wisdom = Column(Float)
-    base_name = relationship("DBAgentName", backref="agents", foreign_keys=[base_id])
+    base_name: List["DBAgent"] = relationship(
+        "DBAgentName", backref="agents", foreign_keys=[base_id]
+    )
 
     def __repr__(self):
         return f"DBAgent({self.db_id!r}| {self.name})"
@@ -250,9 +265,12 @@ class DBObject(DBElem, SQLBase):
     """
 
     __tablename__ = "objects"
+    __table_args__ = (
+        UniqueConstraint("name", "physical_description", name="text_characteristics"),
+    )
     ID_PREFIX = "OBE"
 
-    base_id = Column(ForeignKey("object_names.db_id"), nullable=False)
+    base_id: str = Column(ForeignKey("object_names.db_id"), nullable=False)
     physical_description = Column(
         String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True
     )
@@ -269,7 +287,9 @@ class DBObject(DBElem, SQLBase):
     contain_size = Column(Integer)
     value = Column(Float)
     rarity = Column(Float)
-    base_name = relationship("DBObjectName", backref="agents", foreign_keys=[base_id])
+    base_name: List["DBObject"] = relationship(
+        "DBObjectName", backref="objects", foreign_keys=[base_id]
+    )
 
     def __repr__(self):
         return f"DBObject({self.db_id!r}| {self.name})"
@@ -295,14 +315,22 @@ class DBRoom(DBElem, SQLBase):
     """
 
     __tablename__ = "rooms"
+    __table_args__ = (
+        UniqueConstraint(
+            "name", "description", "backstory", name="text_characteristics"
+        ),
+    )
     ID_PREFIX = "RME"
 
-    base_id = Column(ForeignKey("room_names.db_id"), nullable=False)
+    base_id: str = Column(ForeignKey("room_names.db_id"), nullable=False)
     description = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)
     backstory = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)
     size = Column(Integer)
     indoor_status = Column(Enum(DBRoomInsideType), nullable=False)
-    base_name = relationship("DBRoomName", backref="agents", foreign_keys=[base_id])
+    rarity = Column(Float)
+    base_name: List["DBRoom"] = relationship(
+        "DBRoomName", backref="rooms", foreign_keys=[base_id]
+    )
 
     def __repr__(self):
         return f"DBRoom({self.db_id!r}| {self.name})"
@@ -362,13 +390,15 @@ class DBEdge(DBEdgeBase, SQLBase):
     __tablename__ = "edges"
     ID_PREFIX = "NED"
 
-    child_id = Column(String(ID_STRING_LENGTH))
+    child_id = Column(String(ID_STRING_LENGTH), nullable=False)
     built_occurrences = Column(Integer, nullable=False, default=0)
+
+    _child: Optional[DBElem] = None
 
     @property
     def child(self) -> DBElem:
         """Follow this edge and load the child node"""
-        if hasattr(self, "_child") and self._child is not None:
+        if self._child is not None:
             return self.child
 
         use_session = Session.object_session(self)
@@ -378,6 +408,8 @@ class DBEdge(DBEdgeBase, SQLBase):
         # Determine return type
         # This may be better wrapped as a utility of EnvDB,
         # but that's not in-scope here
+        assert self.child_id is not None
+        TargetClass: Type[DBElem]
         if DBAgent.is_id(self.child_id):
             TargetClass = DBAgent
             stmt = select(DBAgent)
@@ -398,6 +430,7 @@ class DBEdge(DBEdgeBase, SQLBase):
         """Expand the node and text edges for this entity"""
         if db._cache is not None:
             # Load the edges from the cache
+            assert self.child_id is not None
             node = db._cache["all"][self.child_id]
             self._child = node
         else:
@@ -444,20 +477,19 @@ class DBEdit(SQLBase, HasDBIDMixin):
     new_value = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)
     create_timestamp = Column(Float, nullable=False)
 
-    def accept_and_apply(self, db: EnvDB) -> None:
+    def accept_and_apply(self, db: "EnvDB") -> None:
         """Accept and apply the given edit"""
         # TODO Implement
         raise NotImplementedError
 
-    def reject_edit(self, db: EnvDB) -> None:
+    def reject_edit(self, db: "EnvDB") -> None:
         """Reject the given edit"""
         with Session(db.engine) as session:
-            edit = session.query(DBEdit).get(self.db_id)
-            edit.status = DBStatus.REJECTED
+            session.add(self)
+            self.status = DBStatus.REJECTED
             session.flush()
             session.commit()
             session.expunge_all()
-            self.status = DBStatus.REJECTED
 
     def __repr__(self):
         return f"DBEdit({self.db_id!r}| {self.node_id}-{self.field}-{self.status})"
@@ -479,6 +511,7 @@ class DBFlag(HasDBIDMixin, SQLBase):
 
     db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
     flag_type = Column(Enum(DBFlagTargetType), nullable=False)
+    user_id = Column(String(ID_STRING_LENGTH), nullable=False, index=True)
     target_id = Column(String(ID_STRING_LENGTH), nullable=False, index=True)
     reason = Column(String(REPORT_REASON_LENGTH))
     status = Column(Enum(DBStatus), nullable=False, index=True)
@@ -502,8 +535,10 @@ class DBQuest(SQLBase, HasDBIDMixin):
     ID_PREFIX = "QST"
 
     db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    agent_id = Column(ForeignKey("agents.db_id"), nullable=False)
-    parent_id = Column(ForeignKey("quests.db_id"))  # Map to possible parent
+    agent_id: str = Column(ForeignKey("agents.db_id"), nullable=False)
+    parent_id: Optional[str] = Column(
+        ForeignKey("quests.db_id")
+    )  # Map to possible parent
     text_motivation = Column(String(QUEST_MOTIVATION_LENGTH), nullable=False)
     target_type = Column(Enum(DBQuestTargetType), nullable=False)
     target = Column(String(QUEST_MOTIVATION_LENGTH))
@@ -514,13 +549,16 @@ class DBQuest(SQLBase, HasDBIDMixin):
     )  # temp retain the creator ID for new things
     create_timestamp = Column(Float, nullable=False)
 
+    _subgoals: Optional[List["DBQuest"]] = None
+    _parent_chain: Optional[List["DBQuest"]] = None
+
     @property
-    def subgoals(self) -> List[DBQuest]:
+    def subgoals(self) -> List["DBQuest"]:
         """
         Return the list of DBQuests that are a direct
         subgoal of this one
         """
-        if hasattr(self, "_subgoals") and self._subgoals is not None:
+        if self._subgoals is not None:
             return self._subgoals
 
         use_session = Session.object_session(self)
@@ -528,17 +566,19 @@ class DBQuest(SQLBase, HasDBIDMixin):
             use_session is not None
         ), "Must be in-session if not cached. Otherwise call `load_relations` first"
 
-        subgoals = use_session.query(DBQuest).where(DBQuest.parent_id == self.db_id)
+        subgoals = (
+            use_session.query(DBQuest).where(DBQuest.parent_id == self.db_id).all()
+        )
         self._subgoals = subgoals
         return subgoals
 
     @property
-    def parent_chain(self) -> List[DBQuest]:
+    def parent_chain(self) -> List["DBQuest"]:
         """
         Return the chain of quests/motivations above this level,
         starting from the highest down to this one
         """
-        if hasattr(self, "_parent_chain") and self._parent_chain is not None:
+        if self._parent_chain is not None:
             return self._parent_chain
 
         use_session = Session.object_session(self)
@@ -550,9 +590,10 @@ class DBQuest(SQLBase, HasDBIDMixin):
         curr_item = self
         while curr_item.parent_id is not None:
             parent_item = use_session.query(DBQuest).get(curr_item.parent_id)
+            assert parent_item is not None
             parent_chain.append(parent_item)
             curr_item = parent_item
-        parent_chain = reversed(parent_chain)
+        parent_chain = list(reversed(parent_chain))
 
         self._parent_chain = parent_chain
         return parent_chain
@@ -580,17 +621,19 @@ class DBGraph(SQLBase, HasDBIDMixin):
     ID_PREFIX = "UGR"
 
     db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    graph_name = Column(String(WORLD_NAME_LENGTH_CAP), nulable=False, index=True)
+    graph_name = Column(String(WORLD_NAME_LENGTH_CAP), nullable=False, index=True)
     creator_id = Column(
-        String(ID_STRING_LENGTH), nulable=False, index=True
+        String(ID_STRING_LENGTH), nullable=False, index=True
     )  # retain the creator ID, they own this
-    file_path = Column(String(FILE_PATH_LENGTH_CAP), nulable=False)
+    file_path = Column(String(FILE_PATH_LENGTH_CAP), nullable=False)
     status = Column(Enum(DBStatus), nullable=False, index=True)
     create_timestamp = Column(Float, nullable=False)
 
-    def get_graph(self, db: EnvDB) -> OOGraph:
+    def get_graph(self, db: "EnvDB") -> OOGraph:
         """Get an OOGraph for this DBGraph, loading from file"""
+        assert self.file_path is not None
         graph_json = db.read_data_from_file(self.file_path, json_encoded=False)
+        assert isinstance(graph_json, str)
         graph = OOGraph.from_json(graph_json)
         return graph
 
@@ -627,13 +670,13 @@ class EnvDB(BaseDB):
         without needing repeated queries
         """
         # TODO we can use the cache in more of the core DB functions
-        all_rooms = self.find_rooms()
-        all_agents = self.find_agents()
-        all_objects = self.find_objects()
-        all_nodes = all_rooms + all_agents + all_nodes
-        all_node_edges = self.get_edges()
-        all_text_edges = self.get_text_edges()
-        all_entities = all_nodes + all_node_edges + all_text_edges
+        all_rooms: List[Any] = self.find_rooms()
+        all_agents: List[Any] = self.find_agents()
+        all_objects: List[Any] = self.find_objects()
+        all_nodes: List[Any] = all_rooms + all_agents + all_nodes
+        all_node_edges: List[Any] = self.get_edges()
+        all_text_edges: List[Any] = self.get_text_edges()
+        all_entities: List[Any] = all_nodes + all_node_edges + all_text_edges
         self._cache = {
             "rooms": {r.db_id: r for r in all_rooms},
             "nodes": {a.db_id: a for a in all_agents},
@@ -650,7 +693,8 @@ class EnvDB(BaseDB):
 
         # manually link the attributes in a single pass
         all_attributes = self.get_attributes()
-        for attribute in attributes:
+        for attribute in all_attributes:
+            assert attribute.target_id is not None
             self._cache["all"][attribute.target_id]._attributes.append(attribute)
 
     def _create_name_key(
@@ -661,7 +705,7 @@ class EnvDB(BaseDB):
         """Idempotently create a name key for the given class"""
         with Session(self.engine) as session:
             db_id = KeyClass.get_id()
-            name_key = KeyClass(
+            name_key = KeyClass(  # type: ignore
                 db_id=db_id,
                 name=name,
                 status=DBStatus.REVIEW,
@@ -680,7 +724,7 @@ class EnvDB(BaseDB):
         status: Optional[DBStatus] = None,
         split: Optional[DBSplitType] = None,
     ) -> DBNameKey:
-        """Get a specific agent name, assert that it exists"""
+        """Get a specific name key, assert that it exists"""
         assert (
             name is not None or db_id is not None
         ), "Must provide one of name or db_id"
@@ -701,11 +745,38 @@ class EnvDB(BaseDB):
             session.expunge_all()
             return db_name_key
 
+    def _find_name_keys(
+        self,
+        KeyClass: Type[DBNameKey],
+        name_substring: Optional[str] = None,
+        status: Optional[DBStatus] = None,
+        split: Optional[DBSplitType] = None,
+    ) -> List[DBNameKey]:
+        """Find all matching name keys"""
+        with Session(self.engine) as session:
+            if name_substring is None and status is None and split is None:
+                # Empty query
+                name_keys = session.query(KeyClass).all()
+                session.expunge_all()
+                return name_keys
+            stmt = select(KeyClass)
+            if name_substring is not None:
+                stmt = stmt.where(KeyClass.name.like(f"%{name_substring}%"))
+            if status is not None:
+                stmt = stmt.where(KeyClass.status == status)
+            if split is not None:
+                stmt = stmt.where(KeyClass.split == split)
+
+            name_keys = session.query(stmt).all()
+            session.expunge_all()
+            return name_keys
+
     def _resolve_id_to_db_elem(
         self,
         db_id: str,
     ) -> DBElem:
         """Query for the correct DBElem given the provided db_id"""
+        TargetClass: Type[DBElem]
         if DBAgent.is_id(db_id):
             TargetClass = DBAgent
             stmt = select(DBAgent)
@@ -739,6 +810,23 @@ class EnvDB(BaseDB):
     def create_agent_name(self, name: str) -> str:
         """Create a new agent name in the database"""
         return self._create_name_key(DBAgentName, name)
+
+    def find_agent_names(
+        self,
+        name_substring: Optional[str] = None,
+        status: Optional[DBStatus] = None,
+        split: Optional[DBSplitType] = None,
+    ) -> List[DBAgentName]:
+        """Find all matching agent name keys"""
+        return [
+            cast(DBAgentName, a_name)
+            for a_name in self._find_name_keys(
+                KeyClass=DBAgentName,
+                name_substring=name_substring,
+                status=status,
+                split=split,
+            )
+        ]
 
     def get_agent_name(
         self,
@@ -779,7 +867,7 @@ class EnvDB(BaseDB):
         creator_id: Optional[str] = None,
     ) -> str:
         """Create this agent, making an agent name first if required"""
-        base_id = self.create_agent_name(base_name, creator_id)
+        base_id = self.create_agent_name(base_name)
         with Session(self.engine) as session:
             db_id = DBAgent.get_id()
             agent = DBAgent(
@@ -819,6 +907,15 @@ class EnvDB(BaseDB):
         creator_id: Optional[str] = None,
     ) -> List[DBAgent]:
         """Return all agents matching the given parameters"""
+        # Empty query first
+        query_args = locals().copy()
+        if len([filter(lambda x: x is not None, query_args)]) == 1:
+            # Only self argument
+            with Session(self.engine) as session:
+                agents = session.query(DBAgent).all()
+                session.expunge_all()
+                return agents
+
         # Construct query
         stmt = select(DBAgent)
         if base_id is not None:
@@ -877,9 +974,27 @@ class EnvDB(BaseDB):
             ),
         )
 
+    def find_object_names(
+        self,
+        name_substring: Optional[str] = None,
+        status: Optional[DBStatus] = None,
+        split: Optional[DBSplitType] = None,
+    ) -> List[DBObjectName]:
+        """Find all matching agent name keys"""
+        return [
+            cast(DBObjectName, o_name)
+            for o_name in self._find_name_keys(
+                KeyClass=DBObjectName,
+                name_substring=name_substring,
+                status=status,
+                split=split,
+            )
+        ]
+
     def create_object_entry(
         self,
         name: str,
+        base_name: str,
         physical_description: str,
         is_container: float,
         is_drink: float,
@@ -898,7 +1013,7 @@ class EnvDB(BaseDB):
         creator_id: Optional[str] = None,
     ) -> str:
         """Create a new object, making a object_name first if required"""
-        base_id = self.create_object_name(base_name, creator_id)
+        base_id = self.create_object_name(base_name)
         with Session(self.engine) as session:
             db_id = DBObject.get_id()
             agent = DBObject(
@@ -947,6 +1062,15 @@ class EnvDB(BaseDB):
         creator_id: Optional[str] = None,
     ) -> List["DBObject"]:
         """Return all objects matching the given parameters"""
+        # Empty query first
+        query_args = locals().copy()
+        if len([filter(lambda x: x is not None, query_args)]) == 1:
+            # Only self argument
+            with Session(self.engine) as session:
+                objects = session.query(DBObject).all()
+                session.expunge_all()
+                return objects
+
         FLOAT_TRUE_THRESHOLD = 0.5
         # Construct query
         stmt = select(DBObject)
@@ -1039,9 +1163,27 @@ class EnvDB(BaseDB):
             ),
         )
 
+    def find_room_names(
+        self,
+        name_substring: Optional[str] = None,
+        status: Optional[DBStatus] = None,
+        split: Optional[DBSplitType] = None,
+    ) -> List[DBRoomName]:
+        """Find all matching agent name keys"""
+        return [
+            cast(DBRoomName, r_name)
+            for r_name in self._find_name_keys(
+                KeyClass=DBRoomName,
+                name_substring=name_substring,
+                status=status,
+                split=split,
+            )
+        ]
+
     def create_room_entry(
         self,
         name: str,
+        base_name: str,
         description: str,
         backstory: str,
         size: Optional[int] = None,
@@ -1051,10 +1193,10 @@ class EnvDB(BaseDB):
         creator_id: Optional[str] = None,
     ) -> str:
         """Create a new room, making a room name first if required"""
-        base_id = self.create_object_name(base_name, creator_id)
+        base_id = self.create_object_name(base_name)
         with Session(self.engine) as session:
-            db_id = DBObject.get_id()
-            agent = DBObject(
+            db_id = DBRoom.get_id()
+            room = DBRoom(
                 db_id=db_id,
                 base_id=base_id,
                 status=status,
@@ -1067,7 +1209,7 @@ class EnvDB(BaseDB):
                 indoor_status=indoor_status,
                 rarity=rarity,
             )
-            session.add(agent)
+            session.add(room)
             session.flush()
             session.commit()
         return db_id
@@ -1084,6 +1226,15 @@ class EnvDB(BaseDB):
         creator_id: Optional[str] = None,
     ) -> List["DBRoom"]:
         """Return all rooms matching the given parameters"""
+        # Empty query first
+        query_args = locals().copy()
+        if len([filter(lambda x: x is not None, query_args)]) == 1:
+            # Only self argument
+            with Session(self.engine) as session:
+                rooms = session.query(DBRoom).all()
+                session.expunge_all()
+                return rooms
+
         # Construct query
         stmt = select(DBRoom)
         if base_id is not None:
@@ -1150,6 +1301,15 @@ class EnvDB(BaseDB):
         creator_id: Optional[str] = None,
     ) -> List[DBNodeAttribute]:
         """Return the list of all attributes stored that match the given filters"""
+        # Empty query first
+        query_args = locals().copy()
+        if len([filter(lambda x: x is not None, query_args)]) == 1:
+            # Only self argument
+            with Session(self.engine) as session:
+                attributes = session.query(DBNodeAttribute).all()
+                session.expunge_all()
+                return attributes
+
         # Construct query
         stmt = select(DBNodeAttribute)
         if target_id is not None:
@@ -1176,7 +1336,7 @@ class EnvDB(BaseDB):
         self,
         parent_id: str,
         child_id: str,
-        edge_type: str,
+        edge_type: DBEdgeType,
         edge_label: Optional[str] = None,
         status: DBStatus = DBStatus.REVIEW,
         creator_id: Optional[str] = None,
@@ -1203,12 +1363,21 @@ class EnvDB(BaseDB):
         self,
         parent_id: Optional[str] = None,
         child_id: Optional[str] = None,
-        edge_type: Optional[str] = None,
+        edge_type: Optional[DBEdgeType] = None,
         status: Optional[DBStatus] = None,
         creator_id: Optional[str] = None,
-        min_strength: Optional[float] = 0,
+        min_strength: Optional[float] = None,
     ) -> List[DBEdge]:
         """Return all edges matching the given parameters"""
+        # Empty query first
+        query_args = locals().copy()
+        if len([filter(lambda x: x is not None, query_args)]) == 1:
+            # Only self argument
+            with Session(self.engine) as session:
+                edges = session.query(DBEdge).all()
+                session.expunge_all()
+                return edges
+
         # Construct query
         stmt = select(DBEdge)
         if parent_id is not None:
@@ -1247,7 +1416,7 @@ class EnvDB(BaseDB):
         self,
         parent_id: str,
         child_text: str,
-        edge_type: str,
+        edge_type: DBEdgeType,
         edge_label: Optional[str] = None,
         status: DBStatus = DBStatus.REVIEW,
         creator_id: Optional[str] = None,
@@ -1274,11 +1443,20 @@ class EnvDB(BaseDB):
         self,
         parent_id: Optional[str] = None,
         child_text: Optional[str] = None,
-        edge_type: Optional[str] = None,
+        edge_type: Optional[DBEdgeType] = None,
         status: Optional[DBStatus] = None,
         creator_id: Optional[str] = None,
     ) -> List[DBTextEdge]:
         """Return all text edges matching the given parameters"""
+        # Empty query first
+        query_args = locals().copy()
+        if len([filter(lambda x: x is not None, query_args)]) == 1:
+            # Only self argument
+            with Session(self.engine) as session:
+                text_edges = session.query(DBTextEdge).all()
+                session.expunge_all()
+                return text_edges
+
         # Construct query
         stmt = select(DBTextEdge)
         if parent_id is not None:
@@ -1336,6 +1514,15 @@ class EnvDB(BaseDB):
         status: Optional[DBStatus] = None,
     ) -> List[DBEdit]:
         """Return all edits matching the given parameters"""
+        # Empty query first
+        query_args = locals().copy()
+        if len([filter(lambda x: x is not None, query_args)]) == 1:
+            # Only self argument
+            with Session(self.engine) as session:
+                edits = session.query(DBEdit).all()
+                session.expunge_all()
+                return edits
+
         # Construct query
         stmt = select(DBEdit)
         if editor_id is not None:
@@ -1371,6 +1558,7 @@ class EnvDB(BaseDB):
             db_id = DBFlag.get_id()
             flag = DBFlag(
                 db_id=db_id,
+                user_id=user_id,
                 flag_type=flag_type,
                 target_id=target_id,
                 reason=reason,
@@ -1392,6 +1580,15 @@ class EnvDB(BaseDB):
         status: Optional[DBStatus] = None,
     ) -> List[DBFlag]:
         """Return all flags matching the given parameters"""
+        # Empty query first
+        query_args = locals().copy()
+        if len([filter(lambda x: x is not None, query_args)]) == 1:
+            # Only self argument
+            with Session(self.engine) as session:
+                flags = session.query(DBFlag).all()
+                session.expunge_all()
+                return flags
+
         # Construct query
         stmt = select(DBFlag)
         if user_id is not None:
@@ -1416,8 +1613,9 @@ class EnvDB(BaseDB):
         self,
         agent_id: str,
         text_motivation: str,
-        target_type: str,
+        target_type: DBQuestTargetType,
         target: str,
+        origin_filepath: Optional[str] = None,
         parent_id: Optional[str] = None,
         status: DBStatus = DBStatus.REVIEW,
         creator_id: Optional[str] = None,
@@ -1449,12 +1647,21 @@ class EnvDB(BaseDB):
         self,
         agent_id: Optional[str] = None,
         text_motivation: Optional[str] = None,
-        target_type: Optional[str] = None,
+        target_type: Optional[DBQuestTargetType] = None,
         target: Optional[str] = None,
         status: Optional[DBStatus] = None,
         creator_id: Optional[str] = None,
     ) -> List[DBQuest]:
         """Return all text edges matching the given parameters"""
+        # Empty query first
+        query_args = locals().copy()
+        if len([filter(lambda x: x is not None, query_args)]) == 1:
+            # Only self argument
+            with Session(self.engine) as session:
+                quests = session.query(DBQuest).all()
+                session.expunge_all()
+                return quests
+
         # Construct query
         stmt = select(DBQuest)
         if agent_id is not None:
@@ -1465,8 +1672,6 @@ class EnvDB(BaseDB):
             stmt = stmt.where(DBQuest.target_type == target_type)
         if target is not None:
             stmt = stmt.where(DBQuest.target == target)
-        if new_value is not None:
-            stmt = stmt.where(DBQuest.new_value == new_value)
         if status is not None:
             stmt = stmt.where(DBQuest.status == status)
         if creator_id is not None:
@@ -1482,17 +1687,13 @@ class EnvDB(BaseDB):
     def save_graph(self, graph: "OOGraph", creator_id: str) -> str:
         """Save this graph to a file for the given user"""
         # Find or assign a db_id for this graph
-        if hasattr(graph, "db_id") and graph.db_id is not None:
+        if graph.db_id is not None:
             db_id = graph.db_id
         else:
             db_id = DBGraph.get_id()
             graph.db_id = db_id
 
         dump_file_path = os.path.join(FILE_PATH_KEY, GRAPH_PATH_KEY, f"{db_id}.json")
-
-        for graph_info in graphs:
-            graph_full_path = os.path.join(graph_dump_root, graph_info["filename"])
-            self.write_data_to_file(graph_info["graph_json"], graph_full_path)
 
         # Create or update the graph
         with Session(self.engine) as session:
@@ -1527,9 +1728,9 @@ class EnvDB(BaseDB):
     def load_graph(self, graph_id: str) -> DBGraph:
         """Return the queried graph, raising if nonexistent"""
         with Session(self.engine) as session:
-            db_graph = session.query(DBGraph).get(db_id)
+            db_graph = session.query(DBGraph).get(graph_id)
             if db_graph is None:
-                raise KeyError(f"Graph key {db_id} didn't exist!")
+                raise KeyError(f"Graph key {graph_id} didn't exist!")
             session.expunge_all()
             return db_graph
 
@@ -1540,6 +1741,15 @@ class EnvDB(BaseDB):
         # ... TODO can add other search attributes?
     ) -> List[DBGraph]:
         """Return all graphs matching the provided parameters"""
+        # Empty query first
+        query_args = locals().copy()
+        if len([filter(lambda x: x is not None, query_args)]) == 1:
+            # Only self argument
+            with Session(self.engine) as session:
+                graphs = session.query(DBGraph).all()
+                session.expunge_all()
+                return graphs
+
         # Construct query
         stmt = select(DBGraph)
         if graph_name is not None:

@@ -10,6 +10,7 @@ from light.graph.elements.graph_nodes import (
     GraphVoidNode,
     GraphEdge,
 )
+from typing import Optional
 from light.world.utils.json_utils import GraphEncoder
 from light.world.content_loggers import RoomInteractionLogger
 
@@ -32,6 +33,7 @@ class OOGraph(object):
         self.dead_nodes = {}
         self._opt = opt
         self.title = opt.get("title", "untitled")
+        self.db_id: Optional[str] = None
 
     @staticmethod
     def from_graph(graph, start_location=None):
