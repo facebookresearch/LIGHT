@@ -156,7 +156,7 @@ class DBElem(HasDBIDMixin):
             use_session is not None
         ), "Must be in-session if not cached. Otherwise call `load_edges` first"
         stmt = select(DBTextEdge).where(DBEdge.parent_id == self.db_id)
-        text_edges = use_session.query(stmt).all()
+        text_edges = use_session.scalars(stmt).all()
         self._text_edges = text_edges
         return text_edges
 
@@ -171,7 +171,7 @@ class DBElem(HasDBIDMixin):
             use_session is not None
         ), "Must be in-session if not cached. Otherwise call `load_edges` first"
         stmt = select(DBEdge).where(DBEdge.parent_id == self.db_id)
-        node_edges = use_session.query(stmt).all()
+        node_edges = use_session.scalars(stmt).all()
         self._node_edges = node_edges
         for node_edge in node_edges:
             # Force load the children
@@ -203,7 +203,7 @@ class DBElem(HasDBIDMixin):
             use_session is not None
         ), "Must be in-session if not cached. Otherwise call `load_attributes` first"
         stmt = select(DBNodeAttribute).where(DBNodeAttribute.target_id == self.db_id)
-        attributes = use_session.query(stmt).all()
+        attributes = use_session.scalars(stmt).all()
         self._attributes = attributes
         return attributes
 
@@ -422,7 +422,7 @@ class DBEdge(DBEdgeBase, SQLBase):
         else:
             raise AssertionError("Edge type was none of Agent, room, or object")
         stmt = select(TargetClass).where(TargetClass.db_id == self.child_id)
-        child = use_session.query(stmt).one()
+        child = use_session.scalars(stmt).one()
         self._child = child
         return child
 
@@ -751,26 +751,26 @@ class EnvDB(BaseDB):
     def _find_name_keys(
         self,
         KeyClass: Type[DBNameKey],
-        name_substring: Optional[str] = None,
+        name: Optional[str] = None,
         status: Optional[DBStatus] = None,
         split: Optional[DBSplitType] = None,
     ) -> List[DBNameKey]:
         """Find all matching name keys"""
         with Session(self.engine) as session:
-            if name_substring is None and status is None and split is None:
+            if name is None and status is None and split is None:
                 # Empty query
                 name_keys = session.query(KeyClass).all()
                 session.expunge_all()
                 return name_keys
             stmt = select(KeyClass)
-            if name_substring is not None:
-                stmt = stmt.where(KeyClass.name.like(f"%{name_substring}%"))
+            if name is not None:
+                stmt = stmt.where(KeyClass.name.like(f"%{name}%"))
             if status is not None:
                 stmt = stmt.where(KeyClass.status == status)
             if split is not None:
                 stmt = stmt.where(KeyClass.split == split)
 
-            name_keys = session.query(stmt).all()
+            name_keys = session.scalars(stmt).all()
             session.expunge_all()
             return name_keys
 
@@ -816,7 +816,7 @@ class EnvDB(BaseDB):
 
     def find_agent_names(
         self,
-        name_substring: Optional[str] = None,
+        name: Optional[str] = None,
         status: Optional[DBStatus] = None,
         split: Optional[DBSplitType] = None,
     ) -> List[DBAgentName]:
@@ -825,7 +825,7 @@ class EnvDB(BaseDB):
             cast(DBAgentName, a_name)
             for a_name in self._find_name_keys(
                 KeyClass=DBAgentName,
-                name_substring=name_substring,
+                name=name,
                 status=status,
                 split=split,
             )
@@ -913,7 +913,8 @@ class EnvDB(BaseDB):
         """Return all agents matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
-        if len([filter(lambda x: x is not None, query_args)]) == 1:
+        filtered_args = list(filter(lambda x: x is not None, query_args.values()))
+        if len(filtered_args) == 1:
             # Only self argument
             with Session(self.engine) as session:
                 agents = session.query(DBAgent).all()
@@ -925,11 +926,13 @@ class EnvDB(BaseDB):
         if base_id is not None:
             stmt = stmt.where(DBAgent.base_id == base_id)
         if name is not None:
-            stmt = stmt.where(DBAgent.name == name)
+            stmt = stmt.where(DBAgent.name.like(f"%{name}%"))
         if persona is not None:
-            stmt = stmt.where(DBAgent.persona == persona)
+            stmt = stmt.where(DBAgent.persona.like(f"%{persona}%"))
         if physical_description is not None:
-            stmt = stmt.where(DBAgent.physical_description == physical_description)
+            stmt = stmt.where(
+                DBAgent.physical_description.like(f"%{physical_description}%")
+            )
         if name_prefix is not None:
             stmt = stmt.where(DBAgent.name_prefix == name_prefix)
         if is_plural is not None:
@@ -938,14 +941,13 @@ class EnvDB(BaseDB):
             stmt = stmt.where(DBAgent.status == status)
         if split is not None:
             # Need to join up to parent for split query
-            stmt = stmt.select_from(join(DBAgent, DBAgentName, DBAgent.base_id)).where(
-                DBAgentName.split == split
-            )
+            stmt = stmt.where(DBAgent.base_name.has(split=split))
         if creator_id is not None:
             stmt = stmt.where(DBAgent.creator_id == creator_id)
+
         # Do query
         with Session(self.engine) as session:
-            agents = session.query(stmt).all()
+            agents = session.scalars(stmt).all()
             session.expunge_all()
             return agents
 
@@ -980,7 +982,7 @@ class EnvDB(BaseDB):
 
     def find_object_names(
         self,
-        name_substring: Optional[str] = None,
+        name: Optional[str] = None,
         status: Optional[DBStatus] = None,
         split: Optional[DBSplitType] = None,
     ) -> List[DBObjectName]:
@@ -989,7 +991,7 @@ class EnvDB(BaseDB):
             cast(DBObjectName, o_name)
             for o_name in self._find_name_keys(
                 KeyClass=DBObjectName,
-                name_substring=name_substring,
+                name=name,
                 status=status,
                 split=split,
             )
@@ -1007,7 +1009,7 @@ class EnvDB(BaseDB):
         is_surface: float,
         is_wearable: float,
         is_weapon: float,
-        name_prefix: Optional[str] = None,
+        name_prefix: str = "a",
         is_plural: Optional[bool] = None,
         size: Optional[int] = None,
         contain_size: Optional[int] = None,
@@ -1068,7 +1070,8 @@ class EnvDB(BaseDB):
         """Return all objects matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
-        if len([filter(lambda x: x is not None, query_args)]) == 1:
+        filtered_args = list(filter(lambda x: x is not None, query_args.values()))
+        if len(filtered_args) == 1:
             # Only self argument
             with Session(self.engine) as session:
                 objects = session.query(DBObject).all()
@@ -1079,11 +1082,13 @@ class EnvDB(BaseDB):
         # Construct query
         stmt = select(DBObject)
         if base_id is not None:
-            stmt = stmt.where(DBObject.base_id == base_id)
+            stmt = stmt.where(DBObject.base_id.like(f"%{base_id}%"))
         if name is not None:
-            stmt = stmt.where(DBObject.name == name)
+            stmt = stmt.where(DBObject.name.like(f"%{name}%"))
         if physical_description is not None:
-            stmt = stmt.where(DBObject.physical_description == physical_description)
+            stmt = stmt.where(
+                DBObject.physical_description.like(f"%{physical_description}%")
+            )
         if is_container is not None:
             if is_container:
                 stmt = stmt.where(DBObject.is_container >= FLOAT_TRUE_THRESHOLD)
@@ -1127,14 +1132,12 @@ class EnvDB(BaseDB):
             stmt = stmt.where(DBObject.status == status)
         if split is not None:
             # Need to join up to parent for split query
-            stmt = stmt.select_from(
-                join(DBObject, DBObjectName, DBObject.base_id)
-            ).where(DBObjectName.split == split)
+            stmt = stmt.where(DBObject.base_name.has(split=split))
         if creator_id is not None:
             stmt = stmt.where(DBObject.creator_id == creator_id)
         # Do query
         with Session(self.engine) as session:
-            objects = session.query(stmt).all()
+            objects = session.scalars(stmt).all()
             session.expunge_all()
             return objects
 
@@ -1169,7 +1172,7 @@ class EnvDB(BaseDB):
 
     def find_room_names(
         self,
-        name_substring: Optional[str] = None,
+        name: Optional[str] = None,
         status: Optional[DBStatus] = None,
         split: Optional[DBSplitType] = None,
     ) -> List[DBRoomName]:
@@ -1178,7 +1181,7 @@ class EnvDB(BaseDB):
             cast(DBRoomName, r_name)
             for r_name in self._find_name_keys(
                 KeyClass=DBRoomName,
-                name_substring=name_substring,
+                name=name,
                 status=status,
                 split=split,
             )
@@ -1190,14 +1193,14 @@ class EnvDB(BaseDB):
         base_name: str,
         description: str,
         backstory: str,
+        indoor_status: DBRoomInsideType = DBRoomInsideType.UNKNOWN,
         size: Optional[int] = None,
-        indoor_status: Optional[DBRoomInsideType] = None,
         rarity: Optional[float] = None,
         status: DBStatus = DBStatus.REVIEW,
         creator_id: Optional[str] = None,
     ) -> str:
         """Create a new room, making a room name first if required"""
-        base_id = self.create_object_name(base_name)
+        base_id = self.create_room_name(base_name)
         with Session(self.engine) as session:
             db_id = DBRoom.get_id()
             room = DBRoom(
@@ -1232,7 +1235,8 @@ class EnvDB(BaseDB):
         """Return all rooms matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
-        if len([filter(lambda x: x is not None, query_args)]) == 1:
+        filtered_args = list(filter(lambda x: x is not None, query_args.values()))
+        if len(filtered_args) == 1:
             # Only self argument
             with Session(self.engine) as session:
                 rooms = session.query(DBRoom).all()
@@ -1244,25 +1248,23 @@ class EnvDB(BaseDB):
         if base_id is not None:
             stmt = stmt.where(DBRoom.base_id == base_id)
         if name is not None:
-            stmt = stmt.where(DBRoom.name == name)
+            stmt = stmt.where(DBRoom.name.like(f"%{name}%"))
         if description is not None:
-            stmt = stmt.where(DBRoom.description == description)
+            stmt = stmt.where(DBRoom.description.like(f"%{description}%"))
         if backstory is not None:
-            stmt = stmt.where(DBRoom.backstory == backstory)
+            stmt = stmt.where(DBRoom.backstory.like(f"%{backstory}%"))
         if indoor_status is not None:
             stmt = stmt.where(DBRoom.indoor_status == indoor_status)
         if status is not None:
             stmt = stmt.where(DBRoom.status == status)
         if split is not None:
             # Need to join up to parent for split query
-            stmt = stmt.select_from(join(DBRoom, DBRoomName, DBRoom.base_id)).where(
-                DBRoomName.split == split
-            )
+            stmt = stmt.where(DBRoom.base_name.has(split=split))
         if creator_id is not None:
             stmt = stmt.where(DBRoom.creator_id == creator_id)
         # Do query
         with Session(self.engine) as session:
-            rooms = session.query(stmt).all()
+            rooms = session.scalars(stmt).all()
             session.expunge_all()
             return rooms
 
@@ -1307,7 +1309,8 @@ class EnvDB(BaseDB):
         """Return the list of all attributes stored that match the given filters"""
         # Empty query first
         query_args = locals().copy()
-        if len([filter(lambda x: x is not None, query_args)]) == 1:
+        filtered_args = list(filter(lambda x: x is not None, query_args.values()))
+        if len(filtered_args) == 1:
             # Only self argument
             with Session(self.engine) as session:
                 attributes = session.query(DBNodeAttribute).all()
@@ -1330,7 +1333,7 @@ class EnvDB(BaseDB):
             stmt = stmt.where(DBNodeAttribute.creator_id == creator_id)
         # Do query
         with Session(self.engine) as session:
-            attributes = session.query(stmt).all()
+            attributes = session.scalars(stmt).all()
             session.expunge_all()
             return attributes
 
@@ -1375,7 +1378,8 @@ class EnvDB(BaseDB):
         """Return all edges matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
-        if len([filter(lambda x: x is not None, query_args)]) == 1:
+        filtered_args = list(filter(lambda x: x is not None, query_args.values()))
+        if len(filtered_args) == 1:
             # Only self argument
             with Session(self.engine) as session:
                 edges = session.query(DBEdge).all()
@@ -1396,7 +1400,7 @@ class EnvDB(BaseDB):
             stmt = stmt.where(DBEdge.creator_id == creator_id)
         # Do query
         with Session(self.engine) as session:
-            edges = session.query(stmt).all()
+            edges = session.scalars(stmt).all()
             if min_strength is not None:
                 # Need to post-filter out things below the min strength, where
                 # strength is defined as the proportion of edge occurrences to
@@ -1454,7 +1458,8 @@ class EnvDB(BaseDB):
         """Return all text edges matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
-        if len([filter(lambda x: x is not None, query_args)]) == 1:
+        filtered_args = list(filter(lambda x: x is not None, query_args.values()))
+        if len(filtered_args) == 1:
             # Only self argument
             with Session(self.engine) as session:
                 text_edges = session.query(DBTextEdge).all()
@@ -1475,7 +1480,7 @@ class EnvDB(BaseDB):
             stmt = stmt.where(DBTextEdge.creator_id == creator_id)
         # Do query
         with Session(self.engine) as session:
-            edges = session.query(stmt).all()
+            edges = session.scalars(stmt).all()
             session.expunge_all()
             return edges
 
@@ -1520,7 +1525,8 @@ class EnvDB(BaseDB):
         """Return all edits matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
-        if len([filter(lambda x: x is not None, query_args)]) == 1:
+        filtered_args = list(filter(lambda x: x is not None, query_args.values()))
+        if len(filtered_args) == 1:
             # Only self argument
             with Session(self.engine) as session:
                 edits = session.query(DBEdit).all()
@@ -1543,7 +1549,7 @@ class EnvDB(BaseDB):
             stmt = stmt.where(DBEdit.status == status)
         # Do query
         with Session(self.engine) as session:
-            edits = session.query(stmt).all()
+            edits = session.scalars(stmt).all()
             session.expunge_all()
             return edits
 
@@ -1586,7 +1592,8 @@ class EnvDB(BaseDB):
         """Return all flags matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
-        if len([filter(lambda x: x is not None, query_args)]) == 1:
+        filtered_args = list(filter(lambda x: x is not None, query_args.values()))
+        if len(filtered_args) == 1:
             # Only self argument
             with Session(self.engine) as session:
                 flags = session.query(DBFlag).all()
@@ -1607,7 +1614,7 @@ class EnvDB(BaseDB):
             stmt = stmt.where(DBFlag.status == status)
         # Do query
         with Session(self.engine) as session:
-            flags = session.query(stmt).all()
+            flags = session.scalars(stmt).all()
             session.expunge_all()
             return flags
 
@@ -1659,7 +1666,8 @@ class EnvDB(BaseDB):
         """Return all text edges matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
-        if len([filter(lambda x: x is not None, query_args)]) == 1:
+        filtered_args = list(filter(lambda x: x is not None, query_args.values()))
+        if len(filtered_args) == 1:
             # Only self argument
             with Session(self.engine) as session:
                 quests = session.query(DBQuest).all()
@@ -1682,7 +1690,7 @@ class EnvDB(BaseDB):
             stmt = stmt.where(DBQuest.creator_id == creator_id)
         # Do query
         with Session(self.engine) as session:
-            quests = session.query(stmt).all()
+            quests = session.scalars(stmt).all()
             session.expunge_all()
             return quests
 
@@ -1747,7 +1755,8 @@ class EnvDB(BaseDB):
         """Return all graphs matching the provided parameters"""
         # Empty query first
         query_args = locals().copy()
-        if len([filter(lambda x: x is not None, query_args)]) == 1:
+        filtered_args = list(filter(lambda x: x is not None, query_args.values()))
+        if len(filtered_args) == 1:
             # Only self argument
             with Session(self.engine) as session:
                 graphs = session.query(DBGraph).all()
@@ -1762,6 +1771,6 @@ class EnvDB(BaseDB):
             stmt = stmt.where(DBGraph.creator_id == creator_id)
         # Do query
         with Session(self.engine) as session:
-            db_graphs = session.query(stmt).all()
+            db_graphs = session.scalars(stmt).all()
             session.expunge_all()
             return db_graphs
