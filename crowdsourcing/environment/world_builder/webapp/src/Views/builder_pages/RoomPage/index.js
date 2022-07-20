@@ -3,17 +3,22 @@ import React, {useState, useEffect} from 'react';
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
-import {setLoading} from "../../../features/loading/loading-slice";
+//LOADING
+import {setIsLoading} from "../../../features/loading/loading-slice";
+//ERROR
 import {setShowError, setErrorMessage} from "../../../features/errors/errors-slice";
-import { updateSelectedWorld, setWorldDraft } from "../../../features/playerWorld/playerworld-slice.ts";
-import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
-import { updateObjects} from "../../../features/objects/objects-slice.ts";
-import { updateCharacters } from "../../../features/characters/characters-slice.ts";
+//NAVIGATION
 import {updateTaskRouterHistory} from '../../../features/taskRouter/taskrouter-slice';
+//WORLD
+import { updateSelectedWorld, setWorldDraft } from "../../../features/playerWorld/playerworld-slice.ts";
+//ROOMS
+import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
+//OBJECTS
+import { updateObjects} from "../../../features/objects/objects-slice.ts";
+//CHARACTERS
+import { updateCharacters } from "../../../features/characters/characters-slice.ts";
 /* STYLES */
 import './styles.css';
-/* BOOTSTRAP COMPONENTS */
-import Button from "react-bootstrap/Button"
 //LAYOUT
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -24,6 +29,7 @@ import TextButton from "../../../components/world_builder/Buttons/TextButton";
 import ButtonToggle from "../../../components/world_builder/FormFields/ButtonToggle";
 import Slider from "../../../components/world_builder/FormFields/Slider";
 import GenerateForms from "../../../components/world_builder/FormFields/GenerateForms";
+import GenerateButton from "../../../components/world_builder/Buttons/GenerateButton";
 import BreadCrumbs from "../../../components/world_builder/BreadCrumbs";
 import TypeAheadTokenizerForm from "../../../components/world_builder/FormFields/TypeAheadTokenizer";
 
@@ -46,7 +52,9 @@ const RoomPage = ({
     //REACT ROUTER
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
-    /* ------ REDUX STATE ------ */
+/* ------ REDUX STATE ------ */
+    //LOADING
+    const isLoading = useAppSelector((state) => state.loading.isLoading);
     //TASKROUTER
     const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
     const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
@@ -61,6 +69,20 @@ const RoomPage = ({
     //CHARACTERS
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     /* ------ REDUX ACTIONS ------ */
+    //LOADING
+    const startLoading = () =>{
+        dispatch(setIsLoading(true));
+    };
+    const stopLoading = () =>{
+        dispatch(setIsLoading(false));
+    };
+    //ERROR
+    const showError = ()=>{
+        dispatch(setShowError(true));
+    };
+    const setError = (errorMessage)=>{
+        dispatch(setErrorMessage(errorMessage));
+    };
     //WORLD DRAFT
     const updateWorldDraft = ()=>{
         dispatch(setWorldDraft(selectedWorld));
@@ -68,9 +90,7 @@ const RoomPage = ({
     //NAVIGATION
     const backStep = ()=>{
         let previousLoc =  taskRouterHistory[taskRouterHistory.length-1]
-        console.log("history:  ", taskRouterHistory)
         let updatedHistory = taskRouterHistory.slice(0, taskRouterHistory.length-1);
-        console.log("PREVIOUS LOC BACKSTEP:  ", previousLoc)
         builderRouterNavigate(previousLoc)
         dispatch(updateTaskRouterHistory(updatedHistory));
     };
@@ -78,10 +98,7 @@ const RoomPage = ({
     //Adds more than one node to currently selected room
     const addContent = (roomId, newNodes)=>{
         let {agents, objects, nodes } = selectedWorld;
-        console.log("ROOM ID:  ", roomId)
-        let unupdatedRoomData = nodes[roomId]
-        console.log("ROOM DATA:  ", unupdatedRoomData)
-        let unupdatedWorld = selectedWorld;
+        let unupdatedRoomData = nodes[roomId];
         let updatedNodes = {...nodes};
         let newObjects =[...agents];
         let newAgents = [...objects]
@@ -125,18 +142,17 @@ const RoomPage = ({
     const updateRoom = (id, update) =>{
         let unupdatedWorld = selectedWorld;
         let {nodes } = unupdatedWorld;
-        let updatedNodes = {...nodes, [id]:update}
-        let updatedWorld ={...selectedWorld, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
-    }
+        let updatedNodes = {...nodes, [id]:update};
+        let updatedWorld ={...selectedWorld, nodes:updatedNodes};
+        dispatch(updateSelectedWorld(updatedWorld));
+    };
 
     const deleteSelectedRoom = ()=>{
         let updatedWorld = containedNodesRemover(roomId)
-        console.log("POST DELETION WORLD", updatedWorld)
         let updatedRooms = worldRooms.filter(room => roomId !== room);
         dispatch(setWorldDraft({...updatedWorld, rooms: updatedRooms}));
-        backStep()
-    }
+        backStep();
+    };
 
     //CHARACTERS
     // Adds new Character to selectedWorld state
@@ -243,7 +259,6 @@ const RoomPage = ({
     const [roomId, setRoomId] = useState(null);
     const [roomName, setRoomName] = useState("");
     const [roomDesc, setRoomDesc] = useState("");
-
     const [roomCharacters, setRoomCharacters] = useState([]);
     const [roomObjects, setRoomObjects] = useState([]);
     const [roomIsIndoors, setRoomIsIndoors]= useState(null);
@@ -293,11 +308,8 @@ const RoomPage = ({
             let updatedNodes = {...nodes};
             delete updatedNodes[removedNodeId];
             updatedWorld = {...updatedWorld, nodes: updatedNodes};
-            console.log("updated post delete world", updatedWorld);
             dispatch(updateSelectedWorld(updatedWorld));
         });
-        //
-        console.log("UPDATED WORLD POST DIG AND DELETE",  updatedWorld)
         return updatedWorld;
     };
     // worldNodeSorter - Sorts the the different types of nodes in a world into arrays
@@ -309,7 +321,6 @@ const RoomPage = ({
         const WorldNodeKeys = Object.keys(nodes);
         WorldNodeKeys.map((nodeKey)=>{
             let WorldNode = nodes[nodeKey];
-            console.log("WORLD NODE:  ", WorldNode)
             if(WorldNode){
                 if(WorldNode.classes){
                     let NodeClass = WorldNode.classes[0]
@@ -329,11 +340,10 @@ const RoomPage = ({
                 }
             }
         });
-        console.log(" NODE BREAKDOWN COR:  ", CharacterNodes, ObjectNodes, RoomNodes)
         dispatch(updateRooms(RoomNodes));
         dispatch(updateObjects(ObjectNodes));
         dispatch(updateCharacters(CharacterNodes));
-    }
+    };
 
     // Handler
     const WorldSaveHandler = ()=>{
@@ -342,22 +352,23 @@ const RoomPage = ({
         dispatch(updateSelectedWorld(updatedWorld));
         dispatch(updateWorldDraft(updatedWorld));
         console.log("WORLD SAVE UPDATE:", updatedWorld);
-    }
+    };
 
     /* --- LIFE CYCLE FUNCTIONS --- */
+    //Updates currently selectedRoom any time worldDraft changes
     useEffect(()=>{
-        console.log("WORLD DRAFT IN ROOM PAGE:  ", worldDraft)
         dispatch(updateSelectedWorld(worldDraft));
-        setRoomId(currentLocation.id)
-    },[worldDraft])
+        setRoomId(currentLocation.id);
+    },[worldDraft]);
 
+    //Updates currently selectedRoom any time selectedWorld changes
     useEffect(()=>{
         if(selectedWorld){
-            console.log("SELECTED WORLD PRE SORTER:  ", selectedWorld)
-            worldNodeSorter(selectedWorld)
-        }
-    },[selectedWorld])
+            worldNodeSorter(selectedWorld);
+        };
+    },[selectedWorld]);
 
+    //Selects room based on any changes to roomId and updates currently selectedRoom anytime selectedWorld state changes
     useEffect(()=>{
         if(selectedWorld){
             let {nodes}= selectedWorld;
@@ -366,8 +377,9 @@ const RoomPage = ({
                 dispatch(selectRoom(currentRoom));
             }
         }
-    },[roomId, selectedWorld])
+    },[roomId, selectedWorld]);
 
+    //Upon any changes to selectedRoom selected fields in forms in local state will be updated by most recent selectedRoom data
     useEffect(()=>{
         if(selectedWorld){
             const {nodes} = selectedWorld;
@@ -414,127 +426,190 @@ const RoomPage = ({
                 setRoomCharacters(CharacterNodes);
             };
         };
-    }, [selectedRoom])
+    }, [selectedRoom]);
 
     //HANDLERS
+    //FORM CHANGE HANDLER
+    //RoomNameChangeHandler handles any changes to room's name
     const RoomNameChangeHandler = (e)=>{
         let updatedRoomName = e.target.value;
-        setRoomName(updatedRoomName)
-        let updatedSelectedRoom = {...selectedRoom, name: updatedRoomName }
+        setRoomName(updatedRoomName);
+        let updatedSelectedRoom = {...selectedRoom, name: updatedRoomName };
         if(selectedRoom){
             if(selectedRoom.node_id){
-                updateRoom(selectedRoom.node_id, updatedSelectedRoom)
-            }
-        }
-    }
-
+                updateRoom(selectedRoom.node_id, updatedSelectedRoom);
+            };
+        };
+    };
+    //RoomDescChangeHandler handles any changes to room's description
     const RoomDescChangeHandler = (e)=>{
         let updatedRoomDesc = e.target.value;
-        setRoomDesc(updatedRoomDesc)
-        let updatedSelectedRoom = {...selectedRoom, desc: updatedRoomDesc }
+        setRoomDesc(updatedRoomDesc);
+        let updatedSelectedRoom = {...selectedRoom, desc: updatedRoomDesc };
         if(selectedRoom){
             if(selectedRoom.node_id){
-                updateRoom(selectedRoom.node_id, updatedSelectedRoom)
-            }
-        }
-    }
+                updateRoom(selectedRoom.node_id, updatedSelectedRoom);
+            };
+        };
+    };
 
+    //RoomIsIndoorsSetter sets room to indoors
     const RoomIsIndoorsSetter = ()=>{
-        setRoomIsIndoors(true)
-        let updatedSelectedRoom = {...selectedRoom, is_indoors: true }
+        setRoomIsIndoors(true);
+        let updatedSelectedRoom = {...selectedRoom, is_indoors: true };
         if(selectedRoom){
             if(selectedRoom.node_id){
-                updateRoom(selectedRoom.node_id, updatedSelectedRoom)
-            }
-        }
-    }
+                updateRoom(selectedRoom.node_id, updatedSelectedRoom);
+            };
+        };
+    };
 
+    //RoomIsIndoorsSetter sets room to outdoors
     const RoomIsOutdoorsSetter = ()=>{
-        setRoomIsIndoors(false)
-        let updatedSelectedRoom = {...selectedRoom, is_indoors: false }
+        setRoomIsIndoors(false);
+        let updatedSelectedRoom = {...selectedRoom, is_indoors: false };
         if(selectedRoom){
             if(selectedRoom.node_id){
-                updateRoom(selectedRoom.node_id, updatedSelectedRoom)
-            }
-        }
-    }
+                updateRoom(selectedRoom.node_id, updatedSelectedRoom);
+            };
+        };
+    };
 
+    //RoomBrightnessChangeHandler handles changes to room's brightness via slider value
     const RoomBrightnessChangeHandler = (e)=>{
         let updatedRoomBrightness = e.target.value;
         setRoomBrightness(updatedRoomBrightness);
         let updatedSelectedRoom = {...selectedRoom, brightness: updatedRoomBrightness }
         if(selectedRoom){
             if(selectedRoom.node_id){
-                updateRoom(selectedRoom.node_id, updatedSelectedRoom)
-            }
-        }
-    }
+                updateRoom(selectedRoom.node_id, updatedSelectedRoom);
+            };
+        };
+    };
 
+    //RoomTemperatureChangeHandler handles changes to room's temperature via slider value
     const RoomTemperatureChangeHandler = (e)=>{
         let updatedRoomTemperature = e.target.value;
-        setRoomTemperature(updatedRoomTemperature)
-        let updatedSelectedRoom = {...selectedRoom, temperature: updatedRoomTemperature }
+        setRoomTemperature(updatedRoomTemperature);
+        let updatedSelectedRoom = {...selectedRoom, temperature: updatedRoomTemperature };
         if(selectedRoom){
             if(selectedRoom.node_id){
-                updateRoom(selectedRoom.node_id, updatedSelectedRoom)
-            }
-        }
-    }
+                updateRoom(selectedRoom.node_id, updatedSelectedRoom);
+            };
+        };
+    };
+
+    //ERROR HANDLER
+    //Shows and sets Error Message
+    const errorHandler = (err)=>{
+        setError(err);
+        showError();
+    };
+
+    //GENERATE HANDLERS
+    //Generates Characters and Objects for room
+    const generateRoomContentButtonFunction = async ()=>{
+        try{
+            const payload = await CommonSenseRoomContents();
+            const {nodeId, data} = payload;
+            addContent(nodeId, data);
+            stopLoading();
+        } catch (error) {
+            stopLoading();
+            console.log(error);
+            errorHandler(error);
+        };
+    };
+
+    const generateRoomDescButtonFunction = async ()=>{
+        try{
+            const payload = await CommonSenseDescribeRoom();
+            const {nodeId, data} = payload;
+            const updatedRoom = {...selectedRoom, desc:data};
+            updateRoom(nodeId, updatedRoom);
+            stopLoading();
+        } catch (error) {
+            stopLoading();
+            console.log(error);
+            errorHandler(error);
+        };
+    };
 
 
     /* COMMON SENSE API INTERACTIONS */
-
-    // COMMON SENSE DESCRIBE ROOM FUNCTION
-    const CommonSenseDescribeRoom = ()=>{
-        let target_room = selectedRoom['node_id'];
-        let nodes = {};
-        nodes[target_room] = selectedRoom;
-        for (let character of worldCharacters) {
-            nodes[character['node_id']] = character;
-        }
-        for (let object of worldObjects) {
-            nodes[object['node_id']] = object;
-        }
-        let agents = worldCharacters.map(c => c['node_id']);
-        let objects = worldObjects.map(c => c['node_id']);
-        let rooms = [target_room]
-        let room_graph = {nodes, agents, objects, rooms};
-        console.log("room graph");
-        console.log(room_graph);
-        console.log("selectedRoom");
-        console.log(target_room);
-        getRoomAttributes({target_room, room_graph}).then((result) => {
+    // COMMON SENSE DESCRIBE ROOM GENERATION FUNCTION
+    const CommonSenseDescribeRoom = async ()=>{
+        try{
+            startLoading()
+            let target_room = selectedRoom['node_id'];
+            let nodes = {};
+            nodes[target_room] = selectedRoom;
+            for (let character of worldCharacters) {
+                nodes[character['node_id']] = character;
+            }
+            for (let object of worldObjects) {
+                nodes[object['node_id']] = object;
+            }
+            let agents = worldCharacters.map(c => c['node_id']);
+            let objects = worldObjects.map(c => c['node_id']);
+            let rooms = [target_room]
+            let room_graph = {nodes, agents, objects, rooms};
+            console.log("room graph");
+            console.log(room_graph);
+            console.log("selectedRoom");
+            console.log(target_room);
+            const result = await getRoomAttributes({target_room, room_graph});
             console.log("Finished describe room");
-
             console.log(result);
-        })
+            const generatedData = result.updated_item;
+            const updatedDesc = generatedData.desc;
+            const payload = {
+                nodeId: target_room,
+                data: updatedDesc
+            };
+            return payload
+        } catch (error) {
+            stopLoading()
+            errorHandler(error)
+            throw error;
+        }
     }
     // COMMON SENSE FORM FUNCTION
-    const CommonSenseRoomContents = ()=>{
-        let target_room = selectedRoom['node_id'];
-        let nodes = {};
-        nodes[target_room] = selectedRoom;
-        for (let character of worldCharacters) {
-            nodes[character['node_id']] = character;
-        }
-        for (let object of worldObjects) {
-            nodes[object['node_id']] = object;
-        }
-        let agents = worldCharacters.map(c => c['node_id']);
-        let objects = worldObjects.map(c => c['node_id']);
-        let rooms = [target_room]
-        let room_graph = {nodes, agents, objects, rooms};
-        console.log("room graph");
-        console.log(room_graph);
-        console.log("selectedRoom");
-        console.log(target_room);
-        suggestRoomContents({target_room, room_graph}).then((result) => {
+    const CommonSenseRoomContents = async ()=>{
+        try{
+            startLoading()
+            let target_room = selectedRoom['node_id'];
+            let nodes = {};
+            nodes[target_room] = selectedRoom;
+            for (let character of worldCharacters) {
+                nodes[character['node_id']] = character;
+            }
+            for (let object of worldObjects) {
+                nodes[object['node_id']] = object;
+            }
+            let agents = worldCharacters.map(c => c['node_id']);
+            let objects = worldObjects.map(c => c['node_id']);
+            let rooms = [target_room]
+            let room_graph = {nodes, agents, objects, rooms};
+            console.log("room graph");
+            console.log(room_graph);
+            console.log("selectedRoom");
+            console.log(target_room);
+            const result = await suggestRoomContents({target_room, room_graph})
             console.log("Finished Describe");
             console.log(result);
             const newItems = result.new_items;
-            addContent(target_room, newItems)
-        })
-    }
+            const payload = {
+                nodeId: target_room,
+                data: newItems
+            };
+            return payload;
+        } catch (error) {
+            stopLoading();
+            errorHandler(error);
+            throw error;
+        };
+    };
 
     //CRUMBS
     const crumbs= [...taskRouterHistory, currentLocation];
@@ -578,7 +653,15 @@ const RoomPage = ({
                             label="Room Description:"
                             value={roomDesc}
                             changeHandler={RoomDescChangeHandler}
-                            clickFunction={CommonSenseRoomContents}
+                            clickFunction={generateRoomDescButtonFunction}
+                            generateButtonLabel={"Generate Room Description"}
+                        />
+                    </Row>
+                    <Row>
+                        <GenerateButton
+                            clickFunction ={generateRoomContentButtonFunction}
+                            label= {"SUGGEST ROOM CONTENTS"}
+                            isLoading={isLoading}
                         />
                     </Row>
                     <Row>
@@ -654,6 +737,7 @@ const RoomPage = ({
                 <TextButton
                     text={selectedRoom.node_id ? "Save Changes" : "Create Object" }
                     clickFunction={updateWorldDraft}
+                    disabled={roomName.length}
                 />
               </Col>
               <Col>

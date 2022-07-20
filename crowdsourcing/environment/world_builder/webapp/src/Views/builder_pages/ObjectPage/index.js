@@ -1,13 +1,20 @@
 /* REACT */
 import React, { useState, useEffect } from 'react';
-import { useParams, useRouteMatch, useHistory } from "react-router-dom";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
+//LOADING
+import { setIsLoading} from "../../../features/loading/loading-slice.ts";
+//ERROR
+import { setShowError, setErrorMessage} from "../../../features/errors/errors-slice.ts";
+//WORLD
 import { updateSelectedWorld, setWorldDraft } from "../../../features/playerWorld/playerworld-slice.ts";
+//ROOMS
 import { updateRooms, selectRoom } from "../../../features/rooms/rooms-slice.ts";
+//OBJECTS
 import { updateObjects, selectObject } from "../../../features/objects/objects-slice.ts";
-import { updateCharacters, selectCharacter } from "../../../features/characters/characters-slice.ts";
+//CHARACTERS
+import { updateCharacters} from "../../../features/characters/characters-slice.ts";
 /* STYLES */
 import './styles.css';
 /* BOOTSTRAP COMPONENTS */
@@ -286,85 +293,109 @@ const ObjectPage = ({
             break;
           default:
             break;
-        }
-      }
-    })
-    dispatch(updateRooms(RoomNodes))
-    dispatch(updateObjects(ObjectNodes))
-    dispatch(updateCharacters(CharacterNodes))
-  }
+        };
+      };
+    });
+    dispatch(updateRooms(RoomNodes));
+    dispatch(updateObjects(ObjectNodes));
+    dispatch(updateCharacters(CharacterNodes));
+  };
 
 
 
   //HANDLERS
+  //OBJECT CHANGE HANDLERS
+  //Handles changes to selected object's name
   const ObjectNameChangeHandler = (e) => {
     let updatedObjectName = e.target.value;
-    setObjectName(updatedObjectName)
-    let updatedSelectedObject = { ...selectedObject, name: updatedObjectName }
+    setObjectName(updatedObjectName);
+    let updatedSelectedObject = { ...selectedObject, name: updatedObjectName };
     if (selectedObject) {
       if (selectedObject.node_id) {
-        updateObject(selectedObject.node_id, updatedSelectedObject)
-      }
-    }
-  }
+        updateObject(selectedObject.node_id, updatedSelectedObject);
+      };
+    };
+  };
 
+  //Handles changes to selected object's description
   const ObjectDescChangeHandler = (e) => {
     let updatedObjectDesc = e.target.value;
-    setObjectDesc(updatedObjectDesc)
+    setObjectDesc(updatedObjectDesc);
     let updatedSelectedObject = { ...selectedObject, desc: updatedObjectDesc }
     if (selectedObject) {
       if (selectedObject.node_id) {
-        updateObject(selectedObject.node_id, updatedSelectedObject)
-      }
-    }
-  }
+        updateObject(selectedObject.node_id, updatedSelectedObject);
+      };
+    };
+  };
 
+  //Handles changes to selected object's pluralized name
   const ObjectPluralNameChangeHandler = (e) => {
     let updatedObjectPluralName = e.target.value;
-    setObjectPluralName(updatedObjectPluralName)
-    let updatedSelectedObject = { ...selectedObject, plural: updatedObjectPluralName }
+    setObjectPluralName(updatedObjectPluralName);
+    let updatedSelectedObject = { ...selectedObject, plural: updatedObjectPluralName };
     if (selectedObject) {
       if (selectedObject.node_id) {
-        updateObject(selectedObject.node_id, updatedSelectedObject)
-      }
-    }
-  }
+        updateObject(selectedObject.node_id, updatedSelectedObject);
+      };
+    };
+  };
 
+  //Handles changes to selected object's prefix
   const ObjectPrefixChangeHandler = (e) => {
     let updatedObjectPrefix = e.target.value;
-    setObjectPrefix(updatedObjectPrefix)
-    let updatedSelectedObject = { ...selectedObject, prefix: updatedObjectPrefix }
+    setObjectPrefix(updatedObjectPrefix);
+    let updatedSelectedObject = { ...selectedObject, prefix: updatedObjectPrefix };
     if (selectedObject) {
       if (selectedObject.node_id) {
-        updateObject(selectedObject.node_id, updatedSelectedObject)
-      }
-    }
-  }
+        updateObject(selectedObject.node_id, updatedSelectedObject);
+      };
+    };
+  };
 
+  //Handles changes to selected object's size
   const ObjectSizeChangeHandler = (e) => {
     let updatedObjectSize = e.target.value;
     setObjectSize(updatedObjectSize);
-    let updatedSelectedObject = { ...selectedObject, size: updatedObjectSize }
+    let updatedSelectedObject = { ...selectedObject, size: updatedObjectSize };
     if (selectedObject) {
       if (selectedObject.node_id) {
-        updateObject(selectedObject.node_id, updatedSelectedObject)
-      }
-    }
-  }
+        updateObject(selectedObject.node_id, updatedSelectedObject);
+      };
+    };
+  };
 
+  //Handles changes to selected object's value
   const ObjectValueChangeHandler = (e) => {
     let updatedObjectValue = e.target.value;
-    setObjectValue(updatedObjectValue)
-    let updatedSelectedObject = { ...selectedObject, value: updatedObjectValue }
+    setObjectValue(updatedObjectValue);
+    let updatedSelectedObject = { ...selectedObject, value: updatedObjectValue };
     if (selectedObject) {
       if (selectedObject.node_id) {
-        updateObject(selectedObject.node_id, updatedSelectedObject)
-      }
+        updateObject(selectedObject.node_id, updatedSelectedObject);
+      };
+    };
+  };
+  //GENERATE HANDLERS
+  //Generates contained objects for object
+  const generateContainedObjectsButtonFunction = async ()=>{
+    try{
+        const payload = await CommonSenseObjectContents();
+        const {nodeId, data} = payload;
+        addContent(nodeId, data);
+        dispatch(setIsLoading(false));
+    } catch (error) {
+        dispatch(setIsLoading(false));
+        console.log(error);
+        dispatch(setErrorMessage(error));
+        dispatch(setShowError(true));
     }
   }
 
+
   // COMMON SENSE DESCRIBE OBJECT FUNCTION
-  const CommonSenseDescribeObject = () => {
+  const CommonSenseDescribeObject = async () => {
+    try{
     let target_room = selectedRoom['node_id'];
     let target_id = objectId;
     let nodes = {};
@@ -383,38 +414,53 @@ const ObjectPage = ({
     console.log(room_graph);
     console.log("selectedRoom");
     console.log(target_room);
-    suggestObjectDescription({ target_room, room_graph, target_id }).then((result) => {
+    const result = await suggestObjectDescription({ target_room, room_graph, target_id })
       console.log("Finished describe object");
       console.log(result);
-    })
+    } catch (error){
+        dispatch(setIsLoading(false));
+        dispatch(setErrorMessage(error));
+        dispatch(setShowError(true));
+        throw error;
+    }
   }
 
   // COMMON SENSE CONTENTS OBJECT FUNCTION
-  const CommonSenseObjectContents = () => {
-    let target_room = selectedRoom['node_id'];
-    let target_id = objectId;
-    let nodes = {};
-    nodes[target_room] = selectedRoom;
-    for (let character of worldCharacters) {
-      nodes[character['node_id']] = character;
-    }
-    for (let object of worldObjects) {
-      nodes[object['node_id']] = object;
-    }
-    let agents = worldCharacters.map(c => c['node_id']);
-    let objects = worldObjects.map(c => c['node_id']);
-    let rooms = [target_room]
-    let room_graph = { nodes, agents, objects, rooms };
-    console.log("room graph");
-    console.log(room_graph);
-    console.log("selectedRoom");
-    console.log(target_room);
-    suggestObjectContents({ target_room, room_graph, target_id }).then((result) => {
-      console.log("Finished object contents");
+  const CommonSenseObjectContents = async () => {
+    try{
+      let target_room = selectedRoom['node_id'];
+      let target_id = objectId;
+      let nodes = {};
+      nodes[target_room] = selectedRoom;
+      for (let character of worldCharacters) {
+        nodes[character['node_id']] = character;
+      }
+      for (let object of worldObjects) {
+        nodes[object['node_id']] = object;
+      }
+      let agents = worldCharacters.map(c => c['node_id']);
+      let objects = worldObjects.map(c => c['node_id']);
+      let rooms = [target_room]
+      let room_graph = { nodes, agents, objects, rooms };
+      console.log("room graph");
+      console.log(room_graph);
+      console.log("selectedRoom");
+      console.log(target_room);
+      const result = await suggestObjectContents({ target_room, room_graph, target_id })
+      console.log("Finished Describe");
       console.log(result);
       const newItems = result.new_items;
-      addContent(target_id, newItems)
-    })
+      const payload = {
+          nodeId: target_room,
+          data: newItems
+      };
+      return payload;
+    } catch (error){
+      dispatch(setIsLoading(false));
+      dispatch(setErrorMessage(error));
+      dispatch(setShowError(true));
+      throw error;
+    }
   }
 
   //CRUMBS
@@ -550,7 +596,7 @@ const ObjectPage = ({
                     value={objectDesc}
                     changeHandler={ObjectDescChangeHandler}
                     clickFunction={CommonSenseDescribeObject}
-                    generateName={"Generate Description"}
+                    generateButtonLabel={"Generate Description"}
                   />
                 </Row>
                 <Row>
@@ -567,7 +613,7 @@ const ObjectPage = ({
                   />
                 </Row>
                 <Row>
-                  <Button onClick={CommonSenseObjectContents} variant="primary">
+                  <Button onClick={generateContainedObjectsButtonFunction} variant="primary">
                     Generate Object Contents
                   </Button>
                 </Row>

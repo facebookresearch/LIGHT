@@ -50,9 +50,7 @@ const TypeaheadTokenizer = ({
 
 
     useEffect(() => {
-        console.log("TOKEN OPTIONS BEING SET:  ", tokenOptions);
         if(tokenOptions.length){
-            console.log("TOKEN OPTIONS    ", tokenOptions);
             let updatedTokenList = tokenOptions.map((tokendata, index)=>{
                 let updatedTokenData = {...tokendata}
                 if(objectWorn){
@@ -68,7 +66,6 @@ const TypeaheadTokenizer = ({
                     key: tokendata.node_id,
                     data: tokendata
                 };
-                console.log("UPDATED TOKEN:  ", updatedToken)
                 return updatedToken;
             })
             setTokenList(updatedTokenList);
@@ -77,15 +74,10 @@ const TypeaheadTokenizer = ({
 
 console.log(formLabel, tokenOptions)
 const SelectHandler = (selected)=>{
-    console.log("SELECTED:  ",selected);
     selected.map((selectedToken, index)=>{
-        console.log("selected:   ", "#", index,  selectedToken)
         const {id, data, customOption, label}= selectedToken;
-
-
         let selectedUpdate;
         if(index==(selected.length-1)){
-            console.log("TOKEN TYPE:  ", tokenType, customOption);
                 if( tokenType === 'characters'){
                     if(customOption){
                         let newCharacterTokenData = {
@@ -133,22 +125,17 @@ const SelectHandler = (selected)=>{
                             tags:[],
                             usually_npc:false
                         };
-                        console.log("NEW CHAR DATA:  ", newCharacterTokenData);
                         let newCharacterToken = {
                             key: label,
                             label: label,
                             data: newCharacterTokenData
                         };
-                        console.log("NEW CHAR TOKEN DATA:  ", newCharacterToken);
                         selectedToken= newCharacterToken;
-                        console.log("NEW CHAR UPDATE:  ", selectedUpdate);
                     }else{
                         selectedUpdate= selectedToken;
-                        console.log("NEW CHAR UPDATE:  ", selectedUpdate);
                     };
                 };
                 if( tokenType === 'objects'){
-                    console.log("OBJECTO:  ", selectedToken);
                     if(customOption){
                         let newObjectTokenData = {
                             agent:false,
@@ -189,7 +176,6 @@ const SelectHandler = (selected)=>{
                     };
                 };
             selectedUpdate= selectedToken;
-            console.log("ON TOKEN ADDITION DATA:  ", selectedUpdate);
             onTokenAddition(selectedUpdate.data);
         };
     });
@@ -211,7 +197,6 @@ const SelectHandler = (selected)=>{
             renderInput={(inputProps, props) => (
             <TypeaheadInputMulti {...inputProps} selected={selected}>
                 {selected.length ? selected.map((option, idx) => {
-                    console.log("OPTION DATA:  ",option)
                     return (
                         <Token
                             index={idx}

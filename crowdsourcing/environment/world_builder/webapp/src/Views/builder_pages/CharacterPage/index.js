@@ -674,7 +674,7 @@ const CharacterPage = ({
                                 label="Character Description:"
                                 value={characterDesc}
                                 changeHandler={CharacterDescChangeHandler}
-                                generateName={"Generate Description"}
+                                generateButtonLabel={"Generate Description"}
                                 clickFunction={CommonSenseDescribeCharacter}
                             />
                         </Row>
@@ -683,7 +683,7 @@ const CharacterPage = ({
                                 label="Character Persona:"
                                 value={characterPersona}
                                 changeHandler={CharacterPersonaChangeHandler}
-                                generateName={"Generate Persona"}
+                                generateButtonLabel={"Generate Persona"}
                                 clickFunction={CommonSenseCharacterPersona}
                             />
                         </Row>
@@ -692,7 +692,7 @@ const CharacterPage = ({
                                 label="Motivation:"
                                 value={characterMotivation}
                                 changeHandler={CharacterMotivationChangeHandler}
-                                generateName={"Generate Motivation"}
+                                generateButtonLabel={"Generate Motivation"}
                                 clickFunction={CommonSenseCharacterMotivation}
                             />
                         </Row>

@@ -2,19 +2,18 @@
 import React, { useRef, useState, useEffect } from 'react';
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../../../app/hooks';
-/* ---- REDUCER ACTIONS ---- */
-import {  setTaskRouterCurrentLocation, updateTaskRouterHistory } from "../../../../../features/taskRouter/taskrouter-slice.ts";
 /* TYPEAHEAD TOKENIZER */
 import { Token as RBTToken } from 'react-bootstrap-typeahead';
 /* ICONS */
 import { BsGear } from 'react-icons/bs';
 import { MdCancel } from "react-icons/md";
 
+//NOTE: ASK JACK ABOUT GEAR FUNCTION
+
 //Individual token in typeAhead Tokeenizer
 const Token = ({
     index,
     option,
-    roomId,
     sectionName,
     deleteTokenFunction,
     builderRouterNavigate,
@@ -46,13 +45,10 @@ const Token = ({
             name: sectionName,
             id: option.data.node_id
         }
-        console.log("TOKEN VALUE:  ", option)
-        console.log("GEAR LOCATION:  ", gearLocation)
         builderRouterNavigate(gearLocation);
     }
 
     const deleteClickHandler = ()=>{
-        console.log("TOKEN DATA:  ", option)
         deleteTokenFunction(option.key)
     }
 

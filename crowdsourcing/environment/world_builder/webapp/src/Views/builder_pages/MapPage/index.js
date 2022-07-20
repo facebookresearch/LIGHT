@@ -66,9 +66,7 @@ const WorldBuilderPage = ({
     //Adds more than one node to currently selected room
     const addContent = (roomId, newNodes)=>{
         let {agents, objects, nodes } = selectedWorld;
-        console.log("ROOM ID:  ", roomId)
         let unupdatedRoomData = nodes[roomId]
-        console.log("ROOM DATA:  ", unupdatedRoomData)
         let unupdatedWorld = selectedWorld;
         let updatedNodes = {...nodes};
         let newObjects =[...agents];
@@ -102,13 +100,10 @@ const WorldBuilderPage = ({
 
             formattedNewNode = {...newNode, node_id:formattedNewNodetId , container_node:{target_id: roomId}};
             updatedContainedNodes = {...updatedContainedNodes, [formattedNewNodetId]:{target_id: formattedNewNodetId}};
-            console.log("FORMATTED NEW NODE:  ", formattedNewNode)
             updatedNodes = {...updatedNodes, [formattedNewNodetId]:formattedNewNode};
-            console.log("UPDATED NOTES IN ADD CONTENT FUNCTION IN MAPPING:  ", updatedNodes)
         });
         let updatedRoomData = {...selectedRoom, contained_nodes: updatedContainedNodes};
         updatedNodes = {...updatedNodes, [roomId]: updatedRoomData};
-        console.log("UPDATED NOTES IN ADD CONTENT FUNCTION FINAL VERSION:  ", updatedNodes)
         let updatedWorld ={...selectedWorld, agents: [...newAgents], objects:[...newObjects], nodes: updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
     };
@@ -428,30 +423,23 @@ const WorldBuilderPage = ({
         //Removal List is populated by nodeDigger function using the id of the deleted node then mapped through to remove nodes from the world
         removalList.map((removedNode)=>{
             let {agents, objects, rooms, nodes}= updatedWorld
-          let removedNodeClass = removedNode.class;
-          console.log("REMOVED NODE CLASS", removedNodeClass, "REMOVED NODE:  ", removedNode)
-          let removedNodeId = removedNode.nodeId;
+            let removedNodeClass = removedNode.class;
+            let removedNodeId = removedNode.nodeId;
             if(removedNodeClass==="agent"){
               let updatedCharacters = agents.filter(char => removedNodeId !== char);
-              console.log("REMOVED AGENT", updatedCharacters)
               updatedWorld = {...updatedWorld, agents: updatedCharacters};
             }else if(removedNodeClass==="object" || removedNodeClass==="container"){
               let updatedObjects = objects.filter(obj => removedNodeId !== obj);
-              console.log("REMOVED OBJECT", updatedObjects)
               updatedWorld = {...updatedWorld, objects: updatedObjects};
             }else if(removedNodeClass==="room"){
               let updatedRooms = rooms.filter(room => removedNodeId !== room);
-              console.log("REMOVED ROOM", updatedRooms)
               updatedWorld = {...updatedWorld, rooms: updatedRooms};
             }
             let updatedNodes = {...nodes};
             delete updatedNodes[removedNodeId];
             updatedWorld = {...updatedWorld, nodes: updatedNodes};
-            console.log("updated post delete world", updatedWorld);
             dispatch(updateSelectedWorld(updatedWorld));
         });
-        //
-        console.log("UPDATED WORLD POST DIG AND DELETE",  updatedWorld)
         return updatedWorld;
     };
     // calculateMapBorders- Calculates borders from array of roomnodes and sets border values.
@@ -480,7 +468,6 @@ const WorldBuilderPage = ({
         //     borders.right = borders.right+1;
         //     borders.left = borders.left-1;
         // }
-        console.log("BORDERS:  ", borders);
         return BorderSetter(borders);
     };
 
@@ -490,7 +477,6 @@ const WorldBuilderPage = ({
         let RoomNodes = [];
         let ObjectNodes = [];
         const {nodes} = world;
-        console.log("SORTER NODES:  ", nodes)
         //sortFunction sorts array of nodes by name attribute alphabetically
         const sortFunction = (a, b)=>{
             let firstItem=a.name.toLowerCase()
@@ -502,15 +488,11 @@ const WorldBuilderPage = ({
             return 0; //default return value (no sorting)
         };
         const WorldNodeKeys = Object.keys(nodes);
-        console.log("WORLD KEY NODES:  ", nodes)
-        console.log("WORLD KEY NODES:  ", WorldNodeKeys)
         //Filters all world nodes into arrays by class (agent, object, room)
         WorldNodeKeys.map((nodeKey)=>{
           let WorldNode = nodes[nodeKey];
-          console.log("WORLD NODE:  ", WorldNode)
           if(WorldNode.classes){
             let NodeClass = WorldNode.classes[0]
-            console.log("NODE CLASS IN SORTER:  ", NodeClass)
             switch(NodeClass) {
               case "agent":
                 CharacterNodes.push(WorldNode);
@@ -530,9 +512,6 @@ const WorldBuilderPage = ({
         RoomNodes = RoomNodes.sort(sortFunction);
         ObjectNodes = ObjectNodes.sort(sortFunction);
         CharacterNodes = CharacterNodes.sort(sortFunction);
-        console.log("ROOM NODES IN SORTER:  ", RoomNodes)
-        console.log("CHARACTERS NODES IN SORTER:  ", CharacterNodes)
-        console.log("OBJECT NODES IN SORTER:  ", ObjectNodes)
         //Updates each classes' state with updated arrays
         dispatch(updateRooms(RoomNodes));
         dispatch(updateObjects(ObjectNodes));
@@ -556,7 +535,6 @@ const WorldBuilderPage = ({
     // Uses worldNodeSorter helper function to break nodes into arrays and send them to respective redux slices.
     useEffect(()=>{
         if(selectedWorld){
-            console.log("NODES BEING SORTED:  ", selectedWorld)
             worldNodeSorter(selectedWorld);
         };
       },[selectedWorld]);
@@ -573,13 +551,10 @@ const WorldBuilderPage = ({
         let updatedMapHeightMultiplier = Math.abs(bottom) + top;
         let updatedMapWidth = updatedMapWidthMultiplier * -200;
         let updatedMapHeight = updatedMapHeightMultiplier * -200;
-        console.log("HEIGHT AND MULT", updatedMapHeightMultiplier)
-        console.log("HEIGHT", updatedMapHeight)
         const updatedDimensions = {
             width: updatedMapWidth,
             height: updatedMapHeight
         };
-        console.log("UPDATED DIMENSIONS:", updatedDimensions)
         DimensionSetter(updatedDimensions);
     },[mapBorders]);
 

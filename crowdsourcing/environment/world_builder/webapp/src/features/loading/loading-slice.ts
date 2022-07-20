@@ -3,12 +3,12 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 /* STATE TYPE */
 interface LoadingState {
-    showLoadingSpinner: Boolean;
+    isLoading: Boolean;
 }
 
 /* Initial value of the state */
 const initialState: LoadingState = {
-    showLoadingSpinner: false,
+    isLoading: false,
 };
 
 //Create slice will generate action objects for us
@@ -18,7 +18,7 @@ const loadingSlice = createSlice({
     /* REDUCER ACTIONS */
     reducers: {
         setIsLoading(state, action: PayloadAction<boolean>) {
-            state.showLoadingSpinner= action.payload
+            state.isLoading= action.payload
         }
     }
 });
