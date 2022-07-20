@@ -86,8 +86,8 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # TODO implement once we have an onboarding
         return True
 
-    USE_MODEL = False
-    # USE_MODEL = True
+    # USE_MODEL = False
+    USE_MODEL = True
     MODEL_NAME = "bart_all_simple_Sun_Jan_23/c9d"
     world_builder_agent = None
     # force = False
@@ -283,6 +283,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
             graph, char_name_diff = run_create_char(graph, world_builder_agent, count=3)
             new_chars = [c for c in graph['characters'] if c['name'] in char_name_diff]
             for c in new_chars:
+                print(f"Adding {c['name']} to graph")
                 room_graph = add_character_to_graph(room_graph, cur_room, c)
             print(f"new room graph")
             print(room_graph)
