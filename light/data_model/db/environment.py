@@ -703,18 +703,21 @@ class EnvDB(BaseDB):
         name: str,
     ) -> str:
         """Idempotently create a name key for the given class"""
-        with Session(self.engine) as session:
-            db_id = KeyClass.get_id()
-            name_key = KeyClass(  # type: ignore
-                db_id=db_id,
-                name=name,
-                status=DBStatus.REVIEW,
-                split=DBSplitType.UNSET,
-            )
-            session.add(name_key)
-            session.flush()
-            session.commit()
-        return db_id
+        try:
+            return self._get_name_key(KeyClass, name=name).db_id
+        except KeyError:
+            with Session(self.engine) as session:
+                db_id = KeyClass.get_id()
+                name_key = KeyClass(  # type: ignore
+                    db_id=db_id,
+                    name=name,
+                    status=DBStatus.REVIEW,
+                    split=DBSplitType.UNSET,
+                )
+                session.add(name_key)
+                session.flush()
+                session.commit()
+            return db_id
 
     def _get_name_key(
         self,
@@ -809,10 +812,7 @@ class EnvDB(BaseDB):
 
     def create_agent_name(self, name: str) -> str:
         """Create a new agent name in the database"""
-        try:
-            return self.get_agent_name(name=name).db_id
-        except KeyError:
-            return self._create_name_key(DBAgentName, name)
+        return self._create_name_key(DBAgentName, name)
 
     def find_agent_names(
         self,
