@@ -3,9 +3,17 @@ import React, {useState, useEffect} from 'react';
 /* REDUX */
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 /* ---- REDUCER ACTIONS ---- */
+//LOADING
+import {setIsLoading} from "../../../features/loading/loading-slice";
+//ERROR
+import {setShowError, setErrorMessage} from "../../../features/errors/errors-slice";
+//WORLD
 import { updateSelectedWorld, setWorldDraft} from "../../../features/playerWorld/playerworld-slice.ts";
+//ROOMS
 import { updateRooms, selectRoom} from "../../../features/rooms/rooms-slice.ts";
+//OBJECTS
 import { updateObjects} from "../../../features/objects/objects-slice.ts";
+//CHARACTERS
 import { updateCharacters, selectCharacter } from "../../../features/characters/characters-slice.ts";
 /* STYLES */
 import './styles.css';
@@ -15,21 +23,39 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 /* CUSTOM COMPONENTS */
+//FORMS
+import TypeAheadTokenizerForm from "../../../components/world_builder/FormFields/TypeAheadTokenizer";
 import GenerateForms from "../../../components/world_builder/FormFields/GenerateForms";
 import InlineTextInsertForm from "../../../components/world_builder/FormFields/InlineTextInsertForm";
 import TextInput from "../../../components/world_builder/FormFields/TextInput";
+//BUTTONS
 import TextButton from "../../../components/world_builder/Buttons/TextButton";
-import Button from 'react-bootstrap/Button';
+import GenerateButton from "../../../components/world_builder/Buttons/GenerateButton";
+//INPUT COMPONENTS
 import Slider from "../../../components/world_builder/FormFields/Slider";
+//BREADCRUMBS
 import BreadCrumbs from "../../../components/world_builder/BreadCrumbs";
-import TypeAheadTokenizerForm from "../../../components/world_builder/FormFields/TypeAheadTokenizer";
 
+//CharacterPage - Advanced edit page for Selected Character
 const CharacterPage = ({
     api,
     builderRouterNavigate,
 })=> {
+
+    //API
+    let {
+        getRoomAttributes,
+        getRoomFill,
+        suggestRoomContents,
+        suggestCharacterContents,
+        suggestCharacterDescription,
+        suggestCharacterPersona,
+        suggestObjectContents,
+        getObjectFill,
+        getCharacterFill,
+    } = api;
+
     /* ------ LOCAL STATE ------ */
-    //
     const [roomId, setRoomId] = useState("");
     const [charId, setCharId] = useState("");
     const [characterName, setCharacterName] = useState("");
@@ -44,21 +70,11 @@ const CharacterPage = ({
     const [wornObjects, setWornObjects] = useState([]);
     const [wieldedObjects, setWieldedObjects] = useState([]);
 
-    let {
-        getRoomAttributes,
-        getRoomFill,
-        suggestRoomContents,
-        suggestCharacterContents,
-        suggestCharacterDescription,
-        suggestCharacterPersona,
-        suggestObjectContents,
-        getObjectFill,
-        getCharacterFill,
-    } = api;
-
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
     /* ------ REDUX STATE ------ */
+    //LOADING
+    const isLoading = useAppSelector((state) => state.loading.isLoading);
     //TASKROUTER
     const currentLocation = useAppSelector((state) => state.taskRouter.currentLocation);
     const taskRouterHistory = useAppSelector((state) => state.taskRouter.taskRouterHistory);
@@ -73,14 +89,19 @@ const CharacterPage = ({
     const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
     const selectedCharacter = useAppSelector((state) => state.worldCharacters.selectedCharacter);
     /* ------ REDUX ACTIONS ------ */
-    //TASKROUTER
-    //navigatess to clicked on node
-    const navigateToLocation = (sectionName, nodeId)=>{
-        let newLocation = {
-            name: sectionName,
-            id: nodeId
-        };
-        builderRouterNavigate(newLocation);
+    //LOADING
+    const startLoading = () =>{
+        dispatch(setIsLoading(true));
+    };
+    const stopLoading = () =>{
+        dispatch(setIsLoading(false));
+    };
+    //ERROR
+    const showError = ()=>{
+        dispatch(setShowError(true));
+    };
+    const setError = (errorMessage)=>{
+        dispatch(setErrorMessage(errorMessage));
     };
 
     //NAVIGATION
@@ -88,7 +109,7 @@ const CharacterPage = ({
     const backStep = ()=>{
         let previousLoc =  taskRouterHistory[taskRouterHistory.length-1]
         let updatedHistory = taskRouterHistory.slice(0, taskRouterHistory.length-1);
-        builderRouterNavigate(previousLoc)
+        builderRouterNavigate(previousLoc);
         dispatch(updateTaskRouterHistory(updatedHistory));
     };
 
@@ -143,10 +164,11 @@ const CharacterPage = ({
     const updateCharacter = (id, update) =>{
         let unupdatedWorld = selectedWorld;
         let {nodes } = unupdatedWorld;
-        let updatedNodes = {...nodes, [id]:update}
-        let updatedWorld ={...selectedWorld, nodes:updatedNodes}
-        dispatch(updateSelectedWorld(updatedWorld))
-    }
+        let updatedNodes = {...nodes, [id]:update};
+        let updatedWorld ={...selectedWorld, nodes:updatedNodes};
+        dispatch(updateSelectedWorld(updatedWorld));
+    };
+
     //Removes Current Character from selectedWorld state
     const deleteCurrentCharacter = ()=>{
         let unupdatedWorld = selectedWorld;
@@ -154,8 +176,9 @@ const CharacterPage = ({
         let updatedAgents = agents.filter(char => charId !== char);
         const updatedWorld = containedNodesRemover(id);
         dispatch(setWorldDraft({...updatedWorld, agents: updatedAgents}));
-        backStep()
-    }
+        backStep();
+    };
+
     //OBJECTS
     // Adds new Object to character inventory state
     const addObject = (obj, worn, wielded)=>{
@@ -208,122 +231,6 @@ const CharacterPage = ({
         dispatch(updateSelectedWorld({...updatedWorld, objects: updatedObjects}));
     };
 
-    // COMMON SENSE DESCRIBE CHARACTER FUNCTION
-    const CommonSenseDescribeCharacter = ()=>{
-        let target_room = selectedRoom['node_id'];
-        let target_id = charId;
-        let nodes = {};
-        nodes[target_room] = selectedRoom;
-        for (let character of worldCharacters) {
-            nodes[character['node_id']] = character;
-        }
-        for (let object of worldObjects) {
-            nodes[object['node_id']] = object;
-        }
-        let agents = worldCharacters.map(c => c['node_id']);
-        let objects = worldObjects.map(c => c['node_id']);
-        let rooms = [target_room]
-        let room_graph = {nodes, agents, objects, rooms};
-        console.log("room graph");
-        console.log(room_graph);
-        console.log("selectedRoom");
-        console.log(target_room);
-        suggestCharacterDescription({target_room, room_graph, target_id}).then((result) => {
-            console.log("Finished character description");
-            const generatedData = result.updated_item;
-            const updatedDescription = generatedData.desc;
-            const updatedCharacter = {...selectedCharacter, desc:updatedDescription};
-            console.log(updatedCharacter);
-            updateCharacter(target_id, updatedCharacter);
-        });
-    };
-
-    // COMMON SENSE PERSONA CHARACTER FUNCTION
-    const CommonSenseCharacterPersona = ()=>{
-        let target_room = selectedRoom['node_id'];
-        let target_id = charId;
-        let nodes = {};
-        nodes[target_room] = selectedRoom;
-        for (let character of worldCharacters) {
-            nodes[character['node_id']] = character;
-        }
-        for (let object of worldObjects) {
-            nodes[object['node_id']] = object;
-        }
-        let agents = worldCharacters.map(c => c['node_id']);
-        let objects = worldObjects.map(c => c['node_id']);
-        let rooms = [target_room]
-        let room_graph = {nodes, agents, objects, rooms};
-        console.log("room graph");
-        console.log(room_graph);
-        console.log("selectedRoom");
-        console.log(target_room);
-        suggestCharacterPersona({target_room, room_graph, target_id}).then((result) => {
-            console.log("Finished persona character");
-            const generatedData = result.updated_item;
-            const updatedPersona = generatedData.persona;
-            const updatedCharacter = {...selectedCharacter, persona:updatedPersona};
-            console.log(updatedCharacter);
-            updateCharacter(charId, updatedCharacter);
-        });
-    };
-
-    // COMMON SENSE MOTIVATION CHARACTER FUNCTION
-    const CommonSenseCharacterMotivation = ()=>{
-        let target_room = selectedRoom['node_id'];
-        let target_id = charId;
-        let nodes = {};
-        nodes[target_room] = selectedRoom;
-        for (let character of worldCharacters) {
-            nodes[character['node_id']] = character;
-        }
-        for (let object of worldObjects) {
-            nodes[object['node_id']] = object;
-        }
-        let agents = worldCharacters.map(c => c['node_id']);
-        let objects = worldObjects.map(c => c['node_id']);
-        let rooms = [target_room]
-        let room_graph = {nodes, agents, objects, rooms};
-        console.log("room graph");
-        console.log(room_graph);
-        console.log("selectedRoom");
-        console.log(target_room);
-        suggestCharacterMotivation({target_room, room_graph, target_id}).then((result) => {
-            console.log("Finished persona character");
-            const generatedData = result.updated_item;
-            const updatedMotivation = generatedData.mission;
-            const updatedCharacter = {...selectedCharacter, mission:updatedMotivation};
-            console.log(updatedCharacter);
-            updateCharacter(charId, updatedCharacter);
-        });
-    };
-
-    // COMMON SENSE CONTENTS CHARACTER FUNCTION
-    const CommonSenseCharacterContents = ()=>{
-        let target_room = selectedRoom['node_id'];
-        let target_id = charId;
-        let nodes = {};
-        nodes[target_room] = selectedRoom;
-        for (let character of worldCharacters) {
-            nodes[character['node_id']] = character;
-        }
-        for (let object of worldObjects) {
-            nodes[object['node_id']] = object;
-        }
-        let agents = worldCharacters.map(c => c['node_id']);
-        let objects = worldObjects.map(c => c['node_id']);
-        let rooms = [target_room]
-        let room_graph = {nodes, agents, objects, rooms};
-        console.log("room graph");
-        console.log(room_graph);
-        console.log("selectedRoom");
-        console.log(target_room);
-        suggestCharacterContents({target_room, room_graph, target_id}).then((result) => {
-            console.log("Finished character contents", result);
-            const newItems = result.new_items;
-            addContent(charId, newItems)
-        })
-    }
 
     //UTILS
     //worldNodeSorter - filters nodes into their appropriate state and arrays upon changes to the selected or draft world
@@ -352,14 +259,61 @@ const CharacterPage = ({
                 };
             };
         });
-        console.log( "MID SORT ROOMS : ", RoomNodes)
-        console.log( "MID SORT CHARACTERS:  ", CharacterNodes)
-        console.log( "MID SORT OBJECTS", ObjectNodes)
         dispatch(updateRooms(RoomNodes));
         dispatch(updateObjects(ObjectNodes));
         dispatch(updateCharacters(CharacterNodes));
     };
 
+    //containedNodesRemover - helper function that handles deleteing any contained nodes in node being deleted
+    const containedNodesRemover = (nodeId) => {
+        let updatedWorld = selectedWorld;
+        let {nodes} = updatedWorld;
+        // nodeDigger - digs through nodes checking each one for contained node to generate a list of nodes to be removed from the world
+        const nodeDigger = (id)=>{
+          let unupdatedNode = nodes[id];
+          let {classes, contained_nodes} = unupdatedNode;
+          let containedNodes = contained_nodes;
+          let containedNodesList = Object.keys(containedNodes);
+          let updatedRemovalArray = [{nodeId: id, class: classes[0]}];
+          if(!containedNodesList){
+            return updatedRemovalArray;
+          }else{
+            while(containedNodesList.length){
+                let currentNode = containedNodesList.pop();
+                updatedRemovalArray=[...updatedRemovalArray, ...nodeDigger(currentNode)];
+            };
+            return updatedRemovalArray;
+          };
+        };
+        //Removal List is populated by nodeDigger function using the id of the deleted node then mapped through to remove nodes from the world
+        let removalList = [];
+        removalList = nodeDigger(nodeId);
+        removalList.map((removedNode)=>{
+            let {agents, objects, rooms, nodes}= updatedWorld
+          let removedNodeClass = removedNode.class;
+          let removedNodeId = removedNode.nodeId;
+            if(removedNodeClass ==="agent"){
+              let updatedCharacters = agents.filter(char => removedNodeId !== char);
+              updatedWorld = {...updatedWorld, agents: updatedCharacters};
+            }else if(removedNodeClass ==="object" || removedNodeClass ==="container"){
+              let updatedObjects = objects.filter(obj => removedNodeId !== obj);
+              updatedWorld = {...updatedWorld, objects: updatedObjects};
+            }else if(removedNodeClass ==="room"){
+              let updatedRooms = rooms.filter(room => removedNodeId !== room);
+              updatedWorld = {...updatedWorld, rooms: updatedRooms};
+            }
+            let updatedNodes = {...nodes};
+            delete updatedNodes[removedNodeId];
+            updatedWorld = {...updatedWorld, nodes: updatedNodes};
+            //Any changes during removal update the selectedWorld state as the removal list is mapped through
+            dispatch(updateSelectedWorld(updatedWorld));
+        });
+        // The updated world is then returned for any additional changes that may need to be done
+        return updatedWorld;
+    };
+
+    //Crumbs act as links to "pages" leading to the current page
+    const crumbs= [...taskRouterHistory, currentLocation];
 
     //HANDLERS
     //WORLD DRAFT
@@ -373,16 +327,13 @@ const CharacterPage = ({
     const HandleBasicGearClick = (newLoc)=>{
         WorldSaveHandler()
         const {node_id} = selectedCharacter;
-        console.log("BASIC GEAR CLICK:  ", node_id)
         let location = {
             name:"character",
             id: node_id
         };
         let updatedGearLocation = newLoc;
         const updatedRouterHistory = [...taskRouterHistory, currentLocation, location]
-        console.log("BASIC UPDATED HISTORY:  ", updatedRouterHistory);
         dispatch(updateTaskRouterHistory(updatedRouterHistory));
-        console.log("CURRENT LOCATION:  ", updatedGearLocation);
         dispatch(setTaskRouterCurrentLocation(updatedGearLocation));
     }
 
@@ -471,58 +422,227 @@ const CharacterPage = ({
         };
     };
 
-    //UTILS
-    //containedNodesRemover - helper function that handles deleteing any contained nodes in node being deleted
-    const containedNodesRemover = (nodeId) => {
-        let updatedWorld = selectedWorld;
-        let {nodes} = updatedWorld;
-        // nodeDigger - digs through nodes checking each one for contained node to generate a list of nodes to be removed from the world
-        const nodeDigger = (id)=>{
-          let unupdatedNode = nodes[id];
-          let {classes, contained_nodes} = unupdatedNode;
-          let containedNodes = contained_nodes;
-          let containedNodesList = Object.keys(containedNodes);
-          let updatedRemovalArray = [{nodeId: id, class: classes[0]}];
-          if(!containedNodesList){
-            return updatedRemovalArray;
-          }else{
-            while(containedNodesList.length){
-                let currentNode = containedNodesList.pop();
-                updatedRemovalArray=[...updatedRemovalArray, ...nodeDigger(currentNode)];
-            };
-            return updatedRemovalArray;
-          };
-        };
-        //Removal List is populated by nodeDigger function using the id of the deleted node then mapped through to remove nodes from the world
-        let removalList = [];
-        removalList = nodeDigger(nodeId);
-        removalList.map((removedNode)=>{
-            let {agents, objects, rooms, nodes}= updatedWorld
-          let removedNodeClass = removedNode.class;
-          let removedNodeId = removedNode.nodeId;
-            if(removedNodeClass ==="agent"){
-              let updatedCharacters = agents.filter(char => removedNodeId !== char);
-              updatedWorld = {...updatedWorld, agents: updatedCharacters};
-            }else if(removedNodeClass ==="object" || removedNodeClass ==="container"){
-              let updatedObjects = objects.filter(obj => removedNodeId !== obj);
-              updatedWorld = {...updatedWorld, objects: updatedObjects};
-            }else if(removedNodeClass ==="room"){
-              let updatedRooms = rooms.filter(room => removedNodeId !== room);
-              updatedWorld = {...updatedWorld, rooms: updatedRooms};
-            }
-            let updatedNodes = {...nodes};
-            delete updatedNodes[removedNodeId];
-            updatedWorld = {...updatedWorld, nodes: updatedNodes};
-            //Any changes during removal update the selectedWorld state as the removal list is mapped through
-            dispatch(updateSelectedWorld(updatedWorld));
-        });
-        // The updated world is then returned for any additional changes that may need to be done
-        return updatedWorld;
+    //ERROR HANDLER
+    //Shows and sets Error Message
+    const errorHandler = (err)=>{
+        setError(err);
+        showError();
     };
 
-    //CRUMBS
-    //Crumbes act as links to "pages" leading to the current page
-    const crumbs= [...taskRouterHistory, currentLocation];
+    //GENERATE HANDLERS
+    //Generates Objects for Character
+    const generateRoomContentButtonFunction = async ()=>{
+        try{
+            const payload = await CommonSenseCharacterContents();
+            const {nodeId, data} = payload;
+            addContent(nodeId, data);
+            stopLoading();
+        } catch (error) {
+            stopLoading();
+            console.log(error);
+            errorHandler(error);
+        };
+    };
+
+    //Generates description of character
+    const generateCharacterDescButtonFunction = async ()=>{
+        try{
+            const payload = await CommonSenseDescribeCharacter();
+            const {nodeId, data} = payload;
+            updateCharacter(nodeId, data);
+            stopLoading();
+        } catch (error) {
+            stopLoading();
+            console.log(error);
+            errorHandler(error);
+        };
+    };
+
+    //Generates persona for character
+    const generateCharacterPersonaButtonFunction = async ()=>{
+        try{
+            const payload = await CommonSenseCharacterPersona();
+            const {nodeId, data} = payload;
+            updateCharacter(nodeId, data);
+            stopLoading();
+        } catch (error) {
+            stopLoading();
+            console.log(error);
+            errorHandler(error);
+        };
+    };
+
+    //Generates motivation for character
+    const generateCharacterMotivationButtonFunction = async ()=>{
+        try{
+            const payload = await CommonSenseCharacterMotivation();
+            const {nodeId, data} = payload;
+            updateCharacter(nodeId, data);
+            stopLoading();
+        } catch (error) {
+            stopLoading();
+            console.log(error);
+            errorHandler(error);
+        };
+    };
+
+    /* ------ END OF HANDLERS ------ */
+
+    /* COMMON SENSE API INTERACTIONS */
+    // COMMON SENSE CHARACTER DESCRIPTION GENERATION FUNCTION
+    const CommonSenseDescribeCharacter = async ()=>{
+        try{
+            let target_room = selectedRoom['node_id'];
+            let target_id = charId;
+            let nodes = {};
+            nodes[target_room] = selectedRoom;
+            for (let character of worldCharacters) {
+                nodes[character['node_id']] = character;
+            }
+            for (let object of worldObjects) {
+                nodes[object['node_id']] = object;
+            }
+            let agents = worldCharacters.map(c => c['node_id']);
+            let objects = worldObjects.map(c => c['node_id']);
+            let rooms = [target_room]
+            let room_graph = {nodes, agents, objects, rooms};
+            console.log("room graph");
+            console.log(room_graph);
+            console.log("selectedRoom");
+            console.log(target_room);
+            const result = await suggestCharacterDescription({target_room, room_graph, target_id});
+            console.log("Finished character description");
+            const generatedData = result.updated_item;
+            const updatedDesc = generatedData.desc;
+            const updatedCharacter = {...selectedCharacter, desc:updatedDesc};
+            console.log(updatedCharacter);
+            const payload = {
+                nodeId: target_id,
+                data: updatedCharacter
+            };
+            return payload;
+        } catch(error){
+            stopLoading();
+            errorHandler(error);
+            throw error;
+        };
+    };
+
+    // COMMON SENSE CHARACTER PERSONA GENERATION FUNCTION
+    const CommonSenseCharacterPersona = async ()=>{
+        try{
+            let target_room = selectedRoom['node_id'];
+            let target_id = charId;
+            let nodes = {};
+            nodes[target_room] = selectedRoom;
+            for (let character of worldCharacters) {
+                nodes[character['node_id']] = character;
+            }
+            for (let object of worldObjects) {
+                nodes[object['node_id']] = object;
+            }
+            let agents = worldCharacters.map(c => c['node_id']);
+            let objects = worldObjects.map(c => c['node_id']);
+            let rooms = [target_room]
+            let room_graph = {nodes, agents, objects, rooms};
+            console.log("room graph");
+            console.log(room_graph);
+            console.log("selectedRoom");
+            console.log(target_room);
+            const result = await suggestCharacterPersona({target_room, room_graph, target_id});
+            console.log("Finished character description");
+            const generatedData = result.updated_item;
+            const updatedpersona = generatedData.persona;
+            const updatedCharacter = {...selectedCharacter, persona:updatedpersona};
+            const payload = {
+                nodeId: target_id,
+                data: updatedCharacter
+            };
+            console.log(updatedCharacter);
+            return payload;
+        } catch(error){
+            stopLoading();
+            errorHandler(error);
+            throw error;
+        };
+    };
+
+    // COMMON SENSE CHARACTER MOTIVATION GENERATION FUNCTION
+    const CommonSenseCharacterMotivation = async ()=>{
+        try{
+            let target_room = selectedRoom['node_id'];
+            let target_id = charId;
+            let nodes = {};
+            nodes[target_room] = selectedRoom;
+            for (let character of worldCharacters) {
+                nodes[character['node_id']] = character;
+            }
+            for (let object of worldObjects) {
+                nodes[object['node_id']] = object;
+            }
+            let agents = worldCharacters.map(c => c['node_id']);
+            let objects = worldObjects.map(c => c['node_id']);
+            let rooms = [target_room]
+            let room_graph = {nodes, agents, objects, rooms};
+            console.log("room graph");
+            console.log(room_graph);
+            console.log("selectedRoom");
+            console.log(target_room);
+            const result = await suggestCharacterMotivation({target_room, room_graph, target_id});
+            console.log("Finished character description");
+            const generatedData = result.updated_item;
+            const updatedMotivation = generatedData.mission;
+            const updatedCharacter = {...selectedCharacter, persona:updatedMotivation};
+            const payload = {
+                nodeId: target_id,
+                data: updatedCharacter
+            };
+            console.log(updatedCharacter);
+            return payload;
+        } catch(error){
+            stopLoading();
+            errorHandler(error);
+            throw error;
+        };
+    };
+
+    // COMMON SENSE CHARACTER CONTENTS GENERATION FUNCTION
+    const CommonSenseCharacterContents = async ()=>{
+        try{
+            startLoading()
+            let target_room = selectedRoom['node_id'];
+            let target_id = charId;
+            let nodes = {};
+            nodes[target_room] = selectedRoom;
+            for (let character of worldCharacters) {
+                nodes[character['node_id']] = character;
+            }
+            for (let object of worldObjects) {
+                nodes[object['node_id']] = object;
+            }
+            let agents = worldCharacters.map(c => c['node_id']);
+            let objects = worldObjects.map(c => c['node_id']);
+            let rooms = [target_room]
+            let room_graph = {nodes, agents, objects, rooms};
+            console.log("room graph");
+            console.log(room_graph);
+            console.log("selectedRoom");
+            console.log(target_room);
+            const result = suggestCharacterContents({target_room, room_graph, target_id});
+            console.log("Finished character contents", result);
+            const newItems = result.new_items;
+            const payload = {
+                nodeId: target_id,
+                data: newItems
+            };
+            return payload;
+        } catch (error) {
+            stopLoading();
+            errorHandler(error);
+            throw error;
+        };
+    };
+
     /* --- LIFE CYCLE FUNCTIONS --- */
     // Pulls params from current task router location anytime the currentLocation state changes
     useEffect(()=>{
@@ -647,7 +767,7 @@ const CharacterPage = ({
         setCarryObjects(updatedCarryObjects);
         setWornObjects(updatedWornObjects);
         setWieldedObjects(updatedWieldedObjects);
-    }, [containedObjects])
+    }, [containedObjects]);
 
     return (
         <Container>
@@ -675,7 +795,7 @@ const CharacterPage = ({
                                 value={characterDesc}
                                 changeHandler={CharacterDescChangeHandler}
                                 generateButtonLabel={"Generate Description"}
-                                clickFunction={CommonSenseDescribeCharacter}
+                                clickFunction={generateCharacterDescButtonFunction}
                             />
                         </Row>
                         <Row>
@@ -684,7 +804,7 @@ const CharacterPage = ({
                                 value={characterPersona}
                                 changeHandler={CharacterPersonaChangeHandler}
                                 generateButtonLabel={"Generate Persona"}
-                                clickFunction={CommonSenseCharacterPersona}
+                                clickFunction={generateCharacterPersonaButtonFunction}
                             />
                         </Row>
                         <Row>
@@ -693,13 +813,15 @@ const CharacterPage = ({
                                 value={characterMotivation}
                                 changeHandler={CharacterMotivationChangeHandler}
                                 generateButtonLabel={"Generate Motivation"}
-                                clickFunction={CommonSenseCharacterMotivation}
+                                clickFunction={generateCharacterMotivationButtonFunction}
                             />
                         </Row>
                         <Row>
-                            <Button onClick={CommonSenseCharacterContents} variant="primary">
-                                Generate Character Contents
-                            </Button>
+                            <GenerateButton
+                                label={"Generate Character Contents"}
+                                clickFunction={generateRoomContentButtonFunction}
+                                isloading={isLoading}
+                            />
                         </Row>
                         <Row>
                             <TypeAheadTokenizerForm

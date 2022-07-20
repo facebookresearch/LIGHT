@@ -33,12 +33,13 @@ import GenerateButton from "../../../components/world_builder/Buttons/GenerateBu
 import BreadCrumbs from "../../../components/world_builder/BreadCrumbs";
 import TypeAheadTokenizerForm from "../../../components/world_builder/FormFields/TypeAheadTokenizer";
 
+//RoomPage - Advanced edit page for Selected Room
 const RoomPage = ({
     api,
     builderRouterNavigate,
 })=> {
 
-    // Common sense API
+    //API
     let {
         getRoomAttributes,
         getRoomFill,
@@ -49,10 +50,19 @@ const RoomPage = ({
         getCharacterFill,
     } = api;
 
+    /* ------ LOCAL STATE ------ */
+    const [roomId, setRoomId] = useState(null);
+    const [roomName, setRoomName] = useState("");
+    const [roomDesc, setRoomDesc] = useState("");
+    const [roomCharacters, setRoomCharacters] = useState([]);
+    const [roomObjects, setRoomObjects] = useState([]);
+    const [roomIsIndoors, setRoomIsIndoors]= useState(null);
+    const [roomBrightness, setRoomBrightness] = useState(0);
+    const [roomTemperature, setRoomTemperature] = useState(0);
     //REACT ROUTER
     /* REDUX DISPATCH FUNCTION */
     const dispatch = useAppDispatch();
-/* ------ REDUX STATE ------ */
+    /* ------ REDUX STATE ------ */
     //LOADING
     const isLoading = useAppSelector((state) => state.loading.isLoading);
     //TASKROUTER
@@ -94,6 +104,7 @@ const RoomPage = ({
         builderRouterNavigate(previousLoc)
         dispatch(updateTaskRouterHistory(updatedHistory));
     };
+
     //GENERAL
     //Adds more than one node to currently selected room
     const addContent = (roomId, newNodes)=>{
@@ -136,9 +147,10 @@ const RoomPage = ({
         updatedNodes = {...updatedNodes, [roomId]: updatedRoomData};
         let updatedWorld ={...selectedWorld, agents: [...newAgents], objects:[...newObjects], nodes: updatedNodes};
         dispatch(updateSelectedWorld(updatedWorld));
-    }
+    };
 
     //ROOMS
+    //Updates Room in selectedWorld state
     const updateRoom = (id, update) =>{
         let unupdatedWorld = selectedWorld;
         let {nodes } = unupdatedWorld;
@@ -147,6 +159,7 @@ const RoomPage = ({
         dispatch(updateSelectedWorld(updatedWorld));
     };
 
+    //Removes SelectedRoom from selectedWorld state
     const deleteSelectedRoom = ()=>{
         let updatedWorld = containedNodesRemover(roomId)
         let updatedRooms = worldRooms.filter(room => roomId !== room);
@@ -155,7 +168,7 @@ const RoomPage = ({
     };
 
     //CHARACTERS
-    // Adds new Character to selectedWorld state
+    //Adds new Character to selectedWorld state
     const addCharacter = (char)=>{
         let unupdatedWorld = selectedWorld;
         let {agents, nodes } = unupdatedWorld;
@@ -254,18 +267,9 @@ const RoomPage = ({
         dispatch(updateSelectedWorld(updatedWorld));
     };
 
+    /* ------ END OF REDUX ACTIONS ------ */
 
-    /* ------ LOCAL STATE ------ */
-    const [roomId, setRoomId] = useState(null);
-    const [roomName, setRoomName] = useState("");
-    const [roomDesc, setRoomDesc] = useState("");
-    const [roomCharacters, setRoomCharacters] = useState([]);
-    const [roomObjects, setRoomObjects] = useState([]);
-    const [roomIsIndoors, setRoomIsIndoors]= useState(null);
-    const [roomBrightness, setRoomBrightness] = useState(0);
-    const [roomTemperature, setRoomTemperature] = useState(0);
-
-    //UTILS
+    /* UTILS */
     //containedNodesRemover - helper function that handles deleteing any contained nodes in node being deleted
     const containedNodesRemover = (nodeId) => {
         let updatedWorld = selectedWorld;
@@ -343,15 +347,6 @@ const RoomPage = ({
         dispatch(updateRooms(RoomNodes));
         dispatch(updateObjects(ObjectNodes));
         dispatch(updateCharacters(CharacterNodes));
-    };
-
-    // Handler
-    const WorldSaveHandler = ()=>{
-        let worldUpdates = {...worldRooms, worldObjects, worldCharacters};
-        let updatedWorld = {...selectedWorld, nodes: worldUpdates};
-        dispatch(updateSelectedWorld(updatedWorld));
-        dispatch(updateWorldDraft(updatedWorld));
-        console.log("WORLD SAVE UPDATE:", updatedWorld);
     };
 
     /* --- LIFE CYCLE FUNCTIONS --- */
@@ -521,12 +516,12 @@ const RoomPage = ({
         };
     };
 
+    //Generates Description for SelectedRoom
     const generateRoomDescButtonFunction = async ()=>{
         try{
             const payload = await CommonSenseDescribeRoom();
             const {nodeId, data} = payload;
-            const updatedRoom = {...selectedRoom, desc:data};
-            updateRoom(nodeId, updatedRoom);
+            updateRoom(nodeId, data);
             stopLoading();
         } catch (error) {
             stopLoading();
@@ -535,6 +530,7 @@ const RoomPage = ({
         };
     };
 
+    /* ------ END OF HANDLERS ------ */
 
     /* COMMON SENSE API INTERACTIONS */
     // COMMON SENSE DESCRIBE ROOM GENERATION FUNCTION
@@ -563,9 +559,10 @@ const RoomPage = ({
             console.log(result);
             const generatedData = result.updated_item;
             const updatedDesc = generatedData.desc;
+            const updatedRoom = {...selectedRoom, desc:updatedDesc};
             const payload = {
                 nodeId: target_room,
-                data: updatedDesc
+                data: updatedRoom
             };
             return payload
         } catch (error) {
@@ -735,7 +732,7 @@ const RoomPage = ({
             <Row>
               <Col>
                 <TextButton
-                    text={selectedRoom.node_id ? "Save Changes" : "Create Object" }
+                    text={selectedRoom.node_id ? "Save Changes" : "Create Room" }
                     clickFunction={updateWorldDraft}
                     disabled={roomName.length}
                 />
