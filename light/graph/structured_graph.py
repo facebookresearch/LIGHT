@@ -21,6 +21,8 @@ class OOGraph(object):
     """
 
     def __init__(self, opt=None):
+        if opt is None:
+            opt = {}
         self.objects = {}
         self.agents = {}
         self.rooms = {}

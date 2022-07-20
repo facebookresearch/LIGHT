@@ -32,6 +32,7 @@ from light.data_model.db.environment import (
     DBEdit,
     DBQuest,
 )
+from typing import List
 from light.data_model.db.base import LightDBConfig, DBStatus, DBSplitType
 from sqlalchemy.orm import Session
 
@@ -50,16 +51,43 @@ class TestEnvironmentDB(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.data_dir)
 
-    def set_up_some_nodes(self):
+    def set_up_some_nodes(self, db: EnvDB):
         # Create some test entries in the env DB
-        opt = {"is_logging": True, "log_path": self.data_dir}
-        test_graph = OOGraph(opt)
-        agent_node = test_graph.add_agent("My test agent", {})
-        room_node = test_graph.add_room("test room", {})
-        agent_node.force_move_to(room_node)
-        test_world = World({}, None, True)
-        test_world.oo_graph = test_graph
-        return (test_graph, test_world, agent_node, room_node)
+        agent_ids: List[str] = []
+        room_ids: List[str] = []
+        object_ids: List[str] = []
+        for x in range(5):
+            agent_ids.append(
+                db.create_agent_entry(
+                    name=f"test_agent_{x}",
+                    base_name="agent",
+                    persona="agent_persona",
+                    physical_description="agent_description",
+                )
+            )
+            room_ids.append(
+                db.create_room_entry(
+                    name=f"test_room_{x}",
+                    base_name="room",
+                    description="room_description",
+                    backstory="room_backstory",
+                )
+            )
+            object_ids.append(
+                db.create_object_entry(
+                    name=f"test_object_{x}",
+                    base_name="object",
+                    physical_description="object_description",
+                    is_container=0,
+                    is_drink=0,
+                    is_food=0,
+                    is_gettable=1,
+                    is_surface=0,
+                    is_wearable=0,
+                    is_weapon=0,
+                )
+            )
+        return agent_ids, room_ids, object_ids
 
     def test_initialize_env_db(self):
         """Ensure it's possible to initialize the db"""
@@ -956,6 +984,320 @@ class TestEnvironmentDB(unittest.TestCase):
 
     def test_create_load_edges(self):
         """Ensure it's possible to create edges, and load them from DBElems"""
+        db = EnvDB(self.config)
+
+        # get some things to use
+        agent_ids, room_ids, object_ids = self.set_up_some_nodes(db)
+        agent_1_id = agent_ids[0]
+        agent_2_id = agent_ids[1]
+        agent_3_id = agent_ids[2]
+        object_1_id = object_ids[0]
+        object_2_id = object_ids[1]
+        object_3_id = object_ids[2]
+        room_1_id = room_ids[0]
+        room_2_id = room_ids[1]
+
+        # Create first edge
+        edge_1_id = db.create_edge(
+            parent_id=room_1_id,
+            child_id=agent_1_id,
+            edge_type=DBEdgeType.CONTAINS,
+        )
+        self.assertTrue(DBEdge.is_id(edge_1_id))
+
+        # Ensure edge exists correctly
+        edges = db.get_edges()
+        self.assertEqual(len(edges), 1)
+        edge_1 = edges[0]
+        self.assertEqual(edge_1.db_id, edge_1_id)
+        self.assertEqual(edge_1.parent_id, room_1_id)
+        self.assertEqual(edge_1.child_id, agent_1_id)
+        self.assertEqual(edge_1.built_occurrences, 0)
+        self.assertEqual(edge_1.edge_type, DBEdgeType.CONTAINS)
+        self.assertEqual(edge_1.status, DBStatus.REVIEW)
+        self.assertEqual(edge_1.edge_label, "")
+        self.assertIsNone(edge_1.creator_id)
+        self.assertIsNotNone(edge_1.create_timestamp)
+
+        # Note no duplicate edge possible
+        edge_1_id_2 = db.create_edge(
+            parent_id=room_1_id,
+            child_id=agent_1_id,
+            edge_type=DBEdgeType.CONTAINS,
+        )
+        self.assertEqual(edge_1_id, edge_1_id_2)
+        edges = db.get_edges()
+        self.assertEqual(len(edges), 1)
+        edge_1 = edges[0]
+
+        # Try expanding edge
+        with self.assertRaises(AssertionError):
+            _test_child = edge_1.child()
+        edge_1.expand_edge(db)
+        self.assertIsInstance(edge_1.child, DBAgent)
+        self.assertEqual(edge_1.child.db_id, agent_1_id)
+
+        # Create more edges
+        edge_2_id = db.create_edge(
+            parent_id=room_1_id,
+            child_id=agent_2_id,
+            edge_type=DBEdgeType.CONTAINS,
+        )
+        edge_3_id = db.create_edge(
+            parent_id=room_1_id,
+            child_id=agent_3_id,
+            edge_type=DBEdgeType.MAY_CONTAIN,
+        )
+        edge_4_id = db.create_edge(
+            parent_id=agent_1_id,
+            child_id=object_2_id,
+            edge_type=DBEdgeType.CONTAINS,
+        )
+        edge_5_id = db.create_edge(
+            parent_id=agent_1_id,
+            child_id=object_3_id,
+            edge_type=DBEdgeType.WEARING,
+        )
+        edge_6_id = db.create_edge(
+            parent_id=room_1_id,
+            child_id=object_1_id,
+            edge_type=DBEdgeType.MAY_CONTAIN,
+        )
+        edge_7_id = db.create_edge(
+            parent_id=agent_3_id,
+            child_id=object_3_id,
+            edge_type=DBEdgeType.MAY_WEAR,
+        )
+        edge_8_id = db.create_edge(
+            parent_id=agent_2_id,
+            child_id=object_3_id,
+            edge_type=DBEdgeType.WIELDING,
+        )
+        edge_9_id = db.create_edge(
+            parent_id=agent_3_id,
+            child_id=object_1_id,
+            edge_type=DBEdgeType.MAY_WIELD,
+            status=DBStatus.REJECTED,
+        )
+        edge_10_id = db.create_edge(
+            parent_id=room_1_id,
+            child_id=room_2_id,
+            edge_type=DBEdgeType.NEIGHBOR,
+            edge_label="a path to",
+        )
+        edge_11_id = db.create_edge(
+            parent_id=room_2_id,
+            child_id=room_1_id,
+            edge_type=DBEdgeType.MAY_BE_NEIGHBOR,
+            creator_id="test",
+        )
+        edge_12_id = db.create_edge(
+            parent_id=object_1_id,
+            child_id=object_2_id,
+            edge_type=DBEdgeType.MAY_CONTAIN,
+        )
+
+        # Try expanding other edges
+        edge_2 = db.get_edges(parent_id=room_1_id, child_id=room_2_id)[0]
+        edge_2.expand_edge(db)
+        self.assertIsInstance(edge_2.child, DBRoom)
+        self.assertEqual(edge_2.child.db_id, room_2_id)
+        edge_3 = db.get_edges(parent_id=room_1_id, child_id=object_1_id)[0]
+        edge_3.expand_edge(db)
+        self.assertIsInstance(edge_3.child, DBObject)
+        self.assertEqual(edge_3.child.db_id, object_1_id)
+
+        # Query the edges
+        edges = db.get_edges()
+        self.assertEqual(len(edges), 12)
+        no_matching_pair = db.get_edges(parent_id=room_1_id, child_id=object_3_id)
+        self.assertEqual(len(no_matching_pair), 0)
+        no_matching_type = db.get_edges(
+            parent_id=room_1_id,
+            child_id=object_1_id,
+            edge_type=DBEdgeType.MAY_BE_NEIGHBOR,
+        )
+        self.assertEqual(len(no_matching_type), 0)
+        room_1_edges = db.get_edges(parent_id=room_1_id)
+        self.assertEqual(len(room_1_edges), 5)
+        agent_1_edges = db.get_edges(parent_id=agent_1_id)
+        self.assertEqual(len(agent_1_edges), 2)
+        object_1_edges = db.get_edges(parent_id=object_1_id)
+        self.assertEqual(len(object_1_edges), 1)
+        neighbor_edges = db.get_edges(edge_type=DBEdgeType.NEIGHBOR)
+        self.assertEqual(len(neighbor_edges), 1)
+        contains_edges = db.get_edges(edge_type=DBEdgeType.CONTAINS)
+        self.assertEqual(len(contains_edges), 3)
+        matching_edge_label = db.get_edges(edge_label="")
+        self.assertEqual(len(matching_edge_label), 11)
+        special_edge_label = db.get_edges(edge_label="a path to")
+        self.assertEqual(len(special_edge_label), 1)
+        no_matching_edge_label = db.get_edges(edge_label="zzzzzz")
+        self.assertEqual(len(no_matching_edge_label), 0)
+        matching_status = db.get_edges(status=DBStatus.REVIEW)
+        self.assertEqual(len(matching_status), 11)
+        special_matching_status = db.get_edges(status=DBStatus.REJECTED)
+        self.assertEqual(len(special_matching_status), 1)
+        no_matching_status = db.get_edges(status=DBStatus.ACCEPTED)
+        self.assertEqual(len(no_matching_status), 0)
+
+        # Create first text edge
+        text_edge_1_id = db.create_text_edge(
+            parent_id=room_1_id,
+            child_text="unknown object",
+            edge_type=DBEdgeType.MAY_CONTAIN,
+        )
+        self.assertTrue(DBTextEdge.is_id(text_edge_1_id))
+
+        # Ensure edge exists correctly
+        text_edges = db.get_text_edges()
+        self.assertEqual(len(text_edges), 1)
+        text_edge_1 = text_edges[0]
+        self.assertEqual(text_edge_1.db_id, text_edge_1_id)
+        self.assertEqual(text_edge_1.parent_id, room_1_id)
+        self.assertEqual(text_edge_1.child_text, "unknown object")
+        self.assertEqual(text_edge_1.edge_type, DBEdgeType.MAY_CONTAIN)
+        self.assertEqual(text_edge_1.status, DBStatus.REVIEW)
+        self.assertEqual(text_edge_1.edge_label, "")
+        self.assertIsNone(text_edge_1.creator_id)
+        self.assertIsNotNone(text_edge_1.create_timestamp)
+
+        # Note no duplicate edge possible
+        text_edge_1_id_2 = db.create_text_edge(
+            parent_id=room_1_id,
+            child_text="unknown object",
+            edge_type=DBEdgeType.MAY_CONTAIN,
+        )
+        self.assertEqual(text_edge_1_id, text_edge_1_id_2)
+        text_edges = db.get_text_edges()
+        self.assertEqual(len(text_edges), 1)
+
+        # More text edges
+        text_edge_2_id = db.create_text_edge(
+            parent_id=agent_1_id,
+            child_text="unknown room",
+            edge_type=DBEdgeType.MAY_BE_CONTAINED_IN,
+        )
+        text_edge_3_id = db.create_text_edge(
+            parent_id=object_1_id,
+            child_text="unknown agent",
+            edge_type=DBEdgeType.CONTAINED_IN,
+        )
+        text_edge_4_id = db.create_text_edge(
+            parent_id=room_1_id,
+            child_text="unknown room",
+            edge_type=DBEdgeType.MAY_BE_NEIGHBOR,
+            edge_label="a path to",
+            creator_id="test",
+            status=DBStatus.ACCEPTED,
+        )
+
+        # Query text edges
+        text_edges = db.get_text_edges()
+        self.assertEqual(len(text_edges), 4)
+        text_no_matching_pair = db.get_text_edges(
+            parent_id=object_1_id, child_text="unknown room"
+        )
+        self.assertEqual(len(text_no_matching_pair), 0)
+        text_no_matching_parent = db.get_text_edges(parent_id=agent_2_id)
+        self.assertEqual(len(text_no_matching_parent), 0)
+        text_no_matching_child = db.get_text_edges(child_text="something random")
+        self.assertEqual(len(text_no_matching_child), 0)
+        text_matching_child = db.get_text_edges(child_text="unknown room")
+        self.assertEqual(len(text_matching_child), 2)
+        text_matching_parent = db.get_text_edges(parent_id=room_1_id)
+        self.assertEqual(len(text_matching_parent), 2)
+        text_matching_type = db.get_text_edges(edge_type=DBEdgeType.CONTAINED_IN)
+        self.assertEqual(len(text_matching_type), 1)
+        text_no_matching_type = db.get_text_edges(edge_type=DBEdgeType.NEIGHBOR)
+        self.assertEqual(len(text_no_matching_type), 0)
+        text_matching_status = db.get_text_edges(status=DBStatus.REVIEW)
+        self.assertEqual(len(text_matching_status), 3)
+        text_special_status = db.get_text_edges(status=DBStatus.ACCEPTED)
+        self.assertEqual(len(text_special_status), 1)
+        text_no_matching_status = db.get_text_edges(status=DBStatus.REJECTED)
+        self.assertEqual(len(text_no_matching_status), 0)
+        text_matching_label = db.get_text_edges(edge_label="")
+        self.assertEqual(len(text_matching_label), 3)
+        text_special_label = db.get_text_edges(edge_label="a path to")
+        self.assertEqual(len(text_special_label), 1)
+        text_no_matching_label = db.get_text_edges(edge_label="zzzzzz")
+        self.assertEqual(len(text_no_matching_label), 0)
+
+        # Query edges for DBElems
+        room_1 = db.get_room(room_1_id)
+        agent_1 = db.get_agent(agent_1_id)
+        agent_2 = db.get_agent(agent_2_id)
+        object_1 = db.get_object(object_1_id)
+
+        # Try expanding edge
+        # All edges fail when not loading first
+        with self.assertRaises(AssertionError):
+            _test_text_edges = room_1.text_edges
+        with self.assertRaises(AssertionError):
+            _test_text_edges = agent_1.text_edges
+        with self.assertRaises(AssertionError):
+            _test_text_edges = agent_2.text_edges
+        with self.assertRaises(AssertionError):
+            _test_text_edges = object_1.text_edges
+        with self.assertRaises(AssertionError):
+            _test_node_edges = room_1.node_edges
+        with self.assertRaises(AssertionError):
+            _test_node_edges = agent_1.node_edges
+        with self.assertRaises(AssertionError):
+            _test_node_edges = agent_2.node_edges
+        with self.assertRaises(AssertionError):
+            _test_node_edges = object_1.node_edges
+
+        room_1.load_edges(db)
+        agent_1.load_edges(db)
+        agent_2.load_edges(db)
+        object_1.load_edges(db)
+
+        text_edges = db.get_text_edges()
+        self.assertEqual(len(text_edges), 4)
+
+        self.assertEqual(len(room_1.node_edges), 5)
+        self.assertEqual(len(room_1.text_edges), 2)
+        self.assertEqual(len(agent_1.node_edges), 2)
+        self.assertEqual(len(agent_1.text_edges), 1)
+        self.assertEqual(len(agent_2.node_edges), 1)
+        self.assertEqual(len(agent_2.text_edges), 0)
+        self.assertEqual(len(object_1.node_edges), 1)
+        self.assertEqual(len(object_1.text_edges), 1)
+
+        # Ensure that each of the edges is valid
+        for node in [room_1, agent_1, agent_2, object_1]:
+            for node_edge in node.node_edges:
+                self.assertEqual(node_edge.child.db_id, node_edge.child_id)
+            for text_edge in node.text_edges:
+                self.assertIsNotNone(text_edge.child_text)
+
+        # Try creating the cache and reloading from that state
+        db.create_node_cache()
+
+        # Query edges for DBElems
+        room_1 = db.get_room(room_1_id)
+        agent_1 = db.get_agent(agent_1_id)
+        agent_2 = db.get_agent(agent_2_id)
+        object_1 = db.get_object(object_1_id)
+
+        # Cached edges can be directly accessed
+        self.assertEqual(len(room_1.node_edges), 5)
+        self.assertEqual(len(room_1.text_edges), 2)
+        self.assertEqual(len(agent_1.node_edges), 2)
+        self.assertEqual(len(agent_1.text_edges), 1)
+        self.assertEqual(len(agent_2.node_edges), 1)
+        self.assertEqual(len(agent_2.text_edges), 0)
+        self.assertEqual(len(object_1.node_edges), 1)
+        self.assertEqual(len(object_1.text_edges), 1)
+
+        # Ensure that each of the edges is valid
+        for node in [room_1, agent_1, agent_2, object_1]:
+            for node_edge in node.node_edges:
+                self.assertEqual(node_edge.child.db_id, node_edge.child_id)
+            for text_edge in node.text_edges:
+                self.assertIsNotNone(text_edge.child_text)
 
     def test_create_load_flags(self):
         """Ensure it's possible to create and load flags"""

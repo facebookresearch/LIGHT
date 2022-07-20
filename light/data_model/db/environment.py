@@ -33,6 +33,7 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 from sqlalchemy.orm import declarative_base, relationship, Session, join
+import sqlalchemy.exc
 
 import enum
 import os
@@ -155,7 +156,7 @@ class DBElem(HasDBIDMixin):
         assert (
             use_session is not None
         ), "Must be in-session if not cached. Otherwise call `load_edges` first"
-        stmt = select(DBTextEdge).where(DBEdge.parent_id == self.db_id)
+        stmt = select(DBTextEdge).where(DBTextEdge.parent_id == self.db_id)
         text_edges = use_session.scalars(stmt).all()
         self._text_edges = text_edges
         return text_edges
@@ -189,6 +190,7 @@ class DBElem(HasDBIDMixin):
         else:
             # Load everything in a session
             with Session(db.engine) as session:
+                session.add(self)
                 assert self.text_edges is not None
                 assert self.node_edges is not None
                 session.expunge_all()
@@ -217,6 +219,7 @@ class DBElem(HasDBIDMixin):
         else:
             # Load everything in a session
             with Session(db.engine) as session:
+                session.add(self)
                 assert self.attributes is not None
                 session.expunge_all()
 
@@ -362,12 +365,14 @@ class DBEdgeType(enum.Enum):
 
     CONTAINS = "contains"
     MAY_CONTAIN = "may_contain"
-    WEARING = "wearing"
-    MAY_WEAR = "may_wear"
-    WIELDING = "wielding"
-    MAY_WIELD = "may_wield"
-    CONTAINED_IN = "contained_in"
-    MAY_BE_CONTAINED_IN = "may_be_contained_in"
+    WEARING = "wearing"  # only agent-object
+    MAY_WEAR = "may_wear"  # only agent-object
+    WIELDING = "wielding"  # only agent-object
+    MAY_WIELD = "may_wield"  # only agent-object
+    CONTAINED_IN = "contained_in"  # only outward text edge
+    MAY_BE_CONTAINED_IN = "may_be_contained_in"  # only outward text edge
+    NEIGHBOR = "neighboring"  # Only room-room
+    MAY_BE_NEIGHBOR = "may_be_neighboring"  # Only room-room
 
 
 class DBEdgeBase(HasDBIDMixin):
@@ -388,6 +393,11 @@ class DBEdge(DBEdgeBase, SQLBase):
     """Class for edges between two GraphNodes registered in the DB"""
 
     __tablename__ = "edges"
+    __table_args__ = (
+        UniqueConstraint(
+            "parent_id", "child_id", "edge_type", "edge_label", name="edge_details"
+        ),
+    )
     ID_PREFIX = "NED"
 
     child_id = Column(String(ID_STRING_LENGTH), nullable=False)
@@ -399,7 +409,7 @@ class DBEdge(DBEdgeBase, SQLBase):
     def child(self) -> DBElem:
         """Follow this edge and load the child node"""
         if self._child is not None:
-            return self.child
+            return self._child
 
         use_session = Session.object_session(self)
         assert (
@@ -436,6 +446,7 @@ class DBEdge(DBEdgeBase, SQLBase):
         else:
             # Load everything in a session
             with Session(db.engine) as session:
+                session.add(self)
                 assert self.child is not None
                 session.expunge_all()
 
@@ -449,6 +460,11 @@ class DBTextEdge(DBEdgeBase, SQLBase):
     """Class for edges between a GraphNodes and a new entity in the DB"""
 
     __tablename__ = "text_edges"
+    __table_args__ = (
+        UniqueConstraint(
+            "parent_id", "child_text", "edge_type", "edge_label", name="edge_details"
+        ),
+    )
     ID_PREFIX = "TED"
 
     child_text = Column(String(BASE_NAME_LENGTH_CAP), nullable=False, index=True)
@@ -673,7 +689,7 @@ class EnvDB(BaseDB):
         all_rooms: List[Any] = self.find_rooms()
         all_agents: List[Any] = self.find_agents()
         all_objects: List[Any] = self.find_objects()
-        all_nodes: List[Any] = all_rooms + all_agents + all_nodes
+        all_nodes: List[Any] = all_rooms + all_agents + all_objects
         all_node_edges: List[Any] = self.get_edges()
         all_text_edges: List[Any] = self.get_text_edges()
         all_entities: List[Any] = all_nodes + all_node_edges + all_text_edges
@@ -704,7 +720,9 @@ class EnvDB(BaseDB):
     ) -> str:
         """Idempotently create a name key for the given class"""
         try:
-            return self._get_name_key(KeyClass, name=name).db_id
+            db_id = self._get_name_key(KeyClass, name=name).db_id
+            assert db_id is not None
+            return db_id
         except KeyError:
             with Session(self.engine) as session:
                 db_id = KeyClass.get_id()
@@ -800,6 +818,9 @@ class EnvDB(BaseDB):
     ) -> DBElem:
         """Get a specific element of the given class by ID, asserting that it exists"""
         assert ElemClass.is_id(db_id), f"Given id {db_id} not for {ElemClass}"
+        if self._cache is not None:
+            return self._cache["all"][db_id]
+
         stmt = select(ElemClass).where(ElemClass.db_id == db_id)
         with Session(self.engine) as session:
             db_elem = self._enforce_get_first(
@@ -1344,33 +1365,47 @@ class EnvDB(BaseDB):
         parent_id: str,
         child_id: str,
         edge_type: DBEdgeType,
-        edge_label: Optional[str] = None,
+        edge_label: str = "",
         status: DBStatus = DBStatus.REVIEW,
         creator_id: Optional[str] = None,
     ) -> str:
-        """Create an edge between two nodes"""
-        with Session(self.engine) as session:
-            db_id = DBEdge.get_id()
-            edge = DBEdge(
-                db_id=db_id,
+        """Create an edge between two nodes, idempotent"""
+        try:
+            with Session(self.engine) as session:
+                db_id = DBEdge.get_id()
+                edge = DBEdge(
+                    db_id=db_id,
+                    parent_id=parent_id,
+                    edge_type=edge_type,
+                    edge_label=edge_label,
+                    status=status,
+                    creator_id=creator_id,
+                    create_timestamp=time.time(),
+                    child_id=child_id,
+                )
+                session.add(edge)
+                session.flush()
+                session.commit()
+            return db_id
+        except sqlalchemy.exc.IntegrityError:
+            # Duplicate, grab the existing
+            edges = self.get_edges(
                 parent_id=parent_id,
+                child_id=child_id,
                 edge_type=edge_type,
                 edge_label=edge_label,
-                status=status,
-                creator_id=creator_id,
-                create_timestamp=time.time(),
-                child_id=child_id,
             )
-            session.add(edge)
-            session.flush()
-            session.commit()
-        return db_id
+            assert len(edges) == 1
+            db_id = edges[0].db_id
+            assert db_id is not None
+            return db_id
 
     def get_edges(
         self,
         parent_id: Optional[str] = None,
         child_id: Optional[str] = None,
         edge_type: Optional[DBEdgeType] = None,
+        edge_label: Optional[str] = None,
         status: Optional[DBStatus] = None,
         creator_id: Optional[str] = None,
         min_strength: Optional[float] = None,
@@ -1394,6 +1429,8 @@ class EnvDB(BaseDB):
             stmt = stmt.where(DBEdge.child_id == child_id)
         if edge_type is not None:
             stmt = stmt.where(DBEdge.edge_type == edge_type)
+        if edge_label is not None:
+            stmt = stmt.where(DBEdge.edge_label == edge_label)
         if status is not None:
             stmt = stmt.where(DBEdge.status == status)
         if creator_id is not None:
@@ -1425,33 +1462,47 @@ class EnvDB(BaseDB):
         parent_id: str,
         child_text: str,
         edge_type: DBEdgeType,
-        edge_label: Optional[str] = None,
+        edge_label: str = "",
         status: DBStatus = DBStatus.REVIEW,
         creator_id: Optional[str] = None,
     ) -> str:
         """Create an edge between a node and the name of a possible leaf"""
-        with Session(self.engine) as session:
-            db_id = DBTextEdge.get_id()
-            edge = DBTextEdge(
-                db_id=db_id,
+        try:
+            with Session(self.engine) as session:
+                db_id = DBTextEdge.get_id()
+                edge = DBTextEdge(
+                    db_id=db_id,
+                    parent_id=parent_id,
+                    edge_type=edge_type,
+                    edge_label=edge_label,
+                    status=status,
+                    creator_id=creator_id,
+                    create_timestamp=time.time(),
+                    child_text=child_text,
+                )
+                session.add(edge)
+                session.flush()
+                session.commit()
+            return db_id
+        except sqlalchemy.exc.IntegrityError:
+            # Duplicate, grab the existing
+            edges = self.get_text_edges(
                 parent_id=parent_id,
+                child_text=child_text,
                 edge_type=edge_type,
                 edge_label=edge_label,
-                status=status,
-                creator_id=creator_id,
-                create_timestamp=time.time(),
-                child_text=child_text,
             )
-            session.add(edge)
-            session.flush()
-            session.commit()
-        return db_id
+            assert len(edges) == 1
+            db_id = edges[0].db_id
+            assert db_id is not None
+            return db_id
 
     def get_text_edges(
         self,
         parent_id: Optional[str] = None,
         child_text: Optional[str] = None,
         edge_type: Optional[DBEdgeType] = None,
+        edge_label: Optional[str] = None,
         status: Optional[DBStatus] = None,
         creator_id: Optional[str] = None,
     ) -> List[DBTextEdge]:
@@ -1474,6 +1525,8 @@ class EnvDB(BaseDB):
             stmt = stmt.where(DBTextEdge.child_text == child_text)
         if edge_type is not None:
             stmt = stmt.where(DBTextEdge.edge_type == edge_type)
+        if edge_label is not None:
+            stmt = stmt.where(DBTextEdge.edge_label == edge_label)
         if status is not None:
             stmt = stmt.where(DBTextEdge.status == status)
         if creator_id is not None:
