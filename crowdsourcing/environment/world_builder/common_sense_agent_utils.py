@@ -525,7 +525,7 @@ class CommonSenseAgent(Agent):
         """
         context = self.parse_room_graph(existing_room_graph)
         input_text = context + "\n" + prompt
-
+        logging.info(f"Prompt: {prompt}")
         self.observe({'text': input_text, 'sender': 'human', 'episode_done': True})
         act = self.act()
         if self.verbose:
@@ -988,9 +988,9 @@ class CommonSenseAgent(Agent):
         existing_room_graph = self.add_object_contains(
             existing_room_graph, target_id, count=count
         )
-        existing_room_graph = self.add_all_static_attributes(
-            existing_room_graph, target_id
-        )
+        # existing_room_graph = self.add_all_static_attributes(
+        #     existing_room_graph, target_id
+        # )
 
         return existing_room_graph
 

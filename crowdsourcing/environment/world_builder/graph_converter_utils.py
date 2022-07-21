@@ -437,9 +437,9 @@ def add_object_secondary_objects_to_graph(input_graph, node_id, contained):
             "food_energy": 0,
             "gettable": False,
             "locked_edge": None,
-            "name": o['name'],
+            "name": o,
             "name_prefix": "a",
-            "names": [o['name']],
+            "names": [o],
             "node_id": o_id,
             "object": True,
             "on_use": None,
@@ -457,7 +457,7 @@ def add_object_secondary_objects_to_graph(input_graph, node_id, contained):
         }
         input_graph['objects'].append(o_id)
         input_graph['nodes'][o_id] = new_node
-        input_graph['nodes'][node_id]['contained_nodes'][o_id] = {"target_id": o_id}
+        # input_graph['nodes'][node_id]['contained_nodes'][o_id] = {"target_id": o_id}
         # input_graph['objects'].append(new_node)
     return input_graph
 
@@ -469,7 +469,6 @@ def add_object_to_graph(input_graph, room_name, object_dict):
         return input_graph
     # print(object_dict)
     contained = object_dict.get('containing_objects', [])
-    input_graph = add_object_secondary_objects_to_graph(input_graph, node_id, contained)
 
     new_node = {
         "agent": False,
@@ -511,6 +510,7 @@ def add_object_to_graph(input_graph, room_name, object_dict):
     input_graph['nodes'][node_id] = new_node
     input_graph['objects'].append(node_id)
     input_graph['nodes'][room_name]['contained_nodes'][node_id] = {"target_id": node_id}
+    input_graph = add_object_secondary_objects_to_graph(input_graph, node_id, contained)
     return input_graph
 
 ########################################################################################
