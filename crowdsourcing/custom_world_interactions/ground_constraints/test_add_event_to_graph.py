@@ -50,6 +50,9 @@ ROOM_ID = GRAPH['rooms'][0]
 
 data = mephisto_data_browser.get_data_from_unit(unit)
 print(data['data']['outputs']['events'])
+print()
+print(data['data']['outputs']['this_task_state'])
+print()
 constraints = data['data']['outputs']['constraints']
 attributes = data['data']['outputs']['events']
 constraint_rows = []
