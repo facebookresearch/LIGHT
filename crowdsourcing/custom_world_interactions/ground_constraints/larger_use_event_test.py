@@ -101,6 +101,9 @@ for unit in accepted_units:
         print(row)
 
     for c in attributes:
+        if c['type'] == "create_entity":
+            print(c)
+            x = 1/0
         if 'modify_attribute' not in c['type']:
             continue
         if 'location' in c['type']:
