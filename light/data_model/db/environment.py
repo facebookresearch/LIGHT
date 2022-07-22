@@ -1336,8 +1336,8 @@ class EnvDB(BaseDB):
                 attribute_value_string=attribute_value_string,
             )
             assert len(attributes) == 1
+            assert attributes[0].db_id is not None
             db_id = attributes[0].db_id
-            assert db_id is not None
             return db_id
 
     def get_attributes(
@@ -1417,8 +1417,8 @@ class EnvDB(BaseDB):
                 edge_label=edge_label,
             )
             assert len(edges) == 1
+            assert edges[0].db_id is not None
             db_id = edges[0].db_id
-            assert db_id is not None
             return db_id
 
     def get_edges(
@@ -1514,8 +1514,8 @@ class EnvDB(BaseDB):
                 edge_label=edge_label,
             )
             assert len(edges) == 1
+            assert edges[0].db_id is not None
             db_id = edges[0].db_id
-            assert db_id is not None
             return db_id
 
     def get_text_edges(
