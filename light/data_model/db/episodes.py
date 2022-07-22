@@ -225,7 +225,7 @@ class EpisodeDB(BaseDB):
             first_graph = None
             for idx, graph_info in enumerate(graphs):
                 graph_full_path = os.path.join(graph_dump_root, graph_info["filename"])
-                db_graph = DBGraph(
+                db_graph = DBEpisodeGraph(
                     graph_key_id=graph_info["key"],
                     full_path=graph_full_path,
                 )
