@@ -35,7 +35,7 @@ class OOGraph(object):
         self.dead_nodes = {}
         self._opt = opt
         self.title = opt.get("title", "untitled")
-        self.db_id: Optional[str] = None
+        self.db_id: Optional[str] = opt.get("db_id")
 
     @staticmethod
     def from_graph(graph, start_location=None):

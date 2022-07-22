@@ -124,7 +124,7 @@ class DBEpisode(SQLBase):
         return f"DBEpisode(ids:[{self.id!r}] group/split:[{self.group.value!r}/{self.split.value!r}] File:[{self.dump_file_path!r}])"
 
 
-class DBGraph(SQLBase):
+class DBEpisodeGraph(SQLBase):
     """Class containing expected elements for a stored graph"""
 
     __tablename__ = "graphs"
@@ -144,7 +144,7 @@ class DBGraph(SQLBase):
         return graph
 
     def __repr__(self):
-        return f"DBGraph(ids:[{self.id!r},{self.graph_key_id!r}], episode:{self.episode_id!r})"
+        return f"DBEpisodeGraph(ids:[{self.id!r},{self.graph_key_id!r}], episode:{self.episode_id!r})"
 
 
 class EpisodeDB(BaseDB):

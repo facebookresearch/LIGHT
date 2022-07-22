@@ -660,6 +660,7 @@ class DBGraph(SQLBase, HasDBIDMixin):
         graph_json = db.read_data_from_file(self.file_path, json_encoded=False)
         assert isinstance(graph_json, str)
         graph = OOGraph.from_json(graph_json)
+        graph.db_id = self.db_id
         return graph
 
     def __repr__(self):
@@ -1782,6 +1783,7 @@ class EnvDB(BaseDB):
         # Find or assign a db_id for this graph
         if graph.db_id is not None:
             db_id = graph.db_id
+            assert DBGraph.is_id(db_id), f"Provided Graph ID invalid: {db_id}"
         else:
             db_id = DBGraph.get_id()
             graph.db_id = db_id
@@ -1800,6 +1802,7 @@ class EnvDB(BaseDB):
                 self.write_data_to_file(
                     graph.to_json(), dump_file_path, json_encode=False
                 )
+                db_graph.status = DBStatus.REVIEW
             else:
                 # New graph
                 db_graph = DBGraph(

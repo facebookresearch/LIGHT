@@ -1790,3 +1790,82 @@ class TestEnvironmentDB(unittest.TestCase):
 
     def test_create_load_graphs(self):
         """Ensure that graph loading is functioning as expected"""
+
+        db = EnvDB(self.config)
+
+        # Create a test graph
+        test_graph_1 = OOGraph({})
+        agent_node = test_graph_1.add_agent("My test agent", {})
+        room_node = test_graph_1.add_room("test room", {})
+        agent_node.force_move_to(room_node)
+
+        # Save the test graph
+        graph_id_1 = db.save_graph(test_graph_1, creator_id="tester")
+        self.assertTrue(DBGraph.is_id(graph_id_1))
+        self.assertEqual(test_graph_1.db_id, graph_id_1)
+
+        # Ensure that the graph is set up as expected
+        graphs = db.find_graphs()
+        self.assertEqual(len(graphs), 1)
+        db_graph_1 = graphs[0]
+        self.assertEqual(db_graph_1.db_id, graph_id_1)
+        self.assertEqual(db_graph_1.graph_name, "untitled")
+        self.assertEqual(db_graph_1.creator_id, "tester")
+        self.assertTrue(
+            db.file_path_exists(db_graph_1.file_path),
+            f"Output path {db_graph_1.file_path} doesn't seem to exist in the db",
+        )
+        self.assertEqual(db_graph_1.status, DBStatus.REVIEW)
+        self.assertIsNotNone(db_graph_1.create_timestamp)
+
+        # Make changes to the graph, then re-save
+        room_node_2 = test_graph_1.add_room("test room 2", {})
+        # Assert same graph, not new
+        graph_id_1_2 = db.save_graph(test_graph_1, creator_id="tester")
+        self.assertEqual(graph_id_1, graph_id_1_2)
+        graphs = db.find_graphs()
+        self.assertEqual(len(graphs), 1)
+
+        # Load the graph directly
+        db_graph_1 = db.load_graph(graph_id_1)
+
+        # Try to pull the underlying graph from file
+        oo_graph = db_graph_1.get_graph(db)
+        self.assertEqual(
+            oo_graph.to_json(), test_graph_1.to_json(), "Graphs are not equal!"
+        )
+
+        # Save a second graph, this time titled with an ID too
+        test_graph_2 = OOGraph({"title": "Test Graph", "db_id": "UGR-TEST"})
+        agent_node = test_graph_2.add_agent("My test agent", {})
+        room_node = test_graph_2.add_room("test room", {})
+        agent_node.force_move_to(room_node)
+
+        # Save the second graph
+        graph_id_2 = db.save_graph(test_graph_2, creator_id="tester")
+        self.assertTrue(DBGraph.is_id(graph_id_2))
+        self.assertEqual(test_graph_2.db_id, graph_id_2)
+        self.assertEqual(test_graph_2.db_id, "UGR-TEST")
+
+        # Do some queries
+        graphs = db.find_graphs()
+        self.assertEqual(len(graphs), 2)
+        graph_default_name_1 = db.find_graphs(graph_name="untitled")
+        self.assertEqual(len(graph_default_name_1), 1)
+        graph_custom_name_1 = db.find_graphs(graph_name="Test Graph")
+        self.assertEqual(len(graph_custom_name_1), 1)
+        graph_name_0 = db.find_graphs(graph_name="nonexisting")
+        self.assertEqual(len(graph_name_0), 0)
+        graph_creator_2 = db.find_graphs(creator_id="tester")
+        self.assertEqual(len(graph_creator_2), 2)
+        graph_creator_0 = db.find_graphs(creator_id="nonexisting")
+        self.assertEqual(len(graph_creator_0), 0)
+
+        # Ensure main graph save failures
+        with self.assertRaises(AssertionError):
+            # Can't save one graph as a different creator
+            _graph_id_1_3 = db.save_graph(test_graph_1, creator_id="not_tester")
+        test_graph_1.db_id = "bad-db-id"
+        with self.assertRaises(AssertionError):
+            # Can't save a graph with an invalid DBGraph ID
+            _graph_id_1_3 = db.save_graph(test_graph_1, creator_id="not_tester")
