@@ -1865,3 +1865,11 @@ class EnvDB(BaseDB):
         all of the edges.
         """
         raise NotImplementedError
+
+    # release functionality
+
+    def export(self):
+        """
+        Create a scrubbed version of this database for use in releases
+        """
+        raise NotImplementedError
