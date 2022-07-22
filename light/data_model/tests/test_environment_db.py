@@ -1142,6 +1142,26 @@ class TestEnvironmentDB(unittest.TestCase):
         no_matching_status = db.get_edges(status=DBStatus.ACCEPTED)
         self.assertEqual(len(no_matching_status), 0)
 
+        # Test edge strength filtering
+        room_1 = db.get_room(room_1_id)
+        edge_2 = db.get_edges(parent_id=room_1_id, child_id=agent_2_id)[0]
+        with Session(db.engine) as session:
+            session.add(room_1)
+            session.add(edge_1)
+            session.add(edge_2)
+            room_1.built_occurrences = 3
+            edge_1.built_occurrences = 1
+            edge_2.built_occurrences = 2
+            session.flush()
+            session.commit()
+            session.expunge_all()
+        more_than_quarter = db.get_edges(min_strength=0.25)
+        self.assertEqual(len(more_than_quarter), 2)
+        more_than_half = db.get_edges(min_strength=0.5)
+        self.assertEqual(len(more_than_half), 1)
+        more_than_top = db.get_edges(min_strength=0.75)
+        self.assertEqual(len(more_than_top), 0)
+
         # Create first text edge
         text_edge_1_id = db.create_text_edge(
             parent_id=room_1_id,
@@ -1436,20 +1456,337 @@ class TestEnvironmentDB(unittest.TestCase):
                 self.assertIsNotNone(attribute.attribute_value_string)
                 self.assertEqual(attribute.target_id, node.db_id)
 
-    def test_create_load_flags(self):
-        """Ensure it's possible to create and load flags"""
-
     def test_create_load_edits(self):
         """Ensure it's possible to create, load, and reject edits"""
+        db = EnvDB(self.config)
+
+        # get some things to use
+        agent_ids, room_ids, object_ids = self.set_up_some_nodes(db)
+        agent_1_id = agent_ids[0]
+
+        # Create an edit
+        edit_1_id = db.create_edit(
+            editor_id="test_editor",
+            node_id=agent_1_id,
+            field="persona",
+            old_value="agent_persona",
+            new_value="edited_agent_persona",
+        )
+        self.assertTrue(DBEdit.is_id(edit_1_id))
+
+        # load the edit
+        edits = db.get_edits()
+        self.assertEqual(len(edits), 1)
+        edit_1 = edits[0]
+
+        # Assert fields are set
+        self.assertEqual(edit_1.db_id, edit_1_id)
+        self.assertEqual(edit_1.editor_id, "test_editor")
+        self.assertEqual(edit_1.node_id, agent_1_id)
+        self.assertEqual(edit_1.field, "persona")
+        self.assertEqual(edit_1.old_value, "agent_persona")
+        self.assertEqual(edit_1.new_value, "edited_agent_persona")
+        self.assertEqual(edit_1.status, DBStatus.REVIEW)
+        self.assertIsNotNone(edit_1.create_timestamp)
+
+        # reject the edit
+        edit_1.reject_edit(db)
+        edits = db.get_edits()
+        self.assertEqual(len(edits), 1)
+        edit_1 = edits[0]
+        self.assertEqual(edit_1.status, DBStatus.REJECTED)
+
+        # create two more edits
+        edit_2_id = db.create_edit(
+            editor_id="test_editor",
+            node_id=agent_1_id,
+            field="name",
+            old_value="test_agent_1",
+            new_value="test_agent_0",
+            status=DBStatus.QUESTIONABLE,
+        )
+        edit_3_id = db.create_edit(
+            editor_id="test_editor_2",
+            node_id=agent_1_id,
+            field="persona",
+            old_value="agent_persona",
+            new_value="edited_agent_persona_2",
+        )
+        edits = db.get_edits()
+        self.assertEqual(len(edits), 3)
+
+        # query the various edits
+        match_editor_2 = db.get_edits(editor_id="test_editor")
+        self.assertEqual(len(match_editor_2), 2)
+        match_editor_1 = db.get_edits(editor_id="test_editor_2")
+        self.assertEqual(len(match_editor_1), 1)
+        match_editor_0 = db.get_edits(editor_id="test_editor_3")
+        self.assertEqual(len(match_editor_0), 0)
+        match_node_id_3 = db.get_edits(node_id=agent_1_id)
+        self.assertEqual(len(match_node_id_3), 3)
+        match_node_id_0 = db.get_edits(node_id="test")
+        self.assertEqual(len(match_node_id_0), 0)
+        match_field_2 = db.get_edits(field="persona")
+        self.assertEqual(len(match_field_2), 2)
+        match_field_1 = db.get_edits(field="name")
+        self.assertEqual(len(match_field_1), 1)
+        match_field_0 = db.get_edits(field="physical_description")
+        self.assertEqual(len(match_field_0), 0)
+        match_old_value_2 = db.get_edits(old_value="agent_persona")
+        self.assertEqual(len(match_old_value_2), 2)
+        match_old_value_1 = db.get_edits(old_value="test_agent_1")
+        self.assertEqual(len(match_old_value_1), 1)
+        match_old_value_0 = db.get_edits(old_value="zzzzz")
+        self.assertEqual(len(match_old_value_0), 0)
+        match_new_value = db.get_edits(new_value="test_agent_0")
+        self.assertEqual(len(match_new_value), 1)
+        no_match_new_value = db.get_edits(new_value="zzzzz")
+        self.assertEqual(len(no_match_new_value), 0)
+        match_status_standard = db.get_edits(status=DBStatus.REVIEW)
+        self.assertEqual(len(match_status_standard), 1)
+        match_status_reject = db.get_edits(status=DBStatus.REJECTED)
+        self.assertEqual(len(match_status_reject), 1)
+        match_status_special = db.get_edits(status=DBStatus.QUESTIONABLE)
+        self.assertEqual(len(match_status_special), 1)
+        match_status_0 = db.get_edits(status=DBStatus.ACCEPTED)
+        self.assertEqual(len(match_status_0), 0)
+
+        # TODO accept an edit
+
+    def test_create_load_flags(self):
+        """Ensure it's possible to create and load flags"""
+        db = EnvDB(self.config)
+
+        # get some things to use
+        agent_ids, room_ids, object_ids = self.set_up_some_nodes(db)
+        agent_1_id = agent_ids[0]
+
+        # Create a flag
+        flag_1_id = db.flag_entry(
+            user_id="flagger_id",
+            flag_type=DBFlagTargetType.FLAG_USER,
+            target_id="bad_user",
+            reason="some_reason",
+        )
+        self.assertTrue(DBFlag.is_id(flag_1_id))
+
+        # load the flag
+        flags = db.get_flags()
+        self.assertEqual(len(flags), 1)
+        flag_1 = flags[0]
+        self.assertEqual(flag_1.db_id, flag_1_id)
+        self.assertEqual(flag_1.user_id, "flagger_id")
+        self.assertEqual(flag_1.flag_type, DBFlagTargetType.FLAG_USER)
+        self.assertEqual(flag_1.target_id, "bad_user")
+        self.assertEqual(flag_1.reason, "some_reason")
+        self.assertEqual(flag_1.status, DBStatus.REVIEW)
+        self.assertIsNotNone(flag_1.create_timestamp)
+
+        # create two more flags
+        flag_2_id = db.flag_entry(
+            user_id="flagger_id",
+            flag_type=DBFlagTargetType.FLAG_ENVIRONMENT,
+            target_id=agent_ids[0],
+            reason="some_other_reason",
+        )
+        flag_3_id = db.flag_entry(
+            user_id="flagger_id",
+            flag_type=DBFlagTargetType.FLAG_UTTERANCE,
+            target_id="model_id",
+            reason="some_reason",
+            status=DBStatus.ACCEPTED,
+        )
+        flags = db.get_flags()
+        self.assertEqual(len(flags), 3)
+
+        # query the various flags
+        match_user = db.get_flags(user_id="flagger_id")
+        self.assertEqual(len(match_user), 3)
+        no_match_user = db.get_flags(user_id="random_id")
+        self.assertEqual(len(no_match_user), 0)
+        match_type_env = db.get_flags(flag_type=DBFlagTargetType.FLAG_ENVIRONMENT)
+        self.assertEqual(len(match_type_env), 1)
+        match_type_utt = db.get_flags(flag_type=DBFlagTargetType.FLAG_UTTERANCE)
+        self.assertEqual(len(match_type_utt), 1)
+        match_type_user = db.get_flags(flag_type=DBFlagTargetType.FLAG_USER)
+        self.assertEqual(len(match_type_user), 1)
+        match_target = db.get_flags(target_id=agent_ids[0])
+        self.assertEqual(len(match_target), 1)
+        no_match_target = db.get_flags(target_id=agent_ids[1])
+        self.assertEqual(len(no_match_target), 0)
+        match_reason = db.get_flags(reason="some_reason")
+        self.assertEqual(len(match_reason), 2)
+        no_match_reason = db.get_flags(reason="fake_reason")
+        self.assertEqual(len(no_match_reason), 0)
+        match_status = db.get_flags(status=DBStatus.REVIEW)
+        self.assertEqual(len(match_status), 2)
+        match_other_status = db.get_flags(status=DBStatus.ACCEPTED)
+        self.assertEqual(len(match_other_status), 1)
+        no_match_status = db.get_flags(status=DBStatus.QUESTIONABLE)
+        self.assertEqual(len(no_match_status), 0)
 
     def test_create_load_link_quests(self):
         """Ensure that quests are saving and loading as expected"""
+        db = EnvDB(self.config)
+
+        # get some things to use
+        agent_ids, room_ids, object_ids = self.set_up_some_nodes(db)
+
+        # Create first quest
+        quest_1_id = db.create_quest(
+            agent_id=agent_ids[0],
+            text_motivation="top_text_motivation",
+            target_type=DBQuestTargetType.TEXT_ONLY,
+            target="",
+        )
+        self.assertTrue(DBQuest.is_id(quest_1_id))
+
+        # Ensure init looks good
+        quests = db.find_quests()
+        self.assertEqual(len(quests), 1)
+        quest_1 = quests[0]
+        self.assertEqual(quest_1.db_id, quest_1_id)
+        self.assertEqual(quest_1.agent_id, agent_ids[0])
+        self.assertEqual(quest_1.text_motivation, "top_text_motivation")
+        self.assertEqual(quest_1.target_type, DBQuestTargetType.TEXT_ONLY)
+        self.assertEqual(quest_1.target, "")
+        self.assertEqual(quest_1.status, DBStatus.REVIEW)
+        self.assertEqual(quest_1.position, 0)
+        self.assertIsNone(quest_1.parent_id)
+        self.assertIsNone(quest_1.origin_filepath)
+        self.assertIsNone(quest_1.creator_id)
+        self.assertIsNotNone(quest_1.create_timestamp)
+
+        # Create quest tree
+        quest_2_id = db.create_quest(
+            agent_id=agent_ids[0],
+            text_motivation="big_text_motivation",
+            target_type=DBQuestTargetType.TEXT_ONLY,
+            target="",
+            parent_id=quest_1_id,
+        )
+        quest_3_id = db.create_quest(
+            agent_id=agent_ids[0],
+            text_motivation="mid_text_motivation",
+            target_type=DBQuestTargetType.TEXT_ONLY,
+            target="",
+            parent_id=quest_2_id,
+        )
+        quest_4_id = db.create_quest(
+            agent_id=agent_ids[0],
+            text_motivation="mid_text_motivation",
+            target_type=DBQuestTargetType.TEXT_ONLY,
+            target="",
+            parent_id=quest_2_id,
+            position=1,
+        )
+        quest_5_id = db.create_quest(
+            agent_id=agent_ids[0],
+            text_motivation="low_goal_1",
+            target_type=DBQuestTargetType.TARGET_ACTION,
+            target="get thing",
+            parent_id=quest_3_id,
+            position=1,
+        )
+        quest_6_id = db.create_quest(
+            agent_id=agent_ids[0],
+            text_motivation="low_goal_2",
+            target_type=DBQuestTargetType.TARGET_ACTION,
+            target="do something",
+            origin_filepath="test/file/path.json",
+            status=DBStatus.REJECTED,
+            creator_id="bad_creator",
+            parent_id=quest_3_id,
+        )
+        quests = db.find_quests()
+        self.assertEqual(len(quests), 6)
+
+        # Query more elements
+        agent_match_6 = db.find_quests(agent_id=agent_ids[0])
+        self.assertEqual(len(agent_match_6), 6)
+        agent_match_0 = db.find_quests(agent_id=agent_ids[1])
+        self.assertEqual(len(agent_match_0), 0)
+        motivation_match_2 = db.find_quests(text_motivation="mid_text_motivation")
+        self.assertEqual(len(motivation_match_2), 2)
+        motivation_match_1 = db.find_quests(text_motivation="low_goal_1")
+        self.assertEqual(len(motivation_match_1), 1)
+        motivation_match_0 = db.find_quests(text_motivation="fake_goal")
+        self.assertEqual(len(motivation_match_0), 0)
+        target_type_match_4 = db.find_quests(target_type=DBQuestTargetType.TEXT_ONLY)
+        self.assertEqual(len(target_type_match_4), 4)
+        target_type_match_2 = db.find_quests(
+            target_type=DBQuestTargetType.TARGET_ACTION
+        )
+        self.assertEqual(len(target_type_match_2), 2)
+        target_match_4 = db.find_quests(target="")
+        self.assertEqual(len(target_match_4), 4)
+        target_match_1 = db.find_quests(target="get thing")
+        self.assertEqual(len(target_match_1), 1)
+        target_match_0 = db.find_quests(target="sleep")
+        self.assertEqual(len(target_match_0), 0)
+        parent_id_match_2 = db.find_quests(parent_id=quest_2_id)
+        self.assertEqual(len(parent_id_match_2), 2)
+        parent_id_match_1 = db.find_quests(parent_id=quest_1_id)
+        self.assertEqual(len(parent_id_match_1), 1)
+        parent_id_match_0 = db.find_quests(parent_id=quest_6_id)
+        self.assertEqual(len(parent_id_match_0), 0)
+        creator_id_match_1 = db.find_quests(creator_id="bad_creator")
+        self.assertEqual(len(creator_id_match_1), 1)
+        creator_id_match_0 = db.find_quests(creator_id="test")
+        self.assertEqual(len(creator_id_match_0), 0)
+        origin_filepath_match_1 = db.find_quests(origin_filepath="test/file/path.json")
+        self.assertEqual(len(origin_filepath_match_1), 1)
+        origin_filepath_match_0 = db.find_quests(origin_filepath="fake/file/path.json")
+        self.assertEqual(len(origin_filepath_match_0), 0)
+        status_match_5 = db.find_quests(status=DBStatus.REVIEW)
+        self.assertEqual(len(status_match_5), 5)
+        status_match_1 = db.find_quests(status=DBStatus.REJECTED)
+        self.assertEqual(len(status_match_1), 1)
+        status_match_0 = db.find_quests(status=DBStatus.QUESTIONABLE)
+        self.assertEqual(len(status_match_0), 0)
+
+        # Check that inter-node references work
+        with Session(db.engine) as session:
+            quest_6 = session.query(DBQuest).get(quest_6_id)
+            session.expunge_all()
+
+        # Loads should fail outside of session
+        with self.assertRaises(AssertionError):
+            _test_parent_chain = quest_1.parent_chain
+        with self.assertRaises(AssertionError):
+            _test_parent_chain = quest_6.parent_chain
+        with self.assertRaises(AssertionError):
+            _test_subgoals = quest_1.subgoals
+        with self.assertRaises(AssertionError):
+            _test_subgoals = quest_6.subgoals
+
+        quest_1.load_relations(db)
+        quest_6.load_relations(db)
+
+        # Subgoals are correct length
+        self.assertEqual(len(quest_1.subgoals), 1)
+        self.assertEqual(len(quest_6.subgoals), 0)
+
+        # Parent chains are correct
+        self.assertEqual(len(quest_1.parent_chain), 1)
+        self.assertEqual(len(quest_6.parent_chain), 4)
+
+        # Subgoals are all loaded
+        quest_2 = quest_1.subgoals[0]
+        self.assertEqual(quest_2.db_id, quest_2_id)
+        self.assertEqual(len(quest_2.subgoals), 2)
+        quest_4 = quest_2.subgoals[1]
+        self.assertEqual(quest_4.db_id, quest_4_id)
+        self.assertEqual(len(quest_4.subgoals), 0)
+        quest_3 = quest_2.subgoals[0]
+        self.assertEqual(quest_3.db_id, quest_3_id)
+        self.assertEqual(len(quest_3.subgoals), 2)
+        quest_5 = quest_3.subgoals[1]  # test order swap by position
+        quest_6 = quest_3.subgoals[0]
+        self.assertEqual(quest_5.db_id, quest_5_id)
+        self.assertEqual(len(quest_5.subgoals), 0)
+        self.assertEqual(quest_6.db_id, quest_6_id)
+        self.assertEqual(len(quest_6.subgoals), 0)
 
     def test_create_load_graphs(self):
         """Ensure that graph loading is functioning as expected"""
-
-    def test_initialize_env_db_cache(self):
-        """Ensure it's possible to load everything to the cache"""
-        db = EnvDB(self.config)
-        # self.set_up_some_nodes()
-        # self.set_up_some_edges()

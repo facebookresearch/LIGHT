@@ -565,6 +565,7 @@ class DBQuest(SQLBase, HasDBIDMixin):
     target = Column(String(QUEST_MOTIVATION_LENGTH))
     status = Column(Enum(DBStatus), nullable=False, index=True)
     origin_filepath = Column(String(FILE_PATH_LENGTH_CAP))
+    position = Column(Integer)  # If subgoal of a parent, which substep?
     creator_id = Column(
         String(ID_STRING_LENGTH)
     )  # temp retain the creator ID for new things
@@ -590,6 +591,7 @@ class DBQuest(SQLBase, HasDBIDMixin):
         subgoals = (
             use_session.query(DBQuest).where(DBQuest.parent_id == self.db_id).all()
         )
+        subgoals = sorted(subgoals, key=lambda x: x.position)
         self._subgoals = subgoals
         return subgoals
 
@@ -623,11 +625,13 @@ class DBQuest(SQLBase, HasDBIDMixin):
         """Expand the parent chain and subgoals for this item"""
         # Load everything in a session
         with Session(db.engine) as session:
+            session.add(self)
             assert self.parent_chain is not None
             # Recurse through subgoals to load entire chain
             subgoals_to_check = self.subgoals.copy()
             while len(subgoals_to_check) > 0:
                 next_goal = subgoals_to_check.pop()
+                session.add(next_goal)
                 subgoals_to_check += next_goal.subgoals.copy()
             session.expunge_all()
 
@@ -690,7 +694,6 @@ class EnvDB(BaseDB):
         relationships, to use for rapid construction of things
         without needing repeated queries
         """
-        # TODO we can use the cache in more of the core DB functions
         all_rooms: List[Any] = self.find_rooms()
         all_agents: List[Any] = self.find_agents()
         all_objects: List[Any] = self.find_objects()
@@ -1568,7 +1571,7 @@ class EnvDB(BaseDB):
         """Write a potential edit to db. Return the edit db_id"""
         with Session(self.engine) as session:
             db_id = DBEdit.get_id()
-            edge = DBEdit(
+            edit = DBEdit(
                 db_id=db_id,
                 editor_id=editor_id,
                 node_id=node_id,
@@ -1578,7 +1581,7 @@ class EnvDB(BaseDB):
                 status=status,
                 create_timestamp=time.time(),
             )
-            session.add(edge)
+            session.add(edit)
             session.flush()
             session.commit()
         return db_id
@@ -1696,6 +1699,7 @@ class EnvDB(BaseDB):
         text_motivation: str,
         target_type: DBQuestTargetType,
         target: str,
+        position: int = 0,
         origin_filepath: Optional[str] = None,
         parent_id: Optional[str] = None,
         status: DBStatus = DBStatus.REVIEW,
@@ -1711,6 +1715,7 @@ class EnvDB(BaseDB):
                 db_id=db_id,
                 agent_id=agent_id,
                 parent_id=parent_id,
+                position=position,
                 text_motivation=text_motivation,
                 target_type=target_type,
                 target=target,
@@ -1727,11 +1732,13 @@ class EnvDB(BaseDB):
     def find_quests(
         self,
         agent_id: Optional[str] = None,
+        parent_id: Optional[str] = None,
         text_motivation: Optional[str] = None,
         target_type: Optional[DBQuestTargetType] = None,
         target: Optional[str] = None,
         status: Optional[DBStatus] = None,
         creator_id: Optional[str] = None,
+        origin_filepath: Optional[str] = None,
     ) -> List[DBQuest]:
         """Return all text edges matching the given parameters"""
         # Empty query first
@@ -1748,6 +1755,8 @@ class EnvDB(BaseDB):
         stmt = select(DBQuest)
         if agent_id is not None:
             stmt = stmt.where(DBQuest.agent_id == agent_id)
+        if parent_id is not None:
+            stmt = stmt.where(DBQuest.parent_id == parent_id)
         if text_motivation is not None:
             stmt = stmt.where(DBQuest.text_motivation == text_motivation)
         if target_type is not None:
@@ -1758,6 +1767,8 @@ class EnvDB(BaseDB):
             stmt = stmt.where(DBQuest.status == status)
         if creator_id is not None:
             stmt = stmt.where(DBQuest.creator_id == creator_id)
+        if origin_filepath is not None:
+            stmt = stmt.where(DBQuest.origin_filepath == origin_filepath)
         # Do query
         with Session(self.engine) as session:
             quests = session.scalars(stmt).all()
@@ -1844,3 +1855,10 @@ class EnvDB(BaseDB):
             db_graphs = session.scalars(stmt).all()
             session.expunge_all()
             return db_graphs
+
+    def count_built_occurrences(self) -> None:
+        """
+        Iterate through all of the graphs to populate the strengths of
+        all of the edges.
+        """
+        raise NotImplementedError
