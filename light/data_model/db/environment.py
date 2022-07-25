@@ -886,7 +886,7 @@ class EnvDB(BaseDB):
         base_name: str,
         persona: str,
         physical_description: str,
-        name_prefix: str = "a",
+        name_prefix: Optional[str] = None,
         is_plural: Optional[bool] = None,
         size: Optional[int] = None,
         contain_size: Optional[int] = None,
@@ -900,6 +900,8 @@ class EnvDB(BaseDB):
         creator_id: Optional[str] = None,
     ) -> str:
         """Create this agent, making an agent name first if required"""
+        if name_prefix is None:
+            name_prefix = "an" if name[0] in "aeiou" else "a"
         base_id = self.create_agent_name(base_name)
         with Session(self.engine) as session:
             db_id = DBAgent.get_id()
@@ -1039,7 +1041,7 @@ class EnvDB(BaseDB):
         is_surface: float,
         is_wearable: float,
         is_weapon: float,
-        name_prefix: str = "a",
+        name_prefix: Optional[str] = None,
         is_plural: Optional[bool] = None,
         size: Optional[int] = None,
         contain_size: Optional[int] = None,
@@ -1049,6 +1051,8 @@ class EnvDB(BaseDB):
         creator_id: Optional[str] = None,
     ) -> str:
         """Create a new object, making a object_name first if required"""
+        if name_prefix is None:
+            name_prefix = "an" if name[0] in "aeiou" else "a"
         base_id = self.create_object_name(base_name)
         with Session(self.engine) as session:
             db_id = DBObject.get_id()

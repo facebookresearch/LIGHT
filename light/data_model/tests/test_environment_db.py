@@ -102,7 +102,7 @@ class TestEnvironmentDB(unittest.TestCase):
         BASE_NAME_1 = "king"
         BASE_NAME_2 = "queen"
         FULL_NAME_1 = "king of the orcs"
-        FULL_NAME_2 = "king of the rats"
+        FULL_NAME_2 = "elder king of the rats"
         FULL_NAME_3 = "queen of the land"
 
         # First agent should test mostly default values
@@ -200,6 +200,7 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(agent_2.name, FULL_NAME_2)
         self.assertEqual(agent_2.physical_description, TEST_DESC_2)
         self.assertEqual(agent_2.base_id, agent_2.base_id)
+        self.assertEqual(agent_2.name_prefix, "an")
 
         # Ensure only one base class, but two agents
         self.assertEqual(len(db.find_agents()), 2)
@@ -363,8 +364,8 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(len(name_prefix_match_0), 0)
         name_prefix_match_1 = db.find_agents(name_prefix="hello")
         self.assertEqual(len(name_prefix_match_1), 1)
-        name_prefix_match_2 = db.find_agents(name_prefix="a")
-        self.assertEqual(len(name_prefix_match_2), 2)
+        name_prefix_match_a = db.find_agents(name_prefix="a")
+        self.assertEqual(len(name_prefix_match_a), 1)
         is_plural_match_0 = db.find_agents(is_plural=False)
         self.assertEqual(len(is_plural_match_0), 0)
         is_plural_match_1 = db.find_agents(is_plural=True)
@@ -654,7 +655,7 @@ class TestEnvironmentDB(unittest.TestCase):
         db = EnvDB(self.config)
         BASE_NAME_1 = "ball"
         BASE_NAME_2 = "shovel"
-        FULL_NAME_1 = "red ball"
+        FULL_NAME_1 = "azure ball"
         FULL_NAME_2 = "metal ball"
         FULL_NAME_3 = "garden shovel"
 
@@ -701,7 +702,7 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(object_1.is_wearable, 0)
         self.assertEqual(object_1.is_weapon, 0)
         self.assertEqual(object_1.built_occurrences, 0)
-        self.assertEqual(object_1.name_prefix, "a")
+        self.assertEqual(object_1.name_prefix, "an")
         self.assertEqual(object_1.status, DBStatus.REVIEW)
         self.assertIsNone(object_1.is_plural)
         self.assertIsNone(object_1.size)
@@ -774,6 +775,7 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(object_2.name, FULL_NAME_2)
         self.assertEqual(object_2.physical_description, TEST_DESC_2)
         self.assertEqual(object_2.base_id, object_2.base_id)
+        self.assertEqual(object_2.name_prefix, "a")
 
         # Ensure only one base class, but two objects
         self.assertEqual(len(db.find_objects()), 2)
@@ -935,8 +937,10 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(len(name_prefix_match_0), 0)
         name_prefix_match_1 = db.find_objects(name_prefix="hello")
         self.assertEqual(len(name_prefix_match_1), 1)
-        name_prefix_match_2 = db.find_objects(name_prefix="a")
-        self.assertEqual(len(name_prefix_match_2), 2)
+        name_prefix_match_a = db.find_objects(name_prefix="a")
+        self.assertEqual(len(name_prefix_match_a), 1)
+        name_prefix_match_an = db.find_objects(name_prefix="an")
+        self.assertEqual(len(name_prefix_match_an), 1)
         is_plural_match_0 = db.find_objects(is_plural=False)
         self.assertEqual(len(is_plural_match_0), 0)
         is_plural_match_1 = db.find_objects(is_plural=True)
