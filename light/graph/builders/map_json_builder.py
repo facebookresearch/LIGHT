@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from light.data_model.db.episodes import EpisodeDB
 
 
-class MapJsonBuilder(DBGraphBuilder):
+class MapJsonBuilder(GraphBuilder):
     """Loads maps exported from the structured_graph to_json method."""
 
     def __init__(
@@ -34,7 +34,7 @@ class MapJsonBuilder(DBGraphBuilder):
     ):
         """Store initialization options"""
         self.opt = opt if opt is not None else {}
-        self.episode_db = edb
+        self.episode_db = episode_db
         self.original_agents: Dict[str, Tuple["GraphRoom", "NodeProps"]] = {}
         self._no_npc_models = True
 

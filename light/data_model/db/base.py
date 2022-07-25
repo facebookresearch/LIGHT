@@ -79,7 +79,9 @@ class BaseDB(ABC):
             else:
                 self.file_root = config.file_root
         else:
-            raise NotImplementedError()
+            raise NotImplementedError(
+                f"Provided backend {config.backend} doens't exist"
+            )
         self._complete_init(config)
 
     @abstractmethod
@@ -109,7 +111,7 @@ class BaseDB(ABC):
         Determine if the given file path exists on this storage
         """
         if self.backend in ["test", "local"]:
-            full_path = os.path.join(self.file_root, file_path)
+            full_path = os.path.join(self.file_root, filename)
             return os.path.exists(full_path)
         else:
             raise NotImplementedError

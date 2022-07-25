@@ -26,8 +26,8 @@ from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 from light.world.views import WorldViewer
 from light.world.purgatory import Purgatory
 
-from typing import List, Optional, Dict, TYPE_CHECKING
-from dataclasses import dataclass
+from typing import List, Optional, Dict, Any, TYPE_CHECKING
+from dataclasses import dataclass, field
 
 
 if TYPE_CHECKING:
@@ -62,7 +62,7 @@ class WorldConfig:
 
     # TODO create LIGHTConfig that can write out a WorldConfig
     # args: DictConfig (to replace opt)
-    opt: Optional[Dict[str, Any]] = {}
+    opt: Optional[Dict[str, Any]] = field(default_factory=dict)
     episode_db: Optional["EpisodeDB"] = None
     graph_builder: Optional["GraphBuilder"] = None
 
@@ -84,7 +84,7 @@ class World(object):
         self._node_freeze = False
         self._cnt = 0
         self.debug = debug
-        self.oo_graph = OOGraph(config._opt)
+        self._oo_graph = OOGraph(config.opt)
         self.view = WorldViewer(self)
         self.purgatory = Purgatory(self)
 
@@ -103,9 +103,26 @@ class World(object):
 
         # Set up action parser.
 
-        self.action_parser = opt.get("_action_parser")
+        self.action_parser = config.opt.get("_action_parser")
         if self.action_parser is None:
-            self.action_parser = ActionParser(opt)
+            self.action_parser = ActionParser(config.opt)
+
+    @property
+    def oo_graph(self):
+        """Wrapper around oo_graph allowing us to do special configuration when set"""
+        return self._oo_graph
+
+    @oo_graph.setter
+    def oo_graph(self, oo_graph: "OOGraph"):
+        """
+        Wrapper around oo_graph setter allowing us to properly attach room interaction
+        loggers and handle other initialization
+        """
+        # TODO maybe there's a better way to do this? What happens when we add a new room
+        # to an existin graph?
+        self._oo_graph = oo_graph
+        for room_node in oo_graph.room_id_to_loggers.values():
+            room_node.episode_db = self._config.episode_db
 
     @staticmethod
     def from_graph(graph, config: WorldConfig = None):

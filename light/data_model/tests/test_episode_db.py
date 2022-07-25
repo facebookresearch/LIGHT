@@ -57,7 +57,7 @@ class TestEpisodesDB(unittest.TestCase):
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
-        room_logger.db = episode_db
+        room_logger.episode_db = episode_db
 
         # Push a json episode out to the db
         test_init_json = test_world.oo_graph.to_json_rv(room_node.node_id)
@@ -205,8 +205,9 @@ class TestEpisodesDB(unittest.TestCase):
 
         # Check the graph json was done correctly from agent's room
         test_init_json = test_world.oo_graph.to_json_rv(room_node.node_id)
-        agent_logger = AgentInteractionLogger(test_graph, agent_node)
-        agent_logger.db = episode_db
+        agent_logger = AgentInteractionLogger(
+            test_graph, agent_node, episode_db=episode_db
+        )
         agent_logger._begin_meta_episode()
         agent_logger._end_meta_episode()
 
@@ -282,13 +283,14 @@ class TestEpisodesDB(unittest.TestCase):
         agent_node.user_id = "test"
         room2_node = test_graph.add_room("test room2", {})
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
-        room_logger.db = episode_db
+        room_logger.episode_db = episode_db
 
         # Check an event json was done correctly
         test_event = ArriveEvent(agent_node, text_content="")
         test_init_json = test_world.oo_graph.to_json_rv(agent_node.get_room().node_id)
-        agent_logger = AgentInteractionLogger(test_graph, agent_node)
-        agent_logger.db = episode_db
+        agent_logger = AgentInteractionLogger(
+            test_graph, agent_node, episode_db=episode_db
+        )
         agent_logger._begin_meta_episode()
         agent_logger.observe_event(test_event)
         test_event2 = LookEvent(agent_node)
@@ -336,7 +338,7 @@ class TestEpisodesDB(unittest.TestCase):
         agent_node.user_id = "test"
         room_node2 = test_graph.add_room("test room2", {})
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
-        room_logger.db = episode_db
+        room_logger.episode_db = episode_db
         test_graph.add_paths_between(
             room_node, room_node2, "a path to the north", "a path to the south"
         )
