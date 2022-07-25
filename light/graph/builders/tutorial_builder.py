@@ -23,11 +23,6 @@ class TutorialWorldBuilder(MapJsonBuilder):
     made to run tutorials. Generally like a single room builder.
     """
 
-    def __init__(self, db: "LIGHTDatabase", opt: Dict[str, Any] = None):
-        """Store initialization options"""
-        self.db = db
-        self.opt = opt if opt is not None else {}
-
     def add_random_new_agent_to_graph(self, target_graph):
         """Add an agent to the graph in a random room somewhere"""
         raise Exception("Agents should not be added to tutorials!")
@@ -154,7 +149,9 @@ class TutorialWorldBuilder(MapJsonBuilder):
         else:
             graph = self.build_new_graph()
 
-        world = World(WorldConfig(opt=self.opt, graph_builder=self))
+        world = World(
+            WorldConfig(episode_db=self.episode_db, opt=self.opt, graph_builder=self)
+        )
         world.oo_graph = graph
         world.purgatory = TutorialPurgatory(world)
         return graph, world

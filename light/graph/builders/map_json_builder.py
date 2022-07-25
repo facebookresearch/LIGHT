@@ -7,7 +7,7 @@ import json
 import random, copy
 from light.graph.structured_graph import OOGraph
 from light.graph.builders.base import (
-    DBGraphBuilder,
+    GraphBuilder,
     SingleSuggestionGraphBuilder,
     POSSIBLE_NEW_ENTRANCES,
 )
@@ -23,14 +23,18 @@ if TYPE_CHECKING:
         NodeProps,
         GraphAgent,
     )
+    from light.data_model.db.episodes import EpisodeDB
 
 
 class MapJsonBuilder(DBGraphBuilder):
     """Loads maps exported from the structured_graph to_json method."""
 
-    def __init__(self, ldb, debug, opt):
-        self.db = ldb
-        self.opt = opt
+    def __init__(
+        self, episode_db: Optional["EpisodeDB"], opt: Optional[Dict[str, Any]]
+    ):
+        """Store initialization options"""
+        self.opt = opt if opt is not None else {}
+        self.episode_db = edb
         self.original_agents: Dict[str, Tuple["GraphRoom", "NodeProps"]] = {}
         self._no_npc_models = True
 
@@ -45,7 +49,9 @@ class MapJsonBuilder(DBGraphBuilder):
             agent.name: (agent.get_room(), agent.get_props())
             for agent in g.agents.values()
         }
-        world = World(WorldConfig(opt=self.opt, graph_builder=self))
+        world = World(
+            WorldConfig(episode_db=self.episode_db, opt=self.opt, graph_builder=self)
+        )
         world.oo_graph = g
         return g, world
 
