@@ -75,7 +75,7 @@ class DBEpisode(SQLBase):
         Return all of the actions and turns from this episode,
         split by the graph key ID relevant to those actions
         """
-        from light.world.world import World
+        from light.world.world import World, WorldConfig
 
         events = db.read_data_from_file(self.dump_file_path, json_encoded=True)[
             "events"
@@ -92,7 +92,7 @@ class DBEpisode(SQLBase):
                 curr_graph_key = event_turn["graph_key"]
                 episode: List["GraphEvent"] = []
                 curr_graph = self.get_graph(curr_graph_key, db)
-                tmp_world = World({}, None)
+                tmp_world = World(WorldConfig())
                 tmp_world.oo_graph = curr_graph
             episode.append(GraphEvent.from_json(event_turn["event_json"], tmp_world))
         if episode is not None:

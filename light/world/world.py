@@ -26,7 +26,13 @@ from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 from light.world.views import WorldViewer
 from light.world.purgatory import Purgatory
 
-from typing import List, Optional
+from typing import List, Optional, Dict, TYPE_CHECKING
+from dataclasses import dataclass
+
+
+if TYPE_CHECKING:
+    from light.data_model.db.episodes import EpisodeDB
+    from light.graph.builders.base import GraphBuilder
 
 
 def check_integrity(f):
@@ -47,6 +53,20 @@ def check_integrity(f):
     return wrapper
 
 
+@dataclass
+class WorldConfig:
+    """
+    Class containing (optional) world configuration data. Important for
+    the sub-portions of the broader LIGHTConfig that are world-specific
+    """
+
+    # TODO create LIGHTConfig that can write out a WorldConfig
+    # args: DictConfig (to replace opt)
+    opt: Optional[Dict[str, Any]] = {}
+    episode_db: Optional["EpisodeDB"] = None
+    graph_builder: Optional["GraphBuilder"] = None
+
+
 class World(object):
     """High-level class that manages gameplay logic for players over a graph.
     Should provide an interface to advance the game, register callbacks, and
@@ -56,31 +76,30 @@ class World(object):
 
     def __init__(
         self,
-        opt,
-        graph_builder,
-        debug=False,
+        config: WorldConfig,
+        debug: bool = False,
     ):
-        self._opt = opt
+        self._config = config
+        self._opt = config.opt
         self._node_freeze = False
         self._cnt = 0
         self.debug = debug
-        self.oo_graph = OOGraph(opt)
+        self.oo_graph = OOGraph(config._opt)
         self.view = WorldViewer(self)
         self.purgatory = Purgatory(self)
-        self.opt = opt
 
         # TODO better specific player management?
         self._player_cnt = 0
         self._playerid_to_agentid = {}
         self._agentid_to_playerid = {}
 
-        self.graph_builder = graph_builder  # TODO replace with builder
+        self.graph_builder = config.graph_builder
 
         # Set up safety classifier.
-        init_safety_classifier(self.opt.get("safety_classifier_path", ""))
+        init_safety_classifier(self._opt.get("safety_classifier_path", ""))
 
         # Set up magic!
-        init_magic(self.opt.get("magic_db_path", "/scratch/light/data/magic.db"))
+        init_magic(self._opt.get("magic_db_path", "/scratch/light/data/magic.db"))
 
         # Set up action parser.
 
@@ -89,9 +108,11 @@ class World(object):
             self.action_parser = ActionParser(opt)
 
     @staticmethod
-    def from_graph(graph, graph_builder=None):
+    def from_graph(graph, config: WorldConfig = None):
         """Loads the world from the older versions of graph."""
-        world = World(graph._opt, graph_builder)
+        if config is None:
+            config = WorldConfig()
+        world = World(config)
         world.oo_graph = OOGraph.from_graph(graph)
         world._node_freeze = graph._node_freeze
         world._cnt = graph._cnt
@@ -729,7 +750,7 @@ class World(object):
     def parse_exec(self, actor, inst=None, event_id: Optional[str] = None):
         if not isinstance(actor, GraphNode):
             actor = self.oo_graph.get_node(actor)
-        if self.opt.get("dont_catch_errors", False):
+        if self._opt.get("dont_catch_errors", False):
             return self.parse_exec_internal(actor, inst=inst, event_id=event_id)
 
         else:

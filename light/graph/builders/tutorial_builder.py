@@ -7,7 +7,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from light.graph.builders.map_json_builder import MapJsonBuilder
-from light.world.world import World
+from light.world.world import World, WorldConfig
 from light.world.purgatory import TutorialPurgatory
 from light.graph.structured_graph import OOGraph
 
@@ -154,7 +154,7 @@ class TutorialWorldBuilder(MapJsonBuilder):
         else:
             graph = self.build_new_graph()
 
-        world = World(self.opt, self)
+        world = World(WorldConfig(opt=self.opt, graph_builder=self))
         world.oo_graph = graph
         world.purgatory = TutorialPurgatory(world)
         return graph, world

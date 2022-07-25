@@ -13,7 +13,7 @@ import time
 
 from light.graph.elements.graph_nodes import GraphAgent
 from light.graph.structured_graph import OOGraph
-from light.world.world import World
+from light.world.world import World, WorldConfig
 from light.graph.events.graph_events import ArriveEvent, LeaveEvent, GoEvent, LookEvent
 from light.world.content_loggers import AgentInteractionLogger, RoomInteractionLogger
 from light.world.utils.json_utils import read_event_logs
@@ -38,7 +38,7 @@ class TestEpisodesDB(unittest.TestCase):
         agent_node = test_graph.add_agent("My test agent", {})
         room_node = test_graph.add_room("test room", {})
         agent_node.force_move_to(room_node)
-        test_world = World({}, None, True)
+        test_world = World(WorldConfig(), True)
         test_world.oo_graph = test_graph
         return (test_graph, test_world, agent_node, room_node)
 

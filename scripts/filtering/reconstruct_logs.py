@@ -6,7 +6,7 @@
 from light.graph.events.base import GraphEvent
 from light.graph.structured_graph import OOGraph
 from light.world.utils.json_utils import read_event_logs
-from light.world.world import World
+from light.world.world import World, WorldConfig
 
 import argparse
 import os
@@ -52,7 +52,7 @@ def get_world(uuid, graph_dir):
     graph_file = os.path.join(graph_dir, f"{uuid}.json")
     with open(graph_file, "r") as graph_json_file:
         graph = OOGraph.from_json(graph_json_file.read())
-    world = World({}, None, False)
+    world = World(WorldConfig(), False)
     world.oo_graph = graph
     return world
 

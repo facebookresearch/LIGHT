@@ -40,7 +40,7 @@ def init_world(world_builder):
     g, world = world_builder.get_graph()
     purgatory = world.purgatory
     # Choose the type of NPC souls.
-    if world.opt["use_models"] == "PartnerHeuristicModelSoul":
+    if world._opt["use_models"] == "PartnerHeuristicModelSoul":
         purgatory.register_filler_soul_provider(
             "model", PartnerHeuristicModelSoul, lambda: [shared_model_content]
         )

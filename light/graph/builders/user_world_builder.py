@@ -11,7 +11,7 @@ from light.graph.builders.base import (
     DBGraphBuilder,
     POSSIBLE_NEW_ENTRANCES,
 )
-from light.world.world import World
+from light.world.world import World, WorldConfig
 
 
 # TODO:  Refactor common functionality between builders!
@@ -159,7 +159,7 @@ class UserWorldBuilder(DBGraphBuilder):
         self.add_nodes(g, resources, db_to_g, node_to_g)
         self.add_edges(g, edge_list, node_to_g)
 
-        world = World(self.opt, self)
+        world = World(WorldConfig(opt=self.opt, graph_builder=self))
         world.oo_graph = g
         return g, world
 

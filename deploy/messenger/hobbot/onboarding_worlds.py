@@ -38,7 +38,7 @@ def request_username(agent, world):
         else:
             # check if contains offensive subword
             bad = world.service_strategy.check_offensive_subwords(
-                world.opt.get("dict_freqs"),
+                world._opt.get("dict_freqs"),
                 a["text"],
             )
             if bad is not None and len(bad) > 0:

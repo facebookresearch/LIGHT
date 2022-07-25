@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from light.graph.builders.starspace_assisted import StarspaceBuilder
-from light.world.world import World
+from light.world.world import World, WorldConfig
 from light.graph.structured_graph import OOGraph
 
 
@@ -98,6 +98,6 @@ class ExampleBuilder(StarspaceBuilder):
                 "a path aways over",  # room 2 -> room 1
             )
 
-            world = World(self.opt, self)
+            world = World(WorldConfig(opt=self.opt, graph_builder=self))
             world.oo_graph = g
             return g, world

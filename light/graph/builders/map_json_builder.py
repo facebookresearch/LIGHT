@@ -12,7 +12,7 @@ from light.graph.builders.base import (
     POSSIBLE_NEW_ENTRANCES,
 )
 from light.graph.events.graph_events import ArriveEvent
-from light.world.world import World
+from light.world.world import World, WorldConfig
 
 from typing import TYPE_CHECKING, List, Dict, Tuple, Any, Optional
 
@@ -45,7 +45,7 @@ class MapJsonBuilder(DBGraphBuilder):
             agent.name: (agent.get_room(), agent.get_props())
             for agent in g.agents.values()
         }
-        world = World(self.opt, self)
+        world = World(WorldConfig(opt=self.opt, graph_builder=self))
         world.oo_graph = g
         return g, world
 
