@@ -158,7 +158,7 @@ class TestEpisodesDB(unittest.TestCase):
         agent_node.user_id = "test"
         room2_node = test_graph.add_room("test room2", {})
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
-        room_logger.db = episode_db
+        room_logger.episode_db = episode_db
 
         # Check an event json was done correctly
         test_event = ArriveEvent(agent_node, text_content="")
