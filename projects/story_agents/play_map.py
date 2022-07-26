@@ -37,7 +37,7 @@ if __name__ == "__main__":
     print("[loading db...]")
     ldb = LIGHTDatabase(LIGHT_DB_FILE_LOC)
     print("[loading map...]")
-    world_builder = MapJsonBuilder(ldb, debug=False, opt=opt)
+    world_builder = MapJsonBuilder(episode_db=None, opt=opt)
     graph, world = world_builder.get_graph()
 
     # Set up the world
