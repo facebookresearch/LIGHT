@@ -31,7 +31,9 @@ class TutorialWorldBuilder(MapJsonBuilder):
         """
         Create a tutorial graph, not from file
         """
-        graph = OOGraph(self.opt)
+        opt = self.opt.copy()
+        opt["tutorial"] = True
+        graph = OOGraph(opt)
         room_node = graph.add_room(
             "Impossible Tavern",
             {
@@ -144,14 +146,16 @@ class TutorialWorldBuilder(MapJsonBuilder):
 
     def get_graph(self):
         """Create and return a tutorial graph"""
-        if self.opt.get("load_map", None) is not None:
+        if self.opt.get("load_tutorial_map", None) is not None:
             graph, _ = super().get_graph()
         else:
             graph = self.build_new_graph()
-
+        opt = self.opt.copy()
+        opt["tutorial"] = True
         world = World(
-            WorldConfig(episode_db=self.episode_db, opt=self.opt, graph_builder=self)
+            WorldConfig(episode_db=self.episode_db, opt=opt, graph_builder=self)
         )
         world.oo_graph = graph
+        # Force the logging mode to tutorial PRE_LAUNCH_TUTORIAL
         world.purgatory = TutorialPurgatory(world)
         return graph, world

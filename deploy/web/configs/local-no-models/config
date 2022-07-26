@@ -9,4 +9,6 @@ LetsPlay
 --port
 35494
 --db-backend
-test
+local
+--is-logging
+True

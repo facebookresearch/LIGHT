@@ -28,6 +28,7 @@ class DBGroupName(enum.Enum):
     WILD = "wild"
     MULTIPARTY = "multiparty"
     PRE_LAUNCH = "crowdsourced"
+    PRE_LAUNCH_TUTORIAL = "crowdsourced_tutorial"
     RELEASE_Q4_22 = "full_release_Q4_22"
 
 
@@ -155,6 +156,8 @@ class EpisodeDB(BaseDB):
     Used by InteractionLoggers to write new entries, and by ParlAI to
     create teachers for datasets.
     """
+
+    DB_TYPE = "episode"
 
     def _complete_init(self, config: "DictConfig"):
         """

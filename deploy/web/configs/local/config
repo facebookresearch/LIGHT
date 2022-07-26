@@ -15,4 +15,4 @@ dialog_gen/model
 --acting-model
 main_act/model
 --db-backend
-test
+local

@@ -43,7 +43,11 @@ class InteractionLogger(abc.ABC):
         self.players: Set[str] = set()
         self.actions: int = 0
         self._last_episode_logged: Optional[int] = None
-
+        self.group = (
+            DBGroupName.PRE_LAUNCH_TUTORIAL
+            if graph._opt.get("tutorial")
+            else DBGroupName.PRE_LAUNCH
+        )
         # All loggers should have graph state history and a buffer for events
         # State history is just the json of the graph the event executed on
         self.state_history: List[str] = []
@@ -124,7 +128,7 @@ class InteractionLogger(abc.ABC):
             log_type=episode_type,
             action_count=self.actions,
             players=self.players,
-            group=DBGroupName.PRE_LAUNCH,  # TODO make configurable?
+            group=self.group,  # TODO make configurable?
         )
 
 

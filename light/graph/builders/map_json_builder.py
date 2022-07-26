@@ -43,7 +43,7 @@ class MapJsonBuilder(GraphBuilder):
         f = open(input_json, "r")
         data = f.read()
         f.close()
-        g = OOGraph.from_json(data)
+        g = OOGraph.from_json(data, self.opt)
         g._opt = self.opt
         self.original_agents = {
             agent.name: (agent.get_room(), agent.get_props())
