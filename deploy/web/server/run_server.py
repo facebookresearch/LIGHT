@@ -29,6 +29,7 @@ from light.world.souls.models.generative_heuristic_model_soul import (
 )
 from light.data_model.db.base import LightDBConfig
 from light.data_model.db.episodes import EpisodeDB
+from light.data_model.db.users import UserDB
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -85,8 +86,14 @@ def make_app(FLAGS, ldb, model_resources):
     )
     db_config = LightDBConfig(backend=FLAGS.db_backend, file_root=FLAGS.db_root)
     episode_db = EpisodeDB(db_config)
+    user_db = UserDB(db_config)
     registryApp = RegistryApplication(
-        FLAGS, ldb, model_resources, tornado_settings, episode_db
+        FLAGS,
+        ldb,
+        model_resources,
+        tornado_settings,
+        episode_db=episode_db,
+        user_db=user_db,
     )
     rules = []
     if FLAGS.disable_builder is None:

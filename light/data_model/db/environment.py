@@ -4,7 +4,7 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.data_model.db.base import BaseDB, DBStatus, DBSplitType
+from light.data_model.db.base import BaseDB, DBStatus, DBSplitType, HasDBIDMixin
 from light.graph.structured_graph import OOGraph
 from omegaconf import MISSING, DictConfig
 from typing import (
@@ -19,7 +19,6 @@ from typing import (
     cast,
     TYPE_CHECKING,
 )
-from uuid import uuid4
 from sqlalchemy import (
     insert,
     select,
@@ -55,22 +54,6 @@ ID_STRING_LENGTH = 40
 QUEST_MOTIVATION_LENGTH = 128
 REPORT_REASON_LENGTH = 1024
 FILE_PATH_LENGTH_CAP = 96
-
-
-class HasDBIDMixin:
-    """Simple mixin for classes that define their own DBID schema"""
-
-    ID_PREFIX: str  # ID prefix should be 3 characters max.
-
-    @classmethod
-    def get_id(cls: Type["HasDBIDMixin"]) -> str:
-        """Create an ID for this class"""
-        return f"{cls.ID_PREFIX}-{uuid4()}"
-
-    @classmethod
-    def is_id(cls: Type["HasDBIDMixin"], test_id: str) -> bool:
-        """Check if a given ID refers to this class"""
-        return test_id.startswith(f"{cls.ID_PREFIX}-")
 
 
 # Name Key Components - Should be text searchable

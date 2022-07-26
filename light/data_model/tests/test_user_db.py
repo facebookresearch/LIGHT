@@ -41,12 +41,12 @@ class TestUserDB(unittest.TestCase):
         self.assertIsNotNone(player_id_1, "No player ID returned for first")
         self.assertIsNotNone(player_id_2, "No player ID returned for second")
 
-        # Assert cannot create duplicates
+        # Assert duplicates return same id
 
-        with self.assertRaises(IntegrityError):
-            player_id_3 = db.create_user(extern_id_1, is_preauth=False)
-        with self.assertRaises(IntegrityError):
-            player_id_3 = db.create_user(extern_id_1, is_preauth=True)
+        player_id_3 = db.create_user(extern_id_1, is_preauth=False)
+        self.assertEqual(player_id_1, player_id_3)
+        player_id_4 = db.create_user(extern_id_1, is_preauth=True)
+        self.assertEqual(player_id_1, player_id_4)
 
         # Assert can find given players, and that their values are initialized
 
@@ -55,9 +55,11 @@ class TestUserDB(unittest.TestCase):
         player_1_by_extern = db.get_player_by_extern_id(extern_id_1)
         player_2_by_extern = db.get_player_by_extern_id(extern_id_2)
 
-        self.assertEqual(player_1_by_id.id, player_id_1, "Gotten player by ID mismatch")
         self.assertEqual(
-            player_1_by_extern.id, player_id_1, "Gotten player by extern mismatch"
+            player_1_by_id.db_id, player_id_1, "Gotten player by ID mismatch"
+        )
+        self.assertEqual(
+            player_1_by_extern.db_id, player_id_1, "Gotten player by extern mismatch"
         )
         self.assertEqual(
             player_1_by_id.extern_id, extern_id_1, "Gotten player by ID mismatch"
@@ -85,9 +87,11 @@ class TestUserDB(unittest.TestCase):
             "Did not initialize to tutorial",
         )
 
-        self.assertEqual(player_2_by_id.id, player_id_2, "Gotten player by ID mismatch")
         self.assertEqual(
-            player_2_by_extern.id, player_id_2, "Gotten player by extern mismatch"
+            player_2_by_id.db_id, player_id_2, "Gotten player by ID mismatch"
+        )
+        self.assertEqual(
+            player_2_by_extern.db_id, player_id_2, "Gotten player by extern mismatch"
         )
         self.assertEqual(
             player_2_by_id.extern_id, extern_id_2, "Gotten player by ID mismatch"
@@ -118,9 +122,9 @@ class TestUserDB(unittest.TestCase):
         # Assert cannot find non-existent players
 
         with self.assertRaises(KeyError):
-            player_3 = db.get_player(-1)
+            player_5 = db.get_player(-1)
         with self.assertRaises(KeyError):
-            player_3 = db.get_player_by_extern_id("FakePlayer")
+            player_5 = db.get_player_by_extern_id("FakePlayer")
 
     def test_update_scores(self):
         """Ensure we can increment scores successfully"""
@@ -146,9 +150,9 @@ class TestUserDB(unittest.TestCase):
             base_score = db.get_agent_score(-1)
 
         # Add a few scores for at least 2 different agent names
-        db.update_agent_score(player_id_1, agent_id_1, 1, 4)
-        db.update_agent_score(player_id_1, agent_id_2, 2, 5)
-        db.update_agent_score(player_id_1, agent_id_2, 3, 6)
+        db.update_agent_score(player_id_1, agent_id_1, 1, 4, 5)
+        db.update_agent_score(player_id_1, agent_id_2, 2, 5, -4)
+        db.update_agent_score(player_id_1, agent_id_2, 3, 6, 2)
 
         # Ensure all of the values add up as expected
         base_score = db.get_agent_score(player_id_1)
@@ -157,6 +161,7 @@ class TestUserDB(unittest.TestCase):
 
         self.assertEqual(base_score.score, 6, "Scores did not add to 6")
         self.assertEqual(base_score.count, 3, "Other than 3 episodes marked")
+        self.assertEqual(base_score.reward_xp, 3, "Reward xp not summed")
         self.assertEqual(score_1.score, 1, "Expected 1 score for agent 1")
         self.assertEqual(score_1.count, 1, "Expected one episode for agent 1")
         self.assertEqual(score_2.score, 5, "Expected 5 score for agent 2")

@@ -92,6 +92,8 @@ class PlayerSoul(BaseSoul):
         actor = self.target_node
         actor._last_action_time = time.time()
         self.world.parse_exec(self.target_node, act_text, event_id=event_id)
+        if hasattr(self.target_node, "num_turns"):
+            self.target_node.num_turns += 1
 
     def new_quest(self):
         if random.random() > 0.01:

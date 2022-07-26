@@ -9,7 +9,8 @@ from abc import ABC, abstractmethod
 from omegaconf import MISSING, DictConfig
 from sqlalchemy import create_engine
 from enum import Enum
-from typing import Optional, Union, Dict, Any
+from typing import Optional, Union, Dict, Any, Type
+from uuid import uuid4
 from dataclasses import dataclass
 from tempfile import mkdtemp
 import shutil
@@ -51,6 +52,22 @@ class DBSplitType(Enum):
     TEST = "test"
     VALID = "valid"
     UNSEEN = "unseen_test"
+
+
+class HasDBIDMixin:
+    """Simple mixin for classes that define their own DBID schema"""
+
+    ID_PREFIX: str  # ID prefix should be 3 characters max.
+
+    @classmethod
+    def get_id(cls: Type["HasDBIDMixin"]) -> str:
+        """Create an ID for this class"""
+        return f"{cls.ID_PREFIX}-{uuid4()}"
+
+    @classmethod
+    def is_id(cls: Type["HasDBIDMixin"], test_id: str) -> bool:
+        """Check if a given ID refers to this class"""
+        return test_id.startswith(f"{cls.ID_PREFIX}-")
 
 
 class BaseDB(ABC):
