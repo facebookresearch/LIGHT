@@ -151,12 +151,12 @@ function WorldBuilder({ upload }) {
         labelInfo={`Max ${MAX_FLOORS}`}
         style={{ marginBottom: "0px" }}
       >
-        <FloorSelector
+        {/* <FloorSelector
           max={MAX_FLOORS}
           manager={state.floorManager}
           map={state.map}
           currFloor={state.currFloor}
-        />
+        /> */}
       </FormGroup>
       <FormGroup inline label="Advanced">
         <Switch onChange={() => setAdvanced(!advanced)} checked={!!advanced} />

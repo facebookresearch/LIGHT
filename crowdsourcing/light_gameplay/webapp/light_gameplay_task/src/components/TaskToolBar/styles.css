@@ -1,0 +1,25 @@
+/* TASKTOOLBAR STYLES */
+.tool-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.task-label {
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+}
+
+.tool-label {
+    font-size: 20px;
+    color: white;
+    font-weight: 700;
+}
+
+.tool-text {
+    font-size: 20px;
+    color: white;
+    margin-left: 5px;
+}

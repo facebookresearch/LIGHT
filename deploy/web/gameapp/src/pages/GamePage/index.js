@@ -1,35 +1,42 @@
+/* REACT */
 import React from "react";
+/* REDUX */
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+/* ---- REDUCER ACTIONS ---- */
+import { updateAgents } from "../../features/agents/agents-slice.ts";
+import { updateEmoji } from "../../features/playerInfo/emoji-slice";
+import { updateLocation } from "../../features/playerInfo/location-slice.ts";
+import { updatePersona } from "../../features/playerInfo/persona-slice.ts";
+import { updateXp } from "../../features/playerInfo/xp-slice.ts";
+import { updateGiftXp } from "../../features/playerInfo/giftxp-slice.ts";
+import { updateSessionXp } from "../../features/sessionInfo/sessionxp-slice";
+import { updateIsMobile } from "../../features/view/view-slice";
+/* STYLES */
 
-import "../../styles.css";
 import "./styles.css";
 import "react-tippy/dist/tippy.css";
 import "emoji-mart/css/emoji-mart.css";
-
+/* EMOJI */
 import { DefaultEmojiMapper } from "../../utils";
-
-import { Picker, emojiIndex } from "emoji-mart";
-import onClickOutside from "react-onclickoutside";
-
-import Scribe from "../../assets/images/scribe.png";
-import Beer from "../../assets/images/Beer.png";
-
-//Custom Components
-import { useWSDataSource } from "../../useWSDataSource";
+import { emojiIndex } from "emoji-mart";
+/* CUSTOM COMPONENTS */
+import { useWSDataSource } from "../../WebSockets/useWSDataSource";
 import MobileFrame from "../../components/MobileFrame";
-import ExperienceInfo from "../../components/ExperienceInfo";
-import Logo from "../../components/Logo/index.js";
-import LoadingScreen from "../../LoadingScreen";
+import LoadingPage from "../../pages/LoadingPage";
 import Sidebar from "./Sidebar";
 import ChatDisplay from "./ChatDisplay";
-import Modal from "../../components/Modal";
-import InstructionModalContent from "./InstructionModalContent";
-
+/* CONFIG */
 import CONFIG from "../../config.js";
 
+//WEBSOCKET CONNECTION FUNCTION
 const createWebSocketUrlFromBrowserUrl = (url) => {
+  //console.log("URL", url);
   const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
+  //console.log("wsProtocol", wsProtocol);
   const optionalServerHost = new URL(url).searchParams.get("server");
+  //console.log("optionalServerHost", optionalServerHost);
   var optionalGameId = new URL(url).searchParams.get("id");
+  //console.log("optionalGameId", optionalGameId);
   if (!optionalGameId) {
     optionalGameId = "";
   }
@@ -39,13 +46,15 @@ const createWebSocketUrlFromBrowserUrl = (url) => {
 
   let websocketURL =
     wsProtocol + "://" + (optionalServerHost || CONFIG.hostname);
-  if (CONFIG.port != "80") {
+  if (CONFIG.port !== "80") {
     websocketURL += ":" + CONFIG.port;
   }
   websocketURL += `/game${optionalGameId}/socket`;
+  console.log("WS URL", websocketURL, "CONFIG", CONFIG);
   return websocketURL;
 };
 
+//MODEL ADDRESS HELPER FUNCTION
 const getDataModelAddress = () => {
   return new URL(window.location).searchParams.get("builder");
 };
@@ -61,7 +70,8 @@ const getDataModelAddress = () => {
 //   "#ffe8eb" //red
 // ];
 
-function ConnectedApp() {
+//ConnectedApp - Creates socket and renders Chat Component upon successful connection to backend.
+const ConnectedApp = () => {
   const wsUrl = React.useMemo(
     () => createWebSocketUrlFromBrowserUrl(window.location),
     []
@@ -85,7 +95,7 @@ function ConnectedApp() {
     );
 
   if (messages.length === 0) {
-    return <LoadingScreen isFull={isFull} />;
+    return <LoadingPage isFull={isFull} />;
   }
 
   return (
@@ -98,37 +108,43 @@ function ConnectedApp() {
       disconnectFromSession={disconnectFromSession}
     />
   );
-}
+};
 
-function Chat({
+//Chat - Renders game all all visual components
+const Chat = ({
   messages,
   onSubmit,
   persona,
   location,
   agents,
   disconnectFromSession,
-}) {
+}) => {
+  /* REDUX DISPATCH FUNCTION */
+  const dispatch = useAppDispatch();
+  /* ------ REDUX STATE ------ */
+  //GIFT XP STATE
+  const giftXp = useAppSelector((state) => state.giftXp.value);
+  //SESSION XP STATE
+  const sessionXp = useAppSelector((state) => state.sessionXp.value);
+  //SESSION GIFT XP STATE
+  const sessionGiftXpSpent = useAppSelector(
+    (state) => state.sessionSpentGiftXp.value
+  );
   //MOBILE STATE
+  const isMobile = useAppSelector((state) => state.view.isMobile);
+  //DRAWER
+  const showDrawer = useAppSelector((state) => state.view.showDrawer);
+  /* REDUX ACTIONS */
+  const selectEmoji = (emoji) => dispatch(updateEmoji(emoji));
+
+  /* ------ LOCAL STATE ------ */
   const [screenSize, setScreenSize] = React.useState(null);
-  const [isMobile, setIsMobile] = React.useState(false);
-  //DRAWER STATE
-  const [showDrawer, setShowDrawer] = React.useState(false);
-  //MODAL STATE
-  const [showInstructionModal, setShowInstructionModal] = React.useState(false);
   //IDLE STATE
   const [idleTime, setIdleTime] = React.useState(0);
   const [idle, setIdle] = React.useState(false);
   //CHAT TEXT STATE
-  const [enteredText, setEnteredText] = React.useState("");
   const chatContainerRef = React.useRef(null);
-  //PLAYER XP AND GIFT XP
-  const [playerXp, setPlayerXp] = React.useState(0);
-  const [playerGiftXp, setPlayerGiftXp] = React.useState(0);
-  const [sessionXp, setSessionXp] = React.useState(0);
-  const [sessionGiftXp, setSessionGiftXp] = React.useState(0);
-  const [sessionGiftXpSpent, setSessionGiftXpSpent] = React.useState(0);
   // AGENT AND CHARACTER STATE
-  const getAgentName = (agent) => (agents ? agents[agent] : agent);
   const getEntityId = (agent) => agent.match(/\d+$/)[0];
   const dataModelHost = getDataModelAddress();
 
@@ -142,6 +158,65 @@ function Chat({
     [chatContainerRef]
   );
 
+  const getLocationState = (messages) => {
+    var valid_messages = messages.filter(
+      (m) => m.is_self !== true && m.caller !== null
+    );
+    if (valid_messages.length === 0) return [null, []];
+    var lastMessage = valid_messages[valid_messages.length - 1];
+    return {
+      currentRoom: lastMessage.room_id,
+      presentAgents: Object.keys(lastMessage.present_agent_ids),
+    };
+  };
+
+  /* PLAYER AND SESSION INFO UPDATES TO REDUX STORE */
+  React.useEffect(() => {
+    const { xp, giftXp } = persona;
+    /* ----PLAYER INFO---- */
+    dispatch(updatePersona(persona));
+    dispatch(updateXp(xp));
+    dispatch(updateGiftXp(giftXp));
+    //Show Tutorial Modal condition
+    let characterEmoji = DefaultEmojiMapper(persona.name);
+    if (persona === null || persona.name === null) return;
+    const skipWords = ["a", "the", "an", "of", "with", "holding"];
+    const tryPickEmojis = !persona
+      ? []
+      : emojiIndex.search(characterEmoji).map((o) => {
+          return o.native;
+        });
+    const autopickedEmoji = tryPickEmojis.length > 0 ? tryPickEmojis[0] : "?";
+    dispatch(updateEmoji(autopickedEmoji));
+    /* ---- INSTRUCTION MODAL---- */
+    if (xp <= 10) {
+      //NEW Tutorial triggers
+    }
+    /* ----SESSION INFO---- */
+    /* SESSION XP */
+    let sessionXpUpdate = 0;
+    messages.map((message) => {
+      if (message.is_self && message.xp > 0) {
+        sessionXpUpdate += message.xp;
+      }
+    });
+    dispatch(updateSessionXp(sessionXpUpdate));
+  }, [persona]);
+
+  React.useEffect(() => {
+    dispatch(updateGiftXp(giftXp - sessionGiftXpSpent));
+  }, [sessionGiftXpSpent]);
+  /* LOCATION UPDATES TO REDUX STORE */
+  React.useEffect(() => {
+    dispatch(updateLocation(location));
+  }, [location]);
+
+  /* AGENT UPDATES TO REDUX STORE */
+  React.useEffect(() => {
+    dispatch(updateAgents(agents));
+  }, [agents]);
+
+  /* IDLE TIMER */
   React.useEffect(() => {
     scrollToBottom();
     let timer = null;
@@ -160,44 +235,21 @@ function Chat({
     setIdleTime(0);
   };
 
+  // SCROLL TO BOTTOM UPON RECIEVING NEW MESSAGES
   React.useEffect(() => {
     scrollToBottom();
   }, [scrollToBottom, messages]);
 
-  // Previous Emoji Mapper
-  // const defaultEmoji = "❓";
-  // const { presentAgents } = getLocationState(messages);
-  // const [selectedEmoji, setSelectedEmoji] = React.useState(defaultEmoji);
-
-  // React.useEffect(() => {
-  //   if (persona === null || persona.name === null) return;
-  //   const skipWords = ["a", "the", "an", "of", "with", "holding"];
-  //   const tryPickEmojis = !persona
-  //     ? []
-  //     : persona.name
-  //         .split(" ")
-  //         .filter((token) => !!token)
-  //         .map((token) => token.replace(/\.$/, ""))
-  //         .filter((word) => skipWords.indexOf(word.toLowerCase()) === -1)
-  //         .flatMap((term) =>
-  //           emojiIndex.search(term).map((o) => {
-  //             return o.native;
-  //           })
-  //         );
-
-  //   const autopickedEmoji =
-  //     tryPickEmojis.length > 0 ? tryPickEmojis[0] : defaultEmoji;
-  //   setSelectedEmoji(autopickedEmoji);
-  // }, [persona, setSelectedEmoji]);
-
-  const defaultEmoji = "❓";
-  const { presentAgents } = getLocationState(messages);
-  const [selectedEmoji, setSelectedEmoji] = React.useState(defaultEmoji);
+  //const { presentAgents } = getLocationState(messages);
 
   React.useEffect(() => {
+    const defaultEmoji = "❓";
     let characterEmoji = DefaultEmojiMapper(persona.name);
+    if (characterEmoji === undefined) {
+      characterEmoji = persona.name;
+    }
     if (persona === null || persona.name === null) return;
-    const skipWords = ["a", "the", "an", "of", "with", "holding"];
+    //const skipWords = ["a", "the", "an", "of", "with", "holding"];
     const tryPickEmojis = !persona
       ? []
       : emojiIndex.search(characterEmoji).map((o) => {
@@ -205,82 +257,54 @@ function Chat({
         });
     const autopickedEmoji =
       tryPickEmojis.length > 0 ? tryPickEmojis[0] : defaultEmoji;
-    setSelectedEmoji(autopickedEmoji);
-  }, [persona, setSelectedEmoji]);
-
-  React.useEffect(() => {
-    const { xp, giftXp } = persona;
-    if (xp <= 10) {
-      setShowInstructionModal(true);
-    }
-    setPlayerXp(xp);
-    setPlayerGiftXp(giftXp);
+    selectEmoji(autopickedEmoji);
   }, [persona]);
 
-  React.useEffect(() => {
-    let sessionXpUpdate = 0;
-    messages.map((message) => {
-      if (message.is_self && message.xp > 0) {
-        sessionXpUpdate += message.xp;
-      }
-    });
-    setSessionXp(sessionXpUpdate);
-  }, [messages]);
-
+  /* SESSION AND GIFT XP UPDATE PLAYER XP and GIFT XP */
   React.useEffect(() => {
     const { xp, giftXp } = persona;
-    setPlayerXp(xp + sessionXp);
+    dispatch(updateXp(xp + sessionXp));
     let sessionGiftXpUpdate = sessionXp / 4;
     if (sessionGiftXpUpdate >= 1) {
-      setPlayerGiftXp(giftXp + sessionGiftXpUpdate - sessionGiftXpSpent);
+      dispatch(updateGiftXp(giftXp + sessionGiftXpUpdate - sessionGiftXpSpent));
     } else {
-      setPlayerGiftXp(giftXp - sessionGiftXpSpent);
+      dispatch(updateGiftXp(giftXp - sessionGiftXpSpent));
     }
   }, [sessionXp, sessionGiftXpSpent]);
 
+  /* ----------VIEW--------- */
+  /* SCREEN SIZE */
   const updateDimensions = () => {
     setScreenSize(window.innerWidth);
   };
+  /* MOBILE */
   React.useEffect(() => {
     window.addEventListener("resize", updateDimensions);
     let startingSize = window.innerWidth;
     if (startingSize <= 950) {
-      setIsMobile(true);
+      dispatch(updateIsMobile(true));
     } else if (startingSize > 950) {
-      setIsMobile(false);
+      dispatch(updateIsMobile(false));
     }
   });
 
   React.useEffect(() => {
     if (screenSize <= 950) {
-      setIsMobile(true);
+      dispatch(updateIsMobile(true));
     } else if (screenSize > 950) {
-      setIsMobile(false);
+      dispatch(updateIsMobile(false));
     }
   }, [screenSize]);
 
-  const openDrawer = () => setShowDrawer(true);
-  const closeDrawer = () => setShowDrawer(false);
   const buttons = [];
   return (
     <div className="gamepage-container" onMouseMove={resetIdleTimer}>
       {isMobile ? (
-        <MobileFrame
-          showDrawer={showDrawer}
-          openDrawer={openDrawer}
-          closeDrawer={closeDrawer}
-          buttons={buttons}
-        >
+        <MobileFrame buttons={buttons}>
           {persona ? (
             <Sidebar
-              persona={persona}
-              location={location}
               dataModelHost={dataModelHost}
               getEntityId={getEntityId}
-              selectedEmoji={selectedEmoji}
-              setSelectedEmoji={setSelectedEmoji}
-              playerXp={playerXp}
-              playerGiftXp={playerGiftXp}
               isMobile={isMobile}
               showDrawer={showDrawer}
             />
@@ -296,27 +320,15 @@ function Chat({
             getLocationState={getLocationState}
             idle={idle}
             resetIdleTimer={resetIdleTimer}
-            setPlayerXp={setPlayerXp}
-            setPlayerGiftXp={setPlayerGiftXp}
-            playerXp={playerXp}
-            playerGiftXp={playerGiftXp}
-            sessionGiftXpSpent={sessionGiftXpSpent}
-            setSessionGiftXpSpent={setSessionGiftXpSpent}
           />
         </MobileFrame>
       ) : (
-        <>
+        <div id="fullscreen-gamepage">
           <div className="sidebar-container">
             {persona ? (
               <Sidebar
-                persona={persona}
-                location={location}
                 dataModelHost={dataModelHost}
                 getEntityId={getEntityId}
-                selectedEmoji={selectedEmoji}
-                setSelectedEmoji={setSelectedEmoji}
-                playerXp={playerXp}
-                playerGiftXp={playerGiftXp}
               />
             ) : (
               <div />
@@ -334,49 +346,12 @@ function Chat({
               getLocationState={getLocationState}
               idle={idle}
               resetIdleTimer={resetIdleTimer}
-              setPlayerXp={setPlayerXp}
-              setPlayerGiftXp={setPlayerGiftXp}
-              playerXp={playerXp}
-              playerGiftXp={playerGiftXp}
-              sessionGiftXpSpent={sessionGiftXpSpent}
-              setSessionGiftXpSpent={setSessionGiftXpSpent}
             />
           </div>
-        </>
+        </div>
       )}
-      {showInstructionModal ? (
-        <Modal
-          showModal={showInstructionModal}
-          setShowModal={setShowInstructionModal}
-        >
-          <InstructionModalContent
-            buttonFunction={() => {
-              setShowInstructionModal(false);
-            }}
-          />
-        </Modal>
-      ) : null}
     </div>
   );
-}
-
-const EmojiPicker = ({ onBlur, ...props }) => {
-  EmojiPicker.handleClickOutside = () => onBlur();
-  return <Picker {...props} />;
 };
-const BlurClosingPicker = onClickOutside(EmojiPicker, {
-  handleClickOutside: () => EmojiPicker.handleClickOutside,
-});
 
-function getLocationState(messages) {
-  var valid_messages = messages.filter(
-    (m) => m.is_self !== true && m.caller !== null
-  );
-  if (valid_messages.length === 0) return [null, []];
-  var lastMessage = valid_messages[valid_messages.length - 1];
-  return {
-    currentRoom: lastMessage.room_id,
-    presentAgents: Object.keys(lastMessage.present_agent_ids),
-  };
-}
 export default ConnectedApp;

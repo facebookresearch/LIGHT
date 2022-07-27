@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: row;
   margin: 0;
-  width: 100%;
   justify-content: flex-start;
   align-items: center;
   font-family: fantasy;
@@ -11,11 +10,11 @@
 }
 
 .experienceinfo-leveldisplay {
-  width: 80%;
+  width: 30%;
   margin-right: 0;
 }
 .experienceinfo-progressbar {
-  width: 100%;
+  width: 70%;
   margin-left: 5%;
   margin-right: 0;
 }

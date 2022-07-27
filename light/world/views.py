@@ -112,7 +112,7 @@ class WorldViewer(object):
                 ent = prefix + " " + ent
         elif node.get_prop("room"):
             prefix = self.name_prefix(node, ent, use_the)
-            if prefix is not "":
+            if prefix != "":
                 ent = prefix + " " + ent
             else:
                 ent = "the " + ent
@@ -141,7 +141,7 @@ class WorldViewer(object):
             ent = world.get_prop(id, "player_name")
         elif world.has_prop(id, "agent") or world.has_prop(id, "object"):
             prefix = self.name_prefix_id(id, ent, use_the)
-            if prefix is not "" and not drop_prefix:
+            if prefix != "" and not drop_prefix:
                 # -- clean up data, TODO: shouldn't need this?
                 if ent.lower().startswith("a "):
                     ent = ent[2:]
@@ -153,7 +153,7 @@ class WorldViewer(object):
                 ent = prefix + " " + ent
         elif world.has_prop(id, "room"):
             prefix = self.name_prefix_id(id, ent, use_the)
-            if prefix is not "":
+            if prefix != "":
                 ent = prefix + " " + ent
             else:
                 ent = "the " + ent

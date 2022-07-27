@@ -1,0 +1,33 @@
+.path-container {
+  border-style:solid;  
+  border-color: grey;
+  border-width: 5px;
+  opacity: .2;
+}
+
+.path-container:hover{
+
+    opacity: .6;
+}
+  
+
+.path-container.horizontal {
+    height: 35%;
+    width: 100%;
+}
+
+.path-container.vertical {
+    height: 100%;
+    width: 35%;
+}
+
+
+.path-container.active {
+    background-color: grey;
+    opacity: 1;
+}
+
+.path-container.active:hover{
+
+    opacity: 1;
+}

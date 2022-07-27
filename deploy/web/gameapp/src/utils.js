@@ -18,6 +18,7 @@ export function setCaretPosition(elem, caretPos) {
   }
 }
 
+// DefaultEmojiMapper - Maps corresponding emoji to actor based on name
 export const DefaultEmojiMapper = (name) => {
   let characterName = name;
   characterName = characterName.replace(/-/g, "_");
@@ -51,6 +52,7 @@ export const DefaultEmojiMapper = (name) => {
     small_aggressive_looking_dog: "dog",
     smith: "hammer",
     town_doctor: "syringe",
+    you: "smiley",
   };
 
   return EmojiMap[characterName];

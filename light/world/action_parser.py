@@ -102,6 +102,7 @@ class ActionParser:
             self.agent = None
         # Lock to handle concurrency, fixed better with asycio
         self.parse_lock = threading.Condition()
+        opt["_action_parser"] = self
 
     def parse(self, txt, actor=None):
         if self.agent is None:

@@ -1,0 +1,48 @@
+/* HOMEPAGE STYLES */
+.homepage-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.homepage-label__column {
+    display: flex;
+    width: 20%;
+    justify-content: flex-end;
+}
+
+.homepage-world__column {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+}
+
+.worldcounter-container {
+    display: flex;
+    width:49%;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 2px;
+    margin-bottom: 4px;
+}
+
+.worldcounter-box {
+    display: flex;
+    background-color: white;
+    justify-content: center;
+    align-items: center;
+    border-width: 1px;
+    border-color: black;
+    padding: 4px;
+    border-style: solid;
+}
+
+.worldcounter-text{
+    color:black;
+    font-weight: bold;
+}
+
+.createworldbutton-row {
+    display: flex;
+    width:49%;
+    justify-content: flex-end;
+}
