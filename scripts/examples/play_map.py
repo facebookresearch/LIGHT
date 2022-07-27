@@ -163,6 +163,8 @@ def init_correct_models(opt: Dict[str, Any]) -> ModelPool:
     if opt["no_models"]:
         return model_pool
 
+    os.environ["LIGHT_MODEL_ROOT"] = opt["light_model_root"]
+
     # Initialize dialog model
     agent_soul = opt["agent_soul"]
     if agent_soul == "GenerativeHeuristicModelSoul":
@@ -183,6 +185,7 @@ def init_correct_models(opt: Dict[str, Any]) -> ModelPool:
     # Initialize Scoring model
     roleplaying_opt_target = opt["roleplaying_score_opt_file"]
     if roleplaying_opt_target is not None and roleplaying_opt_target != "":
+        # TODO local local opt override model opt: FileNotFoundError: [Errno 2] No such file or directory: '/checkpoint/jase/projects/light/beatthehobbot/cands/speech_train_cands_extra_filtered_more.txt'
         model_pool.register_model(
             ParlAIPolyencoderActingScoreModelConfig(opt_file=roleplaying_opt_target),
             ["role_playing_score"],

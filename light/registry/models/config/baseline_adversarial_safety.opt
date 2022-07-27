@@ -1,9 +1,9 @@
 {
     "model": "transformer/classifier",
     "model_file": "zoo:bot_adversarial_dialogue/multi_turn/model",
-    "print_scores": True,
-    "split_lines": True,
-    "model_parallel": False,
+    "print_scores": true,
+    "split_lines": true,
+    "model_parallel": false,
     "threshold": 0.999,
     "batchsize": 1
 }

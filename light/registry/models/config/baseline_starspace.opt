@@ -2,6 +2,6 @@
     "model": "starspace",
     "model_file": "$LIGHT_MODEL_ROOT/starspace/angela_starspace/model4"
     "eval_candidates": "inline",
-    "ignore_bad_candidates": True,
+    "ignore_bad_candidates": true,
     "interactive_mode": true
 }

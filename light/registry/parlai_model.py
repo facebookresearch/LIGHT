@@ -52,7 +52,10 @@ class ParlAIModelConfig:
 
     def get(self, attr: str, default_val: Optional[Any] = None):
         """Wrapper to ensure interoperability with hydra DictConfig"""
-        return self.__dict__.get(attr, default_val)
+        val = self.__dict__.get(attr, default_val)
+        if val == MISSING:
+            val = None
+        return val
 
 
 class ParlAIModelLoader:
@@ -72,6 +75,8 @@ class ParlAIModelLoader:
         model_from_config = config.get("model_file", None)
         overrides = dict(config.get("overrides", {}))
 
+        print(opt_from_config, model_from_config)
+
         if opt_from_config is None and model_from_config is None:
             raise AssertionError(f"Must provide one of opt_file or model_file")
 
@@ -88,7 +93,7 @@ class ParlAIModelLoader:
                     opt[key] = os.path.expandvars(opt[key])
 
         if model_from_config is not None:
-            model_file = os.path.expanduser(config.opt_file)
+            model_file = os.path.expanduser(config.model_file)
             if not os.path.exists(model_file):
                 raise AssertionError(
                     f"Provided model file `{model_file}` does not exist."
@@ -109,7 +114,8 @@ class ParlAIModelLoader:
         use_shared = self._shared
         if use_shared is not None:
             opt = deepcopy(use_shared["opt"])
-            opt.update(overrides)
+            if overrides is not None:
+                opt.update(overrides)
             use_shared["opt"] = opt
         model = create_agent_from_shared(use_shared)
         return self.before_return_model(model)
