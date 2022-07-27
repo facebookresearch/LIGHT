@@ -146,6 +146,7 @@ def init_model_resources(FLAGS):
         return {"shared_model_content": {}}
 
     # dialog gen is at `dialog_gen`, other is at `game_speech1`?
+    # TODO TODO TODO TODO FIXME FIXME
     shared_model_content = GenerativeHeuristicModelSoul.load_models(
         light_model_root + dialog_model,
     )

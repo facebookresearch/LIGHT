@@ -68,6 +68,15 @@ class WorldConfig:
     graph_builder: Optional["GraphBuilder"] = None
     model_pool: Optional["ModelPool"] = None
 
+    def copy(self) -> "WorldConfig":
+        """Return a new shallow copy of this WorldConfig"""
+        return WorldConfig(
+            opt=self.opt,
+            episode_db=self.episode_db,
+            graph_builder=self.graph_builder,
+            model_pool=self.model_pool,
+        )
+
 
 class World(object):
     """High-level class that manages gameplay logic for players over a graph.
@@ -115,7 +124,7 @@ class World(object):
 
         self.action_parser = config.opt.get("_action_parser")
         if self.action_parser is None:
-            self.action_parser = ActionParser(config.opt)
+            self.action_parser = ActionParser(config.opt, self.model_pool)
 
     @property
     def oo_graph(self):

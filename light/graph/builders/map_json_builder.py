@@ -38,7 +38,22 @@ class MapJsonBuilder(GraphBuilder):
         self.original_agents: Dict[str, Tuple["GraphRoom", "NodeProps"]] = {}
         self._no_npc_models = True
 
-    def get_graph(self):
+    def _get_attached_config(
+        self, world_config: Optional[WorldConfig] = None, opt: Dict[str, Any] = None
+    ) -> WorldConfig:
+        """
+        Get a copy of the given world config attached to this builder
+        """
+        if opt is None:
+            opt = self.opt
+        if world_config is None:
+            return WorldConfig(episode_db=self.episode_db, opt=opt, graph_builder=self)
+        else:
+            world_config = world_config.copy()
+            world_config.graph_builder = self
+            return world_config
+
+    def get_graph(self, world_config: Optional[WorldConfig] = None):
         input_json = self.opt["load_map"]
         f = open(input_json, "r")
         data = f.read()
@@ -49,9 +64,7 @@ class MapJsonBuilder(GraphBuilder):
             agent.name: (agent.get_room(), agent.get_props())
             for agent in g.agents.values()
         }
-        world = World(
-            WorldConfig(episode_db=self.episode_db, opt=self.opt, graph_builder=self)
-        )
+        world = World(self._get_attached_config(world_config))
         world.oo_graph = g
         return g, world
 
