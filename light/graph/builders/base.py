@@ -23,6 +23,13 @@ from light.graph.builders.base_elements import (
     DBCharacter,
 )
 
+from typing import Any, Dict, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from light.registry.model_pool import ModelPool
+    from parlai.core.message import Message
+    from parlai.core.agents import Agent as ParlAIAgent
+
 # Possible new entrances for add_new_random_agent
 POSSIBLE_NEW_ENTRANCES = [
     "somewhere you can't see",
@@ -210,17 +217,16 @@ class SingleSuggestionGraphBuilder(object):
     """Abstract class that defines methods to obtain suggestions from models
     for building LIGHT worlds and related graphs"""
 
-    def __init__(self, opt, model_path=""):
+    def __init__(self, model_pool: ModelPool):
         """Initalize  SingleSuggestionGraphBuilder to access suggestion models"""
-        self.agents = {}
-        self.model_path = model_path
-        self.opt = copy.deepcopy(opt)
+        self.agents: Dict[str, "ParlAIAgent"] = {}
+        self.model_pool = model_pool
 
-    def load_models(self):
+    def load_models(self) -> None:
         """abstract method for loading models for suggestions"""
         raise NotImplementedError
 
-    def agent_recommend(self, observation, agent_type):
+    def agent_recommend(self, observation, agent_type) -> Message:
         """Return a response when querying a specific
         type of agent and return the model response"""
         assert agent_type in self.agents, "Agent type not found in existing agents"

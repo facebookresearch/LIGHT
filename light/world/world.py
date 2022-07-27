@@ -90,6 +90,12 @@ class World(object):
         self.view = WorldViewer(self)
         self.purgatory = Purgatory(self)
         self.opt = opt
+        model_pool = config.model_pool
+        if model_pool is None:
+            from light.registry.model_pool import ModelPool
+
+            # TODO likely cleaner way to get one of these
+            model_pool = ModelPool()
         self.model_pool = config.model_pool
 
         # TODO better specific player management?
