@@ -8,3 +8,7 @@ localhost
 LetsPlay
 --port
 35494
+--db-backend
+local
+--is-logging
+True

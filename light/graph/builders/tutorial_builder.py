@@ -7,7 +7,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from light.graph.builders.map_json_builder import MapJsonBuilder
-from light.world.world import World
+from light.world.world import World, WorldConfig
 from light.world.purgatory import TutorialPurgatory
 from light.graph.structured_graph import OOGraph
 
@@ -23,11 +23,6 @@ class TutorialWorldBuilder(MapJsonBuilder):
     made to run tutorials. Generally like a single room builder.
     """
 
-    def __init__(self, db: "LIGHTDatabase", opt: Dict[str, Any] = None):
-        """Store initialization options"""
-        self.db = db
-        self.opt = opt if opt is not None else {}
-
     def add_random_new_agent_to_graph(self, target_graph):
         """Add an agent to the graph in a random room somewhere"""
         raise Exception("Agents should not be added to tutorials!")
@@ -36,7 +31,9 @@ class TutorialWorldBuilder(MapJsonBuilder):
         """
         Create a tutorial graph, not from file
         """
-        graph = OOGraph(self.opt)
+        opt = self.opt.copy()
+        opt["tutorial"] = True
+        graph = OOGraph(opt)
         room_node = graph.add_room(
             "Impossible Tavern",
             {
@@ -149,12 +146,16 @@ class TutorialWorldBuilder(MapJsonBuilder):
 
     def get_graph(self):
         """Create and return a tutorial graph"""
-        if self.opt.get("load_map", None) is not None:
+        if self.opt.get("load_tutorial_map", None) is not None:
             graph, _ = super().get_graph()
         else:
             graph = self.build_new_graph()
-
-        world = World(self.opt, self)
+        opt = self.opt.copy()
+        opt["tutorial"] = True
+        world = World(
+            WorldConfig(episode_db=self.episode_db, opt=opt, graph_builder=self)
+        )
         world.oo_graph = graph
+        # Force the logging mode to tutorial PRE_LAUNCH_TUTORIAL
         world.purgatory = TutorialPurgatory(world)
         return graph, world

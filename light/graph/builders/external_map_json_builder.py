@@ -11,7 +11,7 @@ from light.graph.builders.base import (
     SingleSuggestionGraphBuilder,
     POSSIBLE_NEW_ENTRANCES,
 )
-from light.world.world import World
+from light.world.world import World, WorldConfig
 
 
 class ExternalMapJsonBuilder(DBGraphBuilder):
@@ -24,6 +24,6 @@ class ExternalMapJsonBuilder(DBGraphBuilder):
 
     def get_graph(self):
         g = OOGraph.from_worldbuilder_json(self.opt["load_map"])
-        world = World(self.opt, self)
+        world = World(WorldConfig(opt=self.opt, graph_builder=self))
         world.oo_graph = g
         return g, world

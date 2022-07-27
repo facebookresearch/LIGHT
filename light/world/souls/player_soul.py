@@ -62,7 +62,9 @@ class PlayerSoul(BaseSoul):
             self.roleplaying_score_model = model_pool.get_model("role_playing_score")
         if model_pool.has_model("action"):
             self.generic_act_model = model_pool.get_model("action")
-        self.agent_logger = AgentInteractionLogger(world.oo_graph, target_node)
+        self.agent_logger = AgentInteractionLogger(
+            world.oo_graph, target_node, episode_db=world._config.episode_db
+        )
         provider.register_soul(self)
         self.world.oo_graph.room_id_to_loggers[
             self.target_node.get_room().node_id
@@ -91,6 +93,8 @@ class PlayerSoul(BaseSoul):
         actor = self.target_node
         actor._last_action_time = time.time()
         self.world.parse_exec(self.target_node, act_text, event_id=event_id)
+        if hasattr(self.target_node, "num_turns"):
+            self.target_node.num_turns += 1
 
     def new_quest(self):
         if random.random() > 0.01:

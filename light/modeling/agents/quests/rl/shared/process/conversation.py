@@ -7,7 +7,7 @@
 
 from collections import namedtuple
 from light.graph.structured_graph import OOGraph
-from light.world.world import World
+from light.world.world import World, WorldConfig
 
 Turn = namedtuple(
     "Turn",
@@ -99,7 +99,7 @@ class Conversation(object):
         """
         # Get Graph
         g = OOGraph.from_json(conv_dict["graph_json"])
-        world = World({}, None)
+        world = World(WorldConfig())
         world.oo_graph = g
         self.graph = world
 

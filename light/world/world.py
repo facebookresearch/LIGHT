@@ -26,9 +26,12 @@ from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 from light.world.views import WorldViewer
 from light.world.purgatory import Purgatory
 
-from typing import List, Optional, TYPE_CHECKING, Dict, Any
+from typing import List, Optional, Dict, Any, TYPE_CHECKING
+from dataclasses import dataclass, field
+
 
 if TYPE_CHECKING:
+    from light.data_model.db.episodes import EpisodeDB
     from light.registry.model_pool import ModelPool
     from light.graph.builders.base import GraphBuilder
 
@@ -51,6 +54,21 @@ def check_integrity(f):
     return wrapper
 
 
+@dataclass
+class WorldConfig:
+    """
+    Class containing (optional) world configuration data. Important for
+    the sub-portions of the broader LIGHTConfig that are world-specific
+    """
+
+    # TODO create LIGHTConfig that can write out a WorldConfig
+    # args: DictConfig (to replace opt)
+    opt: Optional[Dict[str, Any]] = field(default_factory=dict)
+    episode_db: Optional["EpisodeDB"] = None
+    graph_builder: Optional["GraphBuilder"] = None
+    model_pool: Optional["ModelPool"] = None
+
+
 class World(object):
     """High-level class that manages gameplay logic for players over a graph.
     Should provide an interface to advance the game, register callbacks, and
@@ -60,44 +78,62 @@ class World(object):
 
     def __init__(
         self,
-        opt: Dict[str, Any],
-        graph_builder: "GraphBuilder",
-        model_pool: "ModelPool",
-        debug=False,
+        config: WorldConfig,
+        debug: bool = False,
     ):
-        self._opt = opt
+        self._config = config
+        self._opt = config.opt
         self._node_freeze = False
         self._cnt = 0
         self.debug = debug
-        self.oo_graph = OOGraph(opt)
+        self._oo_graph = OOGraph(config.opt)
         self.view = WorldViewer(self)
         self.purgatory = Purgatory(self)
         self.opt = opt
-        self.model_pool = model_pool
+        self.model_pool = config.model_pool
 
         # TODO better specific player management?
         self._player_cnt = 0
         self._playerid_to_agentid = {}
         self._agentid_to_playerid = {}
 
-        self.graph_builder = graph_builder  # TODO replace with builder
+        self.graph_builder = config.graph_builder
 
         # Set up safety classifier.
-        init_safety_classifier(self.opt.get("safety_classifier_path", ""), model_pool)
+        init_safety_classifier(self._opt.get("safety_classifier_path", ""), model_pool)
 
         # Set up magic!
-        init_magic(self.opt.get("magic_db_path", "/scratch/light/data/magic.db"))
+        init_magic(self._opt.get("magic_db_path", "/scratch/light/data/magic.db"))
 
         # Set up action parser.
 
-        self.action_parser = opt.get("_action_parser")
+        self.action_parser = config.opt.get("_action_parser")
         if self.action_parser is None:
-            self.action_parser = ActionParser(opt)
+            self.action_parser = ActionParser(config.opt)
+
+    @property
+    def oo_graph(self):
+        """Wrapper around oo_graph allowing us to do special configuration when set"""
+        return self._oo_graph
+
+    @oo_graph.setter
+    def oo_graph(self, oo_graph: "OOGraph"):
+        """
+        Wrapper around oo_graph setter allowing us to properly attach room interaction
+        loggers and handle other initialization
+        """
+        # TODO maybe there's a better way to do this? What happens when we add a new room
+        # to an existin graph?
+        self._oo_graph = oo_graph
+        for room_node in oo_graph.room_id_to_loggers.values():
+            room_node.episode_db = self._config.episode_db
 
     @staticmethod
-    def from_graph(graph, graph_builder=None):
+    def from_graph(graph, config: WorldConfig = None):
         """Loads the world from the older versions of graph."""
-        world = World(graph._opt, graph_builder)
+        if config is None:
+            config = WorldConfig()
+        world = World(config)
         world.oo_graph = OOGraph.from_graph(graph)
         world._node_freeze = graph._node_freeze
         world._cnt = graph._cnt
@@ -735,7 +771,7 @@ class World(object):
     def parse_exec(self, actor, inst=None, event_id: Optional[str] = None):
         if not isinstance(actor, GraphNode):
             actor = self.oo_graph.get_node(actor)
-        if self.opt.get("dont_catch_errors", False):
+        if self._opt.get("dont_catch_errors", False):
             return self.parse_exec_internal(actor, inst=inst, event_id=event_id)
 
         else:

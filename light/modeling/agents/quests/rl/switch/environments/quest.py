@@ -8,7 +8,7 @@
 import json
 from glob import glob
 from copy import deepcopy, copy
-from light.world.world import World
+from light.world.world import World, WorldConfig
 from light.graph.structured_graph import OOGraph
 
 
@@ -86,7 +86,7 @@ class QuestEnv(object):
         self.score = 0
         self.real_speech_score = 0
         self.real_act_score = 0
-        # self.world = World({}, None)
+        # self.world = World(WorldConfig())
         # g = OOGraph.from_json(deepcopy(self.graph_data))
         # self.world.oo_graph = g
         self.world = deepcopy(self.graph_data)

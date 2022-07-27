@@ -88,7 +88,7 @@ class GraphEvent(object):
         """
         if event_id is None:
             event_id = str(uuid4())
-        self.executed: bool = False  # type: ignore
+        self.executed: bool = False
         self.actor = actor
         self.room = actor.get_room()
         self.target_nodes = [] if target_nodes is None else target_nodes

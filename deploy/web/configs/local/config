@@ -14,3 +14,5 @@ starspace/angela_starspace/model4
 dialog_gen/model
 --acting-model
 main_act/model
+--db-backend
+local

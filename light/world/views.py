@@ -57,7 +57,7 @@ class WorldViewer(object):
     def get_health_text_for(self, id):
         """Return the text description of someone's numeric health"""
         # TODO get the correct values
-        health = self.world.get_prop(id, "health")
+        health = self.world.oo_graph.get_node(id).get_prop("health")
         if health < 0:
             health = 0
         if health is None or health is False:
@@ -217,7 +217,7 @@ class WorldViewer(object):
     def name_prefix_id(self, id, txt, use_the):
         """Get the prefix to prepend an object with in text form"""
         # Get the preferred prefix type.
-        pre = self.world.get_prop(id, "name_prefix")
+        pre = self.world.oo_graph.get_node(id).get_prop("name_prefix")
         if pre == "":
             return pre
 

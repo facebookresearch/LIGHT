@@ -40,7 +40,7 @@ class TestInteractionLoggers(unittest.TestCase):
         loop = asyncio.get_running_loop()
         opt = {}
         opt["load_map"] = os.path.join(LIGHT_DIR, "scripts/examples/complex_world.json")
-        world_builder = MapJsonBuilder("", debug=False, opt=opt)
+        world_builder = MapJsonBuilder(episode_db=None, opt=opt)
         g, world = world_builder.get_graph()
         purgatory = world.purgatory
         purgatory.register_filler_soul_provider(
