@@ -200,9 +200,10 @@ class GameCreatorHandler(BaseHandler):
             username = tornado.escape.xhtml_escape(self.current_user)
             with self.app.user_db as user_db:
                 player = user_db.get_user_id(username)
-                if not user_db.is_world_owned_by(world_id, player):
-                    self.set_status(403)
-                    return
+                # TODO update with the env DB
+                # if not user_db.is_world_owned_by(world_id, player):
+                #     self.set_status(403)
+                #     return
             game = self.app.run_new_game(game_id, self.app.ldb, player, world_id)
         else:
             game = self.app.run_new_game(game_id, self.app.ldb)
