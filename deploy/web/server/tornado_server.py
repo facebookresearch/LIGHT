@@ -10,7 +10,6 @@ from deploy.web.server.game_instance import (
     Player,
     GameInstance,
 )
-from light.data_model.light_user_db import LIGHTDatabase
 from light.data_model.db.users import PlayerStatus
 from light.world.player_provider import PlayerProvider
 from light.world.quest_loader import QuestLoader
