@@ -1,6 +1,6 @@
 {
     "model": "transformer/generator",
-    "model_file": "$LIGHT_MODEL_ROOT/dialog/baseline_gen/model",
+    "model_file": "$LIGHT_MODEL_ROOT/dialog/baseline_gen_start/model.checkpoint",
     "inference": "beam",
     "datatype": "valid",
     "beam_context_block_ngram": 3,

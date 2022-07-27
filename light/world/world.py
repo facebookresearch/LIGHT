@@ -98,7 +98,6 @@ class World(object):
         self._oo_graph = OOGraph(config.opt)
         self.view = WorldViewer(self)
         self.purgatory = Purgatory(self)
-        self.opt = opt
         model_pool = config.model_pool
         if model_pool is None:
             from light.registry.model_pool import ModelPool
@@ -124,7 +123,7 @@ class World(object):
 
         self.action_parser = config.opt.get("_action_parser")
         if self.action_parser is None:
-            self.action_parser = ActionParser(config.opt, self.model_pool)
+            self.action_parser = ActionParser(self.model_pool)
 
     @property
     def oo_graph(self):

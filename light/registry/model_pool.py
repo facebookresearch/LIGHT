@@ -7,10 +7,14 @@
 from dataclasses import dataclass, field
 from omegaconf import MISSING, DictConfig
 
-from light.registry.models.parlai_model import ParlAIModelConfig, ParlAIModelLoader
+from light.registry.parlai_model import ParlAIModelConfig, ParlAIModelLoader
 from light.registry.models.acting_score_model import (
     ParlAIPolyencoderActingScoreModelConfig,
     ParlAIPolyencoderActingScoreModelLoader,
+)
+from light.registry.models.starspace_model import (
+    MapStarspaceModelConfig,
+    MapStarspaceModelLoader,
 )
 
 from parlai.core.agents import Agent
@@ -20,6 +24,7 @@ from typing import List, Any, Dict, Optional, Type
 ALL_LOADERS: Dict[str, Type[ParlAIModelLoader]] = {
     ParlAIModelConfig._loader: ParlAIModelLoader,
     ParlAIPolyencoderActingScoreModelConfig._loader: ParlAIPolyencoderActingScoreModelLoader,
+    MapStarspaceModelConfig._loader: MapStarspaceModelLoader,
 }
 
 

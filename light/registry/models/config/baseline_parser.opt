@@ -1,5 +1,5 @@
 {
     "model_file": "$LIGHT_MODEL_ROOT/parser/baseline/model",
     "interactive_candidates": "inline",
-    "interactive_mode": True,
+    "interactive_mode": true
 }

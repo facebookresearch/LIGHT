@@ -32,7 +32,12 @@ class BaseSoul(Soul):
         self.target_node._last_interaction_partner_id = None
         self.reset_interaction_history(self.target_node)
         self.model_pool = world.model_pool
-        self.roleplaying_score_model = self.model_pool.get_model("role_playing_score")
+        if self.model_pool.has_model("role_playing_score"):
+            self.roleplaying_score_model = self.model_pool.get_model(
+                "role_playing_score"
+            )
+        else:
+            self.roleplaying_score_model = None
 
     def get_last_interaction_partner(self, node=None) -> Optional["GraphAgent"]:
         if node == None:
@@ -256,7 +261,7 @@ class BaseSoul(Soul):
         return human_rank, human_score
 
     def score_conversation(self):
-        if not hasattr(self, "roleplaying_score_model"):
+        if self.roleplaying_score_model is None:
             # For local testing of exp with no models, set this to nonzero
             return 0
 

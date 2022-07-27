@@ -3,6 +3,6 @@
     "candidates": "fixed",
     "eval_candidates": "fixed",
     "use_reply": "none",
-    "interactive_mode": True,
-    "boring_alpha": 0,
+    "interactive_mode": true,
+    "boring_alpha": 0
 }

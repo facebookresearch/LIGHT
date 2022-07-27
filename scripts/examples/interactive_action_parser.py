@@ -62,7 +62,7 @@ def setup_args(parser=None):
 
 def interactive(opt):
     # Create model and assign it to the specified task
-    parser = ActionParser(opt, ModelPool())
+    parser = ActionParser(ModelPool())
     human_agent = LocalHumanAgent(opt)
     world = create_task(opt, [human_agent, parser.agent])
 

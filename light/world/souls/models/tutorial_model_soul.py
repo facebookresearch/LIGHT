@@ -79,7 +79,7 @@ class TutorialModelSoul(OnEventSoul):
 
     HAS_MAIN_LOOP = True
 
-    def _init_with_models(self, models) -> None:
+    def _init_with_models(self, model_pool) -> None:
         """
         Initialize required members of this soul for tracking the
         model and interactions with it.

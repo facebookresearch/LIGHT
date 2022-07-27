@@ -144,7 +144,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
 
     def load_models(self) -> None:
         """Load starspace models for building the map"""
-        self.model_pool.register_model(self.config.model_loader_config, "map_starspace")
+        # self.model_pool.register_model(self.config.model_loader_config, "map_starspace")
         self.agents["room"] = self.model_pool.get_model(
             "map_starspace", {"target_type": "room"}
         )

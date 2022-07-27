@@ -217,7 +217,7 @@ class SingleSuggestionGraphBuilder(object):
     """Abstract class that defines methods to obtain suggestions from models
     for building LIGHT worlds and related graphs"""
 
-    def __init__(self, model_pool: ModelPool):
+    def __init__(self, model_pool: "ModelPool"):
         """Initalize  SingleSuggestionGraphBuilder to access suggestion models"""
         self.agents: Dict[str, "ParlAIAgent"] = {}
         self.model_pool = model_pool
@@ -226,7 +226,7 @@ class SingleSuggestionGraphBuilder(object):
         """abstract method for loading models for suggestions"""
         raise NotImplementedError
 
-    def agent_recommend(self, observation, agent_type) -> Message:
+    def agent_recommend(self, observation, agent_type) -> "Message":
         """Return a response when querying a specific
         type of agent and return the model response"""
         assert agent_type in self.agents, "Agent type not found in existing agents"

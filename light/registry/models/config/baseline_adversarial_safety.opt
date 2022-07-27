@@ -5,5 +5,5 @@
     "split_lines": True,
     "model_parallel": False,
     "threshold": 0.999,
-    "batchsize": 1,
+    "batchsize": 1
 }

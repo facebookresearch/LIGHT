@@ -26,14 +26,14 @@ class ModelSoul(BaseSoul):
     HAS_MAIN_LOOP = False
     MAIN_LOOP_STEP_TIMEOUT = 5  # seconds between loop actions
 
-    def __init__(self, target_node: "GraphAgent", world: "World", models: Any):
+    def __init__(self, target_node: "GraphAgent", world: "World"):
         """
         All Souls should be attached to a target_node, which is the agent that
         this soul will be inhabiting. It also takes the world in which that
         agent exists.
         """
         super().__init__(target_node, world)
-        self._init_with_models(models)
+        self._init_with_models(self.model_pool)
         self._main_loop = None
         if self.HAS_MAIN_LOOP:
             self._run_timesteps()
