@@ -188,6 +188,7 @@ class UserDB(BaseDB):
             base_score.reward_xp += reward_change
 
             agent_score = session.scalars(specific_stmt).first()
+            print(agent_score, agent_name_id)
             if agent_score is None:
                 # User has not played this character before, we'll need to initialize it
                 agent_score = DBScoreEntry(

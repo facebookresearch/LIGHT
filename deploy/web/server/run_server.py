@@ -81,12 +81,15 @@ if "facebook_secret" in SECRETS:
 
 def make_app(FLAGS, ldb, model_resources):
     worldBuilderApp = BuildApplication(get_handlers(ldb), tornado_settings)
-    landingApp = LandingApplication(
-        ldb, FLAGS.hostname, FLAGS.password, tornado_settings
-    )
     db_config = LightDBConfig(backend=FLAGS.db_backend, file_root=FLAGS.db_root)
     episode_db = EpisodeDB(db_config)
     user_db = UserDB(db_config)
+    landingApp = LandingApplication(
+        user_db=user_db,
+        hostname=FLAGS.hostname,
+        password=FLAGS.password,
+        given_tornado_settings=tornado_settings,
+    )
     registryApp = RegistryApplication(
         FLAGS,
         ldb,

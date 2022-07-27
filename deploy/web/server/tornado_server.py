@@ -336,7 +336,7 @@ class BaseHandler(tornado.web.RequestHandler):
                 # Also can be caused when auth is refreshed
                 print(f"User {user_decoded} tried to log in, but was rejected.")
                 return None
-            print(f"User {user_decoded, user_id} logged in.")
+            print(f"User {user.extern_id, user_id} logged in.")
             return user_id
         else:
             return None
@@ -449,7 +449,7 @@ class ApiHandler(BaseHandler):
 class LandingApplication(tornado.web.Application):
     def __init__(
         self,
-        user_db,
+        user_db: "UserDB",
         hostname=DEFAULT_HOSTNAME,
         password="LetsPlay",
         given_tornado_settings=None,
@@ -560,7 +560,7 @@ class PreauthGameHandler(BaseHandler):
             user_hash = get_salted_hash(user_id)
             context_hash = get_salted_hash(context_id)
             hashed_user_id = f"preauth-{user_hash}"
-            self.user_db.create_user(extern_id=hashed_user_id)
+            self.user_db.create_user(extern_id=hashed_user_id, is_preauth=True)
             self.set_secure_cookie(
                 "preauth",
                 tornado.escape.json_encode(hashed_user_id),
@@ -631,7 +631,9 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
                 client_secret=self.app.settings["facebook_secret"],
                 code=self.get_argument("code"),
             )
-            user_id = self.user_db.create_user(extern_id=fb_user["id"])
+            user_id = self.user_db.create_user(
+                extern_id=fb_user["id"], is_preauth=False
+            )
             self.set_current_user(user_id)
             self.redirect("/play/")
             return
@@ -672,7 +674,7 @@ class LoginHandler(BaseHandler):
         name = self.get_argument("name", "")
         password = self.get_argument("password", "")
         if password == self.password:
-            user_id = self.user_db.create_user(extern_id=name)
+            user_id = self.user_db.create_user(extern_id=name, is_preauth=False)
             self.set_current_user(user_id)
             # self.redirect(self.get_argument("next", "/"))
             self.redirect("/play/")
@@ -744,6 +746,7 @@ class TornadoPlayerProvider(PlayerProvider):
             if self.user_db is not None:
                 base_score = self.user_db.get_agent_score(self.user_id)
                 # TODO refactor into elsewhere
+                target_node = soul.target_node
                 target_node.xp = base_score.score
                 target_node.reward_xp = base_score.reward_xp
                 target_node._base_class_experience = 0
@@ -827,10 +830,10 @@ class TornadoPlayerProvider(PlayerProvider):
                 net_reward_points = (
                     target_node.reward_xp - target_node._base_reward_points
                 )
-                db_id = target_node.base_id if target_node.base_id is not None else ""
+                db_id = target_node.db_id if target_node.db_id is not None else ""
                 self.user_db.update_agent_score(
-                    player_id=user_id,
-                    agent_name_id=target_node.db_id,
+                    player_id=self.user_id,
+                    agent_name_id=db_id,
                     points=gained_experience,
                     num_turns=target_node._num_turns,
                     reward_change=net_reward_points,
