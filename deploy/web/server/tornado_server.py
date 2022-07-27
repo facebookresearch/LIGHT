@@ -232,7 +232,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             new_player = TornadoPlayerProvider(
                 self,
                 graph_purgatory,
-                db=self.user_db,
+                user_db=self.user_db,
                 user_id=user_id,
             )
             new_player.init_soul()
@@ -868,7 +868,7 @@ class TornadoPlayerFactory:
             nonlocal port
             self.my_loop = ioloop.IOLoop()
             self.app = Application(
-                given_tornado_settings=given_tornado_settings, db=self.user_db
+                given_tornado_settings=given_tornado_settings, user_db=self.user_db
             )
             self.app.registry = self.registry
             if listening:
