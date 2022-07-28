@@ -12,7 +12,7 @@ from light.graph.elements.graph_nodes import GraphAgent
 from light.graph.structured_graph import OOGraph
 from light.world.world import World
 from light.graph.events.graph_events import EmoteEvent, SayEvent
-from light.world.souls.test_soul import TestSoul
+from light.world.souls._test_soul import TestSoul
 from light.world.souls.repeat_soul import RepeatSoul
 
 
