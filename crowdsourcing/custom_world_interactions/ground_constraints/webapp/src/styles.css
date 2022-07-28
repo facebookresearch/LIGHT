@@ -1,0 +1,11 @@
+body {
+    line-height: 1;
+}
+p {
+    margin: 0;
+}
+
+.tippy-tooltip [x-circle] {
+    background-color: none !important;
+    opacity: 0 !important;
+}
