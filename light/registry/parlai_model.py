@@ -76,6 +76,7 @@ class ParlAIModelLoader:
         overrides = dict(config.get("overrides", {}))
 
         print(opt_from_config, model_from_config)
+        # TODO local local opt override model opt: FileNotFoundError: [Errno 2] No such file or directory: '/checkpoint/jase/projects/light/beatthehobbot/cands/speech_train_cands_extra_filtered_more.txt'
 
         if opt_from_config is None and model_from_config is None:
             raise AssertionError(f"Must provide one of opt_file or model_file")
@@ -83,14 +84,20 @@ class ParlAIModelLoader:
         if opt_from_config is None:
             parser = ParlaiParser(True, True, "")
             opt = parser.parse_args(args=[])
+            opt["override"] = opt.get("override", {})
         else:
             opt_file = os.path.expanduser(opt_from_config)
-            print(opt_file)
             opt = Opt.load(os.path.expanduser(opt_file))
-            for key in opt.keys():
-                # Expand path and file keys to capture $LIGHT_MODEL_ROOT
-                if "path" in key or "file" in key:
+            for key, item in opt.items():
+                if not isinstance(item, str):
+                    continue
+                if "$LIGHT_MODEL_ROOT" in item:
+                    # Expand path and file keys to capture $LIGHT_MODEL_ROOT
                     opt[key] = os.path.expandvars(opt[key])
+
+            base_overrides = opt.get("base_overrides", {})
+            base_overrides.update(opt.copy())
+            opt["override"] = base_overrides
 
         if model_from_config is not None:
             model_file = os.path.expanduser(config.model_file)
@@ -101,6 +108,7 @@ class ParlAIModelLoader:
             opt["model_file"] = model_file
 
         opt.update(overrides)
+        opt["override"].update(overrides)
         print(opt)
         model = create_agent(opt)
         self._shared = model.share()

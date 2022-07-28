@@ -10,13 +10,15 @@
 import sys
 
 import parlai.utils.misc as parlai_utils
+from parlai.core.params import ParlaiParser
 
 from light import LIGHT_DIR
 from light.graph.builders.map_json_builder import MapJsonBuilder
 from light.graph.builders.starspace_all import StarspaceBuilder
+from light.graph.events.graph_events import init_safety_classifier
 from light.data_model.light_database import LIGHTDatabase
 from light.world.utils.terminal_player_provider import TerminalPlayerProvider
-from parlai.core.params import ParlaiParser
+
 from light.world.world import World, WorldConfig
 from light.world.souls.base_soul import BaseSoul
 from light.world.souls.repeat_soul import RepeatSoul
@@ -185,7 +187,6 @@ def init_correct_models(opt: Dict[str, Any]) -> ModelPool:
     # Initialize Scoring model
     roleplaying_opt_target = opt["roleplaying_score_opt_file"]
     if roleplaying_opt_target is not None and roleplaying_opt_target != "":
-        # TODO local local opt override model opt: FileNotFoundError: [Errno 2] No such file or directory: '/checkpoint/jase/projects/light/beatthehobbot/cands/speech_train_cands_extra_filtered_more.txt'
         model_pool.register_model(
             ParlAIPolyencoderActingScoreModelConfig(opt_file=roleplaying_opt_target),
             ["role_playing_score"],
@@ -213,6 +214,7 @@ def init_correct_models(opt: Dict[str, Any]) -> ModelPool:
             ),
             ["safety"],
         )
+        init_safety_classifier("", model_pool)
 
     return model_pool
 

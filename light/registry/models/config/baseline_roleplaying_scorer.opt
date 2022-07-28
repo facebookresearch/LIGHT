@@ -5,5 +5,8 @@
     "use_reply": "none",
     "interactive_mode": true,
     "fixed_candidates_path": "$LIGHT_MODEL_ROOT/cands/speech_train_cands_extra_filtered_more.txt",
+    "partner_trainset": "$LIGHT_MODEL_ROOT/cands/agent_to_utterance_partner_trainset.txt",
+    "trainset": "$LIGHT_MODEL_ROOT/cands/agent_to_utterance_trainset.txt",
+    "baseforms": "$LIGHT_MODEL_ROOT/cands/baseforms.json",
     "boring_alpha": 0
 }

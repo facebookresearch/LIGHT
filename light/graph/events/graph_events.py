@@ -38,8 +38,7 @@ safety_classifier: Optional[SafetyClassifier] = None
 
 def init_safety_classifier(datapath, model_pool: "ModelPool"):
     global safety_classifier
-    if datapath is not None and len(datapath) > 0:
-        safety_classifier = SafetyClassifier(datapath, model_pool)
+    safety_classifier = SafetyClassifier(datapath, model_pool)
 
 
 if TYPE_CHECKING:
