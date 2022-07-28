@@ -9,11 +9,9 @@ import random
 import shutil
 import subprocess
 from mephisto.operations.operator import Operator
-from mephisto.operations.utils import get_root_dir
 from mephisto.tools.scripts import load_db_and_process_config
-from mephisto.abstractions.blueprint import BlueprintArgs
 from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint import (
-    BLUEPRINT_TYPE,
+    BLUEPRINT_TYPE_STATIC_REACT as BLUEPRINT_TYPE
 )
 from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint import (
     SharedStaticTaskState,
@@ -32,7 +30,8 @@ from dataclasses import dataclass, field
 from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-LIGHT_DB_PATH = "~/ParlAI/data/LIGHT/merged.db"
+# LIGHT_DB_PATH = "~/ParlAI/data/LIGHT/merged.db"
+LIGHT_DB_PATH = "~/ParlAI/data/light/environment/db/d3/database3.db"
 PRIMARY_OBJECT_LIST_SIZE = 8
 SECONDARY_OBJECT_LIST_SIZE = 8
 DEFAULT_NUM_TASKS = 20
@@ -41,6 +40,7 @@ db = LocalMephistoDB()
 mephisto_data_browser = MephistoDataBrowser(db=db)
 
 defaults = [
+    "_self_",
     {"mephisto/blueprint": BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
@@ -141,15 +141,20 @@ def validate_unit(unit):
     if unit.get_assigned_agent() is None:
         return
 
-    output = mephisto_data_browser.get_data_from_unit(unit)["data"]
+    unit_data = mephisto_data_browser.get_data_from_unit(unit)
+    unit_data = unit_data.get("data")
 
-    if output is None:
+    if unit_data is None:
         return
         
-    data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
-        "final_data"
-    ]
-    action_description = data["actionDescription"].strip()
+    data = unit_data.get("outputs")
+    
+    if data is None or "actionDescription" not in data:
+        return
+    action_description = data["actionDescription"]
+    if type(action_description) is not str:
+        return
+    action_description = action_description.strip()
 
     if (
         len(action_description) <= 20
@@ -219,7 +224,6 @@ def main(cfg: DictConfig) -> None:
 
     db, cfg = load_db_and_process_config(cfg)
     operator = Operator(db)
-
     operator.validate_and_run_config(cfg.mephisto, shared_state)
     operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=30)
 

@@ -25,6 +25,7 @@ function MainApp() {
   const [primaryObject, setPrimaryObject] = React.useState("");
   const [secondaryObject, setSecondaryObject] = React.useState("");
   const [actionDescription, setActionDescription] = React.useState("");
+  const [rawAction, setRawAction] = React.useState("");
   const [otherActive, setOtherActive] = React.useState(false);
 
   const {
@@ -42,7 +43,7 @@ function MainApp() {
   if (blockedReason !== null) {
     return (
       <section className="hero is-medium is-danger">
-        <div class="hero-body">
+        <div className="hero-body">
           <h2 className="title is-3">{blockedExplanation}</h2>{" "}
         </div>
       </section>
@@ -58,12 +59,14 @@ function MainApp() {
   }
 
   const payload = {
-    primaryObject: primaryObject,
-    secondaryObject: secondaryObject,
-    actionDescription: actionDescription,
+    primaryObject,
+    secondaryObject,
+    actionDescription,
+    rawAction,
   };
 
   const active =
+    payload.rawAction.length > 0 &&
     payload.actionDescription.length > 0 &&
     payload.secondaryObject.length > 0 &&
     payload.primaryObject.length > 0;
@@ -77,6 +80,7 @@ function MainApp() {
           setPrimaryObject={setPrimaryObject}
           setSecondaryObject={setSecondaryObject}
           setActionDescription={setActionDescription}
+          setRawAction={setRawAction}
           setOtherActive={setOtherActive}
           onSubmit={handleSubmit}
           isOnboarding={isOnboarding}

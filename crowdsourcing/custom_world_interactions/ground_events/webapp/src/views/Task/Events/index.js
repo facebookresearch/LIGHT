@@ -11,6 +11,8 @@ const Events = ({
     interaction,
     broadcastMessage,
     setBroadcastMessage,
+    ranges,
+    setRanges,
     isCreatingEntity,
     setIsCreatingEntity,
     createdEntity,
@@ -50,6 +52,8 @@ const Events = ({
                     interaction={interaction}
                     broadcastMessage={broadcastMessage}
                     setBroadcastMessage={setBroadcastMessage}
+                    ranges={ranges}
+                    setRanges={setRanges}
                     isCreatingEntity={isCreatingEntity}
                     setIsCreatingEntity={setIsCreatingEntity}
                     createdEntity={createdEntity}
