@@ -21,7 +21,7 @@ from light.world.souls.base_soul import BaseSoul
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 import inspect
-import os.path
+import os
 from light.data_model.light_database import LIGHTDatabase
 from light.graph.events.graph_events import init_safety_classifier
 from light.world.souls.models.generative_heuristic_model_soul import (
@@ -30,7 +30,16 @@ from light.world.souls.models.generative_heuristic_model_soul import (
 from light.data_model.db.base import LightDBConfig
 from light.data_model.db.episodes import EpisodeDB
 from light.data_model.db.users import UserDB
+from light.world.world import WorldConfig
+from light.registry.model_pool import ModelPool
+from light.registry.parlai_model import ParlAIModelConfig
+from light.registry.models.acting_score_model import (
+    ParlAIPolyencoderActingScoreModelConfig,
+)
 
+from light import LIGHT_DIR
+
+CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -79,7 +88,7 @@ if "facebook_secret" in SECRETS:
     tornado_settings["facebook_secret"] = SECRETS["facebook_secret"]
 
 
-def make_app(FLAGS, ldb, model_resources):
+def make_app(FLAGS, ldb, model_pool: ModelPool):
     worldBuilderApp = BuildApplication(get_handlers(ldb), tornado_settings)
     db_config = LightDBConfig(backend=FLAGS.db_backend, file_root=FLAGS.db_root)
     episode_db = EpisodeDB(db_config)
@@ -93,7 +102,7 @@ def make_app(FLAGS, ldb, model_resources):
     registryApp = RegistryApplication(
         FLAGS,
         ldb,
-        model_resources,
+        model_pool,
         tornado_settings,
         episode_db=episode_db,
         user_db=user_db,
@@ -134,36 +143,69 @@ def _run_server(FLAGS, ldb, model_resources):
         my_loop.stop()
 
 
-# Update this to load _all_ models for the full game, fix "shared_model_content"
-def init_model_resources(FLAGS):
+# Update this to load _all_ models for the full game, return the ModelPool
+def init_model_pool(FLAGS) -> "ModelPool":
     light_model_root = FLAGS.light_model_root
-    dialog_model = FLAGS.dialog_model
-    act_model = FLAGS.acting_model
-    scoring_model = FLAGS.roleplaying_score_model_file
-    generic_act_model = FLAGS.generic_act_model_file
+    if light_model_root.endswith("/"):
+        light_model_root = os.path.expanduser(light_model_root[:-1])
+    os.environ["LIGHT_MODEL_ROOT"] = light_model_root
 
-    if dialog_model is None:
-        return {"shared_model_content": {}}
-
-    # dialog gen is at `dialog_gen`, other is at `game_speech1`?
-    # TODO TODO TODO TODO FIXME FIXME
-    shared_model_content = GenerativeHeuristicModelSoul.load_models(
-        light_model_root + dialog_model,
+    safety_model_opt_file = FLAGS.safety_model_opt_file.replace(
+        "LIGHT_MODEL_ROOT", light_model_root
     )
-    resources = {"shared_model_content": shared_model_content}
+    dialog_model_opt_file = FLAGS.dialog_model_opt_file.replace(
+        "LIGHT_MODEL_ROOT", light_model_root
+    )
+    action_model_opt_file = FLAGS.action_model_opt_file.replace(
+        "LIGHT_MODEL_ROOT", light_model_root
+    )
+    roleplaying_score_opt_file = FLAGS.roleplaying_score_opt_file.replace(
+        "LIGHT_MODEL_ROOT", light_model_root
+    )
+    generic_act_opt_file = FLAGS.generic_act_opt_file.replace(
+        "LIGHT_MODEL_ROOT", light_model_root
+    )
+    parser_opt_file = FLAGS.parser_opt_file.replace(
+        "LIGHT_MODEL_ROOT", light_model_root
+    )
 
-    if scoring_model is not None:
-        resources["rpg_model"] = BaseSoul.load_roleplaying_score_model(scoring_model)
-        shared_model_content["rpg_model"] = resources["rpg_model"]
+    model_pool = ModelPool()
 
-    if generic_act_model is not None:
-        generic_act_model_content = BaseSoul.load_generic_act_model(generic_act_model)
-        resources["generic_act_model"] = generic_act_model_content.share()
-        shared_model_content["shared_action_model"] = resources["generic_act_model"]
+    # Register Models
 
-    init_safety_classifier(FLAGS.safety_list)
+    if len(safety_model_opt_file) > 3:
+        model_pool.register_model(
+            ParlAIModelConfig(opt_file=safety_model_opt_file),
+            ["safety"],
+        )
+    if len(dialog_model_opt_file) > 3:
+        model_pool.register_model(
+            ParlAIModelConfig(opt_file=dialog_model_opt_file),
+            ["dialog"],
+        )
+    if len(roleplaying_score_opt_file) > 3:
+        model_pool.register_model(
+            ParlAIPolyencoderActingScoreModelConfig(
+                opt_file=roleplaying_score_opt_file
+            ),
+            ["role_playing_score"],
+        )
+    if len(action_model_opt_file) > 3:
+        model_pool.register_model(
+            ParlAIModelConfig(opt_file=action_model_opt_file), ["action"]
+        )
+    if len(generic_act_opt_file) > 3:
+        model_pool.register_model(
+            ParlAIModelConfig(opt_file=generic_act_opt_file), ["generic_action"]
+        )
+    if len(parser_opt_file) > 3:
+        model_pool.register_model(
+            ParlAIModelConfig(opt_file=parser_opt_file), ["parser"]
+        )
 
-    return resources
+    init_safety_classifier(FLAGS.safety_list, model_pool)
+
+    return model_pool
 
 
 def main():
@@ -226,32 +268,9 @@ def main():
         help="port to run the server on.",
     )
     parser.add_argument(
-        "--safety-list",
-        metavar="safety_list",
+        "--db-root",
         type=str,
-        default=os.path.expanduser("~/data/safety/OffensiveLanguage.txt"),
-        help="Where to find the offensive language list.",
-    )
-    parser.add_argument(
-        "--builder-model",
-        metavar="builder_model",
-        type=str,
-        default=None,
-        help="Builder model to be loading",
-    )
-    parser.add_argument(
-        "--dialog-model",
-        metavar="dialog_model",
-        type=str,
-        default=None,
-        help="dialog model to be loading",
-    )
-    parser.add_argument(
-        "--acting-model",
-        metavar="acting_model",
-        type=str,
-        default=None,
-        help="acting model to be loading",
+        default=here + "/../../../logs/db_root",
     )
     parser.add_argument(
         "--disable-builder",
@@ -261,19 +280,49 @@ def main():
         help="flag to disable the builder, omit to enable",
     )
     parser.add_argument(
-        "--parser-model-file",
+        "--builder-model",
+        metavar="builder_model",
         type=str,
-        default="",
+        default=None,
+        help="Builder model to be loading",
     )
     parser.add_argument(
-        "--roleplaying-score-model-file",
+        "--safety-list",
         type=str,
-        default="",
+        default=os.path.expanduser("~/data/safety/OffensiveLanguage.txt"),
+        help="Where to find the offensive language list.",
     )
     parser.add_argument(
-        "--generic-act-model-file",
+        "--safety-model-opt-file",
         type=str,
-        default="",
+        default=os.path.join(CONFIG_DIR, "baseline_adversarial_safety.opt"),
+        help="Where to find the offensive language list.",
+    )
+    parser.add_argument(
+        "--dialog-model-opt-file",
+        type=str,
+        default=os.path.join(CONFIG_DIR, "baseline_generative.opt"),
+        help="dialog model to be loading",
+    )
+    parser.add_argument(
+        "--roleplaying-score-opt-file",
+        type=str,
+        default=os.path.join(CONFIG_DIR, "baseline_roleplaying_scorer.opt"),
+    )
+    parser.add_argument(
+        "--action-model-opt-file",
+        type=str,
+        default=os.path.join(CONFIG_DIR, "baseline_main_act_model.opt"),
+    )
+    parser.add_argument(
+        "--generic-act-opt-file",
+        type=str,
+        default=os.path.join(CONFIG_DIR, "generic_act_model.opt"),
+    )
+    parser.add_argument(
+        "--parser-opt-file",
+        type=str,
+        default=os.path.join(CONFIG_DIR, "baseline_parser.opt"),
     )
     parser.add_argument(
         "--is-logging",
@@ -286,20 +335,15 @@ def main():
         type=str,
         default="test",
     )
-    parser.add_argument(
-        "--db-root",
-        type=str,
-        default=here + "/../../../logs/db_root",
-    )
     FLAGS, _unknown = parser.parse_known_args()
 
     print(FLAGS)
 
     random.seed(6)
     numpy.random.seed(6)
-    model_resources = init_model_resources(FLAGS)
+    model_pool = init_model_pool(FLAGS)
     ldb = LIGHTDatabase(FLAGS.data_model_db)
-    _run_server(FLAGS, ldb, model_resources)
+    _run_server(FLAGS, ldb, model_pool)
 
 
 if __name__ == "__main__":

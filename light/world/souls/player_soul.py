@@ -59,8 +59,8 @@ class PlayerSoul(BaseSoul):
         model_pool = world.model_pool
         if model_pool.has_model("role_playing_score"):
             self.roleplaying_score_model = model_pool.get_model("role_playing_score")
-        if model_pool.has_model("action"):
-            self.generic_act_model = model_pool.get_model("action")
+        if model_pool.has_model("generic_action"):
+            self.generic_act_model = model_pool.get_model("generic_action")
         self.agent_logger = AgentInteractionLogger(
             world.oo_graph, target_node, episode_db=world._config.episode_db
         )

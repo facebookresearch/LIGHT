@@ -144,6 +144,11 @@ def parse_and_return_args():
         default=os.path.join(CONFIG_DIR, "baseline_roleplaying_scorer.opt"),
     )
     parser.add_argument(
+        "--acting-model-opt-file",
+        type=str,
+        default=os.path.join(CONFIG_DIR, "baseline_main_act_model.opt"),
+    )
+    parser.add_argument(
         "--generic-act-opt-file",
         type=str,
         default=os.path.join(CONFIG_DIR, "generic_act_model.opt"),
@@ -193,10 +198,17 @@ def init_correct_models(opt: Dict[str, Any]) -> ModelPool:
         )
 
     # Initialize Acting model
+    acting_model_opt_target = opt["acting_model_opt_file"]
+    if acting_model_opt_target is not None and acting_model_opt_target != "":
+        model_pool.register_model(
+            ParlAIModelConfig(opt_file=acting_model_opt_target), ["action"]
+        )
+
+    # Initialize Generic Acting model
     generic_act_opt_target = opt["generic_act_opt_file"]
     if generic_act_opt_target is not None and generic_act_opt_target != "":
         model_pool.register_model(
-            ParlAIModelConfig(opt_file=generic_act_opt_target), ["action"]
+            ParlAIModelConfig(opt_file=generic_act_opt_target), ["generic_action"]
         )
 
     # Initialize Parser model

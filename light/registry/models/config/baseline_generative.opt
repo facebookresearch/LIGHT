@@ -7,5 +7,6 @@
     "beam_block_ngram": 3,
     "beam_size": 10,
     "beam_min_length": 20,
+    "skip_generation": false,
     "interactive_mode": true
 }

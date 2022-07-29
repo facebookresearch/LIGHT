@@ -12,6 +12,8 @@ import socket
 DEFAULT_HOSTNAME = "localhost"
 DEFAULT_PORT = 35497
 
+"""Application specifically for hosting a model for remote access"""
+
 
 def send_to_connection(c, txt):
     txt = txt.rstrip("\n").lstrip(" ").lstrip("\n")

@@ -19,6 +19,7 @@ from deploy.web.server.game_instance import GameInstance, TutorialInstance
 from deploy.web.server.tornado_server import TornadoPlayerFactory
 from light.graph.builders.user_world_builder import UserWorldBuilder
 from light.data_model.db.users import PlayerStatus
+from light.world.world import WorldConfig
 
 from typing import Optional, TYPE_CHECKING
 
@@ -42,7 +43,7 @@ class RegistryApplication(tornado.web.Application):
         self,
         FLAGS,
         ldb,  # TODO remove!
-        model_resources,
+        model_pool,
         tornado_settings,
         episode_db: Optional["EpisodeDB"] = None,
         user_db: Optional["UserDB"] = None,
@@ -50,7 +51,7 @@ class RegistryApplication(tornado.web.Application):
         self.game_instances = {}
         self.step_callbacks = {}
         self.tutorial_map = {}  # Player ID to game ID
-        self.model_resources = model_resources
+        self.model_pool = model_pool
         self.FLAGS = FLAGS
         self.ldb = ldb
         self.episode_db = episode_db
@@ -109,11 +110,14 @@ class RegistryApplication(tornado.web.Application):
             _, world = builder.get_graph()
             game = GameInstance(game_id, ldb, g=world, opt=vars(self.FLAGS))
         else:
+            world_config = WorldConfig(
+                episode_db=self.episode_db, model_pool=self.model_pool
+            )
             game = GameInstance(
-                game_id, ldb, opt=vars(self.FLAGS), episode_db=self.episode_db
+                game_id, ldb, opt=vars(self.FLAGS), world_config=world_config
             )
             world = game.world
-        game.fill_souls(self.FLAGS, self.model_resources)
+        game.fill_souls(self.FLAGS, [])
 
         self.game_instances[game_id] = game
         game.register_provider(self.tornado_provider)
@@ -126,10 +130,13 @@ class RegistryApplication(tornado.web.Application):
     def run_tutorial(self, user_id, on_complete):
         game_id = get_rand_id()
 
-        game = TutorialInstance(
-            game_id, self.ldb, opt=vars(self.FLAGS), episode_db=self.episode_db
+        world_config = WorldConfig(
+            episode_db=self.episode_db, model_pool=self.model_pool
         )
-        game.fill_souls(self.FLAGS, self.model_resources)
+        game = TutorialInstance(
+            game_id, self.ldb, opt=vars(self.FLAGS), world_config=world_config
+        )
+        game.fill_souls(self.FLAGS, [])
         world = game.world
 
         def run_or_cleanup_world():
