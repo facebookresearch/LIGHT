@@ -15,7 +15,9 @@ mephisto_data_browser = MephistoDataBrowser(db=db)
 
 DO_REVIEW = True
 
-units = mephisto_data_browser.get_units_for_task_name("objects-interaction-task-pilot-5")
+units = mephisto_data_browser.get_units_for_task_name(
+    "objects-interaction-task-pilot-5"
+)
 
 print(f"prev len: {len(units)}")
 print(Counter([u.get_status() for u in units]))
