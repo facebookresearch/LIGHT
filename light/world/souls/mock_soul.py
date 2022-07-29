@@ -13,14 +13,14 @@ if TYPE_CHECKING:
     from light.graph.events.base import GraphEvent
 
 
-class TestSoul(Soul):
+class MockSoul(Soul):
     """
     A Soul for use in testing
     """
 
     def __init__(self, target_node: "GraphAgent", world: "World"):
         """
-        TestSouls are created for test cases to take actions
+        MockSouls are created for test cases to take actions
         and report observations
         """
         super().__init__(target_node, world)
@@ -34,13 +34,13 @@ class TestSoul(Soul):
 
     async def observe_event(self, event: "GraphEvent"):
         """
-        TestSouls do very little beyond saying what they observed, and smiling
+        MockSouls do very little beyond saying what they observed, and smiling
         for good measure.
         """
         self.observations.append(event)
 
     def reap(self):
         """
-        TestSouls don't have any extra resources, and thus don't need to clean up.
+        MockSouls don't have any extra resources, and thus don't need to clean up.
         """
         super().reap()
