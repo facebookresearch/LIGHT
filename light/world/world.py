@@ -54,6 +54,12 @@ def check_integrity(f):
     return wrapper
 
 
+def get_empty_model_pool():
+    from light.registry.model_pool import ModelPool
+
+    return ModelPool()
+
+
 @dataclass
 class WorldConfig:
     """
@@ -66,7 +72,7 @@ class WorldConfig:
     opt: Optional[Dict[str, Any]] = field(default_factory=dict)
     episode_db: Optional["EpisodeDB"] = None
     graph_builder: Optional["GraphBuilder"] = None
-    model_pool: Optional["ModelPool"] = None
+    model_pool: Optional["ModelPool"] = field(default_factory=get_empty_model_pool)
 
     def copy(self) -> "WorldConfig":
         """Return a new shallow copy of this WorldConfig"""
