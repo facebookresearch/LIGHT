@@ -16,7 +16,7 @@ import { updateRooms, selectRoom } from "../../../features/rooms/rooms-slice.ts"
 //OBJECTS
 import { updateObjects, selectObject } from "../../../features/objects/objects-slice.ts";
 //CHARACTERS
-import { updateCharacters} from "../../../features/characters/characters-slice.ts";
+import { updateCharacters, selectCharacter} from "../../../features/characters/characters-slice.ts";
 /* STYLES */
 import './styles.css';
 /* BOOTSTRAP COMPONENTS */
@@ -51,6 +51,7 @@ const ObjectPage = ({
   } = api;
 
   /* ------ LOCAL STATE ------ */
+  const [selectedParent, setSelectedParent] = useState(null);
   const [objectId, setObjectId] = useState("");
   const [parentId, setParentId] = useState("");
   const [objectName, setObjectName] = useState("");
@@ -80,6 +81,7 @@ const ObjectPage = ({
   const selectedObject = useAppSelector((state) => state.worldObjects.selectedObject);
   //CHARACTERS
   const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
+  const selectedCharacter = useAppSelector((state)=> state.worldCharacters.selectedCharacter);
   /* ------ REDUX ACTIONS ------ */
   //LOADING
   const startLoading = () =>{
@@ -112,9 +114,11 @@ const ObjectPage = ({
   //GENERAL
   //Adds more than one node to currently selected character
   const addContent = (objectId, newNodes)=>{
+    console.log("NEW NODES:  ", newNodes);
     let unupdatedWorld = selectedWorld;
     let {objects, nodes } = unupdatedWorld;
-    let unupdatedObjectData = nodes[objectId]
+    let unupdatedObjectData = nodes[objectId];
+    console.log("UNUPDATED OBJECT DATA:  ", unupdatedObjectData);
     let updatedNodes = {...nodes};
     let newObjects =[...objects];
     let updatedContainedNodes = {...unupdatedObjectData.contained_nodes};
@@ -144,11 +148,12 @@ const ObjectPage = ({
         if(nodeType === "object"){
             newObjects.push(formattedNewNodetId);
         };
-        formattedNewNode = {...newNode, node_id:formattedNewNodetId , container_node:{target_id: parentId}};
+        formattedNewNode = {...newNode, node_id:formattedNewNodetId , container_node:{target_id: objectId}};
         updatedContainedNodes = {...updatedContainedNodes, [formattedNewNodetId]:{target_id: formattedNewNodetId}};
         updatedNodes = {...updatedNodes, [formattedNewNodetId]:formattedNewNode};
     });
     let updatedObjectData = {...selectedObject, contained_nodes: updatedContainedNodes};
+    console.log("UPDATED OBJECT DATA:  ", updatedObjectData);
     updatedNodes = {...updatedNodes, [objectId]: updatedObjectData};
     let updatedWorld ={...selectedWorld, objects:[...newObjects], nodes: updatedNodes};
     dispatch(updateSelectedWorld(updatedWorld));
@@ -212,10 +217,11 @@ const ObjectPage = ({
 
   const deleteSelectedObject = () => {
     let unupdatedWorld = selectedWorld;
-    let updatedRoom = selectedWorld.nodes[parentId]
-    let updatedRoomContent = { ...updatedRoom.contained_nodes };
-    delete updatedRoomContent[objectId];
-    unupdatedWorld = { ...unupdatedWorld, nodes: { ...unupdatedWorld.nodes, parentId: updatedRoom } }
+    let updatedParent = selectedWorld.nodes[parentId]
+    let updatedParentContent = { ...updatedRoom.contained_nodes };
+    delete updatedParentContent[objectId];
+    updatedParent = {...updatedParent, contained_nodes: updatedParentContent}
+    unupdatedWorld = { ...unupdatedWorld, nodes: { ...unupdatedWorld.nodes, parentId: updatedParent } }
     let updatedWorld = containedNodesRemover(objectId)
     let { objects, nodes } = updatedWorld;
     let updatedObjects = objects.filter(obj => objectId !== obj);
@@ -277,7 +283,9 @@ const ObjectPage = ({
     const WorldNodeKeys = Object.keys(nodes);
     WorldNodeKeys.map((nodeKey) => {
       let WorldNode = nodes[nodeKey];
-      if (WorldNode.classes) {
+      let {classes} = WorldNode;
+      let nodeClass = classes[0]
+      if (nodeClass) {
         let NodeClass = WorldNode.classes[0]
         switch (NodeClass) {
           case "agent":
@@ -380,6 +388,7 @@ const ObjectPage = ({
     try{
         const payload = await CommonSenseObjectContents();
         const {nodeId, data} = payload;
+        console.log("PAY LOAD", payload)
         addContent(nodeId, data);
         dispatch(setIsLoading(false));
     } catch (error) {
@@ -393,6 +402,7 @@ const ObjectPage = ({
     try{
         const payload = await CommonSenseDescribeObject();
         const {nodeId, data} = payload;
+        console.log("Object Description", payload)
         updateObject(nodeId, data);
         stopLoading();
     } catch (error) {
@@ -410,6 +420,7 @@ const ObjectPage = ({
     try{
       startLoading()
       let target_room = selectedRoom['node_id'];
+      console.log(" TARGET ROOM:  ", target_room)
       let target_id = objectId;
       let nodes = {};
       nodes[target_room] = selectedRoom;
@@ -473,7 +484,7 @@ const ObjectPage = ({
       console.log(result);
       const newItems = result.new_items;
       const payload = {
-          nodeId: target_room,
+          nodeId: target_id,
           data: newItems
       };
       return payload;
@@ -486,11 +497,13 @@ const ObjectPage = ({
 
   //CRUMBS
   const crumbs = [...taskRouterHistory, currentLocation];
-
+  console.log("CRUMBS", crumbs)
   /* --- LIFE CYCLE FUNCTIONS --- */
   useEffect(() => {
     let updatedObjectData = currentLocation;
     let updatedParentData = taskRouterHistory[taskRouterHistory.length - 1];
+    console.log("OBJECT DATA:  ", updatedObjectData);
+    console.log("PARENT DATA:  ", updatedParentData);
     if (updatedObjectData) {
       setObjectId(updatedObjectData.id);
     };
@@ -513,10 +526,8 @@ const ObjectPage = ({
   useEffect(() => {
     if (parentId) {
       let { nodes } = selectedWorld;
-      let currentRoom = nodes[parentId];
-      if (currentRoom) {
-        dispatch(selectRoom(currentRoom));
-      };
+      let currentParent = nodes[parentId];
+      setSelectedParent(currentParent)
     };
   }, [parentId]);
 
@@ -571,8 +582,9 @@ const ObjectPage = ({
         const roomContentNodesKeys = Object.keys(contained_nodes)
         roomContentNodesKeys.map((nodeKey) => {
           let WorldNode = nodes[nodeKey];
-          if (WorldNode.classes) {
-            let NodeClass = WorldNode.classes[0]
+          let {classes} = WorldNode
+          if (classes) {
+            let NodeClass = classes[0]
             switch (NodeClass) {
               case "object":
                 ObjectNodes.push(WorldNode);
@@ -593,7 +605,7 @@ const ObjectPage = ({
         crumbs={crumbs}
       />
       {
-        selectedObject
+        (selectedObject || selectedParent)
           ?
           <>
             <Row>
@@ -620,7 +632,7 @@ const ObjectPage = ({
                     formLabel="Contents"
                     tokenOptions={worldObjects}
                     sectionName={"objects"}
-                    containerId={selectedRoom.node_id}
+                    containerId={selectedObject.node_id}
                     tokens={containedObjects}
                     tokenType={'objects'}
                     onTokenAddition={addObject}

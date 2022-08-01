@@ -330,13 +330,8 @@ const CharacterPage = ({
     //the function that clicking a gear on the typeahead tokenizer invokes.  It saves the current worldState to the draft before navigating to the item or character's advanced page.
     const HandleBasicGearClick = (newLoc)=>{
         WorldSaveHandler()
-        const {node_id} = selectedCharacter;
-        let location = {
-            name:"character",
-            id: node_id
-        };
         let updatedGearLocation = newLoc;
-        const updatedRouterHistory = [...taskRouterHistory, currentLocation, location]
+        const updatedRouterHistory = [...taskRouterHistory, currentLocation]
         dispatch(updateTaskRouterHistory(updatedRouterHistory));
         dispatch(setTaskRouterCurrentLocation(updatedGearLocation));
     }
@@ -438,6 +433,7 @@ const CharacterPage = ({
     const generateCharacterInventoryButtonFunction = async ()=>{
         try{
             const payload = await CommonSenseCharacterContents();
+            console.log("CHARACTER INVENTORY PAY LOARD")
             const {nodeId, data} = payload;
             addContent(nodeId, data);
             stopLoading();
@@ -814,7 +810,7 @@ const CharacterPage = ({
                                 clickFunction={generateCharacterPersonaButtonFunction}
                             />
                         </Row>
-                        <Row>
+                        {/* <Row>
                             <GenerateForms
                                 label="Motivation:"
                                 value={characterMotivation}
@@ -822,7 +818,7 @@ const CharacterPage = ({
                                 generateButtonLabel={"Generate Motivation"}
                                 clickFunction={generateCharacterMotivationButtonFunction}
                             />
-                        </Row>
+                        </Row> */}
                         <Row>
                             <GenerateButton
                                 label={"Generate Character Inventory"}

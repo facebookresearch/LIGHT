@@ -19,11 +19,18 @@ import Button from 'react-bootstrap/Button';
 /* DEFAULT WORLD */
 import DefaultWorld from "../../StartingWorldCopy";
 
+const MIN_ROOM_COUNT = 5;
+const MIN_CHARACTER_COUNT = 5;
+const MIN_OBJECT_COUNT= 20;
+
 const App = ({
   api,
   handleSubmit
 })=>{
   /* ------ LOCAL STATE ------  */
+  const [enoughRooms, setEnoughRooms] = useState(false);
+  const [enoughCharacters, setEnoughCharacters] = useState(false);
+  const [enoughObjects, setEnoughObjects] = useState(false);
   const [workerComments, setWorkerComments] = useState("");
   const [showInstructions, setShowInstructions] = useState(false);
   const [show, setShow] = useState(false);
@@ -74,13 +81,22 @@ const App = ({
       data: updatedCurrentWorld,
       comments: workerComments
     };
-    handleSubmit(workerSubmission);
+    // handleSubmit(workerSubmission);
+    console.log("FINAL SUBMISSION:  ", workerSubmission)
     setShow(false);
   };
 
   //A function that will run each time the world builder saves a draft and will alert worker wor when they have completed the task
   const isWorldBigEnough = () => {
-    return true; // TODO actually check room, char, obj counts
+    if(worldRooms >= MIN_ROOM_COUNT){
+      setEnoughRooms(true);
+    };
+    if(worldCharacters >= MIN_CHARACTER_COUNT){
+      setEnoughCharacters(true);
+    };
+    if(worldObjects >= MIN_OBJECT_COUNT){
+      setEnoughObjects(true);
+    };
   };
 
   /*---------------LIFECYCLE----------------*/
@@ -102,6 +118,7 @@ const App = ({
       //*** NOTE *** be sure to collect worker ID and use it as local storage key
       window.localStorage.setItem("taskWorld", JSON.stringify(worldDraft));
       setSelectedWorld(worldDraft);
+      isWorldBigEnough()
   }, [worldDraft]);
 
   return (
@@ -135,7 +152,7 @@ const App = ({
         </Modal.Header>
         <Modal.Body>
           {
-            (isWorldBigEnough())
+            (enoughRooms && enoughCharacters && enoughObjects)
             ?
             <>
               <p>
