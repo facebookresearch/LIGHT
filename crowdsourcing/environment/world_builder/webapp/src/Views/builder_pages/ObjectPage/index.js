@@ -402,6 +402,7 @@ const ObjectPage = ({
     try{
         const payload = await CommonSenseDescribeObject();
         const {nodeId, data} = payload;
+        console.log("Object Description", payload)
         updateObject(nodeId, data);
         stopLoading();
     } catch (error) {
@@ -419,6 +420,7 @@ const ObjectPage = ({
     try{
       startLoading()
       let target_room = selectedRoom['node_id'];
+      console.log(" TARGET ROOM:  ", target_room)
       let target_id = objectId;
       let nodes = {};
       nodes[target_room] = selectedRoom;
@@ -495,11 +497,13 @@ const ObjectPage = ({
 
   //CRUMBS
   const crumbs = [...taskRouterHistory, currentLocation];
-
+  console.log("CRUMBS", crumbs)
   /* --- LIFE CYCLE FUNCTIONS --- */
   useEffect(() => {
     let updatedObjectData = currentLocation;
     let updatedParentData = taskRouterHistory[taskRouterHistory.length - 1];
+    console.log("OBJECT DATA:  ", updatedObjectData);
+    console.log("PARENT DATA:  ", updatedParentData);
     if (updatedObjectData) {
       setObjectId(updatedObjectData.id);
     };
@@ -523,7 +527,6 @@ const ObjectPage = ({
     if (parentId) {
       let { nodes } = selectedWorld;
       let currentParent = nodes[parentId];
-      let currentParentClass = currentParent.classes[0]
       setSelectedParent(currentParent)
     };
   }, [parentId]);
@@ -579,8 +582,9 @@ const ObjectPage = ({
         const roomContentNodesKeys = Object.keys(contained_nodes)
         roomContentNodesKeys.map((nodeKey) => {
           let WorldNode = nodes[nodeKey];
-          if (WorldNode.classes) {
-            let NodeClass = WorldNode.classes[0]
+          let {classes} = WorldNode
+          if (classes) {
+            let NodeClass = classes[0]
             switch (NodeClass) {
               case "object":
                 ObjectNodes.push(WorldNode);

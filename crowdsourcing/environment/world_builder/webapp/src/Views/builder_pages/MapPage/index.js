@@ -82,13 +82,18 @@ const WorldBuilderPage = ({
                 while((agents.indexOf(formattedNewNodetId)>=0) || objects.indexOf(formattedNewNodetId)>=0){
                     let splitformattedNewNodetId = formattedNewNodetId.split("_");
                     let idNumber = splitformattedNewNodetId[splitformattedNewNodetId.length-1];
-                    idNumber = (idNumber*1)+1;
-                    idNumber = idNumber.toString();
-                    splitformattedNewNodetId[splitformattedNewNodetId.length-1] = idNumber;
-                    formattedNewNodetId = splitformattedNewNodetId.join("_");
+                    //if ID exists
+                    if((typeof idNumber === "number") && (!Number.isNaN(idNumber))){
+                        idNumber = (idNumber*1)+1;
+                        idNumber = idNumber.toString();
+                        splitformattedNewNodetId[splitformattedNewNodetId.length-1] = idNumber;
+                        formattedNewNodetId = splitformattedNewNodetId.join("_");
+                    }else { //if "IDNUMBER" ISN'T A NUMBER
+                        formattedObjectId = newNode.name +"_1"
+                    }
                 };
-            //
             }else{
+                //if ID Doesn't exist
                 formattedNewNodetId = newNode.name +"_1" ;
             };
             if(nodeType === "agent"){
@@ -114,14 +119,28 @@ const WorldBuilderPage = ({
     const addRoom = (room)=>{
         let unupdatedWorld = selectedWorld;
         let {rooms, nodes } = unupdatedWorld;
+        let formattedRoomId = room.name;
         //Room Id is initially generated from the new room's name a one added on.  It will iterate until it finds a unique key.
-        let formattedRoomId = room.name.replaceAll(" ", "_") + "_1";
+        if(formattedRoomId.indexOf(" ")>0){
+            formattedRoomId = room.name.replaceAll(" ", "_");
+        };
         while(rooms.indexOf(formattedRoomId)>=0){
-            let splitFormattedRoomId = formattedRoomId.split("_")
-            let idNumber = splitFormattedRoomId[splitFormattedRoomId.length-1];
-            idNumber = idNumber++;
-            splitFormattedRoomId[splitFormattedRoomId.length-1] = idNumber;
-            formattedRoomId = splitFormattedRoomId.join("_");
+            if(formattedRoomId.indexOf("_")>0){
+                let splitFormattedRoomId = formattedRoomId.split("_");
+                let idNumber = splitFormattedRoomId[splitFormattedRoomId.length-1];
+                //if ID exists
+                if((typeof idNumber === "number") && (!Number.isNaN(idNumber))){
+                    idNumber = parseInt(idNumber)
+                    idNumber = idNumber+1;
+                    idNumber = idNumber.toString();
+                    splitformattedNewNodetId[splitformattedNewNodetId.length-1] = idNumber;
+                    formattedRoomId = splitformattedNewNodetId.join("_");
+                }else {
+                    formattedRoomId = formattedRoomId+"_1"
+                }
+            }else {
+                formattedRoomId = formattedRoomId+"_1"
+            }
         };
         let updatedRoomData = {...room, node_id:formattedRoomId};
         let updatedRooms = [...rooms, formattedRoomId];
@@ -637,7 +656,6 @@ const WorldBuilderPage = ({
                 {
                 (selectedWorld && mapBorders)
                 ?
-                <>
                 <WorldBuilderMap
                     worldData={selectedWorld}
                     worldRoomsData={worldRooms}
@@ -651,8 +669,6 @@ const WorldBuilderPage = ({
                     connectRooms={connectRooms}
                     disconnectRooms={disconnectRooms}
                 />
-                "HI WORLD AGAIN"
-                </>
                 :
                 null
                 }
