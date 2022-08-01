@@ -81,7 +81,12 @@ def get_previously_completed_unit_data():
         accepted_units = [u for u in task_units if u.get_status() == "accepted"]
         for unit in accepted_units:
             inputs = mephisto_data_browser.get_data_from_unit(unit)["data"]['inputs']
-            existing_units.append(inputs['interaction'])
+            o1 = inputs['object1']['name']
+            o2 = inputs['object2']['name']
+            existing_units.append((o1, o2))
+            # existing_units.append(inputs['interaction'])
+            # inputs = mephisto_data_browser.get_data_from_unit(unit)["data"]['inputs']
+            # existing_units.append(inputs['interaction'])
     return set(existing_units)
 
 @dataclass
@@ -139,8 +144,8 @@ def create_task_data(input_file_tasks, num_tasks):
         units.extend(cur_units)
     units = [u for u in units if u.get_db_status() == "accepted"]
     previous_messages = get_previously_completed_unit_data()
-    print(f"len(previously units): {len(previous_messages)}")
-    print(f"len(accepted units): {len(units)}")
+    print(f"len(previously done units): {len(previous_messages)}")
+    print(f"len(accepted units from previous tasks): {len(units)}")
     random.shuffle(units)
     data = []
     for unit in units:
@@ -151,9 +156,13 @@ def create_task_data(input_file_tasks, num_tasks):
         if "this_task_state" in new_data:
             if 'isCreatingEntity' in new_data['this_task_state'] or 'createdModifiedAttributes' in new_data['this_task_state']:
                 # if 'ranges' in new_data['this_task_state']:
-                broadcastMessage = new_data['this_task_state']['broadcastMessage']
-                if broadcastMessage in previous_messages:
+                o1 = new_data['this_task_state']['object1']['name']
+                o2 = new_data['this_task_state']['object2']['name']
+                if (o1, o2) in previous_messages:
                     continue
+                broadcastMessage = new_data['this_task_state']['interaction']
+                # if broadcastMessage in previous_messages:
+                #     continue
                 if any(broadcastMessage.count(key) > 3 for key in ["OBJECT2", "OBJECT1", "ACTOR", "LOCATION"]):
                     continue
                 data.append(new_data)

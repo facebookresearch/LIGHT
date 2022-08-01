@@ -68,6 +68,8 @@ ALL_GOOD_USER_FILES = ["/private/home/alexgurung/LIGHT/crowdsourcing/custom_worl
 ALL_BAD_USER_FILES = [
     "/private/home/alexgurung/LIGHT/crowdsourcing/custom_world_interactions/ground_events/users_who_didnt_get_it.txt",
     "/private/home/alexgurung/LIGHT/crowdsourcing/custom_world_interactions/collect_narrations/users_who_didnt_get_it.txt",
+    "/private/home/alexgurung/LIGHT/crowdsourcing/custom_world_interactions/ground_attributes/users_who_didnt_get_it.txt",
+    "/private/home/alexgurung/LIGHT/crowdsourcing/custom_world_interactions/ground_constraints/users_who_didnt_get_it.txt"
     ]
 
 @dataclass
@@ -144,21 +146,23 @@ def get_previously_completed_unit_data():
     existing_units = []
     for task_name in PREVIOUSLY_DONE_TASKS:
         task_units = mephisto_data_browser.get_units_for_task_name(task_name)
-        for unit in task_units:
+        accepted_units = [u for u in task_units if u.get_status() == "accepted"]
+        for unit in accepted_units:
             inputs = mephisto_data_browser.get_data_from_unit(unit)["data"]['inputs']
             obj1 = inputs['object1']['name']
             obj2 = inputs['object2']['name']
             rawAction = inputs['rawAction']
             interaction = inputs['interaction']
-            existing_units.append((obj1, obj2, rawAction, interaction))
+            # existing_units.append((obj1, obj2, rawAction, interaction))
+            existing_units.append((obj1, obj2))
     return set(existing_units)
 
 def new_unit_in_completed(new_unit_data, existing_units):
     obj1 = new_unit_data['object1']['name']
     obj2 = new_unit_data['object2']['name']
-    rawAction = new_unit_data['rawAction']
-    interaction = new_unit_data['interaction']
-    return (obj1, obj2, rawAction, interaction) in existing_units
+    # rawAction = new_unit_data['rawAction']
+    # interaction = new_unit_data['interaction']
+    return (obj1, obj2) in existing_units
 
 def create_task_data(input_file_tasks, num_tasks):
     # get data from collect-narration submissions

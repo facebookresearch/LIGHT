@@ -87,7 +87,10 @@ def format_for_printing_data(data):
     # Custom tasks can define methods for how to display their data in a relevant way
     worker_name = Worker.get(db, data["worker_id"]).worker_name
     contents = data["data"]
-    duration = contents["times"]["task_end"] - contents["times"]["task_start"]
+    duration = 0
+    if "times" in contents:
+        duration = contents["times"]["task_end"] - contents["times"]["task_start"]
+    
     metadata_string = (
         f"Worker: {worker_name}\nUnit: {data['unit_id']}\n"
         f"Duration: {int(duration)}\nStatus: {data['status']}\n"
@@ -109,9 +112,12 @@ def format_for_printing_data(data):
         return f"-------------------\n{metadata_string}{inputs_string}{outputs_string}"
 
     # want to print new narration first
-    broadcast_messages = [
-        e for e in outputs["events"] if e is not None and e["type"] == "broadcast_message"
-    ]
+    try:
+        broadcast_messages = [
+            e for e in outputs["events"] if e is not None and e["type"] == "broadcast_message"
+        ]
+    except:
+        return f"-------------------\n{metadata_string}{inputs_string}{outputs_string}"
     if len(broadcast_messages) == 1:
         # character agnostic narration; Narration \t narration_text
         event = broadcast_messages[0]

@@ -131,9 +131,10 @@ def get_previously_completed_unit_data():
     existing_units = []
     for task_name in PREVIOUSLY_DONE_TASKS:
         task_units = mephisto_data_browser.get_units_for_task_name(task_name)
-        for unit in task_units:
+        accepted_units = [u for u in task_units if u.get_status() == "accepted"]
+        for unit in accepted_units:
             inputs = mephisto_data_browser.get_data_from_unit(unit)["data"]['inputs']
-            existing_units.append(inputs['interaction'])
+            existing_units.append((inputs['object1']['name'], inputs['object2']['name']))
     return set(existing_units)
 
 def create_task_data(input_file_tasks, num_tasks):
@@ -182,12 +183,17 @@ def create_task_data(input_file_tasks, num_tasks):
             else:
                 start = start + 1
             h_map[broadcastMessage[start:end+1]] = r['highlighter']
-
+        h_map['villager'] = 'ACTOR'
+        o1 = new_data['this_task_state']['object1']['name']
+        o2 = new_data['this_task_state']['object2']['name']
+        h_map[o1] = "OBJECT1"
+        h_map[o2] = "OBJECT2"
         broadcastMessage = original_bm
         for word, highlighter in h_map.items():
             broadcastMessage = broadcastMessage.replace(word, highlighter)
         new_data['interaction'] = broadcastMessage
-        if broadcastMessage in previous_messages:
+        # if broadcastMessage in previous_messages:
+        if (o1, o2) in previous_messages:
             continue
         # print(f"OUTPUT: {broadcastMessage}")
         # print("-"*100)
@@ -202,6 +208,12 @@ def create_task_data(input_file_tasks, num_tasks):
     # x = 1/0
     data = data[:num_tasks]
     print(f"Adjusted len(data): {len(data)}")
+    
+    for d in set([d['interaction'] for d in data]):
+        print(d)
+    print("-"*100)
+    for p in previous_messages:
+        print(p)
     return data
     # return [{}]  # data[:num_tasks]
 

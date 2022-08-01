@@ -37,8 +37,20 @@ for t in INPUT_FILE_TASKS:
     print(Counter([u.get_status() for u in new_units]))
 
 
-print(f"prev len: {len(units)}")
+print(f"len: {len(units)}")
 print(Counter([u.get_status() for u in units]))
+
+accepted = [u for u in units if u.get_status() == "accepted"]
+
+obj_name_tuples = []
+for unit in accepted:
+    inputs = mephisto_data_browser.get_data_from_unit(unit)["data"]['inputs']
+    o1 = inputs['object1']['name']
+    o2 = inputs['object2']['name']
+    obj_name_tuples.append((o1, o2))
+
+print(f"len(obj_name_tuples): {len(obj_name_tuples)}")
+print(f"len(set(obj_name_tuples)): {len(set(obj_name_tuples))}")
 
 
 tasks_to_show = input("Tasks to see? (a)ll/(u)nreviewed: ")
