@@ -124,13 +124,17 @@ const RoomPage = ({
                 while((agents.indexOf(formattedNewNodetId)>=0) || objects.indexOf(formattedNewNodetId)>=0){
                     let splitformattedNewNodetId = formattedNewNodetId.split("_");
                     let idNumber = splitformattedNewNodetId[splitformattedNewNodetId.length-1];
-                    idNumber = (idNumber*1)+1;
-                    idNumber = idNumber.toString();
-                    splitformattedNewNodetId[splitformattedNewNodetId.length-1] = idNumber;
-                    formattedNewNodetId = splitformattedNewNodetId.join("_");
+                    if((typeof idNumber === "number") && (!Number.isNaN(idNumber))){
+                        idNumber = (idNumber*1)+1;
+                        idNumber = idNumber.toString();
+                        splitformattedNewNodetId[splitformattedNewNodetId.length-1] = idNumber;
+                        formattedNewNodetId = splitformattedNewNodetId.join("_");
+                    }else {
+                        formattedNewNodetId = newNode.name+"_1" ;
+                    };
                 };
-            //
             }else{
+                //NEW OBJECT
                 formattedNewNodetId = newNode.name +"_1" ;
             };
             if(nodeType === "agent"){

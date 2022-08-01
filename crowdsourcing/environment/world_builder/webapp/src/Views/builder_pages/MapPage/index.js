@@ -637,6 +637,7 @@ const WorldBuilderPage = ({
                 {
                 (selectedWorld && mapBorders)
                 ?
+                <>
                 <WorldBuilderMap
                     worldData={selectedWorld}
                     worldRoomsData={worldRooms}
@@ -650,6 +651,8 @@ const WorldBuilderPage = ({
                     connectRooms={connectRooms}
                     disconnectRooms={disconnectRooms}
                 />
+                "HI WORLD AGAIN"
+                </>
                 :
                 null
                 }

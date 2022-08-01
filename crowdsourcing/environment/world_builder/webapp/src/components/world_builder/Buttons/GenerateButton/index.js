@@ -1,5 +1,5 @@
 /* REACT */
-import React from "react";
+import React, {useState} from "react";
 /* STYLES */
 import "./styles.css";
 /* BOOTSTRAP COMPONENTS */
@@ -14,10 +14,23 @@ const GenerateButton = ({
   label,
   isLoading
 }) => {
+  const [isClicked, setIsClicked] = useState(false)
+  const generateFunction = async ()=>{
+    try {
+      setIsClicked(true)
+      await clickFunction()
+      setIsClicked(false)
+    }
+    catch (err){
+      setIsClicked(false)
+      throw err
+      console.log(err)
+    }
+  }
   return (
-    <Button className="generatebutton-container" onClick={clickFunction} variant="primary" disabled={isLoading}>
+    <Button className="generatebutton-container" onClick={generateFunction} variant="primary" disabled={isLoading}>
     {
-        isLoading
+        (isLoading && isClicked)
         ?
         <>
           <Spinner
