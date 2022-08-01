@@ -174,18 +174,23 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         original_ids = set(room_graph['nodes'].keys())
         if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
-            if db is not None:
-                print("using tfidf vectorizer to find similar room")
-                print(f"USING ROOM: ")
-                print(room_graph['nodes'][target_room])
-                most_similar = get_most_similar(room_graph['nodes'][target_room], "room")
-                print(most_similar)
-                room_desc = most_similar['description']
-                room_backstory = most_similar['backstory']
-                room_graph['nodes'][target_room]['desc'] = room_desc
-                room_graph['nodes'][target_room]['extra_desc'] = room_backstory
-                room_graph['nodes'][target_room]['from_retrieval'] = True
-            # return room_graph
+            try:
+                if db is not None:
+                    print("using tfidf vectorizer to find similar room")
+                    print(f"USING ROOM: ")
+                    print(room_graph['nodes'][target_room])
+                    most_similar = get_most_similar(room_graph['nodes'][target_room], "room")
+                    print(most_similar)
+                    room_desc = most_similar['description']
+                    room_backstory = most_similar['backstory']
+                    room_graph['nodes'][target_room]['desc'] = room_desc
+                    room_graph['nodes'][target_room]['extra_desc'] = room_backstory
+                    room_graph['nodes'][target_room]['from_retrieval'] = True
+                # return room_graph
+            except Exception as e:
+                print("EXCEPTION FOUND")
+                print(e)
+                pass
             new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
             return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_room]}
             
@@ -230,31 +235,35 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         original_ids = set(room_graph['nodes'].keys())
         if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
-            if db is not None:
-                print("using tfidf vectorizer to find similar room")
-                print(f"USING ROOM: ")
-                print(room_graph['nodes'][target_room])
-                most_similar = get_most_similar(room_graph['nodes'][target_room], "room")
-                items_from_most_similar = ROOM_ID_TO_ITEMS[most_similar['id']]
-                objects = items_from_most_similar['objects']
-                characters = items_from_most_similar['characters']
-                for o in objects:
-                    o['container_node']['target_id'] = target_room
-                    o['from_retrieval'] = True
-                    node_id = o['node_id']
-                    if node_id not in room_graph:
-                        room_graph['nodes'][node_id] = o
-                        room_graph['objects'].append(node_id)
-                        room_graph['nodes'][target_room]['contained_nodes'][node_id] = {'target_id': node_id}
-                for c in characters:
-                    c['container_node']['target_id'] = target_room
-                    c['from_retrieval'] = True
-                    node_id = c['node_id']
-                    if node_id not in room_graph:
-                        room_graph['nodes'][node_id] = c
-                        room_graph['agents'].append(node_id)
-                        room_graph['nodes'][target_room]['contained_nodes'][node_id] = {'target_id': node_id}
-
+            try:
+                if db is not None:
+                    print("using tfidf vectorizer to find similar room")
+                    print(f"USING ROOM: ")
+                    print(room_graph['nodes'][target_room])
+                    most_similar = get_most_similar(room_graph['nodes'][target_room], "room")
+                    items_from_most_similar = ROOM_ID_TO_ITEMS[most_similar['id']]
+                    objects = items_from_most_similar['objects']
+                    characters = items_from_most_similar['characters']
+                    for o in objects:
+                        o['container_node']['target_id'] = target_room
+                        o['from_retrieval'] = True
+                        node_id = o['node_id']
+                        if node_id not in room_graph:
+                            room_graph['nodes'][node_id] = o
+                            room_graph['objects'].append(node_id)
+                            room_graph['nodes'][target_room]['contained_nodes'][node_id] = {'target_id': node_id}
+                    for c in characters:
+                        c['container_node']['target_id'] = target_room
+                        c['from_retrieval'] = True
+                        node_id = c['node_id']
+                        if node_id not in room_graph:
+                            room_graph['nodes'][node_id] = c
+                            room_graph['agents'].append(node_id)
+                            room_graph['nodes'][target_room]['contained_nodes'][node_id] = {'target_id': node_id}
+            except Exception as e:
+                print("EXCEPTION FOUND")
+                print(e)
+                pass
             # return room_graph
             new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
             return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_room]}
@@ -311,18 +320,22 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         original_ids = set(room_graph['nodes'].keys())
         if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
-            if db is not None:
-                print("using tfidf vectorizer to find similar character")
-                print(f"USING CHARACTER: ")
-                print(room_graph['nodes'][target_id])
-                most_similar = get_most_similar(room_graph['nodes'][target_id], "character")
-                print(most_similar)
-                similar_wearing = most_similar.get("wearing_objects", [])
-                similar_carrying = most_similar.get("carrying_objects", [])
-                similar_wielding = most_similar.get("wielding_objects", [])
-                
-                room_graph = add_character_secondary_objects_to_graph(room_graph, target_id, similar_carrying, similar_wielding, similar_wearing)
-
+            try:
+                if db is not None:
+                    print("using tfidf vectorizer to find similar character")
+                    print(f"USING CHARACTER: ")
+                    print(room_graph['nodes'][target_id])
+                    most_similar = get_most_similar(room_graph['nodes'][target_id], "character")
+                    print(most_similar)
+                    similar_wearing = most_similar.get("wearing_objects", [])
+                    similar_carrying = most_similar.get("carrying_objects", [])
+                    similar_wielding = most_similar.get("wielding_objects", [])
+                    
+                    room_graph = add_character_secondary_objects_to_graph(room_graph, target_id, similar_carrying, similar_wielding, similar_wearing)
+            except Exception as e:
+                print("EXCEPTION FOUND")
+                print(e)
+                pass
             # return room_graph
             new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
         
@@ -411,17 +424,22 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         original_ids = set(room_graph['nodes'].keys())
         if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
-            if db is not None:
-                print("using tfidf vectorizer to find similar object")
-                print(f"USING OBJECT: ")
-                print(room_graph['nodes'][target_id])
-                most_similar = get_most_similar(room_graph['nodes'][target_id], "object")
-                print(most_similar)
+            try:
+                if db is not None:
+                    print("using tfidf vectorizer to find similar object")
+                    print(f"USING OBJECT: ")
+                    print(room_graph['nodes'][target_id])
+                    most_similar = get_most_similar(room_graph['nodes'][target_id], "object")
+                    print(most_similar)
 
-                new_description = most_similar["description"]
-                
-                room_graph['nodes'][target_id]['desc'] = new_description
-                room_graph['nodes'][target_id]['from_retrieval'] = True
+                    new_description = most_similar["description"]
+                    
+                    room_graph['nodes'][target_id]['desc'] = new_description
+                    room_graph['nodes'][target_id]['from_retrieval'] = True
+            except Exception as e:
+                print("EXCEPTION FOUND")
+                print(e)
+                pass
             # return room_graph
             new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
             return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
@@ -479,19 +497,24 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         original_ids = set(room_graph['nodes'].keys())
         if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
-            if db is not None:
-                print("using tfidf vectorizer to find similar character")
-                print(f"USING CHARACTER: ")
-                print(room_graph['nodes'][target_id])
-                most_similar = get_most_similar(room_graph['nodes'][target_id], "character")
-                print(most_similar)
+            try:
+                if db is not None:
+                    print("using tfidf vectorizer to find similar character")
+                    print(f"USING CHARACTER: ")
+                    print(room_graph['nodes'][target_id])
+                    most_similar = get_most_similar(room_graph['nodes'][target_id], "character")
+                    print(most_similar)
 
-                new_description = most_similar["desc"]
-                new_persona = most_similar["persona"]
-                # print(f"new desc: {new_description}")
-                # print(f"persona: {new_persona}")
-                room_graph['nodes'][target_id]['desc'] = new_description
-                room_graph['nodes'][target_id]['from_retrieval'] = True
+                    new_description = most_similar["desc"]
+                    new_persona = most_similar["persona"]
+                    # print(f"new desc: {new_description}")
+                    # print(f"persona: {new_persona}")
+                    room_graph['nodes'][target_id]['desc'] = new_description
+                    room_graph['nodes'][target_id]['from_retrieval'] = True
+            except Exception as e:
+                print("EXCEPTION FOUND")
+                print(e)
+                pass
             # return room_graph
             new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
             return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
@@ -549,17 +572,22 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         original_ids = set(room_graph['nodes'].keys())
         if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
-            if db is not None:
-                print("using tfidf vectorizer to find similar character")
-                print(f"USING CHARACTER: ")
-                print(room_graph['nodes'][target_id])
-                most_similar = get_most_similar(room_graph['nodes'][target_id], "character")
-                print(most_similar)
-                new_persona = most_similar["persona"]
-                # print(f"new desc: {new_description}")
-                # print(f"persona: {new_persona}")
-                room_graph['nodes'][target_id]['persona'] = new_persona
-                room_graph['nodes'][target_id]['from_retrieval'] = True
+            try:
+                if db is not None:
+                    print("using tfidf vectorizer to find similar character")
+                    print(f"USING CHARACTER: ")
+                    print(room_graph['nodes'][target_id])
+                    most_similar = get_most_similar(room_graph['nodes'][target_id], "character")
+                    print(most_similar)
+                    new_persona = most_similar["persona"]
+                    # print(f"new desc: {new_description}")
+                    # print(f"persona: {new_persona}")
+                    room_graph['nodes'][target_id]['persona'] = new_persona
+                    room_graph['nodes'][target_id]['from_retrieval'] = True
+            except Exception as e:
+                print("EXCEPTION FOUND")
+                print(e)
+                pass
             # return room_graph
             new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
             return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
@@ -618,15 +646,20 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         original_ids = set(room_graph['nodes'].keys())
         if world_builder_agent is None:
             print("No world builder model found, path does not point to file")
-            if db is not None:
-                print("using tfidf vectorizer to find similar character")
-                print(f"USING CHARACTER: ")
-                print(room_graph['nodes'][target_id])
-                most_similar = get_most_similar(room_graph['nodes'][target_id], "object")
-                print(most_similar)
-                similar_contained = most_similar.get("containing_objects", [])
-                
-                room_graph = add_object_secondary_objects_to_graph(room_graph, target_id, similar_contained)
+            try:
+                if db is not None:
+                    print("using tfidf vectorizer to find similar character")
+                    print(f"USING CHARACTER: ")
+                    print(room_graph['nodes'][target_id])
+                    most_similar = get_most_similar(room_graph['nodes'][target_id], "object")
+                    print(most_similar)
+                    similar_contained = most_similar.get("containing_objects", [])
+                    
+                    room_graph = add_object_secondary_objects_to_graph(room_graph, target_id, similar_contained)
+            except Exception as e:
+                print("EXCEPTION FOUND")
+                print(e)
+                pass
         try:    
             room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
             room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
