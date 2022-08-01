@@ -86,8 +86,8 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # TODO implement once we have an onboarding
         return True
 
-    # USE_MODEL = False
-    USE_MODEL = True
+    USE_MODEL = False
+    # USE_MODEL = True
     MODEL_NAME = "bart_all_simple_Sun_Jan_23/c9d"
     world_builder_agent = None
     # force = False
@@ -418,7 +418,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
                 most_similar = get_most_similar(room_graph['nodes'][target_id], "object")
                 print(most_similar)
 
-                new_description = most_similar["desc"]
+                new_description = most_similar["description"]
                 
                 room_graph['nodes'][target_id]['desc'] = new_description
                 room_graph['nodes'][target_id]['from_retrieval'] = True
