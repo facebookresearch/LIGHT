@@ -473,18 +473,18 @@ const CharacterPage = ({
     };
 
     //Generates motivation for character
-    const generateCharacterMotivationButtonFunction = async ()=>{
-        try{
-            const payload = await CommonSenseCharacterMotivation();
-            const {nodeId, data} = payload;
-            updateCharacter(nodeId, data);
-            stopLoading();
-        } catch (error) {
-            stopLoading();
-            console.log(error);
-            errorHandler(error);
-        };
-    };
+    // const generateCharacterMotivationButtonFunction = async ()=>{
+    //     try{
+    //         const payload = await CommonSenseCharacterMotivation();
+    //         const {nodeId, data} = payload;
+    //         updateCharacter(nodeId, data);
+    //         stopLoading();
+    //     } catch (error) {
+    //         stopLoading();
+    //         console.log(error);
+    //         errorHandler(error);
+    //     };
+    // };
 
     /* ------ END OF HANDLERS ------ */
 
@@ -570,44 +570,44 @@ const CharacterPage = ({
     };
 
     // COMMON SENSE CHARACTER MOTIVATION GENERATION FUNCTION
-    const CommonSenseCharacterMotivation = async ()=>{
-        try{
-            startLoading()
-            let target_room = selectedRoom['node_id'];
-            let target_id = charId;
-            let nodes = {};
-            nodes[target_room] = selectedRoom;
-            for (let character of worldCharacters) {
-                nodes[character['node_id']] = character;
-            }
-            for (let object of worldObjects) {
-                nodes[object['node_id']] = object;
-            }
-            let agents = worldCharacters.map(c => c['node_id']);
-            let objects = worldObjects.map(c => c['node_id']);
-            let rooms = [target_room]
-            let room_graph = {nodes, agents, objects, rooms};
-            console.log("room graph");
-            console.log(room_graph);
-            console.log("selectedRoom");
-            console.log(target_room);
-            const result = await suggestCharacterMotivation({target_room, room_graph, target_id});
-            console.log("Finished character description");
-            const generatedData = result.updated_item;
-            const updatedMotivation = generatedData.mission;
-            const updatedCharacter = {...selectedCharacter, persona:updatedMotivation};
-            const payload = {
-                nodeId: target_id,
-                data: updatedCharacter
-            };
-            console.log(updatedCharacter);
-            return payload;
-        } catch(error){
-            stopLoading();
-            errorHandler(error);
-            throw error;
-        };
-    };
+    // const CommonSenseCharacterMotivation = async ()=>{
+    //     try{
+    //         startLoading()
+    //         let target_room = selectedRoom['node_id'];
+    //         let target_id = charId;
+    //         let nodes = {};
+    //         nodes[target_room] = selectedRoom;
+    //         for (let character of worldCharacters) {
+    //             nodes[character['node_id']] = character;
+    //         }
+    //         for (let object of worldObjects) {
+    //             nodes[object['node_id']] = object;
+    //         }
+    //         let agents = worldCharacters.map(c => c['node_id']);
+    //         let objects = worldObjects.map(c => c['node_id']);
+    //         let rooms = [target_room]
+    //         let room_graph = {nodes, agents, objects, rooms};
+    //         console.log("room graph");
+    //         console.log(room_graph);
+    //         console.log("selectedRoom");
+    //         console.log(target_room);
+    //         const result = await suggestCharacterMotivation({target_room, room_graph, target_id});
+    //         console.log("Finished character description");
+    //         const generatedData = result.updated_item;
+    //         const updatedMotivation = generatedData.mission;
+    //         const updatedCharacter = {...selectedCharacter, persona:updatedMotivation};
+    //         const payload = {
+    //             nodeId: target_id,
+    //             data: updatedCharacter
+    //         };
+    //         console.log(updatedCharacter);
+    //         return payload;
+    //     } catch(error){
+    //         stopLoading();
+    //         errorHandler(error);
+    //         throw error;
+    //     };
+    // };
 
     // COMMON SENSE CHARACTER CONTENTS GENERATION FUNCTION
     const CommonSenseCharacterContents = async ()=>{
