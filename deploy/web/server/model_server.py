@@ -8,6 +8,7 @@
 
 """Application specifically for hosting a model for remote access"""
 
+
 import argparse
 import json
 import logging
@@ -15,14 +16,11 @@ import os
 import traceback
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
-import tornado.auth  # noqa E402: gotta install ioloop first
-import tornado.escape  # noqa E402: gotta install ioloop first
-import tornado.ioloop  # noqa E402: gotta install ioloop first
-import tornado.web  # noqa E402: gotta install ioloop first
-import tornado.websocket  # noqa E402: gotta install ioloop first
-
-# Server imports
-from zmq.eventloop import ioloop
+import tornado.auth
+import tornado.escape
+import tornado.ioloop
+import tornado.web
+import tornado.websocket
 
 from light import LIGHT_DIR
 from light.registry.model_pool import ALL_LOADERS, ModelPool
@@ -32,8 +30,6 @@ from light.registry.models.acting_score_model import (
 
 # Temporary imports pre Hydra
 from light.registry.parlai_model import ParlAIModelConfig
-
-ioloop.install()  # Needs to happen before any tornado imports!
 
 
 if TYPE_CHECKING:
@@ -129,7 +125,7 @@ def _run_server(
     """
     Run the model server with the given setup configuration
     """
-    my_loop = ioloop.IOLoop()
+    my_loop = tornado.ioloop.IOLoop()
 
     app = ModelServer(
         model=model,
