@@ -8,6 +8,10 @@ from dataclasses import dataclass, field
 from omegaconf import MISSING, DictConfig
 
 from light.registry.parlai_model import ParlAIModelConfig, ParlAIModelLoader
+from light.registry.parlai_remote_model import (
+    ParlAIRemoteModelConfig,
+    ParlAIRemoteModelLoader,
+)
 from light.registry.models.acting_score_model import (
     ParlAIPolyencoderActingScoreModelConfig,
     ParlAIPolyencoderActingScoreModelLoader,
@@ -18,13 +22,19 @@ from light.registry.models.starspace_model import (
 )
 
 from parlai.core.agents import Agent
-from typing import List, Any, Dict, Optional, Type
+from typing import List, Any, Union, Dict, Optional, Type
 
-# At the moment all models are ParlAIModelLoaders. May change as we make more models
-ALL_LOADERS: Dict[str, Type[ParlAIModelLoader]] = {
+
+# We should make a base ModelLoader class
+ModelLoaderClass = Union[Type[ParlAIModelLoader], Type[ParlAIRemoteModelLoader]]
+ModelLoader = Union[ParlAIModelLoader, ParlAIRemoteModelLoader]
+ModelConfig = Union[ParlAIModelConfig, ParlAIRemoteModelConfig]
+
+ALL_LOADERS: Dict[str, ModelLoaderClass] = {
     ParlAIModelConfig._loader: ParlAIModelLoader,
     ParlAIPolyencoderActingScoreModelConfig._loader: ParlAIPolyencoderActingScoreModelLoader,
     MapStarspaceModelConfig._loader: MapStarspaceModelLoader,
+    ParlAIRemoteModelConfig._loader: ParlAIRemoteModelLoader,
 }
 
 
@@ -32,7 +42,9 @@ class ModelPool:
     def __init__(self):
         self._model_loaders = {}
 
-    def register_model(self, config: DictConfig, model_names: List[str]) -> None:
+    def register_model(
+        self, config: Union[DictConfig, ModelConfig], model_names: List[str]
+    ) -> None:
         """
         Takes the given config, loads the model, and
         stores it in the registry under the given names.

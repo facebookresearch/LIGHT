@@ -60,12 +60,3 @@ class MapStarspaceModelLoader(ParlAIModelLoader):
         opt["override"]["fixed_candidates_file"] = opt["fixed_candidates_file"]
         model = create_agent_from_shared(use_shared)
         return self.before_return_model(model)
-
-    def before_return_model(self, model) -> Agent:
-        """Clear boring and setup for being an acting score model"""
-        model.boring = None
-        # mark this agent as the special RP score agent
-        model.actingscore = True
-        # override eval step here
-        model.eval_step = model.eval_step_scoresonly
-        return model

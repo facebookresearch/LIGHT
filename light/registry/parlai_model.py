@@ -22,14 +22,17 @@ flow due to the semantics of ParlAI and the ParlAIModelLoader implementation her
 from dataclasses import dataclass, field
 from omegaconf import MISSING, DictConfig
 
-from parlai.core.params import ParlaiParser
-from parlai.core.agents import create_agent, create_agent_from_shared
+from parlai.core.agents import Agent, create_agent, create_agent_from_shared
+from parlai.core.message import Message
 from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
 from copy import deepcopy
 import os
 
 from typing import List, Any, Dict, Optional
-from parlai.core.agents import Agent
+
+
+CONTEXT_FILL_COUNT = 4000
 
 
 @dataclass
@@ -107,6 +110,12 @@ class ParlAIModelLoader:
         opt.update(overrides)
         opt["override"].update(overrides)
         model = create_agent(opt)
+
+        # Push something through the model to fill context
+        act = {"text": "Hello " * CONTEXT_FILL_COUNT, "episode_done": True}
+        model.observe(act)
+
+        # Share the model params for use in `get_model`
         self._shared = model.share()
 
     def before_return_model(self, model):
