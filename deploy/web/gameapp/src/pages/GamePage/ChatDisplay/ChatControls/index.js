@@ -4,7 +4,7 @@ import React from "react";
 import "./styles.css";
 /* CUSTOM COMPONENTS */
 import ChatBar from "./ChatBar";
-import ActionBar from "./ActionBar";
+import ActionBar from "../ActionBar";
 import DisconnectMessage from "./DisconnectMessage";
 
 //ChatControls - render container that holds both chat input and "action bar" which contains quick chat speech bubbles for each npc in vincinity
@@ -33,12 +33,6 @@ const ChatControls = ({
             onSubmit={onSubmit}
             scrollToBottom={scrollToBottom}
             resetIdleTimer={resetIdleTimer}
-          />
-          <ActionBar
-            presentAgents={presentAgents}
-            getAgentName={getAgentName}
-            getEntityId={getEntityId}
-            dataModelHost={dataModelHost}
           />
         </>
       )}

@@ -1,20 +1,46 @@
 /* APP STYLES */
+body {
+  background-color: black;
+}
 #helpmode {
   cursor: help;
 }
 
-.app-controls {
-  font-size: 12px;
-  font-family: sans-serif;
-  padding: 10px;
+.overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 20px;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  border-radius: 72px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  display: none;
+  /* font-weight: bold; */
+  pointer-events: none;
 }
 
-a {
-  color: #165cb9;
+.hint-message {
+  background-color: lightgoldenrodyellow;
+  padding: 3px;
+  font-size: 13px;
+  border-radius: 3px;
 }
-p {
-  margin: 0;
+
+.data-model-deep-link {
+  color: black;
 }
+
+.header-text {
+  font-size: 80px;
+  text-align: center;
+  color: #fff;
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+
+/* ANIMATION EFFECTS*/
 
 @keyframes glow {
   from {
@@ -36,98 +62,6 @@ p {
   .app-controls {
     background-color: rgb(255, 255, 235);
   }
-}
-
-.message.type-setting {
-  /* font-style: italic; */
-  background-color: #efefef;
-  color: rgb(42, 42, 42);
-  border: none;
-  font-size: 18px;
-  padding: 10px;
-  margin-bottom: 20px;
-  margin-top: 10px;
-  margin-left: 130px;
-  margin-right: 130px;
-  text-align: left;
-  display: block;
-  white-space: pre-wrap;
-  width: 100%;
-}
-
-.floatFix {
-  margin: 0;
-  clear: both;
-}
-
-.message.type-setting p,
-.message.type-setting .markdown-p {
-  margin: 0 0px 10px 0px;
-}
-.markdown-p em {
-  font-weight: bold;
-  color: #585e67;
-}
-.message.type-setting p:last-child,
-.message.type-setting .markdown-p:last-child {
-  margin: 0 0px 0px 0px;
-}
-
-.message.me {
-  float: left;
-  margin-right: 80px;
-}
-.message.other {
-  float: right;
-  margin-left: 80px;
-}
-.message.type-dialogue {
-  background-color: white;
-  animation: popInChat 0.25s cubic-bezier(0, 0.5, 0, 1);
-  box-shadow: 0 2px 2px #bbb;
-  text-align: left;
-  white-space: pre-line;
-}
-
-.message.type-action {
-  background-color: white;
-  animation: popInChat 0.25s cubic-bezier(0, 0.5, 0, 1);
-  box-shadow: 0 2px 2px #bbb;
-  text-align: left;
-  color: #999;
-  font-style: italic;
-}
-
-.message {
-  padding: 20px 10px 10px;
-  clear: both;
-  border: 1px solid rgb(201, 201, 201);
-  margin: 5px;
-  border-radius: 7px;
-  text-align: center;
-  position: relative;
-}
-
-.input.edit-message {
-  font: inherit;
-  width: 100%;
-  padding: 3px;
-  box-sizing: border-box;
-}
-.controls span.action {
-  margin: 5px 3px;
-  padding: 5px;
-  display: inline-block;
-  background-color: #f1f1f1;
-  cursor: pointer;
-  border-radius: 5px;
-  border: 1px solid #eaeaea;
-  color: #777;
-}
-
-span.action:first-child {
-  background-color: #777;
-  color: #f1f1f1;
 }
 
 @keyframes popInChat {
@@ -156,112 +90,6 @@ span.action:first-child {
     opacity: 1;
     transform: scale(1, 1) translateY(0px);
   }
-}
-
-.leaflet-container {
-  height: 200px;
-  width: 100%;
-  margin: 0 auto;
-}
-
-i.fa {
-  cursor: pointer;
-}
-
-.header {
-  font-size: 15px;
-  display: flex;
-}
-.header h1 {
-  margin: 0;
-  padding: 0;
-}
-.header img {
-  border-radius: 5px;
-  margin-right: 15px;
-  width: 75px;
-}
-
-.persona {
-  margin: 60px 10px 0px 0px;
-  background-color: lightgoldenrodyellow;
-
-  border-radius: 25px;
-  box-shadow: 5px 2px 5px;
-  position: relative;
-  box-shadow: 5px 2px 5px;
-  width: 94%;
-  padding: 0px 10px 5px 10px;
-}
-
-.persona .icon {
-  position: absolute;
-  left: 50%;
-  top: 0%;
-  transform: translate(-50%, -75%);
-  font-size: 50px;
-  background-color: #fdf1b3;
-  border-radius: 72px;
-  height: 60px;
-  width: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 5px solid gold;
-}
-
-.char-icon {
-  padding-top: 10%;
-}
-.persona-text {
-  margin: 0px;
-  text-align: center;
-  margin-bottom: 4px;
-}
-
-.overlay {
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  font-size: 20px;
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  border-radius: 72px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  display: none;
-  /* font-weight: bold; */
-  pointer-events: none;
-}
-.icon:hover .overlay,
-.icon.editing .overlay {
-  display: flex;
-}
-
-.hint-message {
-  background-color: lightgoldenrodyellow;
-  padding: 3px;
-  font-size: 13px;
-  border-radius: 3px;
-}
-.fadeHidden {
-  opacity: 0;
-  transition: opacity 0.3s ease-out;
-}
-body .fadeShow {
-  opacity: 1;
-}
-
-.data-model-deep-link {
-  color: black;
-}
-
-.header-text {
-  font-size: 80px;
-  text-align: center;
-  color: #fff;
-  animation: pulse 1s ease-in-out infinite alternate;
 }
 
 @keyframes pulse {

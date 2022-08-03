@@ -6,6 +6,7 @@ import { updateSelectedTip } from "../../../features/tutorials/tutorials-slice";
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */
+import ActionBar from "./ActionBar";
 import ChatMessages from "./ChatMessages";
 import ChatControls from "./ChatControls";
 import TutorialPopover from "../../../components/TutorialPopover";
@@ -54,25 +55,38 @@ const ChatDisplay = ({
   }, [scrollToBottom, messages]);
   /* ----------TAILWIND CLASSES--------- */
   const classNames = {
-    chatWrapper: " w-full h-full",
-    chat: "flex flex-col bg-indigo-900 bg-opacity-50 w-full",
+    chatWrapper: " w-full h-full bg-indigo-900 bg-opacity-50",
+    chat: "flex flex-col w-full",
   };
   const { presentAgents } = getLocationState(messages);
   return (
-    <div className={classNames.chatWrapper}>
-      <div className={classNames.chat} ref={chatContainerRef}>
-        <ChatMessages messages={messages} />
+    <div className="h-screen">
+      <div className=" h-1/6 max-h-28">
+        <ActionBar
+          presentAgents={presentAgents}
+          getAgentName={getAgentName}
+          getEntityId={getEntityId}
+          dataModelHost={dataModelHost}
+        />
       </div>
-      <ChatControls
-        onSubmit={onSubmit}
-        presentAgents={presentAgents}
-        getAgentName={getAgentName}
-        getEntityId={getEntityId}
-        dataModelHost={dataModelHost}
-        scrollToBottom={scrollToBottom}
-        idle={idle}
-        resetIdleTimer={resetIdleTimer}
-      />
+      <div className={classNames.chatWrapper}>
+        <div className={classNames.chat} ref={chatContainerRef}>
+          <ChatMessages messages={messages} />
+        </div>
+        <ChatControls
+          onSubmit={onSubmit}
+          presentAgents={presentAgents}
+          getAgentName={getAgentName}
+          getEntityId={getEntityId}
+          dataModelHost={dataModelHost}
+          scrollToBottom={scrollToBottom}
+          idle={idle}
+          resetIdleTimer={resetIdleTimer}
+        />
+      </div>
+      <div className="flex justify-end">
+        <p className=" text-gray-200">XP earned this scene:</p>
+      </div>
     </div>
   );
 };

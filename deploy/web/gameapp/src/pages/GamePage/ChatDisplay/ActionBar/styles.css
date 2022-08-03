@@ -3,10 +3,8 @@
   display: flex;
   padding: 0px 10px 0px;
   font-size: 14px;
-  width: 100%;
   overflow: scroll;
   flex-wrap: wrap;
-  height: 50%;
   align-items: center;
 }
 
