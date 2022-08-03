@@ -20,10 +20,12 @@ def get_room_content_from_json(graph_dict):
     content = {'objects': [], 'characters': []}
     meta_params = {'db_id': 0}
 
-    def add_item_to_graph(item_to_add, container_node_id=None, container_edge=None):
+    def add_item_to_graph(item_to_add, container_node_id=None, container_edge=None, depth=0):
         """
         Adds nodes to the dictionary by BFS traversal of nodes tree.
         """
+        if depth >= 4:
+            return
         print(f"ADDING: {item_to_add}")
         # Adding the item itself
         item_type = get_item_class(item_to_add)
@@ -87,7 +89,16 @@ def get_room_content_from_json(graph_dict):
                     if o['node_id'] == container_node_id:
                         o[container_edge] = o.get(container_edge, [])
                         # o[container_edge].append(new_item)
-                        o[container_edge].append(new_item['name'])
+                        # o[container_edge].append(new_item['name'])
+                        o[container_edge].append({
+                            'name': new_item['name'],
+                            "element_type": "objects",
+                            "is_in_room": True,
+                            "containing_objects": [],
+                            "carrying_objects": [],
+                            "wearing_objects": [],
+                            "wielding_objects": [],
+                        })
                         break
                 else:
                     for c in content['characters']:
@@ -144,13 +155,14 @@ def get_room_content_from_json(graph_dict):
                     sub_com_type == consts.ElementType.OBJECT
                     or sub_com_type == consts.ElementType.CHARACTER
                 ):
-                    add_item_to_graph(sub_comp_node)
+                    add_item_to_graph(sub_comp_node, depth=depth+1)
                 continue
             elif item_type == consts.ElementType.OBJECT:
                 add_item_to_graph(
                     sub_comp_node,
                     container_node_id=item_node_id,
                     container_edge="containing_objects",
+                    depth=depth+1
                 )
                 continue
             else:  # Item belongs to a character
@@ -160,6 +172,7 @@ def get_room_content_from_json(graph_dict):
                         sub_comp_node,
                         container_node_id=item_node_id,
                         container_edge="carrying_objects",
+                        depth=depth+1
                     )
                     continue
 
@@ -180,23 +193,27 @@ def get_room_content_from_json(graph_dict):
                         sub_comp_node,
                         container_node_id=item_node_id,
                         container_edge="wearing_objects",
+                        depth=depth+1
                     )
                     add_item_to_graph(
                         sub_comp_node,
                         container_node_id=item_node_id,
                         container_edge="wielding_objects",
+                        depth=depth+1
                     )
                 elif equipped_type == 'wear':
                     add_item_to_graph(
                         sub_comp_node,
                         container_node_id=item_node_id,
                         container_edge="wearing_objects",
+                        depth=depth+1
                     )
                 elif equipped_type == 'wield':
                     add_item_to_graph(
                         sub_comp_node,
                         container_node_id=item_node_id,
                         container_edge="wielding_objects",
+                        depth=depth+1
                     )
                 else:
                     ValueError(f'Object with invalid equipped type "{equipped_type}".')
@@ -204,7 +221,7 @@ def get_room_content_from_json(graph_dict):
     rooms = graph_dict['rooms']
     assert len(rooms) == 1, f'Common sense teacher is currently only handling one room.'
     # Adding the room, and recursively anything underneath it.
-    add_item_to_graph(graph_dict['nodes'][rooms[0]], 0)
+    add_item_to_graph(graph_dict['nodes'][rooms[0]], 0, depth=0)
     return content
 
 ########################################################################################
@@ -216,53 +233,6 @@ def modify_room_attrs(input_graph, room_name, attr_name, attr_value):
     return input_graph
 
 def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wielded, worn):
-    for o in carried:
-        if type(o) is str:
-            o = {'name':o}
-        o_id = o['name']
-        if o_id in input_graph['nodes']:
-            continue
-        new_node = {
-            "agent": False,
-            "classes": ["object"],
-            "contain_size": 20,
-            "contained_nodes": {},
-            "container": True,
-            "container_node": {
-                "target_id": node_id
-                },
-            "db_id": None,
-            "dead": False,
-            "desc": o.get('description', ''),
-            "drink": False,
-            "equipped": None,
-            "food": False,
-            "food_energy": 0,
-            "gettable": False,
-            "locked_edge": None,
-            "name": o['name'],
-            "name_prefix": "a",
-            "names": [o['name']],
-            "node_id": o_id,
-            "object": True,
-            "on_use": None,
-            "room": False,
-            "size": 1,
-            "stats": {
-            "damage": 0,
-            "defense": 0
-            },
-            "surface_type": "in",
-            "value": 1,
-            "wearable": False,
-            "wieldable": False,
-            "from_model": True
-        }
-        # input_graph['objects'].append(new_node)
-        input_graph['objects'].append(o_id)
-        input_graph['nodes'][o_id] = new_node
-        input_graph['nodes'][node_id]['contained_nodes'][o_id] = {"target_id": o_id}
-    
     for o in wielded:
         if type(o) is str:
             o = {'name':o}
@@ -356,6 +326,55 @@ def add_character_secondary_objects_to_graph(input_graph, node_id, carried, wiel
         input_graph['objects'].append(o_id)
         input_graph['nodes'][o_id] = new_node
         input_graph['nodes'][node_id]['contained_nodes'][o_id] = {"target_id": o_id}
+    
+    for o in carried:
+        if type(o) is str:
+            o = {'name':o}
+        o_id = o['name']
+        if o_id in input_graph['nodes']:
+            continue
+        new_node = {
+            "agent": False,
+            "classes": ["object"],
+            "contain_size": 20,
+            "contained_nodes": {},
+            "container": True,
+            "container_node": {
+                "target_id": node_id
+                },
+            "db_id": None,
+            "dead": False,
+            "desc": o.get('description', ''),
+            "drink": False,
+            "equipped": None,
+            "food": False,
+            "food_energy": 0,
+            "gettable": False,
+            "locked_edge": None,
+            "name": o['name'],
+            "name_prefix": "a",
+            "names": [o['name']],
+            "node_id": o_id,
+            "object": True,
+            "on_use": None,
+            "room": False,
+            "size": 1,
+            "stats": {
+            "damage": 0,
+            "defense": 0
+            },
+            "surface_type": "in",
+            "value": 1,
+            "wearable": False,
+            "wieldable": False,
+            "from_model": True
+        }
+        # input_graph['objects'].append(new_node)
+        input_graph['objects'].append(o_id)
+        input_graph['nodes'][o_id] = new_node
+        input_graph['nodes'][node_id]['contained_nodes'][o_id] = {"target_id": o_id}
+    
+
     return input_graph
 
 def add_character_to_graph(input_graph, room_name, character_dict):
@@ -415,7 +434,8 @@ def add_character_to_graph(input_graph, room_name, character_dict):
     return input_graph
 
 def add_object_secondary_objects_to_graph(input_graph, node_id, contained):
-    for o in contained:
+    for obj in contained:
+        o = obj['name']
         if o in input_graph['nodes']:
             continue
         o_id = o
@@ -430,7 +450,8 @@ def add_object_secondary_objects_to_graph(input_graph, node_id, contained):
             },
             "db_id": None,
             "dead": False,
-            "desc": '',
+            # "desc": '',
+            "desc": obj.get('description', ''),
             "drink": False,
             "equipped": None,
             "food": False,
@@ -474,7 +495,8 @@ def add_object_to_graph(input_graph, room_name, object_dict):
         "agent": False,
         "classes": ["object"],
         "contain_size": 20,
-        "contained_nodes": {o:{"target_id":o} for o in object_dict.get('containing_objects', [])},
+        # "contained_nodes": {o:{"target_id":o} for o in object_dict.get('containing_objects', [])},
+        "contained_nodes": {o['name']:{"target_id":o['name']} for o in object_dict.get('containing_objects', [])},
         "container": True,
         "container_node": {
           "target_id": room_name

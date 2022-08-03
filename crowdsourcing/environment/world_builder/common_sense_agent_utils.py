@@ -218,24 +218,26 @@ def find_item(existing_room_graph, target_id, item_type=None):
 
         item_list = existing_room_graph[primary_type]
         for _, item in enumerate(item_list):
-            if item.get("db_id", item["name"]) == target_id or item['name'] == target_id:
+            if str(item.get("db_id", item["name"])).lower() == target_id.lower() or item['name'].lower() == target_id.lower():
                 return item
 
             # NOTE: to be changed once contained objects are complete dicts with attributes
             # currently only characters have secondary lists with dict items
             # only search if secondary objects are a possibility
-            if primary_type == "characters" and search_secondary:
+            # if primary_type == "characters" and search_secondary:
+            if search_secondary:
                 for secondary_list in [
                     "carrying_objects",
                     "wearing_objects",
                     "wielding_objects",
+                    "containing_objects"
                 ]:
                     for _, secondary_item in enumerate(item.get(secondary_list, [])):
                         # NOTE: during testing items may not have db_ids but should always have names
                         # In deployment, items should always have both
                         if (
-                            secondary_item.get("db_id", secondary_item['name'])
-                            == target_id
+                            str(secondary_item.get("db_id", secondary_item['name'])).lower() == target_id.lower() or
+                            secondary_item['name'].lower() == target_id
                         ):
                             return secondary_item
     return None
@@ -428,10 +430,11 @@ def conditional_add_secondary_item_to_graph(
                 # currently character->secondary objects are dictionaries while object->secondary objects are not
                 secondary_items.append({'name': secondary_item_name})
             elif item_type == "objects":
-                secondary_items.append(secondary_item_name)
+                secondary_items.append({'name': secondary_item_name})
             if errors is not None:
                 errors.append("correct")
             item[secondary_edge_name] = secondary_items
+            logging.info(f"New {secondary_edge_name} for {primary_item_name}: {secondary_items}")
     else:
         logging.warning(
             f"Failed to find matching item for target {target_id}, no secondary item added."

@@ -40,6 +40,7 @@ from sklearn.metrics.pairwise import linear_kernel
 from build_room_data import ALL_CHARACTERS, ALL_OBJECTS, ROOM_ID_TO_ITEMS
 import numpy as np
 from config import LIGHT_DB_PATH
+import copy
 
 MAX_INCORRECT = 3
 
@@ -86,8 +87,8 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # TODO implement once we have an onboarding
         return True
 
-    USE_MODEL = False
-    # USE_MODEL = True
+    # USE_MODEL = False
+    USE_MODEL = True
     MODEL_NAME = "bart_all_simple_Sun_Jan_23/c9d"
     world_builder_agent = None
     # force = False
@@ -172,6 +173,9 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         room_graph = args["room_graph"]
         original_rooms = room_graph['rooms']
         original_ids = set(room_graph['nodes'].keys())
+        if target_room not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_room} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
         if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
             try:
@@ -233,6 +237,9 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         target_room = args["target_room"]
         original_rooms = room_graph['rooms']
         original_ids = set(room_graph['nodes'].keys())
+        if target_room not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_room} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
         if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
             try:
@@ -318,6 +325,9 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         print(f"Target ID: {target_id}")
         print(f"Target Room: {target_room}")
         original_ids = set(room_graph['nodes'].keys())
+        if target_id not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_id} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
         if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
             try:
@@ -367,9 +377,9 @@ def main(operator: Operator, cfg: DictConfig) -> None:
                 if c['name'] == target_name:
                     character_dict = c
                     break
-            original_carried = character_dict.get('carrying_objects', [])
-            original_wielded = character_dict.get('wielding_objects', [])
-            original_worn = character_dict.get('wearing_objects', [])
+            original_carried = copy.deepcopy(character_dict.get('carrying_objects', []))
+            original_wielded = copy.deepcopy(character_dict.get('wielding_objects', []))
+            original_worn = copy.deepcopy(character_dict.get('wearing_objects', []))
 
             graph = world_builder_agent.add_character_carrying(
                 graph, target_name, count=3
@@ -422,6 +432,9 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         target_room = args["target_room"]
         target_id = args["target_id"]
         original_ids = set(room_graph['nodes'].keys())
+        if target_id not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_id} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
         if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
             try:
@@ -468,10 +481,32 @@ def main(operator: Operator, cfg: DictConfig) -> None:
             print("OUTPUT GRAPH")
             print(graph)
             target_obj = None
-            for node in graph["objects"]:
-                if node['name'] == target_name:
-                    target_obj = node
+            for o in graph['objects']:
+                if o['name'] == target_name:
+                    target_obj = o
                     break
+            if target_obj is None:
+                for o1 in graph['objects']:
+                    for o in o1.get('containing_objects', []):
+                        if o['name'] == target_name:
+                            target_obj = o
+                            break
+                    if target_obj is not None:
+                        break
+                for c in graph['characters']:
+                    for secondary_list in [
+                        "carrying_objects",
+                        "wearing_objects",
+                        "wielding_objects",
+                    ]:
+                        for o in c.get(secondary_list, []):
+                            if o['name'] == target_name:
+                                target_obj = o
+                                break
+                        if target_obj is not None:
+                            break
+                    if target_obj is not None:
+                        break
             print(f"TARGET OBJ: {target_obj}")
             room_graph['nodes'][target_id]['desc'] = target_obj['description']
             room_graph['nodes'][target_id]['from_model'] = True
@@ -495,6 +530,9 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         target_room = args["target_room"]
         target_id = args["target_id"]
         original_ids = set(room_graph['nodes'].keys())
+        if target_id not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_id} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
         if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
             try:
@@ -570,6 +608,9 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         target_room = args["target_room"]
         target_id = args["target_id"]
         original_ids = set(room_graph['nodes'].keys())
+        if target_id not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_id} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
         if world_builder_agent is None or not USE_MODEL:
             print("No world builder model found, path does not point to file")
             try:
@@ -644,6 +685,9 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # Use `add_object_contains` to create a list of object suggestions
         target_id = args["target_id"]
         original_ids = set(room_graph['nodes'].keys())
+        if target_id not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_id} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
         if world_builder_agent is None:
             print("No world builder model found, path does not point to file")
             try:
@@ -670,7 +714,8 @@ def main(operator: Operator, cfg: DictConfig) -> None:
             room_graph['rooms'] = [cur_room]
 
             graph = get_room_content_from_json(room_graph)
-
+            print("ROOM CONTENT")
+            print(graph)
             # find the target object to get the underlying name
             target_name = target_id
             for n, node in room_graph["nodes"].items():
@@ -684,8 +729,30 @@ def main(operator: Operator, cfg: DictConfig) -> None:
                 if o['name'] == target_name:
                     object_dict = o
                     break
+            if object_dict is None:
+                for o1 in graph['objects']:
+                    for o in o1.get('containing_objects', []):
+                        if o['name'] == target_name:
+                            object_dict = o
+                            break
+                    if object_dict is not None:
+                        break
+                for c in graph['characters']:
+                    for secondary_list in [
+                        "carrying_objects",
+                        "wearing_objects",
+                        "wielding_objects",
+                    ]:
+                        for o in c.get(secondary_list, []):
+                            if o['name'] == target_name:
+                                object_dict = o
+                                break
+                        if object_dict is not None:
+                            break
+                    if object_dict is not None:
+                        break
             
-            original_contains = object_dict.get('containing_objects', [])
+            original_contains = copy.deepcopy(object_dict.get('containing_objects', []))
             
             # add objects to model-graph default number to attempt is 3
             graph = world_builder_agent.add_object_contains(
@@ -697,14 +764,39 @@ def main(operator: Operator, cfg: DictConfig) -> None:
                 if o['name'] == target_name:
                     object_dict = o
                     break
+            if object_dict is None:
+                for o1 in graph['objects']:
+                    for o in o1.get('containing_objects', []):
+                        if o['name'] == target_name:
+                            object_dict = o
+                            break
+                    if object_dict is not None:
+                        break
+                for c in graph['characters']:
+                    for secondary_list in [
+                        "carrying_objects",
+                        "wearing_objects",
+                        "wielding_objects",
+                    ]:
+                        for o in c.get(secondary_list, []):
+                            if o['name'] == target_name:
+                                object_dict = o
+                                break
+                        if object_dict is not None:
+                            break
+                    if object_dict is not None:
+                        break
             
             # this should only modify 2 parts of the room graph
             # 1) contained_nodes section of the corresponding object
             # 2) the list of objects (which could contain more objects)
-            contains = object_dict.get('carrying_objects', [])
+            # contains = object_dict.get('carrying_objects', [])
+            contains = object_dict.get('containing_objects', [])
             
             new_contains = [o for o in contains if o not in original_contains]
-            
+            print(f"CONTAINS AFTER: {contains}")
+            print(f"CONTAINS BEFORE: {original_contains}")
+            print(f"NEW CONTAINS: {new_contains}")
             graph = add_object_secondary_objects_to_graph(room_graph, target_id, new_contains)
         except Exception as e:
             print(f"Exception found:")
@@ -725,6 +817,9 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         target_room = args["target_room"]
         target_id = args["object_id"]
         original_ids = set(room_graph['nodes'].keys())
+        if target_id not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_id} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
         if world_builder_agent is None:
             print("No world builder model found, path does not point to file")
             # return room_graph
