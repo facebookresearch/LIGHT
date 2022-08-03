@@ -3,7 +3,12 @@
 .task-container{
     height: 95vh;
     width: 100vw;
-    margin-top: 50px;
+    margin-top: 100px;
+}
+.builder-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .header-container {

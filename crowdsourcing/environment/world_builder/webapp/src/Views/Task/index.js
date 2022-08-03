@@ -2,73 +2,124 @@
 import React, {useEffect, useState} from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-
+//ACTIONS
+import {setWorldDraft, updateSelectedWorld} from '../../features/playerWorld/playerworld-slice.ts';
+import {setShowError} from '../../features/errors/errors-slice.ts';
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */
 import TaskToolBar from "../../components/TaskToolBar";
 import PreviewContent from "../../Views/PreviewView/PreviewContent";
-import MapPage2 from "../builder_pages/MapPage2";
+import BuilderRouter from "./BuilderRouter";
+import ErrorAlert from "../../components/ErrorAlert";
 /* BOOTSTRAP COMPONENTS */
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+/* DEFAULT WORLD */
+import DefaultWorld from "../../StartingWorldCopy";
 
-const BuilderRouter = ({virtualPath, api}) => {
-  // TODO will likely need to do something similar to the router for the full builder
-  // Perhaps we can use a MemoryRouter from the react router package?
-  return <MapPage2 api={api} />;
-}
+const MIN_ROOM_COUNT = 5;
+const MIN_CHARACTER_COUNT = 5;
+const MIN_OBJECT_COUNT= 20;
 
 const App = ({
   api,
   handleSubmit
 })=>{
-  /* ------ REDUX STATE ------ */
-  // VIEW STATE
-  // TODO configure loading the world state? Below is dummy
-  const [currentWorld, updateWorld] = useState({});
-  /*---------------LOCAL STATE----------------*/
-
-  // TODO I'm not sure what the right call is for replacing the router
-  // to work with the 4 intended views
-  const [virtualPath, setVirtualPath] = useState("");
+  /* ------ LOCAL STATE ------  */
+  const [enoughRooms, setEnoughRooms] = useState(false);
+  const [enoughCharacters, setEnoughCharacters] = useState(false);
+  const [enoughObjects, setEnoughObjects] = useState(false);
   const [workerComments, setWorkerComments] = useState("");
   const [showInstructions, setShowInstructions] = useState(false);
   const [show, setShow] = useState(false);
-  /* ----REDUX ACTIONS---- */
+  /* ------ REDUX STATE ------ */
+  //ERROR
+  const showError = useAppSelector((state) => state.errors.showError);
+  const errorMessage = useAppSelector((state) => state.errors.errorMessage);
+  //WORLDS
+  const worldDraft = useAppSelector((state) => state.playerWorld.worldDraft);
+  //ROOMS
+  const worldRooms = useAppSelector((state) => state.worldRooms.worldRooms);
+  //CHARACTERS
+  const worldCharacters = useAppSelector((state) => state.worldCharacters.worldCharacters);
+  //OBJECTS
+  const worldObjects = useAppSelector((state) => state.worldObjects.worldObjects);
   // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();
+  /* ----REDUX ACTIONS---- */
+  //Updates current selectedWorld state
+  const setSelectedWorld = (newWorldData)=>{
+    dispatch(updateSelectedWorld(newWorldData));
+  };
 
   /*---------------HANDLERS----------------*/
   const OpenModal = ()=>{
-    setShow(true)
+    setShow(true);
+  };
+
+  const closeErrorAlert = ()=>{
+    dispatch(setShowError(false))
   }
 
   const ToggleInstructionsModal = ()=>{
-    let updatedToggleValue = !showInstructions
-    setShowInstructions(updatedToggleValue)
-  }
+    let updatedToggleValue = !showInstructions;
+    setShowInstructions(updatedToggleValue);
+  };
 
+  //Updates text in comments section of submission form
   const CommentChangeHandler = (e)=>{
     let updatedWorkerComments = e.target.value;
-    setWorkerComments(updatedWorkerComments)
-  }
+    setWorkerComments(updatedWorkerComments);
+  };
 
+  //Submission Handler - Will submit the worker's comments and world from local storage then clear the local storage upon successful submission of their complted draft
   const SubmissionHandler = ()=>{
+    let updatedCurrentWorld = JSON.parse(window.localStorage.getItem("taskWorld"))
     let workerSubmission = {
-      data: currentWorld,
+      data: updatedCurrentWorld,
       comments: workerComments
-    }
-    handleSubmit(workerSubmission)
-    setShow(false)
-  }
+    };
+    // handleSubmit(workerSubmission);
+    console.log("FINAL SUBMISSION:  ", workerSubmission)
+    setShow(false);
+  };
 
+  //A function that will run each time the world builder saves a draft and will alert worker wor when they have completed the task
   const isWorldBigEnough = () => {
-    return true; // TODO actually check room, char, obj counts
-  }
+    if(worldRooms >= MIN_ROOM_COUNT){
+      setEnoughRooms(true);
+    };
+    if(worldCharacters >= MIN_CHARACTER_COUNT){
+      setEnoughCharacters(true);
+    };
+    if(worldObjects >= MIN_OBJECT_COUNT){
+      setEnoughObjects(true);
+    };
+  };
 
   /*---------------LIFECYCLE----------------*/
+  //This lifecycle evnt will attempt to pull a draft from local storage data first, if there is none it will pull
+  //the default world from the StartingWorldCopy.js file
+  useEffect(() => {
+    let initialDraft  = JSON.parse(window.localStorage.getItem("taskWorld"));
+    if(!initialDraft){
+      window.localStorage.setItem("taskWorld", JSON.stringify(DefaultWorld));
+      dispatch(setWorldDraft(DefaultWorld));
+    }else {
+      dispatch(setWorldDraft(initialDraft));
+    }
+    window.localStorage.setItem("currentLocation", JSON.stringify("/"));
+  }, []);
+
+  //Each time the worldDraft Redux state is updated the localStorage draft will be updated as well.
+  useEffect(() => {
+      //*** NOTE *** be sure to collect worker ID and use it as local storage key
+      window.localStorage.setItem("taskWorld", JSON.stringify(worldDraft));
+      setSelectedWorld(worldDraft);
+      isWorldBigEnough()
+  }, [worldDraft]);
 
   return (
   <>
@@ -77,9 +128,17 @@ const App = ({
         buttonFunction={OpenModal}
         toggleFunction={ToggleInstructionsModal}
         toggleValue={showInstructions}
+        roomCount={worldRooms.length}
+        charCount={worldCharacters.length}
+        objectCount={worldObjects.length}
       />
       <div className="builder-container">
-        <BuilderRouter virtualPath={virtualPath} api={api} />
+        <BuilderRouter api={api} />
+        <ErrorAlert
+          closeFunction={closeErrorAlert}
+          showAlert={showError}
+          errorMessage={errorMessage}
+        />
       </div>
       <Modal
         show={show}
@@ -93,7 +152,7 @@ const App = ({
         </Modal.Header>
         <Modal.Body>
           {
-            (isWorldBigEnough())
+            (enoughRooms && enoughCharacters && enoughObjects)
             ?
             <>
               <p>
@@ -141,6 +200,5 @@ const App = ({
     </div>
   </>
   );
-}
-
+};
 export default App;

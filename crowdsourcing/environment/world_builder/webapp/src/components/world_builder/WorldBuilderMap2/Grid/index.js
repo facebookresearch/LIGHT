@@ -1,10 +1,5 @@
 /* REACT */
 import React, {useState, useEffect} from "react";
-import { useParams, useRouteMatch, useHistory } from "react-router-dom";
-/* REDUX */
-import {useAppDispatch, useAppSelector} from '../../../../app/hooks';
-/* ---- REDUCER ACTIONS ---- */
-import { fetchWorlds, selectWorld } from "../../../../features/playerWorlds/playerworlds-slice.ts";
 /* STYLES */
 import "./styles.css"
 /* CUSTOM COMPONENTS */
@@ -36,8 +31,8 @@ const Grid = ({
         let {floors} = gridData;
         //ROWS
         let belowFloorRows = floors[0];
-        let currentFloorRows = floors[1]
-        let aboveFloorRows = floors[2]
+        let currentFloorRows = floors[1];
+        let aboveFloorRows = floors[2];
         if(currentFloorRows.length){
             let columns = currentFloorRows[0];
             setGridRows(currentFloorRows);
@@ -45,16 +40,18 @@ const Grid = ({
             let columnCount = columns.length;
             let height = rowCount * 250;
             let width = columnCount * 250;
+            console.log("GRID HEIGHT", height);
+            console.log("GRID WIDTH", width);
             setGridWidth(width);
             setGridHeight(height);
         }
         if(belowFloorRows.length){
-            setGridBelowRows(belowFloorRows)
+            setGridBelowRows(belowFloorRows);
         }
         if(aboveFloorRows.length){
-            setGridAboveRows(aboveFloorRows)
+            setGridAboveRows(aboveFloorRows);
         }
-    },[gridData])
+    },[gridData]);
 
     return(
         <div

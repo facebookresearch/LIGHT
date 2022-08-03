@@ -1,8 +1,5 @@
 /* REACT */
 import React, {useEffect, useState} from 'react';
-
-/* REDUX */
-
 /* CUSTOM COMPONENTS */
 import Grid from "./Grid"
 /* BLUEPRINT JS COMPONENTS */
@@ -55,6 +52,8 @@ const WorldBuilderMap2 = ({
 
     /* ------ Handlers ------ */
     const shiftView = (axes, amount)=>{
+      console.log("VIEW LOC: ", viewLoc)
+      console.log("HEIGHT: ", height)
       let updatedView = viewLoc;
         axes.map((axis, index)=>{
           updatedView = {...updatedView, [axis]: updatedView[axis]+amount[index]}
@@ -111,8 +110,8 @@ const WorldBuilderMap2 = ({
             :
             <div
             style={{
-              height: "20px",
-              width:"1000px"
+              width:"1000px",
+              height: "20px"
             }}
           />
           }
@@ -144,7 +143,7 @@ const WorldBuilderMap2 = ({
               <Button
                 className="button"
                 style={{
-                height: "800px",
+                height: "400px",
                 width:"20px"
                 }}
                 icon="arrow-left"
@@ -153,7 +152,7 @@ const WorldBuilderMap2 = ({
             :
             <div
               style={{
-                height: "800px",
+                height: "400px",
                 width:"20px"
               }}
             />
@@ -183,7 +182,7 @@ const WorldBuilderMap2 = ({
           <Button
               className="bp3-button"
               style={{
-                height:"800px"
+                height:"400px"
               }}
               icon="arrow-right"
               onClick={()=>shiftView(["x"], [-40])}
@@ -191,7 +190,7 @@ const WorldBuilderMap2 = ({
             :
             <div
             style={{
-              height: "800px",
+              height: "400px",
               width:"20px"
             }}
           />
@@ -199,7 +198,7 @@ const WorldBuilderMap2 = ({
         </div>
         <div className="button-row">
         {
-            (viewLoc.y>=height+200 && viewLoc.x<=0 )
+            (viewLoc.y>=height-200 && viewLoc.x<=0 )
             ?
           <Button
               className="bp3-button"
@@ -219,7 +218,7 @@ const WorldBuilderMap2 = ({
           />
           }
           {
-            (viewLoc.y >= height+200)
+            (viewLoc.y >= height-200)
               ?
             <Button
               className="bp3-button"
@@ -238,7 +237,7 @@ const WorldBuilderMap2 = ({
             />
           }
           {
-            (viewLoc.y>=height+200 && viewLoc.x > width+250)
+            (viewLoc.y>=height-200 && viewLoc.x > width+250)
             ?
             <Button
               className="bp3-button"

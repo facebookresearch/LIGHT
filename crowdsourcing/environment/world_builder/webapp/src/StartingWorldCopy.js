@@ -1,0 +1,511 @@
+const BlankWorld = {
+    id:1,
+    name: "Starter World",
+    tags:[],
+    agents: [],
+    nodes: {
+              starter_room_0_1: {
+        agent: false,
+        classes: ["room"],
+        contain_size: 100000,
+        contained_nodes: {
+
+        },
+        container_node: {
+          target_id: "VOID"
+        },
+        db_id: null,
+        desc: "",
+        extra_desc: "",
+        name: "Starter Room",
+        name_prefix: "the",
+        names: ["Starter Room"],
+        neighbors: {
+        },
+        node_id: "starter_room_0_1",
+        object: false,
+        room: true,
+        size: 1,
+        grid_location: [0, 0, 0],
+        surface_type: "in"
+      },
+    },
+    objects: [],
+    rooms: ["starter_room_0_1"]
+}
+
+export default BlankWorld
+
+
+// const SimpleWorld = {
+//     id:1,
+//     name: "Simple World",
+//     tags:["#red", "#haunted", "#dry"],
+//     agents: ["kitty_3_5", "orc_2_4"],
+//     nodes: {
+//       church_entryway_1_2: {
+//         agent: false,
+//         classes: ["room"],
+//         contain_size: 100000,
+//         contained_nodes: {
+//           kitty_3_5: {
+//             target_id: "kitty_3_5"
+//           },
+//           muddy_area_6_7: {
+//             target_id: "muddy area_6_7"
+//           },
+//           scroll_9_1: {
+//             target_id: "scroll_9_1"
+//           },
+//           scroll_9_2: {
+//             target_id: "scroll_9_2"
+//           },
+//           scroll_9_3: {
+//             target_id: "scroll_9_3"
+//           },
+//           shovel_5_6: {
+//             target_id: "shovel_5_6"
+//           }
+//         },
+//         container_node: {
+//           target_id: "VOID"
+//         },
+//         db_id: null,
+//         desc: "The church has marble floors and a huge frost window. There are benches made from wood and a big organ can be seen at the front stage. There is gold trim all around the church.",
+//         extra_desc: "The church has marble floors and a huge frost window. There are benches made from wood and a big organ can be seen at the front stage. There is gold trim all around the church.",
+//         name: "Church Entryway",
+//         name_prefix: "the",
+//         names: ["Church Entryway"],
+//         neighbors: {
+//           orc_cave_0_1: {
+//             examine_desc: "You see a path!",
+//             label: "path to the west",
+//             locked_edge: null,
+//             target_id: "orc cave_0_1"
+//           }
+//         },
+//         node_id: "church entryway_1_2",
+//         object: false,
+//         room: true,
+//         size: 1,
+//         grid_location: [0, 0, 0],
+//         surface_type: "in"
+//       },
+//       kitty_3_5: {
+//         agent: true,
+//         aggression: 0,
+//         pacifist: false,
+//         char_type: "creature",
+//         classes: ["agent"],
+//         contain_size: 20,
+//         contained_nodes: {},
+//         container_node: {
+//           target_id: "church entryway_1_2"
+//         },
+//         damage: 1,
+//         db_id: null,
+//         defense: 0,
+//         desc: "Black and white and cute all over.",
+//         followed_by: {},
+//         following: null,
+//         food_energy: 1,
+//         health: 5,
+//         is_player: false,
+//         name: "kitty",
+//         name_prefix: "a",
+//         names: ["kitty"],
+//         tags: ["orc"],
+//         node_id: "kitty_3_5",
+//         object: false,
+//         on_events: null,
+//         persona: "I'm a cute kitty.",
+//         room: false,
+//         size: 20,
+//         speed: 20
+//       },
+//       muddy_area_6_7: {
+//         agent: false,
+//         classes: ["object"],
+//         contain_size: 20,
+//         contained_nodes: {},
+//         container: true,
+//         container_node: {
+//           target_id: "church entryway_1_2"
+//         },
+//         db_id: null,
+//         dead: false,
+//         desc: "A muddy area.",
+//         drink: false,
+//         equipped: null,
+//         food: false,
+//         food_energy: 0,
+//         gettable: false,
+//         locked_edge: null,
+//         name: "muddy area",
+//         name_prefix: "a",
+//         names: ["muddy area"],
+//         node_id: "muddy area_6_7",
+//         object: true,
+//         on_use: null,
+//         room: false,
+//         size: 1,
+//         stats: {
+//           damage: 0,
+//           defense: 0
+//         },
+//         surface_type: "in",
+//         value: 1,
+//         wearable: false,
+//         wieldable: false
+//       },
+//       orc_cave_0_1: {
+//         agent: false,
+//         classes: ["room"],
+//         contain_size: 100000,
+//         contained_nodes: {
+//           orc_2_4: {
+//             target_id: "orc_2_4"
+//           }
+//         },
+//         container_node: {
+//           target_id: "VOID"
+//         },
+//         db_id: null,
+//         desc: "It is a dark cave that is cold and damp inside. The floor is rocks covered in bat poop. It is damp from the ceiling dripping of water. The cave just goes on what seems to be endlessly into the dark abyss. The only light you can see is from the distance entrance of the cave.",
+//         extra_desc: "It is a dark cave that is cold and damp inside. The floor is rocks covered in bat poop. It is damp from the ceiling dripping of water. The cave just goes on what seems to be endlessly into the dark abyss. The only light you can see is from the distance entrance of the cave.",
+//         name: "Orc cave",
+//         name_prefix: "the",
+//         names: ["Orc cave"],
+//         neighbors: {
+//           church_entryway_1_2: {
+//             examine_desc: "You see a path!",
+//             label: "path to the east",
+//             locked_edge: null,
+//             target_id: "church entryway_1_2"
+//           }
+//         },
+//         node_id: "orc cave_0_1",
+//         object: false,
+//         room: true,
+//         size: 1,
+//         grid_location: [1, 0, 0],
+//         surface_type: "in"
+//       },
+//       orc_2_4: {
+//         agent: true,
+//         usually_npc: true,
+//         aggression: 0,
+//         char_type: "creature",
+//         classes: ["agent"],
+//         contain_size: 20,
+//         contained_nodes: {
+//           priceless_piece_of_art_4_3: {
+//             target_id: "priceless piece of art_4_3"
+//           }
+//         },
+//         container_node: {
+//           target_id: "orc cave_0_1"
+//         },
+//         damage: 1,
+//         db_id: null,
+//         defense: 0,
+//         desc: "You really don't have a good reason to be examining this orc closer.",
+//         followed_by: {},
+//         following: null,
+//         food_energy: 1,
+//         health: 10,
+//         is_player: false,
+//         name: "orc",
+//         name_prefix: "an",
+//         names: ["orc"],
+//         node_id: "orc_2_4",
+//         object: false,
+//         tags: ["orc"],
+//         attack_tagged_agents: ["!orc"],
+//         dont_accept_gifts: false,
+//         on_events: [
+//           [
+//             ["SayEvent", "lotr"],
+//             ["SayEvent", "One does not simply mention lotr!"]
+//           ],
+//           [
+//             ["SayEvent", "art"],
+//             [
+//               "SayEvent",
+//               "I might give you this piece of art if you give me something shiny for it."
+//             ]
+//           ],
+//           [
+//             ["SayEvent", "smile at me"],
+//             ["EmoteEvent", "smile"]
+//           ],
+//           [
+//             ["GiveObjectEvent", "ring"],
+//             ["GiveObjectEvent", "art", "other_agent"]
+//           ]
+//         ],
+//         persona: "I am a orc that was born in a cave. I eat corn the most. I have many friends.",
+//         room: false,
+//         size: 20,
+//         speed: 20
+//       },
+//       priceless_piece_of_art_4_3: {
+//         agent: false,
+//         classes: ["object"],
+//         contain_size: 0,
+//         contained_nodes: {},
+//         container: false,
+//         container_node: {
+//           target_id: "orc_2_4"
+//         },
+//         db_id: null,
+//         dead: false,
+//         desc: "A work of art that is has more than monetary value. Mostly owned by kings and wealthy collectors",
+//         drink: false,
+//         equipped: null,
+//         food: false,
+//         food_energy: 0,
+//         gettable: true,
+//         locked_edge: null,
+//         name: "priceless piece of art",
+//         name_prefix: "a",
+//         names: ["priceless piece of art"],
+//         node_id: "priceless piece of art_4_3",
+//         object: true,
+//         on_use: null,
+//         room: false,
+//         size: 1,
+//         stats: {
+//           damage: 0,
+//           defense: 0
+//         },
+//         surface_type: "on",
+//         value: 10,
+//         wearable: false,
+//         wieldable: true
+//       },
+//       shovel_5_6: {
+//         agent: false,
+//         classes: ["object"],
+//         contain_size: 0,
+//         contained_nodes: {},
+//         container: false,
+//         container_node: {
+//           target_id: "church entryway_1_2"
+//         },
+//         db_id: null,
+//         dead: false,
+//         desc: "A shovel",
+//         drink: false,
+//         equipped: null,
+//         food: false,
+//         food_energy: 0,
+//         gettable: true,
+//         locked_edge: null,
+//         name: "shovel",
+//         name_prefix: "a",
+//         names: ["shovel"],
+//         node_id: "shovel_5_6",
+//         object: true,
+//         on_use: [
+//             {
+//             remaining_uses: 1,
+//             events: [
+//               {
+//                 type: "create_entity",
+//                 params: {
+//                   type: "in_used_target_item",
+//                   object: {
+//                     name_prefix: "an",
+//                     is_wearable: true,
+//                     name: "emerald ring",
+//                     desc: "A beautiful and mysterious ring.. could it have magical powers?"
+//                   }
+//                 }
+//               },
+//               {
+//                 type: "broadcast_message",
+//                 params: {
+//                   self_view: "You dig into the sodden mud, and spy something glistening within!"
+//                 }
+//               }
+//             ],
+//             constraints: [
+//               {
+//                 type: "is_holding",
+//                 params: {
+//                   complement: "used_item"
+//                 }
+//               },
+//               {
+//                 type: "used_with_item_name",
+//                 params: {
+//                   item: "muddy area"
+//                 }
+//               }
+//             ]
+//           }
+//         ],
+//         room: false,
+//         size: 1,
+//         stats: {
+//           damage: 1,
+//           defense: 0
+//         },
+//         surface_type: "on",
+//         value: 1,
+//         wearable: false,
+//         wieldable: true
+//       },
+//       scroll_9_1: {
+//         agent: false,
+//         desc: "An old scroll with words you decipher to be: \"facere mortem\". Could this be magic?",
+//         name: "mortem scroll",
+//         drink: false,
+//         equipped: null,
+//         food: true,
+//         food_energy: 2,
+//         name_prefix: "a",
+//         value: 10,
+//         node_id: "scroll_9_1",
+//         container_node: {
+//             target_id: "church entryway_1_2"
+//         },
+//         contained_nodes: {},
+//       object: true,
+//         on_use: [
+//           {
+//             events: [
+//               {
+//                 type: "broadcast_message",
+//                 params: {
+//                   self_view: "You say the words aloud, and runes on the scroll glow with gold.",
+//                   self_as_target_view: "You are struck with searing pain!",
+//                   self_not_target_view: "{recipient_text} is struck with searing pain!",
+//                   room_view: "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} is struck with searing pain!"
+//                 }
+//               },
+//               {
+//                 type: "modify_attribute",
+//                 params: {
+//                   type: "in_used_target_item",
+//                   key: "health",
+//                   value: "-20"
+//                 }
+//               }
+//             ],
+//             constraints: [
+//               {
+//                 type: "is_holding",
+//                 params: {
+//                   complement: "used_item"
+//                 }
+//               },
+//               {
+//                 type: "used_with_agent"
+//               }
+//             ]
+//           }
+//         ]
+//       },
+//       scroll_9_2: {
+//         agent: false,
+//         classes: ["object"],
+//         desc: "An old scroll with words you decipher to be: \"creo magnitudo\". Could this be magic?",
+//         name: "magnitudo scroll",
+//         name_prefix: "a",
+//         node_id: "scroll_9_2",
+//         container_node: { "target_id": "church entryway_1_2" },
+//         contained_nodes: {},
+//         object: true,
+//         on_use: [
+//           {
+//             events: [
+//               {
+//                 type: "broadcast_message",
+//                 params: {
+//                   self_view: "You say the words aloud, and runes on the scroll glow with gold.",
+//                   self_as_target_view: "Suddenly you feel a voluminous about you and you feel ... LARGER! You are  growing!",
+//                   self_not_target_view: "{recipient_text} appears to be growing larger!!!",
+//                   room_view: "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} seems to glow for a second.. and appears to be getting larger!"
+//                 }
+//               },
+//               {
+//                 type: "modify_attribute",
+//                 params: {
+//                   type: "in_used_target_item",
+//                   key: "size",
+//                   value: "+2"
+//                 }
+//               }
+//             ],
+//             constraints: [
+//               {
+//                 type: "is_holding",
+//                 params: {
+//                   complement: "used_item"
+//                 }
+//               },
+//               {
+//                 type: "used_with_agent"
+//               }
+//             ]
+//           }
+//         ]
+//       },
+//       scroll_9_3: {
+//         agent: false,
+//         classes: ["object"],
+//         desc: "An old scroll with words you decipher to be: \"creo dexteritate\". Could this be magic?",
+//         name: "dexteritate scroll",
+//         name_prefix: "a",
+//         node_id: "scroll_9_3",
+//         container_node: { "target_id": "church entryway_1_2" },
+//         contained_nodes: {},
+//         object: true,
+//         on_use: [
+//           {
+//             events: [
+//               {
+//                 type: "broadcast_message",
+//                 params: {
+//                   self_view: "You say the words aloud, and runes on the scroll glow with gold.",
+//                   self_as_target_view: "Suddenly you feel a lightness upon you and you feel more fleet of foot. Your dexterity has increased!",
+//                   self_not_target_view: "{recipient_text} feels a lightness upon them and they feel more fleet of foot. Their dexterity has increased!",
+//                   room_view: "{actor_text} says the words of a scroll aloud, and it glows with gold. {recipient_text} seems to glow for a second."
+//                 }
+//               },
+//               {
+//                 type: "modify_attribute",
+//                 params: {
+//                   type: "in_used_target_item",
+//                   key: "dexterity",
+//                   value: "+2"
+//                 }
+//               }
+//             ],
+//             constraints: [
+//               {
+//                 type: "is_holding",
+//                 params: {
+//                   complement: "used_item"
+//                 }
+//               },
+//               {
+//                 type: "used_with_agent"
+//               }
+//             ]
+//           }
+//         ]
+//       }
+//     },
+//     objects: [
+//       "muddy area_6_7",
+//       "priceless piece of art_4_3",
+//       "shovel_5_6",
+//       "scroll_9_1",
+//       "scroll_9_2",
+//       "scroll_9_3"
+//     ],
+//     rooms: ["church entryway_1_2", "orc cave_0_1"]
+// }

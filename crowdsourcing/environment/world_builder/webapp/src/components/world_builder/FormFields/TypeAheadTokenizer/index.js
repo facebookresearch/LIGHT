@@ -1,4 +1,5 @@
-import React, { useCallback, useState, useEffect } from 'react';
+/* REACT */
+import React, { useState, useEffect } from 'react';
 import { Typeahead, TypeaheadInputMulti } from 'react-bootstrap-typeahead';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -7,66 +8,76 @@ import Token from './Token';
 
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import './styles.css';
-import { BsGear } from 'react-icons/bs';
 
-
+// TypeaheadTokenizer - Allows users to generate new tokens and automatically filters token optinos based on what the user has already typed.
 const TypeaheadTokenizer = ({
-    formLabel,
+    formLabel, //Label
     tokenOptions,
-    worldId,
     sectionName,
-    roomId,
+    containerId,
     tokens,
+    objectWorn,
+    objectWielded,
     tokenType,
     onTokenAddition,
-    onTokenRemoval
+    onTokenRemoval,
+    builderRouterNavigate
 }) => {
     //LOCAL STATE
     const [tokenList, setTokenList] = useState([]);
     const [selected, setSelected] = useState([]);
+
+    /* --- LIFE CYCLE FUNCTIONS --- */
+
     useEffect(() => {
        if(tokens){
-        console.log("DEFAULT TOKENS", tokens)
+        console.log("DEFAULT TOKENS", tokens);
         let updatedtokens = tokens.map((tokenData, index)=>{
             let updatedDefaultTokenData = {
                 index: index,
                 label: tokenData.name,
                 key: tokenData.node_id,
                 data: tokenData
-            }
+            };
             return updatedDefaultTokenData;
-        })
-        setSelected([...updatedtokens])
+        });
+        console.log("UPDATED TOKENS:  ", updatedtokens);
+        setSelected([...updatedtokens]);
        }else{
-        setSelected([])
+        setSelected([]);
        }
-    }, [tokens, roomId])
+    }, [tokens]);
+
+
     useEffect(() => {
         if(tokenOptions.length){
-            console.log("TOKEN OPTIONS    ", tokenOptions)
             let updatedTokenList = tokenOptions.map((tokendata, index)=>{
-                let updatedTokenData = {
+                let updatedTokenData = {...tokendata}
+                if(objectWorn){
+                    updatedTokenData = {...updatedTokenData, wearable: objectWorn, equipped:"equipped" }
+                }
+                if(objectWielded){
+                    updatedTokenData = {...updatedTokenData, wieldable: objectWielded, equipped:"equipped" }
+                }
+
+                let updatedToken = {
                     index: index,
                     label: tokendata.name,
                     key: tokendata.node_id,
                     data: tokendata
-                }
-                return updatedTokenData;
+                };
+                return updatedToken;
             })
-            setTokenList(updatedTokenList)
+            setTokenList(updatedTokenList);
         }
-    }, [tokenOptions])
+    }, [tokenOptions]);
 
 console.log(formLabel, tokenOptions)
 const SelectHandler = (selected)=>{
-    console.log("SELECTED:  ",selected);
     selected.map((selectedToken, index)=>{
         const {id, data, customOption, label}= selectedToken;
-
-
-        let selectedUpdate
+        let selectedUpdate;
         if(index==(selected.length-1)){
-            console.log("TOKEN TYPE:  ", tokenType, customOption)
                 if( tokenType === 'characters'){
                     if(customOption){
                         let newCharacterTokenData = {
@@ -79,7 +90,7 @@ const SelectHandler = (selected)=>{
                             classes:["agent"],
                             contain_size: 0,
                             contained_nodes:{},
-                            container_node:{target_id: roomId},
+                            container_node:{target_id: containerId},
                             damage:1,
                             db_id:null,
                             dead:false,
@@ -114,22 +125,17 @@ const SelectHandler = (selected)=>{
                             tags:[],
                             usually_npc:false
                         };
-                        console.log("NEW CHAR DATA:  ", newCharacterTokenData)
                         let newCharacterToken = {
-                            key:{label},
+                            key: label,
                             label: label,
                             data: newCharacterTokenData
-                        }
-                        console.log("NEW CHAR TOKEN DATA:  ", newCharacterToken)
-                        selectedToken= newCharacterToken
-                        console.log("NEW CHAR UPDATE:  ", selectedUpdate)
+                        };
+                        selectedToken= newCharacterToken;
                     }else{
-                        selectedUpdate= selectedToken
-                        console.log("NEW CHAR UPDATE:  ", selectedUpdate)
-                    }
-                }
+                        selectedUpdate= selectedToken;
+                    };
+                };
                 if( tokenType === 'objects'){
-                    console.log("OBJECTO:  ", selectedToken)
                     if(customOption){
                         let newObjectTokenData = {
                             agent:false,
@@ -137,12 +143,12 @@ const SelectHandler = (selected)=>{
                             contain_size: 0,
                             contained_nodes:{},
                             container: false,
-                            container_node:{target_id: roomId},
+                            container_node:{target_id: containerId},
                             db_id:null,
                             dead:false,
                             desc:"",
                             drink:false,
-                            equipped:null,
+                            equipped: (objectWorn ? "worn" : (objectWielded ? "wielded" : null)),
                             food:false,
                             food_energy:0,
                             gettable:true,
@@ -158,23 +164,22 @@ const SelectHandler = (selected)=>{
                             stats:{damage:0, defense:0},
                             surface_type:"on",
                             value: 1,
-                            wearable: false,
-                            wieldable: false
+                            wearable: objectWorn,
+                            wieldable: objectWielded
                         };
                         let newObjectToken = {
                             key:{label},
                             label: label,
                             data: newObjectTokenData
-                        }
-                        selectedToken= newObjectToken
-                    }
-                }
-            selectedUpdate= selectedToken
-            console.log("ON TOKEN ADDITION DATA:  ", selectedUpdate)
-            onTokenAddition(selectedUpdate.data)
-        }
-    })
-}
+                        };
+                        selectedToken= newObjectToken;
+                    };
+                };
+            selectedUpdate= selectedToken;
+            onTokenAddition(selectedUpdate.data);
+        };
+    });
+};
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -191,19 +196,21 @@ const SelectHandler = (selected)=>{
             placeholder="Select one"
             renderInput={(inputProps, props) => (
             <TypeaheadInputMulti {...inputProps} selected={selected}>
-                {selected.length ? selected.map((option, idx) => (
-                    <Token
-                        index={idx}
-                        option={option}
-                        key={option.key}
-                        worldId={worldId}
-                        sectionName={sectionName}
-                        roomId={roomId}
-                        deleteTokenFunction={onTokenRemoval}
-                    >
-                        {option.label.toUpperCase()}
-                    </Token>
-                )):
+                {selected.length ? selected.map((option, idx) => {
+                    return (
+                        <Token
+                            index={idx}
+                            option={option}
+                            key={option.key === null ? idx : option.key}
+                            sectionName={sectionName}
+                            containerId={containerId}
+                            deleteTokenFunction={onTokenRemoval}
+                            builderRouterNavigate={builderRouterNavigate}
+                        >
+                            {option.label.toUpperCase()}
+                        </Token>
+                    )
+                }):
                 null}
             </TypeaheadInputMulti>
             )}

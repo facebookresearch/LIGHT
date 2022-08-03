@@ -17,13 +17,36 @@ from mephisto.abstractions.blueprints.remote_procedure.remote_procedure_blueprin
     SharedRemoteProcedureTaskState,
     RemoteProcedureAgentState,
 )
+from common_sense_agent_utils import CommonSenseAgent
+import json
+from graph_converter_utils import (add_object_to_graph, 
+                                    add_object_secondary_objects_to_graph,
+                                    add_character_to_graph, 
+                                    add_character_secondary_objects_to_graph,
+                                    get_room_content_from_json, 
+                                    replace_binarized_attributes_with_description, 
+                                    run_create_char, 
+                                    run_create_obj, 
+                                    modify_room_attrs)
 
 from omegaconf import DictConfig, MISSING
 from typing import List, Any, Dict
 from dataclasses import dataclass, field
 
+from light.data_model.light_database import LIGHTDatabase
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import linear_kernel
+
+from build_room_data import ALL_CHARACTERS, ALL_OBJECTS, ROOM_ID_TO_ITEMS
+import numpy as np
+from config import LIGHT_DB_PATH
+import copy
+
 MAX_INCORRECT = 3
 
+##############################
+# TODO: add suggestion id
+############### ###############
 
 def get_salted_hash(in_string, salt):
     """Return a hash string for the given string using sha-256"""
@@ -64,33 +87,595 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # TODO implement once we have an onboarding
         return True
 
-    # TODO initialize agent as necessary for the below
+    # USE_MODEL = False
+    USE_MODEL = True
+    MODEL_NAME = "bart_all_simple_Sun_Jan_23/c9d"
+    world_builder_agent = None
+    # force = False
+    force = True
+    opt_file = f"/checkpoint/alexgurung/light/common_sense/add_format/{MODEL_NAME}/model.opt"
+    if os.path.exists(opt_file):
+        with open(opt_file) as f:
+            opt = json.load(f)
+
+        if "override" not in opt:
+            opt['override'] = {}
+        opt['override']['skip_generation'] = False
+        
+        # TODO initialize agent as necessary for the below
+        world_builder_agent = CommonSenseAgent(
+            opt, model_name=MODEL_NAME, force_add=force, verbose=False, count_errors=True
+            )
+
+    db = None
+    obj_vectorizer, obj_vectors, all_objects = None, None, None
+    char_vectorizer, char_vectors, all_chars = None, None, None
+    room_vectorizer, room_vectors, all_rooms = None, None, None
+    if os.path.exists(LIGHT_DB_PATH):
+        db = LIGHTDatabase(LIGHT_DB_PATH)
+        with db as ldb:
+            all_objects = [dict(obj) for obj in ldb.get_object()]
+
+        with db as ldb:
+            all_chars = [dict(obj) for obj in ldb.get_character()]
+
+        with db as ldb:
+            all_rooms = [dict(obj) for obj in ldb.get_room()]
+
+        room_vectorizer = TfidfVectorizer(stop_words="english")
+        room_texts = [room["name"] + "\n" + room['description'] for room in all_rooms]
+        room_vectors = room_vectorizer.fit_transform(room_texts)
+
+        obj_vectorizer = TfidfVectorizer(stop_words="english")
+        obj_texts = [obj["name"] + "\n" + obj['description'] for obj in ALL_OBJECTS]
+        # obj_texts = [obj["name"] + "\n" + obj['physical_description'] for obj in all_objects]
+        obj_vectors = obj_vectorizer.fit_transform(obj_texts)
+
+        char_vectorizer = TfidfVectorizer(stop_words="english")
+        # char_texts = [char["name"] + "\n" + char['physical_description'] + "\n" + char["persona"] for char in all_chars]
+        char_texts = [char["name"] + "\n" + char['desc'] + "\n" + char["persona"] for char in ALL_CHARACTERS]
+        char_vectors = char_vectorizer.fit_transform(char_texts)
+        print(f"SET UP VECTORS")
+    
+    def get_most_similar(item, item_type):
+        item_text = item['name']
+        vectorizer = obj_vectorizer
+        type_vectors = obj_vectors
+        # all_items = all_objects
+        all_items = ALL_OBJECTS
+        if item_type == "object":
+            item_text += "\n" + item.get('physical_description', '')
+        elif item_type == "character":
+            item_text += "\n" + item.get('desc', '') + "\n" + item.get('persona', '')
+            vectorizer = char_vectorizer
+            type_vectors = char_vectors
+            # all_items = all_chars
+            all_items = ALL_CHARACTERS
+        else:
+            item_text += "\n" + item.get('desc') + "\n"
+            vectorizer = room_vectorizer
+            type_vectors = room_vectors
+            all_items = all_rooms
+
+        item_vec = vectorizer.transform([item_text])
+        cosine_similarities = linear_kernel(item_vec, type_vectors).flatten()
+        max_index = np.argmax(cosine_similarities)
+        return all_items[max_index]
 
     def suggest_room(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
     ):
         # Use add_room_description and add_room_backstory to fill these
         # from a title alone
+        print("SUGGEST ROOM")
+        print(f"args: {args}")
+        target_room = args["target_room"]
         room_graph = args["room_graph"]
-        pass
+        original_rooms = room_graph['rooms']
+        original_ids = set(room_graph['nodes'].keys())
+        if target_room not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_room} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
+        if world_builder_agent is None or not USE_MODEL:
+            print("No world builder model found, path does not point to file")
+            try:
+                if db is not None:
+                    print("using tfidf vectorizer to find similar room")
+                    print(f"USING ROOM: ")
+                    print(room_graph['nodes'][target_room])
+                    most_similar = get_most_similar(room_graph['nodes'][target_room], "room")
+                    print(most_similar)
+                    room_desc = most_similar['description']
+                    room_backstory = most_similar['backstory']
+                    room_graph['nodes'][target_room]['desc'] = room_desc
+                    room_graph['nodes'][target_room]['extra_desc'] = room_backstory
+                    room_graph['nodes'][target_room]['from_retrieval'] = True
+                # return room_graph
+            except Exception as e:
+                print("EXCEPTION FOUND")
+                print(e)
+                pass
+            new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+            return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_room]}
+            
+        try:
+            room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
+            room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
+            room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
+
+            # cur_room = room_graph['rooms']
+            cur_room = target_room.replace(" ", "_")
+            room_graph['rooms'] = [cur_room]
+            cur_room = target_room.replace(" ", "_")
+            
+            print(f"cur_room {cur_room}")
+            converted_graph = get_room_content_from_json(room_graph)
+            print(f"converted graph")
+            print(converted_graph)
+
+            graph = world_builder_agent.add_room_description(converted_graph)
+            graph = world_builder_agent.add_room_backstory(graph)
+            print(f"Adding description: {graph['description']}")
+            print(f"Adding backstory: {graph['background']}")
+            room_graph = modify_room_attrs(room_graph, cur_room, "desc", graph["description"])
+            room_graph = modify_room_attrs(room_graph, cur_room, "extra_desc", graph["background"])
+        except Exception as e:
+            print(f"Exception found:")
+            print(e)
+            print("Returning room graph at current stage")
+            pass
+        # final step, fix the room list
+        # room_graph['rooms'] = original_rooms
+        # return room_graph
+        new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_room]}
 
     def suggest_room_contents(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
     ):
         room_graph = args["room_graph"]
         target_room = args["target_room"]
-        # Use `add_object` and `add_character` to generate a list of suggestions for
-        # objects and characters
-        pass
+        original_rooms = room_graph['rooms']
+        original_ids = set(room_graph['nodes'].keys())
+        if target_room not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_room} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
+        if world_builder_agent is None or not USE_MODEL:
+            print("No world builder model found, path does not point to file")
+            try:
+                if db is not None:
+                    print("using tfidf vectorizer to find similar room")
+                    print(f"USING ROOM: ")
+                    print(room_graph['nodes'][target_room])
+                    most_similar = get_most_similar(room_graph['nodes'][target_room], "room")
+                    items_from_most_similar = ROOM_ID_TO_ITEMS[most_similar['id']]
+                    objects = items_from_most_similar['objects']
+                    characters = items_from_most_similar['characters']
+                    for o in objects:
+                        o['container_node']['target_id'] = target_room
+                        o['from_retrieval'] = True
+                        node_id = o['node_id']
+                        if node_id not in room_graph:
+                            room_graph['nodes'][node_id] = o
+                            room_graph['objects'].append(node_id)
+                            room_graph['nodes'][target_room]['contained_nodes'][node_id] = {'target_id': node_id}
+                    for c in characters:
+                        c['container_node']['target_id'] = target_room
+                        c['from_retrieval'] = True
+                        node_id = c['node_id']
+                        if node_id not in room_graph:
+                            room_graph['nodes'][node_id] = c
+                            room_graph['agents'].append(node_id)
+                            room_graph['nodes'][target_room]['contained_nodes'][node_id] = {'target_id': node_id}
+            except Exception as e:
+                print("EXCEPTION FOUND")
+                print(e)
+                pass
+            # return room_graph
+            new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+            return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_room]}
+        try:
+            room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
+            room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
+            room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
+
+            cur_room = target_room.replace(" ", "_")
+            room_graph['rooms'] = [cur_room]
+
+            
+            graph = get_room_content_from_json(room_graph)
+
+            ########################
+            # Add Object
+            ########################
+            graph, obj_name_diff = run_create_obj(graph, world_builder_agent, count=3)
+            new_objects = [o for o in graph['objects'] if o['name'] in obj_name_diff]
+            for o in new_objects:
+                room_graph = add_object_to_graph(room_graph, cur_room, o)
+
+            ########################
+            # Add Character
+            ########################
+            graph, char_name_diff = run_create_char(graph, world_builder_agent, count=3)
+            new_chars = [c for c in graph['characters'] if c['name'] in char_name_diff]
+            for c in new_chars:
+                print(f"Adding {c['name']} to graph")
+                room_graph = add_character_to_graph(room_graph, cur_room, c)
+            print(f"new room graph")
+            print(room_graph)
+            print(f"new_chars: {[c['name'] for c in new_chars]}")
+            print(f"new_objs: {[c['name'] for c in new_objects]}")
+        except Exception as e:
+            print(f"Exception found:")
+            print(e)
+            print("Returning room graph at current stage")
+            pass
+        # final step, fix the room list
+        # room_graph['rooms'] = original_rooms
+        # return room_graph
+        new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_room]}
 
     def suggest_character_contents(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
     ):
         room_graph = args["room_graph"]
         target_room = args["target_room"]
+        target_id = args["target_id"]
+        print(f"Target ID: {target_id}")
+        print(f"Target Room: {target_room}")
+        original_ids = set(room_graph['nodes'].keys())
+        if target_id not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_id} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
+        if world_builder_agent is None or not USE_MODEL:
+            print("No world builder model found, path does not point to file")
+            try:
+                if db is not None:
+                    print("using tfidf vectorizer to find similar character")
+                    print(f"USING CHARACTER: ")
+                    print(room_graph['nodes'][target_id])
+                    most_similar = get_most_similar(room_graph['nodes'][target_id], "character")
+                    print(most_similar)
+                    similar_wearing = most_similar.get("wearing_objects", [])
+                    similar_carrying = most_similar.get("carrying_objects", [])
+                    similar_wielding = most_similar.get("wielding_objects", [])
+                    
+                    room_graph = add_character_secondary_objects_to_graph(room_graph, target_id, similar_carrying, similar_wielding, similar_wearing)
+            except Exception as e:
+                print("EXCEPTION FOUND")
+                print(e)
+                pass
+            # return room_graph
+            new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+        
+            return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
         # Use `add_character_wearing`, `add_character_wielding`, `add_character_carrying`
         # to create three lists of suggestions
-        pass
+        try:
+            room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
+            room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
+            room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
+
+            cur_room = target_room.replace(" ", "_")
+            original_rooms = room_graph['rooms']
+            room_graph['rooms'] = [cur_room]
+
+            target_id = args["target_id"]
+
+            target_name = target_id
+
+            for n, node in room_graph["nodes"].items():
+                if n == target_id:
+                    target_name = node['name']
+                    break
+            
+            graph = get_room_content_from_json(room_graph)
+
+            character_dict = None
+            for c in graph['characters']:
+                if c['name'] == target_name:
+                    character_dict = c
+                    break
+            original_carried = copy.deepcopy(character_dict.get('carrying_objects', []))
+            original_wielded = copy.deepcopy(character_dict.get('wielding_objects', []))
+            original_worn = copy.deepcopy(character_dict.get('wearing_objects', []))
+
+            graph = world_builder_agent.add_character_carrying(
+                graph, target_name, count=3
+            )
+            graph = world_builder_agent.add_character_wearing(
+                graph, target_name, count=3
+            )
+            graph = world_builder_agent.add_character_wielding(
+                graph, target_name, count=3
+            )
+            character_dict = None
+            for c in graph['characters']:
+                if c['name'] == target_name:
+                    character_dict = c
+                    break
+            
+            # this should only modify 2 parts of the room graph
+            # 1) contained_nodes section of the corresponding character
+            # 2) the list of objects (which could contain more objects)
+            carried = character_dict.get('carrying_objects', [])
+            wielded = character_dict.get('wielding_objects', [])
+            worn = character_dict.get('wearing_objects', [])
+            new_carried = [o for o in carried if o not in original_carried]
+            new_wielded = [o for o in wielded if o not in original_wielded]
+            new_worn = [o for o in worn if o not in original_worn]
+            print(graph)
+            print(new_carried)
+            print(new_wielded)
+            print(new_worn)
+
+            graph = add_character_secondary_objects_to_graph(room_graph, target_id, new_carried, new_wielded, new_worn)
+            print(graph)
+            room_graph = graph
+        except Exception as e:
+            print(f"Exception found:")
+            print(e)
+            print("Returning room graph at current stage")
+            pass
+        # final step, fix the room list
+        # room_graph['rooms'] = original_rooms
+        # return room_graph
+        new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+        print(f"Adding new_ids: {new_ids}")
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
+
+    def suggest_object_description(
+        _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
+    ):
+        room_graph = args["room_graph"]
+        target_room = args["target_room"]
+        target_id = args["target_id"]
+        original_ids = set(room_graph['nodes'].keys())
+        if target_id not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_id} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
+        if world_builder_agent is None or not USE_MODEL:
+            print("No world builder model found, path does not point to file")
+            try:
+                if db is not None:
+                    print("using tfidf vectorizer to find similar object")
+                    print(f"USING OBJECT: ")
+                    print(room_graph['nodes'][target_id])
+                    most_similar = get_most_similar(room_graph['nodes'][target_id], "object")
+                    print(most_similar)
+
+                    new_description = most_similar["description"]
+                    
+                    room_graph['nodes'][target_id]['desc'] = new_description
+                    room_graph['nodes'][target_id]['from_retrieval'] = True
+            except Exception as e:
+                print("EXCEPTION FOUND")
+                print(e)
+                pass
+            # return room_graph
+            new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+            return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
+        try:
+            room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
+            room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
+            room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
+
+            cur_room = target_room.replace(" ", "_")
+            original_rooms = room_graph['rooms']
+            room_graph['rooms'] = [cur_room]
+
+            target_id = args["target_id"]
+
+            target_name = target_id
+            for n, node in room_graph["nodes"].items():
+                if n == target_id:
+                    target_name = node['name']
+                    break
+            
+            graph = get_room_content_from_json(room_graph)
+
+            graph = world_builder_agent.add_object_description(
+                graph, target_name
+            )
+            print("OUTPUT GRAPH")
+            print(graph)
+            target_obj = None
+            for o in graph['objects']:
+                if o['name'] == target_name:
+                    target_obj = o
+                    break
+            if target_obj is None:
+                for o1 in graph['objects']:
+                    for o in o1.get('containing_objects', []):
+                        if o['name'] == target_name:
+                            target_obj = o
+                            break
+                    if target_obj is not None:
+                        break
+                for c in graph['characters']:
+                    for secondary_list in [
+                        "carrying_objects",
+                        "wearing_objects",
+                        "wielding_objects",
+                    ]:
+                        for o in c.get(secondary_list, []):
+                            if o['name'] == target_name:
+                                target_obj = o
+                                break
+                        if target_obj is not None:
+                            break
+                    if target_obj is not None:
+                        break
+            print(f"TARGET OBJ: {target_obj}")
+            room_graph['nodes'][target_id]['desc'] = target_obj['description']
+            room_graph['nodes'][target_id]['from_model'] = True
+            print(f"Model predicted desc: {target_obj['description']}")
+
+        except Exception as e:
+            print(f"Exception found:")
+            print(e)
+            print("Returning room graph at current stage")
+            pass
+        # final step, fix the room list
+        # room_graph['rooms'] = original_rooms
+        # return room_graph
+        new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
+    
+    def suggest_character_description(
+        _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
+    ):
+        room_graph = args["room_graph"]
+        target_room = args["target_room"]
+        target_id = args["target_id"]
+        original_ids = set(room_graph['nodes'].keys())
+        if target_id not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_id} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
+        if world_builder_agent is None or not USE_MODEL:
+            print("No world builder model found, path does not point to file")
+            try:
+                if db is not None:
+                    print("using tfidf vectorizer to find similar character")
+                    print(f"USING CHARACTER: ")
+                    print(room_graph['nodes'][target_id])
+                    most_similar = get_most_similar(room_graph['nodes'][target_id], "character")
+                    print(most_similar)
+
+                    new_description = most_similar["desc"]
+                    new_persona = most_similar["persona"]
+                    # print(f"new desc: {new_description}")
+                    # print(f"persona: {new_persona}")
+                    room_graph['nodes'][target_id]['desc'] = new_description
+                    room_graph['nodes'][target_id]['from_retrieval'] = True
+            except Exception as e:
+                print("EXCEPTION FOUND")
+                print(e)
+                pass
+            # return room_graph
+            new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+            return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
+        try:
+            room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
+            room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
+            room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
+
+            cur_room = target_room.replace(" ", "_")
+            original_rooms = room_graph['rooms']
+            room_graph['rooms'] = [cur_room]
+
+            target_id = args["target_id"]
+
+            target_name = target_id
+            for n, node in room_graph["nodes"].items():
+                if n == target_id:
+                    target_name = node['name']
+                    break
+            
+            graph = get_room_content_from_json(room_graph)
+
+            graph = world_builder_agent.add_character_description(
+                graph, target_name
+            )
+            print("OUTPUT GRAPH")
+            print(graph)
+            target_char = None
+            for node in graph["characters"]:
+                if node['name'] == target_name:
+                    target_char = node
+                    break
+            print(f"TARGET CHAR: {target_char}")
+            room_graph['nodes'][target_id]['desc'] = target_char['desc']
+            room_graph['nodes'][target_id]['from_model'] = True
+            print(f"Model predicted desc: {target_char['desc']}")
+
+        except Exception as e:
+            print(f"Exception found:")
+            print(e)
+            print("Returning room graph at current stage")
+            pass
+        # final step, fix the room list
+        # room_graph['rooms'] = original_rooms
+        # return room_graph
+        new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
+
+    def suggest_character_persona(
+        _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
+    ):
+        room_graph = args["room_graph"]
+        target_room = args["target_room"]
+        target_id = args["target_id"]
+        original_ids = set(room_graph['nodes'].keys())
+        if target_id not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_id} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
+        if world_builder_agent is None or not USE_MODEL:
+            print("No world builder model found, path does not point to file")
+            try:
+                if db is not None:
+                    print("using tfidf vectorizer to find similar character")
+                    print(f"USING CHARACTER: ")
+                    print(room_graph['nodes'][target_id])
+                    most_similar = get_most_similar(room_graph['nodes'][target_id], "character")
+                    print(most_similar)
+                    new_persona = most_similar["persona"]
+                    # print(f"new desc: {new_description}")
+                    # print(f"persona: {new_persona}")
+                    room_graph['nodes'][target_id]['persona'] = new_persona
+                    room_graph['nodes'][target_id]['from_retrieval'] = True
+            except Exception as e:
+                print("EXCEPTION FOUND")
+                print(e)
+                pass
+            # return room_graph
+            new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+            return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
+        try:
+            room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
+            room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
+            room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
+
+            cur_room = target_room.replace(" ", "_")
+            original_rooms = room_graph['rooms']
+            room_graph['rooms'] = [cur_room]
+
+            target_id = args["target_id"]
+
+            target_name = target_id
+            for n, node in room_graph["nodes"].items():
+                if n == target_id:
+                    target_name = node['name']
+                    break
+            
+            graph = get_room_content_from_json(room_graph)
+
+            graph = world_builder_agent.add_character_persona(
+                graph, target_name
+            )
+            print("OUTPUT GRAPH")
+            print(graph)
+            target_char = None
+            for node in graph["characters"]:
+                if node['name'] == target_name:
+                    target_char = node
+                    break
+            print(f"TARGET CHAR: {target_char}")
+            room_graph['nodes'][target_id]['persona'] = target_char['persona']
+            room_graph['nodes'][target_id]['from_model'] = True
+            print(f"Model predicted persona: {target_char['persona']}")
+
+        except Exception as e:
+            print(f"Exception found:")
+            print(e)
+            print("Returning room graph at current stage")
+            pass
+        # final step, fix the room list
+        # room_graph['rooms'] = original_rooms
+        # return room_graph
+        new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
 
     def suggest_object_contents(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
@@ -98,7 +683,130 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         room_graph = args["room_graph"]
         target_room = args["target_room"]
         # Use `add_object_contains` to create a list of object suggestions
-        pass
+        target_id = args["target_id"]
+        original_ids = set(room_graph['nodes'].keys())
+        if target_id not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_id} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
+        if world_builder_agent is None:
+            print("No world builder model found, path does not point to file")
+            try:
+                if db is not None:
+                    print("using tfidf vectorizer to find similar character")
+                    print(f"USING CHARACTER: ")
+                    print(room_graph['nodes'][target_id])
+                    most_similar = get_most_similar(room_graph['nodes'][target_id], "object")
+                    print(most_similar)
+                    similar_contained = most_similar.get("containing_objects", [])
+                    
+                    room_graph = add_object_secondary_objects_to_graph(room_graph, target_id, similar_contained)
+            except Exception as e:
+                print("EXCEPTION FOUND")
+                print(e)
+                pass
+        try:    
+            room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
+            room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
+            room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
+
+            cur_room = target_room.replace(" ", "_")
+            original_rooms = room_graph['rooms']
+            room_graph['rooms'] = [cur_room]
+
+            graph = get_room_content_from_json(room_graph)
+            print("ROOM CONTENT")
+            print(graph)
+            # find the target object to get the underlying name
+            target_name = target_id
+            for n, node in room_graph["nodes"].items():
+                if n == target_id:
+                    target_name = node['name']
+                    break
+            
+            # find the corresponding object dict in the model-graph to get the contained objects
+            object_dict = None
+            for o in graph['objects']:
+                if o['name'] == target_name:
+                    object_dict = o
+                    break
+            if object_dict is None:
+                for o1 in graph['objects']:
+                    for o in o1.get('containing_objects', []):
+                        if o['name'] == target_name:
+                            object_dict = o
+                            break
+                    if object_dict is not None:
+                        break
+                for c in graph['characters']:
+                    for secondary_list in [
+                        "carrying_objects",
+                        "wearing_objects",
+                        "wielding_objects",
+                    ]:
+                        for o in c.get(secondary_list, []):
+                            if o['name'] == target_name:
+                                object_dict = o
+                                break
+                        if object_dict is not None:
+                            break
+                    if object_dict is not None:
+                        break
+            
+            original_contains = copy.deepcopy(object_dict.get('containing_objects', []))
+            
+            # add objects to model-graph default number to attempt is 3
+            graph = world_builder_agent.add_object_contains(
+                graph, target_name, count=3
+            )
+            # find the corresponding object again, this time it will have the new contained objects
+            object_dict = None
+            for o in graph['objects']:
+                if o['name'] == target_name:
+                    object_dict = o
+                    break
+            if object_dict is None:
+                for o1 in graph['objects']:
+                    for o in o1.get('containing_objects', []):
+                        if o['name'] == target_name:
+                            object_dict = o
+                            break
+                    if object_dict is not None:
+                        break
+                for c in graph['characters']:
+                    for secondary_list in [
+                        "carrying_objects",
+                        "wearing_objects",
+                        "wielding_objects",
+                    ]:
+                        for o in c.get(secondary_list, []):
+                            if o['name'] == target_name:
+                                object_dict = o
+                                break
+                        if object_dict is not None:
+                            break
+                    if object_dict is not None:
+                        break
+            
+            # this should only modify 2 parts of the room graph
+            # 1) contained_nodes section of the corresponding object
+            # 2) the list of objects (which could contain more objects)
+            # contains = object_dict.get('carrying_objects', [])
+            contains = object_dict.get('containing_objects', [])
+            
+            new_contains = [o for o in contains if o not in original_contains]
+            print(f"CONTAINS AFTER: {contains}")
+            print(f"CONTAINS BEFORE: {original_contains}")
+            print(f"NEW CONTAINS: {new_contains}")
+            graph = add_object_secondary_objects_to_graph(room_graph, target_id, new_contains)
+        except Exception as e:
+            print(f"Exception found:")
+            print(e)
+            print("Returning room graph at current stage")
+            pass
+        # final step, fix the room list
+        # room_graph['rooms'] = original_rooms
+        new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
 
     def fill_object(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
@@ -106,8 +814,42 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # Fill the attributes and contents of object_id with `add_all_static_attributes`
         # and `add_all_object_attributes`
         room_graph = args["room_graph"]
-        room_graph = args["object_id"]
-        pass
+        target_room = args["target_room"]
+        target_id = args["object_id"]
+        original_ids = set(room_graph['nodes'].keys())
+        if target_id not in room_graph['nodes']:
+            print(f"TARGET ITEM {target_id} NOT FOUND")
+            return {'new_items':[],'updated_item':None}
+        if world_builder_agent is None:
+            print("No world builder model found, path does not point to file")
+            # return room_graph
+            return {'new_items':[], 'updated_item':room_graph['nodes'][target_id]}
+
+        room_graph['rooms'] = [r.replace(" ", "_") for r in room_graph['rooms']]
+        room_graph['objects'] = [r.replace(" ", "_") for r in room_graph['objects']]
+        room_graph['agents'] = [r.replace(" ", "_") for r in room_graph['agents']]
+
+        cur_room = target_room.replace(" ", "_")
+        original_rooms = room_graph['rooms']
+        room_graph['rooms'] = [cur_room]
+
+        graph = get_room_content_from_json(room_graph)
+
+        target_name = target_id
+        for n, node in args["nodes"].items():
+            if n == target_id:
+                target_name = node['name']
+                break
+        
+        graph = world_builder_agent.add_all_object_attributes(
+            graph, target_name, count=3
+        )
+
+
+        room_graph['rooms'] = original_rooms
+        # return room_graph
+        new_ids = [k for k in room_graph['nodes'].keys() if k not in original_ids]
+        return {'new_items':[room_graph['nodes'][i] for i in new_ids], 'updated_item':room_graph['nodes'][target_id]}
 
     def fill_character(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
@@ -115,19 +857,28 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         # Fill the attributes and contents of character_id with `add_all_character_attributes`
         room_graph = args["room_graph"]
         room_graph = args["character_id"]
-        pass
+        if world_builder_agent is None:
+            print("No world builder model found, path does not point to file")
+            return room_graph
+        return room_graph
 
     def fill_room(
         _request_id: str, args: Dict[str, Any], agent_state: RemoteProcedureAgentState
     ):
         # Use add_object, add_character, fill_object, and fill_character to fill out this room
         room_graph = args["room_graph"]
-        pass
+        if world_builder_agent is None:
+            print("No world builder model found, path does not point to file")
+            return room_graph
+        return room_graph
 
     function_registry = {
         "suggest_room_contents": suggest_room_contents,
+        "suggest_character_description": suggest_character_description,
+        "suggest_character_persona": suggest_character_persona,
         "suggest_character_contents": suggest_character_contents,
         "suggest_object_contents": suggest_object_contents,
+        "suggest_object_description": suggest_object_description,
         "suggest_room": suggest_room,
         "fill_object": fill_object,
         "fill_character": fill_character,

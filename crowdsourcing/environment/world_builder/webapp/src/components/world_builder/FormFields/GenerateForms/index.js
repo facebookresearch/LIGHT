@@ -10,25 +10,37 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 //FORM
-import Form from 'react-bootstrap/Form'
+import Form from 'react-bootstrap/Form';
 //BUTTON
-import Button from 'react-bootstrap/Button'
-
+import Button from 'react-bootstrap/Button';
+//SPINNER
+import Spinner from 'react-bootstrap/Spinner';
 /* CUSTOM COMPONENTS */
+import GenerateButton from "../../Buttons/GenerateButton";
 
-const GenerateForms = ({label, value, changeHandler, clickFunction})=> {
+const GenerateForms = ({
+    label,
+    value,
+    changeHandler,
+    clickFunction,
+    generateButtonLabel,
+    isLoading
+})=> {
+
   return (
-    <div className="generateform-container">
+    <Container className="generateform-container">
         <Form>
                 <Row>
                     <Col xs={4}>
                         <Form.Label>{label}</Form.Label>
                     </Col>
-                    <Col xs={6}/>
+
                     <Col xs={2}>
-                        <Button onClick={clickFunction} variant="primary" type="submit">
-                            Generate
-                        </Button>
+                        <GenerateButton
+                            clickFunction={clickFunction}
+                            label ={generateButtonLabel}
+                            isLoading={isLoading}
+                        />
                     </Col>
                 </Row>
                 <Row style={{marginTop:"5px"}}>
@@ -37,7 +49,7 @@ const GenerateForms = ({label, value, changeHandler, clickFunction})=> {
                     </Col>
                 </Row>
         </Form>
-    </div>
+    </Container>
 
   );
 }

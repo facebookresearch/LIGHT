@@ -1,9 +1,11 @@
 /* REACT */
 import React from "react";
-//VIEWS
+// VIEWS
 import PreviewView from "./Views/PreviewView"
 import Task from "./Views/Task"
 import OnboardingView from "./Views/OnboardingView"
+/* BOOTSTRAP STYLES */
+import 'bootstrap/dist/css/bootstrap.min.css';
 // Task context
 import {
   MephistoContext,
@@ -50,6 +52,9 @@ function LIGHTAppTaskFrame() {
   const getRoomFill = remoteProcedure("fill_room")
   const suggestRoomContents = remoteProcedure("suggest_room_contents")
   const suggestCharacterContents = remoteProcedure("suggest_character_contents")
+  const suggestObjectDescription = remoteProcedure("suggest_object_description")
+  const suggestCharacterDescription = remoteProcedure("suggest_character_description")
+  const suggestCharacterPersona = remoteProcedure("suggest_character_persona")
   const suggestObjectContents = remoteProcedure("suggest_object_contents")
   const getObjectFill = remoteProcedure("fill_object")
   const getCharacterFill = remoteProcedure("fill_character")
@@ -58,6 +63,9 @@ function LIGHTAppTaskFrame() {
     getRoomFill,
     suggestRoomContents,
     suggestCharacterContents,
+    suggestCharacterDescription,
+    suggestCharacterPersona,
+    suggestObjectDescription,
     suggestObjectContents,
     getObjectFill,
     getCharacterFill,
@@ -81,6 +89,7 @@ function LIGHTAppTaskFrame() {
   return (
     <ErrorBoundary handleError={handleFatalError}>
       <MephistoContext.Provider value={mephistoProps}>
+
         <div className="container-fluid" id="ui-container">
           <Task
             api={api}
