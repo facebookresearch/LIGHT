@@ -1,19 +1,19 @@
 /* REACT */
 import React, { useState, useEffect } from "react";
 /* REDUX */
-import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
-import { updateSelectedTip } from "../../../../../features/tutorials/tutorials-slice";
+import { useAppDispatch, useAppSelector } from "../../../../../../app/hooks";
+import { updateSelectedTip } from "../../../../../../features/tutorials/tutorials-slice";
 /* ---- REDUCER ACTIONS ---- */
 import {
   updateChatText,
   updateIsSaying,
   updateTellTarget,
   updateSubmittedMessages,
-} from "../../../../../features/chatInput/chatinput-slice";
+} from "../../../../../../features/chatInput/chatinput-slice";
 /* STYLES */
-import "./styles.css";
+import "../styles.css";
 /* CUSTOM COMPONENTS */
-import TutorialPopover from "../../../../../components/TutorialPopover";
+import TutorialPopover from "../../../../../../components/TutorialPopover";
 
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
 const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
@@ -55,33 +55,26 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
       dispatch(updateIsSaying(toggledValue));
     }
   };
-  const chatSubmissionHandler = (e) => {
-    e.preventDefault();
-
-    if (!inHelpMode) {
-      let textSubmission;
-      if (!!chatText) {
-        if (tellTarget !== "") {
-          textSubmission = `tell ${tellTarget} "${chatText}"`;
-        } else if (isSaying) {
-          textSubmission = `"${chatText}"`;
-        } else {
-          textSubmission = chatText;
-        }
-        dispatch(updateSubmittedMessages(chatText));
-        onSubmit(textSubmission);
-        dispatch(updateChatText(""));
-        scrollToBottom();
-      }
-    }
-  };
 
   /*---------------HELPERS----------------*/
 
+  /* ----------TAILWIND CLASSES--------- */
+  const classNames = {};
   return (
-    <>
-      <div></div>
-    </>
+    <div className="relative ">
+      <button
+        type="button"
+        className=" w-40 absolute items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      >
+        SAY
+      </button>
+      <button
+        type="button"
+        className=" w-40 absolute  items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-orange-600 my-3 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      >
+        DO
+      </button>
+    </div>
   );
 };
 

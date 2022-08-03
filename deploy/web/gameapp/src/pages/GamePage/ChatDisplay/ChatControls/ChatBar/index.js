@@ -14,10 +14,12 @@ import {
 import "./styles.css";
 /* CUSTOM COMPONENTS */
 import ChatButtons from "./ChatButtons";
+import ChatInput from "./ChatInput";
+import SendButton from "./SendButton";
 import TutorialPopover from "../../../../../components/TutorialPopover";
 
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
-const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
+const ChatBar = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   /* ------ REDUX STATE ------ */
   // VIEW STATE
   const isMobile = useAppSelector((state) => state.view.isMobile);
@@ -92,30 +94,27 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   /* ----------TAILWIND CLASSES--------- */
   const classNames = {
     chatbarContainer: "flex flex-row w-full border-4 rounded border-green-400",
-    chatbar: "flex flex-row",
+    chatbar: "flex flex-row w-full",
   };
 
   return (
     <div className={classNames.chatbarContainer}>
-      <form onSubmit={chatSubmissionHandler}>
-        <div className={classNames.chatbar}>
+      <div className={classNames.chatbar}>
+        <div className="w-1/4">
           <ChatButtons />
-
-          <div
-            className="chatbox-button send"
-            onClick={
-              inHelpMode ? () => setSelectedTip(7) : chatSubmissionHandler
-            }
-          >
-            SEND
-          </div>
         </div>
-      </form>
+        <div className="w-2/4">
+          <ChatInput />
+        </div>
+        <div className="w-1/4">
+          <SendButton />
+        </div>
+      </div>
     </div>
   );
 };
 
-export default ChatInput;
+export default ChatBar;
 
 // <div className={classNames.chatbarContainer}>
 // <form onSubmit={chatSubmissionHandler}>

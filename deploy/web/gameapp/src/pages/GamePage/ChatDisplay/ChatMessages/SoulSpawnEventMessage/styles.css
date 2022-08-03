@@ -1,13 +1,8 @@
 /* SOUL SPAWN MESSAGE STYLES  */
 .soulspawn-container {
-  display: block;
 }
 
 #soulspawn {
-  background-color: #181ab1;
-  border-style: groove;
-  border-color: ivory;
-  border-width: 0.5em;
   margin: auto;
 }
 

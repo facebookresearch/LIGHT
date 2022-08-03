@@ -3,7 +3,7 @@ import React from "react";
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */
-import ChatInput from "./ChatInput";
+import ChatBar from "./ChatBar";
 import ActionBar from "./ActionBar";
 import DisconnectMessage from "./DisconnectMessage";
 
@@ -29,7 +29,7 @@ const ChatControls = ({
         <DisconnectMessage />
       ) : (
         <>
-          <ChatInput
+          <ChatBar
             onSubmit={onSubmit}
             scrollToBottom={scrollToBottom}
             resetIdleTimer={resetIdleTimer}

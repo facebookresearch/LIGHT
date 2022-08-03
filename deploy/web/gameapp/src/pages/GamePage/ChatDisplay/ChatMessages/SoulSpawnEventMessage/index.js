@@ -24,9 +24,7 @@ const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
   return (
     <div
       id="soulspawn"
-      className={`soulspawn-container message type-setting ${
-        inHelpMode ? "active" : ""
-      }`}
+      className={`soulspawn-container ${inHelpMode ? "active" : ""}`}
       onClick={onClickFunction}
     >
       <p className="soulspawn-text soulspawn-star">{StarShine1}</p>
