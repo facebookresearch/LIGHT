@@ -874,12 +874,6 @@ class TornadoPlayerFactory:
                 given_tornado_settings=given_tornado_settings, user_db=self.user_db
             )
             self.app.registry = self.registry
-
-            if "HOSTNAME" in os.environ and hostname == DEFAULT_HOSTNAME:
-                hostname = os.environ["HOSTNAME"]
-            else:
-                hostname = hostname
-
             if listening:
                 self.app.listen(port, max_buffer_size=1024 ** 3)
                 print(
@@ -890,6 +884,11 @@ class TornadoPlayerFactory:
                     % (hostname, port)
                 )
             logging.info("TornadoWebProvider Started")
+
+            if "HOSTNAME" in os.environ and hostname == DEFAULT_HOSTNAME:
+                hostname = os.environ["HOSTNAME"]
+            else:
+                hostname = hostname
 
         _run_server()
         while self.app is None:
