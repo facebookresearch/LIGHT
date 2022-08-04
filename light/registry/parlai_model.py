@@ -113,7 +113,7 @@ class ParlAIModelLoader:
 
         # Push something through the model to fill context
         act = {"text": "Hello " * CONTEXT_FILL_COUNT, "episode_done": True}
-        if opt["eval_candidates"] == "inline":
+        if opt.get("eval_candidates") == "inline":
             act["label_candidates"] = ["hi", "hi there", "whatup"]
         model.observe(act)
         model.act()
