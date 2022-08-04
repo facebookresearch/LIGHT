@@ -1,11 +1,8 @@
 /* ACTIONBAR STYLES */
 .actions {
-  display: flex;
   padding: 0px 10px 0px;
   font-size: 14px;
   overflow: scroll;
-  flex-wrap: wrap;
-  align-items: center;
 }
 
 .actions.active:hover {

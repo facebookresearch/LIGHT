@@ -9,11 +9,12 @@ import { updateSessionSpentGiftXp } from "../../../../../features/sessionInfo/se
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
 /* CUSTOM COMPONENTS */
+import ReportMessageForm from "./ReportMessageForm";
 import TutorialPopover from "../../../../../components/TutorialPopover";
 /* CONFIG */
 import CONFIG from "../../../../../config.js";
 
-function handleReport(reportedMessage, reportReason) {
+function handleReport(reportedMessage, reportReason, reportCategory) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
   if (CONFIG.port !== "80") {
     base_url += ":" + CONFIG.port;
@@ -26,6 +27,7 @@ function handleReport(reportedMessage, reportReason) {
     },
     credentials: "same-origin",
     body: JSON.stringify({
+      category: reportCategory,
       message: reportedMessage,
       reason: reportReason,
     }),
@@ -76,6 +78,7 @@ const AgentMessage = ({
   /* ------ LOCAL STATE ------ */
   const [isEditMode, setEditMode] = useState(false);
   const [isReportMode, setReportMode] = useState(false);
+  const [reportCategory, setReportCategory] = useState("");
   const [reportReason, setReportReason] = useState("");
   const [isReported, setReported] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
@@ -92,6 +95,8 @@ const AgentMessage = ({
     setHelpEventId(eventId);
     onClickFunction();
   };
+
+  const exitReportMode = () => setReportMode(false);
 
   let classNames = "message type-dialogue ";
   if (["tell", "say", "whisper"].includes(caller)) {
@@ -129,41 +134,12 @@ const AgentMessage = ({
 
   if (isReportMode) {
     return (
-      <div className={classNames}>
-        <div className="agent">
-          <span>{actor}</span>
-        </div>
-        {text}
-        <div>
-          <b>Why are you reporting this message?</b>
-        </div>
-        <input
-          className="edit-message"
-          defaultValue={"Enter reason here"}
-          value={reportReason}
-          onChange={(evt) => setReportReason(evt.target.value)}
-        />
-        <button
-          type="submit"
-          disabled={reportReason.length === 0}
-          onClick={() => {
-            handleReport(text, reportReason);
-            setReportReason("");
-            setReported(true);
-            setReportMode(false);
-          }}
-        >
-          Report
-        </button>
-        <button
-          type="submit"
-          onClick={() => {
-            setReportMode(false);
-          }}
-        >
-          Cancel
-        </button>
-      </div>
+      <ReportMessageForm
+        reportedMessage={text}
+        caller={caller}
+        actor={actor}
+        exitReportMode={exitReportMode}
+      />
     );
   }
 

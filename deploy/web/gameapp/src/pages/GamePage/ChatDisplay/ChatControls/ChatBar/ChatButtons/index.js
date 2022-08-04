@@ -15,6 +15,8 @@ import "../styles.css";
 /* CUSTOM COMPONENTS */
 import TutorialPopover from "../../../../../../components/TutorialPopover";
 
+import { FaSync } from "react-icons/fa";
+
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
 const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   /* ------ REDUX STATE ------ */
@@ -22,8 +24,8 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   //   const isMobile = useAppSelector((state) => state.view.isMobile);
   //   // CHAT STATE
   //   const chatText = useAppSelector((state) => state.chatInput.chatText);
-  //   const isSaying = useAppSelector((state) => state.chatInput.isSaying);
-  //   const tellTarget = useAppSelector((state) => state.chatInput.tellTarget);
+  const isSaying = useAppSelector((state) => state.chatInput.isSaying);
+  const tellTarget = useAppSelector((state) => state.chatInput.tellTarget);
   //   const submittedMessages = useAppSelector(
   //     (state) => state.chatInput.submittedMessages
   //   );
@@ -32,7 +34,7 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   //   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   //   /* ----REDUX ACTIONS---- */
   //   // REDUX DISPATCH FUNCTION
-  //   const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   //   const setSelectedTip = (tipNumber) => {
   //     if (inHelpMode) {
   //       dispatch(updateSelectedTip(tipNumber));
@@ -47,6 +49,7 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
 
   /*---------------HANDLERS----------------*/
   const toggleIsSaying = () => {
+    console.log("TOGGLE BEING CLICKED");
     if (tellTarget) {
       dispatch(updateTellTarget(""));
       dispatch(updateIsSaying(true));
@@ -60,7 +63,26 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
 
   /* ----------TAILWIND CLASSES--------- */
   const classNames = {};
-  return <div></div>;
+  return (
+    <>
+      <button
+        onClick={toggleIsSaying}
+        type="button"
+        className={` w-20 items-start px-1.5 py-0.5 border border-transparent text-lg font-medium rounded shadow-sm text-white ${
+          tellTarget
+            ? "bg-red-700 "
+            : isSaying
+            ? "bg-green-700"
+            : "bg-blue-500 "
+        }`}
+      >
+        <span className="flex flex-row justify-between items-center">
+          {tellTarget ? `TELL ${tellTarget}` : isSaying ? "SAY" : "DO"}
+          <FaSync color="white" size={20} />
+        </span>
+      </button>
+    </>
+  );
 };
 
 export default ChatButtons;

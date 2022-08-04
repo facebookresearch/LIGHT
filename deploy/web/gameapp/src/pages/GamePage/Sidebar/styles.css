@@ -48,7 +48,6 @@
 }
 
 .sidebar-body__container {
-  background-color: rgb(228, 226, 221);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -57,7 +56,7 @@
   border-style: ridge;
   border-color: lightgray;
   border-width: 10px;
-  height: 60%;
+  height: 600px;
 }
 .sidebar-body__container.mobile {
   height: 40%;

@@ -93,21 +93,24 @@ const ChatBar = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
 
   /* ----------TAILWIND CLASSES--------- */
   const classNames = {
-    chatbarContainer: "flex flex-row w-full border-4 rounded border-green-400",
-    chatbar: "flex flex-row w-full",
+    chatbarContainer:
+      "flex flex-row w-full border-4 rounded border-green-400 justify-center items-center",
+    chatbar: "flex flex-row w-full justify-center items-center",
   };
 
   return (
     <div className={classNames.chatbarContainer}>
       <div className={classNames.chatbar}>
-        <div className="w-1/4">
-          <ChatButtons />
+        <div className=" flex  flex-start w-4/5">
+          <div className="w-2/5">
+            <ChatButtons />
+          </div>
+          <div className="w-3/5">
+            <ChatInput resetIdleTimer={resetIdleTimer} />
+          </div>
         </div>
-        <div className="w-2/4">
-          <ChatInput />
-        </div>
-        <div className="w-1/4">
-          <SendButton />
+        <div className="w-3">
+          <SendButton clickFunction={chatSubmissionHandler} />
         </div>
       </div>
     </div>

@@ -37,7 +37,9 @@ const ActionBar = ({
   };
   return (
     <div
-      className={`actions ${inHelpMode ? "active" : ""}`}
+      className={`actions flex flex-col flex-start ${
+        inHelpMode ? "active" : ""
+      }`}
       onClick={() => setSelectedTip(8)}
     >
       <p className="text-gray-200">{`Characters present in ${"location"}`}</p>
@@ -47,7 +49,7 @@ const ActionBar = ({
         position="bottom"
       ></TutorialPopover>
       {/* {location ? <span>{location.name} &mdash; </span> : null} */}
-      <div>
+      <div className=" ">
         {presentAgents
           .filter((id) => id !== persona.id) // only show users other than self
           .map((agent) => {

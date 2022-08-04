@@ -328,7 +328,7 @@ const Chat = ({
           />
         </MobileFrame>
       ) : (
-        <div className="flex max-h-full">
+        <div className="flex h-screen">
           <div className="w-1/4">
             {persona ? (
               <Sidebar

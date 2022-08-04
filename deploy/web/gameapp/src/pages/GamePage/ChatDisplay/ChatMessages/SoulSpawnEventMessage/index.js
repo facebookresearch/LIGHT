@@ -18,7 +18,7 @@ const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
   let MissionDesc = MissionArr[1];
 
   /* ----REDUX STATE---- */
-  //TUTORIAL;
+  //TUTORIAL
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   return (

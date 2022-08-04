@@ -14,7 +14,12 @@ import {
 import TutorialPopover from "../../../../../../components/TutorialPopover";
 
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
-const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
+const SendButton = ({
+  clickFunction,
+  onSubmit,
+  scrollToBottom,
+  resetIdleTimer,
+}) => {
   /* ------ REDUX STATE ------ */
   // VIEW STATE
   //   const isMobile = useAppSelector((state) => state.view.isMobile);
@@ -59,18 +64,19 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   /* ----------TAILWIND CLASSES--------- */
   const classNames = {};
   return (
-    <div className=" bg-white inline-flex justify-center items-center min-w-40 ">
+    <>
       <button
         type="button"
-        className=" w-40 absolute  items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-yellow-600 my-3 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+        className=" w-30  items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-yellow-300 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+        onClick={clickFunction}
       >
         SEND
       </button>
-    </div>
+    </>
   );
 };
 
-export default ChatInput;
+export default SendButton;
 
 // <div
 // className="chatbox-button send"
