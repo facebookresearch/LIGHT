@@ -76,7 +76,7 @@ class BaseHandler(tornado.web.RequestHandler):
                 params = {
                     "error": str(exc_info[1]),
                     "trace_info": traceback.format_exception(*exc_info),
-                    "request": self.request.__dict__,
+                    "request": str(self.request.__dict__),
                 }
                 self.write(json.dumps(params))
             except Exception as e:
