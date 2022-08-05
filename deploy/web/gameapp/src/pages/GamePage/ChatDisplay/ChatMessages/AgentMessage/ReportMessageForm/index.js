@@ -15,6 +15,7 @@ const ReportCategories = [
 ];
 
 const ReportMessageForm = ({
+  eventId,
   reportedMessage,
   caller,
   actor,
@@ -36,12 +37,13 @@ const ReportMessageForm = ({
     setReportCategory(e.target.value);
   };
 
-  const handleReport = (reportedMessage, reportCategory, reportReason) => {
+  const handleReportSubmission = () => {
     let base_url = window.location.protocol + "//" + CONFIG.hostname;
     if (CONFIG.port !== "80") {
       base_url += ":" + CONFIG.port;
     }
     console.log("REPORT PAYLOAD:  ", {
+      eventId: eventId,
       category: reportCategory,
       message: reportedMessage,
       reason: reportReason,
@@ -59,6 +61,9 @@ const ReportMessageForm = ({
         reason: reportReason,
       }),
     });
+    setReportReason("");
+    setReported(true);
+    exitReportMode();
   };
 
   return (
@@ -106,12 +111,7 @@ const ReportMessageForm = ({
             type="submit"
             className={` w-20 items-start px-1.5 py-0.5 border border-transparent text-lg font-medium rounded shadow-sm text-white bg-red-600`}
             disabled={reportReason.length === 0}
-            onClick={() => {
-              handleReport(reportedMessage, reportCategory, reportReason);
-              setReportReason("");
-              setReported(true);
-              exitReportMode();
-            }}
+            onClick={handleReportSubmission}
           >
             Report
           </button>

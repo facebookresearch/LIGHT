@@ -135,6 +135,7 @@ const AgentMessage = ({
   if (isReportMode) {
     return (
       <ReportMessageForm
+        eventId={eventId}
         reportedMessage={text}
         caller={caller}
         actor={actor}

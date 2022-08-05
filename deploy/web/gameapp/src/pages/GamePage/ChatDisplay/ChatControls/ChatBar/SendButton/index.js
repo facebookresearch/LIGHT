@@ -13,34 +13,32 @@ import {
 /* CUSTOM COMPONENTS */
 import TutorialPopover from "../../../../../../components/TutorialPopover";
 
+//ICONS
+import { MdOutlineArrowForwardIos } from "react-icons/md";
+
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
-const SendButton = ({
-  clickFunction,
-  onSubmit,
-  scrollToBottom,
-  resetIdleTimer,
-}) => {
+const SendButton = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   /* ------ REDUX STATE ------ */
   // VIEW STATE
-  //   const isMobile = useAppSelector((state) => state.view.isMobile);
+  const isMobile = useAppSelector((state) => state.view.isMobile);
   //   // CHAT STATE
-  //   const chatText = useAppSelector((state) => state.chatInput.chatText);
-  //   const isSaying = useAppSelector((state) => state.chatInput.isSaying);
-  //   const tellTarget = useAppSelector((state) => state.chatInput.tellTarget);
-  //   const submittedMessages = useAppSelector(
-  //     (state) => state.chatInput.submittedMessages
-  //   );
+  const chatText = useAppSelector((state) => state.chatInput.chatText);
+  const isSaying = useAppSelector((state) => state.chatInput.isSaying);
+  const tellTarget = useAppSelector((state) => state.chatInput.tellTarget);
+  const submittedMessages = useAppSelector(
+    (state) => state.chatInput.submittedMessages
+  );
   //   //TUTORIAL;
-  //   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
-  //   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
+  const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
+  const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   //   /* ----REDUX ACTIONS---- */
   //   // REDUX DISPATCH FUNCTION
-  //   const dispatch = useAppDispatch();
-  //   const setSelectedTip = (tipNumber) => {
-  //     if (inHelpMode) {
-  //       dispatch(updateSelectedTip(tipNumber));
-  //     }
-  //   };
+  const dispatch = useAppDispatch();
+  const setSelectedTip = (tipNumber) => {
+    if (inHelpMode) {
+      dispatch(updateSelectedTip(tipNumber));
+    }
+  };
   //   /*---------------LOCAL STATE----------------*/
   //   const [cycleMessagesPosition, setCycleMessagesPosition] = useState(0);
   //   /*---------------LIFECYCLE----------------*/
@@ -49,6 +47,28 @@ const SendButton = ({
   //   }, [submittedMessages]);
 
   /*---------------HANDLERS----------------*/
+  const chatSubmissionHandler = (e) => {
+    e.preventDefault();
+
+    if (!inHelpMode) {
+      let textSubmission;
+      if (!!chatText) {
+        if (tellTarget !== "") {
+          textSubmission = `tell ${tellTarget} "${chatText}"`;
+        } else if (isSaying) {
+          textSubmission = `"${chatText}"`;
+        } else {
+          textSubmission = chatText;
+        }
+        resetIdleTimer();
+        dispatch(updateSubmittedMessages(chatText));
+        onSubmit(textSubmission);
+        dispatch(updateChatText(""));
+        scrollToBottom();
+      }
+    }
+  };
+
   const toggleIsSaying = () => {
     if (tellTarget) {
       dispatch(updateTellTarget(""));
@@ -65,31 +85,12 @@ const SendButton = ({
   const classNames = {};
   return (
     <>
-      <button
-        type="button"
-        className=" w-30  items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-yellow-300 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
-        onClick={clickFunction}
-      >
-        SEND
-      </button>
+      <MdOutlineArrowForwardIos
+        onClick={inHelpMode ? () => setSelectedTip(7) : chatSubmissionHandler}
+        className="text-2xl font-bold text-green-200 hover:text-red-100"
+      />
     </>
   );
 };
 
 export default SendButton;
-
-// <div
-// className="chatbox-button send"
-// onClick={
-//   inHelpMode ? () => setSelectedTip(7) : chatSubmissionHandler
-// }
-// >
-// <button
-// type="button"
-// className="chatbox-button send"
-// onClick={
-// inHelpMode ? () => setSelectedTip(7) : chatSubmissionHandler
-// }
-// >
-// SEND
-// </button>

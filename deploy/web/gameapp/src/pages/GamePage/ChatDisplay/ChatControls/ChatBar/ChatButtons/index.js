@@ -21,9 +21,9 @@ import { FaSync } from "react-icons/fa";
 const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   /* ------ REDUX STATE ------ */
   // VIEW STATE
-  //   const isMobile = useAppSelector((state) => state.view.isMobile);
+  const isMobile = useAppSelector((state) => state.view.isMobile);
   //   // CHAT STATE
-  //   const chatText = useAppSelector((state) => state.chatInput.chatText);
+  const chatText = useAppSelector((state) => state.chatInput.chatText);
   const isSaying = useAppSelector((state) => state.chatInput.isSaying);
   const tellTarget = useAppSelector((state) => state.chatInput.tellTarget);
   //   const submittedMessages = useAppSelector(
@@ -60,6 +60,16 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   };
 
   /*---------------HELPERS----------------*/
+  const formatTellTargetForButton = (str) => {
+    let formattedTellTargetName = str.toUpperCase();
+    if (str.length > 7) {
+      formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 7)}...`;
+      if (isMobile) {
+        formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 4)}...`;
+      }
+    }
+    return formattedTellTargetName;
+  };
 
   /* ----------TAILWIND CLASSES--------- */
   const classNames = {};
@@ -68,7 +78,7 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
       <button
         onClick={toggleIsSaying}
         type="button"
-        className={` w-20 items-start px-1.5 py-0.5 border border-transparent text-lg font-medium rounded shadow-sm text-white ${
+        className={` w-full h-full mx-1 items-start px-1.5 py-0.5 border border-transparent text-lmd font-medium rounded shadow-sm text-white ${
           tellTarget
             ? "bg-red-700 "
             : isSaying
@@ -77,7 +87,11 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
         }`}
       >
         <span className="flex flex-row justify-between items-center">
-          {tellTarget ? `TELL ${tellTarget}` : isSaying ? "SAY" : "DO"}
+          {tellTarget
+            ? `TELL ${formatTellTargetForButton(tellTarget)}`
+            : isSaying
+            ? "SAY"
+            : "DO"}
           <FaSync color="white" size={20} />
         </span>
       </button>

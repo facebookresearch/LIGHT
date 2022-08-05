@@ -53,13 +53,18 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   };
 
   return (
-    <div>
+    <>
       <input
         name="chat"
         id="chat"
+        autocomplete="off"
         style={{ caretColor: "green" }}
-        className="text-green-100 shadow-sm bg-transparent placeholder-green-100 focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-        placeholder={`${"say"} something`}
+        className={`chatbox-input ${
+          inHelpMode ? "active" : ""
+        } text-green-100 w-full shadow-sm bg-transparent placeholder-green-100 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md`}
+        placeholder={`${
+          tellTarget ? `Tell ${tellTarget}` : isSaying ? "Say" : "Do"
+        } Something`}
         value={chatText}
         onClick={(e) => {
           e.preventDefault();
@@ -119,11 +124,11 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
           if (e.key === "Enter" && e.shiftKey) {
             const prefix = e.target.value.startsWith('"') ? "" : '"';
             const suffix = e.target.value.endsWith('"') ? "" : '"';
-            dispatch(updateChatText(`${prefix} e.target.value ${suffix}`));
+            dispatch(updateChatText(`${prefix} ${e.target.value} ${suffix}`));
           }
         }}
       />
-    </div>
+    </>
   );
 };
 

@@ -58,26 +58,26 @@ const ChatBar = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
       dispatch(updateIsSaying(toggledValue));
     }
   };
-  const chatSubmissionHandler = (e) => {
-    e.preventDefault();
+  // const chatSubmissionHandler = (e) => {
+  //   e.preventDefault();
 
-    if (!inHelpMode) {
-      let textSubmission;
-      if (!!chatText) {
-        if (tellTarget !== "") {
-          textSubmission = `tell ${tellTarget} "${chatText}"`;
-        } else if (isSaying) {
-          textSubmission = `"${chatText}"`;
-        } else {
-          textSubmission = chatText;
-        }
-        dispatch(updateSubmittedMessages(chatText));
-        onSubmit(textSubmission);
-        dispatch(updateChatText(""));
-        scrollToBottom();
-      }
-    }
-  };
+  //   if (!inHelpMode) {
+  //     let textSubmission;
+  //     if (!!chatText) {
+  //       if (tellTarget !== "") {
+  //         textSubmission = `tell ${tellTarget} "${chatText}"`;
+  //       } else if (isSaying) {
+  //         textSubmission = `"${chatText}"`;
+  //       } else {
+  //         textSubmission = chatText;
+  //       }
+  //       dispatch(updateSubmittedMessages(chatText));
+  //       onSubmit(textSubmission);
+  //       dispatch(updateChatText(""));
+  //       scrollToBottom();
+  //     }
+  //   }
+  // };
 
   /*---------------HELPERS----------------*/
   const formatTellTargetForButton = (str) => {
@@ -101,16 +101,18 @@ const ChatBar = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   return (
     <div className={classNames.chatbarContainer}>
       <div className={classNames.chatbar}>
-        <div className=" flex  flex-start w-4/5">
-          <div className="w-2/5">
-            <ChatButtons />
-          </div>
-          <div className="w-3/5">
-            <ChatInput resetIdleTimer={resetIdleTimer} />
-          </div>
+        <div className="w-1/6 h-full">
+          <ChatButtons />
         </div>
-        <div className="w-3">
-          <SendButton clickFunction={chatSubmissionHandler} />
+        <div className="w-4/6">
+          <ChatInput resetIdleTimer={resetIdleTimer} />
+        </div>
+        <div className="w-1/6 flex justify-center items-center">
+          <SendButton
+            resetIdleTimer={resetIdleTimer}
+            scrollToBottom={scrollToBottom}
+            onSubmit={onSubmit}
+          />
         </div>
       </div>
     </div>
