@@ -15,6 +15,7 @@ import "emoji-mart/css/emoji-mart.css";
 import "./styles.css";
 import cx from "classnames";
 /* CUSTOM COMPONENTS */
+import SideBarHeader from "./SideBarHeader";
 import ExperienceInfo from "../../../components/ExperienceInfo";
 import Logo from "../../../components/Logo/index.js";
 import CollapsibleBox from "../../../components/CollapsibleBox";
@@ -66,13 +67,14 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
         open={inHelpMode && selectedTip === 1}
         position="right"
       >
-        <div
+        <SideBarHeader />
+        {/* <div
           className={`sidebar-header__container ${inHelpMode ? "active" : ""} `}
           onClick={() => setSelectedTip(1)}
         >
-          {isMobile ? null : <Logo />}
-          <ExperienceInfo isMobile={isMobile} />
-        </div>
+          {/* {isMobile ? null : <Logo />} */}
+        {/* <ExperienceInfo isMobile={isMobile} /> */}
+        {/* </div> */}
       </TutorialPopover>
       <div
         className={cx("icon", { editing: showEmojiPicker })}
@@ -111,7 +113,7 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
           selectedEmoji={selectedEmoji}
           setShowEmojiPicker={setShowEmojiPicker}
           setSelectedEmoji={setEmoji}
-          titleBg={"gold"}
+          titleBg={"black"}
           onClickFunction={() => setSelectedTip(2)}
         >
           <p className="persona-text" style={{ fontSize: "14px" }}>
@@ -129,12 +131,12 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
         </IconCollapsibleBox>
         <CollapsibleBox
           title="Mission"
-          titleBg="yellow"
-          containerBg="lightyellow"
+          titleBg="black"
+          containerBg="black"
           onClickFunction={() => setSelectedTip(3)}
         >
           {
-            <p className="mission-text">
+            <p className="mission-text text-white">
               <TutorialPopover
                 tipNumber={3}
                 open={inHelpMode && selectedTip === 3}
@@ -151,11 +153,11 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
         {location ? (
           <CollapsibleBox
             title="Location"
-            titleBg="#76dada"
-            containerBg="#e0fffe"
+            titleBg="black"
+            containerBg="#black"
             onClickFunction={() => setSelectedTip(4)}
           >
-            <div className="location">
+            <div className="location text-white">
               <h3
                 style={{
                   textDecoration: "underline",

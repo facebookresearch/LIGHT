@@ -103,6 +103,7 @@ const Entry = ({ msg, onReply, agents, selfId }) => {
           <PlayerMessage
             text={msg.text}
             isSelf={msg.is_self || actor === selfId}
+            caller={msg.caller}
             actor={agents[actor]}
             onReply={onReply}
             xp={msg.xp}

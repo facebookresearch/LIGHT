@@ -22,25 +22,25 @@ import { BsStar } from "react-icons/bs";
 import { BsReplyFill } from "react-icons/bs";
 import { BsFillFlagFill } from "react-icons/bs";
 
-function handleReport(reportedMessage, reportReason, reportCategory) {
-  let base_url = window.location.protocol + "//" + CONFIG.hostname;
-  if (CONFIG.port !== "80") {
-    base_url += ":" + CONFIG.port;
-  }
+// function handleReport(reportedMessage, reportReason, reportCategory) {
+//   let base_url = window.location.protocol + "//" + CONFIG.hostname;
+//   if (CONFIG.port !== "80") {
+//     base_url += ":" + CONFIG.port;
+//   }
 
-  fetch(`${base_url}/report`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "same-origin",
-    body: JSON.stringify({
-      category: reportCategory,
-      message: reportedMessage,
-      reason: reportReason,
-    }),
-  });
-}
+//   fetch(`${base_url}/report`, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     credentials: "same-origin",
+//     body: JSON.stringify({
+//       category: reportCategory,
+//       message: reportedMessage,
+//       reason: reportReason,
+//     }),
+//   });
+// }
 
 function handleReward(messageId, messageOwner) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
@@ -209,7 +209,7 @@ const AgentMessage = ({
               </span>
             ) : null}
             <div className="flex flex-row w-full justify-between items-center">
-              <BsReplyFill />
+              <BsReplyFill onClick={() => onReply(actor)} />
               <div className="flex flex-row justify-center items-center">
                 <BsFillHandThumbsUpFill
                   className={`${isLiked ? "text-green-500" : "text-gray-400"}`}
