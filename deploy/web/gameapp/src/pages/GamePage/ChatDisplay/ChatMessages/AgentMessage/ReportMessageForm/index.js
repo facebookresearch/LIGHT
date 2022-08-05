@@ -20,16 +20,10 @@ const ReportMessageForm = ({
   caller,
   actor,
   exitReportMode,
+  reportedHandler,
 }) => {
-  let classNames = "message type-dialogue ";
-  if (["tell", "say", "whisper"].includes(caller)) {
-    reportedMessage = "&ldquo;" + reportedMessage + "&rdquo;";
-    classNames = "message type-dialogue ";
-  }
-  classNames += "other";
   const [reportCategory, setReportCategory] = useState("");
   const [reportReason, setReportReason] = useState("");
-  const [isReported, setReported] = useState(false);
 
   /* HANDLERS */
   const categorySelectionHandler = (e) => {
@@ -62,12 +56,12 @@ const ReportMessageForm = ({
       }),
     });
     setReportReason("");
-    setReported(true);
+    reportedHandler();
     exitReportMode();
   };
 
   return (
-    <div className={classNames}>
+    <div className="bg-white ">
       <div className="agent">
         <span>{actor}</span>
       </div>

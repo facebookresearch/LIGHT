@@ -14,6 +14,14 @@ import TutorialPopover from "../../../../../components/TutorialPopover";
 /* CONFIG */
 import CONFIG from "../../../../../config.js";
 
+/* ICONS */
+import { BsFillHandThumbsUpFill } from "react-icons/bs";
+import { BsFillHandThumbsDownFill } from "react-icons/bs";
+import { BsFillStarFill } from "react-icons/bs";
+import { BsStar } from "react-icons/bs";
+import { BsReplyFill } from "react-icons/bs";
+import { BsFillFlagFill } from "react-icons/bs";
+
 function handleReport(reportedMessage, reportReason, reportCategory) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
   if (CONFIG.port !== "80") {
@@ -78,17 +86,36 @@ const AgentMessage = ({
   /* ------ LOCAL STATE ------ */
   const [isEditMode, setEditMode] = useState(false);
   const [isReportMode, setReportMode] = useState(false);
-  const [reportCategory, setReportCategory] = useState("");
-  const [reportReason, setReportReason] = useState("");
-  const [isReported, setReported] = useState(false);
+  const [isReported, setIsReported] = useState(false);
+  const [isStarred, setIsStarred] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [isDisliked, setIsDisliked] = useState(false);
   const [helpEventId, setHelpEventId] = useState(0);
+
+  /* ------ HANDLERS ------ */
+
   const likeHandler = () => {
+    setIsLiked(true);
+  };
+
+  const dislikeHandler = () => {
+    setIsDisliked(true);
+  };
+
+  const starHandler = () => {
     if (giftXp >= 1) {
       handleReward(eventId, actorId);
-      setIsLiked(true);
+      setIsStarred(true);
       dispatch(updateSessionSpentGiftXp(sessionSpentGiftXp + 1));
     }
+  };
+
+  const reportingHandler = () => {
+    setReportMode(true);
+  };
+
+  const reportedHandler = () => {
+    setIsReported(true);
   };
 
   const onAgentClick = () => {
@@ -132,97 +159,166 @@ const AgentMessage = ({
     );
   }
 
-  if (isReportMode) {
-    return (
-      <ReportMessageForm
-        eventId={eventId}
-        reportedMessage={text}
-        caller={caller}
-        actor={actor}
-        exitReportMode={exitReportMode}
-      />
-    );
-  }
+  // if (isReportMode) {
+  //   return (
+  //     <ReportMessageForm
+  //       eventId={eventId}
+  //       reportedMessage={text}
+  //       caller={caller}
+  //       actor={actor}
+  //       exitReportMode={exitReportMode}
+  //       reportedHandler={reportedHandler}
+  //     />
+  //   );
+  // }
 
-  if (isReported) {
-    return (
-      <div className={classNames}>
-        <div className="agent">
-          <span>{actor}</span>
-        </div>
-        <i>We have logged your report of this message</i>
-      </div>
-    );
-  }
+  // if (isReported) {
+  //   return (
+  //     <div className={classNames}>
+  //       <div className="agent">
+  //         <span>{actor}</span>
+  //       </div>
+  //       <i>We have logged your report of this message</i>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div
-      className={`${classNames} ${inHelpMode ? "active" : ""}`}
-      onClick={onAgentClick}
+      className={` flex flex-row justify-end items-center m-4px pr-10 ${
+        inHelpMode ? "active" : ""
+      }`}
+      onClick={onClickFunction}
     >
-      {actor ? (
-        <div className="agent">
-          <span id="message-nameplate">
-            {actor ? actor.toUpperCase() : null}
-          </span>
-          {
-            <div className="message-icon__container">
-              <Tooltip
-                title={
-                  giftXp > 0
-                    ? `Award ${actor} Experience`
-                    : "Not enough Gift Experience"
-                }
-                position="top"
-              >
-                <div style={{ position: "relative", marginRight: "150%" }}>
-                  {isLiked ? (
-                    <i id="message-star" className="fa fa-star message-star" />
-                  ) : (
-                    <i
-                      id="message-star-O"
-                      className="fa fa-star-o "
-                      onClick={likeHandler}
-                    />
-                  )}
-                </div>
-              </Tooltip>{" "}
-              <Tooltip title={`tell ${actor}...`} position="top">
-                <i
-                  className="fa fa-reply message-icon"
-                  onClick={() => onReply(actor)}
-                />
-              </Tooltip>{" "}
-              {/* <Tooltip
-                  title={`Do you think something else should have been said instead? Provide feedback via an edit...`}
-                  position="top"
-                >
-                  <i
-                    className="fa fa-commenting-o "
-                    onClick={() => setEditMode(true)}
-                  />
-                </Tooltip> */}
-              <Tooltip
-                title={`Was this offensive or inappropriate? Click to report.`}
-                position="top"
-              >
-                <i
-                  className="fa fa-flag message-icon"
-                  onClick={() => setReportMode(true)}
-                />
-              </Tooltip>
-            </div>
-          }
-        </div>
+      {isLiked ? (
+        <>
+          {isStarred ? (
+            <BsFillStarFill className={`text-yellow-300`} />
+          ) : (
+            <BsStar className={`text-yellow-300`} onClick={starHandler} />
+          )}
+        </>
       ) : null}
-      <TutorialPopover
-        tipNumber={16}
-        open={helpEventId === eventId && inHelpMode && selectedTip === 16}
-        position="bottom"
-      >
-        {text}
-      </TutorialPopover>
+      <div className=" flex flex-col mr-6">
+        <div className="relative min-w-[120px] max-w-[400px] min-h-[90px] bg-white rounded-[10px] flex justify-center items-center text-black text-xl">
+          <div className="flex flex-col m-4">
+            <p className="">{text}</p>
+            {isReported ? (
+              <span className="text-red-600">
+                This Message Has been reported
+              </span>
+            ) : null}
+            <div className="flex flex-row w-full justify-between items-center">
+              <BsReplyFill />
+              <div className="flex flex-row justify-center items-center">
+                <BsFillHandThumbsUpFill
+                  className={`${isLiked ? "text-green-500" : "text-gray-400"}`}
+                  onClick={likeHandler}
+                />
+                <BsFillHandThumbsDownFill
+                  className={`${isDisliked ? "text-red-500" : "text-gray-400"}`}
+                  onClick={dislikeHandler}
+                />
+              </div>
+            </div>
+          </div>
+          <div>
+            {/* <div className="relative">
+          <div className="absolute bg-emerald-500">
+          </div>
+        </div> */}
+            <div className="absolute w-0 h-0 border-t-[13px] border-t-transparent border-b-[13px] border-b-transparent border-l-[26px] border-r-white left-[100%] top-[25%] translate-y-[50%]" />
+          </div>
+        </div>
+        {isDisliked && !isReported ? (
+          <span
+            className="flex flex-row text-red-500"
+            onClick={reportingHandler}
+          >
+            <BsFillFlagFill />
+            REPORT THIS NOW?
+          </span>
+        ) : null}
+        {isReportMode ? (
+          <ReportMessageForm
+            eventId={eventId}
+            reportedMessage={text}
+            caller={caller}
+            actor={actor}
+            exitReportMode={exitReportMode}
+            reportedHandler={reportedHandler}
+          />
+        ) : null}
+      </div>
+      <span className="w-30 text-white">{actor}</span>
     </div>
   );
 };
+//     //   className={`${classNames} ${inHelpMode ? "active" : ""}`}
+//     //   onClick={onAgentClick}
+//     // >
+//     //   {actor ? (
+//     //     <div className="agent">
+//     //       <span id="message-nameplate">
+//     //         {actor ? actor.toUpperCase() : null}
+//     //       </span>
+//     //       {
+//     //         <div className="message-icon__container">
+//     //           <Tooltip
+//     //             title={
+//     //               giftXp > 0
+//     //                 ? `Award ${actor} Experience`
+//     //                 : "Not enough Gift Experience"
+//     //             }
+//     //             position="top"
+//     //           >
+//     //             <div style={{ position: "relative", marginRight: "150%" }}>
+//     //               {isLiked ? (
+//     //                 <i id="message-star" className="fa fa-star message-star" />
+//     //               ) : (
+//     //                 <i
+//     //                   id="message-star-O"
+//     //                   className="fa fa-star-o "
+//     //                   onClick={likeHandler}
+//     //                 />
+//     //               )}
+//     //             </div>
+//     //           </Tooltip>{" "}
+//     //           <Tooltip title={`tell ${actor}...`} position="top">
+//     //             <i
+//     //               className="fa fa-reply message-icon"
+//     //               onClick={() => onReply(actor)}
+//     //             />
+//     //           </Tooltip>{" "}
+//     //           {/* <Tooltip
+//     //               title={`Do you think something else should have been said instead? Provide feedback via an edit...`}
+//     //               position="top"
+//     //             >
+//     //               <i
+//     //                 className="fa fa-commenting-o "
+//     //                 onClick={() => setEditMode(true)}
+//     //               />
+//     //             </Tooltip> */}
+//     //           <Tooltip
+//     //             title={`Was this offensive or inappropriate? Click to report.`}
+//     //             position="top"
+//     //           >
+//     //             <i
+//     //               className="fa fa-flag message-icon"
+//     //               onClick={() => setReportMode(true)}
+//     //             />
+//     //           </Tooltip>
+//     //         </div>
+//   // }
+//       // ) : null}
+//       // <TutorialPopover
+//       //   tipNumber={16}
+//       //   open={helpEventId === eventId && inHelpMode && selectedTip === 16}
+//       //   position="bottom"
+//       // >
+//       //   {text}
+//       // </TutorialPopover>
+//     // </div>
+//   );
+// };
 export default AgentMessage;
