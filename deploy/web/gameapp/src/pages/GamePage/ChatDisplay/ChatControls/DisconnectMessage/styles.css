@@ -10,14 +10,14 @@
 }
 
 .disconnect-text {
-  font-family: fantasy;
+  font-family: "Courier New", Courier, monospace;
   color: darkgrey;
   text-shadow: 0px 10px 10px rgba(109, 90, 48, 0.2);
   text-align: center;
 }
 
 .disconnect-text__reload {
-  font-family: fantasy;
+  font-family: "Courier New", Courier, monospace;
   color: darkgrey;
   text-shadow: 0px 10px 10px rgba(109, 90, 48, 0.2);
   text-align: center;

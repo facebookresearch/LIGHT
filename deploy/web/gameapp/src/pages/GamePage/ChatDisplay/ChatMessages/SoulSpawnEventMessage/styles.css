@@ -20,8 +20,8 @@
 .soulspawn-subheader {
   text-decoration: underline;
   margin-bottom: 0;
-  font-family: fantasy;
-  font-weight: 900;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
   font-size: 18px;
   color: #fff;
   text-align: center;

@@ -4,7 +4,7 @@
   margin: 0;
   justify-content: flex-start;
   align-items: center;
-  font-family: fantasy;
+  font-family: "Courier New", Courier, monospace;
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
 }

@@ -35,7 +35,7 @@
   color: black;
   z-index: 10;
   text-align: center;
-  font-family: fantasy;
+  font-family: "Courier New", Courier, monospace;
   font-weight: bolder;
   width: 90%;
   background-color: #0072ff;
@@ -108,7 +108,7 @@
     color: black;
     z-index: 10;
     text-align: center;
-    font-family: fantasy;
+    font-family: "Courier New", Courier, monospace;
     font-weight: bolder;
     width: 98%;
     background-color: #0072ff;
