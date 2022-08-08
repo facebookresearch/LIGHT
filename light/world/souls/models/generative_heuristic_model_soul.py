@@ -6,6 +6,7 @@
 
 import time
 import random
+import asyncio
 from collections import deque
 from light.world.souls.on_event_soul import OnEventSoul
 from light.graph.events.base import ErrorEvent
@@ -76,7 +77,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         super().log_interaction_from_event(event)
         if self.target_node._dying:
             return
-        super().quest_events(event)
+        await super().quest_events(event)
         did_event = super().on_events(event)
         did_trade = super().trade_event_heuristics(event)
 
@@ -151,7 +152,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
     def get_last_turn_too_recent(self):
         return time.time() - self._last_action_time < MIN_TIME_BETWEEN_TURNS
 
-    def npc_action(self):
+    async def npc_action(self):
         """
         Agent attempt to take an action
         """
@@ -185,7 +186,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             "eval_labels": [cands[0]],
         }
         self.npc_act_model.observe(msg)
-        act = self.npc_act_model.act()
+        act = await self.npc_act_model.act()
         scores = {}
         for i in range(0, 3):
             scores[act["text_candidates"][i]] = float(act["sorted_scores"][i])
@@ -231,12 +232,12 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
                 "eval_labels": [cands[0]],
             }
             self.npc_act_model.observe(msg)
-            act = self.npc_act_model.act()
+            act = await self.npc_act_model.act()
             act_text = act["text"]
             act_text = self.npc_pick_non_repeating_action(act_text)
             if act_text is None:
                 return
-            self.world.parse_exec(agent_id, act_text)
+            await self.world.parse_exec(agent_id, act_text)
             return True
 
         if best_type == "emote":
@@ -250,7 +251,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
                 "eval_labels": [cands[0]],
             }
             self.npc_act_model.observe(msg)
-            act = self.npc_act_model.act()
+            act = await self.npc_act_model.act()
             act_text = act["text"]
             act_text = self.npc_pick_non_repeating_action(act_text)
             if act_text is None:
@@ -262,7 +263,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             return True
         return False
 
-    def npc_dialogue(self, obs=None):
+    async def npc_dialogue(self, obs=None):
         """
         Attempt to take a dialogue turn
         """
@@ -312,7 +313,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         # Send to model to process
         msg = {"text": context, "episode_done": True}
         self.npc_dialog_model.observe(msg)
-        act = self.npc_dialog_model.act()
+        act = await self.npc_dialog_model.act()
 
         act_text = self.dialogue_pick_non_repeating_response(act, partner)
 
@@ -342,7 +343,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             ):
                 # Try goal dialog heuristic first, otherwise use normal dialog.
                 if not self.tell_goal_heuristics(obs):
-                    self.npc_dialogue(obs)
+                    await self.npc_dialogue(obs)
 
         # possibly initiate talk request to someone in the room
         if self.get_last_interaction_partner(agent) is None:
@@ -358,7 +359,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             ):
                 self.dialogue_switch_partner(agent, partner)
                 try:
-                    self.npc_dialogue(None)
+                    await self.npc_dialogue(None)
                 except Exception as e:
                     print(f"Hit exception {e}")
                     import traceback
@@ -377,4 +378,4 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
 
         # Possibly act according to the transformer model
         if not acted:
-            self.npc_action()
+            await self.npc_action()

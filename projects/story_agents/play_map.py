@@ -19,6 +19,7 @@ from light import LIGHT_DIR
 from light.graph.builders.map_json_builder import MapJsonBuilder
 from light.data_model.light_database import LIGHTDatabase
 from parlai.core.params import ParlaiParser
+import asyncio
 
 
 import os
@@ -38,7 +39,7 @@ if __name__ == "__main__":
     ldb = LIGHTDatabase(LIGHT_DB_FILE_LOC)
     print("[loading map...]")
     world_builder = MapJsonBuilder(episode_db=None, opt=opt)
-    graph, world = world_builder.get_graph()
+    graph, world = asyncio.run(world_builder.get_graph())
 
     # Set up the world
     purgatory = world.purgatory
@@ -52,6 +53,6 @@ if __name__ == "__main__":
     while True:
         for empty_agent in world.oo_graph.agents.values():
             inst = input(f"{empty_agent} enter act> ")
-            world.parse_exec(
-                empty_agent, inst=inst
+            asyncio.run(
+                world.parse_exec(empty_agent, inst=inst)
             )  # Triggers the event, and following `observe_event`s

@@ -305,20 +305,20 @@ class OnEventSoul(ModelSoul):
         else:
             return True  # Note that we did something with on_events
 
-    def new_quest(self):
+    async def new_quest(self):
         graph = self.world.oo_graph
         actor = self.target_node
         if hasattr(self, "npc_act_model"):
-            quest = QuestCreator.create_quest(actor, graph, self.npc_act_model)
+            quest = await QuestCreator.create_quest(actor, graph, self.npc_act_model)
         else:
             # no model for generating quests
-            quest = QuestCreator.create_quest(actor, graph)
+            quest = await QuestCreator.create_quest(actor, graph)
         if quest is not None:
             self.world.send_msg(actor, "New Quest: " + quest["text"])
 
-    def quest_events(self, event):
+    async def quest_events(self, event):
         # Possibly create quest if we don't have one.
-        self.new_quest()
+        await self.new_quest()
         actor = self.target_node
         quests_left = []
         if actor.quests is None:
@@ -348,7 +348,7 @@ class OnEventSoul(ModelSoul):
         self.log_interaction_from_event(event)
         if self.target_node._dying:
             return  # We're dying, don't do any responding.
-        self.quest_events(event)
+        await self.quest_events(event)
         self.on_events(event)
         self.trade_event_heuristics(event)
         self.tell_goal_heuristics(event)

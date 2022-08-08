@@ -7,6 +7,7 @@
 from light.graph.builders.starspace_assisted import StarspaceBuilder
 from light.world.world import World, WorldConfig
 from light.graph.structured_graph import OOGraph
+import asyncio
 
 
 class ExampleBuilder(StarspaceBuilder):
@@ -35,10 +36,10 @@ class ExampleBuilder(StarspaceBuilder):
         StarspaceBuilder.add_parser_arguments(parser)
         parser.add_argument("--use-simple", action="store_true")
 
-    def get_graph(self):
+    async def get_graph(self):
         """Create a graph"""
         if not self.use_simple:
-            return super().get_graph()
+            return await super().get_graph()
         else:
             g = OOGraph(self.opt)
 

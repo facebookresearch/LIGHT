@@ -6,6 +6,7 @@
 
 from dataclasses import dataclass, field
 from omegaconf import MISSING, DictConfig
+import asyncio
 
 from light.registry.parlai_model import ParlAIModelConfig, ParlAIModelLoader
 from light.registry.parlai_remote_model import (
@@ -42,7 +43,7 @@ class ModelPool:
     def __init__(self):
         self._model_loaders = {}
 
-    def register_model(
+    async def register_model_async(
         self, config: Union[DictConfig, ModelConfig], model_names: List[str]
     ) -> None:
         """
@@ -55,8 +56,17 @@ class ModelPool:
                 f"Trying to load a model with non-existent loader {config._loader}"
             )
         loader = loader_class(config)
+        await loader.force_load()
         for model_name in model_names:
             self._model_loaders[model_name] = loader
+
+    def register_model(
+        self, config: Union[DictConfig, ModelConfig], model_names: List[str]
+    ) -> None:
+        """
+        Syncronous model registration for server and script setups
+        """
+        return asyncio.run(self.register_model_async(config, model_names))
 
     def has_model(self, model_name: str) -> bool:
         """

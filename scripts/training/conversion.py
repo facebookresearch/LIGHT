@@ -15,6 +15,7 @@
 import argparse
 import pickle
 import os
+import asyncio
 from light.graph.structured_graph import OOGraph
 from light.world.world import World, WorldConfig
 from light.graph.events.graph_events import SoulSpawnEvent, LookEvent
@@ -34,8 +35,8 @@ def execute_events(world, transcript):
         if action != "":
             if action.startswith("gesture"):
                 action = action.replace("gesture", "emote")
-            world.parse_exec(event["id"].lower(), action)
-        world.parse_exec(event["id"].lower(), "say " + event["text"])
+            asyncio.run(world.parse_exec(event["id"].lower(), action))
+        asyncio.run(world.parse_exec(event["id"].lower(), "say " + event["text"]))
 
 
 def process_episodes(src, log_dir):

@@ -8,6 +8,7 @@ from copy import deepcopy
 import emoji
 import os
 import random
+import asyncio
 
 from light.graph.utils import rm, deprecated
 from light.graph.events.base import GraphEvent, ErrorEvent
@@ -414,7 +415,14 @@ class World(object):
             print(txt, agent_id)
         if action is None:
             action = SystemMessageEvent(agent, [], text_content=txt)
-        self.purgatory.send_event_to_soul(action, agent)
+        try:
+            # Run in the current event loop, if it exists
+            curr_loop = asyncio.get_running_loop()
+            coro = self.purgatory.send_event_to_soul(action, agent)
+            asyncio.run_coroutine_threadsafe(coro, curr_loop)
+        except RuntimeError:
+            # Not in event loop, execute with run
+            asyncio.run(self.purgatory.send_event_to_soul(action, agent))
         # TODO remove below when server game has Soul-based PlayerProvider
         agent.observe_action(txt, action)
         pos_playerid = self.agentid_to_playerid(agent_id)
@@ -788,15 +796,17 @@ class World(object):
         h = ["Have you tried typing help?"]
         return random.choice(h)
 
-    def parse_exec(self, actor, inst=None, event_id: Optional[str] = None):
+    async def parse_exec(self, actor, inst=None, event_id: Optional[str] = None):
         if not isinstance(actor, GraphNode):
             actor = self.oo_graph.get_node(actor)
         if self._opt.get("dont_catch_errors", False):
-            return self.parse_exec_internal(actor, inst=inst, event_id=event_id)
+            return await self.parse_exec_internal(actor, inst=inst, event_id=event_id)
 
         else:
             try:
-                return self.parse_exec_internal(actor, inst=inst, event_id=event_id)
+                return await self.parse_exec_internal(
+                    actor, inst=inst, event_id=event_id
+                )
             except Exception:
                 import traceback
 
@@ -831,7 +841,9 @@ class World(object):
             actor_node, result.targets, result.text, event_id=event_id
         )
 
-    def parse_exec_internal(self, actor, inst=None, event_id: Optional[str] = None):
+    async def parse_exec_internal(
+        self, actor, inst=None, event_id: Optional[str] = None
+    ):
         """Try to parse and execute the given event"""
         # basic replacements
         inst = self.action_parser.post_process(inst, actor)
@@ -856,7 +868,7 @@ class World(object):
             and actor.get_prop("human")
             and actor.get_prop("dead")
         ):
-            self.respawn_player(actor.node_id)
+            await self.respawn_player(actor.node_id)
             return True, "Respawn"
         dead = actor.get_prop("dead")
         if dead or (dead == "ErrorNodeNotFound"):
@@ -909,7 +921,7 @@ class World(object):
                 return True, "Suicide"
         if executable not in ALL_EVENTS:
             # Try again with the full model parser.
-            new_inst = self.action_parser.parse(inst, actor)
+            new_inst = await self.action_parser.parse(inst, actor)
             if new_inst != "":
                 instruction_list = new_inst.strip().split()
                 executable = instruction_list[0]
@@ -984,7 +996,7 @@ class World(object):
         return self._agentid_to_playerid.get(aid)
 
     # TODO refactor players
-    def respawn_player(self, a_id):
+    async def respawn_player(self, a_id):
         p_id = self.agentid_to_playerid(a_id)
         if p_id != None:
             try:
@@ -995,9 +1007,9 @@ class World(object):
                 pass
             p_id2 = self.spawn_player(existing_player_id=p_id)
             new_a_id = self.playerid_to_agentid(p_id2)
-            self.parse_exec(new_a_id, "look")
+            await self.parse_exec(new_a_id, "look")
 
-    def clean_corpses_and_respawn(self) -> List[GraphAgent]:
+    async def clean_corpses_and_respawn(self) -> List[GraphAgent]:
         """
         Clean any corpses that have been lying around for a while,
         then try to do a respawn for each corpse cleaned.
@@ -1017,7 +1029,7 @@ class World(object):
         created = []
         if self.graph_builder is not None:
             for _x in range(cleaned_count):
-                new_agent = self.graph_builder.add_random_new_agent_to_graph(self)
+                new_agent = await self.graph_builder.add_random_new_agent_to_graph(self)
                 if new_agent is not None:
                     created.append(new_agent)
         return created

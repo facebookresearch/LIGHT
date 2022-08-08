@@ -11,6 +11,7 @@ from light.world.world import World, WorldConfig
 from light.world.purgatory import TutorialPurgatory
 from light.graph.structured_graph import OOGraph
 
+import asyncio
 from typing import Dict, Optional, Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -23,7 +24,7 @@ class TutorialWorldBuilder(MapJsonBuilder):
     made to run tutorials. Generally like a single room builder.
     """
 
-    def add_random_new_agent_to_graph(self, target_graph):
+    async def add_random_new_agent_to_graph(self, target_graph):
         """Add an agent to the graph in a random room somewhere"""
         raise Exception("Agents should not be added to tutorials!")
 
@@ -144,10 +145,10 @@ class TutorialWorldBuilder(MapJsonBuilder):
         )
         return graph
 
-    def get_graph(self, world_config: Optional[WorldConfig] = None):
+    async def get_graph(self, world_config: Optional[WorldConfig] = None):
         """Create and return a tutorial graph"""
         if self.opt.get("load_tutorial_map", None) is not None:
-            graph, _ = super().get_graph()
+            graph, _ = await super().get_graph()
         else:
             graph = self.build_new_graph()
         opt = self.opt.copy()

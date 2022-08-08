@@ -28,6 +28,7 @@ from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from copy import deepcopy
 import os
+import asyncio
 
 from typing import List, Any, Dict, Optional
 
@@ -70,9 +71,15 @@ class ParlAIModelLoader:
     def __init__(self, config: DictConfig):
         self._shared = None
         self.config = config
-        self.load_model(config)
 
-    def load_model(self, config: DictConfig) -> None:
+    async def force_load(self) -> None:
+        """
+        Force the model loader to initialize and query
+        the model (to warm up)
+        """
+        await self.load_model(self.config)
+
+    async def load_model(self, config: DictConfig) -> None:
         """Initialize the model from the given config"""
         opt_from_config = config.get("opt_file", None)
         model_from_config = config.get("model_file", None)
@@ -116,7 +123,7 @@ class ParlAIModelLoader:
         if opt.get("eval_candidates") == "inline":
             act["label_candidates"] = ["hi", "hi there", "whatup"]
         model.observe(act)
-        model.act()
+        await model.act()
 
         # Share the model params for use in `get_model`
         self._shared = model.share()

@@ -104,10 +104,10 @@ class RegistryApplication(tornado.web.Application):
                 del self.step_callbacks[game_id]
                 del self.game_instances[game_id]
 
-    def run_new_game(self, game_id, ldb, player_id=None, world_id=None):
+    async def run_new_game(self, game_id, ldb, player_id=None, world_id=None):
         if world_id is not None and player_id is not None:
             builder = UserWorldBuilder(ldb, player_id=player_id, world_id=world_id)
-            _, world = builder.get_graph()
+            _, world = await builder.get_graph()
             game = GameInstance(game_id, ldb, g=world, opt=vars(self.FLAGS))
         else:
             world_config = WorldConfig(
@@ -139,8 +139,8 @@ class RegistryApplication(tornado.web.Application):
         game.fill_souls(self.FLAGS, [])
         world = game.world
 
-        def run_or_cleanup_world():
-            game.run_graph_step()
+        async def run_or_cleanup_world():
+            await game.run_graph_step()
             if game._should_shutdown or game._did_complete:
                 if (
                     game._did_complete and self.user_db is not None

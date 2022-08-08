@@ -3,6 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+import asyncio
 import random, copy
 from light.graph.builders.db_utils import id_is_usable
 from light.data_model.light_database import (
@@ -52,11 +53,11 @@ class GraphBuilder(object):
         set other parameters as required to build graphs using this builder"""
         raise NotImplementedError
 
-    def add_random_new_agent_to_graph(self, target_graph):
+    async def add_random_new_agent_to_graph(self, target_graph):
         """Add an agent to the graph in a random room somewhere"""
         raise NotImplementedError
 
-    def get_graph(self):
+    async def get_graph(self):
         """Return an OOGraph built by this builder"""
         raise NotImplementedError
 
@@ -226,14 +227,14 @@ class SingleSuggestionGraphBuilder(object):
         """abstract method for loading models for suggestions"""
         raise NotImplementedError
 
-    def agent_recommend(self, observation, agent_type) -> "Message":
+    async def agent_recommend(self, observation, agent_type) -> "Message":
         """Return a response when querying a specific
         type of agent and return the model response"""
         assert agent_type in self.agents, "Agent type not found in existing agents"
         self.agents[agent_type].reset()
         msg = {"text": observation, "episode_done": True}
         self.agents[agent_type].observe(msg)
-        response = self.agents[agent_type].act()
+        response = await self.agents[agent_type].act()
         return response
 
     def get_description(self, txt_feat, element_type, num_results=5):

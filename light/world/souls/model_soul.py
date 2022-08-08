@@ -71,14 +71,14 @@ class ModelSoul(BaseSoul):
 
                 traceback.print_exc()
                 print("Reaping...")
-                self.reap()
+                await self.reap()
 
         self._main_loop = asyncio.create_task(_run_main_logic_forever())
 
-    def reap(self):
+    async def reap(self):
         """
         Clear the main loop, and free any model resources
         """
-        super().reap()
+        await super().reap()
         if self._main_loop is not None:
             self._main_loop.cancel()

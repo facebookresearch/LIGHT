@@ -69,7 +69,7 @@ class PlayerSoul(BaseSoul):
             self.target_node.get_room().node_id
         ]._add_player()
 
-    def handle_act(self, act_text, event_id: Optional[str] = None):
+    async def handle_act(self, act_text, event_id: Optional[str] = None):
         """
         PlayerSouls must process act text sent from players and enact them on the world.
         This method is called by the player provider when an action is taken.
@@ -91,11 +91,11 @@ class PlayerSoul(BaseSoul):
 
         actor = self.target_node
         actor._last_action_time = time.time()
-        self.world.parse_exec(self.target_node, act_text, event_id=event_id)
+        await self.world.parse_exec(self.target_node, act_text, event_id=event_id)
         if hasattr(self.target_node, "num_turns"):
             self.target_node.num_turns += 1
 
-    def new_quest(self):
+    async def new_quest(self):
         if random.random() > 0.01:
             # Turn these mostly off for now.
             return
@@ -104,16 +104,18 @@ class PlayerSoul(BaseSoul):
         actor = self.target_node
 
         if hasattr(self, "generic_act_model"):
-            quest = QuestCreator.create_quest(actor, graph, self.generic_act_model)
+            quest = await QuestCreator.create_quest(
+                actor, graph, self.generic_act_model
+            )
         else:
             # no model for generating quests
-            quest = QuestCreator.create_quest(actor, graph)
+            quest = await QuestCreator.create_quest(actor, graph)
         if quest is not None:
             self.world.send_msg(actor, "New Quest: " + quest["text"])
 
-    def quest_events(self, event):
+    async def quest_events(self, event):
         # Possibly create quest if we don't have one.
-        self.new_quest()
+        await self.new_quest()
         actor = self.target_node
         quests_left = []
         if actor.quests is None:
@@ -132,18 +134,18 @@ class PlayerSoul(BaseSoul):
         """
         self.set_interaction_partners_from_event(event)
         self.log_interaction_from_event(event)
-        self.role_playing_score_events(event)
+        await self.role_playing_score_events(event)
         check_if_cast_magic_from_event(self, event)
-        self.quest_events(event)
+        await self.quest_events(event)
         self.provider.player_observe_event(self, event)
         self.agent_logger.observe_event(event)
 
-    def reap(self):
+    async def reap(self):
         """
         PlayerSouls must remove the player flag from their target GraphAgent when
         removed, and notify the logger
         """
-        super().reap()
+        await super().reap()
         self.target_node.is_player = False
         self.target_node.persona = self.target_node.persona.split(QUEST_TEXT)[0]
         self.world.oo_graph.room_id_to_loggers[
@@ -151,4 +153,4 @@ class PlayerSoul(BaseSoul):
         ]._remove_player()
         if self.agent_logger._logging_intialized:
             self.agent_logger._end_meta_episode()
-        self.provider.on_reap_soul(self)
+        await self.provider.on_reap_soul(self)

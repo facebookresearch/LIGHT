@@ -50,7 +50,9 @@ shared_model_content = None
 
 
 def init_world(world_builder, opt, model_pool):
-    g, world = world_builder.get_graph(world_config=WorldConfig(model_pool=model_pool))
+    g, world = asyncio.run(
+        world_builder.get_graph(world_config=WorldConfig(model_pool=model_pool))
+    )
     purgatory = world.purgatory
 
     # Choose the type of NPC souls.
@@ -80,7 +82,7 @@ async def run_with_builder(world_builder, opt, model_pool):
     Takes in a World object and its OOGraph and allows one to play with a random map
     """
     player_provider = init_world(world_builder, opt, model_pool)
-    player_provider.process_terminal_act("")  # get an agent
+    await player_provider.process_terminal_act("")  # get an agent
     await asyncio.sleep(0.01)
     while True:
         act = input("\raction> ")
@@ -92,10 +94,10 @@ async def run_with_builder(world_builder, opt, model_pool):
         elif act in ["new", "reset"]:
             print("A mist fills the world and everything resets")
             player_provider = init_world(world_builder, opt, model_pool)
-            player_provider.process_terminal_act("")  # get an agent
+            await player_provider.process_terminal_act("")  # get an agent
             await asyncio.sleep(0.01)
         else:
-            player_provider.process_terminal_act(act)
+            await player_provider.process_terminal_act(act)
         await asyncio.sleep(0.01)
 
 

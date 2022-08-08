@@ -14,6 +14,7 @@ import json
 import logging
 import os
 import traceback
+import asyncio
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
 import tornado.auth
@@ -92,14 +93,14 @@ class ResponseHandler(BaseHandler):
     def initialize(self, model):
         self.model = model
 
-    def post(self):
+    async def post(self):
         # Process the data to extract the act
         data = tornado.escape.json_decode(self.request.body)
         message = data["observation"]
         # Pass the act to the model
         self.model.observe(message)
         # return the response
-        response = self.model.act()
+        response = await self.model.act()
         if "metrics" in response:
             del response["metrics"]
         self.write(json.dumps({"act": response}))

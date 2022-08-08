@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import asyncio
 from light.world.souls.soul import Soul
 from copy import deepcopy
 import os
@@ -236,31 +237,38 @@ class BaseSoul(Soul):
             return True
         return False
 
-    def get_fixed_cand_scores(self, context):
+    async def get_fixed_cand_scores(self, context):
         """
         Returns the candidates at self.SAMPLE_INDS
         """
-        self.roleplaying_score_model.opt["eval_candidates"] = "fixed"
-        self.roleplaying_score_model.eval_candidates = "fixed"  # set candidates
         act = {
             "text": context,
             "id": "persona",
             "episode_done": False,
         }
-        self.roleplaying_score_model.reset()
-        self.roleplaying_score_model.observe(deepcopy(act))
-        _ = self.roleplaying_score_model.act()
-        return self.roleplaying_score_model.scores
+        self.roleplaying_score_model.observe(act)
+        score_act = await self.roleplaying_score_model.act()
+        return score_act["scores"]
 
-    def get_pos_human_msg(self, human_msg, scores):
+    async def get_pos_human_msg(self, human_msg, context, scores):
         """
         Get the model score of the human message and compare to fixed cands.
         """
-        human_score = float(self.roleplaying_score_model.score_one_candidate(human_msg))
+        act = {
+            "text": context,
+            "id": "persona",
+            "episode_done": False,
+            "label_candidates": [human_msg],
+            "eval_labels": [human_msg],
+        }
+        self.roleplaying_score_model.observe(deepcopy(act))
+        score_act = await self.roleplaying_score_model.act()
+
+        human_score = float(score_act["scores"][0])
         human_rank = int((scores > human_score).sum())
         return human_rank, human_score
 
-    def score_conversation(self):
+    async def score_conversation(self):
         if self.roleplaying_score_model is None:
             # For local testing of exp with no models, set this to nonzero
             return 0
@@ -277,28 +285,23 @@ class BaseSoul(Soul):
         # check for n-gram match with context
         if self.too_much_string_overlap(context, human_msg):
             return 0
-        # mark this agent as the special RP score agent
-        self.roleplaying_score_model.actingscore = True
-        # override eval step here
-        self.roleplaying_score_model.eval_step = (
-            self.roleplaying_score_model.eval_step_scoresonly
+        fixed_cand_scores = await self.get_fixed_cand_scores(context)
+        pos, _score = await self.get_pos_human_msg(
+            human_msg, context, fixed_cand_scores
         )
-        fixed_cand_scores = self.get_fixed_cand_scores(context)
-        pos, _score = self.get_pos_human_msg(human_msg, fixed_cand_scores)
-        # print("pos:", pos)
-        if pos < 1000:
+        if pos < 1:
             final_score = 4
-        elif pos < 2000:
+        elif pos < 2:
             final_score = 3
-        elif pos < 5000:
+        elif pos < 3:
             final_score = 2
-        elif pos < 10000:
+        elif pos < 4:
             final_score = 1
         else:
             final_score = 0
         return final_score
 
-    def role_playing_score_events(self, event):
+    async def role_playing_score_events(self, event):
         # Track event history, and award roleplaying score if appropriate.
         agent = event.actor
         if agent != self.target_node:
@@ -318,7 +321,7 @@ class BaseSoul(Soul):
                 if agent2_id not in agent._agent_interactions:
                     agent._agent_interactions[agent2_id] = 0
 
-                stars = self.score_conversation()
+                stars = await self.score_conversation()
                 agent._agent_interactions[agent2_id] += stars
                 agent.xp += stars
                 agent.reward_xp += stars / 4.0

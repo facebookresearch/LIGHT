@@ -181,7 +181,7 @@ class TutorialModelSoul(OnEventSoul):
     def get_last_turn_too_recent(self):
         return time.time() - self._last_action_time < MIN_TIME_BETWEEN_TURNS
 
-    def npc_action(self):
+    async def npc_action(self):
         """
         Agent attempt to take an action?
         """
@@ -213,7 +213,7 @@ class TutorialModelSoul(OnEventSoul):
             "eval_labels": [cands[0]],
         }
         self.npc_act_model.observe(msg)
-        act = self.npc_act_model.act()
+        act = await self.npc_act_model.act()
         scores = {}
         for i in range(0, 3):
             scores[act["text_candidates"][i]] = float(act["sorted_scores"][i])
@@ -240,7 +240,7 @@ class TutorialModelSoul(OnEventSoul):
                 "eval_labels": [cands[0]],
             }
             self.npc_act_model.observe(msg)
-            act = self.npc_act_model.act()
+            act = await self.npc_act_model.act()
             act_text = act["text"]
             act_text = self.npc_pick_non_repeating_action(act_text)
             if act_text is None:
@@ -252,7 +252,7 @@ class TutorialModelSoul(OnEventSoul):
             return True
         return False
 
-    def npc_dialogue(self, obs=None):
+    async def npc_dialogue(self, obs=None):
         """
         Attempt to take a dialogue turn
         """
@@ -292,7 +292,7 @@ class TutorialModelSoul(OnEventSoul):
         # Send to model to process
         msg = {"text": context, "episode_done": True}
         self.npc_dialog_model.observe(msg)
-        act = self.npc_dialog_model.act()
+        act = await self.npc_dialog_model.act()
 
         act_text = self.dialogue_pick_non_repeating_response(act, partner)
 
@@ -437,7 +437,7 @@ class TutorialModelSoul(OnEventSoul):
                 if isinstance(obs, SayEvent) or (
                     isinstance(obs, TellEvent) and obs.target_nodes[0] == agent
                 ):
-                    self.npc_dialogue(obs)
+                    await self.npc_dialogue(obs)
 
         # Possibly act according to the transformer model
-        self.npc_action()
+        await self.npc_action()

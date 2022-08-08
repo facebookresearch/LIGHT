@@ -39,8 +39,8 @@ class MockSoul(Soul):
         """
         self.observations.append(event)
 
-    def reap(self):
+    async def reap(self):
         """
         MockSouls don't have any extra resources, and thus don't need to clean up.
         """
-        super().reap()
+        await super().reap()

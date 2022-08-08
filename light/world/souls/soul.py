@@ -81,7 +81,7 @@ class Soul(ABC):
         """
         pass
 
-    def reap(self):
+    async def reap(self):
         """
         Free resources associated with this Soul, and ensure any pending futures
         are cancelled.

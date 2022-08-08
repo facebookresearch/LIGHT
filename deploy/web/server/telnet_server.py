@@ -15,6 +15,7 @@ from deploy.web.server.game_instance import (
 
 import argparse
 import socket
+import asyncio
 
 DEFAULT_HOSTNAME = "localhost"
 DEFAULT_PORT = 35495
@@ -41,7 +42,7 @@ class TelnetPlayer(Player):
         if self.text != "":
             agent_id = self.get_agent_id()
             print(agent_id + ":" + str(self.text))
-            self.g.parse_exec(agent_id, self.text)
+            asyncio.run(self.g.parse_exec(agent_id, self.text))
             self.text = ""
 
     def observe(self):
@@ -60,7 +61,7 @@ class TelnetPlayer(Player):
         only be called the first time this player is initialized.
         """
         agent_id = self.get_agent_id()
-        self.g.parse_exec(agent_id, "look")
+        asyncio.run(self.g.parse_exec(agent_id, "look"))
         self.observe()
 
     def is_alive(self):
