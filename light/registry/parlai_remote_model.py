@@ -61,7 +61,8 @@ async def _make_request(
         try:
             logging.debug(f"Making request: {data}")
             async with session.post(
-                f"{server}/model_request", json=data, headers=headers
+                f"{server}/model_request",
+                json=data,
             ) as resp:
                 resp_text = await resp.text()
                 obj = json.loads(resp_text)
@@ -142,9 +143,11 @@ class ParlAIRemoteAgentWrapper(Agent):
             timeout=self.timeout,
             max_num_tries=self.retries,
         )
-        act = Message(resps[0])
-        if is_request_failed_response(act):
-            act["text"] = DEFAULT_API_FAIL_TEXT
+        resp = resps[0]
+        if is_request_failed_response(resp):
+            act = Message({"text": DEFAULT_API_FAIL_TEXT})
+        else:
+            act = Message(resp["act"])
         return act
 
     def observe(self, observation: Message):

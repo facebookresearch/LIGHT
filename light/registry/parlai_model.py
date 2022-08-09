@@ -34,6 +34,14 @@ from typing import List, Any, Dict, Optional
 
 
 CONTEXT_FILL_COUNT = 4000
+INIT_CONTEXT = """
+_setting_name weathered shack, Abandoned
+_setting_desc A weathered shack with a roof made of old broken tiles sits in the middle of the forest. The wood is starting to split and the shack appears as if it will crumble at any moment.
+_partner_name animal
+_self_name man
+_self_persona I am a strong man. I work in the fields and pastures all day. I take of my master's sheep. One day I hope to have my own sheep.
+I am very strong
+"""
 
 
 @dataclass
@@ -119,7 +127,10 @@ class ParlAIModelLoader:
         model = create_agent(opt)
 
         # Push something through the model to fill context
-        act = {"text": "Hello " * CONTEXT_FILL_COUNT, "episode_done": True}
+        act = {
+            "text": INIT_CONTEXT + "Hello " * CONTEXT_FILL_COUNT,
+            "episode_done": True,
+        }
         if opt.get("eval_candidates") == "inline":
             act["label_candidates"] = ["hi", "hi there", "whatup"]
         model.observe(act)

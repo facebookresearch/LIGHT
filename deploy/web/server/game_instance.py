@@ -139,19 +139,22 @@ class GameInstance:
         return instance
 
     async def _init_world(self):
-        if opt["builder_model"] is not None:
-            _, world = await StarspaceBuilder(
-                ldb,
+        if self.opt["builder_model"] is not None:
+            _, self.world = await StarspaceBuilder(
+                self.ldb,
                 debug=False,
-                opt=opt,
+                opt=self.opt,
             ).get_graph()  # TODO: what are the args that are needed
-            self.world = world
         else:
-            opt["load_map"] = os.path.expanduser(
+            self.opt["load_map"] = os.path.expanduser(
                 "~/LIGHT/scripts/examples/complex_world.json"
             )
-            world_builder = MapJsonBuilder(episode_db=world_config.episode_db, opt=opt)
-            _, self.world = await world_builder.get_graph(world_config=world_config)
+            world_builder = MapJsonBuilder(
+                episode_db=self.world_config.episode_db, opt=self.opt
+            )
+            _, self.world = await world_builder.get_graph(
+                world_config=self.world_config
+            )
 
     def fill_souls(self, FLAGS, model_resources):
         purgatory = self.world.purgatory
