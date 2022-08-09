@@ -116,12 +116,11 @@ class TestRegistryApp(AsyncHTTPTestCase):
 
     @mock.patch(
         "deploy.web.server.registry.RegistryApplication.run_new_game",
-        return_value="test",
+        return_value=async_return("test"),
     )
     @gen_test
     def test_new_game(self, mocked_auth, MockStarSpace, mocked_method):
         """Test that we can post to create a new game"""
-        mocked_method.return_value = async_return("test")
         response = yield self.client.fetch(
             f"{URL}/game/new/01",
             method="POST",
