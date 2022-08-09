@@ -110,7 +110,6 @@ class RegistryApplication(tornado.web.Application):
             builder = UserWorldBuilder(ldb, player_id=player_id, world_id=world_id)
             _, world = await builder.get_graph()
             game = await GameInstance.get(game_id, ldb, g=world, opt=vars(self.FLAGS))
-            await game.init_world()
         else:
             world_config = WorldConfig(
                 episode_db=self.episode_db, model_pool=self.model_pool
