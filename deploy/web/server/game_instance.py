@@ -138,7 +138,7 @@ class GameInstance:
         await instance._init_world()
         return instance
 
-    async def _init_world():
+    async def _init_world(self):
         if opt["builder_model"] is not None:
             _, world = await StarspaceBuilder(
                 ldb,
