@@ -138,7 +138,7 @@ class GameInstance:
         await self._init_world()
         return instance
 
-    async def init_world():
+    async def _init_world():
         if opt["builder_model"] is not None:
             _, world = await StarspaceBuilder(
                 ldb,
@@ -206,7 +206,7 @@ class TutorialInstance(GameInstance):
         self._should_shutdown = False
         self._did_complete = True
 
-    async def init_world():
+    async def _init_world():
         _, self.world = await TutorialWorldBuilder(self.db, self.opt).get_graph()
 
     def fill_souls(self, _FLAGS, model_resources):

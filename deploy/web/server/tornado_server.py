@@ -265,7 +265,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             logging.info("Opened new socket from ip: {}".format(self.request.remote_ip))
             logging.info("For game: {}".format(game_id))
 
-            loop = asyncio.get_running_loop()
+            loop = tornado.ioloop.IOLoop.current()
 
             # First check for tutorials
             if self.user_should_do_tutorial(user_id):
@@ -278,12 +278,13 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
 
                     def on_complete():
                         time.sleep(TRANSITION_AFTER_TUTORIAL)
-                        coro = self.launch_game_for_user(user_id, orig_game_id)
-                        asyncio.run_coroutine_threadsafe(coro, loop)
+                        loop.spawn_callback(
+                            self.launch_game_for_user, user_id, orig_game_id
+                        )
 
                     game_id = self.app.registry.run_tutorial(user_id, on_complete)
-            coro = self.launch_game_for_user(user_id, game_id)
-            asyncio.run_coroutine_threadsafe(coro, loop)
+
+            loop.spawn_callback(self.launch_game_for_user, user_id, game_id)
         else:
             self.close()
             self.redirect("/#/login")
@@ -302,7 +303,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             data = msg["data"]
             await self.player.act(data["text"], data["event_id"])
         else:
-            print("THESE COMMANDS HAVE BEEN DEPRICATED")
+            logging.warning(f"THESE COMMANDS HAVE BEEN DEPRICATED: {data}")
 
     def on_close(self):
         self.alive = False
