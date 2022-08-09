@@ -29,15 +29,11 @@ import warnings
 import asyncio
 import hashlib
 from collections import defaultdict
-from zmq.eventloop import ioloop
-
-ioloop.install()  # Needs to happen before any tornado imports!
-
-import tornado.ioloop  # noqa E402: gotta install ioloop first
-import tornado.web  # noqa E402: gotta install ioloop first
-import tornado.auth  # noqa E402: gotta install ioloop first
-import tornado.websocket  # noqa E402: gotta install ioloop first
-import tornado.escape  # noqa E402: gotta install ioloop first
+import tornado.ioloop as ioloop
+import tornado.web
+import tornado.auth
+import tornado.websocket
+import tornado.escape
 from light.graph.events.graph_events import (
     SoulSpawnEvent,
     SystemMessageEvent,
