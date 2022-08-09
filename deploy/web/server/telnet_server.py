@@ -157,7 +157,7 @@ def main():
     random.seed(6)
     numpy.random.seed(6)
 
-    game = GameInstance()
+    game = asyncio.run(GameInstance.get())
     graph = game.world
     provider = TelnetPlayerProvider(graph, FLAGS.hostname, FLAGS.port)
     game.register_provider(provider)

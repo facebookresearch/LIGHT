@@ -268,6 +268,9 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         if user_id is not None:
             logging.info("Opened new socket from ip: {}".format(self.request.remote_ip))
             logging.info("For game: {}".format(game_id))
+
+            loop = asyncio.get_running_loop()
+
             # First check for tutorials
             if self.user_should_do_tutorial(user_id):
                 # Spawn a tutorial world for this user, or inject them into
@@ -279,10 +282,12 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
 
                     def on_complete():
                         time.sleep(TRANSITION_AFTER_TUTORIAL)
-                        await self.launch_game_for_user(user_id, orig_game_id)
+                        coro = self.launch_game_for_user(user_id, orig_game_id)
+                        asyncio.run_coroutine_threadsafe(coro, loop)
 
                     game_id = self.app.registry.run_tutorial(user_id, on_complete)
-            await self.launch_game_for_user(user_id, game_id)
+            coro = self.launch_game_for_user(user_id, game_id)
+            asyncio.run_coroutine_threadsafe(coro, loop)
         else:
             self.close()
             self.redirect("/#/login")
@@ -937,7 +942,7 @@ def main():
             None, FLAGS.hostname, FLAGS.port, listening=True
         )
     else:
-        game = GameInstance(game_id=0, ldb=ldb)
+        game = asyncio.run(GameInstance(game_id=0, ldb=ldb))
         graph = game.world
         provider = TornadoPlayerFactory(
             graph, FLAGS.hostname, FLAGS.port, db=ldb, listening=True

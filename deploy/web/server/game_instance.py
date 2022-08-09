@@ -125,6 +125,19 @@ class GameInstance:
         self.providers = []
         self.last_connection = time.time()
 
+    @classmethod
+    async def get(
+        cls,
+        game_id,
+        ldb,  # TODO remove this DB
+        g=None,
+        opt=None,
+        world_config: Optional["WorldConfig"] = None,  # TODO make this required
+    ) -> "GameInstance":
+        instance = cls(game_id, ldb, g=g, opt=opt, world_config=world_config)
+        await self._init_world()
+        return instance
+
     async def init_world():
         if opt["builder_model"] is not None:
             _, world = await StarspaceBuilder(
