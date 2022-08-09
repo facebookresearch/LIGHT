@@ -135,7 +135,7 @@ class GameInstance:
         world_config: Optional["WorldConfig"] = None,  # TODO make this required
     ) -> "GameInstance":
         instance = cls(game_id, ldb, g=g, opt=opt, world_config=world_config)
-        await self._init_world()
+        await instance._init_world()
         return instance
 
     async def _init_world():
