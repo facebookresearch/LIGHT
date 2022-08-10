@@ -1,12 +1,13 @@
 {
-    "model": "projects.light_whoami.agents.pacer:PacerAgent",
+    "model": "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent",
     "predictor_model_file": "zoo:light_whoami/rpa_reranker/model",
-    "model_file": "$LIGHT_MODEL_ROOT/dialog/baseline_gen_start/model.checkpoint",
+    "model_file": "zoo:light_whoami/profile_expanded_attention_128/model",
     "inference": "beam",
     "datatype": "valid",
     "beam_context_block_ngram": 3,
     "beam_block_ngram": 3,
     "beam_size": 10,
     "beam_min_length": 20,
+    "skip_generation": false,
     "interactive_mode": true
 }
