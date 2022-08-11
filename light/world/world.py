@@ -848,7 +848,7 @@ class World(object):
                 target_nodes=result.targets,
                 text_content=result.text,
                 event_id=event_id,
-                is_safe=is_safe,
+                safe=is_safe,
             )
 
         # Create the final event. May be an error but that's okay

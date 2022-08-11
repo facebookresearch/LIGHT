@@ -86,7 +86,7 @@ class SpeechEvent(GraphEvent):
         target_nodes: Optional[List[GraphNode]] = None,
         text_content: Optional[str] = None,
         event_id: Optional[str] = None,
-        is_safe: Optional[bool] = True,
+        safe: Optional[bool] = True,
     ):
         super().__init__(
             actor,
@@ -97,7 +97,7 @@ class SpeechEvent(GraphEvent):
         # Give opportunity to skip the safety after initialization
         # for debug reasons
         self.skip_safety = False
-        self.safe = is_safe
+        self.safe = safe
 
     def is_dialogue_safe(self, text):
         return self.safe
