@@ -7,6 +7,7 @@
 from parlai.utils.safety import OffensiveStringMatcher
 from parlai.agents.transformer.transformer import TransformerClassifierAgent
 from parlai.utils.typing import TShared
+from parlai.tasks.dialogue_safety.agents import OK_CLASS, NOT_OK_CLASS
 
 from typing import Optional, TYPE_CHECKING
 
@@ -16,6 +17,7 @@ if TYPE_CHECKING:
 
 class SafetyClassifier:
     def __init__(self, datapath: Optional[str], model_pool: "ModelPool"):
+        self.classes = {OK_CLASS: False, NOT_OK_CLASS: True}
         if datapath is not None and datapath != "":
             self.string_matcher = OffensiveStringMatcher(datapath)
         else:

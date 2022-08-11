@@ -840,13 +840,13 @@ class World(object):
         if isinstance(result, ErrorEvent):
             return result
 
-        if isinstance(result, SpeechEvent):
+        if issubclass(EventClass, SpeechEvent):
             # Additionally, run safety
-            is_safe = await safety_classifier.is_safe(result.text)
-            return EventClass.construct_from_args(
-                actor_node,
-                result.targets,
-                result.text,
+            is_safe = await self.safety_classifier.is_safe(result.text)
+            return EventClass(
+                actor=actor_node,
+                target_nodes=result.targets,
+                text_content=result.text,
                 event_id=event_id,
                 is_safe=is_safe,
             )
