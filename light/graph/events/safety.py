@@ -13,51 +13,36 @@ from typing import Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     from light.registry.model_pool import ModelPool
 
-try:
-    from parlai_internal.agents.safety_wrapper.multiturn_safety import (
-        MultiturnOffensiveLanguageClassifier,
-    )
-except:
-
-    class MultiturnOffensiveLanguageClassifier:
-        # Temporary until using public safety
-        pass
-
-
-class AdversarialOffensiveLanguageClassifier(MultiturnOffensiveLanguageClassifier):
-    """
-    Load model trained to detect offensive language in the context of multi- turn
-    dialogue utterances.
-    This model was trained to be robust to adversarial examples created by humans. See
-    <http://parl.ai/projects/dialogue_safety/> for more information.
-    """
-
-    def __init__(self, model_pool: "ModelPool"):
-        self.__model_pool = model_pool
-        super().__init__()
-
-    def _create_safety_model(self):
-        return self.__model_pool.get_model("safety")
-
 
 class SafetyClassifier:
-    print("Initializing safety classifier")
-
     def __init__(self, datapath: Optional[str], model_pool: "ModelPool"):
         if datapath is not None and datapath != "":
             self.string_matcher = OffensiveStringMatcher(datapath)
         else:
             self.string_matcher = None
         if model_pool.has_model("safety"):
-            self.classifier = AdversarialOffensiveLanguageClassifier(model_pool)
+            self.classifier = model_pool.get_model("safety")
         else:
             self.classifier = None
 
-    def is_safe(self, text: str):
+    async def contains_offensive_language(self, text):
+        """
+        Returns the probability that a message is safe according to the classifier.
+        """
+        act = {"text": text, "episode_done": True}
+        self.classifier.observe(act)
+        response_act = await self.classifier.act()
+        response = response_act["text"]
+        pred_class, prob = [x.split(": ")[-1] for x in response.split("\n")]
+        pred_not_ok = self.classes[pred_class]  # check whether classified as NOT OK
+        prob = float(prob)  # cast string to float
+        return pred_not_ok, prob
+
+    async def is_safe(self, text: str):
         if self.string_matcher is not None:
             if text in self.string_matcher:
                 return False
         if self.classifier is not None:
-            if text in self.classifier:
-                return False
+            not_ok, _prob = await self.contains_offensive_language(text)
+            return not_ok
         return True

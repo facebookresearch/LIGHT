@@ -197,7 +197,12 @@ class TutorialInstance(GameInstance):
     """
 
     def __init__(
-        self, game_id, ldb, opt=None, world_config: Optional["WorldConfig"] = None
+        self,
+        game_id,
+        ldb,
+        g=None,
+        opt=None,
+        world_config: Optional["WorldConfig"] = None,
     ):
         self.db = ldb
         self._created_time = time.time()

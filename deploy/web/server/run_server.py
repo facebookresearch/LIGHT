@@ -24,7 +24,6 @@ import inspect
 import os
 import asyncio
 from light.data_model.light_database import LIGHTDatabase
-from light.graph.events.graph_events import init_safety_classifier
 from light.world.souls.models.generative_heuristic_model_soul import (
     GenerativeHeuristicModelSoul,
 )
@@ -203,8 +202,7 @@ def init_model_pool(FLAGS) -> "ModelPool":
         model_pool.register_model(
             ParlAIModelConfig(opt_file=parser_opt_file), ["parser"]
         )
-
-    init_safety_classifier(FLAGS.safety_list, model_pool)
+    FLAGS.safety_classifier_path = FLAGS.safety_list
 
     return model_pool
 

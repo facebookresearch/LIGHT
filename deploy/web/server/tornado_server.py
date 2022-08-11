@@ -13,7 +13,7 @@ from deploy.web.server.game_instance import (
 from light.data_model.db.users import PlayerStatus
 from light.world.player_provider import PlayerProvider
 from light.world.quest_loader import QuestLoader
-from light.graph.events.graph_events import init_safety_classifier, RewardEvent
+from light.graph.events.graph_events import RewardEvent
 from light.world.souls.tutorial_player_soul import TutorialPlayerSoul
 
 import argparse
@@ -928,8 +928,9 @@ def main():
         help="port to run the server on.",
     )
     FLAGS = parser.parse_args()
-
-    init_safety_classifier(os.path.expanduser("~/data/safety/OffensiveLanguage.txt"))
+    FLAGS.safety_classifier_path = os.path.expanduser(
+        "~/data/safety/OffensiveLanguage.txt"
+    )
 
     random.seed(6)
     numpy.random.seed(6)

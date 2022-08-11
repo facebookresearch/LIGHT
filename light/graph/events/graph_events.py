@@ -32,16 +32,6 @@ import math
 
 if TYPE_CHECKING:
     from light.registry.model_pool import ModelPool
-
-safety_classifier: Optional[SafetyClassifier] = None
-
-
-def init_safety_classifier(datapath, model_pool: "ModelPool"):
-    global safety_classifier
-    safety_classifier = SafetyClassifier(datapath, model_pool)
-
-
-if TYPE_CHECKING:
     from light.world.world import World
     from light.graph.structured_graph import OOGraph
 
@@ -96,6 +86,7 @@ class SpeechEvent(GraphEvent):
         target_nodes: Optional[List[GraphNode]] = None,
         text_content: Optional[str] = None,
         event_id: Optional[str] = None,
+        is_safe: Optional[bool] = True,
     ):
         super().__init__(
             actor,
@@ -106,17 +97,9 @@ class SpeechEvent(GraphEvent):
         # Give opportunity to skip the safety after initialization
         # for debug reasons
         self.skip_safety = False
-        self.safe = None
+        self.safe = is_safe
 
     def is_dialogue_safe(self, text):
-        if safety_classifier is None:
-            self.safe = True
-            return True
-
-        if safety_classifier.is_safe(text):
-            self.safe = True
-        else:
-            self.safe = False
         return self.safe
 
 

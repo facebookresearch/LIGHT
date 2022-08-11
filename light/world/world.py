@@ -14,10 +14,11 @@ from light.graph.utils import rm, deprecated
 from light.graph.events.base import GraphEvent, ErrorEvent
 from light.graph.events.graph_events import (
     SpawnEvent,
+    SpeechEvent,
     SystemMessageEvent,
     DeleteObjectEvent,
-    init_safety_classifier,
 )
+from light.graph.events.safety import SafetyClassifier
 from light.graph.events.all_events_list import (
     ALL_EVENTS,
     ALL_EVENTS_LIST,
@@ -121,7 +122,10 @@ class World(object):
         self.graph_builder = config.graph_builder
 
         # Set up safety classifier.
-        init_safety_classifier(self._opt.get("safety_classifier_path", ""), model_pool)
+        self.safety_classifier = SafetyClassifier(
+            self._opt.get("safety_classifier_path", ""),
+            model_pool,
+        )
 
         # Set up magic!
         init_magic(self._opt.get("magic_db_path", "/scratch/light/data/magic.db"))
@@ -816,7 +820,7 @@ class World(object):
                 )
                 return False, "FailedParseExec"
 
-    def attempt_parse_event(
+    async def attempt_parse_event(
         self, EventClass, actor_node, arguments, event_id: Optional[str] = None
     ):
         """Return the possible parsed event given the event, actor, and arguments"""
@@ -835,6 +839,17 @@ class World(object):
 
         if isinstance(result, ErrorEvent):
             return result
+
+        if isinstance(result, SpeechEvent):
+            # Additionally, run safety
+            is_safe = await safety_classifier.is_safe(result.text)
+            return EventClass.construct_from_args(
+                actor_node,
+                result.targets,
+                result.text,
+                event_id=event_id,
+                is_safe=is_safe,
+            )
 
         # Create the final event. May be an error but that's okay
         return EventClass.construct_from_args(
@@ -934,7 +949,9 @@ class World(object):
 
         EventClass = ALL_EVENTS[executable]
 
-        parsed_event = self.attempt_parse_event(EventClass, actor, arguments, event_id)
+        parsed_event = await self.attempt_parse_event(
+            EventClass, actor, arguments, event_id
+        )
         if isinstance(parsed_event, ErrorEvent):
             self.broadcast_to_agents(parsed_event, [actor])
             return False, inst

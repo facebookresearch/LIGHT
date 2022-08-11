@@ -103,6 +103,8 @@ class ResponseHandler(BaseHandler):
         response = await self.model.act()
         if "metrics" in response:
             del response["metrics"]
+        if "sorted_scores" in response:
+            response["sorted_scores"].force_set(response["sorted_scores"].tolist())
         self.write(json.dumps({"act": response}))
 
 
