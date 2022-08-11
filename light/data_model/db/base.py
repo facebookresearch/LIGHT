@@ -169,7 +169,7 @@ class BaseDB(ABC):
         if self.backend in ["test", "local"]:
             full_path = os.path.join(self.file_root, file_path)
             return os.path.exists(full_path)
-        if self.backend in ["aws-postgres"]:
+        elif self.backend in ["aws-postgres"]:
             import botocore
 
             try:
@@ -183,7 +183,7 @@ class BaseDB(ABC):
                     # Something else has gone wrong.
                     raise
         else:
-            raise NotImplementedError
+            raise NotImplementedError(f"Backend {self.backend} is not implemented")
 
     def write_data_to_file(
         self, data: Union[str, Dict[str, Any]], filename: str, json_encode: bool = False
@@ -200,12 +200,12 @@ class BaseDB(ABC):
                     json.dump(data, target_file)
                 else:
                     target_file.write(data)
-        if self.backend in ["aws-postgres"]:
+        elif self.backend in ["aws-postgres"]:
             if json_encode:
                 data = json.dumps(data)
             self.bucket.Object(filename).put(Body=data)
         else:
-            raise NotImplementedError()
+            raise NotImplementedError(f"Backend {self.backend} is not implemented")
 
     def read_data_from_file(
         self, filename: str, json_encoded: bool = False
@@ -221,14 +221,14 @@ class BaseDB(ABC):
                     return json.load(target_file)
                 else:
                     return target_file.read()
-        if self.backend in ["aws-postgres"]:
+        elif self.backend in ["aws-postgres"]:
             data = self.bucket.Object(filename).get()["Body"]
             if json_encoded:
                 return json.loads(data)
             else:
                 return data
         else:
-            raise NotImplementedError()
+            raise NotImplementedError(f"Backend {self.backend} is not implemented")
 
     def shutdown(self):
         if self.backend == "test":
