@@ -33,7 +33,7 @@ import asyncio
 from typing import List, Any, Dict, Optional
 
 
-CONTEXT_FILL_COUNT = 4000
+CONTEXT_FILL_COUNT = 200
 INIT_CONTEXT = """
 _setting_name weathered shack, Abandoned
 _setting_desc A weathered shack with a roof made of old broken tiles sits in the middle of the forest. The wood is starting to split and the shack appears as if it will crumble at any moment.

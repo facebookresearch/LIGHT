@@ -105,7 +105,12 @@ class ResponseHandler(BaseHandler):
             del response["metrics"]
         if "sorted_scores" in response:
             response["sorted_scores"].force_set(response["sorted_scores"].tolist())
-        self.write(json.dumps({"act": response}))
+        try:
+            self.write(json.dumps({"act": response}))
+        except:
+            print(response.keys())
+            print(response)
+            raise
 
 
 class AliveHandler(BaseHandler):
@@ -158,7 +163,13 @@ def _init_model(model_opt_file: str, model_loader: str) -> "Agent":
         raise NotImplementedError(f"Unsupported model loader {model_loader}")
 
     pool.register_model(cfg, ["target"])
-    return pool.get_model("target")
+    model = pool.get_model("target")
+    # Try to clear up some memory
+    del pool._model_loaders["target"]
+    import gc
+
+    gc.collect()
+    return model
 
 
 def main():

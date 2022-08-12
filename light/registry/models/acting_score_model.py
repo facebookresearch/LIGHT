@@ -8,6 +8,7 @@ import asyncio
 from dataclasses import dataclass, field
 from parlai.core.agents import Agent
 from parlai.core.message import Message
+import types
 
 from light.registry.parlai_model import ParlAIModelConfig, ParlAIModelLoader
 
@@ -41,27 +42,41 @@ class ParlAIPolyencoderActingScoreModelLoader(ParlAIModelLoader):
         old_act = model.act
         old_observe = model.observe
 
-        def new_observe(model, message: Message):
-            model._last_observe = message
+        def new_observe(model_self, message: Message):
+            model_self._last_observe = message
             old_observe(message)
 
-        model.observe = new_observe
+        model.observe = types.MethodType(new_observe, model)
         model._last_observe = Message({})
 
-        def new_act(model):
-            if model._last_observe.get("label_candidates"):
+        old_act = model.act
+
+        def new_act(model_self):
+            if model_self._last_observe.get("label_candidates"):
                 # Evalling just one cand
-                model.roleplaying_score_model.opt["label_candidates"] = "inline"
-                model.roleplaying_score_model.label_candidates = "inline"
-                act = model.act()
-                scores = model.scores
-                act["scores"] = model.scores
+                model_self.opt["candidates"] = "inline"
+                model_self.candidates = "inline"
+                model_self.opt["eval_candidates"] = "inline"
+                model_self.eval_candidates = "inline"
+                model_self.reset()
+                old_observe(model_self._last_observe)  # re-observe to vectorize
+                act = old_act()
+                scores = model_self.scores
+                act["scores"] = scores[0].tolist()
             else:
                 # Evalling against the base candidates
-                model.roleplaying_score_model.opt["eval_candidates"] = "fixed"
-                model.roleplaying_score_model.eval_candidates = "fixed"
-                act = model.act()
-                scores = [model.scores[i] for i in SCORE_INDS]
+                model_self.opt["candidates"] = "fixed"
+                model_self.candidates = "fixed"
+                model_self.opt["eval_candidates"] = "fixed"
+                model_self.eval_candidates = "fixed"
+                # model_self.reset()
+                act = old_act()
+                list_scores = sorted(model_self.scores[0].tolist())
+                list_scores.reverse()
+                scores = [list_scores[i] for i in SCORE_INDS]
                 act["scores"] = scores
+            return act
+
+        model.act = types.MethodType(new_act, model)
 
         return model
