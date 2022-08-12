@@ -331,5 +331,20 @@ class EpisodeDB(BaseDB):
                 actors = actors_string.split(",")
                 processed_actors = [rehash(a) for a in actors]
                 episode.actors = ",".join(processed_actors)
-            session.commit()
+                # Rewrite the graphs and events too
+                def replace_all_actors(in_data: str) -> str:
+                    out_data = in_data
+                    for i in range(len(actors)):
+                        out_data = out_data.replace(actors[i], processed_actors[i])
+                    return out_data
+
+                graphs = episode.graphs
+                for graph in graphs:
+                    graph_data = self.read_data_from_file(graph.full_path)
+                    anon_graph_data = replace_all_actors(graph_data)
+                    self.write_data_to_file(anon_graph_data, graph.full_path)
+                event_data = self.read_data_from_file(episode.dump_file_path)
+                anon_event_data = replace_all_actors(event_data)
+                self.write_data_to_file(anon_event_data, episode.dump_file_path)
+                session.commit()
         return True

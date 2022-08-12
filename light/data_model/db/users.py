@@ -10,6 +10,7 @@ from typing import Optional, Union, Dict, Any, TYPE_CHECKING
 from sqlalchemy import (
     insert,
     select,
+    delete,
     Enum,
     Column,
     Integer,
@@ -243,7 +244,9 @@ class UserDB(BaseDB):
         with Session(self.engine) as session:
             player = self._enforce_get_first(session, get_player, "Player not found")
             session.execute(delete(DBPlayer).where(DBPlayer.db_id == player_id))
-            session.execute(delete(DBPlayer).where(DBScoreEntry.user_id == player_id))
+            session.execute(
+                delete(DBScoreEntry).where(DBScoreEntry.user_id == player_id)
+            )
             session.commit()
 
         env_db.clear_player_graphs(player_id)

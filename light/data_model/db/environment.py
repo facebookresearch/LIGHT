@@ -346,6 +346,7 @@ class DBNodeAttribute(HasDBIDMixin, SQLBase):
     creator_id = Column(
         String(ID_STRING_LENGTH)
     )  # temp retain the creator ID for new things
+    create_timestamp = Column(Float, nullable=False)
 
 
 # Graph edges and attributes
@@ -1315,6 +1316,7 @@ class EnvDB(BaseDB):
                     attribute_value_string=attribute_value_string,
                     status=status,
                     creator_id=creator_id,
+                    create_timestamp=time.time(),
                 )
                 session.add(attribute)
                 session.flush()
@@ -1860,12 +1862,12 @@ class EnvDB(BaseDB):
 
     # release functionality
 
-    def scrub_creators(self) -> int:
+    def scrub_creators(self, start_time: Optional[int] = None) -> int:
         """
         Remove creators from anything in the dataset longer than 60 days
         """
         changed_count = 0
-        current_time = time.time()
+        current_time = time.time() if start_time is None else start_time
         cutoff_time = current_time - MAX_RETENTION
         with Session(self.engine) as session:
             for target_type in [
@@ -1878,7 +1880,7 @@ class EnvDB(BaseDB):
                 DBQuest,
             ]:
                 stmt = select(target_type)
-                stmt = stmt.where(target_type.creator_id.starts_with("USR"))
+                stmt = stmt.where(target_type.creator_id.startswith("USR"))
                 stmt = stmt.where(target_type.create_timestamp < cutoff_time)
                 elems = session.scalars(stmt).all()
                 for elem in elems:
@@ -1886,7 +1888,7 @@ class EnvDB(BaseDB):
                     elem.creator_id = SCRUBBED_USER_ID
 
             stmt = select(DBFlag)
-            stmt = stmt.where(DBFlag.user_id.starts_with("USR"))
+            stmt = stmt.where(DBFlag.user_id.startswith("USR"))
             stmt = stmt.where(DBFlag.create_timestamp < cutoff_time)
             flags = session.scalars(stmt).all()
             for flag in flags:
@@ -1894,7 +1896,7 @@ class EnvDB(BaseDB):
                 flag.user_id = SCRUBBED_USER_ID
 
             stmt = select(DBEdit)
-            stmt = stmt.where(DBEdit.editor_id.starts_with("USR"))
+            stmt = stmt.where(DBEdit.editor_id.startswith("USR"))
             stmt = stmt.where(DBEdit.create_timestamp < cutoff_time)
             edits = session.scalars(stmt).all()
             for edit in edits:
