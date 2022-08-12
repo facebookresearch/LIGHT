@@ -386,6 +386,8 @@ class OnEventSoul(ModelSoul):
         return False
 
     async def _take_timestep(self) -> None:
+        if self.target_node._dying:
+            return
         self.timestep_actions()
 
     def timestep_actions(self):

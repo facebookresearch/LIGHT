@@ -368,24 +368,24 @@ def main():
     error_list = get_errors(action_episodes)
 
     print(
-        f"{BOLD_CYAN}---- Episode Stats -----{C.RESET}\n"
+        f"{C.BOLD_CYAN}---- Episode Stats -----{C.RESET}\n"
         f"Total Count: {len(episodes)} \tNontrivial: {nontrivial_count} ({nontrivial_prop:2.2f}%)\n"
-        f"{BOLD_CYAN}---- Remaining stats on Nontrivial ----{C.RESET}\n"
+        f"{C.BOLD_CYAN}---- Remaining stats on Nontrivial ----{C.RESET}\n"
         f"Overall Interaction count stats: {overall_turn_details['string']}\n"
         f"Rooms Travelled stats: {movement_turn_details['string']}\n"
         f"Speech Count: {speech_count} ({speech_prop:2.2f}% of nontrivial)\n"
-        f"{BOLD_YELLOW}---- Error Analysis ----{C.RESET}\n"
+        f"{C.BOLD_YELLOW}---- Error Analysis ----{C.RESET}\n"
         f"Total errors: {len(error_list)}\n"
         f"Episodes with parse errors: {error_count} ({error_prop:2.2f}%)\n"
-        f"{BOLD_CYAN}---- Remaining stats on Speech ----{C.RESET}\n"
+        f"{C.BOLD_CYAN}---- Remaining stats on Speech ----{C.RESET}\n"
         f"Overall speech turn stats: {speech_turn_details['string']}\n"
         f"Human speech turn stats: {human_turn_details['string']}\n"
         f"Multi-player: 2 or more: {multi_human_count} ({multi_human_prop:2.2f}%) \t"
         f"3 or more: {three_party_count} ({three_party_prop:2.2f}%)\n"
-        f"{BOLD_YELLOW}---- Safety ----{C.RESET}\n"
+        f"{C.BOLD_YELLOW}---- Safety ----{C.RESET}\n"
         f"Unsafe by player: {actor_unsafe_count} ({actor_unsafe_prop:2.2f}%) \t"
         f"Unsafe by any: {any_unsafe_count} ({any_unsafe_prop:2.2f}%)\n"
-        f"{BOLD_CYAN}----- Player action breakdown ----{C.RESET}\n"
+        f"{C.BOLD_CYAN}----- Player action breakdown ----{C.RESET}\n"
         f"Overall action breakdown: {overall_action_breakdown}\n"
     )
 

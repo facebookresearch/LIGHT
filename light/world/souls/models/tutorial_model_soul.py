@@ -12,6 +12,7 @@ from light.graph.events.base import ErrorEvent
 from light.graph.events.graph_events import (
     UnblockEvent,
     WearEvent,
+    EquipObjectEvent,
     TellEvent,
     SayEvent,
     GoEvent,
@@ -48,11 +49,13 @@ SAFE_PHRASES = [
 ]
 
 SCRIPTED_RESPONSES = {
-    (""): (
+    ("", "hello", "hi"): (
         "Welcome my friend to the impossible tavern. I'm glad you're here! "
         "I'm looking for curious souls to inhabit the residents of the "
         "world beyond that shimmering portal. If you have a ticket "
-        "I can let you in and provide you a story to play. "
+        "I can let you in and provide you a story to play. In the meantime we "
+        "can chat! I warn you though, out here my mind may wander... "
+        "Be sure to ask for help if you need it."
     ),
     ("boots", "boot"): (
         "While you're just a soul in here, it's worthwhile to have some footwear. "
@@ -63,6 +66,14 @@ SCRIPTED_RESPONSES = {
     ),
     ("carrying", "holding"): (
         "You can see what you're carrying with the `inv` command"
+    ),
+    ("ticket", "tickets"): (
+        "I've already distributed all of the tickets. Perhaps you already have one? "
+        "You should check what you're carrying."
+    ),
+    ("where", "the way", "portal", "get there"): (
+        "If you're trying to get into the realm of LIGHT, you'll need to go into "
+        "that portal right over there. You'd need a ticket first though."
     ),
 }
 
@@ -316,18 +327,19 @@ class TutorialModelSoul(OnEventSoul):
                 "doing right now, you can try checking your persona on the left. "
             )
 
-        if self.num_dialogue_without_action > 5:
+        if self.num_dialogue_without_action > 4:
             return (
                 "While I'm happy to talk all day, I do want to be sure you know how to do things "
                 "as well. You can toggle between saying and doing things with the button below, "
                 "or quickly with the ` key. Try it now! See what you're carrying with `inv`, or "
-                "maybe `examine` some of the things in this room."
+                "maybe `examine` some of the things in this room. `help` will show you all of the "
+                "possible commands, in case you've forgotten."
             )
 
         for key_group in SCRIPTED_RESPONSES.keys():
             if key_group not in self.used_responses:
                 for key in key_group:
-                    if key in text_content:
+                    if key in text_content.lower() or key == "":
                         self.used_responses.add(key_group)
                         return SCRIPTED_RESPONSES[key_group]
 
@@ -389,7 +401,9 @@ class TutorialModelSoul(OnEventSoul):
                     "I'm always open for a hug! Kindness is important in LIGHT"
                 )
                 HugEvent(self.target_node, [last_action.actor]).execute(self.world)
-            elif isinstance(last_action, WearEvent):
+            elif isinstance(last_action, WearEvent) or isinstance(
+                last_action, EquipObjectEvent
+            ):
                 if last_action.target_nodes[0].name == "boots":
                     self.partner_wearing_boots = True
                     if self.partner_gave_ticket:
@@ -407,9 +421,10 @@ class TutorialModelSoul(OnEventSoul):
                 print("Maybe should do something with this?", last_action)
 
         if response_content is not None:
-            SayEvent(self.target_node, text_content=response_content).execute(
-                self.world
-            )
+            canned_response = SayEvent(self.target_node, text_content=response_content)
+            canned_response.safe = True
+            canned_response.skip_safety = True
+            canned_response.execute(self.world)
             return True
         else:
             return None

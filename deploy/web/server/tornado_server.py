@@ -47,6 +47,12 @@ if TYPE_CHECKING:
     from light.world.world import World
     from light.data_model.db.users import UserDB
 
+# Monkeypatch to allow samesite for iframe usage
+from http.cookies import Morsel
+
+Morsel._reserved["samesite"] = "SameSite"
+
+
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
 QUESTS_LOCATION = "/home/ubuntu/data/quests"
@@ -234,7 +240,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             await new_player.init_soul()
             self.app.registry.game_instances[game_id].players.append(new_player)
 
-    async def open(self, game_id):
+    def open(self, game_id):
         """
         Open a websocket, validated either by a valid user cookie or
         by a validated preauth.
@@ -257,7 +263,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                 return
         else:
             user_json = self.get_secure_cookie("user")
-            if user_json is not None:
+            if user_json is not None and user_json != "":
                 user_id = json.loads(user_json)
 
         print("Requesting for user", user_id)
@@ -282,9 +288,15 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                             self.launch_game_for_user, user_id, orig_game_id
                         )
 
-                    game_id = self.app.registry.run_tutorial(user_id, on_complete)
+                    async def create_and_run_tutorial():
+                        game_id = await self.app.registry.run_tutorial(
+                            user_id, on_complete
+                        )
+                        await self.launch_game_for_user(user_id, game_id)
 
-            loop.spawn_callback(self.launch_game_for_user, user_id, game_id)
+                    loop.spawn_callback(create_and_run_tutorial)
+            else:
+                loop.spawn_callback(self.launch_game_for_user, user_id, game_id)
         else:
             self.close()
             self.redirect("/#/login")
@@ -302,8 +314,10 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         if cmd == "act":
             data = msg["data"]
             await self.player.act(data["text"], data["event_id"])
+        elif cmd == "hb":
+            pass  # heartbeats
         else:
-            logging.warning(f"THESE COMMANDS HAVE BEEN DEPRICATED: {data}")
+            logging.warning(f"THESE COMMANDS HAVE BEEN DEPRICATED: {msg}")
 
     def on_close(self):
         self.alive = False
@@ -324,7 +338,7 @@ class BaseHandler(tornado.web.RequestHandler):
         user_json = self.get_secure_cookie(
             "user"
         )  # Need to refactor into 'get_identity', then have base and preauth handler implementations
-        if user_json:
+        if user_json is not None and len(user_json) != 0:
             user_decoded = tornado.escape.json_decode(user_json)
             if len(user_decoded) == 0:
                 return None
@@ -387,7 +401,7 @@ class ApiHandler(BaseHandler):
     def get(self, *args):
         print("THE ARGS", *args)
         user_json = self.get_secure_cookie("user")
-        if user_json:
+        if user_json is not None and user_json != "":
             user_decoded = tornado.escape.json_decode(user_json)
 
             split_inputs = args[0].split("/")
@@ -415,7 +429,7 @@ class ApiHandler(BaseHandler):
         data = tornado.escape.json_decode(self.request.body)
         user_json = self.get_secure_cookie("user")
         print(data)
-        if user_json:
+        if user_json is not None and user_json != "":
             user_decoded = tornado.escape.json_decode(user_json)
 
             split_inputs = args[0].split("/")
@@ -488,7 +502,7 @@ class LandingApplication(tornado.web.Application):
                 FacebookOAuth2LoginHandler,
                 {"user_db": user_db, "hostname": hostname, "app": self},
             ),
-            (r"/logout", LogoutHandler, {"user_db": user_db}),
+            (r"/logout", LogoutHandler, {"hostname": hostname}),
             (
                 r"/terms",
                 StaticPageHandler,
@@ -569,6 +583,8 @@ class PreauthGameHandler(BaseHandler):
                 expires_days=1,
                 domain=self.hostname,
                 httponly=True,
+                samesite=None,
+                secure=True,
             )
             self.set_secure_cookie(
                 "preauth_context",
@@ -576,6 +592,8 @@ class PreauthGameHandler(BaseHandler):
                 expires_days=1,
                 domain=self.hostname,
                 httponly=True,
+                samesite=None,
+                secure=True,
             )
             self.set_secure_cookie(
                 "context_token",
@@ -583,6 +601,8 @@ class PreauthGameHandler(BaseHandler):
                 expires_days=1,
                 domain=self.hostname,
                 httponly=True,
+                samesite=None,
+                secure=True,
             )
             self.render(here + "/../build/game.html")
         else:
@@ -654,7 +674,13 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
                 httponly=True,
             )
         else:
-            self.clear_cookie("user")
+            self.set_secure_cookie(
+                "user",
+                "",
+                domain=self.hostname,
+                secure=True,
+                httponly=True,
+            )
 
 
 class LoginHandler(BaseHandler):
@@ -694,12 +720,30 @@ class LoginHandler(BaseHandler):
                 httponly=True,
             )
         else:
-            self.clear_cookie("user")
+            self.set_secure_cookie(
+                "user",
+                "",
+                domain=self.hostname,
+                secure=True,
+                httponly=True,
+            )
 
 
 class LogoutHandler(BaseHandler):
+    def initialize(
+        self,
+        hostname=DEFAULT_HOSTNAME,
+    ):
+        self.hostname = hostname
+
     def get(self):
-        self.clear_cookie("user")
+        self.set_secure_cookie(
+            "user",
+            "",
+            domain=self.hostname,
+            secure=True,
+            httponly=True,
+        )
         self.redirect("/#/bye")
 
 

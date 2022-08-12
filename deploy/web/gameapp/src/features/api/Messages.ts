@@ -51,4 +51,5 @@ export const api = createApi({
   }),
 });
 
-export const { useGetMessagesQuery } = api;
+// TODO @Justin this is unused, what are we doing with it?
+// export const { useGetMessagesQuery } = api;

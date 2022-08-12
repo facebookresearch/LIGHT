@@ -64,7 +64,7 @@ class TutorialPlayerSoul(Soul):
         PlayerSouls pass their observation along to the provider, who will handle
         getting the correct format to send to the view.
         """
-        self.provider.player_observe_event(self, event)
+        await self.provider.player_observe_event(self, event)
         self.agent_logger.observe_event(event)
 
     async def reap(self):

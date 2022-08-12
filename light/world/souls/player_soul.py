@@ -137,7 +137,7 @@ class PlayerSoul(BaseSoul):
         await self.role_playing_score_events(event)
         check_if_cast_magic_from_event(self, event)
         await self.quest_events(event)
-        self.provider.player_observe_event(self, event)
+        await self.provider.player_observe_event(self, event)
         self.agent_logger.observe_event(event)
 
     async def reap(self):

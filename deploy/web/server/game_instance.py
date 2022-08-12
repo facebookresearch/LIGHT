@@ -143,14 +143,14 @@ class GameInstance:
             _, self.world = await StarspaceBuilder(
                 self.ldb,
                 debug=False,
-                opt=self.opt,
+                opt=self.world_config.opt,
             ).get_graph()  # TODO: what are the args that are needed
         else:
-            self.opt["load_map"] = os.path.expanduser(
+            self.world_config.opt["load_map"] = os.path.expanduser(
                 "~/LIGHT/scripts/examples/complex_world.json"
             )
             world_builder = MapJsonBuilder(
-                episode_db=self.world_config.episode_db, opt=self.opt
+                episode_db=self.world_config.episode_db, opt=self.world_config.opt
             )
             _, self.world = await world_builder.get_graph(
                 world_config=self.world_config
@@ -206,30 +206,34 @@ class TutorialInstance(GameInstance):
     ):
         self.db = ldb
         self._created_time = time.time()
-        self._player_node = tutorial_world.oo_graph.find_nodes_by_name("You")[0]
-        self._target_destination = tutorial_world.oo_graph.find_nodes_by_name(
-            "Ethereal Mist"
-        )[0]
         super().__init__(game_id, ldb, opt=opt, world_config=world_config)
         self._should_shutdown = False
         self._did_complete = True
 
-    async def _init_world():
-        _, self.world = await TutorialWorldBuilder(self.db, self.opt).get_graph()
+    async def _init_world(self):
+        _, tutorial_world = await TutorialWorldBuilder(
+            self.db,
+            opt=self.world_config.opt,
+        ).get_graph(world_config=self.world_config)
+        self.world = tutorial_world
+        self._player_node = tutorial_world.oo_graph.find_nodes_by_name("You")[0]
+        self._target_destination = tutorial_world.oo_graph.find_nodes_by_name(
+            "Ethereal Mist"
+        )[0]
 
     def fill_souls(self, _FLAGS, model_resources):
         """Tutorials directly register the tutorial to the DM"""
         self.world.purgatory.register_filler_soul_provider(
             "tutorial",
             TutorialModelSoul,
-            lambda: [model_resources["shared_model_content"]],
+            lambda: [],
         )
         dm_agent = list(self.world.oo_graph.agents.values())[1]
         assert dm_agent.name == "Dungeon Master", "Did not find DM!"
         self.world.purgatory.fill_soul(dm_agent, "tutorial")
 
     async def run_graph_step(self):
-        super().run_graph_step()
+        await super().run_graph_step()
         self._did_complete = self._player_node.get_room() == self._target_destination
         self._should_shutdown = (
             len(self.players) == 0 and time.time() - self._created_time > 60

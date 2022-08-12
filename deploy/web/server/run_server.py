@@ -24,15 +24,13 @@ import inspect
 import os
 import asyncio
 from light.data_model.light_database import LIGHTDatabase
-from light.world.souls.models.generative_heuristic_model_soul import (
-    GenerativeHeuristicModelSoul,
-)
-from light.data_model.db.base import LightDBConfig
+from light.data_model.db.base import LightDBConfig, LightAWSDBConfig
 from light.data_model.db.episodes import EpisodeDB
 from light.data_model.db.users import UserDB
 from light.world.world import WorldConfig
 from light.registry.model_pool import ModelPool
 from light.registry.parlai_model import ParlAIModelConfig
+from light.registry.parlai_remote_model import ParlAIRemoteModelConfig
 from light.registry.models.acting_score_model import (
     ParlAIPolyencoderActingScoreModelConfig,
 )
@@ -121,14 +119,9 @@ def make_app(FLAGS, ldb, model_pool: ModelPool):
     return registryApp
 
 
-async def start_default_game(ldb, registryApp):
-    _ = await registryApp.run_new_game("", ldb)
-
-
-def _run_server(FLAGS, ldb, model_resources):
-    my_loop = IOLoop.current()
+async def _run_server(FLAGS, ldb, model_resources):
     registry_app = make_app(FLAGS, ldb, model_resources)
-    my_loop.call_later(1, start_default_game, ldb, registry_app)
+    _ = await registry_app.run_new_game("", ldb)
 
     print(
         "\nYou can connect to the game at http://%s:%s/" % (FLAGS.hostname, FLAGS.port)
@@ -137,10 +130,8 @@ def _run_server(FLAGS, ldb, model_resources):
         "You can connect to the worldbuilder at http://%s:%s/builder/ \n"
         % (FLAGS.hostname, FLAGS.port)
     )
-    try:
-        my_loop.start()
-    except KeyboardInterrupt:
-        my_loop.stop()
+    while True:
+        await asyncio.sleep(30)
 
 
 # Update this to load _all_ models for the full game, return the ModelPool
@@ -342,7 +333,7 @@ def main():
     numpy.random.seed(6)
     model_pool = init_model_pool(FLAGS)
     ldb = LIGHTDatabase(FLAGS.data_model_db)
-    _run_server(FLAGS, ldb, model_pool)
+    asyncio.run(_run_server(FLAGS, ldb, model_pool))
 
 
 if __name__ == "__main__":

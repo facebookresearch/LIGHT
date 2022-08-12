@@ -12,3 +12,5 @@ LetsPlay
 True
 --is-logging
 True
+--safety-list
+''

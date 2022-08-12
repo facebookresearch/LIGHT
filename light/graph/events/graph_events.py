@@ -3122,7 +3122,7 @@ def actor_has_no_recent_action(last_time_acted, current_time):
 class ExamineEvent(GraphEvent):
     """Handles displaying examine/extra text for a graph node"""
 
-    NAMES = ["examine", "ex"]
+    NAMES = ["examine", "ex", "inspect"]
 
     def _get_target_description(self, world: "World") -> str:
         """Get the examine description for the given target"""

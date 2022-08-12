@@ -58,7 +58,9 @@ class DBScoreEntry(SQLBase):
     user_id = Column(
         String, ForeignKey("user_accounts.db_id"), nullable=False, index=True
     )
-    agent_name_id = Column(Integer, index=True)  # Null for overall score for an agent
+    agent_name_id = Column(
+        String(40), index=True
+    )  # Null for overall score for an agent
     score = Column(Integer, nullable=False)
     count = Column(Integer, nullable=False)
     reward_xp = Column(Integer)

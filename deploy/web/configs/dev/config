@@ -1,7 +1,7 @@
 --data-model-db
 /home/ubuntu/data/database.db
 --hostname
-www.light-rpg.ai
+dev.light-rpg.ai
 --light-model-root
 /home/ubuntu/data/models/
 --password
@@ -9,4 +9,8 @@ LetsPlay
 --port
 8088
 --db-backend
-local
+aws-postgres
+--is-logging
+True
+--safety-list
+''
