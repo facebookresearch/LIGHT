@@ -44,6 +44,9 @@ FILE_PATH_KEY = "env"
 GRAPH_PATH_KEY = "graphs"
 QUEST_PATH_KEY = "quests"
 
+SCRUBBED_USER_ID = "scrubbed_user"
+MAX_RETENTION = 60 * 60 * 24 * 90  # 60 days
+
 BASE_NAME_LENGTH_CAP = 96
 WORLD_NAME_LENGTH_CAP = 128
 EDGE_LABEL_LENGTH_CAP = 64
@@ -1857,8 +1860,53 @@ class EnvDB(BaseDB):
 
     # release functionality
 
+    def scrub_creators(self) -> int:
+        """
+        Remove creators from anything in the dataset longer than 60 days
+        """
+        changed_count = 0
+        current_time = time.time()
+        cutoff_time = current_time - MAX_RETENTION
+        with Session(self.engine) as session:
+            for target_type in [
+                DBAgent,
+                DBObject,
+                DBRoom,
+                DBNodeAttribute,
+                DBEdge,
+                DBTextEdge,
+                DBQuest,
+            ]:
+                stmt = select(target_type)
+                stmt = stmt.where(target_type.creator_id.starts_with("USR"))
+                stmt = stmt.where(target_type.create_timestamp < cutoff_time)
+                elems = session.scalars(stmt).all()
+                for elem in elems:
+                    changed_count += 1
+                    elem.creator_id = SCRUBBED_USER_ID
+
+            stmt = select(DBFlag)
+            stmt = stmt.where(DBFlag.user_id.starts_with("USR"))
+            stmt = stmt.where(DBFlag.create_timestamp < cutoff_time)
+            flags = session.scalars(stmt).all()
+            for flag in flags:
+                changed_count += 1
+                flag.user_id = SCRUBBED_USER_ID
+
+            stmt = select(DBEdit)
+            stmt = stmt.where(DBEdit.editor_id.starts_with("USR"))
+            stmt = stmt.where(DBEdit.create_timestamp < cutoff_time)
+            edits = session.scalars(stmt).all()
+            for edit in edits:
+                changed_count += 1
+                edit.editor_id = SCRUBBED_USER_ID
+
+            session.commit()
+
     def export(self):
         """
         Create a scrubbed version of this database for use in releases
         """
+        # Duplicate the DB, run scrub_creators
+        # Scrub creators from graphs as well
         raise NotImplementedError

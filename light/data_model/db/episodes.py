@@ -13,6 +13,7 @@ from light.graph.events.base import GraphEvent
 import time
 import enum
 import os
+import hashlib
 
 if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
@@ -300,3 +301,35 @@ class EpisodeDB(BaseDB):
             episodes = session.scalars(stmt).all()
             session.expunge_all()
             return episodes
+
+    def anonymize_group(self, group: DBGroupName) -> bool:
+        """
+        Run anonymization on the split to remove any link to the
+        long-term user. All data within a quarter's dataset
+        can be linked (for long-term memory analysis) but cannot be
+        tracked cross-quarters.
+
+        Return true on success
+        """
+        hashing_time = time.time()
+        sha = hashlib.sha256()
+
+        def rehash(curr_name):
+            if not curr_name.startswith("USR"):
+                return curr_name  # already hashed
+
+            # Adding a hashtime to make unique
+            hash_name = f"{curr_name}-{hashing_time}"
+            sha.update(hash_name.encode())
+            return str(sha.hexdigest()[:30])
+
+        with Session(self.engine) as session:
+            stmt = select(DBEpisode).where(DBEpisode.group == group)
+            episodes = session.scalars(stmt).all()
+            for episode in episodes:
+                actors_string = episode.actors
+                actors = actors_string.split(",")
+                processed_actors = [rehash(a) for a in actors]
+                episode.actors = ",".join(processed_actors)
+            session.commit()
+        return True
