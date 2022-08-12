@@ -1902,6 +1902,20 @@ class EnvDB(BaseDB):
                 edit.editor_id = SCRUBBED_USER_ID
 
             session.commit()
+            return changed_count
+
+    def clear_player_graphs(self, player_id: int):
+        """
+        Find graphs with this player_id as creator
+        and then scrub the association
+        """
+        with Session(self.engine) as session:
+            stmt = select(DBGraph)
+            stmt = stmt.where(DBGraph.creator_id == player_id)
+            graphs = session.scalars(stmt).all()
+            for graph in graphs:
+                graph.creator_id = SCRUBBED_USER_ID
+            session.commit()
 
     def export(self):
         """

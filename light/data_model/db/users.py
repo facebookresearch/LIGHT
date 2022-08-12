@@ -6,7 +6,7 @@
 
 from light.data_model.db.base import BaseDB, HasDBIDMixin
 from omegaconf import MISSING, DictConfig
-from typing import Optional, Union, Dict, Any
+from typing import Optional, Union, Dict, Any, TYPE_CHECKING
 from sqlalchemy import (
     insert,
     select,
@@ -19,6 +19,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import declarative_base, relationship, Session
 import enum
+
+if TYPE_CHECKING:
+    from light.data_model.db.environment import EnvDB
 
 SQLBase = declarative_base()
 
@@ -124,7 +127,7 @@ class UserDB(BaseDB):
             session.commit()
         return player_id
 
-    def get_player(self, player_id: int) -> DBPlayer:
+    def get_player(self, player_id: str) -> DBPlayer:
         """Find the specified player, raise exception if non-existent"""
         stmt = select(DBPlayer).where(DBPlayer.db_id == player_id)
         with Session(self.engine) as session:
@@ -206,7 +209,7 @@ class UserDB(BaseDB):
 
             session.commit()
 
-    def mark_flag(self, player_id: int) -> None:
+    def mark_flag(self, player_id: str) -> None:
         """Mark that a player has been flagged"""
         get_player = select(DBPlayer).where(DBPlayer.db_id == player_id)
         with Session(self.engine) as session:
@@ -214,7 +217,7 @@ class UserDB(BaseDB):
             player.flag_count += 1
             session.commit()
 
-    def mark_safety_trigger(self, player_id: int) -> None:
+    def mark_safety_trigger(self, player_id: str) -> None:
         """mark that a specific player has triggered the safety"""
         get_player = select(DBPlayer).where(DBPlayer.db_id == player_id)
         with Session(self.engine) as session:
@@ -222,10 +225,25 @@ class UserDB(BaseDB):
             player.safety_trigger_count += 1
             session.commit()
 
-    def update_player_status(self, player_id: int, new_status: PlayerStatus) -> None:
+    def update_player_status(self, player_id: str, new_status: PlayerStatus) -> None:
         """Update the status for a given player"""
         get_player = select(DBPlayer).where(DBPlayer.db_id == player_id)
         with Session(self.engine) as session:
             player = self._enforce_get_first(session, get_player, "Player not found")
             player.account_status = new_status
             session.commit()
+
+    def delete_player(self, player_id: str, env_db: "EnvDB") -> None:
+        """
+        Delete a player from the database, removing all
+        of their personal game data and clearing
+        association for their graphs
+        """
+        get_player = select(DBPlayer).where(DBPlayer.db_id == player_id)
+        with Session(self.engine) as session:
+            player = self._enforce_get_first(session, get_player, "Player not found")
+            session.execute(delete(DBPlayer).where(DBPlayer.db_id == player_id))
+            session.execute(delete(DBPlayer).where(DBScoreEntry.user_id == player_id))
+            session.commit()
+
+        env_db.clear_player_graphs(player_id)
