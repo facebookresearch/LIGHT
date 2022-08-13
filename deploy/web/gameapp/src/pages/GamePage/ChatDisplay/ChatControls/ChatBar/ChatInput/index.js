@@ -38,6 +38,16 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
       dispatch(updateSelectedTip(tipNumber));
     }
   };
+
+  const toggleIsSaying = () => {
+    if (tellTarget) {
+      dispatch(updateTellTarget(""));
+      dispatch(updateIsSaying(true));
+    } else {
+      let toggledValue = !isSaying;
+      dispatch(updateIsSaying(toggledValue));
+    }
+  };
   //   /*---------------LOCAL STATE----------------*/
   const [cycleMessagesPosition, setCycleMessagesPosition] = useState(0);
   //   /*---------------LIFECYCLE----------------*/
@@ -121,10 +131,11 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
               }
             }
           }
-          if (e.key === "Enter" && e.shiftKey) {
+          if (e.key === "Enter") {
             const prefix = e.target.value.startsWith('"') ? "" : '"';
             const suffix = e.target.value.endsWith('"') ? "" : '"';
             dispatch(updateChatText(`${prefix} ${e.target.value} ${suffix}`));
+            onSubmit(e);
           }
         }}
       />

@@ -57,9 +57,8 @@ const ChatDisplay = ({
   }, [scrollToBottom, messages]);
   /* ----------TAILWIND CLASSES--------- */
   const classNames = {
-    chatWrapper:
-      " w-full h-full bg-indigo-900 bg-opacity-50 	overflow-y-hidden ",
-    chat: "flex flex-col w-full h-4/5 overflow-y-scroll",
+    chatWrapper: " w-full h-5/6 bg-indigo-900 bg-opacity-50 	overflow-y-hidden ",
+    chat: "flex flex-col w-full h-5/6 overflow-y-scroll",
   };
   const { presentAgents } = getLocationState(messages);
   return (

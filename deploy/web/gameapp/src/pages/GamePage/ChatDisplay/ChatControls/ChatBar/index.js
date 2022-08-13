@@ -49,35 +49,26 @@ const ChatBar = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   }, [submittedMessages]);
 
   /*---------------HANDLERS----------------*/
-  const toggleIsSaying = () => {
-    if (tellTarget) {
-      dispatch(updateTellTarget(""));
-      dispatch(updateIsSaying(true));
-    } else {
-      let toggledValue = !isSaying;
-      dispatch(updateIsSaying(toggledValue));
+  const chatSubmissionHandler = (e) => {
+    e.preventDefault();
+
+    if (!inHelpMode) {
+      let textSubmission;
+      if (!!chatText) {
+        if (tellTarget !== "") {
+          textSubmission = `tell ${tellTarget} "${chatText}"`;
+        } else if (isSaying) {
+          textSubmission = `"${chatText}"`;
+        } else {
+          textSubmission = chatText;
+        }
+        dispatch(updateSubmittedMessages(chatText));
+        onSubmit(textSubmission);
+        dispatch(updateChatText(""));
+        scrollToBottom();
+      }
     }
   };
-  // const chatSubmissionHandler = (e) => {
-  //   e.preventDefault();
-
-  //   if (!inHelpMode) {
-  //     let textSubmission;
-  //     if (!!chatText) {
-  //       if (tellTarget !== "") {
-  //         textSubmission = `tell ${tellTarget} "${chatText}"`;
-  //       } else if (isSaying) {
-  //         textSubmission = `"${chatText}"`;
-  //       } else {
-  //         textSubmission = chatText;
-  //       }
-  //       dispatch(updateSubmittedMessages(chatText));
-  //       onSubmit(textSubmission);
-  //       dispatch(updateChatText(""));
-  //       scrollToBottom();
-  //     }
-  //   }
-  // };
 
   /*---------------HELPERS----------------*/
   const formatTellTargetForButton = (str) => {
@@ -105,7 +96,10 @@ const ChatBar = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
           <ChatButtons />
         </div>
         <div className="w-4/6">
-          <ChatInput resetIdleTimer={resetIdleTimer} />
+          <ChatInput
+            resetIdleTimer={resetIdleTimer}
+            onSubmit={chatSubmissionHandler}
+          />
         </div>
         <div className="w-1/6 flex justify-center items-center">
           <SendButton
