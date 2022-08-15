@@ -103,7 +103,9 @@ class ResponseHandler(BaseHandler):
         response = await self.model.act()
         if "metrics" in response:
             del response["metrics"]
-        if "sorted_scores" in response:
+        if "sorted_scores" in response and not isinstance(
+            response["sorted_scored"], list
+        ):
             response["sorted_scores"].force_set(response["sorted_scores"].tolist())
         try:
             self.write(json.dumps({"act": response}))

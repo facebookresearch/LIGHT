@@ -26,6 +26,7 @@ from parlai.core.agents import create_agent, create_agent_from_shared
 from typing import TYPE_CHECKING, List
 
 from light.graph.events.graph_events import EmoteEvent
+from light.registry.model_pool import ModelTypeName
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -98,8 +99,8 @@ class TutorialModelSoul(OnEventSoul):
 
         self._pending_observations = []
         self._last_action_time = time.time() + self._get_random_time_offset()
-        self.npc_dialog_model = model_pool.get_model("dialog")
-        self.npc_act_model = model_pool.get_model("action")
+        self.npc_dialog_model = model_pool.get_model(ModelTypeName.DIALOG)
+        self.npc_act_model = model_pool.get_model(ModelTypeName.ACTION)
         self.reset_interaction_history(self.target_node)
         self.num_dialogue_without_action = 0
         self.partner_wearing_boots = False
