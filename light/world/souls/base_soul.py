@@ -290,7 +290,8 @@ class BaseSoul(Soul):
         if self.too_much_string_overlap(context, human_msg):
             return 0
         fixed_cand_scores = await self.get_fixed_cand_scores(context)
-        final_score, _score = await self.get_pos_human_msg(
+        # We award points on the score ranking, not the raw model score
+        final_score, _model_score = await self.get_pos_human_msg(
             human_msg, context, fixed_cand_scores
         )
         return final_score

@@ -109,7 +109,8 @@ class ResponseHandler(BaseHandler):
             response["sorted_scores"].force_set(response["sorted_scores"].tolist())
         try:
             self.write(json.dumps({"act": response}))
-        except:
+        except TypeError:
+            print("JSON encoding failed:")
             print(response.keys())
             print(response)
             raise
