@@ -14,6 +14,7 @@ from light.graph.events.graph_events import TellEvent, SayEvent
 from typing import TYPE_CHECKING, List
 
 from light.graph.events.graph_events import EmoteEvent
+from light.registry.model_pool import ModelTypeName
 
 if TYPE_CHECKING:
     from light.registry.model_pool import ModelPool
@@ -59,8 +60,8 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         """
         self._pending_observations = []
         self._last_action_time = time.time() + self._get_random_time_offset()
-        self.npc_dialog_model = model_pool.get_model("dialog")
-        self.npc_act_model = model_pool.get_model("action")
+        self.npc_dialog_model = model_pool.get_model(ModelTypeName.DIALOG)
+        self.npc_act_model = model_pool.get_model(ModelTypeName.ACTION)
         self.reset_interaction_history(self.target_node)
 
     async def observe_event(self, event: "GraphEvent"):

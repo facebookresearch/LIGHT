@@ -29,7 +29,7 @@ from light.world.souls.models.generative_heuristic_model_soul import (
 from light.world.souls.models.generative_heuristic_model_with_start_feature_soul import (
     GenerativeHeuristicModelWithStartFeatureSoul,
 )
-from light.registry.model_pool import ModelPool
+from light.registry.model_pool import ModelPool, ModelTypeName
 from light.registry.parlai_model import ParlAIModelConfig
 from light.registry.models.acting_score_model import (
     ParlAIPolyencoderActingScoreModelConfig,
@@ -179,14 +179,14 @@ def init_correct_models(opt: Dict[str, Any]) -> ModelPool:
             ParlAIModelConfig(
                 opt_file=os.path.join(CONFIG_DIR, "baseline_generative.opt")
             ),
-            ["dialog"],
+            [ModelTypeName.DIALOG],
         )
     elif agent_soul == "GenerativeHeuristicModelWithStartFeatureSoul":
         model_pool.register_model(
             ParlAIModelConfig(
                 opt_file=os.path.join(CONFIG_DIR, "baseline_generative_with_start.opt")
             ),
-            ["dialog"],
+            [ModelTypeName.DIALOG],
         )
 
     # Initialize Scoring model
@@ -194,28 +194,31 @@ def init_correct_models(opt: Dict[str, Any]) -> ModelPool:
     if roleplaying_opt_target is not None and roleplaying_opt_target != "":
         model_pool.register_model(
             ParlAIPolyencoderActingScoreModelConfig(opt_file=roleplaying_opt_target),
-            ["role_playing_score"],
+            [ModelTypeName.SCORING],
         )
 
     # Initialize Acting model
     acting_model_opt_target = opt["acting_model_opt_file"]
     if acting_model_opt_target is not None and acting_model_opt_target != "":
         model_pool.register_model(
-            ParlAIModelConfig(opt_file=acting_model_opt_target), ["action"]
+            ParlAIModelConfig(opt_file=acting_model_opt_target),
+            [ModelTypeName.ACTION],
         )
 
     # Initialize Generic Acting model
     generic_act_opt_target = opt["generic_act_opt_file"]
     if generic_act_opt_target is not None and generic_act_opt_target != "":
         model_pool.register_model(
-            ParlAIModelConfig(opt_file=generic_act_opt_target), ["generic_action"]
+            ParlAIModelConfig(opt_file=generic_act_opt_target),
+            [ModelTypeName.GENERIC_ACTS],
         )
 
     # Initialize Parser model
     parser_opt_targert = opt["parser_opt_file"]
     if parser_opt_targert is not None and parser_opt_targert != "":
         model_pool.register_model(
-            ParlAIModelConfig(opt_file=parser_opt_targert), ["parser"]
+            ParlAIModelConfig(opt_file=parser_opt_targert),
+            [ModelTypeName.PARSER],
         )
 
     # Initialize Safety model
@@ -224,7 +227,7 @@ def init_correct_models(opt: Dict[str, Any]) -> ModelPool:
             ParlAIModelConfig(
                 opt_file=os.path.join(CONFIG_DIR, "baseline_adversarial_safety.opt")
             ),
-            ["safety"],
+            [ModelTypeName.SAFETY],
         )
         init_safety_classifier("", model_pool)
 
