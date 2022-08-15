@@ -45,7 +45,7 @@ GRAPH_PATH_KEY = "graphs"
 QUEST_PATH_KEY = "quests"
 
 SCRUBBED_USER_ID = "scrubbed_user"
-MAX_RETENTION = 60 * 60 * 24 * 90  # 60 days
+MAX_RETENTION = 60 * 60 * 24 * 60  # 60 days
 
 BASE_NAME_LENGTH_CAP = 96
 WORLD_NAME_LENGTH_CAP = 128
