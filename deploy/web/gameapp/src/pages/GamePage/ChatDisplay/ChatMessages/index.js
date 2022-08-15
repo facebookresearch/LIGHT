@@ -10,7 +10,7 @@ import "./styles.css";
 import Entry from "./Entry";
 
 //ChatMessages - Renders messages in chat display by iterating through message reducer returning Entry components
-const ChatMessages = ({ messages }) => {
+const ChatMessages = ({ messages, scrollToBottom }) => {
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
@@ -22,7 +22,7 @@ const ChatMessages = ({ messages }) => {
   return (
     <>
       {messages.map((msg, idx) => (
-        <div className="message-row" key={msg.event_id}>
+        <div className="w-full" key={msg.event_id}>
           <Entry
             msg={msg}
             agents={agents}
@@ -30,6 +30,7 @@ const ChatMessages = ({ messages }) => {
               dispatch(updateTellTarget(agent));
             }}
             selfId={persona.id}
+            scrollToBottom={scrollToBottom}
           />
         </div>
       ))}

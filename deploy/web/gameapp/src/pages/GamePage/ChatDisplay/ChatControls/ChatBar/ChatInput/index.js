@@ -65,6 +65,7 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   return (
     <>
       <input
+        autoFocus
         name="chat"
         id="chat"
         autocomplete="off"

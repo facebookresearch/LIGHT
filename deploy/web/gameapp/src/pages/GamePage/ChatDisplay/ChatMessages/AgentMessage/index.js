@@ -69,6 +69,7 @@ const AgentMessage = ({
   eventId,
   actorId,
   onClickFunction,
+  scrollToBottom,
 }) => {
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
@@ -94,12 +95,15 @@ const AgentMessage = ({
 
   /* ------ HANDLERS ------ */
 
-  const likeHandler = () => {
-    setIsLiked(true);
+  const toggleLikeHandler = () => {
+    let newLikeValue = !isLiked;
+    setIsLiked(newLikeValue);
   };
 
-  const dislikeHandler = () => {
-    setIsDisliked(true);
+  const toggleDislikeHandler = () => {
+    let newDislikeValue = !isDisliked;
+    setIsDisliked(newDislikeValue);
+    scrollToBottom();
   };
 
   const starHandler = () => {
@@ -112,10 +116,12 @@ const AgentMessage = ({
 
   const reportingHandler = () => {
     setReportMode(true);
+    scrollToBottom();
   };
 
   const reportedHandler = () => {
     setIsReported(true);
+    scrollToBottom(scrollToBottom);
   };
 
   const onAgentClick = () => {
@@ -184,74 +190,77 @@ const AgentMessage = ({
   // }
 
   return (
-    <div
-      className={` flex flex-row justify-end items-center m-4px pr-10 ${
-        inHelpMode ? "active" : ""
-      }`}
-      onClick={onClickFunction}
-    >
-      {isLiked ? (
-        <>
-          {isStarred ? (
-            <BsFillStarFill className={`text-yellow-300`} />
-          ) : (
-            <BsStar className={`text-yellow-300`} onClick={starHandler} />
-          )}
-        </>
-      ) : null}
-      <div className=" flex flex-col mr-6">
-        <div className="relative min-w-[120px] max-w-[400px] min-h-[90px] bg-white rounded-[10px] flex justify-center items-center text-black text-xl">
-          <div className="flex flex-col m-4">
-            <p className="">{text}</p>
-            {isReported ? (
-              <span className="text-red-600">
-                This Message Has been reported
-              </span>
-            ) : null}
-            <div className="flex flex-row w-full justify-between items-center">
-              <BsReplyFill onClick={() => onReply(actor)} />
-              <div className="flex flex-row justify-center items-center">
-                <BsFillHandThumbsUpFill
-                  className={`${isLiked ? "text-green-500" : "text-gray-400"}`}
-                  onClick={likeHandler}
-                />
-                <BsFillHandThumbsDownFill
-                  className={`${isDisliked ? "text-red-500" : "text-gray-400"}`}
-                  onClick={dislikeHandler}
-                />
+    <>
+      <div
+        className={` flex flex-row justify-end items-center m-4px pr-10 ${
+          inHelpMode ? "active" : ""
+        }`}
+        onClick={onClickFunction}
+      >
+        {isLiked ? (
+          <>
+            {isStarred ? (
+              <BsFillStarFill className={`text-yellow-300`} />
+            ) : (
+              <BsStar className={`text-yellow-300`} onClick={starHandler} />
+            )}
+          </>
+        ) : null}
+        <div className=" flex flex-col mr-6">
+          <div className="relative min-w-[120px] max-w-[400px] min-h-[90px] bg-white rounded-[10px] flex justify-center items-center text-black text-xl">
+            <div className="flex flex-col m-4 max-w-md break-words">
+              <p className="">{text}</p>
+              {isReported ? (
+                <span className="text-red-600">
+                  This Message Has been reported
+                </span>
+              ) : null}
+              <div className="flex flex-row w-full justify-between items-center">
+                <BsReplyFill onClick={() => onReply(actor)} />
+                <div className="flex flex-row justify-center items-center">
+                  <BsFillHandThumbsUpFill
+                    className={`${
+                      isLiked ? "text-green-500" : "text-gray-400"
+                    }`}
+                    onClick={toggleLikeHandler}
+                  />
+                  <BsFillHandThumbsDownFill
+                    className={`${
+                      isDisliked ? "text-red-500" : "text-gray-400"
+                    }`}
+                    onClick={toggleDislikeHandler}
+                  />
+                </div>
               </div>
             </div>
+            <div>
+              <div className="absolute w-0 h-0 border-t-[13px] border-t-transparent border-b-[13px] border-b-transparent border-l-[26px] border-r-white left-[100%] top-[25%] translate-y-[50%]" />
+            </div>
           </div>
-          <div>
-            {/* <div className="relative">
-          <div className="absolute bg-emerald-500">
-          </div>
-        </div> */}
-            <div className="absolute w-0 h-0 border-t-[13px] border-t-transparent border-b-[13px] border-b-transparent border-l-[26px] border-r-white left-[100%] top-[25%] translate-y-[50%]" />
-          </div>
+          {isDisliked && !isReported ? (
+            <span
+              className="flex flex-row text-red-500"
+              onClick={reportingHandler}
+            >
+              <BsFillFlagFill />
+              REPORT THIS NOW?
+            </span>
+          ) : null}
         </div>
-        {isDisliked && !isReported ? (
-          <span
-            className="flex flex-row text-red-500"
-            onClick={reportingHandler}
-          >
-            <BsFillFlagFill />
-            REPORT THIS NOW?
-          </span>
-        ) : null}
-        {isReportMode ? (
-          <ReportMessageForm
-            eventId={eventId}
-            reportedMessage={text}
-            caller={caller}
-            actor={actor}
-            exitReportMode={exitReportMode}
-            reportedHandler={reportedHandler}
-          />
-        ) : null}
+        <span className="w-30 text-white">{actor}</span>
       </div>
-      <span className="w-30 text-white">{actor}</span>
-    </div>
+      {isReportMode ? (
+        <ReportMessageForm
+          eventId={eventId}
+          reportedMessage={text}
+          caller={caller}
+          actor={actor}
+          exitReportMode={exitReportMode}
+          reportedHandler={reportedHandler}
+          scrollToBottom={scrollToBottom}
+        />
+      ) : null}
+    </>
   );
 };
 //     //   className={`${classNames} ${inHelpMode ? "active" : ""}`}

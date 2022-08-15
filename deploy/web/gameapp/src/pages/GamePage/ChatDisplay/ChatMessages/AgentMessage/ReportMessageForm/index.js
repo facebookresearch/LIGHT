@@ -1,5 +1,5 @@
 /* REACT */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 /* STYLES */
 
 /* ICONS */
@@ -21,9 +21,16 @@ const ReportMessageForm = ({
   actor,
   exitReportMode,
   reportedHandler,
+  scrollToBottom,
 }) => {
+  /* LOCAL STATE */
   const [reportCategory, setReportCategory] = useState("");
   const [reportReason, setReportReason] = useState("");
+
+  /*  LIFE CYLCE */
+  useEffect(() => {
+    scrollToBottom();
+  }, [reportCategory]);
 
   /* HANDLERS */
   const categorySelectionHandler = (e) => {
@@ -58,6 +65,7 @@ const ReportMessageForm = ({
     setReportReason("");
     reportedHandler();
     exitReportMode();
+    scrollToBottom();
   };
 
   return (

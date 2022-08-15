@@ -33,8 +33,8 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
       <span className="text-white">YOU</span>
       <div className="mx-10">
         <div className="relative min-w-[120px] min-h-[90px] bg-white rounded-[10px] flex justify-center items-center text-black text-xl">
-          <div className="flex flex-col">
-            {text}
+          <div className="flex flex-col max-w-md break-words">
+            <p>{text}</p>
             <>
               {xp ? (
                 <>

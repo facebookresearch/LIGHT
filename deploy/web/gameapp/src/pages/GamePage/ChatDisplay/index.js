@@ -73,7 +73,7 @@ const ChatDisplay = ({
       </div>
       <div className={classNames.chatWrapper}>
         <div className={classNames.chat} ref={chatContainerRef}>
-          <ChatMessages messages={messages} />
+          <ChatMessages messages={messages} scrollToBottom={scrollToBottom} />
         </div>
         <div className="h-1/5">
           <ChatControls
