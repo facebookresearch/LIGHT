@@ -29,6 +29,8 @@ class TestEpisodesDB(unittest.TestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
         self.config = LightDBConfig(backend="test", file_root=self.data_dir)
+        self.data_dir_copy = tempfile.mkdtemp()
+        self.config_2 = LightDBConfig(backend="test", file_root=self.data_dir_copy)
 
     def tearDown(self):
         shutil.rmtree(self.data_dir)
@@ -386,6 +388,12 @@ class TestEpisodesDB(unittest.TestCase):
                     f"Event Json should match for LeaveEvent, misses on {k}",
                 )
 
+        # assert export works
+        copy_db = episode_db.export(self.config_2)
+        copy_episode = copy_db.get_episode(episode_id)
+        copy_events = copy_episode.get_parsed_events(copy_db)
+        self.assertEqual(len(copy_events), 1, f"Expected 1 graph type, found {events}")
+
         # assert user id is present in the temp dataset
         self.assertIn(agent_node.user_id, episode.actors)
         all_data = str(events)
@@ -402,4 +410,13 @@ class TestEpisodesDB(unittest.TestCase):
         self.assertNotIn(agent_node.user_id, str(events))
         for key in episode.get_graph_map().keys():
             graph = episode.get_graph(key, episode_db)
+            self.assertNotIn(agent_node.user_id, str(graph.to_json()))
+
+        # Assert user data is scrubbed from new table too
+        episode = copy_db.get_episode(episode_id)
+        events = episode.get_parsed_events(copy_db)
+        self.assertNotIn(agent_node.user_id, episode.actors)
+        self.assertNotIn(agent_node.user_id, str(events))
+        for key in episode.get_graph_map().keys():
+            graph = episode.get_graph(key, copy_db)
             self.assertNotIn(agent_node.user_id, str(graph.to_json()))

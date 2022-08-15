@@ -348,3 +348,40 @@ class EpisodeDB(BaseDB):
                 self.write_data_to_file(anon_event_data, episode.dump_file_path)
                 session.commit()
         return True
+
+    def export(self, config: "DictConfig") -> "EpisodeDB":
+        """
+        Create a scrubbed version of this database for use in releases
+        """
+        assert config.file_root != self.file_root, "Cannot copy DB to same location!"
+        new_db = EpisodeDB(config)
+
+        # Copy all the basic content
+        for table_name, table_obj in SQLBase.metadata.tables.items():
+            with self.engine.connect() as orig_conn:
+                with new_db.engine.connect() as new_conn:
+                    all_data = [
+                        dict(row) for row in orig_conn.execute(select(table_obj.c))
+                    ]
+                    if len(all_data) == 0:
+                        continue
+                    new_conn.execute(table_obj.insert().values(all_data))
+                    new_conn.commit()
+
+        with Session(self.engine) as session:
+            stmt = select(DBEpisode)
+            episodes = session.scalars(stmt).all()
+            for episode in episodes:
+                graphs = episode.graphs
+                for graph in graphs:
+                    # Copy the graphs to the new DB
+                    graph_data = self.read_data_from_file(graph.full_path)
+                    new_db.write_data_to_file(graph_data, graph.full_path)
+                # Copy the events to the new DB
+                event_data = self.read_data_from_file(episode.dump_file_path)
+                new_db.write_data_to_file(event_data, episode.dump_file_path)
+
+        for group in DBGroupName:
+            new_db.anonymize_group(group=group)
+
+        return new_db

@@ -1944,7 +1944,6 @@ class EnvDB(BaseDB):
                     ]
                     if len(all_data) == 0:
                         continue
-                    print(all_data)
                     new_conn.execute(table_obj.insert().values(all_data))
                     new_conn.commit()
 
