@@ -8,6 +8,7 @@ import parlai.utils.logging as logging
 from parlai.core.message import Message
 import copy
 import threading
+from light.registry.model_pool import ModelTypeName
 
 from typing import TYPE_CHECKING
 
@@ -96,8 +97,8 @@ def get_input_cands(x, y2, y):
 
 class ActionParser:
     def __init__(self, model_pool: "ModelPool"):
-        if model_pool.has_model("parser"):
-            self.agent = model_pool.get_model("parser")
+        if model_pool.has_model(ModelTypeName.PARSER):
+            self.agent = model_pool.get_model(ModelTypeName.PARSER)
         else:
             self.agent = None
         # Lock to handle concurrency, fixed better with asycio

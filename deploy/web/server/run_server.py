@@ -31,7 +31,7 @@ from light.data_model.db.base import LightDBConfig
 from light.data_model.db.episodes import EpisodeDB
 from light.data_model.db.users import UserDB
 from light.world.world import WorldConfig
-from light.registry.model_pool import ModelPool
+from light.registry.model_pool import ModelPool, ModelTypeName
 from light.registry.parlai_model import ParlAIModelConfig
 from light.registry.models.acting_score_model import (
     ParlAIPolyencoderActingScoreModelConfig,
@@ -143,7 +143,6 @@ def _run_server(FLAGS, ldb, model_resources):
         my_loop.stop()
 
 
-# Update this to load _all_ models for the full game, return the ModelPool
 def init_model_pool(FLAGS) -> "ModelPool":
     light_model_root = FLAGS.light_model_root
     if light_model_root.endswith("/"):
@@ -176,31 +175,34 @@ def init_model_pool(FLAGS) -> "ModelPool":
     if len(safety_model_opt_file) > 3:
         model_pool.register_model(
             ParlAIModelConfig(opt_file=safety_model_opt_file),
-            ["safety"],
+            [ModelTypeName.SAFETY],
         )
     if len(dialog_model_opt_file) > 3:
         model_pool.register_model(
             ParlAIModelConfig(opt_file=dialog_model_opt_file),
-            ["dialog"],
+            [ModelTypeName.DIALOG],
         )
     if len(roleplaying_score_opt_file) > 3:
         model_pool.register_model(
             ParlAIPolyencoderActingScoreModelConfig(
                 opt_file=roleplaying_score_opt_file
             ),
-            ["role_playing_score"],
+            [ModelTypeName.SCORING],
         )
     if len(action_model_opt_file) > 3:
         model_pool.register_model(
-            ParlAIModelConfig(opt_file=action_model_opt_file), ["action"]
+            ParlAIModelConfig(opt_file=action_model_opt_file),
+            [ModelTypeName.ACTION],
         )
     if len(generic_act_opt_file) > 3:
         model_pool.register_model(
-            ParlAIModelConfig(opt_file=generic_act_opt_file), ["generic_action"]
+            ParlAIModelConfig(opt_file=generic_act_opt_file),
+            [ModelTypeName.GENERIC_ACTS],
         )
     if len(parser_opt_file) > 3:
         model_pool.register_model(
-            ParlAIModelConfig(opt_file=parser_opt_file), ["parser"]
+            ParlAIModelConfig(opt_file=parser_opt_file),
+            [ModelTypeName.PARSER],
         )
 
     init_safety_classifier(FLAGS.safety_list, model_pool)

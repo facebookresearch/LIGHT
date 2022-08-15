@@ -7,8 +7,10 @@
 from parlai.utils.safety import OffensiveStringMatcher
 from parlai.agents.transformer.transformer import TransformerClassifierAgent
 from parlai.utils.typing import TShared
+from light.registry.model_pool import ModelTypeName
 
 from typing import Optional, TYPE_CHECKING
+
 
 if TYPE_CHECKING:
     from light.registry.model_pool import ModelPool
@@ -37,7 +39,7 @@ class AdversarialOffensiveLanguageClassifier(MultiturnOffensiveLanguageClassifie
         super().__init__()
 
     def _create_safety_model(self):
-        return self.__model_pool.get_model("safety")
+        return self.__model_pool.get_model(ModelTypeName.SAFETY)
 
 
 class SafetyClassifier:
@@ -48,7 +50,7 @@ class SafetyClassifier:
             self.string_matcher = OffensiveStringMatcher(datapath)
         else:
             self.string_matcher = None
-        if model_pool.has_model("safety"):
+        if model_pool.has_model(ModelTypeName.SAFETY):
             self.classifier = AdversarialOffensiveLanguageClassifier(model_pool)
         else:
             self.classifier = None
