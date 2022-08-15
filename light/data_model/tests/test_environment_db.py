@@ -53,9 +53,12 @@ class TestEnvironmentDB(unittest.TestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
         self.config = LightDBConfig(backend="test", file_root=self.data_dir)
+        self.data_dir_copy = tempfile.mkdtemp()
+        self.config_2 = LightDBConfig(backend="test", file_root=self.data_dir_copy)
 
     def tearDown(self):
         shutil.rmtree(self.data_dir)
+        shutil.rmtree(self.data_dir_copy)
 
     def set_up_some_nodes(self, db: EnvDB):
         # Create some test entries in the env DB
@@ -427,7 +430,6 @@ class TestEnvironmentDB(unittest.TestCase):
         # Ensure room created and matches defaults and provided
         room_1 = db.get_room(room_1_id)
         base_id_1 = room_1.base_id
-        print(room_1, room_1.__dict__)
         self.assertTrue(DBRoomName.is_id(base_id_1), "Base ID not correct format")
         self.assertEqual(
             room_1.db_id, room_1_id, "Marked db_id differs from initially returned id"
@@ -658,6 +660,13 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(len(creator_id_match_0), 0)
         creator_id_match_1 = db.find_rooms(creator_id=TEST_USER_ID)
         self.assertEqual(len(creator_id_match_1), 1)
+
+        # Ensure duplicating works, but with creator IDs scrubbed
+        new_db = db.export(self.config_2)
+        self.assertEqual(len(new_db.find_rooms()), 3)
+        self.assertEqual(len(new_db.find_room_names()), 2)
+        self.assertEqual(len(new_db.find_rooms(creator_id=TEST_USER_ID)), 0)
+        self.assertEqual(len(new_db.find_rooms(creator_id=SCRUBBED_USER_ID)), 1)
 
     def test_create_load_inspect_objects(self):
         """Ensure it's possible to create and load objects"""
@@ -1662,6 +1671,10 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(len(match_other_status), 1)
         no_match_status = db.get_flags(status=DBStatus.QUESTIONABLE)
         self.assertEqual(len(no_match_status), 0)
+
+        # Run duplicate, ensure flags aren't copied
+        new_db = db.export(self.config_2)
+        self.assertEqual(len(new_db.get_flags()), 0)
 
         # Run scrub
         scrub_count = db.scrub_creators(start_time=time.time() + MAX_RETENTION)

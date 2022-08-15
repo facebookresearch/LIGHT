@@ -1906,23 +1906,73 @@ class EnvDB(BaseDB):
             session.commit()
             return changed_count
 
-    def clear_player_graphs(self, player_id: int):
+    def clear_player_graphs(
+        self, player_id: Optional[str] = None, scrub_all: Optional[bool] = False
+    ) -> None:
         """
         Find graphs with this player_id as creator
-        and then scrub the association
+        and then scrub the association.
         """
+        if player_id is not None:
+            assert scrub_all is not True, "Cannot scrub all if providing player id"
         with Session(self.engine) as session:
             stmt = select(DBGraph)
-            stmt = stmt.where(DBGraph.creator_id == player_id)
+            if not scrub_all:
+                stmt = stmt.where(DBGraph.creator_id == player_id)
             graphs = session.scalars(stmt).all()
             for graph in graphs:
                 graph.creator_id = SCRUBBED_USER_ID
             session.commit()
 
-    def export(self):
+    def export(self, config: "DictConfig") -> "EnvDB":
         """
         Create a scrubbed version of this database for use in releases
         """
-        # Duplicate the DB, run scrub_creators
-        # Scrub creators from graphs as well
-        raise NotImplementedError
+        assert config.file_root != self.file_root, "Cannot copy DB to same location!"
+        new_db = EnvDB(config)
+
+        SKIPPED_TABLES = [t.__tablename__ for t in [DBFlag, DBEdit]]
+
+        for table_name, table_obj in SQLBase.metadata.tables.items():
+            # Skip tables that should not be public
+            if table_name in SKIPPED_TABLES:
+                continue
+            with self.engine.connect() as orig_conn:
+                with new_db.engine.connect() as new_conn:
+                    all_data = [
+                        dict(row) for row in orig_conn.execute(select(table_obj.c))
+                    ]
+                    if len(all_data) == 0:
+                        continue
+                    print(all_data)
+                    new_conn.execute(table_obj.insert().values(all_data))
+                    new_conn.commit()
+
+        new_db.clear_player_graphs(scrub_all=True)
+        new_db.scrub_creators(
+            start_time=time.time() + MAX_RETENTION
+        )  # Scrub _all_ creator ids
+
+        with Session(self.engine) as session:
+            # Copy the graphs to the new DB
+            stmt = select(DBGraph)
+            graphs = session.scalars(stmt).all()
+            for graph in graphs:
+                graph_data = self.read_data_from_file(
+                    graph.file_path, json_encoded=False
+                )
+                new_db.write_data_to_file(
+                    graph_data, graph.file_path, json_encoded=False
+                )
+
+            # Copy the quests to the new DB
+            stmt = select(DBQuest)
+            quests = session.scalars(stmt).all()
+            for quest in quests:
+                file_path = quest.origin_file_path
+                if file_path is None:
+                    continue  # no quest file
+                quest_data = self.read_data_from_file(file_path, json_encoded=False)
+                new_db.write_data_to_file(quest_data, file_path, json_encoded=False)
+
+        return new_db
