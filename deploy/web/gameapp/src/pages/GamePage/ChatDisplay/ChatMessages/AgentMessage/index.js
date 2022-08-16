@@ -15,8 +15,8 @@ import TutorialPopover from "../../../../../components/TutorialPopover";
 import CONFIG from "../../../../../config.js";
 
 /* ICONS */
-import { BsFillHandThumbsUpFill } from "react-icons/bs";
-import { BsFillHandThumbsDownFill } from "react-icons/bs";
+import { BsCheckLg } from "react-icons/bs";
+import { BsXLg } from "react-icons/bs";
 import { BsFillStarFill } from "react-icons/bs";
 import { BsStar } from "react-icons/bs";
 import { BsReplyFill } from "react-icons/bs";
@@ -218,18 +218,32 @@ const AgentMessage = ({
               <div className="flex flex-row w-full justify-between items-center">
                 <BsReplyFill onClick={() => onReply(actor)} />
                 <div className="flex flex-row justify-center items-center">
-                  <BsFillHandThumbsUpFill
-                    className={`${
-                      isLiked ? "text-green-500" : "text-gray-400"
-                    }`}
-                    onClick={toggleLikeHandler}
-                  />
-                  <BsFillHandThumbsDownFill
-                    className={`${
-                      isDisliked ? "text-red-500" : "text-gray-400"
-                    }`}
-                    onClick={toggleDislikeHandler}
-                  />
+                  {isDisliked ? null : (
+                    <Tooltip
+                      title="This message is in-character!"
+                      position="bottom"
+                    >
+                      <BsCheckLg
+                        className={` mx-2 ${
+                          isLiked ? "text-green-500" : "text-gray-400"
+                        }`}
+                        onClick={toggleLikeHandler}
+                      />
+                    </Tooltip>
+                  )}
+                  {isLiked ? null : (
+                    <Tooltip
+                      title="This message has issues..."
+                      position="bottom"
+                    >
+                      <BsXLg
+                        className={` mx-2 ${
+                          isDisliked ? "text-red-500" : "text-gray-400"
+                        }`}
+                        onClick={toggleDislikeHandler}
+                      />
+                    </Tooltip>
+                  )}
                 </div>
               </div>
             </div>
@@ -237,6 +251,14 @@ const AgentMessage = ({
               <div className="absolute w-0 h-0 border-t-[13px] border-t-transparent border-b-[13px] border-b-transparent border-l-[26px] border-r-white left-[100%] top-[25%] translate-y-[50%]" />
             </div>
           </div>
+          {isLiked && !isStarred ? (
+            <span
+              className="flex flex-row text-yellow-500"
+              onClick={starHandler}
+            >
+              Would you like to award this message a star?
+            </span>
+          ) : null}
           {isDisliked && !isReported ? (
             <span
               className="flex flex-row text-red-500"

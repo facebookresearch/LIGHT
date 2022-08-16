@@ -12,6 +12,8 @@ import {
 } from "../../../../../../features/chatInput/chatinput-slice";
 /* STYLES */
 import "../styles.css";
+/* TOOLTIPS */
+import { Tooltip } from "react-tippy";
 /* CUSTOM COMPONENTS */
 import TutorialPopover from "../../../../../../components/TutorialPopover";
 

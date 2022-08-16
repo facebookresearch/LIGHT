@@ -20,12 +20,15 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
   // classNames += "me";
 
   /* ----REDUX STATE---- */
+  console.log("CALLER:  ", caller);
+  console.log("ACTOR:  ", actor);
+
   //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   return (
     <div
-      className={` flex flex-row justify-start items-center  ${
+      className={` flex flex-row justify-start items-center ${
         inHelpMode ? "active" : ""
       }`}
       onClick={onClickFunction}
