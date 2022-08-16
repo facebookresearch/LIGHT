@@ -27,6 +27,12 @@ DEFAULT_LOG_PATH = "".join(
 @dataclass
 class LightDBConfig:
     backend: str = "test"
+    file_root: Optional[str] = None
+
+
+@dataclass
+class LightLocalDBConfig:
+    backend: str = "test"
     file_root: Optional[str] = DEFAULT_LOG_PATH
 
 
@@ -39,9 +45,11 @@ class LightAWSDBConfig(LightDBConfig):
     db_pass: str = MISSING
 
 
-cs = ConfigStore.instance()
-cs.store(name="db/base", node=LightDBConfig)
-cs.store(name="db/aws-postgres", node=LightAWSDBConfig)
+ALL_DB_CONFIGS_LIST = [
+    LightDBConfig,
+    LightLocalDBConfig,
+    LightAWSDBConfig,
+]
 
 
 class DBStatus(Enum):

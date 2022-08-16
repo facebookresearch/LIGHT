@@ -7,7 +7,9 @@
 from dataclasses import dataclass, field
 from omegaconf import MISSING, DictConfig
 import asyncio
+import enum
 
+from light.registry.base_model_loader import ModelConfig, ModelLoader
 from light.registry.parlai_model import ParlAIModelConfig, ParlAIModelLoader
 from light.registry.parlai_remote_model import (
     ParlAIRemoteModelConfig,
@@ -25,18 +27,27 @@ from light.registry.models.starspace_model import (
 from parlai.core.agents import Agent
 from typing import List, Any, Union, Dict, Optional, Type
 
-
-# We should make a base ModelLoader class
-ModelLoaderClass = Union[Type[ParlAIModelLoader], Type[ParlAIRemoteModelLoader]]
-ModelLoader = Union[ParlAIModelLoader, ParlAIRemoteModelLoader]
-ModelConfig = Union[ParlAIModelConfig, ParlAIRemoteModelConfig]
-
-ALL_LOADERS: Dict[str, ModelLoaderClass] = {
-    ParlAIModelConfig._loader: ParlAIModelLoader,
-    ParlAIPolyencoderActingScoreModelConfig._loader: ParlAIPolyencoderActingScoreModelLoader,
-    MapStarspaceModelConfig._loader: MapStarspaceModelLoader,
-    ParlAIRemoteModelConfig._loader: ParlAIRemoteModelLoader,
+ALL_LOADERS_LIST: List[ModelLoader] = {
+    ParlAIModelLoader,
+    ParlAIPolyencoderActingScoreModelLoader,
+    MapStarspaceModelLoader,
+    ParlAIRemoteModelLoader,
 }
+
+ALL_LOADERS_MAP: Dict[str, ModelLoader] = {
+    k.CONFIG_CLASS._loader: k for k in ALL_LOADERS_LIST
+}
+
+
+class ModelTypeName(enum.Enum):
+    """Common model names of use in LIGHT, for use in register_model"""
+
+    SAFETY = "safety"  # Models used to evaluate dialog or env safety
+    DIALOG = "dialog"  # Models for generating dialogue
+    SCORING = "role_playing_score"  # Models to score player utterances
+    ACTION = "action"  # Models used by model agents for generating actions
+    GENERIC_ACTS = "generic_action"  # Models to select a next action from cands
+    PARSER = "parser"  # Models to parse raw text to in-game actions
 
 
 class ModelPool:
@@ -50,13 +61,13 @@ class ModelPool:
         Takes the given config, loads the model, and
         stores it in the registry under the given names.
         """
-        loader_class = ALL_LOADERS.get(config._loader)
+        loader_class = ALL_LOADERS_MAP.get(config._loader)
         if loader_class is None:
             raise AssertionError(
                 f"Trying to load a model with non-existent loader {config._loader}"
             )
         loader = loader_class(config)
-        await loader.force_load()
+        await loader.load_model()
         for model_name in model_names:
             self._model_loaders[model_name] = loader
 
