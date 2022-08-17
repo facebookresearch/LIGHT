@@ -6,6 +6,7 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
+from dataclasses import dataclass
 from light.graph.builders.map_json_builder import MapJsonBuilder, MapJsonBuilderConfig
 from light.world.world import World, WorldConfig
 from light.world.purgatory import TutorialPurgatory
@@ -156,11 +157,11 @@ class TutorialWorldBuilder(MapJsonBuilder):
     async def get_graph(self, world_config: Optional[WorldConfig] = None):
         """Create and return a tutorial graph"""
         world_config = self._get_attached_config(world_config)
-        if self.load_map is not None and self.load_map != "":
+        if self.map is not None and self.map != "":
             graph, _ = await super().get_graph(world_config)
         else:
             graph = self.build_new_graph(world_config)
-        world = World()
+        world = World(world_config)
 
         world.oo_graph = graph
         # Force the logging mode to tutorial PRE_LAUNCH_TUTORIAL
