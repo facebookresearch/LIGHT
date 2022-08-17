@@ -31,7 +31,7 @@ class OOGraph(object):
         self._deleted_nodes = {}
         self.dead_nodes = {}
         self.title = title
-        self.db_id: db_id
+        self.db_id = db_id
 
     @staticmethod
     def from_graph(graph, start_location=None):
@@ -499,6 +499,7 @@ class OOGraph(object):
             "objects": sorted(objects),
             "rooms": sorted(rooms),
             "title": self.title,
+            "db_id": self.db_id,
         }
         return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
 

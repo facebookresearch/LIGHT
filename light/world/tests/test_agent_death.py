@@ -9,8 +9,9 @@ import os
 import asyncio
 import time
 from light import LIGHT_DIR
-from light.graph.builders.map_json_builder import MapJsonBuilder
+from light.graph.builders.map_json_builder import MapJsonBuilder, MapJsonBuilderConfig
 from light.world.souls.tests.battle_royale_soul import BattleRoyaleSoul
+from light.world.world import WorldConfig
 from light.graph.elements.graph_nodes import TICKS_TO_CLEAN_CORPSE
 
 # Magic number to ensure we wait more than the expected ticks to clean a corpse
@@ -46,10 +47,12 @@ class TestInteractionLoggers(unittest.TestCase):
         # Populate a world
         await asyncio.sleep(0.1)
         loop = asyncio.get_running_loop()
-        opt = {}
-        opt["load_map"] = os.path.join(LIGHT_DIR, "scripts/examples/complex_world.json")
-        world_builder = MapJsonBuilder(episode_db=None, opt=opt)
-        g, world = await world_builder.get_graph()
+        world_builder = MapJsonBuilder(
+            MapJsonBuilderConfig(
+                load_map=os.path.join(LIGHT_DIR, "scripts/examples/complex_world.json")
+            )
+        )
+        g, world = await world_builder.get_graph(WorldConfig())
         purgatory = world.purgatory
         purgatory.register_filler_soul_provider(
             "battle",

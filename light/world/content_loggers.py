@@ -262,6 +262,7 @@ class RoomInteractionLogger(InteractionLogger):
                 self.graph.all_nodes[node_id].is_player
             ):
                 self._add_player()
+                self.players.add(node_id)
 
     def _begin_meta_episode(self) -> None:
         self._clear_buffers()

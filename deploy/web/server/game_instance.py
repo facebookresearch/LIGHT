@@ -110,7 +110,6 @@ class GameInstance:
         game_id,
         ldb,  # TODO remove this DB
         g=None,
-        opt=None,
         world_config: Optional["WorldConfig"] = None,  # TODO make this required
     ):
         self.world = None
@@ -118,7 +117,6 @@ class GameInstance:
             self.world = g
 
         self.world_config = world_config
-        self.opt = opt
         self.db = ldb
         self.game_id = game_id
         self.players = []
@@ -131,14 +129,14 @@ class GameInstance:
         game_id,
         ldb,  # TODO remove this DB
         g=None,
-        opt=None,
         world_config: Optional["WorldConfig"] = None,  # TODO make this required
     ) -> "GameInstance":
-        instance = cls(game_id, ldb, g=g, opt=opt, world_config=world_config)
+        instance = cls(game_id, ldb, g=g, world_config=world_config)
         await instance._init_world()
         return instance
 
     async def _init_world(self):
+        # TODO construct args
         if self.opt["builder_model"] is not None:
             _, self.world = await StarspaceBuilder(
                 self.ldb,
@@ -201,19 +199,17 @@ class TutorialInstance(GameInstance):
         game_id,
         ldb,
         g=None,
-        opt=None,
         world_config: Optional["WorldConfig"] = None,
     ):
         self.db = ldb
         self._created_time = time.time()
-        super().__init__(game_id, ldb, opt=opt, world_config=world_config)
+        super().__init__(game_id, ldb, world_config=world_config)
         self._should_shutdown = False
         self._did_complete = True
 
     async def _init_world(self):
         _, tutorial_world = await TutorialWorldBuilder(
             self.db,
-            opt=self.world_config.opt,
         ).get_graph(world_config=self.world_config)
         self.world = tutorial_world
         self._player_node = tutorial_world.oo_graph.find_nodes_by_name("You")[0]

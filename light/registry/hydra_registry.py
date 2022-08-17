@@ -42,6 +42,12 @@ def register_model_loader(loader: Type[ModelLoader]):
             group=f"light/model_pool/{model_type_name.value}/schema",
             package=f"light.model_pool.{model_type_name.value}",
         )
+        config.store(
+            name=loader.CONFIG_CLASS._loader,
+            node=loader.CONFIG_CLASS,
+            group=f"light/model/schema",
+            package=f"model",
+        )
 
 
 def register_db_config(db_config: Type[LightDBConfig]):

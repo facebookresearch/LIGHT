@@ -11,10 +11,13 @@ import sys
 
 import parlai.utils.misc as parlai_utils
 
-from light.graph.builders.tutorial_builder import TutorialWorldBuilder
+from light.graph.builders.tutorial_builder import (
+    TutorialWorldBuilder,
+    TutorialBuilderConfig,
+)
 from light.data_model.light_database import LIGHTDatabase
 from light.world.utils.terminal_player_provider import TerminalPlayerProvider
-from light.world.world import World
+from light.world.world import World, WorldConfig
 from light.world.souls.tutorial_player_soul import TutorialPlayerSoul
 from light.world.souls.models.tutorial_model_soul import TutorialModelSoul
 from light.world.purgatory import TutorialPurgatory
@@ -39,8 +42,8 @@ async def ainput(string: str) -> str:
 
 
 def init_world():
-    world_builder = TutorialWorldBuilder(None, opt={"load_map": TUTORIAL_FILE})
-    g, world = asyncio.run(world_builder.get_graph())
+    world_builder = TutorialWorldBuilder(TutorialBuilderConfig(load_map=TUTORIAL_FILE))
+    g, world = asyncio.run(world_builder.get_graph(WorldConfig()))
     # NOTE: I just took the act_model_path from elsewhere
     # TODO TODO FIXME will need to update
     shared_resources = TutorialModelSoul.load_models(

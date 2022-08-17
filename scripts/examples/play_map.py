@@ -4,8 +4,22 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# To run, use:
-# python scripts/examples/play_map.py --use-models GenerativeHeuristicModelSoul
+"""
+Script for launching and playing a local map
+
+Some usage examples:
+Default:
+python scripts/examples/play_map.py
+
+Complex map:
+python scripts/examples/play_map.py builder.load_map=scripts/examples/complex_world.json
+
+Using some models:
+python scripts/examples/play_map.py /light/model_pool=simple agent_soul=GenerativeHeuristicModelSoul
+
+Using all models:
+python scripts/examples/play_map.py /light/model_pool=baseline agent_soul=GenerativeHeuristicModelSoul
+"""
 
 import hydra
 import os

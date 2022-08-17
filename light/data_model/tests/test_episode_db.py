@@ -27,6 +27,7 @@ class TestEpisodesDB(unittest.TestCase):
     """Unit tests for the EpisodeDB. Leverages Interaction Loggers to generate episodes"""
 
     def setUp(self):
+        self.maxDiff = 10000
         self.data_dir = tempfile.mkdtemp()
         self.config = LightDBConfig(backend="test", file_root=self.data_dir)
         self.data_dir_copy = tempfile.mkdtemp()
@@ -37,7 +38,7 @@ class TestEpisodesDB(unittest.TestCase):
 
     def setUp_single_room_graph(self, episode_db=None):
         # Set up the graph
-        test_graph = OOGraph(opt)
+        test_graph = OOGraph()
         agent_node = test_graph.add_agent("My test agent", {})
         room_node = test_graph.add_room("test room", {})
         agent_node.force_move_to(room_node)
@@ -161,8 +162,7 @@ class TestEpisodesDB(unittest.TestCase):
         agent_node.user_id = TEST_USER_ID
         room2_node = test_graph.add_room("test room2", {})
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
-        room_logger.episode_db = episode_db
-        room_logger.players.add(agent_node.user_id)
+        test_world.oo_graph = test_graph  # refresh logger
 
         # Check an event json was done correctly
         test_event = ArriveEvent(agent_node, text_content="")
@@ -284,6 +284,7 @@ class TestEpisodesDB(unittest.TestCase):
         agent_node.is_player = True
         agent_node.user_id = TEST_USER_ID
         room2_node = test_graph.add_room("test room2", {})
+        test_world.oo_graph = test_graph  # refresh logger
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
         room_logger.episode_db = episode_db
         room_logger.players.add(agent_node.user_id)
@@ -338,13 +339,10 @@ class TestEpisodesDB(unittest.TestCase):
         agent_node.is_player = True
         agent_node.user_id = TEST_USER_ID
         room_node2 = test_graph.add_room("test room2", {})
-        room_logger = test_graph.room_id_to_loggers[room_node.node_id]
-        room_logger.episode_db = episode_db
         test_graph.add_paths_between(
             room_node, room_node2, "a path to the north", "a path to the south"
         )
-        test_graph.room_id_to_loggers[room_node.node_id]._add_player()
-        test_graph.room_id_to_loggers[room_node.node_id].players.add(agent_node.user_id)
+        test_world.oo_graph = test_graph  # refresh logger
 
         # Check the room and event json was done correctly for room_node
         event_room_node_observed = LeaveEvent(
