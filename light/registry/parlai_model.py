@@ -134,7 +134,7 @@ class ParlAIModelLoader(ModelLoader):
             if opt.get("eval_candidates") == "inline":
                 act["label_candidates"] = ["hi", "hi there", "whatup"]
             model.observe(act)
-            await model.act()
+            model.act()
         except Exception as e:
             print(f"Cannot warm model {opt['model']}, hit error {e}")
 

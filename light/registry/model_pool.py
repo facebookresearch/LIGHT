@@ -65,7 +65,7 @@ class ModelPool:
         for model_type_name in ModelTypeName:
             model_type = model_type_name.value
             if cfg.get(model_type, None) is not None:
-                models_to_load[model_type] = cfg.get(model_type)
+                models_to_load[model_type_name] = cfg.get(model_type)
         await asyncio.gather(
             *[
                 model_pool.register_model_async(model_config, [model_name])

@@ -108,7 +108,7 @@ async def run_with_builder(world_builder, opt, model_pool):
 class PlayMapScriptConfig(ScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: ["_self_", {"conf": "local"}])
     agent_soul: str = field(
-        default="OnEventSoul",
+        default="RepeatSoul",
         metadata={
             "help": "The type of soul to populate NPCs with."
             "One of OnEventSoul, RepeatSoul, GenerativeHeuristicModelSoul, "
@@ -143,7 +143,10 @@ def main(cfg: PlayMapScriptConfig):
     print(cfg)
     os.environ["LIGHT_MODEL_ROOT"] = os.path.abspath(cfg.light.model_root)
     model_pool = ModelPool.get_from_config(cfg.light.model_pool)
-    assert False
+    if not model_pool.has_model(ModelTypeName.DIALOG):
+        assert (
+            cfg.agent_soul == "RepeatSoul"
+        ), "Can only use Repeat soul if no models provided"
 
     if cfg.load_map != "none":
         world_builder = MapJsonBuilder(None, opt=opt)

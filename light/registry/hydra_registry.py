@@ -50,7 +50,7 @@ def register_db_config(db_config: Type[LightDBConfig]):
     )
 
 
-light_default_list = ["_self_", {"model_pool": "simple"}]
+light_default_list = ["_self_", {"model_pool": "base"}]
 
 
 @dataclass
