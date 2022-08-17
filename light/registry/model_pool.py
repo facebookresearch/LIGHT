@@ -82,7 +82,7 @@ class ModelPool:
         return asyncio.run(cls.get_from_config_async(cfg))
 
     async def register_model_async(
-        self, config: ModelConfig, model_names: List[str]
+        self, config: ModelConfig, model_names: List[ModelTypeName]
     ) -> None:
         """
         Takes the given config, loads the model, and
@@ -96,9 +96,11 @@ class ModelPool:
         loader = loader_class(config)
         await loader.load_model()
         for model_name in model_names:
-            self._model_loaders[model_name] = loader
+            self._model_loaders[model_name.value] = loader
 
-    def register_model(self, config: ModelConfig, model_names: List[str]) -> None:
+    def register_model(
+        self, config: ModelConfig, model_names: List[ModelTypeName]
+    ) -> None:
         """
         Syncronous model registration for server and script setups
         """
@@ -108,17 +110,17 @@ class ModelPool:
         """
         Determine if there's a model registered for the given name.
         """
-        return model_name in self._model_loaders
+        return model_name.value in self._model_loaders
 
     def get_model(
-        self, model_name: str, overrides: Optional[Dict[str, Any]] = None
+        self, model_name: ModelTypeName, overrides: Optional[Dict[str, Any]] = None
     ) -> Agent:
         """
         Get a copy of the model stored in the given name
 
         If overrides are provided, pass those to the loader as well
         """
-        loader = self._model_loaders.get(model_name)
+        loader = self._model_loaders.get(model_name.value)
         if loader is None:
             raise AssertionError(
                 f"No models registered for requested name {model_name}"

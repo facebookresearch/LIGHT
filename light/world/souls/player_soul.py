@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Optional
 import random
 import time
 from light.graph.events.graph_events import SystemMessageEvent
+from light.registry.model_pool import ModelTypeName
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -57,10 +58,10 @@ class PlayerSoul(BaseSoul):
                 )
                 target_node.persona += QUEST_TEXT + target_quest[goal]
         model_pool = world.model_pool
-        if model_pool.has_model("role_playing_score"):
-            self.roleplaying_score_model = model_pool.get_model("role_playing_score")
-        if model_pool.has_model("generic_action"):
-            self.generic_act_model = model_pool.get_model("generic_action")
+        if model_pool.has_model(ModelTypeName.SCORING):
+            self.roleplaying_score_model = model_pool.get_model(ModelTypeName.SCORING)
+        if model_pool.has_model(ModelTypeName.GENERIC_ACTS):
+            self.generic_act_model = model_pool.get_model(ModelTypeName.GENERIC_ACTS)
         self.agent_logger = AgentInteractionLogger(
             world.oo_graph, target_node, episode_db=world._config.episode_db
         )

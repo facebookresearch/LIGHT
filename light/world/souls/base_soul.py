@@ -11,6 +11,7 @@ import os
 import asyncio
 from typing import TYPE_CHECKING, Any, Optional
 from light.graph.events.graph_events import SystemMessageEvent
+from light.registry.model_pool import ModelTypeName
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -33,9 +34,9 @@ class BaseSoul(Soul):
         self.target_node._last_interaction_partner_id = None
         self.reset_interaction_history(self.target_node)
         self.model_pool = world.model_pool
-        if self.model_pool.has_model("role_playing_score"):
+        if self.model_pool.has_model(ModelTypeName.SCORING):
             self.roleplaying_score_model = self.model_pool.get_model(
-                "role_playing_score"
+                ModelTypeName.SCORING
             )
         else:
             self.roleplaying_score_model = None

@@ -32,7 +32,7 @@ from light.world.souls.models.generative_heuristic_model_soul import (
 from light.world.souls.models.generative_heuristic_model_with_start_feature_soul import (
     GenerativeHeuristicModelWithStartFeatureSoul,
 )
-from light.registry.model_pool import ModelPool
+from light.registry.model_pool import ModelPool, ModelTypeName
 from light.registry.parlai_model import ParlAIModelConfig
 from light.registry.models.acting_score_model import (
     ParlAIPolyencoderActingScoreModelConfig,
