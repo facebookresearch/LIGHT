@@ -3,6 +3,7 @@ from light.graph.viz.graph_printer import GraphPrinter
 from light.graph.structured_graph import OOGraph
 from light.graph.elements.graph_nodes import GraphRoom
 from light.world.action_parser import ActionParser
+from light.world.content_loggers import RoomInteractionLogger
 
 from copy import deepcopy
 import emoji
@@ -75,6 +76,7 @@ class WorldConfig:
     episode_db: Optional["EpisodeDB"] = None
     graph_builder: Optional["GraphBuilder"] = None
     model_pool: Optional["ModelPool"] = field(default_factory=get_empty_model_pool)
+    is_logging: bool = False
 
     def copy(self) -> "WorldConfig":
         """Return a new shallow copy of this WorldConfig"""
@@ -106,6 +108,8 @@ class World(object):
         self._oo_graph = OOGraph(config.opt)
         self.view = WorldViewer(self)
         self.purgatory = Purgatory(self)
+        self.is_logging = config.is_logging
+        self.episode_db = config.episode_db
         model_pool = config.model_pool
         if model_pool is None:
             from light.registry.model_pool import ModelPool
@@ -150,8 +154,8 @@ class World(object):
         # TODO maybe there's a better way to do this? What happens when we add a new room
         # to an existin graph?
         self._oo_graph = oo_graph
-        for room_node in oo_graph.room_id_to_loggers.values():
-            room_node.episode_db = self._config.episode_db
+        for room_id in oo_graph.rooms.keys():
+            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(self, room_id)
 
     @staticmethod
     def from_graph(graph, config: WorldConfig = None):

@@ -76,7 +76,7 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
-        logger = AgentInteractionLogger(test_graph, agent_node)
+        logger = AgentInteractionLogger(test_world, agent_node)
 
         self.assertEqual(logger.graph, test_graph)
         self.assertEqual(logger.state_history, [])
@@ -120,7 +120,7 @@ class TestInteractionLoggers(unittest.TestCase):
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
 
-        logger = AgentInteractionLogger(test_graph, agent_node)
+        logger = AgentInteractionLogger(test_world, agent_node)
         logger.event_buffer.append("Testing")
         logger.state_history.append("Testing")
         logger._begin_meta_episode()
@@ -155,7 +155,7 @@ class TestInteractionLoggers(unittest.TestCase):
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
 
-        logger = AgentInteractionLogger(test_graph, agent_node)
+        logger = AgentInteractionLogger(test_world, agent_node)
         logger._end_meta_episode()
 
         self.assertFalse(logger._logging_intialized)
@@ -266,7 +266,7 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
-        logger = AgentInteractionLogger(test_graph, agent_node)
+        logger = AgentInteractionLogger(test_world, agent_node)
 
         logger._begin_meta_episode()
         test_event1 = ArriveEvent(agent_node, text_content="hello1")
@@ -305,7 +305,7 @@ class TestInteractionLoggers(unittest.TestCase):
         test_graph, test_world, agent_node, room_node = initial
         agent_node2 = test_graph.add_agent("My test agent2", {})
         agent_node2.force_move_to(room_node)
-        logger = AgentInteractionLogger(test_graph, agent_node)
+        logger = AgentInteractionLogger(test_world, agent_node)
 
         logger._begin_meta_episode()
         test_event1 = ArriveEvent(agent_node2, text_content="hello1")

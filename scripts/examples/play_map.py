@@ -17,7 +17,8 @@ import parlai.utils.misc as parlai_utils
 from parlai.core.params import ParlaiParser
 
 from light import LIGHT_DIR
-from light.graph.builders.map_json_builder import MapJsonBuilder
+from light.graph.builders.base import GraphBuilderConfig
+from light.graph.builders.map_json_builder import MapJsonBuilder, MapJsonBuilderConfig
 from light.graph.builders.starspace_all import StarspaceBuilder
 from light.data_model.light_database import LIGHTDatabase
 from light.world.utils.terminal_player_provider import TerminalPlayerProvider
@@ -52,39 +53,11 @@ random.seed(6)
 numpy.random.seed(6)
 
 
-def init_world(world_builder, opt, model_pool):
-    g, world = asyncio.run(
-        world_builder.get_graph(world_config=WorldConfig(model_pool=model_pool))
-    )
-    purgatory = world.purgatory
-
-    # Choose the type of NPC souls.
-    if opt["agent_soul"] == "GenerativeHeuristicModelSoul":
-        purgatory.register_filler_soul_provider(
-            "model", GenerativeHeuristicModelSoul, lambda: []
-        )
-    elif opt["agent_soul"] == "GenerativeHeuristicModelWithStartFeatureSoul":
-        purgatory.register_filler_soul_provider(
-            "model",
-            GenerativeHeuristicModelWithStartFeatureSoul,
-            lambda: [],
-        )
-    elif opt["agent_soul"] == "OnEventSoul":
-        purgatory.register_filler_soul_provider("repeat", OnEventSoul, lambda: [])
-    else:
-        purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
-
-    for empty_agent in world.oo_graph.agents.values():
-        purgatory.fill_soul(empty_agent)
-    provider = TerminalPlayerProvider(purgatory)
-    return provider
-
-
-async def run_with_builder(world_builder, opt, model_pool):
+async def run_with_builder(init_world):
     """
     Takes in a World object and its OOGraph and allows one to play with a random map
     """
-    player_provider = init_world(world_builder, opt, model_pool)
+    player_provider = await init_world()
     await player_provider.process_terminal_act("")  # get an agent
     await asyncio.sleep(0.01)
     while True:
@@ -96,7 +69,7 @@ async def run_with_builder(world_builder, opt, model_pool):
             return
         elif act in ["new", "reset"]:
             print("A mist fills the world and everything resets")
-            player_provider = init_world(world_builder, opt, model_pool)
+            player_provider = await init_world()
             await player_provider.process_terminal_act("")  # get an agent
             await asyncio.sleep(0.01)
         else:
@@ -107,17 +80,14 @@ async def run_with_builder(world_builder, opt, model_pool):
 @dataclass
 class PlayMapScriptConfig(ScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: ["_self_", {"conf": "local"}])
+    builder: GraphBuilderConfig = MapJsonBuilderConfig()
     agent_soul: str = field(
-        default="RepeatSoul",
+        default="OnEventSoul",
         metadata={
             "help": "The type of soul to populate NPCs with."
             "One of OnEventSoul, RepeatSoul, GenerativeHeuristicModelSoul, "
             "GenerativeHeuristicModelWithStartFeatureSoul",
         },
-    )
-    load_map: str = field(
-        default=os.path.join(LIGHT_DIR, "scripts/examples/simple_world.json"),
-        metadata={"help": "Map file to load to play the game on"},
     )
     magic_db_path: str = field(
         # default=""
@@ -144,12 +114,14 @@ def main(cfg: PlayMapScriptConfig):
     os.environ["LIGHT_MODEL_ROOT"] = os.path.abspath(cfg.light.model_root)
     model_pool = ModelPool.get_from_config(cfg.light.model_pool)
     if not model_pool.has_model(ModelTypeName.DIALOG):
-        assert (
-            cfg.agent_soul == "RepeatSoul"
-        ), "Can only use Repeat soul if no models provided"
+        assert cfg.agent_soul in [
+            "RepeatSoul",
+            "OnEventSoul",
+        ], "Can only use Repeat or OnEvent souls if no models provided"
 
-    if cfg.load_map != "none":
-        world_builder = MapJsonBuilder(None, opt=opt)
+    # TODO move builder initialization from builder into base GraphBuilder
+    if cfg.builder._builder == "MapJsonBuilder":
+        world_builder = MapJsonBuilder(cfg.builder)
     else:
         # TODO FIXME make this all work with Hydra instead
         # to have stacked configs
@@ -158,8 +130,34 @@ def main(cfg: PlayMapScriptConfig):
         ldb = LIGHTDatabase(opt["light_db_file"], read_only=True)
         world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run_with_builder(world_builder, opt, model_pool))
+    async def init_new_world() -> TerminalPlayerProvider:
+        g, world = await world_builder.get_graph(
+            world_config=WorldConfig(model_pool=model_pool)
+        )
+        purgatory = world.purgatory
+
+        # Choose the type of NPC souls.
+        if cfg.agent_soul == "GenerativeHeuristicModelSoul":
+            purgatory.register_filler_soul_provider(
+                "model", GenerativeHeuristicModelSoul, lambda: []
+            )
+        elif cfg.agent_soul == "GenerativeHeuristicModelWithStartFeatureSoul":
+            purgatory.register_filler_soul_provider(
+                "model",
+                GenerativeHeuristicModelWithStartFeatureSoul,
+                lambda: [],
+            )
+        elif cfg.agent_soul == "OnEventSoul":
+            purgatory.register_filler_soul_provider("repeat", OnEventSoul, lambda: [])
+        else:
+            purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
+
+        for empty_agent in world.oo_graph.agents.values():
+            purgatory.fill_soul(empty_agent)
+        provider = TerminalPlayerProvider(purgatory)
+        return provider
+
+    asyncio.run(run_with_builder(init_new_world))
 
 
 if __name__ == "__main__":

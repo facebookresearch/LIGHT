@@ -109,8 +109,6 @@ def creo(agent, event):
         # TODO: later maybe make a proprty: hasattr(node, 'magical_create') and node.magical_create:
         if node.name == "orb of creation":
             can_cast = True
-    if agent.world._opt.get("allow_save_world", False):
-        can_cast = True
     if not can_cast:
         return
 
@@ -163,8 +161,6 @@ def teleport(agent, event):
     for node in agent.target_node.get_contents():
         if node.name == "dark emerald ring":
             can_cast = True
-    if agent.world._opt.get("allow_save_world", False):
-        can_cast = True
     if not can_cast:
         return
 
@@ -207,9 +203,7 @@ def save(agent, event):
 def check_if_cast_magic_from_event(agent, event):
     event_name = event.__class__.__name__
     if event_name == "SayEvent" and event.actor == agent.target_node:
-        if event.text_content == "creoservo" and agent.world._opt.get(
-            "allow_save_world", False
-        ):
+        if event.text_content == "creoservo":
             save(agent, event)
         if event.text_content.startswith("creo "):
             creo(agent, event)

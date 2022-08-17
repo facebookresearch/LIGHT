@@ -44,7 +44,7 @@ class TerminalPlayerProvider(PlayerProvider):
         """Save the soul as a local player soul"""
         self.player_soul = soul
 
-    def player_observe_event(self, soul: "PlayerSoul", event: "GraphEvent"):
+    async def player_observe_event(self, soul: "PlayerSoul", event: "GraphEvent"):
         """
         Send observation forward to the player in whatever format the player
         expects it to be.

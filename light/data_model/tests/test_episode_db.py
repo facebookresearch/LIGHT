@@ -35,14 +35,13 @@ class TestEpisodesDB(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.data_dir)
 
-    def setUp_single_room_graph(self):
+    def setUp_single_room_graph(self, episode_db=None):
         # Set up the graph
-        opt = {"is_logging": True, "log_path": self.data_dir}
         test_graph = OOGraph(opt)
         agent_node = test_graph.add_agent("My test agent", {})
         room_node = test_graph.add_room("test room", {})
         agent_node.force_move_to(room_node)
-        test_world = World(WorldConfig(), True)
+        test_world = World(WorldConfig(is_logging=True, episode_db=episode_db), True)
         test_world.oo_graph = test_graph
         return (test_graph, test_world, agent_node, room_node)
 
@@ -58,7 +57,7 @@ class TestEpisodesDB(unittest.TestCase):
         # Set up the graph
         pre_time = time.time()
         episode_db = EpisodeDB(self.config)
-        initial = self.setUp_single_room_graph()
+        initial = self.setUp_single_room_graph(episode_db)
         test_graph, test_world, agent_node, room_node = initial
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
         room_logger.episode_db = episode_db
@@ -156,7 +155,7 @@ class TestEpisodesDB(unittest.TestCase):
         """
         # Set up the graph
         episode_db = EpisodeDB(self.config)
-        initial = self.setUp_single_room_graph()
+        initial = self.setUp_single_room_graph(episode_db)
         test_graph, test_world, agent_node, room_node = initial
         agent_node.is_player = True
         agent_node.user_id = TEST_USER_ID
@@ -205,14 +204,12 @@ class TestEpisodesDB(unittest.TestCase):
         """
         # Set up the graph
         episode_db = EpisodeDB(self.config)
-        initial = self.setUp_single_room_graph()
+        initial = self.setUp_single_room_graph(episode_db)
         test_graph, test_world, agent_node, room_node = initial
 
         # Check the graph json was done correctly from agent's room
         test_init_json = test_world.oo_graph.to_json_rv(room_node.node_id)
-        agent_logger = AgentInteractionLogger(
-            test_graph, agent_node, episode_db=episode_db
-        )
+        agent_logger = AgentInteractionLogger(test_world, agent_node)
         agent_logger._begin_meta_episode()
         agent_logger._end_meta_episode()
 
@@ -282,7 +279,7 @@ class TestEpisodesDB(unittest.TestCase):
         """
         # Set up the graph
         episode_db = EpisodeDB(self.config)
-        initial = self.setUp_single_room_graph()
+        initial = self.setUp_single_room_graph(episode_db)
         test_graph, test_world, agent_node, room_node = initial
         agent_node.is_player = True
         agent_node.user_id = TEST_USER_ID
@@ -294,9 +291,7 @@ class TestEpisodesDB(unittest.TestCase):
         # Check an event json was done correctly
         test_event = ArriveEvent(agent_node, text_content="")
         test_init_json = test_world.oo_graph.to_json_rv(agent_node.get_room().node_id)
-        agent_logger = AgentInteractionLogger(
-            test_graph, agent_node, episode_db=episode_db
-        )
+        agent_logger = AgentInteractionLogger(test_world, agent_node)
         agent_logger._begin_meta_episode()
         agent_logger.observe_event(test_event)
         test_event2 = LookEvent(agent_node)
@@ -338,7 +333,7 @@ class TestEpisodesDB(unittest.TestCase):
         """
         # Set up the graph
         episode_db = EpisodeDB(self.config)
-        initial = self.setUp_single_room_graph()
+        initial = self.setUp_single_room_graph(episode_db)
         test_graph, test_world, agent_node, room_node = initial
         agent_node.is_player = True
         agent_node.user_id = TEST_USER_ID

@@ -21,6 +21,9 @@ from light.data_model.db.base import LightDBConfig, ALL_DB_CONFIGS_LIST
 
 from typing import List, Type, Dict, Any, TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from light.graph.builders.base import GraphBuilderConfig
+
 LIGHT_DIR = dirname(dirname(dirname(abspath(__file__))))
 
 config = ConfigStoreWithProvider("light")
@@ -47,6 +50,15 @@ def register_db_config(db_config: Type[LightDBConfig]):
         node=db_config,
         group=f"light/db/schema",
         package="light.db",
+    )
+
+
+def register_builder_config(builder_config: Type["GraphBuilderConfig"]):
+    config.store(
+        name=builder_config._builder,
+        node=builder_config,
+        group=f"light/builder/schema",
+        package="builder",
     )
 
 
@@ -87,6 +99,9 @@ def initialize_named_configs():
         register_model_loader(loader)
     for db_config in ALL_DB_CONFIGS_LIST:
         register_db_config(db_config)
+    from light.graph.builders.map_json_builder import MapJsonBuilderConfig
+
+    register_builder_config(MapJsonBuilderConfig)
 
 
 def register_script_config(name: str, module: Any):
