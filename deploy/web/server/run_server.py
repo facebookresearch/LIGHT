@@ -80,7 +80,9 @@ SECRETS = read_secrets()
 
 @dataclass
 class WorldServerConfig(ScriptConfig):
-    defaults: List[Any] = field(default_factory=lambda: ["_self_", {"deploy": "local"}])
+    defaults: List[Any] = field(
+        default_factory=lambda: ["_self_", {"deploy": "local_no_models"}]
+    )
     builder: GraphBuilderConfig = MapJsonBuilderConfig(
         load_map=os.path.expanduser("~/LIGHT/scripts/examples/complex_world.json")
     )
