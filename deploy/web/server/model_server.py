@@ -6,31 +6,33 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Application specifically for hosting a model for remote access"""
+"""
+Application specifically for hosting a model for remote access
 
+Examples:
+python model_server.py model.opt_file=../../../light/registry/models/config/generic_act_model.opt
+python model_server.py model.opt_file=../../../light/registry/models/config/baseline_adversarial_safety.opt
+python model_server.py model._loader=ParlAIActingScore model.opt_file=../../../light/registry/models/config/baseline_roleplaying_scorer.opt
+"""
 
-import argparse
 import json
 import logging
 import os
 import traceback
 import asyncio
-from typing import TYPE_CHECKING, Any, Dict, Optional
+import gc
+import hydra
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING, Any, Dict, Optional, List
 
-import tornado.auth
 import tornado.escape
 import tornado.ioloop
 import tornado.web
-import tornado.websocket
 
 from light import LIGHT_DIR
-from light.registry.model_pool import ALL_LOADERS, ModelPool
-from light.registry.models.acting_score_model import (
-    ParlAIPolyencoderActingScoreModelConfig,
-)
-
-# Temporary imports pre Hydra
+from light.registry.model_pool import ModelPool, ModelTypeName
 from light.registry.parlai_model import ParlAIModelConfig
+from light.registry.hydra_registry import register_script_config, ScriptConfig
 
 
 if TYPE_CHECKING:
@@ -42,6 +44,8 @@ tornado_settings = {
 }
 DEFAULT_HOSTNAME = "localhost"
 DEFAULT_PORT = 40000
+
+HYDRA_CONFIG_DIR = os.path.join(LIGHT_DIR, "deploy/web/configs")
 
 
 class ModelServer(tornado.web.Application):
@@ -152,73 +156,41 @@ def _run_server(
     print("Exiting server")
 
 
-def _init_model(model_opt_file: str, model_loader: str) -> "Agent":
+def _init_model(cfg: ParlAIModelConfig) -> "Agent":
     """Initialize a model for serving"""
-
     pool = ModelPool()
-    # Temporary mapping that allows us to get things running before Hydra
-    cfg = None
-    if model_loader == "ParlAI":
-        cfg = ParlAIModelConfig(opt_file=model_opt_file)
-    elif model_loader == "ParlAIActingScore":
-        cfg = ParlAIPolyencoderActingScoreModelConfig(opt_file=model_opt_file)
-    else:
-        raise NotImplementedError(f"Unsupported model loader {model_loader}")
-
-    pool.register_model(cfg, ["target"])
-    model = pool.get_model("target")
+    pool.register_model(cfg, [ModelTypeName.SERVED])
+    model = pool.get_model(ModelTypeName.SERVED)
     # Try to clear up some memory
-    del pool._model_loaders["target"]
-    import gc
+    del pool._model_loaders[ModelTypeName.SERVED.value]
 
     gc.collect()
     return model
 
 
-def main():
-    import random
-    import numpy
+@dataclass
+class ModelServerConfig(ScriptConfig):
+    defaults: List[Any] = field(default_factory=lambda: ["_self_"])
+    model: ParlAIModelConfig = ParlAIModelConfig()
+    config_dif: str = os.path.join(LIGHT_DIR, "light/registry/models/config/")
+    port: int = field(
+        default=DEFAULT_PORT, metadata={"help": "Port to run the server on"}
+    )
+    hostname: str = field(
+        default=DEFAULT_HOSTNAME, metadata={"help": "Host to run the server on"}
+    )
 
-    parser = argparse.ArgumentParser(description="Start the model server.")
-    parser.add_argument(
-        "--light-model-root",
-        type=str,
-        default=os.path.join(LIGHT_DIR, "models/"),
-        help="Path to the models",
-    )
-    parser.add_argument(
-        "--model-opt-file",
-        type=str,
-        default=os.path.join(
-            LIGHT_DIR, "light/registry/models/config/baseline_generative.opt"
-        ),
-        help="Opt file to load a model from",
-    )
-    parser.add_argument(
-        "--model-loader",
-        type=str,
-        default="ParlAI",
-        help="ModelConfig to load alongside the given opt file",
-    )
-    parser.add_argument(
-        "--port",
-        metavar="port",
-        type=int,
-        default=DEFAULT_PORT,
-        help="port to run the server on.",
-    )
-    parser.add_argument(
-        "--hostname",
-        metavar="hostname",
-        type=str,
-        default=DEFAULT_HOSTNAME,
-        help="host to run the server on.",
-    )
-    FLAGS = parser.parse_args()
 
-    os.environ["LIGHT_MODEL_ROOT"] = FLAGS.light_model_root
-    model = _init_model(FLAGS.model_opt_file, FLAGS.model_loader)
-    _run_server(tornado_settings, FLAGS.hostname, FLAGS.port, model)
+register_script_config("scriptconfig", ModelServerConfig)
+
+
+@hydra.main(
+    config_path=HYDRA_CONFIG_DIR, config_name="scriptconfig", version_base="1.2"
+)
+def main(cfg: ModelServerConfig):
+    os.environ["LIGHT_MODEL_ROOT"] = cfg.light.model_root
+    model = _init_model(cfg.model)
+    _run_server(tornado_settings, cfg.hostname, cfg.port, model)
 
 
 if __name__ == "__main__":

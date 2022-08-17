@@ -51,6 +51,7 @@ class ModelTypeName(enum.Enum):
     ACTION = "action"  # Models used by model agents for generating actions
     GENERIC_ACTS = "generic_action"  # Models to select a next action from cands
     PARSER = "parser"  # Models to parse raw text to in-game actions
+    SERVED = "served"  # Any generic served model (for ModelServer)
 
 
 class ModelPool:

@@ -13,7 +13,7 @@ dialog:
   _loader: ParlAI
   opt_file: ${light.light_dir}/light/registry/models/config/baseline_generative.opt
 role_playing_score:
-  _loader: ParlAI
+  _loader: ParlAIActingScore
   opt_file: ${light.light_dir}/light/registry/models/config/baseline_roleplaying_scorer.opt
 action:
   _loader: ParlAI

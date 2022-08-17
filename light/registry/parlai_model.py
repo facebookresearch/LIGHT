@@ -136,7 +136,7 @@ class ParlAIModelLoader(ModelLoader):
             model.observe(act)
             model.act()
         except Exception as e:
-            print(f"Cannot warm model {opt['model']}, hit error {e}")
+            print(f"Cannot warm model {opt['model_file']}, hit error {e}")
 
         # Share the model params for use in `get_model`
         self._shared = model.share()

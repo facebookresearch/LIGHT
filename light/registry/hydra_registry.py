@@ -42,19 +42,19 @@ def register_model_loader(loader: Type[ModelLoader]):
             group=f"light/model_pool/{model_type_name.value}/schema",
             package=f"light.model_pool.{model_type_name.value}",
         )
-        config.store(
-            name=loader.CONFIG_CLASS._loader,
-            node=loader.CONFIG_CLASS,
-            group=f"light/model/schema",
-            package=f"model",
-        )
+    config.store(
+        name=loader.CONFIG_CLASS._loader,
+        node=loader.CONFIG_CLASS,
+        group=f"schema/light/model",
+        package=f"model",
+    )
 
 
 def register_db_config(db_config: Type[LightDBConfig]):
     config.store(
         name=db_config.backend,
         node=db_config,
-        group=f"light/db/schema",
+        group=f"schema/light/db",
         package="light.db",
     )
 
@@ -63,7 +63,7 @@ def register_builder_config(builder_config: Type["GraphBuilderConfig"]):
     config.store(
         name=builder_config._builder,
         node=builder_config,
-        group=f"light/builder/schema",
+        group=f"schema/light/builder",
         package="builder",
     )
 

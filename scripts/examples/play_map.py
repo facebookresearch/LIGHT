@@ -27,9 +27,6 @@ from dataclasses import dataclass, field
 from omegaconf import DictConfig, OmegaConf
 from light.registry.hydra_registry import register_script_config, ScriptConfig
 
-import parlai.utils.misc as parlai_utils
-from parlai.core.params import ParlaiParser
-
 from light import LIGHT_DIR
 from light.graph.builders.base import GraphBuilderConfig
 from light.graph.builders.map_json_builder import MapJsonBuilder, MapJsonBuilderConfig
@@ -38,7 +35,6 @@ from light.data_model.light_database import LIGHTDatabase
 from light.world.utils.terminal_player_provider import TerminalPlayerProvider
 
 from light.world.world import World, WorldConfig
-from light.world.souls.base_soul import BaseSoul
 from light.world.souls.repeat_soul import RepeatSoul
 from light.world.souls.on_event_soul import OnEventSoul
 from light.world.souls.models.generative_heuristic_model_soul import (
@@ -48,10 +44,7 @@ from light.world.souls.models.generative_heuristic_model_with_start_feature_soul
     GenerativeHeuristicModelWithStartFeatureSoul,
 )
 from light.registry.model_pool import ModelPool, ModelTypeName
-from light.registry.parlai_model import ParlAIModelConfig
-from light.registry.models.acting_score_model import (
-    ParlAIPolyencoderActingScoreModelConfig,
-)
+
 
 from typing import Dict, Any, List
 
@@ -124,7 +117,6 @@ register_script_config("scriptconfig", PlayMapScriptConfig)
     config_path=HYDRA_CONFIG_DIR, config_name="scriptconfig", version_base="1.2"
 )
 def main(cfg: PlayMapScriptConfig):
-    print(cfg)
     os.environ["LIGHT_MODEL_ROOT"] = os.path.abspath(cfg.light.model_root)
     model_pool = ModelPool.get_from_config(cfg.light.model_pool)
     if not model_pool.has_model(ModelTypeName.DIALOG):
