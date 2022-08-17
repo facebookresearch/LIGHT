@@ -106,7 +106,7 @@ class ModelPool:
         """
         return asyncio.run(self.register_model_async(config, model_names))
 
-    def has_model(self, model_name: str) -> bool:
+    def has_model(self, model_name: ModelTypeName) -> bool:
         """
         Determine if there's a model registered for the given name.
         """
