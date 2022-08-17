@@ -7,7 +7,7 @@ GAME_DIR="${WEBDIR}/gameapp/"
 LANDING_DIR="${WEBDIR}/landingapp/"
 SERVER_FILE="${WEBDIR}/server/run_server.py"
 
-CONF_FN="./configs/"$1"/config.js"
+CONF_FN="./configs/"$1".js"
 
 if [ -z "$1" ];
 then

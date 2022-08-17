@@ -45,7 +45,7 @@ tornado_settings = {
 DEFAULT_HOSTNAME = "localhost"
 DEFAULT_PORT = 40000
 
-HYDRA_CONFIG_DIR = os.path.join(LIGHT_DIR, "deploy/web/configs")
+HYDRA_CONFIG_DIR = os.path.join(LIGHT_DIR, "hydra_configs")
 
 
 class ModelServer(tornado.web.Application):

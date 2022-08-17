@@ -220,6 +220,8 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.player = player
 
     def user_should_do_tutorial(self, user_id):
+        if self.app.registry.tutorial_builder_config is None:
+            return False
         player = self.user_db.get_player(user_id)
         return player.account_status == PlayerStatus.TUTORIAL
 

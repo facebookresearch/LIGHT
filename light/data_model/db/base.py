@@ -31,8 +31,8 @@ class LightDBConfig:
 
 
 @dataclass
-class LightLocalDBConfig:
-    backend: str = "test"
+class LightLocalDBConfig(LightDBConfig):
+    backend: str = "local"
     file_root: Optional[str] = DEFAULT_LOG_PATH
 
 

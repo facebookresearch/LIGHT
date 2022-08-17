@@ -57,6 +57,12 @@ def register_db_config(db_config: Type[LightDBConfig]):
         group=f"schema/light/db",
         package="light.db",
     )
+    config.store(
+        name=db_config.backend,
+        node=db_config,
+        group=f"light/db",
+        package="light.db",
+    )
 
 
 def register_builder_config(builder_config: Type["GraphBuilderConfig"]):

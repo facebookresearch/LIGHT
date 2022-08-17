@@ -37,7 +37,7 @@ class TutorialWorldBuilder(MapJsonBuilder):
         """Add an agent to the graph in a random room somewhere"""
         raise Exception("Agents should not be added to tutorials!")
 
-    def build_new_graph(self):
+    def build_new_graph(self, world_config: WorldConfig):
         """
         Create a tutorial graph, not from file
         """

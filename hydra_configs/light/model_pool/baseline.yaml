@@ -1,7 +1,7 @@
 defaults:
   - safety/schema: ParlAI
   - dialog/schema: ParlAI
-  - role_playing_score/schema: ParlAI
+  - role_playing_score/schema: ParlAIActingScore
   - action/schema: ParlAI
   - generic_action/schema: ParlAI
   - parser/schema: ParlAI

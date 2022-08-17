@@ -55,7 +55,7 @@ import numpy
 import asyncio
 
 CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
-HYDRA_CONFIG_DIR = os.path.join(LIGHT_DIR, "scripts", "hydra_configs")
+HYDRA_CONFIG_DIR = os.path.join(LIGHT_DIR, "hydra_configs")
 random.seed(6)
 numpy.random.seed(6)
 
