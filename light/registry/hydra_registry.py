@@ -9,14 +9,19 @@ Contains helper functions that allow us to register hydra
 structured configs.
 """
 
+import os
+from os.path import abspath, dirname
 from hydra.core.config_store import ConfigStoreWithProvider
 from dataclasses import dataclass, field, fields, Field, make_dataclass
 from omegaconf import OmegaConf, MISSING, DictConfig
+
 from light.registry.base_model_loader import ModelLoader, ModelConfig
 from light.registry.model_pool import ALL_LOADERS_LIST, ModelTypeName
 from light.data_model.db.base import LightDBConfig, ALL_DB_CONFIGS_LIST
 
 from typing import List, Type, Dict, Any, TYPE_CHECKING
+
+LIGHT_DIR = dirname(dirname(dirname(abspath(__file__))))
 
 config = ConfigStoreWithProvider("light")
 
@@ -31,7 +36,8 @@ def register_model_loader(loader: Type[ModelLoader]):
         config.store(
             name=loader.CONFIG_CLASS._loader,
             node=loader.CONFIG_CLASS,
-            group=f"light/model_pool/{model_type_name.value}",
+            group=f"light/model_pool/{model_type_name.value}/schema",
+            package=f"light.model_pool.{model_type_name.value}",
         )
 
 
@@ -39,15 +45,25 @@ def register_db_config(db_config: Type[LightDBConfig]):
     config.store(
         name=db_config.backend,
         node=db_config,
-        group=f"light/db",
+        group=f"light/db/schema",
+        package="light.db",
     )
+
+
+light_default_list = ["_self_", {"model_pool": "simple"}]
 
 
 @dataclass
 class LightConfig:
-    model_pool: ModelPoolConfig = MISSING
+    defaults: List[Any] = field(default_factory=lambda: light_default_list)
+    model_pool: ModelPoolConfig = ModelPoolConfig()
     db: LightDBConfig = MISSING
     log_level: str = "info"
+    model_root: str = field(
+        default=os.path.join(LIGHT_DIR, "models"),
+        metadata={"help": "Where LIGHT looks for model files"},
+    )
+    light_dir: str = LIGHT_DIR
 
 
 @dataclass

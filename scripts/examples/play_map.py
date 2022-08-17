@@ -7,7 +7,11 @@
 # To run, use:
 # python scripts/examples/play_map.py --use-models GenerativeHeuristicModelSoul
 
-import sys
+import hydra
+import os
+from dataclasses import dataclass, field
+from omegaconf import DictConfig, OmegaConf
+from light.registry.hydra_registry import register_script_config, ScriptConfig
 
 import parlai.utils.misc as parlai_utils
 from parlai.core.params import ParlaiParser
@@ -34,7 +38,7 @@ from light.registry.models.acting_score_model import (
     ParlAIPolyencoderActingScoreModelConfig,
 )
 
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 
 import os
@@ -43,9 +47,9 @@ import numpy
 import asyncio
 
 CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
+HYDRA_CONFIG_DIR = os.path.join(LIGHT_DIR, "scripts", "hydra_configs")
 random.seed(6)
 numpy.random.seed(6)
-shared_model_content = None
 
 
 def init_world(world_builder, opt, model_pool):
@@ -100,145 +104,49 @@ async def run_with_builder(world_builder, opt, model_pool):
         await asyncio.sleep(0.01)
 
 
-def parse_and_return_args():
-    parser = ParlaiParser()
-    parser.add_argument(
-        "--agent-soul",
-        type=str,
+@dataclass
+class PlayMapScriptConfig(ScriptConfig):
+    defaults: List[Any] = field(default_factory=lambda: ["_self_", {"conf": "local"}])
+    agent_soul: str = field(
         default="OnEventSoul",
-        choices={
-            "OnEventSoul",
-            "RepeatSoul",
-            "GenerativeHeuristicModelSoul",
+        metadata={
+            "help": "The type of soul to populate NPCs with."
+            "One of OnEventSoul, RepeatSoul, GenerativeHeuristicModelSoul, "
             "GenerativeHeuristicModelWithStartFeatureSoul",
         },
     )
-    parser.add_argument(
-        "--light-model-root",
-        type=str,
-        default=os.path.join(LIGHT_DIR, "models")
-        # default="/checkpoint/light/models/"
-    )
-    parser.add_argument(
-        "--load-map",
-        type=str,
+    load_map: str = field(
         default=os.path.join(LIGHT_DIR, "scripts/examples/simple_world.json"),
+        metadata={"help": "Map file to load to play the game on"},
     )
-    parser.add_argument("--dont-catch-errors", type="bool", default=True)
-    parser.add_argument(
-        "--safety-classifier-path",
-        type=str,
-        default="",
-        # default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
-    )
-    parser.add_argument(
-        "--magic-db-path",
-        type=str,
+    magic_db_path: str = field(
         # default=""
         default="/checkpoint/light/magic/magic.db,scripts/examples/special_items.db"
         # default = "scripts/examples/special_items.db"
     )
-    parser.add_argument("--allow-save-world", type="bool", default=True)
-    parser.add_argument(
-        "--roleplaying-score-opt-file",
-        type=str,
-        default=os.path.join(CONFIG_DIR, "baseline_roleplaying_scorer.opt"),
+    safety_classifier_path: str = field(
+        default="",
+        # default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
     )
-    parser.add_argument(
-        "--acting-model-opt-file",
-        type=str,
-        default=os.path.join(CONFIG_DIR, "baseline_main_act_model.opt"),
+    allow_save_world: bool = field(
+        default=True,
     )
-    parser.add_argument(
-        "--generic-act-opt-file",
-        type=str,
-        default=os.path.join(CONFIG_DIR, "generic_act_model.opt"),
-    )
-    parser.add_argument(
-        "--parser-opt-file",
-        type=str,
-        default=os.path.join(CONFIG_DIR, "baseline_parser.opt"),
-    )
-    parser.add_argument("--no-models", default=False, action="store_true")
-    parser.add_argument("--use-safety-model", default=False, action="store_true")
-    opt, _unknown = parser.parse_and_process_known_args()
-    return opt
 
 
-def init_correct_models(opt: Dict[str, Any]) -> ModelPool:
-    """Produces the correct ModelPool for the given opts"""
-    model_pool = ModelPool()
-    if opt["no_models"]:
-        return model_pool
-
-    os.environ["LIGHT_MODEL_ROOT"] = opt["light_model_root"]
-
-    # Initialize dialog model
-    agent_soul = opt["agent_soul"]
-    if agent_soul == "GenerativeHeuristicModelSoul":
-        model_pool.register_model(
-            ParlAIModelConfig(
-                opt_file=os.path.join(CONFIG_DIR, "baseline_generative.opt")
-            ),
-            ["dialog"],
-        )
-    elif agent_soul == "GenerativeHeuristicModelWithStartFeatureSoul":
-        model_pool.register_model(
-            ParlAIModelConfig(
-                opt_file=os.path.join(CONFIG_DIR, "baseline_generative_with_start.opt")
-            ),
-            ["dialog"],
-        )
-
-    # Initialize Scoring model
-    roleplaying_opt_target = opt["roleplaying_score_opt_file"]
-    if roleplaying_opt_target is not None and roleplaying_opt_target != "":
-        model_pool.register_model(
-            ParlAIPolyencoderActingScoreModelConfig(opt_file=roleplaying_opt_target),
-            ["role_playing_score"],
-        )
-
-    # Initialize Acting model
-    acting_model_opt_target = opt["acting_model_opt_file"]
-    if acting_model_opt_target is not None and acting_model_opt_target != "":
-        model_pool.register_model(
-            ParlAIModelConfig(opt_file=acting_model_opt_target), ["action"]
-        )
-
-    # Initialize Generic Acting model
-    generic_act_opt_target = opt["generic_act_opt_file"]
-    if generic_act_opt_target is not None and generic_act_opt_target != "":
-        model_pool.register_model(
-            ParlAIModelConfig(opt_file=generic_act_opt_target), ["generic_action"]
-        )
-
-    # Initialize Parser model
-    parser_opt_targert = opt["parser_opt_file"]
-    if parser_opt_targert is not None and parser_opt_targert != "":
-        model_pool.register_model(
-            ParlAIModelConfig(opt_file=parser_opt_targert), ["parser"]
-        )
-
-    # Initialize Safety model
-    if opt["use_safety_model"]:
-        model_pool.register_model(
-            ParlAIModelConfig(
-                opt_file=os.path.join(CONFIG_DIR, "baseline_adversarial_safety.opt")
-            ),
-            ["safety"],
-        )
-
-    return model_pool
+register_script_config("scriptconfig", PlayMapScriptConfig)
 
 
-def main():
-    opt = parse_and_return_args()
-    model_pool = init_correct_models(opt)
+@hydra.main(
+    config_path=HYDRA_CONFIG_DIR, config_name="scriptconfig", version_base="1.2"
+)
+def main(cfg: PlayMapScriptConfig):
+    print(cfg)
+    os.environ["LIGHT_MODEL_ROOT"] = os.path.abspath(cfg.light.model_root)
+    model_pool = ModelPool.get_from_config(cfg.light.model_pool)
+    assert False
 
-    if opt["load_map"] != "none":
-        Builder = MapJsonBuilder
-        ldb = ""
-        world_builder = Builder(None, opt=opt)
+    if cfg.load_map != "none":
+        world_builder = MapJsonBuilder(None, opt=opt)
     else:
         # TODO FIXME make this all work with Hydra instead
         # to have stacked configs

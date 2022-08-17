@@ -25,7 +25,10 @@ from light.registry.models.starspace_model import (
 )
 
 from parlai.core.agents import Agent
-from typing import List, Any, Union, Dict, Optional, Type
+from typing import List, Any, Union, Dict, Optional, Type, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from light.registry.hydra_registry import ModelPoolConfig
 
 ALL_LOADERS_LIST: List[ModelLoader] = {
     ParlAIModelLoader,
@@ -54,8 +57,32 @@ class ModelPool:
     def __init__(self):
         self._model_loaders = {}
 
+    @classmethod
+    async def get_from_config_async(cls, cfg: "ModelPoolConfig") -> "ModelPool":
+        """Initialize a ModelPool with models in the given ModelPoolConfig"""
+        model_pool = cls()
+        models_to_load: Dict[str, ModelConfig] = {}
+        for model_type_name in ModelTypeName:
+            model_type = model_type_name.value
+            if cfg.get(model_type, None) is not None:
+                models_to_load[model_type] = cfg.get(model_type)
+        await asyncio.gather(
+            *[
+                model_pool.register_model_async(model_config, [model_name])
+                for model_name, model_config in models_to_load.items()
+            ]
+        )
+        return model_pool
+
+    @classmethod
+    def get_from_config(cls, cfg: "ModelPoolConfig"):
+        """
+        Initialize a ModelPool with models in the given ModelPoolConfig synchronously
+        """
+        return asyncio.run(cls.get_from_config_async(cfg))
+
     async def register_model_async(
-        self, config: Union[DictConfig, ModelConfig], model_names: List[str]
+        self, config: ModelConfig, model_names: List[str]
     ) -> None:
         """
         Takes the given config, loads the model, and
@@ -71,9 +98,7 @@ class ModelPool:
         for model_name in model_names:
             self._model_loaders[model_name] = loader
 
-    def register_model(
-        self, config: Union[DictConfig, ModelConfig], model_names: List[str]
-    ) -> None:
+    def register_model(self, config: ModelConfig, model_names: List[str]) -> None:
         """
         Syncronous model registration for server and script setups
         """
