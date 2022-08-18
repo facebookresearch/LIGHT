@@ -9,7 +9,7 @@ By design changing options can happen in a few places with the
 following priority order:
 
 1. Options provided by a specific `ModelPool.get_model` call.
-2. Options provided on the command `line via `+<model>.overrides.<target>=value`
+2. Options provided on the command line via `+<model>.overrides.<target>=value`
 3. Options provided in the overrides of a particular hydra config yaml file
 4. Options specified in the provided (hydra) `<model>.opt_file`
    (either from the yaml, or provided on the command line)
