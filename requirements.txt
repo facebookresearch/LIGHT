@@ -8,6 +8,6 @@ psycopg2-binary>=2.8.5
 pytest>=5.0.0
 pyzmq>=19.0.1
 tqdm>=4.48.0
-hydra-core>=1.2.0
+hydra-core>=1.1.0
 mephisto>=1.0.3
 SQLAlchemy>=1.4.36
