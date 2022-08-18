@@ -1,5 +1,5 @@
 /* REACT */
-import React from "react";
+import React, { useEffect, Fragment } from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
@@ -11,8 +11,9 @@ import { updateXp } from "../../features/playerInfo/xp-slice.ts";
 import { updateGiftXp } from "../../features/playerInfo/giftxp-slice.ts";
 import { updateSessionXp } from "../../features/sessionInfo/sessionxp-slice";
 import { updateIsMobile } from "../../features/view/view-slice";
+import { setReportModal } from "../../features/modals/modals-slice";
 /* STYLES */
-
+import { Dialog, Transition } from "@headlessui/react";
 import "./styles.css";
 import "react-tippy/dist/tippy.css";
 import "emoji-mart/css/emoji-mart.css";
@@ -122,6 +123,10 @@ const Chat = ({
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
+  //MODAL STATE
+  const showReportModal = useAppSelector(
+    (state) => state.modals.showReportModal
+  );
   //GIFT XP STATE
   const giftXp = useAppSelector((state) => state.giftXp.value);
   //SESSION XP STATE
@@ -170,8 +175,17 @@ const Chat = ({
     };
   };
 
+  /*------REDUX ACTIONS--------*/
+  const openReportModal = () => {
+    dispatch(setReportModal(true));
+  };
+
+  const closeReportModal = () => {
+    dispatch(setReportModal(false));
+  };
+
   /* PLAYER AND SESSION INFO UPDATES TO REDUX STORE */
-  React.useEffect(() => {
+  useEffect(() => {
     const { xp, giftXp } = persona;
     /* ----PLAYER INFO---- */
     dispatch(updatePersona(persona));
@@ -203,21 +217,21 @@ const Chat = ({
     dispatch(updateSessionXp(sessionXpUpdate));
   }, [persona]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(updateGiftXp(giftXp - sessionGiftXpSpent));
   }, [sessionGiftXpSpent]);
   /* LOCATION UPDATES TO REDUX STORE */
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(updateLocation(location));
   }, [location]);
 
   /* AGENT UPDATES TO REDUX STORE */
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(updateAgents(agents));
   }, [agents]);
 
   /* IDLE TIMER */
-  React.useEffect(() => {
+  useEffect(() => {
     scrollToBottom();
     let timer = null;
     timer = setInterval(() => {
@@ -236,13 +250,13 @@ const Chat = ({
   };
 
   // SCROLL TO BOTTOM UPON RECIEVING NEW MESSAGES
-  React.useEffect(() => {
+  useEffect(() => {
     scrollToBottom();
   }, [scrollToBottom, messages]);
 
   //const { presentAgents } = getLocationState(messages);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const defaultEmoji = "❓";
     let characterEmoji = DefaultEmojiMapper(persona.name);
     if (characterEmoji === undefined) {
@@ -261,7 +275,7 @@ const Chat = ({
   }, [persona]);
 
   /* SESSION AND GIFT XP UPDATE PLAYER XP and GIFT XP */
-  React.useEffect(() => {
+  useEffect(() => {
     const { xp, giftXp } = persona;
     dispatch(updateXp(xp + sessionXp));
     let sessionGiftXpUpdate = sessionXp / 4;
@@ -278,7 +292,7 @@ const Chat = ({
     setScreenSize(window.innerWidth);
   };
   /* MOBILE */
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener("resize", updateDimensions);
     let startingSize = window.innerWidth;
     if (startingSize <= 950) {
@@ -288,7 +302,7 @@ const Chat = ({
     }
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (screenSize <= 950) {
       dispatch(updateIsMobile(true));
     } else if (screenSize > 950) {
@@ -355,6 +369,36 @@ const Chat = ({
           </div>
         </div>
       )}
+      <Transition.Root show={showReportModal} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeReportModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          ></Transition.Child>
+
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            enterTo="opacity-100 translate-y-0 sm:scale-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          >
+            <Dialog.Panel className="relative bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-sm sm:w-full sm:p-6">
+              <Dialog.Title
+                as="h3"
+                className="text-lg leading-6 font-medium text-gray-900"
+              ></Dialog.Title>
+            </Dialog.Panel>
+          </Transition.Child>
+        </Dialog>
+      </Transition.Root>
     </div>
   );
 };

@@ -253,7 +253,7 @@ const AgentMessage = ({
           </div>
           {isLiked && !isStarred ? (
             <span
-              className="flex flex-row text-yellow-500"
+              className="flex flex-row justify-end text-yellow-500"
               onClick={starHandler}
             >
               Would you like to award this message a star?
@@ -261,7 +261,7 @@ const AgentMessage = ({
           ) : null}
           {isDisliked && !isReported ? (
             <span
-              className="flex flex-row text-red-500"
+              className="flex flex-row justify-end text-red-500"
               onClick={reportingHandler}
             >
               <BsFillFlagFill />

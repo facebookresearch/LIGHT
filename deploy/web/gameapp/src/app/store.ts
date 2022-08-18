@@ -7,6 +7,7 @@ import emojiReducer from "../features/playerInfo/emoji-slice";
 import giftXpReducer from "../features/playerInfo/giftxp-slice";
 import locationReducer from "../features/playerInfo/location-slice";
 import messagesReducer from "../features/messages/messages-slice";
+import modalReducer from "../features/modals/modals-slice";
 import personaReducer from "../features/playerInfo/persona-slice";
 import sessionXpReducer from "../features/sessionInfo/sessionxp-slice";
 import sessionSpentGiftXpReducer from "../features/sessionInfo/sessionspentgiftxp-slice";
@@ -24,6 +25,7 @@ export const store = configureStore({
     giftXp: giftXpReducer,
     location: locationReducer,
     messages: messagesReducer,
+    modals: modalReducer,
     persona: personaReducer,
     sessionXp: sessionXpReducer,
     sessionSpentGiftXp: sessionSpentGiftXpReducer,

@@ -1,6 +1,7 @@
 /* APP STYLES */
 body {
   background-color: black;
+  overflow-y: hidden;
 }
 #helpmode {
   cursor: help;
@@ -54,14 +55,6 @@ body {
 }
 
 @media only screen and (max-width: 900px) {
-  div.leaflet-container {
-    border: none;
-    border-radius: 0px;
-  }
-
-  .app-controls {
-    background-color: rgb(255, 255, 235);
-  }
 }
 
 @keyframes popInChat {

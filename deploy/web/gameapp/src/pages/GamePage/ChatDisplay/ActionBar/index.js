@@ -50,50 +50,48 @@ const ActionBar = ({
       ></TutorialPopover>
       {/* {location ? <span>{location.name} &mdash; </span> : null} */}
       <div className=" ">
-        {presentAgents
-          .filter((id) => id !== persona.id) // only show users other than self
-          .map((agent) => {
-            const agentName = getAgentName(agent);
-            const agentId = getEntityId(agent);
-            return (
-              <span
-                key={agentName}
-                onClick={() => {
-                  if (!inHelpMode) {
-                    dispatch(updateIsSaying(false));
-                    dispatch(updateTellTarget(agentName));
-                  }
-                }}
-              >
-                <Tooltip title={`tell ${agentName}...`} position="bottom">
-                  <button
-                    type="button"
-                    className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-200 bg-transparent hover: bg-gray-800 "
+        {presentAgents.map((agent) => {
+          const agentName = getAgentName(agent);
+          const agentId = getEntityId(agent);
+          return (
+            <span
+              key={agentName}
+              onClick={() => {
+                if (!inHelpMode) {
+                  dispatch(updateIsSaying(false));
+                  dispatch(updateTellTarget(agentName));
+                }
+              }}
+            >
+              <Tooltip title={`tell ${agentName}...`} position="bottom">
+                <button
+                  type="button"
+                  className="inline-flex items-center ml-2 px-2.5 py-1.5 border  border-gray-300 shadow-sm text-xs font-medium rounded text-gray-200 bg-transparent hover: bg-gray-800 "
+                >
+                  {`${agentName}`}
+                </button>
+              </Tooltip>
+              {dataModelHost && (
+                <>
+                  {" "}
+                  <Tooltip
+                    title={`suggest changes for ${agentName}`}
+                    position="bottom"
                   >
-                    {`${agentName}`}
-                  </button>
-                </Tooltip>
-                {dataModelHost && (
-                  <>
-                    {" "}
-                    <Tooltip
-                      title={`suggest changes for ${agentName}`}
-                      position="bottom"
+                    <a
+                      className="data-model-deep-link"
+                      href={`${dataModelHost}/edit/${agentId}`}
+                      rel="noopener noreferrer"
+                      target="_blank"
                     >
-                      <a
-                        className="data-model-deep-link"
-                        href={`${dataModelHost}/edit/${agentId}`}
-                        rel="noopener noreferrer"
-                        target="_blank"
-                      >
-                        <i className="fa fa-edit" aria-hidden="true" />
-                      </a>
-                    </Tooltip>
-                  </>
-                )}
-              </span>
-            );
-          })}
+                      <i className="fa fa-edit" aria-hidden="true" />
+                    </a>
+                  </Tooltip>
+                </>
+              )}
+            </span>
+          );
+        })}
       </div>
     </div>
   );

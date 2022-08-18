@@ -1,5 +1,5 @@
 /* REACT */
-import React, { useEffect, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { updateSelectedTip } from "../../../features/tutorials/tutorials-slice";
@@ -27,6 +27,7 @@ const ChatDisplay = ({
   //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
+  const persona = useAppSelector((state) => state.persona);
   //XP
   const xp = useAppSelector((state) => state.xp.value);
   /* ----REDUX ACTIONS---- */
@@ -35,6 +36,8 @@ const ChatDisplay = ({
   const setSelectedTip = (tipNumber) => {
     dispatch(updateSelectedTip(tipNumber));
   };
+  /* LOCAL STATE */
+  const [nonPlayerAgents, setNonPlayerAgents] = useState([]);
   /*---------------REFS----------------*/
   const chatContainerRef = useRef(null);
   /*---------------UT----------------*/
@@ -55,23 +58,33 @@ const ChatDisplay = ({
   useEffect(() => {
     scrollToBottom();
   }, [scrollToBottom, messages]);
+
+  useEffect(() => {
+    const { presentAgents } = getLocationState(messages);
+    let updatedNonPlayerAgents = presentAgents.filter(
+      (id) => id !== persona.id
+    ); // only show users other than self
+    setNonPlayerAgents(updatedNonPlayerAgents);
+  }, [messages]);
   /* ----------TAILWIND CLASSES--------- */
   const classNames = {
-    chatWrapper: " w-full h-5/6 bg-indigo-900 bg-opacity-50 	overflow-y-hidden ",
+    chatWrapper: " w-full bg-indigo-900 bg-opacity-50 	overflow-y-hidden ",
     chat: "flex flex-col w-full h-5/6 overflow-y-scroll",
   };
   const { presentAgents } = getLocationState(messages);
   return (
     <div className="h-screen">
-      <div className="h-14">
-        <ActionBar
-          presentAgents={presentAgents}
-          getAgentName={getAgentName}
-          getEntityId={getEntityId}
-          dataModelHost={dataModelHost}
-        />
-      </div>
-      <div className={classNames.chatWrapper}>
+      {nonPlayerAgents.length ? (
+        <div className="h-14 overflow-y-scroll">
+          <ActionBar
+            presentAgents={nonPlayerAgents}
+            getAgentName={getAgentName}
+            getEntityId={getEntityId}
+            dataModelHost={dataModelHost}
+          />
+        </div>
+      ) : null}
+      <div className={`${classNames.chatWrapper} h-full`}>
         <div className={classNames.chat} ref={chatContainerRef}>
           <ChatMessages messages={messages} scrollToBottom={scrollToBottom} />
         </div>

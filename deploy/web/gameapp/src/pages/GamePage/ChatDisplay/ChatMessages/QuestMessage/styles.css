@@ -35,7 +35,14 @@
   border-radius: 15px;
   box-shadow: 4px 4px 6px black;
   overflow-y: scroll;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
+
+.quest-content::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+}
+
 .quest-content.active:hover {
   animation: glow 1s ease-in-out infinite alternate;
 }
