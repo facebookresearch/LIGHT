@@ -26,6 +26,11 @@ if TYPE_CHECKING:
     from light.data_model.db.episodes import EpisodeDB
     from light.data_model.db.users import UserDB
 
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from light.data_model.db.episodes import EpisodeDB
+
 
 def get_rand_id():
     return str(uuid.uuid4())
