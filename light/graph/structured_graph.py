@@ -10,7 +10,7 @@ from light.graph.elements.graph_nodes import (
     GraphVoidNode,
     GraphEdge,
 )
-from typing import Optional
+from typing import Optional, Dict, Any
 from light.world.utils.json_utils import GraphEncoder
 from light.world.content_loggers import RoomInteractionLogger
 
@@ -527,9 +527,9 @@ class OOGraph(object):
         return contained_nodes
 
     @staticmethod
-    def from_json(input_json: str):
+    def from_json(input_json: str, opt: Optional[Dict[str, Any]] = None):
         dict_format = json.loads(input_json)
-        opt = {}
+        opt = opt if opt is not None else {}
         if dict_format.get("title") is not None:
             opt["title"] = dict_format["title"]
         oo_graph = OOGraph(opt)

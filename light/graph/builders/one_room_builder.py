@@ -6,7 +6,7 @@
 
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent, create_agent_from_shared
-from light.world.world import World
+from light.world.world import World, WorldConfig
 from light.graph.structured_graph import OOGraph
 from light.graph.builders.base import (
     DBGraphBuilder,
@@ -466,7 +466,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
     def get_graph_from_quest(self, quest):
         graph_json = quest["data"]["graph"]
         g = OOGraph.from_json(graph_json)
-        world = World(self.opt, self)
+        world = World(WorldConfig(opt=self.opt, graph_builder=self))
         world.oo_graph = g
 
         base_room = list(g.rooms.values())[0]
@@ -595,7 +595,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 db_id=neighbor_room.db_id,
             )
 
-        world = World(self.opt, self)
+        world = World(WorldConfig(opt=self.opt, graph_builder=self))
         world.oo_graph = g
         return g, world
 

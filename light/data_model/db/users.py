@@ -73,6 +73,8 @@ class UserDB(BaseDB):
     game, as associated with a given id.
     """
 
+    DB_TYPE = "users"
+
     def _complete_init(self, config: "DictConfig"):
         """
         Initialize any specific interaction-related paths. Populate

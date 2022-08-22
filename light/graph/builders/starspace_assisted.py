@@ -8,7 +8,7 @@ import sys
 
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent, create_agent_from_shared
-from light.world.world import World
+from light.world.world import World, WorldConfig
 from light.graph.viz.html_map import generate_html_map
 from light.graph.structured_graph import OOGraph
 from light.graph.elements.graph_nodes import GraphNode
@@ -858,7 +858,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         for room in g.rooms:
             g.room_id_to_loggers[room] = RoomInteractionLogger(g, room)
 
-        world = World(self.opt, self)
+        world = World(WorldConfig(opt=self.opt, graph_builder=self))
         world.oo_graph = g
         return g, world
 

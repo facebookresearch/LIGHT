@@ -61,7 +61,9 @@ class PlayerSoul(BaseSoul):
             self.roleplaying_score_model = shared_model_content["rpg_model"].clone()
         if "generic_act_model" in shared_model_content:
             self.generic_act_model = shared_model_content["generic_act_model"].clone()
-        self.agent_logger = AgentInteractionLogger(world.oo_graph, target_node)
+        self.agent_logger = AgentInteractionLogger(
+            world.oo_graph, target_node, episode_db=world._config.episode_db
+        )
         provider.register_soul(self)
         self.world.oo_graph.room_id_to_loggers[
             self.target_node.get_room().node_id

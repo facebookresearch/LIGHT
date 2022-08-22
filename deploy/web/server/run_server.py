@@ -27,6 +27,9 @@ from light.graph.events.graph_events import init_safety_classifier
 from light.world.souls.models.generative_heuristic_model_soul import (
     GenerativeHeuristicModelSoul,
 )
+from light.data_model.db.base import LightDBConfig
+from light.data_model.db.episodes import EpisodeDB
+
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -80,7 +83,11 @@ def make_app(FLAGS, ldb, model_resources):
     landingApp = LandingApplication(
         ldb, FLAGS.hostname, FLAGS.password, tornado_settings
     )
-    registryApp = RegistryApplication(FLAGS, ldb, model_resources, tornado_settings)
+    db_config = LightDBConfig(backend=FLAGS.db_backend, file_root=FLAGS.db_root)
+    episode_db = EpisodeDB(db_config)
+    registryApp = RegistryApplication(
+        FLAGS, ldb, model_resources, tornado_settings, episode_db
+    )
     rules = []
     if FLAGS.disable_builder is None:
         rules.append(Rule(PathMatches("/builder.*"), worldBuilderApp))
@@ -262,6 +269,16 @@ def main():
         type=str2bool,
         default=False,
         help="flag to enable storing logs of interactions",
+    )
+    parser.add_argument(
+        "--db-backend",
+        type=str,
+        default="test",
+    )
+    parser.add_argument(
+        "--db-root",
+        type=str,
+        default=here + "/../../../logs/db_root",
     )
     FLAGS, _unknown = parser.parse_known_args()
 

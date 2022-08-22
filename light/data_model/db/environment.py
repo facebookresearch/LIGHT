@@ -674,6 +674,8 @@ class EnvDB(BaseDB):
     quests, world-interactions, and more.
     """
 
+    DB_TYPE = "environment"
+
     def _complete_init(self, config: "DictConfig"):
         """
         Initialize any specific environment-related paths

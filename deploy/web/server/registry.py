@@ -19,6 +19,11 @@ from deploy.web.server.game_instance import GameInstance, TutorialInstance
 from deploy.web.server.tornado_server import TornadoPlayerFactory
 from light.graph.builders.user_world_builder import UserWorldBuilder
 
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from light.data_model.db.episodes import EpisodeDB
+
 
 def get_rand_id():
     return str(uuid.uuid4())
@@ -31,13 +36,21 @@ class RegistryApplication(tornado.web.Application):
         - Assign to a random (or default) game based on some load balancing
     """
 
-    def __init__(self, FLAGS, ldb, model_resources, tornado_settings):
+    def __init__(
+        self,
+        FLAGS,
+        ldb,
+        model_resources,
+        tornado_settings,
+        episode_db: Optional["EpisodeDB"] = None,
+    ):
         self.game_instances = {}
         self.step_callbacks = {}
         self.tutorial_map = {}  # Player ID to game ID
         self.model_resources = model_resources
         self.FLAGS = FLAGS
         self.ldb = ldb
+        self.episode_db = episode_db
         super(RegistryApplication, self).__init__(
             self.get_handlers(FLAGS, ldb, tornado_settings), **tornado_settings
         )
@@ -92,7 +105,9 @@ class RegistryApplication(tornado.web.Application):
             _, world = builder.get_graph()
             game = GameInstance(game_id, ldb, g=world, opt=vars(self.FLAGS))
         else:
-            game = GameInstance(game_id, ldb, opt=vars(self.FLAGS))
+            game = GameInstance(
+                game_id, ldb, opt=vars(self.FLAGS), episode_db=self.episode_db
+            )
             world = game.world
         game.fill_souls(self.FLAGS, self.model_resources)
 
@@ -107,7 +122,9 @@ class RegistryApplication(tornado.web.Application):
     def run_tutorial(self, user_id, on_complete):
         game_id = get_rand_id()
 
-        game = TutorialInstance(game_id, self.ldb, opt=vars(self.FLAGS))
+        game = TutorialInstance(
+            game_id, self.ldb, opt=vars(self.FLAGS), episode_db=self.episode_db
+        )
         game.fill_souls(self.FLAGS, self.model_resources)
         world = game.world
 

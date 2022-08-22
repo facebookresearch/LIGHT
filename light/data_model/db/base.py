@@ -64,6 +64,8 @@ class BaseDB(ABC):
     currently with: https://github.com/dumblob/mysql2sqlite
     """
 
+    DB_TYPE: str
+
     def __init__(self, config: "DictConfig"):
         """
         Create this database, either connecting to a remote host or local
@@ -78,8 +80,14 @@ class BaseDB(ABC):
                 self.file_root = mkdtemp()
             else:
                 self.file_root = config.file_root
+        elif config.backend == "local":
+            self.file_root = config.file_root
+            db_path = os.path.join(self.file_root, f"{self.DB_TYPE}.db")
+            self.engine = create_engine(f"sqlite:////{db_path}")
         else:
-            raise NotImplementedError()
+            raise NotImplementedError(
+                f"Provided backend {config.backend} doens't exist"
+            )
         self._complete_init(config)
 
     @abstractmethod

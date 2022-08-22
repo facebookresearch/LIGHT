@@ -18,6 +18,11 @@ from light.world.souls.models.tutorial_model_soul import (
 import os.path
 import time
 
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from light.data_model.db.environment import EpisodeDB
+
 # TODO specify the models to be using
 USE_MODELS = True
 
@@ -101,9 +106,10 @@ class GameInstance:
     def __init__(
         self,
         game_id,
-        ldb,
+        ldb,  # TODO remove this DB
         g=None,
         opt=None,
+        episode_db: Optional["EpisodeDB"] = None,  # TODO make this DB required
     ):
         if g is None:
             if opt["builder_model"] is not None:
@@ -117,7 +123,7 @@ class GameInstance:
                 opt["load_map"] = os.path.expanduser(
                     "~/LIGHT/scripts/examples/complex_world.json"
                 )
-                world_builder = MapJsonBuilder("", debug=False, opt=opt)
+                world_builder = MapJsonBuilder(episode_db=episode_db, opt=opt)
                 _, self.world = world_builder.get_graph()
         else:
             self.world = g
@@ -174,7 +180,9 @@ class TutorialInstance(GameInstance):
     Version of the game meant to run tutorials, not for general play
     """
 
-    def __init__(self, game_id, ldb, opt=None):
+    def __init__(
+        self, game_id, ldb, opt=None, episode_db: Optional["EpisodeDB"] = None
+    ):
         _, tutorial_world = TutorialWorldBuilder(ldb, opt).get_graph()
         self.db = ldb
         self._created_time = time.time()
@@ -182,7 +190,7 @@ class TutorialInstance(GameInstance):
         self._target_destination = tutorial_world.oo_graph.find_nodes_by_name(
             "Ethereal Mist"
         )[0]
-        super().__init__(game_id, ldb, g=tutorial_world, opt=opt)
+        super().__init__(game_id, ldb, g=tutorial_world, opt=opt, episode_db=episode_db)
         self._should_shutdown = False
         self._did_complete = True
 

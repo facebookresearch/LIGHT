@@ -851,7 +851,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         for room in g.rooms:
             g.room_id_to_loggers[room] = RoomInteractionLogger(g, room)
 
-        world = World(self.opt, self)
+        world = World(WorldConfig(opt=self.opt, graph_builder=self))
         world.oo_graph = g
         return g, world
 

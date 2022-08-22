@@ -10,7 +10,7 @@ import asyncio
 
 from light.graph.elements.graph_nodes import GraphAgent
 from light.graph.structured_graph import OOGraph
-from light.world.world import World
+from light.world.world import World, WorldConfig
 from light.graph.events.graph_events import EmoteEvent, SayEvent
 from light.world.souls.mock_soul import MockSoul
 from light.world.souls.repeat_soul import RepeatSoul
@@ -35,7 +35,7 @@ class MockSouls(unittest.TestCase):
         agent_node = test_graph.add_agent("My test agent", {})
         room_node = test_graph.add_room("test room", {})
         agent_node.force_move_to(room_node)
-        test_world = World({}, None, True)
+        test_world = World(WorldConfig(), True)
         test_world.oo_graph = test_graph
         mock_soul = MockSoul(agent_node, test_world)
         self.assertEqual(agent_node, mock_soul.target_node)
@@ -61,7 +61,7 @@ class MockSouls(unittest.TestCase):
         test_node.force_move_to(room_node)
         repeat_node.force_move_to(room_node)
 
-        test_world = World({}, None, True)
+        test_world = World(WorldConfig(), True)
         test_world.oo_graph = test_graph
 
         purgatory = test_world.purgatory

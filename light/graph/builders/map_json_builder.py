@@ -7,12 +7,12 @@ import json
 import random, copy
 from light.graph.structured_graph import OOGraph
 from light.graph.builders.base import (
-    DBGraphBuilder,
+    GraphBuilder,
     SingleSuggestionGraphBuilder,
     POSSIBLE_NEW_ENTRANCES,
 )
 from light.graph.events.graph_events import ArriveEvent
-from light.world.world import World
+from light.world.world import World, WorldConfig
 
 from typing import TYPE_CHECKING, List, Dict, Tuple, Any, Optional
 
@@ -23,14 +23,18 @@ if TYPE_CHECKING:
         NodeProps,
         GraphAgent,
     )
+    from light.data_model.db.episodes import EpisodeDB
 
 
-class MapJsonBuilder(DBGraphBuilder):
+class MapJsonBuilder(GraphBuilder):
     """Loads maps exported from the structured_graph to_json method."""
 
-    def __init__(self, ldb, debug, opt):
-        self.db = ldb
-        self.opt = opt
+    def __init__(
+        self, episode_db: Optional["EpisodeDB"], opt: Optional[Dict[str, Any]]
+    ):
+        """Store initialization options"""
+        self.opt = opt if opt is not None else {}
+        self.episode_db = episode_db
         self.original_agents: Dict[str, Tuple["GraphRoom", "NodeProps"]] = {}
         self._no_npc_models = True
 
@@ -39,13 +43,15 @@ class MapJsonBuilder(DBGraphBuilder):
         f = open(input_json, "r")
         data = f.read()
         f.close()
-        g = OOGraph.from_json(data)
+        g = OOGraph.from_json(data, self.opt)
         g._opt = self.opt
         self.original_agents = {
             agent.name: (agent.get_room(), agent.get_props())
             for agent in g.agents.values()
         }
-        world = World(self.opt, self)
+        world = World(
+            WorldConfig(episode_db=self.episode_db, opt=self.opt, graph_builder=self)
+        )
         world.oo_graph = g
         return g, world
 

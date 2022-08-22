@@ -43,7 +43,11 @@ class InteractionLogger(abc.ABC):
         self.players: Set[str] = set()
         self.actions: int = 0
         self._last_episode_logged: Optional[int] = None
-
+        self.group = (
+            DBGroupName.PRE_LAUNCH_TUTORIAL
+            if graph._opt.get("tutorial")
+            else DBGroupName.PRE_LAUNCH
+        )
         # All loggers should have graph state history and a buffer for events
         # State history is just the json of the graph the event executed on
         self.state_history: List[str] = []
@@ -114,17 +118,17 @@ class InteractionLogger(abc.ABC):
         return (event_file_name, events)
 
     def _log_interactions(self, episode_type: "EpisodeLogType", target_id: str) -> None:
-        if self.db is None:
+        if self.episode_db is None:
             return  # not actually logging
         graphs = self._prep_graphs()
         events = self._prep_events(graphs, target_id)
-        self._last_episode_logged = self.db.write_episode(
+        self._last_episode_logged = self.episode_db.write_episode(
             graphs=graphs,
             events=events,
             log_type=episode_type,
             action_count=self.actions,
             players=self.players,
-            group=DBGroupName.PRE_LAUNCH,  # TODO make configurable?
+            group=self.group,
         )
 
 
@@ -140,11 +144,11 @@ class AgentInteractionLogger(InteractionLogger):
         self,
         graph: "OOGraph",
         agent: "GraphAgent",
-        db: Optional["EpisodeDB"] = None,
+        episode_db: Optional["EpisodeDB"] = None,
         is_active: bool = False,
         afk_turn_tolerance: int = 30,
     ):
-        super().__init__(graph, db)
+        super().__init__(graph, episode_db)
         self.agent = agent
         self.afk_turn_tolerance = afk_turn_tolerance
         if graph._opt is None:
@@ -247,11 +251,11 @@ class RoomInteractionLogger(InteractionLogger):
         self,
         graph: "OOGraph",
         room_id: str,
-        db: Optional["EpisodeDB"] = None,
+        episode_db: Optional["EpisodeDB"] = None,
         is_active: bool = False,
         afk_turn_tolerance: int = 30,
     ):
-        super().__init__(graph, db)
+        super().__init__(graph, episode_db)
         self.room_id: str = room_id
         self.afk_turn_tolerance = afk_turn_tolerance
         if graph._opt is None:
