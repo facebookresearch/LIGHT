@@ -46,7 +46,7 @@ const AboutPage = (props) => {
             collected from within LIGHT, with the goal of enabling other
             researchers to extend upon our work, and this will be available for
             download from the project page. The complete source code for the
-            project is available on our github.
+            project will be made available on our github.
           </p>
         </div>
         <img className="aboutpage-image" src={Unicorn} />

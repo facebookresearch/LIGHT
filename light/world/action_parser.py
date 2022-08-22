@@ -129,7 +129,7 @@ class ActionParser:
         with self.parse_lock:
             # Given verb, predict the args (unless it's a no-arg action(.
             if args[verb] > 0:
-                cands = get_input_cands(txt, verb, txt)
+                cands = list(get_input_cands(txt, verb, txt))
                 query2 = Message(
                     {
                         "id": "context",

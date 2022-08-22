@@ -123,7 +123,7 @@ class World(object):
 
         # Set up safety classifier.
         self.safety_classifier = SafetyClassifier(
-            self._opt.get("safety_classifier_path", ""),
+            self._opt.get("safety_classifier_path", self._opt.get("safety_list")),
             model_pool,
         )
 

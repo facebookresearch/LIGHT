@@ -69,7 +69,8 @@ class TutorialWorldBuilder(MapJsonBuilder):
                 "name_prefix": "",
                 "persona": "You are, well, yourself... a wandering soul who has yet to "
                 "become someone in the full LIGHT world. Perhaps you may be "
-                "granted admission by the dungeon master? ",
+                "granted admission by the dungeon master?\nYour Mission: Find out how to "
+                "get to LIGHT, then get in to play.",
                 "mission": "Find out how to get to LIGHT, then get in to play.",
             },
         )
@@ -143,6 +144,7 @@ class TutorialWorldBuilder(MapJsonBuilder):
             None,
             "You feel as if this portal leads somewhere unusual.",
         )
+        dungeon_master_node.block(agent_node)
         return graph
 
     async def get_graph(self, world_config: Optional[WorldConfig] = None):

@@ -206,15 +206,18 @@ class BaseSoul(Soul):
         # Dialogue/interaction context.
         dtxt = ""
         agent = self.target_node
+        agent_id = agent.node_id
+        is_self = None
         turn_id = None
         for d in agent._last_interaction_history:
             current_turn_id = d[0][0]
-            if turn_id == None or turn_id == current_turn_id:
+            current_is_self = current_turn_id == agent_id
+            if is_self == None or is_self == current_is_self:
                 dtxt += " " + d[1]
             else:
                 dtxt = dtxt.lstrip(" ")
                 dtxt += "\n" + d[1]
-            turn_id = current_turn_id
+            is_self = current_is_self
             is_safe = d[0][2]
             if not is_safe:
                 # reset conversation when unsafe utterances are in the history
@@ -266,8 +269,8 @@ class BaseSoul(Soul):
         score_act = await self.roleplaying_score_model.act()
 
         human_score = float(score_act["scores"][0])
-        human_rank = int((scores > human_score).sum())
-        return human_rank, human_score
+        human_points = len([x for x in scores if x < human_score])
+        return human_points, human_score
 
     async def score_conversation(self):
         if self.roleplaying_score_model is None:
@@ -287,19 +290,10 @@ class BaseSoul(Soul):
         if self.too_much_string_overlap(context, human_msg):
             return 0
         fixed_cand_scores = await self.get_fixed_cand_scores(context)
-        pos, _score = await self.get_pos_human_msg(
+        # We award points on the score ranking, not the raw model score
+        final_score, _model_score = await self.get_pos_human_msg(
             human_msg, context, fixed_cand_scores
         )
-        if pos < 1:
-            final_score = 4
-        elif pos < 2:
-            final_score = 3
-        elif pos < 3:
-            final_score = 2
-        elif pos < 4:
-            final_score = 1
-        else:
-            final_score = 0
         return final_score
 
     async def role_playing_score_events(self, event):

@@ -60,6 +60,7 @@ class RegistryApplication(tornado.web.Application):
         super(RegistryApplication, self).__init__(
             self.get_handlers(FLAGS, user_db, tornado_settings), **tornado_settings
         )
+        self.opt = vars(self.FLAGS)
 
     def get_handlers(self, FLAGS, user_db, tornado_settings):
         self.tornado_provider = TornadoPlayerFactory(
@@ -109,13 +110,15 @@ class RegistryApplication(tornado.web.Application):
         if world_id is not None and player_id is not None:
             builder = UserWorldBuilder(ldb, player_id=player_id, world_id=world_id)
             _, world = await builder.get_graph()
-            game = await GameInstance.get(game_id, ldb, g=world, opt=vars(self.FLAGS))
+            game = await GameInstance.get(game_id, ldb, g=world, opt=self.opt)
         else:
             world_config = WorldConfig(
-                episode_db=self.episode_db, model_pool=self.model_pool
+                episode_db=self.episode_db,
+                model_pool=self.model_pool,
+                opt=self.opt,
             )
             game = await GameInstance.get(
-                game_id, ldb, opt=vars(self.FLAGS), world_config=world_config
+                game_id, ldb, opt=self.opt, world_config=world_config
             )
             world = game.world
         game.fill_souls(self.FLAGS, [])
@@ -128,14 +131,16 @@ class RegistryApplication(tornado.web.Application):
         self.step_callbacks[game_id].start()
         return game
 
-    def run_tutorial(self, user_id, on_complete):
+    async def run_tutorial(self, user_id, on_complete):
         game_id = get_rand_id()
 
         world_config = WorldConfig(
-            episode_db=self.episode_db, model_pool=self.model_pool
+            episode_db=self.episode_db,
+            model_pool=self.model_pool,
+            opt=self.opt,
         )
-        game = TutorialInstance(
-            game_id, self.ldb, opt=vars(self.FLAGS), world_config=world_config
+        game = await TutorialInstance.get(
+            game_id, self.ldb, opt=self.opt, world_config=world_config
         )
         game.fill_souls(self.FLAGS, [])
         world = game.world
