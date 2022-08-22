@@ -55,29 +55,6 @@ def get_path(filename):
     return os.path.join(cwd, filename)
 
 
-def read_secrets():
-    """
-    Reads the secrets from a secret text file, located outside the repo.
-    The secrets should have the facebook api key, secret, and the cookie secret.
-    """
-    loc = here + "/../../../../secrets.txt"
-    secrets = {}
-    if not os.path.exists(loc):
-        return {
-            "cookie_secret": "0123456789",
-            "preauth_secret": "0123456789",
-        }
-    with open(loc, "r") as secret_file:
-        for line in secret_file:
-            items = line.split(" ")
-            if len(items) == 2:
-                secrets[items[0]] = items[1].strip()
-    return secrets
-
-
-SECRETS = read_secrets()
-
-
 @dataclass
 class WorldServerConfig(ScriptConfig):
     defaults: List[Any] = field(
@@ -89,16 +66,15 @@ class WorldServerConfig(ScriptConfig):
     tutorial_builder: Optional[GraphBuilderConfig] = TutorialBuilderConfig(load_map="")
     safety_classifier_path: str = field(
         default=os.path.expanduser("~/data/safety/OffensiveLanguage.txt"),
-        # default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
         metadata={"help": "Where to find the offensive language list."},
     )
     magic_db_path: str = ""
     cookie_secret: str = field(
-        default="temp8000800080008000",
+        default="temp8000800080008000",  # can be any value, overridden by our configs
         metadata={"help": "Cookie secret for issueing cookies (SECRET!!!)"},
     )
     preauth_secret: str = field(
-        default="temp8000800080008000",
+        default="temp8000800080008000",  # can be any value, overridden by our configs
         metadata={"help": "Secret for salting valid preauth keys"},
     )
     facebook_api_key: str = field(
@@ -170,6 +146,7 @@ def make_app(cfg: WorldServerConfig, model_pool: ModelPool):
         user_db=user_db,
     )
     rules = []
+    # TODO re-enable world builder once builder models are hydra-registered
     # if not cfg.disable_builder:
     #     rules.append(Rule(PathMatches("/builder.*"), worldBuilderApp))
     rules += [

@@ -118,8 +118,10 @@ class RegistryApplication(tornado.web.Application):
 
     async def run_new_game(self, game_id, player_id=None, world_id=None):
         if world_id is not None and player_id is not None:
-            # TODO remake loading user worlds
-            assert False, "We don't handle this case yet, will need UserWorldBuilder"
+            # TODO remake loading user worlds as part of phase 3
+            raise NotImplementedError(
+                "We don't handle this case yet, will need UserWorldBuilder"
+            )
             # builder = UserWorldBuilder(ldb, player_id=player_id, world_id=world_id)
             # _, world = await builder.get_graph()
             # game = await GameInstance.get(game_id, ldb, g=world, opt=self.opt)
