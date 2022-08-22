@@ -25,12 +25,6 @@ if TYPE_CHECKING:
     from light.data_model.db.environment import EpisodeDB
     from light.world.world import WorldConfig
 
-from typing import Optional, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from light.data_model.db.environment import EpisodeDB
-    from light.world.world import WorldConfig
-
 # TODO specify the models to be using
 USE_MODELS = True
 

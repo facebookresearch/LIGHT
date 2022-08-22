@@ -44,14 +44,6 @@ if TYPE_CHECKING:
     from light.data_model.light_database import LIGHTDatabase
     from light.registry.model_pool import ModelPool
 
-from dataclasses import dataclass, field
-from omegaconf import MISSING, DictConfig
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from light.data_model.light_database import LIGHTDatabase
-    from light.registry.model_pool import ModelPool
-
 MAX_EXTRA_AGENTS_PER_ROOM = 2
 INV_DIR = {"east": "west", "west": "east", "north": "south", "south": "north"}
 NEIGHBOR = DB_EDGE_NEIGHBOR

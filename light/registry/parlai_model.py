@@ -126,15 +126,19 @@ class ParlAIModelLoader:
         opt["override"].update(overrides)
         model = create_agent(opt)
 
+        context_fill = opt.get("truncate", CONTEXT_FILL_COUNT)
         # Push something through the model to fill context
-        act = {
-            "text": INIT_CONTEXT + "Hello " * CONTEXT_FILL_COUNT,
-            "episode_done": True,
-        }
-        if opt.get("eval_candidates") == "inline":
-            act["label_candidates"] = ["hi", "hi there", "whatup"]
-        model.observe(act)
-        await model.act()
+        try:
+            act = {
+                "text": INIT_CONTEXT + "Hello " * context_fill,
+                "episode_done": True,
+            }
+            if opt.get("eval_candidates") == "inline":
+                act["label_candidates"] = ["hi", "hi there", "whatup"]
+            model.observe(act)
+            await model.act()
+        except Exception as e:
+            print(f"Cannot warm model {opt['model']}, hit error {e}")
 
         # Share the model params for use in `get_model`
         self._shared = model.share()

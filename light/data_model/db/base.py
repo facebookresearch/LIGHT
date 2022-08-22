@@ -30,8 +30,18 @@ class LightDBConfig:
     file_root: Optional[str] = DEFAULT_LOG_PATH
 
 
+@dataclass
+class LightAWSDBConfig(LightDBConfig):
+    backend: str = "aws-postgres"
+    file_root: str = MISSING
+    db_address: str = MISSING
+    db_user: str = MISSING
+    db_pass: str = MISSING
+
+
 cs = ConfigStore.instance()
-cs.store(name="config1", node=LightDBConfig)
+cs.store(name="db/base", node=LightDBConfig)
+cs.store(name="db/aws-postgres", node=LightAWSDBConfig)
 
 
 class DBStatus(Enum):
@@ -88,7 +98,6 @@ class BaseDB(ABC):
         Create this database, either connecting to a remote host or local
         files and instances.
         """
-        # TODO replace with a swappable engine that persists the data
         self.backend = config.backend
         if config.backend == "test":
             self.engine = create_engine("sqlite+pysqlite:///:memory:", future=True)
@@ -101,6 +110,28 @@ class BaseDB(ABC):
             self.file_root = config.file_root
             db_path = os.path.join(self.file_root, f"{self.DB_TYPE}.db")
             self.engine = create_engine(f"sqlite:////{db_path}")
+        elif config.backend == "aws-postgres":
+            try:
+                import psycopg2
+                import boto3
+            except ImportError:
+                print(
+                    "For aws-postgres usage, you must also `pip install mysqlclient boto3 psycopg2-binary"
+                )
+                raise
+            # Get DB registered and functioning
+            self.db_address = config.db_address
+            db_address = config.db_address
+            login_user = config.db_user
+            login_pass = config.db_pass
+            self.engine = create_engine(
+                f"postgresql://{login_user}:{login_pass}@{db_address}:5432/postgres"
+            )
+
+            # Connect to the s3 filestore
+            self.file_root = config.file_root  # file root is a s3 bucket address
+            s3 = boto3.resource("s3")
+            self.bucket = s3.Bucket(self.file_root)
         else:
             raise NotImplementedError(
                 f"Provided backend {config.backend} doens't exist"
@@ -136,8 +167,21 @@ class BaseDB(ABC):
         if self.backend in ["test", "local"]:
             full_path = os.path.join(self.file_root, file_path)
             return os.path.exists(full_path)
+        elif self.backend in ["aws-postgres"]:
+            import botocore
+
+            try:
+                self.bucket.Object(file_path).load()
+                return True
+            except botocore.exceptions.ClientError as e:
+                if e.response["Error"]["Code"] == "404":
+                    # The object does not exist.
+                    return False
+                else:
+                    # Something else has gone wrong.
+                    raise
         else:
-            raise NotImplementedError
+            raise NotImplementedError(f"Backend {self.backend} is not implemented")
 
     def write_data_to_file(
         self, data: Union[str, Dict[str, Any]], filename: str, json_encode: bool = False
@@ -154,8 +198,12 @@ class BaseDB(ABC):
                     json.dump(data, target_file)
                 else:
                     target_file.write(data)
+        elif self.backend in ["aws-postgres"]:
+            if json_encode:
+                data = json.dumps(data)
+            self.bucket.Object(filename).put(Body=data)
         else:
-            raise NotImplementedError()
+            raise NotImplementedError(f"Backend {self.backend} is not implemented")
 
     def read_data_from_file(
         self, filename: str, json_encoded: bool = False
@@ -171,15 +219,14 @@ class BaseDB(ABC):
                     return json.load(target_file)
                 else:
                     return target_file.read()
+        elif self.backend in ["aws-postgres"]:
+            data = self.bucket.Object(filename).get()["Body"]
+            if json_encoded:
+                return json.loads(data)
+            else:
+                return data
         else:
-            raise NotImplementedError()
-
-    def open_file(self):
-        try:
-            file = open(self.file_name, "w")
-            yield file
-        finally:
-            file.close()
+            raise NotImplementedError(f"Backend {self.backend} is not implemented")
 
     def shutdown(self):
         if self.backend == "test":
