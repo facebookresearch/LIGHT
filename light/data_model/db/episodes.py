@@ -76,29 +76,39 @@ class DBEpisode(SQLBase):
         Return all of the actions and turns from this episode,
         split by the graph key ID relevant to those actions
         """
-        from light.world.world import World, WorldConfig
+        # Import deferred as World imports loggers which import the EpisodeDB
+        from light.world.world import World
 
         events = db.read_data_from_file(self.dump_file_path, json_encoded=True)[
             "events"
         ]
-        episodes: List[Tuple[str, List["GraphEvent"]]] = []
-        episode = None
+        graph_grouped_events: List[Tuple[str, List["GraphEvent"]]] = []
+        current_graph_events = None
         curr_graph_key = None
         curr_graph = None
         tmp_world = None
+        # Extract events to the correct related graphs, initializing the graphs
+        # as necessary
         for event_turn in events:
+            # See if we've moved onto an event in a new graph
             if event_turn["graph_key"] != curr_graph_key:
-                if episode is not None:
-                    episodes.append((curr_graph_key, episode))
+                if current_graph_events is not None:
+                    # There was old state, so lets push it to the list
+                    graph_grouped_events.append((curr_graph_key, current_graph_events))
+                # We're on a new graph, have to reset the current graph state
                 curr_graph_key = event_turn["graph_key"]
-                episode: List["GraphEvent"] = []
+                current_graph_events: List["GraphEvent"] = []
                 curr_graph = self.get_graph(curr_graph_key, db)
-                tmp_world = World(WorldConfig())
+                tmp_world = World({}, None)
                 tmp_world.oo_graph = curr_graph
-            episode.append(GraphEvent.from_json(event_turn["event_json"], tmp_world))
-        if episode is not None:
-            episodes.append((curr_graph_key, episode))
-        return episodes
+            # The current turn is part of the current graph's events, add
+            current_graph_events.append(
+                GraphEvent.from_json(event_turn["event_json"], tmp_world)
+            )
+        if current_graph_events is not None:
+            # Push the last graph's events, which weren't yet added
+            graph_grouped_events.append((curr_graph_key, current_graph_events))
+        return graph_grouped_events
 
     def get_before_graph(self, db: "EpisodeDB") -> "OOGraph":
         """Return the state of the graph before this episode"""
@@ -189,10 +199,10 @@ class EpisodeDB(BaseDB):
         actor_string = ",".join(list(players))
         event_filename = events[0]
         event_list = events[1]
+
         # Trim the filename from the left if too long
-        if len(event_filename) > 70:
-            event_filename = event_filename[-70:]
-        assert len(event_filename) <= 70
+        event_filename = event_filename[-70:]
+
         dump_file_path = os.path.join(
             FILE_PATH_KEY, group.value, log_type.value, event_filename
         )

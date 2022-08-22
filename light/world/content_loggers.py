@@ -37,8 +37,8 @@ class InteractionLogger(abc.ABC):
     location to write data, as well as defines some methods for interfacing
     """
 
-    def __init__(self, graph: "OOGraph", episode_db: Optional["EpisodeDB"]):
-        self.episode_db = episode_db
+    def __init__(self, graph: "OOGraph", db: Optional["EpisodeDB"]):
+        self.db = db
         self.graph = graph
         self.players: Set[str] = set()
         self.actions: int = 0
@@ -128,7 +128,7 @@ class InteractionLogger(abc.ABC):
             log_type=episode_type,
             action_count=self.actions,
             players=self.players,
-            group=self.group,  # TODO make configurable?
+            group=self.group,
         )
 
 
