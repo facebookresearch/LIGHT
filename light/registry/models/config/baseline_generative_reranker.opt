@@ -1,7 +1,7 @@
 {
-    "model": "projects.light_whoami.agents.pacer:PacerAgent",
+    "model": "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent",
     "predictor_model_file": "zoo:light_whoami/rpa_reranker/model",
-    "model_file": "$LIGHT_MODEL_ROOT/dialog/baseline_gen_start/model.checkpoint",
+    "model_file": "$LIGHT_MODEL_ROOT/dialog/baseline/model",
     "inference": "beam",
     "datatype": "valid",
     "beam_context_block_ngram": 3,

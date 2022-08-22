@@ -48,5 +48,5 @@ class SafetyClassifier:
                 return False
         if self.classifier is not None:
             not_ok, _prob = await self.contains_offensive_language(text)
-            return not_ok
+            return not not_ok
         return True

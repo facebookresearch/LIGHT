@@ -15,6 +15,7 @@ from parlai.core.params import ParlaiParser
 from light import LIGHT_DIR
 from light.graph.builders.map_json_builder import MapJsonBuilder
 from light.graph.builders.starspace_all import StarspaceBuilder
+from light.graph.events.graph_events import init_safety_classifier
 from light.data_model.light_database import LIGHTDatabase
 from light.world.utils.terminal_player_provider import TerminalPlayerProvider
 
