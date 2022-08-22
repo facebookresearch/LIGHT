@@ -37,8 +37,8 @@ class InteractionLogger(abc.ABC):
     location to write data, as well as defines some methods for interfacing
     """
 
-    def __init__(self, graph: "OOGraph", db: Optional["EpisodeDB"]):
-        self.db = db
+    def __init__(self, graph: "OOGraph", episode_db: Optional["EpisodeDB"]):
+        self.episode_db = episode_db
         self.graph = graph
         self.players: Set[str] = set()
         self.actions: int = 0

@@ -99,7 +99,7 @@ class DBEpisode(SQLBase):
                 curr_graph_key = event_turn["graph_key"]
                 current_graph_events: List["GraphEvent"] = []
                 curr_graph = self.get_graph(curr_graph_key, db)
-                tmp_world = World({}, None)
+                tmp_world = World(WorldConfig())
                 tmp_world.oo_graph = curr_graph
             # The current turn is part of the current graph's events, add
             current_graph_events.append(

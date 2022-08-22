@@ -4,7 +4,7 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.data_model.db.base import BaseDB
+from light.data_model.db.base import BaseDB, HasDBIDMixin
 from omegaconf import MISSING, DictConfig
 from typing import Optional, Union, Dict, Any
 from sqlalchemy import (
@@ -30,12 +30,13 @@ class PlayerStatus(enum.Enum):
     ADMIN = "admin"
 
 
-class DBPlayer(SQLBase):
+class DBPlayer(HasDBIDMixin, SQLBase):
     """Class containing the expected elements for a Player as stored in the db"""
 
     __tablename__ = "user_accounts"
+    ID_PREFIX = "USR"
 
-    id = Column(Integer, primary_key=True)
+    db_id = Column(String(40), primary_key=True)
     extern_id = Column(String(60), nullable=False, index=True, unique=True)
     is_preauth = Column(Boolean, nullable=False)
     flag_count = Column(Integer, nullable=False)
@@ -45,7 +46,7 @@ class DBPlayer(SQLBase):
     scores = relationship("DBScoreEntry")
 
     def __repr__(self):
-        return f"DBPlayer(ids:[{self.id!r},{self.extern_id!r}], preauth:{self.is_preauth!r}, status:{self.account_status.value!r})"
+        return f"DBPlayer(ids:[{self.db_id!r},{self.extern_id!r}], preauth:{self.is_preauth!r}, status:{self.account_status.value!r})"
 
 
 class DBScoreEntry(SQLBase):
@@ -55,11 +56,12 @@ class DBScoreEntry(SQLBase):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(
-        Integer, ForeignKey("user_accounts.id"), nullable=False, index=True
+        String, ForeignKey("user_accounts.db_id"), nullable=False, index=True
     )
     agent_name_id = Column(Integer, index=True)  # Null for overall score for an agent
     score = Column(Integer, nullable=False)
     count = Column(Integer, nullable=False)
+    reward_xp = Column(Integer)
 
     def __repr__(self):
         if self.agent_name_id is None:
@@ -93,9 +95,16 @@ class UserDB(BaseDB):
         extern_id: str,
         is_preauth: bool,
     ) -> int:
-        """Create the specified player"""
+        """Create the specified player, idempotently"""
+        try:
+            user = self.get_player_by_extern_id(extern_id)
+            return user.db_id
+        except KeyError:
+            pass  # Create a new user!
         with Session(self.engine) as session:
+            player_id = DBPlayer.get_id()
             player = DBPlayer(
+                db_id=player_id,
                 extern_id=extern_id,
                 is_preauth=is_preauth,
                 flag_count=0,
@@ -106,17 +115,16 @@ class UserDB(BaseDB):
             base_score = DBScoreEntry(
                 score=0,
                 count=0,
+                reward_xp=0,
             )
             player.scores.append(base_score)
             session.add(player)
-            session.flush()
-            player_id = player.id
             session.commit()
         return player_id
 
     def get_player(self, player_id: int) -> DBPlayer:
         """Find the specified player, raise exception if non-existent"""
-        stmt = select(DBPlayer).where(DBPlayer.id == player_id)
+        stmt = select(DBPlayer).where(DBPlayer.db_id == player_id)
         with Session(self.engine) as session:
             player = self._enforce_get_first(session, stmt, "Player not found")
             session.expunge_all()
@@ -147,10 +155,15 @@ class UserDB(BaseDB):
             return score_entry
 
     def update_agent_score(
-        self, player_id: str, agent_name_id: str, points: int, num_turns: int
+        self,
+        player_id: str,
+        agent_name_id: str,
+        points: int,
+        num_turns: int,
+        reward_change: int,
     ):
         """Add to both the base agent score and total score for a player"""
-        player_stmt = select(DBPlayer).where(DBPlayer.id == player_id)
+        player_stmt = select(DBPlayer).where(DBPlayer.db_id == player_id)
         base_stmt = (
             select(DBScoreEntry)
             .where(DBScoreEntry.user_id == player_id)
@@ -172,8 +185,10 @@ class UserDB(BaseDB):
                 raise AssertionError("No default score for player, corruption issue")
             base_score.score += points
             base_score.count += 1
+            base_score.reward_xp += reward_change
 
             agent_score = session.scalars(specific_stmt).first()
+            print(agent_score, agent_name_id)
             if agent_score is None:
                 # User has not played this character before, we'll need to initialize it
                 agent_score = DBScoreEntry(
@@ -191,7 +206,7 @@ class UserDB(BaseDB):
 
     def mark_flag(self, player_id: int) -> None:
         """Mark that a player has been flagged"""
-        get_player = select(DBPlayer).where(DBPlayer.id == player_id)
+        get_player = select(DBPlayer).where(DBPlayer.db_id == player_id)
         with Session(self.engine) as session:
             player = self._enforce_get_first(session, get_player, "Player not found")
             player.flag_count += 1
@@ -199,7 +214,7 @@ class UserDB(BaseDB):
 
     def mark_safety_trigger(self, player_id: int) -> None:
         """mark that a specific player has triggered the safety"""
-        get_player = select(DBPlayer).where(DBPlayer.id == player_id)
+        get_player = select(DBPlayer).where(DBPlayer.db_id == player_id)
         with Session(self.engine) as session:
             player = self._enforce_get_first(session, get_player, "Player not found")
             player.safety_trigger_count += 1
@@ -207,7 +222,7 @@ class UserDB(BaseDB):
 
     def update_player_status(self, player_id: int, new_status: PlayerStatus) -> None:
         """Update the status for a given player"""
-        get_player = select(DBPlayer).where(DBPlayer.id == player_id)
+        get_player = select(DBPlayer).where(DBPlayer.db_id == player_id)
         with Session(self.engine) as session:
             player = self._enforce_get_first(session, get_player, "Player not found")
             player.account_status = new_status

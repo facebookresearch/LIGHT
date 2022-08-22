@@ -29,6 +29,7 @@ from light.world.souls.models.generative_heuristic_model_soul import (
 )
 from light.data_model.db.base import LightDBConfig
 from light.data_model.db.episodes import EpisodeDB
+from light.data_model.db.users import UserDB
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -80,13 +81,22 @@ if "facebook_secret" in SECRETS:
 
 def make_app(FLAGS, ldb, model_resources):
     worldBuilderApp = BuildApplication(get_handlers(ldb), tornado_settings)
-    landingApp = LandingApplication(
-        ldb, FLAGS.hostname, FLAGS.password, tornado_settings
-    )
     db_config = LightDBConfig(backend=FLAGS.db_backend, file_root=FLAGS.db_root)
     episode_db = EpisodeDB(db_config)
+    user_db = UserDB(db_config)
+    landingApp = LandingApplication(
+        user_db=user_db,
+        hostname=FLAGS.hostname,
+        password=FLAGS.password,
+        given_tornado_settings=tornado_settings,
+    )
     registryApp = RegistryApplication(
-        FLAGS, ldb, model_resources, tornado_settings, episode_db
+        FLAGS,
+        ldb,
+        model_resources,
+        tornado_settings,
+        episode_db=episode_db,
+        user_db=user_db,
     )
     rules = []
     if FLAGS.disable_builder is None:
