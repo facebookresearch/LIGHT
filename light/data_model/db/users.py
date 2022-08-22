@@ -45,7 +45,7 @@ class DBPlayer(SQLBase):
     scores = relationship("DBScoreEntry")
 
     def __repr__(self):
-        return f"DBPlayer(ids:[{self.id!r},{self.extern_id!r}], preauth:{self.is_preauth!r}, status:{self.account_status!r})"
+        return f"DBPlayer(ids:[{self.id!r},{self.extern_id!r}], preauth:{self.is_preauth!r}, status:{self.account_status.value!r})"
 
 
 class DBScoreEntry(SQLBase):

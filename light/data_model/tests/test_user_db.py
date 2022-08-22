@@ -10,7 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from light.data_model.db.base import LightDBConfig
 from light.data_model.db.users import UserDB, PlayerStatus
 
-config = LightDBConfig(backend="test")
+config = LightDBConfig(backend="test", file_root="unused")
 
 
 class TestUserDB(unittest.TestCase):
