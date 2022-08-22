@@ -24,7 +24,7 @@ import tornado.web
 import tornado.websocket
 
 from light import LIGHT_DIR
-from light.registry.model_pool import ALL_LOADERS, ModelPool
+from light.registry.model_pool import ALL_LOADERS, ModelPool, ModelTypeName
 from light.registry.models.acting_score_model import (
     ParlAIPolyencoderActingScoreModelConfig,
 )
@@ -165,10 +165,10 @@ def _init_model(model_opt_file: str, model_loader: str) -> "Agent":
     else:
         raise NotImplementedError(f"Unsupported model loader {model_loader}")
 
-    pool.register_model(cfg, ["target"])
-    model = pool.get_model("target")
+    pool.register_model(cfg, [ModelTypeName.SERVED])
+    model = pool.get_model(ModelTypeName.SERVED)
     # Try to clear up some memory
-    del pool._model_loaders["target"]
+    del pool._model_loaders[ModelTypeName.SERVED]
     import gc
 
     gc.collect()

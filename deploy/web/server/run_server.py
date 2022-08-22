@@ -34,6 +34,19 @@ from light.registry.parlai_remote_model import ParlAIRemoteModelConfig
 from light.registry.models.acting_score_model import (
     ParlAIPolyencoderActingScoreModelConfig,
 )
+from light.data_model.db.base import LightDBConfig
+from light.data_model.db.episodes import EpisodeDB
+from light.data_model.db.users import UserDB
+from light.world.world import WorldConfig
+from light.registry.model_pool import ModelPool, ModelTypeName
+from light.registry.parlai_model import ParlAIModelConfig
+from light.registry.models.acting_score_model import (
+    ParlAIPolyencoderActingScoreModelConfig,
+)
+
+from light import LIGHT_DIR
+
+CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
 
 from light import LIGHT_DIR
 
