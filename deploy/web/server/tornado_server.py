@@ -13,7 +13,7 @@ from deploy.web.server.game_instance import (
 from light.data_model.db.users import PlayerStatus
 from light.world.player_provider import PlayerProvider
 from light.world.quest_loader import QuestLoader
-from light.graph.events.graph_events import init_safety_classifier, RewardEvent
+from light.graph.events.graph_events import RewardEvent
 from light.world.souls.tutorial_player_soul import TutorialPlayerSoul
 
 import argparse
@@ -29,15 +29,11 @@ import warnings
 import asyncio
 import hashlib
 from collections import defaultdict
-from zmq.eventloop import ioloop
-
-ioloop.install()  # Needs to happen before any tornado imports!
-
-import tornado.ioloop  # noqa E402: gotta install ioloop first
-import tornado.web  # noqa E402: gotta install ioloop first
-import tornado.auth  # noqa E402: gotta install ioloop first
-import tornado.websocket  # noqa E402: gotta install ioloop first
-import tornado.escape  # noqa E402: gotta install ioloop first
+import tornado.ioloop as ioloop
+import tornado.web
+import tornado.auth
+import tornado.websocket
+import tornado.escape
 from light.graph.events.graph_events import (
     SoulSpawnEvent,
     SystemMessageEvent,
@@ -221,7 +217,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         player = self.user_db.get_player(user_id)
         return player.account_status == PlayerStatus.TUTORIAL
 
-    def launch_game_for_user(self, user_id, game_id):
+    async def launch_game_for_user(self, user_id, game_id):
         # Check for custom game world
         if game_id not in self.app.registry.game_instances:
             self.close()
@@ -235,10 +231,10 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                 user_db=self.user_db,
                 user_id=user_id,
             )
-            new_player.init_soul()
+            await new_player.init_soul()
             self.app.registry.game_instances[game_id].players.append(new_player)
 
-    def open(self, game_id):
+    async def open(self, game_id):
         """
         Open a websocket, validated either by a valid user cookie or
         by a validated preauth.
@@ -268,6 +264,9 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         if user_id is not None:
             logging.info("Opened new socket from ip: {}".format(self.request.remote_ip))
             logging.info("For game: {}".format(game_id))
+
+            loop = tornado.ioloop.IOLoop.current()
+
             # First check for tutorials
             if self.user_should_do_tutorial(user_id):
                 # Spawn a tutorial world for this user, or inject them into
@@ -279,10 +278,13 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
 
                     def on_complete():
                         time.sleep(TRANSITION_AFTER_TUTORIAL)
-                        self.launch_game_for_user(user_id, orig_game_id)
+                        loop.spawn_callback(
+                            self.launch_game_for_user, user_id, orig_game_id
+                        )
 
                     game_id = self.app.registry.run_tutorial(user_id, on_complete)
-            self.launch_game_for_user(user_id, game_id)
+
+            loop.spawn_callback(self.launch_game_for_user, user_id, game_id)
         else:
             self.close()
             self.redirect("/#/login")
@@ -291,7 +293,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.safe_write_message(json.dumps({"command": "register", "data": self.sid}))
         self.alive_sent = True
 
-    def on_message(self, message):
+    async def on_message(self, message):
         logging.info("from web client: {}".format(message))
         msg = tornado.escape.json_decode(tornado.escape.to_basestring(message))
         cmd = msg.get("command")
@@ -299,9 +301,9 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             return
         if cmd == "act":
             data = msg["data"]
-            self.player.act(data["text"], data["event_id"])
+            await self.player.act(data["text"], data["event_id"])
         else:
-            print("THESE COMMANDS HAVE BEEN DEPRICATED")
+            logging.warning(f"THESE COMMANDS HAVE BEEN DEPRICATED: {data}")
 
     def on_close(self):
         self.alive = False
@@ -755,7 +757,7 @@ class TornadoPlayerProvider(PlayerProvider):
                 target_node._base_reward_points = target_node.reward_xp
             self.app.user_node_map[self.user_id] = soul.target_node
 
-    def player_observe_event(self, soul: "PlayerSoul", event: "GraphEvent"):
+    async def player_observe_event(self, soul: "PlayerSoul", event: "GraphEvent"):
         """
         Send observation forward to the player in whatever format the player
         expects it to be.
@@ -776,18 +778,18 @@ class TornadoPlayerProvider(PlayerProvider):
             isinstance(event, DeathEvent)
             and event.actor.node_id == soul.target_node.node_id
         ):
-            self.purgatory.clear_soul(soul.target_node)
+            await self.purgatory.clear_soul(soul.target_node)
 
-    def act(self, action_data, event_id: Optional[str] = None):
+    async def act(self, action_data, event_id: Optional[str] = None):
         if self.player_soul is not None and self.player_soul.is_reaped:
             self.player_soul = None
         if self.player_soul is None:
-            self.init_soul()
+            await self.init_soul()
             return
-        player_agent = self.player_soul.handle_act(action_data, event_id)
+        player_agent = await self.player_soul.handle_act(action_data, event_id)
 
-    def init_soul(self):
-        self.purgatory.get_soul_for_player(self)
+    async def init_soul(self):
+        await self.purgatory.get_soul_for_player(self)
         if self.player_soul is None:
             dat = {"text": "Could not find a soul for you, sorry"}
             self.socket.safe_write_message(
@@ -798,14 +800,14 @@ class TornadoPlayerProvider(PlayerProvider):
             SoulSpawnEvent(soul_id, self.player_soul.target_node).execute(
                 self.purgatory.world
             )
-            self.player_soul.handle_act("look")
+            await self.player_soul.handle_act("look")
             self.player_soul.target_node.user_id = self.user_id
             self.player_soul.target_node.context_id = self.context
 
     def is_alive(self):
         return self.socket.alive
 
-    def on_reap_soul(self, soul):
+    async def on_reap_soul(self, soul):
         action = SystemMessageEvent(
             soul.target_node,
             [],
@@ -926,8 +928,9 @@ def main():
         help="port to run the server on.",
     )
     FLAGS = parser.parse_args()
-
-    init_safety_classifier(os.path.expanduser("~/data/safety/OffensiveLanguage.txt"))
+    FLAGS.safety_classifier_path = os.path.expanduser(
+        "~/data/safety/OffensiveLanguage.txt"
+    )
 
     random.seed(6)
     numpy.random.seed(6)
@@ -937,7 +940,7 @@ def main():
             None, FLAGS.hostname, FLAGS.port, listening=True
         )
     else:
-        game = GameInstance(game_id=0, ldb=ldb)
+        game = asyncio.run(GameInstance(game_id=0, ldb=ldb))
         graph = game.world
         provider = TornadoPlayerFactory(
             graph, FLAGS.hostname, FLAGS.port, db=ldb, listening=True

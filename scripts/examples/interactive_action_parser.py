@@ -16,6 +16,7 @@ from parlai.core.message import Message
 from light.registry.model_pool import ModelPool
 from light.world.action_parser import ActionParser
 import random
+import asyncio
 
 
 # TODO upgrade to hydra, then test again
@@ -69,7 +70,7 @@ def interactive(opt):
     # Show some example dialogs:
     while not world.epoch_done():
         txt = input("Action> ")
-        parse_txt = parser.parse(txt)
+        parse_txt = asyncio.run(parser.parse(txt))
         print(parse_txt)
 
 

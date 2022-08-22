@@ -20,9 +20,17 @@ ENOUGH_EXTRA_TICKS_TO_ENSURE_CORPSE_CLEANUP = 20
 def async_test(f):
     def wrapper(*args, **kwargs):
         coro = f
-        future = coro(*args, **kwargs)
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(future)
+        try:
+            loop = asyncio.get_event_loop()
+            future = coro(*args, **kwargs)
+            loop.run_until_complete(future)
+        except RuntimeError:
+            try:
+                loop = asyncio.get_running_loop()
+                future = coro(*args, **kwargs)
+                loop.run_until_complete(future)
+            except RuntimeError:
+                asyncio.run(coro(*args, **kwargs))
 
     return wrapper
 
@@ -41,7 +49,7 @@ class TestInteractionLoggers(unittest.TestCase):
         opt = {}
         opt["load_map"] = os.path.join(LIGHT_DIR, "scripts/examples/complex_world.json")
         world_builder = MapJsonBuilder(episode_db=None, opt=opt)
-        g, world = world_builder.get_graph()
+        g, world = await world_builder.get_graph()
         purgatory = world.purgatory
         purgatory.register_filler_soul_provider(
             "battle",
@@ -78,7 +86,7 @@ class TestInteractionLoggers(unittest.TestCase):
         await run_some_time(2)
 
         # some agents definitely should have died
-        self.assertTrue(len(g.agents) < current_agents)
+        self.assertLess(len(g.agents), current_agents)
 
         current_agents = len(g.agents)
         current_objects = len(g.objects)
@@ -87,14 +95,14 @@ class TestInteractionLoggers(unittest.TestCase):
         # try respawning
         use_ticks = TICKS_TO_CLEAN_CORPSE + ENOUGH_EXTRA_TICKS_TO_ENSURE_CORPSE_CLEANUP
         for _x in range(use_ticks):
-            ags = world.clean_corpses_and_respawn()
+            ags = await world.clean_corpses_and_respawn()
             for ag in ags:
                 purgatory.fill_soul(ag)
 
         # some agents definitely should have respawned
-        self.assertTrue(len(g.agents) > current_agents)
-        self.assertTrue(len(g.objects) < current_objects)
-        self.assertTrue(len(g.dead_nodes) < current_dead)
+        self.assertGreater(len(g.agents), current_agents)
+        self.assertLess(len(g.objects), current_objects)
+        self.assertLess(len(g.dead_nodes), current_dead)
 
 
 if __name__ == "__main__":

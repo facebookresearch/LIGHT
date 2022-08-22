@@ -8,14 +8,13 @@
 
 """Application specifically for hosting a model for remote access"""
 
-"""Application specifically for hosting a model for remote access"""
-
 
 import argparse
 import json
 import logging
 import os
 import traceback
+import asyncio
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
 import tornado.auth
@@ -94,16 +93,20 @@ class ResponseHandler(BaseHandler):
     def initialize(self, model):
         self.model = model
 
-    def post(self):
+    async def post(self):
         # Process the data to extract the act
         data = tornado.escape.json_decode(self.request.body)
         message = data["observation"]
         # Pass the act to the model
         self.model.observe(message)
         # return the response
-        response = self.model.act()
+        response = await self.model.act()
         if "metrics" in response:
             del response["metrics"]
+        if "sorted_scores" in response and not isinstance(
+            response["sorted_scored"], list
+        ):
+            response["sorted_scores"].force_set(response["sorted_scores"].tolist())
         self.write(json.dumps({"act": response}))
 
 

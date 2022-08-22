@@ -22,7 +22,6 @@ import os
 from typing import List, Any, Dict, Optional
 
 
-DEFAULT_KEY = os.environ.get("USER", "light")
 DEFAULT_SERVER = "http://localhost:40000"
 DEFAULT_SERVER_TIMEOUT = 600
 DEFAULT_RETRIES = 3
@@ -42,13 +41,11 @@ async def _make_request(
     session: aiohttp.ClientSession,
     server: str,
     act_message: Message,
-    api_key: str,
     num_retry_on_api_exception=-1,
     request_delay: float = 0.5,
 ) -> Dict[str, Any]:
     data = {
         "observation": act_message,
-        "api_key": api_key,
     }
     init_request_delay = request_delay
     past_exceptions: List[Dict[str, Any]] = []
@@ -63,9 +60,9 @@ async def _make_request(
             }
         try:
             logging.debug(f"Making request: {data}")
-            headers = {"Authorization": f"Bearer {api_key}"}
             async with session.post(
-                f"{server}/model_request", json=data, headers=headers
+                f"{server}/model_request",
+                json=data,
             ) as resp:
                 resp_text = await resp.text()
                 obj = json.loads(resp_text)
@@ -94,7 +91,6 @@ async def _make_request(
 
 async def async_request_many(
     server: str,
-    api_key: str,
     acts: List[Message],
     timeout: Optional[int] = None,
     max_num_tries: int = -1,
@@ -111,7 +107,6 @@ async def async_request_many(
                     _make_request(
                         session=session,
                         server=server,
-                        api_key=api_key,
                         act_message=act,
                         num_retry_on_api_exception=max_num_tries,
                     )
@@ -119,24 +114,6 @@ async def async_request_many(
             )
         results = await asyncio.gather(*tasks)
         return results
-
-
-def request_many(
-    server: str,
-    api_key: str,
-    acts: List[Message],
-    timeout: Optional[int] = None,
-    max_num_tries: int = -1,
-) -> List[Dict[str, Any]]:
-    return asyncio.run(
-        async_request_many(
-            server=server,
-            api_key=api_key,
-            acts=acts,
-            timeout=timeout,
-            max_num_tries=max_num_tries,
-        )
-    )
 
 
 def server_is_alive(server: str) -> bool:
@@ -156,21 +133,21 @@ class ParlAIRemoteAgentWrapper(Agent):
         """Agent wrapper that actually just executes things remotely"""
         self.observed_act = Message({"text": "", "episode_done": True})
         self.server = opt["server"]
-        self.api_key = opt["api_key"]
         self.retries = opt["retries"]
         self.timeout = opt["timeout"]
 
-    def act(self):
-        resps = request_many(
+    async def act(self):
+        resps = await async_request_many(
             server=self.server,
-            api_key=self.api_key,
             acts=[self.observed_act],
             timeout=self.timeout,
             max_num_tries=self.retries,
         )
-        act = Message(resps[0])
-        if is_request_failed_response(act):
-            act["text"] = DEFAULT_API_FAIL_TEXT
+        resp = resps[0]
+        if is_request_failed_response(resp):
+            act = Message({"text": DEFAULT_API_FAIL_TEXT})
+        else:
+            act = Message(resp["act"])
         return act
 
     def observe(self, observation: Message):
@@ -197,10 +174,6 @@ class ParlAIRemoteModelConfig:
             "help": ("How long to wait for a response before considering a timeout")
         },
     )
-    api_key: str = field(
-        default=DEFAULT_KEY,
-        metadata={"help": ("API key to pass to the server on requests")},
-    )
 
     def get(self, attr: str, default_val: Optional[Any] = None):
         """Wrapper to ensure interoperability with hydra DictConfig"""
@@ -219,6 +192,13 @@ class ParlAIRemoteModelLoader:
         self.config = config
         self.load_model(config)
 
+    async def force_load(self) -> None:
+        """
+        Force the model loader to connect to the remote service and ensure the
+        connection is live.
+        """
+        self.load_model(self.config)
+
     def load_model(self, config: DictConfig) -> None:
         """Initialize the model from the given config"""
         remote_host = config.get("host", DEFAULT_SERVER)
@@ -227,7 +207,6 @@ class ParlAIRemoteModelLoader:
             {
                 "server": remote_host,
                 "retries": config.get("retries", DEFAULT_RETRIES),
-                "api_key": config.get("api_key", DEFAULT_KEY),
                 "timeout": config.get("timeout", DEFAULT_SERVER_TIMEOUT),
             }
         )

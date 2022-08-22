@@ -17,6 +17,13 @@ from light.world.souls.models.tutorial_model_soul import (
 
 import os.path
 import time
+import asyncio
+
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from light.data_model.db.environment import EpisodeDB
+    from light.world.world import WorldConfig
 
 from typing import Optional, TYPE_CHECKING
 
@@ -112,30 +119,48 @@ class GameInstance:
         opt=None,
         world_config: Optional["WorldConfig"] = None,  # TODO make this required
     ):
-        if g is None:
-            if opt["builder_model"] is not None:
-                _, world = StarspaceBuilder(
-                    ldb,
-                    debug=False,
-                    opt=opt,
-                ).get_graph()  # TODO: what are the args that are needed
-                self.world = world
-            else:
-                opt["load_map"] = os.path.expanduser(
-                    "~/LIGHT/scripts/examples/complex_world.json"
-                )
-                world_builder = MapJsonBuilder(
-                    episode_db=world_config.episode_db, opt=opt
-                )
-                _, self.world = world_builder.get_graph(world_config=world_config)
-        else:
+        self.world = None
+        if g is not None:
             self.world = g
 
+        self.world_config = world_config
+        self.opt = opt
         self.db = ldb
         self.game_id = game_id
         self.players = []
         self.providers = []
         self.last_connection = time.time()
+
+    @classmethod
+    async def get(
+        cls,
+        game_id,
+        ldb,  # TODO remove this DB
+        g=None,
+        opt=None,
+        world_config: Optional["WorldConfig"] = None,  # TODO make this required
+    ) -> "GameInstance":
+        instance = cls(game_id, ldb, g=g, opt=opt, world_config=world_config)
+        await instance._init_world()
+        return instance
+
+    async def _init_world(self):
+        if self.opt["builder_model"] is not None:
+            _, self.world = await StarspaceBuilder(
+                self.ldb,
+                debug=False,
+                opt=self.opt,
+            ).get_graph()  # TODO: what are the args that are needed
+        else:
+            self.opt["load_map"] = os.path.expanduser(
+                "~/LIGHT/scripts/examples/complex_world.json"
+            )
+            world_builder = MapJsonBuilder(
+                episode_db=self.world_config.episode_db, opt=self.opt
+            )
+            _, self.world = await world_builder.get_graph(
+                world_config=self.world_config
+            )
 
     def fill_souls(self, FLAGS, model_resources):
         purgatory = self.world.purgatory
@@ -153,7 +178,7 @@ class GameInstance:
     def register_provider(self, provider):
         self.providers.append(provider)
 
-    def run_graph_step(self):
+    async def run_graph_step(self):
         world = self.world
 
         # Clear disconnected players
@@ -161,13 +186,13 @@ class GameInstance:
         for player in left_players:
             if player.player_soul is not None:
                 node_to_clean = player.player_soul.target_node
-                self.world.purgatory.clear_soul(node_to_clean)
+                await self.world.purgatory.clear_soul(node_to_clean)
                 self.world.purgatory.fill_soul(node_to_clean)
             self.players.remove(player)
             self.last_connection = time.time()
 
         # clear corpses and respawn
-        ags = self.world.clean_corpses_and_respawn()
+        ags = await self.world.clean_corpses_and_respawn()
         for ag in ags:
             self.world.purgatory.fill_soul(ag)
 
@@ -178,20 +203,25 @@ class TutorialInstance(GameInstance):
     """
 
     def __init__(
-        self, game_id, ldb, opt=None, world_config: Optional["WorldConfig"] = None
+        self,
+        game_id,
+        ldb,
+        g=None,
+        opt=None,
+        world_config: Optional["WorldConfig"] = None,
     ):
-        _, tutorial_world = TutorialWorldBuilder(ldb, opt).get_graph()
         self.db = ldb
         self._created_time = time.time()
         self._player_node = tutorial_world.oo_graph.find_nodes_by_name("You")[0]
         self._target_destination = tutorial_world.oo_graph.find_nodes_by_name(
             "Ethereal Mist"
         )[0]
-        super().__init__(
-            game_id, ldb, g=tutorial_world, opt=opt, world_config=world_config
-        )
+        super().__init__(game_id, ldb, opt=opt, world_config=world_config)
         self._should_shutdown = False
         self._did_complete = True
+
+    async def _init_world():
+        _, self.world = await TutorialWorldBuilder(self.db, self.opt).get_graph()
 
     def fill_souls(self, _FLAGS, model_resources):
         """Tutorials directly register the tutorial to the DM"""
@@ -204,7 +234,7 @@ class TutorialInstance(GameInstance):
         assert dm_agent.name == "Dungeon Master", "Did not find DM!"
         self.world.purgatory.fill_soul(dm_agent, "tutorial")
 
-    def run_graph_step(self):
+    async def run_graph_step(self):
         super().run_graph_step()
         self._did_complete = self._player_node.get_room() == self._target_destination
         self._should_shutdown = (

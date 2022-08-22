@@ -4,6 +4,7 @@ import json
 import re
 import os
 import ast
+import asyncio
 from tornado import gen, httpclient, ioloop, testing, escape
 from tornado.testing import AsyncHTTPTestCase, gen_test
 from tornado.ioloop import IOLoop
@@ -63,6 +64,12 @@ PORT = 35494
 URL = f"http://localhost:{PORT}"
 
 
+def async_return(result):
+    f = asyncio.Future()
+    f.set_result(result)
+    return f
+
+
 class MockFlags:
     def __init__(self, hostname, port):
         self.hostname = hostname
@@ -109,7 +116,7 @@ class TestRegistryApp(AsyncHTTPTestCase):
 
     @mock.patch(
         "deploy.web.server.registry.RegistryApplication.run_new_game",
-        return_value="test",
+        return_value=async_return("test"),
     )
     @gen_test
     def test_new_game(self, mocked_auth, MockStarSpace, mocked_method):

@@ -19,9 +19,17 @@ from light.world.souls.repeat_soul import RepeatSoul
 def async_test(f):
     def wrapper(*args, **kwargs):
         coro = f
-        future = coro(*args, **kwargs)
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(future)
+        try:
+            loop = asyncio.get_event_loop()
+            future = coro(*args, **kwargs)
+            loop.run_until_complete(future)
+        except RuntimeError:
+            try:
+                loop = asyncio.get_running_loop()
+                future = coro(*args, **kwargs)
+                loop.run_until_complete(future)
+            except RuntimeError:
+                asyncio.run(coro(*args, **kwargs))
 
     return wrapper
 
@@ -46,7 +54,7 @@ class MockSouls(unittest.TestCase):
         )
         mock_soul.do_act(test_event)
 
-        mock_soul.reap()
+        asyncio.run(mock_soul.reap())
 
     @async_test
     async def test_message_sending(self):

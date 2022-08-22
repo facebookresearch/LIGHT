@@ -9,6 +9,7 @@
 import json
 import time
 import uuid
+import asyncio
 import tornado.web
 from tornado.routing import (
     PathMatches,
@@ -104,16 +105,16 @@ class RegistryApplication(tornado.web.Application):
                 del self.step_callbacks[game_id]
                 del self.game_instances[game_id]
 
-    def run_new_game(self, game_id, ldb, player_id=None, world_id=None):
+    async def run_new_game(self, game_id, ldb, player_id=None, world_id=None):
         if world_id is not None and player_id is not None:
             builder = UserWorldBuilder(ldb, player_id=player_id, world_id=world_id)
-            _, world = builder.get_graph()
-            game = GameInstance(game_id, ldb, g=world, opt=vars(self.FLAGS))
+            _, world = await builder.get_graph()
+            game = await GameInstance.get(game_id, ldb, g=world, opt=vars(self.FLAGS))
         else:
             world_config = WorldConfig(
                 episode_db=self.episode_db, model_pool=self.model_pool
             )
-            game = GameInstance(
+            game = await GameInstance.get(
                 game_id, ldb, opt=vars(self.FLAGS), world_config=world_config
             )
             world = game.world
@@ -139,8 +140,8 @@ class RegistryApplication(tornado.web.Application):
         game.fill_souls(self.FLAGS, [])
         world = game.world
 
-        def run_or_cleanup_world():
-            game.run_graph_step()
+        async def run_or_cleanup_world():
+            await game.run_graph_step()
             if game._should_shutdown or game._did_complete:
                 if (
                     game._did_complete and self.user_db is not None
@@ -194,7 +195,7 @@ class GameCreatorHandler(BaseHandler):
         self.game_instances = app.game_instances
 
     @tornado.web.authenticated
-    def post(self, game_id):
+    async def post(self, game_id):
         """
         Registers a new TornadoProvider at the game_id endpoint
         """
@@ -211,9 +212,9 @@ class GameCreatorHandler(BaseHandler):
                 # if not user_db.is_world_owned_by(world_id, player):
                 #     self.set_status(403)
                 #     return
-            game = self.app.run_new_game(game_id, self.app.ldb, player, world_id)
+            game = await self.app.run_new_game(game_id, self.app.ldb, player, world_id)
         else:
-            game = self.app.run_new_game(game_id, self.app.ldb)
+            game = await self.app.run_new_game(game_id, self.app.ldb)
 
         # Create game_provider here
         print("Registering: ", game_id)

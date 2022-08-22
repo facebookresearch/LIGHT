@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 import json
 import random, copy
+import asyncio
 from light.graph.structured_graph import OOGraph
 from light.graph.builders.base import (
     GraphBuilder,
@@ -53,7 +54,7 @@ class MapJsonBuilder(GraphBuilder):
             world_config.graph_builder = self
             return world_config
 
-    def get_graph(self, world_config: Optional[WorldConfig] = None):
+    async def get_graph(self, world_config: Optional[WorldConfig] = None):
         input_json = self.opt["load_map"]
         f = open(input_json, "r")
         data = f.read()
@@ -91,7 +92,7 @@ class MapJsonBuilder(GraphBuilder):
         )
         arrival_event.execute(world)
 
-    def add_random_new_agent_to_graph(self, world) -> Optional["GraphAgent"]:
+    async def add_random_new_agent_to_graph(self, world) -> Optional["GraphAgent"]:
         """
         Add an agent from the stored original_agents list that isn't
         currently present in the world, if such an agent exists.

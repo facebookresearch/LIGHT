@@ -22,8 +22,8 @@ from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 import inspect
 import os
+import asyncio
 from light.data_model.light_database import LIGHTDatabase
-from light.graph.events.graph_events import init_safety_classifier
 from light.world.souls.models.generative_heuristic_model_soul import (
     GenerativeHeuristicModelSoul,
 )
@@ -121,8 +121,8 @@ def make_app(FLAGS, ldb, model_pool: ModelPool):
     return registryApp
 
 
-def start_default_game(ldb, registryApp):
-    _ = registryApp.run_new_game("", ldb)
+async def start_default_game(ldb, registryApp):
+    _ = await registryApp.run_new_game("", ldb)
 
 
 def _run_server(FLAGS, ldb, model_resources):
@@ -204,8 +204,7 @@ def init_model_pool(FLAGS) -> "ModelPool":
             ParlAIModelConfig(opt_file=parser_opt_file),
             [ModelTypeName.PARSER],
         )
-
-    init_safety_classifier(FLAGS.safety_list, model_pool)
+    FLAGS.safety_classifier_path = FLAGS.safety_list
 
     return model_pool
 

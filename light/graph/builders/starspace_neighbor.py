@@ -18,6 +18,7 @@ import pickle
 import random
 import copy
 import numpy as np
+import asyncio
 
 random.seed(6)
 np.random.seed(6)
@@ -206,7 +207,7 @@ class StarspaceNeighborBuilder(GraphBuilder):
                     g.set_prop(obj_id, "equipped")
         return agent_id
 
-    def add_random_new_agent_to_graph(self, g):
+    async def add_random_new_agent_to_graph(self, g):
         # pick a random room
         while True:
             id = random.choice(list(g.oo_graph.rooms.keys()))
@@ -433,7 +434,7 @@ class StarspaceNeighborBuilder(GraphBuilder):
             if len(response["text_candidates"]) <= ind:
                 return None
 
-    def get_graph(self):
+    async def get_graph(self):
         g = OOGraph(self.opt)
         g.npc_models._no_npc_models = self._no_npc_models
         g.db = self.db
