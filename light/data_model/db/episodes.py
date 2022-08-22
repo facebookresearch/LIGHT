@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from light.data_model.db.base import BaseDB, DBStatus, DBSplitType
+from light.data_model.db.users import DBPlayer
 from omegaconf import MISSING, DictConfig
 from typing import Optional, List, Tuple, Union, Dict, Any, Set, TYPE_CHECKING
 from sqlalchemy import insert, select, Enum, Column, Integer, String, Float, ForeignKey
@@ -20,6 +21,7 @@ if TYPE_CHECKING:
 
 SQLBase = declarative_base()
 FILE_PATH_KEY = "episodes"
+USR_KEY = DBPlayer.ID_PREFIX
 
 
 class DBGroupName(enum.Enum):
@@ -325,7 +327,7 @@ class EpisodeDB(BaseDB):
         sha = hashlib.sha256()
 
         def rehash(curr_name):
-            if not curr_name.startswith("USR"):
+            if not curr_name.startswith(USR_KEY):
                 return curr_name  # already hashed
 
             # Adding a hashtime to make unique
