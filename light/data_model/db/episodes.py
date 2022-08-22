@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from light.data_model.db.base import BaseDB, DBStatus, DBSplitType
+from light.data_model.db.users import DBPlayer
 from omegaconf import MISSING, DictConfig
 from typing import Optional, List, Tuple, Union, Dict, Any, Set, TYPE_CHECKING
 from sqlalchemy import insert, select, Enum, Column, Integer, String, Float, ForeignKey
@@ -13,12 +14,14 @@ from light.graph.events.base import GraphEvent
 import time
 import enum
 import os
+import hashlib
 
 if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
 
 SQLBase = declarative_base()
 FILE_PATH_KEY = "episodes"
+USR_KEY = DBPlayer.ID_PREFIX
 
 
 class DBGroupName(enum.Enum):
@@ -310,3 +313,87 @@ class EpisodeDB(BaseDB):
             episodes = session.scalars(stmt).all()
             session.expunge_all()
             return episodes
+
+    def anonymize_group(self, group: DBGroupName) -> bool:
+        """
+        Run anonymization on the split to remove any link to the
+        long-term user. All data within a quarter's dataset
+        can be linked (for long-term memory analysis) but cannot be
+        tracked cross-quarters.
+
+        Return true on success
+        """
+        hashing_time = time.time()
+        sha = hashlib.sha256()
+
+        def rehash(curr_name):
+            if not curr_name.startswith(USR_KEY):
+                return curr_name  # already hashed
+
+            # Adding a hashtime to make unique
+            hash_name = f"{curr_name}-{hashing_time}"
+            sha.update(hash_name.encode())
+            return str(sha.hexdigest()[:30])
+
+        with Session(self.engine) as session:
+            stmt = select(DBEpisode).where(DBEpisode.group == group)
+            episodes = session.scalars(stmt).all()
+            for episode in episodes:
+                actors_string = episode.actors
+                actors = actors_string.split(",")
+                processed_actors = [rehash(a) for a in actors]
+                episode.actors = ",".join(processed_actors)
+                # Rewrite the graphs and events too
+                def replace_all_actors(in_data: str) -> str:
+                    out_data = in_data
+                    for i in range(len(actors)):
+                        out_data = out_data.replace(actors[i], processed_actors[i])
+                    return out_data
+
+                graphs = episode.graphs
+                for graph in graphs:
+                    graph_data = self.read_data_from_file(graph.full_path)
+                    anon_graph_data = replace_all_actors(graph_data)
+                    self.write_data_to_file(anon_graph_data, graph.full_path)
+                event_data = self.read_data_from_file(episode.dump_file_path)
+                anon_event_data = replace_all_actors(event_data)
+                self.write_data_to_file(anon_event_data, episode.dump_file_path)
+                session.commit()
+        return True
+
+    def export(self, config: "DictConfig") -> "EpisodeDB":
+        """
+        Create a scrubbed version of this database for use in releases
+        """
+        assert config.file_root != self.file_root, "Cannot copy DB to same location!"
+        new_db = EpisodeDB(config)
+
+        # Copy all the basic content
+        for table_name, table_obj in SQLBase.metadata.tables.items():
+            with self.engine.connect() as orig_conn:
+                with new_db.engine.connect() as new_conn:
+                    all_data = [
+                        dict(row) for row in orig_conn.execute(select(table_obj.c))
+                    ]
+                    if len(all_data) == 0:
+                        continue
+                    new_conn.execute(table_obj.insert().values(all_data))
+                    new_conn.commit()
+
+        with Session(self.engine) as session:
+            stmt = select(DBEpisode)
+            episodes = session.scalars(stmt).all()
+            for episode in episodes:
+                graphs = episode.graphs
+                for graph in graphs:
+                    # Copy the graphs to the new DB
+                    graph_data = self.read_data_from_file(graph.full_path)
+                    new_db.write_data_to_file(graph_data, graph.full_path)
+                # Copy the events to the new DB
+                event_data = self.read_data_from_file(episode.dump_file_path)
+                new_db.write_data_to_file(event_data, episode.dump_file_path)
+
+        for group in DBGroupName:
+            new_db.anonymize_group(group=group)
+
+        return new_db
