@@ -8,11 +8,5 @@ localhost
 LetsPlay
 --port
 35494
---builder-model
-starspace/angela_starspace/model4
---dialog-model
-dialog_gen/model
---acting-model
-main_act/model
 --db-backend
 local

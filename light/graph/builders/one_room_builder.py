@@ -4,8 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.params import ParlaiParser
-from parlai.core.agents import create_agent, create_agent_from_shared
+from light.registry.models.starspace_model import MapStarspaceModelConfig
 from light.world.world import World, WorldConfig
 from light.graph.structured_graph import OOGraph
 from light.graph.builders.base import (
@@ -36,6 +35,14 @@ import random
 import copy
 import time
 
+from dataclasses import dataclass, field
+from omegaconf import MISSING, DictConfig
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from light.data_model.light_database import LIGHTDatabase
+    from light.registry.model_pool import ModelPool
+
 MAX_EXTRA_AGENTS_PER_ROOM = 2
 INV_DIR = {"east": "west", "west": "east", "north": "south", "south": "north"}
 NEIGHBOR = DB_EDGE_NEIGHBOR
@@ -63,38 +70,63 @@ POSSIBLE_NEW_ENTRANCES = [
 ]
 
 
+@dataclass
+class OneRoomChatBuilderConfig:  # BuilderConfig():
+    # TODO create builder config parent
+    model_loader_config: MapStarspaceModelConfig = MapStarspaceModelConfig()
+    suggestion_type: str = field(
+        default="model",
+        metadata={
+            "help": ("Input 'model', 'human', or 'hybrid', for the suggestion type")
+        },
+    )
+    hybridity_prob: float = field(
+        default=0.5,
+        metadata={
+            "help": ("Set probability how often ex-object or character is skipped")
+        },
+    )
+    use_best_match_model: bool = field(
+        default=False,
+        metadata={
+            "help": (
+                "use human suggestions for predicting placement of objects, characters, and room"
+            )
+        },
+    )
+    # TODO move to elsewhere
+    light_db_file: str = field(
+        default="/checkpoint/light/data/database3.db",
+        metadata={"help": ("specific path for light database")},
+    )
+
+
 class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
     """Builds a one-room light Graph using a StarSpace model to connect everything."""
 
-    def __init__(self, ldb, debug=True, opt=None):
+    def __init__(
+        self,
+        ldb: "LIGHTDatabase",  # LIGHT database, TODO replace with EnvDB
+        model_pool: "ModelPool",  # Models this builder can use
+        builder_config: "DictConfig",  # Configuration for this builder
+        graph_opt=None,
+    ):
         """Initializes required models and parameters for this graph builder"""
-        if opt is None:
-            parser = ParlaiParser(
-                True, True, "Arguments for building a LIGHT room with Starspace"
-            )
-            self.add_parser_arguments(parser)
-            opt, _unknown = parser.parse_and_process_known_args()
+        self.graph_opt = {} if graph_opt is None else graph_opt
 
         # Setup correct path
-        db_path = opt.get("db_path")
-        if db_path is None:
-            parlai_datapath = opt["datapath"]
-            db_path = os.path.join(parlai_datapath, "light", "database3.db")
-        self.db_path = db_path
+        self.db_path = builder_config.get("light_db_file")
         self.dpath = os.path.expanduser("~/ParlAI/data/light_maps/")
         model_path = opt.get("model_path")
         if model_path is None:
             model_path = opt.get("light_model_root")
         self.model_path = model_path
-        self.ldb = ldb
         DBGraphBuilder.__init__(self, ldb)
-        SingleSuggestionGraphBuilder.__init__(self, opt, model_path=self.model_path)
-        self.debug = debug
+        SingleSuggestionGraphBuilder.__init__(self, model_pool=model_pool)
 
-        self._no_npc_models = True
         self.load_models()
-        self.use_best_match = False
-        self.suggestion_type = self.opt.get("suggestion_type", "hybrid")
+        self.use_best_match = builder_config.use_best_match_model
+        self.suggestion_type = builder_config.suggestion_type
         # Cache for retrieved room/ char/ obj dicts from the database
         self.roomid_to_feats = {}
         self.feats_to_roomid = {}
@@ -103,74 +135,25 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         self.charid_to_feats = {}
         self.feats_to_charid = {}
         # paramter to control the hybridity of the model
-        self.prob_skip_ex_objects = self.opt.get("hybridity_prob", 0.5)
-        self.prob_skip_ex_char = self.opt.get("hybridity_prob", 0.5)
+        self.prob_skip_ex_objects = builder_config.hybridity_prob
+        self.prob_skip_ex_char = builder_config.hybridity_prob
         self.allowed_characters = None
         self.banned_rooms = []
         self.room = None
         self.neighbors = []
 
-    @staticmethod
-    def add_parser_arguments(parser):
-        """
-        Add arguments to a parser to be able to set the required options for
-        this builder
-        """
-        parser.add_argument(
-            "--suggestion-type",
-            type=str,
-            default="model",
-            help="Input 'model', 'human', or 'hybrid', for the suggestion type",
-        )
-        parser.add_argument(
-            "--hybridity-prob",
-            type=float,
-            default=0.5,
-            help="Set probability how often ex-object or character is skipped",
-        )
-        parser.add_argument(
-            "--use-best-match-model",
-            type="bool",
-            default=False,
-            help="use human suggestions for predicting placement of objects, characters, and room",
-        )
-        parser.add_argument(
-            "--light-db-file",
-            type=str,
-            default="/checkpoint/light/data/database3.db",
-            help="specific path for light database",
-        )
-        parser.add_argument(
-            "--light-model-root",
-            type=str,
-            default="/checkpoint/light/models/",
-            help="specific path for light models",
-        )
-
-    def load_models(self):
+    def load_models(self) -> None:
         """Load starspace models for building the map"""
-        # TODO load from zoo when launched
-        opt = copy.deepcopy(self.opt)
-        mf = os.path.join(self.model_path, "starspace/angela_starspace/model4")
-        opt["model_file"] = mf
-        # Create room agent
-        opt["fixed_candidates_file"] = self.dpath + "/room_full_cands.txt"
-        opt["override"] = {"fixed_candidates_file": opt["fixed_candidates_file"]}
-        self.agents["room"] = create_agent(opt, requireModelExists=True)
-        # Model Params are added as new fields to opt dict, Are there better ways around this?
-        opt = self.agents["room"].opt.copy()
-        opt["fixed_candidates_file"] = self.dpath + "/object_full_cands.txt"
-        opt["override"] = {"fixed_candidates_file": opt["fixed_candidates_file"]}
-        share_dict = self.agents["room"].share()
-        share_dict["opt"] = opt
-        self.agents["object"] = create_agent_from_shared(share_dict)
-        opt = self.agents["room"].opt.copy()
-        opt["fixed_candidates_file"] = self.dpath + "/character_full_cands.txt"
-        opt["override"] = {"fixed_candidates_file": opt["fixed_candidates_file"]}
-        share_dict = self.agents["room"].share()
-        share_dict["opt"] = opt
-        self.agents["character"] = create_agent_from_shared(share_dict)
-        self.agent = self.agents["room"]
+        # self.model_pool.register_model(self.config.model_loader_config, "map_starspace")
+        self.agents["room"] = self.model_pool.get_model(
+            "map_starspace", {"target_type": "room"}
+        )
+        self.agents["object"] = self.model_pool.get_model(
+            "map_starspace", {"target_type": "object"}
+        )
+        self.agents["character"] = self.model_pool.get_model(
+            "map_starspace", {"target_type": "character"}
+        )
 
     def _props_from_obj(self, obj):
         """Given a DBObject representing an object in the world, extract the
@@ -466,7 +449,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
     def get_graph_from_quest(self, quest):
         graph_json = quest["data"]["graph"]
         g = OOGraph.from_json(graph_json)
-        world = World(WorldConfig(opt=self.opt, graph_builder=self))
+        world = World(WorldConfig(opt=self.graph_opt, graph_builder=self))
         world.oo_graph = g
 
         base_room = list(g.rooms.values())[0]
@@ -504,7 +487,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         else:
             set_room = self.get_room_from_id(self.roomfeats_to_id(location))
 
-        g = OOGraph(self.opt)
+        g = OOGraph(self.graph_opt)
         room_node = g.add_room(
             set_room.setting,
             {
@@ -595,7 +578,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 db_id=neighbor_room.db_id,
             )
 
-        world = World(WorldConfig(opt=self.opt, graph_builder=self))
+        world = World(WorldConfig(opt=self.graph_opt, graph_builder=self))
         world.oo_graph = g
         return g, world
 

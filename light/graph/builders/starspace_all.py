@@ -73,6 +73,7 @@ RELATIONSHIP_TYPES = [
 ]
 
 
+# TODO port similarly to OneRoomChatBuilder
 class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
     """Builds a LIGHT map using a StarSpace model to connect everything."""
 
