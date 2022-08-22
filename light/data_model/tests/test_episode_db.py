@@ -42,7 +42,7 @@ class TestEpisodesDB(unittest.TestCase):
         test_world.oo_graph = test_graph
         return (test_graph, test_world, agent_node, room_node)
 
-    def test_initialize_user_db(self):
+    def test_initialize_episode_db(self):
         """Ensure it's possible to initialize the db"""
         db = EpisodeDB(self.config)
 

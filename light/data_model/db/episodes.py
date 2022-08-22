@@ -18,16 +18,17 @@ if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
 
 SQLBase = declarative_base()
+FILE_PATH_KEY = "episodes"
 
 
 class DBGroupName(enum.Enum):
-    """Edges in the LIGHT Environment DB"""
+    """Data Releases in the LIGHT episode DB"""
 
     ORIG = "orig"
     WILD = "wild"
     MULTIPARTY = "multiparty"
     PRE_LAUNCH = "crowdsourced"
-    RELEASE = "full_release"
+    RELEASE_Q4_22 = "full_release_Q4_22"
 
 
 class EpisodeLogType(enum.Enum):
@@ -133,7 +134,7 @@ class DBEpisode(SQLBase):
         return f"DBEpisode(ids:[{self.id!r}] group/split:[{self.group.value!r}/{self.split.value!r}] File:[{self.dump_file_path!r}])"
 
 
-class DBGraph(SQLBase):
+class DBEpisodeGraph(SQLBase):
     """Class containing expected elements for a stored graph"""
 
     __tablename__ = "graphs"
@@ -153,7 +154,7 @@ class DBGraph(SQLBase):
         return graph
 
     def __repr__(self):
-        return f"DBGraph(ids:[{self.id!r},{self.graph_key_id!r}], episode:{self.episode_id!r})"
+        return f"DBEpisodeGraph(ids:[{self.id!r},{self.graph_key_id!r}], episode:{self.episode_id!r})"
 
 
 class EpisodeDB(BaseDB):
@@ -195,11 +196,15 @@ class EpisodeDB(BaseDB):
         actor_string = ",".join(list(players))
         event_filename = events[0]
         event_list = events[1]
+
         # Trim the filename from the left if too long
         event_filename = event_filename[-70:]
-        assert len(event_filename) <= 70
-        dump_file_path = os.path.join(group.value, log_type.value, event_filename)
+
+        dump_file_path = os.path.join(
+            FILE_PATH_KEY, group.value, log_type.value, event_filename
+        )
         graph_dump_root = os.path.join(
+            FILE_PATH_KEY,
             group.value,
             log_type.value,
             "graphs",
@@ -230,7 +235,7 @@ class EpisodeDB(BaseDB):
             first_graph = None
             for idx, graph_info in enumerate(graphs):
                 graph_full_path = os.path.join(graph_dump_root, graph_info["filename"])
-                db_graph = DBGraph(
+                db_graph = DBEpisodeGraph(
                     graph_key_id=graph_info["key"],
                     full_path=graph_full_path,
                 )

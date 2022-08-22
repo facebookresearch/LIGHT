@@ -10,6 +10,7 @@ from light.graph.elements.graph_nodes import (
     GraphVoidNode,
     GraphEdge,
 )
+from typing import Optional
 from light.world.utils.json_utils import GraphEncoder
 from light.world.content_loggers import RoomInteractionLogger
 
@@ -20,6 +21,8 @@ class OOGraph(object):
     """
 
     def __init__(self, opt=None):
+        if opt is None:
+            opt = {}
         self.objects = {}
         self.agents = {}
         self.rooms = {}
@@ -31,6 +34,8 @@ class OOGraph(object):
         self._deleted_nodes = {}
         self.dead_nodes = {}
         self._opt = opt
+        self.title = opt.get("title", "untitled")
+        self.db_id: Optional[str] = opt.get("db_id")
 
     @staticmethod
     def from_graph(graph, start_location=None):
@@ -463,6 +468,7 @@ class OOGraph(object):
             "agents": sorted(list(self.agents.keys())),
             "rooms": sorted(list(self.rooms.keys())),
             "nodes": self.all_nodes,
+            "title": self.title,
         }
         return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
 
@@ -500,6 +506,7 @@ class OOGraph(object):
             "nodes": {node.node_id: node for node in nodes},
             "objects": sorted(objects),
             "rooms": sorted(rooms),
+            "title": self.title,
         }
         return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
 
@@ -522,7 +529,10 @@ class OOGraph(object):
     @staticmethod
     def from_json(input_json: str):
         dict_format = json.loads(input_json)
-        oo_graph = OOGraph()
+        opt = {}
+        if dict_format.get("title") is not None:
+            opt["title"] = dict_format["title"]
+        oo_graph = OOGraph(opt)
         object_ids = set(dict_format["objects"])
         agent_ids = set(dict_format["agents"])
         room_ids = set(dict_format["rooms"])

@@ -104,6 +104,16 @@ class BaseDB(ABC):
             raise KeyError(error_text)
         return result
 
+    def file_path_exists(self, file_path: str) -> bool:
+        """
+        Determine if the given file path exists on this storage
+        """
+        if self.backend in ["test", "local"]:
+            full_path = os.path.join(self.file_root, file_path)
+            return os.path.exists(full_path)
+        else:
+            raise NotImplementedError
+
     def write_data_to_file(
         self, data: Union[str, Dict[str, Any]], filename: str, json_encode: bool = False
     ) -> None:
