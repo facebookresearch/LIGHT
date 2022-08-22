@@ -8,6 +8,8 @@
 
 """Application specifically for hosting a model for remote access"""
 
+"""Application specifically for hosting a model for remote access"""
+
 
 import argparse
 import json

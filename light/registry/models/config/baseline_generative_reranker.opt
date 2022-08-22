@@ -1,7 +1,7 @@
 {
     "model": "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent",
     "predictor_model_file": "zoo:light_whoami/rpa_reranker/model",
-    "model_file": "$LIGHT_MODEL_ROOT/dialog/baseline_gen_start/model.checkpoint",
+    "model_file": "$LIGHT_MODEL_ROOT/dialog/baseline/model",
     "inference": "beam",
     "datatype": "valid",
     "beam_context_block_ngram": 3,
@@ -10,32 +10,3 @@
     "beam_min_length": 20,
     "interactive_mode": true
 }
-
-Traceback (most recent call last):
-  File "model_server.py", line 212, in <module>
-    main()
-  File "model_server.py", line 207, in main
-    model = _init_model(FLAGS.model_opt_file, FLAGS.model_loader)
-  File "model_server.py", line 161, in _init_model
-    pool.register_model(cfg, ["target"])
-  File "/home/ubuntu/LIGHT/light/registry/model_pool.py", line 57, in register_model
-    loader = loader_class(config)
-  File "/home/ubuntu/LIGHT/light/registry/parlai_model.py", line 73, in __init__
-    self.load_model(config)
-  File "/home/ubuntu/LIGHT/light/registry/parlai_model.py", line 117, in load_model
-    model.act()
-  File "/home/ubuntu/ParlAI/parlai/core/torch_agent.py", line 2148, in act
-    response = self.batch_act([self.observation])[0]
-  File "/home/ubuntu/ParlAI/parlai/agents/reranker/reranker.py", line 537, in batch_act
-    inference_batch_reply = super().batch_act(observations)
-  File "/home/ubuntu/ParlAI/parlai/core/torch_agent.py", line 2244, in batch_act
-    output = self.eval_step(batch)
-  File "/home/ubuntu/ParlAI/parlai/core/torch_generator_agent.py", line 901, in eval_step
-    beam_preds_scores, beams = self._generate(
-  File "/home/ubuntu/ParlAI/parlai/core/torch_generator_agent.py", line 1169, in _generate
-    encoder_states = model.encoder(*self._encoder_input(batch))
-  File "/home/ubuntu/anaconda3/envs/py38/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1130, in _call_impl
-    return forward_call(*input, **kwargs)
-  File "/home/ubuntu/ParlAI/projects/light_whoami/agents/expanded_attention.py", line 606, in forward
-    assert expanded_attn_inputs is not None or ignore_expanded_attn_inputs
-AssertionError
