@@ -70,7 +70,6 @@ class WorldConfig:
     the sub-portions of the broader LIGHTConfig that are world-specific
     """
 
-    # TODO create LIGHTConfig that can write out a WorldConfig
     episode_db: Optional["EpisodeDB"] = None
     graph_builder: Optional["GraphBuilder"] = None
     model_pool: Optional["ModelPool"] = field(default_factory=get_empty_model_pool)

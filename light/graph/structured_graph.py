@@ -520,7 +520,7 @@ class OOGraph(object):
         return contained_nodes
 
     @staticmethod
-    def from_json(input_json: str):
+    def from_json(input_json: str, opt: Optional[Dict[str, Any]] = None):
         dict_format = json.loads(input_json)
         title = dict_format.get("title", "untitled")
         db_id = dict_format.get("db_id")

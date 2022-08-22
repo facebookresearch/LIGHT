@@ -128,7 +128,7 @@ class InteractionLogger(abc.ABC):
             log_type=episode_type,
             action_count=self.actions,
             players=self.players,
-            group=self.group,  # TODO make configurable?
+            group=self.group,
         )
 
 

@@ -242,7 +242,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             await new_player.init_soul()
             self.app.registry.game_instances[game_id].players.append(new_player)
 
-    def open(self, game_id):
+    async def open(self, game_id):
         """
         Open a websocket, validated either by a valid user cookie or
         by a validated preauth.
