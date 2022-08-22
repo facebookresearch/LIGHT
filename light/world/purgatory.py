@@ -6,7 +6,7 @@
 
 import random
 import threading
-from typing import TYPE_CHECKING, List, Tuple, Type, Callable, Any, Optional, Dict
+from typing import TYPE_CHECKING, List, Dict, Tuple, Type, Callable, Any, Optional
 
 from light.world.souls.player_soul import PlayerSoul
 from light.world.souls.tutorial_player_soul import TutorialPlayerSoul
@@ -41,14 +41,6 @@ class Purgatory:
         self.world = world
         self.player_assign_condition = threading.Condition()
         self.players = 0
-        self.shared_args = {}
-
-    def register_shared_args(self, arg_name, arg_provider):
-        """
-        Used to pass in e.g. the generic act model and roleplaying model scorer to souls.
-        """
-        if arg_provider is not None:
-            self.shared_args[arg_name] = arg_provider
 
     def register_filler_soul_provider(
         self,
@@ -124,7 +116,6 @@ class Purgatory:
                     self.world,
                     self.players,
                     player_provider,
-                    self.shared_args,
                 )
                 self.node_id_to_soul[target_agent.node_id] = soul
                 self.player_soul_id_to_soul[self.players] = soul
@@ -149,7 +140,6 @@ class TutorialPurgatory(Purgatory):
                 self.world,
                 self.players,
                 player_provider,
-                self.shared_args,
             )
             self.node_id_to_soul[ag.node_id] = soul
             self.player_soul_id_to_soul[self.players] = soul

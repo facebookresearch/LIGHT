@@ -31,7 +31,6 @@ class TutorialPlayerSoul(Soul):
         world: "World",
         player_id: str,
         provider=None,
-        shared_model_content=None,
     ):
         """
         TutorialPlayerSouls register to a GraphAgent in a World, but also keep track of the

@@ -3,8 +3,6 @@
 # Is not currently connected to the LIGHT text adventure game API
 #  (but should be straight-forward).
 
-from parlai.core.params import ParlaiParser
-from parlai.core.agents import create_agent
 from parlai_internal.projects.light.light_maps.html_map import generate_html_map
 from parlai_internal.projects.light.light_maps.filler_rooms import build_filler_rooms
 import parlai_internal.projects.light.v1.graph as graph

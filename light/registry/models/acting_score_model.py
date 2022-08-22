@@ -8,7 +8,7 @@
 from dataclasses import dataclass, field
 from parlai.core.agents import Agent
 
-from light.registry.models.parlai_model import ParlAIModelConfig, ParlAIModelLoader
+from light.registry.parlai_model import ParlAIModelConfig, ParlAIModelLoader
 
 
 @dataclass

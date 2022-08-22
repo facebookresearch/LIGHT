@@ -22,6 +22,7 @@ from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from light.data_model.db.environment import EpisodeDB
+    from light.world.world import WorldConfig
 
 # TODO specify the models to be using
 USE_MODELS = True
@@ -109,7 +110,7 @@ class GameInstance:
         ldb,  # TODO remove this DB
         g=None,
         opt=None,
-        episode_db: Optional["EpisodeDB"] = None,  # TODO make this DB required
+        world_config: Optional["WorldConfig"] = None,  # TODO make this required
     ):
         if g is None:
             if opt["builder_model"] is not None:
@@ -123,8 +124,10 @@ class GameInstance:
                 opt["load_map"] = os.path.expanduser(
                     "~/LIGHT/scripts/examples/complex_world.json"
                 )
-                world_builder = MapJsonBuilder(episode_db=episode_db, opt=opt)
-                _, self.world = world_builder.get_graph()
+                world_builder = MapJsonBuilder(
+                    episode_db=world_config.episode_db, opt=opt
+                )
+                _, self.world = world_builder.get_graph(world_config=world_config)
         else:
             self.world = g
 
@@ -136,19 +139,13 @@ class GameInstance:
 
     def fill_souls(self, FLAGS, model_resources):
         purgatory = self.world.purgatory
-        if FLAGS.dialog_model is None:
+        if len(FLAGS.dialog_model_opt_file) <= 3:
             purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
         else:
             purgatory.register_filler_soul_provider(
                 "model",
                 GenerativeHeuristicModelSoul,
-                lambda: [model_resources["shared_model_content"]],
-            )
-        if model_resources.get("rpg_model") is not None:
-            purgatory.register_shared_args("rpg_model", model_resources["rpg_model"])
-        if model_resources.get("shared_action_model") is not None:
-            purgatory.register_shared_args(
-                "generic_act_model", model_resources["generic_act_model"]
+                lambda: [],
             )
         for empty_agent in self.world.oo_graph.agents.values():
             purgatory.fill_soul(empty_agent)
@@ -181,7 +178,7 @@ class TutorialInstance(GameInstance):
     """
 
     def __init__(
-        self, game_id, ldb, opt=None, episode_db: Optional["EpisodeDB"] = None
+        self, game_id, ldb, opt=None, world_config: Optional["WorldConfig"] = None
     ):
         _, tutorial_world = TutorialWorldBuilder(ldb, opt).get_graph()
         self.db = ldb
@@ -190,7 +187,9 @@ class TutorialInstance(GameInstance):
         self._target_destination = tutorial_world.oo_graph.find_nodes_by_name(
             "Ethereal Mist"
         )[0]
-        super().__init__(game_id, ldb, g=tutorial_world, opt=opt, episode_db=episode_db)
+        super().__init__(
+            game_id, ldb, g=tutorial_world, opt=opt, world_config=world_config
+        )
         self._should_shutdown = False
         self._did_complete = True
 

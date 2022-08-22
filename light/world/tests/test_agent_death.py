@@ -46,7 +46,7 @@ class TestInteractionLoggers(unittest.TestCase):
         purgatory.register_filler_soul_provider(
             "battle",
             BattleRoyaleSoul,
-            lambda: [{}],
+            lambda: [],
         )
         for empty_agent in world.oo_graph.agents.values():
             purgatory.fill_soul(empty_agent)

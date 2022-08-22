@@ -32,6 +32,7 @@ from dataclasses import dataclass, field
 
 if TYPE_CHECKING:
     from light.data_model.db.episodes import EpisodeDB
+    from light.registry.model_pool import ModelPool
     from light.graph.builders.base import GraphBuilder
 
 
@@ -53,6 +54,12 @@ def check_integrity(f):
     return wrapper
 
 
+def get_empty_model_pool():
+    from light.registry.model_pool import ModelPool
+
+    return ModelPool()
+
+
 @dataclass
 class WorldConfig:
     """
@@ -65,6 +72,16 @@ class WorldConfig:
     opt: Optional[Dict[str, Any]] = field(default_factory=dict)
     episode_db: Optional["EpisodeDB"] = None
     graph_builder: Optional["GraphBuilder"] = None
+    model_pool: Optional["ModelPool"] = field(default_factory=get_empty_model_pool)
+
+    def copy(self) -> "WorldConfig":
+        """Return a new shallow copy of this WorldConfig"""
+        return WorldConfig(
+            opt=self.opt,
+            episode_db=self.episode_db,
+            graph_builder=self.graph_builder,
+            model_pool=self.model_pool,
+        )
 
 
 class World(object):
@@ -87,6 +104,13 @@ class World(object):
         self._oo_graph = OOGraph(config.opt)
         self.view = WorldViewer(self)
         self.purgatory = Purgatory(self)
+        model_pool = config.model_pool
+        if model_pool is None:
+            from light.registry.model_pool import ModelPool
+
+            # TODO likely cleaner way to get one of these
+            model_pool = ModelPool()
+        self.model_pool = config.model_pool
 
         # TODO better specific player management?
         self._player_cnt = 0
@@ -96,7 +120,7 @@ class World(object):
         self.graph_builder = config.graph_builder
 
         # Set up safety classifier.
-        init_safety_classifier(self._opt.get("safety_classifier_path", ""))
+        init_safety_classifier(self._opt.get("safety_classifier_path", ""), model_pool)
 
         # Set up magic!
         init_magic(self._opt.get("magic_db_path", "/scratch/light/data/magic.db"))
@@ -105,7 +129,7 @@ class World(object):
 
         self.action_parser = config.opt.get("_action_parser")
         if self.action_parser is None:
-            self.action_parser = ActionParser(config.opt)
+            self.action_parser = ActionParser(self.model_pool)
 
     @property
     def oo_graph(self):

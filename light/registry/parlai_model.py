@@ -50,6 +50,13 @@ class ParlAIModelConfig:
         metadata={"help": ("Additional overrides for this model's opt")},
     )
 
+    def get(self, attr: str, default_val: Optional[Any] = None):
+        """Wrapper to ensure interoperability with hydra DictConfig"""
+        val = self.__dict__.get(attr, default_val)
+        if val == MISSING:
+            val = None
+        return val
+
 
 class ParlAIModelLoader:
     """
@@ -74,12 +81,23 @@ class ParlAIModelLoader:
         if opt_from_config is None:
             parser = ParlaiParser(True, True, "")
             opt = parser.parse_args(args=[])
+            opt["override"] = opt.get("override", {})
         else:
-            opt_file = os.path.expanduser()
+            opt_file = os.path.expanduser(opt_from_config)
             opt = Opt.load(os.path.expanduser(opt_file))
+            for key, item in opt.items():
+                if not isinstance(item, str):
+                    continue
+                if "$LIGHT_MODEL_ROOT" in item:
+                    # Expand path and file keys to capture $LIGHT_MODEL_ROOT
+                    opt[key] = os.path.expandvars(opt[key])
+
+            base_overrides = opt.get("base_overrides", {})
+            base_overrides.update(opt.copy())
+            opt["override"] = base_overrides
 
         if model_from_config is not None:
-            model_file = os.path.expanduser(config.opt_file)
+            model_file = os.path.expanduser(config.model_file)
             if not os.path.exists(model_file):
                 raise AssertionError(
                     f"Provided model file `{model_file}` does not exist."
@@ -87,6 +105,7 @@ class ParlAIModelLoader:
             opt["model_file"] = model_file
 
         opt.update(overrides)
+        opt["override"].update(overrides)
         model = create_agent(opt)
         self._shared = model.share()
 
@@ -99,7 +118,8 @@ class ParlAIModelLoader:
         use_shared = self._shared
         if use_shared is not None:
             opt = deepcopy(use_shared["opt"])
-            opt.update(overrides)
+            if overrides is not None:
+                opt.update(overrides)
             use_shared["opt"] = opt
         model = create_agent_from_shared(use_shared)
         return self.before_return_model(model)

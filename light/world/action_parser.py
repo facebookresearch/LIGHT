@@ -4,12 +4,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.agents import create_agent
 import parlai.utils.logging as logging
 from parlai.core.message import Message
 import copy
-
 import threading
+from light.registry.model_pool import ModelTypeName
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from light.registry.model_pool import ModelPool
 
 args = {}
 args["help"] = 0
@@ -92,23 +96,13 @@ def get_input_cands(x, y2, y):
 
 
 class ActionParser:
-    def __init__(self, opt):
-        # Create parser model
-        self.opt = copy.deepcopy(opt)
-        if "parser_model_file" not in self.opt or self.opt["parser_model_file"] == "":
+    def __init__(self, model_pool: "ModelPool"):
+        if model_pool.has_model(ModelTypeName.PARSER):
+            self.agent = model_pool.get_model(ModelTypeName.PARSER)
+        else:
             self.agent = None
-            return
-        self.opt["model_file"] = self.opt["parser_model_file"]
-        self.opt["interactive_candidates"] = "inline"
-        # self.opt["no_cuda"] = True
-        self.opt["override"] = {
-            "interactive_candidates": "inline"
-        }  # , "no_cuda": True}
-        self.agent = create_agent(self.opt, requireModelExists=True)
-        self.agent.opt.log()
         # Lock to handle concurrency, fixed better with asycio
         self.parse_lock = threading.Condition()
-        opt["_action_parser"] = self
 
     def parse(self, txt, actor=None):
         if self.agent is None:

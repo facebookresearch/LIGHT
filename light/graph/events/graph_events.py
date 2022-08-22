@@ -30,13 +30,15 @@ from light.graph.elements.graph_nodes import (
 from light.graph.events.safety import SafetyClassifier
 import math
 
-safety_classifier = None
+if TYPE_CHECKING:
+    from light.registry.model_pool import ModelPool
+
+safety_classifier: Optional[SafetyClassifier] = None
 
 
-def init_safety_classifier(datapath):
+def init_safety_classifier(datapath, model_pool: "ModelPool"):
     global safety_classifier
-    if datapath is not None and len(datapath) > 0:
-        safety_classifier = SafetyClassifier(datapath, True)
+    safety_classifier = SafetyClassifier(datapath, model_pool)
 
 
 if TYPE_CHECKING:

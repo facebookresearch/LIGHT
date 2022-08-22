@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Optional
 import random
 import time
 from light.graph.events.graph_events import SystemMessageEvent
+from light.registry.model_pool import ModelTypeName
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -35,7 +36,6 @@ class PlayerSoul(BaseSoul):
         world: "World",
         player_id: str,
         provider=None,
-        shared_model_content=None,
     ):
         """
         PlayerSouls register to a GraphAgent in a World, but also keep track of the
@@ -57,10 +57,11 @@ class PlayerSoul(BaseSoul):
                     ["short_motivation", "mid_motivation", "long_motivation"]
                 )
                 target_node.persona += QUEST_TEXT + target_quest[goal]
-        if "rpg_model" in shared_model_content:
-            self.roleplaying_score_model = shared_model_content["rpg_model"].clone()
-        if "generic_act_model" in shared_model_content:
-            self.generic_act_model = shared_model_content["generic_act_model"].clone()
+        model_pool = world.model_pool
+        if model_pool.has_model(ModelTypeName.SCORING):
+            self.roleplaying_score_model = model_pool.get_model(ModelTypeName.SCORING)
+        if model_pool.has_model(ModelTypeName.GENERIC_ACTS):
+            self.generic_act_model = model_pool.get_model(ModelTypeName.GENERIC_ACTS)
         self.agent_logger = AgentInteractionLogger(
             world.oo_graph, target_node, episode_db=world._config.episode_db
         )

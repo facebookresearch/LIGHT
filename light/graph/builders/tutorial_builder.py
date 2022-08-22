@@ -144,7 +144,7 @@ class TutorialWorldBuilder(MapJsonBuilder):
         )
         return graph
 
-    def get_graph(self):
+    def get_graph(self, world_config: Optional[WorldConfig] = None):
         """Create and return a tutorial graph"""
         if self.opt.get("load_tutorial_map", None) is not None:
             graph, _ = super().get_graph()
@@ -152,9 +152,8 @@ class TutorialWorldBuilder(MapJsonBuilder):
             graph = self.build_new_graph()
         opt = self.opt.copy()
         opt["tutorial"] = True
-        world = World(
-            WorldConfig(episode_db=self.episode_db, opt=opt, graph_builder=self)
-        )
+        world = World(self._get_attached_config(world_config, opt))
+
         world.oo_graph = graph
         # Force the logging mode to tutorial PRE_LAUNCH_TUTORIAL
         world.purgatory = TutorialPurgatory(world)

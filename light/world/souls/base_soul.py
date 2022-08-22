@@ -10,6 +10,7 @@ import os
 import asyncio
 from typing import TYPE_CHECKING, Any, Optional
 from light.graph.events.graph_events import SystemMessageEvent
+from light.registry.model_pool import ModelTypeName
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -31,6 +32,13 @@ class BaseSoul(Soul):
         super().__init__(target_node, world)
         self.target_node._last_interaction_partner_id = None
         self.reset_interaction_history(self.target_node)
+        self.model_pool = world.model_pool
+        if self.model_pool.has_model(ModelTypeName.SCORING):
+            self.roleplaying_score_model = self.model_pool.get_model(
+                ModelTypeName.SCORING
+            )
+        else:
+            self.roleplaying_score_model = None
 
     def get_last_interaction_partner(self, node=None) -> Optional["GraphAgent"]:
         if node == None:
@@ -197,7 +205,6 @@ class BaseSoul(Soul):
         # Dialogue/interaction context.
         dtxt = ""
         agent = self.target_node
-        agent_id = agent.node_id
         turn_id = None
         for d in agent._last_interaction_history:
             current_turn_id = d[0][0]
@@ -215,73 +222,7 @@ class BaseSoul(Soul):
         final = txt + dtxt
         return final
 
-    @classmethod
-    def load_generic_act_model(cls, generic_act_model_file):
-        """
-        Load up and create shared retrieval model for acts, emotes and quest scoring, etc.
-        """
-        # TODO refactor with some kind of model-loading standard for model souls?
-        from parlai.core.params import ParlaiParser
-        from parlai.core.agents import create_agent
-
-        parser = ParlaiParser(True, True, "")
-        # Load action model
-        args = [
-            "-mf",
-            generic_act_model_file,
-            "-ecands",
-            "inline",
-            "--ignore-bad-candidates",
-            "True",
-        ]
-        act_opt, _unknown = parser.parse_and_process_known_args(args=args)
-        act_opt["override"] = {
-            "eval_candidates": "inline",
-            "ignore_bad_candidates": "True",
-        }
-        act_opt["interactive_mode"] = True
-        act_opt["ignore_bad_candidates"] = True
-        print("[ Creating generic act model ... ]")
-        action_model = create_agent(act_opt, requireModelExists=True)
-        return action_model
-
     ## ----- ROLE PLAYING SCORE FUNCTIONS BELOW
-
-    @classmethod
-    def load_roleplaying_score_model(cls, roleplaying_score_model_file):
-        """
-        Load up and create shared roleplaying score model for use with this class
-        """
-        # TODO refactor with some kind of model-loading standard for model souls?
-        from parlai.core.params import ParlaiParser
-        from parlai.core.agents import create_agent
-
-        parser = ParlaiParser(True, True, "")
-        args = ["-mf", roleplaying_score_model_file]
-        opt, _unknown = parser.parse_and_process_known_args(args=args)
-        # opt["interactive_mode"] = True
-        # return create_agent(opt, requireModelExists=True)
-        print("[ Creating roleplaying score agent ... ]")
-        model_opt = {}
-        model_opt["datapath"] = opt["datapath"]
-        model_opt["model_file"] = roleplaying_score_model_file
-        # '/checkpoint/jase/projects/light/beatthehobbot/swp6_light_bi/actmodelv2/model'
-        # model_opt['fixed_candidates_path'] = ranker_agent.opt['fixed_candidates_path']
-        model_opt["candidates"] = "fixed"
-        model_opt["eval_candidates"] = "fixed"
-        # model_opt["no_cuda"] = True
-        model_opt["use_reply"] = "none"
-        model_opt["interactive_mode"] = True
-        model_opt["boring_alpha"] = 0
-        model_opt["override"] = deepcopy(model_opt)
-        roleplaying_score_model = create_agent(model_opt)
-        roleplaying_score_model.boring = None
-
-        # mark this agent as the special RP score agent
-        roleplaying_score_model.actingscore = True
-        # override eval step here
-        roleplaying_score_model.eval_step = roleplaying_score_model.eval_step_scoresonly
-        return roleplaying_score_model
 
     def too_much_string_overlap(self, s1, s2):
         """
@@ -321,7 +262,7 @@ class BaseSoul(Soul):
         return human_rank, human_score
 
     def score_conversation(self):
-        if not hasattr(self, "roleplaying_score_model"):
+        if self.roleplaying_score_model is None:
             # For local testing of exp with no models, set this to nonzero
             return 0
 
@@ -344,7 +285,7 @@ class BaseSoul(Soul):
             self.roleplaying_score_model.eval_step_scoresonly
         )
         fixed_cand_scores = self.get_fixed_cand_scores(context)
-        pos, score = self.get_pos_human_msg(human_msg, fixed_cand_scores)
+        pos, _score = self.get_pos_human_msg(human_msg, fixed_cand_scores)
         # print("pos:", pos)
         if pos < 1000:
             final_score = 4

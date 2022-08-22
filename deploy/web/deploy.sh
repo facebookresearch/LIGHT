@@ -21,4 +21,4 @@ fi
 
 CONF_FN=$WEBDIR"/configs/"$1"/config"
 
-python $SERVER_FILE @$CONF_FN
+cat $CONF_FN | python $SERVER_FILE `xargs -0`

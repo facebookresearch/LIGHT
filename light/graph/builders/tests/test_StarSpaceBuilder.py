@@ -33,6 +33,7 @@ from light.data_model.light_database import (
 
 
 @pytest.mark.slow
+@pytest.mark.skip(reason="Need to update starspace builders to use Model Pool")
 class TestStarspaceBuilder(unittest.TestCase):
     def setUp(self):
         random.seed(20)

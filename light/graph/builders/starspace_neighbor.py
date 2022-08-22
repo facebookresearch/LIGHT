@@ -23,6 +23,7 @@ random.seed(6)
 np.random.seed(6)
 
 
+# TODO deprecate?
 class StarspaceNeighborBuilder(GraphBuilder):
     """Old builder that used starspace to connect rooms and db entries to fill them"""
 
