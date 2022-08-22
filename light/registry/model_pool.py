@@ -7,6 +7,7 @@
 from dataclasses import dataclass, field
 from omegaconf import MISSING, DictConfig
 import asyncio
+import enum
 
 from light.registry.parlai_model import ParlAIModelConfig, ParlAIModelLoader
 from light.registry.parlai_remote_model import (
@@ -39,12 +40,24 @@ ALL_LOADERS: Dict[str, ModelLoaderClass] = {
 }
 
 
+class ModelTypeName(enum.Enum):
+    """Common model names of use in LIGHT, for use in register_model"""
+
+    SAFETY = "safety"  # Models used to evaluate dialog or env safety
+    DIALOG = "dialog"  # Models for generating dialogue
+    SCORING = "role_playing_score"  # Models to score player utterances
+    ACTION = "action"  # Models used by model agents for generating actions
+    GENERIC_ACTS = "generic_action"  # Models to select a next action from cands
+    PARSER = "parser"  # Models to parse raw text to in-game actions
+    SERVED = "served"  # Any generic served model (for ModelServer)
+
+
 class ModelPool:
     def __init__(self):
         self._model_loaders = {}
 
     async def register_model_async(
-        self, config: Union[DictConfig, ModelConfig], model_names: List[str]
+        self, config: Union[DictConfig, ModelConfig], model_names: List[ModelTypeName]
     ) -> None:
         """
         Takes the given config, loads the model, and
@@ -58,7 +71,7 @@ class ModelPool:
         loader = loader_class(config)
         await loader.force_load()
         for model_name in model_names:
-            self._model_loaders[model_name] = loader
+            self._model_loaders[model_name.value] = loader
 
     def register_model(
         self, config: Union[DictConfig, ModelConfig], model_names: List[str]
@@ -68,21 +81,21 @@ class ModelPool:
         """
         return asyncio.run(self.register_model_async(config, model_names))
 
-    def has_model(self, model_name: str) -> bool:
+    def has_model(self, model_name: ModelTypeName) -> bool:
         """
         Determine if there's a model registered for the given name.
         """
-        return model_name in self._model_loaders
+        return model_name.value in self._model_loaders
 
     def get_model(
-        self, model_name: str, overrides: Optional[Dict[str, Any]] = None
+        self, model_name: ModelTypeName, overrides: Optional[Dict[str, Any]] = None
     ) -> Agent:
         """
         Get a copy of the model stored in the given name
 
         If overrides are provided, pass those to the loader as well
         """
-        loader = self._model_loaders.get(model_name)
+        loader = self._model_loaders.get(model_name.value)
         if loader is None:
             raise AssertionError(
                 f"No models registered for requested name {model_name}"

@@ -24,7 +24,7 @@ import tornado.web
 import tornado.websocket
 
 from light import LIGHT_DIR
-from light.registry.model_pool import ALL_LOADERS, ModelPool
+from light.registry.model_pool import ALL_LOADERS, ModelPool, ModelTypeName
 from light.registry.models.acting_score_model import (
     ParlAIPolyencoderActingScoreModelConfig,
 )
@@ -103,11 +103,14 @@ class ResponseHandler(BaseHandler):
         response = await self.model.act()
         if "metrics" in response:
             del response["metrics"]
-        if "sorted_scores" in response:
+        if "sorted_scores" in response and not isinstance(
+            response["sorted_scored"], list
+        ):
             response["sorted_scores"].force_set(response["sorted_scores"].tolist())
         try:
             self.write(json.dumps({"act": response}))
-        except:
+        except TypeError:
+            print("JSON encoding failed:")
             print(response.keys())
             print(response)
             raise
@@ -162,10 +165,10 @@ def _init_model(model_opt_file: str, model_loader: str) -> "Agent":
     else:
         raise NotImplementedError(f"Unsupported model loader {model_loader}")
 
-    pool.register_model(cfg, ["target"])
-    model = pool.get_model("target")
+    pool.register_model(cfg, [ModelTypeName.SERVED])
+    model = pool.get_model(ModelTypeName.SERVED)
     # Try to clear up some memory
-    del pool._model_loaders["target"]
+    del pool._model_loaders[ModelTypeName.SERVED]
     import gc
 
     gc.collect()

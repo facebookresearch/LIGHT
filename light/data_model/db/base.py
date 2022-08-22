@@ -164,8 +164,6 @@ class BaseDB(ABC):
         """
         Determine if the given file path exists on this storage
         """
-        import botocore
-
         if self.backend in ["test", "local"]:
             full_path = os.path.join(self.file_root, file_path)
             return os.path.exists(full_path)
