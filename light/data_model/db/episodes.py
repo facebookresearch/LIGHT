@@ -77,7 +77,7 @@ class DBEpisode(SQLBase):
         split by the graph key ID relevant to those actions
         """
         # Import deferred as World imports loggers which import the EpisodeDB
-        from light.world.world import World
+        from light.world.world import World, WorldConfig
 
         events = db.read_data_from_file(self.dump_file_path, json_encoded=True)[
             "events"
