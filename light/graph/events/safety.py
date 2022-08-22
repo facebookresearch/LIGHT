@@ -8,8 +8,10 @@ from parlai.utils.safety import OffensiveStringMatcher
 from parlai.agents.transformer.transformer import TransformerClassifierAgent
 from parlai.utils.typing import TShared
 from parlai.tasks.dialogue_safety.agents import OK_CLASS, NOT_OK_CLASS
+from light.registry.model_pool import ModelTypeName
 
 from typing import Optional, TYPE_CHECKING
+
 
 if TYPE_CHECKING:
     from light.registry.model_pool import ModelPool
@@ -22,8 +24,8 @@ class SafetyClassifier:
             self.string_matcher = OffensiveStringMatcher(datapath)
         else:
             self.string_matcher = None
-        if model_pool.has_model("safety"):
-            self.classifier = model_pool.get_model("safety")
+        if model_pool.has_model(ModelTypeName.SAFETY):
+            self.classifier = model_pool.get_model(ModelTypeName.SAFETY)
         else:
             self.classifier = None
 
@@ -46,5 +48,5 @@ class SafetyClassifier:
                 return False
         if self.classifier is not None:
             not_ok, _prob = await self.contains_offensive_language(text)
-            return not_ok
+            return not not_ok
         return True
