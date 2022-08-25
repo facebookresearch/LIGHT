@@ -1,9 +1,11 @@
 /* REACT */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
+/* REDUX */
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+/* ---- REDUCER ACTIONS ---- */
+import { setReportModal } from "../../../features/modals/modals-slice";
 /* STYLES */
 import { Dialog, Transition } from "@headlessui/react";
-/* ICONS */
-import { FaStar } from "react-icons/fa";
 
 /* CONFIG */
 import CONFIG from "../../../config.js";
@@ -14,25 +16,35 @@ const ReportCategories = [
   "Other",
 ];
 
-const ReportMessageForm = ({
-  eventId,
-  reportedMessage,
-  caller,
-  actor,
-  exitReportMode,
-  reportedHandler,
-  scrollToBottom,
-}) => {
+const ReportMessageForm = () => {
+  /* REDUX DISPATCH FUNCTION */
+  const dispatch = useAppDispatch();
+  /* ------ REDUX STATE ------ */
+  //MODAL STATE
+  const showReportModal = useAppSelector(
+    (state) => state.modals.showReportModal
+  );
+  const reportModalMessageId = useAppSelector(
+    (state) => state.modals.reportModalMessageId
+  );
+  const reportModalMessage = useAppSelector(
+    (state) => state.modals.reportModalMessage
+  );
+  const reportModalActor = useAppSelector(
+    (state) => state.modals.reportModalActor
+  );
   /* LOCAL STATE */
   const [reportCategory, setReportCategory] = useState("");
   const [reportReason, setReportReason] = useState("");
 
   /*  LIFE CYLCE */
-  useEffect(() => {
-    scrollToBottom();
-  }, [reportCategory]);
 
   /* HANDLERS */
+
+  const closeReportModalHandler = () => {
+    dispatch(setReportModal(false));
+  };
+
   const categorySelectionHandler = (e) => {
     console.log("DROP DOWN TARGET:  ", e.target.value);
     setReportCategory(e.target.value);
@@ -44,9 +56,9 @@ const ReportMessageForm = ({
       base_url += ":" + CONFIG.port;
     }
     console.log("REPORT PAYLOAD:  ", {
-      eventId: eventId,
+      eventId: reportModalMessageId,
       category: reportCategory,
-      message: reportedMessage,
+      message: reportModalMessage,
       reason: reportReason,
     });
 
@@ -58,19 +70,21 @@ const ReportMessageForm = ({
       credentials: "same-origin",
       body: JSON.stringify({
         category: reportCategory,
-        message: reportedMessage,
+        message: reportModalMessage,
         reason: reportReason,
       }),
     });
     setReportReason("");
-    reportedHandler();
-    exitReportMode();
     scrollToBottom();
   };
 
   return (
     <Transition.Root show={showReportModal} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={closeReportModal}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        onClose={closeReportModalHandler}
+      >
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -100,9 +114,9 @@ const ReportMessageForm = ({
       </Dialog>
       <div className="bg-white ">
         <div className="agent">
-          <span>{actor}</span>
+          <span>{reportModalActor}</span>
         </div>
-        {reportedMessage}
+        {reportModalMessage}
         <div>
           <b>Why are you reporting this message?</b>
         </div>
@@ -149,7 +163,7 @@ const ReportMessageForm = ({
             <button
               type="submit"
               className={` w-20 items-start px-1.5 py-0.5 border border-transparent text-lg font-medium rounded shadow-sm text-white bg-gray-600`}
-              onClick={exitReportMode}
+              onClick={closeReportModalHandler}
             >
               Cancel
             </button>

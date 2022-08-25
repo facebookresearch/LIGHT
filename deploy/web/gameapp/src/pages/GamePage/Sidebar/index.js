@@ -113,7 +113,6 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
           selectedEmoji={selectedEmoji}
           setShowEmojiPicker={setShowEmojiPicker}
           setSelectedEmoji={setEmoji}
-          titleBg={"black"}
           onClickFunction={() => setSelectedTip(2)}
         >
           <p className="persona-text" style={{ fontSize: "14px" }}>
@@ -131,8 +130,6 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
         </IconCollapsibleBox>
         <CollapsibleBox
           title="Mission"
-          titleBg="black"
-          containerBg="black"
           onClickFunction={() => setSelectedTip(3)}
         >
           {
@@ -153,8 +150,6 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
         {location ? (
           <CollapsibleBox
             title="Location"
-            titleBg="black"
-            containerBg="#black"
             onClickFunction={() => setSelectedTip(4)}
           >
             <div className="location text-white">

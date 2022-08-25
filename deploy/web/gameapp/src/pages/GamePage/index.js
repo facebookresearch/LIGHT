@@ -16,6 +16,8 @@ import { setReportModal } from "../../features/modals/modals-slice";
 import "./styles.css";
 import "react-tippy/dist/tippy.css";
 import "emoji-mart/css/emoji-mart.css";
+/* IMAGES */
+import StarryNight from "../../assets/images/light_starry_bg.jpg";
 /* EMOJI */
 import { DefaultEmojiMapper } from "../../utils";
 import { emojiIndex } from "emoji-mart";
@@ -25,7 +27,7 @@ import MobileFrame from "../../components/MobileFrame";
 import LoadingPage from "../../pages/LoadingPage";
 import Sidebar from "./Sidebar";
 import ChatDisplay from "./ChatDisplay";
-//import ReportMessageModal from "../../components/Modals/ReportMessageModal"
+import ReportMessageModal from "../../components/Modals/ReportMessageModal";
 /* CONFIG */
 import CONFIG from "../../config.js";
 
@@ -126,12 +128,6 @@ const Chat = ({
   //MODAL STATE
   const showReportModal = useAppSelector(
     (state) => state.modals.showReportModal
-  );
-  const reportModalMesssage = useAppSelector(
-    (state) => state.modals.reportModalMesssage
-  );
-  const reportModalMesssageId = useAppSelector(
-    (state) => state.modals.reportModalMesssageId
   );
   //GIFT XP STATE
   const giftXp = useAppSelector((state) => state.giftXp.value);
@@ -375,10 +371,14 @@ const Chat = ({
 
   /* ----------TAILWIND CLASSES--------- */
   const classNames = {
-    gamepageContainer: "container h-full max-h-full",
+    gamepageContainer: "container h-screen w-screen",
   };
   return (
-    <div className={classNames.gamepageContainer} onMouseMove={resetIdleTimer}>
+    <div
+      style={{ backgroundImage: `url(${StarryNight})` }}
+      className={classNames.gamepageContainer}
+      onMouseMove={resetIdleTimer}
+    >
       {isMobile ? (
         <MobileFrame buttons={buttons}>
           {persona ? (
@@ -430,6 +430,7 @@ const Chat = ({
           </div>
         </div>
       )}
+      <ReportMessageModal />
     </div>
   );
 };

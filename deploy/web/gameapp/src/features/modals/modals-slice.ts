@@ -4,15 +4,17 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 /* STATE TYPE */
 interface ModalState {
   showReportModal: boolean;
-  reportModalMesssage: string;
+  reportModalMessage: string;
   reportModalMessageId: string;
+  reportModalActor: string;
 }
 
 /* Initial value of the state */
 const initialState: ModalState = {
   showReportModal: false,
-  reportModalMesssage: "",
+  reportModalMessage: "",
   reportModalMessageId: "",
+  reportModalActor: "",
 };
 //Create slice will generate action objects for us
 const modalSlice = createSlice({
@@ -23,11 +25,14 @@ const modalSlice = createSlice({
     setReportModal(state, action: PayloadAction<boolean>) {
       return { ...state, showReportModal: action.payload };
     },
-    setReportModalMesssage(state, action: PayloadAction<string>) {
-      return { ...state, reportModalMesssage: action.payload };
+    setReportModalMessage(state, action: PayloadAction<string>) {
+      return { ...state, reportModalMessage: action.payload };
     },
     setReportModalMessageId(state, action: PayloadAction<string>) {
       return { ...state, reportModalMessageId: action.payload };
+    },
+    setReportModalActor(state, action: PayloadAction<string>) {
+      return { ...state, reportModalActor: action.payload };
     },
   },
 });
@@ -36,8 +41,9 @@ const modalSlice = createSlice({
 // import anywhere in app to use
 export const {
   setReportModal,
-  setReportModalMesssage,
+  setReportModalMessage,
   setReportModalMessageId,
+  setReportModalActor,
 } = modalSlice.actions;
 /* SLICE REDUCER */
 export default modalSlice.reducer;

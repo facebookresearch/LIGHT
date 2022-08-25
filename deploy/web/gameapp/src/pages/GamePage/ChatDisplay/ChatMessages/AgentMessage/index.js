@@ -7,8 +7,9 @@ import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
 import { updateSessionSpentGiftXp } from "../../../../../features/sessionInfo/sessionspentgiftxp-slice";
 import {
-  setReportModalMesssage,
-  setReportModalMesssageId,
+  setReportModal,
+  setReportModalMessageId,
+  setReportModalActor,
 } from "../../../../../features/modals/modals-slice";
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
@@ -79,11 +80,11 @@ const AgentMessage = ({
   const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
   //MODAL STATE
-  const reportModalMesssage = useAppSelector(
-    (state) => state.modals.reportModalMesssage
+  const reportModalMessage = useAppSelector(
+    (state) => state.modals.reportModalMessage
   );
-  const reportModalMesssageId = useAppSelector(
-    (state) => state.modals.reportModalMesssageId
+  const reportModalMessageId = useAppSelector(
+    (state) => state.modals.reportModalMessageId
   );
   //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
@@ -127,6 +128,10 @@ const AgentMessage = ({
 
   const reportingHandler = () => {
     setReportMode(true);
+    dispatch(setReportModalMessageId(eventId));
+    dispatch(setReportModalMessage(text));
+    dispatch(setReportModalActor(actor));
+    dispatch(setReportModal(true));
     scrollToBottom();
   };
 
@@ -220,7 +225,7 @@ const AgentMessage = ({
         <div className=" flex flex-col mr-6">
           <div className="relative min-w-[120px] max-w-[400px] min-h-[90px] bg-white rounded-[10px] flex justify-center items-center text-black text-xl">
             <div className="flex flex-col m-4 max-w-md break-words">
-              <p className="">{text}</p>
+              <p className="p-4">{text}</p>
               {isReported ? (
                 <span className="text-red-600">
                   This Message Has been reported
@@ -282,7 +287,7 @@ const AgentMessage = ({
         </div>
         <span className="w-30 text-white">{actor}</span>
       </div>
-      {isReportMode ? (
+      {/* {isReportMode ? (
         <ReportMessageForm
           eventId={eventId}
           reportedMessage={text}
@@ -292,7 +297,7 @@ const AgentMessage = ({
           reportedHandler={reportedHandler}
           scrollToBottom={scrollToBottom}
         />
-      ) : null}
+      ) : null} */}
     </>
   );
 };

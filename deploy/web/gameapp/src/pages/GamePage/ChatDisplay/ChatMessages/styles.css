@@ -39,7 +39,7 @@
 #message-star__container {
   display: flex;
   flex-direction: row;
-  background-color: white;
+  justify-content: flex-start;
 }
 
 #message-star {
@@ -55,7 +55,6 @@
 }
 
 #message-star__number {
-  margin-right: 1.3em;
   display: inline;
   font-size: 24px;
   animation: 4s slide normal;
