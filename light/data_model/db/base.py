@@ -50,7 +50,7 @@ class DBStatus(Enum):
     REVIEW = "unreviewed"
     PRODUCTION = "production"
     REJECTED = "rejected"
-    QUESTIONABLE = "questionable"
+    QUESTIONABLE = "questionable"  # For low quality, or borderline content
     ACCEPTED = "accepted"
 
 
