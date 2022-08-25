@@ -17,9 +17,8 @@ const xpSlice = createSlice({
   initialState,
   /* REDUCER ACTIONS */
   reducers: {
-    //immer will handle immutability in state changess
-    updateXp(state, action: PayloadAction<XpState>) {
-      return { ...state, ...action.payload };
+    updateXp(state, action: PayloadAction<number>) {
+      return { ...state, value: action.payload };
     },
     increaseXp(state, action: PayloadAction<number>) {
       state.value += action.payload;
@@ -29,6 +28,6 @@ const xpSlice = createSlice({
 
 /* EXPORTED REDUCER ACTIONS */
 // import anywhere in app to use
-export const { updateXp } = xpSlice.actions;
+export const { updateXp, increaseXp } = xpSlice.actions;
 /* SLICE REDUCER */
 export default xpSlice.reducer;

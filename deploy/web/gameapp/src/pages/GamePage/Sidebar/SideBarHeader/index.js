@@ -11,40 +11,46 @@ import LevelDisplay from "../../../../components/LevelDisplay";
 
 /* IMAGES */
 import Scribe from "../../../../assets/images/scribe.png";
+import { GiConsoleController } from "react-icons/gi";
 
 //
 const SidebarHeader = () => {
   /* ----LOCAL STATE---- */
+  //Character level
   const [level, setLevel] = useState(1);
+  //Experience needed for next level
   const [neededExp, setNeededExp] = useState(0);
-  const [exp, setExp] = useState(0);
+  //Percent of progress towards next level
   const [progressPercent, setProgressPercent] = useState(0);
   /* ----REDUX STATE---- */
-  //XP
+  //PLAYER XP STATE
   const xp = useAppSelector((state) => state.xp.value);
-  //GIFTXP
+  //SESSION XP STATE
+  const sessionXp = useAppSelector((state) => state.sessionXp.value);
+  //GIFTXP STATE
   const giftXp = useAppSelector((state) => state.giftXp.value);
 
+  // UTIL
   const levelCalculator = () => {
+    // BASE VALUES
     let currentLevel = 1;
-    let currentExp = xp;
+    let currentExp = xp + sessionXp;
     let expToLevel = currentLevel * 10;
+    // Level is calculated by subtracting total exp by required experience for each level
     while (expToLevel <= currentExp) {
       currentLevel++;
       currentExp -= expToLevel;
       expToLevel = currentLevel * 10;
     }
-    let nextLevel = currentLevel * 5 * (currentLevel + 1);
-    let percent = Math.floor((xp / nextLevel) * 100);
+    let updatedPercent = Math.floor((currentExp / expToLevel) * 100);
     setLevel(currentLevel);
-    setNeededExp(nextLevel);
-    setExp(xp);
-    setProgressPercent(percent);
+    setNeededExp(expToLevel);
+    setProgressPercent(updatedPercent);
   };
 
   useEffect(() => {
     levelCalculator();
-  }, [xp]);
+  }, [xp, sessionXp]);
 
   return (
     <div>
@@ -52,11 +58,16 @@ const SidebarHeader = () => {
         <img className="inline-block h-14 w-14 rounded-full" src={Scribe} />
         <div>
           <p style={{ color: "white" }}> {`You are level ${level}`} </p>
-          <progress
-            className="progress progress-success w-56 h-4 border-solid border-white border-2"
-            value={progressPercent}
-            max="100"
-          ></progress>
+          <Tooltip
+            title={`Earn ${neededExp} XP til level ${level + 1}`}
+            position="top"
+          >
+            <progress
+              className="progress progress-warning w-full h-4 border-solid border-white border-2"
+              value={progressPercent}
+              max="100"
+            />
+          </Tooltip>
         </div>
       </div>
       {/* <div className="experienceinfo-leveldisplay">

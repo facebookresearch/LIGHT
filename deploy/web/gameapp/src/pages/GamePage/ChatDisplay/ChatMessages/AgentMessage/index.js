@@ -6,6 +6,10 @@ import "./styles.css";
 import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
 import { updateSessionSpentGiftXp } from "../../../../../features/sessionInfo/sessionspentgiftxp-slice";
+import {
+  setReportModalMesssage,
+  setReportModalMesssageId,
+} from "../../../../../features/modals/modals-slice";
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
 /* CUSTOM COMPONENTS */
@@ -74,6 +78,13 @@ const AgentMessage = ({
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
+  //MODAL STATE
+  const reportModalMesssage = useAppSelector(
+    (state) => state.modals.reportModalMesssage
+  );
+  const reportModalMesssageId = useAppSelector(
+    (state) => state.modals.reportModalMesssageId
+  );
   //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);

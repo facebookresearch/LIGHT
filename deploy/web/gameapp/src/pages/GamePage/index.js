@@ -1,5 +1,5 @@
 /* REACT */
-import React, { useEffect, Fragment } from "react";
+import React, { useState, useCallback, useEffect, Fragment } from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
@@ -13,7 +13,6 @@ import { updateSessionXp } from "../../features/sessionInfo/sessionxp-slice";
 import { updateIsMobile } from "../../features/view/view-slice";
 import { setReportModal } from "../../features/modals/modals-slice";
 /* STYLES */
-import { Dialog, Transition } from "@headlessui/react";
 import "./styles.css";
 import "react-tippy/dist/tippy.css";
 import "emoji-mart/css/emoji-mart.css";
@@ -26,6 +25,7 @@ import MobileFrame from "../../components/MobileFrame";
 import LoadingPage from "../../pages/LoadingPage";
 import Sidebar from "./Sidebar";
 import ChatDisplay from "./ChatDisplay";
+//import ReportMessageModal from "../../components/Modals/ReportMessageModal"
 /* CONFIG */
 import CONFIG from "../../config.js";
 
@@ -127,6 +127,12 @@ const Chat = ({
   const showReportModal = useAppSelector(
     (state) => state.modals.showReportModal
   );
+  const reportModalMesssage = useAppSelector(
+    (state) => state.modals.reportModalMesssage
+  );
+  const reportModalMesssageId = useAppSelector(
+    (state) => state.modals.reportModalMesssageId
+  );
   //GIFT XP STATE
   const giftXp = useAppSelector((state) => state.giftXp.value);
   //SESSION XP STATE
@@ -184,9 +190,49 @@ const Chat = ({
     dispatch(setReportModal(false));
   };
 
+  /* HANDLERS */
+  const categorySelectionHandler = (e) => {
+    console.log("DROP DOWN TARGET:  ", e.target.value);
+    setReportCategory(e.target.value);
+  };
+
+  const handleReportSubmission = () => {
+    let base_url = window.location.protocol + "//" + CONFIG.hostname;
+    if (CONFIG.port !== "80") {
+      base_url += ":" + CONFIG.port;
+    }
+    console.log("REPORT PAYLOAD:  ", {
+      eventId: eventId,
+      category: reportCategory,
+      message: reportedMessage,
+      reason: reportReason,
+    });
+
+    fetch(`${base_url}/report`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "same-origin",
+      body: JSON.stringify({
+        category: reportCategory,
+        message: reportedMessage,
+        reason: reportReason,
+      }),
+    });
+    setReportReason("");
+    reportedHandler();
+    exitReportMode();
+    scrollToBottom();
+  };
+
+  /*  LIFE CYLCE */
   /* PLAYER AND SESSION INFO UPDATES TO REDUX STORE */
   useEffect(() => {
     const { xp, giftXp } = persona;
+    console.log("PERSONA:  ", persona);
+    console.log("INCOMING EXP", xp);
+    console.log("Starting gift XP", giftXp);
     /* ----PLAYER INFO---- */
     dispatch(updatePersona(persona));
     dispatch(updateXp(xp));
@@ -208,14 +254,29 @@ const Chat = ({
     }
     /* ----SESSION INFO---- */
     /* SESSION XP */
+
     let sessionXpUpdate = 0;
     messages.map((message) => {
       if (message.is_self && message.xp > 0) {
         sessionXpUpdate += message.xp;
       }
     });
+    console.log("SESSION EXP:  ", sessionXpUpdate);
     dispatch(updateSessionXp(sessionXpUpdate));
   }, [persona]);
+
+  useEffect(() => {
+    /* ----SESSION INFO---- */
+    /* SESSION XP */
+    let sessionXpUpdate = 0;
+    messages.map((message) => {
+      if (message.is_self && message.xp > 0) {
+        sessionXpUpdate += message.xp;
+      }
+    });
+    console.log("SESSION EXP:  ", sessionXpUpdate);
+    dispatch(updateSessionXp(sessionXpUpdate));
+  }, [messages]);
 
   useEffect(() => {
     dispatch(updateGiftXp(giftXp - sessionGiftXpSpent));
@@ -369,36 +430,6 @@ const Chat = ({
           </div>
         </div>
       )}
-      <Transition.Root show={showReportModal} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeReportModal}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          ></Transition.Child>
-
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            enterTo="opacity-100 translate-y-0 sm:scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          >
-            <Dialog.Panel className="relative bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-sm sm:w-full sm:p-6">
-              <Dialog.Title
-                as="h3"
-                className="text-lg leading-6 font-medium text-gray-900"
-              ></Dialog.Title>
-            </Dialog.Panel>
-          </Transition.Child>
-        </Dialog>
-      </Transition.Root>
     </div>
   );
 };

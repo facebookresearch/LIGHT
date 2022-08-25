@@ -16,8 +16,8 @@ const sessionXpSlice = createSlice({
   initialState,
   /* REDUCER ACTIONS */
   reducers: {
-    updateSessionXp(state, action: PayloadAction<SessionXpState>) {
-      return { ...state, ...action.payload };
+    updateSessionXp(state, action: PayloadAction<number>) {
+      return { ...state, value: action.payload };
     },
   },
 });

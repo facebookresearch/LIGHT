@@ -76,25 +76,7 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
           } rounded-[10px] flex justify-center items-center text-xl`}
         >
           <div className="flex flex-col max-w-md break-words">
-            <p>{text}</p>
-            <>
-              {xp ? (
-                <>
-                  <Tooltip
-                    title={
-                      xp > 0
-                        ? `${xp} Experience Points Earned For Roleplaying`
-                        : null
-                    }
-                  >
-                    <span id="message-star__container">
-                      <p id="message-star__number">{xp}</p>
-                      <i id="message-star" className="fa fa-star" />
-                    </span>
-                  </Tooltip>
-                </>
-              ) : null}
-            </>
+            <p className="p-4">{text}</p>
           </div>
           <div className="relative">
             <div className="absolute bg-emerald-500">
@@ -118,6 +100,20 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
           />
         </div>
       </div>
+      {xp ? (
+        <>
+          <Tooltip
+            title={
+              xp > 0 ? `${xp} Experience Points Earned For Roleplaying` : null
+            }
+          >
+            <span id="message-star__container">
+              <p id="message-star__number">{xp}</p>
+              <i id="message-star" className="fa fa-star" />
+            </span>
+          </Tooltip>
+        </>
+      ) : null}
     </div>
   );
 };

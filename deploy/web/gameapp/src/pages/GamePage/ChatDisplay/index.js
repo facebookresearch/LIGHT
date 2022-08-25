@@ -28,8 +28,10 @@ const ChatDisplay = ({
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   const persona = useAppSelector((state) => state.persona);
-  //XP
+  //PLAYER XP STATE
   const xp = useAppSelector((state) => state.xp.value);
+  //SESSION XP STATE
+  const sessionXp = useAppSelector((state) => state.sessionXp.value);
   /* ----REDUX ACTIONS---- */
   // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();
@@ -100,7 +102,7 @@ const ChatDisplay = ({
             resetIdleTimer={resetIdleTimer}
           />
           <div className="flex justify-end">
-            <p className=" text-gray-200">XP earned this scene:{xp}</p>
+            <p className=" text-gray-200">XP earned this scene:{sessionXp}</p>
           </div>
         </div>
       </div>
