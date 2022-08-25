@@ -221,9 +221,6 @@ class TutorialInstance(GameInstance):
             "Ethereal Mist"
         )[0]
 
-    async def _init_world():
-        _, self.world = await TutorialWorldBuilder(self.db, self.opt).get_graph()
-
     def fill_souls(self, _FLAGS, model_resources):
         """Tutorials directly register the tutorial to the DM"""
         self.world.purgatory.register_filler_soul_provider(
