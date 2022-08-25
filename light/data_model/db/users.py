@@ -242,7 +242,8 @@ class UserDB(BaseDB):
         """
         get_player = select(DBPlayer).where(DBPlayer.db_id == player_id)
         with Session(self.engine) as session:
-            player = self._enforce_get_first(session, get_player, "Player not found")
+            # Ensure player exists first
+            _player = self._enforce_get_first(session, get_player, "Player not found")
             session.execute(delete(DBPlayer).where(DBPlayer.db_id == player_id))
             session.execute(
                 delete(DBScoreEntry).where(DBScoreEntry.user_id == player_id)

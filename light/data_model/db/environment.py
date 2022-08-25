@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from light.data_model.db.base import BaseDB, DBStatus, DBSplitType, HasDBIDMixin
+from light.data_model.db.users import DBPlayer
 from light.graph.structured_graph import OOGraph
 from omegaconf import MISSING, DictConfig
 from typing import (
@@ -43,6 +44,10 @@ SQLBase = declarative_base()
 FILE_PATH_KEY = "env"
 GRAPH_PATH_KEY = "graphs"
 QUEST_PATH_KEY = "quests"
+USR_KEY = DBPlayer.ID_PREFIX
+
+SCRUBBED_USER_ID = "scrubbed_user"
+MAX_RETENTION = 60 * 60 * 24 * 60  # 60 days
 
 SCRUBBED_USER_ID = "scrubbed_user"
 MAX_RETENTION = 60 * 60 * 24 * 60  # 60 days
@@ -1880,7 +1885,7 @@ class EnvDB(BaseDB):
                 DBQuest,
             ]:
                 stmt = select(target_type)
-                stmt = stmt.where(target_type.creator_id.startswith("USR"))
+                stmt = stmt.where(target_type.creator_id.startswith(USR_KEY))
                 stmt = stmt.where(target_type.create_timestamp < cutoff_time)
                 elems = session.scalars(stmt).all()
                 for elem in elems:
@@ -1888,7 +1893,7 @@ class EnvDB(BaseDB):
                     elem.creator_id = SCRUBBED_USER_ID
 
             stmt = select(DBFlag)
-            stmt = stmt.where(DBFlag.user_id.startswith("USR"))
+            stmt = stmt.where(DBFlag.user_id.startswith(USR_KEY))
             stmt = stmt.where(DBFlag.create_timestamp < cutoff_time)
             flags = session.scalars(stmt).all()
             for flag in flags:
@@ -1896,7 +1901,7 @@ class EnvDB(BaseDB):
                 flag.user_id = SCRUBBED_USER_ID
 
             stmt = select(DBEdit)
-            stmt = stmt.where(DBEdit.editor_id.startswith("USR"))
+            stmt = stmt.where(DBEdit.editor_id.startswith(USR_KEY))
             stmt = stmt.where(DBEdit.create_timestamp < cutoff_time)
             edits = session.scalars(stmt).all()
             for edit in edits:

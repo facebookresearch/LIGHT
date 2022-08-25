@@ -46,6 +46,10 @@ HYDRA_CONFIG_DIR = os.path.join(LIGHT_DIR, "hydra_configs")
 DEFAULT_PORT = 35494
 DEFAULT_HOSTNAME = "localhost"
 
+from light import LIGHT_DIR
+
+CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
+
 here = os.path.abspath(os.path.dirname(__file__))
 
 

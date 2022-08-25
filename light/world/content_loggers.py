@@ -42,7 +42,7 @@ class InteractionLogger(abc.ABC):
         self.graph = graph
         self.players: Set[str] = set()
         self.actions: int = 0
-        self._last_episode_logged: Optional[int] = None
+        self._last_episode_logged: Optional[str] = None
         self.group = (
             DBGroupName.PRE_LAUNCH_TUTORIAL
             if graph.title == "tutorial"
