@@ -3,7 +3,10 @@ import React, { useEffect, useState, Fragment } from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
-import { setReportModal } from "../../../features/modals/modals-slice";
+import {
+  setReportModal,
+  setReportModalSubmitted,
+} from "../../../features/modals/modals-slice";
 /* STYLES */
 import { Dialog, Transition } from "@headlessui/react";
 
@@ -45,6 +48,14 @@ const ReportMessageForm = () => {
     dispatch(setReportModal(false));
   };
 
+  const openReportModalHandler = () => {
+    dispatch(setReportModal(open));
+  };
+
+  const setReportModalHandler = (val) => {
+    dispatch(setReportModal(val));
+  };
+
   const categorySelectionHandler = (e) => {
     console.log("DROP DOWN TARGET:  ", e.target.value);
     setReportCategory(e.target.value);
@@ -75,7 +86,7 @@ const ReportMessageForm = () => {
       }),
     });
     setReportReason("");
-    scrollToBottom();
+    dispatch(setReportModalSubmitted(true));
   };
 
   return (
@@ -83,93 +94,93 @@ const ReportMessageForm = () => {
       <Dialog
         as="div"
         className="relative z-10"
-        onClose={closeReportModalHandler}
+        onClose={setReportModalHandler}
       >
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        ></Transition.Child>
-
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          enterTo="opacity-100 translate-y-0 sm:scale-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-          leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-        >
-          <Dialog.Panel className="relative bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-sm sm:w-full sm:p-6">
-            <Dialog.Title
-              as="h3"
-              className="text-lg leading-6 font-medium text-gray-900"
-            ></Dialog.Title>
-          </Dialog.Panel>
-        </Transition.Child>
+        <div className="fixed z-10 inset-0 overflow-y-auto">
+          <div className="flex items-end sm:items-center justify-center min-h-full p-4 text-center sm:p-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel className="relative bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-sm sm:w-full sm:p-6">
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg leading-6 font-medium text-gray-900"
+                >
+                  Report Message
+                </Dialog.Title>
+                <div className="bg-white ">
+                  <div className="">
+                    <span>CHARACTER: </span>
+                    <span>{reportModalActor}</span>
+                  </div>
+                  <div className="">
+                    <span>MESSAGE: </span>
+                    <span>{reportModalMessage}</span>
+                  </div>
+                  <div>
+                    <b>Why are you reporting this message?</b>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="category"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Category
+                    </label>
+                    <select
+                      id="category"
+                      name="category"
+                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-solid border-gray-300 border-4 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                      defaultValue=""
+                      onChange={categorySelectionHandler}
+                      value={reportCategory}
+                    >
+                      <option value={""} id={""}></option>
+                      {ReportCategories.map((category, index) => (
+                        <option key={category} id={index} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {reportCategory ? (
+                    <>
+                      <label>Please describe issue here:</label>
+                      <input
+                        className="edit-message border-solid border-gray-300 border-4"
+                        defaultValue={"Enter reason here"}
+                        value={reportReason}
+                        onChange={(evt) => setReportReason(evt.target.value)}
+                      />
+                      <button
+                        type="submit"
+                        className={` w-20 items-start px-1.5 py-0.5 border border-transparent text-lg font-medium rounded shadow-sm text-white bg-red-600`}
+                        disabled={reportReason.length === 0}
+                        onClick={handleReportSubmission}
+                      >
+                        Report
+                      </button>
+                      <button
+                        type="submit"
+                        className={` w-20 items-start px-1.5 py-0.5 border border-transparent text-lg font-medium rounded shadow-sm text-white bg-gray-600`}
+                        onClick={closeReportModalHandler}
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  ) : null}
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
       </Dialog>
-      <div className="bg-white ">
-        <div className="agent">
-          <span>{reportModalActor}</span>
-        </div>
-        {reportModalMessage}
-        <div>
-          <b>Why are you reporting this message?</b>
-        </div>
-        <div>
-          <label
-            htmlFor="category"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Category
-          </label>
-          <select
-            id="category"
-            name="category"
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-solid border-gray-300 border-4 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-            defaultValue=""
-            onChange={categorySelectionHandler}
-            value={reportCategory}
-          >
-            <option value={""} id={""}></option>
-            {ReportCategories.map((category, index) => (
-              <option key={category} id={index} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-        </div>
-        {reportCategory ? (
-          <>
-            <label>Please describe issue here:</label>
-            <input
-              className="edit-message border-solid border-gray-300 border-4"
-              defaultValue={"Enter reason here"}
-              value={reportReason}
-              onChange={(evt) => setReportReason(evt.target.value)}
-            />
-            <button
-              type="submit"
-              className={` w-20 items-start px-1.5 py-0.5 border border-transparent text-lg font-medium rounded shadow-sm text-white bg-red-600`}
-              disabled={reportReason.length === 0}
-              onClick={handleReportSubmission}
-            >
-              Report
-            </button>
-            <button
-              type="submit"
-              className={` w-20 items-start px-1.5 py-0.5 border border-transparent text-lg font-medium rounded shadow-sm text-white bg-gray-600`}
-              onClick={closeReportModalHandler}
-            >
-              Cancel
-            </button>
-          </>
-        ) : null}
-      </div>
     </Transition.Root>
   );
 };

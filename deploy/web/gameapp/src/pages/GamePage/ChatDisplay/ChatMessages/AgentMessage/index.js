@@ -9,6 +9,7 @@ import { updateSessionSpentGiftXp } from "../../../../../features/sessionInfo/se
 import {
   setReportModal,
   setReportModalMessageId,
+  setReportModalMessage,
   setReportModalActor,
 } from "../../../../../features/modals/modals-slice";
 /* TOOLTIPS */
@@ -26,26 +27,6 @@ import { BsFillStarFill } from "react-icons/bs";
 import { BsStar } from "react-icons/bs";
 import { BsReplyFill } from "react-icons/bs";
 import { BsFillFlagFill } from "react-icons/bs";
-
-// function handleReport(reportedMessage, reportReason, reportCategory) {
-//   let base_url = window.location.protocol + "//" + CONFIG.hostname;
-//   if (CONFIG.port !== "80") {
-//     base_url += ":" + CONFIG.port;
-//   }
-
-//   fetch(`${base_url}/report`, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     credentials: "same-origin",
-//     body: JSON.stringify({
-//       category: reportCategory,
-//       message: reportedMessage,
-//       reason: reportReason,
-//     }),
-//   });
-// }
 
 function handleReward(messageId, messageOwner) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
@@ -287,20 +268,11 @@ const AgentMessage = ({
         </div>
         <span className="w-30 text-white">{actor}</span>
       </div>
-      {/* {isReportMode ? (
-        <ReportMessageForm
-          eventId={eventId}
-          reportedMessage={text}
-          caller={caller}
-          actor={actor}
-          exitReportMode={exitReportMode}
-          reportedHandler={reportedHandler}
-          scrollToBottom={scrollToBottom}
-        />
-      ) : null} */}
     </>
   );
 };
+export default AgentMessage;
+
 //     //   className={`${classNames} ${inHelpMode ? "active" : ""}`}
 //     //   onClick={onAgentClick}
 //     // >
@@ -368,4 +340,23 @@ const AgentMessage = ({
 //     // </div>
 //   );
 // };
-export default AgentMessage;
+
+// function handleReport(reportedMessage, reportReason, reportCategory) {
+//   let base_url = window.location.protocol + "//" + CONFIG.hostname;
+//   if (CONFIG.port !== "80") {
+//     base_url += ":" + CONFIG.port;
+//   }
+
+//   fetch(`${base_url}/report`, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     credentials: "same-origin",
+//     body: JSON.stringify({
+//       category: reportCategory,
+//       message: reportedMessage,
+//       reason: reportReason,
+//     }),
+//   });
+// }
