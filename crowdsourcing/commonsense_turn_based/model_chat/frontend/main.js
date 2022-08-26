@@ -47,7 +47,7 @@ function MainApp() {
         }
         return (
           <>
-            {text !== undefined && idx <= 3 ? <RenderChatMessage
+            {text !== undefined && idx <= 3 && mephistoContext.initialTaskData && mephistoContext.initialTaskData.task_data  ? <RenderChatMessage
               message={message}
               mephistoContext={mephistoContext}
               appContext={appContext}
@@ -80,8 +80,8 @@ function MainApp() {
         let bold_current_player = undefined;
         if (task_data !== undefined) {
           // gameText = task_data.game_text_dropoutless;
-          gameText = "<b>Context</b> <br>" + task_data.setting_context_text_dropoutless;
-          gameText = gameText + "<br><br> <b>Previous Actions: </b> <br>" + task_data.action_context_text_dropoutless;
+          gameText = "<b>Context</b> <br>" + task_data.setting_context_text;
+          gameText = gameText + "<br><br> <b>Previous Actions: </b> <br>" + task_data.action_context_text;
           bold_current_player = "<br><br><h3> You are: <b>" + task_data.current_player + "</b>. <br><br> Please give an <b>action</b> (not dialog) your character would want to perform and rate the response.</h3>";
           if (gameText !== undefined) {
             gameText = gameText.replaceAll("\n", "<br>");

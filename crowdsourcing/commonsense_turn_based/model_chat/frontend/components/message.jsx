@@ -38,8 +38,10 @@ function RenderChatMessage({ message, mephistoContext, appContext, idx }) {
   console.log(appContext);
   console.log(idx);
   console.groupEnd();
-  const { agentId, taskConfig } = mephistoContext;
+  const { agentId, taskConfig, initialTaskData } = mephistoContext;
   const { currentAgentNames } = appContext.taskContext;
+  let { task_data } = initialTaskData;
+  let {action, actor} = task_data;
   const { appSettings, setAppSettings } = appContext;
   const { checkboxValues, textFieldValues, messages } = appSettings;
   messages[idx] = [message['id'], message['text']]
@@ -90,7 +92,7 @@ function RenderChatMessage({ message, mephistoContext, appContext, idx }) {
   return (
     <MaybeCheckboxChatMessage
       isSelf={isHuman}
-      agentName={isHuman ? "Some Hiking Party (you)" : "Game Engine"
+      agentName={isHuman ? `${actor} (you)` : "Game Engine"
         // message.id in currentAgentNames
         //   ? currentAgentNames[message.id]
         //   : message.id

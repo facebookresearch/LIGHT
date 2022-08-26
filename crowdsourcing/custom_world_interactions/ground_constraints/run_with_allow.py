@@ -166,6 +166,7 @@ def create_task_data(input_file_tasks, num_tasks):
                 if any(broadcastMessage.count(key) > 3 for key in ["OBJECT2", "OBJECT1", "ACTOR", "LOCATION"]):
                     continue
                 data.append(new_data)
+                previous_messages.add((o1, o2))
                 # else:
                 #     print("no ranges")
             # else:

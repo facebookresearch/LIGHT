@@ -18,7 +18,7 @@ mephisto:
     conversation_start_mode: 'hi'
     annotation_question: Does this narration of your action from the game engine have any of the following attributes? (Check all that apply)
     # conversations_needed_string: "bart_rag:10"
-    conversations_needed_string: "bart:10"
+    conversations_needed_string: "bart:50"
     custom_source_dir: "/private/home/alexgurung/LIGHT/crowdsourcing/commonsense_turn_based/model_chat/frontend/"
     task_config_path: "/private/home/alexgurung/LIGHT/crowdsourcing/commonsense_turn_based/model_chat/task_config"
     final_rating_question: ""
@@ -26,11 +26,11 @@ mephisto:
     allowed_concurrent: 1
     assignment_duration_in_seconds: 600
     max_num_concurrent_units: 0  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes
-    maximum_units_per_worker: 3
-    task_name: model_chat
-    task_reward: 3
+    maximum_units_per_worker: 1
+    task_name: model_chat_get_workers_test_1
+    task_reward: 1
     task_tags: "chat,conversation,dialog,partner"
     task_title: "Roleplay in a fantasy environment!"
 mturk:
   worker_blocklist_paths: null
-num_tasks: 10
+num_tasks: 50

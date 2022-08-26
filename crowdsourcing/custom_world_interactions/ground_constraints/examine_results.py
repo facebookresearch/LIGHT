@@ -21,6 +21,14 @@ DO_REVIEW = True
 # task_names = ["objects-interaction-task-allowlist-contraints-1"]
 # task_names = ["objects-interaction-task-allowlist-constraints-2"]
 task_names = ["objects-interaction-task-allowlist-constraints-3"]
+INPUT_FILE_TASKS = ["objects-interaction-task-allowlist-attributes-1"]
+
+units = []
+for t in INPUT_FILE_TASKS:
+    new_units = mephisto_data_browser.get_units_for_task_name(t)
+    print(t)
+    print(Counter([u.get_status() for u in new_units]))
+    units.extend(new_units)
 
 units = []
 for t in task_names:
@@ -29,14 +37,14 @@ for t in task_names:
     print(Counter([u.get_status() for u in new_units]))
     units.extend(new_units)
 
-INPUT_FILE_TASKS = ["objects-interaction-task-allowlist-attributes-1"]
-input_units = []
-for t in INPUT_FILE_TASKS:
-    new_units = mephisto_data_browser.get_units_for_task_name(t)
-    print(t)
-    print(Counter([u.get_status() for u in new_units]))
+# INPUT_FILE_TASKS = ["objects-interaction-task-allowlist-attributes-1"]
+# input_units = []
+# for t in INPUT_FILE_TASKS:
+#     new_units = mephisto_data_browser.get_units_for_task_name(t)
+#     print(t)
+#     print(Counter([u.get_status() for u in new_units]))
 
-
+print("COMBINED")
 print(f"len: {len(units)}")
 print(Counter([u.get_status() for u in units]))
 

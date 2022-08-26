@@ -6,8 +6,8 @@ mephisto:
     units_per_assignment: 1
     block_qualification: OBJINTERACTION_ATTRIBUTES_DATA_ANNOTATION_TASK_BLOCKLIST
   task:
-    maximum_units_per_worker: 5
-    max_num_concurrent_units: 10
+    maximum_units_per_worker: 20
+    max_num_concurrent_units: 20
     task_name: "objects-interaction-task-allowlist-constraints-3"
     task_title: "Determine the attributes after a single interaction."
     task_description: "In this task you will receive two objects with an interaction between them described in text format. You will answer questions related to the result of this description."

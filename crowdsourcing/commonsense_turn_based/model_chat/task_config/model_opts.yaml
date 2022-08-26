@@ -4,5 +4,13 @@
 #     --model-file zoo:hallucination/bart_rag_turn_do/model
 #     --model-file zoo:bart/bart_large/mode
 #     --model-file /checkpoint/alexgurung/light/common_sense/add_format/bart_all_simple_Sun_Jan_23/c9d/model
+#    --model-file /checkpoint/alexgurung/light/common_sense/final_format/bart_all_balanced_universalgraph_Mon_May__2/b2d/model
+# --model-file /checkpoint/alexgurung/light/common_sense/final_format/bart_compare_v2_Wed_Aug__3/fdf/model
+#   --model-file /checkpoint/alexgurung/light/common_sense/final_format/bart_compare_shownnograph_Wed_Aug__3/0f5/model
+# --model-file /checkpoint/alexgurung/light/common_sense/final_format/bart_nograph_v2_Sat_Aug__6/973/model
+#   --model-file /checkpoint/alexgurung/light/common_sense/final_format/bart_graph_v2_Sat_Aug__6/045/model
+# --model-file /checkpoint/alexgurung/light/common_sense/compare_grounding/bart_compare_largersweep_Sun_Aug_14/6ce/model
+# --model-file /checkpoint/alexgurung/light/common_sense/compare_grounding/bart_compare_largersweep_Sun_Aug_14/6c8/model
+# --model-file /checkpoint/alexgurung/light/common_sense/compare_grounding/bart_compare_largersweep_Sun_Aug_14/341/model
 bart: >
-    --model-file /checkpoint/alexgurung/light/common_sense/final_format/bart_all_balanced_universalgraph_Mon_May__2/b2d/model
+    --model-file /checkpoint/alexgurung/light/common_sense/compare_grounding/bart_compare_largersweep_Sun_Aug_14/c8f/model
