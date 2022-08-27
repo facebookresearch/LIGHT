@@ -795,7 +795,10 @@ class GraphObject(GraphNode):
     def __init__(self, node_id, name, props=None, db_id=None):
         super().__init__(node_id, name, props, db_id)
         self.object = True
-        self.size = self._props.get("size", self.DEFAULT_SIZE)
+        self.size = self._props.get(
+            "size",
+            self.DEFAULT_CONTAINER_SIZE if self.container else self.DEFAULT_SIZE,
+        )
         self.food_energy = self._props.get("food_energy", 1)
         self.value = self._props.get("value", 1)
         self.drink = self._props.get("drink", self._props.get("is_drink", False))
