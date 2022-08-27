@@ -831,8 +831,6 @@ class GraphObject(GraphNode):
             if self.container
             else self.DEFAULT_CONTAIN_SIZE,
         )
-        if self.contain_size > self.size:
-            self.size = self.contain_size
         # TODO object stat multipliers should not be a simple dict
         self.stats = self._props.get(
             "stats", {"damage": int(self.wieldable), "defense": int(self.wearable)}
