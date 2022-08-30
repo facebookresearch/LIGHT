@@ -1926,6 +1926,13 @@ class EnvDB(BaseDB):
                 graph.creator_id = SCRUBBED_USER_ID
             session.commit()
 
+    def dissociate_graph(self, graph_id: str) -> None:
+        with Session(self.engine) as session:
+            stmt = select(DBGraph).where(DBGraph.db_id == graph_id)
+            graph = session.scalars(stmt).one()
+            graph.creator_id = SCRUBBED_USER_ID
+            session.commit()
+
     def export(self, config: "DictConfig") -> "EnvDB":
         """
         Create a scrubbed version of this database for use in releases
