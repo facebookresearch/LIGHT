@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
@@ -15,8 +15,11 @@ import jsonlines
 from typing import List, Optional, Tuple
 import random
 import os
+
 # from parlai.tasks.jericho_world.agents import encode_set_elements
 from typing import Any, Dict, List, Set, Union, Optional, Tuple
+
+
 def encode_set_elements(set1: Set[str], set2: Set[str]) -> Tuple[List[str]]:
     """
     Encodes (maps to int indices) elements in the union of two sets.
@@ -30,6 +33,8 @@ def encode_set_elements(set1: Set[str], set2: Set[str]) -> Tuple[List[str]]:
         if el in set2:
             set2_enc.append(el_id_str)
     return set1_enc, set2_enc
+
+
 from parlai.core.message import Message
 from parlai.core.metrics import F1Metric
 from parlai.core.params import ParlaiParser
@@ -47,8 +52,8 @@ from light.modeling.tasks.common_sense.build import build
 def clean_str(txt):
     # ensure txt is str, could be int/float
     txt = str(txt)
-    for char in ('\n', '\t'):
-        txt = txt.replace(char, ' ')
+    for char in ("\n", "\t"):
+        txt = txt.replace(char, " ")
     return txt
 
 
@@ -62,18 +67,18 @@ def add_to_graph_state(graphs_state, v1, v2, edge):
 
 
 def get_mutation_token(mutation_type):
-    assert isinstance(mutation_type, consts.GraphMutations), 'Invalid mutation type'
-    return f'{mutation_type.name}:'
+    assert isinstance(mutation_type, consts.GraphMutations), "Invalid mutation type"
+    return f"{mutation_type.name}:"
 
 
 def get_mutation(tuple, mutation_type):
-    return f'{get_mutation_token(mutation_type)} {tuple}'
+    return f"{get_mutation_token(mutation_type)} {tuple}"
 
 
 def survives_dropout(prob_do: float):
     assert (
         0 <= prob_do <= 1
-    ), f'Invalid probably of dropout: {prob_do}. Must be in [0, 1].'
+    ), f"Invalid probably of dropout: {prob_do}. Must be in [0, 1]."
     if 0 < prob_do < 1:
         return random.random() > prob_do
     return prob_do == 0
@@ -87,7 +92,7 @@ def replace_binarized_attributes_with_description(states_str: str):
     for st_id in range(len(states)):
         curr_state = states[st_id]
 
-        if 'HAD_ACTED' in curr_state:
+        if "HAD_ACTED" in curr_state:
             # Game action history
             continue
 
@@ -97,9 +102,9 @@ def replace_binarized_attributes_with_description(states_str: str):
 
         # Replacing binarized state with their equivalent text
         assert v2 in (
-            '0',
-            '1',
-        ), f'unsupported binary value {v2} for {e}'
+            "0",
+            "1",
+        ), f"unsupported binary value {v2} for {e}"
         attribute_text_equivalent = random.choice(consts.ATTRIBUTE_VALUES[e][int(v2)])
         states[st_id] = graph_state_tuple(
             v1, attribute_text_equivalent, consts.GraphEdges.HAS_ATTRIBUTE
@@ -126,7 +131,7 @@ def dedup_elements_list(elements_list, pick_first=False):
     """
     entities_by_name = defaultdict(list)
     for element in elements_list:
-        element_name = element['name']
+        element_name = element["name"]
         entities_by_name[element_name].append(element)
 
     deduped_elements = []
@@ -159,7 +164,7 @@ def add_room_att_to_graph_states(
     dropout_default=0,
 ):
     # Adding room level info to the graph state
-    room_name = room_data['setting']
+    room_name = room_data["setting"]
     if survives_dropout(
         dropouts.get(consts.GraphDropoutOptions.ROOM_NAME, dropout_default)
     ):
@@ -171,7 +176,7 @@ def add_room_att_to_graph_states(
     if survives_dropout(
         dropouts.get(consts.GraphDropoutOptions.ROOM_DESCRIPTION, dropout_default)
     ):
-        room_description = room_data['description']
+        room_description = room_data["description"]
         add_to_graph_state(
             states, room_name, room_description, consts.GraphEdges.HAS_DESCRIPTION
         )
@@ -180,7 +185,7 @@ def add_room_att_to_graph_states(
     if survives_dropout(
         dropouts.get(consts.GraphDropoutOptions.ROOM_BACKSTORY, dropout_default)
     ):
-        room_baskstory = room_data['background']
+        room_baskstory = room_data["background"]
         add_to_graph_state(
             states, room_name, room_baskstory, consts.GraphEdges.HAS_BACKSTORY
         )
@@ -213,7 +218,7 @@ def add_subelements(
 def add_room_objects_to_graph_state(
     room_data, states, only_in_edges, dropouts, dropout_default=0
 ):
-    for obj in dedup_elements_list(room_data['objects']):
+    for obj in dedup_elements_list(room_data["objects"]):
         if only_in_edges and not obj[consts.IS_IN_ROOM]:
             # it is an object on the ex edge
             continue
@@ -222,8 +227,8 @@ def add_room_objects_to_graph_state(
         ):
             continue
 
-        room_name = room_data['setting']
-        object_name = obj['name']
+        room_name = room_data["setting"]
+        object_name = obj["name"]
 
         if survives_dropout(
             dropouts.get(consts.GraphDropoutOptions.OBJECT_INSIDE_ROOM, dropout_default)
@@ -242,37 +247,37 @@ def add_room_objects_to_graph_state(
             (
                 consts.GraphDropoutOptions.OBJECT_IS_GETTABLE,
                 consts.GraphEdges.IS_GETTABLE,
-                obj.get('is_gettable', None),
+                obj.get("is_gettable", None),
             ),
             (
                 consts.GraphDropoutOptions.OBJECT_IS_DRINK,
                 consts.GraphEdges.IS_DRINK,
-                obj.get('is_drink', None),
+                obj.get("is_drink", None),
             ),
             (
                 consts.GraphDropoutOptions.OBJECT_IS_FOOD,
                 consts.GraphEdges.IS_FOOD,
-                obj.get('is_food', None),
+                obj.get("is_food", None),
             ),
             (
                 consts.GraphDropoutOptions.OBJECT_IS_CONTAINER,
                 consts.GraphEdges.IS_CONTAINER,
-                obj.get('is_container', None),
+                obj.get("is_container", None),
             ),
             (
                 consts.GraphDropoutOptions.OBJECT_IS_SURFACE,
                 consts.GraphEdges.IS_SURFACE,
-                obj.get('is_surface', None),
+                obj.get("is_surface", None),
             ),
             (
                 consts.GraphDropoutOptions.OBJECT_IS_WEAPON,
                 consts.GraphEdges.IS_WIELDABLE,
-                obj.get('is_weapon', None),
+                obj.get("is_weapon", None),
             ),
             (
                 consts.GraphDropoutOptions.OBJECT_IS_WEARABLE,
                 consts.GraphEdges.IS_WEARABLE,
-                obj.get('is_wearable', None),
+                obj.get("is_wearable", None),
             ),
         ):
             # if attribute doesn't exist, edge value is None
@@ -293,14 +298,14 @@ def add_room_objects_to_graph_state(
             dropouts.get(consts.GraphDropoutOptions.PHYS_DESCRIPTION, dropout_default)
         ):
             edge = consts.GraphEdges.HAS_DESCRIPTION
-            add_to_graph_state(states, object_name, obj['description'], edge)
+            add_to_graph_state(states, object_name, obj["description"], edge)
 
         # Adding contained objects
-        if 'containing_objects' in obj:
+        if "containing_objects" in obj:
             add_subelements(
                 states,
                 object_name,
-                obj['containing_objects'],
+                obj["containing_objects"],
                 consts.GraphEdges.CONTAINS,
                 # consts.GraphEdges.IS_INSIDE,
                 dropouts.get(
@@ -323,10 +328,10 @@ def add_room_characters_to_graph_state(
 ):
     def get_names(objects_list):
         # creating the list from a set, to avoid duplicate elements.
-        return list({o['name'] for o in objects_list})
+        return list({o["name"] for o in objects_list})
 
-    room_name = room_data['setting']
-    for char in dedup_elements_list(room_data['characters']):
+    room_name = room_data["setting"]
+    for char in dedup_elements_list(room_data["characters"]):
         if only_in_edges and not char[consts.IS_IN_ROOM]:
             continue
         if not survives_dropout(
@@ -334,7 +339,7 @@ def add_room_characters_to_graph_state(
         ):
             continue
 
-        character_name = char['name']
+        character_name = char["name"]
 
         if survives_dropout(
             dropouts.get(consts.GraphDropoutOptions.CHARACTER_TYPE, dropout_default)
@@ -373,7 +378,7 @@ def add_room_characters_to_graph_state(
             add_subelements(
                 states,
                 character_name,
-                get_names(char['wielding_objects']),
+                get_names(char["wielding_objects"]),
                 consts.GraphEdges.IS_WIELDING,
                 dropouts.get(
                     consts.GraphDropoutOptions.WIELDED_OBJECTS, dropout_default
@@ -387,7 +392,7 @@ def add_room_characters_to_graph_state(
             add_subelements(
                 states,
                 character_name,
-                get_names(char['wearing_objects']),
+                get_names(char["wearing_objects"]),
                 consts.GraphEdges.IS_WEARING,
                 dropouts.get(consts.GraphDropoutOptions.WORN_OBJECTS, dropout_default),
                 reverse_edge=True,
@@ -399,7 +404,7 @@ def add_room_characters_to_graph_state(
             add_subelements(
                 states,
                 character_name,
-                get_names(char['carrying_objects']),
+                get_names(char["carrying_objects"]),
                 consts.GraphEdges.IS_CARRYING,
                 dropouts.get(
                     consts.GraphDropoutOptions.CARRYING_OBJECTS, dropout_default
@@ -472,6 +477,7 @@ def generate_graph_tuples(
 
     return consts.GRAPH_STATES_DELIM.join(state_tuples_list)
 
+
 class CommonSenseBaseTeacher(DialogTeacher):
     """
     Base class for all the common sense teachers.
@@ -479,42 +485,42 @@ class CommonSenseBaseTeacher(DialogTeacher):
 
     def __init__(self, opt, shared=None):
         build(opt)
-        self._delimiter = opt['delimiter']
+        self._delimiter = opt["delimiter"]
         self._dtype = get_dtype(opt)
         self.id = self.get_id()
         self._text_features_droputs = {
-            consts.GraphDropoutOptions.ROOM_NAME: opt['room_name_do'],
-            consts.GraphDropoutOptions.ROOM_DESCRIPTION: opt['room_description_do'],
-            consts.GraphDropoutOptions.ROOM_BACKSTORY: opt['room_backstory_do'],
-            consts.GraphDropoutOptions.ROOM_OBJECTS: opt['room_objects_do'],
-            consts.GraphDropoutOptions.ROOM_CHARACTERS: opt['room_characters_do'],
-            consts.GraphDropoutOptions.CONTAINED_OBJECTS: opt['contained_objects_do'],
-            consts.GraphDropoutOptions.WORN_OBJECTS: opt['worn_objects_do'],
-            consts.GraphDropoutOptions.WIELDED_OBJECTS: opt['wielded_objects_do'],
-            consts.GraphDropoutOptions.CARRYING_OBJECTS: opt['carrying_objects_do'],
-            consts.GraphDropoutOptions.ATTRIBUTE: opt['attribute_do'],
-            consts.GraphDropoutOptions.PERSONA: opt['persona_do'],
-            consts.GraphDropoutOptions.PHYS_DESCRIPTION: opt['phys_description_do'],
+            consts.GraphDropoutOptions.ROOM_NAME: opt["room_name_do"],
+            consts.GraphDropoutOptions.ROOM_DESCRIPTION: opt["room_description_do"],
+            consts.GraphDropoutOptions.ROOM_BACKSTORY: opt["room_backstory_do"],
+            consts.GraphDropoutOptions.ROOM_OBJECTS: opt["room_objects_do"],
+            consts.GraphDropoutOptions.ROOM_CHARACTERS: opt["room_characters_do"],
+            consts.GraphDropoutOptions.CONTAINED_OBJECTS: opt["contained_objects_do"],
+            consts.GraphDropoutOptions.WORN_OBJECTS: opt["worn_objects_do"],
+            consts.GraphDropoutOptions.WIELDED_OBJECTS: opt["wielded_objects_do"],
+            consts.GraphDropoutOptions.CARRYING_OBJECTS: opt["carrying_objects_do"],
+            consts.GraphDropoutOptions.ATTRIBUTE: opt["attribute_do"],
+            consts.GraphDropoutOptions.PERSONA: opt["persona_do"],
+            consts.GraphDropoutOptions.PHYS_DESCRIPTION: opt["phys_description_do"],
             consts.GraphDropoutOptions.CHARACTER_INSIDE_ROOM: opt[
-                'character_inside_room_do'
+                "character_inside_room_do"
             ],
-            consts.GraphDropoutOptions.CHARACTER_TYPE: opt['character_type_do'],
-            consts.GraphDropoutOptions.OBJECT_INSIDE_ROOM: opt['object_inside_room_do'],
-            consts.GraphDropoutOptions.OBJECT_TYPE: opt['object_type_do'],
+            consts.GraphDropoutOptions.CHARACTER_TYPE: opt["character_type_do"],
+            consts.GraphDropoutOptions.OBJECT_INSIDE_ROOM: opt["object_inside_room_do"],
+            consts.GraphDropoutOptions.OBJECT_TYPE: opt["object_type_do"],
             consts.GraphDropoutOptions.OBJECT_IS_GETTABLE: opt[
-                'attribute_qa_gettable_do'
+                "attribute_qa_gettable_do"
             ],
-            consts.GraphDropoutOptions.OBJECT_IS_DRINK: opt['attribute_qa_drink_do'],
-            consts.GraphDropoutOptions.OBJECT_IS_FOOD: opt['attribute_qa_food_do'],
+            consts.GraphDropoutOptions.OBJECT_IS_DRINK: opt["attribute_qa_drink_do"],
+            consts.GraphDropoutOptions.OBJECT_IS_FOOD: opt["attribute_qa_food_do"],
             consts.GraphDropoutOptions.OBJECT_IS_CONTAINER: opt[
-                'attribute_qa_container_do'
+                "attribute_qa_container_do"
             ],
             consts.GraphDropoutOptions.OBJECT_IS_SURFACE: opt[
-                'attribute_qa_surface_do'
+                "attribute_qa_surface_do"
             ],
-            consts.GraphDropoutOptions.OBJECT_IS_WEAPON: opt['attribute_qa_weapon_do'],
+            consts.GraphDropoutOptions.OBJECT_IS_WEAPON: opt["attribute_qa_weapon_do"],
             consts.GraphDropoutOptions.OBJECT_IS_WEARABLE: opt[
-                'attribute_qa_wearable_do'
+                "attribute_qa_wearable_do"
             ],
         }
         self.no_mutation_weight = opt["no_mutation_weight"]
@@ -523,164 +529,164 @@ class CommonSenseBaseTeacher(DialogTeacher):
     @classmethod
     def add_cmdline_args(cls, parser: ParlaiParser, partial_opt=None) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
-        arg_group = parser.add_argument_group('LIGHT common sense teachers.')
+        arg_group = parser.add_argument_group("LIGHT common sense teachers.")
         arg_group.add_argument(
-            '--delimiter',
+            "--delimiter",
             type=str,
-            default='\n',
-            help=('Delimiter token between the parts of the example text feature.'),
+            default="\n",
+            help=("Delimiter token between the parts of the example text feature."),
         )
         arg_group.add_argument(
-            '--room-name-do',
+            "--room-name-do",
             type=float,
             default=0,
-            help='The dropout rate for the room name.',
+            help="The dropout rate for the room name.",
         )
         arg_group.add_argument(
-            '--room-description-do',
+            "--room-description-do",
             type=float,
             default=0,
-            help='The dropout rate for the room description.',
+            help="The dropout rate for the room description.",
         )
         arg_group.add_argument(
-            '--room-backstory-do',
+            "--room-backstory-do",
             type=float,
             default=0,
-            help='The dropout rate for the room backstory.',
+            help="The dropout rate for the room backstory.",
         )
         arg_group.add_argument(
-            '--room-elements-type',
+            "--room-elements-type",
             type=str,
-            choices=['objects', 'characters', 'both'],
-            default='both',
-            help='The type of room content elements to keep.',
+            choices=["objects", "characters", "both"],
+            default="both",
+            help="The type of room content elements to keep.",
         )
         arg_group.add_argument(
-            '--room-objects-do',
+            "--room-objects-do",
             type=float,
             default=0,
-            help='The dropout rate for objects in the room.',
+            help="The dropout rate for objects in the room.",
         )
         arg_group.add_argument(
-            '--room-characters-do',
+            "--room-characters-do",
             type=float,
             default=0,
-            help='The dropout rate for characters in the room.',
+            help="The dropout rate for characters in the room.",
         )
         arg_group.add_argument(
-            '--contained-objects-do',
+            "--contained-objects-do",
             type=float,
             default=0,
-            help='The dropout rate for objects contained within other objects.',
+            help="The dropout rate for objects contained within other objects.",
         )
         arg_group.add_argument(
-            '--worn-objects-do',
+            "--worn-objects-do",
             type=float,
             default=0,
-            help='The dropout rate for objects worn by characters.',
+            help="The dropout rate for objects worn by characters.",
         )
         arg_group.add_argument(
-            '--wielded-objects-do',
+            "--wielded-objects-do",
             type=float,
             default=0,
-            help='The dropout rate for objects wielded by characters.',
+            help="The dropout rate for objects wielded by characters.",
         )
         arg_group.add_argument(
-            '--carrying-objects-do',
+            "--carrying-objects-do",
             type=float,
             default=0,
-            help='The dropout rate for objects carried by characters.',
+            help="The dropout rate for objects carried by characters.",
         )
         arg_group.add_argument(
-            '--attribute-do',
+            "--attribute-do",
             type=float,
             default=0,
-            help='The dropout rate for character/object attributes',
+            help="The dropout rate for character/object attributes",
         )
         arg_group.add_argument(
-            '--phys-description-do',
+            "--phys-description-do",
             type=float,
             default=0,
-            help='The dropout rate for character/object physical descriptions',
+            help="The dropout rate for character/object physical descriptions",
         )
         arg_group.add_argument(
-            '--persona-do',
+            "--persona-do",
             type=float,
             default=0,
-            help='The dropout rate for character personas',
+            help="The dropout rate for character personas",
         )
         arg_group.add_argument(
-            '--character-inside-room-do',
+            "--character-inside-room-do",
             type=float,
             default=0,
-            help='The dropout rate for the KB line character in room',
+            help="The dropout rate for the KB line character in room",
         )
         arg_group.add_argument(
-            '--character-type-do',
+            "--character-type-do",
             type=float,
             default=0,
-            help='The dropout rate for chracter type KB line',
+            help="The dropout rate for chracter type KB line",
         )
         arg_group.add_argument(
-            '--object-inside-room-do',
+            "--object-inside-room-do",
             type=float,
             default=0,
-            help='The dropout rate for KB line object in room',
+            help="The dropout rate for KB line object in room",
         )
         arg_group.add_argument(
-            '--object-type-do',
+            "--object-type-do",
             type=float,
             default=0,
-            help='The dropout rate for object type KB line',
+            help="The dropout rate for object type KB line",
         )
         arg_group.add_argument(
-            '--no-mutation-weight',
+            "--no-mutation-weight",
             type=float,
             default=1,
-            help='The default weighting of no mutation options (when picking from a list), smaller values make less likely',
+            help="The default weighting of no mutation options (when picking from a list), smaller values make less likely",
         )
         # Object attribute dropouts
         arg_group.add_argument(
-            '--attribute-qa-gettable-do',
+            "--attribute-qa-gettable-do",
             type=float,
             default=0,
-            help=('The dropout for the gettable attribute.'),
+            help=("The dropout for the gettable attribute."),
         )
         arg_group.add_argument(
-            '--attribute-qa-drink-do',
+            "--attribute-qa-drink-do",
             type=float,
             default=0,
-            help=('The dropout for the drinkable attribute.'),
+            help=("The dropout for the drinkable attribute."),
         )
         arg_group.add_argument(
-            '--attribute-qa-food-do',
+            "--attribute-qa-food-do",
             type=float,
             default=0,
-            help=('The dropout for the edible attribute.'),
+            help=("The dropout for the edible attribute."),
         )
         arg_group.add_argument(
-            '--attribute-qa-container-do',
+            "--attribute-qa-container-do",
             type=float,
             default=0,
-            help=('The dropout for the container attribute.'),
+            help=("The dropout for the container attribute."),
         )
         arg_group.add_argument(
-            '--attribute-qa-surface-do',
+            "--attribute-qa-surface-do",
             type=float,
             default=0,
-            help=('The dropout for the is_surface attribute.'),
+            help=("The dropout for the is_surface attribute."),
         )
         arg_group.add_argument(
-            '--attribute-qa-weapon-do',
+            "--attribute-qa-weapon-do",
             type=float,
             default=0,
-            help=('The dropout for the wieldable attribute.'),
+            help=("The dropout for the wieldable attribute."),
         )
         arg_group.add_argument(
-            '--attribute-qa-wearable-do',
+            "--attribute-qa-wearable-do",
             type=float,
             default=0,
-            help=('The dropout for the wearable attribute.'),
+            help=("The dropout for the wearable attribute."),
         )
         return parser
 
@@ -714,12 +720,12 @@ class CommonSenseBaseTeacher(DialogTeacher):
         labels: Optional[Tuple[str]],
         model_response: Message,
     ) -> None:
-        if model_response.is_padding() or (not model_response.get('text', None)):
+        if model_response.is_padding() or (not model_response.get("text", None)):
             return
 
         expected_graph = set(labels[0].lower().split(consts.GRAPH_STATES_DELIM))
         predicted_graph = set(
-            model_response['text'].lower().split(consts.GRAPH_STATES_DELIM)
+            model_response["text"].lower().split(consts.GRAPH_STATES_DELIM)
         )
 
         # Encoding the graph edges/mutation operations into ints for readily use of F1Metric
@@ -728,10 +734,10 @@ class CommonSenseBaseTeacher(DialogTeacher):
             expected_graph, predicted_graph
         )
         self.metrics.add(
-            'response_elements_f1',
+            "response_elements_f1",
             F1Metric.compute(
-                guess=' '.join(predicted_graph_enc),
-                answers=[' '.join(expected_graph_enc)],
+                guess=" ".join(predicted_graph_enc),
+                answers=[" ".join(expected_graph_enc)],
             ),
         )
 
@@ -744,9 +750,9 @@ class CommonSenseBaseTeacher(DialogTeacher):
         )
         ekg_sub_rel_ids, pkg_sub_rel_ids = encode_set_elements(ekg_sub_rel, pkg_sub_rel)
         self.metrics.add(
-            'graph_subject_relation_f1',
+            "graph_subject_relation_f1",
             F1Metric.compute(
-                guess=' '.join(pkg_sub_rel_ids), answers=[' '.join(ekg_sub_rel_ids)]
+                guess=" ".join(pkg_sub_rel_ids), answers=[" ".join(ekg_sub_rel_ids)]
             ),
         )
 
@@ -755,9 +761,9 @@ class CommonSenseBaseTeacher(DialogTeacher):
         pkg_sub = set([e.split(consts.GRAPH_TUPLES_DELIM)[0] for e in pkg_sub_rel])
         ekg_sub_ids, pkg_sub_ids = encode_set_elements(ekg_sub, pkg_sub)
         self.metrics.add(
-            'graph_subject_f1',
+            "graph_subject_f1",
             F1Metric.compute(
-                guess=' '.join(pkg_sub_ids), answers=[' '.join(ekg_sub_ids)]
+                guess=" ".join(pkg_sub_ids), answers=[" ".join(ekg_sub_ids)]
             ),
         )
 
@@ -776,9 +782,9 @@ class RoomCommonSenseBaseTeacher(CommonSenseBaseTeacher):
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        self._include_ex_room_entities = opt['include_ex_room_entities']
-        self._room_elements_type = opt['room_elements_type']
-        opt['datafile'] = self._get_datafile_path(opt)
+        self._include_ex_room_entities = opt["include_ex_room_entities"]
+        self._room_elements_type = opt["room_elements_type"]
+        opt["datafile"] = self._get_datafile_path(opt)
         super().__init__(opt, shared)
 
     def collect_dropouts(self, opt):
@@ -790,29 +796,29 @@ class RoomCommonSenseBaseTeacher(CommonSenseBaseTeacher):
     def add_cmdline_args(cls, parser: ParlaiParser, partial_opt=None) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
         arg_group = parser.add_argument_group(
-            'LIGHT room entities common sense teacher arguments.'
+            "LIGHT room entities common sense teacher arguments."
         )
         arg_group.add_argument(
-            '--include-ex-room-entities',
-            type='bool',
+            "--include-ex-room-entities",
+            type="bool",
             default=False,
             help=(
-                'Whether to include the room entities that are on the ex edge (might be in the room).'
+                "Whether to include the room entities that are on the ex edge (might be in the room)."
             ),
         )
         return parser
 
     def _get_datafile_path(self, opt):
         return os.path.join(
-            opt['datapath'],
+            opt["datapath"],
             consts.DATASET_DIR_NAME,
             consts.ROOM_CONTENTS_DIR,
-            f'{get_dtype(opt)}.jsonl',
+            f"{get_dtype(opt)}.jsonl",
         )
 
     def load_room_content_data(self, datapath: str):
-        logging.info(f'Loading data from {datapath}')
-        with jsonlines.open(datapath, 'r') as fi:
+        logging.info(f"Loading data from {datapath}")
+        with jsonlines.open(datapath, "r") as fi:
             return [rd for rd in fi]
 
     def setup_data(self, datapath: str):
@@ -820,13 +826,13 @@ class RoomCommonSenseBaseTeacher(CommonSenseBaseTeacher):
         for rc in room_content_data:
             message = Message(
                 {
-                    'id': self.id,
+                    "id": self.id,
                     # To have randomization and dropouts, we set text later.
                     # The final message and label for each example is determined
                     # the content of the `original_room_content_data`
-                    'text': 'text place holder',
-                    'labels': ['label place holder'],
-                    'original_room_content_data': rc,
+                    "text": "text place holder",
+                    "labels": ["label place holder"],
+                    "original_room_content_data": rc,
                 }
             )
             yield message, True
@@ -840,11 +846,11 @@ class RoomCommonSenseBaseTeacher(CommonSenseBaseTeacher):
         first element only during valid and test (for repeatability).
         """
         example_copy = copy.deepcopy(room_content_data)
-        room_data = example_copy['original_room_content_data']
+        room_data = example_copy["original_room_content_data"]
         # We only pick the first element from the list during valid and test,
         # but select as random during the training.
-        non_randomize_dedup = self._dtype in ('valid', 'test')
-        for item_type in ('objects', 'characters'):
+        non_randomize_dedup = self._dtype in ("valid", "test")
+        for item_type in ("objects", "characters"):
             room_data[item_type] = dedup_elements_list(
                 room_data[item_type], pick_first=non_randomize_dedup
             )
@@ -861,10 +867,10 @@ class RoomDescriptionAndBackStorydBase(RoomCommonSenseBaseTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         new_message = super().get(episode_idx, entry_idx=entry_idx)
-        room_content_data = new_message.pop('original_room_content_data')
+        room_content_data = new_message.pop("original_room_content_data")
 
         new_message.force_set(
-            'text',
+            "text",
             self._delimiter.join(
                 [
                     replace_binarized_attributes_with_description(
@@ -875,7 +881,7 @@ class RoomDescriptionAndBackStorydBase(RoomCommonSenseBaseTeacher):
             ),
         )
         new_message.force_set(
-            'labels',
+            "labels",
             [
                 replace_binarized_attributes_with_description(
                     self.generate_example_label(room_content_data)
@@ -884,14 +890,15 @@ class RoomDescriptionAndBackStorydBase(RoomCommonSenseBaseTeacher):
         )
         return new_message
 
-@register_teacher('light:common_sense:RoomDescriptionTeacher')
+
+@register_teacher("light:common_sense:RoomDescriptionTeacher")
 class RoomDescriptionTeacher(RoomDescriptionAndBackStorydBase):
     """
     Generates room description from its state graph.
     """
 
     def get_id(self):
-        return 'RoomDescriptionTeacher'
+        return "RoomDescriptionTeacher"
 
     def generate_example_text(self, room_content_data):
         element_types = [
@@ -924,16 +931,17 @@ class RoomDescriptionTeacher(RoomDescriptionAndBackStorydBase):
         return consts.GRAPH_STATES_DELIM.join(mutations)
 
     def get_teacher_prompt(self):
-        return random.choice(consts.TEACHER_PROMPTS['room_description'])
+        return random.choice(consts.TEACHER_PROMPTS["room_description"])
 
-@register_teacher('light:common_sense:RoomBackstoryTeacher')
+
+@register_teacher("light:common_sense:RoomBackstoryTeacher")
 class RoomBackstoryTeacher(RoomDescriptionAndBackStorydBase):
     """
     Generates room backstory from its state graph.
     """
 
     def get_id(self):
-        return 'RoomBackstoryTeacher'
+        return "RoomBackstoryTeacher"
 
     def generate_example_text(self, room_content_data):
         element_types = [
@@ -966,7 +974,7 @@ class RoomBackstoryTeacher(RoomDescriptionAndBackStorydBase):
         return consts.GRAPH_STATES_DELIM.join(mutations)
 
     def get_teacher_prompt(self):
-        return random.choice(consts.TEACHER_PROMPTS['room_backstory'])
+        return random.choice(consts.TEACHER_PROMPTS["room_backstory"])
 
 
 class RoomElementBase(RoomCommonSenseBaseTeacher):
@@ -979,7 +987,7 @@ class RoomElementBase(RoomCommonSenseBaseTeacher):
             element_types = self._room_element_types()
             req_elements = []
             for element_type in element_types:
-                elements = example['original_room_content_data'][element_type]
+                elements = example["original_room_content_data"][element_type]
                 req_elements.extend(elements)
 
             if not self._include_ex_room_entities:
@@ -987,10 +995,10 @@ class RoomElementBase(RoomCommonSenseBaseTeacher):
             return len(req_elements) == 0
 
         for example, _ in super().setup_data(datapath):
-            example['end_adding_example'] = False
-            for item_type in ('objects', 'characters'):
-                room_items = example['original_room_content_data'][item_type]
-                example['original_room_content_data'][item_type] = remove_train_items(
+            example["end_adding_example"] = False
+            for item_type in ("objects", "characters"):
+                room_items = example["original_room_content_data"][item_type]
+                example["original_room_content_data"][item_type] = remove_train_items(
                     room_items, dtype=self._dtype
                 )
             if had_nothing_to_add(example):
@@ -1030,7 +1038,7 @@ class RoomElementBase(RoomCommonSenseBaseTeacher):
         in the context.
         """
         return False
-    
+
     def select_from_available_mutations(self):
         return False
 
@@ -1061,7 +1069,13 @@ class RoomElementBase(RoomCommonSenseBaseTeacher):
                 if len(graph_states) == 0:
                     no_mutation_indices.add(i)
             try:
-                label_index = random.choice([i for i in range(len(potential_labels)) if i not in no_mutation_indices])
+                label_index = random.choice(
+                    [
+                        i
+                        for i in range(len(potential_labels))
+                        if i not in no_mutation_indices
+                    ]
+                )
             except:
                 pass
 
@@ -1102,14 +1116,14 @@ class RoomElementBase(RoomCommonSenseBaseTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         new_message = super().get(episode_idx, entry_idx=entry_idx)
-        room_content_data = new_message.pop('original_room_content_data')
+        room_content_data = new_message.pop("original_room_content_data")
 
         element_types = self._room_element_types()
         room_items = []
         for element_type in element_types:
             items = room_content_data[element_type]
             for it in items:
-                it['element_type'] = element_type
+                it["element_type"] = element_type
             room_items.extend(items)
 
         if not self._include_ex_room_entities:
@@ -1118,24 +1132,24 @@ class RoomElementBase(RoomCommonSenseBaseTeacher):
             room_items = [item for item in room_items if item[consts.IS_IN_ROOM]]
             for element_type in element_types:
                 type_room_items = [
-                    pl for pl in room_items if pl['element_type'] == element_type
+                    pl for pl in room_items if pl["element_type"] == element_type
                 ]
                 room_content_data[element_type] = type_room_items
 
         label, label_name, label_state_change = self.pick_label(
-            room_items, room_content_data['setting']
+            room_items, room_content_data["setting"]
         )
-        
+
         # re-set room_content with room_items, which may have had label item removed
         for element_type in element_types:
             type_room_items = [
-                pl for pl in room_items if pl['element_type'] == element_type
+                pl for pl in room_items if pl["element_type"] == element_type
             ]
             room_content_data[element_type] = type_room_items
 
         # Picking the label
         new_message.force_set(
-            'labels', [replace_binarized_attributes_with_description(label)]
+            "labels", [replace_binarized_attributes_with_description(label)]
         )
 
         # Generating the example text. Note that we need to generate label
@@ -1158,7 +1172,7 @@ class RoomElementBase(RoomCommonSenseBaseTeacher):
         )
 
         new_message.force_set(
-            'text',
+            "text",
             self._delimiter.join(
                 [
                     replace_binarized_attributes_with_description(state_text),
@@ -1211,9 +1225,9 @@ class AddObjectCharacterBase(RoomElementBase):
         # To generate the graph state needed to add this single object,
         # we generate the graph for an empty room that only has this single object.
 
-        single_element_room = {'setting': room_name, element['element_type']: [element]}
+        single_element_room = {"setting": room_name, element["element_type"]: [element]}
         dropouts = self.generate_label_dropouts()
-        if element['element_type'] == 'objects':
+        if element["element_type"] == "objects":
             add_room_objects_to_graph_state(
                 single_element_room,
                 graph_state,
@@ -1222,7 +1236,7 @@ class AddObjectCharacterBase(RoomElementBase):
                 dropouts=dropouts,
                 dropout_default=1,
             )
-        elif element['element_type'] == 'characters':
+        elif element["element_type"] == "characters":
             add_room_characters_to_graph_state(
                 single_element_room,
                 graph_state,
@@ -1233,7 +1247,8 @@ class AddObjectCharacterBase(RoomElementBase):
 
         return graph_state
 
-@register_teacher('light:common_sense:AddObjectTeacher')
+
+@register_teacher("light:common_sense:AddObjectTeacher")
 class AddObjectTeacher(AddObjectCharacterBase):
     """
     Suggests a new object, given the room settings.
@@ -1257,7 +1272,7 @@ class AddObjectTeacher(AddObjectCharacterBase):
         )
 
     def get_id(self):
-        return 'AddObjectTeacher'
+        return "AddObjectTeacher"
 
     def get_goal_features(self):
         return {
@@ -1265,28 +1280,29 @@ class AddObjectTeacher(AddObjectCharacterBase):
         }
 
     def _room_element_types(self):
-        return ['objects']
+        return ["objects"]
 
     def get_teacher_prompt(self, name=""):
-        return random.choice(consts.TEACHER_PROMPTS['adding_objects'])
+        return random.choice(consts.TEACHER_PROMPTS["adding_objects"])
 
     def remove_endpoint_references(self):
         return False
 
-@register_teacher('light:common_sense:AddObjectContainsTeacher')
+
+@register_teacher("light:common_sense:AddObjectContainsTeacher")
 class AddObjectContainsTeacher(AddObjectTeacher):
     """
     Suggests what this object might contain, given the room settings.
     """
 
     def get_id(self):
-        return 'AddObjectContainsTeacher'
+        return "AddObjectContainsTeacher"
 
     def get_goal_features(self):
         return {consts.GraphDropoutOptions.CONTAINED_OBJECTS}
 
     def get_teacher_prompt(self, name=""):
-        prompt = random.choice(consts.TEACHER_PROMPTS['adding_object_contains'])
+        prompt = random.choice(consts.TEACHER_PROMPTS["adding_object_contains"])
         return prompt.format(name=name)
 
     def delete_label_item(self):
@@ -1294,24 +1310,25 @@ class AddObjectContainsTeacher(AddObjectTeacher):
 
     def remove_endpoint_references(self):
         return True
-    
+
     def select_from_available_mutations(self):
         return True
 
-@register_teacher('light:common_sense:AddObjectDescriptionTeacher')
+
+@register_teacher("light:common_sense:AddObjectDescriptionTeacher")
 class AddObjectDescriptionTeacher(AddObjectTeacher):
     """
     Suggests what physical description this object might have, given the room settings.
     """
 
     def get_id(self):
-        return 'AddObjectDescriptionTeacher'
+        return "AddObjectDescriptionTeacher"
 
     def get_goal_features(self):
         return {consts.GraphDropoutOptions.PHYS_DESCRIPTION}
 
     def get_teacher_prompt(self, name=""):
-        prompt = random.choice(consts.TEACHER_PROMPTS['adding_physical_description'])
+        prompt = random.choice(consts.TEACHER_PROMPTS["adding_physical_description"])
         return prompt.format(name=name)
 
     def delete_label_item(self):
@@ -1320,7 +1337,8 @@ class AddObjectDescriptionTeacher(AddObjectTeacher):
     def add_no_mutation_option(self):
         return False
 
-@register_teacher('light:common_sense:AddCharacterTeacher')
+
+@register_teacher("light:common_sense:AddCharacterTeacher")
 class AddCharacterTeacher(AddObjectCharacterBase):
     """
     Suggests a new character, given the room settings.
@@ -1340,7 +1358,7 @@ class AddCharacterTeacher(AddObjectCharacterBase):
         ]
 
     def get_id(self):
-        return 'AddCharacterTeacher'
+        return "AddCharacterTeacher"
 
     def get_goal_features(self):
         return {
@@ -1348,25 +1366,26 @@ class AddCharacterTeacher(AddObjectCharacterBase):
         }
 
     def _room_element_types(self):
-        return ['characters']
+        return ["characters"]
 
     def get_teacher_prompt(self, name=""):
-        return random.choice(consts.TEACHER_PROMPTS['adding_characters'])
+        return random.choice(consts.TEACHER_PROMPTS["adding_characters"])
 
-@register_teacher('light:common_sense:AddCharacterWielding')
+
+@register_teacher("light:common_sense:AddCharacterWielding")
 class AddCharacterWieldingTeacher(AddCharacterTeacher):
     """
     Suggests what this character might wield, given the room settings.
     """
 
     def get_id(self):
-        return 'AddCharacterWieldingTeacher'
+        return "AddCharacterWieldingTeacher"
 
     def get_goal_features(self):
         return {consts.GraphDropoutOptions.WIELDED_OBJECTS}
 
     def get_teacher_prompt(self, name=""):
-        prompt = random.choice(consts.TEACHER_PROMPTS['adding_character_wielding'])
+        prompt = random.choice(consts.TEACHER_PROMPTS["adding_character_wielding"])
         return prompt.format(name=name)
 
     def delete_label_item(self):
@@ -1374,24 +1393,25 @@ class AddCharacterWieldingTeacher(AddCharacterTeacher):
 
     def remove_endpoint_references(self):
         return True
-    
+
     def select_from_available_mutations(self):
         return True
 
-@register_teacher('light:common_sense:AddCharacterCarryingTeacher')
+
+@register_teacher("light:common_sense:AddCharacterCarryingTeacher")
 class AddCharacterCarryingTeacher(AddCharacterTeacher):
     """
     Suggests what this character might carry, given the room settings.
     """
 
     def get_id(self):
-        return 'AddCharacterCarryingTeacher'
+        return "AddCharacterCarryingTeacher"
 
     def get_goal_features(self):
         return {consts.GraphDropoutOptions.CARRYING_OBJECTS}
 
     def get_teacher_prompt(self, name=""):
-        prompt = random.choice(consts.TEACHER_PROMPTS['adding_character_carrying'])
+        prompt = random.choice(consts.TEACHER_PROMPTS["adding_character_carrying"])
         return prompt.format(name=name)
 
     def delete_label_item(self):
@@ -1403,20 +1423,21 @@ class AddCharacterCarryingTeacher(AddCharacterTeacher):
     def select_from_available_mutations(self):
         return True
 
-@register_teacher('light:common_sense:AddCharacterWearingTeacher')
+
+@register_teacher("light:common_sense:AddCharacterWearingTeacher")
 class AddCharacterWearingTeacher(AddCharacterTeacher):
     """
     Suggests what this character might wear, given the room settings.
     """
 
     def get_id(self):
-        return 'AddCharacterWearingTeacher'
+        return "AddCharacterWearingTeacher"
 
     def get_goal_features(self):
         return {consts.GraphDropoutOptions.WORN_OBJECTS}
 
     def get_teacher_prompt(self, name=""):
-        prompt = random.choice(consts.TEACHER_PROMPTS['adding_character_wearing'])
+        prompt = random.choice(consts.TEACHER_PROMPTS["adding_character_wearing"])
         return prompt.format(name=name)
 
     def delete_label_item(self):
@@ -1424,11 +1445,12 @@ class AddCharacterWearingTeacher(AddCharacterTeacher):
 
     def remove_endpoint_references(self):
         return True
-    
+
     def select_from_available_mutations(self):
         return True
 
-@register_teacher('light:common_sense:AddCharacterDescriptionTeacher')
+
+@register_teacher("light:common_sense:AddCharacterDescriptionTeacher")
 class AddCharacterDescriptionTeacher(AddCharacterTeacher):
     """
     Suggests what physical description this character might have, given the room
@@ -1436,13 +1458,13 @@ class AddCharacterDescriptionTeacher(AddCharacterTeacher):
     """
 
     def get_id(self):
-        return 'AddCharacterDescriptionTeacher'
+        return "AddCharacterDescriptionTeacher"
 
     def get_goal_features(self):
         return {consts.GraphDropoutOptions.PHYS_DESCRIPTION}
 
     def get_teacher_prompt(self, name=""):
-        prompt = random.choice(consts.TEACHER_PROMPTS['adding_physical_description'])
+        prompt = random.choice(consts.TEACHER_PROMPTS["adding_physical_description"])
         return prompt.format(name=name)
 
     def delete_label_item(self):
@@ -1451,20 +1473,21 @@ class AddCharacterDescriptionTeacher(AddCharacterTeacher):
     def add_no_mutation_option(self):
         return False
 
-@register_teacher('light:common_sense:AddCharacterPersonaTeacher')
+
+@register_teacher("light:common_sense:AddCharacterPersonaTeacher")
 class AddCharacterPersonaTeacher(AddCharacterTeacher):
     """
     Suggests what persona this character might have, given the room settings.
     """
 
     def get_id(self):
-        return 'AddCharacterPersonaTeacher'
+        return "AddCharacterPersonaTeacher"
 
     def get_goal_features(self):
         return {consts.GraphDropoutOptions.PERSONA}
 
     def get_teacher_prompt(self, name=""):
-        prompt = random.choice(consts.TEACHER_PROMPTS['adding_character_persona'])
+        prompt = random.choice(consts.TEACHER_PROMPTS["adding_character_persona"])
         return prompt.format(name=name)
 
     def delete_label_item(self):
@@ -1473,7 +1496,8 @@ class AddCharacterPersonaTeacher(AddCharacterTeacher):
     def add_no_mutation_option(self):
         return False
 
-@register_teacher('light:common_sense:AddItemTypeTeacher')
+
+@register_teacher("light:common_sense:AddItemTypeTeacher")
 class AddItemTypeTeacher(AddObjectCharacterBase):
     """
     Suggests a new character, given the room settings.
@@ -1496,7 +1520,7 @@ class AddItemTypeTeacher(AddObjectCharacterBase):
         ]
 
     def get_id(self):
-        return 'AddItemTypeTeacher'
+        return "AddItemTypeTeacher"
 
     def get_goal_features(self):
         return {
@@ -1505,10 +1529,10 @@ class AddItemTypeTeacher(AddObjectCharacterBase):
         }
 
     def _room_element_types(self):
-        return ['objects', 'characters']
+        return ["objects", "characters"]
 
     def get_teacher_prompt(self, name=""):
-        prompt = random.choice(consts.TEACHER_PROMPTS['add_item_type'])
+        prompt = random.choice(consts.TEACHER_PROMPTS["add_item_type"])
         return prompt.format(name=name)
 
     def add_no_mutation_option(self):
@@ -1530,7 +1554,7 @@ class AddItemTypeTeacher(AddObjectCharacterBase):
 
 class BaseCommonSenseQATeacher(RoomElementBase):
     def get_id(self):
-        return 'CommonSenseQATeacher'
+        return "CommonSenseQATeacher"
 
     def add_no_mutation_select_buffer(self):
         return False
@@ -1538,7 +1562,8 @@ class BaseCommonSenseQATeacher(RoomElementBase):
     def get_goal_features(self):
         return {self._goal_feature}
 
-@register_teacher('light:common_sense:ObjectsCommonSenseQATeacher')
+
+@register_teacher("light:common_sense:ObjectsCommonSenseQATeacher")
 class ObjectsCommonSenseQATeacher(BaseCommonSenseQATeacher):
 
     OBJECT_ATTRIBUTES = (
@@ -1552,10 +1577,10 @@ class ObjectsCommonSenseQATeacher(BaseCommonSenseQATeacher):
     )
 
     def get_id(self):
-        return 'ObjectsCommonSenseQATeacher'
+        return "ObjectsCommonSenseQATeacher"
 
     def _room_element_types(self):
-        return ['objects']
+        return ["objects"]
 
     def type_relevant_dropouts(self):
         base_do_types = super().type_relevant_dropouts()
@@ -1569,80 +1594,80 @@ class ObjectsCommonSenseQATeacher(BaseCommonSenseQATeacher):
 
     def get_teacher_prompt(self, name):
         if self._goal_feature == consts.GraphDropoutOptions.OBJECT_IS_GETTABLE:
-            prompt_type_key = 'attribute_qa_gettable'
+            prompt_type_key = "attribute_qa_gettable"
         elif self._goal_feature == consts.GraphDropoutOptions.OBJECT_IS_DRINK:
-            prompt_type_key = 'attribute_qa_drink'
+            prompt_type_key = "attribute_qa_drink"
         elif self._goal_feature == consts.GraphDropoutOptions.OBJECT_IS_FOOD:
-            prompt_type_key = 'attribute_qa_food'
+            prompt_type_key = "attribute_qa_food"
         elif self._goal_feature == consts.GraphDropoutOptions.OBJECT_IS_CONTAINER:
-            prompt_type_key = 'attribute_qa_container'
+            prompt_type_key = "attribute_qa_container"
         elif self._goal_feature == consts.GraphDropoutOptions.OBJECT_IS_SURFACE:
-            prompt_type_key = 'attribute_qa_surface'
+            prompt_type_key = "attribute_qa_surface"
         elif self._goal_feature == consts.GraphDropoutOptions.OBJECT_IS_WEAPON:
-            prompt_type_key = 'attribute_qa_weapon'
+            prompt_type_key = "attribute_qa_weapon"
         elif self._goal_feature == consts.GraphDropoutOptions.OBJECT_IS_WEARABLE:
-            prompt_type_key = 'attribute_qa_wearable'
+            prompt_type_key = "attribute_qa_wearable"
         else:
-            raise ValueError(f'Unknown attribute {self._goal_feature}')
+            raise ValueError(f"Unknown attribute {self._goal_feature}")
 
         prompt_template = random.choice(consts.TEACHER_PROMPTS[prompt_type_key])
         return prompt_template.format(name=name)
 
     def generate_element_graph_states(self, element):
         graph_state = []
-        object_name = element['name']
+        object_name = element["name"]
 
         if self._goal_feature == consts.GraphDropoutOptions.OBJECT_IS_GETTABLE:
             add_to_graph_state(
                 graph_state,
                 object_name,
-                float_to_binary_str(element['is_gettable']),
+                float_to_binary_str(element["is_gettable"]),
                 consts.GraphEdges.IS_GETTABLE,
             )
         elif self._goal_feature == consts.GraphDropoutOptions.OBJECT_IS_DRINK:
             add_to_graph_state(
                 graph_state,
                 object_name,
-                float_to_binary_str(element['is_drink']),
+                float_to_binary_str(element["is_drink"]),
                 consts.GraphEdges.IS_DRINK,
             )
         elif self._goal_feature == consts.GraphDropoutOptions.OBJECT_IS_FOOD:
             add_to_graph_state(
                 graph_state,
                 object_name,
-                float_to_binary_str(element['is_food']),
+                float_to_binary_str(element["is_food"]),
                 consts.GraphEdges.IS_FOOD,
             )
         elif self._goal_feature == consts.GraphDropoutOptions.OBJECT_IS_CONTAINER:
             add_to_graph_state(
                 graph_state,
                 object_name,
-                float_to_binary_str(element['is_container']),
+                float_to_binary_str(element["is_container"]),
                 consts.GraphEdges.IS_CONTAINER,
             )
         elif self._goal_feature == consts.GraphDropoutOptions.OBJECT_IS_SURFACE:
             add_to_graph_state(
                 graph_state,
                 object_name,
-                float_to_binary_str(element['is_surface']),
+                float_to_binary_str(element["is_surface"]),
                 consts.GraphEdges.IS_SURFACE,
             )
         elif self._goal_feature == consts.GraphDropoutOptions.OBJECT_IS_WEAPON:
             add_to_graph_state(
                 graph_state,
                 object_name,
-                float_to_binary_str(element['is_weapon']),
+                float_to_binary_str(element["is_weapon"]),
                 consts.GraphEdges.IS_WIELDABLE,
             )
         elif self._goal_feature == consts.GraphDropoutOptions.OBJECT_IS_WEARABLE:
             add_to_graph_state(
                 graph_state,
                 object_name,
-                float_to_binary_str(element['is_wearable']),
+                float_to_binary_str(element["is_wearable"]),
                 consts.GraphEdges.IS_WEARABLE,
             )
         else:
-            raise ValueError(f'Unknown attribute {self._goal_feature}')
+            raise ValueError(f"Unknown attribute {self._goal_feature}")
 
         return graph_state
 
@@ -1651,7 +1676,7 @@ class ObjectsCommonSenseQATeacher(BaseCommonSenseQATeacher):
         assert self._goal_feature
         assert (
             potential_labels
-        ), 'The potential objects for common sense QA can not be empty.'
+        ), "The potential objects for common sense QA can not be empty."
 
         label_index = random.choice(range(len(potential_labels)))
         label_item = potential_labels[label_index]
@@ -1673,14 +1698,14 @@ class ObjectsCommonSenseQATeacher(BaseCommonSenseQATeacher):
 
 
 def get_item_class(item_data):
-    if item_data['room']:
+    if item_data["room"]:
         return consts.ElementType.ROOM
-    elif item_data['object']:
+    elif item_data["object"]:
         return consts.ElementType.OBJECT
-    elif item_data['agent']:
+    elif item_data["agent"]:
         return consts.ElementType.CHARACTER
     else:
-        raise ValueError(f'Invalid item type. Item details {item_data}')
+        raise ValueError(f"Invalid item type. Item details {item_data}")
 
 
 class GameActionsBaseTeacher(CommonSenseBaseTeacher):
@@ -1690,18 +1715,18 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['datafile'] = self._get_datafile_path(opt)
+        opt["datafile"] = self._get_datafile_path(opt)
         # `_no_mutation_label_do` is different from the rest because it is on the whole example,
         # not the components of the context. That's why we keep it seperate from others,
         # outside the `_text_features_droputs` dict.
-        self._no_mutation_label_do = opt['no_mutation_label_do']
+        self._no_mutation_label_do = opt["no_mutation_label_do"]
         super().__init__(opt, shared)
         for k in (
-            'dialog_history_do',
-            'state_mutations_history_do',
-            'object_info_do',
-            'character_info_do',
-            'character_context_do',
+            "dialog_history_do",
+            "state_mutations_history_do",
+            "object_info_do",
+            "character_info_do",
+            "character_context_do",
         ):
             self._text_features_droputs[k] = opt[k]
 
@@ -1711,61 +1736,61 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
     @classmethod
     def add_cmdline_args(cls, parser: ParlaiParser, partial_opt=None) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
-        arg_group = parser.add_argument_group('Common sense actions teacher arguments.')
+        arg_group = parser.add_argument_group("Common sense actions teacher arguments.")
         arg_group.add_argument(
-            '--dialog-history-do',
+            "--dialog-history-do",
             type=float,
             default=0,
-            help=('The dropout rate for the dialogue history between the agents.'),
+            help=("The dropout rate for the dialogue history between the agents."),
         )
         arg_group.add_argument(
-            '--state-mutations-history-do',
+            "--state-mutations-history-do",
             type=float,
             default=0,
-            help=('The dropout rate for the history of the game state changes.'),
+            help=("The dropout rate for the history of the game state changes."),
         )
         arg_group.add_argument(
-            '--object-info-do',
+            "--object-info-do",
             type=float,
             default=0,
-            help=('The dropout rate for object info (eg, drinkable, wearable, etc.).'),
+            help=("The dropout rate for object info (eg, drinkable, wearable, etc.)."),
         )
         arg_group.add_argument(
-            '--character-info-do',
+            "--character-info-do",
             type=float,
             default=0,
-            help=('The dropout rate for character info (eg, health, strength, etc.).'),
+            help=("The dropout rate for character info (eg, health, strength, etc.)."),
         )
         arg_group.add_argument(
-            '--character-context-do',
+            "--character-context-do",
             type=float,
             default=0,
             help=(
-                'The dropout rate for context message shown to the playing character.'
+                "The dropout rate for context message shown to the playing character."
             ),
         )
         arg_group.add_argument(
-            '--no-mutation-label-do',
+            "--no-mutation-label-do",
             type=float,
             default=0,
-            help=('The dropout rate for *examples* with NO_MUTATION label.'),
+            help=("The dropout rate for *examples* with NO_MUTATION label."),
         )
         return parser
 
     def _get_datafile_path(self, opt):
         dtype = get_dtype(opt)
-        fname = f'processed_{dtype}_convs.jsonl'
+        fname = f"processed_{dtype}_convs.jsonl"
         return os.path.join(
-            opt['datapath'], consts.DATASET_DIR_NAME, consts.GAMEPLAY_DIR, fname
+            opt["datapath"], consts.DATASET_DIR_NAME, consts.GAMEPLAY_DIR, fname
         )
 
     def load_dialog_data(self, data_path):
-        logging.info(f'Loading dataset from {data_path}')
-        with jsonlines.open(data_path, 'r') as fin:
+        logging.info(f"Loading dataset from {data_path}")
+        with jsonlines.open(data_path, "r") as fin:
             return [line for line in fin]
 
     def format_hist_element(self, actor, action_type, time_diff, action_data):
-        action_relation = f'{action_type.name} ({time_diff})'
+        action_relation = f"{action_type.name} ({time_diff})"
         return graph_state_tuple(actor, action_data, action_relation)
 
     def get_graph_state_tuples(self, json_graph, dropouts, dropouts_default=0):
@@ -1782,7 +1807,7 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
             """
             # Adding the item itself
             item_type = get_item_class(item_to_add)
-            item_name = item_to_add['name'].lower()
+            item_name = item_to_add["name"].lower()
             add_to_graph_state(
                 graph_state_tuples, item_name, item_type.name, consts.GraphEdges.IS_TYPE
             )
@@ -1797,7 +1822,7 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
                     add_to_graph_state(
                         graph_state_tuples,
                         item_name,
-                        item_to_add['desc'],
+                        item_to_add["desc"],
                         consts.GraphEdges.HAS_DESCRIPTION,
                     )
 
@@ -1810,16 +1835,16 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
                     add_to_graph_state(
                         graph_state_tuples,
                         item_name,
-                        item_to_add['extra_desc'],
+                        item_to_add["extra_desc"],
                         consts.GraphEdges.HAS_BACKSTORY,
                     )
             elif item_type == consts.ElementType.OBJECT and survives_dropout(
-                dropouts.get('object_info_do', dropouts_default)
+                dropouts.get("object_info_do", dropouts_default)
             ):
                 for qual, edge_type in (
-                    ('gettable', consts.GraphEdges.IS_GETTABLE),
-                    ('wearable', consts.GraphEdges.IS_WEARABLE),
-                    ('wieldable', consts.GraphEdges.IS_WIELDABLE),
+                    ("gettable", consts.GraphEdges.IS_GETTABLE),
+                    ("wearable", consts.GraphEdges.IS_WEARABLE),
+                    ("wieldable", consts.GraphEdges.IS_WIELDABLE),
                 ):
                     add_to_graph_state(
                         graph_state_tuples,
@@ -1828,13 +1853,13 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
                         edge_type,
                     )
             elif item_type == consts.ElementType.CHARACTER and survives_dropout(
-                dropouts.get('character_info_do', dropouts_default)
+                dropouts.get("character_info_do", dropouts_default)
             ):
                 for qual, edge_type in (
-                    ('dead', consts.GraphEdges.IS_DEAD),
-                    ('damage', consts.GraphEdges.HAS_DAMAGE_LEVEL),
-                    ('health', consts.GraphEdges.HAS_HEALTH_LEVEL),
-                    ('strength', consts.GraphEdges.HAS_STRENGTH_LEVEL),
+                    ("dead", consts.GraphEdges.IS_DEAD),
+                    ("damage", consts.GraphEdges.HAS_DAMAGE_LEVEL),
+                    ("health", consts.GraphEdges.HAS_HEALTH_LEVEL),
+                    ("strength", consts.GraphEdges.HAS_STRENGTH_LEVEL),
                 ):
                     add_to_graph_state(
                         graph_state_tuples,
@@ -1844,9 +1869,9 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
                     )
 
             # Recursively adding the objects under a component
-            for sub_comps in item_to_add['contained_nodes']:
-                sub_comp_node = graph_dict['nodes'][sub_comps]
-                sub_com_name = sub_comp_node['name'].lower()
+            for sub_comps in item_to_add["contained_nodes"]:
+                sub_comp_node = graph_dict["nodes"][sub_comps]
+                sub_com_name = sub_comp_node["name"].lower()
                 if item_type == consts.ElementType.ROOM:
                     sub_com_type = get_item_class(sub_comp_node)
                     if (
@@ -1886,7 +1911,7 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
                     )
                     add_item_to_graph(sub_comp_node)
                 else:  # Item belongs to a character
-                    equipped_type = sub_comp_node.get('equipped')
+                    equipped_type = sub_comp_node.get("equipped")
                     if not equipped_type:
                         add_to_graph_state(
                             graph_state_tuples,
@@ -1897,19 +1922,19 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
                         add_item_to_graph(sub_comp_node)
                         continue
 
-                    if equipped_type == 'equip':
+                    if equipped_type == "equip":
                         # Handling unclarified equipped items
                         assert (
-                            sub_comp_node['wearable'] or sub_comp_node['wieldable']
-                        ), 'Equipped unequipable item.'
-                        if sub_comp_node['wearable'] and sub_comp_node['wieldable']:
-                            equipped_type = 'wear_wield'
-                        elif sub_comp_node['wearable']:
-                            equipped_type = 'wear'
-                        elif sub_comp_node['wieldable']:
-                            equipped_type = 'wield'
+                            sub_comp_node["wearable"] or sub_comp_node["wieldable"]
+                        ), "Equipped unequipable item."
+                        if sub_comp_node["wearable"] and sub_comp_node["wieldable"]:
+                            equipped_type = "wear_wield"
+                        elif sub_comp_node["wearable"]:
+                            equipped_type = "wear"
+                        elif sub_comp_node["wieldable"]:
+                            equipped_type = "wield"
 
-                    if equipped_type == 'wear_wield':
+                    if equipped_type == "wear_wield":
                         if survives_dropout(
                             dropouts.get(
                                 consts.GraphDropoutOptions.WIELDED_OBJECTS,
@@ -1935,7 +1960,7 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
                             )
                             add_item_to_graph(sub_comp_node)
 
-                    elif equipped_type == 'wear':
+                    elif equipped_type == "wear":
                         if survives_dropout(
                             dropouts.get(
                                 consts.GraphDropoutOptions.WORN_OBJECTS,
@@ -1949,7 +1974,7 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
                                 consts.GraphEdges.IS_WEARING,
                             )
                             add_item_to_graph(sub_comp_node)
-                    elif equipped_type == 'wield':
+                    elif equipped_type == "wield":
                         if survives_dropout(
                             dropouts.get(
                                 consts.GraphDropoutOptions.WIELDED_OBJECTS,
@@ -1968,12 +1993,12 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
                             f'Object with invalid equipped type "{equipped_type}".'
                         )
 
-        rooms = graph_dict['rooms']
+        rooms = graph_dict["rooms"]
         assert (
             len(rooms) == 1
-        ), f'Common sense teacher is currently only handling one room.'
+        ), f"Common sense teacher is currently only handling one room."
         # Adding the room, and recursively anything underneath it.
-        add_item_to_graph(graph_dict['nodes'][rooms[0]])
+        add_item_to_graph(graph_dict["nodes"][rooms[0]])
         return consts.GRAPH_STATES_DELIM.join(graph_state_tuples)
 
     def get_graph_diff(self, graph_1, graph_2):
@@ -2004,50 +2029,50 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
             messages = []
             state_changes_hist = []
             for idx, conv in enumerate(convs):
-                acting_agent = conv['speaker_id']  # in each round agent acts and speaks
-                speech_txt = conv['speech_text'].strip().replace('\n', ' ')
+                acting_agent = conv["speaker_id"]  # in each round agent acts and speaks
+                speech_txt = conv["speech_text"].strip().replace("\n", " ")
                 messages.append((idx, acting_agent, speech_txt))
-                round_act = conv['action']
+                round_act = conv["action"]
                 if not round_act:
                     continue
                 act_message = Message(
                     {
-                        'id': acting_agent,
+                        "id": acting_agent,
                         # This is a proxy for marking event alogn the history.
-                        'curr_time': idx,
+                        "curr_time": idx,
                         # NOTE the hist lists are shared by the examples in an episode: the all keep
                         # a reference to the same list. We don't need to deep copy as long as we assure
                         # we process the length of the list that is relevant to that time-step.
-                        'speech_hist': messages,
-                        'world_changes_hist': state_changes_hist,
-                        'action': round_act,
-                        'agent_observation': conv['agent_observation'],
-                        'player_context': conv['player_context'],
-                        'possible_actions': conv['possible_actions'],
+                        "speech_hist": messages,
+                        "world_changes_hist": state_changes_hist,
+                        "action": round_act,
+                        "agent_observation": conv["agent_observation"],
+                        "player_context": conv["player_context"],
+                        "possible_actions": conv["possible_actions"],
                         # We keep conv['game_state_after_action'] for applying dropout on it later
                         # By keeping the whole graph we assure that dropout happens correctly.
                         # For example, dropping out a character and all its related belongings.
-                        'game_state_before_action': conv['game_state_before_action'],
+                        "game_state_before_action": conv["game_state_before_action"],
                     }
                 )
 
                 graph_state_before_action = self.get_graph_state_tuples(
-                    conv['game_state_before_action'],
+                    conv["game_state_before_action"],
                     dropouts=NO_DROPOUTS_DICT,
                 )
                 # We store this for keeing the correct order of the added entities.
                 act_message[
-                    'state_tuples_before_action'
+                    "state_tuples_before_action"
                 ] = graph_state_before_action.split(consts.GRAPH_STATES_DELIM)
                 graph_state_after_action = self.get_graph_state_tuples(
-                    conv['game_state_after_action'],
+                    conv["game_state_after_action"],
                     dropouts=NO_DROPOUTS_DICT,
                 )
                 graph_diff = self.get_graph_diff(
                     graph_state_after_action, graph_state_before_action
                 )
 
-                act_message['graph_diff'] = graph_diff
+                act_message["graph_diff"] = graph_diff
                 if graph_diff != consts.GraphMutations.NO_MUTATION.name:
                     state_changes_hist.append(
                         (
@@ -2075,7 +2100,7 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
                 yield act_message, True
 
     def _get_hist_txt_feature(self, example, example_feat_name, edge_type):
-        curr_time_idx = example['curr_time']
+        curr_time_idx = example["curr_time"]
         message_hist_txt_parts = []
         for time_idx, sender, message in example[example_feat_name]:
             time_diff = curr_time_idx - time_idx
@@ -2088,21 +2113,21 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
 
     def get_speech_hist_text_feature(self, example):
         return self._get_hist_txt_feature(
-            example, 'speech_hist', consts.GraphEdges.HAD_SAID
+            example, "speech_hist", consts.GraphEdges.HAD_SAID
         )
 
     def get_world_change_hist_text_feature(self, example):
         return self._get_hist_txt_feature(
-            example, 'world_changes_hist', consts.GraphEdges.HAD_ACTED
+            example, "world_changes_hist", consts.GraphEdges.HAD_ACTED
         )
 
     def get(self, episode_idx, entry_idx=0):
         example = super().get(episode_idx, entry_idx)
         return Message(
             {
-                'id': example['id'],
-                'episode_done': True,
-                'text': self._delimiter.join(
+                "id": example["id"],
+                "episode_done": True,
+                "text": self._delimiter.join(
                     [
                         replace_binarized_attributes_with_description(
                             self.generate_example_text(example)
@@ -2110,7 +2135,7 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
                         self.get_teacher_prompt(example),
                     ]
                 ),
-                'labels': [
+                "labels": [
                     replace_binarized_attributes_with_description(
                         self.generate_example_label(example)
                     )
@@ -2120,35 +2145,36 @@ class GameActionsBaseTeacher(CommonSenseBaseTeacher):
 
 
 def action_teacher_prompt(example):
-    prompt = random.choice(consts.TEACHER_PROMPTS['action_effects'])
-    return prompt.format(actor=example['id'], act=example['action'])
+    prompt = random.choice(consts.TEACHER_PROMPTS["action_effects"])
+    return prompt.format(actor=example["id"], act=example["action"])
 
 
 def narration_teacher_prompt(example):
-    prompt = random.choice(consts.TEACHER_PROMPTS['narration_after_action'])
-    return prompt.format(actor=example['id'], act=example['action'])
+    prompt = random.choice(consts.TEACHER_PROMPTS["narration_after_action"])
+    return prompt.format(actor=example["id"], act=example["action"])
 
-@register_teacher('light:common_sense:GameActionsTeacher')
+
+@register_teacher("light:common_sense:GameActionsTeacher")
 class GameActionsTeacher(GameActionsBaseTeacher):
     """
     Common sense for player actions.
     """
 
     def get_id(self):
-        return 'WorldActionsCommonSenseTeacher'
+        return "WorldActionsCommonSenseTeacher"
 
     def generate_example_text(self, example):
 
         txt_feature_parts = []
 
         # Adding the dialog history
-        if survives_dropout(self._text_features_droputs['dialog_history_do']):
+        if survives_dropout(self._text_features_droputs["dialog_history_do"]):
             txt = self.get_speech_hist_text_feature(example)
             if txt:
                 txt_feature_parts.append(txt)
 
         # Adding the action history
-        if survives_dropout(self._text_features_droputs['state_mutations_history_do']):
+        if survives_dropout(self._text_features_droputs["state_mutations_history_do"]):
             txt = self.get_world_change_hist_text_feature(example)
             if txt:
                 txt_feature_parts.append(txt)
@@ -2157,10 +2183,10 @@ class GameActionsTeacher(GameActionsBaseTeacher):
         # because the graph action changes these (deletes them after action).
         need_state_tuple_set = set()
         del_mutation_token = get_mutation_token(consts.GraphMutations.DEL)
-        for mut in example['graph_diff'].split(consts.GRAPH_STATES_DELIM):
+        for mut in example["graph_diff"].split(consts.GRAPH_STATES_DELIM):
             if not mut.startswith(del_mutation_token):
                 continue
-            need_state_tuple_set.add(mut.replace(del_mutation_token, '').strip())
+            need_state_tuple_set.add(mut.replace(del_mutation_token, "").strip())
 
         # We generate two copies of graph states, one with dropout (A) and one without (B).
         # Then we check each tuple in B and add it to the output if it is in A or in the
@@ -2169,7 +2195,7 @@ class GameActionsTeacher(GameActionsBaseTeacher):
         # during setup, and store it with the example (`state_tuples_before_action`).
         init_states_with_do_set = set(
             self.get_graph_state_tuples(
-                example['game_state_before_action'],
+                example["game_state_before_action"],
                 dropouts=self._text_features_droputs,
             ).split(consts.GRAPH_STATES_DELIM)
         )
@@ -2181,15 +2207,15 @@ class GameActionsTeacher(GameActionsBaseTeacher):
         # But it may make it harder for the model to learn (just a guess).
         ret_states = []
         states_to_keep = init_states_with_do_set.union(need_state_tuple_set)
-        for cand_state in example['state_tuples_before_action']:
+        for cand_state in example["state_tuples_before_action"]:
             if cand_state in states_to_keep:
                 ret_states.append(cand_state)
 
-        if survives_dropout(self._text_features_droputs['character_context_do']):
+        if survives_dropout(self._text_features_droputs["character_context_do"]):
             ret_states.append(
                 graph_state_tuple(
-                    example['id'],
-                    example['player_context'],
+                    example["id"],
+                    example["player_context"],
                     consts.GraphEdges.HAS_PLAYER_CONTEXT,
                 )
             )
@@ -2199,7 +2225,7 @@ class GameActionsTeacher(GameActionsBaseTeacher):
         return self._delimiter.join(txt_feature_parts)
 
     def generate_example_label(self, example):
-        return example['graph_diff']
+        return example["graph_diff"]
 
     def get_teacher_prompt(self, example):
         return action_teacher_prompt(example)
@@ -2207,19 +2233,20 @@ class GameActionsTeacher(GameActionsBaseTeacher):
 
 def action_narration_tuple(example):
     return graph_state_tuple(
-        example['id'], example['agent_observation'], consts.GraphEdges.OBSERVED
+        example["id"], example["agent_observation"], consts.GraphEdges.OBSERVED
     )
 
-@register_teacher('light:common_sense:GameActionsNarrationTeacher')
+
+@register_teacher("light:common_sense:GameActionsNarrationTeacher")
 class GameActionsNarrationTeacher(GameActionsTeacher):
     def get_id(self):
-        return 'GameActionsNarration'
+        return "GameActionsNarration"
 
     def setup_data(self, datapath: str):
         for msg, _ in super().setup_data(datapath):
-            if msg.get('agent_observation'):
+            if msg.get("agent_observation"):
                 # skip rounds that there was no action from use and thus no observation.
-                assert msg.get('action')
+                assert msg.get("action")
                 yield msg, True
 
     def generate_example_label(self, example):
@@ -2228,28 +2255,29 @@ class GameActionsNarrationTeacher(GameActionsTeacher):
     def get_teacher_prompt(self, example):
         return narration_teacher_prompt(example)
 
-@register_teacher('light:common_sense:SelfPlayTeacher')
+
+@register_teacher("light:common_sense:SelfPlayTeacher")
 class SelfPlayTeacher(GameActionsTeacher):
     """
     Agent observations after a potential action.
     """
 
     def __init__(self, opt, shared=None):
-        self._data_size_reduction_factor = opt['selfplay_data_reduc_factor']
-        assert self._data_size_reduction_factor >= 1, 'Minimum reduction factor is 1.'
+        self._data_size_reduction_factor = opt["selfplay_data_reduc_factor"]
+        assert self._data_size_reduction_factor >= 1, "Minimum reduction factor is 1."
         super().__init__(opt, shared=shared)
 
     @classmethod
     def add_cmdline_args(cls, parser: ParlaiParser, partial_opt=None) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
         arg_group = parser.add_argument_group(
-            'LIGHT common sense self-play action teachers.'
+            "LIGHT common sense self-play action teachers."
         )
         arg_group.add_argument(
-            '--selfplay-data-reduc-factor',
+            "--selfplay-data-reduc-factor",
             type=int,
             default=1,
-            help=('To reduce the size of the dataset by this factor.'),
+            help=("To reduce the size of the dataset by this factor."),
         )
         return parser
 
@@ -2257,7 +2285,7 @@ class SelfPlayTeacher(GameActionsTeacher):
         return True
 
     def get_id(self):
-        return 'SelfPlayActions'
+        return "SelfPlayActions"
 
     def get_teacher_prompt(self, example):
         return action_teacher_prompt(example)
@@ -2271,31 +2299,32 @@ class SelfPlayTeacher(GameActionsTeacher):
             if not action_roll_outs:
                 continue
 
-            del original_msg['possible_actions']  # don't need it
+            del original_msg["possible_actions"]  # don't need it
 
             for act in action_roll_outs:
                 message = copy.deepcopy(original_msg)
-                for ovrds in ('action', 'agent_observation'):
+                for ovrds in ("action", "agent_observation"):
                     message.force_set(ovrds, act[ovrds])
                 graph_state_before_action = consts.GRAPH_STATES_DELIM.join(
-                    message['state_tuples_before_action']
+                    message["state_tuples_before_action"]
                 )
                 graph_state_after_action = self.get_graph_state_tuples(
-                    act['game_state_after_action'],
+                    act["game_state_after_action"],
                     dropouts={},
                 )
                 message.force_set(
-                    'graph_diff',
+                    "graph_diff",
                     self.get_graph_diff(
                         graph_state_after_action, graph_state_before_action
                     ),
                 )
                 yield message, True
 
-@register_teacher('light:common_sense:SelfPlayNarrationTeacher')
+
+@register_teacher("light:common_sense:SelfPlayNarrationTeacher")
 class SelfPlayNarrationTeacher(SelfPlayTeacher):
     def get_id(self):
-        return 'SelfPlayActionsNarration'
+        return "SelfPlayActionsNarration"
 
     def generate_example_label(self, example):
         return action_narration_tuple(example)

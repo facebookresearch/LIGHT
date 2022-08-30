@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.abs
 
@@ -1848,7 +1848,7 @@ equipped_node = test_graph_3_before_equip_sword.get_node("sword_from_a_stone_4")
 actor_node = test_graph_3_before_equip_sword.get_node("carrier_12")
 assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
 assert isinstance(actor_node, GraphAgent), "Graph parsing failed"
-equipped_node.equipped = 'equip'
+equipped_node.equipped = "equip"
 actor_node.damage += 1
 actor_node.num_wieldable_items = 1
 actor_node.num_wearable_items = 0
@@ -1856,7 +1856,7 @@ test_graph_3_after_equip_sword = test_graph_3_before_equip_sword.to_json()
 
 equipped_node = test_graph_3_before_equip_sword.get_node("hat_5")
 assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
-equipped_node.equipped = 'equip'
+equipped_node.equipped = "equip"
 actor_node.defense += 1
 actor_node.num_wieldable_items = 1
 actor_node.num_wearable_items = 1
@@ -1867,7 +1867,7 @@ equipped_node = test_graph_3_before_equip_hat.get_node("hat_5")
 actor_node = test_graph_3_before_equip_hat.get_node("carrier_12")
 assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
 assert isinstance(actor_node, GraphAgent), "Graph parsing failed"
-equipped_node.equipped = 'equip'
+equipped_node.equipped = "equip"
 actor_node.defense += 1
 actor_node.num_wieldable_items = 0
 actor_node.num_wearable_items = 1
@@ -1914,11 +1914,12 @@ class EquipObjectEventTest(GraphEventTests):
     ]
     EVENT_CLASS = EquipObjectEvent
 
+
 test_graph_3_before_wearing_hat = OOGraph.from_json(test_graph_3)
 actor_node = test_graph_3_before_wearing_hat.get_node("carrier_12")
 equipped_node = test_graph_3_before_wearing_hat.get_node("hat_5")
 assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
-equipped_node.equipped = 'wear'
+equipped_node.equipped = "wear"
 actor_node.defense += 1
 actor_node.num_wieldable_items = 0
 actor_node.num_wearable_items = 1
@@ -1981,7 +1982,7 @@ equipped_node = test_graph_3_before_wield_sword.get_node("sword_from_a_stone_4")
 actor_node = test_graph_3_before_wield_sword.get_node("carrier_12")
 assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
 assert isinstance(actor_node, GraphAgent), "Graph parsing failed"
-equipped_node.equipped = 'wield'
+equipped_node.equipped = "wield"
 actor_node.damage += 1
 actor_node.num_wieldable_items = 1
 actor_node.num_wearable_items = 0

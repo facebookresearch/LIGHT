@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -81,7 +81,9 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             parlai_datapath = opt["datapath"]
             db_path = os.path.join(parlai_datapath, "light", "database3.db")
         self.db_path = db_path
-        self.dpath = os.path.expanduser(os.path.join(opt['db_path'], '../..', 'light_maps'))
+        self.dpath = os.path.expanduser(
+            os.path.join(opt["db_path"], "../..", "light_maps")
+        )
         model_path = opt.get("model_path")
         if model_path is None:
             model_path = opt.get("light_model_root")

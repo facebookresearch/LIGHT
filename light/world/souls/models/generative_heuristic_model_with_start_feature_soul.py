@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.world.souls.models.generative_heuristic_model_soul import GenerativeHeuristicModelSoul
+from light.world.souls.models.generative_heuristic_model_soul import (
+    GenerativeHeuristicModelSoul,
+)
+
 
 class GenerativeHeuristicModelWithStartFeatureSoul(GenerativeHeuristicModelSoul):
-
     def add_startswith_tokens(self, context, dialogue_txt):
         # extract partner name
         partner_name = ""
@@ -21,8 +23,8 @@ class GenerativeHeuristicModelWithStartFeatureSoul(GenerativeHeuristicModelSoul)
             feature = "START " + partner_name
         else:
             feature = "CONTINUE " + partner_name
-        final = context + dialogue_txt + '\n' + feature
-        #print(final)
+        final = context + dialogue_txt + "\n" + feature
+        # print(final)
         return final
 
     def build_dialog_context(self, quest_txt=None):
@@ -47,8 +49,7 @@ class GenerativeHeuristicModelWithStartFeatureSoul(GenerativeHeuristicModelSoul)
                 dtxt = self.build_context(quest_txt)
         dtxt = dtxt.lstrip(" ")
 
-        # Add starting context features, can help the model.            
+        # Add starting context features, can help the model.
         final = self.add_startswith_tokens(txt, dtxt)
 
         return final
-    

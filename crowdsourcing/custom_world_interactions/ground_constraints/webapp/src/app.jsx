@@ -1,3 +1,10 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 /*
  * Copyright (c) 2017-present, Facebook, Inc.
  * All rights reserved.
@@ -38,7 +45,7 @@ function MainApp() {
     initialTaskData,
     handleSubmit,
   } = useMephistoTask();
-  
+
   //Error Handling
   const [showError, setShowError] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
@@ -284,7 +291,7 @@ function MainApp() {
             type: "in_used_item",
             key: attribute.name,
             list: [attribute.value],
-            cmp_type: attribute.value ? "eq" : "neq", 
+            cmp_type: attribute.value ? "eq" : "neq",
           }
         })
       })
@@ -315,7 +322,7 @@ function MainApp() {
         key: "has_backstory",
       }
     }]
-    
+
     let this_task_state = {
       broadcastMessage,
       isRemovingObjects,

@@ -1,3 +1,10 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 //REACT
 import React, {useEffect, useState} from "react";
 //STYLING
@@ -17,7 +24,7 @@ const MultipleSelectQuestion = ({
     //Local State
     const [selectedAnswers, setSelectedAnswers] = useState([]);
     const [answerList, setAnswerList] = useState([]);
-    
+
     if (colors === undefined) {
         colors = answers.map(a => undefined);
     }

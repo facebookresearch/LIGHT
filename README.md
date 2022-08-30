@@ -51,6 +51,10 @@ TODO - Fill out once all of the required minimal models are hosted for access ou
 
 TODO - more details are in the [web deploy](https://github.com/facebookresearch/LIGHT/tree/main/deploy/web/) directory.
 
+## License
+
+LIGHT is licensed under the MIT License. Please refer to our [LICENSE](https://github.com/facebookresearch/LIGHT/LICENSE) file for information about how the project is to be used.
+
 ## Creating tasks and agents
 We use the "register" syntax so that new agents and tasks are visible to the parlai module. Note, however,
 that in any script that uses these tasks or agents, you will have to make a call to the functions `register_all_agents()` and `register_all_tasks()` which can be found in `light/modeling/loading.py`.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -21,10 +21,10 @@ from light.world.souls.base_soul import BaseSoul
 from light.world.souls.repeat_soul import RepeatSoul
 from light.world.souls.on_event_soul import OnEventSoul
 from light.world.souls.models.generative_heuristic_model_soul import (
-    GenerativeHeuristicModelSoul
+    GenerativeHeuristicModelSoul,
 )
 from light.world.souls.models.generative_heuristic_model_with_start_feature_soul import (
-    GenerativeHeuristicModelWithStartFeatureSoul
+    GenerativeHeuristicModelWithStartFeatureSoul,
 )
 
 import os
@@ -51,7 +51,9 @@ def init_world(world_builder):
     elif opt["use_models"] == "GenerativeHeuristicModelWithStartFeatureSoul":
         print("on it")
         purgatory.register_filler_soul_provider(
-            "model", GenerativeHeuristicModelWithStartFeatureSoul, lambda: [shared_model_content]
+            "model",
+            GenerativeHeuristicModelWithStartFeatureSoul,
+            lambda: [shared_model_content],
         )
     elif opt["use_models"] == "OnEventSoul":
         purgatory.register_filler_soul_provider("repeat", OnEventSoul, lambda: [{}])
@@ -97,7 +99,7 @@ parser.add_argument(
         "OnEventSoul",
         "RepeatSoul",
         "GenerativeHeuristicModelSoul",
-        "GenerativeHeuristicModelWithStartFeatureSoul"
+        "GenerativeHeuristicModelWithStartFeatureSoul",
     },
 )
 parser.add_argument(
@@ -177,8 +179,9 @@ if opt["use_models"] == "GenerativeHeuristicModelSoul":
 if opt["use_models"] == "GenerativeHeuristicModelWithStartFeatureSoul":
     light_model_root = opt["light_model_root"]
     shared_model_content = GenerativeHeuristicModelWithStartFeatureSoul.load_models(
-        light_model_root + "game2021/gen_dialog_model_with_start_feature/model.checkpoint",
-        #light_model_root + "game2021/gen_dialog_model/model.checkpoint",
+        light_model_root
+        + "game2021/gen_dialog_model_with_start_feature/model.checkpoint",
+        # light_model_root + "game2021/gen_dialog_model/model.checkpoint",
     )
     shared_model_content["shared_action_model"] = generic_act_model_content.share()
 

@@ -1,4 +1,9 @@
 
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+
 
 #parlai i -mf /checkpoint/light/quest_generator/models/sw1/dda_jobid=4/model.checkpoint --inference beam --beam-context-block-ngram 3  --beam-block-ngram 3  --beam-size 10 --beam-min-length 20 -dt valid
 

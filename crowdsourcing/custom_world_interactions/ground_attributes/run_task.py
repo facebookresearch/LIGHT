@@ -1,6 +1,6 @@
 ##!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -84,6 +84,7 @@ def get_light_objects():
         all_objects = [dict(obj) for obj in ldb.get_object()]
     return all_objects
 
+
 def build_task(task_dir):
     """Rebuild the frontend for this task"""
 
@@ -108,14 +109,17 @@ def build_task(task_dir):
             "frontend. See the above error for more information."
         )
     os.chdir(return_dir)
+
+
 def get_previously_completed_unit_data():
     existing_units = []
     for task_name in PREVIOUSLY_DONE_TASKS:
         task_units = mephisto_data_browser.get_units_for_task_name(task_name)
         for unit in task_units:
-            inputs = mephisto_data_browser.get_data_from_unit(unit)["data"]['inputs']
-            existing_units.append(inputs['this_task_state']['broadcastMessage'])
+            inputs = mephisto_data_browser.get_data_from_unit(unit)["data"]["inputs"]
+            existing_units.append(inputs["this_task_state"]["broadcastMessage"])
     return set(existing_units)
+
 
 def create_task_data(input_file_tasks, num_tasks):
     # get data from collect-narration submissions
@@ -132,26 +136,42 @@ def create_task_data(input_file_tasks, num_tasks):
     data = []
     for unit in units:
         unit_data = mephisto_data_browser.get_data_from_unit(unit)["data"]
-        new_data = unit_data['inputs']
-        for key, val in unit_data['outputs'].items():
+        new_data = unit_data["inputs"]
+        for key, val in unit_data["outputs"].items():
             new_data[key] = val
         # filter for outputs created with new multi-stage tasks
         if "this_task_state" in new_data:
             # FIX RANGES
-            ranges = new_data['this_task_state']['ranges']
-            original_bm = new_data['this_task_state']['broadcastMessage']
-            ranges = [r for r in ranges if r['start'] is not None and r['end'] is not None and r['text'] == original_bm]
-            ranges = [r for r in ranges if r['start'] >= 0 and r['start'] < len(original_bm) and r['end'] >= r['start'] and r['end'] < len(original_bm)]
-            ranges = sorted(ranges, key=lambda r: r['start'])
+            ranges = new_data["this_task_state"]["ranges"]
+            original_bm = new_data["this_task_state"]["broadcastMessage"]
+            ranges = [
+                r
+                for r in ranges
+                if r["start"] is not None
+                and r["end"] is not None
+                and r["text"] == original_bm
+            ]
+            ranges = [
+                r
+                for r in ranges
+                if r["start"] >= 0
+                and r["start"] < len(original_bm)
+                and r["end"] >= r["start"]
+                and r["end"] < len(original_bm)
+            ]
+            ranges = sorted(ranges, key=lambda r: r["start"])
             h_map = {}
             for i, r in enumerate(ranges):
-                broadcastMessage = new_data['this_task_state']['broadcastMessage']
-                start = r['start']
-                end = r['end']
+                broadcastMessage = new_data["this_task_state"]["broadcastMessage"]
+                start = r["start"]
+                end = r["end"]
                 # print(f"og overlap: {broadcastMessage[start:end+1]}")
                 if broadcastMessage[end].isalnum():
                     next_index = end + 1
-                    while next_index < len(broadcastMessage) and broadcastMessage[next_index].isalnum():
+                    while (
+                        next_index < len(broadcastMessage)
+                        and broadcastMessage[next_index].isalnum()
+                    ):
                         next_index += 1
                     end = next_index - 1
                 else:
@@ -163,7 +183,7 @@ def create_task_data(input_file_tasks, num_tasks):
                     start = prev_index + 1
                 else:
                     start = start + 1
-                h_map[broadcastMessage[start:end+1]] = r['highlighter']
+                h_map[broadcastMessage[start : end + 1]] = r["highlighter"]
                 # size_original_word = end - start
                 # print(f"REPLACE: {broadcastMessage[start:end+1]} with {r['highlighter']}")
                 # broadcastMessage = broadcastMessage[:start] + r['highlighter'] + broadcastMessage[end+1:]
@@ -176,16 +196,16 @@ def create_task_data(input_file_tasks, num_tasks):
             broadcastMessage = original_bm
             for word, highlighter in h_map.items():
                 broadcastMessage = broadcastMessage.replace(word, highlighter)
-            new_data['this_task_state']['broadcastMessage'] = broadcastMessage
+            new_data["this_task_state"]["broadcastMessage"] = broadcastMessage
             if broadcastMessage in previous_messages:
                 continue
             # print(f"OUTPUT: {broadcastMessage}")
             # print("-"*100)
-            new_data['this_task_state']['object1']['attributes'] = []
-            new_data['object1']['attributes'] = [{'name':'', 'val':False}]
-            new_data['this_task_state']['object2']['attributes'] = []
+            new_data["this_task_state"]["object1"]["attributes"] = []
+            new_data["object1"]["attributes"] = [{"name": "", "val": False}]
+            new_data["this_task_state"]["object2"]["attributes"] = []
             # new_data['object2']['attributes'] = []
-            new_data['object2']['attributes'] = [[{'name':'', 'val':False}]]
+            new_data["object2"]["attributes"] = [[{"name": "", "val": False}]]
             data.append(new_data)
     print(f"len(data): {len(data)}")
     print(data[0])

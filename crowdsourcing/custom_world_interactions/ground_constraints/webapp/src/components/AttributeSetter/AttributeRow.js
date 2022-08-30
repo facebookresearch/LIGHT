@@ -1,3 +1,10 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import React, {useState, useEffect, useRef} from "react";
 
 import TaskButton from "../TaskButton"
@@ -58,7 +65,7 @@ const AttributeRow = ({
                     unselectedText="b-button__text true"
                     selectedText=" b-selectedbutton__text"
                     disabled={true}
-                    /> : 
+                    /> :
                 <TaskButton
                     name={isConstraint ? " MUST NOT BE ":" IS NOT "}
                     isSelected={attributeVal===false}

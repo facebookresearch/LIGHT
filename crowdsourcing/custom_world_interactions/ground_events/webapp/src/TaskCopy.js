@@ -1,3 +1,10 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 //HEADER SCREENSHOT
 const HeaderShot = require("./assets/images/Tutorial/HeaderShot.png");
 //EVENT SCREENSHOTS
@@ -35,8 +42,8 @@ const Copy ={
             },
             {
                 question:"2) Highlight the actor and objects",
-                explanation:`Select each highlighter and drag across the corresponding actor, 
-                object, or location in your narration. The goal is to highlight the actor (e.g. the villager) and the two objects 
+                explanation:`Select each highlighter and drag across the corresponding actor,
+                object, or location in your narration. The goal is to highlight the actor (e.g. the villager) and the two objects
                 listed at the beginning of the task, as well as the location if applicable. To remove previous highlights, use the eraser.`,
                 screenshot: EventShot2
             },
