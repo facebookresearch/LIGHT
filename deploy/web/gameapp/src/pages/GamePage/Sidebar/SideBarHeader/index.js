@@ -87,14 +87,17 @@ const SidebarHeader = () => {
             </Tooltip>
           </div>
         </div>
-        <div className="w-1/2">
-          <div className="sidebar-row">
-            {/* <a
-          href={"/logout"}
-          style={{ color: "#0060B6", textDecoration: "none" }}
-        >
-          <GameButton text={"LOGOUT"} clickFunction={() => {}} />
-        </a> */}
+        <div className="w-1/2 flex flex-row justify-around">
+          <div className="flex flex-row justify-center items-center">
+            <IconButton />
+          </div>
+          <div className="flex flex-row justify-center items-center">
+            <a
+              href={"/logout"}
+              style={{ color: "#0060B6", textDecoration: "none" }}
+            >
+              <GameButton text={"LOGOUT"} clickFunction={() => {}} />
+            </a>
             {/* <div>
           <ToggleSwitch
             switchLabel="CHARACTER INFO"
@@ -108,9 +111,6 @@ const SidebarHeader = () => {
             setOff={closeDrawer}
           />
         </div> */}
-            <div>
-              <IconButton />
-            </div>
           </div>
         </div>
       </div>
