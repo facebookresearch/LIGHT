@@ -16,8 +16,6 @@ import "./styles.css";
 import cx from "classnames";
 /* CUSTOM COMPONENTS */
 import SideBarHeader from "./SideBarHeader";
-import ExperienceInfo from "../../../components/ExperienceInfo";
-import Logo from "../../../components/Logo/index.js";
 import CollapsibleBox from "../../../components/CollapsibleBox";
 import IconCollapsibleBox from "../../../components/IconCollapsibleBox";
 import GameButton from "../../../components/GameButton";
@@ -68,13 +66,6 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
         position="right"
       >
         <SideBarHeader />
-        {/* <div
-          className={`sidebar-header__container ${inHelpMode ? "active" : ""} `}
-          onClick={() => setSelectedTip(1)}
-        >
-          {/* {isMobile ? null : <Logo />} */}
-        {/* <ExperienceInfo isMobile={isMobile} /> */}
-        {/* </div> */}
       </TutorialPopover>
       <div
         className={cx("icon", { editing: showEmojiPicker })}
@@ -96,15 +87,6 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
             </a>
           </Tooltip>
         )}
-      </div>
-      <div className="sidebar-row">
-        <a
-          href={"/logout"}
-          style={{ color: "#0060B6", textDecoration: "none" }}
-        >
-          <GameButton text={"LOGOUT"} clickFunction={() => {}} />
-        </a>
-        {isMobile ? null : <IconButton />}
       </div>
       <div className={`sidebar-body__container ${isMobile ? "mobile" : ""}`}>
         <IconCollapsibleBox
