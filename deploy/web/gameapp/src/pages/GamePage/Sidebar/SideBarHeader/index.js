@@ -59,7 +59,7 @@ const SidebarHeader = () => {
         <div>
           <p style={{ color: "white" }}> {`You are level ${level}`} </p>
           <Tooltip
-            title={`Earn ${neededExp} XP til level ${level + 1}`}
+            title={`Earn ${neededExp - sessionXp} XP til level ${level + 1}`}
             position="top"
           >
             <progress

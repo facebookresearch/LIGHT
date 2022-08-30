@@ -29,23 +29,17 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   //   const submittedMessages = useAppSelector(
   //     (state) => state.chatInput.submittedMessages
   //   );
-  //   //TUTORIAL;
-  //   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
-  //   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
+  //TUTORIAL;
+  const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
+  const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   //   /* ----REDUX ACTIONS---- */
   //   // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();
-  //   const setSelectedTip = (tipNumber) => {
-  //     if (inHelpMode) {
-  //       dispatch(updateSelectedTip(tipNumber));
-  //     }
-  //   };
-  //   /*---------------LOCAL STATE----------------*/
-  //   const [cycleMessagesPosition, setCycleMessagesPosition] = useState(0);
-  //   /*---------------LIFECYCLE----------------*/
-  //   useEffect(() => {
-  //     setCycleMessagesPosition(submittedMessages.length);
-  //   }, [submittedMessages]);
+  const setSelectedTip = (tipNumber) => {
+    if (inHelpMode) {
+      dispatch(updateSelectedTip(tipNumber));
+    }
+  };
 
   /*---------------HANDLERS----------------*/
   const toggleIsSaying = () => {
@@ -75,26 +69,39 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   const classNames = {};
   return (
     <>
-      <button
-        onClick={toggleIsSaying}
-        type="button"
-        className={` w-full h-full mx-1 items-start px-1.5 py-0.5 border border-transparent text-lmd font-medium rounded shadow-sm text-white ${
-          tellTarget
-            ? "bg-red-700 "
-            : isSaying
-            ? "bg-green-700"
-            : "bg-blue-500 "
-        }`}
+      <TutorialPopover
+        tipNumber={5}
+        open={inHelpMode && selectedTip === 5}
+        position="right"
       >
-        <span className="flex flex-row justify-between items-center">
-          {tellTarget
-            ? `TELL ${formatTellTargetForButton(tellTarget)}`
-            : isSaying
-            ? "SAY"
-            : "DO"}
-          <FaSync color="white" size={20} />
-        </span>
-      </button>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            if (inHelpMode) {
+              setSelectedTip(5);
+            } else {
+              toggleIsSaying();
+            }
+          }}
+          type="button"
+          className={` w-full h-full mx-1 items-start px-1.5 py-0.5 border border-transparent text-lmd font-medium rounded shadow-sm text-white ${
+            tellTarget
+              ? "bg-red-700 "
+              : isSaying
+              ? "bg-green-700"
+              : "bg-blue-500 "
+          }`}
+        >
+          <span className="flex flex-row justify-between items-center">
+            {tellTarget
+              ? `TELL ${formatTellTargetForButton(tellTarget)}`
+              : isSaying
+              ? "SAY"
+              : "DO"}
+            <FaSync color="white" size={20} />
+          </span>
+        </button>
+      </TutorialPopover>
     </>
   );
 };

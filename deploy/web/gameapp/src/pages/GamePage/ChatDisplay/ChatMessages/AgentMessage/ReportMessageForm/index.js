@@ -27,7 +27,7 @@ const ReportMessageForm = ({
   const [reportCategory, setReportCategory] = useState("");
   const [reportReason, setReportReason] = useState("");
 
-  /*  LIFE CYLCE */
+  /*  LIFE CYCLE */
   useEffect(() => {
     scrollToBottom();
   }, [reportCategory]);

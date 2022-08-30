@@ -16,8 +16,8 @@ const giftXpSlice = createSlice({
   initialState,
   /* REDUCER ACTIONS */
   reducers: {
-    updateGiftXp(state, action: PayloadAction<GiftXpState>) {
-      return { ...state, ...action.payload };
+    updateGiftXp(state, action: PayloadAction<number>) {
+      return { ...state, value: action.payload };
     },
     decrementGiftXp(state) {
       state.value--;

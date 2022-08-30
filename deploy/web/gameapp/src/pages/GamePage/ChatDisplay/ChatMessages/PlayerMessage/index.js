@@ -63,7 +63,7 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
       onClick={onClickFunction}
     >
       <span className="text-white">YOU</span>
-      <div className="mx-10">
+      <div className="ml-10">
         <div
           className={`relative min-w-[120px] min-h-[90px] ${
             isSay

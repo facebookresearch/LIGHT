@@ -85,10 +85,16 @@ const SendButton = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   const classNames = {};
   return (
     <>
-      <MdOutlineArrowForwardIos
-        onClick={inHelpMode ? () => setSelectedTip(7) : chatSubmissionHandler}
-        className="text-2xl font-bold text-green-200 hover:text-red-100"
-      />
+      <TutorialPopover
+        tipNumber={7}
+        open={inHelpMode && selectedTip === 7}
+        position="left"
+      >
+        <MdOutlineArrowForwardIos
+          onClick={inHelpMode ? () => setSelectedTip(7) : chatSubmissionHandler}
+          className="text-2xl font-bold text-green-200 hover:text-red-100"
+        />
+      </TutorialPopover>
     </>
   );
 };

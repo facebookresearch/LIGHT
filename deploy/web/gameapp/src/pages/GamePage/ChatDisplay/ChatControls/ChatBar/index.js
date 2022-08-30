@@ -173,7 +173,7 @@ export default ChatBar;
 //               if (nextTip > 8) {
 //                 nextTip = 0;
 //               }
-//               console.log("TIP cylce", nextTip);
+//               console.log("TIP CYCLE", nextTip);
 //               setSelectedTip(nextTip);
 //             } else {
 //               if (submittedMessages.length > 0) {

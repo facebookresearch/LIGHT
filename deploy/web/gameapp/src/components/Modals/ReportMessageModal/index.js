@@ -40,7 +40,7 @@ const ReportMessageForm = () => {
   const [reportCategory, setReportCategory] = useState("");
   const [reportReason, setReportReason] = useState("");
 
-  /*  LIFE CYLCE */
+  /*  LIFE CYCLE */
 
   /* HANDLERS */
 
@@ -86,7 +86,9 @@ const ReportMessageForm = () => {
       }),
     });
     setReportReason("");
+    setReportCategory("");
     dispatch(setReportModalSubmitted(true));
+    dispatch(setReportModal(false));
   };
 
   return (
@@ -107,36 +109,42 @@ const ReportMessageForm = () => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-sm sm:w-full sm:p-6">
+              <Dialog.Panel className="relative bg-gray-700 bg-opacity-90 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-sm sm:w-full sm:p-6">
                 <Dialog.Title
                   as="h3"
-                  className="text-lg leading-6 font-medium text-gray-900"
+                  className="text-lg leading-6 font-medium underline text-white text-center"
                 >
-                  Report Message
+                  REPORT MESSAGE
                 </Dialog.Title>
-                <div className="bg-white ">
-                  <div className="">
-                    <span>CHARACTER: </span>
-                    <span>{reportModalActor}</span>
+                <div className=" ">
+                  <div className="w-full flex flex-row justify-start items-center p-2">
+                    <span className=" text-white border rounded p-1 mr-1 border-green-400 bg-green-400">
+                      CHARACTER:{" "}
+                    </span>
+                    <span className=" text-white">{reportModalActor}</span>
                   </div>
-                  <div className="">
-                    <span>MESSAGE: </span>
-                    <span>{reportModalMessage}</span>
+                  <div className="w-full flex flex-row justify-start  p-2">
+                    <span className=" text-white border rounded p-1 mr-1 border-green-400 bg-green-400">
+                      MESSAGE:{" "}
+                    </span>
+                    <span className=" text-white">{reportModalMessage}</span>
                   </div>
                   <div>
-                    <b>Why are you reporting this message?</b>
+                    <b className=" text-white ">
+                      Why are you reporting this message?
+                    </b>
                   </div>
                   <div>
                     <label
                       htmlFor="category"
-                      className="block text-sm font-medium text-gray-700"
+                      className="block text-sm font-medium text-white underline text-center"
                     >
                       Category
                     </label>
                     <select
                       id="category"
                       name="category"
-                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-solid border-gray-300 border-4 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-solid border-green-400 border-4 focus:outline-none focus:ring-green-400 focus:border-green-400 sm:text-sm rounded-md"
                       defaultValue=""
                       onChange={categorySelectionHandler}
                       value={reportCategory}
@@ -151,7 +159,9 @@ const ReportMessageForm = () => {
                   </div>
                   {reportCategory ? (
                     <>
-                      <label>Please describe issue here:</label>
+                      <label className="text-white">
+                        Please describe issue here:
+                      </label>
                       <input
                         className="edit-message border-solid border-gray-300 border-4"
                         defaultValue={"Enter reason here"}

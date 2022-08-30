@@ -222,7 +222,7 @@ const Chat = ({
     scrollToBottom();
   };
 
-  /*  LIFE CYLCE */
+  /*  LIFE CYCLE */
   /* PLAYER AND SESSION INFO UPDATES TO REDUX STORE */
   useEffect(() => {
     const { xp, giftXp } = persona;
@@ -259,6 +259,7 @@ const Chat = ({
     });
     console.log("SESSION EXP:  ", sessionXpUpdate);
     dispatch(updateSessionXp(sessionXpUpdate));
+    dispatch(updateGiftXp(giftXp));
   }, [persona]);
 
   useEffect(() => {
@@ -335,9 +336,9 @@ const Chat = ({
   useEffect(() => {
     const { xp, giftXp } = persona;
     dispatch(updateXp(xp + sessionXp));
-    let sessionGiftXpUpdate = sessionXp / 4;
-    if (sessionGiftXpUpdate >= 1) {
-      dispatch(updateGiftXp(giftXp + sessionGiftXpUpdate - sessionGiftXpSpent));
+    let sessionGiftXpEarned = sessionXp / 4;
+    if (sessionGiftXpEarned >= 1) {
+      dispatch(updateGiftXp(giftXp + sessionGiftXpEarned - sessionGiftXpSpent));
     } else {
       dispatch(updateGiftXp(giftXp - sessionGiftXpSpent));
     }

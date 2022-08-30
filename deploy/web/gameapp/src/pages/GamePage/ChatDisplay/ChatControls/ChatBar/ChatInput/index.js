@@ -18,22 +18,22 @@ import { Tooltip } from "react-tippy";
 import TutorialPopover from "../../../../../../components/TutorialPopover";
 
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
-const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
+const ChatInput = ({ onSubmit, resetIdleTimer }) => {
   /* ------ REDUX STATE ------ */
   // VIEW STATE
   const isMobile = useAppSelector((state) => state.view.isMobile);
-  //   // CHAT STATE
+  // CHAT STATE
   const chatText = useAppSelector((state) => state.chatInput.chatText);
   const isSaying = useAppSelector((state) => state.chatInput.isSaying);
   const tellTarget = useAppSelector((state) => state.chatInput.tellTarget);
   const submittedMessages = useAppSelector(
     (state) => state.chatInput.submittedMessages
   );
-  //   //TUTORIAL;
+  //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
-  //   /* ----REDUX ACTIONS---- */
-  //   // REDUX DISPATCH FUNCTION
+  /* ----REDUX ACTIONS---- */
+  // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();
   const setSelectedTip = (tipNumber) => {
     if (inHelpMode) {
@@ -66,82 +66,88 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
 
   return (
     <>
-      <input
-        autoFocus
-        name="chat"
-        id="chat"
-        autocomplete="off"
-        style={{ caretColor: "green" }}
-        className={`chatbox-input ${
-          inHelpMode ? "active" : ""
-        } text-green-100 w-full shadow-sm bg-transparent placeholder-green-100 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md`}
-        placeholder={`${
-          tellTarget ? `Tell ${tellTarget}` : isSaying ? "Say" : "Do"
-        } Something`}
-        value={chatText}
-        onClick={(e) => {
-          e.preventDefault();
-          if (inHelpMode) {
-            setSelectedTip(6);
-          }
-        }}
-        onChange={(e) => {
-          resetIdleTimer();
-          dispatch(updateChatText(e.target.value));
-        }}
-        onKeyDown={(e) => {
-          if (e.key == "`") {
-            e.preventDefault();
-            toggleIsSaying();
-          }
-          if (e.key == "ArrowUp") {
+      <TutorialPopover
+        tipNumber={6}
+        open={inHelpMode && selectedTip === 6}
+        position="top"
+      >
+        <input
+          autoFocus
+          name="chat"
+          id="chat"
+          autocomplete="off"
+          style={{ caretColor: "green" }}
+          className={`chatbox-input ${
+            inHelpMode ? "active" : ""
+          } text-green-100 w-full shadow-sm bg-transparent placeholder-green-100 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md`}
+          placeholder={`${
+            tellTarget ? `Tell ${tellTarget}` : isSaying ? "Say" : "Do"
+          } Something`}
+          value={chatText}
+          onClick={(e) => {
             e.preventDefault();
             if (inHelpMode) {
-              console.log(" HELP MODE ARROW UP KEY PRESS");
-              let nextTip = selectedTip + 1;
-              if (nextTip > 8) {
-                nextTip = 0;
-              }
-              console.log("TIP cylce", nextTip);
-              setSelectedTip(nextTip);
-            } else {
-              if (submittedMessages.length > 0) {
-                let updatedPosition = cycleMessagesPosition - 1;
-                if (updatedPosition < 0) {
-                  updatedPosition = submittedMessages.length;
+              setSelectedTip(6);
+            }
+          }}
+          onChange={(e) => {
+            resetIdleTimer();
+            dispatch(updateChatText(e.target.value));
+          }}
+          onKeyDown={(e) => {
+            if (e.key == "`") {
+              e.preventDefault();
+              toggleIsSaying();
+            }
+            if (e.key == "ArrowUp") {
+              e.preventDefault();
+              if (inHelpMode) {
+                console.log(" HELP MODE ARROW UP KEY PRESS");
+                let nextTip = selectedTip + 1;
+                if (nextTip > 8) {
+                  nextTip = 0;
                 }
-                setCycleMessagesPosition(updatedPosition);
-                dispatch(updateChatText(submittedMessages[updatedPosition]));
+                console.log("TIP CYCLE", nextTip);
+                setSelectedTip(nextTip);
+              } else {
+                if (submittedMessages.length > 0) {
+                  let updatedPosition = cycleMessagesPosition - 1;
+                  if (updatedPosition < 0) {
+                    updatedPosition = submittedMessages.length - 1;
+                  }
+                  setCycleMessagesPosition(updatedPosition);
+                  dispatch(updateChatText(submittedMessages[updatedPosition]));
+                }
               }
             }
-          }
-          if (e.key == "ArrowDown") {
-            e.preventDefault();
-            if (inHelpMode) {
-              let lastTip = selectedTip - 1;
-              if (lastTip < 0) {
-                lastTip = 8;
-              }
-              setSelectedTip(lastTip);
-            } else {
-              if (submittedMessages.length > 0) {
-                let updatedPosition = cycleMessagesPosition + 1;
-                if (updatedPosition >= submittedMessages.length) {
-                  updatedPosition = 0;
+            if (e.key == "ArrowDown") {
+              e.preventDefault();
+              if (inHelpMode) {
+                let lastTip = selectedTip - 1;
+                if (lastTip < 0) {
+                  lastTip = 8;
                 }
-                setCycleMessagesPosition(updatedPosition);
-                dispatch(updateChatText(submittedMessages[updatedPosition]));
+                setSelectedTip(lastTip);
+              } else {
+                if (submittedMessages.length > 0) {
+                  let updatedPosition = cycleMessagesPosition + 1;
+                  if (updatedPosition >= submittedMessages.length) {
+                    updatedPosition = 0;
+                  }
+                  setCycleMessagesPosition(updatedPosition);
+                  dispatch(updateChatText(submittedMessages[updatedPosition]));
+                }
               }
             }
-          }
-          if (e.key === "Enter") {
-            const prefix = e.target.value.startsWith('"') ? "" : '"';
-            const suffix = e.target.value.endsWith('"') ? "" : '"';
-            dispatch(updateChatText(`${prefix} ${e.target.value} ${suffix}`));
-            onSubmit(e);
-          }
-        }}
-      />
+            if (e.key === "Enter") {
+              const prefix = e.target.value.startsWith('"') ? "" : '"';
+              const suffix = e.target.value.endsWith('"') ? "" : '"';
+              dispatch(updateChatText(`${prefix} ${e.target.value} ${suffix}`));
+              onSubmit(e);
+            }
+          }}
+        />
+      </TutorialPopover>
     </>
   );
 };

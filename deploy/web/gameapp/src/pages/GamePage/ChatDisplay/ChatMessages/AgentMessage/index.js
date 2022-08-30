@@ -1,5 +1,5 @@
 /* REACT */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 /* STYLES */
 import "./styles.css";
 /* REDUX */
@@ -11,6 +11,7 @@ import {
   setReportModalMessageId,
   setReportModalMessage,
   setReportModalActor,
+  setReportModalSubmitted,
 } from "../../../../../features/modals/modals-slice";
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
@@ -61,11 +62,18 @@ const AgentMessage = ({
   const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
   //MODAL STATE
+  const showReportModal = useAppSelector(
+    (state) => state.modals.showReportModal
+  );
   const reportModalMessage = useAppSelector(
     (state) => state.modals.reportModalMessage
   );
   const reportModalMessageId = useAppSelector(
     (state) => state.modals.reportModalMessageId
+  );
+
+  const reportModalSubmitted = useAppSelector(
+    (state) => state.modals.reportModalSubmitted
   );
   //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
@@ -79,7 +87,7 @@ const AgentMessage = ({
   );
   /* ------ LOCAL STATE ------ */
   const [isEditMode, setEditMode] = useState(false);
-  const [isReportMode, setReportMode] = useState(false);
+  const [isReporting, setIsReporting] = useState(false);
   const [isReported, setIsReported] = useState(false);
   const [isStarred, setIsStarred] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
@@ -108,7 +116,7 @@ const AgentMessage = ({
   };
 
   const reportingHandler = () => {
-    setReportMode(true);
+    setIsReporting(true);
     dispatch(setReportModalMessageId(eventId));
     dispatch(setReportModalMessage(text));
     dispatch(setReportModalActor(actor));
@@ -126,14 +134,23 @@ const AgentMessage = ({
     onClickFunction();
   };
 
-  const exitReportMode = () => setReportMode(false);
-
   let classNames = "message type-dialogue ";
   if (["tell", "say", "whisper"].includes(caller)) {
     text = "&ldquo;" + text + "&rdquo;";
     classNames = "message type-dialogue ";
   }
   classNames += "other";
+  /*  LIFE CYCLE */
+
+  useEffect(() => {
+    if (isReporting && reportModalSubmitted) {
+      setIsReporting(false);
+      setIsReported(true);
+      dispatch(setReportModalSubmitted(false));
+    } else {
+      setIsReporting(false);
+    }
+  }, [showReportModal]);
 
   if (isEditMode) {
     return (
@@ -204,7 +221,7 @@ const AgentMessage = ({
           </>
         ) : null}
         <div className=" flex flex-col mr-6">
-          <div className="relative min-w-[120px] max-w-[400px] min-h-[90px] bg-white rounded-[10px] flex justify-center items-center text-black text-xl">
+          <div className="relative min-w-[120px] min-h-[90px] bg-white rounded-[10px] flex justify-center items-center text-black text-xl">
             <div className="flex flex-col m-4 max-w-md break-words">
               <p className="p-4">{text}</p>
               {isReported ? (
@@ -230,14 +247,18 @@ const AgentMessage = ({
                   )}
                   {isLiked ? null : (
                     <Tooltip
-                      title="This message has issues..."
+                      title={
+                        !isReported
+                          ? "This message has issues..."
+                          : "This Message has already been reported."
+                      }
                       position="bottom"
                     >
                       <BsXLg
                         className={` mx-2 ${
                           isDisliked ? "text-red-500" : "text-gray-400"
                         }`}
-                        onClick={toggleDislikeHandler}
+                        onClick={!isReported ? toggleDislikeHandler : () => {}}
                       />
                     </Tooltip>
                   )}
