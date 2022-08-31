@@ -23,6 +23,12 @@ COPYRIGHT_JS_LIKE = """
  */
 
 """
+REMOVE_COPYRIGHT_PYTHON = """
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+"""
+
 PROBLEM = """
  */
 
@@ -47,6 +53,13 @@ def add_copyright_if_not_present(filename):
 
     if MISDONE_COPYRIGHT in contents:
         contents = contents.replace(MISDONE_COPYRIGHT, COPYRIGHT_CORRECTION)
+
+        with open(filename, "w") as out_file:
+            out_file.write(contents)
+        print(end=LINE_CLEAR)
+        print(f"Fixed header for {filename}")
+    elif REMOVE_COPYRIGHT_PYTHON in contents:
+        contents = contents.replace(REMOVE_COPYRIGHT_PYTHON, "")
 
         with open(filename, "w") as out_file:
             out_file.write(contents)
