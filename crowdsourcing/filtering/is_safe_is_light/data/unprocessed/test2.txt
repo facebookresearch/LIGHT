@@ -1,5 +1,0 @@
-This is a test phrase.
-I'm going to put a few sentences.
-Hopefully the scripts work as intended.
-This one has some extra sentences.
-Only one way to find out if they come through, and with commas too.
