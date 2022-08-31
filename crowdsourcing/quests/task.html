@@ -1,0 +1,266 @@
+<!-- Bootstrap v3.0.3 -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><!-- Modal --><!-- MODAL -->
+<div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade in" id="exampleModal" role="dialog" tabindex="-1">
+<div class="modal-dialog" role="document">
+<div class="modal-content">
+<div class="modal-header"><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button></div>
+
+<div class="modal-body" id="modal">&nbsp;</div>
+
+<div class="modal-footer"><button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button></div>
+</div>
+</div>
+</div>
+<!-- Content -->
+
+<section class="container" id="Other" style="margin-bottom: 15px; padding: 10px; font-family: Verdana, Geneva, sans-serif; font-size: 0.9em;">
+<div class="row col-xs-12 col-md-12"><!-- Instructions -->
+<div class="panel panel-primary">
+<div class="panel-heading"><strong>Instructions</strong></div>
+
+<div class="panel-body" id="instructions">
+<p>
+    Below you are given a character name and background for someone from a <b>medieval</b> fantasy story.
+    You are also given an action that your given character would be able to do in the room.
+    As additional context you are also given a location, and a list of things there or that
+    you may be carrying.
+    <br/>
+    Your task is to come up with a reason for which your character may want to accomplish
+    the given action at various levels of depth, as well as related actions they may have done
+    before or will do next.
+    <br/>
+    Below is an <i>example</i>:
+</p>
+
+<div>
+    <strong>Character Name:</strong> "Farmer"
+    <br/>
+    <strong>Character Description:</strong> I am a very hard worker. I am up with the sun 7 days a week. I learned all I know from my father. I will leave my farm to my son.
+    <br/>
+    <strong>Goal Action:</strong> get shovel
+    <br/>
+    <strong>Setting: </strong>
+      You are in a field beside the farm house.
+      The sun burns brightly in the sky, and there are crops all around.
+      There is a shovel and a sack of unplanted seeds here.
+    <br/>
+    <br/>
+    <strong>
+        1. Provide a <i>simple</i> sentence describing the goal action from the first person perspective of your given character:
+    </strong>
+    <i>I want to pick up the shovel.</i>
+    <br/>
+    <strong>
+        2. Provide a possible intention from the first person perspective that would lead your character to want to accomplish the goal action:
+    </strong>
+    <i>I need to dig a hole.</i>
+    <br/>
+    <strong>
+        3. Provide a <i>broad goal</i> or <i>long term motivation</i> from the first person perspective that would lead your character to have the intention listed in your last answer:
+    </strong>
+    <i>I have to plant some seeds this morning, so I can grow some potatoes, and eventually sell them at the market.</i>
+    <br/>
+    <strong>
+        4. Provide three actions your character may accomplish next in trying to do the broad goal or long term motivation you've provided:
+    </strong>
+    <i>Use shovel, get seeds, put seeds in hole</i>
+    <br/>
+    <strong>
+        5. Provide three actions your character may have accomplished already in trying to do the broad goal or long term motivation you've provided:
+    </strong>
+    <i>wear overalls, wear boots, go outside</i>
+    <br/>
+    <br/>
+    <br/>
+    <strong>Note: For questions 1, 2, and 3, you should write your answers to be used as an additional sentence added to the character description. Only one answer will be used at a time, so these answers should <i>not</i> refer to each other directly with pronouns (like "it"). </strong>
+    <br/>
+    <strong>Note: For the provided actions in questions 4 and 5, you should select the action type with the dropdown, and use the text box to enter the target of that action. </strong>
+    <br/>
+    <strong>Note: This is a Medieval fantasy game, don't refer to modern day technology (cars, phones, electricity, etc...) </strong>
+</div>
+
+</div>
+</div>
+<!-- End Instructions --><!-- Content Body -->
+
+<div class="input_location">
+<p><strong>Character Name:</strong> ${character}</p>
+<p><strong>Character Description:</strong> ${persona}</p>
+<p><strong>Setting: </strong> ${description} </p>
+<p><strong>Goal Action:</strong> ${goal}</p>
+</div>
+
+<section>
+<fieldset>
+<div class="input-group">
+    <label>1. Provide a <i>simple</i> sentence describing "${goal}" from the first person perspective of your given character:</label>
+    <input type="text" name="simple" style="width:100%" placeholder="I..."/>
+
+    <label>2. Provide a possible intention from the first person perspective that would lead ${character} to want to accomplish ${goal}: </label>
+    <input type="text" name="motivation" style="width:100%" placeholder="I..."/>
+
+    <label>3. Provide a <i>long-term motivation</i> from the first person perspective that would lead ${character} to have the intention listed in your last answer: </label>
+    <input type="text" name="future_goal" style="width:100%" placeholder="I..."/>
+
+    <label>4. Provide three actions your character may do after ${goal} in trying to do the long-term motivation you've provided: </label>
+    <select class="form-control" name="next1_type" style="width:30%">
+        <option selected="selected" value="">(select one)</option>
+        <option value="get">Get</option>
+        <option value="drop">Drop</option>
+        <option value="put">Put</option>
+        <option value="give">Give</option>
+        <option value="get">Get</option>
+        <option value="steal">Steal</option>
+        <option value="wear">Wear</option>
+        <option value="wield">Wield</option>
+        <option value="use">Use</option>
+        <option value="hit">Hit</option>
+        <option value="hug">Hug</option>
+        <option value="go">Go</option>
+        <option value="eat">Eat</option>
+        <option value="drink">Drink</option>
+        <option value="follow">Follow</option>
+    </select>
+    <input type="text" name="next1_text" style="width:65%" placeholder="(object, character, or location)"/>
+    <br/>
+    <br/>
+    <select class="form-control" name="next2_type" style="width:30%">
+        <option selected="selected" value="">(select one)</option>
+        <option value="get">Get</option>
+        <option value="drop">Drop</option>
+        <option value="put">Put</option>
+        <option value="give">Give</option>
+        <option value="get">Get</option>
+        <option value="steal">Steal</option>
+        <option value="wear">Wear</option>
+        <option value="wield">Wield</option>
+        <option value="use">Use</option>
+        <option value="hit">Hit</option>
+        <option value="hug">Hug</option>
+        <option value="go">Go</option>
+        <option value="eat">Eat</option>
+        <option value="drink">Drink</option>
+        <option value="follow">Follow</option>
+    </select>
+    <input type="text" name="next2_text" style="width:65%" placeholder="(object, character, or location)"/>
+    <br/>
+    <br/>
+    <select class="form-control" name="next3_type" style="width:30%" >
+        <option selected="selected" value="">(select one)</option>
+        <option value="get">Get</option>
+        <option value="drop">Drop</option>
+        <option value="put">Put</option>
+        <option value="give">Give</option>
+        <option value="get">Get</option>
+        <option value="steal">Steal</option>
+        <option value="wear">Wear</option>
+        <option value="wield">Wield</option>
+        <option value="use">Use</option>
+        <option value="hit">Hit</option>
+        <option value="hug">Hug</option>
+        <option value="go">Go</option>
+        <option value="eat">Eat</option>
+        <option value="drink">Drink</option>
+        <option value="follow">Follow</option>
+    </select>
+    <input type="text" name="next3_text" style="width:65%" placeholder="(object, character, or location)"/>
+    <br/>
+    <br/>
+
+    <label>5. Provide three actions your character may have accomplished before ${goal} in trying to do the long term goal you've provided: </label>
+    <select class="form-control" name="prev1_type" style="width:30%">
+        <option selected="selected" value="">(select one)</option>
+        <option value="get">Get</option>
+        <option value="drop">Drop</option>
+        <option value="put">Put</option>
+        <option value="give">Give</option>
+        <option value="get">Get</option>
+        <option value="steal">Steal</option>
+        <option value="wear">Wear</option>
+        <option value="wield">Wield</option>
+        <option value="use">Use</option>
+        <option value="hit">Hit</option>
+        <option value="hug">Hug</option>
+        <option value="go">Go</option>
+        <option value="eat">Eat</option>
+        <option value="drink">Drink</option>
+        <option value="follow">Follow</option>
+    </select>
+    <input type="text" name="prev1_text" style="width:65%" placeholder="(object, character, or location)"/>
+    <br/>
+    <br/>
+    <select class="form-control" name="prev2_type" style="width:30%">
+        <option selected="selected" value="">(select one)</option>
+        <option value="get">Get</option>
+        <option value="drop">Drop</option>
+        <option value="put">Put</option>
+        <option value="give">Give</option>
+        <option value="get">Get</option>
+        <option value="steal">Steal</option>
+        <option value="wear">Wear</option>
+        <option value="wield">Wield</option>
+        <option value="use">Use</option>
+        <option value="hit">Hit</option>
+        <option value="hug">Hug</option>
+        <option value="go">Go</option>
+        <option value="eat">Eat</option>
+        <option value="drink">Drink</option>
+        <option value="follow">Follow</option>
+    </select>
+    <input type="text" name="prev2_text" style="width:65%" placeholder="(object, character, or location)"/>
+    <br/>
+    <br/>
+    <select class="form-control" name="prev3_type" style="width:30%">
+        <option selected="selected" value="">(select one)</option>
+        <option value="get">Get</option>
+        <option value="drop">Drop</option>
+        <option value="put">Put</option>
+        <option value="give">Give</option>
+        <option value="get">Get</option>
+        <option value="steal">Steal</option>
+        <option value="wear">Wear</option>
+        <option value="wield">Wield</option>
+        <option value="use">Use</option>
+        <option value="hit">Hit</option>
+        <option value="hug">Hug</option>
+        <option value="go">Go</option>
+        <option value="eat">Eat</option>
+        <option value="drink">Drink</option>
+        <option value="follow">Follow</option>
+    </select>
+    <input type="text" name="prev3_text" style="width:65%" placeholder="(object, character, or location)"/>
+    <br/>
+    <br/>
+
+</div>
+</fieldset>
+
+</section>
+<!-- End Content Body --></div>
+</section>
+<script>
+
+$(function()
+{
+    modal_body = $("#modal");
+    $("#instructions").clone().appendTo(modal_body);
+    $('.modal').modal('show');
+});
+</script>
+
+
+</script><!-- close container -->
+<style type="text/css">fieldset {
+    padding: 10px;
+    background:#fbfbfb;
+    border-radius:5px;
+    margin-bottom:5px;
+}
+
+.input_location {
+  background-color: blanchedalmond;
+  padding: 10px;
+}
+</style>

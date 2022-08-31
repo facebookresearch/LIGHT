@@ -1,0 +1,46 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* ERROR TOAST STYLES */
+ul{
+    list-style: none;
+    overflow: scroll;
+}
+
+ul li::before {
+    content: "\2022";
+    color: white;
+    font-weight: bold;
+    display: inline-block;
+    width: 3em;
+    margin-left: 1em;
+  }
+
+#toast-container{
+    position: fixed;
+    background-color: red;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    max-height: 30vh;
+}
+#toast-header{
+    color:white;
+    background-color: red;
+    font-weight: bold;
+    width: 90vw;
+}
+#toast-text{
+    text-align: center;
+    font-weight: bold;
+}
+
+#toast-error{
+    color: white;
+    text-align: left;
+    width: 90vw;
+}

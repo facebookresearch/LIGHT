@@ -1,0 +1,33 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/*TAG ROW STYLES*/
+.tagrow-container{
+    display:flex;
+    flex-direction: row;
+    width: 100%;
+    padding:10px
+}
+
+.tagrow-item__container{
+    width:30%;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    background-color: blue;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.tagrow-item__text {
+    color:white;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 0;
+    margin-left:5px;
+
+}

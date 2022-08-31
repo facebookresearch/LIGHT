@@ -1,0 +1,121 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+#mobile-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-content {
+  width: 100%;
+  margin-top: 20vh;
+  margin-bottom: 20em;
+  overflow-x: hidden;
+  position: fixed;
+}
+
+/*MOBILE HEADER*/
+.mobileheader-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #421001;
+  z-index: 99;
+  height: 20vh;
+  position: fixed;
+}
+
+.mobileheader-logo {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 50%;
+}
+
+.mobileheader-logo__img {
+  width: 20%;
+}
+
+.mobileheader-logo__text {
+  font-size: 50px;
+  text-align: center;
+  padding-left: 0.5em;
+  color: #fff;
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #eef079, 0 0 20px #eef079,
+      0 0 25px #eef079, 0 0 30px #eef079, 0 0 35px #eef079;
+  }
+  to {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #eef079,
+      0 0 40px #eef079, 0 0 50px #eef079, 0 0 60px #eef079, 0 0 70px #eef079;
+  }
+}
+
+.mobileheader-tools {
+  padding-left: 3em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 50%;
+}
+
+@media only screen and (max-width: 950px) {
+  .mobile-content {
+  }
+  .mobileheader-logo__img {
+  }
+  .mobileheader-logo__text {
+    font-size: 80px;
+  }
+}
+
+@media only screen and (max-width: 650px) {
+  .mobileheader-logo__img {
+  }
+  .mobileheader-logo__text {
+    font-size: 50px;
+    padding-left: 0.5em;
+  }
+}
+
+@media (orientation: landscape) {
+  #mobile-container {
+  }
+
+  .mobile-content {
+    width: 100%;
+    height: 70%;
+    overflow-y: hidden;
+  }
+
+  .mobileheader-container {
+    flex-direction: row-reverse;
+    height: 20%;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .mobileheader-logo {
+    width: 35%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 35%;
+  }
+  .mobileheader-logo__img {
+  }
+  .mobileheader-logo__text {
+  }
+}

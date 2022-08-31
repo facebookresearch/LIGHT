@@ -1,0 +1,1322 @@
+y132 Inside Church The rectory The rectory is one of the most important rooms in the church, as it is where the priest and others get ready before they start church, where the put on robes and cassocks and the like. It is vital to the church as a matter of fact. Visibility to the room is blocked off by the altar in front of it, so church goers cannot see it unless they walk behind the altar. It seems to be used as a bit of a storage area for religious artifacts.
+
+y361 Cave Orc cave The cave is an old orc hiding place. It housed thousands of orcs that used it for shelter and to store their gold. The orc population has died and there is now very little that remains of the orcs that used to occupy this cave. Robbers have stolen anything worthwhile in this cave.
+
+y65 Town Simple Town The town has been here for many years. The town has never been attacked due to the guard towers around town. The town is usually quite however sometimes parades are thrown.
+
+y177 Inside Church Church Entryway This is where everyone comes to pray. It is a place to worship god and have ceremonies.
+
+y226 Farm Large Farm The farm is the life of the town. It is where all the crops are grown to feed the people. The barn was the first building built when the town was established.
+
+y273 Forest Firewood Forest The forest is where all the wood is gathered to make fire. The forest goes for miles and new trees are planted once a year to make sure it lasts forever.
+
+m337 Outside Temple Temple gardens Many funeral ceremonies have been held in this garden, staining its tranquil presence with haunting memories.
+
+y338 Outside Church Church field This is used for special occasions like a wedding. It is also used for baptism and summer services.
+
+y268 Inside Tower Southernmost Tower Entryway This tower was the first built to accompany the castle and was majestic in its heyday. It stood four stories tall, gleaming white with parapets on the top. The Southernmost Tower served as the guest quarters for visitors to the castle and was talked about throughout the land. After the Heinous Wars the castle was left to rot when its inhabitants fled for their lives. The castle and its accompanying tower stand as a footnote in history now.
+
+y113 Countryside Meadow A great battle once held here. The battle was not between Soldiers and knights. But by wizards and strange ones. It is said to be haunted for the most part, but tales have been told that men have received great visions of wisdom while walking the meadow.
+
+y254 Bazaar Central Bazaar Opening early in the morning and not closing till late, you can always find people bustling about. Whether it be finding what's for dinner or simply just to browse. You can find just about anything at the local bazaar.
+
+y221 Forest mysterious forest outskirts The vast expanse of the forest is one of the greatest mysteries for the local castle. No one knows where it ends, for even the brave hunters dare only travel to its outermost depths. As a result, it is likely that the forest has grown and grown for the past hundred years, and no one is willing to explore deeper, for there are myths of a mythical dragon king's castle in its innermost depths.
+
+y407 Farm Castle farm The farms were a necessity for the castle to be able to sustain itself during winters and sieges. As a result, the unskilled laborers of the castle were designated to move outside the castle walls and generate food for their people. The farmers always made sure there was a plentiful amount of harvest to last during these harsh times.
+
+m228 Dungeon The Lower Dungeon Guard Room This room and its attached four cells aren't for the normal murderer or thief, they wait their sentences in the relatively salubrious Upper Dungeon.  This Lower Dungeon is for those who act against the King.  The King ensures that all the nobility know about this horrible place.
+
+y246 Inside Cottage Cottage safe-room The safe-room is the last option of defense against the Genii. If the Genii get past the outside gates of the cottage, then the safe-room is the becomes the next objective point. What gives the safe-room its value, is the ability to cloak the door.
+
+y170 Outside Tower In Front of a Stone Tower This tower was created a long time ago by workers unknown. It appears rather old, but has withstood the test of time.
+
+y38 Inside Church A small church There are many roadside churches in the land and this is but one of them.  Most travelers come here to rest on their way to the nearest town, still a day's travel away.
+
+y19 Inside Cottage Cottage entryway This cottage seems strangely ahead of its time for a place so underwhelming. The owner is something of a tinkerer and the furnishings and contraptions reflect the work of either a madman or a genius.
+
+y362 Dungeon A wet dungeon The dungeon is in a low underground chamber by the castle. It is under water, or a lake. Fresh water keeps dripping from the ceiling, and it smells like fish.
+
+y16 Outside Church Enormous church entrance door This church has stood for over five hundred years. Many people have knocked on its doors looking for protection or service. It is commanding, yet welcoming.
+
+y194 Outside Temple Hilltop temple grounds Many people journey to the temple for peace, solitude, reflection and meditation.  They journey up the hill and steps that are cut into the side of the mountain.  Once they reach the temple grounds the view is luxurious, breath taking and serene.
+
+b241 Inside Castle Castle Maids' Room Many of the servants share quarters, but the head maid has her own room.  She is a favorite of the Duke who owns the castle.  She is loyal, but her room still reflects that she is a servant.  She has plans of her own as her room inside the Castle has secret door and storage where she has things she should not.
+
+y81 Inside Castle Privy room This is truly the work horse of the castle. It has seen more action then the throne room or even the war room. Everyone from the king to the kings court visits this room daily. It took years to build and all the workers love having a place to gather.
+
+b178 Bazaar Castle courtyard bazaar The bazaar is an exciting time when the farmers have pulled in their harvest and everyone meets to sample wares and trade stock for the upcoming winter. It is an exciting celebration that the people look forward to all year long, for they get to visit with friends from far away locations and taste the wonderful pies and fruits the farmers and their wives have brought.
+
+y22 Jungle Unexplored jungle This area mostly unexplored and is still a mystery to this day.  Many have traveled into the depths of this place, but few have ever returned to tell their tales.  The lack of light, the heat, and the various plants and beasts that dwell in this place (some have deemed as monsters) have taken many a curious traveler, never to return.
+
+y322 Inside Temple The Inside Temple Many years before, the people ever gratified for the protection of the gods decided to all give part of their earnings to build the most glorious temple ever constructed in a city.  A collection was taken the glorious temple was built.  It is the pride and joy of all in the city and it the talk of the entire countryside.
+
+y142 Swamp Haunted Swamp This is a place that no one dares to go to. It is said to be haunted with many ghosts. Many people who have came here never returned home.
+
+y171 Shore Turquoise Shore It is said that this place is lived my mermaids and they love to find and collect gems and gold. They love shiny things.
+
+m396 Abandoned The Forsaken Castle The castle use to belong to a kingdom. It was a beautiful and rich kingdom, but the people were murdered by bandits.
+
+c103 Inside Tower The Great Hall The Great Hall is the room in the castle where all can meet and dine. The king sits at a higher dining table than the rest overlooking servants at lower tables. The king meets with all leaders and visitors here.
+
+y39 Mountain Abandoned Mine A generation ago, people sought their fortunes here. After a decade, they'd discovered heartbreak, sorrow, and agony. If fortunes were to be had, it evidently wasn't here. The miners - the lucky ones, anyway - moved on. What spends its time here today is anyone's guess.
+
+y62 Graveyard An Unfinished Mausoleum Bright white stone was all the fad for funerary architecture, once upon a time. It's difficult to understand why someone would abandon such a large and expensive undertaking. If they didn't have the money to finish it, they could have sold the stone, surely - or the mausoleum itself. Maybe they just haven't needed it yet? A bit odd, though, given how old it is. Maybe the gravedigger remembers... if he's sober.
+
+g94 Port Fishmonger's stall Where there's water, there are fish, and where there are fish, there are stories about "the one that got away", and of course fishermen. As they can be unpleasantly salty characters unfit for the company of the more genteel sorts of ladyfolk, enterprising individuals act as middlemen, buying fresh-caught seafood from these disreputable sorts and selling them on. This is one such enterprise, which has clearly both been here a while, and not been entirely prosperous.
+
+y266 Shore The beach This beach is a very famous beach that everyone that lives in the area knows about. Most people come every summer and enjoy the weather.
+
+g42 Abandoned abandoned mine This mine used to be very productive and lots of men worked in it. But eventually the stores of metal under the earth depleted, and it was abandoned because it was no longer profitable. The nearby village suffered as a result, with lots of people moving away. Some locals say this mine is haunted by spirits.
+
+g123 Jungle Bamboo hut The hut was built by a tribesman who is the last of his people. It is his only shelter from the elements. He is afraid that if there is another strong monsoon, the hut may not survive and he will lose his only shelter and be forced to head down-river into unknown territory.
+
+n120 Inside Palace The Dungeon The dungeon was created to keep prisoners and challengers to the thrones for periods of time. The royalty felt it was less expensive to leave them there without eating and meet their fate down there. As time went on, more and more people were lost to the dungeon and it began to be darker and darker.
+
+y420 Trail path in forest The trail used to be a fun and interesting trail to walk on in the light before the war against humanity. Thousands of humans fought for the right of the trail and now it is dark and mysterious.
+
+g227 Inside Temple The prayer room The prayer room is the place king and his general meet and pray before the war. They need to be purify before entering the room by the priest. They can ask guidance or help for any problems in the kingdom too and the priest is the one who interpret the god or goddess messages
+
+y284 Farm Barn A barn is must need for any farmer. It is the place of productivity. Where the cows can be milked and equipment is stored. A farmer without one is running the farm with out a leg. Simple yet helpful to such a degree where one might find a farmer spend most of his time in.
+
+m144 Graveyard Cemetery This graveyard is located outside the notorious town of Brimswood.
+The many atrocities and constant stress filled throughout the town has earned it a reputation for being haunted by many spirits.
+
+c20 Countryside Meadow The meadow is the favorite haunt of children, particularly of the nobility. On a cool summer's eve, the children gather here to play their favorite sports.
+
+b23 Inside Palace Queen's Bedchamber This is the Queen's bedroom, where she spends many lonely nights while her husband, the King Consort, has his affairs in another part of the castle.
+
+y95 Mountain Cave Rumors say a bear lurks there, and all know not to travel there.
+
+m145 Inside Temple The altar room This room is where the animal sacrifices are burned to satiate the gods. The fire is kept lit year-round. It is extinguished once per year, on the last day of the year, and relit the next day in honor of the new year.
+
+m146 Inside Church Confessional The confessional is used by the clergyman to collect the confessions of the parishioners. However it has secretly been used to gather sensitive information to blackmail the parishioners.
+
+n192 Dungeon Torture Room The monarchs send their enemies here. The torture master is utilizes the room to extract information of use to the crown, then disposes of the remains.
+
+y256 Lake Island This island is an emergency refuge for those on the run or whose boats have capsized.
+
+y269 Shore Lighthouse The lighthouse was built a century ago to guide ships safely to shore. Even today the building provides a valuable service.
+
+g326 Tavern The bar The saddest men of the town gathered to sit at this bar. They sing a song of sorrow and forget about life for a while.
+
+g344 Outside Tower Watchtower This is the first line of defense for the castle. Any incursion against the royal family begins here. At the first sign of trouble, the watchmen alert the castle with the use of an alarm horn they have on their person at all times.
+
+b197 Port Port Tavern The port tavern used to be a private domicile. It belonged to a wealthy merchant who lived there with his beautiful wife and daughters. This merchant was intelligent, charming, well-respected, and was addicted to gambling. Luck had been on his side for his entire life, until one night when he was playing cards against local merchants. Out of cash and overconfident, he bet his house to a small, round man with a bushy mustache and a questionable past.
+
+b214 Inside Tower Prison room Daughter of the strapping king and his oriental wife, the young princess was the most beautiful girl in all the land. She was sweet and kind, and everyone loved her. When she reached adolescence, however, what the clergy called the 'devil's spell' took hold of her. No force in the world could keep her away from young men. Embarrassed, the king had this tower built specifically to hold his daughter.
+
+n300 Inside Castle Dungeon The existence of this dungeon predates the castle's current occupants. Only years after the duke inherited this castle from his father did he stumble upon a hidden trapdoor that concealed the staircase that led deep down into the dungeon. Inside were the skeletons of several men, still chained in their cells. One of those skeletons still had an ornate ruby necklace around its bony neck; it was the Duke's mother, who had mysteriously vanished years earlier. Now the Duke uses the dungeon to hold any dissenters.
+
+b391 Inside Palace Master Bedroom When the owner's wife ran off with the palace cook, the man's ego was wounded beyond repair. Word of his wife's infidelity spread quickly and his reputation was ruined. In order to regain his pride, the owner built this new master bedroom. Rumors say he takes a new woman to this bedroom every night and none of them can resist its charm.
+
+y213 Outside Temple Outside Temple Outside the temple by the entrance is where the building of it started. It started with 400 steps of stairs coming up the mountain, and at the top of the mountain after the war, the temple was built. It has held many festivals, and the front door is made from a rare wood from a tree that doesn't exist anymore.
+
+m277 Graveyard Graveyard The graveyard was started after the King's son died and they wanted to make a place just for royalty. For decades, this graveyard has held all the royal members that have come and go. The graveyard was expanded after they needed more room.
+
+y291 Outside Castle Outside Castle The outside castle was constructed in ancient times before any other building. It's concrete was one of the first ever used, and the stones used on the entrance door date back to the prehistoric age.
+
+y289 Trail The opening to the drawbridge of the castle The trail leads straight to the drawbridge of the castle. There are arrows stuck in the trunks of the trees from previous battles and the trunks also show scarring from sword hits. The trail leads straight through the forest to the castle which is hidden by the luscious canopy of the trees. Worthy opponents of the castle can get through the trail; however, they then are at the trailhead and face the castle's kingdom and army.
+
+y109 Inside Church Bell Tower The bell is rung daily at high noon. It also tolls when someone has died or married
+
+g355 Swamp Troll's bridge The troll has lived there for ages. It is a myth that he was cast there by a witch. Other's believe he so ugly that he was thrown away by his parents and he learned magic that gave him eternal life. He guards the cobblestone bridge and terrorizes people
+
+y136 Farm Barn This barn was a landmark of the farm.  Withstanding the elements for almost a century, it has kept it's original construct.  Whenever guests come for fresh eggs or milk, the farmer often boasts about it.
+
+n159 Dungeon Dungeon within a castle The dungeon was initially created for only the worst enemies of the king, but with the rise of crime and corruption within the kingdom, it is now populated by even the most petty of criminals. Simply looking at a guard the wrong way can land you in the dark abysses of the cruel dungeon. An escape tunnel is believed to exist somewhere within, but the darkness makes it impossible to find, even for the guards.
+
+y193 Forest A wooded magical village The wooded grotto is home to a master wizard who is cared for by the child-like village people. He pays them by protecting them and their village from the dangerous animals that reside in the dark forest.
+
+c262 Abandoned An abandoned castle on an ocean cliff side The castle once belonged to a noble of a rather poor fishing village. He could not afford magical protection, so he was unable to protect his mighty castle from the erosion of the cliffs. An elderly man in the nearby fishing villages claims that the castle belonged to his family, but lacks the paperwork necessary to prove his claims.
+
+m282 Dungeon Inside a desolate cave The dungeon is believed to have been created by ancient nobility with the aid of wizards. The dungeon was likely a prison for powerful enemies of the kingdom who may break free of traditional prison captivity by force or magical abilities.
+
+b342 Inside Castle Knights Quarters The Knights Quarters were installed as an attempt at generosity by the King. The Knights live rent-free, but are not allowed to leave as long as they are employed. They must live here 24-7 and cannot take wives. Many of the knights have not seen sunlight since the last major battle. A hidden tunnel is located inside the trunk of an abandoned cot. It is believed to lead to a pub or perhaps a brothel.
+
+y382 Mountain A Dwarven City What once started as a mine within a mountain has since evolved into a massive city of exciting technology and lots of adventure. The ancestors of the dwarves sold the minerals acquired within the mountain to create a highly advanced civilization that appears foreign even to other dwarven cities. Magical carts can take you anywhere you need to go as long as you make your request in the difficult dwarven language.
+
+y345 Cave Underground Chamber Not just anyone can enter into this underground chamber because it is guarded by mystical lions.
+
+y28 Outside Church outside the church of monks the monks are not allowed to talk to anyone, so they have built the outside of their church to be as uninviting as possible.
+
+y40 Outside Temple Temple courtyard The temple is where everyone comes to pray.  It is the only temple for miles, so it is usually pretty crowded.
+
+g55 Inside Palace Inside the Unicorn palace The unicorn palace was built by the king to give them a place to come and restore their magic powers.  When they eat the grass, it replenishes their magical powers.
+
+g112 Tavern The werewolves tavern The werewolves tavern is suppose to be a discreet place. No one wants to go in because they will probably never come out.  The only person that has dared to go in is the witch because she has a spell that makes her invisible to the werewolves.
+
+m176 Inside Temple Inside Temple The inside temple is not painted or colorful. It is intentionally left blank because it is believed that the spirits of our ancestors live here, and they require a blank slate to be able to move from this realm to the next.
+
+g295 Outside Cottage The witches cottage The witch was banished from the kingdom, so she needed a new home.  She built the cottage from the sticks she gathered from the forest floor.
+
+y373 Inside Temple Inside the fairy temple The fairy room was built by the fairies centuries ago.  It was built inside of a scarab beetle because the Egyptians admired the beetle, so they knew they would never destroy it.
+
+m412 Forest Fairy Forest The fairy forest was created when the king was annoyed by all the fairy flying around tweaking people's noses.  He banished them all to the fairy forest and told them if they ever annoyed him again, he would kill one unicorn for each offense.  The fairies think unicorns are their god, so they don't dare tempt the king.
+
+y209 Inside Church Inside the fairies church The fairy church isn't really a church like we think.  Its more of a place for fairies to play tricks on other fairies.
+
+y324 Inside Palace Inside the king's palace The palace was built by the Egyptians.  The king paid them with scarab beetles to build it.
+
+y393 Inside Temple Inside Temple This temple is said to house the gods themselves.  When mankind was new, they vowed to keep us safe on earth and so they were contained here so that we could visit and ask for favors from them.  Whenever someone asks for something, they are required to add to the cave paintings by adding a picture of their request.
+
+g219 Inside Tower Dining Hall This dining hall was once the center of a huge conflict between two families. The argument was between two sons at dinner shortly after their dad had passed away. They fought over who would take over the throne, which led to the first bloodbath inside the kingdom. The younger son was victorious and the older son was slain to death.
+
+y93 Inside Church Confessional Room The confessional room is one of the oldest rooms in the church.  Pilgrims come from far away to unload their sins and seek forgiveness from the cardinal.  Tucked away in a small corner of church, the confessional room is modest and secluded.  Although the demand is great, the confessional room is always ready for those who have need of it.
+
+y230 Desert Oasis Although the oasis stands out, anybody who has seen it before would struggle to remember where.  The oasis seems like a slice of heaven gifted by the gods, to answer the prayers of the lost.  Many who stumble upon the oasis are known to have a change of heart leading to a more pious life.
+
+g428 Outside Tower Wizard's Quarters The Wizard's Quarters are home to the enigmatic Wizard.  Often sequestered here for months at a time,  The Wizard's Quarters are seldom seen by anyone other than the wizard himself/herself.  Travelers often seek the access to the Wizard's Quarters to request help from the powerful Wizard.
+
+n312 Inside Castle Dungeon Any criminal who commits an act of thievery or injustice against the kingdom finds themselves locked away in the dungeon.  Far from prying eyes, the guards are able to enact a special form of justice and rehabilitation to ensure the kingdom stays safe and protected.  Some say the most dastardly of  criminal will spend the rest of their lives there, while certain rumors can be told of a secret tunnel leading to freedom for any foolish enough to find themselves there.
+
+y29 Inside Castle Castle The inside of the castle is where all important visitors come when in town. The kings throne is located in the castle and never moved. The inside of the castle gets a new coat of paint every month.
+
+y83 Cave Cave This cave is only used when the village is being attacked. It is a place to hide from the enemies during war. The cave is good for hiding cause it has no lights and is very hard to find.
+
+c87 Inside Castle Castle This castle is where the king lives and where other royalty reside. There are fancy dinners here as well as many important meetings.
+
+y149 Bazaar Bazaar This is where all trade is done. You bring your items there, get them weighed and then leave them for another villager to offer a trade.
+
+y152 Inside Tower Tower This inside tower is used as a guards hangout. It allows the guards to have a place to call their own. They sleep here between shifts and sometimes eat here.
+
+y160 Outside Tower Tower This outside tower is used to guard the castle. This is at the front of the castle and always has many guards working there.
+
+y251 Bazaar Bazaar this is where the village comes to buy general goods. They have all kinds of  items that you can get by trade. They have some food however what is available is based on the season.
+
+b150 Outside Palace Royal Gardens The Royal Gardens were conceptualized by the late great Queen. She wanted a beautiful promenade to walk her dogs and converse with her bed maids about court gossip. It was originally commissioned to be 1/2 an acre but has been expanded as time has gone on.
+
+g51 Port The Docks A lot of known criminals like to hang around those parts at night, no body dare say why.  During the day it's where a lot of local fisherman deliver their product.
+
+y234 Inside Church The Sacred Temple The Sacred Temple has been around for more than the present local townsfolk can remember.  They also swear by it's powers on granting their wishes if worshiped correctly.
+
+y271 Lake The Lagoon The Lagoon has been a place of a lot of mystery, a lot of rumors surround it.  Many say it is the scene of a lot of mystical miracles and also at the same time where a lot of townsfolk go missing.
+
+y34 Inside Temple Inside the temple The temple is the central location of the town. Everything that happens good and bad is a result of what happens in this temple.
+
+y172 Cave Cave The cave is a dark and mysterious place with stories of hidden treasure and littered with bones of those who have searched for it. The endless passages are enough to drive ones sense of direction aerie.
+
+y236 Outside Tower Outside tower The outside tower vital for defense and the appearance of domination in the surrounding area. Along with its appearance, it fully functions as a defense against enemies far and wide.
+
+y334 Jungle Jungle The jungle is the place where many call home and many call there demise. To survive here you need the upmost survival knowledge.
+
+y352 Lake Lake The lake is not only beautiful, but gives life to the surrounding area. With fish and shell fish this lake provides a whole eco system unique to its own.
+
+y350 Outside Church Outside Church The former church of royalty. Long abandoned after the fall of the empire. Forgotten and forlorn.
+
+g196 Forest Riverbed The riverbed is where the village people come to collect water to drink. The women come early in the morning with their baskets to collect water for the whole family. Later, the men come and catch fish, for the evening meal. The children follow their mothers to the river and play in the river while the mothers chat and collect water.
+
+y220 Jungle Mud pit The mud pit is in the center of the jungle. As animals pass by, they sink into the pit and cannot escape. Soon animals learn to avoid the pit. However, soldier's horses often get stuck, and royal carriages need to be sent to help them.
+
+y314 Swamp A military outpost at the heart of the swamp This outpost was set up to ward off the evil swamp monster Hoakbera from the Gumerian goblin clan. Ever since the year 193 the monster has been running amok in the swamp and nearby lands destroying livelihoods of goblins and moblins alike.
+
+g366 Inside Palace Royal Kitchen King Fulmer made this place through war. War with Zinzel, war with Ulma, war with Hunber. He sacked all their lands to the north, and south to create a bastion of his glory right in the center of the Yumerian continent. Despised by many, he has grown a reputation amongst other nations as a warmonger. His own people be-love, and adore him though.
+
+y61 Inside Tower Inside Tower The Tower stands off in the corner of the Castle.  One of many ornate vessels of the castle, the Tower serves to protect the kingdom's valuables and its people. Its towers over the beautiful farmland in the countryside and is a marker for those who travel off in the distance.
+
+y35 Wasteland Abandoned Shack The shack was clearly one a home, a safe place, a haven for families, for single people with pets, for anyone who needed it. Now it is a home to flora and fauna of all kind is becoming a part of the earth.
+
+y78 Inside Palace Princess' Library The Princess was gifted this library for her 16th birthday. She longed to travel and see the world, but will be limited as she is the only heir to the throne. Sensing her longing for more, her kindly father, the King, bestowed upon her the gift of knowledge and escapism.
+
+y129 Desert Yurt Passed down from father to son and father to son again, the Yurt is traditional structure and keeps an old way of life alive. The memories that are woven into the fabric are clearly marked by the patches added by grandmothers past and the stains left behind by children, now adults.
+
+y195 Bazaar Spice Stall The bustling Bazaar is the perfect backdrop for the spice stall. The vendors are all yelling and the customers are all bartering with the spice stall an oasis of beauty in the center.
+
+y280 Inside Temple Treasure Cavern The caverns is the heart and soul of the Temple, with winding hallways, traps, and other curious ways of keeping intruders away the cavern is the hardest part of the Temple to access.
+
+y346 Inside Tower Bathroom The bathroom oasis is the best kept secret in the tower. There are regular restrooms, but this special tub-room is only for those who stumble upon it. Down a rarely used hallway many must assume its storage closet or something as equally mundane.
+
+y375 Jungle Tree House The treehouse is a humane gem in the animalistic run of the jungle. The home is something that is not easily accessible, but is easily recognizable to those who find it.
+
+y92 Inside Palace The  main hall The main hall is the first thing you see walking into the castle. It is both breathtaking and beautiful.
+
+y223 Town The town square It's a small park plaza in the middle of town where people gather and spend their time relaxing and socializing. It is the  main area of the town.
+
+y306 Farm The living quarters The farm workers live here, where they share meals and their free time. Despite all being different, they have become like a family. They like the fact they can live where they work.
+
+m122 Inside Palace Kings chambers This room was designed by a team of the finest decorators in the kingdom, but it has been nicknamed the bloodbath, because the king put to death 3 designers for "not meeting the standard set forth".  The fourth designer, a young upstart, is now the most famous in the land because of his work on this one room.  The king feels most powerful when he is in this room.
+
+m217 Wasteland Trash Heap This trash heap stands as a glowing example of the wasted city that was once great.  The entire population has been decimated by the plague, and all of the belongings of the dead are burned to avoid spreading.
+
+y1 Forest Entrance to the Pine trees The Pine forest is home to many deer and other animals. It is a sanctuary for people escaping the loud city. It is serene and peaceful and many people have found solace here.
+
+g45 Outside Palace Courtyard The king loved to stroll through the courtyard to think on his reign. The king will often bring subjects to walk and talk about business and needs of his people.
+
+y68 Port Large Galleon The ships name is Turk, known for its battle prowess, and seemingly impenetrable hull. It is currently docked in he nearby port, resupplying for the next voyage.
+
+g74 Inside Cottage kitchen The kitchen in his modest cottage, home to the resident chef. He allows no one to mess about inside for this is his sanctuary. Only others of similar taste and style can ever dream of muttering around this room.
+
+y85 Jungle Tree house A shipwrecked survivor must call this home, with no way to leave the island jungle he has crafted this place to last as long as he can. It would seem he has been gone for sometime, is he alive?
+
+y96 Cave Dark Cave Unknown cave happened upon, it seems there are no stories, or tales for this place. It seems untouched by human life, as if the world has kept this secret for itself for centuries. We will be able to tell the first tale of this location.
+
+y154 Outside Tower Top side tower overlooking view This tower was made by the lands lord, as a watchtower the first defense and first response. It its considered an honor to be on tower watch, and light the signal fire to warn the nearby town and castle of pending danger!
+
+g183 Town Black Smiths shop The smith has worked this forge for decades. He aids the towns folk of all their needs, re-shoeing horses fixing broken tools, crafting needed items. In secret he makes the finest weapons for a noble and fierce assassin.
+
+g365 Lake Lakeside House The vacation home of a humble knight. He returns here after long journeys to recoup and introspect. he sometimes throws extravagant parties for his trusted friends.
+
+y368 Inside Castle Armory A collection of arms from the province many battles from history. These items will be used as emergency weapons and equipment in the event of a siege.
+
+n296 Dungeon Torture Chamber Whenever the King finds someone that he wants information from, he sends them down to the torture chamber. A castle guard regularly goes down to interrogate the prisoners. Wrong doers are also sent to the torture chamber, where they are immediately executed.
+
+g404 Inside Cottage Bedroom The bedroom belongs to the groundskeeper of the castle and his wife. The old man has spent his entire life tending to the castle, and the bedroom is the place where he goes at night to rest after a long day of working.
+
+y12 Inside Castle Treasure Room The treasure room is the most sacred room inside the castle. This room was created hundreds of years ago to house and protect an ancient magical crystal that was found in the heart of a mystical dragon. Ever since then more and more pieces of treasure have been secured inside the room.
+
+y175 Farm Barn The barn is the biggest and brightest building on the property. It is where the animals sleep at night and take shelter in the cold. Children sometimes play in the barn, jumping from the loft and landing on a pile of hay.
+
+c10 Shore throne room The throne room is the pride and joy of the castle. The king commissioned hundreds of craftsman to construct expensive interior. The king often being important ambassadors to this room to impress with his power
+
+y108 Shore Coast This seashore is the pride and joy of the nearest town.  It's kept immaculately clean and the white sand is something that is readily boasted about.
+
+y427 Cave Bat room There is a bat king and bat queen and their children bats. They live in the deepest place. They have a big mushroom like beds. Other bats are always working for royal family.
+
+y416 Inside Church The Choir room The choir room is always filled with music.  Many people like to pass by and listen to hear the songs being sang.
+
+m26 Inside Tower Jail room The jail cell has been home to many criminals of many different types. Serious offenders may stay years while someone who inhibits too much may stay a night. It is said to be haunted by those who inhabited it before and villagers scare their children into behaving by telling them about it.
+
+y44 Town Town Theater The theater was built for the local troupe. They put on several plays a year. They also hold town meetings there. People will also rent it out for special occasions.
+
+y53 Cave Underground Cavern By law, the jewels belong to the king. Yet he lets people go into the cavern to look at the beauty of his gems. People love to go in there and enjoy the coolness, especially in the hot months. They must bring candles, because it is pitch black!
+
+y59 Inside Palace Castle Kitchen The kitchen castle is bustling every day. The cooks feed hundreds of people every single day! There is happy chatter from the men and women working. It is very hot in there with all the ovens!
+
+y66 Outside Palace Moat The moat protects the castle from those who would do the castle harm. It is very deep and its gators keep everyone away. It sparkles under the summer sun. People warn their children to stay away!
+
+y114 Inside Cottage Bedroom The town baker lives in the tiny cottage. She is busy all day so most of the time when she is in her bedroom it is because she is sleeping. She has a comfortable straw mattress, and feels much at home in her quaint little room.
+
+y167 Inside Temple Clergyman's office This small office is where the bishop tends to people who needs help. They come and he offers them guidance. He prays for their souls.
+
+y235 Inside Cottage Gathering room The family spend a lot of time in the comfortable gathering room. They talk about their day and about their hopes. They tell stories and read books and enjoy each other.
+
+g308 Mountain waterfall The waterfall is a place of lore for the people. They conduct important ceremonies near it. The king says it is the only thing as powerful as he. They take the water and consider it sacred.
+
+g332 Inside Palace Grand Dancing Hall The dancing room is used for happy and joyous occasions. The king had his wedding in he room, and the festivities lasted for twelve days! Every week, there are different parties celebrating every holiday, wedding and just because. The people wear gorgeous gowns and finery and dance to a huge band.
+
+y119 Jungle Top of a tall tree The tree is home to many animals. Little monkeys love to climbs the tree. Hundreds of colorful birds of all different types make nests on the trees. People love to stop underneath the tree and enjoy its soft shade.
+
+y210 Swamp Murky water The swamp is a place where people go to tell scary stories. Brave children will sometimes venture there before their parents pull them back. Healers will sometimes look for plants that can have medicinal qualities in the murky depths.
+
+g298 Inside Castle Dining Hall The dining room is used for grand occasions big and small. The king eats there every night. There are festivities while they eat. They serve ten courses every night!
+
+g315 Mountain Summit People love to scale the mountain to get to the summit. The king often does this, and says he is truly ruling from the top of the world. People have been known to wed at the peak. It is a popular place to bring children to show them the extent of the realm.
+
+y417 Trail scenic overlook The scenic overlook is the most beautiful location on the trail. It was made to give people a place to sit and reflect on the beauty of nature. For many years, people enjoy it. There have been many proposals and was even a wedding!
+
+y204 Desert Secret Oasis Legend has it that this oasis only appears to travelers at their time of most need, however the local fauna are familiar with it's location, and by following carefully, they can lead you to its rich store of precious water.
+
+c106 Town Town The town was established as a small settlement well outside of the castle walls. The population consists mostly of laborsmen and poorer subsistence farmers that could not afford the houses within the castle limits. Over time, these lower class citizens settled here and built a modest, friendly town that welcomes anyone to come join them.
+
+g386 Graveyard Tombstones of the Kings The kings of the castle are revered as gods by their subjects. As a result, they demanded a special burial to suit their grand status, and this involved creating their gravestones from the finest material and decorating them with piles of fine riches. These graves were also separated from the rest of the tombstones of the common folk, and well protected by guards and a fence.
+
+c127 Inside Church Sanctuary The sanctuary was built hundreds of years ago, paid for by a rich local family who was known for being very religious.  The sanctuary took 6 months to completely build.
+
+y15 Inside Church Rectory After years of renovations to other part of the complex, the rectory remains the oldest piece of the property. A close-knit order of monks had built the rectory hundreds of years ago as a way to house the workers and perhaps any wayward souls. All who work here, including sometimes the head priest, sleep here.
+
+y69 Inside Temple Meditation room This is the most used room in the temple, the monks gather here to meditate in silence in an attempt to reach awakening. The giant Bhudda inspires dharma and many monks have had insights and realized zen in this very room.
+
+y199 Port Loading Dock This old loading dock has been used for centuries since the founding of the colony. It has been raided many times in the past by pirates looking to get rich off of its cargo. Without the continued maintenance of this important section of the port, the port itself and the island would not have been able to sustain itself.
+
+y253 Mountain Mountain Peak This peak has been sought after by many hikers, although not everyone has the stamina and willpower to reach it. The path to it is very risky and steep, however once reached you feel a sense of wonder and fulfillment as not many others have been able to accomplish this challenge.
+
+y267 Outside Tower The tower base This tower is a beacon of hope for the nearby village. It is where soldiers gather in times of war. The path to the tower has been walked upon by the country's greatest generals.
+
+n91 Inside Tower The King's Quarters The king's quarters served as the king's royal bedroom for centuries.  It used to be the astrologist's laboratory but has since been blessed by various fertility shamans and is physically and spiritually cleansed daily by a powerful wizard.  Daily offerings are made to the paintings of the deities--various fruits, nuts, and sometimes bloodletting into a golden dish is not uncommon.
+
+b205 Mountain The Oracle Cave Inside this cave dwells The Oracle, an old, wizened priestess who was once a virgin handpicked by the King of her time to serve the gods and the nation.  Appointments to the cave are by invite only.  90% of uninvited visitors meet a horrible, gruesome death.
+
+g80 Inside Tower A spiral staircase This staircase was built by the great grandfather of the current king. At the top of the staircase, in the highest tower, lies an vital scroll that holds the secret to protecting the castle.
+
+y97 Inside Church Confessional The confessional is as ancient as Catholicism itself. Since the beginning of the Sacrament of Penance, this tiny, benched room has provided countless sinners with respite from their sin.
+
+y363 Port Marketplace The marketplace began with the founding of the port town. Gradually as more and more ships rolled in, more products were available, until the marketplace became fundamental to the success and well-being of the town. When the marketplace thrives, the town thrives.
+
+g32 Outside Castle Beyond the Wall This used to be a grassy meadow but as the Castle expanded with time, the King Omako III decide the King would need to find space for his closest aides so that they could always be a few minutes away if duty called. This Outside Castle was then renovated and luxury homes were built.
+
+g240 Abandoned Land beyond the Wasteland It is the field of a vicious battle between the King's Guard and the Barbarians. It was torched with fire and flooded with the blood and gore of both armies. Now, it lays abandoned and is said that venturing too deep into the Abandoned causes one too lose sanity.
+
+y310 Wasteland Behind the Servant Quarters The Queens castle used to be located here, but after it was ravaged by barbarians, and set on fire, it has been converted into a wasteland. Nothing else is allowed to be built here since it is said to carry bad luck.
+
+y316 Farm Adjacent to the Guest Castle The Farm is the oldest location in the King's Land and was the first location of the Kings Castle, which has now been converted into a Guest Castle. The castle has been rejuvenated after a deadly famine 100 years ago that wiped out all life. Today, it is looked after by a team of well-compensated farmers.
+
+g336 Inside Tower Inside the King's Castle Located right in the center of Kings Castle, this Tower was constructed after the first Barbarian Assault, for which the Kings Guard had not seen due to a surprise attack at night. The purpose of making this Tower was so that future attackers could be seen with greater ease.
+
+g356 Trail Across the King's Garden Often used by the King and his family members for evening walks. It is part of the Kings Land that has been left untouched by man and is only presided by nature itself. It is said that the King often brings his war officers here to discuss secrets and make important decisions.
+
+b359 Inside Temple Within the King's Mansion This Temple was constructed when the Kingdom adopted Omamoko religion. It is the primary place of worship for the King and his closest family. The death of the King's first daughter tragically took place in this Temple after she was sacrificed to make the Statues eye gleam.
+
+g409 Tavern Market Center One of the most popular locations in the Market. The Hosely brothers decided to open up this Tavern since they could were no longer able to fight after injuries sustained in the Great War of Barbarian. It has since grown and is even visited by King once every few years.
+
+y166 Inside Church The Chapel Made 100 years ago, this chapel has a long history in this town. people have gathered here to worship for 3 generations!
+
+y249 Tavern The bar This is the most lively place in town where locals and travelers drink and share stories! The bar keep is friendly and has lots of information about the town and surrounding areas.
+
+y2 Shore A battleship This boat is abandoned.  No one has been able to board her for centuries and it is under suspicious circumstances that now it appears to have life aboard it.  People watch daily from the shore to see what look like little fairies buzzing all around and inside this ship.
+
+g3 Inside Castle Banquet Hall This is the banquet hall of the King.  And he gives amazing dinners here for certain distinguished people.  But lately this room has been quiet, as the King is under a sleeping spell.  And interestingly enough, this room is now attended by tiny fairy lights that no one has yet to be able to capture.
+
+g4 Outside Castle Entrance to castle This is the entrance to the castle of the King that is under a spell.  There are little fairy lights all around, but no one can catch them.  They hover around this entrance, making sure that no one enters, and no one leaves.
+
+y5 Countryside A cabin This cabin, although plain, houses a very powerful enchantress.  The home was given to her by a magical frog who told her that if she lived  here, and lived a basic life, she would live forever.  But now there are people looking for her.
+
+g6 Inside Church Pew This pew is in the church that the King and his family used to attend.  They have all died under mysterious circumstances and are buried in the cemetery.  No one has come into this church since then and it's fallen into disrepair.  But just under the surface, if one were to look close enough, there is something going on, something brewing.
+
+g8 Bazaar Shop in Bazaar This tent in the bazaar has been a long time coming.  The proprietor has gone all over the kingdom looking for these stones to make a living.  He really doesn't believe in their powers, but a lady who claimed to be a sorceress that he met in the countryside promised him that if he found these stones and sold them to the townspeople, that he would be greatly rewarded.  So he has spent the better part of the year collecting these jewels.
+
+g7 Outside Church Entrance to church This was the church that the King attended with his family when they were alive.  They all died under mysterious circumstances and are all now buried in the cemetery.  But now no one comes into this church, it is considered sacred ground.  And there are things that live here, things that are different.
+
+g9 Port Dock at the Port This dock is used to offload the high sorceress' supplies.  It is only allowed to be used by her and this port is somewhat mysterious as well.  She receives her goods at night and has guards that hover around her at the port.  No one really knows what kind of supplies she is receiving, but most do not want to know.
+
+g265 Lake Dock The dock was first built to help with trade from a village across its expanse, making it easier to go through rather then around. However it also made a convenient launching points for fishermen who could bring in a number of odd fish from the lake's center most expanse.
+
+n415 Swamp Witch's House This building was created by a coven of witches that used to roam the swamp, taking the children of the local village on its edge for use in their dark rituals. That is until the day a group of witch hunters tracked each of them down and strung them to the pyre. Now it sits as a reminder to those who use the swamp for their dark means that not even the mires are safe.
+
+g424 Inside Tower Within the walls of the city Built as a ever watchful reminder so that the people would know the guard had eyes on approaching danger the Inside Tower was commissioned by the first ruling family of the area. The grand wizard of the area carved runes blessed by the fair folk so ensure that no matter what was thrown against it the tower would stand strong.
+
+b115 Inside Palace The Queen's Chamber This room inside the palace is the Queen's bed chambers. In this very room lived the previous queens of other eras and where the future heir to the throne was born. It's said in these chambers the Queen performs rituals unknown to anyone outside of the palace to keep her young and immortal. Only royalty and royal servants know the secrets of this place.
+
+g110 Countryside Cottage The man that lived in the cottage had built it with his own two hands so long ago that nobody could remember a time he didn't live there. He hosted many dinner parties in the home, although it seemed small it could fit many people.
+
+y140 Swamp Bog The frogs have made a home in the murky waters of the bog because they are able to hide from predators more easily. The seldom need to be on dry ground and there are a surplus of bugs for them to consume. The reeds are so tall that when birds land on them the frogs can see them and swim quickly away.
+
+y191 Inside Palace Dining Hall The dining hall is one of the most used spaces in the entire palace. Everyone loves to spend copious amounts of time eating, drinking, and being merry. The stained glass windows are always one of the largest topics of discussion. The dining hall makes everyone feel like a family in the palace.
+
+y369 Inside Church Nave The nave was beautifully decorated and was a wonderful place to worship. The priests would go up and down the aisle to collect the tithings from the congregation every Sunday. The room was almost like an echo chamber in that when the congregation would sing it would sound like there were ten times more people than there actually were.
+
+g304 Shore King's Quarters The context of this location is this is the King's quarters. The King had this room specifically designed when he had taken over from his father. He made sure that this was the most extravagant room that anyone had seen.
+
+y36 Inside Tower Weapon Closet The closet was just a part of the tower that was built in case people needed supplies during violent times.
+
+g46 Inside Tower Princess' Chamber The bedroom was originally simple quarters for various nobility, but the princess thought that living in one of the towers seemed very fun and so the king arranged for her chamber to be set up in the tower. He paid for all of the finest items to furnish the room with. The princess had been living there for almost ten years now.
+
+c54 Inside Church Inside Church The church is a humble place of worship for a small and poor village. The local villagers don't have much and yet they place as much money into the church as they can.
+
+y88 Outside Palace Training Fields The training fields have been being used for several generations. The inhabitants of the palace used to train somewhere else until flooding destroyed the area, and it was moved here. The fields have been an efficient place and have hosted all of the fighters of the kingdom at some point.
+
+g117 Inside Tower Alchemists Lab The alchemist masquerades as a simple noble man, living in the tower with his family and court. Secretly, he is an evil alchemist who is plotting strange things in this hidden tower chamber.
+
+g131 Inside Palace Nursery The nursery was designed by the queen. All of the children of the castle have spent time being nurtured and raised in the room. Nurses take care of the children here.
+
+g155 Outside Castle Royal stables The stables were built when the castle was built. The king was particularly fond of horses and so he requested a very studious stable to fill with the highest quality horses. The horses who live there are all very healthy, strong and skilled.
+
+y200 Tavern Kitchen The tavern kitchen is old and has not been cleaned in a long time. It is run as minimally as possible, with a rotating cast of chefs who work for meager pay from the tavern owner.
+
+g250 Swamp Boathouse The boathouse was built on the small lake when the king found it while exploring as a child. His father was proud of his adventurous son's discovery and built the boathouse as a reward. The boy spent many days in there, reading or relaxing, or boating on the lake.
+
+y270 Inside Church Nave The church is the oldest church in the region. It was built centuries ago by Christian missionaries, and it has hosted many weddings, blessings, funerals and holidays of the local populations and their ancestors.
+
+g283 Outside Cottage Tool Shed The tool shed was built by the owner of the cottage. While he is a hard worker, he tends to take short cuts to get the job done quickly so the shed is not exactly perfect looking, but it has stayed standing for several years now.
+
+b302 Inside Cottage Kitchen The kitchen belongs to a small family of four, and the mother spends most of her day their cooking meals for her family. Her husband built her the kitchen as a gift.
+
+g376 Inside Castle Library The library was built when the castle was built, because the current king was a studious individual. Many scholarly nobles came from far and wide to view the wide array of books, sometimes ancient ones.
+
+g385 Inside Castle Dining Hall The dining hall has been the king's family's favorite room for generations. Many holidays, occasions and parties were held there.
+
+b411 Outside Palace Courtyard An ancient king and queen, when they had just been married, built a new summer palace. The king let the queen design the beautiful courtyard as a gift. From then on, the courtyard had been one of the most famous, beautiful focal points of the palace.
+
+y24 Cave The Troll's Lair Used as a story to scare local children, the Troll is very reclusive, and prefers a life of solitude in his lair.  While a few brave knights have tried to root him out from his home within the cave, none have ever escaped.  Now, most let him be, happy to grant him lease within the darkness underground.  The Troll leaves his lair at night searching for food, and then drags it back into the cave to feast on it.
+
+g190 Outside Castle The Barracks The barracks mainly serves as the sleeping quarters for the guardsmen when they're off duty.  After a long day of keeping the castle exterior secure, the guardsmen need a place to lie down and rest, as well as eat and drink.  Guardsmen need be on call frequently, so the barracks is very close to the castle should a danger arise and the men need be called upon.
+
+g276 Inside Tower Throne Room The throne room is the pride and joy of the castle. The king commissioned hundreds of craftsman to construct it's expensive interior. The king often brings important ambassadors to this room to impress them with his power.
+
+y124 Forest The Brush Den The fae inhibit this small cot hidden in the brush of the forest. These small creatures slowly add new brush and decorations to their den as they scavenge the forest for food and supporting their animal friends. The small den lies just a short distance east of the lake with the door facing the lake. One might easily miss it with a quick glance as many bushes and glowing flowers are outside of it.
+
+y397 Inside Church Next to an Altar The altar is the proud centerpiece of the church. The jeweled cross is known throughout the lands, and by itself draws its own share of people to the church. During the daytime, colored light plays across surfaces and faces as the window is purposefully positioned to catch the sun's rays.
+
+y215 Inside Palace The Ball Room This room is where many formals take place. It was built for the king many years ago by the finest of craftsmen. It is used to host many formal dinners, dances, and concerts.
+
+y49 Forest Along the banks of a river in the forest The river runs through most of the continent on its way to the sea.  It passes through this forest, cutting it exactly in half as it travels from east to west.  It is the only source of fresh water for the entire forest.
+
+g99 Inside Palace King's Bedroom After having to deal with the public for the better part of the day, the King comes to relax in his room where he has the chance to go over personal correspondence, eat his meals either with or without the Queen, and engage in some reading for learning or for fun.
+
+g260 Bazaar A jewelry stall The trader had heard about the bazaar and with the last of his savings, packed up his jewelry and everything he owned and came to the city.  At first things were hard - there were at least thirteen other craftsmen, and all better than he.  But over time his reputation grew until they said of him, "he could sell sand to a camel!"
+
+g264 Outside Tower The Winter Gardens The Winter Garden was named not because most of the flowers bloom in the winter [not true], but because the Princess who came up with the idea did so in the dead of winter.  At first, only winter blooms were planted but as time went on, she kept adding and adding and adding on to it.  It's a very popular place to visit for people of all ages.
+
+c278 Inside Palace Servant's Quarters The servants' quarters were an afterthought, for the most part.  After all of the opulence that went into building the Castle itself, someone finally asked, "but where will the servants live?"  As it was, their quarters were tacked onto the side of the castle, out of view.
+
+y340 Graveyard A cursed grave No one seems to know for sure who is buried in this grave, and until recently, no one really wanted to find out.  The grave may have been disturbed, but by whom?
+
+gg381 Inside Palace Foyer The Queen's favorite place in the castle, besides her Throne Room.  She hung all of her favorite paintings here for guests to mill about and admire while awaiting their audience with her.
+
+y394 Outside Tower Guard Shack The Tower itself was built to house only two people at a time.  There is but one way in, and one way out.  The guard shack houses those who make sure nobody unwanted gets in, and nobody unwanted gets out.  They take their jobs very seriously, even though there's almost little to no activity.
+
+g421 Inside Temple The Hall of the Goddess The Hall was built when the previous King, who wanted to leave his mark for all eternity, commissioned his best artists and metalsmiths to work on this statue.  It was completed six months before he died, and the last official act he did as King was to bless and consecrate this statue, and open it for the first High Holy Day of the New Calendar.
+
+g207 Inside Palace the throne A very large painting of the king with his family where his wife and children appear. with the frame in gold details.
+
+y143 Farm The old red barn This barn has been on the farm since the very beginning. It was built by the first generation farmer to live on the land over sixty years ago. It has been repainted numerous times and wasn't originally red. It was actually yellow before switching to red.
+
+y41 Desert Desert Cavern Villagers from around the regions share stories about this dread place. Many seek it's fortune, but none have gotten past the vultures. No one know whys the vultures sit there. All they know is that that they are hungry and will eat anyone who comes in there.
+
+y52 Desert Cactus Field No one knows why the cacti are in this location in such number nor why they look so ominous. Villagers claim that there lies treasure at the heart of this field of death. No one dares ventures inside, since their clothes and skin would be torn to shreds.
+
+y57 Shore Fishing Pier The fishing pier has been a staple of village commerce for centuries - it is a means for peasants to fish, who don't have the advantage of owning a boat. Its structural integrity is something to question, since most of its piers look rotten to the bone. Many speculate that it will collapse here if the mythical Moby Dick is caught whilst standing on the pier.
+
+g60 Inside Church High Priest Chamber Many a high priest has taken residence in this chamber. It is where the priest works from and studies from. When he is not giving a service, he is in this chamber, poring over ancient religious texts, looking for anything he can use to give meaning to his religion. It smells of elderberries.
+
+m73 Inside Church Beside church pews The church pews were built centuries ago by the first founders of GloopdeGloo. The founders wanted their followers to sit in something simple, but somewhat ornate. The pews are not comfortable by any means, but they are nice to look at. Numerous butts fill the pews every Sunday for the weekly ceremony.
+
+y126 Swamp Quicksand Pit The quicksand pit is relatively unknown by villagers because those that fall victim to the pit never make it out to tell its location. The pit swallows up 100 villagers a year on average. The villagers chalk up this statistic to a monster known as Bigfoot, snatching and eating people up while they sleep.
+
+n148 Inside Temple Sacrifice Chamber This is a secret chamber of the temple that not many people know about. It has a dark history, which no archaeologist has had the misfortune to uncover. Human sacrifices were performed her for many centuries.
+
+g163 Shore Beach House The beach house was built by the king as a means to escape the stress of rule. He goes there every summer and throws raging parties out on the magnificent pier. Few know of this lavish getaway, but those that do are marveled by its opulence.
+
+g169 Outside Cottage Mushroom Hut No one knows what the purpose of this mushroom is. The villagers claim that the witch houses trespassers in here when she turns them into smurfs. Others believe that the witch keeps her mangy mutt inside.
+
+y173 Port Pirate Ship The pirate ship is called "The Purple Pear". It is a ship known to be filled with the rankest of scalawags. It has traversed the Golden Coast dozen of times, seeking defenseless merchants to plunder. Many mariners try to avoid and many authorities try to bring her to justice.
+
+g185 Inside Tower beside tower entrance The inside of the tower is very bare. The tower itself is just a means for the king's archers to get up high and rain hell down upon his enemies. No one really goes in there often. It is plain and serves its purpose well.
+
+g189 Inside Palace Palace Throne The throne of the king was a gift from the king's brother, that was a renowned goldsmith. Many visitors marvel at its beauty. It is somewhat wide, but that is to accommodate the king's enormous girth, for he is quite fat. The king rarely sits there because he is afraid he wouldn't be able to get up.
+
+c206 Inside Palace Palace Kitchen The kitchen was established when the palace was built, but steadily added on to after each victory the kingdom claimed. Many speak of the divine meals that come out of the kitchen, but few have tried them.
+
+y245 Inside Cottage Inside cottage kitchen The cottage kitchen is only meant to serve four people. It does not have the capacity to serve a huge party. A family of well off villagers come to the cottage each year to hunt in the Autumn. It's quaint, but not bodacious by any means.
+
+g293 Countryside Hillside Manor The manor is owned by Frederick Higgins, a wealthy bookshop owner. He built the manor 20 years ago, as his bookshop was doing quite well. He lives there with his 10 sons and daughters and loving wife. It is a noisy abode, but a lively one.
+
+g330 Countryside Pig Pen The pig pen is where the village gets its bacon from Farmer Bob. Although no one likes going past the place, everyone knows it is a necessity for good bacon.
+
+g339 Outside Temple Beside temple entrance The temple entrance is how one would gain access to the temple. It is very hard to find and many archaeologists try to find it every day. The king has a reward of one hundred sheep to the first person to find its location.
+
+n341 Inside Tower Tower Dungeon The Tower Dungeon is a notorious place to be, according to the kingdom's history. The king throws only the most dangerous of men in there, to punish their souls. No one usually leaves and the prisoners die a slow and painful death.
+
+y343 Outside Church Beside church entrance The church entrance looks grand, but not too excessive - as the king's architect wanted it to be. Many flock down the walkway to the entrance every Sunday for the weekly ritual. This is the only entrance to the church.
+
+y351 Inside Castle Castle Armory The armory was founded some 2 centuries ago. It is the biggest armory in the land and has the best armorer to boot. Thousands of swords and armor pieces are made there each day in preparation of the bloodiest campaign predicted.
+
+y354 Countryside Hillside Mansion The grand villa was built there by the Red Baron two centuries ago. As not many people have been invited inside, no one really know what it looks like or what the Red Baron is up to. It is a mysterious dwelling, but one that brings great beauty to passersby.
+
+g371 Inside Palace palace ballroom The ballroom was built recently after the King's triumph over his wealthy northern neighbors. He used the funds to build the boisterous ballroom. The King holds many grand parties in the ballroom. All that enter the room never forget what it looks like.
+
+g374 Inside Church Church Altar The altar was given to the church as a present from the King centuries ago, after the terrible crusades. Many visitors find the altar remarkable, since it is made of solid gold. Religious meal prep is the primary use of the altar.
+
+g398 Inside Tower Tower Sewers The tower sewers were built to give the mad king a means to drain the waste produced by his experiments that he conducts daily. Villagers from the area believe that treasure lie at the end of the sewer maze, but this can be no further from the truth. The mad king cackles with glee as he hears the cries of those poor fools getting eaten alive by the fat rats.
+
+y400 Desert Towering Mesa The Towering Mesa has been a significant landmark in the Kingdom's Desert since man existed. No one has been to the top of the mesa, due to it's near vertical faces. Many claim that the god of their pagan religion sits atop the mesa, chuckling at the misfortune of man.
+
+y402 Inside Temple inside temple crypt The crypt was once a grand location for the temple's priest to be buried and entombed. Archaeologists have visited the crypt frequently, but never come up with anything, since the crypt has been picked over clean over the years. No one really visits the place anymore.
+
+g50 Jungle Small Hut The hut belongs to Jacob, a man who got lost in the jungle and made himself a home to shield and protect him from the elements, animals, and bugs.
+
+y161 Abandoned Gold Mine The gold mine use to be full of glittering gold, shining all around. The miners  were in their by large numbers, picks in their hand, pounding at the walls. It was known for producing gold nuggets the size of a man's palm.
+
+g263 Outside Castle stable The stable houses all of the king's horses, so it is necessary to be very clean. The groomsmen make sure the horses are always clean, with the hooves properly shooed on the horses. The horses always have on the king's livery colors, displaying the kings crest and colors. Sometimes, you will find some of the stable workers sleeping in the loft, on a fresh stack of hay. It is a bit drafty and musty, but clean and dry. The king insists that it looks clean and presentable, as often the royal family will go riding or shooting.
+
+g401 Inside Castle The room at the top of the tower This small room is the king's favorite place to  be alone. He loves to read here, and sometimes watch through the window the antics of his soldiers training in the meadow below. The king also watches out for signs of enemies approaching the castle from this vantage point.
+
+y31 Abandoned a lonely island The pirates leave people there that they have robbed from their ship such as gold from royalty, they leave people stranded there as a sport. There is nothing but a coconut tree there and skeletons of other people.
+
+n37 Bazaar Public execution stand The royals use this location to execute peasants who have broken the law. The law is strict and unforgiving. They chop heads off.
+
+y70 Inside Cottage sitting room the sitting room is used to entertain guests but also serves as the main room such as the kitchen and bedroom.
+
+n77 Outside Church the whipping station the whipping station is used by corrupt priests that allow anyone to be hung who does not follow the old king's law
+
+n111 Inside Palace the bedding room the bedding room was used as tradition for the royal family to hold meetings there.
+
+m151 Inside Tower prison room the room in the high tower is used for the king's private prison room for traitors.
+
+y158 Graveyard the fountain the fountain used to have water and it was well taken care of but the village was abandoned and therefore grass and weeds grew everywhere.
+
+m174 Desert oasis the oasis is a break for a traveler's gypsy group roaming through the desert. They were dying and severely dehydrated.
+
+y179 Shore beach house the beach house is used for those who live in exile, it is said that the area is haunted with dead people over the years. It is forbidden to help anyone who lives there.
+
+y182 Inside Church stained glass room the stained glass room is used to educate people on old and new testament stories.
+
+g216 Outside Cottage the farmer hill the farmer uses his farm to be self sufficient and the only thing he can grow outside his cottage is carrots. He hopes his cows give him more cows and he will be able to survive the winter.
+
+y238 Desert Mars desert The mars desert is unbelievable, it has just been found but the squad has trouble surviving. They are running out of supplies fast, especially water.
+
+m261 Forest the clearing the clearing is used as practice and you can get there over the river, and through the forest. It is thick with trees but this spot serves as a secret marriage consummation station.
+
+y311 Inside Temple Hall of echoes the temple is used to hold mass and honor the gods that visit the knights.
+
+n383 Inside Temple bathing room the bathing room has an ironic name and doesn't really serve for bathing, it is used for discretional activities that priests shouldn't do in the temple.
+
+y25 Bazaar Mysterious shop The shop appeared seemingly overnight, and no one can say for sure who its owner is. Neighboring shopkeepers avoid the equally mysterious owner, who keeps his or herself enveloped in the shadowy recesses of the wooden structure. Strangely, most of the shop's business appears to take place in the dead of night.
+
+g101 Inside Castle The Show Room Inside the Castle It took many years to build this room.  No other hunter has a room like it, even the king is jealous, those who view this room fear the Duke more than the King. Could there be a conspiracy?  Danger and intrigue live in this room.  You feel it as soon as you enter and view the walls and the ceiling, which compete for your fear and your respect.
+
+y187 Inside Church Inside Church Back Row The back row seats were designed in the village church to show there is something lacking in its occupants.  Those sitting there knew they had to wait for acceptance to reach the mahogany seats.  They weren't bad, they were just unknown or considered mysterious people.
+
+c313 Town Town of Anoria The town of Anoria is known for the extravagant design of the Nobles homes and castles.  Each castle is designed to outdo the previous one.  Even the streets of the towns people have special designs in the cobblestone.
+
+y406 Tavern Tavern of Browntavia Browntavia Tavern gets its name from brown dirt the farmers and workers get on their hands from hard work.  The workers gather here to share their stories and relax from the work day.  Outsiders are easily noticed, especially by the look of their hands.
+
+n102 Outside Temple bone pit The bone pit is rumored to have been originally used by an ancient king to persuade traitors to expose their counterparts.  The king was said to toss the traitors loved ones into the pit, one by one, until he got his answers, eventually tossing the traitor in as well.
+
+y231 Shore Enchanted light house This desolate shore is known for the enchanted light house, Legend has it that it can disappear on some nights, causing ships to crash into the coast. Its origin is unknown, which makes it even more intriguing.
+
+n21 Inside Temple Sacrificial altar This room is used in worship of an evil deity.  Many have been sacrificed here in the name of this god.  The locals who come here believes it gives them good fortune in life.
+
+m27 Inside Tower Murder hole This is a section of the tower where archers can shoot out from without generally being hit by anything.  This is especially useful during sieges and assaults they must defend against.
+
+n33 Inside Temple Dungeon A plain and dirty place where heretics are taken and tortured.  One hopes to not stay long in this place as the methods for torture are quite brutal.
+
+c47 Outside Cottage Garden This is an area where peasants plant vegetables and flowers used for medicinal concoctions.  The area is carefully maintained by the residents.
+
+y56 Inside Palace Personal quarters This is where the inhabitants of the palace come to rest, write, and do other personal activities.  Treasure is also stored here in hidden places only known to members of the royal family.
+
+y75 Inside Tower Dining hall This room is used primarily by visitors and guests to the tower.  It's also used to celebrate various occasions and family reunions.
+
+y76 Swamp Bank The bank is where you will often see turtles sunbathing and various other wildlife resting before the waters of the swamp. You will also see peasants going out to fish in this spot
+
+y104 Inside Castle Library This is a room where scribes and royalty alike come to gain knowledge.  They use this room to study texts containing law and history.
+
+y105 Outside Temple Main entrance This is where all those who worship come through.  They are greeted by the impressive statues standing outside the temple.
+
+m116 Dungeon Storage room This is a room used for storing the belongings of prisoners as well as keeping paper records of those who come through.  Some get their belongings back if they make it out alive.
+
+y134 Inside Church Study room Priests and scribes come here to gain knowledge and translate texts.  The day's sermons are also composed here by candle light.
+
+c141 Abandoned Ruined house This used to be the room of a wealthy noble.  However, due to his poor business decisions, he was forced to flee and leave his home in disrepair.  Vagrants have come to stay over the years and loot whatever was inside.
+
+y157 Forest Pond This area is used by the local wild life to bask in the sun.  Some peasants come here to fish and relax at the end of a long day.
+
+c162 Graveyard Reception area This is a plain building where business matters of the graveyard are conducted.  Peasants and royalty alike come here to make deals to bury their loved ones in the graveyard.
+
+c180 Outside Palace Garden Members of the royal family come here to unwind and contemplate matters.  There's artists who also come to create paintings of the beautiful flowers here.
+
+y181 Port Dock Sailors come here to dock their boats and get the supplies they need.  They also come to exchange tall tales about the sea.
+
+y208 Inside Temple Weapon room This is a room that many think wouldn't exist in a religious temple, but is used when the temple comes under attack from invaders.  It gives those who defend the temple a surprise advantage.
+
+n211 Outside Cottage Small graveyard This is where the residents of the cottage have buried their loved ones.  They wanted them to be close by so they can pay their respects.
+
+m232 Cave Entrance No one really knows what this cave is used for.  Some say for witchcraft and devil worship, others say mythical creatures reside here.
+
+y244 Inside Castle Armory This is used to store equipment used by castle guards in case of sieges and invasions.  Careful attention is paid to make sure the gear stays in top condition.
+
+y279 Farm Stable This is an area where the horses are kept and maintained.  The peasants who run the farm store pieces of equipment in here as well along with food for the animals.
+
+y285 Tavern Storage room This is where the tavern's stock of beer and alcohol is stored.  The owner comes here to check the stock and make sure everything is in order.
+
+y347 Jungle Clearing This is an area where there are few trees, allowing sunlight to come through.  Animals take advantage of this area by basking in the sun.
+
+y348 Inside Church Nave A fairly plain area, this is where the congregation meets.  They come here to listen to religious sermons, sing, and enjoy worship.
+
+y349 Outside Church Graveyard This is an area where loved ones bury their dearly departed.  There are also ceremonies held here as well to commemorate different events.
+
+c360 Outside Palace Stable This is where the royal family's horses are stored and cared for.  Servants come here to take care of the animals along with retrieving equipment.
+
+c380 Outside Palace Courtyard This is an area where members of the royal family entertain guests.  The inhabitants of the palace may also use this area to walk among a garden and enjoy the sunlight.
+
+n387 Dungeon Torture room This room is used to extract confessions from those who have committed crimes.  It's also useful to obtain information from captured enemy soldiers.
+
+y413 Inside Palace Main hallway This is an area where a visitor can get a glimpse of the history of those who rule here.  It's meant to stun and impress those who enter.
+
+y419 Town Town square This is where the general population of the area come together.  It's typically busy during festivals where peasants are celebrating some occasion.
+
+y425 Inside Temple Hidden passageway This is a hidden passageway used for escape.  This is typically used when the temple members fear an assault on the main building.
+
+c43 Inside Castle Grand Ballroom The Grand Ballroom was once a place of great meaning where all royal celebrations were held.  There were often hundreds of important people to the realm in attendance just to get a glance at the royal family.
+
+y100 Graveyard Old Crypt The Old crypt is located in the middle of the abandoned graveyard.  It's is unkempt and  crumbling around the base with the etched name worn down.  There are old dried vies that are surrounding the crypt showing that it hasn't been entered in quite some time.
+
+y64 Inside Castle Castle Kitchen This is where the royal chef prepares all of the royal meals. It is located right next to the dining room where the servant serves the King and Queen and their family and guests.  There is wood brought in daily to ensure the stove can always be lit.
+
+b67 Abandoned weathered shack Around 1902, a man and his wife lived in the shack. They lived on the land and were able to survive by creating a self-sustaining homestead. When they died, the shack remained unused and started to wither away.
+
+m90 Inside Tower Debtor's Prison The debtor's prison is where the King locks people away for not paying their debts. They stay in the tower until someone can repay them. If no one does, then they stay there till they die.
+
+y130 Outside Temple Temple Entrance The temple entrance is the only way to enter the temple of the Gods.  It was constructed a year after the temple was built to keep out the evil that didn't belong.
+
+n323 Inside Tower staircase The staircase goes from the entrance to the castle to the top floor of the tower where the Debtor's prison is located. It is the only way into the debtor's prison as there are no windows in the entire tower. It also passes the 2nd floor where the slave's quarters are located.
+
+y333 Trail Tree of Spirits The Tree of Spirits is supposed to contain the souls of everyone who has died in the forest for the past 500 years.  Legend has it if you disturb the tree, it will capture your soul as it's own.
+
+m72 Inside Temple Royal Tomb This is where all the royal family of the emperor and the empress are buried when they pass. They are mummified first and then put into a personalized tomb and then the tomb is locked and placed into this room.
+
+y233 Inside Church Popes dormitory This is where the pope of the church stays during his religious times of the year where he is to be present in the church at all times. This would usually fall around holidays, and there is only enough room in the dormitory for the pope himself.
+
+y288 Inside Palace The grand dining room This is the room where all meals are eaten by the king and the queen and their family and staff. There are 3 servants who cater to the room, bringing all meals. Also this is where meetings are held when guests are invited to the palace.
+
+y317 Lake Brim canal The canal has been the preferred spot for the few local folk to come and gather water, wash some clothes, catch fish, and go swimming. In the canal there is no current like there is out in the main lake and there is shade by the trees on either side of the canal. The canal was formed thousands of years ago when a major earthquake made a rocky edge of the lake crack, allowing water to flow in and eventually separate the two sides even wider.
+
+n372 Countryside Maidens Cottage After escaping from being a servant at a large plantation hundreds of miles north, a young maiden found her way to this vast countryside and built herself this cottage. She was able to herd some sheep, and find a few horses that she led to live in the hills around her cottage to keep her company. These animals keep the grasslands around the cottage neat from the feeding.
+
+y63 Outside Cottage Horse's stables The horse stables are well kept and used in preparation of war. The most well trained knights are given horses for battle and travel. The horses stables are very well respected within the community.
+
+c71 Countryside Horse field The horse fields are respected for their beauty and plainness. They make a great location to train knights and peasants in the art of riding.
+
+y138 Trail Hunting grounds The hunting ground is revered among knights. The greatest knights and archers practice day and night slaying pigs. Some say the grounds are even haunted with the spirits of the deceased organisms.
+
+m165 Dungeon Prisoner's cell The prisoner's cell includes the zone by which the castle dumps and locks up prisoners. These can be prisoners of war or defectors. There are tales that the cell is haunted and even houses ghosts.
+
+g224 Inside Palace Queen's quarters The queen built the room herself, with a team of architects. The luxury and style has made it incredibly popular even among the servants and king, himself.
+
+y225 Wasteland Cemetery The cemetery is known to be haunted. The local peasants tend to avoid the area altogether. The kings and queens fear it because they know they will eventually have a plot.
+
+y239 Inside Tower Artillery room The artillery room houses the weapons and gunpowder for the tower. The tower is always on high alert for foreign invaders. The members of the tower are eager and always willing to stand their ground in defense.
+
+y287 Outside Castle Archery zone The archery grounds are home to the skills and teachings of archers of all ages and classes. The master archers teach the younger ones about the art of the bow.
+
+y328 Trail Knight's hunting ground There isn't very much to be said about the hunting grounds. Its keepers take a lot of special care to ensure there are plenty of animals to hunt.
+
+c377 Inside Temple Priest's chambers The priest's chambers are respected for their mystery and holiness. The peasants speak very highly of the priest and the chambers. Many find it spooky and tough to stay near.
+
+g414 Inside Castle kitchen The chef's kitchen is revered by guests and kings. The head chef is lauded for his skill and culinary brilliance. The kitchen is the center of his art.
+
+c426 Inside Palace King's chambers The king's chambers it he most extravagant section of the castle. The room is revered by servants and peasants alike. The king and queen spend much of their time in the chambers.
+
+c286 Inside Castle Master Bedroom The master bedroom is home to the castle's master, the King. He often finds himself there, either relaxing on the silk sheets or writing away at his desk. The large windows look out on his realm and he finds much comfort in looking out over his people.
+
+y79 Mountain Outpost The mountain outpost south of the Royal city watches for the dangers of the bordering country. If any enemies were to start moving into the kingdom they will be the first to know. The outpost is maned by 10 soldiers 2 chiefs and 2 blacksmiths. Those who recently join the Royal military are sent here for field experience.
+
+y86 Port Royal Shipyard The birth of a royal navy ship begins in these shipyards. For 200 years master craftsmen and the royal shipwrights make repairs and create more master pieces for the kingdom.
+
+m128 Inside Temple The ritual room This room is where dark rituals are performed for members of the Cult of the Doomed. The kingdom has yet to know of their dark practices and the cult hopes that stays that way.
+
+g137 Outside Cottage Front of the Cottage A simple little cottage in the woods where a hunter has made his living. The cottage is but a simple place for a everyday man of the time. His blood hound companion guards the front door from intruders.
+
+g153 Mountain Village at the base of the Mountain The mountain village is a small importance for the kingdom. if there ever to be a invasion this would be the first place to send troops. The first king was born from this village and has forever been a important symbol for the simple men and women of the kingdom.
+
+y168 Inside Tower The armory The great tower in the kingdom has held visage over the royal city for many years. Every guard would give their live to keep the tower standing. If the tower to ever fall the Royal city will surely fall with the tower.
+
+y248 Inside Church The confession Box This church is where all confess to the priest about their wrong doings. It is the center of the kingdom of Dark Thorn. The church is Thousands of years old and still stand for the just good of god. The confession box is one of many in the church.
+
+y303 Cave Bandit Lair A very well known bandit gang live in this cave. They have been known for stealing many royal treasures but also killing many innocents. The bandits know they are well known and use that to incite fear into the locals that settle near the cave.
+
+g318 Wasteland Ruin of a house A old testament to man that once occupied the wasteland. How someone used to live in this house was a awe to many citizens of the kingdom.
+
+y257 Desert Tent The tent provided little more than shade, offering no protection from the wind that changed the landscape daily. The fabric used to be a thick blanket but has worn thin.
+
+g389 Inside Temple Inside the temple The temple is home to the king and all of his favorite people. Along with them are the servants that make life there perfect. They often have many celebrations in the tomb and are closed of from the rest of the world.
+
+g18 Port Boat House The boat house has been around for a long time, and it looks like it.  Fishermen consider it a tradition to get plastered here before they head out to sea.  There's also a lot of grungy and depressed looking men in here.  They basically are either at sea fishing, or hanging out in the boat house.
+
+g410 Inside Castle Kings bedroom The royal bedroom is grand and is often used to woo the nearby kingdoms.  The King stores all his royal robes and crowns here.  Most of the gold in the castle is kept here.  The bedroom is guarded on the outside by 2 guards, who are some of the kings most trusted men.
+
+y11 Forest The stream The stream was created by rainfall. The water in the sky was becoming raindrops in the clouds and then it fell to the earth. The water accumulates as it flows down from higher elevations. The areas where the water is accumulated is called stream or river.
+
+y14 Countryside The forest The forest started out as a small amount of plants and then the plants kept growing and growing until they were vast. After the plants were very grown the animals and all the small livings things decided to make some houses in the plants.
+
+y125 Countryside Lush meadow in the country side This is gods country. No man could have anything this beautiful. The local government knew it and had this area set away as a protected area years ago.
+
+y198 Town Small town located in the hills This town is the charm of the country side.  Each person that works or live in town take pride in the town, in keeping it clean and in keeping it beautiful. This please is quickly growing as a vacation destination for those that want to relax.
+
+g218 Inside Castle Kings Bed Room The king has wanted a room this large for years. He had people from all around the world come and help work on it. The fireplace and it's mantle are his pride and joys and the doors that can't be broken down.
+
+y272 Inside Church Front Row This church has been around since early man and still has a large weekly following that gives all they can to keep the church in tip top shape.
+
+b274 Wasteland Town in the desert This was once a trading center, a home a place of advertisement and fantasy. people loved the sheriff and he loved them in return. Beautiful girls walked around with man their age but time have changed since the catastrophe that swept the homes away and the happy life along with it. Only death and ghosts roam the city with a few of us left
+
+y307 Cave Primary Cave The primary cave is respected and feared among people across the land. Tales of adventurers that have gone inside the cave but never seen again are part of the stories told by the elder.
+
+y321 Inside Castle Chapel of the eight The chapel of the eight represents the core of the religious values and beliefs. The chapel has sculptures of the eight Gods that are feared and loved across the land. It's a place of peace and tribute where only the worthiest people can step in.
+
+y384 Port Ferry Terminal The ferry terminal is the heart of the land. Many travelers have come and departed though this point, always telling new stories about other lands adventures that become live once retold.
+
+b403 Inside Palace Bed Chambers The king is proud about the bed chambers. It took the work of many men to complete it as it has many details worthy of a real king. The bed chambers are the most beautiful place of the palace.
+
+b299 Inside Cottage Modest living area The family who lives here has lived on the edge of the forest for generations, passed down from father to son, it has been the only home they have ever known in history. It is near the forest, but in a clearing so they have rich soils where they can grow vegetables, and hunt the forest for wild game. In the springtime, mother and her young ones will go out and pick berries and make delicious preserves.
+
+r301 Inside Temple Temple foyer The temple was built by the ancients before the current people have arrived here many generations ago. Wisdom has been lost through the ages due to the great war and famine that followed. A single, indecipherable tablet was all that remained to give the people a hint of the Temple's purpose. The only word they understood was Meta, the name of their most prosperous god.
+
+r229 Inside Temple the front altar The alter inside the temple is the location that many kings have utilized in attempt to obtain absolution after acts of evil.
+
+y329 Wasteland desert tent This campsite only came about because of necessity. After the plague of so many years the land hasn't recovered.
+
+b164 Lake Northern Shore The northern shore is a common place for locals to come cool off on warm days. It also serves as a place where women will wash their clothes and any other dirty linens they may have. This is somewhat of a sacred place for a few, mainly those who worship the water gods, as they have erected a small alter to them just off the water.
+
+y331 Trail grassy plains This trail leads to a cave deep in the forest. Many people have followed the trail and entered the forest to look for treasure that was lost long ago, but no one has been able to find it.
+
+g48 Bazaar Old Gnaisha's Gnaisha used to be a treasure hunter, but after a nasty Manticore night out an end to that, she discovered her true calling hawking weird, wonderful and horrible magical items. Old Gnaisha has been here for decades, and if you don't bother her, she won't bother you. On the other hand, as that one carpet merchant found out to his sorrow, a wise man doesn't antagonize someone with so many magical things at her disposal...
+
+g82 Inside Castle Great Armory The King's late older brother was an avid collector and historian of weapons of every kind, and ensured that the castle bought the very best. He had a room commissioned just for the weapons, and was always on the lookout for new ones.
+
+y133 Town The Dancing Stoat The Dancing Stoat is one of several pubs and taverns in town. It has a reputation for good food at the expense of mediocre lodging. It was founded by returning Goblin King's War veterans, and they tend to keep the shadier denizens of the pub under tighter control than most publicans.
+
+y186 Inside Church Paladins' Memorial Chapel The Paladins' Memorial Chapel was built to commemorate the lives and deaths of the Church's many devoted Paladins. It was funded by donations by both normal people saved by the Paladins me wealthy local merchants looking to expand their own renown by proximity. The tiles were all fashioned by local workshops, and took up so much time and material that the price of porcelain and other ceramics skyrocketed during its construction.
+
+r294 Inside Temple Shrine of Sretniy Sretniy is a mischief-making by generally benevolent deity, and popular among wide swaths of society. His shrine is heavily attended, although from time to time his priests must clear paths through the offerings. Sretniy prefers shiny metal things as offerings, and stolen things or those gotten by adventure or cleverness are best.
+
+y84 Inside Castle Banquet Hall This banquet hall is where famous leaders come to enjoy a good meal while discussing future goals.
+
+r305 Inside Temple {} This Temple imprison the soul of the best warriors that past away in battle. A real privilege to be able to sing after life in those tombs. Our civilization is not afraid of death, death is the rest you deserve after a life of fighting. We thirst for blood and battle any other nations we come across, our reign is limitless, and so is our power. Even death cannot make us silent...
+
+y89 Desert desert land The desert was a result of the mighty god Zuric sending a giant boulder from the heavens in order to keep the people at bay, never to reach the gateways to the other life.  When the giant boulder reached the earth, the shockwave sent everything that was life away from the epicenter.  All that was left was earth and sand and that is all that is left to this day.
+
+c107 Wasteland Pond The wasteland pond is the one stop for the peasants of the village when they require water. Although extremely contaminated, there is no other choice of water for these people and they make a sluggish trek towards the pond each morning to collect their water for the day. Often, a peasant is so dehydrated that he risks drinking directly from the pond just to live.
+
+y201 Lake Fishing shack The fishing shack is a popular place for the village people to gather. Early in the morning, one can find many people standing by with their fishing poles  trying to catch the day's food.
+
+y13 Outside Castle Horse stables Not many people go to the stable because they have the stable hand bring the horses to the entrance of the castle. It leaks and is falling into disrepair. For the stable hand it is home. There is a sense of comfort in the drab old building with the gorgeous horses.
+
+y429 Inside Castle Castle basement The treasures gathered in the castle had to be secured in a place where it would be least expected, the most hidden spot. The best spot was in the castle basement by the dungeon. The broken furniture were put there once, thrown in from the lack of a better spot for them.
+
+y430 Inside Tower Tower kitchen The kitchen prepares meals for everyone in the tower and cooks have to make sure the quality of meals is excellent, therefore any uncleanliness is not tolerated, especially by high officials residing in the tower, ensuring the standard is the highest. The cooks are asked to wear aprons and caps at all times and the cleanliness is being checked twice a day. All this is due to an accident that happened one day when one of the highest officials in the tower fell sick with the stomach upset, and eventually died.
+
+y431 Graveyard Abandoned workers shed The Abandoned workers shed used to offer a refuge to the groundskeepers who tended to the graveyard, making sure it was well maintained. Once the area around the graveyard was abandoned, the groundskeepers left the old graveyard and it began to deteriorate.
+
+b432 Countryside Chicken Pen The chicken pen is used to provide eggs for the family living in the cabin to eat, and even sell if they have a surplus. The chicken in there are raised by the mother of the family while the father goes hunting.
+
+y433 Outside Castle stable hand's quarters The stable hand's quarters provide a place for the workers to rest and relax in while not at work. They are not too far from the stable so that at a moments notice the stable hands can respond to their call for work.
+
+y434 Bazaar Middle of the Bazaar The Bazaar provides a place for the vendors, both travelling and native to the town, to fence their goods and try and barter with the townsfolk. The merchants provide a variety of items, from exotic spices to locally grown crops.
+
+y435 Lake Launching point The Launching point is where newly constructed ships are cast out to see. The wooden slide is used to help catapult the ships into water, and it's narrow design keeps them from tipping when the force of the ship hits the water.
+
+b436 Farm Corn field Corn provides the livelihood for these farmers, and as such most of their days are spent tending to the crop. For about a century the farmers and their forefathers have tended to their now famous crop, which is boasted as the best in the land.
+
+r437 Inside Temple Temple The Temple is established as a place of refuge for the religious devout, so that they may pray to their religious deity and provide gifts and sacrifice in hopes of earning their favor.
+
+y438 Farm Main house The main house provides refuge for the farmers after a hard days work, and is where they sleep, eat, and socialize before heading out for another day in the fields.
+
+r439 Inside Church sacristy The sacristy acts as a storage for the church, and keeps the tools of worship when not in use. Prior to a service the priest can obtain all the items needed for the day's service inside of the sacristy. Though not at the forefront of the church, the sacristy is also open to the devout who may wish to act as alter servants for the service.
+
+y440 Wasteland Old Queen Farm The Old Queen Farm was a farm that once served to grow the crops used personally by the kingdom's Queen, but upon a particularly bad famine the crops died out and the farm was abandoned. Among the vegetables grown on the farm, there was also live stock raised in the pastures.
+
+g441 Port Fish Market The port is right near the ocean and is a place where fisherman come to sell the fishes they caught throughout the early morning. It is a place of business where they sell more than just fish.
+
+g442 Inside Castle castle exit The castle exit is used quite often by the king and his henchmen. It is a very decorated and honored place because it is used a lot throughout the day. It is reflective of the legacy of the royal family.
+
+g443 Desert cavern dwelling The dwelling was once inhabited by the kings and his subjects. Their are many treasures inside here and many people try coming here to steal and loot whatever they can. However, it is a dangerous place filled with traps and puzzles to prevent greedy people.
+
+g444 Outside Tower Reagent Room The reagent room is where the Wizard likes to experiment with his chemicals. Once he studies about potions and collects certain ingredients, he comes here to mix and experiment on all the odd chemicals. Many inventions and elixirs were created here.
+
+g445 Inside Castle washroom The washroom was a quiet and private place for the king to relieve himself and left alone in thought. It is built to make the ambiance more calming and it always smelled like flowers.
+
+y446 Lake Fishing Dock Once used as a swimming hole by a nearby village, the lake has been scrubbed from history.  Many tales of children and entire families going missing from the lake.  Some travelers even insist they saw creatures coming out of the lake from within the depths.
+
+g447 Inside Palace Balcony The queen wanted a balcony but the king was not very fond of the idea until he realized it would be the perfect place to enjoy an ice cold lemonade and a good book. He searched high and low for the perfect architect to design such an add on; he even traveled all over the land to find a qualified person for the job.
+
+g448 Farm Sheriff Office The sheriff spends a lot of his time reading when he is not tasked with taking care of a problem. The main jail is underneath the castle, so no prisoners are housed at the office. It is a small, quiet building and the sheriff is often napping when someone comes to see him.
+
+g449 Outside Church Church garden The priests often walk and contemplate for hours in the gardens. The queen can often be spotted walking and thinking. The king almost never visits the gardens, as he is allergic to bee stings.
+
+g450 Countryside Flower Field In the springtime you can often find women out picking flowers and children playing. People often wander the paths to clear their heads.
+
+y451 Shore Large cliffs Those that are particularly daring might climb up or down them. Others like to sit on the top and enjoy a nice, elevated view of the beautiful blue sea. These cliffs are a point of historical significance, as they marked the point of the colonists' first arrival.
+
+y452 Port Port Skyline This port has historical roots, as it was the first city founded in the kingdom. It was here that colonizers first landed hundreds of years ago. Now, the city is a hub of the kingdom, where hundreds of thousands live out their lives. The city is a center for the latest technologies of the time and beautiful works of art, literature, and music.
+
+r453 Inside Temple main prayer room This is a room of worship, the large size and high ceilings amplify the mournful voices of those sacrificing to the gods so that they may be better heard, it is a highly ornamental place to show off the prosperity of the gods
+
+y454 Farm Haunted Orchard This orchard was clearly a well tended, food producing area taken care of by people living in the Abandoned Shack. But it too has become abandoned.
+
+g455 Town Apothecary At the Apothecary, medicine is given for everyone, from the townspeople to the king. Villagers can find remedies for all sorts of ailments, from headaches to stomachaches. People come there whenever they have any sort of ailment. They mix the chemicals and powders to create the perfect remedies.
+
+y456 Inside Church chamber entrance People who need help come in and out of the door. It is where they enter the sanctuary to speak to the clergy. There is a sense of calmness that descends upon people as they enter the chamber. They go from the cold outside to the warmth of the chamber.
+
+y457 Outside Palace main castle doors It takes four large men to open each door. They provide a strong defense for the castle. During the day they usually remain open as people come in and out of the castle. At times when the castle is under siege, the doors are closed. They have never been penetrated by the enemy.
+
+y458 Outside Church Church Garden Many villagers benefit from the produce of the church garden. The fruits and vegetables are used to feed the poor and the hungry. Many people would starve if they did not get the produce from the church garden. They are used for celebrations such as weddings as well. The flowers are used in ceremonies.
+
+g459 Inside Castle Dining hall The dining room is used for eating for small occasions and large festivities alike. The king and his family always eat here. They have used it for special occasions such as weddings and Christmas dinner but also for family meals. Many important discussions take place over food here.
+
+y460 Forest North Forest Many animals, and humans make their homes in the forest. It is a source of much of the game humans eat. The people also get their wood, fresh fish and meat from the resources of the forest. It is also a place where people enjoy camping and where they travel as they roam.
+
+y461 Inside Temple Mess Hall The Mess Hall is where people enjoy food for every meal. The villagers will go there to eat and also to socialize. They spend hours talking about village life and affairs of the villagers. It gets used very often. They clean it regularly to ensure that it is nice for everyone.
+
+y462 Graveyard Dead Tree Many animals and plants use it as their home. Plants grow on its side and squirrels use it as their home. Animals hide in it. it is covered by insects. Village children come to it and tell scary stories about it. Some say it is haunted.
+
+g463 Cave Gallery This cave used to be used a a wine cellar many years ago, until alcohol was outlawed by the king after his son died in a drunken brawl. Now it sits empty and rumor has it, enemies of the kingdom are kept down here.
+
+y464 Port crew berthing The room was designed when the ship was built and an entrance to the captains quarters. A small area that was re-purposed so there is more storage on the ship in the old quarters for the loot of the pirates.
+
+g465 Inside Palace Landing in the Foyer The landing is the first room any entrant to castle sees. It is meant to show off the extreme wealth and success of the king. It is constantly being updated and renovated to keep up with the latest trends and maintain an appearance of superiority. It is one of the most expensive rooms in the castle.
+
+g466 Port captain's cabin This room is where the captain lets his guard down. He must appear strong and confident for his men, to keep up his reputation and prevent capture, but he is beginning to feel the pressure. Every year there are more and more authorities looking for them, and it is becoming harder and harder to evade them. With the mariners avoiding them it is getting harder  to steal from other ships, and they haven't had any luck finding any treasure for the last two years. Now the captain is exhausted and furious, leading to the disarray of the room.
+
+y467 Port Wharf The port is just like any other port. Busy with the bustle and hustle of people buying and selling whatever they can. A connection to the rest of the world, so you'll see people who look like they belong and you'll see people new here as well. You'll also run into a few people who can't afford to buy and will take things from those who may not be paying full attention.
+
+m468 Forest woodlands During the day, the woodlands are used by honored knights and archers, practicing their skills on hogs and traversing the dense forest to prepare for battle. But at night, what seems to be a land of prosperity and growth turns into one of despair, the cries of slaughtered pigs piercing the night air with no animal in sight. Many have told tales of night practices ending in mysterious bites and scratches from things not of this world.
+
+y469 Lake drinking water lake Rumored by local peasantry to be blessed by the gods, the drinking water lake is a source of clean drinking water for local townspeople. While slightly farther for most villagers than the local river, the water is highly prized for its cleanliness and perceived mystical qualities. Some believe that the entire forest surrounding the lake owes its growth to the divine properties in the water.
+
+y470 Port Quay The quay started as a small platform, but over the years, the port master has extended it, slowly but surely, using bits of old wood from busted ships. Now, it extends far along the water's edge, loaded with fine goods from all over the world.
+
+y471 Port Warehouses The warehouse manager wasn't always an anxious man, but last year, some foreign sailors raided the warehouse and stole twelve casks of the finest rum. The owner of the warehouse threatened to send him away on the next ship if anything went missing again. He watches with a keen eye, now, fearful of losing his livelihood, or even his life.
+
+g472 Countryside Valley of doom The Valley of Doom is home to witches and goblins in the region.  People rarely try to pass here because they all know that the evil is afoot.
+
+g473 Lake The swimming hole The swimming hole is a favorite place of the young lads.  It is a cool, refreshing place to relax.  On a normal day, you can hear the screams and laughter of the children and young men as they swim and frollick.
+
+g474 Inside Castle The Bottlery The Bottlery is where the kings wines are stored. The wines stored here date back to several centuries.
+
+n475 Bazaar fitting room This shop features a lot of wonders from around the continent. The owner of this shop has gone to a lot of trouble to get all of the items. Every so often, he asks lucky shoppers to aid him in his experiments. Assuming that it is a man. Nobody knows for sure. Some claim it is a young lady.
+
+g476 Outside Castle arrow house An old Fletcher carries out his duties, smiling dutifully and politely at the archers and other visitors to his arrow house. He is constantly working, though is known to entertain extended visits from specific masters and the court jester. A master of archery in his own right, it's commonly said that no one in all the land can out shoot him. In spite of challenges, taunts and pleas, he refuses to shoot an arrow, save for when testing bows or new types of arrows.
+
+g477 Inside Palace Castle Kitchens The central location for the life of the serving staff, the Kitchen is bustling with action throughout the day and well into the night. The head cook and his helpers interact with everyone working in the castle and hear all of the gossip, currently making the rounds. Farmers, hunters and others, peddling wares and food find themselves in the always warm confines of the kitchen, often staying for a while to visit and trade the the most recent stories and news.
+
+g478 Inside Castle Bright Path The bright path provides the perfect respite for guests who want to take a walk and enjoy the fragrant night air after a party. The queen takes this path often with her maids. They walk and gossip about court life.
+
+b479 Outside Cottage Cold storage room The man of the house built this room for his wife as their family grew. Originally they only had a larder and root cellar for their harvests, but with new mouths to feed came added need for more space for food. The family works together to fill the cold storage room during harvest time.
+
+y480 Forest Forest entrance None but the bravest adventurers risk entering the western wood.  Fierce creatures are known to reside there, and there are rumors of a malevolent spirit haunting the deepest reaches of the wood.
+
+n481 Inside Tower Slave quarters Slaves are forced to reside here while they work off their debt.  It is an extremely depressing place that few ever seem to leave.
+
+y482 Port Fishing Store Fisherman and sailors alike come here to replenish their supplies.  They also exchange tall tales of mermaids and other extraordinary creatures spotted as sea.
+
+y483 Desert Dunes There is said to be a legendary oasis in the parts with hidden treasure.  Many have come from around the world to attempt to cross the dunes to get there and have failed miserably.
+
+y484 Outside Temple Temple guard station This guard station is used to house guards protecting the temple.  Frequently temple priests will come here to complain about lax security.
+
+c485 Countryside peasant's cottage The peasants come here to enjoy a meal and rest at the end of a long day.  There are also some celebrations to be had here.
+
+c486 Countryside The small dirt road This dirt path is frequently used by peasants and military conveys on their way to local engagements.  If one is not carefully, they can be ambushed by thieves.
+
+g487 Inside Castle Royal Bathroom The king often makes a stop here in the morning but he sets out on official business.  Only the royal family can use these bathrooms as everyone else is forbidden.
+
+g488 Farm Stilt Home This home belongs to a clever herbalist who thought it'd be smart to have his house propped out to avoid getting flooded.  As a result, he encounters few if any damages to his home.
+
+g489 Forest Forbidden Forest The forbidden forest is a place where the outcasts live. The outcasts are better known as the witches. These are the people that everyone is afraid of. They have been shunned from regular society and they are now inhabitants of the forbidden forest. No one other than the witches' themselves are allowed in the forest.
+
+y490 Cave the underground river The local teenagers found this location by accident after sneaking away from their parents. It was known afterwards as a local hangout from parents and local stresses of life.
+
+y491 Outside Temple Temple main room The monks of this Temple are avidly religious. The worship not only the past lives of old monks, but deities as well. These monks are supporters of Victorian architecture, and it shows within the walls of this room.
+
+r492 Inside Castle Arch Hall This room was often used by cult worshippers whom would perform rituals at the center table. The golden candle was a symbol of release and renewal, but was also construed as a summoning candle. There are legends of ancient demons being summoned here, but to this day has not been confirmed.
+
+g493 Bazaar Back of the stall The back room was first made when the shopkeeper realized there were many night where he'd fall asleep at his desk. He his wife fashioned him a small bed that they both transported over by their only horse. On occassion their horse would peer into the back room window and watch over his owner while he slept. Then every morning they'd both head back home to get ready for the afternoon workload.
+
+y494 Forest Woods The forest was never all that well known because people swore it disappeared from time to time. No one was ever sure if it was ever a thing that really existed until you were inside of it. And by then you had traveled so far in that only a rare few found their way out. Those who did marked their path hoping to help the next person but for some reason it seemed that for every marking someone put in, three more appeared.
+
+gg495 Countryside Countryside The countryside outside the bazaar has always been well known for being a place for people to relax. As they travel back and forth they can stop by campfires and share stories. It was first started by their king. A lovely man who wanted everyone to try and get to know each other and help each other. When he died his villagers wanted to continue his acts of kindness by offering help to those who passed by.
+
+y496 Town Saokra's Blacksmith Shop Saokra's Shop has been around for years, Saokra herself has always been the owner of it. No one's sure how but it's believed that she was once a God, and possibly still is but instead of living her life in the heavens she chose to live with the people and enjoys her work. One of the reasons for this is that the shop in question seemed to be around for more than a hundred years and with each weapon or armor set she creates you can feel a hum within it. No one's sure why she decided to live the life she does but everyone is grateful to her for having helped keep some of the bad souls away.
+
+y497 Mountain mesa peak It's said that the villagers believe it to be impossible to get to the top of the peak. And that if you did, their God would be waiting for you, laughing at having people waste their time trying to climb such a steep mountain top. But in reality there is no laughing, but their God is indeed there. In the form of a statue, one bowl in either hand. One containing water to quench your thirst for having climbed so high. In the other a simple bowl of fruit and some bread to reward you for your work. No one's sure how exactly someone is getting food up this high but to those that have made it to the top, they secretly believe it's a gift from their God himself. Lastly there are some ledges, and to the right of the statue a warm alcove to rest and watch the day go by from the most beautiful view in the world.
+
+m498 Dungeon Prisoners Cells The prison was created to hold the mightiest of enemies. The wizards who built it warded it as heavily as they could. Some even lost their lives by using too much magic then they could handle. They say at times you can still hear them chanting, keeping a watch over the prisoners.
+
+n499 Inside Temple temple chamber The story's say that this temple was one of human sacrifices. Back in those times there was nothing greater than being asked to make yourself a sacrifice for such devise beings. Many hoped for such a time to come but as a priest to the temple once had to be asked to sacrifice his son he asked himself if there could be a better way to please their gods. So instead of sacrificing their young, they then turned to gifting items to their Gods and oddly enough they seemed to flourish even more.
+
+g500 Inside Castle main foyer The foyer is actually the biggest single room in the castle, the King instructed to make it as big as possible so that it could accommodate any family, royal or otherwise that might visit. He wanted every painting of their family they had to be displayed on the walls, so that you could see how long his linage extended.
+
+g501 Outside Tower Winding Staircase The original wizard to make the tower wanted to make sure that it's power and those inside of it never got into the wrong hands. So he created a spell that is taught to everyone who comes to learn their ways. Even some of the human travelers who come by have been known to know the special incantation to protect the tower should it's teacher fall.
+
+m502 Mountain Tailings Pile This Tailing Pile is a bit different from most dirt piles you see outside of older mines. For this one has had to see a bit of misfortune, you see there was an explosion in this mine many years ago and it sadly took the lives of many and among that destroyed the main badly to the point that the miners could never quite get it back into shape enough to keep from having cave-ins. So in this pile there lies broken tools of disheartened workers that had to go in and drag out their fallen brothers. Or if no body could be found, just pieces of their clothing from that day.
+
+c503 Town Town center High Nobility and wealth rule the town. Although there are many impoverished people living there, they are mostly kept to the hard to find alleys. There is a strong sense of art and established money in all the main avenues.
+
+g504 Outside Palace Garden The King's late mother had a humble background and it was her idea to ensure the palace had a vegetable garden so they could make homey meals.
+
+y505 Forest South Forest The river in the forest is important to the people who live near the forest. it supplies them with clean drinking water and also food to eat and a place to bathe
+
+g506 Inside Palace hidden revolutionaries' headquarters This room is used by the Queen and her lover, the Duke of Nottingham, to plot the downfall of the King  They plan to poison the King, who is an evil tyrant, and use the arms and armor to round up and dispatch, if necessary, the members of his inner circle.  Then they plan to announce the Queen as the ruler and the Duke as the long lost King's brother who had been targeted for assassination by the King.  However, the Duke survived, but the King married his grieving fiance.
+
+n567 Outside Castle the acid yard Acid yard being the least liked place in the entire castle grounds is by far, the most mysterious. Rumor has it long ago a mad king used it for torturing the enemies by pouring an acid down on every single one of them, bit by bit until they were screaming the answers to his questions. It has created a large yard contaminated by acid on which nothing but a few mosses will grow.
+
+y568 Outside Cottage the hay field The hay is being sold to faraway lands, it's the best quality hay in the whole kingdom and therefore this field has many workers and lots of carriages set up to carry them to marketplaces all around the kingdom.
+
+y569 Inside Palace Castle front Entering the front of the palace is the way honored guests are received.
+
+g570 Farm Horse Tent The Horse Tent is used to store the royalty's guests' horses as they visit the kingdom. They are tended to by the stable boys, and are a means to show the King's generosity in dealing with visitors.
+
+y571 Bazaar Knife Seller The Knife Seller has operated as a family business for nearly a decade, in collaboration with a family of blacksmiths who supply the knife sellers with their merchandise. It is a popular seller for the soldiers of the town.
+
+y572 Inside Tower Guards quarters The guard quarters are where the guards sleep and store their material possessions when not in service. It is a shared residency, but exclusive to only the guards and cant be accessed by others.
+
+y573 Town General Store The General store provides the towns people with basic food and hygiene supplies. It also serves the towns people well in providing a place for the locals to gossip and share the news of the day.
+
+y574 Bazaar the mysterious shop's entrance The shop is stocked by goods traded through traveling merchants who have traveled to far away lands. It carries novel items that can't be easily found in other stores in the town.
+
+r575 Outside Church beside the town church The Town Church has become not only a central meeting place for the religious devout, but also a place for the town to meet and discuss news and other political issues. The priest resides within the town Church as well, and it's pews are long and vast enough to hold the citizens of the town.
+
+y576 Inside Tower entryway to the wizards tower The Wizard's tower is where the town mystics go to study their craft and  cast incantations at the behest of the townsfolk. It also serves as a library for curious towns members.
+
+y577 Countryside main gate The mansion's main gate is built to be strong enough to protect the royalty inside the mansion from robbers and invaders alike, who might try to batter down the gate. The gate can only be opened by two of the mansion's servants.
+
+y578 Outside Palace Palace Garden The palace garden was created to provide a place of relaxation for the town's royalty. It is tended to by the most esteemed gardeners, and is always well taken after.
+
+c579 Inside Tower Gold Room The Gold Room is where the current Monarchs store their prizes from conquest and their most prized possessions. The location is forbidden by the general public, and hidden to all but the Monarchy's most trusted servants.
+
+r580 Inside Temple Visitor's Entrance The visitor's entrance provides a means for the pious to make their way into the Hall of the Goddess, but can be locked in times of need. It allows the clergy to prevent people from coming in during moments of private ritual.
+
+g581 Inside Palace The throne room This provides the main area for the King to meet with diplomats and serve orders to his army. It is not to be accessed by the towns folk and only those close to the king are allowed entry into this heavily guarded area.
+
+g582 Inside Tower Throne room The throne room is where the king of the castle meets with other diplomats and rules over his kingdom. Only those close to and trusted by the King are allowed into this room, and it is heavily defended by the knights of the castle.
+
+y583 Port Supply store The supply store is run by small family of people who lived in the area before the port was constructed. As sailors needed goods, the family was happy to accommodate them for a price.
+
+y584 Bazaar bazaar outside the royal city The Bazaar is a place for travelers to rest up and refill their supplies. Many sellers and family go through here to get to the royal city. It is a long, rough path to the city and this place serves as a place to meet up and socialize with others.
+
+y585 Desert cactus field entrance The desert is a very unkind place to all. It is dangerous and many have died wandering around looking for water and treasures. Many have heard stories of the cactus field and its mysterious placement in the middle of nowhere. Very few actually survive to reach these fields, and no one has come back to tell about it.
+
+g586 Outside Temple outside of the temple offices The area outside the office was made to look incredibly peaceful and beautiful. It was a place where people would feel calm and comfortable enough to express their sins and seek help from the clergy. Although the office may be simple, the outside looks similar to a king's garden.
+
+y587 Inside Temple temple chamber The temple was once a place where monks trained to become the next leader of the clan. They practiced their martial arts and lived together as family in the those 4 walls.
+
+y588 Town town center The small, quaint town was born of a necessity for lightness and levity during the dark times. Though the rest of the surrounding world might be brimming with turmoil, here in this tiny hamlet there is merriment and light oozing from each crack in the sidewalk.
+
+c589 Inside Castle castle kitchen This kitchen is staffed by professional chefs and the most smug wait staff possible. Throughout the day you can see the snooty servants walking back and forth, carrying everything from fresh crusty loaves of bread to elaborate dessert puddings. The kitchen is never empty, for either the King or the Queen is always hungry at some point throughout the day.
+
+n590 Inside Castle Disposal area This room is used to hold the dead after they succumb from the various torture methods. Bodies, whole and part, are dumped in piles until they can be cremated weekly.
+
+y591 Port the village of Tamerak Once a quiet small town near the coast.  This port quickly grew into fame due to a sea monster sighting many years ago.  The monster was said to have eaten a ship whole!  Alas, this was never proven, but it did not stop travelers from embarking to hunt, catch, or see this beast with their own eyes!  The port quickly grew into a city and begot the name after that legendary sea monster, Tamerak.
+
+y592 Forest Pine tree graveyard The nearby town tells strangers that this place is peaceful and beautiful, but little do they know it is not.  A terrible price is paid for all visitors who enter this place, no one has ever returned.
+
+b593 Desert The Grand Desert The Grand Desert is the King's getaway from royal life. He goes there every year for a break from the kingdom. Here he will be greeted by dancing girls, delicious Arabian meals, and relax far from the stresses. At night he will sit by the fire and listen to the music while others dance in delight.
+
+y594 Inside Palace Personal rooms The personal room is used for guests to stay in while they visit the palace. The king and queen and the royal family stay in a different wing of the palace.
+
+y595 Inside Cottage mansion entrance This is where the baron meets his rare guests. A butler takes the guests coats and offers them a drink. Then the baron is notified of the arrival, and comes down the staircase to meet his guests.
+
+y596 Inside Tower Curved Hallway The tower was built with several levels of floors, each with a small hallway surrounding an inner room.
+
+y597 Inside Cottage inside the ruined house The family had abandoned their cottage long ago after they had been seeing creatures in the woods.  Nature took its tool shortly after and did as it does and tried to reclaim the place for itself.
+
+y598 Town city of elders The City of Elders was names because of the mysterious property of its residents - they seem to live twice the lifetime of a normal human on average! They prefer a life away from the trappings of modern society, isolated by a vast jungle from civilization.
+
+g599 Outside Palace Hidden garden This is where the King buried the love of his life who died in childbirth.  She was very fond of dancing.  The king has not visited in some time and it is forbidden for others.
+
+m600 Trail The Ghost Trail It is rumored if you walk the ghost trail long enough you will end up like the little boy who led his family on this road to murder them.  Their spirits are said to collect little children.
+
+y601 Outside Temple the spring bath The water here is thought of to have some mystical properties, being that it is always cool and clear. The water from the spring is always used to bathe the bodies of those who are deceased prior to their funeral services. This is thought to help the deceased along in the afterlife, by imbuing the body with the mystical properties of the water.
+
+y602 Tavern Brimswood pub The pub is a bit of a respite from the horrors that can occur in the community. The people are often fearful of the spirits that haunt the nearby graveyard and the awful things that they sometimes cause. When people are here, they feel safe enough, but always know that danger could strike at any moment.
+
+y603 Inside Church the main chapel The church has been the focal point of this village for a long time. The bell tower has always been used to announce good or bad things happening to members of the community. Whenever it rings, the inhabitants of the village gather at the church to hear whatever news is to be delivered.
+
+m604 Inside Castle Lavoratory The room is not very pleasant since there is no ventilation to the outside. The smell can become rancid, but this is somewhat curbed by the cleaning performed by the servants. Servants will come and scoop out the troughs and toilets into wheelbarrows three times per day and wheel the waste to a nearby creek. Once a night, they will scrub the insides, as well, to help get rid of leftover waste.
+
+y605 Countryside nearby road During the ancient battle, the road was used to carry supplies to the wizards army. The strange ones lived in the wilderness, so they didn't use roads. Since the battle ended, the road has been used as a passageway between towns for merchants and travelers. It isn't used after dark, however, due to the spirits that tend to haunt the area.
+
+r606 Inside Temple Council of Twelve In the beginning days, the twelve gods were all that there were. They created the lesser gods, who in turn created other forms of life, trickling down to the creation of humans. This room is a piece of honor to the original gods.
+
+y607 Inside Tower Tub The tub is a magical place that instantly whisks away any negaitve thoughts you had before climbing into it. The king uses it to feel refreshed and energized after difficult days dealing with the problems of his subjects and staff. It is a hidden secret reserved only for the King.
+
+y608 Inside Tower arsenal This is a room created out of necessity. It's to store the armaments and battling rams and things so they don't get all rusted and they can keep it organized, not much to see here, it's a storage facility
+
+n609 Dungeon Torture equipment storage room This is a room for storing equipment, it was designated long ago by a king long since forgotten, and blessed by a wizards upon completion, and rumors have it that since this blessed occasion, the thumbscrews and cuffs have never rusted to this very day
+
+c610 Farm Farmer's house This is feudal land, owned by a lordly lord and worked by a peasant farmer who grows crops mainly to be harvested for the lord's feasts and store but he is allowed to eat what he may, and has little else.
+
+y611 Town Town Courtroom This is where the magistrate hears grievances and wrongdoings of the common folk, they sue each other for wrongful deaths and witchcraft, and criminals are brought before the magistrate to be sentenced
+
+y612 Outside Tower Castle foothills These low hills are naturally occurring and made, presumably by the gods, who got sort of chilly one day, and shivered so hard the earth furrowed and sort or got wrinkled up and never was the same afterwards, although some of the gods tried to smooth it back out, but they didn't try that hard, actually
+
+y613 Inside Tower tower spire This is the peak of the tower. It was build last as the tower was started at the bottom, and only finished when the top was all the way on it. A pointy spike atop a tower. A bird makes a nest by it. It's a crow, but not a magic one.
+
+y614 Tavern Saloon this is a popular meeting place for thieves and low class citizens, located near the bazaar, it's known for its rougher clientele and the various whores and drunken gamblers might make the nobler patrons seek a thirst slakenening elsewhere
+
+y615 Inside Castle Basement Here lie the brave and craven alike, descendants of the royal bloodline. It houses all of the dead, from benevolent kings, to mad rulers, to the twisted and hideous offspring only hinted at by rumor, they're all here, all lying in their crypts, decaying in their royal finery, forever at rest.
+
+c616 Trail Trail Exit This forest has an abundance of deer and other wildlife that the local peasants often hunt, when politics allow.  Various kings have shown their largesse or greed by allowing their subjects free (or lack thereof) access to what is official part of the Royal grounds, though no one of noble blood has been see there for centuries.
+
+y617 Bazaar Bazaar The Dusty Merchants' Bazaar was founded many years ago, some say by the first king himself.  It's convenient access to water by it's two canals that lead to the main port, as well as access to a number of highways make this a fine trading destination for merchants near and far.  It is the heart of the city and is what makes it so profitable, while the waterways that intertwine it streets make it a difficult target for greedy neighbors.
+
+r618 Inside Church Along the Pews People come far and wide to this church as it produces an almost magical atmosphere. People claim miracles have happened here because it is so beautiful.
+
+r619 Outside Church gate to street The street running outside the abandoned church. Empty and devoid of activity.
+
+y620 Farm Chicken coop This yard has been set up to be a chicken coop, but it doesn't appear to have been planned for that originally.
+
+y621 Shore pier walkway The fishing pier is immediately accessible from this small walkway that extends form the beach.
+
+r622 Inside Church Attic The attic has been used for many years to store items.  It contains many years worth of materials that the church uses. They will use it to store whatever they need. It has been quite useful and helped to keep the lower rooms clean.
+
+y623 Inside Church Hidden passage When the church was constructed long ago, the pope of that time had a hidden passage installed behind the wardrobe to avoid capture in case of war. It has allowed several popes to escape harm. Several others have used it for less legitimate purposes.
+
+y624 Tavern table area People from the town and the countryside go to have fun, catch up, and to see what has been happening around the town. While they're here they often find some interesting entertainment from whoever happens to be performing in the tavern today.
+
+r625 Inside Temple temple hallway A place of worship for an ancient sect. They acolytes make offerings and do their ceremonies. No one outside the sect is even suppose to know about them or their temple.
+
+y626 Shore old docks The light house and docks near it are the safes place because of the lighthouses enchantments. Protecting travellers. The shores themself as well as the waters are dangerous. The creatures that live in the water are not to be taken lightly any one who does regrets it.
+
+g627 Outside Palace Courtyard exterior Centuries old but maintained to look as good as it ever has. It's suppose to be a place to make the people of the kingdom feel like their king is a servant to them not them being servants to a king. People gather and arrive here to see the king, petition the court or just meet with friends who live or work at the castle.
+
+y628 Forest a room hidden in the dense canopy A group of beings that prefer to stay hidden from the outside world. You some how find your way to the entrance of their city
+
+y629 Mountain a small clearing This cave was a backup emergency hiding place. Originally people would evacuate to a larger cave, but that one was discovered by an enemy, and the people hiding in it were killed. Luckily, some people had gotten lost, and stumbled upon this cave. They barely made it into the cave before the enemy was upon them, and luckily in the dark the enemy thought the space was too small for anyone to be hiding and missed the cave entirely. Ever since, people have gone to this cave in emergencies.
+
+y630 Outside Castle the weapons storage room The weapons storage room serves a practical purpose, and is also used to provide a sense of glory and intimidate. It shows off the abundant weapons the kingdom possesses and the number available for use suggests a vast army also available for war. The mysterious weapons are weapons taken from vanquished enemies as a prize. They remind visitors of the victory, and provide a chance for a warrior to distinguish themselves by learning to use the weapon efficiently.
+
+g631 Inside Castle the kitchens This room has always been the kitchen for the king's family. The kitchen workers take pride in serving delicious food to the king, his family, and whatever guests they may have. In fact, when there are guests, the workers make sure the food is especially delicious. They also have an ulterior motive to make sure the food is amazing - they are allowed the eat the leftovers after the evening's feast is finished.
+
+g632 Outside Castle Battlements The battlements are very old, as this castle has not been breached before. They have somewhat recently been remodeled to create the larger slots for cannons, but the rest of the design is tradition instituted by highly respected and successful soldiers. The reason the battlements have worked so well is that the king asked his best generals to design the most efficient and effective battlements possible, and gave them all the resources to do so. Out of appreciation for their generous king, the soldiers have worked extra hard to defend the castle.
+
+y633 Bazaar Blacksmith Funded by the King himself, this was once the armory for the Kings Guard but as the Kingdom expanded, the Blacksmith was turned into one open to the citizens of the kingdom. The Blacksmith shop was destroyed in a fire during the second medieval war but was reconstructed on request of the king to where it stand now in the center of the Bazaar.
+
+m634 Abandoned Collapsed West Wing The noble had recently brought a child into the world with his wife when this wing of the home went crashing into the ocean.  It is not know if the child perished or  not, but a crushed cradle can be seen through the rubble in the collapsed wing.
+
+y635 Inside Tower sewer entrance Something tells me you don't want to know much of why it smells so bad down here.
+
+m636 Inside Church church coat room This room used to be a primitive bathroom ten years ago, but became too smelly and difficult to clean. People complained, and it was re-purposed as a coat room. It is vented at the top for when they used to burn excrement.
+
+y637 Forest Ant hill These ants are the scourge of the kingdom. Every time an ant hill is eradicated another pops up. These ants are very aggressive and hungry and have even been known to take large cattle or baby elephants.
+
+y638 Forest unsettling forest area It is believed that this forest is alive! People say that trees are moving from one place to another when nobody sees. This way hunters and other people have a hard time finding their way back. This forest never looks the same
+
+y639 Outside Temple Decoration shop The decoration shop is where all of the royal family goes to purchase the decorations for their homes. They go there also to buy decorations for outside, such as plants for outside temple.  The decoration shop is a happy place that is full of warmth and generosity.
+
+b640 Inside Palace Top floor of palace The owner of the palace cherished his wife more than anything in the world, and these artifacts stored in the top floor of the palace were a testament to his love. He sent his emissaries far and wide to collect them, hoping to find something as beautiful as she was, something to prove his love to her.  He would take her to the top floor and show her his collection, having her help pick out which ones to display in the main ballroom for grand festivals. When her infidelity came to light, the owner of the manor stored them all up, and now cannot stand the sight of the treasures, for they remind him of his lost love.
+
+y641 Cave Secret tunnel This tunnel provides escape to prisoners with enough coin to bribe the guards. While escape is possible through other means, slipping five copper to the militiaman in charge of relieving you of your wares may grant you access to the tunnel. The door was well hidden and unassuming, blending in the wall behind chests and barrels in the storage room. The tunnel is a natural formation, used by early pioneering guards to make a few extra coins on top of their salaries.
+
+y642 Desert Dead Valley Life is sparse in the desert.  Travelers take heed when they pass here.  It is hot and a long crossing.
+
+y643 Mountain Dangerous Precipice People stay away from this area.  It is a dangerous part of the mountain.  Many people have fallen to their deaths passing here.
+
+g644 Inside Tower kitchens This kitchen was built when the tower was finished. It was a clear need to have food to distribute throughout the tower. The food here is also shared with paying customers who stop in. The king himself likes to come here every so often. but the kitchens aren't completely to his desires in culinary expertise.
+
+g645 Swamp soldiers camp This soldiers camp was created as there was need for a training and resting area for the soldiers of the king's royal army. The location is ideal as they have water and material. The king himself was excited by this spot.
+
+g646 Inside Castle Secret Tunnel These tunnels were created in secret because there was a large group within the kings council wanted to overthrow him.  The king caught wind of this and had tunnels built without any one knowing but immediate and trusted family members.  Over time the kings regained order amount his people and the tunnels are more well known.  Now they are used as a method of escape in case of invasion.
+
+y647 Forest flower garden This garden is used to feed the fae that live in the Brush den. The fruit from the climbing vines and the nectar from the flowers make up most of their diet, and the garden provides them with a ready source of nourishment. The entrance to the encircled clearing is within the roots of an ancient oak, and is not easy to see.
+
+y648 Inside Tower Alchemists bedroom It is here that the Alchemist performs his most dangerous and forbidden experiments. If forced to accept a visitor, the interloper will only be shown what is in the laboratory above and never allowed to see what goes on at the end of the hidden stairway. Inside a flask, slowly growing is a tiny purple stone, which the Alchemist hopes will enable the creation of a powder that will allow him to disguise himself as anyone he wishes.
+
+y649 Inside Castle Guard Barracks This room may be bustling with activity, or almost totally empty, at any given time. Guards rarely spend their free time here, though on occasion, especially when off duty but in a state of readiness, they may be found playing games, wrestling, or simply conversing. The Captain of the Guard runs a very tight ship and does not tolerate any slovenly behavior. Older, senior guardsmen can sometimes be found at the tables in the back, drinking and discussing current events.
+
+y650 Outside Cottage backyard These freshly grown carrots by the farmer gives food and living through out the year. The winters are relayed on the cows which can give calf and provide his living for that season.
+
+g652 Inside Palace attic The library is where the king mainly likes to do his book keeping as it were. Here he can relax fully since no one comes here other then himself or the queen. He has also planned attack strategies here and often defense of the castle itself.
+
+g653 Inside Palace Grand balcony The grand balcony is where the King goes when he needs to think. He goes there to think over war strategies (if the need arises), how to deal with issues of his people, if the Queen is angry with him, or any other problems. The King is particularly proud of the design of the balcony, as it is like no other. He hand-picked the creatures that graced the railing, and it feels a part of him was put into as it was designed. He can look over his lands, as well as any approaching enemies could be seen for miles. Only a few select are allowed on the Grand Balcony, his Queen, some close alliances, and close family.
+
+g654 Inside Tower rat den The rat den used to be a storage room, before the mad King became the ruler. It stored crates of lovely dishes, ornaments and treasures. It was kept clean, with servants coming and going to get items, as well as store them. It was actually quite a clean and nice room, where even food was stored when there was an abundance. Torches kept the room bright, the walls were in good order, clean of cobwebs.
+
+m655 Wasteland midland town Before the resurrection, this was a trading center on the outskirts of the desert. Once the marauders came, the place was burned to the ground. The only people crazy enough to still be here are scavengers and outlaws.
+
+y656 Cave Underwater Cave This underwater cave holds many secrets. It is impossible to reach it from dry land. One must swim into the cave from the bog. Inside it is lit by a single ever-burning torch where the coven meets every full moon.
+
+g657 Inside Castle Castle Royal tower The castle's royal tower is a lookout point for the king's men. From stone windows, soldiers can survey the land around them. You can see the green field, straw-thatched peasant huts, and fields fat with crops. From here the castle is protected with bows and arrows at the ready.
+
+g658 Inside Tower Keep The keep has stood for centuries, never having been taken in battle. The keep holds weapons and armor, to be sure, but it also holds many of the king's most valued treasures. If the keep goes, so goes the kingdom.
+
+y659 Jungle outlaws' jungle This thick jungle is home to a merry band of men. They are outlaws and hide among the trees where they run very little risk of being found. They live with the land, befriending the local animals, and living in the treetops.
+
+r660 Inside Church Church foyer Worshippers comes to the foyer to wait to be let into the main church for daily service.  This is also the place where rumors fly about as worshippers talk among each other.
+
+m661 Graveyard Main graveyard Families of lost loved ones come here to grieve and pay their respects before the dead are buried.  Sometimes, in the dead of night, thieves come to rob the dead of their jewels.
+
+g662 Inside Church Confessions room When a worshipper feels guilty, he'll head to the confessions room in order to seek penitence from the priest.  There have been some terrible crimes divulged here but still remain secret.
+
+y663 Outside Cottage Outside gates These gates prevent unauthorized people from entering.  They also serve to tell others which family lives here.
+
+c664 Outside Palace Peasant living quarters The peasants come here at the end of a long day to rest and get ready to do it again.  They find themselves quickly falling to sleep after a long day.
+
+y665 Inside Temple The Temple Marketplace People come here to exchange goods and hopefully make a decent enough profit to cover the rent just for setting up here.  Sometimes traders come back with very exotic goods from far away places.
+
+y666 Forest picnic area Peasants come here during their lunch break to enjoy the outdoors before having to go back to their manual labor.  It's one of the few areas where they can unwind.
+
+y667 Swamp Darkest part of the swamp Creatures come back here to rest and feast on what they've captured from the main areas of the swamp.  This is an extremely isolated area that few humans ever come to willingly.
+
+c668 Countryside path to the manor A wealthy lord lives here and he comes back at the end of a long day directing peasants on their daily duties.  Few are allowed inside except for the lord's family, servants, and invited guests.
+
+y669 Inside Church Prayer bell Church assistants come here to call worshippers to service.  It can be a bit of a pain as one advances in years and needs to make the trek up.
+
+y670 Inside Castle The garden courtyard The garden courtyard is the only exotic garden in the entire kingdom. The most respected exotic flower and plant collectors send their finest collections as gifts and homage to be displayed in the garden. It is the highest honor to have one's plants and flowers be relocated there. The biosphere is unique and self sufficient to keep all of the flowers and plants alive, a strange phenomenon harmonized by the existence of many foreign plants living together.
+
+g671 Abandoned Abandoned mine entrance The mind used to be the hub of coal many years ago. The king's men worked diligently to remove the coal to use for heating the village. It wasn't untill about 40 years ago, that the mine started to crumble and the King deemed it to dangerous to access anymore.
+
+m672 Inside Castle Pet chamber All of the rarest and most beautiful animals are sent here as tribute, buy they are sad and need to be petted and played with. Unfortunately you can't reach in to touch any of them.
+
+y673 Farm royal farm The peasants of the kingdom must work for a living. They have gathered together to tend to the foodstuffs of the kingdom. The peasants work day and night for their crops.
+
+y674 Inside Tower Jail entrance The jail holds the worst criminals in the city. There are some bad people that need to be kept in jail. They guard it heavily to ensure this.
+
+g675 Inside Palace Palace Entrance The king decorated the palace entrance himself. He loves gold and the power it shows.
+
+y676 Bazaar The Farmers market You are able to buy foods from many cultures in this market. They are from lots of different cultures
+
+g677 Inside Church back room The priest uses the room to study and learn about religion. He reads the texts and chooses from them to speak about.
+
+r678 Inside Church The Sermon Hall The Sermon Hall used to be the first thing you saw when you walked into the first. Back when it was first built there were only a few who came to visit and hear the Priest's words. And as more people came by, either from the village or just traveling the area started getting more and more full. People waiting at the confessionals, as there was only one at the time. Then while waiting for weekly services the smaller area could no longer hold everyone so they decided to expand upon it, and create a bigger space where everyone was welcome.
+
+y679 Lake clean water lake The area was first found by an old couple that used to live by, on a now abandoned homestead. They set up a bath tub so that they could boil water and take a nice bath together overlooking the surrounding area. They offered it to travelers as a way to relax if they so happened to travel by their home.
+
+g680 Mountain Dwarven blacksmith The blacksmith in this shop is huge. For a dwarf you'd swear he was bigger than a human. His hands are working, hammering day in and day out smelting anything the city might need. He has scars across his right cheek from clipping himself with his weaponry. You'd think he'd be the meanest dwarf of them all, but in fact he's the sweetest man you'd ever know. He greets every customer with a smile, as why not smile when you're doing the work you love? The dog and cat currently taken in are actually strays he's adopted over the years.
+
+y681 Outside Palace Laundry Lines The laundry lines were set up so the villagers could have a good place to dry their laundry next to a river. They used to hang them at home but as there were times the sun wouldn't hit them directly it became a bad way to manage so instead they came together to get a place where everyone could dry.
+
+m682 Inside Castle Basement The basement was originally going to be a dungeon that served for the prisoners who were found trying to infiltrate the castle but as the room was smaller than originally planned it was decided to be used as a storage for the cleaning supplies for the Duke's housemaids.
+
+y683 Bazaar School The school  was created from an old church that was no longer needed in the village. The priest held a ceremony for the town to come and visit before the school opened so that the students could meet their teacher. The ceremony was a success and even brought in enough donated money to buy the stained glass circle that's featured on the front door.
+
+y684 Inside Palace The grand dining room Many feasts have taken place  in the grand dining room, deals have been reached and broken. The great dinning room holds many stories in its walls and has been the witness of many decisions across generations.
+
+y685 Inside Church holy alter The altar is the most holy place in the kingdom, royalty travels across the realm just to be in this holy place and get rid of evil. The leyend of its power is told frequently and one of the most known stories in the realm.
+
+y686 Outside Church Iconostasis This stand was made by an old priest Nicolas. He spent 5 years creating the iconostasis and he ordered the icons from another kingdom.
+
+y687 Inside Castle Throne room This room is the place where the King or Queen makes decisions regarding his servants, populace and territory. It is handed down to the next King or Queen each generation.
+
+y688 Bazaar Kebab stall This vendor is a staple of the city and has been long established in this spot. Its obvious he doesn't set up this stall everyday, just brings his food.
+
+y689 Farm An Open Field The farm once was a very productive venture, providing meat and produce for the people in the tower. The decorations are old but nice, not the type a king would own but a well-to-do merchant. What isn't nailed down has been carted off or used for campfire fuel.
+
+g690 Town Wealthy area of town This city was once a garrison for the King's soldiers but in times of peace has become the commerce hub of the region. You can see some military installations but they are old and unused, relics of an earlier time.installations
+
+g691 Inside Tower King's Dorm This tower was once the home to the Great King who unified the warring regions and enforced peace with an iron rule. He was clever, powerful but known as fair. Examples of his deeds can be seen in the artwork, the relics, the adornments. It is a testament to both his legacy and his ego; no one who comes there later will be able to forget who created it.
+
+y692 Outside Church Church The church has been around for over 100 years. It is old and has rich history. There are many headstones present in the cemetery. The church holds services on Wednesdays and Sundays, has celebrations (such as weddings and baptisms), and offers funeral services.
+
+g693 Cave cave exit This cave was discovered quite by accident during an expedition.  The explorer, Rosco Monteguy thought perhaps when finding it there was an underground stream.  He returned a year later to explore and upon digging the hole found a literal goldmine in jewels.  Rosco, ever the patriot returned to the King and told him of his findings.  Rosco is given a statue at the cave entrance to signify his achievement.
+
+y694 Outside Castle Main Gate the gate being new was the idea of leaders, many resources were poured into the area, to the dismay of many members of the area
+
+y695 Trail Trailhead this area is notorious for fights and robberies, there are many poor people in the area who could use some food and money
+
+n696 Inside Palace bedrooms this room has been the stomping grounds of many kings and royal family, it is spotless because of the butlers and maids, and is rarely ever used except for sleep.
+
+y697 Inside Church The dogs' domain legend has it that the animals that live here are self sustaining and never eat food given to them by humans. they have an informal community set up.
+
+y698 Mountain Hiking path the atmosphere is caused by an energy that portrays the failure of those who tried to conquer the mountain. it has a quiet eerie sound and makes you doubt yourself, causing many to not try and climb to the peak
+
+b699 Bazaar Bazaar Gambling the area is known for crime and scammers, and so women avoid it at all costs. only middle aged men are around the area, and tough ones at that.
+
+y700 Bazaar Apple trees this apple tree has sparked debate, as many want it cut down to make room for more market space, as well as wood resources. others admire the beauty and admire it as a food source in harsh times
+
+g701 Town Pharmacy this pharmacy was established by the local philanthropist who does not believe in simple remedies. He wanted the town to have reliable access to proven help
+
+m702 Graveyard Main street many members of the town protested the cemetery being so close to the main street, but they were denied, and the atmosphere reflects this
+
+g703 city in the clouds cloud tavern This is the local watering hole of angel men who come here after work to socialize after work and blow off some steam
+
+g704 city in the clouds harp store this is a business for angel men to purchase their musical instruments, they sell harps mostly, but there are some lyres and a few bouzoukis
+
+y705 frozen tundra Ice cave There are etchings on the walls that are obviously left from humans. They depict wars and struggle. There is often pictures of a giant beast killing humans.
+
+y706 frozen tundra Entrance to a Cave The entrance was once the home of an ancient beast, whose name has long since been forgotten, but whose looming presence has long been felt in these lands.  It was once the home of a magical creature under the heel of the icy enchantress that reigned in these parts, although it is not certain if it was dominated by force or tamed to serve the enchantress willingly.
+
+m707 frozen tundra Entry to Icy Fortress This fortress once belonged to the cruel enchantress, who often kidnapped errant children who disobeyed their parents.  At least, that's what the legends say, but most adults now discount such tales as tricks used by parents to curb unruly children.  And yet, no one would actively mock or disparage the legends aloud, lest the wicked enchantress hear and destroy those who dared to question her very existence.
+
+y708 frozen tundra Ice Cave The cave was carved out by an ancient ocean that once covered the land. It has been used as a shelter by all manner of both man and beast. The walls seem to echo its history in deathly quiet whispers.
+
+g709 frozen tundra Ice Cave Nobody quite knows how the ice cave came to be, but it had been abandoned for quite some years until claimed by the king. It serves as a halfway point between ends of the tundra where soldiers can escape the brutal cold.
+
+y710 magical realm swamp The swamp contains many different properties.  It allows people to live forever or possibly cause death based on whom approaches it.  It has been called both the swamp of evil and the swamp of youth.
+
+y711 magical realm Faeries Den The Faerie Den is home to the faeries when they are not out helping others. Faeries come here to rest and regain their magical powers after helping humans in the human realm. No human has ever entered here.
+
+y712 magical realm A Creature cave This cave houses a large creature. No one knows where it came from but they do know it is harmful to humans. The creature likes to bring it's kills back into this cave.
+
+y713 netherworld cavern This cavern is home to many lizardlike creatures that are blind and live in the dark. They dwell in the cavern and lower tunnels, dragging the souls of the undead down occasionally to eat and torture
+
+n714 netherworld Torture Chanber This room is for torture. It has taken many souls and given them a slow death. It was created by the dark lord that rules over the kingdom. It is 500 years old.
+
+m715 netherworld The devils castle This castle houses the devil. He is pure evil and is looking for slaves to worship him. These ancient grounds have many lost souls living among it.
+
+n716 netherworld whipping chamber This sis a punishment room where droves of damned soles are strapped to stone walls and whipped by demons until their screams burst their throats
+
+y717 netherworld Lava Lake Lava lake has existed through time immemorial. It is sustained by fresh magma that oozes through cracks in the earth at the base of the lake. No creature dares go near it for fear of being swallowed and imprisoned by it.
+
+y718 supernatural ghost monk quarters a long dead monk haunts this simple room. He is a ghostly figure and no one hardly goes in here for fear of being haunted
+
+g719 supernatural Astral plane The astral plane has always existed. It has no beginning and no end. Thosge who find themselves here must tremble at the enormity of it. This is a place where men's nightmares have made their abode.
+
+y720 supernatural bridge in the forest Many people traveled over this bridge but it has become run down now there is a more well kept road that cuts through the forest. Some wars were fought in this area and this bridge was command posts for many armies. Many sould stil haunt this area.
+
+g721 supernatural Fighting Arena inside Tourney Grounds The fighting arena was once the location an actual battle between warring nations. The king issued that a tourney be erected in memory of the battle. Great memories.
+
+y722 underwater aquapolis tool shed a humble shack for storing the implements of agrarian life
+
+b723 underwater aquapolis farmhouse this is a humble farmer's shack where he lives with his wife and six children, it is falling apart and in disrepair and is very old
+
+y724 city in the clouds Dragon Lift Dragon Lift has been around for over 75 years and even though the owner, Joel, is often sued by customers when flights go wrong, the business is pretty profitable.
+
+y725 city in the clouds Cloud Nine Bar The bar was built as an escape from the doldrums of a working day. The bar is enjoyed by all citizens in the city in the clouds.
+
+g726 city in the clouds wizards dragon egg incubatory this location is used by a wizard who has been in a kings hire. he is trying to both hatch, and train dragons to fight along with soldiers. female dragons are kept nearby under the guise of many promises or treachery.
+
+y727 city in the clouds Observatory From high in the clouds, the denizens of the city always wished they could see what was going on in the world below them. By building the observatory in their tallest tower, the people knew that they could now see not only the goings on in their city, but could also see what was going on underneath their city. In this way they will always know if danger approaches them from below, and they will be ready to fight it. Ever since it was built, the observatory has been an important location for the defense of the city. Adjacent to the room they built a deck, and a large trumpet there can immediately notify people of an attack. Meanwhile, the security room below can be notified to ready their forces.
+
+g728 city in the clouds The Moon Observatory The king commissioned the observatory to be built for his queen after she became enraptured with looking at the night sky and tracking the movement of the moon.
+
+y729 city in the clouds Main square of the city in the clouds The main square is the central location for the city in the clouds. It is where people come to chat and spend the day. People come here to eat and learn the day's news. They can see the newest creations from the blacksmith. They also hold public meetings and performances.
+
+y730 frozen tundra Living room The living room is the primary room in the hut. The owners carefully constructed the hut during the summer to last through the harsh long winter. The roof is reinforced to bear the weight of constantly falling snow. The hut, though not impressive to look at, provides a safe refuge against the frozen tundra.
+
+y731 frozen tundra hidden cave The cave houses many hunter and gatherers when traipsing across the rugged terrain of the frozen tundra. The cave offers relief from the cold and allows one to simply take short breather from the elements.
+
+y732 frozen tundra The Abyss The frozen tundra was created when a dragon was created. All of the heat and life out of the environment was sucked away to create it.
+
+y733 frozen tundra Den The queen commissioned this room for her husband, the King, who took ill after a particularly cold hunt in the tundra. She said she wanted a place for her husband and sons to warm up.
+
+g734 frozen tundra Festival Room The festival room was built after the princess requested a large party for her fifth birthday. The king had the room built so that his sick daughter could celebrate with all of the people of the town comfortably,
+
+y735 frozen tundra Large Ice Cave Cold and barren, this ice cave looks like nothing should be able to live here. Small animal bone are brought in from scavengers, or possibly something more dangerous. the snow on the floor looks fresh, like nothing has walked on it in some time
+
+g736 magical realm Secret magician's workshop Mordak, the wizard, constructed this powerful workshop after the death of the most famous king, Henry of Silverton.  Any who enter here immediately become enchanted with the wizard's power, giving them advanced healing powers.
+
+g737 magical realm Wizard's lair The wizard of the town was tired of casting spells in public and being ridiculed. He built this room for months in order to have a private place to think and get revenge.
+
+y738 magical realm The Royal Tent The Alabaster Elves disdain those who separate themselves from the magical realm they live in with walls and stone.  Instead they chose to live in fantastical tents, and roam throughout the Realm of Magic, always seeking to unlock the secrets and mysteries throughout the land.  The Royal Tent is but slightly larger than the rest, as the royal family does not hold themselves overly above their subjects.  It was said to have been a gift of the Elves of the North, and the magics of it allow for it to be as practical and durable as it is beautiful to behold.
+
+y739 magical realm Echo Hall The most renown of wizards would congregate here historically in order to discuss advancements of magic. Their deeds would be recorded on the walls and recalled when wizards would speak about them again.
+
+g740 magical realm Inside of a troll cave The local troll that roams the land lives in this cave. He only comes out in the day to find food then comes back to his cave at night to eat and sleep. Sometimes adventurers stumble upon this cave and run away from the rancid smell.
+
+y741 netherworld Devil's Den The Devil's Den is where the most evil creature rules the netherworld, collecting souls from the human world. It is a place humans fear to enter, knowing they will never escape.
+
+g742 netherworld Withered Gardens This garden was once the pride and joy of the Goddess who lived in the netherworld.  She would sit on the bench and sing to the souls that wandered the lands of the Dead, giving them peace and comfort.  However, she was betrayed by one who she trusted most, and was locked away.  Without her kind divine radiance, her garden soon withered away to the husk it is now.  None but the most foolhardy and desperate venture into it, for few who enter it return, and those that do are not unscathed.
+
+n743 netherworld The Pit of Despair The Pit of Despair is one of the many landmarks in the Netherworld to maximize human suffering. However the Pit is for agonizing and elongating pain until one's psyche and mind crumble.
+
+y744 netherworld Lord's Castle The Lord's Castle is the tallest and most ominous looking structure in the netherworld.  All inhabitants of the netherworld live in fear of ever being summoned there as if they are, they know their time of reckoning has come.
+
+n745 netherworld Dungeon The dungeon hosts the evil of evil. It is the darkness of the netherworld, holding the secrets of evil that are withheld from the good.
+
+g746 netherworld Viewing room The king of the netherworld had the room created by a witch several centuries ago so that he could look in on the love of his life. The witch only allowed the ball to show the living one day per year to keep the dead from pining away in the room year round.
+
+m747 supernatural Goddess Hollow The people of the wood created the hollow several centuries ago. They discovered the hollowed out tree while searching for a missing baby who was believed to have been stolen from his mother by woodland creatures. The baby was never found but his blanket was within the tree. The woodland people began bringing gifts to the tree to protect their children from a similar fate.
+
+b748 supernatural Haunted Basement At night, the sound of pacing footsteps are heard, pattering against the concrete floor. On some nights the sound of a crying woman can be heard echoing from within the basement. A young mother who had recently moved in with her family could no longer take the sounds at night, her curiosity driving her mad. One day, she descended into the basement and found some old documents and journals. As it turns out, the man who built the house would drag his wife into the basement and beat her routinely. After a particularly rough day at work he beat her especially savagely and killed her.
+
+b749 supernatural Magic Room This room was created when a wizard's wife was taken from him by the king for disobeying his orders. The wizard created this room, called the king in and then they both died.
+
+g750 supernatural The Glade of Mysteries This glade is part of the Secret Realm, unknown by mortal men, and yet dwelling beside it in a parallel dimension.  Yet whispers and stories of the Glade are told in the feeble tales of men, who can only grasp at its' wonder and power.  It is said that if one looks in the surface of the pond that dwells within, that one's whole future stretches out before them, along with all the possibilities therein.  Such knowledge will drive a man, for the human mind is not meant to contain such knowledge.
+
+y751 underwater aquapolis Underwater Marketplace This market started as a small trading place, but has evolved over generations to become a major resource for the community. The building itself started small as well, and as the market's popularity grew the building was expanded. Today, the market stands as the largest source of tourism for the kingdom.
+
+y752 underwater aquapolis Research lab The research lab is located in the central area of the aquapolis for easy access for all those involved in the research.
+
+y753 underwater aquapolis Dry Dock Room The dry dock is need as a portal in between the dry area of the aquapolis and the outside water. Divers and maintence workers will enter the room and it will fill with water. After which the door will open to the outside.
+
+y754 underwater aquapolis Underwater Aquapolis An ancient underwater people created the city, collecting beautiful and priceless items from all over the ocean to add to the budding city. Creatures from all over the seas made their way to the aquapolis, both to help and to admire the incredible creation.
+
+y755 underwater aquapolis The Marketplace This market was once part of a famed above water city, which has long since sunk into the waves.  At first the merpeoples of the sea there disdained it for its primitive ways, finding its walls and broken structures an amusing testimony to the futile efforts of the surface dwellers. However, just as the tides change, so do the moods of the people that swim within them.  The merpeople clamor for goods and trades from the surface, and so the market became more of a charming testimony to the quaint and unique properties of things created far from the waves and waters of those who dwelt below.
+
+g756 underwater aquapolis Neptune's throne room The queen loved the sea. When she was married off to a royal family in the country far from her beloved ocean palace, her husband requested that a room embodying everything beautiful about the ocean was constructed to please his queen.
+
+y757 underwater aquapolis The lords treasury Rumors say that the original ruler of the aquapolis filled the treasury with riches that he aquired while on a quest he undertook on land before the founding of the aquapolis.
+
+n758 netherworld The Thrones of Death The Thrones of Death is the room where murders are brought to and chained to the back walls.  They are then whipped and sometimes tortured to their impending death.  The Watchman wears a black hood and watches over the torturers.  The declares when a murderer has passed.
+
+g759 city in the clouds mess hall of the servants anyone who works in labor for the king is bound to be here at set times for whatever meals are left from the higher ups. some food is not too bad but the sanitation could be better. everyone from blacksmiths to tanners and fletchers will be found here at times and gossip runs rampant.
+
+y760 city in the clouds Grand hall of the City The grand hall of the city is where most business for city matters take place. Be it a festival, exotic markets, or even the royal weddings. People may come and go to the grand hall as they please unless the massive door is shut which hasn't happened in years.
+
+y761 frozen tundra The Endless Strait The endless strait was always there, separating the Northern Continents from the Southern ones. No one knows why it was created or how, just that it is difficult to cross and devoid of life.
+
+y762 frozen tundra Frozen Outpost The location came about due to the king wanting to harness the territory and prevent rival kingdoms from claiming it. He set up an outpost to protect the camp and territories.
+
+y763 frozen tundra Eating area of cave This cave was found while on a hiking expedition. The hiking party is lost and has been here, waiting for the weather to die down. They are here going on a month
+
+y764 frozen tundra inside of a igloo The home of a hunter that roams the tundra for work. It's a nice little home for the hunter to stay while he isn't in his home town miles away from the igloo.
+
+g765 frozen tundra Research Laboratory This place was founded almost 31 years ago. Its creator entrusted it to those of us who could weather the frozen wilds out here without too much trouble. What a naive man he was.
+
+y766 magical realm The Fountain of Youth The Fountain of Youth has long been a story of legend among mortal folk.  Yet, as with any magic in these realms, there is oft a price to be paid to cheat Nature of her rights.  While many whisper and dream of finding this mysterious fountain, and over the centuries many a brave knight has searched, no one has ever returned from visiting this perilous place.
+
+g767 magical realm Elf's room A magical elf far from home built this room in an attempt to seek refuge from the creatures of the forest. He hides during the night, but ventures out to explore during the day.
+
+g768 magical realm The cabin of an ogre The ogre built this cabin and has inhabited it for years after being run out of town. He tends to his gardens and imagines what it is like to be among his own one day. He invites no one to this place.
+
+n769 netherworld Lower dungeon This room is the torture chamber and dungeon for the worst criminals. The light of day never reaches this room so as to help break those tough criminals. The table in the center of the room is used for torture. This room was built before the actual castle above it. It predates all the current inhabitants of the land. No one knows who built it or what it's original purpose was for.
+
+g770 netherworld The Dark Kings Throne Room The Dark King created the room himself, erecting it with only a few words. It gains magical power with every person that enters the netherworld.
+
+g771 netherworld Reaper's lair The reaper of the town desired his home to reflect his profession. He commissioned workers to create this dull and fear-worthy lair. Since then, no one except for its rightful owner has stepped foot in the room again.
+
+y772 supernatural Stonehenge Used to show power, knowledge and skill the Stonehenge is where a variety of nomadic people can trade and exchange ideas, as well as learn of astronomic occurrences.
+
+y773 underwater aquapolis Toad Hollow Toad Hollow is a legend among knights young and old. Mostly, it's discovered by children playing down in the sewers who take a combination of turns through the drainage pipes and wind up there by accident. Some braze knights have purposefully tried to find Toad Hollow and been successful but most have not glimpsed the creature. Toad Hollow remains shrouded in mystery to this day and many question if it's even real. Some say that you should be careful not to get caught on the armor of the drowned when you're wading through and that hands have reached up from the bottom of the water and grabbed their ankles.
+
+n774 underwater aquapolis The dungeon this is the dungeon in a kingdom ran by a merciless king who rules with a iron fist. he believes fear is what keeps them loyal. his favorite torture? the iron maiden
+
+y775 underwater aquapolis Geothermal Valley The Geothermal Valley is place where one can come and heal with the minerals and heat that perminates through the body and soul. It is the main attraction in the underwater aquapolis.

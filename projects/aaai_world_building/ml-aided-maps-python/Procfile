@@ -1,0 +1,1 @@
+web: cd ParlAI; python3 setup.py develop; cd ..; python3 python_backend/tornado_server.py -port $PORT

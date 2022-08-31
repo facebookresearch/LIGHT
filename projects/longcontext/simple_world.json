@@ -1,0 +1,179 @@
+{
+	"dimensions": {
+		"name": "SimpleWorld",
+		"height": 3,
+		"width": 3,
+		"floors": 1,
+		"id": 431210
+	},
+	"map": [
+		{
+			"name": "1F",
+			"tiles": {
+				"0 0": {
+				    "room": 1,
+				    "characters": [
+					"4"
+				    ],
+				    "objects": [],
+				    "color": "#8A9BA8"
+				},
+				"1 0": {
+				    "room": 2,
+				    "characters": [ "5", "8", "9" ],
+				    "objects": [
+					"3", "6", "7"
+				    ],
+				    "color": "#8A9BA8"
+				}
+			},
+			"walls": {}
+		}
+	],
+	"entities": {
+		"room": {
+			"1": {
+				"id": 4,
+				"name": "Orc cave",
+				"base_id": 3,
+				"description": "It is a dark cave that is cold and damp inside. The floor is rocks covered in bat poop. It is damp from the ceiling dripping of water. The cave just goes on what seems to be endlessly into the dark abyss. The only light you can see is from the distance entrance of the cave.",
+				"backstory": "The cave is an old orc hiding place. It housed thousands of orcs that used it for shelter and to store their gold. The orc population has died and there is now very little that remains of the orcs that used to occupy this cave. Robbers have stolen anything worthwhile in this cave."
+			},
+			"2": {
+				"id": 8,
+				"name": "Church Entryway",
+				"base_id": 1,
+				"description": "The church has marble floors and a huge frost window. There are benches made from wood and a big organ can be seen at the front stage. There is gold trim all around the church.",
+				"backstory": "This is where everyone comes to pray. It is a place to worship god and have ceremonies."
+			}
+		},
+		"character": {
+		    "4": {
+			"id": 3629,
+			"name": "troll",
+			"base_id": 3628,
+			"persona": "I am a orc that was born in a cave. I eat corn the most. I have many friends.",
+			"physical_description": "You are unlike any other orcs. You engage with a lot of other orcs and like to talk a little too much.",
+			"name_prefix": "some",
+			"is_plural": 1,
+			"char_type": "creature",
+			"emoji": "b",
+			"on_events": [
+			    [["SayEvent", "lotr"], ["SayEvent", "One does not simply mention lotr!"]],
+			    [["SayEvent", "meow"], ["SayEvent", "Meow back!"]],
+			    [["SayEvent", "beam at me"], ["EmoteEvent", "grin"]]
+			]
+		    },
+		    "5": {
+			"id": 3629,
+			"name": "kittykat",
+			"base_id": 3628,
+			"persona": "I'm a cute kitty.",
+			"desc": "Black and white and cute all over.",
+			"name_prefix": "some",
+			"is_plural": 1,
+			"char_type": "creature",
+			"emoji": "a"
+		    },
+		    "8": {
+			"id": 3630,
+			"name": "mouse",
+			"base_id": 3630,
+			"persona": "I'm a cute mouse.",
+			"desc": "Black and white and cute all over.",
+			"name_prefix": "some",
+			"is_plural": 1,
+			"char_type": "creature",
+			"emoji": "a"
+		    },
+		    "9": {
+			"id": 3630,
+			"name": "dog",
+			"base_id": 3630,
+			"persona": "I'm a cute mouse.",
+			"desc": "Black and white and cute all over.",
+			"name_prefix": "some",
+			"is_plural": 1,
+			"char_type": "creature",
+			"emoji": "a"
+		    }
+		},
+		"object": {
+			"3": {
+				"id": 5125,
+				"name": "priceless piece of art",
+				"base_id": 5124,
+				"is_container": 0,
+				"is_drink": 0,
+				"is_food": 0,
+				"is_gettable": 0,
+				"is_surface": 0,
+				"is_wearable": 0,
+				"is_weapon": 0,
+				"desc": "A work of art that is has more than monetary value. Mostly owned by kings and wealthy collectors",
+				"name_prefix": "a",
+				"is_plslural": 0,
+				"emoji": "🕰️"
+			},
+			"6": {
+			    "id": 5125,
+			    "name": "shovel",
+			    "base_id": 5124,
+			    "is_container": 0,
+			    "is_drink": 0,
+			    "is_food": 0,
+			    "is_gettable": 0,
+			    "is_surface": 0,
+			    "is_wearable": 0,
+			    "is_weapon": 0,
+			    "desc": "A shovel",
+			    "name_prefix": "a",
+			    "is_plural": 0,
+			    "on_use": [
+				{
+				    "pre": [
+					["is_holding", "used_item"],
+					["used_with_item_name", "muddy area"]
+				    ],
+				    "post": [
+					[
+                                            "create_entity",
+                                            "in_used_target_item",
+					    {
+						"name": "emerald ring",
+						"is_wearable": 1,
+						"physical_description": "A beautiful and mysterious ring.. could it have magical powers?"
+					    }
+					],
+					[
+					    "broadcast_message",
+					    {
+						"self_view": "You dig into the sodden mud, and spy something glistening within!"
+					    }
+					]
+				    ]
+				}
+			    ]
+			},
+			"7": {
+			    "id": 5125,
+			    "name": "muddy area",
+			    "base_id": 5124,
+			    "is_container": 1,
+			    "container": true,
+			    "is_drink": 0,
+			    "is_food": 0,
+			    "is_gettable": 0,
+			    "is_surface": 1,
+			    "surface_type": "in",
+			    "is_wearable": 0,
+			    "is_weapon": 0,
+			    "desc": "A muddy area",
+			    "name_prefix": "a",
+			    "is_plural": 0,
+			    "emoji": "🕰️"
+			}
+		},
+		"nextID": 5
+	}
+}

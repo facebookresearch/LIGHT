@@ -1,0 +1,41 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/*DISCONNECT MESSAGE STYLES*/
+.disconnect-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  flex-direction: column;
+}
+
+.disconnect-text {
+  font-family: fantasy;
+  color: darkgrey;
+  text-shadow: 0px 10px 10px rgba(109, 90, 48, 0.2);
+  text-align: center;
+}
+
+.disconnect-text__reload {
+  font-family: fantasy;
+  color: darkgrey;
+  text-shadow: 0px 10px 10px rgba(109, 90, 48, 0.2);
+  text-align: center;
+  text-decoration: underline;
+}
+
+.disconnect-text__reload:hover {
+  cursor: pointer;
+  text-shadow: 0px 0px 0px rgba(109, 90, 48, 0.2);
+}
+
+.disconnect-text__reload:active {
+  cursor: pointer;
+  text-decoration: none;
+}

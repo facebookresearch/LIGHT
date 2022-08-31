@@ -1,0 +1,22 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* SUCCESS BANNER STYLES */
+.successbanner-container{
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+}
+.successbanner-header{
+    background-color: green;
+    color:white;
+}
+
+.successbanner-body{
+    background-color: white;
+    color:green;
+}

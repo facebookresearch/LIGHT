@@ -1,0 +1,178 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/*NUMBER STAR STYLES*/
+.numberstar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.numberstar-text__container {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.numberstar-text {
+  z-index: 100;
+  color: grey;
+  text-align: center;
+  margin: 0;
+  font-size: 1em;
+  padding-top: 0.5em;
+}
+
+.star-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.gift-star {
+  color: yellow;
+  position: absolute;
+  z-index: 1;
+  height: 3em;
+  width: 3em;
+  font-size: 1em;
+}
+
+/*NUMBER CIRCLE STYLES*/
+
+.numbercircle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.numbercircle-text__container {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.numbercircle-text {
+  z-index: 100;
+  color: grey;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  font-size: 0.8em;
+  line-height: 1.5;
+  padding-top: 0.5em;
+}
+
+.circle-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.level-circle {
+  color: yellow;
+  position: absolute;
+  z-index: 1;
+  height: 3em;
+  width: 3em;
+}
+
+@media only screen and (max-width: 900px) {
+  /*NUMBER STAR STYLES 900px */
+  .numberstar-text {
+    font-size: 12px;
+    padding-top: 0.75em;
+    padding-right: 0.5em;
+  }
+
+  /*NUMBER CIRCLE STYLES 900px*/
+  .numbercircle-text {
+    font-size: 10px;
+    padding-top: 0.75em;
+    padding-right: 0.5em;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  /*NUMBER STAR STYLES 600px*/
+  .gift-star {
+    color: yellow;
+    position: absolute;
+    z-index: 1;
+    height: 4em;
+    width: 4em;
+  }
+
+  .numberstar-text {
+    font-size: 12px;
+  }
+
+  /*NUMBER CIRCLE STYLES 600px*/
+  .level-circle {
+    color: yellow;
+    position: absolute;
+    z-index: 1;
+    height: 4em;
+    width: 4em;
+  }
+
+  .numbercircle-text {
+    font-size: 10px;
+    padding-top: 0.75em;
+    padding-right: 0.5em;
+  }
+}
+
+/* BROWSER SPECIFIC QUERIES */
+/* Safari 11+ */
+@media not all and (min-resolution: 0.001dpcm) {
+  @supports (-webkit-appearance: none) and (stroke-color: transparent) {
+    .gift-star {
+      color: yellow;
+      position: absolute;
+      z-index: 1;
+      height: 3em;
+      width: 3em;
+      font-size: 1.2em;
+    }
+  }
+}
+
+/* Safari 10.1 */
+@media not all and (min-resolution: 0.001dpcm) {
+  @supports (-webkit-appearance: none) and (not (stroke-color: transparent)) {
+    .gift-star {
+      color: yellow;
+      position: absolute;
+      z-index: 1;
+      height: 3em;
+      width: 3em;
+      font-size: 1.2em;
+    }
+  }
+}
+
+/* Safari 6.1-10.0 (but not 10.1) */
+@media screen and (min-color-index: 0) and(-webkit-min-device-pixel-ratio:0) {
+  .gift-star {
+    color: yellow;
+    position: absolute;
+    z-index: 1;
+    height: 3em;
+    width: 3em;
+    font-size: 1.2em;
+  }
+}

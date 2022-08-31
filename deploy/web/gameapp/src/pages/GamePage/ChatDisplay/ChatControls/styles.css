@@ -1,0 +1,36 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/*CHATCONTROLS STYLES*/
+.controls {
+  min-height: 100px;
+  background-color: rgb(228, 226, 221);
+  box-shadow: 0px 10px 10px rgba(109, 90, 48, 0.2);
+  border-radius: 0px 0px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgb(184, 184, 184);
+  border-top: none;
+  overflow: hidden;
+  border-style: ridge;
+  border-color: lightgray;
+  border-width: 10px 10px 10px 10px;
+  height: 20%;
+  padding: 0px;
+}
+
+@media only screen and (max-width: 1224px) {
+}
+
+@media only screen and (max-width: 950px) {
+}
+
+@media only screen and (max-width: 600px) {
+  .controls {
+  }
+}
+@media (orientation: landscape) {
+}

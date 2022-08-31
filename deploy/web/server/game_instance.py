@@ -1,0 +1,204 @@
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+
+from light.graph.builders.starspace_all import StarspaceBuilder
+from light.graph.builders.map_json_builder import MapJsonBuilder
+from light.graph.builders.tutorial_builder import TutorialWorldBuilder
+from light.world.souls.repeat_soul import RepeatSoul
+from light.world.souls.models.generative_heuristic_model_soul import (
+    GenerativeHeuristicModelSoul,
+)
+from light.world.souls.models.tutorial_model_soul import (
+    TutorialModelSoul,
+)
+
+import os.path
+import time
+
+# TODO specify the models to be using
+USE_MODELS = True
+
+
+class Player:
+    """
+    A player in an instance of the light game. Maintains any required
+    connections and IO such that the game doesn't need to worry about
+    that stuff
+    """
+
+    def __init__(self, graph, player_id):
+        self.g = graph
+        self.id = player_id
+        self.init_observe()
+
+    def get_player_id(self):
+        return self.id
+
+    def get_agent_id(self):
+        return self.g.playerid_to_agentid(self.id)
+
+    def act(self):
+        """
+        Get an action to take on the graph if one exists
+        """
+        raise NotImplementedError
+
+    def observe(self):
+        """
+        Send any observed content to the player.
+        This method should query the graph for what it needs, and should
+        clear the graph content when this happens.
+        """
+        raise NotImplementedError
+
+    def init_observe(self):
+        """
+        Send any required initialization observations to the player. Will
+        only be called the first time this player is initialized.
+        """
+        raise NotImplementedError
+
+    def is_alive(self):
+        """
+        Should be checking to see if connections are still maintained.
+        Will be called once before the above two methods in every main loop
+        of the running game.
+        """
+        raise NotImplementedError
+
+
+class PlayerProvider:
+    """
+    A player provider is an API for adding new players into the game. It
+    will be given opportunities to check for new players and should return
+    an array of new players during these calls
+    """
+
+    def __init__(self, graphs):
+        # Graphs should be a map of game_ids to the associated game graph
+        self.graphs = graphs
+
+    def get_new_players(self):
+        """
+        Should check the potential source of players for new players. If
+        a player exists, this should instantiate a relevant Player object
+        for each potential new player and return them.
+        """
+        raise NotImplementedError
+
+
+class GameInstance:
+    """
+    This class serves to create a wrapper around a specific graph and manage
+    all of the agents on the inside. It accepts players in the form of a
+    class that extends the Player class, which itself extends Agent. Players
+    can come from any source.
+    """
+
+    def __init__(
+        self,
+        game_id,
+        ldb,
+        g=None,
+        opt=None,
+    ):
+        if g is None:
+            if opt["builder_model"] is not None:
+                _, world = StarspaceBuilder(
+                    ldb,
+                    debug=False,
+                    opt=opt,
+                ).get_graph()  # TODO: what are the args that are needed
+                self.world = world
+            else:
+                opt["load_map"] = os.path.expanduser(
+                    "~/LIGHT/scripts/examples/complex_world.json"
+                )
+                world_builder = MapJsonBuilder("", debug=False, opt=opt)
+                _, self.world = world_builder.get_graph()
+        else:
+            self.world = g
+
+        self.db = ldb
+        self.game_id = game_id
+        self.players = []
+        self.providers = []
+        self.last_connection = time.time()
+
+    def fill_souls(self, FLAGS, model_resources):
+        purgatory = self.world.purgatory
+        if FLAGS.dialog_model is None:
+            purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
+        else:
+            purgatory.register_filler_soul_provider(
+                "model",
+                GenerativeHeuristicModelSoul,
+                lambda: [model_resources["shared_model_content"]],
+            )
+        if model_resources.get("rpg_model") is not None:
+            purgatory.register_shared_args("rpg_model", model_resources["rpg_model"])
+        if model_resources.get("shared_action_model") is not None:
+            purgatory.register_shared_args(
+                "generic_act_model", model_resources["generic_act_model"]
+            )
+        for empty_agent in self.world.oo_graph.agents.values():
+            purgatory.fill_soul(empty_agent)
+
+    def register_provider(self, provider):
+        self.providers.append(provider)
+
+    def run_graph_step(self):
+        world = self.world
+
+        # Clear disconnected players
+        left_players = [p for p in self.players if not p.is_alive()]
+        for player in left_players:
+            if player.player_soul is not None:
+                node_to_clean = player.player_soul.target_node
+                self.world.purgatory.clear_soul(node_to_clean)
+                self.world.purgatory.fill_soul(node_to_clean)
+            self.players.remove(player)
+            self.last_connection = time.time()
+
+        # clear corpses and respawn
+        ags = self.world.clean_corpses_and_respawn()
+        for ag in ags:
+            self.world.purgatory.fill_soul(ag)
+
+
+class TutorialInstance(GameInstance):
+    """
+    Version of the game meant to run tutorials, not for general play
+    """
+
+    def __init__(self, game_id, ldb, opt=None):
+        _, tutorial_world = TutorialWorldBuilder(ldb, opt).get_graph()
+        self.db = ldb
+        self._created_time = time.time()
+        self._player_node = tutorial_world.oo_graph.find_nodes_by_name("You")[0]
+        self._target_destination = tutorial_world.oo_graph.find_nodes_by_name(
+            "Ethereal Mist"
+        )[0]
+        super().__init__(game_id, ldb, g=tutorial_world, opt=opt)
+        self._should_shutdown = False
+        self._did_complete = True
+
+    def fill_souls(self, _FLAGS, model_resources):
+        """Tutorials directly register the tutorial to the DM"""
+        self.world.purgatory.register_filler_soul_provider(
+            "tutorial",
+            TutorialModelSoul,
+            lambda: [model_resources["shared_model_content"]],
+        )
+        dm_agent = list(self.world.oo_graph.agents.values())[1]
+        assert dm_agent.name == "Dungeon Master", "Did not find DM!"
+        self.world.purgatory.fill_soul(dm_agent, "tutorial")
+
+    def run_graph_step(self):
+        super().run_graph_step()
+        self._did_complete = self._player_node.get_room() == self._target_destination
+        self._should_shutdown = (
+            len(self.players) == 0 and time.time() - self._created_time > 60
+        )
