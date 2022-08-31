@@ -3615,7 +3615,6 @@ class LIGHTDatabase:
         flags = int(result[0][0])
         return OnboardingFlags(flags)
 
-    #
     def set_user_flags(self, user, flags: "OnboardingFlags"):
         if flags.flag_did_update():
             new_flags = flags.get_flag()
