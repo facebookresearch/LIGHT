@@ -543,7 +543,9 @@ class TestLandingApp(AsyncHTTPTestCase):
         shutil.rmtree(self.data_dir)
 
     def get_app(self):
-        app = LandingApplication(self.db, given_tornado_settings=TEST_TORNADO_SETTINGS)
+        app = LandingApplication(
+            self.db, password="LetsPlay", given_tornado_settings=TEST_TORNADO_SETTINGS
+        )
         app.listen(PORT)
         return app
 
