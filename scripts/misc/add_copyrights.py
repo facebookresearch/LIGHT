@@ -23,6 +23,11 @@ COPYRIGHT_JS_LIKE = """
  */
 
 """
+PROBLEM = """
+ */
+
+/*
+"""
 FILENAME_EXTENSIONS = ["py", "sh", "js", "css", "jsx", "ts", "tsx"]
 LINE_CLEAR = "\x1b[2K"  # <-- ANSI sequence
 
@@ -34,6 +39,10 @@ def add_copyright_if_not_present(filename):
     with open(filename, "r") as in_file:
         contents = in_file.read()
 
+    if PROBLEM in contents:
+        print(end=LINE_CLEAR)
+        print(f"Duplicatee copyright in {filename}")
+
     if COPYRIGHT_BASE not in contents:
         if file_ext in ["py", "sh"]:
             contents = COPYRIGHT_PYTHON + contents
@@ -43,9 +52,7 @@ def add_copyright_if_not_present(filename):
         with open(filename, "w") as out_file:
             out_file.write(contents)
         print(end=LINE_CLEAR)
-        print(
-            f"Added missing header to {filename}                                                    "
-        )
+        print(f"Added missing header to {filename}")
 
 
 def main():
@@ -64,6 +71,10 @@ def main():
             if "outputs" in target_path:
                 continue
             if ".git" in target_path:
+                continue
+            if "/build" in target_path:
+                continue
+            if "/_generated" in target_path:
                 continue
             if os.path.isdir(target_path):
                 curr_dir_list.append(target_path)
