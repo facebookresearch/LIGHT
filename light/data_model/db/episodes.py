@@ -4,10 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# Copyright 2017-present, Facebook, Inc.
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
-
 from light.data_model.db.base import BaseDB, DBStatus, DBSplitType, HasDBIDMixin
 from light.data_model.db.users import DBPlayer
 from omegaconf import MISSING, DictConfig

@@ -4,10 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# Copyright 2017-present, Facebook, Inc.
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
-
 from light.graph.builders.starspace_all import StarspaceBuilder
 from light.graph.builders.map_json_builder import MapJsonBuilder
 from light.graph.builders.tutorial_builder import TutorialWorldBuilder
