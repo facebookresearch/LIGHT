@@ -43,11 +43,13 @@ for unit in units:
 for k, v in workers_to_res.items():
     if len(v) <= 0:
         continue
-    counted =  Counter(v)
+    counted = Counter(v)
     # if counted.get("accepted", 0) >= counted.get('soft_rejected', 0) * 2:
     if counted.get("accepted", 0) == len(v):
         worker = worker_name_to_worker[k]
         worker.grant_qualification("ground_events_1_task_block", 0)
-        print(worker_name_to_worker[k], counted.get("accepted", 0), counted.get('soft_rejected', 0))
-
-
+        print(
+            worker_name_to_worker[k],
+            counted.get("accepted", 0),
+            counted.get("soft_rejected", 0),
+        )

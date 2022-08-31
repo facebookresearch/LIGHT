@@ -35,8 +35,8 @@ const Copy ={
             },
             {
                 question:"2) Highlight the actor and objects",
-                explanation:`Select each highlighter and drag across the corresponding actor, 
-                object, or location in your narration. The goal is to highlight the actor (e.g. the villager) and the two objects 
+                explanation:`Select each highlighter and drag across the corresponding actor,
+                object, or location in your narration. The goal is to highlight the actor (e.g. the villager) and the two objects
                 listed at the beginning of the task, as well as the location if applicable. To remove previous highlights, use the eraser.`,
                 screenshot: EventShot2
             },

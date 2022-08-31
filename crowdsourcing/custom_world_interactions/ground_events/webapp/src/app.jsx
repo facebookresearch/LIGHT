@@ -38,7 +38,7 @@ function MainApp() {
     initialTaskData,
     handleSubmit,
   } = useMephistoTask();
-  
+
   //Error Handling
   const [showError, setShowError] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);

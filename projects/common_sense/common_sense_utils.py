@@ -28,7 +28,9 @@ def verify_add_item_graph_tuple(graph_tuple, true_room_name, errors=None):
     # check correct edge
     if edge != consts.GraphEdges.IS_INSIDE.name:
         if errors is not None:
-            errors.append(f"incorrect edge: {edge} -=--=- {consts.GraphEdges.IS_INSIDE.name}")
+            errors.append(
+                f"incorrect edge: {edge} -=--=- {consts.GraphEdges.IS_INSIDE.name}"
+            )
         return False
     # check correct predicted name
     if room_name != true_room_name:
@@ -40,7 +42,9 @@ def verify_add_item_graph_tuple(graph_tuple, true_room_name, errors=None):
     return True
 
 
-def verify_add_room_attribute_graph_tuple(graph_tuple, true_room_name, true_graph_edge, errors=None):
+def verify_add_room_attribute_graph_tuple(
+    graph_tuple, true_room_name, true_graph_edge, errors=None
+):
     """
     Verify a generated graph tuple has the correct form for room attributes Item add
     tuples should have structure room_name -=- edge_name -=- new_value.
@@ -122,7 +126,9 @@ def verify_add_secondary_item(graph_tuple, graph_edge_name, errors=None):
     return True
 
 
-def conditional_add_item_to_graph(existing_room_graph, graph_modification, item_type, errors=None):
+def conditional_add_item_to_graph(
+    existing_room_graph, graph_modification, item_type, errors=None
+):
     """
     Add a new item (object or character) to the existing room graph, if it does not
     already exist.
@@ -134,7 +140,7 @@ def conditional_add_item_to_graph(existing_room_graph, graph_modification, item_
         )
         if errors is not None:
             errors.append("start")
-        
+
         return existing_room_graph
 
     graph_tuple = graph_modification.split("ADD: ")[1]
@@ -151,7 +157,7 @@ def conditional_add_item_to_graph(existing_room_graph, graph_modification, item_
     # NOTE: this new item may have the same name as another, they should receive unique ids
     item_list.append(
         {
-            'name': new_item_name,
+            "name": new_item_name,
             "element_type": item_type,
             "is_in_room": True,
             "carrying_objects": [],
@@ -228,7 +234,7 @@ def find_item(existing_room_graph, target_id, item_type=None):
                         # NOTE: during testing items may not have db_ids but should always have names
                         # In deployment, items should always have both
                         if (
-                            secondary_item.get("db_id", secondary_item['name'])
+                            secondary_item.get("db_id", secondary_item["name"])
                             == target_id
                         ):
                             return secondary_item
@@ -236,7 +242,13 @@ def find_item(existing_room_graph, target_id, item_type=None):
 
 
 def search_and_modify(
-    existing_room_graph, edge_name, edge_value, target_id, predicted_name, item_type=None, errors=None
+    existing_room_graph,
+    edge_name,
+    edge_value,
+    target_id,
+    predicted_name,
+    item_type=None,
+    errors=None,
 ):
     """
     Searches through all items for matching db_id and modifies accordingly Returns
@@ -244,13 +256,15 @@ def search_and_modify(
     """
     item = find_item(existing_room_graph, target_id, item_type=item_type)
     if item is not None:
-        if item.get('name', '') != predicted_name:
+        if item.get("name", "") != predicted_name:
             # item found using target id doesn't have predicted name
             logging.warning(
-                    f"Target's name does not match predicted name in graph modification {predicted_name} vs {item.get('name', '')}, no change performed."
-                )
+                f"Target's name does not match predicted name in graph modification {predicted_name} vs {item.get('name', '')}, no change performed."
+            )
             if errors is not None:
-                errors.append(f"incorrect name: {predicted_name} -=--=- {item.get('name', '')}")
+                errors.append(
+                    f"incorrect name: {predicted_name} -=--=- {item.get('name', '')}"
+                )
             return existing_room_graph, False
 
         item[edge_name] = edge_value
@@ -265,10 +279,7 @@ def search_and_modify(
 
 
 def conditional_add_static_item_edge_to_graph(
-    existing_room_graph,
-    graph_modification,
-    target_id,
-    true_graph_edge, errors=None
+    existing_room_graph, graph_modification, target_id, true_graph_edge, errors=None
 ):
     """
     Add an item attribute to the existing room graph, if the item already exists.
@@ -309,7 +320,13 @@ def conditional_add_static_item_edge_to_graph(
     predicted_name = graph_tuples[0]
     edge_name = true_graph_edge.lower()
     existing_room_graph, modified = search_and_modify(
-        existing_room_graph, edge_name, edge_value, target_id, predicted_name, item_type=None, errors=errors
+        existing_room_graph,
+        edge_name,
+        edge_value,
+        target_id,
+        predicted_name,
+        item_type=None,
+        errors=errors,
     )
     if modified:
         if errors is not None:
@@ -326,7 +343,7 @@ def conditional_add_item_edge_to_graph(
     edge_name,
     item_type,
     true_graph_edge,
-    errors=None
+    errors=None,
 ):
     """
     Add an item attribute to the existing room graph, if the item already exists.
@@ -342,7 +359,9 @@ def conditional_add_item_edge_to_graph(
 
     graph_tuple = graph_modification.split("ADD: ")[1]
 
-    if not verify_add_item_attribute_graph_tuple(graph_tuple, true_graph_edge, errors=errors):
+    if not verify_add_item_attribute_graph_tuple(
+        graph_tuple, true_graph_edge, errors=errors
+    ):
         logging.warning(
             f"Invalid graph tuple '{graph_tuple}'. Expected 3 parts and {true_graph_edge}. No item edge added."
         )
@@ -355,7 +374,13 @@ def conditional_add_item_edge_to_graph(
     predicted_name = graph_tuples[0]
 
     existing_room_graph, modified = search_and_modify(
-        existing_room_graph, edge_name, edge_value, target_id, predicted_name, item_type=item_type, errors=errors
+        existing_room_graph,
+        edge_name,
+        edge_value,
+        target_id,
+        predicted_name,
+        item_type=item_type,
+        errors=errors,
     )
     if modified:
         if errors is not None:
@@ -372,7 +397,7 @@ def conditional_add_secondary_item_to_graph(
     secondary_edge_name,
     item_type,
     graph_edge_name,
-    errors=None
+    errors=None,
 ):
     """
     Add a secondary item (e.g. object being worn) to the existing room graph, if the
@@ -405,19 +430,21 @@ def conditional_add_secondary_item_to_graph(
 
     item = find_item(existing_room_graph, target_id, item_type=item_type)
     if item is not None:
-        if item.get('name', '') != primary_item_name:
+        if item.get("name", "") != primary_item_name:
             # item found using target id doesn't have predicted name
             logging.warning(
-                    f"Target's name does not match predicted name in graph modification {primary_item_name} vs {item.get('name', '')}, no secondary item added."
-                )
+                f"Target's name does not match predicted name in graph modification {primary_item_name} vs {item.get('name', '')}, no secondary item added."
+            )
             if errors is not None:
-                errors.append(f"incorrect name: {primary_item_name} -=--=- {item.get('name', '')}")
+                errors.append(
+                    f"incorrect name: {primary_item_name} -=--=- {item.get('name', '')}"
+                )
         else:
             # correct item found, success
             secondary_items = item.get(secondary_edge_name, [])
             if item_type == "characters":
                 # currently character->secondary objects are dictionaries while object->secondary objects are not
-                secondary_items.append({'name': secondary_item_name})
+                secondary_items.append({"name": secondary_item_name})
             elif item_type == "objects":
                 secondary_items.append(secondary_item_name)
             if errors is not None:
@@ -459,7 +486,7 @@ class CommonSenseAgent(Agent):
         opt["override"]["inference"] = inference
         opt["override"]["beam_size"] = beam_size
         self.force_add = force_add
-        opt["override"]['opt_prefix_tokens'] = [29270, 29] if self.force_add else []
+        opt["override"]["opt_prefix_tokens"] = [29270, 29] if self.force_add else []
         self.opt = opt
         self.verbose = verbose
         self.count_errors = count_errors
@@ -468,16 +495,16 @@ class CommonSenseAgent(Agent):
         self.graph_modifications = [] if self.count_errors else None
         self.internal_agent = create_agent(opt, requireModelExists=True)
         super().__init__(opt, shared)
-    
+
     def get_errors(self):
         return self.errors
-    
+
     def get_tasks(self):
         return self.tasks
 
     def get_graph_mods(self):
         return self.graph_modifications
-    
+
     def clear_errors(self):
         self.errors = [] if self.count_errors else None
         self.tasks = [] if self.count_errors else None
@@ -516,14 +543,14 @@ class CommonSenseAgent(Agent):
         context = self.parse_room_graph(existing_room_graph)
         input_text = context + "\n" + prompt
 
-        self.observe({'text': input_text, 'sender': 'human', 'episode_done': True})
+        self.observe({"text": input_text, "sender": "human", "episode_done": True})
         act = self.act()
         if self.verbose:
             logging.info(f"Prompt: {prompt}")
             logging.info(f"Output: {act['text']}")
-        
+
         if self.graph_modifications is not None:
-            self.graph_modifications.append(act['text'])
+            self.graph_modifications.append(act["text"])
         return act["text"]
 
     def add_room_description(self, existing_room_graph):
@@ -543,7 +570,7 @@ class CommonSenseAgent(Agent):
             graph_modification,
             "description",
             consts.GraphEdges.HAS_DESCRIPTION.name,
-            errors=self.errors
+            errors=self.errors,
         )
 
         return existing_room_graph
@@ -565,7 +592,7 @@ class CommonSenseAgent(Agent):
             graph_modification,
             "background",
             consts.GraphEdges.HAS_BACKSTORY.name,
-            errors=self.errors
+            errors=self.errors,
         )
 
         return existing_room_graph
@@ -612,8 +639,7 @@ class CommonSenseAgent(Agent):
             prompt = random.choice(consts.TEACHER_PROMPTS["adding_objects"])
             graph_modification = self.generate_from_graph(existing_room_graph, prompt)
             existing_room_graph = conditional_add_item_to_graph(
-                existing_room_graph, graph_modification, "objects",
-                errors=self.errors
+                existing_room_graph, graph_modification, "objects", errors=self.errors
             )
 
         return existing_room_graph
@@ -633,8 +659,10 @@ class CommonSenseAgent(Agent):
             prompt = random.choice(consts.TEACHER_PROMPTS["adding_characters"])
             graph_modification = self.generate_from_graph(existing_room_graph, prompt)
             existing_room_graph = conditional_add_item_to_graph(
-                existing_room_graph, graph_modification, "characters",
-                errors=self.errors
+                existing_room_graph,
+                graph_modification,
+                "characters",
+                errors=self.errors,
             )
 
         return existing_room_graph
@@ -678,7 +706,7 @@ class CommonSenseAgent(Agent):
                 edge_name,
                 item_type,
                 graph_edge_name,
-                errors=self.errors
+                errors=self.errors,
             )
 
         return existing_room_graph
@@ -791,7 +819,7 @@ class CommonSenseAgent(Agent):
             edge_name,
             item_type,
             true_graph_edge,
-            errors=self.errors
+            errors=self.errors,
         )
 
         return existing_room_graph
@@ -870,7 +898,7 @@ class CommonSenseAgent(Agent):
             graph_modification,
             target_id,
             true_graph_edge,
-            errors=self.errors
+            errors=self.errors,
         )
 
         return existing_room_graph
@@ -1011,7 +1039,7 @@ class CommonSenseAgent(Agent):
             "wielding_objects",
         ]:
             for _, secondary_item in enumerate(character.get(secondary_list, [])):
-                secondary_id = secondary_item.get("db_id", secondary_item['name'])
+                secondary_id = secondary_item.get("db_id", secondary_item["name"])
                 self.add_all_object_attributes(existing_room_graph, secondary_id)
 
         return existing_room_graph

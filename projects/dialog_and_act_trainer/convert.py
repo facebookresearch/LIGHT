@@ -29,7 +29,7 @@ def clean(msg):
     txt = msg["text"]
     res = []
     app = ""
-    
+
     for t in txt.split("\n"):
         if t.startswith("_") and "_object_desc" not in t:
             if (

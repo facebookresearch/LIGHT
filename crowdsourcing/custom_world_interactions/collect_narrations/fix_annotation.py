@@ -37,4 +37,3 @@ print(Counter([u.get_status() for u in units]))
 #         print(outputs)
 #         unit.set_db_status("soft_rejected")
 #         break
-    

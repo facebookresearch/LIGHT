@@ -40,7 +40,7 @@ const Preview = ({}) => {
                   } else {
                     question = question + " - Requires Your Input"
                   }
-                  
+
                   return <TutorialEntry key={index} question={question} explanation={explanation} screenshot={screenshot}/>
                 })
               }

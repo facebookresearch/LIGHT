@@ -17,7 +17,7 @@ const MultipleSelectQuestion = ({
     //Local State
     const [selectedAnswers, setSelectedAnswers] = useState([]);
     const [answerList, setAnswerList] = useState([]);
-    
+
     if (colors === undefined) {
         colors = answers.map(a => undefined);
     }

@@ -7,6 +7,7 @@
 import light.modeling.tasks.common_sense.constants as consts
 from collections import Counter
 
+
 def calc_f1(truth, gen):
     # calculate f1 for item lists
     # truth: true list of item names
@@ -113,6 +114,7 @@ def calculate_room_kb_metrics(truth_room, generated_room):
 
     return metrics
 
+
 def parse_errors(errors):
     # errors: list of error strings from commonsense agent validation
     # return dict of each error type's counts
@@ -163,16 +165,16 @@ def parse_errors(errors):
         error_counts[cor] = Counter(preds)
 
     return {
-        'edge_count':edge_count,
-        'start_count':start_count,
-        'match_count':match_count,
-        'name_count':name_count,
-        'value_count':value_count,
-        'room_count':room_count,
-        'size_count':size_count,
-        'correct': correct_count,
-        'other':other,
-        'total': len(errors),
-        'edge_errors': error_counts,
-        'raw_errors': errors
+        "edge_count": edge_count,
+        "start_count": start_count,
+        "match_count": match_count,
+        "name_count": name_count,
+        "value_count": value_count,
+        "room_count": room_count,
+        "size_count": size_count,
+        "correct": correct_count,
+        "other": other,
+        "total": len(errors),
+        "edge_errors": error_counts,
+        "raw_errors": errors,
     }

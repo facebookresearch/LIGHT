@@ -58,7 +58,7 @@ const AttributeRow = ({
                     unselectedText="b-button__text true"
                     selectedText=" b-selectedbutton__text"
                     disabled={true}
-                    /> : 
+                    /> :
                 <TaskButton
                     name={isConstraint ? " MUST NOT BE ":" IS NOT "}
                     isSelected={attributeVal===false}

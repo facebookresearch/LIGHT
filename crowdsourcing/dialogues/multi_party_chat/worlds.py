@@ -152,7 +152,7 @@ class LIGHTMultiAgentDialogWorld(CrowdTaskWorld):
                     if other_agent != agent:
                         other_agent.observe(validate(act))
 
-        time.sleep(0.1) # Preventing tight loop on parley calls
+        time.sleep(0.1)  # Preventing tight loop on parley calls
 
         self.try_agent_timeouts()
         if self.is_done():

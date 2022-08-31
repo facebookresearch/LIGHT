@@ -60,7 +60,7 @@ const FormQuestion = ({
                     placeholder={placeholder}
                 > {description} </p>
             </div> : null}
-            {!disabled ? 
+            {!disabled ?
                 <div className="answer-container">
                     <textarea
                         className="answer-form"
