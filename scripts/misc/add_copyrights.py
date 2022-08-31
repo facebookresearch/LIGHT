@@ -28,7 +28,7 @@ PROBLEM = """
 
 /*
 """
-MISDONE_COPYRIGHT = "Meta Platforms, Inc. and affiliates."
+MISDONE_COPYRIGHT = "Meta Platforms, Inc. and its affiliates."
 COPYRIGHT_CORRECTION = "Meta Platforms, Inc. and affiliates."
 FILENAME_EXTENSIONS = ["py", "sh", "js", "css", "jsx", "ts", "tsx"]
 LINE_CLEAR = "\x1b[2K"  # <-- ANSI sequence
@@ -73,6 +73,8 @@ def main():
         possible_targets = os.listdir(curr_dir)
         for target in possible_targets:
             target_path = os.path.join(curr_dir, target)
+            if "add_copyrights.py" in target_path:
+                continue  # false positives!
             if "node_modules" in target_path:
                 continue
             if ".mypy_cache" in target_path:
@@ -81,7 +83,7 @@ def main():
                 continue
             if ".git" in target_path:
                 continue
-            if "/build" in target_path:
+            if "build" == target:
                 continue
             if "/_generated" in target_path:
                 continue
