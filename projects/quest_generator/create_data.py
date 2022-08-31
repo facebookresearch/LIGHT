@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-
-# Copyright (c) Facebook, Inc. and its affiliates.
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
 """
 py interactive_action_parser.py -mf /checkpoint/jase/projects/light/parser/parser2/34c_jobid=1/model
 """

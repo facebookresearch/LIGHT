@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
-
 """
 Simple script to browse through episodes.
 Allows searching by particular characters, or filtering by
