@@ -1,6 +1,6 @@
 ##!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -71,6 +71,7 @@ def get_light_objects():
         all_objects = [dict(obj) for obj in ldb.get_object()]
     return all_objects
 
+
 def build_task(task_dir):
     """Rebuild the frontend for this task"""
 
@@ -110,11 +111,14 @@ def create_task_data(input_file_tasks, num_tasks):
     data = []
     for unit in units:
         unit_data = mephisto_data_browser.get_data_from_unit(unit)["data"]
-        new_data = unit_data['inputs']
-        for key, val in unit_data['outputs'].items():
+        new_data = unit_data["inputs"]
+        for key, val in unit_data["outputs"].items():
             new_data[key] = val
         if "this_task_state" in new_data:
-            if not new_data['this_task_state']['isCreatingEntity'] or 'createdModifiedAttributes' in new_data['this_task_state']:
+            if (
+                not new_data["this_task_state"]["isCreatingEntity"]
+                or "createdModifiedAttributes" in new_data["this_task_state"]
+            ):
                 # if 'ranges' in new_data['this_task_state']:
                 data.append(new_data)
                 # else:
@@ -131,7 +135,7 @@ def create_task_data(input_file_tasks, num_tasks):
         # # get primary and secondary objects from their corresponding lists
         # primary_object = match_object_to_list(output_data['primaryObject'], primary_objects)
         # primary_object['attributes'] = get_attributes_from_obj(all_light_objects, primary_object)
-        
+
         # secondary_object = match_object_to_list(output_data['secondaryObject'], secondary_objects)
         # secondary_object['attributes'] = get_attributes_from_obj(all_light_objects, secondary_object)
         # # input to this grounding task has both objects and their interaction text

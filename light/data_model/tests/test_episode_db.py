@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.abs
+# LICENSE file in the root directory of this source tree.
 
 import unittest
 import shutil, tempfile
@@ -20,25 +20,29 @@ from light.world.utils.json_utils import read_event_logs
 from light.data_model.db.episodes import EpisodeDB, EpisodeLogType
 from light.data_model.db.base import LightDBConfig
 
+TEST_USER_ID = "USR-test"
+
 
 class TestEpisodesDB(unittest.TestCase):
     """Unit tests for the EpisodeDB. Leverages Interaction Loggers to generate episodes"""
 
     def setUp(self):
+        self.maxDiff = 10000
         self.data_dir = tempfile.mkdtemp()
         self.config = LightDBConfig(backend="test", file_root=self.data_dir)
+        self.data_dir_copy = tempfile.mkdtemp()
+        self.config_2 = LightDBConfig(backend="test", file_root=self.data_dir_copy)
 
     def tearDown(self):
         shutil.rmtree(self.data_dir)
 
-    def setUp_single_room_graph(self):
+    def setUp_single_room_graph(self, episode_db=None):
         # Set up the graph
-        opt = {"is_logging": True, "log_path": self.data_dir}
-        test_graph = OOGraph(opt)
+        test_graph = OOGraph()
         agent_node = test_graph.add_agent("My test agent", {})
         room_node = test_graph.add_room("test room", {})
         agent_node.force_move_to(room_node)
-        test_world = World(WorldConfig(), True)
+        test_world = World(WorldConfig(is_logging=True, episode_db=episode_db), True)
         test_world.oo_graph = test_graph
         return (test_graph, test_world, agent_node, room_node)
 
@@ -54,7 +58,7 @@ class TestEpisodesDB(unittest.TestCase):
         # Set up the graph
         pre_time = time.time()
         episode_db = EpisodeDB(self.config)
-        initial = self.setUp_single_room_graph()
+        initial = self.setUp_single_room_graph(episode_db)
         test_graph, test_world, agent_node, room_node = initial
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
         room_logger.episode_db = episode_db
@@ -152,13 +156,13 @@ class TestEpisodesDB(unittest.TestCase):
         """
         # Set up the graph
         episode_db = EpisodeDB(self.config)
-        initial = self.setUp_single_room_graph()
+        initial = self.setUp_single_room_graph(episode_db)
         test_graph, test_world, agent_node, room_node = initial
         agent_node.is_player = True
-        agent_node.user_id = "test"
+        agent_node.user_id = TEST_USER_ID
         room2_node = test_graph.add_room("test room2", {})
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
-        room_logger.episode_db = episode_db
+        test_world.oo_graph = test_graph  # refresh logger
 
         # Check an event json was done correctly
         test_event = ArriveEvent(agent_node, text_content="")
@@ -185,10 +189,10 @@ class TestEpisodesDB(unittest.TestCase):
 
         # Assert that episode queries with users
         self.assertEqual(episode.human_count, 1, "Expected one human")
-        self.assertEqual(episode.get_actors(), ["test"], "Expected one actor")
+        self.assertEqual(episode.get_actors(), [TEST_USER_ID], "Expected one actor")
         episodes = episode_db.get_episodes(min_humans=1)
         self.assertEqual(len(episodes), 1, f"Expected one episode, found {episodes}")
-        episodes = episode_db.get_episodes(user_id="test")
+        episodes = episode_db.get_episodes(user_id=TEST_USER_ID)
         self.assertEqual(len(episodes), 1, f"Expected one episode, found {episodes}")
         episodes = episode_db.get_episodes(user_id="nonexist")
         self.assertEqual(len(episodes), 0, f"Expected 0 episodes, found {episodes}")
@@ -200,14 +204,12 @@ class TestEpisodesDB(unittest.TestCase):
         """
         # Set up the graph
         episode_db = EpisodeDB(self.config)
-        initial = self.setUp_single_room_graph()
+        initial = self.setUp_single_room_graph(episode_db)
         test_graph, test_world, agent_node, room_node = initial
 
         # Check the graph json was done correctly from agent's room
         test_init_json = test_world.oo_graph.to_json_rv(room_node.node_id)
-        agent_logger = AgentInteractionLogger(
-            test_graph, agent_node, episode_db=episode_db
-        )
+        agent_logger = AgentInteractionLogger(test_world, agent_node)
         agent_logger._begin_meta_episode()
         agent_logger._end_meta_episode()
 
@@ -277,20 +279,20 @@ class TestEpisodesDB(unittest.TestCase):
         """
         # Set up the graph
         episode_db = EpisodeDB(self.config)
-        initial = self.setUp_single_room_graph()
+        initial = self.setUp_single_room_graph(episode_db)
         test_graph, test_world, agent_node, room_node = initial
         agent_node.is_player = True
-        agent_node.user_id = "test"
+        agent_node.user_id = TEST_USER_ID
         room2_node = test_graph.add_room("test room2", {})
+        test_world.oo_graph = test_graph  # refresh logger
         room_logger = test_graph.room_id_to_loggers[room_node.node_id]
         room_logger.episode_db = episode_db
+        room_logger.players.add(agent_node.user_id)
 
         # Check an event json was done correctly
         test_event = ArriveEvent(agent_node, text_content="")
         test_init_json = test_world.oo_graph.to_json_rv(agent_node.get_room().node_id)
-        agent_logger = AgentInteractionLogger(
-            test_graph, agent_node, episode_db=episode_db
-        )
+        agent_logger = AgentInteractionLogger(test_world, agent_node)
         agent_logger._begin_meta_episode()
         agent_logger.observe_event(test_event)
         test_event2 = LookEvent(agent_node)
@@ -318,10 +320,10 @@ class TestEpisodesDB(unittest.TestCase):
 
         # Assert that episode queries with users
         self.assertEqual(episode.human_count, 1, "Expected one human")
-        self.assertEqual(episode.get_actors(), ["test"], "Expected one actor")
+        self.assertEqual(episode.get_actors(), [TEST_USER_ID], "Expected one actor")
         episodes = episode_db.get_episodes(min_humans=1)
         self.assertEqual(len(episodes), 1, f"Expected one episode, found {episodes}")
-        episodes = episode_db.get_episodes(user_id="test")
+        episodes = episode_db.get_episodes(user_id=TEST_USER_ID)
         self.assertEqual(len(episodes), 1, f"Expected one episode, found {episodes}")
         episodes = episode_db.get_episodes(user_id="nonexist")
         self.assertEqual(len(episodes), 0, f"Expected 0 episodes, found {episodes}")
@@ -332,17 +334,15 @@ class TestEpisodesDB(unittest.TestCase):
         """
         # Set up the graph
         episode_db = EpisodeDB(self.config)
-        initial = self.setUp_single_room_graph()
+        initial = self.setUp_single_room_graph(episode_db)
         test_graph, test_world, agent_node, room_node = initial
         agent_node.is_player = True
-        agent_node.user_id = "test"
+        agent_node.user_id = TEST_USER_ID
         room_node2 = test_graph.add_room("test room2", {})
-        room_logger = test_graph.room_id_to_loggers[room_node.node_id]
-        room_logger.episode_db = episode_db
         test_graph.add_paths_between(
             room_node, room_node2, "a path to the north", "a path to the south"
         )
-        test_graph.room_id_to_loggers[room_node.node_id]._add_player()
+        test_world.oo_graph = test_graph  # refresh logger
 
         # Check the room and event json was done correctly for room_node
         event_room_node_observed = LeaveEvent(
@@ -380,3 +380,36 @@ class TestEpisodesDB(unittest.TestCase):
                     event_ref[k],
                     f"Event Json should match for LeaveEvent, misses on {k}",
                 )
+
+        # assert export works
+        copy_db = episode_db.export(self.config_2)
+        copy_episode = copy_db.get_episode(episode_id)
+        copy_events = copy_episode.get_parsed_events(copy_db)
+        self.assertEqual(len(copy_events), 1, f"Expected 1 graph type, found {events}")
+
+        # assert user id is present in the temp dataset
+        self.assertIn(agent_node.user_id, episode.actors)
+        all_data = str(events)
+        for key in episode.get_graph_map().keys():
+            graph = episode.get_graph(key, episode_db)
+            all_data += str(graph.to_json())
+        self.assertIn(agent_node.user_id, all_data)
+
+        # assert user data is scrubbed after scrub
+        episode_db.anonymize_group(episode.group)
+        episode = episode_db.get_episode(episode_id)
+        events = episode.get_parsed_events(episode_db)
+        self.assertNotIn(agent_node.user_id, episode.actors)
+        self.assertNotIn(agent_node.user_id, str(events))
+        for key in episode.get_graph_map().keys():
+            graph = episode.get_graph(key, episode_db)
+            self.assertNotIn(agent_node.user_id, str(graph.to_json()))
+
+        # Assert user data is scrubbed from new table too
+        episode = copy_db.get_episode(episode_id)
+        events = episode.get_parsed_events(copy_db)
+        self.assertNotIn(agent_node.user_id, episode.actors)
+        self.assertNotIn(agent_node.user_id, str(events))
+        for key in episode.get_graph_map().keys():
+            graph = episode.get_graph(key, copy_db)
+            self.assertNotIn(agent_node.user_id, str(graph.to_json()))

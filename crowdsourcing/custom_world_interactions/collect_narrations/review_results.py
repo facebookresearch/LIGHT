@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -23,6 +23,7 @@ print(f"prev len: {len(units)}")
 print(Counter([u.get_status() for u in units]))
 units = [u for u in units if u.get_status() == "completed"]
 print(f"len: {len(units)}")
+
 
 def format_data_for_printing(data):
     worker_name = Worker.get(db, data["worker_id"]).worker_name
@@ -67,5 +68,5 @@ def main():
     run_examine_or_review(db, format_data_for_printing)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

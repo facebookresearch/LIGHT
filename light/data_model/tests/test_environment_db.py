@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.abs
+# LICENSE file in the root directory of this source tree.
 
 import unittest
 import shutil, tempfile
@@ -15,6 +15,8 @@ import sqlalchemy
 from light.graph.structured_graph import OOGraph
 from light.data_model.db.environment import (
     EnvDB,
+    MAX_RETENTION,
+    SCRUBBED_USER_ID,
     DBRoomInsideType,
     DBEdgeType,
     DBFlagTargetType,
@@ -38,6 +40,8 @@ from typing import List
 from light.data_model.db.base import LightDBConfig, DBStatus, DBSplitType
 from sqlalchemy.orm import Session
 
+TEST_USER_ID = "USR-test"
+
 
 class TestEnvironmentDB(unittest.TestCase):
     """
@@ -49,9 +53,12 @@ class TestEnvironmentDB(unittest.TestCase):
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
         self.config = LightDBConfig(backend="test", file_root=self.data_dir)
+        self.data_dir_copy = tempfile.mkdtemp()
+        self.config_2 = LightDBConfig(backend="test", file_root=self.data_dir_copy)
 
     def tearDown(self):
         shutil.rmtree(self.data_dir)
+        shutil.rmtree(self.data_dir_copy)
 
     def set_up_some_nodes(self, db: EnvDB):
         # Create some test entries in the env DB
@@ -225,7 +232,7 @@ class TestEnvironmentDB(unittest.TestCase):
             is_plural=True,
             size=7,
             contain_size=8,
-            creator_id="test",
+            creator_id=TEST_USER_ID,
         )
 
         # Ensure id created is correct
@@ -260,7 +267,7 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertTrue(agent_3.is_plural)
         self.assertEqual(agent_3.size, 7)
         self.assertEqual(agent_3.contain_size, 8)
-        self.assertEqual(agent_3.creator_id, "test")
+        self.assertEqual(agent_3.creator_id, TEST_USER_ID)
         self.assertIsNotNone(agent_3.create_timestamp)
 
         # Ensure base agent created and matches values
@@ -382,8 +389,14 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(len(split_match_3), 3)
         creator_id_match_0 = db.find_agents(creator_id="fake")
         self.assertEqual(len(creator_id_match_0), 0)
-        creator_id_match_1 = db.find_agents(creator_id="test")
+        creator_id_match_1 = db.find_agents(creator_id=TEST_USER_ID)
         self.assertEqual(len(creator_id_match_1), 1)
+
+        # Test base scrub doesn't scrub anything
+        scrub_count = db.scrub_creators()
+        self.assertEqual(
+            scrub_count, 0, "Nothing exceeded retention time, should be no scrubs"
+        )
 
     def test_create_load_inspect_rooms(self):
         """Ensure it's possible to create and load rooms"""
@@ -417,7 +430,6 @@ class TestEnvironmentDB(unittest.TestCase):
         # Ensure room created and matches defaults and provided
         room_1 = db.get_room(room_1_id)
         base_id_1 = room_1.base_id
-        print(room_1, room_1.__dict__)
         self.assertTrue(DBRoomName.is_id(base_id_1), "Base ID not correct format")
         self.assertEqual(
             room_1.db_id, room_1_id, "Marked db_id differs from initially returned id"
@@ -500,7 +512,7 @@ class TestEnvironmentDB(unittest.TestCase):
             rarity=1,
             size=2,
             status=DBStatus.ACCEPTED,
-            creator_id="test",
+            creator_id=TEST_USER_ID,
         )
 
         # Ensure id created is correct
@@ -528,7 +540,7 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(room_3.rarity, 1)
         self.assertEqual(room_3.size, 2)
         self.assertEqual(room_3.indoor_status, DBRoomInsideType.OUTSIDE)
-        self.assertEqual(room_3.creator_id, "test")
+        self.assertEqual(room_3.creator_id, TEST_USER_ID)
         self.assertIsNotNone(room_3.create_timestamp)
 
         # Ensure base room created and matches values
@@ -646,8 +658,15 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(len(indoor_status_match_2), 2)
         creator_id_match_0 = db.find_rooms(creator_id="fake")
         self.assertEqual(len(creator_id_match_0), 0)
-        creator_id_match_1 = db.find_rooms(creator_id="test")
+        creator_id_match_1 = db.find_rooms(creator_id=TEST_USER_ID)
         self.assertEqual(len(creator_id_match_1), 1)
+
+        # Ensure duplicating works, but with creator IDs scrubbed
+        new_db = db.export(self.config_2)
+        self.assertEqual(len(new_db.find_rooms()), 3)
+        self.assertEqual(len(new_db.find_room_names()), 2)
+        self.assertEqual(len(new_db.find_rooms(creator_id=TEST_USER_ID)), 0)
+        self.assertEqual(len(new_db.find_rooms(creator_id=SCRUBBED_USER_ID)), 1)
 
     def test_create_load_inspect_objects(self):
         """Ensure it's possible to create and load objects"""
@@ -801,7 +820,7 @@ class TestEnvironmentDB(unittest.TestCase):
             value=3,
             rarity=4,
             status=DBStatus.ACCEPTED,
-            creator_id="test",
+            creator_id=TEST_USER_ID,
         )
 
         # Ensure id created is correct
@@ -841,7 +860,7 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(object_3.contain_size, 2)
         self.assertEqual(object_3.value, 3)
         self.assertEqual(object_3.rarity, 4)
-        self.assertEqual(object_3.creator_id, "test")
+        self.assertEqual(object_3.creator_id, TEST_USER_ID)
         self.assertIsNotNone(object_3.create_timestamp)
 
         # Ensure base object created and matches values
@@ -957,7 +976,7 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(len(split_match_3), 3)
         creator_id_match_0 = db.find_objects(creator_id="fake")
         self.assertEqual(len(creator_id_match_0), 0)
-        creator_id_match_1 = db.find_objects(creator_id="test")
+        creator_id_match_1 = db.find_objects(creator_id=TEST_USER_ID)
         self.assertEqual(len(creator_id_match_1), 1)
         is_container_match_0 = db.find_objects(is_container=True)
         self.assertEqual(len(is_container_match_0), 0)
@@ -987,6 +1006,16 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(len(is_weapon_match_0), 0)
         is_weapon_match_3 = db.find_objects(is_weapon=False)
         self.assertEqual(len(is_weapon_match_3), 3)
+
+        # Run scrub
+        scrub_count = db.scrub_creators(start_time=time.time() + MAX_RETENTION)
+        self.assertEqual(scrub_count, 1, "Should have scrubbed 1 object")
+        # Can't find old user IDs
+        match_user = db.find_objects(creator_id="USR-test_editor")
+        self.assertEqual(len(match_user), 0)
+        # Can find scrub
+        match_user = db.find_objects(creator_id=SCRUBBED_USER_ID)
+        self.assertEqual(len(match_user), 1)
 
     def test_create_load_edges(self):
         """Ensure it's possible to create edges, and load them from DBElems"""
@@ -1095,7 +1124,7 @@ class TestEnvironmentDB(unittest.TestCase):
             parent_id=room_2_id,
             child_id=room_1_id,
             edge_type=DBEdgeType.MAY_BE_NEIGHBOR,
-            creator_id="test",
+            creator_id=TEST_USER_ID,
         )
         edge_12_id = db.create_edge(
             parent_id=object_1_id,
@@ -1214,7 +1243,7 @@ class TestEnvironmentDB(unittest.TestCase):
             child_text="unknown room",
             edge_type=DBEdgeType.MAY_BE_NEIGHBOR,
             edge_label="a path to",
-            creator_id="test",
+            creator_id=TEST_USER_ID,
             status=DBStatus.ACCEPTED,
         )
 
@@ -1376,7 +1405,7 @@ class TestEnvironmentDB(unittest.TestCase):
             attribute_name="tested",
             attribute_value_string="true",
             status=DBStatus.ACCEPTED,
-            creator_id="test",
+            creator_id=TEST_USER_ID,
         )
         attribute_4_id = db.create_arbitrary_attribute(
             target_id=agent_1_id,
@@ -1409,7 +1438,7 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(len(status_match_1), 1)
         status_match_0 = db.get_attributes(status=DBStatus.REJECTED)
         self.assertEqual(len(status_match_0), 0)
-        creator_match_1 = db.get_attributes(creator_id="test")
+        creator_match_1 = db.get_attributes(creator_id=TEST_USER_ID)
         self.assertEqual(len(creator_match_1), 1)
         creator_match_0 = db.get_attributes(creator_id="zzzz")
         self.assertEqual(len(creator_match_0), 0)
@@ -1471,7 +1500,7 @@ class TestEnvironmentDB(unittest.TestCase):
 
         # Create an edit
         edit_1_id = db.create_edit(
-            editor_id="test_editor",
+            editor_id="USR-test_editor",
             node_id=agent_1_id,
             field="persona",
             old_value="agent_persona",
@@ -1486,7 +1515,7 @@ class TestEnvironmentDB(unittest.TestCase):
 
         # Assert fields are set
         self.assertEqual(edit_1.db_id, edit_1_id)
-        self.assertEqual(edit_1.editor_id, "test_editor")
+        self.assertEqual(edit_1.editor_id, "USR-test_editor")
         self.assertEqual(edit_1.node_id, agent_1_id)
         self.assertEqual(edit_1.field, "persona")
         self.assertEqual(edit_1.old_value, "agent_persona")
@@ -1503,7 +1532,7 @@ class TestEnvironmentDB(unittest.TestCase):
 
         # create two more edits
         edit_2_id = db.create_edit(
-            editor_id="test_editor",
+            editor_id="USR-test_editor",
             node_id=agent_1_id,
             field="name",
             old_value="test_agent_1",
@@ -1511,7 +1540,7 @@ class TestEnvironmentDB(unittest.TestCase):
             status=DBStatus.QUESTIONABLE,
         )
         edit_3_id = db.create_edit(
-            editor_id="test_editor_2",
+            editor_id="ADMIN",
             node_id=agent_1_id,
             field="persona",
             old_value="agent_persona",
@@ -1521,11 +1550,11 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(len(edits), 3)
 
         # query the various edits
-        match_editor_2 = db.get_edits(editor_id="test_editor")
+        match_editor_2 = db.get_edits(editor_id="USR-test_editor")
         self.assertEqual(len(match_editor_2), 2)
-        match_editor_1 = db.get_edits(editor_id="test_editor_2")
+        match_editor_1 = db.get_edits(editor_id="ADMIN")
         self.assertEqual(len(match_editor_1), 1)
-        match_editor_0 = db.get_edits(editor_id="test_editor_3")
+        match_editor_0 = db.get_edits(editor_id="USR-test_editor_2")
         self.assertEqual(len(match_editor_0), 0)
         match_node_id_3 = db.get_edits(node_id=agent_1_id)
         self.assertEqual(len(match_node_id_3), 3)
@@ -1558,6 +1587,19 @@ class TestEnvironmentDB(unittest.TestCase):
 
         # TODO accept an edit
 
+        # Run scrub
+        scrub_count = db.scrub_creators(start_time=time.time() + MAX_RETENTION)
+        self.assertEqual(scrub_count, 2, "Should have scrubbed 2 edits")
+        # Can't find old user IDs
+        match_user = db.get_edits(editor_id="USR-test_editor")
+        self.assertEqual(len(match_user), 0)
+        # Can find special creator IDs
+        match_user = db.get_edits(editor_id="ADMIN")
+        self.assertEqual(len(match_user), 1)
+        # Can find scrub
+        match_user = db.get_edits(editor_id=SCRUBBED_USER_ID)
+        self.assertEqual(len(match_user), 2)
+
     def test_create_load_flags(self):
         """Ensure it's possible to create and load flags"""
         db = EnvDB(self.config)
@@ -1568,7 +1610,7 @@ class TestEnvironmentDB(unittest.TestCase):
 
         # Create a flag
         flag_1_id = db.flag_entry(
-            user_id="flagger_id",
+            user_id="USR-flagger_id",
             flag_type=DBFlagTargetType.FLAG_USER,
             target_id="bad_user",
             reason="some_reason",
@@ -1580,7 +1622,7 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(len(flags), 1)
         flag_1 = flags[0]
         self.assertEqual(flag_1.db_id, flag_1_id)
-        self.assertEqual(flag_1.user_id, "flagger_id")
+        self.assertEqual(flag_1.user_id, "USR-flagger_id")
         self.assertEqual(flag_1.flag_type, DBFlagTargetType.FLAG_USER)
         self.assertEqual(flag_1.target_id, "bad_user")
         self.assertEqual(flag_1.reason, "some_reason")
@@ -1589,13 +1631,13 @@ class TestEnvironmentDB(unittest.TestCase):
 
         # create two more flags
         flag_2_id = db.flag_entry(
-            user_id="flagger_id",
+            user_id="USR-flagger_id",
             flag_type=DBFlagTargetType.FLAG_ENVIRONMENT,
             target_id=agent_ids[0],
             reason="some_other_reason",
         )
         flag_3_id = db.flag_entry(
-            user_id="flagger_id",
+            user_id="USR-flagger_id",
             flag_type=DBFlagTargetType.FLAG_UTTERANCE,
             target_id="model_id",
             reason="some_reason",
@@ -1605,7 +1647,7 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(len(flags), 3)
 
         # query the various flags
-        match_user = db.get_flags(user_id="flagger_id")
+        match_user = db.get_flags(user_id="USR-flagger_id")
         self.assertEqual(len(match_user), 3)
         no_match_user = db.get_flags(user_id="random_id")
         self.assertEqual(len(no_match_user), 0)
@@ -1629,6 +1671,20 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(len(match_other_status), 1)
         no_match_status = db.get_flags(status=DBStatus.QUESTIONABLE)
         self.assertEqual(len(no_match_status), 0)
+
+        # Run duplicate, ensure flags aren't copied
+        new_db = db.export(self.config_2)
+        self.assertEqual(len(new_db.get_flags()), 0)
+
+        # Run scrub
+        scrub_count = db.scrub_creators(start_time=time.time() + MAX_RETENTION)
+        self.assertEqual(scrub_count, 3, "Should have scrubbed 3 flags")
+        # Can't find old user IDs
+        match_user = db.get_flags(user_id="USR-flagger_id")
+        self.assertEqual(len(match_user), 0)
+        # Can find scrubbed ID
+        match_user = db.get_flags(user_id=SCRUBBED_USER_ID)
+        self.assertEqual(len(match_user), 3)
 
     def test_create_load_link_quests(self):
         """Ensure that quests are saving and loading as expected"""
@@ -1737,7 +1793,7 @@ class TestEnvironmentDB(unittest.TestCase):
         self.assertEqual(len(parent_id_match_0), 0)
         creator_id_match_1 = db.find_quests(creator_id="bad_creator")
         self.assertEqual(len(creator_id_match_1), 1)
-        creator_id_match_0 = db.find_quests(creator_id="test")
+        creator_id_match_0 = db.find_quests(creator_id=TEST_USER_ID)
         self.assertEqual(len(creator_id_match_0), 0)
         origin_filepath_match_1 = db.find_quests(origin_filepath="test/file/path.json")
         self.assertEqual(len(origin_filepath_match_1), 1)

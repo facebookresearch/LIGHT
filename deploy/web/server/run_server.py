@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-# Copyright 2017-present, Facebook, Inc.
-# All rights reserved.
-#
-# This source code is licensed under the license found in the
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+
 
 from deploy.web.server.tornado_server import LandingApplication
 from deploy.web.server.builder_server import (
@@ -43,6 +42,10 @@ from light.registry.parlai_model import ParlAIModelConfig
 from light.registry.models.acting_score_model import (
     ParlAIPolyencoderActingScoreModelConfig,
 )
+
+from light import LIGHT_DIR
+
+CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
 
 from light import LIGHT_DIR
 

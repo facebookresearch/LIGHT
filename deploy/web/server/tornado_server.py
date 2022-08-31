@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
-# Copyright 2017-present, Facebook, Inc.
-# All rights reserved.
-#
-# This source code is licensed under the license found in the
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
 from deploy.web.server.game_instance import (
@@ -644,17 +642,30 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
         self.user_db = user_db
         self.hostname = hostname
 
+    async def get_privacy_restricted_user_id(self, redirect_url) -> str:
+        """
+        While we already don't request user input for our API key,
+        this method ensures that we're only getting the `id` key.
+
+        DO NOT CHANGE THIS METHOD
+        """
+        fb_user = await self.get_authenticated_user(
+            redirect_uri=redirect_url,
+            client_id=self.app.settings["facebook_api_key"],
+            client_secret=self.app.settings["facebook_secret"],
+            code=self.get_argument("code"),
+        )
+        return fb_user["id"]
+
     async def get(self):
         redirect = "https://" + self.request.host + "/auth/fblogin"
         if self.get_argument("code", False):
-            fb_user = await self.get_authenticated_user(
-                redirect_uri=redirect,
-                client_id=self.app.settings["facebook_api_key"],
-                client_secret=self.app.settings["facebook_secret"],
-                code=self.get_argument("code"),
+            fb_app_scoped_id = await self.get_privacy_restricted_user_id(
+                redirect_url=redirect,
             )
+
             user_id = self.user_db.create_user(
-                extern_id=fb_user["id"], is_preauth=False
+                extern_id=fb_app_scoped_id, is_preauth=False
             )
             self.set_current_user(user_id)
             self.redirect("/play/")

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-# Copyright 2017-present, Facebook, Inc.
-# This source code is licensed under the license found in the
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.data_model.db.base import BaseDB, DBStatus, DBSplitType
+from light.data_model.db.base import BaseDB, DBStatus, DBSplitType, HasDBIDMixin
+from light.data_model.db.users import DBPlayer
 from omegaconf import MISSING, DictConfig
 from typing import Optional, List, Tuple, Union, Dict, Any, Set, TYPE_CHECKING
 from sqlalchemy import insert, select, Enum, Column, Integer, String, Float, ForeignKey
@@ -13,12 +14,15 @@ from light.graph.events.base import GraphEvent
 import time
 import enum
 import os
+import hashlib
 
 if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
 
 SQLBase = declarative_base()
 FILE_PATH_KEY = "episodes"
+ID_STRING_LENGTH = 40
+USR_KEY = DBPlayer.ID_PREFIX
 
 
 class DBGroupName(enum.Enum):
@@ -40,12 +44,14 @@ class EpisodeLogType(enum.Enum):
     FULL = "full"
 
 
-class DBEpisode(SQLBase):
+class DBEpisode(HasDBIDMixin, SQLBase):
     """Class containing the expected elements for an episode as stored in the db"""
 
     __tablename__ = "episodes"
 
-    id = Column(Integer, primary_key=True)
+    ID_PREFIX = "EPI"
+
+    id = Column(String(ID_STRING_LENGTH), primary_key=True)
     group = Column(Enum(DBGroupName), nullable=False, index=True)
     split = Column(Enum(DBSplitType), nullable=False, index=True)
     status = Column(Enum(DBStatus), nullable=False, index=True)
@@ -116,7 +122,9 @@ class DBEpisode(SQLBase):
 
     def get_graph(self, id_or_key: str, db: "EpisodeDB") -> "OOGraph":
         """Return a specific graph by id or key"""
-        return self.get_graph_map()[id_or_key].get_graph(db)
+        with Session(db.engine) as session:
+            session.add(self)
+            return self.get_graph_map()[id_or_key].get_graph(db)
 
     def get_after_graph(self, db: "EpisodeDB") -> "OOGraph":
         """Return the state of the graph after this episode"""
@@ -135,12 +143,14 @@ class DBEpisode(SQLBase):
         return f"DBEpisode(ids:[{self.id!r}] group/split:[{self.group.value!r}/{self.split.value!r}] File:[{self.dump_file_path!r}])"
 
 
-class DBEpisodeGraph(SQLBase):
+class DBEpisodeGraph(HasDBIDMixin, SQLBase):
     """Class containing expected elements for a stored graph"""
 
     __tablename__ = "graphs"
 
-    id = Column(Integer, primary_key=True)
+    ID_PREFIX = "EPG"
+
+    id = Column(String(ID_STRING_LENGTH), primary_key=True)
     episode_id = Column(Integer, ForeignKey("episodes.id"), nullable=False, index=True)
     full_path = Column(String(80), nullable=False)
     graph_key_id = Column(String(60), nullable=False, index=True)
@@ -222,8 +232,10 @@ class EpisodeDB(BaseDB):
             self.write_data_to_file(graph_info["graph_json"], graph_full_path)
 
         # DB Writes
+        episode_id = DBEpisode.get_id()
         with Session(self.engine) as session:
             episode = DBEpisode(
+                id=episode_id,
                 group=group,
                 split=DBSplitType.UNSET,
                 status=DBStatus.REVIEW,
@@ -239,6 +251,7 @@ class EpisodeDB(BaseDB):
             for idx, graph_info in enumerate(graphs):
                 graph_full_path = os.path.join(graph_dump_root, graph_info["filename"])
                 db_graph = DBEpisodeGraph(
+                    id=DBEpisodeGraph.get_id(),
                     graph_key_id=graph_info["key"],
                     full_path=graph_full_path,
                 )
@@ -249,8 +262,6 @@ class EpisodeDB(BaseDB):
             session.flush()
             episode.first_graph_id = first_graph.id
             episode.final_graph_id = db_graph.id
-
-            episode_id = episode.id
             session.commit()
 
         return episode_id
@@ -310,3 +321,87 @@ class EpisodeDB(BaseDB):
             episodes = session.scalars(stmt).all()
             session.expunge_all()
             return episodes
+
+    def anonymize_group(self, group: DBGroupName) -> bool:
+        """
+        Run anonymization on the split to remove any link to the
+        long-term user. All data within a quarter's dataset
+        can be linked (for long-term memory analysis) but cannot be
+        tracked cross-quarters.
+
+        Return true on success
+        """
+        hashing_time = time.time()
+        sha = hashlib.sha256()
+
+        def rehash(curr_name):
+            if not curr_name.startswith(USR_KEY):
+                return curr_name  # already hashed
+
+            # Adding a hashtime to make unique
+            hash_name = f"{curr_name}-{hashing_time}"
+            sha.update(hash_name.encode())
+            return str(sha.hexdigest()[:30])
+
+        with Session(self.engine) as session:
+            stmt = select(DBEpisode).where(DBEpisode.group == group)
+            episodes = session.scalars(stmt).all()
+            for episode in episodes:
+                actors_string = episode.actors
+                actors = actors_string.split(",")
+                processed_actors = [rehash(a) for a in actors]
+                episode.actors = ",".join(processed_actors)
+                # Rewrite the graphs and events too
+                def replace_all_actors(in_data: str) -> str:
+                    out_data = in_data
+                    for i in range(len(actors)):
+                        out_data = out_data.replace(actors[i], processed_actors[i])
+                    return out_data
+
+                graphs = episode.graphs
+                for graph in graphs:
+                    graph_data = self.read_data_from_file(graph.full_path)
+                    anon_graph_data = replace_all_actors(graph_data)
+                    self.write_data_to_file(anon_graph_data, graph.full_path)
+                event_data = self.read_data_from_file(episode.dump_file_path)
+                anon_event_data = replace_all_actors(event_data)
+                self.write_data_to_file(anon_event_data, episode.dump_file_path)
+                session.commit()
+        return True
+
+    def export(self, config: "DictConfig") -> "EpisodeDB":
+        """
+        Create a scrubbed version of this database for use in releases
+        """
+        assert config.file_root != self.file_root, "Cannot copy DB to same location!"
+        new_db = EpisodeDB(config)
+
+        # Copy all the basic content
+        for table_name, table_obj in SQLBase.metadata.tables.items():
+            with self.engine.connect() as orig_conn:
+                with new_db.engine.connect() as new_conn:
+                    all_data = [
+                        dict(row) for row in orig_conn.execute(select(table_obj.c))
+                    ]
+                    if len(all_data) == 0:
+                        continue
+                    new_conn.execute(table_obj.insert().values(all_data))
+                    new_conn.commit()
+
+        with Session(self.engine) as session:
+            stmt = select(DBEpisode)
+            episodes = session.scalars(stmt).all()
+            for episode in episodes:
+                graphs = episode.graphs
+                for graph in graphs:
+                    # Copy the graphs to the new DB
+                    graph_data = self.read_data_from_file(graph.full_path)
+                    new_db.write_data_to_file(graph_data, graph.full_path)
+                # Copy the events to the new DB
+                event_data = self.read_data_from_file(episode.dump_file_path)
+                new_db.write_data_to_file(event_data, episode.dump_file_path)
+
+        for group in DBGroupName:
+            new_db.anonymize_group(group=group)
+
+        return new_db

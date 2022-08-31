@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-# Copyright 2017-present, Facebook, Inc.
-# This source code is licensed under the license found in the
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
 from light.data_model.db.base import BaseDB, DBStatus, DBSplitType, HasDBIDMixin
+from light.data_model.db.users import DBPlayer
 from light.graph.structured_graph import OOGraph
 from omegaconf import MISSING, DictConfig
 from typing import (
@@ -43,6 +44,10 @@ SQLBase = declarative_base()
 FILE_PATH_KEY = "env"
 GRAPH_PATH_KEY = "graphs"
 QUEST_PATH_KEY = "quests"
+USR_KEY = DBPlayer.ID_PREFIX
+
+SCRUBBED_USER_ID = "scrubbed_user"
+MAX_RETENTION = 60 * 60 * 24 * 60  # 60 days
 
 BASE_NAME_LENGTH_CAP = 96
 WORLD_NAME_LENGTH_CAP = 128
@@ -343,6 +348,7 @@ class DBNodeAttribute(HasDBIDMixin, SQLBase):
     creator_id = Column(
         String(ID_STRING_LENGTH)
     )  # temp retain the creator ID for new things
+    create_timestamp = Column(Float, nullable=False)
 
 
 # Graph edges and attributes
@@ -1312,6 +1318,7 @@ class EnvDB(BaseDB):
                     attribute_value_string=attribute_value_string,
                     status=status,
                     creator_id=creator_id,
+                    create_timestamp=time.time(),
                 )
                 session.add(attribute)
                 session.flush()
@@ -1857,8 +1864,123 @@ class EnvDB(BaseDB):
 
     # release functionality
 
-    def export(self):
+    def scrub_creators(self, start_time: Optional[int] = None) -> int:
+        """
+        Remove creators from anything in the dataset longer than 60 days
+        """
+        changed_count = 0
+        current_time = time.time() if start_time is None else start_time
+        cutoff_time = current_time - MAX_RETENTION
+        with Session(self.engine) as session:
+            for target_type in [
+                DBAgent,
+                DBObject,
+                DBRoom,
+                DBNodeAttribute,
+                DBEdge,
+                DBTextEdge,
+                DBQuest,
+            ]:
+                stmt = select(target_type)
+                stmt = stmt.where(target_type.creator_id.startswith(USR_KEY))
+                stmt = stmt.where(target_type.create_timestamp < cutoff_time)
+                elems = session.scalars(stmt).all()
+                for elem in elems:
+                    changed_count += 1
+                    elem.creator_id = SCRUBBED_USER_ID
+
+            stmt = select(DBFlag)
+            stmt = stmt.where(DBFlag.user_id.startswith(USR_KEY))
+            stmt = stmt.where(DBFlag.create_timestamp < cutoff_time)
+            flags = session.scalars(stmt).all()
+            for flag in flags:
+                changed_count += 1
+                flag.user_id = SCRUBBED_USER_ID
+
+            stmt = select(DBEdit)
+            stmt = stmt.where(DBEdit.editor_id.startswith(USR_KEY))
+            stmt = stmt.where(DBEdit.create_timestamp < cutoff_time)
+            edits = session.scalars(stmt).all()
+            for edit in edits:
+                changed_count += 1
+                edit.editor_id = SCRUBBED_USER_ID
+
+            session.commit()
+            return changed_count
+
+    def clear_player_graphs(
+        self, player_id: Optional[str] = None, scrub_all: Optional[bool] = False
+    ) -> None:
+        """
+        Find graphs with this player_id as creator
+        and then scrub the association.
+        """
+        if player_id is not None:
+            assert scrub_all is not True, "Cannot scrub all if providing player id"
+        with Session(self.engine) as session:
+            stmt = select(DBGraph)
+            if not scrub_all:
+                stmt = stmt.where(DBGraph.creator_id == player_id)
+            graphs = session.scalars(stmt).all()
+            for graph in graphs:
+                graph.creator_id = SCRUBBED_USER_ID
+            session.commit()
+
+    def dissociate_graph(self, graph_id: str) -> None:
+        with Session(self.engine) as session:
+            stmt = select(DBGraph).where(DBGraph.db_id == graph_id)
+            graph = session.scalars(stmt).one()
+            graph.creator_id = SCRUBBED_USER_ID
+            session.commit()
+
+    def export(self, config: "DictConfig") -> "EnvDB":
         """
         Create a scrubbed version of this database for use in releases
         """
-        raise NotImplementedError
+        assert config.file_root != self.file_root, "Cannot copy DB to same location!"
+        new_db = EnvDB(config)
+
+        SKIPPED_TABLES = [t.__tablename__ for t in [DBFlag, DBEdit]]
+
+        for table_name, table_obj in SQLBase.metadata.tables.items():
+            # Skip tables that should not be public
+            if table_name in SKIPPED_TABLES:
+                continue
+            with self.engine.connect() as orig_conn:
+                with new_db.engine.connect() as new_conn:
+                    all_data = [
+                        dict(row) for row in orig_conn.execute(select(table_obj.c))
+                    ]
+                    if len(all_data) == 0:
+                        continue
+                    new_conn.execute(table_obj.insert().values(all_data))
+                    new_conn.commit()
+
+        new_db.clear_player_graphs(scrub_all=True)
+        new_db.scrub_creators(
+            start_time=time.time() + MAX_RETENTION
+        )  # Scrub _all_ creator ids
+
+        with Session(self.engine) as session:
+            # Copy the graphs to the new DB
+            stmt = select(DBGraph)
+            graphs = session.scalars(stmt).all()
+            for graph in graphs:
+                graph_data = self.read_data_from_file(
+                    graph.file_path, json_encoded=False
+                )
+                new_db.write_data_to_file(
+                    graph_data, graph.file_path, json_encoded=False
+                )
+
+            # Copy the quests to the new DB
+            stmt = select(DBQuest)
+            quests = session.scalars(stmt).all()
+            for quest in quests:
+                file_path = quest.origin_file_path
+                if file_path is None:
+                    continue  # no quest file
+                quest_data = self.read_data_from_file(file_path, json_encoded=False)
+                new_db.write_data_to_file(quest_data, file_path, json_encoded=False)
+
+        return new_db

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -9,6 +9,7 @@ from omegaconf import OmegaConf
 from sqlalchemy.exc import IntegrityError
 from light.data_model.db.base import LightDBConfig
 from light.data_model.db.users import UserDB, PlayerStatus
+from light.data_model.db.environment import EnvDB
 
 config = LightDBConfig(backend="test", file_root="unused")
 
@@ -171,6 +172,19 @@ class TestUserDB(unittest.TestCase):
         player = db.get_player(player_id_1)
         self.assertEqual(player.total_messages, 15, "Expected 15 actions")
 
+        # Assert can delete player
+        env_db = EnvDB(config)
+        db.delete_player(player_id_1, env_db)
+
+        with self.assertRaises(KeyError):
+            player_1_by_id = db.get_player(player_id_1)
+        with self.assertRaises(KeyError):
+            base_score = db.get_agent_score(player_id_1)
+        with self.assertRaises(KeyError):
+            score_1 = db.get_agent_score(player_id_1, agent_id_1)
+        with self.assertRaises(KeyError):
+            score_2 = db.get_agent_score(player_id_1, agent_id_2)
+
     def test_flag_scores(self):
         """Ensure we can flag players successfully"""
         hydra_config = OmegaConf.structured(config)
@@ -195,7 +209,7 @@ class TestUserDB(unittest.TestCase):
         with self.assertRaises(KeyError, msg="Could mark non-existing player"):
             db.mark_flag(-1)
         with self.assertRaises(KeyError, msg="Could mark non-existing player"):
-            db.mark_flag(-1)
+            db.mark_safety_trigger(-1)
 
     def test_update_player_status(self):
         """Ensure we can flag players successfully"""

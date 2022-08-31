@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.abs
@@ -42,7 +46,7 @@ class InteractionLogger(abc.ABC):
         self.graph = graph
         self.players: Set[str] = set()
         self.actions: int = 0
-        self._last_episode_logged: Optional[int] = None
+        self._last_episode_logged: Optional[str] = None
         self.group = (
             DBGroupName.PRE_LAUNCH_TUTORIAL
             if graph._opt.get("tutorial")
