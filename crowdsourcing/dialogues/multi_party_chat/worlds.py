@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld
@@ -152,7 +152,7 @@ class LIGHTMultiAgentDialogWorld(CrowdTaskWorld):
                     if other_agent != agent:
                         other_agent.observe(validate(act))
 
-        time.sleep(0.1) # Preventing tight loop on parley calls
+        time.sleep(0.1)  # Preventing tight loop on parley calls
 
         self.try_agent_timeouts()
         if self.is_done():

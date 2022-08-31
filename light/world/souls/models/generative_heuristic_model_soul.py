@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -61,35 +61,14 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         """
         Load up the dialog model for use with this class
         """
-        # Model args if no reranking
-        # dialog_args = [
-        #     "-dt",
-        #     "valid",
-        #     "--inference",
-        #     "beam",
-        #     "--beam-context-block-ngram",
-        #     "3",
-        #     "--beam-block-ngram",
-        #     "3",
-        #     "--beam-size",
-        #     "10",
-        #     "--beam-min-length",
-        #     "20",
-        #     "-m",
-        #     "transformer/generator",
-        #     "-mf",
-        #     dialog_model_path,
-        # ]
-
         # Reranker args
         dialog_args = [
             "-m",
-            "internal:light_whoami/generative_rerank",
+            "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent",
             "--predictor-model-file",
-            # "/home/ubuntu/data/models/rerank/model",
-            "/checkpoint/kshuster/projects/continual_learning/light_whoami/whoami_sweep3b_Tue_Oct_13/943/model",
+            "zoo:light_whoami/rpa_reranker/model",
             "--inference",
-            "delayedbeam",
+            "beam",
             "-dt",
             "valid",
             "--beam-context-block-ngram",
@@ -108,11 +87,10 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         dialog_opt["override"] = {
             "inference": "beam",
             "beam_context_block_ngram": 3,
-            "beam_size": 2,
+            "beam_size": 10,
             "beam_min_length": 20,
+            "model": "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent",
         }
-        # dialog_opt['override']['inference'] = 'topk'
-        # dialog_opt['override']['topk'] = 40
         return create_agent(dialog_opt, requireModelExists=True)
 
     @classmethod
@@ -124,7 +102,6 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         """
         Load up and create possible shared models for use with this class
         """
-        # TODO refactor with some kind of model-loading standard for model souls?
         from parlai.core.params import ParlaiParser
         from parlai.core.agents import create_agent
 
@@ -136,6 +113,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         )
 
         if act_model_path is not None:
+            # TODO @Kurt do we have an action model in character? Or just dialogue?
             # Load action model
             args = [
                 "-mf",

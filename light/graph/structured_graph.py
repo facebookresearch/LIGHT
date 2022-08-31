@@ -1,3 +1,7 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 #!/usr/bin/env python3
 import json
 import os
@@ -558,6 +562,12 @@ class OOGraph(object):
                     )
                 else:
                     char.follow(sync_nodes[followed_char_id])
+
+        # Blocking
+        for char in oo_graph.agents.values():
+            char_dict = node_dicts[char.node_id]
+            if char_dict.get("blocking") is not None:
+                char.block(sync_nodes[char_dict["blocking"]["target_id"]])
 
         # Neighbors/locks
         for room in oo_graph.rooms.values():

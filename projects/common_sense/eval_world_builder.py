@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
@@ -20,11 +20,10 @@ import pickle
 import copy
 
 
-
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, True, 'Test common sense model for room building')
-    parser.set_defaults(interactive_mode=True, task='interactive')
+        parser = ParlaiParser(True, True, "Test common sense model for room building")
+    parser.set_defaults(interactive_mode=True, task="interactive")
     return parser
 
 
@@ -46,6 +45,7 @@ def run_create_char_objs(graph, agent, count=3):
         new_graph = agent.add_all_object_attributes(new_graph, c)
     return new_graph
 
+
 def interactive(opt):
     # setup data
     just_desc_dropouts = {}
@@ -66,8 +66,8 @@ def interactive(opt):
 
     # load in data to run test on
     with jsonlines.open(
-        '/private/home/alexgurung/ParlAI/data/light_common_sense/rooms_and_contents/test.jsonl',
-        'r',
+        "/private/home/alexgurung/ParlAI/data/light_common_sense/rooms_and_contents/test.jsonl",
+        "r",
     ) as f:
         for room_graph in f:
             input_txt = generate_graph_tuples(
@@ -97,18 +97,26 @@ def interactive(opt):
     # test_data = test_data
 
     if isinstance(opt, ParlaiParser):
-        logging.error('interactive should be passed opt not Parser')
+        logging.error("interactive should be passed opt not Parser")
         opt = opt.parse_args()
 
-    for model_name in ["bart_all_simple_Sun_Jan_23/c9d", "bart_all_simple_Mon_Jan_24/09d", "bart_all_simple_Wed_Jan_26/317"]:
+    for model_name in [
+        "bart_all_simple_Sun_Jan_23/c9d",
+        "bart_all_simple_Mon_Jan_24/09d",
+        "bart_all_simple_Wed_Jan_26/317",
+    ]:
         for force in [True]:
-        # for model_name in ["bart_all_simple_Mon_Jan_24/09d"]:
+            # for model_name in ["bart_all_simple_Mon_Jan_24/09d"]:
             model_start = time()
             # agent = CommonSenseAgent(
             #     opt, model_name=model_name, force_add=True, verbose=False, count_errors=True
             # )
             agent = CommonSenseAgent(
-                opt, model_name=model_name, force_add=force, verbose=False, count_errors=True
+                opt,
+                model_name=model_name,
+                force_add=force,
+                verbose=False,
+                count_errors=True,
             )
             # agent = CommonSenseAgent(opt, force_add=True, verbose=True)
             agent.opt.log()
@@ -126,7 +134,6 @@ def interactive(opt):
 
                 new_graph = run_create_char_objs(new_graph, agent, count=3)
                 new_graph = run_create_char_objs(new_graph, agent, count=3)
-                
 
                 print(f"{time() - s:.02f} s")
                 times.append(time() - s)
@@ -136,7 +143,7 @@ def interactive(opt):
                 )
                 print(metrics)
                 all_metrics.append(metrics)
-            print("-"*100)
+            print("-" * 100)
             print(f"MODEL TOTAL TIME: {time() - model_start}")
             # print(agent.get_errors())
 
@@ -146,7 +153,9 @@ def interactive(opt):
             error_data = parse_errors(errors)
             error_data["raw_tasks"] = tasks
             error_data["raw_mods"] = graph_mods
-            print(f"{len(error_data['raw_errors'])} vs {len(error_data['raw_tasks'])} vs {len(error_data['raw_mods'])}")
+            print(
+                f"{len(error_data['raw_errors'])} vs {len(error_data['raw_tasks'])} vs {len(error_data['raw_mods'])}"
+            )
 
             if save_res or save_error:
                 split = model_name.split("/")
@@ -154,26 +163,29 @@ def interactive(opt):
                 name = split[1]
                 force_name = "force" if force else "noforce"
                 if save_error:
-                    with open(f"/checkpoint/alexgurung/light/common_sense/add_format/{folder}/error_metrics_{name}_{force_name}_default.json", 'w') as f:
+                    with open(
+                        f"/checkpoint/alexgurung/light/common_sense/add_format/{folder}/error_metrics_{name}_{force_name}_default.json",
+                        "w",
+                    ) as f:
                         json.dump(error_data, f)
                 if save_res:
                     with open(
                         f"/checkpoint/alexgurung/light/common_sense/add_format/{folder}/builder_metrics_{name}_{force_name}_default.json",
-                        'w',
+                        "w",
                     ) as f:
                         json.dump(all_metrics, f)
 
             # print(error_data['edge_errors'])
-            del error_data['edge_errors']
-            del error_data['raw_errors']
-            del error_data['raw_tasks']
-            del error_data['raw_mods']
+            del error_data["edge_errors"]
+            del error_data["raw_errors"]
+            del error_data["raw_tasks"]
+            del error_data["raw_mods"]
             df = pd.DataFrame(data=error_data.items(), columns=["key", "value"])
             print(df)
-            print("-"*100)
+            print("-" * 100)
 
 
-@register_script('interactive', aliases=['i'])
+@register_script("interactive", aliases=["i"])
 class Interactive(ParlaiScript):
     @classmethod
     def setup_args(cls):
@@ -183,6 +195,6 @@ class Interactive(ParlaiScript):
         return interactive(self.opt)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     random.seed(42)
     Interactive.main()

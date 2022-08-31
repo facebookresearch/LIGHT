@@ -1,3 +1,10 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 //REACT
 import React, {useEffect, useState} from "react";
 //STYLING
@@ -18,10 +25,12 @@ const BooleanQuestion = ({
     toolTipCopy,// Copy for desired tooltip
     hasToolTip,// Boolean stating whether or not this component has a tooltip
     isComplete,// Completion condition for question to be satisfactorily answered
+    defaultOption,
     children
 })=>{
     //local state for question answer
-    const [answer, setAnswer] = useState(null);
+    // const [answer, setAnswer] = useState(null);
+    const [answer, setAnswer] = useState(defaultOption ? defaultOption : null);
 
     //sets both local and payload state to true
     const trueHandler = ()=>{

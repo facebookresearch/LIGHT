@@ -1,3 +1,10 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 //REACT
 import React, {useState, useEffect} from "react";
 //STYLING
@@ -29,14 +36,14 @@ const AttributeSetter = ({
     },[])
     //Function used to add a "blank attribute to the array."
     const addAttributeHandler = ()=>{
-        const newAtt = [...attributeList, {name:"", val:true}]
+        const newAtt = [...attributeList, {name:"", value:true}]
         setAttributeList(newAtt)
         setter(newAtt)
     }
     //Function used to update attributes
     const updateAttributeHandler = (updateIndex, update) => {
-        let filteredListPreUpdate = attributeList.filter((item, index)=> (index !== updateIndex))//Unupdated entry removed from array
-        let updatedArr = [...filteredListPreUpdate, update] // Updated Entry added to array
+        // update attribute at given index, used to reorder but now does in-place
+        let updatedArr = attributeList.map((value, i) => {return i === updateIndex ? update : value});
         setAttributeList(updatedArr) // Array with updated entry set to local state
         setter(updatedArr) // Array with updated entry set to payload state
     }

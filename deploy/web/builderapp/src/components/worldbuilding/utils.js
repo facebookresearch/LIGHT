@@ -1,3 +1,10 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import React from "react";
 import { Colors } from "@blueprintjs/core";
 import { cloneDeep, isEmpty, merge } from "lodash";
@@ -8,8 +15,8 @@ export const MAX_WIDTH = 10;
 export const MAX_HEIGHT = 10;
 export const MAX_FLOORS = 10;
 
-const STARTING_WIDTH = 3;
-const STARTING_HEIGHT = 3;
+const STARTING_WIDTH = 5;
+const STARTING_HEIGHT = 5;
 const STARTING_FLOORS = 1;
 
 export const DEFAULT_EMOJI = "❓";
@@ -189,10 +196,10 @@ const createdEntitiesReducer = (state, action) => {
   }
 };
 
-/**
+/*
  * Custom hook managing map state.
  * Includes utility functions for setting state of the map.
- */
+*/
 export function useWorldBuilder(upload) {
   const [dimensions, setDimensions] = React.useState(
     upload
