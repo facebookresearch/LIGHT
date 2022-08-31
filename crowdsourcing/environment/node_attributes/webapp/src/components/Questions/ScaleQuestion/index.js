@@ -1,6 +1,6 @@
 
 /*****
- * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
@@ -12,7 +12,9 @@ import "./styles.css"
 //CUSTOM COMPONENTS
 import Scale from "./Scale";
 import ScaleQuestionHeader from "./ScaleQuestionHeader"
-
+//COPY
+import TaskCopy from "../../../TaskCopy"
+const {customAttributeQuestionToolTip} = TaskCopy
 // ScaleQuestion - form that allows worker to rate an attribute of a selection.
 // On a scale from lowest to highest the worker can place a "flag" on where they believe the selections falls on the scale.
 const ScaleQuestion = ({
@@ -22,7 +24,7 @@ const ScaleQuestion = ({
     isCustom,
     updateFunction,
 })=>{
-    const {name, description} = trait;
+    const {name, description, toolTip} = trait;
 
     return(
         <div className="scalequestion-container">
@@ -31,6 +33,7 @@ const ScaleQuestion = ({
                 trait={name}
                 traitDescription={description}
                 updateFunction={(fieldName, updateValue)=>updateFunction(fieldName,  "none", updateValue)}
+                toolTip={isCustom ? customAttributeQuestionToolTip : toolTip}
             />
             <Scale
                 scaleRange={scaleRange}

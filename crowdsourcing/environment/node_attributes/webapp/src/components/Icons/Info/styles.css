@@ -1,0 +1,32 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/*INFO ICON STYLES*/
+.info-icon{
+    color: white;
+    font-size: 30px;
+    margin-left:6px;
+    margin-right:10px;
+}
+
+.info-icon:hover {
+    color: rgb(116, 215, 233);
+    cursor: help;
+}
+
+.info-icon__dark{
+    color: black;
+    font-size: 30px;
+    margin-left:6px;
+    margin-right:10px;
+}
+
+
+.info-icon__dark:hover {
+    color: rgb(116, 215, 233);
+    cursor: help;
+}

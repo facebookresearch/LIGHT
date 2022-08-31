@@ -1,6 +1,6 @@
 
 /*****
- * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
@@ -12,9 +12,12 @@ import "./styles.css";
 //BOOTSTRAP COMPONENTS
 import Form from 'react-bootstrap/Form'
 import FormCheck from 'react-bootstrap/FormCheck'
+//CUSTOM COMPONENTS
+import InfoIcon from "../../Icons/Info";
+import ToolTip from "../../ToolTip/index.js"
 
 // MultipleSelectQuestion - Form type that allows user to select multiple options to answer question
-const MultipleSelectQuestion = ({question, answers, selectFunction})=>{
+const MultipleSelectQuestion = ({question, answers, selectFunction, toolTip})=>{
 
     const [selectedAnswers, setSelectedAnswers] = useState([]);
     const [answerList, setAnswerList] = useState([])
@@ -38,6 +41,13 @@ const MultipleSelectQuestion = ({question, answers, selectFunction})=>{
     }
     return(
         <div className="multipleselectquestion-container" >
+            <ToolTip
+                toolTipText={toolTip}
+            >
+                <div>
+                    <InfoIcon dark={true}/>
+                </div>
+            </ToolTip>
             <h1 className="multipleselectquestion-text">
                 {question}
             </h1>

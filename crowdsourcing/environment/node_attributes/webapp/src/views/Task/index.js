@@ -1,6 +1,6 @@
 
 /*****
- * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
@@ -53,7 +53,7 @@ const Task = ({
   // Payload for Scale Attribute ratings
   const [scaleAttributePayload, setScaleAttributePayload] = useState({});
   // Payload for custom Scale Attribute ratings and input
-  const [customScaleAttributesPayload, setCustomScaleAttributesPayload] = useState([{name:"", description:"", vals:{} }, {name:"", description:"" }]);
+  const [customScaleAttributesPayload, setCustomScaleAttributesPayload] = useState([{name:"", description:"", vals:{} }, /*{name:"", description:"" }*/]);
   // Boolean value that determines when Success Banner renders
   const [showSuccess, setShowSuccess] = useState(false);
   // Boolean value that determines when Error Banner renders
@@ -106,8 +106,9 @@ const Task = ({
         let {requiredAttribute} = trait;
         filteredSelection = selectionData.filter(item=>{
           let {attributes}=item;
-          return attributes.filter(attribute => attribute.name == requiredAttribute).length
+          return attributes.filter(attribute => requiredAttribute.includes(attribute.name) && attribute.value).length
         })
+        console.log("New filtered selection", filteredSelection, requiredAttribute);
       }
       //Adds selection names as keys without values as value to attribute
       filteredSelection.map((selection,index)=>{
@@ -229,24 +230,35 @@ const Task = ({
   const {nodes} = submissionPayload;
   nodes.map(node=>{
     let {name, values} = node;
-    let {custom} = values;
-    if(custom !== undefined){
-      let customAttributesCount = custom.length;
-      if(customAttributesCount == undefined){
-        errorList.push(`${name} requires at least 4 custom attributes`)
-      }else if(customAttributesCount<4){
-        let requiredAttributesNumber = 4 - customAttributesCount;
-        errorList.push(`${name} requires ${requiredAttributesNumber} more attributes`)
+    let {custom, ...others} = values;
+    let presetAttributesCount = 0
+    for (const attr in others) {
+      if (!others[attr]) {
+        continue;
       }
-    }else{
-      errorList.push(`${name} requires at least 4 custom attributes`)
+      if (["wearable", "wieldable", "food", "drink", "surface", "container", "carryable"].includes(attr)) {
+        continue;
+      }
+      presetAttributesCount += 1;
+    }
+    let customAttributesCount = 0;
+    if(custom !== undefined){
+      customAttributesCount = custom.length;
+      if(customAttributesCount == undefined){
+        customAttributesCount = 0;
+      }
+    }
+    const attributesCount = presetAttributesCount + customAttributesCount;
+    if (attributesCount < 4) {
+      const requiredAttributesNumber = 4 - attributesCount;
+      errorList.push(`${name} requires ${requiredAttributesNumber} more attributes`)
     }
   })
     console.log("submissionPayload:  ", submissionPayload)
     if(!errorList.length){
       console.log("SUCCESSFULLY READY TO SUBMIT")
       setShowSuccess(true);
-      //handleSubmit()
+      handleSubmit(submissionPayload)
     }else{
       setErrorMessage(errorList);
       setShowError(true);
@@ -279,7 +291,7 @@ const Task = ({
           if(requiredAttribute){
             let filteredSelection = selectionData.filter(item =>{
               let {attributes} = item;
-              let matchedAttributes = attributes.filter(attr=>(attr.name==requiredAttribute));
+              let matchedAttributes = attributes.filter(attr=>(requiredAttribute.includes(attr.name) && attr.value));
               let hasAttribute = !!matchedAttributes.length;
               return hasAttribute
             } )

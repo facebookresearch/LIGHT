@@ -1,6 +1,6 @@
 
 /*****
- * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
@@ -16,9 +16,10 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import { Typeahead } from 'react-bootstrap-typeahead';
 //CUSTOM COMPONENTS
 import ToolTip from "../../../ToolTip";
+import InfoIcon from "../../../Icons/Info";
 //Copy
 import TaskCopy from "../../../../TaskCopy";
-const {numericAttributes} = TaskCopy
+const {numericAttributes, booleanAttributeToolTip} = TaskCopy
 
 // SelectionList - A container for each selection item and their description
 const TagRow = ({
@@ -32,7 +33,6 @@ const TagRow = ({
 })=>{
     /*--------------------REFS--------------------*/
     const attributeRef = useRef();
-
 
     const changeHandler = ()=>{
         let {current} = attributeRef;
@@ -56,10 +56,16 @@ const TagRow = ({
         }
     }
 
-
     return(
         <>
             <div className="tagrow-container">
+                <ToolTip
+                    toolTipText={booleanAttributeToolTip}
+                >
+                    <div>
+                        <InfoIcon dark={true}/>
+                    </div>
+                </ToolTip>
                 <div className="tagrow-item__container">
                     <ToolTip
                         toolTipText={description}
@@ -68,17 +74,17 @@ const TagRow = ({
                     </ToolTip>
                 </div>
                 <div style={{width:"70%"}}>
-                <Typeahead
-                    allowNew
-                    defaultSelected={startingAttributes}
-                    id="custom-selections-example"
-                    multiple
-                    newSelectionPrefix="Add a new attribute:  "
-                    options={booleanAttributeOptions}
-                    placeholder="Add Attributes here"
-                    ref={attributeRef}
-                    onChange={changeHandler}
-                />
+                    <Typeahead
+                        allowNew
+                        defaultSelected={startingAttributes}
+                        id="custom-selections-example"
+                        multiple
+                        newSelectionPrefix="Add a new attribute:  "
+                        options={booleanAttributeOptions}
+                        placeholder="Add Attributes here"
+                        ref={attributeRef}
+                        onChange={changeHandler}
+                    />
                 </div>
             </div>
         </>

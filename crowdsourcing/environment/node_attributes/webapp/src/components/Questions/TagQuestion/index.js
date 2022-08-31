@@ -1,6 +1,6 @@
 
 /*****
- * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
@@ -18,9 +18,6 @@ const TagQuestion = ({
     booleanAttributeOptions, // the default attributes for the selected object type
     updateFunction,// the function to update the attributes for the objects
 })=>{
-
-
-
     return(
       <div className="tagquestion-body">
         {
@@ -31,19 +28,17 @@ const TagQuestion = ({
               if(attr.value){
               return(attr.name)
               }
-            })
+            }).filter(elem => elem !== undefined)
             return (
-              <>
-                <TagRow
-                  key={index}
-                  id={id}
-                  name={name}
-                  description={description}
-                  startingAttributes={startingAttributes}
-                  booleanAttributeOptions={booleanAttributeOptions}
-                  updateFunction={(update)=>updateFunction(index, update)}
-                />
-              </>
+              <TagRow
+                key={index}
+                id={id}
+                name={name}
+                description={description}
+                startingAttributes={startingAttributes}
+                booleanAttributeOptions={booleanAttributeOptions}
+                updateFunction={(update)=>updateFunction(index, update)}
+              />
             )
         })
         :

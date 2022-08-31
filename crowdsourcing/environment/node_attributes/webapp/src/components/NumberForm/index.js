@@ -1,6 +1,6 @@
 
 /*****
- * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
@@ -9,12 +9,16 @@
 import React, {useEffect, useState} from "react";
 //STYLING
 import "./styles.css"
+//CUSTOM COMPONENTS
+import InfoIcon from "../Icons/Info";
+import ToolTip from "../ToolTip/index.js"
 
 //NumberQuestion - Question with number for answer.
 const NumberForm = ({
     header, //Header Text
     formFunction, // setState function that connects to payload state
-    startingVal // initial value of form
+    startingVal, // initial value of form
+    toolTip
 })=>{
     /*---------- State ----------*/
     const [formNumber, setFormNumber] = useState(startingVal)
@@ -32,9 +36,18 @@ const NumberForm = ({
     return(
         <div className="numberform-container" >
             <div className="numberanswer-container">
-                <p className="numberanswer-header" >
-                    {header}
-                </p>
+                <div className="numberanswer-header">
+                    <p className="numberanswer-header__text" >
+                        {header}
+                    </p>
+                    <ToolTip
+                        toolTipText={toolTip}
+                    >
+                        <div>
+                            <InfoIcon dark={true}/>
+                        </div>
+                    </ToolTip>
+                </div>
                 <input
                     type="number"
                     id="limit"
