@@ -7,7 +7,7 @@
 import React from "react";
 import { HashRouter, Route, Redirect, Switch } from "react-router-dom";
 /* CONFIG */
-import CONFIG from "../config.js";
+import CONFIG from "./config.js";
 
 import AboutPage from "./pages/AboutPage";
 import LandingPage from "./pages/LandingPage";
