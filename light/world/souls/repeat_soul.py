@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -32,6 +32,10 @@ class RepeatSoul(Soul):
         """
         if event.actor == self.target_node:
             return
+        if not (event.actor.is_player):
+            return
+        if self.target_node.is_dying():
+            return  # Going to die, can't do anything
         my_observation = event.view_as(self.target_node)
         repeat_text = f"I just saw the following: {my_observation}"
         repeat_event = SayEvent.construct_from_args(

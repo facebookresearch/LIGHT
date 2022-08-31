@@ -1,0 +1,68 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* SOUL SPAWN MESSAGE STYLES  */
+.soulspawn-container {
+  display: block;
+}
+
+#soulspawn {
+  background-color: #181ab1;
+  border-style: groove;
+  border-color: ivory;
+  border-width: 0.5em;
+  margin: auto;
+}
+
+#soulspawn.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+.soulspawn-header {
+  color: #fff;
+  text-align: center;
+  animation: pulse 1s ease-in-out infinite alternate;
+  font-weight: bolder;
+}
+
+.soulspawn-subheader {
+  text-decoration: underline;
+  margin-bottom: 0;
+  font-family: fantasy;
+  font-weight: 900;
+  font-size: 18px;
+  color: #fff;
+  text-align: center;
+}
+
+.soulspawn-text {
+  color: #fff;
+  text-align: center;
+}
+
+.soulspawn-star {
+  text-align: center;
+  text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #eef079, 0 0 40px #eef079,
+    0 0 50px #eef079, 0 0 60px #eef079, 0 0 70px #eef079;
+}
+
+@media only screen and (max-width: 950px) {
+  .soulspawn-container {
+    width: 90%;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  #soulspawn {
+  }
+  .soulspawn-header {
+    font-size: 14px;
+  }
+
+  .soulspawn-subheader {
+    font-size: 11px;
+  }
+}

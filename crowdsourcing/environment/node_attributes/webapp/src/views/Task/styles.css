@@ -1,0 +1,30 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+
+.task-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 20px;
+    overflow: scroll;
+}
+
+.attributequestion-container{
+    width:90%;
+    border-color: blue;
+    border-radius: 15px;
+    border-style: solid;
+    background-color: blue;
+    margin-bottom: 20px;
+}
+.attributequestion-header {
+    text-align: center;
+    font-weight: bold;
+    color:white;
+}

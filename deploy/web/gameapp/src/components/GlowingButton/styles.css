@@ -1,0 +1,37 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.glowingbutton {
+  color: white;
+  font-size: 1em;
+  background-color: gold;
+  width: 5em;
+  text-align: center;
+  padding: 0.5em;
+  border-radius: 15px;
+  border-style: double;
+  border-color: white;
+  box-shadow: 1px 1px 4px black;
+  cursor: pointer;
+}
+
+.glowingbutton:hover {
+  animation: pulse 1s infinite;
+}
+
+.glowingbutton:active {
+  animation: pulse 1s infinite;
+  box-shadow: 0px 0px 0px black;
+}
+
+.glowingbutton-text {
+}
+
+@media only screen and (max-width: 650px) {
+  .glowingbutton-text {
+    font-size: 12px;
+  }
+}

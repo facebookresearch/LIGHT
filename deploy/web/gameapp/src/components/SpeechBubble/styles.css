@@ -1,0 +1,79 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.speechbubble-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 40px;
+  height: 2em;
+  margin: 5px;
+}
+.speechbubble {
+  font-family: fantasy;
+  font-size: 12px;
+  color: black;
+  position: relative;
+  background: white;
+  padding: 5px 5px 0px 15px;
+  border-radius: 10px;
+  z-index: 10;
+  margin: 10px;
+  min-width: 60px;
+}
+
+.speechbubble-tail {
+  position: absolute;
+  content: "";
+  border: 20px solid transparent;
+  border-top-color: white;
+  border-bottom: 0;
+  left: 34%;
+  margin-left: -37%;
+  top: 20%;
+  z-index: -1;
+}
+
+.speechbubble :hover {
+  cursor: pointer;
+  color: gold;
+  font-weight: bolder;
+}
+.speechbubble-text {
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+@media only screen and (max-width: 600px) {
+  .speechbubble {
+    font-family: fantasy;
+    font-size: 8px;
+    color: black;
+
+    padding: 5px 5px 3px 10px;
+    border-radius: 10px;
+    z-index: 10;
+    margin: 10px;
+    min-width: 40px;
+  }
+  .speechbubble-tail {
+    border: 1.5em solid transparent;
+    border-top-color: white;
+    border-bottom: 0;
+    left: 34%;
+    margin-left: -38%;
+    top: 20%;
+    z-index: -1;
+  }
+  .speechbubble-text {
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+  }
+}

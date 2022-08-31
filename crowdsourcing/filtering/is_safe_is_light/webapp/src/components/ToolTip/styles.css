@@ -1,0 +1,41 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* INFO TOOL TIP STYLES */
+.info-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* TIP */
+.tip-container{
+    height: 100%;
+    width: 100%;
+    z-index: 100;
+    background-color: black;
+    border-radius: 15px;
+}
+.tip-text {
+    font-size: 16px;
+    color:white;
+    padding:10px;
+    margin:0;
+}
+
+.info-icon{
+    color: black;
+    font-size: 30px;
+    margin-left:6px;
+    margin-right:10px;
+}
+
+.info-icon:hover {
+    color: blue;
+    cursor: help;
+}

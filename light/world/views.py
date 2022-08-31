@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -58,11 +58,13 @@ class WorldViewer(object):
         """Return the text description of someone's numeric health"""
         # TODO get the correct values
         health = self.world.get_prop(id, "health")
+        if health < 0:
+            health = 0
         if health is None or health is False:
             health = 1
         if health > 8:
             health = 8
-        # Second argument indicates sentiment (can use for descriptions).    
+        # Second argument indicates sentiment (can use for descriptions).
         f = [
             ("pretty dead", -1),
             ("on the verge of death", -1),
@@ -72,7 +74,7 @@ class WorldViewer(object):
             ("good", 1),
             ("strong", 1),
             ("very strong", 1),
-            ("nigh on invincible", 1)
+            ("nigh on invincible", 1),
         ]
         return f[int(health)][0], f[int(health)][1]
 
@@ -110,7 +112,7 @@ class WorldViewer(object):
                 ent = prefix + " " + ent
         elif node.get_prop("room"):
             prefix = self.name_prefix(node, ent, use_the)
-            if prefix is not "":
+            if prefix != "":
                 ent = prefix + " " + ent
             else:
                 ent = "the " + ent
@@ -139,7 +141,7 @@ class WorldViewer(object):
             ent = world.get_prop(id, "player_name")
         elif world.has_prop(id, "agent") or world.has_prop(id, "object"):
             prefix = self.name_prefix_id(id, ent, use_the)
-            if prefix is not "" and not drop_prefix:
+            if prefix != "" and not drop_prefix:
                 # -- clean up data, TODO: shouldn't need this?
                 if ent.lower().startswith("a "):
                     ent = ent[2:]
@@ -151,7 +153,7 @@ class WorldViewer(object):
                 ent = prefix + " " + ent
         elif world.has_prop(id, "room"):
             prefix = self.name_prefix_id(id, ent, use_the)
-            if prefix is not "":
+            if prefix != "":
                 ent = prefix + " " + ent
             else:
                 ent = "the " + ent
@@ -349,7 +351,7 @@ class WorldViewer(object):
     def display_node_list(self, l, from_node=None):
         """Return the view for all the nodes in l as viewed from from_node"""
         desc_to_ent = {ent.get_view_from(from_node): ent for ent in l}
-        descs = [ent.get_view_from(from_node) for ent in l]
+        descs = [ent.get_prefix_view_from(from_node) for ent in l]
         return self.display_desc_list(descs, desc_to_ent)
 
     def node_contents(self, node):
@@ -358,7 +360,7 @@ class WorldViewer(object):
         if node.get_prop("surface_type") == "on":
             content_desc = self.display_node_list(node.get_contents())
             obj_desc = self.get_node_desc(node, use_the=True)
-            return "There's {} on {}".format(content_desc, obj_desc)
+            return "There's {} on {}.".format(content_desc, obj_desc)
         else:
             s = self.get_node_desc(node, use_the=True).capitalize() + " contains "
             content_desc = self.display_node_list(node.get_contents())
@@ -376,23 +378,25 @@ class WorldViewer(object):
             + ("Thine Commands:\n")
             + scroll_line
             + (
+                "quest/goal/mission\n"
+                "stats/status/health\n"
+                "inventory (i or inv, for short)\n"
                 'say/shout "<thing you want to say>; or use quotes only for short "\n'
                 'tell/whisper <agent> "<something>"\n'
                 "look (l, for short)\n"
                 'go <direction>, e.g. "go north", or "go n" or just "n" for short\n'
-                "inventory (i or inv, for short)\n"
-                "status/health\n"
                 "examine <thing> (ex, for short)\n"
                 "get/drop <object>\n"
                 "eat/drink <object>\n"
                 "wear/remove <object>\n"
                 "wield/unwield <object>\n"
-                "lock/unlock <object> with <object>\n"
+                "use <object> with <object>\n"
                 "follow <agent>\n"
                 "hit <agent>\n"
                 "put <object> in <container>\n"
                 "get <object> from <container>\n"
                 "give <object> to <agent>\n"
+                "point to <object>, e.g. good for trading\n"
                 "steal <object> from <agent>\n"
                 "emotes: laugh,cry,smile,ponder,blush,shrug,sigh,\n"
                 "        wink,yawn,wave,stare,scream,pout,nudge,nod,\n"

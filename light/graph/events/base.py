@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -26,24 +26,33 @@ from typing import (
 )
 import inspect
 import json
+from uuid import uuid4
 
 if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
     from light.world.world import World
 
 
-def proper_caps(func): 
-    '''Decorator that reports the execution time.'''
-  
-    def wrap(*args, **kwargs): 
-        result = func(*args, **kwargs) 
+def proper_caps(in_string: str) -> str:
+    """Function for only capitalizing the very first letter without disturbing the rest"""
+    # This implementation is O(n), so if string manipulation ends up being a long-term
+    # problem for LIGHT we'll need to swap to ctypes to get this right
+    return in_string[0].upper() + in_string[1:]
+
+
+def proper_caps_wrapper(func):
+    """Decorator to ensure output strings are properly capitalized (first letter)."""
+
+    def wrap(*args, **kwargs):
+        result = func(*args, **kwargs)
         if result is not None:
             try:
-                result = result[0].upper() + result[1:]
+                result = proper_caps(result)
             except:
                 print(f"Had difficulty with proper_caps on {result}")
-        return result 
-    return wrap 
+        return result
+
+    return wrap
 
 
 class ProcessedArguments(NamedTuple):
@@ -72,10 +81,13 @@ class GraphEvent(object):
         actor: GraphAgent,
         target_nodes: Optional[List[GraphNode]] = None,
         text_content: Optional[str] = None,
+        event_id: Optional[str] = None,
     ):
         """
         Construct an event to be executed by the given actor on given nodes
         """
+        if event_id is None:
+            event_id = str(uuid4())
         self.executed: bool = False  # type: ignore
         self.actor = actor
         self.room = actor.get_room()
@@ -88,6 +100,7 @@ class GraphEvent(object):
                 x.get_view_from(self.room) for x in self.target_nodes
             ]
         self.text_content = text_content
+        self.event_id = event_id
 
     def execute(self, world: "World") -> List["GraphEvent"]:
         """
@@ -142,7 +155,11 @@ class GraphEvent(object):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> Union["GraphEvent", "ErrorEvent"]:
         """
         Try to return an Event constructed from the given args, return
@@ -196,7 +213,12 @@ class GraphEvent(object):
         event = class_(*arglist)
         for k, v in attribute_dict.items():
             event.__dict__[k] = v
+        event.post_json_load(world)
         return event
+
+    def post_json_load(self, world: "World") -> None:
+        """Rectify any state following a load from json."""
+        pass
 
     def to_json(self, viewer: GraphAgent = None, indent: int = None) -> str:
         """
@@ -233,6 +255,7 @@ class GraphEvent(object):
         return {
             "text": self.view_as(viewer),
             "caller": self.__class__.__name__,
+            "event_id": self.event_id,
             "target_nodes": [node_to_json(x) for x in self.target_nodes],
             "additional_text": self.text_content,
             "present_agent_ids": present_dict,
@@ -282,7 +305,7 @@ class ErrorEvent(GraphEvent):
         """
         raise Exception("ErrorEvents should never be executed")
 
-    @proper_caps
+    @proper_caps_wrapper
     def view_as(self, actor):
         """ErrorEvents should be viewed by the actor who tried to act"""
         assert actor == self.actor, (
@@ -340,7 +363,11 @@ class TriggeredEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> GraphEvent:
         """Triggered events are never parsed, and shouldn't call this"""
         raise Exception("Triggered events are never parsed")
@@ -367,7 +394,11 @@ class NoArgumentEvent(GraphEvent):
 
     @classmethod
     def construct_from_args(
-        cls, actor: GraphAgent, targets: List["GraphNode"], text: Optional[str] = None
+        cls,
+        actor: GraphAgent,
+        targets: List["GraphNode"],
+        text: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> GraphEvent:
         """No argument events can always be constructed from just the actor"""
         return cls(actor)

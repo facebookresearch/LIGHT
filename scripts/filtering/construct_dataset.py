@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -28,9 +28,9 @@ import time
 
 def convert_event_log_dirs(event_log_dir, dataset_dir):
     """
-        Given a directory which may contain log files, search for all the
-        log files inside this directory and extract the episodes from each
-        of them using convert_event_log
+    Given a directory which may contain log files, search for all the
+    log files inside this directory and extract the episodes from each
+    of them using convert_event_log
     """
     for subdir, _, files in os.walk(event_log_dir):
         for filename in files:
@@ -42,10 +42,12 @@ def convert_event_log_dirs(event_log_dir, dataset_dir):
 
 def convert_event_log(event_file, dataset_dir):
     """
-        Given a log file and a dataset directory to write to, extract the
-        training episodes from the log and write them to the dataset.
+    Given a log file and a dataset directory to write to, extract the
+    training episodes from the log and write them to the dataset.
     """
-    uuid_to_world, event_buffer = load_event_log(event_file,)
+    uuid_to_world, event_buffer = load_event_log(
+        event_file,
+    )
     # TODO: Have a better way to say if log is agent or room POV (?)
     agent_pov = "agent" in os.path.abspath(os.path.dirname(event_file))
     try:
@@ -61,7 +63,7 @@ def convert_event_log(event_file, dataset_dir):
 
 def write_episodes_to_dir(episodes, dataset_dir, indent=4):
     """
-        Given episodes and a directory for a dataset, write the episodes to the dataset
+    Given episodes and a directory for a dataset, write the episodes to the dataset
     """
     if not os.path.exists(dataset_dir):
         os.mkdir(dataset_dir)

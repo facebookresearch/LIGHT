@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
@@ -42,17 +42,22 @@ DEFAULT_PERSONA = "I am a player in the LIGHT world."
 
 def extract_episodes(uuid_to_world, event_buffer, agent_pov=True):
     """
-        Given the uuid to world json, and a buffer of events which occured in the logs,
-        1. Delimit the training episodes
-        2. Gather the metadata for training episodes
-        3. Parse the episode from the data
-        4. Return the episodes!
+    Given the uuid to world json, and a buffer of events which occured in the logs,
+    1. Delimit the training episodes
+    2. Gather the metadata for training episodes
+    3. Parse the episode from the data
+    4. Return the episodes!
     """
     episodes = []
     curr_episode = None
     if agent_pov:
         for i in range(len(event_buffer)):
-            uuid, _, _, event, = event_buffer[i]
+            (
+                uuid,
+                _,
+                _,
+                event,
+            ) = event_buffer[i]
             world = uuid_to_world[uuid]
             if curr_episode is None:
                 curr_episode = initialize_episode(event)
@@ -70,7 +75,12 @@ def extract_episodes(uuid_to_world, event_buffer, agent_pov=True):
     else:
         # Triggered by soul spawn event or arrive event!
         for i in range(len(event_buffer)):
-            _, _, _, event, = event_buffer[i]
+            (
+                _,
+                _,
+                _,
+                event,
+            ) = event_buffer[i]
             # Get the human entered on this event, record episode until leave or die.
             if should_start_episode(event):
                 # Should start with SoulSpawnEvent/ArriveEvent from agent POV
@@ -84,20 +94,25 @@ def extract_episodes(uuid_to_world, event_buffer, agent_pov=True):
 
 def should_start_episode(event):
     """
-        Returns true if the event signals the start of a new conversation
-        1. There is not an episode currently in place
-        2. The event starts a conversation (so is a speech event)
-        3. More than one agent in the room
+    Returns true if the event signals the start of a new conversation
+    1. There is not an episode currently in place
+    2. The event starts a conversation (so is a speech event)
+    3. More than one agent in the room
     """
     return type(event) in START_EVENTS and event.actor.is_player
 
 
 def record_episode(uuid_to_world, curr_episode, event_buffer, i):
     """
-        Records an episode from the POV of an agent in a room
+    Records an episode from the POV of an agent in a room
     """
     while i < len(event_buffer):
-        uuid, _, _, event, = event_buffer[i]
+        (
+            uuid,
+            _,
+            _,
+            event,
+        ) = event_buffer[i]
         world = uuid_to_world[uuid]
         if i == 0:
             add_event_trigger(curr_episode, world, event)
@@ -112,8 +127,8 @@ def record_episode(uuid_to_world, curr_episode, event_buffer, i):
 
 def add_event_trigger(curr_episode, world, event, prev_type=None):
     """
-        Determines if the event should be added with triggered or not, then
-         adds it to the utterances for the episode
+    Determines if the event should be added with triggered or not, then
+     adds it to the utterances for the episode
     """
     if type(event) == LookEvent:
         triggered = prev_type == ArriveEvent or prev_type == SoulSpawnEvent
@@ -127,18 +142,18 @@ def add_event_trigger(curr_episode, world, event, prev_type=None):
 
 def should_end_episode(episode, event):
     """
-        Returns true if the event signals the end of a new conversation
-        1. DeathEvent
-        2. Leave Event (if agents continue talking, just make it a new convo
+    Returns true if the event signals the end of a new conversation
+    1. DeathEvent
+    2. Leave Event (if agents continue talking, just make it a new convo
     """
     return type(event) in END_EVENTS and event.actor.node_id == episode.actor.node_id
 
 
 def initialize_episode(event):
     """
-        Given an event which should_start_episode, initialize the episode class
-        with the room name, description, and present agents and objects and their
-        descriptions
+    Given an event which should_start_episode, initialize the episode class
+    with the room name, description, and present agents and objects and their
+    descriptions
     """
     settings = {event.room.name: event.room.desc}
     contained = event.room.get_contents()
@@ -157,11 +172,11 @@ def initialize_episode(event):
 
 class Episode:
     """
-        This class models the necessary information for a training episode.  Training
-        episodes consist of:
-            1. Metadata about the episode setting (room, name, description, etc)
-            2. Utterances: Id of who is saying/acting, text/action, and target
-            3. Present player id's (perhaps(?)) - may come in use for banning
+    This class models the necessary information for a training episode.  Training
+    episodes consist of:
+        1. Metadata about the episode setting (room, name, description, etc)
+        2. Utterances: Id of who is saying/acting, text/action, and target
+        3. Present player id's (perhaps(?)) - may come in use for banning
     """
 
     def __init__(self, settings, agents, objects, actor):
@@ -177,8 +192,8 @@ class Episode:
 
     def add_utterance(self, world, event, triggered=False):
         """
-            Converts the event to an utterance then appends it to the utterance
-            buffer
+        Converts the event to an utterance then appends it to the utterance
+        buffer
         """
         # TODO: Decide if there are other skippable events which should not be
         # part of an episode
@@ -210,12 +225,12 @@ class Episode:
 
 class Utterance:
     """
-        An utterance is a class which is a single "turn"/timestep in a conversation
-        Utterances include:
-        1. The name of the actor
-        2. What was said (the text of the action)
-        3. What action (if any) was performed
-        4. The recipient of the action
+    An utterance is a class which is a single "turn"/timestep in a conversation
+    Utterances include:
+    1. The name of the actor
+    2. What was said (the text of the action)
+    3. What action (if any) was performed
+    4. The recipient of the action
     """
 
     def __init__(self, actor_id, text, action, target_ids, triggered):
@@ -228,15 +243,15 @@ class Utterance:
     @staticmethod
     def convert_to_utterance(event, main_agent, certain_triggered=False):
         """
-            This method is responsible for converting an event to an utterance from the
-            episode's POV.
+        This method is responsible for converting an event to an utterance from the
+        episode's POV.
 
-            Special cases:
+        Special cases:
 
-                - If there are no target nodes, then we pass None, and if there are
-                multiple we record them all
+            - If there are no target nodes, then we pass None, and if there are
+            multiple we record them all
 
-                - If it is a speech event, do not record the action form.
+            - If it is a speech event, do not record the action form.
 
         """
         target_ids = (

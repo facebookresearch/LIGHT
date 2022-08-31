@@ -1,0 +1,53 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.leveldisplay-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-around;
+  align-items: center;
+  padding-top: 12px;
+  margin-left: 10px;
+}
+.level-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 3em;
+  width: 3em;
+}
+
+.gift-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 3em;
+  width: 3em;
+}
+
+@media only screen and (max-width: 900px) {
+}
+
+@media only screen and (max-width: 600px) {
+  .level-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3em;
+    width: 3em;
+    margin-left: 20px;
+  }
+
+  .gift-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3em;
+    width: 3em;
+    margin-left: 40px;
+  }
+}

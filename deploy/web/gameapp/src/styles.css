@@ -1,15 +1,14 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 .App {
-  display: grid;
-  grid-template-columns: 400px 1fr;
-  height: 100vh;
-  margin: 0 auto;
-  padding: 0px 0;
-  align-items: stretch;
-  justify-content: center;
-  max-width: 1440px;
-  font-size: 18px;
-  box-sizing: border-box;
-  overflow: auto;
+}
+
+#helpmode {
+  cursor: help;
 }
 
 body.dark-mode {
@@ -18,10 +17,7 @@ body.dark-mode {
 
 body {
   background-color: #d4cab8;
-}
-
-.App.no-sidebar {
-  grid-template-columns: 1fr;
+  overflow-y: hidden;
 }
 
 .app-controls {
@@ -33,28 +29,28 @@ body {
 a {
   color: #165cb9;
 }
+p {
+  margin: 0;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 1px #fff, 0 0 2px #fff, 0 0 3px #85e3fa, 0 0 4px #85e3fa,
+      0 0 5px #85e3fa, 0 0 6px #85e3fa, 0 0 7px #85e3fa;
+  }
+  to {
+    box-shadow: 0 0 10px #fff, 0 0 11px #fff, 0 0 12px #85e3fa, 0 0 13px #85e3fa,
+      0 0 14px #85e3fa, 0 0 15px #85e3fa, 0 0 16px #85e3fa;
+  }
+}
 
 @media only screen and (max-width: 900px) {
-  div.App {
-    grid-template-columns: 1fr;
-    grid-template-rows: min-content 1fr;
-  }
-
-  .chat-wrapper {
-    grid-row-start: 2;
-  }
-
-  div.sidebar {
-    margin: 0px;
-  }
-
   div.leaflet-container {
     border: none;
     border-radius: 0px;
   }
 
   .app-controls {
-    margin-bottom: -20px;
     background-color: rgb(255, 255, 235);
   }
 }
@@ -62,49 +58,6 @@ a {
 .leaflet-container {
   border-radius: 10px;
   border: 1px solid black;
-}
-
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-}
-
-.game-state {
-  flex: 1;
-  overflow: auto;
-  margin: 20px 0 40px;
-}
-
-.chat-wrapper {
-  display: flex;
-  flex-direction: column;
-  animation: popInApp 0.3s 0.3s cubic-bezier(0.5, 0, 0, 1);
-  animation-fill-mode: forwards;
-  overflow-y: auto;
-  opacity: 0;
-  min-height: 500px;
-}
-
-.chat {
-  flex: 1;
-  border: 1px solid rgb(184, 184, 184);
-  background-color: rgb(228, 226, 221);
-  margin: 30px 20px 0px;
-  overflow-y: auto;
-  border-radius: 10px 10px 0px 0px;
-  padding: 10px;
-  position: relative;
-
-  /* box-shadow: 0px 10px 10px rgba(250, 199, 169, 0.5); */
-}
-
-.sidebar {
-  margin: 30px 0px 0px 0px;
-  padding: 0 10px;
-  animation: popInApp 0.3s cubic-bezier(0.5, 0, 0, 1);
-  animation-fill-mode: forwards;
-  opacity: 0;
 }
 
 .message.type-setting {
@@ -121,6 +74,7 @@ a {
   text-align: left;
   display: block;
   white-space: pre-wrap;
+  width: 100%;
 }
 
 .floatFix {
@@ -166,22 +120,6 @@ a {
   font-style: italic;
 }
 
-.message .agent {
-  font-size: 13px;
-  top: 0;
-  left: 0;
-  margin: -19px -10px 5px -10px;
-  color: #666;
-  font-style: italic;
-}
-
-.message .agent span {
-  background-color: rgba(0, 0, 0, 0.07);
-  padding: 1px 5px;
-  border-top-left-radius: 7px;
-  margin-right: 7px;
-}
-
 .message {
   padding: 20px 10px 10px;
   clear: both;
@@ -190,54 +128,14 @@ a {
   border-radius: 7px;
   text-align: center;
   position: relative;
-  /* font-size: 16px; */
 }
 
-.controls {
-  /* justify-self: flex-end; */
-  min-height: 100px;
-  background-color: rgb(255, 255, 255);
-  width: auto;
-  margin: 0px 20px 40px;
-  box-sizing: border-box;
-  box-shadow: 0px 10px 10px rgba(109, 90, 48, 0.2);
-  border-radius: 0px 0px 10px 10px;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid rgb(184, 184, 184);
-  border-top: none;
-  overflow: hidden;
-}
-
-.controls input {
-  border: none;
-  padding: 10px;
-  font-size: 18px;
-  background-color: white;
-  border: 3px solid #dedede;
-  flex: 1;
-  font-family: Lora, serif;
-}
-
-input::placeholder {
-  font-style: italic;
-  color: #aaa;
-}
-
-input.chatbox:active,
-input.chatbox:focus {
-  border: 3px solid #e49475;
-  outline: none;
-  font-style: normal;
-}
-
-input.edit-message {
+.input.edit-message {
   font: inherit;
   width: 100%;
   padding: 3px;
   box-sizing: border-box;
 }
-
 .controls span.action {
   margin: 5px 3px;
   padding: 5px;
@@ -247,13 +145,6 @@ input.edit-message {
   border-radius: 5px;
   border: 1px solid #eaeaea;
   color: #777;
-}
-
-.controls .actions {
-  padding: 10px 10px 10px;
-  font-size: 14px;
-  background-color: rgb(228, 226, 221);
-  flex: 1;
 }
 
 span.action:first-child {
@@ -302,13 +193,10 @@ i.fa {
 .header {
   font-size: 15px;
   display: flex;
-  align-items: center;
-  color: #555;
 }
 .header h1 {
   margin: 0;
   padding: 0;
-  color: #333;
 }
 .header img {
   border-radius: 5px;
@@ -317,25 +205,15 @@ i.fa {
 }
 
 .persona {
-  font-size: 16px;
-  margin: 95px 0 0 0px;
+  margin: 60px 10px 0px 0px;
   background-color: lightgoldenrodyellow;
-  padding: 30px 25px 25px;
-  border-radius: 10px;
+
+  border-radius: 25px;
+  box-shadow: 5px 2px 5px;
   position: relative;
-  line-height: 1.35em;
-}
-
-.persona h3,
-.location h3 {
-  text-align: center;
-  margin: 5px 0 10px;
-}
-
-.location p {
-  margin: 8px 0 0;
-  font-size: 15px;
-  line-height: 1.4em;
+  box-shadow: 5px 2px 5px;
+  width: 94%;
+  padding: 0px 10px 5px 10px;
 }
 
 .persona .icon {
@@ -343,26 +221,24 @@ i.fa {
   left: 50%;
   top: 0%;
   transform: translate(-50%, -75%);
-  font-size: 72px;
+  font-size: 50px;
   background-color: #fdf1b3;
   border-radius: 72px;
-  height: 90px;
-  width: 90px;
+  height: 60px;
+  width: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
   border: 5px solid gold;
 }
 
-.location {
-  padding: 15px 25px 25px;
-  font-size: 16px;
-  line-height: 1.35em;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  background-color: lightcyan;
-  border-radius: 10px;
-  position: relative;
+.char-icon {
+  padding-top: 10%;
+}
+.persona-text {
+  margin: 0px;
+  text-align: center;
+  margin-bottom: 4px;
 }
 
 .overlay {
@@ -401,4 +277,35 @@ body .fadeShow {
 
 .data-model-deep-link {
   color: black;
+}
+
+.header-text {
+  font-size: 80px;
+  text-align: center;
+  color: #fff;
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #eef079, 0 0 20px #eef079,
+      0 0 25px #eef079, 0 0 30px #eef079, 0 0 35px #eef079;
+  }
+  to {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #eef079,
+      0 0 40px #eef079, 0 0 50px #eef079, 0 0 60px #eef079, 0 0 70px #eef079;
+  }
+}
+
+.header-text2 {
+  font-size: 80px;
+  text-align: center;
+  color: #fff;
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+@media only screen and (max-width: 1224px) {
+}
+
+@media only screen and (max-width: 870px) {
 }

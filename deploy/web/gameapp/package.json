@@ -5,25 +5,41 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
+    "@reduxjs/toolkit": "^1.6.1",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.7.9",
+    "@types/react": "^17.0.19",
+    "@types/react-dom": "^17.0.9",
+    "@types/react-redux": "^7.1.18",
+    "@types/react-router-dom": "^5.1.8",
+    "axios": "^0.21.1",
     "classnames": "^2.2.6",
     "emoji-mart": "^2.11.1",
     "eslint-plugin-react-hooks": "^1.6.1",
     "leaflet": "1.4.0",
     "react": "16.8.3",
     "react-dom": "16.8.3",
+    "react-icons": "^4.2.0",
     "react-leaflet": "2.2.1",
     "react-onclickoutside": "^6.8.0",
+    "react-redux": "^7.2.4",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "2.1.8",
-    "react-tippy": "^1.2.3"
+    "react-tippy": "^1.2.3",
+    "typescript": "^4.4.2",
+    "web-vitals": "^1.1.2"
   },
   "devDependencies": {
-    "typescript": "3.3.3"
+    "typescript": "^3.3.3"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "cp ../config.js ./src/config.js && react-scripts build",
-    "postbuild": "(cp -r ./build/* ../build && rm -R ./build && rm ./src/config.js)",
-    "test": "cp ../config.js ./src/config.js && react-scripts test --env=jsdom",
+    "build": "react-scripts build",
+    "postbuild": "mv ./build/index.html ./build/game.html && cp -r ./build/* ../build && rm -R ./build",
+    "test": "cp ../config/local/config.js ./src/config.js && react-scripts test --env=jsdom",
     "posttest": "rm ./src/config.js",
     "eject": "react-scripts eject"
   },

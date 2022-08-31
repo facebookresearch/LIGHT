@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from light.graph.events.base import GraphEvent
@@ -19,9 +19,9 @@ the point of view (and logs) of either an agent or a room.
 
 def load_event_log(event_file):
     """
-        Given a log file, this method reconstructs the graph jsons and event jsons
-        associated with said log. To replay, all that is required is using event
-        execute methods
+    Given a log file, this method reconstructs the graph jsons and event jsons
+    associated with said log. To replay, all that is required is using event
+    execute methods
     """
     graph_dir = os.path.join(
         os.path.abspath(os.path.dirname(event_file)), "../../light_graph_dumps"
@@ -46,13 +46,13 @@ def load_event_log(event_file):
 
 def get_world(uuid, graph_dir):
     """
-        Given a directory containing graph dumps and a graph uuid, reconstruct a world
-        from the serialized graph
+    Given a directory containing graph dumps and a graph uuid, reconstruct a world
+    from the serialized graph
     """
     graph_file = os.path.join(graph_dir, f"{uuid}.json")
     with open(graph_file, "r") as graph_json_file:
         graph = OOGraph.from_json(graph_json_file.read())
-    world = World(None, None, False)
+    world = World({}, None, False)
     world.oo_graph = graph
     return world
 
@@ -61,7 +61,9 @@ def main():
     parser = argparse.ArgumentParser(description="Args for the event to reconstruct")
     parser.add_argument("--event-log", type=str, help="The event log to reconstruct")
     FLAGS, _unknown = parser.parse_known_args()
-    uuid_to_world, event_buffer = load_event_log(FLAGS.event_log,)
+    uuid_to_world, event_buffer = load_event_log(
+        FLAGS.event_log,
+    )
     # TODO:  Process these in future - for now just display
     print(uuid_to_world)
     print(event_buffer)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.abs
 
@@ -23,8 +23,8 @@ DEFAULT_LOG_PATH = "".join([os.path.abspath(os.path.dirname(__file__)), "/../../
 
 class InteractionLogger(abc.ABC):
     """
-        Base object for interaction loggers.  Takes a reference to the graph and
-        location to write data, as well as defines some methods for interfacing
+    Base object for interaction loggers.  Takes a reference to the graph and
+    location to write data, as well as defines some methods for interfacing
     """
 
     def __init__(self, graph, data_path):
@@ -40,36 +40,36 @@ class InteractionLogger(abc.ABC):
 
     def _begin_meta_episode(self):
         """
-            Handles any preprocessing associated with beginning a meta episode such as
-            clearing buffers and recording initial state
+        Handles any preprocessing associated with beginning a meta episode such as
+        clearing buffers and recording initial state
         """
         raise NotImplementedError
 
     def _end_meta_episode(self):
         """
-            Handles any postprocessing associated with the end of a meta episode
-            such as flushing buffers by writing to data location, and updating variables
+        Handles any postprocessing associated with the end of a meta episode
+        such as flushing buffers by writing to data location, and updating variables
         """
         self._log_interactions()
         raise NotImplementedError
 
     def _log_interactions(self):
         """
-            Writes out the buffers to the location specified by data location,
-            handling any data specific formatting
+        Writes out the buffers to the location specified by data location,
+        handling any data specific formatting
         """
         raise NotImplementedError
 
     def observe_event(self, event):
         """
-            Examine event passed in, deciding how to save it to the logs
+        Examine event passed in, deciding how to save it to the logs
         """
         raise NotImplementedError
 
     def _dump_graphs(self):
         """
-            This method is responsible for dumping the graphs of the event logger
-            to file, recording the identifiers used for the graphs
+        This method is responsible for dumping the graphs of the event logger
+        to file, recording the identifiers used for the graphs
         """
         # First, check graph path, then write the graph dump
         if not os.path.exists(self.data_path):
@@ -90,14 +90,14 @@ class InteractionLogger(abc.ABC):
 
     def _dump_events(self, graph_states, pov, id_):
         """
-            This method is responsible for dumping the event logs, referencing the
-            graph files recorded in graph_states.  An event log consist of events, where
-            an event consist of 3 lines:
-                serialized_graph_filename event_hash
-                timestamp
-                event_json
-            Event logs are named: {id}_{unique_identifier}.log
-            and are stored in the `pov/` directory
+        This method is responsible for dumping the event logs, referencing the
+        graph files recorded in graph_states.  An event log consist of events, where
+        an event consist of 3 lines:
+            serialized_graph_filename event_hash
+            timestamp
+            event_json
+        Event logs are named: {id}_{unique_identifier}.log
+        and are stored in the `pov/` directory
 
         """
         # Now, do the same for events, dumping in the light_event_dumps/rooms
@@ -122,20 +122,20 @@ class InteractionLogger(abc.ABC):
 
 class AgentInteractionLogger(InteractionLogger):
     """
-        This interaction logger attaches to human agents in the graph, logging all
-        events the human observes.  This logger also requires serializing more rooms,
-        since agent encounters many rooms along its traversal  These events go into
-        the conversation buffer, which is then sent to `.log` files
-        at the specified path
+    This interaction logger attaches to human agents in the graph, logging all
+    events the human observes.  This logger also requires serializing more rooms,
+    since agent encounters many rooms along its traversal  These events go into
+    the conversation buffer, which is then sent to `.log` files
+    at the specified path
 
-        context_buffers serve an important role in this class to avoid bloating the
-        event logs. Context_buffers will log a fixed number of the most recent events
-        when:
+    context_buffers serve an important role in this class to avoid bloating the
+    event logs. Context_buffers will log a fixed number of the most recent events
+    when:
 
-        1. The player goes afk.  This has the potential to avoid logging lots of noise
-            in the room that does not provide any signal on human player interactions.
-            When the player comes back to the game, our loggers send some context of
-            the most recent events to the log
+    1. The player goes afk.  This has the potential to avoid logging lots of noise
+        in the room that does not provide any signal on human player interactions.
+        When the player comes back to the game, our loggers send some context of
+        the most recent events to the log
     """
 
     def __init__(
@@ -175,8 +175,7 @@ class AgentInteractionLogger(InteractionLogger):
         self.event_buffer.clear()
 
     def _add_current_graph_state(self):
-        """Make a copy of the graph state so we can replay events on top of it
-        """
+        """Make a copy of the graph state so we can replay events on top of it"""
         try:
             self.state_history.append(
                 self.graph.to_json_rv(self.agent.get_room().node_id)
@@ -250,24 +249,24 @@ class AgentInteractionLogger(InteractionLogger):
 
 class RoomInteractionLogger(InteractionLogger):
     """
-        This interaction logger attaches to a room level node in the graph, logging all
-        events which take place with human agents in the room as long as a player is
-        still in the room.  These events go into the conversation buffer, which is
-        then sent to `.log` files at the specified path
+    This interaction logger attaches to a room level node in the graph, logging all
+    events which take place with human agents in the room as long as a player is
+    still in the room.  These events go into the conversation buffer, which is
+    then sent to `.log` files at the specified path
 
 
-        context_buffers serve an important role in this class to avoid bloating the
-        event logs. context_buffers will log a fixed number of the most recent events
-        when:
+    context_buffers serve an important role in this class to avoid bloating the
+    event logs. context_buffers will log a fixed number of the most recent events
+    when:
 
-        1. There are no players in the room. This is a potential use case when an agent
-            enters a conversation between 2 or more models, and we want some context for
-            training purposes
+    1. There are no players in the room. This is a potential use case when an agent
+        enters a conversation between 2 or more models, and we want some context for
+        training purposes
 
-        2. All players go afk.  This has the potential to avoid logging lots of noise
-            in the room that does not provide any signal on human player interactions.
-            When players come back to the game, our loggers send context of the most
-            recent events to the log
+    2. All players go afk.  This has the potential to avoid logging lots of noise
+        in the room that does not provide any signal on human player interactions.
+        When players come back to the game, our loggers send context of the most
+        recent events to the log
     """
 
     def __init__(
@@ -297,7 +296,6 @@ class RoomInteractionLogger(InteractionLogger):
         for node_id in self.graph.all_nodes[self.room_id].contained_nodes:
             if self.graph.all_nodes[node_id].agent and (
                 self.graph.all_nodes[node_id].is_player
-                or self.graph.all_nodes[node_id]._human
             ):
                 self._add_player()
 
@@ -314,8 +312,7 @@ class RoomInteractionLogger(InteractionLogger):
         self.context_buffer.clear()
 
     def _add_current_graph_state(self):
-        """Make a copy of the graph state so we can replay events on top of it
-        """
+        """Make a copy of the graph state so we can replay events on top of it"""
         try:
             self.state_history.append(self.graph.to_json_rv(self.room_id))
         except Exception as e:
@@ -344,12 +341,16 @@ class RoomInteractionLogger(InteractionLogger):
 
     def _add_player(self):
         """ Record that a player entered the room, updating variables as needed"""
+        if not self.is_active:
+            return
         if not self._is_logging():
             self._begin_meta_episode()
         self.num_players_present += 1
 
     def _remove_player(self):
         """ Record that a player left the room, updating variables as needed"""
+        if not self.is_active:
+            return
         self.num_players_present -= 1
         assert self.num_players_present >= 0
         if not self._is_logging():
@@ -404,7 +405,6 @@ class RoomInteractionLogger(InteractionLogger):
 
     def human_controlled(self, event):
         """
-            Determines if an event is controlled by a human or not -
-            need ._human for legacy (web)
+        Determines if an event is controlled by a human or not
         """
-        return event.actor.is_player or event.actor._human
+        return event.actor.is_player

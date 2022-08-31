@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -78,12 +78,14 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
 
     def __init__(self, ldb, debug=True, opt=None):
         """Initializes required models and parameters for this graph builder"""
-        if opt is None:
+        if True:  # opt is None:
             parser = ParlaiParser(
                 True, True, "Arguments for building a LIGHT world with Starspace"
             )
             self.add_parser_arguments(parser)
-            opt, _unknown = parser.parse_and_process_known_args()
+            base_opt, _unknown = parser.parse_and_process_known_args()
+            base_opt.update(opt)
+            opt = base_opt
 
         self.parlai_datapath = opt["datapath"]
         self.db_path = os.path.join(opt["datapath"], "light", "database3.db")
@@ -145,8 +147,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         )
         parser.add_argument(
             "--light-db-file",
-            type=str,
-            #default="/checkpoint/light/data/database3.db",
+            type=str,  # default="/checkpoint/light/data/database3.db",
             default="/checkpoint/light/data/merged.db",
             help="specific path for light database",
         )
@@ -227,11 +228,13 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         }
         if obj.is_surface > 0.5:
             props["container"] = True
+            props["size"] = 4
             props["contain_size"] = 3
             props["surface_type"] = "on"
             use_classes.append("container")
         if obj.is_container > 0.5:
             props["container"] = True
+            props["size"] = 4
             props["contain_size"] = 3
             props["surface_type"] = "on"
             use_classes.append("container")
@@ -364,7 +367,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         agent_node = g.add_agent(
             use_desc, self._props_from_char(char), db_id=char.db_id
         )
-        # added as a NPC Nothing needs to be done as agent is added as x._human = False
+        # added as a NPC
         agent_node.move_to(room_node)
         objs = {}
         if self.suggestion_type != "model":
@@ -431,6 +434,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         self.grid = {}
         self.banned_rooms = set()
 
+        print(self.get_usable_rooms())
         r = self.get_random_room()
         loc = (3, 3, 0)
         r.loc = loc
@@ -619,7 +623,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
 
     ##########For best match model###################
     def get_similar_element(self, txt_feats, element_type):
-        """ Given a text feature, and the corresponding Database type
+        """Given a text feature, and the corresponding Database type
         return an DBElement of the DB type"""
         agent_type = None
         banned_items = {}
@@ -708,7 +712,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
 
         # Create base rooms
         self.roomid_to_db = {}
-        for pos_room in self.grid.values():
+        for grid_loc, pos_room in self.grid.items():
             if pos_room.setting == "EMPTY":
                 continue
             pos_room.g_id = g.add_room(
@@ -722,6 +726,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                     "name_prefix": "the",
                     "surface_type": "in",
                     "classes": {"room"},
+                    "grid_location": grid_loc,
                 },
                 db_id=pos_room.db_id,
             ).node_id
@@ -904,7 +909,6 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         results = []
         while len(results) < num_results:
             key = response["text_candidates"][ind]
-
             if "wench" in key:
                 ind = ind + 1
                 continue
@@ -954,9 +958,9 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         num_results=5,
         banned_items=[],
     ):
-        """ Given a text description of a non-graph element and a type of
+        """Given a text description of a non-graph element and a type of
         relationship to query, find closest match in database
-        and return model suggestions """
+        and return model suggestions"""
         # TODO: context based query
         element_rel_dict = {
             CONTAINING: [DB_TYPE_OBJ, DB_TYPE_ROOM, DB_TYPE_CHAR],

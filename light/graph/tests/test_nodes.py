@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.abs
 
@@ -371,7 +371,7 @@ class TestNodeNetwork(unittest.TestCase):
             self.assertEqual(
                 object_node.get_contain_size(), GraphObject.DEFAULT_CONTAINER_SIZE
             )
-            self.assertEqual(object_node.size, GraphObject.DEFAULT_SIZE)
+            self.assertEqual(object_node.size, GraphObject.DEFAULT_CONTAINER_SIZE)
 
     def test_corect_character_init(self):
         """Ensure GraphAgent inits properly"""

@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Dict
 import asyncio
+from concurrent.futures import CancelledError
 import time
 
 if TYPE_CHECKING:
@@ -46,15 +47,24 @@ class Soul(ABC):
             try:
                 await _observe_future
                 del self._observe_futures[future_id]
+            except CancelledError:
+                return
             except Exception as e:
-                print(f"Error when running observe for soul {self}: {repr(e)}")
                 import traceback
+
                 traceback.print_exc()
 
-        loop = asyncio.get_running_loop()
-        self._observe_futures[future_id] = asyncio.ensure_future(
-            _await_observe_then_cleanup(), loop=loop
-        )
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = None
+        if loop is not None:
+            self._observe_futures[future_id] = asyncio.ensure_future(
+                _await_observe_then_cleanup(), loop=loop
+            )
+        else:
+            loop = asyncio.new_event_loop()
+            loop.run_until_complete(_observe_future)
 
     @abstractmethod
     async def observe_event(self, event: "GraphEvent"):

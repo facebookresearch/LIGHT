@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -15,6 +15,7 @@ from parlai.core.params import ParlaiParser
 from light.data_model.conversation_checkpoint_parser import ConversationCheckpointParser
 from light.data_model.environment_checkpoint_parser import EnvironmentCheckpointParser
 from light.graph.utils import get_article
+from light.data_model.onboarding_flags import OnboardingFlags
 import sys
 import parlai.utils.misc as parlai_utils
 import json
@@ -143,7 +144,7 @@ class LIGHTDatabase:
         opt = argparser.parse_and_process_known_args()[0]
 
         # Path to the database
-        self.dbpath = dbpath
+        self.dbpath = os.path.expanduser(dbpath)
         conn = sqlite3.connect(self.dbpath)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = 1")
@@ -276,6 +277,8 @@ class LIGHTDatabase:
             self.init_user_tables()
             self.init_game_tables()
             self.create_triggers()
+            self.check_custom_tags_objects_tables()
+            self.check_user_onboarding_tags()
 
         # Dictionaries to convert between previous pickle IDs and current
         # database IDs
@@ -297,12 +300,12 @@ class LIGHTDatabase:
         self.read_only = True
 
         try:
-            possible_cache_path = self.dbpath + '.json'
+            possible_cache_path = self.dbpath + ".json"
             if os.path.exists(possible_cache_path):
                 cache_date = os.path.getmtime(possible_cache_path)
                 database_date = os.path.getmtime(self.dbpath)
                 if cache_date > database_date:
-                    with open(possible_cache_path, 'r') as json_cache:
+                    with open(possible_cache_path, "r") as json_cache:
                         self.cache = json.load(json_cache)
                         for key in self.cache.keys():
                             for str_id in self.cache[key].ids():
@@ -337,7 +340,7 @@ class LIGHTDatabase:
             else:
                 self.cache[key] = {int(row["id"]): dict(row) for row in results}
 
-        with open(possible_cache_path, 'w') as json_cache:
+        with open(possible_cache_path, "w") as json_cache:
             json.dump(self.cache, json_cache)
 
     def __enter__(self):
@@ -392,7 +395,7 @@ class LIGHTDatabase:
         table_name_fts = self.table_dict[type] + "_fts"
         # if input is empty, return all entries of the specified type through
         # the "else" block
-        
+
         try:
             self.c.execute(
                 """
@@ -424,8 +427,8 @@ class LIGHTDatabase:
                 (input,),
             )
             fts_results = self.c.fetchall()
-            already_present = set(r['id'] for r in results)
-            results += [r for r in fts_results if r['id'] not in already_present]
+            already_present = set(r["id"] for r in results)
+            results += [r for r in fts_results if r["id"] not in already_present]
 
         return results
 
@@ -439,7 +442,7 @@ class LIGHTDatabase:
             if use_id in self.cache["id"]:
                 found_id = self.cache["id"][use_id]
                 if expand:
-                    return [self.cache[found_id['type'] + 's'][use_id]]
+                    return [self.cache[found_id["type"] + "s"][use_id]]
                 return [found_id]
         if self.use_cache and type is not None:
             return [row for row in self.cache["id"].values() if row["type"] == type]
@@ -610,6 +613,10 @@ class LIGHTDatabase:
             physical_description text NOT NULL,
             name_prefix text NOT NULL,
             is_plural float NOT NULL,
+            size integer,
+            contain_size integer,
+            shape text,
+            value integer,
             UNIQUE (name, base_id, physical_description),
             CONSTRAINT fk_base_id FOREIGN KEY (base_id)
                 REFERENCES base_objects_table (id)
@@ -947,6 +954,10 @@ class LIGHTDatabase:
         entry_attributes={},
         name_prefix=None,
         is_plural=None,
+        size=None,
+        contain_size=None,
+        shape=None,
+        value=None,
     ):
         # Check that the attributes are between 0 and 1
         assert (
@@ -1005,8 +1016,8 @@ class LIGHTDatabase:
             """
             INSERT or IGNORE INTO objects_table(id, name, base_id, is_container,
             is_drink, is_food, is_gettable, is_surface, is_wearable, is_weapon,
-            physical_description, name_prefix, is_plural)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            physical_description, name_prefix, is_plural, size, contain_size, shape, value)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 id,
@@ -1022,6 +1033,10 @@ class LIGHTDatabase:
                 physical_description,
                 name_prefix,
                 is_plural,
+                size,
+                contain_size,
+                shape,
+                value,
             ),
         )
         inserted = bool(self.c.rowcount)
@@ -1032,7 +1047,9 @@ class LIGHTDatabase:
                 SELECT id from objects_table WHERE name = ? AND base_id = ? \
                 AND is_container = ? AND is_drink = ? AND is_food = ? \
                 AND is_gettable = ? AND is_surface = ? AND is_wearable = ? \
-                AND is_weapon = ? AND physical_description = ?
+                AND is_weapon = ? AND physical_description = ? \
+                AND (?11 IS NULL OR size = ?11) AND (?12 IS NULL OR contain_size = ?12) \
+                AND (?13 IS NULL OR shape = ?13) AND (?14 IS NULL OR value = ?14) \
                 """,
                 (
                     name,
@@ -1045,10 +1062,16 @@ class LIGHTDatabase:
                     is_wearable,
                     is_weapon,
                     physical_description,
+                    size,
+                    contain_size,
+                    shape,
+                    value,
                 ),
             )
             result = self.c.fetchall()
-            assert len(result) == 1
+            assert (
+                len(result) == 1
+            ), "There is already an existing item with these unique IDs (name, base_id, physical_description)"
             id = int(result[0][0])
         return (id, inserted)
 
@@ -1259,6 +1282,10 @@ class LIGHTDatabase:
         is_wearable=None,
         is_weapon=None,
         physical_description=None,
+        size=None,
+        contain_size=None,
+        shape=None,
+        value=None,
     ):
         if self.use_cache and id is not None and id in self.cache["objects"]:
             return [self.cache["objects"][id]]
@@ -1275,7 +1302,11 @@ class LIGHTDatabase:
             AND (?8 IS NULL OR is_wearable = ?8)
             AND (?9 IS NULL OR is_weapon = ?9)
             AND (?10 IS NULL OR physical_description = ?10)
-            AND (?11 IS NULL OR id = ?11)
+            AND (?11 IS NULL OR size = ?11)
+            AND (?12 IS NULL OR contain_size = ?12)
+            AND (?13 IS NULL OR shape = ?13)
+            AND (?14 IS NULL OR value = ?14)
+            AND (?15 IS NULL OR id = ?15)
             """,
             (
                 name,
@@ -1288,6 +1319,10 @@ class LIGHTDatabase:
                 is_wearable,
                 is_weapon,
                 physical_description,
+                size,
+                contain_size,
+                shape,
+                value,
                 id,
             ),
         )
@@ -1391,7 +1426,20 @@ class LIGHTDatabase:
             """
             CREATE TABLE IF NOT EXISTS user_table (
             id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-            username text UNIQUE NOT NULL);
+            extern_id text UNIQUE NOT NULL,
+            username text,
+            onboarding_flags integer DEFAULT 0);
+            """
+        )
+
+        self.c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS scores_table (
+            id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+            user_id text NOT NULL,
+            character_id text,
+            experience int NOT NULL,
+            reward_points int);
             """
         )
 
@@ -2120,6 +2168,63 @@ class LIGHTDatabase:
                 """.format(
                     i[0], comma_separated, comma_separated_with_new
                 )
+            )
+
+    def check_custom_tags_objects_tables(self):
+        """
+        Check if the tables has the attrs related to the custom tagged attributes. If not, add them.
+        """
+
+        # Check the table for size, contain_size, shape, value columns and add if nonexistent
+        # this should be deprecated soon when a legacy table is opened
+        has_size_column = dict(
+            self.c.execute(
+                " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='size' "
+            ).fetchone()
+        )["CNTREC"]
+        has_contain_size_column = dict(
+            self.c.execute(
+                " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='contain_size' "
+            ).fetchone()
+        )["CNTREC"]
+        has_shape_column = dict(
+            self.c.execute(
+                " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='shape' "
+            ).fetchone()
+        )["CNTREC"]
+        has_value_column = dict(
+            self.c.execute(
+                " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('objects_table') WHERE name='value' "
+            ).fetchone()
+        )["CNTREC"]
+
+        if not (
+            has_size_column
+            or has_contain_size_column
+            or has_shape_column
+            or has_value_column
+        ):
+            self.c.execute("ALTER TABLE objects_table ADD COLUMN size;")
+            self.c.execute("ALTER TABLE objects_table ADD COLUMN contain_size;")
+            self.c.execute("ALTER TABLE objects_table ADD COLUMN shape;")
+            self.c.execute("ALTER TABLE objects_table ADD COLUMN value;")
+
+    def check_user_onboarding_tags(self):
+        """
+        Check if the tables has the attrs related to the custom tagged attributes. If not, add them.
+        """
+
+        # Check the table for size, contain_size, shape, value columns and add if nonexistent
+        # this should be deprecated soon when a legacy table is opened
+        has_flags_column = dict(
+            self.c.execute(
+                " SELECT COUNT(*) AS CNTREC FROM pragma_table_info('user_table') WHERE name='onboarding_flags' "
+            ).fetchone()
+        )["CNTREC"]
+
+        if not has_flags_column:
+            self.c.execute(
+                "ALTER TABLE user_table ADD COLUMN onboarding_flags INTEGER DEFAULT 0;"
             )
 
     def add_single_conversation(self, room, participants, turns):
@@ -3075,7 +3180,11 @@ class LIGHTDatabase:
                 SET timestamp = ?, world_dump = ?
                 WHERE owner_id = ?;
                 """,
-                (timestamp, world_dump, player_id,),
+                (
+                    timestamp,
+                    world_dump,
+                    player_id,
+                ),
             )
         else:
             # Otherwise, just insert
@@ -3084,7 +3193,11 @@ class LIGHTDatabase:
                 INSERT or IGNORE INTO auto_save_table(owner_id, timestamp, world_dump)
                 VALUES (?, ?, ?)
                 """,
-                (player_id, timestamp, world_dump,),
+                (
+                    player_id,
+                    timestamp,
+                    world_dump,
+                ),
             )
 
     def get_autosave(self, player_id):
@@ -3136,13 +3249,16 @@ class LIGHTDatabase:
             SELECT * FROM world_table
             WHERE id = ? AND owner_id = ?
             """,
-            (world_id, player_id,),
+            (
+                world_id,
+                player_id,
+            ),
         )
         return self.c.fetchall()
 
     def set_world_inactive(self, world_id, player_id):
         """
-            Makes a world in the world table inactive if owned by player_id
+        Makes a world in the world table inactive if owned by player_id
         """
         assert self.is_world_owned_by(
             world_id, player_id
@@ -3246,7 +3362,10 @@ class LIGHTDatabase:
             SELECT src_id, dst_id, edge_type FROM edges_table
             WHERE id = ? AND w_id = ?
             """,
-            (edge_id, world_id,),
+            (
+                edge_id,
+                world_id,
+            ),
         )
         return self.c.fetchall()
 
@@ -3315,7 +3434,15 @@ class LIGHTDatabase:
             color, x_coordinate, y_coordinate, floor)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
-            (id, world_id, room_id, color, x_coordinate, y_coordinate, floor,),
+            (
+                id,
+                world_id,
+                room_id,
+                color,
+                x_coordinate,
+                y_coordinate,
+                floor,
+            ),
         )
         inserted = bool(self.c.rowcount)
         if not inserted:
@@ -3339,7 +3466,11 @@ class LIGHTDatabase:
             INSERT or IGNORE INTO nodes_table(id, w_id, entity_id)
             VALUES (?, ?, ?)
             """,
-            (id, w_id, entity_id,),
+            (
+                id,
+                w_id,
+                entity_id,
+            ),
         )
         inserted = bool(self.c.rowcount)
         if not inserted:
@@ -3348,7 +3479,10 @@ class LIGHTDatabase:
                 """
                 SELECT id from nodes_table WHERE w_id = ? AND entity_id = ?
                 """,
-                (w_id, entity_id,),
+                (
+                    w_id,
+                    entity_id,
+                ),
             )
             result = self.c.fetchall()
             assert len(result) == 1
@@ -3362,7 +3496,13 @@ class LIGHTDatabase:
             INSERT or IGNORE INTO edges_table(id, w_id, src_id, dst_id, edge_type)
             VALUES (?, ?, ?, ?, ?)
             """,
-            (id, w_id, src_id, dst_id, type_,),
+            (
+                id,
+                w_id,
+                src_id,
+                dst_id,
+                type_,
+            ),
         )
         inserted = bool(self.c.rowcount)
         if not inserted:
@@ -3403,7 +3543,15 @@ class LIGHTDatabase:
             height, width, num_floors, in_use)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
-            (id, name, owner_id, height, width, num_floors, in_use,),
+            (
+                id,
+                name,
+                owner_id,
+                height,
+                width,
+                num_floors,
+                in_use,
+            ),
         )
         inserted = bool(self.c.rowcount)
         if not inserted:
@@ -3420,21 +3568,21 @@ class LIGHTDatabase:
             id = int(result[0][0])
         return (id, inserted)
 
-    def create_user(self, username):
+    def create_user(self, extern_id):
         self.c.execute(
             """
-            INSERT or IGNORE INTO user_table(username)
+            INSERT or IGNORE INTO user_table(extern_id)
             VALUES (?)
             """,
-            (username,),
+            (extern_id,),
         )
         inserted = bool(self.c.rowcount)
         if not inserted:
             self.c.execute(
                 """
-                SELECT id from user_table WHERE username = ?
+                SELECT id from user_table WHERE extern_id = ?
                 """,
-                (username,),
+                (extern_id,),
             )
             result = self.c.fetchall()
             assert len(result) == 1
@@ -3443,14 +3591,119 @@ class LIGHTDatabase:
             id = self.c.lastrowid
         return (id, inserted)
 
-    def get_user_id(self, username):
+    def get_user_id(self, extern_id):
         self.c.execute(
             """
-                SELECT id from user_table WHERE username = ?
-                """,
-            (username,),
+            SELECT id from user_table WHERE extern_id = ?
+            """,
+            (extern_id,),
         )
         result = self.c.fetchall()
         assert len(result) == 1
         id = int(result[0][0])
         return id
+
+    def get_user_flags(self, extern_id):
+        self.c.execute(
+            """
+            SELECT onboarding_flags from user_table WHERE extern_id = ?
+            """,
+            (extern_id,),
+        )
+        result = self.c.fetchall()
+        assert len(result) == 1
+        flags = int(result[0][0])
+        return OnboardingFlags(flags)
+
+    def set_user_flags(self, user, flags: "OnboardingFlags"):
+        if flags.flag_did_update():
+            new_flags = flags.get_flag()
+            self.c.execute(
+                """
+                UPDATE user_table
+                SET onboarding_flags = ?
+                WHERE extern_id = ?
+                """,
+                (new_flags, user),
+            )
+
+    def initialize_agent_score(self, target_node, user):
+        """
+        Initialize this agent with the current scores written in the database for the given user
+        """
+        user_id = self.get_user_id(user)
+        db_id = target_node.db_id
+        self.c.execute(
+            """SELECT * FROM scores_table WHERE user_id = ? AND character_id IS NULL""",
+            (user_id,),
+        )
+        result = self.c.fetchone()
+        if result is None:
+            self.c.execute(
+                """
+                INSERT OR IGNORE INTO scores_table(user_id, experience, reward_points)
+                values (?,?,?)
+                """,
+                (user_id, 0, 0),
+            )
+            result = {"experience": 0, "reward_points": 0}
+
+        # TODO refactor public/private `GraphNode` attributes, discussion:
+        # https://github.com/facebookresearch/LIGHT/pull/192#discussion_r616161265
+        target_node.xp = result["experience"]
+        target_node.reward_xp = result["reward_points"]
+        target_node._base_class_experience = 0
+        target_node._base_experience = target_node.xp
+        target_node._base_reward_points = target_node.reward_xp
+
+        if db_id is not None:
+            self.c.execute(
+                """SELECT * FROM scores_table WHERE user_id = ? AND character_id = ?""",
+                (user_id, db_id),
+            )
+            result = self.c.fetchone()
+            if result is None:
+                self.c.execute(
+                    """
+                    INSERT OR IGNORE INTO scores_table(user_id, char_id, score, reward_points)
+                    values (?,?,?)
+                    """,
+                    (user_id, db_id, 0, 0),
+                )
+
+    def store_agent_score(self, target_node, user):
+        """
+        Write the updated score values back to the table
+        """
+        user_id = self.get_user_id(user)
+        gained_experience = target_node.xp - target_node._base_experience
+        net_reward_points = target_node.reward_xp - target_node._base_reward_points
+        self.c.execute(
+            """
+            UPDATE scores_table
+            SET experience = experience + ?, reward_points = reward_points + ?
+            WHERE user_id = ? AND character_id is NULL
+            """,
+            (
+                gained_experience,
+                net_reward_points,
+                user_id,
+            ),
+        )
+
+        # Extract the target node's db_id, which corresponds to its character
+        # in the database, if it is set
+        db_id = target_node.db_id
+        if db_id is not None:
+            self.c.execute(
+                """
+                UPDATE scores_table
+                SET experience = experience + ?
+                WHERE user_id = ? AND character_id = ?
+                """,
+                (gained_experience, user_id, db_id),
+            )
+
+        # Checkpoint that these changes are now in the DB.
+        target_node._base_experience = target_node.xp
+        target_node._base_reward_points = target_node.reward_xp

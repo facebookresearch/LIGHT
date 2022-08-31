@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.abs
 
@@ -420,7 +420,7 @@ class ShoutEventTest(GraphEventTests):
             [],
             "something I'm giving up on you",
             test_graph_1_after_noop,
-            [],
+            [ShoutEvent],
         ),
         (
             "test_agent_0",
@@ -428,7 +428,7 @@ class ShoutEventTest(GraphEventTests):
             [],
             "this is a test phrase",
             test_graph_1_after_noop,
-            [],
+            [ShoutEvent],
         ),
         (
             "test_agent_0",
@@ -436,7 +436,7 @@ class ShoutEventTest(GraphEventTests):
             [],
             "I can parse with quotations too",
             test_graph_1_after_noop,
-            [],
+            [ShoutEvent],
         ),
     ]
     EVENT_CLASS = ShoutEvent
@@ -1082,7 +1082,7 @@ test_graph_3 = OOGraph.from_json(
         },
         "sword_dealer_14": {
             "agent": true,
-            "dexterity": 1000, 
+            "dexterity": 1000,
             "aggression": 0,
             "char_type": "person",
             "classes": [
@@ -1848,7 +1848,7 @@ equipped_node = test_graph_3_before_equip_sword.get_node("sword_from_a_stone_4")
 actor_node = test_graph_3_before_equip_sword.get_node("carrier_12")
 assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
 assert isinstance(actor_node, GraphAgent), "Graph parsing failed"
-equipped_node.equipped = True
+equipped_node.equipped = "equip"
 actor_node.damage += 1
 actor_node.num_wieldable_items = 1
 actor_node.num_wearable_items = 0
@@ -1856,7 +1856,7 @@ test_graph_3_after_equip_sword = test_graph_3_before_equip_sword.to_json()
 
 equipped_node = test_graph_3_before_equip_sword.get_node("hat_5")
 assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
-equipped_node.equipped = True
+equipped_node.equipped = "equip"
 actor_node.defense += 1
 actor_node.num_wieldable_items = 1
 actor_node.num_wearable_items = 1
@@ -1867,7 +1867,7 @@ equipped_node = test_graph_3_before_equip_hat.get_node("hat_5")
 actor_node = test_graph_3_before_equip_hat.get_node("carrier_12")
 assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
 assert isinstance(actor_node, GraphAgent), "Graph parsing failed"
-equipped_node.equipped = True
+equipped_node.equipped = "equip"
 actor_node.defense += 1
 actor_node.num_wieldable_items = 0
 actor_node.num_wearable_items = 1
@@ -1915,6 +1915,17 @@ class EquipObjectEventTest(GraphEventTests):
     EVENT_CLASS = EquipObjectEvent
 
 
+test_graph_3_before_wearing_hat = OOGraph.from_json(test_graph_3)
+actor_node = test_graph_3_before_wearing_hat.get_node("carrier_12")
+equipped_node = test_graph_3_before_wearing_hat.get_node("hat_5")
+assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
+equipped_node.equipped = "wear"
+actor_node.defense += 1
+actor_node.num_wieldable_items = 0
+actor_node.num_wearable_items = 1
+test_graph_3_after_wearing_hat = test_graph_3_before_wearing_hat.to_json()
+
+
 class WearEventTest(GraphEventTests):
 
     INPUT_WORLD_JSON = test_graph_3
@@ -1934,11 +1945,48 @@ class WearEventTest(GraphEventTests):
             "hat",
             ["hat_5"],
             None,
-            test_graph_3_after_equip_hat,
+            test_graph_3_after_wearing_hat,
             [WearEvent],
         )
     ]
     EVENT_CLASS = WearEvent
+
+
+class RemovenWearingObjectEventTest(GraphEventTests):
+
+    INPUT_WORLD_JSON = test_graph_3_after_wearing_hat
+    ERROR_CASES: List[Tuple[str, str]] = [
+        ("sword_dealer_14", "chest"),  # Cant equip things you don't have
+        ("carrier_12", "123"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("sword_dealer_14", "carrier"),  # Can't equip people
+        ("carrier_12", "carrier"),  # Can't equip to self
+    ]
+    SUCCESS_CASES: List[
+        Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
+    ] = [
+        (
+            "carrier_12",
+            "hat",
+            ["hat_5"],
+            None,
+            test_graph_3,
+            [RemoveObjectEvent],
+        ),
+    ]
+    EVENT_CLASS = RemoveObjectEvent
+
+
+test_graph_3_before_wield_sword = OOGraph.from_json(test_graph_3)
+equipped_node = test_graph_3_before_wield_sword.get_node("sword_from_a_stone_4")
+actor_node = test_graph_3_before_wield_sword.get_node("carrier_12")
+assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
+assert isinstance(actor_node, GraphAgent), "Graph parsing failed"
+equipped_node.equipped = "wield"
+actor_node.damage += 1
+actor_node.num_wieldable_items = 1
+actor_node.num_wearable_items = 0
+test_graph_3_after_wield_sword = test_graph_3_before_wield_sword.to_json()
 
 
 class WieldEventTest(GraphEventTests):
@@ -1960,7 +2008,7 @@ class WieldEventTest(GraphEventTests):
             "sword from a stone",
             ["sword_from_a_stone_4"],
             None,
-            test_graph_3_after_equip_sword,
+            test_graph_3_after_wield_sword,
             [WieldEvent],
         ),
         (
@@ -1968,11 +2016,37 @@ class WieldEventTest(GraphEventTests):
             "sword",
             ["sword_from_a_stone_4"],
             None,
-            test_graph_3_after_equip_sword,
+            test_graph_3_after_wield_sword,
             [WieldEvent],
         ),
     ]
     EVENT_CLASS = WieldEvent
+
+
+class RemovenWieldingObjectEventTest(GraphEventTests):
+
+    INPUT_WORLD_JSON = test_graph_3_after_wield_sword
+    ERROR_CASES: List[Tuple[str, str]] = [
+        ("sword_dealer_14", "chest"),  # Cant equip things you don't have
+        ("carrier_12", "123"),  # Fail because the thing doesn't exist
+        ("carrier_12", ""),
+        ("sword_dealer_14", "carrier"),  # Can't equip people
+        ("carrier_12", "carrier"),  # Can't equip to self
+        ("carrier_12", "hat"),  # can't wield wearables
+    ]
+    SUCCESS_CASES: List[
+        Tuple[str, str, List[str], Optional[str], str, List[Type[GraphEvent]]]
+    ] = [
+        (
+            "carrier_12",
+            "sword from a stone",
+            ["sword_from_a_stone_4"],
+            None,
+            test_graph_3,
+            [RemoveObjectEvent],
+        ),
+    ]
+    EVENT_CLASS = RemoveObjectEvent
 
 
 class RemoveObjectEventTest(GraphEventTests):
@@ -2073,8 +2147,9 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "carrier_12__dead__",
             "object": true,
+            "on_use": null,
             "room": false,
-            "size": 20,
+            "size": 21,
             "stats": {
                 "damage": 0,
                 "defense": 0
@@ -2112,8 +2187,9 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "chest_7",
             "object": true,
+            "on_use": null,
             "room": false,
-            "size": 1,
+            "size": 10,
             "stats": {
                 "damage": 0,
                 "defense": 0
@@ -2150,6 +2226,7 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "contained_object_10",
             "object": true,
+            "on_use": null,
             "room": false,
             "size": 1,
             "stats": {
@@ -2174,6 +2251,11 @@ test_graph_3_after_ingest_apple = """
             "db_id": null,
             "desc": "A east room to be used in a test. Doesn't have any other interesting properties beyond that.",
             "extra_desc": "If you look very closely, you can observe that nothing is here.",
+            "grid_location": [
+                0,
+                0,
+                0
+            ],
             "name": "east room",
             "name_prefix": "the",
             "names": [
@@ -2220,8 +2302,9 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "goldfish_in_a_bag_11",
             "object": true,
+            "on_use": null,
             "room": false,
-            "size": 1,
+            "size": 5,
             "stats": {
                 "damage": 0,
                 "defense": 0
@@ -2259,6 +2342,7 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "hat_5",
             "object": true,
+            "on_use": null,
             "room": false,
             "size": 1,
             "stats": {
@@ -2274,7 +2358,7 @@ test_graph_3_after_ingest_apple = """
             "classes": [
                 "room"
             ],
-            "contain_size": 2000,
+            "contain_size": 1999,
             "contained_nodes": {
                 "carrier_12__dead__": {
                     "target_id": "carrier_12__dead__"
@@ -2295,6 +2379,11 @@ test_graph_3_after_ingest_apple = """
             "db_id": null,
             "desc": "A main room to be used in a test. Doesn't have any other interesting properties beyond that.",
             "extra_desc": "If you look very closely, you can observe testing as it occurs.",
+            "grid_location": [
+                0,
+                0,
+                0
+            ],
             "name": "Main room",
             "name_prefix": "the",
             "names": [
@@ -2337,6 +2426,11 @@ test_graph_3_after_ingest_apple = """
             "db_id": null,
             "desc": "A north room to be used in a test. Doesn't have any other interesting properties beyond that.",
             "extra_desc": "If you look very closely, you can observe that nothing is here.",
+            "grid_location": [
+                0,
+                0,
+                0
+            ],
             "name": "north room",
             "name_prefix": "the",
             "names": [
@@ -2383,6 +2477,7 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "something_to_drink_20",
             "object": true,
+            "on_use": null,
             "room": false,
             "size": 1,
             "stats": {
@@ -2397,7 +2492,9 @@ test_graph_3_after_ingest_apple = """
         "sword_dealer_14": {
             "agent": true,
             "aggression": 0,
-            "dexterity": 1000,
+            "attack_tagged_agents": [],
+            "blocked_by": {},
+            "blocking": null,
             "char_type": "person",
             "classes": [
                 "agent"
@@ -2409,24 +2506,40 @@ test_graph_3_after_ingest_apple = """
             },
             "damage": 1,
             "db_id": null,
+            "dead": false,
             "defense": 0,
             "desc": "A person who deals swords.",
+            "dexterity": 1000,
+            "dont_accept_gifts": false,
             "followed_by": {},
             "following": null,
             "food_energy": 1,
             "health": 2,
             "is_player": false,
+            "max_distance_from_start_location": 1000000,
+            "max_wearable_items": 3,
+            "max_wieldable_items": 1,
+            "mission": "",
+            "movement_energy_cost": 0.0,
             "name": "sword dealer",
             "name_prefix": "the",
             "names": [
                 "sword dealer"
             ],
             "node_id": "sword_dealer_14",
+            "num_wearable_items": 0,
+            "num_wieldable_items": 0,
             "object": false,
+            "on_events": [],
+            "pacifist": false,
             "persona": "I am a sword dealer. I deal swords.",
+            "quests": [],
             "room": false,
             "size": 20,
-            "speed": 5
+            "speed": 5,
+            "strength": 0,
+            "tags": [],
+            "usually_npc": false
         },
         "sword_from_a_stone_4": {
             "agent": false,
@@ -2456,6 +2569,7 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "sword_from_a_stone_4",
             "object": true,
+            "on_use": null,
             "room": false,
             "size": 5,
             "stats": {
@@ -2498,8 +2612,9 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "table_6",
             "object": true,
+            "on_use": null,
             "room": false,
-            "size": 1,
+            "size": 3,
             "stats": {
                 "damage": 0,
                 "defense": 0
@@ -2536,6 +2651,7 @@ test_graph_3_after_ingest_apple = """
             ],
             "node_id": "tasty_steak_to_eat_9",
             "object": true,
+            "on_use": null,
             "room": false,
             "size": 1,
             "stats": {
@@ -2550,6 +2666,9 @@ test_graph_3_after_ingest_apple = """
         "trained_monkey_13": {
             "agent": true,
             "aggression": 0,
+            "attack_tagged_agents": [],
+            "blocked_by": {},
+            "blocking": null,
             "char_type": "person",
             "classes": [
                 "agent"
@@ -2561,24 +2680,40 @@ test_graph_3_after_ingest_apple = """
             },
             "damage": 1,
             "db_id": null,
+            "dead": false,
             "defense": 0,
             "desc": "A monkey that has been trained to test.",
+            "dexterity": 0,
+            "dont_accept_gifts": false,
             "followed_by": {},
             "following": null,
             "food_energy": 1,
             "health": 2,
             "is_player": false,
+            "max_distance_from_start_location": 1000000,
+            "max_wearable_items": 3,
+            "max_wieldable_items": 1,
+            "mission": "",
+            "movement_energy_cost": 0.0,
             "name": "trained monkey",
             "name_prefix": "the",
             "names": [
                 "trained monkey"
             ],
             "node_id": "trained_monkey_13",
+            "num_wearable_items": 0,
+            "num_wieldable_items": 0,
             "object": false,
+            "on_events": [],
+            "pacifist": false,
             "persona": "I am a trained monkey. I am trained to test LIGHT.",
+            "quests": [],
             "room": false,
             "size": 20,
-            "speed": 5
+            "speed": 5,
+            "strength": 0,
+            "tags": [],
+            "usually_npc": false
         }
     },
     "objects": [

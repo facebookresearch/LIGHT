@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
@@ -165,8 +165,8 @@ class UserWorldBuilder(DBGraphBuilder):
 
     def add_nodes(self, g, resources, db_to_g, node_to_g):
         """
-            Iterates over the entities in the saved world, adding them
-            to the graph as nodes
+        Iterates over the entities in the saved world, adding them
+        to the graph as nodes
         """
         type_to_entities = {
             "room": resources[2],
@@ -199,8 +199,8 @@ class UserWorldBuilder(DBGraphBuilder):
 
     def add_edges(self, g, edge_list, node_to_g):
         """
-            Adds the edges from the edge_lsit to the graph, g, using node_to_g map
-            to map ids
+        Adds the edges from the edge_lsit to the graph, g, using node_to_g map
+        to map ids
         """
         for edge in edge_list:
             src = g.get_node(node_to_g[edge["src_id"]])

@@ -1,3 +1,7 @@
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 #!/usr/bin/env python3
 import json
 import os
@@ -307,13 +311,20 @@ class OOGraph(object):
     def get_all_nodes(self):
         return list(self.all_nodes.values())
 
+    def get_humans(self):
+        """Get a list of agent nodes that are currently being played by
+        a human character"""
+        return [
+            x for x in self.agents.values() if x.is_player and not x.get_prop("dead")
+        ]
+
     def get_npcs(self):
         """Get a list of agent nodes that aren't currently being played by
         a human character"""
         return [
             x
             for x in self.agents.values()
-            if x._human is False and not x.is_player and not x.get_prop("dead")
+            if not x.is_player and not x.get_prop("dead")
         ]
 
     def set_desc(self, id, desc):
@@ -346,6 +357,13 @@ class OOGraph(object):
         """Return all accessible ids for an actor"""
         local_nodes = self.get_local_nodes(actor_id)
         return [x.node_id for x in local_nodes]
+
+    def find_nodes_by_name(self, node_name):
+        """
+        Return all nodes that exact match the given node name,
+        if any exist.
+        """
+        return [n for n in self.get_all_nodes() if n.name == node_name]
 
     def desc_to_nodes(self, desc, nearby_node=None, nearbytype=None):
         """Get nodes nearby to a given node from that node's perspective"""
@@ -383,6 +401,12 @@ class OOGraph(object):
                     o = o.union(o1).union(o2).union(o3)
                 if "contains" in nearbytype:
                     o = o.union({from_node})
+                if "other_agents" in nearbytype:
+                    # what other agents are carrying (in the same room as the given node)
+                    r = nearby_node.get_room()
+                    for n1 in r.get_contents():
+                        if n1.agent:
+                            o = o.union(n1.get_contents())
                 if "others" in nearbytype:
                     for item in o:
                         if item.room or (item.object and item.container):
@@ -529,8 +553,21 @@ class OOGraph(object):
         # Follows
         for char in oo_graph.agents.values():
             char_dict = node_dicts[char.node_id]
-            if char_dict["following"] is not None:
-                char.follow(sync_nodes[char_dict["following"]["target_id"]])
+            followed_char = char_dict["following"]
+            if followed_char is not None:
+                followed_char_id = followed_char["target_id"]
+                if followed_char_id not in sync_nodes:
+                    print(
+                        f"Warning - followed char {followed_char_id} not present in this graph, followed by {char}"
+                    )
+                else:
+                    char.follow(sync_nodes[followed_char_id])
+
+        # Blocking
+        for char in oo_graph.agents.values():
+            char_dict = node_dicts[char.node_id]
+            if char_dict.get("blocking") is not None:
+                char.block(sync_nodes[char_dict["blocking"]["target_id"]])
 
         # Neighbors/locks
         for room in oo_graph.rooms.values():
@@ -592,7 +629,11 @@ class OOGraph(object):
 
         agents = {}
         for ind, props in entities["character"].items():
-            n = g.add_agent(props["name"], props, uid=str(ind),)
+            n = g.add_agent(
+                props["name"],
+                props,
+                uid=str(ind),
+            )
             agents[int(ind)] = n
 
         objects = {}

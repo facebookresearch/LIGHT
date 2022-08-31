@@ -1,0 +1,29 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.app-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding-bottom: 5em;
+}
+
+.header {
+    background-color:blue;
+    width: 100%;
+    padding: 4px;
+    margin-bottom: 20px;
+}
+.header__text{
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    font-size: 4em;
+}

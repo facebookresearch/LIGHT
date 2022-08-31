@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.abs
 
@@ -501,6 +501,8 @@ class TestInteractionLoggers(unittest.TestCase):
         ref_json = json.loads(event_room_node_observed)
         event_ref = json.loads(written_event)
         for k in ref_json:
+            if k == "event_id":
+                continue
             self.assertEqual(
                 ref_json[k], event_ref[k], f"Event Json should match for LeaveEvent"
             )

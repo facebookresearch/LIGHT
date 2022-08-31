@@ -1,3 +1,10 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import React, { useEffect } from "react";
 import {
   NumericInput,
@@ -151,12 +158,12 @@ function WorldBuilder({ upload }) {
         labelInfo={`Max ${MAX_FLOORS}`}
         style={{ marginBottom: "0px" }}
       >
-        <FloorSelector
+        {/* <FloorSelector
           max={MAX_FLOORS}
           manager={state.floorManager}
           map={state.map}
           currFloor={state.currFloor}
-        />
+        /> */}
       </FormGroup>
       <FormGroup inline label="Advanced">
         <Switch onChange={() => setAdvanced(!advanced)} checked={!!advanced} />

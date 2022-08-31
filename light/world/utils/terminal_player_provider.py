@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -54,3 +54,9 @@ class TerminalPlayerProvider(PlayerProvider):
             print(
                 "\r" + event.view_as(soul.target_node).strip() + "\naction> ", end=" "
             )
+
+    def on_reap_soul(self, soul: "PlayerSoul") -> None:
+        """
+        Reaping a soul will lead to a need for respawning.
+        """
+        self.process_terminal_act("respawn")

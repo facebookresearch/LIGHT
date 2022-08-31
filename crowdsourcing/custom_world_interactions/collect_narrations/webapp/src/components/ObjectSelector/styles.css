@@ -1,0 +1,76 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* SELECTOR */
+.selector-container {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0px 10px 0;
+}
+.selector-header {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: underline;
+    color: blue;
+    margin-bottom: 5px;
+}
+.options-container {
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 0px 0px black;
+}
+
+.selection-description {
+    font-size: 20px;
+    color:blue;
+}
+/* BUTTON */
+.button-container {
+    background-color: blue;
+    border-color:white;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 5px 2px 5px black;
+    margin: 10px;
+}
+.button-text{
+    color: white;
+    font-size: 16px;
+    padding:6px;
+    font-weight: bold;
+}
+
+.selectedbutton-container {
+    background-color: white;
+    border-color:blue;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 5px 2px 5px black;
+    margin: 10px;
+}
+
+.selectedbutton-text {
+    color: blue;
+    font-size: 16px;
+    padding:6px;
+    font-weight: bold;
+}
+
+.button-container:hover {
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+.button-container:active {
+box-shadow: 0em 0em 0em;
+}

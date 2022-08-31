@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import unittest, os, sys
@@ -42,7 +42,9 @@ class TestStarspaceBuilder(unittest.TestCase):
         parlai_datapath = os.path.join(parser.parlai_home, "data")
         ldb = LIGHTDatabase(self.dbpath)
         model_dir = os.path.join(parlai_datapath, "models", "light", "")
-        self.testBuilder = StarspaceBuilder(ldb,)
+        self.testBuilder = StarspaceBuilder(
+            ldb,
+        )
         self.testGraph, _ = self.testBuilder.get_graph()
 
     def test_arg_parser(self):

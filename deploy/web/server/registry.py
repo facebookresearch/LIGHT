@@ -1,10 +1,7 @@
-#!/usr/bin/env python3
-
-# Copyright 2017-present, Facebook, Inc.
-# All rights reserved.
-#
-# This source code is licensed under the license found in the
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+
 
 import json
 import time
@@ -15,22 +12,13 @@ from tornado.routing import (
     Rule,
     RuleRouter,
 )
-from deploy.web.server.game_instance import GameInstance
+from deploy.web.server.game_instance import GameInstance, TutorialInstance
 from deploy.web.server.tornado_server import TornadoPlayerFactory
 from light.graph.builders.user_world_builder import UserWorldBuilder
 
 
 def get_rand_id():
     return str(uuid.uuid4())
-
-
-tornado_settings = {
-    "autoescape": None,
-    "cookie_secret": "0123456789",  # TODO: Placeholder, read secrets!!!
-    "compiled_template_cache": False,
-    "debug": "/dbg/" in __file__,
-    "login_url": "/login",
-}
 
 
 class RegistryApplication(tornado.web.Application):
@@ -40,22 +28,30 @@ class RegistryApplication(tornado.web.Application):
         - Assign to a random (or default) game based on some load balancing
     """
 
-    def __init__(self, FLAGS, ldb, model_resources):
+    def __init__(self, FLAGS, ldb, model_resources, tornado_settings):
         self.game_instances = {}
         self.step_callbacks = {}
+        self.tutorial_map = {}  # Player ID to game ID
         self.model_resources = model_resources
         self.FLAGS = FLAGS
         self.ldb = ldb
         super(RegistryApplication, self).__init__(
-            self.get_handlers(FLAGS, ldb), **tornado_settings
+            self.get_handlers(FLAGS, ldb, tornado_settings), **tornado_settings
         )
 
-    def get_handlers(self, FLAGS, ldb):
+    def get_handlers(self, FLAGS, ldb, tornado_settings):
         self.tornado_provider = TornadoPlayerFactory(
-            self.game_instances, FLAGS.hostname, FLAGS.port
+            self,
+            FLAGS.hostname,
+            FLAGS.port,
+            given_tornado_settings=tornado_settings,
+            db=ldb,
         )
         self.router = RuleRouter(
-            [Rule(PathMatches(f"/game.*/socket"), self.tornado_provider.app)]
+            [
+                Rule(PathMatches(f"/game.*/socket"), self.tornado_provider.app),
+                Rule(PathMatches(f"/game/api/.*"), self.tornado_provider.app),
+            ]
         )
         TEN_MINUTES = 600000
         tornado.ioloop.PeriodicCallback(self.cleanup_games, TEN_MINUTES).start()
@@ -66,8 +62,8 @@ class RegistryApplication(tornado.web.Application):
 
     def cleanup_games(self):
         """
-            Goes through the game instances, cleaning up any game that does
-            not have a connection in the past 10 minutes
+        Goes through the game instances, cleaning up any game that does
+        not have a connection in the past 10 minutes
         """
         TIMEOUT = 10  # timeout to clear with no players, in minutes
         curr_time = time.time()
@@ -88,15 +84,14 @@ class RegistryApplication(tornado.web.Application):
                 del self.game_instances[game_id]
 
     def run_new_game(self, game_id, ldb, player_id=None, world_id=None):
-
         if world_id is not None and player_id is not None:
             builder = UserWorldBuilder(ldb, player_id=player_id, world_id=world_id)
-            _, graph = builder.get_graph()
-            game = GameInstance(game_id, ldb, g=graph)
+            _, world = builder.get_graph()
+            game = GameInstance(game_id, ldb, g=world, opt=vars(self.FLAGS))
         else:
-            game = GameInstance(game_id, ldb)
-            graph = game.g
-        game.fill_souls(self.model_resources)
+            game = GameInstance(game_id, ldb, opt=vars(self.FLAGS))
+            world = game.world
+        game.fill_souls(self.FLAGS, self.model_resources)
 
         self.game_instances[game_id] = game
         game.register_provider(self.tornado_provider)
@@ -105,6 +100,37 @@ class RegistryApplication(tornado.web.Application):
         )
         self.step_callbacks[game_id].start()
         return game
+
+    def run_tutorial(self, user_id, on_complete):
+        game_id = get_rand_id()
+
+        game = TutorialInstance(game_id, self.ldb, opt=vars(self.FLAGS))
+        game.fill_souls(self.FLAGS, self.model_resources)
+        world = game.world
+
+        def run_or_cleanup_world():
+            game.run_graph_step()
+            if game._should_shutdown or game._did_complete:
+                if game._did_complete:
+                    with self.ldb as ldb:
+                        flags = ldb.get_user_flags(user_id)
+                        flags.completed_onboarding = True
+                        ldb.set_user_flags(user_id, flags)
+                    on_complete()
+                self.step_callbacks[game_id].stop()
+                del self.step_callbacks[game_id]
+                # TODO delete this game instance
+                del self.game_instances[game_id]
+                del self.tutorial_map[user_id]
+
+        self.game_instances[game_id] = game
+        self.tutorial_map[user_id] = game_id
+        game.register_provider(self.tornado_provider)
+        self.step_callbacks[game_id] = tornado.ioloop.PeriodicCallback(
+            run_or_cleanup_world, 125
+        )
+        self.step_callbacks[game_id].start()
+        return game_id
 
 
 # Default BaseHandler - should be extracted to some util?

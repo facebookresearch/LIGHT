@@ -5,8 +5,12 @@ data/*
 tmp/*
 **/node_modules/*
 examples/**/build/*
+**/build/*
+**/outputs/*
+prod_db/*
 
 light.egg-info/
+parlai.egg-info/
 **/.vscode/*
 
 dataset/*
@@ -18,3 +22,29 @@ logs/*
 *~
 \#*\#
 .\#*
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+*/src/config.js
+**/_generated/**

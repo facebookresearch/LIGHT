@@ -1,3 +1,10 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import React from "react";
 import classNames from "classnames";
 import CONFIG from "../config";
@@ -8,6 +15,9 @@ import { Redirect } from "react-router-dom";
 import { Button, Classes, Intent, Overlay, Spinner } from "@blueprintjs/core";
 import { cloneDeep, isEmpty } from "lodash";
 import { EDGE_TYPES } from "./EdgeTypes";
+
+const BASE_URL =
+  CONFIG.port != "80" ? `${CONFIG.host}:${CONFIG.port}` : CONFIG.host;
 
 function ListWorldsOverlay({ isOverlayOpen, setIsOverlayOpen }) {
   const classes = classNames(Classes.CARD, Classes.ELEVATION_4);
@@ -49,21 +59,15 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
   const [upload, setUpload] = React.useState(undefined);
 
   const deleteWorld = async (id) => {
-    const res = await fetch(
-      `${CONFIG.host}:${CONFIG.port}/builder/world/delete/${id}`,
-      {
-        method: "DELETE",
-      }
-    );
+    const res = await fetch(`${BASE_URL}/builder/world/delete/${id}`, {
+      method: "DELETE",
+    });
   };
 
   const getAutosave = async () => {
-    const res = await fetch(
-      `${CONFIG.host}:${CONFIG.port}/builder/world/autosave/`,
-      {
-        method: "GET",
-      }
-    );
+    const res = await fetch(`${BASE_URL}/builder/world/autosave/`, {
+      method: "GET",
+    });
     const data = await res.json();
 
     // Mission accomplished!
@@ -178,15 +182,12 @@ function ListWorlds({ isOpen, setIsOverlayOpen }) {
       timeout: 10000,
     });
 
-    const res = await fetch(
-      `${CONFIG.host}:${CONFIG.port}/builder/world/${id}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const res = await fetch(`${BASE_URL}/builder/world/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     const data = await res.json();
 
     // Construct the 3 parts of state we need
@@ -348,7 +349,7 @@ export async function launchWorld(state) {
   const world_map = { world_id: world_id };
   const res = await post("game/new/", world_map);
   const data = await res.json();
-  const url = `${CONFIG.host}:${CONFIG.port}/?id=${data}`;
+  const url = `${BASE_URL}/?id=${data}`;
   window.open(url);
   return data;
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from light.world.souls.player_soul import PlayerSoul
+    from light.world.world import World
 
 
 class PlayerProvider:
@@ -38,3 +39,9 @@ class PlayerProvider:
         expects it to be.
         """
         pass
+
+    def get_objective(self, soul: "PlayerSoul", world: "World"):
+        """
+        Get an objective for the current sould to complete in the world
+        """
+        return None

@@ -1,27 +1,36 @@
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 #!/usr/bin/env python3
 from light.graph.viz.graph_printer import GraphPrinter
 from light.graph.structured_graph import OOGraph
 from light.graph.elements.graph_nodes import GraphRoom
+from light.world.action_parser import ActionParser
 
 from copy import deepcopy
 import emoji
 import os
 import random
 
-# TODO don't use * imports
-from light.world.npc_models import *
 from light.graph.utils import rm, deprecated
 from light.graph.events.base import GraphEvent, ErrorEvent
 from light.graph.events.graph_events import (
-    ALL_EVENTS,
-    ALL_EVENTS_LIST,
     SpawnEvent,
     SystemMessageEvent,
+    DeleteObjectEvent,
     init_safety_classifier,
 )
+from light.graph.events.all_events_list import (
+    ALL_EVENTS,
+    ALL_EVENTS_LIST,
+)
+from light.graph.events.magic import init_magic
 from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 from light.world.views import WorldViewer
 from light.world.purgatory import Purgatory
+
+from typing import List, Optional
 
 
 def check_integrity(f):
@@ -50,11 +59,11 @@ class World(object):
     """
 
     def __init__(
-        self, opt, graph_builder, debug=False,
+        self,
+        opt,
+        graph_builder,
+        debug=False,
     ):
-        # TODO re-investigate callbacks during action refactor
-        self.callbacks = {}
-        self.variables = {}
         self._opt = opt
         self._node_freeze = False
         self._cnt = 0
@@ -68,33 +77,29 @@ class World(object):
         self._player_cnt = 0
         self._playerid_to_agentid = {}
         self._agentid_to_playerid = {}
-        self.__message_callbacks = {}
 
-        # TODO move non-player characters management.
-        self._initial_num_npcs = 0
-        self.npc_models = npc_models(opt, self)
-        if graph_builder is not None:
-            self._no_npc_models = graph_builder._no_npc_models
-            self.npc_models._no_npc_models = self._no_npc_models
         self.graph_builder = graph_builder  # TODO replace with builder
 
         # Set up safety classifier.
         init_safety_classifier(self.opt.get("safety_classifier_path", ""))
 
-        # TODO Used for storage of conversation history
-        # self._database_location = opt.get('database_path', None)
-        # self._room_convo_buffers = {}  # Map from room id to RoomConversationBuffer
+        # Set up magic!
+        init_magic(self.opt.get("magic_db_path", "/scratch/light/data/magic.db"))
+
+        # Set up action parser.
+
+        self.action_parser = opt.get("_action_parser")
+        if self.action_parser is None:
+            self.action_parser = ActionParser(opt)
 
     @staticmethod
-    def from_graph(graph):
-        world = World(graph._opt, graph.world)
+    def from_graph(graph, graph_builder=None):
+        """Loads the world from the older versions of graph."""
+        world = World(graph._opt, graph_builder)
         world.oo_graph = OOGraph.from_graph(graph)
         world._node_freeze = graph._node_freeze
         world._cnt = graph._cnt
-        world._player_cnt = graph._player_cnt
-        world._playerid_to_agentid = graph._playerid_to_agentid
-        world._agentid_to_playerid = graph._agentid_to_playerid
-        world._initial_num_npcs = graph._initial_num_npcs
+        world._player_cnt = len(world.oo_graph.agents)
         return world
 
     # ------- debug and test helpers ------#
@@ -129,10 +134,7 @@ class World(object):
         result = cls.__new__(cls)
         memo[id(self)] = result
         for k, v in self.__dict__.items():
-            if "__message_callbacks" not in k:  # we cant copy callback anchors
-                setattr(result, k, deepcopy(v, memo))
-            else:
-                setattr(result, k, {})
+            setattr(result, k, {})
         return result
 
     def all_node_ids(self):
@@ -156,23 +158,6 @@ class World(object):
 
     def version(self):
         return 4
-
-    # TODO refactor players
-    def add_message_callback(self, id, func):
-        self.__message_callbacks[id] = func
-
-    def clear_message_callback(self, id):
-        if id in self.__message_callbacks:
-            del self.__message_callbacks[id]
-
-    # -- Callbacks and variables -- #
-
-    def register_callbacks(self, callbacks, variables):
-        self.callbacks = callbacks
-        self.variables = variables
-
-    def register_parser(self, file_parser):
-        self.parser = file_parser
 
     # -- Full node editors/creators/getters/deleters -- #
     def add_node(self, desc, props, is_player=False, uid="", is_room=False):
@@ -248,77 +233,6 @@ class World(object):
         # TODO deprecate calls here, go to oo_graph
         return [x.node_id for x in self.oo_graph.get_node(id).get_contents()]
 
-    def get_available_actions_fast(self, agent_id):
-        """Get available actions quickly, some of these may not be possible.
-        NOTE: Jack can clean up later, but this seems to do everything need for NPCs
-        right now. Essentially I think such a function shouldn't be using strings
-        at all during reasoning, only ids all the way down until the last conversion
-        to action strings, which the existing code didn't seem to do..?
-        NOTE2: I've only included here actions actually in the LIGHT Turked dataset.
-        Easy to add more of course, such as wield.
-        This code is fairly fast (i measured like 10,000 calls in 0.8 secs).
-        """
-        # TODO improve with graphs
-        acts = []
-        room_id = self.room(agent_id)
-        nearby_ids = self.node_contains(room_id)
-        carrying_ids = self.node_contains(agent_id)
-        container_ids = []
-
-        for id in nearby_ids:
-            if id == agent_id:
-                continue
-            id_txt = self.node_to_desc(id).lower()
-            if self.has_prop(id, "agent"):
-                acts.append("hit " + id_txt)
-                acts.append("hug " + id_txt)
-                acts.append("examine " + id_txt)
-                for id2 in carrying_ids:
-                    id2_txt = self.node_to_desc(id2).lower()
-                    acts.append("give " + id2_txt + " to " + id_txt)
-                neighbor_carrying_ids = self.node_contains(id)
-                for id2 in neighbor_carrying_ids:
-                    id2_txt = self.node_to_desc(id2).lower()
-                    acts.append("steal " + id2_txt + " from " + id_txt)
-            if self.has_prop(id, "object"):
-                if not self.has_prop(id, "not_gettable"):
-                    acts.append("get " + id_txt)
-                if not self.has_prop(id, "not_gettable") or self.has_prop(id, "human"):
-                    # objects are examinable,
-                    # except for non-gettable by NPCs, as it's boring.
-                    acts.append("examine " + id_txt)
-            if self.has_prop(id, "container"):
-                container_ids.append(id)
-
-        for id in carrying_ids:
-            if self.has_prop(id, "container"):
-                container_ids.append(id)
-
-        for id in carrying_ids:
-            id_txt = self.node_to_desc(id).lower()
-            acts.append("examine " + id_txt)
-            acts.append("drop " + id_txt)
-            if self.has_prop(id, "equipped"):
-                acts.append("remove " + id_txt)
-            elif self.has_prop(id, "wearable"):
-                acts.append("wear " + id_txt)
-            if self.has_prop(id, "food"):
-                acts.append("eat " + id_txt)
-            if self.has_prop(id, "drink"):
-                acts.append("drink " + id_txt)
-            for id2 in container_ids:
-                id2_txt = self.node_to_desc(id2).lower()
-                acts.append("put " + id_txt + " in " + id2_txt)
-
-        for id in container_ids:
-            id_txt = self.node_to_desc(id).lower()
-            inside_ids = self.node_contains(id)
-            for id2 in inside_ids:
-                id2_txt = self.node_to_desc(id2).lower()
-                acts.append("get " + id_txt + " from " + id2_txt)
-
-        return acts
-
     @deprecated
     def desc_to_nodes(self, desc, nearbyid=None, nearbytype=None):
         """Get nodes nearby to a given node from that node's perspective"""
@@ -337,6 +251,7 @@ class World(object):
         assert isinstance(room, GraphRoom)
         return [x.node_id for x in room.get_neighbors()]
 
+    @deprecated
     def get_actionable_ids(self, actor_id):
         # TODO deprectate when new action generator done
         o = self.get_local_ids(actor_id)
@@ -445,8 +360,6 @@ class World(object):
         # TODO remove below when server game has Soul-based PlayerProvider
         agent.observe_action(txt, action)
         pos_playerid = self.agentid_to_playerid(agent_id)
-        if pos_playerid in self.__message_callbacks:
-            self.__message_callbacks[pos_playerid](self, action)
 
     def broadcast_to_agents(self, action, agents, exclude_agents=None):
         """send a message to agents in the specified list """
@@ -490,8 +403,7 @@ class World(object):
 
     def broadcast_to_all_agents(self, action, exclude_agents=None, told_by=None):
         """send a message to everyone """
-        agents_list, _descs = self.get_all_agents()
-        agents = set(agents_list)
+        agents = set(self.oo_graph.agents.values())
         self.broadcast_to_agents(action, agents, exclude_agents)
 
     # -- Create helpers -- #
@@ -776,13 +688,6 @@ class World(object):
         agent_descs = [self.node_to_desc(a, drop_prefix=drop_prefix) for a in agents]
         return agents, agent_descs
 
-    def get_all_agents(self, have_prop="human"):
-        """Return a list of all agents and their current descriptions"""
-        agents = list(self.oo_graph.agents.values())
-        agents = [a.node_id for a in agents if a.get_prop(have_prop)]
-        agent_descs = [self.node_to_desc(a) for a in agents]
-        return agents, agent_descs
-
     @deprecated
     def get_text(self, agent, clear_actions=True):
         """Get text from the text buffer for an agent, clear that buffer"""
@@ -825,28 +730,33 @@ class World(object):
         h = ["Have you tried typing help?"]
         return random.choice(h)
 
-    def parse_exec(self, agentid, inst=None):
-        if self.opt.get('dont_catch_errors', False):
-            return self.parse_exec_internal(agentid, inst)
+    def parse_exec(self, actor, inst=None, event_id: Optional[str] = None):
+        if not isinstance(actor, GraphNode):
+            actor = self.oo_graph.get_node(actor)
+        if self.opt.get("dont_catch_errors", False):
+            return self.parse_exec_internal(actor, inst=inst, event_id=event_id)
+
         else:
             try:
-                return self.parse_exec_internal(agentid, inst)
+                return self.parse_exec_internal(actor, inst=inst, event_id=event_id)
             except Exception:
                 import traceback
 
                 traceback.print_exc()
                 self.send_msg(
-                    agentid, "Strange magic is afoot. This failed for some reason..."
+                    actor, "Strange magic is afoot. This failed for some reason..."
                 )
                 return False, "FailedParseExec"
 
-    def attempt_parse_event(self, EventClass, actor_node, arguments):
+    def attempt_parse_event(
+        self, EventClass, actor_node, arguments, event_id: Optional[str] = None
+    ):
         """Return the possible parsed event given the event, actor, and arguments"""
         # Parse the text into string args
         possible_text_args = EventClass.split_text_args(actor_node, arguments)
         if isinstance(possible_text_args, ErrorEvent):
             return possible_text_args
-        
+
         # Parse the string arguments into nodes
         for string_args in possible_text_args:
             result = EventClass.find_nodes_for_args(
@@ -854,17 +764,19 @@ class World(object):
             )
             if not isinstance(result, ErrorEvent):
                 break
-            
+
         if isinstance(result, ErrorEvent):
             return result
 
         # Create the final event. May be an error but that's okay
-        return EventClass.construct_from_args(actor_node, result.targets, result.text)
+        return EventClass.construct_from_args(
+            actor_node, result.targets, result.text, event_id=event_id
+        )
 
-    def parse_exec_internal(self, agentid, inst=None):
+    def parse_exec_internal(self, actor, inst=None, event_id: Optional[str] = None):
         """Try to parse and execute the given event"""
         # basic replacements
-        inst = inst.rstrip("\n").rstrip("\r")
+        inst = self.action_parser.post_process(inst, actor)
         parse_shortcuts = {
             "e": "go east",
             "w": "go west",
@@ -879,19 +791,19 @@ class World(object):
             inst = "say " + inst
 
         instruction_list = inst.strip().split()
-        
+
         if (
             len(inst) == 1
             and ((inst[0] == "respawn") or (inst[0] == "*respawn*"))
-            and self.get_prop(agentid, "human")
-            and self.get_prop(agentid, "dead")
+            and actor.get_prop("human")
+            and actor.get_prop("dead")
         ):
-            self.respawn_player(agentid)
+            self.respawn_player(actor.node_id)
             return True, "Respawn"
-        dead = self.get_prop(agentid, "dead")
+        dead = actor.get_prop("dead")
         if dead or (dead == "ErrorNodeNotFound"):
             self.send_msg(
-                agentid,
+                actor,
                 "You are dead, you can't do anything, sorry.\nType *respawn* to try at life again.\n",
             )
             return False, "dead"
@@ -904,49 +816,57 @@ class World(object):
                 "Maybe try help...?",
                 "Sigh.",
             ]
-            self.send_msg(agentid, random.choice(errs))
+            self.send_msg(actor, random.choice(errs))
             return False
 
-        executable = instruction_list[0]
+        executable = instruction_list[0].lower()
         arguments = " ".join(instruction_list[1:])
 
         hint_calls = ["a", "actions", "hints"]
         if executable in hint_calls:
             # TODO remove the list of valid instructions from the main game,
             # Perhaps behind an admin gatekeeper of sorts
-            self.send_msg(agentid, "\n".join(self.get_possible_actions(agentid)) + "\n")
+            self.send_msg(
+                actor, "\n".join(self.get_possible_actions(actor.node_id)) + "\n"
+            )
             return True, "actions"
-        if executable == "map" and len(arguments) == 0:
-            # TODO fix print_graph
-            self.send_msg(
-                agentid, self.print_graph(self.room(agentid), agentid, visited=False)
-            )
-            return True, "Print graph"
-        if executable == "fogmap" and len(arguments) == 0:
-            # TODO fix print_graph
-            self.send_msg(
-                agentid, self.print_graph(self.room(agentid), agentid, visited=True)
-            )
-            return True, "Print graph"
-        if executable == "commit" and arguments == "suicide":
-            # TODO fix send_msg
-            self.send_msg(agentid, "You commit suicide!")
-            self.die(agentid)
-            return True, "Suicide"
-
+        if False:
+            # Switch these off for now.
+            if executable == "map" and len(arguments) == 0:
+                # TODO fix print_graph
+                self.send_msg(
+                    actor, self.print_graph(actor.room(), actor.node_id, visited=False)
+                )
+                return True, "Print graph"
+            if executable == "fogmap" and len(arguments) == 0:
+                # TODO fix print_graph
+                self.send_msg(
+                    actor, self.print_graph(actor.room(), actor.node_id, visited=True)
+                )
+                return True, "Print graph"
+            if executable == "commit" and arguments == "suicide":
+                # TODO fix send_msg
+                self.send_msg(actor, "You commit suicide!")
+                self.die(actor.node_id)
+                return True, "Suicide"
         if executable not in ALL_EVENTS:
-            self.send_msg(
-                agentid, "You can't {}. {}".format(executable, self.help_message())
-            )
-            return False, inst[0]
+            # Try again with the full model parser.
+            new_inst = self.action_parser.parse(inst, actor)
+            if new_inst != "":
+                instruction_list = new_inst.strip().split()
+                executable = instruction_list[0]
+                arguments = " ".join(instruction_list[1:])
+            if executable not in ALL_EVENTS:
+                self.send_msg(
+                    actor, "You can't {}. {}".format(executable, self.help_message())
+                )
+                return False, inst[0]
 
         EventClass = ALL_EVENTS[executable]
 
-        actor_node = self.oo_graph.get_node(agentid)
-
-        parsed_event = self.attempt_parse_event(EventClass, actor_node, arguments)
+        parsed_event = self.attempt_parse_event(EventClass, actor, arguments, event_id)
         if isinstance(parsed_event, ErrorEvent):
-            self.broadcast_to_agents(parsed_event, [agentid])
+            self.broadcast_to_agents(parsed_event, [actor])
             return False, inst
         else:
             parsed_event.execute(self)
@@ -1019,54 +939,27 @@ class World(object):
             new_a_id = self.playerid_to_agentid(p_id2)
             self.parse_exec(new_a_id, "look")
 
-    @deprecated
-    def possibly_clean_corpse(self, id):
-        ticks = self.get_prop(id, "death_ticks", 0)
-        self.set_prop(id, "death_ticks", ticks + 1)
-        # After N ticks, we clean up the corpse.
-        if ticks < 20:
-            return
+    def clean_corpses_and_respawn(self) -> List[GraphAgent]:
+        """
+        Clean any corpses that have been lying around for a while,
+        then try to do a respawn for each corpse cleaned.
 
-        agent_desc = self.node_to_desc(id, use_the=True).capitalize()
-        self.broadcast_to_room(
-            {
-                "caller": None,
-                "room_id": self.location(id),
-                "txt": agent_desc + " corpse disintegrates in a puff of magic.\n",
-            },
-            [id],
-        )
-        # Possibly spawn in a new agent
-        self.graph_builder.add_random_new_agent_to_graph(self)
-        self.delete_node(id)
-        # TODO remove direct access to oo_graph property here
-        if id in self.oo_graph.dead_nodes:
-            del self.oo_graph.dead_nodes[id]
+        Return any respawned GraphAgent nodes created like this
+        """
+        dead_nodes = self.oo_graph.get_dead_nodes()
+        cleaned_count = 0
+        for node in dead_nodes:
+            if node.ready_to_clean_corpse():
+                cleaned_count += 1
+                clear_event = DeleteObjectEvent(
+                    actor=node, text_content="corpse disintegrates in a puff of magic."
+                )
+                clear_event.execute(self)
 
-    # TODO refactor players
-    def update_world(self):
-        # move all the agents and junk, unless world frozen
-        if self.freeze():
-            return
-        live_npcs = 0
-        npcs = self.oo_graph.get_npcs()
-        for agent in npcs:
-            if agent.get_prop("dead"):
-                continue
-            live_npcs += 1
-            try:
-                self.npc_models.npc_act(agent.node_id)
-            except AttributeError:
-                # TODO fix this death bug in npc models and agents refactor
-                continue
-
-        for coprse in self.oo_graph.get_dead_nodes():
-            self.possibly_clean_corpse(coprse.node_id)
-
-        # Delete any nodes left in the queue to be deleted.
-        # It's better to do this here outside the loop above where the nodes might be used.
-        self.oo_graph.delete_nodes()
-        if live_npcs < self._initial_num_npcs:
-            # add a new NPC as we don't have enough left alive!
-            # print("adding new npc as total is: " + str(live_npcs))
-            self.graph_builder.add_random_new_agent_to_graph(self)
+        created = []
+        if self.graph_builder is not None:
+            for _x in range(cleaned_count):
+                new_agent = self.graph_builder.add_random_new_agent_to_graph(self)
+                if new_agent is not None:
+                    created.append(new_agent)
+        return created

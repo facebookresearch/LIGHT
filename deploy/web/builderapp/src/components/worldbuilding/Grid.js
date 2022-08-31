@@ -1,3 +1,10 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import React from "react";
 import GridLayout from "react-grid-layout";
 import { cloneDeep, isEmpty, isEqual } from "lodash";
@@ -15,19 +22,19 @@ const MARGIN = 24;
  * rather than trying to suggest based on all of them.
  */
 function get_neighbor(j, i, state) {
-  let otherTile = state.getTileAt(j-1, i, state.currFloor);
+  let otherTile = state.getTileAt(j - 1, i, state.currFloor);
   if (otherTile && !isNaN(otherTile.room)) {
     return otherTile.room;
   }
-  otherTile = state.getTileAt(j+1, i, state.currFloor);
+  otherTile = state.getTileAt(j + 1, i, state.currFloor);
   if (otherTile && !isNaN(otherTile.room)) {
     return otherTile.room;
   }
-  otherTile = state.getTileAt(j, i-1, state.currFloor);
+  otherTile = state.getTileAt(j, i - 1, state.currFloor);
   if (otherTile && !isNaN(otherTile.room)) {
     return otherTile.room;
   }
-  otherTile = state.getTileAt(j, i+1, state.currFloor);
+  otherTile = state.getTileAt(j, i + 1, state.currFloor);
   if (otherTile && !isNaN(otherTile.room)) {
     return otherTile.room;
   }
@@ -236,7 +243,7 @@ function Grid({ state, initialShowAdvanced }) {
             margin: "auto",
           }}
           onClick={state.addRowTop}
-          icon="add"
+          icon="arrow-up"
         />
         <div style={{ display: "flex" }}>
           <Button
@@ -250,7 +257,7 @@ function Grid({ state, initialShowAdvanced }) {
               margin: "10px 0",
             }}
             onClick={state.addColFront}
-            icon="add"
+            icon="arrow-left"
           />
           <div
             className="map-container"
@@ -298,7 +305,7 @@ function Grid({ state, initialShowAdvanced }) {
               margin: "10px 0",
             }}
             onClick={state.addColEnd}
-            icon="add"
+            icon="arrow-right"
           />
         </div>
         <Button
@@ -312,7 +319,7 @@ function Grid({ state, initialShowAdvanced }) {
             margin: "auto",
           }}
           onClick={state.addRowBot}
-          icon="add"
+          icon="arrow-down"
         />
       </div>
       <AdvancedEditor

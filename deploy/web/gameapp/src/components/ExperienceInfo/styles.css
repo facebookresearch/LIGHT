@@ -1,0 +1,43 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.experienceinfo-container {
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  justify-content: flex-start;
+  align-items: center;
+  font-family: fantasy;
+  border-top-right-radius: 15px;
+  border-top-left-radius: 15px;
+}
+
+.experienceinfo-leveldisplay {
+  width: 30%;
+  margin-right: 0;
+}
+.experienceinfo-progressbar {
+  width: 70%;
+  margin-left: 5%;
+  margin-right: 0;
+}
+
+@media only screen and (max-width: 600px) {
+  .experienceinfo-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 0;
+  }
+  .experienceinfo-progressbar {
+    width: 100%;
+    margin-left: 10%;
+    margin-right: 0;
+    margin-top: 1em;
+  }
+}

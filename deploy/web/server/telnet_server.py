@@ -1,9 +1,5 @@
-#!/usr/bin/env python3
-
-# Copyright 2017-present, Facebook, Inc.
-# All rights reserved.
-#
-# This source code is licensed under the license found in the
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
 
@@ -157,7 +153,7 @@ def main():
     numpy.random.seed(6)
 
     game = GameInstance()
-    graph = game.g
+    graph = game.world
     provider = TelnetPlayerProvider(graph, FLAGS.hostname, FLAGS.port)
     game.register_provider(provider)
     game.run_graph()

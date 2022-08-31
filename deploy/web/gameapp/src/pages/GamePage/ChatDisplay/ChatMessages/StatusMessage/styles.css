@@ -1,0 +1,71 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* STATUS MESSAGE STYLES */
+.status-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 25em;
+  z-index: 1;
+}
+
+.status-heart__container {
+  position: relative;
+  width: 20em;
+  z-index: 3;
+}
+
+.status-heart {
+  position: absolute;
+  z-index: 1;
+  opacity: 0.8;
+  left: 0.7em;
+}
+
+.status-content {
+  position: absolute;
+  z-index: 4;
+  padding-top: 2.5em;
+  margin: 0;
+  width: 100%;
+  height: 19em;
+  border-color: red;
+  border-width: 0.2em;
+  border-style: solid;
+  background-color: #efefef;
+  opacity: 0.9;
+  border-radius: 15px;
+  overflow-y: scroll;
+  box-shadow: 4px 4px 6px black;
+}
+
+.status-content.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+.status-content__entry {
+  color: black;
+  z-index: 6;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bolder;
+  padding-top: 1em;
+}
+
+@media only screen and (max-width: 600px) {
+  .status-content {
+    width: 98%;
+    display: flex;
+    flex-direction: column;
+
+    overflow-x: hidden;
+  }
+
+  .status-content__entry {
+    font-size: 11px;
+  }
+}

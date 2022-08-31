@@ -1,6 +1,16 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import React from "react";
 
 import CONFIG from "./config";
+
+const BASE_URL =
+  CONFIG.port != "80" ? `${CONFIG.host}:${CONFIG.port}` : CONFIG.host;
 
 export function usePrevious(value) {
   const ref = React.useRef();
@@ -35,14 +45,17 @@ export function useAPI(CONFIG, url, { body, params } = {}, preloaded) {
     let isSubscribed = true;
 
     if (state.loading) {
-      fetch(CONFIG.host + ":" + CONFIG.port + "/builder" + url)
+      var target_url = BASE_URL + "/builder" + url;
+      fetch(target_url, { credentials: "same-origin" })
         .then((res) => res.json())
         .then((data) => {
           if (isSubscribed) {
             setState({ loading: false, result: data });
           }
         })
-        .catch((err) => console.log("Error fetching data"));
+        .catch((err) =>
+          console.log("Error fetching data for url: " + target_url, err)
+        );
     }
 
     return () => (isSubscribed = false);
@@ -70,11 +83,12 @@ export function post(url, payload) {
     );
     formBody.push(encodedKey + "=" + encodedValue);
   }
-  return fetch(`${CONFIG.host}:${CONFIG.port}/${url}`, {
+  return fetch(`${BASE_URL}/${url}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
+    credentials: "same-origin",
     body: formBody.join("&"),
   });
 }

@@ -1,0 +1,18 @@
+# create the data
+py create_data.py
+
+# build cands
+py  ~/src/ParlAI/parlai/scripts/build_candidates.py -t fromfile -ffdp /tmp/train.txt
+py  ~/src/ParlAI/parlai/scripts/build_candidates.py -t fromfile -ffdp /tmp/valid.txt
+cp <blah> /tmp/cands.txt.train
+cp <blah> /tmp/cands.txt.valid
+
+# and create data again with the cands
+py create_data.py
+
+# copy here:
+
+cp /tmp/train.txt /checkpoint/light/projects/dialog_and_act_trainer/light_questscorer_train.txt
+cp /tmp/valid.txt /checkpoint/light/projects/dialog_and_act_trainer/light_questscorer_valid.txt
+
+# Then used for training the model in light/projects/dialog_and_act_trainer

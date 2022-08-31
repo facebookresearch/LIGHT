@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.world.souls.soul import Soul
+from light.world.souls.base_soul import BaseSoul
 import os
 import asyncio
 from typing import TYPE_CHECKING, Any
+from concurrent.futures import CancelledError
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
     from light.graph.world.world import World
 
 
-class ModelSoul(Soul):
+class ModelSoul(BaseSoul):
     """
     A ModelSoul is responsible for passing it's observations back to
     a model that decides what to do. This class should be initialized with a
@@ -61,9 +62,12 @@ class ModelSoul(Soul):
                 while not self.is_reaped:
                     await self._take_timestep()
                     await asyncio.sleep(self.MAIN_LOOP_STEP_TIMEOUT)
+            except CancelledError:
+                return
             except Exception as e:
                 print(f"Unhandled model soul exception in {self}: {e}")
                 import traceback
+
                 traceback.print_exc()
                 print("Reaping...")
                 self.reap()

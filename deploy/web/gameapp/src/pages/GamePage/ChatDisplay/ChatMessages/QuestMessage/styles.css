@@ -1,0 +1,66 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* QUEST MESSAGE STYLES */
+.quest-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 20em;
+  z-index: 1;
+}
+
+.quest-grail__container {
+  position: relative;
+  width: 20em;
+  z-index: 3;
+}
+
+.quest-grail {
+  position: absolute;
+  z-index: 1;
+  opacity: 0.7;
+  left: 0.7em;
+}
+
+.quest-content {
+  position: absolute;
+  z-index: 4;
+  padding: 2.5em 6px 6px 6px;
+  margin: 0;
+  width: 100%;
+  height: 16em;
+  border-color: yellow;
+  border-width: 0.2em;
+  border-style: solid;
+  background-color: white;
+  opacity: 0.6;
+  border-radius: 15px;
+  box-shadow: 4px 4px 6px black;
+  overflow-y: scroll;
+}
+.quest-content.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+.quest-content__entry {
+  color: black;
+  z-index: 6;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bolder;
+  padding-top: 1em;
+}
+
+@media only screen and (max-width: 600px) {
+  .quest-content {
+    width: 98%;
+  }
+
+  .quest-content__entry {
+    font-size: 11px;
+  }
+}

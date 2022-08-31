@@ -1,0 +1,24 @@
+#@package _global_
+mephisto:
+  blueprint:
+    world_file: ${task_dir}/worlds.py
+    task_description_file: ${task_dir}/task_description.html
+    onboarding_qualification: light-multi-party-chat-qualification
+    blocking_qualification: light-multi-party-chat-block
+    custom_source_dir: ${task_dir}/frontend
+    num_conversations: 10
+  task:
+    task_name: light-multi-party-chat-pilot
+    task_title: "Multi-Party Fantasy Chat"
+    task_description: >
+      In this task you will have a conversation with two other people
+      in a fantasy setting. You will all be given characters, and should
+      have a conversation about your assigned characters and the setting,
+      taking natural turns.
+    task_reward: 1.80
+    max_num_concurrent_units: 15
+    task_tags: "dynamic,chat,testing,fantasy,role-playing"
+    assignment_duration_in_seconds: 2400
+  database:
+    _database_type: singleton
+qualify_new_workers: true

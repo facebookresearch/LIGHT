@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
 import random
 import json
-from typing import List, Set
+from typing import List, Set, Dict, Any
+
+NodeProps = Dict[str, Any]
 
 UNINTERESTING_PHRASES = [
     "There's nothing special about it.",
     "You really don't have a good reason to be examining this closer.",
-    "You try to get a better look, but it's just as non-descript",
+    "You try to get a better look, but it's just as non-descript.",
     # TODO more uninteresting phrases?
 ]
 
@@ -20,6 +22,8 @@ DEAD_DESCRIPTIONS = [
     "They are very dead.",
     "Their corpse is inanimate.",
 ]
+
+TICKS_TO_CLEAN_CORPSE = 150
 
 
 def node_to_json(node):
@@ -129,6 +133,11 @@ class GraphNode(object):
             props = {}
         self._props = props.copy()
 
+        if "contain_size" in self._props and self._props["contain_size"] is None:
+            del self._props["contain_size"]
+        if "size" in self._props and self._props["size"] is None:
+            del self._props["size"]
+
         # TODO perhaps these should be edges rather than special cases?
         self.container_node = None
         self.contained_nodes = {}
@@ -143,7 +152,10 @@ class GraphNode(object):
             "name_prefix", "an" if name[0] in "aeiou" else "a"
         )
         self.names = self._props.get("names", [self.name]).copy()
-        self.desc = self._props.get("desc", random.choice(UNINTERESTING_PHRASES))
+        field = "desc"
+        if "desc" not in self._props:
+            field = "physical_description"
+        self.desc = self._props.get(field, random.choice(UNINTERESTING_PHRASES))
         self.classes = set(self._props.get("classes", set()).copy())
 
         self.agent = False
@@ -151,6 +163,7 @@ class GraphNode(object):
         self.object = False
         self._is_from_graph = False
         self._is_from_json = False
+        self._death_ticks = 0
 
         # TODO there are probably more properties currently abstracted by
         # the overarching graph class
@@ -168,7 +181,11 @@ class GraphNode(object):
     @classmethod
     def from_json_dict(cls, input_dict):
         """Init this node from a json encoding of the original node"""
-        node = cls(input_dict.get("node_id", -1), input_dict["name"], props=input_dict,)
+        node = cls(
+            input_dict.get("node_id", -1),
+            input_dict["name"],
+            props=input_dict,
+        )
         if "container_node" in input_dict:
             node._container_id = input_dict["container_node"]["target_id"]
         if "contained_nodes" in input_dict:
@@ -267,6 +284,10 @@ class GraphNode(object):
 
     def get_prop(self, prop_name, default=False):
         return self.__dict__.get(prop_name, default)
+
+    def get_props(self):
+        """Extract props and attributes from this node"""
+        return {k: v for k, v in self.__dict__.copy().items() if not k.startswith("_")}
 
     def has_prop(self, prop_name):
         """Return if the node has the given prop"""
@@ -369,6 +390,17 @@ class GraphNode(object):
         container_node.contained_nodes[self.node_id] = GraphEdge(self)
         self.set_container(container_node)
 
+    def ready_to_clean_corpse(self) -> bool:
+        """
+        Return True if this is a corpse that is ready to be removed,
+        False otherwise. Increment death ticks if unripe corpse.
+        """
+        if self.get_prop("dead") is True:
+            if self._death_ticks > TICKS_TO_CLEAN_CORPSE:
+                return True
+            self._death_ticks += 1
+        return False
+
     def delete_and_cleanup(self):
         """Remove this node and all contents from being linked, return nodes deleted"""
         old_container = self.get_container()
@@ -412,12 +444,14 @@ class GraphRoom(GraphNode):
     def __init__(self, node_id, name, props=None, db_id=None):
         super().__init__(node_id, name, props, db_id)
         self.room = True
+        if props is not None and "desc" not in props:
+            self.desc = props.get("description", "")
         self.extra_desc = self._props.get("extra_desc", self.desc)
         self.name_prefix = self._props.get("name_prefix", "the")
         self.surface_type = self._props.get("surface_type", "in")
         self.classes = set(self._props.get("classes", {"room"}))
         self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
-        self.grid_location = self._props.get("grid_location", [0,0,0])
+        self.grid_location = self._props.get("grid_location", [0, 0, 0])
         self.neighbors = {}
 
     def assert_valid(self):
@@ -450,6 +484,17 @@ class GraphRoom(GraphNode):
             return from_node.get_edge_to(self).label
         else:
             return self.name
+
+    def get_prefix_view_from(self, from_node=None):
+        """Return how this node would look like from the given location"""
+        if from_node is None:
+            return f"{self.name_prefix} {self.name}"
+        elif from_node == self:
+            return f"{self.name_prefix} {self.name}"
+        elif self in from_node.get_neighbors():
+            return from_node.get_edge_to(self).label
+        else:
+            return f"{self.name_prefix} {self.name}"
 
     def add_neighbor(
         self,
@@ -495,7 +540,7 @@ class GraphAgent(GraphNode):
     DEFAULT_MAX_WEARABLE_ITEMS = 3
     DEFAULT_MAX_WIELDABLE_ITEMS = 1
     DEFAULT_HEALTH = 6
-    DEFAULT_MOVEMENT_ENERGY_COST = 0.05
+    DEFAULT_MOVEMENT_ENERGY_COST = 0.00
     DEFAULT_SPEED = 10
     DEFAULT_STRENGTH = 0
     DEFAULT_DEXTERITY = 0
@@ -506,7 +551,7 @@ class GraphAgent(GraphNode):
     DEFAULT_ATTACK_TAGGED_AGENTS = []
     DEFAULT_MAX_DISTANCE_FROM_START_LOCATION = 1000000
     DEFAULT_DONT_ACCEPT_GIFTS = False
-    
+
     NODE_TYPE = "GraphAgent"
 
     def __init__(self, node_id, name, props=None, db_id=None):
@@ -541,11 +586,13 @@ class GraphAgent(GraphNode):
             self.dead = self._props.get("dead")
         else:
             self.dead = False
-        self.is_player = self._props.get("is_player", False)
+        # Flag to resolve when a death event is in the stack, but possibly not processed
+        self._dying = False
+        self.is_player = self._props.get("is_player", self._props.get("_human", False))
         self.usually_npc = self._props.get("usually_npc", False)
         self.pacifist = self._props.get("pacifist", False)
         self.tags = self._props.get("tags", self.DEFAULT_TAGS)
-        
+
         self.following = None
         self.followed_by = {}
 
@@ -555,15 +602,23 @@ class GraphAgent(GraphNode):
         # NPC properties. TODO move to another class somehow?
         self.aggression = self._props.get("aggression", self.DEFAULT_AGGRESSION)
         self.speed = self._props.get("speed", self.DEFAULT_SPEED)
-        self.max_distance_from_start_location = self._props.get("max_distance_from_start_location",
-                                                                self.DEFAULT_MAX_DISTANCE_FROM_START_LOCATION)
-        self.dont_accept_gifts = self._props.get("dont_accept_gifts", self.DEFAULT_DONT_ACCEPT_GIFTS)
-        self.attack_tagged_agents = self._props.get("attack_tagged_agents", self.DEFAULT_ATTACK_TAGGED_AGENTS)
+        self.max_distance_from_start_location = self._props.get(
+            "max_distance_from_start_location",
+            self.DEFAULT_MAX_DISTANCE_FROM_START_LOCATION,
+        )
+        self.dont_accept_gifts = self._props.get(
+            "dont_accept_gifts", self.DEFAULT_DONT_ACCEPT_GIFTS
+        )
+        self.attack_tagged_agents = self._props.get(
+            "attack_tagged_agents", self.DEFAULT_ATTACK_TAGGED_AGENTS
+        )
 
-        
-        
+        if self.on_events is None:
+            self.on_events = []
+        self.quests = self._props.get("quests", [])
+        self.mission = self._props.get("mission", "")
+
         # Game properties to track for this agent, TODO move to other class?
-        self._human = False
         self._current_player = None
         self.clear_memory()
 
@@ -698,14 +753,22 @@ class GraphAgent(GraphNode):
 
     def set_player(self, current_player):
         """Have a new player take over this agent. None returns to npc"""
-        self._human = current_player is not None
+        self.is_player = current_player is not None
         self.clear_memory()
         self._current_player = current_player
+
+    def mark_dying(self):
+        """Note that this agent is now dying, and future events can see this"""
+        self._dying = True
+
+    def is_dying(self):
+        return self._dying
 
     def die(self):
         """Kill off this agent, turn them into an object"""
         self.desc = random.choice(DEAD_DESCRIPTIONS)
         self.set_prop("dead", True)
+        self.mark_dying()
         new_node_id = self.node_id + "__dead__"
         new_node = GraphObject(new_node_id, self.name, self.__dict__)
         room = self.get_room()
@@ -732,25 +795,43 @@ class GraphObject(GraphNode):
         super().__init__(node_id, name, props, db_id)
         self.object = True
         self.size = self._props.get("size", self.DEFAULT_SIZE)
-        self.food_energy = self._props.get("food_energy", 0)
+        self.food_energy = self._props.get("food_energy", 1)
         self.value = self._props.get("value", 1)
-        self.surface_type = self._props.get("surface_type", "on")
-        self.drink = self._props.get("drink", False)
-        self.food = self._props.get("food", False)
+        self.drink = self._props.get("drink", self._props.get("is_drink", False))
+        self.food = self._props.get("food", self._props.get("is_food", False))
         self.dead = self._props.get("dead", False)
         self.on_use = self._props.get("on_use", None)
         self.container = self._props.get("container", False)
-        self.gettable = self._props.get("gettable", True)
-        self.wearable = self._props.get("wearable", False)
-        self.wieldable = self._props.get("wieldable", False)
+        if self._props.get("is_container", False) or self._props.get(
+            "is_surface", False
+        ):
+            self.container = True
+        self.surface_type = self._props.get("surface_type", "on")
+        if "is_surface" in self._props:
+            if self._props.get("is_surface") == 1.0:
+                self.surface_type = "on"
+            else:
+                self.surface_type = "in"
+        self.gettable = self._props.get(
+            "gettable", self._props.get("is_gettable", True)
+        )
+        self.wearable = self._props.get(
+            "wearable", self._props.get("is_wearable", False)
+        )
+        self.wieldable = self._props.get(
+            "wieldable", self._props.get("is_weapon", False)
+        )
         self.classes = set(self._props.get("classes", {"object"}))
         self.equipped = self._props.get("equipped", None)
+
         self.contain_size = self._props.get(
             "contain_size",
             self.DEFAULT_CONTAINER_SIZE
             if self.container
             else self.DEFAULT_CONTAIN_SIZE,
         )
+        if self.contain_size > self.size:
+            self.size = self.contain_size
         # TODO object stat multipliers should not be a simple dict
         self.stats = self._props.get(
             "stats", {"damage": int(self.wieldable), "defense": int(self.wearable)}

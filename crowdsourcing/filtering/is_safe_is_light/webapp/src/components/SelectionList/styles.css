@@ -1,0 +1,44 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/*SELECTION LIST STYLES*/
+.selectionlist-container {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-style: ridge;
+    border-color: blue;
+    border-width: 10px;
+    border-radius: 15px;
+    width: 99%;
+    padding:20px;
+    margin:10px 5px 10px 5px;
+}
+/*SELECTION LIST ITEM*/
+.selection-row {
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    margin: 5px 0 5px 0;
+    width: 100%;
+}
+
+.selection-name__container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.selection-name__text {
+    color: blue;
+    font-weight: bold;
+    margin-bottom: 0;
+    padding:5px;
+    text-align: center;
+    font-size: 34;
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -17,12 +17,16 @@ from typing import Any, Dict
 
 class GraphEncoder(json.JSONEncoder):
     def default(self, o):
+        from light.graph.events.base import GraphEvent
+
         if isinstance(o, set):
             return sorted(list(o))
         if isinstance(o, list):
             return sorted(o)
         if isinstance(o, GraphEdge):
             return {k: v for k, v in o.__dict__.copy().items() if not k.startswith("_")}
+        if isinstance(o, GraphEvent):
+            return o.to_json()
         if not isinstance(o, GraphNode):
             return super().default(o)
         use_dict = {k: v for k, v in o.__dict__.copy().items() if not k.startswith("_")}
@@ -71,7 +75,7 @@ def convert_dict_to_node(obj, world):
 
 def read_event_logs(event_file):
     """
-        Parses an event file, returning the read file in a buffer
+    Parses an event file, returning the read file in a buffer
     """
     buffer = []
     with open(event_file, "r") as event_json_file:

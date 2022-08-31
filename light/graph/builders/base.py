@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import random, copy
@@ -245,10 +245,10 @@ class SingleSuggestionGraphBuilder(object):
         banned_items=[],
     ):
         """abstract method for getting desired relationship given a non-graph
-        element and a type of relationship """
+        element and a type of relationship"""
         raise NotImplementedError
 
     def get_similar_element(self, txt_feats, element_type):
-        """ abstract method for getting a corresponding element that already
-        exists in the in the model """
+        """abstract method for getting a corresponding element that already
+        exists in the in the model"""
         raise NotImplementedError

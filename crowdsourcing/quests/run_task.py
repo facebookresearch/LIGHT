@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
 import os
 import time
 import shlex
-from mephisto.core.local_database import LocalMephistoDB
-from mephisto.core.operator import Operator
-from mephisto.core.utils import get_root_dir
+from mephisto.abstractions.databases.local_database import LocalMephistoDB
+from mephisto.operations.operator import Operator
+from mephisto.operations.utils import get_root_dir
 from parlai.core.params import ParlaiParser
 
 import random

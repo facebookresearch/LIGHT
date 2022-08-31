@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
 import random
 import threading
-from typing import TYPE_CHECKING, List, Tuple, Type, Callable, Any, Optional
+from typing import TYPE_CHECKING, List, Tuple, Type, Callable, Any, Optional, Dict
 
 from light.world.souls.player_soul import PlayerSoul
+from light.world.souls.tutorial_player_soul import TutorialPlayerSoul
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
-    from light.graph.world.world import World
+    from light.world.world import World
     from light.graph.events.base import GraphEvent
     from light.world.souls.soul import Soul
 
@@ -40,6 +41,14 @@ class Purgatory:
         self.world = world
         self.player_assign_condition = threading.Condition()
         self.players = 0
+        self.shared_args = {}
+
+    def register_shared_args(self, arg_name, arg_provider):
+        """
+        Used to pass in e.g. the generic act model and roleplaying model scorer to souls.
+        """
+        if arg_provider is not None:
+            self.shared_args[arg_name] = arg_provider
 
     def register_filler_soul_provider(
         self,
@@ -84,7 +93,7 @@ class Purgatory:
         the async call such that the soul can choose to take its time
         deciding what to do.
         """
-        if agent.get_prop('dead'):
+        if agent.get_prop("dead"):
             self.clear_soul(agent)
             return  # We shouldn't send an event to this soul, as it is reaped
         soul: "Soul" = self.node_id_to_soul.get(agent.node_id)
@@ -111,10 +120,38 @@ class Purgatory:
                 target_agent = random.choice(possible_agents)
                 self.clear_soul(target_agent)
                 soul = PlayerSoul(
-                    target_agent, self.world, self.players, player_provider
+                    target_agent,
+                    self.world,
+                    self.players,
+                    player_provider,
+                    self.shared_args,
                 )
                 self.node_id_to_soul[target_agent.node_id] = soul
                 self.player_soul_id_to_soul[self.players] = soul
                 self.players += 1
                 return soul
         return None
+
+
+class TutorialPurgatory(Purgatory):
+    """Version of purgatory that only ever puts a player into the tutorial character"""
+
+    def get_soul_for_player(
+        self,
+        player_provider,
+        agent: Optional["GraphAgent"] = None,
+    ):
+        with self.player_assign_condition:
+            ag = [a for a in self.world.oo_graph.agents.values() if a.name == "You"][0]
+            self.clear_soul(ag)
+            soul = TutorialPlayerSoul(
+                ag,
+                self.world,
+                self.players,
+                player_provider,
+                self.shared_args,
+            )
+            self.node_id_to_soul[ag.node_id] = soul
+            self.player_soul_id_to_soul[self.players] = soul
+            self.players += 1
+            return soul

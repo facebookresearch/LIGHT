@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -53,13 +53,19 @@ class TestWorldGraphBuilder(unittest.TestCase):
             ]
             cbase_id = test.create_base_character("troll")[0]
             self.charID = test.create_character(
-                "troll under the bridge", cbase_id, "Male", "Tall",
+                "troll under the bridge",
+                cbase_id,
+                "Male",
+                "Tall",
             )[0]
             self.charID2 = test.create_character(
                 "troll under the bridge2", cbase_id, "Female", "Short"
             )[0]
             self.charID3 = test.create_character(
-                "troll under the bridge3", cbase_id, "Male", "Tall",
+                "troll under the bridge3",
+                cbase_id,
+                "Male",
+                "Tall",
             )[0]
             self.obase_id = test.create_base_object("room4")[0]
             self.objID = test.create_object(
@@ -104,7 +110,7 @@ class TestWorldGraphBuilder(unittest.TestCase):
 
     def test_builder_adds_random_agent_to_graph_adds_another_to_some_room(self):
         """
-            Test that the add_random_new_agent_to_graph method will add new agents
+        Test that the add_random_new_agent_to_graph method will add new agents
         """
         dbid_to_g = {val: key for key, val in self.graphBuilder.roomid_to_db.items()}
         gRoomId = dbid_to_g[self.roomID]
@@ -114,9 +120,6 @@ class TestWorldGraphBuilder(unittest.TestCase):
         contained_room_1 = len(self.testGraph.get_node(gRoomId).contained_nodes)
         contained_room_2 = len(self.testGraph.get_node(gRoomId2).contained_nodes)
         self.assertTrue(contained_room_1 == 3 or contained_room_2 == 3)
-        # Trying to add again will not work, since all characters in world!
-        self.graphBuilder.add_random_new_agent_to_graph(self.testWorld)
-        self.assertEqual(len(self.testGraph.agents), 3)
 
     def test_builder_returns_graph(self):
         self.assertIsInstance(self.testGraph, OOGraph)
