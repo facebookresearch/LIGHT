@@ -1,3 +1,7 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 #!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
@@ -60,7 +64,7 @@ def format_data_for_printing(data):
             episode_type = f"{C.BOLD_RED}FAILED TUTORIAL{C.RESET}"
     elif dialogue_had_full_game:
         episode_type = f"{C.BOLD_BLUE}RETURNING WORKER{C.RESET}"
-         
+
     return (
         f"{metadata_string}"
         f"Says: {says}, Dos: {dos}\n"

@@ -1,3 +1,7 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 #!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
@@ -53,16 +57,16 @@ def validate_unit(unit):
     agent = unit.get_assigned_agent()
     if agent is None:
         return
-    
+
     data = agent.state.get_data()
 
-    if data['final_submission'] is None:
+    if data["final_submission"] is None:
         return
 
     dialogue_data = data["final_submission"]["data"]
 
     if had_full_game(dialogue_data):
-        return # No action, made it to full game
+        return  # No action, made it to full game
 
     if was_tutorial(dialogue_data):
         worker = agent.get_worker()

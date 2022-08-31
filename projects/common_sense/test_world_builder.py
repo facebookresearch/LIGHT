@@ -1,3 +1,7 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 #!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
@@ -20,10 +24,11 @@ import pickle
 from collections import Counter
 import copy
 
+
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, True, 'Test common sense model for room building')
-    parser.set_defaults(interactive_mode=True, task='interactive')
+        parser = ParlaiParser(True, True, "Test common sense model for room building")
+    parser.set_defaults(interactive_mode=True, task="interactive")
     return parser
 
 
@@ -45,6 +50,7 @@ def run_create_char_objs(graph, agent, count=3):
         new_graph = agent.add_all_object_attributes(new_graph, c)
     return new_graph
 
+
 def interactive(opt):
     # setup data
     just_desc_dropouts = {}
@@ -65,8 +71,8 @@ def interactive(opt):
 
     # load in data to run test on
     with jsonlines.open(
-        '/private/home/alexgurung/ParlAI/data/light_common_sense/rooms_and_contents/test.jsonl',
-        'r',
+        "/private/home/alexgurung/ParlAI/data/light_common_sense/rooms_and_contents/test.jsonl",
+        "r",
     ) as f:
         for room_graph in f:
             input_txt = generate_graph_tuples(
@@ -94,9 +100,9 @@ def interactive(opt):
     # test_data = test_data
 
     if isinstance(opt, ParlaiParser):
-        logging.error('interactive should be passed opt not Parser')
+        logging.error("interactive should be passed opt not Parser")
         opt = opt.parse_args()
-    
+
     model_name = "bart_all_simple_Sun_Jan_23/c9d"
     force = True
     model_start = time()
@@ -122,11 +128,11 @@ def interactive(opt):
 
         new_graph = run_create_char_objs(new_graph, agent, count=3)
         new_graph = run_create_char_objs(new_graph, agent, count=3)
-        
+
         print("-" * 100)
-        print("-"*20 + "TRUE ROOM" + "-"*20)
+        print("-" * 20 + "TRUE ROOM" + "-" * 20)
         print(true_room)
-        print("-"*20 + "PREDICTED ROOM" + "-"*20)
+        print("-" * 20 + "PREDICTED ROOM" + "-" * 20)
         print(agent.parse_room_graph(new_graph))
         print("-" * 100)
 
@@ -138,24 +144,24 @@ def interactive(opt):
         )
         print(metrics)
         all_metrics.append(metrics)
-    print("-"*100)
+    print("-" * 100)
     print(f"MODEL TOTAL TIME: {time() - model_start}")
     # print(agent.get_errors())
 
     errors = agent.get_errors()
     error_data = parse_errors(errors)
-    print("-"*20 + "Edge Errors" + "-"*20)
+    print("-" * 20 + "Edge Errors" + "-" * 20)
     df = pd.DataFrame(data=error_data["edge_errors"]).transpose()
     print(df)
-    print("-"*20 + "Error Breakdown" + "-"*20)
-    del error_data['edge_errors']
-    del error_data['raw_errors']
+    print("-" * 20 + "Error Breakdown" + "-" * 20)
+    del error_data["edge_errors"]
+    del error_data["raw_errors"]
     df = pd.DataFrame(data=error_data.items(), columns=["key", "value"])
     print(df)
-    print("-"*100)
+    print("-" * 100)
 
 
-@register_script('interactive', aliases=['i'])
+@register_script("interactive", aliases=["i"])
 class Interactive(ParlaiScript):
     @classmethod
     def setup_args(cls):
@@ -165,6 +171,6 @@ class Interactive(ParlaiScript):
         return interactive(self.opt)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     random.seed(42)
     Interactive.main()
