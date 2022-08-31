@@ -1,7 +1,13 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 .App {
   display: grid;
   grid-template-columns: 400px 1fr;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   margin: 0 auto;
   padding: 0px 0;
@@ -50,10 +56,6 @@ td {
 
   .chat-wrapper {
     grid-row-start: 2;
-  }
-
-  div.sidebar {
-    margin: 0px;
   }
 
   div.leaflet-container {
@@ -426,15 +428,6 @@ body .fadeShow {
   flex-direction: column;
   padding: 1em 5em 4em 0.5em;
   background-image: url("./assets/images/spider.png");
-  background-size: cover;
-  height: 100%;
-}
-
-.profilepage-container {
-  display: flex;
-  flex-direction: column;
-  padding: 1em 1em 4em 1em;
-  background-image: url("./assets/images/InexplicableTavern.png");
   background-size: cover;
   height: 100%;
 }

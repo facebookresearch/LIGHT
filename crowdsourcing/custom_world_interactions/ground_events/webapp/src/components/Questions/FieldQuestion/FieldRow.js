@@ -1,3 +1,10 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 //REACT
 import React, {useState} from "react";
 //CUSTOM COMPONENTS
@@ -14,7 +21,6 @@ const FieldRow = ({
     const [fieldVal, setFieldVal] = useState("")
     //updates state in field question component
     const changeHandler = e=>{
-        e.preventDefault()
         setFieldVal(e.target.value)
         changeFunction(e.target.value)
     }

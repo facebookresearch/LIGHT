@@ -1,0 +1,40 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.iconbutton-icon {
+  color: white;
+  font-size: 2.25em;
+  background-color: rgb(7, 101, 241);
+  text-align: center;
+  padding: 0.1em;
+  border-radius: 25px;
+  border-style: double;
+  border-color: white;
+  box-shadow: 1px 1px 4px black;
+}
+
+.iconbutton-icon.active {
+  color: rgb(7, 101, 241);
+  font-size: 2.25em;
+  background-color: white;
+  text-align: center;
+  padding: 0.1em;
+  border-radius: 25px;
+  border-style: double;
+  border-color: rgb(7, 101, 241);
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+.iconbutton-icon:hover {
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+.iconbutton-icon.active:active {
+  box-shadow: 0px 0px 0px black;
+}
+
+@media only screen and (max-width: 650px) {
+}

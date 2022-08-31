@@ -1,3 +1,9 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import React from "react";
 
 // Generate a random id
@@ -28,7 +34,6 @@ const reducer = (state, msg) => {
     (msg.caller === "SystemMessageEvent" && msg.text.indexOf("XP") >= 0) ||
     (msg.caller === "RewardEvent" && msg.text.indexOf("XP") >= 0)
   ) {
-    console.log("EXP MESSAGE", msg);
     let { event_data } = msg;
     let {
       target_event, //UUID OF MESSAGE THAT TRIGGERED EXP

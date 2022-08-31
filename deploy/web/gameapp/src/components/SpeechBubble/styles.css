@@ -1,3 +1,9 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 .speechbubble-container {
   display: flex;
   justify-content: center;
@@ -62,5 +68,12 @@
     margin-left: -38%;
     top: 20%;
     z-index: -1;
+  }
+  .speechbubble-text {
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
   }
 }

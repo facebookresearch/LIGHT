@@ -8,7 +8,7 @@ repos:
         exclude: "^.*svg"
       - id: check-yaml
       - id: check-added-large-files
-        args: ["--maxkb=1000"]
+        args: ["--maxkb=600"]
   - repo: https://github.com/psf/black
     rev: 20.8b1
     hooks:

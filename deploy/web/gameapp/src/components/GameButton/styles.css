@@ -1,3 +1,10 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* GAME BUTTON STYLES */
 .button-container {
   border-radius: 25px;
   background-color: yellow;
@@ -13,6 +20,9 @@
   margin: 0;
   padding: 0;
   color: darkgrey;
+  text-align: center;
+  margin: 0;
+  padding: 0;
 }
 
 .button-text:hover {
@@ -23,4 +33,14 @@
 
 .button-container:active {
   box-shadow: 0em 0em 0em;
+}
+
+@media only screen and (max-width: 650px) {
+  .button-text {
+    font-size: 20px;
+    font-family: "Courier New", Courier, monospace;
+    margin: 0;
+    padding: 0;
+    color: black;
+  }
 }

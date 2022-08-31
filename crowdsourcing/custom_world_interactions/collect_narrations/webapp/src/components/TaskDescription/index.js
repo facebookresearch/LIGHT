@@ -1,7 +1,14 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import React from "react";
 import "./styles.css";
 
-import TaskExample1 from "../../assets/images/TaskExample1.png"
+import TaskExample1 from "../../assets/images/TaskExample1.png";
 //CUSTOM COMPONENTS
 import GoodExampleList from "./GoodExampleList";
 import BadExampleList from "./BadExampleList";
@@ -55,7 +62,11 @@ const TaskDescription = ()=> {
           <p className="description-section__text">
             Let's say we have a  <b>lit torch </b> as the <span style={{color:"gold"}} ><b> primary object </b></span> and a
             <b> wooden table</b> as the <span style={{color:"blue"}} ><b>  secondary object</b></span>.
-            In this case, a good action <span style={{color:"green"}}><b> description </b></span>  would be:{" "}
+            In this case, a good action <span style={{color:"green"}}><b> phrase </b></span>  would be:{" "}
+            <span style={{color:"green"}}><i>
+              "Ignite the <span style={{color:"blue"}} ><b> table </b></span> with <span style={{color:"gold"}} ><b>the lit torch </b></span>." {" "}
+            </i></span>
+            Using this action phrase, a good action <span style={{color:"green"}}><b> description </b></span>  would be:{" "}
             <span style={{color:"green"}}><i>
               "You light the <span style={{color:"blue"}} ><b> table </b></span> on fire with <span style={{color:"gold"}} ><b>the lit torch </b></span>. It ignites and burns to
               the ground, leaving a pile of ash."

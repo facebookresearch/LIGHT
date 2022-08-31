@@ -15,3 +15,12 @@ Some `Soul`'s set flags on `GraphAgent`'s to be able to be interpreted by other 
 
 Current flags:
 - `is_player`: Set by `PlayerSoul` to designate `GraphAgent`'s that are inhabited by a real player. Used by the world to ensure we don't doubly assign a `GraphAgent` to two different players, and by `ModelSoul`'s to differentiate between inter-model chat and chat with a human.
+
+## Current Souls:
+- [**`Soul`**](https://github.com/facebookresearch/LIGHT/tree/main/light/world/souls/soul.py): Abstract class defining the minimum API for an agent-attached interaction layer into a LIGHT world.
+- [**`BaseSoul`**](https://github.com/facebookresearch/LIGHT/tree/main/light/world/souls/base_soul.py): Extension on the basic `Soul` class including various helpers and state that are useful for both player and model-based interactions.
+- [**`ModelSoul`**](https://github.com/facebookresearch/LIGHT/tree/main/light/world/souls/model_soul.py): Basic `Soul` that is defines an interface where models can be loaded in and used as agents.
+- [**`OnEventSoul`**](https://github.com/facebookresearch/LIGHT/tree/main/light/world/souls/on_event_soul.py): Extended `ModelSoul` class that is able to handle some basic scripted heuristic events as well as the more general `on_event` types that can be linked to a `GraphNode`.
+- [**`PlayerSoul`**](https://github.com/facebookresearch/LIGHT/tree/main/light/world/souls/player_soul.py): Simple `Soul` class that allows for a human player to take control of the `GraphAgent`. Requires use of a `PlayerProvider` containing the abstractions for sending observations and receiving actions.
+- [**`RepeatSoul`**](https://github.com/facebookresearch/LIGHT/tree/main/light/world/souls/repeat_soul.py): Bare-bones `Soul` class for use in demonstrations. Simply speaks back the observations it sees with a `SayEvent`.
+- [**`MockSoul`**](https://github.com/facebookresearch/LIGHT/tree/main/light/world/souls/mock_soul.py): Core soul for being able to run tests on the LIGHT `World` classes. Has a directly accessible `observations` field and a `do_act` function allowing scripted execution of actions.

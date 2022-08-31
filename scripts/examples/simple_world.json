@@ -266,7 +266,7 @@
       "node_id": "shovel_5_6",
       "object": true,
       "on_use": [
-          {
+        {
           "remaining_uses": 1,
           "events": [
             {
@@ -324,11 +324,11 @@
       "food": true,
       "food_energy": 2,
       "name_prefix": "a",
-      "value": 10,	
+      "value": 10,
       "node_id": "scroll_9_1",
       "container_node": { "target_id": "church entryway_1_2" },
       "contained_nodes": {},
-	"object": true,
+      "object": true,
       "on_use": [
         {
           "events": [

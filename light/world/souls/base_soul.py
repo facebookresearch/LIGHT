@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -190,7 +190,7 @@ class BaseSoul(Soul):
             txt += quest_txt
         txt += "\n"
         return txt
-        
+
     def build_dialog_context(self, quest_txt=None):
         # Initial context.
         txt = self.build_context(quest_txt)
@@ -210,7 +210,7 @@ class BaseSoul(Soul):
             is_safe = d[0][2]
             if not is_safe:
                 # reset conversation when unsafe utterances are in the history
-                txt = ""
+                dtxt = ""
         dtxt = dtxt.lstrip(" ")
         final = txt + dtxt
         return final
@@ -332,7 +332,7 @@ class BaseSoul(Soul):
         human_msg = contextsplit[-1]
         if len(human_msg.split()) < 5:
             return 0
-        if 'DEBUG' in human_msg:
+        if "DEBUG" in human_msg:
             return 0
         # check for n-gram match with context
         if self.too_much_string_overlap(context, human_msg):

@@ -1,36 +1,53 @@
-.levelDisplay-container {
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.leveldisplay-container {
   display: flex;
   flex-direction: row;
   width: 100%;
-  justify-content: center;
+  justify-content: space-around;
+  align-items: center;
   padding-top: 12px;
+  margin-left: 10px;
 }
 .level-container {
   display: flex;
-  width: 2.7em;
-  height: 2.7em;
-  background-color: yellow;
-  display: flex;
-  border-radius: 1.35em;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
-  margin-right: 0.3rem;
+  height: 3em;
+  width: 3em;
 }
-.level-number {
-  color: grey;
-  margin: 0;
-  font-size: 14px;
-  padding: 0;
+
+.gift-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 3em;
+  width: 3em;
 }
 
 @media only screen and (max-width: 900px) {
-  .level-number {
-  }
 }
 
 @media only screen and (max-width: 600px) {
-  .level-number {
-    font-size: 12px;
+  .level-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3em;
+    width: 3em;
+    margin-left: 20px;
+  }
+
+  .gift-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3em;
+    width: 3em;
+    margin-left: 40px;
   }
 }

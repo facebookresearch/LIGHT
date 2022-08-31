@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -47,7 +47,9 @@ if __name__ == "__main__":
         ),
         install_requires=reqs.strip().split("\n"),
         include_package_data=True,
-        # entry_points={"flake8.extension": ["PAI = parlai.utils.flake8:ParlAIChecker"]},
+        entry_points={
+            "console_scripts": ["light=light.light_cli:main"],
+        },
         classifiers=[
             "Programming Language :: Python :: 3",
             "License :: OSI Approved :: MIT License",

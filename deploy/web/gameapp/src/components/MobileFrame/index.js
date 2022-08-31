@@ -1,6 +1,14 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* REACT */
 import React from "react";
+/* STYLES */
 import "./styles.css";
-//CUSTOM COMPONENTS
+/* CUSTOM COMPONENTS */
 import MobileHeader from "./MobileHeader";
 
 const MobileFrame = ({

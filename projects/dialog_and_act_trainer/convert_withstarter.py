@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
@@ -37,7 +37,7 @@ def clean(msg):
             convo_has_started = True
         if "_partner_name " in t:
             partner_name = t.replace("_partner_name ", "")
-            
+
     first_convo_line = True
     for t in txt.split("\n"):
         if t.startswith("_") and "_object_desc" not in t:
@@ -53,7 +53,7 @@ def clean(msg):
                 t = t.replace("_partner_emote ", "")
                 app = app + " *" + t + "*"
             else:
-                #if ("_partner_say " in t) or ("_self_say" in t):
+                # if ("_partner_say " in t) or ("_self_say" in t):
                 #    #import pdb; pdb.set_trace()
                 if ("_partner_say " in t) or ("_self_say" in t):
                     first_convo_line = False
@@ -66,9 +66,9 @@ def clean(msg):
         res.append("START " + partner_name)
     else:
         res.append("CONTINUE " + partner_name)
-                
+
     msg.force_set("text", "\n".join(res))
-    #print(res)
+    # print(res)
     return msg
 
 

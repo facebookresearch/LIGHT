@@ -1,3 +1,9 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 .glowingbutton {
   color: white;
   font-size: 1em;
@@ -22,4 +28,10 @@
 }
 
 .glowingbutton-text {
+}
+
+@media only screen and (max-width: 650px) {
+  .glowingbutton-text {
+    font-size: 12px;
+  }
 }

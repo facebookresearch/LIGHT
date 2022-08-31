@@ -1,10 +1,7 @@
-#!/usr/bin/env python3
-
-# Copyright 2017-present, Facebook, Inc.
-# All rights reserved.
-#
-# This source code is licensed under the license found in the
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+
 
 from deploy.web.server.tornado_server import LandingApplication
 from deploy.web.server.builder_server import (
@@ -47,6 +44,7 @@ def read_secrets():
     if not os.path.exists(loc):
         return {
             "cookie_secret": "0123456789",
+            "preauth_secret": "0123456789",
         }
     with open(loc, "r") as secret_file:
         for line in secret_file:
@@ -64,6 +62,7 @@ tornado_settings = {
     "compiled_template_cache": False,
     "debug": "/dbg/" in __file__,
     "login_url": "/login",
+    "preauth_secret": SECRETS["preauth_secret"],
     "template_path": get_path("static"),
 }
 

@@ -1,12 +1,23 @@
-import React, { useState, useEffect } from "react";
-import "./styles.css";
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
-const Logo = (props) => {
-  const builder_url =
-    window.location.protocol + "//" + window.location.host + "/builder/";
+/* REACT */
+import React from "react";
+/* STYLES */
+import "./styles.css";
+/* IMAGES */
+import Scribe from "../../assets/images/scribe.png";
+
+//Logo - renders game logo along with Title and blurb with custom styling
+const Logo = () => {
+  // const builder_url =
+  //   window.location.protocol + "//" + window.location.host + "/builder/";
   return (
     <div className="header">
-      <img alt="logo" src="/scribe.png" />
+      <img alt="logo" src={Scribe} />
       <div className="logo-container">
         <h1 className="logo-title">LIGHT</h1>
         <p className="logo-text">

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -2223,8 +2223,9 @@ class LIGHTDatabase:
         )["CNTREC"]
 
         if not has_flags_column:
-            self.c.execute("ALTER TABLE user_table ADD COLUMN onboarding_flags INTEGER DEFAULT 0;")
-
+            self.c.execute(
+                "ALTER TABLE user_table ADD COLUMN onboarding_flags INTEGER DEFAULT 0;"
+            )
 
     def add_single_conversation(self, room, participants, turns):
         """
@@ -3602,7 +3603,7 @@ class LIGHTDatabase:
         id = int(result[0][0])
         return id
 
-    def get_user_flags(self, user):
+    def get_user_flags(self, extern_id):
         self.c.execute(
             """
             SELECT onboarding_flags from user_table WHERE extern_id = ?
@@ -3623,7 +3624,7 @@ class LIGHTDatabase:
                 SET onboarding_flags = ?
                 WHERE extern_id = ?
                 """,
-                (new_flags,),
+                (new_flags, user),
             )
 
     def initialize_agent_score(self, target_node, user):
