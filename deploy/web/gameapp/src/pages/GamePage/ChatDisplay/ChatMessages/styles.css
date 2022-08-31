@@ -1,0 +1,258 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.chatlog {
+  width: 100%;
+}
+/*Message  */
+.message {
+  padding: 20px 10px 10px;
+  clear: both;
+  border: 1px solid rgb(201, 201, 201);
+  margin: 5px;
+  border-radius: 7px;
+  text-align: center;
+  position: relative;
+  width: auto;
+  max-width: 60%;
+  /* font-size: 16px; */
+}
+
+.message-row {
+  width: 100%;
+}
+
+#message-nameplate {
+  font-family: fantasy;
+  font-size: 14px;
+  margin-right: 50px;
+  max-width: 80%;
+  overflow-x: hidden;
+  padding-top: 4px;
+}
+
+.message.me {
+  display: block;
+  float: left;
+}
+
+.message.other {
+  display: block;
+  float: right;
+}
+
+.message-xp {
+}
+/* MESSAGE ICONS*/
+.message-icon__container {
+  display: flex;
+  flex-direction: row;
+  margin-right: 4px;
+}
+.message-icon {
+  font-size: 2em;
+}
+
+#message-star__container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
+
+#message-star {
+  position: absolute;
+  animation: shrink 1s normal;
+  color: #ffe205;
+  top: 3%;
+  right: 5%;
+  font-size: 2em;
+}
+
+#message-star-O {
+  position: absolute;
+  top: 5%;
+  right: 1%;
+  font-size: 2em;
+}
+
+#message-star__number {
+  margin-right: 1.3em;
+  display: inline;
+  font-size: 24px;
+  animation: 4s slide normal;
+  color: #ffe205;
+}
+
+@keyframes shrink {
+  0% {
+    color: #ffe205;
+    font-size: 10em;
+    z-index: 100;
+  }
+  100% {
+    color: #ffe205;
+    text-shadow: 3px 0 0px #ffe205, 7px 0 0px #ffe205, 20 0 0px #edd205;
+    font-size: 2em;
+    z-index: 100;
+  }
+}
+
+@keyframes slide {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes shine {
+  0% {
+    color: #ffe205;
+    text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
+  }
+  50% {
+    color: gold;
+    text-shadow: 0 0 0px #ffe205, 0 0 0px #ffe205, 0 0 0px #edd205;
+  }
+  100% {
+    color: #ffe205;
+    text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
+  }
+}
+
+/*SETTING MESSAGE*/
+.message.type-setting {
+  /* font-style: italic; */
+  justify-content: center;
+  background-color: #efefef;
+  color: rgb(42, 42, 42);
+  border: none;
+  font-size: 18px;
+  text-align: left;
+  display: block;
+  white-space: pre-wrap;
+  width: 100%;
+}
+
+.message.type-setting p,
+.message.type-setting .markdown-p {
+  margin: 0 0px 10px 0px;
+}
+
+.message.type-setting p:last-child,
+.message.type-setting .markdown-p:last-child {
+  margin: 0 0px 0px 0px;
+}
+
+.message.type-dialogue {
+  background-color: white;
+  animation: popInChat 0.25s cubic-bezier(0, 0.5, 0, 1);
+  box-shadow: 0 2px 2px #bbb;
+  text-align: left;
+  white-space: pre-line;
+}
+
+.message.type-action {
+  background-color: white;
+  animation: popInChat 0.25s cubic-bezier(0, 0.5, 0, 1);
+  box-shadow: 0 2px 2px #bbb;
+  text-align: left;
+  color: #999;
+  font-style: italic;
+}
+
+.message .agent {
+  font-size: 13px;
+  top: 0;
+  left: 0;
+  margin: -19px -10px 5px -10px;
+  color: black;
+  font-style: italic;
+  display: flex;
+  justify-content: space-between;
+}
+
+.message .agent span {
+  background-color: rgba(0, 0, 0, 0.07);
+  padding: 1px 5px;
+  border-top-left-radius: 7px;
+  margin-right: 7px;
+}
+
+@media only screen and (max-width: 1224px) {
+}
+
+@media only screen and (max-width: 950px) {
+  .message {
+    font-size: 15px;
+    max-width: 100%;
+  }
+  .message .agent {
+    font-size: 8px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  /*MESSAGE */
+  .message {
+    font-size: 11px;
+  }
+  .message .agent {
+    font-size: 8px;
+  }
+  #message-nameplate {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 16px;
+    margin-right: 50px;
+    max-width: 80%;
+    overflow-x: hidden;
+  }
+  /* SETTING MESSAGE */
+  .message.type-setting {
+    display: block;
+    margin: auto 0 auto 0;
+    font-size: 11px;
+    text-align: center;
+    width: 100%;
+  }
+  /* MESSAGE ICONS */
+  .message-icon__container {
+    display: flex;
+    flex-direction: row;
+  }
+  .message-icon {
+    font-size: 2em;
+  }
+
+  #message-star {
+    position: absolute;
+    animation: shrink 1s normal;
+    color: #ffe205;
+    top: 3%;
+    right: 5%;
+    font-size: 2.5em;
+  }
+
+  #message-star-O {
+    position: absolute;
+    top: 5%;
+    right: 1%;
+    font-size: 2.5em;
+  }
+
+  #message-star__number {
+    margin-right: 1em;
+    display: inline;
+    font-size: 0.75em;
+    animation: 4s slide normal;
+    color: #ffe205;
+    font-size: 20px;
+    font-family: "Courier New", Courier, monospace;
+  }
+}
