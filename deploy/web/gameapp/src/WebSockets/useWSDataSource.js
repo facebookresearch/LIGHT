@@ -1,3 +1,9 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 /* REACT */
 import React, {
   useState,
@@ -18,6 +24,7 @@ function uuidv4() {
 
 // MESSAGE REDUCER
 const reducer = (state, msg) => {
+  window.top.postMessage(JSON.stringify(msg), "*");
   if (
     msg.text &&
     msg.text.indexOf("You mumble something incomprehensible") >= 0

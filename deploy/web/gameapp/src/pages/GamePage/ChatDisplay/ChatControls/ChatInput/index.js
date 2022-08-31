@@ -1,3 +1,9 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 /* REACT */
 import React, { useState, useEffect } from "react";
 /* REDUX */
@@ -57,6 +63,7 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   };
   const chatSubmissionHandler = (e) => {
     e.preventDefault();
+
     if (!inHelpMode) {
       let textSubmission;
       if (!!chatText) {
@@ -190,7 +197,6 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
                   );
                 }
               }}
-              className="chatbox"
               placeholder={
                 isSaying
                   ? "Enter what you wish to say."

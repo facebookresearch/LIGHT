@@ -1,3 +1,10 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 //REACT
 import React, {useState} from "react";
 //STYLING
@@ -13,8 +20,9 @@ const DropdownSelect = ({options, selectFunction})=>{
   //Upon selection updates both the localstate and the payload state.
     const selectHandler = (selection)=>{
       setFirstSelect(true)
-      setSelectedOption(selection.value)
-      selectFunction(selection)
+      // setSelectedOption(selection.value)
+      setSelectedOption(selection.target.value)
+      selectFunction(selection.target.value)
     }
     return(
     <div className="dropdown-container">

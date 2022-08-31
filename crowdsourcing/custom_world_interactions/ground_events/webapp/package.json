@@ -11,8 +11,9 @@
   "author": "",
   "dependencies": {
     "bootstrap": "^4.6.0",
+    "highlightable": "^1.1.0-beta.0",
     "jquery": "^3.6.0",
-    "mephisto-task": "^1.0.14",
+    "mephisto-task": "^2.0.1",
     "popper.js": "^1.16.1",
     "react": "16.13.1",
     "react-bootstrap": "^1.5.0",

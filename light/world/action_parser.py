@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -108,6 +108,7 @@ class ActionParser:
         self.agent.opt.log()
         # Lock to handle concurrency, fixed better with asycio
         self.parse_lock = threading.Condition()
+        opt["_action_parser"] = self
 
     def parse(self, txt, actor=None):
         if self.agent is None:
