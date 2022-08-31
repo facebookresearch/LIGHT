@@ -2436,7 +2436,7 @@ class EquipObjectEvent(GraphEvent):
         ), f"Can only equip GraphObjects, not {equip_target}"
         # The current children of EquipObjectEvent have ONLY one name.
         # Joining for any future possibility that may have more than one.
-        equip_target.equipped = ','.join(self.NAMES)
+        equip_target.equipped = ",".join(self.NAMES)
         for n, s in equip_target.get_prop("stats", {"defense": 1}).items():
             self.actor.set_prop(n, self.actor.get_prop(n) + s)
         if equip_target.wieldable:

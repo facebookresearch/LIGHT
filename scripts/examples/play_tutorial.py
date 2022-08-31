@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -44,7 +44,7 @@ def init_world():
     # NOTE: I just took the act_model_path from elsewhere
     shared_resources = TutorialModelSoul.load_models(
         dialog_model_path="zoo:light_whoami/profile_expanded_attention_128/model",
-        act_model_path="/checkpoint/light/models/game2021/act_model/model"
+        act_model_path="/checkpoint/light/models/game2021/act_model/model",
     )
     # shared_resources = {}
     purgatory = world.purgatory

@@ -13,7 +13,7 @@ mephisto:
     task_description: "In this task you will recieve two object lists. You will be asked to select one from each, and then describe in second person an interaction that would occur if one were to use the objects together."
     task_reward: 0.70
     task_tags: "fantasy,object,interaction"
-  database: 
+  database:
     _database_type: singleton
 num_tasks: 150
 qualify_new_workers: true

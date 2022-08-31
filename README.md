@@ -63,3 +63,6 @@ that in any script that uses these tasks or agents, you will have to make a call
 - etc.
 
 Using `light` will automatically load the correct modules from inside this repo so that they are visible to ParlAI.
+
+## License
+ParlAI is MIT licensed. See the **[LICENSE](https://github.com/facebookresearch/LIGHT/LICENSE)** file for details.

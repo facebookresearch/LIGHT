@@ -1,0 +1,41 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* TUTORIAL ENTRY STYLING */
+.tutorialentry-container {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.tutorialentry-header{
+
+
+}
+
+.tutorialentry-header__text{
+    font-size: 20px;
+    font-weight: bold;
+    color: gold;
+    text-decoration: underline;
+    padding-left: 4px;
+}
+
+.tutorialentry-body{
+
+}
+
+.tutorialentry-body__text{
+    padding: 0px 4px 0px 4px;
+    font-size: 16px;
+}
+
+.tutorialentry-img{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}

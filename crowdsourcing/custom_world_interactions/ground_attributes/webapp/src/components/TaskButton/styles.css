@@ -1,0 +1,156 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* TASK BUTTON STYLES */
+/* Multiple choice button styles */
+.mc-button__container {
+    background-color: red;
+    border-color:white;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 5px 2px 5px black;
+    margin: 10px;
+}
+.mc-button__text{
+    color: white;
+    font-size: 16px;
+    padding:6px;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.mc-selectedbutton__container {
+    background-color: white;
+    border-color:red;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 5px 2px 5px black;
+    margin: 10px;
+}
+
+.mc-selectedbutton__text {
+    color: red;
+    font-size: 16px;
+    padding:6px;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.mc-button__container:hover {
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+.mc-button__container:active {
+box-shadow: 0em 0em 0em;
+}
+
+/* Boolean button styles */
+.b-button__container {
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 5px 2px 5px black;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.b-button__container.true {
+    background-color: white;
+    border-color:green;
+    border-radius: 10px 0 0 10px;
+}
+
+.b-button__container.false {
+    background-color: white;
+    border-color:red;
+    border-radius: 0 10px 10px 0px;
+}
+
+.b-button__text{
+    font-size: 16px;
+    padding:6px;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.b-button__text.true{
+    color: green;
+}
+
+.b-button__text.false{
+    color: red;
+}
+
+.b-selectedbutton__container {
+    border-width: 1px;
+    box-shadow: 5px 2px 5px black;
+    border-style: solid;
+}
+
+.b-selectedbutton__container.true {
+    background-color: green;
+    border-color:green;
+    border-radius: 10px 0 0 10px;
+}
+.b-selectedbutton__container.false {
+    background-color: red;
+    border-color:red;
+    border-radius: 0 10px 10px 0px;
+}
+
+
+.b-selectedbutton__text {
+    font-size: 16px;
+    padding:6px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 0;
+}
+
+
+.b-button__container:hover {
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+.b-button__container:active {
+box-shadow: 0em 0em 0em;
+}
+
+/* SUBMISSION BUTTON */
+
+.submission-button__container {
+    border-style: ridge;
+    border-width: 3px;
+    box-shadow: 5px 2px 5px black;
+    height: 100%;
+    background-color: chartreuse;
+    border-color: silver;
+    border-radius: 15px;
+    width: 20%;
+}
+
+.submission-selectedbutton__text {
+    font-size: 16px;
+    padding:6px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+
+.submission-button__container:hover {
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+.submission-button__container:active {
+box-shadow: 0em 0em 0em;
+}

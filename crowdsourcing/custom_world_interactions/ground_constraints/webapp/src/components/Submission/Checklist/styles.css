@@ -1,0 +1,32 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+table, th, td {
+    border: 4px ridge silver;
+  }
+
+.checklist-container {
+
+}
+
+.checklist-header__text {
+    text-align: center;
+    font-size: 28px;
+    text-decoration: underline;
+    font-weight: bold;
+
+}
+
+
+.checklist-table__header--text {
+    text-align: center;
+    padding: 4px;
+}
+
+.checklist-item {
+    padding: 3px;
+}

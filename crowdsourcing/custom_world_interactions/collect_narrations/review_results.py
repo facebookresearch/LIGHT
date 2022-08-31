@@ -53,5 +53,5 @@ def main():
     run_examine_or_review(db, format_data_for_printing)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -145,7 +145,7 @@ def validate_unit(unit):
 
     if output is None:
         return
-        
+
     data = mephisto_data_browser.get_data_from_unit(unit)["data"]["outputs"][
         "final_data"
     ]
