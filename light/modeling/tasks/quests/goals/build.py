@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
 
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+
 import parlai.core.build_data as build_data
 import os
 from parlai.tasks.light_dialog.builder import build_from_db

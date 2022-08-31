@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 from parlai.core.teachers import ParlAIDialogTeacher, MultiTaskTeacher
 from parlai.utils.misc import str_to_msg
 from parlai_internal.projects.light.quests.tasks.quest_predictive_machines.build import (

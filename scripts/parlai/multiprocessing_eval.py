@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
 
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+
 """
 Main launch script for single-host, multi-GPU evaluation.
 This is a drop-in replacement for eval_model.  This script will launch N
