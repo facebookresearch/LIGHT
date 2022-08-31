@@ -1,3 +1,9 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 //HEADER SCREENSHOT
 const HeaderShot = require("./assets/images/Tutorial/HeaderShot.png");
 //EVENT SCREENSHOTS
@@ -54,7 +60,7 @@ const Copy ={
                 question:"2) Backstory",
                 explanation:`Some narrations rely on backstory that cannot be created through object constraints.
 
-                For instance, the interaction is "You slowly clean the shield with the cloth, 
+                For instance, the interaction is "You slowly clean the shield with the cloth,
                 thinking about all the fun times you had with your brother", includes backstory (i.e. the brother)
                 that is not an inherent attribute of the objects. As a result such an example would be marked true.`,
                 screenshot: ConstraintShot2
@@ -211,10 +217,10 @@ const Copy ={
             {
                 question:"7) Remove Backstory",
                 explanation:`If the provided narration contains
-                extra backstory (e.g. a reference to a character's past), 
-                rewrite the narration to remove it. For example, the 
-                narration "ACTOR hits the OBJECT1 into the OBJECT2, remembering 
-                how father used to do it before their demise." should 
+                extra backstory (e.g. a reference to a character's past),
+                rewrite the narration to remove it. For example, the
+                narration "ACTOR hits the OBJECT1 into the OBJECT2, remembering
+                how father used to do it before their demise." should
                 become "ACTOR hits the OBJECT1 into the OBJECT2.".`,
                 // screenshot: EventShot7
                 screenshot: null

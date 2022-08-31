@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -37,7 +37,9 @@ print(Counter([u.get_status() for u in units]))
 unique_inputs = set()
 for unit in units:
     data = mephisto_data_browser.get_data_from_unit(unit)
-    inputs_to_data = data['data']['inputs']['interaction'] + data['data']['inputs']['rawAction']
+    inputs_to_data = (
+        data["data"]["inputs"]["interaction"] + data["data"]["inputs"]["rawAction"]
+    )
     unique_inputs.add(inputs_to_data)
 
 print(f"len unique inputs: {len(unique_inputs)}")
@@ -109,18 +111,23 @@ def format_for_printing_data(data):
 
     # want to print new narration first
     broadcast_messages = [
-        e for e in outputs["events"] if e is not None and e["type"] == "broadcast_message"
+        e
+        for e in outputs["events"]
+        if e is not None and e["type"] == "broadcast_message"
     ]
     if len(broadcast_messages) == 1:
         # character agnostic narration; Narration \t narration_text
         event = broadcast_messages[0]
         outputs_string += f"\tNarration:\n\t\t{event['params']['room_view']}\n"
-        if 'ranges' not in outputs['this_task_state'] or len(outputs['this_task_state']['ranges']) == 0:
+        if (
+            "ranges" not in outputs["this_task_state"]
+            or len(outputs["this_task_state"]["ranges"]) == 0
+        ):
             outputs_string += "\t\tRanges:\n\t\t NONE FOUND\n\n"
         else:
-            for r in outputs['this_task_state']['ranges']:
-                s = r['start']
-                e = r['end']
+            for r in outputs["this_task_state"]["ranges"]:
+                s = r["start"]
+                e = r["end"]
                 outputs_string += f"\t\t{r['text'][s:e]}: {r['highlighter']}\n"
 
     outputs_string += f"\tEvents:\n\n"
@@ -133,16 +140,16 @@ def format_for_printing_data(data):
             outputs_string += f"\t\t[Remove] ({event['params']['name']})\n\n"
         elif event["type"] == "create_entity":
             # any entities created; [Create Object] (object_name) with description: object_description
-            if len(event['params']['object']) == 0:
+            if len(event["params"]["object"]) == 0:
                 continue
             outputs_string += f"\t\t[Create Object] ({event['params']['object']['name']}) with description: {event['params']['object']['desc']} \n\n"
-            print(event['params']['object'])
+            print(event["params"]["object"])
         elif (
             event["type"] == "modify_attribute_primary"
             or event["type"] == "modify_attribute_secondary"
         ):
             # new/modified attributes after action; [Changed Attribute] ({object_name) \t is/isn't \t attribute
-            cur_obj = obj_from_key(event['params']['type'], primary_obj, secondary_obj)
+            cur_obj = obj_from_key(event["params"]["type"], primary_obj, secondary_obj)
             is_isnt = "is" if event["params"].get("value") else "isn't"
             outputs_string += f"\t\t[Changed Attribute] ({cur_obj.get('name')})\t{is_isnt}\t{event['params']['key']}\n\n"
         elif (
@@ -150,7 +157,7 @@ def format_for_printing_data(data):
             or event["type"] == "modify_attribute_secondary_description"
         ):
             # new description for items; [New Description] (object_name): object_description
-            cur_obj = obj_from_key(event['params']['type'], primary_obj, secondary_obj)
+            cur_obj = obj_from_key(event["params"]["type"], primary_obj, secondary_obj)
             outputs_string += f"\t\t[New Description] ({cur_obj.get('name')}): {event['params']['value']}\n\n"
         elif event["params"]["key"] == "location":
             # new location, map to more legible
@@ -158,7 +165,7 @@ def format_for_printing_data(data):
             new_location_name = nice_location_name(
                 new_location, primary_obj.get("name"), secondary_obj.get("name")
             )
-            cur_obj = obj_from_key(event['params']['type'], primary_obj, secondary_obj)
+            cur_obj = obj_from_key(event["params"]["type"], primary_obj, secondary_obj)
 
             outputs_string += f"\t\t[Changed Location] ({cur_obj.get('name')}): {new_location_name}\n\n"
         else:
