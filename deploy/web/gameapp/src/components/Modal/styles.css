@@ -1,0 +1,33 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.modal-overlay {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-window {
+  width: 50%;
+  height: 70%;
+  background-color: white;
+  border-color: lightgrey;
+  border-width: 1em;
+  border-style: ridge;
+  border-radius: 15px;
+  overflow: hidden;
+  z-index: 100;
+}
+
+@media only screen and (max-width: 950px) {
+  .modal-window {
+    width: 95%;
+  }
+}

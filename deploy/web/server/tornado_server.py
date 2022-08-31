@@ -1,10 +1,7 @@
-#!/usr/bin/env python3
-
-# Copyright 2017-present, Facebook, Inc.
-# All rights reserved.
-#
-# This source code is licensed under the license found in the
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+
 
 from deploy.web.server.game_instance import (
     Player,
@@ -214,9 +211,8 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
 
     def user_should_do_tutorial(self, user_id):
         with self.db as ldb:
-            # flags = ldb.get_user_flags(user_id)
-            # return not flags.completed_onboarding
-            return False
+            flags = ldb.get_user_flags(user_id)
+            return not flags.completed_onboarding
 
     def launch_game_for_user(self, user_id, game_id):
         # Check for custom game world

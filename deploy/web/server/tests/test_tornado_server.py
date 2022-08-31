@@ -1,3 +1,7 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 #!/usr/bin/env python3
 import unittest.mock as mock
 import json
@@ -63,7 +67,7 @@ PORT = 35494
 URL = f"http://localhost:{PORT}"
 
 
-class TestFlags:
+class MockFlags:
     def __init__(self, hostname, port):
         self.hostname = hostname
         self.port = port
@@ -79,7 +83,7 @@ class TestRegistryApp(AsyncHTTPTestCase):
         # Need to fix this somehow...
         self.db_path = os.path.join(self.data_dir, "test_server.db")
         self.db = LIGHTDatabase(self.db_path)
-        self.FLAGS = TestFlags("localhost", PORT)
+        self.FLAGS = MockFlags("localhost", PORT)
         self.client = httpclient.AsyncHTTPClient()
         super().setUp()
 

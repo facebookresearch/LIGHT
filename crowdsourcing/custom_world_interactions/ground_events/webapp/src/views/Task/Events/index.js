@@ -1,3 +1,10 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 //REACT
 import React from "react";
 //STYLING
@@ -11,6 +18,8 @@ const Events = ({
     interaction,
     broadcastMessage,
     setBroadcastMessage,
+    ranges,
+    setRanges,
     isCreatingEntity,
     setIsCreatingEntity,
     createdEntity,
@@ -50,6 +59,8 @@ const Events = ({
                     interaction={interaction}
                     broadcastMessage={broadcastMessage}
                     setBroadcastMessage={setBroadcastMessage}
+                    ranges={ranges}
+                    setRanges={setRanges}
                     isCreatingEntity={isCreatingEntity}
                     setIsCreatingEntity={setIsCreatingEntity}
                     createdEntity={createdEntity}

@@ -1,5 +1,12 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 //REACT
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 //STYLES
 import "./styles.css"
 //CUSTOM COMPONENT
@@ -17,46 +24,43 @@ const FormQuestion = ({
     toolTipCopy,// Text that will appear in tooltip
     hasToolTip,// boolean that adds tooltip icon and text if true
     isComplete// completion condition
-})=>{
+}) => {
     /*------STATE------*/
     const [description, setDescription] = useState("")
-     /*------LIFECYCLE------*/
+    /*------LIFECYCLE------*/
     //Sets initial value on render
-    useEffect(()=>{
-        setDescription(formVal)
-    },[])
     /*------HANDLERS------*/
     //Updates both local and payload state with answer
-    const changeHandler = e=>{
+    const changeHandler = e => {
         e.preventDefault()
         setDescription(e.target.value)
         formFunction(e.target.value)
     }
-    return(
+    return (
         <div className="form-container" >
             <InfoToolTip
-            tutorialCopy={toolTipCopy}
-            hasToolTip={hasToolTip}
+                tutorialCopy={toolTipCopy}
+                hasToolTip={hasToolTip}
             >
-                <div style={{display:"flex", flexDirection:"row"}}>
-                    {hasToolTip ? <Checkbox isComplete={isComplete} />:null}
-                    <h1 className="form-header" style={{color: (questionColor ?  questionColor : "black")}}>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                    {hasToolTip ? <Checkbox isComplete={isComplete} /> : null}
+                    <h1 className="form-header" style={{ color: (questionColor ? questionColor : "black") }}>
                         {upperCaseQuestion ? question.toUpperCase() : question}
                     </h1>
                 </div>
             </InfoToolTip>
-        <p >
-        </p>
-        <div className="answer-container">
-            <textarea
-                className="answer-form"
-                onChange={changeHandler}
-                value={description}
-                rows="7"
-                type="text"
-                placeholder={placeholder}
-            />
-        </div>
+            <p >
+            </p>
+            <div className="answer-container">
+                <textarea
+                    className="answer-form"
+                    onChange={changeHandler}
+                    value={description}
+                    rows="7"
+                    type="text"
+                    placeholder={placeholder}
+                />
+            </div>
         </div>
     )
 }
