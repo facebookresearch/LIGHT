@@ -20,7 +20,6 @@ const FieldRow = ({
     const [fieldVal, setFieldVal] = useState("")
     //updates state in field question component
     const changeHandler = e=>{
-        e.preventDefault()
         setFieldVal(e.target.value)
         changeFunction(e.target.value)
     }

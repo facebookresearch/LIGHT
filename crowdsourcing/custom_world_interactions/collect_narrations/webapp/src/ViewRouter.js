@@ -4,7 +4,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { ObjectSelector } from "./components/object_selector.jsx";
@@ -70,7 +69,7 @@ const ViewRouter =({appData})=> {
 // if (blockedReason !== null) {
 //     return (
 //       <section className="hero is-medium is-danger">
-//         <div class="hero-body">
+//         <div className="hero-body">
 //           <h2 className="title is-3">{blockedExplanation}</h2>{" "}
 //         </div>
 //       </section>
@@ -83,7 +82,7 @@ const ViewRouter =({appData})=> {
         {
             (blockedReason !== null) ?
             <section className="hero is-medium is-danger">
-                <div class="hero-body">
+                <div className="hero-body">
                     <h2 className="title is-3">{blockedExplanation}</h2>{" "}
                 </div>
             </section>

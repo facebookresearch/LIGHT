@@ -24,10 +24,12 @@ const BooleanQuestion = ({
     toolTipCopy,// Copy for desired tooltip
     hasToolTip,// Boolean stating whether or not this component has a tooltip
     isComplete,// Completion condition for question to be satisfactorily answered
+    defaultOption,
     children
 })=>{
     //local state for question answer
-    const [answer, setAnswer] = useState(null);
+    // const [answer, setAnswer] = useState(null);
+    const [answer, setAnswer] = useState(defaultOption ? defaultOption : null);
 
     //sets both local and payload state to true
     const trueHandler = ()=>{

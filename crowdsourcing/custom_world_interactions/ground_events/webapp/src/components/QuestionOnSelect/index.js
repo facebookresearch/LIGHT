@@ -56,7 +56,7 @@ const QuestionOnSelect= ({
         switch (type) {
             case "dropdown":
                 let selectFunction = (update)=>{
-                    secondaryOnSelectFunction(update)
+                    secondaryOnSelectFunction(update);
                 }
                 return (
                     <div style={{width:"40%"}}>

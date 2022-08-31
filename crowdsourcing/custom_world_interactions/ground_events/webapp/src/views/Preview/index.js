@@ -13,9 +13,7 @@ import Copy from "../../TaskCopy"
 const PreviewTutorial = Copy.tutorialIntro.explanation;
 const PreviewTutorialImg= Copy.tutorialIntro.screenshot;
 const EventTutorialIntro = Copy.event.tutorialIntro;
-const ConstraintTutorialIntro = Copy.constraint.tutorialIntro;
 const EventTutorial = Copy.event.tutorialCopy;
-const ConstraintTutorial = Copy.constraint.tutorialCopy;
 //Custom Components
 import TutorialEntry from "../../components/TutorialEntry"
 import Header from "../../components/Header";
@@ -40,25 +38,14 @@ const Preview = ({}) => {
               {EventTutorialIntro}
               {
                 EventTutorial.map((entry, index)=>{
+                  if (index >= 6) {
+                    return <div />
+                  }
                   const {question, explanation, screenshot} = entry;
                   return <TutorialEntry key={index} question={question} explanation={explanation} screenshot={screenshot}/>
                 })
               }
             </div>
-          </div>
-          <div className="constraintpreview-container">
-            <div className="constraintpreview-header">
-                <p>CONSTRAINTS</p>
-            </div>
-              <div className="constraintpreview-body">
-                {ConstraintTutorialIntro}
-                {
-                  ConstraintTutorial.map((entry, index)=>{
-                    const {question, explanation, screenshot} = entry;
-                    return <TutorialEntry key={index} question={question} explanation={explanation} screenshot={screenshot} />
-                  })
-                }
-              </div>
           </div>
         </div>
       </div>

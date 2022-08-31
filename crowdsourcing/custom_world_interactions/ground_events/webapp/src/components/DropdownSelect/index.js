@@ -19,8 +19,9 @@ const DropdownSelect = ({options, selectFunction})=>{
   //Upon selection updates both the localstate and the payload state.
     const selectHandler = (selection)=>{
       setFirstSelect(true)
-      setSelectedOption(selection.value)
-      selectFunction(selection)
+      // setSelectedOption(selection.value)
+      setSelectedOption(selection.target.value)
+      selectFunction(selection.target.value)
     }
     return(
     <div className="dropdown-container">

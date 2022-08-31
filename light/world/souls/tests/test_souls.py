@@ -12,7 +12,7 @@ from light.graph.elements.graph_nodes import GraphAgent
 from light.graph.structured_graph import OOGraph
 from light.world.world import World
 from light.graph.events.graph_events import EmoteEvent, SayEvent
-from light.world.souls.test_soul import TestSoul
+from light.world.souls.mock_soul import MockSoul
 from light.world.souls.repeat_soul import RepeatSoul
 
 
@@ -26,7 +26,7 @@ def async_test(f):
     return wrapper
 
 
-class TestSouls(unittest.TestCase):
+class MockSouls(unittest.TestCase):
     """Unit tests for simple souls"""
 
     def test_init_soul(self):
@@ -37,16 +37,16 @@ class TestSouls(unittest.TestCase):
         agent_node.force_move_to(room_node)
         test_world = World({}, None, True)
         test_world.oo_graph = test_graph
-        test_soul = TestSoul(agent_node, test_world)
-        self.assertEqual(agent_node, test_soul.target_node)
-        self.assertEqual(test_world, test_soul.world)
+        mock_soul = MockSoul(agent_node, test_world)
+        self.assertEqual(agent_node, mock_soul.target_node)
+        self.assertEqual(test_world, mock_soul.world)
 
         test_event = EmoteEvent.construct_from_args(
             agent_node, targets=[], text="smile"
         )
-        test_soul.do_act(test_event)
+        mock_soul.do_act(test_event)
 
-        test_soul.reap()
+        mock_soul.reap()
 
     @async_test
     async def test_message_sending(self):
@@ -65,7 +65,7 @@ class TestSouls(unittest.TestCase):
         test_world.oo_graph = test_graph
 
         purgatory = test_world.purgatory
-        purgatory.register_filler_soul_provider("test", TestSoul, lambda: [])
+        purgatory.register_filler_soul_provider("test", MockSoul, lambda: [])
         purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
 
         purgatory.fill_soul(test_node, "test")
@@ -74,23 +74,23 @@ class TestSouls(unittest.TestCase):
         purgatory.fill_soul(repeat_node, "repeat")
         self.assertIn(repeat_node.node_id, purgatory.node_id_to_soul)
 
-        test_soul: "TestSoul" = purgatory.node_id_to_soul[test_node.node_id]
+        mock_soul: "MockSoul" = purgatory.node_id_to_soul[test_node.node_id]
         repeat_soul = purgatory.node_id_to_soul[repeat_node.node_id]
 
         # Make the test soul act, and observe what follows
         test_event = EmoteEvent.construct_from_args(test_node, targets=[], text="smile")
-        test_soul.do_act(test_event)
+        mock_soul.do_act(test_event)
 
-        observations = test_soul.observations
+        observations = mock_soul.observations
         start_time = time.time()
         OBSERVATION_WAIT_TIMEOUT = 3.3
         while len(observations) < 3:
             self.assertTrue(
                 time.time() - start_time < OBSERVATION_WAIT_TIMEOUT,
                 f"Exceeded expected duration {OBSERVATION_WAIT_TIMEOUT} waiting "
-                f"for parrot events, found {test_soul.observations}",
+                f"for parrot events, found {mock_soul.observations}",
             )
-            observations = test_soul.observations
+            observations = mock_soul.observations
             await asyncio.sleep(0.01)
 
         # Observations should be the self smile event, then the repeat agent's say and smile
@@ -114,11 +114,11 @@ class TestSouls(unittest.TestCase):
         self.assertEqual(other_emote_observe.actor, repeat_node)
         self.assertEqual(other_emote_observe.text_content, "smile")
 
-        observations = test_soul.observations
+        observations = mock_soul.observations
         # Extra observation may have slipped in?
         self.assertEqual(len(observations), 3, "Unexpected amount of observations")
         self.assertEqual(
-            len(test_soul._observe_futures), 0, "All obs threads should have deleted"
+            len(mock_soul._observe_futures), 0, "All obs threads should have deleted"
         )
 
 

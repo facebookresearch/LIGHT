@@ -19,7 +19,7 @@ const NumberQuestion = ({
 
     //changeHandler - updates both local and payload state with answer
     const changeHandler = e=>{
-        e.preventDefault()
+        e.preventDefault();
         setFormNumber(e.target.value)
         formFunction(e.target.value)
     }

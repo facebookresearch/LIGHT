@@ -11,7 +11,6 @@ import "./styles.css"
 //Custom Components
 import Header from "../../components/Header";
 import TaskDataCards from "./TaskDataCards"
-import Constraints from "./Constraints"
 import Events from "./Events"
 //Task - Primary View for task, contains the Header, both the events and constraints, and the Task Cards.
 const Task = ({
@@ -19,6 +18,8 @@ const Task = ({
   //STATE AND CORRESPONDING FUNCTIONS TO SET STATE
   broadcastMessage,
   setBroadcastMessage,
+  ranges,
+  setRanges,
   isCreatingEntity,
   setIsCreatingEntity,
   createdEntity,
@@ -41,26 +42,6 @@ const Task = ({
   setSecondaryIsChangingLocation,
   secondaryNewLocation,
   setSecondaryNewLocation,
-  primaryModifiedAttributes,
-  setPrimaryModifiedAttributes,
-  secondaryModifiedAttributes,
-  setSecondaryModifiedAttributes,
-  isSecondaryHeld,
-  setIsSecondaryHeld,
-  isReversible,
-  setIsReversible,
-  isLocationConstrained,
-  setIsLocationConstrained,
-  constraintLocation,
-  setConstraintLocation,
-  primaryConstrainingAttributes,
-  setPrimaryConstrainingAttributes,
-  secondaryConstrainingAttributes,
-  setSecondaryConstrainingAttributes,
-  isInfinite,
-  setIsInifinite,
-  timesRemaining,
-  setTimesRemaining,
 }) => {
   //Abstracts object and interaction information off data from backend
   const {object1, object2, interaction}= data;
@@ -79,6 +60,8 @@ const Task = ({
               interaction={interaction}
               broadcastMessage={broadcastMessage}
               setBroadcastMessage={setBroadcastMessage}
+              ranges={ranges}
+              setRanges={setRanges}
               isCreatingEntity={isCreatingEntity}
               setIsCreatingEntity={setIsCreatingEntity}
               createdEntity={createdEntity}
@@ -101,31 +84,6 @@ const Task = ({
               setSecondaryIsChangingLocation={setSecondaryIsChangingLocation}
               secondaryNewLocation={secondaryNewLocation}
               setSecondaryNewLocation={setSecondaryNewLocation}
-              primaryModifiedAttributes={primaryModifiedAttributes}
-              setPrimaryModifiedAttributes={setPrimaryModifiedAttributes}
-              secondaryModifiedAttributes={secondaryModifiedAttributes}
-              setSecondaryModifiedAttributes={setSecondaryModifiedAttributes}
-            />
-            <Constraints
-              object1={object1}
-              object2={object2}
-              interaction={interaction}
-              isSecondaryHeld={isSecondaryHeld}
-              setIsSecondaryHeld={setIsSecondaryHeld}
-              isReversible={isReversible}
-              setIsReversible={setIsReversible}
-              isLocationConstrained={isLocationConstrained}
-              setIsLocationConstrained={setIsLocationConstrained}
-              constraintLocation={constraintLocation}
-              setConstraintLocation={setConstraintLocation}
-              primaryConstrainingAttributes={primaryConstrainingAttributes}
-              setPrimaryConstrainingAttributes={setPrimaryConstrainingAttributes}
-              secondaryConstrainingAttributes={secondaryConstrainingAttributes}
-              setSecondaryConstrainingAttributes={setSecondaryConstrainingAttributes}
-              isInfinite={isInfinite}
-              setIsInifinite={setIsInifinite}
-              timesRemaining={timesRemaining}
-              setTimesRemaining={setTimesRemaining}
             />
         </div>
       </div>

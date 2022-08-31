@@ -4,7 +4,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 var path = require("path");
 var webpack = require("webpack");
 

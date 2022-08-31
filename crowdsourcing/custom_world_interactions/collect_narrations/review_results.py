@@ -7,12 +7,26 @@
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.tools.examine_utils import run_examine_or_review, print_results
 from mephisto.data_model.worker import Worker
+from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
+from collections import Counter
 
 db = LocalMephistoDB()
 
+mephisto_data_browser = MephistoDataBrowser(db=db)
+task_names = ["objects-interaction-task-pilot-5", "objects-interaction-task-pilot-4"]
+
+units = []
+for t in task_names:
+    units.extend(mephisto_data_browser.get_units_for_task_name(t))
+
+print(f"prev len: {len(units)}")
+print(Counter([u.get_status() for u in units]))
+units = [u for u in units if u.get_status() == "completed"]
+print(f"len: {len(units)}")
+
 
 def format_data_for_printing(data):
-    worker_name = Worker(db, data["worker_id"]).worker_name
+    worker_name = Worker.get(db, data["worker_id"]).worker_name
     contents = data["data"]
     duration = contents["times"]["task_end"] - contents["times"]["task_start"]
     metadata_string = (
@@ -25,7 +39,8 @@ def format_data_for_printing(data):
 
     if contents["inputs"] is not None and contents["outputs"] is not None:
         inputs = contents["inputs"]
-        outputs = contents["outputs"]["final_data"]
+        # outputs = contents["outputs"]["final_data"]
+        outputs = contents["outputs"]
         primary = outputs["primaryObject"]
         secondary = outputs["secondaryObject"]
         primary_object_map = {
@@ -43,7 +58,7 @@ def format_data_for_printing(data):
             f"\t\t{primary}: {primary_object_map[primary]}\n"
             f"\t\t{secondary}: {secondary_object_map[secondary]}\n\n"
         )
-        outputs_string = f"Output:\n\tUse {primary} with {secondary}\n\tAction: {outputs['actionDescription']}\n"
+        outputs_string = f"Output:\n\tUse {primary} with {secondary}\n\n\tRaw Action: {outputs.get('rawAction')}\n\tAction Description: {outputs['actionDescription']}\n"
 
     return f"-------------------\n{metadata_string}{inputs_string}{outputs_string}"
 
