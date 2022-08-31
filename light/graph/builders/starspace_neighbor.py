@@ -1,8 +1,8 @@
+#!/usr/bin/env python3
+
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-
-#!/usr/bin/env python3
 # Builds a LIGHT map using a StarSpace model to connect locations.
 # Is not currently connected to the LIGHT text adventure game API
 #  (but should be straight-forward).
