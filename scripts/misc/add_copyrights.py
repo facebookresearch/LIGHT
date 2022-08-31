@@ -28,6 +28,8 @@ PROBLEM = """
 
 /*
 """
+MISDONE_COPYRIGHT = "Meta Platforms, Inc. and affiliates."
+COPYRIGHT_CORRECTION = "Meta Platforms, Inc. and affiliates."
 FILENAME_EXTENSIONS = ["py", "sh", "js", "css", "jsx", "ts", "tsx"]
 LINE_CLEAR = "\x1b[2K"  # <-- ANSI sequence
 
@@ -43,7 +45,14 @@ def add_copyright_if_not_present(filename):
         print(end=LINE_CLEAR)
         print(f"Duplicatee copyright in {filename}")
 
-    if COPYRIGHT_BASE not in contents:
+    if MISDONE_COPYRIGHT in contents:
+        contents = contents.replace(MISDONE_COPYRIGHT, COPYRIGHT_CORRECTION)
+
+        with open(filename, "w") as out_file:
+            out_file.write(contents)
+        print(end=LINE_CLEAR)
+        print(f"Fixed header for {filename}")
+    elif COPYRIGHT_BASE not in contents:
         if file_ext in ["py", "sh"]:
             contents = COPYRIGHT_PYTHON + contents
         else:
