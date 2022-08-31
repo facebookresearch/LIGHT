@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -11,7 +11,7 @@ import subprocess
 from mephisto.operations.operator import Operator
 from mephisto.tools.scripts import load_db_and_process_config
 from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint import (
-    BLUEPRINT_TYPE_STATIC_REACT as BLUEPRINT_TYPE
+    BLUEPRINT_TYPE_STATIC_REACT as BLUEPRINT_TYPE,
 )
 from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint import (
     SharedStaticTaskState,
@@ -146,9 +146,9 @@ def validate_unit(unit):
 
     if unit_data is None:
         return
-        
+
     data = unit_data.get("outputs")
-    
+
     if data is None or "actionDescription" not in data:
         return
     action_description = data["actionDescription"]

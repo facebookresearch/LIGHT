@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-# Copyright 2017-present, Facebook, Inc.
-# This source code is licensed under the license found in the
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
 from light.data_model.db.base import BaseDB, DBStatus, DBSplitType, HasDBIDMixin
@@ -1927,6 +1927,13 @@ class EnvDB(BaseDB):
             graphs = session.scalars(stmt).all()
             for graph in graphs:
                 graph.creator_id = SCRUBBED_USER_ID
+            session.commit()
+
+    def dissociate_graph(self, graph_id: str) -> None:
+        with Session(self.engine) as session:
+            stmt = select(DBGraph).where(DBGraph.db_id == graph_id)
+            graph = session.scalars(stmt).one()
+            graph.creator_id = SCRUBBED_USER_ID
             session.commit()
 
     def export(self, config: "DictConfig") -> "EnvDB":

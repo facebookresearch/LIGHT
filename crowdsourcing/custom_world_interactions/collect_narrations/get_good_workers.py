@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -15,7 +15,9 @@ mephisto_data_browser = MephistoDataBrowser(db=db)
 
 DO_REVIEW = True
 
-units = mephisto_data_browser.get_units_for_task_name("objects-interaction-task-pilot-4")
+units = mephisto_data_browser.get_units_for_task_name(
+    "objects-interaction-task-pilot-4"
+)
 
 print(f"prev len: {len(units)}")
 print(Counter([u.get_status() for u in units]))
@@ -37,11 +39,13 @@ for unit in units:
 for k, v in workers_to_res.items():
     if len(v) <= 0:
         continue
-    counted =  Counter(v)
+    counted = Counter(v)
     # if counted.get("accepted", 0) >= counted.get('soft_rejected', 0) * 2:
     if counted.get("accepted", 0) == len(v):
         worker = worker_name_to_worker[k]
         worker.grant_qualification("collect_narrations_task_block", 0)
-        print(worker_name_to_worker[k], counted.get("accepted", 0), counted.get('soft_rejected', 0))
-
-
+        print(
+            worker_name_to_worker[k],
+            counted.get("accepted", 0),
+            counted.get("soft_rejected", 0),
+        )

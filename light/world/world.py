@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 from light.graph.viz.graph_printer import GraphPrinter
 from light.graph.structured_graph import OOGraph
 from light.graph.elements.graph_nodes import GraphRoom
