@@ -377,13 +377,10 @@ const Chat = ({
   const buttons = [];
 
   /* ----------TAILWIND CLASSES--------- */
-  const classNames = {
-    gamepageContainer: "container h-screen w-screen",
-  };
   return (
     <div
-      style={{ backgroundImage: `url(${StarryNight})` }}
-      className={classNames.gamepageContainer}
+      style={{ backgroundImage: `linear-gradient(to bottom, #0f0c2999, #302b63aa, #24243ecc), url(${StarryNight})` }}
+      className="_game-page_ flex h-screen w-screen bg-cover bg-top bg-no-repeat"
       onMouseMove={resetIdleTimer}
     >
       {isMobile ? (
@@ -410,8 +407,8 @@ const Chat = ({
           />
         </MobileFrame>
       ) : (
-        <div className="flex h-screen">
-          <div className="w-1/4">
+        <div className="flex flex-row h-screen">
+          <div className="_sidebar-container_ flex-1">
             {persona ? (
               <Sidebar
                 dataModelHost={dataModelHost}
@@ -421,7 +418,7 @@ const Chat = ({
               <div />
             )}
           </div>
-          <div className=" w-3/4">
+          <div className="_chat-container_ flex-1 grow-[3] h-full">
             <ChatDisplay
               scrollToBottom={scrollToBottom}
               messages={messages}
