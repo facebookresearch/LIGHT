@@ -7,7 +7,21 @@
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      typography: {
+        DEFAULT: {
+          css: {
+            p: {
+              lineHeight: "1.4",
+              margin: "1rem 0"
+            }
+          }
+        }
+      }
+    }
   },
-  plugins: [require("daisyui")],
+  plugins: [
+    require("daisyui"),
+    require('@tailwindcss/typography'),
+  ],
 };

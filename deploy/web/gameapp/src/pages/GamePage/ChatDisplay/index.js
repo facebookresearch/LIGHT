@@ -75,15 +75,12 @@ const ChatDisplay = ({
     setNonPlayerAgents(updatedNonPlayerAgents);
   }, [messages]);
   /* ----------TAILWIND CLASSES--------- */
-  const classNames = {
-    chatWrapper: " w-full bg-indigo-900 bg-opacity-50 	overflow-y-hidden ",
-    chat: "flex flex-col w-full h-5/6 overflow-y-scroll",
-  };
+
   const { presentAgents } = getLocationState(messages);
   return (
-    <div className="h-screen">
+    <div className="h-full m-10 flex flex-col">
       {nonPlayerAgents.length ? (
-        <div className="h-14 overflow-y-scroll">
+        <div className="flex-0 mb-4">
           <ActionBar
             presentAgents={nonPlayerAgents}
             getAgentName={getAgentName}
@@ -92,11 +89,11 @@ const ChatDisplay = ({
           />
         </div>
       ) : null}
-      <div className={`${classNames.chatWrapper} h-full`}>
-        <div className={classNames.chat} ref={chatContainerRef}>
+      <div className="flex flex-1 flex-col h-full bg-indigo-900 bg-opacity-50 overflow-hidden p-7 rounded-t-md">
+        <div className="flex-1 grow-[5] overflow-y-scroll" ref={chatContainerRef}>
           <ChatMessages messages={messages} scrollToBottom={scrollToBottom} />
         </div>
-        <div className="h-1/5">
+        <div className="flex-1 ">
           <ChatControls
             onSubmit={onSubmit}
             presentAgents={presentAgents}
