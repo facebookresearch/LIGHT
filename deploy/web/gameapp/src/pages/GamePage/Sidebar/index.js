@@ -151,7 +151,7 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
             </p>
           }
         </CollapsibleBox>
-        {location ? (
+        {/* {location ? (
           <CollapsibleBox
             title="Location"
             onClickFunction={() => setSelectedTip(4)}
@@ -196,7 +196,7 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
               )}
             </div>
           </CollapsibleBox>
-        ) : null}
+        ) : null} */}
       </div>
     </div>
   );
