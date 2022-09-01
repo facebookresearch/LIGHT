@@ -212,7 +212,8 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
     def user_should_do_tutorial(self, user_id):
         with self.db as ldb:
             flags = ldb.get_user_flags(user_id)
-            return not flags.completed_onboarding
+            # return not flags.completed_onboarding
+            return False
 
     def launch_game_for_user(self, user_id, game_id):
         # Check for custom game world

@@ -17,6 +17,7 @@ import { Tooltip } from "react-tippy";
 //import "./styles.css";
 //CUSTOM COMPONENTS
 import LevelDisplay from "../../../../components/LevelDisplay";
+import ProgressBar from "../../../../components/Progressbar";
 import GameButton from "../../../../components/GameButton";
 import IconButton from "../../../../components/IconButtons/InfoButton";
 import ToggleSwitch from "../../../../components/ToggleSwitch";
@@ -85,11 +86,7 @@ const SidebarHeader = () => {
               title={`Earn ${neededExp - sessionXp} XP til level ${level + 1}`}
               position="top"
             >
-              <progress
-                className="progress progress-warning w-full h-4 border-solid border-white border-2"
-                value={progressPercent}
-                max="100"
-              />
+              <ProgressBar progressPercent={progressPercent} />
             </Tooltip>
           </div>
         </div>
@@ -104,19 +101,19 @@ const SidebarHeader = () => {
             >
               <GameButton text={"LOGOUT"} clickFunction={() => {}} />
             </a>
-            {/* <div>
-          <ToggleSwitch
-            switchLabel="CHARACTER INFO"
-            toolTipText={
-              showDrawer
-                ? "Click to return to the game"
-                : "Click to open your character info."
-            }
-            isOn={showDrawer}
-            setOn={openDrawer}
-            setOff={closeDrawer}
-          />
-        </div> */}
+            <div>
+              <ToggleSwitch
+                switchLabel="CHARACTER INFO"
+                toolTipText={
+                  showDrawer
+                    ? "Click to return to the game"
+                    : "Click to open your character info."
+                }
+                isOn={showDrawer}
+                setOn={openDrawer}
+                setOff={closeDrawer}
+              />
+            </div>
           </div>
         </div>
       </div>

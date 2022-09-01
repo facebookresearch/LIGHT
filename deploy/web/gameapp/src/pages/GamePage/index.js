@@ -32,6 +32,7 @@ import { useWSDataSource } from "../../WebSockets/useWSDataSource";
 import MobileFrame from "../../components/MobileFrame";
 import LoadingPage from "../../pages/LoadingPage";
 import Sidebar from "./Sidebar";
+import SideDrawer from "../../components/SideDrawer";
 import ChatDisplay from "./ChatDisplay";
 import ReportMessageModal from "../../components/Modals/ReportMessageModal";
 /* CONFIG */
@@ -145,7 +146,7 @@ const Chat = ({
   );
   //MOBILE STATE
   const isMobile = useAppSelector((state) => state.view.isMobile);
-  //DRAWER
+  //DRAWER STATE
   const showDrawer = useAppSelector((state) => state.view.showDrawer);
   /* REDUX ACTIONS */
   const selectEmoji = (emoji) => dispatch(updateEmoji(emoji));
@@ -232,9 +233,6 @@ const Chat = ({
   /* PLAYER AND SESSION INFO UPDATES TO REDUX STORE */
   useEffect(() => {
     const { xp, giftXp } = persona;
-    console.log("PERSONA:  ", persona);
-    console.log("INCOMING EXP", xp);
-    console.log("Starting gift XP", giftXp);
     /* ----PLAYER INFO---- */
     dispatch(updatePersona(persona));
     dispatch(updateXp(xp));
@@ -263,7 +261,6 @@ const Chat = ({
         sessionXpUpdate += message.xp;
       }
     });
-    console.log("SESSION EXP:  ", sessionXpUpdate);
     dispatch(updateSessionXp(sessionXpUpdate));
     dispatch(updateGiftXp(giftXp));
   }, [persona]);
@@ -386,16 +383,16 @@ const Chat = ({
       className={classNames.gamepageContainer}
       onMouseMove={resetIdleTimer}
     >
-      {isMobile ? (
-        <MobileFrame buttons={buttons}>
+      <div className="flex h-screen">
+        <div className="w-1/4">
+          {showDrawer ? <SideDrawer /> : null}
           {persona ? (
-            <Sidebar
-              dataModelHost={dataModelHost}
-              getEntityId={getEntityId}
-              isMobile={isMobile}
-              showDrawer={showDrawer}
-            />
-          ) : null}
+            <Sidebar dataModelHost={dataModelHost} getEntityId={getEntityId} />
+          ) : (
+            <div />
+          )}
+        </div>
+        <div className=" w-3/4">
           <ChatDisplay
             scrollToBottom={scrollToBottom}
             messages={messages}
@@ -408,38 +405,70 @@ const Chat = ({
             idle={idle}
             resetIdleTimer={resetIdleTimer}
           />
-        </MobileFrame>
-      ) : (
-        <div className="flex h-screen">
-          <div className="w-1/4">
-            {persona ? (
-              <Sidebar
-                dataModelHost={dataModelHost}
-                getEntityId={getEntityId}
-              />
-            ) : (
-              <div />
-            )}
-          </div>
-          <div className=" w-3/4">
-            <ChatDisplay
-              scrollToBottom={scrollToBottom}
-              messages={messages}
-              onSubmit={onSubmit}
-              persona={persona}
-              location={location}
-              agents={agents}
-              getDataModelAddress={getDataModelAddress}
-              getLocationState={getLocationState}
-              idle={idle}
-              resetIdleTimer={resetIdleTimer}
-            />
-          </div>
         </div>
-      )}
+      </div>
       <ReportMessageModal />
     </div>
   );
 };
 
 export default ConnectedApp;
+
+// <div
+// style={{ backgroundImage: `url(${StarryNight})` }}
+// className={classNames.gamepageContainer}
+// onMouseMove={resetIdleTimer}
+// >
+// {isMobile ? (
+//   <MobileFrame buttons={buttons}>
+//     {persona ? (
+//       <Sidebar
+//         dataModelHost={dataModelHost}
+//         getEntityId={getEntityId}
+//         isMobile={isMobile}
+//         showDrawer={showDrawer}
+//       />
+//     ) : null}
+//     <ChatDisplay
+//       scrollToBottom={scrollToBottom}
+//       messages={messages}
+//       onSubmit={onSubmit}
+//       persona={persona}
+//       location={location}
+//       agents={agents}
+//       getDataModelAddress={getDataModelAddress}
+//       getLocationState={getLocationState}
+//       idle={idle}
+//       resetIdleTimer={resetIdleTimer}
+//     />
+//   </MobileFrame>
+// ) : (
+//   <div className="flex h-screen">
+//     <div className="w-1/4">
+//       {persona ? (
+//         <Sidebar
+//           dataModelHost={dataModelHost}
+//           getEntityId={getEntityId}
+//         />
+//       ) : (
+//         <div />
+//       )}
+//     </div>
+//     <div className=" w-3/4">
+//       <ChatDisplay
+//         scrollToBottom={scrollToBottom}
+//         messages={messages}
+//         onSubmit={onSubmit}
+//         persona={persona}
+//         location={location}
+//         agents={agents}
+//         getDataModelAddress={getDataModelAddress}
+//         getLocationState={getLocationState}
+//         idle={idle}
+//         resetIdleTimer={resetIdleTimer}
+//       />
+//     </div>
+//   </div>
+// )}
+// <ReportMessageModal />
+// </div>
