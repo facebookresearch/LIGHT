@@ -383,57 +383,35 @@ const Chat = ({
       onMouseMove={resetIdleTimer}
     >
       <div className="flex h-screen">
-        <div className="w-1/4">
-          {showDrawer ? <SideDrawer /> : null}
-          {persona ? (
-            <Sidebar dataModelHost={dataModelHost} getEntityId={getEntityId} />
-          ) : (
-            <div />
-          )}
-        </div>
-        <div className=" w-3/4">
-          <ChatDisplay
-            scrollToBottom={scrollToBottom}
-            messages={messages}
-            onSubmit={onSubmit}
-            persona={persona}
-            location={location}
-            agents={agents}
-            getDataModelAddress={getDataModelAddress}
-            getLocationState={getLocationState}
-            idle={idle}
-            resetIdleTimer={resetIdleTimer}
-          />
-          ) : (
-          <div className="flex flex-row h-screen">
-            <div className="_sidebar-container_ flex-1">
-              {persona ? (
-                <Sidebar
-                  dataModelHost={dataModelHost}
-                  getEntityId={getEntityId}
-                />
-              ) : (
-                <div />
-              )}
-            </div>
-            <div className="_chat-container_ flex-1 grow-[3] h-full">
-              <ChatDisplay
-                scrollToBottom={scrollToBottom}
-                messages={messages}
-                onSubmit={onSubmit}
-                persona={persona}
-                location={location}
-                agents={agents}
-                getDataModelAddress={getDataModelAddress}
-                getLocationState={getLocationState}
-                idle={idle}
-                resetIdleTimer={resetIdleTimer}
+        <div className="flex flex-row h-screen">
+          <div className="_sidebar-container_ flex-1 relative">
+            {showDrawer ? <SideDrawer /> : null}
+            {persona ? (
+              <Sidebar
+                dataModelHost={dataModelHost}
+                getEntityId={getEntityId}
               />
-            </div>
+            ) : (
+              <div />
+            )}
+          </div>
+          <div className="_chat-container_ flex-1 grow-[3] h-full">
+            <ChatDisplay
+              scrollToBottom={scrollToBottom}
+              messages={messages}
+              onSubmit={onSubmit}
+              persona={persona}
+              location={location}
+              agents={agents}
+              getDataModelAddress={getDataModelAddress}
+              getLocationState={getLocationState}
+              idle={idle}
+              resetIdleTimer={resetIdleTimer}
+            />
           </div>
         </div>
-        <ReportMessageModal />
       </div>
+      <ReportMessageModal />
     </div>
   );
 };
