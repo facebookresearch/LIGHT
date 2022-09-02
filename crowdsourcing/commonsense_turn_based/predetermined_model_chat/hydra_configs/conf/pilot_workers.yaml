@@ -1,0 +1,51 @@
+#@package _global_
+defaults:
+  - /mephisto/blueprint: model_chat_blueprint
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
+mephisto:
+  blueprint:
+    annotations_config_path: ${task_dir}/task_config/annotations_config.json
+    # onboarding_qualification: COMMONSENSE_NOCHATMODELCHAT_ONBOARDING_1
+    onboarding_qualification: COMMONSENSE_NOCHATMODELCHAT_ONBOARDING_new_training
+    chat_data_folder: ${task_dir}/model_chat/
+    model_opt_path: ${task_dir}/task_config/model_opts.yaml
+    # num_turns: 3
+    num_turns: 1
+    units_per_assignment: 3
+    task_model_parallel: true
+    check_acceptability: false
+    include_persona: false
+    conversation_start_mode: 'hi'
+    annotation_question: Does this narration of your action from the game engine have any of the following attributes? (Check all that apply)
+    # conversations_needed_string: "bart_rag:10"
+    conversations_needed_string: "bart:50"
+    custom_source_dir: "/private/home/alexgurung/LIGHT/crowdsourcing/commonsense_turn_based/predetermined_model_chat/frontend/"
+    task_config_path: "/private/home/alexgurung/LIGHT/crowdsourcing/commonsense_turn_based/predetermined_model_chat/task_config"
+    final_rating_question: ""
+    block_qualification: COMMONSENSE_NOCHATMODELCHAT_ANNOTATION_TASK_BLOCKLIST
+  task:
+    allowed_concurrent: 50
+    assignment_duration_in_seconds: 600
+    max_num_concurrent_units: 0  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes
+    # maximum_units_per_worker: 10
+    maximum_units_per_worker: 10
+    # task_name: commonsense_model_chat_pilot_3
+    # task_name: commonsense_model_chat_bart_grounded_1
+    # task_name: commonsense_model_chat_bart_grounded_forceinvalid_2
+    # task_name: commonsense_model_chat_bart_nogrounded_forceinvalid_2
+    # task_name: commonsense_model_chat_bart_nogrounded_forceinvalid_3
+    # task_name: commonsense_nomodel_chat_allowlist_final
+    # task_name: commonsense_nomodel_chat_allowlist_final_grounded
+    # task_name: commonsense_nomodel_chat_allowlist_test_grouped_2
+    task_name: commonsense_nomodel_chat_allowlist_test_grouped_new_training_2
+    task_reward: 1.5
+    task_tags: "chat,conversation,dialog,partner,fantasy"
+    task_title: "Judge roleplays in a fantasy environment!"
+    task_description: "In this task you will evaluate a game engine's responses to actions you provide in a medieval roleplaying environment, as if playing a text adventure game."
+mturk:
+  worker_blocklist_paths: null
+# num_tasks: 20
+num_tasks: 50
+# num_tasks: 50
+world_log_path: "/checkpoint/light/common_sense/model_data/bart_compare_largersweep_Sun_Aug_14/world_logs/341/341_internal:light_common_sense:InvalidSelfPlayNarrationTeacher.jsonl"
