@@ -11,7 +11,8 @@ model_names = [
 
 # dts = ["train:evalmode", "test", "valid"]
 
-dts = ["test"]
+# dts = ["test"]
+dts = ["train:evalmode"]
 
 teachers = "internal:light_common_sense:GameActionsNarrationTeacher,internal:light_common_sense:UseEventGameActionsNarrationTeacher,internal:light_common_sense:SelfPlayNarrationTeacher,internal:light_common_sense:InvalidSelfPlayNarrationTeacher"
 # teachers = "internal:light_common_sense:UseEventGameActionsNarrationTeacher"

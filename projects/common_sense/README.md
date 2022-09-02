@@ -4,7 +4,7 @@ The goal of the common sense project is to produce models that "understand" our 
 
 ## Structure of codebase
 
-The codebase for this project is split into four pieces across two repos:
+The codebase for this project is split into four pieces across two repos: `LIGHT` (in the `commonsense_v2` branch) and ParlAI-Internal (in the `light_commonsense_v1` branch). Saved files and models should be put in `/checkpoint/light/common_sense/`.
 
 ### Data Collection
 
@@ -22,7 +22,7 @@ The teachers (and helper files) are in ParlAI-Internal, under `tasks/light_commo
 
 ### Sweeps
 
-Model sweeps are run from ParlAI-Internal, under `projects/light/common_sense/`.
+Model sweeps are run from ParlAI-Internal, under `projects/light/common_sense/train_sweeps`. There is also an `old_scripts` folder in `common_sense/` for reference for prior work on graph generation from models.
 
 
 ### Analysis
