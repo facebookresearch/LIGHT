@@ -1,9 +1,10 @@
-/*****
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+/*
+ * Copyright (c) 2017-present, Facebook, Inc.
+ * All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  */
-
 //REACT
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
@@ -37,14 +38,13 @@ function MainApp() {
     initialTaskData,
     handleSubmit,
   } = useMephistoTask();
-
+  
   //Error Handling
   const [showError, setShowError] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
   /*-----------Constraint State-----------*/
   const [isSecondaryHeld, setIsSecondaryHeld] = useState(null);
   const [isReversible, setIsReversible] = useState(null);
-  const [isInfinite, setIsInfinite] = useState(null)
   const [timesRemaining, setTimesRemaining] = useState(0);
   const [isLocationConstrained, setIsLocationConstrained] = useState(null);
   const [constraintLocation, setConstraintLocation] = useState("");
@@ -283,7 +283,7 @@ function MainApp() {
             type: "in_used_item",
             key: attribute.name,
             list: [attribute.value],
-            cmp_type: attribute.value ? "eq" : "neq",
+            cmp_type: attribute.value ? "eq" : "neq", 
           }
         })
       })
@@ -314,7 +314,7 @@ function MainApp() {
         key: "has_backstory",
       }
     }]
-
+    
     let this_task_state = {
       broadcastMessage,
       isRemovingObjects,
@@ -336,7 +336,6 @@ function MainApp() {
       hasBackstory,
       isSecondaryHeld,
       isReversible,
-      isInfinite,
       timesRemaining,
       isLocationConstrained,
       constraintLocation,
@@ -400,8 +399,6 @@ function MainApp() {
         setSecondaryConstrainingAttributes={() => {}}
         hasBackstory={hasBackstory}
         setHasBackstory={() => {}}
-        isInfinite={isInfinite}
-        setIsInfinite={setIsInfinite}
         timesRemaining={timesRemaining}
         setTimesRemaining={setTimesRemaining}
         isSecondaryHeld={isSecondaryHeld}
@@ -424,7 +421,6 @@ function MainApp() {
           isChangingDescription={isChangingDescription}
           isSecondaryHeld={isSecondaryHeld}
           isReversible={isReversible}
-          isInfinite={isInfinite}
           timesRemaining={timesRemaining}
           isLocationConstrained={isLocationConstrained}
           constraintLocation={constraintLocation}

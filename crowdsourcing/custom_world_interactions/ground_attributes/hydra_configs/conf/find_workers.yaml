@@ -16,7 +16,7 @@ mephisto:
     # task_reward: 0.89
     task_reward: 0.92
     task_tags: "fantasy,object,interaction"
-  database:
+  database: 
     _database_type: singleton
 num_tasks: 35
 qualify_new_workers: true

@@ -13,7 +13,7 @@ mephisto:
     task_description: "In this task you will receive two objects with an interaction between them described in text format. You will answer questions related to the result of this description."
     task_reward: 0.92
     task_tags: "fantasy,object,interaction"
-  database:
+  database: 
     _database_type: singleton
 num_tasks: 20
 qualify_new_workers: true

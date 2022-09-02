@@ -1,6 +1,6 @@
 ##!/usr/bin/env python3
 
-# Copyright (c) Meta Platforms, Inc. and affiliates.
+# Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -31,15 +31,27 @@ from omegaconf import DictConfig
 from dataclasses import dataclass, field
 from typing import List, Any
 
+from mephisto.utils.qualifications import make_qualification_dict
+from mephisto.data_model.qualification import QUAL_EXISTS
+from parlai_internal.crowdsourcing.projects.reverse_persona.utils.dataloading_utils import (
+    get_block_list,
+)
+from mephisto.abstractions.providers.mturk.utils.script_utils import (
+    direct_soft_block_mturk_workers,
+)
+
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 LIGHT_DB_PATH = "~/ParlAI/data/light/environment/db/d3/database3.db"
-# INPUT_FILE_TASK = "objects-interaction-task-pilot-sandbox"
-# INPUT_FILE_TASK = "ground-stage-1-task-1"
-# INPUT_FILE_TASK = "ground-stage-1-pilot-3"
-# INPUT_FILE_TASKS = ["ground-stage-1-pilot-3", "ground-stage-1-pilot-4", "ground-stage-1-pilot-5"]
-INPUT_FILE_TASKS = ["ground-stage-1-pilot-3", "ground-stage-1-pilot-4"]
-# PREVIOUSLY_DONE_TASKS = ["ground-stage-2-pilot-1"]
-PREVIOUSLY_DONE_TASKS = ["ground-stage-2-pilot-2", "ground-stage-2-pilot-3"]
+
+INPUT_FILE_TASKS = ["objects-interaction-task-allowlist-events-1"]
+
+PREVIOUSLY_DONE_TASKS = ["objects-interaction-task-allowlist-attributes-1"]
+
+ALLOWLIST_QUAL_NAME = "OBJINTERACTION_ATTRIBUTES_DATA_ANNOTATION_TASK_ALLOWLIST"
+BLOCKLIST_QUAL_NAME = "OBJINTERACTION_ATTRIBUTES_DATA_ANNOTATION_TASK_BLOCKLIST"
+
+ALL_GOOD_USER_FILES = ["/checkpoint/light/common_sense/jing_worker_allow_list.txt"]
+ALL_BAD_USER_FILES = ["/checkpoint/light/common_sense/all_bad_users.txt"]
 
 DEFAULT_NUM_TASKS = 20
 
@@ -56,13 +68,6 @@ defaults = [
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
 
-
-# @dataclass
-# class TestScriptConfig(RunScriptConfig):
-#     defaults: List[Any] = field(default_factory=lambda: defaults)
-#     task_dir: str = TASK_DIRECTORY
-#     input_file_task: str = INPUT_FILE_TASK
-#     num_tasks: int = DEFAULT_NUM_TASKS
 @dataclass
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
@@ -72,6 +77,7 @@ class TestScriptConfig(RunScriptConfig):
     num_tasks: int = DEFAULT_NUM_TASKS
     force_rebuild: bool = False
     qualify_new_workers: bool = False
+    use_allowlist: bool = False
 
 
 register_script_config(name="scriptconfig", module=TestScriptConfig)
@@ -83,7 +89,6 @@ def get_light_objects():
     with db as ldb:
         all_objects = [dict(obj) for obj in ldb.get_object()]
     return all_objects
-
 
 def build_task(task_dir):
     """Rebuild the frontend for this task"""
@@ -109,17 +114,15 @@ def build_task(task_dir):
             "frontend. See the above error for more information."
         )
     os.chdir(return_dir)
-
-
 def get_previously_completed_unit_data():
     existing_units = []
     for task_name in PREVIOUSLY_DONE_TASKS:
         task_units = mephisto_data_browser.get_units_for_task_name(task_name)
-        for unit in task_units:
-            inputs = mephisto_data_browser.get_data_from_unit(unit)["data"]["inputs"]
-            existing_units.append(inputs["this_task_state"]["broadcastMessage"])
+        accepted_units = [u for u in task_units if u.get_status() == "accepted"]
+        for unit in accepted_units:
+            inputs = mephisto_data_browser.get_data_from_unit(unit)["data"]['inputs']
+            existing_units.append((inputs['object1']['name'], inputs['object2']['name']))
     return set(existing_units)
-
 
 def create_task_data(input_file_tasks, num_tasks):
     # get data from collect-narration submissions
@@ -136,81 +139,69 @@ def create_task_data(input_file_tasks, num_tasks):
     data = []
     for unit in units:
         unit_data = mephisto_data_browser.get_data_from_unit(unit)["data"]
-        new_data = unit_data["inputs"]
-        for key, val in unit_data["outputs"].items():
+        new_data = unit_data['inputs']
+        for key, val in unit_data['outputs'].items():
             new_data[key] = val
         # filter for outputs created with new multi-stage tasks
-        if "this_task_state" in new_data:
-            # FIX RANGES
-            ranges = new_data["this_task_state"]["ranges"]
-            original_bm = new_data["this_task_state"]["broadcastMessage"]
-            ranges = [
-                r
-                for r in ranges
-                if r["start"] is not None
-                and r["end"] is not None
-                and r["text"] == original_bm
-            ]
-            ranges = [
-                r
-                for r in ranges
-                if r["start"] >= 0
-                and r["start"] < len(original_bm)
-                and r["end"] >= r["start"]
-                and r["end"] < len(original_bm)
-            ]
-            ranges = sorted(ranges, key=lambda r: r["start"])
-            h_map = {}
-            for i, r in enumerate(ranges):
-                broadcastMessage = new_data["this_task_state"]["broadcastMessage"]
-                start = r["start"]
-                end = r["end"]
-                # print(f"og overlap: {broadcastMessage[start:end+1]}")
-                if broadcastMessage[end].isalnum():
-                    next_index = end + 1
-                    while (
-                        next_index < len(broadcastMessage)
-                        and broadcastMessage[next_index].isalnum()
-                    ):
-                        next_index += 1
-                    end = next_index - 1
-                else:
-                    end = end - 1
-                if broadcastMessage[start].isalnum():
-                    prev_index = start - 1
-                    while prev_index >= 0 and broadcastMessage[prev_index].isalnum():
-                        prev_index -= 1
-                    start = prev_index + 1
-                else:
-                    start = start + 1
-                h_map[broadcastMessage[start : end + 1]] = r["highlighter"]
-                # size_original_word = end - start
-                # print(f"REPLACE: {broadcastMessage[start:end+1]} with {r['highlighter']}")
-                # broadcastMessage = broadcastMessage[:start] + r['highlighter'] + broadcastMessage[end+1:]
-                # size_difference = len(r['highlighter']) - size_original_word
-                # for j, r2 in enumerate(ranges[i+1:]):
-                #     r2['start'] = r2['start'] if r2['start'] < start else r2['start'] + size_difference
-                #     r2['end'] = r2['end'] if r2['end'] < end else r2['end'] + size_difference
-
-                # new_data['this_task_state']['broadcastMessage'] = broadcastMessage
-            broadcastMessage = original_bm
-            for word, highlighter in h_map.items():
-                broadcastMessage = broadcastMessage.replace(word, highlighter)
-            new_data["this_task_state"]["broadcastMessage"] = broadcastMessage
-            if broadcastMessage in previous_messages:
-                continue
-            # print(f"OUTPUT: {broadcastMessage}")
-            # print("-"*100)
-            new_data["this_task_state"]["object1"]["attributes"] = []
-            new_data["object1"]["attributes"] = [{"name": "", "val": False}]
-            new_data["this_task_state"]["object2"]["attributes"] = []
-            # new_data['object2']['attributes'] = []
-            new_data["object2"]["attributes"] = [[{"name": "", "val": False}]]
-            data.append(new_data)
+        # FIX RANGES
+        ranges = new_data['this_task_state']['ranges']
+        original_bm = new_data['interaction']
+        ranges = [r for r in ranges if r['start'] is not None and r['end'] is not None and r['text'] == original_bm]
+        ranges = [r for r in ranges if r['start'] >= 0 and r['start'] < len(original_bm) and r['end'] >= r['start'] and r['end'] < len(original_bm)]
+        ranges = sorted(ranges, key=lambda r: r['start'])
+        h_map = {}
+        for i, r in enumerate(ranges):
+            broadcastMessage = new_data['interaction']
+            start = r['start']
+            end = r['end']
+            # print(f"og overlap: {broadcastMessage[start:end+1]}")
+            if broadcastMessage[end].isalnum():
+                next_index = end + 1
+                while next_index < len(broadcastMessage) and broadcastMessage[next_index].isalnum():
+                    next_index += 1
+                end = next_index - 1
+            else:
+                end = end - 1
+            if broadcastMessage[start].isalnum():
+                prev_index = start - 1
+                while prev_index >= 0 and broadcastMessage[prev_index].isalnum():
+                    prev_index -= 1
+                start = prev_index + 1
+            else:
+                start = start + 1
+            h_map[broadcastMessage[start:end+1]] = r['highlighter']
+        h_map['villager'] = 'ACTOR'
+        o1 = new_data['this_task_state']['object1']['name']
+        o2 = new_data['this_task_state']['object2']['name']
+        h_map[o1] = "OBJECT1"
+        h_map[o2] = "OBJECT2"
+        broadcastMessage = original_bm
+        for word, highlighter in h_map.items():
+            broadcastMessage = broadcastMessage.replace(word, highlighter)
+        new_data['interaction'] = broadcastMessage
+        # if broadcastMessage in previous_messages:
+        if (o1, o2) in previous_messages:
+            continue
+        # print(f"OUTPUT: {broadcastMessage}")
+        # print("-"*100)
+        new_data['object1']['attributes'] = []
+        new_data['object1']['attributes'] = [{'name':'', 'val':False}]
+        new_data['object2']['attributes'] = []
+        # new_data['object2']['attributes'] = []
+        new_data['object2']['attributes'] = [[{'name':'', 'val':False}]]
+        data.append(new_data)
     print(f"len(data): {len(data)}")
     print(data[0])
     # x = 1/0
-    return data[:num_tasks]
+    data = data[:num_tasks]
+    print(f"Adjusted len(data): {len(data)}")
+    
+    for d in set([d['interaction'] for d in data]):
+        print(d)
+    print("-"*100)
+    for p in previous_messages:
+        print(p)
+    return data
     # return [{}]  # data[:num_tasks]
 
 
@@ -235,7 +226,6 @@ def validate_unit(unit):
         print("Unit not validated!")
         unit.get_assigned_agent().soft_reject_work()
         worker = unit.get_assigned_agent().get_worker()
-        worker.grant_qualification("ground_events_2_task_block", 1)
 
     return
 
@@ -247,28 +237,46 @@ def main(cfg: DictConfig) -> None:
 
     def onboarding_always_valid(onboarding_data):
         return True
+    
+    if not cfg.qualify_new_workers:
+        validator = lambda u: True
+    else:
+        validator = validate_unit
+
+    db, cfg = load_db_and_process_config(cfg)
+
+    using_allowlist = cfg.use_allowlist
+    if using_allowlist:
+        # Kind of hacky, but add qualifications to good+bad users
+        for fname in ALL_GOOD_USER_FILES:
+            direct_soft_block_mturk_workers(
+                db,
+                get_block_list(fname),
+                ALLOWLIST_QUAL_NAME,
+                cfg.mephisto.provider.requester_name,
+            )
+
+        for fname in ALL_BAD_USER_FILES:
+            direct_soft_block_mturk_workers(
+                db,
+                get_block_list(fname),
+                BLOCKLIST_QUAL_NAME,
+                cfg.mephisto.provider.requester_name,
+            )
+
+        existing_qualifications = [
+            make_qualification_dict(ALLOWLIST_QUAL_NAME, QUAL_EXISTS, None),
+        ]
 
     shared_state = SharedStaticTaskState(
-        # static_task_data=create_task_data(cfg.input_file_task, cfg.num_tasks),
         static_task_data=create_task_data(cfg.input_file_tasks, cfg.num_tasks),
         validate_onboarding=onboarding_always_valid,
-        on_unit_submitted=validate_unit,
+        on_unit_submitted=validator,
     )
-
-    shared_state.mturk_specific_qualifications = [
-        {
-            "QualificationTypeId": "00000000000000000040",
-            "Comparator": "GreaterThanOrEqualTo",
-            "IntegerValues": [3000],
-            "ActionsGuarded": "DiscoverPreviewAndAccept",
-        },
-        {
-            "QualificationTypeId": "000000000000000000L0",
-            "Comparator": "GreaterThanOrEqualTo",
-            "IntegerValues": [97],
-            "ActionsGuarded": "DiscoverPreviewAndAccept",
-        },
-    ]
+    
+    if using_allowlist:
+        # add qualifications
+        shared_state.qualifications = existing_qualifications
 
     build_task(task_dir)
 

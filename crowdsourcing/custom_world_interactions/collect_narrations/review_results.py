@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Meta Platforms, Inc. and affiliates.
+# Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -13,7 +13,9 @@ from collections import Counter
 db = LocalMephistoDB()
 
 mephisto_data_browser = MephistoDataBrowser(db=db)
-task_names = ["objects-interaction-task-pilot-5", "objects-interaction-task-pilot-4"]
+# task_names = ["objects-interaction-task-pilot-5", "objects-interaction-task-pilot-4"]
+# task_names = ["objects-interaction-task-collection-1"]
+task_names = ["objects-interaction-task-allowlist-collection-2"]
 
 units = []
 for t in task_names:
@@ -24,8 +26,8 @@ print(Counter([u.get_status() for u in units]))
 units = [u for u in units if u.get_status() == "completed"]
 print(f"len: {len(units)}")
 
-
 def format_data_for_printing(data):
+    print(f"WORKER NAME: {data['worker_id']}")
     worker_name = Worker.get(db, data["worker_id"]).worker_name
     contents = data["data"]
     duration = contents["times"]["task_end"] - contents["times"]["task_start"]
@@ -68,5 +70,5 @@ def main():
     run_examine_or_review(db, format_data_for_printing)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

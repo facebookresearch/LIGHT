@@ -1,9 +1,3 @@
-/*****
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
 //HEADER SCREENSHOT
 const HeaderShot = require("./assets/images/Tutorial/HeaderShot.png");
 //EVENT SCREENSHOTS
@@ -35,10 +29,10 @@ const Copy ={
             " Constraints for Interaction:  ",
             "1. Is there backstory that can't be represented in constraints?",
             "2.  Does # need to be held?",
-            "3.  Could one use # with # and expect the same outcome?",
+            "3.  Could one use # with # and expect the same outcome? i.e. Flipping the objects in the narration has the same result.",
             "4.  Can this operation be done an infinite number of times?",
             "4a. How many more times can it be done?",
-            "5.  Would this have to happen in a specific place?",
+            "5.  Would this have to happen in a specific place mentioned in the narration? e.g. forest, castle",
             "5a.  Where would that location be?",
         ],
         tutorialCopy:[
@@ -60,7 +54,7 @@ const Copy ={
                 question:"2) Backstory",
                 explanation:`Some narrations rely on backstory that cannot be created through object constraints.
 
-                For instance, the interaction is "You slowly clean the shield with the cloth,
+                For instance, the interaction is "You slowly clean the shield with the cloth, 
                 thinking about all the fun times you had with your brother", includes backstory (i.e. the brother)
                 that is not an inherent attribute of the objects. As a result such an example would be marked true.`,
                 screenshot: ConstraintShot2
@@ -87,12 +81,12 @@ const Copy ={
                 question:"5) Can this operation be done an infinite number of times?",
                 explanation:`Some interactions are limited in the number of uses. Here
                 you should estimate the number of times the interaction
-                could be repeated. For instance, for the interaction: "You
+                could be repeated, one after another. Some actions, like moving entire objects from 
+                one place to another, can probably only be done once as the constraints for the action 
+                are no longer fulfilled.
+                However, the interaction: "You
                 give a piece of the pie to the fox. It eats it quickly and scurries
-                back away from you." This kind of interaction must have some
-                kind of limit, as your pie has a constant amount. As such you
-                may say this interaction could be done 12 times. While we
-                don't expect an exact number on this, an estimation will be fine.
+                back away from you." could be done a few times until the pie runs out.
 
                 In contrast "You swing the stick at the bucket and it rings out
                 loudly, likely annoying anyone in earshot" is an interaction
@@ -217,10 +211,10 @@ const Copy ={
             {
                 question:"7) Remove Backstory",
                 explanation:`If the provided narration contains
-                extra backstory (e.g. a reference to a character's past),
-                rewrite the narration to remove it. For example, the
-                narration "ACTOR hits the OBJECT1 into the OBJECT2, remembering
-                how father used to do it before their demise." should
+                extra backstory (e.g. a reference to a character's past), 
+                rewrite the narration to remove it. For example, the 
+                narration "ACTOR hits the OBJECT1 into the OBJECT2, remembering 
+                how father used to do it before their demise." should 
                 become "ACTOR hits the OBJECT1 into the OBJECT2.".`,
                 // screenshot: EventShot7
                 screenshot: null

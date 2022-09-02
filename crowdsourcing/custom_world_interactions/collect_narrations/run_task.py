@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Meta Platforms, Inc. and affiliates.
+# Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -11,7 +11,7 @@ import subprocess
 from mephisto.operations.operator import Operator
 from mephisto.tools.scripts import load_db_and_process_config
 from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint import (
-    BLUEPRINT_TYPE_STATIC_REACT as BLUEPRINT_TYPE,
+    BLUEPRINT_TYPE_STATIC_REACT as BLUEPRINT_TYPE
 )
 from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint import (
     SharedStaticTaskState,
@@ -21,6 +21,14 @@ from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
 from mephisto.data_model.worker import Worker
 from mephisto.data_model.unit import Unit
+from mephisto.utils.qualifications import make_qualification_dict
+from mephisto.data_model.qualification import QUAL_EXISTS
+from parlai_internal.crowdsourcing.projects.reverse_persona.utils.dataloading_utils import (
+    get_block_list,
+)
+from mephisto.abstractions.providers.mturk.utils.script_utils import (
+    direct_soft_block_mturk_workers,
+)
 
 import hydra
 import json
@@ -50,6 +58,13 @@ defaults = [
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
 
 
+ALLOWLIST_QUAL_NAME = "OBJINTERACTION_NARRATION_DATA_ANNOTATION_TASK_ALLOWLIST"
+BLOCKLIST_QUAL_NAME = "OBJINTERACTION_NARRATION_DATA_ANNOTATION_TASK_BLOCKLIST"
+
+ALL_GOOD_USER_FILES = ["/checkpoint/light/common_sense/jing_worker_allow_list.txt"]
+ALL_BAD_USER_FILES = ["/checkpoint/light/common_sense/all_bad_users.txt"]
+
+
 @dataclass
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
@@ -60,6 +75,7 @@ class TestScriptConfig(RunScriptConfig):
     num_tasks: int = DEFAULT_NUM_TASKS
     force_rebuild: bool = False
     qualify_new_workers: bool = False
+    use_allowlist: bool = False
 
 
 def get_object_lists(db_path):
@@ -146,9 +162,9 @@ def validate_unit(unit):
 
     if unit_data is None:
         return
-
+        
     data = unit_data.get("outputs")
-
+    
     if data is None or "actionDescription" not in data:
         return
     action_description = data["actionDescription"]
@@ -156,6 +172,8 @@ def validate_unit(unit):
         return
     action_description = action_description.strip()
 
+
+    # some basic filtering
     if (
         len(action_description) <= 20
         or action_description.lower().find("you") == -1
@@ -190,6 +208,31 @@ def main(cfg: DictConfig) -> None:
     else:
         validator = validate_unit
 
+    db, cfg = load_db_and_process_config(cfg)
+
+    using_allowlist = cfg.use_allowlist
+    if using_allowlist:
+        # Kind of hacky, but add qualifications to good+bad users
+        for fname in ALL_GOOD_USER_FILES:
+            direct_soft_block_mturk_workers(
+                db,
+                get_block_list(fname),
+                ALLOWLIST_QUAL_NAME,
+                cfg.mephisto.provider.requester_name,
+            )
+
+        for fname in ALL_BAD_USER_FILES:
+            direct_soft_block_mturk_workers(
+                db,
+                get_block_list(fname),
+                BLOCKLIST_QUAL_NAME,
+                cfg.mephisto.provider.requester_name,
+            )
+        # add allowlist qualification
+        existing_qualifications = [
+            make_qualification_dict(ALLOWLIST_QUAL_NAME, QUAL_EXISTS, None),
+        ]
+
     shared_state = SharedStaticTaskState(
         static_task_data=create_task_data(
             primary_objects,
@@ -201,6 +244,10 @@ def main(cfg: DictConfig) -> None:
         validate_onboarding=onboarding_always_valid,
         on_unit_submitted=validator,
     )
+
+    if using_allowlist:
+        # add qualifications
+        shared_state.qualifications = existing_qualifications
 
     if cfg.qualify_new_workers:
         shared_state.mturk_specific_qualifications = [

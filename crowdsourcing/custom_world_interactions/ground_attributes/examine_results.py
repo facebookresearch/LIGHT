@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Meta Platforms, Inc. and affiliates.
+# Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -17,9 +17,21 @@ DO_REVIEW = True
 
 # units = mephisto_data_browser.get_units_for_task_name(input("Input task name: "))
 # We're only examining this task with this file, but in the future could rely on mephisto.tools.examine_utils.run_examine_or_review
-prev_tasks = ["ground-stage-2-pilot-2", "ground-stage-2-pilot-3"]
+# prev_tasks = ["ground-stage-2-pilot-2", "ground-stage-2-pilot-3"]
+prev_tasks = ["objects-interaction-task-allowlist-collection-2"]
 units = []
-# for t in prev_tasks:
+#for t in prev_tasks:
+#    units.extend(mephisto_data_browser.get_units_for_task_name(t))
+for t in prev_tasks:
+    new_units = mephisto_data_browser.get_units_for_task_name(t)
+    print(t)
+    print(Counter([u.get_status() for u in new_units]))
+    units.extend(new_units)
+
+
+prev_tasks = ["objects-interaction-task-allowlist-attributes-1"]
+units = []
+#for t in prev_tasks:
 #    units.extend(mephisto_data_browser.get_units_for_task_name(t))
 for t in prev_tasks:
     new_units = mephisto_data_browser.get_units_for_task_name(t)
@@ -75,7 +87,10 @@ def format_for_printing_data(data):
     # Custom tasks can define methods for how to display their data in a relevant way
     worker_name = Worker.get(db, data["worker_id"]).worker_name
     contents = data["data"]
-    duration = contents["times"]["task_end"] - contents["times"]["task_start"]
+    # duration = contents["times"]["task_end"] - contents["times"]["task_start"]
+    duration = 0
+    if "times" in contents:
+        duration = contents["times"]["task_end"] - contents["times"]["task_start"]
     metadata_string = (
         f"Worker: {worker_name}\nUnit: {data['unit_id']}\n"
         f"Duration: {int(duration)}\nStatus: {data['status']}\n"
@@ -89,10 +104,10 @@ def format_for_printing_data(data):
     inputs_string = f"Inputs:\n\t(Primary Object) {primary_obj.get('name')}: {primary_obj.get('desc')}\n\t(Secondary Object) {secondary_obj.get('name')}: {secondary_obj.get('desc')}\n\tAction Description: {inputs.get('interaction')}\n\n"
 
     outputs = contents["outputs"]
+    if outputs is None:
+        return f"-------------------\n{metadata_string}{inputs_string}NONE"
     outputs["events"] = [e for e in outputs.get("events", []) if e is not None]
-    outputs["constraints"] = [
-        e for e in outputs.get("constraints", []) if e is not None
-    ]
+    outputs["constraints"] = [e for e in outputs.get("constraints", []) if e is not None]
 
     outputs_string = f"Output:\n"
 
@@ -107,9 +122,7 @@ def format_for_printing_data(data):
         event = broadcast_messages[0]
         outputs_string += f"\tNarration:\n\t\t{event['params']['room_view']}\n\n"
     outputs_string += f"\tReplaced Backstory:\t{outputs['this_task_state']['noBackstoryNarration']}\n\n"
-    outputs_string += (
-        f"\tBackstory Too Complex:\t{outputs['this_task_state']['hasBackstory']}\n\n"
-    )
+    outputs_string += f"\tBackstory Too Complex:\t{outputs['this_task_state']['hasBackstory']}\n\n"
     outputs_string += f"\tEvents:\n\n"
     for event in outputs["events"]:
         if event["type"] == "broadcast_message":
@@ -126,7 +139,7 @@ def format_for_printing_data(data):
             or event["type"] == "modify_attribute_secondary"
         ):
             # new/modified attributes after action; [Changed Attribute] ({object_name) \t is/isn't \t attribute
-            cur_obj = obj_from_key(event["params"]["type"], primary_obj, secondary_obj)
+            cur_obj = obj_from_key(event['params']['type'], primary_obj, secondary_obj)
             is_isnt = "is" if event["params"].get("value") else "isn't"
             outputs_string += f"\t\t[Changed Attribute] ({cur_obj.get('name')})\t{is_isnt}\t{event['params']['key']}\n\n"
         elif (
@@ -134,7 +147,7 @@ def format_for_printing_data(data):
             or event["type"] == "modify_attribute_secondary_description"
         ):
             # new description for items; [New Description] (object_name): object_description
-            cur_obj = obj_from_key(event["params"]["type"], primary_obj, secondary_obj)
+            cur_obj = obj_from_key(event['params']['type'], primary_obj, secondary_obj)
             outputs_string += f"\t\t[New Description] ({cur_obj.get('name')}): {event['params']['value']}\n\n"
         elif event["params"]["key"] == "location":
             # new location, map to more legible
@@ -142,7 +155,7 @@ def format_for_printing_data(data):
             new_location_name = nice_location_name(
                 new_location, primary_obj.get("name"), secondary_obj.get("name")
             )
-            cur_obj = obj_from_key(event["params"]["type"], primary_obj, secondary_obj)
+            cur_obj = obj_from_key(event['params']['type'], primary_obj, secondary_obj)
 
             outputs_string += f"\t\t[Changed Location] ({cur_obj.get('name')}): {new_location_name}\n\n"
         else:
@@ -152,20 +165,18 @@ def format_for_printing_data(data):
     outputs_string += f"\tConstraints:\n\n"
     for constraint in outputs["constraints"]:
         if constraint["type"] == "is_holding_secondary":
-            cur_obj = obj_from_key(
-                constraint["params"]["complement"], primary_obj, secondary_obj
+            cur_obj = obj_from_key(constraint['params']['complement'], primary_obj, secondary_obj)
+            outputs_string += (
+                f"\t\t[Must Hold] {cur_obj.get('name')}\n\n"
             )
-            outputs_string += f"\t\t[Must Hold] {cur_obj.get('name')}\n\n"
         elif constraint["type"] == "in_room":
             outputs_string += f"\t\t[Required Location Description] {constraint['params']['room_name']}\n\n"
         elif (
             constraint["type"] == "attribute_compare_value_primary"
             or constraint["type"] == "attribute_compare_value_secondary"
         ):
-            cur_obj = obj_from_key(
-                constraint["params"]["type"], primary_obj, secondary_obj
-            )
-
+            cur_obj = obj_from_key(constraint['params']['type'], primary_obj, secondary_obj)
+            
             comparison = (
                 "must be" if constraint["params"]["cmp_type"] == "eq" else "must not be"
             )

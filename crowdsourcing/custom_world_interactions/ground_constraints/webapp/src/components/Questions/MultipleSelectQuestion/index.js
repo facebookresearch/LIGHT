@@ -1,36 +1,48 @@
-/*****
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
 //REACT
 import React, {useEffect, useState} from "react";
 //STYLING
 import "./styles.css";
 //CUSTOM COMPONENTS
-import TaskButton from "../../TaskButton"
+import TaskButton from "../../TaskButton";
+import FormatQuestion from "../../Utils/FormatQuestion";
+import InfoToolTip from "../../InfoToolTip";
+import Checkbox from "../../Checkbox";
 
 
 //MultipleSelectQuestion - Question where answer comes from clicking a button and more than one button may be selected at a time
 const MultipleSelectQuestion = ({
     question, //Question Text
     answers, //Array of answers
+    colors, // array of colors for each answer
     selectFunction, // setState function connected to payload state
-    disabled,
-    curSelectedAnswers
+    onlySelectOne,
+    toolTipCopy,// Copy for desired tooltip
+    hasToolTip,// Boolean stating whether or not this component has a tooltip
+    isComplete,// Completion condition for question to be satisfactorily answered
+    keywords,
+    disabled
 })=>{
     //Local State
-    // selected answers should be list
-    const [selectedAnswers, setSelectedAnswers] = useState(curSelectedAnswers ? curSelectedAnswers : []);
-    const [answerList, setAnswerList] = useState([])
+    const [selectedAnswers, setSelectedAnswers] = useState([]);
+    const [answerList, setAnswerList] = useState([]);
+    
+    if (colors === undefined) {
+        colors = answers.map(a => undefined);
+    }
 
     //clickHandler - handles selection and unselection of answers
     const clickHandler = (id, answer)=>{
+        if (disabled) {
+            return;
+        }
         let updatedAnswers;
         //Selecting answer
         if(selectedAnswers.indexOf(answer)<0){
-            updatedAnswers = [...selectedAnswers, answer];
+            if (onlySelectOne) {
+                updatedAnswers = [answer];
+            } else {
+                updatedAnswers = [...selectedAnswers, answer];
+            }
             setSelectedAnswers(updatedAnswers)
             selectFunction(updatedAnswers)
         }
@@ -47,19 +59,33 @@ const MultipleSelectQuestion = ({
     }, [answers])
     return(
         <div className="multipleselectquestion-container" >
-            <h1 className="multipleselectquestion-text">
+            <InfoToolTip
+                tutorialCopy={toolTipCopy}
+                hasToolTip={hasToolTip}
+            >
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                    {hasToolTip && !disabled ? <Checkbox isComplete={isComplete} /> : null}
+                    <FormatQuestion
+                        question={question}
+                        keywords={keywords}
+                        containerStyle="booleanquestion-text"
+                    />
+                </div>
+            </InfoToolTip>
+            {/* <h1 className="multipleselectquestion-text">
                 {question}
-            </h1>
+            </h1> */}
             <div className="multipleselectanswer-container">
             {
                 [answerList].length
                 ?
-                answerList.filter(answer => (selectedAnswers.indexOf(answer)>=0)).map((answer, index)=>(
+                answerList.map((answer, index)=>(
                     <TaskButton
                         key={index}
                         name={answer}
-                        selectFunction={disabled ? () => {} : ()=>clickHandler(index, answer)}
+                        selectFunction={()=>clickHandler(index, answer)}
                         isSelected={(selectedAnswers.indexOf(answer)>=0)}
+                        color={colors[index]}
                         selectedContainer="mc-button__container"
                         unselectedContainer="mc-selectedbutton__container"
                         selectedText="mc-button__text"
