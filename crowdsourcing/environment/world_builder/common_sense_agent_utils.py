@@ -452,7 +452,7 @@ class CommonSenseAgent(Agent):
     def __init__(
         self,
         opt,
-        model_name="bart_all_weighted_Wed_Nov_10/703",
+        model_path="/checkpoint/light/common_sense/model_data/bart_compare_largersweep_Sun_Aug_14/341/model",
         shared=None,
         force_add=True,
         verbose=False,
@@ -462,7 +462,7 @@ class CommonSenseAgent(Agent):
     ):
         opt[
             "model_file"
-        ] = f"/checkpoint/alexgurung/light/common_sense/add_format/{model_name}/model"
+        ] = model_path
 
         opt["single_turn"] = True
         opt["datatype"] = "test"

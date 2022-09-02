@@ -61,6 +61,8 @@ class BuilderTaskConfig(build_default_task_config("local")):  # type: ignore
         default=MISSING,
         metadata={"help": "Complete URL to use for the version of the game running"},
     )
+    model_dir: str = "/checkpoint/light/common_sense/model_data/bart_compare_largersweep_Sun_Aug_14"
+    model_name: str = "341"
 
 
 def validate_unit(unit):
@@ -82,18 +84,18 @@ def validate_unit(unit):
 @task_script(config=BuilderTaskConfig)
 def main(operator: Operator, cfg: DictConfig) -> None:
     tasks: List[Dict[str, Any]] = [{"url": cfg.game_url}] * cfg.num_tasks
-
+    model_dir = cfg.model_dir
+    model_name = cfg.model_name
     def validate_onboarding(onboarding_data):
         # TODO implement once we have an onboarding
         return True
 
     # USE_MODEL = False
     USE_MODEL = True
-    MODEL_NAME = "bart_all_simple_Sun_Jan_23/c9d"
     world_builder_agent = None
     # force = False
     force = True
-    opt_file = f"/checkpoint/alexgurung/light/common_sense/add_format/{MODEL_NAME}/model.opt"
+    opt_file = f"{model_dir}/{model_name}/model.opt"
     if os.path.exists(opt_file):
         with open(opt_file) as f:
             opt = json.load(f)
@@ -104,7 +106,7 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         
         # TODO initialize agent as necessary for the below
         world_builder_agent = CommonSenseAgent(
-            opt, model_name=MODEL_NAME, force_add=force, verbose=False, count_errors=True
+            opt, model_path=f"{model_dir}/{model_name}/model", force_add=force, verbose=False, count_errors=True
             )
 
     db = None
