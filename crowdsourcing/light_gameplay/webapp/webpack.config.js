@@ -20,15 +20,15 @@ module.exports = {
     path: __dirname,
     filename: "build/bundle.js",
   },
+  node: {
+    net: "empty",
+    dns: "empty",
+  },
   resolve: {
     alias: {
       react: path.resolve("./node_modules/react"),
     },
     extensions: ['.ts', '.tsx', '.js' ],
-    fallback: {
-      net: false,
-      dns: false,
-    },
   },
   module: {
     rules: [

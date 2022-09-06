@@ -1,14 +1,54 @@
 {
-  "name": "light_gameplay_task",
-  "version": "1.0.0",
-  "description": "web app for collecting gameplay data",
-  "main": "index.js",
+  "name": "mephisto-task-compiler",
+  "version": "1.0.1",
+  "description": "",
+  "main": "webpack.config.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "webpack --mode development -q",
+    "dev:watch": "webpack --mode development -q --watch"
   },
+  "keywords": [],
   "author": "",
-  "license": "MIT",
   "dependencies": {
-    "create-react-app": "^5.0.0"
+    "mephisto-task": "^2.0.2",
+    "bootstrap": "^4.3.1",
+    "react": "16.13.1",
+    "react-bootstrap": "^1.5.0",
+    "react-bootstrap-icons": "^1.5.0",
+    "react-dom": "16.13.1",
+    "react-dropdown": "^1.9.2",
+    "react-icons": "^4.2.0",
+    "@reduxjs/toolkit": "^1.7.2",
+    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/react": "^12.1.3",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^26.0.24",
+    "@types/node": "^12.20.23",
+    "@types/react": "^17.0.19",
+    "@types/react-dom": "^17.0.9",
+    "axios": "^0.21.1",
+    "react-redux": "^7.2.6",
+    "react-router-dom": "^6.2.1",
+    "react-scripts": "5.0.0",
+    "web-vitals": "^2.1.4"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.0",
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.2.2",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "css-loader": "^1.0.0",
+    "ts-loader": "^8.0.0",
+    "file-loader": "^6.0.0",
+    "style-loader": "^0.23.0",
+    "url-loader": "^2.0.1",
+    "webpack": "^4.19.1",
+    "webpack-cli": "^3.1.1"
   }
 }
