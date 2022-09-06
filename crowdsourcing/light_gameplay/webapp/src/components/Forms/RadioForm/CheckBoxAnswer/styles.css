@@ -1,0 +1,25 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* CHECKBOX ANSWER STYLES */
+.answer-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:100%
+}
+
+.answer-checkbox_container {
+    width:5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.answer-chatinput_container {
+    width:95%;
+}

@@ -1,0 +1,43 @@
+
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.collapsible-container {
+  border-radius: 25px;
+  box-shadow: 5px 2px 5px;
+  margin: 10px;
+  width: 50%;
+}
+
+.collapsible-container.active:hover {
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+.collapsible-header {
+  display: flex;
+  flex: row;
+  justify-content: center;
+  padding: 10px;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+}
+
+.collapsible-header--text {
+  margin-bottom: 0px;
+  margin-top: 2px;
+
+  text-align: center;
+  margin-left: 2em;
+  font-size: 18px;
+}
+
+.collapsible-body {
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  padding: 10px;
+  text-align: center;
+  margin: 0px;
+}
