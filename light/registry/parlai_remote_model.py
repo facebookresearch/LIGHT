@@ -188,10 +188,10 @@ class ParlAIRemoteModelLoader(ModelLoader):
 
     def __init__(self, config: DictConfig):
         self.config = config
-        self.load_model(config)
 
     async def load_model(self) -> None:
         """Initialize the model from the given config"""
+        config = self.config
         remote_host = config.get("host", DEFAULT_SERVER)
         assert server_is_alive(remote_host), "Remote host failed alive check"
         self.remote_opt = Opt(

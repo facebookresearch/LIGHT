@@ -126,8 +126,8 @@ def make_app(cfg: WorldServerConfig, model_pool: ModelPool):
 
     if cfg.get("facebook_api_key", None) is not None:
         tornado_settings["facebook_api_key"] = cfg.facebook_api_key
-    if cfg.get("facebook_secret", None) is not None:
-        tornado_settings["facebook_secret"] = cfg.facebook_secret
+    if cfg.get("facebook_api_secret", None) is not None:
+        tornado_settings["facebook_secret"] = cfg.facebook_api_secret
 
     # TODO re-enable world builder once builder models are hydra-registered
     # worldBuilderApp = BuildApplication(get_handlers(ldb), tornado_settings)

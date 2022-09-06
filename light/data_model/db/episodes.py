@@ -64,8 +64,8 @@ class DBEpisode(HasDBIDMixin, SQLBase):
     action_count = Column(Integer, nullable=False)
     timestamp = Column(Float, nullable=False)
     log_type = Column(Enum(EpisodeLogType), nullable=False)
-    first_graph_id = Column(ForeignKey("graphs.id"))
-    final_graph_id = Column(ForeignKey("graphs.id"))
+    first_graph_id = Column(String(ID_STRING_LENGTH), ForeignKey("graphs.id"))
+    final_graph_id = Column(String(ID_STRING_LENGTH), ForeignKey("graphs.id"))
 
     _cached_map = None
 
@@ -151,7 +151,9 @@ class DBEpisodeGraph(HasDBIDMixin, SQLBase):
     ID_PREFIX = "EPG"
 
     id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    episode_id = Column(Integer, ForeignKey("episodes.id"), nullable=False, index=True)
+    episode_id = Column(
+        String(ID_STRING_LENGTH), ForeignKey("episodes.id"), nullable=False, index=True
+    )
     full_path = Column(String(80), nullable=False)
     graph_key_id = Column(String(60), nullable=False, index=True)
     episode = relationship("DBEpisode", backref="graphs", foreign_keys=[episode_id])
