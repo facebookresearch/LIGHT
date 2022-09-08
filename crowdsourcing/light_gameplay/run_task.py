@@ -21,6 +21,8 @@ from mephisto.abstractions.blueprints.remote_procedure.remote_procedure_blueprin
     SharedRemoteProcedureTaskState,
     RemoteProcedureAgentState,
 )
+from mephisto.data_model.qualification import QUAL_EXISTS
+from mephisto.utils.qualifications import make_qualification_dict
 
 from omegaconf import DictConfig, MISSING
 from typing import List, Any, Dict
@@ -50,6 +52,18 @@ class ParlAITaskConfig(build_default_task_config("local")):  # type: ignore
             "help": "Preauth secret key to use with hashes. Should agree with the current"
             "preauth secret on the LIGHT game site."
         },
+    )
+    find_new_workers: bool = field(
+        default=False,
+        metadata={
+            "help": "Whether to use existing qualified workers or find new workers to qualify."
+        }
+    )
+    approved_qualification: str = field(
+        default='light-gameplay-masters',
+        metadata={
+            "help": "Qualification to use for high-quality approved workers for an allowlist"
+        }
     )
 
 
@@ -114,11 +128,35 @@ def main(operator: Operator, cfg: DictConfig) -> None:
         on_unit_submitted=validate_unit,
     )
 
+    if cfg.find_new_workers:
+        shared_state.mturk_specific_qualifications = [
+            {
+                "QualificationTypeId": "00000000000000000040",
+                "Comparator": "GreaterThanOrEqualTo",
+                "IntegerValues": [3000],
+                "ActionsGuarded": "DiscoverPreviewAndAccept",
+            },
+            {
+                "QualificationTypeId": "000000000000000000L0",
+                "Comparator": "GreaterThanOrEqualTo",
+                "IntegerValues": [97],
+                "ActionsGuarded": "DiscoverPreviewAndAccept",
+            },
+        ]
+    else:
+        shared_state.qualifications = [
+            make_qualification_dict(
+                cfg.approved_qualification,
+                QUAL_EXISTS,
+                None
+            )
+        ]
+
     task_dir = cfg.task_dir
     build_custom_bundle(task_dir)
 
     operator.launch_task_run(cfg.mephisto, shared_state)
-    operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=30)
+    operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=600)
 
 
 if __name__ == "__main__":
