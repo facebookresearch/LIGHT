@@ -63,9 +63,8 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
 
   return (
     <div
-      className={` flex flex-row justify-start items-center ${
-        inHelpMode ? "active" : ""
-      }`}
+      className={` flex flex-row justify-start items-center mb-4
+      ${inHelpMode ? "active" : ""}`}
       onClick={onClickFunction}
     >
       <span className="text-white">YOU</span>

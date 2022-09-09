@@ -140,12 +140,12 @@ const AgentMessage = ({
     onClickFunction();
   };
 
-  let classNames = "message type-dialogue ";
-  if (["tell", "say", "whisper"].includes(caller)) {
-    text = "&ldquo;" + text + "&rdquo;";
-    classNames = "message type-dialogue ";
-  }
-  classNames += "other";
+  // let classNames = "message type-dialogue ";
+  // if (["tell", "say", "whisper"].includes(caller)) {
+  //   text = "&ldquo;" + text + "&rdquo;";
+  //   classNames = "message type-dialogue ";
+  // }
+  // classNames += "other";
   /*  LIFE CYCLE */
 
   useEffect(() => {
@@ -160,7 +160,7 @@ const AgentMessage = ({
 
   if (isEditMode) {
     return (
-      <div className={classNames}>
+      <div className="">
         <div className="agent">
           <span>{actor}</span>
           <>
@@ -212,9 +212,8 @@ const AgentMessage = ({
   return (
     <>
       <div
-        className={` flex flex-row justify-end items-center m-4px pr-10 ${
-          inHelpMode ? "active" : ""
-        }`}
+        className={` flex flex-row justify-end items-center m-4px pr-10 mb-4
+        ${inHelpMode ? "active" : ""}`}
         onClick={onClickFunction}
       >
         {isLiked ? (
