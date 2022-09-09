@@ -101,7 +101,7 @@ const SidebarHeader = () => {
             >
               <GameButton text={"LOGOUT"} clickFunction={() => {}} />
             </a>
-            <div>
+            {/* <div>
               <ToggleSwitch
                 switchLabel="CHARACTER INFO"
                 toolTipText={
@@ -113,7 +113,7 @@ const SidebarHeader = () => {
                 setOn={openDrawer}
                 setOff={closeDrawer}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
