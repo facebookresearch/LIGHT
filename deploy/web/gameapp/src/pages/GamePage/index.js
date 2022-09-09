@@ -171,7 +171,7 @@ const Chat = ({
       }, 0),
     [chatContainerRef]
   );
-
+  /* UTILS */
   const getLocationState = (messages) => {
     var valid_messages = messages.filter(
       (m) => m.is_self !== true && m.caller !== null
@@ -185,49 +185,8 @@ const Chat = ({
   };
 
   /*------REDUX ACTIONS--------*/
-  const openReportModal = () => {
-    dispatch(setReportModal(true));
-  };
-
-  const closeReportModal = () => {
-    dispatch(setReportModal(false));
-  };
 
   /* HANDLERS */
-  const categorySelectionHandler = (e) => {
-    console.log("DROP DOWN TARGET:  ", e.target.value);
-    setReportCategory(e.target.value);
-  };
-
-  const handleReportSubmission = () => {
-    let base_url = window.location.protocol + "//" + CONFIG.hostname;
-    if (CONFIG.port !== "80") {
-      base_url += ":" + CONFIG.port;
-    }
-    console.log("REPORT PAYLOAD:  ", {
-      eventId: eventId,
-      category: reportCategory,
-      message: reportedMessage,
-      reason: reportReason,
-    });
-
-    fetch(`${base_url}/report`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "same-origin",
-      body: JSON.stringify({
-        category: reportCategory,
-        message: reportedMessage,
-        reason: reportReason,
-      }),
-    });
-    setReportReason("");
-    reportedHandler();
-    exitReportMode();
-    scrollToBottom();
-  };
 
   /*  LIFE CYCLE */
   /* PLAYER AND SESSION INFO UPDATES TO REDUX STORE */
@@ -248,7 +207,7 @@ const Chat = ({
         });
     const autopickedEmoji = tryPickEmojis.length > 0 ? tryPickEmojis[0] : "?";
     dispatch(updateEmoji(autopickedEmoji));
-    /* ---- INSTRUCTION MODAL---- */
+    /* ---- INSTRUCTION MODAL---- !!!!!!!!!!!!!!!!!!!!!!!!!*/
     if (xp <= 10) {
       //NEW Tutorial triggers
     }
@@ -265,6 +224,7 @@ const Chat = ({
     dispatch(updateGiftXp(giftXp));
   }, [persona]);
 
+  //
   useEffect(() => {
     /* ----SESSION INFO---- */
     /* SESSION XP */
@@ -278,6 +238,7 @@ const Chat = ({
     dispatch(updateSessionXp(sessionXpUpdate));
   }, [messages]);
 
+  //* GIFT XP UPDATES TO REDUX STORE */
   useEffect(() => {
     dispatch(updateGiftXp(giftXp - sessionGiftXpSpent));
   }, [sessionGiftXpSpent]);

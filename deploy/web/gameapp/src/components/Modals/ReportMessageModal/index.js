@@ -79,6 +79,15 @@ const ReportMessageForm = () => {
       reason: reportReason,
     });
 
+    window.top.postMessage(
+      JSON.stringify({
+        category: reportCategory,
+        message: reportModalMessage,
+        reason: reportReason,
+      }),
+      "*"
+    );
+
     fetch(`${base_url}/report`, {
       method: "POST",
       headers: {
