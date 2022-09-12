@@ -15,7 +15,7 @@ import PreviewCopy from "../../../PreviewCopy"
 
 //PreviewContent -  Content that be viewed in both Preview view and Task Container
 const PreviewContent = () => {
-    const {intro, uiSteps, chatSteps} = PreviewCopy
+    const {intro, uiSteps, chatSteps, reportSteps} = PreviewCopy
     return (
         <div className="previewinfo-body">
             <p className="previewinfo-intro">
@@ -28,6 +28,11 @@ const PreviewContent = () => {
             }
             {
               chatSteps.map((step, index)=>(
+                <TutorialImageLg key={index} info ={step} />
+              ))
+            }
+            {
+              reportSteps.map((step, index)=>(
                 <TutorialImageLg key={index} info ={step} />
               ))
             }

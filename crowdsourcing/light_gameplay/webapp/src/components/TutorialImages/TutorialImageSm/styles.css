@@ -10,6 +10,7 @@
 .tutorial-container__sm {
     display: flex;
     flex-direction: row;
+    padding-bottom: 20px;
     width: 100%;
 }
 
