@@ -15,6 +15,11 @@ import TellChatBar from "./assets/screenshots/tellchatbar.png";
 import CharacterInfo from "./assets/screenshots/characterinfo.png";
 import MissionInfo from "./assets/screenshots/missioninfo.png";
 import SettingInfo from "./assets/screenshots/settinginfo.png";
+// Reporting flow
+import BadMessage from "./assets/screenshots/badmessage.png";
+import ClickReport from "./assets/screenshots/clickreport.png";
+import ReportModal from "./assets/screenshots/reportmodal.png";
+
 
 
 // Copy for Preview Blurb
@@ -27,17 +32,17 @@ const PreviewCopy = {
         },
         {
             image: MissionInfo,
-            text: "In this section you can see you character's primary goals and motivations.  Look to this when you are uncertain of what todo."
+            text: "In this section you can see you character's primary goals and motivations.  Look to this when you are uncertain of what you should be trying to accomplish."
         },
         {
             image: SettingInfo,
-            text: "In this section you can see your character's immediate surroundings.  Here you can see items that you can pick up or directions you can move."
+            text: "In this section you can see your character's immediate surroundings. Here you can see items that you can pick up or directions you can move. These will appear in the chat thread as you move around."
         }
     ],
     chatSteps:[
         {
             image: ChatBox,
-            text: "In the chat display you can see the actions and dialogue of your character as well as other characters.  You can enter text at the bottom of the chat display."
+            text: "In the chat display you can see the actions and dialogue of your character as well as other characters.  You can enter text at the bottom of the chat display. Characters in the vicinity can be seen on the top of the chat window.  "
         },
         {
             image: SayChatBar,
@@ -49,7 +54,21 @@ const PreviewCopy = {
         },
         {
             image: TellChatBar,
-            text: "Characters in the vicinity can be seen on the bottom of the chat bar.  Clicking on a character's name will allow you tell them something directly, meaning they know you're addressing them specifically."
+            text: "Clicking on a character's name up top, or clicking the reply button on any message, will allow you tell them something directly, meaning they know you're addressing them specifically."
+        }
+    ],
+    reportSteps:[
+        {
+            image: BadMessage,
+            text: "Sometimes the game makes a mistake, and says things that are innapropriate or don't make sense."
+        },
+        {
+            image: ClickReport,
+            text: "If this occurs, please press the X on the affected message and click the REPORT THIS NOW text."
+        },
+        {
+            image: ReportModal,
+            text: "This will bring up a modal, where you can mark what's wrong with the message. Fill this out and describe the issue with any affected messages."
         }
     ]
 }

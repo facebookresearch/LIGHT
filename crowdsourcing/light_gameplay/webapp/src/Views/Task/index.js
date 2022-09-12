@@ -72,8 +72,11 @@ const App = ({
   }
 
   const SubmissionHandler = ()=>{
+    let reports = workerData.filter((entry) => {return entry.caller == 'report'});
+    let nonReports = workerData.filter((entry) => {return entry.caller != 'report'});
     let workerSubmission = {
-      data: workerData.map((entry) => {return {text: entry.text, caller: entry.caller, actor: entry?.actor?.name}}),
+      data: nonReports.map((entry) => {return {text: entry.text, caller: entry.caller, actor: entry?.actor?.name}}),
+      reports: reports,
       comments: workerComments
     }
     handleSubmit(workerSubmission)
@@ -103,8 +106,9 @@ const App = ({
   }, [LightMessageList])
 
   useEffect(() => {
-    let errorEvents = workerData.filter(msg => msg.caller == 'ErrorEvent');
-    let workerActivity = workerData.filter(msg => msg.is_self);
+    let nonReports = workerData.filter((entry) => {return entry.caller !== 'report'});
+    let errorEvents = nonReports.filter(msg => msg.caller == 'ErrorEvent');
+    let workerActivity = nonReports.filter(msg => msg.is_self);
     let workerActivityCount = workerActivity.length;
     setActivityCounter(workerActivityCount)
     let workerSaidActivity = workerActivity.filter(msg=>{
