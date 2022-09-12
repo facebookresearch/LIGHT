@@ -1,0 +1,9 @@
+#@package _global_
+defaults:
+  - base
+game_url: "https://www.light-rpg.ai/"
+preauth_secret: "TODO"
+num_tasks: 10
+mephisto:
+  blueprint:
+    onboarding_qualification: "light-gameplay-onboarding-sandbox-2"

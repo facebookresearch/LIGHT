@@ -1,0 +1,27 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* NAVHEADER STYLES */
+#navbar {
+  margin-bottom: 10px;
+}
+.light-logo {
+    text-align: center;
+    color: lightyellow;
+    animation: pulse 1s ease-in-out infinite alternate;
+    margin: 0;
+  }
+
+  @keyframes pulse {
+    from {
+      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #eef079, 0 0 20px #eef079,
+        0 0 25px #eef079, 0 0 30px #eef079, 0 0 35px #eef079;
+    }
+    to {
+      text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #eef079,
+        0 0 40px #eef079, 0 0 50px #eef079, 0 0 60px #eef079, 0 0 70px #eef079;
+    }
+  }

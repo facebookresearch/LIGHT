@@ -1,0 +1,41 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* TASKTOOLBAR STYLES */
+.tool-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.task-label {
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+}
+
+.tool-label {
+    font-size: 20px;
+    color: white;
+    font-weight: 700;
+}
+
+.tool-text {
+    font-size: 20px;
+    color: white;
+    margin-left: 5px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.tool-text.do {
+    background-color: #00f;
+}
+
+.tool-text.say {
+    background-color: green;
+}

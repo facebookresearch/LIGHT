@@ -1,0 +1,21 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* STATBLOCK STYLES */
+.stat-row{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.stat-text {
+    font-size: 16px;
+}
+
+.stat-text.label {
+    font-weight: bold;
+}

@@ -1,0 +1,26 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* TUTORIAL IMAGE LARGE STYLES */
+
+.tutorial-container__lg {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.lgtutorial-image__container{
+    width: 100%;
+}
+
+.lgtutorial-text__container{
+    width:100%;
+}
+
+.lgtutorial-text {
+    text-align: center;
+    font-size: 24px;
+}

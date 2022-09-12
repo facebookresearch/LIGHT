@@ -1,0 +1,26 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.buttoninput-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.number-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    height: 40px;
+    width: 40px;
+}
+
+.number-input {
+    height: 40px;
+    width: 50px;
+}

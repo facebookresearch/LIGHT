@@ -1,0 +1,58 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/* WORLDROW STYLES */
+.worldrow-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 6px;
+}
+
+.worldrow-tags__container {
+    display: flex;
+    flex-direction: row;
+    width:20%;
+}
+
+.worldrow-tags__text {
+
+}
+
+.worldrow-name__container {
+    width:30%;
+}
+.worldrow-name__text {
+    width:90%;
+}
+
+.worldrow-icons__container {
+    display: flex;
+    flex-direction: row;
+    width:40%;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.worldrow-icon{
+    font-size: 18px;
+    margin: 4px;
+}
+
+.worldrow-icon:hover {
+    cursor: pointer;
+    color:cornflowerblue
+}
+
+.worldrow-icon:active {
+    cursor: pointer;
+}
+
+.worldrow-name__container:hover {
+    cursor: pointer;
+  }
