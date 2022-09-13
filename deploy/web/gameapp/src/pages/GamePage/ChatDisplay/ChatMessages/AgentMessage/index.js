@@ -214,9 +214,14 @@ const AgentMessage = ({
           <>
             {isStarred ? (
               <BsFillStarFill className={`text-yellow-300`} />
-            ) : (
-              <BsStar className={`text-yellow-300`} onClick={starHandler} />
-            )}
+            ) : giftXp > 0 ? (
+              <Tooltip
+                title="Click to ward player a Gift XP Star"
+                position="top"
+              >
+                <BsStar className={`text-yellow-300`} onClick={starHandler} />
+              </Tooltip>
+            ) : null}
           </>
         ) : null}
         <div className=" flex flex-col">
