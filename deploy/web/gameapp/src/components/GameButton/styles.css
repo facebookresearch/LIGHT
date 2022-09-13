@@ -7,19 +7,20 @@
 /* GAME BUTTON STYLES */
 .button-container {
   border-radius: 25px;
-  background-color: yellow;
   padding: 6px;
   display: flex;
   justify-content: center;
   align-items: center;
   box-shadow: 0.2em 0.2em 0.2em black;
+  border-color: #4adf81;
+  border-width: 2px;
 }
 .button-text {
   font-size: 12px;
   font-family: "Courier New", Courier, monospace;
   margin: 0;
   padding: 0;
-  color: darkgrey;
+  color: white;
   text-align: center;
   margin: 0;
   padding: 0;
@@ -27,8 +28,7 @@
 
 .button-text:hover {
   cursor: pointer;
-  text-shadow: 5px 5px 5px pink;
-  color: red;
+  color: #4adf81;
 }
 
 .button-container:active {

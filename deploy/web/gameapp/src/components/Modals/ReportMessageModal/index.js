@@ -54,10 +54,6 @@ const ReportMessageForm = () => {
     dispatch(setReportModal(false));
   };
 
-  const openReportModalHandler = () => {
-    dispatch(setReportModal(open));
-  };
-
   const setReportModalHandler = (val) => {
     dispatch(setReportModal(val));
   };

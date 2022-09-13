@@ -140,12 +140,6 @@ const AgentMessage = ({
     onClickFunction();
   };
 
-  // let classNames = "message type-dialogue ";
-  // if (["tell", "say", "whisper"].includes(caller)) {
-  //   text = "&ldquo;" + text + "&rdquo;";
-  //   classNames = "message type-dialogue ";
-  // }
-  // classNames += "other";
   /*  LIFE CYCLE */
 
   useEffect(() => {
@@ -156,34 +150,34 @@ const AgentMessage = ({
     } else {
       setIsReporting(false);
     }
-  }, [showReportModal]);
+  }, [showReportModal, reportModalSubmitted]);
 
-  if (isEditMode) {
-    return (
-      <div className="">
-        <div className="agent">
-          <span>{actor}</span>
-          <>
-            <i className="fa fa-reply" onClick={() => onReply(actor)} />{" "}
-            <i
-              className="fa fa-commenting-o "
-              onClick={() => setEditMode(false)}
-            />
-          </>
-        </div>
-        <div style={{ opacity: 0, height: 1, pointerEvents: "none" }}>
-          {text}
-        </div>
-        <input className="edit-message" defaultValue={text} />
-        <button type="submit" onClick={() => setEditMode(false)}>
-          Suggest edit
-        </button>
-        <button type="submit" onClick={() => setEditMode(false)}>
-          Suggest edit
-        </button>
-      </div>
-    );
-  }
+  // if (isEditMode) {
+  //   return (
+  //     <div className="">
+  //       <div className="agent">
+  //         <span>{actor}</span>
+  //         <>
+  //           <i className="fa fa-reply" onClick={() => onReply(actor)} />{" "}
+  //           <i
+  //             className="fa fa-commenting-o "
+  //             onClick={() => setEditMode(false)}
+  //           />
+  //         </>
+  //       </div>
+  //       <div style={{ opacity: 0, height: 1, pointerEvents: "none" }}>
+  //         {text}
+  //       </div>
+  //       <input className="edit-message" defaultValue={text} />
+  //       <button type="submit" onClick={() => setEditMode(false)}>
+  //         Suggest edit
+  //       </button>
+  //       <button type="submit" onClick={() => setEditMode(false)}>
+  //         Suggest edit
+  //       </button>
+  //     </div>
+  //   );
+  // }
 
   // if (isReportMode) {
   //   return (
@@ -277,16 +271,24 @@ const AgentMessage = ({
             </div>
           </div>
           {isLiked && !isStarred ? (
-            <span
-              className="flex flex-row justify-end text-yellow-500"
-              onClick={starHandler}
-            >
-              Would you like to award this message a star?
-            </span>
+            giftXp > 0 ? (
+              <span
+                className="flex flex-row justify-end text-yellow-500 break-words"
+                onClick={starHandler}
+              >
+                <p> Would you like to award this message a star?</p>
+              </span>
+            ) : (
+              <span className="flex flex-row justify-end text-yellow-500 break-words">
+                <p>
+                  Earn gift experience by roleplaying to be able to award stars.
+                </p>
+              </span>
+            )
           ) : null}
           {isDisliked && !isReported ? (
             <span
-              className="flex flex-row justify-end text-red-500"
+              className="flex flex-row justify-end text-red-500 break-words"
               onClick={reportingHandler}
             >
               <BsFillFlagFill />
