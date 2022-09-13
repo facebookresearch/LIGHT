@@ -212,7 +212,7 @@ const AgentMessage = ({
   return (
     <>
       <div
-        className={` flex flex-row justify-end items-center m-4px pr-10 mb-4
+        className={` flex flex-row justify-end items-center mb-4 mr-28
         ${inHelpMode ? "active" : ""}`}
         onClick={onClickFunction}
       >
@@ -225,7 +225,7 @@ const AgentMessage = ({
             )}
           </>
         ) : null}
-        <div className=" flex flex-col mr-6">
+        <div className=" flex flex-col">
           <div className="relative min-w-[120px] min-h-[90px] bg-white rounded-[10px] flex justify-center items-center text-black text-xl">
             <div className="flex flex-col m-4 max-w-md break-words">
               <p className="p-4">{text}</p>
@@ -271,7 +271,9 @@ const AgentMessage = ({
               </div>
             </div>
             <div>
-              <div className="absolute w-0 h-0 border-t-[13px] border-t-transparent border-b-[13px] border-b-transparent border-l-[26px] border-r-white left-[100%] top-[25%] translate-y-[50%]" />
+              <div className="absolute flex items-center justify-start w-0 h-0 border-t-[13px] border-t-transparent border-b-[13px] border-b-transparent border-l-[26px] border-l-white left-[100%] top-[25%] translate-y-[50%]">
+                <span className="w-30 text-white">{actor.toUpperCase()}</span>
+              </div>
             </div>
           </div>
           {isLiked && !isStarred ? (
@@ -292,7 +294,6 @@ const AgentMessage = ({
             </span>
           ) : null}
         </div>
-        <span className="w-30 text-white">{actor}</span>
       </div>
     </>
   );
