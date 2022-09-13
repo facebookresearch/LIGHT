@@ -143,14 +143,23 @@ const AgentMessage = ({
   /*  LIFE CYCLE */
 
   useEffect(() => {
-    if (isReporting && reportModalSubmitted) {
-      setIsReporting(false);
-      setIsReported(true);
-      dispatch(setReportModalSubmitted(false));
-    } else {
-      setIsReporting(false);
+    console.log("UPON SHOWREPORT MODAL CHANGE");
+    console.log("reportModalSubmitted:  ", reportModalSubmitted);
+    console.log("isReporting:  ", isReporting);
+    if (!showReportModal) {
+      if (isReporting && reportModalSubmitted) {
+        setIsReported(true);
+        setIsReporting(false);
+        dispatch(setReportModalSubmitted(false));
+      } else {
+        setIsReporting(false);
+      }
     }
-  }, [showReportModal, reportModalSubmitted]);
+  }, [showReportModal]);
+
+  useEffect(() => {
+    console.log("UPON IS REPORTING CHANGE:  ", isReporting);
+  }, [isReporting]);
 
   // if (isEditMode) {
   //   return (
