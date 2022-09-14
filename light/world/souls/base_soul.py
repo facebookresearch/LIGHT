@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Meta Platforms, Inc. and affiliates.
+# Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -377,8 +377,8 @@ class BaseSoul(Soul):
 
                 if agent2_id not in agent._agent_interactions:
                     agent._agent_interactions[agent2_id] = 0
-                stars = 4
-                # stars = self.score_conversation()
+
+                stars = self.score_conversation()
                 agent._agent_interactions[agent2_id] += stars
                 agent.xp += stars
                 agent.reward_xp += stars / 4.0
