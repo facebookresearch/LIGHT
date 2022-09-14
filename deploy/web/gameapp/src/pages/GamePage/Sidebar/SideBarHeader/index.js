@@ -57,7 +57,7 @@ const SidebarHeader = () => {
   const levelCalculator = () => {
     // BASE VALUES
     let currentLevel = 1;
-    let currentExp = xp + sessionXp;
+    let currentExp = xp;
     let expToLevel = currentLevel * 10;
     // Level is calculated by subtracting total exp by required experience for each level
     while (expToLevel <= currentExp) {
@@ -65,13 +65,15 @@ const SidebarHeader = () => {
       currentExp -= expToLevel;
       expToLevel = currentLevel * 10;
     }
-    let updatedPercent = Math.floor((currentExp / expToLevel) * 100);
+    let remainingXp = currentExp;
+    let updatedPercent = Math.floor((remainingXp / expToLevel) * 100);
     setLevel(currentLevel);
-    setNeededExp(expToLevel - currentExp);
+    setNeededExp(expToLevel - remainingXp);
     setProgressPercent(updatedPercent);
   };
 
   useEffect(() => {
+    console.log("SESSION XP:  ", sessionXp);
     levelCalculator();
   }, [xp, sessionXp]);
 
@@ -83,7 +85,7 @@ const SidebarHeader = () => {
           <div>
             <p style={{ color: "white" }}> {`You are level ${level}`} </p>
             <Tooltip
-              title={`Earn ${neededExp - sessionXp} XP til level ${level + 1}`}
+              title={`Earn ${neededExp} XP til level ${level + 1}`}
               position="top"
             >
               <ProgressBar progressPercent={progressPercent} />

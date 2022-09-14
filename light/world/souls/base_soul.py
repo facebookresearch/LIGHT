@@ -377,8 +377,8 @@ class BaseSoul(Soul):
 
                 if agent2_id not in agent._agent_interactions:
                     agent._agent_interactions[agent2_id] = 0
-
-                stars = self.score_conversation()
+                stars = 4
+                # stars = self.score_conversation()
                 agent._agent_interactions[agent2_id] += stars
                 agent.xp += stars
                 agent.reward_xp += stars / 4.0
