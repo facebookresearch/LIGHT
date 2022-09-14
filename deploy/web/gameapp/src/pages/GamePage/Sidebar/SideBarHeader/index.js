@@ -103,6 +103,7 @@ const SidebarHeader = () => {
             >
               <GameButton text={"LOGOUT"} clickFunction={() => {}} />
             </a>
+            <GameButton text={"MENU"} clickFunction={openDrawer} />
             {/* <div>
               <ToggleSwitch
                 switchLabel="CHARACTER INFO"

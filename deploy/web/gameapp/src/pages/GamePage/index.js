@@ -312,6 +312,21 @@ const Chat = ({
     }
   }, [sessionXp, sessionGiftXpSpent]);
 
+  /* SESSION GIFT XP */
+  useEffect(() => {
+    console.log("GIFT XP", giftXp);
+    console.log("SESSION GIFT XP SPENT", sessionGiftXpSpent);
+    const { xp, giftXp } = persona;
+    dispatch(updateXp(xp + sessionXp));
+    let sessionGiftXpEarned = sessionXp / 4;
+    console.log("Session Gift Xp Earned", sessionGiftXpEarned);
+    if (sessionGiftXpEarned >= 1) {
+      dispatch(updateGiftXp(giftXp + sessionGiftXpEarned - sessionGiftXpSpent));
+    } else {
+      dispatch(updateGiftXp(giftXp - sessionGiftXpSpent));
+    }
+  }, [sessionXp, sessionGiftXpSpent]);
+
   /* ----------VIEW--------- */
   /* SCREEN SIZE */
   const updateDimensions = () => {

@@ -15,3 +15,8 @@
 .sidedrawer.open {
   transform: translateX(0);
 }
+
+.tab-active {
+  color: black;
+  background-color: white;
+}
