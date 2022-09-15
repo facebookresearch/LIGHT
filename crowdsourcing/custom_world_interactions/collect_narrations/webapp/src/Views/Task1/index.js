@@ -9,24 +9,22 @@ import { BsExclamationOctagonFill, BsCheck, BsX } from "react-icons/bs";
 import CollapsibleContainer from "../../components/CollapsibleContainer";
 import TaskDescription from "../../components/TaskDescription";
 import ObjectSelector from "../../components/ObjectSelector";
+import ObjectDescriber from "../../components/ObjectDescriber";
 import DescriptionForm from "./DescriptionForm";
 
 const Task1 = ({
-  actionDescription,
-  rawAction,
   taskData,
   onSubmit,
   isOnboarding,
   onError,
   setPrimaryObject,
+  setPrimaryDescription,
   setSecondaryObject,
   setActionDescription,
   setRawAction,
-  setOtherActive,
   payload,
   active
-})=> {
-  const [primaryObjectList, setPrimaryObjectList] = useState([]);
+}) => {
   const [secondaryObjectList, setSecondaryObjectList] = useState([]);
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -34,38 +32,17 @@ const Task1 = ({
 
   const toggleShowSuccess = () => setShowSuccess(!showSuccess);
   const toggleShowError = () => setShowError(!showError);
-console.log("TASK DATA:  ", taskData)
-
-  const {primaryObject, secondaryObject} = payload;
+  const {primaryObject, secondaryObject, primaryDescription, actionDescription, rawAction} = payload;
 
   useEffect(()=>{
-      setPrimaryObjectList(taskData["primary_object_list"]);
       setSecondaryObjectList(taskData["secondary_object_list"]);
-  },[taskData])
+  }, [taskData])
 
-  const primaryHandler = (selection)=>{
-    setPrimaryObject(selection)
-  }
-
-  const secondaryHandler = (selection)=>{
-    setSecondaryObject(selection)
-  }
-
-  const otherHandler = (selection)=>{
-    setOtherActive={selection}
-
-  }
-  const clearHandler = () =>{
-    setPrimaryObject("");
-    setSecondaryObject("");
-    setActionDescription("");
-  }
   const submitHandler = ()=>{
-    if(active){
-    onSubmit(payload);
-    clearHandler()
-    }else{
-      let ErrorMessage = `${primaryObject ? "": "Must select a primary object"}${secondaryObject ? "": ",Must select a secondary Object"}${actionDescription ? "": ",Action description cannot be blank"}`.split(",")
+    if (active) {
+      onSubmit(payload);
+    } else {
+      let ErrorMessage = `${primaryObject ? "": "Must create a primary object"}${primaryDescription ? "": ",Must describe the primary object"}${secondaryObject ? "": ",Must select a secondary Object"}${actionDescription ? "": ",Action description cannot be blank"}`.split(",")
       console.log(ErrorMessage)
       setErrorMessage(ErrorMessage)
       setShowError(true)
@@ -114,10 +91,20 @@ console.log("TASK DATA:  ", taskData)
           <TaskDescription/>
         </CollapsibleContainer>
         {
-          (primaryObjectList.length && secondaryObjectList.length) ?
+          (secondaryObjectList.length) ?
           <div className="object-selectors">
-            <ObjectSelector label="Primary Object" items={[...primaryObjectList]} selectFunction={primaryHandler} />
-            <ObjectSelector label="Secondary Object" items={[...secondaryObjectList]} selectFunction={secondaryHandler} />
+            <ObjectSelector
+              label={"Secondary Item:"}
+              items={[...secondaryObjectList]}
+              selectedItem={secondaryObject}
+              selectFunction={(obj) => setSecondaryObject(obj)}
+            />
+            <ObjectDescriber
+              name={primaryObject}
+              description={primaryDescription}
+              onChangeName={setPrimaryObject}
+              onChangeDescription={setPrimaryDescription}
+            />
           </div>
           :
           <div/>
@@ -129,7 +116,7 @@ console.log("TASK DATA:  ", taskData)
           secondaryObject={secondaryObject}
           name={"Action Phrase"}
           placeholder={"In simple terms state the action between the two objects, e.g. swing axe at tree, wipe mirror with cloth"}
-          taskTemplate={"The action phrase should involve you using {primaryText} with {secondaryText}:"}
+          taskTemplate={"The action phrase should involve using {primaryText} with {secondaryText}:"}
           tips={false}
           bigForm={false}
         />
@@ -144,22 +131,12 @@ console.log("TASK DATA:  ", taskData)
           tips={true}
           bigForm={true}
         />
-        {
-          active
-          ?
-          <div
+          <button
             className="submit-button"
-            onClick={submitHandler}>
+            onClick={submitHandler}
+            disabled={!active}>
               SUBMIT
-          </div>
-          :
-          <div
-            disabled
-            className="submit-button"
-            onClick={submitHandler}>
-              SUBMIT
-          </div>
-        }
+          </button>
       </div>
     </div>
   );

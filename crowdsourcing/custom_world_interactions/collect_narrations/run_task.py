@@ -11,12 +11,13 @@ import subprocess
 from mephisto.operations.operator import Operator
 from mephisto.tools.scripts import load_db_and_process_config
 from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint import (
-    BLUEPRINT_TYPE_STATIC_REACT as BLUEPRINT_TYPE
+    BLUEPRINT_TYPE_STATIC_REACT as BLUEPRINT_TYPE,
 )
 from mephisto.abstractions.blueprints.abstract.static_task.static_blueprint import (
     SharedStaticTaskState,
 )
-from light.data_model.light_database import LIGHTDatabase
+from light.data_model.db.environment import EnvDB
+from light.data_model.db.base import LightLocalDBConfig
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
 from mephisto.data_model.worker import Worker
@@ -39,8 +40,7 @@ from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 # LIGHT_DB_PATH = "~/ParlAI/data/LIGHT/merged.db"
-LIGHT_DB_PATH = "~/ParlAI/data/light/environment/db/d3/database3.db"
-PRIMARY_OBJECT_LIST_SIZE = 8
+LIGHT_DB_PATH = "/Users/jju/LIGHT/prod_db"
 SECONDARY_OBJECT_LIST_SIZE = 8
 DEFAULT_NUM_TASKS = 20
 
@@ -70,7 +70,6 @@ class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
     light_db_path: str = LIGHT_DB_PATH
-    primary_object_list_size: int = PRIMARY_OBJECT_LIST_SIZE
     secondary_object_list_size: int = SECONDARY_OBJECT_LIST_SIZE
     num_tasks: int = DEFAULT_NUM_TASKS
     force_rebuild: bool = False
@@ -79,44 +78,30 @@ class TestScriptConfig(RunScriptConfig):
 
 
 def get_object_lists(db_path):
-    db = LIGHTDatabase(db_path)
-    with db as ldb:
-        all_objects = [dict(obj) for obj in ldb.get_object()]
-
-    primary_objects = [
-        {"name": obj["name"], "desc": obj["physical_description"]}
-        for obj in all_objects
-        if obj["is_gettable"] > 0.5
-    ]
+    ldb = EnvDB(LightLocalDBConfig(file_root=LIGHT_DB_PATH))
+    all_objects = ldb.find_objects()
 
     secondary_objects = [
-        {"name": obj["name"], "desc": obj["physical_description"]}
-        for obj in all_objects
+        {"name": obj.name, "desc": obj.physical_description} for obj in all_objects
     ]
 
-    return primary_objects, secondary_objects
+    return secondary_objects
 
 
 def create_task_data(
-    primary_objects,
     secondary_objects,
-    primary_object_list_size,
     secondary_object_list_size,
     num_tasks,
 ):
-    random.shuffle(primary_objects)
     random.shuffle(secondary_objects)
     task_data_array = []
 
     for idx in range(num_tasks):
-        primary_object_list = random.sample(primary_objects, primary_object_list_size)
         secondary_object_list = random.sample(
             secondary_objects, secondary_object_list_size
         )
-
         task_data_array.append(
             {
-                "primary_object_list": primary_object_list,
                 "secondary_object_list": secondary_object_list,
             }
         )
@@ -162,9 +147,9 @@ def validate_unit(unit):
 
     if unit_data is None:
         return
-        
+
     data = unit_data.get("outputs")
-    
+
     if data is None or "actionDescription" not in data:
         return
     action_description = data["actionDescription"]
@@ -172,6 +157,8 @@ def validate_unit(unit):
         return
     action_description = action_description.strip()
 
+    object_name = data["primaryObject"]
+    object_description = data["primaryDescription"]
 
     # some basic filtering
     if (
@@ -182,9 +169,16 @@ def validate_unit(unit):
             and action_description.lower()[-1] != "?"
             and action_description.lower()[-1] != "!"
         )
+        or (
+            object_description.lower()[-1] != "."
+            and object_description.lower()[-1] != "?"
+            and object_description.lower()[-1] != "!"
+        )
+        or len(object_description) <= 20
     ):
         # Not in second person or invalid punctuation
         print("Action " + action_description + " was not validated!")
+        print("Or Object " + object_description + " was not validated!")
         # unit.get_assigned_agent().soft_reject_work() => must wait for async version
         worker = unit.get_assigned_agent().get_worker()
         worker.grant_qualification("collect_narrations_task_block", 1)
@@ -199,7 +193,7 @@ def main(cfg: DictConfig) -> None:
     def onboarding_always_valid(onboarding_data):
         return True
 
-    primary_objects, secondary_objects = get_object_lists(
+    secondary_objects = get_object_lists(
         cfg.light_db_path,
     )
 
@@ -235,9 +229,7 @@ def main(cfg: DictConfig) -> None:
 
     shared_state = SharedStaticTaskState(
         static_task_data=create_task_data(
-            primary_objects,
             secondary_objects,
-            cfg.primary_object_list_size,
             cfg.secondary_object_list_size,
             cfg.num_tasks,
         ),

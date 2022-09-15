@@ -4,12 +4,12 @@ import "./styles.css";
 //CUSTOM COMPONENTS
 import ObjectButton from "./ObjectButton";
 
-const ObjectSelector = ({label, items, selectFunction})=>{
-    const [selectedItem, setSelectedItem] = useState(null);
+const ObjectSelector = ({label, selectedItem, items, selectFunction})=>{
+    const [selectedDesc, setSelectedDesc] = useState("");
     const [objectList, setObjectList] = useState([])
 
     const clickHandler = (selection)=>{
-        setSelectedItem(selection);
+        setSelectedDesc(selection.desc);
         selectFunction(selection.name);
     }
     useEffect(()=>{
@@ -29,14 +29,14 @@ const ObjectSelector = ({label, items, selectFunction})=>{
                     key={index}
                     name={item.name}
                     selectFunction={()=>clickHandler(item)}
-                    isSelected={selectedItem ? selectedItem.name==item.name : false}
+                    isSelected={selectedItem ? selectedItem==item.name : false}
                 />
                 ))
                 :
                 null
             }
             </div>
-            {selectedItem ? <p className="selection-description" ><span style={{fontWeight:"bold"}}>{selectedItem.name.toUpperCase()}:  </span>{selectedItem.desc}</p> : null}
+            {selectedItem ? <p className="selection-description" ><span style={{fontWeight:"bold"}}>{selectedItem.toUpperCase()}:  </span>{selectedDesc}</p> : null}
         </div>
     )
 }

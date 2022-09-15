@@ -14,7 +14,7 @@ const BadExampleList = ()=>{
             </div>
             {
                 BadExamples.map((example, index)=>{
-                    const {primary, primary_desc, secondary, secondary_desc, narration, badReason} = example
+                    const {primary, primary_desc, secondary, secondary_desc, action_phrase, narration, badReason} = example
                     return(
                         <ExampleCard
                             key={index}
@@ -22,6 +22,7 @@ const BadExampleList = ()=>{
                             primary_desc={primary_desc}
                             secondary={secondary}
                             secondary_desc={secondary_desc}
+                            action_phrase={action_phrase}
                             narration={narration}
                             badReason={badReason}
                         />

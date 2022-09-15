@@ -1,7 +1,7 @@
 import React from "react";
 import "./styles.css";
 
-import TaskExample1 from "../../assets/images/TaskExample1.png";
+import TaskExample from "../../assets/images/TaskExample.png";
 //CUSTOM COMPONENTS
 import GoodExampleList from "./GoodExampleList";
 import BadExampleList from "./BadExampleList";
@@ -16,7 +16,7 @@ const TaskDescription = ()=> {
             Overview:
           </p>
           <p className="description-section__text">
-            We're trying to crowdsource interactions between two objects. These interactions will be set in a <b>medieval fantasy scenario</b>, and as such should <b>not refer to real people, places, or modern day technologies.</b> Ultimately, we'll want someone to be able to select two objects and be told the outcome of them using these objects together, in a second-person <i>"choose your adventure"</i> narrative style.
+            We're trying to crowdsource interactions a character may enact between two objects. These interactions will be set in a <b>medieval fantasy scenario</b>, and as such should <b>not refer to real people, places, or modern day technologies.</b> Ultimately, we'll want someone to be able to select two objects and be told the outcome of them using these objects together, in a second-person <i>"choose your adventure"</i> narrative style.
           </p>
         </div>
         <div className="description-section">
@@ -32,7 +32,7 @@ const TaskDescription = ()=> {
                 <span style={{color:"gold"}} ><b>Primary: </b></span>
               </p>
               <p className="description-section__text">
-                Should be an object that a person can hold or physically move.
+                Should be an object that a person can hold or physically move. You will come up with an interesting primary entity.
               </p>
             </div>
             <div className="description-section">
@@ -40,7 +40,7 @@ const TaskDescription = ()=> {
                 <span style={{color:"blue"}} ><b>Secondary: </b></span>
               </p>
               <p className="description-section__text">
-                Can be any entity that a person could use the primary object with, can be held (but doesn't necessarily have to be), and may be a living thing.
+                One of a provided list of objects. May or may not be held by the actor, but should be involved in the interaction with the primary entity.
               </p>
             </div>
             <p className="description-section__text">
@@ -53,22 +53,23 @@ const TaskDescription = ()=> {
             <b>For example:</b>
           </p>
           <p className="description-section__text">
-            Let's say we have a  <b>lit torch </b> as the <span style={{color:"gold"}} ><b> primary object </b></span> and a
-            <b> wooden table</b> as the <span style={{color:"blue"}} ><b>  secondary object</b></span>.
-            In this case, a good action <span style={{color:"green"}}><b> phrase </b></span>  would be:{" "}
+            Let's say you select a <b> wooden table</b> as the <span style={{color:"blue"}} ><b>  secondary object</b></span>. It has the provided description:
+            "This wooden table has seen better days - in fact the history of those days appears to have been etched right into the surface by previous patrons."
+            In this case, it would be reasonable to provide a <b>lit torch</b> as the primary object. A good action <span style={{color:"green"}}><b> phrase </b></span>  would
+            then be:{" "}
             <span style={{color:"green"}}><i>
-              "Ignite the <span style={{color:"blue"}} ><b> table </b></span> with <span style={{color:"gold"}} ><b>the lit torch </b></span>." {" "}
+              "Ignite the <span style={{color:"blue"}} ><b> table </b></span> with the <span style={{color:"gold"}} ><b>lit torch </b></span>." {" "}
             </i></span>
             Using this action phrase, a good action <span style={{color:"green"}}><b> description </b></span>  would be:{" "}
             <span style={{color:"green"}}><i>
-              "You light the <span style={{color:"blue"}} ><b> table </b></span> on fire with <span style={{color:"gold"}} ><b>the lit torch </b></span>. It ignites and burns to
-              the ground, leaving a pile of ash."
+              "You light the <span style={{color:"blue"}} ><b> table </b></span> on fire with <span style={{color:"gold"}} ><b>the lit torch </b></span>. It ignites and burns,
+              gradually reducing the table and all the carvings on it to a pile of ash on the ground."
             </i></span>
           </p>
         </div>
       </div>
       <div className="description-row">
-        <img src={TaskExample1} className="example-img" />
+        <img src={TaskExample} className="example-img" />
       </div>
       <br />
       <div className="examples-container">

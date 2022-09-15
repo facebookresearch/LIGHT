@@ -1,7 +1,5 @@
 #@package _global_
 mephisto:
-  provider:
-    requester_name: alexgurung_sandbox
   blueprint:
     task_source: ${task_dir}/webapp/build/bundle.js
     extra_source_dir: ${task_dir}/webapp/src/static

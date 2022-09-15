@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 
 
-import {LoadingScreen } from "./components/core_components.jsx";
+import { LoadingScreen } from "./components/LoadingScreen";
 import { useMephistoTask, ErrorBoundary } from "mephisto-task";
 
 /* ================= Container Components ================= */
@@ -23,10 +23,10 @@ import Task1 from "./Views/Task1";
 function MainApp() {
 
   const [primaryObject, setPrimaryObject] = React.useState("");
+  const [primaryDescription, setPrimaryDescription] = React.useState("");
   const [secondaryObject, setSecondaryObject] = React.useState("");
   const [actionDescription, setActionDescription] = React.useState("");
   const [rawAction, setRawAction] = React.useState("");
-  const [otherActive, setOtherActive] = React.useState(false);
 
   const {
     blockedReason,
@@ -49,7 +49,7 @@ function MainApp() {
       </section>
     );
   }
-  if (isLoading) {
+  if (isLoading || (initialTaskData && !initialTaskData.secondary_object_list)) {
     return <LoadingScreen />;
   }
   if (isPreview) {
@@ -60,6 +60,7 @@ function MainApp() {
 
   const payload = {
     primaryObject,
+    primaryDescription,
     secondaryObject,
     actionDescription,
     rawAction,
@@ -69,19 +70,19 @@ function MainApp() {
     payload.rawAction.length > 0 &&
     payload.actionDescription.length > 0 &&
     payload.secondaryObject.length > 0 &&
-    payload.primaryObject.length > 0;
+    payload.primaryObject.length > 0 &&
+    payload.primaryDescription.length > 0;
 
   return (
     <>
       <ErrorBoundary handleError={handleFatalError}>
         <Task1
-          actionDescription={actionDescription}
           taskData={initialTaskData}
           setPrimaryObject={setPrimaryObject}
+          setPrimaryDescription={setPrimaryDescription}
           setSecondaryObject={setSecondaryObject}
           setActionDescription={setActionDescription}
           setRawAction={setRawAction}
-          setOtherActive={setOtherActive}
           onSubmit={handleSubmit}
           isOnboarding={isOnboarding}
           onError={handleFatalError}
