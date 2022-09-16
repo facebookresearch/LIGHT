@@ -3,10 +3,11 @@ defaults:
   - base
 game_url: "https://www.light-rpg.ai/"
 preauth_secret: "TODO"
-num_tasks: 50
+num_tasks: 100
 mephisto:
   blueprint:
     onboarding_qualification: "light-gameplay-onboarding"
+    block_qualification: "light-gameplay-ineligible"
   task:
     allowed_concurrent: 1
     task_name: light-gameplay-task-pilot
@@ -19,4 +20,5 @@ mephisto:
     task_reward: 4.00
     task_tags: "fantasy,text,role-playing,adventure,dialogue"
     maximum_units_per_worker: 3
-    max_num_concurrent_units: 15
+    max_num_concurrent_units: 30
+find_new_workers: True

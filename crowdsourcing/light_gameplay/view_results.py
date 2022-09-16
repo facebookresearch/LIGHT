@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -24,6 +24,7 @@ def format_data_for_printing(data):
     dialogue_string = ""
     dialogue_data = data["data"]["final_submission"]["data"]
     feedback = data["data"]["final_submission"]["comments"]
+    reports = data["data"]["final_submission"]["reports"]
 
     curr_actor = None
 
@@ -65,6 +66,7 @@ def format_data_for_printing(data):
         f"Says: {says}, Dos: {dos}\n"
         f"Type: {episode_type}\n"
         f"Feedback: {feedback}\n\n"
+        f"{reports}\n--------\n"
         f"{dialogue_string}-----------\n\n"
     )
 

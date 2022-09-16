@@ -7,3 +7,4 @@ num_tasks: 10
 mephisto:
   blueprint:
     onboarding_qualification: "light-gameplay-onboarding-sandbox-2"
+find_new_workers: True
