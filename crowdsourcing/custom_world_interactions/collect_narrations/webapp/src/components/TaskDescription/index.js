@@ -62,7 +62,7 @@ const TaskDescription = ()=> {
             </i></span>
             Using this action phrase, a good action <span style={{color:"green"}}><b> description </b></span>  would be:{" "}
             <span style={{color:"green"}}><i>
-              "You light the <span style={{color:"blue"}} ><b> table </b></span> on fire with <span style={{color:"gold"}} ><b>the lit torch </b></span>. It ignites and burns,
+              "You light the <span style={{color:"blue"}} ><b> table </b></span> on fire with the <span style={{color:"gold"}} ><b>lit torch </b></span>. It ignites and burns,
               gradually reducing the table and all the carvings on it to a pile of ash on the ground."
             </i></span>
           </p>
@@ -72,6 +72,9 @@ const TaskDescription = ()=> {
         <img src={TaskExample} className="example-img" />
       </div>
       <br />
+      <p>
+        More good and bad examples are listed below to help you get a feel for the type of interactions we're looking for.
+      </p>
       <div className="examples-container">
         <GoodExampleList/>
         <BadExampleList/>
