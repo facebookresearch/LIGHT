@@ -4,10 +4,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+const defaultTheme = require('tailwindcss/defaultTheme')
+
+
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        'sans': ['"Inter"', ...defaultTheme.fontFamily.sans],
+        'mono': ['"JetBrains Mono"', ...defaultTheme.fontFamily.mono],
+      },
       typography: {
         DEFAULT: {
           css: {

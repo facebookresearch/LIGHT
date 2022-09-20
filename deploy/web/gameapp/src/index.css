@@ -4,7 +4,28 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+
 /* TAILWIND */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: 'Inter';
+    src: local('Inter'), url('./assets/fonts/Inter_slnt,wght.ttf') format('truetype');
+    font-weight: 100 1000;
+  }
+
+  @font-face {
+    font-family: 'JetBrains Mono';
+    src: local('JetBrains Mono'), url('./assets/fonts/JetBrainsMono_wght.ttf') format('truetype');
+    font-weight: 100 800;
+  }
+
+  @font-face {
+    font-family: 'Lexend';
+    src: local('Lexend'), url('./assets/fonts/Lexend_wght.ttf') format('truetype');
+    font-weight: 100 900;
+  }
+}
