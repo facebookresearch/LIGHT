@@ -1,10 +1,12 @@
 /* REACT */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { updateShowDrawer } from "../../features/view/view-slice";
 /* STYLES */
 import "./styles.css";
+
+import DrawerTabContent from "./DrawerTabContent";
 /* ICONS */
 import { BsXLg } from "react-icons/bs";
 
@@ -33,17 +35,23 @@ const SideDrawer = () => {
       </div>
       <div className=""></div>
       <div className="">
-        <div className="tabs tabs-boxed">
+        <div className="tabs tabs-boxed bg-white bg-opacity-40">
           <a
             className={`tab ${
-              selectedTab === "character-info" ? "tab-active" : ""
+              selectedTab === "character-info"
+                ? " tab-active-primary-content bg-opacity-100"
+                : ""
             }`}
             onClick={() => TabSelectionHandler("character-info")}
           >
             Character Info
           </a>
           <a
-            className={`tab ${selectedTab === "system" ? "tab-active" : ""}`}
+            className={`tab ${
+              selectedTab === "system"
+                ? "tab-active bg-white bg-opacity-100"
+                : ""
+            }`}
             onClick={() => TabSelectionHandler("system")}
           >
             System
@@ -56,7 +64,9 @@ const SideDrawer = () => {
           </a> */}
         </div>
       </div>
-      <div></div>
+      <div className="__sidedrawer-body__ w-full p-8">
+        <DrawerTabContent currentTab={selectedTab} />
+      </div>
     </div>
   );
 };

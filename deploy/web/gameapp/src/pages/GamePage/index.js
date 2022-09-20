@@ -95,9 +95,11 @@ const ConnectedApp = () => {
     agents,
     isFull,
     disconnectFromSession,
+    markPlayerAsIdle,
+    isIdle,
   } = useWSDataSource(wsUrl);
 
-  if (isErrored)
+  if (isErrored && !isIdle)
     return (
       <div style={{ textAlign: "center", marginTop: 30, fontSize: 30 }}>
         Could not connect to the server.
@@ -116,6 +118,7 @@ const ConnectedApp = () => {
       location={location}
       agents={agents}
       disconnectFromSession={disconnectFromSession}
+      markPlayerAsIdle={markPlayerAsIdle}
     />
   );
 };
@@ -240,7 +243,9 @@ const Chat = ({
 
   //* GIFT XP UPDATES TO REDUX STORE */
   useEffect(() => {
-    dispatch(updateGiftXp(giftXp - sessionGiftXpSpent));
+    let updatedGiftXp = giftXp - sessionGiftXpSpent;
+    console.log("Updated Gift Xp", updatedGiftXp);
+    dispatch(updateGiftXp(updatedGiftXp));
   }, [sessionGiftXpSpent]);
 
   /* LOCATION UPDATES TO REDUX STORE */
@@ -261,6 +266,7 @@ const Chat = ({
       setIdleTime((idleTime) => idleTime + 1);
     }, 1000);
     if (idleTime === 300) {
+      markPlayerAsIdle();
       setIdle(true);
       clearInterval(timer);
       disconnectFromSession();

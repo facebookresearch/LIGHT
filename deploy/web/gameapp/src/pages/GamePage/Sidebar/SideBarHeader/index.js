@@ -20,7 +20,6 @@ import LevelDisplay from "../../../../components/LevelDisplay";
 import ProgressBar from "../../../../components/Progressbar";
 import GameButton from "../../../../components/GameButton";
 import IconButton from "../../../../components/IconButtons/InfoButton";
-import ToggleSwitch from "../../../../components/ToggleSwitch";
 /* IMAGES */
 import Scribe from "../../../../assets/images/scribe.png";
 import { GiConsoleController } from "react-icons/gi";
@@ -29,53 +28,20 @@ import { GiConsoleController } from "react-icons/gi";
 const SidebarHeader = () => {
   const dispatch = useAppDispatch();
   /* REDUX STATE */
-  //DRAWER
-  const showDrawer = useAppSelector((state) => state.view.showDrawer);
   /* REDUX ACTIONS */
   const openDrawer = () => {
     dispatch(updateShowDrawer(true));
   };
-  const closeDrawer = () => {
-    dispatch(updateShowDrawer(false));
-  };
-  /* ----LOCAL STATE---- */
-  //Character level
-  const [level, setLevel] = useState(1);
-  //Experience needed for next level
-  const [neededExp, setNeededExp] = useState(0);
-  //Percent of progress towards next level
-  const [progressPercent, setProgressPercent] = useState(0);
-  /* ----REDUX STATE---- */
   //PLAYER XP STATE
   const xp = useAppSelector((state) => state.xp.value);
+  const level = useAppSelector((state) => state.xp.level);
+  const xpToNextLevel = useAppSelector((state) => state.xp.xpToNextLevel);
+  const progressPercent = useAppSelector((state) => state.xp.progressPercent);
   //SESSION XP STATE
   const sessionXp = useAppSelector((state) => state.sessionXp.value);
   //GIFTXP STATE
   const giftXp = useAppSelector((state) => state.giftXp.value);
-
-  // UTIL
-  const levelCalculator = () => {
-    // BASE VALUES
-    let currentLevel = 1;
-    let currentExp = xp;
-    let expToLevel = currentLevel * 10;
-    // Level is calculated by subtracting total exp by required experience for each level
-    while (expToLevel <= currentExp) {
-      currentLevel++;
-      currentExp -= expToLevel;
-      expToLevel = currentLevel * 10;
-    }
-    let remainingXp = currentExp;
-    let updatedPercent = Math.floor((remainingXp / expToLevel) * 100);
-    setLevel(currentLevel);
-    setNeededExp(expToLevel - remainingXp);
-    setProgressPercent(updatedPercent);
-  };
-
-  useEffect(() => {
-    console.log("SESSION XP:  ", sessionXp);
-    levelCalculator();
-  }, [xp, sessionXp]);
+  /* ----LOCAL STATE---- */
 
   return (
     <>
@@ -85,7 +51,7 @@ const SidebarHeader = () => {
           <div>
             <p style={{ color: "white" }}> {`You are level ${level}`} </p>
             <Tooltip
-              title={`Earn ${neededExp} XP til level ${level + 1}`}
+              title={`Earn ${xpToNextLevel} XP til level ${level + 1}`}
               position="top"
             >
               <ProgressBar progressPercent={progressPercent} />
@@ -97,26 +63,7 @@ const SidebarHeader = () => {
             <IconButton />
           </div>
           <div className="flex flex-row justify-center items-center">
-            <a
-              href={"/logout"}
-              style={{ color: "#0060B6", textDecoration: "none" }}
-            >
-              <GameButton text={"LOGOUT"} clickFunction={() => {}} />
-            </a>
             <GameButton text={"MENU"} clickFunction={openDrawer} />
-            {/* <div>
-              <ToggleSwitch
-                switchLabel="CHARACTER INFO"
-                toolTipText={
-                  showDrawer
-                    ? "Click to return to the game"
-                    : "Click to open your character info."
-                }
-                isOn={showDrawer}
-                setOn={openDrawer}
-                setOff={closeDrawer}
-              />
-            </div> */}
           </div>
         </div>
       </div>

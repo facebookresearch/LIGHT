@@ -1,12 +1,13 @@
 /* REACT */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 /* REDUX */
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { updateShowDrawer } from "../../features/view/view-slice";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { updateShowDrawer } from "../../../features/view/view-slice";
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */
 import CharacterInfoTabBody from "./Tabs/CharacterInfoTabBody";
+import SystemTabBody from "./Tabs/SystemTabBody";
 /* ICONS */
 import { BsXLg } from "react-icons/bs";
 
@@ -19,22 +20,24 @@ const SideDrawer = ({ currentTab }) => {
   /* REDUX ACTIONS */
 
   /* ------ LOCAL STATE ------ */
+  const [selectedTab, setSelectedTab] = useState("");
 
-  const TabContent = () => {
-    switch (currentTab) {
+  useEffect(() => {
+    setSelectedTab(currentTab);
+  }, [currentTab]);
+
+  const TabContent = ({ tab }) => {
+    switch (tab) {
       case "character-info":
         return <CharacterInfoTabBody />;
       case "system":
-        break;
+        return <SystemTabBody />;
       default:
         return <CharacterInfoTabBody />;
     }
   };
-  return (
-    <div className="sidedrawer w-full">
-      <TabContent />
-    </div>
-  );
+
+  return <TabContent tab={selectedTab} />;
 };
 
 export default SideDrawer;
