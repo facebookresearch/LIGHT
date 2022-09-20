@@ -16,6 +16,8 @@ import { updatePersona } from "../../features/playerInfo/persona-slice.ts";
 import { updateXp } from "../../features/playerInfo/xp-slice.ts";
 import { updateGiftXp } from "../../features/playerInfo/giftxp-slice.ts";
 import { updateSessionXp } from "../../features/sessionInfo/sessionxp-slice";
+import { updateSessionSpentGiftXp } from "../../features/sessionInfo/sessionspentgiftxp-slice";
+import { updateSessionEarnedGiftXp } from "../../features/sessionInfo/sessionearnedgiftxp-slice";
 import { updateIsMobile } from "../../features/view/view-slice";
 import { setReportModal } from "../../features/modals/modals-slice";
 /* STYLES */
@@ -37,6 +39,7 @@ import ChatDisplay from "./ChatDisplay";
 import ReportMessageModal from "../../components/Modals/ReportMessageModal";
 /* CONFIG */
 import CONFIG from "../../config.js";
+// import { Console } from "console";
 
 //WEBSOCKET CONNECTION FUNCTION
 const createWebSocketUrlFromBrowserUrl = (url) => {
@@ -131,6 +134,7 @@ const Chat = ({
   location,
   agents,
   disconnectFromSession,
+  markPlayerAsIdle,
 }) => {
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
@@ -143,9 +147,12 @@ const Chat = ({
   const giftXp = useAppSelector((state) => state.giftXp.value);
   //SESSION XP STATE
   const sessionXp = useAppSelector((state) => state.sessionXp.value);
-  //SESSION GIFT XP STATE
+  //SESSION GIFT XP
   const sessionGiftXpSpent = useAppSelector(
     (state) => state.sessionSpentGiftXp.value
+  );
+  const sessionEarnedGiftXp = useAppSelector(
+    (state) => state.sessionEarnedGiftXp.value
   );
   //MOBILE STATE
   const isMobile = useAppSelector((state) => state.view.isMobile);
@@ -194,11 +201,14 @@ const Chat = ({
   /*  LIFE CYCLE */
   /* PLAYER AND SESSION INFO UPDATES TO REDUX STORE */
   useEffect(() => {
-    const { xp, giftXp } = persona;
+    console.log("UPDATED PERSONA", persona);
+    let updatedXp = persona.xp;
+    let updatedGiftXp = persona.giftXp;
+    console.log("GIFT XP", giftXp);
     /* ----PLAYER INFO---- */
     dispatch(updatePersona(persona));
-    dispatch(updateXp(xp));
-    dispatch(updateGiftXp(giftXp));
+    dispatch(updateXp(updatedXp));
+    dispatch(updateGiftXp(updatedGiftXp));
     //Show Tutorial Modal condition
     let characterEmoji = DefaultEmojiMapper(persona.name);
     if (persona === null || persona.name === null) return;
@@ -211,41 +221,35 @@ const Chat = ({
     const autopickedEmoji = tryPickEmojis.length > 0 ? tryPickEmojis[0] : "?";
     dispatch(updateEmoji(autopickedEmoji));
     /* ---- INSTRUCTION MODAL---- !!!!!!!!!!!!!!!!!!!!!!!!!*/
-    if (xp <= 10) {
+    if (updatedXp <= 10) {
       //NEW Tutorial triggers
     }
-    /* ----SESSION INFO---- */
-    /* SESSION XP */
-
-    let sessionXpUpdate = 0;
-    messages.map((message) => {
-      if (message.is_self && message.xp > 0) {
-        sessionXpUpdate += message.xp;
-      }
-    });
-    dispatch(updateSessionXp(sessionXpUpdate));
-    dispatch(updateGiftXp(giftXp));
   }, [persona]);
 
   //
   useEffect(() => {
-    /* ----SESSION INFO---- */
-    /* SESSION XP */
-    let sessionXpUpdate = 0;
-    messages.map((message) => {
-      if (message.is_self && message.xp > 0) {
-        sessionXpUpdate += message.xp;
-      }
-    });
-    console.log("SESSION EXP:  ", sessionXpUpdate);
-    dispatch(updateSessionXp(sessionXpUpdate));
-  }, [messages]);
+    console.log("GIFT XP UPDATE", giftXp);
+  }, [giftXp]);
+
+  useEffect(() => {
+    if (sessionGiftXpSpent > 0) {
+      let updatedGiftXp = giftXp - sessionGiftXpSpent;
+      console.log("giftXp", giftXp);
+      console.log("sessionGiftXpSpent", sessionGiftXpSpent);
+      console.log("Updated Gift Xp", updatedGiftXp);
+      dispatch(updateGiftXp(updatedGiftXp));
+    }
+  }, [sessionGiftXpSpent]);
 
   //* GIFT XP UPDATES TO REDUX STORE */
   useEffect(() => {
-    let updatedGiftXp = giftXp - sessionGiftXpSpent;
-    console.log("Updated Gift Xp", updatedGiftXp);
-    dispatch(updateGiftXp(updatedGiftXp));
+    if (sessionGiftXpSpent > 0) {
+      let updatedGiftXp = giftXp - sessionGiftXpSpent;
+      console.log("giftXp", giftXp);
+      console.log("sessionGiftXpSpent", sessionGiftXpSpent);
+      console.log("Updated Gift Xp", updatedGiftXp);
+      dispatch(updateGiftXp(updatedGiftXp));
+    }
   }, [sessionGiftXpSpent]);
 
   /* LOCATION UPDATES TO REDUX STORE */
@@ -304,34 +308,34 @@ const Chat = ({
   }, [persona]);
 
   /* SESSION AND GIFT XP UPDATE PLAYER XP and GIFT XP */
-  useEffect(() => {
-    console.log("GIFT XP", giftXp);
-    console.log("SESSION GIFT XP SPENT", sessionGiftXpSpent);
-    const { xp, giftXp } = persona;
-    dispatch(updateXp(xp + sessionXp));
-    let sessionGiftXpEarned = sessionXp / 4;
-    console.log("Session Gift Xp Earned", sessionGiftXpEarned);
-    if (sessionGiftXpEarned >= 1) {
-      dispatch(updateGiftXp(giftXp + sessionGiftXpEarned - sessionGiftXpSpent));
-    } else {
-      dispatch(updateGiftXp(giftXp - sessionGiftXpSpent));
-    }
-  }, [sessionXp, sessionGiftXpSpent]);
+  // useEffect(() => {
+  //     console.log("GIFT XP", giftXp);
+  //     console.log("SESSION GIFT XP SPENT", sessionGiftXpSpent);
+  //     const { xp, giftXp } = persona;
+  //     dispatch(updateXp(xp + sessionXp));
+  //     let sessionGiftXpEarned = sessionXp / 4;
+  //     console.log("Session Gift Xp Earned", sessionGiftXpEarned);
+  //     if (sessionGiftXpEarned >= 1) {
+  //       dispatch(updateGiftXp(giftXp + sessionGiftXpEarned - sessionGiftXpSpent));
+  //     } else {
+  //       dispatch(updateGiftXp(giftXp - sessionGiftXpSpent));
+  //     }
+  // }, [sessionXp]);
 
   /* SESSION GIFT XP */
   useEffect(() => {
-    console.log("GIFT XP", giftXp);
-    console.log("SESSION GIFT XP SPENT", sessionGiftXpSpent);
-    const { xp, giftXp } = persona;
-    dispatch(updateXp(xp + sessionXp));
-    let sessionGiftXpEarned = sessionXp / 4;
-    console.log("Session Gift Xp Earned", sessionGiftXpEarned);
-    if (sessionGiftXpEarned >= 1) {
-      dispatch(updateGiftXp(giftXp + sessionGiftXpEarned - sessionGiftXpSpent));
+    console.log(
+      "giftXp sessionGiftXpSpent sessionGiftXpSpent",
+      giftXp,
+      sessionEarnedGiftXp,
+      sessionGiftXpSpent
+    );
+    if (sessionGiftXpSpent >= 1) {
+      dispatch(updateGiftXp(giftXp + sessionEarnedGiftXp - sessionGiftXpSpent));
     } else {
       dispatch(updateGiftXp(giftXp - sessionGiftXpSpent));
     }
-  }, [sessionXp, sessionGiftXpSpent]);
+  }, [sessionGiftXpSpent]);
 
   /* ----------VIEW--------- */
   /* SCREEN SIZE */

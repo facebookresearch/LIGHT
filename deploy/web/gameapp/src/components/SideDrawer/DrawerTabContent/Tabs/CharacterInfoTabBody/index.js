@@ -12,6 +12,9 @@ const CharacterInfoTabBody = ({ currentTab }) => {
   /* ------ REDUX STATE ------ */
   //PERSONA
   const characterName = useAppSelector((state) => state.persona.name);
+  const characterDescription = useAppSelector(
+    (state) => state.persona.description
+  );
   //PLAYER XP STATE
   const xp = useAppSelector((state) => state.xp.value);
   const level = useAppSelector((state) => state.xp.level);
@@ -24,8 +27,6 @@ const CharacterInfoTabBody = ({ currentTab }) => {
   /* ------ LOCAL STATE ------ */
   const [mission, setMission] = useState("");
   const [items, setItems] = useState([]);
-
-  useEffect(() => {}, [xp]);
 
   useEffect(() => {
     console.log(" SIDEBAR giftXP", giftXp);
@@ -41,9 +42,16 @@ const CharacterInfoTabBody = ({ currentTab }) => {
         {characterName.toUpperCase()}
       </p>
       <h5 className="__sidedrawer-mission-label__ font-bold">Mission</h5>
-      <p className="__sidedrawer-mission-value ">{mission}</p>
-      <h5>Items</h5>
-      <p></p>
+      <p className="__sidedrawer-mission-value__ ">
+        {characterDescription.slice(
+          characterDescription.indexOf(":") + 1,
+          characterDescription.length
+        )}
+      </p>
+      <h5 className="__sidedrawer-giftxp-label__ font-bold">Gift XP</h5>
+      <p className="__sidedrawer-giftxp-value__ ">{giftXp}</p>
+      {/* <h5>Items</h5>
+      <p></p> */}
     </div>
   );
 };

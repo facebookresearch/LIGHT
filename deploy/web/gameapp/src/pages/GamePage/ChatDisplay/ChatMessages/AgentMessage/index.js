@@ -115,9 +115,10 @@ const AgentMessage = ({
 
   const starHandler = () => {
     if (giftXp >= 1) {
+      let updatedSessionSpentGiftXp = giftXp - 1;
       handleReward(eventId, actorId);
       setIsStarred(true);
-      dispatch(updateSessionSpentGiftXp(sessionSpentGiftXp + 1));
+      dispatch(updateSessionSpentGiftXp(updatedSessionSpentGiftXp));
     }
   };
 

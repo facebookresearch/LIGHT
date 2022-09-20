@@ -23,10 +23,8 @@ const giftXpSlice = createSlice({
   /* REDUCER ACTIONS */
   reducers: {
     updateGiftXp(state, action: PayloadAction<number>) {
+      console.log("PAYLOAD", action.payload);
       return { ...state, value: action.payload };
-    },
-    decrementGiftXp(state) {
-      state.value--;
     },
   },
 });

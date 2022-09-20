@@ -8,21 +8,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 /* STATE TYPE */
-interface SessionSpentGiftXpState {
+interface SessionEarnedGiftXpState {
   value: number;
 }
 
 /* Initial value of the state */
-const initialState: SessionSpentGiftXpState = {
+const initialState: SessionEarnedGiftXpState = {
   value: 0,
 };
 //Create slice will generate action objects for us
-const sessionSpentGiftXpSlice = createSlice({
-  name: "sessionSpentGiftXp",
+const sessionEarnedGiftXpSlice = createSlice({
+  name: "sessionEarnedGiftXp",
   initialState,
   /* REDUCER ACTIONS */
   reducers: {
-    updateSessionSpentGiftXp(state, action: PayloadAction<number>) {
+    updateSessionEarnedGiftXp(state, action: PayloadAction<number>) {
       return { ...state, value: action.payload };
     },
   },
@@ -30,6 +30,6 @@ const sessionSpentGiftXpSlice = createSlice({
 
 /* EXPORTED REDUCER ACTIONS */
 // import anywhere in app to use
-export const { updateSessionSpentGiftXp } = sessionSpentGiftXpSlice.actions;
+export const { updateSessionEarnedGiftXp } = sessionEarnedGiftXpSlice.actions;
 /* SLICE REDUCER */
-export default sessionSpentGiftXpSlice.reducer;
+export default sessionEarnedGiftXpSlice.reducer;

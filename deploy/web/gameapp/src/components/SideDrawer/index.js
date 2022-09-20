@@ -31,15 +31,15 @@ const SideDrawer = () => {
         <BsXLg onClick={closeDrawer} />
       </div>
       <div className="__sidedrawer-header__ flex justify-center items-center">
-        <h1>MENU</h1>
+        <h1 className="font-extrabold text-2xl">MENU</h1>
       </div>
       <div className=""></div>
       <div className="">
         <div className="tabs tabs-boxed bg-white bg-opacity-40">
           <a
-            className={`tab ${
+            className={`tab text-opacity-100 font-bold ${
               selectedTab === "character-info"
-                ? " tab-active-primary-content bg-opacity-100"
+                ? " tab-active bg-white bg-opacity-100"
                 : ""
             }`}
             onClick={() => TabSelectionHandler("character-info")}
@@ -47,7 +47,7 @@ const SideDrawer = () => {
             Character Info
           </a>
           <a
-            className={`tab ${
+            className={`tab text-opacity-100 font-bold ${
               selectedTab === "system"
                 ? "tab-active bg-white bg-opacity-100"
                 : ""
