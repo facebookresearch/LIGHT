@@ -6,6 +6,54 @@
 
 const defaultTheme = require('tailwindcss/defaultTheme')
 
+// We are adding all color classes to safeList
+const colors = [
+  "primary",
+  "primary-focus",
+  "primary-content",
+  "secondary",
+  "secondary-focus",
+  "secondary-content",
+  "accent",
+  "accent-focus",
+  "accent-content",
+  "neutral",
+  "neutral-focus",
+  "neutral-content",
+  "base-100",
+  "base-200",
+  "base-300",
+  "base-content",
+  "info",
+  "info-content",
+  "success",
+  "success-content",
+  "warning",
+  "warning-content",
+  "error",
+  "error-content",
+];
+
+const types = ["bg", "border", "text", "border-l", "border-r", "border-t", "border-b"];
+
+// States like hover and focus (see https://tailwindcss.com/docs/hover-focus-and-other-states)
+// Add to this list as needed
+const states = ["hover"];
+
+const colorSafeList = [];
+for (let i = 0; i < types.length; i++) {
+  const t = types[i];
+
+  for (let j = 0; j < colors.length; j++) {
+    const c = colors[j];
+    colorSafeList.push(`${t}-${c}`);
+
+    for (let l = 0; l < states.length; l++) {
+      const st = states[l];
+      colorSafeList.push(`${st}:${t}-${c}`);
+    }
+  }
+}
 
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
@@ -31,4 +79,5 @@ module.exports = {
     require("daisyui"),
     require('@tailwindcss/typography'),
   ],
+  safelist: [].concat(colorSafeList),
 };
