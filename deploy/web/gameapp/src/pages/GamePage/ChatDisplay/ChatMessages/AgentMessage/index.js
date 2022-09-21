@@ -28,12 +28,16 @@ import TutorialPopover from "../../../../../components/TutorialPopover";
 import CONFIG from "../../../../../config.js";
 
 /* ICONS */
-import { BsCheckLg } from "react-icons/bs";
-import { BsXLg } from "react-icons/bs";
 import { BsFillStarFill } from "react-icons/bs";
 import { BsStar } from "react-icons/bs";
 import { BsReplyFill } from "react-icons/bs";
 import { BsFillFlagFill } from "react-icons/bs";
+import { RiReplyFill } from "react-icons/ri";
+import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from "react-icons/ai";
+
+
+import { ChatBubble } from "../../../../../components/ChatBubble";
+
 
 function handleReward(messageId, messageOwner) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
@@ -216,7 +220,7 @@ const AgentMessage = ({
   return (
     <>
       <div
-        className={` flex flex-row justify-end items-center mb-4 mr-28
+        className={`_agent-message_ flex flex-row justify-start items-center mb-4 mr-28
         ${inHelpMode ? "active" : ""}`}
         onClick={onClickFunction}
       >
@@ -234,29 +238,27 @@ const AgentMessage = ({
             ) : null}
           </>
         ) : null}
-        <div className=" flex flex-col">
-          <div className="relative min-w-[120px] min-h-[90px] bg-white rounded-[10px] flex justify-center items-center text-black text-xl">
-            <div className="flex flex-col m-4 max-w-md break-words">
-              <p className="p-4">{text}</p>
+        <div className="flex flex-col">
+          <ChatBubble align="left" actor={actor.toUpperCase()} action="default">
+            <div className="flex flex-col max-w-md break-words">
+              <div className="mb-2">{text}</div>
               {isReported ? (
-                <span className="text-red-600">
+                <span className="text-error-content">
                   This Message Has been reported
                 </span>
               ) : null}
               <div className="flex flex-row w-full justify-between items-center">
-                <BsReplyFill onClick={() => onReply(actor)} />
+                <RiReplyFill className="cursor-pointer hover:text-info" onClick={() => onReply(actor)} />
                 <div className="flex flex-row justify-center items-center">
                   {isDisliked ? null : (
                     <Tooltip
                       title="This message is in-character!"
                       position="bottom"
                     >
-                      <BsCheckLg
-                        className={` mx-2 ${
-                          isLiked ? "text-green-500" : "text-gray-400"
-                        }`}
-                        onClick={toggleLikeHandler}
-                      />
+                      {isLiked 
+                        ? <AiFillLike className="ml-2 text-success cursor-pointer" onClick={toggleLikeHandler} /> 
+                        : <AiOutlineLike className="ml-2 text-slate-600 hover:text-success cursor-pointer" onClick={toggleLikeHandler} />
+                      }
                     </Tooltip>
                   )}
                   {isLiked ? null : (
@@ -268,47 +270,38 @@ const AgentMessage = ({
                       }
                       position="bottom"
                     >
-                      <BsXLg
-                        className={` mx-2 ${
-                          isDisliked ? "text-red-500" : "text-gray-400"
-                        }`}
-                        onClick={!isReported ? toggleDislikeHandler : () => {}}
-                      />
+                      {isDisliked 
+                        ? <AiFillDislike className="ml-3 text-error cursor-pointer" onClick={toggleDislikeHandler} /> 
+                        : <AiOutlineDislike className="ml-3 text-slate-600 hover:text-error cursor-pointer" onClick={toggleDislikeHandler} />
+                      }
                     </Tooltip>
                   )}
                 </div>
               </div>
             </div>
-            <div>
-              <div className="absolute flex items-center justify-start w-0 h-0 border-t-[13px] border-t-transparent border-b-[13px] border-b-transparent border-l-[26px] border-l-white left-[100%] top-[25%] translate-y-[50%]">
-                <span className="w-30 text-white">{actor.toUpperCase()}</span>
-              </div>
-            </div>
-          </div>
+          </ChatBubble>
           {isLiked && !isStarred ? (
             giftXp > 0 ? (
-              <span
-                className="flex flex-row justify-end text-yellow-500 break-words"
+              <div
+                className="text-right text-yellow-500 break-words text-sm mt-1 cursor-pointer"
                 onClick={starHandler}
               >
-                <p> Would you like to award this message a star?</p>
-              </span>
+                Would you like to award this message a star?
+              </div>
             ) : (
-              <span className="flex flex-row justify-end text-yellow-500 break-words">
-                <p>
-                  Earn gift experience by roleplaying to be able to award stars.
-                </p>
-              </span>
+              <div className="text-right text-base-200 opacity-50 break-words text-sm mt-1">
+                Earn gift experience by roleplaying to be able to award stars
+              </div>
             )
           ) : null}
           {isDisliked && !isReported ? (
-            <span
-              className="flex flex-row justify-end text-red-500 break-words"
+            <div
+              className="text-right text-red-500 break-words text-sm mt-1 cursor-pointer"
               onClick={reportingHandler}
             >
-              <BsFillFlagFill />
-              REPORT THIS NOW?
-            </span>
+              <BsFillFlagFill className="inline-block mr-2" />
+              <span className="inline-block">Report this message</span>
+            </div>
           ) : null}
         </div>
       </div>

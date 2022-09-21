@@ -19,7 +19,7 @@
     "@types/react-router-dom": "^5.1.8",
     "axios": "^0.21.1",
     "classnames": "^2.2.6",
-    "daisyui": "^2.14.1",
+    "daisyui": "^2.29.0",
     "emoji-mart": "^3.0.1",
     "eslint-plugin-react-hooks": "^1.6.1",
     "leaflet": "1.4.0",
