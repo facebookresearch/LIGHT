@@ -17,6 +17,7 @@ import { Tooltip } from "react-tippy";
 import TutorialPopover from "../../../../../components/TutorialPopover";
 
 import { getActionThemeColor  } from "../../../../../app/theme";
+import { ChatBubble } from "../../../../../components/ChatBubble";
 
 //PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message
 const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
@@ -58,18 +59,13 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
 
   return (
     <div
-      className={`_player-message_ flex flex-row justify-start items-center mb-4
+      className={`_player-message_ flex flex-row justify-end items-center mb-4
       ${inHelpMode ? "active" : ""}`}
       onClick={onClickFunction}
     >
-      <span className="text-white">YOU</span>
       <div className="ml-10">
-        <div
-          className={`relative p-3 min-h-[50px] font-medium 
-            ${getActionThemeColor("bg", action)} ${getActionThemeColor("text", action)} 
-            rounded-md flex justify-center items-center`}
-        >
-          <div className="flex flex-col max-w-md break-words">
+        <ChatBubble action={action} actor="YOU" align="right">
+          <div className="max-w-md break-words">
             {text}
           </div>
           <div className="relative">
@@ -81,12 +77,7 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
               ></TutorialPopover>
             </div>
           </div>
-          <div
-            className={`absolute w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-r-[12px] ${
-              getActionThemeColor("border-r", action)
-            } right-[100%] top-[50%] translate-y-[-50%]`}
-          />
-        </div>
+        </ChatBubble>
       </div>
       {xp ? (
         <>

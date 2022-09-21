@@ -10,7 +10,7 @@ export function getActionThemeColor(where:string, action:string) {
     say: "accent",
     tell: "info",
     do: "success",
-    default: "base"
+    default: "base-100"
   };
   
   const color = actionColors[action] || actionColors.default;

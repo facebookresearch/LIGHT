@@ -34,7 +34,7 @@ const colors = [
   "error-content",
 ];
 
-const types = ["bg", "border", "text", "border-l", "border-r", "border-t", "border-b"];
+const types = ["bg", "border", "text", "border-l", "border-r", "border-t", "border-b", "fill", "stroke"];
 
 // States like hover and focus (see https://tailwindcss.com/docs/hover-focus-and-other-states)
 // Add to this list as needed
