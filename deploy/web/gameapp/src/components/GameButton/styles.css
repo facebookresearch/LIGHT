@@ -6,6 +6,7 @@
 
 /* GAME BUTTON STYLES */
 .button-container {
+  color: white;
   border-radius: 25px;
   padding: 6px;
   display: flex;
@@ -13,6 +14,7 @@
   align-items: center;
   box-shadow: 0.2em 0.2em 0.2em black;
   border-color: #4adf81;
+  background-color: #4adf81;
   border-width: 2px;
 }
 .button-text {
@@ -20,15 +22,20 @@
   font-family: "Courier New", Courier, monospace;
   margin: 0;
   padding: 0;
-  color: white;
   text-align: center;
   margin: 0;
   padding: 0;
 }
 
+.button-container:hover {
+  border-color: white;
+  background-color: white;
+  cursor: pointer;
+  color: black;
+}
 .button-text:hover {
   cursor: pointer;
-  color: #4adf81;
+  color: black;
 }
 
 .button-container:active {

@@ -14,7 +14,7 @@ import { updateSelectedTip } from "../../../../features/tutorials/tutorials-slic
 //TOOLTIP
 import { Tooltip } from "react-tippy";
 //STYLES
-//import "./styles.css";
+import "./styles.css";
 //CUSTOM COMPONENTS
 import LevelDisplay from "../../../../components/LevelDisplay";
 import ProgressBar from "../../../../components/Progressbar";
@@ -46,9 +46,13 @@ const SidebarHeader = () => {
   return (
     <>
       <div className="flex flex-row justify-start items-center w-full">
-        <div className="flex flex-row justify-start items-center w-1/2">
-          <img className="inline-block h-14 w-14 rounded-full" src={Scribe} />
-          <div>
+        <div className="flex flex-row justify-start items-center w-3/4 pt-2 pl-2">
+          <img
+            className="__scribe-avatar__  inline-block h-14 w-14 rounded-full mr-2"
+            src={Scribe}
+            onClick={openDrawer}
+          />
+          <div className="w-full">
             <p style={{ color: "white" }}> {`You are level ${level}`} </p>
             <Tooltip
               title={`Earn ${xpToNextLevel} XP til level ${level + 1}`}
@@ -58,12 +62,9 @@ const SidebarHeader = () => {
             </Tooltip>
           </div>
         </div>
-        <div className="w-1/2 flex flex-row justify-around">
+        <div className="w-1/4 flex flex-row justify-around">
           <div className="flex flex-row justify-center items-center">
             <IconButton />
-          </div>
-          <div className="flex flex-row justify-center items-center">
-            <GameButton text={"MENU"} clickFunction={openDrawer} />
           </div>
         </div>
       </div>
