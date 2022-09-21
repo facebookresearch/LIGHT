@@ -143,11 +143,13 @@ const Chat = ({
   const showReportModal = useAppSelector(
     (state) => state.modals.showReportModal
   );
+  //XP State
+  const xp = useAppSelector((state) => state.xp.value);
   //GIFT XP STATE
   const giftXp = useAppSelector((state) => state.giftXp.value);
   //SESSION XP STATE
   const sessionXp = useAppSelector((state) => state.sessionXp.value);
-  //SESSION GIFT XP
+  //SESSION GIFT XP STATE
   const sessionGiftXpSpent = useAppSelector(
     (state) => state.sessionSpentGiftXp.value
   );
@@ -202,55 +204,69 @@ const Chat = ({
   /* PLAYER AND SESSION INFO UPDATES TO REDUX STORE */
   useEffect(() => {
     console.log("UPDATED PERSONA", persona);
-    let updatedXp = persona.xp;
-    let updatedGiftXp = persona.giftXp;
-    console.log("GIFT XP", giftXp);
-    /* ----PLAYER INFO---- */
-    dispatch(updatePersona(persona));
-    dispatch(updateXp(updatedXp));
-    dispatch(updateGiftXp(updatedGiftXp));
-    //Show Tutorial Modal condition
-    let characterEmoji = DefaultEmojiMapper(persona.name);
-    if (persona === null || persona.name === null) return;
-    const skipWords = ["a", "the", "an", "of", "with", "holding"];
-    const tryPickEmojis = !persona
-      ? []
-      : emojiIndex.search(characterEmoji).map((o) => {
-          return o.native;
-        });
-    const autopickedEmoji = tryPickEmojis.length > 0 ? tryPickEmojis[0] : "?";
-    dispatch(updateEmoji(autopickedEmoji));
-    /* ---- INSTRUCTION MODAL---- !!!!!!!!!!!!!!!!!!!!!!!!!*/
-    if (updatedXp <= 10) {
-      //NEW Tutorial triggers
+    if (persona) {
+      let updatedXp = persona.xp;
+      let updatedGiftXp = persona.giftXp;
+      console.log("XP", updatedXp);
+      console.log("GIFT XP", updatedGiftXp);
+      /* ----PLAYER INFO---- */
+      dispatch(updatePersona(persona));
+      dispatch(updateXp(updatedXp));
+      dispatch(updateGiftXp(updatedGiftXp));
+      //Show Tutorial Modal condition
+      let characterEmoji = DefaultEmojiMapper(persona.name);
+      if (persona === null || persona.name === null) return;
+      const skipWords = ["a", "the", "an", "of", "with", "holding"];
+      const tryPickEmojis = !persona
+        ? []
+        : emojiIndex.search(characterEmoji).map((o) => {
+            return o.native;
+          });
+      const autopickedEmoji = tryPickEmojis.length > 0 ? tryPickEmojis[0] : "?";
+      dispatch(updateEmoji(autopickedEmoji));
+      /* ---- INSTRUCTION MODAL---- !!!!!!!!!!!!!!!!!!!!!!!!!*/
+      if (updatedXp <= 10) {
+        //NEW Tutorial triggers
+      }
     }
   }, [persona]);
-
-  //
   useEffect(() => {
-    console.log("GIFT XP UPDATE", giftXp);
-  }, [giftXp]);
-
-  useEffect(() => {
-    if (sessionGiftXpSpent > 0) {
-      let updatedGiftXp = giftXp - sessionGiftXpSpent;
-      console.log("giftXp", giftXp);
-      console.log("sessionGiftXpSpent", sessionGiftXpSpent);
-      console.log("Updated Gift Xp", updatedGiftXp);
-      dispatch(updateGiftXp(updatedGiftXp));
+    /* ----SESSION INFO---- */
+    /* SESSION XP */
+    let sessionXpUpdate = 0;
+    messages.map((message) => {
+      if (message.is_self && message.xp > 0) {
+        sessionXpUpdate += message.xp;
+      }
+    });
+    let newSessionXp = sessionXpUpdate - sessionXp;
+    let newGiftXp = newSessionXp / 4;
+    if (newSessionXp > 0) {
+      let updatedXp = sessionXpUpdate;
+      dispatch(updateSessionXp(updatedXp));
     }
-  }, [sessionGiftXpSpent]);
+    if (newGiftXp >= 1) {
+      let updatedSessionGiftXpEarned = sessionEarnedGiftXp + newGiftXp;
+      dispatch(updateSessionEarnedGiftXp(updatedSessionGiftXpEarned));
+    }
+  }, [messages]);
+
+  /* UPDATE PLAYER XP */
+  useEffect(() => {
+    if (sessionXp > 0) {
+      let updatedXP = xp + sessionXp;
+      dispatch(updateXp(updatedXP));
+    }
+  }, [sessionXp]);
 
   //* GIFT XP UPDATES TO REDUX STORE */
   useEffect(() => {
-    if (sessionGiftXpSpent > 0) {
-      let updatedGiftXp = giftXp - sessionGiftXpSpent;
-      console.log("giftXp", giftXp);
-      console.log("sessionGiftXpSpent", sessionGiftXpSpent);
-      console.log("Updated Gift Xp", updatedGiftXp);
+    if (sessionEarnedGiftXp >= 1 || sessionGiftXpSpent >= 1) {
+      let updatedGiftXp = giftXp + sessionGiftXpEarned - sessionGiftXpSpent;
+      console.log("Updated GIFT XP:  ", updatedGiftXp);
       dispatch(updateGiftXp(updatedGiftXp));
     }
-  }, [sessionGiftXpSpent]);
+  }, [sessionEarnedGiftXp, sessionGiftXpSpent]);
 
   /* LOCATION UPDATES TO REDUX STORE */
   useEffect(() => {
@@ -307,21 +323,6 @@ const Chat = ({
     selectEmoji(autopickedEmoji);
   }, [persona]);
 
-  /* SESSION AND GIFT XP UPDATE PLAYER XP and GIFT XP */
-  // useEffect(() => {
-  //     console.log("GIFT XP", giftXp);
-  //     console.log("SESSION GIFT XP SPENT", sessionGiftXpSpent);
-  //     const { xp, giftXp } = persona;
-  //     dispatch(updateXp(xp + sessionXp));
-  //     let sessionGiftXpEarned = sessionXp / 4;
-  //     console.log("Session Gift Xp Earned", sessionGiftXpEarned);
-  //     if (sessionGiftXpEarned >= 1) {
-  //       dispatch(updateGiftXp(giftXp + sessionGiftXpEarned - sessionGiftXpSpent));
-  //     } else {
-  //       dispatch(updateGiftXp(giftXp - sessionGiftXpSpent));
-  //     }
-  // }, [sessionXp]);
-
   /* SESSION GIFT XP */
   useEffect(() => {
     console.log(
@@ -332,8 +333,6 @@ const Chat = ({
     );
     if (sessionGiftXpSpent >= 1) {
       dispatch(updateGiftXp(giftXp + sessionEarnedGiftXp - sessionGiftXpSpent));
-    } else {
-      dispatch(updateGiftXp(giftXp - sessionGiftXpSpent));
     }
   }, [sessionGiftXpSpent]);
 

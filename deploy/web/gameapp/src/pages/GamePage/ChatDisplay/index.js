@@ -15,7 +15,6 @@ import "./styles.css";
 import ActionBar from "./ActionBar";
 import ChatMessages from "./ChatMessages";
 import ChatControls from "./ChatControls";
-import TutorialPopover from "../../../components/TutorialPopover";
 /* UTILS */
 import { setCaretPosition } from "../../../utils";
 
@@ -90,7 +89,10 @@ const ChatDisplay = ({
         </div>
       ) : null}
       <div className="flex flex-1 flex-col h-full bg-indigo-900 bg-opacity-50 overflow-hidden p-7 rounded-t-md">
-        <div className="flex-1 grow-[5] overflow-y-scroll" ref={chatContainerRef}>
+        <div
+          className="flex-1 grow-[5] overflow-y-scroll"
+          ref={chatContainerRef}
+        >
           <ChatMessages messages={messages} scrollToBottom={scrollToBottom} />
         </div>
         <div className="flex-1 ">
