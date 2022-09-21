@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { updateSelectedTip } from "../../features/tutorials/tutorials-slice";
 /* ICONS */
-import { BiWindow } from "react-icons/bi";
+import { BsPlusLg } from "react-icons/bs";
 import { FaWindowMinimize } from "react-icons/fa";
 /* EMOJI */
 import { Picker } from "emoji-mart";
@@ -104,7 +104,7 @@ const IconCollapsibleBox = ({
             <h5 className="collapsible-header--text">{title}</h5>
             <div className="collapsible-header--icon">
               {isCollapsed ? (
-                <BiWindow style={{}} onClick={openHandler} />
+                <BsPlusLg onClick={openHandler} />
               ) : (
                 <FaWindowMinimize onClick={closeHandler} />
               )}
