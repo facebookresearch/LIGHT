@@ -19,6 +19,8 @@ import { Dialog, Transition } from "@headlessui/react";
 /* CONFIG */
 import CONFIG from "../../../config.js";
 
+import {Button} from "daisyui";
+
 const ReportCategories = [
   "Report Inappropriate Content",
   "Report Bug",
@@ -106,7 +108,7 @@ const ReportMessageForm = () => {
     <Transition.Root show={showReportModal} as={Fragment}>
       <Dialog
         as="div"
-        className="relative z-10"
+        className="_report-message-modal_ relative z-10"
         onClose={setReportModalHandler}
       >
         <div className="fixed z-10 inset-0 overflow-y-auto">
@@ -120,80 +122,79 @@ const ReportMessageForm = () => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative bg-gray-700 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-sm sm:w-full sm:p-6">
+              <Dialog.Panel className="relative bg-base-100 rounded-lg p-10 text-left overflow-hidden shadow-2xl transform transition-all w-[50vw] min-w-fit">
                 <Dialog.Title
-                  as="h3"
-                  className="text-lg leading-6 font-medium underline text-white text-center"
+                  as="h2"
+                  className="text-xl leading-6 font-semibold text-base-content text-left mb-8"
                 >
                   REPORT MESSAGE
                 </Dialog.Title>
-                <div className=" ">
-                  <div className="w-full flex flex-row justify-start items-center p-2">
-                    <span className=" text-white border rounded p-1 mr-1 border-green-400 bg-green-400">
-                      CHARACTER:{" "}
-                    </span>
-                    <span className=" text-white">{reportModalActor}</span>
+                <div className="text-md">
+                  <div className="w-full flex flex-row mb-4">
+                    <div className=" text-base-content w-[100px] flex-none opacity-70">
+                      Character
+                    </div>
+                    <div className=" text-base-content font-medium">{reportModalActor}</div>
                   </div>
-                  <div className="w-full flex flex-row justify-start  p-2">
-                    <span className=" text-white border rounded p-1 mr-1 border-green-400 bg-green-400">
-                      MESSAGE:{" "}
-                    </span>
-                    <span className=" text-white">{reportModalMessage}</span>
+                  <div className="w-full flex flex-row mb-4">
+                    <div className=" text-base-content w-[100px] flex-none opacity-70">
+                      Message
+                    </div>
+                    <div className=" text-base-content font-medium max-w-lg">{reportModalMessage}</div>
                   </div>
-                  <div>
-                    <b className=" text-white ">
-                      Why are you reporting this message?
-                    </b>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="category"
-                      className="block text-sm font-medium text-white underline text-center"
-                    >
-                      Category
+                  <div className="w-full flex flex-row mb-4">
+                    <label className=" text-base-content w-[100px] flex-none opacity-70 pt-2">
+                      Reason
                     </label>
-                    <select
-                      id="category"
-                      name="category"
-                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-solid border-green-400 border-4 focus:outline-none focus:ring-green-400 focus:border-green-400 sm:text-sm rounded-md"
-                      defaultValue=""
-                      onChange={categorySelectionHandler}
-                      value={reportCategory}
-                    >
-                      <option value={""} id={""}></option>
-                      {ReportCategories.map((category, index) => (
-                        <option key={category} id={index} value={category}>
-                          {category}
-                        </option>
-                      ))}
-                    </select>
+                    <div>
+                      <select
+                        id="category"
+                        name="category"
+                        className="p-2 rounded-md bg-base-200 focus:outline-primary active:outline-primary"
+                        defaultValue=""
+                        onChange={categorySelectionHandler}
+                        value={reportCategory}
+                      >
+                        <option value={""} id={""}>Select...</option>
+                        {ReportCategories.map((category, index) => (
+                          <option key={category} id={index} value={category}>
+                            {category}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                   {reportCategory ? (
                     <>
-                      <label className="text-white">
-                        Please describe issue here:
-                      </label>
-                      <input
-                        className="edit-message border-solid border-gray-300 border-4"
-                        defaultValue={"Enter reason here"}
-                        value={reportReason}
-                        onChange={(evt) => setReportReason(evt.target.value)}
-                      />
-                      <button
-                        type="submit"
-                        className={` w-20 items-start px-1.5 py-0.5 border border-transparent text-lg font-medium rounded shadow-sm text-white bg-red-600`}
-                        disabled={reportReason.length === 0}
-                        onClick={handleReportSubmission}
-                      >
-                        Report
-                      </button>
-                      <button
-                        type="submit"
-                        className={` w-20 items-start px-1.5 py-0.5 border border-transparent text-lg font-medium rounded shadow-sm text-white bg-gray-600`}
-                        onClick={closeReportModalHandler}
-                      >
-                        Cancel
-                      </button>
+                      <div className="w-full flex flex-row mb-6">
+                        <label className="text-base-content w-[100px] flex-none opacity-70 pt-3">
+                          Issue
+                        </label>
+                        <textarea
+                          rows={3}
+                          className="edit-message border-solid rounded-md p-3 w-full bg-base-200 focus:outline-primary active:outline-primary"
+                          placeholder="Please describe the issue here"
+                          value={reportReason}
+                          onChange={(evt) => setReportReason(evt.target.value)}
+                        />
+                      </div>
+                      <div className="text-right">
+                        <button
+                          type="submit"
+                          className={`btn btn-ghost mr-2`}
+                          onClick={closeReportModalHandler}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className={`btn btn-primary`}
+                          disabled={reportReason.length === 0}
+                          onClick={handleReportSubmission}
+                        >
+                          Report
+                        </button>
+                      </div>
                     </>
                   ) : null}
                 </div>
