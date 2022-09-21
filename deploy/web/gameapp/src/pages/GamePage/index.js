@@ -262,7 +262,7 @@ const Chat = ({
   //* GIFT XP UPDATES TO REDUX STORE */
   useEffect(() => {
     if (sessionEarnedGiftXp >= 1 || sessionGiftXpSpent >= 1) {
-      let updatedGiftXp = giftXp + sessionGiftXpEarned - sessionGiftXpSpent;
+      let updatedGiftXp = giftXp + sessionEarnedGiftXp - sessionGiftXpSpent;
       console.log("Updated GIFT XP:  ", updatedGiftXp);
       dispatch(updateGiftXp(updatedGiftXp));
     }

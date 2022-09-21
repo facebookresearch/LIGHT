@@ -33,11 +33,14 @@ import { BsStar } from "react-icons/bs";
 import { BsReplyFill } from "react-icons/bs";
 import { BsFillFlagFill } from "react-icons/bs";
 import { RiReplyFill } from "react-icons/ri";
-import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from "react-icons/ai";
-
+import {
+  AiFillDislike,
+  AiFillLike,
+  AiOutlineDislike,
+  AiOutlineLike,
+} from "react-icons/ai";
 
 import { ChatBubble } from "../../../../../components/ChatBubble";
-
 
 function handleReward(messageId, messageOwner) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
@@ -109,6 +112,7 @@ const AgentMessage = ({
   const toggleLikeHandler = () => {
     let newLikeValue = !isLiked;
     setIsLiked(newLikeValue);
+    scrollToBottom();
   };
 
   const toggleDislikeHandler = () => {
@@ -119,7 +123,7 @@ const AgentMessage = ({
 
   const starHandler = () => {
     if (giftXp >= 1) {
-      let updatedSessionSpentGiftXp = giftXp - 1;
+      let updatedSessionSpentGiftXp = sessionSpentGiftXp + 1;
       handleReward(eventId, actorId);
       setIsStarred(true);
       dispatch(updateSessionSpentGiftXp(updatedSessionSpentGiftXp));
@@ -248,17 +252,27 @@ const AgentMessage = ({
                 </span>
               ) : null}
               <div className="flex flex-row w-full justify-between items-center">
-                <RiReplyFill className="cursor-pointer hover:text-info" onClick={() => onReply(actor)} />
+                <RiReplyFill
+                  className="cursor-pointer hover:text-info"
+                  onClick={() => onReply(actor)}
+                />
                 <div className="flex flex-row justify-center items-center">
                   {isDisliked ? null : (
                     <Tooltip
                       title="This message is in-character!"
                       position="bottom"
                     >
-                      {isLiked 
-                        ? <AiFillLike className="ml-2 text-success cursor-pointer" onClick={toggleLikeHandler} /> 
-                        : <AiOutlineLike className="ml-2 text-slate-600 hover:text-success cursor-pointer" onClick={toggleLikeHandler} />
-                      }
+                      {isLiked ? (
+                        <AiFillLike
+                          className="ml-2 text-success cursor-pointer"
+                          onClick={toggleLikeHandler}
+                        />
+                      ) : (
+                        <AiOutlineLike
+                          className="ml-2 text-slate-600 hover:text-success cursor-pointer"
+                          onClick={toggleLikeHandler}
+                        />
+                      )}
                     </Tooltip>
                   )}
                   {isLiked ? null : (
@@ -270,10 +284,17 @@ const AgentMessage = ({
                       }
                       position="bottom"
                     >
-                      {isDisliked 
-                        ? <AiFillDislike className="ml-3 text-error cursor-pointer" onClick={toggleDislikeHandler} /> 
-                        : <AiOutlineDislike className="ml-3 text-slate-600 hover:text-error cursor-pointer" onClick={toggleDislikeHandler} />
-                      }
+                      {isDisliked ? (
+                        <AiFillDislike
+                          className="ml-3 text-error cursor-pointer"
+                          onClick={toggleDislikeHandler}
+                        />
+                      ) : (
+                        <AiOutlineDislike
+                          className="ml-3 text-slate-600 hover:text-error cursor-pointer"
+                          onClick={toggleDislikeHandler}
+                        />
+                      )}
                     </Tooltip>
                   )}
                 </div>
