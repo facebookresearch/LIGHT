@@ -71,7 +71,7 @@ const ChatInput = ({ onSubmit, resetIdleTimer }) => {
   };
 
   return (
-    <>
+    <div className="w-full">
       <TutorialPopover
         tipNumber={6}
         open={inHelpMode && selectedTip === 6}
@@ -85,10 +85,8 @@ const ChatInput = ({ onSubmit, resetIdleTimer }) => {
           style={{ caretColor: "green" }}
           className={`chatbox-input ${
             inHelpMode ? "active" : ""
-          } text-green-100 w-full shadow-sm bg-transparent placeholder-green-100 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md`}
-          placeholder={`${
-            tellTarget ? `Tell ${tellTarget}` : isSaying ? "Say" : "Do"
-          } Something`}
+          } text-base-100 w-full bg-transparent border-b-[1px] border-b-transparent px-0 py-2 mx-4 font-sans`}
+          placeholder="Something..."
           value={chatText}
           onClick={(e) => {
             e.preventDefault();
@@ -154,7 +152,7 @@ const ChatInput = ({ onSubmit, resetIdleTimer }) => {
           }}
         />
       </TutorialPopover>
-    </>
+    </div>
   );
 };
 

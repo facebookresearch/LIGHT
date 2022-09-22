@@ -95,7 +95,7 @@ const ChatDisplay = ({
         >
           <ChatMessages messages={messages} scrollToBottom={scrollToBottom} />
         </div>
-        <div className="flex-1 ">
+        <div className="flex-none h-[120px]">
           <ChatControls
             onSubmit={onSubmit}
             presentAgents={presentAgents}
@@ -107,7 +107,7 @@ const ChatDisplay = ({
             resetIdleTimer={resetIdleTimer}
           />
           <div className="flex justify-end">
-            <p className=" text-gray-200">XP earned this scene:{sessionXp}</p>
+            <p className="text-base-100 opacity-80 mt-2 text-xs">XP earned in this scene: <strong className="text-warning">{sessionXp}</strong></p>
           </div>
         </div>
       </div>

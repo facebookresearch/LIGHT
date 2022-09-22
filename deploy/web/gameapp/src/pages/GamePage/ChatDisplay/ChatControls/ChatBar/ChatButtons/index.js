@@ -21,7 +21,9 @@ import "../styles.css";
 /* CUSTOM COMPONENTS */
 import TutorialPopover from "../../../../../../components/TutorialPopover";
 
-import { FaSync } from "react-icons/fa";
+import { getActionThemeColor  } from "../../../../../../app/theme";
+
+import { BiChevronRight } from "react-icons/bi";
 
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
 const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
@@ -71,10 +73,10 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
     return formattedTellTargetName;
   };
 
-  /* ----------TAILWIND CLASSES--------- */
-  const classNames = {};
+  const action = tellTarget ? 'tell' : (isSaying ? 'say' : 'do');
+
   return (
-    <>
+    <div className="_chat-button_ h-full">
       <TutorialPopover
         tipNumber={5}
         open={inHelpMode && selectedTip === 5}
@@ -90,25 +92,17 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
             }
           }}
           type="button"
-          className={` w-full h-full mx-1 items-start px-1.5 py-0.5 border border-transparent text-lmd font-medium rounded shadow-sm text-white ${
-            tellTarget
-              ? "bg-red-700 "
-              : isSaying
-              ? "bg-green-700"
-              : "bg-blue-500 "
-          }`}
+          className={`h-full text-md font-medium rounded shadow-sm text-white pl-4 pr-2 ${
+            getActionThemeColor("bg", action)
+          } hover:bg-white`}
         >
-          <span className="flex flex-row justify-between items-center">
-            {tellTarget
-              ? `TELL ${formatTellTargetForButton(tellTarget)}`
-              : isSaying
-              ? "SAY"
-              : "DO"}
-            <FaSync color="white" size={20} />
+          <span className="flex flex-row items-center capitalize">
+            <div className="pr-1 text-accent-content">{`${action} ${ tellTarget ? formatTellTargetForButton(tellTarget) : ''}`}</div>
+            <BiChevronRight className="text-accent-content" size={24} />
           </span>
         </button>
       </TutorialPopover>
-    </>
+    </div>
   );
 };
 
