@@ -24,6 +24,7 @@ import TutorialPopover from "../../../../../../components/TutorialPopover";
 import { getActionThemeColor  } from "../../../../../../app/theme";
 
 import { BiChevronRight } from "react-icons/bi";
+import { FaSort } from "react-icons/fa";
 
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
 const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
@@ -63,9 +64,9 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
 
   /*---------------HELPERS----------------*/
   const formatTellTargetForButton = (str) => {
-    let formattedTellTargetName = str.toUpperCase();
-    if (str.length > 7) {
-      formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 7)}...`;
+    let formattedTellTargetName = str;
+    if (str.length > 12) {
+      formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 12)}...`;
       if (isMobile) {
         formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 4)}...`;
       }
@@ -92,13 +93,13 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
             }
           }}
           type="button"
-          className={`h-full text-md font-medium rounded shadow-sm text-white pl-4 pr-2 ${
+          className={`h-full text-md font-medium rounded shadow-sm text-white pl-2 pr-4 ${
             getActionThemeColor("bg", action)
           } hover:bg-white`}
         >
-          <span className="flex flex-row items-center capitalize">
-            <div className="pr-1 text-accent-content">{`${action} ${ tellTarget ? formatTellTargetForButton(tellTarget) : ''}`}</div>
-            <BiChevronRight className="text-accent-content" size={24} />
+          <span className="flex flex-row items-center text-accent-content capitalize">
+            { tellTarget ? <BiChevronRight size={20} /> : <FaSort /> }
+            <div className="capitalize pl-1">{`${action} ${ tellTarget ? formatTellTargetForButton(tellTarget) : ''}`}</div>
           </span>
         </button>
       </TutorialPopover>

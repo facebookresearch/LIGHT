@@ -77,7 +77,7 @@ const ChatDisplay = ({
 
   const { presentAgents } = getLocationState(messages);
   return (
-    <div className="h-full m-10 flex flex-col">
+    <div className="h-full m-8 flex flex-col">
       {nonPlayerAgents.length ? (
         <div className="flex-0 mb-4">
           <ActionBar

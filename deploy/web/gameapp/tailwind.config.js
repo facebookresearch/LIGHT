@@ -75,6 +75,16 @@ module.exports = {
       }
     }
   },
+  daisyui: {
+    themes: [
+      { 
+        "light": {
+          ...require("daisyui/src/colors/themes")["[data-theme=light]"],
+          "success": "#22cc55"
+        }
+      }
+    ]
+  },
   plugins: [
     require("daisyui"),
     require('@tailwindcss/typography'),

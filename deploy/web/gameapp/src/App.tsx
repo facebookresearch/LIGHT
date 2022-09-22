@@ -19,7 +19,7 @@ function App() {
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
 
   return (
-    <div id={`${inHelpMode ? "helpmode" : ""}`}>
+    <div id={`${inHelpMode ? "helpmode" : ""}`} data-theme="light">
       <Routes />
     </div>
   );

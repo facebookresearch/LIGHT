@@ -65,10 +65,6 @@ const ChatInput = ({ onSubmit, resetIdleTimer }) => {
   /*---------------HELPERS----------------*/
 
   /* ----------TAILWIND CLASSES--------- */
-  const classNames = {
-    chatbarContainer: "flex flex-row w-full border-4 rounded border-green-400",
-    chatbar: "flex flex-row",
-  };
 
   return (
     <div className="w-full">
