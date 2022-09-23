@@ -1,0 +1,36 @@
+/* ERROR TOAST STYLES */
+ul{
+    list-style: none;
+}
+
+ul li::before {
+    content: "\2022";
+    color: white;
+    font-weight: bold;
+    display: inline-block;
+    width: 3em;
+    margin-left: 1em;
+  }
+
+.toast-container{
+    position: fixed;
+    background-color: red;
+    display: flex;
+    flex-direction: column;
+}
+.toast-header{
+    color:white;
+    background-color: red;
+    font-weight: bold;
+    width: 90vw;
+}
+.toast-text{
+    text-align: center;
+    font-weight: bold;
+}
+
+.toast-error{
+    color: white;
+    text-align: left;
+    width: 90vw;
+}
