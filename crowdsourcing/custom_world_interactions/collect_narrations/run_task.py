@@ -39,9 +39,9 @@ from dataclasses import dataclass, field
 from typing import List, Any
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-# LIGHT_DB_PATH = "~/ParlAI/data/LIGHT/merged.db"
-LIGHT_DB_PATH = "/Users/jju/LIGHT/prod_db"
-SECONDARY_OBJECT_LIST_SIZE = 8
+LIGHT_DB_PATH = "/checkpoint/light/db/prod"
+# LIGHT_DB_PATH = "/Users/jju/LIGHT/prod_db"
+SECONDARY_OBJECT_LIST_SIZE = 6
 DEFAULT_NUM_TASKS = 20
 
 db = LocalMephistoDB()
@@ -96,7 +96,7 @@ def create_task_data(
     random.shuffle(secondary_objects)
     task_data_array = []
 
-    for idx in range(num_tasks):
+    for _ in range(num_tasks):
         secondary_object_list = random.sample(
             secondary_objects, secondary_object_list_size
         )
@@ -169,11 +169,6 @@ def validate_unit(unit):
             and action_description.lower()[-1] != "?"
             and action_description.lower()[-1] != "!"
         )
-        or (
-            object_description.lower()[-1] != "."
-            and object_description.lower()[-1] != "?"
-            and object_description.lower()[-1] != "!"
-        )
         or len(object_description) <= 20
     ):
         # Not in second person or invalid punctuation
@@ -206,25 +201,25 @@ def main(cfg: DictConfig) -> None:
 
     using_allowlist = cfg.use_allowlist
     if using_allowlist:
-        # Kind of hacky, but add qualifications to good+bad users
-        for fname in ALL_GOOD_USER_FILES:
-            direct_soft_block_mturk_workers(
-                db,
-                get_block_list(fname),
-                ALLOWLIST_QUAL_NAME,
-                cfg.mephisto.provider.requester_name,
-            )
+        # # Kind of hacky, but add qualifications to good+bad users
+        # for fname in ALL_GOOD_USER_FILES:
+        #     direct_soft_block_mturk_workers(
+        #         db,
+        #         get_block_list(fname),
+        #         ALLOWLIST_QUAL_NAME,
+        #         cfg.mephisto.provider.requester_name,
+        #     )
 
-        for fname in ALL_BAD_USER_FILES:
-            direct_soft_block_mturk_workers(
-                db,
-                get_block_list(fname),
-                BLOCKLIST_QUAL_NAME,
-                cfg.mephisto.provider.requester_name,
-            )
+        # for fname in ALL_BAD_USER_FILES:
+        #     direct_soft_block_mturk_workers(
+        #         db,
+        #         get_block_list(fname),
+        #         BLOCKLIST_QUAL_NAME,
+        #         cfg.mephisto.provider.requester_name,
+        #     )
         # add allowlist qualification
         existing_qualifications = [
-            make_qualification_dict(ALLOWLIST_QUAL_NAME, QUAL_EXISTS, None),
+            make_qualification_dict("collect_narrations_task_allow_09_19", QUAL_EXISTS, None),
         ]
 
     shared_state = SharedStaticTaskState(
@@ -252,7 +247,7 @@ def main(cfg: DictConfig) -> None:
             {
                 "QualificationTypeId": "000000000000000000L0",
                 "Comparator": "GreaterThanOrEqualTo",
-                "IntegerValues": [95],
+                "IntegerValues": [97],
                 "ActionsGuarded": "DiscoverPreviewAndAccept",
             },
         ]
@@ -264,7 +259,7 @@ def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
     operator = Operator(db)
     operator.validate_and_run_config(cfg.mephisto, shared_state)
-    operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=30)
+    operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=300)
 
 
 if __name__ == "__main__":
