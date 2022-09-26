@@ -21,7 +21,10 @@ import "../styles.css";
 /* CUSTOM COMPONENTS */
 import TutorialPopover from "../../../../../../components/TutorialPopover";
 
-import { FaSync } from "react-icons/fa";
+import { getActionThemeColor  } from "../../../../../../app/theme";
+
+import { BiChevronRight } from "react-icons/bi";
+import { FaSort } from "react-icons/fa";
 
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
 const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
@@ -61,9 +64,9 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
 
   /*---------------HELPERS----------------*/
   const formatTellTargetForButton = (str) => {
-    let formattedTellTargetName = str.toUpperCase();
-    if (str.length > 7) {
-      formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 7)}...`;
+    let formattedTellTargetName = str;
+    if (str.length > 12) {
+      formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 12)}...`;
       if (isMobile) {
         formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 4)}...`;
       }
@@ -71,10 +74,10 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
     return formattedTellTargetName;
   };
 
-  /* ----------TAILWIND CLASSES--------- */
-  const classNames = {};
+  const action = tellTarget ? 'tell' : (isSaying ? 'say' : 'do');
+
   return (
-    <>
+    <div className="_chat-button_ h-full">
       <TutorialPopover
         tipNumber={5}
         open={inHelpMode && selectedTip === 5}
@@ -90,25 +93,17 @@ const ChatButtons = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
             }
           }}
           type="button"
-          className={` w-full h-full mx-1 items-start px-1.5 py-0.5 border border-transparent text-lmd font-medium rounded shadow-sm text-white ${
-            tellTarget
-              ? "bg-red-700 "
-              : isSaying
-              ? "bg-green-700"
-              : "bg-blue-500 "
-          }`}
+          className={`h-full text-md font-medium rounded shadow-sm text-white pl-2 pr-4 ${
+            getActionThemeColor("bg", action)
+          } hover:bg-white`}
         >
-          <span className="flex flex-row justify-between items-center">
-            {tellTarget
-              ? `TELL ${formatTellTargetForButton(tellTarget)}`
-              : isSaying
-              ? "SAY"
-              : "DO"}
-            <FaSync color="white" size={20} />
+          <span className="flex flex-row items-center text-accent-content capitalize">
+            { tellTarget ? <BiChevronRight size={20} /> : <FaSort /> }
+            <div className="capitalize pl-1">{`${action} ${ tellTarget ? formatTellTargetForButton(tellTarget) : ''}`}</div>
           </span>
         </button>
       </TutorialPopover>
-    </>
+    </div>
   );
 };
 

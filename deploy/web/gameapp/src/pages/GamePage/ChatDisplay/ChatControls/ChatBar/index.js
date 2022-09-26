@@ -24,6 +24,8 @@ import ChatInput from "./ChatInput";
 import SendButton from "./SendButton";
 import TutorialPopover from "../../../../../components/TutorialPopover";
 
+import { getActionThemeColor  } from "../../../../../app/theme";
+
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
 const ChatBar = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   /* ------ REDUX STATE ------ */
@@ -88,27 +90,23 @@ const ChatBar = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
     return formattedTellTargetName;
   };
 
-  /* ----------TAILWIND CLASSES--------- */
-  const classNames = {
-    chatbarContainer:
-      "flex flex-row w-full border-4 rounded border-green-400 justify-center items-center",
-    chatbar: "flex flex-row w-full justify-center items-center",
-  };
+  const action = tellTarget ? 'tell' : (isSaying ? 'say' : 'do');
 
   return (
-    <div className={classNames.chatbarContainer}>
-      <div className={classNames.chatbar}>
-        <div className="w-1/6 h-full">
+    <div className={`_chat-bar_ w-full rounded ${getActionThemeColor("border", action)} border-2 p-2`}>
+      <div className="flex flex-row items-stretch h-[45px]">
+        <div className="flex-0">
           <ChatButtons />
         </div>
-        <div className="w-4/6">
+        <div className="flex-1 flex items-center">
           <ChatInput
             resetIdleTimer={resetIdleTimer}
             onSubmit={chatSubmissionHandler}
           />
         </div>
-        <div className="w-1/6 flex justify-center items-center">
+        <div className="flex-0 flex items-center">
           <SendButton
+            action={action}
             resetIdleTimer={resetIdleTimer}
             scrollToBottom={scrollToBottom}
             onSubmit={onSubmit}

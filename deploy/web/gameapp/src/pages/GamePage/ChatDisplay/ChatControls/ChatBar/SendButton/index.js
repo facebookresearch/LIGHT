@@ -19,11 +19,13 @@ import {
 /* CUSTOM COMPONENTS */
 import TutorialPopover from "../../../../../../components/TutorialPopover";
 
+import { getActionThemeColor  } from "../../../../../../app/theme";
+
 //ICONS
-import { MdOutlineArrowForwardIos } from "react-icons/md";
+import { MdSend } from "react-icons/md";
 
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
-const SendButton = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
+const SendButton = ({ onSubmit, scrollToBottom, resetIdleTimer, action }) => {
   /* ------ REDUX STATE ------ */
   // VIEW STATE
   const isMobile = useAppSelector((state) => state.view.isMobile);
@@ -87,21 +89,18 @@ const SendButton = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
 
   /*---------------HELPERS----------------*/
 
-  /* ----------TAILWIND CLASSES--------- */
-  const classNames = {};
   return (
-    <>
+    <div className={`_send-button_ text-2xl ${getActionThemeColor('text', action, false)} hover:text-white cursor-pointer px-2 py-2`}>
       <TutorialPopover
         tipNumber={7}
         open={inHelpMode && selectedTip === 7}
         position="left"
       >
-        <MdOutlineArrowForwardIos
+        <MdSend
           onClick={inHelpMode ? () => setSelectedTip(7) : chatSubmissionHandler}
-          className="text-2xl font-bold text-green-200 hover:text-red-100"
         />
       </TutorialPopover>
-    </>
+    </div>
   );
 };
 

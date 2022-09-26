@@ -16,7 +16,6 @@ import { Tooltip } from "react-tippy";
 /* CUSTOM COMPONENTS */
 import TutorialPopover from "../../../../../components/TutorialPopover";
 
-import { getActionThemeColor  } from "../../../../../app/theme";
 import { ChatBubble } from "../../../../../components/ChatBubble";
 
 //PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message

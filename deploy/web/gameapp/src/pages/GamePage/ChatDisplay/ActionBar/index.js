@@ -22,6 +22,8 @@ import "./styles.css";
 import SpeechBubble from "../../../../components/SpeechBubble";
 import TutorialPopover from "../../../../components/TutorialPopover";
 
+import { RiReplyFill } from "react-icons/ri";
+
 //ActionBar - Renders container for speech bubbles that act as "quick tell" button for all present NPCS
 const ActionBar = ({
   presentAgents,
@@ -43,25 +45,26 @@ const ActionBar = ({
   };
   return (
     <div
-      className={`actions flex flex-col flex-start ${
+      className={`_action-bar_ actions flex flex-col flex-start ${
         inHelpMode ? "active" : ""
       }`}
       onClick={() => setSelectedTip(8)}
     >
-      <p className="text-gray-200">{`Characters present in ${"location"}`}</p>
+      <div className="text-base-100 opacity-60 text-xs mb-2">{`Characters present in ${"location"}`}</div>
       <TutorialPopover
         tipNumber={8}
         open={inHelpMode && selectedTip === 8}
         position="bottom"
       ></TutorialPopover>
       {/* {location ? <span>{location.name} &mdash; </span> : null} */}
-      <div className=" ">
+      <div className="mb-4">
         {presentAgents.map((agent) => {
           const agentName = getAgentName(agent);
           const agentId = getEntityId(agent);
           return (
-            <span
+            <div
               key={agentName}
+              className="btn btn-outline btn-sm btn-info capitalize"
               onClick={() => {
                 if (!inHelpMode) {
                   dispatch(updateIsSaying(false));
@@ -69,14 +72,11 @@ const ActionBar = ({
                 }
               }}
             >
-              <Tooltip title={`tell ${agentName}...`} position="bottom">
-                <button
-                  type="button"
-                  className="inline-flex items-center ml-2 px-2.5 py-1.5 border  border-gray-300 shadow-sm text-xs font-medium rounded text-gray-200 bg-transparent hover: bg-gray-800 "
-                >
-                  {`${agentName}`}
-                </button>
-              </Tooltip>
+              
+              <span className="inline-flex">
+                <span className="pr-2">{`${agentName}`}</span> <RiReplyFill />
+              </span>
+              
               {dataModelHost && (
                 <>
                   {" "}
@@ -95,7 +95,7 @@ const ActionBar = ({
                   </Tooltip>
                 </>
               )}
-            </span>
+            </div>
           );
         })}
       </div>
