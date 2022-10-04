@@ -919,6 +919,20 @@ class World(object):
         event.execute(self)
         return p_id
 
+    def get_vocab(self, eligible_events=None):
+        """
+        Return the vocabulary for this LIGHT world
+        """
+        if eligible_events is None:
+            eligible_events = ALL_EVENTS_LIST
+        vocab = []
+        for event in eligible_events:
+            vocab += event.get_vocab()
+        vocab += self.oo_graph.get_vocab()
+        vocab += self.view.get_vocab()
+        # TODO is there any other vocab in LIGHT?
+        return vocab
+
     def playerid_to_agentid(self, pid):
         return self._playerid_to_agentid[pid]
 

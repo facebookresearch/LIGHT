@@ -75,6 +75,8 @@ class GraphEvent(object):
     # then many possible synonyms as possible.
     # Events that can only be triggered do not have to set anything.
     NAMES: List[str] = []
+    # All invokable events should define at least one template
+    TEMPLATES: List[str] = []
 
     def __init__(
         self,
@@ -264,6 +266,12 @@ class GraphEvent(object):
             "actor": node_to_json(self.actor),
             "objects": present_objects_dict,
         }
+
+    def get_vocab(self) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return []
 
 
 class ErrorEvent(GraphEvent):
