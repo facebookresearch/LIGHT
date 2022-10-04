@@ -137,7 +137,7 @@ def build_filler_rooms_from_categories(category_set):
         "This is a run down [FILL], it looks [OBSTACLE].",
         "There's a bit of [CHARACTERISTIC].",
     ]
-    background = [
+    backgrounds = [
         "Sometimes things are just what they seem. There's nothing interesting here."
     ]
 
@@ -160,6 +160,8 @@ def build_filler_rooms_from_categories(category_set):
                     description = description.replace(
                         "[CHARACTERISTIC]", random.choice(characteristics)
                     )
-            build_room = FillerRoom(category, name, description, background)
+            build_room = FillerRoom(
+                category, name, description, random.choice(backgrounds)
+            )
             filler_rooms[category].append(build_room)
     return filler_rooms, set(filler_room_names)

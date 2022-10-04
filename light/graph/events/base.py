@@ -267,7 +267,8 @@ class GraphEvent(object):
             "objects": present_objects_dict,
         }
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """

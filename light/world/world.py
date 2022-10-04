@@ -949,7 +949,7 @@ class World(object):
         """
         if eligible_events is None:
             eligible_events = ALL_EVENTS_LIST
-        templates = get_action_templates(eligible_events)
+        templates = self.get_action_templates(eligible_events)
 
         nodes = self.oo_graph.get_all_nodes()
 

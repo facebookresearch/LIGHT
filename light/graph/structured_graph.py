@@ -357,7 +357,7 @@ class OOGraph(object):
             vocab += agent.desc.split(" ")
             vocab += agent.name_prefix.split(" ")
 
-        for room in self.room.values():
+        for room in self.rooms.values():
             vocab += room.name.split(" ")
             vocab += room.desc.split(" ")
             vocab += room.extra_desc.split(" ")

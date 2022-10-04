@@ -184,7 +184,8 @@ class SayEvent(SpeechEvent):
             text = text[1:-1]
         return cls(actor, text_content=text, event_id=event_id)
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -278,7 +279,8 @@ class ShoutEvent(SpeechEvent):
             text = text[1:-1]
         return cls(actor, text_content=text, event_id=event_id)
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -424,7 +426,8 @@ class WhisperEvent(SpeechEvent):
                 )
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -555,7 +558,8 @@ class TellEvent(SpeechEvent):
                 )
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -597,14 +601,15 @@ class LeaveEvent(TriggeredEvent):
         else:
             return self.__in_room_view
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
         return (
             ["left", "towards"]
-            + self._SELF_VIEW_FROM_VOID.split()
-            + self._ROOM_VIEW_FROM_VOID[3:].split()
+            + cls._SELF_VIEW_FROM_VOID.split()
+            + cls._ROOM_VIEW_FROM_VOID[3:].split()
         )
 
 
@@ -657,7 +662,8 @@ class TriggerFollowEvent(TriggeredEvent):
         else:
             return None  # One should not observe others follows
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -894,7 +900,8 @@ class GoEvent(GraphEvent):
                     valid_actions.append(cls(actor, target_nodes=[neighbor]))
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -962,7 +969,8 @@ class UnfollowEvent(NoArgumentEvent):
         else:
             return []
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -1074,7 +1082,8 @@ class FollowEvent(GraphEvent):
                 valid_actions.append(cls(actor, target_nodes=[agent]))
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -1140,7 +1149,8 @@ class UnblockEvent(NoArgumentEvent):
         else:
             return []
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -1253,7 +1263,8 @@ class BlockEvent(GraphEvent):
                 valid_actions.append(cls(actor, target_nodes=[agent]))
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -1305,7 +1316,8 @@ class DeathEvent(TriggeredEvent):
         else:
             return self.__in_room_view
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -1356,7 +1368,8 @@ class SoulSpawnEvent(TriggeredEvent):
         else:
             return None
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -1403,7 +1416,8 @@ class SpawnEvent(TriggeredEvent):
         else:
             return None
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -1656,15 +1670,16 @@ class HitEvent(GraphEvent):
                 valid_actions.append(cls(actor, target_nodes=[agent]))
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
         vocab = []
-        vocab += self._PACIFIST_TEXT.split()
-        vocab += split_in_list(self._ATTACK_VERBS)
-        vocab += split_in_list(self._BLOCK_VERBS)
-        vocab += split_in_list(self._HIT_DETAILS)
+        vocab += cls._PACIFIST_TEXT.split()
+        vocab += split_in_list(cls._ATTACK_VERBS)
+        vocab += split_in_list(cls._BLOCK_VERBS)
+        vocab += split_in_list(cls._HIT_DETAILS)
         vocab += ["but", "missed", "they", "you", "the", "attack", "attacked", "with"]
         return vocab
 
@@ -1760,7 +1775,8 @@ class HugEvent(GraphEvent):
                 valid_actions.append(cls(actor, target_nodes=[agent]))
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -1962,7 +1978,8 @@ class GetObjectEvent(GraphEvent):
                     valid_actions.append(cls(actor, target_nodes=[obj, container]))
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -2159,7 +2176,8 @@ class PutObjectInEvent(GraphEvent):
 
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -2285,7 +2303,8 @@ class DropObjectEvent(GraphEvent):
 
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -2489,7 +2508,8 @@ class StealObjectEvent(GraphEvent):
 
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -2677,7 +2697,8 @@ class GiveObjectEvent(GraphEvent):
 
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -2831,6 +2852,7 @@ class WearEvent(EquipObjectEvent):
     def can_equip(cls, object_node: GraphObject) -> bool:
         return object_node.wearable
 
+    @classmethod
     def get_vocab(self) -> List[str]:
         """
         Return the vocabulary this event uses
@@ -2851,7 +2873,8 @@ class WieldEvent(EquipObjectEvent):
     def can_equip(cls, object_node: GraphObject) -> bool:
         return object_node.wieldable
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -2982,7 +3005,8 @@ class RemoveObjectEvent(GraphEvent):
 
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -3125,6 +3149,7 @@ class EatEvent(IngestEvent):
     def can_ingest(cls, object_node: GraphObject) -> bool:
         return object_node.food
 
+    @classmethod
     def get_vocab(self) -> List[str]:
         """
         Return the vocabulary this event uses
@@ -3144,7 +3169,8 @@ class DrinkEvent(IngestEvent):
     def can_ingest(cls, object_node: GraphObject) -> bool:
         return object_node.drink
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -3554,7 +3580,8 @@ class ExamineEvent(GraphEvent):
 
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -3667,11 +3694,12 @@ class EmoteEvent(GraphEvent):
 
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
-        return ["you"] + self.DESC_MAP.values() + self.DESC_MAP.keys()
+        return ["you"] + list(cls.DESC_MAP.values()) + list(cls.DESC_MAP.keys())
 
 
 class WaitEvent(NoArgumentEvent):
@@ -3698,7 +3726,8 @@ class WaitEvent(NoArgumentEvent):
         else:
             return f"{self.__actor_name} waited."
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -3734,7 +3763,8 @@ class InventoryEvent(NoArgumentEvent):
         else:
             return f"{self.__actor_name} checked their inventory."
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -3790,7 +3820,8 @@ class QuestEvent(NoArgumentEvent):
         else:
             return None  # f"{self.__actor_name} looks deep in thought. "
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -4067,7 +4098,8 @@ class HealthEvent(NoArgumentEvent):
             s += f"\nYou are {dex_txt} in physical dexterity."
         return s
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -4081,8 +4113,8 @@ class HealthEvent(NoArgumentEvent):
             "still",
             "looks",
         ]
-        vocab += split_in_list(self._SIZE_TEXTS)
-        vocab += split_in_list(self.ATTRIBUTE_VALUE_STRINGS)
+        vocab += split_in_list(cls._SIZE_TEXTS)
+        vocab += split_in_list(cls._ATTRIBUTE_VALUE_STRINGS)
         return [
             "you",
             "currently",
@@ -4165,7 +4197,8 @@ class LookEvent(NoArgumentEvent):
         else:
             return f"{self.__actor_name} looked around."
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -4298,7 +4331,8 @@ class PointEvent(GraphEvent):
 
         return valid_actions
 
-    def get_vocab(self) -> List[str]:
+    @classmethod
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
