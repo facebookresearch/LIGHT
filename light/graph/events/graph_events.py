@@ -519,6 +519,22 @@ class TellEvent(SpeechEvent):
 
         return cls(actor, target_nodes=[target], text_content=text, event_id=event_id)
 
+    @classmethod
+    def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
+        """
+        Return any valid actions that can be taken by the given actor
+        over the current graph. Default returns no events.
+        """
+        valid_actions: List[GraphEvent] = []
+        room = actor.get_room()
+        room_agents = [x for x in room.get_contents() if x.agent]
+        for agent in room_agents:
+            if agent != actor:
+                valid_actions.append(
+                    cls(actor, target_nodes=[agent], text_content="<SOMETHING>")
+                )
+        return valid_actions
+
     def get_vocab(self) -> List[str]:
         """
         Return the vocabulary this event uses
