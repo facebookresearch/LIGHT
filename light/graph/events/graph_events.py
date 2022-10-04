@@ -130,6 +130,7 @@ class SayEvent(SpeechEvent):
     """Handles saying something out loud to the room."""
 
     NAMES = ["say"]
+    TEMPLATES = ['say "<SOMETHING>"']
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the expected views, then broadcast"""
@@ -213,6 +214,7 @@ class ShoutEvent(SpeechEvent):
     """Handles saying something out loud to all agents."""
 
     NAMES = ["shout"]
+    TEMPLATES = ['shout "<SOMETHING>"']
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the view for the event"""
@@ -300,6 +302,7 @@ class WhisperEvent(SpeechEvent):
     """Handles saying something to a specific agent without others hearing."""
 
     NAMES = ["whisper"]
+    TEMPLATES = ['whisper "<SOMETHING>" to <agent>']
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the views for the event, then broadcast"""
@@ -405,6 +408,22 @@ class WhisperEvent(SpeechEvent):
             actor, target_nodes=[targets[0]], text_content=text, event_id=event_id
         )
 
+    @classmethod
+    def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
+        """
+        Return any valid actions that can be taken by the given actor
+        over the current graph. Default returns no events.
+        """
+        valid_actions: List[GraphEvent] = []
+        room = actor.get_room()
+        room_agents = [x for x in room.get_contents() if x.agent]
+        for agent in room_agents:
+            if agent != actor:
+                valid_actions.append(
+                    cls(actor, target_nodes=[agent], text_content="<SOMETHING>")
+                )
+        return valid_actions
+
     def get_vocab(self) -> List[str]:
         """
         Return the vocabulary this event uses
@@ -416,6 +435,7 @@ class TellEvent(SpeechEvent):
     """Handles saying something to a specific agent aloud."""
 
     NAMES = ["tell"]
+    TEMPLATES = ['tell "<SOMETHING>" to <agent>']
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the view for the actors involved"""
@@ -662,6 +682,7 @@ class GoEvent(GraphEvent):
     """Handles moving as an individual from one room to another"""
 
     NAMES = ["go"]
+    TEMPLATES = ["go <room|path>"]
 
     def __init__(
         self,
@@ -886,6 +907,7 @@ class UnfollowEvent(NoArgumentEvent):
     """Handles removing a follow"""
 
     NAMES = ["unfollow"]
+    TEMPLATES = ["unfollow"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -951,6 +973,7 @@ class FollowEvent(GraphEvent):
     """Handles having an agent follow another agent"""
 
     NAMES = ["follow"]
+    TEMPLATES = ["follow <agent>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -1062,6 +1085,7 @@ class UnblockEvent(NoArgumentEvent):
     """Handles removing a block"""
 
     NAMES = ["unblock"]
+    TEMPLATES = ["unblock"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -1127,6 +1151,7 @@ class BlockEvent(GraphEvent):
     """Handles having an agent blocking another agent"""
 
     NAMES = ["block"]
+    TEMPLATES = ["block <agent>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -1399,6 +1424,7 @@ class HelpEvent(NoArgumentEvent):
     """Handles user asking for help"""
 
     NAMES = ["help", "h"]
+    TEMPLATES = ["help"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """Construct intro text and broadcast to the player"""
@@ -1420,6 +1446,7 @@ class HitEvent(GraphEvent):
     """Handles having one agent attack another"""
 
     NAMES = ["hit"]
+    TEMPLATES = ["hit <agent>"]
 
     _PACIFIST_TEXT = "You couldn't do that, you are a pacifist!"
     _ATTACK_VERBS = ["attacked", "struck at", "charged at", "swiped at"]
@@ -1646,6 +1673,7 @@ class HugEvent(GraphEvent):
     """Handles having one agent give another a hug"""
 
     NAMES = ["hug"]
+    TEMPLATES = ["hug <agent>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -1744,6 +1772,7 @@ class GetObjectEvent(GraphEvent):
     """Handles getting an object from a container or a location"""
 
     NAMES = ["get", "take"]
+    TEMPLATES = ["get <gettable> from <container|surface|room>", "get <gettable>"]
 
     def __init__(
         self,
@@ -1945,6 +1974,7 @@ class PutObjectInEvent(GraphEvent):
     """Handles putting an object in or on another object"""
 
     NAMES = ["put"]
+    TEMPLATES = ["put <gettable> in <container>", "put <gettable> on <surface>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -2140,6 +2170,7 @@ class DropObjectEvent(GraphEvent):
     """Handles dropping an object onto the floor"""
 
     NAMES = ["drop"]
+    TEMPLATES = ["drop <gettable>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -2265,6 +2296,7 @@ class StealObjectEvent(GraphEvent):
     """Handles stealing an object from an actor"""
 
     NAMES = ["steal"]
+    TEMPLATES = ["steal <gettable> from <agent>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -2482,6 +2514,7 @@ class GiveObjectEvent(GraphEvent):
     """Handles giving an object to another agent"""
 
     NAMES = ["give"]
+    TEMPLATES = ["give <gettable> to <agent>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -2655,6 +2688,7 @@ class EquipObjectEvent(GraphEvent):
     """Handles equipping a held object"""
 
     NAMES = ["equip"]
+    TEMPLATES = ["equip <wearable|wieldable>"]
 
     action_name = "equipped"
     past_tense_action_name = "equipped"
@@ -2788,6 +2822,7 @@ class WearEvent(EquipObjectEvent):
     """Handles wearing a held object"""
 
     NAMES = ["wear"]
+    TEMPLATES = ["wear <wearable>"]
 
     action_name = "wore"
     past_tense_action_name = "worn"
@@ -2807,6 +2842,7 @@ class WieldEvent(EquipObjectEvent):
     """Handles wielding a held object"""
 
     NAMES = ["wield"]
+    TEMPLATES = ["wield <wieldable>"]
 
     action_name = "wielded"
     past_tense_action_name = "wielded"
@@ -2826,6 +2862,7 @@ class RemoveObjectEvent(GraphEvent):
     """Handles removing an equipped object"""
 
     NAMES = ["remove", "unwield"]
+    TEMPLATES = ["remove <wearable|wieldable>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -2956,6 +2993,7 @@ class IngestEvent(GraphEvent):
     """Handles equipping a held object"""
 
     NAMES = ["ingest"]
+    TEMPLATES = ["ingest <food|drink>"]
 
     past_tense_action_name = "ingested"
 
@@ -3079,6 +3117,7 @@ class EatEvent(IngestEvent):
     """Handles eating a held object"""
 
     NAMES = ["eat"]
+    TEMPLATES = ["eat <food>"]
 
     past_tense_action_name = "ate"
 
@@ -3097,6 +3136,7 @@ class DrinkEvent(IngestEvent):
     """Handles eating a held object"""
 
     NAMES = ["drink"]
+    TEMPLATES = ["drink <drink>"]
 
     past_tense_action_name = "drank"
 
@@ -3407,6 +3447,7 @@ class ExamineEvent(GraphEvent):
     """Handles displaying examine/extra text for a graph node"""
 
     NAMES = ["examine", "ex"]
+    TEMPLATES = ["examine <agent|room|object>"]
 
     def _get_target_description(self, world: "World") -> str:
         """Get the examine description for the given target"""
@@ -3561,6 +3602,8 @@ class EmoteEvent(GraphEvent):
         "yawn": "yawns",
     }
 
+    TEMPLATES = [f"emote {e}" for e in DESC_MAP.keys()]
+
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the expected views, then broadcast"""
         assert not self.executed
@@ -3635,6 +3678,7 @@ class WaitEvent(NoArgumentEvent):
     """Wait events just allow a player to do nothing in a timestep"""
 
     NAMES = ["wait"]
+    TEMPLATES = ["wait"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -3665,6 +3709,7 @@ class InventoryEvent(NoArgumentEvent):
     """Inventory events just allow a player see what they are carrying, etc."""
 
     NAMES = ["inventory", "inv", "i"]
+    TEMPLATES = ["inventory"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -3700,6 +3745,7 @@ class QuestEvent(NoArgumentEvent):
     """Quest events just allow a player to see their assigned quests. """
 
     NAMES = ["quest", "quests", "mission", "missions", "goal", "goals", "q"]
+    TEMPLATES = ["quests"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -3769,6 +3815,7 @@ class RewardEvent(GraphEvent):
     """Reward events allow to give another agent XP. """
 
     NAMES = ["reward", "r"]
+    TEMPLATES = ["reward <agent>"]
 
     def __init__(
         self,
@@ -3913,6 +3960,7 @@ class HealthEvent(NoArgumentEvent):
     """Inventory events just allow a player to do nothing in a timestep"""
 
     NAMES = ["health", "status", "stats"]
+    TEMPLATES = ["health"]
 
     _SIZE_TEXTS = [
         "huge",
@@ -4056,6 +4104,7 @@ class LookEvent(NoArgumentEvent):
     """Look events show the contents of the room as well as the description"""
 
     NAMES = ["look", "l"]
+    TEMPLATES = ["look"]
 
     def _construct_world_view(self, world) -> str:
         """Create the actual viewed string once all fields have been found"""
@@ -4127,6 +4176,7 @@ class PointEvent(GraphEvent):
     """Handles agents pointing at graph nodes"""
 
     NAMES = ["point"]
+    TEMPLATES = ["point <room|object|agent>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
