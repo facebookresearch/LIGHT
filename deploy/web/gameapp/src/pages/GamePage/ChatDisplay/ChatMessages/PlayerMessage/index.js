@@ -20,20 +20,13 @@ import { ChatBubble } from "../../../../../components/ChatBubble";
 
 //PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message
 const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
-  // let classNames = "message type-dialogue ";
-  // if (["tell", "say", "whisper"].includes(caller)) {
-  //   text = "&ldquo;" + text + "&rdquo;";
-  //   classNames = "message type-dialogue ";
-  // }
-  // classNames += "me";
-
   /* ----REDUX STATE---- */
   console.log("CALLER:  ", caller);
   console.log("ACTOR:  ", actor);
   console.log("MESSAGE TEXT:", text);
   console.log("XP", xp);
 
-  //TUTORIAL;
+  //TUTORIAL
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   /* ----LOCAL STATE---- */
@@ -62,22 +55,6 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
       ${inHelpMode ? "active" : ""}`}
       onClick={onClickFunction}
     >
-      <div className="ml-10">
-        <ChatBubble action={action} actor="YOU" align="right">
-          <div className="max-w-md break-words">
-            {text}
-          </div>
-          <div className="relative">
-            <div className="absolute bg-emerald-500">
-              <TutorialPopover
-                tipNumber={17}
-                open={inHelpMode && selectedTip === 17}
-                position="top"
-              ></TutorialPopover>
-            </div>
-          </div>
-        </ChatBubble>
-      </div>
       {xp ? (
         <>
           <Tooltip
@@ -92,6 +69,20 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
           </Tooltip>
         </>
       ) : null}
+      <div className="ml-10">
+        <ChatBubble action={action} actor="YOU" align="right">
+          <div className="max-w-md break-words">{text}</div>
+          <div className="relative">
+            <div className="absolute bg-emerald-500">
+              <TutorialPopover
+                tipNumber={17}
+                open={inHelpMode && selectedTip === 17}
+                position="top"
+              ></TutorialPopover>
+            </div>
+          </div>
+        </ChatBubble>
+      </div>
     </div>
   );
 };
