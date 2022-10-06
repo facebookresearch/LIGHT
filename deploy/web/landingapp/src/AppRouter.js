@@ -19,7 +19,7 @@ import "./styles.css";
 
 const AppRouter = () => {
   return (
-    <div className="app-container">
+    <>
       <HashRouter>
         <Switch>
           <Route path="/" component={LandingPage} exact />
@@ -32,7 +32,7 @@ const AppRouter = () => {
           <Route component={ErrorPage} />
         </Switch>
       </HashRouter>
-    </div>
+    </>
   );
 };
 
