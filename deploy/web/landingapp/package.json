@@ -5,9 +5,11 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
+    "@babel/runtime": "^7.19.0",
+    "@tailwindcss/typography": "^0.5.7",
     "classnames": "^2.2.6",
     "daisyui": "^2.31.0",
-    "emoji-mart": "^2.11.1",
+    "emoji-mart": "^5.2.2",
     "eslint-plugin-react-hooks": "^1.6.1",
     "leaflet": "1.4.0",
     "react": "16.8.3",
@@ -15,7 +17,7 @@
     "react-leaflet": "2.2.1",
     "react-onclickoutside": "^6.8.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "2.1.8",
+    "react-scripts": "^5.1.0-next.14",
     "react-tippy": "^1.2.3"
   },
   "devDependencies": {

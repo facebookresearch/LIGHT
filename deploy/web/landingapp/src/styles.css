@@ -2,14 +2,18 @@
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+*/
 
 body {
-  line-height: 1;
-  margin: 0;
-  padding: 0;
-  border: 0;
+  background-color: black;
+  overflow-y: hidden;
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+div::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+div {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }

@@ -6,10 +6,9 @@
 /* REACT */
 import React from "react";
 import ReactDOM from "react-dom";
-//STYLES
+/* STYLES */
 import "./index.css";
-import "./styles.css";
-
+/* CUSTOM COMPONENTS */
 import AppRouter from "./AppRouter";
 
 const rootElement = document.getElementById("root");

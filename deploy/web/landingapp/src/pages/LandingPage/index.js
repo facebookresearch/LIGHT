@@ -6,8 +6,6 @@
 
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import "react-tippy/dist/tippy.css";
-import "emoji-mart/css/emoji-mart.css";
 
 import Scribe from "../../assets/images/scribe.png";
 import StarryNight from "../../assets/images/light_starry_bg.jpg";
