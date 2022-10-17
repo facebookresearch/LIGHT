@@ -16,6 +16,7 @@ import LogoutPage from "./pages/LogoutPage";
 import ErrorPage from "./pages/ErrorPage";
 
 import StarryNight from "./assets/images/light_starry_bg.jpg";
+import "./styles.css";
 
 const AppRouter = () => {
   return (
@@ -23,9 +24,20 @@ const AppRouter = () => {
       style={{
         backgroundImage: `linear-gradient(to bottom, #0f0c2999, #302b63aa, #24243ecc), url(${StarryNight})`,
       }}
-      className=" flex h-screen w-screen bg-cover bg-top bg-no-repeat"
+      className="__landing-page__ flex h-screen w-screen bg-cover bg-top bg-no-repeat"
     >
-      hi.,dfmnaslkfdnaslkdfnasl;kfnjasl;kdnfaslkdnfaks
+      <HashRouter>
+        <Switch>
+          <Route path="/" component={LandingPage} exact />
+          <Route path="/tutorial" component={TutorialPage} exact />
+          <Route path="/about" component={AboutPage} exact />
+          <Route path="/terms" component={TermsPage} exact />
+          <Route path="/login" component={LoginPage} exact />
+          <Route path="/bye" component={LogoutPage} exact />
+          <Route path="/error" component={ErrorPage} exact />
+          <Route component={ErrorPage} />
+        </Switch>
+      </HashRouter>
     </div>
   );
 };
