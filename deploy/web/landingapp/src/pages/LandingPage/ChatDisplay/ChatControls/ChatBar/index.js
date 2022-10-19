@@ -15,6 +15,7 @@ import { getActionThemeColor } from "../../../../../app/theme";
 
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
 const ChatBar = ({
+  introStep,
   submittedActions,
   onSubmit,
   scrollToBottom,
@@ -41,10 +42,12 @@ const ChatBar = ({
     >
       <div className="flex flex-row items-stretch h-[45px]">
         <div className="flex-0">
-          <ChatButtons
-            toggleAction={inputActionTypeToggleHandler}
-            action={inputActionType}
-          />
+          {introStep >= 2 ? (
+            <ChatButtons
+              toggleAction={inputActionTypeToggleHandler}
+              action={inputActionType}
+            />
+          ) : null}
         </div>
         <div className="flex-1 flex items-center">
           <ChatInput

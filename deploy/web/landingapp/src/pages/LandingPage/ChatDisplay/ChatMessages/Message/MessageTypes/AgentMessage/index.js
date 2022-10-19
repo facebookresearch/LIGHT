@@ -26,12 +26,11 @@ import {
 import { ChatBubble } from "../../../../../../../components/ChatBubble/index.tsx";
 
 const AgentMessage = ({
+  introStep,
   text,
   actor,
-  onReply,
-  eventId,
-  onClickFunction,
   scrollToBottom,
+  ratingStepHandler,
 }) => {
   /* ------ LOCAL STATE ------ */
   const [isReporting, setIsReporting] = useState(false);
@@ -39,19 +38,20 @@ const AgentMessage = ({
   const [isStarred, setIsStarred] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
-  const [helpEventId, setHelpEventId] = useState(0);
 
   /* ------ HANDLERS ------ */
 
   const toggleLikeHandler = () => {
     let newLikeValue = !isLiked;
     setIsLiked(newLikeValue);
+    ratingStepHandler();
     scrollToBottom();
   };
 
   const toggleDislikeHandler = () => {
     let newDislikeValue = !isDisliked;
     setIsDisliked(newDislikeValue);
+    ratingStepHandler();
     scrollToBottom();
   };
 
@@ -71,45 +71,13 @@ const AgentMessage = ({
     scrollToBottom(scrollToBottom);
   };
 
-  const onAgentClick = () => {
-    setHelpEventId(eventId);
-    onClickFunction();
-  };
-
   /*  LIFE CYCLE */
-
-  useEffect(() => {
-    if (!showReportModal) {
-      if (isReporting && reportModalSubmitted) {
-        setIsReported(true);
-        setIsReporting(false);
-      } else {
-        setIsReporting(false);
-      }
-    }
-  }, [showReportModal]);
 
   return (
     <>
       <div
-        className={`_agent-message_ flex flex-row justify-start items-center mb-4 mr-28
-        ${inHelpMode ? "active" : ""}`}
-        onClick={onClickFunction}
+        className={`_agent-message_ flex flex-row justify-start items-center mb-4 mr-28`}
       >
-        {isLiked ? (
-          <>
-            {isStarred ? (
-              <BsFillStarFill className={`text-yellow-300`} />
-            ) : giftXp > 0 ? (
-              <Tooltip
-                title="Click to ward player a Gift XP Star"
-                position="top"
-              >
-                <BsStar className={`text-yellow-300`} onClick={starHandler} />
-              </Tooltip>
-            ) : null}
-          </>
-        ) : null}
         <div className="flex flex-col">
           <ChatBubble align="left" actor={actor.toUpperCase()} action="default">
             <div className="flex flex-col max-w-md break-words">
@@ -120,69 +88,65 @@ const AgentMessage = ({
                 </span>
               ) : null}
               <div className="flex flex-row w-full justify-between items-center">
-                <RiReplyFill
-                  className="cursor-pointer hover:text-info"
-                  onClick={() => onReply(actor)}
-                />
-                <div className="flex flex-row justify-center items-center">
-                  {isDisliked ? null : (
-                    <Tooltip
-                      title="This message is in-character!"
-                      position="bottom"
-                    >
-                      {isLiked ? (
-                        <AiFillLike
-                          className="ml-2 text-success cursor-pointer"
-                          onClick={toggleLikeHandler}
-                        />
-                      ) : (
-                        <AiOutlineLike
-                          className="ml-2 text-slate-600 hover:text-success cursor-pointer"
-                          onClick={toggleLikeHandler}
-                        />
-                      )}
-                    </Tooltip>
-                  )}
-                  {isLiked ? null : (
-                    <Tooltip
-                      title={
-                        !isReported
-                          ? "This message has issues..."
-                          : "This Message has already been reported."
-                      }
-                      position="bottom"
-                    >
-                      {isDisliked ? (
-                        <AiFillDislike
-                          className="ml-3 text-error cursor-pointer"
-                          onClick={toggleDislikeHandler}
-                        />
-                      ) : (
-                        <AiOutlineDislike
-                          className="ml-3 text-slate-600 hover:text-error cursor-pointer"
-                          onClick={toggleDislikeHandler}
-                        />
-                      )}
-                    </Tooltip>
-                  )}
-                </div>
+                {introStep >= 3 ? (
+                  <div className="flex flex-row justify-center items-center">
+                    {isDisliked ? null : (
+                      <Tooltip
+                        title="This message is in-character!"
+                        position="bottom"
+                      >
+                        {isLiked ? (
+                          <AiFillLike
+                            className="ml-2 text-success cursor-pointer"
+                            onClick={toggleLikeHandler}
+                          />
+                        ) : (
+                          <AiOutlineLike
+                            className="ml-2 text-slate-600 hover:text-success cursor-pointer"
+                            onClick={toggleLikeHandler}
+                          />
+                        )}
+                      </Tooltip>
+                    )}
+                    {isLiked ? null : (
+                      <Tooltip
+                        title={
+                          !isReported
+                            ? "This message has issues..."
+                            : "This Message has already been reported."
+                        }
+                        position="bottom"
+                      >
+                        {isDisliked ? (
+                          <AiFillDislike
+                            className="ml-3 text-error cursor-pointer"
+                            onClick={toggleDislikeHandler}
+                          />
+                        ) : (
+                          <AiOutlineDislike
+                            className="ml-3 text-slate-600 hover:text-error cursor-pointer"
+                            onClick={toggleDislikeHandler}
+                          />
+                        )}
+                      </Tooltip>
+                    )}
+                  </div>
+                ) : null}
               </div>
             </div>
           </ChatBubble>
           {isLiked && !isStarred ? (
-            giftXp > 0 ? (
-              <div
-                className="text-right text-yellow-500 break-words text-sm mt-1 cursor-pointer"
-                onClick={starHandler}
-              >
-                Would you like to award this message a star?
-              </div>
-            ) : (
-              <div className="text-right text-base-200 opacity-50 break-words text-sm mt-1">
-                Earn gift experience by roleplaying to be able to award stars
-              </div>
-            )
-          ) : null}
+            <div
+              className="text-right text-yellow-500 break-words text-sm mt-1 cursor-pointer"
+              onClick={starHandler}
+            >
+              Would you like to award this message a star?
+            </div>
+          ) : (
+            <div className="text-right text-base-200 opacity-50 break-words text-sm mt-1">
+              Earn gift experience by roleplaying to be able to award stars
+            </div>
+          )}
           {isDisliked && !isReported ? (
             <div
               className="text-right text-red-500 break-words text-sm mt-1 cursor-pointer"

@@ -15,6 +15,8 @@ import ChatControls from "./ChatControls";
 
 //ChatDisplay - renders primary container for both chat and entirety of chat controls
 const ChatDisplay = ({
+  introStep,
+  ratingStepHandler,
   chatInputText,
   inputActionType,
   inputActionTypeToggleHandler,
@@ -42,18 +44,26 @@ const ChatDisplay = ({
           className="flex-1 grow-[5] overflow-y-scroll"
           ref={chatContainerRef}
         >
-          <ChatMessages messages={messages} scrollToBottom={scrollToBottom} />
+          <ChatMessages
+            introStep={introStep}
+            messages={messages}
+            ratingStepHandler={ratingStepHandler}
+            scrollToBottom={scrollToBottom}
+          />
         </div>
         <div className="flex-none h-[120px]">
-          <ChatControls
-            submittedActions={submittedActions}
-            onSubmit={onSubmit}
-            scrollToBottom={scrollToBottom}
-            inputChangeHandler={inputChangeHandler}
-            inputActionTypeToggleHandler={inputActionTypeToggleHandler}
-            inputActionType={inputActionType}
-            chatInputText={chatInputText}
-          />
+          {introStep >= 1 ? (
+            <ChatControls
+              introStep={introStep}
+              submittedActions={submittedActions}
+              onSubmit={onSubmit}
+              scrollToBottom={scrollToBottom}
+              inputChangeHandler={inputChangeHandler}
+              inputActionTypeToggleHandler={inputActionTypeToggleHandler}
+              inputActionType={inputActionType}
+              chatInputText={chatInputText}
+            />
+          ) : null}
         </div>
       </div>
     </div>

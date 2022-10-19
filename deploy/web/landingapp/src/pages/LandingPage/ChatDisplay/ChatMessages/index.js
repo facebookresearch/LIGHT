@@ -12,18 +12,20 @@ import React from "react";
 import Message from "./Message";
 
 //ChatMessages - Renders messages in chat display by iterating through message reducer returning Entry components
-const ChatMessages = ({ messages, scrollToBottom }) => {
+const ChatMessages = ({
+  introStep,
+  messages,
+  scrollToBottom,
+  ratingStepHandler,
+}) => {
   return (
     <>
       {messages.map((msg, idx) => (
-        <div className="_chat-message_" key={msg.event_id}>
+        <div className="_chat-message_" key={idx}>
           <Message
+            introStep={introStep}
             msg={msg}
-            agents={agents}
-            onReply={(agent) => {
-              dispatch(updateTellTarget(agent));
-            }}
-            selfId={persona.id}
+            ratingStepHandler={ratingStepHandler}
             scrollToBottom={scrollToBottom}
           />
         </div>

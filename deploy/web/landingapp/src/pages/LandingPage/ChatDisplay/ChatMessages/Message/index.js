@@ -11,34 +11,24 @@ import PlayerMessage from "./MessageTypes/PlayerMessage";
 import AgentMessage from "./MessageTypes/AgentMessage";
 
 //Message - Renders specific type of message component based on individual message object's attributes
-const Message = ({ msg, onReply, scrollToBottom }) => {
-  /* ----REDUX STATE---- */
-  //TUTORIAL;
-
-  /* ----REDUX ACTIONS---- */
-  // REDUX DISPATCH FUNCTION
-
+const Message = ({
+  introStep,
+  msg,
+  onReply,
+  scrollToBottom,
+  ratingStepHandler,
+}) => {
+  console.log("ACTOR:  ", msg.actor);
   return (
     <>
-      {msg.is_self || actor === selfId ? (
-        <PlayerMessage
-          text={msg.text}
-          isSelf={msg.is_self || actor === selfId}
-          caller={msg.caller}
-          actor={agents[actor]}
-          onReply={onReply}
-          xp={msg.xp}
-          onClickFunction={() => setSelectedTip(17)}
-        />
+      {msg.isSelf ? (
+        <PlayerMessage text={msg.text} action={msg.action} />
       ) : (
         <AgentMessage
+          introStep={introStep}
           text={msg.text}
-          actor={agents[actor]}
-          onReply={onReply}
-          xp={msg.xp}
-          actorId={actor}
-          eventId={msg.event_id}
-          onClickFunction={() => setSelectedTip(16)}
+          actor={msg.actor}
+          ratingStepHandler={ratingStepHandler}
           scrollToBottom={scrollToBottom}
         />
       )}

@@ -11,6 +11,7 @@ import ChatBar from "./ChatBar";
 
 //ChatControls - render container that holds both chat input and "action bar" which contains quick chat speech bubbles for each npc in vincinity
 const ChatControls = ({
+  introStep,
   submittedActions,
   onSubmit,
   scrollToBottom,
@@ -22,6 +23,7 @@ const ChatControls = ({
   return (
     <div className="w-full">
       <ChatBar
+        introStep={introStep}
         submittedActions={submittedActions}
         onSubmit={onSubmit}
         scrollToBottom={scrollToBottom}
