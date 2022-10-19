@@ -29,7 +29,12 @@ const LandingAppCopy = {
       highlighted: false,
     },
   ],
-  legalAgreements: [],
+  legalAgreements: [
+    "1. I am 18 years of age or older (or, if higher than 18, the age of majority in the jurisdiction from which I am accessing LIGHT) and reside in the United States.",
+    "2. I understand LIGHT is for research, and LIGHT Agents can make untrue or offensive statements. If this happens, I pledge to report these issues to help improve future research. Furthermore, I agree not to intentionally trigger others to make offensive statements.",
+    "3. I understand that interactions in LIGHT are set in a fantasy environment, and content inside is not intended to reflect real-world circumstances.",
+    "4. I understand that in-game interactions will be published publicly and used for future research. Therefore, I agree not to mention any personally identifiable information in the content of my conversations, including names, addresses, emails, and phone numbers. [link to additional info on our use of your data in the FAQ’s]",
+  ],
   introDialogueSteps: [
     {
       action: "say",
