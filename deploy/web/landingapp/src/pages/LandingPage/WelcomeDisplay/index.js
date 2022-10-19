@@ -4,17 +4,40 @@
  * LICENSE file in the root directory of this source tree.
  */
 /* REACT */
-import React from "react";
+import React, { useState } from "react";
 /* CUSTOM COMPONENTS */
 import TerminalEntry from "./TerminalEntry";
 
 const WelcomeDisplay = ({ terminalDialogue, loginStepIncreaseHandler }) => {
+  const [terminalInput, setTerminalInput] = useState("");
+  /*--------------- HANDLERS ----------------*/
+  const terminalInputChangeHandler = (e) => {
+    let updatedValue = e.target.value;
+    setTerminalInput(updatedValue);
+  };
+
+  const terminalSubmissionHandler = () => {
+    if (terminalInput === "y") {
+      loginStepIncreaseHandler();
+    } else {
+      setTerminalInput("");
+    }
+  };
+
   return (
     <div className="">
       {terminalDialogue.map((entry, index) => (
         <TerminalEntry text={entry.text} highlighted={entry.highlighted} />
       ))}
-      <input />
+      <input
+        onChange={terminalInputChangeHandler}
+        value={terminalInput}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            terminalSubmissionHandler();
+          }
+        }}
+      />
     </div>
   );
 };

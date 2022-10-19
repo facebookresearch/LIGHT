@@ -6,8 +6,10 @@
 /* REACT */
 import React from "react";
 
-const WelcomeDisplay = ({ text, highlighted }) => {
-  return <p className="">{text}</p>;
+const TerminalEntry = ({ text, highlighted }) => {
+  return (
+    <p className={`${highlighted ? "text-green-200" : "text-white"}`}>{text}</p>
+  );
 };
 
-export default WelcomeDisplay;
+export default TerminalEntry;
