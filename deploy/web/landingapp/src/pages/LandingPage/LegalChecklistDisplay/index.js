@@ -21,7 +21,7 @@ const LegalChecklistDisplay = ({
       for (let i = 0; i < legalInputResponses.length; i++) {
         let currentResponse = legalInputResponses[i];
         if (currentResponse === false) {
-          formComplete = false;
+          return (formComplete = false);
         } else {
           formComplete = true;
         }
