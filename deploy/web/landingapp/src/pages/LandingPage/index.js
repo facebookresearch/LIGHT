@@ -7,6 +7,7 @@
 import React, { useState, useCallback, useEffect, Fragment } from "react";
 /* CUSTOM COMPONENTS */
 import ChatDisplay from "./ChatDisplay";
+import WelcomeDisplay from "./WelcomeDisplay";
 /* IMAGES */
 import Scribe from "../../assets/images/scribe.png";
 import "./styles.css";
@@ -35,6 +36,11 @@ const LandingPage = () => {
   //CHAT DISPLAY REF
   const chatContainerRef = React.useRef(null);
   /*--------------- HANDLERS ----------------*/
+  const loginStepIncreaseHandler = () => {
+    let nextStep = loginStep + 1;
+    setLoginStep(nextStep);
+  };
+
   const inputActionTypeToggleHandler = () => {
     if (inputActionType === "say") {
       setInputActionType("do");
@@ -81,6 +87,7 @@ const LandingPage = () => {
 
   /*-------------- LIFECYCLE ----------------*/
   useEffect(() => {
+    console.log(messages);
     let updatedMessage = [introDialogueSteps[0]];
     setMessages(updatedMessage);
   }, []);
@@ -117,24 +124,38 @@ const LandingPage = () => {
 
   return (
     <>
-      <div className="_sidebar-container_ flex-1 relative">
-        <div className="w-1/4 "></div>
-      </div>
-      <div className="_chat-container_ flex-1 grow-[3] h-full">
-        <ChatDisplay
-          introStep={introStep}
-          ratingStepHandler={ratingStepHandler}
-          chatInputText={chatInputText}
-          inputActionType={inputActionType}
-          inputActionTypeToggleHandler={inputActionTypeToggleHandler}
-          inputChangeHandler={inputChangeHandler}
-          scrollToBottom={scrollToBottom}
-          messages={messages}
-          submittedActions={submittedActions}
-          onSubmit={chatSubmissionHandler}
-          chatContainerRef={chatContainerRef}
-        />
-      </div>
+      <>
+        <div className="_sidebar-container_ flex-1 relative">
+          <div className="w-1/4 ">
+            {loginStep === 0 ? (
+              <WelcomeDisplay
+                terminalDialogue={terminalDialogue}
+                loginStepIncreaseHandler={loginStepIncreaseHandler}
+              />
+            ) : null}
+          </div>
+        </div>
+        {loginStep >= 1 ? (
+          <div className="_chat-container_ flex-1 grow-[3] h-full">
+            {messages ? (
+              <ChatDisplay
+                introStep={introStep}
+                ratingStepHandler={ratingStepHandler}
+                chatInputText={chatInputText}
+                inputActionType={inputActionType}
+                inputActionTypeToggleHandler={inputActionTypeToggleHandler}
+                inputChangeHandler={inputChangeHandler}
+                scrollToBottom={scrollToBottom}
+                messages={messages}
+                submittedActions={submittedActions}
+                onSubmit={chatSubmissionHandler}
+                chatContainerRef={chatContainerRef}
+              />
+            ) : null}
+          </div>
+        ) : null}
+      </>
+      }
     </>
   );
 };
