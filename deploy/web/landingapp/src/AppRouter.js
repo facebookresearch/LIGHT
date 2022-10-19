@@ -15,11 +15,17 @@ import LoginPage from "./pages/LoginPage";
 import LogoutPage from "./pages/LogoutPage";
 import ErrorPage from "./pages/ErrorPage";
 
+import StarryNight from "./assets/images/light_starry_bg.jpg";
 import "./styles.css";
 
 const AppRouter = () => {
   return (
-    <div className="app-container">
+    <div
+      style={{
+        backgroundImage: `linear-gradient(to bottom, #0f0c2999, #302b63aa, #24243ecc), url(${StarryNight})`,
+      }}
+      className="__landing-page__ flex h-screen w-screen bg-cover bg-top bg-no-repeat"
+    >
       <HashRouter>
         <Switch>
           <Route path="/" component={LandingPage} exact />
