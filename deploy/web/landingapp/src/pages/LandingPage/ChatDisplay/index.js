@@ -44,12 +44,14 @@ const ChatDisplay = ({
           className="flex-1 grow-[5] overflow-y-scroll"
           ref={chatContainerRef}
         >
-          <ChatMessages
-            introStep={introStep}
-            messages={messages}
-            ratingStepHandler={ratingStepHandler}
-            scrollToBottom={scrollToBottom}
-          />
+          {messages ? (
+            <ChatMessages
+              introStep={introStep}
+              messages={messages}
+              ratingStepHandler={ratingStepHandler}
+              scrollToBottom={scrollToBottom}
+            />
+          ) : null}
         </div>
         <div className="flex-none h-[120px]">
           {introStep >= 1 ? (
