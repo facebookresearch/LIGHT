@@ -8,6 +8,8 @@ import React, { useState, useCallback, useEffect, Fragment } from "react";
 /* CUSTOM COMPONENTS */
 import ChatDisplay from "./ChatDisplay";
 import WelcomeDisplay from "./WelcomeDisplay";
+import LegalChecklistDisplay from "./LegalChecklistDisplay";
+import LoginDisplay from "./LoginDisplay";
 /* IMAGES */
 import Scribe from "../../assets/images/scribe.png";
 import "./styles.css";
@@ -124,18 +126,30 @@ const LandingPage = () => {
 
   return (
     <>
-      <>
+      {loginStep === 0 ? (
         <div className="_sidebar-container_ flex-1 relative">
           <div className="w-1/4 ">
-            {loginStep === 0 ? (
-              <WelcomeDisplay
-                terminalDialogue={terminalDialogue}
-                loginStepIncreaseHandler={loginStepIncreaseHandler}
-              />
-            ) : null}
+            <WelcomeDisplay
+              terminalDialogue={terminalDialogue}
+              loginStepIncreaseHandler={loginStepIncreaseHandler}
+            />
           </div>
         </div>
-        {loginStep >= 1 ? (
+      ) : null}
+      {loginStep === 1 ? (
+        <LoginDisplay loginStepIncreaseHandler={loginStepIncreaseHandler} />
+      ) : null}
+      {loginStep === 2 ? (
+        <LegalChecklistDisplay
+          legalAgreements={legalAgreements}
+          loginStepIncreaseHandler={loginStepIncreaseHandler}
+        />
+      ) : null}
+      {loginStep >= 3 ? (
+        <>
+          <div className="_sidebar-container_ flex-1 relative">
+            <div className="w-1/4 "></div>
+          </div>
           <div className="_chat-container_ flex-1 grow-[3] h-full">
             {messages ? (
               <ChatDisplay
@@ -153,9 +167,8 @@ const LandingPage = () => {
               />
             ) : null}
           </div>
-        ) : null}
-      </>
-      }
+        </>
+      ) : null}
     </>
   );
 };
