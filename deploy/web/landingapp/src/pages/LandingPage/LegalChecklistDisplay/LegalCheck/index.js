@@ -25,6 +25,7 @@ const LegalCheck = ({ itemIndex, responses, legalItem, responseHandler }) => {
             checked={isChecked}
             onChange={responseHandler}
             className="checkbox checkbox-accent"
+            checkbox-lg
           />
           <span>{legalItem}</span>
         </label>

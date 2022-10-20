@@ -22,6 +22,7 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
   };
   return (
     <div className="w-full h-full flex items-center justify-center flex-col">
+      <h1 className="text-white underline">LOGIN</h1>
       <div className="w-full flex flex-row justify-center items-start w-3/4">
         <label className="cursor-pointer label">
           <input
@@ -29,6 +30,7 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
             checked={legalAgreement}
             onChange={toggleAgreement}
             className="checkbox checkbox-accent"
+            checkbox-lg
           />
           <span className="text-white">
             By clicking “sign up” below [OR “log-in”/”continue” - whichever text
