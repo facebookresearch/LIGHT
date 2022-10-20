@@ -5,8 +5,11 @@
  */
 /* REACT */
 import React, { useState } from "react";
+import { Link, useHistory } from "react-router-dom";
 /* CUSTOM COMPONENTS */
 import TerminalEntry from "./TerminalEntry";
+/* STYLES */
+import "./styles.css";
 
 const WelcomeDisplay = ({
   terminalDialogue,
@@ -47,7 +50,7 @@ const WelcomeDisplay = ({
       ))}
       {welcomeStep === 2 ? (
         <input
-          className="focus:outline-none bg-transparent text-green-200 border-transparent border-0"
+          className=" focus:outline-none bg-transparent text-green-200 border-transparent border-0"
           onChange={terminalInputChangeHandler}
           disabled={welcomeStep !== 2}
           autoFocus={welcomeStep === 2}
@@ -68,8 +71,12 @@ const WelcomeDisplay = ({
           }}
         />
       ) : null}
+
       {rejectedAgreement ? (
-        <p className="text-white">{rejectionTerminalDialogue}</p>
+        <>
+          <p className="text-green-200"> {">" + '"' + terminalInput + '"'}</p>
+          <p className="text-white">{rejectionTerminalDialogue}</p>
+        </>
       ) : null}
     </div>
   );

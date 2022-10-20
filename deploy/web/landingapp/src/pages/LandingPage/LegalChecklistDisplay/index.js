@@ -71,23 +71,28 @@ const LegalChecklistDisplay = ({
 
   return (
     <div className="w-3/4 text-3xl text-mono ">
-      <h1 className="text-white text-4xl text-center underline">
+      <h1 className="text-white text-8xl text-center underline mb-4">
+        Legal Agreement
+      </h1>
+      <h2 className="text-white text-4xl text-center">
         To get started, please acknowledge that you have read and agreed to
         every statement below by checking each box.
-      </h1>
-      {legalAgreements.map((legalItem, index) => {
-        let responseHandler = () => legalCheckListResponseHandler(index);
+      </h2>
+      <div className="flex flex-col justify-start items-start">
+        {legalAgreements.map((legalItem, index) => {
+          let responseHandler = () => legalCheckListResponseHandler(index);
 
-        return (
-          <LegalCheck
-            key={legalItem}
-            responses={legalInputResponses}
-            itemIndex={index}
-            legalItem={legalItem}
-            responseHandler={responseHandler}
-          />
-        );
-      })}
+          return (
+            <LegalCheck
+              key={legalItem}
+              responses={legalInputResponses}
+              itemIndex={index}
+              legalItem={legalItem}
+              responseHandler={responseHandler}
+            />
+          );
+        })}
+      </div>
       {formFullyCompleted ? (
         <div className="w-full flex justify-center items-center">
           <button
