@@ -37,8 +37,8 @@ const WelcomeDisplay = ({
   };
 
   return (
-    <div className="ml-16">
-      <h1 className="text-white">WELCOME TO LIGHT</h1>
+    <div className="ml-16 font-mono">
+      <h1 className="text-white font-mono">WELCOME TO LIGHT</h1>
       {terminalDialogue.map((entry, index) => (
         <TerminalEntry
           text={entry.text}

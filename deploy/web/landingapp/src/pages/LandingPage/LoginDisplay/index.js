@@ -21,7 +21,7 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
     setLegalAgreement(updateAgreement);
   };
   return (
-    <div className="w-full h-full flex items-center justify-center flex-col">
+    <div className="w-full h-full flex items-center justify-center flex-col font-mono">
       <h1 className="text-white underline">LOGIN</h1>
       <div className="w-full flex flex-row justify-center items-start w-3/4">
         <label className="cursor-pointer label">
@@ -29,18 +29,27 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
             type="checkbox"
             checked={legalAgreement}
             onChange={toggleAgreement}
-            className="checkbox checkbox-accent"
+            className="checkbox checkbox-accent checkbox-lg"
             checkbox-lg
           />
-          <span className="text-white">
+          <span className="text-white text-3xl">
             By clicking “sign up” below [OR “log-in”/”continue” - whichever text
             will appear on the call to action button], you are agreeing to the
-            LIGHT Supplemental Terms of Service and Meta Platform, Inc.'s Data
-            Policy and you consent for us to use a cookie to track your
-            logged-in status across the LIGHT site. Learn more about how we use
-            cookies here. In order to play LIGHT, you are required to login via
-            your valid Facebook account. You must be at least 18 years of age or
-            older and reside in the United States in order to play.{" "}
+            <a
+              className="text-blue-400 hover:text-green-100 active:text-green-50"
+              target="_blank"
+              href={
+                "https://</span>docs.google.com/document/d/1RR5vo-ith7lBX--Pk7ErgD0gyjaktY-DR_SSsdLWEuc/edit#"
+              }
+            >
+              {" "}
+              LIGHT Supplemental Terms of Service and Meta Platform
+            </a>
+            , Inc.'s Data Policy and you consent for us to use a cookie to track
+            your logged-in status across the LIGHT site. Learn more about how we
+            use cookies here. In order to play LIGHT, you are required to login
+            via your valid Facebook account. You must be at least 18 years of
+            age or older and reside in the United States in order to play.{" "}
           </span>
         </label>
       </div>
