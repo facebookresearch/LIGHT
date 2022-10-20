@@ -39,17 +39,33 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
               className="text-blue-400 hover:text-green-100 active:text-green-50"
               target="_blank"
               href={
-                "https://</span>docs.google.com/document/d/1RR5vo-ith7lBX--Pk7ErgD0gyjaktY-DR_SSsdLWEuc/edit#"
+                "https://docs.google.com/document/d/1RR5vo-ith7lBX--Pk7ErgD0gyjaktY-DR_SSsdLWEuc/edit#"
               }
             >
               {" "}
               LIGHT Supplemental Terms of Service and Meta Platform
             </a>
-            , Inc.'s Data Policy and you consent for us to use a cookie to track
-            your logged-in status across the LIGHT site. Learn more about how we
-            use cookies here. In order to play LIGHT, you are required to login
-            via your valid Facebook account. You must be at least 18 years of
-            age or older and reside in the United States in order to play.{" "}
+            , Inc.'s
+            <a
+              className="text-blue-400 hover:text-green-100 active:text-green-50"
+              target="_blank"
+              href="https://www.facebook.com/about/privacy/update"
+            >
+              {" "}
+              Data Policy{" "}
+            </a>
+            and you consent for us to use a cookie to track your logged-in
+            status across the LIGHT site. Learn more about how we use cookies{" "}
+            <a
+              className="text-blue-400 hover:text-green-100 active:text-green-50"
+              target="_blank"
+              href="https://www.facebook.com/policies/cookies/"
+            >
+              here
+            </a>
+            . In order to play LIGHT, you are required to login via your valid
+            Facebook account. You must be at least 18 years of age or older and
+            reside in the United States in order to play.{" "}
           </span>
         </label>
       </div>
