@@ -89,13 +89,16 @@ const LegalChecklistDisplay = ({
         );
       })}
       {formFullyCompleted ? (
-        <button
-          onClick={() => {
-            loginStepIncreaseHandler();
-          }}
-        >
-          SUBMIT AGREEMENTS
-        </button>
+        <div className="w-full flex justify-center items-center">
+          <button
+            className="text-green-200 border-2 p-1 border-green-200 rounded"
+            onClick={() => {
+              loginStepIncreaseHandler();
+            }}
+          >
+            SUBMIT AGREEMENT
+          </button>
+        </div>
       ) : null}
     </div>
   );
