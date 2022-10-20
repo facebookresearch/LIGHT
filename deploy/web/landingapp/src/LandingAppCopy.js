@@ -7,7 +7,7 @@ const LandingAppCopy = {
       step: 0,
     },
     {
-      text: "> Look around",
+      text: "Look around",
       highlighted: true,
       step: 0,
     },
@@ -18,7 +18,7 @@ const LandingAppCopy = {
       step: 1,
     },
     {
-      text: "> “Hello…?”",
+      text: "“Hello…?”",
       highlighted: true,
       step: 1,
     },

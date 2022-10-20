@@ -26,21 +26,42 @@ const WelcomeDisplay = ({ terminalDialogue, loginStepIncreaseHandler }) => {
     }
   };
 
+  const welcomeStepAdvancementHandler = () => {
+    let nextStep = welcomeStep + 1;
+    setWelcomeStep(nextStep);
+  };
+
   return (
     <div className="ml-16">
       <h1 className="text-white">WELCOME TO LIGHT</h1>
       {terminalDialogue.map((entry, index) => (
-        <TerminalEntry text={entry.text} highlighted={entry.highlighted} />
+        <TerminalEntry
+          text={entry.text}
+          highlighted={entry.highlighted}
+          textStep={entry.step}
+          welcomeStep={welcomeStep}
+          welcomeStepAdvancementHandler={welcomeStepAdvancementHandler}
+        />
       ))}
-      <input
-        onChange={terminalInputChangeHandler}
-        value={terminalInput}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            terminalSubmissionHandler();
-          }
-        }}
-      />
+      {welcomeStep === 2 ? (
+        <input
+          className="focus:outline-none bg-transparent text-green-200 border-transparent border-0"
+          onChange={terminalInputChangeHandler}
+          autoFocus={welcomeStep === 2}
+          value={terminalInput}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              let answer = terminalInput[0];
+              console.log("Y?", answer);
+              answer = answer.toLowerCase();
+              console.log("Y?", answer);
+              if (answer === "y") {
+                terminalSubmissionHandler();
+              }
+            }
+          }}
+        />
+      ) : null}
     </div>
   );
 };

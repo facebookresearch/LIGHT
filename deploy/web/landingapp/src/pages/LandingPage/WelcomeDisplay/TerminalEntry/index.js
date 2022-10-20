@@ -6,12 +6,39 @@
 /* REACT */
 import React from "react";
 
-const TerminalEntry = ({ text, highlighted }) => {
+const TerminalEntry = ({
+  text,
+  highlighted,
+  textStep,
+  welcomeStep,
+  welcomeStepAdvancementHandler,
+}) => {
+  console.log("TEXT STEP:  ", textStep, "WELCOME STEP:  ", welcomeStep);
   return (
     <>
-      <p className={`pb-4 ${highlighted ? "text-green-200" : "text-white"}`}>
-        {text}
-      </p>
+      {textStep <= welcomeStep ? (
+        !highlighted ? (
+          <p
+            className={`pb-4 ${highlighted ? "text-green-200" : "text-white"}`}
+          >
+            {text}
+          </p>
+        ) : (
+          <>
+            <span className="text-green-200"> {">"}</span>
+            <input
+              className="focus:outline-none bg-transparent text-green-200 border-transparent border-0"
+              autoFocus={welcomeStep === textStep}
+              value={text}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  welcomeStepAdvancementHandler();
+                }
+              }}
+            />
+          </>
+        )
+      ) : null}
     </>
   );
 };
