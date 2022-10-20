@@ -8,7 +8,11 @@ import React from "react";
 
 const TerminalEntry = ({ text, highlighted }) => {
   return (
-    <p className={`${highlighted ? "text-green-200" : "text-white"}`}>{text}</p>
+    <>
+      <p className={`pb-4 ${highlighted ? "text-green-200" : "text-white"}`}>
+        {text}
+      </p>
+    </>
   );
 };
 

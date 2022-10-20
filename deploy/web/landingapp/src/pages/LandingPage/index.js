@@ -128,7 +128,7 @@ const LandingPage = () => {
     <>
       {loginStep === 0 ? (
         <div className="_sidebar-container_ flex-1 relative">
-          <div className="w-1/4 ">
+          <div className="flex w-1/2 h-full justify-center items-center">
             <WelcomeDisplay
               terminalDialogue={terminalDialogue}
               loginStepIncreaseHandler={loginStepIncreaseHandler}

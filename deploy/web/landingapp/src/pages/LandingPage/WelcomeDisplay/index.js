@@ -9,7 +9,9 @@ import React, { useState } from "react";
 import TerminalEntry from "./TerminalEntry";
 
 const WelcomeDisplay = ({ terminalDialogue, loginStepIncreaseHandler }) => {
+  /*--------------- LOCAL STATE ----------------*/
   const [terminalInput, setTerminalInput] = useState("");
+  const [welcomeStep, setWelcomeStep] = useState(0);
   /*--------------- HANDLERS ----------------*/
   const terminalInputChangeHandler = (e) => {
     let updatedValue = e.target.value;
@@ -25,7 +27,8 @@ const WelcomeDisplay = ({ terminalDialogue, loginStepIncreaseHandler }) => {
   };
 
   return (
-    <div className="">
+    <div className="ml-16">
+      <h1 className="text-white">WELCOME TO LIGHT</h1>
       {terminalDialogue.map((entry, index) => (
         <TerminalEntry text={entry.text} highlighted={entry.highlighted} />
       ))}

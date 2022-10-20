@@ -14,6 +14,7 @@ const LegalChecklistDisplay = ({
 }) => {
   /*--------------- LOCAL STATE ----------------*/
   const [legalInputResponses, setLegalInputResponses] = useState([]);
+  const [formFullyCompleted, setFormFullyCompleted] = useState(false);
   /*--------------- UTIL ----------------*/
   const completionChecker = () => {
     let formComplete = false;
@@ -31,6 +32,7 @@ const LegalChecklistDisplay = ({
   };
 
   /*--------------- LIFECYLCLE ----------------*/
+
   useEffect(() => {
     console.log(
       "LEGAL AGREEMENTS :  ",
@@ -45,13 +47,14 @@ const LegalChecklistDisplay = ({
     console.log("INITIAL RESPONSES:  ", initialResponses);
     setLegalInputResponses(initialResponses);
   }, []);
+
   useEffect(() => {
     console.log("LEGAL INPUT RESPONSES:  ", legalInputResponses);
     let formComplete = completionChecker();
-    console.log(formComplete);
-    if (formComplete) {
-      loginStepIncreaseHandler();
-    }
+    setFormFullyCompleted(formComplete);
+    // if (formComplete) {
+    //   loginStepIncreaseHandler();
+    // }
   }, [legalInputResponses]);
   /*--------------- HANDLERS ----------------*/
   const legalCheckListResponseHandler = (termIndex) => {
@@ -81,6 +84,15 @@ const LegalChecklistDisplay = ({
           />
         );
       })}
+      {formFullyCompleted ? (
+        <button
+          onClick={() => {
+            loginStepIncreaseHandler();
+          }}
+        >
+          SUBMIT AGREEMENTS
+        </button>
+      ) : null}
     </div>
   );
 };

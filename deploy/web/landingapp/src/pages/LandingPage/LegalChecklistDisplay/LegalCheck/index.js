@@ -18,8 +18,17 @@ const LegalCheck = ({ itemIndex, responses, legalItem, responseHandler }) => {
 
   return (
     <div className="text-white">
-      <input type="checkbox" checked={isChecked} onChange={responseHandler} />
-      <span>{legalItem}</span>
+      <div className="form-control">
+        <label className="cursor-pointer label">
+          <input
+            type="checkbox"
+            checked={isChecked}
+            onChange={responseHandler}
+            className="checkbox checkbox-accent"
+          />
+          <span>{legalItem}</span>
+        </label>
+      </div>
     </div>
   );
 };
