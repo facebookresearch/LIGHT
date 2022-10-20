@@ -17,7 +17,7 @@ const LegalCheck = ({ itemIndex, responses, legalItem, responseHandler }) => {
   /*--------------- HANDLERS ----------------*/
 
   return (
-    <div className="text-white">
+    <div className="flex items-start text-white">
       <div className="form-control">
         <label className="cursor-pointer label">
           <input

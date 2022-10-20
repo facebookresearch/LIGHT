@@ -140,10 +140,12 @@ const LandingPage = () => {
         <LoginDisplay loginStepIncreaseHandler={loginStepIncreaseHandler} />
       ) : null}
       {loginStep === 2 ? (
-        <LegalChecklistDisplay
-          legalAgreements={legalAgreements}
-          loginStepIncreaseHandler={loginStepIncreaseHandler}
-        />
+        <div className="flex w-full h-full justify-center items-center">
+          <LegalChecklistDisplay
+            legalAgreements={legalAgreements}
+            loginStepIncreaseHandler={loginStepIncreaseHandler}
+          />
+        </div>
       ) : null}
       {loginStep >= 3 ? (
         <>

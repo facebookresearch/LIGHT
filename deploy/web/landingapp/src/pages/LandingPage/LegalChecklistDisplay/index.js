@@ -70,7 +70,11 @@ const LegalChecklistDisplay = ({
   };
 
   return (
-    <div className="">
+    <div className="w-3/4">
+      <h1 className="text-white underline">
+        To get started, please acknowledge that you have read and agreed to
+        every statement below by checking each box.
+      </h1>
       {legalAgreements.map((legalItem, index) => {
         let responseHandler = () => legalCheckListResponseHandler(index);
 
