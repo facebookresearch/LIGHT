@@ -21,6 +21,7 @@ const LandingPage = () => {
     terminalDialogue,
     legalAgreements,
     introDialogueSteps,
+    rejectionTerminalDialogue,
   } = LANDINGAPPCOPY;
   /*---------------LOCAL STATE----------------*/
   //UI INTRO STEP
@@ -132,6 +133,7 @@ const LandingPage = () => {
             <WelcomeDisplay
               terminalDialogue={terminalDialogue}
               loginStepIncreaseHandler={loginStepIncreaseHandler}
+              rejectionTerminalDialogue={rejectionTerminalDialogue}
             />
           </div>
         </div>

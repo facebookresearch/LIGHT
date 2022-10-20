@@ -24,7 +24,7 @@ const LandingAppCopy = {
     },
     {
       text:
-        "“Welcome to LIGHT, my friend,” it says. “Beyond here is a world of strange characters, interesting locations, and goals to achieve, all serving to help out with AI research on conversational language understanding. Are you interested in participating?”",
+        "“Welcome to LIGHT, my friend,” it says. “Beyond here is a world of strange characters, interesting locations, and goals to achieve, all serving to help out with AI research on conversational language understanding. Are you interested in participating?  Y/N”",
       highlighted: false,
       step: 2,
     },

@@ -29,6 +29,7 @@ const TerminalEntry = ({
             <input
               className="focus:outline-none bg-transparent text-green-200 border-transparent border-0"
               autoFocus={welcomeStep === textStep}
+              disabled={welcomeStep !== textStep}
               value={text}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {

@@ -8,10 +8,15 @@ import React, { useState } from "react";
 /* CUSTOM COMPONENTS */
 import TerminalEntry from "./TerminalEntry";
 
-const WelcomeDisplay = ({ terminalDialogue, loginStepIncreaseHandler }) => {
+const WelcomeDisplay = ({
+  terminalDialogue,
+  loginStepIncreaseHandler,
+  rejectionTerminalDialogue,
+}) => {
   /*--------------- LOCAL STATE ----------------*/
   const [terminalInput, setTerminalInput] = useState("");
   const [welcomeStep, setWelcomeStep] = useState(0);
+  const [rejectedAgreement, setRejectedAgreement] = useState(false);
   /*--------------- HANDLERS ----------------*/
   const terminalInputChangeHandler = (e) => {
     let updatedValue = e.target.value;
@@ -47,20 +52,26 @@ const WelcomeDisplay = ({ terminalDialogue, loginStepIncreaseHandler }) => {
         <input
           className="focus:outline-none bg-transparent text-green-200 border-transparent border-0"
           onChange={terminalInputChangeHandler}
+          disabled={welcomeStep !== 2}
           autoFocus={welcomeStep === 2}
           value={terminalInput}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               let answer = terminalInput[0];
-              console.log("Y?", answer);
               answer = answer.toLowerCase();
-              console.log("Y?", answer);
               if (answer === "y") {
                 terminalSubmissionHandler();
+              }
+              if (answer === "n") {
+                setRejectedAgreement(true);
+                welcomeStepAdvancementHandler();
               }
             }
           }}
         />
+      ) : null}
+      {rejectedAgreement ? (
+        <p className="text-white">{rejectionTerminalDialogue}</p>
       ) : null}
     </div>
   );
