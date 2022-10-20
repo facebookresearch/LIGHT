@@ -73,7 +73,7 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
         {legalAgreement ? (
           <button
             disabled={!legalAgreement}
-            className="login-form__submit"
+            className="text-3xl text-green-200 border-2 p-1 border-green-200 rounded"
             onClick={loginHandler}
           >
             Sign In With Facebook

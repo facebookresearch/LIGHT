@@ -128,14 +128,12 @@ const LandingPage = () => {
   return (
     <>
       {loginStep === 0 ? (
-        <div className="_sidebar-container_ flex-1 relative">
-          <div className="flex w-1/2 h-full justify-center items-center">
-            <WelcomeDisplay
-              terminalDialogue={terminalDialogue}
-              loginStepIncreaseHandler={loginStepIncreaseHandler}
-              rejectionTerminalDialogue={rejectionTerminalDialogue}
-            />
-          </div>
+        <div className="flex w-1/2 h-full justify-start items-center">
+          <WelcomeDisplay
+            terminalDialogue={terminalDialogue}
+            loginStepIncreaseHandler={loginStepIncreaseHandler}
+            rejectionTerminalDialogue={rejectionTerminalDialogue}
+          />
         </div>
       ) : null}
       {loginStep === 1 ? (
