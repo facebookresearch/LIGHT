@@ -24,11 +24,8 @@ const WelcomeDisplay = ({
   };
 
   const terminalSubmissionHandler = () => {
-    if (terminalInput === "y") {
-      loginStepIncreaseHandler();
-    } else {
-      setTerminalInput("");
-    }
+    loginStepIncreaseHandler();
+    setTerminalInput("");
   };
 
   const welcomeStepAdvancementHandler = () => {
@@ -37,7 +34,7 @@ const WelcomeDisplay = ({
   };
 
   return (
-    <div className="ml-16 font-mono flex items-start flex-col justify-start">
+    <div className="ml-16 font-mono text-3xl flex items-start flex-col justify-start">
       <h1 className="text-white font-mono">WELCOME TO LIGHT</h1>
       {terminalDialogue.map((entry, index) => (
         <TerminalEntry
@@ -59,10 +56,11 @@ const WelcomeDisplay = ({
             if (e.key === "Enter") {
               let answer = terminalInput[0];
               answer = answer.toLowerCase();
-              if (answer === "y") {
+              console.log("ANSWER:  ", answer == "y");
+              if (answer == "y") {
                 terminalSubmissionHandler();
               }
-              if (answer === "n") {
+              if (answer == "n") {
                 setRejectedAgreement(true);
                 welcomeStepAdvancementHandler();
               }

@@ -17,19 +17,17 @@ const LegalCheck = ({ itemIndex, responses, legalItem, responseHandler }) => {
   /*--------------- HANDLERS ----------------*/
 
   return (
-    <div className="flex items-start text-white">
-      <div className="form-control">
-        <label className="cursor-pointer label">
-          <input
-            type="checkbox"
-            checked={isChecked}
-            onChange={responseHandler}
-            className="checkbox checkbox-accent"
-            checkbox-lg
-          />
-          <span>{legalItem}</span>
-        </label>
-      </div>
+    <div className=" text-white">
+      <label className="cursor-pointer label flex flex-row items-start justify-starts">
+        <input
+          type="checkbox"
+          checked={isChecked}
+          onChange={responseHandler}
+          className="checkbox checkbox-accent checkbox-lg  mr-3"
+          checkbox-lg
+        />
+        <span>{legalItem}</span>
+      </label>
     </div>
   );
 };

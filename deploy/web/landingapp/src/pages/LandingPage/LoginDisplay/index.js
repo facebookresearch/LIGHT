@@ -22,14 +22,14 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
   };
   return (
     <div className="w-full h-full flex items-center justify-center flex-col font-mono">
-      <h1 className="text-white underline">LOGIN</h1>
+      <h1 className="text-white underline text-6xl mb-1">LIGHT LOGIN</h1>
       <div className="w-full flex flex-row justify-center items-start w-3/4">
         <label className="cursor-pointer label">
           <input
             type="checkbox"
             checked={legalAgreement}
             onChange={toggleAgreement}
-            className="checkbox checkbox-accent checkbox-lg"
+            className="checkbox checkbox-accent checkbox-lg mr-3"
             checkbox-lg
           />
           <span className="text-white text-3xl">
@@ -76,7 +76,7 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
             className="text-3xl text-green-200 border-2 p-1 border-green-200 rounded"
             onClick={loginHandler}
           >
-            Sign In With Facebook
+            Log In
           </button>
         ) : null}
         {/* <form action="/auth/fblogin?next={{next}}" method="get">

@@ -24,7 +24,7 @@ const TerminalEntry = ({
             {text}
           </p>
         ) : (
-          <>
+          <div className="flex flex-row">
             <span className="text-green-200"> {">"}</span>
             <input
               className="focus:outline-none bg-transparent text-green-200 border-transparent border-0"
@@ -37,7 +37,7 @@ const TerminalEntry = ({
                 }
               }}
             />
-          </>
+          </div>
         )
       ) : null}
     </>
