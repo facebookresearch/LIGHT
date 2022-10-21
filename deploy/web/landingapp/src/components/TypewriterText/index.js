@@ -6,14 +6,23 @@
 /* REACT */
 import React, { useState, useEffect } from "react";
 
-const TypewriterText = ({ text, welcomeStepAdvancementHandler }) => {
-  const [remainingTextToType, setRemainingTextToType] = useState(text);
+const TypewriterText = ({
+  text,
+  textStep,
+  welcomeStep,
+  welcomeStepAdvancementHandler,
+}) => {
+  const [isCurrentStep, setIsCurrentStep] = useState(false);
   const [typedText, setTypedText] = useState("");
 
   /*--------------- LIFECYLCLE ----------------*/
   useEffect(() => {
-    setRemainingTextToType(text);
-  }, []);
+    if (welcomeStep === textStep || welcomeStep === textStep + 1) {
+      setIsCurrentStep(true);
+    } else {
+      setIsCurrentStep(false);
+    }
+  }, [welcomeStep]);
   useEffect(() => {
     const timeout = setTimeout(() => {
       setTypedText(text.slice(0, typedText.length + 1));
@@ -26,7 +35,7 @@ const TypewriterText = ({ text, welcomeStepAdvancementHandler }) => {
   /*--------------- HANDLERS ----------------*/
 
   return (
-    <div className=" text-white">
+    <div className={`${isCurrentStep ? "text-white" : "text-gray-500"}`}>
       <p>{typedText}</p>
     </div>
   );

@@ -23,6 +23,8 @@ const TerminalEntry = ({
         !highlighted ? (
           <TypewriterText
             text={text}
+            textStep={textStep}
+            welcomeStep={welcomeStep}
             welcomeStepAdvancementHandler={welcomeStepAdvancementHandler}
           />
         ) : (

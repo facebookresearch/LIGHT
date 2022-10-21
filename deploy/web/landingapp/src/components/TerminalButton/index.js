@@ -16,20 +16,11 @@ const TerminalButton = ({
   const [isCurrentStep, setIsCurrentStep] = useState(false);
   /*--------------- LIFECYLCLE ----------------*/
   useEffect(() => {
-    console.log(
-      "STEP:  ",
-      textStep,
-      "WELCOME STEP:  ",
-      welcomeStep,
-      "EQUAL?",
-      welcomeStep === textStep
-    );
     if (welcomeStep === textStep) {
       setIsCurrentStep(true);
     } else {
       setIsCurrentStep(false);
     }
-    console.log("isCurrentStep?:  ", isCurrentStep);
   }, [welcomeStep]);
 
   /*--------------- HANDLERS ----------------*/
