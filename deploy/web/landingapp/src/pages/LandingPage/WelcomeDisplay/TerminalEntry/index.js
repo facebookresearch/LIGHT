@@ -5,6 +5,9 @@
  */
 /* REACT */
 import React from "react";
+/* CUSTOM COMPONENTS */
+import TypewriterText from "../../../../components/TypewriterText";
+import TerminalButton from "../../../../components/TerminalButton";
 
 const TerminalEntry = ({
   text,
@@ -18,26 +21,17 @@ const TerminalEntry = ({
     <>
       {textStep <= welcomeStep ? (
         !highlighted ? (
-          <p
-            className={`pb-4 ${highlighted ? "text-green-200" : "text-white"}`}
-          >
-            {text}
-          </p>
+          <TypewriterText
+            text={text}
+            welcomeStepAdvancementHandler={welcomeStepAdvancementHandler}
+          />
         ) : (
-          <div className="flex flex-row">
-            <span className="text-green-200"> {">"}</span>
-            <input
-              className="focus:outline-none bg-transparent text-green-200 border-transparent border-0"
-              autoFocus={welcomeStep === textStep}
-              disabled={welcomeStep !== textStep}
-              value={text}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  welcomeStepAdvancementHandler();
-                }
-              }}
-            />
-          </div>
+          <TerminalButton
+            text={text}
+            textStep={textStep}
+            welcomeStep={welcomeStep}
+            welcomeStepAdvancementHandler={welcomeStepAdvancementHandler}
+          />
         )
       ) : null}
     </>

@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 /* CUSTOM COMPONENTS */
 import TerminalEntry from "./TerminalEntry";
+import TerminalButton from "../../../components/TerminalButton";
 /* STYLES */
 import "./styles.css";
 
@@ -31,6 +32,11 @@ const WelcomeDisplay = ({
     setTerminalInput("");
   };
 
+  const terminalRejectionHandler = () => {
+    setRejectedAgreement(true);
+    welcomeStepAdvancementHandler();
+  };
+
   const welcomeStepAdvancementHandler = () => {
     let nextStep = welcomeStep + 1;
     setWelcomeStep(nextStep);
@@ -48,33 +54,27 @@ const WelcomeDisplay = ({
           welcomeStepAdvancementHandler={welcomeStepAdvancementHandler}
         />
       ))}
-      {welcomeStep === 2 ? (
-        <input
-          className=" focus:outline-none bg-transparent text-green-200 border-transparent border-0"
-          onChange={terminalInputChangeHandler}
-          disabled={welcomeStep !== 2}
-          autoFocus={welcomeStep === 2}
-          value={terminalInput}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              let answer = terminalInput[0];
-              answer = answer.toLowerCase();
-              console.log("ANSWER:  ", answer == "y");
-              if (answer == "y") {
-                terminalSubmissionHandler();
-              }
-              if (answer == "n") {
-                setRejectedAgreement(true);
-                welcomeStepAdvancementHandler();
-              }
-            }
-          }}
-        />
+      {welcomeStep >= 5 ? (
+        <div>
+          {rejectedAgreement ? null : (
+            <TerminalButton
+              text={"YES"}
+              textStep={5}
+              welcomeStep={welcomeStep}
+              welcomeStepAdvancementHandler={terminalSubmissionHandler}
+            />
+          )}
+          <TerminalButton
+            text={"NO"}
+            textStep={5}
+            welcomeStep={welcomeStep}
+            welcomeStepAdvancementHandler={terminalRejectionHandler}
+          />
+        </div>
       ) : null}
 
       {rejectedAgreement ? (
         <>
-          <p className="text-green-200"> {">" + '"' + terminalInput + '"'}</p>
           <p className="text-white">{rejectionTerminalDialogue}</p>
         </>
       ) : null}
@@ -83,6 +83,3 @@ const WelcomeDisplay = ({
 };
 
 export default WelcomeDisplay;
-
-// "If  > “Yes”: continue to pre-login flow";
-// "If  > “No”: ";

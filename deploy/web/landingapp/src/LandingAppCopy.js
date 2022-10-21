@@ -9,24 +9,24 @@ const LandingAppCopy = {
     {
       text: "Look around",
       highlighted: true,
-      step: 0,
+      step: 1,
     },
     {
       text:
         "You can’t really make out much of anything near you. It’s almost as if it’s all a blur, or like you’re suspended underwater. One spot of clarity in the noise: a figure in a cloak gestures in your direction.",
       highlighted: false,
-      step: 1,
+      step: 2,
     },
     {
       text: "“Hello…?”",
       highlighted: true,
-      step: 1,
+      step: 3,
     },
     {
       text:
         "“Welcome to LIGHT, my friend,” it says. “Beyond here is a world of strange characters, interesting locations, and goals to achieve, all serving to help out with AI research on conversational language understanding. Are you interested in participating?  Y/N”",
       highlighted: false,
-      step: 2,
+      step: 4,
     },
   ],
   rejectionTerminalDialogue:
