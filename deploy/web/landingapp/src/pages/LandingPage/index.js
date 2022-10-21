@@ -7,25 +7,17 @@
 import React, { useState, useCallback, useEffect, Fragment } from "react";
 /* CUSTOM COMPONENTS */
 import ChatDisplay from "./ChatDisplay";
-import WelcomeDisplay from "./WelcomeDisplay";
 import LegalChecklistDisplay from "./LegalChecklistDisplay";
-import LoginDisplay from "./LoginDisplay";
 /* IMAGES */
-import Scribe from "../../assets/images/scribe.png";
 import "./styles.css";
 /* COPY */
 import LANDINGAPPCOPY from "../../LandingAppCopy";
 
 const LandingPage = () => {
-  const {
-    terminalDialogue,
-    legalAgreements,
-    introDialogueSteps,
-    rejectionTerminalDialogue,
-  } = LANDINGAPPCOPY;
+  const { legalAgreements, introDialogueSteps } = LANDINGAPPCOPY;
   /*---------------LOCAL STATE----------------*/
   //UI INTRO STEP
-  const [loginStep, setLoginStep] = useState(0);
+  const [postLoginStep, setPostLoginStep] = useState(0);
   //UI INTRO STEP
   const [introStep, setIntroStep] = useState(0);
   //CHAT MESSAGES
@@ -39,9 +31,9 @@ const LandingPage = () => {
   //CHAT DISPLAY REF
   const chatContainerRef = React.useRef(null);
   /*--------------- HANDLERS ----------------*/
-  const loginStepIncreaseHandler = () => {
-    let nextStep = loginStep + 1;
-    setLoginStep(nextStep);
+  const postLoginStepIncreaseHandler = () => {
+    let nextStep = postLoginStep + 1;
+    setPostLoginStep(nextStep);
   };
 
   const inputActionTypeToggleHandler = () => {
@@ -127,27 +119,15 @@ const LandingPage = () => {
 
   return (
     <>
-      {loginStep === 0 ? (
-        <div className="flex w-1/2 h-full justify-start items-center">
-          <WelcomeDisplay
-            terminalDialogue={terminalDialogue}
-            loginStepIncreaseHandler={loginStepIncreaseHandler}
-            rejectionTerminalDialogue={rejectionTerminalDialogue}
-          />
-        </div>
-      ) : null}
-      {loginStep === 1 ? (
-        <LoginDisplay loginStepIncreaseHandler={loginStepIncreaseHandler} />
-      ) : null}
-      {loginStep === 2 ? (
+      {postLoginStep === 0 ? (
         <div className="flex w-full h-full justify-center items-center">
           <LegalChecklistDisplay
             legalAgreements={legalAgreements}
-            loginStepIncreaseHandler={loginStepIncreaseHandler}
+            postLoginStepIncreaseHandler={postLoginStepIncreaseHandler}
           />
         </div>
       ) : null}
-      {loginStep >= 3 ? (
+      {postLoginStep >= 1 ? (
         <>
           <div className="_sidebar-container_ flex-1 relative">
             <div className="w-1/4 "></div>

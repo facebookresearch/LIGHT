@@ -10,7 +10,7 @@ import LegalCheck from "./LegalCheck";
 
 const LegalChecklistDisplay = ({
   legalAgreements,
-  loginStepIncreaseHandler,
+  postLoginStepIncreaseHandler,
 }) => {
   /*--------------- LOCAL STATE ----------------*/
   const [legalInputResponses, setLegalInputResponses] = useState([]);
@@ -53,7 +53,7 @@ const LegalChecklistDisplay = ({
     let formComplete = completionChecker();
     setFormFullyCompleted(formComplete);
     // if (formComplete) {
-    //   loginStepIncreaseHandler();
+    //   postLoginStepIncreaseHandler();
     // }
   }, [legalInputResponses]);
   /*--------------- HANDLERS ----------------*/
@@ -98,7 +98,7 @@ const LegalChecklistDisplay = ({
           <button
             className="text-green-200 border-2 p-1 border-green-200 rounded"
             onClick={() => {
-              loginStepIncreaseHandler();
+              postLoginStepIncreaseHandler();
             }}
           >
             SUBMIT AGREEMENT
