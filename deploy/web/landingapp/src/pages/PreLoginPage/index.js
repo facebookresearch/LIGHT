@@ -12,7 +12,7 @@ import LoginDisplay from "./LoginDisplay";
 /* COPY */
 import LANDINGAPPCOPY from "../../LandingAppCopy";
 
-const LandingPage = () => {
+const PreLoginPage = () => {
   const { terminalDialogue, rejectionTerminalDialogue } = LANDINGAPPCOPY;
   let history = useHistory();
   /*---------------LOCAL STATE----------------*/
@@ -34,7 +34,7 @@ const LandingPage = () => {
   }, [loginStep]);
 
   return (
-    <>
+    <div className="flex w-full h-full justify-center items-center flex-col">
       {loginStep === 0 ? (
         <div className="flex w-full h-full justify-center items-center">
           <WelcomeDisplay
@@ -47,8 +47,9 @@ const LandingPage = () => {
       {loginStep === 1 ? (
         <LoginDisplay loginStepIncreaseHandler={loginStepIncreaseHandler} />
       ) : null}
-    </>
+      <div className="__welcome-footer__ w-full h-fit"></div>
+    </div>
   );
 };
 
-export default LandingPage;
+export default PreLoginPage;

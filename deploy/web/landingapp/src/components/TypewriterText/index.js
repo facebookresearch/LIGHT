@@ -6,6 +6,9 @@
 /* REACT */
 import React, { useState, useEffect } from "react";
 
+import LandingAppCopy from "../../LandingAppCopy";
+const { terminalTypingSpeed } = LandingAppCopy;
+
 const TypewriterText = ({
   text,
   textStep,
@@ -26,7 +29,7 @@ const TypewriterText = ({
   useEffect(() => {
     const timeout = setTimeout(() => {
       setTypedText(text.slice(0, typedText.length + 1));
-    }, 100);
+    }, terminalTypingSpeed);
     if (text.length === typedText.length) {
       welcomeStepAdvancementHandler();
     }

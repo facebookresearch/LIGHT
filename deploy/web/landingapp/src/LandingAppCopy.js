@@ -1,4 +1,5 @@
 const LandingAppCopy = {
+  terminalTypingSpeed: 15,
   terminalDialogue: [
     {
       text:
@@ -24,13 +25,13 @@ const LandingAppCopy = {
     },
     {
       text:
-        "“Welcome to LIGHT, my friend,” it says. “Beyond here is a world of strange characters, interesting locations, and goals to achieve, all serving to help out with AI research on conversational language understanding. Are you interested in participating?  Y/N”",
+        "“Welcome to LIGHT, my friend,” it says. “Beyond here is a world of strange characters, interesting locations, and goals to achieve, all serving to help out with AI research on conversational language understanding. Are you interested in participating?”",
       highlighted: false,
       step: 4,
     },
   ],
   rejectionTerminalDialogue:
-    "“Alright then, perhaps some other time,” the figure responds, before vanishing entirely. The page is now static, but still links to the FAQ and Terms pages.",
+    "“Alright then, perhaps some other time,” the figure responds, before vanishing entirely.",
   preLoginAgreement:
     "By clicking “sign up” below [OR “log-in”/”continue” - whichever text will appear on the call to action button], you are agreeing to the LIGHT Supplemental Terms of Service and Meta Platform, Inc.'s Data Policy and you consent for us to use a cookie to track your logged-in status across the LIGHT site. Learn more about how we use cookies here. In order to play LIGHT, you are required to login via your valid Facebook account. You must be at least 18 years of age or older and reside in the United States in order to play.",
   legalAgreements: [

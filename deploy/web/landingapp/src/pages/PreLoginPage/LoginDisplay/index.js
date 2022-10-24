@@ -3,11 +3,14 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
+/* REACT */
 import React, { useState } from "react";
-
+/* STYLES */
 import "./styles.css";
+/* CUSTOM COMPONENTS */
+import CheckBox from "../../../components/CheckBox";
 
+//LoginDisplay -
 const LoginDisplay = ({ loginStepIncreaseHandler }) => {
   /*--------------- LOCAL STATE ----------------*/
   const [legalAgreement, setLegalAgreement] = useState(false);
@@ -23,8 +26,12 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
   return (
     <div className="w-full h-full flex items-center justify-center flex-col font-mono">
       <h1 className="text-white underline text-6xl mb-1">LIGHT LOGIN</h1>
-      <div className="w-full flex flex-row justify-center items-start w-3/4">
+      <div className=" flex flex-row justify-center items-start w-3/4">
         <label className="cursor-pointer label">
+          {/* <CheckBox
+            checkStatus={legalAgreement}
+            checkFunction={toggleAgreement}
+          /> */}
           <input
             type="checkbox"
             checked={legalAgreement}
