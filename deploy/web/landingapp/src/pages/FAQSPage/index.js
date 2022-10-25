@@ -26,44 +26,6 @@ const FAQSPage = () => {
               LIGHT FAQ
             </h1>
           </div>
-          <div className="__internalcontext-container__ bg-blue-400 border-black border-4 p-6">
-            <p className="mb-4">
-              <span className="font-bold"> Meta-internal context: </span>
-              The FAIR Labs Dialogue research group has approval (LAMA,
-              director) to release our LIGHT chatbot to the public as a
-              multiplayer chat game where players and bots interact within a
-              shared fantasy world. The primary goal of the demo will be to
-              drive conversational research outcomes. Specifically, this setting
-              provides rich grounded dialogue (tied to the fantasy world),
-              multiparty interaction, human-human dialogue, dialogue + action
-              episodes, and goal-driven interactions, all extending the standard
-              interaction type and model feedback we get in other bots like
-              BlenderBot. The team will release this specifically via targeted
-              FB ads for users who have shown interest in fantasy games, role
-              playing games, interactive fiction, and similar categories.
-              Previously, the team released single-player versions of the game
-              on Messenger in the past, and this release is the culmination of
-              what the project has been trying to establish.
-            </p>
-            <p className="mb-4">
-              The following FAQ will live on the LIGHT demo website (currently
-              accessible on VPN only). The landing page also contains a
-              checklist of acknowledgements, such as the user knows the bot may
-              say unsafe things, the user knows we will save conversational data
-              for research purposes, and links to our terms of service and
-              privacy policy being prepared by Legal. Users must acknowledge all
-              terms of use before they are able to interact with the bot.
-            </p>
-            <p className="mb-4">
-              We’re using this FAQ as a form of “reactive comms” for our initial
-              beta deploy of the demo. The audience of the FAQ is the users, who
-              will be several thousand people from the general, 18+ US public,
-              sourced by Facebook ads. This FAQ will also be used for media
-              reactively should they inquire about LIGHT. Later on (TBD 2023) we
-              hope to do a broader public deployment with proactive comms, and
-              at that point this FAQ will be seen by a larger audience.
-            </p>
-          </div>
           <div className="__about-container__ text-white">
             <h4 className="font-bold underline">About LIGHT</h4>
             <p className="mb-4">
