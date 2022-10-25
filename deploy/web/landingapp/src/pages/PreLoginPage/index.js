@@ -49,19 +49,20 @@ const PreLoginPage = () => {
       ) : null}
       <div className="__welcome-footer__ w-full h-fit text-white">
         <div className="p-2">
+          {" "}
           <Link
-            to="terms"
+            to="tos"
             className="cursor-pointer underline hover:text-green-100 mr-2"
           >
-            {" "}
-            Terms and Conditions{" "}
+            Terms
           </Link>
+          {" "}
           <Link
-            to="faqs"
+            to="faq"
             className="cursor-pointer underline hover:text-green-100"
           >
             {" "}
-            FAQS{" "}
+            FAQ{" "}
           </Link>
         </div>
       </div>

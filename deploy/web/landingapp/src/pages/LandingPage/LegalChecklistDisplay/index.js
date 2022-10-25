@@ -70,11 +70,8 @@ const LegalChecklistDisplay = ({
   };
 
   return (
-    <div className="w-3/4 text-3xl text-mono mb-20 ">
-      <h1 className="text-white text-8xl text-center underline mb-4">
-        Legal Agreement
-      </h1>
-      <h2 className="text-white text-4xl text-center">
+    <div className="w-3/4 text-2xl text-mono ">
+      <h2 className="text-white text-3xl text-center">
         To get started, please acknowledge that you have read and agreed to
         every statement below by checking each box.
       </h2>
@@ -93,21 +90,18 @@ const LegalChecklistDisplay = ({
           );
         })}
       </div>
-      <div className="w-full flex justify-center items-center mt-6 mb-10">
-        <button
-          disabled={!formFullyCompleted}
-          className={`text-3xl ${
-            formFullyCompleted
-              ? "text-green-200 border-green-200 hover:text-blue-400 hover:border-blue-400"
-              : "text-gray-200 border-gray-200"
-          } border-2 p-1 rounded`}
-          onClick={() => {
-            postLoginStepIncreaseHandler();
-          }}
-        >
-          SUBMIT AGREEMENT
-        </button>
-      </div>
+      {formFullyCompleted ? (
+        <div className="w-full flex justify-center items-center">
+          <button
+            className="text-green-200 border-2 p-1 border-green-200 rounded"
+            onClick={() => {
+              postLoginStepIncreaseHandler();
+            }}
+          >
+            Accept Agreement
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 };

@@ -23,7 +23,7 @@
     "emoji-mart": "^3.0.1",
     "eslint-plugin-react-hooks": "^1.6.1",
     "leaflet": "1.4.0",
-    "react": "16.8.3",
+    "react": "^16.9.0",
     "react-dom": "16.8.3",
     "react-icons": "^4.4.0",
     "react-leaflet": "2.2.1",

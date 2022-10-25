@@ -23,36 +23,31 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
     let updateAgreement = !legalAgreement;
     setLegalAgreement(updateAgreement);
   };
+
+  const nextLoc = new URLSearchParams(window.location.search).get("next");
+  const targetStr =
+    "/auth/fblogin" + (nextLoc !== null ? "?next=" + nextLoc : "");
   return (
     <div className="w-full h-full flex items-center justify-center flex-col font-mono">
-      <h1 className="text-white underline text-6xl mb-1">LIGHT LOGIN</h1>
+      <h1 className="text-white underline text-4xl mb-1">Login to LIGHT</h1>
       <div className=" flex flex-row justify-center items-start w-3/4">
         <label className="cursor-pointer label flex flex-row">
           <CheckBox
             checkStatus={legalAgreement}
             checkFunction={toggleAgreement}
           />
-          {/* <input
-            type="checkbox"
-            checked={legalAgreement}
-            onChange={toggleAgreement}
-            className="checkbox checkbox-accent checkbox-lg mr-3"
-            checkbox-lg
-          /> */}
-          <span className="text-white text-3xl">
-            By clicking “sign up” below [OR “log-in”/”continue” - whichever text
-            will appear on the call to action button], you are agreeing to the
+          <span className="text-white text-2xl">
+            By clicking “Sign in with Facebook” below, you are agreeing to the
+            LIGHT
             <a
               className="text-blue-400 hover:text-green-100 active:text-green-50"
               target="_blank"
-              href={
-                "https://docs.google.com/document/d/1RR5vo-ith7lBX--Pk7ErgD0gyjaktY-DR_SSsdLWEuc/edit#"
-              }
+              href={"/tos"}
             >
               {" "}
-              LIGHT Supplemental Terms of Service and Meta Platform
+              Supplemental Terms of Service{" "}
             </a>
-            , Inc.'s
+            and Meta Platform, Inc.'s
             <a
               className="text-blue-400 hover:text-green-100 active:text-green-50"
               target="_blank"
@@ -77,17 +72,15 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
         </label>
       </div>
       <div className="w-full flex justify-center items-center">
-        <button
-          disabled={!legalAgreement}
-          className={`text-3xl ${
-            legalAgreement
-              ? "text-green-200 border-green-200 hover:text-blue-400 hover:border-blue-400"
-              : "text-gray-200 border-gray-200"
-          } border-2 p-1 rounded`}
-          onClick={loginHandler}
-        >
-          Log In
-        </button>
+        <form action={targetStr} method="get">
+          <button
+            className="text-2xl text-green-200 border-2 p-1 border-green-200 rounded hover:text-white"
+            type="submit"
+            disabled={!legalAgreement}
+          >
+            Sign In With Facebook
+          </button>
+        </form>
       </div>
     </div>
   );

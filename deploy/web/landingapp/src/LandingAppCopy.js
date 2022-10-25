@@ -1,5 +1,7 @@
+import React from "react";
+
 const LandingAppCopy = {
-  terminalTypingSpeed: 1,
+  terminalTypingSpeed: 7,
   terminalDialogue: [
     {
       text:
@@ -33,44 +35,63 @@ const LandingAppCopy = {
   rejectionTerminalDialogue:
     "“Alright then, perhaps some other time,” the figure responds, before vanishing entirely.",
   preLoginAgreement:
-    "By clicking “sign up” below [OR “log-in”/”continue” - whichever text will appear on the call to action button], you are agreeing to the LIGHT Supplemental Terms of Service and Meta Platform, Inc.'s Data Policy and you consent for us to use a cookie to track your logged-in status across the LIGHT site. Learn more about how we use cookies here. In order to play LIGHT, you are required to login via your valid Facebook account. You must be at least 18 years of age or older and reside in the United States in order to play.",
+    "By clicking “log in with Facebook” below, you are agreeing to the LIGHT Supplemental Terms of Service and Meta Platform, Inc.'s Data Policy and you consent for us to use a cookie to track your logged-in status across the LIGHT site. Learn more about how we use cookies here. In order to play LIGHT, you are required to login via your valid Facebook account. You must be at least 18 years of age or older and reside in the United States in order to play.",
   legalAgreements: [
     "1. I am 18 years of age or older (or, if higher than 18, the age of majority in the jurisdiction from which I am accessing LIGHT) and reside in the United States.",
     "2. I understand LIGHT is for research, and LIGHT Agents can make untrue or offensive statements. If this happens, I pledge to report these issues to help improve future research. Furthermore, I agree not to intentionally trigger others to make offensive statements.",
     "3. I understand that interactions in LIGHT are set in a fantasy environment, and content inside is not intended to reflect real-world circumstances.",
-    "4. I understand that in-game interactions will be published publicly and used for future research. Therefore, I agree not to mention any personally identifiable information in the content of my conversations, including names, addresses, emails, and phone numbers. [link to additional info on our use of your data in the FAQ’s]",
+    <>
+      {"4. I understand that in-game interactions will be "}
+      <a
+        className="text-blue-500 cursor-pointer underline hover:text-green-100 "
+        href="/faq#meta-data-access"
+      >
+        {"published publicly and used for future research."}
+      </a>
+      {
+        " Therefore, I agree not to mention any personally identifiable information in the content of my conversations, including names, addresses, emails, and phone numbers."
+      }
+    </>,
   ],
   introDialogueSteps: [
     {
       action: "say",
-      actor: "Dungeon Master",
-      text: "Welcome to Light.",
+      actor: "Mysterious Figure",
+      text: "Let's get you oriented first",
       isSelf: false,
     },
     {
       action: "say",
-      actor: "Dungeon Master",
+      actor: "Mysterious Figure",
       text: "Try saying hello using the chat bar.",
       isSelf: false,
     },
     {
       action: "say",
-      actor: "Dungeon Master",
+      actor: "Mysterious Figure",
       text:
-        "Well done!  Toggle between saying and doing using the chat button or pressing the ` key.  Try doing something.",
+        "Well done! Can you do something too? Toggle between saying and doing using the chat button or pressing the ` key.  Try doing something.",
       isSelf: false,
     },
     {
       action: "say",
-      actor: "Dungeon Master",
+      actor: "Mysterious Figure",
       text:
-        "Well done!  You can like and dislike messages.  Try clicking on a rating system.",
+        "Great! Also important to the work here is that you can rate messages.  Try clicking on a rating.",
       isSelf: false,
     },
     {
       action: "say",
-      actor: "Dungeon Master",
-      text: "Great job you are now ready to enter the world of light.",
+      actor: "Mysterious Figure",
+      text:
+        "Seems you know the basics now. With that, have some of this to clear your head.",
+      isSelf: false,
+    },
+    {
+      action: "do",
+      actor: "Mysterious Figure",
+      text:
+        "The mysterious figure gives you a mysterious beverage. You drink it. The world begins to clear up a little bit.",
       isSelf: false,
     },
   ],
