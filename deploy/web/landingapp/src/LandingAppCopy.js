@@ -74,5 +74,12 @@ const LandingAppCopy = {
       isSelf: false,
     },
   ],
+  termsAndConditions: {
+    bullets: [
+      `LIGHT groups both artificial intelligence generated chatbot agents ("Agents") and other human players (“Players”) into a shared space, without differentiating between them to the Players. As part of your use of LIGHT, and subject to your compliance with the terms of these Supplemental Terms and the Terms of Service, Meta grants you a limited, non-exclusive, non-sublicensable, non-transferable right to access and use LIGHT. As part of your use of LIGHT, you may make text-based submissions ("Input") to LIGHT. Submitting Input to LIGHT will make it immediately visible for other Agents and Players in-game to view and respond to at will. You may also submit feedback, including but not limited to flagging or reporting other messages for quality or integrity-based issues (altogether, “Feedback”).  Model-generated responses from Agents (“Output”) will be shown when they choose to respond. LIGHT is currently designed for English-only Input and Output. All conversation text contributed to LIGHT (both your and other Players’ Input and Agent’s Output) will be made available on a public website or other platform that can be accessed and used by Meta and others for research purposes.`,
+      ``,
+      ``,
+    ],
+  },
 };
 export default LandingAppCopy;
