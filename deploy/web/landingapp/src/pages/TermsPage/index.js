@@ -12,13 +12,15 @@ const TermsPage = () => {
   return (
     <div className="__termspage-container__ w-full h-full overflow-y-scroll">
       <div
-        className="text-green-200 text-2xl ml-3"
+        className="text-white cursor-pointer hover:text-green-100 p-4 text-2xl"
         onClick={() => history.goBack()}
       >
         Back
       </div>
       <div className="__termspage-body__ flex justify-center items-center flex-col text-white">
-        <h1 className="__terms-header__ text-6xl  underline">Terms</h1>
+        <h1 className="__faqspage-header_text__ text-white font-extrabold text-6xl">
+          Terms & Conditions
+        </h1>
         <div className="termspage-text__container justify-center items-center w-3/5 h-full text-2xl">
           <p className="mb-4">
             By using the LIGHT platform ("LIGHT"), you agree to be bound by Meta
