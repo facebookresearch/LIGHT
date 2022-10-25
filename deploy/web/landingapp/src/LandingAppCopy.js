@@ -1,5 +1,5 @@
 const LandingAppCopy = {
-  terminalTypingSpeed: 15,
+  terminalTypingSpeed: 1,
   terminalDialogue: [
     {
       text:

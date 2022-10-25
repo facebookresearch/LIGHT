@@ -120,7 +120,7 @@ const LandingPage = () => {
   return (
     <>
       {postLoginStep === 0 ? (
-        <div className="flex w-full h-full justify-center items-center">
+        <div className="flex w-full h-full justify-center  overflow-y-scroll pb-10">
           <LegalChecklistDisplay
             legalAgreements={legalAgreements}
             postLoginStepIncreaseHandler={postLoginStepIncreaseHandler}

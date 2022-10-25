@@ -27,18 +27,18 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
     <div className="w-full h-full flex items-center justify-center flex-col font-mono">
       <h1 className="text-white underline text-6xl mb-1">LIGHT LOGIN</h1>
       <div className=" flex flex-row justify-center items-start w-3/4">
-        <label className="cursor-pointer label">
-          {/* <CheckBox
+        <label className="cursor-pointer label flex flex-row">
+          <CheckBox
             checkStatus={legalAgreement}
             checkFunction={toggleAgreement}
-          /> */}
-          <input
+          />
+          {/* <input
             type="checkbox"
             checked={legalAgreement}
             onChange={toggleAgreement}
             className="checkbox checkbox-accent checkbox-lg mr-3"
             checkbox-lg
-          />
+          /> */}
           <span className="text-white text-3xl">
             By clicking “sign up” below [OR “log-in”/”continue” - whichever text
             will appear on the call to action button], you are agreeing to the
@@ -77,22 +77,17 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
         </label>
       </div>
       <div className="w-full flex justify-center items-center">
-        {legalAgreement ? (
-          <button
-            disabled={!legalAgreement}
-            className="text-3xl text-green-200 border-2 p-1 border-green-200 rounded"
-            onClick={loginHandler}
-          >
-            Log In
-          </button>
-        ) : null}
-        {/* <form action="/auth/fblogin?next={{next}}" method="get">
-             <input
-               className="login-form__submit"
-               type="submit"
-               value="Sign In With Facebook"
-             />
-           </form> */}
+        <button
+          disabled={!legalAgreement}
+          className={`text-3xl ${
+            legalAgreement
+              ? "text-green-200 border-green-200 hover:text-blue-400 hover:border-blue-400"
+              : "text-gray-200 border-gray-200"
+          } border-2 p-1 rounded`}
+          onClick={loginHandler}
+        >
+          Log In
+        </button>
       </div>
     </div>
   );
