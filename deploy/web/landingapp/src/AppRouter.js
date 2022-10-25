@@ -6,10 +6,9 @@
 
 /* REACT */
 import React from "react";
-import { BrowserRouter, Route, Redirect, Switch} from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 /* CUSTOM COMPONENTS */
-import AboutPage from "./pages/AboutPage";
 import LandingPage from "./pages/LandingPage";
 import TermsPage from "./pages/TermsPage";
 import FAQSPage from "./pages/FAQSPage";

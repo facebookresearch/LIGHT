@@ -5,12 +5,12 @@
  */
 
 /* REACT */
-import React, { useState, useEffect } from "react";
+import React from "react";
 //STYLES
 import "./styles.css";
 //CUSTOM COMPONENTS
 import ProgressBar from "../../../../components/Progressbar";
-import IconButton from "../../../../components/IconButtons/InfoButton";
+import InfoButton from "../../../../components/IconButtons/InfoButton";
 /* IMAGES */
 import Scribe from "../../../../assets/images/scribe.png";
 
@@ -31,7 +31,7 @@ const SidebarHeader = () => {
         </div>
         <div className="w-1/4 flex flex-row justify-around">
           <div className="flex flex-row justify-center items-center">
-            <IconButton />
+            <InfoButton />
           </div>
         </div>
       </div>

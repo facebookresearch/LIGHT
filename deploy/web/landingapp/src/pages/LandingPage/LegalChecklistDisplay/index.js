@@ -8,14 +8,16 @@ import React, { useState, useEffect } from "react";
 /* CUSTOM COMPONENTS */
 import LegalCheck from "./LegalCheck";
 
+//LegalChecklistDisplay - This Component renders checkbox forms to confirm users approve of the condition required to proceed to the intro or the game.
 const LegalChecklistDisplay = ({
   legalAgreements,
   postLoginStepIncreaseHandler,
 }) => {
   /*--------------- LOCAL STATE ----------------*/
-  const [legalInputResponses, setLegalInputResponses] = useState([]);
-  const [formFullyCompleted, setFormFullyCompleted] = useState(false);
+  const [legalInputResponses, setLegalInputResponses] = useState([]); //Tracks Users answers
+  const [formFullyCompleted, setFormFullyCompleted] = useState(false); //Tracks when all conditions have been accepted
   /*--------------- UTIL ----------------*/
+  //completionChecker - iterates through responses and sets formFullyCompleted state to true when all condition have been accepted
   const completionChecker = () => {
     let formComplete = false;
     if (legalInputResponses.length) {
@@ -32,31 +34,22 @@ const LegalChecklistDisplay = ({
   };
 
   /*--------------- LIFECYLCLE ----------------*/
-
+  //Sets initial responses to an array of false values
   useEffect(() => {
-    console.log(
-      "LEGAL AGREEMENTS :  ",
-      legalAgreements,
-      legalAgreements.length
-    );
     let initialResponses = [];
     for (let i = 0; i < legalAgreements.length; i++) {
-      console.log("for loop running :  ", i);
       initialResponses[i] = false;
     }
-    console.log("INITIAL RESPONSES:  ", initialResponses);
     setLegalInputResponses(initialResponses);
   }, []);
 
+  //Checks if the form is completed after each response change
   useEffect(() => {
-    console.log("LEGAL INPUT RESPONSES:  ", legalInputResponses);
     let formComplete = completionChecker();
     setFormFullyCompleted(formComplete);
-    // if (formComplete) {
-    //   postLoginStepIncreaseHandler();
-    // }
   }, [legalInputResponses]);
   /*--------------- HANDLERS ----------------*/
+  //legalCheckListResponseHandler - togglese value of the responsee of the associated condition
   const legalCheckListResponseHandler = (termIndex) => {
     let updatedResponses = legalInputResponses.map((response, index) => {
       if (index === termIndex) {
@@ -78,7 +71,6 @@ const LegalChecklistDisplay = ({
       <div className="flex flex-col justify-start items-start">
         {legalAgreements.map((legalItem, index) => {
           let responseHandler = () => legalCheckListResponseHandler(index);
-
           return (
             <LegalCheck
               key={legalItem}
@@ -90,18 +82,21 @@ const LegalChecklistDisplay = ({
           );
         })}
       </div>
-      {formFullyCompleted ? (
-        <div className="w-full flex justify-center items-center">
-          <button
-            className="text-green-200 border-2 p-1 border-green-200 rounded"
-            onClick={() => {
-              postLoginStepIncreaseHandler();
-            }}
-          >
-            Accept Agreement
-          </button>
-        </div>
-      ) : null}
+      <div className="w-full flex justify-center items-center">
+        <button
+          disabled={!formFullyCompleted}
+          className={` ${
+            formFullyCompleted
+              ? "text-green-200 border-green-200 hover:text-blue-400 hover:border-blue-400"
+              : "text-gray-200 border-gray-200"
+          } border-2 p-1 rounded`}
+          onClick={() => {
+            postLoginStepIncreaseHandler();
+          }}
+        >
+          Accept Agreement
+        </button>
+      </div>
     </div>
   );
 };

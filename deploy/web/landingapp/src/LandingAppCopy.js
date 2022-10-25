@@ -1,5 +1,3 @@
-import React from "react";
-
 const LandingAppCopy = {
   terminalTypingSpeed: 7,
   terminalDialogue: [
@@ -92,6 +90,13 @@ const LandingAppCopy = {
       actor: "Mysterious Figure",
       text:
         "The mysterious figure gives you a mysterious beverage. You drink it. The world begins to clear up a little bit.",
+      isSelf: false,
+    },
+    {
+      action: "say",
+      actor: "Mysterious Figure",
+      text:
+        "With a clearer mind, sometimes people begin to visualize who and where they are. Oftentimes this appears to the left.  Are you ready to begin your adventure?",
       isSelf: false,
     },
   ],

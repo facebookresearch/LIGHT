@@ -10,15 +10,12 @@ import "./styles.css";
 /* CUSTOM COMPONENTS */
 import CheckBox from "../../../components/CheckBox";
 
-//LoginDisplay -
-const LoginDisplay = ({ loginStepIncreaseHandler }) => {
+//LoginDisplay - renders Login agreement and login button
+const LoginDisplay = () => {
   /*--------------- LOCAL STATE ----------------*/
   const [legalAgreement, setLegalAgreement] = useState(false);
   /*--------------- HANDLERS ----------------*/
-  const loginHandler = (e) => {
-    e.preventDefault();
-    loginStepIncreaseHandler();
-  };
+  //toggleAgreement - toggles boolean value of legal agreement users must agree to in order to login
   const toggleAgreement = () => {
     let updateAgreement = !legalAgreement;
     setLegalAgreement(updateAgreement);
@@ -74,7 +71,11 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
       <div className="w-full flex justify-center items-center">
         <form action={targetStr} method="get">
           <button
-            className="text-2xl text-green-200 border-2 p-1 border-green-200 rounded hover:text-white"
+            className={`${
+              legalAgreement
+                ? "text-green-200 border-green-200 hover:text-blue-400 hover:border-blue-400"
+                : "text-gray-200 border-gray-200"
+            } border-2 p-1 rounded`}
             type="submit"
             disabled={!legalAgreement}
           >

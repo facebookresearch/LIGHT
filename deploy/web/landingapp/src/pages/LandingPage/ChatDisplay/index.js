@@ -29,16 +29,6 @@ const ChatDisplay = ({
 }) => {
   return (
     <div className="h-full m-8 flex flex-col">
-      {/* {nonPlayerAgents.length ? (
-        <div className="flex-0 mb-4">
-          <ActionBar
-            presentAgents={nonPlayerAgents}
-            getAgentName={getAgentName}
-            getEntityId={getEntityId}
-            dataModelHost={dataModelHost}
-          />
-        </div>
-      ) : null} */}
       <div className="flex flex-1 flex-col h-full bg-indigo-900 bg-opacity-50 overflow-hidden p-7 rounded-t-md">
         <div
           className="flex-1 grow-[5] overflow-y-scroll"

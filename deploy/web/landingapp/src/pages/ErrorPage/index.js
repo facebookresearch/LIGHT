@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 
 import "./styles.css";
 
-const ErrorPage = (props) => {
+const ErrorPage = () => {
   return (
     <div className="errorpage-container">
       <div className="errorpage-body">
@@ -24,9 +24,6 @@ const ErrorPage = (props) => {
             Return Home
           </Link>
         </div>
-        <h1 style={{ color: "white", textAlign: "center" }}>
-          Oops, looks like there's a web issue
-        </h1>
       </div>
     </div>
   );
