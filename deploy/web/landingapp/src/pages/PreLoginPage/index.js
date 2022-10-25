@@ -47,7 +47,24 @@ const PreLoginPage = () => {
       {loginStep === 1 ? (
         <LoginDisplay loginStepIncreaseHandler={loginStepIncreaseHandler} />
       ) : null}
-      <div className="__welcome-footer__ w-full h-fit"></div>
+      <div className="__welcome-footer__ w-full h-fit text-white">
+        <div className="p-2">
+          <Link
+            to="terms"
+            className="cursor-pointer underline hover:text-green-100 mr-2"
+          >
+            {" "}
+            Terms and Conditions{" "}
+          </Link>
+          <Link
+            to="faqs"
+            className="cursor-pointer underline hover:text-green-100"
+          >
+            {" "}
+            FAQS{" "}
+          </Link>
+        </div>
+      </div>
     </div>
   );
 };

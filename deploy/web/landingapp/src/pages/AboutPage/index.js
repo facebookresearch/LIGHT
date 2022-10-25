@@ -7,8 +7,6 @@
 import React from "react";
 import { Link, useHistory } from "react-router-dom";
 
-import "./styles.css";
-
 import Unicorn from "../../assets/images/unicorn.jpg";
 
 const AboutPage = (props) => {

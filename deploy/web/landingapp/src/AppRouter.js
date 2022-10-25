@@ -11,6 +11,7 @@ import { HashRouter, Route, Redirect, Switch } from "react-router-dom";
 import AboutPage from "./pages/AboutPage";
 import LandingPage from "./pages/LandingPage";
 import TermsPage from "./pages/TermsPage";
+import FAQSPage from "./pages/FAQSPage";
 import LogoutPage from "./pages/LogoutPage";
 import ErrorPage from "./pages/ErrorPage";
 import PreLoginPage from "./pages/PreLoginPage";
@@ -31,6 +32,7 @@ const AppRouter = () => {
         <Switch>
           <Route path="/" component={PreLoginPage} exact />
           <Route path="/intro" component={LandingPage} exact />
+          <Route path="/faqs" component={FAQSPage} exact />
           <Route path="/about" component={AboutPage} exact />
           <Route path="/terms" component={TermsPage} exact />
           <Route path="/bye" component={LogoutPage} exact />
