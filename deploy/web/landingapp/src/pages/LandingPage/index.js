@@ -8,6 +8,7 @@ import React, { useState, useCallback, useEffect, Fragment } from "react";
 /* CUSTOM COMPONENTS */
 import ChatDisplay from "./ChatDisplay";
 import LegalChecklistDisplay from "./LegalChecklistDisplay";
+import SideBarDisplay from "./SideBarDisplay";
 /* IMAGES */
 import "./styles.css";
 /* COPY */
@@ -130,7 +131,9 @@ const LandingPage = () => {
       {postLoginStep >= 1 ? (
         <>
           <div className="_sidebar-container_ flex-1 relative">
-            <div className="w-1/4 "></div>
+            <div className="">
+              {postLoginStep >= 1 ? <SideBarDisplay /> : null}
+            </div>
           </div>
           <div className="_chat-container_ flex-1 grow-[3] h-full">
             {messages ? (
