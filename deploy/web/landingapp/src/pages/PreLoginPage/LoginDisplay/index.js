@@ -23,15 +23,14 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
     let updateAgreement = !legalAgreement;
     setLegalAgreement(updateAgreement);
   };
+
+  const nextLoc = new URLSearchParams(window.location.search).get('next');
+  const targetStr = "/auth/fblogin" + ((nextLoc !== null) ? "?next=" + nextLoc : "")
   return (
     <div className="w-full h-full flex items-center justify-center flex-col font-mono">
-      <h1 className="text-white underline text-6xl mb-1">LIGHT LOGIN</h1>
+      <h1 className="text-white underline text-4xl mb-1">Login to LIGHT</h1>
       <div className=" flex flex-row justify-center items-start w-3/4">
         <label className="cursor-pointer label">
-          {/* <CheckBox
-            checkStatus={legalAgreement}
-            checkFunction={toggleAgreement}
-          /> */}
           <input
             type="checkbox"
             checked={legalAgreement}
@@ -39,27 +38,26 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
             className="checkbox checkbox-accent checkbox-lg mr-3"
             checkbox-lg
           />
-          <span className="text-white text-3xl">
-            By clicking “sign up” below [OR “log-in”/”continue” - whichever text
-            will appear on the call to action button], you are agreeing to the
+          <span className="text-white text-2xl">
+            By clicking “Sign in with Facebook” below, you are agreeing to the LIGHT
             <a
               className="text-blue-400 hover:text-green-100 active:text-green-50"
               target="_blank"
-              href={
-                "https://docs.google.com/document/d/1RR5vo-ith7lBX--Pk7ErgD0gyjaktY-DR_SSsdLWEuc/edit#"
-              }
+              href={"/tos"}
             >
               {" "}
-              LIGHT Supplemental Terms of Service and Meta Platform
+              Supplemental Terms of Service
+              {" "}
             </a>
-            , Inc.'s
+            and Meta Platform, Inc.'s
             <a
               className="text-blue-400 hover:text-green-100 active:text-green-50"
               target="_blank"
               href="https://www.facebook.com/about/privacy/update"
             >
               {" "}
-              Data Policy{" "}
+              Data Policy
+              {" "}
             </a>
             and you consent for us to use a cookie to track your logged-in
             status across the LIGHT site. Learn more about how we use cookies{" "}
@@ -77,22 +75,15 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
         </label>
       </div>
       <div className="w-full flex justify-center items-center">
-        {legalAgreement ? (
+        <form action={targetStr} method="get">
           <button
+            className="text-2xl text-green-200 border-2 p-1 border-green-200 rounded hover:text-white"
+            type="submit"
             disabled={!legalAgreement}
-            className="text-3xl text-green-200 border-2 p-1 border-green-200 rounded"
-            onClick={loginHandler}
           >
-            Log In
+            Sign In With Facebook
           </button>
-        ) : null}
-        {/* <form action="/auth/fblogin?next={{next}}" method="get">
-             <input
-               className="login-form__submit"
-               type="submit"
-               value="Sign In With Facebook"
-             />
-           </form> */}
+        </form>
       </div>
     </div>
   );

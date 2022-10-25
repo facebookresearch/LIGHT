@@ -8,7 +8,6 @@ import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 /* CUSTOM COMPONENTS */
 import TerminalEntry from "./TerminalEntry";
-import TerminalButton from "../../../components/TerminalButton";
 /* STYLES */
 import "./styles.css";
 
@@ -43,12 +42,12 @@ const WelcomeDisplay = ({
   };
 
   return (
-    <div className="ml-16 w-1/2 font-mono text-3xl flex items-start flex-col justify-start">
-      <h1 className="text-white font-mono">WELCOME TO LIGHT</h1>
+    <div className="ml-16 w-1/2 font-mono text-2xl flex items-start flex-col justify-start">
+      <h1 className="text-white font-mono">Landing in LIGHT</h1>
       {terminalDialogue.map((entry, index) => (
         <TerminalEntry
           text={entry.text}
-          highlighted={entry.highlighted}
+          isButton={entry.highlighted}
           textStep={entry.step}
           welcomeStep={welcomeStep}
           welcomeStepAdvancementHandler={welcomeStepAdvancementHandler}
@@ -57,18 +56,20 @@ const WelcomeDisplay = ({
       {welcomeStep >= 5 ? (
         <div>
           {rejectedAgreement ? null : (
-            <TerminalButton
+            <TerminalEntry
               text={"YES"}
               textStep={5}
               welcomeStep={welcomeStep}
               welcomeStepAdvancementHandler={terminalSubmissionHandler}
+              isButton={true}
             />
           )}
-          <TerminalButton
+          <TerminalEntry
             text={"NO"}
             textStep={5}
             welcomeStep={welcomeStep}
             welcomeStepAdvancementHandler={terminalRejectionHandler}
+            isButton={true}
           />
         </div>
       ) : null}

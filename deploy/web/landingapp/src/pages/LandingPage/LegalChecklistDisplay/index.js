@@ -70,11 +70,8 @@ const LegalChecklistDisplay = ({
   };
 
   return (
-    <div className="w-3/4 text-3xl text-mono ">
-      <h1 className="text-white text-8xl text-center underline mb-4">
-        Legal Agreement
-      </h1>
-      <h2 className="text-white text-4xl text-center">
+    <div className="w-3/4 text-2xl text-mono ">
+      <h2 className="text-white text-3xl text-center">
         To get started, please acknowledge that you have read and agreed to
         every statement below by checking each box.
       </h2>
@@ -101,7 +98,7 @@ const LegalChecklistDisplay = ({
               postLoginStepIncreaseHandler();
             }}
           >
-            SUBMIT AGREEMENT
+            Accept Agreement
           </button>
         </div>
       ) : null}

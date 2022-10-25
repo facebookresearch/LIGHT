@@ -6,7 +6,8 @@
 
 /* REACT */
 import React from "react";
-import { HashRouter, Route, Redirect, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Redirect, Switch} from "react-router-dom";
+
 /* CUSTOM COMPONENTS */
 import AboutPage from "./pages/AboutPage";
 import LandingPage from "./pages/LandingPage";
@@ -28,18 +29,17 @@ const AppRouter = () => {
       }}
       className="__landing-page__ flex h-screen w-screen bg-cover bg-top bg-no-repeat"
     >
-      <HashRouter>
+      <BrowserRouter>
         <Switch>
           <Route path="/" component={PreLoginPage} exact />
           <Route path="/intro" component={LandingPage} exact />
-          <Route path="/faqs" component={FAQSPage} exact />
-          <Route path="/about" component={AboutPage} exact />
-          <Route path="/terms" component={TermsPage} exact />
+          <Route path="/faq" component={FAQSPage} exact />
+          <Route path="/tos" component={TermsPage} exact />
           <Route path="/bye" component={LogoutPage} exact />
           <Route path="/error" component={ErrorPage} exact />
           <Route component={ErrorPage} />
         </Switch>
-      </HashRouter>
+      </BrowserRouter>
     </div>
   );
 };

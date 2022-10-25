@@ -149,7 +149,7 @@ const FAQSPage = () => {
               </a>
               .
             </p>
-            <p>
+            <p className="mb-4">
               We are committed to making our work transparent and easy for
               others to reproduce and build upon, so you can also find links to
               publications, models, and datasets on our{" "}
@@ -162,7 +162,7 @@ const FAQSPage = () => {
               </a>
               .
             </p>
-            <h5 className="font-bold ">
+            <h5 id="meta-data-access" className="font-bold ">
               Will Meta have access to my personal data? What data is saved and
               for how long? Who will have access to the data?
             </h5>

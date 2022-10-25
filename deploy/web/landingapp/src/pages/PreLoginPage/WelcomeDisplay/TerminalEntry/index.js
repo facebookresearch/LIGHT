@@ -7,34 +7,25 @@
 import React from "react";
 /* CUSTOM COMPONENTS */
 import TypewriterText from "../../../../components/TypewriterText";
-import TerminalButton from "../../../../components/TerminalButton";
 
 const TerminalEntry = ({
   text,
-  highlighted,
   textStep,
   welcomeStep,
   welcomeStepAdvancementHandler,
+  isButton,
 }) => {
   console.log("TEXT STEP:  ", textStep, "WELCOME STEP:  ", welcomeStep);
   return (
     <>
       {textStep <= welcomeStep ? (
-        !highlighted ? (
-          <TypewriterText
-            text={text}
-            textStep={textStep}
-            welcomeStep={welcomeStep}
-            welcomeStepAdvancementHandler={welcomeStepAdvancementHandler}
-          />
-        ) : (
-          <TerminalButton
-            text={text}
-            textStep={textStep}
-            welcomeStep={welcomeStep}
-            welcomeStepAdvancementHandler={welcomeStepAdvancementHandler}
-          />
-        )
+        <TypewriterText
+          text={(isButton) ? "> " + text : text}
+          textStep={textStep}
+          welcomeStep={welcomeStep}
+          welcomeStepAdvancementHandler={welcomeStepAdvancementHandler}
+          isButton={isButton}
+        />
       ) : null}
     </>
   );

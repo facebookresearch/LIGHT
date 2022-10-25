@@ -50,9 +50,23 @@ const LandingPage = () => {
 
   const ratingStepHandler = () => {
     setIntroStep(3);
-    let updatedMessage = introDialogueSteps[4];
-    let updatedMessages = [...messages, updatedMessage];
+    let updatedMessages = [...messages, introDialogueSteps[4], introDialogueSteps[5]];
     setMessages(updatedMessages);
+    setTimeout(() => {
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ completed: true }),
+      };
+      const loginData = fetch("/submit_intro", requestOptions)
+        .then((response) => {
+          console.log(response);
+          window.location.href = "/play";
+        })
+        .catch((error) => {
+          console.error('There was an error!', error);
+        });
+    }, 3000)
   };
 
   const chatSubmissionHandler = () => {
@@ -109,7 +123,7 @@ const LandingPage = () => {
       if (introStep === 2) {
         if (newMessage.action === "do" && newMessage.isSelf) {
           setIntroStep(3);
-          let updatedMessage = introDialogueSteps[2];
+          let updatedMessage = introDialogueSteps[3];
           let updatedMessages = [...messages, updatedMessage];
           setMessages(updatedMessages);
         }
