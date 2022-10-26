@@ -9,6 +9,8 @@ import React, { useState } from "react";
 import "./styles.css";
 /* CUSTOM COMPONENTS */
 import CheckBox from "../../../components/CheckBox";
+/* TOOLTIPS */
+import { Tooltip } from "react-tippy";
 
 //LoginDisplay - renders Login agreement and login button
 const LoginDisplay = () => {
@@ -69,19 +71,33 @@ const LoginDisplay = () => {
         </label>
       </div>
       <div className="w-full flex justify-center items-center">
-        <form action={targetStr} method="get">
-          <button
-            className={`${
-              legalAgreement
-                ? "text-green-200 border-green-200 hover:text-blue-400 hover:border-blue-400"
-                : "text-gray-200 border-gray-200"
-            } border-2 p-1 rounded`}
-            type="submit"
-            disabled={!legalAgreement}
-          >
-            Sign In With Facebook
-          </button>
-        </form>
+        <Tooltip
+          className="text-white bg-gray-50"
+          html={
+            <div className="w-30 h-30 p-3 border-solid border-black rounded bg-white text-black">
+              <p> Please agree to the terms in order to proceed</p>
+            </div>
+          }
+          position="top"
+          trigger="mouseenter"
+          size="big"
+          disabled={!!legalAgreement}
+          style={{ color: "white", backgroundColor: "black" }}
+        >
+          <form action={targetStr} method="get">
+            <button
+              className={`${
+                legalAgreement
+                  ? "text-green-200 border-green-200 hover:text-blue-400 hover:border-blue-400"
+                  : "text-gray-200 border-gray-200"
+              } border-2 p-1 rounded`}
+              type="submit"
+              disabled={!legalAgreement}
+            >
+              Sign In With Facebook
+            </button>
+          </form>
+        </Tooltip>
       </div>
     </div>
   );

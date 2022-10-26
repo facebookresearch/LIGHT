@@ -7,6 +7,8 @@
 import React, { useState, useEffect } from "react";
 /* CUSTOM COMPONENTS */
 import LegalCheck from "./LegalCheck";
+/* TOOLTIPS */
+import { Tooltip } from "react-tippy";
 
 //LegalChecklistDisplay - This Component renders checkbox forms to confirm users approve of the condition required to proceed to the intro or the game.
 const LegalChecklistDisplay = ({
@@ -83,19 +85,37 @@ const LegalChecklistDisplay = ({
         })}
       </div>
       <div className="w-full flex justify-center items-center">
-        <button
-          disabled={!formFullyCompleted}
-          className={` ${
-            formFullyCompleted
-              ? "text-green-200 border-green-200 hover:text-blue-400 hover:border-blue-400"
-              : "text-gray-200 border-gray-200"
-          } border-2 p-1 rounded`}
-          onClick={() => {
-            postLoginStepIncreaseHandler();
-          }}
+        <Tooltip
+          className="text-white bg-gray-50"
+          html={
+            <div className="w-30 h-30 p-3 border-solid border-black rounded bg-white text-black">
+              <p>
+                {" "}
+                Please agree to all of the terms above by checking each box in
+                order to proceed
+              </p>
+            </div>
+          }
+          position="top"
+          trigger="mouseenter"
+          size="big"
+          disabled={!!formFullyCompleted}
+          style={{ color: "white", backgroundColor: "black" }}
         >
-          Accept Agreement
-        </button>
+          <button
+            disabled={!formFullyCompleted}
+            className={` ${
+              formFullyCompleted
+                ? "text-green-200 border-green-200 hover:text-blue-400 hover:border-blue-400"
+                : "text-gray-200 border-gray-200"
+            } border-2 p-1 rounded`}
+            onClick={() => {
+              postLoginStepIncreaseHandler();
+            }}
+          >
+            Accept Agreement
+          </button>
+        </Tooltip>
       </div>
     </div>
   );
