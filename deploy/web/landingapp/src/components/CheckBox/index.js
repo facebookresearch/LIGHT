@@ -22,11 +22,11 @@ const CheckBox = ({ checkFunction, checkStatus }) => {
   };
   return (
     <div
-      className="w-20 h-20 bg-blue-600 flex justify-center items-center rounded-2xl mr-2"
+      className="w-16 h-16 bg-blue-600 flex justify-center items-center rounded-2xl mr-2"
       onClick={clickHandler}
     >
-      <div className="w-20 h-20 flex justify-center items-center ">
-        {isChecked ? <BsCheckLg color="white" size={60} /> : <div />}
+      <div className="w-16 h-16 flex justify-center items-center ">
+        {isChecked ? <BsCheckLg color="white" size={50} /> : <div />}
       </div>
     </div>
   );
