@@ -26,7 +26,7 @@ const AppRouter = () => {
       style={{
         backgroundImage: `linear-gradient(to bottom, #0f0c2999, #302b63aa, #24243ecc), url(${StarryNight})`,
       }}
-      className="__landing-page__ flex h-screen w-screen bg-cover bg-top bg-no-repeat"
+      className="__landing-page__ flex h-screen w-screen bg-cover bg-top bg-no-repeat overflow-x-scroll min-w-[75%]"
     >
       <BrowserRouter>
         <Switch>
