@@ -1,5 +1,3 @@
-import React from "react";
-
 const LandingAppCopy = {
   terminalTypingSpeed: 7,
   terminalDialogue: [
@@ -40,13 +38,18 @@ const LandingAppCopy = {
     "1. I am 18 years of age or older (or, if higher than 18, the age of majority in the jurisdiction from which I am accessing LIGHT) and reside in the United States.",
     "2. I understand LIGHT is for research, and LIGHT Agents can make untrue or offensive statements. If this happens, I pledge to report these issues to help improve future research. Furthermore, I agree not to intentionally trigger others to make offensive statements.",
     "3. I understand that interactions in LIGHT are set in a fantasy environment, and content inside is not intended to reflect real-world circumstances.",
-    (<>
-        {"4. I understand that in-game interactions will be "}
-        <a className="text-blue-500 cursor-pointer underline hover:text-green-100 " href="/faq#meta-data-access">
-            {"published publicly and used for future research."}
-        </a>
-        {" Therefore, I agree not to mention any personally identifiable information in the content of my conversations, including names, addresses, emails, and phone numbers."}
-    </>),
+    <>
+      {"4. I understand that in-game interactions will be "}
+      <a
+        className="text-blue-500 cursor-pointer underline hover:text-green-100 "
+        href="/faq#meta-data-access"
+      >
+        {"published publicly and used for future research."}
+      </a>
+      {
+        " Therefore, I agree not to mention any personally identifiable information in the content of my conversations, including names, addresses, emails, and phone numbers."
+      }
+    </>,
   ],
   introDialogueSteps: [
     {
@@ -78,13 +81,22 @@ const LandingAppCopy = {
     {
       action: "say",
       actor: "Mysterious Figure",
-      text: "Seems you know the basics now. With that, have some of this to clear your head.",
+      text:
+        "Seems you know the basics now. With that, have some of this to clear your head.",
       isSelf: false,
     },
     {
       action: "do",
       actor: "Mysterious Figure",
-      text: "The mysterious figure gives you a mysterious beverage. You drink it. The world begins to clear up a little bit.",
+      text:
+        "The mysterious figure gives you a mysterious beverage. You drink it. The world begins to clear up a little bit.",
+      isSelf: false,
+    },
+    {
+      action: "say",
+      actor: "Mysterious Figure",
+      text:
+        "With a clearer mind, sometimes people begin to visualize who and where they are. Oftentimes this appears to the left.  Are you ready to begin your adventure?",
       isSelf: false,
     },
   ],

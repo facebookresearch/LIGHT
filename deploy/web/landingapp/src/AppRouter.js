@@ -6,10 +6,9 @@
 
 /* REACT */
 import React from "react";
-import { BrowserRouter, Route, Redirect, Switch} from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 /* CUSTOM COMPONENTS */
-import AboutPage from "./pages/AboutPage";
 import LandingPage from "./pages/LandingPage";
 import TermsPage from "./pages/TermsPage";
 import FAQSPage from "./pages/FAQSPage";
@@ -27,7 +26,7 @@ const AppRouter = () => {
       style={{
         backgroundImage: `linear-gradient(to bottom, #0f0c2999, #302b63aa, #24243ecc), url(${StarryNight})`,
       }}
-      className="__landing-page__ flex h-screen w-screen bg-cover bg-top bg-no-repeat"
+      className="__landing-page__ flex h-screen w-screen bg-cover bg-top bg-no-repeat overflow-x-scroll min-w-[75%]"
     >
       <BrowserRouter>
         <Switch>

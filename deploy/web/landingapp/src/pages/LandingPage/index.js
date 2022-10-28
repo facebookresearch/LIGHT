@@ -8,6 +8,7 @@ import React, { useState, useCallback, useEffect, Fragment } from "react";
 /* CUSTOM COMPONENTS */
 import ChatDisplay from "./ChatDisplay";
 import LegalChecklistDisplay from "./LegalChecklistDisplay";
+import SideBarDisplay from "./SideBarDisplay";
 /* IMAGES */
 import "./styles.css";
 /* COPY */
@@ -49,27 +50,20 @@ const LandingPage = () => {
   };
 
   const ratingStepHandler = () => {
-    setIntroStep(3);
-    let updatedMessages = [...messages, introDialogueSteps[4], introDialogueSteps[5]];
+    setIntroStep(4);
+    let updatedMessages = [
+      ...messages,
+      introDialogueSteps[4],
+      introDialogueSteps[5],
+      introDialogueSteps[6],
+    ];
     setMessages(updatedMessages);
-    setTimeout(() => {
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ completed: true }),
-      };
-      const loginData = fetch("/submit_intro", requestOptions)
-        .then((response) => {
-          console.log(response);
-          window.location.href = "/play";
-        })
-        .catch((error) => {
-          console.error('There was an error!', error);
-        });
-    }, 3000)
   };
 
   const chatSubmissionHandler = () => {
+    if (introStep === 4) {
+      setIntroStep(5);
+    }
     let newChatSubmission = {
       action: inputActionType,
       actor: "YOU",
@@ -105,7 +99,7 @@ const LandingPage = () => {
     if (messages.length) {
       let newMessage = messages[messages.length - 1];
       console.log("NEW MESSAGE:  ", newMessage);
-      console.log("Step Logic");
+      console.log("Step Logic", introStep);
       if (introStep === 0) {
         setIntroStep(1);
         let updatedMessage = introDialogueSteps[1];
@@ -128,13 +122,30 @@ const LandingPage = () => {
           setMessages(updatedMessages);
         }
       }
+      if (introStep >= 5) {
+        setTimeout(() => {
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ completed: true }),
+          };
+          const loginData = fetch("/submit_intro", requestOptions)
+            .then((response) => {
+              console.log(response);
+              window.location.href = "/play";
+            })
+            .catch((error) => {
+              console.error("There was an error!", error);
+            });
+        }, 3000);
+      }
     }
   }, [messages, introStep]);
 
   return (
     <>
       {postLoginStep === 0 ? (
-        <div className="flex w-full h-full justify-center items-center">
+        <div className="flex w-full h-full justify-center  overflow-y-scroll pb-10">
           <LegalChecklistDisplay
             legalAgreements={legalAgreements}
             postLoginStepIncreaseHandler={postLoginStepIncreaseHandler}
@@ -144,7 +155,7 @@ const LandingPage = () => {
       {postLoginStep >= 1 ? (
         <>
           <div className="_sidebar-container_ flex-1 relative">
-            <div className="w-1/4 "></div>
+            <div className="">{introStep >= 4 ? <SideBarDisplay /> : null}</div>
           </div>
           <div className="_chat-container_ flex-1 grow-[3] h-full">
             {messages ? (

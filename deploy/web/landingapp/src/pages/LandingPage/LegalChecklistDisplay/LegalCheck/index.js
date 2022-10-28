@@ -6,6 +6,8 @@
 /* REACT */
 import React, { useState, useEffect } from "react";
 
+import CheckBox from "../../../../components/CheckBox";
+
 const LegalCheck = ({ itemIndex, responses, legalItem, responseHandler }) => {
   const [isChecked, setIsChecked] = useState(false);
 
@@ -18,14 +20,8 @@ const LegalCheck = ({ itemIndex, responses, legalItem, responseHandler }) => {
 
   return (
     <div className=" text-white">
-      <label className="cursor-pointer label flex flex-row items-start justify-starts">
-        <input
-          type="checkbox"
-          checked={isChecked}
-          onChange={responseHandler}
-          className="checkbox checkbox-accent checkbox-lg  mr-3"
-          checkbox-lg
-        />
+      <label className="cursor-pointer label flex flex-row items-center justify-starts">
+        <CheckBox checkStatus={isChecked} checkFunction={responseHandler} />
         <span>{legalItem}</span>
       </label>
     </div>

@@ -9,45 +9,42 @@ import React, { useState } from "react";
 import "./styles.css";
 /* CUSTOM COMPONENTS */
 import CheckBox from "../../../components/CheckBox";
+/* TOOLTIPS */
+import { Tooltip } from "react-tippy";
 
-//LoginDisplay -
-const LoginDisplay = ({ loginStepIncreaseHandler }) => {
+//LoginDisplay - renders Login agreement and login button
+const LoginDisplay = () => {
   /*--------------- LOCAL STATE ----------------*/
   const [legalAgreement, setLegalAgreement] = useState(false);
   /*--------------- HANDLERS ----------------*/
-  const loginHandler = (e) => {
-    e.preventDefault();
-    loginStepIncreaseHandler();
-  };
+  //toggleAgreement - toggles boolean value of legal agreement users must agree to in order to login
   const toggleAgreement = () => {
     let updateAgreement = !legalAgreement;
     setLegalAgreement(updateAgreement);
   };
 
-  const nextLoc = new URLSearchParams(window.location.search).get('next');
-  const targetStr = "/auth/fblogin" + ((nextLoc !== null) ? "?next=" + nextLoc : "")
+  const nextLoc = new URLSearchParams(window.location.search).get("next");
+  const targetStr =
+    "/auth/fblogin" + (nextLoc !== null ? "?next=" + nextLoc : "");
   return (
     <div className="w-full h-full flex items-center justify-center flex-col font-mono">
       <h1 className="text-white underline text-4xl mb-1">Login to LIGHT</h1>
       <div className=" flex flex-row justify-center items-start w-3/4">
-        <label className="cursor-pointer label">
-          <input
-            type="checkbox"
-            checked={legalAgreement}
-            onChange={toggleAgreement}
-            className="checkbox checkbox-accent checkbox-lg mr-3"
-            checkbox-lg
+        <label className="cursor-pointer label flex flex-row">
+          <CheckBox
+            checkStatus={legalAgreement}
+            checkFunction={toggleAgreement}
           />
           <span className="text-white text-2xl">
-            By clicking “Sign in with Facebook” below, you are agreeing to the LIGHT
+            By clicking “Sign in with Facebook” below, you are agreeing to the
+            LIGHT
             <a
               className="text-blue-400 hover:text-green-100 active:text-green-50"
               target="_blank"
               href={"/tos"}
             >
               {" "}
-              Supplemental Terms of Service
-              {" "}
+              Supplemental Terms of Service{" "}
             </a>
             and Meta Platform, Inc.'s
             <a
@@ -56,8 +53,7 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
               href="https://www.facebook.com/about/privacy/update"
             >
               {" "}
-              Data Policy
-              {" "}
+              Data Policy{" "}
             </a>
             and you consent for us to use a cookie to track your logged-in
             status across the LIGHT site. Learn more about how we use cookies{" "}
@@ -75,15 +71,33 @@ const LoginDisplay = ({ loginStepIncreaseHandler }) => {
         </label>
       </div>
       <div className="w-full flex justify-center items-center">
-        <form action={targetStr} method="get">
-          <button
-            className="text-2xl text-green-200 border-2 p-1 border-green-200 rounded hover:text-white"
-            type="submit"
-            disabled={!legalAgreement}
-          >
-            Sign In With Facebook
-          </button>
-        </form>
+        <Tooltip
+          className="text-white bg-gray-50"
+          html={
+            <div className="w-30 h-30 p-3 border-solid border-black rounded bg-white text-black">
+              <p> Please agree to the terms in order to proceed</p>
+            </div>
+          }
+          position="top"
+          trigger="mouseenter"
+          size="big"
+          disabled={!!legalAgreement}
+          style={{ color: "white", backgroundColor: "black" }}
+        >
+          <form action={targetStr} method="get">
+            <button
+              className={`${
+                legalAgreement
+                  ? "text-green-200 border-green-200 hover:text-blue-400 hover:border-blue-400"
+                  : "text-gray-200 border-gray-200"
+              } border-2 p-1 rounded`}
+              type="submit"
+              disabled={!legalAgreement}
+            >
+              Sign In With Facebook
+            </button>
+          </form>
+        </Tooltip>
       </div>
     </div>
   );
