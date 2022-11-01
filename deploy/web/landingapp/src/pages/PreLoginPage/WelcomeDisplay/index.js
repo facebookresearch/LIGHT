@@ -11,6 +11,7 @@ import TerminalEntry from "./TerminalEntry";
 /* STYLES */
 import "./styles.css";
 
+//WelcomeDisplay -
 const WelcomeDisplay = ({
   terminalDialogue,
   loginStepIncreaseHandler,

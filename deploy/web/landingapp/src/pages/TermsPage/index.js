@@ -5,8 +5,10 @@
  */
 /* REACT */
 import React from "react";
+/* REACT ROUTER */
 import { Link, useHistory } from "react-router-dom";
 
+//TermsPage - Renders Terms Page with information and helpful links clearly stating the terms of Light
 const TermsPage = () => {
   let history = useHistory();
   return (
