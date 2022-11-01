@@ -6,6 +6,8 @@
 /* REACT */
 import React, { useState, useEffect } from "react";
 
+// TerminalButton - renders interactive, "terminal" styled "buttons"
+//  Styles them based on the current step in the welcome progression
 const TerminalButton = ({
   text,
   textStep,
@@ -15,6 +17,7 @@ const TerminalButton = ({
   /*--------------- LOCAL STATE ----------------*/
   const [isCurrentStep, setIsCurrentStep] = useState(false);
   /*--------------- LIFECYLCLE ----------------*/
+  //Checks the welcome step and sets the styles and interactvity based on that confirmation
   useEffect(() => {
     if (welcomeStep === textStep) {
       setIsCurrentStep(true);

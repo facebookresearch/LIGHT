@@ -6,7 +6,6 @@
 
 /* REACT */
 import React, { useState } from "react";
-
 /* ICONS */
 import { BsPlusLg } from "react-icons/bs";
 import { FaWindowMinimize } from "react-icons/fa";
@@ -14,6 +13,8 @@ import { FaWindowMinimize } from "react-icons/fa";
 import "./styles.css";
 
 //IconCollapsibleBox - Renders collapsible container with selectible icon in header.
+//* This component has been disconnected in the landing app and the emoji feature
+//* is scheduled to be removed soon  11/1/2022
 const IconCollapsibleBox = ({
   selectedEmoji,
   title,
@@ -22,7 +23,10 @@ const IconCollapsibleBox = ({
 }) => {
   /* LOCAL STATE */
   const [isCollapsed, setIsCollapsed] = useState(false);
+  /*  HANDLERS */
+  //openHandler - Shows contents of container
   const openHandler = () => setIsCollapsed(false);
+  //closeHandler - Hides contents of container
   const closeHandler = () => setIsCollapsed(true);
 
   return (

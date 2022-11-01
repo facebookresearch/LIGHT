@@ -83,6 +83,9 @@ module.exports = {
           },
         },
       },
+      animation: {
+        "quick-bounce": "bounce 1ms linear 1",
+      },
     },
   },
   daisyui: {

@@ -29,7 +29,15 @@ const CheckBox = ({ checkFunction, checkStatus }) => {
       onClick={clickHandler}
     >
       <div className="__check_container__ w-16 h-16 flex justify-center items-center ">
-        {isChecked ? <BsCheckLg color="white" size={50} /> : <div />}
+        {isChecked ? (
+          <BsCheckLg
+            className="__check__ animate-quick-bounce"
+            color="white"
+            size={50}
+          />
+        ) : (
+          <div />
+        )}
       </div>
     </div>
   );
