@@ -9,6 +9,7 @@ import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 /* CUSTOM COMPONENTS */
+//PAGES
 import LandingPage from "./pages/LandingPage";
 import TermsPage from "./pages/TermsPage";
 import FAQSPage from "./pages/FAQSPage";
@@ -16,10 +17,12 @@ import LogoutPage from "./pages/LogoutPage";
 import ErrorPage from "./pages/ErrorPage";
 import PreLoginPage from "./pages/PreLoginPage";
 /* IMAGES */
+//APP BACKGROUND IMAGE
 import StarryNight from "./assets/images/light_starry_bg.jpg";
 /* STYLES */
 import "./styles.css";
 
+//AppRouter - Renders react-router for app.  Each virtual path renders component page based on URL
 const AppRouter = () => {
   return (
     <div

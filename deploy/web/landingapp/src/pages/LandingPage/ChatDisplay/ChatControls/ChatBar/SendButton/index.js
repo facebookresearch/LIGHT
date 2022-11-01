@@ -5,16 +5,13 @@
  */
 
 /* REACT */
-import React, { useState, useEffect } from "react";
-/* REDUX */
-
+import React from "react";
 /* CUSTOM COMPONENTS */
 import { getActionThemeColor } from "../../../../../../app/theme";
-
 //ICONS
 import { MdSend } from "react-icons/md";
 
-// ChatInput - Component that renders chat bar along with Say/Do buttons and send button
+// SendButton - Renders send button allowing user to submit messages by clicking it
 const SendButton = ({ onSubmit, scrollToBottom, action }) => {
   /*---------------HANDLERS----------------*/
   const chatSubmissionHandler = (e) => {
@@ -31,9 +28,6 @@ const SendButton = ({ onSubmit, scrollToBottom, action }) => {
       scrollToBottom();
     }
   };
-
-  /*---------------HELPERS----------------*/
-
   return (
     <div
       className={`_send-button_ text-2xl ${getActionThemeColor(

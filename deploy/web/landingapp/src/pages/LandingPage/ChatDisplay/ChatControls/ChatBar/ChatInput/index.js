@@ -5,21 +5,20 @@
  */
 
 /* REACT */
-import React, { useState, useEffect } from "react";
-/* CUSTOM COMPONENTS */
+import React, { useState } from "react";
 
-// ChatInput - Component that renders chat bar along with Say/Do buttons and send button
+// ChatInput - Component that renders chat input form.
+//Cycles through previously submitted text with arrow keys
+//Switching action type with ` key
+//Submitting text with enter key
 const ChatInput = ({
   inputChangeHandler,
   chatInputText,
   inputActionTypeToggleHandler,
-  submittedActions,
   onSubmit,
 }) => {
   /*---------------LOCAL STATE----------------*/
   const [cycleMessagesPosition, setCycleMessagesPosition] = useState(0);
-  /*---------------LIFECYCLE----------------*/
-
   return (
     <div className="w-full">
       <input

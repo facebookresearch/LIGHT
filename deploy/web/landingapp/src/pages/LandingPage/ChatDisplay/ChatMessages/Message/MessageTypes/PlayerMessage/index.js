@@ -5,23 +5,21 @@
  */
 
 /* REACT */
-import React, { useState, useEffect, useMemo } from "react";
+import React from "react";
 /* CUSTOM COMPONENTS */
 import { ChatBubble } from "../../../../../../../components/ChatBubble/index.tsx";
 
 //PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message
 const PlayerMessage = ({ text, action }) => {
-  /* ----LOCAL STATE---- */
-  const [formatttedMessage, setFormattedMessage] = useState("");
-  /*---------------LIFECYCLE----------------*/
-
   return (
     <div
       className={"_player-message_ flex flex-row justify-end items-center mb-4"}
     >
-      <div className="ml-10">
+      <div className="_player-message-bubble-container_  ml-10">
         <ChatBubble action={action} actor="YOU" align="right">
-          <div className="max-w-md break-words">{text}</div>
+          <div className="_player-message-bubble-text_  max-w-md break-words">
+            {text}
+          </div>
           <div className="relative">
             <div className="absolute bg-emerald-500"></div>
           </div>
