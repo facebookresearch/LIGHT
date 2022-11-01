@@ -5,7 +5,7 @@
  */
 
 /* REACT */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 /* CUSTOM COMPONENTS */
 import { ChatBubble } from "../../../../../../../components/ChatBubble/index.tsx";
 /* ICONS */
@@ -16,6 +16,7 @@ import {
   AiOutlineLike,
 } from "react-icons/ai";
 
+//AgentMessage - Renders message from other players/models.  Contains buttons that allow for user feedback to the content of the message.
 const AgentMessage = ({
   introStep,
   text,
@@ -29,14 +30,14 @@ const AgentMessage = ({
   const [isDisliked, setIsDisliked] = useState(false);
 
   /* ------ HANDLERS ------ */
-
+  //Handles clicking on like button
   const toggleLikeHandler = () => {
     let newLikeValue = !isLiked;
     setIsLiked(newLikeValue);
     ratingStepHandler();
     scrollToBottom();
   };
-
+  //Handles clicking on dislike button
   const toggleDislikeHandler = () => {
     let newDislikeValue = !isDisliked;
     setIsDisliked(newDislikeValue);

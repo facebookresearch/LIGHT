@@ -7,7 +7,7 @@
 /* REACT */
 import React, { useState } from "react";
 
-// ChatInput - Component that renders chat input form.
+//ChatInput - Component that renders chat input form.
 //Cycles through previously submitted text with arrow keys
 //Switching action type with ` key
 //Submitting text with enter key

@@ -6,8 +6,6 @@
 
 /* REACT */
 import React from "react";
-/* STYLES */
-
 /* CUSTOM COMPONENTS */
 import Message from "./Message";
 

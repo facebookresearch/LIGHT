@@ -14,6 +14,8 @@ import "./styles.css";
 /* COPY */
 import LANDINGAPPCOPY from "../../LandingAppCopy";
 
+//LandingPage - Renders the Landing Page.  This page renders elements based on stepping through the postLoginSteps.
+//*
 const LandingPage = () => {
   const { legalAgreements, introDialogueSteps } = LANDINGAPPCOPY;
   /*---------------LOCAL STATE----------------*/
@@ -32,11 +34,13 @@ const LandingPage = () => {
   //CHAT DISPLAY REF
   const chatContainerRef = React.useRef(null);
   /*--------------- HANDLERS ----------------*/
+  //postLoginStepIncreaseHandler - iterates through postLoginSteps which triggers different elements to render
   const postLoginStepIncreaseHandler = () => {
     let nextStep = postLoginStep + 1;
     setPostLoginStep(nextStep);
   };
 
+  //inputActionTypeToggleHandler - toggles between say and do inputAction state
   const inputActionTypeToggleHandler = () => {
     if (inputActionType === "say") {
       setInputActionType("do");
@@ -44,11 +48,14 @@ const LandingPage = () => {
       setInputActionType("say");
     }
   };
+
+  //inputChangeHandler - sets text of chat input.
   const inputChangeHandler = (e) => {
     let updatedInputValue = e.target.value;
     setChatInputText(updatedInputValue);
   };
 
+  //ratingStepHandler - sets intro step upon completion of the rating step in the intro
   const ratingStepHandler = () => {
     setIntroStep(4);
     let updatedMessages = [
@@ -60,6 +67,8 @@ const LandingPage = () => {
     setMessages(updatedMessages);
   };
 
+  //chatSubmissionHandler - sets intro step based completion of chat submission steps
+  //as well as submits messages to chat display
   const chatSubmissionHandler = () => {
     if (introStep === 4) {
       setIntroStep(5);
@@ -89,17 +98,17 @@ const LandingPage = () => {
   );
 
   /*-------------- LIFECYCLE ----------------*/
+  //Upon render sets first messages in intro chat display
   useEffect(() => {
     console.log(messages);
     let updatedMessage = [introDialogueSteps[0]];
     setMessages(updatedMessage);
   }, []);
 
+  //Listens for proper message entries rerquired to complete currernt intro step and continue to move through intro and postlogin stepper
   useEffect(() => {
     if (messages.length) {
       let newMessage = messages[messages.length - 1];
-      console.log("NEW MESSAGE:  ", newMessage);
-      console.log("Step Logic", introStep);
       if (introStep === 0) {
         setIntroStep(1);
         let updatedMessage = introDialogueSteps[1];

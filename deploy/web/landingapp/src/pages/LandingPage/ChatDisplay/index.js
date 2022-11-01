@@ -6,8 +6,6 @@
 
 /* REACT */
 import React from "react";
-/* STYLES */
-
 /* CUSTOM COMPONENTS */
 import ChatMessages from "./ChatMessages";
 import ChatControls from "./ChatControls";
