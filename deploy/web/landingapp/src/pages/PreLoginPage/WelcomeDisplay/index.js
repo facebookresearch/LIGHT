@@ -11,7 +11,7 @@ import TerminalEntry from "./TerminalEntry";
 /* STYLES */
 import "./styles.css";
 
-//WelcomeDisplay -
+//WelcomeDisplay - Renders WelcomeDisplay container that renders copy in classic terminal style to walking user through steps of prelogin
 const WelcomeDisplay = ({
   terminalDialogue,
   loginStepIncreaseHandler,
@@ -22,21 +22,24 @@ const WelcomeDisplay = ({
   const [welcomeStep, setWelcomeStep] = useState(0);
   const [rejectedAgreement, setRejectedAgreement] = useState(false);
   /*--------------- HANDLERS ----------------*/
+  //handles any changes to input value forr terminal steps with typed out answers
   const terminalInputChangeHandler = (e) => {
     let updatedValue = e.target.value;
     setTerminalInput(updatedValue);
   };
-
+  //handles any changes to input value forr terminal steps with typed out answers
   const terminalSubmissionHandler = () => {
     loginStepIncreaseHandler();
     setTerminalInput("");
   };
 
+  //handles user rejecting terms and makes page static with terms and faqs links still accessible
   const terminalRejectionHandler = () => {
     setRejectedAgreement(true);
     welcomeStepAdvancementHandler();
   };
 
+  //handles progressing to next step of welcomeStepper
   const welcomeStepAdvancementHandler = () => {
     let nextStep = welcomeStep + 1;
     setWelcomeStep(nextStep);
