@@ -21,7 +21,10 @@ const CollapsibleBox = ({
 }) => {
   /* ----LOCAL STATE---- */
   const [isCollapsed, setIsCollapsed] = useState(false);
+  /* ----HANDLERS---- */
+  //openHandler - Shows contents of container
   const openHandler = () => setIsCollapsed(false);
+  //closeHandler - Hides contents of container
   const closeHandler = () => setIsCollapsed(true);
 
   return (

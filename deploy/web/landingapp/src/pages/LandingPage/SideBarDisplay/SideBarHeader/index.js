@@ -6,7 +6,7 @@
 
 /* REACT */
 import React from "react";
-//STYLES
+/* STYLES */
 import "./styles.css";
 //CUSTOM COMPONENTS
 import ProgressBar from "../../../../components/Progressbar";
@@ -14,7 +14,7 @@ import InfoButton from "../../../../components/IconButtons/InfoButton";
 /* IMAGES */
 import Scribe from "../../../../assets/images/scribe.png";
 
-//
+//SidebarHeader - Renders user info and progress at the top of the side bar.  (hard coded in Landing App)
 const SidebarHeader = () => {
   return (
     <>

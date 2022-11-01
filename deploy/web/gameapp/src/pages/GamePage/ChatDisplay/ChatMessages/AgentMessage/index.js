@@ -18,7 +18,8 @@ import { Tooltip } from "react-tippy";
 import TutorialPopover from "../../../../../components/TutorialPopover";
 /* CONFIG */
 import CONFIG from "../../../../../config.js";
-
+/* UTIL */
+//handleReport - sends reported message and reras
 function handleReport(reportedMessage, reportReason) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
   if (CONFIG.port !== "80") {
@@ -38,6 +39,7 @@ function handleReport(reportedMessage, reportReason) {
   });
 }
 
+//handleReward - sends award exp to owner of message and message id to backend
 function handleReward(messageId, messageOwner) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
   if (CONFIG.port !== "80") {
@@ -57,6 +59,7 @@ function handleReward(messageId, messageOwner) {
   });
 }
 
+//AgentMessage - Message component sent by another player or model.  Can be awarded xp by user if they have any gift xp.  Can open reporting modal to report message for variet of reasons.  Can be replied too by clicking the reply button.
 const AgentMessage = ({
   text,
   caller,

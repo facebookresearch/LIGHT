@@ -1,7 +1,14 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+/* REACT */
 import React, { useState, useEffect, useMemo } from "react";
-
+/* STYLING */
 import { getActionThemeColor } from "../../app/theme";
 
+//Checks alignment, actor name, and action type.
 interface Props {
   align: "left" | "right";
   action: string;
@@ -9,6 +16,7 @@ interface Props {
   children: React.ReactNode;
 }
 
+//ChatBubbleTail - orients chat bubble tail to correct side.
 function ChatBubbleTail({
   align,
   action,
@@ -31,6 +39,7 @@ function ChatBubbleTail({
   );
 }
 
+//CharacterName - Character name plate
 function CharacterName({ name }: { name: string }) {
   return (
     <div className="text-sm font-semibold text-base-100 whitespace-pre">
@@ -39,6 +48,7 @@ function CharacterName({ name }: { name: string }) {
   );
 }
 
+//ChatBubble - Chat bubble that agent and user messages appear in.  User message to the right agent messages to the left.  Color of messages is determined by action
 export function ChatBubble({
   align = "left",
   action = "default",
