@@ -22,7 +22,7 @@ const LoginDisplay = () => {
     let updateAgreement = !legalAgreement;
     setLegalAgreement(updateAgreement);
   };
-
+  //LOGIN PATHS
   const nextLoc = new URLSearchParams(window.location.search).get("next");
   const targetStr =
     "/auth/fblogin" + (nextLoc !== null ? "?next=" + nextLoc : "");
