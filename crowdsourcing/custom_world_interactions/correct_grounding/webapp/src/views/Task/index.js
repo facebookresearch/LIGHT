@@ -11,13 +11,11 @@ import NarrationEditor from "../../components/NarrationEditor";
 import ObjectsEditor from "../../components/ObjectsEditor";
 import AttributesEditor from "../../components/AttributesEditor";
 
-}
-
 function getAttributeDictBaseVal(attributeDict) {
   let retDict = {};
-  for (item in attributeDict) {
+  for (let item in attributeDict) {
     let retItemDict = {};
-    for (attribute in attributeDict[item]) {
+    for (let attribute in attributeDict[item]) {
       retItemDict[attribute] = "";
     }
     retItemDict['EXTRAS'] = "";
@@ -38,10 +36,10 @@ const Task = ({
   const [errorMessages, setErrorMessages] = useState([]);
   //// Validation
   const [interactionValid, setInteractionValid] = useState(true);
-  const [primaryItem, setPrimaryItem] = useState("");
+  const [primaryItem, setPrimaryItem] = useState(null);
   //// Narration
-  const [usesExternalContext, setUsesExternalContext] = useState(false);
-  const [updatedNarration, setUpdatedNarration] = useState("");
+  const [usesExternalContext, setUsesExternalContext] = useState(null);
+  const [updatedNarration, setUpdatedNarration] = useState(data.action_desc);
   const [externalPerspective, setExternalPerspective] = useState(data.external_perspective);
   //// Objects after
   const [remainingObjects, setRemainingObjects] = useState(data.objects_afterwards);
@@ -55,7 +53,6 @@ const Task = ({
     interactionValid,
     usesExternalContext,
     updatedNarration,
-    narrationRanges,
     primaryItem,
     externalPerspective,
     remainingObjects,
@@ -67,8 +64,36 @@ const Task = ({
 
   function submissionHandler() {
     // Do some checking first
-    if (true) {
-      setErrorMessages("hello");
+    let errors = [];
+    if (primaryItem === null) {
+      errors.push("Be sure to pick a primary item for question 2. ");
+    }
+    if (usesExternalContext === null) {
+      errors.push("Annotate whether or not this interaction uses external context in question 3. ");
+    }
+    if (updatedNarration === data.action_desc) {
+      errors.push("You must provide a modified interaction description in question 4. ");
+    } 
+    if (Object.entries(finalDescriptions).filter(([_, x]) => x.length == 0).length != 0) {
+      errors.push("Be sure to provide a description for each object present after the interaction in question 7. ");
+    }
+    if (Object.entries(finalLocations).filter(([_, x]) => x.length == 0).length != 0) {
+      errors.push("Be sure to provide a final location for each object present after the interaction in question 8. ");
+    }
+    for (let itemName in beforeAttributes) {
+      if (Object.entries(beforeAttributes[itemName]).filter(([att_name, reason]) => (att_name != 'EXTRAS' && reason.length == 0)).length != 0) {
+        errors.push("Be sure to provide an answer for whether or not each attribute in question 9 is required before the interaction and why. ");
+        break;
+      }
+    }
+    for (let itemName in afterAttributes) {
+      if (Object.entries(afterAttributes[itemName]).filter(([att_name, reason]) => (att_name != 'EXTRAS' && reason.length == 0)).length != 0) {
+        errors.push("Be sure to provide an answer for whether or not each attribute in question 10 is required after the interaction and why.");
+        break;
+      }
+    }
+    if (errors.length > 0) {
+      setErrorMessages(errors);
       setShowError(true);
     } else {
       handleSubmit(payload);
@@ -93,6 +118,7 @@ const Task = ({
       />
       <div className="task-container">
         <NarrationEditor
+          interaction={data.action_desc}
           usesExternalContext={usesExternalContext}
           setUsesExternalContext={setUsesExternalContext}
           updatedNarration={updatedNarration}
@@ -115,11 +141,11 @@ const Task = ({
           setBeforeAttributes={setBeforeAttributes}
           afterAttributes={afterAttributes}
           setAfterAttributes={setAfterAttributes}
-        /> {/* TODO make list editor, and multi-list selector */}
+        />
       </div>
       <div>
         <Submission
-          submitFunction={() => submissionHandler}
+          submitFunction={() => submissionHandler()}
         />
       </div>
     </div>

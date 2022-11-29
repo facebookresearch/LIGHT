@@ -48,3 +48,5 @@ yarn-error.log*
 
 */src/config.js
 **/_generated/**
+
+**/out_data/**

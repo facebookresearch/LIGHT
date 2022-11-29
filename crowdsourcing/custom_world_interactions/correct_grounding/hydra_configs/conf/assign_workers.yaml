@@ -1,0 +1,20 @@
+#@package _global_
+mephisto:
+  blueprint:
+    task_source: ${task_dir}/webapp/build/bundle.js
+    extra_source_dir: ${task_dir}/webapp/src/static
+    units_per_assignment: 1
+    # approve_qualification: correct_narrations_task_allow
+  task:
+    maximum_units_per_worker: 4
+    max_num_concurrent_units: 80
+    assignment_duration_in_seconds: 3600
+    task_name: "objects-interaction-annotation-task-pilot"
+    task_title: "Annotate Grounding for an interaction between two objects. (pilot - limit 4)"
+    task_description: "In this task you will be given two objects and the narration for an interaction between them. You will need to annotate details about this interaction. You will be provided with model-generated suggestions, though these often require correction."
+    task_reward: 3.00
+    task_tags: "fantasy,object,interaction,annotations,grounding"
+  database:
+    _database_type: singleton
+num_tasks: 160
+use_allowlist: true

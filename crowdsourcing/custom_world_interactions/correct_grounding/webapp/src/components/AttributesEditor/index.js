@@ -6,7 +6,6 @@ import "./styles.css"
 import QuestionCopy from "../../TaskCopy.js";
 //CUSTOM COMPONENTSimport QuestionOnSelect from "../../../../components/QuestionOnSelect";
 import MultiFormQuestion from "../Questions/MultiFormQuestion";
-import ListEditQuestion from "../Questions/ListEditQuestion";
 
 // Attributes Editor Component - Container for Property Editing questions
 const AttributesEditor = ({
@@ -18,16 +17,16 @@ const AttributesEditor = ({
     // Assigning object attributes to variables for readability
     const QuestionList = QuestionCopy.attributes.questions
     const TipList = QuestionCopy.attributes.tutorialCopy;
-
+    const splitWord = " <has property> "
     function handleUpdateBeforeAttributes(label, newAttribute) {
-        let obj, att = label.split("|")
+        let [obj, att] = label.split(splitWord)
         let newBeforeAttributes = {...beforeAttributes};
         newBeforeAttributes[obj][att] = newAttribute;
         setBeforeAttributes(newBeforeAttributes);
     }
 
     function handleUpdateAfterAttributes(label, newAttribute) {
-        let obj, att = label.split("|")
+        let [obj, att] = label.split(splitWord)
         let newAfterAttributes = {...afterAttributes};
         newAfterAttributes[obj][att] = newAttribute;
         setAfterAttributes(newAfterAttributes);
@@ -35,10 +34,10 @@ const AttributesEditor = ({
 
     function reduceAttMap(attMap) {
         let newMap = {}
-        for (objName in attMap) {
+        for (let objName in attMap) {
             let attDict = attMap[objName];
-            for (attName in attDict) {
-                newMap[objName + '|' + attName] = attDict[attName];
+            for (let attName in attDict) {
+                newMap[objName + splitWord + attName] = attDict[attName];
             }
         }
         return newMap;
@@ -46,39 +45,36 @@ const AttributesEditor = ({
 
     let beforeReduceMap = reduceAttMap(beforeAttributes);
     let afterReduceMap = reduceAttMap(afterAttributes);
-
+    let beforeComplete = Object.entries(beforeReduceMap).filter(([n, x]) => n.indexOf('EXTRAS') == -1 && x.length == 0).length == 0;
+    let afterComplete = Object.entries(afterReduceMap).filter(([n, x]) => n.indexOf('EXTRAS') == -1 && x.length == 0).length == 0;
+    let beforePlaceholders = Object.entries(beforeReduceMap).map(([name, _]) => ((name.indexOf('EXTRAS') != -1) ? "Optional comma separated list of additional properties" : "'Required because ...' or 'Not required because ...'"))
+    let afterPlaceholders = Object.entries(afterReduceMap).map(([name, _]) => ((name.indexOf('EXTRAS') != -1) ? "Optional comma separated list of additional properties" : "'Required because ...' or 'Not required because ...'"))
 
     /*------LIFECYCLE------*/
     //Upon object change sets descriptions for relevant object
     return (
-        <div className="events-container">
-            <div className="events-header">
-                Narration Questions
+        <div className="attributes-container">
+            <div className="attributes-header">
+                Attributes Questions
             </div>
-            <div className="events-body">
-                <ListEditQuestion
+            <div className="attributes-body">
+                <MultiFormQuestion
                     question={QuestionList[0]}
-                    entries={remainingObjects}
-                    updateEntry={handleUpdateObjects}
+                    entryMap={beforeReduceMap}
+                    updateEntry={handleUpdateBeforeAttributes}
                     toolTipCopy={TipList[0].explanation}
                     hasToolTip={true}
-                    isComplete={remainingObjects.filter((x) => x.length == 0).length == 0}
+                    isComplete={beforeComplete}
+                    entryPlaceholder={beforePlaceholders}
                 />
                 <MultiFormQuestion
                     question={QuestionList[1]}
-                    entryMap={beforeReduceMap}
-                    updateEntry={handleUpdateBeforeAttributes}
-                    toolTipCopy={TipList[1].explanation}
-                    hasToolTip={true}
-                    isComplete={Object.entries(beforeReduceMap).filter((n, x) => !n.indexOf('EXTRAS') && x.length == 0).length == 0}
-                />
-                <MultiFormQuestion
-                    question={QuestionList[2]}
                     entryMap={afterReduceMap}
                     updateEntry={handleUpdateAfterAttributes}
-                    toolTipCopy={TipList[2].explanation}
+                    toolTipCopy={TipList[1].explanation}
                     hasToolTip={true}
-                    isComplete={Object.entries(afterReduceMap).filter((n, x) => !n.indexOf('EXTRAS') && x.length == 0).length == 0}
+                    isComplete={afterComplete}
+                    entryPlaceholder={afterPlaceholders}
                 />
             </div>
         </div>

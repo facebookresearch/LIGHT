@@ -19,7 +19,7 @@ import openai
 
 from typing import Dict, Any, List, Optional
 
-TARGET_FILE = os.path.join(os.path.dirname(__file__), "out_data", "results.json")
+TARGET_FILE = os.path.join(os.path.dirname(__file__), "out_data", "results-soft-reject.json")
 BACKUP_FILE = TARGET_FILE + ".bak"
 
 
@@ -200,8 +200,8 @@ def main():
             try:
                 if example.get('primary_carryable') is None:
                     example = determine_objects_holdable(example)
-                if example.get('context_consistent') is None:
-                    example = determine_context(example)
+                # if example.get('context_consistent') is None:
+                #     example = determine_context(example)
             except openai.error.ServiceUnavailableError as _e:
                 import time
                 time.sleep(1)

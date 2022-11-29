@@ -12,6 +12,8 @@ populate initial values for the potential grounding.
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.data_model.agent import AgentState
 
+from .utils import lev_dist
+
 import os
 import json
 import shutil
@@ -19,7 +21,9 @@ import openai
 
 from typing import Dict, Any, List, Optional
 
-TARGET_FILE = os.path.join(os.path.dirname(__file__), "out_data", "results.json")
+# TARGET_FILE = os.path.join(os.path.dirname(__file__), "out_data", "results.json")
+# BACKUP_FILE = TARGET_FILE + ".bak"
+TARGET_FILE = os.path.join(os.path.dirname(__file__), "out_data", "no-op-actions.json")
 BACKUP_FILE = TARGET_FILE + ".bak"
 
 
@@ -289,6 +293,7 @@ Objects remaining afterwards:
 {}
 Before Attributes:"""
 
+
 def get_objects_after_list(example: Dict[str, Any]) -> Dict[str, Any]:
     """prompt for the "objects_afterwards" field"""
     final_prompt = BASE_OBJECTS_AFTER_PROMPT.format(
@@ -299,6 +304,7 @@ def get_objects_after_list(example: Dict[str, Any]) -> Dict[str, Any]:
         example['raw_action'],
         example['action_desc'],
     )
+    subprompt = final_prompt.split('\n\n')[-1]
     completion = openai.Completion.create(
         engine='text-davinci-002', 
         temperature=0.4, # these should be _correct_ answers
@@ -308,15 +314,15 @@ def get_objects_after_list(example: Dict[str, Any]) -> Dict[str, Any]:
     )
     result = completion.choices[0].text.strip()
 
-    assert "Objects no longer present:\n" in result, f"No split for objects no longer present! {final_prompt}{result}"
+    assert len(result.split("Objects no longer present:\n")) == 2, f"Split for objects no longer present is corrupted! {subprompt}{result}"
 
     remaining_objects_and_reasons, no_longer_present_objects_and_reasons = result.split("Objects no longer present:\n")
     
-    remaining_objects_and_reasons = remaining_objects_and_reasons.split("\n")
+    remaining_objects_and_reasons = remaining_objects_and_reasons.strip().split("\n")
     remaining_objects = [r_o_r.split(' - ')[0] for r_o_r in remaining_objects_and_reasons]
     remaining_objects = [o for o in remaining_objects if o.lower() != "none" and o.strip() != '']
 
-    no_longer_present_objects_and_reasons = no_longer_present_objects_and_reasons.split("\n")
+    no_longer_present_objects_and_reasons = no_longer_present_objects_and_reasons.strip().split("\n")
     not_present_objects = [r_o_r.split(' - ')[0] for r_o_r in no_longer_present_objects_and_reasons]
     not_present_objects = [o for o in not_present_objects if o.lower() != "none" and o.strip() != '']
 
@@ -327,8 +333,37 @@ def get_objects_after_list(example: Dict[str, Any]) -> Dict[str, Any]:
                 return True
         return False
     
-    assert is_in_one(example['primary'].lower()), f"Primary object not in either remaining or removed list: {final_prompt}{result}\n{remaining_objects}"
-    assert is_in_one(example['secondary'].lower()), f"Secondary object not in either remaining or removed list: {final_prompt}{result}\n{remaining_objects}"
+    def get_near_match(target: str) -> Optional[str]:
+        # Finds the closest match within an edit distance of 4 for the obj and the full list
+        for max_dist in [1, 2, 3, 4]:
+            for elem in full_list:
+                if lev_dist(target, elem) <= max_dist:
+                    return elem
+        return None
+
+    def replace_in_list(old_val: str, new_val: str):
+        for idx, elem in enumerate(remaining_objects):
+            if elem == old_val:
+                remaining_objects[idx] = new_val
+                print(f"{old_val} replaced with {new_val}")
+                return
+        for idx, elem in enumerate(not_present_objects):
+            if elem == old_val:
+                not_present_objects[idx] = new_val
+                print(f"{old_val} replaced with {new_val}")
+                return
+
+
+    primary_lower = example['primary'].lower()
+    if not is_in_one(primary_lower):
+        replace_target = get_near_match(primary_lower)
+        assert replace_target is not None, f"Primary object not in either remaining or removed list: {subprompt}{result}\n{remaining_objects}"
+        replace_in_list(replace_target, primary_lower)
+    secondary_lower = example['secondary'].lower()
+    if not is_in_one(secondary_lower):
+        replace_target = get_near_match(primary_lower)
+        assert replace_target is not None, f"Secondary object not in either remaining or removed list: {subprompt}{result}\n{remaining_objects}"
+        replace_in_list(replace_target, secondary_lower)
 
     example['objects_afterwards'] = remaining_objects
     return example
@@ -345,6 +380,7 @@ def get_objects_after_descriptions(example: Dict[str, Any]) -> Dict[str, Any]:
         example['action_desc'],
         "\n".join(example['objects_afterwards']),
     )
+    subprompt = final_prompt.split('\n\n')[-1]
     completion = openai.Completion.create(
         engine='text-davinci-002', 
         temperature=0.75, # these should be interesting descriptions
@@ -354,11 +390,11 @@ def get_objects_after_descriptions(example: Dict[str, Any]) -> Dict[str, Any]:
     )
     result = completion.choices[0].text.strip()
 
-    item_desc_strings = result.split("\n")
+    item_desc_strings = result.strip().split("\n")
     item_desc_map = {r.split(": ")[0].lower(): ": ".join(r.split(": ")[1:]) for r in item_desc_strings}
 
     for item in example['objects_afterwards']:
-        assert item.lower() in item_desc_map, f"Generated item desc map missing item: {item} - {final_prompt}{result}"
+        assert item.lower() in item_desc_map, f"Generated item desc map missing item: {item} - {subprompt}{result}"
 
     example['descriptions_afterwards'] = item_desc_map
     return example
@@ -374,6 +410,7 @@ def get_external_perspective(example: Dict[str, Any]) -> Dict[str, Any]:
         example['raw_action'],
         example['action_desc'],
     )
+    subprompt = final_prompt.split('\n\n')[-1]
     completion = openai.Completion.create(
         engine='text-davinci-002', 
         temperature=0.83, # these should be interesting descriptions
@@ -383,7 +420,7 @@ def get_external_perspective(example: Dict[str, Any]) -> Dict[str, Any]:
     )
     result = completion.choices[0].text.strip()
 
-    assert "{actor}" in result, f"Description missing {{actor}} entirely, {final_prompt}{result}"
+    assert "{actor}" in result, f"Description missing {{actor}} entirely, {subprompt}{result}"
 
     example['external_perspective'] = result
     return example
@@ -400,6 +437,7 @@ def get_final_locations(example: Dict[str, Any]) -> Dict[str, Any]:
         example['action_desc'],
         "\n".join(example['objects_afterwards']),
     )
+    subprompt = final_prompt.split('\n\n')[-1]
     completion = openai.Completion.create(
         engine='text-davinci-002', 
         temperature=0.4, # these should be correct answers
@@ -420,7 +458,7 @@ def get_final_locations(example: Dict[str, Any]) -> Dict[str, Any]:
         return False
 
     for remaining_obj in example['objects_afterwards']:
-        assert remaining_obj.lower() in location_mapping, f"Remaining object {remaining_obj} was omitted! {final_prompt}{result}"
+        assert remaining_obj.lower() in location_mapping, f"Remaining object {remaining_obj} was omitted! {subprompt}{result}"
         location = location_mapping[remaining_obj.lower()]
         target = None
         if location.startswith('original location of '):
@@ -428,7 +466,7 @@ def get_final_locations(example: Dict[str, Any]) -> Dict[str, Any]:
         elif location.startswith('inside '):
             target = location[len('inside '):]
         if target is not None:
-            assert in_possible_targets(target), f"Provided target for {remaining_obj} : {target} was not in {possible_targets} | {final_prompt}{result}"
+            assert in_possible_targets(target), f"Provided target for {remaining_obj} : {target} was not in {possible_targets} | {subprompt}{result}"
 
     example['locations_afterwards'] = location_mapping
     return example
@@ -442,16 +480,23 @@ def get_relevant_attributes(example: Dict[str, Any]) -> Dict[str, Any]:
         def get_attribute_reason_map(attribute_list: List[str]) -> Dict[str, str]:
             ret_map = {}
             for attribute in attribute_list:
-                attribute_name = attribute.split(" - ")[0]
+                if len(attribute.strip()) == 0 or attribute.strip() == "N/A":
+                    continue
+                attribute_name, attribute_reason = attribute.split(" - ", 1)
                 if attribute_name == "N/A" or attribute_name == "":
                     continue
-                ret_map[attribute_name] = " - ".join(attribute.split(" - ")[1:]) 
+                ret_map[attribute_name] = attribute_reason
             return ret_map
         
         ret_map = {}
         for attribute_string in attribute_lists:
-            obj_name = attribute_string.split(": ")[0]
-            obj_attribute_list = (": ".join(attribute_string.split(": ")[1:])).split(" | ")
+            if attribute_string.strip() == '' or attribute_string.strip() == "N/A":
+                continue
+            print(attribute_string, attribute_string.split(": "))
+            obj_name, obj_attributes = attribute_string.split(": ", 1)
+            if obj_name == '':
+                continue
+            obj_attribute_list = obj_attributes.split(" | ")
             ret_map[obj_name.lower()] = get_attribute_reason_map(obj_attribute_list)
 
         return ret_map
@@ -465,6 +510,7 @@ def get_relevant_attributes(example: Dict[str, Any]) -> Dict[str, Any]:
         example['action_desc'],
         "\n".join(example['objects_afterwards']),
     )
+    subprompt = final_prompt.split('\n\n')[-1]
     completion = openai.Completion.create(
         engine='text-davinci-002', 
         temperature=0.6, # these should be _generally_ set
@@ -472,29 +518,46 @@ def get_relevant_attributes(example: Dict[str, Any]) -> Dict[str, Any]:
         prompt=final_prompt,
         max_tokens=800,
     )
-    
+
     result = completion.choices[0].text.strip()
 
-    assert "After Attributes:\n" in result, f"No split for after objects! in {final_prompt}{result}"
+    assert "After Attributes:\n" in result, f"No split for after objects! in {subprompt}{result}"
 
     before_attributes, after_attributes = result.split("After Attributes:\n")
-    before_attributes = before_attributes.split("\n")
+    before_attributes = before_attributes.strip().split("\n")
     before_map = get_object_attribute_map(before_attributes)
+
+    def get_near_match(target: str, t_map) -> Optional[str]:
+        # Finds the closest match within an edit distance of 4 for the obj and the given map
+        for max_dist in [1, 2, 3, 4]:
+            for elem in t_map.keys():
+                if lev_dist(target, elem) <= max_dist:
+                    return elem
+        return None
+
+    def replace_in_map(old_val: str, new_val: str, t_map):
+        t_map[new_val] = t_map[old_val]
+        del t_map[old_val]
 
     def is_in_map(item, t_map):
         for pos in t_map.keys():
             if item in pos or pos in item:
                 return True
+        # Try to put into the list
+        near_match = get_near_match(item, t_map)
+        if near_match is not None:
+            replace_in_map(near_match, item, t_map)
+            return True
         return False
 
     for item in [example['primary'].lower(), example['secondary'].lower()]:
-        assert is_in_map(item, before_map), f"Before item {item} missing in before attributes {before_map} | {final_prompt}{result}"
+        assert is_in_map(item, before_map), f"Before item {item} missing in before attributes {before_map} | {subprompt}{result}"
 
-    
-    after_attributes = after_attributes.split("\n")
+
+    after_attributes = after_attributes.strip().split("\n")
     after_map = get_object_attribute_map(after_attributes)
     for item in [e.lower() for e in example['objects_afterwards']]:
-        assert is_in_map(item, after_map), f"Before item {item} missing in before attributes {after_map} | {final_prompt}{result}"
+        assert is_in_map(item, after_map), f"Before item {item} missing in before attributes {after_map} | {subprompt}{result}"
 
     example['object_attributes']['before'] = before_map
     example['object_attributes']['after'] = after_map
@@ -515,29 +578,56 @@ def main():
     openai_sk = input("OpenAI API key: ")
     openai.organization = openai_org_id
     openai.api_key = openai_sk
-    
 
     current_results_len = len(results)
     print("Existing narrations: ", current_results_len)
     current_results_len_json = len(json.dumps(results))
 
-    for example in list(results.values())[:30]:
+    failed_annotations = 0
+    succeeded_annotations = 0
+    total_annotations = 0
+    for example in list(results.values()):
         try:
+            did_something = False
             if example['external_perspective'] is None:
                 example = get_external_perspective(example)
+                did_something = True
             if example['objects_afterwards'] is None:
                 example = get_objects_after_list(example)
+                did_something = True
             if example['descriptions_afterwards'] is None:
                 example = get_objects_after_descriptions(example)
-            if True: #example['locations_afterwards'] is None:
+                did_something = True
+            if example['locations_afterwards'] is None:
                 example = get_final_locations(example)
-            if example['object_attributes']['before'] is None:
-                example = get_relevant_attributes(example)
-        except AssertionError as e:
+                did_something = True
+            try:
+                if example['object_attributes']['before'] is None:
+                    example = get_relevant_attributes(example)
+                    did_something = True
+            except ValueError:
+                did_something = False # We won't count this as successful
+                failed_annotations += 1
+                pass
+            if did_something:
+                succeeded_annotations += 1
+            total_annotations += 1
+        except (AssertionError, openai.error.APIConnectionError, openai.error.Timeout) as e:
             print(e)
+            failed_annotations += 1
             pass
+        except (BaseException, KeyboardInterrupt) as e:
+            print(e)
+            import traceback
+            traceback.print_exc()
+            print("Cleaning up after exception")
+            break
         results[example['id']] = example
     
+    print(f"{failed_annotations} annotations failed during the annotation process")
+    print(f"{succeeded_annotations} are newly completed")
+    print(f"{total_annotations} annotations now completed")
+
     # Write out results
     with open(TARGET_FILE, "w+") as target_file:
         json.dump(results, target_file, indent=2)

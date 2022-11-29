@@ -10,6 +10,8 @@ import BooleanQuestion from "../../components/Questions/BooleanQuestion";
 
 // Narration Editor Component - Container for Narration Editing questions
 const NarrationEditor = ({
+    interaction,
+    baseExternalPerspective,
     usesExternalContext,
     setUsesExternalContext,
     updatedNarration,
@@ -18,17 +20,17 @@ const NarrationEditor = ({
     setExternalPerspective,
 }) => {
     // Assigning object attributes to variables for readability
-    const QuestionList = QuestionCopy.narrations.questions
-    const TipList = QuestionCopy.narrations.tutorialCopy;
+    const QuestionList = QuestionCopy.narration.questions
+    const TipList = QuestionCopy.narration.tutorialCopy;
 
     /*------LIFECYCLE------*/
     //Upon object change sets descriptions for relevant object
     return (
-        <div className="events-container">
-            <div className="events-header">
+        <div className="narration-container">
+            <div className="narration-header">
                 Narration Questions
             </div>
-            <div className="events-body">
+            <div className="narration-body">
                 <BooleanQuestion
                     question={QuestionList[0]}
                     trueAnswer={{ name: "Yes" }}
@@ -41,6 +43,7 @@ const NarrationEditor = ({
                 />
                 <FormQuestion
                     question={QuestionList[1]}
+                    placeholder={interaction}
                     formVal={updatedNarration}
                     formFunction={setUpdatedNarration}
                     toolTipCopy={TipList[1].explanation}
@@ -49,11 +52,12 @@ const NarrationEditor = ({
                 />
                 <FormQuestion
                     question={QuestionList[2]}
+                    placeholder={baseExternalPerspective}
                     formVal={externalPerspective}
                     formFunction={setExternalPerspective}
                     toolTipCopy={TipList[2].explanation}
                     hasToolTip={true}
-                    isComplete={(externalPerspective.length)}
+                    isComplete={externalPerspective.length != 0}
                 />
             </div>
         </div>

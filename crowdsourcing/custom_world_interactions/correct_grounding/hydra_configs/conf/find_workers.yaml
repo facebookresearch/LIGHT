@@ -4,19 +4,18 @@ mephisto:
     task_source: ${task_dir}/webapp/build/bundle.js
     extra_source_dir: ${task_dir}/webapp/src/static
     units_per_assignment: 1
-    # block_qualification: constraints_events_task_block
-    block_qualification: ground_events_1_task_block
+    block_qualification: collect_narrations_task_block
+    # approve_qualification: collect_narrations_task_allow
   task:
-    maximum_units_per_worker: 5
-    max_num_concurrent_units: 20
-    task_name: "ground-stage-1-pilot-4"
-    task_title: "Determine the results of a single interaction."
-    task_description: "In this task you will receive two objects with an interaction between them described in text format. You will answer questions related to the result of this description."
-    task_reward: 0.45
-    task_tags: "fantasy,object,interaction"
-  database: 
+    maximum_units_per_worker: 3
+    max_num_concurrent_units: 40
+    assignment_duration_in_seconds: 2400
+    task_name: "objects-interaction-annotation-task-pilot"
+    task_title: "Annotate Grounding for an interaction between two objects. (pilot)"
+    task_description: "In this task you will be given two objects and the narration for an interaction between them. You will need to annotate details about this interaction. You will be provided with model-generated suggestions, though these often require correction."
+    task_reward: 3.00
+    task_tags: "fantasy,object,interaction,annotations,grounding"
+  database:
     _database_type: singleton
-# num_tasks: 150
-# num_tasks: 60
-num_tasks: 96
+num_tasks: 40
 qualify_new_workers: true

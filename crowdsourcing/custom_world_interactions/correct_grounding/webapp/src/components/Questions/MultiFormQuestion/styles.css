@@ -11,7 +11,7 @@
 .form-header {
     font-size: 20px;
     font-weight: bold;
-    text-align: center;
+    text-align: left;
     margin-bottom: 4px;
 }
 
@@ -19,19 +19,24 @@
 
 }
 
-.answer-container {
+.multi-form-container {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.answer-form{
+.multi-form-form{
     font-size: 16px;
     border-width: 5px;
     border-color: silver;
     border-style: ridge;
     border-radius: 5px;
     padding:3px;
-    width: 60%;
+    width: 70%;
+    resize: none;
+}
+
+.multi-form-list{
+    width: 90%;
 }

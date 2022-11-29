@@ -1,0 +1,19 @@
+#@package _global_
+mephisto:
+  blueprint:
+    task_source: ${task_dir}/webapp/build/bundle.js
+    extra_source_dir: ${task_dir}/webapp/src/static
+    units_per_assignment: 1
+  task:
+    max_num_concurrent_units: 60
+    task_name: "objects-interaction-narration-task-full-failing"
+    task_title: "Create a FAILED interaction between two objects. (UPDATED INSTRUCTIONS 10/17/22 - please expand at top)"
+    task_description: "In this task you will be given a list of objects. You will be asked to select one, then come up with an object you may attempt to use in an interaction with your selected object. You will then describe in second person why the interaction would fail if one tried to use the objects together."
+    task_reward: 1.10
+    task_tags: "fantasy,object,interaction"
+  database:
+    _database_type: singleton
+num_tasks: 1500
+use_allowlist: true
+# num_tasks: 10
+# qualify_new_workers: false

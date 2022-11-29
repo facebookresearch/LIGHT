@@ -6,16 +6,16 @@ import "./styles.css"
 import InfoToolTip from "../../InfoToolTip";
 import Checkbox from "../../Checkbox";
 
-const Entry = ({text, updateText, onRemove}) => {
+const Entry = ({text, updateText, onRemove, placeholder}) => {
     return (
         <li>
             <textarea
-                className="answer-form"
+                className="list-edit-form"
                 onChange={(e) => updateText(e.target.value)}
                 value={text}
                 rows="1"
                 type="text"
-                placeholder={'enter an item'}
+                placeholder={placeholder}
             />
             <button onClick={onRemove}>Remove Item</button>
         </li>
@@ -30,13 +30,15 @@ const ListEditQuestion = ({
     updateEntry,// setState function that connects answer to payload state
     toolTipCopy,// Text that will appear in tooltip
     hasToolTip,// boolean that adds tooltip icon and text if true
-    isComplete// completion condition
+    isComplete, // completion condition
+    entryPlaceholder // placeholder for each entry in the list
 }) => {
     const entryForms = entries.map((n, idx) => <Entry 
         key={"remaining-"+idx} 
         text={n}
         updateText={(t) => updateEntry(t, idx, false)}
-        onRemove={(t) => updateEntry(null, idx, true)}
+        onRemove={() => updateEntry(null, idx, true)}
+        placeholder={entryPlaceholder}
     />);
     return (
         <div className="form-container" >
@@ -53,11 +55,11 @@ const ListEditQuestion = ({
             </InfoToolTip>
             <p >
             </p>
-            <div className="answer-container">
-                <ul>
+            <div className="list-edit-container">
+                <ul className="list-edit-list">
                     {entryForms}
                 </ul>
-                <button onClick={updateEntry(null, null, null)}>Add entry</button>
+                <button onClick={() => updateEntry(null, null, null)}>Add entry</button>
             </div>
         </div>
     )

@@ -12,6 +12,27 @@ import ObjectSelector from "../../components/ObjectSelector";
 import ObjectDescriber from "../../components/ObjectDescriber";
 import DescriptionForm from "./DescriptionForm";
 
+const Copy = {
+  basic: {
+    rawActionDescription: "In simple terms state the action between the two objects, e.g. swing axe at tree, wipe mirror with cloth",
+    rawActionTemplate: "The action phrase should involve using {primaryText} with {secondaryText}:",
+    narrationDescription: "Describe the interaction between these two objects (Remember to commit to the medieval fantasy setting) - Start with 'You...', e.g. You swing the axe, easily felling the tree and releasing shards of bark everywhere.",
+    narrationTemplate: "Your action should describe you using {primaryText} with {secondaryText}:",
+  },
+  boring: {
+    rawActionDescription: "In simple terms state the action between the two objects, e.g. hit rock with spoon, bounce ball off wall",
+    rawActionTemplate: "The action phrase should involve using {primaryText} with {secondaryText}:",
+    narrationDescription: "Describe the interaction between these two objects (Remember to commit to the medieval fantasy setting) - Start with 'You...', e.g. You hit the rock with the spoon, and it makes a satisfying 'dink' sound.",
+    narrationTemplate: "Your action should describe you using {primaryText} with {secondaryText}, and the action shouldn't change the final location/position, description, or attributes of the objects:",
+  },
+  failing: {
+    rawActionDescription: "In simple terms state an action between the two objects THAT SHOULDN'T BE POSSIBLE or DON'T MAKE SENSE, e.g. ignite river with match, unlock apple with key",
+    rawActionTemplate: "The action phrase should involve using {primaryText} with {secondaryText}, but the action should be impossible:",
+    narrationDescription: "Describe the failure of the interaction between the two objects such that the actor doesn't act or neither object is modified. (Remember to commit to the medieval fantasy setting) - Start with 'You...', e.g. You can't ignite a river! All you'd be left with is a soaked matchstick.",
+    narrationTemplate: "Your action should describe you attempting and failing to use {primaryText} with {secondaryText}, or not being able to do the given action for some reason:",
+  },
+}
+
 const Task1 = ({
   taskData,
   onSubmit,
@@ -33,6 +54,7 @@ const Task1 = ({
   const toggleShowSuccess = () => setShowSuccess(!showSuccess);
   const toggleShowError = () => setShowError(!showError);
   const {primaryObject, secondaryObject, primaryDescription, actionDescription, rawAction} = payload;
+  const copy = Copy.failing;
 
   useEffect(()=>{
       setSecondaryObjectList(taskData["secondary_object_list"]);
@@ -115,8 +137,8 @@ const Task1 = ({
           primaryObject={primaryObject}
           secondaryObject={secondaryObject}
           name={"Action Phrase"}
-          placeholder={"In simple terms state the action between the two objects, e.g. swing axe at tree, wipe mirror with cloth"}
-          taskTemplate={"The action phrase should involve using {primaryText} with {secondaryText}:"}
+          placeholder={copy.rawActionDescription}
+          taskTemplate={copy.rawActionTemplate}
           tips={false}
           bigForm={false}
         />
@@ -126,17 +148,17 @@ const Task1 = ({
           primaryObject={primaryObject}
           secondaryObject={secondaryObject}
           name={"Description"}
-          placeholder={"Describe the interaction between these two objects (Remember to commit to the medieval fantasy setting) - Start with 'You...', e.g. You swing the axe, easily felling the tree and releasing shards of bark everywhere."}
-          taskTemplate={"Your action should describe you using {primaryText} with {secondaryText}:"}
+          placeholder={copy.narrationDescription}
+          taskTemplate={copy.narrationTemplate}
           tips={true}
           bigForm={true}
         />
-          <button
-            className="submit-button"
-            onClick={submitHandler}
-            disabled={!active}>
-              SUBMIT
-          </button>
+        <button
+          className="submit-button"
+          onClick={submitHandler}
+          disabled={!active}>
+            SUBMIT
+        </button>
       </div>
     </div>
   );

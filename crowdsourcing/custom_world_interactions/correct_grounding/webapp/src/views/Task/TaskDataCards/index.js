@@ -3,7 +3,9 @@ import React from "react";
 import "./styles.css";
 //Custom Components
 import DataCard from "./DataCard";
-import TaskButton from "../../../components/TaskButton"
+import QuestionCopy from "../../../TaskCopy.js";
+import BooleanQuestion from "../../../components/Questions/BooleanQuestion";
+import MultipleSelectQuestion from "../../../components/Questions/MultipleSelectQuestion";
 
 //TaskDataCards - renders object1, object 2, and interaction datacards with proper layout
 const TaskDataCards = ({
@@ -18,6 +20,8 @@ const TaskDataCards = ({
     interactionValid,
     setInteractionValid,
 }) => {
+    const QuestionList = QuestionCopy.interaction.questions
+    const TipList = QuestionCopy.interaction.tutorialCopy;
     return (
        <div className="taskdatacards-container">
             <div className="items-container">
@@ -34,21 +38,33 @@ const TaskDataCards = ({
             </div>
             <div className="desc-container">
                 <DataCard
-                    header={"Interaction Description: " + rawAction}
+                    header={rawAction}
                     body={interaction}
                     color="green"
                 />
             </div>
             <div>
-                Does this interaction overall make sense? Is the narration of an event where an actor uses these objects together:
-                <TaskButton selectFunction={() => setInteractionValid(true)} name={'Yes'} isSelected={interactionValid === true} />
-                <TaskButton selectFunction={() => setInteractionValid(false)} name={'No'} isSelected={interactionValid === false} />
+                <BooleanQuestion
+                    question={QuestionList[0]}
+                    trueAnswer={{ name: "Yes" }}
+                    falseAnswer={{ name: "No" }}
+                    formFunction={(v) => setInteractionValid(v)}
+                    toolTipCopy={TipList[0].explanation}
+                    hasToolTip={true}
+                    defaultOption={interactionValid}
+                    isComplete={interactionValid !== null}
+                />
             </div>
             <div>
-                Which item is the actor more likely holding/using to do this interaction:
-                <TaskButton selectFunction={() => setPrimaryItem(object1)} name={object1} isSelected={primaryItem==object1} />
-                <TaskButton selectFunction={() => setPrimaryItem(object2)} name={object2} isSelected={primaryItem==object2} />
-                <TaskButton selectFunction={() => setPrimaryItem('either')} name={'either'} isSelected={primaryItem=='either'} />
+                <MultipleSelectQuestion
+                    question={QuestionList[1]}
+                    answers={[object1, object2, 'either', 'both']}
+                    selectFunction={(v) => setPrimaryItem(v[0])}
+                    toolTipCopy={TipList[1].explanation}
+                    hasToolTip={true}
+                    onlySelectOne={true}
+                    isComplete={primaryItem !== null}
+                />
             </div>
        </div>
     );

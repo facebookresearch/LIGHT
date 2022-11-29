@@ -8,13 +8,13 @@ mephisto:
     # approve_qualification: collect_narrations_task_allow
   task:
     maximum_units_per_worker: 5
-    max_num_concurrent_units: 50
+    max_num_concurrent_units: 60
     task_name: "objects-interaction-narration-task-pilot"
     task_title: "Annotate an interaction between two objects. (pilot)"
-    task_description: "In this task you will a list of objects. You will be asked to select one, then come up with an object you may use in an interaction with your selected object. You will then describe in second person an interaction that would occur if one were to use the objects together."
-    task_reward: 0.70
+    task_description: "In this task you will be given a list of objects. You will be asked to select one, then come up with an object you may use in an interaction with your selected object. You will then describe in second person an interaction that would occur if one were to use the objects together."
+    task_reward: 1.00
     task_tags: "fantasy,object,interaction"
   database:
     _database_type: singleton
-num_tasks: 200
+num_tasks: 400
 qualify_new_workers: true

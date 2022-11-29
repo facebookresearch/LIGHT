@@ -42,9 +42,9 @@ const ObjectsEditor = ({
             let newRemainingObjects = [...remainingObjects];
             let newAfterAttributes = {...afterAttributes}
             newRemainingObjects.splice(idx, 1);
-            delete newDescriptions[entry];
-            delete newLocations[entry];
-            delete newAfterAttributes[entry];
+            delete newDescriptions[entry.toLowerCase()];
+            delete newLocations[entry.toLowerCase()];
+            delete newAfterAttributes[entry.toLowerCase()];
             setRemainingObjects(newRemainingObjects);
             setFinalDescriptions(newDescriptions);
             setFinalLocations(newLocations);
@@ -55,13 +55,14 @@ const ObjectsEditor = ({
             let newDescriptions = {...finalDescriptions};
             let newLocations = {...finalLocations};
             let newRemainingObjects = [...remainingObjects];
+            let newAfterAttributes = {...afterAttributes}
             newRemainingObjects[idx] = value;
-            newDescriptions[value] = newDescriptions[entry];
-            newLocations[value] = newLocations[entry];
-            newAfterAttributes[value] = newAfterAttributes[entry];
-            delete newDescriptions[entry];
-            delete newLocations[entry];
-            delete newAfterAttributes[entry];
+            newDescriptions[value.toLowerCase()] = newDescriptions[entry.toLowerCase()];
+            newLocations[value.toLowerCase()] = newLocations[entry.toLowerCase()];
+            newAfterAttributes[value.toLowerCase()] = newAfterAttributes[entry.toLowerCase()];
+            delete newDescriptions[entry.toLowerCase()];
+            delete newLocations[entry.toLowerCase()];
+            delete newAfterAttributes[entry.toLowerCase()];
             setRemainingObjects(newRemainingObjects);
             setFinalDescriptions(newDescriptions);
             setFinalLocations(newLocations);
@@ -84,11 +85,11 @@ const ObjectsEditor = ({
     /*------LIFECYCLE------*/
     //Upon object change sets descriptions for relevant object
     return (
-        <div className="events-container">
-            <div className="events-header">
-                Narration Questions
+        <div className="objects-container">
+            <div className="objects-header">
+                Objects Questions
             </div>
-            <div className="events-body">
+            <div className="objects-body">
                 <ListEditQuestion
                     question={QuestionList[0]}
                     entries={remainingObjects}
@@ -96,6 +97,7 @@ const ObjectsEditor = ({
                     toolTipCopy={TipList[0].explanation}
                     hasToolTip={true}
                     isComplete={remainingObjects.filter((x) => x.length == 0).length == 0}
+                    entryPlaceholder={"Enter an item that remains after the interaction"}
                 />
                 <MultiFormQuestion
                     question={QuestionList[1]}
@@ -103,7 +105,10 @@ const ObjectsEditor = ({
                     updateEntry={handleUpdateDescription}
                     toolTipCopy={TipList[1].explanation}
                     hasToolTip={true}
-                    isComplete={Object.entries(finalDescriptions).filter((_, x) => x.length == 0).length == 0}
+                    isComplete={Object.entries(finalDescriptions).filter(([_, x]) => x.length == 0).length == 0}
+                    entryPlaceholder={
+                        Object.entries(finalDescriptions).map(([name, _]) => "Final description for " + name)
+                    }
                 />
                 <MultiFormQuestion
                     question={QuestionList[2]}
@@ -111,7 +116,10 @@ const ObjectsEditor = ({
                     updateEntry={handleUpdateLocation}
                     toolTipCopy={TipList[2].explanation}
                     hasToolTip={true}
-                    isComplete={Object.entries(finalLocations).filter((_, x) => x.length == 0).length == 0}
+                    isComplete={Object.entries(finalLocations).filter(([_, x]) => x.length == 0).length == 0}
+                    entryPlaceholder={
+                        Object.entries(finalDescriptions).map(([name, _]) => "Final location for " + name)
+                    }
                 />
             </div>
         </div>

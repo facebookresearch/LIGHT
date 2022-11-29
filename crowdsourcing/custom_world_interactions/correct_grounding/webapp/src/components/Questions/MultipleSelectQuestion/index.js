@@ -4,6 +4,9 @@ import React, {useEffect, useState} from "react";
 import "./styles.css";
 //CUSTOM COMPONENTS
 import TaskButton from "../../TaskButton"
+import InfoToolTip from "../../InfoToolTip";
+import Checkbox from "../../Checkbox";
+import FormatQuestion from "../../Utils/FormatQuestion";
 
 
 //MultipleSelectQuestion - Question where answer comes from clicking a button and more than one button may be selected at a time
@@ -12,6 +15,9 @@ const MultipleSelectQuestion = ({
     answers, //Array of answers
     colors, // array of colors for each answer
     selectFunction, // setState function connected to payload state
+    toolTipCopy, // Copy for desired tooltip
+    hasToolTip, // Boolean stating whether or not this component has a tooltip
+    isComplete, // Completion condition for question to be satisfactorily answered
     onlySelectOne,
 })=>{
     //Local State
@@ -48,9 +54,18 @@ const MultipleSelectQuestion = ({
     }, [answers])
     return(
         <div className="multipleselectquestion-container" >
-            <h1 className="multipleselectquestion-text">
-                {question}
-            </h1>
+            <InfoToolTip
+                tutorialCopy={toolTipCopy}
+                hasToolTip={hasToolTip}
+            >
+                <div style={{display:"flex", flexDirection:"row"}}>
+                    {hasToolTip?<Checkbox isComplete={isComplete} />:null}
+                    <FormatQuestion
+                        question={question}
+                        containerStyle="multipleselectquestion-text"
+                    />
+                </div>
+            </InfoToolTip>
             <div className="multipleselectanswer-container">
             {
                 [answerList].length

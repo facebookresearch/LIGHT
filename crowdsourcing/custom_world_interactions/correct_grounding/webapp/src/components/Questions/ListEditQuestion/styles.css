@@ -11,7 +11,7 @@
 .form-header {
     font-size: 20px;
     font-weight: bold;
-    text-align: center;
+    text-align: left;
     margin-bottom: 4px;
 }
 
@@ -19,14 +19,15 @@
 
 }
 
-.answer-container {
+.list-edit-container {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
 }
 
-.answer-form{
+.list-edit-form{
     font-size: 16px;
     border-width: 5px;
     border-color: silver;
@@ -34,4 +35,9 @@
     border-radius: 5px;
     padding:3px;
     width: 60%;
+    resize: none;
+}
+
+.list-edit-list{
+    width: 80%;
 }

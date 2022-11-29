@@ -6,6 +6,7 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 //REACT
+import React from "react";
 import ReactDOM from "react-dom";
 //MEPHISTO
 import { useMephistoTask } from "mephisto-task";

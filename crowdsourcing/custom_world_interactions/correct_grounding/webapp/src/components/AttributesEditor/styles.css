@@ -1,14 +1,15 @@
-/* EVENTS STYLES */
-.events-container {
-    width: 48%;
+/* attributes STYLES */
+.attributes-container {
+    width: 95%;
     display: flex;
     flex-direction: column;
     border-radius: 15px;
     box-shadow: 4px 4px 4px black;
     align-items: flex-start;
+    margin-bottom: 15px;
 }
 
-.events-header {
+.attributes-header {
     width: 100%;
     background-color: coral;
     font-weight: bold;
@@ -19,7 +20,7 @@
     border-top-left-radius: 10px;
 }
 
-.events-body {
+.attributes-body {
     border-color: coral;
     border-width: 3px;
     border-style: solid;
@@ -32,7 +33,7 @@
 }
 
 @media only screen and (max-width: 1000px) {
-    .events-container {
+    .attributes-container {
         width: 80%;
     }
 }

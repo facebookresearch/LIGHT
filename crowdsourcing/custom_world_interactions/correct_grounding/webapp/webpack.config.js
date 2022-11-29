@@ -36,7 +36,7 @@ module.exports = {
       },
       {
         test: /\.(svg|png|jpe?g|ttf)$/,
-        loader: "url-loader?limit=100000",
+        loader: "url-loader?limit=400000",
       },
       {
         test: /\.jpg$/,

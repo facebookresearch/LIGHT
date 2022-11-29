@@ -6,17 +6,17 @@ import "./styles.css"
 import InfoToolTip from "../../InfoToolTip";
 import Checkbox from "../../Checkbox";
 
-const Entry = ({name, text, updateText}) => {
+const Entry = ({name, text, updateText, placeholder}) => {
     return (
         <li>
             <b>{name}:</b>
             <textarea
-                className="answer-form"
+                className="multi-form-form"
                 onChange={(e) => updateText(e.target.value)}
                 value={text}
-                rows="1"
+                rows="2"
                 type="text"
-                placeholder={'enter an item'}
+                placeholder={placeholder}
             />
         </li>
     );
@@ -30,14 +30,16 @@ const MultiFormQuestion = ({
     updateEntry,// setState function that connects answer to payload state
     toolTipCopy,// Text that will appear in tooltip
     hasToolTip,// boolean that adds tooltip icon and text if true
-    isComplete// completion condition
+    isComplete, // completion condition
+    entryPlaceholder, // Placeholder array for form for each entry
 }) => {
-    const entryForms = Object.fromEntries(Object.entries(entryMap).map(([label, value], idx) => <Entry 
+    const entryForms = Object.entries(entryMap).map(([label, value], idx) => <Entry 
         key={"multi-form-entry-"+idx} 
         name={label}
         text={value}
         updateText={(t) => updateEntry(label, t)}
-    />));
+        placeholder={entryPlaceholder[idx]}
+    />);
     return (
         <div className="form-container" >
             <InfoToolTip
@@ -53,8 +55,8 @@ const MultiFormQuestion = ({
             </InfoToolTip>
             <p >
             </p>
-            <div className="answer-container">
-                <ul>
+            <div className="multi-form-container">
+                <ul className="multi-form-list">
                     {entryForms}
                 </ul>
             </div>

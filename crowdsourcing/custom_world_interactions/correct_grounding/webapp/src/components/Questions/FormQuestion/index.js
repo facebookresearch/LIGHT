@@ -19,7 +19,7 @@ const FormQuestion = ({
     isComplete// completion condition
 }) => {
     /*------STATE------*/
-    const [description, setDescription] = useState("")
+    const [description, setDescription] = useState(formVal)
     /*------LIFECYCLE------*/
     //Sets initial value on render
     /*------HANDLERS------*/

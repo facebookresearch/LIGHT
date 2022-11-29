@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -56,13 +56,6 @@ defaults = [
 ]
 
 from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
-
-
-ALLOWLIST_QUAL_NAME = "OBJINTERACTION_NARRATION_DATA_ANNOTATION_TASK_ALLOWLIST"
-BLOCKLIST_QUAL_NAME = "OBJINTERACTION_NARRATION_DATA_ANNOTATION_TASK_BLOCKLIST"
-
-ALL_GOOD_USER_FILES = ["/checkpoint/light/common_sense/jing_worker_allow_list.txt"]
-ALL_BAD_USER_FILES = ["/checkpoint/light/common_sense/all_bad_users.txt"]
 
 
 @dataclass
@@ -201,23 +194,6 @@ def main(cfg: DictConfig) -> None:
 
     using_allowlist = cfg.use_allowlist
     if using_allowlist:
-        # # Kind of hacky, but add qualifications to good+bad users
-        # for fname in ALL_GOOD_USER_FILES:
-        #     direct_soft_block_mturk_workers(
-        #         db,
-        #         get_block_list(fname),
-        #         ALLOWLIST_QUAL_NAME,
-        #         cfg.mephisto.provider.requester_name,
-        #     )
-
-        # for fname in ALL_BAD_USER_FILES:
-        #     direct_soft_block_mturk_workers(
-        #         db,
-        #         get_block_list(fname),
-        #         BLOCKLIST_QUAL_NAME,
-        #         cfg.mephisto.provider.requester_name,
-        #     )
-        # add allowlist qualification
         existing_qualifications = [
             make_qualification_dict("collect_narrations_task_allow_09_19", QUAL_EXISTS, None),
         ]

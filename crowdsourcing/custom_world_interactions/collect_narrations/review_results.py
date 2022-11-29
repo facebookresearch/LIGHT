@@ -24,7 +24,7 @@ def format_data_for_printing(data):
     duration = data["task_end"] - data["task_start"]
     metadata_string = (
         f"Worker: {worker_name}\nUnit: {data['unit_id']}\n"
-        f"Duration: {duration / 60} (pay/hr: {0.85 * 60 / (duration / 60)})\nStatus: {data['status']}\n"
+        f"Duration: {duration / 60} (pay/hr: {1.15 * 60 / (duration / 60)})\nStatus: {data['status']}\n"
     )
 
     inputs_string = ""
