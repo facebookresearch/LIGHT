@@ -1,0 +1,14 @@
+# @package _global_
+
+defaults:
+  - /light/model_pool: baseline
+  - /schema/light/db: local
+  - /light/db: devfair
+
+hostname: localhost
+port: 35496
+safety_classifier_path: /checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt
+is_logging: false
+
+light:
+  model_root: /checkpoint/light/models/

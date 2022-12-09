@@ -50,7 +50,7 @@ else:
     world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
 
 print("[building...]")
-g, world = world_builder.get_graph()
+g, world = asyncio.run(world_builder.get_graph())
 data = g.to_json()
 print(data)
 fw = open("/tmp/map.json", "w")

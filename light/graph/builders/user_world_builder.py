@@ -5,13 +5,14 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
 import random
+import asyncio
 from light.graph.structured_graph import OOGraph
 from light.graph.events.graph_events import ArriveEvent
 from light.graph.builders.base import (
     DBGraphBuilder,
     POSSIBLE_NEW_ENTRANCES,
 )
-from light.world.world import World
+from light.world.world import World, WorldConfig
 
 
 # TODO:  Refactor common functionality between builders!
@@ -123,7 +124,7 @@ class UserWorldBuilder(DBGraphBuilder):
                     obj_node.set_prop("equipped", True)
         return agent
 
-    def add_random_new_agent_to_graph(self, world):
+    async def add_random_new_agent_to_graph(self, world):
         # pick a random room
         g = world.oo_graph
         id = random.choice(list(g.rooms.keys()))
@@ -139,9 +140,9 @@ class UserWorldBuilder(DBGraphBuilder):
         )
         arrival_event.execute(world)
 
-    def get_graph(self):
+    async def get_graph(self):
         """Return an OOGraph built by this builder"""
-        g = OOGraph(self.opt)
+        g = OOGraph()
         self.g = g
         with self.db as ldb:
             world = ldb.get_world(self.world_id, self.player_id)
@@ -159,7 +160,7 @@ class UserWorldBuilder(DBGraphBuilder):
         self.add_nodes(g, resources, db_to_g, node_to_g)
         self.add_edges(g, edge_list, node_to_g)
 
-        world = World(self.opt, self)
+        world = World(WorldConfig(graph_builder=self))
         world.oo_graph = g
         return g, world
 

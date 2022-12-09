@@ -245,7 +245,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
     def get_last_turn_too_recent(self):
         return time.time() - self._last_action_time < MIN_TIME_BETWEEN_TURNS
 
-    def npc_action(self):
+    async def npc_action(self):
         """
         Agent attempt to take an action
         """
@@ -290,7 +290,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
         reply_action = act_text + "\n"
         # add action to history
         hist[agent_id].append("_self_act " + act_text + "\\n")
-        self.world.parse_exec(agent_id, reply_action)
+        await self.world.parse_exec(agent_id, reply_action)
 
     def provide_task(self):
         # STEP 1: in same room as viewing agent?
@@ -489,7 +489,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
             if isinstance(obs, SayEvent) or (
                 isinstance(obs, TellEvent) and obs.target_nodes[0] == agent
             ):
-                self.npc_dialogue(obs)
+                await self.npc_dialogue(obs)
                 return
 
         # possibly initiate talk request to someone in the room
@@ -505,7 +505,7 @@ class PartnerHeuristicModelSoul(ModelSoul):
                 and self.get_last_interaction_partner(partner) is None
             ):
                 self.set_interaction_partner(partner)
-                self.npc_dialogue(None)
+                await self.npc_dialogue(None)
                 return
         else:
             # possibly end interaction with existing interaction partner (if any)?
@@ -513,4 +513,4 @@ class PartnerHeuristicModelSoul(ModelSoul):
                 self.dialogue_clear_partner()
 
         # possibly act according to the bert model
-        # self.npc_action()
+        # await self.npc_action()

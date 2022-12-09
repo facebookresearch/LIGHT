@@ -1,0 +1,1 @@
+# LIGHT Server Architecture doc

@@ -4,12 +4,14 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import asyncio
 from light.world.souls.soul import Soul
 from copy import deepcopy
 import os
 import asyncio
 from typing import TYPE_CHECKING, Any, Optional
 from light.graph.events.graph_events import SystemMessageEvent
+from light.registry.model_pool import ModelTypeName
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -31,6 +33,13 @@ class BaseSoul(Soul):
         super().__init__(target_node, world)
         self.target_node._last_interaction_partner_id = None
         self.reset_interaction_history(self.target_node)
+        self.model_pool = world.model_pool
+        if self.model_pool.has_model(ModelTypeName.SCORING):
+            self.roleplaying_score_model = self.model_pool.get_model(
+                ModelTypeName.SCORING
+            )
+        else:
+            self.roleplaying_score_model = None
 
     def get_last_interaction_partner(self, node=None) -> Optional["GraphAgent"]:
         if node == None:
@@ -198,15 +207,17 @@ class BaseSoul(Soul):
         dtxt = ""
         agent = self.target_node
         agent_id = agent.node_id
+        is_self = None
         turn_id = None
         for d in agent._last_interaction_history:
             current_turn_id = d[0][0]
-            if turn_id == None or turn_id == current_turn_id:
+            current_is_self = current_turn_id == agent_id
+            if is_self == None or is_self == current_is_self:
                 dtxt += " " + d[1]
             else:
                 dtxt = dtxt.lstrip(" ")
                 dtxt += "\n" + d[1]
-            turn_id = current_turn_id
+            is_self = current_is_self
             is_safe = d[0][2]
             if not is_safe:
                 # reset conversation when unsafe utterances are in the history
@@ -215,73 +226,7 @@ class BaseSoul(Soul):
         final = txt + dtxt
         return final
 
-    @classmethod
-    def load_generic_act_model(cls, generic_act_model_file):
-        """
-        Load up and create shared retrieval model for acts, emotes and quest scoring, etc.
-        """
-        # TODO refactor with some kind of model-loading standard for model souls?
-        from parlai.core.params import ParlaiParser
-        from parlai.core.agents import create_agent
-
-        parser = ParlaiParser(True, True, "")
-        # Load action model
-        args = [
-            "-mf",
-            generic_act_model_file,
-            "-ecands",
-            "inline",
-            "--ignore-bad-candidates",
-            "True",
-        ]
-        act_opt, _unknown = parser.parse_and_process_known_args(args=args)
-        act_opt["override"] = {
-            "eval_candidates": "inline",
-            "ignore_bad_candidates": "True",
-        }
-        act_opt["interactive_mode"] = True
-        act_opt["ignore_bad_candidates"] = True
-        print("[ Creating generic act model ... ]")
-        action_model = create_agent(act_opt, requireModelExists=True)
-        return action_model
-
     ## ----- ROLE PLAYING SCORE FUNCTIONS BELOW
-
-    @classmethod
-    def load_roleplaying_score_model(cls, roleplaying_score_model_file):
-        """
-        Load up and create shared roleplaying score model for use with this class
-        """
-        # TODO refactor with some kind of model-loading standard for model souls?
-        from parlai.core.params import ParlaiParser
-        from parlai.core.agents import create_agent
-
-        parser = ParlaiParser(True, True, "")
-        args = ["-mf", roleplaying_score_model_file]
-        opt, _unknown = parser.parse_and_process_known_args(args=args)
-        # opt["interactive_mode"] = True
-        # return create_agent(opt, requireModelExists=True)
-        print("[ Creating roleplaying score agent ... ]")
-        model_opt = {}
-        model_opt["datapath"] = opt["datapath"]
-        model_opt["model_file"] = roleplaying_score_model_file
-        # '/checkpoint/jase/projects/light/beatthehobbot/swp6_light_bi/actmodelv2/model'
-        # model_opt['fixed_candidates_path'] = ranker_agent.opt['fixed_candidates_path']
-        model_opt["candidates"] = "fixed"
-        model_opt["eval_candidates"] = "fixed"
-        # model_opt["no_cuda"] = True
-        model_opt["use_reply"] = "none"
-        model_opt["interactive_mode"] = True
-        model_opt["boring_alpha"] = 0
-        model_opt["override"] = deepcopy(model_opt)
-        roleplaying_score_model = create_agent(model_opt)
-        roleplaying_score_model.boring = None
-
-        # mark this agent as the special RP score agent
-        roleplaying_score_model.actingscore = True
-        # override eval step here
-        roleplaying_score_model.eval_step = roleplaying_score_model.eval_step_scoresonly
-        return roleplaying_score_model
 
     def too_much_string_overlap(self, s1, s2):
         """
@@ -296,32 +241,39 @@ class BaseSoul(Soul):
             return True
         return False
 
-    def get_fixed_cand_scores(self, context):
+    async def get_fixed_cand_scores(self, context):
         """
         Returns the candidates at self.SAMPLE_INDS
         """
-        self.roleplaying_score_model.opt["eval_candidates"] = "fixed"
-        self.roleplaying_score_model.eval_candidates = "fixed"  # set candidates
         act = {
             "text": context,
             "id": "persona",
             "episode_done": False,
         }
-        self.roleplaying_score_model.reset()
-        self.roleplaying_score_model.observe(deepcopy(act))
-        _ = self.roleplaying_score_model.act()
-        return self.roleplaying_score_model.scores
+        self.roleplaying_score_model.observe(act)
+        score_act = await self.roleplaying_score_model.act()
+        return score_act["scores"]
 
-    def get_pos_human_msg(self, human_msg, scores):
+    async def get_pos_human_msg(self, human_msg, context, scores):
         """
         Get the model score of the human message and compare to fixed cands.
         """
-        human_score = float(self.roleplaying_score_model.score_one_candidate(human_msg))
-        human_rank = int((scores > human_score).sum())
-        return human_rank, human_score
+        act = {
+            "text": context,
+            "id": "persona",
+            "episode_done": False,
+            "label_candidates": [human_msg],
+            "eval_labels": [human_msg],
+        }
+        self.roleplaying_score_model.observe(deepcopy(act))
+        score_act = await self.roleplaying_score_model.act()
 
-    def score_conversation(self):
-        if not hasattr(self, "roleplaying_score_model"):
+        human_score = float(score_act["scores"][0])
+        human_points = len([x for x in scores if x < human_score])
+        return human_points, human_score
+
+    async def score_conversation(self):
+        if self.roleplaying_score_model is None:
             # For local testing of exp with no models, set this to nonzero
             return 0
 
@@ -337,28 +289,14 @@ class BaseSoul(Soul):
         # check for n-gram match with context
         if self.too_much_string_overlap(context, human_msg):
             return 0
-        # mark this agent as the special RP score agent
-        self.roleplaying_score_model.actingscore = True
-        # override eval step here
-        self.roleplaying_score_model.eval_step = (
-            self.roleplaying_score_model.eval_step_scoresonly
+        fixed_cand_scores = await self.get_fixed_cand_scores(context)
+        # We award points on the score ranking, not the raw model score
+        final_score, _model_score = await self.get_pos_human_msg(
+            human_msg, context, fixed_cand_scores
         )
-        fixed_cand_scores = self.get_fixed_cand_scores(context)
-        pos, score = self.get_pos_human_msg(human_msg, fixed_cand_scores)
-        # print("pos:", pos)
-        if pos < 1000:
-            final_score = 4
-        elif pos < 2000:
-            final_score = 3
-        elif pos < 5000:
-            final_score = 2
-        elif pos < 10000:
-            final_score = 1
-        else:
-            final_score = 0
         return final_score
 
-    def role_playing_score_events(self, event):
+    async def role_playing_score_events(self, event):
         # Track event history, and award roleplaying score if appropriate.
         agent = event.actor
         if agent != self.target_node:
@@ -378,7 +316,7 @@ class BaseSoul(Soul):
                 if agent2_id not in agent._agent_interactions:
                     agent._agent_interactions[agent2_id] = 0
 
-                stars = self.score_conversation()
+                stars = await self.score_conversation()
                 agent._agent_interactions[agent2_id] += stars
                 agent.xp += stars
                 agent.reward_xp += stars / 4.0

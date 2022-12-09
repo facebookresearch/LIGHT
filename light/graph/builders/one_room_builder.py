@@ -4,9 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.params import ParlaiParser
-from parlai.core.agents import create_agent, create_agent_from_shared
-from light.world.world import World
+from light.registry.models.starspace_model import MapStarspaceModelConfig
+from light.world.world import World, WorldConfig
 from light.graph.structured_graph import OOGraph
 from light.graph.builders.base import (
     DBGraphBuilder,
@@ -35,6 +34,15 @@ import os
 import random
 import copy
 import time
+import asyncio
+
+from dataclasses import dataclass, field
+from omegaconf import MISSING, DictConfig
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from light.data_model.light_database import LIGHTDatabase
+    from light.registry.model_pool import ModelPool
 
 MAX_EXTRA_AGENTS_PER_ROOM = 2
 INV_DIR = {"east": "west", "west": "east", "north": "south", "south": "north"}
@@ -63,40 +71,63 @@ POSSIBLE_NEW_ENTRANCES = [
 ]
 
 
+@dataclass
+class OneRoomChatBuilderConfig:  # BuilderConfig():
+    # TODO create builder config parent
+    model_loader_config: MapStarspaceModelConfig = MapStarspaceModelConfig()
+    suggestion_type: str = field(
+        default="model",
+        metadata={
+            "help": ("Input 'model', 'human', or 'hybrid', for the suggestion type")
+        },
+    )
+    hybridity_prob: float = field(
+        default=0.5,
+        metadata={
+            "help": ("Set probability how often ex-object or character is skipped")
+        },
+    )
+    use_best_match_model: bool = field(
+        default=False,
+        metadata={
+            "help": (
+                "use human suggestions for predicting placement of objects, characters, and room"
+            )
+        },
+    )
+    # TODO move to elsewhere
+    light_db_file: str = field(
+        default="/checkpoint/light/data/database3.db",
+        metadata={"help": ("specific path for light database")},
+    )
+
+
 class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
     """Builds a one-room light Graph using a StarSpace model to connect everything."""
 
-    def __init__(self, ldb, debug=True, opt=None):
+    def __init__(
+        self,
+        ldb: "LIGHTDatabase",  # LIGHT database, TODO replace with EnvDB
+        model_pool: "ModelPool",  # Models this builder can use
+        builder_config: "DictConfig",  # Configuration for this builder
+        graph_opt=None,
+    ):
         """Initializes required models and parameters for this graph builder"""
-        if opt is None:
-            parser = ParlaiParser(
-                True, True, "Arguments for building a LIGHT room with Starspace"
-            )
-            self.add_parser_arguments(parser)
-            opt, _unknown = parser.parse_and_process_known_args()
+        self.graph_opt = {} if graph_opt is None else graph_opt
 
         # Setup correct path
-        db_path = opt.get("db_path")
-        if db_path is None:
-            parlai_datapath = opt["datapath"]
-            db_path = os.path.join(parlai_datapath, "light", "database3.db")
-        self.db_path = db_path
-        self.dpath = os.path.expanduser(
-            os.path.join(opt["db_path"], "../..", "light_maps")
-        )
+        self.db_path = builder_config.get("light_db_file")
+        self.dpath = os.path.expanduser("~/ParlAI/data/light_maps/")
         model_path = opt.get("model_path")
         if model_path is None:
             model_path = opt.get("light_model_root")
         self.model_path = model_path
-        self.ldb = ldb
         DBGraphBuilder.__init__(self, ldb)
-        SingleSuggestionGraphBuilder.__init__(self, opt, model_path=self.model_path)
-        self.debug = debug
+        SingleSuggestionGraphBuilder.__init__(self, model_pool=model_pool)
 
-        self._no_npc_models = True
         self.load_models()
-        self.use_best_match = False
-        self.suggestion_type = self.opt.get("suggestion_type", "hybrid")
+        self.use_best_match = builder_config.use_best_match_model
+        self.suggestion_type = builder_config.suggestion_type
         # Cache for retrieved room/ char/ obj dicts from the database
         self.roomid_to_feats = {}
         self.feats_to_roomid = {}
@@ -105,74 +136,25 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         self.charid_to_feats = {}
         self.feats_to_charid = {}
         # paramter to control the hybridity of the model
-        self.prob_skip_ex_objects = self.opt.get("hybridity_prob", 0.5)
-        self.prob_skip_ex_char = self.opt.get("hybridity_prob", 0.5)
+        self.prob_skip_ex_objects = builder_config.hybridity_prob
+        self.prob_skip_ex_char = builder_config.hybridity_prob
         self.allowed_characters = None
         self.banned_rooms = []
         self.room = None
         self.neighbors = []
 
-    @staticmethod
-    def add_parser_arguments(parser):
-        """
-        Add arguments to a parser to be able to set the required options for
-        this builder
-        """
-        parser.add_argument(
-            "--suggestion-type",
-            type=str,
-            default="model",
-            help="Input 'model', 'human', or 'hybrid', for the suggestion type",
-        )
-        parser.add_argument(
-            "--hybridity-prob",
-            type=float,
-            default=0.5,
-            help="Set probability how often ex-object or character is skipped",
-        )
-        parser.add_argument(
-            "--use-best-match-model",
-            type="bool",
-            default=False,
-            help="use human suggestions for predicting placement of objects, characters, and room",
-        )
-        parser.add_argument(
-            "--light-db-file",
-            type=str,
-            default="/checkpoint/light/data/database3.db",
-            help="specific path for light database",
-        )
-        parser.add_argument(
-            "--light-model-root",
-            type=str,
-            default="/checkpoint/light/models/",
-            help="specific path for light models",
-        )
-
-    def load_models(self):
+    def load_models(self) -> None:
         """Load starspace models for building the map"""
-        # TODO load from zoo when launched
-        opt = copy.deepcopy(self.opt)
-        mf = os.path.join(self.model_path, "starspace/angela_starspace/model4")
-        opt["model_file"] = mf
-        # Create room agent
-        opt["fixed_candidates_file"] = self.dpath + "/room_full_cands.txt"
-        opt["override"] = {"fixed_candidates_file": opt["fixed_candidates_file"]}
-        self.agents["room"] = create_agent(opt, requireModelExists=True)
-        # Model Params are added as new fields to opt dict, Are there better ways around this?
-        opt = self.agents["room"].opt.copy()
-        opt["fixed_candidates_file"] = self.dpath + "/object_full_cands.txt"
-        opt["override"] = {"fixed_candidates_file": opt["fixed_candidates_file"]}
-        share_dict = self.agents["room"].share()
-        share_dict["opt"] = opt
-        self.agents["object"] = create_agent_from_shared(share_dict)
-        opt = self.agents["room"].opt.copy()
-        opt["fixed_candidates_file"] = self.dpath + "/character_full_cands.txt"
-        opt["override"] = {"fixed_candidates_file": opt["fixed_candidates_file"]}
-        share_dict = self.agents["room"].share()
-        share_dict["opt"] = opt
-        self.agents["character"] = create_agent_from_shared(share_dict)
-        self.agent = self.agents["room"]
+        # self.model_pool.register_model(self.config.model_loader_config, "map_starspace")
+        self.agents["room"] = self.model_pool.get_model(
+            "map_starspace", {"target_type": "room"}
+        )
+        self.agents["object"] = self.model_pool.get_model(
+            "map_starspace", {"target_type": "object"}
+        )
+        self.agents["character"] = self.model_pool.get_model(
+            "map_starspace", {"target_type": "character"}
+        )
 
     def _props_from_obj(self, obj):
         """Given a DBObject representing an object in the world, extract the
@@ -258,7 +240,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             use_desc = use_desc[4:]
         return use_desc
 
-    def add_object_to_graph(self, g, obj, container_node, extra_props=None):
+    async def add_object_to_graph(self, g, obj, container_node, extra_props=None):
         """Adds a particular DBObject to the given OOgraph, adding to the specific
         container node. Returns the newly created object node"""
         if obj is None:
@@ -284,7 +266,9 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                     obj.name,
                     obj.db_id,
                 )
-                contained_objs = self.get_contained_items(obj.db_id, DB_TYPE_OBJ, 3)[1:]
+                contained_objs = await self.get_contained_items(
+                    obj.db_id, DB_TYPE_OBJ, 3
+                )[1:]
                 for o in contained_objs:
                     if self._name_not_in_graph(g, o.name):
                         self._add_object_to_graph(g, o, obj_node)
@@ -313,7 +297,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             obj_node.move_to(container_node)
             return obj_node
 
-    def add_new_agent_to_graph(self, g, char, room_node):
+    async def add_new_agent_to_graph(self, g, char, room_node):
         """Add the given DBcharacter  to the given room (room_node) in the
         given OOFraph. Return the new agent node on success, and None on failure"""
         if char is None:
@@ -350,18 +334,18 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 obj.db_id: (
                     "equipped" if obj.is_wearable or obj.is_weapon else "carrying"
                 )
-                for obj in self.get_contained_items(char.db_id, DB_TYPE_CHAR)
+                for obj in await self.get_contained_items(char.db_id, DB_TYPE_CHAR)
             }
         if self.suggestion_type == "hybrid" and len(objs) == 0:
             objs = {
                 obj.db_id: (
                     "equipped" if obj.is_weapon or obj.is_wearable else "carrying"
                 )
-                for obj in self.get_contained_items(char.db_id, DB_TYPE_CHAR, 2)
+                for obj in await self.get_contained_items(char.db_id, DB_TYPE_CHAR, 2)
             }
 
         for obj in objs:
-            obj_node = self.add_object_to_graph(
+            obj_node = await self.add_object_to_graph(
                 g, self.get_obj_from_id(obj), agent_node
             )
             if obj_node is not None:
@@ -369,11 +353,11 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                     obj_node.set_prop("equipped", True)
         return agent_node
 
-    def add_random_new_agent_to_graph(self, world):
+    async def add_random_new_agent_to_graph(self, world):
         """Add a random agent to the OOGraph at a random room node"""
         raise Exception("There shouldn't be any random additions")
 
-    def add_neighbors(self, room):
+    async def add_neighbors(self, room):
         """Try to add all possible exits to a given room"""
         if self.use_best_match:
             neighbors = room.get_text_edges(DB_EDGE_NEIGHBOR)
@@ -381,12 +365,14 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             # Not using best match model but the starspace model for model prediction
             neighbors = [
                 e.setting
-                for e in self.get_neighbor_rooms(room_id=room.db_id, banned_rooms=[])
+                for e in await self.get_neighbor_rooms(
+                    room_id=room.db_id, banned_rooms=[]
+                )
             ]
         return neighbors
 
     ##########For best match model###################
-    def get_similar_element(self, txt_feats, element_type):
+    async def get_similar_element(self, txt_feats, element_type):
         """Given a text feature, and the corresponding Database type
         return an DBElement of the DB type"""
         agent_type = None
@@ -410,7 +396,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             self.agents[agent_type].reset()
             msg = {"text": txt_feats, "episode_done": True}
             self.agents[agent_type].observe(msg)
-            response = self.agents[agent_type].act()
+            response = await self.agents[agent_type].act()
             ind = 0
             while ind < len(response["text_candidates"]):
                 key = response["text_candidates"][ind]
@@ -420,24 +406,24 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 ind = ind + 1
             return None
 
-    def get_similar_room(self, txt_feats):
+    async def get_similar_room(self, txt_feats):
         """Find a similar room to the text room given
         based on a starspace prediction"""
-        return self.get_similar_element(txt_feats, DB_TYPE_ROOM)
+        return await self.get_similar_element(txt_feats, DB_TYPE_ROOM)
 
-    def get_similar_object(self, txt_feats):
+    async def get_similar_object(self, txt_feats):
         """Find a similar object to the text given
         based on starspace prediciton"""
-        return self.get_similar_element(txt_feats, DB_TYPE_OBJ)
+        return await self.get_similar_element(txt_feats, DB_TYPE_OBJ)
 
-    def get_similar_character(self, txt_feats):
+    async def get_similar_character(self, txt_feats):
         """Find a similar object to the text given
         based on starspace prediciton"""
-        return self.get_similar_element(txt_feats, DB_TYPE_CHAR)
+        return await self.get_similar_element(txt_feats, DB_TYPE_CHAR)
 
     ###################################################
 
-    def get_neighbor_rooms(self, room_id, num_results=5, banned_rooms=None):
+    async def get_neighbor_rooms(self, room_id, num_results=5, banned_rooms=None):
         """get prediction of neighbor room with StarSpaceModel, return DBRoom Object """
         if banned_rooms is None:
             banned_rooms = [room_id]
@@ -446,7 +432,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             # This is added due to the new model prediction for neighbors
         else:
             txt_feats = self.roomid_to_feats[room_id]
-        response = self.agent_recommend(txt_feats, "room")
+        response = await self.agent_recommend(txt_feats, "room")
         ind = 0
         results = []
         while len(results) < num_results:
@@ -465,10 +451,10 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                     return results
         return results
 
-    def get_graph_from_quest(self, quest):
+    async def get_graph_from_quest(self, quest):
         graph_json = quest["data"]["graph"]
         g = OOGraph.from_json(graph_json)
-        world = World(self.opt, self)
+        world = World(WorldConfig(opt=self.graph_opt, graph_builder=self))
         world.oo_graph = g
 
         base_room = list(g.rooms.values())[0]
@@ -476,7 +462,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         if db_id is None:
             neighbors = [self.get_random_room(), self.get_random_room()]
         else:
-            neighbors = self.get_neighbor_rooms(db_id)
+            neighbors = await self.get_neighbor_rooms(db_id)
         for neighbor_room in neighbors:
             if neighbor_room is None:
                 continue
@@ -496,7 +482,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             )
         return g, world
 
-    def _get_constrained_graph(self, location=None, player=None, num_partners=1):
+    async def _get_constrained_graph(self, location=None, player=None, num_partners=1):
         """
         Location is of the form "Location Name. location description"
         player is of the form "Player Name. player persona"
@@ -506,7 +492,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         else:
             set_room = self.get_room_from_id(self.roomfeats_to_id(location))
 
-        g = OOGraph(self.opt)
+        g = OOGraph(self.graph_opt)
         room_node = g.add_room(
             set_room.setting,
             {
@@ -523,7 +509,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         )
         set_room.g_id = room_node.node_id
 
-        possible_chars = self.get_contained_characters(
+        possible_chars = await self.get_contained_characters(
             room_id=set_room.db_id, num_results=5
         )
         if "db" in set_room.ex_characters:
@@ -538,23 +524,29 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         if player is None:
             player_char = random.choice(possible_chars)
             possible_chars.remove(player_char)
-            self_char_id = self.add_new_agent_to_graph(g, player_char, room_node)
+            self_char_id = await self.add_new_agent_to_graph(g, player_char, room_node)
             while self_char_id is None:
                 player_char = random.choice(possible_chars)
                 possible_chars.remove(player_char)
-                self_char_id = self.add_new_agent_to_graph(g, player_char, room_node)
+                self_char_id = await self.add_new_agent_to_graph(
+                    g, player_char, room_node
+                )
         else:
             player_char = self.get_char_from_id(self.charfeats_to_id(player.lower()))
-            self_char_id = self.add_new_agent_to_graph(g, player_char, room_node)
+            self_char_id = await self.add_new_agent_to_graph(g, player_char, room_node)
 
         for _ in range(num_partners):
             partner_char = random.choice(possible_chars)
             possible_chars.remove(partner_char)
-            parner_char_id = self.add_new_agent_to_graph(g, partner_char, room_node)
+            parner_char_id = await self.add_new_agent_to_graph(
+                g, partner_char, room_node
+            )
             while parner_char_id is None:
                 partner_char = random.choice(possible_chars)
                 possible_chars.remove(partner_char)
-                parner_char_id = self.add_new_agent_to_graph(g, partner_char, room_node)
+                parner_char_id = await self.add_new_agent_to_graph(
+                    g, partner_char, room_node
+                )
 
         if "db" in set_room.ex_objects:
             for item_id in set_room.ex_objects["db"]:
@@ -570,7 +562,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 if obj is not None:
                     self.add_object_to_graph(g, obj, room_node, props)
         if self.suggestion_type == "model":
-            predicted_objects = self.get_contained_items(
+            predicted_objects = await self.get_contained_items(
                 container_id=set_room.db_id, container_type=DB_TYPE_ROOM
             )
             for o in predicted_objects:
@@ -578,7 +570,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                     room_node = g.get_node(set_room.g_id)
                     self.add_object_to_graph(g, o, room_node)
 
-        neighbors = self.get_neighbor_rooms(set_room.db_id)
+        neighbors = await self.get_neighbor_rooms(set_room.db_id)
         for neighbor_room in neighbors:
             if neighbor_room is None:
                 continue
@@ -597,11 +589,11 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 db_id=neighbor_room.db_id,
             )
 
-        world = World(self.opt, self)
+        world = World(WorldConfig(opt=self.graph_opt, graph_builder=self))
         world.oo_graph = g
         return g, world
 
-    def get_constrained_graph(self, location=None, player=None, num_partners=1):
+    async def get_constrained_graph(self, location=None, player=None, num_partners=1):
         """Take a few attempts to get the graph meeting the given constraints"""
         attempts = 9
         graph = None
@@ -609,7 +601,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         while graph is None and attempts > 0:
             try:
                 random.seed(time.time())
-                graph, world = self._get_constrained_graph(
+                graph, world = await self._get_constrained_graph(
                     location=location,
                     player=player,
                     num_partners=num_partners,
@@ -619,13 +611,13 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 attempts -= 1
         return graph, world
 
-    def get_graph(self):
+    async def get_graph(self):
         """Construct a graph using the grid created with build_world after
         selecting new characters and objects to place within.
         """
-        return self.get_constrained_graph(None, None, num_partners=1)
+        return await self.get_constrained_graph(None, None, num_partners=1)
 
-    def get_contained_items(
+    async def get_contained_items(
         self, container_id, container_type, num_results=5, banned_items=None
     ):
         """
@@ -651,7 +643,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 txt_feats = self.charid_to_feats[container_id]
             else:
                 txt_feats = self.get_text_features(self.get_char_from_id(container_id))
-        response = self.agent_recommend(txt_feats, "object")
+        response = await self.agent_recommend(txt_feats, "object")
         ind = 0
         results = []
         while len(results) < num_results and ind < len(response["text_candidates"]):
@@ -667,7 +659,9 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             ind = ind + 1
         return results
 
-    def get_contained_characters(self, room_id, num_results=5, banned_characters=None):
+    async def get_contained_characters(
+        self, room_id, num_results=5, banned_characters=None
+    ):
         """ Get prediction of contained characters in given room_id from StarSpace model."""
         if banned_characters is None:
             banned_characters = []
@@ -678,7 +672,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             txt_feats = self.roomid_to_feats[room_id]
         else:
             txt_feats = self.get_text_features(self.get_room_from_id(room_id))
-        response = self.agent_recommend(txt_feats, "character")
+        response = await self.agent_recommend(txt_feats, "character")
         ind = 0
         results = []
         while len(results) < num_results:

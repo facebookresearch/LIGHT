@@ -1,8 +1,8 @@
+#!/usr/bin/env python3
+
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-
-#!/usr/bin/env python3
 import json
 import os
 import sys
@@ -10,6 +10,7 @@ import ast
 import inspect
 import time
 import tornado.web
+import asyncio
 from tornado.ioloop import IOLoop
 from tornado import locks
 from tornado import gen
@@ -625,7 +626,7 @@ class SuggestionHandler(BaseHandler):
         self.builder = get_builder(database)
 
     @tornado.web.authenticated
-    def get(self, type, source):
+    async def get(self, type, source):
         if type not in ["room", "object", "character"]:
             raise AppException(reason="Type is not valid. ", status_code=400)
         with self.db as ldb:
@@ -635,11 +636,13 @@ class SuggestionHandler(BaseHandler):
             return
         source_obj = source_objs[0]
         if type == "room":
-            items = builder.get_neighbor_rooms(source_obj["id"])
+            items = await builder.get_neighbor_rooms(source_obj["id"])
         elif type == "object":
-            items = builder.get_contained_items(source_obj["id"], source_obj["type"])
+            items = await builder.get_contained_items(
+                source_obj["id"], source_obj["type"]
+            )
         elif type == "character":
-            items = builder.get_contained_characters(source_obj["id"])
+            items = await builder.get_contained_characters(source_obj["id"])
         with self.db as ldb:
             result_items = [dict(ldb.get_id(id=x.db_id, expand=True)[0]) for x in items]
         self.write(json.dumps(result_items))

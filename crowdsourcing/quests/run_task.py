@@ -7,6 +7,7 @@
 import os
 import time
 import shlex
+import asyncio
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.operations.operator import Operator
 from mephisto.operations.utils import get_root_dir
@@ -167,10 +168,10 @@ def construct_tasks(num_tasks):
     builder = StarspaceBuilder(ldb, opt=opt)
     random.seed(88)
     while len(tasks) < num_tasks:
-        g, world = builder.get_graph()
+        g, world = asyncio.run(builder.get_graph())
         while len(world.oo_graph.agents) == 0:
             print("no agents in room")
-            g, world = builder.get_graph()
+            g, world = asyncio.run(builder.get_graph())
         possible_agents = list(world.oo_graph.agents.values())
         random.shuffle(possible_agents)
         for character in possible_agents:

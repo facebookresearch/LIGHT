@@ -1,0 +1,14 @@
+# @package _global_
+
+defaults:
+  - /light/model_pool: baseline
+  - /schema/light/db: local
+  - /light/db: local
+
+hostname: localhost
+port: 35494
+safety_classifier_path: ""
+is_logging: false
+
+light:
+  model_root: ~/LIGHT/models/

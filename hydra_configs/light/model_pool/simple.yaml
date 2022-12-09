@@ -1,0 +1,14 @@
+defaults:
+  - dialog/schema: ParlAI
+  - action/schema: ParlAI
+  - generic_action/schema: ParlAI
+
+dialog:
+  _loader: ParlAI
+  opt_file: ${light.light_dir}/light/registry/models/config/baseline_generative.opt
+action:
+  _loader: ParlAI
+  opt_file: ${light.light_dir}/light/registry/models/config/baseline_main_act_model.opt
+generic_action:
+  _loader: ParlAI
+  opt_file: ${light.light_dir}/light/registry/models/config/generic_act_model.opt

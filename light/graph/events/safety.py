@@ -5,61 +5,48 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.utils.safety import OffensiveStringMatcher
-from parlai.core.agents import create_agent
-from parlai.core.params import ParlaiParser
 from parlai.agents.transformer.transformer import TransformerClassifierAgent
+from parlai.utils.typing import TShared
+from parlai.tasks.dialogue_safety.agents import OK_CLASS, NOT_OK_CLASS
+from light.registry.model_pool import ModelTypeName
 
-try:
-    from parlai_internal.agents.safety_wrapper.multiturn_safety import (
-        MultiturnOffensiveLanguageClassifier,
-    )
-except:
-
-    class MultiturnOffensiveLanguageClassifier:
-        # Temporary until using public safety
-        pass
+from typing import Optional, TYPE_CHECKING
 
 
-class AdversarialOffensiveLanguageClassifier(MultiturnOffensiveLanguageClassifier):
-    """
-    Load model trained to detect offensive language in the context of multi- turn
-    dialogue utterances.
-    This model was trained to be robust to adversarial examples created by humans. See
-    <http://parl.ai/projects/dialogue_safety/> for more information.
-    """
-
-    def _create_safety_model(self):
-        parser = ParlaiParser(False, False)
-        TransformerClassifierAgent.add_cmdline_args(parser)
-        parser.set_params(
-            model_file="zoo:bot_adversarial_dialogue/multi_turn/model",
-            print_scores=True,
-            split_lines=True,
-            model_parallel=False,
-            threshold=0.999,
-            bs=1,
-        )
-        safety_opt = parser.parse_args([])
-        return create_agent(safety_opt, requireModelExists=True)
+if TYPE_CHECKING:
+    from light.registry.model_pool import ModelPool
 
 
 class SafetyClassifier:
-    def __init__(self, datapath, use_model=False):
-        if datapath != "":
+    def __init__(self, datapath: Optional[str], model_pool: "ModelPool"):
+        self.classes = {OK_CLASS: False, NOT_OK_CLASS: True}
+        if datapath is not None and datapath != "":
             self.string_matcher = OffensiveStringMatcher(datapath)
         else:
             self.string_matcher = None
-        if use_model:
-            self.classifier = AdversarialOffensiveLanguageClassifier()
+        if model_pool.has_model(ModelTypeName.SAFETY):
+            self.classifier = model_pool.get_model(ModelTypeName.SAFETY)
         else:
             self.classifier = None
 
-    def is_safe(self, text):
+    async def contains_offensive_language(self, text):
+        """
+        Returns the probability that a message is safe according to the classifier.
+        """
+        act = {"text": text, "episode_done": True}
+        self.classifier.observe(act)
+        response_act = await self.classifier.act()
+        response = response_act["text"]
+        pred_class, prob = [x.split(": ")[-1] for x in response.split("\n")]
+        pred_not_ok = self.classes[pred_class]  # check whether classified as NOT OK
+        prob = float(prob)  # cast string to float
+        return pred_not_ok, prob
+
+    async def is_safe(self, text: str):
         if self.string_matcher is not None:
             if text in self.string_matcher:
                 return False
         if self.classifier is not None:
-            print(text)
-            if text in self.classifier:
-                return False
+            not_ok, _prob = await self.contains_offensive_language(text)
+            return not not_ok
         return True

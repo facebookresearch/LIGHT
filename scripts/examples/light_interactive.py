@@ -1,8 +1,8 @@
+#!/usr/bin/env python3
+
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-
-#!/usr/bin/env python3
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
@@ -10,6 +10,7 @@ from parlai.agents.local_human.local_human import LocalHumanAgent
 
 import json
 import random
+import asyncio
 
 
 personas_path = "/checkpoint/parlai/zoo/light/personas.json"
@@ -114,11 +115,11 @@ def interactive(opt, print_parser=None):
     last_act = None
     while True:
         new_act = {"episode_done": True}
-        human_act = human_agent.act()
+        human_act = asyncio.run(human_agent.act())
         bot_obs.append(PARTNER_SAY + human_act["text"])
         new_act["text"] = "\n".join(bot_obs)
         agent.observe(new_act)
-        last_act = agent.act()
+        last_act = asyncio.run(agent.act())
         # get a unique utterance among 100 available candidates
         if "text_candidates" in last_act:
             for cand in last_act["text_candidates"]:

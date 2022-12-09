@@ -8,8 +8,8 @@
 from setuptools import setup, find_packages
 import sys
 
-if sys.version_info < (3, 6):
-    sys.exit("Sorry, Python >=3.6 is required for ParlAI.")
+if sys.version_info < (3, 8):
+    sys.exit("Sorry, Python >=3.8 is required for ParlAI.")
 
 with open("README.md", encoding="utf8") as f:
     readme = f.read()
@@ -31,12 +31,12 @@ except:
 if __name__ == "__main__":
     setup(
         name="light",
-        version="0.1",
+        version="0.2",
         description="Text-Adventure Game Research Platform.",
         long_description=readme,
         # url='http://light-game.ai/',
         license=license,
-        python_requires=">=3.6",
+        python_requires=">=3.8",
         packages=find_packages(
             exclude=(
                 "data",

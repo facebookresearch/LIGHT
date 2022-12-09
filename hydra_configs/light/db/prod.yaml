@@ -1,0 +1,5 @@
+backend: aws-postgres
+file_root: my-s3-bucket-address-name
+db_address: my-rds-database-hostname.rds.amazonaws.com
+db_user: my-db-username
+db_pass: my-db-password

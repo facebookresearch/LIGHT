@@ -13,6 +13,7 @@ Derived and simplified from /scripts/gen_map.py
 """
 
 import os
+import asyncio
 from light import LIGHT_DIR
 from example_builder import ExampleBuilder
 import light.modeling.tasks.utils as utils
@@ -43,7 +44,7 @@ if __name__ == "__main__":
     print("[loading builder model...]")
     world_builder = ExampleBuilder(ldb, debug=False, opt=opt)
     print("[Building light graph]")
-    g, world = world_builder.get_graph()
+    g, world = asyncio.run(world_builder.get_graph())
     data = g.to_json()
     target_loc = os.path.join(CURR_DIR, "outputs", opt["map_file"])
     with open(target_loc, "w+") as mapfile:

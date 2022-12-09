@@ -23,6 +23,4 @@ then
   exit 1
 fi
 
-CONF_FN=$WEBDIR"/configs/"$1"/config"
-
-python $SERVER_FILE @$CONF_FN
+python $SERVER_FILE deploy=$1

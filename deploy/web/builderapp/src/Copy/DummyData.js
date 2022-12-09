@@ -1,4 +1,3 @@
-
 /*****
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  * This source code is licensed under the MIT license found in the
@@ -1172,9 +1171,7 @@ const ComplexWorld1 = {
       },
       db_id: null,
       desc: "There's a bit of dust.",
-      extra_desc: [
-        "Sometimes things are just what they seem. There's nothing interesting here."
-      ],
+      extra_desc: "Sometimes things are just what they seem. There's nothing interesting here.",
       grid_location: [
         2,
         1,
@@ -2409,9 +2406,7 @@ const ComplexWorld1 = {
       },
       db_id: null,
       desc: "There's a bit of dirt.",
-      extra_desc: [
-        "Sometimes things are just what they seem. There's nothing interesting here."
-      ],
+      extra_desc: "Sometimes things are just what they seem. There's nothing interesting here.",
       grid_location: [
         4,
         4,
@@ -3277,9 +3272,7 @@ const ComplexWorld1 = {
       },
       db_id: null,
       desc: "There's a bit of water.",
-      extra_desc: [
-        "Sometimes things are just what they seem. There's nothing interesting here."
-      ],
+      extra_desc: "Sometimes things are just what they seem. There's nothing interesting here.",
       grid_location: [
         4,
         0,
@@ -8921,9 +8914,7 @@ const ComplexWorld1 = {
       },
       db_id: null,
       desc: "There's a bit of water.",
-      extra_desc: [
-        "Sometimes things are just what they seem. There's nothing interesting here."
-      ],
+      extra_desc: "Sometimes things are just what they seem. There's nothing interesting here.",
       grid_location: [
         2,
         4,
@@ -9531,9 +9522,7 @@ const ComplexWorld1 = {
       },
       db_id: null,
       desc: "There's a bit of dust.",
-      extra_desc: [
-        "Sometimes things are just what they seem. There's nothing interesting here."
-      ],
+      extra_desc: "Sometimes things are just what they seem. There's nothing interesting here.",
       grid_location: [
         6,
         2,
@@ -9751,9 +9740,7 @@ const ComplexWorld1 = {
       },
       db_id: null,
       desc: "There's a bit of dirt.",
-      extra_desc: [
-        "Sometimes things are just what they seem. There's nothing interesting here."
-      ],
+      extra_desc: "Sometimes things are just what they seem. There's nothing interesting here.",
       grid_location: [
         6,
         5,

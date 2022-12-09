@@ -1,16 +1,17 @@
+#!/usr/bin/env python3
+
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-
 
 from deploy.web.server.game_instance import (
     Player,
     GameInstance,
 )
-from light.data_model.light_database import LIGHTDatabase
+from light.data_model.db.users import PlayerStatus
 from light.world.player_provider import PlayerProvider
 from light.world.quest_loader import QuestLoader
-from light.graph.events.graph_events import init_safety_classifier, RewardEvent
+from light.graph.events.graph_events import RewardEvent
 from light.world.souls.tutorial_player_soul import TutorialPlayerSoul
 
 import argparse
@@ -26,26 +27,29 @@ import warnings
 import asyncio
 import hashlib
 from collections import defaultdict
-from zmq.eventloop import ioloop
-
-ioloop.install()  # Needs to happen before any tornado imports!
-
-import tornado.ioloop  # noqa E402: gotta install ioloop first
-import tornado.web  # noqa E402: gotta install ioloop first
-import tornado.auth  # noqa E402: gotta install ioloop first
-import tornado.websocket  # noqa E402: gotta install ioloop first
-import tornado.escape  # noqa E402: gotta install ioloop first
+import tornado.ioloop as ioloop
+import tornado.web
+import tornado.auth
+import tornado.websocket
+import tornado.escape
 from light.graph.events.graph_events import (
     SoulSpawnEvent,
     SystemMessageEvent,
     DeathEvent,
 )
 
-from typing import Dict, Optional, TYPE_CHECKING
+from typing import Dict, Optional, Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
     from light.world.world import World
+    from light.data_model.db.users import UserDB
+
+# Monkeypatch to allow samesite for iframe usage
+from http.cookies import Morsel
+
+Morsel._reserved["samesite"] = "SameSite"
+
 
 DEFAULT_PORT = 35496
 DEFAULT_HOSTNAME = "localhost"
@@ -147,14 +151,14 @@ tornado_settings = None
 
 
 class Application(tornado.web.Application):
-    def __init__(self, given_tornado_settings=None, db=None):
+    def __init__(self, given_tornado_settings=None, user_db: Optional["UserDB"] = None):
         global tornado_settings
         use_tornado_settings = tornado_settings
         if given_tornado_settings is not None:
             use_tornado_settings = given_tornado_settings
         self.subs = {}
         self.new_subs = defaultdict(list)
-        self.db = db
+        self.user_db = user_db
         self.user_node_map: Dict[str, Optional["GraphAgent"]] = {}
         self.world: Optional["World"] = None
         super(Application, self).__init__(self.get_handlers(), **use_tornado_settings)
@@ -165,9 +169,13 @@ class Application(tornado.web.Application):
         #       hit in the top level RuleRouter from run_server.py in case this application
         #       is run standalone for some reason.
         return [
-            (r"/game/api/(.*)", ApiHandler, {"app": self, "database": self.db}),
-            (r"/game(.*)/socket", SocketHandler, {"app": self, "database": self.db}),
-            (r"/play", GameHandler, {"app": self, "database": self.db}),
+            (r"/game/api/(.*)", ApiHandler, {"app": self, "user_db": self.user_db}),
+            (
+                r"/game(.*)/socket",
+                SocketHandler,
+                {"app": self, "user_db": self.user_db},
+            ),
+            (r"/play", GameHandler, {"app": self, "user_db": self.user_db}),
             (r"/(.*)", StaticUIHandler, {"path": path_to_build}),
         ]
 
@@ -185,8 +193,8 @@ class StaticUIHandler(tornado.web.StaticFileHandler):
 
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
-    def initialize(self, app, database):
-        self.db = database
+    def initialize(self, app, user_db):
+        self.user_db = user_db
         self.app = app
         self.subs = app.subs
         self.new_subs = app.new_subs
@@ -195,7 +203,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.actions = []
         self.player = None
         self.sid = get_rand_id()
-        self.db = app.db
+        self.user_db = app.user_db
 
     def safe_write_message(self, msg):
         try:
@@ -210,12 +218,12 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.player = player
 
     def user_should_do_tutorial(self, user_id):
-        with self.db as ldb:
-            flags = ldb.get_user_flags(user_id)
-            # return not flags.completed_onboarding
+        if self.app.registry.tutorial_builder_config is None:
             return False
+        player = self.user_db.get_player(user_id)
+        return player.account_status == PlayerStatus.TUTORIAL
 
-    def launch_game_for_user(self, user_id, game_id):
+    async def launch_game_for_user(self, user_id, game_id):
         # Check for custom game world
         if game_id not in self.app.registry.game_instances:
             self.close()
@@ -226,22 +234,23 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             new_player = TornadoPlayerProvider(
                 self,
                 graph_purgatory,
-                db=self.db,
-                user=user_id,
+                user_db=self.user_db,
+                user_id=user_id,
             )
-            new_player.init_soul()
+            await new_player.init_soul()
             self.app.registry.game_instances[game_id].players.append(new_player)
 
-    def open(self, game_id):
+    async def open(self, game_id):
         """
         Open a websocket, validated either by a valid user cookie or
         by a validated preauth.
         """
         preauth_context = self.get_secure_cookie("preauth_context")
-        user = None
+        user_id = None
         if preauth_context is not None:  # If there is any preauth
             preauth = self.get_secure_cookie("preauth")
-            user = json.loads(preauth)
+            hashed_user_id = json.loads(preauth)
+            user_id = self.user_db.get_player(hashed_user_id).db_id
 
             # See if the context matches our generated hash
             context_token = json.loads(self.get_secure_cookie("context_token"))
@@ -254,28 +263,40 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                 return
         else:
             user_json = self.get_secure_cookie("user")
-            if user_json is not None:
-                user = json.loads(user_json)
+            if user_json is not None and user_json != "":
+                user_id = json.loads(user_json)
 
-        print("Requesting for user", user)
-        if user is not None:
+        print("Requesting for user", user_id)
+        if user_id is not None:
             logging.info("Opened new socket from ip: {}".format(self.request.remote_ip))
             logging.info("For game: {}".format(game_id))
+
+            loop = tornado.ioloop.IOLoop.current()
+
             # First check for tutorials
-            if self.user_should_do_tutorial(user):
+            if self.user_should_do_tutorial(user_id):
                 # Spawn a tutorial world for this user, or inject them into
                 # their existing world
-                if user in self.app.registry.tutorial_map:
-                    game_id = self.app.registry.tutorial_map[user]
+                if user_id in self.app.registry.tutorial_map:
+                    game_id = self.app.registry.tutorial_map[user_id]
                 else:
                     orig_game_id = game_id
 
                     def on_complete():
                         time.sleep(TRANSITION_AFTER_TUTORIAL)
-                        self.launch_game_for_user(user, orig_game_id)
+                        loop.spawn_callback(
+                            self.launch_game_for_user, user_id, orig_game_id
+                        )
 
-                    game_id = self.app.registry.run_tutorial(user, on_complete)
-            self.launch_game_for_user(user, game_id)
+                    async def create_and_run_tutorial():
+                        game_id = await self.app.registry.run_tutorial(
+                            user_id, on_complete
+                        )
+                        await self.launch_game_for_user(user_id, game_id)
+
+                    loop.spawn_callback(create_and_run_tutorial)
+            else:
+                loop.spawn_callback(self.launch_game_for_user, user_id, game_id)
         else:
             self.close()
             self.redirect("/#/login")
@@ -284,7 +305,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.safe_write_message(json.dumps({"command": "register", "data": self.sid}))
         self.alive_sent = True
 
-    def on_message(self, message):
+    async def on_message(self, message):
         logging.info("from web client: {}".format(message))
         msg = tornado.escape.json_decode(tornado.escape.to_basestring(message))
         cmd = msg.get("command")
@@ -292,9 +313,11 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             return
         if cmd == "act":
             data = msg["data"]
-            self.player.act(data["text"], data["event_id"])
+            await self.player.act(data["text"], data["event_id"])
+        elif cmd == "hb":
+            pass  # heartbeats
         else:
-            print("THESE COMMANDS HAVE BEEN DEPRICATED")
+            logging.warning(f"THESE COMMANDS HAVE BEEN DEPRICATED: {msg}")
 
     def on_close(self):
         self.alive = False
@@ -305,8 +328,8 @@ class BaseHandler(tornado.web.RequestHandler):
         self.include_host = False
         super(BaseHandler, self).__init__(*request, **kwargs)
 
-    def initialize(self, database):
-        self.db = database
+    def initialize(self, user_db):
+        self.user_db = user_db
 
     def get_login_url(self):
         return "/#/login"
@@ -315,22 +338,22 @@ class BaseHandler(tornado.web.RequestHandler):
         user_json = self.get_secure_cookie(
             "user"
         )  # Need to refactor into 'get_identity', then have base and preauth handler implementations
-        if user_json:
+        if user_json is not None and len(user_json) != 0:
             user_decoded = tornado.escape.json_decode(user_json)
             if len(user_decoded) == 0:
                 return None
             try:
-                with self.db as ldb:
-                    user_id = ldb.get_user_id(user_decoded)
+                user = self.user_db.get_player(user_decoded)
+                user_id = user.db_id
             except Exception as e:
-                # User id does not exist in the database, either
+                # User id does not exist in the user_db, either
                 # we've updated the user table or someone
                 # is fishing :/
                 # Also can be caused when auth is refreshed
                 print(f"User {user_decoded} tried to log in, but was rejected.")
                 return None
-            print(f"User {user_decoded, user_id} logged in.")
-            return user_decoded
+            print(f"User {user.extern_id, user_id} logged in.")
+            return user_id
         else:
             return None
 
@@ -370,15 +393,15 @@ class BaseHandler(tornado.web.RequestHandler):
 
 
 class ApiHandler(BaseHandler):
-    def initialize(self, app, database):
-        self.db = database
+    def initialize(self, app, user_db):
+        self.user_db = user_db
         self.app = app
 
     @tornado.web.authenticated
     def get(self, *args):
         print("THE ARGS", *args)
         user_json = self.get_secure_cookie("user")
-        if user_json:
+        if user_json is not None and user_json != "":
             user_decoded = tornado.escape.json_decode(user_json)
 
             split_inputs = args[0].split("/")
@@ -406,7 +429,7 @@ class ApiHandler(BaseHandler):
         data = tornado.escape.json_decode(self.request.body)
         user_json = self.get_secure_cookie("user")
         print(data)
-        if user_json:
+        if user_json is not None and user_json != "":
             user_decoded = tornado.escape.json_decode(user_json)
 
             split_inputs = args[0].split("/")
@@ -442,67 +465,85 @@ class ApiHandler(BaseHandler):
 class LandingApplication(tornado.web.Application):
     def __init__(
         self,
-        database,
-        hostname=DEFAULT_HOSTNAME,
-        password="LetsPlay",
-        given_tornado_settings=None,
+        user_db: "UserDB",
+        hostname: str = DEFAULT_HOSTNAME,
+        password: Optional[str] = None,
+        given_tornado_settings: Dict[str, Any] = None,
     ):
-        self.db = database
+        self.user_db = user_db
         global tornado_settings
         tornado_settings = given_tornado_settings
+        self.tornado_settings = tornado_settings
+        self.hostname = hostname
+        self.password = password
         super(LandingApplication, self).__init__(
-            self.get_handlers(database, hostname, password), **tornado_settings
+            self.get_handlers(user_db), **tornado_settings
         )
 
-    def get_handlers(self, database, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
-        return [
-            (r"/", LandingHandler, {"database": database}),
-            (r"/#(.*)", LandingHandler, {"database": database}),
-            (r"/#/login", LandingHandler, {"database": database}),
-            (r"/#/error", NotFoundHandler, {"database": database}),
+    def get_handlers(self, user_db):
+        base_handlers = [
+            (r"/", LandingHandler, {"user_db": user_db}),
+            (r"/#(.*)", LandingHandler, {"user_db": user_db}),
+            (r"/#/login", LandingHandler, {"user_db": user_db}),
+            (r"/#/error", NotFoundHandler, {"user_db": user_db}),
             (
                 r"/preauth/(.*)/(.*)/(.*)/",
                 PreauthGameHandler,
-                {"database": database, "hostname": hostname},
+                {"user_db": user_db, "hostname": self.hostname},
             ),
-            (r"/play", GameHandler, {"database": database}),
-            (r"/play/?id=.*", GameHandler, {"database": database}),
-            (r"/play/*", GameHandler, {"database": database}),
-            (r"/build", BuildHandler, {"database": database}),
-            (
-                r"/login",
-                LoginHandler,
-                {"database": database, "hostname": hostname, "password": password},
-            ),
-            (
-                r"/auth/fblogin",
-                FacebookOAuth2LoginHandler,
-                {"database": database, "hostname": hostname, "app": self},
-            ),
-            (r"/logout", LogoutHandler, {"database": database}),
+            (r"/play", GameHandler, {"user_db": user_db}),
+            (r"/play/?id=.*", GameHandler, {"user_db": user_db}),
+            (r"/play/*", GameHandler, {"user_db": user_db}),
+            (r"/build", BuildHandler, {"user_db": user_db}),
+            (r"/logout", LogoutHandler, {"hostname": self.hostname}),
             (
                 r"/terms",
                 StaticPageHandler,
-                {"database": database, "target": "/html/terms.html"},
+                {"user_db": user_db, "target": "/html/terms.html"},
             ),
             (
                 r"/#/bye",
                 LandingHandler,
-                {"database": database},
+                {"user_db": user_db},
             ),
             (
                 r"/about",
                 StaticLoggedInPageHandler,
-                {"database": database, "target": "/html/about.html"},
+                {"user_db": user_db, "target": "/html/about.html"},
             ),
             (
                 r"/profile",
                 StaticLoggedInPageHandler,
-                {"database": database, "target": "/html/profile.html"},
+                {"user_db": user_db, "target": "/html/profile.html"},
             ),
-            (r"/report", ReportHandler, {"database": database}),
+            (r"/report", ReportHandler, {"user_db": user_db}),
             (r"/(.*)", StaticUIHandler, {"path": here + "/../build/"}),
         ]
+        if self.password is not None and len(self.password) > 0:
+            base_handlers.append(
+                (
+                    r"/login",
+                    LoginHandler,
+                    {
+                        "user_db": user_db,
+                        "hostname": self.hostname,
+                        "password": self.password,
+                    },
+                )
+            )
+        else:
+            assert (
+                "facebook_api_key" in self.tornado_settings
+            ), "Must launch with api key or password"
+            base_handlers.append(
+                (
+                    r"/auth/fblogin",
+                    FacebookOAuth2LoginHandler,
+                    {"user_db": user_db, "hostname": self.hostname, "app": self},
+                )
+            )
+
+        return base_handlers
 
 
 class LandingHandler(BaseHandler):
@@ -524,10 +565,10 @@ class GameHandler(BaseHandler):
 class PreauthGameHandler(BaseHandler):
     def initialize(
         self,
-        database,
+        user_db,
         hostname=DEFAULT_HOSTNAME,
     ):
-        self.db = database
+        self.user_db = user_db
         self.hostname = hostname
 
     def validate_login_details(self, user_id, context_id, auth_token) -> bool:
@@ -553,14 +594,15 @@ class PreauthGameHandler(BaseHandler):
             user_hash = get_salted_hash(user_id)
             context_hash = get_salted_hash(context_id)
             hashed_user_id = f"preauth-{user_hash}"
-            with self.db as ldb:
-                _ = ldb.create_user(hashed_user_id)
+            self.user_db.create_user(extern_id=hashed_user_id, is_preauth=True)
             self.set_secure_cookie(
                 "preauth",
                 tornado.escape.json_encode(hashed_user_id),
                 expires_days=1,
                 domain=self.hostname,
                 httponly=True,
+                samesite=None,
+                secure=True,
             )
             self.set_secure_cookie(
                 "preauth_context",
@@ -568,6 +610,8 @@ class PreauthGameHandler(BaseHandler):
                 expires_days=1,
                 domain=self.hostname,
                 httponly=True,
+                samesite=None,
+                secure=True,
             )
             self.set_secure_cookie(
                 "context_token",
@@ -575,6 +619,8 @@ class PreauthGameHandler(BaseHandler):
                 expires_days=1,
                 domain=self.hostname,
                 httponly=True,
+                samesite=None,
+                secure=True,
             )
             self.render(here + "/../build/game.html")
         else:
@@ -587,9 +633,9 @@ class NotFoundHandler(BaseHandler):
 
 
 class StaticPageHandler(BaseHandler):
-    def initialize(self, target, database):
+    def initialize(self, target, user_db):
         self.target_page = here + target
-        self.db = database
+        self.user_db = user_db
 
     def get(self):
         self.render(self.target_page)
@@ -608,24 +654,40 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
 
     def initialize(
         self,
-        database,
+        user_db,
         hostname,
         app,
     ):
         self.app = app
-        self.db = database
+        self.user_db = user_db
         self.hostname = hostname
+
+    async def get_privacy_restricted_user_id(self, redirect_url) -> str:
+        """
+        While we already don't request user input for our API key,
+        this method ensures that we're only getting the `id` key.
+
+        DO NOT CHANGE THIS METHOD
+        """
+        fb_user = await self.get_authenticated_user(
+            redirect_uri=redirect_url,
+            client_id=self.app.settings["facebook_api_key"],
+            client_secret=self.app.settings["facebook_secret"],
+            code=self.get_argument("code"),
+        )
+        return fb_user["id"]
 
     async def get(self):
         redirect = "https://" + self.request.host + "/auth/fblogin"
         if self.get_argument("code", False):
-            fb_user = await self.get_authenticated_user(
-                redirect_uri=redirect,
-                client_id=self.app.settings["facebook_api_key"],
-                client_secret=self.app.settings["facebook_secret"],
-                code=self.get_argument("code"),
+            fb_app_scoped_id = await self.get_privacy_restricted_user_id(
+                redirect_url=redirect,
             )
-            self.set_current_user(fb_user["id"])
+
+            user_id = self.user_db.create_user(
+                extern_id=fb_app_scoped_id, is_preauth=False
+            )
+            self.set_current_user(user_id)
             self.redirect("/play/")
             return
         self.authorize_redirect(
@@ -633,29 +695,33 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
             client_id=self.app.settings["facebook_api_key"],
         )
 
-    def set_current_user(self, user):
-        if user:
-            with self.db as ldb:
-                _ = ldb.create_user(user)
+    def set_current_user(self, user_id):
+        if user_id:
             self.set_secure_cookie(
                 "user",
-                tornado.escape.json_encode(user),
+                tornado.escape.json_encode(user_id),
                 domain=self.hostname,
                 secure=True,
                 httponly=True,
             )
         else:
-            self.clear_cookie("user")
+            self.set_secure_cookie(
+                "user",
+                "",
+                domain=self.hostname,
+                secure=True,
+                httponly=True,
+            )
 
 
 class LoginHandler(BaseHandler):
     def initialize(
         self,
-        database,
+        user_db,
         hostname=DEFAULT_HOSTNAME,
         password="LetsPlay",
     ):
-        self.db = database
+        self.user_db = user_db
         self.hostname = hostname
         self.password = password
 
@@ -667,31 +733,48 @@ class LoginHandler(BaseHandler):
         name = self.get_argument("name", "")
         password = self.get_argument("password", "")
         if password == self.password:
-            with self.db as ldb:
-                _ = ldb.create_user(name)
-            self.set_current_user(name)
+            user_id = self.user_db.create_user(extern_id=name, is_preauth=False)
+            self.set_current_user(user_id)
             # self.redirect(self.get_argument("next", "/"))
             self.redirect("/play/")
         else:
             error_msg = "?error=" + tornado.escape.url_escape("incorrect")
             self.redirect("/#/login" + error_msg)
 
-    def set_current_user(self, user):
-        if user:
+    def set_current_user(self, user_id):
+        if user_id:
             self.set_secure_cookie(
                 "user",
-                tornado.escape.json_encode(user),
+                tornado.escape.json_encode(user_id),
                 domain=self.hostname,
                 # secure=True, login handler is for local testing
                 httponly=True,
             )
         else:
-            self.clear_cookie("user")
+            self.set_secure_cookie(
+                "user",
+                "",
+                domain=self.hostname,
+                secure=True,
+                httponly=True,
+            )
 
 
 class LogoutHandler(BaseHandler):
+    def initialize(
+        self,
+        hostname=DEFAULT_HOSTNAME,
+    ):
+        self.hostname = hostname
+
     def get(self):
-        self.clear_cookie("user")
+        self.set_secure_cookie(
+            "user",
+            "",
+            domain=self.hostname,
+            secure=True,
+            httponly=True,
+        )
         self.redirect("/#/bye")
 
 
@@ -716,7 +799,7 @@ class TornadoPlayerProvider(PlayerProvider):
     Player Provider for the web app
     """
 
-    def __init__(self, socket, purgatory, db=None, user=None, context=None):
+    def __init__(self, socket, purgatory, user_db=None, user_id=None, context=None):
         self.socket = socket
         self.player_soul = None
         self.purgatory = purgatory
@@ -724,8 +807,8 @@ class TornadoPlayerProvider(PlayerProvider):
             self.quest_loader = quest_loader
         socket.set_player(self)
         socket.send_alive()
-        self.db = db
-        self.user = user
+        self.user_db = user_db
+        self.user_id = user_id
         self.context = context
         # TODO a TornadoPlayerProvider refactor is likely desired, combining
         # the APIs for socket and HTTP requests to use logged in user
@@ -736,13 +819,20 @@ class TornadoPlayerProvider(PlayerProvider):
     def register_soul(self, soul: "PlayerSoul"):
         """Save the soul as a local player soul"""
         self.player_soul = soul
-        if self.user is not None:
-            if self.db is not None:
-                with self.db as ldb:
-                    ldb.initialize_agent_score(soul.target_node, self.user)
-            self.app.user_node_map[self.user] = soul.target_node
+        if self.user_id is not None:
+            if self.user_db is not None:
+                base_score = self.user_db.get_agent_score(self.user_id)
+                # TODO refactor into elsewhere
+                target_node = soul.target_node
+                target_node.xp = base_score.score
+                target_node.reward_xp = base_score.reward_xp
+                target_node._base_class_experience = 0
+                target_node._num_turns = 0
+                target_node._base_experience = target_node.xp
+                target_node._base_reward_points = target_node.reward_xp
+            self.app.user_node_map[self.user_id] = soul.target_node
 
-    def player_observe_event(self, soul: "PlayerSoul", event: "GraphEvent"):
+    async def player_observe_event(self, soul: "PlayerSoul", event: "GraphEvent"):
         """
         Send observation forward to the player in whatever format the player
         expects it to be.
@@ -763,18 +853,18 @@ class TornadoPlayerProvider(PlayerProvider):
             isinstance(event, DeathEvent)
             and event.actor.node_id == soul.target_node.node_id
         ):
-            self.purgatory.clear_soul(soul.target_node)
+            await self.purgatory.clear_soul(soul.target_node)
 
-    def act(self, action_data, event_id: Optional[str] = None):
+    async def act(self, action_data, event_id: Optional[str] = None):
         if self.player_soul is not None and self.player_soul.is_reaped:
             self.player_soul = None
         if self.player_soul is None:
-            self.init_soul()
+            await self.init_soul()
             return
-        player_agent = self.player_soul.handle_act(action_data, event_id)
+        player_agent = await self.player_soul.handle_act(action_data, event_id)
 
-    def init_soul(self):
-        self.purgatory.get_soul_for_player(self)
+    async def init_soul(self):
+        await self.purgatory.get_soul_for_player(self)
         if self.player_soul is None:
             dat = {"text": "Could not find a soul for you, sorry"}
             self.socket.safe_write_message(
@@ -785,14 +875,14 @@ class TornadoPlayerProvider(PlayerProvider):
             SoulSpawnEvent(soul_id, self.player_soul.target_node).execute(
                 self.purgatory.world
             )
-            self.player_soul.handle_act("look")
-            self.player_soul.target_node.user_id = self.user
+            await self.player_soul.handle_act("look")
+            self.player_soul.target_node.user_id = self.user_id
             self.player_soul.target_node.context_id = self.context
 
     def is_alive(self):
         return self.socket.alive
 
-    def on_reap_soul(self, soul):
+    async def on_reap_soul(self, soul):
         action = SystemMessageEvent(
             soul.target_node,
             [],
@@ -809,11 +899,26 @@ class TornadoPlayerProvider(PlayerProvider):
         self.socket.safe_write_message(
             json.dumps({"command": "actions", "data": [dat]})
         )
-        if self.user is not None:
-            if self.db is not None and not isinstance(soul, TutorialPlayerSoul):
-                with self.db as ldb:
-                    ldb.store_agent_score(soul.target_node, self.user)
-            self.app.user_node_map[self.user] = None
+        if self.user_id is not None:
+            if self.user_db is not None and not isinstance(soul, TutorialPlayerSoul):
+                # TODO refactor out from server logic
+                target_node = soul.target_node
+                gained_experience = target_node.xp - target_node._base_experience
+                net_reward_points = (
+                    target_node.reward_xp - target_node._base_reward_points
+                )
+                db_id = target_node.db_id if target_node.db_id is not None else ""
+                self.user_db.update_agent_score(
+                    player_id=self.user_id,
+                    agent_name_id=db_id,
+                    points=gained_experience,
+                    num_turns=target_node._num_turns,
+                    reward_change=net_reward_points,
+                )
+                target_node._num_turns = 0
+                target_node._base_experience = target_node.xp
+                target_node._base_reward_points = target_node.reward_xp
+            self.app.user_node_map[self.user_id] = None
 
 
 class TornadoPlayerFactory:
@@ -828,13 +933,13 @@ class TornadoPlayerFactory:
         registry,
         hostname=DEFAULT_HOSTNAME,
         port=DEFAULT_PORT,
-        db=None,
+        user_db=None,
         listening=False,
         given_tornado_settings=None,
     ):
         self.registry = registry
         self.app = None
-        self.db = db
+        self.user_db = user_db
 
         def _run_server():
             nonlocal listening
@@ -843,7 +948,7 @@ class TornadoPlayerFactory:
             nonlocal port
             self.my_loop = ioloop.IOLoop()
             self.app = Application(
-                given_tornado_settings=given_tornado_settings, db=self.db
+                given_tornado_settings=given_tornado_settings, user_db=self.user_db
             )
             self.app.registry = self.registry
             if listening:
@@ -898,8 +1003,9 @@ def main():
         help="port to run the server on.",
     )
     FLAGS = parser.parse_args()
-
-    init_safety_classifier(os.path.expanduser("~/data/safety/OffensiveLanguage.txt"))
+    FLAGS.safety_classifier_path = os.path.expanduser(
+        "~/data/safety/OffensiveLanguage.txt"
+    )
 
     random.seed(6)
     numpy.random.seed(6)
@@ -909,7 +1015,7 @@ def main():
             None, FLAGS.hostname, FLAGS.port, listening=True
         )
     else:
-        game = GameInstance(game_id=0, ldb=ldb)
+        game = asyncio.run(GameInstance(game_id=0, ldb=ldb))
         graph = game.world
         provider = TornadoPlayerFactory(
             graph, FLAGS.hostname, FLAGS.port, db=ldb, listening=True
