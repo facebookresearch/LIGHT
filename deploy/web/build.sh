@@ -23,6 +23,7 @@ then
 fi
 
 cp $CONF_FN $BUILDER_DIR"src/config.js"
+cp $CONF_FN $LANDING_DIR"src/config.js"
 cp $CONF_FN $GAME_DIR"src/config.js"
 
 mkdir build

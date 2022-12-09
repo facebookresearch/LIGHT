@@ -8,7 +8,7 @@ import React from "react";
 
 import "./styles.css";
 
-const LoginPage = (props) => {
+const DevLoginPage = (props) => {
   return (
     <div className="loginpage-container">
       <div className="login-form__container">
@@ -33,21 +33,9 @@ const LoginPage = (props) => {
             />
           </div>
         </form>
-        <div
-          className="login-form__field"
-          style={{ justifyContent: "center", marginTop: "8px" }}
-        >
-          <form action="/auth/fblogin?next={{next}}" method="get">
-            <input
-              className="login-form__submit"
-              type="submit"
-              value="Sign In With Facebook"
-            />
-          </form>
-        </div>
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default DevLoginPage;

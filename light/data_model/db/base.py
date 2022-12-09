@@ -154,7 +154,9 @@ class BaseDB(ABC):
 
     @abstractmethod
     def _validate_init(self):
-        """"""
+        """
+        Ensure that this database is initialized correctly
+        """
 
     def _enforce_get_first(self, session, stmt, error_text) -> Any:
         """
