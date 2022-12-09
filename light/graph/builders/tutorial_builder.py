@@ -1,12 +1,15 @@
+#!/usr/bin/env python3
+
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
 from light.graph.builders.map_json_builder import MapJsonBuilder
-from light.world.world import World
+from light.world.world import World, WorldConfig
 from light.world.purgatory import TutorialPurgatory
 from light.graph.structured_graph import OOGraph
 
+import asyncio
 from typing import Dict, Optional, Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -19,12 +22,7 @@ class TutorialWorldBuilder(MapJsonBuilder):
     made to run tutorials. Generally like a single room builder.
     """
 
-    def __init__(self, db: "LIGHTDatabase", opt: Dict[str, Any] = None):
-        """Store initialization options"""
-        self.db = db
-        self.opt = opt if opt is not None else {}
-
-    def add_random_new_agent_to_graph(self, target_graph):
+    async def add_random_new_agent_to_graph(self, target_graph):
         """Add an agent to the graph in a random room somewhere"""
         raise Exception("Agents should not be added to tutorials!")
 
@@ -32,7 +30,9 @@ class TutorialWorldBuilder(MapJsonBuilder):
         """
         Create a tutorial graph, not from file
         """
-        graph = OOGraph(self.opt)
+        opt = self.opt.copy()
+        opt["tutorial"] = True
+        graph = OOGraph(opt)
         room_node = graph.add_room(
             "Impossible Tavern",
             {
@@ -67,7 +67,8 @@ class TutorialWorldBuilder(MapJsonBuilder):
                 "name_prefix": "",
                 "persona": "You are, well, yourself... a wandering soul who has yet to "
                 "become someone in the full LIGHT world. Perhaps you may be "
-                "granted admission by the dungeon master? ",
+                "granted admission by the dungeon master?\nYour Mission: Find out how to "
+                "get to LIGHT, then get in to play.",
                 "mission": "Find out how to get to LIGHT, then get in to play.",
             },
         )
@@ -141,16 +142,20 @@ class TutorialWorldBuilder(MapJsonBuilder):
             None,
             "You feel as if this portal leads somewhere unusual.",
         )
+        dungeon_master_node.block(agent_node)
         return graph
 
-    def get_graph(self):
+    async def get_graph(self, world_config: Optional[WorldConfig] = None):
         """Create and return a tutorial graph"""
-        if self.opt.get("load_map", None) is not None:
-            graph, _ = super().get_graph()
+        if self.opt.get("load_tutorial_map", None) is not None:
+            graph, _ = await super().get_graph()
         else:
             graph = self.build_new_graph()
+        opt = self.opt.copy()
+        opt["tutorial"] = True
+        world = World(self._get_attached_config(world_config, opt))
 
-        world = World(self.opt, self)
         world.oo_graph = graph
+        # Force the logging mode to tutorial PRE_LAUNCH_TUTORIAL
         world.purgatory = TutorialPurgatory(world)
         return graph, world

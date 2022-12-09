@@ -6,19 +6,21 @@
 
 import time
 import random
+import asyncio
 from collections import deque
 from light.world.souls.on_event_soul import OnEventSoul
 from light.graph.events.base import ErrorEvent
 from light.graph.events.graph_events import TellEvent, SayEvent
-from parlai.core.agents import create_agent, create_agent_from_shared
 
 from typing import TYPE_CHECKING, List
 
 from light.graph.events.graph_events import EmoteEvent
+from light.registry.model_pool import ModelTypeName
 
 if TYPE_CHECKING:
+    from light.registry.model_pool import ModelPool
     from light.graph.elements.graph_nodes import GraphAgent
-    from light.graph.world.world import World
+    from light.world.world import World
     from light.graph.events.base import GraphEvent
 
 
@@ -52,107 +54,15 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
 
     HAS_MAIN_LOOP = True
 
-    @classmethod
-    def load_dialog_model(
-        cls,
-        parser,
-        dialog_model_path,
-    ):
-        """
-        Load up the dialog model for use with this class
-        """
-        # Reranker args
-        dialog_args = [
-            "-m",
-            "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent",
-            "--predictor-model-file",
-            "zoo:light_whoami/rpa_reranker/model",
-            "--inference",
-            "beam",
-            "-dt",
-            "valid",
-            "--beam-context-block-ngram",
-            "3",
-            "--beam-block-ngram",
-            "3",
-            "--beam-size",
-            "10",
-            "--beam-min-length",
-            "20",
-            "-mf",
-            dialog_model_path,
-        ]
-        dialog_opt = parser.parse_args(args=dialog_args)
-        dialog_opt["interactive_mode"] = True
-        dialog_opt["override"] = {
-            "inference": "beam",
-            "beam_context_block_ngram": 3,
-            "beam_size": 10,
-            "beam_min_length": 20,
-            "model": "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent",
-        }
-        return create_agent(dialog_opt, requireModelExists=True)
-
-    @classmethod
-    def load_models(
-        cls,
-        dialog_model_path,
-        act_model_path=None,
-    ):
-        """
-        Load up and create possible shared models for use with this class
-        """
-        from parlai.core.params import ParlaiParser
-        from parlai.core.agents import create_agent
-
-        parser = ParlaiParser(True, True, "")
-
-        dialog_model = cls.load_dialog_model(
-            parser,
-            dialog_model_path,
-        )
-
-        if act_model_path is not None:
-            # TODO @Kurt do we have an action model in character? Or just dialogue?
-            # Load action model
-            args = [
-                "-mf",
-                act_model_path,
-                "-ecands",
-                "inline",
-                "--ignore-bad-candidates",
-                "True",
-            ]
-            act_opt, _unknown = parser.parse_and_process_known_args(args=args)
-
-            act_opt["override"] = {
-                "eval_candidates": "inline",
-                "ignore_bad_candidates": "True",
-            }
-            act_opt["interactive_mode"] = True
-            act_opt["ignore_bad_candidates"] = True
-            action_model = create_agent(act_opt, requireModelExists=True)
-            action_model_share = action_model.share()
-        else:
-            action_model_share = None
-
-        return {
-            "shared_dialog_model": dialog_model.share(),
-            "shared_action_model": action_model_share,
-        }
-
-    def _init_with_models(self, models) -> None:
+    def _init_with_models(self, model_pool) -> None:
         """
         Initialize required members of this soul for tracking the
         model and interactions with it.
         """
         self._pending_observations = []
         self._last_action_time = time.time() + self._get_random_time_offset()
-        self.npc_dialog_model = create_agent_from_shared(models["shared_dialog_model"])
-        if models["shared_action_model"] is not None:
-            self.npc_act_model = create_agent_from_shared(models["shared_action_model"])
-        else:
-            self.npc_act_model = self.generic_act_model
+        self.npc_dialog_model = model_pool.get_model(ModelTypeName.DIALOG)
+        self.npc_act_model = model_pool.get_model(ModelTypeName.ACTION)
         self.reset_interaction_history(self.target_node)
 
     async def observe_event(self, event: "GraphEvent"):
@@ -168,7 +78,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         super().log_interaction_from_event(event)
         if self.target_node._dying:
             return
-        super().quest_events(event)
+        await super().quest_events(event)
         did_event = super().on_events(event)
         did_trade = super().trade_event_heuristics(event)
 
@@ -243,7 +153,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
     def get_last_turn_too_recent(self):
         return time.time() - self._last_action_time < MIN_TIME_BETWEEN_TURNS
 
-    def npc_action(self):
+    async def npc_action(self):
         """
         Agent attempt to take an action
         """
@@ -277,7 +187,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             "eval_labels": [cands[0]],
         }
         self.npc_act_model.observe(msg)
-        act = self.npc_act_model.act()
+        act = await self.npc_act_model.act()
         scores = {}
         for i in range(0, 3):
             scores[act["text_candidates"][i]] = float(act["sorted_scores"][i])
@@ -323,12 +233,12 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
                 "eval_labels": [cands[0]],
             }
             self.npc_act_model.observe(msg)
-            act = self.npc_act_model.act()
+            act = await self.npc_act_model.act()
             act_text = act["text"]
             act_text = self.npc_pick_non_repeating_action(act_text)
             if act_text is None:
                 return
-            self.world.parse_exec(agent_id, act_text)
+            await self.world.parse_exec(agent_id, act_text)
             return True
 
         if best_type == "emote":
@@ -342,7 +252,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
                 "eval_labels": [cands[0]],
             }
             self.npc_act_model.observe(msg)
-            act = self.npc_act_model.act()
+            act = await self.npc_act_model.act()
             act_text = act["text"]
             act_text = self.npc_pick_non_repeating_action(act_text)
             if act_text is None:
@@ -354,7 +264,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             return True
         return False
 
-    def npc_dialogue(self, obs=None):
+    async def npc_dialogue(self, obs=None):
         """
         Attempt to take a dialogue turn
         """
@@ -404,7 +314,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
         # Send to model to process
         msg = {"text": context, "episode_done": True}
         self.npc_dialog_model.observe(msg)
-        act = self.npc_dialog_model.act()
+        act = await self.npc_dialog_model.act()
 
         act_text = self.dialogue_pick_non_repeating_response(act, partner)
 
@@ -434,7 +344,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             ):
                 # Try goal dialog heuristic first, otherwise use normal dialog.
                 if not self.tell_goal_heuristics(obs):
-                    self.npc_dialogue(obs)
+                    await self.npc_dialogue(obs)
 
         # possibly initiate talk request to someone in the room
         if self.get_last_interaction_partner(agent) is None:
@@ -450,7 +360,7 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             ):
                 self.dialogue_switch_partner(agent, partner)
                 try:
-                    self.npc_dialogue(None)
+                    await self.npc_dialogue(None)
                 except Exception as e:
                     print(f"Hit exception {e}")
                     import traceback
@@ -469,4 +379,4 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
 
         # Possibly act according to the transformer model
         if not acted:
-            self.npc_action()
+            await self.npc_action()

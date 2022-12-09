@@ -47,6 +47,13 @@ BAD_START_SPACING = """
 MISPLACED_ENV = """
 #!/usr/bin/env python3
 """
+MISPLACED_ENV_2 = """#!/usr/bin/env python3
+
+
+# Copyright (c) Meta Platforms, Inc."""
+CORRECT_ENV = """#!/usr/bin/env python3
+
+# Copyright (c) Meta Platforms, Inc."""
 PROBLEM = """
  */
 
@@ -104,9 +111,16 @@ def add_copyright_if_not_present(filename):
             out_file.write(contents)
         print(end=LINE_CLEAR)
         print(f"Fixed header for {filename}")
+    elif MISPLACED_ENV_2 in contents:
+        contents = contents.replace(MISPLACED_ENV_2, CORRECT_ENV)
+
+        with open(filename, "w") as out_file:
+            out_file.write(contents)
+        print(end=LINE_CLEAR)
+        print(f"Fixed header for {filename}")
     elif MISPLACED_ENV in contents:
         contents = contents.replace(MISPLACED_ENV, "")
-        contents = "#!/usr/bin/env python3\n\n" + contents
+        contents = "#!/usr/bin/env python3\n" + contents
         with open(filename, "w") as out_file:
             out_file.write(contents)
         print(end=LINE_CLEAR)

@@ -30,16 +30,8 @@ from light.graph.elements.graph_nodes import (
 from light.graph.events.safety import SafetyClassifier
 import math
 
-safety_classifier = None
-
-
-def init_safety_classifier(datapath):
-    global safety_classifier
-    if datapath is not None and len(datapath) > 0:
-        safety_classifier = SafetyClassifier(datapath, True)
-
-
 if TYPE_CHECKING:
+    from light.registry.model_pool import ModelPool
     from light.world.world import World
     from light.graph.structured_graph import OOGraph
 
@@ -102,6 +94,7 @@ class SpeechEvent(GraphEvent):
         target_nodes: Optional[List[GraphNode]] = None,
         text_content: Optional[str] = None,
         event_id: Optional[str] = None,
+        safe: Optional[bool] = True,
     ):
         super().__init__(
             actor,
@@ -112,17 +105,9 @@ class SpeechEvent(GraphEvent):
         # Give opportunity to skip the safety after initialization
         # for debug reasons
         self.skip_safety = False
-        self.safe = None
+        self.safe = safe
 
     def is_dialogue_safe(self, text):
-        if safety_classifier is None:
-            self.safe = True
-            return True
-
-        if safety_classifier.is_safe(text):
-            self.safe = True
-        else:
-            self.safe = False
         return self.safe
 
 
@@ -792,9 +777,9 @@ class GoEvent(GraphEvent):
         health = self.actor.health
         eps = self.actor.movement_energy_cost
         if health > eps:
-            health_text = world.health(self.actor.node_id)
+            health_text = world.view.get_health_text_for(self.actor.node_id)
             self.actor.health = max(0, health - eps)
-            new_health_text = world.health(self.actor.node_id)
+            new_health_text = world.view.get_health_text_for(self.actor.node_id)
             if health_text != new_health_text:
                 HealthEvent(self.actor, text_content="HealthOnMoveEvent").execute(world)
 
@@ -1305,7 +1290,7 @@ class DeathEvent(TriggeredEvent):
 
         # Trigger the actual death
         world.oo_graph.agent_die(self.actor)
-        # world.purgatory.clear_soul(self.actor) todo - clear soul only after message queue consumed
+        # await world.purgatory.clear_soul(self.actor) todo - clear soul only after message queue consumed
         return []
 
     @proper_caps_wrapper
@@ -3043,9 +3028,9 @@ class IngestEvent(GraphEvent):
 
         world.broadcast_to_room(self)
 
-        health_text = world.health(self.actor.node_id)
+        health_text = world.view.get_health_text_for(self.actor.node_id)
         self.actor.health = max(self.actor.health + fe, 0)
-        new_health_text = world.health(self.actor.node_id)
+        new_health_text = world.view.get_health_text_for(self.actor.node_id)
         if self.actor.health <= 0:
             DeathEvent(self.actor).execute(world)
         elif health_text != new_health_text:
@@ -3472,7 +3457,7 @@ def actor_has_no_recent_action(last_time_acted, current_time):
 class ExamineEvent(GraphEvent):
     """Handles displaying examine/extra text for a graph node"""
 
-    NAMES = ["examine", "ex"]
+    NAMES = ["examine", "ex", "inspect"]
     TEMPLATES = ["examine <agent|room|object>"]
 
     def _get_target_description(self, world: "World") -> str:
@@ -4021,7 +4006,7 @@ class HealthEvent(NoArgumentEvent):
         """
         assert not self.executed
         self.__actor_name = self.actor.get_prefix_view()
-        self.__health_text = world.health(self.actor.node_id)
+        self.__health_text = world.view.get_health_text_for(self.actor.node_id)
         to_agents = [self.actor]
         for t in self.target_nodes:
             to_agents.append(t)

@@ -5,14 +5,15 @@
 # LICENSE file in the root directory of this source tree.
 import json
 import random, copy
+import asyncio
 from light.graph.structured_graph import OOGraph
 from light.graph.builders.base import (
-    DBGraphBuilder,
+    GraphBuilder,
     SingleSuggestionGraphBuilder,
     POSSIBLE_NEW_ENTRANCES,
 )
 from light.graph.events.graph_events import ArriveEvent
-from light.world.world import World
+from light.world.world import World, WorldConfig
 
 from typing import TYPE_CHECKING, List, Dict, Tuple, Any, Optional
 
@@ -23,29 +24,48 @@ if TYPE_CHECKING:
         NodeProps,
         GraphAgent,
     )
+    from light.data_model.db.episodes import EpisodeDB
 
 
-class MapJsonBuilder(DBGraphBuilder):
+class MapJsonBuilder(GraphBuilder):
     """Loads maps exported from the structured_graph to_json method."""
 
-    def __init__(self, ldb, debug, opt):
-        self.db = ldb
-        self.opt = opt
+    def __init__(
+        self, episode_db: Optional["EpisodeDB"], opt: Optional[Dict[str, Any]]
+    ):
+        """Store initialization options"""
+        self.opt = opt if opt is not None else {}
+        self.episode_db = episode_db
         self.original_agents: Dict[str, Tuple["GraphRoom", "NodeProps"]] = {}
         self._no_npc_models = True
 
-    def get_graph(self):
+    def _get_attached_config(
+        self, world_config: Optional[WorldConfig] = None, opt: Dict[str, Any] = None
+    ) -> WorldConfig:
+        """
+        Get a copy of the given world config attached to this builder
+        """
+        if opt is None:
+            opt = self.opt
+        if world_config is None:
+            return WorldConfig(episode_db=self.episode_db, opt=opt, graph_builder=self)
+        else:
+            world_config = world_config.copy()
+            world_config.graph_builder = self
+            return world_config
+
+    async def get_graph(self, world_config: Optional[WorldConfig] = None):
         input_json = self.opt["load_map"]
         f = open(input_json, "r")
         data = f.read()
         f.close()
-        g = OOGraph.from_json(data)
+        g = OOGraph.from_json(data, self.opt)
         g._opt = self.opt
         self.original_agents = {
             agent.name: (agent.get_room(), agent.get_props())
             for agent in g.agents.values()
         }
-        world = World(self.opt, self)
+        world = World(self._get_attached_config(world_config))
         world.oo_graph = g
         return g, world
 
@@ -72,7 +92,7 @@ class MapJsonBuilder(DBGraphBuilder):
         )
         arrival_event.execute(world)
 
-    def add_random_new_agent_to_graph(self, world) -> Optional["GraphAgent"]:
+    async def add_random_new_agent_to_graph(self, world) -> Optional["GraphAgent"]:
         """
         Add an agent from the stored original_agents list that isn't
         currently present in the world, if such an agent exists.

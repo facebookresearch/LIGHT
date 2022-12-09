@@ -1,0 +1,306 @@
+{
+    "is_onboarding": false,
+    "speakers_to_eval": [
+        "parlai_internal.projects.light.lightqa.seq2seq2seq.task.agents:StackedKnowledgeDialogueAgent",
+        "/checkpoint/kshuster/projects/wizard_2.0/parlai_sweeps/bart_sweep1_Fri_Oct__2/395/model",
+    ],
+    "dialogue_ids": ["episode0_0_1_0", "episode0_0_1_1"],
+    "knowledge": "The first Nobel Prize in Physics was awarded in 1901 to Wilhelm Conrad R\u00f6ntgen , of Germany , who received 150,782 SEK , which is equal to 7,731,004 SEK in December 2007 . John Bardeen is the only laureate to win the prize twice -- in 1956 and 1972 . Maria Sk\u0142odowska - Curie also won two Nobel Prizes , for physics in 1903 and chemistry in 1911 . William Lawrence Bragg was , until October 2014 , the youngest ever Nobel laureate ; he won the prize in 1915 at the age of 25 . Two women have won the prize : Curie and Maria Goeppert - Mayer ( 1963 ) . As of 2017 , the prize has been awarded to 206 individuals . There have been six years in which the Nobel Prize in Physics was not awarded ( 1916 , 1931 , 1934 , 1940 -- 1942 ) .",
+    "dialogue_dicts": [
+        {
+            "speakers": [
+                "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                "parlai_internal.projects.light.lightqa.seq2seq2seq.task.agents:StackedKnowledgeDialogueAgent",
+            ],
+            "dialogue": [
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "The first Nobel Prize in Physics was awarded in 1901 to Wilhelm Conrad R\u00f6ntgen , of Germany , who received 150,782 SEK , which is equal to 7,731,004 SEK in December 2007 . John Bardeen is the only laureate to win the prize twice -- in 1956 and 1972 . Maria Sk\u0142odowska - Curie also won two Nobel Prizes , for physics in 1903 and chemistry in 1911 . William Lawrence Bragg was , until October 2014 , the youngest ever Nobel laureate ; he won the prize in 1915 at the age of 25 . Two women have won the prize : Curie and Maria Goeppert - Mayer ( 1963 ) . As of 2017 , the prize has been awarded to 206 individuals . There have been six years in which the Nobel Prize in Physics was not awarded ( 1916 , 1931 , 1934 , 1940 -- 1942 ) .",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "who got the first nobel prize in physics?",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.seq2seq2seq.task.agents:StackedKnowledgeDialogueAgent",
+                    "text": "Albert Einstein was the first winner of the Nobel prize in physics.",
+                },
+            ],
+        },
+        {
+            "speakers": [
+                "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                "/checkpoint/kshuster/projects/wizard_2.0/parlai_sweeps/bart_sweep1_Fri_Oct__2/395/model",
+            ],
+            "dialogue": [
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "The first Nobel Prize in Physics was awarded in 1901 to Wilhelm Conrad R\u00f6ntgen , of Germany , who received 150,782 SEK , which is equal to 7,731,004 SEK in December 2007 . John Bardeen is the only laureate to win the prize twice -- in 1956 and 1972 . Maria Sk\u0142odowska - Curie also won two Nobel Prizes , for physics in 1903 and chemistry in 1911 . William Lawrence Bragg was , until October 2014 , the youngest ever Nobel laureate ; he won the prize in 1915 at the age of 25 . Two women have won the prize : Curie and Maria Goeppert - Mayer ( 1963 ) . As of 2017 , the prize has been awarded to 206 individuals . There have been six years in which the Nobel Prize in Physics was not awarded ( 1916 , 1931 , 1934 , 1940 -- 1942 ) .",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "who got the first nobel prize in physics?",
+                },
+                {
+                    "id": "/checkpoint/kshuster/projects/wizard_2.0/parlai_sweeps/bart_sweep1_Fri_Oct__2/395/model",
+                    "text": "I'm not sure who won the first Nobel prize in physics, but I know it was awarded to someone in the field of astronomy.",
+                },
+            ],
+        },
+    ],
+}
+{
+    "is_onboarding": false,
+    "speakers_to_eval": [
+        "parlai_internal.projects.light.lightqa.seq2seq2seq.task.agents:StackedKnowledgeDialogueAgent",
+        "/checkpoint/kshuster/projects/wizard_2.0/parlai_sweeps/bart_sweep1_Fri_Oct__2/395/model",
+    ],
+    "dialogue_ids": ["episode1_0_1_0", "episode1_0_1_1"],
+    "knowledge": "Deadpool 2 is scheduled to be released in the United States on May 18 , 2018 . A sequel , Deadpool 3 , is in development .",
+    "dialogue_dicts": [
+        {
+            "speakers": [
+                "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                "parlai_internal.projects.light.lightqa.seq2seq2seq.task.agents:StackedKnowledgeDialogueAgent",
+            ],
+            "dialogue": [
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "Deadpool 2 is scheduled to be released in the United States on May 18 , 2018 . A sequel , Deadpool 3 , is in development .",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "when is the next deadpool movie being released?",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.seq2seq2seq.task.agents:StackedKnowledgeDialogueAgent",
+                    "text": "When is the next deadpool movie coming out? May 18, 2018.",
+                },
+            ],
+        },
+        {
+            "speakers": [
+                "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                "/checkpoint/kshuster/projects/wizard_2.0/parlai_sweeps/bart_sweep1_Fri_Oct__2/395/model",
+            ],
+            "dialogue": [
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "Deadpool 2 is scheduled to be released in the United States on May 18 , 2018 . A sequel , Deadpool 3 , is in development .",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "when is the next deadpool movie being released?",
+                },
+                {
+                    "id": "/checkpoint/kshuster/projects/wizard_2.0/parlai_sweeps/bart_sweep1_Fri_Oct__2/395/model",
+                    "text": "I'm not sure, but I know it's going to be a sequel to the first one.",
+                },
+            ],
+        },
+    ],
+}
+{
+    "is_onboarding": false,
+    "speakers_to_eval": [
+        "parlai_internal.projects.light.lightqa.seq2seq2seq.task.agents:StackedKnowledgeDialogueAgent",
+        "/private/home/ladolphs/code/ParlAI/data/models/hallucination/bart_rag_token/model",
+    ],
+    "dialogue_ids": ["episode0_0_2_0", "episode0_0_2_1"],
+    "knowledge": "The first Nobel Prize in Physics was awarded in 1901 to Wilhelm Conrad R\u00f6ntgen , of Germany , who received 150,782 SEK , which is equal to 7,731,004 SEK in December 2007 . John Bardeen is the only laureate to win the prize twice -- in 1956 and 1972 . Maria Sk\u0142odowska - Curie also won two Nobel Prizes , for physics in 1903 and chemistry in 1911 . William Lawrence Bragg was , until October 2014 , the youngest ever Nobel laureate ; he won the prize in 1915 at the age of 25 . Two women have won the prize : Curie and Maria Goeppert - Mayer ( 1963 ) . As of 2017 , the prize has been awarded to 206 individuals . There have been six years in which the Nobel Prize in Physics was not awarded ( 1916 , 1931 , 1934 , 1940 -- 1942 ) .",
+    "dialogue_dicts": [
+        {
+            "speakers": [
+                "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                "parlai_internal.projects.light.lightqa.seq2seq2seq.task.agents:StackedKnowledgeDialogueAgent",
+            ],
+            "dialogue": [
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "The first Nobel Prize in Physics was awarded in 1901 to Wilhelm Conrad R\u00f6ntgen , of Germany , who received 150,782 SEK , which is equal to 7,731,004 SEK in December 2007 . John Bardeen is the only laureate to win the prize twice -- in 1956 and 1972 . Maria Sk\u0142odowska - Curie also won two Nobel Prizes , for physics in 1903 and chemistry in 1911 . William Lawrence Bragg was , until October 2014 , the youngest ever Nobel laureate ; he won the prize in 1915 at the age of 25 . Two women have won the prize : Curie and Maria Goeppert - Mayer ( 1963 ) . As of 2017 , the prize has been awarded to 206 individuals . There have been six years in which the Nobel Prize in Physics was not awarded ( 1916 , 1931 , 1934 , 1940 -- 1942 ) .",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "who got the first nobel prize in physics?",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.seq2seq2seq.task.agents:StackedKnowledgeDialogueAgent",
+                    "text": "Albert Einstein was the first winner of the Nobel prize in physics.",
+                },
+            ],
+        },
+        {
+            "speakers": [
+                "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                "/private/home/ladolphs/code/ParlAI/data/models/hallucination/bart_rag_token/model",
+            ],
+            "dialogue": [
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "The first Nobel Prize in Physics was awarded in 1901 to Wilhelm Conrad R\u00f6ntgen , of Germany , who received 150,782 SEK , which is equal to 7,731,004 SEK in December 2007 . John Bardeen is the only laureate to win the prize twice -- in 1956 and 1972 . Maria Sk\u0142odowska - Curie also won two Nobel Prizes , for physics in 1903 and chemistry in 1911 . William Lawrence Bragg was , until October 2014 , the youngest ever Nobel laureate ; he won the prize in 1915 at the age of 25 . Two women have won the prize : Curie and Maria Goeppert - Mayer ( 1963 ) . As of 2017 , the prize has been awarded to 206 individuals . There have been six years in which the Nobel Prize in Physics was not awarded ( 1916 , 1931 , 1934 , 1940 -- 1942 ) .",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "who got the first nobel prize in physics?",
+                },
+                {
+                    "id": "/private/home/ladolphs/code/ParlAI/data/models/hallucination/bart_rag_token/model",
+                    "text": "Marie Curie was the first woman to win the Nobel Prize in physics.",
+                },
+            ],
+        },
+    ],
+}
+{
+    "is_onboarding": false,
+    "speakers_to_eval": [
+        "parlai_internal.projects.light.lightqa.seq2seq2seq.task.agents:StackedKnowledgeDialogueAgent",
+        "/private/home/ladolphs/code/ParlAI/data/models/hallucination/bart_rag_token/model",
+    ],
+    "dialogue_ids": ["episode1_0_2_0", "episode1_0_2_1"],
+    "knowledge": "Deadpool 2 is scheduled to be released in the United States on May 18 , 2018 . A sequel , Deadpool 3 , is in development .",
+    "dialogue_dicts": [
+        {
+            "speakers": [
+                "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                "parlai_internal.projects.light.lightqa.seq2seq2seq.task.agents:StackedKnowledgeDialogueAgent",
+            ],
+            "dialogue": [
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "Deadpool 2 is scheduled to be released in the United States on May 18 , 2018 . A sequel , Deadpool 3 , is in development .",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "when is the next deadpool movie being released?",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.seq2seq2seq.task.agents:StackedKnowledgeDialogueAgent",
+                    "text": "When is the next deadpool movie coming out? May 18, 2018.",
+                },
+            ],
+        },
+        {
+            "speakers": [
+                "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                "/private/home/ladolphs/code/ParlAI/data/models/hallucination/bart_rag_token/model",
+            ],
+            "dialogue": [
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "Deadpool 2 is scheduled to be released in the United States on May 18 , 2018 . A sequel , Deadpool 3 , is in development .",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "when is the next deadpool movie being released?",
+                },
+                {
+                    "id": "/private/home/ladolphs/code/ParlAI/data/models/hallucination/bart_rag_token/model",
+                    "text": "When is the next Deadpool movie coming out?",
+                },
+            ],
+        },
+    ],
+}
+{
+    "is_onboarding": false,
+    "speakers_to_eval": [
+        "/checkpoint/kshuster/projects/wizard_2.0/parlai_sweeps/bart_sweep1_Fri_Oct__2/395/model",
+        "/private/home/ladolphs/code/ParlAI/data/models/hallucination/bart_rag_token/model",
+    ],
+    "dialogue_ids": ["episode0_1_2_0", "episode0_1_2_1"],
+    "knowledge": "The first Nobel Prize in Physics was awarded in 1901 to Wilhelm Conrad R\u00f6ntgen , of Germany , who received 150,782 SEK , which is equal to 7,731,004 SEK in December 2007 . John Bardeen is the only laureate to win the prize twice -- in 1956 and 1972 . Maria Sk\u0142odowska - Curie also won two Nobel Prizes , for physics in 1903 and chemistry in 1911 . William Lawrence Bragg was , until October 2014 , the youngest ever Nobel laureate ; he won the prize in 1915 at the age of 25 . Two women have won the prize : Curie and Maria Goeppert - Mayer ( 1963 ) . As of 2017 , the prize has been awarded to 206 individuals . There have been six years in which the Nobel Prize in Physics was not awarded ( 1916 , 1931 , 1934 , 1940 -- 1942 ) .",
+    "dialogue_dicts": [
+        {
+            "speakers": [
+                "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                "/checkpoint/kshuster/projects/wizard_2.0/parlai_sweeps/bart_sweep1_Fri_Oct__2/395/model",
+            ],
+            "dialogue": [
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "The first Nobel Prize in Physics was awarded in 1901 to Wilhelm Conrad R\u00f6ntgen , of Germany , who received 150,782 SEK , which is equal to 7,731,004 SEK in December 2007 . John Bardeen is the only laureate to win the prize twice -- in 1956 and 1972 . Maria Sk\u0142odowska - Curie also won two Nobel Prizes , for physics in 1903 and chemistry in 1911 . William Lawrence Bragg was , until October 2014 , the youngest ever Nobel laureate ; he won the prize in 1915 at the age of 25 . Two women have won the prize : Curie and Maria Goeppert - Mayer ( 1963 ) . As of 2017 , the prize has been awarded to 206 individuals . There have been six years in which the Nobel Prize in Physics was not awarded ( 1916 , 1931 , 1934 , 1940 -- 1942 ) .",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "who got the first nobel prize in physics?",
+                },
+                {
+                    "id": "/checkpoint/kshuster/projects/wizard_2.0/parlai_sweeps/bart_sweep1_Fri_Oct__2/395/model",
+                    "text": "I'm not sure who won the first Nobel prize in physics, but I know it was awarded to someone in the field of astronomy.",
+                },
+            ],
+        },
+        {
+            "speakers": [
+                "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                "/private/home/ladolphs/code/ParlAI/data/models/hallucination/bart_rag_token/model",
+            ],
+            "dialogue": [
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "The first Nobel Prize in Physics was awarded in 1901 to Wilhelm Conrad R\u00f6ntgen , of Germany , who received 150,782 SEK , which is equal to 7,731,004 SEK in December 2007 . John Bardeen is the only laureate to win the prize twice -- in 1956 and 1972 . Maria Sk\u0142odowska - Curie also won two Nobel Prizes , for physics in 1903 and chemistry in 1911 . William Lawrence Bragg was , until October 2014 , the youngest ever Nobel laureate ; he won the prize in 1915 at the age of 25 . Two women have won the prize : Curie and Maria Goeppert - Mayer ( 1963 ) . As of 2017 , the prize has been awarded to 206 individuals . There have been six years in which the Nobel Prize in Physics was not awarded ( 1916 , 1931 , 1934 , 1940 -- 1942 ) .",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "who got the first nobel prize in physics?",
+                },
+                {
+                    "id": "/private/home/ladolphs/code/ParlAI/data/models/hallucination/bart_rag_token/model",
+                    "text": "Marie Curie was the first woman to win the Nobel Prize in physics.",
+                },
+            ],
+        },
+    ],
+}
+{
+    "is_onboarding": false,
+    "speakers_to_eval": [
+        "/checkpoint/kshuster/projects/wizard_2.0/parlai_sweeps/bart_sweep1_Fri_Oct__2/395/model",
+        "/private/home/ladolphs/code/ParlAI/data/models/hallucination/bart_rag_token/model",
+    ],
+    "dialogue_ids": ["episode1_1_2_0", "episode1_1_2_1"],
+    "knowledge": "Deadpool 2 is scheduled to be released in the United States on May 18 , 2018 . A sequel , Deadpool 3 , is in development .",
+    "dialogue_dicts": [
+        {
+            "speakers": [
+                "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                "/checkpoint/kshuster/projects/wizard_2.0/parlai_sweeps/bart_sweep1_Fri_Oct__2/395/model",
+            ],
+            "dialogue": [
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "Deadpool 2 is scheduled to be released in the United States on May 18 , 2018 . A sequel , Deadpool 3 , is in development .",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "when is the next deadpool movie being released?",
+                },
+                {
+                    "id": "/checkpoint/kshuster/projects/wizard_2.0/parlai_sweeps/bart_sweep1_Fri_Oct__2/395/model",
+                    "text": "I'm not sure, but I know it's going to be a sequel to the first one.",
+                },
+            ],
+        },
+        {
+            "speakers": [
+                "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                "/private/home/ladolphs/code/ParlAI/data/models/hallucination/bart_rag_token/model",
+            ],
+            "dialogue": [
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "Deadpool 2 is scheduled to be released in the United States on May 18 , 2018 . A sequel , Deadpool 3 , is in development .",
+                },
+                {
+                    "id": "parlai_internal.projects.light.lightqa.nq_open.task.agents:NQOpenTeacher",
+                    "text": "when is the next deadpool movie being released?",
+                },
+                {
+                    "id": "/private/home/ladolphs/code/ParlAI/data/models/hallucination/bart_rag_token/model",
+                    "text": "When is the next Deadpool movie coming out?",
+                },
+            ],
+        },
+    ],
+}

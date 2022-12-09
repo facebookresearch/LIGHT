@@ -589,6 +589,7 @@ class GraphAgent(GraphNode):
         # Flag to resolve when a death event is in the stack, but possibly not processed
         self._dying = False
         self.is_player = self._props.get("is_player", self._props.get("_human", False))
+        self.user_id = self._props.get("user_id", None)
         self.usually_npc = self._props.get("usually_npc", False)
         self.pacifist = self._props.get("pacifist", False)
         self.tags = self._props.get("tags", self.DEFAULT_TAGS)

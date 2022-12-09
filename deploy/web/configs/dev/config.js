@@ -5,9 +5,9 @@
  */
 
 const DEV = {
-  host: "https://www.light-rpg.ai",
-  hostname: "www.light-rpg.ai",
-  port: "8088",
+  host: "https://dev.light-rpg.ai",
+  hostname: "dev.light-rpg.ai",
+  port: "80",
 };
 
 export default DEV;

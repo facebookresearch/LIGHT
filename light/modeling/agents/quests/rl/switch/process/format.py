@@ -9,7 +9,7 @@ import pickle
 from glob import glob
 import json
 from light.graph.structured_graph import OOGraph
-from light.world.world import World
+from light.world.world import World, WorldConfig
 from light.constants import LIGHT_DATAPATH
 import copy
 
@@ -236,7 +236,7 @@ def preprocess(args):
         graph_json = quest_file["graph"]
 
         g = OOGraph.from_json(graph_json)
-        world = World({}, None)
+        world = World(WorldConfig())
         world.oo_graph = g
 
         # print(world.get_possible_actions(human['id'], USE_ACTIONS))

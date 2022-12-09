@@ -2,7 +2,7 @@
 
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.abs
+# LICENSE file in the root directory of this source tree.
 
 import unittest
 import json
@@ -51,7 +51,7 @@ from light.graph.elements.graph_nodes import (
     GraphObject,
     GraphAgent,
 )
-from light.world.world import World
+from light.world.world import World, WorldConfig
 
 from typing import Tuple, List, Type, Optional
 
@@ -86,7 +86,7 @@ class GraphEventTests(unittest.TestCase):
         """
         Setup should put together any requirements for starting the database for a test.
         """
-        self.world = World({}, None)
+        self.world = World(WorldConfig())
         self.reset_world()
 
     def reset_world(self) -> None:
