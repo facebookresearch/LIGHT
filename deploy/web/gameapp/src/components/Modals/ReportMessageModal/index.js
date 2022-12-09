@@ -77,8 +77,9 @@ const ReportMessageForm = () => {
       reason: reportReason,
     });
 
-    window.top.postMessage(
+    window.parent.postMessage(
       JSON.stringify({
+        caller: 'report',
         category: reportCategory,
         message: reportModalMessage,
         reason: reportReason,

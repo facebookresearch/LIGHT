@@ -8,6 +8,7 @@ examples/**/build/*
 **/build/*
 **/outputs/*
 prod_db/*
+hydra_configs/**/*
 
 light.egg-info/
 parlai.egg-info/

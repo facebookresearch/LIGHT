@@ -80,7 +80,7 @@ const LoginDisplay = () => {
           className="text-white bg-gray-50"
           html={
             <div className="w-30 h-30 p-3 border-solid border-black rounded bg-white text-black">
-              <p> Please agree to the terms in order to proceed</p>
+              <p> Please check the box to agree to the terms </p>
             </div>
           }
           position="top"

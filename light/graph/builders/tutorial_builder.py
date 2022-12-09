@@ -145,7 +145,7 @@ class TutorialWorldBuilder(MapJsonBuilder):
         )
         room_node.add_neighbor(
             exit_node,
-            "A shimmering portal",
+            "a shimmering portal",
             None,
             "You feel as if this portal leads somewhere unusual.",
         )
