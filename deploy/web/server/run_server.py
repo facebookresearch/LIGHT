@@ -49,6 +49,18 @@ from light import LIGHT_DIR
 
 CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
 
+from light import LIGHT_DIR
+
+CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
+
+from light import LIGHT_DIR
+
+CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
+
+from light import LIGHT_DIR
+
+CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
+
 here = os.path.abspath(os.path.dirname(__file__))
 
 

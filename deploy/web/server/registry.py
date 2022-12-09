@@ -68,6 +68,7 @@ class RegistryApplication(tornado.web.Application):
         super(RegistryApplication, self).__init__(
             self.get_handlers(cfg, user_db, tornado_settings), **tornado_settings
         )
+        self.opt = vars(self.FLAGS)
 
     def get_handlers(self, cfg: "WorldServerConfig", user_db, tornado_settings):
         self.tornado_provider = TornadoPlayerFactory(
