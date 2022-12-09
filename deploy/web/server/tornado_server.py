@@ -502,7 +502,7 @@ class LandingApplication(tornado.web.Application):
                 {"user_db": user_db, "target": "/html/terms.html"},
             ),
             (
-                r"/#/bye",
+                r"/bye",
                 LandingHandler,
                 {"user_db": user_db},
             ),
@@ -517,9 +517,9 @@ class LandingApplication(tornado.web.Application):
                 {"user_db": user_db, "target": "/html/profile.html"},
             ),
             (r"/report", ReportHandler, {"user_db": user_db}),
-            (r"/(.*)", StaticUIHandler, {"path": here + "/../build/"}),
         ]
         if self.password is not None and len(self.password) > 0:
+            print("Adding login handler ?")
             base_handlers.append(
                 (
                     r"/login",
@@ -542,6 +542,7 @@ class LandingApplication(tornado.web.Application):
                     {"user_db": user_db, "hostname": self.hostname, "app": self},
                 )
             )
+        base_handlers.append((r"/(.*)", StaticUIHandler, {"path": here + "/../build/"}))
 
         return base_handlers
 
@@ -726,7 +727,7 @@ class LoginHandler(BaseHandler):
         self.password = password
 
     def get(self):
-        self.render(here + "/build/index.html", next=self.get_argument("next", "/"))
+        self.render(here + "/../build/index.html")
         self.next = next
 
     def post(self):
@@ -775,7 +776,7 @@ class LogoutHandler(BaseHandler):
             secure=True,
             httponly=True,
         )
-        self.redirect("/#/bye")
+        self.redirect("/bye")
 
 
 class ReportHandler(BaseHandler):

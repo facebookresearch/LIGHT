@@ -19,6 +19,8 @@ import SoulSpawnEventMessage from "./SoulSpawnEventMessage";
 import StatusMessage from "./StatusMessage";
 import QuestMessage from "./QuestMessage";
 
+/* UTIL */
+//get_msg_actor - helper function that retrieves actor sending message.
 function get_msg_actor(msg) {
   if (msg.actors === undefined) {
     return msg.actor.node_id;

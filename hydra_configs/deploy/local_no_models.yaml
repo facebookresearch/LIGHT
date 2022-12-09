@@ -10,6 +10,7 @@ port: 35494
 safety_classifier_path: ""
 is_logging: false
 tutorial_builder: null
+password: LetsPlay
 
 light:
   model_root: ~/LIGHT/models/

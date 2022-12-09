@@ -33,7 +33,6 @@ const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
       className={`soulspawn-container ${inHelpMode ? "active" : ""}`}
       onClick={onClickFunction}
     >
-      
       {/* <p className="soulspawn-text soulspawn-star">{StarShine1}</p>
       <p className="soulspawn-header">Let there be LIGHT</p>
       <p className="soulspawn-text">{Character}</p>
@@ -50,6 +49,10 @@ const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
       </p>
       <h5 className="soulspawn-subheader">YOUR MISSION</h5>
       <p className="soulspawn-text">{MissionDesc}</p>
+      <p className="soulspawn-text">
+        You will be rewarded for roleplaying so play your character to the best
+        of your ability.
+      </p>
       <p className="soulspawn-text soulspawn-star">{StarShine1}</p>
        */}
     </div>
