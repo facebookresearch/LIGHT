@@ -12,7 +12,7 @@ import time
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
-    from light.graph.world.world import World
+    from light.world.world import World
     from light.graph.events.base import GraphEvent
 
 
@@ -81,7 +81,7 @@ class Soul(ABC):
         """
         pass
 
-    def reap(self):
+    async def reap(self):
         """
         Free resources associated with this Soul, and ensure any pending futures
         are cancelled.

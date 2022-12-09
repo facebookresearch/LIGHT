@@ -1,130 +1,205 @@
+#!/usr/bin/env python3
+
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+"""Application specifically for hosting a model for remote access"""
+
+
 import argparse
-import socket
+import json
+import logging
+import os
+import traceback
+import asyncio
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
+import tornado.auth
+import tornado.escape
+import tornado.ioloop
+import tornado.web
+import tornado.websocket
+
+from light import LIGHT_DIR
+from light.registry.model_pool import ALL_LOADERS, ModelPool, ModelTypeName
+from light.registry.models.acting_score_model import (
+    ParlAIPolyencoderActingScoreModelConfig,
+)
+
+# Temporary imports pre Hydra
+from light.registry.parlai_model import ParlAIModelConfig
+
+
+if TYPE_CHECKING:
+    from parlai.core.agents import Agent
+
+tornado_settings = {
+    "autoescape": None,
+    "compiled_template_cache": False,
+}
 DEFAULT_HOSTNAME = "localhost"
-DEFAULT_PORT = 35497
+DEFAULT_PORT = 40000
 
 
-def send_to_connection(c, txt):
-    txt = txt.rstrip("\n").lstrip(" ").lstrip("\n")
-    if len(txt) > 0:
-        txt += "\n"
-        c[0].send(str.encode(txt))
-
-
-class TelnetClient:
-    def __init__(self, model, client_id, connection_details):
-        self.model = model
-        self.c = connection_details
-        self.text = ""
-        self.alive = True
-        self.client_id = client_id
-
-    def act(self):
-        """
-        Pull an action stored from the last alive check
-        """
-        if self.text != "":
-            agent_id = str(self.client_id)
-            print(agent_id + ":" + str(self.text))
-            # self.model.parse_exec(agent_id, self.text)
-            self.observe()
-            self.text = ""
-
-    def observe(self):
-        """
-        Send any observed content to the client.
-        This method should query the graph for what it needs, and should
-        clear the graph content when this happens.
-        """
-        agent_id = self.client_id
-        txt = "blah!"
-        send_to_connection(self.c, txt)
-
-    def is_alive(self):
-        """
-        As alive checks are called every tick, we both check liveliness and
-        store the last action if one existed
-        """
-        # import pdb; pdb.set_trace()
-        try:
-            data = self.c[0].recv(1024)
-            if data != b"":
-                try:
-                    self.text = data.decode()
-                    print(self.text)
-                except UnicodeDecodeError:
-                    self.text = ""
-            else:
-                # dead connection, unspawn the client
-                self.alive = False
-                print("[" + str(self.client_id) + " has disconnected]")
-        except BlockingIOError:
-            pass
-
-        return self.alive
-
-
-class TelnetClientProvider:
-    def __init__(self, model, ip="127.0.0.1", port=35496):
-        self.ip = ip
-        self.port = port
-        self._setup_socket()
-        self._cnt = 0
+class ModelServer(tornado.web.Application):
+    def __init__(self, model: "Agent", given_tornado_settings=None):
         self.model = model
 
-    def _setup_socket(self):
-        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server_socket.bind((self.ip, self.port))
-        print("Server socket bound with with ip {} port {}".format(self.ip, self.port))
-        server_socket.listen()
-        server_socket.settimeout(0.0)
-        self.server_socket = server_socket
+        super(ModelServer, self).__init__(self.get_handlers(), **given_tornado_settings)
 
-    def get_new_clients(self):
-        """
-        Should check the potential source of clients for new clients. If
-        a client exists, this should instantiate a relevant Client object
-        for each potential new client and return them.
+    def get_handlers(self):
+        return [
+            (r"/model_request", ResponseHandler, {"model": self.model}),
+            (r"/is_alive", AliveHandler, {}),
+        ]
 
-        This particular implementation only checks for one client at a time
-        """
+
+class BaseHandler(tornado.web.RequestHandler):
+    def __init__(self, *request, **kwargs):
+        self.include_host = False
+        super(BaseHandler, self).__init__(*request, **kwargs)
+
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "*")
+
+    def write_error(self, status_code, **kwargs):
+        logging.error("ERROR: %s: %s" % (status_code, kwargs))
+        if "exc_info" in kwargs:
+            logging.info(
+                "Traceback: {}".format(traceback.format_exception(*kwargs["exc_info"]))
+            )
+            exc_info = kwargs["exc_info"]
+            try:
+                params = {
+                    "error": str(exc_info[1]),
+                    "trace_info": traceback.format_exception(*exc_info),
+                    "request": str(self.request.__dict__),
+                }
+                self.write(json.dumps(params))
+            except Exception as e:
+                logging.error(e)
+
+
+class ResponseHandler(BaseHandler):
+    """
+    Handler to pass a post response along to the model, then
+    return a result
+    """
+
+    def initialize(self, model):
+        self.model = model
+
+    async def post(self):
+        # Process the data to extract the act
+        data = tornado.escape.json_decode(self.request.body)
+        message = data["observation"]
+        # Pass the act to the model
+        self.model.observe(message)
+        # return the response
+        response = await self.model.act()
+        if "metrics" in response:
+            del response["metrics"]
+        if "sorted_scores" in response and not isinstance(
+            response["sorted_scored"], list
+        ):
+            response["sorted_scores"].force_set(response["sorted_scores"].tolist())
         try:
-            (clientConnection, clientAddress) = self.server_socket.accept()
-            if clientConnection:
-                self._cnt += 1
-                client_id = self._cnt
-                c = (clientConnection, clientAddress, client_id)
-                print("added a connection to model server!: " + str(c))
-                c[0].settimeout(0.0)
-                if client_id == -1:
-                    send_to_connection(c, "Sorry the model server is full!")
-                    return []
-                new_client = TelnetClient(self.model, client_id, c)
-                return [new_client]
-        except BlockingIOError:
-            pass
-        return []
+            self.write(json.dumps({"act": response}))
+        except TypeError:
+            print("JSON encoding failed:")
+            print(response.keys())
+            print(response)
+            raise
+
+
+class AliveHandler(BaseHandler):
+    """
+    Handler to pass a post response along to the model, then
+    return a result
+    """
+
+    def initialize(self):
+        pass
+
+    def post(self):
+        # Process the data to extract the act
+        self.write(json.dumps({"alive": True}))
+
+
+def _run_server(
+    given_tornado_settings: Dict[str, Any], hostname: str, port: int, model: "Agent"
+):
+    """
+    Run the model server with the given setup configuration
+    """
+    my_loop = tornado.ioloop.IOLoop()
+
+    app = ModelServer(
+        model=model,
+        given_tornado_settings=given_tornado_settings,
+    )
+    app.listen(port, max_buffer_size=1024 ** 3)
+    print("Model Server Started")
+
+    try:
+        my_loop.start()
+    except KeyboardInterrupt:
+        my_loop.stop()
+    print("Exiting server")
+
+
+def _init_model(model_opt_file: str, model_loader: str) -> "Agent":
+    """Initialize a model for serving"""
+
+    pool = ModelPool()
+    # Temporary mapping that allows us to get things running before Hydra
+    cfg = None
+    if model_loader == "ParlAI":
+        cfg = ParlAIModelConfig(opt_file=model_opt_file)
+    elif model_loader == "ParlAIActingScore":
+        cfg = ParlAIPolyencoderActingScoreModelConfig(opt_file=model_opt_file)
+    else:
+        raise NotImplementedError(f"Unsupported model loader {model_loader}")
+
+    pool.register_model(cfg, [ModelTypeName.SERVED])
+    model = pool.get_model(ModelTypeName.SERVED)
+    # Try to clear up some memory
+    del pool._model_loaders[ModelTypeName.SERVED]
+    import gc
+
+    gc.collect()
+    return model
 
 
 def main():
     import random
     import numpy
 
-    parser = argparse.ArgumentParser(description="Start the telnet server.")
+    parser = argparse.ArgumentParser(description="Start the model server.")
     parser.add_argument(
         "--light-model-root",
         type=str,
-        default="/Users/jju/Desktop/LIGHT/",
-        help="models path. For local setup, use: /checkpoint/jase/projects/light/dialog/",
+        default=os.path.join(LIGHT_DIR, "models/"),
+        help="Path to the models",
     )
     parser.add_argument(
-        "-port",
+        "--model-opt-file",
+        type=str,
+        default=os.path.join(
+            LIGHT_DIR, "light/registry/models/config/baseline_generative.opt"
+        ),
+        help="Opt file to load a model from",
+    )
+    parser.add_argument(
+        "--model-loader",
+        type=str,
+        default="ParlAI",
+        help="ModelConfig to load alongside the given opt file",
+    )
+    parser.add_argument(
+        "--port",
         metavar="port",
         type=int,
         default=DEFAULT_PORT,
@@ -139,25 +214,9 @@ def main():
     )
     FLAGS = parser.parse_args()
 
-    random.seed(6)
-    numpy.random.seed(6)
-    model = []
-
-    provider = TelnetClientProvider(model, FLAGS.hostname, FLAGS.port)
-    clients = []
-    while True:
-        # try to get new clients
-        clients += provider.get_new_clients()
-
-        # Clear disconnected clients
-        left_clients = [p for p in clients if not p.is_alive()]
-        for client in left_clients:
-            clients.remove(client)
-
-        # Check existing clients
-        for client in clients:
-            # import pdb; pdb.set_trace()
-            act = client.act()
+    os.environ["LIGHT_MODEL_ROOT"] = FLAGS.light_model_root
+    model = _init_model(FLAGS.model_opt_file, FLAGS.model_loader)
+    _run_server(tornado_settings, FLAGS.hostname, FLAGS.port, model)
 
 
 if __name__ == "__main__":

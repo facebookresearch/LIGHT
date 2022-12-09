@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import sys
 
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent, create_agent_from_shared
@@ -50,6 +49,8 @@ import os
 import random
 import copy
 import numpy as np
+import sys
+import asyncio
 
 random.seed(6)
 np.random.seed(6)
@@ -73,6 +74,7 @@ RELATIONSHIP_TYPES = [
 ]
 
 
+# TODO port similarly to OneRoomChatBuilder
 class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
     """Builds a LIGHT map using a StarSpace model to connect everything."""
 
@@ -300,7 +302,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             use_desc = use_desc[4:]
         return use_desc
 
-    def add_object_to_graph(self, g, obj, container_node, extra_props={}):
+    async def add_object_to_graph(self, g, obj, container_node, extra_props={}):
         """Adds a particular DBObject to the given OOgraph, adding to the specific
         container node. Returns the newly created object node"""
         obj.description = obj.description.capitalize()
@@ -322,7 +324,9 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                     obj.name,
                     obj.db_id,
                 )
-                contained_objs = self.get_contained_items(obj.db_id, DB_TYPE_OBJ, 3)[1:]
+                contained_objs = await self.get_contained_items(
+                    obj.db_id, DB_TYPE_OBJ, 3
+                )[1:]
                 for o in contained_objs:
                     if self._name_not_in_graph(g, o.name):
                         self._add_object_to_graph(g, o, obj_node)
@@ -349,7 +353,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             obj_node.move_to(container_node)
             return obj_node
 
-    def add_new_agent_to_graph(self, g, char, room_node):
+    async def add_new_agent_to_graph(self, g, char, room_node):
         """Add the given DBcharacter  to the given room (room_node) in the
         given OOFraph. Return the new agent node on success, and None on failure"""
         if "is_banned" in vars(char):
@@ -384,18 +388,18 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 obj.db_id: (
                     "equipped" if obj.is_wearable or obj.is_weapon else "carrying"
                 )
-                for obj in self.get_contained_items(char.db_id, DB_TYPE_CHAR)
+                for obj in await self.get_contained_items(char.db_id, DB_TYPE_CHAR)
             }
         if self.suggestion_type == "hybrid" and len(objs) == 0:
             objs = {
                 obj.db_id: (
                     "equipped" if obj.is_weapon or obj.is_wearable else "carrying"
                 )
-                for obj in self.get_contained_items(char.db_id, DB_TYPE_CHAR, 2)
+                for obj in await self.get_contained_items(char.db_id, DB_TYPE_CHAR, 2)
             }
 
         for obj in objs:
-            obj_node = self.add_object_to_graph(
+            obj_node = await self.add_object_to_graph(
                 g, self.get_obj_from_id(obj), agent_node
             )
             if obj_node is not None:
@@ -403,7 +407,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                     obj_node.set_prop("equipped", True)
         return agent_node
 
-    def add_random_new_agent_to_graph(self, world):
+    async def add_random_new_agent_to_graph(self, world):
         """Add a random agent to the OOGraph at a random room node"""
         g = world.oo_graph
         pos_rooms = [x for x in g.rooms.keys()]
@@ -418,7 +422,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         if len(chars) == 0:
             return
         char = self.get_random_char()
-        agent = self.add_new_agent_to_graph(g, char, g.get_node(pos_room.g_id))
+        agent = await self.add_new_agent_to_graph(g, char, g.get_node(pos_room.g_id))
         if agent is None:
             return
 
@@ -428,7 +432,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         )
         arrival_event.execute(world)
 
-    def construct_grid(self, html_visualization_filename="/tmp/gridtmp.html"):
+    async def construct_grid(self, html_visualization_filename="/tmp/gridtmp.html"):
         """Create a new stitched together environment from an empty grid"""
         # Initialize for a new grid setup
         self.grid = {}
@@ -458,7 +462,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         self.stack.append(r)
         while len(self.stack) > 0:
             r1 = self.stack.pop()
-            self.add_exits(r1)
+            await self.add_exits(r1)
         generate_html_map(html_visualization_filename, self.grid)
 
     def new_grid_position(self, loc):
@@ -499,7 +503,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         else:
             return None, None
 
-    def room_similarity(self, loc1, loc2):
+    async def room_similarity(self, loc1, loc2):
         """Determine how similar the starspace model thinks two given rooms are"""
         room_1 = self.grid[loc1]
         room_2 = self.grid[loc2]
@@ -519,7 +523,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         msg = {"text": txt_feats, "episode_done": True}
         self.agents["room"].reset()
         self.agents["room"].observe(msg)
-        response = self.agents["room"].act()
+        response = await self.agents["room"].act()
         score = 100000
         for i, k in enumerate(response["text_candidates"]):
             if k == sim_feats:
@@ -527,7 +531,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 break
         return score
 
-    def possibly_connect_to_neighbor(self, loc1, loc2, src_dir):
+    async def possibly_connect_to_neighbor(self, loc1, loc2, src_dir):
         """Connect two rooms if the model thinks they're similar enough"""
         # TODO rather than connecting if two rooms are similar, perhaps
         # we should be connecting if a room is similar to another
@@ -541,7 +545,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             return
         else:
             # compute similarity of rooms:
-            sim = self.room_similarity(loc1, loc2)
+            sim = await self.room_similarity(loc1, loc2)
             if sim > 100:
                 # if not in the top 100 most similar rooms, no connection.
                 return
@@ -551,24 +555,32 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             self.grid[loc2].possible_connections[INV_DIR[src_dir] + "*"] = True
             self.grid[loc1].possible_connections[src_dir + "*"] = True
 
-    def possibly_connect_to_neighbors(self, loc):
+    async def possibly_connect_to_neighbors(self, loc):
         """Try to connect a room to all of its possible neighbors"""
-        self.possibly_connect_to_neighbor(loc, (loc[0] - 1, loc[1], loc[2]), "west")
-        self.possibly_connect_to_neighbor(loc, (loc[0] + 1, loc[1], loc[2]), "east")
-        self.possibly_connect_to_neighbor(loc, (loc[0], loc[1] - 1, loc[2]), "north")
-        self.possibly_connect_to_neighbor(loc, (loc[0], loc[1] + 1, loc[2]), "south")
+        await self.possibly_connect_to_neighbor(
+            loc, (loc[0] - 1, loc[1], loc[2]), "west"
+        )
+        await self.possibly_connect_to_neighbor(
+            loc, (loc[0] + 1, loc[1], loc[2]), "east"
+        )
+        await self.possibly_connect_to_neighbor(
+            loc, (loc[0], loc[1] - 1, loc[2]), "north"
+        )
+        await self.possibly_connect_to_neighbor(
+            loc, (loc[0], loc[1] + 1, loc[2]), "south"
+        )
 
-    def add_room(self, room, loc, src_loc, src_dir):
+    async def add_room(self, room, loc, src_loc, src_dir):
         """Add a room as the neighbor of the room at src_loc"""
         self.grid[loc] = room
         room.loc = loc
         self.grid[loc].possible_connections[INV_DIR[src_dir]] = True
         self.grid[src_loc].possible_connections[src_dir] = True
         self.banned_rooms.add(room.db_id)
-        self.possibly_connect_to_neighbors(loc)
+        await self.possibly_connect_to_neighbors(loc)
         self.stack.append(room)
 
-    def add_exits(self, r):
+    async def add_exits(self, r):
         """Try to add all possible exits to a given room"""
         if type(r) is FillerRoom:
             # This is needed as neighbors used to be the field in filler_room
@@ -579,7 +591,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             # Not using best match model but the starspace model for model prediction
             neighbors = [
                 e.setting
-                for e in self.get_neighbor_rooms(
+                for e in await self.get_neighbor_rooms(
                     room_id=r.db_id, banned_rooms=self.banned_rooms
                 )
             ]
@@ -587,7 +599,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             l1, src_dir = self.new_grid_position(r.loc)
             if l1 is not None:
                 exit_text = e + " " + r.category
-                r1 = self.get_similar_room(exit_text)
+                r1 = await self.get_similar_room(exit_text)
                 if r1 is not None:
                     if self.debug:
                         print(
@@ -617,12 +629,12 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                         # FillerRoom is using the db_id of the room it substitute's
                         filler_room.neighbors = r1.get_text_edges(DB_EDGE_NEIGHBOR)
                         # Filler rooms inherit neighbors from the real room they replace
-                        self.add_room(filler_room, l1, r.loc, src_dir)
+                        await self.add_room(filler_room, l1, r.loc, src_dir)
                     else:
-                        self.add_room(r1, l1, r.loc, src_dir)
+                        await self.add_room(r1, l1, r.loc, src_dir)
 
     ##########For best match model###################
-    def get_similar_element(self, txt_feats, element_type):
+    async def get_similar_element(self, txt_feats, element_type):
         """Given a text feature, and the corresponding Database type
         return an DBElement of the DB type"""
         agent_type = None
@@ -646,7 +658,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             self.agents[agent_type].reset()
             msg = {"text": txt_feats, "episode_done": True}
             self.agents[agent_type].observe(msg)
-            response = self.agents[agent_type].act()
+            response = await self.agents[agent_type].act()
             ind = 0
             while ind < len(response["text_candidates"]):
                 key = response["text_candidates"][ind]
@@ -656,24 +668,24 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 ind = ind + 1
             return None
 
-    def get_similar_room(self, txt_feats):
+    async def get_similar_room(self, txt_feats):
         """Find a similar room to the text room given
         based on a starspace prediction"""
-        return self.get_similar_element(txt_feats, DB_TYPE_ROOM)
+        return await self.get_similar_element(txt_feats, DB_TYPE_ROOM)
 
-    def get_similar_object(self, txt_feats):
+    async def get_similar_object(self, txt_feats):
         """Find a similar object to the text given
         based on starspace prediciton"""
-        return self.get_similar_element(txt_feats, DB_TYPE_OBJ)
+        return await self.get_similar_element(txt_feats, DB_TYPE_OBJ)
 
-    def get_similar_character(self, txt_feats):
+    async def get_similar_character(self, txt_feats):
         """Find a similar object to the text given
         based on starspace prediciton"""
-        return self.get_similar_element(txt_feats, DB_TYPE_CHAR)
+        return await self.get_similar_element(txt_feats, DB_TYPE_CHAR)
 
     ###################################################
 
-    def get_neighbor_rooms(self, room_id, num_results=5, banned_rooms=None):
+    async def get_neighbor_rooms(self, room_id, num_results=5, banned_rooms=None):
         """get prediction of neighbor room with StarSpaceModel, return DBRoom Object """
         if banned_rooms is None:
             banned_rooms = [room_id]
@@ -682,7 +694,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             # This is added due to the new model prediction for neighbors
         else:
             txt_feats = self.roomid_to_feats[room_id]
-        response = self.agent_recommend(txt_feats, "room")
+        response = await self.agent_recommend(txt_feats, "room")
         ind = 0
         results = []
         while len(results) < num_results:
@@ -701,11 +713,11 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                     return results
         return results
 
-    def get_graph(self):
+    async def get_graph(self):
         """Construct a graph using the grid created with build_world after
         selecting new characters and objects to place within.
         """
-        self.construct_grid()
+        await self.construct_grid()
         g = OOGraph(self.opt)
         self.g = g
         room_ids = []
@@ -715,7 +727,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         for grid_loc, pos_room in self.grid.items():
             if pos_room.setting == "EMPTY":
                 continue
-            pos_room.g_id = g.add_room(
+            pos_room.g_id = await g.add_room(
                 pos_room.setting,
                 {
                     "room": True,
@@ -789,7 +801,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                         if obj is not None:
                             room_node = g.get_node(pos_room.g_id)
                             no_human_suggestions_obj = False
-                            objid = self.add_object_to_graph(g, obj, room_node)
+                            objid = await self.add_object_to_graph(g, obj, room_node)
                 if "db" in pos_room.in_objects:
                     for item_id in pos_room.in_objects["db"]:
                         obj = self.get_obj_from_id(item_id)
@@ -799,7 +811,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                         if obj is not None:
                             room_node = g.get_node(pos_room.g_id)
                             no_human_suggestions_obj = False
-                            obj_node = self.add_object_to_graph(
+                            obj_node = await self.add_object_to_graph(
                                 g, obj, room_node, props
                             )
                 if "db" in pos_room.ex_characters:
@@ -814,7 +826,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                         if char is not None:
                             room_node = g.get_node(pos_room.g_id)
                             no_human_suggestions_char = False
-                            self.add_new_agent_to_graph(g, char, room_node)
+                            await self.add_new_agent_to_graph(g, char, room_node)
                             cnt += 1
                 if "db" in pos_room.in_characters:
                     for char_id in pos_room.in_characters["db"]:
@@ -832,30 +844,30 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             if self.suggestion_type != "human":
                 # For model suggestions and hybrid
                 if self.suggestion_type == "model" or no_human_suggestions_obj:
-                    predicted_objects = self.get_contained_items(
+                    predicted_objects = await self.get_contained_items(
                         container_id=pos_room.db_id, container_type=DB_TYPE_ROOM
                     )
                     for o in predicted_objects:
                         if o is not None:
                             room_node = g.get_node(pos_room.g_id)
-                            self.add_object_to_graph(g, o, room_node)
+                            await self.add_object_to_graph(g, o, room_node)
                 if self.suggestion_type == "model" or no_human_suggestions_char:
-                    predicted_characters = self.get_contained_characters(
+                    predicted_characters = await self.get_contained_characters(
                         room_id=pos_room.db_id, num_results=2
                     )
                     for c in predicted_characters:
                         if c is not None:
                             room_node = g.get_node(pos_room.g_id)
-                            self.add_new_agent_to_graph(g, c, room_node)
+                            await self.add_new_agent_to_graph(g, c, room_node)
 
         for room in g.rooms:
             g.room_id_to_loggers[room] = RoomInteractionLogger(g, room)
 
-        world = World(self.opt, self)
+        world = World(WorldConfig(opt=self.opt, graph_builder=self))
         world.oo_graph = g
         return g, world
 
-    def get_contained_items(
+    async def get_contained_items(
         self, container_id, container_type, num_results=5, banned_items=[]
     ):
         """
@@ -879,7 +891,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 txt_feats = self.charid_to_feats[container_id]
             else:
                 txt_feats = self.get_text_features(self.get_char_from_id(container_id))
-        response = self.agent_recommend(txt_feats, "object")
+        response = await self.agent_recommend(txt_feats, "object")
         ind = 0
         results = []
         while len(results) < num_results and ind < len(response["text_candidates"]):
@@ -895,7 +907,9 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             ind = ind + 1
         return results
 
-    def get_contained_characters(self, room_id, num_results=5, banned_characters=[]):
+    async def get_contained_characters(
+        self, room_id, num_results=5, banned_characters=[]
+    ):
         """ Get prediction of contained characters in given room_id from StarSpace model."""
         if type(room_id) is str and room_id[0] == "f":
             # To check for filler_rooms, if it is filler_room, using the db_id of the room it has replaced
@@ -904,7 +918,7 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             txt_feats = self.roomid_to_feats[room_id]
         else:
             txt_feats = self.get_text_features(self.get_room_from_id(room_id))
-        response = self.agent_recommend(txt_feats, "character")
+        response = await self.agent_recommend(txt_feats, "character")
         ind = 0
         results = []
         while len(results) < num_results:
@@ -923,33 +937,35 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                     return results
         return results
 
-    def get_description(self, txt_feat, element_type, num_results=5):
+    async def get_description(self, txt_feat, element_type, num_results=5):
         """Get description of element, given the txt_feature title"""
-        response = self.agent_recommend(txt_feat, "node_desc")
+        response = await self.agent_recommend(txt_feat, "node_desc")
         text_results = [r["text_candidates"] for r in response][
             : min(num_results, len(response))
         ]
         return text_results
 
-    def get_object_affordance(self, txt_feat, num_results=5):
+    async def get_object_affordance(self, txt_feat, num_results=5):
         """Given a text representation of an object, return its
         affordance such as wearable, gettable, wiedable etc"""
-        response = self.agent_recommend(txt_feat, "obj_afford")
+        response = await self.agent_recommend(txt_feat, "obj_afford")
         text_results = [r["text_candidates"] for r in response][
             : min(num_results, len(response))
         ]
         return text_results
 
-    def get_character_object_relation(self, txt_feat, affordance_type, num_results=5):
+    async def get_character_object_relation(
+        self, txt_feat, affordance_type, num_results=5
+    ):
         """Get the text based object given the character name and affordance of the object"""
         query_type = "char_" + affordance_type
-        response = self.agent_recommend(txt_feat, query_type)
+        response = await self.agent_recommend(txt_feat, query_type)
         text_results = [r["text_candidates"] for r in response][
             : min(num_results, len(response))
         ]
         return text_results
 
-    def get_element_relationship(
+    async def get_element_relationship(
         self,
         element_txt,
         element_type,
@@ -973,28 +989,28 @@ class StarspaceBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             return
         closest_match = None
         if element_type == DB_TYPE_OBJ:
-            closest_match = self.get_similar_object(element_txt)
+            closest_match = await self.get_similar_object(element_txt)
         elif relationship_type == CHAR_CONTAINING:
-            closest_match = self.get_similar_room(element_txt)
+            closest_match = await self.get_similar_room(element_txt)
         elif element_type == DB_TYPE_CHAR:
-            closest_match = self.get_similar_character(element_txt)
+            closest_match = await self.get_similar_character(element_txt)
         elif element_type == DB_TYPE_ROOM:
-            closest_match = self.get_similar_room(element_txt)
+            closest_match = await self.get_similar_room(element_txt)
             banned_items.extend(self.banned_rooms)
         if closest_match is None:
             return
         if relationship_type == NEIGHBOR:
             return [
                 r
-                for r in self.get_neighbor_rooms(closest_match.db_id, num_results)
+                for r in await self.get_neighbor_rooms(closest_match.db_id, num_results)
                 if r not in banned_items
             ]
         elif relationship_type == CONTAINING:
-            return self.get_contained_items(
+            return await self.get_contained_items(
                 closest_match.db_id, element_type, num_results
             )
         elif relationship_type == CHAR_CONTAINING:
-            return self.get_contained_characters(closest_match.db_id, num_results)
+            return await self.get_contained_characters(closest_match.db_id, num_results)
 
     def get_text_features(self, c, full=False):
         """Return text feature given a candidate and return and cache the text feature"""

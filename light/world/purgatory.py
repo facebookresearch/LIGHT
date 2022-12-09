@@ -6,7 +6,7 @@
 
 import random
 import threading
-from typing import TYPE_CHECKING, List, Tuple, Type, Callable, Any, Optional, Dict
+from typing import TYPE_CHECKING, List, Dict, Tuple, Type, Callable, Any, Optional
 
 from light.world.souls.player_soul import PlayerSoul
 from light.world.souls.tutorial_player_soul import TutorialPlayerSoul
@@ -41,14 +41,6 @@ class Purgatory:
         self.world = world
         self.player_assign_condition = threading.Condition()
         self.players = 0
-        self.shared_args = {}
-
-    def register_shared_args(self, arg_name, arg_provider):
-        """
-        Used to pass in e.g. the generic act model and roleplaying model scorer to souls.
-        """
-        if arg_provider is not None:
-            self.shared_args[arg_name] = arg_provider
 
     def register_filler_soul_provider(
         self,
@@ -86,7 +78,7 @@ class Purgatory:
         soul = soul_class(agent, self.world, *arg_provider())
         self.node_id_to_soul[agent.node_id] = soul
 
-    def send_event_to_soul(self, event: "GraphEvent", agent: "GraphAgent"):
+    async def send_event_to_soul(self, event: "GraphEvent", agent: "GraphAgent"):
         """
         Pass an GraphEvent along to the soul inhabiting the given GraphAgent
         if such a soul exists, passing otherwise. Launch in wrapper around
@@ -94,20 +86,20 @@ class Purgatory:
         deciding what to do.
         """
         if agent.get_prop("dead"):
-            self.clear_soul(agent)
+            await self.clear_soul(agent)
             return  # We shouldn't send an event to this soul, as it is reaped
         soul: "Soul" = self.node_id_to_soul.get(agent.node_id)
         if soul is not None:
             soul.wrap_observe_event(event)
 
-    def clear_soul(self, agent: "GraphAgent") -> None:
+    async def clear_soul(self, agent: "GraphAgent") -> None:
         """Clear the soul that is associated with the given agent"""
         soul = self.node_id_to_soul.get(agent.node_id)
         if soul is not None:
             del self.node_id_to_soul[agent.node_id]
-            soul.reap()
+            await soul.reap()
 
-    def get_soul_for_player(
+    async def get_soul_for_player(
         self, player_provider, agent: Optional["GraphAgent"] = None
     ) -> Optional["Soul"]:
         """
@@ -118,13 +110,12 @@ class Purgatory:
             possible_agents = self.world.get_possible_player_nodes()
             if len(possible_agents) > 0:
                 target_agent = random.choice(possible_agents)
-                self.clear_soul(target_agent)
+                await self.clear_soul(target_agent)
                 soul = PlayerSoul(
                     target_agent,
                     self.world,
                     self.players,
                     player_provider,
-                    self.shared_args,
                 )
                 self.node_id_to_soul[target_agent.node_id] = soul
                 self.player_soul_id_to_soul[self.players] = soul
@@ -136,20 +127,19 @@ class Purgatory:
 class TutorialPurgatory(Purgatory):
     """Version of purgatory that only ever puts a player into the tutorial character"""
 
-    def get_soul_for_player(
+    async def get_soul_for_player(
         self,
         player_provider,
         agent: Optional["GraphAgent"] = None,
     ):
         with self.player_assign_condition:
             ag = [a for a in self.world.oo_graph.agents.values() if a.name == "You"][0]
-            self.clear_soul(ag)
+            await self.clear_soul(ag)
             soul = TutorialPlayerSoul(
                 ag,
                 self.world,
                 self.players,
                 player_provider,
-                self.shared_args,
             )
             self.node_id_to_soul[ag.node_id] = soul
             self.player_soul_id_to_soul[self.players] = soul

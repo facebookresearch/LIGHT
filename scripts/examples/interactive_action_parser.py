@@ -13,10 +13,13 @@ from parlai.utils.world_logging import WorldLogger
 from parlai.agents.local_human.local_human import LocalHumanAgent
 from parlai.core.message import Message
 
+from light.registry.model_pool import ModelPool
 from light.world.action_parser import ActionParser
 import random
+import asyncio
 
 
+# TODO upgrade to hydra, then test again
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, "Interactive chat with a model")
@@ -60,14 +63,14 @@ def setup_args(parser=None):
 
 def interactive(opt):
     # Create model and assign it to the specified task
-    parser = ActionParser(opt)
+    parser = ActionParser(ModelPool())
     human_agent = LocalHumanAgent(opt)
     world = create_task(opt, [human_agent, parser.agent])
 
     # Show some example dialogs:
     while not world.epoch_done():
         txt = input("Action> ")
-        parse_txt = parser.parse(txt)
+        parse_txt = asyncio.run(parser.parse(txt))
         print(parse_txt)
 
 

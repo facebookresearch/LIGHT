@@ -40,8 +40,9 @@ async def ainput(string: str) -> str:
 
 def init_world():
     world_builder = TutorialWorldBuilder(None, opt={"load_map": TUTORIAL_FILE})
-    g, world = world_builder.get_graph()
+    g, world = asyncio.run(world_builder.get_graph())
     # NOTE: I just took the act_model_path from elsewhere
+    # TODO TODO FIXME will need to update
     shared_resources = TutorialModelSoul.load_models(
         dialog_model_path="zoo:light_whoami/profile_expanded_attention_128/model",
         act_model_path="/checkpoint/light/models/game2021/act_model/model",
@@ -65,7 +66,7 @@ async def run_tutorial():
     Takes in a World object and its OOGraph and allows one to play with a random map
     """
     player_provider = init_world()
-    player_provider.process_terminal_act("")  # get an agent
+    await player_provider.process_terminal_act("")  # get an agent
     await asyncio.sleep(0.01)
     while True:
         act = await ainput("\raction> ")
@@ -77,10 +78,10 @@ async def run_tutorial():
         elif act in ["new", "reset"]:
             print("A mist fills the world and everything resets")
             player_provider = init_world()
-            player_provider.process_terminal_act("")  # get an agent
+            await player_provider.process_terminal_act("")  # get an agent
             await asyncio.sleep(0.4)
         else:
-            player_provider.process_terminal_act(act)
+            await player_provider.process_terminal_act(act)
         await asyncio.sleep(0.4)
 
 

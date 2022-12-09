@@ -11,6 +11,7 @@ from light.graph.structured_graph import OOGraph
 
 
 @pytest.mark.slow
+@pytest.mark.skip(reason="Need to update starspace builders to use Model Pool")
 class TestStarspaceNeighborBuilder(unittest.TestCase):
     def setUp(self):
         parser = ParlaiParser()

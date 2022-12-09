@@ -30,18 +30,18 @@ from light.graph.elements.graph_nodes import (
 from light.graph.events.safety import SafetyClassifier
 import math
 
-safety_classifier = None
-
-
-def init_safety_classifier(datapath):
-    global safety_classifier
-    if datapath is not None and len(datapath) > 0:
-        safety_classifier = SafetyClassifier(datapath, True)
-
-
 if TYPE_CHECKING:
+    from light.registry.model_pool import ModelPool
     from light.world.world import World
     from light.graph.structured_graph import OOGraph
+
+
+def split_in_list(text_list: List[str]) -> List[str]:
+    """Return all of the individual words used in the text list"""
+    vocab = set()
+    for elem in text_list:
+        vocab.update(elem.split())
+    return list(vocab)
 
 
 # TODO remove ability to take actions with yourself
@@ -94,6 +94,7 @@ class SpeechEvent(GraphEvent):
         target_nodes: Optional[List[GraphNode]] = None,
         text_content: Optional[str] = None,
         event_id: Optional[str] = None,
+        safe: Optional[bool] = True,
     ):
         super().__init__(
             actor,
@@ -104,17 +105,9 @@ class SpeechEvent(GraphEvent):
         # Give opportunity to skip the safety after initialization
         # for debug reasons
         self.skip_safety = False
-        self.safe = None
+        self.safe = safe
 
     def is_dialogue_safe(self, text):
-        if safety_classifier is None:
-            self.safe = True
-            return True
-
-        if safety_classifier.is_safe(text):
-            self.safe = True
-        else:
-            self.safe = False
         return self.safe
 
 
@@ -122,6 +115,7 @@ class SayEvent(SpeechEvent):
     """Handles saying something out loud to the room."""
 
     NAMES = ["say"]
+    TEMPLATES = ['say "<SOMETHING>"']
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the expected views, then broadcast"""
@@ -175,6 +169,13 @@ class SayEvent(SpeechEvent):
             text = text[1:-1]
         return cls(actor, text_content=text, event_id=event_id)
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "mumble", "mumbled", "something", "incomprehensible", "said"]
+
 
 def distance_and_direction(node1, node2):
     node1_loc = node1.get_room().grid_location
@@ -199,6 +200,7 @@ class ShoutEvent(SpeechEvent):
     """Handles saying something out loud to all agents."""
 
     NAMES = ["shout"]
+    TEMPLATES = ['shout "<SOMETHING>"']
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the view for the event"""
@@ -262,11 +264,32 @@ class ShoutEvent(SpeechEvent):
             text = text[1:-1]
         return cls(actor, text_content=text, event_id=event_id)
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return [
+            "you",
+            "shout",
+            "something",
+            "incomprehensible",
+            "shouted",
+            "hear",
+            "from",
+            "the",
+            "north",
+            "south",
+            "east",
+            "west",
+        ]
+
 
 class WhisperEvent(SpeechEvent):
     """Handles saying something to a specific agent without others hearing."""
 
     NAMES = ["whisper"]
+    TEMPLATES = ['whisper "<SOMETHING>" to <agent>']
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the views for the event, then broadcast"""
@@ -372,11 +395,35 @@ class WhisperEvent(SpeechEvent):
             actor, target_nodes=[targets[0]], text_content=text, event_id=event_id
         )
 
+    @classmethod
+    def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
+        """
+        Return any valid actions that can be taken by the given actor
+        over the current graph. Default returns no events.
+        """
+        valid_actions: List[GraphEvent] = []
+        room = actor.get_room()
+        room_agents = [x for x in room.get_contents() if x.agent]
+        for agent in room_agents:
+            if agent != actor:
+                valid_actions.append(
+                    cls(actor, target_nodes=[agent], text_content="<SOMETHING>")
+                )
+        return valid_actions
+
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "whipser", "something", "incomprehensible", "whispered", "to"]
+
 
 class TellEvent(SpeechEvent):
     """Handles saying something to a specific agent aloud."""
 
     NAMES = ["tell"]
+    TEMPLATES = ['tell "<SOMETHING>" to <agent>']
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the view for the actors involved"""
@@ -480,17 +527,51 @@ class TellEvent(SpeechEvent):
 
         return cls(actor, target_nodes=[target], text_content=text, event_id=event_id)
 
+    @classmethod
+    def get_valid_actions(cls, graph: "OOGraph", actor: GraphAgent) -> List[GraphEvent]:
+        """
+        Return any valid actions that can be taken by the given actor
+        over the current graph. Default returns no events.
+        """
+        valid_actions: List[GraphEvent] = []
+        room = actor.get_room()
+        room_agents = [x for x in room.get_contents() if x.agent]
+        for agent in room_agents:
+            if agent != actor:
+                valid_actions.append(
+                    cls(actor, target_nodes=[agent], text_content="<SOMETHING>")
+                )
+        return valid_actions
+
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return [
+            "you",
+            "mumble",
+            "mumbled",
+            "something",
+            "incomprehensible",
+            "told",
+            "to",
+        ]
+
 
 class LeaveEvent(TriggeredEvent):
     """Event to note that someone has left a room"""
+
+    _SELF_VIEW_FROM_VOID = "You chant the words and feel yourself appearing and disappearing in a puff of smoke!"
+    _ROOM_VIEW_FROM_VOID = "{} disappears in a puff of smoke!"
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """Save expected views, then message everyone"""
         actor_name = self.actor.get_prefix_view()
         self.__self_view = None
         if self.target_nodes[0] == world.oo_graph.void:
-            self.__self_view = "You chant the words and feel yourself appearing and disappearing in a puff of smoke!"
-            self.__in_room_view = f"{actor_name} disappears in a puff of smoke!"
+            self.__self_view = self._SELF_VIEW_FROM_VOID
+            self.__in_room_view = self._ROOM_VIEW_FROM_VOID.format(actor_name)
         else:
             target_name = self.target_nodes[0].get_prefix_view_from(self.room)
             self.__in_room_view = f"{actor_name} left towards {target_name}."
@@ -504,6 +585,17 @@ class LeaveEvent(TriggeredEvent):
             return self.__self_view
         else:
             return self.__in_room_view
+
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return (
+            ["left", "towards"]
+            + cls._SELF_VIEW_FROM_VOID.split()
+            + cls._ROOM_VIEW_FROM_VOID[3:].split()
+        )
 
 
 class ArriveEvent(TriggeredEvent):
@@ -555,11 +647,33 @@ class TriggerFollowEvent(TriggeredEvent):
         else:
             return None  # One should not observe others follows
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return [
+            "you",
+            "follow",
+            "try",
+            "to",
+            "but",
+            "cannot",
+            "as",
+            "there",
+            "is",
+            "no",
+            "more",
+            "room",
+            "there",
+        ]
+
 
 class GoEvent(GraphEvent):
     """Handles moving as an individual from one room to another"""
 
     NAMES = ["go"]
+    TEMPLATES = ["go <room|path>"]
 
     def __init__(
         self,
@@ -663,9 +777,9 @@ class GoEvent(GraphEvent):
         health = self.actor.health
         eps = self.actor.movement_energy_cost
         if health > eps:
-            health_text = world.health(self.actor.node_id)
+            health_text = world.view.get_health_text_for(self.actor.node_id)
             self.actor.health = max(0, health - eps)
-            new_health_text = world.health(self.actor.node_id)
+            new_health_text = world.view.get_health_text_for(self.actor.node_id)
             if health_text != new_health_text:
                 HealthEvent(self.actor, text_content="HealthOnMoveEvent").execute(world)
 
@@ -771,11 +885,21 @@ class GoEvent(GraphEvent):
                     valid_actions.append(cls(actor, target_nodes=[neighbor]))
         return valid_actions
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        BLOCK_TEXT = "you blocked from moving was by".split()
+        EXHAUSTED_TEXT = "you are too exhausted to move tries to leave but is".split()
+        return ["arrived", "from"] + BLOCK_TEXT + EXHAUSTED_TEXT
+
 
 class UnfollowEvent(NoArgumentEvent):
     """Handles removing a follow"""
 
     NAMES = ["unfollow"]
+    TEMPLATES = ["unfollow"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -830,11 +954,19 @@ class UnfollowEvent(NoArgumentEvent):
         else:
             return []
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "stopped", "following"]
+
 
 class FollowEvent(GraphEvent):
     """Handles having an agent follow another agent"""
 
     NAMES = ["follow"]
+    TEMPLATES = ["follow <agent>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -935,11 +1067,19 @@ class FollowEvent(GraphEvent):
                 valid_actions.append(cls(actor, target_nodes=[agent]))
         return valid_actions
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "started", "following"]
+
 
 class UnblockEvent(NoArgumentEvent):
     """Handles removing a block"""
 
     NAMES = ["unblock"]
+    TEMPLATES = ["unblock"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -994,11 +1134,19 @@ class UnblockEvent(NoArgumentEvent):
         else:
             return []
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "stopped", "blocking"]
+
 
 class BlockEvent(GraphEvent):
     """Handles having an agent blocking another agent"""
 
     NAMES = ["block"]
+    TEMPLATES = ["block <agent>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -1100,6 +1248,13 @@ class BlockEvent(GraphEvent):
                 valid_actions.append(cls(actor, target_nodes=[agent]))
         return valid_actions
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "started", "blocking"]
+
 
 # Note, this is the only event we have right now where the actor is
 # an object... This may need cleanup
@@ -1135,7 +1290,7 @@ class DeathEvent(TriggeredEvent):
 
         # Trigger the actual death
         world.oo_graph.agent_die(self.actor)
-        # world.purgatory.clear_soul(self.actor) todo - clear soul only after message queue consumed
+        # await world.purgatory.clear_soul(self.actor) todo - clear soul only after message queue consumed
         return []
 
     @proper_caps_wrapper
@@ -1145,6 +1300,13 @@ class DeathEvent(TriggeredEvent):
             return f"You died! "
         else:
             return self.__in_room_view
+
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "died"]
 
 
 class SoulSpawnEvent(TriggeredEvent):
@@ -1191,6 +1353,26 @@ class SoulSpawnEvent(TriggeredEvent):
         else:
             return None
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return [
+            "your",
+            "soul",
+            "possesses",
+            "roleplay",
+            "well",
+            "my",
+            "friend",
+            "and",
+            "earn",
+            "experience",
+            "points",
+            "character",
+        ]
+
 
 class SpawnEvent(TriggeredEvent):
     """Handles processing the view for when a player is spawned, and passing their context"""
@@ -1219,11 +1401,29 @@ class SpawnEvent(TriggeredEvent):
         else:
             return None
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return [
+            "you",
+            "are",
+            "spawned",
+            "into",
+            "this",
+            "world",
+            "as",
+            "your",
+            "character",
+        ]
+
 
 class HelpEvent(NoArgumentEvent):
     """Handles user asking for help"""
 
     NAMES = ["help", "h"]
+    TEMPLATES = ["help"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """Construct intro text and broadcast to the player"""
@@ -1245,6 +1445,18 @@ class HitEvent(GraphEvent):
     """Handles having one agent attack another"""
 
     NAMES = ["hit"]
+    TEMPLATES = ["hit <agent>"]
+
+    _PACIFIST_TEXT = "You couldn't do that, you are a pacifist!"
+    _ATTACK_VERBS = ["attacked", "struck at", "charged at", "swiped at"]
+    _BLOCK_VERBS = ["parried", "blocked", "repelled"]
+    _HIT_DETAILS = [
+        "making crunching contact",
+        "hitting the target",
+        "crunch",
+        "smash",
+        "crack, that hurts",
+    ]
 
     def __init__(
         self,
@@ -1312,18 +1524,9 @@ class HitEvent(GraphEvent):
             else:
                 self.weapon = random.choice(weapons).get_prefix_view()
             # fun text details
-            attack_verb = ["attacked", "struck at", "charged at", "swiped at"]
-            block_verb = ["parried", "blocked", "repelled"]
-            hit_details = [
-                "making crunching contact",
-                "hitting the target",
-                "crunch",
-                "smash",
-                "crack, that hurts",
-            ]
-            self.attack_verb = random.choice(attack_verb)
-            self.block_verb = random.choice(block_verb)
-            self.hit_details = random.choice(hit_details)
+            self.attack_verb = random.choice(self._ATTACK_VERBS)
+            self.block_verb = random.choice(self._BLOCK_VERBS)
+            self.hit_details = random.choice(self._HIT_DETAILS)
 
         # Mark as a coming death if this is death, as no response can occur
         if attack_target.health <= self.attack - self.defend:
@@ -1452,11 +1655,25 @@ class HitEvent(GraphEvent):
                 valid_actions.append(cls(actor, target_nodes=[agent]))
         return valid_actions
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        vocab = []
+        vocab += cls._PACIFIST_TEXT.split()
+        vocab += split_in_list(cls._ATTACK_VERBS)
+        vocab += split_in_list(cls._BLOCK_VERBS)
+        vocab += split_in_list(cls._HIT_DETAILS)
+        vocab += ["but", "missed", "they", "you", "the", "attack", "attacked", "with"]
+        return vocab
+
 
 class HugEvent(GraphEvent):
     """Handles having one agent give another a hug"""
 
     NAMES = ["hug"]
+    TEMPLATES = ["hug <agent>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -1523,9 +1740,9 @@ class HugEvent(GraphEvent):
         event_id: Optional[str] = None,
     ) -> Union["HugEvent", "ErrorEvent"]:
         """Hug events with a target will always be valid."""
-        assert len(targets) == 1, f"HitEvent takes one arg, got {targets}"
+        assert len(targets) == 1, f"HugEvent takes one arg, got {targets}"
         target = targets[0]
-        assert target.agent, "Can only hit agents"
+        assert target.agent, "Can only hug agents"
         return cls(actor, target_nodes=[target], event_id=event_id)
 
     @classmethod
@@ -1543,12 +1760,20 @@ class HugEvent(GraphEvent):
                 valid_actions.append(cls(actor, target_nodes=[agent]))
         return valid_actions
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "hugged"]
+
 
 # TODO handle locked objects
 class GetObjectEvent(GraphEvent):
     """Handles getting an object from a container or a location"""
 
     NAMES = ["get", "take"]
+    TEMPLATES = ["get <gettable> from <container|surface|room>", "get <gettable>"]
 
     def __init__(
         self,
@@ -1738,12 +1963,20 @@ class GetObjectEvent(GraphEvent):
                     valid_actions.append(cls(actor, target_nodes=[obj, container]))
         return valid_actions
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "got", "from"]
+
 
 # TODO handle locked objects
 class PutObjectInEvent(GraphEvent):
     """Handles putting an object in or on another object"""
 
     NAMES = ["put"]
+    TEMPLATES = ["put <gettable> in <container>", "put <gettable> on <surface>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -1928,11 +2161,19 @@ class PutObjectInEvent(GraphEvent):
 
         return valid_actions
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "put", "in", "on"]
+
 
 class DropObjectEvent(GraphEvent):
     """Handles dropping an object onto the floor"""
 
     NAMES = ["drop"]
+    TEMPLATES = ["drop <gettable>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -2047,11 +2288,19 @@ class DropObjectEvent(GraphEvent):
 
         return valid_actions
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "dropped"]
+
 
 class StealObjectEvent(GraphEvent):
     """Handles stealing an object from an actor"""
 
     NAMES = ["steal"]
+    TEMPLATES = ["steal <gettable> from <agent>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -2094,7 +2343,7 @@ class StealObjectEvent(GraphEvent):
         if viewer == self.target_nodes[1]:
             victim_text = "you"
         if self.failed:
-            return f"{actor_text} tried to steal {self.__gotten_name} from {victim_text}, but they caught you in the act!"
+            return f"{actor_text} tried to steal {self.__gotten_name} from {victim_text}, but they were caught in the act!"
         else:
             return f"{actor_text} stole {self.__gotten_name} from {victim_text}."
 
@@ -2244,11 +2493,33 @@ class StealObjectEvent(GraphEvent):
 
         return valid_actions
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return [
+            "you",
+            "tried",
+            "to",
+            "steal",
+            "from",
+            "but",
+            "they",
+            "were",
+            "caught",
+            "in",
+            "the",
+            "act",
+            "stole",
+        ]
+
 
 class GiveObjectEvent(GraphEvent):
     """Handles giving an object to another agent"""
 
     NAMES = ["give"]
+    TEMPLATES = ["give <gettable> to <agent>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -2411,11 +2682,19 @@ class GiveObjectEvent(GraphEvent):
 
         return valid_actions
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "gave", "to"]
+
 
 class EquipObjectEvent(GraphEvent):
     """Handles equipping a held object"""
 
     NAMES = ["equip"]
+    TEMPLATES = ["equip <wearable|wieldable>"]
 
     action_name = "equipped"
     past_tense_action_name = "equipped"
@@ -2549,6 +2828,7 @@ class WearEvent(EquipObjectEvent):
     """Handles wearing a held object"""
 
     NAMES = ["wear"]
+    TEMPLATES = ["wear <wearable>"]
 
     action_name = "wore"
     past_tense_action_name = "worn"
@@ -2557,11 +2837,19 @@ class WearEvent(EquipObjectEvent):
     def can_equip(cls, object_node: GraphObject) -> bool:
         return object_node.wearable
 
+    @classmethod
+    def get_vocab(self) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "wore"]
+
 
 class WieldEvent(EquipObjectEvent):
     """Handles wielding a held object"""
 
     NAMES = ["wield"]
+    TEMPLATES = ["wield <wieldable>"]
 
     action_name = "wielded"
     past_tense_action_name = "wielded"
@@ -2570,11 +2858,19 @@ class WieldEvent(EquipObjectEvent):
     def can_equip(cls, object_node: GraphObject) -> bool:
         return object_node.wieldable
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "wielded"]
+
 
 class RemoveObjectEvent(GraphEvent):
     """Handles removing an equipped object"""
 
     NAMES = ["remove", "unwield"]
+    TEMPLATES = ["remove <wearable|wieldable>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -2694,11 +2990,19 @@ class RemoveObjectEvent(GraphEvent):
 
         return valid_actions
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "removed"]
+
 
 class IngestEvent(GraphEvent):
     """Handles equipping a held object"""
 
     NAMES = ["ingest"]
+    TEMPLATES = ["ingest <food|drink>"]
 
     past_tense_action_name = "ingested"
 
@@ -2724,9 +3028,9 @@ class IngestEvent(GraphEvent):
 
         world.broadcast_to_room(self)
 
-        health_text = world.health(self.actor.node_id)
+        health_text = world.view.get_health_text_for(self.actor.node_id)
         self.actor.health = max(self.actor.health + fe, 0)
-        new_health_text = world.health(self.actor.node_id)
+        new_health_text = world.view.get_health_text_for(self.actor.node_id)
         if self.actor.health <= 0:
             DeathEvent(self.actor).execute(world)
         elif health_text != new_health_text:
@@ -2822,6 +3126,7 @@ class EatEvent(IngestEvent):
     """Handles eating a held object"""
 
     NAMES = ["eat"]
+    TEMPLATES = ["eat <food>"]
 
     past_tense_action_name = "ate"
 
@@ -2829,17 +3134,32 @@ class EatEvent(IngestEvent):
     def can_ingest(cls, object_node: GraphObject) -> bool:
         return object_node.food
 
+    @classmethod
+    def get_vocab(self) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "ate", "yum", "gross"]
+
 
 class DrinkEvent(IngestEvent):
     """Handles eating a held object"""
 
     NAMES = ["drink"]
+    TEMPLATES = ["drink <drink>"]
 
     past_tense_action_name = "drank"
 
     @classmethod
     def can_ingest(cls, object_node: GraphObject) -> bool:
         return object_node.drink
+
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "drank", "yum", "gross"]
 
 
 class LockableEvent(GraphEvent):
@@ -3137,7 +3457,8 @@ def actor_has_no_recent_action(last_time_acted, current_time):
 class ExamineEvent(GraphEvent):
     """Handles displaying examine/extra text for a graph node"""
 
-    NAMES = ["examine", "ex"]
+    NAMES = ["examine", "ex", "inspect"]
+    TEMPLATES = ["examine <agent|room|object>"]
 
     def _get_target_description(self, world: "World") -> str:
         """Get the examine description for the given target"""
@@ -3244,6 +3565,24 @@ class ExamineEvent(GraphEvent):
 
         return valid_actions
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return [
+            "you",
+            "examine",
+            "they",
+            "appear",
+            "to",
+            "be",
+            "dozing",
+            "off",
+            "right",
+            "now",
+        ]
+
 
 class EmoteEvent(GraphEvent):
     """Handles ending an emotion to the room."""
@@ -3274,6 +3613,8 @@ class EmoteEvent(GraphEvent):
         "wink": "winks",
         "yawn": "yawns",
     }
+
+    TEMPLATES = [f"emote {e}" for e in DESC_MAP.keys()]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """On execution, store the expected views, then broadcast"""
@@ -3338,11 +3679,19 @@ class EmoteEvent(GraphEvent):
 
         return valid_actions
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you"] + list(cls.DESC_MAP.values()) + list(cls.DESC_MAP.keys())
+
 
 class WaitEvent(NoArgumentEvent):
     """Wait events just allow a player to do nothing in a timestep"""
 
     NAMES = ["wait"]
+    TEMPLATES = ["wait"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -3362,11 +3711,19 @@ class WaitEvent(NoArgumentEvent):
         else:
             return f"{self.__actor_name} waited."
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "waited"]
+
 
 class InventoryEvent(NoArgumentEvent):
     """Inventory events just allow a player see what they are carrying, etc."""
 
     NAMES = ["inventory", "inv", "i"]
+    TEMPLATES = ["inventory"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -3391,11 +3748,19 @@ class InventoryEvent(NoArgumentEvent):
         else:
             return f"{self.__actor_name} checked their inventory."
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "check", "yourself", "are", "checked", "their", "inventory"]
+
 
 class QuestEvent(NoArgumentEvent):
     """Quest events just allow a player to see their assigned quests. """
 
     NAMES = ["quest", "quests", "mission", "missions", "goal", "goals", "q"]
+    TEMPLATES = ["quests"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -3436,18 +3801,37 @@ class QuestEvent(NoArgumentEvent):
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
         """Provide the way that the given viewer should view this event"""
         if viewer == self.actor:
-            return (
-                f"You check yourself. You are {self.__actor_name}\n"
-                f"{self.__quests_text}\n"
-            ).replace("\n\n", "\n")
+            return (f"{self.__quests_text}\n").replace("\n\n", "\n")
         else:
-            return []  # f"{self.__actor_name} looks deep in thought. "
+            return None  # f"{self.__actor_name} looks deep in thought. "
+
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return [
+            "you",
+            "currently",
+            "have",
+            "no",
+            "quests",
+            "talk",
+            "to",
+            "people",
+            "get",
+            "some",
+            "help",
+            "quest",
+            "current",
+        ]
 
 
 class RewardEvent(GraphEvent):
     """Reward events allow to give another agent XP. """
 
     NAMES = ["reward", "r"]
+    TEMPLATES = ["reward <agent>"]
 
     def __init__(
         self,
@@ -3592,6 +3976,29 @@ class HealthEvent(NoArgumentEvent):
     """Inventory events just allow a player to do nothing in a timestep"""
 
     NAMES = ["health", "status", "stats"]
+    TEMPLATES = ["health"]
+
+    _SIZE_TEXTS = [
+        "huge",
+        "quite large",
+        "average in size",
+        "below average in size",
+        "quite small",
+        "absolutely tiny",
+    ]
+    _ATTRIBUTE_VALUE_STRINGS = [
+        "extremely strong",
+        "very strong",
+        "strong",
+        "well above average",
+        "above average",
+        "average",
+        "below average",
+        "well below average",
+        "weak",
+        "very weak",
+        "extremely weak",
+    ]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -3599,7 +4006,7 @@ class HealthEvent(NoArgumentEvent):
         """
         assert not self.executed
         self.__actor_name = self.actor.get_prefix_view()
-        self.__health_text = world.health(self.actor.node_id)
+        self.__health_text = world.view.get_health_text_for(self.actor.node_id)
         to_agents = [self.actor]
         for t in self.target_nodes:
             to_agents.append(t)
@@ -3614,7 +4021,6 @@ class HealthEvent(NoArgumentEvent):
         if viewer == self.actor:
             s = ""
             if self.text_content is None:
-                # actual self "health" call, show experience points.
                 xp = 0
                 rxp = 0
                 if hasattr(self.actor, "xp"):
@@ -3623,7 +4029,7 @@ class HealthEvent(NoArgumentEvent):
                     rxp = self.actor.reward_xp
                 s += f"Experience Points: {xp}\n"
                 s += f"Rewards left to give: {rxp}\n"
-            if self.text_content == "HealthOnMoveEvent":
+            elif self.text_content == "HealthOnMoveEvent":
                 s += "You are getting tired from your travels. "
             s += f"You are currently feeling {health_text}."
         else:
@@ -3634,40 +4040,40 @@ class HealthEvent(NoArgumentEvent):
         if viewer == self.actor and self.text_content is None:
             # actual self "health" call, show dexterity and strength options as well.
             size = self.actor.size
-            size_txt = "average in size."
+            size_txt = self._SIZE_TEXTS[2]
             if size > 30:
-                size_txt = "huge."
+                size_txt = self._SIZE_TEXTS[0]
             if size > 20:
-                size_txt = "quite large."
+                size_txt = self._SIZE_TEXTS[1]
             if size < 10:
-                size_txt = "below average in size."
+                size_txt = self._SIZE_TEXTS[3]
             if size < 5:
-                size_txt = "quite small."
+                size_txt = self._SIZE_TEXTS[4]
             if size <= 1:
-                size_txt = "absolutely tiny!"
+                size_txt = self._SIZE_TEXTS[5]
 
             def txt2num(strength):
-                strength_txt = "average"
+                strength_txt = self._ATTRIBUTE_VALUE_STRINGS[5]
                 if strength > 0:
-                    strength_txt = "above average"
+                    strength_txt = self._ATTRIBUTE_VALUE_STRINGS[4]
                 if strength > 1:
-                    strength_txt = "well above average"
+                    strength_txt = self._ATTRIBUTE_VALUE_STRINGS[3]
                 if strength > 3:
-                    strength_txt = "strong"
+                    strength_txt = self._ATTRIBUTE_VALUE_STRINGS[2]
                 if strength > 5:
-                    strength_txt = "very strong"
+                    strength_txt = self._ATTRIBUTE_VALUE_STRINGS[1]
                 if strength > 8:
-                    strength_txt = "extremely strong"
+                    strength_txt = self._ATTRIBUTE_VALUE_STRINGS[0]
                 if strength < 0:
-                    strength_txt = "below average"
+                    strength_txt = self._ATTRIBUTE_VALUE_STRINGS[6]
                 if strength < -1:
-                    strength_txt = "well below average"
+                    strength_txt = self._ATTRIBUTE_VALUE_STRINGS[7]
                 if strength < -3:
-                    strength_txt = "weak"
+                    strength_txt = self._ATTRIBUTE_VALUE_STRINGS[8]
                 if strength < -5:
-                    strength_txt = "very weak"
+                    strength_txt = self._ATTRIBUTE_VALUE_STRINGS[9]
                 if strength < -8:
-                    strength_txt = "extremely weak"
+                    strength_txt = self._ATTRIBUTE_VALUE_STRINGS[10]
                 return strength_txt
 
             strength_txt = txt2num(self.actor.strength)
@@ -3677,11 +4083,45 @@ class HealthEvent(NoArgumentEvent):
             s += f"\nYou are {dex_txt} in physical dexterity."
         return s
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        vocab = [
+            "you",
+            "are",
+            "in",
+            "physical",
+            "toughness",
+            "dexterity",
+            "still",
+            "looks",
+        ]
+        vocab += split_in_list(cls._SIZE_TEXTS)
+        vocab += split_in_list(cls._ATTRIBUTE_VALUE_STRINGS)
+        return [
+            "you",
+            "currently",
+            "have",
+            "no",
+            "quests",
+            "talk",
+            "to",
+            "people",
+            "get",
+            "some",
+            "help",
+            "quest",
+            "current",
+        ]
+
 
 class LookEvent(NoArgumentEvent):
     """Look events show the contents of the room as well as the description"""
 
     NAMES = ["look", "l"]
+    TEMPLATES = ["look"]
 
     def _construct_world_view(self, world) -> str:
         """Create the actual viewed string once all fields have been found"""
@@ -3742,11 +4182,19 @@ class LookEvent(NoArgumentEvent):
         else:
             return f"{self.__actor_name} looked around."
 
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return ["you", "are", "in", "looked", "around"]
+
 
 class PointEvent(GraphEvent):
     """Handles agents pointing at graph nodes"""
 
     NAMES = ["point"]
+    TEMPLATES = ["point <room|object|agent>"]
 
     def execute(self, world: "World") -> List[GraphEvent]:
         """
@@ -3867,3 +4315,20 @@ class PointEvent(GraphEvent):
             valid_actions.append(cls(actor, target_nodes=[obj]))
 
         return valid_actions
+
+    @classmethod
+    def get_vocab(cls) -> List[str]:
+        """
+        Return the vocabulary this event uses
+        """
+        return [
+            "carried",
+            "worn",
+            "wielded",
+            "you",
+            "pointed",
+            "at",
+            "by",
+            "they",
+            "are",
+        ]
