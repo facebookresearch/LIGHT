@@ -1114,6 +1114,3 @@ class World(object):
                 if new_agent is not None:
                     created.append(new_agent)
         return created
-
-
-ß
