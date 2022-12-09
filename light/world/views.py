@@ -11,6 +11,31 @@ from light.graph.utils import rm, deprecated
 from light.graph.elements.graph_nodes import GraphRoom
 
 
+NUMS_ARRAY = [
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+    "a lot of",
+]
+
+HEALTH_TUPLES = [
+    ("pretty dead", -1),
+    ("on the verge of death", -1),
+    ("very weak", -1),
+    ("weak", -1),
+    ("ok", 1),
+    ("good", 1),
+    ("strong", 1),
+    ("very strong", 1),
+    ("nigh on invincible", 1),
+]
+
+
 class WorldViewer(object):
     """Contains methods related to converting game state into viewable and
     consumable text"""
@@ -65,18 +90,7 @@ class WorldViewer(object):
         if health > 8:
             health = 8
         # Second argument indicates sentiment (can use for descriptions).
-        f = [
-            ("pretty dead", -1),
-            ("on the verge of death", -1),
-            ("very weak", -1),
-            ("weak", -1),
-            ("ok", 1),
-            ("good", 1),
-            ("strong", 1),
-            ("very strong", 1),
-            ("nigh on invincible", 1),
-        ]
-        return f[int(health)][0], f[int(health)][1]
+        return HEALTH_TUPLES[int(health)][0], HEALTH_TUPLES[int(health)][1]
 
     def get_node_desc(self, node, from_node=None, use_the=False, drop_prefix=False):
         """Return a viewable description for this node in the graph"""
@@ -303,21 +317,11 @@ class WorldViewer(object):
                         words = (obj + "s").split(" ")
                     else:
                         words = (obj).split(" ")
-            f = [
-                "two",
-                "three",
-                "four",
-                "five",
-                "six",
-                "seven",
-                "eight",
-                "nine",
-                "a lot of",
-            ]
+
             cnt = cnt - 2
             if cnt > 8:
                 cnt = 8
-            cnt = f[cnt]
+            cnt = NUMS_ARRAY[cnt]
             if words[0] == "some":
                 return " ".join(words)
             else:
@@ -406,3 +410,38 @@ class WorldViewer(object):
         )
         # ((emoji.emojize(':scroll:', use_aliases=True) + ' ')*20) + '\n')
         return txt
+
+    def get_vocab(self):
+        """Return all the vocab this agent introduces into LIGHT"""
+        return (
+            [
+                "a",
+                "an",
+                "and",
+                "are",
+                "carrying",
+                "contains",
+                "dead",
+                "empty",
+                "here",
+                "is",
+                "it",
+                "lot",
+                "nothing",
+                "of",
+                "on",
+                "path",
+                "paths",
+                "some",
+                "to",
+                "the",
+                "there",
+                "there's",
+                "things",
+                "wearing",
+                "wielding",
+                "you",
+            ]
+            + ((" ".join(NUMS_ARRAY).strip()).split(" "))
+            + (" ".join([h[0] for h in HEALTH_TUPLES]).split(" "))
+        )

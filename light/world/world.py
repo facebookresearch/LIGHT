@@ -13,6 +13,7 @@ import emoji
 import os
 import random
 import asyncio
+import re
 
 from light.graph.utils import rm, deprecated
 from light.graph.events.base import GraphEvent, ErrorEvent
@@ -1009,6 +1010,69 @@ class World(object):
         event = SpawnEvent(use_agent)
         event.execute(self)
         return p_id
+
+    def get_vocab(self, eligible_events=None):
+        """
+        Return the vocabulary for this LIGHT world
+        """
+        if eligible_events is None:
+            eligible_events = ALL_EVENTS_LIST
+        vocab = []
+        for event in eligible_events:
+            vocab += event.get_vocab()
+        vocab += self.oo_graph.get_vocab()
+        vocab += self.view.get_vocab()
+        # TODO is there any other vocab in LIGHT?
+        return list(set(vocab))
+
+    def get_action_templates(self, eligible_events):
+        """
+        Get all of the templates for the given eligible events
+        """
+        templates = []
+        for event in eligible_events:
+            templates += event.TEMPLATES
+        return templates
+
+    def get_action_space(self, eligible_events=None):
+        """
+        Return the vocabulary for this LIGHT world
+        """
+        if eligible_events is None:
+            eligible_events = ALL_EVENTS_LIST
+        templates = self.get_action_templates(eligible_events)
+
+        nodes = self.oo_graph.get_all_nodes()
+
+        # Get a list of path labels
+        path_labels = []
+        for room in self.oo_graph.rooms.values():
+            path_labels += [e.label for e in room.neighbors.values()]
+        events = []
+        REGEX = '.*? [^"]?<(.*?)>.*'  # match any non-"<SOMETHING>" <tags>
+        while len(templates) > 0:
+            new_templates = []
+            for evt in templates:
+                temp_match = re.match(REGEX, evt)
+                if not temp_match:
+                    events.append(evt)
+                    continue
+
+                target_group = temp_match.groups()[0]
+                group_tag = f"<{target_group}>"
+                attribute_tags = target_group.split("|")
+                pre, post = evt.split(group_tag, 1)
+                for attribute in attribute_tags:
+                    if attribute == "path":
+                        # Get all path labels
+                        for path in path_labels:
+                            new_templates.append(pre + path + post)
+                    else:
+                        for node in nodes:
+                            if node.__dict__.get(attribute) is True:
+                                new_templates.append(pre + node.name + post)
+            templates = new_templates
+        return list(set(events))
 
     def playerid_to_agentid(self, pid):
         return self._playerid_to_agentid[pid]
