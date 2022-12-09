@@ -22,11 +22,8 @@ const sessionSpentGiftXpSlice = createSlice({
   initialState,
   /* REDUCER ACTIONS */
   reducers: {
-    updateSessionSpentGiftXp(
-      state,
-      action: PayloadAction<SessionSpentGiftXpState>
-    ) {
-      return { ...state, ...action.payload };
+    updateSessionSpentGiftXp(state, action: PayloadAction<number>) {
+      return { ...state, value: action.payload };
     },
   },
 });

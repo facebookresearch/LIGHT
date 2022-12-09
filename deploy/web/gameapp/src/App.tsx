@@ -17,8 +17,9 @@ function App() {
   /* ----REDUX STATE---- */
   //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
+
   return (
-    <div id={`${inHelpMode ? "helpmode" : ""}`} className={"App"}>
+    <div id={`${inHelpMode ? "helpmode" : ""}`} data-theme="light">
       <Routes />
     </div>
   );
