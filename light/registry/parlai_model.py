@@ -21,14 +21,16 @@ flow due to the semantics of ParlAI and the ParlAIModelLoader implementation her
 
 from dataclasses import dataclass, field
 from omegaconf import MISSING, DictConfig
+from copy import deepcopy
+import os
+import asyncio
 
 from parlai.core.agents import Agent, create_agent, create_agent_from_shared
 from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from copy import deepcopy
-import os
-import asyncio
+
+from light.registry.base_model_loader import ModelConfig, ModelLoader
 
 from typing import List, Any, Dict, Optional
 
@@ -45,7 +47,7 @@ I am very strong
 
 
 @dataclass
-class ParlAIModelConfig:
+class ParlAIModelConfig(ModelConfig):
     # As of now, ParlAI is the only model loader.
     # Eventually this could be split into more classes
     # as we incorporate other models.
@@ -70,25 +72,21 @@ class ParlAIModelConfig:
         return val
 
 
-class ParlAIModelLoader:
+class ParlAIModelLoader(ModelLoader):
     """
     Takes in the configuration for a ParlAI model, and provides options
     for being able to load that model one or multiple times (via sharing).
     """
 
+    CONFIG_CLASS = ParlAIModelConfig
+
     def __init__(self, config: DictConfig):
         self._shared = None
         self.config = config
 
-    async def force_load(self) -> None:
-        """
-        Force the model loader to initialize and query
-        the model (to warm up)
-        """
-        await self.load_model(self.config)
-
-    async def load_model(self, config: DictConfig) -> None:
+    async def load_model(self) -> None:
         """Initialize the model from the given config"""
+        config = self.config
         opt_from_config = config.get("opt_file", None)
         model_from_config = config.get("model_file", None)
         overrides = dict(config.get("overrides", {}))
@@ -136,9 +134,9 @@ class ParlAIModelLoader:
             if opt.get("eval_candidates") == "inline":
                 act["label_candidates"] = ["hi", "hi there", "whatup"]
             model.observe(act)
-            await model.act()
+            model.act()
         except Exception as e:
-            print(f"Cannot warm model {opt['model']}, hit error {e}")
+            print(f"Cannot warm model {opt['model_file']}, hit error {e}")
 
         # Share the model params for use in `get_model`
         self._shared = model.share()

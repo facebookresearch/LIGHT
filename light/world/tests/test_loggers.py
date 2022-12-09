@@ -15,7 +15,6 @@ from light.world.world import World, WorldConfig
 from light.graph.events.graph_events import ArriveEvent, LeaveEvent, GoEvent, LookEvent
 from light.world.content_loggers import AgentInteractionLogger, RoomInteractionLogger
 from light.world.utils.json_utils import read_event_logs
-from parlai.core.params import ParlaiParser
 
 
 class TestInteractionLoggers(unittest.TestCase):
@@ -23,34 +22,17 @@ class TestInteractionLoggers(unittest.TestCase):
 
     def setUp(self):
         self.data_dir = tempfile.mkdtemp()
-        # TODO: Remove reliance on this, just use argparser
-        self.parser = ParlaiParser(
-            True, True, "Arguments for building a LIGHT world with Starspace"
-        )
-        self.parser.add_argument(
-            "--is-logging",
-            type="bool",
-            default=True,
-            help="Log events with interaction loggers",
-        )
-        self.parser.add_argument(
-            "--log-path",
-            type=str,
-            default=self.data_dir,
-            help="Write the events logged to this path",
-        )
 
     def tearDown(self):
         shutil.rmtree(self.data_dir)
 
     def setUp_single_room_graph(self):
         # Set up the graph
-        opt, _ = self.parser.parse_and_process_known_args()
-        test_graph = OOGraph(opt)
+        test_graph = OOGraph()
         agent_node = test_graph.add_agent("My test agent", {})
         room_node = test_graph.add_room("test room", {})
         agent_node.force_move_to(room_node)
-        test_world = World(WorldConfig(), True)
+        test_world = World(WorldConfig(is_logging=True), True)
         test_world.oo_graph = test_graph
         return (test_graph, test_world, agent_node, room_node)
 
@@ -76,7 +58,7 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
-        logger = AgentInteractionLogger(test_graph, agent_node)
+        logger = AgentInteractionLogger(test_world, agent_node)
 
         self.assertEqual(logger.graph, test_graph)
         self.assertEqual(logger.state_history, [])
@@ -120,7 +102,7 @@ class TestInteractionLoggers(unittest.TestCase):
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
 
-        logger = AgentInteractionLogger(test_graph, agent_node)
+        logger = AgentInteractionLogger(test_world, agent_node)
         logger.event_buffer.append("Testing")
         logger.state_history.append("Testing")
         logger._begin_meta_episode()
@@ -155,7 +137,7 @@ class TestInteractionLoggers(unittest.TestCase):
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
 
-        logger = AgentInteractionLogger(test_graph, agent_node)
+        logger = AgentInteractionLogger(test_world, agent_node)
         logger._end_meta_episode()
 
         self.assertFalse(logger._logging_intialized)
@@ -266,7 +248,7 @@ class TestInteractionLoggers(unittest.TestCase):
         """
         initial = self.setUp_single_room_graph()
         test_graph, test_world, agent_node, room_node = initial
-        logger = AgentInteractionLogger(test_graph, agent_node)
+        logger = AgentInteractionLogger(test_world, agent_node)
 
         logger._begin_meta_episode()
         test_event1 = ArriveEvent(agent_node, text_content="hello1")
@@ -305,7 +287,7 @@ class TestInteractionLoggers(unittest.TestCase):
         test_graph, test_world, agent_node, room_node = initial
         agent_node2 = test_graph.add_agent("My test agent2", {})
         agent_node2.force_move_to(room_node)
-        logger = AgentInteractionLogger(test_graph, agent_node)
+        logger = AgentInteractionLogger(test_world, agent_node)
 
         logger._begin_meta_episode()
         test_event1 = ArriveEvent(agent_node2, text_content="hello1")

@@ -1,0 +1,26 @@
+defaults:
+  - safety/schema: ParlAI
+  - dialog/schema: ParlAI
+  - role_playing_score/schema: ParlAIActingScore
+  - action/schema: ParlAI
+  - generic_action/schema: ParlAI
+  - parser/schema: ParlAI
+
+safety:
+  _loader: ParlAI
+  opt_file: ${light.light_dir}/light/registry/models/config/baseline_adversarial_safety.opt
+dialog:
+  _loader: ParlAI
+  opt_file: ${light.light_dir}/light/registry/models/config/baseline_generative.opt
+role_playing_score:
+  _loader: ParlAIActingScore
+  opt_file: ${light.light_dir}/light/registry/models/config/baseline_roleplaying_scorer.opt
+action:
+  _loader: ParlAI
+  opt_file: ${light.light_dir}/light/registry/models/config/baseline_main_act_model.opt
+generic_action:
+  _loader: ParlAI
+  opt_file: ${light.light_dir}/light/registry/models/config/generic_act_model.opt
+parser:
+  _loader: ParlAI
+  opt_file: ${light.light_dir}/light/registry/models/config/baseline_parser.opt

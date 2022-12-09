@@ -30,26 +30,26 @@ from light.graph.events.graph_events import (
 from typing import Optional, List, Set, Dict, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from light.data_model.db.episodes import EpisodeDB
-    from light.graph.structured_graph import OOGraph
+    from light.world.world import World
     from light.graph.elements.graph_nodes import GraphAgent
 
 
 class InteractionLogger(abc.ABC):
     """
-    Base object for interaction loggers.  Takes a reference to the graph and
+    Base object for interaction loggers.  Takes a reference to the world and
     location to write data, as well as defines some methods for interfacing
     """
 
-    def __init__(self, graph: "OOGraph", episode_db: Optional["EpisodeDB"]):
-        self.episode_db = episode_db
+    def __init__(self, world: "World"):
+        self.world = world
+        graph = world.oo_graph
         self.graph = graph
         self.players: Set[str] = set()
         self.actions: int = 0
         self._last_episode_logged: Optional[str] = None
         self.group = (
             DBGroupName.PRE_LAUNCH_TUTORIAL
-            if graph._opt.get("tutorial")
+            if graph.title == "tutorial"
             else DBGroupName.PRE_LAUNCH
         )
         # All loggers should have graph state history and a buffer for events
@@ -122,11 +122,11 @@ class InteractionLogger(abc.ABC):
         return (event_file_name, events)
 
     def _log_interactions(self, episode_type: "EpisodeLogType", target_id: str) -> None:
-        if self.episode_db is None:
+        if self.world.episode_db is None:
             return  # not actually logging
         graphs = self._prep_graphs()
         events = self._prep_events(graphs, target_id)
-        self._last_episode_logged = self.episode_db.write_episode(
+        self._last_episode_logged = self.world.episode_db.write_episode(
             graphs=graphs,
             events=events,
             log_type=episode_type,
@@ -146,19 +146,14 @@ class AgentInteractionLogger(InteractionLogger):
 
     def __init__(
         self,
-        graph: "OOGraph",
+        world: "World",
         agent: "GraphAgent",
-        episode_db: Optional["EpisodeDB"] = None,
-        is_active: bool = False,
         afk_turn_tolerance: int = 30,
     ):
-        super().__init__(graph, episode_db)
+        super().__init__(world)
         self.agent = agent
         self.afk_turn_tolerance = afk_turn_tolerance
-        if graph._opt is None:
-            self.is_active = is_active
-        else:
-            self.is_active = graph._opt.get("is_logging", False)
+        self.is_active = world.is_logging
 
         self.turns_wo_player_action = 0
         self._logging_intialized = False
@@ -253,19 +248,14 @@ class RoomInteractionLogger(InteractionLogger):
 
     def __init__(
         self,
-        graph: "OOGraph",
+        world: "World",
         room_id: str,
-        episode_db: Optional["EpisodeDB"] = None,
-        is_active: bool = False,
         afk_turn_tolerance: int = 30,
     ):
-        super().__init__(graph, episode_db)
+        super().__init__(world)
         self.room_id: str = room_id
         self.afk_turn_tolerance = afk_turn_tolerance
-        if graph._opt is None:
-            self.is_active = is_active
-        else:
-            self.is_active = graph._opt.get("is_logging", False)
+        self.is_active = world.is_logging
 
         self.num_players_present = 0
         self.turns_wo_players = float("inf")  # Technically, we have never had players
@@ -276,6 +266,7 @@ class RoomInteractionLogger(InteractionLogger):
                 self.graph.all_nodes[node_id].is_player
             ):
                 self._add_player()
+                self.players.add(node_id)
 
     def _begin_meta_episode(self) -> None:
         self._clear_buffers()

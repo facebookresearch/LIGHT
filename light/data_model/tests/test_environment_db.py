@@ -1855,7 +1855,7 @@ class TestEnvironmentDB(unittest.TestCase):
         db = EnvDB(self.config)
 
         # Create a test graph
-        test_graph_1 = OOGraph({})
+        test_graph_1 = OOGraph()
         agent_node = test_graph_1.add_agent("My test agent", {})
         room_node = test_graph_1.add_room("test room", {})
         agent_node.force_move_to(room_node)
@@ -1897,7 +1897,7 @@ class TestEnvironmentDB(unittest.TestCase):
         )
 
         # Save a second graph, this time titled with an ID too
-        test_graph_2 = OOGraph({"title": "Test Graph", "db_id": "UGR-TEST"})
+        test_graph_2 = OOGraph(title="Test Graph", db_id="UGR-TEST")
         agent_node = test_graph_2.add_agent("My test agent", {})
         room_node = test_graph_2.add_room("test room", {})
         agent_node.force_move_to(room_node)

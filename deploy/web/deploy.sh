@@ -24,6 +24,4 @@ then
   exit 1
 fi
 
-CONF_FN=$WEBDIR"/configs/"$1"/config"
-
-cat $CONF_FN | python $SERVER_FILE `xargs -0`
+python $SERVER_FILE deploy=$1

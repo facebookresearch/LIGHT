@@ -38,7 +38,7 @@ from light.graph.events.graph_events import (
     DeathEvent,
 )
 
-from typing import Dict, Optional, TYPE_CHECKING
+from typing import Dict, Optional, Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -218,6 +218,8 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.player = player
 
     def user_should_do_tutorial(self, user_id):
+        if self.app.registry.tutorial_builder_config is None:
+            return False
         player = self.user_db.get_player(user_id)
         return player.account_status == PlayerStatus.TUTORIAL
 
@@ -464,19 +466,22 @@ class LandingApplication(tornado.web.Application):
     def __init__(
         self,
         user_db: "UserDB",
-        hostname=DEFAULT_HOSTNAME,
-        password="LetsPlay",
-        given_tornado_settings=None,
+        hostname: str = DEFAULT_HOSTNAME,
+        password: Optional[str] = None,
+        given_tornado_settings: Dict[str, Any] = None,
     ):
         self.user_db = user_db
         global tornado_settings
         tornado_settings = given_tornado_settings
+        self.tornado_settings = tornado_settings
+        self.hostname = hostname
+        self.password = password
         super(LandingApplication, self).__init__(
-            self.get_handlers(user_db, hostname, password), **tornado_settings
+            self.get_handlers(user_db), **tornado_settings
         )
 
-    def get_handlers(self, user_db, hostname=DEFAULT_HOSTNAME, password="LetsPlay"):
-        return [
+    def get_handlers(self, user_db):
+        base_handlers = [
             (r"/", LandingHandler, {"user_db": user_db}),
             (r"/#(.*)", LandingHandler, {"user_db": user_db}),
             (r"/#/login", LandingHandler, {"user_db": user_db}),
@@ -484,23 +489,13 @@ class LandingApplication(tornado.web.Application):
             (
                 r"/preauth/(.*)/(.*)/(.*)/",
                 PreauthGameHandler,
-                {"user_db": user_db, "hostname": hostname},
+                {"user_db": user_db, "hostname": self.hostname},
             ),
             (r"/play", GameHandler, {"user_db": user_db}),
             (r"/play/?id=.*", GameHandler, {"user_db": user_db}),
             (r"/play/*", GameHandler, {"user_db": user_db}),
             (r"/build", BuildHandler, {"user_db": user_db}),
-            (
-                r"/login",
-                LoginHandler,
-                {"user_db": user_db, "hostname": hostname, "password": password},
-            ),
-            (
-                r"/auth/fblogin",
-                FacebookOAuth2LoginHandler,
-                {"user_db": user_db, "hostname": hostname, "app": self},
-            ),
-            (r"/logout", LogoutHandler, {"hostname": hostname}),
+            (r"/logout", LogoutHandler, {"hostname": self.hostname}),
             (
                 r"/terms",
                 StaticPageHandler,
@@ -524,6 +519,31 @@ class LandingApplication(tornado.web.Application):
             (r"/report", ReportHandler, {"user_db": user_db}),
             (r"/(.*)", StaticUIHandler, {"path": here + "/../build/"}),
         ]
+        if self.password is not None and len(self.password) > 0:
+            base_handlers.append(
+                (
+                    r"/login",
+                    LoginHandler,
+                    {
+                        "user_db": user_db,
+                        "hostname": self.hostname,
+                        "password": self.password,
+                    },
+                )
+            )
+        else:
+            assert (
+                "facebook_api_key" in self.tornado_settings
+            ), "Must launch with api key or password"
+            base_handlers.append(
+                (
+                    r"/auth/fblogin",
+                    FacebookOAuth2LoginHandler,
+                    {"user_db": user_db, "hostname": self.hostname, "app": self},
+                )
+            )
+
+        return base_handlers
 
 
 class LandingHandler(BaseHandler):

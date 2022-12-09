@@ -8,6 +8,7 @@ const DEV = {
   host: "http://localhost",
   hostname: "localhost",
   port: "35494",
+  login: "pass",
 };
 
 export default DEV;

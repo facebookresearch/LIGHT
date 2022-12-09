@@ -42,9 +42,7 @@ class TutorialPlayerSoul(Soul):
         target_node._last_action_time = time.time()
         self.player_id = player_id
         self.provider = provider  # TODO link with real provider
-        self.agent_logger = AgentInteractionLogger(
-            world.oo_graph, target_node, episode_db=world._config.episode_db
-        )
+        self.agent_logger = AgentInteractionLogger(world, target_node)
         provider.register_soul(self)
         self.world.oo_graph.room_id_to_loggers[
             self.target_node.get_room().node_id

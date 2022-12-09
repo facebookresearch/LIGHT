@@ -29,6 +29,8 @@ class ParlAIPolyencoderActingScoreModelLoader(ParlAIModelLoader):
     could be done as a special opt in the agent itself, but for now it's here.
     """
 
+    CONFIG_CLASS = ParlAIPolyencoderActingScoreModelConfig
+
     def before_return_model(self, model) -> Agent:
         """Clear boring and setup for being an acting score model"""
         model.boring = None
