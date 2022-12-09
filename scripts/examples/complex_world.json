@@ -43,9 +43,7 @@
       },
       "db_id": null,
       "desc": "There's a bit of dust.",
-      "extra_desc": [
-        "Sometimes things are just what they seem. There's nothing interesting here."
-      ],
+      "extra_desc": "Sometimes things are just what they seem. There's nothing interesting here.",
       "grid_location": [2, 1, 0],
       "name": "Abandoned farm",
       "name_prefix": "the",
@@ -1150,9 +1148,7 @@
       },
       "db_id": null,
       "desc": "There's a bit of dirt.",
-      "extra_desc": [
-        "Sometimes things are just what they seem. There's nothing interesting here."
-      ],
+      "extra_desc": "Sometimes things are just what they seem. There's nothing interesting here.",
       "grid_location": [4, 4, 0],
       "name": "Central garden",
       "name_prefix": "the",
@@ -1914,9 +1910,7 @@
       },
       "db_id": null,
       "desc": "There's a bit of water.",
-      "extra_desc": [
-        "Sometimes things are just what they seem. There's nothing interesting here."
-      ],
+      "extra_desc": "Sometimes things are just what they seem. There's nothing interesting here.",
       "grid_location": [4, 0, 0],
       "name": "Empty storage room",
       "name_prefix": "the",
@@ -6949,9 +6943,7 @@
       },
       "db_id": null,
       "desc": "There's a bit of water.",
-      "extra_desc": [
-        "Sometimes things are just what they seem. There's nothing interesting here."
-      ],
+      "extra_desc": "Sometimes things are just what they seem. There's nothing interesting here.",
       "grid_location": [2, 4, 0],
       "name": "Stretch of road",
       "name_prefix": "the",
@@ -7478,9 +7470,7 @@
       },
       "db_id": null,
       "desc": "There's a bit of dust.",
-      "extra_desc": [
-        "Sometimes things are just what they seem. There's nothing interesting here."
-      ],
+      "extra_desc": "Sometimes things are just what they seem. There's nothing interesting here.",
       "grid_location": [6, 2, 0],
       "name": "Town garden",
       "name_prefix": "the",
@@ -7662,9 +7652,7 @@
       },
       "db_id": null,
       "desc": "There's a bit of dirt.",
-      "extra_desc": [
-        "Sometimes things are just what they seem. There's nothing interesting here."
-      ],
+      "extra_desc": "Sometimes things are just what they seem. There's nothing interesting here.",
       "grid_location": [6, 5, 0],
       "name": "Unused chamber",
       "name_prefix": "the",
