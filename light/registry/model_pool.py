@@ -30,12 +30,12 @@ from typing import List, Any, Union, Dict, Optional, Type, TYPE_CHECKING
 if TYPE_CHECKING:
     from light.registry.hydra_registry import ModelPoolConfig
 
-ALL_LOADERS_LIST: List[ModelLoader] = {
+ALL_LOADERS_LIST: List[ModelLoader] = [
     ParlAIModelLoader,
     ParlAIPolyencoderActingScoreModelLoader,
     MapStarspaceModelLoader,
     ParlAIRemoteModelLoader,
-}
+]
 
 ALL_LOADERS_MAP: Dict[str, ModelLoader] = {
     k.CONFIG_CLASS._loader: k for k in ALL_LOADERS_LIST
