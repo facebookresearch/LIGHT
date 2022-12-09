@@ -12,7 +12,7 @@ GAME_DIR="${WEBDIR}/gameapp/"
 LANDING_DIR="${WEBDIR}/landingapp/"
 SERVER_FILE="${WEBDIR}/server/run_server.py"
 
-CONF_FN="./configs/"$1"/config.js"
+CONF_FN="./configs/"$1".js"
 
 if [ -z "$1" ];
 then
@@ -23,6 +23,7 @@ then
 fi
 
 cp $CONF_FN $BUILDER_DIR"src/config.js"
+cp $CONF_FN $LANDING_DIR"src/config.js"
 cp $CONF_FN $GAME_DIR"src/config.js"
 
 mkdir build

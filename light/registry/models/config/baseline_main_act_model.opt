@@ -1,0 +1,6 @@
+{
+    "model_file": "$LIGHT_MODEL_ROOT/acting/baseline/model",
+    "eval_candidates": "inline",
+    "ignore_bad_candidates": true,
+    "interactive_mode": true
+}

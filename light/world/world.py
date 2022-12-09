@@ -7,20 +7,24 @@ from light.graph.viz.graph_printer import GraphPrinter
 from light.graph.structured_graph import OOGraph
 from light.graph.elements.graph_nodes import GraphRoom
 from light.world.action_parser import ActionParser
+from light.world.content_loggers import RoomInteractionLogger
 
 from copy import deepcopy
 import emoji
 import os
 import random
+import asyncio
+import re
 
 from light.graph.utils import rm, deprecated
 from light.graph.events.base import GraphEvent, ErrorEvent
 from light.graph.events.graph_events import (
     SpawnEvent,
+    SpeechEvent,
     SystemMessageEvent,
     DeleteObjectEvent,
-    init_safety_classifier,
 )
+from light.graph.events.safety import SafetyClassifier
 from light.graph.events.all_events_list import (
     ALL_EVENTS,
     ALL_EVENTS_LIST,
@@ -30,7 +34,14 @@ from light.graph.elements.graph_nodes import GraphNode, GraphAgent
 from light.world.views import WorldViewer
 from light.world.purgatory import Purgatory
 
-from typing import List, Optional
+from typing import List, Optional, Dict, Any, TYPE_CHECKING
+from dataclasses import dataclass, field
+
+
+if TYPE_CHECKING:
+    from light.data_model.db.episodes import EpisodeDB
+    from light.registry.model_pool import ModelPool
+    from light.graph.builders.base import GraphBuilder
 
 
 def check_integrity(f):
@@ -51,6 +62,38 @@ def check_integrity(f):
     return wrapper
 
 
+def get_empty_model_pool():
+    from light.registry.model_pool import ModelPool
+
+    return ModelPool()
+
+
+@dataclass
+class WorldConfig:
+    """
+    Class containing (optional) world configuration data. Important for
+    the sub-portions of the broader LIGHTConfig that are world-specific
+    """
+
+    episode_db: Optional["EpisodeDB"] = None
+    graph_builder: Optional["GraphBuilder"] = None
+    model_pool: Optional["ModelPool"] = field(default_factory=get_empty_model_pool)
+    is_logging: bool = False
+    safety_classifier_path: Optional[str] = None
+    magic_db_path: Optional[str] = "/scratch/light/data/magic.db"
+
+    def copy(self) -> "WorldConfig":
+        """Return a new shallow copy of this WorldConfig"""
+        return WorldConfig(
+            episode_db=self.episode_db,
+            graph_builder=self.graph_builder,
+            model_pool=self.model_pool,
+            is_logging=self.is_logging,
+            safety_classifier_path=self.safety_classifier_path,
+            magic_db_path=self.magic_db_path,
+        )
+
+
 class World(object):
     """High-level class that manages gameplay logic for players over a graph.
     Should provide an interface to advance the game, register callbacks, and
@@ -60,42 +103,68 @@ class World(object):
 
     def __init__(
         self,
-        opt,
-        graph_builder,
-        debug=False,
+        config: WorldConfig,
+        debug: bool = False,
     ):
-        self._opt = opt
+        self._config = config
         self._node_freeze = False
         self._cnt = 0
         self.debug = debug
-        self.oo_graph = OOGraph(opt)
+        self._oo_graph = OOGraph()
         self.view = WorldViewer(self)
         self.purgatory = Purgatory(self)
-        self.opt = opt
+        self.is_logging = config.is_logging
+        self.episode_db = config.episode_db
+        model_pool = config.model_pool
+        if model_pool is None:
+            from light.registry.model_pool import ModelPool
+
+            # TODO likely cleaner way to get one of these
+            model_pool = ModelPool()
+        self.model_pool = config.model_pool
 
         # TODO better specific player management?
         self._player_cnt = 0
         self._playerid_to_agentid = {}
         self._agentid_to_playerid = {}
 
-        self.graph_builder = graph_builder  # TODO replace with builder
+        self.graph_builder = config.graph_builder
 
         # Set up safety classifier.
-        init_safety_classifier(self.opt.get("safety_classifier_path", ""))
+        self.safety_classifier = SafetyClassifier(
+            config.safety_classifier_path,
+            model_pool,
+        )
 
         # Set up magic!
-        init_magic(self.opt.get("magic_db_path", "/scratch/light/data/magic.db"))
+        init_magic(config.magic_db_path)
 
         # Set up action parser.
+        self.action_parser = ActionParser(self.model_pool)
 
-        self.action_parser = opt.get("_action_parser")
-        if self.action_parser is None:
-            self.action_parser = ActionParser(opt)
+    @property
+    def oo_graph(self):
+        """Wrapper around oo_graph allowing us to do special configuration when set"""
+        return self._oo_graph
+
+    @oo_graph.setter
+    def oo_graph(self, oo_graph: "OOGraph"):
+        """
+        Wrapper around oo_graph setter allowing us to properly attach room interaction
+        loggers and handle other initialization
+        """
+        # TODO maybe there's a better way to do this? What happens when we add a new room
+        # to an existin graph?
+        self._oo_graph = oo_graph
+        for room_id in oo_graph.rooms.keys():
+            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(self, room_id)
 
     @staticmethod
-    def from_graph(graph, graph_builder=None):
+    def from_graph(graph, config: WorldConfig = None):
         """Loads the world from the older versions of graph."""
-        world = World(graph._opt, graph_builder)
+        if config is None:
+            config = WorldConfig()
+        world = World(config)
         world.oo_graph = OOGraph.from_graph(graph)
         world._node_freeze = graph._node_freeze
         world._cnt = graph._cnt
@@ -356,7 +425,14 @@ class World(object):
             print(txt, agent_id)
         if action is None:
             action = SystemMessageEvent(agent, [], text_content=txt)
-        self.purgatory.send_event_to_soul(action, agent)
+        try:
+            # Run in the current event loop, if it exists
+            curr_loop = asyncio.get_running_loop()
+            coro = self.purgatory.send_event_to_soul(action, agent)
+            asyncio.run_coroutine_threadsafe(coro, curr_loop)
+        except RuntimeError:
+            # Not in event loop, execute with run
+            asyncio.run(self.purgatory.send_event_to_soul(action, agent))
         # TODO remove below when server game has Soul-based PlayerProvider
         agent.observe_action(txt, action)
         pos_playerid = self.agentid_to_playerid(agent_id)
@@ -730,25 +806,22 @@ class World(object):
         h = ["Have you tried typing help?"]
         return random.choice(h)
 
-    def parse_exec(self, actor, inst=None, event_id: Optional[str] = None):
+    async def parse_exec(self, actor, inst=None, event_id: Optional[str] = None):
         if not isinstance(actor, GraphNode):
             actor = self.oo_graph.get_node(actor)
-        if self.opt.get("dont_catch_errors", False):
-            return self.parse_exec_internal(actor, inst=inst, event_id=event_id)
 
-        else:
-            try:
-                return self.parse_exec_internal(actor, inst=inst, event_id=event_id)
-            except Exception:
-                import traceback
+        try:
+            return await self.parse_exec_internal(actor, inst=inst, event_id=event_id)
+        except Exception:
+            import traceback
 
-                traceback.print_exc()
-                self.send_msg(
-                    actor, "Strange magic is afoot. This failed for some reason..."
-                )
-                return False, "FailedParseExec"
+            traceback.print_exc()
+            self.send_msg(
+                actor, "Strange magic is afoot. This failed for some reason..."
+            )
+            return False, "FailedParseExec"
 
-    def attempt_parse_event(
+    async def attempt_parse_event(
         self, EventClass, actor_node, arguments, event_id: Optional[str] = None
     ):
         """Return the possible parsed event given the event, actor, and arguments"""
@@ -768,12 +841,25 @@ class World(object):
         if isinstance(result, ErrorEvent):
             return result
 
+        if issubclass(EventClass, SpeechEvent):
+            # Additionally, run safety
+            is_safe = await self.safety_classifier.is_safe(result.text)
+            return EventClass(
+                actor=actor_node,
+                target_nodes=result.targets,
+                text_content=result.text,
+                event_id=event_id,
+                safe=is_safe,
+            )
+
         # Create the final event. May be an error but that's okay
         return EventClass.construct_from_args(
             actor_node, result.targets, result.text, event_id=event_id
         )
 
-    def parse_exec_internal(self, actor, inst=None, event_id: Optional[str] = None):
+    async def parse_exec_internal(
+        self, actor, inst=None, event_id: Optional[str] = None
+    ):
         """Try to parse and execute the given event"""
         # basic replacements
         inst = self.action_parser.post_process(inst, actor)
@@ -798,7 +884,7 @@ class World(object):
             and actor.get_prop("human")
             and actor.get_prop("dead")
         ):
-            self.respawn_player(actor.node_id)
+            await self.respawn_player(actor.node_id)
             return True, "Respawn"
         dead = actor.get_prop("dead")
         if dead or (dead == "ErrorNodeNotFound"):
@@ -851,7 +937,7 @@ class World(object):
                 return True, "Suicide"
         if executable not in ALL_EVENTS:
             # Try again with the full model parser.
-            new_inst = self.action_parser.parse(inst, actor)
+            new_inst = await self.action_parser.parse(inst, actor)
             if new_inst != "":
                 instruction_list = new_inst.strip().split()
                 executable = instruction_list[0]
@@ -864,7 +950,9 @@ class World(object):
 
         EventClass = ALL_EVENTS[executable]
 
-        parsed_event = self.attempt_parse_event(EventClass, actor, arguments, event_id)
+        parsed_event = await self.attempt_parse_event(
+            EventClass, actor, arguments, event_id
+        )
         if isinstance(parsed_event, ErrorEvent):
             self.broadcast_to_agents(parsed_event, [actor])
             return False, inst
@@ -919,6 +1007,69 @@ class World(object):
         event.execute(self)
         return p_id
 
+    def get_vocab(self, eligible_events=None):
+        """
+        Return the vocabulary for this LIGHT world
+        """
+        if eligible_events is None:
+            eligible_events = ALL_EVENTS_LIST
+        vocab = []
+        for event in eligible_events:
+            vocab += event.get_vocab()
+        vocab += self.oo_graph.get_vocab()
+        vocab += self.view.get_vocab()
+        # TODO is there any other vocab in LIGHT?
+        return list(set(vocab))
+
+    def get_action_templates(self, eligible_events):
+        """
+        Get all of the templates for the given eligible events
+        """
+        templates = []
+        for event in eligible_events:
+            templates += event.TEMPLATES
+        return templates
+
+    def get_action_space(self, eligible_events=None):
+        """
+        Return the vocabulary for this LIGHT world
+        """
+        if eligible_events is None:
+            eligible_events = ALL_EVENTS_LIST
+        templates = self.get_action_templates(eligible_events)
+
+        nodes = self.oo_graph.get_all_nodes()
+
+        # Get a list of path labels
+        path_labels = []
+        for room in self.oo_graph.rooms.values():
+            path_labels += [e.label for e in room.neighbors.values()]
+        events = []
+        REGEX = '.*? [^"]?<(.*?)>.*'  # match any non-"<SOMETHING>" <tags>
+        while len(templates) > 0:
+            new_templates = []
+            for evt in templates:
+                temp_match = re.match(REGEX, evt)
+                if not temp_match:
+                    events.append(evt)
+                    continue
+
+                target_group = temp_match.groups()[0]
+                group_tag = f"<{target_group}>"
+                attribute_tags = target_group.split("|")
+                pre, post = evt.split(group_tag, 1)
+                for attribute in attribute_tags:
+                    if attribute == "path":
+                        # Get all path labels
+                        for path in path_labels:
+                            new_templates.append(pre + path + post)
+                    else:
+                        for node in nodes:
+                            if node.__dict__.get(attribute) is True:
+                                new_templates.append(pre + node.name + post)
+            templates = new_templates
+        return list(set(events))
+
     def playerid_to_agentid(self, pid):
         return self._playerid_to_agentid[pid]
 
@@ -926,7 +1077,7 @@ class World(object):
         return self._agentid_to_playerid.get(aid)
 
     # TODO refactor players
-    def respawn_player(self, a_id):
+    async def respawn_player(self, a_id):
         p_id = self.agentid_to_playerid(a_id)
         if p_id != None:
             try:
@@ -937,9 +1088,9 @@ class World(object):
                 pass
             p_id2 = self.spawn_player(existing_player_id=p_id)
             new_a_id = self.playerid_to_agentid(p_id2)
-            self.parse_exec(new_a_id, "look")
+            await self.parse_exec(new_a_id, "look")
 
-    def clean_corpses_and_respawn(self) -> List[GraphAgent]:
+    async def clean_corpses_and_respawn(self) -> List[GraphAgent]:
         """
         Clean any corpses that have been lying around for a while,
         then try to do a respawn for each corpse cleaned.
@@ -959,7 +1110,7 @@ class World(object):
         created = []
         if self.graph_builder is not None:
             for _x in range(cleaned_count):
-                new_agent = self.graph_builder.add_random_new_agent_to_graph(self)
+                new_agent = await self.graph_builder.add_random_new_agent_to_graph(self)
                 if new_agent is not None:
                     created.append(new_agent)
         return created

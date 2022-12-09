@@ -12,6 +12,7 @@ from light.graph.events.base import ErrorEvent
 from light.graph.events.graph_events import (
     UnblockEvent,
     WearEvent,
+    EquipObjectEvent,
     TellEvent,
     SayEvent,
     GoEvent,
@@ -25,6 +26,7 @@ from parlai.core.agents import create_agent, create_agent_from_shared
 from typing import TYPE_CHECKING, List
 
 from light.graph.events.graph_events import EmoteEvent
+from light.registry.model_pool import ModelTypeName
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
@@ -48,11 +50,13 @@ SAFE_PHRASES = [
 ]
 
 SCRIPTED_RESPONSES = {
-    (""): (
+    ("", "hello", "hi"): (
         "Welcome my friend to the impossible tavern. I'm glad you're here! "
         "I'm looking for curious souls to inhabit the residents of the "
         "world beyond that shimmering portal. If you have a ticket "
-        "I can let you in and provide you a story to play. "
+        "I can let you in and provide you a story to play. In the meantime we "
+        "can chat! I warn you though, out here my mind may wander... "
+        "Be sure to ask for help if you need it."
     ),
     ("boots", "boot"): (
         "While you're just a soul in here, it's worthwhile to have some footwear. "
@@ -63,6 +67,14 @@ SCRIPTED_RESPONSES = {
     ),
     ("carrying", "holding"): (
         "You can see what you're carrying with the `inv` command"
+    ),
+    ("ticket", "tickets"): (
+        "I've already distributed all of the tickets. Perhaps you already have one? "
+        "You should check what you're carrying."
+    ),
+    ("where", "the way", "portal", "get there"): (
+        "If you're trying to get into the realm of LIGHT, you'll need to go into "
+        "that portal right over there. You'd need a ticket first though."
     ),
 }
 
@@ -79,109 +91,17 @@ class TutorialModelSoul(OnEventSoul):
 
     HAS_MAIN_LOOP = True
 
-    @classmethod
-    def load_dialog_model(
-        cls,
-        parser,
-        dialog_model_path,
-    ):
-        """
-        Load up the dialog model for use with this class
-        """
-        # Reranker args
-        dialog_args = [
-            "-m",
-            "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent",
-            "--predictor-model-file",
-            "zoo:light_whoami/rpa_reranker/model",
-            "--inference",
-            "beam",
-            "-dt",
-            "valid",
-            "--beam-context-block-ngram",
-            "3",
-            "--beam-block-ngram",
-            "3",
-            "--beam-size",
-            "10",
-            "--beam-min-length",
-            "20",
-            "-mf",
-            dialog_model_path,
-        ]
-        dialog_opt = parser.parse_args(args=dialog_args)
-        dialog_opt["interactive_mode"] = True
-        dialog_opt["override"] = {
-            "inference": "beam",
-            "beam_context_block_ngram": 3,
-            "beam_size": 10,
-            "beam_min_length": 20,
-            "model": "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent",
-        }
-        return create_agent(dialog_opt, requireModelExists=True)
-
-    @classmethod
-    def load_models(
-        cls,
-        dialog_model_path,
-        act_model_path=None,
-    ):
-        """
-        Load up and create possible shared models for use with this class
-        """
-        from parlai.core.params import ParlaiParser
-        from parlai.core.agents import create_agent
-
-        parser = ParlaiParser(True, True, "")
-
-        dialog_model = cls.load_dialog_model(
-            parser,
-            dialog_model_path,
-        )
-
-        if act_model_path is not None:
-            # TODO @Kurt do we have an action model in character? Or just dialogue?
-            # Load action model
-            args = [
-                "-mf",
-                act_model_path,
-                "-ecands",
-                "inline",
-                "--ignore-bad-candidates",
-                "True",
-            ]
-            act_opt, _unknown = parser.parse_and_process_known_args(args=args)
-
-            act_opt["override"] = {
-                "eval_candidates": "inline",
-                "ignore_bad_candidates": "True",
-            }
-            act_opt["interactive_mode"] = True
-            act_opt["ignore_bad_candidates"] = True
-            action_model = create_agent(act_opt, requireModelExists=True)
-            action_model_share = action_model.share()
-        else:
-            action_model_share = None
-
-        return {
-            "shared_dialog_model": dialog_model.share(),
-            "shared_action_model": action_model_share,
-        }
-
-    def _init_with_models(self, models) -> None:
+    def _init_with_models(self, model_pool) -> None:
         """
         Initialize required members of this soul for tracking the
         model and interactions with it.
         """
+
         self._pending_observations = []
         self._last_action_time = time.time() + self._get_random_time_offset()
-        self.npc_dialog_model = create_agent_from_shared(models["shared_dialog_model"])
-        if models["shared_action_model"] is not None:
-            self.npc_act_model = create_agent_from_shared(models["shared_action_model"])
-        else:
-            self.npc_act_model = None
+        self.npc_dialog_model = model_pool.get_model(ModelTypeName.DIALOG)
+        self.npc_act_model = model_pool.get_model(ModelTypeName.ACTION)
         self.reset_interaction_history(self.target_node)
-
         self.num_dialogue_without_action = 0
         self.partner_wearing_boots = False
         self.partner_gave_ticket = False
@@ -273,7 +193,7 @@ class TutorialModelSoul(OnEventSoul):
     def get_last_turn_too_recent(self):
         return time.time() - self._last_action_time < MIN_TIME_BETWEEN_TURNS
 
-    def npc_action(self):
+    async def npc_action(self):
         """
         Agent attempt to take an action?
         """
@@ -305,7 +225,7 @@ class TutorialModelSoul(OnEventSoul):
             "eval_labels": [cands[0]],
         }
         self.npc_act_model.observe(msg)
-        act = self.npc_act_model.act()
+        act = await self.npc_act_model.act()
         scores = {}
         for i in range(0, 3):
             scores[act["text_candidates"][i]] = float(act["sorted_scores"][i])
@@ -332,7 +252,7 @@ class TutorialModelSoul(OnEventSoul):
                 "eval_labels": [cands[0]],
             }
             self.npc_act_model.observe(msg)
-            act = self.npc_act_model.act()
+            act = await self.npc_act_model.act()
             act_text = act["text"]
             act_text = self.npc_pick_non_repeating_action(act_text)
             if act_text is None:
@@ -344,7 +264,7 @@ class TutorialModelSoul(OnEventSoul):
             return True
         return False
 
-    def npc_dialogue(self, obs=None):
+    async def npc_dialogue(self, obs=None):
         """
         Attempt to take a dialogue turn
         """
@@ -384,7 +304,7 @@ class TutorialModelSoul(OnEventSoul):
         # Send to model to process
         msg = {"text": context, "episode_done": True}
         self.npc_dialog_model.observe(msg)
-        act = self.npc_dialog_model.act()
+        act = await self.npc_dialog_model.act()
 
         act_text = self.dialogue_pick_non_repeating_response(act, partner)
 
@@ -408,18 +328,19 @@ class TutorialModelSoul(OnEventSoul):
                 "doing right now, you can try checking your persona on the left. "
             )
 
-        if self.num_dialogue_without_action > 5:
+        if self.num_dialogue_without_action > 4:
             return (
                 "While I'm happy to talk all day, I do want to be sure you know how to do things "
                 "as well. You can toggle between saying and doing things with the button below, "
                 "or quickly with the ` key. Try it now! See what you're carrying with `inv`, or "
-                "maybe `examine` some of the things in this room."
+                "maybe `examine` some of the things in this room. `help` will show you all of the "
+                "possible commands, in case you've forgotten."
             )
 
         for key_group in SCRIPTED_RESPONSES.keys():
             if key_group not in self.used_responses:
                 for key in key_group:
-                    if key in text_content:
+                    if key in text_content.lower() or key == "":
                         self.used_responses.add(key_group)
                         return SCRIPTED_RESPONSES[key_group]
 
@@ -481,7 +402,9 @@ class TutorialModelSoul(OnEventSoul):
                     "I'm always open for a hug! Kindness is important in LIGHT"
                 )
                 HugEvent(self.target_node, [last_action.actor]).execute(self.world)
-            elif isinstance(last_action, WearEvent):
+            elif isinstance(last_action, WearEvent) or isinstance(
+                last_action, EquipObjectEvent
+            ):
                 if last_action.target_nodes[0].name == "boots":
                     self.partner_wearing_boots = True
                     if self.partner_gave_ticket:
@@ -499,9 +422,10 @@ class TutorialModelSoul(OnEventSoul):
                 print("Maybe should do something with this?", last_action)
 
         if response_content is not None:
-            SayEvent(self.target_node, text_content=response_content).execute(
-                self.world
-            )
+            canned_response = SayEvent(self.target_node, text_content=response_content)
+            canned_response.safe = True
+            canned_response.skip_safety = True
+            canned_response.execute(self.world)
             return True
         else:
             return None
@@ -529,7 +453,7 @@ class TutorialModelSoul(OnEventSoul):
                 if isinstance(obs, SayEvent) or (
                     isinstance(obs, TellEvent) and obs.target_nodes[0] == agent
                 ):
-                    self.npc_dialogue(obs)
+                    await self.npc_dialogue(obs)
 
         # Possibly act according to the transformer model
-        self.npc_action()
+        await self.npc_action()

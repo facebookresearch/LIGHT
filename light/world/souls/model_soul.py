@@ -12,7 +12,8 @@ from concurrent.futures import CancelledError
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
-    from light.graph.world.world import World
+    from light.world.world import World
+    from light.registry.model_pool import ModelPool
 
 
 class ModelSoul(BaseSoul):
@@ -25,19 +26,19 @@ class ModelSoul(BaseSoul):
     HAS_MAIN_LOOP = False
     MAIN_LOOP_STEP_TIMEOUT = 5  # seconds between loop actions
 
-    def __init__(self, target_node: "GraphAgent", world: "World", models: Any):
+    def __init__(self, target_node: "GraphAgent", world: "World"):
         """
         All Souls should be attached to a target_node, which is the agent that
         this soul will be inhabiting. It also takes the world in which that
         agent exists.
         """
         super().__init__(target_node, world)
-        self._init_with_models(models)
+        self._init_with_models(self.model_pool)
         self._main_loop = None
         if self.HAS_MAIN_LOOP:
             self._run_timesteps()
 
-    def _init_with_models(self, models) -> None:
+    def _init_with_models(self, model_pool: "ModelPool") -> None:
         """
         If this model soul requires additional configuration of the models,
         or setting of attributes depending on these models, handle that here.
@@ -70,14 +71,14 @@ class ModelSoul(BaseSoul):
 
                 traceback.print_exc()
                 print("Reaping...")
-                self.reap()
+                await self.reap()
 
         self._main_loop = asyncio.create_task(_run_main_logic_forever())
 
-    def reap(self):
+    async def reap(self):
         """
         Clear the main loop, and free any model resources
         """
-        super().reap()
+        await super().reap()
         if self._main_loop is not None:
             self._main_loop.cancel()

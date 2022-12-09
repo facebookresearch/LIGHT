@@ -2,7 +2,7 @@
 
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.abs
+# LICENSE file in the root directory of this source tree.
 
 import unittest
 import json
@@ -51,7 +51,7 @@ from light.graph.elements.graph_nodes import (
     GraphObject,
     GraphAgent,
 )
-from light.world.world import World
+from light.world.world import World, WorldConfig
 
 from typing import Tuple, List, Type, Optional
 
@@ -86,8 +86,9 @@ class GraphEventTests(unittest.TestCase):
         """
         Setup should put together any requirements for starting the database for a test.
         """
-        self.world = World({}, None)
+        self.world = World(WorldConfig())
         self.reset_world()
+        self.maxDiff = 100000
 
     def reset_world(self) -> None:
         self.graph = OOGraph.from_json(self.INPUT_WORLD_JSON)
@@ -2149,7 +2150,7 @@ test_graph_3_after_ingest_apple = """
             "object": true,
             "on_use": null,
             "room": false,
-            "size": 21,
+            "size": 20,
             "stats": {
                 "damage": 0,
                 "defense": 0
@@ -2189,7 +2190,7 @@ test_graph_3_after_ingest_apple = """
             "object": true,
             "on_use": null,
             "room": false,
-            "size": 10,
+            "size": 1,
             "stats": {
                 "damage": 0,
                 "defense": 0
@@ -2304,7 +2305,7 @@ test_graph_3_after_ingest_apple = """
             "object": true,
             "on_use": null,
             "room": false,
-            "size": 5,
+            "size": 1,
             "stats": {
                 "damage": 0,
                 "defense": 0
@@ -2358,7 +2359,7 @@ test_graph_3_after_ingest_apple = """
             "classes": [
                 "room"
             ],
-            "contain_size": 1999,
+            "contain_size": 2000,
             "contained_nodes": {
                 "carrier_12__dead__": {
                     "target_id": "carrier_12__dead__"
@@ -2614,7 +2615,7 @@ test_graph_3_after_ingest_apple = """
             "object": true,
             "on_use": null,
             "room": false,
-            "size": 3,
+            "size": 1,
             "stats": {
                 "damage": 0,
                 "defense": 0

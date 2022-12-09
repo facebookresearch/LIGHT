@@ -6,8 +6,10 @@
 
 /* REACT */
 import React from "react";
+
 /* STYLES */
 import "./styles.css";
+
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
 /* ICONS */

@@ -30,7 +30,7 @@ function get_msg_actor(msg) {
 }
 
 //Entry - Renders specific type of message component based on individual message object's attributes
-const Entry = ({ msg, onReply, agents, selfId }) => {
+const Entry = ({ msg, onReply, agents, selfId, scrollToBottom }) => {
   /* ----REDUX STATE---- */
   //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
@@ -111,6 +111,7 @@ const Entry = ({ msg, onReply, agents, selfId }) => {
           <PlayerMessage
             text={msg.text}
             isSelf={msg.is_self || actor === selfId}
+            caller={msg.caller}
             actor={agents[actor]}
             onReply={onReply}
             xp={msg.xp}
@@ -125,6 +126,7 @@ const Entry = ({ msg, onReply, agents, selfId }) => {
             actorId={actor}
             eventId={msg.event_id}
             onClickFunction={() => setSelectedTip(16)}
+            scrollToBottom={scrollToBottom}
           />
         )}
       </>

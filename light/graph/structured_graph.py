@@ -14,8 +14,8 @@ from light.graph.elements.graph_nodes import (
     GraphVoidNode,
     GraphEdge,
 )
+from typing import Optional, Dict, Any
 from light.world.utils.json_utils import GraphEncoder
-from light.world.content_loggers import RoomInteractionLogger
 
 
 class OOGraph(object):
@@ -23,7 +23,7 @@ class OOGraph(object):
     inspectible version from an Object-Oriented point of view
     """
 
-    def __init__(self, opt=None):
+    def __init__(self, title: str = "untitled", db_id: Optional[str] = None):
         self.objects = {}
         self.agents = {}
         self.rooms = {}
@@ -34,11 +34,12 @@ class OOGraph(object):
         self._nodes_to_delete = []
         self._deleted_nodes = {}
         self.dead_nodes = {}
-        self._opt = opt
+        self.title = title
+        self.db_id = db_id
 
     @staticmethod
     def from_graph(graph, start_location=None):
-        oo_graph = OOGraph(graph._opt)
+        oo_graph = OOGraph()
         oo_graph._graph = graph
         object_ids = set(graph.get_all_by_prop("object"))
         room_ids = set(graph.get_all_by_prop("room"))
@@ -97,9 +98,6 @@ class OOGraph(object):
                 )
                 # TODO parse other edge locked parameters
             room.move_to(oo_graph.void)
-            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(
-                oo_graph, room_id
-            )
 
         if hasattr(graph, "void_id"):
             oo_graph.delete_nodes([oo_graph.get_node(graph.void_id)])
@@ -214,8 +212,6 @@ class OOGraph(object):
         node.force_move_to(self.void)
         self.rooms[id] = node
         self.all_nodes[id] = node
-
-        self.room_id_to_loggers[id] = RoomInteractionLogger(self, id)
 
         return node
 
@@ -343,6 +339,30 @@ class OOGraph(object):
 
     # Derived graph logic
 
+    def get_vocab(self):
+        """Return the vocabulary for the entire graph"""
+        vocab = []
+        for agent in self.agents.values():
+            vocab += agent.name.split(" ")
+            vocab += agent.desc.split(" ")
+            vocab += agent.persona.split(" ")
+            vocab += agent.name_prefix.split(" ")
+
+        for obj in self.objects.values():
+            vocab += agent.name.split(" ")
+            vocab += agent.desc.split(" ")
+            vocab += agent.name_prefix.split(" ")
+
+        for room in self.rooms.values():
+            vocab += room.name.split(" ")
+            vocab += room.desc.split(" ")
+            vocab += room.extra_desc.split(" ")
+            vocab += room.name_prefix.split(" ")
+            for edge in room.neighbors.values():
+                vocab += edge.label.split(" ")
+
+        return vocab
+
     def get_local_nodes(self, actor_id):
         """Get nodes local to the given actor_id"""
         actor = self.get_node(actor_id)
@@ -467,6 +487,8 @@ class OOGraph(object):
             "agents": sorted(list(self.agents.keys())),
             "rooms": sorted(list(self.rooms.keys())),
             "nodes": self.all_nodes,
+            "title": self.title,
+            "db_id": self.db_id,
         }
         return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
 
@@ -504,6 +526,8 @@ class OOGraph(object):
             "nodes": {node.node_id: node for node in nodes},
             "objects": sorted(objects),
             "rooms": sorted(rooms),
+            "title": self.title,
+            "db_id": self.db_id,
         }
         return json.dumps(dicts, cls=GraphEncoder, sort_keys=True, indent=4)
 
@@ -524,9 +548,11 @@ class OOGraph(object):
         return contained_nodes
 
     @staticmethod
-    def from_json(input_json: str):
+    def from_json(input_json: str, opt: Optional[Dict[str, Any]] = None):
         dict_format = json.loads(input_json)
-        oo_graph = OOGraph()
+        title = dict_format.get("title", "untitled")
+        db_id = dict_format.get("db_id")
+        oo_graph = OOGraph(title=title, db_id=db_id)
         object_ids = set(dict_format["objects"])
         agent_ids = set(dict_format["agents"])
         room_ids = set(dict_format["rooms"])
@@ -590,10 +616,6 @@ class OOGraph(object):
                         edge_desc=edge_dict["examine_desc"],
                     )
             room.force_move_to(oo_graph.void)
-            # need to read opts back somehow?  Or just do not worry about it - not logging from json
-            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(
-                oo_graph, room_id
-            )
 
         # Container locks
         for obj in oo_graph.objects.values():

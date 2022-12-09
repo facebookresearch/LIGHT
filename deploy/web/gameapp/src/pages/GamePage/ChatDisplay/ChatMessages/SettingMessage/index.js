@@ -8,8 +8,7 @@
 import React from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
-/* STYLES */
-import "./styles.css";
+
 /* CUSTOM COMPONENTS */
 import TutorialPopover from "../../../../../components/TutorialPopover";
 
@@ -19,9 +18,9 @@ const SettingMessage = ({ text, onClickFunction }) => {
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   return (
-    <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+    <div className="border-b border-b-[#ffffff33] border-dotted pb-4 mb-4">
       <div
-        className={`setting-container ${inHelpMode ? "active" : ""}`}
+        className={`${inHelpMode ? "active" : ""} prose font-mono text-white `}
         onClick={onClickFunction}
       >
         <TutorialPopover
@@ -33,7 +32,7 @@ const SettingMessage = ({ text, onClickFunction }) => {
           <p key={idx}>{para}</p>
         ))}
       </div>
-    </div>
+      </div>
   );
 };
 export default SettingMessage;

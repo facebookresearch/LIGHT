@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -9,21 +11,55 @@ from deploy.web.server.builder_server import (
     get_handlers,
 )
 from deploy.web.server.registry import RegistryApplication
+
 from tornado.routing import (
     PathMatches,
     Rule,
     RuleRouter,
 )
-from light.world.souls.base_soul import BaseSoul
 from tornado.httpserver import HTTPServer
-from tornado.ioloop import IOLoop
 import inspect
-import os.path
-from light.data_model.light_database import LIGHTDatabase
-from light.graph.events.graph_events import init_safety_classifier
-from light.world.souls.models.generative_heuristic_model_soul import (
-    GenerativeHeuristicModelSoul,
-)
+import os
+import asyncio
+import hydra
+from dataclasses import dataclass, field
+from omegaconf import MISSING
+
+from light.data_model.db.base import LightDBConfig, LightAWSDBConfig
+from light.data_model.db.episodes import EpisodeDB
+from light.data_model.db.users import UserDB
+from light.world.world import WorldConfig
+from light.graph.builders.base import GraphBuilderConfig
+from light.graph.builders.map_json_builder import MapJsonBuilderConfig
+from light.graph.builders.tutorial_builder import TutorialBuilderConfig
+from light.registry.model_pool import ModelPool, ModelTypeName
+from light.registry.hydra_registry import register_script_config, ScriptConfig
+
+from typing import List, Any, Dict, Optional, TYPE_CHECKING
+
+from light import LIGHT_DIR
+
+CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
+HYDRA_CONFIG_DIR = os.path.join(LIGHT_DIR, "hydra_configs")
+
+DEFAULT_PORT = 35494
+DEFAULT_HOSTNAME = "localhost"
+
+from light import LIGHT_DIR
+
+CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
+
+from light import LIGHT_DIR
+
+CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
+
+from light import LIGHT_DIR
+
+CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
+
+from light import LIGHT_DIR
+
+CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -34,53 +70,100 @@ def get_path(filename):
     return os.path.join(cwd, filename)
 
 
-def read_secrets():
-    """
-    Reads the secrets from a secret text file, located outside the repo.
-    The secrets should have the facebook api key, secret, and the cookie secret.
-    """
-    loc = here + "/../../../../secrets.txt"
-    secrets = {}
-    if not os.path.exists(loc):
-        return {
-            "cookie_secret": "0123456789",
-            "preauth_secret": "0123456789",
-        }
-    with open(loc, "r") as secret_file:
-        for line in secret_file:
-            items = line.split(" ")
-            if len(items) == 2:
-                secrets[items[0]] = items[1].strip()
-    return secrets
-
-
-SECRETS = read_secrets()
-
-tornado_settings = {
-    "autoescape": None,
-    "cookie_secret": SECRETS["cookie_secret"],
-    "compiled_template_cache": False,
-    "debug": "/dbg/" in __file__,
-    "login_url": "/login",
-    "preauth_secret": SECRETS["preauth_secret"],
-    "template_path": get_path("static"),
-}
-
-if "facebook_api_key" in SECRETS:
-    tornado_settings["facebook_api_key"] = SECRETS["facebook_api_key"]
-if "facebook_secret" in SECRETS:
-    tornado_settings["facebook_secret"] = SECRETS["facebook_secret"]
-
-
-def make_app(FLAGS, ldb, model_resources):
-    worldBuilderApp = BuildApplication(get_handlers(ldb), tornado_settings)
-    landingApp = LandingApplication(
-        ldb, FLAGS.hostname, FLAGS.password, tornado_settings
+@dataclass
+class WorldServerConfig(ScriptConfig):
+    defaults: List[Any] = field(
+        default_factory=lambda: ["_self_", {"deploy": "local_no_models"}]
     )
-    registryApp = RegistryApplication(FLAGS, ldb, model_resources, tornado_settings)
+    builder: GraphBuilderConfig = MapJsonBuilderConfig(
+        load_map=os.path.expanduser("~/LIGHT/scripts/examples/complex_world.json")
+    )
+    tutorial_builder: Optional[GraphBuilderConfig] = TutorialBuilderConfig(load_map="")
+    safety_classifier_path: str = field(
+        default=os.path.expanduser("~/data/safety/OffensiveLanguage.txt"),
+        metadata={"help": "Where to find the offensive language list."},
+    )
+    magic_db_path: str = ""
+    cookie_secret: str = field(
+        default="temp8000800080008000",  # can be any value, overridden by our configs
+        metadata={"help": "Cookie secret for issueing cookies (SECRET!!!)"},
+    )
+    preauth_secret: str = field(
+        default="temp8000800080008000",  # can be any value, overridden by our configs
+        metadata={"help": "Secret for salting valid preauth keys"},
+    )
+    facebook_api_key: str = field(
+        default=MISSING,
+        metadata={"help": "FB API login key"},
+    )
+    facebook_api_secret: str = field(
+        default=MISSING,
+        metadata={"help": "FB API secret key"},
+    )
+    hostname: str = field(
+        default=DEFAULT_HOSTNAME,
+        metadata={"help": "host to run the server on."},
+    )
+    port: int = field(
+        default=DEFAULT_PORT,
+        metadata={"help": "port to run the server on."},
+    )
+    password: str = field(
+        default="LetsPlay",
+        metadata={"help": "password - leave blank to disable login with password"},
+    )
+    disable_builder: bool = field(
+        default=True, metadata={"help": "Bool to disable launching the world builder"}
+    )
+    is_logging: bool = field(
+        default=False,
+        metadata={"help": "Whether to initialize writing episodes to the DB"},
+    )
+
+
+register_script_config("scriptconfig", WorldServerConfig)
+
+
+def make_app(cfg: WorldServerConfig, model_pool: ModelPool):
+    # Construct tornado settings for this app
+    tornado_settings = {
+        "autoescape": None,
+        "cookie_secret": cfg.cookie_secret,
+        "compiled_template_cache": False,
+        "debug": "/dbg/" in __file__,
+        "login_url": "/login",
+        "preauth_secret": cfg.preauth_secret,
+        "template_path": get_path("static"),
+    }
+
+    if cfg.get("facebook_api_key", None) is not None:
+        tornado_settings["facebook_api_key"] = cfg.facebook_api_key
+    if cfg.get("facebook_api_secret", None) is not None:
+        tornado_settings["facebook_secret"] = cfg.facebook_api_secret
+
+    # TODO re-enable world builder once builder models are hydra-registered
+    # worldBuilderApp = BuildApplication(get_handlers(ldb), tornado_settings)
+
+    db_config = cfg.light.db
+    episode_db = EpisodeDB(db_config)
+    user_db = UserDB(db_config)
+    landingApp = LandingApplication(
+        user_db=user_db,
+        hostname=cfg.hostname,
+        password=cfg.password,
+        given_tornado_settings=tornado_settings,
+    )
+    registryApp = RegistryApplication(
+        cfg,
+        model_pool,
+        tornado_settings,
+        episode_db=episode_db,
+        user_db=user_db,
+    )
     rules = []
-    if FLAGS.disable_builder is None:
-        rules.append(Rule(PathMatches("/builder.*"), worldBuilderApp))
+    # TODO re-enable world builder once builder models are hydra-registered
+    # if not cfg.disable_builder:
+    #     rules.append(Rule(PathMatches("/builder.*"), worldBuilderApp))
     rules += [
         Rule(PathMatches("/game.*"), registryApp),
         Rule(PathMatches("/.*"), landingApp),
@@ -88,187 +171,35 @@ def make_app(FLAGS, ldb, model_resources):
 
     router = RuleRouter(rules)
     server = HTTPServer(router)
-    server.listen(FLAGS.port)
+    server.listen(cfg.port)
     return registryApp
 
 
-def start_default_game(ldb, registryApp):
-    _ = registryApp.run_new_game("", ldb)
+async def _run_server(cfg: WorldServerConfig, model_pool: ModelPool):
+    registry_app = make_app(cfg, model_pool)
+    _ = await registry_app.run_new_game("")
 
-
-def _run_server(FLAGS, ldb, model_resources):
-    my_loop = IOLoop.current()
-    registry_app = make_app(FLAGS, ldb, model_resources)
-    my_loop.call_later(1, start_default_game, ldb, registry_app)
-
-    print(
-        "\nYou can connect to the game at http://%s:%s/" % (FLAGS.hostname, FLAGS.port)
-    )
+    print("\nYou can connect to the game at http://%s:%s/" % (cfg.hostname, cfg.port))
     print(
         "You can connect to the worldbuilder at http://%s:%s/builder/ \n"
-        % (FLAGS.hostname, FLAGS.port)
+        % (cfg.hostname, cfg.port)
     )
-    try:
-        my_loop.start()
-    except KeyboardInterrupt:
-        my_loop.stop()
+    while True:
+        await asyncio.sleep(30)
 
 
-# Update this to load _all_ models for the full game, fix "shared_model_content"
-def init_model_resources(FLAGS):
-    light_model_root = FLAGS.light_model_root
-    dialog_model = FLAGS.dialog_model
-    act_model = FLAGS.acting_model
-    scoring_model = FLAGS.roleplaying_score_model_file
-    generic_act_model = FLAGS.generic_act_model_file
-
-    if dialog_model is None:
-        return {"shared_model_content": {}}
-
-    # dialog gen is at `dialog_gen`, other is at `game_speech1`?
-    shared_model_content = GenerativeHeuristicModelSoul.load_models(
-        light_model_root + dialog_model,
-    )
-    resources = {"shared_model_content": shared_model_content}
-
-    if scoring_model is not None:
-        resources["rpg_model"] = BaseSoul.load_roleplaying_score_model(scoring_model)
-        shared_model_content["rpg_model"] = resources["rpg_model"]
-
-    if generic_act_model is not None:
-        generic_act_model_content = BaseSoul.load_generic_act_model(generic_act_model)
-        resources["generic_act_model"] = generic_act_model_content.share()
-        shared_model_content["shared_action_model"] = resources["generic_act_model"]
-
-    init_safety_classifier(FLAGS.safety_list)
-
-    return resources
-
-
-def main():
-    import argparse
+@hydra.main(
+    config_path=HYDRA_CONFIG_DIR, config_name="scriptconfig", version_base="1.2"
+)
+def main(cfg: WorldServerConfig):
     import numpy
     import random
 
-    DEFAULT_PORT = 35494
-    DEFAULT_HOSTNAME = "localhost"
-
-    def str2bool(v):
-        if isinstance(v, bool):
-            return v
-        if v.lower() in ("yes", "true", "t", "y", "1"):
-            return True
-        elif v.lower() in ("no", "false", "f", "n", "0"):
-            return False
-        else:
-            raise argparse.ArgumentTypeError("Boolean value expected.")
-
-    parser = argparse.ArgumentParser(
-        description="Start the game server.", fromfile_prefix_chars="@"
-    )
-    parser.add_argument(
-        "--cookie-secret",
-        type=str,
-        default="temp8000800080008000",
-        help="Cookie secret for issueing cookies (SECRET!!!)",
-    )
-    parser.add_argument(
-        "--data-model-db",
-        type=str,
-        default=here + "/../../../light/data_model/database.db",
-        help="Databse path for the datamodel",
-    )
-    parser.add_argument(
-        "--hostname",
-        metavar="hostname",
-        type=str,
-        default=DEFAULT_HOSTNAME,
-        help="host to run the server on.",
-    )
-    parser.add_argument(
-        "--light-model-root",
-        type=str,
-        default="/checkpoint/light/models/",
-        help="Models path",
-    )
-    parser.add_argument(
-        "--password",
-        type=str,
-        default="LetsPlay",
-        help="password for users to access the game.",
-    )
-    parser.add_argument(
-        "--port",
-        metavar="port",
-        type=int,
-        default=DEFAULT_PORT,
-        help="port to run the server on.",
-    )
-    parser.add_argument(
-        "--safety-list",
-        metavar="safety_list",
-        type=str,
-        default=os.path.expanduser("~/data/safety/OffensiveLanguage.txt"),
-        help="Where to find the offensive language list.",
-    )
-    parser.add_argument(
-        "--builder-model",
-        metavar="builder_model",
-        type=str,
-        default=None,
-        help="Builder model to be loading",
-    )
-    parser.add_argument(
-        "--dialog-model",
-        metavar="dialog_model",
-        type=str,
-        default=None,
-        help="dialog model to be loading",
-    )
-    parser.add_argument(
-        "--acting-model",
-        metavar="acting_model",
-        type=str,
-        default=None,
-        help="acting model to be loading",
-    )
-    parser.add_argument(
-        "--disable-builder",
-        metavar="disable_builder",
-        type=str,
-        default=None,
-        help="flag to disable the builder, omit to enable",
-    )
-    parser.add_argument(
-        "--parser-model-file",
-        type=str,
-        default="",
-    )
-    parser.add_argument(
-        "--roleplaying-score-model-file",
-        type=str,
-        default="",
-    )
-    parser.add_argument(
-        "--generic-act-model-file",
-        type=str,
-        default="",
-    )
-    parser.add_argument(
-        "--is-logging",
-        type=str2bool,
-        default=False,
-        help="flag to enable storing logs of interactions",
-    )
-    FLAGS, _unknown = parser.parse_known_args()
-
-    print(FLAGS)
-
+    model_pool = ModelPool.get_from_config(cfg.light.model_pool)
     random.seed(6)
     numpy.random.seed(6)
-    model_resources = init_model_resources(FLAGS)
-    ldb = LIGHTDatabase(FLAGS.data_model_db)
-    _run_server(FLAGS, ldb, model_resources)
+
+    asyncio.run(_run_server(cfg, model_pool))
 
 
 if __name__ == "__main__":

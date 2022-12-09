@@ -2,15 +2,16 @@
 
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.abs
+# LICENSE file in the root directory of this source tree.
 
 import unittest
 import os
 import asyncio
 import time
 from light import LIGHT_DIR
-from light.graph.builders.map_json_builder import MapJsonBuilder
+from light.graph.builders.map_json_builder import MapJsonBuilder, MapJsonBuilderConfig
 from light.world.souls.tests.battle_royale_soul import BattleRoyaleSoul
+from light.world.world import WorldConfig
 from light.graph.elements.graph_nodes import TICKS_TO_CLEAN_CORPSE
 
 # Magic number to ensure we wait more than the expected ticks to clean a corpse
@@ -20,9 +21,17 @@ ENOUGH_EXTRA_TICKS_TO_ENSURE_CORPSE_CLEANUP = 20
 def async_test(f):
     def wrapper(*args, **kwargs):
         coro = f
-        future = coro(*args, **kwargs)
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(future)
+        try:
+            loop = asyncio.get_event_loop()
+            future = coro(*args, **kwargs)
+            loop.run_until_complete(future)
+        except RuntimeError:
+            try:
+                loop = asyncio.get_running_loop()
+                future = coro(*args, **kwargs)
+                loop.run_until_complete(future)
+            except RuntimeError:
+                asyncio.run(coro(*args, **kwargs))
 
     return wrapper
 
@@ -38,15 +47,17 @@ class TestInteractionLoggers(unittest.TestCase):
         # Populate a world
         await asyncio.sleep(0.1)
         loop = asyncio.get_running_loop()
-        opt = {}
-        opt["load_map"] = os.path.join(LIGHT_DIR, "scripts/examples/complex_world.json")
-        world_builder = MapJsonBuilder("", debug=False, opt=opt)
-        g, world = world_builder.get_graph()
+        world_builder = MapJsonBuilder(
+            MapJsonBuilderConfig(
+                load_map=os.path.join(LIGHT_DIR, "scripts/examples/complex_world.json")
+            )
+        )
+        g, world = await world_builder.get_graph(WorldConfig())
         purgatory = world.purgatory
         purgatory.register_filler_soul_provider(
             "battle",
             BattleRoyaleSoul,
-            lambda: [{}],
+            lambda: [],
         )
         for empty_agent in world.oo_graph.agents.values():
             purgatory.fill_soul(empty_agent)
@@ -78,7 +89,7 @@ class TestInteractionLoggers(unittest.TestCase):
         await run_some_time(2)
 
         # some agents definitely should have died
-        self.assertTrue(len(g.agents) < current_agents)
+        self.assertLess(len(g.agents), current_agents)
 
         current_agents = len(g.agents)
         current_objects = len(g.objects)
@@ -87,14 +98,14 @@ class TestInteractionLoggers(unittest.TestCase):
         # try respawning
         use_ticks = TICKS_TO_CLEAN_CORPSE + ENOUGH_EXTRA_TICKS_TO_ENSURE_CORPSE_CLEANUP
         for _x in range(use_ticks):
-            ags = world.clean_corpses_and_respawn()
+            ags = await world.clean_corpses_and_respawn()
             for ag in ags:
                 purgatory.fill_soul(ag)
 
         # some agents definitely should have respawned
-        self.assertTrue(len(g.agents) > current_agents)
-        self.assertTrue(len(g.objects) < current_objects)
-        self.assertTrue(len(g.dead_nodes) < current_dead)
+        self.assertGreater(len(g.agents), current_agents)
+        self.assertLess(len(g.objects), current_objects)
+        self.assertLess(len(g.dead_nodes), current_dead)
 
 
 if __name__ == "__main__":

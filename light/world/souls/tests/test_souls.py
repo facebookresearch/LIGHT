@@ -2,7 +2,7 @@
 
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.abs
+# LICENSE file in the root directory of this source tree.
 
 import unittest
 import time
@@ -10,7 +10,7 @@ import asyncio
 
 from light.graph.elements.graph_nodes import GraphAgent
 from light.graph.structured_graph import OOGraph
-from light.world.world import World
+from light.world.world import World, WorldConfig
 from light.graph.events.graph_events import EmoteEvent, SayEvent
 from light.world.souls.mock_soul import MockSoul
 from light.world.souls.repeat_soul import RepeatSoul
@@ -19,9 +19,17 @@ from light.world.souls.repeat_soul import RepeatSoul
 def async_test(f):
     def wrapper(*args, **kwargs):
         coro = f
-        future = coro(*args, **kwargs)
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(future)
+        try:
+            loop = asyncio.get_event_loop()
+            future = coro(*args, **kwargs)
+            loop.run_until_complete(future)
+        except RuntimeError:
+            try:
+                loop = asyncio.get_running_loop()
+                future = coro(*args, **kwargs)
+                loop.run_until_complete(future)
+            except RuntimeError:
+                asyncio.run(coro(*args, **kwargs))
 
     return wrapper
 
@@ -35,7 +43,7 @@ class MockSouls(unittest.TestCase):
         agent_node = test_graph.add_agent("My test agent", {})
         room_node = test_graph.add_room("test room", {})
         agent_node.force_move_to(room_node)
-        test_world = World({}, None, True)
+        test_world = World(WorldConfig(), True)
         test_world.oo_graph = test_graph
         mock_soul = MockSoul(agent_node, test_world)
         self.assertEqual(agent_node, mock_soul.target_node)
@@ -46,7 +54,7 @@ class MockSouls(unittest.TestCase):
         )
         mock_soul.do_act(test_event)
 
-        mock_soul.reap()
+        asyncio.run(mock_soul.reap())
 
     @async_test
     async def test_message_sending(self):
@@ -61,7 +69,7 @@ class MockSouls(unittest.TestCase):
         test_node.force_move_to(room_node)
         repeat_node.force_move_to(room_node)
 
-        test_world = World({}, None, True)
+        test_world = World(WorldConfig(), True)
         test_world.oo_graph = test_graph
 
         purgatory = test_world.purgatory

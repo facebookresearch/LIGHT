@@ -7,12 +7,14 @@
 /* REACT */
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
+/* CONFIG */
+import CONFIG from "./config.js";
 
 /* CUSTOM COMPONENTS */
-//PAGES
 import LandingPage from "./pages/LandingPage";
 import TermsPage from "./pages/TermsPage";
 import FAQSPage from "./pages/FAQSPage";
+import DevLoginPage from "./pages/DevLoginPage";
 import LogoutPage from "./pages/LogoutPage";
 import ErrorPage from "./pages/ErrorPage";
 import PreLoginPage from "./pages/PreLoginPage";
@@ -24,6 +26,10 @@ import "./styles.css";
 
 //AppRouter - Renders react-router for app.  Each virtual path renders component page based on URL
 const AppRouter = () => {
+  const local_login =
+    CONFIG.login == "fb" ? null : (
+      <Route path="/login" component={DevLoginPage} exact />
+    );
   return (
     <div
       style={{
@@ -39,6 +45,7 @@ const AppRouter = () => {
           <Route path="/tos" component={TermsPage} exact />
           <Route path="/bye" component={LogoutPage} exact />
           <Route path="/error" component={ErrorPage} exact />
+          {local_login}
           <Route component={ErrorPage} />
         </Switch>
       </BrowserRouter>
