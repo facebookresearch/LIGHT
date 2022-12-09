@@ -35,7 +35,7 @@ class QuestLoader:
 
 
 class QuestCreator:
-    def __init__(self, opt):
+    def __init__(self):
         pass
 
     templates = {

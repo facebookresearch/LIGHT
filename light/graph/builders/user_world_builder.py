@@ -142,7 +142,7 @@ class UserWorldBuilder(DBGraphBuilder):
 
     async def get_graph(self):
         """Return an OOGraph built by this builder"""
-        g = OOGraph(self.opt)
+        g = OOGraph()
         self.g = g
         with self.db as ldb:
             world = ldb.get_world(self.world_id, self.player_id)
@@ -160,7 +160,7 @@ class UserWorldBuilder(DBGraphBuilder):
         self.add_nodes(g, resources, db_to_g, node_to_g)
         self.add_edges(g, edge_list, node_to_g)
 
-        world = World(WorldConfig(opt=self.opt, graph_builder=self))
+        world = World(WorldConfig(graph_builder=self))
         world.oo_graph = g
         return g, world
 

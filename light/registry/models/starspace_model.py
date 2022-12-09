@@ -32,6 +32,8 @@ class MapStarspaceModelLoader(ParlAIModelLoader):
     could be done as a special opt in the agent itself, but for now it's here.
     """
 
+    CONFIG_CLASS = MapStarspaceModelConfig
+
     def get_model(self, overrides: Optional[Dict[str, Any]] = None) -> Agent:
         """Get a copy of the model"""
         use_shared = self._shared

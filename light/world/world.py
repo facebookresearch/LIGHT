@@ -7,6 +7,7 @@ from light.graph.viz.graph_printer import GraphPrinter
 from light.graph.structured_graph import OOGraph
 from light.graph.elements.graph_nodes import GraphRoom
 from light.world.action_parser import ActionParser
+from light.world.content_loggers import RoomInteractionLogger
 
 from copy import deepcopy
 import emoji
@@ -74,20 +75,22 @@ class WorldConfig:
     the sub-portions of the broader LIGHTConfig that are world-specific
     """
 
-    # TODO create LIGHTConfig that can write out a WorldConfig
-    # args: DictConfig (to replace opt)
-    opt: Optional[Dict[str, Any]] = field(default_factory=dict)
     episode_db: Optional["EpisodeDB"] = None
     graph_builder: Optional["GraphBuilder"] = None
     model_pool: Optional["ModelPool"] = field(default_factory=get_empty_model_pool)
+    is_logging: bool = False
+    safety_classifier_path: Optional[str] = None
+    magic_db_path: Optional[str] = "/scratch/light/data/magic.db"
 
     def copy(self) -> "WorldConfig":
         """Return a new shallow copy of this WorldConfig"""
         return WorldConfig(
-            opt=self.opt,
             episode_db=self.episode_db,
             graph_builder=self.graph_builder,
             model_pool=self.model_pool,
+            is_logging=self.is_logging,
+            safety_classifier_path=self.safety_classifier_path,
+            magic_db_path=self.magic_db_path,
         )
 
 
@@ -104,13 +107,14 @@ class World(object):
         debug: bool = False,
     ):
         self._config = config
-        self._opt = config.opt
         self._node_freeze = False
         self._cnt = 0
         self.debug = debug
-        self._oo_graph = OOGraph(config.opt)
+        self._oo_graph = OOGraph()
         self.view = WorldViewer(self)
         self.purgatory = Purgatory(self)
+        self.is_logging = config.is_logging
+        self.episode_db = config.episode_db
         model_pool = config.model_pool
         if model_pool is None:
             from light.registry.model_pool import ModelPool
@@ -128,18 +132,15 @@ class World(object):
 
         # Set up safety classifier.
         self.safety_classifier = SafetyClassifier(
-            self._opt.get("safety_classifier_path", self._opt.get("safety_list")),
+            config.safety_classifier_path,
             model_pool,
         )
 
         # Set up magic!
-        init_magic(self._opt.get("magic_db_path", "/scratch/light/data/magic.db"))
+        init_magic(config.magic_db_path)
 
         # Set up action parser.
-
-        self.action_parser = config.opt.get("_action_parser")
-        if self.action_parser is None:
-            self.action_parser = ActionParser(self.model_pool)
+        self.action_parser = ActionParser(self.model_pool)
 
     @property
     def oo_graph(self):
@@ -155,8 +156,8 @@ class World(object):
         # TODO maybe there's a better way to do this? What happens when we add a new room
         # to an existin graph?
         self._oo_graph = oo_graph
-        for room_node in oo_graph.room_id_to_loggers.values():
-            room_node.episode_db = self._config.episode_db
+        for room_id in oo_graph.rooms.keys():
+            oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(self, room_id)
 
     @staticmethod
     def from_graph(graph, config: WorldConfig = None):
@@ -808,22 +809,17 @@ class World(object):
     async def parse_exec(self, actor, inst=None, event_id: Optional[str] = None):
         if not isinstance(actor, GraphNode):
             actor = self.oo_graph.get_node(actor)
-        if self._opt.get("dont_catch_errors", False):
+
+        try:
             return await self.parse_exec_internal(actor, inst=inst, event_id=event_id)
+        except Exception:
+            import traceback
 
-        else:
-            try:
-                return await self.parse_exec_internal(
-                    actor, inst=inst, event_id=event_id
-                )
-            except Exception:
-                import traceback
-
-                traceback.print_exc()
-                self.send_msg(
-                    actor, "Strange magic is afoot. This failed for some reason..."
-                )
-                return False, "FailedParseExec"
+            traceback.print_exc()
+            self.send_msg(
+                actor, "Strange magic is afoot. This failed for some reason..."
+            )
+            return False, "FailedParseExec"
 
     async def attempt_parse_event(
         self, EventClass, actor_node, arguments, event_id: Optional[str] = None

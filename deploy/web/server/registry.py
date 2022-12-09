@@ -20,11 +20,15 @@ from light.graph.builders.user_world_builder import UserWorldBuilder
 from light.data_model.db.users import PlayerStatus
 from light.world.world import WorldConfig
 
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, Dict, Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from light.registry.model_pool import ModelPool
     from light.data_model.db.episodes import EpisodeDB
     from light.data_model.db.users import UserDB
+
+    # TODO refactor when WorldServer is realized fully
+    from deploy.web.server.run_server import WorldServerConfig
 
 
 def get_rand_id():
@@ -40,31 +44,36 @@ class RegistryApplication(tornado.web.Application):
 
     def __init__(
         self,
-        FLAGS,
-        ldb,  # TODO remove!
-        model_pool,
-        tornado_settings,
-        episode_db: Optional["EpisodeDB"] = None,
-        user_db: Optional["UserDB"] = None,
+        cfg: "WorldServerConfig",
+        model_pool: "ModelPool",
+        tornado_settings: Dict[str, Any],
+        episode_db: "EpisodeDB",
+        user_db: "UserDB",
     ):
         self.game_instances = {}
         self.step_callbacks = {}
         self.tutorial_map = {}  # Player ID to game ID
         self.model_pool = model_pool
-        self.FLAGS = FLAGS
-        self.ldb = ldb
         self.episode_db = episode_db
         self.user_db = user_db
-        super(RegistryApplication, self).__init__(
-            self.get_handlers(FLAGS, user_db, tornado_settings), **tornado_settings
+        self.base_world_config = WorldConfig(
+            episode_db=episode_db,
+            model_pool=model_pool,
+            is_logging=cfg.is_logging,
+            safety_classifier_path=cfg.safety_classifier_path,
+            magic_db_path=cfg.magic_db_path,
         )
-        self.opt = vars(self.FLAGS)
+        self.tutorial_builder_config = cfg.tutorial_builder
+        self.builder_config = cfg.builder
+        super(RegistryApplication, self).__init__(
+            self.get_handlers(cfg, user_db, tornado_settings), **tornado_settings
+        )
 
-    def get_handlers(self, FLAGS, user_db, tornado_settings):
+    def get_handlers(self, cfg: "WorldServerConfig", user_db, tornado_settings):
         self.tornado_provider = TornadoPlayerFactory(
             self,
-            FLAGS.hostname,
-            FLAGS.port,
+            cfg.hostname,
+            cfg.port,
             given_tornado_settings=tornado_settings,
             user_db=user_db,
         )
@@ -104,22 +113,23 @@ class RegistryApplication(tornado.web.Application):
                 del self.step_callbacks[game_id]
                 del self.game_instances[game_id]
 
-    async def run_new_game(self, game_id, ldb, player_id=None, world_id=None):
+    async def run_new_game(self, game_id, player_id=None, world_id=None):
         if world_id is not None and player_id is not None:
-            builder = UserWorldBuilder(ldb, player_id=player_id, world_id=world_id)
-            _, world = await builder.get_graph()
-            game = await GameInstance.get(game_id, ldb, g=world, opt=self.opt)
-        else:
-            world_config = WorldConfig(
-                episode_db=self.episode_db,
-                model_pool=self.model_pool,
-                opt=self.opt,
+            # TODO remake loading user worlds as part of phase 3
+            raise NotImplementedError(
+                "We don't handle this case yet, will need UserWorldBuilder"
             )
+            # builder = UserWorldBuilder(ldb, player_id=player_id, world_id=world_id)
+            # _, world = await builder.get_graph()
+            # game = await GameInstance.get(game_id, ldb, g=world, opt=self.opt)
+        else:
             game = await GameInstance.get(
-                game_id, ldb, opt=self.opt, world_config=world_config
+                game_id,
+                builder_config=self.builder_config,
+                world_config=self.base_world_config,
             )
             world = game.world
-        game.fill_souls(self.FLAGS, [])
+        game.fill_souls(self.model_pool)
 
         self.game_instances[game_id] = game
         game.register_provider(self.tornado_provider)
@@ -131,16 +141,12 @@ class RegistryApplication(tornado.web.Application):
 
     async def run_tutorial(self, user_id, on_complete):
         game_id = get_rand_id()
-
-        world_config = WorldConfig(
-            episode_db=self.episode_db,
-            model_pool=self.model_pool,
-            opt=self.opt,
-        )
         game = await TutorialInstance.get(
-            game_id, self.ldb, opt=self.opt, world_config=world_config
+            game_id,
+            builder_config=self.tutorial_builder_config,
+            world_config=self.base_world_config,
         )
-        game.fill_souls(self.FLAGS, [])
+        game.fill_souls(self.model_pool)
         world = game.world
 
         async def run_or_cleanup_world():
@@ -215,9 +221,9 @@ class GameCreatorHandler(BaseHandler):
                 # if not user_db.is_world_owned_by(world_id, player):
                 #     self.set_status(403)
                 #     return
-            game = await self.app.run_new_game(game_id, self.app.ldb, player, world_id)
+            game = await self.app.run_new_game(game_id, player, world_id)
         else:
-            game = await self.app.run_new_game(game_id, self.app.ldb)
+            game = await self.app.run_new_game(game_id)
 
         # Create game_provider here
         print("Registering: ", game_id)

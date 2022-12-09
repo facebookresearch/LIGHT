@@ -1,4 +1,3 @@
-
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -24,6 +23,4 @@ then
   exit 1
 fi
 
-CONF_FN=$WEBDIR"/configs/"$1"/config"
-
-cat $CONF_FN | python $SERVER_FILE `xargs -0`
+python $SERVER_FILE deploy=$1

@@ -9,6 +9,7 @@ from omegaconf import MISSING, DictConfig
 import asyncio
 import enum
 
+from light.registry.base_model_loader import ModelConfig, ModelLoader
 from light.registry.parlai_model import ParlAIModelConfig, ParlAIModelLoader
 from light.registry.parlai_remote_model import (
     ParlAIRemoteModelConfig,
@@ -24,19 +25,20 @@ from light.registry.models.starspace_model import (
 )
 
 from parlai.core.agents import Agent
-from typing import List, Any, Union, Dict, Optional, Type
+from typing import List, Any, Union, Dict, Optional, Type, TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from light.registry.hydra_registry import ModelPoolConfig
 
-# We should make a base ModelLoader class
-ModelLoaderClass = Union[Type[ParlAIModelLoader], Type[ParlAIRemoteModelLoader]]
-ModelLoader = Union[ParlAIModelLoader, ParlAIRemoteModelLoader]
-ModelConfig = Union[ParlAIModelConfig, ParlAIRemoteModelConfig]
+ALL_LOADERS_LIST: List[ModelLoader] = [
+    ParlAIModelLoader,
+    ParlAIPolyencoderActingScoreModelLoader,
+    MapStarspaceModelLoader,
+    ParlAIRemoteModelLoader,
+]
 
-ALL_LOADERS: Dict[str, ModelLoaderClass] = {
-    ParlAIModelConfig._loader: ParlAIModelLoader,
-    ParlAIPolyencoderActingScoreModelConfig._loader: ParlAIPolyencoderActingScoreModelLoader,
-    MapStarspaceModelConfig._loader: MapStarspaceModelLoader,
-    ParlAIRemoteModelConfig._loader: ParlAIRemoteModelLoader,
+ALL_LOADERS_MAP: Dict[str, ModelLoader] = {
+    k.CONFIG_CLASS._loader: k for k in ALL_LOADERS_LIST
 }
 
 
@@ -56,25 +58,49 @@ class ModelPool:
     def __init__(self):
         self._model_loaders = {}
 
+    @classmethod
+    async def get_from_config_async(cls, cfg: "ModelPoolConfig") -> "ModelPool":
+        """Initialize a ModelPool with models in the given ModelPoolConfig"""
+        model_pool = cls()
+        models_to_load: Dict[str, ModelConfig] = {}
+        for model_type_name in ModelTypeName:
+            model_type = model_type_name.value
+            if cfg.get(model_type, None) is not None:
+                models_to_load[model_type_name] = cfg.get(model_type)
+        await asyncio.gather(
+            *[
+                model_pool.register_model_async(model_config, [model_name])
+                for model_name, model_config in models_to_load.items()
+            ]
+        )
+        return model_pool
+
+    @classmethod
+    def get_from_config(cls, cfg: "ModelPoolConfig"):
+        """
+        Initialize a ModelPool with models in the given ModelPoolConfig synchronously
+        """
+        return asyncio.run(cls.get_from_config_async(cfg))
+
     async def register_model_async(
-        self, config: Union[DictConfig, ModelConfig], model_names: List[ModelTypeName]
+        self, config: ModelConfig, model_names: List[ModelTypeName]
     ) -> None:
         """
         Takes the given config, loads the model, and
         stores it in the registry under the given names.
         """
-        loader_class = ALL_LOADERS.get(config._loader)
+        loader_class = ALL_LOADERS_MAP.get(config._loader)
         if loader_class is None:
             raise AssertionError(
                 f"Trying to load a model with non-existent loader {config._loader}"
             )
         loader = loader_class(config)
-        await loader.force_load()
+        await loader.load_model()
         for model_name in model_names:
             self._model_loaders[model_name.value] = loader
 
     def register_model(
-        self, config: Union[DictConfig, ModelConfig], model_names: List[str]
+        self, config: ModelConfig, model_names: List[ModelTypeName]
     ) -> None:
         """
         Syncronous model registration for server and script setups

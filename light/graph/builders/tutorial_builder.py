@@ -4,16 +4,23 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.graph.builders.map_json_builder import MapJsonBuilder
+from dataclasses import dataclass
+from light.graph.builders.map_json_builder import MapJsonBuilder, MapJsonBuilderConfig
 from light.world.world import World, WorldConfig
 from light.world.purgatory import TutorialPurgatory
 from light.graph.structured_graph import OOGraph
 
 import asyncio
-from typing import Dict, Optional, Any, TYPE_CHECKING
+from typing import Dict, Optional, Any, TYPE_CHECKING, ClassVar, Type
 
 if TYPE_CHECKING:
     from light.data_model.light_database import LIGHTDatabase
+
+
+@dataclass
+class TutorialBuilderConfig(MapJsonBuilderConfig):
+    _builder: str = "TutorialWorldBuilder"
+    load_map: str = ""
 
 
 class TutorialWorldBuilder(MapJsonBuilder):
@@ -22,17 +29,17 @@ class TutorialWorldBuilder(MapJsonBuilder):
     made to run tutorials. Generally like a single room builder.
     """
 
+    CONFIG_CLASS = ClassVar[Type[TutorialBuilderConfig]]
+
     async def add_random_new_agent_to_graph(self, target_graph):
         """Add an agent to the graph in a random room somewhere"""
         raise Exception("Agents should not be added to tutorials!")
 
-    def build_new_graph(self):
+    def build_new_graph(self, world_config: WorldConfig):
         """
         Create a tutorial graph, not from file
         """
-        opt = self.opt.copy()
-        opt["tutorial"] = True
-        graph = OOGraph(opt)
+        graph = OOGraph(title="tutorial")
         room_node = graph.add_room(
             "Impossible Tavern",
             {
@@ -147,15 +154,15 @@ class TutorialWorldBuilder(MapJsonBuilder):
 
     async def get_graph(self, world_config: Optional[WorldConfig] = None):
         """Create and return a tutorial graph"""
-        if self.opt.get("load_tutorial_map", None) is not None:
-            graph, _ = await super().get_graph()
+        world_config = self._get_attached_config(world_config)
+        if self.map is not None and self.map != "":
+            graph, _ = await super().get_graph(world_config)
         else:
-            graph = self.build_new_graph()
-        opt = self.opt.copy()
-        opt["tutorial"] = True
-        world = World(self._get_attached_config(world_config, opt))
+            graph = self.build_new_graph(world_config)
+        world = World(world_config)
 
         world.oo_graph = graph
         # Force the logging mode to tutorial PRE_LAUNCH_TUTORIAL
+        world.oo_graph.title = "tutorial"
         world.purgatory = TutorialPurgatory(world)
         return graph, world

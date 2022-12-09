@@ -6,14 +6,9 @@
 
 /* SOUL SPAWN MESSAGE STYLES  */
 .soulspawn-container {
-  display: block;
 }
 
 #soulspawn {
-  background-color: #181ab1;
-  border-style: groove;
-  border-color: ivory;
-  border-width: 0.5em;
   margin: auto;
 }
 
@@ -31,8 +26,8 @@
 .soulspawn-subheader {
   text-decoration: underline;
   margin-bottom: 0;
-  font-family: fantasy;
-  font-weight: 900;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
   font-size: 18px;
   color: #fff;
   text-align: center;

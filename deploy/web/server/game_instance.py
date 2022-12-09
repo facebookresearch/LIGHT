@@ -7,6 +7,7 @@
 from light.graph.builders.starspace_all import StarspaceBuilder
 from light.graph.builders.map_json_builder import MapJsonBuilder
 from light.graph.builders.tutorial_builder import TutorialWorldBuilder
+from light.graph.builders.base import GraphBuilderConfig
 from light.world.souls.repeat_soul import RepeatSoul
 from light.world.souls.models.generative_heuristic_model_soul import (
     GenerativeHeuristicModelSoul,
@@ -14,19 +15,18 @@ from light.world.souls.models.generative_heuristic_model_soul import (
 from light.world.souls.models.tutorial_model_soul import (
     TutorialModelSoul,
 )
+from light.registry.model_pool import ModelPool, ModelTypeName
 
 import os.path
 import time
 import asyncio
 
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, Dict, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from light.data_model.db.environment import EpisodeDB
     from light.world.world import WorldConfig
-
-# TODO specify the models to be using
-USE_MODELS = True
+    from light.graph.structured_graph import OOGraph
 
 
 class Player:
@@ -36,15 +36,15 @@ class Player:
     that stuff
     """
 
-    def __init__(self, graph, player_id):
+    def __init__(self, graph: "OOGraph", player_id: str):
         self.g = graph
         self.id = player_id
         self.init_observe()
 
-    def get_player_id(self):
+    def get_player_id(self) -> str:
         return self.id
 
-    def get_agent_id(self):
+    def get_agent_id(self) -> str:
         return self.g.playerid_to_agentid(self.id)
 
     def act(self):
@@ -84,7 +84,7 @@ class PlayerProvider:
     an array of new players during these calls
     """
 
-    def __init__(self, graphs):
+    def __init__(self, graphs: Dict[str, "OOGraph"]):
         # Graphs should be a map of game_ids to the associated game graph
         self.graphs = graphs
 
@@ -107,19 +107,13 @@ class GameInstance:
 
     def __init__(
         self,
-        game_id,
-        ldb,  # TODO remove this DB
-        g=None,
-        opt=None,
-        world_config: Optional["WorldConfig"] = None,  # TODO make this required
+        game_id: str,
+        builder_config: "GraphBuilderConfig",
+        world_config: "WorldConfig",
     ):
         self.world = None
-        if g is not None:
-            self.world = g
-
         self.world_config = world_config
-        self.opt = opt
-        self.db = ldb
+        self.builder_config = builder_config
         self.game_id = game_id
         self.players = []
         self.providers = []
@@ -128,37 +122,25 @@ class GameInstance:
     @classmethod
     async def get(
         cls,
-        game_id,
-        ldb,  # TODO remove this DB
-        g=None,
-        opt=None,
-        world_config: Optional["WorldConfig"] = None,  # TODO make this required
+        game_id: str,
+        builder_config: "GraphBuilderConfig",
+        world_config: "WorldConfig",
     ) -> "GameInstance":
-        instance = cls(game_id, ldb, g=g, opt=opt, world_config=world_config)
+        instance = cls(
+            game_id, builder_config=builder_config, world_config=world_config
+        )
         await instance._init_world()
         return instance
 
     async def _init_world(self):
-        if self.opt["builder_model"] is not None:
-            _, self.world = await StarspaceBuilder(
-                self.ldb,
-                debug=False,
-                opt=self.world_config.opt,
-            ).get_graph()  # TODO: what are the args that are needed
-        else:
-            self.world_config.opt["load_map"] = os.path.expanduser(
-                "~/LIGHT/scripts/examples/complex_world.json"
-            )
-            world_builder = MapJsonBuilder(
-                episode_db=self.world_config.episode_db, opt=self.world_config.opt
-            )
-            _, self.world = await world_builder.get_graph(
-                world_config=self.world_config
-            )
+        # TODO pull appropriate builder from base GraphBuilder
+        assert self.builder_config._builder == "MapJsonBuilder"
+        world_builder = MapJsonBuilder(self.builder_config)
+        _, self.world = await world_builder.get_graph(world_config=self.world_config)
 
-    def fill_souls(self, FLAGS, model_resources):
+    def fill_souls(self, model_pool: ModelPool):
         purgatory = self.world.purgatory
-        if len(FLAGS.dialog_model_opt_file) <= 3:
+        if not model_pool.has_model(ModelTypeName.DIALOG):
             purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
         else:
             purgatory.register_filler_soul_provider(
@@ -199,29 +181,27 @@ class TutorialInstance(GameInstance):
     def __init__(
         self,
         game_id,
-        ldb,
-        g=None,
-        opt=None,
-        world_config: Optional["WorldConfig"] = None,
+        builder_config: "GraphBuilderConfig",
+        world_config: "WorldConfig",
     ):
-        self.db = ldb
         self._created_time = time.time()
-        super().__init__(game_id, ldb, opt=opt, world_config=world_config)
+        super().__init__(
+            game_id, builder_config=builder_config, world_config=world_config
+        )
         self._should_shutdown = False
         self._did_complete = True
 
     async def _init_world(self):
-        _, tutorial_world = await TutorialWorldBuilder(
-            self.db,
-            opt=self.world_config.opt,
-        ).get_graph(world_config=self.world_config)
+        _, tutorial_world = await TutorialWorldBuilder(self.builder_config).get_graph(
+            world_config=self.world_config
+        )
         self.world = tutorial_world
         self._player_node = tutorial_world.oo_graph.find_nodes_by_name("You")[0]
         self._target_destination = tutorial_world.oo_graph.find_nodes_by_name(
             "Ethereal Mist"
         )[0]
 
-    def fill_souls(self, _FLAGS, model_resources):
+    def fill_souls(self, model_pool: "ModelPool"):
         """Tutorials directly register the tutorial to the DM"""
         self.world.purgatory.register_filler_soul_provider(
             "tutorial",

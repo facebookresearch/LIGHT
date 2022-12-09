@@ -129,6 +129,7 @@ export function useWSDataSource(url) {
   /*---------------STATE----------------*/
   const [isConnected, setConnected] = useState(false);
   const [isErrored, setErrored] = useState(false);
+  const [isIdle, setIsIdle] = useState(false);
   const [isFull, setFull] = useState(false);
   const [persona, setPersona] = useState(null);
   const [location, setLocation] = useState(null);
@@ -245,7 +246,9 @@ export function useWSDataSource(url) {
     setConnected(false);
     websocket.current = null;
   };
-
+  const markPlayerAsIdle = () => {
+    setIsIdle(true);
+  };
   return {
     isConnected,
     messages,
@@ -256,5 +259,7 @@ export function useWSDataSource(url) {
     agents,
     isFull,
     disconnectFromSession,
+    markPlayerAsIdle,
+    isIdle,
   };
 }

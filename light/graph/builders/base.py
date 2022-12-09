@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 import asyncio
 import random, copy
+from dataclasses import dataclass
 from light.graph.builders.db_utils import id_is_usable
 from light.data_model.light_database import (
     LIGHTDatabase,
@@ -40,6 +41,13 @@ POSSIBLE_NEW_ENTRANCES = [
     "nowhere in particular",
     "a flash of light",
 ]
+
+
+@dataclass
+class GraphBuilderConfig(object):
+    """Configuration options for a specific graph builder"""
+
+    pass
 
 
 class GraphBuilder(object):

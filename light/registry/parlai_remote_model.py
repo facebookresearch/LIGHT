@@ -7,17 +7,20 @@
 
 from dataclasses import dataclass, field
 from omegaconf import MISSING, DictConfig
+from copy import deepcopy
+
+import os
 import requests
 import aiohttp
 import asyncio
 import logging
 import json
 
+from light.registry.base_model_loader import ModelConfig, ModelLoader
+
 from parlai.core.agents import Agent
 from parlai.core.message import Message
 from parlai.core.opt import Opt
-from copy import deepcopy
-import os
 
 from typing import List, Any, Dict, Optional
 
@@ -28,7 +31,7 @@ DEFAULT_RETRIES = 3
 DEFAULT_API_FAIL_TEXT = "MODEL RESPONSE FAILED"
 
 
-def is_request_failed_response(resp):
+def is_request_failed_response(resp) -> bool:
     """
     Whether the requests to Metaseq worker have failed.
     It checks this based on the existences of the failure reasons as they get
@@ -94,7 +97,7 @@ async def async_request_many(
     acts: List[Message],
     timeout: Optional[int] = None,
     max_num_tries: int = -1,
-):
+) -> List[Dict[str, Any]]:
     connector = aiohttp.TCPConnector(limit=0)
     timeout_obj = aiohttp.ClientTimeout(total=timeout)
     async with aiohttp.ClientSession(
@@ -136,7 +139,7 @@ class ParlAIRemoteAgentWrapper(Agent):
         self.retries = opt["retries"]
         self.timeout = opt["timeout"]
 
-    async def act(self):
+    async def act(self) -> Message:
         resps = await async_request_many(
             server=self.server,
             acts=[self.observed_act],
@@ -150,12 +153,12 @@ class ParlAIRemoteAgentWrapper(Agent):
             act = Message(resp["act"])
         return act
 
-    def observe(self, observation: Message):
+    def observe(self, observation: Message) -> None:
         self.observed_act = observation
 
 
 @dataclass
-class ParlAIRemoteModelConfig:
+class ParlAIRemoteModelConfig(ModelConfig):
     # As of now, ParlAI is the only model loader.
     # Eventually this could be split into more classes
     # as we incorporate other models.
@@ -175,32 +178,20 @@ class ParlAIRemoteModelConfig:
         },
     )
 
-    def get(self, attr: str, default_val: Optional[Any] = None):
-        """Wrapper to ensure interoperability with hydra DictConfig"""
-        val = self.__dict__.get(attr, default_val)
-        if val == MISSING:
-            val = None
-        return val
 
-
-class ParlAIRemoteModelLoader:
+class ParlAIRemoteModelLoader(ModelLoader):
     """
     Takes in the configuration for a ParlAIRemote model, and establishes the connection
     """
 
+    CONFIG_CLASS = ParlAIRemoteModelConfig
+
     def __init__(self, config: DictConfig):
         self.config = config
-        self.load_model(config)
 
-    async def force_load(self) -> None:
-        """
-        Force the model loader to connect to the remote service and ensure the
-        connection is live.
-        """
-        self.load_model(self.config)
-
-    def load_model(self, config: DictConfig) -> None:
+    async def load_model(self) -> None:
         """Initialize the model from the given config"""
+        config = self.config
         remote_host = config.get("host", DEFAULT_SERVER)
         assert server_is_alive(remote_host), "Remote host failed alive check"
         self.remote_opt = Opt(

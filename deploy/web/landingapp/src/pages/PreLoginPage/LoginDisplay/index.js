@@ -9,6 +9,7 @@ import React, { useState } from "react";
 import "./styles.css";
 /* CUSTOM COMPONENTS */
 import CheckBox from "../../../components/CheckBox";
+import CONFIG from "../../../config.js";
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
 
@@ -24,8 +25,12 @@ const LoginDisplay = () => {
   };
 
   const nextLoc = new URLSearchParams(window.location.search).get("next");
-  const targetStr =
-    "/auth/fblogin" + (nextLoc !== null ? "?next=" + nextLoc : "");
+  var targetStr = null;
+  if (CONFIG.login == "fb") {
+    targetStr = "/auth/fblogin" + (nextLoc !== null ? "?next=" + nextLoc : "");
+  } else {
+    targetStr = "/login";
+  }
   return (
     <div className="w-full h-full flex items-center justify-center flex-col font-mono">
       <h1 className="text-white underline text-4xl mb-1">Login to LIGHT</h1>

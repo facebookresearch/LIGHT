@@ -21,8 +21,6 @@ One issue with a text world, especially one where characters can die in, is that
 
 `content_loggers` attach to `player_souls` and `rooms`, and are used to log events which take place with a human/player.  The important opts to use when building a graph for loggers are
 
-    - `log_path`, which specifies the top level directory to write logs
-
     - `is_logging`, which determines wether loggers should be recording events or not
 
 Files ending in `event.log` record a meta episode from the POV of the room or agent (depending on where the log was attached).  Such log files have the following structure, where each pair of three lines is a new event:

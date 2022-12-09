@@ -1,0 +1,14 @@
+# @package _global_
+
+defaults:
+  - /light/model_pool: remote
+  - /schema/light/db: aws-postgres
+  - /light/db: dev
+
+hostname: dev.light-rpg.ai
+port: 8088
+safety_classifier_path: ""
+is_logging: True
+
+light:
+  model_root: /home/ubuntu/data/models/

@@ -62,9 +62,7 @@ class PlayerSoul(BaseSoul):
             self.roleplaying_score_model = model_pool.get_model(ModelTypeName.SCORING)
         if model_pool.has_model(ModelTypeName.GENERIC_ACTS):
             self.generic_act_model = model_pool.get_model(ModelTypeName.GENERIC_ACTS)
-        self.agent_logger = AgentInteractionLogger(
-            world.oo_graph, target_node, episode_db=world._config.episode_db
-        )
+        self.agent_logger = AgentInteractionLogger(world, target_node)
         provider.register_soul(self)
         self.world.oo_graph.room_id_to_loggers[
             self.target_node.get_room().node_id
