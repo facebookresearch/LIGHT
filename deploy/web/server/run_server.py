@@ -42,6 +42,9 @@ from light import LIGHT_DIR
 CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
 HYDRA_CONFIG_DIR = os.path.join(LIGHT_DIR, "hydra_configs")
 
+DEFAULT_PORT = 35494
+DEFAULT_HOSTNAME = "localhost"
+
 @dataclass
 class WorldServerConfig(ScriptConfig):
     defaults: List[Any] = field(
