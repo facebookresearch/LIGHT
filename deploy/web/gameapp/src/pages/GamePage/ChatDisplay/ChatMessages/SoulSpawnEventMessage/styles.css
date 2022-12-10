@@ -18,7 +18,6 @@
 
 .soulspawn-header {
   color: #fff;
-  text-align: center;
   animation: pulse 1s ease-in-out infinite alternate;
   font-weight: bolder;
 }
@@ -30,18 +29,15 @@
   font-weight: bold;
   font-size: 18px;
   color: #fff;
-  text-align: center;
 }
 
 .soulspawn-text {
   color: #fff;
-  text-align: center;
 }
 
 .soulspawn-star {
-  text-align: center;
-  text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #eef079, 0 0 40px #eef079,
-    0 0 50px #eef079, 0 0 60px #eef079, 0 0 70px #eef079;
+  white-space: nowrap;
+  text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #eef079;
 }
 
 @media only screen and (max-width: 950px) {

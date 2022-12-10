@@ -250,7 +250,8 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         if preauth_context is not None:  # If there is any preauth
             preauth = self.get_secure_cookie("preauth")
             hashed_user_id = json.loads(preauth)
-            user_id = self.user_db.get_player(hashed_user_id).db_id
+            print(hashed_user_id, " ID loaded from preauth")
+            user_id = self.user_db.get_player_by_extern_id(hashed_user_id).db_id
 
             # See if the context matches our generated hash
             context_token = json.loads(self.get_secure_cookie("context_token"))
@@ -299,7 +300,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                 loop.spawn_callback(self.launch_game_for_user, user_id, game_id)
         else:
             self.close()
-            self.redirect("/#/login")
+            self.redirect("/")
 
     def send_alive(self):
         self.safe_write_message(json.dumps({"command": "register", "data": self.sid}))
@@ -332,7 +333,7 @@ class BaseHandler(tornado.web.RequestHandler):
         self.user_db = user_db
 
     def get_login_url(self):
-        return "/#/login"
+        return "/"
 
     def get_current_user(self):
         user_json = self.get_secure_cookie(
@@ -389,7 +390,7 @@ class BaseHandler(tornado.web.RequestHandler):
                 logging.error(e)
         else:
             # In production, reroute to error
-            self.redirect("/#/error")
+            self.redirect("/error")
 
 
 class ApiHandler(BaseHandler):
@@ -483,9 +484,13 @@ class LandingApplication(tornado.web.Application):
     def get_handlers(self, user_db):
         base_handlers = [
             (r"/", LandingHandler, {"user_db": user_db}),
+            (r"/intro", AuthLandingHandler, {"user_db": user_db}),
+            (r"/faq", LandingHandler, {"user_db": user_db}),
+            (r"/tos", LandingHandler, {"user_db": user_db}),
+            (r"/error", LandingHandler, {"user_db": user_db}),
+            (r"/submit_intro", LegalSubmitHandler, {"user_db": user_db}),
             (r"/#(.*)", LandingHandler, {"user_db": user_db}),
             (r"/#/login", LandingHandler, {"user_db": user_db}),
-            (r"/#/error", NotFoundHandler, {"user_db": user_db}),
             (
                 r"/preauth/(.*)/(.*)/(.*)/",
                 PreauthGameHandler,
@@ -519,7 +524,6 @@ class LandingApplication(tornado.web.Application):
             (r"/report", ReportHandler, {"user_db": user_db}),
         ]
         if self.password is not None and len(self.password) > 0:
-            print("Adding login handler ?")
             base_handlers.append(
                 (
                     r"/login",
@@ -547,6 +551,12 @@ class LandingApplication(tornado.web.Application):
         return base_handlers
 
 
+class AuthLandingHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        self.render(here + "/../build/index.html")
+
+
 class LandingHandler(BaseHandler):
     def get(self):
         self.render(here + "/../build/index.html")
@@ -558,8 +568,19 @@ class BuildHandler(BaseHandler):
 
 
 class GameHandler(BaseHandler):
+    def initialize(
+        self,
+        user_db,
+    ):
+        self.user_db = user_db
+
     @tornado.web.authenticated
     def get(self):
+        user_id = self.get_current_user()
+        player = self.user_db.get_player(user_id)
+        if (player.account_status) == PlayerStatus.INTRO:
+            self.redirect("/intro")
+            return
         self.render(here + "/../build/game.html")
 
 
@@ -591,10 +612,12 @@ class PreauthGameHandler(BaseHandler):
         a context auth token we generate the hash for (this way we can assert the
         cookie contents weren't edited).
         """
+        print("Get Preauth", user_id, context_id, auth_token)
         if self.validate_login_details(user_id, context_id, auth_token):
             user_hash = get_salted_hash(user_id)
             context_hash = get_salted_hash(context_id)
             hashed_user_id = f"preauth-{user_hash}"
+            print("creating hashed user", hashed_user_id)
             self.user_db.create_user(extern_id=hashed_user_id, is_preauth=True)
             self.set_secure_cookie(
                 "preauth",
@@ -625,12 +648,7 @@ class PreauthGameHandler(BaseHandler):
             )
             self.render(here + "/../build/game.html")
         else:
-            self.redirect("/#/error")
-
-
-class NotFoundHandler(BaseHandler):
-    def get(self):
-        self.redirect("/#/error")
+            self.redirect("/error")
 
 
 class StaticPageHandler(BaseHandler):
@@ -676,7 +694,8 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
             client_secret=self.app.settings["facebook_secret"],
             code=self.get_argument("code"),
         )
-        return fb_user["id"]
+        salted_string = fb_user["id"] + self.app.tornado_settings['facebook_asid_salt']
+        return hashlib.sha256(salted_string.encode("utf-8")).hexdigest()[:30]
 
     async def get(self):
         redirect = "https://" + self.request.host + "/auth/fblogin"
@@ -689,7 +708,12 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
                 extern_id=fb_app_scoped_id, is_preauth=False
             )
             self.set_current_user(user_id)
-            self.redirect("/play/")
+            player = self.user_db.get_player(user_id)
+            default_next = 'play'
+            if (player.account_status) == PlayerStatus.INTRO:
+                default_next = 'intro'
+            next = self.get_argument("next", default_next)
+            self.redirect("/" + next)
             return
         self.authorize_redirect(
             redirect_uri=redirect,
@@ -736,8 +760,12 @@ class LoginHandler(BaseHandler):
         if password == self.password:
             user_id = self.user_db.create_user(extern_id=name, is_preauth=False)
             self.set_current_user(user_id)
-            # self.redirect(self.get_argument("next", "/"))
-            self.redirect("/play/")
+            player = self.user_db.get_player(user_id)
+            default_next = 'play'
+            if (player.account_status) == PlayerStatus.INTRO:
+                default_next = 'intro'
+            next = self.get_argument("next", default_next)
+            self.redirect("/" + next)
         else:
             error_msg = "?error=" + tornado.escape.url_escape("incorrect")
             self.redirect("/#/login" + error_msg)
@@ -778,6 +806,22 @@ class LogoutHandler(BaseHandler):
         )
         self.redirect("/bye")
 
+
+class LegalSubmitHandler(BaseHandler):
+    def initialize(
+        self,
+        user_db,
+    ):
+        self.user_db = user_db
+
+    @tornado.web.authenticated
+    def post(self):
+        user_id = self.get_current_user()
+        assert user_id is not None, "Can only submit legal with logged in user"
+        player = self.user_db.get_player(user_id)
+        assert player.account_status == PlayerStatus.INTRO, "Must be in intro to submit legal"
+        self.user_db.update_player_status(user_id, PlayerStatus.TUTORIAL)
+        self.write(json.dumps({"data": "Something"}))
 
 class ReportHandler(BaseHandler):
     def post(self):

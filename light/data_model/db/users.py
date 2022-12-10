@@ -30,6 +30,7 @@ SQLBase = declarative_base()
 class PlayerStatus(enum.Enum):
     STANDARD = "standard"
     BLOCKED = "blocked"
+    INTRO = "in_intro"
     TUTORIAL = "in_tutorial"
     ADMIN = "admin"
 
@@ -116,7 +117,7 @@ class UserDB(BaseDB):
                 flag_count=0,
                 safety_trigger_count=0,
                 total_messages=0,
-                account_status=PlayerStatus.TUTORIAL,
+                account_status=PlayerStatus.INTRO,
             )
             base_score = DBScoreEntry(
                 score=0,
