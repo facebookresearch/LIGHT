@@ -6,6 +6,7 @@ import os
 import json
 import math
 import random
+import asyncio
 
 from light.graph.events.graph_events import SystemMessageEvent
 
@@ -34,7 +35,7 @@ class QuestLoader:
 
 
 class QuestCreator:
-    def __init__(self, opt):
+    def __init__(self):
         pass
 
     templates = {
@@ -226,7 +227,7 @@ class QuestCreator:
                     best_score = score
             return best_obj
 
-    def rank_quests(quests, quest_scorer_model):
+    async def rank_quests(quests, quest_scorer_model):
         context = "character: " + quests[0]["actor_name"] + "\n"
         context += "persona: " + quests[0]["actor_persona"] + "\n"
         context += "goal: unknown\n"
@@ -240,7 +241,7 @@ class QuestCreator:
             "eval_labels": [cands[0]],
         }
         quest_scorer_model.observe(msg)
-        act = quest_scorer_model.act()
+        act = await quest_scorer_model.act()
         best_act = act["text"]
         quest = None
         for q in quests:
@@ -248,7 +249,7 @@ class QuestCreator:
                 quest = q
         return quest
 
-    def create_quest(actor, graph, quest_scorer_model=None):
+    async def create_quest(actor, graph, quest_scorer_model=None):
         if actor.quests is None or len(actor.quests) == 0:
             actor.quests = []
         else:
@@ -267,7 +268,7 @@ class QuestCreator:
             quest = quests[0]
         else:
             # rank the quests with the model scorer
-            quest = QuestCreator.rank_quests(quests, quest_scorer_model)
+            quest = await QuestCreator.rank_quests(quests, quest_scorer_model)
             if quest is None:
                 return None
 

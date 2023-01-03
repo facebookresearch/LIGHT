@@ -4,20 +4,38 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# To run, use:
-# python scripts/examples/play_map.py --use-models GenerativeHeuristicModelSoul
+"""
+Script for launching and playing a local map
 
-import sys
+Some usage examples:
+Default:
+python scripts/examples/play_map.py
 
-import parlai.utils.misc as parlai_utils
+Complex map:
+python scripts/examples/play_map.py builder.load_map=scripts/examples/complex_world.json
 
-from light.graph.builders.map_json_builder import MapJsonBuilder
+Using some models:
+python scripts/examples/play_map.py /light/model_pool=simple agent_soul=GenerativeHeuristicModelSoul
+
+Using all models:
+python scripts/examples/play_map.py /light/model_pool=baseline agent_soul=GenerativeHeuristicModelSoul
+"""
+
+import hydra
+import os
+from dataclasses import dataclass, field
+from omegaconf import DictConfig, OmegaConf
+from light.registry.hydra_registry import register_script_config, ScriptConfig
+
+from light import LIGHT_DIR
+from light.graph.builders.base import GraphBuilderConfig
+from light.graph.builders.map_json_builder import MapJsonBuilder, MapJsonBuilderConfig
 from light.graph.builders.starspace_all import StarspaceBuilder
+from light.graph.events.graph_events import init_safety_classifier
 from light.data_model.light_database import LIGHTDatabase
 from light.world.utils.terminal_player_provider import TerminalPlayerProvider
-from parlai.core.params import ParlaiParser
-from light.world.world import World
-from light.world.souls.base_soul import BaseSoul
+
+from light.world.world import World, WorldConfig
 from light.world.souls.repeat_soul import RepeatSoul
 from light.world.souls.on_event_soul import OnEventSoul
 from light.world.souls.models.generative_heuristic_model_soul import (
@@ -26,52 +44,29 @@ from light.world.souls.models.generative_heuristic_model_soul import (
 from light.world.souls.models.generative_heuristic_model_with_start_feature_soul import (
     GenerativeHeuristicModelWithStartFeatureSoul,
 )
+from light.registry.model_pool import ModelPool, ModelTypeName
+
+
+from typing import Dict, Any, List
+
 
 import os
 import random
 import numpy
 import asyncio
 
+CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
+HYDRA_CONFIG_DIR = os.path.join(LIGHT_DIR, "hydra_configs")
 random.seed(6)
 numpy.random.seed(6)
-shared_model_content = None
 
 
-def init_world(world_builder):
-    g, world = world_builder.get_graph()
-    purgatory = world.purgatory
-    purgatory.register_shared_args("rpg_model", rpg_model_content)
-    purgatory.register_shared_args("generic_act_model", generic_act_model_content)
-
-    # Choose the type of NPC souls.
-    if opt["use_models"] == "GenerativeHeuristicModelSoul":
-        purgatory.register_filler_soul_provider(
-            "model", GenerativeHeuristicModelSoul, lambda: [shared_model_content]
-        )
-    elif opt["use_models"] == "GenerativeHeuristicModelWithStartFeatureSoul":
-        print("on it")
-        purgatory.register_filler_soul_provider(
-            "model",
-            GenerativeHeuristicModelWithStartFeatureSoul,
-            lambda: [shared_model_content],
-        )
-    elif opt["use_models"] == "OnEventSoul":
-        purgatory.register_filler_soul_provider("repeat", OnEventSoul, lambda: [{}])
-    else:
-        purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
-
-    for empty_agent in world.oo_graph.agents.values():
-        purgatory.fill_soul(empty_agent)
-    provider = TerminalPlayerProvider(purgatory)
-    return provider
-
-
-async def run_with_builder(world_builder):
+async def run_with_builder(init_world):
     """
     Takes in a World object and its OOGraph and allows one to play with a random map
     """
-    player_provider = init_world(world_builder)
-    player_provider.process_terminal_act("")  # get an agent
+    player_provider = await init_world()
+    await player_provider.process_terminal_act("")  # get an agent
     await asyncio.sleep(0.01)
     while True:
         act = input("\raction> ")
@@ -82,110 +77,95 @@ async def run_with_builder(world_builder):
             return
         elif act in ["new", "reset"]:
             print("A mist fills the world and everything resets")
-            player_provider = init_world(world_builder)
-            player_provider.process_terminal_act("")  # get an agent
+            player_provider = await init_world()
+            await player_provider.process_terminal_act("")  # get an agent
             await asyncio.sleep(0.01)
         else:
-            player_provider.process_terminal_act(act)
+            await player_provider.process_terminal_act(act)
         await asyncio.sleep(0.01)
 
 
-parser = ParlaiParser()
-parser.add_argument(
-    "--use-models",
-    type=str,
-    default="OnEventSoul",
-    choices={
-        "OnEventSoul",
-        "RepeatSoul",
-        "GenerativeHeuristicModelSoul",
-        "GenerativeHeuristicModelWithStartFeatureSoul",
-    },
-)
-parser.add_argument(
-    "--light-model-root",
-    type=str,
-    default="/checkpoint/light/models/"
-    # default="/checkpoint/light/models/"
-)
-parser.add_argument(
-    "--load-map", type=str, default="scripts/examples/simple_world.json"
-)
-parser.add_argument("--dont-catch-errors", type="bool", default=True)
-parser.add_argument(
-    "--safety-classifier-path",
-    type=str,
-    default="",
-    # default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
-)
-parser.add_argument(
-    "--magic-db-path",
-    type=str,
-    # default=""
-    default="/checkpoint/light/magic/magic.db,scripts/examples/special_items.db"
-    # default = "scripts/examples/special_items.db"
-)
-parser.add_argument("--allow-save-world", type="bool", default=True)
-parser.add_argument(
-    "--roleplaying-score-model-file",
-    type=str,
-    default="",
-    # default="/checkpoint/light/models/game2020/roleplay_scorer/model",
-)
-parser.add_argument(
-    "--generic-act-model-file",
-    type=str,
-    default="/checkpoint/light/models/game2021/act_model/model",
-)
-parser.add_argument(
-    "--parser-model-file",
-    type=str,
-    default="",  # "/checkpoint/jase/projects/light/parser/parser3/34c_jobid=1/model"
-)
-opt, _unknown = parser.parse_and_process_known_args()
-
-if opt["load_map"] != "none":
-    Builder = MapJsonBuilder
-    ldb = ""
-    world_builder = Builder(ldb, debug=False, opt=opt)
-else:
-    StarspaceBuilder.add_parser_arguments(parser)
-    opt, _unknown = parser.parse_and_process_known_args()
-    ldb = LIGHTDatabase(opt["light_db_file"], read_only=True)
-    world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
-
-if opt["roleplaying_score_model_file"] != "":
-    # Load RPG scorer.
-    rpg_model_content = BaseSoul.load_roleplaying_score_model(
-        opt["roleplaying_score_model_file"]
+@dataclass
+class PlayMapScriptConfig(ScriptConfig):
+    defaults: List[Any] = field(default_factory=lambda: ["_self_", {"conf": "local"}])
+    builder: GraphBuilderConfig = MapJsonBuilderConfig()
+    agent_soul: str = field(
+        default="OnEventSoul",
+        metadata={
+            "help": "The type of soul to populate NPCs with."
+            "One of OnEventSoul, RepeatSoul, GenerativeHeuristicModelSoul, "
+            "GenerativeHeuristicModelWithStartFeatureSoul",
+        },
     )
-else:
-    rpg_model_content = None
-
-if opt["generic_act_model_file"] != "":
-    generic_act_model_content = BaseSoul.load_generic_act_model(
-        opt["generic_act_model_file"]
+    magic_db_path: str = field(
+        # default=""
+        default="/checkpoint/light/magic/magic.db,scripts/examples/special_items.db"
+        # default = "scripts/examples/special_items.db"
     )
-else:
-    generic_act_model_content = None
-
-if opt["use_models"] == "GenerativeHeuristicModelSoul":
-    light_model_root = opt["light_model_root"]
-    shared_model_content = GenerativeHeuristicModelSoul.load_models(
-        light_model_root + "game2021/gen_dialog_model/model.checkpoint",
+    safety_classifier_path: str = field(
+        default="",
+        # default="/checkpoint/light/data/safety/reddit_and_beathehobbot_lists/OffensiveLanguage.txt",
     )
-    shared_model_content["shared_action_model"] = generic_act_model_content.share()
-
-if opt["use_models"] == "GenerativeHeuristicModelWithStartFeatureSoul":
-    light_model_root = opt["light_model_root"]
-    shared_model_content = GenerativeHeuristicModelWithStartFeatureSoul.load_models(
-        light_model_root
-        + "game2021/gen_dialog_model_with_start_feature/model.checkpoint",
-        # light_model_root + "game2021/gen_dialog_model/model.checkpoint",
+    allow_save_world: bool = field(
+        default=True,
     )
-    shared_model_content["shared_action_model"] = generic_act_model_content.share()
+
+
+register_script_config("scriptconfig", PlayMapScriptConfig)
+
+
+@hydra.main(
+    config_path=HYDRA_CONFIG_DIR, config_name="scriptconfig", version_base="1.2"
+)
+def main(cfg: PlayMapScriptConfig):
+    os.environ["LIGHT_MODEL_ROOT"] = os.path.abspath(cfg.light.model_root)
+    model_pool = ModelPool.get_from_config(cfg.light.model_pool)
+    if not model_pool.has_model(ModelTypeName.DIALOG):
+        assert cfg.agent_soul in [
+            "RepeatSoul",
+            "OnEventSoul",
+        ], "Can only use Repeat or OnEvent souls if no models provided"
+
+    # TODO move builder initialization from builder into base GraphBuilder
+    if cfg.builder._builder == "MapJsonBuilder":
+        world_builder = MapJsonBuilder(cfg.builder)
+    else:
+        # TODO FIXME make this all work with Hydra instead
+        # to have stacked configs
+        StarspaceBuilder.add_parser_arguments(parser)
+        opt, _unknown = parser.parse_and_process_known_args()
+        ldb = LIGHTDatabase(opt["light_db_file"], read_only=True)
+        world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
+
+    async def init_new_world() -> TerminalPlayerProvider:
+        g, world = await world_builder.get_graph(
+            world_config=WorldConfig(model_pool=model_pool)
+        )
+        purgatory = world.purgatory
+
+        # Choose the type of NPC souls.
+        if cfg.agent_soul == "GenerativeHeuristicModelSoul":
+            purgatory.register_filler_soul_provider(
+                "model", GenerativeHeuristicModelSoul, lambda: []
+            )
+        elif cfg.agent_soul == "GenerativeHeuristicModelWithStartFeatureSoul":
+            purgatory.register_filler_soul_provider(
+                "model",
+                GenerativeHeuristicModelWithStartFeatureSoul,
+                lambda: [],
+            )
+        elif cfg.agent_soul == "OnEventSoul":
+            purgatory.register_filler_soul_provider("repeat", OnEventSoul, lambda: [])
+        else:
+            purgatory.register_filler_soul_provider("repeat", RepeatSoul, lambda: [])
+
+        for empty_agent in world.oo_graph.agents.values():
+            purgatory.fill_soul(empty_agent)
+        provider = TerminalPlayerProvider(purgatory)
+        return provider
+
+    asyncio.run(run_with_builder(init_new_world))
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run_with_builder(world_builder))
+    main()

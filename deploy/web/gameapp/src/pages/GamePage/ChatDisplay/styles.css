@@ -17,7 +17,6 @@
 
 .chat {
   height: 75vh;
-  background-color: rgb(228, 226, 221);
   overflow-x: hidden;
   border-radius: 10px 10px 0px 0px;
   position: relative;

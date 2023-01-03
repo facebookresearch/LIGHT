@@ -1,0 +1,27 @@
+defaults:
+  - safety/schema: ParlAIRemote
+  - dialog/schema: ParlAIRemote
+  - role_playing_score/schema: ParlAIRemote
+  - action/schema: ParlAIRemote
+  - generic_action/schema: ParlAIRemote
+  - parser/schema: ParlAIRemote
+
+# Set up to correct hosts for any real deploy
+safety:
+  _loader: ParlAIRemote
+  host: http://localhost:30000
+dialog:
+  _loader: ParlAIRemote
+  host: http://localhost:30001
+role_playing_score:
+  _loader: ParlAIRemote
+  host: http://localhost:30002
+action:
+  _loader: ParlAIRemote
+  host: http://localhost:30003
+generic_action:
+  _loader: ParlAIRemote
+  host: http://localhost:30004
+parser:
+  _loader: ParlAIRemote
+  host: http://localhost:30005

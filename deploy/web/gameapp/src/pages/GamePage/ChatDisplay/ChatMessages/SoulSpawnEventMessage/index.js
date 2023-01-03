@@ -24,18 +24,16 @@ const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
   let MissionDesc = MissionArr[1];
 
   /* ----REDUX STATE---- */
-  //TUTORIAL;
+  //TUTORIAL
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   return (
     <div
       id="soulspawn"
-      className={`soulspawn-container message type-setting ${
-        inHelpMode ? "active" : ""
-      }`}
+      className={`soulspawn-container ${inHelpMode ? "active" : ""}`}
       onClick={onClickFunction}
     >
-      <p className="soulspawn-text soulspawn-star">{StarShine1}</p>
+      {/* <p className="soulspawn-text soulspawn-star">{StarShine1}</p>
       <p className="soulspawn-header">Let there be LIGHT</p>
       <p className="soulspawn-text">{Character}</p>
       <p></p>
@@ -56,6 +54,7 @@ const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
         of your ability.
       </p>
       <p className="soulspawn-text soulspawn-star">{StarShine1}</p>
+       */}
     </div>
   );
 };

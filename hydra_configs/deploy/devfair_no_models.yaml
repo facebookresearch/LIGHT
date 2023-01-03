@@ -1,0 +1,15 @@
+# @package _global_
+
+defaults:
+  - /light/model_pool: base
+  - /schema/light/db: local
+  - /light/db: devfair
+
+hostname: localhost
+port: 35496
+safety_classifier_path: ""
+is_logging: false
+disable_builder: true
+
+light:
+  model_root: /checkpoint/light/models/

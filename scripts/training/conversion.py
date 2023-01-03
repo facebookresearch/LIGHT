@@ -15,8 +15,9 @@
 import argparse
 import pickle
 import os
+import asyncio
 from light.graph.structured_graph import OOGraph
-from light.world.world import World
+from light.world.world import World, WorldConfig
 from light.graph.events.graph_events import SoulSpawnEvent, LookEvent
 from scripts.filtering.construct_dataset import convert_event_log_dirs
 
@@ -34,8 +35,8 @@ def execute_events(world, transcript):
         if action != "":
             if action.startswith("gesture"):
                 action = action.replace("gesture", "emote")
-            world.parse_exec(event["id"].lower(), action)
-        world.parse_exec(event["id"].lower(), "say " + event["text"])
+            asyncio.run(world.parse_exec(event["id"].lower(), action))
+        asyncio.run(world.parse_exec(event["id"].lower(), "say " + event["text"]))
 
 
 def process_episodes(src, log_dir):
@@ -50,7 +51,7 @@ def process_episodes(src, log_dir):
         ep["graph"]._opt["is_logging"] = True
         ep["graph"]._opt["log_path"] = log_dir
         new_g = OOGraph.from_graph(ep["graph"])
-        world = World(new_g._opt, None)
+        world = World(WorldConfig(opt=new_g._opt))
         world.oo_graph = new_g
         transcript = ep["conv_info"]["acts"]
         players = [x for x in new_g.all_nodes.values() if x.agent and x.is_player]

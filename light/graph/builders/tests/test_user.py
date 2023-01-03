@@ -10,6 +10,7 @@ import sqlite3
 import os
 import pickle
 import random
+import asyncio
 
 from light.graph.builders.base import DBGraphBuilder
 from light.graph.builders.user_world_builder import UserWorldBuilder
@@ -103,7 +104,7 @@ class TestWorldGraphBuilder(unittest.TestCase):
         self.graphBuilder = UserWorldBuilder(
             self.ldb, self.world_id, self.player_id, True, opt
         )
-        self.testGraph, self.testWorld = self.graphBuilder.get_graph()
+        self.testGraph, self.testWorld = asyncio.run(self.graphBuilder.get_graph())
 
     def tearDown(self):
         shutil.rmtree(self.data_dir)
@@ -115,7 +116,7 @@ class TestWorldGraphBuilder(unittest.TestCase):
         dbid_to_g = {val: key for key, val in self.graphBuilder.roomid_to_db.items()}
         gRoomId = dbid_to_g[self.roomID]
         gRoomId2 = dbid_to_g[self.roomID2]
-        self.graphBuilder.add_random_new_agent_to_graph(self.testWorld)
+        asyncio.run(self.graphBuilder.add_random_new_agent_to_graph(self.testWorld))
         self.assertEqual(len(self.testGraph.agents), 3)
         contained_room_1 = len(self.testGraph.get_node(gRoomId).contained_nodes)
         contained_room_2 = len(self.testGraph.get_node(gRoomId2).contained_nodes)

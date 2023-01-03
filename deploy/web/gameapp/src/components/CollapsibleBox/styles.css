@@ -5,8 +5,6 @@
  */
 
 .collapsible-container {
-  border-radius: 25px;
-  box-shadow: 5px 2px 5px;
   margin: 10px auto 10px auto;
   width: 90%;
 }
@@ -27,7 +25,7 @@
 .collapsible-header--text {
   margin-bottom: 0px;
   margin-top: 2px;
-  font-family: fantasy;
+  font-family: "Courier New", Courier, monospace;
   text-align: center;
   margin-left: 2em;
 }
@@ -53,7 +51,7 @@
   .collapsible-header--text {
     margin-bottom: 0px;
     margin-top: 2px;
-    font-family: fantasy;
+    font-family: "Courier New", Courier, monospace;
     text-align: center;
     margin-left: 2em;
     font-size: 10;

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -11,6 +13,7 @@ from deploy.web.server.game_instance import (
 
 import argparse
 import socket
+import asyncio
 
 DEFAULT_HOSTNAME = "localhost"
 DEFAULT_PORT = 35495
@@ -37,7 +40,7 @@ class TelnetPlayer(Player):
         if self.text != "":
             agent_id = self.get_agent_id()
             print(agent_id + ":" + str(self.text))
-            self.g.parse_exec(agent_id, self.text)
+            asyncio.run(self.g.parse_exec(agent_id, self.text))
             self.text = ""
 
     def observe(self):
@@ -56,7 +59,7 @@ class TelnetPlayer(Player):
         only be called the first time this player is initialized.
         """
         agent_id = self.get_agent_id()
-        self.g.parse_exec(agent_id, "look")
+        asyncio.run(self.g.parse_exec(agent_id, "look"))
         self.observe()
 
     def is_alive(self):
@@ -152,7 +155,7 @@ def main():
     random.seed(6)
     numpy.random.seed(6)
 
-    game = GameInstance()
+    game = asyncio.run(GameInstance.get())
     graph = game.world
     provider = TelnetPlayerProvider(graph, FLAGS.hostname, FLAGS.port)
     game.register_provider(provider)

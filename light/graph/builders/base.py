@@ -3,7 +3,9 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+import asyncio
 import random, copy
+from dataclasses import dataclass
 from light.graph.builders.db_utils import id_is_usable
 from light.data_model.light_database import (
     LIGHTDatabase,
@@ -23,6 +25,13 @@ from light.graph.builders.base_elements import (
     DBCharacter,
 )
 
+from typing import Any, Dict, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from light.registry.model_pool import ModelPool
+    from parlai.core.message import Message
+    from parlai.core.agents import Agent as ParlAIAgent
+
 # Possible new entrances for add_new_random_agent
 POSSIBLE_NEW_ENTRANCES = [
     "somewhere you can't see",
@@ -32,6 +41,13 @@ POSSIBLE_NEW_ENTRANCES = [
     "nowhere in particular",
     "a flash of light",
 ]
+
+
+@dataclass
+class GraphBuilderConfig(object):
+    """Configuration options for a specific graph builder"""
+
+    pass
 
 
 class GraphBuilder(object):
@@ -45,11 +61,11 @@ class GraphBuilder(object):
         set other parameters as required to build graphs using this builder"""
         raise NotImplementedError
 
-    def add_random_new_agent_to_graph(self, target_graph):
+    async def add_random_new_agent_to_graph(self, target_graph):
         """Add an agent to the graph in a random room somewhere"""
         raise NotImplementedError
 
-    def get_graph(self):
+    async def get_graph(self):
         """Return an OOGraph built by this builder"""
         raise NotImplementedError
 
@@ -210,24 +226,23 @@ class SingleSuggestionGraphBuilder(object):
     """Abstract class that defines methods to obtain suggestions from models
     for building LIGHT worlds and related graphs"""
 
-    def __init__(self, opt, model_path=""):
+    def __init__(self, model_pool: "ModelPool"):
         """Initalize  SingleSuggestionGraphBuilder to access suggestion models"""
-        self.agents = {}
-        self.model_path = model_path
-        self.opt = copy.deepcopy(opt)
+        self.agents: Dict[str, "ParlAIAgent"] = {}
+        self.model_pool = model_pool
 
-    def load_models(self):
+    def load_models(self) -> None:
         """abstract method for loading models for suggestions"""
         raise NotImplementedError
 
-    def agent_recommend(self, observation, agent_type):
+    async def agent_recommend(self, observation, agent_type) -> "Message":
         """Return a response when querying a specific
         type of agent and return the model response"""
         assert agent_type in self.agents, "Agent type not found in existing agents"
         self.agents[agent_type].reset()
         msg = {"text": observation, "episode_done": True}
         self.agents[agent_type].observe(msg)
-        response = self.agents[agent_type].act()
+        response = await self.agents[agent_type].act()
         return response
 
     def get_description(self, txt_feat, element_type, num_results=5):

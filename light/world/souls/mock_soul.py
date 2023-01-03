@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from light.graph.elements.graph_nodes import GraphAgent
-    from light.graph.world.world import World
+    from light.world.world import World
     from light.graph.events.base import GraphEvent
 
 
@@ -39,8 +39,8 @@ class MockSoul(Soul):
         """
         self.observations.append(event)
 
-    def reap(self):
+    async def reap(self):
         """
         MockSouls don't have any extra resources, and thus don't need to clean up.
         """
-        super().reap()
+        await super().reap()

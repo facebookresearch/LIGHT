@@ -23,7 +23,7 @@
   text-align: center;
   position: absolute;
   top: -6%;
-  font-family: fantasy;
+  font-family: "Courier New", Courier, monospace;
   font-weight: bolder;
 }
 
@@ -41,7 +41,7 @@
 .missionsuccess-star__exp {
   position: absolute;
   z-index: 10;
-  font-family: fantasy;
+  font-family: "Courier New", Courier, monospace;
   color: white;
   top: 20%;
   left: 30%;

@@ -24,7 +24,7 @@ function uuidv4() {
 
 // MESSAGE REDUCER
 const reducer = (state, msg) => {
-  window.top.postMessage(JSON.stringify(msg), "*");
+  window.parent.postMessage(JSON.stringify(msg), "*");
   if (
     msg.text &&
     msg.text.indexOf("You mumble something incomprehensible") >= 0
@@ -129,10 +129,12 @@ export function useWSDataSource(url) {
   /*---------------STATE----------------*/
   const [isConnected, setConnected] = useState(false);
   const [isErrored, setErrored] = useState(false);
+  const [isIdle, setIsIdle] = useState(false);
   const [isFull, setFull] = useState(false);
   const [persona, setPersona] = useState(null);
   const [location, setLocation] = useState(null);
   const [agents, setAgents] = useState({});
+  const [aliveInterval, setAliveInterval] = useState(null);
   /*---------------REFS----------------*/
   const websocket = useRef();
   const agentList = useRef(agents);
@@ -225,6 +227,11 @@ export function useWSDataSource(url) {
 
     websocket.current.onopen = () => {
       setConnected(true);
+      const hb = JSON.stringify({ command: "hb", data: {} });
+      var interval = window.setInterval(() => {
+        websocket.current.send(hb);
+      }, 10000);
+      setAliveInterval(interval);
     };
 
     websocket.current.onerror = websocket.current.onclose = (e) => {
@@ -232,13 +239,16 @@ export function useWSDataSource(url) {
       setConnected(false);
       setErrored(true);
       websocket.current = null;
+      window.clearInterval(aliveInterval);
     };
   }
   const disconnectFromSession = () => {
     setConnected(false);
     websocket.current = null;
   };
-
+  const markPlayerAsIdle = () => {
+    setIsIdle(true);
+  };
   return {
     isConnected,
     messages,
@@ -249,5 +259,7 @@ export function useWSDataSource(url) {
     agents,
     isFull,
     disconnectFromSession,
+    markPlayerAsIdle,
+    isIdle,
   };
 }
