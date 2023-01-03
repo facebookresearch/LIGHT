@@ -46,7 +46,7 @@ const WelcomeDisplay = ({
   };
 
   return (
-    <div className="ml-16 w-1/2 font-mono text-2xl flex items-start flex-col justify-start">
+    <div className="flex flex-col sm:items-center sm:pl-4 sm:w-1/3 sm:overflow-y-hidden sm:h-32 md:h-full md:items-start md:justify-center md:ml-16 md:w-1/2 font-mono md:text-2xl">
       <h1 className="text-white font-mono">Landing in LIGHT</h1>
       {terminalDialogue.map((entry, index) => (
         <TerminalEntry

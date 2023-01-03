@@ -52,7 +52,7 @@ const AgentMessage = ({
       >
         <div className="flex flex-col">
           <ChatBubble align="left" actor={actor.toUpperCase()} action="default">
-            <div className="flex flex-col max-w-md break-words">
+            <div className="flex flex-col max-w-lg break-words">
               <div className="mb-2">{text}</div>
               {isReported ? (
                 <span className="text-error-content">

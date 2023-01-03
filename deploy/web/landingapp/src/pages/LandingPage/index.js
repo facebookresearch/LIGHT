@@ -9,6 +9,7 @@ import React, { useState, useCallback, useEffect, Fragment } from "react";
 import ChatDisplay from "./ChatDisplay";
 import LegalChecklistDisplay from "./LegalChecklistDisplay";
 import SideBarDisplay from "./SideBarDisplay";
+import SideDrawer from "../../components/SideDrawer";
 /* IMAGES */
 import "./styles.css";
 /* COPY */
@@ -152,7 +153,7 @@ const LandingPage = () => {
   }, [messages, introStep]);
 
   return (
-    <>
+    <div className="w-screen h-screen">
       {postLoginStep === 0 ? (
         <div className="flex w-full h-full justify-center  overflow-y-scroll pb-10">
           <LegalChecklistDisplay
@@ -162,11 +163,18 @@ const LandingPage = () => {
         </div>
       ) : null}
       {postLoginStep >= 1 ? (
-        <>
-          <div className="_sidebar-container_ flex-1 relative">
-            <div className="">{introStep >= 4 ? <SideBarDisplay /> : null}</div>
+        <div className="w-full h-full flex flex-row">
+          <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative">
+            {introStep >= 4 ? <SideBarDisplay /> : null}
           </div>
-          <div className="_chat-container_ flex-1 grow-[3] h-full">
+          <div className="_sidebar-container_ flex sm:flex md:hidden lg:hidden">
+            {introStep >= 4 ? (
+              <SideDrawer>
+                <SideBarDisplay />
+              </SideDrawer>
+            ) : null}
+          </div>
+          <div className="_chat-container_  sm: flex-1 md: grow-[3] h-full ">
             {messages ? (
               <ChatDisplay
                 introStep={introStep}
@@ -183,9 +191,9 @@ const LandingPage = () => {
               />
             ) : null}
           </div>
-        </>
+        </div>
       ) : null}
-    </>
+    </div>
   );
 };
 

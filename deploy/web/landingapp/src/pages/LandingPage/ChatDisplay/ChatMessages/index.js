@@ -5,7 +5,7 @@
  */
 
 /* REACT */
-import React from "react";
+import React, { useEffect } from "react";
 /* CUSTOM COMPONENTS */
 import Message from "./Message";
 
@@ -16,10 +16,13 @@ const ChatMessages = ({
   scrollToBottom,
   ratingStepHandler,
 }) => {
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
   return (
     <>
       {messages.map((msg, idx) => (
-        <div className="_chat-message_" key={idx}>
+        <div className="_chat-message_ " key={idx}>
           <Message
             introStep={introStep}
             msg={msg}

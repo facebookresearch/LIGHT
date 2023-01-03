@@ -13,11 +13,13 @@ import { ChatBubble } from "../../../../../../../components/ChatBubble/index.tsx
 const PlayerMessage = ({ text, action }) => {
   return (
     <div
-      className={"_player-message_ flex flex-row justify-end items-center mb-4"}
+      className={
+        "_player-message_ flex flex-row w-full pr-4 justify-end items-end mb-4 "
+      }
     >
-      <div className="_player-message-bubble-container_  ml-10">
+      <div className="_player-message-bubble-container_ ml-10">
         <ChatBubble action={action} actor="YOU" align="right">
-          <div className="_player-message-bubble-text_  max-w-md break-words">
+          <div className="_player-message-bubble-text_ sm:max-w-md break-words">
             {text}
           </div>
           <div className="relative">
