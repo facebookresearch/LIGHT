@@ -77,7 +77,7 @@ const ChatDisplay = ({
 
   const { presentAgents } = getLocationState(messages);
   return (
-    <div className="h-full m-8 flex flex-col">
+    <div className="h-full flex flex-col">
       {nonPlayerAgents.length ? (
         <div className="flex-0 mb-4">
           <ActionBar
@@ -107,7 +107,10 @@ const ChatDisplay = ({
             resetIdleTimer={resetIdleTimer}
           />
           <div className="flex justify-end">
-            <p className="text-base-100 opacity-80 mt-2 text-xs">XP earned in this scene: <strong className="text-warning">{sessionXp}</strong></p>
+            <p className="text-base-100 opacity-80 mt-2 text-xs">
+              XP earned in this scene:{" "}
+              <strong className="text-warning">{sessionXp}</strong>
+            </p>
           </div>
         </div>
       </div>

@@ -155,7 +155,7 @@ const LandingPage = () => {
   return (
     <div className="w-screen h-screen">
       {postLoginStep === 0 ? (
-        <div className="flex w-full h-full justify-center  overflow-y-scroll pb-10">
+        <div className="flex w-full h-full justify-center overflow-y-scroll pt-10 pb-10">
           <LegalChecklistDisplay
             legalAgreements={legalAgreements}
             postLoginStepIncreaseHandler={postLoginStepIncreaseHandler}
@@ -174,7 +174,7 @@ const LandingPage = () => {
               </SideDrawer>
             ) : null}
           </div>
-          <div className="_chat-container_  sm: flex-1 md: grow-[3] h-full ">
+          <div className="_chat-container_  sm: flex-1 md:grow-[3] h-full ">
             {messages ? (
               <ChatDisplay
                 introStep={introStep}

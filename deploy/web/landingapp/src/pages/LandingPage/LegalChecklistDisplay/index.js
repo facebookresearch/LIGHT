@@ -65,8 +65,8 @@ const LegalChecklistDisplay = ({
   };
 
   return (
-    <div className="sm:h-40 w-3/4 md:text-2xl text-mono ">
-      <h2 className="text-white md:text-3xl text-center">
+    <div className=" w-5/6 text-base sm:text-xl md:text-l lg:text-xl xl:text-2xl 2xl:text-4xl text-mono mb-10">
+      <h2 className="text-white font-bold md:text-3xl lg:text-4xl xl:text-4xl text-center">
         To get started, please acknowledge that you have read and agreed to
         every statement below by checking each box.
       </h2>
@@ -84,11 +84,11 @@ const LegalChecklistDisplay = ({
           );
         })}
       </div>
-      <div className="w-full flex justify-center items-center">
+      <div className="w-full flex justify-center items-center mt-4 pb-10">
         <Tooltip
           className="text-white bg-gray-50"
           html={
-            <div className="w-30 h-30 p-3 border-solid border-black rounded bg-white text-black">
+            <div className="w-30 h-30 p-3 lg:w-30 lg:h-30 lg:p-3 lg:text-xl 2xl:w-48 2xl:h-48 2xl:p-4 2xl:text-4xl border-solid border-black rounded bg-white text-black">
               <p>
                 {" "}
                 Please agree to all of the terms above by checking each box in
@@ -108,7 +108,7 @@ const LegalChecklistDisplay = ({
               formFullyCompleted
                 ? "text-green-200 border-green-200 hover:text-blue-400 hover:border-blue-400"
                 : "text-gray-200 border-gray-200"
-            } border-2 p-1 rounded`}
+            } border-2 p-1 lg:p-4 2xl:p-8 rounded`}
             onClick={() => {
               postLoginStepIncreaseHandler();
             }}

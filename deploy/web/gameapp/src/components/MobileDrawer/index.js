@@ -10,10 +10,9 @@ import React, { useState, useEffect } from "react";
 //APP BACKGROUND IMAGE
 import StarryNight from "../../assets/images/light_starry_bg.jpg";
 
-// SideDrawer - Hides and renders children with side orientation
-const SideDrawer = ({ children }) => {
+// MobileDrawer - Hides and renders children with side orientation
+const MobileDrawer = ({ children, isDrawerOpen, setIsDrawerOpen }) => {
   /*--------------- LOCAL STATE ----------------*/
-  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   /*--------------- LIFECYLCLE ----------------*/
 
   /*--------------- HANDLERS ----------------*/
@@ -22,11 +21,10 @@ const SideDrawer = ({ children }) => {
       style={{
         backgroundImage: `linear-gradient(to bottom, #0f0c2999, #302b63aa, #24243ecc), url(${StarryNight})`,
       }}
-      className={`top-0 right-0 w-[100vw] z-30 pb-20 text-white fixed h-full `}
     >
       {children}
     </div>
   );
 };
 
-export default SideDrawer;
+export default MobileDrawer;

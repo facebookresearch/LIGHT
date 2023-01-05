@@ -66,7 +66,9 @@ const TypewriterText = ({
       className={textClass}
       onClick={isButton && isCurrentStep ? clickHandler : null}
     >
-      <p className="sm:text-xs md:text-base">{typedText}</p>
+      <p className="text-s md:text-base lg:text-2xl xl:text-3xl 2xl:text-4xl">
+        {typedText}
+      </p>
     </div>
   );
 };

@@ -5,10 +5,10 @@
  */
 
 const DEV = {
-  host: "https://www.light-rpg.ai",
-  hostname: "www.light-rpg.ai",
-  port: "80",
-  login: "fb",
+  host: "http://localhost",
+  hostname: "localhost",
+  port: "35494",
+  login: "pass",
 };
 
 export default DEV;

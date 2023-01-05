@@ -12,18 +12,22 @@ import { Link, useHistory } from "react-router-dom";
 const TermsPage = () => {
   let history = useHistory();
   return (
-    <div className="__termspage-container__ w-full h-full overflow-y-scroll">
-      <div
-        className="text-white cursor-pointer hover:text-green-100 p-4 text-2xl"
-        onClick={() => history.goBack()}
-      >
-        Back
+    <div className="__termspage-container__ w-screen h-screen">
+      <div className="w-full flex flex-start fixed z-30 back bg-black">
+        <div
+          className=" text-white cursor-pointer hover:text-green-100 p-4 text-2xl"
+          onClick={() => history.goBack()}
+        >
+          Back
+        </div>
       </div>
-      <div className="__termspage-body__ flex justify-center items-center flex-col text-white">
-        <h1 className="__faqspage-header_text__ text-white font-extrabold sm:text-4xl md:text-6xl">
-          Terms & Conditions
-        </h1>
-        <div className="termspage-text__container justify-center items-center md:w-3/5 h-full md:text-2xl">
+      <div className="__termspage-body__ flex flex-col items-center w-full h-full text-white overflow-y-scroll py-20">
+        <div className="__termspage-copy__ w-5/6 mb-26 lg:text-4xl break-all">
+          <div className="__termspage-header_container__ w-full flex justify-center items-center">
+            <h1 className="__termspage-header_text__ w-full text-white font-extrabold text-xl lg:text-6xl mb-4">
+              Terms & Conditions
+            </h1>
+          </div>
           <p className="mb-4">
             By using the LIGHT platform ("LIGHT"), you agree to be bound by Meta
             Platform, Inc.’s Terms of Service (available at{" "}
@@ -46,7 +50,7 @@ const TermsPage = () => {
             ) as supplemented by these LIGHT Supplemental Terms of Service
             (these "Supplemental Terms"). You acknowledge and agree that:
           </p>
-          <ul className=" flex justify-start items-start flex-col list-disc pl-7">
+          <ul className=" flex justify-start items-start flex-col list-disc break-words pl-6">
             <li className="mb-4">
               LIGHT groups both artificial intelligence generated chatbot agents
               ("Agents") and other human players (“Players”) into a shared
@@ -83,7 +87,7 @@ const TermsPage = () => {
               Meta will process the Input and Feedback you submit to LIGHT in
               accordance with our Data Policy ({" "}
               <a
-                className="cursor-pointer text-blue-500 underline hover:text-green-100"
+                className="cursor-pointer text-blue-500 underline hover:text-green-100 break-words"
                 href={"https://www.facebook.com/about/privacy/update"}
                 target="_blank"
               >

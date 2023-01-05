@@ -23,25 +23,25 @@ const LoginDisplay = () => {
     setLegalAgreement(updateAgreement);
   };
   //LOGIN PATHS
-  const nextLoc = new URLSearchParams(window.location.search).get("next");
-  var targetStr = null;
-  if (CONFIG.login == "fb") {
-    targetStr = "/auth/fblogin" + (nextLoc !== null ? "?next=" + nextLoc : "");
-  } else {
-    targetStr = "/login";
-  }
+  // const nextLoc = new URLSearchParams(window.location.search).get("next");
+  // var targetStr = null;
+  // if (CONFIG.login == "fb") {
+  //   targetStr = "/auth/fblogin" + (nextLoc !== null ? "?next=" + nextLoc : "");
+  // } else {
+  //   targetStr = "/login";
+  // }
   return (
-    <div className=" flex-col font-mono w-full sm:h-40 sm:overflow-y-scroll sm:justify-center sm:items-center md:h-full flex md:items-center md:justify-center">
-      <h1 className="text-white underline sm:text-2xl md:text-4xl mb-1">
+    <div className=" flex-col font-mono w-full overflow-y-scroll justify-center items-center h-full flex ">
+      <h1 className="text-white underline font-bold text-2xl md:text-3xl lg:text-4xl xl:text-6xl mb-1">
         Login to LIGHT
       </h1>
-      <div className=" flex flex-row justify-center sm:items-center sm:w-5/6 md:items-start md:w-3/4">
+      <div className=" flex flex-row justify-center items-center w-5/6 text-s md:text-base lg:text-lg xl:text-xl">
         <label className="cursor-pointer label flex flex-row">
           <CheckBox
             checkStatus={legalAgreement}
             checkFunction={toggleAgreement}
           />
-          <span className="text-white md:text-2xl">
+          <span className="text-white">
             By clicking “Sign in with Facebook” below, you are agreeing to the
             LIGHT
             <a
@@ -90,7 +90,7 @@ const LoginDisplay = () => {
           disabled={!!legalAgreement}
           style={{ color: "white", backgroundColor: "black" }}
         >
-          <form action={targetStr} method="get">
+          <form method="get">
             <button
               className={`${
                 legalAgreement

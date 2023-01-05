@@ -35,6 +35,7 @@ import MobileFrame from "../../components/MobileFrame";
 import LoadingPage from "../../pages/LoadingPage";
 import Sidebar from "./Sidebar";
 import SideDrawer from "../../components/SideDrawer";
+import MobileDrawer from "../../components/MobileDrawer";
 import ChatDisplay from "./ChatDisplay";
 import ReportMessageModal from "../../components/Modals/ReportMessageModal";
 /* CONFIG */
@@ -173,6 +174,8 @@ const Chat = ({
   // AGENT AND CHARACTER STATE
   const getEntityId = (agent) => agent.match(/\d+$/)[0];
   const dataModelHost = getDataModelAddress();
+  //MOBILE DRAWER STATE
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
 
   const scrollToBottom = React.useCallback(
     () =>
@@ -370,7 +373,25 @@ const Chat = ({
     >
       <div className="flex h-screen">
         <div className="flex flex-row h-screen">
-          <div className="_sidebar-container_ flex-1 relative">
+          <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative">
+            <Sidebar dataModelHost={dataModelHost} getEntityId={getEntityId} />
+          </div>
+          <div className="_sidebar-container_ flex sm:flex md:hidden lg:hidden xl:hidden 2xl:hidden">
+            {isDrawerOpen ? (
+              <MobileDrawer
+                isDrawerOpen={isDrawerOpen}
+                closeDrawerFunction={() => setIsDrawerOpen(false)}
+              >
+                <Sidebar
+                  dataModelHost={dataModelHost}
+                  getEntityId={getEntityId}
+                />
+              </MobileDrawer>
+            ) : (
+              <div className="bg-yellow-300 w-30 h-30">CLOSE</div>
+            )}
+          </div>
+          {/* <div className="_sidebar-container_ flex-1 relative">
             {showDrawer ? <SideDrawer /> : null}
             {persona ? (
               <Sidebar
@@ -380,8 +401,8 @@ const Chat = ({
             ) : (
               <div />
             )}
-          </div>
-          <div className="_chat-container_ flex-1 grow-[3] h-full">
+          </div> */}
+          <div className="_chat-container_ flex-1 md:grow-[3] lg:grow-[3] xl:grow-[3] 2xl:grow-[3] h-full">
             <ChatDisplay
               scrollToBottom={scrollToBottom}
               messages={messages}

@@ -14,7 +14,7 @@ const FAQSPage = () => {
   let history = useHistory();
   return (
     <div className="__faqspage-container__ w-screen h-screen">
-      <div className="w-full flex flex-start">
+      <div className="w-full flex flex-start fixed z-30 back bg-black">
         <div
           className=" text-white cursor-pointer hover:text-green-100 p-4 text-2xl"
           onClick={() => history.goBack()}
@@ -22,14 +22,14 @@ const FAQSPage = () => {
           Back
         </div>
       </div>
-      <div className="__faqspage-body__ flex flex-col items-center w-full h-full text-white overflow-y-scroll">
-        <div className="__faqspage-copy__ w-3/5 mb-26">
-          <div className="__faqspage-header_container__ flex justify-center items-center">
-            <h1 className="__faqspage-header_text__ text-white font-extrabold text-6xl">
+      <div className="__faqspage-body__ flex flex-col items-center w-full h-full text-white overflow-y-scroll py-20">
+        <div className="__faqspage-copy__ w-4/5 mb-26">
+          <div className="__faqspage-header_container__ w-full flex justify-center items-center">
+            <h1 className="__faqspage-header_text__ w-full text-white font-extrabold text-xl lg:text-6xl mb-4">
               LIGHT FAQ
             </h1>
           </div>
-          <div className="__about-container__ text-white">
+          <div className="__about-container__ text-white lg:text-4xl">
             <h4 className="font-bold underline">About LIGHT</h4>
             <p className="mb-4">
               LIGHT is a research project by Meta AI. Our main goal in this
@@ -80,10 +80,10 @@ const FAQSPage = () => {
               on our github.
             </p>
           </div>
-          <div className="__faq-container__ text-white">
+          <div className="__faq-container__ text-white lg:text-4xl mb-4">
             <h4 className="font-bold underline">FAQ</h4>
             <h5 className="font-bold ">What is LIGHT?</h5>
-            <p className="mb-4">
+            <p className="mt-2 mb-4">
               LIGHT is a research project focused on creating realistic
               interactive AI, set in a multiplayer fantasy text adventure game.
               LIGHT stands for “Learning in Interactive Games with Humans and
