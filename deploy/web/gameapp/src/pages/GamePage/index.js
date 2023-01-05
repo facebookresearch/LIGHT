@@ -373,7 +373,7 @@ const Chat = ({
     >
       <div className="flex h-screen">
         <div className="flex flex-row h-screen">
-          <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative">
+          <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative xl:flex-1 xl:relative 2xl:flex-1 2xl:relative">
             <Sidebar dataModelHost={dataModelHost} getEntityId={getEntityId} />
           </div>
           <div className="_sidebar-container_ flex sm:flex md:hidden lg:hidden xl:hidden 2xl:hidden">
