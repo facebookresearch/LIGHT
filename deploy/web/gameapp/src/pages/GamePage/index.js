@@ -38,6 +38,9 @@ import SideDrawer from "../../components/SideDrawer";
 import MobileDrawer from "../../components/MobileDrawer";
 import ChatDisplay from "./ChatDisplay";
 import ReportMessageModal from "../../components/Modals/ReportMessageModal";
+/* ICONS */
+import { BiRightArrow } from "react-icons/bi";
+
 /* CONFIG */
 import CONFIG from "../../config.js";
 // import { Console } from "console";
@@ -175,7 +178,7 @@ const Chat = ({
   const getEntityId = (agent) => agent.match(/\d+$/)[0];
   const dataModelHost = getDataModelAddress();
   //MOBILE DRAWER STATE
-  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const scrollToBottom = React.useCallback(
     () =>
@@ -388,7 +391,13 @@ const Chat = ({
                 />
               </MobileDrawer>
             ) : (
-              <div className="bg-yellow-300 w-30 h-30">CLOSE</div>
+              <div className=" w-30 h-full flex items-center justify-center">
+                <BiRightArrow
+                  onClick={() => setIsDrawerOpen(true)}
+                  color="yellow"
+                  size={30}
+                />
+              </div>
             )}
           </div>
           {/* <div className="_sidebar-container_ flex-1 relative">

@@ -57,15 +57,7 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
   };
 
   return (
-    <div
-      className={
-        isMobile
-          ? showDrawer
-            ? "mobile-sidebar open"
-            : "mobile-sidebar"
-          : "sidebar"
-      }
-    >
+    <div className={"sidebar"}>
       <TutorialPopover
         tipNumber={1}
         open={inHelpMode && selectedTip === 1}
