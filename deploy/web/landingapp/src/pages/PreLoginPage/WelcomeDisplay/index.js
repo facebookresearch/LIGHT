@@ -4,7 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 /* REACT */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 /* CUSTOM COMPONENTS */
 import TerminalEntry from "./TerminalEntry";
@@ -44,6 +44,17 @@ const WelcomeDisplay = ({
     let nextStep = welcomeStep + 1;
     setWelcomeStep(nextStep);
   };
+
+  useEffect(() => {
+    let shouldRedirect;
+    fetch("/play").then((x) => {
+      console.log(x);
+      shouldRedirect = x.redirected;
+      if (true) {
+        window.location.href = "http://localhost:3000/play";
+      }
+    });
+  }, []);
 
   return (
     <div className="flex flex-col items-start justify-center pl-2 w-4/5 sm:w-2/3 sm:h-32 md:h-full md:ml-16 md:w-2/3 font-mono md:text-2xl lg:text-2xl xl:text-3xl 2xl:text-4xl">
