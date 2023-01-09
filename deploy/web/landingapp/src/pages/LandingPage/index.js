@@ -14,6 +14,8 @@ import SideDrawer from "../../components/SideDrawer";
 import "./styles.css";
 /* COPY */
 import LANDINGAPPCOPY from "../../LandingAppCopy";
+/* ICONS */
+import { BiRightArrow } from "react-icons/bi";
 
 //LandingPage - Renders the Landing Page.  This page renders elements based on stepping through the postLoginSteps.
 //*
@@ -34,6 +36,9 @@ const LandingPage = () => {
   const [submittedActions, setSubmittedActions] = useState([]);
   //CHAT DISPLAY REF
   const chatContainerRef = React.useRef(null);
+  //MOBILE DRAWER STATE
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   /*--------------- HANDLERS ----------------*/
   //postLoginStepIncreaseHandler - iterates through postLoginSteps which triggers different elements to render
   const postLoginStepIncreaseHandler = () => {
@@ -169,7 +174,11 @@ const LandingPage = () => {
           </div>
           <div className="_sidebar-container_ flex sm:flex md:hidden lg:hidden">
             {introStep >= 4 ? (
-              <SideDrawer>
+              <SideDrawer
+                isDrawerOpen={isDrawerOpen}
+                closeDrawerFunction={() => setIsDrawerOpen(false)}
+                openDrawerFunction={() => setIsDrawerOpen(true)}
+              >
                 <SideBarDisplay />
               </SideDrawer>
             ) : null}

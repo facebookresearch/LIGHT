@@ -380,25 +380,16 @@ const Chat = ({
             <Sidebar dataModelHost={dataModelHost} getEntityId={getEntityId} />
           </div>
           <div className="_sidebar-container_ flex sm:flex md:hidden lg:hidden xl:hidden 2xl:hidden">
-            {isDrawerOpen ? (
-              <MobileDrawer
-                isDrawerOpen={isDrawerOpen}
-                closeDrawerFunction={() => setIsDrawerOpen(false)}
-              >
-                <Sidebar
-                  dataModelHost={dataModelHost}
-                  getEntityId={getEntityId}
-                />
-              </MobileDrawer>
-            ) : (
-              <div className=" w-30 h-full flex items-center justify-center">
-                <BiRightArrow
-                  onClick={() => setIsDrawerOpen(true)}
-                  color="yellow"
-                  size={30}
-                />
-              </div>
-            )}
+            <MobileDrawer
+              isDrawerOpen={isDrawerOpen}
+              closeDrawerFunction={() => setIsDrawerOpen(false)}
+              openDrawerFunction={() => setIsDrawerOpen(true)}
+            >
+              <Sidebar
+                dataModelHost={dataModelHost}
+                getEntityId={getEntityId}
+              />
+            </MobileDrawer>
           </div>
           {/* <div className="_sidebar-container_ flex-1 relative">
             {showDrawer ? <SideDrawer /> : null}

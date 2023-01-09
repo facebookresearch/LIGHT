@@ -45,13 +45,14 @@ const WelcomeDisplay = ({
     setWelcomeStep(nextStep);
   };
 
+  //checks to see if player has completed tutorial previously by querying backend then sends player to game if backend would not redirect them back to the tutorial
   useEffect(() => {
-    let shouldRedirect;
-    fetch("/play").then((x) => {
-      console.log(x);
-      shouldRedirect = x.redirected;
-      if (true) {
-        window.location.href = "http://localhost:3000/play";
+    let willRedirect;
+    fetch("http://www.light-rpg.ai/play").then((response) => {
+      console.log(response);
+      willRedirect = response.redirected;
+      if (!willRedirect) {
+        window.location.href = "http://www.light-rpg.ai/play";
       }
     });
   }, []);

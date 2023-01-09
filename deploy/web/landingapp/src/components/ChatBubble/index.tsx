@@ -74,7 +74,7 @@ export function ChatBubble({
         {align === "right" && <ChatBubbleTail align={align} action={action} />}
         {align === "right" && <CharacterName name={actor} />}
       </div>
-      <div className="flex sm:flex flex-col items-center md:hidden lg:hidden">
+      <div className="flex-col items-center flex sm:flex md:hidden lg:hidden">
         {align === "left" && <CharacterName name={actor} />}
         <div
           className={`_chat_bubble_ relative p-4 min-h-[50px] font-medium
@@ -86,8 +86,6 @@ export function ChatBubble({
         >
           <div>{children}</div>
         </div>
-        {align === "right" && <ChatBubbleTail align={align} action={action} />}
-        {align === "right" && <CharacterName name={actor} />}
       </div>
     </>
   );
