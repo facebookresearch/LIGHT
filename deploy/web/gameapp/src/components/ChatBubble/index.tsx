@@ -31,9 +31,21 @@ function ChatBubbleTail({
   );
 }
 
-function CharacterName({ name }: { name: string }) {
+function CharacterName({
+  align,
+  name,
+}: {
+  name: string;
+  align: "left" | "right";
+}) {
   return (
-    <div className="text-sm font-semibold text-black whitespace-pre">
+    <div
+      className={`text-sm font-semibold ${
+        align === "left" ? "text-black" : "text-white"
+      } sm:$${
+        align === "left" ? "text-black" : "text-white"
+      } md:text-white lg:text-white xl:text-white 2xl:text-white whitespace-pre`}
+    >
       {name}
     </div>
   );
@@ -48,7 +60,7 @@ export function ChatBubble({
   return (
     <>
       <div className=" hidden sm:hidden md:flex lg:flex xl:flex 2xl:flex flex-row items-center">
-        {align === "left" && <CharacterName name={actor} />}
+        {align === "left" && <CharacterName name={actor} align={align} />}
         {align === "left" && <ChatBubbleTail align={align} action={action} />}
         <div
           className={`_chat_bubble_ relative p-4 min-h-[50px] font-medium
@@ -61,7 +73,7 @@ export function ChatBubble({
           <div>{children}</div>
         </div>
         {align === "right" && <ChatBubbleTail align={align} action={action} />}
-        {align === "right" && <CharacterName name={actor} />}
+        {align === "right" && <CharacterName name={actor} align={align} />}
       </div>
       <div
         className={`flex flex-row items-center ${
@@ -76,13 +88,13 @@ export function ChatBubble({
           )}
         rounded-md flex justify-center items-center`}
         >
-          <div>
+          <div className="w-10/12">
             <div
               className={`w-full flex flex-row ${
                 align === "left" ? "justify-start" : "justify-end"
               }`}
             >
-              <CharacterName name={actor} />
+              <CharacterName name={actor} align={align} />
             </div>
             <div className="w-full flex justify-center items-center">
               {children}
