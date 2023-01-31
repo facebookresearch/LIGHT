@@ -27,11 +27,24 @@ const PreLoginPage = () => {
   };
   /*-------------- LIFECYCLE ----------------*/
 
+  //Navigates user to intro page upon completion of login
   useEffect(() => {
     if (loginStep >= 2) {
       history.push("/intro");
     }
   }, [loginStep]);
+
+  //checks to see if player has completed tutorial previously by querying backend then sends player to game if backend would not redirect them back to the tutorial
+  useEffect(() => {
+    let willRedirect;
+    fetch("http://www.light-rpg.ai/play").then((response) => {
+      console.log(response);
+      willRedirect = response.redirected;
+      if (!willRedirect) {
+        window.location.href = "http://www.light-rpg.ai/play";
+      }
+    });
+  }, []);
 
   return (
     <div className="flex w-full h-full justify-center items-center flex-col">
@@ -55,8 +68,7 @@ const PreLoginPage = () => {
             className="cursor-pointer underline hover:text-green-100 mr-2"
           >
             Terms
-          </Link>
-          {" "}
+          </Link>{" "}
           <Link
             to="faq"
             className="cursor-pointer underline hover:text-green-100"

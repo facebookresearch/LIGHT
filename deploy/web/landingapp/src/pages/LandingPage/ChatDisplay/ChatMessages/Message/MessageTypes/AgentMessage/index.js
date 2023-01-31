@@ -48,7 +48,7 @@ const AgentMessage = ({
   return (
     <>
       <div
-        className={`_agent-message_ flex flex-row justify-start items-center mb-4 mr-28`}
+        className={`_agent-message_ flex flex-row justify-start items-center mb-4`}
       >
         <div className="flex flex-col">
           <ChatBubble align="left" actor={actor.toUpperCase()} action="default">

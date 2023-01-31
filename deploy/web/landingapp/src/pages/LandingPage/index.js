@@ -137,6 +137,9 @@ const LandingPage = () => {
           setMessages(updatedMessages);
         }
       }
+      if (introStep === 4) {
+        setIsDrawerOpen(true);
+      }
       if (introStep >= 5) {
         setTimeout(() => {
           const requestOptions = {
@@ -169,10 +172,10 @@ const LandingPage = () => {
       ) : null}
       {postLoginStep >= 1 ? (
         <div className="w-full h-full flex flex-row">
-          <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative">
+          <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative xl:flex-1 xl:relative 2xl:flex-1 2xl:relative">
             {introStep >= 4 ? <SideBarDisplay /> : null}
           </div>
-          <div className="_sidebar-container_ flex sm:flex md:hidden lg:hidden">
+          <div className="_sidebar-mobile-container_ flex sm:flex md:hidden lg:hidden">
             {introStep >= 4 ? (
               <SideDrawer
                 isDrawerOpen={isDrawerOpen}
@@ -183,7 +186,7 @@ const LandingPage = () => {
               </SideDrawer>
             ) : null}
           </div>
-          <div className="_chat-container_  sm: flex-1 md:grow-[3] h-full ">
+          <div className="_chat-container_ flex-1 sm:flex-1 md:grow-[3] lg:grow-[3] xl:grow-[3] 2xl:grow-[3] h-full">
             {messages ? (
               <ChatDisplay
                 introStep={introStep}

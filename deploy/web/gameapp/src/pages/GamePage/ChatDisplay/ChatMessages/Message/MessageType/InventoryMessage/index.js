@@ -7,13 +7,13 @@
 /* REACT */
 import React, { useState, useEffect } from "react";
 /* REDUX */
-import { useAppSelector } from "../../../../../app/hooks";
+import { useAppSelector } from "../../../../../../../app/hooks";
 /* STYLES */
 import "./styles.css";
 /* ICONS */
 import { GiSwapBag } from "react-icons/gi";
 /* CUSTOM COMPONENTS */
-import TutorialPopover from "../../../../../components/TutorialPopover";
+import TutorialPopover from "../../../../../../../components/TutorialPopover";
 
 const InventoryMessage = ({ text, onClickFunction }) => {
   /* ----REDUX STATE---- */

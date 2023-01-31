@@ -9,23 +9,20 @@ import React, { useState, useEffect } from "react";
 /* STYLES */
 import "./styles.css";
 /* REDUX */
-import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../../../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
-import { updateSessionSpentGiftXp } from "../../../../../features/sessionInfo/sessionspentgiftxp-slice";
+import { updateSessionSpentGiftXp } from "../../../../../../../features/sessionInfo/sessionspentgiftxp-slice";
 import {
   setReportModal,
   setReportModalMessageId,
   setReportModalMessage,
   setReportModalActor,
   setReportModalSubmitted,
-} from "../../../../../features/modals/modals-slice";
+} from "../../../../../../../features/modals/modals-slice";
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
-/* CUSTOM COMPONENTS */
-import ReportMessageForm from "./ReportMessageForm";
-import TutorialPopover from "../../../../../components/TutorialPopover";
 /* CONFIG */
-import CONFIG from "../../../../../config.js";
+import CONFIG from "../../../../../../../config.js";
 
 /* ICONS */
 import { BsFillStarFill } from "react-icons/bs";
@@ -40,7 +37,7 @@ import {
   AiOutlineLike,
 } from "react-icons/ai";
 
-import { ChatBubble } from "../../../../../components/ChatBubble";
+import { ChatBubble } from "../../../../../../../components/ChatBubble";
 
 //handleReward - sends award exp to owner of message and message id to backend
 function handleReward(messageId, messageOwner) {

@@ -63,18 +63,28 @@ export function ChatBubble({
         {align === "right" && <ChatBubbleTail align={align} action={action} />}
         {align === "right" && <CharacterName name={actor} />}
       </div>
-      <div className="flex flex-row items-center">
+      <div
+        className={`flex flex-row items-center ${
+          align === "left" ? "justify-start" : "justify-end"
+        } sm:flex md:hidden lg:hidden xl:hidden 2xl:hidden`}
+      >
         <div
           className={`_chat_bubble_ relative p-4 min-h-[50px] font-medium
         ${getActionThemeColor("bg", action)} ${getActionThemeColor(
             "text",
             action
           )}
-        rounded-md flex justify-center items-center`}
+        rounded-md flex justify-center items-center w-10/12`}
         >
           <div>
-            <CharacterName name={actor} />
-            {children}
+            <div
+              className={`w-full flex flex-row ${
+                align === "left" ? "justify-start" : "justify-end"
+              }`}
+            >
+              <CharacterName name={actor} />
+            </div>
+            <div className="w-full flex ">{children}</div>
           </div>
         </div>
       </div>

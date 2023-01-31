@@ -24,13 +24,12 @@ import cx from "classnames";
 import SideBarHeader from "./SideBarHeader";
 import CollapsibleBox from "../../../components/CollapsibleBox";
 import IconCollapsibleBox from "../../../components/IconCollapsibleBox";
-import GameButton from "../../../components/GameButton";
-import IconButton from "../../../components/IconButtons/InfoButton";
 import TutorialPopover from "../../../components/TutorialPopover";
 
 //SiderBar - renders Sidebar for application container player, location, mission, and character info as well as xp, giftxp, and progress
 const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
   /* LOCAL STATE */
+  //
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   /* ----REDUX STATE---- */
   //IsMobile
@@ -57,7 +56,7 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
   };
 
   return (
-    <div className={"sidebar"}>
+    <div className="__sidebar__  h-full">
       <TutorialPopover
         tipNumber={1}
         open={inHelpMode && selectedTip === 1}
@@ -65,28 +64,28 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
       >
         <SideBarHeader />
       </TutorialPopover>
-      <div
-        className={cx("icon", { editing: showEmojiPicker })}
-        style={{ cursor: "pointer" }}
-      >
-        {dataModelHost && (
-          <Tooltip
-            style={{ position: "absolute", bottom: 0, right: 5 }}
-            title={`suggest changes for ${persona.name}`}
-            position="bottom"
-          >
-            <a
-              className="data-model-deep-link"
-              href={`${dataModelHost}/edit/${getEntityId(persona.id)}`}
-              rel="noopener noreferrer"
-              target="_blank"
+      <div className={`__sidebar-body__  overflow-y-scroll h-5/6`}>
+        <div
+          className={cx("icon", { editing: showEmojiPicker })}
+          style={{ cursor: "pointer" }}
+        >
+          {dataModelHost && (
+            <Tooltip
+              style={{ position: "absolute", bottom: 0, right: 5 }}
+              title={`suggest changes for ${persona.name}`}
+              position="bottom"
             >
-              <i className="fa fa-edit" aria-hidden="true" />
-            </a>
-          </Tooltip>
-        )}
-      </div>
-      <div className={`sidebar-body__container ${isMobile ? "mobile" : ""}`}>
+              <a
+                className="data-model-deep-link"
+                href={`${dataModelHost}/edit/${getEntityId(persona.id)}`}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <i className="fa fa-edit" aria-hidden="true" />
+              </a>
+            </Tooltip>
+          )}
+        </div>
         <IconCollapsibleBox
           title={`You are ${persona.prefix} ${persona.name}`}
           showEmojiPicker={showEmojiPicker}

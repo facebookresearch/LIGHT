@@ -7,14 +7,14 @@
 /* REACT */
 import React, { useState, useEffect } from "react";
 /* REDUX */
-import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
-import { updateSelectedTip } from "../../../../../features/tutorials/tutorials-slice";
+import { useAppDispatch, useAppSelector } from "../../../../../../../app/hooks";
+import { updateSelectedTip } from "../../../../../../../features/tutorials/tutorials-slice";
 /* STYLES */
 import "./styles.css";
 /* ICONS */
 import { FaQuestion } from "react-icons/fa";
 /* CUSTOM COMPONENTS */
-import TutorialPopover from "../../../../../components/TutorialPopover";
+import TutorialPopover from "../../../../../../../components/TutorialPopover";
 
 const HelpMessage = ({ text, onClickFunction }) => {
   /* ----REDUX STATE---- */

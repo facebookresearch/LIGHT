@@ -7,11 +7,11 @@
 /* REACT */
 import React from "react";
 /* REDUX */
-import { useAppSelector } from "../../../../../app/hooks";
+import { useAppSelector } from "../../../../../../../app/hooks";
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */
-import TutorialPopover from "../../../../../components/TutorialPopover";
+import TutorialPopover from "../../../../../../../components/TutorialPopover";
 
 //SoulSpawnEventyMessage - renders soul spawn event bubbles and formats text for that event
 const SoulSpawnEventMessage = ({ text, onClickFunction }) => {

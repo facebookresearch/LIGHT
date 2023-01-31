@@ -13,7 +13,7 @@ import { updateTellTarget } from "../../../../features/chatInput/chatinput-slice
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */
-import Entry from "./Entry";
+import Message from "./Message";
 
 //ChatMessages - Renders messages in chat display by iterating through message reducer returning Entry components
 const ChatMessages = ({ messages, scrollToBottom }) => {
@@ -29,7 +29,7 @@ const ChatMessages = ({ messages, scrollToBottom }) => {
     <>
       {messages.map((msg, idx) => (
         <div className="_chat-message_" key={msg.event_id}>
-          <Entry
+          <Message
             msg={msg}
             agents={agents}
             onReply={(agent) => {

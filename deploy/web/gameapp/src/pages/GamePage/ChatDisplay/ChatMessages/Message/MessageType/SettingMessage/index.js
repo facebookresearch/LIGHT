@@ -7,10 +7,10 @@
 /* REACT */
 import React from "react";
 /* REDUX */
-import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../../../../app/hooks";
 
 /* CUSTOM COMPONENTS */
-import TutorialPopover from "../../../../../components/TutorialPopover";
+import TutorialPopover from "../../../../../../../components/TutorialPopover";
 
 const SettingMessage = ({ text, onClickFunction }) => {
   /* ----REDUX STATE---- */
@@ -32,7 +32,7 @@ const SettingMessage = ({ text, onClickFunction }) => {
           <p key={idx}>{para}</p>
         ))}
       </div>
-      </div>
+    </div>
   );
 };
 export default SettingMessage;

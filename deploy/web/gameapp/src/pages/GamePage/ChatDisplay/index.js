@@ -77,9 +77,9 @@ const ChatDisplay = ({
 
   const { presentAgents } = getLocationState(messages);
   return (
-    <div className="h-full flex flex-col">
+    <div className="__chatdisplay-container__ h-full flex flex-col">
       {nonPlayerAgents.length ? (
-        <div className="flex-0 mb-4">
+        <div className="actionbar-container__ flex-0 mb-4">
           <ActionBar
             presentAgents={nonPlayerAgents}
             getAgentName={getAgentName}
@@ -88,14 +88,14 @@ const ChatDisplay = ({
           />
         </div>
       ) : null}
-      <div className="flex flex-1 flex-col h-full bg-indigo-900 bg-opacity-50 overflow-hidden p-7 rounded-t-md">
+      <div className=" __chatdisplay-chat-container__ flex flex-1 flex-col h-full bg-indigo-900 bg-opacity-50 overflow-hidden p-7 rounded-t-md">
         <div
-          className="flex-1 grow-[5] overflow-y-scroll"
+          className="__chatdisplay-message-container__ w-full sm:w-full md:max-w-full flex-1 grow-[5] overflow-y-scroll"
           ref={chatContainerRef}
         >
           <ChatMessages messages={messages} scrollToBottom={scrollToBottom} />
         </div>
-        <div className="flex-none h-[120px]">
+        <div className="__chatdisplay-chatcontrols-container__  flex-none md:h-[120px]">
           <ChatControls
             onSubmit={onSubmit}
             presentAgents={presentAgents}

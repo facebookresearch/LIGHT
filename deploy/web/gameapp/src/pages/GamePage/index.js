@@ -5,7 +5,7 @@
  */
 
 /* REACT */
-import React, { useState, useCallback, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
@@ -16,30 +16,22 @@ import { updatePersona } from "../../features/playerInfo/persona-slice.ts";
 import { updateXp } from "../../features/playerInfo/xp-slice.ts";
 import { updateGiftXp } from "../../features/playerInfo/giftxp-slice.ts";
 import { updateSessionXp } from "../../features/sessionInfo/sessionxp-slice";
-import { updateSessionSpentGiftXp } from "../../features/sessionInfo/sessionspentgiftxp-slice";
 import { updateSessionEarnedGiftXp } from "../../features/sessionInfo/sessionearnedgiftxp-slice";
 import { updateIsMobile } from "../../features/view/view-slice";
-import { setReportModal } from "../../features/modals/modals-slice";
 /* STYLES */
 import "./styles.css";
 import "react-tippy/dist/tippy.css";
 import "emoji-mart/css/emoji-mart.css";
-/* IMAGES */
-import StarryNight from "../../assets/images/light_starry_bg.jpg";
 /* EMOJI */
 import { DefaultEmojiMapper } from "../../utils";
 import { emojiIndex } from "emoji-mart";
 /* CUSTOM COMPONENTS */
 import { useWSDataSource } from "../../WebSockets/useWSDataSource";
-import MobileFrame from "../../components/MobileFrame";
 import LoadingPage from "../../pages/LoadingPage";
 import Sidebar from "./Sidebar";
-import SideDrawer from "../../components/SideDrawer";
 import MobileDrawer from "../../components/MobileDrawer";
 import ChatDisplay from "./ChatDisplay";
 import ReportMessageModal from "../../components/Modals/ReportMessageModal";
-/* ICONS */
-import { BiRightArrow } from "react-icons/bi";
 
 /* CONFIG */
 import CONFIG from "../../config.js";
@@ -213,8 +205,6 @@ const Chat = ({
     if (persona) {
       let updatedXp = persona.xp;
       let updatedGiftXp = persona.giftXp;
-      console.log("XP", updatedXp);
-      console.log("GIFT XP", updatedGiftXp);
       /* ----PLAYER INFO---- */
       dispatch(updatePersona(persona));
       dispatch(updateXp(updatedXp));
@@ -269,7 +259,6 @@ const Chat = ({
   useEffect(() => {
     if (sessionEarnedGiftXp >= 1 || sessionGiftXpSpent >= 1) {
       let updatedGiftXp = giftXp + sessionEarnedGiftXp - sessionGiftXpSpent;
-      console.log("Updated GIFT XP:  ", updatedGiftXp);
       dispatch(updateGiftXp(updatedGiftXp));
     }
   }, [sessionEarnedGiftXp, sessionGiftXpSpent]);
@@ -285,6 +274,7 @@ const Chat = ({
   }, [agents]);
 
   /* IDLE TIMER */
+  // Increases Idle time by one ever second and at 300 sets playerIdle state to true and disconnects user from session
   useEffect(() => {
     scrollToBottom();
     let timer = null;
@@ -300,6 +290,7 @@ const Chat = ({
     return () => clearInterval(timer);
   }, [idleTime]);
 
+  //
   const resetIdleTimer = () => {
     setIdleTime(0);
   };
@@ -368,18 +359,15 @@ const Chat = ({
 
   return (
     <div
-      style={{
-        backgroundImage: `linear-gradient(to bottom, #0f0c2999, #302b63aa, #24243ecc), url(${StarryNight})`,
-      }}
-      className="_game-page_ flex h-screen w-screen bg-cover bg-top bg-no-repeat"
+      className="__game-page__ w-screen h-screen"
       onMouseMove={resetIdleTimer}
     >
-      <div className="flex h-screen">
-        <div className="flex flex-row h-screen">
+      <div className="__gamepage-container__ w-full h-full flex flex-row">
+        <div className="flex flex-row h-screen w-11/12">
           <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative xl:flex-1 xl:relative 2xl:flex-1 2xl:relative">
             <Sidebar dataModelHost={dataModelHost} getEntityId={getEntityId} />
           </div>
-          <div className="_sidebar-container_ flex sm:flex md:hidden lg:hidden xl:hidden 2xl:hidden">
+          <div className="_sidebar-mobile-container_ flex sm:flex md:hidden lg:hidden xl:hidden 2xl:hidden">
             <MobileDrawer
               isDrawerOpen={isDrawerOpen}
               closeDrawerFunction={() => setIsDrawerOpen(false)}
@@ -391,18 +379,7 @@ const Chat = ({
               />
             </MobileDrawer>
           </div>
-          {/* <div className="_sidebar-container_ flex-1 relative">
-            {showDrawer ? <SideDrawer /> : null}
-            {persona ? (
-              <Sidebar
-                dataModelHost={dataModelHost}
-                getEntityId={getEntityId}
-              />
-            ) : (
-              <div />
-            )}
-          </div> */}
-          <div className="_chat-container_ flex-1 md:grow-[3] lg:grow-[3] xl:grow-[3] 2xl:grow-[3] h-full">
+          <div className="_chat-container_ w-full flex-1 sm:flex-1 md:grow-[3] lg:grow-[3] xl:grow-[3] 2xl:grow-[3] h-full">
             <ChatDisplay
               scrollToBottom={scrollToBottom}
               messages={messages}
@@ -424,62 +401,3 @@ const Chat = ({
 };
 
 export default ConnectedApp;
-
-// <div
-// style={{ backgroundImage: `url(${StarryNight})` }}
-// className={classNames.gamepageContainer}
-// onMouseMove={resetIdleTimer}
-// >
-// {isMobile ? (
-//   <MobileFrame buttons={buttons}>
-//     {persona ? (
-//       <Sidebar
-//         dataModelHost={dataModelHost}
-//         getEntityId={getEntityId}
-//         isMobile={isMobile}
-//         showDrawer={showDrawer}
-//       />
-//     ) : null}
-//     <ChatDisplay
-//       scrollToBottom={scrollToBottom}
-//       messages={messages}
-//       onSubmit={onSubmit}
-//       persona={persona}
-//       location={location}
-//       agents={agents}
-//       getDataModelAddress={getDataModelAddress}
-//       getLocationState={getLocationState}
-//       idle={idle}
-//       resetIdleTimer={resetIdleTimer}
-//     />
-//   </MobileFrame>
-// ) : (
-//   <div className="flex h-screen">
-//     <div className="w-1/4">
-//       {persona ? (
-//         <Sidebar
-//           dataModelHost={dataModelHost}
-//           getEntityId={getEntityId}
-//         />
-//       ) : (
-//         <div />
-//       )}
-//     </div>
-//     <div className=" w-3/4">
-//       <ChatDisplay
-//         scrollToBottom={scrollToBottom}
-//         messages={messages}
-//         onSubmit={onSubmit}
-//         persona={persona}
-//         location={location}
-//         agents={agents}
-//         getDataModelAddress={getDataModelAddress}
-//         getLocationState={getLocationState}
-//         idle={idle}
-//         resetIdleTimer={resetIdleTimer}
-//       />
-//     </div>
-//   </div>
-// )}
-// <ReportMessageModal />
-// </div>

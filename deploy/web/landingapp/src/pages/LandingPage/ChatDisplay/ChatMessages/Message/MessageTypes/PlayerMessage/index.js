@@ -14,14 +14,12 @@ const PlayerMessage = ({ text, action }) => {
   return (
     <div
       className={
-        "_player-message_ flex flex-row w-full pr-4 justify-end items-end mb-4 "
+        "_player-message_ flex flex-row w-full justify-end items-end mb-4 "
       }
     >
-      <div className="_player-message-bubble-container_ ml-10">
+      <div className="_player-message-bubble-container_ ">
         <ChatBubble action={action} actor="YOU" align="right">
-          <div className="_player-message-bubble-text_ sm:max-w-md break-words">
-            {text}
-          </div>
+          <div className="_player-message-bubble-text_ break-all">{text}</div>
           <div className="relative">
             <div className="absolute bg-emerald-500"></div>
           </div>

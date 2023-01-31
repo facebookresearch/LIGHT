@@ -7,16 +7,16 @@
 /* REACT */
 import React, { useState, useEffect, useMemo } from "react";
 /* REDUX */
-import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
-import { updateSelectedTip } from "../../../../../features/tutorials/tutorials-slice";
+import { useAppDispatch, useAppSelector } from "../../../../../../../app/hooks";
+import { updateSelectedTip } from "../../../../../../../features/tutorials/tutorials-slice";
 /* STYLES */
 import "./styles.css";
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
 /* CUSTOM COMPONENTS */
-import TutorialPopover from "../../../../../components/TutorialPopover";
+import TutorialPopover from "../../../../../../../components/TutorialPopover";
 
-import { ChatBubble } from "../../../../../components/ChatBubble";
+import { ChatBubble } from "../../../../../../../components/ChatBubble";
 
 //PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message
 const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
@@ -51,7 +51,7 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
 
   return (
     <div
-      className={`_player-message_ flex flex-row justify-end items-center mb-4
+      className={`_player-message_ flex flex-row w-full justify-end items-center mb-4
       ${inHelpMode ? "active" : ""}`}
       onClick={onClickFunction}
     >

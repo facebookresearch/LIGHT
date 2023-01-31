@@ -1,15 +1,7 @@
-/*****
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
+import React, { useState, useEffect, useMemo } from "react";
 
-/* REACT */
-import React from "react";
-/* STYLING */
 import { getActionThemeColor } from "../../app/theme";
 
-//Checks alignment, actor name, and action type.
 interface Props {
   align: "left" | "right";
   action: string;
@@ -17,7 +9,6 @@ interface Props {
   children: React.ReactNode;
 }
 
-//ChatBubbleTail - orients chat bubble tail to correct side.
 function ChatBubbleTail({
   align,
   action,
@@ -40,16 +31,14 @@ function ChatBubbleTail({
   );
 }
 
-//CharacterName - Character name plate
 function CharacterName({ name }: { name: string }) {
   return (
-    <div className="break-words text-xs font-semibold text-base-100 whitespace-pre">
+    <div className="text-sm font-semibold text-base-100 whitespace-pre">
       {name}
     </div>
   );
 }
 
-//ChatBubble - Chat bubble that agent and user messages appear in.  User message to the right agent messages to the left.  Color of messages is determined by action
 export function ChatBubble({
   align = "left",
   action = "default",
@@ -58,33 +47,45 @@ export function ChatBubble({
 }: Props) {
   return (
     <>
-      <div className="hidden sm:hidden md:flex flex-row items-center">
+      <div className=" hidden sm:hidden md:flex lg:flex xl:flex 2xl:flex flex-row items-center">
         {align === "left" && <CharacterName name={actor} />}
         {align === "left" && <ChatBubbleTail align={align} action={action} />}
         <div
           className={`_chat_bubble_ relative p-4 min-h-[50px] font-medium
-          ${getActionThemeColor("bg", action)} ${getActionThemeColor(
+        ${getActionThemeColor("bg", action)} ${getActionThemeColor(
             "text",
             action
           )}
-          rounded-md flex justify-center items-center`}
+        rounded-md flex justify-center items-center`}
         >
           <div>{children}</div>
         </div>
         {align === "right" && <ChatBubbleTail align={align} action={action} />}
         {align === "right" && <CharacterName name={actor} />}
       </div>
-      <div className="flex-col items-center flex sm:flex md:hidden lg:hidden">
-        {align === "left" && <CharacterName name={actor} />}
+      <div
+        className={`flex flex-row items-center ${
+          align === "left" ? "justify-start" : "justify-end"
+        } sm:flex md:hidden lg:hidden xl:hidden 2xl:hidden`}
+      >
         <div
           className={`_chat_bubble_ relative p-4 min-h-[50px] font-medium
-          ${getActionThemeColor("bg", action)} ${getActionThemeColor(
+        ${getActionThemeColor("bg", action)} ${getActionThemeColor(
             "text",
             action
           )}
-          rounded-md flex justify-center items-center`}
+        rounded-md flex justify-center items-center w-10/12`}
         >
-          <div>{children}</div>
+          <div>
+            <div
+              className={`w-full flex flex-row ${
+                align === "left" ? "justify-start" : "justify-end"
+              }`}
+            >
+              <CharacterName name={actor} />
+            </div>
+            <div className="w-full flex ">{children}</div>
+          </div>
         </div>
       </div>
     </>

@@ -10,7 +10,6 @@ import React from "react";
 import "./styles.css";
 //CUSTOM COMPONENTS
 import ProgressBar from "../../../../components/Progressbar";
-import InfoButton from "../../../../components/IconButtons/InfoButton";
 /* IMAGES */
 import Scribe from "../../../../assets/images/scribe.png";
 
@@ -27,11 +26,6 @@ const SidebarHeader = () => {
           <div className="__sidebar_header_info_progressbar_container__ w-full">
             <p style={{ color: "white" }}> {`You are level 1`} </p>
             <ProgressBar />
-          </div>
-        </div>
-        <div className="__sidebar_header_row_container__ w-1/4 flex flex-row justify-around">
-          <div className="__sidebar_header_button_container__ flex flex-row justify-center items-center">
-            <InfoButton />
           </div>
         </div>
       </div>

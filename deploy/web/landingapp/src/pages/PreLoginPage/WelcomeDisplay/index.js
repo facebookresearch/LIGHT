@@ -45,18 +45,6 @@ const WelcomeDisplay = ({
     setWelcomeStep(nextStep);
   };
 
-  //checks to see if player has completed tutorial previously by querying backend then sends player to game if backend would not redirect them back to the tutorial
-  useEffect(() => {
-    let willRedirect;
-    fetch("http://www.light-rpg.ai/play").then((response) => {
-      console.log(response);
-      willRedirect = response.redirected;
-      if (!willRedirect) {
-        window.location.href = "http://www.light-rpg.ai/play";
-      }
-    });
-  }, []);
-
   return (
     <div className="flex flex-col items-start justify-center pl-2 w-4/5 sm:w-2/3 sm:h-32 md:h-full md:ml-16 md:w-2/3 font-mono md:text-2xl lg:text-2xl xl:text-3xl 2xl:text-4xl">
       <h1 className="text-white font-bold font-mono text-s md:text-base lg:text-2xl xl:text-3xl 2xl:text-4xl">
@@ -64,6 +52,7 @@ const WelcomeDisplay = ({
       </h1>
       {terminalDialogue.map((entry, index) => (
         <TerminalEntry
+          key={index}
           text={entry.text}
           isButton={entry.highlighted}
           textStep={entry.step}

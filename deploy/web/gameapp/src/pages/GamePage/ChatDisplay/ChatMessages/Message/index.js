@@ -6,18 +6,18 @@
 
 /* REACT */
 import React from "react";
-import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
-import { updateSelectedTip } from "../../../../features/tutorials/tutorials-slice";
+import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
+import { updateSelectedTip } from "../../../../../features/tutorials/tutorials-slice";
 /* MESSAGE COMPONENTS */
-import PlayerMessage from "./PlayerMessage";
-import AgentMessage from "./AgentMessage";
-import InventoryMessage from "./InventoryMessage";
-import MissionCompleteMessage from "./MissionCompleteMessage";
-import HelpMessage from "./HelpMessage";
-import SettingMessage from "./SettingMessage";
-import SoulSpawnEventMessage from "./SoulSpawnEventMessage";
-import StatusMessage from "./StatusMessage";
-import QuestMessage from "./QuestMessage";
+import PlayerMessage from "./MessageType/PlayerMessage";
+import AgentMessage from "./MessageType/AgentMessage";
+import InventoryMessage from "./MessageType/InventoryMessage";
+import MissionCompleteMessage from "./MessageType/MissionCompleteMessage";
+import HelpMessage from "./MessageType/HelpMessage";
+import SettingMessage from "./MessageType/SettingMessage";
+import SoulSpawnEventMessage from "./MessageType/SoulSpawnEventMessage";
+import StatusMessage from "./MessageType/StatusMessage";
+import QuestMessage from "./MessageType/QuestMessage";
 
 /* UTIL */
 //get_msg_actor - helper function that retrieves actor sending message.
@@ -29,8 +29,8 @@ function get_msg_actor(msg) {
   }
 }
 
-//Entry - Renders specific type of message component based on individual message object's attributes
-const Entry = ({ msg, onReply, agents, selfId, scrollToBottom }) => {
+//Message - Renders specific type of message component based on individual message object's attributes
+const Message = ({ msg, onReply, agents, selfId, scrollToBottom }) => {
   /* ----REDUX STATE---- */
   //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
@@ -134,4 +134,4 @@ const Entry = ({ msg, onReply, agents, selfId, scrollToBottom }) => {
   }
 };
 
-export default Entry;
+export default Message;

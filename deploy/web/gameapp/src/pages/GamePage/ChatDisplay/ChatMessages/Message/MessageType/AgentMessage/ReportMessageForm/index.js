@@ -8,8 +8,8 @@
 import React, { useEffect, useState } from "react";
 /* STYLES */
 
-/* ICONS */
-import { FaStar } from "react-icons/fa";
+/* CONFIG */
+import CONFIG from "../../../../../../../../config.js";
 
 const ReportCategories = [
   "Report Inappropriate Content",
@@ -39,6 +39,36 @@ const ReportMessageForm = ({
   const categorySelectionHandler = (e) => {
     console.log("DROP DOWN TARGET:  ", e.target.value);
     setReportCategory(e.target.value);
+  };
+
+  const handleReportSubmission = () => {
+    let base_url = window.location.protocol + "//" + CONFIG.hostname;
+    if (CONFIG.port !== "80") {
+      base_url += ":" + CONFIG.port;
+    }
+    console.log("REPORT PAYLOAD:  ", {
+      eventId: eventId,
+      category: reportCategory,
+      message: reportedMessage,
+      reason: reportReason,
+    });
+
+    fetch(`${base_url}/report`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "same-origin",
+      body: JSON.stringify({
+        category: reportCategory,
+        message: reportedMessage,
+        reason: reportReason,
+      }),
+    });
+    setReportReason("");
+    reportedHandler();
+    exitReportMode();
+    scrollToBottom();
   };
 
   return (

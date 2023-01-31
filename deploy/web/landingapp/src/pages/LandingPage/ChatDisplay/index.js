@@ -25,10 +25,10 @@ const ChatDisplay = ({
   chatContainerRef,
 }) => {
   return (
-    <div className="__chatdisplay-container__ flex flex-col h-full md:mt-8">
+    <div className="__chatdisplay-container__ flex flex-col h-full md:mt-8 lg:mt-8 xl:mt-8 2xl:mt-8">
       <div className="__chatdisplay-chat-container__ flex flex-1 flex-col h-full bg-indigo-900 bg-opacity-50 overflow-hidden p-7 rounded-t-md">
         <div
-          className="__chatdisplay-message-container__ sm:max-w-md md:max-w-full flex-1 grow-[5] overflow-y-scroll"
+          className="__chatdisplay-message-container__ w-full sm:w-full md:max-w-full flex-1 grow-[5] overflow-y-scroll"
           ref={chatContainerRef}
         >
           {messages ? (
