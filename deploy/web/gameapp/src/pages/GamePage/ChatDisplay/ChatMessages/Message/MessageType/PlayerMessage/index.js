@@ -51,7 +51,7 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
 
   return (
     <div
-      className={`_player-message_ flex flex-row w-full justify-end items-center mb-4
+      className={`_player-message_ flex flex-row w-full justify-end items-end mb-4
       ${inHelpMode ? "active" : ""}`}
       onClick={onClickFunction}
     >
@@ -71,7 +71,7 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
       ) : null}
       <div className="ml-10">
         <ChatBubble action={action} actor="YOU" align="right">
-          <div className="max-w-md break-words">{text}</div>
+          <div className="_player-message-bubble-text_ break-all">{text}</div>
           <div className="relative">
             <div className="absolute bg-emerald-500">
               <TutorialPopover

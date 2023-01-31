@@ -84,7 +84,7 @@ export function ChatBubble({
             >
               <CharacterName name={actor} />
             </div>
-            <div className="w-full flex ">{children}</div>
+            <div className="w-full flex">{children}</div>
           </div>
         </div>
       </div>

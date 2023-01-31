@@ -210,7 +210,7 @@ const Chat = ({
       dispatch(updateXp(updatedXp));
       dispatch(updateGiftXp(updatedGiftXp));
       //Show Tutorial Modal condition
-      let characterEmoji = DefaultEmojiMapper(persona.name);
+      let characterEmoji = persona.emoji || DefaultEmojiMapper(persona.name);
       if (persona === null || persona.name === null) return;
       const skipWords = ["a", "the", "an", "of", "with", "holding"];
       const tryPickEmojis = !persona
@@ -363,7 +363,7 @@ const Chat = ({
       onMouseMove={resetIdleTimer}
     >
       <div className="__gamepage-container__ w-full h-full flex flex-row">
-        <div className="flex flex-row h-screen w-11/12">
+        <div className="flex flex-row h-screen">
           <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative xl:flex-1 xl:relative 2xl:flex-1 2xl:relative">
             <Sidebar dataModelHost={dataModelHost} getEntityId={getEntityId} />
           </div>

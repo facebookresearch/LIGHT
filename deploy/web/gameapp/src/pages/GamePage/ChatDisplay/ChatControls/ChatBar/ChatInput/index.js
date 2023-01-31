@@ -82,7 +82,9 @@ const ChatInput = ({ onSubmit, resetIdleTimer }) => {
           className={`chatbox-input ${
             inHelpMode ? "active" : ""
           } text-base-100 w-full bg-transparent border-b-[1px] border-b-transparent px-0 py-2 mx-4 font-sans`}
-          placeholder="Something..."
+          placeholder={`${
+            isSaying || tellTarget ? "Say Something" : "Do Something"
+          }`}
           value={chatText}
           onClick={(e) => {
             e.preventDefault();

@@ -24,7 +24,7 @@ import ChatInput from "./ChatInput";
 import SendButton from "./SendButton";
 import TutorialPopover from "../../../../../components/TutorialPopover";
 
-import { getActionThemeColor  } from "../../../../../app/theme";
+import { getActionThemeColor } from "../../../../../app/theme";
 
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
 const ChatBar = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
@@ -90,15 +90,20 @@ const ChatBar = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
     return formattedTellTargetName;
   };
 
-  const action = tellTarget ? 'tell' : (isSaying ? 'say' : 'do');
+  const action = tellTarget ? "tell" : isSaying ? "say" : "do";
 
   return (
-    <div className={`_chat-bar_ w-full rounded ${getActionThemeColor("border", action)} border-2 p-2`}>
+    <div
+      className={`_chat-bar_ w-full rounded ${getActionThemeColor(
+        "border",
+        action
+      )} border-2 p-2`}
+    >
       <div className="flex flex-row items-stretch h-[45px]">
         <div className="flex-0">
           <ChatButtons />
         </div>
-        <div className="flex-1 flex items-center">
+        <div className="flex-1 flex items-center pr-4">
           <ChatInput
             resetIdleTimer={resetIdleTimer}
             onSubmit={chatSubmissionHandler}
