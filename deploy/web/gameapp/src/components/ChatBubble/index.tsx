@@ -33,7 +33,7 @@ function ChatBubbleTail({
 
 function CharacterName({ name }: { name: string }) {
   return (
-    <div className="text-sm font-semibold text-base-100 whitespace-pre">
+    <div className="text-sm font-semibold text-black whitespace-pre">
       {name}
     </div>
   );
@@ -74,7 +74,7 @@ export function ChatBubble({
             "text",
             action
           )}
-        rounded-md flex justify-center items-center w-10/12`}
+        rounded-md flex justify-center items-center`}
         >
           <div>
             <div
@@ -84,7 +84,9 @@ export function ChatBubble({
             >
               <CharacterName name={actor} />
             </div>
-            <div className="w-full flex">{children}</div>
+            <div className="w-full flex justify-center items-center">
+              {children}
+            </div>
           </div>
         </div>
       </div>

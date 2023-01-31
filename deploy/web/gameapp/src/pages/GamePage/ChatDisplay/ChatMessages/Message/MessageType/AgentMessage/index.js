@@ -223,13 +223,13 @@ const AgentMessage = ({
   return (
     <>
       <div
-        className={`_agent-message_ flex flex-row justify-start items-center mb-4 mr-28
+        className={`_agent-message_ w-full flex flex-row justify-start items-center mb-4
         ${inHelpMode ? "active" : ""}`}
         onClick={onClickFunction}
       >
         {isLiked ? (
           <>
-            {isStarred ? (
+            {true ? (
               <BsFillStarFill className={`text-yellow-300`} />
             ) : giftXp > 0 ? (
               <Tooltip
@@ -243,8 +243,8 @@ const AgentMessage = ({
         ) : null}
         <div className="flex flex-col">
           <ChatBubble align="left" actor={actor.toUpperCase()} action="default">
-            <div className="flex flex-col max-w-md break-words">
-              <div className="mb-2">{text}</div>
+            <div className="flex flex-col max-w-md break-all">
+              <p className="mb-2">{text}</p>
               {isReported ? (
                 <span className="text-error-content">
                   This Message Has been reported

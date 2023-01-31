@@ -18,8 +18,6 @@ import TutorialPopover from "../../../../../../../components/TutorialPopover";
 //StatusMessage - Renders Status Message detailing players stats and experience.
 const StatusMessage = ({ text, onClickFunction }) => {
   /* ----REDUX STATE---- */
-  //VIEW
-  const isMobile = useAppSelector((state) => state.view.isMobile);
   //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
@@ -32,25 +30,32 @@ const StatusMessage = ({ text, onClickFunction }) => {
   }, [text]);
 
   return (
-    <div className="status-container" onClick={onClickFunction}>
-      <div className="status-heart__container">
-        <FaHeart className="status-heart" color="red" size="19em" />
-        <div className={`status-content ${inHelpMode ? "active" : ""}`}>
+    <div className="w-full flex justify-center items-center mb-10">
+      <div
+        className={`_status-container_ w-4/5 overflow-hidden border-4 rounded border-red-400 border-double flex justify-center items-center p-4 ${
+          inHelpMode ? "active" : ""
+        }`}
+        onClick={onClickFunction}
+      >
+        <div
+          className={`_status-content_ text-white text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl `}
+        >
           <TutorialPopover
             tipNumber={12}
             open={inHelpMode && selectedTip === 12}
-            osition={isMobile ? "top" : "right"}
+            position="top"
           >
             {statusArr.map((stat, index) => {
               if (index <= 1) {
                 let starStat = parseInt(stat.split(":")[1]);
                 return (
                   <p
-                    className="status-content__entry"
+                    className="_status-content__entry_ flex flex-row justify-center items-center "
                     style={{ marginTop: "1px" }}
                   >
-                    EXPERIENCE {index == 1 ? "GIFT " : ""}POINTS: {starStat}
-                    <span>
+                    EXPERIENCE {index == 1 ? "GIFT " : ""}POINTS:
+                    <span className="_star-count_ flex flex-row justify-center items-center">
+                      {starStat}
                       <FaStar color="yellow" />
                     </span>
                   </p>
@@ -58,7 +63,7 @@ const StatusMessage = ({ text, onClickFunction }) => {
               } else {
                 return (
                   <p
-                    className="status-content__entry"
+                    className="_status-content__entry_ text-white"
                     style={{ marginTop: "1px" }}
                   >
                     {stat}

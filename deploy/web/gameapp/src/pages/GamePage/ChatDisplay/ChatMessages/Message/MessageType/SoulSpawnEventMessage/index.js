@@ -16,12 +16,8 @@ import TutorialPopover from "../../../../../../../components/TutorialPopover";
 //SoulSpawnEventyMessage - renders soul spawn event bubbles and formats text for that event
 const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
   let SpawnArr = text.split("\n");
-  let StarShine1 = SpawnArr[0];
-  let Character = SpawnArr[1];
-  let Description = SpawnArr[3];
   let Mission = SpawnArr[4];
   let MissionArr = Mission.split(":");
-  let MissionDesc = MissionArr[1];
 
   /* ----REDUX STATE---- */
   //TUTORIAL

@@ -18,19 +18,23 @@ const SettingMessage = ({ text, onClickFunction }) => {
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   return (
-    <div className="border-b border-b-[#ffffff33] border-dotted pb-4 mb-4">
-      <div
-        className={`${inHelpMode ? "active" : ""} prose font-mono text-white `}
-        onClick={onClickFunction}
-      >
+    <div className="w-full flex justify-center item-center mb-4">
+      <div className=" border-dotted border-4 rounded border-white flex justify-center items-center p-4">
+        <div
+          className={`${
+            inHelpMode ? "active" : ""
+          } prose font-mono text-white text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl`}
+          onClick={onClickFunction}
+        >
+          {text.split("\n").map((para, idx) => (
+            <p key={idx}>{para}</p>
+          ))}
+        </div>
         <TutorialPopover
           tipNumber={15}
           open={inHelpMode && selectedTip === 15}
-          position="top"
+          position="bottom"
         />
-        {text.split("\n").map((para, idx) => (
-          <p key={idx}>{para}</p>
-        ))}
       </div>
     </div>
   );
