@@ -10,27 +10,18 @@ import React from "react";
 import "./styles.css";
 /* CUSTOM COMPONENTS */
 import ChatBar from "./ChatBar";
-import ActionBar from "../ActionBar";
 import DisconnectMessage from "./DisconnectMessage";
 
 //ChatControls - render container that holds both chat input and "action bar" which contains quick chat speech bubbles for each npc in vincinity
 const ChatControls = ({
-  presentAgents,
-  getAgentName,
-  getEntityId,
-  dataModelHost,
   onSubmit,
   scrollToBottom,
   idle,
   resetIdleTimer,
+  chatInputRef,
 }) => {
-  /* ----------TAILWIND CLASSES--------- */
-  const classNames = {
-    controls: " w-full",
-  };
-
   return (
-    <div className={classNames.controls}>
+    <div className="_chat-controls_ w-full">
       {idle ? (
         <DisconnectMessage />
       ) : (
@@ -39,6 +30,7 @@ const ChatControls = ({
             onSubmit={onSubmit}
             scrollToBottom={scrollToBottom}
             resetIdleTimer={resetIdleTimer}
+            chatInputRef={chatInputRef}
           />
         </>
       )}

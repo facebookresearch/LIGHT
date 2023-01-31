@@ -11,7 +11,6 @@ import Logo from "../../Logo";
 
 //LoadingScreen - renders loading screen when loading, and error screen when connection times out or when server is full
 const LoadingScreen = ({ isFull }) => {
-  console.log(isFull);
   const [isTimedOut, setTimedOut] = React.useState(false);
   const TIMEOUT_SECONDS = 10;
 

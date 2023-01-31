@@ -5,7 +5,13 @@
  */
 
 /* REACT */
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
@@ -81,7 +87,7 @@ const getDataModelAddress = () => {
 
 //ConnectedApp - Creates socket and renders Chat Component upon successful connection to backend.
 const ConnectedApp = () => {
-  const wsUrl = React.useMemo(
+  const wsUrl = useMemo(
     () => createWebSocketUrlFromBrowserUrl(window.location),
     []
   );
@@ -152,27 +158,24 @@ const Chat = ({
   const sessionEarnedGiftXp = useAppSelector(
     (state) => state.sessionEarnedGiftXp.value
   );
-  //MOBILE STATE
-  const isMobile = useAppSelector((state) => state.view.isMobile);
-  //DRAWER STATE
-  const showDrawer = useAppSelector((state) => state.view.showDrawer);
   /* REDUX ACTIONS */
   const selectEmoji = (emoji) => dispatch(updateEmoji(emoji));
 
   /* ------ LOCAL STATE ------ */
-  const [screenSize, setScreenSize] = React.useState(null);
+  const [screenSize, setScreenSize] = useState(null);
   //IDLE STATE
-  const [idleTime, setIdleTime] = React.useState(0);
-  const [idle, setIdle] = React.useState(false);
+  const [idleTime, setIdleTime] = useState(0);
+  const [idle, setIdle] = useState(false);
   //CHAT TEXT STATE
-  const chatContainerRef = React.useRef(null);
+  const chatContainerRef = useRef(null);
+  const chatInputRef = useRef(null);
   // AGENT AND CHARACTER STATE
   const getEntityId = (agent) => agent.match(/\d+$/)[0];
   const dataModelHost = getDataModelAddress();
   //MOBILE DRAWER STATE
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const scrollToBottom = React.useCallback(
+  const scrollToBottom = useCallback(
     () =>
       setTimeout(() => {
         if (chatContainerRef.current)
@@ -322,40 +325,10 @@ const Chat = ({
 
   /* SESSION GIFT XP */
   useEffect(() => {
-    console.log(
-      "giftXp sessionGiftXpSpent sessionGiftXpSpent",
-      giftXp,
-      sessionEarnedGiftXp,
-      sessionGiftXpSpent
-    );
     if (sessionGiftXpSpent >= 1) {
       dispatch(updateGiftXp(giftXp + sessionEarnedGiftXp - sessionGiftXpSpent));
     }
   }, [sessionGiftXpSpent]);
-
-  /* ----------VIEW--------- */
-  /* SCREEN SIZE */
-  const updateDimensions = () => {
-    setScreenSize(window.innerWidth);
-  };
-  /* MOBILE */
-  useEffect(() => {
-    window.addEventListener("resize", updateDimensions);
-    let startingSize = window.innerWidth;
-    if (startingSize <= 950) {
-      dispatch(updateIsMobile(true));
-    } else if (startingSize > 950) {
-      dispatch(updateIsMobile(false));
-    }
-  });
-
-  useEffect(() => {
-    if (screenSize <= 950) {
-      dispatch(updateIsMobile(true));
-    } else if (screenSize > 950) {
-      dispatch(updateIsMobile(false));
-    }
-  }, [screenSize]);
 
   return (
     <div
@@ -391,6 +364,7 @@ const Chat = ({
               getLocationState={getLocationState}
               idle={idle}
               resetIdleTimer={resetIdleTimer}
+              chatInputRef={chatInputRef}
             />
           </div>
         </div>

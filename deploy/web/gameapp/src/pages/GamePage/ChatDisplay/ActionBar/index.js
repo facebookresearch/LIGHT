@@ -30,6 +30,7 @@ const ActionBar = ({
   getAgentName,
   getEntityId,
   dataModelHost,
+  chatInputRef,
 }) => {
   /* ------ REDUX STATE ------ */
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
@@ -69,14 +70,14 @@ const ActionBar = ({
                 if (!inHelpMode) {
                   dispatch(updateIsSaying(false));
                   dispatch(updateTellTarget(agentName));
+                  chatInputRef.current.focus();
                 }
               }}
             >
-              
               <span className="inline-flex">
                 <span className="pr-2">{`${agentName}`}</span> <RiReplyFill />
               </span>
-              
+
               {dataModelHost && (
                 <>
                   {" "}

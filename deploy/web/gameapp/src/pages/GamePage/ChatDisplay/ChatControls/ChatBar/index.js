@@ -27,7 +27,12 @@ import TutorialPopover from "../../../../../components/TutorialPopover";
 import { getActionThemeColor } from "../../../../../app/theme";
 
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
-const ChatBar = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
+const ChatBar = ({
+  onSubmit,
+  scrollToBottom,
+  resetIdleTimer,
+  chatInputRef,
+}) => {
   /* ------ REDUX STATE ------ */
   // VIEW STATE
   const isMobile = useAppSelector((state) => state.view.isMobile);
@@ -74,6 +79,7 @@ const ChatBar = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
         onSubmit(textSubmission);
         dispatch(updateChatText(""));
         scrollToBottom();
+        chatInputRef.current.focus();
       }
     }
   };
@@ -101,12 +107,13 @@ const ChatBar = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
     >
       <div className="flex flex-row items-stretch h-[45px]">
         <div className="flex-0">
-          <ChatButtons />
+          <ChatButtons chatInputRef={chatInputRef} />
         </div>
         <div className="flex-1 flex items-center pr-4">
           <ChatInput
             resetIdleTimer={resetIdleTimer}
             onSubmit={chatSubmissionHandler}
+            chatInputRef={chatInputRef}
           />
         </div>
         <div className="flex-0 flex items-center">

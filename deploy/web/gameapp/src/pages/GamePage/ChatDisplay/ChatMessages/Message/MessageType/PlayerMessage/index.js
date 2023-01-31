@@ -20,12 +20,6 @@ import { ChatBubble } from "../../../../../../../components/ChatBubble";
 
 //PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message
 const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
-  /* ----REDUX STATE---- */
-  console.log("CALLER:  ", caller);
-  console.log("ACTOR:  ", actor);
-  console.log("MESSAGE TEXT:", text);
-  console.log("XP", xp);
-
   //TUTORIAL
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);

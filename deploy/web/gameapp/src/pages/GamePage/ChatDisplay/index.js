@@ -27,6 +27,7 @@ const ChatDisplay = ({
   getLocationState,
   idle,
   resetIdleTimer,
+  chatInputRef,
 }) => {
   /* ----REDUX STATE---- */
   //TUTORIAL;
@@ -47,6 +48,7 @@ const ChatDisplay = ({
   const [nonPlayerAgents, setNonPlayerAgents] = useState([]);
   /*---------------REFS----------------*/
   const chatContainerRef = useRef(null);
+
   /*---------------UT----------------*/
   const getAgentName = (agent) => (agents ? agents[agent] : agent);
   const getEntityId = (agent) => agent.match(/\d+$/)[0];
@@ -85,6 +87,7 @@ const ChatDisplay = ({
             getAgentName={getAgentName}
             getEntityId={getEntityId}
             dataModelHost={dataModelHost}
+            chatInputRef={chatInputRef}
           />
         </div>
       ) : null}
@@ -105,6 +108,7 @@ const ChatDisplay = ({
             scrollToBottom={scrollToBottom}
             idle={idle}
             resetIdleTimer={resetIdleTimer}
+            chatInputRef={chatInputRef}
           />
           <div className="flex justify-end">
             <p className="text-base-100 opacity-80 mt-2 text-xs">
