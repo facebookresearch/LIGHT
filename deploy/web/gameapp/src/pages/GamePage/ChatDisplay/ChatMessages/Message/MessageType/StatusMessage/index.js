@@ -49,10 +49,7 @@ const StatusMessage = ({ text, onClickFunction }) => {
               if (index <= 1) {
                 let starStat = parseInt(stat.split(":")[1]);
                 return (
-                  <p
-                    className="_status-content__entry_ flex flex-row justify-center items-center "
-                    style={{ marginTop: "1px" }}
-                  >
+                  <p className="_status-content__entry_ flex flex-row justify-center items-center ">
                     EXPERIENCE {index == 1 ? "GIFT " : ""}POINTS:
                     <span className="_star-count_ flex flex-row justify-center items-center">
                       {starStat}
@@ -62,12 +59,7 @@ const StatusMessage = ({ text, onClickFunction }) => {
                 );
               } else {
                 return (
-                  <p
-                    className="_status-content__entry_ text-white"
-                    style={{ marginTop: "1px" }}
-                  >
-                    {stat}
-                  </p>
+                  <p className="_status-content__entry_ text-white">{stat}</p>
                 );
               }
             })}

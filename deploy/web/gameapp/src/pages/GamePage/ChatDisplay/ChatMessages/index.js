@@ -28,7 +28,7 @@ const ChatMessages = ({ messages, scrollToBottom }) => {
   return (
     <>
       {messages.map((msg, idx) => (
-        <div className="_chat-message_ w-full" key={msg.event_id}>
+        <div className="_chat-message_ " key={msg.event_id}>
           <Message
             msg={msg}
             agents={agents}

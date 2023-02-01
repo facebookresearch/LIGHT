@@ -151,9 +151,6 @@ const AgentMessage = ({
   /*  LIFE CYCLE */
 
   useEffect(() => {
-    console.log("UPON SHOWREPORT MODAL CHANGE");
-    console.log("reportModalSubmitted:  ", reportModalSubmitted);
-    console.log("isReporting:  ", isReporting);
     if (!showReportModal) {
       if (isReporting && reportModalSubmitted) {
         setIsReported(true);
@@ -169,61 +166,10 @@ const AgentMessage = ({
     console.log("UPON IS REPORTING CHANGE:  ", isReporting);
   }, [isReporting]);
 
-  // if (isEditMode) {
-  //   return (
-  //     <div className="">
-  //       <div className="agent">
-  //         <span>{actor}</span>
-  //         <>
-  //           <i className="fa fa-reply" onClick={() => onReply(actor)} />{" "}
-  //           <i
-  //             className="fa fa-commenting-o "
-  //             onClick={() => setEditMode(false)}
-  //           />
-  //         </>
-  //       </div>
-  //       <div style={{ opacity: 0, height: 1, pointerEvents: "none" }}>
-  //         {text}
-  //       </div>
-  //       <input className="edit-message" defaultValue={text} />
-  //       <button type="submit" onClick={() => setEditMode(false)}>
-  //         Suggest edit
-  //       </button>
-  //       <button type="submit" onClick={() => setEditMode(false)}>
-  //         Suggest edit
-  //       </button>
-  //     </div>
-  //   );
-  // }
-
-  // if (isReportMode) {
-  //   return (
-  //     <ReportMessageForm
-  //       eventId={eventId}
-  //       reportedMessage={text}
-  //       caller={caller}
-  //       actor={actor}
-  //       exitReportMode={exitReportMode}
-  //       reportedHandler={reportedHandler}
-  //     />
-  //   );
-  // }
-
-  // if (isReported) {
-  //   return (
-  //     <div className={classNames}>
-  //       <div className="agent">
-  //         <span>{actor}</span>
-  //       </div>
-  //       <i>We have logged your report of this message</i>
-  //     </div>
-  //   );
-  // }
-
   return (
     <>
       <div
-        className={`_agent-message_ w-full flex flex-row justify-start items-center mb-4
+        className={`_agent-message_ w-full flex mb-4
         ${inHelpMode ? "active" : ""}`}
         onClick={onClickFunction}
       >
@@ -241,10 +187,10 @@ const AgentMessage = ({
             ) : null}
           </>
         ) : null}
-        <div className="flex flex-col">
+        <div className="flex flex-col w-full">
           <ChatBubble align="left" actor={actor.toUpperCase()} action="default">
-            <div className="flex flex-col max-w-md break-all">
-              <p className="mb-2">{text}</p>
+            <div className="flex flex-col break-words">
+              <p className="mb-2 break-words">{text}</p>
               {isReported ? (
                 <span className="text-error-content">
                   This Message Has been reported

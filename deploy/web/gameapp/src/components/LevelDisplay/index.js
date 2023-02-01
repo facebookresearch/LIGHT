@@ -36,13 +36,3 @@ const LevelDisplay = ({ level, giftExperience }) => {
 };
 
 export default LevelDisplay;
-
-/*
-      <Tooltip title="Player Level" position="top">
-        <div className="level-container">
-          <div className="level-circle"/>
-          <p style={{margin:0}} className="level-number"> LVL </p>
-          <p style={{margin:0}}  className="level-number">{level}</p>
-        </div>
-      </Tooltip>
-    */
