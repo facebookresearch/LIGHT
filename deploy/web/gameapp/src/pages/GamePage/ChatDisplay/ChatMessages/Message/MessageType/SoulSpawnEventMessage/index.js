@@ -15,21 +15,41 @@ import TutorialPopover from "../../../../../../../components/TutorialPopover";
 
 //SoulSpawnEventyMessage - renders soul spawn event bubbles and formats text for that event
 const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
-  let SpawnArr = text.split("\n");
-  let Mission = SpawnArr[4];
-  let MissionArr = Mission.split(":");
+  // let SpawnArr = text.split("\n");
+  // let Mission = SpawnArr[4];
+  // let MissionArr = Mission.split(":");
 
   /* ----REDUX STATE---- */
   //TUTORIAL
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   return (
-    <div
-      id="soulspawn"
-      className={`soulspawn-container ${inHelpMode ? "active" : ""}`}
-      onClick={onClickFunction}
-    >
-      {/* <p className="soulspawn-text soulspawn-star">{StarShine1}</p>
+    <div className="w-full flex justify-center item-center mb-4">
+      <TutorialPopover
+        tipNumber={9}
+        open={inHelpMode && selectedTip === 9}
+        position="bottom"
+      >
+        <div
+          className={`${
+            inHelpMode ? "active" : ""
+          } border-dotted border-4 rounded border-white flex justify-center items-center p-4`}
+        >
+          <div
+            className={` prose font-mono text-white text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl`}
+            onClick={onClickFunction}
+          >
+            {text}
+          </div>
+        </div>
+      </TutorialPopover>
+    </div>
+    // <div
+    //   id="soulspawn"
+    //   className={`soulspawn-container ${inHelpMode ? "active" : ""}`}
+    //   onClick={onClickFunction}
+    // >
+    /* <p className="soulspawn-text soulspawn-star">{StarShine1}</p>
       <p className="soulspawn-header">Let there be LIGHT</p>
       <p className="soulspawn-text">{Character}</p>
       <p></p>
@@ -50,8 +70,7 @@ const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
         of your ability.
       </p>
       <p className="soulspawn-text soulspawn-star">{StarShine1}</p>
-       */}
-    </div>
+       */
   );
 };
 export default SoulSpawnEventMessage;
