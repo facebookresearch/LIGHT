@@ -29,24 +29,22 @@ const InventoryMessage = ({ text, onClickFunction }) => {
     setInventoryInfo(inventory);
   }, [text]);
   return (
-    <div className=" inventory-container">
-      <div className="inventory-bag__container">
-        <GiSwapBag className="inventory-bag" color="#bf8315" size="19em" />
+    <div className=" w-full flex justify-center items-center mb-4">
+      <TutorialPopover
+        tipNumber={11}
+        open={inHelpMode && selectedTip === 11}
+        position="bottom"
+      >
         <div
-          className={`inventory-content ${inHelpMode ? "active" : ""}`}
+          className={`_inventory-container_ ${inHelpMode ? "active" : ""}
+        border-solid border-4 rounded border-green-300 flex justify-center items-center p-4 `}
           onClick={onClickFunction}
         >
-          <p className="inventory-content__entry" style={{ marginTop: "1px" }}>
-            <TutorialPopover
-              tipNumber={11}
-              open={inHelpMode && selectedTip === 11}
-              position="left"
-            >
-              {inventoryInfo}
-            </TutorialPopover>
-          </p>
+          <div className="_inventory-content_ font-mono text-green-300 text-center text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl">
+            <p className="_inventory-content-entry_ mt-1">{inventoryInfo}</p>
+          </div>
         </div>
-      </div>
+      </TutorialPopover>
     </div>
   );
 };
