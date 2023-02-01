@@ -85,7 +85,7 @@ export function ChatBubble({
         } sm:flex md:hidden lg:hidden xl:hidden 2xl:hidden`}
       >
         <div
-          className={`_chat_bubble_ max-w-[80%] min-w-[20%] flex justify-center items-center p-4 min-h-[50px] font-medium
+          className={`_chat_bubble_ max-w-[80%] min-w-[40%] flex justify-center items-center p-4 min-h-[50px] font-medium
         ${getActionThemeColor("bg", action)} ${getActionThemeColor(
             "text",
             action
@@ -100,7 +100,7 @@ export function ChatBubble({
             >
               <CharacterName name={actor} align={align} />
             </div>
-            <div className="max-w-[100%]">{children}</div>
+            <div className="max-w-[100%] min-w-[40%]">{children}</div>
           </div>
         </div>
       </div>
