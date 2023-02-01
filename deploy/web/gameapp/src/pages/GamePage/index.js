@@ -335,8 +335,8 @@ const Chat = ({
       className="__game-page__ w-screen h-screen"
       onMouseMove={resetIdleTimer}
     >
-      <div className="__gamepage-container__ w-full h-full flex flex-row">
-        <div className="flex flex-row h-screen">
+      <div className="__gamepage-container__ w-full h-full flex flex-row ">
+        <div className="w-full flex flex-row h-screen">
           <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative xl:flex-1 xl:relative 2xl:flex-1 2xl:relative">
             <Sidebar dataModelHost={dataModelHost} getEntityId={getEntityId} />
           </div>
@@ -352,7 +352,7 @@ const Chat = ({
               />
             </MobileDrawer>
           </div>
-          <div className="_chat-container_ w-full flex-1 sm:flex-1 md:grow-[3] lg:grow-[3] xl:grow-[3] 2xl:grow-[3] h-full">
+          <div className="_chat-container_ overflow-x-hidden w-full flex-1 sm:flex-1 md:grow-[3] lg:grow-[3] xl:grow-[3] 2xl:grow-[3] h-full">
             <ChatDisplay
               scrollToBottom={scrollToBottom}
               messages={messages}

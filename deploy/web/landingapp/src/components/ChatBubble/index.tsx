@@ -31,9 +31,21 @@ function ChatBubbleTail({
   );
 }
 
-function CharacterName({ name }: { name: string }) {
+function CharacterName({
+  align,
+  name,
+}: {
+  name: string;
+  align: "left" | "right";
+}) {
   return (
-    <div className="text-sm font-semibold text-base-100 whitespace-pre">
+    <div
+      className={`text-sm font-semibold break-words ${
+        align === "left" ? "text-black" : "text-white"
+      } sm:$${
+        align === "left" ? "text-black" : "text-white"
+      } md:text-white lg:text-white xl:text-white 2xl:text-white whitespace-pre`}
+    >
       {name}
     </div>
   );
@@ -46,48 +58,52 @@ export function ChatBubble({
   children,
 }: Props) {
   return (
-    <>
-      <div className=" hidden sm:hidden md:flex lg:flex xl:flex 2xl:flex flex-row items-center">
-        {align === "left" && <CharacterName name={actor} />}
+    <div className="w-full">
+      <div
+        className={`${
+          align === "left" ? "justify-start" : "justify-end"
+        } hidden sm:hidden md:flex lg:flex xl:flex 2xl:flex flex-row items-center `}
+      >
+        {align === "left" && <CharacterName name={actor} align={align} />}
         {align === "left" && <ChatBubbleTail align={align} action={action} />}
         <div
-          className={`_chat_bubble_ relative p-4 min-h-[50px] font-medium
+          className={`_chat_bubble_ max-w-[80%] md:max-w-[60%] min-w-[20%] relative p-4 min-h-[50px] font-medium
         ${getActionThemeColor("bg", action)} ${getActionThemeColor(
             "text",
             action
           )}
         rounded-md flex justify-center items-center`}
         >
-          <div>{children}</div>
+          <div className="max-w-[100%] md:max-w-[80%]">{children}</div>
         </div>
         {align === "right" && <ChatBubbleTail align={align} action={action} />}
-        {align === "right" && <CharacterName name={actor} />}
+        {align === "right" && <CharacterName name={actor} align={align} />}
       </div>
       <div
-        className={`flex flex-row items-center ${
+        className={`w-full flex flex-row items-center ${
           align === "left" ? "justify-start" : "justify-end"
         } sm:flex md:hidden lg:hidden xl:hidden 2xl:hidden`}
       >
         <div
-          className={`_chat_bubble_ relative p-4 min-h-[50px] font-medium
+          className={`_chat_bubble_ max-w-[80%] min-w-[40%] flex justify-center items-center p-4 min-h-[50px] font-medium
         ${getActionThemeColor("bg", action)} ${getActionThemeColor(
             "text",
             action
           )}
-        rounded-md flex justify-center items-center w-10/12`}
+        rounded-md`}
         >
-          <div>
+          <div className="max-w-[80%]">
             <div
               className={`w-full flex flex-row ${
                 align === "left" ? "justify-start" : "justify-end"
               }`}
             >
-              <CharacterName name={actor} />
+              <CharacterName name={actor} align={align} />
             </div>
-            <div className="w-full flex ">{children}</div>
+            <div className="max-w-[100%] min-w-[40%]">{children}</div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

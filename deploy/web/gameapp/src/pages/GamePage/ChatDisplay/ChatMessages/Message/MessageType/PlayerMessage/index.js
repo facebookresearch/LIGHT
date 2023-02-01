@@ -45,7 +45,7 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
 
   return (
     <div
-      className={`_player-message_ flex flex-row w-full justify-end items-end mb-4
+      className={`_player-message_  flex w-full mb-4
       ${inHelpMode ? "active" : ""}`}
       onClick={onClickFunction}
     >
@@ -63,19 +63,21 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
           </Tooltip>
         </>
       ) : null}
-      <div className="ml-10">
-        <ChatBubble action={action} actor="YOU" align="right">
-          <div className="_player-message-bubble-text_ break-all">{text}</div>
-          <div className="relative">
-            <div className="absolute bg-emerald-500">
-              <TutorialPopover
-                tipNumber={17}
-                open={inHelpMode && selectedTip === 17}
-                position="top"
-              ></TutorialPopover>
+      <div className="flex flex-col w-full">
+        <TutorialPopover
+          tipNumber={17}
+          open={inHelpMode && selectedTip === 17}
+          position="top"
+        >
+          <ChatBubble action={action} actor="YOU" align="right">
+            <div className="flex flex-col w-full">
+              <p className="_player-message-bubble-text_ break-words">{text}</p>
+              <div className="relative">
+                <div className="absolute bg-emerald-500"></div>
+              </div>
             </div>
-          </div>
-        </ChatBubble>
+          </ChatBubble>
+        </TutorialPopover>
       </div>
     </div>
   );

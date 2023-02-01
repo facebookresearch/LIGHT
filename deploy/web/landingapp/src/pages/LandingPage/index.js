@@ -186,7 +186,7 @@ const LandingPage = () => {
               </SideDrawer>
             ) : null}
           </div>
-          <div className="_chat-container_ flex-1 sm:flex-1 md:grow-[3] lg:grow-[3] xl:grow-[3] 2xl:grow-[3] h-full">
+          <div className="_chat-container_ overflow-x-hidden flex-1 sm:flex-1 md:grow-[3] lg:grow-[3] xl:grow-[3] 2xl:grow-[3] h-full">
             {messages ? (
               <ChatDisplay
                 introStep={introStep}
