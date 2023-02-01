@@ -15,9 +15,13 @@ import TutorialPopover from "../../../../../../../components/TutorialPopover";
 
 //SoulSpawnEventyMessage - renders soul spawn event bubbles and formats text for that event
 const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
-  // let SpawnArr = text.split("\n");
-  // let Mission = SpawnArr[4];
-  // let MissionArr = Mission.split(":");
+  let SpawnArr = text.split("\n");
+  let StarShine1 = SpawnArr[0];
+  let Character = SpawnArr[1];
+  let Description = SpawnArr[3];
+  let Mission = SpawnArr[4];
+  let MissionArr = Mission.split(":");
+  let MissionDesc = MissionArr[1];
 
   /* ----REDUX STATE---- */
   //TUTORIAL
@@ -33,13 +37,33 @@ const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
         <div
           className={`${
             inHelpMode ? "active" : ""
-          } border-dotted border-4 rounded border-white flex justify-center items-center p-4`}
+          } flex justify-center items-center p-4`}
         >
           <div
-            className={` prose font-mono text-white text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl`}
+            className={` prose font-mono text-white text-center text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl`}
             onClick={onClickFunction}
           >
-            {text}
+            <p className=" _soulspawn-stars_">{StarShine1}</p>
+            <p className="soulspawn-header">Let there be LIGHT</p>
+            <p className="soulspawn-text">{Character}</p>
+            <p></p>
+            <h5 className="soulspawn-subheader">YOUR CHARACTER</h5>
+            <p className="soulspawn-text" style={{ padding: "0 3em 0 3em" }}>
+              <TutorialPopover
+                tipNumber={9}
+                open={inHelpMode && selectedTip === 9}
+                position="bottom"
+              >
+                {Description}
+              </TutorialPopover>
+            </p>
+            <h5 className="soulspawn-subheader">YOUR MISSION</h5>
+            <p className="soulspawn-text">{MissionDesc}</p>
+            <p className="soulspawn-text">
+              You will be rewarded for roleplaying so play your character to the
+              best of your ability.
+            </p>
+            <p className="soulspawn-text soulspawn-star">{StarShine1}</p>
           </div>
         </div>
       </TutorialPopover>
