@@ -96,7 +96,11 @@ const ChatDisplay = ({
           className="_chatdisplay-message-container_ max-w-full sm:w-full md:max-w-full flex-1 grow-[5] overflow-y-scroll"
           ref={chatContainerRef}
         >
-          <ChatMessages messages={messages} scrollToBottom={scrollToBottom} />
+          <ChatMessages
+            messages={messages}
+            scrollToBottom={scrollToBottom}
+            chatInputRef={chatInputRef}
+          />
         </div>
         <div className="__chatdisplay-chatcontrols-container__  flex-none md:h-[120px]">
           <ChatControls

@@ -16,7 +16,7 @@ import "./styles.css";
 import Message from "./Message";
 
 //ChatMessages - Renders messages in chat display by iterating through message reducer returning Entry components
-const ChatMessages = ({ messages, scrollToBottom }) => {
+const ChatMessages = ({ messages, scrollToBottom, chatInputRef }) => {
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
@@ -34,6 +34,7 @@ const ChatMessages = ({ messages, scrollToBottom }) => {
             agents={agents}
             onReply={(agent) => {
               dispatch(updateTellTarget(agent));
+              chatInputRef.current.focus();
             }}
             selfId={persona.id}
             scrollToBottom={scrollToBottom}
