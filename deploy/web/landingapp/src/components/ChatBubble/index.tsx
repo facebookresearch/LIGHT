@@ -67,14 +67,14 @@ export function ChatBubble({
         {align === "left" && <CharacterName name={actor} align={align} />}
         {align === "left" && <ChatBubbleTail align={align} action={action} />}
         <div
-          className={`_chat_bubble_ max-w-[80%] min-w-[20%] relative p-4 min-h-[50px] font-medium
+          className={`_chat_bubble_ max-w-[80%] md:max-w-[60%] min-w-[20%] relative p-4 min-h-[50px] font-medium
         ${getActionThemeColor("bg", action)} ${getActionThemeColor(
             "text",
             action
           )}
         rounded-md flex justify-center items-center`}
         >
-          <div className="max-w-[100%]">{children}</div>
+          <div className="max-w-[100%] md:max-w-[80%]">{children}</div>
         </div>
         {align === "right" && <ChatBubbleTail align={align} action={action} />}
         {align === "right" && <CharacterName name={actor} align={align} />}
