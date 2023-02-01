@@ -72,7 +72,7 @@ const ReportMessageForm = ({
   };
 
   return (
-    <div className="bg-white ">
+    <div className="bg-white w-10/12">
       <div className="agent">
         <span>{actor}</span>
       </div>

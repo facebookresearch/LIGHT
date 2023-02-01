@@ -7,12 +7,10 @@
 /* REACT */
 import React, { useState, useEffect } from "react";
 /* REDUX */
-import { useAppDispatch, useAppSelector } from "../../../../../../../app/hooks";
-import { updateSelectedTip } from "../../../../../../../features/tutorials/tutorials-slice";
+import { useAppSelector } from "../../../../../../../app/hooks";
 /* STYLES */
 import "./styles.css";
 /* ICONS */
-import { FaQuestion } from "react-icons/fa";
 /* CUSTOM COMPONENTS */
 import TutorialPopover from "../../../../../../../components/TutorialPopover";
 
@@ -31,34 +29,35 @@ const HelpMessage = ({ text, onClickFunction }) => {
   }, [text]);
 
   return (
-    <div className=" help-container">
-      <div className="help-question__container">
-        <FaQuestion className="help-question" color="#0072ff" />
-      </div>
-      <div
-        className={`help-content ${inHelpMode ? "active" : ""}`}
-        onClick={onClickFunction}
+    <div className=" w-full flex justify-center items-center mb-4">
+      <TutorialPopover
+        tipNumber={10}
+        open={inHelpMode && selectedTip === 10}
+        position="bottom"
       >
-        <p className="help-content__header">COMMANDS</p>
-        <div className="help-content__entries">
-          {commandList.map((command, index) => {
-            return (
-              <p
-                key={index}
-                className="help-content__entry"
-                style={{ margin: "10px 0 0 0" }}
-              >
-                {command}
-              </p>
-            );
-          })}
-          <TutorialPopover
-            tipNumber={10}
-            open={inHelpMode && selectedTip === 10}
-            position="bottom"
-          />
+        <div
+          className={`_help-container_ ${
+            inHelpMode ? "active" : ""
+          } border-solid border-4 rounded border-white flex justify-center items-center p-4 `}
+          onClick={onClickFunction}
+        >
+          <div className="_help-content_ prose font-mono text-white text-center text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl">
+            <p className="_help-content__header_ font-bold">COMMANDS</p>
+            {commandList.map((command, index) => {
+              let formattedCommanded = command;
+              if (formattedCommanded.indexOf(",") > 0) {
+                let splitCommand = formattedCommanded.split(",");
+                formattedCommanded = splitCommand.join(", ");
+              }
+              return (
+                <p key={index} className="_help-content__entry_ ">
+                  {formattedCommanded}
+                </p>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      </TutorialPopover>
     </div>
   );
 };
