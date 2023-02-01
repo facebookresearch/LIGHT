@@ -12,14 +12,10 @@ import { ChatBubble } from "../../../../../../../components/ChatBubble/index.tsx
 //PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message
 const PlayerMessage = ({ text, action }) => {
   return (
-    <div
-      className={
-        "_player-message_ flex flex-row w-full justify-end items-end mb-4 "
-      }
-    >
-      <div className="_player-message-bubble-container_ ">
+    <div className={"_player-message_ flex w-full mb-4"}>
+      <div className="_player-message-bubble-container_ flex flex-col w-full">
         <ChatBubble action={action} actor="YOU" align="right">
-          <div className="_player-message-bubble-text_ break-all">{text}</div>
+          <div className="_player-message-bubble-text_ break-words">{text}</div>
           <div className="relative">
             <div className="absolute bg-emerald-500"></div>
           </div>
