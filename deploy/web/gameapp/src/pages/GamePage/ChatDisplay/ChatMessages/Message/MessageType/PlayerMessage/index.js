@@ -15,8 +15,8 @@ import "./styles.css";
 import { Tooltip } from "react-tippy";
 /* CUSTOM COMPONENTS */
 import TutorialPopover from "../../../../../../../components/TutorialPopover";
-
 import { ChatBubble } from "../../../../../../../components/ChatBubble";
+import AwardStar from "../../../../../../../components/Stars/AwardStar";
 
 //PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message
 const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
@@ -49,20 +49,7 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
       ${inHelpMode ? "active" : ""}`}
       onClick={onClickFunction}
     >
-      {xp ? (
-        <>
-          <Tooltip
-            title={
-              xp > 0 ? `${xp} Experience Points Earned For Roleplaying` : null
-            }
-          >
-            <span id="message-star__container">
-              <p id="message-star__number">{xp}</p>
-              <i id="message-star" className="fa fa-star" />
-            </span>
-          </Tooltip>
-        </>
-      ) : null}
+
       <div className="flex flex-col w-full">
         <TutorialPopover
           tipNumber={17}
@@ -70,11 +57,27 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
           position="top"
         >
           <ChatBubble action={action} actor="YOU" align="right">
+            <div className="w-full flex flex-row justify-between items-between">
+            {xp ? (
+                    <Tooltip
+                      title={
+                        xp > 0 ? `${xp} Experience Points Earned For Roleplaying` : null
+                      }
+                    >
+                      <AwardStar 
+                        xp={12}
+                      />
+                    </Tooltip>
+                ) : null
+                }
+             <div className="w-full flex justify-start items-start">
+              </div>
             <div className="flex flex-col w-full">
-              <p className="_player-message-bubble-text_ break-words">{text}</p>
+              <p className="_player-message-bubble-text_ w-full  break-words">{text}</p>
               <div className="relative">
                 <div className="absolute bg-emerald-500"></div>
               </div>
+            </div>
             </div>
           </ChatBubble>
         </TutorialPopover>

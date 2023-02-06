@@ -1,3 +1,9 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import React, { useState, useEffect, useMemo } from "react";
 
 import { getActionThemeColor } from "../../app/theme";
@@ -85,14 +91,14 @@ export function ChatBubble({
         } sm:flex md:hidden lg:hidden xl:hidden 2xl:hidden`}
       >
         <div
-          className={`_chat_bubble_ max-w-[80%] min-w-[40%] flex justify-center items-center p-4 min-h-[50px] font-medium
+          className={`_chat_bubble_ max-w-[90%] min-w-[80%] flex justify-center items-center p-4 min-h-[50px] font-medium
         ${getActionThemeColor("bg", action)} ${getActionThemeColor(
             "text",
             action
           )}
         rounded-md`}
         >
-          <div className="max-w-[80%]">
+          <div className="w-[90%]">
             <div
               className={`w-full flex flex-row ${
                 align === "left" ? "justify-start" : "justify-end"
@@ -100,7 +106,7 @@ export function ChatBubble({
             >
               <CharacterName name={actor} align={align} />
             </div>
-            <div className="max-w-[100%] min-w-[40%]">{children}</div>
+            <div className="w-[90%]">{children}</div>
           </div>
         </div>
       </div>

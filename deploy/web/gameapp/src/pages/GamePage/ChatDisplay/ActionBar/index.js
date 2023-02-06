@@ -35,7 +35,6 @@ const ActionBar = ({
   /* ------ REDUX STATE ------ */
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
-  const persona = useAppSelector((state) => state.persona);
   /* ----REDUX ACTIONS---- */
   // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();

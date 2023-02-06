@@ -27,6 +27,8 @@ const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
   //TUTORIAL
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
+
+  console.log("STAR SHINE:  ", StarShine1)
   return (
     <div className="w-full flex justify-center item-center mb-4">
       <TutorialPopover
@@ -43,7 +45,7 @@ const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
             className={` prose font-mono text-white text-center text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl`}
             onClick={onClickFunction}
           >
-            <p className=" _soulspawn-stars_">{StarShine1}</p>
+            {/* <p className=" _soulspawn-stars_">{StarShine1}</p> */}
             <p className="soulspawn-header">Let there be LIGHT</p>
             <p className="soulspawn-text">{Character}</p>
             <p></p>
@@ -63,7 +65,7 @@ const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
               You will be rewarded for roleplaying so play your character to the
               best of your ability.
             </p>
-            <p className="soulspawn-text soulspawn-star">{StarShine1}</p>
+            {/* <p className="soulspawn-text soulspawn-star">{StarShine1}</p> */}
           </div>
         </div>
       </TutorialPopover>
