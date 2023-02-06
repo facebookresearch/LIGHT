@@ -20,7 +20,7 @@ const GiftStar = ({isLiked, isStarred, onClick }) => {
     <div className="_star-container_">
         {
         true ? (
-                <BsFillStarFill className={`text-yellow-300`} />
+                <BsFillStarFill id="gift-star" className={`text-yellow-300`} />
               ) : isLiked > 0 ? (
                 <Tooltip
                   title="Click to ward player a Gift XP Star"

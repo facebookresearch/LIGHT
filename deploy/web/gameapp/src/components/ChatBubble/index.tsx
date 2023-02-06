@@ -91,7 +91,7 @@ export function ChatBubble({
         } sm:flex md:hidden lg:hidden xl:hidden 2xl:hidden`}
       >
         <div
-          className={`_chat_bubble_ max-w-[90%] min-w-[80%] flex justify-center items-center p-4 min-h-[50px] font-medium
+          className={`_chat_bubble_ max-w-[90%] min-w-[80%] overflow-hidden flex justify-center items-center p-4 min-h-[50px] font-medium
         ${getActionThemeColor("bg", action)} ${getActionThemeColor(
             "text",
             action
@@ -100,7 +100,7 @@ export function ChatBubble({
         >
           <div className="w-[90%]">
             <div
-              className={`w-full flex flex-row ${
+              className={`w-4/5 flex flex-row ${
                 align === "left" ? "justify-start" : "justify-end"
               }`}
             >

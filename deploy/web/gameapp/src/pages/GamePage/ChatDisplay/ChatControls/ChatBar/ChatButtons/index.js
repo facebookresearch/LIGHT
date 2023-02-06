@@ -99,16 +99,16 @@ const ChatButtons = ({
             }
           }}
           type="button"
-          className={`h-full text-md font-medium rounded shadow-sm text-white pl-2 pr-2 ${getActionThemeColor(
+          className={`h-full max-w-[130px] overflow-hidden text-md font-medium rounded shadow-sm text-white pl-2 pr-2 ${getActionThemeColor(
             "bg",
             action
           )} `}
         >
-          <span className="flex flex-row  items-center  text-accent-content capitalize">
-            {tellTarget ? <BiChevronRight /> : <FaSort />}
-            <div className="capitalize w-1/5 overflow-ellipsis pl-1">{`${action} ${
+          <span className="flex flex-row justify-center items-center  text-accent-content capitalize">
+            {tellTarget ? <BiChevronRight className="text-3xl" /> : <FaSort />}
+            <p className="capitalize overflow-ellipsis pl-1">{`${action} ${
               tellTarget ? formatTellTargetForButton(tellTarget) : ""
-            }`}</div>
+            }`}</p>
           </span>
         </button>
       </TutorialPopover>

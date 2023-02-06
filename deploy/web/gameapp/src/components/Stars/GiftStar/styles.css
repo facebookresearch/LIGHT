@@ -5,7 +5,7 @@
  */
 
 #gift-star {
-    animation: shrink 1s normal;
+    animation: shine 5s normal;
 }
   @keyframes shrink {
     0% {
