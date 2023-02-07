@@ -167,6 +167,7 @@ export function useWSDataSource(url) {
               prefix: action.actor.name_prefix,
               xp: action.actor.xp,
               giftXp: action.actor.reward_xp,
+              emoji: action.actor.emoji,
             });
           }
           const neighbors = getNeighbors(action);
