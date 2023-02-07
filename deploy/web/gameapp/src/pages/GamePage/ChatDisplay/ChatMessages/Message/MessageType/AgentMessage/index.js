@@ -36,8 +36,10 @@ import {
   AiOutlineDislike,
   AiOutlineLike,
 } from "react-icons/ai";
-
+/* CUSTOM COMPONENTS */
 import { ChatBubble } from "../../../../../../../components/ChatBubble";
+import GiftStar from "../../../../../../../components/Stars/GiftStar";
+
 
 //handleReward - sends award exp to owner of message and message id to backend
 function handleReward(messageId, messageOwner) {
@@ -169,28 +171,27 @@ const AgentMessage = ({
   return (
     <>
       <div
-        className={`_agent-message_ w-full flex mb-4
+        className={`_agent-message_ w-full flex justify-center items-center mb-4
         ${inHelpMode ? "active" : ""}`}
         onClick={onClickFunction}
       >
-        {isLiked ? (
-          <>
-            {true ? (
-              <BsFillStarFill className={`text-yellow-300`} />
-            ) : giftXp > 0 ? (
-              <Tooltip
-                title="Click to ward player a Gift XP Star"
-                position="top"
-              >
-                <BsStar className={`text-yellow-300`} onClick={starHandler} />
-              </Tooltip>
-            ) : null}
-          </>
-        ) : null}
         <div className="flex flex-col w-full">
           <ChatBubble align="left" actor={actor.toUpperCase()} action="default">
-            <div className="flex flex-col break-words">
-              <p className="mb-2 break-words">{text}</p>
+            <div className="flex flex-col w-full">
+
+            <div className="w-full flex flex-row justify-between items-between">
+              <p className=" w-full mb-2 break-words">{text}</p>
+              {isLiked ? (
+            <>
+              <GiftStar 
+              isLiked={isLiked}
+              isStarred={isStarred}
+              onClick={starHandler}
+              
+              />
+            </>
+          ) : null}
+              </div>
               {isReported ? (
                 <span className="text-error-content">
                   This Message Has been reported
@@ -246,29 +247,31 @@ const AgentMessage = ({
               </div>
             </div>
           </ChatBubble>
-          {isLiked && !isStarred ? (
-            giftXp > 0 ? (
+          <div className="w-full flex justify-start items-start">
+            {isLiked && !isStarred ? (
+              giftXp > 0 ? (
+                <div
+                  className="text-right text-yellow-500 break-words text-sm mt-1 cursor-pointer"
+                  onClick={starHandler}
+                >
+                  Would you like to award this message a star?
+                </div>
+              ) : (
+                <div className="text-right text-base-200 opacity-50 break-words text-sm mt-1">
+                  Earn gift experience by roleplaying to be able to award stars
+                </div>
+              )
+            ) : null}
+            {isDisliked && !isReported ? (
               <div
-                className="text-right text-yellow-500 break-words text-sm mt-1 cursor-pointer"
-                onClick={starHandler}
+                className="text-right text-red-500 break-words text-sm mt-1 cursor-pointer"
+                onClick={reportingHandler}
               >
-                Would you like to award this message a star?
+                <BsFillFlagFill className="inline-block mr-2" />
+                <span className="inline-block">Report this message</span>
               </div>
-            ) : (
-              <div className="text-right text-base-200 opacity-50 break-words text-sm mt-1">
-                Earn gift experience by roleplaying to be able to award stars
-              </div>
-            )
-          ) : null}
-          {isDisliked && !isReported ? (
-            <div
-              className="text-right text-red-500 break-words text-sm mt-1 cursor-pointer"
-              onClick={reportingHandler}
-            >
-              <BsFillFlagFill className="inline-block mr-2" />
-              <span className="inline-block">Report this message</span>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
         </div>
       </div>
     </>

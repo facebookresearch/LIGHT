@@ -1,0 +1,57 @@
+/*****
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+  .message-star {
+    animation: shrink 1s normal;
+  }
+  
+
+  
+  .message-star__number {
+    animation-delay: 2s;
+    animation: slide 1s normal;
+  }
+  
+  @keyframes shrink {
+    0% {
+      color: #ffe205;
+      font-size: 10em;
+      z-index: 100;
+    }
+    100% {
+      color: #ffe205;
+      text-shadow: 3px 0 0px #ffe205, 7px 0 0px #ffe205, 20 0 0px #edd205;
+      z-index: 100;
+    }
+  }
+  
+  @keyframes slide {
+    0% {
+      opacity: 0;
+      
+    }
+    50% {
+        opacity: 0;
+      }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes shine {
+    0% {
+      color: #ffe205;
+      text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
+    }
+    50% {
+      color: gold;
+      text-shadow: 0 0 0px #ffe205, 0 0 0px #ffe205, 0 0 0px #edd205;
+    }
+    100% {
+      color: #ffe205;
+      text-shadow: 0 0 3px #ffe205, 0 0 7px #ffe205, 0 0 20px #edd205;
+    }
+  }

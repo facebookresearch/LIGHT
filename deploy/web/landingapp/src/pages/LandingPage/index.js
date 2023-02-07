@@ -14,11 +14,8 @@ import SideDrawer from "../../components/SideDrawer";
 import "./styles.css";
 /* COPY */
 import LANDINGAPPCOPY from "../../LandingAppCopy";
-/* ICONS */
-import { BiRightArrow } from "react-icons/bi";
 
 //LandingPage - Renders the Landing Page.  This page renders elements based on stepping through the postLoginSteps.
-//*
 const LandingPage = () => {
   const { legalAgreements, introDialogueSteps } = LANDINGAPPCOPY;
   /*---------------LOCAL STATE----------------*/

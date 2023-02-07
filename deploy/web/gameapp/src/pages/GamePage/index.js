@@ -23,7 +23,6 @@ import { updateXp } from "../../features/playerInfo/xp-slice.ts";
 import { updateGiftXp } from "../../features/playerInfo/giftxp-slice.ts";
 import { updateSessionXp } from "../../features/sessionInfo/sessionxp-slice";
 import { updateSessionEarnedGiftXp } from "../../features/sessionInfo/sessionearnedgiftxp-slice";
-import { updateIsMobile } from "../../features/view/view-slice";
 /* STYLES */
 import "./styles.css";
 import "react-tippy/dist/tippy.css";
@@ -162,7 +161,6 @@ const Chat = ({
   const selectEmoji = (emoji) => dispatch(updateEmoji(emoji));
 
   /* ------ LOCAL STATE ------ */
-  const [screenSize, setScreenSize] = useState(null);
   //IDLE STATE
   const [idleTime, setIdleTime] = useState(0);
   const [idle, setIdle] = useState(false);
@@ -212,17 +210,10 @@ const Chat = ({
       dispatch(updatePersona(persona));
       dispatch(updateXp(updatedXp));
       dispatch(updateGiftXp(updatedGiftXp));
-      //Show Tutorial Modal condition
-      let characterEmoji = persona.emoji || DefaultEmojiMapper(persona.name);
+      let defaultEmoji = "\u2753"
       if (persona === null || persona.name === null) return;
-      const skipWords = ["a", "the", "an", "of", "with", "holding"];
-      const tryPickEmojis = !persona
-        ? []
-        : emojiIndex.search(characterEmoji).map((o) => {
-            return o.native;
-          });
-      const autopickedEmoji = tryPickEmojis.length > 0 ? tryPickEmojis[0] : "?";
-      dispatch(updateEmoji(autopickedEmoji));
+      let characterEmoji = persona.emoji || defaultEmoji
+      selectEmoji(characterEmoji);
       /* ---- INSTRUCTION MODAL---- !!!!!!!!!!!!!!!!!!!!!!!!!*/
       if (updatedXp <= 10) {
         //NEW Tutorial triggers
@@ -306,21 +297,10 @@ const Chat = ({
   //const { presentAgents } = getLocationState(messages);
 
   useEffect(() => {
-    const defaultEmoji = "❓";
-    let characterEmoji = DefaultEmojiMapper(persona.name);
-    if (characterEmoji === undefined) {
-      characterEmoji = persona.name;
-    }
+    let defaultEmoji = "\u2753"
     if (persona === null || persona.name === null) return;
-    //const skipWords = ["a", "the", "an", "of", "with", "holding"];
-    const tryPickEmojis = !persona
-      ? []
-      : emojiIndex.search(characterEmoji).map((o) => {
-          return o.native;
-        });
-    const autopickedEmoji =
-      tryPickEmojis.length > 0 ? tryPickEmojis[0] : defaultEmoji;
-    selectEmoji(autopickedEmoji);
+    let characterEmoji = persona.emoji || defaultEmoji
+    selectEmoji(characterEmoji);
   }, [persona]);
 
   /* SESSION GIFT XP */
