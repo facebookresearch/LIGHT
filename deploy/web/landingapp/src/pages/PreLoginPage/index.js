@@ -36,12 +36,13 @@ const PreLoginPage = () => {
 
   //checks to see if player has completed tutorial previously by querying backend then sends player to game if backend would not redirect them back to the tutorial
   useEffect(() => {
+    let currentUrl = window.location.href
     let willRedirect;
-    fetch("https://www.light-rpg.ai/play").then((response) => {
+    fetch("/play").then((response) => {
       console.log(response);
       willRedirect = response.redirected;
       if (!willRedirect) {
-        window.location.href = "https://www.light-rpg.ai/play";
+        window.location.href = currentUrl+"play";
       }
     });
   }, []);
