@@ -27,12 +27,11 @@ import { updateSessionEarnedGiftXp } from "../../features/sessionInfo/sessionear
 import "./styles.css";
 import "react-tippy/dist/tippy.css";
 import "emoji-mart/css/emoji-mart.css";
-/* EMOJI */
-import { DefaultEmojiMapper } from "../../utils";
-import { emojiIndex } from "emoji-mart";
 /* CUSTOM COMPONENTS */
-import { useWSDataSource } from "../../WebSockets/useWSDataSource";
+//LOADING PAGE
 import LoadingPage from "../../pages/LoadingPage";
+//SOCKET
+import { useWSDataSource } from "../../WebSockets/useWSDataSource";
 import Sidebar from "./Sidebar";
 import MobileDrawer from "../../components/MobileDrawer";
 import ChatDisplay from "./ChatDisplay";

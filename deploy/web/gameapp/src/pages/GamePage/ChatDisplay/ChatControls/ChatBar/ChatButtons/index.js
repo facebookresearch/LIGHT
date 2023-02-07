@@ -34,8 +34,6 @@ const ChatButtons = ({
   chatInputRef,
 }) => {
   /* ------ REDUX STATE ------ */
-  // VIEW STATE
-  const isMobile = useAppSelector((state) => state.view.isMobile);
   //   // CHAT STATE
   const chatText = useAppSelector((state) => state.chatInput.chatText);
   const isSaying = useAppSelector((state) => state.chatInput.isSaying);
@@ -73,9 +71,6 @@ const ChatButtons = ({
     let formattedTellTargetName = str;
     if (str.length > 12) {
       formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 12)}...`;
-      if (isMobile) {
-        formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 4)}...`;
-      }
     }
     return formattedTellTargetName;
   };

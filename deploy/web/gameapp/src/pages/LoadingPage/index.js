@@ -49,22 +49,16 @@ const LoadingScreen = ({ isFull }) => {
   }
 
   return (
-    <div
-      style={{
-        height: "100%",
-        width: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-      }}
-    >
-      <div style={{ width: 500 }}>
-        <div style={{ width: 300 }}>
+    <div className="h-screen w-screen flex justify-center items-center">
+      <div className="w-1/2 h-1/2 flex flex-col justify-center items-center text-white">
+        <div className="w-full">
           <Logo />
         </div>
-        <div style={{ fontSize: 20, marginTop: 50, fontStyle: "italic" }}>
-          {msg}
+        <div className="flex flex-row justify-center items-center">
+        <div className="hidden sm:hidden md:flex radial-progress animate-spin mr-4" style={{"--value":75}}/>
+        <span className="text-lg md:text-xl text-center">{msg}</span>
+        </div>
+        <div>
         </div>
       </div>
     </div>

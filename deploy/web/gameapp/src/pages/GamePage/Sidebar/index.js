@@ -32,8 +32,6 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
   //
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   /* ----REDUX STATE---- */
-  //IsMobile
-  const isMobile = useAppSelector((state) => state.view.isMobile);
   //PERSONA
   const persona = useAppSelector((state) => state.persona);
   //LOCATION
@@ -98,7 +96,6 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
             <TutorialPopover
               tipNumber={2}
               open={inHelpMode && selectedTip === 2}
-              position={isMobile ? "top" : "right"}
             >
               {persona.description.slice(
                 0,
@@ -116,7 +113,6 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
               <TutorialPopover
                 tipNumber={3}
                 open={inHelpMode && selectedTip === 3}
-                osition={isMobile ? "top" : "right"}
               >
                 {persona.description.slice(
                   persona.description.indexOf(":") + 1,
@@ -142,7 +138,6 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
                 <TutorialPopover
                   tipNumber={4}
                   open={inHelpMode && selectedTip === 4}
-                  position={isMobile ? "top" : "right"}
                 >
                   {location.name ? location.name.toUpperCase() : null}
                 </TutorialPopover>

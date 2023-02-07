@@ -9,16 +9,12 @@ import React, { useState, useEffect } from "react";
 /* REDUX */
 /* ---- REDUCER ACTIONS ---- */
 import { useAppSelector, useAppDispatch } from "../../../../app/hooks";
-import { updateShowDrawer } from "../../../../features/view/view-slice";
-import { updateSelectedTip } from "../../../../features/tutorials/tutorials-slice";
 //TOOLTIP
 import { Tooltip } from "react-tippy";
 //STYLES
 import "./styles.css";
 //CUSTOM COMPONENTS
-import LevelDisplay from "../../../../components/LevelDisplay";
 import ProgressBar from "../../../../components/Progressbar";
-import GameButton from "../../../../components/GameButton";
 import IconButton from "../../../../components/IconButtons/InfoButton";
 /* IMAGES */
 import Scribe from "../../../../assets/images/scribe.png";
@@ -30,7 +26,7 @@ const SidebarHeader = () => {
   /* REDUX STATE */
   /* REDUX ACTIONS */
   const openDrawer = () => {
-    dispatch(updateShowDrawer(true));
+
   };
   //PLAYER XP STATE
   const xp = useAppSelector((state) => state.xp.value);

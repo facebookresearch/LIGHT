@@ -34,8 +34,6 @@ const ChatBar = ({
   chatInputRef,
 }) => {
   /* ------ REDUX STATE ------ */
-  // VIEW STATE
-  const isMobile = useAppSelector((state) => state.view.isMobile);
   // CHAT STATE
   const chatText = useAppSelector((state) => state.chatInput.chatText);
   const isSaying = useAppSelector((state) => state.chatInput.isSaying);
@@ -85,17 +83,6 @@ const ChatBar = ({
   };
 
   /*---------------HELPERS----------------*/
-  const formatTellTargetForButton = (str) => {
-    let formattedTellTargetName = str.toUpperCase();
-    if (str.length > 7) {
-      formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 7)}...`;
-      if (isMobile) {
-        formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 4)}...`;
-      }
-    }
-    return formattedTellTargetName;
-  };
-
   const action = tellTarget ? "tell" : isSaying ? "say" : "do";
 
   return (
