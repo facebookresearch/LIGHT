@@ -43,13 +43,9 @@ import CONFIG from "../../config.js";
 
 //WEBSOCKET CONNECTION FUNCTION
 const createWebSocketUrlFromBrowserUrl = (url) => {
-  //console.log("URL", url);
   const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
-  //console.log("wsProtocol", wsProtocol);
   const optionalServerHost = new URL(url).searchParams.get("server");
-  //console.log("optionalServerHost", optionalServerHost);
-  var optionalGameId = new URL(url).searchParams.get("id");
-  //console.log("optionalGameId", optionalGameId);
+  let optionalGameId = new URL(url).searchParams.get("id");
   if (!optionalGameId) {
     optionalGameId = "";
   }
@@ -101,18 +97,18 @@ const ConnectedApp = () => {
     markPlayerAsIdle,
     isIdle,
   } = useWSDataSource(wsUrl);
-
+//ERROR PAGE
   if (isErrored && !isIdle)
     return (
       <div style={{ textAlign: "center", marginTop: 30, fontSize: 30 }}>
         Could not connect to the server.
       </div>
     );
-
+//LOADING PAGE
   if (messages.length === 0) {
     return <LoadingPage isFull={isFull} />;
   }
-
+//GAME PAGE
   return (
     <Chat
       messages={messages}

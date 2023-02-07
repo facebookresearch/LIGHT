@@ -8,15 +8,14 @@ import React from "react";
 /* IMAGES */
 import Scribe from "./assets/images/scribe.png";
 
+// Logo - Renders Light Logo
 const Logo = ()=> {
-  // const builder_url =
-  //   window.location.protocol + "//" + window.location.host + "/builder/";
   return (
-    <div className="w-full flex flex-col items-center mb-4">
-      <img className="w-1/3" alt="logo" src={Scribe} />
-      <div className="flex flex-col justify-center items-center">
+    <div className="_logo-container_ w-full flex flex-col items-center mb-4">
+      <img className="_logo-image_ w-1/3" alt="logo" src={Scribe} />
+      <div className="_logo-text_ flex flex-col justify-center items-center">
         <h1 className="_logo-header_ text-4xl">LIGHT</h1>
-        <span className="text-center">Learning in Interactive Games with Humans and Text</span>
+        <span className="_logo-subheader_ text-center">Learning in Interactive Games with Humans and Text</span>
       </div>
     </div>
   );
