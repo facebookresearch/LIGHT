@@ -11,6 +11,10 @@ import "./styles.css";
 import CheckBox from "../../../components/CheckBox";
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
+/* CONFIG */
+import CONFIG from "../../../config";
+
+
 
 //LoginDisplay - renders Login agreement and login button
 const LoginDisplay = () => {
@@ -30,6 +34,19 @@ const LoginDisplay = () => {
   // } else {
   //   targetStr = "/login";
   // }
+  //HANDLERS
+  const loginSubmissionHandler = (event)=>{
+    event.preventDefault();
+    let targetStr = null
+    if (CONFIG.login == "fb") {
+      targetStr = "/auth/fblogin"
+    } else {
+      targetStr = "/login";
+    }
+    console.log("TARGET STRING:  ", targetStr)
+    window.location.href = targetStr;
+    };
+
   return (
     <div className=" flex-col font-mono w-full overflow-y-scroll justify-center items-center h-full flex ">
       <h1 className="text-white underline font-bold text-2xl md:text-3xl lg:text-4xl xl:text-6xl mb-1">
@@ -90,19 +107,19 @@ const LoginDisplay = () => {
           disabled={!!legalAgreement}
           style={{ color: "white", backgroundColor: "black" }}
         >
-          <form method="get">
+          <div>
             <button
               className={`${
                 legalAgreement
                   ? "text-green-200 border-green-200 hover:text-blue-400 hover:border-blue-400"
                   : "text-gray-200 border-gray-200"
               } border-2 p-1 rounded`}
-              type="submit"
+              onClick={loginSubmissionHandler}
               disabled={!legalAgreement}
             >
               Sign In With Facebook
             </button>
-          </form>
+          </div>
         </Tooltip>
       </div>
     </div>
