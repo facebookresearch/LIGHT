@@ -26,20 +26,13 @@ const LoginDisplay = () => {
     let updateAgreement = !legalAgreement;
     setLegalAgreement(updateAgreement);
   };
-  //LOGIN PATHS
-  // const nextLoc = new URLSearchParams(window.location.search).get("next");
-  // var targetStr = null;
-  // if (CONFIG.login == "fb") {
-  //   targetStr = "/auth/fblogin" + (nextLoc !== null ? "?next=" + nextLoc : "");
-  // } else {
-  //   targetStr = "/login";
-  // }
   //HANDLERS
   const loginSubmissionHandler = (event)=>{
     event.preventDefault();
+    const nextLoc = new URLSearchParams(window.location.search).get("next");
     let targetStr = null
     if (CONFIG.login == "fb") {
-      targetStr = "/auth/fblogin"
+      targetStr = "/auth/fblogin" + (nextLoc !== null ? "?next=" + nextLoc : "")
     } else {
       targetStr = "/login";
     }
