@@ -55,13 +55,7 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
 
   return (
     <div className="__sidebar__  h-full">
-      <TutorialPopover
-        tipNumber={1}
-        open={inHelpMode && selectedTip === 1}
-        position="right"
-      >
-        <SideBarHeader />
-      </TutorialPopover>
+      <SideBarHeader />
       <div className={`__sidebar-body__  overflow-y-scroll h-5/6`}>
         <div
           className={cx("icon", { editing: showEmojiPicker })}
