@@ -100,8 +100,10 @@ const ConnectedApp = () => {
 //ERROR PAGE
   if (isErrored && !isIdle)
     return (
-      <div style={{ textAlign: "center", marginTop: 30, fontSize: 30 }}>
-        Could not connect to the server.
+      <div className="_connectionerror-container_ h-screen w-screen flex justify-center items-center">
+        <div className="_connectionerror-text-container_  justify-center items-center">
+          <h1 className="_connectionerror-text_ text_ text-white text-center text-2xl">Could not connect to the server</h1>
+        </div>
       </div>
     );
 //LOADING PAGE
@@ -178,6 +180,7 @@ const Chat = ({
     [chatContainerRef]
   );
   /* UTILS */
+  // getLocationState - returns current room and other characters in current room
   const getLocationState = (messages) => {
     var valid_messages = messages.filter(
       (m) => m.is_self !== true && m.caller !== null
@@ -189,15 +192,13 @@ const Chat = ({
       presentAgents: Object.keys(lastMessage.present_agent_ids),
     };
   };
-
-  /*------REDUX ACTIONS--------*/
-
-  /* HANDLERS */
-
+  // resetIdleTimer - resets idleness state's current time
+  const resetIdleTimer = () => {
+    setIdleTime(0);
+  };
   /*  LIFE CYCLE */
   /* PLAYER AND SESSION INFO UPDATES TO REDUX STORE */
   useEffect(() => {
-    console.log("UPDATED PERSONA", persona);
     if (persona) {
       let updatedXp = persona.xp;
       let updatedGiftXp = persona.giftXp;
@@ -279,10 +280,6 @@ const Chat = ({
     return () => clearInterval(timer);
   }, [idleTime]);
 
-  //
-  const resetIdleTimer = () => {
-    setIdleTime(0);
-  };
 
   // SCROLL TO BOTTOM UPON RECIEVING NEW MESSAGES
   useEffect(() => {

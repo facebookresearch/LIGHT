@@ -5,7 +5,7 @@
  */
 
 /* REACT */
-import React from "react";
+import React, {useEffect} from "react";
 /* CUSTOM COMPONENTS */
 import Logo from "../../Logo";
 
@@ -14,7 +14,7 @@ const LoadingScreen = ({ isFull }) => {
   const [isTimedOut, setTimedOut] = React.useState(false);
   const TIMEOUT_SECONDS = 10;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isTimedOut) {
       const timer = setTimeout(() => {
         setTimedOut(true);
