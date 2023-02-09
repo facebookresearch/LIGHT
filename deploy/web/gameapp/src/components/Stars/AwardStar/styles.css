@@ -4,15 +4,29 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-  .message-star {
+  ._star_ {
     animation: shrink 1s normal;
   }
   
 
   
-  .message-star__number {
+  ._award-number_ {
     animation-delay: 2s;
     animation: slide 1s normal;
+    /* animation-delay: 2s;
+    animation: text-glow 1s ease-in-out infinite alternate; */
+  }
+
+
+  @keyframes text-glow {
+    from {
+      text-shadow: 0 0 1px #fff, 0 0 2px #fff, 0 0 3px #85e3fa, 0 0 4px #85e3fa,
+        0 0 5px #85e3fa, 0 0 6px #85e3fa, 0 0 7px #85e3fa;
+    }
+    to {
+      text-shadow: 0 0 10px #fff, 0 0 11px #fff, 0 0 12px #85e3fa, 0 0 13px #85e3fa,
+        0 0 14px #85e3fa, 0 0 15px #85e3fa, 0 0 16px #85e3fa;
+    }
   }
   
   @keyframes shrink {

@@ -30,7 +30,7 @@ const SettingMessage = ({ text, onClickFunction }) => {
           } border-dotted border-4 rounded border-white flex justify-center items-center p-4`}
         >
           <div
-            className={` prose font-mono text-white text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl`}
+            className={` prose text-white text-md`}
             onClick={onClickFunction}
           >
             {text.split("\n").map((para, idx) => (

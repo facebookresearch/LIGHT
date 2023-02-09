@@ -19,7 +19,7 @@ import { ChatBubble } from "../../../../../../../components/ChatBubble";
 import AwardStar from "../../../../../../../components/Stars/AwardStar";
 
 //PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message
-const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
+const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction }) => {
   //TUTORIAL
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
@@ -43,21 +43,25 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
     }
   }, [text]);
 
+  /*---------------HANDLERS----------------*/
+  const clickHandler = ()=>{
+    onClickFunction()
+  }
   return (
     <div
-      className={`_player-message_  flex w-full mb-4
-      ${inHelpMode ? "active" : ""}`}
-      onClick={onClickFunction}
+      className={`_player-message-row_  flex w-full mb-4
+      ${inHelpMode && isSelected ? "active" : ""}`}
+      onClick={clickHandler}
     >
 
-      <div className="flex flex-col w-full">
+      <div className="_player-message-container_ flex flex-col w-full">
         <TutorialPopover
           tipNumber={17}
-          open={inHelpMode && selectedTip === 17}
+          open={isSelected && inHelpMode && selectedTip === 17}
           position="top"
         >
-          <ChatBubble action={action} actor="YOU" align="right">
-            <div className="w-full flex flex-row justify-between items-between">
+          <div className="w-full flex flex-row justify-end items-center">
+          <div className="w-full flex justify-end items-end">
             {xp ? (
                     <Tooltip
                       title={
@@ -65,21 +69,27 @@ const PlayerMessage = ({ text, caller, actor, xp, onClickFunction }) => {
                       }
                     >
                       <AwardStar 
-                        xp={12}
+                        xp={xp}
                       />
                     </Tooltip>
                 ) : null
                 }
-             <div className="w-full flex justify-start items-start">
+
               </div>
-            <div className="flex flex-col w-full">
-              <p className="_player-message-bubble-text_ w-full  break-words">{text}</p>
+          <div className="_chatbubble-container_ max-w-[80%]">
+          <ChatBubble action={action} actor="YOU" align="right">
+            <div className="w-full flex flex-row justify-between items-between ">
+             {/* <div className="w-full flex justify-start items-start"> */}
+            <div className="flex flex-col w-[90%]">
+              <p className={`_player-message-bubble-text_ w-full min-w-[40px]  break-words text-left text-md ${action!=="default" ? "text-white" : "text-black"}`}>{text}</p>
+            </div>
               <div className="relative">
                 <div className="absolute bg-emerald-500"></div>
-              </div>
             </div>
             </div>
           </ChatBubble>
+          </div>
+          </div>
         </TutorialPopover>
       </div>
     </div>

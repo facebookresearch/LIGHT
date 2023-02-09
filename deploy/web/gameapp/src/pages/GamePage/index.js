@@ -289,8 +289,7 @@ const Chat = ({
     scrollToBottom();
   }, [scrollToBottom, messages]);
 
-  //const { presentAgents } = getLocationState(messages);
-
+  /* EMOJI */
   useEffect(() => {
     let defaultEmoji = "\u2753"
     if (persona === null || persona.name === null) return;
@@ -307,11 +306,11 @@ const Chat = ({
 
   return (
     <div
-      className="__game-page__ w-screen h-screen"
+      className="_game-page_ w-screen h-screen"
       onMouseMove={resetIdleTimer}
     >
-      <div className="__gamepage-container__ w-full h-full flex flex-row ">
-        <div className="w-full flex flex-row h-screen">
+      <div className="_gamepage-container_ w-full h-full flex flex-row ">
+        <div className="_game-container_ w-full flex flex-row h-screen">
           <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative xl:flex-1 xl:relative 2xl:flex-1 2xl:relative">
             <Sidebar dataModelHost={dataModelHost} getEntityId={getEntityId} />
           </div>

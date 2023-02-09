@@ -42,7 +42,7 @@ const QuestMessage = ({ text, onClickFunction }) => {
           } border-double border-4 rounded border-yellow-100 flex justify-center items-center p-4 `}
         >
           <div
-            className={`_quest-content_ prose font-mono text-yellow-100 text-center text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl`}
+            className={`_quest-content_ prose text-yellow-100 text-center text-md`}
             onClick={onClickFunction}
           >
             {questInfoArr.map((info, index) => {

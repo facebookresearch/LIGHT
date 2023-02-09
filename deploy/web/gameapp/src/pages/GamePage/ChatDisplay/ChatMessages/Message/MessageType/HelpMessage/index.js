@@ -41,7 +41,7 @@ const HelpMessage = ({ text, onClickFunction }) => {
           } border-solid border-4 rounded border-white flex justify-center items-center p-4 `}
           onClick={onClickFunction}
         >
-          <div className="_help-content_ prose font-mono text-white text-center text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl">
+          <div className="_help-content_ prose text-white text-center text-md">
             <p className="_help-content__header_ font-bold">COMMANDS</p>
             {commandList.map((command, index) => {
               let formattedCommanded = command;

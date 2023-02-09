@@ -11,7 +11,7 @@ import "./styles.css";
 const ProgressBar = ({ progressPercent }) => {
   return (
     <progress
-      className="progress progress-warning w-full h-4 border-solid border-white border-2"
+      className="_progress-bar_ progress progress-warning w-full h-4 border-solid border-white border-2"
       value={progressPercent}
       max="100"
     />

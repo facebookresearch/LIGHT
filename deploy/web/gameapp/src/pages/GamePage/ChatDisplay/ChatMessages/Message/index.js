@@ -5,7 +5,7 @@
  */
 
 /* REACT */
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
 import { updateSelectedTip } from "../../../../../features/tutorials/tutorials-slice";
 /* MESSAGE COMPONENTS */
@@ -30,7 +30,7 @@ function get_msg_actor(msg) {
 }
 
 //Message - Renders specific type of message component based on individual message object's attributes
-const Message = ({ msg, onReply, agents, selfId, scrollToBottom }) => {
+const Message = ({messageId, selectedMessage,  msg, onReply, agents, selfId, scrollToBottom, selectMessage }) => {
   /* ----REDUX STATE---- */
   //TUTORIAL;
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
@@ -38,9 +38,24 @@ const Message = ({ msg, onReply, agents, selfId, scrollToBottom }) => {
   // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();
   const setSelectedTip = (tipNumber) => {
-    if (inHelpMode) {
       dispatch(updateSelectedTip(tipNumber));
+  }
+  /* ----LOCAL STATE---- */
+  const [isSelected, setIsSelected] = useState(false);
+  /* ---- LIFECYCLE---- */
+  useEffect(()=>{
+    if(messageId === selectedMessage){
+      setIsSelected(true);
+    }else {
+      setIsSelected(false);
     }
+  },[selectedMessage])
+  /* ----HANDLERS---- */
+  const messageClickHandler = ( tipNumber)=>{
+    if (inHelpMode) {
+      setSelectedTip(tipNumber);
+      selectMessage(messageId);
+    };
   };
   if (
     [
@@ -59,36 +74,41 @@ const Message = ({ msg, onReply, agents, selfId, scrollToBottom }) => {
     if (msg.caller === "HelpEvent") {
       return (
         <HelpMessage
+          isSelected={isSelected}
           text={msg.text}
-          onClickFunction={() => setSelectedTip(10)}
+          onClickFunction={() => messageClickHandler(10)}
         />
       );
     } else if (msg.caller === "InventoryEvent") {
       return (
         <InventoryMessage
+          isSelected={isSelected}
           text={msg.text}
-          onClickFunction={() => setSelectedTip(11)}
+          onClickFunction={() => messageClickHandler(11)}
         />
       );
     } else if (msg.caller === "HealthEvent") {
       return (
         <StatusMessage
+          isSelected={isSelected}
           text={msg.text}
-          onClickFunction={() => setSelectedTip(12)}
+          onClickFunction={() => messageClickHandler(12)}
         />
       );
     } else if (msg.caller === "QuestEvent") {
       return (
         <QuestMessage
+          isSelected={isSelected}
           text={msg.text}
-          onClickFunction={() => setSelectedTip(13)}
+          onClickFunction={() => messageClickHandler(13)}
         />
       );
     } else {
       return (
         <SettingMessage
+          isSelected={isSelected}
           text={msg.text}
-          onClickFunction={() => setSelectedTip(15)}
+          onClickFunction={() => messageClickHandler(15)}
         />
       );
     }
@@ -98,34 +118,39 @@ const Message = ({ msg, onReply, agents, selfId, scrollToBottom }) => {
       <>
         {msg.caller === "SoulSpawnEvent" ? (
           <SoulSpawnEventMessage
+            isSelected={isSelected}
             text={msg.text}
-            onClickFunction={() => setSelectedTip(9)}
+            onClickFunction={() => messageClickHandler(9)}
           />
         ) : msg.questComplete ? (
           <MissionCompleteMessage
+            isSelected={isSelected}
             xp={msg.xp}
             name={msg.text}
-            onClickFunction={() => setSelectedTip(14)}
+            onClickFunction={() => messageClickHandler(14)}
           />
         ) : msg.is_self || actor === selfId ? (
           <PlayerMessage
+            isSelected={isSelected}
             text={msg.text}
             isSelf={msg.is_self || actor === selfId}
             caller={msg.caller}
             actor={agents[actor]}
             onReply={onReply}
             xp={msg.xp}
-            onClickFunction={() => setSelectedTip(17)}
+            onClickFunction={() => messageClickHandler(17)}
           />
         ) : (
           <AgentMessage
+            isSelected={isSelected}
             text={msg.text}
+            caller={msg.caller}
             actor={agents[actor]}
             onReply={onReply}
             xp={msg.xp}
             actorId={actor}
             eventId={msg.event_id}
-            onClickFunction={() => setSelectedTip(16)}
+            onClickFunction={() => messageClickHandler(16)}
             scrollToBottom={scrollToBottom}
           />
         )}

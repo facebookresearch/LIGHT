@@ -38,7 +38,7 @@ const StatusMessage = ({ text, onClickFunction }) => {
         onClick={onClickFunction}
       >
         <div
-          className={`_status-content_ text-white text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl `}
+          className={`_status-content_ text-white text-md`}
         >
           <TutorialPopover
             tipNumber={12}
@@ -50,7 +50,7 @@ const StatusMessage = ({ text, onClickFunction }) => {
                 let starStat = parseInt(stat.split(":")[1]);
                 return (
                   <p className="_status-content__entry_ flex flex-row justify-center items-center ">
-                    EXPERIENCE {index == 1 ? "GIFT " : ""}POINTS:
+                    XP {index == 1 ? "GIFT " : ""}POINTS:
                     <span className="_star-count_ flex flex-row justify-center items-center">
                       {starStat}
                       <FaStar color="yellow" />

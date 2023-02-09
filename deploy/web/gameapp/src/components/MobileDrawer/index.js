@@ -30,14 +30,14 @@ const MobileDrawer = ({
         style={{
           backgroundImage: `linear-gradient(to bottom, #0f0c2999, #302b63aa, #24243ecc), url(${StarryNight})`,
         }}
-        className={`__mobiledrawer-container__ fixed w-full top-0 left-0 overflow-scroll z-10 bg-gray-900 bg-opacity-25 inset-0
+        className={`_mobiledrawer-container_ fixed w-full top-0 left-0 overflow-scroll z-10 bg-gray-900 bg-opacity-25 inset-0
             ${
               isDrawerOpen ? "translate-x-0" : "-translate-x-full"
             } ease-in-out duration-300`}
       >
-        <div className="__mobiledrawer-body__ flex flex-row w-screen h-screen">
-          <div className="__mobiledrawer_content__ flex">{children}</div>
-          <div className="__mobiledrawer-closebutton__ h-full flex justify-center items-center">
+        <div className="_mobiledrawer-body_ flex flex-row w-screen h-screen">
+          <div className="_mobiledrawer_content_ flex">{children}</div>
+          <div className="_mobiledrawer-closebutton_ h-full flex justify-center items-center">
             <BiLeftArrow
               color="yellow"
               size={30}
@@ -46,7 +46,7 @@ const MobileDrawer = ({
           </div>
         </div>
       </div>
-      <div className=" w-30 h-full flex items-center justify-center">
+      <div className="_arrow-container_ w-30 h-full flex items-center justify-center">
         <BiRightArrow onClick={openDrawerFunction} color="yellow" size={30} />
       </div>
     </>

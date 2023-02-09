@@ -17,7 +17,7 @@ const MissionCompleteMessage = ({ xp, name }) => {
       <div
         className={`_missionsuccess-container_
         border-double border-8 rounded border-yellow-300 flex flex-col justify-center items-center p-4
-        font-mono text-yellow-300 text-center
+         text-yellow-300 text-center
       `}
       >
         <p className="_missionsuccess-header_ font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl  2xl:text-5xl">

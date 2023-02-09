@@ -40,7 +40,7 @@ const InventoryMessage = ({ text, onClickFunction }) => {
         border-solid border-4 rounded border-green-300 flex justify-center items-center p-4 `}
           onClick={onClickFunction}
         >
-          <div className="_inventory-content_ font-mono text-green-300 text-center text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl">
+          <div className="_inventory-content_ text-green-300 text-center text-md">
             <p className="_inventory-content-entry_ mt-1">{inventoryInfo}</p>
           </div>
         </div>

@@ -100,6 +100,8 @@ const AgentMessage = ({
     (state) => state.sessionSpentGiftXp.value
   );
   /* ------ LOCAL STATE ------ */
+  const [formattedText, setFormattedText] = useState("")
+  const [messageAction, setMessageAction] = useState("default")
   const [isEditMode, setEditMode] = useState(false);
   const [isReporting, setIsReporting] = useState(false);
   const [isReported, setIsReported] = useState(false);
@@ -151,6 +153,21 @@ const AgentMessage = ({
   };
 
   /*  LIFE CYCLE */
+  useEffect(() => {
+    let updatedMessage = text;
+    console.log("CALLER:  ", caller)
+    if(caller==="SayEvent"){
+      setMessageAction("say")
+      let saidIndex = updatedMessage.indexOf("said")
+      if(saidIndex>0){
+        updatedMessage = updatedMessage.slice(saidIndex+4);
+      }
+    }
+    if(caller==="EmoteEvent" ){
+      setMessageAction("do")
+    }
+    setFormattedText(updatedMessage)
+  }, [text]);
 
   useEffect(() => {
     if (!showReportModal) {
@@ -169,31 +186,32 @@ const AgentMessage = ({
   }, [isReporting]);
 
   return (
-    <>
+
       <div
-        className={`_agent-message_ w-full flex justify-center items-center mb-4
+        className={`_agent-message-row_ flex w-full mb-4 
         ${inHelpMode ? "active" : ""}`}
         onClick={onClickFunction}
       >
-        <div className="flex flex-col w-full">
-          <ChatBubble align="left" actor={actor.toUpperCase()} action="default">
-            <div className="flex flex-col w-full">
+        <div className="_agent-message-container_ flex flex-col max-w-[80%]">
+        <div className="_chatbubble-container_">
+          <ChatBubble align="left" actor={actor.toUpperCase()} action={messageAction}>
+            <div className="w-full flex flex-col">
 
-            <div className="w-full flex flex-row justify-between items-between">
-              <p className=" w-full mb-2 break-words">{text}</p>
+            <div className=" flex flex-row justify-between items-between">
+              <p className={`_agent-message-bubble-text_ w-full  mb-2 break-words text-base ${messageAction!=="default" ? "text-white" : "text-black"}`}>{formattedText}</p>
               {isLiked ? (
             <>
               <GiftStar 
-              isLiked={isLiked}
-              isStarred={isStarred}
-              onClick={starHandler}
-              
+                giftXp={giftXp}
+                isLiked={isLiked}
+                isStarred={isStarred}
+                onClick={starHandler}
               />
             </>
           ) : null}
-              </div>
+            </div>
               {isReported ? (
-                <span className="text-error-content">
+                <span className="text-red-400">
                   This Message Has been reported
                 </span>
               ) : null}
@@ -210,12 +228,12 @@ const AgentMessage = ({
                     >
                       {isLiked ? (
                         <AiFillLike
-                          className="ml-2 text-success cursor-pointer"
+                          className="ml-2 text-green-200  cursor-pointer"
                           onClick={toggleLikeHandler}
                         />
                       ) : (
                         <AiOutlineLike
-                          className="ml-2 text-slate-600 hover:text-success cursor-pointer"
+                          className="ml-2 text-green-200 hover:text-success cursor-pointer"
                           onClick={toggleLikeHandler}
                         />
                       )}
@@ -232,12 +250,12 @@ const AgentMessage = ({
                     >
                       {isDisliked ? (
                         <AiFillDislike
-                          className="ml-3 text-error cursor-pointer"
+                          className="ml-3 text-red-400 cursor-pointer"
                           onClick={toggleDislikeHandler}
                         />
                       ) : (
                         <AiOutlineDislike
-                          className="ml-3 text-slate-600 hover:text-error cursor-pointer"
+                          className="ml-3 text-red-400 hover:text-error cursor-pointer"
                           onClick={toggleDislikeHandler}
                         />
                       )}
@@ -247,6 +265,7 @@ const AgentMessage = ({
               </div>
             </div>
           </ChatBubble>
+          </div>
           <div className="w-full flex justify-start items-start">
             {isLiked && !isStarred ? (
               giftXp > 0 ? (
@@ -274,7 +293,6 @@ const AgentMessage = ({
           </div>
         </div>
       </div>
-    </>
   );
 };
 export default AgentMessage;

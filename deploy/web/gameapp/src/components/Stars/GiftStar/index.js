@@ -15,18 +15,18 @@ import { BsFillStarFill } from "react-icons/bs";
 import { BsStar } from "react-icons/bs";
 
 //GiftStar - 
-const GiftStar = ({isLiked, isStarred, onClick }) => {
+const GiftStar = ({giftXp, isLiked, isStarred, onClick }) => {
   return (
     <div className="_star-container_">
         {
-        true ? (
+        isStarred ? (
                 <BsFillStarFill id="gift-star" className={`text-yellow-300`} />
-              ) : isLiked > 0 ? (
+              ) : isLiked ? (
                 <Tooltip
-                  title="Click to ward player a Gift XP Star"
+                  title={giftXp>0 ? "Click to award player a Gift XP Star":"Role play to earn Gift XP"}
                   position="top"
                 >
-                  <BsStar className='text-black' onClick={onClick} />
+                  <BsStar className='text-yellow-300' onClick={onClick} />
                 </Tooltip>
               ) : null} 
     </div>
