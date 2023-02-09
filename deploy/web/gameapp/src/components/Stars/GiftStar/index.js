@@ -20,13 +20,13 @@ const GiftStar = ({giftXp, isLiked, isStarred, onClick }) => {
     <div className="_star-container_">
         {
         isStarred ? (
-                <BsFillStarFill id="gift-star" className={`text-yellow-300`} />
+                <BsFillStarFill id="gift-star" className={`text-yellow-400`} />
               ) : isLiked ? (
                 <Tooltip
                   title={giftXp>0 ? "Click to award player a Gift XP Star":"Role play to earn Gift XP"}
                   position="top"
                 >
-                  <BsStar className='text-yellow-300' onClick={onClick} />
+                  <BsStar className='text-yellow-400' onClick={onClick} />
                 </Tooltip>
               ) : null} 
     </div>

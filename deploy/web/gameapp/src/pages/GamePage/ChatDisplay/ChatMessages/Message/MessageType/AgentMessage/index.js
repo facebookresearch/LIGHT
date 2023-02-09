@@ -157,14 +157,14 @@ const AgentMessage = ({
     let updatedMessage = text;
     console.log("CALLER:  ", caller)
     if(caller==="SayEvent"){
-      setMessageAction("say")
+      setMessageAction("theySay")
       let saidIndex = updatedMessage.indexOf("said")
       if(saidIndex>0){
         updatedMessage = updatedMessage.slice(saidIndex+4);
       }
     }
     if(caller==="EmoteEvent" ){
-      setMessageAction("do")
+      setMessageAction("theyDo")
     }
     setFormattedText(updatedMessage)
   }, [text]);
@@ -198,7 +198,7 @@ const AgentMessage = ({
             <div className="w-full flex flex-col">
 
             <div className=" flex flex-row justify-between items-between">
-              <p className={`_agent-message-bubble-text_ w-full  mb-2 break-words text-base ${messageAction!=="default" ? "text-white" : "text-black"}`}>{formattedText}</p>
+              <p className={`_agent-message-bubble-text_ w-full  mb-2 break-words text-base "text-black`}>{formattedText}</p>
               {isLiked ? (
             <>
               <GiftStar 
@@ -228,12 +228,12 @@ const AgentMessage = ({
                     >
                       {isLiked ? (
                         <AiFillLike
-                          className="ml-2 text-green-200  cursor-pointer"
+                          className="ml-2 text-green-400  cursor-pointer"
                           onClick={toggleLikeHandler}
                         />
                       ) : (
                         <AiOutlineLike
-                          className="ml-2 text-green-200 hover:text-success cursor-pointer"
+                          className="ml-2 text-green-400 hover:text-success cursor-pointer"
                           onClick={toggleLikeHandler}
                         />
                       )}
