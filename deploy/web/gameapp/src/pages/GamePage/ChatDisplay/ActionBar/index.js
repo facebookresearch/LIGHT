@@ -5,7 +5,7 @@
  */
 
 /* REACT */
-import React from "react";
+import React, {useState, useEffect} from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { updateSelectedTip } from "../../../../features/tutorials/tutorials-slice";
@@ -38,11 +38,19 @@ const ActionBar = ({
   /* ----REDUX ACTIONS---- */
   // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();
+  // TIPS
   const setSelectedTip = (tipNumber) => {
     if (inHelpMode) {
       dispatch(updateSelectedTip(tipNumber));
     }
   };
+  /* ------ LOCAL STATE ------ */
+  const [tellButtons, setTellButtons]= useState([])
+  /* ------ LIFECYCLE ------ */
+  useEffect(()=>{
+    let updatedPresentAgents = presentAgents
+    setTellButtons(updatedPresentAgents)
+  },[presentAgents])
   return (
     <div
       className={`_action-bar_ actions flex flex-col flex-start ${
@@ -58,7 +66,7 @@ const ActionBar = ({
       ></TutorialPopover>
       {/* {location ? <span>{location.name} &mdash; </span> : null} */}
       <div className="mb-4">
-        {presentAgents.map((agent) => {
+        {tellButtons.map((agent) => {
           const agentName = getAgentName(agent);
           const agentId = getEntityId(agent);
           return (
