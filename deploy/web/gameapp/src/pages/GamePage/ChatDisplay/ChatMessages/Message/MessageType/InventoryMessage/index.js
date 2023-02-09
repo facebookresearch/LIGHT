@@ -43,7 +43,7 @@ const InventoryMessage = ({ text, onClickFunction }) => {
           <div className="_inventory-content_ w-full flex flex-col justify-center items-center text-white">
             <div className="_inventory-content-header_ w-full flex flex-row justify-center items-center ">
               <p className="_help-content-header-text_ font-bold">INVENTORY</p>
-              <GiSwapBag className="text-white"/>
+              <GiSwapBag className="_help-content-header-icon_ text-white  ml-2"/>
             </div>
             <p className="_inventory-content-entry_ text-center text-md mt-1">{inventoryInfo}</p>
           </div>
