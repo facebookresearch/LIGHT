@@ -64,7 +64,7 @@ const ActionBar = ({
           return (
             <div
               key={agentName}
-              className="btn btn-outline btn-sm btn-info capitalize"
+              className="btn btn-outline btn-sm btn-info capitalize m-1"
               onClick={() => {
                 if (!inHelpMode) {
                   dispatch(updateIsSaying(false));
