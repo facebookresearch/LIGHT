@@ -18,28 +18,28 @@ const SettingMessage = ({ text, onClickFunction }) => {
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   return (
-    <div className="w-full flex justify-center item-center mb-4">
-      <TutorialPopover
-        tipNumber={15}
-        open={inHelpMode && selectedTip === 15}
-        position="bottom"
-      >
-        <div
-          className={`${
-            inHelpMode ? "active" : ""
-          } border-dotted border-4 rounded border-white flex justify-center items-center p-4`}
-        >
+    <TutorialPopover
+      tipNumber={15}
+      open={inHelpMode && selectedTip === 15}
+      position="bottom"
+    >
+      <div className="_message-row_ w-full flex justify-center item-center mb-4">
           <div
-            className={` prose font-mono text-white text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl`}
-            onClick={onClickFunction}
+            className={`${
+              inHelpMode ? "active" : ""
+            } _setting-container_ w-5/6 md:w-2/3 flex border-solid border-4 rounded border-white justify-center items-center p-4`}
           >
-            {text.split("\n").map((para, idx) => (
-              <p key={idx}>{para}</p>
-            ))}
+            <div
+              className={`_setting-body_ prose text-white text-md`}
+              onClick={onClickFunction}
+            >
+              {text.split("\n").map((para, idx) => (
+                <p key={idx}>{para}</p>
+              ))}
+            </div>
           </div>
-        </div>
-      </TutorialPopover>
-    </div>
+      </div>
+    </TutorialPopover>
   );
 };
 export default SettingMessage;

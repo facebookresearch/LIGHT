@@ -11,7 +11,9 @@ export function getActionThemeColor(where:string, action:string, autoTextStyle:b
     say: "accent",
     tell: "info",
     do: "warning",
-    default: "base-100"
+    default: "base-100",
+    theySay: "white",
+    theyDo: "red-100"
   };
   
   const color = actionColors[action] || actionColors.default;
@@ -20,3 +22,7 @@ export function getActionThemeColor(where:string, action:string, autoTextStyle:b
   // To build a class dynamically, this requires the theme classes be in safeList first. See tailwind.config.js.
   return `${where}-${color}${postfix}`;
 }
+
+
+
+//#f2e2d2

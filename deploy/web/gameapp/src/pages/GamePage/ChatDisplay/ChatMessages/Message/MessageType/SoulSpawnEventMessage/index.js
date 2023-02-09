@@ -42,7 +42,7 @@ const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
           } flex justify-center items-center p-4`}
         >
           <div
-            className={` prose font-mono text-white text-center text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl`}
+            className={`  text-white text-center text-md`}
             onClick={onClickFunction}
           >
             {/* <p className=" _soulspawn-stars_">{StarShine1}</p> */}
@@ -51,13 +51,7 @@ const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
             <p></p>
             <h5 className="soulspawn-subheader">YOUR CHARACTER</h5>
             <p className="soulspawn-text" style={{ padding: "0 3em 0 3em" }}>
-              <TutorialPopover
-                tipNumber={9}
-                open={inHelpMode && selectedTip === 9}
-                position="bottom"
-              >
                 {Description}
-              </TutorialPopover>
             </p>
             <h5 className="soulspawn-subheader">YOUR MISSION</h5>
             <p className="soulspawn-text">{MissionDesc}</p>

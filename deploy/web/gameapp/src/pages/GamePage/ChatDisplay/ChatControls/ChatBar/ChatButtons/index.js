@@ -34,8 +34,6 @@ const ChatButtons = ({
   chatInputRef,
 }) => {
   /* ------ REDUX STATE ------ */
-  // VIEW STATE
-  const isMobile = useAppSelector((state) => state.view.isMobile);
   //   // CHAT STATE
   const chatText = useAppSelector((state) => state.chatInput.chatText);
   const isSaying = useAppSelector((state) => state.chatInput.isSaying);
@@ -73,9 +71,6 @@ const ChatButtons = ({
     let formattedTellTargetName = str;
     if (str.length > 12) {
       formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 12)}...`;
-      if (isMobile) {
-        formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 4)}...`;
-      }
     }
     return formattedTellTargetName;
   };
@@ -83,12 +78,12 @@ const ChatButtons = ({
   const action = tellTarget ? "tell" : isSaying ? "say" : "do";
 
   return (
-    <div className="_chat-button_ h-full">
-      <TutorialPopover
+    <TutorialPopover
         tipNumber={5}
         open={inHelpMode && selectedTip === 5}
         position="right"
       >
+    <div className="_chat-button_ h-full">
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -99,20 +94,20 @@ const ChatButtons = ({
             }
           }}
           type="button"
-          className={`h-full max-w-[130px] overflow-hidden text-md font-medium rounded shadow-sm text-white pl-2 pr-2 ${getActionThemeColor(
+          className={`h-full w-[130px] overflow-hidden text-md font-medium rounded shadow-sm text-white pl-2 pr-2 ${getActionThemeColor(
             "bg",
             action
           )} `}
         >
-          <span className="flex flex-row justify-center items-center  text-accent-content capitalize">
-            {tellTarget ? <BiChevronRight className="text-3xl" /> : <FaSort />}
+          <span className="flex flex-row justify-start items-center  text-accent-content capitalize">
+            {tellTarget ? <BiChevronRight className="text-3xl" /> : <FaSort className="text-xl" />}
             <p className="capitalize overflow-ellipsis pl-1">{`${action} ${
               tellTarget ? formatTellTargetForButton(tellTarget) : ""
             }`}</p>
           </span>
         </button>
-      </TutorialPopover>
     </div>
+    </TutorialPopover>
   );
 };
 

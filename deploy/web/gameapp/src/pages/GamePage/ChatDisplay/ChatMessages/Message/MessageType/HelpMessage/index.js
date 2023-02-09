@@ -11,6 +11,7 @@ import { useAppSelector } from "../../../../../../../app/hooks";
 /* STYLES */
 import "./styles.css";
 /* ICONS */
+
 /* CUSTOM COMPONENTS */
 import TutorialPopover from "../../../../../../../components/TutorialPopover";
 
@@ -29,7 +30,7 @@ const HelpMessage = ({ text, onClickFunction }) => {
   }, [text]);
 
   return (
-    <div className=" w-full flex justify-center items-center mb-4">
+    <div className="_message-row_ w-full flex justify-center items-center mb-4">
       <TutorialPopover
         tipNumber={10}
         open={inHelpMode && selectedTip === 10}
@@ -38,11 +39,11 @@ const HelpMessage = ({ text, onClickFunction }) => {
         <div
           className={`_help-container_ ${
             inHelpMode ? "active" : ""
-          } border-solid border-4 rounded border-white flex justify-center items-center p-4 `}
+          } flex border-solid border-4 rounded border-white justify-center items-center p-4 `}
           onClick={onClickFunction}
         >
-          <div className="_help-content_ prose font-mono text-white text-center text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl">
-            <p className="_help-content__header_ font-bold">COMMANDS</p>
+          <div className="_help-content_ prose text-white text-center text-md">
+            <p className="_help-content-header_ font-bold">COMMANDS</p>
             {commandList.map((command, index) => {
               let formattedCommanded = command;
               if (formattedCommanded.indexOf(",") > 0) {

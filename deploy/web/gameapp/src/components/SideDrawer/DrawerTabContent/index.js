@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { updateShowDrawer } from "../../../features/view/view-slice";
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */

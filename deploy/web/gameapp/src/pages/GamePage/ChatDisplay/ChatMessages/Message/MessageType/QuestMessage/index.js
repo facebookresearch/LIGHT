@@ -30,21 +30,25 @@ const QuestMessage = ({ text, onClickFunction }) => {
   }, [text]);
 
   return (
-    <div className=" w-full flex justify-center items-center mb-4">
-      <TutorialPopover
-        tipNumber={13}
-        open={inHelpMode && selectedTip === 13}
-        position="top"
-      >
+    <TutorialPopover
+    tipNumber={13}
+    open={inHelpMode && selectedTip === 13}
+    position="top"
+  >
+    <div className="_message-row_ w-full flex justify-center items-center mb-4">
         <div
           className={`_quest-container_ ${
             inHelpMode ? "active" : ""
-          } border-double border-4 rounded border-yellow-100 flex justify-center items-center p-4 `}
+          } w-5/6 md:w-2/3 flex border-solid border-4 rounded border-white justify-center items-center p-4 `}
         >
           <div
-            className={`_quest-content_ prose font-mono text-yellow-100 text-center text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl  2xl:text-2xl`}
+            className={`_quest-content_ prose text-white text-center text-md`}
             onClick={onClickFunction}
           >
+            <div className="_quest-content-header_ w-full flex flex-row justify-center items-center ">
+              <p className="_quest-content-header-text_ font-bold">MISSIONS</p>
+              <GiHolyGrail className="_quest-content-header-icon_ text-4xl text-white  ml-2"/>
+            </div>
             {questInfoArr.map((info, index) => {
               if (info.indexOf(":") >= 0) {
                 let traitArr = info.split(":");
@@ -68,8 +72,8 @@ const QuestMessage = ({ text, onClickFunction }) => {
             })}
           </div>
         </div>
-      </TutorialPopover>
     </div>
+  </TutorialPopover>
   );
 };
 export default QuestMessage;

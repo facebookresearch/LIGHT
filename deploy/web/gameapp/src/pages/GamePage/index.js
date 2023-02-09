@@ -27,12 +27,11 @@ import { updateSessionEarnedGiftXp } from "../../features/sessionInfo/sessionear
 import "./styles.css";
 import "react-tippy/dist/tippy.css";
 import "emoji-mart/css/emoji-mart.css";
-/* EMOJI */
-import { DefaultEmojiMapper } from "../../utils";
-import { emojiIndex } from "emoji-mart";
 /* CUSTOM COMPONENTS */
-import { useWSDataSource } from "../../WebSockets/useWSDataSource";
+//LOADING PAGE
 import LoadingPage from "../../pages/LoadingPage";
+//SOCKET
+import { useWSDataSource } from "../../WebSockets/useWSDataSource";
 import Sidebar from "./Sidebar";
 import MobileDrawer from "../../components/MobileDrawer";
 import ChatDisplay from "./ChatDisplay";
@@ -44,13 +43,9 @@ import CONFIG from "../../config.js";
 
 //WEBSOCKET CONNECTION FUNCTION
 const createWebSocketUrlFromBrowserUrl = (url) => {
-  //console.log("URL", url);
   const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
-  //console.log("wsProtocol", wsProtocol);
   const optionalServerHost = new URL(url).searchParams.get("server");
-  //console.log("optionalServerHost", optionalServerHost);
-  var optionalGameId = new URL(url).searchParams.get("id");
-  //console.log("optionalGameId", optionalGameId);
+  let optionalGameId = new URL(url).searchParams.get("id");
   if (!optionalGameId) {
     optionalGameId = "";
   }
@@ -102,18 +97,20 @@ const ConnectedApp = () => {
     markPlayerAsIdle,
     isIdle,
   } = useWSDataSource(wsUrl);
-
+//ERROR PAGE
   if (isErrored && !isIdle)
     return (
-      <div style={{ textAlign: "center", marginTop: 30, fontSize: 30 }}>
-        Could not connect to the server.
+      <div className="_connectionerror-container_ h-screen w-screen flex justify-center items-center">
+        <div className="_connectionerror-text-container_  justify-center items-center">
+          <h1 className="_connectionerror-text_ text_ text-white text-center text-2xl">Could not connect to the server</h1>
+        </div>
       </div>
     );
-
+//LOADING PAGE
   if (messages.length === 0) {
     return <LoadingPage isFull={isFull} />;
   }
-
+//GAME PAGE
   return (
     <Chat
       messages={messages}
@@ -183,6 +180,7 @@ const Chat = ({
     [chatContainerRef]
   );
   /* UTILS */
+  // getLocationState - returns current room and other characters in current room
   const getLocationState = (messages) => {
     var valid_messages = messages.filter(
       (m) => m.is_self !== true && m.caller !== null
@@ -194,15 +192,13 @@ const Chat = ({
       presentAgents: Object.keys(lastMessage.present_agent_ids),
     };
   };
-
-  /*------REDUX ACTIONS--------*/
-
-  /* HANDLERS */
-
+  // resetIdleTimer - resets idleness state's current time
+  const resetIdleTimer = () => {
+    setIdleTime(0);
+  };
   /*  LIFE CYCLE */
   /* PLAYER AND SESSION INFO UPDATES TO REDUX STORE */
   useEffect(() => {
-    console.log("UPDATED PERSONA", persona);
     if (persona) {
       let updatedXp = persona.xp;
       let updatedGiftXp = persona.giftXp;
@@ -284,18 +280,13 @@ const Chat = ({
     return () => clearInterval(timer);
   }, [idleTime]);
 
-  //
-  const resetIdleTimer = () => {
-    setIdleTime(0);
-  };
 
   // SCROLL TO BOTTOM UPON RECIEVING NEW MESSAGES
   useEffect(() => {
     scrollToBottom();
   }, [scrollToBottom, messages]);
 
-  //const { presentAgents } = getLocationState(messages);
-
+  /* EMOJI */
   useEffect(() => {
     let defaultEmoji = "\u2753"
     if (persona === null || persona.name === null) return;
@@ -312,11 +303,11 @@ const Chat = ({
 
   return (
     <div
-      className="__game-page__ w-screen h-screen"
+      className="_game-page_ w-screen h-screen"
       onMouseMove={resetIdleTimer}
     >
-      <div className="__gamepage-container__ w-full h-full flex flex-row ">
-        <div className="w-full flex flex-row h-screen">
+      <div className="_gamepage-container_ w-full h-full flex flex-row ">
+        <div className="_game-container_ w-full flex flex-row h-screen">
           <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative xl:flex-1 xl:relative 2xl:flex-1 2xl:relative">
             <Sidebar dataModelHost={dataModelHost} getEntityId={getEntityId} />
           </div>
