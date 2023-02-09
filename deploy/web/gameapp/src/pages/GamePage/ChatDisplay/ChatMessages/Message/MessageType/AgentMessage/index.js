@@ -162,6 +162,7 @@ const AgentMessage = ({
       if(saidIndex>0){
         updatedMessage = updatedMessage.slice(saidIndex+4);
       }
+      updatedMessage = updatedMessage.slice(2, updatedMessage.length-1)
     }
     if(caller==="EmoteEvent" ){
       setMessageAction("theyDo")

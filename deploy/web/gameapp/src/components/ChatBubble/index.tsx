@@ -12,6 +12,7 @@ interface Props {
   align: "left" | "right";
   action: string;
   actor: string;
+  mobile: boolean;
   children: React.ReactNode;
 }
 
@@ -41,20 +42,19 @@ function CharacterName({
   action,
   align,
   name,
+  mobile
 }: {
   action:string;
+  mobile: boolean;
   name: string;
   align: "left" | "right";
 }) {
   return (
     <div
-      className={`_nameplate-container_ flex text-sm font-semibold ${
-        align === "left" ? "text-black" : "text-white"
-      } sm:$${
-        align === "left" ? "text-black" : "text-white"
-      } md:text-white lg:text-white xl:text-white 2xl:text-white whitespace-pre`}
+      className={`_nameplate-container_ flex ${
+        align === "left" ? "justify-start" : "justify-end"}`}
       >
-      <p className={`_nameplate-text_ break-words truncate ${ action !== "default" ? "text-white" : "text-black"}`}>
+      <p className={`_nameplate-text_ text-md font-semibold break-words truncate ${ !mobile || action==="say" || action==="do" ? "text-white" : "text-black"}`}>
         {name}
       </p>
     </div>
@@ -74,7 +74,7 @@ export function ChatBubble({
           align === "left" ? "justify-start" : "justify-end"
         } hidden sm:hidden md:flex lg:flex xl:flex 2xl:flex flex-row items-center `}
       >
-        {align === "left" && <CharacterName name={actor} align={align} action={action}/>}
+        {align === "left" && <CharacterName name={actor} align={align} action={action} mobile={false}/>}
         {align === "left" && <ChatBubbleTail align={align} action={action} />}
         <div
           className={`_chat_bubble_ w-full min-w-[10%] flex relative p-4 min-h-[50px] font-medium overflow-hidden 
@@ -87,7 +87,7 @@ export function ChatBubble({
           <div className="_chatbubble-body_ w-full ">{children}</div>
         </div>
         {align === "right" && <ChatBubbleTail align={align} action={action} />}
-        {align === "right" && <CharacterName name={actor} align={align} action={action} />}
+        {align === "right" && <CharacterName name={actor} align={align} action={action} mobile={false} />}
       </div>
       <div
         className={`_mobile-chatbubble-row_ flex flex-row items-center ${
@@ -108,7 +108,7 @@ export function ChatBubble({
                 align === "left" ? "justify-start" : "justify-end"
               }`}
             >
-              <CharacterName name={actor} align={align} action={action} />
+              <CharacterName name={actor} align={align} action={action} mobile={true} />
             </div>
             <div className={`_mobile-chatbubble-body_ w-full ${align === "left" ? "text-left": "text-right"}`}>{children}</div>
           </div>

@@ -29,7 +29,7 @@ const HelpMessage = ({ text, onClickFunction }) => {
   }, [text]);
 
   return (
-    <div className=" w-full flex justify-center items-center mb-4">
+    <div className="_message-row_ w-full flex justify-center items-center mb-4">
       <TutorialPopover
         tipNumber={10}
         open={inHelpMode && selectedTip === 10}
