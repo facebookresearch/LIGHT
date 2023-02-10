@@ -62,14 +62,14 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
         >
           <div className="w-full flex flex-row justify-end items-center">
           <div className="w-full flex justify-end items-end">
-            {4 ? (
+            {xp ? (
                     <Tooltip
                       title={
                         xp > 0 ? `${xp} Experience Points Earned For Roleplaying` : null
                       }
                     >
                       <AwardStar 
-                        xp={8}
+                        xp={xp}
                       />
                     </Tooltip>
                 ) : null

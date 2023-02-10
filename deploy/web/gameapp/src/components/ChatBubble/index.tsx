@@ -56,7 +56,7 @@ function CharacterName({
       className={`_nameplate-container_ flex ${
         align === "left" ? "justify-start" : "justify-end"}`}
       >
-      <p className={`_nameplate-text_ text-md font-semibold break-words truncate ${ !mobile || action==="say" || action==="do" ? "text-white" : "text-black"}`}>
+      <p className={`_nameplate-text_ max-w-[100px] text-md font-semibold break-words truncate ${ !mobile || action==="say" || action==="do" ? "text-white" : "text-black"}`}>
         {name}
       </p>
     </div>

@@ -99,11 +99,7 @@ export function ChatBubble({
       >
         <div
           className={`_mobile-chatbubble-container_ w-full overflow-hidden flex justify-center items-center p-4 min-h-[50px] font-medium
-        ${getActionThemeColor("bg", action)} ${getActionThemeColor(
-            "text",
-            action
-          )}
-        rounded-md`}
+        ${getActionThemeColor("bg", action)} rounded-md`}
         >
           <div className="_mobile-chatbubble-body_ w-full">
             <div
