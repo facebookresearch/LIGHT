@@ -21,6 +21,8 @@ export function getActionThemeColor(
     tell: "info",
     do: "warning",
     default: "base-100",
+    theySay: "white",
+    theyDo: "red-100"
   };
 
   const color = actionColors[action] || actionColors.default;

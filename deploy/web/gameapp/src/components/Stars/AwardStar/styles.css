@@ -13,8 +13,6 @@
   ._award-number_ {
     animation-delay: 2s;
     animation: slide 1s normal;
-    /* animation-delay: 2s;
-    animation: text-glow 1s ease-in-out infinite alternate; */
   }
 
 

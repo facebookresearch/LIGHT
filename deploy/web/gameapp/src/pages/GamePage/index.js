@@ -216,6 +216,7 @@ const Chat = ({
       }
     }
   }, [persona]);
+  
   useEffect(() => {
     /* ----SESSION INFO---- */
     /* SESSION XP */

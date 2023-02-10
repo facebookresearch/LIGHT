@@ -3,9 +3,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
+/* REACT */
 import React from "react";
-
+/* THEME */
 import { getActionThemeColor } from "../../app/theme";
 
 interface Props {
@@ -16,6 +16,7 @@ interface Props {
   children: React.ReactNode;
 }
 
+// ChatBubbleTail - Renders chat bubble tail aligned properly
 function ChatBubbleTail({
   align,
   action,
@@ -38,6 +39,7 @@ function ChatBubbleTail({
   );
 }
 
+// CharacterName - Renders character name plate styled and oriented based on source
 function CharacterName({
   action,
   align,
@@ -61,6 +63,7 @@ function CharacterName({
   );
 }
 
+// ChatBubble - renders chatbubble component with children prop as bubble content
 export function ChatBubble({
   align = "left",
   action = "default",

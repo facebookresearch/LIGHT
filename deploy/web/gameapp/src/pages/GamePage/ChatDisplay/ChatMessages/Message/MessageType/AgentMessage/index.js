@@ -196,9 +196,9 @@ const AgentMessage = ({
         <div className="_agent-message-container_ flex flex-col max-w-[80%]">
         <div className="_chatbubble-container_">
           <ChatBubble align="left" actor={actor.toUpperCase()} action={messageAction}>
-            <div className="w-full flex flex-col">
+            <div className="_agent-message-content_ w-full flex flex-col">
 
-            <div className=" flex flex-row justify-between items-between">
+            <div className="_agent-message-text-container_ flex flex-row justify-between items-between">
               <p className={`_agent-message-bubble-text_ w-full  mb-2 break-words text-base "text-black`}>{formattedText}</p>
               {isLiked ? (
             <>
@@ -216,12 +216,12 @@ const AgentMessage = ({
                   This Message Has been reported
                 </span>
               ) : null}
-              <div className="flex flex-row w-full justify-between items-center">
+              <div className="_agent-message-content-footer_ flex flex-row w-full justify-between items-center">
                 <RiReplyFill
-                  className="cursor-pointer hover:text-info"
+                  className="_agent-message-reply-icon_ cursor-pointer hover:text-info"
                   onClick={() => onReply(actor)}
                 />
-                <div className="flex flex-row justify-center items-center">
+                <div className="_agent-message-rating-icons_ flex flex-row justify-center items-center">
                   {isDisliked ? null : (
                     <Tooltip
                       title="This message is in-character!"

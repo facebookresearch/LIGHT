@@ -5,7 +5,7 @@
  */
 
 /* REACT */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 /* CUSTOM COMPONENTS */
 import { ChatBubble } from "../../../../../../../components/ChatBubble/index.tsx";
 /* ICONS */
@@ -20,11 +20,13 @@ import {
 const AgentMessage = ({
   introStep,
   text,
+  action,
   actor,
   scrollToBottom,
   ratingStepHandler,
 }) => {
   /* ------ LOCAL STATE ------ */
+  const [messageAction, setMessageAction] = useState("default")
   const [isReported, setIsReported] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
@@ -45,11 +47,26 @@ const AgentMessage = ({
     scrollToBottom();
   };
 
+    /*  LIFE CYCLE */
+    useEffect(() => {
+      console.log("action:  ", action)
+      console.log("actor:  ", actor)
+      if(action==="say"){
+        setMessageAction("theySay")
+      }
+      if(action==="do"){
+        setMessageAction("theyDo")
+      }
+    }, [text]);
+  
+
+  //Mysterious Figure
   return (
     <>
-      <div className={`_agent-message_ w-full flex mb-4`}>
-        <div className="flex flex-col">
-          <ChatBubble align="left" actor={actor.toUpperCase()} action="default">
+      <div className={`_agent-message-row_ flex w-full mb-4 `}>
+        <div className="_agent-message-container_ flex flex-col max-w-[80%]">
+          <div className="_chatbubble-container_">
+          <ChatBubble align="left" actor={actor.toUpperCase()} action={messageAction}>
             <div className="flex flex-col break-words">
               <div className="mb-2 break-words">{text}</div>
               {isReported ? (
@@ -57,9 +74,9 @@ const AgentMessage = ({
                   This Message Has been reported
                 </span>
               ) : null}
-              <div className="flex flex-row w-full justify-between items-center">
+              <div className="_agent-message-content-footer_ flex flex-row w-full justify-between items-center">
                 {introStep >= 3 ? (
-                  <div className="flex flex-row justify-center items-center">
+                  <div className="_agent-message-rating-icons_ flex flex-row justify-center items-center">
                     {isDisliked ? null : isLiked ? (
                       <AiFillLike
                         className="ml-2 text-success cursor-pointer"
@@ -87,6 +104,7 @@ const AgentMessage = ({
               </div>
             </div>
           </ChatBubble>
+        </div>
         </div>
       </div>
     </>

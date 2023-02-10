@@ -62,14 +62,14 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
         >
           <div className="w-full flex flex-row justify-end items-center">
           <div className="w-full flex justify-end items-end">
-            {xp ? (
+            {4 ? (
                     <Tooltip
                       title={
                         xp > 0 ? `${xp} Experience Points Earned For Roleplaying` : null
                       }
                     >
                       <AwardStar 
-                        xp={xp}
+                        xp={8}
                       />
                     </Tooltip>
                 ) : null
@@ -79,9 +79,8 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
           <div className="_chatbubble-container_ max-w-[80%]">
           <ChatBubble action={action} actor="YOU" align="right">
             <div className="w-full flex flex-row justify-between items-between ">
-             {/* <div className="w-full flex justify-start items-start"> */}
-            <div className="flex flex-col w-[90%]">
-              <p className={`_player-message-bubble-text_ w-full min-w-[40px]  break-words text-left text-md ${action!=="default" ? "text-white" : "text-black"}`}>{text}</p>
+            <div className="flex flex-col w-[100%]">
+              <p className={`_player-message-bubble-text_ w-full min-w-[50px]  break-words text-left text-md ${action!=="default" ? "text-white" : "text-black"}`}>{text+" "}</p>
             </div>
               <div className="relative">
                 <div className="absolute bg-emerald-500"></div>
