@@ -17,6 +17,9 @@ import { Tooltip } from "react-tippy";
 import TutorialPopover from "../../../../../../../components/TutorialPopover";
 import { ChatBubble } from "../../../../../../../components/ChatBubble";
 import AwardStar from "../../../../../../../components/Stars/AwardStar";
+/* ICONS */
+import { ImQuotesLeft } from "react-icons/im";
+import { ImQuotesRight } from "react-icons/im";
 
 //PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message
 const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction }) => {
@@ -49,7 +52,7 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
   }
   return (
     <div
-      className={`_player-message-row_  flex w-full mb-4
+      className={`_player-message-row_  flex w-full h-full mb-4
       ${inHelpMode && isSelected ? "active" : ""}`}
       onClick={clickHandler}
     >
@@ -60,8 +63,8 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
           open={isSelected && inHelpMode && selectedTip === 17}
           position="top"
         >
-          <div className="w-full flex flex-row justify-end items-center">
-          <div className="w-full flex justify-end items-end">
+          <div className="w-full h-full flex flex-row justify-end items-center">
+          <div className="w-full h-full flex flex-row justify-end items-center">
             {xp ? (
                     <Tooltip
                       title={
@@ -74,15 +77,22 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
                     </Tooltip>
                 ) : null
                 }
-
+                {
+                  action === "say" ?
+                <div className="_quote-container_ relative w-[1px] h-full">
+                  <ImQuotesLeft size={34} color="white" className="_quote-icon_ text-white absolute -left-[20px] -top-[10%] z-40" />
+                </div>
+                :
+                null
+                }
               </div>
-          <div className="_chatbubble-container_ max-w-[80%]">
-          <ChatBubble action={action} actor="YOU" align="right">
-            <div className="w-full flex flex-row justify-between items-between ">
-            <div className="flex flex-col w-[100%]">
-              <p className={`_player-message-bubble-text_ w-full min-w-[50px]  break-words text-left text-md ${action!=="default" ? "text-white" : "text-black"}`}>{text+" "}</p>
-            </div>
-              <div className="relative">
+            <div className="_chatbubble-container_ max-w-[80%]">
+              <ChatBubble action={action} actor="YOU" align="right">
+                <div className="w-full flex flex-row justify-between items-between ">
+                 <div className="flex flex-col w-[100%]">
+                  <p className={`_player-message-bubble-text_ w-full min-w-[50px]  break-words text-left text-md ${action!=="default" ? "text-white" : "text-black"}`}>{text+" "}</p>
+                </div>
+                <div className="relative">
                 <div className="absolute bg-emerald-500"></div>
             </div>
             </div>

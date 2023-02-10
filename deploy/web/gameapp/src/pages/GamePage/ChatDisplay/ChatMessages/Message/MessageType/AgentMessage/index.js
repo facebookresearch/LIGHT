@@ -30,6 +30,8 @@ import { BsStar } from "react-icons/bs";
 import { BsReplyFill } from "react-icons/bs";
 import { BsFillFlagFill } from "react-icons/bs";
 import { RiReplyFill } from "react-icons/ri";
+/* ICONS */
+import { ImQuotesRight } from "react-icons/im";
 import {
   AiFillDislike,
   AiFillLike,
@@ -194,7 +196,7 @@ const AgentMessage = ({
         onClick={onClickFunction}
       >
         <div className="_agent-message-container_ flex flex-col max-w-[80%]">
-        <div className="_chatbubble-container_">
+        <div className="_chatbubble-container_ flex flex-row">
           <ChatBubble align="left" actor={actor.toUpperCase()} action={messageAction}>
             <div className="_agent-message-content_ w-full flex flex-col">
 
@@ -266,6 +268,13 @@ const AgentMessage = ({
               </div>
             </div>
           </ChatBubble>
+          {
+            messageAction === "theySay" ?
+          <div className="_quote-container_ relative  w-[1px] h-full">
+            <ImQuotesRight size={36} className="_quote-icon_ absolute text-gray-400 -left-[16px] -top-[10%]  z-40" />
+            </div> :
+            null
+          }
           </div>
           <div className="w-full flex justify-start items-start">
             {isLiked && !isStarred ? (

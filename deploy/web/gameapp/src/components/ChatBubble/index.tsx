@@ -85,7 +85,7 @@ export function ChatBubble({
             "text",
             action
           )}
-        rounded-md flex justify-center items-center`}
+        rounded-md flex flex-row justify-center items-center`}
         >
           <div className="_chatbubble-body_ w-full ">{children}</div>
         </div>
