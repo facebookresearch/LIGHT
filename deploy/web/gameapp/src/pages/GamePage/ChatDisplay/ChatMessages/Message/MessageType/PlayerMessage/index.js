@@ -29,11 +29,13 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   /* ----LOCAL STATE---- */
   const [formatttedMessage, setFormattedMessage] = useState("");
+  const [tellTarget, setTellTarget] = useState(null)
 
   const [action, setAction] = useState("");
   /*---------------LIFECYCLE----------------*/
   useEffect(() => {
     let formattedText = text
+    let formattedTellTarget = tellTarget
     let textEndIndex = text.length - 1;
     let firstTextCharacter = text[0];
     let lastTextCharacter = text[textEndIndex];
@@ -45,11 +47,13 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
     } else if (firstFourTextCharacters === "tell") {
       setAction("tell");
       let quoteIndex = text.indexOf('"')
+      formattedTellTarget = text.slice(5, quoteIndex-1)
       formattedText = text.slice(quoteIndex+1, text.length-1)
     } else {
       setAction("do");
     }
-    setFormattedMessage(formattedText)
+    setFormattedMessage(formattedText);
+    setTellTarget(formattedTellTarget);
   }, [text]);
 
   /*---------------HANDLERS----------------*/
@@ -84,7 +88,7 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
                 ) : null
                 }
                 {
-                  action === "say" ?
+                  action === "say" || action === "tell" ?
                 <div className="_quote-container_ relative w-[1px] h-full">
                   <RiSingleQuotesL size={38} className="_quote-icon-stroke_ absolute text-accent -left-[18px] -top-[18px] z-38" />
                   <RiSingleQuotesL size={30} className="_quote-icon_ absolute text-white -left-[14px] -top-[14px] z-40" />
@@ -100,6 +104,10 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
                 <div className="w-full flex flex-row justify-between items-between ">
                  <div className="flex flex-col w-[100%]">
                   <p className={`_player-message-bubble-text_ w-full min-w-[50px]  break-words text-left text-md ${action!=="default" ? "text-white" : "text-black"}`}>{formatttedMessage}</p>
+                  {tellTarget?
+                  <p className="text-left text-white font-bold italic opacity-50 truncate text-xs mt-1" >This was sent to {" " + tellTarget}</p>
+                  :null
+                  }
                 </div>
                 <div className="relative">
                 <div className="absolute bg-emerald-500"></div>
