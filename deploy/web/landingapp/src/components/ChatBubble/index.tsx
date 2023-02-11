@@ -7,9 +7,6 @@
 import React from "react";
 /* THEME */
 import { getActionThemeColor } from "../../app/theme";
-/* ICONS */
-import { ImQuotesLeft } from "react-icons/im";
-import { ImQuotesRight } from "react-icons/im";
 
 interface Props {
   align: "left" | "right";
