@@ -25,13 +25,8 @@ import { Tooltip } from "react-tippy";
 import CONFIG from "../../../../../../../config.js";
 
 /* ICONS */
-import { BsFillStarFill } from "react-icons/bs";
-import { BsStar } from "react-icons/bs";
-import { BsReplyFill } from "react-icons/bs";
 import { BsFillFlagFill } from "react-icons/bs";
 import { RiReplyFill } from "react-icons/ri";
-/* ICONS */
-import { ImQuotesRight } from "react-icons/im";
 import { RiSingleQuotesR } from "react-icons/ri";
 import {
   AiFillDislike,
