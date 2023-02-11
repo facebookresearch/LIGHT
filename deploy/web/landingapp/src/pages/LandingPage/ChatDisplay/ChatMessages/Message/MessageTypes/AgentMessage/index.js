@@ -6,6 +6,8 @@
 
 /* REACT */
 import React, { useState, useEffect } from "react";
+/* STYLES */
+import "./styles.css"
 /* CUSTOM COMPONENTS */
 import { ChatBubble } from "../../../../../../../components/ChatBubble/index.tsx";
 /* ICONS */
@@ -15,6 +17,7 @@ import {
   AiOutlineDislike,
   AiOutlineLike,
 } from "react-icons/ai";
+import { RiSingleQuotesR } from "react-icons/ri";
 
 //AgentMessage - Renders message from other players/models.  Contains buttons that allow for user feedback to the content of the message.
 const AgentMessage = ({
@@ -65,7 +68,7 @@ const AgentMessage = ({
     <>
       <div className={`_agent-message-row_ flex w-full mb-4 `}>
         <div className="_agent-message-container_ flex flex-col max-w-[80%]">
-          <div className="_chatbubble-container_">
+          <div className="_chatbubble-container_ flex flex-row">
           <ChatBubble align="left" actor={actor.toUpperCase()} action={messageAction}>
             <div className="flex flex-col break-words">
               <div className="mb-2 break-words">{text}</div>
@@ -104,6 +107,16 @@ const AgentMessage = ({
               </div>
             </div>
           </ChatBubble>
+          {
+            messageAction === "theySay" ?
+            <div className="_quote-container_ relative  w-[1px] h-full">
+              <RiSingleQuotesR size={38} className="_quote-icon-stroke_ absolute text-white -left-[30px] -top-[16px] z-38" />
+              <RiSingleQuotesR size={34} className="_quote-icon_ absolute text-black -left-[28px] -top-[14px] z-40" />
+              <RiSingleQuotesR size={38} className="_quote-icon-stroke_ absolute text-white -left-[20px] -top-[16px] z-38" />
+              <RiSingleQuotesR size={34} className="_quote-icon_ absolute text-black -left-[18px] -top-[14px] z-40" />
+            </div> :
+            null
+          }
         </div>
         </div>
       </div>

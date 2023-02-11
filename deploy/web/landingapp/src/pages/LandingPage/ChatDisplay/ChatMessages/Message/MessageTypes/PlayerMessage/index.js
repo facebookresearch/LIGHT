@@ -8,6 +8,8 @@
 import React from "react";
 /* CUSTOM COMPONENTS */
 import { ChatBubble } from "../../../../../../../components/ChatBubble/index.tsx";
+/* ICONS */
+import { RiSingleQuotesL } from "react-icons/ri";
 
 //PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message
 const PlayerMessage = ({ text, action }) => {
@@ -17,6 +19,17 @@ const PlayerMessage = ({ text, action }) => {
     >
       <div className="_player-message-container_ flex flex-col w-full">
           <div className="w-full flex flex-row justify-end items-center">
+            {
+              action === "say" ?
+              <div className="_quote-container_ relative w-[1px] h-full">
+                  <RiSingleQuotesL size={38} className="_quote-icon-stroke_ absolute text-accent -left-[18px] -top-[18px] z-38" />
+                  <RiSingleQuotesL size={30} className="_quote-icon_ absolute text-white -left-[14px] -top-[14px] z-40" />
+                  <RiSingleQuotesL size={38} className="_quote-icon-stroke_ absolute text-accent -left-[8px] -top-[18px] z-38" />
+                  <RiSingleQuotesL size={30} className="_quote-icon_ absolute text-white -left-[4px] -top-[14px] z-40" />
+              </div>
+              :
+              null
+            }
           <div className="_chatbubble-container_ max-w-[80%]">
           <ChatBubble action={action} actor="YOU" align="right">
             <div className="w-full flex flex-row justify-between items-between ">

@@ -32,6 +32,7 @@ import { BsFillFlagFill } from "react-icons/bs";
 import { RiReplyFill } from "react-icons/ri";
 /* ICONS */
 import { ImQuotesRight } from "react-icons/im";
+import { RiSingleQuotesR } from "react-icons/ri";
 import {
   AiFillDislike,
   AiFillLike,
@@ -271,8 +272,11 @@ const AgentMessage = ({
           {
             messageAction === "theySay" ?
           <div className="_quote-container_ relative  w-[1px] h-full">
-            <ImQuotesRight size={36} className="_quote-icon_ absolute text-gray-400 -left-[16px] -top-[10%]  z-40" />
-            </div> :
+            <RiSingleQuotesR size={38} className="_quote-icon-stroke_ absolute text-white -left-[30px] -top-[16px] z-38" />
+            <RiSingleQuotesR size={34} className="_quote-icon_ absolute text-black -left-[28px] -top-[14px] z-40" />
+            <RiSingleQuotesR size={38} className="_quote-icon-stroke_ absolute text-white -left-[20px] -top-[16px] z-38" />
+            <RiSingleQuotesR size={34} className="_quote-icon_ absolute text-black -left-[18px] -top-[14px] z-40" />
+          </div> :
             null
           }
           </div>
