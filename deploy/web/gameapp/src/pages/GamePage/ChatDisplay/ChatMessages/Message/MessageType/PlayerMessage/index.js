@@ -105,7 +105,7 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
                  <div className="flex flex-col w-[100%]">
                   <p className={`_player-message-bubble-text_ w-full min-w-[50px]  break-words text-left text-md ${action!=="default" ? "text-white" : "text-black"}`}>{formatttedMessage}</p>
                   {tellTarget?
-                  <p className="text-left text-white font-bold italic opacity-50 truncate text-xs mt-1" >This was sent to {" " + tellTarget}</p>
+                  <p className="text-left text-white font-bold italic opacity-50 truncate text-xs mt-1" >Told to {" " + tellTarget}</p>
                   :null
                   }
                 </div>

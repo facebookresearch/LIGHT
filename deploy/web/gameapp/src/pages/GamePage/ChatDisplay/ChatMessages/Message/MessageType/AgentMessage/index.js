@@ -162,7 +162,12 @@ const AgentMessage = ({
       }
       updatedMessage = updatedMessage.slice(2, updatedMessage.length-1)
     }
-    if(caller==="EmoteEvent" ){
+    if(caller==="TellEvent"){
+      setMessageAction("theyTell")
+      let toldIndex = updatedMessage.indexOf("told you")
+      updatedMessage = updatedMessage.slice(toldIndex+8, updatedMessage.length-1)
+    }
+    if(caller==="EmoteEvent" || caller==="ArriveEvent"){
       setMessageAction("theyDo")
     }
     setFormattedText(updatedMessage)
@@ -195,9 +200,12 @@ const AgentMessage = ({
         <div className="_chatbubble-container_ flex flex-row">
           <ChatBubble align="left" actor={actor.toUpperCase()} action={messageAction}>
             <div className="_agent-message-content_ w-full flex flex-col">
-
+              {messageAction===theyTell?
+                  <p className="text-left text-white font-bold italic opacity-50 truncate text-xs mt-1" >Told to you</p>
+                  :null
+              }
             <div className="_agent-message-text-container_ flex flex-row justify-between items-between">
-              <p className={`_agent-message-bubble-text_ w-full  mb-2 break-words text-base "text-black`}>{formattedText}</p>
+              <p className={`_agent-message-bubble-text_ w-full  mb-2 break-words ${messageAction===theySay ? "text-black" : "text-white"}`}>{formattedText}</p>
               {isLiked ? (
             <>
               <GiftStar 
@@ -265,11 +273,11 @@ const AgentMessage = ({
             </div>
           </ChatBubble>
           {
-            messageAction === "theySay" ?
+            (messageAction === "theySay" ||  messageAction === "theyTell")?
           <div className="_quote-container_ relative  w-[1px] h-full">
-            <RiSingleQuotesR size={38} className="_quote-icon-stroke_ absolute text-white -left-[30px] -top-[16px] z-38" />
+            <RiSingleQuotesR size={38} className={`_quote-icon-stroke_ absolute ${messageAction === "theyTell" ? "text-info": messageAction === "theyDo" ? "text-red-100" : "text-white"} -left-[30px] -top-[16px] z-38`} />
             <RiSingleQuotesR size={34} className="_quote-icon_ absolute text-black -left-[28px] -top-[14px] z-40" />
-            <RiSingleQuotesR size={38} className="_quote-icon-stroke_ absolute text-white -left-[20px] -top-[16px] z-38" />
+            <RiSingleQuotesR size={38} className={`_quote-icon-stroke_ absolute ${messageAction === "theyTell" ? "text-info": messageAction === "theyDo" ? "text-red-100" : "text-white"} -left-[20px] -top-[16px] z-38`} />
             <RiSingleQuotesR size={34} className="_quote-icon_ absolute text-black -left-[18px] -top-[14px] z-40" />
           </div> :
             null
