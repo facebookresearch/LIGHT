@@ -25,11 +25,9 @@ import { Tooltip } from "react-tippy";
 import CONFIG from "../../../../../../../config.js";
 
 /* ICONS */
-import { BsFillStarFill } from "react-icons/bs";
-import { BsStar } from "react-icons/bs";
-import { BsReplyFill } from "react-icons/bs";
 import { BsFillFlagFill } from "react-icons/bs";
 import { RiReplyFill } from "react-icons/ri";
+import { RiSingleQuotesR } from "react-icons/ri";
 import {
   AiFillDislike,
   AiFillLike,
@@ -194,11 +192,11 @@ const AgentMessage = ({
         onClick={onClickFunction}
       >
         <div className="_agent-message-container_ flex flex-col max-w-[80%]">
-        <div className="_chatbubble-container_">
+        <div className="_chatbubble-container_ flex flex-row">
           <ChatBubble align="left" actor={actor.toUpperCase()} action={messageAction}>
-            <div className="w-full flex flex-col">
+            <div className="_agent-message-content_ w-full flex flex-col">
 
-            <div className=" flex flex-row justify-between items-between">
+            <div className="_agent-message-text-container_ flex flex-row justify-between items-between">
               <p className={`_agent-message-bubble-text_ w-full  mb-2 break-words text-base "text-black`}>{formattedText}</p>
               {isLiked ? (
             <>
@@ -216,12 +214,12 @@ const AgentMessage = ({
                   This Message Has been reported
                 </span>
               ) : null}
-              <div className="flex flex-row w-full justify-between items-center">
+              <div className="_agent-message-content-footer_ flex flex-row w-full justify-between items-center">
                 <RiReplyFill
-                  className="cursor-pointer hover:text-info"
+                  className="_agent-message-reply-icon_ cursor-pointer hover:text-info"
                   onClick={() => onReply(actor)}
                 />
-                <div className="flex flex-row justify-center items-center">
+                <div className="_agent-message-rating-icons_ flex flex-row justify-center items-center">
                   {isDisliked ? null : (
                     <Tooltip
                       title="This message is in-character!"
@@ -266,6 +264,16 @@ const AgentMessage = ({
               </div>
             </div>
           </ChatBubble>
+          {
+            messageAction === "theySay" ?
+          <div className="_quote-container_ relative  w-[1px] h-full">
+            <RiSingleQuotesR size={38} className="_quote-icon-stroke_ absolute text-white -left-[30px] -top-[16px] z-38" />
+            <RiSingleQuotesR size={34} className="_quote-icon_ absolute text-black -left-[28px] -top-[14px] z-40" />
+            <RiSingleQuotesR size={38} className="_quote-icon-stroke_ absolute text-white -left-[20px] -top-[16px] z-38" />
+            <RiSingleQuotesR size={34} className="_quote-icon_ absolute text-black -left-[18px] -top-[14px] z-40" />
+          </div> :
+            null
+          }
           </div>
           <div className="w-full flex justify-start items-start">
             {isLiked && !isStarred ? (

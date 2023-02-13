@@ -3,9 +3,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
+/* REACT */
 import React from "react";
-
+/* THEME */
 import { getActionThemeColor } from "../../app/theme";
 
 interface Props {
@@ -16,6 +16,7 @@ interface Props {
   children: React.ReactNode;
 }
 
+// ChatBubbleTail - Renders chat bubble tail aligned properly
 function ChatBubbleTail({
   align,
   action,
@@ -38,6 +39,7 @@ function ChatBubbleTail({
   );
 }
 
+// CharacterName - Renders character name plate styled and oriented based on source
 function CharacterName({
   action,
   align,
@@ -54,13 +56,14 @@ function CharacterName({
       className={`_nameplate-container_ flex ${
         align === "left" ? "justify-start" : "justify-end"}`}
       >
-      <p className={`_nameplate-text_ text-md font-semibold break-words truncate ${ !mobile || action==="say" || action==="do" ? "text-white" : "text-black"}`}>
+      <p className={`_nameplate-text_ max-w-[100px] text-md font-semibold break-words truncate ${ !mobile || action==="say" || action==="do" ? "text-white" : "text-black"}`}>
         {name}
       </p>
     </div>
   );
 }
 
+// ChatBubble - renders chatbubble component with children prop as bubble content
 export function ChatBubble({
   align = "left",
   action = "default",
@@ -82,7 +85,7 @@ export function ChatBubble({
             "text",
             action
           )}
-        rounded-md flex justify-center items-center`}
+        rounded-md flex flex-row justify-center items-center`}
         >
           <div className="_chatbubble-body_ w-full ">{children}</div>
         </div>

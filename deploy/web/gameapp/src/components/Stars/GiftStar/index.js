@@ -17,7 +17,7 @@ import { BsStar } from "react-icons/bs";
 //GiftStar - 
 const GiftStar = ({giftXp, isLiked, isStarred, onClick }) => {
   return (
-    <div className="_star-container_">
+    <div className="_star-container_ mr-2">
         {
         isStarred ? (
                 <BsFillStarFill id="gift-star" className={`text-yellow-400`} />

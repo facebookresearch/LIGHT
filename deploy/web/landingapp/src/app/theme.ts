@@ -21,11 +21,15 @@ export function getActionThemeColor(
     tell: "info",
     do: "warning",
     default: "base-100",
+    theySay: "white",
+    theyDo: "red-100"
   };
 
   const color = actionColors[action] || actionColors.default;
+  console.log("color:  ", color)
   const postfix = where === "text" && autoTextStyle ? "-content" : "";
-
+  console.log("postfix:  ", postfix)
   // To build a class dynamically, this requires the theme classes be in safeList first. See tailwind.config.js.
+  console.log("THEME RETURN RESULT:  ", `${where}-${color}${postfix}`)
   return `${where}-${color}${postfix}`;
 }
