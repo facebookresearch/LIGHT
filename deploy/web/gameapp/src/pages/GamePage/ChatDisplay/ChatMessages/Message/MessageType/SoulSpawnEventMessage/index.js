@@ -27,8 +27,6 @@ const SoulSpawnEventMessage = ({ text, onClickFunction }) => {
   //TUTORIAL
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
-
-  console.log("STAR SHINE:  ", StarShine1)
   return (
     <div className="w-full flex justify-center item-center mb-4">
       <TutorialPopover
