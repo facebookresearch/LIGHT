@@ -165,9 +165,10 @@ const AgentMessage = ({
     if(caller==="TellEvent"){
       setMessageAction("theyTell")
       let toldIndex = updatedMessage.indexOf("told you")
-      updatedMessage = updatedMessage.slice(toldIndex+8, updatedMessage.length-1)
+      updatedMessage = updatedMessage.slice(toldIndex+10, updatedMessage.length-1)
+      console.log(updatedMessage)
     }
-    if(caller==="EmoteEvent" || caller==="ArriveEvent"){
+    if(caller==="EmoteEvent" || caller==="ArriveEvent" || caller === "LeaveEvent"){
       setMessageAction("theyDo")
     }
     setFormattedText(updatedMessage)
@@ -200,12 +201,12 @@ const AgentMessage = ({
         <div className="_chatbubble-container_ flex flex-row">
           <ChatBubble align="left" actor={actor.toUpperCase()} action={messageAction}>
             <div className="_agent-message-content_ w-full flex flex-col">
-              {messageAction==="theyTell "?
+              {messageAction === "theyTell" ?
                   <p className="text-left text-white font-bold italic opacity-50 truncate text-xs mt-1" >Told to you</p>
                   :null
               }
             <div className="_agent-message-text-container_ flex flex-row justify-between items-between">
-              <p className={`_agent-message-bubble-text_ w-full  mb-2 break-words ${messageAction=== "theySay" ? "text-black" : "text-white"}`}>{formattedText}</p>
+              <p className={`_agent-message-bubble-text_ w-full  mb-2 break-words text-black`}>{formattedText}</p>
               {isLiked ? (
             <>
               <GiftStar 
