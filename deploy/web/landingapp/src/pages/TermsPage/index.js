@@ -3,52 +3,211 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
+/* REACT */
 import React from "react";
+/* REACT ROUTER */
 import { Link, useHistory } from "react-router-dom";
 
-import "./styles.css";
-
-const TermsPage = (props) => {
+//TermsPage - Renders Terms Page with information and helpful links clearly stating the terms of Light
+const TermsPage = () => {
   let history = useHistory();
   return (
-    <div className="termspage-container">
-      <div className="termspage-body">
-        <div style={{ width: "100%", flexDirection: "flexStart" }}>
-          <div className="back-button" onClick={() => history.goBack()}>
-            Back
-          </div>
+    <div className="__termspage-container__ w-screen h-screen">
+      <div className="w-full flex flex-start fixed z-30 back bg-black">
+        <div
+          className=" text-white cursor-pointer hover:text-green-100 p-4 text-2xl"
+          onClick={() => history.goBack()}
+        >
+          Back
         </div>
-        <h1 className="termspage-header">Terms</h1>
-        <div className="termspage-text__container">
-          <p>
-            Facebook will process the messages you send in playing the game in
-            accordance with our Data Policy (
+      </div>
+      <div className="__termspage-body__ flex flex-col items-center w-full h-full text-white overflow-y-scroll py-20">
+        <div className="__termspage-copy__ w-5/6 mb-26 lg:text-4xl break-all">
+          <div className="__termspage-header_container__ w-full flex justify-center items-center">
+            <h1 className="__termspage-header_text__ w-full text-white font-extrabold text-xl lg:text-6xl mb-4">
+              Terms & Conditions
+            </h1>
+          </div>
+          <p className="mb-4">
+            By using the LIGHT platform ("LIGHT"), you agree to be bound by Meta
+            Platform, Inc.’s Terms of Service (available at{" "}
             <a
-              style={{ color: "yellow" }}
-              href="http://facebook.com/policy"
+              className="cursor-pointer text-blue-500 underline hover:text-green-100"
+              href={"https://www.facebook.com/terms.php"}
               target="_blank"
             >
-              facebook.com/policy
+              https://www.facebook.com/terms.php{" "}
             </a>
-            ). Messages you send in playing the game may be used by Facebook for
-            research purposes and as otherwise specified in our Data Policy, and
-            may be used by and/or shared with third parties in connection with
-            this research.
+            ) (as may be updated from time to time, the "Terms of Service"), and
+            Meta Platform, Inc.'s Data Policy (the “Data Policy” available at{" "}
+            <a
+              className="cursor-pointer text-blue-500 underline hover:text-green-100"
+              href={"https://www.facebook.com/about/privacy/update"}
+              target="_blank"
+            >
+              https://www.facebook.com/about/privacy/update{" "}
+            </a>
+            ) as supplemented by these LIGHT Supplemental Terms of Service
+            (these "Supplemental Terms"). You acknowledge and agree that:
           </p>
-          <p>
-            This may involve public disclosure of the messages as part of a
-            research paper or data set. We will take measures to remove any
-            information that directly identifies you before doing so, but cannot
-            guarantee that messages will be completely anonymous. Do not send
-            personal information (for example, name, address, email, or phone
-            number) in your messages.
-          </p>
-          <p>
-            Facebook's Community Standards apply and you may not use any racist,
-            sexist, or otherwise offensive language, or harass other players. If
-            you violate our policies you may be reported and blocked.
-          </p>
+          <ul className=" flex justify-start items-start flex-col list-disc break-words pl-6">
+            <li className="mb-4">
+              LIGHT groups both artificial intelligence generated chatbot agents
+              ("Agents") and other human players (“Players”) into a shared
+              space, without differentiating between them to the Players. As
+              part of your use of LIGHT, and subject to your compliance with the
+              terms of these Supplemental Terms and the Terms of Service, Meta
+              grants you a limited, non-exclusive, non-sublicensable,
+              non-transferable right to access and use LIGHT. As part of your
+              use of LIGHT, you may make text-based submissions ("Input") to
+              LIGHT. Submitting Input to LIGHT will make it immediately visible
+              for other Agents and Players in-game to view and respond to at
+              will. You may also submit feedback, including but not limited to
+              flagging or reporting other messages for quality or
+              integrity-based issues (altogether, “Feedback”). Model-generated
+              responses from Agents (“Output”) will be shown when they choose to
+              respond. LIGHT is currently designed for English-only Input and
+              Output. All conversation text contributed to LIGHT (both your and
+              other Players’ Input and Agent’s Output) will be made available on
+              a public website or other platform that can be accessed and used
+              by Meta and others for research purposes.
+            </li>
+            <li className="mb-4">
+              Output generated by Agents in response to your Input or the Inputs
+              of other Players may be regarded as offensive or harmful or may
+              contain vulgar language, slurs, or culturally insensitive
+              comments. As a result, LIGHT IS ONLY AVAILABLE TO USERS WHO ARE AT
+              LEAST 18 YEARS OLD (OR, IF HIGHER THAN 18, THE AGE OF MAJORITY IN
+              THE JURISDICTION FROM WHICH YOU ARE ACCESSING LIGHT). By
+              accessingLIGHT, you represent that you are at least 18 years old
+              (or, if higher than 18, the age of majority in the jurisdiction
+              from which you are accessing LIGHT).
+            </li>
+            <li className="mb-4">
+              Meta will process the Input and Feedback you submit to LIGHT in
+              accordance with our Data Policy ({" "}
+              <a
+                className="cursor-pointer text-blue-500 underline hover:text-green-100 break-words"
+                href={"https://www.facebook.com/about/privacy/update"}
+                target="_blank"
+              >
+                https://www.facebook.com/about/privacy/update
+              </a>
+              ). Your Input and Feedback may be used for research purposes and
+              as otherwise specified in our Data Policy, and may be used by
+              and/or shared with third parties in connection with this research.
+              This may involve public disclosure of the Input as part of a
+              research paper or data set. We will take measures to remove any
+              information that directly identifies you before doing so, but
+              cannot guarantee that it will be completely anonymous.
+              Accordingly, by submitting Input to LIGHT, you represent that such
+              Input will not contain any information that could be used to
+              identify you or any other person (such as names, phone numbers,
+              addresses, birthdays, and emails). Additional information on how
+              your data may be used can be found{" "}
+              <Link
+                to="faq"
+                className="cursor-pointer underline text-blue-500 hover:text-green-100"
+              >
+                {" "}
+                here
+              </Link>
+              .
+            </li>
+            <li className="mb-4">
+              You grant to Meta and its affiliated companies, licensees, and
+              representatives a perpetual, irrevocable, nonexclusive, and
+              royalty-free license to reproduce, distribute, perform and display
+              (publicly or otherwise), modify, create derivative works of, host,
+              and otherwise use (collectively, "Use") the Input and Feedback in
+              connection with LIGHT, including to facilitate the generation of
+              Output by LIGHT Agents. Further, in the event you choose to share
+              your Input and Feedback with Meta, you grant to Meta and its
+              affiliated companies, licensees, and representatives a license to
+              Use the Input (including as part of a conversation consisting of
+              such Inputs and Agent’s Output in response) and Feedback for
+              research purposes, to share with third parties for research
+              purposes, publish or make available to the public on other sites
+              or platforms, and store indefinitely.
+            </li>
+            <li className="mb-4">
+              As a large company, Meta needs to be very careful about
+              intellectual property infringement. You may not submit any content
+              to LIGHT that infringes the intellectual property rights of others
+              (e.g., no Beyoncé song lyrics, please).
+            </li>
+            <li className="mb-4">
+              In connection with your use of LIGHT, you will not submit any
+              Input that might be regarded as offensive or harmful or contain
+              vulgar language, slurs, or culturally insensitive comments.
+              Further, in using LIGHT, you agree to comply with Facebook’s
+              Community Standards (the “Community Standards”, available at{" "}
+              <a
+                className="cursor-pointer text-blue-500 underline hover:text-green-100"
+                href={
+                  "https://transparency.fb.com/policies/community-standards/"
+                }
+                target="_blank"
+              >
+                https://transparency.fb.com/policies/community-standards/
+              </a>
+              ) (as may be updated from time to time), which is hereby
+              incorporated by reference. Meta reserves the right to terminate
+              your right to use and access LIGHT if you violate these
+              Supplemental Terms or the Terms of Service, including for
+              violations of the Community Standards.
+            </li>
+            <li className="mb-4">
+              LIGHT is controlled or operated (or both) from the United States
+              and is not intended to subject Meta to any non-U.S. jurisdiction
+              or law. LIGHT may only be used in the United States. You must
+              comply with all applicable laws, rules, and regulations in using
+              LIGHT. Meta may limit the availability of LIGHT at any time, in
+              whole or in part, to any person, geographic area or jurisdiction
+              that Meta chooses.
+            </li>
+            <li className="mb-4">
+              Meta may modify, disable or discontinue LIGHT at any time, at
+              Meta’s sole discretion and without notice to you.
+            </li>
+            <li className="mb-4">
+              LIGHT is provided for research purposes only. No content in LIGHT
+              is intended to reflect on or apply to real-world circumstances. As
+              noted above, the Output may be regarded as offensive or harmful or
+              contain vulgar language, slurs, or culturally insensitive
+              comments; if this is a concern, do not use LIGHT. Agents may
+              provide incomplete, misleading, or false information, and you
+              agree not to use or rely on the Output nor to seek legal, medical,
+              investment, or other advice from LIGHT. Meta makes no
+              representations or warranties of any kind as to the adequacy,
+              accuracy, currency, or completeness of LIGHT, any Output, or any
+              other information made available through LIGHT. Meta is not liable
+              for any decisions that you may make, or any actions that you take
+              or fail to take, in reliance on LIGHT, the Output, or Inputs of
+              other Players. Your use of LIGHT and any Output is at your own
+              risk. LIGHT and Output are provided "AS IS" without warranties of
+              any kind, either express or implied, including without limitation
+              warranties of merchantability, fitness for a particular purpose,
+              non-infringement, or other violation of rights. Meta expressly
+              disclaims any liability for any errors or omissions in the Output.
+              Some jurisdictions may not allow the exclusion of implied
+              warranties, so some of the above exclusions may not apply to you.
+            </li>
+            <li className="mb-4">
+              In no event will Meta, or Meta’s subsidiaries, affiliates,
+              directors, officers, employees, agents, and assigns, be liable for
+              any direct or indirect, special, incidental, consequential, or
+              punitive damages, lost profits, or other non-direct damages
+              whatsoever arising in connection with the use of LIGHT, its
+              Output, or the Inputs of other Players, even if one or more of
+              them has been advised of the possibility of such damages or loss.
+              Without limiting the foregoing, the maximum aggregate liability
+              for Meta or Meta’s subsidiaries, affiliates, directors, officers,
+              employees, agents and assigns for all damages, losses and causes
+              of action, whether in contract, tort (including negligence) or
+              otherwise, shall be fifty dollars ($50).
+            </li>
+          </ul>
         </div>
       </div>
     </div>

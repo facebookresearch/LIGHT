@@ -5,7 +5,7 @@
  */
 
 /* REACT */
-import React from "react";
+import React, {useState, useEffect} from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
@@ -30,24 +30,34 @@ const IconButton = ({ buttonFunction, active }) => {
   /* ----REDUX ACTIONS---- */
   // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();
+  //HELP MODE
   const toggleHelpMode = () => {
     let helpModeUpdate = !inHelpMode;
+    let isClickedUpdate = !isClicked
     dispatch(updateInHelpMode(helpModeUpdate));
+    setIsClicked(isClickedUpdate)
   };
-
+  /* ----LOCAL STATE---- */
+  const [isClicked, setIsClicked] = useState(false)
+  /* ----LIFECYCLE---- */
+  useEffect(()=>{
+    if(isClicked){
+      setIsClicked(false);
+    }
+  }, [selectedTip])
   return (
-    <Tooltip title="HELP MODE" position="top">
       <TutorialPopover
         tipNumber={0}
-        open={inHelpMode && selectedTip === 0}
-        position="right"
+        open={isClicked && inHelpMode && selectedTip === 0}
+        position="bottom"
       >
+            <Tooltip title="HELP MODE" position="top">
         <BsInfo
           className={`iconbutton-icon ${inHelpMode ? "active" : ""} `}
           onClick={toggleHelpMode}
         />
+            </Tooltip>
       </TutorialPopover>
-    </Tooltip>
   );
 };
 

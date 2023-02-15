@@ -339,6 +339,30 @@ class OOGraph(object):
 
     # Derived graph logic
 
+    def get_vocab(self):
+        """Return the vocabulary for the entire graph"""
+        vocab = []
+        for agent in self.agents.values():
+            vocab += agent.name.split(" ")
+            vocab += agent.desc.split(" ")
+            vocab += agent.persona.split(" ")
+            vocab += agent.name_prefix.split(" ")
+
+        for obj in self.objects.values():
+            vocab += agent.name.split(" ")
+            vocab += agent.desc.split(" ")
+            vocab += agent.name_prefix.split(" ")
+
+        for room in self.rooms.values():
+            vocab += room.name.split(" ")
+            vocab += room.desc.split(" ")
+            vocab += room.extra_desc.split(" ")
+            vocab += room.name_prefix.split(" ")
+            for edge in room.neighbors.values():
+                vocab += edge.label.split(" ")
+
+        return vocab
+
     def get_local_nodes(self, actor_id):
         """Get nodes local to the given actor_id"""
         actor = self.get_node(actor_id)

@@ -3,166 +3,205 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "react-tippy/dist/tippy.css";
-import "emoji-mart/css/emoji-mart.css";
-
-import Scribe from "../../assets/images/scribe.png";
+/* REACT */
+import React, { useState, useCallback, useEffect, Fragment } from "react";
+/* CUSTOM COMPONENTS */
+import ChatDisplay from "./ChatDisplay";
+import LegalChecklistDisplay from "./LegalChecklistDisplay";
+import SideBarDisplay from "./SideBarDisplay";
+import SideDrawer from "../../components/SideDrawer";
+/* IMAGES */
 import "./styles.css";
+/* COPY */
+import LANDINGAPPCOPY from "../../LandingAppCopy";
 
-const LandingPage = (props) => {
-  let [page, setPage] = useState(0);
+//LandingPage - Renders the Landing Page.  This page renders elements based on stepping through the postLoginSteps.
+const LandingPage = () => {
+  const { legalAgreements, introDialogueSteps } = LANDINGAPPCOPY;
+  /*---------------LOCAL STATE----------------*/
+  //UI INTRO STEP
+  const [postLoginStep, setPostLoginStep] = useState(0);
+  //UI INTRO STEP
+  const [introStep, setIntroStep] = useState(0);
+  //CHAT MESSAGES
+  const [messages, setMessages] = useState([]);
+  //CHAT INPUT TEXT
+  const [chatInputText, setChatInputText] = useState("");
+  //INPUT ACTION TYPE
+  const [inputActionType, setInputActionType] = useState("say");
+  //SUBMITTED ACTIONS
+  const [submittedActions, setSubmittedActions] = useState([]);
+  //CHAT DISPLAY REF
+  const chatContainerRef = React.useRef(null);
+  //MOBILE DRAWER STATE
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const pageChangeHandler = (arrow) => {
-    if (page > 0 && arrow === "-") {
-      let previousPage = (page -= 1);
-      setPage(previousPage);
-    } else if (page < 2 && arrow === "+") {
-      let nextPage = (page += 1);
-      setPage(nextPage);
+  /*--------------- HANDLERS ----------------*/
+  //postLoginStepIncreaseHandler - iterates through postLoginSteps which triggers different elements to render
+  const postLoginStepIncreaseHandler = () => {
+    let nextStep = postLoginStep + 1;
+    setPostLoginStep(nextStep);
+  };
+
+  //inputActionTypeToggleHandler - toggles between say and do inputAction state
+  const inputActionTypeToggleHandler = () => {
+    if (inputActionType === "say") {
+      setInputActionType("do");
+    } else {
+      setInputActionType("say");
     }
   };
+
+  //inputChangeHandler - sets text of chat input.
+  const inputChangeHandler = (e) => {
+    let updatedInputValue = e.target.value;
+    setChatInputText(updatedInputValue);
+  };
+
+  //ratingStepHandler - sets intro step upon completion of the rating step in the intro
+  const ratingStepHandler = () => {
+    setIntroStep(4);
+    let updatedMessages = [
+      ...messages,
+      introDialogueSteps[4],
+      introDialogueSteps[5],
+      introDialogueSteps[6],
+    ];
+    setMessages(updatedMessages);
+  };
+
+  //chatSubmissionHandler - sets intro step based completion of chat submission steps
+  //as well as submits messages to chat display
+  const chatSubmissionHandler = () => {
+    if (introStep === 4) {
+      setIntroStep(5);
+    }
+    let newChatSubmission = {
+      action: inputActionType,
+      actor: "YOU",
+      text: chatInputText,
+      isSelf: true,
+    };
+    let updatedMessages = [...messages, newChatSubmission];
+    let updatedSubmittedActions = [newChatSubmission, ...submittedActions];
+    setMessages(updatedMessages);
+    setSubmittedActions(updatedSubmittedActions);
+    setChatInputText("");
+    scrollToBottom();
+  };
+  //SCROLL TO BOTTOM OF DISPLAY CALLBACK
+  const scrollToBottom = useCallback(
+    () =>
+      setTimeout(() => {
+        if (chatContainerRef.current)
+          chatContainerRef.current.scrollTop =
+            chatContainerRef.current.scrollHeight;
+      }, 0),
+    [chatContainerRef]
+  );
+
+  /*-------------- LIFECYCLE ----------------*/
+  //Upon render sets first messages in intro chat display
+  useEffect(() => {
+    console.log(messages);
+    let updatedMessage = [introDialogueSteps[0]];
+    setMessages(updatedMessage);
+  }, []);
+
+  //Listens for proper message entries rerquired to complete currernt intro step and continue to move through intro and postlogin stepper
+  useEffect(() => {
+    if (messages.length) {
+      let newMessage = messages[messages.length - 1];
+      if (introStep === 0) {
+        setIntroStep(1);
+        let updatedMessage = introDialogueSteps[1];
+        let updatedMessages = [...messages, updatedMessage];
+        setMessages(updatedMessages);
+      }
+      if (introStep === 1) {
+        if (newMessage.action === "say" && newMessage.isSelf) {
+          setIntroStep(2);
+          let updatedMessage = introDialogueSteps[2];
+          let updatedMessages = [...messages, updatedMessage];
+          setMessages(updatedMessages);
+        }
+      }
+      if (introStep === 2) {
+        if (newMessage.action === "do" && newMessage.isSelf) {
+          setIntroStep(3);
+          let updatedMessage = introDialogueSteps[3];
+          let updatedMessages = [...messages, updatedMessage];
+          setMessages(updatedMessages);
+        }
+      }
+      if (introStep === 4) {
+        setIsDrawerOpen(true);
+      }
+      if (introStep >= 5) {
+        setTimeout(() => {
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ completed: true }),
+          };
+          const loginData = fetch("/submit_intro", requestOptions)
+            .then((response) => {
+              console.log(response);
+              window.location.href = "/play";
+            })
+            .catch((error) => {
+              console.error("There was an error!", error);
+            });
+        }, 3000);
+      }
+    }
+  }, [messages, introStep]);
+
   return (
-    <div className="landingpage-container">
-      <h1 className="header-text">Welcome to the world of LIGHT</h1>
-      <div className="main-container">
-        <div className="main-section">
-          <div className="instructions-container">
-            <div className="instructions-container__section">
-              <div className="instruction-bubble">
-                <div className="guide-container">
-                  <img className="guide-img" src={Scribe} />
-                  <div className="arrowbox">
-                    {page !== 0 ? (
-                      <div
-                        onClick={() => pageChangeHandler("-")}
-                        className="instruction-arrow__container"
-                      >
-                        <p className="instruction-arrow">{"<"}</p>
-                      </div>
-                    ) : (
-                      <div className="instruction-arrow__placeholder" />
-                    )}
-                    {page !== 2 ? (
-                      <div
-                        onClick={() => pageChangeHandler("+")}
-                        className="instruction-arrow__container "
-                      >
-                        <p className="instruction-arrow">{">"}</p>
-                      </div>
-                    ) : (
-                      <div className="instruction-arrow__placeholder" />
-                    )}
-                  </div>
-                </div>
-                <div className="instruction-text__container">
-                  {page == 0 ? (
-                    <>
-                      <p className="instruction-welcome">
-                        The Dungeon Master is glad to see you.
-                      </p>
-                    </>
-                  ) : null}
-                  {page == 1 ? (
-                    <>
-                      <h2 className="instruction-header">
-                        Roleplay your Character
-                      </h2>
-                      <p className="instruction-text">
-                        You will be teleported into our mystical realm and fill
-                        the shoes of a character who lives there — playing that
-                        role you must act and talk with other LIGHT denizens. As
-                        you interact, your messages will be evaluated by the
-                        Dungeon Master AI. Portray your character well and you
-                        will increase your <b>experience points</b>.
-                      </p>
-                      <p className="instruction-text">
-                        Other characters will also be playing their roles as
-                        well — some of them will be other human souls, others
-                        will be AIs. When everyone is playing their role to the
-                        best of their ability in the realm the experience will
-                        be maximized. You can <b>reward</b> other players when
-                        you are impressed by their skills. You can also{" "}
-                        <b>report</b> or demote unwanted behaviors: e.g.,
-                        mentions of the real world or bad behavior. Stay good,
-                        my denizens!
-                      </p>
-                    </>
-                  ) : null}
-                  {page == 2 ? (
-                    <>
-                      <h2 className="instruction-header">
-                        Interact with the World
-                      </h2>
-                      <p className="instruction-text">
-                        <b>Talking:</b> Talking is the most important part of
-                        playing your role in the world. You can say, whisper,
-                        shout or tell something to other individuals — all using
-                        free-form text, e.g.
-                        <i>
-                          tell the smithy “I’d love to own such a fine tool! It
-                          looks like wonderful craftsmanship, well done!”{" "}
-                        </i>
-                        .
-                      </p>
-                      <p className="instruction-text">
-                        <b>Emotes:</b> You can also express your emotions in the
-                        game with
-                        <u>emote actions</u>, e.g. <i>smile, grin, scream</i> or{" "}
-                        <i>dance</i>.
-                      </p>
-                      <p className="instruction-text">
-                        <b>Actions:</b> You can move into new locations (e.g.,{" "}
-                        <i> go west</i>), pick up objects (e.g., <i>get tool</i>
-                        ), give objects (e.g.,
-                        <i>give tool to smithy</i>), wear clothing, wield
-                        weapons, eat, drink, try to steal objects, and more.
-                        Type
-                        <i> help </i>
-                        in game for the full list of actions.
-                      </p>
-                    </>
-                  ) : null}
-                </div>
-              </div>
-            </div>
-            <div className="menu-container__section">
-              <div className="menu-container">
-                <a style={{ textDecoration: "none" }} href="/play/">
-                  <div className="menu-item ">
-                    <h1 className="menu-item__text">Play Now</h1>
-                  </div>
-                </a>
-                <Link style={{ textDecoration: "none" }} to="/tutorial">
-                  <div className="menu-item">
-                    <h1 className="menu-item__text">How To Play</h1>
-                  </div>
-                </Link>
-                <Link style={{ textDecoration: "none" }} to="/about">
-                  <div className="menu-item">
-                    <h1 className="menu-item__text">About</h1>
-                  </div>
-                </Link>
-              </div>
-            </div>
+    <div className="w-screen h-screen">
+      {postLoginStep === 0 ? (
+        <div className="flex w-full h-full justify-center overflow-y-scroll pt-10 pb-10">
+          <LegalChecklistDisplay
+            legalAgreements={legalAgreements}
+            postLoginStepIncreaseHandler={postLoginStepIncreaseHandler}
+          />
+        </div>
+      ) : null}
+      {postLoginStep >= 1 ? (
+        <div className="w-full h-full flex flex-row">
+          <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative xl:flex-1 xl:relative 2xl:flex-1 2xl:relative">
+            {introStep >= 4 ? <SideBarDisplay /> : null}
+          </div>
+          <div className="_sidebar-mobile-container_ flex sm:flex md:hidden lg:hidden">
+            {introStep >= 4 ? (
+              <SideDrawer
+                isDrawerOpen={isDrawerOpen}
+                closeDrawerFunction={() => setIsDrawerOpen(false)}
+                openDrawerFunction={() => setIsDrawerOpen(true)}
+              >
+                <SideBarDisplay />
+              </SideDrawer>
+            ) : null}
+          </div>
+          <div className="_chat-container_ overflow-x-hidden flex-1 sm:flex-1 md:grow-[3] lg:grow-[3] xl:grow-[3] 2xl:grow-[3] h-full">
+            {messages ? (
+              <ChatDisplay
+                introStep={introStep}
+                ratingStepHandler={ratingStepHandler}
+                chatInputText={chatInputText}
+                inputActionType={inputActionType}
+                inputActionTypeToggleHandler={inputActionTypeToggleHandler}
+                inputChangeHandler={inputChangeHandler}
+                scrollToBottom={scrollToBottom}
+                messages={messages}
+                submittedActions={submittedActions}
+                onSubmit={chatSubmissionHandler}
+                chatContainerRef={chatContainerRef}
+              />
+            ) : null}
           </div>
         </div>
-        <div className="terms-section">
-          <div className="terms-container">
-            <h3 style={{ color: "yellow", margin: "0" }}>Usage terms</h3>
-            <p style={{ color: "white" }}>
-              You should read our{" "}
-              <Link style={{ color: "yellow" }} to="/terms">
-                terms
-              </Link>{" "}
-              regarding how we process and use data that you send to LIGHT. You
-              are accepting these terms by playing the game.
-            </p>
-          </div>
-        </div>
-      </div>
+      ) : null}
     </div>
   );
 };

@@ -12,13 +12,11 @@
 }
 
 .collapsible-box__icon {
-  background-color: lightgoldenrodyellow;
-  border-radius: 25px;
-  box-shadow: 5px 2px 5px;
   position: relative;
   margin-left: auto;
   margin-right: auto;
   width: 90%;
+  color: white;
 }
 
 .collapsible-box__icon .icon {
@@ -27,14 +25,13 @@
   top: 0%;
   transform: translate(-50%, -75%);
   font-size: 50px;
-  background-color: #fdf1b3;
+
   border-radius: 72px;
   height: 60px;
   width: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 5px solid gold;
 }
 
 .collapsible-header--container {
@@ -43,6 +40,8 @@
 .collapsible-header--text {
   margin-top: 20px;
   text-align: center;
+  color: white;
+  font-family: "Courier New", Courier, monospace;
 }
 
 .content-container.active:hover {

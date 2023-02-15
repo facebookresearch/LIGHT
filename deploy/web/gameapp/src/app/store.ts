@@ -13,11 +13,12 @@ import emojiReducer from "../features/playerInfo/emoji-slice";
 import giftXpReducer from "../features/playerInfo/giftxp-slice";
 import locationReducer from "../features/playerInfo/location-slice";
 import messagesReducer from "../features/messages/messages-slice";
+import modalReducer from "../features/modals/modals-slice";
 import personaReducer from "../features/playerInfo/persona-slice";
 import sessionXpReducer from "../features/sessionInfo/sessionxp-slice";
+import sessionEarnedGiftXpReduucer from "../features/sessionInfo/sessionearnedgiftxp-slice";
 import sessionSpentGiftXpReducer from "../features/sessionInfo/sessionspentgiftxp-slice";
 import tutorialsReducer from "../features/tutorials/tutorials-slice";
-import viewReducer from "../features/view/view-slice";
 import xpReducer from "../features/playerInfo/xp-slice";
 
 //Store - Redux store that as a "bank" of state components can subscribe to
@@ -30,11 +31,12 @@ export const store = configureStore({
     giftXp: giftXpReducer,
     location: locationReducer,
     messages: messagesReducer,
+    modals: modalReducer,
     persona: personaReducer,
     sessionXp: sessionXpReducer,
+    sessionEarnedGiftXp: sessionEarnedGiftXpReduucer,
     sessionSpentGiftXp: sessionSpentGiftXpReducer,
     tutorials: tutorialsReducer,
-    view: viewReducer,
     xp: xpReducer,
   },
 });

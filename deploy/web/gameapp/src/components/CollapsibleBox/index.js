@@ -48,9 +48,9 @@ const CollapsibleBox = ({
         <h3 className="collapsible-header--text">{title}</h3>
         <div className="collapsible-header--icon">
           {isCollapsed ? (
-            <BiWindow color="black" onClick={openHandler} />
+            <BiWindow color="white" onClick={openHandler} />
           ) : (
-            <FaWindowMinimize color="black" onClick={closeHandler} />
+            <FaWindowMinimize color="white" onClick={closeHandler} />
           )}
         </div>
       </div>

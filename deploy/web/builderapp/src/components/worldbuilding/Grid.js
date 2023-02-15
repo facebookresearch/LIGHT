@@ -242,7 +242,7 @@ function Grid({ state, initialShowAdvanced }) {
             margin: "auto",
           }}
           onClick={state.addRowTop}
-          icon="arrow-up"
+          icon="add"
         />
         <div style={{ display: "flex" }}>
           <Button
@@ -256,7 +256,7 @@ function Grid({ state, initialShowAdvanced }) {
               margin: "10px 0",
             }}
             onClick={state.addColFront}
-            icon="arrow-left"
+            icon="add"
           />
           <div
             className="map-container"
@@ -304,7 +304,7 @@ function Grid({ state, initialShowAdvanced }) {
               margin: "10px 0",
             }}
             onClick={state.addColEnd}
-            icon="arrow-right"
+            icon="add"
           />
         </div>
         <Button
@@ -318,7 +318,7 @@ function Grid({ state, initialShowAdvanced }) {
             margin: "auto",
           }}
           onClick={state.addRowBot}
-          icon="arrow-down"
+          icon="add"
         />
       </div>
       <AdvancedEditor

@@ -8,18 +8,13 @@ import React from "react";
 
 import "./styles.css";
 
-const ProgressBar = (props) => {
-  const { bgcolor, percentCompleted, exp, nextLevel } = props;
+const ProgressBar = ({ progressPercent }) => {
   return (
-    <div className="bar-container">
-      <div
-        className="bar-filler"
-        style={{ width: `${percentCompleted}%`, backgroundColor: bgcolor }}
-      ></div>
-      <div className="bar-label__container">
-        <span className="bar-label">{`${exp}/ ${nextLevel} EXP`}</span>
-      </div>
-    </div>
+    <progress
+      className="_progress-bar_ progress progress-warning w-full h-4 border-solid border-white border-2"
+      value={progressPercent}
+      max="100"
+    />
   );
 };
 

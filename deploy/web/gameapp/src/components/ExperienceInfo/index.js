@@ -31,18 +31,19 @@ const ExperienceInfo = () => {
   const giftXp = useAppSelector((state) => state.giftXp.value);
 
   const levelCalculator = () => {
+    console.log("CURRENT XP", xp)
     let currentLevel = 1;
     let currentExp = xp;
     let expToLevel = currentLevel * 10;
     while (expToLevel <= currentExp) {
-      currentLevel++;
+      currentLevel +=1;
       currentExp -= expToLevel;
       expToLevel = currentLevel * 10;
     }
-    let nextLevel = currentLevel * 5 * (currentLevel + 1);
-    let percent = Math.floor((xp / nextLevel) * 100);
+    let updatedXpToNextLevel = currentLevel * 5 * (currentLevel + 1);
+    let percent = Math.floor((xp / updatedXpToNextLevel) * 100);
     setLevel(currentLevel);
-    setNeededExp(nextLevel);
+    setNeededExp(updatedXpToNextLevel);
     setExp(xp);
     setProgressPercent(percent);
   };

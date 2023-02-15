@@ -4,28 +4,36 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/* REACT */
 import React from "react";
+/* REACT ROUTER */
 import { Link } from "react-router-dom";
-
+/* STYLES */
 import "./styles.css";
 
-const ErrorPage = (props) => {
+//ErrorPage - Renders error page with link back to prelogin screen
+const ErrorPage = () => {
   return (
-    <div className="errorpage-container">
-      <div className="errorpage-body">
-        <div
-          style={{
-            width: "100%",
-            flexDirection: "flexStart",
-            paddingLeft: "20px",
-          }}
+    <div className="__errorpage-container__ w-screen h-screen">
+      <div className="__errorpage-header__ w-full flex flex-start pl-5">
+        <Link
+          className=" text-white cursor-pointer hover:text-green-100 p-4 text-2xl"
+          to="/"
         >
-          <Link style={{ textDecoration: "none", color: "yellow" }} to="/">
-            Return Home
-          </Link>
-        </div>
-        <h1 style={{ color: "white", textAlign: "center" }}>
-          Oops, looks like there's a web issue
+          Return Home
+        </Link>
+      </div>
+      <div className="__errorpage-body__ flex w-full h-full justify-center items-center">
+        <h1 className="__errorpage-text__ text-white">
+          There has been an error, head back toward the{" "}
+          <span className="__errorpage-link__">
+            {" "}
+            <Link className=" text-white cursor-pointer" to="/">
+              {" "}
+              LIGHT{" "}
+            </Link>
+          </span>
+          .
         </h1>
       </div>
     </div>

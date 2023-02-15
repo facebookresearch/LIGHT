@@ -14,7 +14,7 @@ dialog:
   _loader: ParlAIRemote
   host: http://localhost:30001
 role_playing_score:
-  _loader: ParlAIRemoteActingScore
+  _loader: ParlAIRemote
   host: http://localhost:30002
 action:
   _loader: ParlAIRemote

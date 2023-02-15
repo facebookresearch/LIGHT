@@ -8,7 +8,17 @@ from light.data_model.db.base import BaseDB, DBStatus, DBSplitType, HasDBIDMixin
 from light.data_model.db.users import DBPlayer
 from omegaconf import MISSING, DictConfig
 from typing import Optional, List, Tuple, Union, Dict, Any, Set, TYPE_CHECKING
-from sqlalchemy import insert, select, Enum, Column, Integer, String, Float, ForeignKey
+from sqlalchemy import (
+    insert,
+    select,
+    Enum,
+    Column,
+    Integer,
+    String,
+    Float,
+    Boolean,
+    ForeignKey,
+)
 from sqlalchemy.orm import declarative_base, relationship, Session
 from light.graph.events.base import GraphEvent
 import time
@@ -23,6 +33,8 @@ SQLBase = declarative_base()
 FILE_PATH_KEY = "episodes"
 ID_STRING_LENGTH = 40
 USR_KEY = DBPlayer.ID_PREFIX
+MAX_WILD_MODEL_LEN = 200
+MAX_WILD_CHOICE_LEN = 100
 
 
 class DBGroupName(enum.Enum):
@@ -170,6 +182,37 @@ class DBEpisodeGraph(HasDBIDMixin, SQLBase):
         return f"DBEpisodeGraph(ids:[{self.id!r},{self.graph_key_id!r}], episode:{self.episode_id!r})"
 
 
+class QuestCompletion(HasDBIDMixin, SQLBase):
+    """Class containing metadata for episodes that represent quest completions"""
+
+    __tablename__ = "quest_completions"
+
+    ID_PREFIX = "QCP"
+
+    id = Column(String(ID_STRING_LENGTH), primary_key=True)
+    episode_id = Column(String, ForeignKey("episodes.id"), nullable=False, index=True)
+    quest_id = Column(String(ID_STRING_LENGTH), nullable=True, index=True)
+
+
+class WildMetadata(SQLBase):
+    """Class containing the expected elements for an episode as stored in the db"""
+
+    __tablename__ = "wild_metadata"
+
+    episode_id = Column(
+        String(ID_STRING_LENGTH),
+        ForeignKey("episodes.id"),
+        nullable=False,
+        index=True,
+        primary_key=True,
+    )
+    quest_id = Column(String(ID_STRING_LENGTH))
+    model_name = Column(String(MAX_WILD_MODEL_LEN), nullable=True)
+    score = Column(Integer, nullable=True)
+    is_complete = Column(Boolean, nullable=True)
+    choice_text = Column(String(MAX_WILD_CHOICE_LEN), nullable=True)
+
+
 class EpisodeDB(BaseDB):
     """
     Episode dataset database for LIGHT, containing accessors for all
@@ -194,6 +237,46 @@ class EpisodeDB(BaseDB):
         """
         # TODO Check the table for any possible consistency issues
         # and ensure that the episode directories for listed splits exist
+
+    def write_wild_metadata(
+        self,
+        episode_id: str,
+        score: int,
+        model_name: Optional[str] = None,
+        quest_id: Optional[str] = None,
+        is_complete: Optional[bool] = None,
+        choice_text: Optional[str] = None,
+    ) -> None:
+        with Session(self.engine) as session:
+            episode_metadata = WildMetadata(
+                episode_id=episode_id,
+                score=score,
+                model_name=model_name,
+                quest_id=quest_id,
+                is_complete=is_complete,
+                choice_text=choice_text,
+            )
+            session.add(episode_metadata)
+            if quest_id is not None and is_complete:
+                completion = QuestCompletion(
+                    id=QuestCompletion.get_id(),
+                    episode_id=episode_id,
+                    quest_id=quest_id,
+                )
+                session.add(completion)
+            session.commit()
+
+    def get_wild_metadata(self, episode_id: str) -> "WildMetadata":
+        """
+        Return a specific episode by id, raising an issue if it doesnt exist
+        """
+        stmt = select(WildMetadata).where(WildMetadata.episode_id == episode_id)
+        with Session(self.engine) as session:
+            wild_metadata = self._enforce_get_first(
+                session, stmt, "Episode did not exist"
+            )
+            session.expunge_all()
+            return wild_metadata
 
     def write_episode(
         self,
