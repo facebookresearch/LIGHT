@@ -201,23 +201,23 @@ const AgentMessage = ({
         <div className="_chatbubble-container_ flex flex-row">
           <ChatBubble align="left" actor={actor.toUpperCase()} action={messageAction}>
             <div className="_agent-message-content_ w-full flex flex-col">
+              <div className="_agent-message-text-container_ flex flex-row justify-between items-between">
+                <p className={`_agent-message-bubble-text_ w-full  mb-2 break-words text-black`}>{formattedText}</p>
+                {isLiked ? (
+                <>
+                  <GiftStar 
+                    giftXp={giftXp}
+                    isLiked={isLiked}
+                    isStarred={isStarred}
+                    onClick={starHandler}
+                  />
+                </>
+               ) : null}
+              </div>
               {messageAction === "theyTell" ?
-                  <p className="text-left text-white font-bold italic opacity-50 truncate text-xs mt-1" >Told to you</p>
+                  <p className="text-left text-gray-600 font-bold italic opacity-50 truncate text-xs mt-1" >Told to you</p>
                   :null
               }
-            <div className="_agent-message-text-container_ flex flex-row justify-between items-between">
-              <p className={`_agent-message-bubble-text_ w-full  mb-2 break-words text-black`}>{formattedText}</p>
-              {isLiked ? (
-            <>
-              <GiftStar 
-                giftXp={giftXp}
-                isLiked={isLiked}
-                isStarred={isStarred}
-                onClick={starHandler}
-              />
-            </>
-          ) : null}
-            </div>
               {isReported ? (
                 <span className="text-red-400">
                   This Message Has been reported

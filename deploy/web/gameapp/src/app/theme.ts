@@ -14,7 +14,7 @@ export function getActionThemeColor(where:string, action:string, autoTextStyle:b
     default: "base-100",
     theySay: "white",
     theyDo: "red-100",
-    theyTell: "info"
+    theyTell: "base-100"
   };
   
   const color = actionColors[action] || actionColors.default;
